@@ -18,6 +18,7 @@ package org.eclipse.pde.internal.core.target;
 
 import java.io.File;
 import java.net.URI;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -45,6 +46,7 @@ import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.equinox.internal.p2.director.PermissiveSlicer;
 import org.eclipse.equinox.internal.p2.garbagecollector.GarbageCollector;
+import org.eclipse.equinox.internal.p2.repository.helpers.RepositoryHelper;
 import org.eclipse.equinox.p2.core.IAgentLocation;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.IProvisioningAgentProvider;
@@ -1395,7 +1397,7 @@ public class P2TargetUtils {
 	 * @exception CoreException
 	 */
 	private Collection<URI> getArtifactRepositories(ITargetDefinition target) throws CoreException {
-		Set<URI> result = new HashSet<>();
+		Set<URI> result = new LinkedHashSet<>();
 		ITargetLocation[] containers = target.getTargetLocations();
 		if (containers == null) {
 			containers = new ITargetLocation[0];
@@ -1418,7 +1420,16 @@ public class P2TargetUtils {
 			// get all the artifact repos we know in the manager currently
 			result.addAll(Arrays.asList(manager.getKnownRepositories(IRepositoryManager.REPOSITORIES_ALL)));
 
-			// Add in the IDE profile bundle pool and all known workspaces
+			if (Boolean.parseBoolean(System.getProperty("pde.usePoolsInfo", "true"))) { //$NON-NLS-1$ //$NON-NLS-2$
+				try {
+					result.addAll(RepositoryHelper.getSharedBundlePools().stream().map(Path::toUri).toList());
+				} catch (Exception e) {
+					//$FALL-THROUGH$
+				}
+			}
+
+			// Add in the IDE profile bufindProfileReposndle pool and all known
+			// workspaces
 			findProfileRepos(result);
 			findWorkspaceRepos(result);
 		}
