@@ -777,7 +777,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 
 		results.put(EXTRA_ID, tokenizer.nextToken());
 		results.put(EXTRA_VERSION, Version.emptyVersion);
-		results.put(EXTRA_UNPACK, Boolean.TRUE);
+		results.put(EXTRA_UNPACK, Boolean.FALSE);
 
 		while (tokenizer.hasMoreTokens()) {
 			String token = tokenizer.nextToken();

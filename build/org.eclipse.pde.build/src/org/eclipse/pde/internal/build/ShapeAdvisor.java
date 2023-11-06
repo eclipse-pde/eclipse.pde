@@ -113,6 +113,6 @@ public class ShapeAdvisor implements IPDEBuildConstants {
 			}
 		}
 
-		return true; //don't know, return the default
+		return false; //don't know, return the default
 	}
 }
