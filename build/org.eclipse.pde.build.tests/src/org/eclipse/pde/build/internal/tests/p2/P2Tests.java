@@ -1025,4 +1025,5 @@ public class P2Tests extends P2TestCase {
 		Bundle launcherBundle = Platform.getBundle("org.eclipse.equinox.launcher");
 		return FileLocator.getBundleFileLocation(launcherBundle).get().getAbsolutePath();
 	}
+
 }

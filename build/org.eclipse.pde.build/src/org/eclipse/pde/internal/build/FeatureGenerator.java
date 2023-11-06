@@ -566,4 +566,5 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 	public void setNestedInclusions(String nested) {
 		this.nestedInclusions = nested;
 	}
+
 }

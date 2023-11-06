@@ -940,4 +940,5 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		}
 		return result.toString();
 	}
+
 }
