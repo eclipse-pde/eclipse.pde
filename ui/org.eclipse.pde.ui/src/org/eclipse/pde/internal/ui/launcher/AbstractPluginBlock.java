@@ -1070,7 +1070,7 @@ public abstract class AbstractPluginBlock {
 	protected abstract LaunchValidationOperation createValidationOperation() throws CoreException;
 
 	/**
-	 * disposing the editor in tree viewer
+	 * Disposing the editor in tree viewer
 	 *
 	 * @param treeView
 	 *            The tree view that will be refreshed.
