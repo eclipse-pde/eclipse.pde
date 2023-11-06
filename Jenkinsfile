@@ -21,6 +21,8 @@ pipeline {
 						-Pbree-libs \
 						-Papi-check \
 						-Pjavadoc \
+						-DDetectVMInstallationsJob.disabled=true \
+						-Dtycho.apitools.debug \
 						-Dmaven.test.error.ignore=true -Dmaven.test.failure.ignore=true
 					'''
 				}
