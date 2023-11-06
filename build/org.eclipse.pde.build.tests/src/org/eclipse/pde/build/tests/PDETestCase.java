@@ -13,9 +13,9 @@
 
 package org.eclipse.pde.build.tests;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -26,11 +26,15 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.helper.AntXMLContext;
@@ -324,9 +328,11 @@ public abstract class PDETestCase {
 		assertTrue(logFile.length() > 0);
 
 		int idx = 0;
+		List<String> logContent = new ArrayList<>();
 		try (BufferedReader reader = new BufferedReader(new FileReader(logFile))) {
 			while (reader.ready()) {
 				String line = reader.readLine();
+				logContent.add(line);
 				if (line.indexOf(lines[idx]) >= 0) {
 					if (++idx >= lines.length) {
 						reader.close();
@@ -335,7 +341,11 @@ public abstract class PDETestCase {
 				}
 			}
 		}
-		fail();
+
+		// Will always fail here (expected)
+		String expected = Stream.of(lines).map(x -> x.trim()).collect(Collectors.joining("\n"));
+		String actual = logContent.stream().map(x -> x.trim()).collect(Collectors.joining("\n"));
+		assertEquals("Not found given lines in given order", expected, actual);
 	}
 
 	/**

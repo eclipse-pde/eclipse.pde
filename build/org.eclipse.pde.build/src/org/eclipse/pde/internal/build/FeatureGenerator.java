@@ -425,7 +425,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 					Entry entry = listIter.next();
 					String name = entry.getId();
 					String bundleVersion = entry.getVersion();
-					boolean guessedUnpack = true;
+					boolean guessedUnpack = false;
 					boolean writeBundle = !verify;
 					if (verify) {
 						BundleDescription bundle = state.getResolvedBundle(name, bundleVersion);
