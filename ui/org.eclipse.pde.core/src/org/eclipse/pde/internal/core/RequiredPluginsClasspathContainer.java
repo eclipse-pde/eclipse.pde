@@ -58,7 +58,6 @@ import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.core.bnd.BndProjectManager;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 
-import aQute.bnd.build.Container;
 import aQute.bnd.build.Project;
 
 public class RequiredPluginsClasspathContainer extends PDEClasspathContainer implements IClasspathContainer {
@@ -205,7 +204,6 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			if (fBuild != null) {
 				addSecondaryDependencies(desc, added, entries);
 			}
-			addBndClasspath(desc, added, entries);
 
 			// add Import-Package
 			// sort by symbolicName_version to get a consistent order
@@ -229,22 +227,6 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		} catch (CoreException e) {
 		}
 		return entries;
-	}
-
-	private void addBndClasspath(BundleDescription desc, Set<BundleDescription> added, List<IClasspathEntry> entries) {
-		try {
-			Optional<Project> bndProject = BndProjectManager.getBndProject(project);
-			if (bndProject.isPresent()) {
-				for (Container container : bndProject.get().getBuildpath()) {
-					addExtraModel(desc, added, entries, container.getBundleSymbolicName());
-				}
-				for (Container container : bndProject.get().getTestpath()) {
-					addExtraModel(desc, added, entries, container.getBundleSymbolicName());
-				}
-			}
-		} catch (Exception e) {
-			PDECore.logException(e, "Can't set classpath from bnd!"); //$NON-NLS-1$
-		}
 	}
 
 	/**
@@ -556,27 +538,21 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			if (entry != null) {
 				String[] tokens = entry.getTokens();
 				for (String pluginId : tokens) {
-					// Get PluginModelBase first to resolve system.bundle entry
-					// if it exists
-					addExtraModel(desc, added, entries, pluginId);
+					// Get PluginModelBase first to resolve system.bundle entry if it exists
+					IPluginModelBase model = PluginRegistry.findModel(pluginId);
+					if (model != null) {
+						BundleDescription bundleDesc = model.getBundleDescription();
+						if (added.contains(bundleDesc)) {
+							continue;
+						}
+						Map<BundleDescription, List<Rule>> rules = new HashMap<>();
+						findExportedPackages(bundleDesc, desc, rules);
+						addDependency(bundleDesc, added, rules, entries, true);
+					}
 				}
 			}
 		} catch (CoreException e) {
 			return;
-		}
-	}
-
-	private void addExtraModel(BundleDescription desc, Set<BundleDescription> added, List<IClasspathEntry> entries,
-			String pluginId) throws CoreException {
-		IPluginModelBase model = PluginRegistry.findModel(pluginId);
-		if (model != null) {
-			BundleDescription bundleDesc = model.getBundleDescription();
-			if (added.contains(bundleDesc)) {
-				return;
-			}
-			Map<BundleDescription, List<Rule>> rules = new HashMap<>();
-			findExportedPackages(bundleDesc, desc, rules);
-			addDependency(bundleDesc, added, rules, entries, true);
 		}
 	}
 
@@ -596,8 +572,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				}
 				map.put(bdesc, rules);
 
-				// Look at re-exported Require-Bundles for any other exported
-				// packages
+				// Look at re-exported Require-Bundles for any other exported packages
 				BundleSpecification[] requiredBundles = bdesc.getRequiredBundles();
 				for (BundleSpecification requiredBundle : requiredBundles) {
 					if (requiredBundle.isExported()) {
