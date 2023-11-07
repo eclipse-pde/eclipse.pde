@@ -187,10 +187,17 @@ public class SchemaEditor extends MultiSourceEditor {
 
 	public static boolean openSchema(IPath path) {
 		String pluginId = path.segment(0);
+		int remove;
+		if ("schema:".equals(pluginId)) { //$NON-NLS-1$
+			pluginId = path.segment(1);
+			remove = 2;
+		} else {
+			remove = 1;
+		}
 		IPluginModelBase model = PluginRegistry.findModel(pluginId);
 		if (model != null && model.getUnderlyingResource() != null) {
 			IProject project = model.getUnderlyingResource().getProject();
-			IFile file = project.getFile(path.removeFirstSegments(1));
+			IFile file = project.getFile(path.removeFirstSegments(remove));
 			return openSchema(file);
 		}
 		return false;
