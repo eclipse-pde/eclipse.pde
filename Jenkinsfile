@@ -18,9 +18,7 @@ pipeline {
 				wrap([$class: 'Xvnc', useXauthority: true]) {
 					sh '''
 						mvn clean verify --batch-mode -Dmaven.repo.local=$WORKSPACE/.m2/repository \
-						-Pbree-libs \
-						-Papi-check \
-						-Pjavadoc \
+						-Pbree-libs -Papi-check \
 						-Dmaven.test.error.ignore=true -Dmaven.test.failure.ignore=true
 					'''
 				}
