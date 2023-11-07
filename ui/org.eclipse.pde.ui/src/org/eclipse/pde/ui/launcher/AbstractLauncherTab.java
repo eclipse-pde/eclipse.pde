@@ -82,7 +82,6 @@ public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab
 
 	/**
 	 * Validates the data entered on the tab.
-	 *
 	 */
 	public abstract void validateTab();
 

@@ -229,7 +229,6 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 	}
 
 	/**
-	 * @param parent
 	 * @return the container holding the available plug-ins list
 	 */
 	private Composite createAvailableList(Composite parent) {

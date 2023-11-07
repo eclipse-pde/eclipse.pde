@@ -40,8 +40,6 @@ public class SearchScopeTests {
 	/**
 	 * Tests that visiting a scope with whole components is the same as visiting
 	 * the components.
-	 *
-	 * @throws CoreException
 	 */
 	@Test
 	public void testVisitEntireComponentsScope() throws CoreException {
@@ -64,11 +62,6 @@ public class SearchScopeTests {
 	/**
 	 * Visits all classes files in the container, add visited packages and types to the
 	 * given collections.
-	 *
-	 * @param container
-	 * @param packageNames
-	 * @param typeNames
-	 * @throws CoreException
 	 */
 	private void visit(IApiTypeContainer container, final Collection<String> packageNames, final Collection<String> typeNames) throws CoreException {
 		ApiTypeContainerVisitor visitor = new ApiTypeContainerVisitor() {
@@ -89,8 +82,6 @@ public class SearchScopeTests {
 
 	/**
 	 * Tests visiting a type scope - type A in package component.a in component.a
-	 *
-	 * @throws CoreException
 	 */
 	@Test
 	public void testVisitTypeScope() throws CoreException {
@@ -112,8 +103,6 @@ public class SearchScopeTests {
 
 	/**
 	 * Tests that visiting a scope with two class files.
-	 *
-	 * @throws CoreException
 	 */
 	@Test
 	public void testVisitSpecificTypes() throws CoreException {

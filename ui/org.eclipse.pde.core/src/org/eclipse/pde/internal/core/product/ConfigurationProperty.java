@@ -31,7 +31,6 @@ public class ConfigurationProperty extends ProductObject implements IConfigurati
 
 	/**
 	 * Only for parsing usage
-	 * @param model
 	 */
 	ConfigurationProperty(IProductModel model) {
 		super(model);

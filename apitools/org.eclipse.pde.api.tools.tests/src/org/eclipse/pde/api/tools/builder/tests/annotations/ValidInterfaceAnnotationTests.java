@@ -24,9 +24,6 @@ import junit.framework.Test;
  */
 public class ValidInterfaceAnnotationTests extends InvalidInterfaceAnnotationTests {
 
-	/**
-	 * @param name
-	 */
 	public ValidInterfaceAnnotationTests(String name) {
 		super(name);
 	}
@@ -45,8 +42,6 @@ public class ValidInterfaceAnnotationTests extends InvalidInterfaceAnnotationTes
 
 	/**
 	 * Tests @NoImplement annotation on interfaces
-	 *
-	 * @throws Exception
 	 */
 	public void testNoImplementF() throws Exception {
 		x1(false);
@@ -54,8 +49,6 @@ public class ValidInterfaceAnnotationTests extends InvalidInterfaceAnnotationTes
 
 	/**
 	 * Tests @NoImplement annotation on interfaces
-	 *
-	 * @throws Exception
 	 */
 	public void testNoImplementI() throws Exception {
 		x1(true);
@@ -67,8 +60,6 @@ public class ValidInterfaceAnnotationTests extends InvalidInterfaceAnnotationTes
 
 	/**
 	 * Tests @NoExtend annotation on interfaces
-	 *
-	 * @throws Exception
 	 */
 	public void testNoExtendF() throws Exception {
 		x2(false);
@@ -76,8 +67,6 @@ public class ValidInterfaceAnnotationTests extends InvalidInterfaceAnnotationTes
 
 	/**
 	 * Tests @NoExtend annotation on interfaces
-	 *
-	 * @throws Exception
 	 */
 	public void testNoExtendI() throws Exception {
 		x2(true);
@@ -89,8 +78,6 @@ public class ValidInterfaceAnnotationTests extends InvalidInterfaceAnnotationTes
 
 	/**
 	 * Tests @NoReference annotation on interfaces
-	 *
-	 * @throws Exception
 	 */
 	public void testNoReferenceF() throws Exception {
 		x3(false);
@@ -98,8 +85,6 @@ public class ValidInterfaceAnnotationTests extends InvalidInterfaceAnnotationTes
 
 	/**
 	 * Tests @NoReference annotation on interfaces
-	 *
-	 * @throws Exception
 	 */
 	public void testNoReferenceI() throws Exception {
 		x3(true);

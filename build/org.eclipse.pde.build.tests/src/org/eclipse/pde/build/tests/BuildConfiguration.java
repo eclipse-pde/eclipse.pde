@@ -105,9 +105,6 @@ public class BuildConfiguration {
 	/**
 	 * Get a default build configuration build.properties based on the template from
 	 * pde.build
-	 * 
-	 * @param buildFolder
-	 * @return
 	 */
 	public static Properties getBuilderProperties(IFolder buildFolder) {
 		String builder = buildFolder.getLocation().toOSString();
@@ -122,11 +119,6 @@ public class BuildConfiguration {
 	 * Get a default set of properties used for invoking the
 	 * genericTargets/generateScript task (which invokes the eclipse.buildScript
 	 * target)
-	 * 
-	 * @param buildFolder
-	 * @param type
-	 * @param id
-	 * @return
 	 */
 	public static Properties getScriptGenerationProperties(IFolder buildFolder, String type, String id) {
 		Properties properties = (Properties) defaultScriptConfig.clone();

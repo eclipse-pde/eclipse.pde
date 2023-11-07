@@ -28,8 +28,6 @@ public class ValidClassFieldAnnotationTests extends FieldAnnotationTest {
 
 	/**
 	 * Constructor
-	 *
-	 * @param name
 	 */
 	public ValidClassFieldAnnotationTests(String name) {
 		super(name);

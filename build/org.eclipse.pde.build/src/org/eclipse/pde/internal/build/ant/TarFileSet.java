@@ -15,17 +15,6 @@ package org.eclipse.pde.internal.build.ant;
 
 public class TarFileSet extends ZipFileSet {
 
-	/**
-	 * @param dir
-	 * @param file
-	 * @param defaultexcludes
-	 * @param includes
-	 * @param includesfile
-	 * @param excludes
-	 * @param excludesfile
-	 * @param prefix
-	 * @param casesensitive
-	 */
 	public TarFileSet(String dir, boolean file, String defaultexcludes, String includes, String includesfile, String excludes, String excludesfile, String prefix, String casesensitive, String permission) {
 		super(dir, file, defaultexcludes, includes, includesfile, excludes, excludesfile, prefix, casesensitive, permission);
 	}

@@ -86,7 +86,6 @@ public abstract class AbstractTargetTest extends PDETestCase {
 	 * the plug-ins.
 	 *
 	 * @return path to the plug-ins directory
-	 * @throws Exception
 	 */
 	protected IPath extractAbcdePlugins() throws Exception {
 		IPath stateLocation = PDETestsPlugin.getDefault().getStateLocation();
@@ -105,7 +104,6 @@ public abstract class AbstractTargetTest extends PDETestCase {
 	 * of the plugins directory.
 	 *
 	 * @return path to the plug-ins directory
-	 * @throws Exception
 	 */
 	protected IPath extractLinkedPlugins() throws Exception {
 		IPath stateLocation = PDETestsPlugin.getDefault().getStateLocation();
@@ -123,7 +121,6 @@ public abstract class AbstractTargetTest extends PDETestCase {
 	 * root directory containing the features and plug-ins
 	 *
 	 * @return path to the root directory
-	 * @throws Exception
 	 */
 	protected IPath extractModifiedFeatures() throws Exception {
 		IPath stateLocation = PDETestsPlugin.getDefault().getStateLocation();
@@ -148,7 +145,6 @@ public abstract class AbstractTargetTest extends PDETestCase {
 	 * root directory containing the plug-ins.
 	 *
 	 * @return path to the directory containing the bundles
-	 * @throws Exception
 	 */
 	protected IPath extractMultiVersionPlugins() throws Exception {
 		IPath stateLocation = PDETestsPlugin.getDefault().getStateLocation();
@@ -165,7 +161,6 @@ public abstract class AbstractTargetTest extends PDETestCase {
 	 *
 	 * @param location path in the local file system
 	 * @param archivePath path to archive relative to the test plug-in
-	 * @throws IOException
 	 */
 	private IPath doUnZip(IPath location, String archivePath) throws IOException {
 		URL zipURL = PDETestsPlugin.getBundleContext().getBundle().getEntry(archivePath);
@@ -212,7 +207,6 @@ public abstract class AbstractTargetTest extends PDETestCase {
 	/**
 	 * Used to reset the target platform to original settings after a test that changes
 	 * the target platform.
-	 * @throws CoreException
 	 */
 	protected void resetTargetPlatform() throws CoreException {
 		ITargetDefinition definition = getDefaultTargetPlatorm();
@@ -250,7 +244,6 @@ public abstract class AbstractTargetTest extends PDETestCase {
 	 * be called inside of a try/finally block that will always call {@link #resetTargetPlatform()}
 	 *
 	 * @param target target definition or <code>null</code>
-	 * @throws CoreException
 	 */
 	protected void setTargetPlatform(ITargetDefinition target) throws CoreException {
 		final AtomicReference<Object> payload = new AtomicReference<>();
@@ -323,7 +316,6 @@ public abstract class AbstractTargetTest extends PDETestCase {
 	 *
 	 * @param container bundle container
 	 * @return included bundles
-	 * @throws Exception
 	 */
 	protected List<BundleInfo> getBundleInfos(ITargetLocation container) throws Exception {
 		TargetBundle[] bundles = container.getBundles();

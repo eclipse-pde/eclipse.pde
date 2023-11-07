@@ -163,9 +163,6 @@ public abstract class PDEProjectionSourcePage extends PDESourcePage implements I
 		super.editorContextMenuAboutToShow(menu);
 	}
 
-	/**
-	 * @param menu
-	 */
 	private void addQuickOutlineMenuEntry(IMenuManager menu) {
 		// Only add the action if the source page supports it
 		if (isQuickOutlineEnabled() == false) {

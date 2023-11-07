@@ -67,9 +67,6 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 
 	private static final String DS_MANIFEST_KEY = "Service-Component"; //$NON-NLS-1$
 
-	/**
-	 *
-	 */
 	public DSCreationOperation(IFile file, String componentName,
 			String implementationClass) {
 		fFile = file;
@@ -175,10 +172,6 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 		model.dispose();
 	}
 
-	/**
-	 * @param component
-	 * @param file
-	 */
 	protected void initializeDS(IDSComponent component, IFile file) {
 		IDSDocumentFactory factory = component.getModel().getFactory();
 
@@ -213,9 +206,6 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 
 	}
 
-	/**
-	 *
-	 */
 	private void openFile() {
 		Display.getCurrent().asyncExec(() -> {
 			IWorkbenchWindow window = Activator.getActiveWorkbenchWindow();

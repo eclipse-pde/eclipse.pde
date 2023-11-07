@@ -20,7 +20,6 @@ import org.eclipse.ui.splash.AbstractSplashHandler;
 
 /**
  * @since 3.3
- *
  */
 public class ExtensibleSplashHandler extends AbstractSplashHandler {
 	
@@ -44,9 +43,6 @@ public class ExtensibleSplashHandler extends AbstractSplashHandler {
 	
 	private Composite fIconPanel;
 	
-	/**
-	 * 
-	 */
 	public ExtensibleSplashHandler() {
 		fImageList = new ArrayList();
 		fTooltipList = new ArrayList();
@@ -76,9 +72,6 @@ public class ExtensibleSplashHandler extends AbstractSplashHandler {
 		doEventLoop();
 	}
 
-	/**
-	 * @return
-	 */
 	private boolean hasSplashExtensions() {
 		if (fImageList.isEmpty()) {
 			return false;
@@ -87,9 +80,6 @@ public class ExtensibleSplashHandler extends AbstractSplashHandler {
 		}
 	}
 	
-	/**
-	 * 
-	 */
 	private void createUI() {
 		// Create the icon panel
 		createUICompositeIconPanel();
@@ -97,9 +87,6 @@ public class ExtensibleSplashHandler extends AbstractSplashHandler {
 		createUIImages();
 	}	
 	
-	/**
-	 * 
-	 */
 	private void createUIImages() {
 		Iterator imageIterator = fImageList.iterator();
 		Iterator tooltipIterator = fTooltipList.iterator();
@@ -118,10 +105,6 @@ public class ExtensibleSplashHandler extends AbstractSplashHandler {
 		}
 	}
 	
-	/**
-	 * @param image
-	 * @param tooltip
-	 */
 	private void createUILabel(Image image, String tooltip) {
 		// Create the label (no text)
 		Label label = new Label(fIconPanel, SWT.NONE);
@@ -129,9 +112,6 @@ public class ExtensibleSplashHandler extends AbstractSplashHandler {
 		label.setToolTipText(tooltip);		
 	}
 
-	/**
-	 * 
-	 */
 	private void createUICompositeIconPanel() {
 		Shell splash = getSplash();
 		// Create the composite
@@ -152,9 +132,6 @@ public class ExtensibleSplashHandler extends AbstractSplashHandler {
 		fIconPanel.setLayout(layout);
 	}
 
-	/**
-	 * 
-	 */
 	private void configureUICompositeIconPanelBounds() {
 		// Determine the size of the panel and position it at the bottom-right
 		// of the splash screen.
@@ -168,17 +145,11 @@ public class ExtensibleSplashHandler extends AbstractSplashHandler {
 		fIconPanel.setBounds(x_coord, y_coord, x_width, y_width);	
 	}
 	
-	/**
-	 * @return
-	 */
 	private int getUsableSplashScreenWidth() {
 		// Splash screen width minus two graphic border bevel widths
 		return getSplash().getSize().x - (F_SPLASH_SCREEN_BEVEL * 2);
 	}
 	
-	/**
-	 * 
-	 */
 	private void loadSplashExtensions() {
 		// Get all splash handler extensions
 		IExtension[] extensions = 
@@ -190,9 +161,6 @@ public class ExtensibleSplashHandler extends AbstractSplashHandler {
 		}
 	}
 
-	/**
-	 * @param extension
-	 */
 	private void processSplashExtension(IExtension extension) {
 		// Get all splash handler configuration elements
 		IConfigurationElement[] elements = extension.getConfigurationElements();
@@ -202,9 +170,6 @@ public class ExtensibleSplashHandler extends AbstractSplashHandler {
 		}
 	}
 
-	/**
-	 * @param configurationElement
-	 */
 	private void processSplashElements(
 			IConfigurationElement configurationElement) {
 		// Attribute: icon
@@ -213,9 +178,6 @@ public class ExtensibleSplashHandler extends AbstractSplashHandler {
 		processSplashElementTooltip(configurationElement);
 	}
 
-	/**
-	 * @param configurationElement
-	 */
 	private void processSplashElementTooltip(
 			IConfigurationElement configurationElement) {
 		// Get attribute tooltip
@@ -229,9 +191,6 @@ public class ExtensibleSplashHandler extends AbstractSplashHandler {
 		}
 	}
 
-	/**
-	 * @param configurationElement
-	 */
 	private void processSplashElementIcon(
 			IConfigurationElement configurationElement) {
 		// Get attribute icon
@@ -267,9 +226,6 @@ public class ExtensibleSplashHandler extends AbstractSplashHandler {
 		fImageList.add(image);
 	}
 
-	/**
-	 * 
-	 */
 	private void configureUISplash() {
 		// Configure layout
 		GridLayout layout = new GridLayout(1, true);
@@ -278,9 +234,6 @@ public class ExtensibleSplashHandler extends AbstractSplashHandler {
 		getSplash().setBackgroundMode(SWT.INHERIT_DEFAULT);		
 	}	
 	
-	/**
-	 * 
-	 */
 	private void doEventLoop() {
 		Shell splash = getSplash();
 		if (splash.getDisplay().readAndDispatch() == false) {

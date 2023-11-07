@@ -126,7 +126,6 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 	 * Returns a list of BundleDescription objects representing the elements delivered by the feature. 
 	 *  
 	 * @return List of BundleDescription
-	 * @throws CoreException
 	 */
 	protected Set<BundleDescription> computeElements(BuildTimeFeature feature) throws CoreException {
 		Set<BundleDescription> computedElements = new LinkedHashSet<>(5);
@@ -292,9 +291,6 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 			throw toAbsorb;
 	}
 
-	/**
-	 * @throws CoreException
-	 */
 	private void generateChildrenScripts(BuildTimeFeature feature) throws CoreException {
 		Set<BundleDescription> plugins = computeElements(feature);
 		String suffix = generateFeatureVersionSuffix(feature);
@@ -518,10 +514,6 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 		return result.substring(0, maxGeneratedLength);
 	}
 
-	/**
-	 * @param models
-	 * @throws CoreException
-	 */
 	private void generateModels(List<BundleDescription> models) throws CoreException {
 		if (scriptGeneration == false)
 			return;
@@ -637,8 +629,6 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 
 	/**
 	 * Method setSourceToGather.
-	 * 
-	 * @param sourceToGather
 	 */
 	public void setSourceToGather(SourceFeatureInformation sourceToGather) {
 		this.sourceToGather = sourceToGather;

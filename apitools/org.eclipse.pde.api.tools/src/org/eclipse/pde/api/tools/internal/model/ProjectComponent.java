@@ -99,7 +99,6 @@ public class ProjectComponent extends BundleComponent {
 	 * @param baseline the owning API baseline
 	 * @param location the given location of the component
 	 * @param model the given model
-	 * @param bundleid
 	 * @throws CoreException if unable to create the API component
 	 */
 	public ProjectComponent(IApiBaseline baseline, String location, IPluginModelBase model, long bundleid) throws CoreException {
@@ -139,7 +138,6 @@ public class ProjectComponent extends BundleComponent {
 	 *
 	 * @return the {@link IPluginModelBase} or throws and exception, never
 	 *         retruns <code>null</code>
-	 * @throws CoreException
 	 */
 	IPluginModelBase getModel() throws CoreException {
 		if (fModel == null) {

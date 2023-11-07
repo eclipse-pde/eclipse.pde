@@ -57,9 +57,6 @@ public class UnzipperGenerator extends AbstractScriptGenerator {
 		}
 	}
 
-	/**
-	 * 
-	 */
 	private void prepareGeneration() {
 		if (packagingPropertiesLocation == null)
 			return;

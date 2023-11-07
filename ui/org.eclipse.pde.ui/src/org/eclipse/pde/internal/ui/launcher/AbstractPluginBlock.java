@@ -658,7 +658,6 @@ public abstract class AbstractPluginBlock {
 	 * filters unchecked items if the fFilterButton is selected.
 	 *
 	 * @author Ian Bull
-	 *
 	 */
 	class Filter extends ViewerFilter {
 		@Override
@@ -828,7 +827,6 @@ public abstract class AbstractPluginBlock {
 	 *
 	 * @param config launch configuration to init from or <code>null</code>
 	 * @param enableTable whether to set the input on the table
-	 * @throws CoreException
 	 */
 	public void initializeFrom(ILaunchConfiguration config, boolean enableTable) throws CoreException {
 		fLaunchConfig = config;

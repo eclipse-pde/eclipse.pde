@@ -28,10 +28,6 @@ import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.build.Messages;
 import org.xml.sax.SAXException;
 
-/**
- *
- *
- */
 public class BuildTimeFeatureFactory /*extends BaseFeatureFactory */implements /*IFeatureFactory,*/IPDEBuildConstants, IBuildPropertiesConstants {
 	public final static String BUILDTIME_FEATURE_FACTORY_ID = PI_PDEBUILD + ".BuildTimeFeatureFactory"; //$NON-NLS-1$
 

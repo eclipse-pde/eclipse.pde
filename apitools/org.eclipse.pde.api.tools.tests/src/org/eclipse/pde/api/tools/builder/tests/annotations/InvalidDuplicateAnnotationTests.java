@@ -31,8 +31,6 @@ public class InvalidDuplicateAnnotationTests extends AnnotationTest {
 
 	/**
 	 * Constructor
-	 *
-	 * @param name
 	 */
 	public InvalidDuplicateAnnotationTests(String name) {
 		super(name);
@@ -57,9 +55,6 @@ public class InvalidDuplicateAnnotationTests extends AnnotationTest {
 
 	/**
 	 * Must be called before a call {@link #getDefaultProblemId()}
-	 *
-	 * @param element
-	 * @param kind
 	 */
 	private void setProblemId(int element, int kind) {
 		fPid = ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, element, kind, IApiProblem.NO_FLAGS);

@@ -21,7 +21,6 @@ import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Provides old {@link org.eclipse.core.runtime.Preferences} like interface to preferences but uses {@link IEclipsePreferences} instead
- *
  */
 public final class PDEPreferencesManager {
 

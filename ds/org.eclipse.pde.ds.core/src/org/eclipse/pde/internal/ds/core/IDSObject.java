@@ -18,7 +18,6 @@ import org.eclipse.pde.internal.core.text.IDocumentObject;
 
 /**
  * Represents a general DS element of a DS xml file.
- *
  */
 public interface IDSObject extends IDocumentObject {
 

@@ -21,7 +21,6 @@ import org.eclipse.swt.widgets.Label;
 
 /**
  * PDELabelUtility
- *
  */
 public class PDELabelUtility {
 
@@ -30,7 +29,6 @@ public class PDELabelUtility {
 	 * control (assumption).  Use this method when the control's label is
 	 * variable or if the label's text is set elsewhere.  Note:  Hyperlink
 	 * label text will not be detected.
-	 * @param control
 	 */
 	public static String getFieldLabel(Control control) {
 		// Note:  Does not handle hyperlink labels
@@ -114,11 +112,6 @@ public class PDELabelUtility {
 		}
 	}
 
-	/**
-	 * @param base
-	 * @param set
-	 * @param title
-	 */
 	private static void compareTitleWithBase(String base, boolean bracketed, HashSet<Integer> set, String title) {
 		// Check to see it the name starts with the prefix
 		if (title.toLowerCase().startsWith(base.toLowerCase())) {

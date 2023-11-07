@@ -208,7 +208,6 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	 * specified. The spcecificity of this method is that it returns an empty
 	 * element when to same separators are following each others. For example
 	 * the string a,,b returns the following array [a, ,b]
-	 *  
 	 */
 	public static String[] getArrayFromStringWithBlank(String list, String separator) {
 		if (list == null || list.trim().length() == 0)
@@ -244,9 +243,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	/**
 	 * Converts an array of strings into an array of URLs.
 	 * 
-	 * @param target
 	 * @return URL[]
-	 * @throws CoreException
 	 */
 	public static URL[] asURL(String[] target) throws CoreException {
 		if (target == null)
@@ -708,7 +705,6 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	/**
 	 * Given a newly generated old-style source bundle for which there was a previously existing
 	 * version in the target, return the location of the src folder in that earlier version
-	 * @param bundle
 	 * @return the old version's src folder, or null
 	 */
 	public static File getOldSourceLocation(BundleDescription bundle) {
@@ -831,12 +827,6 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	 * version number defined by the feature/plugin/fragment descriptor.
 	 * This is a best effort job so do not worry if the expected tags were
 	 * not found and just return without modifying the file.
-	 * 
-	 * @param buildFile
-	 * @param propertyName
-	 * @param newVersion
-	 * @throws IOException
-	 *
 	 */
 	public static void updateVersion(File buildFile, String propertyName, String newVersion) throws IOException {
 		String value = Files.readString(buildFile.toPath());

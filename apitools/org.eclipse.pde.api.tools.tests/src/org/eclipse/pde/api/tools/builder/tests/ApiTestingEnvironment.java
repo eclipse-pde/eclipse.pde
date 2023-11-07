@@ -96,9 +96,6 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 
 	/**
 	 * Sets the given compliance on the given project.
-	 *
-	 * @param project
-	 * @param compliance
 	 */
 	public void setProjectCompliance(IJavaProject project, String compliance) {
 		int requiredComplianceFlag = 0;
@@ -138,7 +135,6 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * same name already exists in the testing workspace it will be deleted and
 	 * new project created.
 	 *
-	 * @param projectName
 	 * @return the newly created {@link IJavaProject} or <code>null</code> if
 	 *         there is an exception creating the project
 	 */
@@ -162,9 +158,6 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	/**
 	 * Performs a clean build on the project using the builder with the given
 	 * builder id
-	 *
-	 * @param project
-	 * @param builderid
 	 */
 	public void cleanBuild(IProject project, String builderid) {
 		try {
@@ -176,9 +169,6 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	/**
 	 * Incrementally builds the given project using the builder with the given
 	 * builder id
-	 *
-	 * @param project
-	 * @param builderid
 	 */
 	public void incrementalBuild(IProject project, String builderid) {
 		try {
@@ -190,9 +180,6 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	/**
 	 * Performs a full build on the given project using the builder with the
 	 * given builder id
-	 *
-	 * @param project
-	 * @param builderid
 	 */
 	public void fullBuild(IProject project, String builderid) {
 		try {
@@ -205,7 +192,6 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * returns all of the usage markers for the specified resource and its
 	 * children
 	 *
-	 * @param resource
 	 * @return all API usage problem markers
 	 * @throws CoreException
 	 *
@@ -225,10 +211,8 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * returns all of the usage markers for the specified resource and its
 	 * children
 	 *
-	 * @param resource
 	 * @return all JDT problem markers that are on the resource backing the
 	 *         given path
-	 * @throws CoreException
 	 */
 	public IMarker[] getAllJDTMarkers(IPath path) throws CoreException {
 		return getAllJDTMarkers(getResource(path));
@@ -238,9 +222,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * returns all of the usage markers for the specified resource and its
 	 * children
 	 *
-	 * @param resource
 	 * @return all JDT problem markers on the given {@link IResource}
-	 * @throws CoreException
 	 */
 	protected IMarker[] getAllJDTMarkers(IResource resource) throws CoreException {
 		if (resource == null) {
@@ -268,7 +250,6 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * Returns all of the unsupported Javadoc tag markers on the specified
 	 * resource and all of its children.
 	 *
-	 * @param resource
 	 * @return all unsupported tag problem markers
 	 * @throws CoreException
 	 *
@@ -288,9 +269,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * Returns all of the unsupported annotation markers on the given resource
 	 * and all of its children
 	 *
-	 * @param resource
 	 * @return all unsupported annotation markers
-	 * @throws CoreException
 	 * @since 1.0.400
 	 */
 	protected IMarker[] getAllUnsupportedAnnotationMarkers(IResource resource) throws CoreException {
@@ -307,7 +286,6 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * Returns all of the compatibility markers on the given resource and its
 	 * children
 	 *
-	 * @param resource
 	 * @return all compatibility problem markers
 	 * @throws CoreException
 	 *
@@ -327,7 +305,6 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * Returns all of the API profile markers on the given resource and its
 	 * children
 	 *
-	 * @param resource
 	 * @return all API baseline problem markers
 	 * @throws CoreException
 	 *
@@ -347,7 +324,6 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * Returns all of the since tag markers on the given resource and its
 	 * children
 	 *
-	 * @param resource
 	 * @return all since tag problem markers
 	 * @throws CoreException
 	 *
@@ -366,7 +342,6 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	/**
 	 * Returns all of the version markers on the given resource and its children
 	 *
-	 * @param resource
 	 * @return all version problem markers
 	 * @throws CoreException
 	 *
@@ -386,7 +361,6 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * Returns all of the unused API problem filters markers on the given
 	 * resource to infinite depth
 	 *
-	 * @param resource
 	 * @return all unused problem filter markers
 	 * @throws CoreException
 	 *
@@ -414,7 +388,6 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	/**
 	 * Returns the collection of API problem markers for the given element
 	 *
-	 * @param root
 	 * @return the array of {@link IMarker}s found on the resource that
 	 *         corresponds to the given path
 	 */
@@ -425,8 +398,6 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	/**
 	 * Return all problems with the specified element.
 	 *
-	 * @param path
-	 * @param additionalMarkerType
 	 * @return the array of {@link IMarker}s found on the resource that
 	 *         corresponds to the given path
 	 */
@@ -457,7 +428,6 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	/**
 	 * Looks up the {@link IResource} in the workspace from the given path
 	 *
-	 * @param path
 	 * @return the {@link IResource} handle for the given path
 	 */
 	public IResource getResource(IPath path) {
@@ -479,9 +449,6 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 
 	/**
 	 * Adds the array of objects to the given list
-	 *
-	 * @param list
-	 * @param objects
 	 */
 	private void addToList(List<Object> list, Object[] objects) {
 		if (list == null || objects == null) {
@@ -587,8 +554,6 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 
 	/**
 	 * Sets the default revert source path to the given path.
-	 *
-	 * @param path
 	 */
 	public void setRevertSourcePath(IPath path) {
 		fRevertSourcePath = path;
@@ -637,9 +602,6 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 
 	/**
 	 * Deletes the workspace file at the specified location (full path).
-	 *
-	 * @param workspaceLocation
-	 * @throws Exception
 	 */
 	private void deleteWorkspaceFile(IPath workspaceLocation) throws Exception {
 		IFile file = getWorkspace().getRoot().getFile(workspaceLocation);
@@ -656,10 +618,6 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * Updates the contents of a workspace file at the specified location (full
 	 * path), with the contents of a local file at the given replacement
 	 * location (absolute path).
-	 *
-	 * @param workspaceLocation
-	 * @param replacementLocation
-	 * @throws Exception
 	 */
 	private void updateWorkspaceFile(IPath workspaceLocation, IPath replacementLocation) throws Exception {
 		IFile file = getWorkspace().getRoot().getFile(workspaceLocation);
@@ -673,10 +631,6 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * Updates the contents of a workspace file at the specified location (full
 	 * path), with the contents of a local file at the given replacement
 	 * location (absolute path).
-	 *
-	 * @param workspaceLocation
-	 * @param replacementLocation
-	 * @throws Exception
 	 */
 	private void createWorkspaceFile(IPath workspaceLocation, IPath replacementLocation) throws Exception {
 		IFile file = getWorkspace().getRoot().getFile(workspaceLocation);
@@ -688,8 +642,6 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 
 	/**
 	 * Notes a file was added during the test, to be undone
-	 *
-	 * @param path
 	 */
 	public void added(IPath path) {
 		fAdded.add(path);
@@ -740,8 +692,6 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 
 	/**
 	 * Sets whether to revert the workspace rather than reset.
-	 *
-	 * @param revert
 	 */
 	public void setRevert(boolean revert) {
 		fRevert = revert;

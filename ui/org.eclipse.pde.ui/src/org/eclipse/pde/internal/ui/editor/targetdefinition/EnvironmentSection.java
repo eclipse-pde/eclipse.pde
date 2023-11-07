@@ -246,7 +246,6 @@ public class EnvironmentSection extends SectionPart {
 
 	/**
 	 * Returns the text of the widget or null if it is empty
-	 * @param combo
 	 * @return text of the widget or <code>null</code>
 	 */
 	private String getText(ComboPart combo) {

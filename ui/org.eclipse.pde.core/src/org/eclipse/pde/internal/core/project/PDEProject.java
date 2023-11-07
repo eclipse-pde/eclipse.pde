@@ -285,7 +285,6 @@ public class PDEProject {
 	 * Returns the bundle localization file for the specified bundle project.
 	 * The file may or may not exist.
 	 *
-	 * @param project
 	 * @return bunlde localization file which may or may not exist
 	 */
 	public static IFile getLocalizationFile(IProject project) {

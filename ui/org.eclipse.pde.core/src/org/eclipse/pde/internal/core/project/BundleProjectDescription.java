@@ -98,7 +98,6 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	 * Constructs a bundle description for the specified project.
 	 *
 	 * @param project project that may or may not exist
-	 * @throws CoreException
 	 */
 	public BundleProjectDescription(IProject project) throws CoreException {
 		fProject = project;
@@ -156,10 +155,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/**
 	 * Parses the specified header.
 	 *
-	 * @param headers
-	 * @param key
 	 * @return elements or <code>null</code> if none
-	 * @throws CoreException
 	 */
 	private ManifestElement[] parseHeader(Map<String, String> headers, String key) throws CoreException {
 		String value = headers.get(key);
@@ -395,8 +391,6 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	 * Creates and returns a bundle claspath specifications for the given source.<library> build
 	 * entry
 	 *
-	 * @param project
-	 * @param entry
 	 * @param binary whether a binary folder (<code>true</code>) or source folder (<code>false</code>)
 	 * @return associated bundle classpath specifications or <code>null</code> if a malformed entry
 	 * @throws CoreException if unable to access Java build path

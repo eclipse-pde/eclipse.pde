@@ -69,9 +69,6 @@ public class SampleStandbyContent implements IStandbyContentPart {
 
 	private static String MEMENTO_SAMPLE_ID_ATT = "sampleId"; //$NON-NLS-1$
 
-	/**
-	 *
-	 */
 	public SampleStandbyContent() {
 		defaultShortcut = new EclipseLaunchShortcut();
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
@@ -273,8 +270,6 @@ public class SampleStandbyContent implements IStandbyContentPart {
 
 	/**
 	* Tries to create the last content part viewed, based on sample id.
-	*
-	* @param memento
 	*/
 	private String getCachedInput(IMemento memento) {
 		if (memento == null)

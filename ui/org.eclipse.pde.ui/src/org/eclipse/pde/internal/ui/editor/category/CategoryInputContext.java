@@ -50,10 +50,6 @@ public class CategoryInputContext extends XMLInputContext {
 	public static final String CONTEXT_ID = "category-context"; //$NON-NLS-1$
 	private final boolean storageModel = false;
 
-	/**
-	 * @param editor
-	 * @param input
-	 */
 	public CategoryInputContext(PDEFormEditor editor, IEditorInput input, boolean primary) {
 		super(editor, input, primary);
 		create();

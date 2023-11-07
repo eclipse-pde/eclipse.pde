@@ -73,8 +73,6 @@ public class BadClassfileTests {
 
 	/**
 	 * Writes any expected error pre-amble prior to the test running
-	 *
-	 * @param test
 	 */
 	void writePreamble(String test) {
 		System.err.println("Expected 'java.lang.ArrayIndexOutOfBoundsException: 34' in " + test + " from ASM ClassReader"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -97,8 +95,6 @@ public class BadClassfileTests {
 
 	/**
 	 * Tests trying to search a bad class file
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testSearchEngine() throws Exception {

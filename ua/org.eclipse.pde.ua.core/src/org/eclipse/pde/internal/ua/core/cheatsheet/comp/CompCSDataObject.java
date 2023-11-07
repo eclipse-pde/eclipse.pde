@@ -33,10 +33,6 @@ public abstract class CompCSDataObject extends CompCSObject implements
 	private static final long serialVersionUID = 1L;
 	private String fFieldContent;
 
-	/**
-	 * @param model
-	 * @param parent
-	 */
 	public CompCSDataObject(ICompCSModel model, ICompCSObject parent) {
 		super(model, parent);
 		// Reset called by child class

@@ -184,8 +184,6 @@ class Configuration implements IConfigurationConstants {
 	/**
 	 * Returns the url as a platform:/ url, if possible, else leaves it
 	 * unchanged
-	 *
-	 * @param url
 	 */
 	public URL asPlatformURL(URL url) {
 		try {

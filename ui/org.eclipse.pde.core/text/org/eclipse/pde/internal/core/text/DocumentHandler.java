@@ -261,9 +261,6 @@ public abstract class DocumentHandler extends DefaultHandler {
 		generateErrorElementHierarchy();
 	}
 
-	/**
-	 *
-	 */
 	private void generateErrorElementHierarchy() {
 		while (!fDocumentNodeStack.isEmpty()) {
 			IDocumentElementNode node = fDocumentNodeStack.pop();

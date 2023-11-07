@@ -22,8 +22,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.pde.internal.core.PDECore;
 
-/**
- */
 public abstract class BaseProject extends PlatformObject implements IProjectNature {
 	private IProject project;
 

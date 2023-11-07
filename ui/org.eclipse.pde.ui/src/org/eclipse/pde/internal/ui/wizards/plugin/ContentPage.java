@@ -120,9 +120,6 @@ public abstract class ContentPage extends WizardPage {
 		return null;
 	}
 
-	/**
-	 * @param text
-	 */
 	protected String validateVersion(Text text) {
 		if (text.getText().trim().length() == 0) {
 			return MessageFormat.format(PDEUIMessages.ContentPage_pversion_message, PDEUIMessages.ControlValidationUtility_errorMsgValueMustBeSpecified);

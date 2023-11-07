@@ -87,7 +87,6 @@ public class PluginsTab extends AbstractLauncherTab {
 	 * Constructor. Equivalent to PluginsTab(true).
 	 *
 	 * @see #PluginsTab(boolean)
-	 *
 	 */
 	public PluginsTab() {
 		super();

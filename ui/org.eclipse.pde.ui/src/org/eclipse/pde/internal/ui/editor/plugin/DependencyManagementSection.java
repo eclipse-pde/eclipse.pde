@@ -820,11 +820,6 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 		}
 	}
 
-	/**
-	 * @param sourcePlugin
-	 * @param targetPlugin
-	 * @param targetLocation
-	 */
 	private void doDropMove(String sourcePlugin, String targetPlugin, int targetLocation) {
 		// Remove the original source object
 		// Normally we remove the original source object after inserting the
@@ -853,9 +848,6 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 		entry.addToken(sourcePlugin, targetIndex);
 	}
 
-	/**
-	 *
-	 */
 	private void doDragRemove() {
 		// Get the secondary dependencies build entry
 		BuildEntry entry = getSecondaryDepBuildEntry();

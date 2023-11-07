@@ -349,9 +349,6 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.println();
 	}
 
-	/**
-	 * 
-	 */
 	protected void generateBrandingCalls() {
 		script.printBrandTask(rootFolder, computeIconsList(), Utils.getPropertyFormat(PROPERTY_LAUNCHER_NAME), Utils.getPropertyFormat(PROPERTY_OS));
 	}

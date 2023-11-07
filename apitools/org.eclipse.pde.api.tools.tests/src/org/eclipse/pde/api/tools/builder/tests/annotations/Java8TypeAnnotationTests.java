@@ -65,8 +65,6 @@ public class Java8TypeAnnotationTests extends AnnotationTest {
 	}
 	/**
 	 * Tests there are no problems with type annotations in method decls
-	 * @param inc
-	 * @throws Exception
 	 */
 	void x1(boolean inc) throws Exception{
 		deployAnnotationTest("test1.java", inc, false); //$NON-NLS-1$
@@ -81,8 +79,6 @@ public class Java8TypeAnnotationTests extends AnnotationTest {
 	}
 	/**
 	 * Tests there are no problems with type annotations in field decls
-	 * @param inc
-	 * @throws Exception
 	 */
 	void x2(boolean inc) throws Exception{
 		deployAnnotationTest("test2.java", inc, false); //$NON-NLS-1$
@@ -97,8 +93,6 @@ public class Java8TypeAnnotationTests extends AnnotationTest {
 	}
 	/**
 	 * Tests there are no problems with type annotations in type decls
-	 * @param inc
-	 * @throws Exception
 	 */
 	void x3(boolean inc) throws Exception{
 		deployAnnotationTest("test3.java", inc, false); //$NON-NLS-1$
@@ -113,8 +107,6 @@ public class Java8TypeAnnotationTests extends AnnotationTest {
 	}
 	/**
 	 * Tests there are problems with API tools annotations used in type annotation case in method decls
-	 * @param inc
-	 * @throws Exception
 	 */
 	void x4(boolean inc) throws Exception{
 		deployAnnotationTestWithErrors("test4.java", inc, true); //$NON-NLS-1$
@@ -129,8 +121,6 @@ public class Java8TypeAnnotationTests extends AnnotationTest {
 	}
 	/**
 	 * Tests there are problems with API tools annotations used in type annotation case in field decls
-	 * @param inc
-	 * @throws Exception
 	 */
 	void x5(boolean inc) throws Exception{
 		deployAnnotationTestWithErrors("test5.java", inc, true); //$NON-NLS-1$
@@ -145,8 +135,6 @@ public class Java8TypeAnnotationTests extends AnnotationTest {
 	}
 	/**
 	 * Tests there are problems with API tools annotations used in type annotation case in type decls
-	 * @param inc
-	 * @throws Exception
 	 */
 	void x6(boolean inc) throws Exception{
 		deployAnnotationTestWithErrors("test6.java", inc, true); //$NON-NLS-1$
@@ -163,9 +151,6 @@ public class Java8TypeAnnotationTests extends AnnotationTest {
 	/**
 	 * Tests there are no problems with multiple type annotations at locations
 	 * class, interface, class field, meth param,method,local var
-	 *
-	 * @param inc
-	 * @throws Exception
 	 */
 	void x7(boolean inc) throws Exception {
 		deployAnnotationTest("test7.java", inc, false); //$NON-NLS-1$
@@ -182,9 +167,6 @@ public class Java8TypeAnnotationTests extends AnnotationTest {
 	/**
 	 * Tests there are problems with type annotation whose location is different
 	 * than defined in the target
-	 *
-	 * @param inc
-	 * @throws Exception
 	 */
 	void x8(boolean inc) throws Exception {
 		deployAnnotationTestWithErrors("test8.java", inc, true); //$NON-NLS-1$
@@ -201,9 +183,6 @@ public class Java8TypeAnnotationTests extends AnnotationTest {
 	/**
 	 * Tests there are problems with type annotation whose attribute is not set
 	 * or if it doesnt have a default value
-	 *
-	 * @param inc
-	 * @throws Exception
 	 */
 	void x9(boolean inc) throws Exception {
 		deployAnnotationTestWithErrors("test9.java", inc, true); //$NON-NLS-1$
@@ -219,9 +198,6 @@ public class Java8TypeAnnotationTests extends AnnotationTest {
 
 	/**
 	 * Tests there are no errors when attribute is not set for type annotation
-	 *
-	 * @param inc
-	 * @throws Exception
 	 */
 	void x10(boolean inc) throws Exception {
 		deployAnnotationTest("test10.java", inc, false); //$NON-NLS-1$

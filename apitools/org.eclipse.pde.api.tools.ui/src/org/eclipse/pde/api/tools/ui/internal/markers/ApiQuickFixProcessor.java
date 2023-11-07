@@ -161,10 +161,7 @@ public class ApiQuickFixProcessor implements IQuickFixProcessor {
 	 * Creates the set of changes to update the compilation unit to use API
 	 * Tools annotations
 	 *
-	 * @param unit
-	 * @param qualifiedname
 	 * @return the {@link Change}, never <code>null</code>
-	 * @throws CoreException
 	 */
 	public static Change createChange(ICompilationUnit unit, String qualifiedname) throws CoreException {
 		IProject project = unit.getJavaProject().getProject();
@@ -182,9 +179,7 @@ public class ApiQuickFixProcessor implements IQuickFixProcessor {
 	 * Create the {@link Change} object for adding / updating the
 	 * build.properties file as needed
 	 *
-	 * @param build
 	 * @return the {@link Change} object, never <code>null</code>
-	 * @throws CoreException
 	 */
 	public static Change createBuildPropertiesChange(IFile build) throws CoreException {
 		String buildPropertiesEntry = "additional.bundles = org.eclipse.pde.api.tools.annotations"; //$NON-NLS-1$
@@ -256,11 +251,6 @@ public class ApiQuickFixProcessor implements IQuickFixProcessor {
 
 	/**
 	 * Creates a new {@link Change}
-	 *
-	 * @param cu
-	 * @param fullyQualifiedName
-	 * @return
-	 * @throws CoreException
 	 */
 	public static CompilationUnitChange createAddImportChange(ICompilationUnit cu, String fullyQualifiedName) throws CoreException {
 		String[] args = {

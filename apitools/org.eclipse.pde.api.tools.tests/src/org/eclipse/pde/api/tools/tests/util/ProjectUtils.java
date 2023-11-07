@@ -157,10 +157,7 @@ public class ProjectUtils {
 	/**
 	 * Crate a plug-in project with the given name
 	 *
-	 * @param projectName
-	 * @param additionalNatures
 	 * @return a new plug-in project
-	 * @throws CoreException
 	 */
 	public static IJavaProject createPluginProject(String projectName, String[] additionalNatures) throws CoreException {
 		String[] resolvednatures = additionalNatures;
@@ -199,10 +196,7 @@ public class ProjectUtils {
 	 * creates a java project with the specified name and additional project
 	 * natures
 	 *
-	 * @param projectName
-	 * @param additionalNatures
 	 * @return a new java project
-	 * @throws CoreException
 	 */
 	public static IJavaProject createJavaProject(String projectName, String[] additionalNatures) throws CoreException {
 		IProgressMonitor monitor = new NullProgressMonitor();
@@ -225,9 +219,7 @@ public class ProjectUtils {
 	/**
 	 * Gets the output location for the given project, creates it if needed
 	 *
-	 * @param project
 	 * @return the path of the output location for the given project
-	 * @throws CoreException
 	 */
 	public static IPath getDefaultProjectOutputLocation(IProject project) throws CoreException {
 		IFolder binFolder = project.getFolder(BIN_FOLDER);
@@ -241,10 +233,7 @@ public class ProjectUtils {
 	 * Adds a new source container specified by the container name to the source
 	 * path of the specified project
 	 *
-	 * @param jproject
-	 * @param containerName
 	 * @return the package fragment root of the container name
-	 * @throws CoreException
 	 */
 	public static IPackageFragmentRoot addSourceContainer(IJavaProject jproject, String containerName) throws CoreException {
 		IProject project = jproject.getProject();
@@ -256,10 +245,6 @@ public class ProjectUtils {
 
 	/**
 	 * Adds a container entry to the specified java project
-	 *
-	 * @param project
-	 * @param container
-	 * @throws JavaModelException
 	 */
 	public static void addContainerEntry(IJavaProject project, IPath container) throws JavaModelException {
 		IClasspathEntry cpe = JavaCore.newContainerEntry(container, false);
@@ -269,10 +254,7 @@ public class ProjectUtils {
 	/**
 	 * Adds a folder with the given name to the specified project
 	 *
-	 * @param project
-	 * @param name
 	 * @return the new container added to the specified project
-	 * @throws CoreException
 	 */
 	public static IContainer addFolderToProject(IProject project, String name) throws CoreException {
 		IContainer container = null;
@@ -290,10 +272,6 @@ public class ProjectUtils {
 
 	/**
 	 * Adds the specified classpath entry to the specified java project
-	 *
-	 * @param jproject
-	 * @param cpe
-	 * @throws JavaModelException
 	 */
 	public static void addToClasspath(IJavaProject jproject, IClasspathEntry cpe) throws JavaModelException {
 		boolean found = false;
@@ -316,10 +294,6 @@ public class ProjectUtils {
 
 	/**
 	 * Removes the specified entry from the classpath of the specified project
-	 *
-	 * @param project
-	 * @param entry
-	 * @throws JavaModelException
 	 */
 	public static void removeFromClasspath(IJavaProject project, IClasspathEntry entry) throws JavaModelException {
 		IClasspathEntry[] oldEntries = project.getRawClasspath();
@@ -337,10 +311,6 @@ public class ProjectUtils {
 	/**
 	 * Delegate equals method to cover the test cases where we want to insert an
 	 * updated element and one with the same path/type/kind is already there.
-	 *
-	 * @param e1
-	 * @param e2
-	 * @return
 	 */
 	private static boolean entriesEqual(IClasspathEntry e1, IClasspathEntry e2) {
 		return e1.equals(e2) || (e1.getEntryKind() == e2.getEntryKind() && e1.getContentKind() == e2.getContentKind() && e1.getPath().equals(e2.getPath()));
@@ -351,10 +321,7 @@ public class ProjectUtils {
 	 * a project with the given name exists, it is refreshed and opened (if
 	 * closed) and returned
 	 *
-	 * @param projectName
-	 * @param monitor
 	 * @return a project with the given name
-	 * @throws CoreException
 	 */
 	public static IProject createProject(String projectName, IProgressMonitor monitor) throws CoreException {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
@@ -372,11 +339,6 @@ public class ProjectUtils {
 
 	/**
 	 * Adds the specified nature to the specified project
-	 *
-	 * @param proj
-	 * @param natureId
-	 * @param monitor
-	 * @throws CoreException
 	 */
 	public static void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor) throws CoreException {
 		IProjectDescription description = proj.getDescription();
@@ -464,7 +426,6 @@ public class ProjectUtils {
 	 *
 	 * @param project the project
 	 * @param entry the entry to append
-	 * @throws CoreException
 	 */
 	public static void addBundleClasspathEntry(IProject project, IBundleClasspathEntry entry) throws CoreException {
 		IBundleProjectDescription description = getBundleProjectService().getDescription(project);

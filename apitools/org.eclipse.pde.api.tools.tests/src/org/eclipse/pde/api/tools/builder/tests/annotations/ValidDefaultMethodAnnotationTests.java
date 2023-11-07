@@ -25,9 +25,6 @@ import junit.framework.Test;
  */
 public class ValidDefaultMethodAnnotationTests extends MethodAnnotationTest {
 
-	/**
-	 * @param name
-	 */
 	public ValidDefaultMethodAnnotationTests(String name) {
 		super(name);
 	}

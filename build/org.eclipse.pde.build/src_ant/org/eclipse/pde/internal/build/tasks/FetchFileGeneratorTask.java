@@ -39,7 +39,6 @@ public class FetchFileGeneratorTask extends Task {
 	/** 
 	 * Set the configuration for which the script should be generated. The default is set to be configuration independent. 
 	 * @param config an ampersand separated list of configuration (for example win32, win32, x86 & macoxs, carbon, ppc).
-	 * @throws CoreException
 	 */
 	public void setConfigInfo(String config) throws CoreException {
 		AbstractScriptGenerator.setConfigInfo(config);

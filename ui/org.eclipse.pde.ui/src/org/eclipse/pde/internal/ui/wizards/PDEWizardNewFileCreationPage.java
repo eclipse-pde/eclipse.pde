@@ -22,14 +22,9 @@ import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 
 /**
  * PDEWizardNewFileCreationPage
- *
  */
 public class PDEWizardNewFileCreationPage extends WizardNewFileCreationPage {
 
-	/**
-	 * @param pageName
-	 * @param selection
-	 */
 	public PDEWizardNewFileCreationPage(String pageName, IStructuredSelection selection) {
 		super(pageName, selection);
 	}

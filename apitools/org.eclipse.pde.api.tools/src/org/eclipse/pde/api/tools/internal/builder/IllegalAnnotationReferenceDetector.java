@@ -96,13 +96,8 @@ public class IllegalAnnotationReferenceDetector extends AbstractIllegalTypeRefer
 	 * one). That way we can fetch the default illegal type reference message
 	 * location
 	 *
-	 * @param type
-	 * @param member
-	 * @param reference
-	 * @param doc
 	 * @return the {@link IAnnotatable} parent or <code>null</code> if it could
 	 *         not be computed.
-	 * @throws CoreException
 	 */
 	IAnnotatable findAnnotableElement(IType type, IApiMember member, IReference reference, IDocument doc) throws CoreException {
 		switch (member.getType()) {

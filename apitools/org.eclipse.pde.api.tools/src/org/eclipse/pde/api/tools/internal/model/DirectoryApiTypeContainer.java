@@ -49,7 +49,6 @@ public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeCon
 		 * Constructs a class file on the given file
 		 *
 		 * @param directory the parent {@link IApiElement} directory
-		 * @param location
 		 * @param qualified type name
 		 * @param component owning API component
 		 */

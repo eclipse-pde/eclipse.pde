@@ -69,7 +69,6 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 *
 	 * @param uri location
 	 * @return metadata repository at the specified location
-	 * @throws Exception
 	 */
 	protected IMetadataRepository getRepository(URI uri) throws Exception {
 		IMetadataRepositoryManager manager = P2TargetUtils.getRepoManager();
@@ -83,7 +82,6 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 *
 	 * @param relativePath test plug-in relative path
 	 * @return URI
-	 * @throws Exception
 	 */
 	public static URI getURI(String relativePath) throws Exception {
 		URL url = PDETestsPlugin.getBundleContext().getBundle().getEntry(relativePath);
@@ -150,8 +148,6 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 
 	/**
 	 * Tests all bundles are resolved for a feature and its required feature
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testResolveRequiredFeatures() throws Exception {
@@ -161,8 +157,6 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 
 	/**
 	 * Tests all bundles are resolved for a single feature
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testResolveSingleFeature() throws Exception {
@@ -172,8 +166,6 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 
 	/**
 	 * Tests all bundles are resolved for a bundle and its required bundles
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testResolveRequiredBundles() throws Exception {
@@ -183,8 +175,6 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 
 	/**
 	 * Tests a bundle is resolved (no required bundles)
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testResolveSingleBundle() throws Exception {
@@ -194,8 +184,6 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 
 	/**
 	 * Tests that contents should be equal.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testContentEqualNonNull() throws Exception {
@@ -206,8 +194,6 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 
 	/**
 	 * Tests that contents should be equal.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testContentNotEqualNonNull() throws Exception {
@@ -218,8 +204,6 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 
 	/**
 	 * Tests that contents should be equal.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testContentEqualNull() throws Exception {
@@ -231,8 +215,6 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 
 	/**
 	 * Tests that contents should not be equal.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testContentNotEqualNull() throws Exception {
@@ -248,7 +230,6 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 *
 	 * @param unitIds identifiers of IU's to add to the container
 	 * @param bundleIds symbolic names of bundles that should be present after resolution
-	 * @throws Exception
 	 */
 	protected void doResolutionTest(String[] unitIds, String[] bundleIds) throws Exception {
 		try {
@@ -278,7 +259,6 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 *
 	 * @param unitIds identifiers of IU's to add to the container
 	 * @param bundleIds ids of resolved bundles expected
-	 * @throws Exception
 	 */
 	protected void doPersistanceTest(String[] unitIds, String[] bundleIds) throws Exception {
 		IUBundleContainer container = createContainer(unitIds);
@@ -309,8 +289,6 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	/**
 	 * Tests that the external model manager can restore external bundles from the bundle pool
 	 * properly. See bug 320583.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testExternalModelManagerPreferences() throws Exception {
@@ -353,7 +331,6 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 *
 	 * @param unitIds identifiers of IU's to add to the container
 	 * @return bundle container
-	 * @throws Exception
 	 */
 	protected IUBundleContainer createContainer(String[] unitIds) throws Exception {
 		URI uri = getURI("/tests/sites/site.a.b");
@@ -377,7 +354,6 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 * @param repositories locations of repositories
 	 * @param flags location flags
 	 * @return IU bundle container
-	 * @throws Exception
 	 */
 	protected IUBundleContainer createContainer(IInstallableUnit[] units, URI[] repositories, int flags) throws Exception {
 		return (IUBundleContainer) getTargetService().newIULocation(units, repositories, flags);
@@ -386,8 +362,6 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	/**
 	 * Tests that a target definition with IU containers can be serialized to xml, then deserialized without
 	 * any loss of data.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testPersistIUDefinition() throws Exception {
@@ -398,8 +372,6 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	/**
 	 * Tests that a target definition with IU containers can be serialized to
 	 * xml, then deserialized without any loss of data.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testPersistMultipleIUDefinition() throws Exception {
@@ -409,8 +381,6 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 
 	/**
 	 * Incrementally adding IUs to a target.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testAddIUs() throws Exception {
@@ -444,8 +414,6 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 
 	/**
 	 * Incrementally removing IUs from a target.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testRemoveIUs() throws Exception {
@@ -479,8 +447,6 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 
 	/**
 	 * Tests overlapping IU containers.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testOverlappingIUContainers() throws Exception {

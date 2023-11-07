@@ -21,7 +21,6 @@ import org.eclipse.pde.core.plugin.IPluginBase;
 
 /**
  * Check if there is already a local maven source bundle available
- *
  */
 public class LocalMavenPluginSourcePathLocator implements IPluginSourcePathLocator {
 

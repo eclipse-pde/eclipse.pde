@@ -57,9 +57,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 
-/**
- *
- */
 public class ArchiveSection extends PDESection {
 	private Table fTable;
 	private TableViewer fViewer;
@@ -106,9 +103,6 @@ public class ArchiveSection extends PDESection {
 		}
 	}
 
-	/**
-	 * @param formPage
-	 */
 	public ArchiveSection(PDEFormPage formPage, Composite parent) {
 		super(formPage, parent, Section.DESCRIPTION);
 		getSection().setText(PDEUIMessages.SiteEditor_ArchiveSection_header);

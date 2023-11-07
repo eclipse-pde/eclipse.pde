@@ -255,9 +255,6 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	/**
 	 * Initializes the baseline cache lazily. Only performs work if the current
 	 * cache has not been created yet
-	 *
-	 * @throws FactoryConfigurationError
-	 * @throws ParserConfigurationException
 	 */
 	private void initializeStateCache() {
 		if (baselinecache != null) {
@@ -317,8 +314,6 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	/**
 	 * Persists all of the cached elements to individual xml files named with
 	 * the id of the API baseline
-	 *
-	 * @throws IOException
 	 */
 	private void persistStateCache() throws CoreException, IOException {
 		if (savelocation == null) {
@@ -363,9 +358,6 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	/**
 	 * Writes out the current state of the {@link IApiBaseline} as XML to the
 	 * given output stream
-	 *
-	 * @param stream
-	 * @throws CoreException
 	 */
 	private void writeBaselineDescription(IApiBaseline baseline, OutputStream stream) throws CoreException {
 		String xml = getProfileXML(baseline);
@@ -541,7 +533,6 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	/**
 	 * Returns if the given name is an existing baseline name
 	 *
-	 * @param name
 	 * @return true if the given name is an existing baseline name, false
 	 *         otherwise
 	 */

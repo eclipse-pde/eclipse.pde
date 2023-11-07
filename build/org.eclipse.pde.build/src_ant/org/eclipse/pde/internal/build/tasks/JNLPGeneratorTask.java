@@ -32,7 +32,6 @@ public class JNLPGeneratorTask extends Task {
 	/**
 	 * The URL location of a feature.xml file.  This can be either a jar: URL to the feature.xml,
 	 * or a file: url to the feature.
-	 * @param value
 	 */
 	public void setFeature(String value) {
 		feature = value;

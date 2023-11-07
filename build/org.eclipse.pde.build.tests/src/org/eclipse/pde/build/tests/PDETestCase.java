@@ -232,11 +232,6 @@ public abstract class PDETestCase {
 
 	/**
 	 * Assert that the zip file contains at least the given entries
-	 * 
-	 * @param buildFolder
-	 * @param archive
-	 * @param entries
-	 * @throws Exception
 	 */
 	public static void assertZipContents(IFolder buildFolder, String archive, Set<String> entries) throws Exception {
 		assertZipContents(buildFolder, archive, entries, true);
@@ -274,10 +269,6 @@ public abstract class PDETestCase {
 
 	/**
 	 * Assert that the given resource exists and has size > 0
-	 * 
-	 * @param buildFolder
-	 * @param fileName
-	 * @throws Exception
 	 */
 	public static void assertResourceFile(IFolder buildFolder, String fileName) throws Exception {
 		buildFolder.refreshLocal(IResource.DEPTH_INFINITE, null);
@@ -298,10 +289,6 @@ public abstract class PDETestCase {
 	/**
 	 * Assert that the given log file contains the given message The message is
 	 * expected to be contained on a single line
-	 * 
-	 * @param log
-	 * @param msg
-	 * @throws Exception
 	 */
 	public static void assertLogContainsLine(IFile log, String msg) throws Exception {
 		assertLogContainsLines(log, new String[] { msg });
@@ -310,10 +297,6 @@ public abstract class PDETestCase {
 	/**
 	 * Assert that the given log file contains the given lines Lines are expected to
 	 * appear in order
-	 * 
-	 * @param log
-	 * @param lines
-	 * @throws Exception
 	 */
 	public static void assertLogContainsLines(IFile log, String[] lines) throws Exception {
 		log.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
@@ -340,9 +323,6 @@ public abstract class PDETestCase {
 
 	/**
 	 * assert that the given xml file exists, has size > 0 and is a valid ant script
-	 * 
-	 * @param buildXML
-	 * @throws Exception
 	 */
 
 	public static Project assertValidAntScript(IFile buildXML) throws Exception {

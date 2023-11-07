@@ -570,8 +570,6 @@ public class ScriptGenerationTests extends PDETestCase {
 	 * Tests that 196754 works without a manifest (pre-osgi plug-in) Bug 196754:
 	 * Unpacked fragments have their manifest entries reordered during feature
 	 * export
-	 * 
-	 * @throws Exception
 	 */
 	// public void testBug196159_196754() throws Exception {
 	// IFolder buildFolder = newTest("196159");

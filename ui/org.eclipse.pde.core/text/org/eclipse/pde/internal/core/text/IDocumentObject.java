@@ -21,7 +21,6 @@ import org.eclipse.pde.core.IWritable;
 
 /**
  * IDocumentObject
- *
  */
 public interface IDocumentObject extends IDocumentElementNode, IWritable {
 

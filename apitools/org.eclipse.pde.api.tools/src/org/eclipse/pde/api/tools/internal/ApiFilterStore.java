@@ -101,8 +101,6 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 
 	/**
 	 * Saves the .api_filters file for the component
-	 *
-	 * @throws IOException
 	 */
 	public void persistApiFilters() {
 		if (!fNeedsSaving) {
@@ -378,7 +376,6 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 	 *
 	 * @param filtermap the mapping of filters to convert to XML
 	 * @return an XML string representation of the given mapping of filters
-	 * @throws CoreException
 	 */
 	synchronized String getStoreAsXml(Map<IResource, Map<String, Set<IApiProblemFilter>>> filtermap) throws CoreException {
 		if (filtermap == null) {
@@ -629,9 +626,6 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 
 	/**
 	 * records that the following filter has been used
-	 *
-	 * @param resource
-	 * @param filter
 	 */
 	private void recordFilterUsed(IResource resource, IApiProblemFilter filter) {
 		if (fUnusedFilters != null) {
@@ -703,11 +697,6 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 	 * Collects the complete set of problem filters from the given set whose
 	 * underlying problem categories do not match any from the given array and
 	 * whose type name matches the underlying problem type name.
-	 *
-	 * @param filters
-	 * @param typename
-	 * @param collector
-	 * @param categories
 	 */
 	private void collectFilterFor(Set<IApiProblemFilter> filters, String typename, Set<IApiProblemFilter> collector, int[] categories) {
 		for (IApiProblemFilter filter : filters) {
@@ -729,8 +718,6 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 	 * categories given in the collection. If the collection of categories is
 	 * <code>null</code> the problem does not match.
 	 *
-	 * @param problem
-	 * @param categories
 	 * @return true if the given collection contains the given problems'
 	 *         category, false otherwise
 	 * @since 1.1

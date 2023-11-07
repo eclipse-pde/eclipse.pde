@@ -120,7 +120,6 @@ public class PDEJavaHelperUI {
 	 * Open/Create a java class
 	 *
 	 * @param name fully qualified java classname
-	 * @param project
 	 * @param value for creation of the class
 	 * @param createIfNoNature will create the class even if the project has no java nature
 	 * @return null if the class exists or the name of the newly created class
@@ -237,8 +236,6 @@ public class PDEJavaHelperUI {
 	 * Disposer returned used to dispose of label provider and remove listeners
 	 * Callers responsibility to call dispose method when underlying text
 	 * widget is being disposed
-	 * @param text
-	 * @param project
 	 */
 	public static TypeFieldAssistDisposer addTypeFieldAssistToText(Text text, IProject project, int searchScope) {
 		// Decorate the text widget with the light-bulb image denoting content

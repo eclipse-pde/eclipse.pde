@@ -25,10 +25,6 @@ public class PackageImportDescription extends RequirementSpecification implement
 
 	/**
 	 * Constructs a package import.
-	 *
-	 * @param name
-	 * @param range
-	 * @param optional
 	 */
 	public PackageImportDescription(String name, VersionRange range, boolean optional) {
 		super(name, range, false, optional);

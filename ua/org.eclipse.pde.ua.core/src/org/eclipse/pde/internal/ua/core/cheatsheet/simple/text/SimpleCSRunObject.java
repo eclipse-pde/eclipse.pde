@@ -21,10 +21,6 @@ public abstract class SimpleCSRunObject extends SimpleCSObject implements
 
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * @param model
-	 * @param tagName
-	 */
 	public SimpleCSRunObject(ISimpleCSModel model, String tagName) {
 		super(model, tagName);
 	}

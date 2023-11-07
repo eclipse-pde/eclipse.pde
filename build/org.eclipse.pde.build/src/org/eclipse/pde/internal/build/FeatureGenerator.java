@@ -374,8 +374,6 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 	 * @param plugins - plug-ins to include
 	 * @param fragments - fragments to include
 	 * @param features - An ordered set of features to include
-	 * @throws CoreException
-	 * @throws FileNotFoundException
 	 */
 	protected void createFeature(String feature, Set<Entry> plugins, Set<Entry> fragments, Set<Entry> features) throws CoreException, FileNotFoundException {
 		String location = IPDEBuildConstants.DEFAULT_FEATURE_LOCATION + '/' + feature;

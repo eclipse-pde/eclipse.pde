@@ -21,31 +21,19 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * AbbreviatedPluginModel
- *
  */
 public class AbbreviatedPluginModel extends WorkspacePluginModel {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 1L;
 
 	private final String[] fExtensionPointIDs;
 
-	/**
-	 * @param file
-	 * @param extensionPointIDs
-	 */
 	public AbbreviatedPluginModel(IFile file, String[] extensionPointIDs) {
 		super(file, true);
 
 		fExtensionPointIDs = extensionPointIDs;
 	}
 
-	/**
-	 * @param file
-	 * @param extensionPointID
-	 */
 	public AbbreviatedPluginModel(IFile file, String extensionPointID) {
 		super(file, true);
 

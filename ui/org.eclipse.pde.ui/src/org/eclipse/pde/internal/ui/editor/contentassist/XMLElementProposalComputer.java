@@ -26,8 +26,6 @@ import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 public class XMLElementProposalComputer {
 
 	/**
-	 * @param sElement
-	 * @param node
 	 * @return A set of elements that can be added as children to element,
 	 * <code>node</code>, as described by schema element, <code>sElement</code>,
 	 * given multiplicity constraints and existing children found under
@@ -53,7 +51,6 @@ public class XMLElementProposalComputer {
 	}
 
 	/**
-	 * @param node
 	 * @return A hash containing singleton entries of node's children mapped
 	 * against the number of occurrences found
 	 * Key is children's XML tag name

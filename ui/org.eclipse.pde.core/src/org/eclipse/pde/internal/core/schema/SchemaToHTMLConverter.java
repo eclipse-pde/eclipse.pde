@@ -53,7 +53,6 @@ import org.xml.sax.SAXException;
 /**
  * Takes a plug-in and created HTML reference documents for all schema (.exsd)
  * files.
- *
  */
 public class SchemaToHTMLConverter {
 

@@ -155,7 +155,6 @@ public class PluginImportOperation extends WorkspaceJob {
 	 * Sets whether some of the plug-ins being imported are currently in use by a launched
 	 * Eclipse instance.  Setting this to true will force an additional check before deleting
 	 * a plug-in.
-	 * @param pluginsInUse
 	 */
 	public void setPluginsInUse(boolean pluginsInUse) {
 		fPluginsAreInUse = pluginsInUse;
@@ -177,7 +176,6 @@ public class PluginImportOperation extends WorkspaceJob {
 	 * see bug 337730
 	 *
 	 * This class should get removed when Bug 346078 is fixed.
-	 *
 	 */
 	private class NotImportedProjectsWarningDialog extends MessageDialog {
 
@@ -456,7 +454,6 @@ public class PluginImportOperation extends WorkspaceJob {
 
 	/**
 	 * Sets the raw classpath of projects that need to be updated
-	 * @param monitor
 	 * @throws JavaModelException if a classpath could not be set
 	 */
 	private void setClasspaths(IProgressMonitor monitor) throws JavaModelException {
@@ -1031,10 +1028,6 @@ public class PluginImportOperation extends WorkspaceJob {
 	 * @param buildModel build model to update if source is found
 	 * @param packageLocations package location map (package path to destination) to update if source is found
 	 * @return true if source was found inside the binary plug-in, false otherwise
-	 *
-	 * @throws CoreException
-	 * @throws ZipException
-	 * @throws IOException
 	 */
 	private boolean handleInternalSource(IPluginModelBase model, WorkspaceBuildModel buildModel, Map<IPath, IPath> packageLocations) throws CoreException, ZipException, IOException {
 		IImportStructureProvider provider;
@@ -1140,9 +1133,6 @@ public class PluginImportOperation extends WorkspaceJob {
 	/**
 	 * Imports files from the plug-in that are necessary to make the created project a plug-in project.
 	 * Specifically the manifest and related file are extracted.
-	 * @param project
-	 * @param model
-	 * @param monitor
 	 * @throws CoreException if there is a problem importing the content
 	 */
 	private void importRequiredPluginFiles(IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
@@ -1239,8 +1229,6 @@ public class PluginImportOperation extends WorkspaceJob {
 	 * Creates a model for an existing manifest file, replacing the classpath entry with the
 	 * new location of the referenced library.  Also removes any extra entries such as signing
 	 * headers.
-	 * @param project
-	 * @param base
 	 */
 	private void modifyBundleClasspathHeader(IProject project, IPluginModelBase base) {
 		IFile file = PDEProject.getManifest(project);
@@ -1322,7 +1310,6 @@ public class PluginImportOperation extends WorkspaceJob {
 	 * <p>If run in dev mode (target workbench), and the plug-in is in the host workspace
 	 * the library names will be replaced with 'bin/'.  See bug 294005.</p>
 	 *
-	 * @param model
 	 * @return list of library names
 	 */
 	private String[] getLibraryNames(IPluginModelBase model) {
@@ -1340,7 +1327,6 @@ public class PluginImportOperation extends WorkspaceJob {
 	 * Returns the standard source directory name for a library name.
 	 * Used to get the source root name for a library as well as the
 	 * standard destination name.
-	 * @param libraryName
 	 * @return source dir name
 	 */
 	private String getSourceDirName(String libraryName) {
@@ -1350,7 +1336,6 @@ public class PluginImportOperation extends WorkspaceJob {
 
 	/**
 	 * Returns whether the install location of the plug-in is a jar file or a folder
-	 * @param model
 	 * @return true if the install location is a jar, false if it is a folder
 	 */
 	private boolean isJARd(IPluginModelBase model) {

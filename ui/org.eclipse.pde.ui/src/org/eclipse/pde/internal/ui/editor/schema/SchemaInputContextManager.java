@@ -19,9 +19,6 @@ import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 
 public class SchemaInputContextManager extends InputContextManager {
-	/**
-	 *
-	 */
 	public SchemaInputContextManager(PDEFormEditor editor) {
 		super(editor);
 	}
