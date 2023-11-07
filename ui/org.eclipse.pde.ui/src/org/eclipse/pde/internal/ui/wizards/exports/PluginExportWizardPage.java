@@ -27,7 +27,6 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
-import org.eclipse.pde.internal.core.bnd.BndProjectManager;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.PersistablePluginObject;
@@ -54,8 +53,7 @@ public class PluginExportWizardPage extends BaseExportWizardPage {
 		for (int i = 0; i < projects.length; i++) {
 			if (!WorkspaceModelManager.isBinaryProject(projects[i]) && WorkspaceModelManager.isPluginProject(projects[i])) {
 				IModel model = PluginRegistry.findModel(projects[i]);
-				if (model != null && isValidModel(model) && (hasBuildProperties((IPluginModelBase) model)
-						|| hasPdeBndDescriptor(projects[i]))) {
+				if (model != null && isValidModel(model) && hasBuildProperties((IPluginModelBase) model)) {
 					result.add(model);
 				}
 			}
@@ -71,15 +69,6 @@ public class PluginExportWizardPage extends BaseExportWizardPage {
 	private boolean hasBuildProperties(IPluginModelBase model) {
 		File file = new File(model.getInstallLocation(), ICoreConstants.BUILD_FILENAME_DESCRIPTOR);
 		return file.exists();
-	}
-
-	private boolean hasPdeBndDescriptor(IProject project) {
-		try {
-			return BndProjectManager.getBndProject(project).isPresent();
-		} catch (Exception e) {
-			return false;
-		}
-
 	}
 
 	@Override
