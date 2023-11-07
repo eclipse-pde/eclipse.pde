@@ -18,21 +18,16 @@ package org.eclipse.pde.internal.ui.launcher;
 
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.BiFunction;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -63,53 +58,6 @@ import org.eclipse.ui.forms.widgets.ScrolledPageBook;
 
 public class TracingBlock {
 
-	/**
-	 * This class encapsulates all calls to the tracing options manager and runs
-	 * them using a progress monitor.
-	 */
-	private static record TracingOptionsManagerDelegate(IRunnableContext fRunnableContext) {
-
-		Map<String, String> getTracingTemplateCopy() {
-			return runShowingProgress(
-					(tracingOptionsManager, monitor) -> tracingOptionsManager.getTracingTemplateCopy(monitor));
-		}
-
-		public Map<String, String> getTracingOptions(Map<String, String> options) {
-			return runShowingProgress(
-					(tracingOptionsManager, monitor) -> tracingOptionsManager.getTracingOptions(options, monitor));
-		}
-
-		public Map<String, String> getTemplateTable(String pluginId) {
-			return runShowingProgress(
-					(tracingOptionsManager, monitor) -> tracingOptionsManager.getTemplateTable(pluginId, monitor));
-		}
-
-		private Map<String, String> runShowingProgress(
-				BiFunction<TracingOptionsManager, IProgressMonitor, Map<String, String>> task) {
-			try {
-				String taskName = PDEUIMessages.TracingBlock_initializing_tracing_options;
-				final Map<String, String> result = new HashMap<>();
-
-				// due to a bug
-				// (https://github.com/eclipse-platform/eclipse.platform/issues/769),
-				// the task needs to be forked otherwise the UI
-				// does not show the progress indicator
-				fRunnableContext.run(true, false, monitor -> {
-					SubMonitor subMonitor = SubMonitor.convert(monitor, taskName, 1);
-					result.putAll(task.apply(PDECore.getDefault().getTracingOptionsManager(), subMonitor.split(1)));
-				});
-
-				return result;
-			} catch (InvocationTargetException e) {
-				throw new IllegalStateException(e);
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-				throw new IllegalStateException(e);
-			}
-		}
-	}
-
-	private TracingOptionsManagerDelegate fTracingOptionsManagerDelegate;
 	private final TracingTab fTab;
 	private Button fTracingCheck;
 	private CheckboxTableViewer fPluginViewer;
@@ -253,7 +201,8 @@ public class TracingBlock {
 			if (selec.getFirstElement() instanceof IPluginModelBase model) {
 				String modelName = model.getBundleDescription().getSymbolicName();
 				if (modelName != null) {
-					Map<String, String> properties = fTracingOptionsManagerDelegate.getTracingTemplateCopy();
+					Map<String, String> properties = PDECore.getDefault().getTracingOptionsManager()
+							.getTracingTemplateCopy();
 					properties.forEach((key, value) -> {
 						if (key.startsWith(modelName + '/')) {
 							fMasterOptions.put(key, value);
@@ -273,7 +222,7 @@ public class TracingBlock {
 		fRestoreDefaultButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
 			disposePropertySources();
 			fMasterOptions.clear();
-			fMasterOptions.putAll(fTracingOptionsManagerDelegate.getTracingTemplateCopy());
+			fMasterOptions.putAll(PDECore.getDefault().getTracingOptionsManager().getTracingTemplateCopy());
 			Object[] elements = fPluginViewer.getCheckedElements();
 			for (Object element : elements) {
 				if (element instanceof IPluginModelBase model) {
@@ -316,17 +265,14 @@ public class TracingBlock {
 		return style == SWT.NULL ? 2 : 0;
 	}
 
-	private void activateInternal(ILaunchConfiguration config) {
+	public void initializeFrom(ILaunchConfiguration config) {
 		fMasterOptions.clear();
 		disposePropertySources();
 		try {
 			fTracingCheck.setSelection(config.getAttribute(IPDELauncherConstants.TRACING, false));
 			Map<String, String> options = config.getAttribute(IPDELauncherConstants.TRACING_OPTIONS, (Map<String, String>) null);
-
-			fMasterOptions.putAll(options == null //
-					? fTracingOptionsManagerDelegate.getTracingTemplateCopy() //
-					: fTracingOptionsManagerDelegate.getTracingOptions(options));
-
+			TracingOptionsManager mgr = PDECore.getDefault().getTracingOptionsManager();
+			fMasterOptions.putAll(options == null ? mgr.getTracingTemplateCopy() : mgr.getTracingOptions(options));
 			masterCheckChanged();
 			String checked = config.getAttribute(IPDELauncherConstants.TRACING_CHECKED, (String) null);
 			if (checked == null) {
@@ -354,10 +300,6 @@ public class TracingBlock {
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
-	}
-
-	public void setRunnableContext(IRunnableContext runnableContext) {
-		fTracingOptionsManagerDelegate = new TracingOptionsManagerDelegate(runnableContext);
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
@@ -406,7 +348,6 @@ public class TracingBlock {
 	}
 
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
-		activateInternal(workingCopy);
 		fPageBook.getParent().getParent().layout(true);
 	}
 
@@ -494,7 +435,7 @@ public class TracingBlock {
 			return null;
 		return fPropertySources.computeIfAbsent(model, m -> {
 			String id = m.getPluginBase().getId();
-			Map<String, String> defaults = fTracingOptionsManagerDelegate.getTemplateTable(id);
+			Map<String, String> defaults = PDECore.getDefault().getTracingOptionsManager().getTemplateTable(id);
 			TracingPropertySource source = new TracingPropertySource(m, fMasterOptions, defaults, this);
 			source.setChanged(true);
 			return source;
