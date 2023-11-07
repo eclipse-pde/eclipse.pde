@@ -850,6 +850,9 @@ public class PDEUIMessages extends NLS {
 	public static String SiteEditor_PluginDetailsSection_title;
 	public static String SiteEditor_PluginDetailsSection_desc;
 	public static String SiteEditor_PluginDetailsSection_pluginLabel;
+	public static String SiteEditor_PluginDetailsSection_downloadSize;
+	public static String SiteEditor_PluginDetailsSection_installSize;
+	public static String SiteEditor_PluginDetailsSection_unpack;
 
 	public static String FeatureEditor_DataDetailsSection_title;
 	public static String FeatureEditor_DataDetailsSection_desc;

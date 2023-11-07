@@ -118,8 +118,8 @@ public class FeatureExportOperation extends Job {
 
 	protected State fStateCopy;
 
-	protected static final String FEATURE_POST_PROCESSING = "features.postProcessingSteps.properties"; //$NON-NLS-1$
-	protected static final String PLUGIN_POST_PROCESSING = "plugins.postProcessingSteps.properties"; //$NON-NLS-1$
+	protected static String FEATURE_POST_PROCESSING = "features.postProcessingSteps.properties"; //$NON-NLS-1$
+	protected static String PLUGIN_POST_PROCESSING = "plugins.postProcessingSteps.properties"; //$NON-NLS-1$
 
 	private static final String[] GENERIC_CONFIG = new String[] {"*", "*", "*", ""}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	protected FeatureExportInfo fInfo;
@@ -1159,6 +1159,7 @@ public class FeatureExportOperation extends Job {
 							plugin.setAttribute("id", bundle.getSymbolicName()); //$NON-NLS-1$
 							plugin.setAttribute("version", bundle.getVersion().toString()); //$NON-NLS-1$
 							setFilterAttributes(plugin, currentConfig);
+							setAdditionalAttributes(plugin, bundle);
 							root.appendChild(plugin);
 
 							if (fInfo.exportSource && fInfo.exportSourceBundle) {
@@ -1167,6 +1168,7 @@ public class FeatureExportOperation extends Job {
 									plugin.setAttribute("id", bundle.getSymbolicName() + ".source"); //$NON-NLS-1$ //$NON-NLS-2$
 									plugin.setAttribute("version", bundle.getVersion().toString()); //$NON-NLS-1$
 									setFilterAttributes(plugin, currentConfig);
+									setAdditionalAttributes(plugin, bundle);
 									root.appendChild(plugin);
 								} else // include the .source plugin, if available
 								{
@@ -1177,6 +1179,7 @@ public class FeatureExportOperation extends Job {
 										plugin.setAttribute("id", bundle.getSymbolicName()); //$NON-NLS-1$
 										plugin.setAttribute("version", bundle.getVersion().toString()); //$NON-NLS-1$
 										setFilterAttributes(plugin, currentConfig);
+										setAdditionalAttributes(plugin, bundle);
 										root.appendChild(plugin);
 									}
 								}
@@ -1198,6 +1201,9 @@ public class FeatureExportOperation extends Job {
 	static boolean isWorkspacePlugin(BundleDescription bundle) {
 		ModelEntry entry = PluginRegistry.findEntry(bundle.getSymbolicName());
 		return entry != null && Arrays.asList(entry.getWorkspaceModels()).contains(PluginRegistry.findModel(bundle));
+	}
+
+	protected void setAdditionalAttributes(Element plugin, BundleDescription bundle) {
 	}
 
 	public static void errorFound() {

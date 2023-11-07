@@ -52,6 +52,7 @@ import org.eclipse.pde.internal.core.iproduct.IJREInfo;
 import org.eclipse.pde.internal.core.iproduct.ILauncherInfo;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.w3c.dom.Element;
 
 public class ProductExportOperation extends FeatureExportOperation {
 	private static final String STATUS_MESSAGE = "!MESSAGE"; //$NON-NLS-1$
@@ -487,5 +488,10 @@ public class ProductExportOperation extends FeatureExportOperation {
 		} finally {
 		}
 		return null;
+	}
+
+	@Override
+	protected void setAdditionalAttributes(Element plugin, BundleDescription bundle) {
+		plugin.setAttribute("unpack", Boolean.toString(CoreUtility.guessUnpack(bundle))); //$NON-NLS-1$
 	}
 }

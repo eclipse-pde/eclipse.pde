@@ -15,11 +15,12 @@
 package org.eclipse.pde.internal.core.feature;
 
 import java.io.PrintWriter;
-import java.util.Arrays;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.IFragment;
+import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.core.plugin.PluginRegistry;
@@ -29,17 +30,23 @@ import org.w3c.dom.Node;
 
 public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 	private static final long serialVersionUID = 1L;
+	private boolean fFragment;
 	private String fVersion;
+	private boolean fUnpack = true;
+
+	public FeaturePlugin() {
+	}
 
 	@Override
 	protected void reset() {
 		super.reset();
 		fVersion = null;
+		fFragment = false;
 	}
 
 	@Override
 	public boolean isFragment() {
-		return getPluginBase() instanceof IFragment;
+		return fFragment;
 	}
 
 	public IPluginBase getPluginBase() {
@@ -54,12 +61,19 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 			ModelEntry entry = PluginRegistry.findEntry(id);
 			// if no plug-ins match the id, entry == null
 			if (entry != null) {
-				model = Arrays.stream(entry.getActiveModels())
-						.filter(base -> base.getPluginBase().getVersion().equals(version))
-						.findFirst().orElse(null);
+				IPluginModelBase bases[] = entry.getActiveModels();
+				for (IPluginModelBase base : bases) {
+					if (base.getPluginBase().getVersion().equals(version)) {
+						model = base;
+						break;
+					}
+				}
 			}
 		}
-		if (model != null) {
+		if (fFragment && model instanceof IFragmentModel) {
+			return model.getPluginBase();
+		}
+		if (!fFragment && model instanceof IPluginModel) {
 			return model.getPluginBase();
 		}
 		return null;
@@ -71,11 +85,24 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 	}
 
 	@Override
+	public boolean isUnpack() {
+		return fUnpack;
+	}
+
+	@Override
 	public void setVersion(String version) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.fVersion;
 		this.fVersion = version;
 		firePropertyChanged(this, P_VERSION, oldValue, version);
+	}
+
+	@Override
+	public void setUnpack(boolean unpack) throws CoreException {
+		ensureModelEditable();
+		boolean oldValue = fUnpack;
+		this.fUnpack = unpack;
+		firePropertyChanged(this, P_UNPACK, Boolean.valueOf(oldValue), Boolean.valueOf(unpack));
 	}
 
 	@Override
@@ -87,16 +114,30 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 		}
 	}
 
+	public void setFragment(boolean fragment) throws CoreException {
+		ensureModelEditable();
+		this.fFragment = fragment;
+	}
+
 	@Override
 	protected void parse(Node node) {
 		super.parse(node);
 		fVersion = getNodeAttribute(node, "version"); //$NON-NLS-1$
+		String f = getNodeAttribute(node, "fragment"); //$NON-NLS-1$
+		if (f != null && f.equalsIgnoreCase("true")) { //$NON-NLS-1$
+			fFragment = true;
+		}
+		String unpack = getNodeAttribute(node, "unpack"); //$NON-NLS-1$
+		if (unpack != null && unpack.equalsIgnoreCase("false")) { //$NON-NLS-1$
+			fUnpack = false;
+		}
 	}
 
 	public void loadFrom(IPluginBase plugin) {
 		id = plugin.getId();
 		label = plugin.getTranslatedName();
 		fVersion = plugin.getVersion();
+		fFragment = plugin instanceof IFragment;
 	}
 
 	@Override
@@ -108,7 +149,16 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 			writer.println();
 			writer.print(indent2 + "version=\"" + getVersion() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+		if (isFragment()) {
+			writer.println();
+			writer.print(indent2 + "fragment=\"true\""); //$NON-NLS-1$
+		}
+		if (!isUnpack()) {
+			writer.println();
+			writer.print(indent2 + "unpack=\"false\""); //$NON-NLS-1$
+		}
 		writer.println("/>"); //$NON-NLS-1$
+		//writer.println(indent + "</plugin>");
 	}
 
 	@Override

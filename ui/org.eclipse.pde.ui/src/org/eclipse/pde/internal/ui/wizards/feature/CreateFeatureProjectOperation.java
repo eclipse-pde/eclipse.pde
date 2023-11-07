@@ -23,6 +23,7 @@ import org.eclipse.pde.internal.core.feature.FeaturePlugin;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
+import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.swt.widgets.Shell;
 
 public class CreateFeatureProjectOperation extends AbstractCreateFeatureOperation {
@@ -42,6 +43,7 @@ public class CreateFeatureProjectOperation extends AbstractCreateFeatureOperatio
 			FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
 			fplugin.loadFrom(plugin);
 			fplugin.setVersion(ICoreConstants.DEFAULT_VERSION);
+			fplugin.setUnpack(CoreUtility.guessUnpack(plugin.getPluginModel().getBundleDescription()));
 			added[i] = fplugin;
 		}
 		feature.addPlugins(added);
