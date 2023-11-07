@@ -86,16 +86,10 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		fFieldTemplate = fieldTemplate;
 	}
 
-	/**
-	 * @param fieldPluginID
-	 */
 	public void setFieldPluginID(String fieldPluginID) {
 		fFieldPluginID = fieldPluginID;
 	}
 
-	/**
-	 *
-	 */
 	public void reset() {
 		fModel = null;
 		fMonitor = null;

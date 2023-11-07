@@ -43,8 +43,6 @@ public abstract class AnnotationTest extends ApiBuilderTest {
 
 	/**
 	 * Constructor
-	 *
-	 * @param name
 	 */
 	public AnnotationTest(String name) {
 		super(name);
@@ -53,10 +51,6 @@ public abstract class AnnotationTest extends ApiBuilderTest {
 	/**
 	 * Sets the message arguments we are expecting for the given test, the
 	 * number of times denoted by count
-	 *
-	 * @param tagname
-	 * @param context
-	 * @param count
 	 */
 	protected void setExpectedMessageArgs(String tagname, String context, int count) {
 		String[][] args = new String[count][];
@@ -93,8 +87,6 @@ public abstract class AnnotationTest extends ApiBuilderTest {
 
 	/**
 	 * Collects tests from the getAllTestClasses() method into the given suite
-	 *
-	 * @param suite
 	 */
 	private static void collectTests(TestSuite suite) {
 		// Reset forgotten subsets of tests
@@ -164,7 +156,6 @@ public abstract class AnnotationTest extends ApiBuilderTest {
 	 * Returns an array composed only of the specified number of
 	 * {@link #PROBLEM_ID}
 	 *
-	 * @param problemcount
 	 * @return an array of {@link #PROBLEM_ID} of the specified size, or an
 	 *         empty array if the specified size is < 1
 	 */
@@ -194,7 +185,6 @@ public abstract class AnnotationTest extends ApiBuilderTest {
 	 * Deploys a build test for API Javadoc tags using the given source file,
 	 * looking for problems specified from {@link #getExpectedProblemIds()()}
 	 *
-	 * @param sourcename
 	 * @param incremental if an incremental build should take place
 	 * @param usedefault if the default package should be used or not
 	 */
@@ -221,10 +211,6 @@ public abstract class AnnotationTest extends ApiBuilderTest {
 	/**
 	 * Deploys the annotations test and allows it to proceed if there are JDT
 	 * errors.
-	 *
-	 * @param sourcename
-	 * @param incremental
-	 * @param usedefault
 	 */
 	protected void deployAnnotationTestWithErrors(String sourcename, boolean incremental, boolean usedefault) {
 		try {

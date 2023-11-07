@@ -25,8 +25,6 @@ public class JavadocConversionWizard extends RefactoringWizard {
 
 	/**
 	 * Constructor
-	 *
-	 * @param refactoring
 	 */
 	public JavadocConversionWizard(Refactoring refactoring) {
 		super(refactoring, RefactoringWizard.WIZARD_BASED_USER_INTERFACE);

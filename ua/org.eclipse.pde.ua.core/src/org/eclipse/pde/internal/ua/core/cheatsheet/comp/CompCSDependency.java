@@ -32,10 +32,6 @@ public class CompCSDependency extends CompCSObject implements ICompCSDependency 
 
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * @param model
-	 * @param parent
-	 */
 	public CompCSDependency(ICompCSModel model, ICompCSObject parent) {
 		super(model, parent);
 		reset();

@@ -104,7 +104,6 @@ public interface IDSReference extends IDSObject {
 	 *
 	 * @param policy
 	 *            new value of the policy (static or dynamic)
-	 *
 	 */
 	public void setReferencePolicy(String policy);
 

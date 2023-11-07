@@ -298,11 +298,6 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		return oldVersion;
 	}
 
-	/**
-	 * @param bundleLocation
-	 * @param manifest
-	 * @throws BundleException
-	 */
 	private void hasQualifier(File bundleLocation, Dictionary<String, String> manifest) throws BundleException {
 		ManifestElement[] versionInfo = ManifestElement.parseHeader(Constants.BUNDLE_VERSION, BundleHelper.getManifestHeader(manifest, Constants.BUNDLE_VERSION));
 		if (versionInfo != null) {
@@ -711,8 +706,6 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	/**
 	 * This methods return the bundleDescriptions to which imports have been
 	 * bound to.
-	 * 
-	 * @param root
 	 */
 	public static BundleDescription[] getImportedBundles(BundleDescription root) {
 		if (root == null)
@@ -728,8 +721,6 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	/**
 	 * This methods return the bundleDescriptions to which required bundles
 	 * have been bound to.
-	 * 
-	 * @param root
 	 */
 	public static BundleDescription[] getRequiredBundles(BundleDescription root) {
 		if (root == null)
@@ -768,7 +759,6 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	/**
 	 * Sort the BundleDescription[] by Version, lowest to highest.
 	 * (It is likely they are already close to this order)
-	 * @param bundles
 	 * @return sorted BundleDescription []
 	 */
 	private BundleDescription[] sortByVersion(BundleDescription[] bundles) {

@@ -32,9 +32,6 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
-/**
- *
- */
 public class FeatureReferencePage extends PDEFormPage {
 	public static final String PAGE_ID = "reference"; //$NON-NLS-1$
 
@@ -44,11 +41,6 @@ public class FeatureReferencePage extends PDEFormPage {
 
 	private PluginPortabilitySection fPluginPortabilitySection;
 
-	/**
-	 *
-	 * @param editor
-	 * @param title
-	 */
 	public FeatureReferencePage(PDEFormEditor editor, String title) {
 		super(editor, PAGE_ID, title);
 	}

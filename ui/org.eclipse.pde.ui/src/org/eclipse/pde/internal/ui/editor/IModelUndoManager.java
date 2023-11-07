@@ -80,7 +80,6 @@ public interface IModelUndoManager {
 	/**
 	 * Reapplies the next operation in the undo stack and sets
 	 * the stack pointer to that operation.
-	 *
 	 */
 	public void redo();
 

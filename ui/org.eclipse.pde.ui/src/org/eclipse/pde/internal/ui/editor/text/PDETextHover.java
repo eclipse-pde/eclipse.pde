@@ -42,11 +42,6 @@ public abstract class PDETextHover implements ITextHoverExtension, ITextHover {
 		return parent -> new PDEDefaultInformationControl(parent, EditorsUI.getTooltipAffordanceString());
 	}
 
-	/**
-	 * @param infoControl
-	 * @param control
-	 * @param provider
-	 */
 	public static void addHoverListenerToControl(final IInformationControl infoControl, final Control control, final IControlHoverContentProvider provider) {
 
 		control.addMouseTrackListener(new MouseTrackListener() {
@@ -75,10 +70,6 @@ public abstract class PDETextHover implements ITextHoverExtension, ITextHover {
 		});
 	}
 
-	/**
-	 * @param infoControl
-	 * @param text
-	 */
 	public static void updateHover(IInformationControl infoControl, String text) {
 		infoControl.setInformation(text);
 		Point p = infoControl.computeSizeHint();

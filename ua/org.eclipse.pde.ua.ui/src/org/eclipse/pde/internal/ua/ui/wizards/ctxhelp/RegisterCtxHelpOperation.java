@@ -210,9 +210,6 @@ public class RegisterCtxHelpOperation extends WorkspaceModifyOperation {
 		monitor.done();
 	}
 
-	/**
-	 * @param model
-	 */
 	private void modifyExistingManifestFile(IFile file) throws CoreException {
 		// Validate the operation
 		// Note: This is not accurate, we are validating the plugin.xml file

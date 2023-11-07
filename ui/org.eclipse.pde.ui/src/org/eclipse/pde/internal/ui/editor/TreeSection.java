@@ -70,7 +70,6 @@ public abstract class TreeSection extends StructuredViewerSection {
 
 	/**
 	 * Constructor for TableSection.
-	 * @param formPage
 	 */
 	public TreeSection(PDEFormPage formPage, Composite parent, int style, String[] buttonLabels) {
 		super(formPage, parent, style, buttonLabels);
@@ -94,7 +93,6 @@ public abstract class TreeSection extends StructuredViewerSection {
 
 	/**
 	 * Expands or collapsed selected node according to its current state
-	 * @param selection
 	 */
 	protected void handleDoubleClick(IStructuredSelection selection) {
 		TreeViewer viewer = (TreeViewer) fViewerPart.getViewer();

@@ -33,15 +33,8 @@ public class CompCSTask extends CompCSTaskObject implements ICompCSTask {
 
 	private List<ICompCSParam> fFieldParams;
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * @param model
-	 * @param parent
-	 */
 	public CompCSTask(ICompCSModel model, ICompCSObject parent) {
 		super(model, parent);
 		reset();

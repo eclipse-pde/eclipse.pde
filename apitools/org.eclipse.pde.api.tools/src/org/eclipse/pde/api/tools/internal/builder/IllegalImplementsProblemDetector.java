@@ -159,10 +159,7 @@ public class IllegalImplementsProblemDetector extends AbstractIllegalTypeReferen
 	 * Returns if the given type implements any of the given interfaces anywhere
 	 * in its lineage
 	 *
-	 * @param type
-	 * @param iname
 	 * @return true if all of the interfaces are implemented, false otherwise
-	 * @throws CoreException
 	 */
 	private boolean isImplemented(IApiType type, final String iname) throws CoreException {
 		if (type == null) {
@@ -181,7 +178,6 @@ public class IllegalImplementsProblemDetector extends AbstractIllegalTypeReferen
 	 * @param iname the name of the interface to find
 	 * @param interfaces the collection of interfaces to inspect
 	 * @return true if the interface is implemented, false otherwise
-	 * @throws CoreException
 	 */
 	private boolean isImplemented(final String iname, IApiType[] interfaces) throws CoreException {
 		if (interfaces.length == 0) {
@@ -206,7 +202,6 @@ public class IllegalImplementsProblemDetector extends AbstractIllegalTypeReferen
 	 * @param entryinterface the name of the interface we originally entered the
 	 *            recursion with
 	 * @param type the {@link IApiType} to inspect the interfaces of
-	 * @throws CoreException
 	 */
 	private boolean findRestrictedSuperinterfaces(final IApiComponent originalcomponent, final String entryinterface, IApiType type) throws CoreException {
 		IApiType[] inters = type.getSuperInterfaces();

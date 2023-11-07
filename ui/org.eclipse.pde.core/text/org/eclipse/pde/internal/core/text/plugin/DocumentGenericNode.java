@@ -18,15 +18,11 @@ import org.eclipse.pde.internal.core.text.DocumentElementNode;
 
 /**
  * DocumentGenericNode
- *
  */
 public class DocumentGenericNode extends DocumentElementNode {
 
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * @param name
-	 */
 	public DocumentGenericNode(String name) {
 		// NO-OP
 		// Used just for generic element type

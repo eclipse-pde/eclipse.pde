@@ -103,7 +103,6 @@ public abstract class AbstractBuildValidationTest {
 	 *
 	 * @param buildProperty		build.properties file (on which markers will looked for)
 	 * @param expectedValues	properties file from which expected values will be read
-	 * @throws CoreException
 	 */
 	protected void verifyQuickFixes(IResource buildProperty, PropertyResourceBundle expectedValues) throws CoreException {
 		IMarker[] markers = buildProperty.findMarkers(PDEMarkerFactory.MARKER_ID, true, IResource.DEPTH_INFINITE);
@@ -125,7 +124,6 @@ public abstract class AbstractBuildValidationTest {
 	 * @param buildProperty		build.properties file (on which markers will looked for)
 	 * @param expectedValues	properties file from which expected values will be read
 	 * @param severity			expected severity of the problem markers
-	 * @throws CoreException
 	 */
 	protected void verifyBuildPropertiesMarkers(IResource buildProperty, PropertyResourceBundle expectedValues, int severity) throws CoreException {
 		IMarker[] markers = buildProperty.findMarkers(PDEMarkerFactory.MARKER_ID, true, IResource.DEPTH_INFINITE);
@@ -228,7 +226,6 @@ public abstract class AbstractBuildValidationTest {
 	 *
 	 * @param location path in the local file system
 	 * @param archivePath path to archive relative to the test plug-in
-	 * @throws IOException
 	 */
 	protected IPath doUnZip(IPath location, String archivePath) throws IOException {
 		URL zipURL = PDETestsPlugin.getBundleContext().getBundle().getEntry(archivePath);
@@ -259,7 +256,6 @@ public abstract class AbstractBuildValidationTest {
 	 * Build the given project and wait till the build the complete
 	 * @param project	project to be build
 	 * @return			<code>true</code> if the project got build successfully. <code>false</code> otherwise.
-	 * @throws CoreException
 	 */
 	protected boolean buildProject(IProject project) throws CoreException {
 		project.build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
@@ -283,7 +279,6 @@ public abstract class AbstractBuildValidationTest {
 	 *
 	 * @param project	project for which the preferences are to be set
 	 * @param severity	severity level
-	 * @throws BackingStoreException
 	 */
 	protected void setPreferences(IProject project, int severity) throws BackingStoreException {
 		ProjectScope scope = new ProjectScope(project);
@@ -305,7 +300,6 @@ public abstract class AbstractBuildValidationTest {
 	 * @param project	project for which the preference are to be set
 	 * @param pref		the preference
 	 * @param value		the value
-	 * @throws BackingStoreException
 	 */
 	protected void setPreference(IProject project, String node, String pref, String value) throws BackingStoreException {
 		ProjectScope scope = new ProjectScope(project);

@@ -15,7 +15,6 @@ import org.eclipse.ui.splash.AbstractSplashHandler;
 
 /**
  * @since 3.3
- * 
  */
 public class BrowserSplashHandler extends AbstractSplashHandler {
 
@@ -27,9 +26,6 @@ public class BrowserSplashHandler extends AbstractSplashHandler {
 	
 	private boolean fClose;
 
-	/**
-	 * 
-	 */
 	public BrowserSplashHandler() {
 		fBrowser = null;
 		fButton = null;
@@ -58,9 +54,6 @@ public class BrowserSplashHandler extends AbstractSplashHandler {
 		doEventLoop();
 	}
 	
-	/**
-	 * 
-	 */
 	private void doEventLoop() {
 		Shell splash = getSplash();
 		while (fClose == false) {
@@ -70,9 +63,6 @@ public class BrowserSplashHandler extends AbstractSplashHandler {
 		}
 	}
 	
-	/**
-	 * 
-	 */
 	private void createUIListeners() {
 		// Create the browser listeners
 		createUIListenersBrowser();
@@ -80,9 +70,6 @@ public class BrowserSplashHandler extends AbstractSplashHandler {
 		createUIListenersButton();
 	}
 
-	/**
-	 * 
-	 */
 	private void createUIListenersButton() {
 		fButton.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -94,9 +81,6 @@ public class BrowserSplashHandler extends AbstractSplashHandler {
 		});		
 	}
 
-	/**
-	 * 
-	 */
 	private void createUIListenersBrowser() {
 		fBrowser.addProgressListener(new ProgressListener() {
 			public void changed(ProgressEvent event) {
@@ -111,9 +95,6 @@ public class BrowserSplashHandler extends AbstractSplashHandler {
 		});		
 	}
 	
-	/**
-	 * 
-	 */
 	private void createUI() {
 		// Create the web browser
 		createUIBrowser();
@@ -121,9 +102,6 @@ public class BrowserSplashHandler extends AbstractSplashHandler {
 		createUIButton();
 	}
 
-	/**
-	 * 
-	 */
 	private void createUIButton() {
 		Shell splash = getSplash();
 		fButton = new Button(splash, SWT.PUSH);
@@ -137,9 +115,6 @@ public class BrowserSplashHandler extends AbstractSplashHandler {
 		fButton.setLayoutData(data);
 	}
 
-	/**
-	 * 
-	 */
 	private void configureUIButtonBounds() {
 		Shell splash = getSplash();
 		
@@ -154,9 +129,6 @@ public class BrowserSplashHandler extends AbstractSplashHandler {
 				button_y_width);		
 	}	
 	
-	/**
-	 * 
-	 */
 	private void createUIBrowser() {
 		fBrowser = new Browser(getSplash(), SWT.NONE);
 		fBrowser.setUrl(F_BROWSER_URL);
@@ -166,9 +138,6 @@ public class BrowserSplashHandler extends AbstractSplashHandler {
 		fBrowser.setLayoutData(data);
 	}
 
-	/**
-	 * 
-	 */
 	private void configureUISplash() {
 		GridLayout layout = new GridLayout(1, true);
 		getSplash().setLayout(layout);

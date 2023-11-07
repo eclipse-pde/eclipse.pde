@@ -270,7 +270,6 @@ class ExternalLibraryCache {
 	 * @param libName name of the library to extract
 	 * @param fTargetFile file location to extract the library to
 	 * @return the file where the jar is extracted if successful, <code>null</code> otherwise.
-	 * @throws IOException
 	 */
 	private File extractJar(File fJarFile, String libName, File fTargetFile) throws IOException {
 		try (JarFile f = new JarFile(fJarFile)) {

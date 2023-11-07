@@ -24,7 +24,6 @@ import org.eclipse.swt.widgets.Composite;
 
 /**
  * PDEProjectionViewer
- *
  */
 public class PDEProjectionViewer extends ProjectionViewer {
 
@@ -37,13 +36,6 @@ public class PDEProjectionViewer extends ProjectionViewer {
 
 	private final boolean fIsQuickOutlineEnabled;
 
-	/**
-	 * @param parent
-	 * @param ruler
-	 * @param overviewRuler
-	 * @param showsAnnotationOverview
-	 * @param styles
-	 */
 	public PDEProjectionViewer(Composite parent, IVerticalRuler ruler, IOverviewRuler overviewRuler, boolean showsAnnotationOverview, int styles, boolean isQuickOutlineEnabled) {
 		super(parent, ruler, overviewRuler, showsAnnotationOverview, styles);
 

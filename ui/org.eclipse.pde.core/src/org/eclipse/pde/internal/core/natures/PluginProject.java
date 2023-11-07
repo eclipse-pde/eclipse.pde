@@ -15,8 +15,6 @@ package org.eclipse.pde.internal.core.natures;
 
 import org.eclipse.core.runtime.CoreException;
 
-/**
- */
 public class PluginProject extends BaseProject {
 	/**
 	 * PluginProject constructor comment.

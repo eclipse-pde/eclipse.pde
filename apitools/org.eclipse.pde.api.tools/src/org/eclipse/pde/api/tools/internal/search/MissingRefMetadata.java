@@ -75,13 +75,6 @@ public class MissingRefMetadata implements IMetadata {
 
 	/**
 	 * Constructor
-	 *
-	 * @param profile
-	 * @param runatdate
-	 * @param reportlocation
-	 * @param scopepattern
-	 * @param refpattern
-	 * @param apiusescans
 	 */
 	public MissingRefMetadata(String profile, String reportlocation, String apiusescans) {
 		this.profile = profile;
@@ -92,9 +85,6 @@ public class MissingRefMetadata implements IMetadata {
 
 	/**
 	 * Returns the use metadata from meta.xml
-	 *
-	 * @return
-	 * @throws Exception
 	 */
 	public static MissingRefMetadata getMetadata(File xmlFile) throws Exception {
 		MissingRefMetadata metadata = new MissingRefMetadata();

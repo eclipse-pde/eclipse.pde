@@ -19,7 +19,6 @@ t SPDX-License-Identifier: EPL-2.0
  *
  * Image filter that user string pattern like "my*icon", vs PatternFilter which
  * user regular expessions.
- *
  */
 public class StringFilter implements IFilter {
 	private final String mPatternString;

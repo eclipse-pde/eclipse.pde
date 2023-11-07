@@ -57,7 +57,6 @@ public class FormEntry {
 
 	/**
 	 * The default constructor. Call 'createControl' to make it.
-	 *
 	 */
 	public FormEntry(Composite parent, FormToolkit toolkit, String labelText,
 			int style) {
@@ -66,12 +65,6 @@ public class FormEntry {
 
 	/**
 	 * This constructor create all the controls right away.
-	 *
-	 * @param parent
-	 * @param toolkit
-	 * @param labelText
-	 * @param browseText
-	 * @param linkLabel
 	 */
 	public FormEntry(Composite parent, FormToolkit toolkit, String labelText,
 			String browseText, boolean linkLabel) {
@@ -92,13 +85,6 @@ public class FormEntry {
 
 	/**
 	 * Create all the controls in the provided parent.
-	 *
-	 * @param parent
-	 * @param toolkit
-	 * @param labelText
-	 * @param span
-	 * @param browseText
-	 * @param linkLabel
 	 */
 	private void createControl(Composite parent, FormToolkit toolkit,
 			String labelText, int style, String browseText, boolean linkLabel,
@@ -200,8 +186,6 @@ public class FormEntry {
 
 	/**
 	 * Attaches the listener for the entry.
-	 *
-	 * @param listener
 	 */
 	public void setFormEntryListener(IFormEntryListener listener) {
 		if (fLabel != null && fLabel instanceof Hyperlink) {
@@ -239,7 +223,6 @@ public class FormEntry {
 	/**
 	 * If dirty, commits the text in the widget to the value and notifies
 	 * the listener. This call clears the 'dirty' flag.
-	 *
 	 */
 	public void commit() {
 		if (fDirty) {

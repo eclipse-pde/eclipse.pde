@@ -21,16 +21,6 @@ public class ZipFileSet extends FileSet {
 	boolean file;
 	String permission;
 
-	/**
-	 * @param dir
-	 * @param defaultexcludes
-	 * @param includes
-	 * @param includesfile
-	 * @param excludes
-	 * @param excludesfile
-	 * @param casesensitive
-	 * @param permission
-	 */
 	public ZipFileSet(String dir, boolean file, String defaultexcludes, String includes, String includesfile, String excludes, String excludesfile, String prefix, String casesensitive, String permission) {
 		super(dir, defaultexcludes, includes, includesfile, excludes, excludesfile, casesensitive);
 		this.prefix = prefix;

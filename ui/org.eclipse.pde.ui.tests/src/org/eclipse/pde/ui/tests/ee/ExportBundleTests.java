@@ -69,9 +69,6 @@ public class ExportBundleTests extends PDETestCase {
 
 	/**
 	 * Deletes the specified project.
-	 *
-	 * @param name
-	 * @throws CoreException
 	 */
 	protected void deleteProject(String name) throws CoreException {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
@@ -85,7 +82,6 @@ public class ExportBundleTests extends PDETestCase {
 	 *
 	 * @param dir
 	 *            the file to delete
-	 * @throws IOException
 	 */
 	protected void deleteFolder(File dir) throws IOException {
 		if (dir.isDirectory()) {
@@ -120,8 +116,6 @@ public class ExportBundleTests extends PDETestCase {
 	/**
 	 * Exports a plug-in project with a custom execution environment and validates class file
 	 * target level.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testExportCustomEnvironment() throws Exception {
@@ -174,8 +168,6 @@ public class ExportBundleTests extends PDETestCase {
 	/**
 	 * Exports a plug-in project with a J2SE-1.4 execution environment and
 	 * validates class file target level.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testExport14Environment() throws Exception {

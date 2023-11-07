@@ -60,7 +60,6 @@ import org.osgi.framework.FrameworkUtil;
 /**
  * Provides a default {@link #tearDown()} implementation to delete all
  * projects in the workspace.
- *
  */
 public abstract class PDETestCase {
 
@@ -117,8 +116,6 @@ public abstract class PDETestCase {
 	/**
 	 * Ensure the welcome screen is closed because in 4.x the debug perspective
 	 * opens a giant fast-view causing issues
-	 *
-	 * @throws Exception
 	 */
 	protected final void assertWelcomeScreenClosed() throws Exception {
 		if (!welcomeClosed && PlatformUI.isWorkbenchRunning()) {

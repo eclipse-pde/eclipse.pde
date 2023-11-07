@@ -176,7 +176,6 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 
 	/**
 	 * Creates the Program To Run group on the tab
-	 *
 	 */
 	protected void createProgramBlock() {
 		fProgramBlock = new ProgramBlock(this);

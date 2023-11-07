@@ -83,10 +83,6 @@ public class ProjectCreationTests extends AbstractApiTest {
 
 	/**
 	 * Tests importing the java source for the Javadoc tag update tests
-	 *
-	 * @throws IOException
-	 * @throws InvocationTargetException
-	 * @throws JavaModelException
 	 */
 	@Test
 	public void testImportJavadocTestSource() throws InvocationTargetException, IOException, JavaModelException {
@@ -105,9 +101,6 @@ public class ProjectCreationTests extends AbstractApiTest {
 
 	/**
 	 * Tests importing the java source for the javadoc tag reading tests
-	 *
-	 * @throws IOException
-	 * @throws InvocationTargetException
 	 */
 	@Test
 	public void testImportClassesTestSource() throws InvocationTargetException, IOException {
@@ -124,8 +117,6 @@ public class ProjectCreationTests extends AbstractApiTest {
 
 	/**
 	 * Tests the creation of a plugin project
-	 *
-	 * @throws CoreException
 	 */
 	@Test
 	public void testCreatePluginProject() throws CoreException {

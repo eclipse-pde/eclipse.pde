@@ -81,9 +81,6 @@ public class FormFilteredTree extends FilteredTree {
 		return viewer;
 	}
 
-	/**
-	 * @param part
-	 */
 	public void createUIListenerEntryFilter(IContextPart part) {
 		// Required to enable Ctrl-V initiated paste operation on first focus
 		// See Bug # 157973

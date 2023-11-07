@@ -16,7 +16,6 @@ package org.eclipse.pde.internal.ua.core.icheatsheet.comp;
 
 /**
  * ICompCSDependency
- *
  */
 public interface ICompCSDependency extends ICompCSObject {
 
@@ -27,7 +26,6 @@ public interface ICompCSDependency extends ICompCSObject {
 
 	/**
 	 * Attribute: task
-	 *
 	 */
 	public String getFieldTask();
 

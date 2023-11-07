@@ -37,7 +37,6 @@ public class TypeFilterChange extends FilterChange {
 	 * @param primaryname the name of the primary type (the name of the
 	 *            resource)
 	 * @param newname the new value to set in the filter
-	 * @param newpath
 	 * @param kind the kind of the change
 	 */
 	public TypeFilterChange(IApiFilterStore store, IApiProblemFilter filter, String newname, String newpath, int kind) {

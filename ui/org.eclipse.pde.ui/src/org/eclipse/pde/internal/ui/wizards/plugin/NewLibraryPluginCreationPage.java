@@ -175,7 +175,6 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 
 	/**
 	 * Creates all of the EE widgets
-	 * @param container
 	 */
 	private void createExecutionEnvironmentControls(Composite container) {
 		// Create label

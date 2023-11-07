@@ -33,10 +33,6 @@ public class ApiProblemFilter implements IApiProblemFilter, Cloneable {
 
 	/**
 	 * Constructor
-	 *
-	 * @param componentid
-	 * @param problem
-	 * @param comment
 	 */
 	public ApiProblemFilter(String componentid, IApiProblem problem, String comment) {
 		fComponentId = componentid;
@@ -89,8 +85,6 @@ public class ApiProblemFilter implements IApiProblemFilter, Cloneable {
 	 * <li>they are equal via the default .equals() method</li>
 	 * </ol>
 	 *
-	 * @param s1
-	 * @param s2
 	 * @return true if the objects are equal, false otherwise
 	 */
 	private boolean elementsEqual(Object s1, Object s2) {

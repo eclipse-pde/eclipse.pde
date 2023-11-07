@@ -54,11 +54,6 @@ public class ApiComparator {
 
 	/**
 	 * Returns a delta for a API component version change
-	 *
-	 * @param apiComponent2
-	 * @param id
-	 * @param apiComponentVersion
-	 * @param apiComponentVersion2
 	 */
 	static IDelta checkBundleVersionChanges(IApiComponent apiComponent2, String id, String apiComponentVersion, String apiComponentVersion2) {
 		Version version = null;
@@ -594,11 +589,6 @@ public class ApiComparator {
 	/**
 	 * Returns true, if the given type descriptor should be skipped, false
 	 * otherwise.
-	 *
-	 * @param visibilityModifiers
-	 * @param elementDescription
-	 * @param typeDescriptor
-	 * @return
 	 */
 	static boolean filterType(final int visibilityModifiers, IApiAnnotations elementDescription, IApiType typeDescriptor) {
 		if (elementDescription != null && (elementDescription.getVisibility() & visibilityModifiers) == 0) {
@@ -620,16 +610,9 @@ public class ApiComparator {
 	 * Performs the internal compare of the given {@link IApiComponent}s using
 	 * their type containers
 	 *
-	 * @param component
-	 * @param component2
-	 * @param referenceBaseline
-	 * @param baseline
-	 * @param visibilityModifiers
-	 * @param globalDelta
 	 * @param monitor
 	 *
 	 * @return a delta of changed API elements
-	 * @throws CoreException
 	 */
 	private static IDelta internalCompare(final IApiComponent component, final IApiComponent component2, final IApiBaseline referenceBaseline, final IApiBaseline baseline, final int visibilityModifiers, final Delta globalDelta, final IProgressMonitor monitor) throws CoreException {
 		final Set<String> typeRootBaseLineNames = new HashSet<>();

@@ -407,7 +407,6 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	 * Returns the given string or <code>null</code> if the string is empty.
 	 * Used when setting a value in the target definition.
 	 *
-	 * @param value
 	 * @return trimmed value or <code>null</code>
 	 */
 	private String getModelValue(String value) {
@@ -422,8 +421,6 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 	/**
 	* Delimits a comma separated preference and add the items to the given set
-	* @param set
-	* @param preference
 	*/
 	private void addExtraChoices(Set<String> set, String preference) {
 		StringTokenizer tokenizer = new StringTokenizer(preference, ","); //$NON-NLS-1$
@@ -559,7 +556,6 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	 * The listener invokes the <code>VMArgumentsSelectionDialog</code> and
 	 * updates the selected VM Arguments back in the VM Arguments Text Box
 	 *
-	 * @param textControl
 	 * @return	<code>SelectionListener</code> for the Add VM Arguments button
 	 */
 	private SelectionListener getVMArgsListener(final Text textControl) {
@@ -583,7 +579,6 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	 * The listener invokes the <code>StringVariableSelectionDialog</code> and
 	 * updates the selected Variables back in the VM Arguments Text Box
 	 *
-	 * @param textControl
 	 * @return	<code>SelectionListener</code> for the Variables button
 	 */
 	private SelectionListener getVariablesListener(final Text textControl) {

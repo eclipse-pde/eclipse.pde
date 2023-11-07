@@ -47,17 +47,9 @@ import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
-/**
- *
- */
 public class SchemaInputContext extends XMLInputContext {
 	public static final String CONTEXT_ID = "schema-context"; //$NON-NLS-1$
 
-	/**
-	 * @param editor
-	 * @param input
-	 * @param primary
-	 */
 	public SchemaInputContext(PDEFormEditor editor, IEditorInput input, boolean primary) {
 		super(editor, input, primary);
 		create();

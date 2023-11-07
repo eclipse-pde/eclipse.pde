@@ -20,15 +20,8 @@ import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject;
 
 public class CompCSIntro extends CompCSDataObject implements ICompCSIntro {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * @param model
-	 * @param parent
-	 */
 	public CompCSIntro(ICompCSModel model, ICompCSObject parent) {
 		super(model, parent);
 		reset();

@@ -119,8 +119,6 @@ public abstract class ApiBaselineWizardPage extends WizardPage {
 
 		/**
 		 * Constructor
-		 *
-		 * @param original
 		 */
 		public WorkingCopyOperation(IApiBaseline original) {
 			this.original = original;
@@ -202,10 +200,6 @@ public abstract class ApiBaselineWizardPage extends WizardPage {
 		fProfile = op.getWorkingCopy();
 	}
 
-	/**
-	 * @param name
-	 * @return
-	 */
 	protected boolean isNameValid(String name) {
 		if (name.length() < 1) {
 			setErrorMessage(WizardMessages.ApiProfileWizardPage_20);
@@ -242,8 +236,6 @@ public abstract class ApiBaselineWizardPage extends WizardPage {
 	 *
 	 * @return a new {@link IApiProfile} or <code>null</code> if an error was
 	 *         encountered creating the new profile
-	 * @throws IOException
-	 * @throws CoreException
 	 */
 	public abstract IApiBaseline finish() throws IOException, CoreException;
 

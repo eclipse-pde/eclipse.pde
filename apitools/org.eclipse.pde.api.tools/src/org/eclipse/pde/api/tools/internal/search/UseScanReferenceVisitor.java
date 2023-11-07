@@ -24,7 +24,6 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 /**
  * This class is used by <code>{@link UseScanParser}</code> to visit the API Use
  * Scan reports
- *
  */
 public class UseScanReferenceVisitor extends UseScanVisitor {
 	private final IApiComponent fLookupAPIComponent;

@@ -20,7 +20,6 @@ public interface IControlValidator {
 
 	/**
 	 * Enable / disable the validator.
-	 * @param enabled
 	 */
 	public void setEnabled(boolean enabled);
 
@@ -53,7 +52,6 @@ public interface IControlValidator {
 	/**
 	 * Controls whether the message handler automatically updates messages in
 	 * the form. Setting the refresh to true, triggers an immediate update
-	 * @param refresh
 	 */
 	public void setRefresh(boolean refresh);
 

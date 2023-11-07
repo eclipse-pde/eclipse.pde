@@ -179,8 +179,6 @@ public class ApiDescriptionProcessor {
 
 		/**
 		 * Adds a status to the current listing of messages
-		 *
-		 * @param status
 		 */
 		private void addStatus(IStatus status) {
 			if (exceptions == null) {
@@ -329,8 +327,6 @@ public class ApiDescriptionProcessor {
 		 * Collects the missing javadoc tags from based on the given listing of
 		 * {@link TagElement}s
 		 *
-		 * @param api
-		 * @param tags
 		 * @param type one of <code>CLASS</code> or <code>INTERFACE</code>
 		 * @param member one of <code>METHOD</code> or <code>FIELD</code> or
 		 *            <code>NONE</code>
@@ -393,8 +389,6 @@ public class ApiDescriptionProcessor {
 		 * Determines if the specified tag appears in the {@link TagElement}
 		 * listing given
 		 *
-		 * @param tags
-		 * @param tag
 		 * @return true if the listing of {@link TagElement}s contains the given
 		 *         tag
 		 */
@@ -406,8 +400,6 @@ public class ApiDescriptionProcessor {
 		 * Finds the {@link IElementDescriptor} that matches the specified name
 		 * and signature
 		 *
-		 * @param name
-		 * @param signature
 		 * @return the matching {@link IElementDescriptor} or <code>null</code>
 		 */
 		private IElementDescriptor findDescriptorByName(String name, String signature) {
@@ -506,9 +498,6 @@ public class ApiDescriptionProcessor {
 	 *
 	 * @param project the java project to update
 	 * @param componentxml the component.xml file to update from
-	 * @param collector
-	 * @throws CoreException
-	 * @throws IOException
 	 */
 	public static void collectTagUpdates(IJavaProject project, File componentxml, Map<IFile, Set<TextEdit>> collector) throws CoreException, IOException {
 		IApiDescription description = new ApiDescription(null);
@@ -527,13 +516,7 @@ public class ApiDescriptionProcessor {
 	 * update the javadoc comments for the type and all members of the type
 	 * found in the description.
 	 *
-	 * @param type
-	 * @param desc
-	 * @param description
 	 * @param members members with API annotations
-	 * @param collector
-	 * @throws CoreException
-	 * @throws BadLocationException
 	 */
 	static void processTagUpdates(IType type, IReferenceTypeDescriptor desc, IApiDescription description, List<IElementDescriptor> members, Map<IFile, Set<TextEdit>> collector) throws CoreException, BadLocationException {
 		ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
@@ -575,7 +558,6 @@ public class ApiDescriptionProcessor {
 	 *
 	 * @param message error message
 	 * @param exception underlying exception, or <code>null</code>
-	 * @throws CoreException
 	 */
 	private static void abort(String message, Throwable exception) throws CoreException {
 		IStatus status = Status.error(message, exception);
@@ -590,7 +572,6 @@ public class ApiDescriptionProcessor {
 	 *
 	 * @param settings API settings to annotate
 	 * @param xml XML used to generate settings
-	 * @throws CoreException
 	 */
 	public static void annotateApiSettings(IJavaProject project, IApiDescription settings, String xml) throws CoreException {
 		Element root = null;
@@ -789,7 +770,6 @@ public class ApiDescriptionProcessor {
 	 * @param type the parent {@link Element}
 	 * @param earlierversion if the version read from XML is older than the
 	 *            current tooling version
-	 * @throws CoreException
 	 */
 	private static void annotateFieldSettings(IJavaProject project, IApiDescription settings, IReferenceTypeDescriptor typedesc, Element type, boolean earlierversion) throws CoreException {
 		NodeList fields = type.getElementsByTagName(IApiXmlConstants.ELEMENT_FIELD);
@@ -819,7 +799,6 @@ public class ApiDescriptionProcessor {
 	 * @param type the parent {@link Element}
 	 * @param earlierversion if the version read from XML is older than the
 	 *            current tooling version
-	 * @throws CoreException
 	 */
 	private static void annotateMethodSettings(IJavaProject project, IApiDescription settings, IReferenceTypeDescriptor typedesc, Element type, boolean earlierversion) throws CoreException {
 		NodeList methods = type.getElementsByTagName(IApiXmlConstants.ELEMENT_METHOD);

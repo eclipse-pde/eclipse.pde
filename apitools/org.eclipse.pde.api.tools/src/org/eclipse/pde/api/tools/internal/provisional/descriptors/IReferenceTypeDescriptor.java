@@ -70,7 +70,6 @@ public interface IReferenceTypeDescriptor extends IMemberDescriptor {
 	 *
 	 * @param name field name
 	 * @return field descriptor
-	 *
 	 */
 	public IFieldDescriptor getField(String name);
 

@@ -25,11 +25,6 @@ public class RequiredBundleDescription extends RequirementSpecification implemen
 
 	/**
 	 * Constructs a required bundle description.
-	 *
-	 * @param name
-	 * @param range
-	 * @param reexport
-	 * @param optional
 	 */
 	public RequiredBundleDescription(String name, VersionRange range, boolean reexport, boolean optional) {
 		super(name, range, reexport, optional);

@@ -92,7 +92,6 @@ public abstract class GeneralRenameIDWizardPage extends UserInputWizardPage {
 	/**
 	 * Intended to allow subclassing wizard pages validate the id based on custom criteria.
 	 *
-	 * @param id
 	 * @return null if id is valid, otherwise return corresponding error message
 	 */
 	protected abstract String validateId(String id);

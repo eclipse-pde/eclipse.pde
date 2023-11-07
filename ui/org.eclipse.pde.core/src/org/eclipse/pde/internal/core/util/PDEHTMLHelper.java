@@ -18,7 +18,6 @@ import java.util.HashMap;
 
 /**
  * PDEHTMLHelper
- *
  */
 public class PDEHTMLHelper {
 

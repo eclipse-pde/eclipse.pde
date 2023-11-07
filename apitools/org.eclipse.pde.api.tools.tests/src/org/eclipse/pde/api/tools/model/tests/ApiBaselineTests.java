@@ -83,9 +83,6 @@ public class ApiBaselineTests {
 
 	/**
 	 * Resolves a package
-	 *
-	 * @throws FileNotFoundException
-	 * @throws CoreException
 	 */
 	@Test
 	public void testResolvePackage() throws FileNotFoundException, CoreException {
@@ -98,9 +95,6 @@ public class ApiBaselineTests {
 
 	/**
 	 * Resolves a package within a single component
-	 *
-	 * @throws FileNotFoundException
-	 * @throws CoreException
 	 */
 	@Test
 	public void testResolvePackageWithinComponent() throws FileNotFoundException, CoreException {
@@ -113,9 +107,6 @@ public class ApiBaselineTests {
 
 	/**
 	 * Resolves a system package
-	 *
-	 * @throws FileNotFoundException
-	 * @throws CoreException
 	 */
 	@Test
 	public void testResolveJavaLangPackage() throws FileNotFoundException, CoreException {
@@ -128,9 +119,6 @@ public class ApiBaselineTests {
 
 	/**
 	 * Resolves a system package
-	 *
-	 * @throws FileNotFoundException
-	 * @throws CoreException
 	 */
 	@Test
 	public void testResolveSystemPackage() throws FileNotFoundException, CoreException {
@@ -143,9 +131,6 @@ public class ApiBaselineTests {
 
 	/**
 	 * Finds the class file for java.lang.Object
-	 *
-	 * @throws FileNotFoundException
-	 * @throws CoreException
 	 */
 	@Test
 	public void testFindJavaLangObject() throws FileNotFoundException, CoreException {
@@ -169,7 +154,6 @@ public class ApiBaselineTests {
 	 * @param version component version
 	 * @param environment execution environment id
 	 * @param requiredComponents list of {@link IRequiredComponentDescription}
-	 * @throws CoreException
 	 */
 	private void validateComponent(IApiBaseline baseline, String id, String name, String version, String environment, List<IRequiredComponentDescription> requiredComponents) throws CoreException {
 		IApiComponent component = baseline.getApiComponent(id);
@@ -192,8 +176,6 @@ public class ApiBaselineTests {
 	/**
 	 * Tests creating a baseline with a component that has a nested jar of class
 	 * files.
-	 *
-	 * @throws CoreException
 	 */
 	@Test
 	public void testNestedJarComponent() throws CoreException {
@@ -252,8 +234,6 @@ public class ApiBaselineTests {
 	 * Tests that an x-friends directive works. Component A exports package
 	 * component.a.friend.of.b as a friend for b. Note - the package should
 	 * still be private.
-	 *
-	 * @throws CoreException
 	 */
 	@Test
 	public void testXFriendsDirective() throws CoreException {
@@ -269,8 +249,6 @@ public class ApiBaselineTests {
 	/**
 	 * Tests that an x-internal directive works. Component A exports package
 	 * component.a.internal as internal.
-	 *
-	 * @throws CoreException
 	 */
 	@Test
 	public void testXInternalDirective() throws CoreException {
@@ -286,8 +264,6 @@ public class ApiBaselineTests {
 	/**
 	 * Tests that a 'uses' directive works. Component A exports package
 	 * component.a. with a 'uses' directive but should still be API.
-	 *
-	 * @throws CoreException
 	 */
 	@Test
 	public void testUsesDirective() throws CoreException {
@@ -303,8 +279,6 @@ public class ApiBaselineTests {
 	/**
 	 * Tests that a non-exported package is private. Component A does not export
 	 * package component.a.not.exported.
-	 *
-	 * @throws CoreException
 	 */
 	@Test
 	public void testNotExported() throws CoreException {
@@ -319,8 +293,6 @@ public class ApiBaselineTests {
 
 	/**
 	 * Tests component prerequisites.
-	 *
-	 * @throws CoreException
 	 */
 	@Test
 	public void testPrerequisites() throws CoreException {

@@ -171,7 +171,6 @@ public class ClasspathComputer {
 	 * {@code IClasspathEntry#CPE_SOURCE source classpath-entries} that are all
 	 * marked as {@code IClasspathAttribute#TEST test sources}.
 	 *
-	 * @param project
 	 * @return true if the given project is a test java project
 	 */
 	public static boolean hasTestOnlyClasspath(IProject project) {

@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.ListenerList;
 
 /**
  * SimpleCSCommandManager
- *
  */
 public class SimpleCSCommandManager {
 

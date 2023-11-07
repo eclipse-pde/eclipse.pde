@@ -242,9 +242,6 @@ public class ArgumentsSection extends PDESection {
 		}
 	}
 
-	/**
-	 * @param event
-	 */
 	private void handleModelEventWorldChanged(IModelChangedEvent event) {
 		refresh();
 	}

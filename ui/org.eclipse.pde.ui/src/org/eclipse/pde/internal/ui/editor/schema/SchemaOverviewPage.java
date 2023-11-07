@@ -107,9 +107,6 @@ public class SchemaOverviewPage extends PDEFormPage {
 		};
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createUIImageHyperlinkPreviewRefDoc(Composite parent) {
 		fImageHyperlinkPreviewRefDoc = new ImageHyperlink(parent, SWT.NONE);
 		fImageHyperlinkPreviewRefDoc.setText(PDEUIMessages.SchemaEditor_previewLink);
@@ -117,9 +114,6 @@ public class SchemaOverviewPage extends PDEFormPage {
 		fImageHyperlinkPreviewRefDoc.setForeground(getManagedForm().getToolkit().getHyperlinkGroup().getForeground());
 	}
 
-	/**
-	 *
-	 */
 	private void createUIListenerImageHyperlinkPreviewRefDoc() {
 		fImageHyperlinkPreviewRefDoc.addHyperlinkListener(new IHyperlinkListener() {
 			@Override
@@ -139,9 +133,6 @@ public class SchemaOverviewPage extends PDEFormPage {
 		});
 	}
 
-	/**
-	 * @param message
-	 */
 	private void handleLinkEnteredPreviewRefDoc(String message) {
 		// Update colour
 		fImageHyperlinkPreviewRefDoc.setForeground(getManagedForm().getToolkit().getHyperlinkGroup().getActiveForeground());
@@ -149,9 +140,6 @@ public class SchemaOverviewPage extends PDEFormPage {
 		getEditor().getEditorSite().getActionBars().getStatusLineManager().setMessage(message);
 	}
 
-	/**
-	 *
-	 */
 	private void handleLinkExitedPreviewRefDoc() {
 		// Update colour
 		fImageHyperlinkPreviewRefDoc.setForeground(getManagedForm().getToolkit().getHyperlinkGroup().getForeground());
@@ -159,9 +147,6 @@ public class SchemaOverviewPage extends PDEFormPage {
 		getEditor().getEditorSite().getActionBars().getStatusLineManager().setMessage(null);
 	}
 
-	/**
-	 *
-	 */
 	private void handleLinkActivatedPreviewRefDoc() {
 		ISchema schema = (ISchema) ((SchemaEditor) getEditor()).getAggregateModel();
 		if (fPreviewAction == null) {

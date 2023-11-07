@@ -122,8 +122,6 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 	/**
 	 * Computes all of the Javadoc completion proposals
 	 *
-	 * @param jcontext
-	 * @param corecontext
 	 * @return the complete list of Javadoc completion proposals or an empty
 	 *         list, never <code>null</code>
 	 * @since 1.0.500
@@ -195,7 +193,6 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 	 * to ensure the visibility is computed equally.
 	 *
 	 * @see TagValidator
-	 * @param element
 	 * @return <code>true</code> if the given element is visible
 	 *         <code>false</code> otherwise
 	 * @throws JavaModelException if a model lookup fails
@@ -289,7 +286,6 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 	 *
 	 * @param element java element
 	 * @return TYPE_INTERFACE, TYPE_CLASS, TYPE_ENUM, TYPE_ANNOTATION or -1
-	 * @throws JavaModelException
 	 */
 	private int getType(IJavaElement element) throws JavaModelException {
 		IJavaElement lelement = element;
@@ -312,11 +308,6 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 	/**
 	 * Collects the existing tags on the {@link IJavaElement} we have been
 	 * activated on
-	 *
-	 * @param element
-	 * @param jcontext
-	 * @throws JavaModelException
-	 * @throws BadLocationException
 	 */
 	private void collectExistingTags(IJavaElement element, JavaContentAssistInvocationContext jcontext) throws JavaModelException {
 		if (element instanceof IMember) {
@@ -357,9 +348,6 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 	 * Determines if the specified completion applies to the current offset
 	 * context in the document
 	 *
-	 * @param document
-	 * @param completiontext
-	 * @param offset
 	 * @return true if the completion applies, false otherwise
 	 */
 	private boolean appliesToContext(IDocument document, String completiontext, int tokenstart, int length) {

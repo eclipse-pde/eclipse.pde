@@ -58,7 +58,6 @@ import org.osgi.framework.Bundle;
 
 /**
  * TemplateFileGenerator
- *
  */
 public class TemplateFileGenerator implements IVariableProvider {
 
@@ -105,10 +104,6 @@ public class TemplateFileGenerator implements IVariableProvider {
 
 	private final String fTemplate;
 
-	/**
-	 * @param project
-	 * @param model
-	 */
 	public TemplateFileGenerator(IProject project, IPluginModelBase model, String pluginID, String targetPackage, String targetClass, String template) {
 		fProject = project;
 		fModel = model;
@@ -426,7 +421,6 @@ public class TemplateFileGenerator implements IVariableProvider {
 	 *            progress monitor to use
 	 * @return source folder that will be used to generate Java files or
 	 *         <samp>null </samp> if none found.
-	 * @throws CoreException
 	 */
 
 	protected IFolder getSourceFolder(IProgressMonitor monitor) throws CoreException {

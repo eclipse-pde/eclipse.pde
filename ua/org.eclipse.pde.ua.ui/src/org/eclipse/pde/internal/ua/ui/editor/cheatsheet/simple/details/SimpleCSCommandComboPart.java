@@ -124,7 +124,6 @@ public class SimpleCSCommandComboPart extends ComboPart implements ISimpleCSComm
 	 * Specify the index to insert the new command key into the combo box
 	 * reciever.  Applicable to new command keys obtained via new command key
 	 * events (Source: other combo boxes).
-	 * @param newCommandKeyIndex
 	 */
 	public void setNewCommandKeyIndex(int newCommandKeyIndex) {
 		fNewCommandKeyIndex = newCommandKeyIndex;

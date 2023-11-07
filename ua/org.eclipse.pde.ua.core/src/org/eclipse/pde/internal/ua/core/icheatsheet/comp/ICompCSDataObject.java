@@ -16,7 +16,6 @@ package org.eclipse.pde.internal.ua.core.icheatsheet.comp;
 
 /**
  * ICompCSDataObject
- *
  */
 public interface ICompCSDataObject extends ICompCSObject {
 
@@ -27,7 +26,6 @@ public interface ICompCSDataObject extends ICompCSObject {
 
 	/**
 	 * PCDATA
-	 *
 	 */
 	public String getFieldContent();
 

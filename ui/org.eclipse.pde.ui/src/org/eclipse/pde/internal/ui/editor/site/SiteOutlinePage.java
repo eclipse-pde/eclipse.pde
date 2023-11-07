@@ -33,9 +33,6 @@ import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 public class SiteOutlinePage extends FormOutlinePage {
 	private LabelProvider fLabelProvider;
 
-	/**
-	 * @param editor
-	 */
 	public SiteOutlinePage(PDEFormEditor editor) {
 		super(editor);
 	}
