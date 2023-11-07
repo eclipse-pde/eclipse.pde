@@ -36,7 +36,7 @@ public class SizeFilter implements IFilter {
 
 	@Override
 	public boolean accept(final ImageElement element) {
-
+		
 
 		boolean accept = switch (mWidthType) {
 			case TYPE_EXACT -> element.getImageData().width == mWidth;
