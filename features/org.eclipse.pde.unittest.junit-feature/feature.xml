@@ -35,6 +35,9 @@
 
    <plugin
          id="org.eclipse.pde.unittest.junit"
-         version="0.0.0"/>
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>
