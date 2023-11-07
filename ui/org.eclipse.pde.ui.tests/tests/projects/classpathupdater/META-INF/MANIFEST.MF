@@ -7,3 +7,5 @@ Bundle-ClassPath: library.jar,
  A.jar,
  .
 Require-Bundle: org.eclipse.pde.core
+Bundle-RequiredExecutionEnvironment: 
+ JavaSE-17
