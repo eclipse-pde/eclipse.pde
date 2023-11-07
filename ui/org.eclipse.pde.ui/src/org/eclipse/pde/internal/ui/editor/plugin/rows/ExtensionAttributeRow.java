@@ -115,9 +115,6 @@ public abstract class ExtensionAttributeRow implements IControlHoverContentProvi
 		PDETextHover.addHoverListenerToControl(fIC, label, this);
 	}
 
-	/**
-	 * @param control
-	 */
 	protected void createTextHover(Control control) {
 		fIC = PDETextHover.getInformationControlCreator().createInformationControl(control.getShell());
 		fIC.setSizeConstraints(300, 600);
@@ -166,11 +163,6 @@ public abstract class ExtensionAttributeRow implements IControlHoverContentProvi
 		return null;
 	}
 
-	/**
-	 * @param parent
-	 * @param toolkit
-	 * @param span
-	 */
 	public void createContents(Composite parent, FormToolkit toolkit, int span) {
 		createTextHover(parent);
 	}

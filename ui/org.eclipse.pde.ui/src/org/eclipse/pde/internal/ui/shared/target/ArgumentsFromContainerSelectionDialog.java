@@ -45,7 +45,6 @@ import org.eclipse.ui.PlatformUI;
 /**
  * A dialog where the user can select arguments provided by installation (profile) containers in
  * the target.  At least one argument must be selected to enable the OK button.
- *
  */
 public class ArgumentsFromContainerSelectionDialog extends TrayDialog {
 

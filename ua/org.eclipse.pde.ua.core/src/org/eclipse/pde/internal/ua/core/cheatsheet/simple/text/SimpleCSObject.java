@@ -32,10 +32,6 @@ public abstract class SimpleCSObject extends DocumentObject implements
 
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * @param model
-	 * @param tagName
-	 */
 	public SimpleCSObject(ISimpleCSModel model, String tagName) {
 		super(model, tagName);
 	}

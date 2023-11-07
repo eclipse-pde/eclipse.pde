@@ -35,7 +35,6 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
  * InternationlizeWizard instance.
  *
  * @author Team Azure
- *
  */
 public class InternationalizeOperation implements IRunnableWithProgress {
 
@@ -92,7 +91,6 @@ public class InternationalizeOperation implements IRunnableWithProgress {
 
 	/**
 	 *
-	 * @param project
 	 * @return whether or not the project was preselected
 	 */
 	public boolean selected(IProject project) {

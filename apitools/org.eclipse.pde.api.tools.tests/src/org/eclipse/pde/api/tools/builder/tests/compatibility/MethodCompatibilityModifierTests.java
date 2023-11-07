@@ -63,7 +63,6 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	 * Returns a problem id for a compatibility change to a class based on the
 	 * specified flags.
 	 *
-	 * @param flags
 	 * @return problem id
 	 */
 	protected int getChangedProblemId(int flags) {
@@ -78,7 +77,6 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	 * Returns a problem id for a compatibility addition to a class based on the
 	 * specified flags.
 	 *
-	 * @param flags
 	 * @return problem id
 	 */
 	protected int getAddedProblemId(int flags) {

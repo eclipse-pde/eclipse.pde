@@ -29,7 +29,6 @@ import org.eclipse.ui.IEditorLauncher;
 
 /**
  * SchemaPreviewLauncher
- *
  */
 public class SchemaPreviewLauncher implements IEditorLauncher {
 
@@ -60,9 +59,6 @@ public class SchemaPreviewLauncher implements IEditorLauncher {
 		}
 	}
 
-	/**
-	 * @param file
-	 */
 	private void handleUnsavedOpenSchemaEditor(IFile file) {
 		// Get the open schema editor with the specified underlying file
 		// (if there is any)

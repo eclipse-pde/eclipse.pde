@@ -82,10 +82,6 @@ public class XMLInsertionComputer {
 	 * In essence, we auto-generate the child element when none should have
 	 * been.
 	 * See Bug # 162379 for details.
-	 * @param sElement
-	 * @param pElement
-	 * @param visited
-	 * @throws CoreException
 	 */
 	protected static void computeInsertionZeroElementEdgeCase(ISchemaElement sElement, IPluginParent pElement, HashSet<String> visited) throws CoreException {
 		// We can make a variety of assumptions because of the single zero
@@ -223,9 +219,6 @@ public class XMLInsertionComputer {
 	/**
 	 * Important: Element is created but not added as a child to the plug-in
 	 * parent.  Callers responsibility to add the child element to the parent.
-	 * @param pElement
-	 * @param schemaElement
-	 * @throws CoreException
 	 */
 	protected static IPluginElement createElement(IPluginParent pElement, ISchemaElement schemaElement) throws CoreException {
 		IPluginElement childElement = pElement.getModel().getFactory().createElement(pElement);

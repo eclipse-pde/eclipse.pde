@@ -190,10 +190,6 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager<IPluginMo
 		}
 	}
 
-	/**
-	 * @param schemaFile
-	 * @param delta
-	 */
 	private void handleEclipseSchemaDelta(IFile schemaFile, IResourceDelta delta) {
 		// Get the kind of resource delta
 		int kind = delta.getKind();
@@ -242,11 +238,6 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager<IPluginMo
 		}
 	}
 
-	/**
-	 * @param schemaPreviewFile
-	 * @param schema
-	 * @throws IOException
-	 */
 	private void recreateSchemaPreviewFileContents(File schemaPreviewFile, ISchema schema) throws IOException {
 		SchemaTransformer transformer = new SchemaTransformer();
 		try (OutputStream os = new FileOutputStream(schemaPreviewFile)) {
@@ -476,7 +467,6 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager<IPluginMo
 	 *
 	 * @return <code>true</code> if the folder (and its children) is of interest to PDE;
 	 * <code>false</code> otherwise.
-	 *
 	 */
 	@Override
 	protected boolean isInterestingFolder(IFolder folder) {

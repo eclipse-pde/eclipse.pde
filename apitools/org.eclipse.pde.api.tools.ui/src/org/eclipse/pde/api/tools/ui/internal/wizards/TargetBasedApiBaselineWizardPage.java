@@ -78,8 +78,6 @@ public class TargetBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 
 		/**
 		 * Constructor
-		 *
-		 * @param platformPath
 		 */
 		public ReloadTargetOperation(ITargetDefinition definition, String name) {
 			this.definition = definition;

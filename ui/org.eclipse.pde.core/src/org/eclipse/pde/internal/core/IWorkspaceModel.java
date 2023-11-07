@@ -18,13 +18,9 @@ import org.eclipse.pde.core.IEditableModel;
 
 /**
  * IWorkspaceModel
- *
  */
 public interface IWorkspaceModel extends IEditableModel {
 
-	/**
-	 *
-	 */
 	public void reload();
 
 }

@@ -180,7 +180,6 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 	 * @param productFileLocation   - the location of a .product file (can be null)
 	 * @param versionAdvice			- version advice (can be null)
 	 * @return The location of the generated script, or null
-	 * @throws CoreException
 	 */
 	public static String generateP2ProductScript(String workingDir, String productFileLocation, Properties versionAdvice) throws CoreException {
 		if (!loadP2Class())

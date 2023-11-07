@@ -74,8 +74,6 @@ public class DirectoryBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 
 		/**
 		 * Constructor
-		 *
-		 * @param platformPath
 		 */
 		public ReloadOperation(String name, String location) {
 			this.location = location;
@@ -117,8 +115,6 @@ public class DirectoryBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 
 	/**
 	 * Constructor
-	 *
-	 * @param profile
 	 */
 	protected DirectoryBasedApiBaselineWizardPage(IApiBaseline profile) {
 		super(profile);

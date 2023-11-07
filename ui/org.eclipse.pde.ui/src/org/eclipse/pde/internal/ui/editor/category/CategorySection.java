@@ -840,7 +840,6 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 	 * feature is not found, but feature with a M.m.s.qualifier exists it will
 	 * be returned.
 	 *
-	 * @param siteFeature
 	 * @return IFeature or null
 	 */
 	private IFeature findFeature(ISiteFeature siteFeature) {

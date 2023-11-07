@@ -140,11 +140,6 @@ public class GetNonExternalizedStringsOperation implements IRunnableWithProgress
 		}, monitor);
 	}
 
-	/**
-	 * @param model
-	 * @param monitor
-	 * @throws CoreException
-	 */
 	private void inspectManifest(IBundlePluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		IFile manifestFile = (IFile) model.getBundleModel().getUnderlyingResource();
 		IBundle bundle = model.getBundleModel().getBundle();
@@ -155,11 +150,6 @@ public class GetNonExternalizedStringsOperation implements IRunnableWithProgress
 		}
 	}
 
-	/**
-	 * @param model
-	 * @param monitor
-	 * @throws CoreException
-	 */
 	private void inspectXML(IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		IFile file;
 		if (model instanceof IBundlePluginModelBase) {

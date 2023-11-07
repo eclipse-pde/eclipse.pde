@@ -400,8 +400,6 @@ public class PDEJavaHelper {
 	/**
 	 * Precedence order from high to low:  (1) Project specific option;
 	 * (2) General preference option; (3) Default option; (4) Java 1.3
-	 * @param project
-	 * @param optionName
 	 */
 	public static String getJavaLevel(IProject project, String optionName) {
 		// Returns the corresponding java project

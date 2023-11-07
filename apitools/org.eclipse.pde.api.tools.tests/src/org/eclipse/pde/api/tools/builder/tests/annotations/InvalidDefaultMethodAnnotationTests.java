@@ -24,9 +24,6 @@ import junit.framework.Test;
  */
 public class InvalidDefaultMethodAnnotationTests extends MethodAnnotationTest {
 
-	/**
-	 * @param name
-	 */
 	public InvalidDefaultMethodAnnotationTests(String name) {
 		super(name);
 	}

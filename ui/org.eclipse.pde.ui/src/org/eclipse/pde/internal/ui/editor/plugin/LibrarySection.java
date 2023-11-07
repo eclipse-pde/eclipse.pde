@@ -743,9 +743,6 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 		return true;
 	}
 
-	/**
-	 * @param sourceObjects
-	 */
 	private boolean validateDragMoveSanity(Object[] sourceObjects) {
 		// Validate source
 		if (sourceObjects == null) {
@@ -800,10 +797,6 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 		return false;
 	}
 
-	/**
-	 * @param targetObject
-	 * @param sourceObjects
-	 */
 	private boolean validateDropMoveSanity(Object targetObject, Object[] sourceObjects) {
 		// Validate target object
 		if ((targetObject instanceof IPluginLibrary) == false) {
@@ -816,10 +809,6 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 		return true;
 	}
 
-	/**
-	 * @param sourcePluginLibrary
-	 * @param targetPluginLibrary
-	 */
 	private boolean validateDropMoveModel(IPluginLibrary sourcePluginLibrary, IPluginLibrary targetPluginLibrary) {
 		// Objects have to be from the same model
 		ISharedPluginModel sourceModel = sourcePluginLibrary.getModel();
@@ -851,11 +840,6 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 		}
 	}
 
-	/**
-	 * @param sourcePluginLibrary
-	 * @param targetPluginLibrary
-	 * @param targetLocation
-	 */
 	private void doDropMove(IPluginLibrary sourcePluginLibrary, IPluginLibrary targetPluginLibrary, int targetLocation) {
 		// Remove the original source object
 		// Normally we remove the original source object after inserting the
@@ -892,9 +876,6 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 		}
 	}
 
-	/**
-	 *
-	 */
 	private void doDragRemove() {
 		// Get the bundle plug-in base
 		BundlePluginBase bundlePluginBase = (BundlePluginBase) getModel().getPluginBase();

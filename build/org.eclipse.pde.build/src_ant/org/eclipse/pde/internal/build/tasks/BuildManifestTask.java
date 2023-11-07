@@ -79,10 +79,6 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 		}
 	}
 
-	/**
-	 * 
-	 * @param output
-	 */
 	protected void generatePrologue(PrintWriter output) {
 		output.print("# Build Manifest for "); //$NON-NLS-1$
 		output.println(buildName);
@@ -138,11 +134,6 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 		return buildType;
 	}
 
-	/**
-	 * 
-	 * @param output
-	 * @param entries
-	 */
 	protected void generateEntries(PrintWriter output, List<String> entries) {
 		Collections.sort(entries);
 		for (String entry : entries) {
@@ -177,12 +168,6 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 		}
 	}
 
-	/**
-	 * 
-	 * @param entries
-	 * @param feature
-	 * @throws CoreException
-	 */
 	protected void collectChildrenEntries(List<String> entries, BuildTimeFeature feature) throws CoreException {
 		FeatureEntry[] pluginEntries = feature.getPluginEntries();
 		for (FeatureEntry pluginEntry : pluginEntries) {
@@ -196,9 +181,7 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 
 	/**
 	 * 
-	 * @param element
 	 * @return Feature
-	 * @throws CoreException
 	 */
 	protected BuildTimeFeature readFeature(String element) throws CoreException {
 		IPath root = IPath.fromOSString(installLocation);
@@ -236,18 +219,10 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 		}
 	}
 
-	/**
-	 * 
-	 * @param directory
-	 */
 	public void setDirectory(String directory) {
 		directoryLocation = directory;
 	}
 
-	/**
-	 * 
-	 * @param value
-	 */
 	public void setElements(String value) {
 		elements = Utils.getArrayFromString(value);
 	}
@@ -266,10 +241,6 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 		this.children = children;
 	}
 
-	/**
-	 * 
-	 * @param value
-	 */
 	public void setBuildName(String value) {
 		buildName = value;
 	}

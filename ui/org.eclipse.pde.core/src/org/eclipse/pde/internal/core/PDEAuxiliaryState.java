@@ -102,7 +102,6 @@ public class PDEAuxiliaryState {
 	/**
 	 * Helper method to create a plugin info object for the given
 	 * element.  The plugin info object is added to the map.
-	 * @param element
 	 */
 	private void createPluginInfo(Element element) {
 		PluginInfo info = new PluginInfo();

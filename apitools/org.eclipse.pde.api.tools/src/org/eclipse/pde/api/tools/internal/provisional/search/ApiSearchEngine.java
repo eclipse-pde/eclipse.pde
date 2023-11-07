@@ -126,12 +126,8 @@ public final class ApiSearchEngine {
 	/**
 	 * Returns the set of resolved references for the given {@link IApiType}
 	 *
-	 * @param requestor
-	 * @param type
-	 * @param monitor
 	 * @return The listing of resolved references from the given
 	 *         {@link IApiType}
-	 * @throws CoreException
 	 */
 	List<IReference> getResolvedReferences(IApiSearchRequestor requestor, IApiType type, IProgressMonitor monitor) throws CoreException {
 		String name = type.getSimpleName() == null ? SearchMessages.ApiSearchEngine_anonymous_type : type.getSimpleName();
@@ -144,13 +140,6 @@ public final class ApiSearchEngine {
 	/**
 	 * Runs the given list of references through the search requestor to
 	 * determine if they should be kept or not
-	 *
-	 * @param requestor
-	 * @param type
-	 * @param references
-	 * @param monitor
-	 * @return
-	 * @throws CoreException
 	 */
 	List<IReference> acceptReferences(IApiSearchRequestor requestor, IApiType type, List<IReference> references, IProgressMonitor monitor) throws CoreException {
 		ArrayList<IReference> refs = new ArrayList<>();
@@ -179,14 +168,10 @@ public final class ApiSearchEngine {
 	 * Searches for all accepted {@link IReference}s from the given
 	 * {@link IApiElement}
 	 *
-	 * @param requestor
-	 * @param element
 	 * @param reporter search reporter to output xml results as references are
 	 *            found
-	 * @param monitor
 	 * @return the collection of accepted {@link IReference}s or an empty list,
 	 *         never <code>null</code>
-	 * @throws CoreException
 	 */
 	private void searchReferences(IApiSearchRequestor requestor, IApiElement element, IApiSearchReporter reporter, IProgressMonitor monitor) throws CoreException {
 		List<IReference> refs = null;
@@ -302,7 +287,6 @@ public final class ApiSearchEngine {
 	/**
 	 * Computes the process context (label)
 	 *
-	 * @param requestor
 	 * @return the label describing the process for the progress monitor
 	 */
 	String computeContext(IApiSearchRequestor requestor) {

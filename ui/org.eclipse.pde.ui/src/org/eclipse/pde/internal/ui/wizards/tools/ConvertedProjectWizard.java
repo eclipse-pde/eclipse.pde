@@ -25,7 +25,6 @@ import org.eclipse.pde.internal.ui.wizards.NewWizard;
 /**
  * Wizard to convert one or more java projects into plug-in projects by creating
  * the basic bundle files and setting the plug-in nature.
- *
  */
 public class ConvertedProjectWizard extends NewWizard {
 

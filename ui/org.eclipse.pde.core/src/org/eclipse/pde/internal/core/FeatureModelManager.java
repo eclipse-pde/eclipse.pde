@@ -171,7 +171,6 @@ public class FeatureModelManager {
 	/**
 	 * Finds active model with a given id and version
 	 *
-	 * @param id
 	 * @param version version number to find, newest version is returned for empty version.
 	 * @return one IFeature model or null
 	 */
@@ -197,8 +196,6 @@ public class FeatureModelManager {
 	 * found, but a feature with qualifier set to qualifier exists it will be
 	 * returned.
 	 *
-	 * @param id
-	 * @param version
 	 * @return IFeatureModel or null
 	 */
 	public IFeatureModel findFeatureModelRelaxed(String id, String version) {
@@ -221,7 +218,6 @@ public class FeatureModelManager {
 	/**
 	 * Finds active models with a given id
 	 *
-	 * @param id
 	 * @return IFeature model[]
 	 */
 	public IFeatureModel[] findFeatureModels(String id) {
@@ -381,10 +377,6 @@ public class FeatureModelManager {
 		return delta;
 	}
 
-	/**
-	 * @param delta
-	 * @param affectedIdVers
-	 */
 	private void adjustExternalVisibility(FeatureModelDelta delta, Set<Idver> affectedIdVers) {
 		if (affectedIdVers != null) {
 			for (final Idver idver : affectedIdVers) {

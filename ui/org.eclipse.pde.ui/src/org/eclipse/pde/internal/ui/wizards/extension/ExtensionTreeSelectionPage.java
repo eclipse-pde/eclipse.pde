@@ -28,18 +28,10 @@ import org.eclipse.pde.ui.IBasePluginWizard;
 import org.eclipse.pde.ui.IExtensionWizard;
 import org.eclipse.pde.ui.templates.ITemplateSection;
 
-/**
- *
- */
 public class ExtensionTreeSelectionPage extends WizardTreeSelectionPage {
 	private IProject fProject;
 	private IPluginBase fPluginBase;
 
-	/**
-	 * @param categories
-	 * @param baseCategory
-	 * @param message
-	 */
 	public ExtensionTreeSelectionPage(WizardCollectionElement categories, String baseCategory, String message) {
 		super(categories, baseCategory, message);
 	}

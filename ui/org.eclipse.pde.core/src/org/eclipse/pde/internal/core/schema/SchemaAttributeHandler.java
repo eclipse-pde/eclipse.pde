@@ -18,7 +18,6 @@ import org.xml.sax.SAXException;
 
 /**
  * AttributeDescriptionHandler
- *
  */
 public class SchemaAttributeHandler extends BaseSchemaHandler {
 
@@ -37,9 +36,6 @@ public class SchemaAttributeHandler extends BaseSchemaHandler {
 
 	private final static String NAME_ATTR = "name"; //$NON-NLS-1$
 
-	/**
-	 *
-	 */
 	public SchemaAttributeHandler(String targetElementName, String targetAttributeName) {
 		super();
 		setTargetElementName(targetElementName);

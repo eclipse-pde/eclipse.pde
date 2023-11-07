@@ -36,8 +36,6 @@ public class ArchivePatternPage extends UsePatternPage {
 
 	/**
 	 * Constructor
-	 *
-	 * @param pattern
 	 */
 	protected ArchivePatternPage(String pattern) {
 		super(PAGE_NAME, Messages.ArchivePatternPage_nested_archive_pattern, null);

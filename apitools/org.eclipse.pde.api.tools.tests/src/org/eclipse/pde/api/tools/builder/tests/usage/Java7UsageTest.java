@@ -92,7 +92,6 @@ public abstract class Java7UsageTest extends ApiBuilderTest {
 	 * This method assumes that the reference and testing project have been
 	 * imported into the workspace already.
 	 *
-	 * @param sourcename
 	 * @param inc if an incremental build should be done
 	 */
 	protected void deployUsageTest(String typename, boolean inc) {
@@ -123,8 +122,6 @@ public abstract class Java7UsageTest extends ApiBuilderTest {
 
 	/**
 	 * Collects tests from the getAllTestClasses() method into the given suite
-	 *
-	 * @param suite
 	 */
 	private static void collectTests(TestSuite suite) {
 		// Hack to load all classes before computing their suite of test cases

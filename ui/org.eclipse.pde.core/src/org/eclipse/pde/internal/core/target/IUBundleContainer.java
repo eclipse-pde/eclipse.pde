@@ -438,7 +438,6 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * @param metadata the metadata backing the conversion
 	 * @param artifacts the underlying artifact repo against which the bundles are validated
 	 * @return map of BundleInfo to IResolvedBundle
-	 * @throws CoreException
 	 */
 	private Map<BundleInfo, TargetBundle> generateResolvedBundles(IQueryable<IInstallableUnit> source, IQueryable<IInstallableUnit> metadata, IFileArtifactRepository artifacts) throws CoreException {
 		OSGiBundleQuery query = new OSGiBundleQuery();

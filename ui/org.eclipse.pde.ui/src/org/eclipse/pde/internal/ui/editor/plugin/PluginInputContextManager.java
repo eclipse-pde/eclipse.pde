@@ -36,9 +36,6 @@ import org.eclipse.ui.forms.IFormPart;
 public class PluginInputContextManager extends InputContextManager {
 	private BundlePluginModelBase bmodel;
 
-	/**
-	 *
-	 */
 	public PluginInputContextManager(PDEFormEditor editor) {
 		super(editor);
 	}

@@ -24,20 +24,12 @@ import org.eclipse.swt.widgets.Composite;
 public class BasePluginListPage extends WizardPage {
 	protected WizardCheckboxTreePart treePart;
 
-	/**
-	 * @param pageName
-	 */
 	public BasePluginListPage(String pageName) {
 		super(pageName);
 		treePart = new WizardCheckboxTreePart(null);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
-	/**
-	 * @param pageName
-	 * @param title
-	 * @param titleImage
-	 */
 	public BasePluginListPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
 		treePart = new WizardCheckboxTreePart(null);

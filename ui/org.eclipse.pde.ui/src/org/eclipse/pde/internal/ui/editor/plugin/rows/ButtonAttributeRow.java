@@ -28,14 +28,9 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 
 /**
  * ButtonAttributeRow
- *
  */
 public abstract class ButtonAttributeRow extends ReferenceAttributeRow {
 
-	/**
-	 * @param part
-	 * @param att
-	 */
 	public ButtonAttributeRow(IContextPart part, ISchemaAttribute att) {
 		super(part, att);
 	}

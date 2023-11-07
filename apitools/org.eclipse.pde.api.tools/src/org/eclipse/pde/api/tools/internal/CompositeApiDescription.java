@@ -35,8 +35,6 @@ public class CompositeApiDescription implements IApiDescription {
 
 	/**
 	 * Constructs a composite API description out of the given descriptions.
-	 *
-	 * @param descriptions
 	 */
 	public CompositeApiDescription(IApiDescription[] descriptions) {
 		fDescriptions = descriptions;

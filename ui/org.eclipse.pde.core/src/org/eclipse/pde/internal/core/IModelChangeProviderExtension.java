@@ -15,9 +15,6 @@ package org.eclipse.pde.internal.core;
 
 import org.eclipse.pde.core.IModelChangeProvider;
 
-/**
- *
- */
 public interface IModelChangeProviderExtension extends IModelChangeProvider {
 	/**
 	 * Passes all the listeners to the target change provider.

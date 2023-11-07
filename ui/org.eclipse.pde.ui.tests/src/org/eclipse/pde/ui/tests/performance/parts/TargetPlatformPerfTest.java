@@ -62,7 +62,6 @@ import org.osgi.framework.Version;
  * The example target used in these tests consists of 1000 simple bundles only containing a manifest.  They
  * were generated using {@link TestBundleCreator} and have increasing numbers of required bundles specified in
  * the manifest (ex TestBundle_100 has required bundles of TestBundle_1 to TestBundle_99).
- *
  */
 public class TargetPlatformPerfTest extends PerformanceTestCase {
 
@@ -257,7 +256,6 @@ public class TargetPlatformPerfTest extends PerformanceTestCase {
 	 *
 	 * @param location path in the local file system
 	 * @param archivePath path to archive relative to the test plug-in
-	 * @throws IOException
 	 */
 	private static IPath doUnZip(IPath location, String archivePath) throws IOException {
 		URL zipURL = PDETestsPlugin.getBundleContext().getBundle().getEntry(archivePath);

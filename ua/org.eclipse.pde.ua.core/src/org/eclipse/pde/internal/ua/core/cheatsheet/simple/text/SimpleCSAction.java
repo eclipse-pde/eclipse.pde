@@ -31,9 +31,6 @@ public class SimpleCSAction extends SimpleCSRunObject implements
 	// TODO: MP: TEO: MED: Verify translate of paramaters on write is okay - no
 	// translate before
 
-	/**
-	 * @param model
-	 */
 	public SimpleCSAction(ISimpleCSModel model) {
 		super(model, ELEMENT_ACTION);
 	}

@@ -35,7 +35,6 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
  * Command handler to run the organize manifests operation.
- *
  */
 public class OrganizeManifestsAction extends AbstractHandler {
 

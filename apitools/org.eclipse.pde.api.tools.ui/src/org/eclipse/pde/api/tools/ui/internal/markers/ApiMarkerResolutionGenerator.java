@@ -134,8 +134,6 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 
 	/**
 	 * resolves the {@link IApiProblemFilter} for the given marker
-	 *
-	 * @param marker
 	 */
 	static IApiProblemFilter resolveFilter(IMarker marker) {
 		try {
