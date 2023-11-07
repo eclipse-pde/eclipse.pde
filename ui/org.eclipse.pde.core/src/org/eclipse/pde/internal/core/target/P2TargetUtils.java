@@ -1416,23 +1416,33 @@ public class P2TargetUtils {
 				result.addAll(getArtifactRepositories(referencedTargetDefinition));
 			}
 		}
+		if (useAdditionalLocalArtifacts()) {
+			// get all the artifact repos we know in the manager currently
+			result.addAll(Arrays.asList(manager.getKnownRepositories(IRepositoryManager.REPOSITORIES_ALL)));
 
-		// get all the local artifact repos we know in the manager currently
-		result.addAll(Arrays.asList(manager.getKnownRepositories(IRepositoryManager.REPOSITORIES_LOCAL)));
-
-		if (Boolean.parseBoolean(System.getProperty("pde.usePoolsInfo", "true"))) { //$NON-NLS-1$ //$NON-NLS-2$
-			try {
-				result.addAll(RepositoryHelper.getSharedBundlePools().stream().map(Path::toUri).toList());
-			} catch (Exception e) {
-				//$FALL-THROUGH$
+			if (Boolean.parseBoolean(System.getProperty("pde.usePoolsInfo", "true"))) { //$NON-NLS-1$ //$NON-NLS-2$
+				try {
+					result.addAll(RepositoryHelper.getSharedBundlePools().stream().map(Path::toUri).toList());
+				} catch (Exception e) {
+					//$FALL-THROUGH$
+				}
 			}
+
+			// Add in the IDE profile bufindProfileReposndle pool and all known
+			// workspaces
+			findProfileRepos(result);
+			findWorkspaceRepos(result);
 		}
-
-		// Add in the IDE profile bundle pool and all known workspaces
-		findProfileRepos(result);
-		findWorkspaceRepos(result);
-
 		return result;
+	}
+
+	/**
+	 * return whether or not to use local artifact repositories when provisioning the target
+	 */
+	private boolean useAdditionalLocalArtifacts() {
+		// XXX consider using a preference here or another strategy if users are able to spec
+		// what local repos are to be considered.
+		return true;
 	}
 
 	/**
