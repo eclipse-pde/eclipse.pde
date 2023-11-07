@@ -26,6 +26,7 @@
     <defaultSigning-excludeInnerJars>true</defaultSigning-excludeInnerJars>
   	<testSuite>${project.artifactId}</testSuite>
   	<testClass>org.eclipse.pde.ui.tests.AllPDETests</testClass>
+  	<surefire.testArgLine>-DDetectVMInstallationsJob.disabled=true</surefire.testArgLine>
   </properties>
 
   <build>
