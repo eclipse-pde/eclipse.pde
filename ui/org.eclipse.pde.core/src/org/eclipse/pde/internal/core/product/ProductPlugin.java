@@ -18,6 +18,8 @@ package org.eclipse.pde.internal.core.product;
 
 import java.io.PrintWriter;
 
+import org.eclipse.pde.core.plugin.IFragmentModel;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
@@ -30,6 +32,12 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 	private String fId;
 	private String fVersion;
 
+	/**
+	 * Used to cache the fragment attribute value internally in order to not lose it in case the current
+	 * plugin/fragment is not in the target platform anymore (see bug 264462)
+	 */
+	private boolean fFragment;
+
 	public ProductPlugin(IProductModel model) {
 		super(model);
 	}
@@ -40,6 +48,8 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 			Element element = (Element) node;
 			fId = element.getAttribute("id"); //$NON-NLS-1$
 			fVersion = element.getAttribute("version"); //$NON-NLS-1$
+			String fragment = element.getAttribute("fragment"); //$NON-NLS-1$
+			fFragment = Boolean.parseBoolean(fragment);
 		}
 	}
 
@@ -49,6 +59,16 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 		if (fVersion != null && fVersion.length() > 0 && !fVersion.equals(ICoreConstants.DEFAULT_VERSION)) {
 			writer.print(" version=\"" + fVersion + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+
+		// If the plugin is a known fragment or has a cached fragment setting, mark it as a fragment
+		if (PluginRegistry.findModel(fId) != null) {
+			if (PluginRegistry.findModel(fId) instanceof IFragmentModel) {
+				writer.print(" fragment=\"" + Boolean.TRUE + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		} else if (fFragment) {
+			writer.print(" fragment=\"" + Boolean.TRUE + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+
 		writer.println("/>"); //$NON-NLS-1$
 	}
 
@@ -74,6 +94,16 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 		if (isEditable()) {
 			firePropertyChanged("version", old, fVersion); //$NON-NLS-1$
 		}
+	}
+
+	@Override
+	public boolean isFragment() {
+		return fFragment;
+	}
+
+	@Override
+	public void setFragment(boolean isFragment) {
+		fFragment = isFragment;
 	}
 
 }
