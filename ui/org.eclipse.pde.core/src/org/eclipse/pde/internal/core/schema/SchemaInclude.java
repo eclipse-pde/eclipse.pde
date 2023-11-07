@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core.schema;
 
 import java.io.PrintWriter;
+import java.util.Objects;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.PDECore;
@@ -23,6 +24,8 @@ import org.eclipse.pde.internal.core.ischema.ISchemaInclude;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 
 public class SchemaInclude extends SchemaObject implements ISchemaInclude {
+
+	private static final PathSchemaProvider DEFAULT_SCHEMA_PROVIDER = new PathSchemaProvider(null);
 
 	private static final long serialVersionUID = 1L;
 
@@ -57,7 +60,7 @@ public class SchemaInclude extends SchemaObject implements ISchemaInclude {
 		super(parent, location);
 		fLocation = location;
 		fAbbreviated = abbreviated;
-		this.schemaProvider = schemaProvider;
+		this.schemaProvider = Objects.requireNonNullElse(schemaProvider, DEFAULT_SCHEMA_PROVIDER);
 	}
 
 	/**
@@ -98,7 +101,7 @@ public class SchemaInclude extends SchemaObject implements ISchemaInclude {
 		if (fAbbreviated) {
 			SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
 			fIncludedSchema = registry.getIncludedSchema(descriptor, fLocation);
-		} else if (fIncludedSchema == null && schemaProvider != null) {
+		} else if (fIncludedSchema == null) {
 			fIncludedSchema = schemaProvider.createSchema(descriptor, fLocation);
 		}
 		return fIncludedSchema;
