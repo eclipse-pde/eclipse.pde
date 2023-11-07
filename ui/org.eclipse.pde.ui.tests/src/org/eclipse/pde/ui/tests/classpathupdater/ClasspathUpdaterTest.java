@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.classpathupdater;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -33,6 +34,7 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ClasspathComputer;
@@ -54,6 +56,9 @@ public class ClasspathUpdaterTest {
 	private static IClasspathEntry[] originalClasspath;
 	private static String originalTestPluginPattern;
 	private static Boolean expectIsTest;
+
+	private static final String JRE_CONTAINER = JavaRuntime.JRE_CONTAINER;
+
 	@ClassRule
 	public static final TestRule CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
 
@@ -88,7 +93,7 @@ public class ClasspathUpdaterTest {
 	@Test
 	public void test_PreserveAttributes() throws Exception {
 		runUpdateClasspathJob();
-		assertClasspathAttribute("JavaSE-17", IClasspathAttribute.MODULE, true, Boolean::valueOf);
+		IClasspathEntry jreEntry = assertClasspathAttribute(JRE_CONTAINER, IClasspathAttribute.MODULE, true, Boolean::valueOf);
 		assertClasspathAttribute("library.jar", IClasspathAttribute.TEST, true, Boolean::valueOf);
 		assertClasspathProperty("library.jar", "exported=true", e -> e.isExported());
 		assertClasspathProperty("library.jar", "no source", e -> e.getSourceAttachmentPath() == null);
@@ -102,7 +107,7 @@ public class ClasspathUpdaterTest {
 		assertClasspathProperty("tests", "exported=false", e -> !e.isExported());
 		assertClasspathAttribute("tests", IClasspathAttribute.IGNORE_OPTIONAL_PROBLEMS, null, Boolean::valueOf);
 		assertClasspathAttribute("tests", IClasspathAttribute.TEST, expectIsTest, Boolean::valueOf);
-		assertClasspathOrder("A.jar", "src", "org.eclipse.pde.core.requiredPlugins", "JavaSE-17", "SOMEVAR",
+		assertClasspathOrder("A.jar", "src", "org.eclipse.pde.core.requiredPlugins", jreEntry.getPath().lastSegment(), "SOMEVAR",
 				"library.jar", "tests");
 	}
 
@@ -117,7 +122,7 @@ public class ClasspathUpdaterTest {
 		jProject.setRawClasspath(new IClasspathEntry[0], null);
 
 		runUpdateClasspathJob();
-		assertClasspathAttribute("JavaSE-17", IClasspathAttribute.MODULE, null, Boolean::valueOf);
+		IClasspathEntry jreEntry = assertClasspathAttribute(JRE_CONTAINER, IClasspathAttribute.MODULE, null, Boolean::valueOf);
 		assertClasspathAttribute("library.jar", IClasspathAttribute.TEST, null, Boolean::valueOf);
 		assertClasspathProperty("library.jar", "exported=true", e -> e.isExported());
 		assertClasspathProperty("library.jar", "no source", e -> e.getSourceAttachmentPath() == null);
@@ -131,7 +136,7 @@ public class ClasspathUpdaterTest {
 		assertClasspathProperty("tests", "exported=false", e -> !e.isExported());
 		assertClasspathAttribute("tests", IClasspathAttribute.IGNORE_OPTIONAL_PROBLEMS, null, Boolean::valueOf);
 		assertClasspathAttribute("tests", IClasspathAttribute.TEST, expectIsTest, Boolean::valueOf);
-		assertClasspathOrder("JavaSE-17", "org.eclipse.pde.core.requiredPlugins", "library.jar", "A.jar", "src",
+		assertClasspathOrder(jreEntry.getPath().lastSegment(), "org.eclipse.pde.core.requiredPlugins", "library.jar", "A.jar", "src",
 				"tests");
 	}
 
@@ -152,7 +157,7 @@ public class ClasspathUpdaterTest {
 		IClasspathEntry[] cp = ClasspathComputer.getClasspath(project, model, sourceMap, false, false);
 		jProject.setRawClasspath(cp, null);
 
-		assertClasspathAttribute("JavaSE-17", IClasspathAttribute.MODULE, true, Boolean::valueOf);
+		IClasspathEntry jreEntry = assertClasspathAttribute(JRE_CONTAINER, IClasspathAttribute.MODULE, true, Boolean::valueOf);
 		assertClasspathAttribute("library.jar", IClasspathAttribute.TEST, true, Boolean::valueOf);
 		assertClasspathProperty("library.jar", "exported=true", e -> e.isExported());
 		assertClasspathProperty("library.jar", "overridden source",
@@ -167,7 +172,7 @@ public class ClasspathUpdaterTest {
 		assertClasspathProperty("tests", "exported=false", e -> !e.isExported());
 		assertClasspathAttribute("tests", IClasspathAttribute.IGNORE_OPTIONAL_PROBLEMS, null, Boolean::valueOf);
 		assertClasspathAttribute("tests", IClasspathAttribute.TEST, expectIsTest, Boolean::valueOf);
-		assertClasspathOrder("A.jar", "src", "org.eclipse.pde.core.requiredPlugins", "JavaSE-17", "SOMEVAR",
+		assertClasspathOrder("A.jar", "src", "org.eclipse.pde.core.requiredPlugins", jreEntry.getPath().lastSegment(), "SOMEVAR",
 				"library.jar", "tests");
 	}
 
@@ -185,7 +190,7 @@ public class ClasspathUpdaterTest {
 		assertTrue("Update Classpath Job failed: " + result, result.isOK());
 	}
 
-	private <T> void assertClasspathAttribute(String entryName, String attrName, T expectedValue,
+	private <T> IClasspathEntry assertClasspathAttribute(String entryName, String attrName, T expectedValue,
 			Function<String, T> parser) throws JavaModelException {
 		IClasspathEntry entry = findClasspathEntry(entryName);
 		assertNotNull("Classpath entry for " + entryName + " is missing", entry);
@@ -193,6 +198,7 @@ public class ClasspathUpdaterTest {
 		T current = attrValue != null ? parser.apply(attrValue) : null; // null: attribute not set
 		assertEquals("Classpath entry for '" + entry.getPath().lastSegment() + "': attribute '" + attrName
 				+ "' is not '" + expectedValue + "'", expectedValue, current);
+		return entry;
 	}
 
 	private String findClasspathAttributeValue(IClasspathEntry entry, String name) {
@@ -209,12 +215,19 @@ public class ClasspathUpdaterTest {
 
 	private void assertClasspathOrder(String... names) throws Exception {
 		var actualNames = Arrays.stream(jProject.getRawClasspath()).map(e -> e.getPath().lastSegment()).toList();
-		assertEquals(Arrays.asList(names), actualNames);
+		assertArrayEquals(Arrays.asList(names).toArray(), actualNames.toArray());
 	}
 
 	private IClasspathEntry findClasspathEntry(String name) throws JavaModelException {
-		Optional<IClasspathEntry> entry = Arrays.stream(jProject.getRawClasspath())
-				.filter(e -> name.equals(e.getPath().lastSegment())).findFirst();
+		Optional<IClasspathEntry> entry;
+		IClasspathEntry[] rawClasspath = jProject.getRawClasspath();
+		if (JRE_CONTAINER.equals(name)) {
+			entry = Arrays.stream(rawClasspath).filter(e -> name.equals(e.getPath().segment(0)))
+					.findFirst();
+		} else {
+			entry = Arrays.stream(rawClasspath)
+					.filter(e -> name.equals(e.getPath().lastSegment())).findFirst();
+		}
 		assertTrue("Classpath entry for " + name + " is missing", entry.isPresent());
 		return entry.get();
 	}
