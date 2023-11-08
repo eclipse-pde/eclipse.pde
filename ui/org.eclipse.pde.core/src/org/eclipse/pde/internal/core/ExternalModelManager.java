@@ -88,7 +88,7 @@ public class ExternalModelManager extends AbstractModelManager {
  * must extract any libraries from within a jarred bundle.  This class manages the set of libraries
  * that we have extracted and deletes them when the list of external models changes.
  *
- * @see PDEClasspathContainer#addExternalPlugin(IPluginModelBase, org.eclipse.pde.internal.core.PDEClasspathContainer.Rule[], ArrayList)
+ * @see PDEClasspathContainer#addExternalPlugin(IPluginModelBase, List, List)
  * @since 3.7
  */
 class ExternalLibraryCache {
