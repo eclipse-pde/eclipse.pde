@@ -113,6 +113,12 @@
         <value>remoteURI</value>
       </detail>
     </annotation>
+    <configSections
+        name="branch">
+      <properties
+          key="autoSetupRebase"
+          value="always"/>
+    </configSections>
     <description>PDE</description>
   </setupTask>
   <setupTask
