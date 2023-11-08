@@ -30,6 +30,7 @@ public interface IReferenceCollection {
 	/**
 	 * Checks if a reference for a given type already exists in the collection
 	 *
+	 * @param type
 	 * @return Returns <code>true</code> if the the collection has references
 	 *         for the given type, <code>false</code> otherwise.
 	 */

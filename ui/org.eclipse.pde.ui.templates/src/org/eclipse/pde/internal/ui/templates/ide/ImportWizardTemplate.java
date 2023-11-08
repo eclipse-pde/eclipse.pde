@@ -187,6 +187,7 @@ public class ImportWizardTemplate extends PDETemplateSection {
 	 * @param iconLocations
 	 * 				comma seperated string of icon placement options
 	 * @return the 2-D array of choices
+	 *
 	 */
 	protected String[][] fromCommaSeparated(String iconLocations) {
 		StringTokenizer tokens = new StringTokenizer(iconLocations, ","); //$NON-NLS-1$

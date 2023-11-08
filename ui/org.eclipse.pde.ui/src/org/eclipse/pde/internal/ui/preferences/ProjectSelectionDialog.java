@@ -92,6 +92,8 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 
 	/**
 	 * Constructor
+	 * @param parentShell
+	 * @param projectsWithSpecifics
 	 */
 	public ProjectSelectionDialog(Shell parentShell, Set<IJavaProject> projectsWithSpecifics) {
 		super(parentShell);
@@ -158,6 +160,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 
 	/**
 	 * Handles the change in selection of the viewer and updates the status of the dialog at the same time
+	 * @param objects
 	 */
 	private void doSelectionChanged(Object[] objects) {
 		if (objects.length != 1) {
@@ -171,6 +174,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 
 	/**
 	 * Updates the viewer filter based on the selection of the 'show project with...' button
+	 * @param selected
 	 */
 	protected void updateFilter(boolean selected) {
 		if (selected) {

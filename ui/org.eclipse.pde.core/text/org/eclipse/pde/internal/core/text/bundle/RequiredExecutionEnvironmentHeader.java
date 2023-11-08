@@ -40,6 +40,10 @@ public class RequiredExecutionEnvironmentHeader extends CompositeManifestHeader 
 		addManifestElement(new ExecutionEnvironment(this, env.getId()));
 	}
 
+	/**
+	 * @param environment
+	 * @param index
+	 */
 	public void addExecutionEnvironment(ExecutionEnvironment environment, int index) {
 		addManifestElement(environment, index, true);
 	}
@@ -73,6 +77,7 @@ public class RequiredExecutionEnvironmentHeader extends CompositeManifestHeader 
 
 	/**
 	 * Remove operation performed using the actual object rather than its value
+	 * @param environment
 	 */
 	public ExecutionEnvironment removeExecutionEnvironmentUnique(ExecutionEnvironment environment) {
 		return (ExecutionEnvironment) removeManifestElement(environment, true);

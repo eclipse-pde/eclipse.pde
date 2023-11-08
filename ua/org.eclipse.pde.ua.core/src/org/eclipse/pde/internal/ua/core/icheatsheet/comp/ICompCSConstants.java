@@ -19,6 +19,7 @@ import org.eclipse.pde.internal.ua.core.icheatsheet.ICSConstants;
 
 /**
  * ICompCSConstants
+ *
  */
 public interface ICompCSConstants extends ICSConstants {
 

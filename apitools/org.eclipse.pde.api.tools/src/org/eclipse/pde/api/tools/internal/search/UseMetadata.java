@@ -107,6 +107,17 @@ public class UseMetadata implements IMetadata {
 
 	/**
 	 * Constructor
+	 *
+	 * @param searchflags
+	 * @param scopepattern
+	 * @param refpattern
+	 * @param baselinelocation
+	 * @param reportlocation
+	 * @param apipatterns
+	 * @param internalpatterns
+	 * @param archivepatterns
+	 * @param runatdate
+	 * @param description
 	 */
 	public UseMetadata(int searchflags, String scopepattern, String refpattern, String baselinelocation, String reportlocation, String[] apipatterns, String[] internalpatterns, String[] archivepatterns, String runatdate, String description) {
 		this.searchflags = searchflags;
@@ -123,6 +134,18 @@ public class UseMetadata implements IMetadata {
 
 	/**
 	 * Constructor
+	 *
+	 * @param searchflags
+	 * @param scopepattern
+	 * @param refpattern
+	 * @param baselinelocation
+	 * @param reportlocation
+	 * @param apipatterns
+	 * @param internalpatterns
+	 * @param archivepatterns
+	 * @param additionalfilters
+	 * @param runatdate
+	 * @param description
 	 */
 	public UseMetadata(int searchflags, String scopepattern, String refpattern, String baselinelocation, String reportlocation, String[] apipatterns, String[] internalpatterns, String[] archivepatterns, String additionalFilters, String runatdate, String description) {
 		this.searchflags = searchflags;

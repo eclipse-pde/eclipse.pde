@@ -37,6 +37,7 @@ import jakarta.inject.Inject;
  * available contexts.
  *
  * @author olivier
+ *
  */
 public class ContextSpyProvider extends LabelProvider implements ITreeContentProvider, IColorProvider {
 

@@ -34,6 +34,9 @@ import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.wizards.IWizardDescriptor;
 
+/**
+ *
+ */
 public class PluginExportAction extends Action {
 	private PDEFormEditor fEditor;
 

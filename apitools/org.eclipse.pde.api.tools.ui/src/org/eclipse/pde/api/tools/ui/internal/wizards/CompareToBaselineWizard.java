@@ -29,6 +29,9 @@ public class CompareToBaselineWizard extends Wizard {
 
 	/**
 	 * Constructor
+	 *
+	 * @param selection
+	 * @param title
 	 */
 	public CompareToBaselineWizard(IStructuredSelection selection, String title) {
 		this.selection = selection;

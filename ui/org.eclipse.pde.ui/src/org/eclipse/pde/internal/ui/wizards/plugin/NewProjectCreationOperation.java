@@ -112,6 +112,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	private boolean fResult;
 
 	/**
+	 * @param data
 	 * @param provider representation of the project
 	 * @param contentWizard wizard to run to get details for the chosen template, may be <code>null</code> if a template is not being used
 	 */
@@ -123,6 +124,8 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 
 	/**
 	 * Function used to modify Manifest just before it is written out (after all project artifacts have been created.
+	 *
+	 * @throws CoreException
 	 */
 	protected void adjustManifests(IProgressMonitor monitor, IProject project, IPluginBase bundle) throws CoreException {
 		// if libraries are exported, compute export package (173393)
@@ -186,6 +189,12 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		}
 	}
 
+	/**
+	 * @throws CoreException
+	 * @throws JavaModelException
+	 * @throws InvocationTargetException
+	 * @throws InterruptedException
+	 */
 	protected void createContents(IProgressMonitor monitor, IProject project) throws CoreException, JavaModelException, InvocationTargetException, InterruptedException {
 	}
 

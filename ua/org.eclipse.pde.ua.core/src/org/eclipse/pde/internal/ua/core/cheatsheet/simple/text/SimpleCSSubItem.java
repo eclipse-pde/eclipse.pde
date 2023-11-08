@@ -26,6 +26,9 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * @param model
+	 */
 	public SimpleCSSubItem(ISimpleCSModel model) {
 		super(model, ELEMENT_SUBITEM);
 	}

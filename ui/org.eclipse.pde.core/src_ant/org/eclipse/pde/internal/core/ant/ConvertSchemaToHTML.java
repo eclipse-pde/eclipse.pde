@@ -31,6 +31,7 @@ import org.eclipse.pde.internal.core.schema.SchemaToHTMLConverter;
 
 /**
  * Ant task that takes a plug-in and created HTML reference documents for all schema (.exsd) files.
+ *
  */
 public class ConvertSchemaToHTML extends Task {
 

@@ -21,6 +21,9 @@ import org.eclipse.core.runtime.IPath;
  * specific Help page. It can also have children, which can be more topics.
  */
 public class TocTopic extends TocObject {
+	/**
+	 *
+	 */
 	private static final long serialVersionUID = 1L;
 
 	/**

@@ -58,6 +58,8 @@ public class RepositoryImportWizard extends Wizard {
 
 	/**
 	 * Map of import delegates to import descriptions.
+	 *
+	 * @param importMap
 	 */
 	public RepositoryImportWizard(Map<IBundleImporter, ScmUrlImportDescription[]> importMap) {
 		IDialogSettings masterSettings = PDEPlugin.getDefault().getDialogSettings();

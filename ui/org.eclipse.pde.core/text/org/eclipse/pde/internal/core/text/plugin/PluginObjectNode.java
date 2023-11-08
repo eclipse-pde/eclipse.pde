@@ -43,6 +43,9 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 	private static final long serialVersionUID = 1L;
 	private String fName;
 
+	/**
+	 *
+	 */
 	public PluginObjectNode() {
 		super();
 	}

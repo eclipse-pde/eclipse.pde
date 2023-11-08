@@ -376,6 +376,9 @@ public class LauncherSection extends PDESection {
 		updateWinEntryValidators(useIco);
 	}
 
+	/**
+	 * @param useIco
+	 */
 	private void updateWinEntryValidators(boolean useIco) {
 		// Turn off auto message update until after values are set
 		fSingleWinIconValidator.setRefresh(false);
@@ -498,6 +501,9 @@ public class LauncherSection extends PDESection {
 		}
 	}
 
+	/**
+	 * @param event
+	 */
 	private void handleModelEventWorldChanged(IModelChangedEvent event) {
 		refresh();
 		// Note:  A deferred selection event is fired from radio buttons when

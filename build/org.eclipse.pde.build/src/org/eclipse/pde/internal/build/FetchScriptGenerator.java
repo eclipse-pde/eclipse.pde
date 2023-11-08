@@ -213,6 +213,8 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 
 	/**
 	 * Main call for generating the script.
+	 * 
+	 * @throws CoreException
 	 */
 	protected void generateFetchScript() throws CoreException {
 		generatePrologue();
@@ -266,7 +268,9 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	/**
 	 * Decompose the elements constituting a Map file entry. The values are returned
 	 * in a Map. <code>null</code> is returned if the entry does not exist.
+	 * @param entry
 	 * @return Map
+	 * @throws CoreException
 	 */
 	private Map<String, Object> processMapFileEntry(String entry, Version version) throws CoreException {
 		Map<String, Object> entryInfos = new HashMap<>(5);
@@ -424,6 +428,8 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	/**
 	 * Helper method to control for what locations a mkdir Ant task was already
 	 * generated so we can reduce replication.
+	 * 
+	 * @param location
 	 */
 	protected void generateMkdirs(String location) {
 		if (mkdirLocations.contains(location))
@@ -432,6 +438,10 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		script.printMkdirTask(location);
 	}
 
+	/**
+	 * 
+	 * @throws CoreException
+	 */
 	protected void generateChildrenFetchScript() throws CoreException {
 		FeatureEntry[] allChildren = feature.getRawPluginEntries();
 		FeatureEntry[] compiledChildren = feature.getPluginEntries();
@@ -478,6 +488,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	 * @param elementName the feature to retrieve
 	 * @param elementType the element type
 	 * @param elementInfos the element information
+	 * @throws CoreException
 	 */
 	protected void retrieveFeature(String elementName, String elementType, Map<String, Object> elementInfos) throws CoreException {
 		// Generate a temporary Ant script which retrieves the feature.xml for this
@@ -582,6 +593,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	 * at any point in the deletion.
 	 * Even if an exception occurs, a best effort is made to continue deleting.
 	 * 
+	 * @param root
 	 * @return boolean
 	 */
 	public static boolean clear(File root) {
@@ -616,7 +628,9 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	/**
 	 * Get information stored in the directory file.
 	 * 
+	 * @param elementName
 	 * @return String
+	 * @throws CoreException
 	 */
 	//There are 3 cases described by the following "table"
 	// what is being asked   -->   what should be returned (what is in the map file)
@@ -761,6 +775,8 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 
 	/**
 	 * Set the directory location to be the given value.
+	 * 
+	 * @param directoryLocation
 	 */
 	public void setDirectoryLocation(String directoryLocation) {
 		this.directoryLocation = directoryLocation;
@@ -768,6 +784,8 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 
 	/**
 	 * Sets whether children of the current element should be fetched.
+	 * 
+	 * @param fetchChildren
 	 */
 	public void setFetchChildren(boolean fetchChildren) {
 		this.fetchChildren = fetchChildren;

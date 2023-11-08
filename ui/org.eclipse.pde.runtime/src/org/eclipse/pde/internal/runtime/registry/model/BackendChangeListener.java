@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.runtime.registry.model;
 /**
  * Notifies on any changes coming from backend. Usually RegistryModel is only interested in receiving
  * news about that.
+ *
  */
 public interface BackendChangeListener {
 

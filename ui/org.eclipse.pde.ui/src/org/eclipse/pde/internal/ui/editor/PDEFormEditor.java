@@ -104,6 +104,8 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		 * provider. If the selection provider is a post selection provider,
 		 * post selection changed events are the preferred choice, otherwise
 		 * normal selection changed events are requested.
+		 *
+		 * @param selectionProvider
 		 */
 		public void install(ISelectionProvider selectionProvider) {
 			if (selectionProvider == null) {
@@ -209,6 +211,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	 * Tests whether this editor has a context with a provided id. The test can
 	 * be used to check whether to add certain pages.
 	 *
+	 * @param contextId
 	 * @return <code>true</code> if provided context is present,
 	 *         <code>false</code> otherwise.
 	 */
@@ -367,6 +370,9 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		editorDirtyStateChanged();
 	}
 
+	/**
+	 *
+	 */
 	public void doRevert() {
 		IFormPage formPage = getActivePageInstance();
 		// If the active page is a form page, commit all of its dirty field
@@ -487,6 +493,9 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		return false;
 	}
 
+	/**
+	 *
+	 */
 	private void storeDefaultPage() {
 		IEditorInput input = getEditorInput();
 		String pageId = fLastActivePageId;
@@ -503,6 +512,9 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		}
 	}
 
+	/**
+	 * @param pageID
+	 */
 	protected void setDialogEditorPageKey(String pageID) {
 		// Use one global setting for all files belonging to a given editor
 		// type.  Use the editor ID as the key.
@@ -513,6 +525,9 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		section.put(getEditorID(), pageID);
 	}
 
+	/**
+	 *
+	 */
 	protected String getDialogEditorPageKey() {
 		// Use one global setting for all files belonging to a given editor
 		// type.  Use the editor ID as the key.

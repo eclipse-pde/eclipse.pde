@@ -57,6 +57,8 @@ public class EditTargetNode implements IWizardNode {
 
 	/**
 	 * Sets the target being edited.
+	 *
+	 * @param definition
 	 */
 	public void setTargetDefinition(ITargetDefinition definition) {
 		fDefinition = definition;

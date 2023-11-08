@@ -36,6 +36,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
+/**
+ *
+ */
 public class DescriptionSection extends PDESection {
 
 	private FormEntry fNameEntry;

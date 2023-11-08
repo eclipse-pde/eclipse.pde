@@ -25,6 +25,9 @@ import junit.framework.Test;
  */
 public class InvalidInterfaceMethodAnnotationTests extends MethodAnnotationTest {
 
+	/**
+	 * @param name
+	 */
 	public InvalidInterfaceMethodAnnotationTests(String name) {
 		super(name);
 	}

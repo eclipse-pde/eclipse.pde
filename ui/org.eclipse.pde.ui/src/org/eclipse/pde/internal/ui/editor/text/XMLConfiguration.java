@@ -34,6 +34,7 @@ import org.eclipse.swt.graphics.Color;
 
 /**
  * Source viewer configuration for the XML Source editors
+ *
  */
 public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 	private AnnotationHover fAnnotationHover;

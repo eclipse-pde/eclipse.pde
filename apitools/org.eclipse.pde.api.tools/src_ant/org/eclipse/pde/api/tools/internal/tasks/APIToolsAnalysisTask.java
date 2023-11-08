@@ -568,6 +568,8 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 	 *            added
 	 * @return an element that contains all the api problem nodes or null if an
 	 *         error occurred
+	 *
+	 * @throws CoreException
 	 */
 	private void insertAPIProblems(Element root, Document document, List<IApiProblem> problems, ProblemCounter counter) throws CoreException {
 		Element apiProblems = document.createElement(IApiXmlConstants.ELEMENT_API_PROBLEMS);

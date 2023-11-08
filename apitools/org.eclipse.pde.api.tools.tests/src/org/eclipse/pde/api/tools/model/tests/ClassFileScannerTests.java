@@ -411,6 +411,8 @@ public class ClassFileScannerTests extends ScannerTest {
 
 	/**
 	 * Cleans up after the tests are done. This must be the last test run
+	 *
+	 * @throws Exception
 	 */
 	@AfterClass
 	public static void testCleanup() throws Exception {

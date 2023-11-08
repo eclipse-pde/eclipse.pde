@@ -218,6 +218,8 @@ public class StubArchiveApiTypeContainer extends ApiElement implements IApiTypeC
 
 	/**
 	 * Initializes cache of packages and types.
+	 *
+	 * @throws CoreException
 	 */
 	private synchronized void init() throws CoreException {
 		ZipFile zipFile = open();

@@ -56,6 +56,7 @@ public class UseSearchTests extends SearchTest {
 
 	/**
 	 * Asserts the the report was created with the correct folder structure
+	 * @param reportroot
 	 */
 	private void assertXMLReport(IPath reportroot){
 		File root = reportroot.toFile();
@@ -87,6 +88,7 @@ public class UseSearchTests extends SearchTest {
 
 	/**
 	 * Cleans the location if it exists
+	 * @param file
 	 */
 	private void scrubReportLocation(File file) {
 		if(file.exists() && file.isDirectory()) {
@@ -126,6 +128,8 @@ public class UseSearchTests extends SearchTest {
 	/**
 	 * Returns the default composite search reporter which has the {@link TestReporter}
 	 * and the {@link XMLApiSearchReporter} in it
+	 * @param path
+	 * @param debug
 	 * @return the default composite search reporter
 	 */
 	IApiSearchReporter getCompositeReporter(String path, boolean debug) {

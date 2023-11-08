@@ -78,6 +78,8 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 
 	/**
 	 * Removes the baseline with the given name
+	 *
+	 * @param name
 	 */
 	private void removeBaseline(String name) {
 		IApiBaselineManager manager = ApiPlugin.getDefault().getApiBaselineManager();
@@ -180,6 +182,8 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 	 * Tests that unused filters are correctly reported. This test adds the
 	 * final modifier to a class that has a protected method leaking and
 	 * internal type, with a filter for the problem
+	 *
+	 * @param inc
 	 */
 	private void x1(boolean inc) throws Exception {
 		String testname = "test1"; //$NON-NLS-1$
@@ -204,6 +208,8 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 	/**
 	 * Tests that there is problem reported for a compilation unit that has been
 	 * deleted, which has an API problem filter
+	 *
+	 * @param inc
 	 */
 	void x2(boolean inc) throws Exception {
 		String testname = "test2"; //$NON-NLS-1$
@@ -224,6 +230,8 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 	/**
 	 * Tests that a compilation unit with more than one problem in it works
 	 * correctly when deleting a member that had a filter
+	 *
+	 * @param inc
 	 */
 	private void x3(boolean inc) throws Exception {
 		String testname = "test3"; //$NON-NLS-1$
@@ -251,6 +259,8 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 	 * for filters. This test adds the final modifier to a class that has a
 	 * protected method leaking and internal type, with a filter for the
 	 * problem, but no API baseline set
+	 *
+	 * @param inc
 	 */
 	private void x4(boolean inc) throws Exception {
 		removeBaseline(BASELINE);

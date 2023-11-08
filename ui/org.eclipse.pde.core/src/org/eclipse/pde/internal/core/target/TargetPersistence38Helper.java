@@ -211,6 +211,7 @@ public class TargetPersistence38Helper {
 	 *
 	 * @param location document element representing a bundle container
 	 * @return target location instance
+	 * @throws CoreException
 	 */
 	private static ITargetLocation deserializeBundleContainer(Element location) throws CoreException {
 		String type = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_LOCATION_TYPE);

@@ -277,6 +277,8 @@ public class Reference implements IReference {
 
 	/**
 	 * OR's the given set of new flags with the current set of flags
+	 *
+	 * @param newflags
 	 */
 	public void setFlags(int newflags) {
 		fFlags |= newflags;
@@ -318,6 +320,8 @@ public class Reference implements IReference {
 
 	/**
 	 * Gets the parameters if return has generics
+	 *
+	 * @throws CoreException
 	 */
 
 	public List<IApiType> getParameterList() throws CoreException {
@@ -428,6 +432,7 @@ public class Reference implements IReference {
 	 * @param type the initial type to search
 	 * @param fieldame the name of the field
 	 * @return true if the field resolved
+	 * @throws CoreException
 	 * @since 1.1
 	 */
 	private boolean resolveField(IApiType type, String fieldame) throws CoreException {
@@ -478,6 +483,9 @@ public class Reference implements IReference {
 	 * reference. If the method is not null and successfully updates the
 	 * reference true is returned
 	 *
+	 * @param method
+	 * @return
+	 * @throws CoreException
 	 * @since 1.0.600
 	 */
 	boolean setResolvedMethod(IApiMethod method) throws CoreException {
@@ -501,6 +509,11 @@ public class Reference implements IReference {
 	 * Resolves a given method in the super type hierarchy, returns true if it
 	 * is resolved
 	 *
+	 * @param type
+	 * @param methodName
+	 * @param methodSignature
+	 * @return
+	 * @throws CoreException
 	 * @since 1.0.600
 	 */
 	boolean resolveSuperTypeMethod(IApiType type, String methodName, String methodSignature) throws CoreException {
@@ -517,6 +530,10 @@ public class Reference implements IReference {
 	/**
 	 * Try to find the method in the interface hierarchy
 	 *
+	 * @param type
+	 * @param methodName
+	 * @param methodSignature
+	 * @return
 	 * @throws CoreException
 	 *
 	 * @since 1.0.600

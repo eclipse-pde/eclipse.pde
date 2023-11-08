@@ -61,6 +61,8 @@ public abstract class ApiMember extends ApiElement implements IApiMember {
 
 	/**
 	 * Returns generic signature or <code>null</code> if none.
+	 *
+	 * @return
 	 */
 	@Override
 	public String getGenericSignature() {
@@ -110,6 +112,8 @@ public abstract class ApiMember extends ApiElement implements IApiMember {
 	 * are equal: where both enclosing type being <code>null</code> is
 	 * considered equal
 	 *
+	 * @param e1
+	 * @param e2
 	 * @return true if both immediate enclosing type are equal
 	 */
 	protected boolean enclosingTypesEqual(IApiElement e1, IApiElement e2) {

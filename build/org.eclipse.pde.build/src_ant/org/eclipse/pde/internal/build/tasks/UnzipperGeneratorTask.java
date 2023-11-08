@@ -40,6 +40,7 @@ public class UnzipperGeneratorTask extends Task {
 
 	/**
 	 * Set the name of the file listing all the files that must be unzipped.
+	 * @param filename
 	 */
 	public void setZipsDirectory(String filename) {
 		generator.setDirectoryLocation(filename);
@@ -56,6 +57,7 @@ public class UnzipperGeneratorTask extends Task {
 	/** 
 	 * Set the configuration for which the script should be generated. The default is set to be configuration independent.
 	 * @param configInfo an ampersand separated list of configuration (for example win32, win32, x86 & macoxs, carbon, ppc).
+	 * @throws BuildException
 	 */
 	public void setConfigInfo(String configInfo) throws BuildException {
 		try {

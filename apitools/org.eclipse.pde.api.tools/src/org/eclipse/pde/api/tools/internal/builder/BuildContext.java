@@ -85,6 +85,8 @@ public class BuildContext implements IBuildContext {
 	/**
 	 * Adds the given type name to the collection of structurally changed types.
 	 * Does nothing if <code>null</code> is passed in as the type name.
+	 *
+	 * @param typename
 	 */
 	public void recordStructuralChange(String typename) {
 		if (typename == null) {
@@ -99,6 +101,8 @@ public class BuildContext implements IBuildContext {
 	/**
 	 * Adds the given type name to the collection of removed types. Does nothing
 	 * if <code>null</code> is passed in as the type name.
+	 *
+	 * @param typename
 	 */
 	public void recordRemovedType(String typename) {
 		if (typename == null) {

@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.ua.core.icheatsheet.comp;
 
 /**
  * ICompCSIntro
+ *
  */
 public interface ICompCSIntro extends ICompCSDataObject {
 	// Nothing

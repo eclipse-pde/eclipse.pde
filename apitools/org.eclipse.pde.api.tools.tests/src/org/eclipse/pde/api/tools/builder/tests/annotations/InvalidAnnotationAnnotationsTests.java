@@ -30,6 +30,8 @@ public class InvalidAnnotationAnnotationsTests extends AnnotationTest {
 
 	/**
 	 * Constructor
+	 *
+	 * @param name
 	 */
 	public InvalidAnnotationAnnotationsTests(String name) {
 		super(name);
@@ -54,6 +56,8 @@ public class InvalidAnnotationAnnotationsTests extends AnnotationTest {
 
 	/**
 	 * Tests an invalid @NoExtend annotation being used
+	 *
+	 * @throws Exception
 	 */
 	public void testInvalidNoExtendAnnotation1I() throws Exception {
 		String typename = "test3.java"; //$NON-NLS-1$
@@ -64,6 +68,8 @@ public class InvalidAnnotationAnnotationsTests extends AnnotationTest {
 
 	/**
 	 * Tests an invalid @NoExtend annotation being used
+	 *
+	 * @throws Exception
 	 */
 	public void testInvalidNoExtendAnnotation1F() throws Exception {
 		String typename = "test3.java"; //$NON-NLS-1$
@@ -74,6 +80,8 @@ public class InvalidAnnotationAnnotationsTests extends AnnotationTest {
 
 	/**
 	 * Tests a variety of invalid annotations being used
+	 *
+	 * @throws Exception
 	 */
 	public void testInvalidAnnotations1I() throws Exception {
 		setExpectedProblemIds(getDefaultProblemSet(8));
@@ -93,6 +101,8 @@ public class InvalidAnnotationAnnotationsTests extends AnnotationTest {
 
 	/**
 	 * Tests a variety of invalid annotations being used
+	 *
+	 * @throws Exception
 	 */
 	public void testInvalidAnnotations1F() throws Exception {
 		setExpectedProblemIds(getDefaultProblemSet(8));
@@ -112,6 +122,8 @@ public class InvalidAnnotationAnnotationsTests extends AnnotationTest {
 
 	/**
 	 * Tests an invalid @NoInstantiate annotation is being used
+	 *
+	 * @throws Exception
 	 */
 	public void testInvalidNoInstantiateAnnotation1I() throws Exception {
 		setExpectedProblemIds(getDefaultProblemSet(4));
@@ -122,6 +134,8 @@ public class InvalidAnnotationAnnotationsTests extends AnnotationTest {
 
 	/**
 	 * Tests an invalid @NoInstantiate annotation is being used
+	 *
+	 * @throws Exception
 	 */
 	public void testInvalidNoInstantiateAnnotation1F() throws Exception {
 		setExpectedProblemIds(getDefaultProblemSet(4));
@@ -132,6 +146,8 @@ public class InvalidAnnotationAnnotationsTests extends AnnotationTest {
 
 	/**
 	 * Tests an invalid @NoImplement annotation is being used
+	 *
+	 * @throws Exception
 	 */
 	public void testInvalidNoImplementAnnotation1I() throws Exception {
 		setExpectedProblemIds(getDefaultProblemSet(4));
@@ -142,6 +158,8 @@ public class InvalidAnnotationAnnotationsTests extends AnnotationTest {
 
 	/**
 	 * Tests an invalid @NoImplement annotation is being used
+	 *
+	 * @throws Exception
 	 */
 	public void testInvalidNoImplementAnnotation1F() throws Exception {
 		setExpectedProblemIds(getDefaultProblemSet(4));
@@ -152,6 +170,8 @@ public class InvalidAnnotationAnnotationsTests extends AnnotationTest {
 
 	/**
 	 * Tests that all annotations are invalid when the parent is not visible
+	 *
+	 * @throws Exception
 	 */
 	public void testPrivateParentAnnotations1I() throws Exception {
 		setExpectedProblemIds(getDefaultProblemSet(3));
@@ -166,6 +186,8 @@ public class InvalidAnnotationAnnotationsTests extends AnnotationTest {
 
 	/**
 	 * Tests that all annotations are invalid when the parent is not visible
+	 *
+	 * @throws Exception
 	 */
 	public void testPrivateParentAnnotations1F() throws Exception {
 		setExpectedProblemIds(getDefaultProblemSet(3));

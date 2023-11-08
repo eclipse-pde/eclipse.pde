@@ -111,6 +111,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	 * The default implementation of this method provides values of the
 	 * following keys: <samp>pluginClass </samp>, <samp>pluginId </samp> and
 	 * <samp>pluginName </samp>.
+	 *
 	 */
 	@Override
 	public String getReplacementString(String fileName, String key) {
@@ -387,6 +388,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	 * The default implementation of the interface method. It will generate
 	 * required files found in the template location and then call
 	 * <samp>updateModel </samp> to add the required manifest entires.
+	 *
 	 */
 	@Override
 	public void execute(IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {

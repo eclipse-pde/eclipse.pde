@@ -254,6 +254,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 	 * Returns the home location with all variables resolved as a path.
 	 *
 	 * @return resolved home location
+	 * @throws CoreException
 	 */
 	private IPath resolveHomeLocation() throws CoreException {
 		return IPath.fromOSString(resolveVariables(fHome));

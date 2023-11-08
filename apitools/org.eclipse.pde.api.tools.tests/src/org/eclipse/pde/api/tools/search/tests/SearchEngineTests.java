@@ -29,6 +29,8 @@ public class SearchEngineTests extends SearchTest {
 	/**
 	 * Tests the the engine properly aborts with invalid <code>null</code>
 	 * arguments
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testNullArguments() throws CoreException {
@@ -43,6 +45,8 @@ public class SearchEngineTests extends SearchTest {
 	/**
 	 * Tests that the search engine properly reports matches when the scope and
 	 * baseline are one-in-the-same
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testSearchNoSeparateScope() throws CoreException {
@@ -60,6 +64,8 @@ public class SearchEngineTests extends SearchTest {
 	 * Tests that the search engine properly reports matches when the scope and
 	 * baseline are not the same
 	 * {@link org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline}
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testSearchSeparateScope() throws CoreException {
@@ -76,6 +82,8 @@ public class SearchEngineTests extends SearchTest {
 
 	/**
 	 * Tests that an entry in the exclude file is honored
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testSearchExcludeOne() throws CoreException {
@@ -92,6 +100,8 @@ public class SearchEngineTests extends SearchTest {
 
 	/**
 	 * Tests that all elements that appear in the exclude file are left out
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testSearchExcludeAll() throws CoreException {
@@ -108,6 +118,8 @@ public class SearchEngineTests extends SearchTest {
 
 	/**
 	 * Tests that a RegEx entry in the exclude file is honored (R:a.b.c.*)
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testExcludeRegexOne() throws CoreException {
@@ -124,6 +136,8 @@ public class SearchEngineTests extends SearchTest {
 
 	/**
 	 * Tests that a RegEx entry will cover all the proper matches (R:*.P*)
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testExcludeRegexAll() throws CoreException {
@@ -140,6 +154,8 @@ public class SearchEngineTests extends SearchTest {
 
 	/**
 	 * Tests searching for API only
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testSearchApiOnly() throws CoreException {
@@ -155,6 +171,8 @@ public class SearchEngineTests extends SearchTest {
 
 	/**
 	 * Tests searching for internal references only
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testSearchInternalOnly() throws CoreException {
@@ -170,6 +188,8 @@ public class SearchEngineTests extends SearchTest {
 
 	/**
 	 * Search with tracing on (causing the console to have content)
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testSearchWithDebugOn() throws CoreException {
@@ -188,6 +208,8 @@ public class SearchEngineTests extends SearchTest {
 	 * Tests that the search engine properly reports matches when the scope and
 	 * baseline are not the same
 	 * {@link org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline}
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testBadRegex() throws CoreException {

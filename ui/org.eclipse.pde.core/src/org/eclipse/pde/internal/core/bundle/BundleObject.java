@@ -71,6 +71,9 @@ public class BundleObject implements Serializable, IWritable, IWritableDelimiter
 		writer.print(toString());
 	}
 
+	/**
+	 * @param model
+	 */
 	public void reconnect(IBundleModel model) {
 		// Transient Field:  Model
 		this.model = model;

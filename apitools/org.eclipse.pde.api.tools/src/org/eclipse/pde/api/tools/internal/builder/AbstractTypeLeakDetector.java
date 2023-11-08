@@ -40,6 +40,9 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
  */
 public abstract class AbstractTypeLeakDetector extends AbstractLeakProblemDetector {
 
+	/**
+	 * @param nonApiPackageNames
+	 */
 	public AbstractTypeLeakDetector(Set<String> nonApiPackageNames) {
 		super(nonApiPackageNames);
 	}

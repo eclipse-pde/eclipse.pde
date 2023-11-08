@@ -241,6 +241,8 @@ public class ReferenceExtractor extends ClassVisitor {
 
 		/**
 		 * Constructor
+		 *
+		 * @param mv
 		 */
 		public ClassFileMethodVisitor(MethodVisitor mv, String name, int argumentcount) {
 			super(Util.LATEST_OPCODES_ASM, mv);
@@ -627,6 +629,8 @@ public class ReferenceExtractor extends ClassVisitor {
 
 		/**
 		 * Add a field to be tracked
+		 *
+		 * @param field
 		 */
 		public void addField(Reference ref) {
 			if (ref != null) {
@@ -636,6 +640,8 @@ public class ReferenceExtractor extends ClassVisitor {
 
 		/**
 		 * Add an accessor to be tracked
+		 *
+		 * @param accessor
 		 */
 		public void addAccessor(Reference ref) {
 			if (ref != null) {
@@ -945,6 +951,11 @@ public class ReferenceExtractor extends ClassVisitor {
 
 	/**
 	 * Constructor
+	 *
+	 * @param type
+	 * @param collector
+	 * @param referenceKinds
+	 * @param tracker
 	 */
 	protected ReferenceExtractor(IApiType type, Set<Reference> collector, int referenceKinds, FieldTracker tracker) {
 		super(Util.LATEST_OPCODES_ASM, new ClassNode());
@@ -973,6 +984,7 @@ public class ReferenceExtractor extends ClassVisitor {
 	 * Returns whether to consider a reference to the specified type. Configured
 	 * by setting to include references within the same class file.
 	 *
+	 * @param owner
 	 * @return true if considered, false otherwise
 	 */
 	protected boolean consider(String owner) {
@@ -1016,6 +1028,9 @@ public class ReferenceExtractor extends ClassVisitor {
 	/**
 	 * Returns the full internal name (if available) from the given simple name.
 	 * The returned name has been modified to be '.' separated
+	 *
+	 * @param name
+	 * @return
 	 */
 	protected String processName(String name) {
 		String newname = name;
@@ -1138,6 +1153,7 @@ public class ReferenceExtractor extends ClassVisitor {
 	 * the ASM framework If the description is an array, the underlying type of
 	 * the array is returned.
 	 *
+	 * @param desc
 	 * @return the {@link Type} of the description or <code>null</code>
 	 */
 	protected Type resolveType(String desc) {
@@ -1274,6 +1290,11 @@ public class ReferenceExtractor extends ClassVisitor {
 
 	/**
 	 * Processes the dependent inner class
+	 *
+	 * @param type
+	 * @param refkinds
+	 * @return
+	 * @throws CoreException
 	 */
 	private Set<Reference> processInnerClass(IApiType type, int refkinds) throws CoreException {
 		HashSet<Reference> refs = new HashSet<>();
@@ -1406,6 +1427,7 @@ public class ReferenceExtractor extends ClassVisitor {
 	 *            searched for a declaration
 	 * @return the IApiType containing the default method definition or
 	 *         <code>null</code>
+	 * @throws CoreException
 	 */
 	static IApiType getDefaultDefined(IApiType type, String name, String signature, boolean isOverride) throws CoreException {
 		if (type != null) {

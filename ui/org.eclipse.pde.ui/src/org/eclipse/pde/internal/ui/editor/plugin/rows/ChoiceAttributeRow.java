@@ -38,6 +38,9 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 public class ChoiceAttributeRow extends ExtensionAttributeRow {
 	protected ComboPart combo;
 
+	/**
+	 * @param att
+	 */
 	public ChoiceAttributeRow(IContextPart part, ISchemaAttribute att) {
 		super(part, att);
 	}

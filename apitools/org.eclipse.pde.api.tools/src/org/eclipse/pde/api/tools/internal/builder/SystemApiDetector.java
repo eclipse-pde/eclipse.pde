@@ -113,6 +113,8 @@ public class SystemApiDetector extends AbstractProblemDetector {
 	 * @param member the member to get the signature from
 	 * @param qualified if the returned signature should be type-qualified or
 	 *            not
+	 * @return
+	 * @throws CoreException
 	 */
 	private String getDisplay(IApiMember member, boolean qualified) throws CoreException {
 		String typeName = qualified ? getTypeName(member) : getSimpleTypeName(member);

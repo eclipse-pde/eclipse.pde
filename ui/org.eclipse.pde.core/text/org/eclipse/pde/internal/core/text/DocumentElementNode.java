@@ -54,6 +54,9 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 
 	// TODO: MP: TEO: LOW: Regenerate comments
 
+	/**
+	 *
+	 */
 	public DocumentElementNode() {
 		fParent = null;
 		fIsErrorNode = false;
@@ -477,11 +480,17 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		fAttributes.values().forEach(attribute -> attribute.reconnect(this));
 	}
 
+	/**
+	 * @param model
+	 */
 	private void reconnectChildren(IModel model) {
 		// Fill in appropriate transient field values
 		fChildren.forEach(child -> child.reconnect(this, model));
 	}
 
+	/**
+	 *
+	 */
 	private void reconnectDocument() {
 		// Transient field:  Indent
 		fIndent = 0;
@@ -493,6 +502,9 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		fOffset = -1;
 	}
 
+	/**
+	 * @param parent
+	 */
 	private void reconnectParent(IDocumentElementNode parent) {
 		// Transient field:  Parent
 		fParent = parent;
@@ -505,6 +517,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 
 	/**
 	 * PRE: Node must have a set parent
+	 * @param targetNode
 	 */
 	private void linkNodeWithSiblings(IDocumentElementNode targetNode) {
 		// Get the node's parent
@@ -536,6 +549,9 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// previousNode <- targetNode <- nextNode
 	}
 
+	/**
+	 *
+	 */
 	private void reconnectText() {
 		// Transient field:  Text Node
 		if (fTextNode != null) {
@@ -588,6 +604,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	}
 
 	/**
+	 * @param attribute
 	 * @return if the attribute is defined
 	 */
 	protected boolean isDefined(IDocumentAttributeNode attribute) {
@@ -600,6 +617,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	}
 
 	/**
+	 * @param node
 	 * @return if the node is defined
 	 */
 	protected boolean isDefined(IDocumentTextNode node) {

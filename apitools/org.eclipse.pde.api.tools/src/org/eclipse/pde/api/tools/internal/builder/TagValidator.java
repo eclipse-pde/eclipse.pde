@@ -71,6 +71,10 @@ public class TagValidator extends Validator {
 
 	/**
 	 * Constructor
+	 *
+	 * @param parent
+	 * @param tags
+	 * @param annotations
 	 */
 	public TagValidator(ICompilationUnit parent, boolean tags, boolean annotations) {
 		fCompilationUnit = parent;
@@ -124,6 +128,9 @@ public class TagValidator extends Validator {
 	/**
 	 * Validates the set of tags for the given parent node and the given listing
 	 * of {@link TagElement}s
+	 *
+	 * @param node
+	 * @param tags
 	 */
 	private void validateTags(ASTNode node, List<TagElement> tags) {
 		if (tags.isEmpty()) {
@@ -207,6 +214,8 @@ public class TagValidator extends Validator {
 	/**
 	 * Process the tags for the given {@link TypeDeclaration} node
 	 *
+	 * @param type
+	 * @param tags
 	 * @since 1.0.400
 	 */
 	void processTypeNode(TypeDeclaration type, List<TagElement> tags) {
@@ -251,6 +260,8 @@ public class TagValidator extends Validator {
 	/**
 	 * Processes all of the tags for the given {@link FieldDeclaration}
 	 *
+	 * @param field
+	 * @param tags
 	 * @since 1.0.400
 	 */
 	void processFieldNode(FieldDeclaration field, List<TagElement> tags) {
@@ -308,6 +319,8 @@ public class TagValidator extends Validator {
 	/**
 	 * Processes all of the tags for the given {@link MethodDeclaration}
 	 *
+	 * @param method
+	 * @param tags
 	 * @since 1.0.400
 	 */
 	void processMethodNode(MethodDeclaration method, List<TagElement> tags) {
@@ -387,6 +400,8 @@ public class TagValidator extends Validator {
 	 * Returns the complete listing of supported tags for the given type and
 	 * member
 	 *
+	 * @param type
+	 * @param member
 	 * @return the list of supported tag names or the
 	 *         {@link Collections#EMPTY_SET}, never <code>null</code>
 	 * @since 1.0.400
@@ -406,6 +421,10 @@ public class TagValidator extends Validator {
 	/**
 	 * Creates a new {@link IApiProblem} for the given tag and adds it to the
 	 * cache
+	 *
+	 * @param tag
+	 * @param element
+	 * @param context
 	 */
 	private void createTagProblem(String typeName, TagElement tag, int element, int kind, int markerid, String context) {
 		int charstart = tag.getStartPosition();
@@ -668,6 +687,13 @@ public class TagValidator extends Validator {
 
 	/**
 	 * Creates a new problem
+	 *
+	 * @param typeName
+	 * @param node
+	 * @param element
+	 * @param kind
+	 * @param markerid
+	 * @param context
 	 */
 	void createAnnotationProblem(String typeName, MarkerAnnotation node, int element, int kind, int markerid, String context) {
 		String name = '@' + node.getTypeName().getFullyQualifiedName();

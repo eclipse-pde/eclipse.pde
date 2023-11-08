@@ -25,6 +25,9 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * @param model
+	 */
 	public SimpleCS(ISimpleCSModel model) {
 		super(model, ELEMENT_CHEATSHEET);
 		// Root node

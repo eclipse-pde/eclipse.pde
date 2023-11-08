@@ -19,11 +19,13 @@ package org.eclipse.pde.internal.runtime.registry.model;
  * local
  * target
  * remote://host:port
+ *
  */
 public class RegistryModelFactory {
 
 	/**
 	 *
+	 * @param uri
 	 * @return never returns null
 	 */
 	public static RegistryModel getRegistryModel(String uri) {

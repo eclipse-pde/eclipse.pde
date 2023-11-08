@@ -42,6 +42,8 @@ public class ValidInterfaceMethodAnnotationTests extends InvalidInterfaceMethodA
 
 	/**
 	 * Tests the valid @NoReferrence annotation on interface methods
+	 *
+	 * @throws Exception
 	 */
 	public void testNoReferenceF() throws Exception {
 		x1(false);
@@ -49,6 +51,8 @@ public class ValidInterfaceMethodAnnotationTests extends InvalidInterfaceMethodA
 
 	/**
 	 * Tests the valid @NoReferrence annotation on interface methods
+	 *
+	 * @throws Exception
 	 */
 	public void testNoReferenceI() throws Exception {
 		x1(true);

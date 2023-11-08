@@ -35,6 +35,10 @@ public class JavaModelEventWaiter extends AbstractApiEventWaiter implements IEle
 
 	/**
 	 * Constructor
+	 * @param elementname
+	 * @param deltakind
+	 * @param deltadetails
+	 * @param elementtype
 	 */
 	public JavaModelEventWaiter(String elementname, int deltakind, int deltadetails, int elementtype) {
 		fElementName = elementname;
@@ -60,6 +64,7 @@ public class JavaModelEventWaiter extends AbstractApiEventWaiter implements IEle
 
 	/**
 	 * Returns if we care about the given event or not
+	 * @param event
 	 * @return true is we care about the given event, false otherwise
 	 */
 	protected boolean accept(ElementChangedEvent event) {
@@ -76,6 +81,7 @@ public class JavaModelEventWaiter extends AbstractApiEventWaiter implements IEle
 
 	/**
 	 * Processes the listing of deltas of interest
+	 * @param deltas
 	 */
 	protected boolean processDelta(IJavaElementDelta[] deltas) {
 		for (IJavaElementDelta delta : deltas) {

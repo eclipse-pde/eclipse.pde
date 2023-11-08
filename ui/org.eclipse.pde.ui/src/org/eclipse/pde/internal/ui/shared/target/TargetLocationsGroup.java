@@ -599,6 +599,7 @@ public class TargetLocationsGroup {
 
 	/**
 	 * Reloads the target
+	 *
 	 */
 	private void contentsReload() {
 		for (ITargetChangedListener listener : fReloadListeners) {

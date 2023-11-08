@@ -37,6 +37,9 @@ public class DocumentTextNode extends DocumentXMLNode implements IDocumentTextNo
 
 	private String fText;
 
+	/**
+	 *
+	 */
 	public DocumentTextNode() {
 		fOffset = -1;
 		fLength = 0;

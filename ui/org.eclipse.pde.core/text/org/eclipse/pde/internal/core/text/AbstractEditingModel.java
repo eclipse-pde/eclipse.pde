@@ -96,6 +96,9 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 		return fLoaded;
 	}
 
+	/**
+	 * @param loaded
+	 */
 	public void setLoaded(boolean loaded) {
 		// TODO: MP: TEO: LOW: Set as API?
 		fLoaded = loaded;

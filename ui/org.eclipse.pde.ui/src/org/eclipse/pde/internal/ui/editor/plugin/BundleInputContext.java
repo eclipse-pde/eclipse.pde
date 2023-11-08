@@ -59,6 +59,10 @@ public class BundleInputContext extends UTF8InputContext {
 
 	private final HashMap<IDocumentKey, TextEdit> fOperationTable = new HashMap<>();
 
+	/**
+	 * @param editor
+	 * @param input
+	 */
 	public BundleInputContext(PDEFormEditor editor, IEditorInput input, boolean primary) {
 		super(editor, input, primary);
 		create();

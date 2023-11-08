@@ -20,8 +20,15 @@ import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSOnCompletion;
 public class CompCSOnCompletion extends CompCSDataObject implements
 		ICompCSOnCompletion {
 
+	/**
+	 *
+	 */
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * @param model
+	 * @param parent
+	 */
 	public CompCSOnCompletion(ICompCSModel model, ICompCSObject parent) {
 		super(model, parent);
 		reset();

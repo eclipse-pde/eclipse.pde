@@ -39,6 +39,8 @@ public interface OSGiAnnotationProcessor {
 
 	/**
 	 * applies the processed annotation actions (if any) to the given model
+	 *
+	 * @param model
 	 */
 	void apply(IBaseModel model);
 

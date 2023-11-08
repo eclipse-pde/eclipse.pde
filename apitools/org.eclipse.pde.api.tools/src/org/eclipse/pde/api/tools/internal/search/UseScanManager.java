@@ -125,6 +125,7 @@ public class UseScanManager {
 	 * @param refTypes reference types for which the references has to be
 	 *            computed in the given <code>IApiComponent</code>. If
 	 *            <code>null</code> or empty, all references will be returned
+	 * @param monitor
 	 * @return the array of reference descriptors
 	 */
 	public IReferenceDescriptor[] getExternalDependenciesFor(IApiComponent apiComponent, String[] apiUseTypes, IProgressMonitor monitor) {
@@ -156,6 +157,11 @@ public class UseScanManager {
 
 	/**
 	 * fetches the references from the API Use Scan locations
+	 *
+	 * @param apiComponent
+	 * @param member
+	 * @param references
+	 * @param monitor
 	 */
 	private void fetch(IApiComponent apiComponent, String[] types, IReferenceCollection references, IProgressMonitor monitor) {
 		UseScanParser parser = new UseScanParser();
@@ -231,6 +237,9 @@ public class UseScanManager {
 
 	/**
 	 * Returns the scan
+	 *
+	 * @param location
+	 * @return
 	 */
 	public static String getExactScanLocation(String location) {
 		File file = new File(location);
@@ -256,6 +265,7 @@ public class UseScanManager {
 	 * the name pattern <code>^.* (.*)$</code></li>
 	 * </ul>
 	 *
+	 * @param file
 	 * @return <code>true</code> is the sub folders match the patterns,
 	 *         <code>false</code> otherwise
 	 */
@@ -290,6 +300,7 @@ public class UseScanManager {
 	 * the name pattern <code>{@link #NAME_REGEX}</code></li>
 	 * </ul>
 	 *
+	 * @param file
 	 * @return <code>true</code> is the sub folders match the patterns,
 	 *         <code>false</code> otherwise
 	 */
@@ -329,6 +340,7 @@ public class UseScanManager {
 	/**
 	 * Returns if the scan if a valid API use scan
 	 *
+	 * @param location
 	 * @return true if the scan is valid false otherwise
 	 */
 	public static boolean isValidScanLocation(String location) {
@@ -342,6 +354,8 @@ public class UseScanManager {
 
 	/**
 	 * Returns the report locations from the preferences
+	 *
+	 * @return
 	 */
 	public String[] getReportLocations() {
 		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
@@ -365,6 +379,8 @@ public class UseScanManager {
 	 * Sets the report locations to be used. Once set, these locations will be
 	 * used instead of ones in the preference. When set to <code>null</code>,
 	 * the locations in preference will be used.
+	 *
+	 * @param locations
 	 */
 	public void setReportLocations(String[] locations) {
 		fLocations = locations;

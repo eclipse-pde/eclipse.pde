@@ -37,6 +37,9 @@ public final class ApiModelCache {
 
 		/**
 		 * Constructor
+		 *
+		 * @param size
+		 * @param overflow
 		 */
 		public Cache(int size, int overflow) {
 			super(size, overflow);
@@ -83,6 +86,9 @@ public final class ApiModelCache {
 	 * Returns the key to use in a cache. The key is of the form:
 	 * <code>[baselineid].[componentid].[typename]</code><br>
 	 *
+	 * @param baseline
+	 * @param component
+	 * @param typename
 	 * @return the member type cache key to use
 	 */
 	private String getCacheKey(String baseline, String component, String typename) {
@@ -165,6 +171,7 @@ public final class ApiModelCache {
 	 * Returns the root type name assuming that the '$' char is a member type
 	 * boundary
 	 *
+	 * @param typename
 	 * @return the pruned name or the original name
 	 */
 	private String getRootName(String typename) {
@@ -178,6 +185,7 @@ public final class ApiModelCache {
 	/**
 	 * Method to see if the type boundary char appears in the type name
 	 *
+	 * @param typename
 	 * @return true if the type name contains '$' false otherwise
 	 */
 	private boolean isMemberType(String typename) {
@@ -347,6 +355,7 @@ public final class ApiModelCache {
 	 * Removes the given {@link IApiElement} info from the cache and returns it
 	 * if present
 	 *
+	 * @param element
 	 * @return true if the {@link IApiElement} was removed false otherwise
 	 * @throws CoreException if there is a problem accessing any of the
 	 *             {@link IApiElement} info in order to remove it from the cache

@@ -90,6 +90,12 @@ public class ManifestStructureCreator extends StructureCreator {
 		return null;
 	}
 
+	/**
+	 * @param root
+	 * @param doc
+	 * @param monitor
+	 * @throws IOException
+	 */
 	private void parseManifest(DocumentRangeNode root, IDocument doc, IProgressMonitor monitor) throws IOException {
 		int lineStart = 0;
 		int[] args = new int[2];

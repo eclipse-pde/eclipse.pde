@@ -42,6 +42,7 @@ public abstract class AbstractLeakProblemDetector extends AbstractProblemDetecto
 	/**
 	 * Returns whether the referenced type name matches a non-API package.
 	 *
+	 * @param reference
 	 * @return whether the referenced type name matches a non-API package
 	 */
 	protected boolean isNonAPIReference(IReference reference) {
@@ -80,6 +81,7 @@ public abstract class AbstractLeakProblemDetector extends AbstractProblemDetecto
 	 *
 	 * @param member member
 	 * @return whether all enclosing types of the given member are visible
+	 * @throws CoreException
 	 */
 	protected boolean isEnclosingTypeVisible(IApiMember member) throws CoreException {
 		IApiType type = null;

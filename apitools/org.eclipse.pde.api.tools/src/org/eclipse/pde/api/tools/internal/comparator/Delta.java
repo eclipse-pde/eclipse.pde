@@ -34,6 +34,9 @@ public class Delta implements IDelta {
 
 	/**
 	 * Writes the delta to the given {@link PrintWriter}
+	 *
+	 * @param delta
+	 * @param writer
 	 */
 	private static void print(IDelta delta, PrintWriter writer) {
 		writer.print("delta (elementType: "); //$NON-NLS-1$
@@ -101,6 +104,15 @@ public class Delta implements IDelta {
 
 	/**
 	 * Constructor
+	 *
+	 * @param elementType
+	 * @param kind
+	 * @param flags
+	 * @param restrictions
+	 * @param modifiers
+	 * @param classFile
+	 * @param key
+	 * @param data
 	 */
 	public Delta(String componentID, int elementType, int kind, int flags, int restrictions, int oldModifiers, int newModifiers, String typeName, String key, String data) {
 		this(componentID, elementType, kind, flags, restrictions, 0, oldModifiers, newModifiers, typeName, key, new String[] { data });
@@ -121,6 +133,13 @@ public class Delta implements IDelta {
 
 	/**
 	 * Constructor
+	 *
+	 * @param elementType
+	 * @param kind
+	 * @param flags
+	 * @param classFile
+	 * @param key
+	 * @param data
 	 */
 	public Delta(String componentID, int elementType, int kind, int flags, String typeName, String key, String data) {
 		this(componentID, elementType, kind, flags, RestrictionModifiers.NO_RESTRICTIONS, 0, 0, typeName, key, data);

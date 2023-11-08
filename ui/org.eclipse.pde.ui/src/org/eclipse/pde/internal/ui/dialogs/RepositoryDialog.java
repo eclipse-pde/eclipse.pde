@@ -40,6 +40,7 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * A simple dialog that forces the user to enter a syntactical valid URL.
+ *
  */
 public class RepositoryDialog extends StatusDialog {
 	private Text fLocation;

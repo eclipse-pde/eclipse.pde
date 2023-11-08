@@ -307,12 +307,20 @@ public class ExportPackageObject extends PackageObject {
 		writer.write(write());
 	}
 
+	/**
+	 * @param model
+	 * @param header
+	 * @param versionAttribute
+	 */
 	public void reconnect(IBundleModel model, ExportPackageHeader header, String versionAttribute) {
 		super.reconnect(model, header, versionAttribute);
 		// Non-Transient Field:  Friends
 		reconnectFriends();
 	}
 
+	/**
+	 *
+	 */
 	private void reconnectFriends() {
 		// Get all the friends
 		// Fill in appropriate transient field values for all friends

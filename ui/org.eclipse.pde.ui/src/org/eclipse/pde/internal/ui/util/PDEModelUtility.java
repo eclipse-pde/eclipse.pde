@@ -72,6 +72,7 @@ import org.osgi.framework.Constants;
 
 /**
  * Your one stop shop for preforming changes to your plug-in models.
+ *
  */
 public class PDEModelUtility {
 
@@ -133,6 +134,7 @@ public class PDEModelUtility {
 
 	/**
 	 * Returns an open ManifestEditor that is associated with this project.
+	 * @param project
 	 * @return null if no ManifestEditor is open for this project
 	 */
 	public static ManifestEditor getOpenManifestEditor(IProject project) {
@@ -141,6 +143,7 @@ public class PDEModelUtility {
 
 	/**
 	 * Returns an open BuildEditor that is associated with this project.
+	 * @param project
 	 * @return null if no BuildEditor is open for this project
 	 */
 	public static BuildEditor getOpenBuildPropertiesEditor(IProject project) {
@@ -149,6 +152,7 @@ public class PDEModelUtility {
 
 	/**
 	 * Returns an open SiteEditor that is associated with this project.
+	 * @param project
 	 * @return null if no SiteEditor is open for this project
 	 */
 	public static SiteEditor getOpenUpdateSiteEditor(IProject project) {
@@ -169,6 +173,7 @@ public class PDEModelUtility {
 
 	/**
 	 * Get the open schema editor rooted at the specified underlying file
+	 * @param file
 	 * @return editor if found or null
 	 */
 	public static SchemaEditor getOpenSchemaEditor(IFile file) {
@@ -500,7 +505,11 @@ public class PDEModelUtility {
 	}
 
 	/**
+	 * @param files
+	 * @param docs
+	 * @param generateEditNames
 	 * @return the {@link IBaseModel} for the new model
+	 * @throws CoreException
 	 */
 	private static IBaseModel prepareBundlePluginModel(IFile[] files, IDocument[] docs, boolean generateEditNames) throws CoreException {
 		AbstractEditingModel[] models = new AbstractEditingModel[docs.length];

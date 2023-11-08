@@ -36,6 +36,10 @@ public class TocModel extends XMLEditingModel {
 
 	private boolean fMarkerRefreshNeeded;
 
+	/**
+	 * @param document
+	 * @param isReconciling
+	 */
 	public TocModel(IDocument document, boolean isReconciling) {
 		super(document, isReconciling);
 

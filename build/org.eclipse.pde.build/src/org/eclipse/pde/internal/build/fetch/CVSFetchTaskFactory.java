@@ -233,6 +233,9 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 	/**
 	 * Creates an SCMURL reference to the associated source.
 	 * 
+	 * @param repoLocation
+	 * @param module
+	 * @param projectName
 	 * @return project reference string or <code>null</code> if none
 	 */
 	private String asReference(String repoLocation, String module, String projectName, String tagName) {

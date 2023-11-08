@@ -25,6 +25,11 @@ public class MigrationReportConvertor extends UseReportConverter {
 
 	/**
 	 * Constructor
+	 *
+	 * @param htmlroot
+	 * @param xmlroot
+	 * @param topatterns
+	 * @param frompatterns
 	 */
 	public MigrationReportConvertor(String htmlroot, String xmlroot, String[] topatterns, String[] frompatterns) {
 		super(htmlroot, xmlroot, topatterns, frompatterns);

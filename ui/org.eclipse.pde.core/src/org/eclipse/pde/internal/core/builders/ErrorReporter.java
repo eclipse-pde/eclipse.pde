@@ -75,6 +75,11 @@ public abstract class ErrorReporter {
 	 * <code>null</code> if no marker should be created because of severity
 	 * settings.
 	 *
+	 * @param message
+	 * @param line
+	 * @param severity
+	 * @param problemID
+	 * @param category
 	 * @return a new marker or <code>null</code>
 	 */
 	public VirtualMarker report(String message, int line, int severity, int problemID, String category) {

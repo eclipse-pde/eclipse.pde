@@ -33,6 +33,9 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 public class TextAttributeRow extends ExtensionAttributeRow {
 	protected Text text;
 
+	/**
+	 * @param att
+	 */
 	public TextAttributeRow(IContextPart part, ISchemaAttribute att) {
 		super(part, att);
 	}
@@ -58,6 +61,9 @@ public class TextAttributeRow extends ExtensionAttributeRow {
 		createUITextFocusListener();
 	}
 
+	/**
+	 *
+	 */
 	private void createUITextFocusListener() {
 		// Required to enable Ctrl-V paste operations
 		text.addFocusListener(new FocusAdapter() {

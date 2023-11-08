@@ -493,6 +493,7 @@ public class MethodReturnTypeLeak extends LeakTest {
 	/**
 	 * Tests that a protected method in a final class does not report any return type leaks
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=257113
+	 * @param inc
 	 */
 	private void x18(boolean inc) {
 		expectingNoProblems();
@@ -511,6 +512,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	/**
 	 * Tests that a protected method(s) in a final class does not report any
 	 * return type leaks https://bugs.eclipse.org/bugs/show_bug.cgi?id=257113
+	 *
+	 * @param inc
 	 */
 	private void x19(boolean inc) {
 		expectingNoProblems();
@@ -529,6 +532,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	/**
 	 * Tests that a protected method(s) in a final class does not report any
 	 * return type leaks https://bugs.eclipse.org/bugs/show_bug.cgi?id=257113
+	 *
+	 * @param inc
 	 */
 	private void x21(boolean inc) {
 		expectingNoProblems();

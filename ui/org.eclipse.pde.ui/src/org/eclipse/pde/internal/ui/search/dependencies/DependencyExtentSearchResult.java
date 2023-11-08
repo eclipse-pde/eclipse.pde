@@ -35,6 +35,9 @@ import org.eclipse.ui.IEditorPart;
 
 public class DependencyExtentSearchResult extends SearchResult {
 
+	/**
+	 * @param query
+	 */
 	public DependencyExtentSearchResult(ISearchQuery query) {
 		super(query);
 	}

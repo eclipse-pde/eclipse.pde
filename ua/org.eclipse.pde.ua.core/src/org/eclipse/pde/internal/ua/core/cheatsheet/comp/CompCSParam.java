@@ -33,8 +33,15 @@ public class CompCSParam extends CompCSObject implements ICompCSParam {
 
 	private String fFieldValue;
 
+	/**
+	 *
+	 */
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * @param model
+	 * @param parent
+	 */
 	public CompCSParam(ICompCSModel model, ICompCSObject parent) {
 		super(model, parent);
 		reset();

@@ -41,6 +41,8 @@ public class TarFile implements Closeable {
 		 * Creates a new tar input stream on the given input stream.
 		 *
 		 * @param in input stream
+		 * @throws TarException
+		 * @throws IOException
 		 */
 		public TarInputStream(InputStream in) throws TarException, IOException {
 			super(in);
@@ -56,6 +58,8 @@ public class TarFile implements Closeable {
 		 *
 		 * @param in input stream
 		 * @param entry skips to this entry in the file
+		 * @throws TarException
+		 * @throws IOException
 		 */
 		TarInputStream(InputStream in, TarEntry entry) throws TarException, IOException {
 			super(in);
@@ -66,6 +70,7 @@ public class TarFile implements Closeable {
 		 * The checksum of a tar file header is simply the sum of the bytes in
 		 * the header.
 		 *
+		 * @param header
 		 * @return checksum
 		 */
 		private long headerChecksum(byte[] header) {
@@ -79,7 +84,10 @@ public class TarFile implements Closeable {
 		/**
 		 * Skips ahead to the position of the given entry in the file.
 		 *
+		 * @param entry
 		 * @return false if the entry has already been passed
+		 * @throws TarException
+		 * @throws IOException
 		 */
 		boolean skipToEntry(TarEntry entry) throws TarException, IOException {
 			int bytestoskip = entry.filepos - bytesread;
@@ -105,6 +113,7 @@ public class TarFile implements Closeable {
 		/**
 		 * Returns true if the header checksum is correct.
 		 *
+		 * @param header
 		 * @return true if this header has a valid checksum
 		 */
 		private boolean isValidTarHeader(byte[] header) {
@@ -149,6 +158,8 @@ public class TarFile implements Closeable {
 		 * extensions.
 		 *
 		 * @return the next entry in the tar file
+		 * @throws TarException
+		 * @throws IOException
 		 */
 		TarEntry getNextEntryInternal() throws TarException, IOException {
 			byte[] header = new byte[512];
@@ -279,6 +290,8 @@ public class TarFile implements Closeable {
 		 * TarEntry object describing it.
 		 *
 		 * @return the next entry in the tar file
+		 * @throws TarException
+		 * @throws IOException
 		 */
 		public TarEntry getNextEntry() throws TarException, IOException {
 			TarEntry entry = getNextEntryInternal();
@@ -339,6 +352,10 @@ public class TarFile implements Closeable {
 
 	/**
 	 * Create a new TarFile for the given file.
+	 *
+	 * @param file
+	 * @throws TarException
+	 * @throws IOException
 	 */
 	public TarFile(File file) throws TarException, IOException {
 		this.file = file;
@@ -405,7 +422,10 @@ public class TarFile implements Closeable {
 	/**
 	 * Returns a new InputStream for the given file in the tar archive.
 	 *
+	 * @param entry
 	 * @return an input stream for the given file
+	 * @throws TarException
+	 * @throws IOException
 	 */
 	public InputStream getInputStream(TarEntry entry) throws TarException, IOException {
 		if (entryStream == null || !entryStream.skipToEntry(entry)) {

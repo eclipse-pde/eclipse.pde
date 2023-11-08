@@ -42,6 +42,7 @@ import org.eclipse.pde.ui.target.ITargetLocationHandler;
 /**
  * Adapter factory for providing all necessary UI components for the
  * {@link IUBundleContainer}
+ *
  */
 public class IUFactory implements IAdapterFactory, ITargetLocationHandler {
 

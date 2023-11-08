@@ -27,6 +27,7 @@ import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 /**
  * Processes {@link OSGiAnnotations#ANNOTATION_BUNDLE_HEADER}
  * and{@link OSGiAnnotations#ANNOTATION_BUNDLE_HEADERS}
+ *
  */
 public class CustomHeaderAnnotationProcessor implements OSGiAnnotationProcessor {
 

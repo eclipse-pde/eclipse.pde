@@ -60,6 +60,9 @@ public class UpdateSiteErrorReporter extends ManifestErrorReporter {
 		}
 	}
 
+	/**
+	 * @param root
+	 */
 	private void validateArchives(Element root) {
 		NodeList list = getChildrenByName(root, "archive"); //$NON-NLS-1$
 		for (int i = 0; i < list.getLength(); i++) {
@@ -82,6 +85,9 @@ public class UpdateSiteErrorReporter extends ManifestErrorReporter {
 		}
 	}
 
+	/**
+	 * @param root
+	 */
 	private void validateCategoryDefinitions(Element root) {
 		NodeList list = getChildrenByName(root, "category-def"); //$NON-NLS-1$
 		for (int i = 0; i < list.getLength(); i++) {
@@ -103,6 +109,9 @@ public class UpdateSiteErrorReporter extends ManifestErrorReporter {
 		}
 	}
 
+	/**
+	 * @param root
+	 */
 	private void validateCategories(Element root) {
 		NodeList list = getChildrenByName(root, "category"); //$NON-NLS-1$
 		for (int i = 0; i < list.getLength(); i++) {
@@ -147,6 +156,9 @@ public class UpdateSiteErrorReporter extends ManifestErrorReporter {
 		}
 	}
 
+	/**
+	 * @param parent
+	 */
 	private void validateDescription(Element parent) {
 		NodeList list = getChildrenByName(parent, "description"); //$NON-NLS-1$
 		if (list.getLength() > 0) {

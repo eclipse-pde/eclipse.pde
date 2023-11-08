@@ -82,6 +82,8 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 
 	/**
 	 * Collects tests from the getAllTestClasses() method into the given suite
+	 *
+	 * @param suite
 	 */
 	private static void collectTests(TestSuite suite) {
 		// Hack to load all classes before computing their suite of test cases
@@ -145,6 +147,8 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 	/**
 	 * Performs a clean and full build on the projects in the workspace computed
 	 * ordering
+	 *
+	 * @throws CoreException
 	 */
 	protected void orderedBuild(IProject[] projects) throws CoreException {
 		for (IProject project : projects) {
@@ -155,6 +159,8 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 
 	/**
 	 * Creates the API baseline for this test.
+	 *
+	 * @throws Exception
 	 */
 	protected void createBaseline() throws Exception {
 		String zipPath = getBaselineLocation();
@@ -194,6 +200,8 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 	/**
 	 * Creates the workspace by importing projects from the source zip. This is
 	 * the initial state of the workspace.
+	 *
+	 * @throws Exception
 	 */
 	protected void createInitialWorkspace() throws Exception {
 		// Get workspace info
@@ -245,6 +253,8 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 
 	/**
 	 * Recursively deletes directories and all files in it.
+	 *
+	 * @param dir
 	 */
 	protected void deleteDir(File dir) {
 		File[] listFiles = dir.listFiles();
@@ -298,6 +308,7 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 	 * @param workspaceFile file to update
 	 * @param incremental whether to perform an incremental (<code>true</code>)
 	 *            or full (<code>false</code>) build
+	 * @throws Exception
 	 */
 	protected void performCompatibilityTest(IPath workspaceFile, boolean incremental) throws Exception {
 		updateWorkspaceFile(workspaceFile, getUpdateFilePath(workspaceFile.lastSegment()));
@@ -319,6 +330,7 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 	 * @param workspaceFile file to update
 	 * @param incremental whether to perform an incremental (<code>true</code>)
 	 *            or full (<code>false</code>) build
+	 * @throws Exception
 	 */
 	protected void performVersionTest(IPath workspaceFile, boolean incremental) throws Exception {
 		updateWorkspaceFile(workspaceFile, getUpdateFilePath(workspaceFile.lastSegment()));
@@ -339,6 +351,7 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 	 * @param workspaceFile file to update
 	 * @param incremental whether to perform an incremental (<code>true</code>)
 	 *            or full (<code>false</code>) build
+	 * @throws Exception
 	 */
 	protected void performDeletionCompatibilityTest(IPath workspaceFile, boolean incremental) throws Exception {
 		deleteWorkspaceFile(workspaceFile, true);
@@ -359,6 +372,7 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 	 * @param workspaceFile file to update
 	 * @param incremental whether to perform an incremental (<code>true</code>)
 	 *            or full (<code>false</code>) build
+	 * @throws Exception
 	 */
 	protected void performCreationCompatibilityTest(IPath workspaceFile, boolean incremental) throws Exception {
 		createWorkspaceFile(workspaceFile, getUpdateFilePath(workspaceFile.lastSegment()));

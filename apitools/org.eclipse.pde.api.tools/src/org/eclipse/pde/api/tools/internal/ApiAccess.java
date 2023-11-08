@@ -37,6 +37,8 @@ public class ApiAccess implements IApiAccess {
 
 	/**
 	 * Constructor
+	 *
+	 * @param access
 	 */
 	public ApiAccess(int access) {
 		this.access = access;
@@ -71,6 +73,7 @@ public class ApiAccess implements IApiAccess {
 	/**
 	 * Returns a textual representation of an {@link IApiAccess}
 	 *
+	 * @param access
 	 * @return the textual representation of an {@link IApiAccess}
 	 */
 	public static String getAccessText(int access) {

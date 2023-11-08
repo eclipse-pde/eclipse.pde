@@ -42,6 +42,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	/**
 	 * Returns the problem id with the given kind
 	 *
+	 * @param kind
 	 * @return the problem id
 	 */
 	protected int getProblemId(int kind, int flags) {
@@ -505,6 +506,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 * Tests that we do not find any problems referencing default methods in JDK
 	 * types
 	 *
+	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
 	 */
 	public void testSystemComponentNoDefaultMethodsReportedF() throws Exception {
@@ -515,6 +517,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 * Tests that we do not find any problems referencing default methods in JDK
 	 * types
 	 *
+	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
 	 */
 	public void testSystemComponentNoDefaultMethodsReportedI() throws Exception {
@@ -533,6 +536,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 * Tests that we find problems referencing default methods in other bundle
 	 * types
 	 *
+	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
 	 */
 	public void testOtherBundleDefaultMethodCallF() throws Exception {
@@ -543,6 +547,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 * Tests that we find problems referencing default methods in other bundle
 	 * types
 	 *
+	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
 	 */
 	public void testOtherBundleDefaultMethodCallI() throws Exception {
@@ -568,6 +573,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 * Tests that we find problems referencing default methods in other bundle
 	 * types
 	 *
+	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
 	 */
 	public void testOtherBundleDefaultMethodCall2F() throws Exception {
@@ -578,6 +584,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 * Tests that we find problems referencing default methods in other bundle
 	 * types
 	 *
+	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
 	 */
 	public void testOtherBundleDefaultMethodCall2I() throws Exception {
@@ -603,6 +610,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 * Tests that we find problems referencing default methods in other bundle
 	 * types
 	 *
+	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
 	 */
 	public void testOtherBundleDefaultMethodCall3F() throws Exception {
@@ -613,6 +621,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 * Tests that we find problems referencing default methods in other bundle
 	 * types
 	 *
+	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
 	 */
 	public void testOtherBundleDefaultMethodCall3I() throws Exception {
@@ -638,6 +647,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 * Tests that we find problems referencing default methods in other bundle
 	 * types
 	 *
+	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
 	 */
 	public void testOtherBundleDefaultMethodCall4F() throws Exception {
@@ -648,6 +658,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 * Tests that we find problems referencing default methods in other bundle
 	 * types
 	 *
+	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
 	 */
 	public void testOtherBundleDefaultMethodCall4I() throws Exception {

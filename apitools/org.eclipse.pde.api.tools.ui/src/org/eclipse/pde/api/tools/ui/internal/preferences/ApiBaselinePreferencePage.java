@@ -239,6 +239,8 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 	/**
 	 * Performs the edit operation for the edit button and the double click
 	 * listener for the table
+	 *
+	 * @param profile
 	 */
 	protected void doEdit(final IApiBaseline baseline) {
 		ApiBaselineWizard wizard = new ApiBaselineWizard(baseline);
@@ -268,6 +270,7 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 	 * Returns if the specified {@link IApiProfile} is the default profile or
 	 * not
 	 *
+	 * @param element
 	 * @return if the profile is the default or not
 	 */
 	protected boolean isDefault(Object element) {

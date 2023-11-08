@@ -41,6 +41,7 @@ public class ClassUsageTests extends UsageTest {
 
 	/**
 	 * Returns the problem id with the given kind
+	 * @param kind
 	 * @return the problem id
 	 */
 	protected int getProblemId(int kind, int flags) {
@@ -317,6 +318,7 @@ public class ClassUsageTests extends UsageTest {
 	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258
 	 * @since 1.0.300
+	 * @throws Exception
 	 */
 	public void testLocalClassIllegalImplements1I() throws Exception {
 		x19(true);
@@ -328,6 +330,7 @@ public class ClassUsageTests extends UsageTest {
 	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258
 	 * @since 1.0.300
+	 * @throws Exception
 	 */
 	public void testLocalClassIllegalImplements1F() throws Exception {
 		x19(false);
@@ -356,6 +359,7 @@ public class ClassUsageTests extends UsageTest {
 	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258
 	 * @since 1.0.300
+	 * @throws Exception
 	 */
 	public void testLocalClassIllegaImplements2I() throws Exception {
 		x20(true);
@@ -368,6 +372,7 @@ public class ClassUsageTests extends UsageTest {
 	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258
 	 * @since 1.0.300
+	 * @throws Exception
 	 */
 	public void testLocalClassIllegalImplements2F() throws Exception {
 		x20(false);
@@ -393,6 +398,7 @@ public class ClassUsageTests extends UsageTest {
 	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258
 	 * @since 1.0.300
+	 * @throws Exception
 	 */
 	public void testAnonymousClassIllegaImplements1I() throws Exception {
 		x21(true);
@@ -405,6 +411,7 @@ public class ClassUsageTests extends UsageTest {
 	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258
 	 * @since 1.0.300
+	 * @throws Exception
 	 */
 	public void testAnonymousClassIllegalImplements1F() throws Exception {
 		x21(false);
@@ -589,6 +596,7 @@ public class ClassUsageTests extends UsageTest {
 	/**
 	 * Tests that local types with the same name in different methods are correctly found
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=258101
+	 * @param inc
 	 */
 	private void x16(boolean inc) {
 		setExpectedProblemIds(new int[] {
@@ -708,7 +716,9 @@ public class ClassUsageTests extends UsageTest {
 	 * Tests that references to a type and its members are flagged when only the type is tagged
 	 * as &#64;reference
 	 *
+	 * @throws Exception
 	 * @since 1.0.300
+	 *
 	 */
 	public void testIllegalReferenceClass1I() throws Exception {
 		x22(true);
@@ -718,7 +728,9 @@ public class ClassUsageTests extends UsageTest {
 	 * Tests that references to a type and its members are flagged when only the type is tagged
 	 * as &#64;reference
 	 *
+	 * @throws Exception
 	 * @since 1.0.300
+	 *
 	 */
 	public void testIllegalReferenceClass1F() throws Exception {
 		x22(false);
@@ -749,7 +761,9 @@ public class ClassUsageTests extends UsageTest {
 	 *  Tests that references to a type and its members are flagged when only the type is tagged
 	 * as &#64;reference - within local / anonymous types
 	 *
+	 * @throws Exception
 	 * @since 1.0.300
+	 *
 	 */
 	public void testIllegalReferenceClass2I() throws Exception {
 		x23(true);
@@ -759,7 +773,9 @@ public class ClassUsageTests extends UsageTest {
 	 *  Tests that references to a type and its members are flagged when only the type is tagged
 	 * as &#64;reference - within local / anonymous types
 	 *
+	 * @throws Exception
 	 * @since 1.0.300
+	 *
 	 */
 	public void testIllegalReferenceClass2F() throws Exception {
 		x23(false);
@@ -788,7 +804,9 @@ public class ClassUsageTests extends UsageTest {
 	 *  Tests that references to a type and its members are flagged when only the type is tagged
 	 * as &#64;reference - from member restricted types
 	 *
+	 * @throws Exception
 	 * @since 1.0.300
+	 *
 	 */
 	public void testIllegalReferenceClass3F() throws Exception {
 		x24(false);
@@ -798,7 +816,9 @@ public class ClassUsageTests extends UsageTest {
 	 *  Tests that references to a type and its members are flagged when only the type is tagged
 	 * as &#64;reference - from member restricted types
 	 *
+	 * @throws Exception
 	 * @since 1.0.300
+	 *
 	 */
 	public void testIllegalReferenceClass3I() throws Exception {
 		x24(false);

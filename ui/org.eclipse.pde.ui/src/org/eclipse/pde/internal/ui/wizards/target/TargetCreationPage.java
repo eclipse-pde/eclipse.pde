@@ -169,6 +169,9 @@ public class TargetCreationPage extends WizardSelectionPage {
 
 	/**
 	 * Applies basic target settings to the given target definition.
+	 *
+	 * @param definition
+	 * @throws CoreException
 	 */
 	private void populateBasicTarget(ITargetDefinition definition) throws CoreException {
 		ITargetPlatformService service = getTargetService();
@@ -180,6 +183,9 @@ public class TargetCreationPage extends WizardSelectionPage {
 
 	/**
 	 * Populates the given definition from current target platform settings.
+	 *
+	 * @param definition
+	 * @throws CoreException
 	 */
 	private void populateFromCurrentTargetPlatform(ITargetDefinition definition) throws CoreException {
 		ITargetPlatformService service = getTargetService();
@@ -192,6 +198,7 @@ public class TargetCreationPage extends WizardSelectionPage {
 	/**
 	 * Populates the given definition from the specified target template.
 	 *
+	 * @param definition
 	 * @param id target extension identifier
 	 * @exception CoreException if unable to complete
 	 */

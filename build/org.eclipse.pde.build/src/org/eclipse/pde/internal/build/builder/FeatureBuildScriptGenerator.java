@@ -149,6 +149,8 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 
 	/**
 	 * Main call for generating the script.
+	 * 
+	 * @throws CoreException
 	 */
 	private void generateBuildScript() throws CoreException {
 		if (BundleHelper.getDefault().isDebugging())
@@ -214,6 +216,8 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 
 	/**
 	 * Add the <code>build.zips</code> target to the given Ant script.
+	 * 
+	 * @throws CoreException
 	 */
 	private void generateBuildZipsTarget() throws CoreException {
 		StringBuffer zips = new StringBuffer();
@@ -364,6 +368,8 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 
 	/**
 	 * Add the <code>gather.bin.parts</code> target to the given Ant script
+	 * 
+	 * @throws CoreException
 	 */
 	private void generateGatherBinPartsTarget() throws CoreException {
 		String include = (String) getBuildProperties().get(PROPERTY_BIN_INCLUDES);
@@ -455,12 +461,18 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		script.println("<eclipse.licenseReplacer featureFilePath=\"" + AntScript.getEscaped(featureRoot) + "\" licenseFilePath=\"" + AntScript.getEscaped(licensePath) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
+	/**
+	 *  
+	 */
 	private void generateRootFilesAndPermissionsCalls() {
 		Map<String, String> param = new HashMap<>(1);
 		param.put(TARGET_ROOT_TARGET, TARGET_ROOTFILES_PREFIX + Utils.getPropertyFormat(PROPERTY_OS) + '_' + Utils.getPropertyFormat(PROPERTY_WS) + '_' + Utils.getPropertyFormat(PROPERTY_ARCH));
 		script.printAntCallTask(TARGET_ROOTFILES_PREFIX, true, param);
 	}
 
+	/**
+	 *  
+	 */
 	private void generateRootFilesAndPermissions() throws CoreException {
 		boolean generateEclipseProduct = Boolean.valueOf(getBuildProperties().getProperty(IBuildPropertiesConstants.PROPERTY_GENERATE_ECLIPSEPRODUCT)).booleanValue();
 		String product = (generateProductFiles || generateEclipseProduct) ? director.getProduct() : null;
@@ -635,6 +647,8 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 	 * Target responsible for delegating target calls to plug-in's build.xml
 	 * scripts. Plugins are sorted according to the requires chain. Fragments
 	 * are inserted afterward
+	 * 
+	 * @throws CoreException
 	 */
 	protected void generateAllPluginsTarget() throws CoreException {
 		Set<BundleDescription> plugins = computeElements();
@@ -749,6 +763,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 	 * object is returned.
 	 * 
 	 * @return Properties the feature's build.properties
+	 * @throws CoreException
 	 */
 	protected Properties getBuildProperties() throws CoreException {
 		if (buildProperties == null)
@@ -762,6 +777,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 	 * object is returned.
 	 * 
 	 * @return Properties the feature's build.properties
+	 * @throws CoreException
 	 */
 	protected Properties getBuildProperties(String featureLocation) throws CoreException {
 		return readProperties(featureLocation, PROPERTIES_FILE, director.isIgnoreMissingPropertiesFile() ? IStatus.OK : IStatus.WARNING);

@@ -27,6 +27,9 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
  */
 public class LeakParameterTypeDetector extends MethodLeakDetector {
 
+	/**
+	 * @param nonApiPackageNames
+	 */
 	public LeakParameterTypeDetector(Set<String> nonApiPackageNames) {
 		super(nonApiPackageNames);
 	}

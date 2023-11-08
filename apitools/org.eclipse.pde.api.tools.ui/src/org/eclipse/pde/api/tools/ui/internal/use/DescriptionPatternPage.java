@@ -43,6 +43,9 @@ public class DescriptionPatternPage extends UsePatternPage {
 
 	/**
 	 * Constructor
+	 *
+	 * @param pattern
+	 * @param kind
 	 */
 	public DescriptionPatternPage(String pattern, int kind) {
 		super(PAGE_NAME, Messages.DescriptionPatternPage_package_name_pattern, null);

@@ -19,9 +19,13 @@ import org.eclipse.swt.graphics.Image;
 
 /**
  * TypeProposalLabelProvider
+ *
  */
 public class TypeProposalLabelProvider extends LabelProvider {
 
+	/**
+	 *
+	 */
 	public TypeProposalLabelProvider() {
 		// NO-OP
 	}

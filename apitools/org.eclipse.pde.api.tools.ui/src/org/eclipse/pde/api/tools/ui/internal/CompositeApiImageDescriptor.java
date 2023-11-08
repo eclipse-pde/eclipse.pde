@@ -36,6 +36,9 @@ public class CompositeApiImageDescriptor extends CompositeImageDescriptor {
 
 	/**
 	 * Constructor
+	 *
+	 * @param original
+	 * @param flags
 	 */
 	public CompositeApiImageDescriptor(Image original, int flags) {
 		fOriginalImage = original;
@@ -71,6 +74,9 @@ public class CompositeApiImageDescriptor extends CompositeImageDescriptor {
 	/**
 	 * Adds the given {@link ImageDescriptor} to the upper right-hand corner of
 	 * the original image
+	 *
+	 * @param desc
+	 * @param pos
 	 */
 	private void addTopRightImage(ImageDescriptor desc, Point pos) {
 		CachedImageDataProvider data = createCachedImageDataProvider(desc);

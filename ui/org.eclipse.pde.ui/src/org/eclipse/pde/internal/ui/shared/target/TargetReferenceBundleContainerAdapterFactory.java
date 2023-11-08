@@ -188,6 +188,7 @@ public class TargetReferenceBundleContainerAdapterFactory implements IAdapterFac
 	/**
 	 * this wrapper prevent several action to take place in case wo would have
 	 * returned the {@link ITargetLocation} directly
+	 *
 	 */
 	public static final class TargetLocationWrapper {
 		private final Object wrappedItem;

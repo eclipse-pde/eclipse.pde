@@ -64,6 +64,9 @@ public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 		disableCodeFoldingFeature();
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	private void disableCodeFoldingFeature() throws Exception {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 		if (store.getBoolean(IPreferenceConstants.EDITOR_FOLDING_ENABLED)) {
@@ -71,6 +74,10 @@ public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 		}
 	}
 
+	/**
+	 * @return
+	 * @throws Exception
+	 */
 	private Bundle getBundle() throws Exception {
 		PDETestsPlugin plugin = PDETestsPlugin.getDefault();
 		if (plugin == null) {
@@ -83,6 +90,12 @@ public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 		return bundle;
 	}
 
+	/**
+	 * @param bundle
+	 * @param filename
+	 * @return
+	 * @throws Exception
+	 */
 	private File getFile(Bundle bundle, String filename) throws Exception {
 		URL url = bundle.getEntry(filename);
 		if (url == null) {
@@ -95,16 +108,26 @@ public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 		return new File(path);
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	public void testEditorOpenXML() throws Exception {
 		tagAsSummary("Open Plug-in Editor: plugin.xml", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
 		executeTestRun(fPluginFile);
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	public void testEditorOpenMF() throws Exception {
 		tagAsSummary("Open Plug-in Editor: MANIFEST.MF", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
 		executeTestRun(fManifestFile);
 	}
 
+	/**
+	 * @param file
+	 * @throws Exception
+	 */
 	private void executeTestRun(File file) throws Exception {
 		// Create the file editor input
 		IFileStore store = EFS.getStore(file.toURI());
@@ -125,11 +148,19 @@ public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 		assertPerformance();
 	}
 
+	/**
+	 * @param file
+	 * @throws Exception
+	 */
 	private IEditorPart openEditor(IEditorInput editorInput) throws Exception {
 		// Open the editor
 		return IDE.openEditor(fActivePage, editorInput, IPDEUIConstants.MANIFEST_EDITOR_ID, true);
 	}
 
+	/**
+	 * @param editorPart
+	 * @throws Exception
+	 */
 	private void closeEditor(IEditorPart editorPart) throws Exception {
 		// Close the editor
 		fActivePage.closeEditor(editorPart, false);

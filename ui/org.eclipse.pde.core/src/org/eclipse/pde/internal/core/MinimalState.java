@@ -230,6 +230,7 @@ public class MinimalState {
 	/**
 	 * Resolves the state incrementally based on the given bundle names.
 	 *
+	 * @param symbolicNames
 	 * @return state delta
 	 */
 	public StateDelta resolveState(String[] symbolicNames) {

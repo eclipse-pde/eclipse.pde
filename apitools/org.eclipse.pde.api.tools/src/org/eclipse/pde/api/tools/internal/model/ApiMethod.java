@@ -52,6 +52,10 @@ public class ApiMethod extends ApiMember implements IApiMethod {
 	 * @param enclosing enclosing type
 	 * @param name method name
 	 * @param signature method signature
+	 * @param genericSig
+	 * @param flags
+	 * @param exceptions
+	 * @param isdefault
 	 */
 	protected ApiMethod(IApiType enclosing, String name, String signature, String genericSig, int flags, String[] exceptions) {
 		super(enclosing, name, signature, genericSig, IApiElement.METHOD, flags);

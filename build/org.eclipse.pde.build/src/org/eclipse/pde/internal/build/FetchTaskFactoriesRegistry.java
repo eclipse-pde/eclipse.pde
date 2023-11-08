@@ -45,6 +45,7 @@ public class FetchTaskFactoriesRegistry implements IPDEBuildConstants {
 	 * The instance is cached, subsequent calls with the same id will 
 	 * return the same factory instance.
 	 * </p>
+	 * @param id
 	 * @return the factory instance (maybe <code>null</code>)
 	 */
 	public IFetchFactory getFactory(String id) {
@@ -66,6 +67,7 @@ public class FetchTaskFactoriesRegistry implements IPDEBuildConstants {
 	 * The instance is not cached. Each time this method is called, a new
 	 * instance is created.
 	 * </p>
+	 * @param id
 	 * @return the factory instance (maybe <code>null</code>)
 	 */
 	public IFetchFactory newFactory(String id) {

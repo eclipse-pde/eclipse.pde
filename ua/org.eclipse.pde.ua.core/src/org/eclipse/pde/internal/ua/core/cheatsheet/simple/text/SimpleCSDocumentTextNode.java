@@ -30,6 +30,9 @@ public class SimpleCSDocumentTextNode extends DocumentTextNode {
 		TAG_EXCEPTIONS.add("br/"); //$NON-NLS-1$
 	}
 
+	/**
+	 *
+	 */
 	public SimpleCSDocumentTextNode() {
 		super();
 	}

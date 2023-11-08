@@ -75,6 +75,7 @@ public class SampleWizard extends Wizard implements INewWizard, IExecutableExten
 
 	/**
 	 * The default constructor.
+	 *
 	 */
 	public SampleWizard() {
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
@@ -96,6 +97,9 @@ public class SampleWizard extends Wizard implements INewWizard, IExecutableExten
 		return samples;
 	}
 
+	/**
+	 *
+	 */
 	@Override
 	public void addPages() {
 		if (selection == null) {
@@ -105,6 +109,9 @@ public class SampleWizard extends Wizard implements INewWizard, IExecutableExten
 		addPage(lastPage);
 	}
 
+	/**
+	 *
+	 */
 	@Override
 	public boolean performFinish() {
 		try {
@@ -191,6 +198,9 @@ public class SampleWizard extends Wizard implements INewWizard, IExecutableExten
 		workbenchActivitySupport.setEnabledActivityIds(set);
 	}
 
+	/**
+	 *
+	 */
 	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
 		String variable = data != null && data instanceof String ? data.toString() : null;

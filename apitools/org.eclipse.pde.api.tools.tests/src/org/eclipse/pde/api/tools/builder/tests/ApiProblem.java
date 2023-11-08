@@ -30,6 +30,7 @@ public class ApiProblem extends Problem {
 
 	/**
 	 * Constructor
+	 * @param marker
 	 */
 	public ApiProblem(IMarker marker) {
 		super(marker);
@@ -39,6 +40,14 @@ public class ApiProblem extends Problem {
 
 	/**
 	 * Constructor
+	 * @param location
+	 * @param message
+	 * @param resourcePath
+	 * @param start
+	 * @param end
+	 * @param categoryId
+	 * @param severity
+	 * @param problemid
 	 */
 	public ApiProblem(String location, String message, IPath resourcePath, int start, int end, int categoryId, int severity, int problemid) {
 		super(location, message, resourcePath, start, end, categoryId, severity);

@@ -138,6 +138,8 @@ public class BundleRootTests {
 	/**
 	 * Tests that IPluginModel.getInstallLocation() returns the bundle root
 	 * location in a project.
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testPluginModelInstallLocation() throws CoreException {
@@ -159,6 +161,8 @@ public class BundleRootTests {
 	/**
 	 * Minimal bundle project with a non-default root - set a symbolic name, and
 	 * go.
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testBundleRoot() throws CoreException {
@@ -209,6 +213,8 @@ public class BundleRootTests {
 	/**
 	 * Creates a bundle project at a root location, and then removes PDE/Java
 	 * natures. Then attempts create a bundle project out of the existing data.
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testAssignRootToExistingProject() throws CoreException {

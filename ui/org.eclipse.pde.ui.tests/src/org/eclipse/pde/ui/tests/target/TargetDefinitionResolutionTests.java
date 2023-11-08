@@ -70,6 +70,7 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 	 * resolving we create the correct status.
 	 *
 	 * @see TargetBundle.STATUS_INVALID_MANIFEST
+	 * @throws Exception
 	 */
 	@Test
 	public void testInvalidManifest() throws Exception {
@@ -171,6 +172,8 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 
 	/**
 	 * Tests that a target definition is in synch with the target platform.
+	 *
+	 * @throws Exception
 	 */
 	@Test
 	public void testTargetInSynch() throws Exception {
@@ -196,6 +199,8 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 	 * Tests that a target definition is in synch with the target platform when
 	 * there are duplicates in the target definition (duplicates should be
 	 * ignored).
+	 *
+	 * @throws Exception
 	 */
 	@Test
 	public void testTargetInSynchWithDuplicates() throws Exception {
@@ -222,6 +227,8 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 	 * Tests that a target definition is not in synch with the target platform
 	 * when a bundle is deleted from the underlying files system (target
 	 * platform).
+	 *
+	 * @throws Exception
 	 */
 	@Test
 	public void testTargetMissingBundle() throws Exception {
@@ -256,6 +263,8 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 	/**
 	 * Tests that a target definition will warn if an expected bundle does not
 	 * exist on the file system.
+	 *
+	 * @throws Exception
 	 */
 	@Test
 	public void testTargetPlatformMissingBundle() throws Exception {
@@ -298,6 +307,8 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 	/**
 	 * Tests the two options on IU bundle containers for controlling how the
 	 * site will be resolved
+	 *
+	 * @throws Exception
 	 */
 	@Test
 	public void testSiteContainerIncludeSettings() throws Exception {
@@ -422,6 +433,7 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 	/**
 	 * Tests that when resolving a set of bundles that include source bundles, the source bundles
 	 * are able to determine the bundle their source is for.
+	 * @throws Exception
 	 */
 	@Test
 	public void testSourceBundleRecognition() throws Exception {

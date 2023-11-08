@@ -238,6 +238,14 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 		return mode;
 	}
 
+	/**
+	 * @param mode
+	 * @param featureVersion
+	 * @param ref
+	 * @param monitor
+	 * @throws CoreException
+	 * @throws BadLocationException
+	 */
 	private void synchronizeVersion(int mode, String featureVersion, IFeaturePlugin ref, IProgressMonitor monitor) throws CoreException, BadLocationException {
 		String id = ref.getId();
 

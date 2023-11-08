@@ -112,6 +112,10 @@ public class IdUtil {
 		return plugin.getId() + '.' + id;
 	}
 
+	/**
+	 * @param point
+	 * @param model
+	 */
 	public static String getFullId(IPluginExtensionPoint point, IPluginModelBase model) {
 
 		if ((point instanceof PluginExtensionPointNode) && (model != null)) {

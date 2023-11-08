@@ -24,6 +24,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * BaseDescriptionHandler
+ *
  */
 public class BaseSchemaHandler extends DefaultHandler {
 

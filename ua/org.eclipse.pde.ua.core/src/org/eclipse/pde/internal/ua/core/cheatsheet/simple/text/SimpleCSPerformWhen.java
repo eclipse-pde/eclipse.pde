@@ -26,6 +26,9 @@ public class SimpleCSPerformWhen extends SimpleCSObject implements
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * @param model
+	 */
 	public SimpleCSPerformWhen(ISimpleCSModel model) {
 		super(model, ELEMENT_PERFORM_WHEN);
 	}

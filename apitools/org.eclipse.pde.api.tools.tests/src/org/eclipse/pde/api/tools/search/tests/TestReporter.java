@@ -115,6 +115,8 @@ public class TestReporter implements IApiSearchReporter {
 	 * Sets the expected reference kinds to the names of the element they came
 	 * from. passing in <code>null</code>(s) will reset to not expecting any
 	 * references
+	 *
+	 * @param references
 	 */
 	void setExpectedReferences(String[] names, int[][] referencekinds) {
 		if (names == null || referencekinds == null) {
@@ -137,6 +139,8 @@ public class TestReporter implements IApiSearchReporter {
 
 	/**
 	 * Sets the {@link IApiElement}s we expect to see as not searched
+	 *
+	 * @param elements
 	 */
 	void setExpectedNotSearched(String[] elements) {
 		if (elements != null) {

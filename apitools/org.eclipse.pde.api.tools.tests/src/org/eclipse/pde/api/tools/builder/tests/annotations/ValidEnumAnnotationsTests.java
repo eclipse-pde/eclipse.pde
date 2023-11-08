@@ -26,6 +26,8 @@ public class ValidEnumAnnotationsTests extends InvalidEnumAnnotationsTests {
 
 	/**
 	 * Constructor
+	 *
+	 * @param name
 	 */
 	public ValidEnumAnnotationsTests(String name) {
 		super(name);

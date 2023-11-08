@@ -38,6 +38,8 @@ public class UnsupportedTagResolution extends WorkbenchMarkerResolution {
 
 	/**
 	 * Constructor
+	 *
+	 * @param marker
 	 */
 	public UnsupportedTagResolution(IMarker marker) {
 		fBackingMarker = marker;

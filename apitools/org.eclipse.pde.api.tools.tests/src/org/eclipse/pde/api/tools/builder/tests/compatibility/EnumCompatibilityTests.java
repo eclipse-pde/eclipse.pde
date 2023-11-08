@@ -41,6 +41,7 @@ public class EnumCompatibilityTests extends CompatibilityTest {
 
 	/**
 	 * Constructor
+	 * @param name
 	 */
 	public EnumCompatibilityTests(String name) {
 		super(name);

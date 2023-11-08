@@ -18,6 +18,7 @@ import org.xml.sax.SAXException;
 
 /**
  * ElementDescriptionHandler
+ *
  */
 public class SchemaElementHandler extends BaseSchemaHandler {
 
@@ -32,6 +33,9 @@ public class SchemaElementHandler extends BaseSchemaHandler {
 
 	private final static String NAME_ATTR = "name"; //$NON-NLS-1$
 
+	/**
+	 *
+	 */
 	public SchemaElementHandler(String targetElementName) {
 		super();
 		setTargetElementName(targetElementName);

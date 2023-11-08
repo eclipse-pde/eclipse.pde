@@ -248,6 +248,8 @@ public class ClassFileComparator {
 
 	/**
 	 * reports problem status to the comparators' complete status
+	 *
+	 * @param newstatus
 	 */
 	protected void reportStatus(IStatus newstatus) {
 		if (this.status == null) {
@@ -259,6 +261,8 @@ public class ClassFileComparator {
 
 	/**
 	 * Report problem to the comparators' status
+	 *
+	 * @param e
 	 */
 	private void reportStatus(CoreException e) {
 		reportStatus(e.getStatus());
@@ -900,6 +904,9 @@ public class ClassFileComparator {
 	/**
 	 * Recursively collects all of the super-interfaces of the given type
 	 * descriptor within the scope of the given API component
+	 *
+	 * @param type
+	 * @param set
 	 */
 	private void collectAllInterfaces(IApiType type, Set<IApiType> set) {
 		try {
@@ -970,6 +977,8 @@ public class ClassFileComparator {
 	/**
 	 * Returns a new {@link Delta} to use, and resets the status of creating a
 	 * delta
+	 *
+	 * @return
 	 */
 	private Delta createDelta() {
 		return new Delta();
@@ -2039,6 +2048,7 @@ public class ClassFileComparator {
 	 * Returns the complete super-interface set for the given type descriptor or
 	 * null, if it could not be computed
 	 *
+	 * @param type
 	 * @return the complete super-interface set for the given descriptor, or
 	 *         <code>null</code>
 	 */
@@ -2471,6 +2481,7 @@ public class ClassFileComparator {
 	 * Returns the delta element type code for the given type. Translates a type
 	 * to interface, class, emum or annotation.
 	 *
+	 * @param type
 	 * @return delta element type
 	 */
 	private int getElementType(IApiType type) {
@@ -2490,6 +2501,7 @@ public class ClassFileComparator {
 	 * Returns the delta element type code for the given method. Translates a
 	 * method to constructor or method.
 	 *
+	 * @param method
 	 * @return delta element type
 	 */
 	private int getElementType(IApiMethod method) {
@@ -2503,6 +2515,7 @@ public class ClassFileComparator {
 	 * Returns the delta type code for the given method when it is the target of
 	 * a remove/add. Translates a method to constructor or method.
 	 *
+	 * @param method
 	 * @return delta type
 	 */
 	private int getTargetType(IApiMethod method) {
@@ -2515,6 +2528,7 @@ public class ClassFileComparator {
 	/**
 	 * Translates a member to its delta element type code.
 	 *
+	 * @param member
 	 * @return delta element type code
 	 */
 	private int getElementType(IApiMember member) {

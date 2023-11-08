@@ -136,6 +136,8 @@ public class ProjectCreationTests {
 
 	/**
 	 * Minimal bundle project creation - set a symbolic name, and go.
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testBundle() throws CoreException {
@@ -183,6 +185,8 @@ public class ProjectCreationTests {
 
 	/**
 	 * Tests that a header can be written with an empty value.
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testEmptyHeader() throws CoreException {
@@ -235,6 +239,8 @@ public class ProjectCreationTests {
 	/**
 	 * Tests that an empty package import header can be tolerated (see bug
 	 * 312291)
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testEmptyPackageImportHeader() throws CoreException {
@@ -262,6 +268,8 @@ public class ProjectCreationTests {
 
 	/**
 	 * Minimal fragment project creation - set a symbolic name and host, and go.
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testFragment() throws CoreException {
@@ -309,6 +317,8 @@ public class ProjectCreationTests {
 
 	/**
 	 * Fragment project creation with source folder and host range.
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testFragmentSrc() throws CoreException {
@@ -362,6 +372,8 @@ public class ProjectCreationTests {
 
 	/**
 	 * Two source folders mapped to the same jar.
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testTwoSourceFoldersOneJar() throws CoreException {
@@ -420,6 +432,8 @@ public class ProjectCreationTests {
 
 	/**
 	 * Test two source folders to different jars
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testTwoSourceFoldersTwoJars() throws CoreException {
@@ -471,6 +485,8 @@ public class ProjectCreationTests {
 
 	/**
 	 * Set a symbolic name and singleton property, and go.
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testSingleton() throws CoreException {
@@ -516,6 +532,8 @@ public class ProjectCreationTests {
 	/**
 	 * A simple project with a single source folder, default output folder, and
 	 * bundle classpath (.).
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testBundleSrc() throws CoreException {
@@ -578,6 +596,8 @@ public class ProjectCreationTests {
 
 	/**
 	 * Convert a bundle to a fragment
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testBundleToFrag() throws CoreException {
@@ -635,6 +655,8 @@ public class ProjectCreationTests {
 	/**
 	 * A project with a source folder, plugin.xml, activator, execution
 	 * environment, required bundles, and package import.
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testPlugin() throws CoreException {
@@ -714,6 +736,8 @@ public class ProjectCreationTests {
 	/**
 	 * Modify a simple project - change class path, add activator and
 	 * plugin.xml.
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testModifyBundle() throws CoreException {
@@ -795,6 +819,8 @@ public class ProjectCreationTests {
 	/**
 	 * Modify a simple project to add/remove/clear some entries. See bug 380444
 	 * where previous settings weren't being cleared
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testModifyRequiredBundles() throws CoreException {
@@ -886,6 +912,8 @@ public class ProjectCreationTests {
 
 	/**
 	 * Convert a fragment into a bundle
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testFragToBundle() throws CoreException {
@@ -943,6 +971,8 @@ public class ProjectCreationTests {
 
 	/**
 	 * Tests creating a project that simply wraps jars into a bundle.
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testJarsAsBundle() throws CoreException, IOException {
@@ -1007,6 +1037,9 @@ public class ProjectCreationTests {
 
 	/**
 	 * Creates a file with some content at the given location.
+	 *
+	 * @param file
+	 * @throws CoreException
 	 */
 	protected void createBogusJar(IFile file) throws CoreException, IOException {
 		IContainer parent = file.getParent();
@@ -1025,6 +1058,8 @@ public class ProjectCreationTests {
 
 	/**
 	 * Tests creating a project that simply wraps jars into a bundle.
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testClassFolders() throws CoreException {
@@ -1089,6 +1124,8 @@ public class ProjectCreationTests {
 
 	/**
 	 * Test custom export wizard and launch shortcuts.
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testExportWizardLaunchShortcuts() throws CoreException {
@@ -1140,6 +1177,8 @@ public class ProjectCreationTests {
 
 	/**
 	 * Targeting 3.1, should get result it Eclipse-AutoStart: true
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testLazyAutostart() throws CoreException {
@@ -1239,6 +1278,8 @@ public class ProjectCreationTests {
 
 	/**
 	 * Targeting 3.1, eager bundle should omit Eclipse-AutoStart: header
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testEagerAutostart() throws CoreException {
@@ -1304,6 +1345,8 @@ public class ProjectCreationTests {
 
 	/**
 	 * Targeting 3.2, lazy bundle should have Eclipse-LazyStart: header
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testLazyEclipseLazyStart() throws CoreException {
@@ -1370,6 +1413,8 @@ public class ProjectCreationTests {
 
 	/**
 	 * Targeting 3.2, eager bundle should not have Eclipse-LazyStart: header
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testEagerEclipseLazyStart() throws CoreException {
@@ -1462,6 +1507,7 @@ public class ProjectCreationTests {
 	 * @param stream
 	 *            the stream to get as a byte array
 	 * @return the given input stream as a byte array
+	 * @throws IOException
 	 */
 	public static byte[] getInputStreamAsByteArray(InputStream stream) throws IOException {
 		try (stream) {
@@ -1472,6 +1518,9 @@ public class ProjectCreationTests {
 	/**
 	 * Tests that package import/export headers don't get flattened when doing
 	 * an unrelated edit.
+	 *
+	 * @throws CoreException
+	 * @throws IOException
 	 */
 	@Test
 	public void testHeaderFormatting() throws CoreException, IOException {
@@ -1511,6 +1560,8 @@ public class ProjectCreationTests {
 
 	/**
 	 * Changes a non-plug-in project into a a plug-in.
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testNonBundleToBundle() throws CoreException {
@@ -1545,6 +1596,8 @@ public class ProjectCreationTests {
 	/**
 	 * Convert an existing Java project into a bundle project. Ensure it's build
 	 * path doesn't get toasted in the process.
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testJavaToBundle() throws CoreException {
@@ -1614,6 +1667,8 @@ public class ProjectCreationTests {
 	/**
 	 * Tests creating a project that has a nested class file folders instead of
 	 * a jar
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testClassFoldersNoJars() throws CoreException {
@@ -1679,6 +1734,8 @@ public class ProjectCreationTests {
 
 	/**
 	 * Tests that adding package exports incrementally works
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testExportUpdateSequence() throws CoreException {

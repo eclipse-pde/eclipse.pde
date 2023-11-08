@@ -55,6 +55,10 @@ public class PluginSearchActionGroup extends ActionGroup {
 		}
 	}
 
+	/**
+	 * @param object
+	 * @param menu
+	 */
 	private void addOpenSchemaAction(Object object, IMenuManager menu) {
 		if (object instanceof IPluginExtension) {
 			// From PDEOutlinePage

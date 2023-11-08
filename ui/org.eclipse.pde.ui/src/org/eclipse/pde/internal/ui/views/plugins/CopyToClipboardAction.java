@@ -39,6 +39,7 @@ public class CopyToClipboardAction extends Action {
 
 	/**
 	 * Constructor for CopyToClipboardAction.
+	 * @param text
 	 */
 	protected CopyToClipboardAction(String text) {
 		super(text);

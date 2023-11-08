@@ -32,6 +32,10 @@ public class RequireBundleHeader extends CompositeManifestHeader {
 		addBundle(iimport.getId(), iimport.getVersion(), iimport.isReexported(), iimport.isOptional());
 	}
 
+	/**
+	 * @param iimport
+	 * @param index
+	 */
 	public void addBundle(IPluginImport iimport, int index) {
 		String id = iimport.getId();
 		String version = iimport.getVersion();
@@ -55,6 +59,12 @@ public class RequireBundleHeader extends CompositeManifestHeader {
 		addManifestElement(element);
 	}
 
+	/**
+	 * @param version
+	 * @param exported
+	 * @param optional
+	 * @param element
+	 */
 	private void configureBundle(String version, boolean exported, boolean optional, RequireBundleObject element) {
 		int bundleManifestVersion = BundlePluginBase.getBundleManifestVersion(getBundle());
 		if (optional) {

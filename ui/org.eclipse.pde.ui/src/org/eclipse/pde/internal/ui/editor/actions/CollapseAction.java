@@ -26,6 +26,12 @@ public class CollapseAction extends Action {
 
 	private final int fExpandToLevel;
 
+	/**
+	 * @param viewer
+	 * @param tooltipText
+	 * @param expandToLevel
+	 * @param treeObject
+	 */
 	public CollapseAction(AbstractTreeViewer viewer, String tooltipText, int expandToLevel, Object treeObject) {
 		super(tooltipText, IAction.AS_PUSH_BUTTON);
 		fExpandToLevel = expandToLevel;
@@ -33,6 +39,10 @@ public class CollapseAction extends Action {
 		initialize(viewer, tooltipText);
 	}
 
+	/**
+	 * @param viewer
+	 * @param tooltipText
+	 */
 	public CollapseAction(AbstractTreeViewer viewer, String tooltipText) {
 		super(tooltipText, IAction.AS_PUSH_BUTTON);
 		fExpandToLevel = 0;
@@ -40,6 +50,10 @@ public class CollapseAction extends Action {
 		initialize(viewer, tooltipText);
 	}
 
+	/**
+	 * @param viewer
+	 * @param tooltipText
+	 */
 	private void initialize(AbstractTreeViewer viewer, String tooltipText) {
 		setToolTipText(tooltipText);
 		setImageDescriptor(PDEPluginImages.DESC_COLLAPSE_ALL);

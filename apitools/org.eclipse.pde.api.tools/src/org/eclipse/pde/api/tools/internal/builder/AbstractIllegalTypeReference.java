@@ -73,6 +73,7 @@ public abstract class AbstractIllegalTypeReference extends AbstractProblemDetect
 	/**
 	 * Returns if the mapping contains the referenced type name
 	 *
+	 * @param reference
 	 * @return true of the mapping contains the key false otherwise
 	 */
 	protected boolean isIllegalType(IReference reference) {

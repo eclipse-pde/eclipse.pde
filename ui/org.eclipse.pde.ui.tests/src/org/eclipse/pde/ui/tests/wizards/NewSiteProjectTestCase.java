@@ -85,6 +85,9 @@ public class NewSiteProjectTestCase {
 		progressService.runInUI(progressService, createOperation, null);
 	}
 
+	/**
+	 * @param project
+	 */
 	private void ensureCreated(IProject project) {
 		assertTrue("Project not created.", project.exists()); //$NON-NLS-1$
 		assertTrue("Project not open.", project.isOpen()); //$NON-NLS-1$

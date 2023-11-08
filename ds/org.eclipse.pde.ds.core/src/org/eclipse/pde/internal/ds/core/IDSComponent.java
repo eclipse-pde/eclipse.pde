@@ -210,6 +210,7 @@ public interface IDSComponent extends IDSObject {
 	 *
 	 * @param properties
 	 *            IDSProperties object
+	 *
 	 */
 	public void addPropertiesElement(IDSProperties properties);
 
@@ -235,6 +236,7 @@ public interface IDSComponent extends IDSObject {
 	 *
 	 * @param properties
 	 *            IDSProperties object
+	 *
 	 */
 	public void removePropertiesElement(IDSProperties properties);
 

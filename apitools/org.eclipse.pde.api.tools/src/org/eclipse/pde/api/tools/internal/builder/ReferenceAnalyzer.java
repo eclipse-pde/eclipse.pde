@@ -225,8 +225,12 @@ public class ReferenceAnalyzer {
 	 * {@link IApiTypeContainer} (scope) and returns a collection of detected
 	 * {@link IApiProblem}s or an empty collection, never <code>null</code>
 	 *
+	 * @param component
+	 * @param scope
+	 * @param monitor
 	 * @return the collection of detected {@link IApiProblem}s or an empty
 	 *         collection, never <code>null</code>
+	 * @throws CoreException
 	 */
 	public IApiProblem[] analyze(IApiComponent component, IApiTypeContainer scope, IProgressMonitor monitor) throws CoreException {
 		SubMonitor localMonitor = SubMonitor.convert(monitor, 4);
@@ -265,6 +269,9 @@ public class ReferenceAnalyzer {
 
 	/**
 	 * Returns the collection of problem detectors for the given reference kind
+	 *
+	 * @param referencekind
+	 * @return
 	 */
 	public IApiProblemDetector[] getProblemDetectors(int referencekind) {
 		if (fIndexedDetectors != null) {

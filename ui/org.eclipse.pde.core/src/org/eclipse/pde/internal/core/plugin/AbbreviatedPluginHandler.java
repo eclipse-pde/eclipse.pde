@@ -19,11 +19,15 @@ import org.xml.sax.SAXException;
 
 /**
  * CSPluginHandler
+ *
  */
 public class AbbreviatedPluginHandler extends PluginHandler {
 
 	private final String[] fExtensionPointIDs;
 
+	/**
+	 * @param extensionPointIDs
+	 */
 	public AbbreviatedPluginHandler(String[] extensionPointIDs) {
 		super(true);
 

@@ -88,6 +88,8 @@ public final class ApiMigrationTask extends CommonUtilsTask {
 	 * The pattern must be a well-formatted regular expression as defined here:
 	 * http://java.sun.com/j2se/1.4.2/docs/api/java/util/regex/Pattern.html
 	 * </p>
+	 *
+	 * @param scopepattern
 	 */
 	public void setScopePattern(String scopepattern) {
 		this.scopepattern = scopepattern;
@@ -101,6 +103,8 @@ public final class ApiMigrationTask extends CommonUtilsTask {
 	 * The pattern must be a well-formatted regular expression as defined here:
 	 * http://java.sun.com/j2se/1.4.2/docs/api/java/util/regex/Pattern.html
 	 * </p>
+	 *
+	 * @param referencepattern
 	 */
 	public void setReferencePattern(String referencepattern) {
 		this.referencepattern = referencepattern;
@@ -263,7 +267,11 @@ public final class ApiMigrationTask extends CommonUtilsTask {
 	/**
 	 * Returns if we should add the given component to our search scope
 	 *
+	 * @param component
+	 * @param pattern
+	 * @param allowresolve
 	 * @return true if the given component should be considered, false otherwise
+	 * @throws CoreException
 	 */
 	boolean acceptComponent(IApiComponent component, Pattern pattern, boolean allowresolve) throws CoreException {
 		if (!allowresolve) {
