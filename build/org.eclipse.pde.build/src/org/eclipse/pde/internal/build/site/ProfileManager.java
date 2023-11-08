@@ -77,6 +77,7 @@ public class ProfileManager {
 
 	/**
 	 * Return the javacSource to use when compiling for the given execution environment
+	 * @param environment
 	 * @return javacSource or null
 	 */
 	public String getJavacSource(String environment) {
@@ -92,6 +93,7 @@ public class ProfileManager {
 
 	/**
 	 * Return the javacTarget to use when compiling for the given execution environment
+	 * @param environment
 	 * @return javacTarget or null
 	 */
 	public String getJavacTarget(String environment) {

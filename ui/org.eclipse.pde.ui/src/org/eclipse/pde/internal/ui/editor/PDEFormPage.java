@@ -306,6 +306,8 @@ public abstract class PDEFormPage extends FormPage {
 	 * Programatically and recursively add focus listeners to the specified
 	 * composite and its children that track the last control to have focus
 	 * before a page change or the editor lost focus
+	 *
+	 * @param composite
 	 */
 	public void addLastFocusListeners(Composite composite) {
 		Control[] controls = composite.getChildren();
@@ -333,6 +335,8 @@ public abstract class PDEFormPage extends FormPage {
 	 * When focus is gained by this control, it registers itself as the last
 	 * control to have focus.  The last control to have focus is stored in order
 	 * to be restored after a page change or editor loses focus.
+	 *
+	 * @param control
 	 */
 	private void addLastFocusListener(final Control control) {
 		control.addFocusListener(new FocusListener() {
@@ -378,6 +382,9 @@ public abstract class PDEFormPage extends FormPage {
 		return fLastFocusControl;
 	}
 
+	/**
+	 * @param control
+	 */
 	public void setLastFocusControl(Control control) {
 		fLastFocusControl = control;
 	}
@@ -460,6 +467,9 @@ public abstract class PDEFormPage extends FormPage {
 	 * Used to align the section client / decriptions of two section headers
 	 * horizontally adjacent to each other.  The misalignment is caused by one
 	 * section header containing toolbar icons and the other not.
+	 *
+	 * @param masterSection
+	 * @param detailsSection
 	 */
 	public void alignSectionHeaders(Section masterSection, Section detailsSection) {
 		detailsSection.descriptionVerticalSpacing += masterSection.getTextClientHeightDifference();

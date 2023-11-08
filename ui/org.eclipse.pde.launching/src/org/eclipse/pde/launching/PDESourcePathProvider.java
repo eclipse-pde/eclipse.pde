@@ -72,6 +72,7 @@ public class PDESourcePathProvider extends StandardSourcePathProvider {
 	 * @throws CoreException
 	 * 			if unable to retrieve attributes from the launch configuration or if
 	 * 			an error occurs when checking the nature of the project
+	 *
 	 */
 	private IProject[] getJavaProjects(ILaunchConfiguration configuration) throws CoreException {
 		IProject[] projects = LaunchPluginValidator.getAffectedProjects(configuration, false);

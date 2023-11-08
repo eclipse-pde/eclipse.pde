@@ -178,6 +178,7 @@ public class TargetPersistence35Helper {
 	 *
 	 * @param definition the target definition to deserialize
 	 * @param location document element representing a bundle container
+	 * @throws CoreException
 	 */
 	private static void deserializeBundleContainer(ITargetDefinition definition, Element location) throws CoreException {
 		String path = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_LOCATION_PATH);

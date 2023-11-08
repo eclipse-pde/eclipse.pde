@@ -377,6 +377,9 @@ public class DSErrorReporter extends XMLErrorReporter {
 	/**
 	 * Validates if a property elements defines a single value and multiple
 	 * values at the same time.
+	 *
+	 * @param element
+	 * @param property
 	 */
 	private void validatePropertyAttrValueAndBody(Element element,
 			IDSProperty property) {

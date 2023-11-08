@@ -18,6 +18,7 @@ import java.util.EventObject;
 
 /**
  * NewCommandKeyEvent
+ *
  */
 public class NewCommandKeyEvent extends EventObject {
 
@@ -27,6 +28,11 @@ public class NewCommandKeyEvent extends EventObject {
 
 	private final String fValue;
 
+	/**
+	 * @param source
+	 * @param key
+	 * @param value
+	 */
 	public NewCommandKeyEvent(Object source, String key, String value) {
 		super(source);
 		fKey = key;

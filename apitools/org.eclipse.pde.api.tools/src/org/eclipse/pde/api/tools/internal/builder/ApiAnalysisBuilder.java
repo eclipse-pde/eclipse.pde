@@ -183,6 +183,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 
 	/**
 	 * Cleans up markers associated with API Tools on the given resource.
+	 *
+	 * @param resource
 	 */
 	void cleanupMarkers(IResource resource) {
 		if (isRunningAsJob()) {
@@ -194,6 +196,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 
 	/**
 	 * Cleans up markers associated with API Tools on the given resource.
+	 *
+	 * @param resource
 	 */
 	void cleanupMarkersInternally(IResource resource) {
 		cleanUnusedFilterMarkers(resource);
@@ -207,6 +211,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 
 	/**
 	 * Cleans up API use scan breakage related markers on the specified resource
+	 *
+	 * @param resource
 	 */
 	void cleanApiUseScanMarkers(IResource resource) {
 		try {
@@ -236,6 +242,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 
 	/**
 	 * Cleans up unsupported Javadoc tag markers on the specified resource
+	 *
+	 * @param resource
 	 */
 	void cleanupUnsupportedTagMarkers(IResource resource) {
 		try {
@@ -254,6 +262,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * Removes all of the unsupported annotation markers from the given resource
 	 * and all of its children
 	 *
+	 * @param resource
 	 * @since 1.0.600
 	 */
 	void cleanupUnsupportedAnnotationMarkers(IResource resource) {
@@ -293,6 +302,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 
 	/**
 	 * cleans up only API usage markers from the given {@link IResource}
+	 *
+	 * @param resource
 	 */
 	void cleanupUsageMarkers(IResource resource) {
 		try {
@@ -312,6 +323,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 
 	/**
 	 * cleans up only fatal problem markers from the given {@link IResource}
+	 *
+	 * @param resource
 	 */
 	void cleanupFatalMarkers(IResource resource) {
 		try {
@@ -325,6 +338,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 
 	/**
 	 * Cleans up the unused API filter problems from the given resource
+	 *
+	 * @param resource
 	 */
 	void cleanUnusedFilterMarkers(IResource resource) {
 		try {
@@ -787,8 +802,10 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * files</li>
 	 * </ul>
 	 *
+	 * @param project
 	 * @return true if the builder should abort building the given project,
 	 *         false otherwise
+	 * @throws CoreException
 	 * @see {@link #hasBeenBuilt(IProject)}
 	 * @see {@link #hasFatalProblems(IProject)}
 	 * @since 1.1
@@ -801,8 +818,10 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * Returns if the project we are about to build has fatal JDT problems that
 	 * prevent class files from being built
 	 *
+	 * @param project
 	 * @return true if the given project has fatal JDT problems
 	 * @see
+	 * @throws CoreException
 	 * @see {@link org.eclipse.jdt.core.IJavaModelMarker#BUILDPATH_PROBLEM_MARKER}
 	 * @since 1.1
 	 */
@@ -871,6 +890,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 *
 	 * @param baseline the default baseline
 	 * @param wbaseline the workspace baseline
+	 * @param monitor
 	 */
 	void buildAll(IApiBaseline baseline, IApiBaseline wbaseline, IProgressMonitor monitor) throws CoreException {
 		PDEPreferencesManager prefs = PDECore.getDefault().getPreferencesManager();
@@ -975,6 +995,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * Creates new markers are for the listing of problems added to this reporter.
 	 * If no problems have been added to this reporter, or we are not running in the
 	 * framework, no work is done.
+	 *
+	 * @param problems
 	 */
 	protected void createMarkersInternally(IApiProblem[] problems) {
 		try {
@@ -1181,6 +1203,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * Creates a single string attribute from an array of strings. Uses the '#'
 	 * char as a delimiter
 	 *
+	 * @param args
 	 * @return a single string attribute from an array or arguments
 	 */
 	String createArgAttribute(String[] args) {
@@ -1216,6 +1239,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 
 	/**
 	 * Cleans the .api_settings file for the given project
+	 *
+	 * @param project
 	 */
 	void cleanupApiDescription(IProject project) {
 		if (project != null && project.exists()) {
@@ -1249,6 +1274,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 
 	/**
 	 * Returns a listing of deltas for this project and for dependent projects
+	 *
+	 * @param projects
+	 * @return
 	 */
 	IResourceDelta[] getDeltas(IProject[] projects) {
 		if (ApiPlugin.DEBUG_BUILDER) {
@@ -1290,7 +1318,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * Returns the complete listing of required projects from the classpath of
 	 * the backing project
 	 *
+	 * @param includeBinaryPrerequisites
 	 * @return the list of projects required
+	 * @throws CoreException
 	 */
 	IProject[] getRequiredProjects(boolean includebinaries) throws CoreException {
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
@@ -1392,6 +1422,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * Returns the output paths of the given project or <code>null</code> if
 	 * none have been computed
 	 *
+	 * @param project
 	 * @return the output paths for the given project or <code>null</code>
 	 */
 	HashSet<IPath> getProjectOutputPaths(IProject project) {
@@ -1401,6 +1432,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	/**
 	 * Returns is the given classpath entry is optional or not
 	 *
+	 * @param entry
 	 * @return true if the specified {@link IClasspathEntry} is optional, false
 	 *         otherwise
 	 */

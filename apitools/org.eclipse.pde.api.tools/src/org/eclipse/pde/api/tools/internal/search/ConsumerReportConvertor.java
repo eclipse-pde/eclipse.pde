@@ -86,6 +86,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 	/**
 	 * Use scan visitor that produces the report data for a single consumer
 	 * bundle. The visitor collects the report data in a {@link Consumer}.
+	 *
 	 */
 	class ConsumerReportVisitor extends UseScanVisitor {
 		Consumer consumer;
@@ -335,6 +336,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 		/**
 		 * Returns if the reference should be reported or not
 		 *
+		 * @param desc
 		 * @return true if the reference should be reported false otherwise
 		 */
 		private boolean acceptReference(IMemberDescriptor desc, Pattern[] patterns) {
@@ -352,6 +354,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 		 * Returns the enclosing {@link IReferenceTypeDescriptor} for the given
 		 * member descriptor
 		 *
+		 * @param member
 		 * @return the enclosing {@link IReferenceTypeDescriptor} or
 		 *         <code>null</code>
 		 */
@@ -367,6 +370,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 		/**
 		 * Formats the arrays of messages
 		 *
+		 * @param messages
 		 * @return the formatted messages or <code>null</code>
 		 */
 		private String formatMessages(String[] messages) {
@@ -455,6 +459,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 	 *
 	 * @param scanResult a list of {@link Consumer} objects returns from the use
 	 *            scan parser
+	 * @param reportsRoot
 	 */
 	@Override
 	protected void writeIndexPage(List<?> scanResult) throws Exception {
@@ -541,6 +546,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 	 *
 	 * @param consumer consumer to write the report for
 	 * @param producers a map of producer name to a {@link Producer} object
+	 * @throws Exception
 	 */
 	protected void writeConsumerReport(Consumer consumer, Map<String, Producer> producers) throws Exception {
 		PrintWriter writer = null;
@@ -606,6 +612,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 	 * </p>
 	 *
 	 * @param producer producer to write the report for
+	 * @throws Exception
 	 */
 	protected void writeProducerReport(Consumer parentConsumer, Producer producer) throws Exception {
 		PrintWriter writer = null;

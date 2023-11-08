@@ -20,6 +20,7 @@ import java.util.TreeMap;
  *
  * Designed as a Map to contain Manifest headers and values.  Returns
  * the value of a header if it matches (case insensitive) to the key.
+ *
  */
 public class HeaderMap<K, V> extends TreeMap<K, V> {
 

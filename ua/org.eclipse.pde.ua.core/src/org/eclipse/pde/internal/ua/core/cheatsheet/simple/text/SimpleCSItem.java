@@ -29,6 +29,9 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * @param model
+	 */
 	public SimpleCSItem(ISimpleCSModel model) {
 		super(model, ELEMENT_ITEM);
 	}

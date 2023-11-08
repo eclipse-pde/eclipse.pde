@@ -44,6 +44,7 @@ import org.eclipse.ui.IWorkbench;
  * allows the user to select the desired plug-ins and the second page the desired
  * locales. Also, the wizard ensures the plug-ins are externalized before proceeding
  * with internationlization.
+ *
  */
 public class InternationalizeWizard extends Wizard implements IImportWizard {
 	private static final String STORE_SECTION = "InternationalizeWizard"; //$NON-NLS-1$
@@ -100,6 +101,7 @@ public class InternationalizeWizard extends Wizard implements IImportWizard {
 
 	/**
 	 *
+	 * @param master
 	 * @return the created setting for the InternationalizeWizard
 	 */
 	private IDialogSettings getSettingsSection(IDialogSettings master) {
@@ -139,6 +141,7 @@ public class InternationalizeWizard extends Wizard implements IImportWizard {
 
 	/**
 	 *
+	 * @param currentPage
 	 * @return the next wizard page
 	 */
 	@Override
@@ -152,6 +155,7 @@ public class InternationalizeWizard extends Wizard implements IImportWizard {
 
 	/**
 	 *
+	 * @param currentPage
 	 * @return the previous wizard page
 	 */
 	@Override

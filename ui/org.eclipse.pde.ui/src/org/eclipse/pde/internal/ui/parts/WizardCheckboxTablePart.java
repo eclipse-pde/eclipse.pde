@@ -38,6 +38,7 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 
 	/**
 	 * Constructor for WizardCheckboxTablePart.
+	 * @param buttonLabels
 	 */
 	public WizardCheckboxTablePart(String tableName, String[] buttonLabels) {
 		super(buttonLabels);

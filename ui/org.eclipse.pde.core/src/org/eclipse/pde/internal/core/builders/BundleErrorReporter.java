@@ -751,6 +751,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	 *            compare
 	 * @return The string representation of the highest Execution Environment
 	 *         between the two Execution Environments
+	 * @throws IllegalArgumentException
 	 */
 	private static String getHighestEE(String execEnv1, String execEnv2) throws IllegalArgumentException {
 		if (execEnv1 == null) {

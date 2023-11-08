@@ -693,6 +693,8 @@ public class UtilTests {
 	 *
 	 * The regex parsing is tested more extensively in
 	 * {@link org.eclipse.pde.api.tools.search.tests.SearchEngineTests}
+	 *
+	 * @throws CoreException
 	 */
 	@Test(expected = CoreException.class)
 	public void testInitializeRegexFilterList() throws CoreException {

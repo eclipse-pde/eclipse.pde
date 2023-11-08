@@ -169,6 +169,9 @@ public final class Util {
 
 		/**
 		 * Constructor
+		 *
+		 * @param name
+		 * @param project
 		 */
 		BuildJob(String name, IProject[] projects) {
 			this(name, projects, IncrementalProjectBuilder.FULL_BUILD);
@@ -188,6 +191,7 @@ public final class Util {
 		/**
 		 * Returns if this build job is covered by another build job
 		 *
+		 * @param other
 		 * @return true if covered by another build job, false otherwise
 		 */
 		public boolean isCoveredBy(BuildJob other) {
@@ -326,6 +330,9 @@ public final class Util {
 
 	/**
 	 * Collects all of the deltas from the given parent delta
+	 *
+	 * @param delta
+	 * @return
 	 */
 	public static List<IDelta> collectAllDeltas(IDelta delta) {
 		final List<IDelta> list = new ArrayList<>();
@@ -393,6 +400,7 @@ public final class Util {
 	/**
 	 * Returns all of the API projects in the workspace
 	 *
+	 * @param sourcelevel
 	 * @return all of the API projects in the workspace or <code>null</code> if
 	 *         there are none.
 	 */
@@ -427,6 +435,8 @@ public final class Util {
 	/**
 	 * Copies the given file to the new file
 	 *
+	 * @param file
+	 * @param newFile
 	 * @return if the copy succeeded
 	 */
 	public static boolean copy(File file, File newFile) {
@@ -441,6 +451,11 @@ public final class Util {
 
 	/**
 	 * Creates an EE file for the given JRE and specified EE id
+	 *
+	 * @param jre
+	 * @param eeid
+	 * @return
+	 * @throws IOException
 	 */
 	public static File createEEFile(IVMInstall jre, String eeid) throws IOException {
 		String string = Util.generateEEContents(jre, eeid);
@@ -455,6 +470,8 @@ public final class Util {
 	 * Returns whether the objects are equal, accounting for either one being
 	 * <code>null</code>.
 	 *
+	 * @param o1
+	 * @param o2
 	 * @return whether the objects are equal, or both are <code>null</code>
 	 */
 	public static boolean equalsOrNull(Object o1, Object o2) {
@@ -493,6 +510,8 @@ public final class Util {
 	 * accepted by the given file filter. If the file filter is null all files
 	 * within the given root are returned.
 	 *
+	 * @param root
+	 * @param fileFilter
 	 * @return the list of files from within the given root
 	 */
 	public static File[] getAllFiles(File root, FileFilter fileFilter) {
@@ -594,6 +613,7 @@ public final class Util {
 	/**
 	 * Returns a text representation of a marker severity level
 	 *
+	 * @param severity
 	 * @return text of a marker severity level
 	 */
 	public static String getSeverity(int severity) {
@@ -917,6 +937,7 @@ public final class Util {
 	/**
 	 * Returns the details of the API delta as a string
 	 *
+	 * @param delta
 	 * @return the details of the delta as a string
 	 */
 	public static String getDetail(IDelta delta) {
@@ -974,7 +995,9 @@ public final class Util {
 	/**
 	 * Returns the {@link IDocument} for the specified {@link ICompilationUnit}
 	 *
+	 * @param cu
 	 * @return the {@link IDocument} for the specified {@link ICompilationUnit}
+	 * @throws CoreException
 	 */
 	public static IDocument getDocument(ICompilationUnit cu) throws CoreException {
 		if (cu.getOwner() == null) {
@@ -1207,6 +1230,11 @@ public final class Util {
 	 * in the same project and return type if it could find one. It return null
 	 * if type is in the same project or if type cannot be found in the same
 	 * project.
+	 *
+	 * @param type
+	 * @param typeName
+	 * @param javaProject
+	 * @return
 	 */
 
 	public static IType getTypeInSameJavaProject(IType type, String typeName, IJavaProject javaProject) {
@@ -1371,6 +1399,7 @@ public final class Util {
 	 *
 	 * @param method the method
 	 * @return the method signature as would be encoded in a .class file
+	 * @throws JavaModelException
 	 */
 	private static String generateBinarySignature(IMethod method) throws JavaModelException {
 		ITypeParameter[] typeTPs = method.getDeclaringType().getTypeParameters();
@@ -1473,6 +1502,7 @@ public final class Util {
 	 * Tries to find the 'MANIFEST.MF' file with in the given project in the
 	 * 'META-INF folder'.
 	 *
+	 * @param currentProject
 	 * @return a handle to the manifest file or <code>null</code> if not found
 	 */
 	public static IResource getManifestFile(IProject currentProject) {
@@ -1488,6 +1518,7 @@ public final class Util {
 	 * @return true if the marker is for an
 	 *         {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem}
 	 *         false otherwise
+	 * @throws CoreException
 	 */
 	public static boolean isApiProblemMarker(IMarker marker) {
 		return marker.getAttribute(IApiMarkerConstants.API_MARKER_ATTR_ID, -1) > 0;
@@ -1606,6 +1637,7 @@ public final class Util {
 	 * Returns if the specified file name is an archive name. A name is
 	 * considered to be an archive name if it ends with either '.zip' or '.jar'
 	 *
+	 * @param fileName
 	 * @return true if the file name is an archive name false otherwise
 	 */
 	public static boolean isArchive(String fileName) {
@@ -1616,6 +1648,7 @@ public final class Util {
 	 * Returns if the given file name represents a 'standard' archive, where the
 	 * name has an extension of *.zip or *.jar
 	 *
+	 * @param fileName
 	 * @return true if the given file name is that of a 'standard' archive,
 	 *         false otherwise
 	 */
@@ -1628,6 +1661,7 @@ public final class Util {
 	 * Returns if the given file name represents a G-zip file name, where the
 	 * name has an extension of *.tar.gz or *.tgz
 	 *
+	 * @param fileName
 	 * @return true if the given file name is that of a G-zip archive, false
 	 *         otherwise
 	 */
@@ -1640,6 +1674,7 @@ public final class Util {
 	 * Returns if the flags are for a class
 	 *
 	 * @param accessFlags the given access flags
+	 * @return
 	 */
 	public static boolean isClass(int accessFlags) {
 		return (accessFlags & (Opcodes.ACC_ENUM | Opcodes.ACC_ANNOTATION | Opcodes.ACC_INTERFACE)) == 0;
@@ -1649,6 +1684,7 @@ public final class Util {
 	 * Returns if the specified file name is for a class file. A name is
 	 * considered to be a class file if it ends in '.class'
 	 *
+	 * @param fileName
 	 * @return true if the name is for a class file false otherwise
 	 */
 	public static boolean isClassFile(String fileName) {
@@ -1689,6 +1725,7 @@ public final class Util {
 	 * Returns if the specified file name is for a java source file. A name is
 	 * considered to be a java source file if it ends in '.java'
 	 *
+	 * @param fileName
 	 * @return true if the name is for a java source file, false otherwise
 	 */
 	public static boolean isJavaFileName(String fileName) {
@@ -1698,6 +1735,7 @@ public final class Util {
 	/**
 	 * Returns if the given name is {@link java.lang.Object}
 	 *
+	 * @param name
 	 * @return true if the name is java.lang.Object, false otherwise
 	 */
 	public static boolean isJavaLangObject(String name) {
@@ -1707,6 +1745,7 @@ public final class Util {
 	/**
 	 * Return if the name is {@link java.lang.RuntimeException}
 	 *
+	 * @param name
 	 * @return true if the name is java.lang.RuntimeException, false otherwise
 	 */
 	public static boolean isJavaLangRuntimeException(String name) {
@@ -1926,6 +1965,8 @@ public final class Util {
 
 	/**
 	 * Gets the .ee file supplied to run tests based on system property.
+	 *
+	 * @return
 	 */
 	public static File getEEDescriptionFile() {
 		// generate a fake 1.6 ee file
@@ -1955,6 +1996,7 @@ public final class Util {
 	 * Creates a new file in the users' <code>temp</code> directory
 	 *
 	 * @return a new temp file
+	 * @throws IOException
 	 */
 	public static File createTempFile(String prefix, String suffix) throws IOException {
 		return recordTempFile(Files.createTempFile(prefix, suffix).toFile());
@@ -1964,6 +2006,7 @@ public final class Util {
 	 * Creates a new directory in the users' <code>temp</code> directory
 	 *
 	 * @return a new temp directory
+	 * @throws IOException
 	 */
 	public static File createTempDirectory(String prefix) throws IOException {
 		return recordTempFile(Files.createTempDirectory(prefix).toFile());
@@ -2212,6 +2255,7 @@ public final class Util {
 	/**
 	 * Turns the given array of strings into a {@link HashSet}
 	 *
+	 * @param values
 	 * @return a new {@link HashSet} of the string array
 	 */
 	public static Set<String> convertAsSet(String[] values) {
@@ -2315,6 +2359,7 @@ public final class Util {
 	/**
 	 * Returns the string representation of the {@link IApiElement} type
 	 *
+	 * @param type
 	 * @return the string of the {@link IApiElement} type
 	 */
 	public static String getApiElementType(int type) {
@@ -2466,6 +2511,8 @@ public final class Util {
 	 * to determine which bundles should be added to the list when processing
 	 * regex expressions.
 	 *
+	 * @param location
+	 * @param baseline
 	 * @return the list of bundles to be excluded
 	 * @throws CoreException if the location does not describe a includes file
 	 *             or an IOException occurs
@@ -2509,6 +2556,10 @@ public final class Util {
 	/**
 	 * Collects the set of component ids that match a given regex in the exclude
 	 * file
+	 *
+	 * @param line
+	 * @param list
+	 * @param components
 	 */
 	public static void collectRegexIds(String line, FilteredElements excludedElements, IApiComponent[] components, boolean debug) throws CoreException {
 		if (line.startsWith(REGULAR_EXPRESSION_START)) {
@@ -2554,6 +2605,8 @@ public final class Util {
 	 * defined as having API visibility in an API description and having either
 	 * the public of protected Java flag set
 	 *
+	 * @param visibility
+	 * @param typeDescriptor
 	 * @return true if the given type is API, false otherwise
 	 */
 	public static boolean isAPI(int visibility, IApiType typeDescriptor) {
@@ -2774,6 +2827,10 @@ public final class Util {
 	/**
 	 * Tries to find SourceType of name typeName in the project. It returns null
 	 * if it cannot find SourceType of name typeName
+	 *
+	 * @param javaProject
+	 * @param typeName
+	 * @return
 	 */
 
 	public static IType findSourceTypeinJavaProject(IJavaProject javaProject, String typeName) {

@@ -267,6 +267,7 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 	/**
 	 * Handles the edit button being pressed
 	 *
+	 * @param selection
 	 * @since 1.1
 	 */
 	void handleEdit(IApiProblemFilter filter) {
@@ -291,6 +292,8 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 
 	/**
 	 * Performs the remove
+	 *
+	 * @param selection
 	 */
 	void handleRemove(IStructuredSelection selection) {
 		ArrayList<Object> comments = new ArrayList<>();
@@ -325,6 +328,7 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 	/**
 	 * Collects the indexes of the first item in the current selection
 	 *
+	 * @param selection
 	 * @return an array of indexes (parent, child) of the first item in the
 	 *         current selection
 	 */
@@ -349,6 +353,8 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 	 * Updates the selection in the viewer based on the given indexes. If there
 	 * is no item to update at the given indexes then the next logical child is
 	 * taken, else the parent is selected, else no selection is made
+	 *
+	 * @param indexes
 	 */
 	private void updateSelection(int[] indexes) {
 		Tree tree = fViewer.getTree();
@@ -392,6 +398,7 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 	/**
 	 * Collects all of the elements to be deleted
 	 *
+	 * @param selection
 	 * @param comments a collector for filters that will have their comments
 	 *            removed
 	 * @return the set of elements to be added to the change set for deletion
@@ -431,6 +438,7 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 
 	/**
 	 * @return the {@link IApiFilterStore} from the backing project
+	 * @throws CoreException
 	 */
 	IApiFilterStore getFilterStore() throws CoreException {
 		IProject project = getProject();

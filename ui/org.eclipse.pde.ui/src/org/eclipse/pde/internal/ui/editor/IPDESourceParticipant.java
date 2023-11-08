@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.ui.editor;
 
 /**
  * IPDESourceParticipant
+ *
  */
 public interface IPDESourceParticipant {
 

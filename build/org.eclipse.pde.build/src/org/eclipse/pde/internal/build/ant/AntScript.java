@@ -43,6 +43,7 @@ public class AntScript implements IAntScript {
 	 * Constructor for the class.
 	 * 
 	 * @param out the output stream to write the script to
+	 * @throws IOException
 	 */
 	public AntScript(OutputStream out) throws IOException {
 		this.out = out;
@@ -428,6 +429,8 @@ public class AntScript implements IAntScript {
 
 	/**
 	 * Print an <code>arg</code> element to the Ant file.
+	 * 
+	 * @param line
 	 */
 	protected void printArg(String line) {
 		printArg(line, false);
@@ -595,6 +598,10 @@ public class AntScript implements IAntScript {
 
 	/**
 	 * Print an <code>exec</code> task to the Ant script.
+	 * @param executable
+	 * @param dir
+	 * @param lineArgs
+	 * @param os
 	 * @param useValue Use value arguments if there is no space in the arg
 	 */
 	public void printExecTask(String executable, String dir, List<String> lineArgs, String os, boolean useValue) {
@@ -866,6 +873,8 @@ public class AntScript implements IAntScript {
 
 	/**
 	 * Print the given string to the Ant script.
+	 * 
+	 * @param message
 	 */
 	@Override
 	public void print(String message) {
@@ -982,6 +991,8 @@ public class AntScript implements IAntScript {
 
 	/**
 	 * Print a <code> dirname </code> task to the script.
+	 * @param property
+	 * @param file
 	 */
 	public void printDirName(String property, String file) {
 		printTab();

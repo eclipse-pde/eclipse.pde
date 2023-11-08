@@ -343,6 +343,11 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	 * Matches the javacSource, javacTarget, javacWarnings, javacErrors and jre.compilation.prile entries in build.properties with the
 	 * project specific Java Compiler properties and reports the errors found.
 	 *
+	 * @param javacSourceEntry
+	 * @param javacTargetEntry
+	 * @param jreCompilationProfileEntry
+	 * @param javacWarningsEntries
+	 * @param javacErrorsEntries
 	 * @param libraryNames list of library names (javacWarnings/javacErrors require an entry for each source library)
 	 */
 	private void validateExecutionEnvironment(IBuildEntry javacSourceEntry, IBuildEntry javacTargetEntry, IBuildEntry jreCompilationProfileEntry, ArrayList<IBuildEntry> javacWarningsEntries, ArrayList<IBuildEntry> javacErrorsEntries, List<String> libraryNames) {
@@ -1310,6 +1315,13 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 
 	/**
 	 * Creates a new marker with the given attributes.  May return <code>null</code> if no marker should be created because of severity level.
+	 * @param message
+	 * @param line
+	 * @param problemID
+	 * @param buildEntry
+	 * @param buildToken
+	 * @param severity
+	 * @param category
 	 * @return a new marker or <code>null</code>
 	 */
 	private VirtualMarker report(String message, int line, int problemID, String buildEntry, String buildToken, int severity, String category) {

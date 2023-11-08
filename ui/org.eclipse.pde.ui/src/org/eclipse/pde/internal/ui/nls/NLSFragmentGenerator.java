@@ -63,6 +63,7 @@ import org.eclipse.swt.widgets.Shell;
  * the user selected. For example plugin_fr.properties for the french locale
  * selection. The generated locale-specific properties files contain the same
  * key-value pairs as the properties file of the initial plug-in.
+ *
  */
 public class NLSFragmentGenerator {
 	public static final String PLUGIN_NAME_MACRO = "${plugin_name}"; //$NON-NLS-1$
@@ -184,6 +185,10 @@ public class NLSFragmentGenerator {
 	/**
 	 * Creates an NL fragment project along with the locale specific properties
 	 * files.
+	 * @throws CoreException
+	 * @throws IOException
+	 * @throws InvocationTargetException
+	 * @throws InterruptedException
 	 */
 	private void internationalizePlugins(List<IPluginModelBase> plugins, List<Locale> locales,
 			Map<String, Object> overwrites)
@@ -241,6 +246,10 @@ public class NLSFragmentGenerator {
 	/**
 	 * Creates a fragment project for the specified plug-in and populates
 	 * the field data.
+	 * @param plugin
+	 * @throws CoreException
+	 * @throws InvocationTargetException
+	 * @throws InterruptedException
 	 */
 	private void createNLFragment(final IPluginModelBase plugin, final IProject project, final Locale locale) throws CoreException, InvocationTargetException, InterruptedException {
 		FragmentFieldData fragmentData = populateFieldData(plugin, locale);
@@ -305,6 +314,7 @@ public class NLSFragmentGenerator {
 	 * fragment-host bundle-version range. For example,
 	 * fragment-host's bundle-version range would be: "[1.0.0, 1.1.0)"
 	 * if the host's version is 1.0.0
+	 * @param oldVersion
 	 * @return adjusted plug-in version
 	 */
 	private String incrementRelease(String oldVersion) {
@@ -330,6 +340,10 @@ public class NLSFragmentGenerator {
 	/**
 	 * Creates a locale specific properties file within the fragment project
 	 * based on the content of the host plug-in's properties file.
+	 * @param fragmentProject
+	 * @param locale
+	 * @throws CoreException
+	 * @throws IOException
 	 */
 	private void createLocaleSpecificPropertiesFile(final IProject fragmentProject, IPluginModelBase plugin, final Locale locale) throws CoreException, IOException {
 		final IFolder localeResourceFolder = fragmentProject.getFolder(RESOURCE_FOLDER_PARENT).getFolder(locale.toString());
@@ -541,6 +555,7 @@ public class NLSFragmentGenerator {
 
 	/**
 	 * Ensures that the target version is compatible.
+	 * @param targetVersion
 	 * @return target version
 	 */
 	private double ensureTargetVersionCompatibility(double targetVersion) {

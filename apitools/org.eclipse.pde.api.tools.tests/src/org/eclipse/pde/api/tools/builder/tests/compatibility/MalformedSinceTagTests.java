@@ -30,6 +30,7 @@ public class MalformedSinceTagTests extends SinceTagTest {
 
 	/**
 	 * Constructor
+	 * @param name
 	 */
 	public MalformedSinceTagTests(String name) {
 		super(name);

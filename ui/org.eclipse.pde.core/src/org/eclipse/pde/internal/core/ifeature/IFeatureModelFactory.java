@@ -60,6 +60,9 @@ public interface IFeatureModelFactory {
 	 */
 	IFeatureInstallHandler createInstallHandler();
 
+	/**
+	 *
+	 */
 	public IFeatureInfo createInfo(int info);
 
 	/**

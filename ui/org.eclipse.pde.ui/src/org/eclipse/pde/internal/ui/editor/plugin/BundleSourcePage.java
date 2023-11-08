@@ -102,6 +102,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 
 	/**
 	 * BundleOutlineContentProvider
+	 *
 	 */
 	private class BundleOutlineContentProvider implements ITreeContentProvider {
 
@@ -240,16 +241,27 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		}
 	}
 
+	/**
+	 * @param editor
+	 * @param id
+	 * @param title
+	 */
 	public BundleSourcePage(PDEFormEditor editor, String id, String title) {
 		super(editor, id, title);
 		resetTargetOutlineSelection();
 		resetCurrentHighlightRangeOffset();
 	}
 
+	/**
+	 * @param offset
+	 */
 	private void setCurrentHighlightRangeOffset(int offset) {
 		fCurrentHighlightRangeOffset = offset;
 	}
 
+	/**
+	 *
+	 */
 	private void resetCurrentHighlightRangeOffset() {
 		fCurrentHighlightRangeOffset = F_NOT_SET;
 	}
@@ -264,10 +276,16 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		super.resetHighlightRange();
 	}
 
+	/**
+	 *
+	 */
 	private void resetTargetOutlineSelection() {
 		fTargetOutlineSelection = null;
 	}
 
+	/**
+	 * @param object
+	 */
 	private void setTargetOutlineSelection(Object object) {
 		fTargetOutlineSelection = object;
 	}
@@ -316,6 +334,8 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	}
 
 	/**
+	 * @param offset
+	 * @param range
 	 * @return true if the offset is within the range; false, otherwise
 	 */
 	private boolean isWithinCurrentRange(int offset, IDocumentRange range) {
@@ -334,6 +354,9 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	/**
 	 * This method is required because the calculated ranges, do NOT include
 	 * their parameters (e.g. x-friends, bundle-version)
+	 * @param offset
+	 * @param current_range
+	 * @param previous_range
 	 * @return true if the offset falls in between the end of the previous range
 	 * and before the current range (e.g. the previous ranges parameters)
 	 */
@@ -350,6 +373,10 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		return false;
 	}
 
+	/**
+	 * @param offset
+	 * @param previousRange
+	 */
 	private boolean isBeforePreviousRange(int offset, IDocumentRange previousRange) {
 
 		if (previousRange == null) {
@@ -360,6 +387,11 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		return false;
 	}
 
+	/**
+	 * @param model
+	 * @param offset
+	 * @param header
+	 */
 	private IDocumentRange getRangeElementChild(IBundleModel model, int offset, CompositeManifestHeader header) {
 		// Ensure the header has associated elements
 		if (header.isEmpty()) {
@@ -405,6 +437,11 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		return null;
 	}
 
+	/**
+	 * @param offset
+	 * @param currentRange
+	 * @param headerRange
+	 */
 	private boolean isWithinLastElementParamRange(int offset, IDocumentRange currentRange, IDocumentRange headerRange) {
 		if (currentRange == null) {
 			return false;
@@ -414,6 +451,10 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		return false;
 	}
 
+	/**
+	 * @param headerName
+	 * @param element
+	 */
 	private void setChildTargetOutlineSelection(String headerName, PDEManifestElement element) {
 		// Use for setting the outline view selection
 		if (headerName.equalsIgnoreCase(Constants.BUNDLE_CLASSPATH)) {
@@ -427,6 +468,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	 * Edge Case:  Cannot use the PDEManifestElement directly to select bundle
 	 * classpath elements in the outline view.  Need to use IPluginLibrary
 	 * objects
+	 * @param manifestElement
 	 */
 	private Object getBundleClasspathOutlineSelection(PDEManifestElement manifestElement) {
 
@@ -446,6 +488,9 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		return null;
 	}
 
+	/**
+	 * @param element
+	 */
 	private String getHeaderName(PDEManifestElement element) {
 		if (element instanceof ExportPackageObject) {
 			return Constants.EXPORT_PACKAGE;

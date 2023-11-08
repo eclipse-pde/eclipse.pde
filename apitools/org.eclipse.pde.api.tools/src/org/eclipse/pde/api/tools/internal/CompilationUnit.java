@@ -86,6 +86,7 @@ public class CompilationUnit {
 	 * from one of the Ant tasks, we simply use the system encoding if the
 	 * encoding has not already been set.
 	 *
+	 * @param base
 	 * @return the encoding to use for this {@link CompilationUnit}
 	 * @since 1.0.600
 	 */
@@ -144,6 +145,7 @@ public class CompilationUnit {
 	 * Returns the encoding for this compilation unit.
 	 *
 	 * @return the encoding to use
+	 * @throws CoreException
 	 * @since 1.0.600
 	 */
 	public String getEncoding() throws CoreException {

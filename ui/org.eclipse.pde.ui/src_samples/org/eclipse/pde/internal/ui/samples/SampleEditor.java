@@ -94,6 +94,9 @@ public class SampleEditor extends EditorPart {
 		}
 	}
 
+	/**
+	 *
+	 */
 	public SampleEditor() {
 		defaultShortcut = new EclipseLaunchShortcut();
 		PDEPlugin.getDefault().getLabelProvider().connect(this);

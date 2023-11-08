@@ -85,6 +85,7 @@ public class SignaturesTests {
 
 	/**
 	 * Tests the {@link Signatures#getMethodName(org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod)} method
+	 * @throws Exception
 	 */
 	@Test
 	public void testGetMethodName() throws Exception {
@@ -97,6 +98,7 @@ public class SignaturesTests {
 
 	/**
 	 * Tests the {@link Signatures#getMethodSignature(org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod)} method
+	 * @throws Exception
 	 */
 	@Test
 	public void testGetMethodSignature() throws Exception {
@@ -115,6 +117,7 @@ public class SignaturesTests {
 
 	/**
 	 * Tests the {@link Signatures#getQualifiedMethodSignature(org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod)} method
+	 * @throws Exception
 	 */
 	@Test
 	public void testGetQualifiedMethodSignature() throws Exception {
@@ -141,6 +144,7 @@ public class SignaturesTests {
 
 	/**
 	 * Tests the {@link Signatures#getQualifiedMethodSignature(org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor, boolean)} method
+	 * @throws Exception
 	 */
 	@Test
 	public void testGetQualifiedMethodSignature2() throws Exception {

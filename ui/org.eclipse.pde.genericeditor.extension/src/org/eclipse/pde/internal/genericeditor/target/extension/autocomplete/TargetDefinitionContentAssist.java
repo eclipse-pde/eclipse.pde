@@ -43,6 +43,7 @@ import org.eclipse.pde.internal.genericeditor.target.extension.model.xml.Parser;
  *
  * Main content assist class that is used to dispatch the specific content
  * assist types (see COMPLETION_TYPE_* fields). Uses regex to match each type.
+ *
  */
 public class TargetDefinitionContentAssist implements IContentAssistProcessor {
 

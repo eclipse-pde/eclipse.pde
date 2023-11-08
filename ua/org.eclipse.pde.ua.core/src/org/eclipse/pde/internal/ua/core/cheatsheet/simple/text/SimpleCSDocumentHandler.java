@@ -22,6 +22,9 @@ public class SimpleCSDocumentHandler extends NodeDocumentHandler {
 
 	private final SimpleCSModel fModel;
 
+	/**
+	 * @param reconciling
+	 */
 	public SimpleCSDocumentHandler(SimpleCSModel model, boolean reconciling) {
 		super(reconciling, model.getFactory());
 		fModel = model;

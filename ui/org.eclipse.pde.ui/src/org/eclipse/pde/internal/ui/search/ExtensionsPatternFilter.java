@@ -40,6 +40,7 @@ import org.eclipse.ui.dialogs.PatternFilter;
  *
  * @see org.eclipse.ui.dialogs.FilteredTree
  * @since 3.8
+ *
  */
 public class ExtensionsPatternFilter extends PatternFilter {
 
@@ -171,6 +172,9 @@ public class ExtensionsPatternFilter extends PatternFilter {
 	 * are expected to contain resource bundles are evaluated as long as the value doesn't contain a point. On some elements
 	 * for example a name attribute can contain an id. Those are skipped though.
 	 *
+	 * @param attributeValue
+	 * @param attributeName
+	 * @param searchPattern
 	 * @return whether this is a match
 	 */
 	protected boolean isNoneResourceMatch(String attributeValue, String attributeName, String searchPattern) {
@@ -299,6 +303,8 @@ public class ExtensionsPatternFilter extends PatternFilter {
 
 	/**
 	 * Enables the filter to temporarily display arbitrary elements
+	 *
+	 * @param element
 	 */
 	public boolean addElement(Object element) {
 		return fFoundAnyElementsCache.add(element);
@@ -306,6 +312,8 @@ public class ExtensionsPatternFilter extends PatternFilter {
 
 	/**
 	 * Removes elements from the filter
+	 *
+	 * @param element
 	 */
 	public boolean removeElement(Object element) {
 		return fFoundAnyElementsCache.remove(element);

@@ -21,6 +21,7 @@ import java.util.Map;
 
 /**
  * SchemaDescriptionRegistry
+ *
  */
 public class XMLComponentRegistry {
 

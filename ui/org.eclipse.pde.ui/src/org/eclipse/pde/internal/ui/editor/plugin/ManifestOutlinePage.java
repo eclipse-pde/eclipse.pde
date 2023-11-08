@@ -29,6 +29,9 @@ import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.build.BuildPage;
 
 public class ManifestOutlinePage extends FormOutlinePage {
+	/**
+	 * @param editor
+	 */
 	public ManifestOutlinePage(PDEFormEditor editor) {
 		super(editor);
 	}

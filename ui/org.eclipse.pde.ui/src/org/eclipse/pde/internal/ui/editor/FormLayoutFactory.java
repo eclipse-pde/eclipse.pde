@@ -94,12 +94,17 @@ public class FormLayoutFactory {
 	public static final int MASTER_DETAILS_MARGIN_HEIGHT = 0;
 	public static final int MASTER_DETAILS_MARGIN_WIDTH = 0;
 
+	/**
+	 *
+	 */
 	private FormLayoutFactory() {
 		// NO-OP
 	}
 
 	/**
 	 * For form bodies.
+	 * @param makeColumnsEqualWidth
+	 * @param numColumns
 	 */
 	public static GridLayout createFormGridLayout(boolean makeColumnsEqualWidth, int numColumns) {
 		GridLayout layout = new GridLayout();
@@ -124,6 +129,8 @@ public class FormLayoutFactory {
 	/**
 	 * For miscellaneous grouping composites.
 	 * For sections (as a whole - header plus client).
+	 * @param makeColumnsEqualWidth
+	 * @param numColumns
 	 */
 	public static GridLayout createClearGridLayout(boolean makeColumnsEqualWidth, int numColumns) {
 		GridLayout layout = new GridLayout();
@@ -147,6 +154,8 @@ public class FormLayoutFactory {
 
 	/**
 	 * For form bodies.
+	 * @param makeColumnsEqualWidth
+	 * @param numColumns
 	 */
 	public static TableWrapLayout createFormTableWrapLayout(boolean makeColumnsEqualWidth, int numColumns) {
 		TableWrapLayout layout = new TableWrapLayout();
@@ -167,6 +176,8 @@ public class FormLayoutFactory {
 
 	/**
 	 * For composites used to group sections in left and right panes.
+	 * @param makeColumnsEqualWidth
+	 * @param numColumns
 	 */
 	public static TableWrapLayout createFormPaneTableWrapLayout(boolean makeColumnsEqualWidth, int numColumns) {
 		TableWrapLayout layout = new TableWrapLayout();
@@ -187,6 +198,8 @@ public class FormLayoutFactory {
 
 	/**
 	 * For composites used to group sections in left and right panes.
+	 * @param makeColumnsEqualWidth
+	 * @param numColumns
 	 */
 	public static GridLayout createFormPaneGridLayout(boolean makeColumnsEqualWidth, int numColumns) {
 		GridLayout layout = new GridLayout();
@@ -211,6 +224,8 @@ public class FormLayoutFactory {
 	/**
 	 * For miscellaneous grouping composites.
 	 * For sections (as a whole - header plus client).
+	 * @param makeColumnsEqualWidth
+	 * @param numColumns
 	 */
 	public static TableWrapLayout createClearTableWrapLayout(boolean makeColumnsEqualWidth, int numColumns) {
 		TableWrapLayout layout = new TableWrapLayout();
@@ -231,6 +246,8 @@ public class FormLayoutFactory {
 
 	/**
 	 * For master sections belonging to a master details block.
+	 * @param makeColumnsEqualWidth
+	 * @param numColumns
 	 */
 	public static GridLayout createMasterGridLayout(boolean makeColumnsEqualWidth, int numColumns) {
 		GridLayout layout = new GridLayout();
@@ -268,6 +285,8 @@ public class FormLayoutFactory {
 
 	/**
 	 * For details sections belonging to a master details block.
+	 * @param makeColumnsEqualWidth
+	 * @param numColumns
 	 */
 	public static GridLayout createDetailsGridLayout(boolean makeColumnsEqualWidth, int numColumns) {
 		GridLayout layout = new GridLayout();
@@ -306,6 +325,8 @@ public class FormLayoutFactory {
 	/**
 	 * For composites set as section clients.
 	 * For composites containg form text.
+	 * @param makeColumnsEqualWidth
+	 * @param numColumns
 	 */
 	public static GridLayout createSectionClientGridLayout(boolean makeColumnsEqualWidth, int numColumns) {
 		GridLayout layout = new GridLayout();
@@ -330,6 +351,8 @@ public class FormLayoutFactory {
 	/**
 	 * For composites set as section clients.
 	 * For composites containg form text.
+	 * @param makeColumnsEqualWidth
+	 * @param numColumns
 	 */
 	public static TableWrapLayout createSectionClientTableWrapLayout(boolean makeColumnsEqualWidth, int numColumns) {
 		TableWrapLayout layout = new TableWrapLayout();
@@ -354,6 +377,8 @@ public class FormLayoutFactory {
 	 * MAGENTA = 11
 	 * CYAN = 13
 	 * GREEN = 5
+	 * @param container
+	 * @param color
 	 */
 	public static void visualizeLayoutArea(Composite container, int color) {
 		container.setBackground(Display.getCurrent().getSystemColor(color));

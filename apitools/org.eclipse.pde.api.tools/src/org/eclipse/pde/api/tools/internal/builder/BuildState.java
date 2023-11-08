@@ -92,7 +92,9 @@ public class BuildState {
 	/**
 	 * Reads the build state from an input stream
 	 *
+	 * @param in
 	 * @return the {@link BuildState} from the given input stream
+	 * @throws IOException
 	 */
 	public static BuildState read(DataInputStream in) throws IOException {
 		String pluginID = in.readUTF();
@@ -163,6 +165,10 @@ public class BuildState {
 
 	/**
 	 * Writes the given {@link BuildState} to the given output stream
+	 *
+	 * @param state
+	 * @param out
+	 * @throws IOException
 	 */
 	public static void write(BuildState state, DataOutputStream out) throws IOException {
 		out.writeUTF(ApiPlugin.PLUGIN_ID);
@@ -217,6 +223,7 @@ public class BuildState {
 	 *
 	 * @param in the input stream to read the {@link IDelta} from
 	 * @return a reconstructed {@link IDelta} from the build state
+	 * @throws IOException
 	 */
 	private static IDelta readDelta(DataInputStream in) throws IOException {
 		// decode the delta from the build state
@@ -257,6 +264,7 @@ public class BuildState {
 	 *
 	 * @param delta the delta to write
 	 * @param out the stream to write to
+	 * @throws IOException
 	 */
 	private static void writeDelta(IDelta delta, DataOutputStream out) throws IOException {
 		// encode a delta into the build state
@@ -376,6 +384,8 @@ public class BuildState {
 	/**
 	 * Sets the current list if re-exported {@link IApiComponent}s for this
 	 * build state
+	 *
+	 * @param components
 	 */
 	public void setReexportedComponents(IApiComponent[] components) {
 		if (components == null) {
@@ -393,6 +403,8 @@ public class BuildState {
 
 	/**
 	 * Adds a dependent project to the listing of dependent projects
+	 *
+	 * @param projectName
 	 */
 	public void addApiToolingDependentProject(String projectName) {
 		if (this.apiToolingDependentProjects == null) {
@@ -606,6 +618,10 @@ public class BuildState {
 
 	/**
 	 * Saves the current build state
+	 *
+	 * @param project
+	 * @param state
+	 * @throws CoreException
 	 */
 	static void saveBuiltState(IProject project, BuildState state) throws CoreException {
 		if (ApiPlugin.DEBUG_BUILDER) {

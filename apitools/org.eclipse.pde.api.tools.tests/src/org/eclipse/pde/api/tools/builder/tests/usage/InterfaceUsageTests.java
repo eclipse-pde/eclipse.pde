@@ -132,6 +132,7 @@ public class InterfaceUsageTests extends UsageTest {
 	 * Tests that an interface tagged with &#64;noreference properly flags usage
 	 * of its members as no reference
 	 *
+	 * @throws Exception
 	 * @since 1.0.300
 	 */
 	public void testNoRefInterface1I() throws Exception {
@@ -142,6 +143,7 @@ public class InterfaceUsageTests extends UsageTest {
 	 * Tests that an interface tagged with &#64;noreference properly flags usage
 	 * of its members as no reference
 	 *
+	 * @throws Exception
 	 * @since 1.0.300
 	 */
 	public void testNoRefInterface1F() throws Exception {
@@ -161,6 +163,7 @@ public class InterfaceUsageTests extends UsageTest {
 	 * Tests that an interface tagged with &#64;noreference properly flags usage
 	 * of its member interfaces as no reference
 	 *
+	 * @throws Exception
 	 * @since 1.0.300
 	 */
 	public void testNoRefInterface2I() throws Exception {
@@ -171,6 +174,7 @@ public class InterfaceUsageTests extends UsageTest {
 	 * Tests that an interface tagged with &#64;noreference properly flags usage
 	 * of its member interfaces as no reference
 	 *
+	 * @throws Exception
 	 * @since 1.0.300
 	 */
 	public void testNoRefInterface2F() throws Exception {

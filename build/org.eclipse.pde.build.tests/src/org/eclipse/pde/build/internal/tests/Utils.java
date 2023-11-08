@@ -71,6 +71,8 @@ public class Utils {
 	 * @param replacements
 	 *            - map of tokens and values to replaces, file should contain
 	 *            "@replaceTag@"
+	 * @throws IOException
+	 * @throws CoreException
 	 */
 	static public void transferAndReplace(URL resource, IFile destination, Map<String, String> replacements)
 			throws IOException, CoreException {

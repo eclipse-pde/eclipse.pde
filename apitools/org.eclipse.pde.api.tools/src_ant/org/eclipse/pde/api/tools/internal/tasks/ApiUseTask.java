@@ -141,6 +141,8 @@ public final class ApiUseTask extends CommonUtilsTask {
 	 * The pattern must be a well-formatted regular expression as defined here:
 	 * http://java.sun.com/j2se/1.4.2/docs/api/java/util/regex/Pattern.html
 	 * </p>
+	 *
+	 * @param scopepattern
 	 */
 	public void setScopePattern(String scopepattern) {
 		this.scopepattern = scopepattern;
@@ -154,6 +156,8 @@ public final class ApiUseTask extends CommonUtilsTask {
 	 * The pattern must be a well-formatted regular expression as defined here:
 	 * http://java.sun.com/j2se/1.4.2/docs/api/java/util/regex/Pattern.html
 	 * </p>
+	 *
+	 * @param referencepattern
 	 */
 	public void setReferencePattern(String referencepattern) {
 		this.referencepattern = referencepattern;
@@ -264,6 +268,8 @@ public final class ApiUseTask extends CommonUtilsTask {
 
 	/**
 	 * Sets any archive name patterns to not scan during the analysis.
+	 *
+	 * @param patterns
 	 */
 	public void setArchivePatterns(String patterns) {
 		archivePatterns = parsePatterns(patterns);
@@ -343,7 +349,11 @@ public final class ApiUseTask extends CommonUtilsTask {
 	/**
 	 * Returns if we should add the given component to our search scope
 	 *
+	 * @param component
+	 * @param pattern
+	 * @param allowresolve
 	 * @return true if the given component should be considered, false otherwise
+	 * @throws CoreException
 	 */
 	boolean acceptComponent(IApiComponent component, Pattern pattern, boolean allowresolve) throws CoreException {
 		if (!allowresolve) {
@@ -368,6 +378,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 	 * @param baseline the baseline to check the components for
 	 * @param ids the live set of reference ids
 	 * @param scope the live set of elements for the scope
+	 * @throws CoreException
 	 */
 	private void getContext(IApiBaseline baseline, Set<String> ids, Set<IApiComponent> scope) throws CoreException {
 		excludedElements = CommonUtilsTask.initializeFilteredElements(this.excludeListLocation, baseline, this.debug);

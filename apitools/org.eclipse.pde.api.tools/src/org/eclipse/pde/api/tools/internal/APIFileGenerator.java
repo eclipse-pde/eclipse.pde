@@ -316,6 +316,7 @@ public class APIFileGenerator {
 	/**
 	 * Returns if the given path ends with one of the collected API path names
 	 *
+	 * @param path
 	 * @return true if the given path name ends with one of the collected API
 	 *         package names
 	 */
@@ -332,6 +333,7 @@ public class APIFileGenerator {
 	 * Collects the names of the packages that are API for the bundle the API
 	 * description is being created for
 	 *
+	 * @param manifestmap
 	 * @return the names of the packages that are API for the bundle the API
 	 *         description is being created for
 	 * @throws BundleException if parsing the manifest map to get API package
@@ -387,6 +389,7 @@ public class APIFileGenerator {
 	 * Resolves the compiler compliance based on the BREE entry in the
 	 * MANIFEST.MF file
 	 *
+	 * @param manifestmap
 	 * @return The derived {@link JavaCore#COMPILER_COMPLIANCE} from the BREE in
 	 *         the manifest map, or {@link JavaCore#VERSION_1_3} if there is no
 	 *         BREE entry in the map or if the BREE entry does not directly map
@@ -419,6 +422,7 @@ public class APIFileGenerator {
 	/**
 	 * Resolves if the '.project' file belongs to an API enabled project or not
 	 *
+	 * @param dotProjectFile
 	 * @return true if the '.project' file is for an API enabled project, false
 	 *         otherwise
 	 */

@@ -37,8 +37,14 @@ public class CompCSModel extends AbstractModel implements ICompCSModel {
 
 	private ICompCS fCompCS;
 
+	/**
+	 *
+	 */
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 *
+	 */
 	public CompCSModel() {
 		// NO-OP
 	}
@@ -116,6 +122,9 @@ public class CompCSModel extends AbstractModel implements ICompCSModel {
 		return false;
 	}
 
+	/**
+	 * @param doc
+	 */
 	private void processDocument(Document doc) {
 		Element rootNode = doc.getDocumentElement();
 		if (fCompCS == null) {

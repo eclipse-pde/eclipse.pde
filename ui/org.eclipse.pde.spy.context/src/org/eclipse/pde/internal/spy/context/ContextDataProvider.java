@@ -287,6 +287,7 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 	/**
 	 * Compute it the current entry in context is a context function
 	 *
+	 * @param element
 	 * @return true if element is a context function
 	 */
 	@SuppressWarnings("unchecked")

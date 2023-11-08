@@ -30,6 +30,8 @@ public class InvalidClassAnnotationsTests extends AnnotationTest {
 
 	/**
 	 * Constructor
+	 *
+	 * @param name
 	 */
 	public InvalidClassAnnotationsTests(String name) {
 		super(name);
@@ -54,6 +56,8 @@ public class InvalidClassAnnotationsTests extends AnnotationTest {
 
 	/**
 	 * Tests annotations on members that are not visible
+	 *
+	 * @throws Exception
 	 */
 	public void testNotVisibleAnnotations1I() throws Exception {
 		setExpectedProblemIds(getDefaultProblemSet(3));
@@ -69,6 +73,8 @@ public class InvalidClassAnnotationsTests extends AnnotationTest {
 
 	/**
 	 * Tests annotations on members that are not visible
+	 *
+	 * @throws Exception
 	 */
 	public void testNotVisibleAnnotations1F() throws Exception {
 		setExpectedProblemIds(getDefaultProblemSet(3));

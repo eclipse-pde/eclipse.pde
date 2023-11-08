@@ -163,6 +163,7 @@ public class ApiDescription implements IApiDescription {
 		 * {@link ApiDescription#VISIBILITY_INHERITED} visibility this method
 		 * recursively asks its' parent nodes if they have API visibility.
 		 *
+		 * @param node
 		 * @return true if this node has API visibility false otherwise
 		 */
 		protected boolean hasApiVisibility(ManifestNode node) {
@@ -283,6 +284,7 @@ public class ApiDescription implements IApiDescription {
 	 *
 	 * @param visitor visitor to visit
 	 * @param childrenMap map of element name to manifest nodes
+	 * @param monitor
 	 */
 	protected void visitChildren(ApiDescriptionVisitor visitor, Map<IElementDescriptor, ManifestNode> childrenMap, IProgressMonitor monitor) {
 		List<IElementDescriptor> elements = new ArrayList<>(childrenMap.keySet());
@@ -309,6 +311,7 @@ public class ApiDescription implements IApiDescription {
 	 * Compares the given version against the embedded version that has been
 	 * read from the API description
 	 *
+	 * @param version
 	 * @return returns the same values as a compareTo call:
 	 *         <ul>
 	 *         <li>-1 if the given version is less than the embedded version</li>
@@ -449,6 +452,7 @@ public class ApiDescription implements IApiDescription {
 	 * Returns the visibility of the given node, walking up the tree if needed
 	 * to resolve inherited visibility.
 	 *
+	 * @param node
 	 * @return visibility modifier
 	 */
 	protected int resolveVisibility(ManifestNode node) {
@@ -608,6 +612,7 @@ public class ApiDescription implements IApiDescription {
 	 * override this method as required.
 	 * </p>
 	 *
+	 * @param elementDescriptor
 	 * @return whether a new node should be inserted into the API description
 	 *         when resolving the annotations for an element if a node is not
 	 *         already present
@@ -625,6 +630,8 @@ public class ApiDescription implements IApiDescription {
 
 	/**
 	 * Returns whether this description has been modified.
+	 *
+	 * @return
 	 */
 	protected boolean isModified() {
 		return fModified;
@@ -632,6 +639,9 @@ public class ApiDescription implements IApiDescription {
 
 	/**
 	 * Sets the modification of api description
+	 *
+	 * @param mod
+	 * @return
 	 */
 	protected void setModified(boolean mod) {
 		fModified = mod;

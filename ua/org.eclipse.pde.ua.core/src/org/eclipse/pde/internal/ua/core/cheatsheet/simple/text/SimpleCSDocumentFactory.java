@@ -37,6 +37,9 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 
 	private final SimpleCSModel fModel;
 
+	/**
+	 * @param model
+	 */
 	public SimpleCSDocumentFactory(SimpleCSModel model) {
 		super();
 		fModel = model;
@@ -156,6 +159,11 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 		return super.createDocumentNode(name, parent);
 	}
 
+	/**
+	 * @param name
+	 * @param elementName
+	 * @return
+	 */
 	private boolean isCSElement(String name, String elementName) {
 		if (name.equals(elementName)) {
 			return true;
@@ -163,50 +171,98 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 		return false;
 	}
 
+	/**
+	 * @param name
+	 * @return
+	 */
 	private boolean isSimpleCS(String name) {
 		return isCSElement(name, ISimpleCSConstants.ELEMENT_CHEATSHEET);
 	}
 
+	/**
+	 * @param name
+	 * @return
+	 */
 	private boolean isIntro(String name) {
 		return isCSElement(name, ISimpleCSConstants.ELEMENT_INTRO);
 	}
 
+	/**
+	 * @param name
+	 * @return
+	 */
 	private boolean isDescription(String name) {
 		return isCSElement(name, ISimpleCSConstants.ELEMENT_DESCRIPTION);
 	}
 
+	/**
+	 * @param name
+	 * @return
+	 */
 	private boolean isItem(String name) {
 		return isCSElement(name, ISimpleCSConstants.ELEMENT_ITEM);
 	}
 
+	/**
+	 * @param name
+	 * @return
+	 */
 	private boolean isAction(String name) {
 		return isCSElement(name, ISimpleCSConstants.ELEMENT_ACTION);
 	}
 
+	/**
+	 * @param name
+	 * @return
+	 */
 	private boolean isCommand(String name) {
 		return isCSElement(name, ISimpleCSConstants.ELEMENT_COMMAND);
 	}
 
+	/**
+	 * @param name
+	 * @return
+	 */
 	private boolean isPerformWhen(String name) {
 		return isCSElement(name, ISimpleCSConstants.ELEMENT_PERFORM_WHEN);
 	}
 
+	/**
+	 * @param name
+	 * @return
+	 */
 	private boolean isSubitem(String name) {
 		return isCSElement(name, ISimpleCSConstants.ELEMENT_SUBITEM);
 	}
 
+	/**
+	 * @param name
+	 * @return
+	 */
 	private boolean isRepeatedSubitem(String name) {
 		return isCSElement(name, ISimpleCSConstants.ELEMENT_REPEATED_SUBITEM);
 	}
 
+	/**
+	 * @param name
+	 * @return
+	 */
 	private boolean isConditionalSubitem(String name) {
 		return isCSElement(name, ISimpleCSConstants.ELEMENT_CONDITIONAL_SUBITEM);
 	}
 
+	/**
+	 * @param name
+	 * @return
+	 */
 	private boolean isOnCompletion(String name) {
 		return isCSElement(name, ISimpleCSConstants.ELEMENT_ONCOMPLETION);
 	}
 
+	/**
+	 * @param name
+	 * @return
+	 */
 	private boolean isBr(String name) {
 		return isCSElement(name, ISimpleCSConstants.ELEMENT_BR);
 	}
@@ -269,6 +325,9 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 		return new SimpleCSSubItem(fModel);
 	}
 
+	/**
+	 * @return
+	 */
 	protected IDocumentElementNode createBr() {
 		return new DocumentGenericNode(ISimpleCSConstants.ELEMENT_BR) {
 			private static final long serialVersionUID = 1L;

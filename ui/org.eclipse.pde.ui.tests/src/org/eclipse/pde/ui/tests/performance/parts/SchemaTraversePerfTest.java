@@ -32,6 +32,9 @@ public class SchemaTraversePerfTest extends AbstractSchemaPerfTest {
 		fRuns = 3000;
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	public void testSchemaTraverse() throws Exception {
 		executeTestRun();
 	}

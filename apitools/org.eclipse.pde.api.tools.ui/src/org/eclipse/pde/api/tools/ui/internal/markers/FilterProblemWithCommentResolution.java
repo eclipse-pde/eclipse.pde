@@ -34,6 +34,8 @@ public class FilterProblemWithCommentResolution extends FilterProblemResolution 
 
 	/**
 	 * Constructor
+	 *
+	 * @param marker
 	 */
 	public FilterProblemWithCommentResolution(IMarker marker) {
 		super(marker);

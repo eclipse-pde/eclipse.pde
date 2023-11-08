@@ -47,6 +47,7 @@ public class PluginVersionReplaceTask extends Task {
 
 	/**
 	 * The location of a fragment.xml or plugin.xml file 
+	 * @param path
 	 */
 	public void setPluginFilePath(String path) {
 		pluginFilePath = path;

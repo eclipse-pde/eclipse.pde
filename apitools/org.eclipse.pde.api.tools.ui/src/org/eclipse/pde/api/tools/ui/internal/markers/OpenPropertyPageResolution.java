@@ -50,6 +50,8 @@ public class OpenPropertyPageResolution implements IMarkerResolution2 {
 
 	/**
 	 * Constructor
+	 *
+	 * @param pageid
 	 */
 	public OpenPropertyPageResolution(String pagename, String pageid, IAdaptable element) {
 		Assert.isNotNull(pagename, MarkerMessages.OpenPropertyPageResolution_the_page_name_cannot_be_null);

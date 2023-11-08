@@ -62,6 +62,7 @@ public class PackagerTask extends Task {
 	/**
 	 * Set the configuration for which the assembling is being done
 	 * @param configInfo a configuration
+	 * @throws CoreException
 	 */
 	public void setConfigInfo(String configInfo) throws CoreException {
 		AbstractScriptGenerator.setConfigInfo(configInfo);
@@ -70,6 +71,7 @@ public class PackagerTask extends Task {
 	/** 
 	 * Set on a configuration basis, the format of the archive being produced. The default is set to be configuration independent.
 	 * @param archivesFormat an ampersand separated list of configuration (for example win32, win32 - zip, x86 & macoxs, carbon, ppc - tar).
+	 * @throws CoreException
 	 * @since 3.0
 	 */
 	public void setArchivesFormat(String archivesFormat) throws CoreException {

@@ -41,6 +41,10 @@ public abstract class XMLInputContext extends UTF8InputContext {
 	protected HashMap<Object, TextEdit> fOperationTable = new HashMap<>();
 	protected HashMap<IDocumentElementNode, MoveSourceEdit> fMoveOperations = new HashMap<>();
 
+	/**
+	 * @param editor
+	 * @param input
+	 */
 	public XMLInputContext(PDEFormEditor editor, IEditorInput input, boolean primary) {
 		super(editor, input, primary);
 	}

@@ -113,6 +113,9 @@ public class JarManifestErrorReporter extends ErrorReporter {
 		return header.getLineNumber();
 	}
 
+	/**
+	 * @param document
+	 */
 	protected void parseManifest(IDocument document, IProgressMonitor monitor) {
 		try {
 			fHeaders = new HashMap<>();

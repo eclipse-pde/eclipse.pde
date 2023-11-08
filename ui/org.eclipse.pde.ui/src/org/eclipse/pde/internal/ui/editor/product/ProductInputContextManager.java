@@ -20,6 +20,9 @@ import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 
 public class ProductInputContextManager extends InputContextManager {
 
+	/**
+	 * @param editor
+	 */
 	public ProductInputContextManager(PDEFormEditor editor) {
 		super(editor);
 	}

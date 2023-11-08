@@ -75,6 +75,7 @@ public class EventSpyPart implements EventMonitor.NewEventListener {
 	 * CapturedEventTree | | |
 	 * +-------------------------------------------------+ | | | Close | | |
 	 * +-------------------------------------------------+
+	 *
 	 */
 
 	@PostConstruct

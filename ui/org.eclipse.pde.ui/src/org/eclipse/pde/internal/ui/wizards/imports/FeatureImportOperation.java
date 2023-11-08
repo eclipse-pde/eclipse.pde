@@ -78,7 +78,9 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 
 	/**
 	 *
+	 * @param models
 	 * @param targetPath a parent of external project or null
+	 * @param replaceQuery
 	 */
 	public FeatureImportOperation(IFeatureModel[] models, boolean binary, IPath targetPath, IReplaceQuery replaceQuery) {
 		fModels = models;

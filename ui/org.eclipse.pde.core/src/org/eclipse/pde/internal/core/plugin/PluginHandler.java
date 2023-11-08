@@ -133,6 +133,12 @@ public class PluginHandler extends DefaultHandler {
 		processCharacters(characters, start, length);
 	}
 
+	/**
+	 * @param characters
+	 * @param start
+	 * @param length
+	 * @throws DOMException
+	 */
 	protected void processCharacters(char[] characters, int start, int length) throws DOMException {
 		StringBuilder buff = new StringBuilder();
 		for (int i = 0; i < length; i++) {

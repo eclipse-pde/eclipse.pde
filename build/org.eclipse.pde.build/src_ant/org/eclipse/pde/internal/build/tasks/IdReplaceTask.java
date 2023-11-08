@@ -71,6 +71,7 @@ public class IdReplaceTask extends Task {
 
 	/**
 	 * The location of a feature.xml file 
+	 * @param path
 	 */
 	public void setFeatureFilePath(String path) {
 		filePath = path;
@@ -83,6 +84,7 @@ public class IdReplaceTask extends Task {
 
 	/** 
 	 * The value with which the current version of the feature will be replaced. 
+	 * @param version
 	 */
 	public void setSelfVersion(String version) {
 		selfVersion = version;
@@ -115,6 +117,7 @@ public class IdReplaceTask extends Task {
 	 * Set the values to use when replacing a generic value used in a feature reference
 	 * Note that all the featureIds that have a generic number into the feature.xml must
 	 * be liste in <param>values</param>.
+	 * @param values
 	 */
 	public void setFeatureIds(String values) {
 		featureIds = new HashMap<>(10);

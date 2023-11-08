@@ -41,6 +41,7 @@ import org.eclipse.pde.internal.ui.editor.schema.SchemaEditor;
 
 /**
  * OpenSchemaAction
+ *
  */
 public class OpenSchemaAction extends Action {
 
@@ -48,6 +49,9 @@ public class OpenSchemaAction extends Action {
 
 	private String fFullPointID;
 
+	/**
+	 *
+	 */
 	public OpenSchemaAction() {
 		fSchema = null;
 		fFullPointID = null;

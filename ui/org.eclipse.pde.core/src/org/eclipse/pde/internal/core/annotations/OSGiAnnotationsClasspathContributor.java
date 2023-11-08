@@ -37,6 +37,7 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
  * "https://docs.osgi.org/specification/osgi.core/7.0.0/framework.api.html#org.osgi.annotation.versioning">OSGi
  * Versioning Annotations</a> available to plugin projects if they are part of
  * the target platform.
+ *
  */
 public class OSGiAnnotationsClasspathContributor implements IClasspathContributor {
 

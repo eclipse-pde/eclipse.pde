@@ -96,6 +96,8 @@ public class IncrementalApiBuilder {
 		 * IF the given {@link IProject} is the same as the project context, or
 		 * is contained in the listing of interesting projects
 		 *
+		 * @param lproject
+		 * @param others
 		 * @return <code>true</code> if the project is the same or in the
 		 *         interesting list <code>false</code> otherwise
 		 */
@@ -114,6 +116,8 @@ public class IncrementalApiBuilder {
 		/**
 		 * Constructs a new visitor, noting whether the build path of the
 		 * project has changed since the last build.
+		 *
+		 * @param pathChanged
 		 */
 		ResourceDeltaVisitor(boolean pathChanged) {
 			buildpathChanged = pathChanged;
@@ -208,6 +212,8 @@ public class IncrementalApiBuilder {
 	 * @param deltas the deltas to be built
 	 * @param state the current JDT build state
 	 * @param buildstate the current API tools build state
+	 * @param monitor
+	 * @throws CoreException
 	 */
 	public void build(IApiBaseline baseline, IApiBaseline wbaseline, IResourceDelta[] deltas, State state, BuildState buildstate, IProgressMonitor monitor) throws CoreException {
 		IProject project = this.builder.getProject();
@@ -256,10 +262,12 @@ public class IncrementalApiBuilder {
 	 * Builds an API delta using the default baseline (from the workspace
 	 * settings and the current
 	 *
+	 * @param project
 	 * @param baseline the baseline to compare to
 	 * @param wbaseline the current workspace baseline
 	 * @param state the current JDT build state
 	 * @param buildstate the current API tools build state
+	 * @param monitor
 	 */
 	void build(final IProject project, final IApiBaseline baseline, final IApiBaseline wbaseline, final State state, BuildState buildstate, IProgressMonitor monitor) {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_on_0, 3);
@@ -297,6 +305,7 @@ public class IncrementalApiBuilder {
 	 * Records the type name from the given IFile as a dependent type in the
 	 * given build context
 	 *
+	 * @param file
 	 * @param kind mask of STRUCTURAL and/or DESCRIPTION
 	 */
 	private void addDependentTypeToContext(IFile file, int kind) {
@@ -322,6 +331,7 @@ public class IncrementalApiBuilder {
 	/**
 	 * Collects the inner types from the compilation unit
 	 *
+	 * @param file
 	 * @param mask of STRUCTURAL and/or DESCRIPTION
 	 */
 	private void addInnerTypesToDependents(IFile file, int kind) {
@@ -346,6 +356,7 @@ public class IncrementalApiBuilder {
 	/**
 	 * Collects the inner types from the compilation unit
 	 *
+	 * @param file
 	 * @param mask of STRUCTURAL and/or DESCRIPTION
 	 */
 	private void addInnerTypes(IFile file, int kind) {
@@ -504,6 +515,8 @@ public class IncrementalApiBuilder {
 	/**
 	 * Adds a type to search for dependents of in considered projects for an
 	 * incremental build
+	 *
+	 * @param path
 	 */
 	void splitName(String typename, StringSet packages, StringSet simpleTypes) {
 		// the qualifiedStrings are of the form 'p1/p2' & the simpleStrings are
@@ -526,6 +539,7 @@ public class IncrementalApiBuilder {
 	 *
 	 * @param project the project being built
 	 * @param state the current build state for the given project
+	 * @param monitor
 	 */
 	void extClean(final IProject project, BuildState state, IProgressMonitor monitor) {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 3);
@@ -571,6 +585,7 @@ public class IncrementalApiBuilder {
 	/**
 	 * Resolves the java path from the given resource
 	 *
+	 * @param resource
 	 * @param kind CLASS_FILE, JAVA_FILE, or UNKNOWN
 	 * @return the resolved path or <code>null</code> if the resource is not
 	 *         part of the java model

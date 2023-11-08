@@ -29,6 +29,9 @@ public class PluginDocumentHandler extends DocumentHandler {
 	private String fSchemaVersion;
 	protected PluginDocumentNodeFactory fFactory;
 
+	/**
+	 * @param model
+	 */
 	public PluginDocumentHandler(PluginModelBase model, boolean reconciling) {
 		super(reconciling);
 		fModel = model;

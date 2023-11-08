@@ -268,6 +268,14 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 		return (i == valueArray.length) ? "" : new String(valueArray, i, valueArray.length - i); //$NON-NLS-1$
 	}
 
+	/**
+	 * @param c
+	 * @param startOffset
+	 * @param length
+	 * @param label
+	 * @param content
+	 * @param image
+	 */
 	protected void addProposalToCollection(final Collection<TypeCompletionProposal> c, final int startOffset, final int length, String label, String content, Image image) {
 		TypeCompletionProposal proposal = new TypeCompletionProposal(content, image, label, startOffset, length);
 		c.add(proposal);

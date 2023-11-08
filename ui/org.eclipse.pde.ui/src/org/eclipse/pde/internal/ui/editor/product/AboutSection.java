@@ -211,6 +211,9 @@ public class AboutSection extends PDESection {
 		}
 	}
 
+	/**
+	 * @param event
+	 */
 	private void handleModelEventWorldChanged(IModelChangedEvent event) {
 		refresh();
 	}

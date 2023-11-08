@@ -18,6 +18,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 /**
  * ISplashHandlerConstants
+ *
  */
 public interface ISplashHandlerConstants {
 

@@ -153,6 +153,8 @@ public abstract class ApiBuilderTest extends BuilderTests {
 
 	/**
 	 * Constructor
+	 *
+	 * @param name
 	 */
 	public ApiBuilderTest(String name) {
 		super(name);
@@ -183,6 +185,8 @@ public abstract class ApiBuilderTest extends BuilderTests {
 
 	/**
 	 * Asserts that there are no compilation problems in the environment
+	 *
+	 * @throws CoreException
 	 */
 	protected void expectingNoJDTProblems() throws CoreException {
 		expectingNoJDTProblemsFor(getEnv().getWorkspaceRootPath());
@@ -190,6 +194,9 @@ public abstract class ApiBuilderTest extends BuilderTests {
 
 	/**
 	 * Asserts that there are no compilation problems on the given resource path
+	 *
+	 * @param resource
+	 * @throws CoreException
 	 */
 	protected void expectingNoJDTProblemsFor(IPath resource) throws CoreException {
 		IMarker[] jdtMarkers = getEnv().getAllJDTMarkers(resource);
@@ -243,6 +250,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	/**
 	 * Creates a set of the default problem ids of the given count
 	 *
+	 * @param numproblems
 	 * @return the set of default problem ids, or an empty set.
 	 */
 	protected int[] getDefaultProblemIdSet(int numproblems) {
@@ -306,6 +314,9 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 * @param projectsdir the directory to load projects from
 	 * @param buildimmediately if a build should be run immediately following
 	 *            the import
+	 * @param importfiles
+	 * @param usetestcompliance
+	 * @throws Exception
 	 */
 	protected void createExistingProjects(String projectsdir, boolean buildimmediately, boolean importfiles, boolean usetestcompliance) throws Exception {
 		IPath path = TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append(projectsdir);
@@ -374,6 +385,8 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 * Create the project described in record. If it is successful return true.
 	 *
 	 * @param projectDir directory containing existing project
+	 * @param importfiles
+	 * @param usetestcompliance
 	 */
 	@SuppressWarnings("deprecation")
 	protected void createExistingProject(File projectDir, boolean importfiles, boolean usetestcompliance) throws Exception {
@@ -494,6 +507,8 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	/**
 	 * Sets the ids of the problems you expect to see from deploying a builder
 	 * test
+	 *
+	 * @param problemids
 	 */
 	protected void setExpectedProblemIds(int[] problemids) {
 		fProblems = problemids;
@@ -501,6 +516,8 @@ public abstract class ApiBuilderTest extends BuilderTests {
 
 	/**
 	 * Sets the line mappings that problems are expected on
+	 *
+	 * @param linenumbers
 	 */
 	protected void setExpectedLineMappings(LineMapping[] linemappings) {
 		fLineMappings = linemappings;
@@ -566,6 +583,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	/**
 	 * Returns the problem id from the marker
 	 *
+	 * @param marker
 	 * @return the problem id from the marker or -1 if there isn't one set on
 	 *         the marker
 	 */
@@ -671,6 +689,8 @@ public abstract class ApiBuilderTest extends BuilderTests {
 
 	/**
 	 * Prints all of the problems from each of the roots to infinite children
+	 *
+	 * @param roots
 	 */
 	@Override
 	protected void printProblemsFor(IPath... roots) {
@@ -684,6 +704,9 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	/**
 	 * Takes each element of the array and calls toString on it to put an array
 	 * together as a string
+	 *
+	 * @param array
+	 * @return
 	 */
 	@Override
 	protected String arrayToString(Object[] array) {
@@ -809,6 +832,8 @@ public abstract class ApiBuilderTest extends BuilderTests {
 
 	/**
 	 * Deletes the workspace file at the specified location (full path).
+	 *
+	 * @param workspaceLocation
 	 */
 	protected void deleteWorkspaceFile(IPath workspaceLocation, boolean recorddeletion) throws Exception {
 		IFile file = getEnv().getWorkspace().getRoot().getFile(workspaceLocation);
@@ -834,6 +859,9 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 * Updates the contents of a workspace file at the specified location (full
 	 * path), with the contents of a local file at the given replacement
 	 * location (absolute path).
+	 *
+	 * @param workspaceLocation
+	 * @param replacementLocation
 	 */
 	protected void createWorkspaceFile(IPath workspaceLocation, IPath replacementLocation) throws Exception {
 		IFile file = getEnv().getWorkspace().getRoot().getFile(workspaceLocation);
@@ -850,6 +878,9 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 * Updates the contents of a workspace file at the specified location (full
 	 * path), with the contents of a local file at the given replacement
 	 * location (absolute path).
+	 *
+	 * @param workspaceLocation
+	 * @param replacementLocation
 	 */
 	protected void updateWorkspaceFile(IPath workspaceLocation, IPath replacementLocation) throws Exception {
 		IFile file = getEnv().getWorkspace().getRoot().getFile(workspaceLocation);
@@ -881,6 +912,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	/**
 	 * Enables or disables the unsupported annotation problems for the builder
 	 *
+	 * @param enabled
 	 * @since 1.0.400
 	 */
 	protected void enableUnsupportedAnnotationOptions(boolean enabled) {
@@ -1036,6 +1068,8 @@ public abstract class ApiBuilderTest extends BuilderTests {
 
 	/**
 	 * Collects tests from the getAllTestClasses() method into the given suite
+	 *
+	 * @param suite
 	 */
 	private static void collectTests(TestSuite suite) {
 		// Hack to load all classes before computing their suite of test cases
@@ -1075,6 +1109,8 @@ public abstract class ApiBuilderTest extends BuilderTests {
 
 	/**
 	 * loads builder tests
+	 *
+	 * @return
 	 */
 	public static Test suite() {
 		TestSuite suite = new TestSuite(ApiBuilderTest.class.getName());

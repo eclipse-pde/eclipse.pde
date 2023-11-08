@@ -41,6 +41,7 @@ public class MethodUsageTests extends UsageTest {
 
 	/**
 	 * Returns a standard method usage problem allowing the kind to be specified
+	 * @param kind
 	 * @return problem id for the specified kind
 	 */
 	protected int getProblemId(int kind, int flags) {

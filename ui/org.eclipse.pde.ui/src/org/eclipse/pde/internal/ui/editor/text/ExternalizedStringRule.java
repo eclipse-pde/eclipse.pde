@@ -21,14 +21,19 @@ import org.eclipse.jface.text.rules.WordPatternRule;
 
 /**
  * ExternalizedStringRule
+ *
  */
 public class ExternalizedStringRule extends WordPatternRule {
 
 	/**
 	 * ExternalizedStringDetector
+	 *
 	 */
 	private static class ExternalizedStringDetector implements IWordDetector {
 
+		/**
+		 *
+		 */
 		public ExternalizedStringDetector() {
 			super();
 		}
@@ -56,6 +61,9 @@ public class ExternalizedStringRule extends WordPatternRule {
 		}
 	}
 
+	/**
+	 * @param token
+	 */
 	public ExternalizedStringRule(IToken token) {
 		super(new ExternalizedStringDetector(), "%", null, token); //$NON-NLS-1$
 	}

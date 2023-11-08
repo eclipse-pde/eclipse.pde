@@ -78,6 +78,9 @@ public class ApiUseScanJob extends Job {
 	 */
 	Set<SkippedComponent> notsearched = null;
 
+	/**
+	 * @param name
+	 */
 	public ApiUseScanJob(ILaunchConfiguration configuration) {
 		super(MessageFormat.format(Messages.ApiUseScanJob_api_use_report, configuration.getName()));
 		this.configuration = configuration;
@@ -192,6 +195,9 @@ public class ApiUseScanJob extends Job {
 
 	/**
 	 * Throws a new {@link CoreException} with the given message
+	 *
+	 * @param message
+	 * @throws CoreException
 	 */
 	void abort(String message) throws CoreException {
 		throw new CoreException(Status.error(message));
@@ -201,7 +207,10 @@ public class ApiUseScanJob extends Job {
 	 * Creates a new {@link IApiBaseline} from the location set in the backing
 	 * launch configuration
 	 *
+	 * @param kind
+	 * @param monitor
 	 * @return the new {@link IApiBaseline}
+	 * @throws CoreException
 	 */
 	private IApiBaseline createApiBaseline(int kind, IProgressMonitor monitor) throws CoreException {
 		ApiBaselineManager bmanager = ApiBaselineManager.getManager();
@@ -256,6 +265,8 @@ public class ApiUseScanJob extends Job {
 	 * @param baseline the baseline to check components from
 	 * @param ids the reference ids to consider
 	 * @param scope the scope of elements to search
+	 * @param monitor
+	 * @throws CoreException
 	 */
 	private void getContext(IApiBaseline baseline, Set<String> ids, Set<IApiComponent> scope, IProgressMonitor monitor) throws CoreException {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, Messages.ApiUseScanJob_collecting_target_components, 10);
@@ -300,6 +311,12 @@ public class ApiUseScanJob extends Job {
 
 	/**
 	 * Returns if we should add the given component to our search scope
+	 *
+	 * @param component
+	 * @param pattern
+	 * @param allowresolve
+	 * @return
+	 * @throws CoreException
 	 */
 	boolean acceptComponent(IApiComponent component, Pattern pattern, boolean allowresolve) throws CoreException {
 		if (!allowresolve) {
@@ -322,7 +339,9 @@ public class ApiUseScanJob extends Job {
 	 * Returns if the given search modifier is set in the backing
 	 * {@link ILaunchConfiguration}
 	 *
+	 * @param modifier
 	 * @return true if the modifier is set, false otherwise
+	 * @throws CoreException
 	 */
 	private boolean isSpecified(int modifier) throws CoreException {
 		int modifiers = configuration.getAttribute(ApiUseLaunchDelegate.SEARCH_MODIFIERS, 0);
@@ -335,6 +354,12 @@ public class ApiUseScanJob extends Job {
 	 * @param reportType what report converter to use, either
 	 *            {@link ApiUseLaunchDelegate#REPORT_KIND_PRODUCER} or
 	 *            {@link ApiUseLaunchDelegate#REPORT_KIND_CONSUMER}
+	 * @param cleanh
+	 * @param hlocation
+	 * @param rlocation
+	 * @param openhtml
+	 * @param monitor
+	 * @throws OperationCanceledException
 	 */
 	void performReportCreation(int reportType, boolean cleanh, String hlocation, String rlocation, boolean openhtml, String[] topatterns, String[] frompatterns, IProgressMonitor monitor) {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, Messages.ApiUseScanJob_creating_html_reports, 10);
@@ -373,6 +398,8 @@ public class ApiUseScanJob extends Job {
 
 	/**
 	 * Cleans the report location specified by the parameter reportLocation
+	 *
+	 * @param monitor
 	 */
 	void cleanReportLocation(String location, IProgressMonitor monitor) {
 		File file = new File(location);
@@ -385,6 +412,9 @@ public class ApiUseScanJob extends Job {
 
 	/**
 	 * Cleans the location if it exists
+	 *
+	 * @param file
+	 * @param monitor
 	 */
 	void scrubReportLocation(File file, IProgressMonitor monitor) {
 		SubMonitor subMonitor = SubMonitor.convert(monitor);
@@ -409,6 +439,7 @@ public class ApiUseScanJob extends Job {
 	/**
 	 * Creates an API baseline from a target definition.
 	 *
+	 * @param definition
 	 * @param monitor progress monitor
 	 */
 	private IApiBaseline createBaseline(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
@@ -433,6 +464,9 @@ public class ApiUseScanJob extends Job {
 
 	/**
 	 * Creates a baseline at an install location
+	 *
+	 * @param path
+	 * @param monitor
 	 */
 	private IApiBaseline createBaseline(String installLocation, IProgressMonitor monitor) throws CoreException {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, Messages.ApiUseScanJob_scanning, 10);

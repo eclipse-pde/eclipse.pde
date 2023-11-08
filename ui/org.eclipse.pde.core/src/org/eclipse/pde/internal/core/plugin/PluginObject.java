@@ -255,6 +255,10 @@ public abstract class PluginObject extends PlatformObject implements IPluginObje
 		return super.getAdapter(adapter);
 	}
 
+	/**
+	 * @param model
+	 * @param parent
+	 */
 	public void reconnect(ISharedPluginModel model, IPluginObject parent) {
 		// Transient Field:  In The Model
 		fInTheModel = false;

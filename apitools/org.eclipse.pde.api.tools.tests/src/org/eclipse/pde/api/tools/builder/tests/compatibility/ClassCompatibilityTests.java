@@ -36,6 +36,8 @@ public abstract class ClassCompatibilityTests extends CompatibilityTest {
 
 	/**
 	 * Collects tests from the getAllTestClasses() method into the given suite
+	 *
+	 * @param suite
 	 */
 	private static void collectTests(TestSuite suite) {
 		// Reset forgotten subsets of tests

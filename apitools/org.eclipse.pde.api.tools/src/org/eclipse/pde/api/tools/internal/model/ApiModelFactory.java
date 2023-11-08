@@ -100,6 +100,7 @@ public class ApiModelFactory {
 	 * does not contain a valid API component. The component is not added to the
 	 * baseline.
 	 *
+	 * @param baseline
 	 * @param model the given model
 	 * @return API component or <code>null</code> if the given model cannot be
 	 *         resolved or does not contain a valid API component
@@ -342,6 +343,7 @@ public class ApiModelFactory {
 	/**
 	 * Return a stable identifier for the provided definition.
 	 *
+	 * @param definition
 	 * @return a stable identifier, in portable OS format as per
 	 *         {@link IPath#fromPortableString(String)}.
 	 */

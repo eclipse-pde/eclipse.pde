@@ -93,6 +93,9 @@ public abstract class CSAbstractEditor extends MultiSourceEditor {
 				message);
 	}
 
+	/**
+	 *
+	 */
 	private void handleLinkExitedRegisterCS() {
 		// Update colour
 		fImageHyperlinkRegisterCS.setForeground(getToolkit()

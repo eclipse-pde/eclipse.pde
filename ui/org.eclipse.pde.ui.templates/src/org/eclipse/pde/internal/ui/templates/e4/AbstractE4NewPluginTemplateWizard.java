@@ -37,6 +37,7 @@ import org.eclipse.ui.part.FileEditorInput;
 /** This abstract class is the basic class for E4 plugins templates.
  * It removes the dependencies to org.eclipse.ui and add the FieldData for E4 mode management.
  * @author olivier
+ *
  */
 public abstract class AbstractE4NewPluginTemplateWizard extends NewPluginTemplateWizard {
 
@@ -115,6 +116,8 @@ public abstract class AbstractE4NewPluginTemplateWizard extends NewPluginTemplat
 
 	/**
 	 * Opens the model editor after the project was created.
+	 *
+	 * @throws PartInitException
 	 */
 	private void openEditorForApplicationModel(IProject project) throws PartInitException {
 		String filename = getFilenameToEdit();

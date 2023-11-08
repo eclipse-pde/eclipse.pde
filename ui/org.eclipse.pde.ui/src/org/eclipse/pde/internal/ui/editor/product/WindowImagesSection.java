@@ -199,6 +199,9 @@ public class WindowImagesSection extends PDESection {
 		}
 	}
 
+	/**
+	 * @param event
+	 */
 	private void handleModelEventWorldChanged(IModelChangedEvent event) {
 		refresh();
 	}

@@ -23,6 +23,7 @@ import org.eclipse.pde.internal.ui.editor.text.XMLStringPartitionScanner;
 
 /**
  * Creates and sets up the document partitioner
+ *
  */
 public class XMLDocumentSetupParticpant implements IDocumentSetupParticipant {
 

@@ -55,6 +55,7 @@ public abstract class NewPluginTemplateWizard extends AbstractNewPluginTemplateW
 
 	/**
 	 * Implemented by asking templates in this wizard to contribute pages.
+	 *
 	 */
 	@Override
 	protected final void addAdditionalPages() {

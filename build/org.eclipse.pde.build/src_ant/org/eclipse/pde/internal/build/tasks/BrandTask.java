@@ -20,6 +20,9 @@ import org.apache.tools.ant.Task;
 import org.eclipse.equinox.internal.p2.publisher.eclipse.BrandingIron;
 import org.eclipse.equinox.internal.p2.publisher.eclipse.ExecutablesDescriptor;
 
+/**
+ *
+ */
 public class BrandTask extends Task {
 
 	BrandingIron iron;

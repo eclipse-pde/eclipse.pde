@@ -80,6 +80,8 @@ public class SpyHandler {
 	 * Prepare the spy window : add the toolbar Item to be called for each spies
 	 * in the tool bar The structure is defined in the fragment.
 	 *
+	 * @param appli
+	 * @param modelService
 	 * @return the model Spies window found in fragment.
 	 */
 

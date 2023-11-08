@@ -115,6 +115,7 @@ public class TargetPlatformProvisionTask extends Task {
 
 	/**
 	 * Set whether the destination should be cleared prior to provisioning.
+	 * @param clearDestination
 	 */
 	public void setClearDestination(boolean clearDestination) {
 		this.clearDestination = clearDestination;
@@ -122,6 +123,7 @@ public class TargetPlatformProvisionTask extends Task {
 
 	/**
 	 * Set the folder in which the target will be provisioned.
+	 * @param destinationDirectory
 	 */
 	public void setDestinationDirectory(File destinationDirectory) {
 		this.destinationDirectory = destinationDirectory;
@@ -129,6 +131,7 @@ public class TargetPlatformProvisionTask extends Task {
 
 	/**
 	 * Set the target file to provision
+	 * @param targetFile
 	 */
 	public void setTargetFile(File targetFile) {
 		this.targetFile = targetFile;

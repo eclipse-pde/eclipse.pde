@@ -33,6 +33,8 @@ public class $wizardPageClassName$ extends WizardPage {
 
 	/**
 	 * Constructor for SampleNewWizardPage.
+	 *
+	 * @param pageName
 	 */
 	public $wizardPageClassName$(ISelection selection) {
 		super("wizardPage");

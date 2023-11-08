@@ -93,6 +93,7 @@ public abstract class ScannerTest {
 	/**
 	 * Returns the set of references collected from the given class file
 	 *
+	 * @param qualifiedname
 	 * @return the set of references from the specified class file name or
 	 *         <code>null</code>
 	 */
@@ -138,6 +139,7 @@ public abstract class ScannerTest {
 	/**
 	 * Returns the fully qualified type name associated with the given member.
 	 *
+	 * @param member
 	 * @return fully qualified type name
 	 */
 	private String getTypeName(IApiMember member) throws CoreException {
@@ -192,6 +194,8 @@ public abstract class ScannerTest {
 
 	/**
 	 * Close the container and null it out
+	 *
+	 * @throws Exception
 	 */
 	protected static void cleanUp() throws Exception {
 		if (container != null) {

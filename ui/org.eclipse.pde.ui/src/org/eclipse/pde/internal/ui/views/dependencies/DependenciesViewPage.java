@@ -124,6 +124,9 @@ public abstract class DependenciesViewPage extends Page {
 		}
 	}
 
+	/**
+	 *
+	 */
 	public DependenciesViewPage(DependenciesView view, IContentProvider contentProvider) {
 		this.fView = view;
 		this.fContentProvider = contentProvider;

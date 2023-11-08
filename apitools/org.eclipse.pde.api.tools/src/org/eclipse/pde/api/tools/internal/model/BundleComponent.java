@@ -159,6 +159,7 @@ public class BundleComponent extends Component {
 	 *
 	 * @param baseline owning API baseline
 	 * @param location directory or jar file
+	 * @param bundleid
 	 * @exception CoreException if unable to create a component from the
 	 *                specified location
 	 */
@@ -253,7 +254,9 @@ public class BundleComponent extends Component {
 	 * Returns if the bundle at the specified location is a valid bundle or not.
 	 * Validity is determined via the existence of a readable manifest file
 	 *
+	 * @param location
 	 * @return true if the bundle at the given location is valid false otherwise
+	 * @throws IOException
 	 */
 	public boolean isValidBundle() throws CoreException {
 		Map<String, String> manifest = getManifest();
@@ -329,7 +332,11 @@ public class BundleComponent extends Component {
 	 * Returns the {@link BundleDescription} for the given manifest + state or
 	 * throws an exception, never returns <code>null</code>
 	 *
+	 * @param manifest
+	 * @param location
+	 * @param id
 	 * @return the {@link BundleDescription} or throws an exception
+	 * @throws BundleException
 	 */
 	protected BundleDescription getBundleDescription(Map<String, String> manifest, String location, long id) throws BundleException {
 		State state = getState();
@@ -348,7 +355,9 @@ public class BundleComponent extends Component {
 	 * Tries to look up the bundle described by the given manifest in the given
 	 * state
 	 *
+	 * @param manifest
 	 * @return the bundle for the given manifest, <code>null</code> otherwise
+	 * @throws BundleException
 	 */
 	protected static BundleDescription lookupBundle(State state, Map<String, String> manifest) throws BundleException {
 		Version version = null;
@@ -428,6 +437,7 @@ public class BundleComponent extends Component {
 	 * not include packages that originate from fragments or a host.
 	 *
 	 * @return local package names
+	 * @throws CoreException
 	 */
 	protected Set<String> getLocalPackageNames() throws CoreException {
 		Set<String> names = new HashSet<>();
@@ -628,7 +638,9 @@ public class BundleComponent extends Component {
 	/**
 	 * Returns classpath entries defined in the given manifest.
 	 *
+	 * @param manifest
 	 * @return classpath entries as bundle relative paths
+	 * @throws BundleException
 	 */
 	protected static String[] getClasspathEntries(Map<String, String> manifest) throws BundleException {
 		ManifestElement[] classpath = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, manifest.get(Constants.BUNDLE_CLASSPATH));
@@ -653,6 +665,7 @@ public class BundleComponent extends Component {
 	 *
 	 * @param path relative path to a class file container in this bundle
 	 * @return {@link IApiTypeContainer} or <code>null</code>
+	 * @throws IOException
 	 * @throws CoreException if something goes wrong while creating the
 	 *             container
 	 */
@@ -752,6 +765,7 @@ public class BundleComponent extends Component {
 	 * @param parent the parent directory to add the extracted entry to
 	 * @return the file handle to the extracted entry, <code>null</code>
 	 *         otherwise
+	 * @throws IOException
 	 */
 	static File extractEntry(ZipFile zip, ZipEntry entry, File parent) throws IOException {
 		try (InputStream inputStream = zip.getInputStream(entry)) {
@@ -871,6 +885,7 @@ public class BundleComponent extends Component {
 	 *            a file (jar)
 	 * @param filePath bundle relative path to desired file
 	 * @return URL to the file
+	 * @throws MalformedURLException
 	 */
 	protected static URL getFileInBundle(File bundleLocation, String filePath) throws MalformedURLException {
 		String extension = IPath.fromOSString(bundleLocation.getName()).getFileExtension();

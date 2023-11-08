@@ -28,6 +28,7 @@ import org.osgi.framework.BundleContext;
  * updated in the future.
  *
  * @author olivier
+ *
  */
 public class ContextSpyHelper {
 

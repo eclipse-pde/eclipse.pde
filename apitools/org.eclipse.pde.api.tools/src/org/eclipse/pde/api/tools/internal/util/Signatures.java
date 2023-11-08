@@ -65,6 +65,7 @@ public final class Signatures {
 	 * generic signature it is returned, otherwise the standard signature is
 	 * used
 	 *
+	 * @param method
 	 * @return the de-qualified signature for the method
 	 */
 	public static String processMethodSignature(IApiMethod method) {
@@ -99,6 +100,7 @@ public final class Signatures {
 	 * method will load the enclosing type in the event the method is a
 	 * constructor.
 	 *
+	 * @param method
 	 * @return the display signature to use for this {@link IApiMethod}
 	 * @throws CoreException if a lookup to the parent type of the method fails
 	 */
@@ -114,6 +116,8 @@ public final class Signatures {
 	/**
 	 * Returns the signature of the method qualified with the given type
 	 *
+	 * @param type
+	 * @param method
 	 * @return the given type qualified signature of the given method
 	 * @throws CoreException if a lookup to the parent type of the given method
 	 *             fails
@@ -136,6 +140,7 @@ public final class Signatures {
 	/**
 	 * Returns the signature of the method qualified with the given type
 	 *
+	 * @param method
 	 * @return the given type qualified signature of the given method
 	 * @throws CoreException if a lookup to the parent type of the given method
 	 *             fails
@@ -160,6 +165,7 @@ public final class Signatures {
 	 * For example: <code>x.y.z.Clazz.mymethod() : Object</code>
 	 *
 	 * @param method the descriptor to get a formatted signature for
+	 * @param qualifiedparams
 	 * @param includereturn if the return type should be returned
 	 * @return the given type qualified signature of the given method
 	 * @throws CoreException if a lookup to the parent type of the given method
@@ -184,7 +190,10 @@ public final class Signatures {
 	/**
 	 * Returns the de-qualified method signature
 	 *
+	 * @param method
+	 * @param includereturn
 	 * @return the de-qualified method signature
+	 * @throws CoreException
 	 */
 	public static String getMethodSignature(IMethodDescriptor method, boolean includereturn) throws CoreException {
 		StringBuilder buffer = new StringBuilder();
@@ -203,8 +212,10 @@ public final class Signatures {
 	 * Returns the name to use for the method. If the method is a constructor,
 	 * the enclosing type is loaded to get its simple name
 	 *
+	 * @param method
 	 * @return the name for the method. If the method is a constructor the
 	 *         simple name of the enclosing type is substituted.
+	 * @throws CoreException
 	 */
 	public static String getMethodName(IApiMethod method) throws CoreException {
 		String mname = method.getName();
@@ -221,8 +232,10 @@ public final class Signatures {
 	 * Returns the name to use for the method. If the method is a constructor,
 	 * the enclosing type is loaded to get its simple name
 	 *
+	 * @param method
 	 * @return the name for the method. If the method is a constructor the
 	 *         simple name of the enclosing type is substituted.
+	 * @throws CoreException
 	 */
 	public static String getMethodName(IMethodDescriptor method) throws CoreException {
 		String mname = method.getName();
@@ -238,6 +251,7 @@ public final class Signatures {
 	/**
 	 * Returns the unqualified signature of the given {@link IApiField}
 	 *
+	 * @param field
 	 * @return the unqualified signature of the given {@link IApiField}
 	 */
 	public static String getFieldSignature(IApiField field) {
@@ -247,6 +261,7 @@ public final class Signatures {
 	/**
 	 * Returns the type-qualified field signature
 	 *
+	 * @param field
 	 * @return the type-qualified field signature
 	 */
 	public static String getQualifiedFieldSignature(IApiField field) throws CoreException {
@@ -262,7 +277,9 @@ public final class Signatures {
 	/**
 	 * Returns the type-qualified field signature
 	 *
+	 * @param field
 	 * @return the type-qualified field signature
+	 * @throws Core
 	 */
 	public static String getQualifiedFieldSignature(IFieldDescriptor field) {
 		StringBuilder buffer = new StringBuilder();
@@ -278,6 +295,7 @@ public final class Signatures {
 	 * Returns the type signature to use for displaying the given
 	 * {@link IApiType}
 	 *
+	 * @param type
 	 * @return the display signature to use for the given {@link IApiType}
 	 */
 	public static String getQualifiedTypeSignature(IApiType type) {
@@ -288,6 +306,7 @@ public final class Signatures {
 	 * Returns the type signature to use for displaying the given
 	 * {@link IReferenceTypeDescriptor}
 	 *
+	 * @param type
 	 * @return the display signature to use for the given
 	 *         {@link IReferenceTypeDescriptor}
 	 */
@@ -308,6 +327,11 @@ public final class Signatures {
 	/**
 	 * Returns the display-able representation of the given signature and
 	 * generic signature
+	 *
+	 * @param signature
+	 * @param genericsignature
+	 * @param qualified
+	 * @return
 	 */
 	public static String getTypeSignature(String signature, String genericsignature, boolean qualified) {
 		StringBuilder buffer = new StringBuilder();
@@ -361,6 +385,9 @@ public final class Signatures {
 	/**
 	 * Appends the given listing of type parameter names to the signature
 	 * contained in the given buffer
+	 *
+	 * @param buffer
+	 * @param parameters
 	 */
 	public static void appendTypeParameters(StringBuilder buffer, String[] parameters) {
 		if (parameters == null) {
@@ -458,6 +485,7 @@ public final class Signatures {
 	/**
 	 * Creates a method signature from a specified {@link MethodDeclaration}
 	 *
+	 * @param node
 	 * @param erased if true then perform type erasure
 	 * @return the signature for the given method node or <code>null</code>
 	 */
@@ -487,6 +515,7 @@ public final class Signatures {
 	 * the list elements are all {@link SingleVariableDeclaration}s and the
 	 * elements in the returned list are of type {@link String}
 	 *
+	 * @param rawparams
 	 * @param erased if true then perform type erasure
 	 * @return a listing of signatures for the specified parameters
 	 */
@@ -714,6 +743,7 @@ public final class Signatures {
 	 * Returns if the specified signature is qualified or not. Qualification is
 	 * determined if there is a token in the signature the begins with an 'L'.
 	 *
+	 * @param signature
 	 * @return true if the signature is qualified, false otherwise
 	 */
 	public static boolean isQualifiedSignature(String signature) {
@@ -784,6 +814,7 @@ public final class Signatures {
 	 * Returns if the {@link AbstractTypeDeclaration} is static or not (has the
 	 * static keyword or not)
 	 *
+	 * @param typeDeclaration
 	 * @return true if it is static, false otherwise
 	 */
 	static boolean isStatic(AbstractTypeDeclaration typeDeclaration) {
@@ -823,6 +854,7 @@ public final class Signatures {
 	 * <code>a.b.c.Type -&gt; Type</code><br>
 	 * <code>a.b.c.Type$Member -&gt; Type$Member</code>
 	 *
+	 * @param referencedTypeName
 	 * @return the type name with package qualification removed
 	 */
 	public static String getSimpleTypeName(String referencedTypeName) {

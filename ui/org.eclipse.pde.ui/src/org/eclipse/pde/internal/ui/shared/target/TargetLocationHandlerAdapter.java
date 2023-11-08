@@ -35,6 +35,7 @@ import org.eclipse.pde.ui.target.ITargetLocationHandler;
 /**
  * Single Entry Point handler for the UI that delegates to adapter framework
  * when necessary
+ *
  */
 class TargetLocationHandlerAdapter implements ITargetLocationHandler {
 

@@ -26,6 +26,9 @@ public class SimpleCSOnCompletion extends SimpleCSObject implements
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * @param model
+	 */
 	public SimpleCSOnCompletion(ISimpleCSModel model) {
 		super(model, ELEMENT_ONCOMPLETION);
 	}

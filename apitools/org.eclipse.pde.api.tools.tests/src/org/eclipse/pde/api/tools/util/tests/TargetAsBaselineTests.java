@@ -52,6 +52,8 @@ public class TargetAsBaselineTests extends AbstractApiTest {
 
 	/**
 	 * Test that an API baseline can be loaded from a target
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testLoadTarget() throws CoreException {
@@ -63,6 +65,8 @@ public class TargetAsBaselineTests extends AbstractApiTest {
 
 	/**
 	 * Test that an API baseline loaded from a target can be detected as stale
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testCheckStale() throws CoreException {

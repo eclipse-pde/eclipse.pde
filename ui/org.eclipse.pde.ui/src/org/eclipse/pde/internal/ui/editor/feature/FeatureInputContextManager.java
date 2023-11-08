@@ -25,6 +25,9 @@ import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 
 public class FeatureInputContextManager extends InputContextManager {
+	/**
+	 *
+	 */
 	public FeatureInputContextManager(PDEFormEditor editor) {
 		super(editor);
 	}

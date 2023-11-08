@@ -40,6 +40,8 @@ public class JavadocTagOperation {
 
 	/**
 	 * Constructor
+	 *
+	 * @param marker
 	 */
 	public JavadocTagOperation(IMarker marker) {
 		fBackingMarker = marker;
@@ -47,6 +49,8 @@ public class JavadocTagOperation {
 
 	/**
 	 * Sets the backing marker for this operation
+	 *
+	 * @param marker
 	 */
 	protected void setMarker(IMarker marker) {
 		fBackingMarker = marker;
@@ -54,6 +58,8 @@ public class JavadocTagOperation {
 
 	/**
 	 * Gets the current {@link IMarker} set for this operation
+	 *
+	 * @return
 	 */
 	protected IMarker getMarker() {
 		return fBackingMarker;
@@ -63,6 +69,7 @@ public class JavadocTagOperation {
 	 * Finds an {@link ASTNode} for the given compilation unit at the backing
 	 * focal position
 	 *
+	 * @param unit
 	 * @return the {@link BodyDeclaration} or <code>null</code>
 	 */
 	protected BodyDeclaration findNode(ICompilationUnit unit) {
@@ -77,6 +84,9 @@ public class JavadocTagOperation {
 	 * Creates an {@link AST} with the given {@link ICompilationUnit} as source
 	 * and the {@link JavaCore#COMPILER_DOC_COMMENT_SUPPORT} options set.
 	 *
+	 * @param unit
+	 * @param focalposition
+	 * @param resolvebindings
 	 * @return a new {@link AST}
 	 */
 	protected CompilationUnit createAST(final ICompilationUnit unit, int focalposition, boolean resolvebindings) {
@@ -111,6 +121,7 @@ public class JavadocTagOperation {
 	 * Creates an {@link AST} with the given {@link ICompilationUnit} as source
 	 * and the {@link JavaCore#COMPILER_DOC_COMMENT_SUPPORT} options set.
 	 *
+	 * @param unit
 	 * @return a new {@link AST}
 	 */
 	protected CompilationUnit createAST(final ICompilationUnit unit) {
@@ -135,6 +146,7 @@ public class JavadocTagOperation {
 	 * the given node or -1 if the parent is not found or not a
 	 * {@link TypeDeclaration}
 	 *
+	 * @param node
 	 * @return the {@link IApiJavadocTag} kind of the parent or -1
 	 */
 	protected int getParentKind(ASTNode node) {
@@ -149,6 +161,9 @@ public class JavadocTagOperation {
 
 	/**
 	 * Returns if the given body declaration is a constructor or not
+	 *
+	 * @param body
+	 * @return
 	 */
 	protected boolean isConstructor(BodyDeclaration body) {
 		if (body.getNodeType() == ASTNode.METHOD_DECLARATION) {

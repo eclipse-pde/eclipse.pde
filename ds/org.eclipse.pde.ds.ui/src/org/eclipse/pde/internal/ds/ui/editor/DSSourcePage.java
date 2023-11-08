@@ -99,6 +99,9 @@ public class DSSourcePage extends XMLSourcePage {
 		updateOutlinePageSelection(range);
 	}
 
+	/**
+	 * @param range
+	 */
 	@Override
 	public IDocumentRange adaptRange(IDocumentRange range) {
 		// Adapt the range to node that is viewable in the outline view

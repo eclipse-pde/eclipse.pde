@@ -21,16 +21,27 @@ import org.eclipse.core.runtime.CoreException;
 
 public class AbbreviatedFragmentModel extends WorkspaceFragmentModel {
 
+	/**
+	 *
+	 */
 	private static final long serialVersionUID = 1L;
 
 	private final String[] fExtensionPointIDs;
 
+	/**
+	 * @param file
+	 * @param extensionPointIDs
+	 */
 	public AbbreviatedFragmentModel(IFile file, String[] extensionPointIDs) {
 		super(file, true);
 
 		fExtensionPointIDs = extensionPointIDs;
 	}
 
+	/**
+	 * @param file
+	 * @param extensionPointID
+	 */
 	public AbbreviatedFragmentModel(IFile file, String extensionPointID) {
 		super(file, true);
 

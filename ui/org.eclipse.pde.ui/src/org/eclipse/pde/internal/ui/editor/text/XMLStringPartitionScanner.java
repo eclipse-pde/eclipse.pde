@@ -20,6 +20,7 @@ import org.eclipse.jface.text.rules.Token;
 
 /**
  * Scanner that exclusively sets predicate rules for checking spelling only for quoted strings.
+ *
  */
 public class XMLStringPartitionScanner extends RuleBasedPartitionScanner {
 	public final static String XML_STRING = "__xml_string"; //$NON-NLS-1$

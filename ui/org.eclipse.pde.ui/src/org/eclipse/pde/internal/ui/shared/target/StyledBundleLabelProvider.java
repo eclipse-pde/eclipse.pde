@@ -121,6 +121,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 	/**
 	 * Returns a styled string for some internal objects
 	 *
+	 * @param element
 	 * @return the styled string
 	 */
 	private StyledString getInternalStyledString(Object element) {

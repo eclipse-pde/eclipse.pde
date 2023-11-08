@@ -330,6 +330,7 @@ public class SWTFactory {
 	 * @param parent the parent composite to add this text widget to
 	 * @param hspan the horizontal span to take up on the parent composite
 	 * @return the new text widget
+	 *
 	 */
 	public static Text createSingleText(Composite parent, int hspan) {
     	Text t = new Text(parent, SWT.SINGLE | SWT.BORDER);
@@ -501,6 +502,9 @@ public class SWTFactory {
 
 	/**
 	 * Creates a horizontal spacer for separating components
+	 *
+	 * @param comp
+	 * @param numlines
 	 */
 	public static void createHorizontalSpacer(Composite comp, int numlines) {
 		Label lbl = new Label(comp, SWT.NONE);
@@ -582,6 +586,7 @@ public class SWTFactory {
 	/**
 	 * This method allows us to open the preference dialog on the specific page, in this case the perspective page
 	 *
+	 * @param shell
 	 * @param id the id of preference page to show
 	 * @param page the actual page to show
 	 */
@@ -591,6 +596,10 @@ public class SWTFactory {
 
 	/**
 	 * This method allows us to open a property page in the default platform dialog
+	 * @param shell
+	 * @param id
+	 * @param element
+	 * @param data
 	 */
 	public static void showPropertiesDialog(Shell shell, String id, IAdaptable element, Object data) {
 		PreferencesUtil.createPropertyDialogOn(shell, element, id, new String[] {id}, data).open();

@@ -25,6 +25,7 @@ import org.osgi.framework.Bundle;
 
 /**
  * AbstractSchemaPerfTest
+ *
  */
 public abstract class AbstractSchemaPerfTest extends PerformanceTestCase {
 
@@ -45,12 +46,19 @@ public abstract class AbstractSchemaPerfTest extends PerformanceTestCase {
 		setUpIterations();
 	}
 
+	/**
+	 *
+	 */
 	protected void setUpIterations() {
 		fTestIterations = 5;
 		fWarmupIterations = 50;
 		fRuns = 200;
 	}
 
+	/**
+	 * @throws Exception
+	 * @throws IOException
+	 */
 	private void setUpSchemaFile() throws Exception, IOException {
 		PDETestsPlugin plugin = PDETestsPlugin.getDefault();
 		if (plugin == null)
@@ -67,6 +75,9 @@ public abstract class AbstractSchemaPerfTest extends PerformanceTestCase {
 		fXSDFile = new File(path);
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	protected void executeTestRun() throws Exception {
 		// Warm-up Iterations
 		for (int i = 0; i < fWarmupIterations; i++) {
@@ -84,6 +95,9 @@ public abstract class AbstractSchemaPerfTest extends PerformanceTestCase {
 		assertPerformance();
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	protected abstract void executeTest() throws Exception;
 
 }

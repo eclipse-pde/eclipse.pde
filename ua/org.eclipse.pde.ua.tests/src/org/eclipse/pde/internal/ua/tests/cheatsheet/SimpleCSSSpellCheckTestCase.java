@@ -48,6 +48,7 @@ import org.junit.Before;
 
 /**
  * Tests the spelling annotations in a Simple Cheat sheet editor.
+ *
  */
 public class SimpleCSSSpellCheckTestCase extends AbstractCheatSheetModelTestCase {
 

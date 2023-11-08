@@ -166,6 +166,7 @@ public abstract class HTMLConvertor {
 	/**
 	 * Opens a new <code>&lt;td&gt;</code> with the given width attribute set
 	 *
+	 * @param width
 	 * @return a new open <code>&lt;td&gt;</code> tag
 	 */
 	public static String openTD(int width) {

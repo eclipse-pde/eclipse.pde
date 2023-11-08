@@ -165,6 +165,7 @@ public interface IApiDescription {
 	 * Traverses this description with the given visitor.
 	 *
 	 * @param visitor description visitor
+	 * @param monitor
 	 */
 	public void accept(ApiDescriptionVisitor visitor, IProgressMonitor monitor);
 

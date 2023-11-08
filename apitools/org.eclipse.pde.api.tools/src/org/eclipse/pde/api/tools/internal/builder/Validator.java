@@ -141,6 +141,7 @@ public abstract class Validator extends ASTVisitor {
 	/**
 	 * Returns the fully qualified name of the enclosing type for the given node
 	 *
+	 * @param node
 	 * @return the fully qualified name of the enclosing type
 	 */
 	protected String getTypeName(ASTNode node) {
@@ -181,6 +182,7 @@ public abstract class Validator extends ASTVisitor {
 	 * the given node or -1 if the parent is not found or not a
 	 * {@link TypeDeclaration}
 	 *
+	 * @param node
 	 * @return the {@link IApiJavadocTag} kind of the parent or -1
 	 */
 	protected int getParentKind(ASTNode node) {
@@ -201,6 +203,7 @@ public abstract class Validator extends ASTVisitor {
 	 * Returns the modifiers from the smallest enclosing type containing the
 	 * given node
 	 *
+	 * @param node
 	 * @return the modifiers for the smallest enclosing type or 0
 	 */
 	protected int getParentModifiers(ASTNode node) {
@@ -215,6 +218,8 @@ public abstract class Validator extends ASTVisitor {
 
 	/**
 	 * Adds a found problem to the listing
+	 *
+	 * @param problem
 	 */
 	protected void addProblem(IApiProblem problem) {
 		if (fProblems == null) {

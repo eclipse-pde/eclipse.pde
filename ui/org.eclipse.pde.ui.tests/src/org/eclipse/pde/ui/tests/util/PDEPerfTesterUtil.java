@@ -39,11 +39,17 @@ public class PDEPerfTesterUtil {
 
 	private final static long F_HOUR_IN_MS = 3600000;
 
+	/**
+	 * @param tag
+	 */
 	public PDEPerfTesterUtil(String tag) {
 		fTag = tag;
 		reset();
 	}
 
+	/**
+	 *
+	 */
 	public void reset() {
 		fDuration = 0;
 		fStart = 0;
@@ -53,16 +59,25 @@ public class PDEPerfTesterUtil {
 		fAverageDuration = 0;
 	}
 
+	/**
+	 *
+	 */
 	public void start() {
 		fIteration++;
 		fStart = System.currentTimeMillis();
 	}
 
+	/**
+	 *
+	 */
 	public void stop() {
 		fEnd = System.currentTimeMillis();
 		calculateDuration();
 	}
 
+	/**
+	 *
+	 */
 	private void calculateDuration() {
 		fDuration = (fEnd - fStart);
 		fTotalDuration = fTotalDuration + fDuration;
@@ -71,6 +86,10 @@ public class PDEPerfTesterUtil {
 		}
 	}
 
+	/**
+	 * @param duration
+	 * @return
+	 */
 	private String formatDuration(long duration) {
 
 		String output = null;
@@ -105,6 +124,9 @@ public class PDEPerfTesterUtil {
 		return output;
 	}
 
+	/**
+	 * @param writer
+	 */
 	public void printDuration(Writer writer) {
 		String output = formatTag() + "(" + //$NON-NLS-1$
 				fIteration + "): " + //$NON-NLS-1$
@@ -117,6 +139,9 @@ public class PDEPerfTesterUtil {
 		}
 	}
 
+	/**
+	 * @param writer
+	 */
 	public void printTotalDuration(Writer writer) {
 		String output = formatTag() + "(TOTAL " + //$NON-NLS-1$
 				fIteration + "): " + //$NON-NLS-1$
@@ -129,6 +154,9 @@ public class PDEPerfTesterUtil {
 		}
 	}
 
+	/**
+	 * @param writer
+	 */
 	public void printAverageDuration(Writer writer) {
 		String output = formatTag() + "(AVERAGE " + //$NON-NLS-1$
 				fIteration + "): " + //$NON-NLS-1$
@@ -141,6 +169,9 @@ public class PDEPerfTesterUtil {
 		}
 	}
 
+	/**
+	 * @return
+	 */
 	private String formatTag() {
 		return "[" + fTag + "]: "; //$NON-NLS-1$ //$NON-NLS-2$
 	}

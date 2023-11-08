@@ -122,6 +122,10 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 
 	private static final String PROPERTY_ARCHIVESFORMAT = "archivesFormat"; //$NON-NLS-1$
 
+	/**
+	 * 
+	 * @throws CoreException
+	 */
 	@Override
 	public void generate() throws CoreException {
 		if (archivesFormatAsString != null) {
@@ -168,6 +172,11 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		}
 	}
 
+	/**
+	 * 
+	 * @param models
+	 * @throws CoreException
+	 */
 	protected void generateModels(List<String> models) throws CoreException {
 		ModelBuildScriptGenerator generator = null;
 		try {
@@ -465,15 +474,27 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		this.generateArchive = generateArchive;
 	}
 
+	/**
+	 * 
+	 * @param children
+	 */
 	public void setChildren(boolean children) {
 		this.children = children;
 	}
 
+	/**
+	 * 
+	 * @param devEntries
+	 */
 	public void setDevEntries(String devEntries) {
 		if (devEntries != null)
 			this.devEntries = new DevClassPathHelper(devEntries);
 	}
 
+	/**
+	 * 
+	 * @param elements
+	 */
 	public void setElements(String[] elements) {
 		this.elements = elements;
 	}
@@ -498,6 +519,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 
 	/**
 	 * Whether or not to generate plugin & feature versions lists
+	 * @param generateVersionsList
 	 */
 	public void setGenerateVersionsList(boolean generateVersionsList) {
 		this.generateVersionsList = generateVersionsList;

@@ -40,6 +40,7 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 
 	/**
 	 * Constructor
+	 * @param name
 	 */
 	public ClassCompatibilityHierarchyTests(String name) {
 		super(name);
@@ -62,6 +63,7 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 	 * Returns a problem id for a compatibility change to a class based on the
 	 * specified flags.
 	 *
+	 * @param flags
 	 * @return problem id
 	 */
 	protected int getChangedProblemId(int flags) {
@@ -76,6 +78,7 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 	 * Returns a problem id for a compatibility remove to a class based on the
 	 * specified flags.
 	 *
+	 * @param flags
 	 * @return problem id
 	 */
 	protected int getRemovedProblemId(int flags) {

@@ -92,6 +92,9 @@ public class ExportDialog extends Dialog {
 
 	/**
 	 * Constructor
+	 *
+	 * @param provider
+	 * @param title
 	 */
 	public ExportDialog(Shell shell, String title) {
 		this(shell, title, ActionMessages.ExportDialogDescription, Util.EMPTY_STRING, newText -> {
@@ -327,6 +330,10 @@ public class ExportDialog extends Dialog {
 	/**
 	 * Restores the selected item for the given combo based on the stored value
 	 * from the dialog settings
+	 *
+	 * @param combo
+	 * @param id
+	 * @param settings
 	 */
 	private void restoreTextSelection(String id, IDialogSettings settings) {
 		String restoredValue = settings.get(id);

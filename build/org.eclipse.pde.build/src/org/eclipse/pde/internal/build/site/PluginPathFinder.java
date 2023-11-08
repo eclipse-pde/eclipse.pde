@@ -34,6 +34,8 @@ public class PluginPathFinder {
 
 	/**
 	 * 
+	 * @param platformHome
+	 * @param linkFile
 	 * @param features false for plugins, true for features
 	 * @return path of plugins or features directory of an extension site
 	 */
@@ -63,6 +65,7 @@ public class PluginPathFinder {
 
 	/**
 	 * 
+	 * @param platformHome
 	 * @param features false for plugin sites, true for feature sites
 	 * @return array of ".../plugins" or ".../features" Files
 	 */
@@ -164,6 +167,7 @@ public class PluginPathFinder {
 
 	/**
 	 * Scan given plugin/feature directories or jars for existence
+	 * @param sites
 	 * @return URLs to plugins/features
 	 */
 	private static List<File> scanLocations(File[] sites) {

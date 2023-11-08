@@ -95,6 +95,7 @@ public class ApiFileGenerationTask extends Task/* APIFileGenerator */ {
 	 * </p>
 	 *
 	 * @since 1.2
+	 * @param allow
 	 */
 	public void setAllowNonApiProject(String allow) {
 		apiFileGenerator.allowNonApiProject = Boolean.parseBoolean(allow);
@@ -103,6 +104,7 @@ public class ApiFileGenerationTask extends Task/* APIFileGenerator */ {
 	/**
 	 * Sets the encoding the task should use when reading text streams
 	 *
+	 * @param encoding
 	 * @since 1.0.600
 	 */
 	public void setEncoding(String encoding) {

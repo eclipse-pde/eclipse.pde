@@ -31,6 +31,7 @@ import org.w3c.dom.Text;
 
 /**
  * CompCS
+ *
  */
 public class CompCS extends CompCSObject implements ICompCS {
 
@@ -38,8 +39,14 @@ public class CompCS extends CompCSObject implements ICompCS {
 
 	private ICompCSTaskObject fFieldTaskObject;
 
+	/**
+	 *
+	 */
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * @param model
+	 */
 	public CompCS(ICompCSModel model) {
 		super(model, null);
 		reset();

@@ -19,11 +19,15 @@ import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
 
 /**
  * SchemaLoaderPerfTest
+ *
  */
 public class SchemaLoaderPerfTest extends AbstractSchemaPerfTest {
 
 	private boolean fAbbreviated;
 
+	/**
+	 * @throws Exception
+	 */
 	public void testSchemaUnabbreviated() throws Exception {
 		fAbbreviated = false;
 		fTestIterations = 5;
@@ -32,6 +36,9 @@ public class SchemaLoaderPerfTest extends AbstractSchemaPerfTest {
 		executeTestRun();
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	public void testSchemaAbbreviated() throws Exception {
 		fAbbreviated = true;
 		fTestIterations = 5;

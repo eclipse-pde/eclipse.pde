@@ -34,6 +34,8 @@ public class ApiBaselineWizard extends Wizard {
 
 	/**
 	 * Constructor
+	 *
+	 * @param profile
 	 */
 	public ApiBaselineWizard(IApiBaseline profile) {
 		this.profile = profile;

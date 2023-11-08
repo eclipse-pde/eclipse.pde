@@ -45,6 +45,7 @@ public abstract class AbstractApiEventWaiter {
 
 	/**
 	 * Sets the current received event
+	 * @param event
 	 */
 	protected void setEvent(Object event) {
 		fEvent = event;

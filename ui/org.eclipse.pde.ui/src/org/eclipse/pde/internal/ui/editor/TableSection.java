@@ -85,6 +85,8 @@ public abstract class TableSection extends StructuredViewerSection {
 
 	/**
 	 * Constructor for TableSection.
+	 *
+	 * @param formPage
 	 */
 	public TableSection(PDEFormPage formPage, Composite parent, int style, String[] buttonLabels) {
 		this(formPage, parent, style, true, buttonLabels);
@@ -92,6 +94,8 @@ public abstract class TableSection extends StructuredViewerSection {
 
 	/**
 	 * Constructor for TableSection.
+	 *
+	 * @param formPage
 	 */
 	public TableSection(PDEFormPage formPage, Composite parent, int style, boolean titleBar, String[] buttonLabels) {
 		super(formPage, parent, style, titleBar, buttonLabels);

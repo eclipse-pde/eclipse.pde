@@ -36,6 +36,7 @@ import org.osgi.service.prefs.BackingStoreException;
  *
  * @since 3.6
  * @see AbstractBuildValidationTest
+ *
  */
 public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 

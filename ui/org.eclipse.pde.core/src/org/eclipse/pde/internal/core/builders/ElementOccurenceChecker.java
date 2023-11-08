@@ -27,10 +27,13 @@ import org.w3c.dom.NodeList;
 
 /**
  * XMLElementProposalComputer
+ *
  */
 public class ElementOccurenceChecker {
 
 	/**
+	 * @param sElement
+	 * @param element
 	 * @return A set of elements that are first-level children of
 	 * <code>element</code>, that violate max occurence rules defined by
 	 * <code>sElement</code>.
@@ -43,6 +46,8 @@ public class ElementOccurenceChecker {
 	}
 
 	/**
+	 * @param sElement
+	 * @param element
 	 * @return A set of elements that are first-level children of
 	 * <code>element</code>, that violate min occurence rules defined by
 	 * <code>sElement</code>.
@@ -55,6 +60,7 @@ public class ElementOccurenceChecker {
 	}
 
 	/**
+	 * @param element
 	 * @return A hash containing singleton entries of node's children mapped
 	 * against the number of occurrences found
 	 * Key is children's XML tag name

@@ -67,6 +67,8 @@ public class FragmentUsageTests extends UsageTest {
 	/**
 	 * Tests that extending an @noextend class from the host bundle is not a
 	 * problem
+	 *
+	 * @param inc
 	 */
 	private void x1(boolean inc) {
 		expectingNoProblems();
@@ -84,6 +86,8 @@ public class FragmentUsageTests extends UsageTest {
 	/**
 	 * Tests that implementing an @noimplement interface from the host bundle is
 	 * not a problem
+	 *
+	 * @param inc
 	 */
 	private void x2(boolean inc) {
 		expectingNoProblems();
@@ -101,6 +105,8 @@ public class FragmentUsageTests extends UsageTest {
 	/**
 	 * Tests that instantiating an @noinstantiate class from the host bundle is
 	 * not a problem
+	 *
+	 * @param inc
 	 */
 	private void x3(boolean inc) {
 		expectingNoProblems();
@@ -118,6 +124,8 @@ public class FragmentUsageTests extends UsageTest {
 	/**
 	 * Tests that referencing a constructor marked as @noreference is not a
 	 * problem from the host bundle
+	 *
+	 * @param inc
 	 */
 	private void x4(boolean inc) {
 		expectingNoProblems();
@@ -135,6 +143,8 @@ public class FragmentUsageTests extends UsageTest {
 	/**
 	 * Tests that referencing an @noreference field from the host if not a
 	 * problem
+	 *
+	 * @param inc
 	 */
 	private void x5(boolean inc) {
 		expectingNoProblems();
@@ -151,6 +161,8 @@ public class FragmentUsageTests extends UsageTest {
 
 	/**
 	 * Tests the overriding an @nooverride method form the host is not a problem
+	 *
+	 * @param inc
 	 */
 	private void x6(boolean inc) {
 		expectingNoProblems();
@@ -168,6 +180,8 @@ public class FragmentUsageTests extends UsageTest {
 	/**
 	 * Tests that extending an @noextend interface from the host is not a
 	 * problem
+	 *
+	 * @param inc
 	 */
 	private void x7(boolean inc) {
 		expectingNoProblems();

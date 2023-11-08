@@ -25,6 +25,10 @@ public class PDEModelManagerPerfTest extends PerformanceTestCase {
 	}
 
 
+	/**
+	 * @param file
+	 * @throws Exception
+	 */
 	public void testModelManagerLoad() throws Exception {
 		startMeasuring();
 		PDECore.getDefault().getModelManager().getExternalModelManager()

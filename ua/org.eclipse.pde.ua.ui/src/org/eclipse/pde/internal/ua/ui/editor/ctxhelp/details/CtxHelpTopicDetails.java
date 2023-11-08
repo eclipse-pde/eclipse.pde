@@ -153,6 +153,7 @@ public class CtxHelpTopicDetails extends CtxHelpAbstractDetails {
 
 	/**
 	 * Sets the text of the form entry used to supply a link
+	 * @param file
 	 */
 	protected void setPathEntry(IFile file) {
 		IPath path = file.getFullPath();

@@ -49,6 +49,7 @@ public interface IManifestHeader extends IDocumentKey {
 	/**
 	 * Forces the header to update its value based on the current components,
 	 * attributes and directives it contains.
+	 *
 	 */
 	void update();
 
