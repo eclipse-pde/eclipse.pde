@@ -61,6 +61,7 @@ public interface IDSModel extends IModelChangeProvider, IModel {
 
 	/**
 	 * Saves the model into the underlying resource
+	 *
 	 */
 	public abstract void save();
 

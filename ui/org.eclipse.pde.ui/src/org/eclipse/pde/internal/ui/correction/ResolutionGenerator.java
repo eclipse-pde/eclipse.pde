@@ -154,6 +154,7 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 	 * Checks for the <<code>problemID</code> attribute first, failing
 	 * that returns the <code>id</code> attribute.
 	 *
+	 * @param marker
 	 * @return the problem id to consider when computing resolutions
 	 */
 	int getProblemId(IMarker marker) {

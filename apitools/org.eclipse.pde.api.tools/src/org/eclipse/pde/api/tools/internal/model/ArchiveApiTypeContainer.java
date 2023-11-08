@@ -146,6 +146,7 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 	 * Converts the location to a path in the applicable file system.
 	 *
 	 * @return the path corresponding to the location.
+	 * @throws IOException
 	 */
 	@SuppressWarnings("nls")
 	private Path getLocation() throws IOException {
@@ -244,6 +245,8 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 
 	/**
 	 * Initializes cache of packages and types.
+	 *
+	 * @throws CoreException
 	 */
 	private synchronized void init() throws CoreException {
 		if (fPackages == null) {

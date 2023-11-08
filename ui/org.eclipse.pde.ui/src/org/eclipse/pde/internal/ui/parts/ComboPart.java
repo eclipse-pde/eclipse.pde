@@ -82,6 +82,9 @@ public class ComboPart {
 			((CCombo) combo).add(item);
 	}
 
+	/**
+	 * @param index
+	 */
 	public void remove(int index) {
 		// Ensure the index is valid
 		if ((index < 0) || (index >= getItemCount())) {

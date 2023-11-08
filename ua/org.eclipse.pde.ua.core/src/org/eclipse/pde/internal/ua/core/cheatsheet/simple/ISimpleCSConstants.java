@@ -18,6 +18,7 @@ import org.eclipse.pde.internal.ua.core.icheatsheet.ICSConstants;
 
 /**
  * ISimpleCSConstants
+ *
  */
 public interface ISimpleCSConstants extends ICSConstants {
 

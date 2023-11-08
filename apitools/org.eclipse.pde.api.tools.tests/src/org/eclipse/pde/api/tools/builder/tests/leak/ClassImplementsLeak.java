@@ -32,6 +32,7 @@ public class ClassImplementsLeak extends LeakTest {
 
 	/**
 	 * Constructor
+	 * @param name
 	 */
 	public ClassImplementsLeak(String name) {
 		super(name);

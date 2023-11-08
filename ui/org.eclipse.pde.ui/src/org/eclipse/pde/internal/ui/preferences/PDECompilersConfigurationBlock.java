@@ -93,6 +93,8 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 
 		/**
 		 * Constructor
+		 * @param key
+		 * @param values
 		 */
 		public ControlData(Key key, String[] values) {
 			this.key = key;
@@ -134,6 +136,8 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 
 		/**
 		 * Constructor
+		 * @param qualifier
+		 * @param key
 		 */
 		public Key(String qualifier, String key) {
 			this.qualifier = qualifier;
@@ -142,6 +146,8 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 
 		/**
 		 * Returns the {@link IEclipsePreferences} node for the given context and {@link IWorkingCopyManager}
+		 * @param context
+		 * @param manager
 		 * @return the {@link IEclipsePreferences} node or <code>null</code>
 		 */
 		private IEclipsePreferences getNode(IScopeContext context, IWorkingCopyManager manager) {
@@ -154,6 +160,8 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 
 		/**
 		 * Returns the value stored in the {@link IEclipsePreferences} node from the given context and working copy manager
+		 * @param context
+		 * @param manager
 		 * @return the value from the {@link IEclipsePreferences} node or <code>null</code>
 		 */
 		public String getStoredValue(IScopeContext context, IWorkingCopyManager manager) {
@@ -167,6 +175,9 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 		/**
 		 * Returns the stored value of this {@link IEclipsePreferences} node using a given lookup order, and allowing the
 		 * top scope to be ignored
+		 * @param lookupOrder
+		 * @param ignoreTopScope
+		 * @param manager
 		 * @return the value from the {@link IEclipsePreferences} node or <code>null</code>
 		 */
 		public String getStoredValue(IScopeContext[] lookupOrder, boolean ignoreTopScope, IWorkingCopyManager manager) {
@@ -181,6 +192,9 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 
 		/**
 		 * Sets the value of this key
+		 * @param context
+		 * @param value
+		 * @param manager
 		 */
 		public void setStoredValue(IScopeContext context, String value, IWorkingCopyManager manager) {
 			IEclipsePreferences node = getNode(context, manager);
@@ -207,6 +221,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 
 	/**
 	 * Returns a new {@link Key} for the {@link PDEPlugin} preference store
+	 * @param key
 	 * @return the new {@link Key} for the {@link PDEPlugin} preference store
 	 */
 	protected final static Key getPDEPrefKey(String key) {
@@ -428,6 +443,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 
 	/**
 	 * Sets using project specific settings
+	 * @param enable
 	 */
 	public void useProjectSpecificSettings(boolean enable) {
 		boolean disabled = fOldProjectSettings == null;
@@ -487,6 +503,8 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 
 	/**
 	 * recursive method to enable/disable all of the controls on the main page
+	 * @param ctrl
+	 * @param enabled
 	 */
 	private void enableControl(Control ctrl, boolean enabled) {
 		ctrl.setEnabled(enabled);
@@ -532,6 +550,10 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 
 	/**
 	 * Creates a tab page parented in the folder
+	 * @param kind
+	 * @param folder
+	 * @param name
+	 * @param description
 	 * @return a new composite to act as the page for a tab
 	 */
 	private Composite createPage(int kind, Composite folder, String name, String description) {
@@ -584,6 +606,10 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 
 	/**
 	 * Creates a set of combo boxes for the given string/ key pairs
+	 * @param composite
+	 * @param labels
+	 * @param keys
+	 * @param tabkind
 	 */
 	private void initializeComboControls(Composite composite, String[] labels, Key[] keys, int tabkind) {
 		for (int i = 0, max = labels.length; i < max; i++) {
@@ -593,6 +619,10 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 
 	/**
 	 * Creates a checkbox button control in the parent
+	 * @param parent
+	 * @param label
+	 * @param key
+	 * @param tabkind
 	 */
 	private void createCheckControl(Composite parent, String label, Key key, int tabkind) {
 		Button button = SWTFactory.createCheckButton(parent, label, null, false, 2);
@@ -621,6 +651,10 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 
 	/**
 	 * Creates a {@link Label} | {@link Combo} control. The combo is initialized from the given {@link Key}
+	 * @param parent
+	 * @param label
+	 * @param key
+	 * @param tabkind
 	 */
 	protected void createComboControl(Composite parent, String label, Key key, int tabkind) {
 		Label lbl = new Label(parent, SWT.NONE);
@@ -659,6 +693,10 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 
 	/**
 	 * Creates a new text control on the parent for the given pref key
+	 * @param parent
+	 * @param label
+	 * @param key
+	 * @param tabkind
 	 */
 	private void createTextControl(Composite parent, String label, Key key, int tabkind) {
 		SWTFactory.createLabel(parent, label, 1);
@@ -680,6 +718,8 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 
 	/**
 	 * Creates a scrolled composite
+	 * @param parent
+	 * @param columns
 	 * @return a new scrolled composite
 	 */
 	protected ScrolledComposite createScrolledComposite(Composite parent, int columns) {
@@ -694,6 +734,8 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 
 	/**
 	 * Creates an {@link ExpandableComposite} with a client composite and a default grid layout
+	 * @param parent
+	 * @param title
 	 * @return a new expandable composite
 	 */
 	private Composite createExpansibleComposite(Composite parent, String title) {
@@ -714,6 +756,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 
 	/**
 	 * Returns the scrolling parent for the given ExpandibleComposite object
+	 * @param obj
 	 * @return the scrolling parent of the given object or <code>null</code> if there isn't one
 	 */
 	private ScrolledComposite getScrollingParent(Object obj) {
@@ -874,6 +917,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	/**
 	 * Adds the associated builder for the tab this control lives on. Lookups are done using
 	 * hash codes for constant time containment checks
+	 * @param control
 	 */
 	private void addBuilder(Control control) {
 		for (Entry<Integer, HashSet<Control>> entry : fControlMap.entrySet()) {

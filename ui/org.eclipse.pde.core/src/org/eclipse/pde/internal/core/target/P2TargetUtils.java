@@ -248,6 +248,8 @@ public class P2TargetUtils {
 
 	/**
 	 * Recursively deletes folder and files.
+	 *
+	 * @param folder
 	 */
 	private static void delete(File folder) {
 		File[] files = folder.listFiles();
@@ -402,6 +404,7 @@ public class P2TargetUtils {
 	 * some settings from the global p2 world.
 	 *
 	 * @return the global p2 provisioning agent
+	 * @throws CoreException
 	 */
 	public static IProvisioningAgent getGlobalAgent() throws CoreException {
 		IProvisioningAgent agent = PDECore.getDefault().acquireService(IProvisioningAgent.class);
@@ -443,6 +446,7 @@ public class P2TargetUtils {
 	 * Returns the local bundle pool (repository) where bundles are stored
 	 *
 	 * @return local file artifact repository
+	 * @throws CoreException
 	 */
 	public static IFileArtifactRepository getBundlePool() throws CoreException {
 		URI uri = BUNDLE_POOL.toFile().toURI();
@@ -959,6 +963,7 @@ public class P2TargetUtils {
 	 * Returns the profile registry or <code>null</code>
 	 *
 	 * @return profile registry or <code>null</code>
+	 * @throws CoreException
 	 */
 	public static IProfileRegistry getProfileRegistry() throws CoreException {
 		IProfileRegistry result = (IProfileRegistry) getAgent().getService(IProfileRegistry.SERVICE_NAME);
@@ -1494,6 +1499,7 @@ public class P2TargetUtils {
 	 * Returns the IU's for the given target related to the given containers
 	 *
 	 * @param definition the definition to filter with
+	 * @param monitor
 	 * @return the discovered IUs
 	 * @exception CoreException if unable to retrieve IU's
 	 */

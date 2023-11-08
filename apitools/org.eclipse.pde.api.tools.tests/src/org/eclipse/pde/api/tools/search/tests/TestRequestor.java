@@ -65,6 +65,7 @@ public class TestRequestor implements IApiSearchRequestor {
 
 	/**
 	 * Returns if the scope encloses the element
+	 * @param element
 	 * @return true if the scope encloses the element false otherwise
 	 */
 	private boolean encloses(IApiElement element) {
@@ -141,7 +142,9 @@ public class TestRequestor implements IApiSearchRequestor {
 
 	/**
 	 * Checks the given {@link IApiComponent} to see if we allow it to appear in the scope or not
+	 * @param component
 	 * @return true if the given component should be allowed in the scope false otherwise
+	 * @throws CoreException
 	 */
 	private boolean acceptComponent0(IApiComponent component) throws CoreException {
 		return component != null &&
@@ -152,6 +155,7 @@ public class TestRequestor implements IApiSearchRequestor {
 	/**
 	 * Utility method to determine if the given {@link IApiComponent} represents a project that
 	 * is API tools enabled
+	 * @param component
 	 * @return true if the project represented by the given component is API tools enabled false otherwise
 	 */
 	private boolean isApiComponent(IApiComponent component) {
@@ -180,6 +184,7 @@ public class TestRequestor implements IApiSearchRequestor {
 	}
 	/**
 	 * Sets the {@link IApiBaseline} to derive the scope from
+	 * @param baseline
 	 */
 	void setScopeBaseline(IApiBaseline baseline) {
 		this.scopebaseline = baseline;
@@ -187,6 +192,7 @@ public class TestRequestor implements IApiSearchRequestor {
 
 	/**
 	 * Sets the search kinds to use
+	 * @param searchmask
 	 */
 	void setSearchMask(int searchmask) {
 		this.searchmask = searchmask;
@@ -194,6 +200,7 @@ public class TestRequestor implements IApiSearchRequestor {
 
 	/**
 	 * Sets the listing of excluded elements to use
+	 * @param excluded
 	 */
 	void setExcludedElements(HashSet<String> excluded) {
 		if(excluded == null) {

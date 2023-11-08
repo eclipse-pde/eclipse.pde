@@ -148,6 +148,8 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 		/**
 		 * Updates a javadoc tag, by either adding a new one or removing an
 		 * existing one
+		 *
+		 * @param body
 		 */
 		private void updateTag(BodyDeclaration body) {
 			Javadoc docnode = body.getJavadoc();
@@ -197,6 +199,9 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	/**
 	 * Creates and returns a test baseline with the given id. Also adds it to
 	 * the baseline manager
+	 *
+	 * @param id
+	 * @return
 	 */
 	protected IApiBaseline getTestBaseline(String id) {
 		IApiBaseline baseline = ApiModelFactory.newApiBaseline(id);
@@ -349,6 +354,9 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 
 	/**
 	 * Asserts if the given restriction is on the specified source
+	 *
+	 * @param packagename
+	 * @param sourcename
 	 */
 	public void assertSourceResctriction(String packagename, String sourcename, int restriction) throws CoreException {
 		IApiDescription desc = getTestProjectApiDescription();
@@ -430,6 +438,15 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	/**
 	 * Adds the specified tag to the source member defined by the member name
 	 * and signature
+	 *
+	 * @param unit
+	 * @param membername
+	 * @param signature
+	 * @param tagname
+	 * @param remove
+	 * @throws CoreException
+	 * @throws MalformedTreeException
+	 * @throws BadLocationException
 	 */
 	private void updateTagInSource(ICompilationUnit unit, String membername, String signature, String tagname, boolean remove) throws CoreException, MalformedTreeException, BadLocationException {
 		ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
@@ -626,6 +643,10 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 * Tests that a library added to the build and bundle class path of a
 	 * project causes the class file containers for the project to need to be
 	 * recomputed
+	 *
+	 * @throws IOException
+	 * @throws InvocationTargetException
+	 * @throws CoreException
 	 */
 	@Test
 	public void testWPUpdateLibraryAddedToClasspath() throws Exception {
@@ -851,6 +872,8 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 
 	/**
 	 * sets the given package name to be an Exported-Package
+	 *
+	 * @param name
 	 */
 	private void setPackageToApi(IJavaProject project, String name) throws CoreException {
 		ProjectUtils.addExportedPackage(project.getProject(), name, false, null);

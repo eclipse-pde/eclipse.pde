@@ -47,6 +47,9 @@ public abstract class InputContextManager implements IResourceChangeListener {
 	private final ArrayList<IInputContextListener> listeners = new ArrayList<>();
 	private IModelUndoManager undoManager;
 
+	/**
+	 *
+	 */
 	public InputContextManager(PDEFormEditor editor) {
 		this.editor = editor;
 		PDEPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
@@ -61,6 +64,10 @@ public abstract class InputContextManager implements IResourceChangeListener {
 		listeners.remove(listener);
 	}
 
+	/**
+	 *
+	 *
+	 */
 	public void dispose() {
 		PDEPlugin.getWorkspace().removeResourceChangeListener(this);
 		// dispose input contexts
@@ -75,6 +82,7 @@ public abstract class InputContextManager implements IResourceChangeListener {
 
 	/**
 	 * Saves dirty contexts.
+	 * @param monitor
 	 */
 	public void save(IProgressMonitor monitor) {
 		for (InputContext context : inputContexts.values()) {
@@ -127,6 +135,9 @@ public abstract class InputContextManager implements IResourceChangeListener {
 	 * Update the key (the editor input in this case) associated with the
 	 * input context without firing a context change event.
 	 * Used for save as operations.
+	 * @param newInput
+	 * @param oldInput
+	 * @throws Exception
 	 */
 	private void updateInputContext(IEditorInput newInput, IEditorInput oldInput) throws Exception {
 		InputContext value = null;
@@ -142,6 +153,11 @@ public abstract class InputContextManager implements IResourceChangeListener {
 		inputContexts.put(newInput, value);
 	}
 
+	/**
+	 * @param monitor
+	 * @param contextID
+	 * @throws Exception
+	 */
 	public void saveAs(IProgressMonitor monitor, String contextID) throws Exception {
 		// Find the existing context
 		InputContext inputContext = findContext(contextID);

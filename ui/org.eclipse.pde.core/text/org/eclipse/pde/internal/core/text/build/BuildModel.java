@@ -30,6 +30,10 @@ public class BuildModel extends AbstractEditingModel implements IBuildModel {
 	private BuildModelFactory fFactory;
 	private Build fBuild;
 
+	/**
+	 * @param document
+	 * @param isReconciling
+	 */
 	public BuildModel(IDocument document, boolean isReconciling) {
 		super(document, isReconciling);
 	}

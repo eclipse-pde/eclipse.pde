@@ -396,6 +396,7 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 
 	/**
 	 * Process category elements
+	 * @param parentElement
 	 */
 	private void updateUICategoryComboElement(IPluginElement parentElement) {
 		// Get the id attribute
@@ -415,6 +416,7 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 
 	/**
 	 * Process cheatsheet elements with a category attribute
+	 * @param parentElement
 	 */
 	private void updateUICategoryComboAttribute(IPluginElement element) {
 		// Get the category attribute

@@ -112,6 +112,7 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 	/**
 	 * Returns the image to use for the given {@link IApiProblem}
 	 *
+	 * @param problem
 	 * @return the image to use for the given {@link IApiProblem
 
 	 */
@@ -175,6 +176,7 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 	/**
 	 * Returns the image to use for the given {@link IApiComponent}
 	 *
+	 * @param component
 	 * @return the image to use for the given {@link IApiComponent}
 	 */
 	private Image getApiComponentImage(IApiComponent component) {
@@ -240,6 +242,7 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 	 * Returns if the specified {@link IApiProfile} is the default profile or
 	 * not
 	 *
+	 * @param element
 	 * @return if the profile is the default or not
 	 */
 	protected boolean isDefaultBaseline(Object element) {

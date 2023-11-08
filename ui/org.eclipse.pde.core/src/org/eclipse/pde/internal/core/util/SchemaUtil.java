@@ -31,6 +31,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * SchemaUtil
+ *
  */
 public class SchemaUtil {
 

@@ -381,6 +381,11 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 
 	/**
 	 * Processes the API Use Scan report for the given API Component
+	 *
+	 * @param apiComponent
+	 * @param bcontext
+	 * @param monitor
+	 * @throws CoreException
 	 */
 	public void checkExternalDependencies(IApiComponent apiComponent, IBuildContext bcontext, Properties properties, IProgressMonitor monitor) throws CoreException {
 		if (!isSeverityEnabled(properties)) {
@@ -523,6 +528,14 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 
 	/**
 	 * Creates an {@link IApiProblem} for the broken external dependency
+	 *
+	 * @param problems
+	 * @param dependency
+	 * @param referenceType
+	 * @param referencedMember
+	 * @param elementType
+	 * @param flag
+	 * @return
 	 */
 	protected IApiProblem createExternalDependenciesProblem(HashMap<String, IApiProblem> problems, IReferenceDescriptor dependency, String referenceTypeName, IMemberDescriptor referencedMember, int elementType, int flag) {
 		String resource = referenceTypeName;
@@ -609,6 +622,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @param changedtypes type names, may have <code>null</code> entries
 	 * @param reference API component in the reference baseline
 	 * @param component API component being checked for compatibility
+	 * @param localMonitor
+	 * @throws CoreException
 	 */
 	private void checkCompatibility(String[] changedtypes, IApiComponent reference, IApiComponent component, SubMonitor localMonitor) throws CoreException {
 		localMonitor.setWorkRemaining(changedtypes.length);
@@ -624,6 +639,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * Checks for unused API problem filters
 	 *
 	 * @param context the current build context
+	 * @param reference
+	 * @param monitor
 	 */
 	private void checkUnusedProblemFilters(final IBuildContext context, IApiComponent reference, IProgressMonitor monitor) {
 		if (ignoreUnusedProblemFilterCheck()) {
@@ -688,6 +705,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 *
 	 * @param store the store to remove from
 	 * @param filterlist list of filters to batch remove
+	 * @param monitor
+	 * @throws CoreException
 	 * @since 1.1
 	 */
 	void removeUnusedProblemFilters(final IApiFilterStore store, final List<IApiProblemFilter> filterlist, final IProgressMonitor monitor) throws CoreException {
@@ -885,6 +904,10 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 
 	/**
 	 * Creates and AST for the given {@link ITypeRoot} at the given offset
+	 *
+	 * @param root
+	 * @param offset
+	 * @return
 	 */
 	private CompilationUnit createAST(ITypeRoot root, int offset) {
 		if (fJavaProject == null) {
@@ -926,6 +949,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * Returns an {@link IApiTypeContainer} given the component and type names
 	 * context
 	 *
+	 * @param component
+	 * @param types
 	 * @return a new {@link IApiTypeContainer} for the component and type names
 	 *         context
 	 */
@@ -943,6 +968,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	/**
 	 * Returns a listing of {@link IReferenceTypeDescriptor}s given the listing
 	 * of type names
+	 *
+	 * @param typenames
+	 * @return
 	 */
 	private IReferenceTypeDescriptor[] getScopedElements(final String[] typenames) {
 		ArrayList<IReferenceTypeDescriptor> types = new ArrayList<>(typenames.length);
@@ -1036,6 +1064,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * Whether to ignore since tag checks. If <code>null</code> is passed in we
 	 * are asking if all since tag checks should be ignored, if a pref is
 	 * specified we only want to know if that kind should be ignored
+	 *
+	 * @param pref
+	 * @return
 	 */
 	private boolean ignoreSinceTagCheck(String pref) {
 		if (fJavaProject == null) {
@@ -1114,6 +1145,10 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 
 	/**
 	 * Checks the validation of tags for the given {@link IApiComponent}
+	 *
+	 * @param context
+	 * @param component
+	 * @param monitor
 	 */
 	private void checkTagValidation(final IBuildContext context, final IApiComponent component, IProgressMonitor monitor) {
 		boolean tags = ignoreInvalidTagCheck();
@@ -1153,6 +1188,10 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	/**
 	 * Recursively finds all source in the given project and scans it for
 	 * invalid tags
+	 *
+	 * @param element
+	 * @param monitor
+	 * @throws JavaModelException
 	 */
 	private void scanSource(IJavaElement element, boolean tags, boolean annotations, IProgressMonitor monitor) throws JavaModelException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor);
@@ -1179,6 +1218,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 
 	/**
 	 * Processes the given type name for invalid Javadoc tags
+	 *
+	 * @param typename
 	 */
 	private void processType(String typename, boolean tags, boolean annotations) {
 		try {
@@ -1202,6 +1243,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 
 	/**
 	 * Processes the given {@link ICompilationUnit} for invalid tags
+	 *
+	 * @param cunit
 	 */
 	private void processType(ICompilationUnit cunit, boolean tags, boolean annotations) {
 		CompilationUnit comp = createAST(cunit, 0);
@@ -1263,6 +1306,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	/**
 	 * Returns the collection of type names to be built
 	 *
+	 * @param context
 	 * @return the complete listing of type names to build or an empty array,
 	 *         never <code>null</code>
 	 * @since 1.1
@@ -1301,6 +1345,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * Compares the given type between the two API components
 	 *
 	 * @param typeName the type to check in each component
+	 * @param reference
+	 * @param component
+	 * @param monitor
 	 */
 	private void checkCompatibility(final String typeName, final IApiComponent reference, final IApiComponent component, IProgressMonitor monitor) throws CoreException {
 		String id = component.getSymbolicName();
@@ -1444,6 +1491,11 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 
 	/**
 	 * Compares the two given components and generates an {@link IDelta}
+	 *
+	 * @param jproject
+	 * @param reference
+	 * @param component
+	 * @param monitor
 	 */
 	private void checkCompatibility(final IApiComponent reference, final IApiComponent component, IProgressMonitor monitor) {
 		long time = System.currentTimeMillis();
@@ -1500,6 +1552,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	/**
 	 * Compares the two given components, checks for Execution Env changes and
 	 * generates true if minor version has to be increased
+	 *
+	 * @param reference
+	 * @param component
 	 */
 
 	private boolean shouldVersionChangeForExecutionEnvChanges(IApiComponent reference, IApiComponent component) {
@@ -1549,6 +1604,10 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * Processes delta to determine if it needs an @since tag. If it does and
 	 * one is not present or the version of the tag is incorrect, a marker is
 	 * created
+	 *
+	 * @param jproject
+	 * @param delta
+	 * @param component
 	 */
 	private void checkSinceTags(final Delta delta, final IApiComponent component) {
 		if (ignoreSinceTagCheck(null)) {
@@ -1686,6 +1745,11 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * Creates a marker to denote a problem with the since tag (existence or
 	 * correctness) for a member and returns it, or <code>null</code>
 	 *
+	 * @param kind
+	 * @param messageargs
+	 * @param compilationUnit
+	 * @param member
+	 * @param version
 	 * @return a new {@link IApiProblem} or <code>null</code>
 	 */
 	private IApiProblem createSinceTagProblem(int kind, final String[] messageargs, final Delta info, final IMember member, final String version) {
@@ -1754,6 +1818,10 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	/**
 	 * Creates an {@link IApiProblem} for the given compatibility delta
 	 *
+	 * @param delta
+	 * @param jproject
+	 * @param reference
+	 * @param component
 	 * @return a new compatibility problem or <code>null</code>
 	 */
 	private IApiProblem createCompatibilityProblem(final IDelta delta, final IApiComponent reference, final IApiComponent component) {
@@ -1840,6 +1908,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	/**
 	 * Creates an {@link IApiProblem} for the given API component
 	 *
+	 * @param component
 	 * @return a new API component resolution problem or <code>null</code>
 	 */
 	private void createApiComponentResolutionProblem(final IApiComponent component, final String message) {
@@ -1851,6 +1920,11 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	/**
 	 * Processes a delta to know if we need to check for since tag or version
 	 * numbering problems
+	 *
+	 * @param jproject
+	 * @param delta
+	 * @param reference
+	 * @param component
 	 */
 	private void processDelta(final IDelta delta, final IApiComponent reference, final IApiComponent component) {
 		if (delta.getComponentVersionId() != null && !delta.getComponentId().equals(component.getSymbolicName())) {
@@ -2027,6 +2101,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	/**
 	 * Checks the version number of the API component and creates a problem
 	 * markers as needed
+	 *
+	 * @param reference
+	 * @param component
 	 */
 	private void checkApiComponentVersion(final IApiComponent reference, final IApiComponent component, final IApiBaseline baseline) throws CoreException {
 		if (reference == null || component == null) {
@@ -2367,6 +2444,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	/**
 	 * Collects details from the given delta listing for version problems
 	 *
+	 * @param deltas
 	 * @return a {@link String} of the details why the version number should be
 	 *         changed
 	 */
@@ -2392,6 +2470,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * Creates a marker on a manifest file for a version numbering problem and
 	 * returns it or <code>null</code>
 	 *
+	 * @param kind
+	 * @param messageargs
+	 * @param version
 	 * @param description the description of details
 	 * @return a new {@link IApiProblem} or <code>null</code>
 	 */
@@ -2594,6 +2675,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	/**
 	 * Adds the problem to the list of problems iff it is not <code>null</code>
 	 * and not filtered
+	 *
+	 * @param problem
+	 * @return
 	 */
 	private boolean addProblem(IApiProblem problem) {
 		if (problem == null || isProblemFiltered(problem)) {

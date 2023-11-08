@@ -218,6 +218,7 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 	 * If the component should be scanned or not. If not than it is added to the
 	 * 'not searched' listing
 	 *
+	 * @param component
 	 * @return <code>true</code> if the component should be scanned,
 	 *         <code>false</code> otherwise
 	 */
@@ -359,6 +360,11 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 
 	/**
 	 * Adds {@link IApiProblem}s to the given document and root
+	 *
+	 * @param root
+	 * @param document
+	 * @param problems
+	 * @throws CoreException
 	 */
 	private void insertAPIProblems(Element root, Document document, List<IApiProblem> problems) throws CoreException {
 		Element apiProblems = document.createElement(IApiXmlConstants.ELEMENT_API_PROBLEMS);

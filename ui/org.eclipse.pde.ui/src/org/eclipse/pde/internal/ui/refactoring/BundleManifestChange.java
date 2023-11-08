@@ -230,7 +230,12 @@ public class BundleManifestChange {
 	}
 
 	/**
+	 * @param file
+	 * @param monitor
 	 * @return the bundle for the given {@link IFile}
+	 * @throws CoreException
+	 * @throws MalformedTreeException
+	 * @throws BadLocationException
 	 */
 	public static Bundle getBundle(IFile file, IProgressMonitor monitor) throws CoreException, MalformedTreeException, BadLocationException {
 		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();

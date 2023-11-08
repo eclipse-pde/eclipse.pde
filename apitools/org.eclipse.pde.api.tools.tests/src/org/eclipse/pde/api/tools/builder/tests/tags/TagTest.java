@@ -47,6 +47,10 @@ public abstract class TagTest extends ApiBuilderTest {
 	/**
 	 * Sets the message arguments we are expecting for the given test, the
 	 * number of times denoted by count
+	 *
+	 * @param tagname
+	 * @param context
+	 * @param count
 	 */
 	protected void setExpectedMessageArgs(String tagname, String context, int count) {
 		String[][] args = new String[count][];
@@ -84,6 +88,8 @@ public abstract class TagTest extends ApiBuilderTest {
 
 	/**
 	 * Collects tests from the getAllTestClasses() method into the given suite
+	 *
+	 * @param suite
 	 */
 	private static void collectTests(TestSuite suite) {
 		// Hack to load all classes before computing their suite of test cases
@@ -148,6 +154,7 @@ public abstract class TagTest extends ApiBuilderTest {
 	 * Returns an array composed only of the specified number of
 	 * {@link #PROBLEM_ID}
 	 *
+	 * @param problemcount
 	 * @return an array of {@link #PROBLEM_ID} of the specified size, or an
 	 *         empty array if the specified size is < 1
 	 */
@@ -177,6 +184,7 @@ public abstract class TagTest extends ApiBuilderTest {
 	 * Deploys a build test for API Javadoc tags using the given source file,
 	 * looking for problems specified from {@link #getExpectedProblemIds()()}
 	 *
+	 * @param sourcename
 	 * @param incremental if an incremental build should take place
 	 * @param usedefault if the default package should be used or not
 	 */

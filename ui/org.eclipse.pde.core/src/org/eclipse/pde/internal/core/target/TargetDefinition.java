@@ -809,6 +809,7 @@ public class TargetDefinition implements ITargetDefinition {
 	 *
 	 * @param message message
 	 * @param e underlying cause of the exception or <code>null</code>
+	 * @throws CoreException
 	 */
 	private void abort(String message, Exception e) throws CoreException {
 		throw new CoreException(Status.error(message, e));
@@ -867,6 +868,7 @@ public class TargetDefinition implements ITargetDefinition {
 	/**
 	 * Returns whether the content of this definition is equal to the content of the specified definition.
 	 *
+	 * @param definition
 	 * @return whether the content of this definition is equal to the content of the specified definition
 	 */
 	public boolean isContentEqual(ITargetDefinition definition) {
@@ -887,6 +889,7 @@ public class TargetDefinition implements ITargetDefinition {
 	 * Returns whether the content of this definition is equivalent to the content of the
 	 * specified definition (excluding name/description).
 	 *
+	 * @param definition
 	 * @return whether the content of this definition is equivalent to the content of the
 	 * specified definition
 	 */

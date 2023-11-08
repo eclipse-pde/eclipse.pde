@@ -310,6 +310,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	/**
 	 * Main call for generating the script.
+	 * 
+	 * @throws CoreException
 	 */
 	private void generateBuildScript() throws CoreException {
 		generatePrologue();
@@ -391,6 +393,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	/**
 	 * Add the <code>clean</code> target to the given Ant script.
+	 * 
+	 * @throws CoreException
 	 */
 	private void generateCleanTarget() throws CoreException {
 		script.println();
@@ -432,6 +436,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	/**
 	 * Add the <code>gather.logs</code> target to the given Ant script.
+	 * 
+	 * @throws CoreException
 	 */
 	private void generateGatherLogTarget() throws CoreException {
 		script.println();
@@ -466,6 +472,11 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printTargetEnd();
 	}
 
+	/**
+	 * 
+	 * @param zipName
+	 * @param source
+	 */
 	private void generateZipIndividualTarget(String zipName, String source) {
 		script.println();
 		script.printTargetDeclaration(zipName, TARGET_INIT, null, null, null);
@@ -476,6 +487,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	/**
 	 * Add the <code>gather.sources</code> target to the given Ant script.
+	 * 
+	 * @throws CoreException
 	 */
 	private void generateGatherSourcesTarget() throws CoreException {
 		script.println();
@@ -745,6 +758,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	/**
 	 * Add the <code>gather.bin.parts</code> target to the given Ant script.
+	 * 
+	 * @throws CoreException
 	 */
 	private void generateGatherBinPartsTarget() throws CoreException {
 		script.println();
@@ -1142,6 +1157,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	/**
 	 * Sets the PluginModel to generate script from.
+	 * 
+	 * @param model
+	 * @throws CoreException
 	 */
 	public void setModel(BundleDescription model) throws CoreException {
 		if (model == null) {
@@ -1165,6 +1183,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	/**
 	 * Sets model to generate scripts from.
+	 * 
+	 * @param modelId
+	 * @throws CoreException
 	 */
 	public void setModelId(String modelId, String modelVersion) throws CoreException {
 		BundleDescription newModel = getModel(modelId, modelVersion);
@@ -1177,6 +1198,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	/**
 	 * Add the <code>build.zips</code> target to the given Ant script.
+	 * 
+	 * @throws CoreException
 	 */
 	private void generateBuildZipsTarget() throws CoreException {
 		StringBuffer zips = new StringBuffer();
@@ -1207,6 +1230,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 * Add the "build.jars" target to the given Ant script using the specified plug-in model.
 	 * 
 	 * @param pluginModel the plug-in model to reference
+	 * @throws CoreException
 	 */
 	private void generateBuildJarsTarget(BundleDescription pluginModel) throws CoreException {
 		Properties properties = getBuildProperties();
@@ -1326,6 +1350,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	/**
 	 * generate compile settings for compiling this entry
 	 * warning levels, default encoding, custom encodings
+	 * @param javac
+	 * @param entry
 	 */
 	private void generateCompilerSettings(JavacTask javac, CompiledEntry entry, List<Object> classpath) {
 		final String ADAPTER_ENCODING = "#ADAPTER#ENCODING#"; //$NON-NLS-1$
@@ -1441,6 +1467,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	/**
 	 * Add a target to extract any nested jars we need to compile against
+	 * @param classpath
+	 * @param entry
 	 * @return a new classpath list containing the extracted locations
 	 */
 	private List<Object> generateExtractNestedJars(List<Object> classpath, CompiledEntry entry) {
@@ -1475,6 +1503,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 * jar as parameters.
 	 * 
 	 * @param classpath the classpath for the jar command
+	 * @param entry
 	 */
 	private void generateCompilationTarget(List<Object> classpath, CompiledEntry entry) {
 		script.println();
@@ -1668,6 +1697,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	/**
 	 * 
+	 * @param properties
 	 * @return JAR[]
 	 */
 	protected CompiledEntry[] extractEntriesToCompile(Properties properties) throws CoreException {
@@ -1698,6 +1728,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	/**
 	 * Add the "src" target to the given Ant script.
+	 * 
+	 * @param jar
 	 */
 	private void generateSRCTarget(CompiledEntry jar) {
 		script.println();
@@ -1849,6 +1881,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 * Substitute the value of an element description variable (variables that
 	 * are found in files like plugin.xml, e.g. $ws$) by an Ant property.
 	 * 
+	 * @param sourceString
 	 * @return String
 	 */
 	static protected String replaceVariables(String sourceString, boolean compiledElement) {

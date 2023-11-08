@@ -261,6 +261,9 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		}
 	}
 
+	/**
+	 * @param parent
+	 */
 	private static ISchema getSchema(IPluginParent parent) {
 		if (parent instanceof IPluginExtension) {
 			return getSchema((IPluginExtension) parent);
@@ -277,6 +280,9 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		return registry.getSchema(point);
 	}
 
+	/**
+	 * @param element
+	 */
 	static ISchemaElement getSchemaElement(IPluginElement element) {
 		ISchema schema = getSchema(element);
 		if (schema != null) {
@@ -285,6 +291,9 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		return null;
 	}
 
+	/**
+	 * @param element
+	 */
 	private static ISchema getSchema(IPluginElement element) {
 		IPluginObject parent = element.getParent();
 		while (parent != null && !(parent instanceof IPluginExtension)) {
@@ -328,6 +337,10 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		}
 	}
 
+	/**
+	 * @param section
+	 * @param toolkit
+	 */
 	private void createSectionToolbar(Section section, FormToolkit toolkit) {
 		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
 		ToolBar toolbar = toolBarManager.createControl(section);
@@ -1188,6 +1201,10 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		return canPasteSourceElement((IPluginElement) sourceObjects[0], elementSet);
 	}
 
+	/**
+	 * @param sourceElements
+	 * @param targetElementSet
+	 */
 	private boolean canPasteSourceElements(IPluginElement[] sourceElements, Set<ISchemaElement> targetElementSet) {
 		// Performance optimisation
 		// HashSet of schema elements is not comparable for the source
@@ -1217,6 +1234,10 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		return true;
 	}
 
+	/**
+	 * @param sourceElement
+	 * @param targetElementSet
+	 */
 	private boolean canPasteSourceElement(IPluginElement sourceElement, Set<ISchemaElement> targetElementSet) {
 		boolean canPaste = false;
 		// Get the source element tag name
@@ -1519,6 +1540,10 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		return true;
 	}
 
+	/**
+	 * @param targetObject
+	 * @param sourceObjects
+	 */
 	private boolean validateDropMoveSanity(Object targetObject, Object[] sourceObjects) {
 		// Validate target object
 		if ((targetObject instanceof IPluginParent) == false) {
@@ -1533,6 +1558,9 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		return true;
 	}
 
+	/**
+	 * @param sourceObjects
+	 */
 	private boolean validateDragMoveSanity(Object[] sourceObjects) {
 		// Validate source
 		if (sourceObjects == null) {
@@ -1551,6 +1579,10 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		return true;
 	}
 
+	/**
+	 * @param sourcePluginObject
+	 * @param targetPluginObject
+	 */
 	private boolean validateDropMoveModel(IPluginParent sourcePluginObject, IPluginParent targetPluginObject) {
 		// Objects have to be from the same model
 		ISharedPluginModel sourceModel = sourcePluginObject.getModel();
@@ -1599,6 +1631,11 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		return false;
 	}
 
+	/**
+	 * @param targetElementObject
+	 * @param sourceElementObject
+	 * @param targetLocation
+	 */
 	private boolean canDropMove(IPluginElement targetElementObject, IPluginElement sourceElementObject, int targetLocation) {
 
 		// Verify that the source is not the parent of the target
@@ -1643,6 +1680,10 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		return false;
 	}
 
+	/**
+	 * @param targetElementObject
+	 * @param sourceElementObject
+	 */
 	private boolean validateDropMoveParent(IPluginElement targetElementObject, IPluginElement sourceElementObject) {
 
 		IPluginObject currentParent = targetElementObject.getParent();
@@ -1658,6 +1699,11 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		}
 	}
 
+	/**
+	 * @param targetExtensionObject
+	 * @param sourceElementObject
+	 * @param targetLocation
+	 */
 	private boolean canDropMove(IPluginExtension targetExtensionObject, IPluginElement sourceElementObject, int targetLocation) {
 
 		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
@@ -1679,6 +1725,10 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		return false;
 	}
 
+	/**
+	 * @param targetPluginObject
+	 * @param sourcePluginObject
+	 */
 	private boolean validateDropMoveSchema(IPluginParent targetPluginObject, IPluginParent sourcePluginObject) {
 		IDocumentElementNode targetPluginNode = (IDocumentElementNode) targetPluginObject;
 		// If the target is the source's parent, then the move is always
@@ -1724,6 +1774,11 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		return false;
 	}
 
+	/**
+	 * @param targetExtensionObject
+	 * @param sourceExtensionObject
+	 * @param targetLocation
+	 */
 	private boolean canDropMove(IPluginExtension targetExtensionObject, IPluginExtension sourceExtensionObject, int targetLocation) {
 
 		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
@@ -1819,6 +1874,11 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		}
 	}
 
+	/**
+	 * @param targetExtensionObject
+	 * @param sourceExtensionObject
+	 * @param targetLocation
+	 */
 	private void doDropMove(IPluginExtension targetExtensionObject, IPluginExtension sourceExtensionObject, int targetLocation) throws CoreException {
 		// Get the model
 		IPluginModelBase model = getPluginModelBase();
@@ -1870,6 +1930,11 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		}
 	}
 
+	/**
+	 * @param targetExtensionObject
+	 * @param sourceElementObject
+	 * @param targetLocation
+	 */
 	private void doDropMove(IPluginExtension targetExtensionObject, IPluginElement sourceElementObject, int targetLocation) throws CoreException {
 		// Get the model
 		IPluginModelBase model = getPluginModelBase();
@@ -1895,6 +1960,11 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		}
 	}
 
+	/**
+	 * @param targetElementObject
+	 * @param sourceElementObject
+	 * @param targetLocation
+	 */
 	private void doDropMove(IPluginElement targetElementObject, IPluginElement sourceElementObject, int targetLocation) throws CoreException {
 		// Get the model
 		IPluginModelBase model = getPluginModelBase();

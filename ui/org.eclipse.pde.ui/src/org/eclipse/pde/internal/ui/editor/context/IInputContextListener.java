@@ -19,12 +19,14 @@ public interface IInputContextListener {
 	/**
 	 * Informs the listener that a new context has been added.
 	 * This should result in a new source tab.
+	 * @param context
 	 */
 	void contextAdded(InputContext context);
 
 	/**
 	 * Informs the listener that the context has been removed.
 	 * This should result in removing the source tab.
+	 * @param context
 	 */
 	void contextRemoved(InputContext context);
 
@@ -38,6 +40,7 @@ public interface IInputContextListener {
 	/**
 	 * Informs the listener that a monitored file has
 	 * been removed.
+	 * @param monitoredFile
 	 * @return <code>true</code> if it is OK to remove
 	 * the associated context, <code>false</code> otherwise.
 	 */

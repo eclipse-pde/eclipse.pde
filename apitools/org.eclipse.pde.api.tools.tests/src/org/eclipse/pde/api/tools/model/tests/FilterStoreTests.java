@@ -112,6 +112,8 @@ public class FilterStoreTests extends AbstractApiTest {
 	/**
 	 * Tests that a filter store can be correctly annotated from a persisted
 	 * version
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testFilterStoreValidity() throws CoreException {
@@ -164,6 +166,8 @@ public class FilterStoreTests extends AbstractApiTest {
 	/**
 	 * Tests that asking the store if it filters an invalid problem will return
 	 * 'false'
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testNonExistantProblem() throws CoreException {
@@ -176,6 +180,8 @@ public class FilterStoreTests extends AbstractApiTest {
 
 	/**
 	 * tests adding then removing an api problem filter
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testAddRemoveFromFilter() throws CoreException {
@@ -197,6 +203,8 @@ public class FilterStoreTests extends AbstractApiTest {
 	/**
 	 * tests adding then rmeoving a filter using the method that accepts an api
 	 * problem
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testAddRemoveFromProblem() throws CoreException {

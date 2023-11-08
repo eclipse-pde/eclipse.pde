@@ -25,6 +25,7 @@ public class TreePart extends StructuredViewerPart {
 
 	/**
 	 * Constructor for TreePart.
+	 * @param buttonLabels
 	 */
 	public TreePart(String[] buttonLabels) {
 		super(buttonLabels);

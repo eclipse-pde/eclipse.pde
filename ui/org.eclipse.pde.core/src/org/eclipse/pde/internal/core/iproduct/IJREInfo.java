@@ -50,12 +50,15 @@ public interface IJREInfo extends IProductObject {
 
 	/**
 	 * Returns whether or not the JRE for the given oOS should actually be bundled with the product
+	 * @param os
 	 * @return whether to include the JRE with the product
 	 */
 	public boolean includeJREWithProduct(String os);
 
 	/**
 	 * Set whether or not the JRE for the given OS should be included with the product
+	 * @param os
+	 * @param includeJRE
 	 */
 	public void setIncludeJREWithProduct(String os, boolean includeJRE);
 }

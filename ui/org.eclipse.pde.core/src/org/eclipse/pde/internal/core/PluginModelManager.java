@@ -116,6 +116,9 @@ public class PluginModelManager implements IModelProviderListener {
 
 		/**
 		 * Queues more projects/containers.
+		 *
+		 * @param projects
+		 * @param containers
 		 */
 		void add(IJavaProject[] projects, IClasspathContainer[] containers) {
 			synchronized (fProjects) {
@@ -139,6 +142,7 @@ public class PluginModelManager implements IModelProviderListener {
 	 * These methods must not be on ModelEntry itself because
 	 * ModelEntry is an API class and we do not want clients to manipulate
 	 * the ModelEntry
+	 *
 	 */
 	private class LocalModelEntry extends ModelEntry {
 

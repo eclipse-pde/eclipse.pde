@@ -62,6 +62,9 @@ public class SampleOperation implements IRunnableWithProgress {
 
 	private IProject[] createdProjects;
 
+	/**
+	 *
+	 */
 	public SampleOperation(IConfigurationElement sample, String[] projectNames, IOverwriteQuery query) {
 		this.sample = sample;
 		this.query = query;

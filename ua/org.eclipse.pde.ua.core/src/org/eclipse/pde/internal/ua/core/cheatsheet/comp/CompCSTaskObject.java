@@ -50,6 +50,10 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 
 	protected List<ICompCSDependency> fFieldDependencies;
 
+	/**
+	 * @param model
+	 * @param parent
+	 */
 	public CompCSTaskObject(ICompCSModel model, ICompCSObject parent) {
 		super(model, parent);
 		// Reset called by child class

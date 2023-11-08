@@ -167,6 +167,10 @@ public class InfoSection extends PDESection {
 		return page;
 	}
 
+	/**
+	 * @param toolkit
+	 * @param parent
+	 */
 	private Control createInfoPage(FormToolkit toolkit, Composite parent) {
 		Composite page = toolkit.createComposite(parent);
 		GridLayout layout = new GridLayout();
@@ -209,6 +213,10 @@ public class InfoSection extends PDESection {
 		return page;
 	}
 
+	/**
+	 * @param toolkit
+	 * @param parent
+	 */
 	private Control createUrlsPage(FormToolkit toolkit, Composite parent) {
 		Composite page = toolkit.createComposite(parent);
 		GridLayout layout = new GridLayout();

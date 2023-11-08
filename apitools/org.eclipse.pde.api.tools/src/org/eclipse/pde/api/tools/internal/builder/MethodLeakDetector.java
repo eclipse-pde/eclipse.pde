@@ -47,6 +47,9 @@ import org.eclipse.pde.api.tools.internal.util.Signatures;
  */
 public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 
+	/**
+	 * @param nonApiPackageNames
+	 */
 	public MethodLeakDetector(Set<String> nonApiPackageNames) {
 		super(nonApiPackageNames);
 	}
@@ -150,6 +153,7 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 	 * Returns if the source API restrictions for the given member matches the
 	 * restrictions in the parent API description
 	 *
+	 * @param member
 	 * @return true if it matches, false otherwise
 	 */
 	protected boolean matchesSourceApiRestrictions(IApiMember member) {
@@ -190,6 +194,7 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 	 * Returns if the source modifiers for the given member match the ones
 	 * specified in the detector
 	 *
+	 * @param member
 	 * @return true if the modifiers match, false otherwise
 	 */
 	protected boolean matchesSourceModifiers(IApiMember member) {

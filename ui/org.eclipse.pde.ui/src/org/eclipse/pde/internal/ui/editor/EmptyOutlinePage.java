@@ -29,6 +29,9 @@ import org.eclipse.ui.IActionBars;
 public class EmptyOutlinePage implements ISortableContentOutlinePage {
 	private Composite control;
 
+	/**
+	 *
+	 */
 	public EmptyOutlinePage() {
 	}
 

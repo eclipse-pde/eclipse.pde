@@ -31,6 +31,7 @@ public class PluginConfiguration extends ProductObject implements IPluginConfigu
 
 	/**
 	 * Only for parsing usage
+	 * @param model
 	 */
 	PluginConfiguration(IProductModel model) {
 		super(model);

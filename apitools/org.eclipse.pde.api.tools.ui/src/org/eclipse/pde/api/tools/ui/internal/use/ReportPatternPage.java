@@ -38,6 +38,8 @@ public class ReportPatternPage extends UsePatternPage {
 
 	/**
 	 * Constructor
+	 *
+	 * @param pattern
 	 */
 	public ReportPatternPage(String pattern, int kind) {
 		super(PAGE_NAME, Messages.ReportPatternPage_report_conversion_pattern, null);

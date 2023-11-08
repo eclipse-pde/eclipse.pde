@@ -60,6 +60,8 @@ class FeatureEntry implements IConfigurationConstants {
 
 	/**
 	 * Sets the url string (relative to the site url)
+	 *
+	 * @param url
 	 */
 	public void setURL(String url) {
 		this.url = url;

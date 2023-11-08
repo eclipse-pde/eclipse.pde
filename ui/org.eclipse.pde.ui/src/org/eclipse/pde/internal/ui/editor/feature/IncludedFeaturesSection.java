@@ -136,6 +136,10 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 		createSectionToolbar(section, toolkit);
 	}
 
+	/**
+	 * @param section
+	 * @param toolkit
+	 */
 	private void createSectionToolbar(Section section, FormToolkit toolkit) {
 
 		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);

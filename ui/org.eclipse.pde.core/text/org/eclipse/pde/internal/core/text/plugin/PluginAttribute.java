@@ -34,6 +34,9 @@ public class PluginAttribute extends PluginObjectNode implements IPluginAttribut
 
 	private String fValue;
 
+	/**
+	 *
+	 */
 	public PluginAttribute() {
 		super();
 		fAttribute = new DocumentAttributeNode();

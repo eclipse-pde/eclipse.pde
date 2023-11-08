@@ -50,7 +50,9 @@ public abstract class ChangeAwareSourceViewerConfiguration extends TextSourceVie
 	private PDEQuickAssistAssistant fQuickAssistant;
 
 	/**
+	 * @param page
 	 * @param manager - an IColorManager, clients must dispose this themselves.
+	 * @param store
 	 */
 	public ChangeAwareSourceViewerConfiguration(PDESourcePage page, IColorManager manager, IPreferenceStore store) {
 		super(store);

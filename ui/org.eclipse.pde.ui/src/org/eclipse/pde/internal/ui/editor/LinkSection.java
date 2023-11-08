@@ -67,6 +67,11 @@ public class LinkSection extends PDESection {
 		}
 	}
 
+	/**
+	 * @param page
+	 * @param parent
+	 * @param style
+	 */
 	public LinkSection(PDEFormPage page, Composite parent, int style) {
 		super(page, parent, style);
 		FormToolkit toolkit = page.getManagedForm().getToolkit();

@@ -26,6 +26,7 @@ import org.eclipse.pde.internal.build.IPDEBuildConstants;
 /**
  * A simple logger for an AntRunner that logs an exception (if
  * one occurs) during a build. No messages are logged otherwise.
+ *
  */
 public class SimpleBuildLogger implements BuildLogger, IPDEBuildConstants {
 

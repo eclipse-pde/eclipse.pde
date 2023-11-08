@@ -750,6 +750,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	 * context content assist is invoked first:
 	 * F_EXTENSION_ATTRIBUTE_POINT_VALUE
 	 * F_EXTENSION_POINT_AND_VALUE
+	 * @param newVType
 	 */
 	private void updateExternalExtPointTypes(int newVType) {
 		// Ensure we have proposals

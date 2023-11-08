@@ -126,6 +126,8 @@ public class ApiToolingApiuseAntTaskTests extends AntRunnerTestCase {
 
 	/**
 	 * Tests that a use scan will find illegal use problems that can be filtered
+	 *
+	 * @throws Exception
 	 */
 	@Test
 	public void testIllegalUse() throws Exception {
@@ -152,6 +154,8 @@ public class ApiToolingApiuseAntTaskTests extends AntRunnerTestCase {
 
 	/**
 	 * Tests that a use scan will find illegal use problems that can be filtered
+	 *
+	 * @throws Exception
 	 */
 	@Test
 	public void testIllegalUseFiltered() throws Exception {

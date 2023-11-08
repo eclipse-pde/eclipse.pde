@@ -126,10 +126,12 @@ public class ProjectUtils {
 	/**
 	 * Create a plugin project with the given name and execution environment.
 	 *
+	 * @param projectName
 	 * @param env
 	 *            environment for build path or <code>null</code> if default
 	 *            system JRE
 	 * @return a new plugin project
+	 * @throws CoreException
 	 */
 	public static IJavaProject createPluginProject(String projectName, IExecutionEnvironment env) throws Exception {
 		PluginFieldData data = new PluginFieldData();

@@ -103,6 +103,7 @@ public final class VisibilityModifiers {
 	 * Returns the string representation of the specified visibility modifier or
 	 * <code>UNKNOWN_VISIBILITY</code> if the modifier is unknown.
 	 *
+	 * @param visibility
 	 * @return the string representation of the visibility or
 	 *         <code>UNKNOWN_VISIBILITY</code>
 	 * @since 1.0.1

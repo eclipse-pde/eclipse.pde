@@ -34,6 +34,9 @@ import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 public class CategoryOutlinePage extends FormOutlinePage {
 	private LabelProvider fLabelProvider;
 
+	/**
+	 * @param editor
+	 */
 	public CategoryOutlinePage(PDEFormEditor editor) {
 		super(editor);
 	}

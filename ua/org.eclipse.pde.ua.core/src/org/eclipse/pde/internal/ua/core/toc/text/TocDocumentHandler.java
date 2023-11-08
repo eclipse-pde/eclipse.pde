@@ -24,6 +24,9 @@ public class TocDocumentHandler extends NodeDocumentHandler {
 
 	private final TocModel fModel;
 
+	/**
+	 * @param reconciling
+	 */
 	public TocDocumentHandler(TocModel model, boolean reconciling) {
 		super(reconciling, model.getFactory());
 		fModel = model;

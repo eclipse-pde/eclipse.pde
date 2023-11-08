@@ -37,6 +37,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
  * Command handler to update the bundle classpath for the selected projects
+ *
  */
 public class UpdateClasspathAction extends AbstractHandler {
 

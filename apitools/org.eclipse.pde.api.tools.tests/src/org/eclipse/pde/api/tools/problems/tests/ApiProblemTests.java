@@ -586,6 +586,9 @@ public class ApiProblemTests extends AbstractApiTest {
 
 	/**
 	 * Helper method to get a hash code for problem arguments
+	 *
+	 * @param arguments
+	 * @return
 	 */
 	private int argumentsHashcode(String[] arguments) {
 		if (arguments == null) {

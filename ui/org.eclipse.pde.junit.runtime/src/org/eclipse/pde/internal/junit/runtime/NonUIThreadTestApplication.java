@@ -64,6 +64,8 @@ public class NonUIThreadTestApplication implements IApplication {
 	 * introduce any dependency on UI code we first attempt to get the harness via service.
 	 * If that doesn't work, we use reflection to call the workbench code, but don't fail
 	 * if Platform UI is not available.
+	 *
+	 * @throws Exception
 	 */
 	private void installPlatformUITestHarness() throws ReflectiveOperationException {
 		Object testableObject = getRegisteredTestableObject();
@@ -147,6 +149,7 @@ public class NonUIThreadTestApplication implements IApplication {
 	 * In 3.0, the default is the "org.eclipse.ui.ide.worbench" application.
 	 *
 	 * see bug 228044
+	 *
 	 */
 	private String getApplicationToRun(String[] args) {
 		String testApp = RemotePluginTestRunner.getArgumentValue(args, "-testApplication"); //$NON-NLS-1$

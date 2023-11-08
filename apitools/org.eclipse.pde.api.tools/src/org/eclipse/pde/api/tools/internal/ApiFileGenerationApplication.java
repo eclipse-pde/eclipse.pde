@@ -19,6 +19,7 @@ import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 
 /**
  * Prefer using the tycho-apitools-plugin to generate the api description file
+ *
  */
 @Deprecated
 public class ApiFileGenerationApplication implements IApplication {

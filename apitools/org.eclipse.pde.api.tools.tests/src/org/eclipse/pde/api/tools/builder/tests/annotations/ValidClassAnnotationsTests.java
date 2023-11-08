@@ -26,6 +26,8 @@ public class ValidClassAnnotationsTests extends InvalidClassAnnotationsTests {
 
 	/**
 	 * Constructor
+	 *
+	 * @param name
 	 */
 	public ValidClassAnnotationsTests(String name) {
 		super(name);
@@ -45,6 +47,8 @@ public class ValidClassAnnotationsTests extends InvalidClassAnnotationsTests {
 
 	/**
 	 * Tests all the valid annotations on a class
+	 *
+	 * @throws Exception
 	 */
 	public void testValidClassAnnotations1I() throws Exception {
 		deployAnnotationTest("test1.java", true, false); //$NON-NLS-1$
@@ -52,6 +56,8 @@ public class ValidClassAnnotationsTests extends InvalidClassAnnotationsTests {
 
 	/**
 	 * Tests all the valid annotations on a class
+	 *
+	 * @throws Exception
 	 */
 	public void testValidClassAnnotations1F() throws Exception {
 		deployAnnotationTest("test1.java", false, false); //$NON-NLS-1$
@@ -59,6 +65,8 @@ public class ValidClassAnnotationsTests extends InvalidClassAnnotationsTests {
 
 	/**
 	 * Tests all the valid annotations on a class in the default package
+	 *
+	 * @throws Exception
 	 */
 	public void testValidClassAnnotations2I() throws Exception {
 		deployAnnotationTest("test5.java", true, true); //$NON-NLS-1$
@@ -66,6 +74,8 @@ public class ValidClassAnnotationsTests extends InvalidClassAnnotationsTests {
 
 	/**
 	 * Tests all the valid annotations on a class in the default package
+	 *
+	 * @throws Exception
 	 */
 	public void testValidClassAnnotations2F() throws Exception {
 		deployAnnotationTest("test5.java", false, true); //$NON-NLS-1$

@@ -29,6 +29,7 @@ import org.eclipse.test.performance.PerformanceTestCase;
 /**
  * Calls the load target platform job which will take a resolved target definition and
  * initialize the PDE models from its content.
+ *
  */
 public class InitializeModelsPerfTest extends PerformanceTestCase {
 

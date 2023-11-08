@@ -315,6 +315,8 @@ public class RegistryModel {
 	/**
 	 * For received domain types: Bundle, IExtension, IExtensionPoint, ServiceReference,
 	 * generates delta with model types: IBundle, IExtensionAdapter, IExtensionPointAdapter, IService
+	 *
+	 * @param objects
 	 */
 	protected void fireModelChangeEvent(ModelChangeDelta[] delta) {
 		for (Iterator<ModelChangeListener> i = listeners.iterator(); i.hasNext();) {

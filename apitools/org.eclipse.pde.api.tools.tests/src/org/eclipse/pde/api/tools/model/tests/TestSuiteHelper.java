@@ -84,6 +84,7 @@ public class TestSuiteHelper {
 	 *
 	 * @param rootDirectory directory to collect bundles from
 	 * @return API baseline
+	 * @throws CoreException
 	 */
 	public static IApiBaseline createBaseline(String name, File rootDirectory) throws CoreException {
 		File eeFile = getEEDescriptionFile();
@@ -111,6 +112,10 @@ public class TestSuiteHelper {
 
 	/**
 	 * Creates a testing API baseline
+	 *
+	 * @param testDirectory
+	 * @return
+	 * @throws CoreException
 	 */
 	public static IApiBaseline createTestingBaseline(String testDirectory) throws CoreException {
 		return createTestingBaseline(null, IPath.fromOSString(testDirectory));
@@ -303,6 +308,9 @@ public class TestSuiteHelper {
 	/**
 	 * Creates a testing {@link IApiComponent}
 	 *
+	 * @param name
+	 * @param id
+	 * @param description
 	 * @return a new {@link IApiComponent} for testing
 	 */
 	public static IApiComponent createTestingApiComponent(final String name, final String id, final IApiDescription description) {
@@ -318,6 +326,7 @@ public class TestSuiteHelper {
 	 *
 	 * @return Testing API baseline. If for some reason the testing directory is
 	 *         not available <code>null</code> is returned
+	 * @throws CoreException
 	 */
 	public static IApiBaseline createTestingBaseline(String baselineid, IPath testDirectory) throws CoreException {
 		IPath path = TestSuiteHelper.getPluginDirectoryPath();
@@ -358,6 +367,7 @@ public class TestSuiteHelper {
 	 * in an OSGi framework.
 	 * </p>
 	 *
+	 * @param name
 	 * @param ee execution environment description file
 	 * @return API baseline
 	 * @exception CoreException if unable to create a baseline
@@ -369,6 +379,12 @@ public class TestSuiteHelper {
 	/**
 	 * Creates a new {@link IApiType} for testing
 	 *
+	 * @param componentid
+	 * @param name
+	 * @param sig
+	 * @param genericsig
+	 * @param flags
+	 * @param enclosingname
 	 * @return a new testing {@link IApiType}
 	 */
 	public static IApiType createTestingApiType(String baselineid, String componentid, String name, String sig, String genericsig, int flags, String enclosingname) {
@@ -377,6 +393,8 @@ public class TestSuiteHelper {
 
 	/**
 	 * Gets the .ee file supplied to run tests based on system property.
+	 *
+	 * @return
 	 */
 	public static File getEEDescriptionFile() {
 		String eePath = System.getProperty("ee.file"); //$NON-NLS-1$
@@ -445,6 +463,7 @@ public class TestSuiteHelper {
 	 * @param done set of component id's that have already been collected
 	 * @param component component to add all prerequisites for
 	 * @param collection collection to add prerequisites to.
+	 * @throws CoreException
 	 */
 	public static void addAllRequired(IApiBaseline baseline, Set<String> done, IApiComponent component, List<IApiComponent> collection) throws CoreException {
 		IRequiredComponentDescription[] descriptions = component.getRequiredComponents();
@@ -477,6 +496,9 @@ public class TestSuiteHelper {
 	/**
 	 * Compiles a single source file
 	 *
+	 * @param sourcename
+	 * @param destinationpath
+	 * @param compileroptions
 	 * @return true if compilation succeeded false otherwise
 	 */
 	public static boolean compile(String sourcename, String destinationpath, String[] compileroptions) {
@@ -513,6 +535,9 @@ public class TestSuiteHelper {
 	 * Compiles all source files in the specified source paths to the specified
 	 * destination path, with the given compiler options
 	 *
+	 * @param sourceFilePaths
+	 * @param destinationPath
+	 * @param compilerOptions
 	 * @return true if the compilation succeeded false otherwise
 	 */
 	public static boolean compile(String[] sourceFilePaths, String destinationPath, String[] compilerOptions) {

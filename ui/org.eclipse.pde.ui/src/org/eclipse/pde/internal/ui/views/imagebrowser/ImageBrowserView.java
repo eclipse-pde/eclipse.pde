@@ -317,6 +317,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 	 *
 	 *
 	 *                           Previous Page 1 2 3 4 5 Next Page
+	 *
 	 */
 	class PageNavigationControl extends Composite {
 		public PageNavigationControl(Composite parent, int style) {

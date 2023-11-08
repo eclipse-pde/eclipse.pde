@@ -45,6 +45,7 @@ public class InterfaceCompatibilityTypeParameterTests extends InterfaceCompatibi
 
 	/**
 	 * Constructor
+	 * @param name
 	 */
 	public InterfaceCompatibilityTypeParameterTests(String name) {
 		super(name);

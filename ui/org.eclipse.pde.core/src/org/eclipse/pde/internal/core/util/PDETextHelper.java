@@ -62,6 +62,7 @@ public class PDETextHelper {
 	/**
 	 * Strips \n, \r, \t
 	 * Strips leading spaces, trailing spaces, duplicate spaces
+	 * @param text
 	 * @return never null
 	 */
 	public static String translateReadText(String text) {

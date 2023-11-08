@@ -192,6 +192,8 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 
 	/**
 	 * Selects (checks) all of the entries in the table
+	 *
+	 * @param checked
 	 */
 	void select(boolean checked) {
 		fTableViewer.setAllChecked(checked);
@@ -201,6 +203,7 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 	/**
 	 * Allows users to select a directory with a use scan in it
 	 *
+	 * @param prevLocation
 	 * @return the new directory or <code>null</code> if the dialog was
 	 *         cancelled
 	 */
@@ -232,6 +235,8 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 
 	/**
 	 * Adds the given location to the table
+	 *
+	 * @param location
 	 */
 	void addLocation(String location) {
 		fLocationList.add(location);
@@ -400,6 +405,7 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 	/**
 	 * Detects changes to the use scan locations
 	 *
+	 * @param newLocations
 	 * @return if there have been changes to the use scan entries
 	 */
 	private boolean hasLocationsChanges(String newLocations) {
@@ -433,6 +439,9 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 
 	/**
 	 * Sets the value to the given preference key
+	 *
+	 * @param key
+	 * @param value
 	 */
 	public void setStoredValue(String key, String value) {
 		IEclipsePreferences node = getNode();
@@ -447,6 +456,8 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 	 * Retrieves the value for the given preference key or the returns the given
 	 * default if it is not defined
 	 *
+	 * @param key
+	 * @param defaultValue
 	 * @return the stored value or the specified default
 	 */
 	public String getStoredValue(String key, String defaultValue) {

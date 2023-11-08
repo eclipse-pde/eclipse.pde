@@ -148,6 +148,9 @@ public class SplashLocationSection extends PDESection {
 		}
 	}
 
+	/**
+	 * @param event
+	 */
 	private void handleModelEventWorldChanged(IModelChangedEvent event) {
 		refresh();
 	}

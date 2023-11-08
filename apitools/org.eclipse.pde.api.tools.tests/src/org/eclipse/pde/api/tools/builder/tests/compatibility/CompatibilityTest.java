@@ -80,6 +80,8 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 
 	/**
 	 * Collects tests from the getAllTestClasses() method into the given suite
+	 *
+	 * @param suite
 	 */
 	private static void collectTests(TestSuite suite) {
 		// Reset forgotten subsets of tests
@@ -181,6 +183,7 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 	 * @param workspaceFile file to update
 	 * @param incremental whether to perform an incremental (<code>true</code>)
 	 *            or full (<code>false</code>) build
+	 * @throws Exception
 	 */
 	protected void performCompatibilityTest(IPath workspaceFile, boolean incremental) throws Exception {
 		updateWorkspaceFile(workspaceFile, getUpdateFilePath(workspaceFile.lastSegment()));
@@ -203,6 +206,7 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 	 * @param workspaceFile file to update
 	 * @param incremental whether to perform an incremental (<code>true</code>)
 	 *            or full (<code>false</code>) build
+	 * @throws Exception
 	 */
 	protected void performVersionTest(IPath workspaceFile, boolean incremental) throws Exception {
 		updateWorkspaceFile(workspaceFile, getUpdateFilePath(workspaceFile.lastSegment()));
@@ -223,6 +227,7 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 	 * @param workspaceFile file to update
 	 * @param incremental whether to perform an incremental (<code>true</code>)
 	 *            or full (<code>false</code>) build
+	 * @throws Exception
 	 */
 	protected void performDeletionCompatibilityTest(IPath workspaceFile, boolean incremental) throws Exception {
 		deleteWorkspaceFile(workspaceFile, true);
@@ -243,6 +248,7 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 	 * @param workspaceFile file to update
 	 * @param incremental whether to perform an incremental (<code>true</code>)
 	 *            or full (<code>false</code>) build
+	 * @throws Exception
 	 */
 	protected void performCreationCompatibilityTest(IPath workspaceFile, boolean incremental) throws Exception {
 		createWorkspaceFile(workspaceFile, getUpdateFilePath(workspaceFile.lastSegment()));

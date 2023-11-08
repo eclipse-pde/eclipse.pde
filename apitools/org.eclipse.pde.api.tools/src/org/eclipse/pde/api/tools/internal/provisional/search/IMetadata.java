@@ -30,6 +30,8 @@ public interface IMetadata {
 	 * Writes the current snapshot of metadata out to the given file
 	 *
 	 * @param file the file to write to
+	 * @throws IOException
+	 * @throws CoreException
 	 */
 	public void serializeToFile(File file) throws IOException, CoreException;
 }

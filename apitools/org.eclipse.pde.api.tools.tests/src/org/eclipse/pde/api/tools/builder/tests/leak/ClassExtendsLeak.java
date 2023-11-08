@@ -569,6 +569,8 @@ public class ClassExtendsLeak extends LeakTest {
 	/**
 	 * Tests that a class that extends an internal class but overrides all of
 	 * its methods is not reported as leaking.
+	 *
+	 * @param inc
 	 */
 	private void x32(boolean inc) {
 		expectingNoProblems();

@@ -24,6 +24,8 @@ public interface IApiScope {
 
 	/**
 	 * Adds the given {@link IApiElement} to the scope
+	 *
+	 * @param newelements
 	 */
 	public void addElement(IApiElement newelement);
 
@@ -45,6 +47,7 @@ public interface IApiScope {
 	/**
 	 * Returns if this scope encloses the given element
 	 *
+	 * @param element
 	 * @return true if this scope encloses the given element, false otherwise
 	 */
 	public boolean encloses(IApiElement element) throws CoreException;

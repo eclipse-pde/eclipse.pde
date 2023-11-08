@@ -17,6 +17,7 @@ import org.eclipse.ui.splash.AbstractSplashHandler;
 
 /**
  * @since 3.3
+ * 
  */
 public class InteractiveSplashHandler extends AbstractSplashHandler {
 	
@@ -40,6 +41,9 @@ public class InteractiveSplashHandler extends AbstractSplashHandler {
 	
 	private boolean fAuthenticated;
 	
+	/**
+	 * 
+	 */
 	public InteractiveSplashHandler() {
 		fCompositeLogin = null;
 		fTextUsername = null;
@@ -70,6 +74,9 @@ public class InteractiveSplashHandler extends AbstractSplashHandler {
 		doEventLoop();
 	}
 	
+	/**
+	 * 
+	 */
 	private void doEventLoop() {
 		Shell splash = getSplash();
 		while (fAuthenticated == false) {
@@ -79,6 +86,9 @@ public class InteractiveSplashHandler extends AbstractSplashHandler {
 		}
 	}
 
+	/**
+	 * 
+	 */
 	private void createUIListeners() {
 		// Create the OK button listeners
 		createUIListenersButtonOK();
@@ -86,6 +96,9 @@ public class InteractiveSplashHandler extends AbstractSplashHandler {
 		createUIListenersButtonCancel();
 	}
 
+	/**
+	 * 
+	 */
 	private void createUIListenersButtonCancel() {
 		fButtonCancel.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -94,12 +107,18 @@ public class InteractiveSplashHandler extends AbstractSplashHandler {
 		});		
 	}
 
+	/**
+	 * 
+	 */
 	private void handleButtonCancelWidgetSelected() {
 		// Abort the loading of the RCP application
 		getSplash().getDisplay().close();
 		System.exit(0);		
 	}
 	
+	/**
+	 * 
+	 */
 	private void createUIListenersButtonOK() {
 		fButtonOK.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -108,6 +127,9 @@ public class InteractiveSplashHandler extends AbstractSplashHandler {
 		});				
 	}
 
+	/**
+	 * 
+	 */
 	private void handleButtonOKWidgetSelected() {
 		String username = fTextUsername.getText();
 		String password = fTextPassword.getText();
@@ -124,6 +146,9 @@ public class InteractiveSplashHandler extends AbstractSplashHandler {
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	private void createUI() {
 		// Create the login panel
 		createUICompositeLogin();
@@ -145,6 +170,9 @@ public class InteractiveSplashHandler extends AbstractSplashHandler {
 		createUIButtonCancel();
 	}		
 	
+	/**
+	 * 
+	 */
 	private void createUIButtonCancel() {
 		// Create the button
 		fButtonCancel = new Button(fCompositeLogin, SWT.PUSH);
@@ -156,6 +184,9 @@ public class InteractiveSplashHandler extends AbstractSplashHandler {
 		fButtonCancel.setLayoutData(data);
 	}
 
+	/**
+	 * 
+	 */
 	private void createUIButtonOK() {
 		// Create the button
 		fButtonOK = new Button(fCompositeLogin, SWT.PUSH);
@@ -167,11 +198,17 @@ public class InteractiveSplashHandler extends AbstractSplashHandler {
 		fButtonOK.setLayoutData(data);
 	}
 
+	/**
+	 * 
+	 */
 	private void createUILabelBlank() {
 		Label label = new Label(fCompositeLogin, SWT.NONE);
 		label.setVisible(false);
 	}
 
+	/**
+	 * 
+	 */
 	private void createUITextPassword() {
 		// Create the text widget
 		int style = SWT.PASSWORD | SWT.BORDER;
@@ -183,6 +220,9 @@ public class InteractiveSplashHandler extends AbstractSplashHandler {
 		fTextPassword.setLayoutData(data);		
 	}
 
+	/**
+	 * 
+	 */
 	private void createUILabelPassword() {
 		// Create the label
 		Label label = new Label(fCompositeLogin, SWT.NONE);
@@ -193,6 +233,9 @@ public class InteractiveSplashHandler extends AbstractSplashHandler {
 		label.setLayoutData(data);					
 	}
 
+	/**
+	 * 
+	 */
 	private void createUITextUserName() {
 		// Create the text widget
 		fTextUsername = new Text(fCompositeLogin, SWT.BORDER);
@@ -203,6 +246,9 @@ public class InteractiveSplashHandler extends AbstractSplashHandler {
 		fTextUsername.setLayoutData(data);		
 	}
 
+	/**
+	 * 
+	 */
 	private void createUILabelUserName() {
 		// Create the label
 		Label label = new Label(fCompositeLogin, SWT.NONE);
@@ -213,6 +259,9 @@ public class InteractiveSplashHandler extends AbstractSplashHandler {
 		label.setLayoutData(data);		
 	}
 
+	/**
+	 * 
+	 */
 	private void createUICompositeBlank() {
 		Composite spanner = new Composite(fCompositeLogin, SWT.NONE);
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -220,6 +269,9 @@ public class InteractiveSplashHandler extends AbstractSplashHandler {
 		spanner.setLayoutData(data);
 	}
 
+	/**
+	 * 
+	 */
 	private void createUICompositeLogin() {
 		// Create the composite
 		fCompositeLogin = new Composite(getSplash(), SWT.BORDER);
@@ -227,6 +279,9 @@ public class InteractiveSplashHandler extends AbstractSplashHandler {
 		fCompositeLogin.setLayout(layout);		
 	}
 
+	/**
+	 * 
+	 */
 	private void configureUISplash() {
 		// Configure layout
 		FillLayout layout = new FillLayout(); 

@@ -251,6 +251,8 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 
 	/**
 	 * Updates the buttons based on the selection in the viewer
+	 *
+	 * @param selection
 	 */
 	void updateButtons(IStructuredSelection selection) {
 		int size = selection.size();
@@ -310,6 +312,10 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 
 	/**
 	 * Adds a new pattern to the list
+	 *
+	 * @param pattern
+	 * @param kind
+	 * @return
 	 */
 	boolean addPattern(String pattern, int kind) {
 		return this.patterns.add(new Pattern(pattern, kind));
@@ -317,6 +323,9 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 
 	/**
 	 * Removes the pattern from the listing
+	 *
+	 * @param pattern
+	 * @return
 	 */
 	boolean removePattern(Pattern pattern) {
 		return this.patterns.remove(pattern);

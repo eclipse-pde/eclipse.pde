@@ -36,6 +36,7 @@ import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSSubItemObject
  * Two sets of factory methods are provided: ones that generate valid cheatsheat
  * XML tags and second that build cheatsheet model using API. Both generate the same data
  * that can be validated using validate* methods.
+ *
  */
 public abstract class CheatSheetModelTestCase extends AbstractCheatSheetModelTestCase {
 

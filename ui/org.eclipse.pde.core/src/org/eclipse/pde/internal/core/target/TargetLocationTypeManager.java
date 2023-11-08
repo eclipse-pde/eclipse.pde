@@ -29,6 +29,7 @@ import org.eclipse.pde.internal.core.PDECore;
 /**
  * Keeps a track of the contributed Target Locations and provides helper functions to
  * access them
+ *
  */
 public class TargetLocationTypeManager {
 

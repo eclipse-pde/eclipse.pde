@@ -101,6 +101,11 @@ public class ProjectApiDescription extends ApiDescription {
 
 		/**
 		 * Constructs a new node.
+		 *
+		 * @param parent
+		 * @param element
+		 * @param visibility
+		 * @param restrictions
 		 */
 		public PackageNode(IPackageFragment fragments[], ManifestNode parent, IElementDescriptor element, int visibility, int restrictions) {
 			super(parent, element, visibility, restrictions);
@@ -169,6 +174,12 @@ public class ProjectApiDescription extends ApiDescription {
 
 		/**
 		 * Constructs a node for a reference type.
+		 *
+		 * @param type
+		 * @param parent
+		 * @param element
+		 * @param visibility
+		 * @param restrictions
 		 */
 		public TypeNode(IType type, ManifestNode parent, IElementDescriptor element, int visibility, int restrictions) {
 			super(parent, element, visibility, restrictions);
@@ -328,6 +339,8 @@ public class ProjectApiDescription extends ApiDescription {
 
 	/**
 	 * Constructs a new API description for the given project API component.
+	 *
+	 * @param component
 	 */
 	public ProjectApiDescription(IJavaProject project) {
 		super(project.getElementName());
@@ -389,6 +402,10 @@ public class ProjectApiDescription extends ApiDescription {
 
 	/**
 	 * Visits a type.
+	 *
+	 * @param visitor
+	 * @param owningComponent
+	 * @param type
 	 */
 	private void visit(ApiDescriptionVisitor visitor, IType type) {
 		IElementDescriptor element = getElementDescriptor(type);
@@ -503,6 +520,13 @@ public class ProjectApiDescription extends ApiDescription {
 
 	/**
 	 * Constructs and returns a new node for the given package fragment.
+	 *
+	 * @param fragment
+	 * @param parent
+	 * @param descriptor
+	 * @param vis
+	 * @param res
+	 * @return
 	 */
 	public PackageNode newPackageNode(IPackageFragment[] fragments, ManifestNode parent, IElementDescriptor descriptor, int vis, int res) {
 		return new PackageNode(fragments, parent, descriptor, vis, res);
@@ -510,6 +534,13 @@ public class ProjectApiDescription extends ApiDescription {
 
 	/**
 	 * Constructs and returns a new node for the given type.
+	 *
+	 * @param type
+	 * @param parent
+	 * @param descriptor
+	 * @param vis
+	 * @param res
+	 * @return
 	 */
 	TypeNode newTypeNode(IType type, ManifestNode parent, IElementDescriptor descriptor, int vis, int res) {
 		return new TypeNode(type, parent, descriptor, vis, res);
@@ -517,6 +548,12 @@ public class ProjectApiDescription extends ApiDescription {
 
 	/**
 	 * Constructs a new manifest node.
+	 *
+	 * @param parent
+	 * @param element
+	 * @param vis
+	 * @param res
+	 * @return
 	 */
 	ManifestNode newNode(ManifestNode parent, IElementDescriptor element, int vis, int res) {
 		return new ManifestNode(parent, element, vis, res);
@@ -638,6 +675,8 @@ public class ProjectApiDescription extends ApiDescription {
 
 	/**
 	 * Returns this API description as XML.
+	 *
+	 * @throws CoreException
 	 */
 	public synchronized String getXML() throws CoreException {
 		Document document = Util.newDocument();

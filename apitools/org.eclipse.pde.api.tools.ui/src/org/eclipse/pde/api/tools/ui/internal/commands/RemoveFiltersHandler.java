@@ -46,6 +46,7 @@ public class RemoveFiltersHandler extends AbstractHandler {
 	/**
 	 * Returns the {@link IAdaptable} from the current selection context
 	 *
+	 * @param selection
 	 * @return the {@link IAdaptable} for the current selection context
 	 */
 	private IAdaptable getAdaptable(ISelection selection) {

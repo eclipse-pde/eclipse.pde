@@ -27,6 +27,7 @@ import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
 
 /**
  * A wrapper class to fix multiple markers of provided category. It invokes the first non-MultiFixResolution for the selected markers
+ *
  */
 public class MultiFixResolution extends WorkbenchMarkerResolution {
 

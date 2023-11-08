@@ -114,6 +114,7 @@ public class ExportOptionsTab extends AbstractExportTab {
 	/**
 	 * Provides an opportunity for subclasses to add additional options
 	 * to the composite.
+	 * @param comp
 	 */
 	protected void addAdditionalOptions(Composite comp) {
 	}

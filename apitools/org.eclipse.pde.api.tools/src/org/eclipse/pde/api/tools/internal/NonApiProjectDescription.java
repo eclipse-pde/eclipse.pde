@@ -26,6 +26,8 @@ public class NonApiProjectDescription extends ProjectApiDescription {
 
 	/**
 	 * Constructs API description for the given project.
+	 *
+	 * @param project
 	 */
 	public NonApiProjectDescription(IJavaProject project) {
 		super(project);

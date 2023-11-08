@@ -33,8 +33,15 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 
 	private List<ICompCSTaskObject> fFieldTaskObjects;
 
+	/**
+	 *
+	 */
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * @param model
+	 * @param parent
+	 */
 	public CompCSTaskGroup(ICompCSModel model, ICompCSObject parent) {
 		super(model, parent);
 		reset();

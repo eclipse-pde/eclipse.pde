@@ -232,6 +232,9 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.PLUGIN_WORKING_SET);
 	}
 
+	/**
+	 *
+	 */
 	private void initialize() {
 		if (fWorkingSet != null) {
 			HashSet<String> set = new HashSet<>();

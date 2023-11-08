@@ -46,6 +46,11 @@ public class PluginImportHelper {
 	 * Imports the contents of a zip file or folder, extracting the necessary files and
 	 * putting them in the specified destination.
 	 * @param source the file or folder to import from, should either be the root of the zip file or the File representing the folder
+	 * @param dstPath
+	 * @param provider
+	 * @param filesToImport
+	 * @param monitor
+	 * @throws CoreException
 	 */
 	public static void importContent(Object source, IPath dstPath, IImportStructureProvider provider, List<Object> filesToImport, IProgressMonitor monitor) throws CoreException {
 		IOverwriteQuery query = file -> IOverwriteQuery.ALL;
@@ -66,7 +71,11 @@ public class PluginImportHelper {
 
 	/**
 	 * Extracts the contents of the specified zip file to the specified destination
+	 * @param file
+	 * @param dstPath
 	 * @param collectedPackages will be updated with the set of packages the extracted source belongs to, if <code>null</code> this step will be skipped
+	 * @param monitor
+	 * @throws CoreException
 	 */
 	public static void extractArchive(File file, IPath dstPath, Set<IPath> collectedPackages, IProgressMonitor monitor) throws CoreException {
 		try (ZipFile zipFile = new ZipFile(file)) {
@@ -173,6 +182,9 @@ public class PluginImportHelper {
 
 	/**
 	 * Copies an archive file to an IFile
+	 * @param file
+	 * @param dstFile
+	 * @throws CoreException
 	 */
 	public static void copyArchive(File file, IFile dstFile, IProgressMonitor monitor) throws CoreException {
 		try (FileInputStream fstream = new FileInputStream(file)) {

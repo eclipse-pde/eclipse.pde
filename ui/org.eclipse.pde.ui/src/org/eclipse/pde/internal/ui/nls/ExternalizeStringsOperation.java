@@ -156,6 +156,14 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 		return change;
 	}
 
+	/**
+	 * @param changeFile
+	 * @param pDoc
+	 * @param pChange
+	 * @param monitor
+	 * @param parentChange
+	 * @throws CoreException
+	 */
 	private void doReplace(ModelChangeFile changeFile, IDocument pDoc, TextFileChange pChange, IProgressMonitor monitor, CompositeChange parentChange) throws CoreException {
 		IFile uFile = changeFile.getFile();
 		try {

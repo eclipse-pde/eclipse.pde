@@ -36,6 +36,7 @@ import org.eclipse.ui.texteditor.spelling.SpellingReconcileStrategy;
 
 /**
  * Reconcile strategy used for spell checking XML documents.
+ *
  */
 public class XMLReconcilingStrategy extends SpellingReconcileStrategy {
 

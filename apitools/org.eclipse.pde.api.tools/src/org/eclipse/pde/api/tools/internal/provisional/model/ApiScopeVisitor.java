@@ -26,6 +26,8 @@ public class ApiScopeVisitor {
 	 * <p>
 	 * The default implementation does nothing. Subclasses may re-implement.
 	 * </p>
+	 *
+	 * @param component
 	 */
 	public void endVisit(IApiComponent component) {
 		// subclasses may re-implement
@@ -36,6 +38,8 @@ public class ApiScopeVisitor {
 	 * <p>
 	 * The default implementation does nothing. Subclasses may re-implement.
 	 * </p>
+	 *
+	 * @param baseline
 	 */
 	public void endVisit(IApiBaseline baseline) {
 		// subclasses may re-implement
@@ -46,6 +50,8 @@ public class ApiScopeVisitor {
 	 * <p>
 	 * The default implementation does nothing. Subclasses may re-implement.
 	 * </p>
+	 *
+	 * @param container
 	 */
 	public void endVisit(IApiTypeContainer container) {
 		// subclasses may re-implement
@@ -56,6 +62,8 @@ public class ApiScopeVisitor {
 	 * <p>
 	 * The default implementation does nothing. Subclasses may re-implement.
 	 * </p>
+	 *
+	 * @param typeRoot
 	 */
 	public void endVisit(IApiTypeRoot typeRoot) {
 		// subclasses may re-implement

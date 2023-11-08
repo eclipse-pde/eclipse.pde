@@ -123,6 +123,10 @@ public class SpyProcessor {
 	 *
 	 * This method will probably move to the common spy plugin providing common
 	 * spy stuff (see bug #428903)
+	 *
+	 * @param keySequence
+	 * @param cmd
+	 * @param paramViewId
 	 */
 	public void bindSpyKeyBinding(MBindingTable spyBindingTable, String keySequence, MCommand cmd, String paramViewId) {
 		// This method must :
@@ -171,6 +175,11 @@ public class SpyProcessor {
 	 * spies will add their key binding). Bind this table with the
 	 * org.eclipse.ui.contexts.dialogAndWindow binding context which should be
 	 * present (create it if not)
+	 *
+	 *
+	 * @param keySequence
+	 * @param cmd
+	 * @param paramViewId
 	 */
 	private MBindingTable getBindingTable() {
 		// This method must :

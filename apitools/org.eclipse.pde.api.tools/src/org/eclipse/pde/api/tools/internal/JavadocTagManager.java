@@ -340,6 +340,7 @@ public final class JavadocTagManager {
 	 * Example: <code>NoExtend</code> returns
 	 * <code>org.eclipse.pde.api.toools.annnotations.NoExtend</code>
 	 *
+	 * @param typename
 	 * @return the fully qualified type name of the annotation or
 	 *         <code>null</code> if unknown
 	 *

@@ -40,6 +40,7 @@ public class InterfaceCompatibilityRestrictionTests extends InterfaceCompatibili
 
 	/**
 	 * Constructor
+	 * @param name
 	 */
 	public InterfaceCompatibilityRestrictionTests(String name) {
 		super(name);

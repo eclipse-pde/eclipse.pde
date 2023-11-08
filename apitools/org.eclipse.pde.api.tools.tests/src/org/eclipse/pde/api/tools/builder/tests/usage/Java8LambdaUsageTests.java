@@ -22,6 +22,7 @@ import junit.framework.Test;
 
 /**
  * Tests labmda expression usage for Java 8 code snippets
+ *
  */
 public class Java8LambdaUsageTests extends Java8UsageTest {
 
@@ -54,6 +55,7 @@ public class Java8LambdaUsageTests extends Java8UsageTest {
 	/**
 	 * Returns the problem id with the given kind
 	 *
+	 * @param kind
 	 * @return the problem id
 	 */
 	protected int getProblemId(int kind, int flags) {

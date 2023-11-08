@@ -68,6 +68,7 @@ import org.osgi.framework.Bundle;
 /**
  * Tests {@link IBundleClasspathResolver} API to extend how the classpath and
  * source lookup path is created.
+ *
  */
 public class ClasspathResolverTest {
 

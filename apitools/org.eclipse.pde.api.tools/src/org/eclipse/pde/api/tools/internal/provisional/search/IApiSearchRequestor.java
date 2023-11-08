@@ -71,6 +71,7 @@ public interface IApiSearchRequestor {
 	 * {@link ApiSearchEngine} to ignore certain type containers while searching
 	 * a component
 	 *
+	 * @param container
 	 * @return true if this requestor cares about the given
 	 *         {@link IApiTypeContainer} false otherwise.
 	 */
@@ -91,6 +92,7 @@ public interface IApiSearchRequestor {
 	 * Returns whether the given {@link IReference} should be accepted by this
 	 * requestor.
 	 *
+	 * @param reference
 	 * @return true if the reference should be accepted, false otherwise
 	 */
 	public boolean acceptReference(IReference reference, IProgressMonitor monitor);

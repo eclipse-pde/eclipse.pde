@@ -87,6 +87,7 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	 * Method selectConfigs.
 	 * Return a list containing all the configurations that are valid for the
 	 * element
+	 * @param element
 	 * @return List
 	 */
 	public List<Config> selectConfigs(IPlatformEntry element) {

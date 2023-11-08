@@ -308,6 +308,7 @@ public class SourceLocationManager implements ICoreConstants {
 	 *
 	 * @param relativePath
 	 *            location of source file within the source location
+	 * @param plugin
 	 * @return path to the source file or <code>null</code> if one could not be
 	 *         found or if the file does not exist
 	 */

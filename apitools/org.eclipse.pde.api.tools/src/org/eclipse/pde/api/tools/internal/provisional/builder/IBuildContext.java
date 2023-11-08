@@ -118,6 +118,7 @@ public interface IBuildContext {
 	 * Returns if this build context contains the given type name in its
 	 * collection of types with API description changes.
 	 *
+	 * @param typename
 	 * @return true if this context contains the given type name, false
 	 *         otherwise
 	 */
@@ -127,6 +128,7 @@ public interface IBuildContext {
 	 * Returns if this build context contains the given type name in its
 	 * collection of types dependent on API description changes.
 	 *
+	 * @param typename
 	 * @return true if this context contains the given type name, false
 	 *         otherwise
 	 */
@@ -136,6 +138,7 @@ public interface IBuildContext {
 	 * Returns if this build context contains the given type name in its changed
 	 * types collection.
 	 *
+	 * @param typename
 	 * @return true if this context contains the given type name, false
 	 *         otherwise
 	 */
@@ -145,6 +148,7 @@ public interface IBuildContext {
 	 * Returns if this build context contains the given type name in its removed
 	 * types collection
 	 *
+	 * @param typename
 	 * @return true if this context contains the given type, false otherwise
 	 */
 	public boolean containsRemovedType(String typename);

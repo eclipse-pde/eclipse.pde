@@ -252,8 +252,10 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 	}
 
 	/**
+	 * @param model
 	 * @param extensionResult cheat sheet extension found or null
 	 * @param elementResult cheat sheet element found or null
+	 * @return
 	 */
 	private FindCSExtensionResult findCSExtensionResult(IPluginModelBase model) {
 		// Container for result

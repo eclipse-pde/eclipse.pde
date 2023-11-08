@@ -42,6 +42,7 @@ public abstract class StructuredViewerSection extends PDESection implements IPDE
 
 	/**
 	 * Constructor for StructuredViewerSection.
+	 * @param formPage
 	 */
 	public StructuredViewerSection(PDEFormPage formPage, Composite parent, int style, String[] buttonLabels) {
 		this(formPage, parent, style, true, buttonLabels);
@@ -49,6 +50,7 @@ public abstract class StructuredViewerSection extends PDESection implements IPDE
 
 	/**
 	 * Constructor for StructuredViewerSection.
+	 * @param formPage
 	 */
 	public StructuredViewerSection(PDEFormPage formPage, Composite parent, int style, boolean titleBar, String[] buttonLabels) {
 		super(formPage, parent, style, titleBar);

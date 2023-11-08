@@ -19,9 +19,13 @@ import org.eclipse.pde.internal.core.text.plugin.DocumentGenericNode;
 
 /**
  * DocumentNodeFactory
+ *
  */
 public abstract class DocumentNodeFactory implements IDocumentNodeFactory {
 
+	/**
+	 *
+	 */
 	public DocumentNodeFactory() {
 		// NO-OP
 	}
@@ -55,6 +59,9 @@ public abstract class DocumentNodeFactory implements IDocumentNodeFactory {
 		return createGeneric(name);
 	}
 
+	/**
+	 * @param name
+	 */
 	protected IDocumentElementNode createGeneric(String name) {
 		return new DocumentGenericNode(name);
 	}

@@ -21,8 +21,14 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
 import junit.framework.Test;
 
+/**
+ *
+ */
 public class InvalidInterfaceAnnotationTests extends AnnotationTest {
 
+	/**
+	 * @param name
+	 */
 	public InvalidInterfaceAnnotationTests(String name) {
 		super(name);
 	}
@@ -46,6 +52,8 @@ public class InvalidInterfaceAnnotationTests extends AnnotationTest {
 
 	/**
 	 * Tests @NoInstantiate on an interface
+	 *
+	 * @throws Exception
 	 */
 	public void testNoInstantiateF() throws Exception {
 		x1(false);
@@ -53,6 +61,8 @@ public class InvalidInterfaceAnnotationTests extends AnnotationTest {
 
 	/**
 	 * Tests @NoInstantiate on an interface
+	 *
+	 * @throws Exception
 	 */
 	public void testNoInstantiateI() throws Exception {
 		x1(true);
@@ -68,6 +78,8 @@ public class InvalidInterfaceAnnotationTests extends AnnotationTest {
 
 	/**
 	 * Tests @NoOverride on an interface
+	 *
+	 * @throws Exception
 	 */
 	public void testNoOverrideF() throws Exception {
 		x2(false);
@@ -75,6 +87,8 @@ public class InvalidInterfaceAnnotationTests extends AnnotationTest {
 
 	/**
 	 * Tests @NoOvveride on an interface
+	 *
+	 * @throws Exception
 	 */
 	public void testNoOverrideI() throws Exception {
 		x2(true);

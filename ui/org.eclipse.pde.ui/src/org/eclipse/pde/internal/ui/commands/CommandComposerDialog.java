@@ -72,6 +72,9 @@ public class CommandComposerDialog extends FormDialog {
 		updateOkButtonEnablement(selection);
 	}
 
+	/**
+	 * @param selection
+	 */
 	private void updateOkButtonEnablement(Object selection) {
 		// Ensure there is a selection
 		if (selection == null) {
@@ -94,6 +97,9 @@ public class CommandComposerDialog extends FormDialog {
 		updateOkButtonEnablement(false);
 	}
 
+	/**
+	 * @param enabled
+	 */
 	private void updateOkButtonEnablement(boolean enabled) {
 		if (fOKButton != null) {
 			fOKButton.setEnabled(enabled);

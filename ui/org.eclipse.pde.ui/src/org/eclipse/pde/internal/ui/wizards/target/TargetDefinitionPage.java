@@ -25,6 +25,9 @@ public abstract class TargetDefinitionPage extends WizardPage {
 
 	private ITargetDefinition fDefinition;
 
+	/**
+	 * @param pageName
+	 */
 	protected TargetDefinitionPage(String pageName, ITargetDefinition definition) {
 		super(pageName);
 		fDefinition = definition;

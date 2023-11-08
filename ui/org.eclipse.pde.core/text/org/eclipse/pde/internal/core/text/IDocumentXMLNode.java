@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.core.text;
 
 /**
  * IDocumentXML
+ *
  */
 public interface IDocumentXMLNode {
 

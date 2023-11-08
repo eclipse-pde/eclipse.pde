@@ -100,6 +100,8 @@ public abstract class PDESourcePage extends org.eclipse.ui.internal.genericedito
 		 * provider. If the selection provider is a post selection provider,
 		 * post selection changed events are the preferred choice, otherwise
 		 * normal selection changed events are requested.
+		 *
+		 * @param selectionProvider
 		 */
 		public void install(ISelectionProvider selectionProvider) {
 			if (selectionProvider != null) {
@@ -388,6 +390,9 @@ public abstract class PDESourcePage extends org.eclipse.ui.internal.genericedito
 		createQuickOutlineAction();
 	}
 
+	/**
+	 *
+	 */
 	private void createQuickOutlineAction() {
 		// Quick Outline Action
 		ResourceAction action = new TextOperationAction(getBundleForConstructedKeys(), "QuickOutline.", this, //$NON-NLS-1$
@@ -493,6 +498,9 @@ public abstract class PDESourcePage extends org.eclipse.ui.internal.genericedito
 		return getInputContext().getModel();
 	}
 
+	/**
+	 * @param rangeElement
+	 */
 	protected void updateOutlinePageSelection(Object rangeElement) {
 		// Set selection in source outline page if the 'Link with Editor'
 		// feature is on
@@ -536,6 +544,9 @@ public abstract class PDESourcePage extends org.eclipse.ui.internal.genericedito
 		}
 	}
 
+	/**
+	 * @param rangeElement
+	 */
 	protected void updateHighlightRange(IDocumentRange rangeElement) {
 		if (rangeElement != null) {
 			setHighlightRange(rangeElement, false);
@@ -577,6 +588,9 @@ public abstract class PDESourcePage extends org.eclipse.ui.internal.genericedito
 
 	/**
 	 * Utility method for getRangeElement(int, boolean)
+	 * @param node
+	 * @param offset
+	 * @param searchChildren
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#findNode(Object[], int, boolean)
 	 */
 	protected IDocumentRange findNode(IDocumentElementNode node, int offset, boolean searchChildren) {
@@ -628,6 +642,7 @@ public abstract class PDESourcePage extends org.eclipse.ui.internal.genericedito
 	 * Override the getAdapter function to return a list of targets
 	 * for the "Show In >" action in the context menu.
 	 *
+	 * @param adapter
 	 * @return A list of targets (IShowInTargetList) for the "Show In >"
 	 * submenu if the appropriate adapter is passed in and the editor
 	 * is not read-only. Returns <code>super.getAdapter(adapter)</code>
@@ -650,6 +665,9 @@ public abstract class PDESourcePage extends org.eclipse.ui.internal.genericedito
 		return () -> new String[] { JavaUI.ID_PACKAGES, IPageLayout.ID_PROJECT_EXPLORER };
 	}
 
+	/**
+	 * @param range
+	 */
 	public IDocumentRange adaptRange(IDocumentRange range) {
 		// Subclasses to override
 		return range;

@@ -109,6 +109,9 @@ public class RemoveUnsupportedAnnotationOperation extends UIJob {
 
 	private IMarker[] fMarkers = null;
 
+	/**
+	 * @param name
+	 */
 	public RemoveUnsupportedAnnotationOperation(IMarker[] markers) {
 		super(MarkerMessages.RemoveUnsupportedAnnotationOperation_remove_unsupported_annotations);
 		fMarkers = markers;

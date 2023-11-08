@@ -136,6 +136,8 @@ public class HeadlessApiBaselineManagerTests extends AbstractApiTest {
 	/**
 	 * Tests that calling the saving(..) method on the manager in headless mode
 	 * does not fail
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testSavingCall() throws CoreException {
@@ -157,6 +159,8 @@ public class HeadlessApiBaselineManagerTests extends AbstractApiTest {
 
 	/**
 	 * Tests that calling preparingToSave(..) does not fail in headless mode
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testPreparingToSave() throws CoreException {

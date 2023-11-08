@@ -26,6 +26,9 @@ public class SimpleCSConditionalSubItem extends SimpleCSObject implements
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * @param model
+	 */
 	public SimpleCSConditionalSubItem(ISimpleCSModel model) {
 		super(model, ELEMENT_CONDITIONAL_SUBITEM);
 	}

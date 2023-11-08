@@ -106,6 +106,11 @@ public class TargetDefinitionPersistenceHelper {
 	 *            target definition to serialize
 	 * @param output
 	 *            output stream to write xml to
+	 * @throws CoreException
+	 * @throws ParserConfigurationException
+	 * @throws TransformerException
+	 * @throws IOException
+	 * @throws SAXException
 	 */
 	public static void persistXML(ITargetDefinition definition, OutputStream output)
 			throws CoreException, ParserConfigurationException, TransformerException, IOException, SAXException {
@@ -139,6 +144,10 @@ public class TargetDefinitionPersistenceHelper {
 	 *            definition to be filled with the result of deserialization
 	 * @param input
 	 *            stream to get xml input from
+	 * @throws CoreException
+	 * @throws ParserConfigurationException
+	 * @throws IOException
+	 * @throws SAXException
 	 */
 	public static void initFromXML(ITargetDefinition definition, InputStream input)
 			throws CoreException, ParserConfigurationException, SAXException, IOException {
@@ -209,6 +218,7 @@ public class TargetDefinitionPersistenceHelper {
 	 * Returns the value of any text nodes stored as children of the given element
 	 * @param element the element to check for text content
 	 * @return string containing text content of element or empty string
+	 * @throws DOMException
 	 */
 	static String getTextContent(Element element) throws DOMException {
 		NodeList children = element.getChildNodes();

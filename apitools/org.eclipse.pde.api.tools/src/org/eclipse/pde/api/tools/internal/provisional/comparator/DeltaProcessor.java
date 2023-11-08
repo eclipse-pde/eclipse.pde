@@ -61,6 +61,7 @@ public class DeltaProcessor {
 	/**
 	 * Returns if the delta is compatible or not
 	 *
+	 * @param delta
 	 * @return true if the delta represents a compatible change or not
 	 */
 	static boolean isCompatible0(IDelta delta) {
@@ -104,6 +105,7 @@ public class DeltaProcessor {
 	/**
 	 * Returns if the API baseline is compatible
 	 *
+	 * @param delta
 	 * @return true if compatible, false otherwise
 	 */
 	private static boolean isApiProfileCompatible(IDelta delta) {
@@ -125,6 +127,7 @@ public class DeltaProcessor {
 	/**
 	 * Returns if the API component is compatible
 	 *
+	 * @param delta
 	 * @return true if compatible, false otherwise
 	 */
 	private static boolean isApiComponentCompatible(IDelta delta) {
@@ -149,6 +152,7 @@ public class DeltaProcessor {
 	/**
 	 * Returns if the annotation is compatible or not
 	 *
+	 * @param delta
 	 * @return true if compatible, false otherwise
 	 */
 	private static boolean isAnnotationCompatible(IDelta delta) {
@@ -196,6 +200,7 @@ public class DeltaProcessor {
 	/**
 	 * Returns if the method is compatible or not
 	 *
+	 * @param delta
 	 * @return true if compatible, false otherwise
 	 */
 	private static boolean isMethodCompatible(IDelta delta) {
@@ -249,6 +254,7 @@ public class DeltaProcessor {
 	/**
 	 * Returns if the field is compatible or not
 	 *
+	 * @param delta
 	 * @return true if compatible, false otherwise
 	 */
 	private static boolean isFieldCompatible(IDelta delta) {
@@ -327,6 +333,7 @@ public class DeltaProcessor {
 	/**
 	 * Returns if the constructor is compatible or not
 	 *
+	 * @param delta
 	 * @return true if compatible, false otherwise
 	 */
 	private static boolean isConstructorCompatible(IDelta delta) {
@@ -373,6 +380,7 @@ public class DeltaProcessor {
 	/**
 	 * Returns if the enum is compatible or not
 	 *
+	 * @param delta
 	 * @return true if compatible, false otherwise
 	 */
 	private static boolean isEnumCompatible(IDelta delta) {
@@ -428,6 +436,7 @@ public class DeltaProcessor {
 	/**
 	 * Returns if a class file is compatible
 	 *
+	 * @param delta
 	 * @return true if compatible, false otherwise
 	 */
 	private static boolean isClassCompatible(IDelta delta) {
@@ -526,6 +535,7 @@ public class DeltaProcessor {
 	/**
 	 * Returns if the interface element is compatible
 	 *
+	 * @param delta
 	 * @return true if compatible, false otherwise
 	 */
 	private static boolean isTypeParameterCompatible(IDelta delta) {
@@ -566,6 +576,7 @@ public class DeltaProcessor {
 	/**
 	 * Returns if the interface element is compatible
 	 *
+	 * @param delta
 	 * @return true if compatible, false otherwise
 	 */
 	private static boolean isInterfaceCompatible(IDelta delta) {

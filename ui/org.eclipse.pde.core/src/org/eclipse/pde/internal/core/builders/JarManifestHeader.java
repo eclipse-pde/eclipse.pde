@@ -33,6 +33,9 @@ public class JarManifestHeader implements IHeader {
 
 	/**
 	 *
+	 * @param name
+	 * @param value
+	 * @param lineNumber
 	 * @param errorReporter
 	 *            JarManinfestErrorReporter or null
 	 */

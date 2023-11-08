@@ -35,6 +35,7 @@ import org.osgi.framework.Version;
 /**
  * Class that computes autocompletions for attribute values. Example:
  * <pre> &ltunit id="org.^" </pre> where ^ is autocomplete call.
+ *
  */
 public class AttributeValueCompletionProcessor extends DelegateProcessor {
 

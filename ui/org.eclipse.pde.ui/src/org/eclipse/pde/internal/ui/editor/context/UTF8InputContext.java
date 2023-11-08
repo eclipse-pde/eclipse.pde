@@ -20,6 +20,10 @@ import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.ui.IEditorInput;
 
 public abstract class UTF8InputContext extends InputContext {
+	/**
+	 * @param editor
+	 * @param input
+	 */
 	public UTF8InputContext(PDEFormEditor editor, IEditorInput input, boolean primary) {
 		super(editor, input, primary);
 	}

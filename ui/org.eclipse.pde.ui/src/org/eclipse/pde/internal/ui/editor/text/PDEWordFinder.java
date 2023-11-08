@@ -21,15 +21,21 @@ import org.eclipse.jface.text.Region;
 
 /**
  * PDEWordFinder
+ *
  */
 public class PDEWordFinder {
 
+	/**
+	 *
+	 */
 	public PDEWordFinder() {
 		// NO-OP
 	}
 
 	/**
 	 * Copied from <code>org.eclipse.jdt.internal.ui.text.JavaWordFinder</code>
+	 * @param document
+	 * @param offset
 	 */
 	public static IRegion findWord(IDocument document, int offset) {
 

@@ -343,6 +343,7 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 	 *
 	 * @param previous previous container to grab information from or <code>null</code> if a new container should be created
 	 * @return a new or modified bundle container
+	 * @throws CoreException
 	 */
 	protected ITargetLocation createContainer(ITargetLocation previous) throws CoreException {
 		return getTargetPlatformService().newDirectoryLocation(fInstallLocation.getText());

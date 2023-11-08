@@ -182,6 +182,7 @@ public class TargetPersistence36Helper {
 	 *
 	 * @param location document element representing a bundle container
 	 * @return target location instance
+	 * @throws CoreException
 	 */
 	private static ITargetLocation deserializeBundleContainer(Element location) throws CoreException {
 		String path = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_LOCATION_PATH);

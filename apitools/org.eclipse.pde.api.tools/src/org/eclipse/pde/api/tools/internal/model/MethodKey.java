@@ -63,6 +63,8 @@ public class MethodKey {
 	 * <li>both are <code>null</code></li>
 	 * </ul>
 	 *
+	 * @param sig1
+	 * @param sig2
 	 * @return <code>true</code> if the signatures are equal <code>false</code>
 	 *         otherwise
 	 */

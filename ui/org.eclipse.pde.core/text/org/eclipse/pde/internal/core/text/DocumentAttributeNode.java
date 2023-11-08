@@ -29,6 +29,9 @@ public class DocumentAttributeNode extends DocumentXMLNode implements IDocumentA
 	private String fValue;
 	private String fName;
 
+	/**
+	 *
+	 */
 	public DocumentAttributeNode() {
 		fEnclosingElement = null;
 		fNameOffset = -1;

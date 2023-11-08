@@ -166,6 +166,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 
 	/**
 	 * Create the import choices group
+	 * @param container
 	 */
 	private void createImportChoicesGroup(Composite container) {
 		Group importChoices = SWTFactory.createGroup(container, PDEUIMessages.ImportWizard_FirstPage_importGroup, 1, 1, GridData.FILL_HORIZONTAL);
@@ -175,6 +176,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 
 	/**
 	 * Create the import options group
+	 * @param container
 	 */
 	private void createImportOptionsGroup(Composite container) {
 		Group options = SWTFactory.createGroup(container, PDEUIMessages.ImportWizard_FirstPage_importAs, 1, 1, GridData.FILL_HORIZONTAL);
@@ -295,6 +297,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 
 	/**
 	 * Creates the directory group
+	 * @param parent
 	 */
 	private void createImportFromGroup(Composite parent) {
 		Group composite = SWTFactory.createGroup(parent, PDEUIMessages.ImportWizard_FirstPage_importFrom, 3, 1, GridData.FILL_HORIZONTAL);
@@ -514,6 +517,8 @@ public class PluginImportWizardFirstPage extends WizardPage {
 
 	/**
 	 * Resolves the plug-ins at the given the base location. Uses plug-ins directory if present.
+	 *
+	 * @param location
 	 */
 	private void resolveArbitraryLocation(String location) {
 		ITargetPlatformService service = getTargetPlatformService();

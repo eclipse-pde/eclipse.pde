@@ -69,6 +69,8 @@ public class ApiTypeContainerTests {
 
 	/**
 	 * Tests retrieving package names from an archive.
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testArchivePackageNames() throws CoreException {
@@ -77,6 +79,8 @@ public class ApiTypeContainerTests {
 
 	/**
 	 * Tests retrieving package names from an directory.
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testDirectoryPackageNames() throws CoreException {
@@ -87,6 +91,7 @@ public class ApiTypeContainerTests {
 	 * Tests retrieving package names.
 	 *
 	 * @param container class file container
+	 * @throws CoreException
 	 */
 	protected void doTestPackageNames(IApiTypeContainer container) throws CoreException {
 		String[] packageNames = container.getPackageNames();
@@ -103,6 +108,8 @@ public class ApiTypeContainerTests {
 
 	/**
 	 * Tests visiting packages in an archive.
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testArchiveVistPackages() throws CoreException {
@@ -111,6 +118,8 @@ public class ApiTypeContainerTests {
 
 	/**
 	 * Tests visiting packages in an directory.
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testDirectoryVistPackages() throws CoreException {
@@ -121,6 +130,7 @@ public class ApiTypeContainerTests {
 	 * Test visiting packages
 	 *
 	 * @param container class file container
+	 * @throws CoreException
 	 */
 	protected void doTestVisitPackages(IApiTypeContainer container) throws CoreException {
 		final List<String> expectedPkgOrder = new ArrayList<>();
@@ -154,6 +164,8 @@ public class ApiTypeContainerTests {
 
 	/**
 	 * Tests visiting class files in an archive.
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testArchiveVisitClassFiles() throws CoreException {
@@ -162,6 +174,8 @@ public class ApiTypeContainerTests {
 
 	/**
 	 * Tests visiting class files in a directory.
+	 *
+	 * @throws CoreException
 	 */
 	@Test
 	public void testDirectoryVisitClassFiles() throws CoreException {
@@ -172,6 +186,7 @@ public class ApiTypeContainerTests {
 	 * Test visiting class files
 	 *
 	 * @param container class file container
+	 * @throws CoreException
 	 */
 	protected void doTestVisitClassFiles(IApiTypeContainer container) throws CoreException {
 		final Map<String, List<String>> expectedTypes = new HashMap<>();

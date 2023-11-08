@@ -83,6 +83,7 @@ public class TracingPropertySource {
 		 *
 		 * @param target
 		 *            - the control to be decorated
+		 * @param enabled
 		 */
 		protected void createCommentDecorator(Control target) {
 			String commentText = getFormattedComment();

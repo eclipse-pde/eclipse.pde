@@ -120,8 +120,10 @@ public class XmlSearchReporter implements IApiSearchReporter {
 	/**
 	 * Resolves the id to use for the component in the mapping
 	 *
+	 * @param component
 	 * @return the id to use for the component in the mapping, includes the
 	 *         version information as well
+	 * @throws CoreException
 	 */
 	String getId(IApiComponent component) throws CoreException {
 		StringBuilder buffer = new StringBuilder();
