@@ -1,9 +1,11 @@
 package $packageName$;
 
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.*;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbench;
-import $pluginClass$;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * This class represents a preference page that
@@ -31,7 +33,8 @@ public class $pageClassName$
 
 	public $pageClassName$() {
 		super(GRID);
-		setPreferenceStore($activator$.getDefault().getPreferenceStore());
+		ScopedPreferenceStore scopedPreferenceStore = new ScopedPreferenceStore(InstanceScope.INSTANCE, String.valueOf(FrameworkUtil.getBundle(getClass()).getBundleId()));
+		setPreferenceStore(scopedPreferenceStore);
 		setDescription("A demonstration of a preference page implementation");
 	}
 	
@@ -61,9 +64,7 @@ public class $pageClassName$
 			new StringFieldEditor(PreferenceConstants.P_STRING, "A &text preference:", getFieldEditorParent()));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 	
