@@ -224,9 +224,7 @@ public class ApiQuickFixProcessor implements IQuickFixProcessor {
 	public static boolean needsBuildPropertiesChange(IFile file) {
 		if (file.exists()) {
 			Properties props = new Properties();
-			InputStream stream = null;
-			try {
-				stream = file.getContents();
+			try (InputStream stream = file.getContents()) {
 				props.load(file.getContents());
 				String entry = (String) props.get("additional.bundles"); //$NON-NLS-1$
 				if (entry != null) {
@@ -236,14 +234,6 @@ public class ApiQuickFixProcessor implements IQuickFixProcessor {
 				}
 			} catch (CoreException | IOException e) {
 				ApiUIPlugin.log(e);
-			} finally {
-				if (stream != null) {
-					try {
-						stream.close();
-					} catch (IOException e) {
-						ApiUIPlugin.log(e);
-					}
-				}
 			}
 		}
 		return true;

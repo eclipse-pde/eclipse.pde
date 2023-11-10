@@ -660,9 +660,7 @@ public class TagScanner {
 	public void scan(CompilationUnit source, IApiDescription description, IApiTypeContainer container, Map<String, String> options, IProgressMonitor monitor) throws CoreException {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, 2);
 		ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
-		InputStream inputStream = null;
-		try {
-			inputStream = source.getInputStream();
+		try (InputStream inputStream = source.getInputStream()) {
 			parser.setSource(Util.getInputStreamAsCharArray(inputStream, source.getEncoding()));
 		} catch (FileNotFoundException e) {
 			throw new CoreException(Status.error(MessageFormat.format("Compilation unit source not found: {0}", source.getName()), e)); //$NON-NLS-1$
@@ -671,14 +669,6 @@ public class TagScanner {
 				System.err.println(source.getName());
 			}
 			throw new CoreException(Status.error(MessageFormat.format("Error reading compilation unit: {0}", source.getName()), e)); //$NON-NLS-1$
-		} finally {
-			if (inputStream != null) {
-				try {
-					inputStream.close();
-				} catch (IOException e) {
-					ApiPlugin.log(e);
-				}
-			}
 		}
 		localmonitor.split(1);
 		Map<String, String> loptions = options;

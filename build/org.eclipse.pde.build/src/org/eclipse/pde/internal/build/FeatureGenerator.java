@@ -392,9 +392,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 
 		//Create feature.xml
 		File file = new File(directory, Constants.FEATURE_FILENAME_DESCRIPTOR);
-		OutputStream output = new BufferedOutputStream(new FileOutputStream(file));
-		XMLWriter writer = new XMLWriter(output);
-		try (writer) {
+		try (XMLWriter writer = new XMLWriter(new BufferedOutputStream(new FileOutputStream(file)))) {
 			Map<String, String> parameters = new LinkedHashMap<>();
 			Dictionary<String, String> environment = new Hashtable<>(3);
 

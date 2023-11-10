@@ -1003,21 +1003,14 @@ public final class Util {
 	 */
 	public static Properties getEEProfile(String eeId) {
 		String profileName = eeId + ".profile"; //$NON-NLS-1$
-		InputStream stream = Util.class.getResourceAsStream("profiles/" + profileName); //$NON-NLS-1$
-		if (stream != null) {
-			try {
+		try (InputStream stream = Util.class.getResourceAsStream("profiles/" + profileName)) { //$NON-NLS-1$
+			if (stream != null) {
 				Properties profile = new Properties();
 				profile.load(stream);
 				return profile;
-			} catch (IOException e) {
-				ApiPlugin.log(e);
-			} finally {
-				try {
-					stream.close();
-				} catch (IOException e) {
-					ApiPlugin.log(e);
-				}
 			}
+		} catch (IOException e) {
+			ApiPlugin.log(e);
 		}
 		return null;
 	}
@@ -1564,20 +1557,10 @@ public final class Util {
 				File apiDescription = new File(file, IApiCoreConstants.API_DESCRIPTION_XML_NAME);
 				return apiDescription.exists();
 			}
-			ZipFile zipFile = null;
-			try {
-				zipFile = new ZipFile(file);
+			try (ZipFile zipFile = new ZipFile(file)) {
 				return zipFile.getEntry(IApiCoreConstants.API_DESCRIPTION_XML_NAME) != null;
 			} catch (IOException e) {
 				// ignore
-			} finally {
-				try {
-					if (zipFile != null) {
-						zipFile.close();
-					}
-				} catch (IOException e) {
-					// ignore
-				}
 			}
 		}
 		return false;
@@ -1765,19 +1748,9 @@ public final class Util {
 	 * @throws IOException if an IOException occurs while saving the file
 	 */
 	public static void saveFile(File file, String contents) throws IOException {
-		BufferedWriter writer = null;
-		try {
-			writer = new BufferedWriter(new FileWriter(file));
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
 			writer.write(contents);
 			writer.flush();
-		} finally {
-			if (writer != null) {
-				try {
-					writer.close();
-				} catch (IOException e) {
-					// ignore
-				}
-			}
 		}
 	}
 
@@ -1789,21 +1762,11 @@ public final class Util {
 	 */
 	public static String getFileContentAsString(File file) {
 		String contents = null;
-		FileInputStream stream = null;
-		try {
-			stream = new FileInputStream(file);
+		try (FileInputStream stream = new FileInputStream(file)) {
 			char[] array = getInputStreamAsCharArray(stream, StandardCharsets.UTF_8);
 			contents = new String(array);
 		} catch (IOException ioe) {
 			ApiPlugin.log(ioe);
-		} finally {
-			if (stream != null) {
-				try {
-					stream.close();
-				} catch (IOException e) {
-					// ignore
-				}
-			}
 		}
 		return contents;
 	}
@@ -1929,26 +1892,21 @@ public final class Util {
 	 */
 	public static File getEEDescriptionFile() {
 		// generate a fake 1.6 ee file
-		File fakeEEFile = null;
-		PrintWriter writer = null;
 		try {
-			fakeEEFile = createTempFile("eefile", ".ee"); //$NON-NLS-1$ //$NON-NLS-2$
-			writer = new PrintWriter(new BufferedWriter(new FileWriter(fakeEEFile)));
-			writer.print("-Djava.home="); //$NON-NLS-1$
-			writer.println(System.getProperty("java.home")); //$NON-NLS-1$
-			writer.print("-Dee.bootclasspath="); //$NON-NLS-1$
-			writer.println(getJavaClassLibsAsString());
-			writer.println("-Dee.language.level=1.6"); //$NON-NLS-1$
-			writer.println("-Dee.class.library.level=JavaSE-1.6"); //$NON-NLS-1$
-			writer.flush();
-		} catch (IOException e) {
-			// ignore
-		} finally {
-			if (writer != null) {
-				writer.close();
+			File fakeEEFile = createTempFile("eefile", ".ee"); //$NON-NLS-1$ //$NON-NLS-2$
+			try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(fakeEEFile)))) {
+				writer.print("-Djava.home="); //$NON-NLS-1$
+				writer.println(System.getProperty("java.home")); //$NON-NLS-1$
+				writer.print("-Dee.bootclasspath="); //$NON-NLS-1$
+				writer.println(getJavaClassLibsAsString());
+				writer.println("-Dee.language.level=1.6"); //$NON-NLS-1$
+				writer.println("-Dee.class.library.level=JavaSE-1.6"); //$NON-NLS-1$
+				writer.flush();
+				return fakeEEFile;
 			}
+		} catch (IOException e) {
+			return null;
 		}
-		return fakeEEFile;
 	}
 
 	/**

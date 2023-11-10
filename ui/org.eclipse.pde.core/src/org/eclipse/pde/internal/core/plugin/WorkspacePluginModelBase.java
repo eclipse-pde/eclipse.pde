@@ -82,14 +82,10 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase i
 	}
 
 	public String getContents() {
-		try (StringWriter swriter = new StringWriter(); PrintWriter writer = new PrintWriter(swriter)) {
-			save(writer);
-			writer.flush();
-			return swriter.toString();
-		} catch (IOException e) {
-			PDECore.logException(e);
-			return ""; //$NON-NLS-1$
-		}
+		StringWriter swriter = new StringWriter();
+		PrintWriter writer = new PrintWriter(swriter);
+		save(writer);
+		return swriter.toString();
 	}
 
 	public IFile getFile() {

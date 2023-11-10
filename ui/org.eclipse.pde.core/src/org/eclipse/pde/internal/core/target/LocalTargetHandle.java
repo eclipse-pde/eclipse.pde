@@ -194,10 +194,8 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 
 	@Override
 	void save(ITargetDefinition definition) throws CoreException {
-		OutputStream stream = getOutputStream();
-		((TargetDefinition) definition).write(stream);
-		try {
-			stream.close();
+		try (OutputStream stream = getOutputStream()) {
+			((TargetDefinition) definition).write(stream);
 		} catch (IOException e) {
 			throw new CoreException(Status.error(NLS.bind(Messages.LocalTargetHandle_4, getFile().getName()), e));
 		}

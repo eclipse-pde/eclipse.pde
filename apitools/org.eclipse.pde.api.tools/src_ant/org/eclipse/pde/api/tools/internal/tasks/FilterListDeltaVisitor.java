@@ -64,7 +64,6 @@ public class FilterListDeltaVisitor extends DeltaXmlVisitor {
 		for (String string : nonExcludedElements) {
 			writer.println(string);
 		}
-		writer.close();
 		return String.valueOf(stringWriter.getBuffer());
 	}
 

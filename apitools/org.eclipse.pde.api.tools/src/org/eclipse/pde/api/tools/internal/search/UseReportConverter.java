@@ -862,21 +862,10 @@ public class UseReportConverter extends HTMLConvertor {
 	 */
 	protected String[] getMissingBundles(File missingfile) throws Exception {
 		MissingHandler handler = new MissingHandler();
-		InputStream inputFile = null;
-		try{
-			inputFile = new FileInputStream(missingfile.getAbsolutePath());
+		try (InputStream inputFile = new FileInputStream(missingfile.getAbsolutePath())) {
 			getParser().parse(inputFile, handler);
-		}
-		catch (IOException ioe) {
+		} catch (IOException ioe) {
 			ApiPlugin.log(ioe);
-		} finally {
-			if (inputFile != null) {
-				try {
-					inputFile.close();
-				} catch (IOException e) {
-					// ignore
-				}
-			}
 		}
 		return handler.missing.toArray(new String[handler.missing.size()]);
 	}
@@ -897,38 +886,33 @@ public class UseReportConverter extends HTMLConvertor {
 	 */
 	void writeMetaPage(File htmlroot) throws Exception {
 		File meta = null;
-		PrintWriter writer = null;
-		try {
-			File file = new File(getReportsRoot(), "meta.xml"); //$NON-NLS-1$
-			if (!file.exists()) {
-				// do nothing if no meta.xml file
-				return;
-			}
-			String filename = "meta"; //$NON-NLS-1$
-			meta = new File(htmlroot, filename + HTML_EXTENSION);
-			if (!meta.exists()) {
-				meta.createNewFile();
-			}
-			StringBuilder buffer = new StringBuilder();
-			buffer.append(HTML_HEADER);
-			buffer.append(OPEN_HTML).append(OPEN_HEAD).append(CONTENT_TYPE_META);
-			buffer.append(OPEN_TITLE).append(SearchMessages.UseReportConverter_use_scan_info).append(CLOSE_TITLE);
-			buffer.append(CLOSE_HEAD);
-			buffer.append(OPEN_BODY);
-			buffer.append(OPEN_H3).append(SearchMessages.UseReportConverter_use_scan_info).append(CLOSE_H3);
-			writeMetadataSummary(buffer);
-			buffer.append(W3C_FOOTER);
+		File file = new File(getReportsRoot(), "meta.xml"); //$NON-NLS-1$
+		if (!file.exists()) {
+			// do nothing if no meta.xml file
+			return;
+		}
+		String filename = "meta"; //$NON-NLS-1$
+		meta = new File(htmlroot, filename + HTML_EXTENSION);
+		if (!meta.exists()) {
+			meta.createNewFile();
+		}
+		StringBuilder buffer = new StringBuilder();
+		buffer.append(HTML_HEADER);
+		buffer.append(OPEN_HTML).append(OPEN_HEAD).append(CONTENT_TYPE_META);
+		buffer.append(OPEN_TITLE).append(SearchMessages.UseReportConverter_use_scan_info).append(CLOSE_TITLE);
+		buffer.append(CLOSE_HEAD);
+		buffer.append(OPEN_BODY);
+		buffer.append(OPEN_H3).append(SearchMessages.UseReportConverter_use_scan_info).append(CLOSE_H3);
+		writeMetadataSummary(buffer);
+		buffer.append(W3C_FOOTER);
 
-			// write file
-			writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(meta), StandardCharsets.UTF_8));
+		// write file
+		try (PrintWriter writer = new PrintWriter(
+				new OutputStreamWriter(new FileOutputStream(meta), StandardCharsets.UTF_8))) {
 			writer.println(buffer.toString());
 			writer.flush();
 		} catch (IOException ioe) {
 			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, meta.getAbsolutePath()));
-		} finally {
-			if (writer != null) {
-				writer.close();
-			}
 		}
 	}
 
@@ -940,7 +924,6 @@ public class UseReportConverter extends HTMLConvertor {
 	protected boolean writeMissingBundlesPage(final File htmlroot) throws Exception {
 		boolean hasMissing = false;
 		File missing = null;
-		PrintWriter writer = null;
 		try {
 			String filename = "missing"; //$NON-NLS-1$
 			missing = new File(htmlroot, filename + HTML_EXTENSION);
@@ -982,15 +965,13 @@ public class UseReportConverter extends HTMLConvertor {
 			buffer.append(W3C_FOOTER);
 
 			// write file
-			writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(missing), StandardCharsets.UTF_8));
-			writer.println(buffer.toString());
-			writer.flush();
+			try (PrintWriter writer = new PrintWriter(
+					new OutputStreamWriter(new FileOutputStream(missing), StandardCharsets.UTF_8))) {
+				writer.println(buffer.toString());
+				writer.flush();
+			}
 		} catch (IOException ioe) {
 			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, missing.getAbsolutePath()));
-		} finally {
-			if (writer != null) {
-				writer.close();
-			}
 		}
 		return hasMissing;
 	}
@@ -1001,7 +982,6 @@ public class UseReportConverter extends HTMLConvertor {
 	 */
 	void writeNotSearchedPage(final File htmlroot) throws Exception {
 		File originhtml = null;
-		InputStream defaultXsltInputStream = null;
 		try {
 			String filename = "not_searched"; //$NON-NLS-1$
 			originhtml = new File(htmlroot, filename + HTML_EXTENSION);
@@ -1013,20 +993,20 @@ public class UseReportConverter extends HTMLConvertor {
 				// try <root>/xml in case a raw report root is specified
 				xml = new File(getReportsRoot() + File.separator + "xml", filename + XML_EXTENSION); //$NON-NLS-1$
 			}
-			defaultXsltInputStream = UseReportConverter.class.getResourceAsStream(getNotSearchedXSLPath());
-			Source xslt = null;
-			if (defaultXsltInputStream != null) {
-				xslt = new StreamSource(new BufferedInputStream(defaultXsltInputStream));
-			}
-			if (xslt == null) {
-				throw new Exception(SearchMessages.UseReportConverter_no_xstl_specified);
-			}
-			if (xml.exists()) {
-				try {
-					applyXSLT(xslt, xml, originhtml);
-				} catch (TransformerException e) {
-					useNotSearchedXml = true;
-					ApiPlugin.logErrorMessage(SearchMessages.UseReportConverter_te_applying_xslt_skipped);
+			try (InputStream defaultXsltInputStream = UseReportConverter.class.getResourceAsStream(getNotSearchedXSLPath())) {
+				Source xslt = (defaultXsltInputStream != null)
+						? xslt = new StreamSource(new BufferedInputStream(defaultXsltInputStream))
+						: null;
+				if (xslt == null) {
+					throw new Exception(SearchMessages.UseReportConverter_no_xstl_specified);
+				}
+				if (xml.exists()) {
+					try {
+						applyXSLT(xslt, xml, originhtml);
+					} catch (TransformerException e) {
+						useNotSearchedXml = true;
+						ApiPlugin.logErrorMessage(SearchMessages.UseReportConverter_te_applying_xslt_skipped);
+					}
 				}
 			}
 		} catch (IOException ioe) {
@@ -1035,10 +1015,6 @@ public class UseReportConverter extends HTMLConvertor {
 			throw new Exception(SearchMessages.UseReportConverter_te_applying_xslt_skipped, te);
 		} catch (CoreException e) {
 			throw new Exception(NLS.bind(SearchMessages.UseReportConverter_coreexception_writing_html_file, originhtml.getAbsolutePath()));
-		} finally {
-			if (defaultXsltInputStream != null) {
-				defaultXsltInputStream.close();
-			}
 		}
 	}
 
@@ -1058,7 +1034,6 @@ public class UseReportConverter extends HTMLConvertor {
 	 * @param referees the listing of referencing bundles
 	 */
 	protected void writeReferencedMemberPage(final Report report, final List<Type> referees) throws Exception {
-		PrintWriter writer = null;
 		File originhtml = null;
 		try {
 			File htmlroot = new File(getHtmlLocation(), report.name);
@@ -1123,15 +1098,13 @@ public class UseReportConverter extends HTMLConvertor {
 			buffer.append(OPEN_P).append("<a href=\"../index.html\">").append(SearchMessages.UseReportConverter_back_to_bundle_index).append(CLOSE_A).append(CLOSE_P); //$NON-NLS-1$
 			buffer.append(W3C_FOOTER);
 
-			writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(originhtml), StandardCharsets.UTF_8));
-			writer.println(buffer.toString());
-			writer.flush();
+			try (PrintWriter writer = new PrintWriter(
+					new OutputStreamWriter(new FileOutputStream(originhtml), StandardCharsets.UTF_8))) {
+				writer.println(buffer.toString());
+				writer.flush();
+			}
 		} catch (IOException ioe) {
 			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, originhtml.getAbsolutePath()));
-		} finally {
-			if (writer != null) {
-				writer.close();
-			}
 		}
 	}
 
@@ -1174,55 +1147,52 @@ public class UseReportConverter extends HTMLConvertor {
 	 * Writes the page that displays all of the members used in a type
 	 */
 	void writeTypePage(Map<IMemberDescriptor, Member> map, Type type, File typefile, String typename) throws Exception {
-		PrintWriter writer = null;
-		try {
-			StringBuilder buffer = new StringBuilder();
-			buffer.append(HTML_HEADER);
-			buffer.append(OPEN_HTML).append(OPEN_HEAD).append(CONTENT_TYPE_META);
-			buffer.append(REF_STYLE);
-			buffer.append(REF_SCRIPT);
-			buffer.append(OPEN_TITLE).append(getTypeTitle(typename)).append(CLOSE_TITLE);
-			buffer.append(CLOSE_HEAD);
-			buffer.append(OPEN_BODY);
-			buffer.append(OPEN_H3).append(getTypeTitle(typename)).append(CLOSE_H3);
-			buffer.append(getTypeCountSummary(typename, type.counts, map.size()));
-			buffer.append(OPEN_H4).append(getTypeDetailsHeader()).append(CLOSE_H4);
-			buffer.append(OPEN_P).append(getTypeDetails()).append(CLOSE_P);
-			buffer.append("<div align=\"left\" class=\"main\">"); //$NON-NLS-1$
-			buffer.append("<table border=\"1\" width=\"80%\">\n"); //$NON-NLS-1$
+		StringBuilder buffer = new StringBuilder();
+		buffer.append(HTML_HEADER);
+		buffer.append(OPEN_HTML).append(OPEN_HEAD).append(CONTENT_TYPE_META);
+		buffer.append(REF_STYLE);
+		buffer.append(REF_SCRIPT);
+		buffer.append(OPEN_TITLE).append(getTypeTitle(typename)).append(CLOSE_TITLE);
+		buffer.append(CLOSE_HEAD);
+		buffer.append(OPEN_BODY);
+		buffer.append(OPEN_H3).append(getTypeTitle(typename)).append(CLOSE_H3);
+		buffer.append(getTypeCountSummary(typename, type.counts, map.size()));
+		buffer.append(OPEN_H4).append(getTypeDetailsHeader()).append(CLOSE_H4);
+		buffer.append(OPEN_P).append(getTypeDetails()).append(CLOSE_P);
+		buffer.append("<div align=\"left\" class=\"main\">"); //$NON-NLS-1$
+		buffer.append("<table border=\"1\" width=\"80%\">\n"); //$NON-NLS-1$
+		buffer.append(OPEN_TR);
+		buffer.append("<td bgcolor=\"").append(REFERENCES_TABLE_HEADER_COLOUR).append("\">").append(OPEN_B) //$NON-NLS-1$ //$NON-NLS-2$
+				.append(SearchMessages.UseReportConverter_member).append("</b></td>\n"); //$NON-NLS-1$
+		buffer.append(CLOSE_TR);
+		IElementDescriptor desc = null;
+		for (Entry<IMemberDescriptor, Member> entry : map.entrySet()) {
+			desc = entry.getKey();
 			buffer.append(OPEN_TR);
-			buffer.append("<td bgcolor=\"").append(REFERENCES_TABLE_HEADER_COLOUR).append("\">").append(OPEN_B).append(SearchMessages.UseReportConverter_member).append("</b></td>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			buffer.append(CLOSE_TR);
-			IElementDescriptor desc = null;
-			for (Entry<IMemberDescriptor, Member> entry : map.entrySet()) {
-				desc = entry.getKey();
-				buffer.append(OPEN_TR);
-				buffer.append("<td align=\"left\">\n"); //$NON-NLS-1$
-				buffer.append(OPEN_B);
-				buffer.append("<a href=\"javascript:void(0)\" class=\"typeslnk\" onclick=\"expand(this)\" title=\""); //$NON-NLS-1$
-				buffer.append(getDisplayName(desc, true, true)).append("\">\n"); //$NON-NLS-1$
-				buffer.append("<span>[+] </span>").append(getDisplayName(desc, true, false)).append("\n"); //$NON-NLS-1$//$NON-NLS-2$
-				buffer.append(CLOSE_A).append(CLOSE_B);
-				buffer.append("<div colspan=\"6\" class=\"types\">\n"); //$NON-NLS-1$
-				buffer.append(getReferencesTable(entry.getValue())).append("\n"); //$NON-NLS-1$
-				buffer.append(CLOSE_DIV);
-				buffer.append(CLOSE_TR);
-			}
-			buffer.append(CLOSE_TABLE);
+			buffer.append("<td align=\"left\">\n"); //$NON-NLS-1$
+			buffer.append(OPEN_B);
+			buffer.append("<a href=\"javascript:void(0)\" class=\"typeslnk\" onclick=\"expand(this)\" title=\""); //$NON-NLS-1$
+			buffer.append(getDisplayName(desc, true, true)).append("\">\n"); //$NON-NLS-1$
+			buffer.append("<span>[+] </span>").append(getDisplayName(desc, true, false)).append("\n"); //$NON-NLS-1$//$NON-NLS-2$
+			buffer.append(CLOSE_A).append(CLOSE_B);
+			buffer.append("<div colspan=\"6\" class=\"types\">\n"); //$NON-NLS-1$
+			buffer.append(getReferencesTable(entry.getValue())).append("\n"); //$NON-NLS-1$
 			buffer.append(CLOSE_DIV);
-			buffer.append(OPEN_P).append("<a href=\"index.html\">").append(SearchMessages.UseReportConverter_back_to_bundle_index).append(CLOSE_A).append(CLOSE_P); //$NON-NLS-1$
-			buffer.append(W3C_FOOTER);
+			buffer.append(CLOSE_TR);
+		}
+		buffer.append(CLOSE_TABLE);
+		buffer.append(CLOSE_DIV);
+		buffer.append(OPEN_P).append("<a href=\"index.html\">") //$NON-NLS-1$
+				.append(SearchMessages.UseReportConverter_back_to_bundle_index).append(CLOSE_A).append(CLOSE_P);
+		buffer.append(W3C_FOOTER);
 
-			// write the file
-			writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(typefile), StandardCharsets.UTF_8));
+		// write the file
+		try (PrintWriter writer = new PrintWriter(
+				new OutputStreamWriter(new FileOutputStream(typefile), StandardCharsets.UTF_8))) {
 			writer.print(buffer.toString());
 			writer.flush();
 		} catch (IOException ioe) {
 			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, typefile.getAbsolutePath()));
-		} finally {
-			if (writer != null) {
-				writer.close();
-			}
 		}
 	}
 
@@ -1359,7 +1329,6 @@ public class UseReportConverter extends HTMLConvertor {
 	protected void writeIndexPage(List<?> scanResult) throws Exception {
 		Collections.sort(scanResult, (o1, o2) -> ((Report) o1).name.compareTo(((Report) o2).name));
 
-		PrintWriter writer = null;
 		try {
 			File reportIndex = new File(getHtmlLocation(), "index.html"); //$NON-NLS-1$
 			if (!reportIndex.exists()) {
@@ -1422,15 +1391,13 @@ public class UseReportConverter extends HTMLConvertor {
 			buffer.append(CLOSE_BODY).append(CLOSE_HTML);
 
 			// write the file
-			writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(reportIndex), StandardCharsets.UTF_8));
-			writer.print(buffer.toString());
-			writer.flush();
+			try (PrintWriter writer = new PrintWriter(
+					new OutputStreamWriter(new FileOutputStream(reportIndex), StandardCharsets.UTF_8))) {
+				writer.print(buffer.toString());
+				writer.flush();
+			}
 		} catch (IOException e) {
 			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, getReportIndex().getAbsolutePath()));
-		} finally {
-			if (writer != null) {
-				writer.close();
-			}
 		}
 	}
 

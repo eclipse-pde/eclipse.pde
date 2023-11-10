@@ -240,75 +240,70 @@ public class XmlReferenceDescriptorWriter {
 			Map<String, Set<IReferenceDescriptor>> map, int visibility)
 			throws CoreException, IOException {
 		if (parent.exists()) {
-			BufferedWriter writer = null;
-			try {
-				Document doc = null;
-				Element root = null;
-				int count = 0;
-				File out = new File(parent, name + ".xml"); //$NON-NLS-1$
-				if (out.exists()) {
-					try {
-						try (FileInputStream inputStream = new FileInputStream(out)) {
-							doc = this.parser.parse(inputStream);
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-						if (doc == null) {
-							return;
-						}
-						root = doc.getDocumentElement();
-						String value = root.getAttribute(IApiXmlConstants.ATTR_REFERENCE_COUNT);
-						count = Integer.parseInt(value);
-					} catch (SAXException se) {
-						se.printStackTrace();
+			Document doc = null;
+			Element root = null;
+			int count = 0;
+			File out = new File(parent, name + ".xml"); //$NON-NLS-1$
+			if (out.exists()) {
+				try {
+					try (FileInputStream inputStream = new FileInputStream(out)) {
+						doc = this.parser.parse(inputStream);
+					} catch (IOException e) {
+						e.printStackTrace();
 					}
-				} else {
-					doc = Util.newDocument();
-					root = doc.createElement(IApiXmlConstants.REFERENCES);
-					doc.appendChild(root);
-					root.setAttribute(IApiXmlConstants.ATTR_REFERENCE_VISIBILITY, Integer.toString(visibility));
-					root.setAttribute(IApiXmlConstants.ATTR_ORIGIN, origin);
-					root.setAttribute(IApiXmlConstants.ATTR_REFEREE, referee);
-					root.setAttribute(IApiXmlConstants.ATTR_NAME, getFormattedTypeName(name));
-					if (alternate != null) {
-						root.setAttribute(IApiXmlConstants.ATTR_ALTERNATE, getId(alternate));
+					if (doc == null) {
+						return;
 					}
+					root = doc.getDocumentElement();
+					String value = root.getAttribute(IApiXmlConstants.ATTR_REFERENCE_COUNT);
+					count = Integer.parseInt(value);
+				} catch (SAXException se) {
+					se.printStackTrace();
 				}
-				if (doc == null || root == null) {
-					return;
+			} else {
+				doc = Util.newDocument();
+				root = doc.createElement(IApiXmlConstants.REFERENCES);
+				doc.appendChild(root);
+				root.setAttribute(IApiXmlConstants.ATTR_REFERENCE_VISIBILITY, Integer.toString(visibility));
+				root.setAttribute(IApiXmlConstants.ATTR_ORIGIN, origin);
+				root.setAttribute(IApiXmlConstants.ATTR_REFEREE, referee);
+				root.setAttribute(IApiXmlConstants.ATTR_NAME, getFormattedTypeName(name));
+				if (alternate != null) {
+					root.setAttribute(IApiXmlConstants.ATTR_ALTERNATE, getId(alternate));
 				}
-				for (Entry<String, Set<IReferenceDescriptor>> entry : map.entrySet()) {
-					String tname = entry.getKey();
-					Element telement = findTypeElement(root, tname);
-					if (telement == null) {
-						telement = doc.createElement(IApiXmlConstants.ELEMENT_TARGET);
-						telement.setAttribute(IApiXmlConstants.ATTR_NAME, tname);
-						root.appendChild(telement);
-					}
-					Set<IReferenceDescriptor> refs = entry.getValue();
-					if (refs != null) {
-						for (Iterator<IReferenceDescriptor> iter2 = refs.iterator(); iter2.hasNext();) {
-							count++;
-							IReferenceDescriptor ref = iter2.next();
-							writeReference(doc, telement, ref);
-							if (!iter2.hasNext()) {
-								// set qualified referenced attributes
-								IMemberDescriptor resolved = ref.getReferencedMember();
-								if (resolved != null) {
-									addMemberDetails(telement, resolved);
-								}
+			}
+			if (doc == null || root == null) {
+				return;
+			}
+			for (Entry<String, Set<IReferenceDescriptor>> entry : map.entrySet()) {
+				String tname = entry.getKey();
+				Element telement = findTypeElement(root, tname);
+				if (telement == null) {
+					telement = doc.createElement(IApiXmlConstants.ELEMENT_TARGET);
+					telement.setAttribute(IApiXmlConstants.ATTR_NAME, tname);
+					root.appendChild(telement);
+				}
+				Set<IReferenceDescriptor> refs = entry.getValue();
+				if (refs != null) {
+					for (Iterator<IReferenceDescriptor> iter2 = refs.iterator(); iter2.hasNext();) {
+						count++;
+						IReferenceDescriptor ref = iter2.next();
+						writeReference(doc, telement, ref);
+						if (!iter2.hasNext()) {
+							// set qualified referenced attributes
+							IMemberDescriptor resolved = ref.getReferencedMember();
+							if (resolved != null) {
+								addMemberDetails(telement, resolved);
 							}
 						}
 					}
 				}
-				root.setAttribute(IApiXmlConstants.ATTR_REFERENCE_COUNT, Integer.toString(count));
-				writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(out), StandardCharsets.UTF_8));
+			}
+			root.setAttribute(IApiXmlConstants.ATTR_REFERENCE_COUNT, Integer.toString(count));
+			try (BufferedWriter writer = new BufferedWriter(
+					new OutputStreamWriter(new FileOutputStream(out), StandardCharsets.UTF_8))) {
 				writer.write(Util.serializeDocument(doc));
 				writer.flush();
-			} finally {
-				if (writer != null) {
-					writer.close();
-				}
 			}
 		}
 	}

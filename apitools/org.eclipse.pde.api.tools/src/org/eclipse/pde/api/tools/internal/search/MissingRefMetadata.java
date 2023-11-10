@@ -126,35 +126,30 @@ public class MissingRefMetadata implements IMetadata {
 
 	@Override
 	public void serializeToFile(File file) throws IOException, CoreException {
-		BufferedWriter writer = null;
-		try {
-			Document doc = Util.newDocument();
-			Element root = doc.createElement(MissingRefMetadata.METADATA);
-			doc.appendChild(root);
+		Document doc = Util.newDocument();
+		Element root = doc.createElement(MissingRefMetadata.METADATA);
+		doc.appendChild(root);
 
-			Element child = doc.createElement(MissingRefMetadata.PROFILE);
-			root.appendChild(child);
-			child.setAttribute(MissingRefMetadata.VALUE, profile);
+		Element child = doc.createElement(MissingRefMetadata.PROFILE);
+		root.appendChild(child);
+		child.setAttribute(MissingRefMetadata.VALUE, profile);
 
-			child = doc.createElement(MissingRefMetadata.RUNATDATE);
-			root.appendChild(child);
-			child.setAttribute(MissingRefMetadata.VALUE, runatdate);
+		child = doc.createElement(MissingRefMetadata.RUNATDATE);
+		root.appendChild(child);
+		child.setAttribute(MissingRefMetadata.VALUE, runatdate);
 
-			child = doc.createElement(MissingRefMetadata.REPORTLOCATION);
-			root.appendChild(child);
-			child.setAttribute(MissingRefMetadata.VALUE, reportlocation);
+		child = doc.createElement(MissingRefMetadata.REPORTLOCATION);
+		root.appendChild(child);
+		child.setAttribute(MissingRefMetadata.VALUE, reportlocation);
 
-			child = doc.createElement(MissingRefMetadata.APIUUSESCANS);
-			root.appendChild(child);
-			child.setAttribute(MissingRefMetadata.VALUE, apiusescans);
+		child = doc.createElement(MissingRefMetadata.APIUUSESCANS);
+		root.appendChild(child);
+		child.setAttribute(MissingRefMetadata.VALUE, apiusescans);
 
-			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
+		try (BufferedWriter writer = new BufferedWriter(
+				new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8))) {
 			writer.write(Util.serializeDocument(doc));
 			writer.flush();
-		} finally {
-			if (writer != null) {
-				writer.close();
-			}
 		}
 	}
 

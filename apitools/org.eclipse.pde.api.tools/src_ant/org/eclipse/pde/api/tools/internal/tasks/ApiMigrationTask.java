@@ -163,24 +163,18 @@ public final class ApiMigrationTask extends CommonUtilsTask {
 			StringWriter out = new StringWriter();
 			PrintWriter writer = new PrintWriter(out);
 			writer.println(NLS.bind(Messages.ApiUseTask_missing_report_location, new String[] { this.reportLocation }));
-			writer.flush();
-			writer.close();
 			throw new BuildException(String.valueOf(out.getBuffer()));
 		}
 		if (this.currentBaselineLocation == null) {
 			StringWriter out = new StringWriter();
 			PrintWriter writer = new PrintWriter(out);
 			writer.println(NLS.bind(Messages.ApiUseTask_missing_baseline_argument, new String[] { this.currentBaselineLocation }));
-			writer.flush();
-			writer.close();
 			throw new BuildException(String.valueOf(out.getBuffer()));
 		}
 		if (this.scanLocation == null) {
 			StringWriter out = new StringWriter();
 			PrintWriter writer = new PrintWriter(out);
 			writer.println(NLS.bind(Messages.ApiMigrationTask_missing_scan_location, new String[] { this.scanLocation }));
-			writer.flush();
-			writer.close();
 			throw new BuildException(String.valueOf(out.getBuffer()));
 		}
 		String xmlLocation = scanLocation;
@@ -189,24 +183,18 @@ public final class ApiMigrationTask extends CommonUtilsTask {
 			StringWriter out = new StringWriter();
 			PrintWriter writer = new PrintWriter(out);
 			writer.println(NLS.bind(Messages.ApiMigrationTask_scan_location_not_exist, new String[] { this.scanLocation }));
-			writer.flush();
-			writer.close();
 			throw new BuildException(String.valueOf(out.getBuffer()));
 		}
 		if (!file.isDirectory()) {
 			StringWriter out = new StringWriter();
 			PrintWriter writer = new PrintWriter(out);
 			writer.println(NLS.bind(Messages.ApiMigrationTask_scan_location_not_dir, new String[] { this.scanLocation }));
-			writer.flush();
-			writer.close();
 			throw new BuildException(String.valueOf(out.getBuffer()));
 		}
 		if (this.reportLocation.equals(scanLocation)) {
 			StringWriter out = new StringWriter();
 			PrintWriter writer = new PrintWriter(out);
 			writer.println(NLS.bind(Messages.ApiMigrationTask_scan_locatoin_same_as_report_location, new String[] { this.scanLocation }));
-			writer.flush();
-			writer.close();
 			throw new BuildException(String.valueOf(out.getBuffer()));
 		}
 

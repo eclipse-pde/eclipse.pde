@@ -460,7 +460,6 @@ public class ConsumerReportConvertor extends UseReportConverter {
 	protected void writeIndexPage(List<?> scanResult) throws Exception {
 		Collections.sort(scanResult, (o1, o2) -> ((Consumer) o1).name.compareTo(((Consumer) o2).name));
 
-		PrintWriter writer = null;
 		try {
 			File reportIndex = new File(getHtmlLocation(), "index.html"); //$NON-NLS-1$
 			if (!reportIndex.exists()) {
@@ -522,15 +521,12 @@ public class ConsumerReportConvertor extends UseReportConverter {
 			buffer.append(CLOSE_BODY).append(CLOSE_HTML);
 
 			// write the file
-			writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(reportIndex), StandardCharsets.UTF_8));
-			writer.print(buffer.toString());
-			writer.flush();
+			try (PrintWriter writer = new PrintWriter(
+					new OutputStreamWriter(new FileOutputStream(reportIndex), StandardCharsets.UTF_8))) {
+				writer.print(buffer.toString());
+			}
 		} catch (IOException e) {
 			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, getReportIndex().getAbsolutePath()));
-		} finally {
-			if (writer != null) {
-				writer.close();
-			}
 		}
 	}
 
@@ -543,7 +539,6 @@ public class ConsumerReportConvertor extends UseReportConverter {
 	 * @param producers a map of producer name to a {@link Producer} object
 	 */
 	protected void writeConsumerReport(Consumer consumer, Map<String, Producer> producers) throws Exception {
-		PrintWriter writer = null;
 		File originhtml = null;
 		try {
 			File htmlroot = new File(getHtmlLocation(), consumer.name);
@@ -586,15 +581,13 @@ public class ConsumerReportConvertor extends UseReportConverter {
 			buffer.append(OPEN_P).append("<a href=\"../index.html\">").append(SearchMessages.UseReportConverter_back_to_bundle_index).append(CLOSE_A).append(CLOSE_P); //$NON-NLS-1$
 			buffer.append(W3C_FOOTER);
 
-			writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(originhtml), StandardCharsets.UTF_8));
-			writer.println(buffer.toString());
-			writer.flush();
+			try (PrintWriter writer = new PrintWriter(
+					new OutputStreamWriter(new FileOutputStream(originhtml), StandardCharsets.UTF_8))) {
+				writer.println(buffer.toString());
+				writer.flush();
+			}
 		} catch (IOException ioe) {
 			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, originhtml.getAbsolutePath()), ioe);
-		} finally {
-			if (writer != null) {
-				writer.close();
-			}
 		}
 	}
 
@@ -608,7 +601,6 @@ public class ConsumerReportConvertor extends UseReportConverter {
 	 * @param producer producer to write the report for
 	 */
 	protected void writeProducerReport(Consumer parentConsumer, Producer producer) throws Exception {
-		PrintWriter writer = null;
 		File originhtml = null;
 		try {
 			File htmlroot = IPath.fromOSString(getHtmlLocation()).append(parentConsumer.name).append(producer.name).toFile();
@@ -661,15 +653,13 @@ public class ConsumerReportConvertor extends UseReportConverter {
 			buffer.append(OPEN_P).append("<a href=\"../index.html\">").append(NLS.bind(SearchMessages.ConsumerReportConvertor_BackLinkToConsumer, parentConsumer.name)).append(CLOSE_A).append(CLOSE_P); //$NON-NLS-1$
 			buffer.append(W3C_FOOTER);
 
-			writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(originhtml), StandardCharsets.UTF_8));
-			writer.println(buffer.toString());
-			writer.flush();
+			try (PrintWriter writer = new PrintWriter(
+					new OutputStreamWriter(new FileOutputStream(originhtml), StandardCharsets.UTF_8))) {
+				writer.println(buffer.toString());
+				writer.flush();
+			}
 		} catch (IOException ioe) {
 			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, originhtml.getAbsolutePath()));
-		} finally {
-			if (writer != null) {
-				writer.close();
-			}
 		}
 	}
 

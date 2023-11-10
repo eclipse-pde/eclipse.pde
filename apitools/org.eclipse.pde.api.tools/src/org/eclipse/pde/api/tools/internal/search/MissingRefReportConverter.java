@@ -77,7 +77,6 @@ public class MissingRefReportConverter extends UseReportConverter {
 		}
 
 		private void writeIndexFileForComponent(Report report) throws Exception {
-			PrintWriter writer = null;
 			File originhtml = null;
 			try {
 				File htmlroot = new File(getHtmlLocation(), report.name);
@@ -130,16 +129,13 @@ public class MissingRefReportConverter extends UseReportConverter {
 				buffer.append(W3C_FOOTER);
 				buffer.append(CLOSE_BODY);
 
-				writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(originhtml), StandardCharsets.UTF_8));
-				writer.println(buffer.toString());
-				writer.flush();
+				try (PrintWriter writer = new PrintWriter(
+						new OutputStreamWriter(new FileOutputStream(originhtml), StandardCharsets.UTF_8))) {
+					writer.println(buffer.toString());
+					writer.flush();
+				}
 			} catch (IOException ioe) {
 				throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, originhtml.getAbsolutePath()));
-			} finally {
-				if (writer != null) {
-					writer.close();
-				}
-
 			}
 		}
 
@@ -335,7 +331,6 @@ public class MissingRefReportConverter extends UseReportConverter {
 	protected void writeIndexPage(List<?> result) throws Exception {
 		Collections.sort(result, (o1, o2) -> ((Report) o1).name.compareTo(((Report) o2).name));
 
-		PrintWriter writer = null;
 		try {
 			File reportIndex = new File(getHtmlLocation(), "index.html"); //$NON-NLS-1$
 			if (!reportIndex.exists()) {
@@ -386,15 +381,13 @@ public class MissingRefReportConverter extends UseReportConverter {
 			buffer.append(CLOSE_BODY).append(CLOSE_HTML);
 
 			// write the file
-			writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(reportIndex), StandardCharsets.UTF_8));
-			writer.print(buffer.toString());
-			writer.flush();
+			try (PrintWriter writer = new PrintWriter(
+					new OutputStreamWriter(new FileOutputStream(reportIndex), StandardCharsets.UTF_8))) {
+				writer.print(buffer.toString());
+				writer.flush();
+			}
 		} catch (IOException e) {
 			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, getReportIndex().getAbsolutePath()));
-		} finally {
-			if (writer != null) {
-				writer.close();
-			}
 		}
 	}
 

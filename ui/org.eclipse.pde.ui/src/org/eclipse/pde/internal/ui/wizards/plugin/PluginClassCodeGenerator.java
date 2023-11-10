@@ -63,15 +63,12 @@ public class PluginClassCodeGenerator {
 		} else {
 			generatePluginClass(packageName, className, writer);
 		}
-		writer.flush();
-		try {
-			swriter.close();
-			ByteArrayInputStream stream = new ByteArrayInputStream(swriter.toString().getBytes(fProject.getDefaultCharset()));
+		try (ByteArrayInputStream stream = new ByteArrayInputStream(
+				swriter.toString().getBytes(fProject.getDefaultCharset()))) {
 			if (file.exists())
 				file.setContents(stream, false, true, monitor);
 			else
 				file.create(stream, false, monitor);
-			stream.close();
 		} catch (IOException e) {
 
 		}
