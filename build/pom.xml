@@ -23,4 +23,33 @@
     <module>org.eclipse.pde.build</module>
     <module>org.eclipse.pde.build.tests</module>
   </modules>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-surefire-plugin</artifactId>
+        <configuration>
+          <dependencies>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.osgi.compatibility.state</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>p2-installable-unit</type>
+              <artifactId>org.eclipse.equinox.executable</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-feature</type>
+              <artifactId>org.eclipse.sdk</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+          </dependencies>
+          <testRuntime>p2Installed</testRuntime>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
