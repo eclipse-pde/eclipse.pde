@@ -153,11 +153,10 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 					if (lineDelimiter != null && !lineDelimiter.equals(lineSeparator)) {
 						xml = xml.replaceAll(lineSeparator, lineDelimiter);
 					}
-					InputStream xstream = Util.getInputStreamFromString(xml);
-					if (xstream == null) {
-						return Status.CANCEL_STATUS;
-					}
-					try {
+					try (InputStream xstream = Util.getInputStreamFromString(xml)) {
+						if (xstream == null) {
+							return Status.CANCEL_STATUS;
+						}
 						if (file.getProject().isAccessible()) {
 							if (!file.exists()) {
 								IFolder folder = (IFolder) file.getParent();
@@ -169,8 +168,6 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 								file.setContents(xstream, true, false, localmonitor);
 							}
 						}
-					} finally {
-						xstream.close();
 					}
 					fTriggeredChange = true;
 					fNeedsSaving = false;
@@ -510,22 +507,12 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 			}
 			return;
 		}
-		InputStream contents = null;
-		try {
-			IFile filterFile = (IFile) file;
-			if (filterFile.exists()) {
-				contents = filterFile.getContents();
+		IFile filterFile = (IFile) file;
+		if (filterFile.exists()) {
+			try (InputStream contents = filterFile.getContents()) {
 				readFilterFile(contents);
-			}
-		} catch (CoreException | IOException e) {
-			ApiPlugin.log(e);
-		} finally {
-			if (contents != null) {
-				try {
-					contents.close();
-				} catch (IOException e) {
-					// ignore
-				}
+			} catch (CoreException | IOException e) {
+				ApiPlugin.log(e);
 			}
 		}
 		// need to reset the flag during initialization if we are not going to

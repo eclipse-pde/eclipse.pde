@@ -1104,22 +1104,13 @@ public class PluginImportOperation extends WorkspaceJob {
 			File sourceLocation = manager.findSourcePlugin(model.getPluginBase());
 			if (sourceLocation != null) {
 				if (sourceLocation.isFile()) {
-					ZipFile zip = null;
-					try {
-						zip = new ZipFile(sourceLocation);
+					try (ZipFile zip = new ZipFile(sourceLocation)) {
 						ZipFileStructureProvider provider = new ZipFileStructureProvider(zip);
 						ArrayList<Object> collected = new ArrayList<>();
 						PluginImportHelper.collectNonJavaNonBuildFiles(provider, provider.getRoot(), collected);
 						PluginImportHelper.importContent(provider.getRoot(), project.getFullPath(), provider, collected, monitor);
 					} catch (IOException e) {
 						throw new CoreException(Status.error(e.getMessage(), e));
-					} finally {
-						if (zip != null) {
-							try {
-								zip.close();
-							} catch (IOException e) {
-							}
-						}
 					}
 				} else {
 					ArrayList<Object> collected = new ArrayList<>();
@@ -1137,22 +1128,13 @@ public class PluginImportOperation extends WorkspaceJob {
 	 */
 	private void importRequiredPluginFiles(IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		if (isJARd(model)) {
-			ZipFile zip = null;
-			try {
-				zip = new ZipFile(new File(model.getInstallLocation()));
+			try (ZipFile zip = new ZipFile(new File(model.getInstallLocation()))) {
 				ZipFileStructureProvider provider = new ZipFileStructureProvider(zip);
 				ArrayList<Object> collected = new ArrayList<>();
 				PluginImportHelper.collectRequiredBundleFiles(provider, provider.getRoot(), collected);
 				PluginImportHelper.importContent(provider.getRoot(), project.getFullPath(), provider, collected, monitor);
 			} catch (IOException e) {
 				throw new CoreException(Status.error(e.getMessage(), e));
-			} finally {
-				if (zip != null) {
-					try {
-						zip.close();
-					} catch (IOException e) {
-					}
-				}
 			}
 		} else {
 			ArrayList<Object> collected = new ArrayList<>();

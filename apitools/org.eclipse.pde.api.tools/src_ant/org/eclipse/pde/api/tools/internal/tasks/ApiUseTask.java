@@ -277,16 +277,12 @@ public final class ApiUseTask extends CommonUtilsTask {
 			StringWriter out = new StringWriter();
 			PrintWriter writer = new PrintWriter(out);
 			writer.println(NLS.bind(Messages.ApiUseTask_missing_report_location, new String[] { this.reportLocation }));
-			writer.flush();
-			writer.close();
 			throw new BuildException(String.valueOf(out.getBuffer()));
 		}
 		if (this.currentBaselineLocation == null) {
 			StringWriter out = new StringWriter();
 			PrintWriter writer = new PrintWriter(out);
 			writer.println(NLS.bind(Messages.ApiUseTask_missing_baseline_argument, new String[] { this.currentBaselineLocation }));
-			writer.flush();
-			writer.close();
 			throw new BuildException(String.valueOf(out.getBuffer()));
 		}
 		// stop if we don't want to see anything

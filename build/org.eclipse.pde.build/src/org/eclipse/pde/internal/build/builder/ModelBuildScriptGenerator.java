@@ -1379,6 +1379,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		if (file.exists()) {
 			file.delete();
 		}
+		@SuppressWarnings("resource")
 		Writer writer = null;
 		try {
 			try {

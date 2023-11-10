@@ -86,29 +86,19 @@ public class FeatureInputContext extends XMLInputContext {
 	}
 
 	private IBaseModel createStorageModel(IStorageEditorInput input) throws CoreException {
-		InputStream stream = null;
 		IStorage storage = input.getStorage();
-		try {
-			stream = new BufferedInputStream(storage.getContents());
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
-			return null;
-		}
-		ExternalFeatureModel model = new ExternalFeatureModel();
-		IPath path = input.getStorage().getFullPath();
-		model.setInstallLocation(path == null ? "" : path.removeLastSegments(1).toOSString()); //$NON-NLS-1$
-		try {
+		try (InputStream stream = new BufferedInputStream(storage.getContents())) {
+			ExternalFeatureModel model = new ExternalFeatureModel();
+			IPath path = input.getStorage().getFullPath();
+			model.setInstallLocation(path == null ? "" : path.removeLastSegments(1).toOSString()); //$NON-NLS-1$
 			model.load(stream, false);
+			return model;
+		} catch (IOException e) {
+			return null;
 		} catch (CoreException e) {
 			// Errors in the file
 			return null;
-		} finally {
-			try {
-				stream.close();
-			} catch (IOException e) {
-			}
 		}
-		return model;
 	}
 
 	private IBaseModel createSystemFileModel(IURIEditorInput input) throws CoreException {

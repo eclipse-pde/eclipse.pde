@@ -2383,8 +2383,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				printWriter.println(NLS.bind(BuilderMessages.BaseApiAnalyzer_more_version_problems, Integer.valueOf(deltas.length - max)));
 			}
 		}
-		printWriter.flush();
-		printWriter.close();
 		return String.valueOf(writer.getBuffer());
 	}
 

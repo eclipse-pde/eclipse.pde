@@ -76,16 +76,11 @@ public class WorkspaceFeatureModel extends AbstractFeatureModel implements IEdit
 	}
 
 	public String getContents() {
-		try (StringWriter swriter = new StringWriter(); PrintWriter writer = new PrintWriter(swriter)) {
-			setLoaded(true);
-			save(writer);
-			writer.flush();
-			return swriter.toString();
-		} catch (IOException e) {
-			PDECore.logException(e);
-			return ""; //$NON-NLS-1$
-		}
-
+		StringWriter swriter = new StringWriter();
+		PrintWriter writer = new PrintWriter(swriter);
+		setLoaded(true);
+		save(writer);
+		return swriter.toString();
 	}
 
 	public IFile getFile() {

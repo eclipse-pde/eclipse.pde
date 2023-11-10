@@ -52,8 +52,6 @@ public class APIDeprecationTask extends CommonUtilsTask {
 			writer.println(NLS.bind(Messages.printArguments, new String[] {
 					this.referenceBaselineLocation,
 					this.currentBaselineLocation, this.reportLocation, }));
-			writer.flush();
-			writer.close();
 			throw new BuildException(String.valueOf(out.getBuffer()));
 		}
 		if (this.debug) {
@@ -132,7 +130,6 @@ public class APIDeprecationTask extends CommonUtilsTask {
 		}
 		if (delta != ApiComparator.NO_DELTA) {
 			// dump the report in the appropriate folder
-			BufferedWriter writer = null;
 			File outputFile = new File(this.reportLocation);
 			if (outputFile.exists()) {
 				if (outputFile.isDirectory()) {
@@ -149,8 +146,7 @@ public class APIDeprecationTask extends CommonUtilsTask {
 					}
 				}
 			}
-			try {
-				writer = new BufferedWriter(new FileWriter(outputFile));
+			try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile))) {
 				FilterListDeltaVisitor visitor = new FilterListDeltaVisitor(excludedElements, includedElements, FilterListDeltaVisitor.CHECK_DEPRECATION);
 				delta.accept(visitor);
 				writer.write(visitor.getXML());
@@ -164,14 +160,6 @@ public class APIDeprecationTask extends CommonUtilsTask {
 				}
 			} catch (IOException | CoreException e) {
 				ApiPlugin.log(e);
-			} finally {
-				try {
-					if (writer != null) {
-						writer.close();
-					}
-				} catch (IOException e) {
-					// ignore
-				}
 			}
 			if (this.debug) {
 				System.out.println("Report generation : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$

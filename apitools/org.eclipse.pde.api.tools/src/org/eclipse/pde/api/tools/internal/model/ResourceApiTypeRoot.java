@@ -19,7 +19,6 @@ import java.io.InputStream;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 
@@ -59,19 +58,12 @@ public class ResourceApiTypeRoot extends AbstractApiTypeRoot {
 			return fContents;
 		}
 		modifiedTimeStamp = fFile.getModificationStamp();
-		InputStream stream = fFile.getContents(true);
-		try {
+		try (InputStream stream = fFile.getContents(true)) {
 			fContents = stream.readAllBytes();
 			return fContents;
 		} catch (IOException ioe) {
 			abort("Unable to read class file: " + getTypeName(), ioe); //$NON-NLS-1$
 			return null;
-		} finally {
-			try {
-				stream.close();
-			} catch (IOException e) {
-				ApiPlugin.log(e);
-			}
 		}
 	}
 

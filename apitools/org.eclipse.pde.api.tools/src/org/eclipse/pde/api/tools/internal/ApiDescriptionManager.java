@@ -251,9 +251,7 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 	private boolean restoreDescription(IJavaProject project, ProjectApiDescription description) throws CoreException {
 		File file = API_DESCRIPTIONS_CONTAINER_PATH.append(project.getElementName()).append(IApiCoreConstants.API_DESCRIPTION_XML_NAME).toFile();
 		if (file.exists()) {
-			BufferedInputStream stream = null;
-			try {
-				stream = new BufferedInputStream(new FileInputStream(file));
+			try (BufferedInputStream stream = new BufferedInputStream(new FileInputStream(file))) {
 				String xml = new String(Util.getInputStreamAsCharArray(stream, StandardCharsets.UTF_8));
 				Element root = Util.parseDocument(xml);
 				if (!root.getNodeName().equals(IApiXmlConstants.ELEMENT_COMPONENT)) {
@@ -270,14 +268,6 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 				}
 			} catch (IOException e) {
 				abort(MessageFormat.format(ScannerMessages.ApiDescriptionManager_1, project.getElementName()), e);
-			} finally {
-				if (stream != null) {
-					try {
-						stream.close();
-					} catch (IOException e) {
-						// ignore
-					}
-				}
 			}
 		}
 		return false;

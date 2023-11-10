@@ -124,8 +124,6 @@ public class APIFileGenerator {
 					new String[] {
 					this.projectName, this.projectLocation,
 					this.binaryLocations, this.targetFolder }));
-			writer.flush();
-			writer.close();
 			throw new IllegalArgumentException(String.valueOf(out.getBuffer()));
 		}
 		if (this.debug) {
@@ -426,21 +424,11 @@ public class APIFileGenerator {
 		if (!dotProjectFile.exists()) {
 			return false;
 		}
-		BufferedInputStream stream = null;
-		try {
-			stream = new BufferedInputStream(new FileInputStream(dotProjectFile));
+		try (BufferedInputStream stream = new BufferedInputStream(new FileInputStream(dotProjectFile))) {
 			String contents = new String(Util.getInputStreamAsCharArray(stream, StandardCharsets.UTF_8));
 			return containsAPIToolsNature(contents);
 		} catch (IOException e) {
 			e.printStackTrace();
-		} finally {
-			if (stream != null) {
-				try {
-					stream.close();
-				} catch (IOException e) {
-					// ignore
-				}
-			}
 		}
 		return false;
 	}

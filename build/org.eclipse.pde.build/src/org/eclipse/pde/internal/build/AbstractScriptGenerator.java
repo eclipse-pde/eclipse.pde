@@ -252,25 +252,12 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	}
 
 	protected static AntScript newAntScript(String scriptLocation, String scriptName) throws CoreException {
-		AntScript result = null;
-		try {
-			OutputStream scriptStream = new BufferedOutputStream(new FileOutputStream(scriptLocation + '/' + scriptName));
-			try {
-				result = new AntScript(scriptStream);
-			} catch (IOException e) {
-				try {
-					scriptStream.close();
-					String message = NLS.bind(Messages.exception_writingFile, scriptLocation + '/' + scriptName);
-					throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
-				} catch (IOException e1) {
-					// Ignored		
-				}
-			}
-		} catch (FileNotFoundException e) {
+		try (OutputStream scriptStream = new BufferedOutputStream(new FileOutputStream(scriptLocation + '/' + scriptName))) {
+			return new AntScript(scriptStream);
+		} catch (IOException e) {
 			String message = NLS.bind(Messages.exception_writingFile, scriptLocation + '/' + scriptName);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
 		}
-		return result;
 	}
 
 	public void closeScript() {
@@ -771,22 +758,13 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		if (!file.exists())
 			return;
 		platformProperties = new Properties();
-		InputStream input = null;
-		try {
-			input = new BufferedInputStream(new FileInputStream(file));
+		try (InputStream input = new BufferedInputStream(new FileInputStream(file))) {
 			platformProperties.load(input);
 		} catch (IOException e) {
 			platformProperties = null;
 			String message = NLS.bind(Messages.error_loading_platform_properties, filename);
 			IStatus status = new Status(IStatus.WARNING, IPDEBuildConstants.PI_PDEBUILD, message, e);
 			BundleHelper.getDefault().getLog().log(status);
-		} finally {
-			if (input != null)
-				try {
-					input.close();
-				} catch (IOException e) {
-					// ignore
-				}
 		}
 	}
 

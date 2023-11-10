@@ -383,16 +383,8 @@ public class APIDeprecationReportConversionTask extends Task {
 	}
 
 	private void writeOutput(StringBuilder buffer) throws IOException {
-		FileWriter writer = null;
-		BufferedWriter bufferedWriter = null;
-		try {
-			writer = new FileWriter(this.htmlFileLocation);
-			bufferedWriter = new BufferedWriter(writer);
+		try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(this.htmlFileLocation))) {
 			bufferedWriter.write(String.valueOf(buffer));
-		} finally {
-			if (bufferedWriter != null) {
-				bufferedWriter.close();
-			}
 		}
 	}
 }

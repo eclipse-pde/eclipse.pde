@@ -65,12 +65,6 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 		StringWriter swriter = new StringWriter();
 		PrintWriter writer = new PrintWriter(swriter);
 		save(writer);
-		writer.flush();
-		try {
-			swriter.close();
-		} catch (IOException e) {
-			PDECore.logException(e);
-		}
 		return swriter.toString();
 	}
 
@@ -108,20 +102,10 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 			return;
 		}
 		if (fUnderlyingResource.exists()) {
-			InputStream stream = null;
-			try {
-				stream = fUnderlyingResource.getContents(true);
+			try (InputStream stream = fUnderlyingResource.getContents(true)) {
 				load(stream, false);
 			} catch (Exception e) {
 				PDECore.logException(e);
-			} finally {
-				try {
-					if (stream != null) {
-						stream.close();
-					}
-				} catch (IOException e) {
-					PDECore.logException(e);
-				}
 			}
 		}
 	}

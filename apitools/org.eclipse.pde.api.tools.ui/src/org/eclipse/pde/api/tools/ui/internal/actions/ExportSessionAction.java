@@ -99,7 +99,6 @@ public class ExportSessionAction extends Action {
 				File reportFile = new File(reportFileName);
 				try {
 					progress.split(25);
-					BufferedWriter writer = null;
 					try {
 						if (isHtmlFile) {
 							xmlOutputFile = Util.createTempFile(String.valueOf(System.currentTimeMillis()),
@@ -115,27 +114,20 @@ public class ExportSessionAction extends Action {
 								return Status.error(ActionMessages.ExportSessionAction_failed_to_create_parent_folders);
 							}
 						}
-						writer = new BufferedWriter(new FileWriter(xmlOutputFile));
-						DeltaXmlVisitor visitor = new DeltaXmlVisitor();
-						Object data = activeSession.getModel().getRoot().getData();
-						if (data instanceof IDelta) {
-							IDelta delta = (IDelta) data;
-							progress.split(25);
-							delta.accept(visitor);
-							writer.write(visitor.getXML());
-							writer.flush();
-							progress.worked(25);
+						try (BufferedWriter writer = new BufferedWriter(new FileWriter(xmlOutputFile))) {
+							DeltaXmlVisitor visitor = new DeltaXmlVisitor();
+							Object data = activeSession.getModel().getRoot().getData();
+							if (data instanceof IDelta) {
+								IDelta delta = (IDelta) data;
+								progress.split(25);
+								delta.accept(visitor);
+								writer.write(visitor.getXML());
+								writer.flush();
+								progress.worked(25);
+							}
 						}
 					} catch (IOException | CoreException e) {
 						ApiPlugin.log(e);
-					} finally {
-						if (writer != null) {
-							try {
-								writer.close();
-							} catch (IOException e) {
-								// ignore
-							}
-						}
 					}
 					if (isHtmlFile) {
 						// remaining part is to convert the xml file to html
@@ -153,21 +145,14 @@ public class ExportSessionAction extends Action {
 									return Status.error(ActionMessages.ExportSessionAction_failed_to_create_parent_folders);
 								}
 							}
-							writer = new BufferedWriter(new FileWriter(reportFile));
-							Result result = new StreamResult(writer);
-							TransformerFactory f = XmlProcessorFactory.createTransformerFactoryWithErrorOnDOCTYPE();
-							Transformer trans = f.newTransformer(xsltSource);
-							trans.transform(xmlSource, result);
+							try (BufferedWriter writer = new BufferedWriter(new FileWriter(reportFile))) {
+								Result result = new StreamResult(writer);
+								TransformerFactory f = XmlProcessorFactory.createTransformerFactoryWithErrorOnDOCTYPE();
+								Transformer trans = f.newTransformer(xsltSource);
+								trans.transform(xmlSource, result);
+							}
 						} catch (TransformerException | IOException e) {
 							ApiUIPlugin.log(e);
-						} finally {
-							if (writer != null) {
-								try {
-									writer.close();
-								} catch (IOException e) {
-									// ignore
-								}
-							}
 						}
 					}
 					return Status.OK_STATUS;

@@ -48,14 +48,10 @@ public class WorkspaceBuildModel extends BuildModel implements IEditableModel {
 	}
 
 	public String getContents() {
-		try (StringWriter swriter = new StringWriter(); PrintWriter writer = new PrintWriter(swriter)) {
-			save(writer);
-			writer.flush();
-			return swriter.toString();
-		} catch (IOException e) {
-			PDECore.logException(e);
-			return ""; //$NON-NLS-1$
-		}
+		StringWriter swriter = new StringWriter();
+		PrintWriter writer = new PrintWriter(swriter);
+		save(writer);
+		return swriter.toString();
 	}
 
 	@Override
@@ -133,18 +129,15 @@ public class WorkspaceBuildModel extends BuildModel implements IEditableModel {
 				StringBuilder str = getHeaderComments(fUnderlyingResource);
 				if (str != null) {
 					ByteArrayInputStream headerComment = new ByteArrayInputStream(str.toString().getBytes());
-					InputStream totalContent = new SequenceInputStream(headerComment, stream);
-					fUnderlyingResource.setContents(totalContent, false, false, null);
-					totalContent.close();
-
-				}
-				if (str == null) {
+					try (InputStream totalContent = new SequenceInputStream(headerComment, stream)) {
+						fUnderlyingResource.setContents(totalContent, false, false, null);
+					}
+				} else {
 					fUnderlyingResource.setContents(stream, false, false, null);
 				}
 			} else {
 				fUnderlyingResource.create(stream, false, null);
 			}
-			stream.close();
 		} catch (CoreException | IOException e) {
 			PDECore.logException(e);
 		}

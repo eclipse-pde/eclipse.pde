@@ -13,16 +13,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.tasks;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -343,23 +341,6 @@ public class IdReplaceTask extends Task {
 	}
 
 	private StringBuffer readFile(File targetName) throws IOException {
-		InputStreamReader reader = new InputStreamReader(new BufferedInputStream(new FileInputStream(targetName)), StandardCharsets.UTF_8);
-		StringBuffer result = new StringBuffer();
-		char[] buf = new char[4096];
-		int count;
-		try {
-			count = reader.read(buf, 0, buf.length);
-			while (count != -1) {
-				result.append(buf, 0, count);
-				count = reader.read(buf, 0, buf.length);
-			}
-		} finally {
-			try {
-				reader.close();
-			} catch (IOException e) {
-				// ignore exceptions here
-			}
-		}
-		return result;
+		return new StringBuffer(Files.readString(targetName.toPath()));
 	}
 }

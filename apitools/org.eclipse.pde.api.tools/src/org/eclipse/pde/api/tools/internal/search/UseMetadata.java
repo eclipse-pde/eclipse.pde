@@ -139,72 +139,67 @@ public class UseMetadata implements IMetadata {
 	}
 	@Override
 	public void serializeToFile(File file) throws IOException, CoreException {
-		BufferedWriter writer = null;
-		try {
-			Document doc = Util.newDocument();
-			Element root = doc.createElement(METADATA);
-			doc.appendChild(root);
-			Element child = doc.createElement(FLAGS);
-			root.appendChild(child);
-			child.setAttribute(VALUE, Integer.toString(this.searchflags));
-			child = doc.createElement(RUNATDATE);
-			root.appendChild(child);
-			child.setAttribute(VALUE, this.runatdate);
-			child = doc.createElement(DESCRIPTION);
-			root.appendChild(child);
-			child.setAttribute(VALUE, this.description);
-			child = doc.createElement(BASELINELOCATION);
-			root.appendChild(child);
-			child.setAttribute(VALUE, this.baselinelocation);
-			child = doc.createElement(REPORTLOCATION);
-			root.appendChild(child);
-			child.setAttribute(VALUE, this.reportlocation);
-			child = doc.createElement(SCOPEPATTERN);
-			root.appendChild(child);
-			child.setAttribute(VALUE, this.scopepattern);
-			child = doc.createElement(REFERENCEPATTERN);
-			root.appendChild(child);
-			child.setAttribute(VALUE, this.refpattern);
-			child = doc.createElement(APIPATTERNS);
-			root.appendChild(child);
-			Element sub = null;
-			if (this.apipatterns != null) {
-				for (String apipattern : this.apipatterns) {
-					sub = doc.createElement(PATTERN);
-					child.appendChild(sub);
-					sub.setAttribute(VALUE, apipattern);
-				}
+		Document doc = Util.newDocument();
+		Element root = doc.createElement(METADATA);
+		doc.appendChild(root);
+		Element child = doc.createElement(FLAGS);
+		root.appendChild(child);
+		child.setAttribute(VALUE, Integer.toString(this.searchflags));
+		child = doc.createElement(RUNATDATE);
+		root.appendChild(child);
+		child.setAttribute(VALUE, this.runatdate);
+		child = doc.createElement(DESCRIPTION);
+		root.appendChild(child);
+		child.setAttribute(VALUE, this.description);
+		child = doc.createElement(BASELINELOCATION);
+		root.appendChild(child);
+		child.setAttribute(VALUE, this.baselinelocation);
+		child = doc.createElement(REPORTLOCATION);
+		root.appendChild(child);
+		child.setAttribute(VALUE, this.reportlocation);
+		child = doc.createElement(SCOPEPATTERN);
+		root.appendChild(child);
+		child.setAttribute(VALUE, this.scopepattern);
+		child = doc.createElement(REFERENCEPATTERN);
+		root.appendChild(child);
+		child.setAttribute(VALUE, this.refpattern);
+		child = doc.createElement(APIPATTERNS);
+		root.appendChild(child);
+		Element sub = null;
+		if (this.apipatterns != null) {
+			for (String apipattern : this.apipatterns) {
+				sub = doc.createElement(PATTERN);
+				child.appendChild(sub);
+				sub.setAttribute(VALUE, apipattern);
 			}
-			child = doc.createElement(INTERNALPATTERNS);
-			root.appendChild(child);
-			if (this.intpatterns != null) {
-				for (String intpattern : this.intpatterns) {
-					sub = doc.createElement(PATTERN);
-					child.appendChild(sub);
-					sub.setAttribute(VALUE, intpattern);
-				}
+		}
+		child = doc.createElement(INTERNALPATTERNS);
+		root.appendChild(child);
+		if (this.intpatterns != null) {
+			for (String intpattern : this.intpatterns) {
+				sub = doc.createElement(PATTERN);
+				child.appendChild(sub);
+				sub.setAttribute(VALUE, intpattern);
 			}
-			child = doc.createElement(ARCHIVEPATTERNS);
-			root.appendChild(child);
-			if (this.archivepatterns != null) {
-				for (String archivepattern : this.archivepatterns) {
-					sub = doc.createElement(PATTERN);
-					child.appendChild(sub);
-					sub.setAttribute(VALUE, archivepattern);
-				}
+		}
+		child = doc.createElement(ARCHIVEPATTERNS);
+		root.appendChild(child);
+		if (this.archivepatterns != null) {
+			for (String archivepattern : this.archivepatterns) {
+				sub = doc.createElement(PATTERN);
+				child.appendChild(sub);
+				sub.setAttribute(VALUE, archivepattern);
 			}
+		}
 
-			child = doc.createElement(ADDITIONALFILTERS);
-			root.appendChild(child);
-			child.setAttribute(VALUE, this.additionalfilters);
+		child = doc.createElement(ADDITIONALFILTERS);
+		root.appendChild(child);
+		child.setAttribute(VALUE, this.additionalfilters);
 
-			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
+		try (BufferedWriter writer = new BufferedWriter(
+				new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8))) {
 			writer.write(Util.serializeDocument(doc));
 			writer.flush();
-		} finally {
-			if (writer != null) {
-				writer.close();
-			}
 		}
 	}
 

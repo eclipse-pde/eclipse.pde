@@ -398,9 +398,8 @@ public class TypeStructureBuilder extends ClassVisitor {
 
 	public static IApiType buildStubTypeStructure(byte[] contents, IApiComponent apiComponent, ArchiveApiTypeRoot archiveApiTypeRoot) {
 		// decode the byte[]
-		DataInputStream inputStream = new DataInputStream(new ByteArrayInputStream(contents));
 		ApiType type = null;
-		try {
+		try (DataInputStream inputStream = new DataInputStream(new ByteArrayInputStream(contents))) {
 			Map<Integer, String> pool = new HashMap<>();
 			short currentVersion = inputStream.readShort(); // read file version
 															// (for now there is
@@ -454,12 +453,6 @@ public class TypeStructureBuilder extends ClassVisitor {
 			}
 		} catch (IOException e) {
 			ApiPlugin.log(e);
-		} finally {
-			try {
-				inputStream.close();
-			} catch (IOException e) {
-				// ignore
-			}
 		}
 		return type;
 	}

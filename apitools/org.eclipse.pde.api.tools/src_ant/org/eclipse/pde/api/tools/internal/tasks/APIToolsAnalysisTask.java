@@ -100,8 +100,6 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 			dumpProblems("Compatibility:", apiCompatibilityProblems, printWriter); //$NON-NLS-1$
 			dumpProblems("Bundle Versions:", apiBundleVersionProblems, printWriter); //$NON-NLS-1$
 			printWriter.println("=================================================================================="); //$NON-NLS-1$
-			printWriter.flush();
-			printWriter.close();
 			return String.valueOf(writer.getBuffer());
 		}
 
@@ -312,8 +310,6 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 			writer.println(NLS.bind(Messages.printArguments, new String[] {
 					this.referenceBaselineLocation,
 					this.currentBaselineLocation, this.reportLocation, }));
-			writer.flush();
-			writer.close();
 			throw new BuildException(String.valueOf(out.getBuffer()));
 		}
 		if (this.debug) {
@@ -814,22 +810,12 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 		if (!preferencesFile.exists()) {
 			return;
 		}
-		BufferedInputStream inputStream = null;
-		try {
-			inputStream = new BufferedInputStream(new FileInputStream(preferencesFile));
+		try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(preferencesFile))) {
 			Properties temp = new Properties();
 			temp.load(inputStream);
 			this.properties = temp;
 		} catch (IOException e) {
 			// ignore
-		} finally {
-			if (inputStream != null) {
-				try {
-					inputStream.close();
-				} catch (IOException e) {
-					// ignore
-				}
-			}
 		}
 	}
 

@@ -62,14 +62,11 @@ public class CompCSWorkspaceModel extends CompCSModel implements
 	}
 
 	private String getContents() {
-		try (StringWriter swriter = new StringWriter(); PrintWriter writer = new PrintWriter(swriter)) {
-			setLoaded(true);
-			save(writer);
-			writer.flush();
-			return swriter.toString();
-		} catch (IOException e) {
-			return "";
-		}
+		StringWriter swriter = new StringWriter();
+		PrintWriter writer = new PrintWriter(swriter);
+		setLoaded(true);
+		save(writer);
+		return swriter.toString();
 	}
 
 	@Override
