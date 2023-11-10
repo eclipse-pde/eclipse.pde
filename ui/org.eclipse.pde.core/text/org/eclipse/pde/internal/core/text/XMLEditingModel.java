@@ -143,14 +143,11 @@ public abstract class XMLEditingModel extends AbstractEditingModel {
 	}
 
 	public String getContents() {
-		try (StringWriter swriter = new StringWriter(); PrintWriter writer = new PrintWriter(swriter)) {
-			setLoaded(true);
-			save(writer);
-			writer.flush();
-			return swriter.toString();
-		} catch (IOException e) {
-			return ""; //$NON-NLS-1$
-		}
+		StringWriter swriter = new StringWriter();
+		PrintWriter writer = new PrintWriter(swriter);
+		setLoaded(true);
+		save(writer);
+		return swriter.toString();
 	}
 
 	@Override

@@ -619,11 +619,8 @@ public class BuildState {
 		if (ApiPlugin.DEBUG_BUILDER) {
 			t = System.currentTimeMillis();
 		}
-		try {
-			DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
-			try (out) {
-				write(state, out);
-			}
+		try (DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file)))) {
+			write(state, out);
 		} catch (RuntimeException | IOException e) {
 			try {
 				file.delete();

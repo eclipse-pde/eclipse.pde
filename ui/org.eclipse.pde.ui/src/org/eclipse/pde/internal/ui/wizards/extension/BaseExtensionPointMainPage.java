@@ -16,7 +16,6 @@ package org.eclipse.pde.internal.ui.wizards.extension;
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -235,12 +234,8 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		section = new DocumentSection(schema, IDocumentSection.COPYRIGHT, "Copyright"); //$NON-NLS-1$
 		schema.addDocumentSection(section);
 		StringWriter swriter = new StringWriter();
-		try (PrintWriter writer = new PrintWriter(swriter, true)) {
-			schema.save(writer);
-			swriter.close();
-		} catch (IOException e) {
-			PDEPlugin.logException(e);
-		}
+		PrintWriter writer = new PrintWriter(swriter, true);
+		schema.save(writer);
 		String content = swriter.toString();
 		content = AbstractModel.fixLineDelimiter(content, schemaFile);
 		return new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));

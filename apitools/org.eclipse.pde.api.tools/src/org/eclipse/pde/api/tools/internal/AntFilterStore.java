@@ -63,7 +63,6 @@ public class AntFilterStore extends FilterStore {
 			return;
 		}
 		fFilterMap = new HashMap<>(5);
-		InputStream contents = null;
 		File filterFileParent = new File(fFiltersRoot, fComponentId);
 		try {
 			if (!filterFileParent.exists()) {
@@ -78,18 +77,12 @@ public class AntFilterStore extends FilterStore {
 					return;
 				}
 			}
-			contents = new BufferedInputStream(new FileInputStream(new File(filterFileParent, IApiCoreConstants.API_FILTERS_XML_NAME)));
-			readFilterFile(contents);
+			try (InputStream contents = new BufferedInputStream(
+					new FileInputStream(new File(filterFileParent, IApiCoreConstants.API_FILTERS_XML_NAME)))) {
+				readFilterFile(contents);
+			}
 		} catch (IOException | CoreException ioe) {
 			ApiPlugin.log("Failed to read filter file " + filterFileParent, ioe); //$NON-NLS-1$
-		} finally {
-			if (contents != null) {
-				try {
-					contents.close();
-				} catch (IOException e) {
-					// ignore
-				}
-			}
 		}
 	}
 

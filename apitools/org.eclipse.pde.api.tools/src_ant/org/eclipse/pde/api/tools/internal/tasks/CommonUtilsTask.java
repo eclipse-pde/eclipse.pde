@@ -187,21 +187,11 @@ public abstract class CommonUtilsTask extends Task {
 			}
 		}
 		File reportFile = new File(dir, reportname);
-		BufferedWriter writer = null;
-		try {
-			writer = new BufferedWriter(new FileWriter(reportFile));
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(reportFile))) {
 			writer.write(contents);
 			writer.flush();
 		} catch (IOException e) {
 			ApiPlugin.log(e);
-		} finally {
-			if (writer != null) {
-				try {
-					writer.close();
-				} catch (IOException e) {
-					// ignore
-				}
-			}
 		}
 	}
 

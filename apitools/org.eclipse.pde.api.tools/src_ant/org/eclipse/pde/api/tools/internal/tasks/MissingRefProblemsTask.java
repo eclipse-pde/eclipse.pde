@@ -536,22 +536,12 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 		if (!preferencesFile.exists()) {
 			return;
 		}
-		BufferedInputStream inputStream = null;
-		try {
-			inputStream = new BufferedInputStream(new FileInputStream(preferencesFile));
+		try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(preferencesFile))) {
 			Properties temp = new Properties();
 			temp.load(inputStream);
 			this.properties = temp;
 		} catch (IOException e) {
 			// ignore
-		} finally {
-			if (inputStream != null) {
-				try {
-					inputStream.close();
-				} catch (IOException e) {
-					// ignore
-				}
-			}
 		}
 	}
 

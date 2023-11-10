@@ -88,7 +88,7 @@ public class RepositoryBundleContainer extends AbstractBundleContainer {
 				}
 				bundles.add(new TargetBundle(file));
 			} catch (IOException | URISyntaxException e) {
-				throw new CoreException(Status.error("Can't fetch bundle from " + url, e));
+				throw new CoreException(Status.error("Can't fetch bundle from " + url, e)); //$NON-NLS-1$
 			}
 		}
 		return bundles.toArray(TargetBundle[]::new);
@@ -120,10 +120,10 @@ public class RepositoryBundleContainer extends AbstractBundleContainer {
 				if (e instanceof RuntimeException runtime) {
 					throw runtime;
 				}
-				throw new CoreException(Status.error("Loading repository from " + location + " failed: " + e, e));
+				throw new CoreException(Status.error("Loading repository from " + location + " failed: " + e, e)); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} catch (URISyntaxException e) {
-			throw new CoreException(Status.error("Invalid URI: " + location, e));
+			throw new CoreException(Status.error("Invalid URI: " + location, e)); //$NON-NLS-1$
 		}
 	}
 

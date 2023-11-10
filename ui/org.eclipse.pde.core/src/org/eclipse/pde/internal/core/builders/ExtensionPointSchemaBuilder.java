@@ -15,7 +15,6 @@
 package org.eclipse.pde.internal.core.builders;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
@@ -137,7 +136,9 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		DefaultSAXParser.parse(file, reporter);
 		reporter.validateContent(monitor);
 
-		try (StringWriter swriter = new StringWriter(); PrintWriter writer = new PrintWriter(swriter)) {
+		StringWriter swriter = new StringWriter();
+		PrintWriter writer = new PrintWriter(swriter);
+		try {
 			boolean generateDoc = CompilerFlags.getBoolean(file.getProject(), CompilerFlags.S_CREATE_DOCS);
 			if (reporter.getDocumentRoot() != null && reporter.getErrorCount() == 0 && generateDoc) {
 				ensureFoldersExist(file.getProject(), getDocLocation(file));
@@ -160,7 +161,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 					outputFile.setContents(target, true, false, monitor);
 				}
 			}
-		} catch (CoreException | IOException e) {
+		} catch (CoreException e) {
 			PDECore.logException(e);
 		}
 		monitor.subTask(PDECoreMessages.Builders_updating);

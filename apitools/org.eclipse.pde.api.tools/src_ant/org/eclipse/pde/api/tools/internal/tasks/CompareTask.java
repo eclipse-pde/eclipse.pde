@@ -60,8 +60,6 @@ public class CompareTask extends CommonUtilsTask {
 			writer.println(NLS.bind(Messages.printArguments, new String[] {
 					this.referenceBaselineLocation,
 					this.currentBaselineLocation, this.reportLocation, }));
-			writer.flush();
-			writer.close();
 			throw new BuildException(String.valueOf(out.getBuffer()));
 		}
 		if (this.debug) {
@@ -162,7 +160,6 @@ public class CompareTask extends CommonUtilsTask {
 			throw new BuildException(Messages.errorInComparison);
 		}
 		// dump the report in the appropriate folder
-		BufferedWriter writer = null;
 		File outputDir = new File(this.reportLocation);
 		if (!outputDir.exists()) {
 			if (!outputDir.mkdirs()) {
@@ -170,14 +167,12 @@ public class CompareTask extends CommonUtilsTask {
 			}
 		}
 		File outputFile = new File(this.reportLocation, REPORT_XML_FILE_NAME);
-		try {
-			if (outputFile.exists()) {
-				// delete the file
-				// TODO we might want to customize it
-				outputFile.delete();
-			}
-			writer = new BufferedWriter(new FileWriter(outputFile));
-
+		if (outputFile.exists()) {
+			// delete the file
+			// TODO we might want to customize it
+			outputFile.delete();
+		}
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile))) {
 			FilterListDeltaVisitor visitor = new FilterListDeltaVisitor(excludedElements, includedElements, FilterListDeltaVisitor.CHECK_ALL);
 			delta.accept(visitor);
 			writer.write(visitor.getXML());
@@ -191,14 +186,6 @@ public class CompareTask extends CommonUtilsTask {
 			}
 		} catch (IOException | CoreException e) {
 			ApiPlugin.log(e);
-		} finally {
-			try {
-				if (writer != null) {
-					writer.close();
-				}
-			} catch (IOException e) {
-				// ignore
-			}
 		}
 	}
 

@@ -82,10 +82,8 @@ public class ExternalFileTargetHandle extends AbstractTargetHandle {
 
 	@Override
 	void save(ITargetDefinition definition) throws CoreException {
-		try {
-			OutputStream stream = new BufferedOutputStream(new FileOutputStream(fFile));
+		try (OutputStream stream = new BufferedOutputStream(new FileOutputStream(fFile))) {
 			((TargetDefinition) definition).write(stream);
-			stream.close();
 		} catch (IOException e) {
 			throw new CoreException(Status.error(NLS.bind(Messages.LocalTargetHandle_4, fFile.getName()), e));
 		}
