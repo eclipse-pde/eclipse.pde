@@ -23,6 +23,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.Enumeration;
@@ -41,6 +42,7 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.RuntimeConfigurable;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
+import org.apache.tools.ant.filters.StringInputStream;
 import org.apache.tools.ant.taskdefs.Copy;
 import org.apache.tools.ant.taskdefs.Javac;
 import org.apache.tools.ant.taskdefs.Parallel;
@@ -1788,14 +1790,23 @@ public class ScriptGenerationTests extends PDETestCase {
 		properties.put("generateSourceReferences", "true");
 		Utils.storeBuildProperties(buildFolder, properties);
 		runBuild(buildFolder);
-
-		Manifest m = Utils.loadManifest(buildFolder.getFile("tmp/eclipse/plugins/A_1.0.0/META-INF/MANIFEST.MF"));
-		assertEquals(m.getMainAttributes().getValue(IPDEBuildConstants.ECLIPSE_SOURCE_REF), a_source);
-		m = Utils.loadManifest(buildFolder.getFile("tmp/eclipse/plugins/B_1.0.0/META-INF/MANIFEST.MF"));
-		assertEquals(m.getMainAttributes().getValue(IPDEBuildConstants.ECLIPSE_SOURCE_REF),
+		
+		String manifestFile = readEntryFromZip(buildFolder.getFile("tmp/eclipse/plugins/A_1.0.0.jar"), "META-INF/MANIFEST.MF");
+		try (InputStream contents = new StringInputStream(manifestFile)) {
+			Manifest m = new Manifest(contents);
+			assertEquals(m.getMainAttributes().getValue(IPDEBuildConstants.ECLIPSE_SOURCE_REF), a_source);
+		}
+		manifestFile = readEntryFromZip(buildFolder.getFile("tmp/eclipse/plugins/B_1.0.0.jar"), "META-INF/MANIFEST.MF");
+		try (InputStream contents = new StringInputStream(manifestFile)) {
+			Manifest m = new Manifest(contents);
+			assertEquals(m.getMainAttributes().getValue(IPDEBuildConstants.ECLIPSE_SOURCE_REF),
 				"B's source,foo.bar;type:=\"mine\"");
-		m = Utils.loadManifest(buildFolder.getFile("tmp/eclipse/plugins/C_1.0.0/META-INF/MANIFEST.MF"));
-		assertEquals(m.getMainAttributes().getValue(IPDEBuildConstants.ECLIPSE_SOURCE_REF), "foo.bar;type:=mine");
+		}
+		manifestFile = readEntryFromZip(buildFolder.getFile("tmp/eclipse/plugins/C_1.0.0.jar"), "META-INF/MANIFEST.MF");
+		try (InputStream contents = new StringInputStream(manifestFile)) {
+			Manifest m = new Manifest(contents);
+			assertEquals(m.getMainAttributes().getValue(IPDEBuildConstants.ECLIPSE_SOURCE_REF), "foo.bar;type:=mine");
+		}
 	}
 
 	@Test

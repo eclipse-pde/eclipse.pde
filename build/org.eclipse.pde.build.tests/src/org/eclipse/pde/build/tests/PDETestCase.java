@@ -18,6 +18,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStream;
@@ -29,18 +30,21 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.helper.AntXMLContext;
 import org.apache.tools.ant.helper.ProjectHelper2;
-import org.apache.tools.zip.ZipEntry;
-import org.apache.tools.zip.ZipFile;
 import org.eclipse.ant.core.AntRunner;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -250,23 +254,70 @@ public abstract class PDETestCase {
 		assertZipContents(archiveFile, entries, true);
 	}
 
+	public static void assertZipContents(IFile archiveFile, String... entries) throws Exception {
+		assertZipContents(archiveFile.getLocation().toFile(), Set.of(entries), true);
+	}
+
+	public static String readEntryFromZip(IFile archiveFile, String pathInZip) throws Exception {
+		try (ZipFile zip = new ZipFile(archiveFile.getLocation().toFile())) {
+			ZipEntry entry = zip.getEntry(pathInZip);
+			try (InputStream stream = zip.getInputStream(entry)) {
+				ByteArrayOutputStream os = new ByteArrayOutputStream();
+				stream.transferTo(os);
+				return os.toString();
+			}
+		}
+	}
+
 	public static void assertZipContents(File archiveFile, Set<String> entries, boolean assertEmpty) throws Exception {
 		assertTrue(archiveFile.exists());
+		Map<String, Set<String>> jarInZip = new HashMap<>();
+		entries = new LinkedHashSet<>(entries);
+		Iterator<String> iterator = entries.iterator();
+		while (iterator.hasNext()) {
+			String entry = iterator.next();
+			if (entry.contains(".jar:")) {
+				String[] files = entry.split(".jar:");
+				String entryRoot = files[0] + ".jar";
+				String entryName = files[1];
+				jarInZip.compute(entryRoot, (key, set) -> {
+					if (set == null) {
+						set = new HashSet<>();
+					}
+					set.add(entryName);
+					return set;
+				});
+				iterator.remove();
+			}
+		}
 
 		try (ZipFile zip = new ZipFile(archiveFile)) {
-			Enumeration<ZipEntry> e = zip.getEntries();
-			while (e.hasMoreElements() && entries.size() > 0) {
+			Enumeration<? extends ZipEntry> e = zip.entries();
+			while (e.hasMoreElements() && (!entries.isEmpty() || !jarInZip.isEmpty())) {
 				ZipEntry entry = e.nextElement();
 				String name = entry.getName();
 				if (entries.contains(name)) {
-					if (!entry.isDirectory())
+					if (!entry.isDirectory()) {
 						assertTrue(entry.getSize() > 0);
+					}
 					entries.remove(name);
+				} else if (jarInZip.containsKey(name)) {
+					Set<String> jarInZipEntries = jarInZip.get(name);
+					File tempFile = Files.createTempFile("test", "").toFile();
+					try (InputStream inputStream = zip.getInputStream(entry)) {
+						inputStream.transferTo(Files.newOutputStream(tempFile.toPath()));
+						assertZipContents(tempFile, jarInZipEntries);
+						jarInZip.remove(name);
+					} finally {
+						tempFile.delete();
+					}
 				}
 			}
 		}
-		if (assertEmpty)
+		if (assertEmpty) {
 			assertTrue("Missing entry in archive: " + entries, entries.isEmpty());
+			assertTrue("Missing entry in archive: " + jarInZip, jarInZip.isEmpty());
+		}
 	}
 
 	public static void assertZipContents(IFolder buildFolder, String archive, Set<String> entries, boolean assertEmpty)
@@ -285,11 +336,19 @@ public abstract class PDETestCase {
 	 */
 	public static void assertResourceFile(IFolder buildFolder, String fileName) throws Exception {
 		buildFolder.refreshLocal(IResource.DEPTH_INFINITE, null);
-		IFile file = buildFolder.getFile(fileName);
-		assertTrue(file.exists());
+		if (fileName.contains(".jar:")) {
+			String[] files = fileName.split(".jar:");
+			fileName = files[0] + ".jar";
+			IFile file = buildFolder.getFile(fileName);
+			assertResourceFile(file);
+			assertZipContents(file, files[1]);
+		} else {
+			IFile file = buildFolder.getFile(fileName);
+			assertTrue(file.exists());
 
-		File ioFile = file.getLocation().toFile();
-		assertTrue(ioFile.length() > 0);
+			File ioFile = file.getLocation().toFile();
+			assertTrue(ioFile.length() > 0);
+		}
 	}
 
 	public static void assertResourceFile(IFile file) throws Exception {

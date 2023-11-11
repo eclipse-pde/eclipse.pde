@@ -565,11 +565,11 @@ public class ProductTests extends PDETestCase {
 		assertLogContainsLine(config, "osgi.bundles.defaultStartLevel=3");
 		assertLogContainsLine(config, "osgi.bundles=org.eclipse.equinox.simpleconfigurator@1:start");
 		assertLogContainsLine(info,
-				"org.eclipse.core.runtime_" + versions.get("org.eclipse.core.runtime") + ",3,false");
-		assertLogContainsLine(info, "org.eclipse.equinox.app_" + versions.get("org.eclipse.equinox.app") + ",3,false"); // bug
+				"org.eclipse.core.runtime_" + versions.get("org.eclipse.core.runtime") + ".jar,3,false");
+		assertLogContainsLine(info, "org.eclipse.equinox.app_" + versions.get("org.eclipse.equinox.app") + ".jar,3,false"); // bug
 																														// 274901
 		assertLogContainsLine(info,
-				"org.eclipse.equinox.common_" + versions.get("org.eclipse.equinox.common") + ",1,true");
+				"org.eclipse.equinox.common_" + versions.get("org.eclipse.equinox.common") + ".jar,1,true");
 	}
 
 	@Test
