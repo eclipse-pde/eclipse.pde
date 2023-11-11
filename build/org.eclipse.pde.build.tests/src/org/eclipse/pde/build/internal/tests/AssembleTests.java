@@ -201,13 +201,13 @@ public class AssembleTests extends PDETestCase {
 
 		Set<String> entries = new HashSet<>();
 		entries.add("eclipse/plugins/A_1.0.0.jar");
-		entries.add("eclipse/plugins/B_1.0.0/META-INF/MANIFEST.MF");
+		entries.add("eclipse/plugins/B_1.0.0.jar:META-INF/MANIFEST.MF");
 		assertZipContents(buildFolder, "I.TestBuild/F-TestBuild.zip", entries);
 
 		buildProperties.put("archivesFormat", "*,*,*-folder");
 		Utils.storeBuildProperties(buildFolder, buildProperties);
 		runBuild(buildFolder);
 		assertResourceFile(buildFolder, "tmp/e4/plugins/A_1.0.0.jar");
-		assertResourceFile(buildFolder, "tmp/e4/plugins/B_1.0.0/META-INF/MANIFEST.MF");
+		assertResourceFile(buildFolder, "tmp/e4/plugins/B_1.0.0.jar:META-INF/MANIFEST.MF");
 	}
 }
