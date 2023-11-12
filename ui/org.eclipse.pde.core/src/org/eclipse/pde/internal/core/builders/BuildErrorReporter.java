@@ -22,12 +22,15 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.xpath.XPath;
@@ -60,6 +63,7 @@ import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
+import org.eclipse.pde.internal.core.bnd.TargetRepository;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.builders.IncrementalErrorReporter.VirtualMarker;
 import org.eclipse.pde.internal.core.ibundle.IBundleFragmentModel;
@@ -72,9 +76,15 @@ import org.eclipse.pde.internal.core.text.build.BuildModel;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
 import org.osgi.framework.Constants;
+import org.osgi.resource.Capability;
+import org.osgi.resource.Requirement;
+import org.osgi.service.repository.Repository;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import aQute.bnd.header.Parameters;
+import aQute.bnd.osgi.resource.CapReqBuilder;
 
 public class BuildErrorReporter extends ErrorReporter implements IBuildPropertiesConstants {
 
@@ -227,6 +237,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		IBuildEntry javacTarget = null;
 		IBuildEntry jreCompilationProfile = null;
 		IBuildEntry javaProjectWarnings = null;
+		IBuildEntry testRequirements = null;
 		ArrayList<IBuildEntry> javacWarnings = new ArrayList<>();
 		ArrayList<IBuildEntry> javacErrors = new ArrayList<>();
 		ArrayList<IBuildEntry> sourceEntries = new ArrayList<>(1);
@@ -274,6 +285,9 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 					// nothing to validate in custom builds
 					return;
 				}
+			} else if (name.equals(IBuildEntry.TEST_REQUIREMENTS)) {
+
+				testRequirements = entry;
 			}
 
 			// non else if statement to catch all names
@@ -286,6 +300,9 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		if (fClasspathSeverity != CompilerFlags.IGNORE) {
 			if (bundleList != null) {
 				validateDependencyManagement(bundleList);
+			}
+			if (testRequirements != null) {
+				validateTestRequirements(testRequirements);
 			}
 		}
 
@@ -322,6 +339,24 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		validateBinIncludes(binIncludes, outputEntries);
 		validateExecutionEnvironment(javacSource, javacTarget, jreCompilationProfile, javacWarnings, javacErrors, getSourceLibraries(sourceEntries));
 		validateJavaCompilerSettings(javaProjectWarnings);
+	}
+
+	private void validateTestRequirements(IBuildEntry buildEntry) {
+		Map<String, List<Requirement>> requirements = Arrays.stream(buildEntry.getTokens())
+				.collect(Collectors.toMap(s -> s, token -> {
+					Parameters parameters = new Parameters(token);
+					return CapReqBuilder.getRequirementsFrom(parameters);
+				}));
+		Repository repository = TargetRepository.getTargetRepository();
+		for (Entry<String, List<Requirement>> entry : requirements.entrySet()) {
+			Map<Requirement, Collection<Capability>> map = repository.findProviders(entry.getValue());
+			if (map.values().stream().flatMap(Collection::stream).count() == 0) {
+				prepareError(buildEntry.getName(), entry.getKey(),
+						NLS.bind(PDECoreMessages.BuildErrorReporter_cannotRequirement, entry.getKey()),
+						PDEMarkerFactory.M_ONLY_CONFIG_SEV, fClasspathSeverity, CompilerFlags.P_UNRESOLVED_IMPORTS,
+						PDEMarkerFactory.CAT_OTHER);
+			}
+		}
 	}
 
 	/**

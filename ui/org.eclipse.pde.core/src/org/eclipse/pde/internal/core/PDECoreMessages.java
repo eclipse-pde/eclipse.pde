@@ -23,6 +23,7 @@ public class PDECoreMessages extends NLS {
 	public static String BaseExportTask_pdeExport;
 
 	public static String BuildErrorReporter_cannotFindBundle;
+	public static String BuildErrorReporter_cannotRequirement;
 
 	public static String BuildErrorReporter_cannotFindJar;
 
