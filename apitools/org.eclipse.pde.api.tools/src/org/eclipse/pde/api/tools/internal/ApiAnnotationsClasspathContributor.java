@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2022 Christoph Läubrich and others.
+ * Copyright (c) 2023 Christoph Läubrich and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,7 +11,7 @@
  * Contributors:
  *     Christoph Läubrich - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.core.annotations;
+package org.eclipse.pde.api.tools.internal;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -20,42 +20,53 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.core.IClasspathContributor;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
 
-/**
- * This makes the <a href=
- * "https://docs.osgi.org/specification/osgi.core/7.0.0/framework.api.html#org.osgi.annotation.bundle">OSGi
- * Bundle Annotations</a> and <a href=
- * "https://docs.osgi.org/specification/osgi.core/7.0.0/framework.api.html#org.osgi.annotation.versioning">OSGi
- * Versioning Annotations</a> available to plugin projects if they are part of
- * the target platform.
- */
-public class OSGiAnnotationsClasspathContributor implements IClasspathContributor {
+public class ApiAnnotationsClasspathContributor implements IClasspathContributor {
 
-	private static final Collection<String> OSGI_ANNOTATIONS = List.of("org.osgi.annotation.versioning", //$NON-NLS-1$
-			"org.osgi.annotation.bundle", "org.osgi.service.component.annotations", //$NON-NLS-1$ //$NON-NLS-2$
-			"org.osgi.service.metatype.annotations"); //$NON-NLS-1$
+	private static final Collection<String> API_TOOLS_ANNOTATIONS = List.of("org.eclipse.pde.api.tools.annotations"); //$NON-NLS-1$
 
 	@Override
 	public List<IClasspathEntry> getInitialEntries(BundleDescription project) {
 		IPluginModelBase model = PluginRegistry.findModel(project);
-		if (model != null) {
+		if (hasApiNature(model)) {
 			return ClasspathUtilCore.classpathEntries(annotations()).collect(Collectors.toList());
 		}
 		return Collections.emptyList();
 	}
 
+
+
+	private boolean hasApiNature(IPluginModelBase model) {
+		if (model != null) {
+			IResource resource = model.getUnderlyingResource();
+			if (resource != null) {
+				try {
+					return resource.getProject().hasNature(ApiPlugin.NATURE_ID);
+				} catch (CoreException e) {
+					// assume not compatible project then...
+				}
+			}
+		}
+		return false;
+	}
+
+
+
 	/**
-	 * @return s stream of all current available annotations in the current
-	 *         plugin registry
+	 * @return s stream of all current available annotations in the current plugin
+	 *         registry
 	 */
 	public static Stream<IPluginModelBase> annotations() {
-		return OSGI_ANNOTATIONS.stream().map(PluginRegistry::findModel).filter(Objects::nonNull)
+		return API_TOOLS_ANNOTATIONS.stream().map(PluginRegistry::findModel).filter(Objects::nonNull)
 				.filter(IPluginModelBase::isEnabled);
 	}
 

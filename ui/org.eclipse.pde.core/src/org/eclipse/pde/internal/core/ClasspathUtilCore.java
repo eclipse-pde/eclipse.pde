@@ -17,11 +17,16 @@ import static java.util.Collections.singleton;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jdt.core.IAccessRule;
+import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -74,6 +79,28 @@ public class ClasspathUtilCore {
 		}
 
 		return entries;
+	}
+
+	public static Stream<IClasspathEntry> classpathEntries(Stream<IPluginModelBase> models) {
+		return models.flatMap(model -> {
+			String location = model.getInstallLocation();
+			if (location == null) {
+				return Stream.empty();
+			}
+			boolean isJarShape = new File(location).isFile();
+			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
+			if (isJarShape || libraries.length == 0) {
+				return Stream.of(IPath.fromOSString(location));
+			}
+			return Arrays.stream(libraries).filter(library -> !IPluginLibrary.RESOURCE.equals(library.getType()))
+					.map(library -> {
+						String name = library.getName();
+						String expandedName = ClasspathUtilCore.expandLibraryName(name);
+						IPath path = ClasspathUtilCore.getPath(model, expandedName, isJarShape);
+						return path;
+					}).filter(Objects::nonNull);
+		}).map(path -> JavaCore.newLibraryEntry(path, path, IPath.ROOT, new IAccessRule[0], new IClasspathAttribute[0],
+				false));
 	}
 
 	private static void addLibraryEntry(IPluginLibrary library, Collection<ClasspathLibrary> entries) {
