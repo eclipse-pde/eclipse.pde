@@ -328,4 +328,10 @@
        </run>
     </application>
  </extension>
+ <extension
+       point="org.eclipse.pde.core.pluginClasspathContributors">
+    <contributor
+          class="org.eclipse.pde.api.tools.internal.ApiAnnotationsClasspathContributor">
+    </contributor>
+ </extension>
 </plugin>
