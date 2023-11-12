@@ -32,6 +32,6 @@ import java.lang.annotation.Target;
 @Target(value = {
 		ElementType.TYPE, ElementType.METHOD, ElementType.CONSTRUCTOR,
 		ElementType.FIELD })
-@Retention(RetentionPolicy.SOURCE)
+@Retention(RetentionPolicy.CLASS)
 public @interface NoReference {
 }

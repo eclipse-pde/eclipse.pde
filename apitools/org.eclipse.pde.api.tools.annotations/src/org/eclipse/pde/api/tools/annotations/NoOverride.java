@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
  */
 @Documented
 @Target(value = { ElementType.METHOD, ElementType.CONSTRUCTOR })
-@Retention(RetentionPolicy.SOURCE)
+@Retention(RetentionPolicy.CLASS)
 public @interface NoOverride {
 
 }
