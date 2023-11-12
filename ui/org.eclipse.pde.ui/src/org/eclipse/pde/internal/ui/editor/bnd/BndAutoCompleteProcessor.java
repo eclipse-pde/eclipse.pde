@@ -69,6 +69,54 @@ public class BndAutoCompleteProcessor implements IContentAssistProcessor {
 											return proposal;
 										}).toArray(ICompletionProposal[]::new);
 								return array;
+							} else if (Constants.FAIL_OK.equals(key)) {
+								String strippedPrefix = prefix.prefix().strip().toLowerCase();
+								String[] booleans = { "true", "false" }; //$NON-NLS-1$ //$NON-NLS-2$
+								ICompletionProposal[] array = Arrays.stream(booleans)
+										.filter(bool -> bool.toLowerCase().contains(strippedPrefix)).map(bool -> {
+											StringBuilder sb = new StringBuilder();
+											sb.append(key);
+											sb.append(": "); //$NON-NLS-1$
+											sb.append(bool);
+											String str = sb.toString();
+											CompletionProposal proposal = new CompletionProposal(str,
+													region.getOffset(), region.getLength(), str.length(), null, bool,
+													null, null);
+											return proposal;
+										}).toArray(ICompletionProposal[]::new);
+								return array;
+							} else if (Constants.COMPRESSION.equals(key)) {
+								String strippedPrefix = prefix.prefix().strip().toLowerCase();
+								String[] booleans = { "DEFLATE", "STORE" }; //$NON-NLS-1$ //$NON-NLS-2$
+								ICompletionProposal[] array = Arrays.stream(booleans)
+										.filter(bool -> bool.toLowerCase().contains(strippedPrefix)).map(bool -> {
+											StringBuilder sb = new StringBuilder();
+											sb.append(key);
+											sb.append(": "); //$NON-NLS-1$
+											sb.append(bool);
+											String str = sb.toString();
+											CompletionProposal proposal = new CompletionProposal(str,
+													region.getOffset(), region.getLength(), str.length(), null, bool,
+													null, null);
+											return proposal;
+										}).toArray(ICompletionProposal[]::new);
+								return array;
+							} else if (Constants.RESOLVE.equals(key)) {
+								String strippedPrefix = prefix.prefix().strip().toLowerCase();
+								String[] booleans = { "manual", "auto", "beforelaunch", "batch", "cache" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+								ICompletionProposal[] array = Arrays.stream(booleans)
+										.filter(bool -> bool.toLowerCase().contains(strippedPrefix)).map(bool -> {
+											StringBuilder sb = new StringBuilder();
+											sb.append(key);
+											sb.append(": "); //$NON-NLS-1$
+											sb.append(bool);
+											String str = sb.toString();
+											CompletionProposal proposal = new CompletionProposal(str,
+													region.getOffset(), region.getLength(), str.length(), null, bool,
+													null, null);
+											return proposal;
+										}).toArray(ICompletionProposal[]::new);
+								return array;
 							} else if (Constants.RUNEE.equals(key)) {
 								// TODO suggest any known EE from JDT?
 							} else if (Constants.INCLUDERESOURCE.equals(key)) {
