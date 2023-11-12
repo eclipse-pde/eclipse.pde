@@ -1030,6 +1030,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		Utils.storeBuildProperties(buildFolder, properties);
 		runBuild(buildFolder);
 
+		entries = new HashSet<>();
 		entries.add("plugins/P1_1.0.0/@dot.xml");
 		entries.add("plugins/P2_1.0.0/@dot.xml");
 		assertZipContents(f1, "F1_1.0.0.log.zip", entries);
@@ -1790,8 +1791,9 @@ public class ScriptGenerationTests extends PDETestCase {
 		properties.put("generateSourceReferences", "true");
 		Utils.storeBuildProperties(buildFolder, properties);
 		runBuild(buildFolder);
-		
-		String manifestFile = readEntryFromZip(buildFolder.getFile("tmp/eclipse/plugins/A_1.0.0.jar"), "META-INF/MANIFEST.MF");
+
+		String manifestFile = readEntryFromZip(buildFolder.getFile("tmp/eclipse/plugins/A_1.0.0.jar"),
+				"META-INF/MANIFEST.MF");
 		try (InputStream contents = new StringInputStream(manifestFile)) {
 			Manifest m = new Manifest(contents);
 			assertEquals(m.getMainAttributes().getValue(IPDEBuildConstants.ECLIPSE_SOURCE_REF), a_source);
@@ -1800,7 +1802,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		try (InputStream contents = new StringInputStream(manifestFile)) {
 			Manifest m = new Manifest(contents);
 			assertEquals(m.getMainAttributes().getValue(IPDEBuildConstants.ECLIPSE_SOURCE_REF),
-				"B's source,foo.bar;type:=\"mine\"");
+					"B's source,foo.bar;type:=\"mine\"");
 		}
 		manifestFile = readEntryFromZip(buildFolder.getFile("tmp/eclipse/plugins/C_1.0.0.jar"), "META-INF/MANIFEST.MF");
 		try (InputStream contents = new StringInputStream(manifestFile)) {
