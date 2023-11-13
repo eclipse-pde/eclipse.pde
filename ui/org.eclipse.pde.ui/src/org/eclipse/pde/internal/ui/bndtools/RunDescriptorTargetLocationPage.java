@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2019 bndtools project and others.
+ * Copyright (c) 2017, 2023 bndtools project and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     Elias N Vasylenko <eliasvasylenko@gmail.com> - initial API and implementation
  *     BJ Hargrave <bj@bjhargrave.com> - ongoing enhancements
+ *     Christoph Läubrich - adapt to PDE codebase
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.bndtools;
 
@@ -39,7 +40,6 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 import aQute.bnd.build.Container;
 import aQute.bnd.build.Workspace;
 import biz.aQute.resolve.Bndrun;
-import bndtools.central.Central;
 
 public class RunDescriptorTargetLocationPage extends BndTargetLocationPage {
 	private static final String			FILE_EXTENSION	= "bndrun";
@@ -132,7 +132,7 @@ public class RunDescriptorTargetLocationPage extends BndTargetLocationPage {
 				File file = runDescriptorFile.getRawLocation()
 					.makeAbsolute()
 					.toFile();
-				Workspace workspace = Central.getWorkspace();
+				Workspace workspace = BndTargetLocation.getWorkspace();
 				List<String> bundles = new ArrayList<>();
 
 				try (Bndrun bndRun = new Bndrun(workspace, file)) {

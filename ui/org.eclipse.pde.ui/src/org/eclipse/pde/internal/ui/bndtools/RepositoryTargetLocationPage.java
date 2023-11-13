@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2020 bndtools project and others.
+ * Copyright (c) 2017, 2023 bndtools project and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     Elias N Vasylenko <eliasvasylenko@gmail.com> - initial API and implementation
  *     BJ Hargrave <bj@bjhargrave.com> - ongoing enhancements
+ *     Christoph Läubrich - adapt to PDE codebase
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.bndtools;
 
@@ -35,7 +36,6 @@ import aQute.bnd.build.WorkspaceRepository;
 import aQute.bnd.service.IndexProvider;
 import aQute.bnd.service.RepositoryPlugin;
 import aQute.bnd.service.ResolutionPhase;
-import bndtools.central.Central;
 
 public class RepositoryTargetLocationPage extends BndTargetLocationPage {
 	private static final String				CACHE_REPOSITORY	= "cache";
@@ -61,7 +61,7 @@ public class RepositoryTargetLocationPage extends BndTargetLocationPage {
 
 		Workspace workspace;
 		try {
-			workspace = Central.getWorkspace();
+			workspace = BndTargetLocation.getWorkspace();
 		} catch (Exception e) {
 			logError(BndTargetLocation.MESSAGE_UNABLE_TO_LOCATE_WORKSPACE, e);
 			return;
