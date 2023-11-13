@@ -13,6 +13,7 @@
  *     BJ Hargrave <bj@bjhargrave.com> - ongoing enhancements
  *     Peter Kriens <Peter.Kriens@aqute.biz> - ongoing enhancements
  *     Juergen Albert <j.albert@data-in-motion.biz> - ongoing enhancements
+ *     Christoph Läubrich - adapt to PDE codebase
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.bndtools;
 
@@ -25,7 +26,6 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.bndtools.core.ui.icons.Icons;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -38,14 +38,18 @@ import org.eclipse.pde.core.target.TargetFeature;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.AbstractBundleContainer;
 import org.eclipse.pde.internal.core.target.TargetDefinition;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.ui.target.ITargetLocationHandler;
 import org.eclipse.swt.graphics.Image;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.util.tracker.ServiceTracker;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import aQute.lib.xml.XML;
+import aQute.bnd.build.Workspace;
 
-@SuppressWarnings("deprecation")
 public abstract class BndTargetLocation extends AbstractBundleContainer
 	implements ITargetLocationHandler, ILabelProvider {
 	static final String		PLUGIN_ID							= "bndtools.pde";
@@ -61,7 +65,7 @@ public abstract class BndTargetLocation extends AbstractBundleContainer
 
 	public BndTargetLocation(String type, String containerIconName) {
 		this.type = Objects.requireNonNull(type);
-		this.containerIcon = Icons.image("/icons/" + containerIconName);
+		this.containerIcon = PDEPluginImages.get("/icons/bndtools/" + containerIconName);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -126,8 +130,9 @@ public abstract class BndTargetLocation extends AbstractBundleContainer
 	public String serialize() {
 		Document document;
 		try {
-			DocumentBuilder docBuilder = XML.newDocumentBuilderFactory()
-				.newDocumentBuilder();
+			@SuppressWarnings("restriction")
+			DocumentBuilder docBuilder = org.eclipse.core.internal.runtime.XmlProcessorFactory
+					.createDocumentBuilderWithErrorOnDOCTYPE();
 			document = docBuilder.newDocument();
 
 			Element locationElement = document.createElement(ELEMENT_LOCATION);
@@ -137,7 +142,9 @@ public abstract class BndTargetLocation extends AbstractBundleContainer
 			serialize(document, locationElement);
 
 			StreamResult result = new StreamResult(new StringWriter());
-			Transformer transformer = XML.newTransformerFactory()
+			@SuppressWarnings("restriction")
+			Transformer transformer = org.eclipse.core.internal.runtime.XmlProcessorFactory
+					.createTransformerFactoryWithErrorOnDOCTYPE()
 				.newTransformer();
 			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 			transformer.transform(new DOMSource(document), result);
@@ -150,4 +157,25 @@ public abstract class BndTargetLocation extends AbstractBundleContainer
 	}
 
 	protected abstract void serialize(Document document, Element locationElement);
+
+	public static Workspace getWorkspace() throws CoreException {
+		Bundle bundle = FrameworkUtil.getBundle(BndTargetLocation.class);
+		if (bundle != null) {
+			BundleContext bundleContext = bundle.getBundleContext();
+			if (bundleContext != null) {
+				ServiceTracker<Workspace, Workspace> tracker = new ServiceTracker<>(bundleContext, Workspace.class,
+						null);
+				tracker.open();
+				try {
+					Workspace service = tracker.getService();
+					if (service != null) {
+						return service;
+					}
+				} finally {
+					tracker.close();
+				}
+			}
+		}
+		throw new CoreException(new Status(IStatus.ERROR, PLUGIN_ID, MESSAGE_UNABLE_TO_LOCATE_WORKSPACE));
+	}
 }

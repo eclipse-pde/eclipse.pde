@@ -13,6 +13,7 @@
  *     BJ Hargrave <bj@bjhargrave.com> - ongoing enhancements
  *     Peter Kriens <Peter.Kriens@aqute.biz> - ongoing enhancements
  *     Juergen Albert <j.albert@data-in-motion.biz> - ongoing enhancements
+ *     Christoph Läubrich - adapt to PDE codebase
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.bndtools;
 
@@ -38,7 +39,6 @@ import org.w3c.dom.NodeList;
 import aQute.bnd.build.Workspace;
 import aQute.bnd.service.RepositoryPlugin;
 import aQute.bnd.version.Version;
-import bndtools.central.Central;
 
 public class RepositoryTargetLocation extends BndTargetLocation {
 	static final String			TYPE									= "BndRepositoryLocation";
@@ -132,7 +132,7 @@ public class RepositoryTargetLocation extends BndTargetLocation {
 	private void resolveRepository() throws CoreException {
 		Workspace workspace;
 		try {
-			workspace = Central.getWorkspace();
+			workspace = BndTargetLocation.getWorkspace();
 		} catch (Exception e) {
 			throw new CoreException(new Status(IStatus.ERROR, PLUGIN_ID, MESSAGE_UNABLE_TO_LOCATE_WORKSPACE, e));
 		}

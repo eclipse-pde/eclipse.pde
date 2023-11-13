@@ -13,6 +13,7 @@
  *     BJ Hargrave <bj@bjhargrave.com> - ongoing enhancements
  *     Peter Kriens <Peter.Kriens@aqute.biz> - ongoing enhancements
  *     Juergen Albert <j.albert@data-in-motion.biz> - ongoing enhancements
+ *     Christoph Läubrich - adapt to PDE codebase
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.bndtools;
 
@@ -43,7 +44,6 @@ import org.w3c.dom.NodeList;
 import aQute.bnd.build.Container;
 import aQute.bnd.build.Workspace;
 import biz.aQute.resolve.Bndrun;
-import bndtools.central.Central;
 
 public class RunDescriptorTargetLocation extends BndTargetLocation {
 	static final String	TYPE							= "BndRunDescriptorLocation";
@@ -98,11 +98,7 @@ public class RunDescriptorTargetLocation extends BndTargetLocation {
 		resolveBndrunFile();
 
 		Workspace workspace;
-		try {
-			workspace = Central.getWorkspace();
-		} catch (Exception e) {
-			throw new CoreException(new Status(IStatus.ERROR, PLUGIN_ID, MESSAGE_UNABLE_TO_LOCATE_WORKSPACE, e));
-		}
+		workspace = BndTargetLocation.getWorkspace();
 
 		try (Bndrun bndRun = new Bndrun(workspace, bndrunFile.getRawLocation()
 			.makeAbsolute()
