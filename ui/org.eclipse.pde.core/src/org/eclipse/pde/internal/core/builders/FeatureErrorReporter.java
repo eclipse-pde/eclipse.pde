@@ -408,7 +408,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.F_UNRESOLVED_PLUGINS);
 		if (severity != CompilerFlags.IGNORE) {
 			IPluginModelBase model = PluginRegistry.findModel(id);
-			if (model == null || !model.isEnabled() || model.isFragmentModel()) {
+			if (model == null || !model.isEnabled()) {
 				VirtualMarker marker = report(NLS.bind(PDECoreMessages.Builders_Feature_reference, id), getLine(element, attr.getName()), severity, PDEMarkerFactory.CAT_OTHER);
 				addMarkerAttribute(marker, PDEMarkerFactory.compilerKey,  CompilerFlags.F_UNRESOLVED_PLUGINS);
 			}
