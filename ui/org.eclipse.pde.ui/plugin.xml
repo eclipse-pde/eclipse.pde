@@ -2496,4 +2496,47 @@
                contentType="org.eclipse.pde.bndInstructions">
          </presentationReconciler>
       </extension>
+         <extension
+         point="org.eclipse.pde.ui.targetLocationProvisioners">
+      <locationProvider
+            class="org.eclipse.pde.internal.ui.bndtools.RepositoryTargetLocationWizard"
+            icon="platform:/plugin/org.eclipse.pde.ui/icons/bndtools/database.png"
+            id="bndtools.RepositoryTargetLocationProvisioner"
+            name="Repository">
+         <description>
+            Download plug-ins from a repository defined in a Bnd workspace
+         </description>
+      </locationProvider>
+   </extension>
+   <extension
+         point="org.eclipse.pde.core.targetLocations"
+         id="bndtools.pde.target.repository.location"
+         name="Bnd Repository Location">
+      <targetLocation
+            locationFactory="org.eclipse.pde.internal.ui.bndtools.RepositoryTargetLocation$Factory"
+            type="BndRepositoryLocation">
+      </targetLocation>
+   </extension>
+
+   <extension
+         point="org.eclipse.pde.ui.targetLocationProvisioners">
+      <locationProvider
+            class="org.eclipse.pde.internal.ui.bndtools.RunDescriptorTargetLocationWizard"
+            icon="platform:/plugin/org.eclipse.pde.ui/icons/bndtools/bndrun.gif"
+            id="bndtools.RunDescriptorTargetLocationProvisioner"
+            name="Run Descriptor">
+         <description>
+            The set of bundles defined by a Bnd run descriptor
+         </description>
+      </locationProvider>
+   </extension>
+   <extension
+         point="org.eclipse.pde.core.targetLocations"
+         id="bndtools.pde.target.rundescriptor.location"
+         name="Bnd Run Descriptor Location">
+      <targetLocation
+            locationFactory="org.eclipse.pde.internal.ui.bndtools.RunDescriptorTargetLocation$Factory"
+            type="BndRunDescriptorLocation">
+      </targetLocation>
+   </extension>
 </plugin>
