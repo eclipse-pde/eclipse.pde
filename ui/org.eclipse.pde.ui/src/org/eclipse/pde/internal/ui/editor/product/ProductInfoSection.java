@@ -409,7 +409,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		if (applicationDeltas.length + productDeltas.length == 0) {
 			return;
 		}
-		Display.getDefault().syncExec(() -> {
+		Display.getDefault().asyncExec(() -> {
 			fAppCombo.handleExtensionDelta(applicationDeltas);
 			fProductCombo.handleExtensionDelta(productDeltas);
 		});
@@ -427,7 +427,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		System.arraycopy(apps, 0, finalApps, 0, apps.length);
 		finalApps[apps.length] = ""; //$NON-NLS-1$
 
-		Display.getDefault().syncExec(() -> {
+		Display.getDefault().asyncExec(() -> {
 			fAppCombo.reload(finalApps);
 			fProductCombo.reload(finalProducts);
 		});
