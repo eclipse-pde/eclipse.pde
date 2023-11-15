@@ -27,6 +27,7 @@
     <module>org.eclipse.pde.launching</module>
     <module>org.eclipse.pde.runtime</module>
     <module>org.eclipse.pde.ui</module>
+    <module>org.eclipse.pde.bnd.ui</module>
     <module>org.eclipse.pde.ui.templates</module>
     <module>org.eclipse.pde.ui.tests</module>
     <module>org.eclipse.pde.spy.core</module>

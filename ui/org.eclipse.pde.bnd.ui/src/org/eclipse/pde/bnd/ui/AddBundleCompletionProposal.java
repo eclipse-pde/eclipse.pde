@@ -45,7 +45,7 @@ import aQute.bnd.build.model.clauses.VersionedClause;
 import aQute.bnd.osgi.BundleId;
 import aQute.bnd.osgi.Descriptors;
 
-class AddBundleCompletionProposal extends WorkspaceJob implements IJavaCompletionProposal {
+public class AddBundleCompletionProposal extends WorkspaceJob implements IJavaCompletionProposal {
 
 	final BundleId					bundle;
 	final String					displayString;
