@@ -12,18 +12,22 @@
  *     Peter Kriens <Peter.Kriens@aqute.biz> - initial API and implementation
  *     Fr Jeremy Krieg <fr.jkrieg@greekwelfaresa.org.au> - ongoing enhancements
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
+ *     Christoph Läubrich - adapt to PDE codebase
  *******************************************************************************/
 package org.eclipse.pde.bnd.ui;
 
+import java.io.File;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import org.bndtools.api.ILogger;
-import org.bndtools.api.Logger;
-import org.bndtools.core.ui.icons.Icons;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -40,13 +44,8 @@ import aQute.bnd.build.model.BndEditModel;
 import aQute.bnd.build.model.clauses.VersionedClause;
 import aQute.bnd.osgi.BundleId;
 import aQute.bnd.osgi.Descriptors;
-import aQute.lib.strings.Strings;
-import bndtools.central.Central;
-import bndtools.preferences.BndPreferences;
 
 class AddBundleCompletionProposal extends WorkspaceJob implements IJavaCompletionProposal {
-
-	private static final ILogger	logger	= Logger.getLogger(AddBundleCompletionProposal.class);
 
 	final BundleId					bundle;
 	final String					displayString;
@@ -65,7 +64,8 @@ class AddBundleCompletionProposal extends WorkspaceJob implements IJavaCompletio
 		this.context = context;
 		this.project = project;
 		this.pathtype = pathtype;
-		this.displayString = Strings.format("Add %s to %s (found %s)", bundle.getBsn(), pathtype, classes.keySet()
+		this.displayString = String.format("Add %s to %s (found %s)", bundle.getBsn(), pathtype,
+				classes.keySet()
 			.stream()
 			.sorted()
 			.collect(Collectors.joining(", ")));
@@ -98,7 +98,7 @@ class AddBundleCompletionProposal extends WorkspaceJob implements IJavaCompletio
 
 	@Override
 	public Image getImage() {
-		return Icons.image("bundle");
+		return Resources.getImage("/icons/bundle.png");
 	}
 
 	@Override
@@ -120,21 +120,21 @@ class AddBundleCompletionProposal extends WorkspaceJob implements IJavaCompletio
 
 				BndEditModel model = new BndEditModel(project);
 				model.load();
-
-				BndPreferences prefs = new BndPreferences();
+//TODO
+//				BndPreferences prefs = new BndPreferences();
 				VersionedClause vc;
-				switch (prefs.getQuickFixVersioning()) {
-					case latest:
-						vc = new VersionedClause(bundle.getBsn() + ";version=latest");
-						break;
-					case noversion :
-					default :
+//				switch (prefs.getQuickFixVersioning()) {
+//					case latest:
+//						vc = new VersionedClause(bundle.getBsn() + ";version=latest");
+//						break;
+//					case noversion :
+//					default :
 						vc = new VersionedClause(bundle.getBsn());
-						break;
-				}
+//						break;
+//				}
 				model.addPath(vc, pathtype);
 				model.saveChanges();
-				Central.refreshFile(project.getPropertiesFile());
+				refreshFile(project.getPropertiesFile());
 				return Status.OK_STATUS;
 
 			}, monitor::isCanceled);
@@ -157,7 +157,7 @@ class AddBundleCompletionProposal extends WorkspaceJob implements IJavaCompletio
 								.createImport(fqn, null, monitor);
 						}
 					} catch (JavaModelException jme) {
-						logger.logError("Couldn't add import for " + fqn, jme);
+							ILog.get().error("Couldn't add import for " + fqn, jme);
 					}
 				});
 			return status;
@@ -165,5 +165,16 @@ class AddBundleCompletionProposal extends WorkspaceJob implements IJavaCompletio
 			return new Status(IStatus.ERROR, "bndtools.core.services",
 				"Failed to add bundle " + bundle + " to " + pathtype, e);
 		}
+	}
+
+	private void refreshFile(File propertiesFile) {
+		IFile file = ResourcesPlugin.getWorkspace().getRoot()
+				.getFile(IPath.fromOSString(propertiesFile.getAbsolutePath()));
+		try {
+			file.refreshLocal(IResource.DEPTH_ZERO, null);
+		} catch (CoreException e) {
+			// if we can't refresh we can't do anything here...
+		}
+
 	}
 }
