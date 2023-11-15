@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Generic UI components related to BND
+Bundle-SymbolicName: org.eclipse.pde.bnd.ui
+Bundle-Vendor: Eclipse.org
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: org.eclipse.pde.bnd.ui
+Bundle-RequiredExecutionEnvironment: JavaSE-17
