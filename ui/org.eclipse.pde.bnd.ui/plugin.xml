@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+	<extension point="org.eclipse.jdt.ui.quickFixProcessors">
+		<quickFixProcessor
+			id="org.eclipse.pde.bnd.ui.buildpathquickfix"
+			name="Buildpath Quick Fix"
+			class="org.eclipse.pde.bnd.ui.BuildpathQuickFixProcessor">
+			<handledMarkerTypes>
+				<markerType id="org.eclipse.jdt.core.problem" />
+			</handledMarkerTypes>
+		</quickFixProcessor>
+	</extension>
+</plugin>
