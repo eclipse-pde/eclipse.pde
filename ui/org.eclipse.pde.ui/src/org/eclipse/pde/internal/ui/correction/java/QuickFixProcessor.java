@@ -18,9 +18,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -49,10 +51,19 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
+import org.eclipse.pde.bnd.ui.AddBundleCompletionProposal;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.internal.core.natures.BndProject;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.correction.java.FindClassResolutionsOperation.AbstractClassResolutionCollector;
+import org.eclipse.swt.graphics.Image;
+
+import aQute.bnd.build.Project;
+import aQute.bnd.osgi.BundleId;
+import aQute.bnd.osgi.Constants;
 
 public class QuickFixProcessor implements IQuickFixProcessor {
 
@@ -60,7 +71,7 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 	public IJavaCompletionProposal[] getCorrections(IInvocationContext context, IProblemLocation[] locations) throws CoreException {
 		ArrayList<Object> results = new ArrayList<>();
 
-		AbstractClassResolutionCollector collector = createCollector(results);
+		AbstractClassResolutionCollector collector = createCollector(results, context);
 
 		for (IProblemLocation location : locations) {
 			int id = location.getProblemId();
@@ -254,7 +265,8 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 	/*
 	 * Custom AbstractClassResolutionCollector which will only add one IJavaCompletionProposal for adding an Import-Package or Export-Package entry
 	 */
-	private AbstractClassResolutionCollector createCollector(final Collection<Object> result) {
+	private AbstractClassResolutionCollector createCollector(final Collection<Object> result,
+			IInvocationContext context) {
 		return new AbstractClassResolutionCollector() {
 
 			// the list of package names for which an import package resolution has been created
@@ -270,11 +282,15 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 			@Override
 			public void addResolutionModification(IProject project, ExportPackageDescription desc, CompilationUnit cu,
 					String qualifiedTypeToImport) {
+				if (BndProject.isBndProject(project)) {
+					// for bnd projects the proposal to import a package is not
+					// really useful as import package is computed automatically
+					return;
+				}
 				// guard against multiple import package resolutions for the same package
 				if (addedImportPackageResolutions.contains(desc.getName())) {
 					return;
 				}
-
 				Object proposal = JavaResolutionFactory.createImportPackageProposal(project, desc,
 						JavaResolutionFactory.TYPE_JAVA_COMPLETION, 4, cu, qualifiedTypeToImport);
 				if (proposal != null) {
@@ -301,12 +317,38 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 			@Override
 			public Object addRequireBundleModification(IProject project, ExportPackageDescription desc, int relevance,
 					CompilationUnit cu, String qualifiedTypeToImport) {
-				Object proposal = super.addRequireBundleModification(project, desc, relevance, cu,
+				Object proposal;
+				if (BndProject.isBndProject(project)) {
+					proposal = createAddBundleCompletionProposal(project, desc, relevance, cu, qualifiedTypeToImport);
+				} else {
+					proposal = super.addRequireBundleModification(project, desc, relevance, cu,
 						qualifiedTypeToImport);
+				}
 				if (proposal != null) {
 					result.add(proposal);
 				}
 				return proposal;
+			}
+
+			private AddBundleCompletionProposal createAddBundleCompletionProposal(IProject project, ExportPackageDescription desc, int relevance,
+					CompilationUnit cu, String qualifiedTypeToImport) {
+				BundleDescription supplier = desc.getSupplier();
+				if (supplier == null) {
+					return null;
+				}
+				Project bndProject = Adapters.adapt(project, Project.class);
+				if (bndProject == null) {
+					return null;
+				}
+				String symbolicName = supplier.getSymbolicName();
+				return new AddBundleCompletionProposal(new BundleId(symbolicName, (String) null),
+							Map.of(qualifiedTypeToImport, true),
+						relevance, context, bndProject, Constants.BUILDPATH) {
+					@Override
+					public Image getImage() {
+						return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_REQ_PLUGIN_OBJ);
+					}
+				};
 			}
 
 			@Override
