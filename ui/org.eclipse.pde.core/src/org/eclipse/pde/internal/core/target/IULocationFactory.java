@@ -72,11 +72,8 @@ public class IULocationFactory implements ITargetLocationFactory {
 					if (element.getNodeName().equalsIgnoreCase(TargetDefinitionPersistenceHelper.INSTALLABLE_UNIT)) {
 						String id = element.getAttribute(TargetDefinitionPersistenceHelper.ATTR_ID);
 						if (id.length() > 0) {
-							String version = element.getAttribute(TargetDefinitionPersistenceHelper.ATTR_VERSION);
-							if (version.length() > 0) {
-								ids.add(id);
-								versions.add(version);
-							}
+							ids.add(id);
+							versions.add(element.getAttribute(TargetDefinitionPersistenceHelper.ATTR_VERSION));
 						}
 					} else if (element.getNodeName().equalsIgnoreCase(TargetDefinitionPersistenceHelper.REPOSITORY)) {
 						String loc = element.getAttribute(TargetDefinitionPersistenceHelper.LOCATION);
