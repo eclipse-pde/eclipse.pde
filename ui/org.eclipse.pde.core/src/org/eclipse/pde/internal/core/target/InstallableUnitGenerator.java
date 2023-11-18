@@ -23,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.stream.Stream;
@@ -57,14 +58,14 @@ public class InstallableUnitGenerator {
 		return Stream.concat(generateInstallableUnits(bundles), generateInstallableUnits(features));
 	}
 
-	public static Stream<IInstallableUnit> generateInstallableUnits(TargetBundle[] bundles) {
+	private static Stream<IInstallableUnit> generateInstallableUnits(TargetBundle[] bundles) {
 		if (bundles == null || bundles.length == 0) {
 			return Stream.empty();
 		}
-		return Arrays.stream(bundles).flatMap(InstallableUnitGenerator::generateInstallableUnits);
+		return Arrays.stream(bundles).mapMulti(InstallableUnitGenerator::generateInstallableUnits);
 	}
 
-	public static Stream<IInstallableUnit> generateInstallableUnits(TargetBundle targetBundle) {
+	private static void generateInstallableUnits(TargetBundle targetBundle, Consumer<IInstallableUnit> downStream) {
 		BundleInfo bundleInfo = targetBundle.getBundleInfo();
 		if (bundleInfo != null) {
 			String manifest = bundleInfo.getManifest();
@@ -87,24 +88,23 @@ public class InstallableUnitGenerator {
 								BundlesAction.createBundleArtifactKey(bundleDescription.getSymbolicName(),
 										bundleDescription.getVersion().toString()),
 								publisherInfo);
-						return Stream.of(iu);
+						downStream.accept(iu);
 					}
 				} catch (IOException e) {
 					// can't use it then...
 				}
 			}
 		}
-		return Stream.empty();
 	}
 
-	public static Stream<IInstallableUnit> generateInstallableUnits(TargetFeature[] features) {
+	private static Stream<IInstallableUnit> generateInstallableUnits(TargetFeature[] features) {
 		if (features == null || features.length == 0) {
 			return Stream.empty();
 		}
 		return Arrays.stream(features).flatMap(InstallableUnitGenerator::generateInstallableUnits);
 	}
 
-	public static Stream<IInstallableUnit> generateInstallableUnits(TargetFeature targetFeature) {
+	private static Stream<IInstallableUnit> generateInstallableUnits(TargetFeature targetFeature) {
 		String location = targetFeature.getLocation();
 		if (location != null) {
 			Feature feature = new FeatureParser().parse(new File(location));

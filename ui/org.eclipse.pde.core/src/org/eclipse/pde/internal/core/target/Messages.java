@@ -19,7 +19,6 @@ public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.core.target.Messages"; //$NON-NLS-1$
 	public static String AbstractBundleContainer_1;
 	public static String AbstractBundleContainer_3;
-	public static String AbstractTargetHandle_0;
 	public static String DirectoryBundleContainer_0;
 	public static String DirectoryBundleContainer_1;
 	public static String FeatureBundleContainer_0;
