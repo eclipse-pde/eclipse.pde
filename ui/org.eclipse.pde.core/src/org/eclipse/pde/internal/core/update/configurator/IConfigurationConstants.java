@@ -38,7 +38,6 @@ interface IConfigurationConstants {
 	String CFG_FEATURE_ENTRY_ROOT = "root"; //$NON-NLS-1$
 	String CFG_DATE = "date"; //$NON-NLS-1$
 	String CFG_PLUGIN = "plugin"; //$NON-NLS-1$
-	String CFG_FRAGMENT = "fragment"; //$NON-NLS-1$
 	String CFG_ENABLED = "enabled"; //$NON-NLS-1$
 	String CFG_SHARED_URL = "shared_ur"; //$NON-NLS-1$
 
