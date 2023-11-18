@@ -104,6 +104,8 @@ public class Messages extends NLS {
 	public static String EditIUContainerPage_IncludeConfigurePhase;
 	public static String EditIUContainerPage_itemSelected;
 	public static String EditIUContainerPage_itemsSelected;
+	public static String EditIUContainerPage_VersionSpecification_Label;
+	public static String EditIUContainerPage_Latest_Label;
 	public static String EditProfileContainerPage_1;
 	public static String EditProfileContainerPage_2;
 	public static String EditProfileContainerPage_3;

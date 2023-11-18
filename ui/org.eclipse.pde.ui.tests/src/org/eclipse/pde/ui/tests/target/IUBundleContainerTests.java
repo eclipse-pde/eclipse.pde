@@ -190,6 +190,30 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		doResolutionTest(new String[]{"bundle.a1"}, bundles);
 	}
 
+	@Test
+	public void testResolveUnitWithoutVersion() throws Exception {
+		URI uri = getURI("/tests/sites/site.a.b");
+		String[] ids = { "feature.a.feature.group" };
+		String[] versions = { "" };
+		ITargetLocation container = getTargetService().newIULocation(ids, versions, new URI[] { uri },
+				IUBundleContainer.INCLUDE_REQUIRED);
+		doResolutionTest(container, new String[] { "bundle.a1", "bundle.a2", "bundle.a3" });
+	}
+
+	@Test
+	public void testResolveUnitWithVersionRange() throws Exception {
+		URI uri = getURI("/tests/sites/site.a.b");
+		String[] ids = { "feature.a.feature.group" };
+		String[] versions = new String[] { "[1.0,1.1)" };
+		ITargetLocation container = getTargetService().newIULocation(ids, versions, new URI[] { uri },
+				IUBundleContainer.INCLUDE_REQUIRED);
+		doResolutionTest(container, new String[] { "bundle.a1", "bundle.a2", "bundle.a3" });
+		versions = new String[] { "[2.0,3.0)" };
+		ITargetLocation container2 = getTargetService().newIULocation(ids, versions, new URI[] { uri },
+				IUBundleContainer.INCLUDE_REQUIRED);
+		doResolutionTest(container2, new String[] {});
+	}
+
 	/**
 	 * Tests whether the in-memory artifact repository is correctly created from
 	 * a non-IU target location.
@@ -302,8 +326,11 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 * @param bundleIds symbolic names of bundles that should be present after resolution
 	 */
 	protected void doResolutionTest(String[] unitIds, String[] bundleIds) throws Exception {
+		doResolutionTest(createContainer(unitIds), bundleIds);
+	}
+
+	private void doResolutionTest(ITargetLocation container, String[] bundleIds) throws Exception {
 		try {
-			IUBundleContainer container = createContainer(unitIds);
 			ITargetDefinition target = getTargetService().newTarget();
 			target.setTargetLocations(new ITargetLocation[]{container});
 			List<BundleInfo> infos = getAllBundleInfos(target);
@@ -314,9 +341,13 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 				assertTrue("Missing: " + bundleId, names.contains(bundleId));
 			}
 			List<String> profiles = P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
-			assertEquals(1, profiles.size());
-			String id = profiles.get(0);
-			assertTrue("Unexpected profile GC'd", id.endsWith(target.getHandle().getMemento()));
+			if (bundleIds.length > 0) {
+				assertEquals(1, profiles.size());
+				String id = profiles.get(0);
+				assertTrue("Unexpected profile GC'd", id.endsWith(target.getHandle().getMemento()));
+			} else {
+				assertEquals(0, profiles.size());
+			}
 		} finally {
 			// Always clean any profiles, even if the test failed to prevent cascading failures
 			P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
@@ -599,6 +630,48 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		assertIncludeAllPlatform(xml, true);
 		assertIncludeMode(xml, "slicer");
 		assertIncludeSource(xml, true);
+		deserializationTest(location);
+	}
+
+	@Test
+	public void testSerializationVersionRange() throws Exception {
+		URI uri = getURI("/tests/sites/site.a.b");
+		String[] unitIds = { "feature.b.feature.group" };
+		String[] versions = { "[1.0,1.1)" };
+		IUBundleContainer location = (IUBundleContainer) getTargetService().newIULocation(unitIds, versions,
+				new URI[] { uri }, 0);
+		String xml = location.serialize();
+		assertToken(xml, "version=\"", "[1.0.0,1.1.0)");
+		assertIncludeMode(xml, "slicer");
+		deserializationTest(location);
+	}
+
+	@Test
+	public void testSerializationNoVersion() throws Exception {
+		URI uri = getURI("/tests/sites/site.a.b");
+		String[] unitIds = { "feature.b.feature.group" };
+		String[] versions = { "" };
+		IUBundleContainer location = (IUBundleContainer) getTargetService().newIULocation(unitIds, versions,
+				new URI[] { uri }, 0);
+		String xml = location.serialize();
+		assertFalse("No version declaration expected", xml.contains("version="));
+		assertIncludeMode(xml, "slicer");
+		deserializationTest(location);
+	}
+
+	@Test
+	public void testSerializationEmptyVersion() throws Exception {
+		// Ensure declared empty versions are preserved. If one day no version
+		// is supported for long enough, empty versions could be cleaned up to
+		// no version automatically.
+		URI uri = getURI("/tests/sites/site.a.b");
+		String[] unitIds = { "feature.b.feature.group" };
+		String[] versions = { "0.0.0" };
+		IUBundleContainer location = (IUBundleContainer) getTargetService().newIULocation(unitIds, versions,
+				new URI[] { uri }, 0);
+		String xml = location.serialize();
+		assertToken(xml, "version=\"", "0.0.0");
+		assertIncludeMode(xml, "slicer");
 		deserializationTest(location);
 	}
 
