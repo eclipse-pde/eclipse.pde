@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -45,13 +44,9 @@ public class IUContentProvider implements ITreeContentProvider {
 				if (target == null || !P2TargetUtils.isResolved(target)) {
 					return new Object[0];
 				}
-				IInstallableUnit[] units = location.getInstallableUnits();
+				List<IInstallableUnit> units = location.getInstallableUnits();
 				// Wrap the units so that they remember their parent container
-				List<IUWrapper> wrappedUnits = new ArrayList<>(units.length);
-				for (IInstallableUnit unit : units) {
-					wrappedUnits.add(new IUWrapper(unit, location));
-				}
-				return wrappedUnits.toArray();
+				return units.stream().map(unit -> new IUWrapper(unit, location)).toArray();
 			} catch (CoreException e) {
 				return new Object[] {e.getStatus()};
 			}
@@ -61,8 +56,8 @@ public class IUContentProvider implements ITreeContentProvider {
 
 	@Override
 	public Object getParent(Object element) {
-		if (element instanceof IUWrapper) {
-			return ((IUWrapper) element).getParent();
+		if (element instanceof IUWrapper wrapper) {
+			return wrapper.parent();
 		}
 		return null;
 	}
@@ -76,21 +71,6 @@ public class IUContentProvider implements ITreeContentProvider {
 	 * Wraps an installable unit so that it knows what bundle container parent it belongs to
 	 * in the tree.
 	 */
-	public static class IUWrapper {
-		private final IInstallableUnit fIU;
-		private final IUBundleContainer fParent;
-
-		public IUWrapper(IInstallableUnit unit, IUBundleContainer parent) {
-			fIU = unit;
-			fParent = parent;
-		}
-
-		public IInstallableUnit getIU() {
-			return fIU;
-		}
-
-		public IUBundleContainer getParent() {
-			return fParent;
-		}
+	public static record IUWrapper(IInstallableUnit iu, IUBundleContainer parent) {
 	}
 }

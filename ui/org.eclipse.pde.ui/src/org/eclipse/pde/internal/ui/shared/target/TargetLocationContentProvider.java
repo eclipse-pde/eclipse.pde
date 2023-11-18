@@ -98,8 +98,8 @@ public class TargetLocationContentProvider implements ITreeContentProvider {
 
 	@Override
 	public Object getParent(Object element) {
-		if (element instanceof IUWrapper) {
-			return ((IUWrapper) element).getParent();
+		if (element instanceof IUWrapper wrapper) {
+			return wrapper.parent();
 		}
 		return null;
 	}
