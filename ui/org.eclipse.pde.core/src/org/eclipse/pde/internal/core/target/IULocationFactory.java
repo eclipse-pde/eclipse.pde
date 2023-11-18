@@ -89,9 +89,6 @@ public class IULocationFactory implements ITargetLocationFactory {
 					}
 				}
 			}
-			String[] iuIDs = ids.toArray(new String[ids.size()]);
-			String[] iuVer = versions.toArray(new String[versions.size()]);
-			URI[] uris = repos.toArray(new URI[repos.size()]);
 
 			int flags = IUBundleContainer.INCLUDE_REQUIRED;
 			if (includeMode != null && includeMode.trim().length() > 0) {
@@ -109,8 +106,8 @@ public class IULocationFactory implements ITargetLocationFactory {
 			} else {
 				flags |= Boolean.parseBoolean(followRepositoryReferences) ? IUBundleContainer.FOLLOW_REPOSITORY_REFERENCES : 0;
 			}
-			return TargetPlatformService.getDefault().newIULocation(iuIDs, iuVer, uris,
-					flags);
+			return TargetPlatformService.getDefault().newIULocation( //
+					ids.toArray(String[]::new), versions.toArray(String[]::new), repos.toArray(URI[]::new), flags);
 		}
 		return null;
 	}

@@ -18,6 +18,7 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -54,10 +55,9 @@ import org.eclipse.pde.ui.target.ITargetLocationHandler;
 public class IUFactory implements IAdapterFactory, ITargetLocationHandler {
 
 	private static final Status STATUS_NO_CHANGE = new Status(IStatus.OK, PDECore.PLUGIN_ID, STATUS_CODE_NO_CHANGE, "", //$NON-NLS-1$
-
 			null);
 	private static final Status STATUS_FORCE_RELOAD = new Status(IStatus.OK, PDECore.PLUGIN_ID,
-			ITargetLocationHandler.STATUS_FORCE_RELOAD, "", null); //$NON-NLS-1$ ;
+			ITargetLocationHandler.STATUS_FORCE_RELOAD, "", null); //$NON-NLS-1$
 	private ILabelProvider fLabelProvider;
 	private ITreeContentProvider fContentProvider;
 
@@ -96,8 +96,8 @@ public class IUFactory implements IAdapterFactory, ITargetLocationHandler {
 	@Override
 	public IWizard getEditWizard(ITargetDefinition target, TreePath path) {
 		Object segment = path.getFirstSegment();
-		if (segment instanceof IUBundleContainer) {
-			return new EditBundleContainerWizard(target, (ITargetLocation) segment);
+		if (segment instanceof IUBundleContainer container) {
+			return new EditBundleContainerWizard(target, container);
 		}
 		return null;
 	}
@@ -105,32 +105,32 @@ public class IUFactory implements IAdapterFactory, ITargetLocationHandler {
 	@Override
 	public IStatus update(ITargetDefinition target, TreePath[] treePaths, IProgressMonitor monitor) {
 		Set<IUBundleContainer> containers = new HashSet<>();
-		Map<IUBundleContainer, Set<String>> wrappersMap = new HashMap<>();
+		Map<IUBundleContainer, Set<String>> wrappers = new HashMap<>();
 		for (TreePath path : treePaths) {
 			Object lastSegment = path.getLastSegment();
-			if (lastSegment instanceof IUBundleContainer) {
-				containers.add((IUBundleContainer) lastSegment);
+			if (lastSegment instanceof IUBundleContainer container) {
+				containers.add(container);
 			} else if (lastSegment instanceof IUWrapper wrapper) {
-				wrappersMap.computeIfAbsent(wrapper.getParent(), k -> new HashSet<>()).add(wrapper.getIU().getId());
+				wrappers.computeIfAbsent(wrapper.parent(), k -> new HashSet<>()).add(wrapper.iu().getId());
 			}
 		}
 		Map<IUBundleContainer, IUBundleContainer> updatedContainer = new HashMap<>();
-		SubMonitor subMonitor = SubMonitor.convert(monitor, (containers.size() + wrappersMap.size()) * 100);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, containers.size() + wrappers.size());
 		for (IUBundleContainer container : containers) {
 			try {
-				IUBundleContainer update = container.update(Collections.emptySet(), subMonitor.split(100));
+				IUBundleContainer update = container.update(Collections.emptySet(), subMonitor.split(1));
 				updatedContainer.put(container, update);
 			} catch (CoreException e) {
 				return e.getStatus();
 			}
 		}
-		for (Entry<IUBundleContainer, Set<String>> entry : wrappersMap.entrySet()) {
+		for (Entry<IUBundleContainer, Set<String>> entry : wrappers.entrySet()) {
 			IUBundleContainer container = entry.getKey();
 			if (containers.contains(container)) {
 				continue;
 			}
 			try {
-				IUBundleContainer update = container.update(entry.getValue(), subMonitor.split(100));
+				IUBundleContainer update = container.update(entry.getValue(), subMonitor.split(1));
 				updatedContainer.put(container, update);
 			} catch (CoreException e) {
 				return e.getStatus();
@@ -177,7 +177,7 @@ public class IUFactory implements IAdapterFactory, ITargetLocationHandler {
 			} else if (segment instanceof IUWrapper wrapper) {
 				// TODO check if we need to force-reload here (at least in
 				// planner mode!)
-				wrapper.getParent().removeInstallableUnit(wrapper.getIU());
+				wrapper.parent().removeInstallableUnit(wrapper.iu());
 			}
 		}
 		return forceReload ? STATUS_FORCE_RELOAD : Status.OK_STATUS;
@@ -205,9 +205,9 @@ public class IUFactory implements IAdapterFactory, ITargetLocationHandler {
 						Messages.IUFactory_errorRefreshRepositories);
 				for (ITargetLocation targetLocation : targetLocations) {
 					if (targetLocation instanceof IUBundleContainer iu) {
-						URI[] repositories = iu.getRepositories();
-						if (repositories != null) {
-							convert.setWorkRemaining(repositories.length * 2);
+						List<URI> repositories = iu.getRepositories();
+						if (!repositories.isEmpty()) {
+							convert.setWorkRemaining(repositories.size() * 2);
 							for (URI repositoryUri : repositories) {
 								repositoryTracker.clearRepositoryNotFound(repositoryUri);
 								try {

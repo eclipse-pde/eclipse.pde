@@ -110,8 +110,8 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 							return null;
 						}
 						StyledString styledString = new StyledString(text);
-						if (element instanceof ITargetLocation) {
-							appendBundleCount(styledString, (ITargetLocation) element);
+						if (element instanceof ITargetLocation location) {
+							appendBundleCount(styledString, location);
 						}
 						return styledString;
 					});
@@ -125,11 +125,11 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 	 */
 	private StyledString getInternalStyledString(Object element) {
 		StyledString styledString = new StyledString();
-		if (element instanceof BundleInfo) {
-			appendBundleInfo(styledString, ((BundleInfo) element));
-		} else if (element instanceof NameVersionDescriptor) {
-			appendBundleInfo(styledString, new BundleInfo(((NameVersionDescriptor) element).getId(),
-					((NameVersionDescriptor) element).getVersion(), null, BundleInfo.NO_LEVEL, false));
+		if (element instanceof BundleInfo info) {
+			appendBundleInfo(styledString, info);
+		} else if (element instanceof NameVersionDescriptor descriptor) {
+			appendBundleInfo(styledString,
+					new BundleInfo(descriptor.getId(), descriptor.getVersion(), null, BundleInfo.NO_LEVEL, false));
 		} else if (element instanceof TargetBundle bundle) {
 			if (bundle.getStatus().isOK()) {
 				appendBundleInfo(styledString, bundle.getBundleInfo());
@@ -137,14 +137,14 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 				// TODO Better error message for missing bundles
 				styledString.append(bundle.getStatus().getMessage());
 			}
-		} else if (element instanceof IStatus) {
-			styledString.append(((IStatus) element).getMessage());
-		} else if (element instanceof IPath) {
-			styledString.append(((IPath) element).removeFirstSegments(1).toString());
-		} else if (element instanceof TargetFeature) {
+		} else if (element instanceof IStatus status) {
+			styledString.append(status.getMessage());
+		} else if (element instanceof IPath path) {
+			styledString.append(path.removeFirstSegments(1).toString());
+		} else if (element instanceof TargetFeature feature) {
 			// Use a bundle info to reuse existing code
-			appendBundleInfo(styledString, new BundleInfo(((TargetFeature) element).getId(),
-					((TargetFeature) element).getVersion(), null, BundleInfo.NO_LEVEL, false));
+			appendBundleInfo(styledString,
+					new BundleInfo(feature.getId(), feature.getVersion(), null, BundleInfo.NO_LEVEL, false));
 		} else if (element instanceof FeatureBundleContainer container) {
 			styledString.append(container.getFeatureId());
 			String version = container.getFeatureVersion();
@@ -180,15 +180,11 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 			}
 			appendBundleCount(styledString, container);
 		} else if (element instanceof IUBundleContainer container) {
-			URI[] repos = container.getRepositories();
-			if (repos == null || repos.length == 0) {
-				styledString.append(Messages.BundleContainerTable_8);
-			} else {
-				styledString.append(repos[0].toString());
-			}
+			List<URI> repos = container.getRepositories();
+			styledString.append(repos.isEmpty() ? Messages.BundleContainerTable_8 : repos.get(0).toString());
 			appendBundleCount(styledString, container);
-		} else if (element instanceof IUWrapper) {
-			styledString = getStyledString(((IUWrapper) element).getIU());
+		} else if (element instanceof IUWrapper wrapper) {
+			styledString = getStyledString(wrapper.iu());
 		} else if (element instanceof IInstallableUnit iu) {
 			@SuppressWarnings("restriction")
 			String name = fTranslations.getIUProperty(iu, IInstallableUnit.PROP_NAME);
@@ -312,14 +308,11 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 	 */
 	private Image getInternalImage(Object element) {
 		if (element instanceof TargetBundle bundle) {
-			int flag = 0;
-			if (bundle.getStatus().getSeverity() == IStatus.WARNING
-					|| bundle.getStatus().getSeverity() == IStatus.INFO) {
-				flag = SharedLabelProvider.F_WARNING;
-			} else if (bundle.getStatus().getSeverity() == IStatus.ERROR) {
-				flag = SharedLabelProvider.F_ERROR;
-			}
-
+			int flag = switch (bundle.getStatus().getSeverity()) {
+				case IStatus.WARNING, IStatus.INFO -> SharedLabelProvider.F_WARNING;
+				case IStatus.ERROR -> SharedLabelProvider.F_ERROR;
+				default -> 0;
+			};
 			if (bundle.getStatus().getSeverity() == IStatus.ERROR
 					&& bundle.getStatus().getCode() == TargetBundle.STATUS_FEATURE_DOES_NOT_EXIST) {
 				// Missing features are represented by resolved bundles in the
@@ -334,14 +327,14 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 			}
 		} else if (element instanceof BundleInfo) {
 			return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PLUGIN_OBJ);
-		} else if (element instanceof NameVersionDescriptor) {
-			if (((NameVersionDescriptor) element).getType() == NameVersionDescriptor.TYPE_FEATURE) {
+		} else if (element instanceof NameVersionDescriptor descriptor) {
+			if (NameVersionDescriptor.TYPE_FEATURE.equals(descriptor.getType())) {
 				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_FEATURE_OBJ);
-			} else if (((NameVersionDescriptor) element).getType() == NameVersionDescriptor.TYPE_PLUGIN) {
+			} else if (NameVersionDescriptor.TYPE_PLUGIN.equals(descriptor.getType())) {
 				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PLUGIN_OBJ);
 			}
-		} else if (element instanceof IStatus) {
-			int severity = ((IStatus) element).getSeverity();
+		} else if (element instanceof IStatus status) {
+			int severity = status.getSeverity();
 			if (severity == IStatus.WARNING || severity == IStatus.INFO) {
 				return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_WARN_TSK);
 			} else if (severity == IStatus.ERROR) {
@@ -351,9 +344,8 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
 		} else if (element instanceof TargetFeature) {
 			return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_FEATURE_OBJ);
-		} else if (element instanceof ITargetLocation) {
+		} else if (element instanceof ITargetLocation container) {
 			int flag = 0;
-			ITargetLocation container = (ITargetLocation) element;
 			if (container.isResolved()) {
 				IStatus status = container.getStatus();
 				if (status.getSeverity() == IStatus.WARNING || status.getSeverity() == IStatus.INFO) {
@@ -395,8 +387,8 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 			} else if (element instanceof IUBundleContainer) {
 				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_REPOSITORY_OBJ, flag);
 			}
-		} else if (element instanceof IUWrapper) {
-			return getImage(((IUWrapper) element).getIU());
+		} else if (element instanceof IUWrapper wrapper) {
+			return getImage(wrapper.iu());
 		} else if (element instanceof IInstallableUnit) {
 			return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_NOREF_FEATURE_OBJ);
 		}
