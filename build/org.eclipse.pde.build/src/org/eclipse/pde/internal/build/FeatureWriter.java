@@ -246,8 +246,6 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 			parameters.put("nl", entry.getNL()); //$NON-NLS-1$
 			if (!entry.isUnpack())
 				parameters.put("unpack", Boolean.FALSE.toString()); //$NON-NLS-1$
-			//			parameters.put("download-size", new Long(entries[i].getDownloadSize() != -1 ? entries[i].getDownloadSize() : 0)); //$NON-NLS-1$
-			//			parameters.put("install-size", new Long(entries[i].getInstallSize() != -1 ? entries[i].getInstallSize() : 0)); //$NON-NLS-1$
 			printTag(PLUGIN, parameters, true, true, true);
 		}
 	}
@@ -260,8 +258,6 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 		//			parameters.put("arch", entries[i].getOSArch()); //$NON-NLS-1$
 		//			parameters.put("ws", entries[i].getWS()); //$NON-NLS-1$
 		//			parameters.put("nl", entries[i].getNL()); //$NON-NLS-1$
-		//			parameters.put("download-size", new Long(entries[i].getDownloadSize() != -1 ? entries[i].getDownloadSize() : 0)); //$NON-NLS-1$
-		//			parameters.put("install-size", new Long(entries[i].getInstallSize() != -1 ? entries[i].getInstallSize() : 0)); //$NON-NLS-1$
 		//			printTag("data", parameters, true, true, true); //$NON-NLS-1$
 		//		}
 	}
