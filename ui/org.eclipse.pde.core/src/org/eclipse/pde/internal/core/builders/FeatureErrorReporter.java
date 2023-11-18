@@ -28,8 +28,6 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.builders.IncrementalErrorReporter.VirtualMarker;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginModel;
-import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.util.IdUtil;
 import org.w3c.dom.Attr;
@@ -125,7 +123,6 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 					reportUnknownAttribute(plugin, name, CompilerFlags.ERROR);
 				}
 			}
-			validateUnpack(plugin);
 		}
 	}
 
@@ -429,35 +426,6 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 	protected void reportExclusiveAttributes(Element element, String attName1, String attName2, int severity) {
 		String message = NLS.bind(PDECoreMessages.Builders_Feature_exclusiveAttributes, (new String[] {attName1, attName2}));
 		report(message, getLine(element, attName2), severity, PDEMarkerFactory.CAT_OTHER);
-	}
-
-	private void validateUnpack(Element parent) {
-		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.F_UNRESOLVED_PLUGINS);
-		if (severity == CompilerFlags.IGNORE) {
-			return;
-		}
-		if (severity == CompilerFlags.ERROR) {
-			// this might not be an error, so max the flag at WARNING level.
-			severity = CompilerFlags.WARNING;
-		}
-		String unpack = parent.getAttribute("unpack"); //$NON-NLS-1$
-		IPluginModelBase pModel = PluginRegistry.findModel(parent.getAttribute("id")); //$NON-NLS-1$
-		if (pModel == null) {
-			return;
-		}
-
-		if (pModel instanceof IBundlePluginModel bModel) {
-			IManifestHeader header = bModel.getBundleModel().getBundle().getManifestHeader(ICoreConstants.ECLIPSE_BUNDLE_SHAPE);
-			if (header != null) {
-				String value = header.getValue();
-				String unpackValue = "true".equals(unpack) ? "jar" : "dir"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				if (value != null && !value.equalsIgnoreCase(unpackValue)) {
-					String message = NLS.bind(PDECoreMessages.Builders_Feature_mismatchUnpackBundleShape, (new String[] {"unpack=" + unpack, parent.getAttribute("id"), "Eclipse-BundleShape: " + value})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					VirtualMarker marker = report(message, getLine(parent), severity, PDEMarkerFactory.CAT_OTHER);
-					addMarkerAttribute(marker, PDEMarkerFactory.compilerKey,  CompilerFlags.F_UNRESOLVED_PLUGINS);
-				}
-			}
-		}
 	}
 
 	/**
