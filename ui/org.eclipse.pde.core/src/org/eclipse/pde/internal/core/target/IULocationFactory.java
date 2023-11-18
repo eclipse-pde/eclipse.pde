@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.equinox.p2.metadata.Version;
 import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.core.target.ITargetLocationFactory;
 import org.w3c.dom.Document;
@@ -72,10 +73,11 @@ public class IULocationFactory implements ITargetLocationFactory {
 						String id = element.getAttribute(TargetDefinitionPersistenceHelper.ATTR_ID);
 						if (id.length() > 0) {
 							String version = element.getAttribute(TargetDefinitionPersistenceHelper.ATTR_VERSION);
-							if (version.length() > 0) {
-								ids.add(id);
-								versions.add(version);
+							if (version.isBlank()) {
+								version = Version.emptyVersion.toString();
 							}
+							ids.add(id);
+							versions.add(version);
 						}
 					} else if (element.getNodeName().equalsIgnoreCase(TargetDefinitionPersistenceHelper.REPOSITORY)) {
 						String loc = element.getAttribute(TargetDefinitionPersistenceHelper.LOCATION);
@@ -101,8 +103,7 @@ public class IULocationFactory implements ITargetLocationFactory {
 			flags |= Boolean.parseBoolean(includeAllPlatforms) ? IUBundleContainer.INCLUDE_ALL_ENVIRONMENTS : 0;
 			flags |= Boolean.parseBoolean(includeSource) ? IUBundleContainer.INCLUDE_SOURCE : 0;
 			flags |= Boolean.parseBoolean(includeConfigurePhase) ? IUBundleContainer.INCLUDE_CONFIGURE_PHASE : 0;
-			return TargetPlatformService.getDefault().newIULocation(iuIDs, iuVer, uris,
-					flags);
+			return TargetPlatformService.getDefault().newIULocation(iuIDs, iuVer, uris, flags);
 		}
 		return null;
 	}

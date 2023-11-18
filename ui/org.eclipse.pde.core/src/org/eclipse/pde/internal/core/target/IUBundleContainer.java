@@ -53,9 +53,8 @@ import org.eclipse.equinox.internal.p2.director.PermissiveSlicer;
 import org.eclipse.equinox.p2.engine.IProfile;
 import org.eclipse.equinox.p2.metadata.IArtifactKey;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
-import org.eclipse.equinox.p2.metadata.IVersionedId;
 import org.eclipse.equinox.p2.metadata.Version;
-import org.eclipse.equinox.p2.metadata.VersionedId;
+import org.eclipse.equinox.p2.metadata.VersionRange;
 import org.eclipse.equinox.p2.query.IQuery;
 import org.eclipse.equinox.p2.query.IQueryResult;
 import org.eclipse.equinox.p2.query.IQueryable;
@@ -77,6 +76,56 @@ import org.w3c.dom.Element;
  * @since 3.5
  */
 public class IUBundleContainer extends AbstractBundleContainer {
+
+	record UnitDescription(String id, VersionRange version) {
+
+		static UnitDescription parse(String id, String version) {
+			VersionRange range;
+			if (Version.emptyVersion.toString().equals(version)) {
+				range = VersionRange.emptyRange;
+			} else if (version.contains(",")) { //$NON-NLS-1$
+				range = VersionRange.create(version);
+			} else {
+				range = VersionRange.create('[' + version + ',' + version + ']');
+			}
+			return new UnitDescription(id, range);
+		}
+
+		static UnitDescription create(String id, Version version) {
+			VersionRange range = new VersionRange(version, true, version, true);
+			return new UnitDescription(id, range);
+		}
+
+		UnitDescription {
+			Objects.requireNonNull(id);
+			Objects.requireNonNull(version);
+		}
+
+		private boolean isSingleVersion() {
+			// TODO: also check bounds? if not both open, then it would be empty
+			// anyways...
+			return version.equals(VersionRange.emptyRange) || version.getMaximum().equals(version.getMinimum());
+		}
+
+		Optional<Version> getSingleVersion() {
+			return isSingleVersion() ? Optional.of(version.getMinimum()) : Optional.empty();
+		}
+
+		IQuery<IInstallableUnit> createIUQuery() {
+			return isSingleVersion() //
+					? QueryUtil.createIUQuery(id, version.getMinimum())
+					: QueryUtil.createIUQuery(id, version);
+		}
+
+		String versionString() {
+			return getSingleVersion().map(Version::toString).orElseGet(version()::toString);
+		}
+
+		@Override
+		public String toString() {
+			return VersionRange.emptyRange.equals(version) ? id : id + '/' + versionString();
+		}
+	}
 
 	/**
 	 * Constant describing the type of bundle container
@@ -114,7 +163,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	public static final int INCLUDE_CONFIGURE_PHASE = 1 << 3;
 
 	/** The list of id+version of all root units declared in this container. */
-	private List<IVersionedId> fIUs;
+	private List<UnitDescription> fIUs;
 
 	/**
 	 * Cached IU's referenced by this bundle container, or <code>null</code> if not
@@ -151,7 +200,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * @param repositories metadata repositories used to search for IU's or <code>null</code> for default set
 	 * @param resolutionFlags bitmask of flags to control IU resolution, possible flags are {@link IUBundleContainer#INCLUDE_ALL_ENVIRONMENTS}, {@link IUBundleContainer#INCLUDE_REQUIRED}, {@link IUBundleContainer#INCLUDE_SOURCE}, {@link IUBundleContainer#INCLUDE_CONFIGURE_PHASE}
 	 */
-	IUBundleContainer(Collection<IVersionedId> units, List<URI> repositories, int resolutionFlags) {
+	IUBundleContainer(Collection<UnitDescription> units, List<URI> repositories, int resolutionFlags) {
 		fIUs = new ArrayList<>(units);
 		fFlags = resolutionFlags;
 		fRepos = List.copyOf(repositories);
@@ -251,8 +300,8 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		IProfile profile = fSynchronizer.getProfile();
 		List<IInstallableUnit> result = new ArrayList<>();
 		MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.IUBundleContainer_ProblemsLoadingRepositories, null);
-		for (IVersionedId unit : fIUs) {
-			IQuery<IInstallableUnit> query = QueryUtil.createIUQuery(unit);
+		for (UnitDescription unit : fIUs) {
+			IQuery<IInstallableUnit> query = unit.createIUQuery();
 			addElement(profile, query, unit, result, status);
 		}
 		if (!status.isOK()) {
@@ -262,8 +311,8 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		fUnits = List.copyOf(result);
 	}
 
-	private void addElement(IQueryable<IInstallableUnit> queryable, IQuery<IInstallableUnit> query, IVersionedId iu,
-			List<IInstallableUnit> result, MultiStatus status) {
+	private void addElement(IQueryable<IInstallableUnit> queryable, IQuery<IInstallableUnit> query,
+			UnitDescription iu, List<IInstallableUnit> result, MultiStatus status) {
 		Optional<IInstallableUnit> queryResult = queryFirst(queryable, query, null);
 		if (queryResult.isEmpty()) {
 			status.add(Status.error(NLS.bind(Messages.IUBundleContainer_1, iu)));
@@ -367,25 +416,36 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		SubMonitor progress = SubMonitor.convert(monitor, 100);
 		IQueryable<IInstallableUnit> source = P2TargetUtils.getQueryableMetadata(fRepos, progress.split(30));
 		boolean updated = false;
-		List<IVersionedId> updatedUnits = new ArrayList<>(fIUs);
+		List<UnitDescription> updatedUnits = new ArrayList<>(fIUs);
 		SubMonitor loopProgress = progress.split(70).setWorkRemaining(updatedUnits.size());
 		for (int i = 0; i < updatedUnits.size(); i++) {
-			IVersionedId unit = updatedUnits.get(i);
-			if (!toUpdate.isEmpty() && !toUpdate.contains(unit.getId())) {
+			UnitDescription unit = updatedUnits.get(i);
+			if (!toUpdate.isEmpty() && !toUpdate.contains(unit.id())) {
 				continue;
 			}
-			IQuery<IInstallableUnit> query = QueryUtil.createLatestQuery(QueryUtil.createIUQuery(unit.getId()));
+			// TODO: why is createLatestQuery() used here but not in the other
+			// caller ?
+			IQuery<IInstallableUnit> query = QueryUtil.createLatestQuery(QueryUtil.createIUQuery(unit.id()));
 			Optional<IInstallableUnit> queryResult = queryFirst(source, query, loopProgress.split(1));
 			Version updatedVersion = queryResult.map(IInstallableUnit::getVersion)
 					// bail if the feature is no longer available.
 					.orElseThrow(() -> new CoreException(Status.error(NLS.bind(Messages.IUBundleContainer_1, unit))));
 			// if the version is different from the spec (up or down), record the change.
-			if (!updatedVersion.equals(unit.getVersion())) {
+			// FIXME: check the new logic here again?!
+			Optional<Version> singleVersion = unit.getSingleVersion();
+
+			if (singleVersion.isPresent() && !updatedVersion.equals(singleVersion.get())) {
 				updated = true;
 				// if the spec was not specific (e.g., 0.0.0) the target def itself has changed.
-				if (!unit.getVersion().equals(Version.emptyVersion)) {
-					updatedUnits.set(i, new VersionedId(unit.getId(), updatedVersion));
+				if (!singleVersion.get().equals(Version.emptyVersion)) {
+					updatedUnits.set(i, UnitDescription.create(unit.id(), updatedVersion));
 				}
+			} else {
+				// TODO: how to update version ranges properly. There are
+				// different strategies possible.
+				// E.g. compute its 'span' and apply it to the updated version
+				// as lower bound
+				throw new UnsupportedOperationException();
 			}
 		}
 		if (updated) {
@@ -488,7 +548,14 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * @param unit unit to remove from the list of root IUs
 	 */
 	public synchronized void removeInstallableUnit(IInstallableUnit unit) {
-		fIUs.remove(new VersionedId(unit.getId(), unit.getVersion()));
+		// TODO: TODO: maybe the units list can be converted to a map and map
+		// each unit to the declaring IU (if its not a dependency). Then we get
+		// an exact matched version for the range. Also consider this for the
+		// update method.
+		Optional<UnitDescription> toRemove = fIUs.stream()
+				.filter(iu -> iu.id().equals(unit.getId()) && iu.version().isIncluded(unit.getVersion())).findFirst();
+		toRemove.ifPresent(fIUs::remove);
+		// fIUs.remove(new VersionedId(unit.getId(), unit.getVersion()));
 		// Need to mark the container as unresolved
 		clearResolutionStatus();
 	}
@@ -565,7 +632,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	}
 
 	/** Returns installable unit identifiers and versions. */
-	List<IVersionedId> getUnits() {
+	List<UnitDescription> getUnits() {
 		return Collections.unmodifiableList(fIUs);
 	}
 
@@ -605,9 +672,17 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		fSynchronizer.setIncludeConfigurePhase((fFlags & INCLUDE_CONFIGURE_PHASE) == INCLUDE_CONFIGURE_PHASE);
 	}
 
-	private static final Comparator<IVersionedId> ID_FIRST_VERSION_SECOND = Comparator //
-			.comparing(IVersionedId::getId) //
-			.thenComparing(IVersionedId::getVersion);
+	private static final Comparator<UnitDescription> ID_FIRST_VERSION_SECOND = Comparator //
+			.comparing(UnitDescription::id) //
+			.thenComparing(unit -> {
+				Optional<Version> singleVersion = unit.getSingleVersion();
+				if (singleVersion.isEmpty()) {
+					return singleVersion.get();
+				} else   {
+					// TODO: better solution? E.g. prefer version over ranges?
+					return unit.version().getMinimum();
+				}
+			});
 
 	@Override
 	public String serialize() {
@@ -636,8 +711,8 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		// Generate a predictable order of the elements
 		fIUs.stream().sorted(ID_FIRST_VERSION_SECOND).forEach(iu -> {
 			Element unit = document.createElement(TargetDefinitionPersistenceHelper.INSTALLABLE_UNIT);
-			unit.setAttribute(TargetDefinitionPersistenceHelper.ATTR_ID, iu.getId());
-			unit.setAttribute(TargetDefinitionPersistenceHelper.ATTR_VERSION, iu.getVersion().toString());
+			unit.setAttribute(TargetDefinitionPersistenceHelper.ATTR_ID, iu.id());
+			unit.setAttribute(TargetDefinitionPersistenceHelper.ATTR_VERSION, iu.versionString());
 			containerElement.appendChild(unit);
 		});
 		try {
@@ -659,9 +734,9 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		IQueryable<IInstallableUnit> repos = P2TargetUtils.getQueryableMetadata(getRepositories(), monitor);
 		MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.IUBundleContainer_ProblemsLoadingRepositories, null);
 		List<IInstallableUnit> result = new ArrayList<>();
-		for (IVersionedId iu : fIUs) {
+		for (UnitDescription iu : fIUs) {
 			// For versions such as 0.0.0, the IU query may return multiple IUs, so we check which is the latest version
-			IQuery<IInstallableUnit> query = QueryUtil.createLatestQuery(QueryUtil.createIUQuery(iu));
+			IQuery<IInstallableUnit> query = QueryUtil.createLatestQuery(iu.createIUQuery());
 			addElement(repos, query, iu, result, status);
 		}
 		if (!status.isOK()) {
@@ -670,6 +745,11 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		}
 		return result.toArray(new IInstallableUnit[0]);
 	}
+
+	// // FIXME: check discrepancy?! Is this even necessary?! We have a
+	// // specific version why the latest? In case the version is 0.0.0! But
+	// // isn't that also interesting fpr the other caller?!
+	// IQuery<IInstallableUnit> query = QueryUtil.createLatestQuery(iuQuery);
 
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {

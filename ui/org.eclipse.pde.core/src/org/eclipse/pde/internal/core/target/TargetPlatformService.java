@@ -61,8 +61,6 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
-import org.eclipse.equinox.p2.metadata.IVersionedId;
-import org.eclipse.equinox.p2.metadata.VersionedId;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -77,6 +75,7 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.core.TargetDefinitionManager;
+import org.eclipse.pde.internal.core.target.IUBundleContainer.UnitDescription;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
@@ -644,7 +643,8 @@ public class TargetPlatformService implements ITargetPlatformService {
 
 	@Override
 	public ITargetLocation newIULocation(IInstallableUnit[] units, URI[] repositories, int resolutionFlags) {
-		Stream<IVersionedId> ius = Arrays.stream(units).map(iu -> new VersionedId(iu.getId(), iu.getVersion()));
+		Stream<UnitDescription> ius = Arrays.stream(units)
+				.map(iu -> UnitDescription.create(iu.getId(), iu.getVersion()));
 		return new IUBundleContainer(ius.toList(), List.of(repositories), resolutionFlags);
 	}
 
@@ -653,8 +653,8 @@ public class TargetPlatformService implements ITargetPlatformService {
 		if (unitIds.length != versions.length) {
 			throw new IllegalArgumentException("Units and versions must have the same length"); //$NON-NLS-1$
 		}
-		Stream<IVersionedId> ius = IntStream.range(0, unitIds.length)
-				.mapToObj(i -> new VersionedId(unitIds[i], versions[i]));
+		Stream<UnitDescription> ius = IntStream.range(0, unitIds.length)
+				.mapToObj(i -> UnitDescription.parse(unitIds[i], versions[i]));
 		return new IUBundleContainer(ius.toList(), List.of(repositories), resolutionFlags);
 	}
 

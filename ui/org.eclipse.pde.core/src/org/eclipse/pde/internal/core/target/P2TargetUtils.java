@@ -64,7 +64,6 @@ import org.eclipse.equinox.p2.metadata.IArtifactKey;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.IProvidedCapability;
 import org.eclipse.equinox.p2.metadata.IRequirement;
-import org.eclipse.equinox.p2.metadata.IVersionedId;
 import org.eclipse.equinox.p2.metadata.MetadataFactory;
 import org.eclipse.equinox.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.metadata.Version;
@@ -87,9 +86,9 @@ import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetHandle;
 import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.core.target.ITargetPlatformService;
-import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.target.IUBundleContainer.UnitDescription;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
@@ -518,9 +517,9 @@ public class P2TargetUtils {
 		// still in the profile, we need to recreate (rather than uninstall)
 		IUProfilePropertyQuery propertyQuery = new IUProfilePropertyQuery(PROP_INSTALLED_IU, Boolean.toString(true));
 		IQueryResult<IInstallableUnit> queryResult = profile.query(propertyQuery, null);
-		Set<NameVersionDescriptor> installedIUs = new HashSet<>();
+		Map<String, List<IInstallableUnit>> installedIUs = new HashMap<>();
 		for (IInstallableUnit unit : queryResult) {
-			installedIUs.add(new NameVersionDescriptor(unit.getId(), unit.getVersion().toString()));
+			installedIUs.computeIfAbsent(unit.getId(), id -> new ArrayList<>(1)).add(unit);
 		}
 		ITargetLocation[] containers = target.getTargetLocations();
 		if (containers == null) {
@@ -528,9 +527,16 @@ public class P2TargetUtils {
 		}
 		for (ITargetLocation container : containers) {
 			if (container instanceof IUBundleContainer bc) {
-				for (IVersionedId iu : bc.getUnits()) {
+				for (UnitDescription iu : bc.getUnits()) {
 					// if there is something in a container but not in the profile, recreate
-					if (!installedIUs.remove(new NameVersionDescriptor(iu.getId(), iu.getVersion().toString()))) {
+					boolean[] removed = { false };
+					installedIUs.computeIfPresent(iu.id(), (id, units) -> {
+						// TODO: what happens if there are two ranges, one more
+						// specific and one wider that match different IUs?
+						removed[0] = units.removeIf(u -> iu.version().isIncluded(u.getVersion()));
+						return units.isEmpty() ? null : units;
+					});
+					if (!removed[0]) {
 						return false;
 					}
 				}
