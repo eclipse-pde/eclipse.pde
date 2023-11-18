@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2023 EclipseSource Inc. and others.
+ * Copyright (c) 2010, 2024 EclipseSource Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -66,6 +66,7 @@ import org.eclipse.equinox.p2.metadata.IArtifactKey;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.IProvidedCapability;
 import org.eclipse.equinox.p2.metadata.IRequirement;
+import org.eclipse.equinox.p2.metadata.IVersionedId;
 import org.eclipse.equinox.p2.metadata.MetadataFactory;
 import org.eclipse.equinox.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.metadata.Version;
@@ -539,11 +540,9 @@ public class P2TargetUtils {
 		}
 		for (ITargetLocation container : containers) {
 			if (container instanceof IUBundleContainer bc) {
-				String[] ids = bc.getIds();
-				Version[] versions = bc.getVersions();
-				for (int j = 0; j < versions.length; j++) {
+				for (IVersionedId iu : bc.getUnits()) {
 					// if there is something in a container but not in the profile, recreate
-					if (!installedIUs.remove(new NameVersionDescriptor(ids[j], versions[j].toString()))) {
+					if (!installedIUs.remove(new NameVersionDescriptor(iu.getId(), iu.getVersion().toString()))) {
 						return false;
 					}
 				}

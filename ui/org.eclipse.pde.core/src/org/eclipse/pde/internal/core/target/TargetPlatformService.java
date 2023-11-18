@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2020 IBM Corporation and others.
+ * Copyright (c) 2008, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -24,6 +24,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -35,6 +36,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.eclipse.core.resources.IFile;
@@ -59,7 +61,8 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
-import org.eclipse.equinox.p2.metadata.Version;
+import org.eclipse.equinox.p2.metadata.IVersionedId;
+import org.eclipse.equinox.p2.metadata.VersionedId;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -643,22 +646,22 @@ public class TargetPlatformService implements ITargetPlatformService {
 
 	@Override
 	public ITargetLocation newIULocation(IInstallableUnit[] units, URI[] repositories, int resolutionFlags) {
-		String[] fIds = new String[units.length];
-		Version[] fVersions = new Version[units.length];
-		for (int i = 0; i < units.length; i++) {
-			fIds[i] = units[i].getId();
-			fVersions[i] = units[i].getVersion();
-		}
-		return new IUBundleContainer(fIds, fVersions, repositories, resolutionFlags);
+		Stream<IVersionedId> ius = Arrays.stream(units).map(iu -> new VersionedId(iu.getId(), iu.getVersion()));
+		return createIUBundleContainer(ius, repositories, resolutionFlags);
 	}
 
 	@Override
 	public ITargetLocation newIULocation(String[] unitIds, String[] versions, URI[] repositories, int resolutionFlags) {
-		Version[] fVersions = new Version[versions.length];
-		for (int i = 0; i < versions.length; i++) {
-			fVersions[i] = Version.create(versions[i]);
+		if (unitIds.length != versions.length) {
+			throw new IllegalArgumentException("Units and versions must have the same length"); //$NON-NLS-1$
 		}
-		return new IUBundleContainer(unitIds, fVersions, repositories, resolutionFlags);
+		Stream<IVersionedId> ius = IntStream.range(0, unitIds.length)
+				.mapToObj(i -> new VersionedId(unitIds[i], versions[i]));
+		return createIUBundleContainer(ius, repositories, resolutionFlags);
+	}
+
+	private ITargetLocation createIUBundleContainer(Stream<IVersionedId> ius, URI[] repos, int resolutionFlags) {
+		return new IUBundleContainer(ius.toList(), repos == null ? List.of() : List.of(repos), resolutionFlags);
 	}
 
 }
