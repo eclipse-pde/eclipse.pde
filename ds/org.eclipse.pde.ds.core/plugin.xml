@@ -27,7 +27,27 @@
                class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber2">
             <parameter
                   name="element"
+                  value="{http://www.osgi.org/xmlns/scr/v1.0.0}component">
+            </parameter>
+            <parameter
+                  name="element"
                   value="{http://www.osgi.org/xmlns/scr/v1.1.0}component">
+            </parameter>
+            <parameter
+                  name="element"
+                  value="{http://www.osgi.org/xmlns/scr/v1.2.0}component">
+            </parameter>
+            <parameter
+                  name="element"
+                  value="{http://www.osgi.org/xmlns/scr/v1.3.0}component">
+            </parameter>
+            <parameter
+                  name="element"
+                  value="{http://www.osgi.org/xmlns/scr/v1.4.0}component">
+            </parameter>
+            <parameter
+                  name="element"
+                  value="{http://www.osgi.org/xmlns/scr/v1.5.0}component">
             </parameter>
          </describer>
       </content-type>
