@@ -51,6 +51,13 @@ public class DSEnums {
 			"UPDATE", "update", //
 			"REPLACE", "replace");
 
+	public static final Map<String, String> COLLECTION_TYPE_OPTION = Map.of( //
+			"SERVICE", "service", //
+			"REFERENCE", "reference", //
+			"SERVICEOBJECTS", "serviceobjects", //
+			"PROPERTIES", "properties", //
+			"TUPLE", "tuple");
+
 	private DSEnums() {
 	}
 
