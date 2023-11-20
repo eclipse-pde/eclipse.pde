@@ -15,6 +15,7 @@
 package org.eclipse.pde.ds.internal.annotations;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
@@ -27,9 +28,16 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.ControlEnableState;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.layout.LayoutConstants;
 import org.eclipse.jface.preference.IPreferencePageContainer;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -74,7 +82,7 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 
 	private Text pathText;
 
-	private Combo specVersionCombo;
+	private ComboViewer specVersionCombo;
 
 	private Combo errorLevelCombo;
 
@@ -232,12 +240,36 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 		specVersionLabel.setText(Messages.DSAnnotationPropertyPage_specVersionLabel_text);
 		specVersionLabel.setFont(JFaceResources.getDialogFont());
 
-		specVersionCombo = new Combo(optionBlockControl, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
-		specVersionCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
-		specVersionCombo.setFont(JFaceResources.getDialogFont());
-		specVersionCombo.add("1.3"); //$NON-NLS-1$
-		specVersionCombo.add("1.2"); //$NON-NLS-1$
-		specVersionCombo.select(0);
+		specVersionCombo = new ComboViewer(optionBlockControl, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
+		specVersionCombo.getControl().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
+		specVersionCombo.getControl().setFont(JFaceResources.getDialogFont());
+		specVersionCombo.setContentProvider(ArrayContentProvider.getInstance());
+		specVersionCombo.setInput(List.of(DSAnnotationVersion.V1_2, DSAnnotationVersion.V1_3, DSAnnotationVersion.V1_4,
+				DSAnnotationVersion.V1_5));
+		specVersionCombo.setSelection(new StructuredSelection(DSAnnotationVersion.V1_3));
+		specVersionCombo.addSelectionChangedListener(new ISelectionChangedListener() {
+
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				DSAnnotationVersion version = (DSAnnotationVersion) event.getStructuredSelection().getFirstElement();
+				if (version == DSAnnotationVersion.V1_5 || version == DSAnnotationVersion.V1_4) {
+					setMessage("Specification version " + version.getSpecificationVersion()
+							+ " is currently not fully supported.", DialogPage.WARNING);
+				} else {
+					setMessage(null);
+				}
+
+			}
+		});
+		specVersionCombo.setLabelProvider(new LabelProvider() {
+			@Override
+			public String getText(Object element) {
+				if (element instanceof DSAnnotationVersion version) {
+					return version.getSpecificationVersion();
+				}
+				return "";
+			}
+		});
 
 		Label errorLevelLabel = new Label(optionBlockControl, SWT.LEFT);
 		errorLevelLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -306,7 +338,7 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 			specVersionEnum = DSAnnotationVersion.V1_3;
 		}
 
-		specVersionCombo.select(DSAnnotationVersion.V1_3.ordinal() - specVersionEnum.ordinal());
+		specVersionCombo.setSelection(new StructuredSelection(specVersionEnum));
 		errorLevelCombo.select(getEnumIndex(errorLevel, ValidationErrorLevel.values(), 0));
 		missingUnbindMethodCombo.select(getEnumIndex(missingUnbindMethodLevel, ValidationErrorLevel.values(), 0));
 		enableBAPLGeneration.setSelection(generateBAPL);
@@ -443,9 +475,9 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 			prefs.putBoolean(Activator.PREF_ENABLED, enableCheckbox.getSelection());
 			prefs.put(Activator.PREF_PATH, IPath.fromOSString(path).toString());
 
-			DSAnnotationVersion[] versions = DSAnnotationVersion.values();
-			int specVersionIndex = Math.max(Math.min(specVersionCombo.getSelectionIndex(), DSAnnotationVersion.V1_3.ordinal()), 0);
-			prefs.put(Activator.PREF_SPEC_VERSION, versions[DSAnnotationVersion.V1_3.ordinal() - specVersionIndex].name());
+			DSAnnotationVersion version = (DSAnnotationVersion) specVersionCombo.getStructuredSelection()
+					.getFirstElement();
+			prefs.put(Activator.PREF_SPEC_VERSION, version.name());
 
 			ValidationErrorLevel[] levels = ValidationErrorLevel.values();
 			int errorLevelIndex = errorLevelCombo.getSelectionIndex();

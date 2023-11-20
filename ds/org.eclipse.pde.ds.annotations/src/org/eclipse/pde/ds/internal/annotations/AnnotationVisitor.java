@@ -35,9 +35,11 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
@@ -55,6 +57,7 @@ import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.AnnotationTypeDeclaration;
 import org.eclipse.jdt.core.dom.ArrayInitializer;
+import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
@@ -105,6 +108,8 @@ import org.osgi.framework.BundleContext;
 
 @SuppressWarnings("restriction")
 public class AnnotationVisitor extends ASTVisitor {
+
+	private static final String DEFAULT_ACTIVATE_METHOD_NAME = "activate";
 
 	private static final String COMPONENT_CONTEXT = "org.osgi.service.component.ComponentContext"; //$NON-NLS-1$
 
@@ -211,10 +216,12 @@ public class AnnotationVisitor extends ASTVisitor {
 			boolean isAbstract = false;
 			boolean isNested = false;
 			boolean noDefaultConstructor = false;
+			boolean hasInjectableConstructor = false;
 			if ((isInterface = type.isInterface())
 					|| (isAbstract = Modifier.isAbstract(type.getModifiers()))
 					|| (isNested = (!type.isPackageMemberTypeDeclaration() && !isNestedPublicStatic(type)))
-					|| (noDefaultConstructor = !hasDefaultConstructor(type))) {
+					|| (noDefaultConstructor = !(hasDefaultConstructor(type)
+							|| (hasInjectableConstructor = hasInjectableConstructor(type, problemReporter))))) {
 				// interfaces, abstract types, non-static/non-public nested types, or types with no default constructor cannot be components
 				if (!errorLevel.isIgnore()) {
 					if (isInterface) {
@@ -224,7 +231,21 @@ public class AnnotationVisitor extends ASTVisitor {
 					} else if (isNested) {
 						problemReporter.reportProblem(annotation, null, NLS.bind(Messages.AnnotationProcessor_invalidCompImplClass_notTopLevel, type.getName().getIdentifier()), type.getName().getIdentifier());
 					} else if (noDefaultConstructor) {
-						problemReporter.reportProblem(annotation, null, NLS.bind(Messages.AnnotationProcessor_invalidCompImplClass_noDefaultConstructor, type.getName().getIdentifier()), type.getName().getIdentifier());
+						if (specVersion.isEqualOrHigherThan(DSAnnotationVersion.V1_4)) {
+							problemReporter.reportProblem(annotation, null,
+									NLS.bind(Messages.AnnotationProcessor_invalidCompImplClass_compatibleConstructor,
+											type.getName().getIdentifier()),
+									type.getName().getIdentifier());
+						} else {
+							if (hasInjectableConstructor) {
+								// TODO we should add an error marker that offers a quickfix to upgrade the spec
+								// version to 1.4
+							}
+							problemReporter.reportProblem(annotation, null,
+									NLS.bind(Messages.AnnotationProcessor_invalidCompImplClass_noDefaultConstructor,
+											type.getName().getIdentifier()),
+									type.getName().getIdentifier());
+						}
 					} else {
 						problemReporter.reportProblem(annotation, null, NLS.bind(Messages.AnnotationProcessor_invalidComponentImplementationClass, type.getName().getIdentifier()), type.getName().getIdentifier());
 					}
@@ -311,20 +332,6 @@ public class AnnotationVisitor extends ASTVisitor {
 		}
 
 		return false;
-	}
-
-	private boolean hasDefaultConstructor(TypeDeclaration type) {
-		boolean hasConstructor = false;
-		for (MethodDeclaration method : type.getMethods()) {
-			if (method.isConstructor()) {
-				hasConstructor = true;
-				if (Modifier.isPublic(method.getModifiers()) && method.parameters().isEmpty()) {
-					return true;
-				}
-			}
-		}
-
-		return !hasConstructor;
 	}
 
 	private void processComponent(TypeDeclaration type, ITypeBinding typeBinding, Annotation annotation, IAnnotationBinding annotationBinding) throws CoreException {
@@ -581,7 +588,7 @@ public class AnnotationVisitor extends ASTVisitor {
 		if ((value = params.get("configurationPolicy")) instanceof IVariableBinding) { //$NON-NLS-1$
 			IVariableBinding configPolicyBinding = (IVariableBinding) value;
 			configPolicy = DSEnums.getConfigurationPolicy(configPolicyBinding.getName());
-		} else if (specVersion == DSAnnotationVersion.V1_3) {
+		} else if (DSAnnotationVersion.V1_3.isEqualOrHigherThan(specVersion)) {
 			for (IAnnotationBinding typeAnnotation : typeBinding.getAnnotations()) {
 				if (!DESIGNATE_ANNOTATION.equals(typeAnnotation.getAnnotationType().getQualifiedName())) {
 					continue;
@@ -603,14 +610,73 @@ public class AnnotationVisitor extends ASTVisitor {
 			}
 		}
 
-		DSAnnotationVersion requiredVersion = DSAnnotationVersion.V1_1;
+		DSAnnotationVersion requiredVersion = DSAnnotationVersion.V1_0;
+
+		// The following changes where made between 1.0 (Compendium 4.1) and 1.1
+		// (compendium 4.2) we must check these
+		// if we really want to support such old DS versions, currently we just use 1.0
+		// as lowest version because the OSGi TCKs would fail otherwise:
+		// (1) Definition of the Service-Component header now uses the definition of a
+		// header from the module layer. It also allows a wildcards to be used in the
+		// last component of the path of a header entry.
+		// FIXME if manifest uses a wildcard we can assume that 1.1 is minimum
+		// (2) SCR must follow the recommendations of Property Propagation on page
+		// 86 and not propagate properties whose names start with ’.’ to service
+		// properties.
+		// XXX this is probably something we can't assert here
+		// (3) The component description now allows for a configuration policy to
+		// control whether component configurations are activated when
+		// Configuration object are present or not.
+		// FIXME if configuration policy is used 1.1 is the minimum
+		// (4) The component description now allows the names of the activate and
+		// deactivate methods to be specified. The signatures of the activate and
+		// deactivate methods are also modified.
+		// FIXME a custom name of the methods or the "modified signatures) need to
+		// trigger minimum of 1.1
+		// (5) The signatures of the bind and unbind methods are modified.
+		// FIXME check if a "new" signature is used
+		// (6) The definition of accessible methods for activate, deactivate, bind and
+		// unbind methods is expanded to include any method accessible from the
+		// component implementation class. This allows private and package
+		// private method declared in the component implementation class to be
+		// used.
+		// FIXME if non public methods are used for bind/unbind we must require DS 1.1
+		// (7) The additional signatures and additional accessibility for the activate,
+		// deactivate, bind and unbind methods can cause problems for compo-
+		// nents written to version 1.0 of this specification. The behavior in this
+		// specification only applies to component descriptions using the v1.1.0
+		// namespace.
+		// This is something not controlled by the generator and don't needs further
+		// actions
+		// (8) The XML schema and namespace have been updated to v1.1.0. It now
+		// supports extensibility for new attributes and elements. The name
+		// attribute of the component element is now optional and the default
+		// value of this attribute is the value of the class attribute of the nested
+		// implementation element. The name attribute of the reference element
+		// is now optional and the default value of this attribute is the value of the
+		// interface attribute of the reference element. The Char type for the
+		// property element has been renamed Character to match the Java type
+		// name. The attributes configuration-policy, activate, deactivate and
+		// modified have been added to the component element.
+		// FIXME usage of 'Character' type in properties require 1.1
+		// (9) When logging error messages, SCR must use a Log Service obtained
+		// using the component’s bundle context so that the resulting Log Entry is
+		// associated with the component’s bundle.
+		// This do not affect the generator
+		// (10) Clarified that target properties are component properties that can be
+		// set
+		// wherever component properties can be set, including configurations.
+		// This do not affect the generator
+		// (11) A component configuration can now avoid being deactivated when a
+		// Configuration changes by specifying the modified attribute.
+		// FIXME a modified method should require SCR 1.1
 
 		String configPid = null;
 		if ((value = params.get("configurationPid")) instanceof String) { //$NON-NLS-1$
 			configPid = (String) value;
 			validateComponentConfigPID(annotation, configPid, -1);
 			requiredVersion = DSAnnotationVersion.V1_2;
-		} else if (specVersion == DSAnnotationVersion.V1_3 && value instanceof Object[]) {
+		} else if (DSAnnotationVersion.V1_3.isEqualOrHigherThan(specVersion) && value instanceof Object[]) {
 			Object[] configPidElems = (Object[]) value;
 			if (configPidElems.length > 0) {
 				LinkedHashSet<String> configPids = new LinkedHashSet<>(configPidElems.length);
@@ -657,7 +723,8 @@ public class AnnotationVisitor extends ASTVisitor {
 		}
 
 		String serviceScope = null;
-		if (specVersion == DSAnnotationVersion.V1_3 && (value = params.get("scope")) instanceof IVariableBinding) { //$NON-NLS-1$
+		if (DSAnnotationVersion.V1_3.isEqualOrHigherThan(specVersion)
+				&& (value = params.get("scope")) instanceof IVariableBinding) { //$NON-NLS-1$
 			IVariableBinding serviceScopeBinding = (IVariableBinding) value;
 			serviceScope = DSEnums.getServiceScope(serviceScopeBinding.getName());
 			if (!errorLevel.isIgnore()) {
@@ -669,7 +736,8 @@ public class AnnotationVisitor extends ASTVisitor {
 			}
 		}
 
-		if (specVersion == DSAnnotationVersion.V1_3 && serviceFactory != null && serviceScope != null && !serviceScope.equals(VALUE_SERVICE_SCOPE_DEFAULT)) {
+		if (DSAnnotationVersion.V1_3.isEqualOrHigherThan(specVersion) && serviceFactory != null && serviceScope != null
+				&& !serviceScope.equals(VALUE_SERVICE_SCOPE_DEFAULT)) {
 			// ignore servicefactory if scope specified and not <<DEFAULT>>
 			if (!errorLevel.isIgnore() && !serviceFactory.equals(VALUE_SERVICE_SCOPE_BUNDLE.equals(serviceScope))) {
 				problemReporter.reportProblem(annotation, "servicefactory", -1, true, errorLevel, Messages.AnnotationVisitor_invalidServiceFactory_ignored); //$NON-NLS-1$
@@ -798,7 +866,7 @@ public class AnnotationVisitor extends ASTVisitor {
 			refMap.put(referenceName, refElement);
 		}
 
-		if (annotation.isNormalAnnotation() && specVersion == DSAnnotationVersion.V1_3) {
+		if (annotation.isNormalAnnotation() && DSAnnotationVersion.V1_3.isEqualOrHigherThan(specVersion)) {
 			for (Object annotationValue : ((NormalAnnotation) annotation).values()) {
 				MemberValuePair annotationMemberValuePair = (MemberValuePair) annotationValue;
 				if (!ATTRIBUTE_COMPONENT_REFERENCE.equals(annotationMemberValuePair.getName().getIdentifier())) {
@@ -853,7 +921,7 @@ public class AnnotationVisitor extends ASTVisitor {
 			}
 		}
 
-		if (specVersion == DSAnnotationVersion.V1_3) {
+		if (DSAnnotationVersion.V1_3.isEqualOrHigherThan(specVersion)) {
 			for (FieldDeclaration field : type.getFields()) {
 				for (Object modifier : field.modifiers()) {
 					if (!(modifier instanceof Annotation)) {
@@ -915,10 +983,10 @@ public class AnnotationVisitor extends ASTVisitor {
 			}
 		}
 
-		String activate = null;
-		boolean lookedForActivateMethod = false;
-		IMethodBinding activateMethod = null;
-		Annotation activateAnnotation = null;
+//		String activate = null;
+//		boolean lookedForActivateMethod = false;
+//		IMethodBinding activateMethod = null;
+//		Annotation activateAnnotation = null;
 		String deactivate = null;
 		boolean lookedForDeactivateMethod = false;
 		IMethodBinding deactivateMethod = null;
@@ -926,6 +994,8 @@ public class AnnotationVisitor extends ASTVisitor {
 		String modified = null;
 		IMethodBinding modifiedMethod = null;
 		Annotation modifiedAnnotation = null;
+		
+		List<ComponentActivationAnnotation> activations = new ArrayList<>();
 
 		for (MethodDeclaration method : type.getMethods()) {
 			for (Object modifier : method.modifiers()) {
@@ -946,29 +1016,28 @@ public class AnnotationVisitor extends ASTVisitor {
 				String annotationName = methodAnnotationBinding.getAnnotationType().getQualifiedName();
 
 				if (ACTIVATE_ANNOTATION.equals(annotationName)) {
-					if (activate == null) {
-						activate = method.getName().getIdentifier();
-						if (specVersion == DSAnnotationVersion.V1_3) {
-							activateMethod = method.resolveBinding();
-						}
-
-						activateAnnotation = methodAnnotation;
-						validateLifeCycleMethod(methodAnnotation, "activate", method); //$NON-NLS-1$
-					} else if (!errorLevel.isIgnore()) {
-						problemReporter.reportProblem(methodAnnotation, null, Messages.AnnotationProcessor_duplicateActivateMethod, method.getName().getIdentifier());
-						if (activateAnnotation != null) {
-							problemReporter.reportProblem(activateAnnotation, null, Messages.AnnotationProcessor_duplicateActivateMethod, activate);
-							activateAnnotation = null;
-						}
+					ComponentActivationAnnotation activation;
+					String activate = method.getName().getIdentifier();
+					if (DSAnnotationVersion.V1_3.isEqualOrHigherThan(specVersion)) {
+						activation = new ComponentActivationAnnotation(activate, methodAnnotation, method.resolveBinding());
+					} else {
+						// prior to 1.3 only an 'activate' method is allowed
+						activation = new ComponentActivationAnnotation(activate, methodAnnotation,
+								findLifeCycleMethod(typeBinding, DEFAULT_ACTIVATE_METHOD_NAME));
 					}
-
+					activations.add(activation);
+					if (DSAnnotationVersion.V1_4.isEqualOrHigherThan(specVersion) && method.isConstructor()) {
+						// TODO validate method parameters!
+					} else {
+						validateLifeCycleMethod(methodAnnotation, DEFAULT_ACTIVATE_METHOD_NAME, method); // $NON-NLS-1$
+					}
 					continue;
 				}
 
 				if (DEACTIVATE_ANNOTATION.equals(annotationName)) {
 					if (deactivate == null) {
 						deactivate = method.getName().getIdentifier();
-						if (specVersion == DSAnnotationVersion.V1_3) {
+						if (DSAnnotationVersion.V1_3.isEqualOrHigherThan(specVersion)) {
 							deactivateMethod = method.resolveBinding();
 						}
 
@@ -988,7 +1057,7 @@ public class AnnotationVisitor extends ASTVisitor {
 				if (MODIFIED_ANNOTATION.equals(annotationName)) {
 					if (modified == null) {
 						modified = method.getName().getIdentifier();
-						if (specVersion == DSAnnotationVersion.V1_3) {
+						if (DSAnnotationVersion.V1_3.isEqualOrHigherThan(specVersion)) {
 							modifiedMethod = method.resolveBinding();
 						}
 
@@ -1035,15 +1104,20 @@ public class AnnotationVisitor extends ASTVisitor {
 			}
 		}
 
-		if (activate == null) {
-			// only remove activate="activate" if method not found
-			if (!"activate".equals(component.getActivateMethod()) //$NON-NLS-1$
-					|| ((lookedForActivateMethod = true)
-							&& (activateMethod = findLifeCycleMethod(typeBinding, "activate")) == null)) { //$NON-NLS-1$
-				removeAttribute(component, IDSConstants.ATTRIBUTE_COMPONENT_ACTIVATE, null);
+		if (activations.isEmpty()) {
+			// lets see if we can find one...
+			IMethodBinding binding = findLifeCycleMethod(typeBinding, DEFAULT_ACTIVATE_METHOD_NAME);
+			if (binding != null) {
+				ComponentActivationAnnotation activation = new ComponentActivationAnnotation(DEFAULT_ACTIVATE_METHOD_NAME, null, binding);
+				activations.add(activation);
 			}
+		}
+		ComponentActivationAnnotation activateMethod = validateOnlyOne( activations.stream().filter(ca -> ca.isMethod()).toList());
+		validateOnlyOne(activations.stream().filter(ca -> ca.isConstructor()).toList());
+		if (activateMethod == null || DEFAULT_ACTIVATE_METHOD_NAME.equals(activateMethod.activate())) {
+			removeAttribute(component, IDSConstants.ATTRIBUTE_COMPONENT_ACTIVATE, null);
 		} else {
-			component.setActivateMethod(activate);
+			component.setActivateMethod(activateMethod.activate());
 		}
 
 		if (deactivate == null) {
@@ -1065,12 +1139,8 @@ public class AnnotationVisitor extends ASTVisitor {
 
 		LinkedHashMap<String, IDSProperty> newPropMap = new LinkedHashMap<>();
 
-		if (specVersion == DSAnnotationVersion.V1_3) {
+		if (DSAnnotationVersion.V1_3.isEqualOrHigherThan(specVersion)) {
 			// collect component property types from activate, modified, and deactivate methods
-			if (activateMethod == null && !lookedForActivateMethod) {
-				activateMethod = findLifeCycleMethod(typeBinding, "activate"); //$NON-NLS-1$
-			}
-
 			if (deactivateMethod == null && !lookedForDeactivateMethod) {
 				deactivateMethod = findLifeCycleMethod(typeBinding, "deactivate"); //$NON-NLS-1$
 			}
@@ -1078,7 +1148,7 @@ public class AnnotationVisitor extends ASTVisitor {
 			HashSet<ITypeBinding> cptClosure = new HashSet<>();
 
 			if (activateMethod != null) {
-				collectProperties(activateMethod, dsFactory, newPropMap, cptClosure);
+				collectProperties((IMethodBinding) activateMethod.binding(), dsFactory, newPropMap, cptClosure);
 			}
 
 			if (modifiedMethod != null) {
@@ -1280,6 +1350,20 @@ public class AnnotationVisitor extends ASTVisitor {
 		}
 
 		component.setNamespace(xmlns);
+	}
+
+	private ComponentActivationAnnotation validateOnlyOne(List<ComponentActivationAnnotation> list) {
+		if (list.isEmpty()) {
+			return null;
+		}
+		if (list.size() == 1 || errorLevel.isIgnore()) {
+			return list.get(0);
+		}
+		for (ComponentActivationAnnotation a : list) {
+			problemReporter.reportProblem(a.annotation(), null, Messages.AnnotationProcessor_duplicateActivateMethod,
+					a.activate());
+		}
+		return null;
 	}
 
 	private IDSReference createReference(IDSDocumentFactory dsFactory) {
@@ -1645,6 +1729,10 @@ public class AnnotationVisitor extends ASTVisitor {
 
 			return;
 		}
+		if (methodBinding.isConstructor()) {
+			problemReporter.reportProblem(annotation, methodName,
+					Messages.AnnotationProcessor_invalidLifecycleMethod_noMethod);
+		}
 
 		if (Modifier.isStatic(methodBinding.getModifiers())) {
 			problemReporter.reportProblem(annotation, methodName, Messages.AnnotationProcessor_invalidLifecycleMethod_static);
@@ -1674,7 +1762,7 @@ public class AnnotationVisitor extends ASTVisitor {
 			String paramTypeName = paramTypeErasure.isMember() ? paramTypeErasure.getBinaryName() : paramTypeErasure.getQualifiedName();
 			boolean isDuplicate = false;
 
-			if (paramTypeBinding.isAnnotation() && specVersion == DSAnnotationVersion.V1_3) {
+			if (paramTypeBinding.isAnnotation() && DSAnnotationVersion.V1_3.isEqualOrHigherThan(specVersion)) {
 				if (!annotationParams.add(paramTypeBinding)) {
 					isDuplicate = true;
 				}
@@ -1728,7 +1816,8 @@ public class AnnotationVisitor extends ASTVisitor {
 				HashSet<ITypeBinding> annotationParams = new HashSet<>(1);
 				for (ITypeBinding paramTypeBinding : paramTypeBindings) {
 					if (paramTypeBinding.isAnnotation()) {
-						if (specVersion == DSAnnotationVersion.V1_3 && annotationParams.add(paramTypeBinding)) {
+						if (DSAnnotationVersion.V1_3.isEqualOrHigherThan(specVersion)
+								&& annotationParams.add(paramTypeBinding)) {
 							// component property type (multiple arguments allowed)
 							continue;
 						}
@@ -1781,5 +1870,45 @@ public class AnnotationVisitor extends ASTVisitor {
 		}
 
 		return null;
+	}
+
+	/**
+	 * An injectable constructor is one annotated with <code>@Activate</code>
+	 * 
+	 * @param type
+	 * @param problemReporter2
+	 * @return
+	 */
+	private static boolean hasInjectableConstructor(TypeDeclaration type, ProblemReporter problemReporter) {
+		for (MethodDeclaration method : type.getMethods()) {
+			if (method.isConstructor() && annotations(method).anyMatch(AnnotationVisitor::isActivateAnnotation)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static boolean hasDefaultConstructor(TypeDeclaration type) {
+		boolean hasConstructor = false;
+		for (MethodDeclaration method : type.getMethods()) {
+			if (method.isConstructor()) {
+				hasConstructor = true;
+				if (Modifier.isPublic(method.getModifiers()) && method.parameters().isEmpty()) {
+					return true;
+				}
+			}
+		}
+
+		return !hasConstructor;
+	}
+
+	@SuppressWarnings("unchecked")
+	private static Stream<IAnnotationBinding> annotations(BodyDeclaration declaration) {
+		Stream<Annotation> filter = declaration.modifiers().stream().filter(Annotation.class::isInstance);
+		return filter.map(Annotation.class::cast).map(Annotation::resolveAnnotationBinding).filter(Objects::nonNull);
+	}
+
+	private static boolean isActivateAnnotation(IAnnotationBinding binding) {
+		return binding != null && ACTIVATE_ANNOTATION.equals(binding.getAnnotationType().getQualifiedName());
 	}
 }

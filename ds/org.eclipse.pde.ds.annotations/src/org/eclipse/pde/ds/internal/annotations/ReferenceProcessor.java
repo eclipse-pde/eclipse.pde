@@ -86,7 +86,7 @@ public class ReferenceProcessor {
 		if ((value = params.get("service")) instanceof ITypeBinding) { //$NON-NLS-1$
 			serviceType = (ITypeBinding) value;
 			if (!errorLevel.isIgnore() && argTypes.length > 0) {
-				if (specVersion == DSAnnotationVersion.V1_3) {
+				if (DSAnnotationVersion.V1_3.isEqualOrHigherThan(specVersion)) {
 					for (ITypeBinding argType : argTypes) {
 						if (!isValidArgumentForService(argType, serviceType)) {
 							problemReporter.reportProblem(annotation, "service", NLS.bind(Messages.AnnotationProcessor_invalidReference_serviceType, argType.getName(), serviceType.getName()), argType.getName(), serviceType.getName()); //$NON-NLS-1$
@@ -104,7 +104,7 @@ public class ReferenceProcessor {
 				}
 			}
 		} else if (argTypes.length > 0) {
-			if (specVersion == DSAnnotationVersion.V1_3) {
+			if (DSAnnotationVersion.V1_3.isEqualOrHigherThan(specVersion)) {
 				serviceType = null;
 				for (ITypeBinding argType : argTypes) {
 					String erasure = argType.getErasure().getBinaryName();
@@ -241,7 +241,7 @@ public class ReferenceProcessor {
 		}
 
 		String referenceScope = null;
-		if (specVersion == DSAnnotationVersion.V1_3) {
+		if (DSAnnotationVersion.V1_3.isEqualOrHigherThan(specVersion)) {
 			if ((value = params.get("scope")) instanceof IVariableBinding) { //$NON-NLS-1$
 				IVariableBinding referenceScopeBinding = (IVariableBinding) value;
 				referenceScope = DSEnums.getReferenceScope(referenceScopeBinding.getName());
@@ -273,7 +273,7 @@ public class ReferenceProcessor {
 		ITypeBinding[] typeArgs;
 		return ((ServiceReference.class.getName().equals(erasure) || COMPONENT_SERVICE_OBJECTS.equals(erasure))
 				&& ((typeArgs = argType.getTypeArguments()).length == 0 || serviceType.isAssignmentCompatible(typeArgs[0])))
-				|| serviceType.isAssignmentCompatible(argType)
+				|| isValidServiceAssignment(argType, serviceType, specVersion)
 				|| Map.class.getName().equals(erasure);
 	}
 
@@ -709,7 +709,7 @@ public class ReferenceProcessor {
 				|| Map.class.getName().equals(erasure)
 				|| (Map.Entry.class.getName().equals(erasure)
 						&& ((typeArgs = fieldType.getTypeArguments()).length < 2 || (Map.class.getName().equals(typeArgs[0].getErasure().getBinaryName()) && serviceType.isAssignmentCompatible(typeArgs[1]))))
-				|| serviceType.isAssignmentCompatible(fieldType);
+				|| isValidServiceAssignment(fieldType, serviceType, specVersion);
 	}
 
 	private ITypeBinding getFieldServiceType(AST ast, ITypeBinding type) {
@@ -923,7 +923,7 @@ public class ReferenceProcessor {
 		}
 
 		ITypeBinding[] argTypes = methodBinding.getParameterTypes();
-		if (specVersion == DSAnnotationVersion.V1_3) {
+		if (DSAnnotationVersion.V1_3.isEqualOrHigherThan(specVersion)) {
 			if (argTypes.length == 0) {
 				problemReporter.reportProblem(annotation, null, NLS.bind(Messages.AnnotationProcessor_invalidReference_bindMethodNoArgs, serviceType == null ? Messages.AnnotationProcessor_unknownServiceTypeLabel : serviceType.getName()));
 			} else if (serviceType != null) {
@@ -931,7 +931,7 @@ public class ReferenceProcessor {
 					String erasure = argType.getErasure().getBinaryName();
 					if (!ServiceReference.class.getName().equals(erasure)
 							&& !COMPONENT_SERVICE_OBJECTS.equals(erasure)
-							&& !(serviceType == null || serviceType.isAssignmentCompatible(argType))
+							&& !(serviceType == null || isValidServiceAssignment(argType, serviceType, specVersion))
 							&& !Map.class.getName().equals(erasure)) {
 						problemReporter.reportProblem(annotation, null, NLS.bind(Messages.AnnotationProcessor_invalidReference_invalidBindMethodArg, argType.getName(), serviceType == null ? Messages.AnnotationProcessor_unknownServiceTypeLabel : serviceType.getName()), argType.getName());
 					}
@@ -992,7 +992,7 @@ public class ReferenceProcessor {
 								&& testedClass.getPackage().isEqualTo(componentClass.getPackage())))) {
 					ITypeBinding[] paramTypes = declaredMethod.getParameterTypes();
 
-					if (specVersion == DSAnnotationVersion.V1_3) {
+					if (DSAnnotationVersion.V1_3.isEqualOrHigherThan(specVersion)) {
 						for (int i = 0; i < paramTypes.length; ++i) {
 							ITypeBinding paramType = paramTypes[i];
 							int priorityOffset = i == 0 ? 10 : 0;
@@ -1090,7 +1090,7 @@ public class ReferenceProcessor {
 		}
 
 		DSAnnotationVersion requiredVersion;
-		if (specVersion == DSAnnotationVersion.V1_3 &&
+		if (DSAnnotationVersion.V1_3.isEqualOrHigherThan(specVersion) &&
 				(reference.getDocumentAttribute(ATTRIBUTE_REFERENCE_SCOPE) != null
 				|| reference.getDocumentAttribute(ATTRIBUTE_REFERENCE_FIELD) != null
 				|| reference.getDocumentAttribute(ATTRIBUTE_REFERENCE_FIELD_OPTION) != null
@@ -1103,7 +1103,7 @@ public class ReferenceProcessor {
 			requiredVersion = DSAnnotationVersion.V1_1;
 		}
 
-		if (specVersion == DSAnnotationVersion.V1_3 && requiredVersion != DSAnnotationVersion.V1_3) {
+		if (DSAnnotationVersion.V1_3.isEqualOrHigherThan(specVersion) && requiredVersion != DSAnnotationVersion.V1_3) {
 			// check if any one of the event methods *don't* have legacy-compatible signature
 			String bind = methodParams.getBind();
 			IMethodBinding bindMethod = methodParams.getBindMethod();
@@ -1206,5 +1206,25 @@ public class ReferenceProcessor {
 			return unbindMethod;
 		}
 
+	}
+
+	private static boolean isValidServiceAssignment(ITypeBinding targetType, ITypeBinding serviceType,
+			DSAnnotationVersion specVersion) {
+		if (serviceType.isAssignmentCompatible(targetType)) {
+			// thats easy...
+			return true;
+		}
+		if (DSAnnotationVersion.V1_4.isEqualOrHigherThan(specVersion)) {
+			String serviceErasuer = serviceType.getErasure().getBinaryName();
+			if ("org.osgi.service.log.LoggerFactory".equals(serviceErasuer)) {
+				String fieldErasure = targetType.getErasure().getBinaryName();
+				if ("org.osgi.service.log.Logger".equals(fieldErasure)
+						|| "org.osgi.service.log.FormatterLogger".equals(fieldErasure)) {
+					// valid per specification...
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

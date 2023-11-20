@@ -59,6 +59,8 @@ public class Messages extends NLS {
 
 	public static String AnnotationProcessor_invalidComponentImplementationClass;
 
+	public static String AnnotationProcessor_invalidCompImplClass_compatibleConstructor;
+
 	public static String AnnotationProcessor_invalidComponentName;
 
 	public static String AnnotationProcessor_invalidComponentProperty_nameRequired;
@@ -72,6 +74,8 @@ public class Messages extends NLS {
 	public static String AnnotationProcessor_invalidComponentPropertyValue;
 
 	public static String AnnotationProcessor_invalidComponentService;
+
+	public static String AnnotationProcessor_invalidLifecycleMethod_noMethod;
 
 	public static String AnnotationProcessor_invalidLifecycleMethod_static;
 
