@@ -25,4 +25,13 @@
     <module>org.eclipse.pde.ds.ui</module>
     <module>org.eclipse.pde.ds.annotations</module>
   </modules>
+  
+  <profiles>
+	  <profile>
+		  <id>tck</id>
+		  <modules>
+			  <module>org.eclipse.pde.ds.tck</module>
+		  </modules>
+	  </profile>
+  </profiles>
 </project>

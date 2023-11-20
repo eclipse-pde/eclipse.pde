@@ -358,7 +358,12 @@ public class DSErrorReporter extends XMLErrorReporter {
 			} else {
 				// Validate Chars
 				if (type.equals(IDSConstants.VALUE_PROPERTY_TYPE_CHAR)) {
-					if (value.length() > 1) {
+					// The spec says: For Character types, the conversion must
+					// be handled by Integer.valueOf method, a Character is
+					// always represented by its Unicode value.
+					try {
+						Integer.valueOf(value);
+					} catch (NumberFormatException e) {
 						reportPropertyTypeCastException(element, value, type);
 					}
 				}
