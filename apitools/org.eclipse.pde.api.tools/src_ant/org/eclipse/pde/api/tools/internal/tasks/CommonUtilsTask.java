@@ -166,7 +166,7 @@ public abstract class CommonUtilsTask extends Task {
 	 * created to put the report in.
 	 *
 	 * @param componentID Name of the component to create a child directory for
-	 *            or <code>null<code> to put the report in the XML root
+	 *            or <code>null</code> to put the report in the XML root
 	 * @param contents contents to output to the report
 	 * @param reportname name of the file to output to
 	 */
