@@ -48,7 +48,6 @@ import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
@@ -838,6 +837,7 @@ public abstract class AbstractPluginBlock {
 		fPluginFilteredTree.getPatternFilter().setPattern(null);
 		if (!enableTable) {
 			fPluginTreeViewer.setInput(null);
+			refreshTreeView(fPluginTreeViewer);
 		} else if (fPluginTreeViewer.getInput() == null) {
 			fPluginTreeViewer.setUseHashlookup(true);
 			fPluginTreeViewer.setInput(PDEPlugin.getDefault());
@@ -1069,21 +1069,10 @@ public abstract class AbstractPluginBlock {
 	protected abstract LaunchValidationOperation createValidationOperation() throws CoreException;
 
 	/**
-	 * called before the TreeView is refreshed. This allows any subclasses to cache
-	 * any information in the view and redisplay after the refresh.  This is used by the
-	 * OSGiBundleBlock to cache the values of the default launch and auto launch columns
-	 * in the table tree.
+	 * Disposing the editor in tree viewer
 	 *
-	 * @param treeView The tree view that will be refreshed.
 	 */
 	protected void refreshTreeView(CheckboxTreeViewer treeView) {
-		// Remove any selection
-		if (treeView.getTree().getItemCount() > 0) {
-			treeView.getTree().setSelection(treeView.getTree().getItem(0));
-		} else {
-			treeView.setSelection(new StructuredSelection(StructuredSelection.EMPTY));
-		}
-
 		// Reset any editors on the tree viewer
 		if (levelColumnEditor != null && levelColumnEditor.getEditor() != null && !levelColumnEditor.getEditor().isDisposed()) {
 			levelColumnEditor.getEditor().dispose();
