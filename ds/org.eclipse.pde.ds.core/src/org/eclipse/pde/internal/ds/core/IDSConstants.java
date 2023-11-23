@@ -32,6 +32,8 @@ public interface IDSConstants {
 	public static final String ELEMENT_SERVICE = "service"; //$NON-NLS-1$
 	public static final String ELEMENT_PROVIDE = "provide"; //$NON-NLS-1$
 	public static final String ELEMENT_REFERENCE = "reference"; //$NON-NLS-1$
+	public static final String ELEMENT_FACTORY_PROPERTIES = "factory-properties"; //$NON-NLS-1$
+	public static final String ELEMENT_FACTORY_PROPERTY = "factory-property"; //$NON-NLS-1$
 
 	//Component Attributes
 	public static final String ATTRIBUTE_COMPONENT_NAME = "name"; //$NON-NLS-1$
@@ -40,6 +42,8 @@ public interface IDSConstants {
 	public static final String ATTRIBUTE_COMPONENT_IMMEDIATE = "immediate"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_COMPONENT_CONFIGURATION_POLICY = "configuration-policy"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_COMPONENT_ACTIVATE = "activate"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_COMPONENT_INIT = "init"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_COMPONENT_ACTIVATION_FIELDS = "activation-fields"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_COMPONENT_DEACTIVATE = "deactivate"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_COMPONENT_MODIFIED = "modified"; //$NON-NLS-1$
 
@@ -79,6 +83,8 @@ public interface IDSConstants {
 	public static final int TYPE_SERVICE = 4;
 	public static final int TYPE_PROVIDE = 5;
 	public static final int TYPE_REFERENCE = 6;
+	public static final int TYPE_FACTORY_PROPERTIES = TYPE_REFERENCE + 1;
+	public static final int TYPE_FACTORY_PROPERTY = TYPE_FACTORY_PROPERTIES + 1;
 
 	public static final String VALUE_PROPERTY_TYPE_STRING = "String"; //$NON-NLS-1$
 	public static final String VALUE_PROPERTY_TYPE_LONG = "Long"; //$NON-NLS-1$

@@ -14,13 +14,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core.text;
 
-import org.eclipse.pde.internal.ds.core.IDSProperty;
+import org.eclipse.pde.internal.ds.core.IDSFactoryProperty;
 
-public class DSProperty extends DSSingleProperty implements IDSProperty {
+public class DSFactoryProperty extends DSSingleProperty implements IDSFactoryProperty {
 
 	private static final long serialVersionUID = 1L;
-	public DSProperty(DSModel model) {
-		super(model, ELEMENT_PROPERTY, TYPE_PROPERTY);
+	public DSFactoryProperty(DSModel model) {
+		super(model, ELEMENT_FACTORY_PROPERTY, TYPE_FACTORY_PROPERTY);
 
 	}
 

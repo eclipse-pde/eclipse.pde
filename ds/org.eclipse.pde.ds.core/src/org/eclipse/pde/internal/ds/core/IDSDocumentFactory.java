@@ -43,6 +43,15 @@ public interface IDSDocumentFactory {
 	 */
 	public abstract IDSProperty createProperty();
 
+	/**
+	 * creates a <code>factory property</code> element
+	 *
+	 * @return IDSFactoryProperty object, containing the new element
+	 * @see IDSProperty
+	 * @see IDSComponent
+	 */
+	public abstract IDSFactoryProperty createFactoryProperty();
+
 
 	/**
 	 * creates a <code>reference</code> element
@@ -70,6 +79,15 @@ public interface IDSDocumentFactory {
 	 * @see IDSComponent
 	 */
 	public abstract IDSProperties createProperties();
+
+	/**
+	 * creates a <code>factoryProperties</code> element
+	 *
+	 * @return IDSProperties object, containing the new element
+	 * @see IDSProperties
+	 * @see IDSComponent
+	 */
+	public IDSFactoryProperties createFactoryProperties();
 
 	/**
 	 * creates a <code>implementation</code> element

@@ -15,10 +15,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core.text;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
+import org.eclipse.pde.internal.ds.core.IDSFactoryProperties;
+import org.eclipse.pde.internal.ds.core.IDSFactoryProperty;
 import org.eclipse.pde.internal.ds.core.IDSImplementation;
 import org.eclipse.pde.internal.ds.core.IDSProperties;
 import org.eclipse.pde.internal.ds.core.IDSProperty;
@@ -137,11 +140,31 @@ public class DSComponent extends DSObject implements IDSComponent {
 	}
 
 	@Override
+	public IDSFactoryProperties[] getFactoryPropertiesElements() {
+		ArrayList<IDocumentElementNode> childNodesList = getChildNodesList(IDSFactoryProperties.class, true);
+		IDSFactoryProperties[] array = new IDSFactoryProperties[childNodesList.size()];
+		for (int i = 0; i < childNodesList.size(); i++) {
+			array[i] = (IDSFactoryProperties) childNodesList.get(i);
+		}
+		return array;
+	}
+
+	@Override
 	public IDSProperty[] getPropertyElements() {
 		ArrayList<IDocumentElementNode> childNodesList = getChildNodesList(IDSProperty.class, true);
 		IDSProperty[] array = new IDSProperty[childNodesList.size()];
 		for (int i = 0; i < childNodesList.size(); i++) {
 			array[i] = (IDSProperty) childNodesList.get(i);
+		}
+		return array;
+	}
+
+	@Override
+	public IDSFactoryProperty[] getFactoryPropertyElements() {
+		List<IDocumentElementNode> childNodesList = getChildNodesList(IDSFactoryProperty.class, true);
+		IDSFactoryProperty[] array = new IDSFactoryProperty[childNodesList.size()];
+		for (int i = 0; i < childNodesList.size(); i++) {
+			array[i] = (IDSFactoryProperty) childNodesList.get(i);
 		}
 		return array;
 	}

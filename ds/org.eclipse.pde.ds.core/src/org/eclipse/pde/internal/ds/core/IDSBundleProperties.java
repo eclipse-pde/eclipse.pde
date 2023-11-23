@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,16 +12,31 @@
  *     IBM Corporation - initial API and implementation
  *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> - bug 223738
  *******************************************************************************/
-package org.eclipse.pde.internal.ds.core.text;
+package org.eclipse.pde.internal.ds.core;
 
-import org.eclipse.pde.internal.ds.core.IDSProperty;
 
-public class DSProperty extends DSSingleProperty implements IDSProperty {
 
-	private static final long serialVersionUID = 1L;
-	public DSProperty(DSModel model) {
-		super(model, ELEMENT_PROPERTY, TYPE_PROPERTY);
+/**
+ * Represents a set of properties from a bundle entry
+ *
+ * @since 3.4
+ * @see IDSObject
+ */
+public interface IDSBundleProperties extends IDSObject {
 
-	}
+	/**
+	 * Sets the entry path relative to the root of the bundle
+	 *
+	 * @param entry
+	 *            New entry path
+	 */
+	public void setEntry(String entry);
+
+	/**
+	 * Returns the value of the entry path
+	 *
+	 * @return String value of the entry path
+	 */
+	public String getEntry();
 
 }
