@@ -157,11 +157,26 @@ public interface IDSComponent extends IDSObject {
 	public IDSProperty[] getPropertyElements();
 
 	/**
+	 * Returns all FactoryProperty elements
+	 *
+	 * @return IDSFactoryProperty's array containing all FactoryProperty
+	 *         elements
+	 */
+	public IDSFactoryProperty[] getFactoryPropertyElements();
+
+	/**
 	 * Returns all Properties elements
 	 *
 	 * @return IDSProperties's array containing all Properties elements
 	 */
 	public IDSProperties[] getPropertiesElements();
+
+	/**
+	 * Returns all FactoryProperties elements
+	 *
+	 * @return IDSFactoryProperties's array containing all Properties elements
+	 */
+	public IDSFactoryProperties[] getFactoryPropertiesElements();
 
 	/**
 	 * Returns the Service element

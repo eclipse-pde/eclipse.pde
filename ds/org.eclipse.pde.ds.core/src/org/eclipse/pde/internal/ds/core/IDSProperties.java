@@ -22,21 +22,7 @@ package org.eclipse.pde.internal.ds.core;
  * @since 3.4
  * @see IDSObject
  */
-public interface IDSProperties extends IDSObject {
+public interface IDSProperties extends IDSBundleProperties {
 
-	/**
-	 * Sets the entry path relative to the root of the bundle
-	 *
-	 * @param entry
-	 *            New entry path
-	 */
-	public void setEntry(String entry);
-
-	/**
-	 * Returns the value of the entry path
-	 *
-	 * @return String value of the entry path
-	 */
-	public String getEntry();
 
 }

@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core.text;
 
-import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSProperties;
 
 /**
@@ -25,56 +24,12 @@ import org.eclipse.pde.internal.ds.core.IDSProperties;
  * @see DSComponent
  * @see DSModel
  */
-public class DSProperties extends DSObject implements IDSProperties {
+public class DSProperties extends DSEntryProperties implements IDSProperties {
 
 	private static final long serialVersionUID = 1L;
 
 	public DSProperties(DSModel model) {
-		super(model, ELEMENT_PROPERTIES);
-		int number = model.getDSComponent().getPropertiesElements().length + 1;
-		this.setEntry(IDSConstants.ATTRIBUTE_PROPERTIES_ENTRY
-				+ number);
-		setInTheModel(true);
-	}
-
-	@Override
-	public boolean canAddChild(int objectType) {
-		return false;
-	}
-
-	@Override
-	public boolean canBeParent() {
-		return false;
-	}
-
-	@Override
-	public String getName() {
-		return getEntry();
-	}
-
-	@Override
-	public int getType() {
-		return TYPE_PROPERTIES;
-	}
-
-	@Override
-	public void setEntry(String entry){
-		setXMLAttribute(ATTRIBUTE_PROPERTIES_ENTRY, entry);
-	}
-
-	@Override
-	public String getEntry(){
-		return getXMLAttributeValue(ATTRIBUTE_PROPERTIES_ENTRY);
-	}
-
-	@Override
-	public String[] getAttributesNames() {
-		return new String[] { IDSConstants.ATTRIBUTE_PROPERTIES_ENTRY };
-	}
-
-	@Override
-	public boolean isLeafNode() {
-		return true;
+		super(model, ELEMENT_PROPERTIES, TYPE_PROPERTIES);
 	}
 
 }

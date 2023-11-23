@@ -19,6 +19,8 @@ import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSDocumentFactory;
+import org.eclipse.pde.internal.ds.core.IDSFactoryProperties;
+import org.eclipse.pde.internal.ds.core.IDSFactoryProperty;
 import org.eclipse.pde.internal.ds.core.IDSImplementation;
 import org.eclipse.pde.internal.ds.core.IDSProperties;
 import org.eclipse.pde.internal.ds.core.IDSProperty;
@@ -67,6 +69,12 @@ public class DSDocumentFactory extends DocumentNodeFactory implements
 			if (isProperty(name)) {
 				return createProperty();
 			}
+			if (IDSConstants.ELEMENT_FACTORY_PROPERTIES.equals(name)) {
+				return createFactoryProperties();
+			}
+			if (IDSConstants.ELEMENT_FACTORY_PROPERTY.equals(name)) {
+				return createFactoryProperty();
+			}
 			if (isService(name)) {
 				return createService();
 			}
@@ -95,6 +103,11 @@ public class DSDocumentFactory extends DocumentNodeFactory implements
 	}
 
 	@Override
+	public IDSFactoryProperty createFactoryProperty() {
+		return new DSFactoryProperty(fModel);
+	}
+
+	@Override
 	public IDSReference createReference() {
 		return new DSReference(fModel);
 	}
@@ -107,6 +120,11 @@ public class DSDocumentFactory extends DocumentNodeFactory implements
 	@Override
 	public IDSProperties createProperties() {
 		return new DSProperties(fModel);
+	}
+
+	@Override
+	public IDSFactoryProperties createFactoryProperties() {
+		return new DSFactoryProperties(fModel);
 	}
 
 	@Override
