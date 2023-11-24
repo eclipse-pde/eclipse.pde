@@ -36,6 +36,7 @@
     <module>ui</module>
     <module>build</module>
     <module>features</module>
+    <module>org.eclipse.pde.doc.user</module>
   </modules>
 
   <!--
