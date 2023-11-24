@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.eclipse.pde</groupId>
@@ -19,13 +21,20 @@
 				<configuration>
 					<dependency-resolution>
 						<extraRequirements>
+							<!-- The product -->
 							<requirement>
-								<!-- The product -->
 								<type>p2-installable-unit</type>
 								<id>org.eclipse.sdk.ide</id>
 								<versionRange>0.0.0</versionRange>
 							</requirement>
+							<!-- The "deltapack" -->
+							<requirement>
+								<type>eclipse-feature</type>
+								<id>org.eclipse.equinox.executable</id>
+								<versionRange>0.0.0</versionRange>
+							</requirement>
 						</extraRequirements>
+						
 					</dependency-resolution>
 				</configuration>
 			</plugin>
@@ -43,10 +52,12 @@
 				<executions>
 					<execution>
 						<id>p2-tests</id>
-						<goals><goal>test</goal></goals>
+						<goals>
+							<goal>test</goal>
+						</goals>
 						<configuration>
 							<testClass>org.eclipse.pde.build.tests.P2TestSuite</testClass>
-							<systemProperties/>
+							<systemProperties />
 						</configuration>
 					</execution>
 				</executions>
