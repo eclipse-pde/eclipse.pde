@@ -11,7 +11,7 @@ Snap.*
 *.class
 
 # maven
-/*/*/target/
+target/
 .DS_Store
 .polyglot.*
 pom.tycho
