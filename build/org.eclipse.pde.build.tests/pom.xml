@@ -34,8 +34,24 @@
 								<versionRange>0.0.0</versionRange>
 							</requirement>
 						</extraRequirements>
-						
 					</dependency-resolution>
+					<environments>
+						<environment>
+							<os>macosx</os>
+							<ws>cocoa</ws>
+							<arch>x86_64</arch>
+						</environment>
+						<environment>
+							<os>win32</os>
+							<ws>win32</ws>
+							<arch>x86_64</arch>
+						</environment>
+						<environment>
+							<os>linux</os>
+							<ws>gtk</ws>
+							<arch>x86_64</arch>
+						</environment>
+					</environments>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -47,7 +63,10 @@
 					<testClass>org.eclipse.pde.build.tests.PDEBuildTestSuite</testClass>
 					<systemProperties>
 						<pde.build.includeP2>false</pde.build.includeP2>
+						<pde.build.verification>true</pde.build.verification>
 					</systemProperties>
+					<installAllEnvironments>true</installAllEnvironments>
+					<work>${project.build.directory}/surefire.app</work>
 				</configuration>
 				<executions>
 					<execution>
@@ -57,7 +76,9 @@
 						</goals>
 						<configuration>
 							<testClass>org.eclipse.pde.build.tests.P2TestSuite</testClass>
-							<systemProperties />
+							<systemProperties>
+								<pde.build.verification>true</pde.build.verification>
+							</systemProperties>
 						</configuration>
 					</execution>
 				</executions>

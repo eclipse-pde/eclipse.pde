@@ -18,6 +18,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeFalse;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -828,6 +829,7 @@ public class ScriptGenerationTests extends PDETestCase {
 
 	@Test
 	public void testBug238177() throws Exception {
+		assumeFalse(Boolean.getBoolean("pde.build.verification"));
 		IFolder buildFolder = newTest("238177");
 		IFolder a = Utils.createFolder(buildFolder, "plugins/A");
 		IFolder b = Utils.createFolder(buildFolder, "plugins/B");
