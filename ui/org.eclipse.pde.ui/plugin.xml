@@ -1713,6 +1713,10 @@
                 commandId="org.eclipse.pde.ui.organizeManifest">
           </handler>
           <handler
+                class="org.eclipse.pde.internal.ui.wizards.tools.ConvertAutomaticManifestAction"
+                commandId="org.eclipse.pde.ui.convertAutomaticManifest">
+          </handler>
+          <handler
                 class="org.eclipse.pde.internal.ui.nls.GetNonExternalizedStringsAction"
                 commandId="org.eclipse.pde.ui.externalizeStrings">
           </handler>
@@ -1952,9 +1956,25 @@
                    </reference>
                 </visibleWhen>
              </command>
+             <separator
+                   name="group3"
+                   visible="true">
+             </separator>
+             <command
+                   commandId="org.eclipse.pde.ui.convertAutomaticManifest"
+                   icon="icons/obj16/toc_leaftopic_obj.png"
+                   label="%command.convertAutomaticManifest.label"
+                   style="push">
+                <visibleWhen
+                      checkEnabled="false">
+                   <reference
+                         definitionId="org.eclipse.pde.ui.pluginFile">
+                   </reference>
+                </visibleWhen>
+             </command>
           </menuContribution>
        </extension>
-           <extension
+       <extension
           point="org.eclipse.ui.ide.markerSupport">
     	<markerGroupingEntry id="org.eclipse.pde.ui.jdt_category.pde"
         	markerGrouping="org.eclipse.jdt.ui.java_marker_category"

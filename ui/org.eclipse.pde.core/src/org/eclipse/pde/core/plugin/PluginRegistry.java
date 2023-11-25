@@ -407,13 +407,15 @@ public class PluginRegistry {
 	 * @since 3.7
 	 */
 	public static IBuildModel createBuildModel(IPluginModelBase model) throws CoreException {
-		IProject project = model.getUnderlyingResource().getProject();
-		if (project != null) {
-			IFile buildFile = PDEProject.getBuildProperties(project);
-			if (buildFile.exists()) {
-				IBuildModel buildModel = new WorkspaceBuildModel(buildFile);
-				buildModel.load();
-				return buildModel;
+		if (model != null) {
+			IProject project = model.getUnderlyingResource().getProject();
+			if (project != null) {
+				IFile buildFile = PDEProject.getBuildProperties(project);
+				if (buildFile.exists()) {
+					IBuildModel buildModel = new WorkspaceBuildModel(buildFile);
+					buildModel.load();
+					return buildModel;
+				}
 			}
 		}
 		return null;
