@@ -25,6 +25,8 @@ public class BndProject extends BaseProject {
 
 	public static final String INSTRUCTIONS_FILE = "pde" + INSTRUCTIONS_FILE_EXTENSION; //$NON-NLS-1$
 
+	public static final String BUILDER_ID = "org.eclipse.pde.BndBuilder"; //$NON-NLS-1$
+
 	@Override
 	public void configure() throws CoreException {
 		addToBuildSpec(BndBuilder.BUILDER_ID);
