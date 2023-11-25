@@ -136,6 +136,24 @@ public class PDEUIMessages extends NLS {
 	public static String OrganizeManifestsProcessor_invalidParam;
 
 	public static String OrganizeManifestsProcessor_rootMessage;
+	public static String ConvertAutomaticManifestsProcessor_rootMessage;
+	public static String ConvertAutomaticManifestsProcessor_changeProject;
+
+	public static String ConvertAutomaticManifestsWizardSettingsPage_convert_to_annotations;
+
+	public static String ConvertAutomaticManifestsWizardSettingsPage_description;
+
+	public static String ConvertAutomaticManifestsWizardSettingsPage_manifest;
+
+	public static String ConvertAutomaticManifestsWizardSettingsPage_manifest_at_output;
+
+	public static String ConvertAutomaticManifestsWizardSettingsPage_manifest_at_root;
+
+	public static String ConvertAutomaticManifestsWizardSettingsPage_discard;
+
+	public static String ConvertAutomaticManifestsWizardSettingsPage_keep;
+
+	public static String ConvertAutomaticManifestsWizardSettingsPage_to_instructions;
 
 	public static String PDECompilersConfigurationBlock_0;
 	public static String PDECompilersConfigurationBlock_1;
@@ -2548,9 +2566,13 @@ public class PDEUIMessages extends NLS {
 
 	public static String ClassSearchParticipant_taskMessage;
 
+	public static String CreateJarChange_instruction_jar;
+
 	public static String CreateJREBundleHeaderResolution_desc;
 
 	public static String CreateJREBundleHeaderResolution_label;
+
+	public static String CreatePackageInfoChange_name;
 
 	public static String UpdateActivationResolution_lazyStart_desc;
 
@@ -2604,6 +2626,7 @@ public class PDEUIMessages extends NLS {
 	public static String ConfigureTargetPlatformResolution_description;
 
 	public static String OrganizeManifestJob_taskName;
+	public static String ConvertAutomaticManifestJob_taskName;
 
 	public static String RemoveImportPkgResolution_description;
 
@@ -2938,6 +2961,8 @@ public class PDEUIMessages extends NLS {
 	public static String OrganizeManifestsOperation_unusedKeys;
 
 	public static String OrganizeManifestsWizardPage_title;
+
+	public static String ConvertAutomaticManifestWizardPage_title;
 
 	public static String OrganizeManifestsWizardPage_description;
 
@@ -3362,4 +3387,11 @@ public class PDEUIMessages extends NLS {
 	public static String ExtensionAttributeRow_AttrLabelDepr;
 	public static String ExtensionAttributeRow_AttrLabelReq;
 	public static String ExtensionAttributeRow_AttrLabelReqDepr;
+
+	public static String ProjectUpdateChange_configure_nature_and_builder;
+	public static String ProjectUpdateChange_convert_manifest_to_bnd;
+	public static String ProjectUpdateChange_convert_build_to_bnd;
+	public static String ProjectUpdateChange_set_pde_preference;
+
 }
+
