@@ -25,9 +25,6 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
  */
 public class DuplicateAnnotationResolution extends UnsupportedAnnotationResolution {
 
-	/**
-	 * @param marker
-	 */
 	public DuplicateAnnotationResolution(IMarker marker) {
 		super(marker);
 	}

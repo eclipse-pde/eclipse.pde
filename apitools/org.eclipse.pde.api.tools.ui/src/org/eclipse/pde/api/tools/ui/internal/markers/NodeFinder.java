@@ -40,8 +40,6 @@ public class NodeFinder extends ASTVisitor {
 
 	/**
 	 * Constructor
-	 *
-	 * @param position
 	 */
 	public NodeFinder(int position) {
 		this.position = position;
@@ -94,9 +92,6 @@ public class NodeFinder extends ASTVisitor {
 	/**
 	 * Visit the {@link BodyDeclaration} node to see if it is at the specified
 	 * position
-	 *
-	 * @param bodyDeclaration
-	 * @return
 	 */
 	private boolean visitNode(BodyDeclaration bodyDeclaration) {
 		int start = bodyDeclaration.getStartPosition();

@@ -46,9 +46,6 @@ public class LeakExtendsProblemDetector extends AbstractTypeLeakDetector {
 
 	int problemFlags = IApiProblem.LEAK_EXTENDS;
 
-	/**
-	 * @param nonApiPackageNames
-	 */
 	public LeakExtendsProblemDetector(Set<String> nonApiPackageNames) {
 		super(nonApiPackageNames);
 	}

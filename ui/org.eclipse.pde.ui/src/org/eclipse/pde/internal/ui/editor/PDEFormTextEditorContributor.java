@@ -210,9 +210,6 @@ public class PDEFormTextEditorContributor extends PDEFormEditorContributor {
 		setSourceActionBarsActive(isSourcePage);
 	}
 
-	/**
-	 *
-	 */
 	private void updateQuickOutlineMenuEntry() {
 		// Get the main action bar
 		IActionBars actionBars = getActionBars();

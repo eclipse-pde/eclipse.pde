@@ -69,7 +69,6 @@ public class DependentUsageTests extends UsageTest {
 
 	/**
 	 * Returns the {@link IPath} to the *.java file to deploy
-	 * @param test
 	 * @return the path to the test source given the test name
 	 */
 	protected IPath getTestSource(String test) {
@@ -414,8 +413,6 @@ public class DependentUsageTests extends UsageTest {
 	/**
 	 * tests adding an @noextend restriction to a type in a multi-part package name
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=296375
-	 *
-	 * @throws Exception
 	 */
 	public void testAddExtendRestrictionMultiPartPackageName() throws Exception {
 		test11(true);
@@ -424,8 +421,6 @@ public class DependentUsageTests extends UsageTest {
 	/**
 	 * tests removing an @noextend restriction to a type in a multi-part package name
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=296375
-	 *
-	 * @throws Exception
 	 */
 	public void testRemoveExtendRestrictionMultiPartPackageName() throws Exception {
 		test11(false);
@@ -444,8 +439,6 @@ public class DependentUsageTests extends UsageTest {
 	/**
 	 * tests adding an @noinstantiate restriction to a type in a multi-part package name
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=296375
-	 *
-	 * @throws Exception
 	 */
 	public void testAddInstantiateRestrictionMultiPartPackageName() throws Exception {
 		test12(true);
@@ -454,8 +447,6 @@ public class DependentUsageTests extends UsageTest {
 	/**
 	 * tests removing an @noinstantiate restriction to a type in a multi-part package name
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=296375
-	 *
-	 * @throws Exception
 	 */
 	public void testRemoveInstantiateRestrictionMultiPartPackageName() throws Exception {
 		test12(false);

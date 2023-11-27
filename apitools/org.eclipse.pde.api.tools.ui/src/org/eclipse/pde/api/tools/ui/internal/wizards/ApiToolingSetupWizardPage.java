@@ -102,8 +102,6 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 
 		/**
 		 * Sets the current text filter to use
-		 *
-		 * @param filter
 		 */
 		public synchronized void setFilter(String pattern) {
 			this.pattern = pattern;
@@ -143,8 +141,6 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 
 	/**
 	 * Constructor
-	 *
-	 * @param pageName
 	 */
 	protected ApiToolingSetupWizardPage() {
 		super(WizardMessages.UpdateJavadocTagsWizardPage_4);
@@ -239,8 +235,6 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 
 	/**
 	 * Updates the number of items that have been checked
-	 *
-	 * @param count
 	 */
 	private void updateCheckStatus(int count) {
 		if (checkcount == null) {
@@ -252,7 +246,6 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 	/**
 	 * @return the complete listing of projects in the workspace that could have
 	 *         API Tools set-up on them
-	 * @throws CoreException
 	 */
 	private IProject[] getInputProjects() {
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
@@ -345,10 +338,6 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 	 * Creates all of the text edit changes collected from the processor. The
 	 * collected edits are arranged as multi-edits for the one file that they
 	 * belong to
-	 *
-	 * @param projectchange
-	 * @param project
-	 * @param cxml
 	 */
 	void createTagChanges(CompositeChange projectchange, IJavaProject project, File cxml) {
 		try {

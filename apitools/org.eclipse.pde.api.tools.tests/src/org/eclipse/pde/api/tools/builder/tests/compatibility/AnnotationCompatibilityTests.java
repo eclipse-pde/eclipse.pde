@@ -40,8 +40,6 @@ public class AnnotationCompatibilityTests extends CompatibilityTest {
 
 	/**
 	 * Constructor
-	 *
-	 * @param name
 	 */
 	public AnnotationCompatibilityTests(String name) {
 		super(name);

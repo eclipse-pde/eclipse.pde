@@ -36,7 +36,6 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 /**
  * Creates an ant build file for a plugin
- *
  */
 public class GeneratePluginBuildFileAction extends BaseBuildAction {
 

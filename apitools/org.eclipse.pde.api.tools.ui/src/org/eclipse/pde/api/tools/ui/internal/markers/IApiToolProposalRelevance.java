@@ -15,8 +15,6 @@ package org.eclipse.pde.api.tools.ui.internal.markers;
 
 /**
  * Interface defining relevance values for API tools resolutions
- *
- *
  */
 
 public interface IApiToolProposalRelevance {

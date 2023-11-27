@@ -43,9 +43,6 @@ public class PackageFriend extends BundleObject {
 		return fPackageObject.getHeader();
 	}
 
-	/**
-	 * @param object
-	 */
 	public void reconnect(PackageObject object) {
 		fPackageObject = object;
 	}

@@ -18,15 +18,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.ViewerComparator;
 
-/**
- *
- */
 public class GenericSourcePage extends PDESourcePage {
-	/**
-	 * @param editor
-	 * @param id
-	 * @param title
-	 */
 	public GenericSourcePage(PDEFormEditor editor, String id, String title) {
 		super(editor, id, title);
 	}

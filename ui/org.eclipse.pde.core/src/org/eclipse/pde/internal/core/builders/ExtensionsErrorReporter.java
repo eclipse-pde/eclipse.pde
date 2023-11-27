@@ -90,9 +90,6 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		}
 	}
 
-	/**
-	 * @throws SAXException
-	 */
 	@Override
 	public void characters(char[] characters, int start, int length) throws SAXException {
 	}
@@ -174,10 +171,6 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		}
 	}
 
-	/**
-	 * @param result
-	 * @param severity
-	 */
 	private void reportMaxOccurenceViolation(ElementOccurrenceResult result, int severity) {
 		Element childElement = result.getElement();
 		String allowedOccurrences = Integer.toString(result.getAllowedOccurrences());
@@ -186,11 +179,6 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		addMarkerAttribute(marker, PDEMarkerFactory.compilerKey,  CompilerFlags.P_UNKNOWN_ELEMENT);
 	}
 
-	/**
-	 * @param parentElement
-	 * @param result
-	 * @param severity
-	 */
 	private void reportMinOccurenceViolation(Element parentElement, ElementOccurrenceResult result, int severity) {
 		ISchemaElement childElement = result.getSchemaElement();
 		String allowedOccurrences = Integer.toString(result.getAllowedOccurrences());
@@ -296,10 +284,6 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		}
 	}
 
-	/**
-	 * @param element
-	 * @param schemaElement
-	 */
 	private void validateMinElementMult(Element element, ISchemaElement schemaElement) {
 		// Validate min element occurence violations
 		int minSeverity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_ELEMENT);
@@ -313,10 +297,6 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		}
 	}
 
-	/**
-	 * @param element
-	 * @param schemaElement
-	 */
 	private void validateMaxElementMult(Element element, ISchemaElement schemaElement) {
 		// Validate max element occurence violations
 		int maxSeverity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_ELEMENT);

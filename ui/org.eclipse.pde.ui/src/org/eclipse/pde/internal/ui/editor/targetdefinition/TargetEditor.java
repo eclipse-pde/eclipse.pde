@@ -415,7 +415,6 @@ public class TargetEditor extends FormEditor {
 
 	/**
 	 * Adds the given form to the list of forms to be refreshed when reverting
-	 * @param managedForm
 	 */
 	public void addForm(IManagedForm managedForm) {
 		fManagedFormPages.add(managedForm);
@@ -541,8 +540,6 @@ public class TargetEditor extends FormEditor {
 
 	/**
 	 * initializes fTargetDocument and fTargetDocumentListener
-	 *
-	 * @throws PartInitException
 	 */
 	private void addTextualEditorPage() throws PartInitException {
 		fTextualEditor = new ExtensionBasedTextEditor();

@@ -753,7 +753,6 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 	 *
 	 * @param container container
 	 * @return any explicit encoding or <code>null</code> if none
-	 * @throws CoreException
 	 */
 	private String getExplicitEncoding(IContainer container) throws CoreException {
 		String encoding = container.getDefaultCharset(false);

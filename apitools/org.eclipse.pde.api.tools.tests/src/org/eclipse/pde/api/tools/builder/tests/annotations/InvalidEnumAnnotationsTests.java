@@ -30,8 +30,6 @@ public class InvalidEnumAnnotationsTests extends AnnotationTest {
 
 	/**
 	 * Constructor
-	 *
-	 * @param name
 	 */
 	public InvalidEnumAnnotationsTests(String name) {
 		super(name);

@@ -56,7 +56,6 @@ public class RegistryBrowserModelChangeListener implements ModelChangeListener {
 	/**
 	 * TODO FIXME this should be moved to content provider getParent
 	 *
-	 * @param object
 	 * @return if returns array, then appears under all top level elements of that array
 	 */
 	private Object getTopLevelElement(Object object) {

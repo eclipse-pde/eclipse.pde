@@ -115,7 +115,6 @@ public class SystemApiDescriptionProcessor {
 	 *
 	 * @param message error message
 	 * @param exception underlying exception, or <code>null</code>
-	 * @throws CoreException
 	 */
 	private static void abort(String message, Throwable exception) throws CoreException {
 		IStatus status = Status.error(message, exception);
@@ -130,7 +129,6 @@ public class SystemApiDescriptionProcessor {
 	 *
 	 * @param settings API settings to annotate
 	 * @param xml XML used to generate settings
-	 * @throws CoreException
 	 */
 	public static void annotateApiSettings(IApiDescription settings, String xml) throws CoreException {
 		Element root = null;
@@ -250,7 +248,6 @@ public class SystemApiDescriptionProcessor {
 	 *            {@link IFieldDescriptor} to
 	 * @param typedesc the containing type descriptor for this field
 	 * @param type the parent {@link Element}
-	 * @throws CoreException
 	 */
 	private static void annotateFieldSettings(IApiDescription settings, IReferenceTypeDescriptor typedesc, Element type) throws CoreException {
 		NodeList fields = type.getElementsByTagName(IApiXmlConstants.ELEMENT_FIELD);
@@ -278,7 +275,6 @@ public class SystemApiDescriptionProcessor {
 	 *            {@link IMethodDescriptor} to
 	 * @param typedesc the containing type descriptor for this method
 	 * @param type the parent {@link Element}
-	 * @throws CoreException
 	 */
 	private static void annotateMethodSettings(IApiDescription settings, IReferenceTypeDescriptor typedesc, Element type) throws CoreException {
 		NodeList methods = type.getElementsByTagName(IApiXmlConstants.ELEMENT_METHOD);

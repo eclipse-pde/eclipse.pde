@@ -28,7 +28,6 @@ public class PatternConstructor {
 
 	/*
 	 * Converts user string to regular expres '*' and '?' to regEx variables.
-	 *
 	 */
 	private static String asRegEx(String pattern, boolean group) {
 		// Replace \ with \\, * with .* and ? with .

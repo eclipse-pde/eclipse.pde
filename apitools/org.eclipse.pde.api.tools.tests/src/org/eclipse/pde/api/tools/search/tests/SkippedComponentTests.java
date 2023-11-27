@@ -47,8 +47,6 @@ public class SkippedComponentTests extends SearchTest {
 
 	/**
 	 * Tests the {@link SkippedComponent#equals(Object)} method
-	 *
-	 * @throws CoreException
 	 */
 	@Test
 	public void testEquals() throws CoreException {
@@ -63,8 +61,6 @@ public class SkippedComponentTests extends SearchTest {
 
 	/**
 	 * Tests the {@link SkippedComponent#hashCode()} method
-	 *
-	 * @throws CoreException
 	 */
 	@Test
 	public void testHashCode() throws CoreException {
@@ -77,8 +73,6 @@ public class SkippedComponentTests extends SearchTest {
 
 	/**
 	 * Tests the {@link SkippedComponent#getComponentId()} method
-	 *
-	 * @throws CoreException
 	 */
 	@Test
 	public void testGetComponentId() throws CoreException {
@@ -93,8 +87,6 @@ public class SkippedComponentTests extends SearchTest {
 
 	/**
 	 * Tests the {@link SkippedComponent#wasExcluded()} method
-	 *
-	 * @throws CoreException
 	 */
 	@Test
 	public void testWasExcluded() throws CoreException {
@@ -108,8 +100,6 @@ public class SkippedComponentTests extends SearchTest {
 
 	/**
 	 * Tests the {@link SkippedComponent#hasResolutionErrors()} method
-	 *
-	 * @throws CoreException
 	 */
 	@Test
 	public void testHasResolutionErrors() throws CoreException {
@@ -123,8 +113,6 @@ public class SkippedComponentTests extends SearchTest {
 
 	/**
 	 * Tests the {@link SkippedComponent#getAncestor(int)} method
-	 *
-	 * @throws CoreException
 	 */
 	@Test
 	public void testGetAncestor() throws CoreException {
@@ -136,8 +124,6 @@ public class SkippedComponentTests extends SearchTest {
 
 	/**
 	 * Tests the {@link SkippedComponent#getApiComponent()} method
-	 *
-	 * @throws CoreException
 	 */
 	@Test
 	public void testGetApiComponent() throws CoreException {
@@ -149,8 +135,6 @@ public class SkippedComponentTests extends SearchTest {
 
 	/**
 	 * Tests the {@link SkippedComponent#getName()} method
-	 *
-	 * @throws CoreException
 	 */
 	@Test
 	public void testGetName() throws CoreException {
@@ -162,8 +146,6 @@ public class SkippedComponentTests extends SearchTest {
 
 	/**
 	 * Tests the {@link SkippedComponent#getParent()} method
-	 *
-	 * @throws CoreException
 	 */
 	@Test
 	public void testGetParent() throws CoreException {
@@ -175,8 +157,6 @@ public class SkippedComponentTests extends SearchTest {
 
 	/**
 	 * Tests the {@link SkippedComponent#getType()} method
-	 *
-	 * @throws CoreException
 	 */
 	@Test
 	public void testGetType() throws CoreException {
@@ -188,8 +168,6 @@ public class SkippedComponentTests extends SearchTest {
 
 	/**
 	 * Tests the {@link SkippedComponent#getVersion()} method
-	 *
-	 * @throws CoreException
 	 */
 	@Test
 	public void testGetVersion() throws CoreException {
@@ -201,8 +179,6 @@ public class SkippedComponentTests extends SearchTest {
 
 	/**
 	 * Tests the {@link SkippedComponent#getErrors()} method
-	 *
-	 * @throws CoreException
 	 */
 	@Test
 	public void testGetErrors() throws CoreException {
@@ -214,8 +190,6 @@ public class SkippedComponentTests extends SearchTest {
 
 	/**
 	 * Tests the {@link SkippedComponent#getErrorDetails()} method
-	 *
-	 * @throws CoreException
 	 */
 	@Test
 	public void testGetErrorDetails() throws CoreException {

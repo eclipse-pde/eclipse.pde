@@ -26,9 +26,6 @@ public abstract class NodeDocumentHandler extends DocumentHandler {
 
 	// TODO: MP: TEO: LOW: Make PluginDocumentHandler extend this
 
-	/**
-	 * @param reconciling
-	 */
 	public NodeDocumentHandler(boolean reconciling, IDocumentNodeFactory factory) {
 		super(reconciling);
 		fFactory = factory;
@@ -126,9 +123,6 @@ public abstract class NodeDocumentHandler extends DocumentHandler {
 		return textNode;
 	}
 
-	/**
-	 * @param tagName
-	 */
 	protected void setCollapsibleParentName(String tagName) {
 		fCollapsibleParentName = tagName;
 	}

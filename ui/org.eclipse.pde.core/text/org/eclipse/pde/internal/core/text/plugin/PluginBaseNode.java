@@ -202,11 +202,6 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 		}
 	}
 
-	/**
-	 * @param extension
-	 * @param position
-	 * @throws CoreException
-	 */
 	public void add(IPluginExtension extension, int position) throws CoreException {
 		// TODO: MP: DND: Make API?
 		if ((extension instanceof PluginExtensionNode) == false) {

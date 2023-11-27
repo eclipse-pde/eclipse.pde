@@ -129,7 +129,6 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 
 	/**
 	 *
-	 * @param siteFeature
 	 * @return IFeatureModel or null
 	 */
 	private IFeature getFeature(ISiteFeature siteFeature) {
@@ -195,12 +194,6 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 		}
 	}
 
-	/**
-	 * @param mode
-	 * @param monitor
-	 * @throws CoreException
-	 * @throws InvocationTargetException
-	 */
 	private void runOperation(int mode, IProgressMonitor monitor) throws CoreException, InvocationTargetException {
 		ISiteFeature[] siteFeatures;
 		if (mode == SELECTED_FEATURES) {

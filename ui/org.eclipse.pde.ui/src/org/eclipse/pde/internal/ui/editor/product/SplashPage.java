@@ -29,7 +29,6 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 /**
  * SplashPage
- *
  */
 public class SplashPage extends PDEFormPage {
 
@@ -56,10 +55,6 @@ public class SplashPage extends PDEFormPage {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.SPLASH_PAGE);
 	}
 
-	/**
-	 * @param managedForm
-	 * @param toolkit
-	 */
 	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {
 		Composite body = managedForm.getForm().getBody();
 		body.setLayout(FormLayoutFactory.createFormGridLayout(false, 1));

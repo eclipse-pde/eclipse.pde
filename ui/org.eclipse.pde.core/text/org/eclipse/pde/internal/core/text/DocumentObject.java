@@ -33,7 +33,6 @@ import org.eclipse.pde.core.ModelChangedEvent;
 
 /**
  * DocumentObject
- *
  */
 public abstract class DocumentObject extends DocumentElementNode implements IDocumentObject {
 
@@ -46,10 +45,6 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 
 	private transient boolean fInTheModel;
 
-	/**
-	 * @param model
-	 * @param tagName
-	 */
 	public DocumentObject(IModel model, String tagName) {
 		super();
 
@@ -120,39 +115,20 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		fModel = model;
 	}
 
-	/**
-	 * @param property
-	 * @param oldValue
-	 * @param newValue
-	 */
 	protected void firePropertyChanged(String property, Object oldValue, Object newValue) {
 		firePropertyChanged(this, property, oldValue, newValue);
 	}
 
-	/**
-	 * @param object
-	 * @param property
-	 * @param oldValue
-	 * @param newValue
-	 */
 	private void firePropertyChanged(Object object, String property, Object oldValue, Object newValue) {
 		if (fModel.isEditable() && (fModel instanceof IModelChangeProvider provider)) {
 			provider.fireModelObjectChanged(object, property, oldValue, newValue);
 		}
 	}
 
-	/**
-	 * @param child
-	 * @param changeType
-	 */
 	protected void fireStructureChanged(Object child, int changeType) {
 		fireStructureChanged(new Object[] {child}, changeType);
 	}
 
-	/**
-	 * @param children
-	 * @param changeType
-	 */
 	protected void fireStructureChanged(Object[] children, int changeType) {
 		if (fModel.isEditable() && (fModel instanceof IModelChangeProvider provider)) {
 			IModelChangedEvent event = new ModelChangedEvent(provider, changeType, children, null);
@@ -181,11 +157,6 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		super.addChildNode(child, position);
 	}
 
-	/**
-	 * @param child
-	 * @param position
-	 * @param fireEvent
-	 */
 	@Override
 	public void addChildNode(IDocumentElementNode child, int position, boolean fireEvent) {
 		addChildNode(child, position);
@@ -195,10 +166,6 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		}
 	}
 
-	/**
-	 * @param child
-	 * @param fireEvent
-	 */
 	@Override
 	public void addChildNode(IDocumentElementNode child, boolean fireEvent) {
 		addChildNode(child);
@@ -265,10 +232,6 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		writer.write(write(true));
 	}
 
-	/**
-	 * @param newNode
-	 * @param clazz
-	 */
 	@Override
 	public void setChildNode(IDocumentElementNode newNode, Class<?> clazz) {
 		// Determine whether to fire the event
@@ -294,11 +257,6 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		}
 	}
 
-	/**
-	 * @param newNode
-	 * @param oldNode
-	 * @param fireEvent
-	 */
 	protected void replaceChildNode(IDocumentElementNode newNode, IDocumentElementNode oldNode, boolean fireEvent) {
 		// Get the index of the old node
 		int position = indexOf(oldNode);
@@ -471,10 +429,6 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		}
 	}
 
-	/**
-	 * @param node
-	 * @param newRelativeIndex
-	 */
 	@Override
 	public void moveChildNode(IDocumentElementNode node, int newRelativeIndex, boolean fireEvent) {
 

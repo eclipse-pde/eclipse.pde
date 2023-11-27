@@ -127,10 +127,6 @@ public abstract class SearchTest {
 		return createBaseline(SCOPE_NAME, projectnames);
 	}
 
-	/**
-	 * @param filename
-	 * @return
-	 */
 	String getExcludeFilePath(String filename) {
 		if (filename == null) {
 			return null;
@@ -142,8 +138,6 @@ public abstract class SearchTest {
 	 * Returns the populated exclude set or an empty list if the exclude file
 	 * location is <code>null</code>
 	 *
-	 * @param baseline
-	 * @param filename
 	 * @return the listing of excluded items
 	 */
 	protected HashSet<String> getExcludeSet(IApiBaseline baseline, String filename) throws CoreException {
@@ -159,8 +153,6 @@ public abstract class SearchTest {
 
 	/**
 	 * reports a failure in the search framework back to the parent test
-	 *
-	 * @param message
 	 */
 	protected void reportFailure(String message) {
 		fail(message);

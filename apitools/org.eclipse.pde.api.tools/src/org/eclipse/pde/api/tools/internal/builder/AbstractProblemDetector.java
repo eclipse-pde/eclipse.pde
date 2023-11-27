@@ -285,15 +285,12 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 
 	/**
 	 * Returns the element type the problem is reported on.
-	 *
-	 * @return
 	 */
 	protected abstract int getElementType(IReference reference);
 
 	/**
 	 * Returns problem flags, if any.
 	 *
-	 * @param reference
 	 * @return problem flags
 	 */
 	protected abstract int getProblemFlags(IReference reference);
@@ -329,7 +326,6 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	/**
 	 * Returns the fully qualified type name associated with the given member.
 	 *
-	 * @param member
 	 * @return fully qualified type name
 	 */
 	protected String getTypeName(IApiMember member) throws CoreException {
@@ -353,10 +349,8 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * Returns the qualified type name to display. This method delegates to the
 	 * {@link Signatures} class to build the display signatures
 	 *
-	 * @param member
 	 * @return fully qualified display signature for the given {@link IApiType}
 	 *         or enclosing type if the member is not a type itself
-	 * @throws CoreException
 	 */
 	protected String getQualifiedTypeName(IApiMember member) throws CoreException {
 		switch (member.getType()) {
@@ -383,7 +377,6 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	/**
 	 * Returns the unqualified type name associated with the given member.
 	 *
-	 * @param member
 	 * @return unqualified type name
 	 */
 	protected String getSimpleTypeName(IApiMember member) throws CoreException {
@@ -415,7 +408,6 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 *
 	 * @param type the type
 	 * @param reference the reference
-	 * @throws CoreException
 	 * @return returns a default {@link Position} for the name range of the
 	 *         given {@link IType}
 	 */
@@ -443,9 +435,6 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * A name is determined to be a method name if it is followed by a '('
 	 * character (excluding spaces)
 	 *
-	 * @param namepart
-	 * @param line
-	 * @param index
 	 * @return the index of the method name on the given line or -1 if not found
 	 */
 	protected int findMethodNameStart(String namepart, String line, int index) {
@@ -539,9 +528,6 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	/**
 	 * Checks if given component is disposed or belongs to already disposed baseline
 	 * - and if yes, cancels given monitor if the API analysis runs in a job
-	 *
-	 * @param component
-	 * @param monitor
 	 */
 	public static void checkIfDisposed(IApiComponent component, IProgressMonitor monitor) {
 		if (component != null && !monitor.isCanceled() && ApiAnalysisBuilder.isRunningAsJob()) {
@@ -563,8 +549,6 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	/**
 	 * Returns whether the resolved reference is a real problem.
 	 *
-	 * @param reference
-	 * @param monitor
 	 * @return whether a problem
 	 */
 	protected boolean isProblem(IReference reference, IProgressMonitor monitor) {
@@ -628,8 +612,6 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * @return the {@link IMethod} from the given {@link IType} that matches the
 	 *         given {@link IApiMethod} or <code>null</code> if no matching
 	 *         method is found
-	 * @throws JavaModelException
-	 * @throws CoreException
 	 */
 	protected IMethod findMethodInType(IType type, IApiMethod method) throws JavaModelException, CoreException {
 		String[] parameterTypes = Signature.getParameterTypes(method.getSignature());
@@ -663,12 +645,9 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * Tries to find the given {@link IApiField} in the given {@link IType}. If
 	 * the field cannot be found <code>null</code> is returned
 	 *
-	 * @param type
-	 * @param field
 	 * @return the {@link IField} matching the given {@link IApiField} or
 	 *         <code>null</code>
 	 * @since 1.0.600
-	 * @throws JavaModelException
 	 */
 	protected IField findFieldInType(IType type, IApiField field) throws JavaModelException {
 		IField match = type.getField(field.getName());
@@ -689,14 +668,8 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * Tries to find the given {@link IApiType} in the given {@link IType}. If
 	 * no match is found <code>null</code> is returned.
 	 *
-	 * @param type
-	 * @param apitype
-	 * @param reference
-	 * @param doc
 	 * @return the matching {@link IType} or <code>null</code>
 	 * @since 1.0.600
-	 * @throws CoreException
-	 * @throws JavaModelException
 	 */
 	protected IType findTypeInType(IType type, IApiType apitype, IReference reference, IDocument doc) throws CoreException, JavaModelException {
 		if (apitype.isLocal()) {
@@ -728,12 +701,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * Returns the enclosing {@link IMethod} for the given type or
 	 * <code>null</code> if it cannot be computed
 	 *
-	 * @param type
-	 * @param jtype
-	 * @param reference
-	 * @param document
 	 * @return the {@link IMethod} enclosing the given type or <code>null</code>
-	 * @throws CoreException
 	 */
 	protected IMethod getEnclosingMethod(final IType jtype, IReference reference, IDocument document) throws CoreException {
 		IApiMember member = reference.getMember();
@@ -790,13 +758,6 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	/**
 	 * Performs a quick look-up using the offset into the the
 	 * {@link ICompilationUnit}
-	 *
-	 * @param jtype
-	 * @param document
-	 * @param reference
-	 * @param offset
-	 * @return
-	 * @throws JavaModelException
 	 */
 	protected IMethod quickLookup(final IType jtype, IDocument document, IReference reference, int offset) throws JavaModelException {
 		if (offset > -1) {
@@ -820,8 +781,6 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * @param method the {@link IApiMethod} to look for the source range for
 	 * @return the {@link ISourceRange} in the {@link IType} enclosing the given
 	 *         {@link IApiMethod}
-	 * @throws CoreException
-	 * @throws JavaModelException
 	 */
 	protected Position getSourceRangeForMethod(IType type, IReference reference, IApiMethod method) throws CoreException, JavaModelException {
 		IMethod match = findMethodInType(type, method);
@@ -847,8 +806,6 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * @param field the field to find the range for
 	 * @return the {@link ISourceRange} in the given {@link IType} that encloses
 	 *         the given {@link IApiField}
-	 * @throws JavaModelException
-	 * @throws CoreException
 	 */
 	protected Position getSourceRangeForField(IType type, IReference reference, IApiField field) throws JavaModelException, CoreException {
 		IField javaField = type.getField(field.getName());
@@ -882,8 +839,6 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * @param reference the reference the field is from
 	 * @return the range of text to select, or <code>null</code> if one could
 	 *         not be computed
-	 * @throws BadLocationException
-	 * @throws CoreException
 	 */
 	protected Position getFieldNameRange(IApiField field, IDocument document, IReference reference) throws BadLocationException, CoreException {
 		return getFieldNameRange(field.getEnclosingType().getName(), field.getName(), document, reference);
@@ -944,7 +899,6 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * @param document document to search in
 	 * @param reference provides line number
 	 * @return method name range
-	 * @throws CoreException
 	 */
 	protected Position getMethodNameRange(boolean isContructor, String name, IDocument document, IReference reference) throws CoreException, BadLocationException {
 		int linenumber = reference.getLineNumber();
@@ -1039,11 +993,6 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 		return false;
 	}
 
-	/**
-	 * @param reference
-	 * @return
-	 * @throws CoreException
-	 */
 	public IApiProblem createProblem(IReference reference) throws CoreException {
 		int lineNumber = reference.getLineNumber();
 		if (lineNumber > 0) {
@@ -1054,9 +1003,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	}
 
 	/**
-	 * @param reference
 	 * @return the API problem if problem or null
-	 * @throws CoreException
 	 */
 	public IApiProblem checkAndCreateProblem(IReference reference, IProgressMonitor monitor) throws CoreException {
 		if (isProblem(reference, monitor) == false) {

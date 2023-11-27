@@ -90,10 +90,6 @@ public class PluginContentPage extends ContentPage {
 
 	/**
 	 * Constructor
-	 * @param pageName
-	 * @param provider
-	 * @param page
-	 * @param data
 	 */
 	public PluginContentPage(String pageName, IProjectProvider provider, NewProjectCreationPage page, AbstractFieldData data) {
 		super(pageName, provider, page, data);
@@ -117,7 +113,6 @@ public class PluginContentPage extends ContentPage {
 
 	/**
 	 * Creates all of the plugin properties widgets
-	 * @param container
 	 */
 	private void createPluginPropertiesGroup(Composite container) {
 		Group propertiesGroup = SWTFactory.createGroup(container, PDEUIMessages.ContentPage_pGroup, 3, 1, GridData.FILL_HORIZONTAL);
@@ -143,7 +138,6 @@ public class PluginContentPage extends ContentPage {
 
 	/**
 	 * Creates all of the EE widgets
-	 * @param container
 	 */
 	private void createExecutionEnvironmentControls(Composite container) {
 		// Create label
@@ -204,7 +198,6 @@ public class PluginContentPage extends ContentPage {
 
 	/**
 	 * Creates all of the plugin options widgets
-	 * @param container
 	 */
 	protected void createPluginClassGroup(Composite container) {
 		Group classGroup = SWTFactory.createGroup(container, PDEUIMessages.ContentPage_pClassGroup, 2, 1, GridData.FILL_HORIZONTAL);
@@ -262,8 +255,6 @@ public class PluginContentPage extends ContentPage {
 
 	/**
 	 * Creates the RCP questions
-	 * @param parent
-	 * @param horizontalSpan
 	 */
 	protected void createRCPQuestion(Composite parent, int horizontalSpan) {
 		fRCPGroup = SWTFactory.createGroup(parent, PDEUIMessages.PluginContentPage_rcpGroup, 2, 1, GridData.FILL_HORIZONTAL);
@@ -383,7 +374,6 @@ public class PluginContentPage extends ContentPage {
 
 	/**
 	 * Saves the current state of widgets of interest in the dialog settings for the wizard
-	 * @param settings
 	 */
 	@Override
 	public void saveSettings(IDialogSettings settings) {

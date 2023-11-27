@@ -68,8 +68,6 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 	/**
 	 * Returns the type container associated with the "bundle.a" project in the
 	 * workspace.
-	 *
-	 * @return
 	 */
 	protected IApiTypeContainer getTypeContainer() throws CoreException {
 		IApiBaseline baseline = ApiBaselineManager.getManager().getWorkspaceBaseline();
@@ -109,8 +107,6 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 
 	/**
 	 * Returns all expected packages in the test project.
-	 *
-	 * @return
 	 */
 	protected Set<String> getAllPackageNames() {
 		// build expected list
@@ -160,8 +156,6 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 
 	/**
 	 * Tests all packages are returned.
-	 *
-	 * @throws CoreException
 	 */
 	public void testPackageNames() throws CoreException {
 		IApiTypeContainer container = getTypeContainer();
@@ -188,8 +182,6 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 
 	/**
 	 * Test type lookup.
-	 *
-	 * @throws CoreException
 	 */
 	public void testFindType() throws CoreException {
 		IApiTypeContainer container = getTypeContainer();
@@ -201,8 +193,6 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 
 	/**
 	 * Test that type lookup fails for a type that is not in the project.
-	 *
-	 * @throws CoreException
 	 */
 	public void testMissingType() throws CoreException {
 		IApiTypeContainer container = getTypeContainer();
@@ -212,8 +202,6 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 
 	/**
 	 * Visits the container - all packages and types.
-	 *
-	 * @throws CoreException
 	 */
 	public void testVisitor() throws CoreException {
 		final Set<String> pkgNames = new HashSet<>();

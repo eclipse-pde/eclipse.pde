@@ -48,7 +48,6 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	 * {@link IApiProblemFilter} handle are the same.
 	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=404173
-	 * @throws Exception
 	 * @since 1.0.400
 	 */
 	@Test
@@ -64,7 +63,6 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	 * {@link IApiProblemFilter} handle are the same.
 	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=404173
-	 * @throws Exception
 	 * @since 1.0.400
 	 */
 	@Test
@@ -83,7 +81,6 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	 * named <code>null</code>
 	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=404173
-	 * @throws Exception
 	 * @since 1.0.400
 	 */
 	@Test

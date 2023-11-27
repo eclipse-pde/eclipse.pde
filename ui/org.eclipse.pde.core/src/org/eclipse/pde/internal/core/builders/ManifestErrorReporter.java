@@ -32,9 +32,6 @@ import org.w3c.dom.Text;
 
 public abstract class ManifestErrorReporter extends XMLErrorReporter {
 
-	/**
-	 * @param file
-	 */
 	public ManifestErrorReporter(IFile file) {
 		super(file);
 	}

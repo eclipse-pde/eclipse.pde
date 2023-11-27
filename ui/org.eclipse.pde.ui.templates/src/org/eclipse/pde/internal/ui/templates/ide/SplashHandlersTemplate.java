@@ -37,7 +37,6 @@ import org.eclipse.pde.ui.templates.TemplateOption;
 
 /**
  * SplashHandlersTemplate
- *
  */
 public class SplashHandlersTemplate extends PDETemplateSection {
 
@@ -67,16 +66,10 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 
 	private TemplateOption fFieldSplash;
 
-	/**
-	 *
-	 */
 	public SplashHandlersTemplate() {
 		initialize();
 	}
 
-	/**
-	 *
-	 */
 	private void initialize() {
 		// Default field values
 		fFieldTemplate = null;
@@ -165,9 +158,6 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 		super.validateOptions(source);
 	}
 
-	/**
-	 *
-	 */
 	private void updateUIFieldClass() {
 		// Update the class name depending on the splash screen type
 		for (int i = 0; i < ISplashHandlerConstants.F_SPLASH_SCREEN_TYPE_CHOICES.length; i++) {
@@ -179,9 +169,6 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 		}
 	}
 
-	/**
-	 *
-	 */
 	private void createUI() {
 		// Field:  template
 		createUIFieldTemplate();
@@ -195,38 +182,23 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 		createUIFieldSplash();
 	}
 
-	/**
-	 *
-	 */
 	private void createUIFieldSplash() {
 		fFieldSplash = addOption(F_FIELD_SPLASH, PDETemplateMessages.SplashHandlersTemplate_fieldAddSplash, false, F_PAGE_INDEX);
 	}
 
-	/**
-	 *
-	 */
 	private void createUIFieldClass() {
 		fFieldClass = (StringOption) addOption(F_FIELD_CLASS, PDETemplateMessages.SplashHandlersTemplate_fieldClassName, ISplashHandlerConstants.F_SPLASH_SCREEN_CLASSES[0], F_PAGE_INDEX);
 		fFieldClass.setReadOnly(true);
 	}
 
-	/**
-	 *
-	 */
 	private void createUIFieldPackage() {
 		fFieldPackage = addOption(KEY_PACKAGE_NAME, PDETemplateMessages.SplashHandlersTemplate_fieldJavaPackage, null, F_PAGE_INDEX);
 	}
 
-	/**
-	 *
-	 */
 	private void createUIFieldTemplate() {
 		fFieldTemplate = addOption(F_FIELD_TEMPLATE, PDETemplateMessages.SplashHandlersTemplate_fieldSplashScreenType, ISplashHandlerConstants.F_SPLASH_SCREEN_TYPE_CHOICES, ISplashHandlerConstants.F_SPLASH_SCREEN_TYPE_CHOICES[0][0], F_PAGE_INDEX);
 	}
 
-	/**
-	 *
-	 */
 	private void createUIFieldProductID() {
 
 		String[] products = TargetPlatform.getProducts();

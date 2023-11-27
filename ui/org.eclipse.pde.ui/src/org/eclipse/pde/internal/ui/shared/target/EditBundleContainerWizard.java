@@ -28,7 +28,6 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 
 /**
  * Wizard that opens an appropriate page for editing a specific type of bundle container
- *
  */
 public class EditBundleContainerWizard extends Wizard {
 

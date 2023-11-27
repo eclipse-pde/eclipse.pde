@@ -58,8 +58,6 @@ public class RemoveUnsupportedTagOperation extends UIJob {
 
 	/**
 	 * Constructor
-	 *
-	 * @param marker
 	 */
 	public RemoveUnsupportedTagOperation(IMarker[] markers) {
 		super(MarkerMessages.UnsupportedTagResolution_remove_unsupported_tags);

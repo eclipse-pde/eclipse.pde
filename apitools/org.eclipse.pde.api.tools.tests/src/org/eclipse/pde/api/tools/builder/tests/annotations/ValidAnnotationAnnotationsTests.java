@@ -26,8 +26,6 @@ public class ValidAnnotationAnnotationsTests extends InvalidAnnotationAnnotation
 
 	/**
 	 * Constructor
-	 *
-	 * @param name
 	 */
 	public ValidAnnotationAnnotationsTests(String name) {
 		super(name);
@@ -47,8 +45,6 @@ public class ValidAnnotationAnnotationsTests extends InvalidAnnotationAnnotation
 
 	/**
 	 * Tests the @NoReference annotation on annotations
-	 *
-	 * @throws Exception
 	 */
 	public void testNoReference1I() throws Exception {
 		String typename = "test1.java"; //$NON-NLS-1$
@@ -57,8 +53,6 @@ public class ValidAnnotationAnnotationsTests extends InvalidAnnotationAnnotation
 
 	/**
 	 * Tests the @NoReference annotation on annotations
-	 *
-	 * @throws Exception
 	 */
 	public void testNoReference1F() throws Exception {
 		String typename = "test1.java"; //$NON-NLS-1$
@@ -67,8 +61,6 @@ public class ValidAnnotationAnnotationsTests extends InvalidAnnotationAnnotation
 
 	/**
 	 * Tests the @NoReference annotation on annotations in the default package
-	 *
-	 * @throws Exception
 	 */
 	public void testNoReference2I() throws Exception {
 		String typename = "test2.java"; //$NON-NLS-1$
@@ -77,8 +69,6 @@ public class ValidAnnotationAnnotationsTests extends InvalidAnnotationAnnotation
 
 	/**
 	 * Tests the @NoReference annotation on annotations in the default package
-	 *
-	 * @throws Exception
 	 */
 	public void testNoReference2F() throws Exception {
 		String typename = "test2.java"; //$NON-NLS-1$
@@ -87,8 +77,6 @@ public class ValidAnnotationAnnotationsTests extends InvalidAnnotationAnnotation
 
 	/**
 	 * Tests the @NoReference annotation on annotations and member types
-	 *
-	 * @throws Exception
 	 */
 	public void testNoReference3I() throws Exception {
 		String typename = "test3.java"; //$NON-NLS-1$
@@ -97,8 +85,6 @@ public class ValidAnnotationAnnotationsTests extends InvalidAnnotationAnnotation
 
 	/**
 	 * Tests the @NoReference annotation on annotations and member types
-	 *
-	 * @throws Exception
 	 */
 	public void testNoReference3F() throws Exception {
 		String typename = "test3.java"; //$NON-NLS-1$

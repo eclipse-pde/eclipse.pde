@@ -39,7 +39,6 @@ import jakarta.inject.Inject;
  * The Object, which is send within the
  * {@link PreferenceSpyEventTopics#PREFERENCESPY_PREFERENCE_CHANGED} event is a
  * PreferenceChangeEvent.
- *
  */
 @SuppressWarnings("restriction")
 public class PreferenceSpyAddon {

@@ -30,14 +30,6 @@ public class FileSet {
 
 	/**
 	 * Constructor for the file set.
-	 * 
-	 * @param dir
-	 * @param defaultexcludes
-	 * @param includes
-	 * @param includesfile
-	 * @param excludes
-	 * @param excludesfile
-	 * @param casesensitive
 	 */
 	public FileSet(String dir, String defaultexcludes, String includes, String includesfile, String excludes, String excludesfile, String casesensitive) {
 		this.dir = dir;

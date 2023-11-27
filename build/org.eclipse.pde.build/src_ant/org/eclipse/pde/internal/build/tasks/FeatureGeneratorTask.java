@@ -73,7 +73,6 @@ public class FeatureGeneratorTask extends Task {
 
 	/**
 	 * Set the product file to base the feature on
-	 * @param productFile
 	 */
 	public void setProductFile(String productFile) {
 		generator.setProductFile(productFile);
@@ -82,7 +81,6 @@ public class FeatureGeneratorTask extends Task {
 	/**
 	 * Set whether or not to automatically include the launchers in the product
 	 * Default is true
-	 * @param includeLaunchers
 	 */
 	public void setIncludeLaunchers(boolean includeLaunchers) {
 		generator.setIncludeLaunchers(includeLaunchers);
@@ -91,7 +89,6 @@ public class FeatureGeneratorTask extends Task {
 	/**
 	 * Set a location that contains plugins and features required by plugins and features 
 	 * for which the feature is being generated
-	 * @param baseLocation
 	 */
 	public void setBaseLocation(String baseLocation) {
 		BuildTimeSiteFactory.setInstalledBaseSite(baseLocation);
@@ -126,7 +123,6 @@ public class FeatureGeneratorTask extends Task {
 
 	/**
 	 * The id to give to the generated feature
-	 * @param featureId
 	 */
 	public void setFeatureId(String featureId) {
 		generator.setFeatureId(featureId);
@@ -143,7 +139,6 @@ public class FeatureGeneratorTask extends Task {
 
 	/**
 	 * Set to true if you want to verify that the plugins and features are available.  
-	 * @param verify
 	 */
 	public void setVerify(boolean verify) {
 		generator.setVerify(verify);
@@ -152,7 +147,6 @@ public class FeatureGeneratorTask extends Task {
 	/** 
 	 * Set the configuration for which the script should be generated. The default is set to be configuration independent.
 	 * @param configInfo an ampersand separated list of configuration (for example win32, win32, x86 & macoxs, carbon, ppc).
-	 * @throws CoreException
 	 */
 	public void setConfigInfo(String configInfo) throws CoreException {
 		AbstractScriptGenerator.setConfigInfo(configInfo);
@@ -160,7 +154,6 @@ public class FeatureGeneratorTask extends Task {
 
 	/**
 	 * Set to the location of a build.properties to be used for the generated feature
-	 * @param buildPropertiesFile
 	 */
 	public void setBuildPropertiesFile(String buildPropertiesFile) {
 		generator.setBuildProperties(buildPropertiesFile);

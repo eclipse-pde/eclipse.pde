@@ -174,7 +174,6 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	/**
 	 * Returns if the given {@link IApiTypeContainer} should be processed
 	 *
-	 * @param container
 	 * @return true if the container should be processed false otherwise
 	 */
 	boolean considerTypeContainer(IApiTypeContainer container) {
@@ -230,7 +229,6 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	 * Returns true if the given reference is an illegal usage reference iff
 	 * illegal use is part of the search mask.
 	 *
-	 * @param reference
 	 * @return true if the reference is illegal use false otherwise
 	 * @since 1.1
 	 */
@@ -263,7 +261,6 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	/**
 	 * Returns if the given problem is filtered
 	 *
-	 * @param problem
 	 * @return <code>true</code> is filtered, false otherwise
 	 */
 	boolean isFiltered(IApiProblem problem) {
@@ -278,8 +275,6 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	/**
 	 * Prepares the search scope based on the available entries in the
 	 * constructor
-	 *
-	 * @param elements
 	 */
 	private void prepareScope(IApiElement[] elements) {
 		if (elements != null) {
@@ -312,8 +307,6 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 
 	/**
 	 * The patterns for jar names to exclude from the search
-	 *
-	 * @param patterns
 	 */
 	public void setJarPatterns(String[] patterns) {
 		jarPatterns = patterns;

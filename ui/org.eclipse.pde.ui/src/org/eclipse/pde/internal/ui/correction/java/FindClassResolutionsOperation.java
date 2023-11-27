@@ -56,7 +56,6 @@ import org.eclipse.pde.internal.core.PDECore;
  * This Operation is used to find possible resolutions to an unresolved class reference in a plug-in project.
  * When it is run, it will pass any ExportPackageDescriptions which provide the package to the AbstractClassResolutionCollector.
  * The AbstractClassResolutionCollector is responsible for creating the appropriate resolutions.
- *
  */
 public class FindClassResolutionsOperation implements IRunnableWithProgress {
 
@@ -274,7 +273,6 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 	 * @param importPkgs the packages which are already imported
 	 * @param packagesToExport return parameter that will be filled with packages to export
 	 * 		 if no valid package to import was found
-	 * @param monitor
 	 * @return the set of packages to import
 	 */
 	private Map<String, ExportPackageDescription> findValidPackagesContainingSimpleType(String aTypeName,

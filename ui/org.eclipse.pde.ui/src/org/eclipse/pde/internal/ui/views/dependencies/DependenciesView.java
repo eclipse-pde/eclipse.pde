@@ -242,9 +242,6 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	private IWorkbenchPart fPartCallersList;
 	private IWorkbenchPart fPartCallersTree;
 
-	/**
-	 *
-	 */
 	public DependenciesView() {
 		super();
 		fPartsToPages = new HashMap<>(4);
@@ -426,9 +423,6 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 		((DependenciesViewPage) getCurrentPage()).setInput(object);
 	}
 
-	/**
-	 *
-	 */
 	private void findLoops() {
 		fLoops = NO_LOOPS;
 		if (fInput instanceof IPluginModel pluginModel) {

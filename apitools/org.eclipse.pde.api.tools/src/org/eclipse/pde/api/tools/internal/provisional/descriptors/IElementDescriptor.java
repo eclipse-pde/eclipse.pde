@@ -55,8 +55,6 @@ public interface IElementDescriptor {
 
 	/**
 	 * Returns the parent of this element or <code>null</code> if none.
-	 *
-	 * @return
 	 */
 	public IElementDescriptor getParent();
 

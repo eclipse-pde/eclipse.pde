@@ -22,13 +22,9 @@ import org.eclipse.jface.fieldassist.IContentProposalProvider;
 
 /**
  * TypeContentProposalListener
- *
  */
 public class TypeContentProposalListener implements IContentProposalListener, IContentProposalListener2 {
 
-	/**
-	 *
-	 */
 	public TypeContentProposalListener() {
 		// NO-OP
 	}

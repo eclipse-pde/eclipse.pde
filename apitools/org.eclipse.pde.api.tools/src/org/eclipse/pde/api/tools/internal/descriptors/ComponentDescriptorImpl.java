@@ -31,8 +31,6 @@ public class ComponentDescriptorImpl extends NamedElementDescriptorImpl implemen
 
 	/**
 	 * Constructor
-	 *
-	 * @param componentid
 	 */
 	public ComponentDescriptorImpl(String componentid, String version) {
 		super(componentid);

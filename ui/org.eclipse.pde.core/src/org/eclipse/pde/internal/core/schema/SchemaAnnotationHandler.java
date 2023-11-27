@@ -19,7 +19,6 @@ import org.xml.sax.SAXException;
 
 /**
  * SchemaAnnotationHandler
- *
  */
 public class SchemaAnnotationHandler extends BaseSchemaHandler {
 
@@ -42,9 +41,6 @@ public class SchemaAnnotationHandler extends BaseSchemaHandler {
 
 	private boolean fAppInfoElemFlag;
 
-	/**
-	 *
-	 */
 	public SchemaAnnotationHandler() {
 		super();
 	}

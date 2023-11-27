@@ -42,7 +42,6 @@ public interface IFragmentFieldData extends IFieldData {
 	 *
 	 * @return the rule for matching the version of the referenced plug-in that
 	 *         can be one of the values defined in <code>IMatchRules</code>
-	 *
 	 */
 	int getMatch();
 }

@@ -32,10 +32,6 @@ public class SimpleCSModel extends XMLEditingModel implements ISimpleCSModel {
 
 	private ISimpleCS fSimpleCS;
 
-	/**
-	 * @param document
-	 * @param isReconciling
-	 */
 	public SimpleCSModel(IDocument document, boolean isReconciling) {
 		super(document, isReconciling);
 

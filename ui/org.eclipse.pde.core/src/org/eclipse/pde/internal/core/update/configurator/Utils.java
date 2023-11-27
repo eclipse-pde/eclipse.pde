@@ -43,9 +43,6 @@ class Utils {
 		ILog.of(Utils.class).log(status);
 	}
 
-	/**
-	 *
-	 */
 	public static boolean isValidEnvironment(String os, String ws, String arch, String nl) {
 		if (os != null && !isMatching(os, getOS())) {
 			return false;
@@ -107,9 +104,6 @@ class Utils {
 		return Platform.getConfigurationLocation();
 	}
 
-	/**
-	 *
-	 */
 	private static boolean isMatching(String candidateValues, String siteValues) {
 		if (siteValues == null) {
 			return false;
@@ -128,9 +122,6 @@ class Utils {
 		return false;
 	}
 
-	/**
-	 *
-	 */
 	private static boolean isMatchingLocale(String candidateValues, String locale) {
 		if (locale == null) {
 			return false;

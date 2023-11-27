@@ -40,7 +40,6 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 
 	/**
 	 * Constructor
-	 * @param name
 	 */
 	public ClassCompatibilityModifierTests(String name) {
 		super(name);
@@ -63,7 +62,6 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 	 * Returns a problem id for a compatibility change to a class based on the
 	 * specified flags.
 	 *
-	 * @param flags
 	 * @return problem id
 	 */
 	protected int getChangedProblemId(int flags) {

@@ -42,7 +42,6 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
  * Handler for the image browser view's save to workspace command.
- *
  */
 public class SaveToWorkspace extends AbstractHandler {
 

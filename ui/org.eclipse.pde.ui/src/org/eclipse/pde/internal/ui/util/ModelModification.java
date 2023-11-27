@@ -25,7 +25,6 @@ import org.eclipse.pde.internal.core.project.PDEProject;
 /**
  * ModelModification class used my the PDEModelUtility
  * Subclass me to create changes to your models.
- *
  */
 public abstract class ModelModification {
 
@@ -58,7 +57,6 @@ public abstract class ModelModification {
 	 * ie. if the project contains a MANIFEST.MF this will be tagged as a
 	 * fullBundleModification, otherwise (this project is an old-style plugin)
 	 * this will be a PluginModel/FragmentModel modification.
-	 * @param project
 	 */
 	public ModelModification(IProject project) {
 		IFile xml = PDEProject.getPluginXml(project);
@@ -108,9 +106,6 @@ public abstract class ModelModification {
 	/**
 	 * Invoke this using PDEModelUtility.modifyModel(ModelModification modification)
 	 * Clients / subclasses should not invoke this method.
-	 * @param model
-	 * @param monitor
-	 * @throws CoreException
 	 */
 	protected abstract void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException;
 

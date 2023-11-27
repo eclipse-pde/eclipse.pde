@@ -59,7 +59,6 @@ public class EditableTablePart extends TablePart {
 
 	/**
 	 * Constructor for EditableTablePart.
-	 * @param buttonLabels
 	 */
 	public EditableTablePart(String[] buttonLabels) {
 		super(buttonLabels);

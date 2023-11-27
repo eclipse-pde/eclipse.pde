@@ -78,8 +78,6 @@ public class JavadocConversionPage extends UserInputWizardPage {
 
 		/**
 		 * Sets the current text filter to use
-		 *
-		 * @param filter
 		 */
 		public synchronized void setFilter(String pattern) {
 			this.pattern = pattern;
@@ -116,8 +114,6 @@ public class JavadocConversionPage extends UserInputWizardPage {
 
 	/**
 	 * Constructor
-	 *
-	 * @param name
 	 */
 	public JavadocConversionPage() {
 		super(WizardMessages.JavadocConversionWizard_0);

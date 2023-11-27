@@ -64,10 +64,6 @@ public class FileUtils {
 
 	/**
 	 * Recursively adds files from the specified directory to the provided list
-	 *
-	 * @param dir
-	 * @param collection
-	 * @throws IOException
 	 */
 	public static void addJavaFiles(File dir, List<File> collection) throws IOException {
 		List<File> subDirs = new ArrayList<>(2);
@@ -87,12 +83,6 @@ public class FileUtils {
 
 	/**
 	 * Imports files from the specified root directory into the specified path
-	 *
-	 * @param rootDir
-	 * @param destPath
-	 * @param monitor
-	 * @throws InvocationTargetException
-	 * @throws IOException
 	 */
 	public static void importFilesFromDirectory(File rootDir, IPath destPath, IProgressMonitor monitor) throws InvocationTargetException, IOException {
 		IResource findMember = ResourcesPlugin.getWorkspace().getRoot().getFolder(destPath);
@@ -109,12 +99,6 @@ public class FileUtils {
 
 	/**
 	 * Imports the specified file to the destination path
-	 *
-	 * @param file
-	 * @param destPath
-	 * @param monitor
-	 * @throws InvocationTargetException
-	 * @throws IOException
 	 */
 	public static void importFileFromDirectory(File file, IPath destPath, IProgressMonitor monitor) throws InvocationTargetException, IOException {
 		IResource findMember = null;
@@ -139,10 +123,6 @@ public class FileUtils {
 
 	/**
 	 * Creates a new java.io.File at the given path with the given contents
-	 *
-	 * @param path
-	 * @param contents
-	 * @throws IOException
 	 */
 	public static void createFile(String path, String contents) throws IOException {
 		try (FileOutputStream output = new FileOutputStream(path)) {
@@ -296,9 +276,6 @@ public class FileUtils {
 
 	/**
 	 * Writes the given content string to the output file, specified
-	 *
-	 * @param contents
-	 * @param destinationFilePath
 	 */
 	public static void writeToFile(String contents, String destinationFilePath) {
 		File destFile = new File(destinationFilePath);
@@ -314,10 +291,6 @@ public class FileUtils {
 	/**
 	 * writes a new zip file from all of the files contained in the specified
 	 * root directory
-	 *
-	 * @param rootDir
-	 * @param zipPath
-	 * @throws IOException
 	 */
 	public static void zip(File rootDir, String zipPath) throws IOException {
 		File zipFile = new File(zipPath);
@@ -333,11 +306,6 @@ public class FileUtils {
 	/**
 	 * Writes all of the zip entries from the given directory to the specified
 	 * zip output stream
-	 *
-	 * @param dir
-	 * @param zip
-	 * @param rootPathLength
-	 * @throws IOException
 	 */
 	public static void zip(File dir, ZipOutputStream zip, int rootPathLength) throws IOException {
 		File[] files = dir.listFiles();
@@ -490,9 +458,6 @@ public class FileUtils {
 
 	/**
 	 * Copies the given file to the given directory.
-	 *
-	 * @param dir
-	 * @param file
 	 */
 	public static void copyFile(File dir, IFile file) throws Exception {
 		File dst = new File(dir, file.getName());

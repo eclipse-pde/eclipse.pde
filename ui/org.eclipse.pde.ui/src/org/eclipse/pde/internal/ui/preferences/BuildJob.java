@@ -43,9 +43,6 @@ public final class BuildJob extends Job {
 
 	/**
 	 * Constructor
-	 *
-	 * @param name
-	 * @param project
 	 */
 	BuildJob(String name, IProject[] projects) {
 		this(name, projects, IncrementalProjectBuilder.FULL_BUILD);
@@ -65,7 +62,6 @@ public final class BuildJob extends Job {
 	/**
 	 * Returns if this build job is covered by another build job
 	 *
-	 * @param other
 	 * @return true if covered by another build job, false otherwise
 	 */
 	public boolean isCoveredBy(BuildJob other) {

@@ -23,13 +23,11 @@ import java.util.Dictionary;
 public interface IDefaultValueConsumer {
 	/**
 	 * Initializes the consumer with the values.
-	 * @param values
 	 */
 	void init(Dictionary<String, String> values);
 
 	/**
 	 * Returns the default value for the given key
-	 * @param key
 	 * @return the default value or <code>null</code> if not provided.
 	 */
 	String getDefaultValue(String key);

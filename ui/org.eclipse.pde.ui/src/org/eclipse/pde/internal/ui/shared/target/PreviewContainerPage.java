@@ -30,7 +30,6 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Wizard page that displays the contents of a bundle container in a table
- *
  */
 public class PreviewContainerPage extends WizardPage {
 

@@ -96,7 +96,6 @@ public class UseReportConverter extends HTMLConvertor {
 		/**
 		 * Returns if the reference should be reported or not
 		 *
-		 * @param desc
 		 * @return true if the reference should be reported false otherwise
 		 */
 		private boolean acceptReference(IMemberDescriptor desc, Pattern[] patterns) {
@@ -114,7 +113,6 @@ public class UseReportConverter extends HTMLConvertor {
 		 * Returns the enclosing {@link IReferenceTypeDescriptor} for the given
 		 * member descriptor
 		 *
-		 * @param member
 		 * @return the enclosing {@link IReferenceTypeDescriptor} or
 		 *         <code>null</code>
 		 */
@@ -217,7 +215,6 @@ public class UseReportConverter extends HTMLConvertor {
 		/**
 		 * Formats the arrays of messages
 		 *
-		 * @param messages
 		 * @return the formatted messages or <code>null</code>
 		 */
 		String formatMessages(String[] messages) {
@@ -775,11 +772,6 @@ public class UseReportConverter extends HTMLConvertor {
 
 	/**
 	 * Applies the given XSLT to the given XML to produce HTML in the given file
-	 *
-	 * @param xsltfile
-	 * @param xmlfile
-	 * @param htmloutput
-	 * @throws TransformerException
 	 */
 	protected void applyXSLT(File xsltFile, File xmlfile, File htmloutput) throws TransformerException, Exception {
 		Source xslt = null;
@@ -800,11 +792,6 @@ public class UseReportConverter extends HTMLConvertor {
 	/**
 	 * Applies the given XSLT source to the given XML file outputting to the
 	 * given HTML file
-	 *
-	 * @param xslt
-	 * @param xmlfile
-	 * @param htmlfile
-	 * @throws TransformerException
 	 */
 	protected void applyXSLT(Source xslt, File xmlfile, File htmlfile) throws TransformerException {
 		Source xml = new StreamSource(xmlfile);
@@ -818,10 +805,6 @@ public class UseReportConverter extends HTMLConvertor {
 	/**
 	 * Transforms the given set of xml files with the given XSLT and places the
 	 * result into a corresponding HTML file
-	 *
-	 * @param xmlfiles
-	 * @param xsltFile
-	 * @param html
 	 */
 	protected void tranformXml(File[] xmlfiles, File xsltFile) {
 		File html = null;
@@ -841,10 +824,6 @@ public class UseReportConverter extends HTMLConvertor {
 
 	/**
 	 * Gets the HTML path to write out the transformed XML file to
-	 *
-	 * @param reportroot
-	 * @param xmlfile
-	 * @return
 	 */
 	protected String getHTMLFileLocation(File xmlfile) {
 		File reportRoot = new File(getXmlLocation());
@@ -865,7 +844,6 @@ public class UseReportConverter extends HTMLConvertor {
 	 * Returns the name to use for the corresponding HTML file from the given
 	 * XML file
 	 *
-	 * @param xmlFile
 	 * @return the HTML name to use
 	 */
 	protected String getNameFromXMLFilename(File xmlFile) {
@@ -880,9 +858,7 @@ public class UseReportConverter extends HTMLConvertor {
 	/**
 	 * Returns the collection of missing bundle names
 	 *
-	 * @param missingfile
 	 * @return the collection of missing bundle names
-	 * @throws Exception
 	 */
 	protected String[] getMissingBundles(File missingfile) throws Exception {
 		MissingHandler handler = new MissingHandler();
@@ -918,9 +894,6 @@ public class UseReportConverter extends HTMLConvertor {
 	/**
 	 * Writes any existing metadata out to a meta.html file in the root of the
 	 * HTML report location
-	 *
-	 * @param htmlroot
-	 * @throws Exception
 	 */
 	void writeMetaPage(File htmlroot) throws Exception {
 		File meta = null;
@@ -962,7 +935,6 @@ public class UseReportConverter extends HTMLConvertor {
 	/**
 	 * Writes out a summary of the missing required bundles
 	 *
-	 * @param htmlroot
 	 * @return <code>true</code> if there was at least one missing bundle
 	 */
 	protected boolean writeMissingBundlesPage(final File htmlroot) throws Exception {
@@ -1026,8 +998,6 @@ public class UseReportConverter extends HTMLConvertor {
 	/**
 	 * Writes out the file of components that were not searched: either because
 	 * they appeared in an exclude list or they have no .api_description file
-	 *
-	 * @param htmlroot
 	 */
 	void writeNotSearchedPage(final File htmlroot) throws Exception {
 		File originhtml = null;
@@ -1085,7 +1055,6 @@ public class UseReportConverter extends HTMLConvertor {
 	/**
 	 * Writes the referenced member index page
 	 *
-	 * @param report
 	 * @param referees the listing of referencing bundles
 	 */
 	protected void writeReferencedMemberPage(final Report report, final List<Type> referees) throws Exception {
@@ -1169,7 +1138,6 @@ public class UseReportConverter extends HTMLConvertor {
 	/**
 	 * Returns the colour to use based on certain counts
 	 *
-	 * @param counts
 	 * @return the colour to use
 	 * @since 1.1
 	 */
@@ -1196,7 +1164,6 @@ public class UseReportConverter extends HTMLConvertor {
 	/**
 	 * Returns the page title to use for the referenced types page
 	 *
-	 * @param bundle
 	 * @return the page title for the referenced types page
 	 */
 	protected String getReferencedTypeTitle(String bundle) {
@@ -1205,12 +1172,6 @@ public class UseReportConverter extends HTMLConvertor {
 
 	/**
 	 * Writes the page that displays all of the members used in a type
-	 *
-	 * @param map
-	 * @param type
-	 * @param typefile
-	 * @param typename
-	 * @throws Exception
 	 */
 	void writeTypePage(Map<IMemberDescriptor, Member> map, Type type, File typefile, String typename) throws Exception {
 		PrintWriter writer = null;
@@ -1288,7 +1249,6 @@ public class UseReportConverter extends HTMLConvertor {
 	/**
 	 * Returns the title to use for the type references page
 	 *
-	 * @param typename
 	 * @return the type references page title
 	 */
 	protected String getTypeTitle(String typename) {
@@ -1342,12 +1302,8 @@ public class UseReportConverter extends HTMLConvertor {
 	 * Returns the name to display for the given {@link IElementDescriptor}
 	 * which can be qualified or not
 	 *
-	 * @param desc
-	 * @param qualifiedparams
-	 * @param qualified
 	 * @return the (un)-qualified name to display for the given
 	 *         {@link IElementDescriptor}
-	 * @throws CoreException
 	 */
 	String getDisplayName(IElementDescriptor desc, boolean qualifiedparams, boolean qualified) throws CoreException {
 		return switch (desc.getElementType()) {
@@ -1372,8 +1328,6 @@ public class UseReportConverter extends HTMLConvertor {
 	 * Extracts underlying link text from the given absolute filename based off
 	 * the root file
 	 *
-	 * @param root
-	 * @param fileName
 	 * @return link text pruned via the given root file
 	 */
 	String extractLinkFrom(File root, String fileName) {
@@ -1401,7 +1355,6 @@ public class UseReportConverter extends HTMLConvertor {
 	 *
 	 * @param scanResult a list of {@link Report} objects returns from the use
 	 *            scan parser
-	 * @param reportsRoot
 	 */
 	protected void writeIndexPage(List<?> scanResult) throws Exception {
 		Collections.sort(scanResult, (o1, o2) -> ((Report) o1).name.compareTo(((Report) o2).name));
@@ -1516,9 +1469,6 @@ public class UseReportConverter extends HTMLConvertor {
 	/**
 	 * This method is called during the HTML header creation phase to allow META
 	 * header elements to be written for metadata objects
-	 *
-	 * @param buffer
-	 * @throws Exception
 	 */
 	void writeMetadataHeaders(StringBuilder buffer) throws Exception {
 		writeMetaTag(buffer, "description", SearchMessages.UseReportConverter_root_index_description); //$NON-NLS-1$
@@ -1528,9 +1478,6 @@ public class UseReportConverter extends HTMLConvertor {
 	/**
 	 * This method is called during the initial index page creation to allow and
 	 * executive summary of the use scan to be written out from metadata
-	 *
-	 * @param buffer
-	 * @throws Exception
 	 */
 	void writeMetadataSummary(StringBuilder buffer) throws Exception {
 		buffer.append(OPEN_H4).append(SearchMessages.UseReportConverter_scan_details).append(CLOSE_H4);
@@ -1671,9 +1618,6 @@ public class UseReportConverter extends HTMLConvertor {
 	}
 	/**
 	 * Returns the use metadata from this scan
-	 *
-	 * @return
-	 * @throws Exception
 	 */
 	IMetadata getMetadata() throws Exception {
 		if (this.metadata == null) {
@@ -1756,9 +1700,6 @@ public class UseReportConverter extends HTMLConvertor {
 
 	/**
 	 * Returns the use filtered count from this scan
-	 *
-	 * @return
-	 * @throws Exception
 	 */
 	int getFilteredCount() throws Exception {
 		if (this.filteredCount == -1) {
@@ -1795,7 +1736,6 @@ public class UseReportConverter extends HTMLConvertor {
 	/**
 	 * Reads saved patterns from the meta.xml file
 	 *
-	 * @param element
 	 * @return the array of patterns or <code>null</code>
 	 */
 	private String[] readPatterns(Element element) {
@@ -1813,9 +1753,6 @@ public class UseReportConverter extends HTMLConvertor {
 
 	/**
 	 * Writes out a META tag of the kind <code>description</code>
-	 *
-	 * @param buffer
-	 * @param description
 	 */
 	void writeMetaTag(StringBuilder buffer, String name, String content) {
 		buffer.append("<meta name=\"").append(name).append("\" content=\"").append(content).append("\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -1827,8 +1764,6 @@ public class UseReportConverter extends HTMLConvertor {
 	 * are API, Internal, Permissible, Fragment-Permissible and Other reference
 	 * counts respectively
 	 *
-	 * @param columnname
-	 * @param includeversion
 	 * @return the default references table header
 	 */
 	String getReferencesTableHeader(String sectionname, String columnname, boolean includeversion) {
@@ -1872,10 +1807,6 @@ public class UseReportConverter extends HTMLConvertor {
 	 * columns are Version, API, Internal, Permissible, Fragment-Permissible
 	 * reference counts respectively
 	 *
-	 * @param counts
-	 * @param link
-	 * @param linktext
-	 * @param includeversion
 	 * @return a single reference table entry
 	 */
 	String getReferenceTableEntry(CountGroup counts, String link, String linktext, boolean includeversion) {
@@ -1905,8 +1836,6 @@ public class UseReportConverter extends HTMLConvertor {
 	/**
 	 * Returns the version string from the text (if any)
 	 *
-	 * @param text
-	 * @return
 	 * @since 1.1
 	 */
 	String getVersion(String text) {
@@ -1939,8 +1868,6 @@ public class UseReportConverter extends HTMLConvertor {
 	/**
 	 * Returns HTML summary for references from a specific component.
 	 *
-	 * @param typename
-	 * @param counts
 	 * @return HTML as a string
 	 */
 	protected String getTypeCountSummary(String typename, CountGroup counts, int membercount) {

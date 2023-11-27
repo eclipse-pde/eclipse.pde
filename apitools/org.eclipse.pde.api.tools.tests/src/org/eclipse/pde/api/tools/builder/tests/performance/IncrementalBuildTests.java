@@ -59,8 +59,6 @@ public class IncrementalBuildTests extends PerformanceTest {
 
 	/**
 	 * Collects tests from the getAllTestClasses() method into the given suite
-	 *
-	 * @param suite
 	 */
 	private static void collectTests(TestSuite suite) {
 		// Hack to load all classes before computing their suite of test cases
@@ -110,9 +108,6 @@ public class IncrementalBuildTests extends PerformanceTest {
 
 	/**
 	 * Returns the path the file that will be reverted
-	 *
-	 * @param filename
-	 * @return
 	 */
 	protected IPath getRevertFilePath(String testname, String filename) {
 		return getTestSourcePath().append("incremental").append(testname).append(REVERT).append(filename); //$NON-NLS-1$
@@ -120,10 +115,6 @@ public class IncrementalBuildTests extends PerformanceTest {
 
 	/**
 	 * Gets the
-	 *
-	 * @param testname
-	 * @param filename
-	 * @return
 	 */
 	protected IPath getUpdateFilePath(String testname, String filename) {
 		return getTestSourcePath().append("incremental").append(testname).append(CHANGED).append(filename); //$NON-NLS-1$
@@ -160,8 +151,6 @@ public class IncrementalBuildTests extends PerformanceTest {
 
 	/**
 	 * Incremental build for structural change to an API type.
-	 *
-	 * @throws Exception
 	 */
 	public void _testApiStructuralChange() throws Exception {
 		deployIncrementalPerformanceTest("Incremental - API Structural Change", //$NON-NLS-1$
@@ -173,8 +162,6 @@ public class IncrementalBuildTests extends PerformanceTest {
 
 	/**
 	 * Incremental build for non-structural change to an API type.
-	 *
-	 * @throws Exception
 	 */
 	public void _testApiNonStructuralChange() throws Exception {
 		deployIncrementalPerformanceTest("Incremental - API Non-Structural Change", //$NON-NLS-1$
@@ -186,8 +173,6 @@ public class IncrementalBuildTests extends PerformanceTest {
 
 	/**
 	 * Incremental build for an API description change to an API type.
-	 *
-	 * @throws Exception
 	 */
 	public void _testApiDescriptionChange() throws Exception {
 		deployIncrementalPerformanceTest("Incremental - API Description Change", //$NON-NLS-1$
@@ -199,8 +184,6 @@ public class IncrementalBuildTests extends PerformanceTest {
 
 	/**
 	 * Incremental build for structural change to an internal type.
-	 *
-	 * @throws Exception
 	 */
 	public void _testInternalStructuralChange() throws Exception {
 		deployIncrementalPerformanceTest("Incremental - Internal Structural Change", //$NON-NLS-1$
@@ -212,8 +195,6 @@ public class IncrementalBuildTests extends PerformanceTest {
 
 	/**
 	 * Incremental build for non-structural change to an internal type.
-	 *
-	 * @throws Exception
 	 */
 	public void _testInternalNonStructuralChange() throws Exception {
 		deployIncrementalPerformanceTest("Incremental - Internal Non-Structural Change", //$NON-NLS-1$
@@ -225,8 +206,6 @@ public class IncrementalBuildTests extends PerformanceTest {
 
 	/**
 	 * Incremental build for an API description change to an internal type.
-	 *
-	 * @throws Exception
 	 */
 	public void _testInternalDescriptionChange() throws Exception {
 		deployIncrementalPerformanceTest("Incremental - Internal Description Change", //$NON-NLS-1$
@@ -326,9 +305,6 @@ public class IncrementalBuildTests extends PerformanceTest {
 	 * default implementation to also do an incremental build with the Java
 	 * builder after the file has been updated.
 	 *
-	 * @param project
-	 * @param workspaceLocation
-	 * @param replacementLocation
 	 * @throws Exception if something bad happens, or if unexpected problems are
 	 *             found after a build
 	 */

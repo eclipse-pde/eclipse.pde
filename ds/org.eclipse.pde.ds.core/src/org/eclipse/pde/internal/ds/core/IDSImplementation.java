@@ -20,7 +20,6 @@ package org.eclipse.pde.internal.ds.core;
  * @since 3.4
  * @see IDSComponent
  * @see IDSObject
- *
  */
 public interface IDSImplementation extends IDSObject {
 

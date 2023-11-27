@@ -36,7 +36,6 @@ public abstract class MemberDescriptorImpl extends NamedElementDescriptorImpl im
 	 * @param name field name
 	 * @param parent type containing the field declaration or package containing
 	 *            the type
-	 * @param modifiers
 	 */
 	MemberDescriptorImpl(String name, IElementDescriptor parent) {
 		super(name);

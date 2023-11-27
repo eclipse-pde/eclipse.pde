@@ -55,8 +55,6 @@ public class AnnotationUsageTests extends UsageTest {
 
 	/**
 	 * Tests using a restricted annotation on a type during a full build
-	 *
-	 * @throws Exception
 	 */
 	public void testAnnotationUsage1F() throws Exception {
 		x1(false);
@@ -64,8 +62,6 @@ public class AnnotationUsageTests extends UsageTest {
 
 	/**
 	 * Tests using a restricted annotation on a type during an incremental build
-	 *
-	 * @throws Exception
 	 */
 	public void testAnnotationUsage1I() throws Exception {
 		x1(true);
@@ -83,8 +79,6 @@ public class AnnotationUsageTests extends UsageTest {
 
 	/**
 	 * Tests using a restricted annotation on a field during a full build
-	 *
-	 * @throws Exception
 	 */
 	public void testAnnotationUsage2F() throws Exception {
 		x2(false);
@@ -93,8 +87,6 @@ public class AnnotationUsageTests extends UsageTest {
 	/**
 	 * Tests using a restricted annotation on a field during an incremental
 	 * build
-	 *
-	 * @throws Exception
 	 */
 	public void testAnnotationUsage2I() throws Exception {
 		x2(true);
@@ -112,8 +104,6 @@ public class AnnotationUsageTests extends UsageTest {
 
 	/**
 	 * Tests using a restricted annotation on a method during a full build
-	 *
-	 * @throws Exception
 	 */
 	public void testAnnotationUsage3F() throws Exception {
 		x3(false);
@@ -122,8 +112,6 @@ public class AnnotationUsageTests extends UsageTest {
 	/**
 	 * Tests using a restricted annotation on a method during an incremental
 	 * build
-	 *
-	 * @throws Exception
 	 */
 	public void testAnnotationUsage3I() throws Exception {
 		x3(true);
@@ -141,8 +129,6 @@ public class AnnotationUsageTests extends UsageTest {
 
 	/**
 	 * Tests using a restricted annotation on a member type during a full build
-	 *
-	 * @throws Exception
 	 */
 	public void testAnnotationUsage4F() throws Exception {
 		x4(false);
@@ -151,8 +137,6 @@ public class AnnotationUsageTests extends UsageTest {
 	/**
 	 * Tests using a restricted annotation on a member during an incremental
 	 * build
-	 *
-	 * @throws Exception
 	 */
 	public void testAnnotationUsage4I() throws Exception {
 		x4(true);
@@ -171,8 +155,6 @@ public class AnnotationUsageTests extends UsageTest {
 	/**
 	 * Tests using a restricted annotation on a secondary type during a full
 	 * build
-	 *
-	 * @throws Exception
 	 */
 	public void testAnnotationUsage5F() throws Exception {
 		x5(false);
@@ -181,8 +163,6 @@ public class AnnotationUsageTests extends UsageTest {
 	/**
 	 * Tests using a restricted annotation on a secondary type during an
 	 * incremental build
-	 *
-	 * @throws Exception
 	 */
 	public void testAnnotationUsage5I() throws Exception {
 		x5(true);
@@ -201,8 +181,6 @@ public class AnnotationUsageTests extends UsageTest {
 	/**
 	 * Tests using a restricted annotation on a field in a member type during a
 	 * full build
-	 *
-	 * @throws Exception
 	 */
 	public void testAnnotationUsage6F() throws Exception {
 		x6(false);
@@ -211,8 +189,6 @@ public class AnnotationUsageTests extends UsageTest {
 	/**
 	 * Tests using a restricted annotation on a field in a member type during an
 	 * incremental build
-	 *
-	 * @throws Exception
 	 */
 	public void testAnnotationUsage6I() throws Exception {
 		x6(true);
@@ -231,8 +207,6 @@ public class AnnotationUsageTests extends UsageTest {
 	/**
 	 * Tests using a restricted annotation on a method in a member type during a
 	 * full build
-	 *
-	 * @throws Exception
 	 */
 	public void testAnnotationUsage7F() throws Exception {
 		x7(false);
@@ -241,8 +215,6 @@ public class AnnotationUsageTests extends UsageTest {
 	/**
 	 * Tests using a restricted annotation on a method in a member type during
 	 * an incremental build
-	 *
-	 * @throws Exception
 	 */
 	public void testAnnotationUsage7I() throws Exception {
 		x7(true);
@@ -261,8 +233,6 @@ public class AnnotationUsageTests extends UsageTest {
 	/**
 	 * Tests using a restricted annotation on a member type of a secondary type
 	 * during a full build
-	 *
-	 * @throws Exception
 	 */
 	public void testAnnotationUsage8F() throws Exception {
 		x8(false);
@@ -271,8 +241,6 @@ public class AnnotationUsageTests extends UsageTest {
 	/**
 	 * Tests using a restricted annotation on a member type or a secondary type
 	 * during an incremental build
-	 *
-	 * @throws Exception
 	 */
 	public void testAnnotationUsage8I() throws Exception {
 		x8(true);
@@ -290,8 +258,6 @@ public class AnnotationUsageTests extends UsageTest {
 
 	/**
 	 * Tests using a restricted annotation on a local type during a full build
-	 *
-	 * @throws Exception
 	 */
 	public void testAnnotationUsage9F() throws Exception {
 		x9(false);
@@ -300,8 +266,6 @@ public class AnnotationUsageTests extends UsageTest {
 	/**
 	 * Tests using a restricted annotation on a local type during an incremental
 	 * build
-	 *
-	 * @throws Exception
 	 */
 	public void testAnnotationUsage9I() throws Exception {
 		x9(true);

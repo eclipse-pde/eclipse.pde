@@ -66,9 +66,6 @@ public class ShowSampleAction extends Action implements IIntroAction {
 
 	private final ProvisioningUI provUI;
 
-	/**
-	 *
-	 */
 	public ShowSampleAction() {
 		provUI = ProvisioningUI.getDefaultUI();
 	}

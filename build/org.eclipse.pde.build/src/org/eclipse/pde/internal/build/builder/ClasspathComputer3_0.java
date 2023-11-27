@@ -60,8 +60,6 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 
 		/**
 		 * Create a ClasspathElement object
-		 * @param path
-		 * @param accessRules
 		 * @throws NullPointerException if path is null
 		 */
 		protected ClasspathElement(String path, String subPath, String accessRules) {
@@ -170,7 +168,6 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	 * @param model the plugin containing the jar compiled
 	 * @param jar the jar for which the classpath is being compiled
 	 * @return String the classpath
-	 * @throws CoreException
 	 */
 	@Override
 	public List<Object> getClasspath(BundleDescription model, ModelBuildScriptGenerator.CompiledEntry jar) throws CoreException {
@@ -245,10 +242,6 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 
 	/**
 	 * Add the specified plugin (including its jars) and its fragments 
-	 * @param plugin
-	 * @param classpath
-	 * @param location
-	 * @throws CoreException
 	 */
 	private void addPlugin(BundleDescription plugin, List<Object> classpath, String location) throws CoreException {
 		boolean allFragments = true;
@@ -266,10 +259,6 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 
 	/**
 	 * Add the runtime libraries for the specified plugin. 
-	 * @param model
-	 * @param classpath
-	 * @param baseLocation
-	 * @throws CoreException
 	 */
 	private void addRuntimeLibraries(BundleDescription model, List<Object> classpath, String baseLocation) throws CoreException {
 		String[] libraries = getClasspathEntries(model);
@@ -286,10 +275,6 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 
 	/**
 	 * Add all fragments of the given plugin
-	 * @param plugin
-	 * @param classpath
-	 * @param baseLocation
-	 * @throws CoreException
 	 */
 	private void addFragmentsLibraries(BundleDescription plugin, List<Object> classpath, String baseLocation, boolean afterPlugin, boolean all) throws CoreException {
 		// if plugin is not a plugin, it's a fragment and there is no fragment for a fragment. So we return.
@@ -326,12 +311,6 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	 * There are cases where the plug-in only declares a library but the real JAR is under
 	 * a fragment location. This method gets all the plugin libraries and place them in the
 	 * possible fragment location.
-	 * 
-	 * @param plugin
-	 * @param fragment
-	 * @param classpath
-	 * @param baseLocation
-	 * @throws CoreException
 	 */
 	private void addPluginLibrariesToFragmentLocations(BundleDescription plugin, BundleDescription fragment, List<Object> classpath, String baseLocation) throws CoreException {
 		//TODO This methods causes the addition of a lot of useless entries. See bug #35544
@@ -516,7 +495,6 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	 * @param url a url
 	 * @param location location used as a base location to compute the relative path 
 	 * @return String the relative path 
-	 * @throws CoreException
 	 */
 	private String[] computeExtraPath(String url, List<Object> classpath, String location) throws CoreException {
 		String relativePath = null;
@@ -627,10 +605,6 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	 * 
 	 * @param target : the plugin for which we are going to introduce
 	 * @param classpath 
-	 * @param baseLocation
-	 * @param pluginChain
-	 * @param addedPlugins
-	 * @throws CoreException
 	 */
 	private void addPluginAndPrerequisites(BundleDescription target, List<Object> classpath, String baseLocation, List<BundleDescription> pluginChain, Set<BundleDescription> addedPlugins) throws CoreException {
 		if (matchFilter(target) == false)
@@ -685,12 +659,6 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		return filter.match(properties);
 	}
 
-	/**
-	 * 
-	 * @param model
-	 * @param baseLocation
-	 * @param classpath
-	 */
 	private void addDevEntries(BundleDescription model, String baseLocation, List<Object> classpath, String[] jarSpecificEntries, Properties modelProperties) {
 		if (generator.devEntries == null && (jarSpecificEntries == null || jarSpecificEntries.length == 0))
 			return;

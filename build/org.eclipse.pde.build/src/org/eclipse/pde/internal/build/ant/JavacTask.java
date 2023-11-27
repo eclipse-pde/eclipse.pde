@@ -139,7 +139,6 @@ public class JavacTask implements ITask {
 
 	/**
 	 * Set the javac task classpath refid to be the given value.
-	 * @param classpathId
 	 */
 	public void setClasspathId(String classpathId) {
 		this.classpathId = classpathId;
@@ -194,7 +193,6 @@ public class JavacTask implements ITask {
 
 	/**
 	 * Set patterns to exclude from compilation 
-	 * @param excludes
 	 */
 	public void setExcludes(String[] excludes) {
 		this.excludes = excludes;

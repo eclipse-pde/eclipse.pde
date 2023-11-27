@@ -94,9 +94,6 @@ public abstract class CommonUtilsTask extends Task {
 
 	/**
 	 * Deletes an {@link IApiBaseline} from the given folder
-	 *
-	 * @param referenceLocation
-	 * @param folder
 	 */
 	protected void deleteBaseline(String referenceLocation, File folder) {
 		if (Util.isArchive(referenceLocation)) {
@@ -108,8 +105,6 @@ public abstract class CommonUtilsTask extends Task {
 	 * Extract extracts the SDK from the given location to the given directory
 	 * name
 	 *
-	 * @param installDirName
-	 * @param location
 	 * @return the {@link File} handle to the extracted SDK
 	 */
 	protected File extractSDK(String installDirName, String location) {
@@ -155,7 +150,6 @@ public abstract class CommonUtilsTask extends Task {
 	 * Initializes the include/exclude list from the given file location, and
 	 * returns a {@link Set} of project names that should be include/excluded.
 	 *
-	 * @param excludeListLocation
 	 * @return the set of project names to be excluded
 	 */
 	protected static FilteredElements initializeFilteredElements(String filterListLocation, IApiBaseline baseline, boolean debug) throws BuildException {

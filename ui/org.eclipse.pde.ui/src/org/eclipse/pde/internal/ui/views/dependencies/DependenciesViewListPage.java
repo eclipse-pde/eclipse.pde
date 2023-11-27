@@ -22,9 +22,6 @@ import org.eclipse.swt.widgets.Table;
 
 public class DependenciesViewListPage extends DependenciesViewPage {
 
-	/**
-	 *
-	 */
 	public DependenciesViewListPage(DependenciesView view, IContentProvider contentProvider) {
 		super(view, contentProvider);
 	}

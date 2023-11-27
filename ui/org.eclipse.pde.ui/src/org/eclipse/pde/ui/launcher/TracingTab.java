@@ -46,7 +46,6 @@ public class TracingTab extends AbstractLauncherTab {
 
 	/**
 	 * Constructor
-	 *
 	 */
 	public TracingTab() {
 		super();

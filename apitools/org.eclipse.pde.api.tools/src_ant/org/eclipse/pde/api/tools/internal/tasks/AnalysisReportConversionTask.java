@@ -306,10 +306,6 @@ public class AnalysisReportConversionTask extends Task {
 
 	/**
 	 * Write out the index file
-	 *
-	 * @param reportsRoot
-	 * @param summaries
-	 * @param allNonApiBundleSummary
 	 */
 	private void dumpIndexFile(File reportsRoot, Summary[] summaries, Summary allNonApiBundleSummary) {
 		File htmlFile = new File(this.htmlReportsLocation, "index.html"); //$NON-NLS-1$

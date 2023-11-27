@@ -148,7 +148,6 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 		 * Determines if the listing of doc tags from the declaration contains
 		 * all of the expected tags
 		 *
-		 * @param tags
 		 * @return true if the tag list contains all of the expected tags, false
 		 *         otherwise
 		 */
@@ -238,10 +237,6 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	 * Creates all of the text edit changes collected from the processor. The
 	 * collected edits are arranged as multi-edits for the one file that they
 	 * belong to
-	 *
-	 * @param projectchange
-	 * @param project
-	 * @param cxml
 	 */
 	private void createTagChanges(CompositeChange projectchange, IJavaProject project, File cxml) {
 		try {

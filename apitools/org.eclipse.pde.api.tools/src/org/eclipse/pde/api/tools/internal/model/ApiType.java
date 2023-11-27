@@ -145,7 +145,6 @@ public class ApiType extends ApiMember implements IApiType {
 	 * @param signature the signature of the type
 	 * @param genericSig the generic signature of the type
 	 * @param flags the flags for the type
-	 * @param enclosingName
 	 * @param storage the storage this content was generated from
 	 */
 	public ApiType(IApiElement parent, String name, String signature, String genericSig, int flags, String enclosingName, IApiTypeRoot storage) {
@@ -189,7 +188,6 @@ public class ApiType extends ApiMember implements IApiType {
 	 *
 	 * @param name method name
 	 * @param signature method signature
-	 * @param genericSig
 	 * @param modifiers method modifiers
 	 * @param exceptions names of thrown exceptions
 	 */
@@ -207,7 +205,6 @@ public class ApiType extends ApiMember implements IApiType {
 	 *
 	 * @param name field name
 	 * @param signature field signature
-	 * @param genericSig
 	 * @param modifiers field modifiers
 	 * @param value constant value or <code>null</code> if none
 	 */
@@ -358,8 +355,6 @@ public class ApiType extends ApiMember implements IApiType {
 	 * Throws an exception due to the fact an API component was not provided
 	 * when this type was created and is now required to perform navigation or
 	 * resolution.
-	 *
-	 * @throws CoreException
 	 */
 	private void requiresApiComponent() throws CoreException {
 		throw new CoreException(Status.error(Messages.ApiType_2));
@@ -516,7 +511,6 @@ public class ApiType extends ApiMember implements IApiType {
 	 * Used when building a type structure.
 	 *
 	 * @param name member type name
-	 * @param modifiers
 	 */
 	public void addMemberType(String name, int modifiers) {
 		if (fMemberTypes == null) {

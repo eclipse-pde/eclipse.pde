@@ -105,7 +105,6 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 	/**
 	 * Build problem detectors for a component.
 	 *
-	 * @param component
 	 * @param kinds the integer mask of the kinds of detectors to create
 	 */
 	public ProblemDetectorBuilder(IApiComponent component, int kinds) {
@@ -184,8 +183,6 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 
 	/**
 	 * Sets the owning component of this builder
-	 *
-	 * @param component
 	 */
 	public void setOwningComponent(IApiComponent component) {
 		fComponent = component;
@@ -224,7 +221,6 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 	/**
 	 * Returns whether the given problem kind should be ignored.
 	 *
-	 * @param problemKey
 	 * @return whether the given problem kind should be ignored
 	 */
 	private boolean isIgnore(String problemKey, IProject project) {
@@ -235,8 +231,6 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 	/**
 	 * Returns a set of all non-API package names that are in prerequisite
 	 * components.
-	 *
-	 * @return
 	 */
 	Set<String> getNonApiPackageNames() {
 		return fNonApiPackageNames;
@@ -245,7 +239,6 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 	/**
 	 * Adds additional non-API package descriptors to the detector builder.
 	 *
-	 * @param packagee
 	 * @return true if the descriptor did not exist in the current collection
 	 *         and was added, false otherwise
 	 */
@@ -267,9 +260,6 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 
 	/**
 	 * Adds the system detector to the given listing
-	 *
-	 * @param detectors
-	 * @param project
 	 */
 	private void addSystemDetector(List<IApiProblemDetector> detectors, IProject project) {
 		if (project != null) {
@@ -289,9 +279,6 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 
 	/**
 	 * Adds the use detectors to the listing
-	 *
-	 * @param detectors
-	 * @param project
 	 */
 	private void addUseDetectors(List<IApiProblemDetector> detectors, IProject project) {
 		if (project != null) {
@@ -342,9 +329,6 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 	 * Adds any leak detectors to the listing. If a project context is available
 	 * we filter out disabled detectors based on project / workspace preference
 	 * settings
-	 *
-	 * @param detectors
-	 * @param project
 	 */
 	private void addLeakDetectors(List<IApiProblemDetector> detectors, IProject project) {
 		if (project != null) {

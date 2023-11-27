@@ -70,9 +70,6 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 
 		/**
 		 * Constructor
-		 *
-		 * @param key
-		 * @param values
 		 */
 		public ControlData(Key key, String[] values) {
 			this.key = key;
@@ -115,9 +112,6 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 
 		/**
 		 * Constructor
-		 *
-		 * @param qualifier
-		 * @param key
 		 */
 		public Key(String qualifier, String key) {
 			this.qualifier = qualifier;
@@ -128,8 +122,6 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 		 * Returns the {@link IEclipsePreferences} node for the given context
 		 * and {@link IWorkingCopyManager}
 		 *
-		 * @param context
-		 * @param manager
 		 * @return the {@link IEclipsePreferences} node or <code>null</code>
 		 */
 		private IEclipsePreferences getNode(IScopeContext context, IWorkingCopyManager manager) {
@@ -144,8 +136,6 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 		 * Returns the value stored in the {@link IEclipsePreferences} node from
 		 * the given context and working copy manager
 		 *
-		 * @param context
-		 * @param manager
 		 * @return the value from the {@link IEclipsePreferences} node or
 		 *         <code>null</code>
 		 */
@@ -161,9 +151,6 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 		 * Returns the stored value of this {@link IEclipsePreferences} node
 		 * using a given lookup order, and allowing the top scope to be ignored
 		 *
-		 * @param lookupOrder
-		 * @param ignoreTopScope
-		 * @param manager
 		 * @return the value from the {@link IEclipsePreferences} node or
 		 *         <code>null</code>
 		 */
@@ -179,10 +166,6 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 
 		/**
 		 * Sets the value of this key
-		 *
-		 * @param context
-		 * @param value
-		 * @param manager
 		 */
 		public void setStoredValue(IScopeContext context, String value, IWorkingCopyManager manager) {
 			IEclipsePreferences node = getNode(context, manager);
@@ -202,7 +185,6 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 	/**
 	 * Returns a new {@link Key} for the {@link ApiUIPlugin} preference store
 	 *
-	 * @param key
 	 * @return the new {@link Key} for the {@link ApiUIPlugin} preference store
 	 */
 	protected final static Key getApiToolsKey(String key) {
@@ -289,8 +271,6 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 	private boolean hasBaseline = true;
 	/**
 	 * Constructor
-	 *
-	 * @param project
 	 */
 	public ApiBaselinesConfigurationBlock(IWorkbenchPreferenceContainer container) {
 		fLookupOrder = new IScopeContext[] {
@@ -306,7 +286,6 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 	 * Creates the control in the parent control
 	 *
 	 * @param parent the parent control
-	 * @param page
 	 */
 	public Control createControl(Composite parent, final ApiBaselinePreferencePage page) {
 		fParent = parent;
@@ -610,10 +589,6 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 	/**
 	 * Creates a {@link Label} | {@link Combo} control. The combo is initialised
 	 * from the given {@link Key}
-	 *
-	 * @param parent
-	 * @param label
-	 * @param key
 	 */
 	protected Combo createComboControl(Composite parent, String label, Key key) {
 		Label lbl = new Label(parent, SWT.NONE);

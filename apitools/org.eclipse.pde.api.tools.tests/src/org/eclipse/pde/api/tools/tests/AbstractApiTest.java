@@ -114,9 +114,6 @@ public class AbstractApiTest {
 
 	/**
 	 * Performs the given refactoring
-	 *
-	 * @param refactoring
-	 * @throws Exception
 	 */
 	protected void performRefactoring(final Refactoring refactoring) throws CoreException {
 		if (refactoring == null) {
@@ -149,10 +146,8 @@ public class AbstractApiTest {
 	/**
 	 * Creates a project with the given name and adds the default 'src' folder
 	 *
-	 * @param name
 	 * @param packages an optional list of packages to add to the project when
 	 *            it is created
-	 * @throws Exception
 	 */
 	protected void createProject(final String name, String[] packages) throws Exception {
 		if (name == null) {
@@ -189,9 +184,6 @@ public class AbstractApiTest {
 
 	/**
 	 * Deletes a project with the given name
-	 *
-	 * @param name
-	 * @throws CoreException
 	 */
 	protected void deleteProject(String name) throws CoreException {
 		if (name == null) {
@@ -212,7 +204,6 @@ public class AbstractApiTest {
 	 * Returns a the project with the given name. The returned project has not
 	 * been checked for existence.
 	 *
-	 * @param name
 	 * @return the handle to the project with the given name.
 	 */
 	protected IProject getProject(String name) {

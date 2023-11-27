@@ -188,7 +188,6 @@ public class P2Utils {
 	 * @param dest array to copy URLs into
 	 * @param start index to start copying into
 	 * @param infos associated bundle infos
-	 * @throws MalformedURLException
 	 */
 	private static void copyURLs(URL[] dest, int start, BundleInfo[] infos) throws MalformedURLException {
 		for (BundleInfo info : infos) {
@@ -205,7 +204,6 @@ public class P2Utils {
 	 * @param home
 	 *            the path describing the base location of the platform install
 	 * @return list containing URL locations or <code>null</code>
-	 * @throws IOException
 	 */
 	private static BundleInfo[] getBundlesFromFile(File filePath, File home) throws IOException {
 		SimpleConfiguratorManipulator manipulator = PDECore.getDefault()
