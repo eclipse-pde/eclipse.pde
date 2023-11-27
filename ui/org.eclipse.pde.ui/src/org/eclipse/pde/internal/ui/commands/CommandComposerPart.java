@@ -49,7 +49,6 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
  *
  * Scrolled form = CommandComposerPart#createForm(Composite)
  * CommandComposerPart#createPartControl(form)
- *
  */
 public class CommandComposerPart implements ISelectionChangedListener {
 

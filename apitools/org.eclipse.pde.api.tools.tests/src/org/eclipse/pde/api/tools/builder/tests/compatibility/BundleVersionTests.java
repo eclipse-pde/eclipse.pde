@@ -54,8 +54,6 @@ public class BundleVersionTests extends ApiBuilderTest {
 
 	/**
 	 * Constructor
-	 *
-	 * @param name
 	 */
 	public BundleVersionTests(String name) {
 		super(name);
@@ -178,8 +176,6 @@ public class BundleVersionTests extends ApiBuilderTest {
 	 * Tests that changing the version of a re-exported bundle has no impact on
 	 * the version of the current bundle as long as the version is within the
 	 * range and the range has not changed.
-	 *
-	 * @throws Exception
 	 */
 	public void test001() throws Exception {
 		// setup the environment
@@ -191,8 +187,6 @@ public class BundleVersionTests extends ApiBuilderTest {
 	/**
 	 * Tests that decreasing the minor version of the lower bound of the
 	 * re-exported bundle range triggers a major version change.
-	 *
-	 * @throws Exception
 	 */
 	public void test002() throws Exception {
 		// setup the environment
@@ -209,8 +203,6 @@ public class BundleVersionTests extends ApiBuilderTest {
 	/**
 	 * Tests that decreasing the major version of the lower bound of the
 	 * re-exported bundle range triggers a major version change.
-	 *
-	 * @throws Exception
 	 */
 	public void test003() throws Exception {
 		// setup the environment
@@ -227,8 +219,6 @@ public class BundleVersionTests extends ApiBuilderTest {
 	/**
 	 * Tests that increasing the major version of the lower bound of the
 	 * re-exported bundle range triggers a major version change.
-	 *
-	 * @throws Exception
 	 */
 	public void test004() throws Exception {
 		// setup the environment
@@ -245,8 +235,6 @@ public class BundleVersionTests extends ApiBuilderTest {
 	/**
 	 * Tests that increasing the minor version of the lower bound of the
 	 * re-exported bundle range triggers a minor version change.
-	 *
-	 * @throws Exception
 	 */
 	public void test005() throws Exception {
 		// setup the environment

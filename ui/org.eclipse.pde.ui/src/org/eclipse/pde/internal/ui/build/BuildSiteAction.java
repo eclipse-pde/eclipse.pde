@@ -45,7 +45,6 @@ import org.eclipse.ui.progress.IProgressConstants;
 
 /**
  * Generates an ant build file for an update site
- *
  */
 public class BuildSiteAction implements IObjectActionDelegate {
 

@@ -23,10 +23,6 @@ public class TypeAnnotations implements IApiAnnotations {
 	private final IApiAnnotations fAnnotations;
 	private final long fBuildStamp;
 
-	/**
-	 * @param visibility
-	 * @param restrictions
-	 */
 	public TypeAnnotations(IApiAnnotations annotations, long stamp) {
 		fAnnotations = annotations;
 		fBuildStamp = stamp;

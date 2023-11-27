@@ -727,9 +727,6 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		return true;
 	}
 
-	/**
-	 * @param sourceObjects
-	 */
 	private boolean validateDragMoveSanity(Object[] sourceObjects) {
 		// Validate source
 		if (sourceObjects == null) {
@@ -745,10 +742,6 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		return true;
 	}
 
-	/**
-	 * @param targetObject
-	 * @param sourceObjects
-	 */
 	private boolean validateDropMoveSanity(Object targetObject, Object[] sourceObjects) {
 		// Validate target object
 		if ((targetObject instanceof ImportObject) == false) {
@@ -761,10 +754,6 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		return true;
 	}
 
-	/**
-	 * @param sourceImportObject
-	 * @param targetImportObject
-	 */
 	private boolean validateDropMoveModel(ImportObject sourceImportObject, ImportObject targetImportObject) {
 		// Objects have to be from the same model
 		IPluginModelBase sourceModel = sourceImportObject.getImport().getPluginModel();
@@ -839,12 +828,6 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		}
 	}
 
-	/**
-	 * @param sourceImportObject
-	 * @param sourcePluginImport
-	 * @param targetPluginImport
-	 * @param targetLocation
-	 */
 	private void doDropMove(ImportObject sourceImportObject, IPluginImport sourcePluginImport, IPluginImport targetPluginImport, int targetLocation) {
 		// Remove the original source object
 		// Normally we remove the original source object after inserting the
@@ -881,16 +864,10 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		resetImportInsertIndex();
 	}
 
-	/**
-	 *
-	 */
 	private void resetImportInsertIndex() {
 		fImportInsertIndex = -1;
 	}
 
-	/**
-	 * @param index
-	 */
 	private void setImportInsertIndex(int index) {
 		fImportInsertIndex = index;
 	}
@@ -899,9 +876,6 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		return fImportInsertIndex;
 	}
 
-	/**
-	 *
-	 */
 	private void doDragRemove() {
 		// Get the bundle plug-in base
 		BundlePluginBase bundlePluginBase = (BundlePluginBase) getModel().getPluginBase();

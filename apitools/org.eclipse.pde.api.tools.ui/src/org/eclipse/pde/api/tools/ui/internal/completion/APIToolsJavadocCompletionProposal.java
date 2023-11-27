@@ -42,10 +42,6 @@ public class APIToolsJavadocCompletionProposal implements IJavaCompletionProposa
 
 	/**
 	 * Constructor
-	 *
-	 * @param replacetext
-	 * @param displaytext
-	 * @param image
 	 */
 	public APIToolsJavadocCompletionProposal(CompletionContext context, String replacetext, String displaytext, Image image) {
 		fContext = context;

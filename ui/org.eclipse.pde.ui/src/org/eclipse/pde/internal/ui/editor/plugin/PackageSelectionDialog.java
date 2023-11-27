@@ -26,10 +26,6 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 public class PackageSelectionDialog extends ElementListSelectionDialog {
 
-	/**
-	 * @param parent
-	 * @param renderer
-	 */
 	public PackageSelectionDialog(Shell parent, ILabelProvider renderer, IJavaProject jProject, Collection<String> existingPackages, boolean allowJava) {
 		super(parent, renderer);
 		setElements(PDEJavaHelper.getPackageFragments(jProject, existingPackages, allowJava));

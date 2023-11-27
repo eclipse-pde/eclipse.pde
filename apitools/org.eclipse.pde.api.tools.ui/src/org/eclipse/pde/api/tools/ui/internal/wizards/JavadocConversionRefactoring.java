@@ -116,8 +116,6 @@ public class JavadocConversionRefactoring extends Refactoring {
 
 	/**
 	 * Whether to remove the existing javadoc tags as part of the refactoring
-	 *
-	 * @param remove
 	 */
 	public void setRemoveTags(boolean remove) {
 		removeTags = remove;
@@ -125,8 +123,6 @@ public class JavadocConversionRefactoring extends Refactoring {
 
 	/**
 	 * Set the projects to run the refactoring on
-	 *
-	 * @param newProjects
 	 */
 	public void setProjects(Set<IProject> newProjects) {
 		projects.clear();
@@ -208,7 +204,6 @@ public class JavadocConversionRefactoring extends Refactoring {
 	 * @param project the project to scan
 	 * @param remove if the found tags should also be removed
 	 * @param monitor the progress monitor
-	 * @throws CoreException
 	 */
 	RefactoringStatus createChanges(CompositeChange projectchange, IJavaProject project, boolean remove, SubMonitor monitor) throws CoreException {
 		HashMap<IFile, Set<TextEdit>> map = new HashMap<>();
@@ -248,7 +243,6 @@ public class JavadocConversionRefactoring extends Refactoring {
 	 * @param collector the map to collect the edits in
 	 * @param remove if the old Javadoc tags should be removed as well
 	 * @param monitor the prgress monitor
-	 * @throws CoreException
 	 */
 	RefactoringStatus collectAnnotationEdits(IJavaProject project, Map<IFile, Set<TextEdit>> collector, boolean remove, IProgressMonitor monitor) throws CoreException {
 		RefactoringStatus status = new RefactoringStatus();
@@ -322,7 +316,6 @@ public class JavadocConversionRefactoring extends Refactoring {
 		 * @param type the type to scan
 		 * @param element the element
 		 * @param description the backing API description
-		 * @throws CoreException
 		 */
 		void collectUpdates(IType type, IElementDescriptor element, IApiDescription description) throws CoreException {
 			ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
@@ -381,11 +374,6 @@ public class JavadocConversionRefactoring extends Refactoring {
 
 		/**
 		 * Constructor
-		 *
-		 * @param component
-		 * @param description
-		 * @param rewrite
-		 * @param remove
 		 */
 		public TagVisitor(IApiComponent component, IApiDescription description, ASTRewrite rewrite, boolean remove) {
 			this.component = component;
@@ -506,9 +494,6 @@ public class JavadocConversionRefactoring extends Refactoring {
 
 		/**
 		 * Adds any missing annotations and optionally removes any Javadoc tags
-		 *
-		 * @param body
-		 * @param annotations
 		 */
 		void updateNode(BodyDeclaration body, IApiAnnotations annotations) {
 			ListRewrite lrewrite = getListrewrite(body);
@@ -581,8 +566,6 @@ public class JavadocConversionRefactoring extends Refactoring {
 		 * Checks to see if the required import is existing for any added
 		 * annotation. If any are found to be missing they will be added when we
 		 * are finished visiting the {@link CompilationUnit}
-		 *
-		 * @param added
 		 */
 		private void ensureImport(String added) {
 			String annot = ALL_API_IMPORTS.get(added);
@@ -595,7 +578,6 @@ public class JavadocConversionRefactoring extends Refactoring {
 		 * Return the {@link ListRewrite} to use or <code>null</code> if there
 		 * is no suitable one
 		 *
-		 * @param node
 		 * @return the {@link ListRewrite} or <code>null</code>
 		 */
 		ListRewrite getListrewrite(ASTNode node) {

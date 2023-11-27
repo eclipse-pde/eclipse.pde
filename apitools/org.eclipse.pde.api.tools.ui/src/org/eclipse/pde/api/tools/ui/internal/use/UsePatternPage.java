@@ -28,10 +28,6 @@ public abstract class UsePatternPage extends WizardPage {
 
 	/**
 	 * Constructor
-	 *
-	 * @param pageName
-	 * @param title
-	 * @param titleImage
 	 */
 	protected UsePatternPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
@@ -45,9 +41,6 @@ public abstract class UsePatternPage extends WizardPage {
 		this.dirty = true;
 	}
 
-	/**
-	 * @param isediting
-	 */
 	protected void resetMessage(boolean isediting) {
 		// do nothing by default
 	}

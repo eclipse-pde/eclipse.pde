@@ -70,7 +70,6 @@ import org.osgi.service.prefs.BackingStoreException;
 /**
  * This is the top level preference page for PDE. It contains a random
  * assortment of preferences that don't belong to other pages.
- *
  */
 public class MainPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 

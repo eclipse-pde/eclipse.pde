@@ -340,8 +340,6 @@ public class ProjectModifyOperation {
 	/**
 	 * Returns whether the two objects are equal or both <code>null</code>.
 	 *
-	 * @param st1
-	 * @param st2
 	 * @return whether equal or both <code>null</code>
 	 */
 	private boolean isEqual(Object st1, Object st2) {
@@ -461,7 +459,6 @@ public class ProjectModifyOperation {
 	 *
 	 * @param description project description
 	 * @param before description before operation began
-	 * @throws CoreException
 	 */
 	private void configureManifest(IBundleProjectDescription description, IBundleProjectDescription before) throws CoreException {
 		IProject project = description.getProject();
@@ -754,7 +751,6 @@ public class ProjectModifyOperation {
 	 *
 	 * @param description project description
 	 * @param before original state of project
-	 * @throws CoreException
 	 */
 	private void configureBundleClasspath(IBundleProjectDescription description, IBundleProjectDescription before) throws CoreException {
 		IBundleClasspathEntry[] cp = description.getBundleClasspath();
@@ -804,12 +800,7 @@ public class ProjectModifyOperation {
 	/**
 	 * Configures the bin.includes entry based on the included libraries and explicit entries to add.
 	 *
-	 * @param project
-	 * @param binEntry
-	 * @param description
-	 * @param before
 	 * @return whether the entry was modified
-	 * @throws CoreException
 	 */
 	private boolean fillBinIncludes(IProject project, IBuildEntry binEntry, IBundleProjectDescription description, IBundleProjectDescription before) throws CoreException {
 		boolean modified = false;
@@ -962,10 +953,6 @@ public class ProjectModifyOperation {
 
 	/**
 	 * Remove a build entry from the model.
-	 *
-	 * @param build
-	 * @param key
-	 * @throws CoreException
 	 */
 	private void removeBuildEntry(IBuild build, String key) throws CoreException {
 		IBuildEntry entry = build.getEntry(key);

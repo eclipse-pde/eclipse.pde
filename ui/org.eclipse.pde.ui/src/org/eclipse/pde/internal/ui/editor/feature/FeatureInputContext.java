@@ -49,17 +49,9 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IURIEditorInput;
 
-/**
- *
- */
 public class FeatureInputContext extends XMLInputContext {
 	public static final String CONTEXT_ID = "feature-context"; //$NON-NLS-1$
 
-	/**
-	 * @param editor
-	 * @param input
-	 * @param primary
-	 */
 	public FeatureInputContext(PDEFormEditor editor, IEditorInput input, boolean primary) {
 		super(editor, input, primary);
 		create();

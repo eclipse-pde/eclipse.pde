@@ -57,10 +57,6 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 	private final ArrayList<ExtensionAttributeRow> rows;
 	private Section section;
 
-	/**
-	 * @param masterSection
-	 * @param schemaElement
-	 */
 	public ExtensionElementDetails(PDESection masterSection, ISchemaElement schemaElement) {
 		super(masterSection);
 		this.schemaElement = schemaElement;

@@ -440,8 +440,6 @@ public class FeatureExportOperation extends Job {
 	 * @param targets the targets in the script to run, use <code>null</code> to run all
 	 * @param properties map of user properties
 	 * @param monitor progress monitor
-	 * @throws InvocationTargetException
-	 * @throws CoreException
 	 */
 	protected void runScript(String location, String[] targets, Map<String, String> properties, IProgressMonitor monitor) throws InvocationTargetException, CoreException {
 		AntRunner runner = new AntRunner();
@@ -945,14 +943,6 @@ public class FeatureExportOperation extends Job {
 
 	/**
 	 * This method recurses on the feature list and creates feature.xml and build.properties.
-	 *
-	 * @param featureID
-	 * @param featureLocation
-	 * @param featuresExported
-	 * @param doc
-	 * @param root
-	 * @param prop
-	 * @throws IOException
 	 */
 	private void createFeature(String featureID, String featureLocation, Object[] featuresExported, Document doc, Element root, Properties prop) throws IOException {
 		try {
@@ -1223,7 +1213,6 @@ public class FeatureExportOperation extends Job {
 	 * any errors found or Status.OK_STATUS.
 	 * @param monitor progress monitor
 	 * @return status explaining build errors or an OK status.
-	 * @throws CoreException
 	 */
 	protected IStatus testBuildWorkspaceBeforeExport(IProgressMonitor monitor) throws CoreException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 50);

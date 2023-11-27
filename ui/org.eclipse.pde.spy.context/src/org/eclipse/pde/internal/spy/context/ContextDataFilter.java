@@ -106,9 +106,6 @@ public class ContextDataFilter extends ViewerFilter {
 
 	/**
 	 * Extract all string values in context
-	 *
-	 * @param ctx
-	 * @return
 	 */
 	private Collection<String> computeValues(IEclipseContext ctx) {
 		Collection<String> result = new ArrayList<>();

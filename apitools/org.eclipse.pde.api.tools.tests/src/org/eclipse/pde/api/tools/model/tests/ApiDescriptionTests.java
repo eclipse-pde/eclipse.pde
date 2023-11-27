@@ -87,11 +87,6 @@ public class ApiDescriptionTests {
 
 	/**
 	 * Creates and returns a container for an element and expected API settings.
-	 *
-	 * @param element
-	 * @param visibility
-	 * @param restrictions
-	 * @return
 	 */
 	public ElementDescription newDescription(IElementDescriptor element, int visibility, int restrictions) {
 		return new ElementDescription(element, visibility, restrictions);
@@ -99,8 +94,6 @@ public class ApiDescriptionTests {
 
 	/**
 	 * Creates a new empty API component description, not owned by any component.
-	 *
-	 * @return
 	 */
 	protected IApiDescription newDescription() {
 		return new ApiDescription(null);
@@ -144,9 +137,6 @@ public class ApiDescriptionTests {
 	 * 		class PB
 	 * 		class PC
 	 * 		class PD
-	 *
-	 *
-	 * @return
 	 */
 	protected IApiDescription buildManifest() {
 		IApiDescription manifest = newDescription();
@@ -251,10 +241,6 @@ public class ApiDescriptionTests {
 	 *
 	 * package a.b.c.internal has API visibility for component "a.friend" class
 	 * D has SPI visibility for component "a.friend"
-	 *
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 * @throws CoreException
 	 */
 	@Test
 	public void testRestoreFromXML() throws FileNotFoundException, IOException, CoreException {
@@ -371,9 +357,6 @@ public class ApiDescriptionTests {
 	/**
 	 * Reads XML from disk, annotates settings, then persists and re-creates
 	 * settings to ensure we read/write equivalent XML.
-	 *
-	 * @throws CoreException
-	 * @throws IOException
 	 */
 	@Test
 	public void testPersistRestoreXML() throws CoreException, IOException {

@@ -349,9 +349,6 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 
 	/**
 	 * Sets the enabled state of all of the child of the given group
-	 *
-	 * @param group
-	 * @param enabled
 	 */
 	void setGroupEnablement(Group group, boolean enabled) {
 		Control[] children = group.getChildren();
@@ -512,8 +509,6 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 	 * Updates the radio button group in
 	 * {@link #initializeFrom(ILaunchConfiguration)} to ensure the radio group
 	 * stays up-to-date when a revert is performed
-	 *
-	 * @param configuration
 	 */
 	void updateRadioButtons(ILaunchConfiguration configuration) throws CoreException {
 		int kind = configuration.getAttribute(ApiUseLaunchDelegate.TARGET_KIND, 0);
@@ -566,11 +561,6 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 	/**
 	 * Returns <code>true</code> if the given modifier is set in the
 	 * configuration
-	 *
-	 * @param modifier
-	 * @param configuration
-	 * @return
-	 * @throws CoreException
 	 */
 	private boolean isSpecified(int modifier, ILaunchConfiguration configuration) throws CoreException {
 		int modifiers = configuration.getAttribute(ApiUseLaunchDelegate.SEARCH_MODIFIERS, 0);
@@ -580,10 +570,6 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 	/**
 	 * Restores the selected item for the given combo based on the stored value
 	 * from the configuration
-	 *
-	 * @param combo
-	 * @param value
-	 * @param settings
 	 */
 	private void restoreComboSelection(Combo combo, String value) {
 		int idx = -1;
@@ -716,9 +702,6 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 
 	/**
 	 * Handles browsing for a file with a given set of valid extensions
-	 *
-	 * @param text
-	 * @param message
 	 */
 	void handleFileBrowse(Text text, String message, String[] extensions) {
 		FileDialog dialog = new FileDialog(getShell());
@@ -735,8 +718,6 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 
 	/**
 	 * Handles the Browse... button being selected
-	 *
-	 * @param text
 	 */
 	void handleFolderBrowse(Text text, String message) {
 		DirectoryDialog dialog = new DirectoryDialog(getShell());

@@ -42,9 +42,6 @@ public class ApiModelCacheTests {
 	/**
 	 * Creates a testing {@link IApiType} with the given type name ad adds it to the cache
 	 * using the default test component - created using {@link #TEST_COMP_ID}
-	 *
-	 * @param typename
-	 * @throws Exception
 	 */
 	private void cacheType(String typename) throws Exception {
 		IApiType type = TestSuiteHelper.createTestingApiType(
@@ -60,8 +57,6 @@ public class ApiModelCacheTests {
 
 	/**
 	 * Tests caching / removing {@link IApiElement} infos
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testAddRemoveElementHandleInfo() throws Exception {
@@ -78,8 +73,6 @@ public class ApiModelCacheTests {
 	/**
 	 * Tests aching / removing {@link IApiElement}s using String identifiers
 	 * instead of {@link IApiElement} handles
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testAddRemoveElementStringInfo() throws Exception {
@@ -96,8 +89,6 @@ public class ApiModelCacheTests {
 	/**
 	 * Tests trying to remove a non-existent type from the cache with cached
 	 * types
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testRemoveNonExistentType() throws Exception {
@@ -112,8 +103,6 @@ public class ApiModelCacheTests {
 	/**
 	 * Tests trying to remove a non-existent type from the cache when nothing
 	 * has been cached yet
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testRemoveNonExistentTypeEmptyCache() throws Exception {
@@ -126,8 +115,6 @@ public class ApiModelCacheTests {
 	/**
 	 * Tests adding some member types to the cache and removing them via the
 	 * root type
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testAddRemoveMemerTypeStringInfo() throws Exception {
@@ -152,8 +139,6 @@ public class ApiModelCacheTests {
 	/**
 	 * Tests adding some member types to the cache and removing them via the
 	 * root type
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testAddRemoveMemerTypeElementInfo() throws Exception {

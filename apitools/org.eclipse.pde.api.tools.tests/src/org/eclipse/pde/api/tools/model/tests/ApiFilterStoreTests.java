@@ -147,8 +147,6 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 	/**
 	 * Tests that a filter store can be correctly annotated from a persisted
 	 * version
-	 *
-	 * @throws CoreException
 	 */
 	@Test
 	public void testAnnotateStoreFromLocalFile() throws CoreException {
@@ -160,8 +158,6 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 	/**
 	 * Tests that asking the store if it filters an invalid problem will return
 	 * 'false'
-	 *
-	 * @throws CoreException
 	 */
 	@Test
 	public void testNonExistantProblem() throws CoreException {
@@ -179,8 +175,6 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 
 	/**
 	 * tests removing an api problem filter
-	 *
-	 * @throws CoreException
 	 */
 	@Test
 	public void testRemoveFilter() throws CoreException {
@@ -201,8 +195,6 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 
 	/**
 	 * tests adding a filter using the method that accepts a filter
-	 *
-	 * @throws CoreException
 	 */
 	@Test
 	public void testAddFilterFromFilter() throws CoreException {
@@ -226,8 +218,6 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 
 	/**
 	 * tests adding a filter using the method that accepts an api problem
-	 *
-	 * @throws CoreException
 	 */
 	@Test
 	public void testAddFilterFromProblem() throws CoreException {
@@ -250,10 +240,6 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 
 	/**
 	 * Tests that a filter store will not be annotated from a bundle
-	 *
-	 * @throws IOException
-	 * @throws InvocationTargetException
-	 * @throws CoreException
 	 */
 	@Test
 	public void testAnnotateStoreFromBundle() throws InvocationTargetException, IOException, CoreException {

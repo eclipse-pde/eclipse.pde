@@ -28,7 +28,6 @@ import org.eclipse.pde.ui.tests.classpathresolver.ClasspathResolverTest;
 /**
  * Test classpath contributor that must be added as a extension for
  * {@link ClasspathContributorTest} to pass.
- *
  */
 public class TestClasspathContributor implements IClasspathContributor {
 

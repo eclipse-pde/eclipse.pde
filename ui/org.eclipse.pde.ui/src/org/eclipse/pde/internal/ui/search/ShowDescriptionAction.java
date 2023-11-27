@@ -148,8 +148,6 @@ public class ShowDescriptionAction extends Action {
 
 	/**
 	 * @return the temporary working directory
-	 *
-	 * @throws IOException
 	 */
 	private File getTempWorkingDir() throws IOException {
 		if (fTempWorkingDir == null) {
@@ -190,9 +188,6 @@ public class ShowDescriptionAction extends Action {
 		return previewFile;
 	}
 
-	/**
-	 *
-	 */
 	private void linkPreviewFileToSchemaFile() {
 		// Ensure the preview file is defined
 		if (fPreviewFile == null) {

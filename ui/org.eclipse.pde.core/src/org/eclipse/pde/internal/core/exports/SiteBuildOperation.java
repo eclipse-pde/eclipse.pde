@@ -137,11 +137,6 @@ public class SiteBuildOperation extends FeatureBasedExportOperation {
 	/**
 	 * Finds the highest version from feature jars. ID and version components
 	 * are constant. Qualifier varies
-	 *
-	 * @param id
-	 * @param major
-	 * @param minor
-	 * @param service
 	 */
 	private String findBuiltVersion(String id, int major, int minor, int service) {
 		IFolder featuresFolder = fSiteContainer.getFolder(IPath.fromOSString("features")); //$NON-NLS-1$

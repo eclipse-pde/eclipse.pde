@@ -30,7 +30,6 @@ public class AnnotationIncrementalBuildTests extends EnumIncrementalBuildTests {
 
 	/**
 	 * Constructor
-	 * @param name
 	 */
 	public AnnotationIncrementalBuildTests(String name) {
 		super(name);

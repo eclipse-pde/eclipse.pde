@@ -46,7 +46,6 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	/**
 	 * Tests that illegal anonymous extends are found in a field declaration in a generic method
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
-	 * @param inc
 	 */
 	private void x1(boolean inc) {
 		setExpectedProblemIds(new int[] {
@@ -71,7 +70,6 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	 *
 	 * Tests that illegal anonymous extends are found in a return statement in a generic method
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
-	 * @param inc
 	 */
 	private void x2(boolean inc) {
 		setExpectedProblemIds(new int[] {
@@ -96,7 +94,6 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	 *
 	 * Tests that illegal anonymous extends are found in a field declaration in a generic constructor method
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
-	 * @param inc
 	 */
 	private void x3(boolean inc) {
 		setExpectedProblemIds(new int[] {
@@ -120,7 +117,6 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	/**
 	 * Tests that illegal anonymous extends are found in a field declaration in a generic type
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
-	 * @param inc
 	 */
 	private void x4(boolean inc) {
 		setExpectedProblemIds(new int[] {
@@ -144,7 +140,6 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	/**
 	 * Tests that illegal local type extends are found in a generic constructor method
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
-	 * @param inc
 	 */
 	private void x5(boolean inc) {
 		setExpectedProblemIds(new int[] {
@@ -168,7 +163,6 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	/**
 	 * Tests that illegal local type extends are found in a generic method
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
-	 * @param inc
 	 */
 	private void x6(boolean inc) {
 		setExpectedProblemIds(new int[] {
@@ -203,8 +197,6 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	 * <pre>
 	 * <code>Clazz clazz = new Clazz&lt;String&gt;();</code>
 	 * </pre>
-	 *
-	 * @param inc
 	 */
 	private void x7(boolean inc) {
 		setExpectedProblemIds(new int[] {
@@ -232,7 +224,6 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	/**
 	 * Tests that local types with the same name in different methods are correctly found
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=258101
-	 * @param inc
 	 */
 	private void x8(boolean inc) {
 		setExpectedProblemIds(new int[] {
@@ -428,7 +419,6 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	/**
 	 * Tests that an anonymous declaration is detected extending a restricted type
 	 * within a method with a generic return type
-	 * @param inc
 	 */
 	private void x16(boolean inc) {
 		setExpectedProblemIds(new int[] {
@@ -518,7 +508,6 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	/**
 	 * Tests finding a problem with a local type extending a restricted type in a method
 	 * with a generic return type
-	 * @param inc
 	 */
 	private void x15(boolean inc) {
 		setExpectedProblemIds(new int[] {
@@ -537,7 +526,6 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258
 	 * @since 1.0.300
-	 * @throws Exception
 	 */
 	@Override
 	public void testLocalClassIllegalImplements1I() throws Exception {
@@ -550,7 +538,6 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258
 	 * @since 1.0.300
-	 * @throws Exception
 	 */
 	@Override
 	public void testLocalClassIllegalImplements1F() throws Exception {
@@ -586,7 +573,6 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258
 	 * @since 1.0.300
-	 * @throws Exception
 	 */
 	@Override
 	public void testLocalClassIllegaImplements2I() throws Exception {
@@ -600,7 +586,6 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258
 	 * @since 1.0.300
-	 * @throws Exception
 	 */
 	@Override
 	public void testLocalClassIllegalImplements2F() throws Exception {
@@ -630,7 +615,6 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258
 	 * @since 1.0.300
-	 * @throws Exception
 	 */
 	@Override
 	public void testAnonymousClassIllegaImplements1I() throws Exception {
@@ -644,7 +628,6 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258
 	 * @since 1.0.300
-	 * @throws Exception
 	 */
 	@Override
 	public void testAnonymousClassIllegalImplements1F() throws Exception {

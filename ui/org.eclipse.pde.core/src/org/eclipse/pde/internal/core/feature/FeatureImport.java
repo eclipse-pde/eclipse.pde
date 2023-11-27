@@ -66,9 +66,6 @@ public class FeatureImport extends VersionableObject implements IFeatureImport {
 	/**
 	 * Finds a feature with the given ID and satisfying constraints
 	 * of the version and the match.
-	 * @param id
-	 * @param version
-	 * @param match
 	 * @return IFeature or null
 	 */
 	public IFeature findFeature(String id, String version, int match) {

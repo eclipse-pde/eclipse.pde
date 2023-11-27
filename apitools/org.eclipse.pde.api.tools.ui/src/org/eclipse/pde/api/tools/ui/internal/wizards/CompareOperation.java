@@ -60,9 +60,6 @@ public class CompareOperation extends Job {
 
 	/**
 	 * Constructor
-	 *
-	 * @param baseline
-	 * @param selection
 	 */
 	public CompareOperation(IApiBaseline baseline, IStructuredSelection selection) {
 		super(ActionMessages.CompareWithAction_comparing_apis);
@@ -113,8 +110,6 @@ public class CompareOperation extends Job {
 	}
 
 	/**
-	 * @param structuredSelection
-	 * @param monitor
 	 * @return the scope
 	 */
 	public static ApiScope walkStructureSelection(IStructuredSelection structuredSelection, IProgressMonitor monitor) {

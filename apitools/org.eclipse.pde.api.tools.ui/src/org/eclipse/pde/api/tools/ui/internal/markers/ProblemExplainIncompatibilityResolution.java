@@ -33,7 +33,6 @@ import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
 /**
  * Marker resolution for explaining a specific API tool error as quickfix
  * resolution
- *
  */
 public class ProblemExplainIncompatibilityResolution extends WorkbenchMarkerResolution {
 

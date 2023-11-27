@@ -40,7 +40,6 @@ public class ClassCompatibilityRestrictionTests extends ClassCompatibilityTests 
 
 	/**
 	 * Constructor
-	 * @param name
 	 */
 	public ClassCompatibilityRestrictionTests(String name) {
 		super(name);

@@ -52,7 +52,6 @@ public interface IExtensionEditorWizard extends IBasePluginWizard {
 	 * @param selection
 	 *            the currently selected extension or extension element in the
 	 *            manifest editor extension tree
-	 *
 	 */
 	public void init(IProject project, IPluginModelBase pluginModel, IStructuredSelection selection);
 }

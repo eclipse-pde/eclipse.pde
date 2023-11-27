@@ -187,7 +187,6 @@ public class PluginImportWizard extends Wizard implements IImportWizard, IPageCh
 	 * 	source locations should be used (from active target platform).
 	 * @param importerToDescriptions map of bundle importers to import descriptions if importing
 	 *  from a repository, else <code>null</code>
-	 *
 	 */
 	public static void doImportOperation(int importType, IPluginModelBase[] models, boolean forceAutobuild, boolean launchedConfiguration, SourceLocationManager alternateSource, Map<IBundleImporter, ScmUrlImportDescription[]> importerToDescriptions) {
 		PluginImportOperation job = new PluginImportOperation(models, importType, forceAutobuild);

@@ -70,7 +70,6 @@ public class WorkspaceExportHelper extends LaunchConfigurationDelegate {
 	 *
 	 * @param exportedItems The plugins or features being exported
 	 * @param monitor a progress monitor or <code>null</code> if progress reporting is not desired
-	 * @throws CoreException
 	 */
 	public void buildBeforeExport(Object[] exportedItems, IProgressMonitor monitor) throws CoreException {
 		IProject[] projects = getExportedWorkspaceProjects(exportedItems);
@@ -86,7 +85,6 @@ public class WorkspaceExportHelper extends LaunchConfigurationDelegate {
 	 *
 	 * @param exportedItems the plugins or features being exported
 	 * @return set of IProjects containing errors
-	 * @throws CoreException
 	 */
 	public Set<IProject> checkForErrors(Object[] exportedItems) throws CoreException {
 		IProject[] projects = getExportedWorkspaceProjects(exportedItems);

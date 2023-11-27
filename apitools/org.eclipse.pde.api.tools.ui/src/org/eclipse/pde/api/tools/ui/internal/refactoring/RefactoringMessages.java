@@ -15,9 +15,6 @@ package org.eclipse.pde.api.tools.ui.internal.refactoring;
 
 import org.eclipse.osgi.util.NLS;
 
-/**
- *
- */
 public class RefactoringMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.api.tools.ui.internal.refactoring.refactoringmessages"; //$NON-NLS-1$
 	public static String CreateFileChange_0;

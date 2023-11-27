@@ -25,7 +25,6 @@ public class TablePart extends StructuredViewerPart {
 
 	/**
 	 * Constructor for TablePart.
-	 * @param buttonLabels
 	 */
 	public TablePart(String[] buttonLabels) {
 		super(buttonLabels);

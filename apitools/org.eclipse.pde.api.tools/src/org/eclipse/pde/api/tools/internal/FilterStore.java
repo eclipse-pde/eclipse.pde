@@ -78,8 +78,6 @@ public class FilterStore implements IApiFilterStore {
 
 	/**
 	 * Constructor
-	 *
-	 * @param component
 	 */
 	public FilterStore(BundleComponent component) {
 		fComponent = component;
@@ -242,8 +240,6 @@ public class FilterStore implements IApiFilterStore {
 	 * <li>both have equal elements at equal positions in the array</li>
 	 * </ul>
 	 *
-	 * @param problemMessageArguments
-	 * @param filterProblemMessageArguments
 	 * @return <code>true</code> if the arrays are equal, <code>false</code>
 	 *         otherwise
 	 */

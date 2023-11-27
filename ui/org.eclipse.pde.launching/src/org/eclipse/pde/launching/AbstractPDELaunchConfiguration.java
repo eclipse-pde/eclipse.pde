@@ -425,7 +425,6 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 *
 	 * @throws CoreException exception thrown if launch fails or canceled or if unable to retrieve attributes
 	 * from the launch configuration
-	 *
 	 */
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		String attribute = launch.getAttribute(PDE_LAUNCH_SHOW_COMMAND);

@@ -96,10 +96,6 @@ public class CompositeManifestHeader extends ManifestHeader {
 		addManifestElement(new PDEManifestElement(this, value));
 	}
 
-	/**
-	 * @param value
-	 * @param index
-	 */
 	protected void addManifestElement(String value, int index) {
 		PDEManifestElement element = new PDEManifestElement(this, value);
 		addManifestElement(element, index, true);
@@ -229,7 +225,6 @@ public class CompositeManifestHeader extends ManifestHeader {
 
 	/**
 	 * Method not applicable for headers that are sorted
-	 * @param targetElement
 	 */
 	public PDEManifestElement getPreviousElement(PDEManifestElement targetElement) {
 		// Ensure we have elements
@@ -259,7 +254,6 @@ public class CompositeManifestHeader extends ManifestHeader {
 
 	/**
 	 * Method not applicable for headers that are sorted
-	 * @param targetElement
 	 */
 	public PDEManifestElement getNextElement(PDEManifestElement targetElement) {
 		// Ensure we have elements
@@ -291,9 +285,6 @@ public class CompositeManifestHeader extends ManifestHeader {
 
 	/**
 	 * Method not applicable for headers that are sorted
-	 * @param element
-	 * @param index
-	 * @param update
 	 */
 	protected void addManifestElement(PDEManifestElement element, int index, boolean update) {
 		// Validate index
@@ -331,7 +322,6 @@ public class CompositeManifestHeader extends ManifestHeader {
 
 	/**
 	 * Method not applicable for headers that are sorted
-	 * @param targetElement
 	 */
 	public int indexOf(PDEManifestElement targetElement) {
 		if (fSort) {
@@ -346,8 +336,6 @@ public class CompositeManifestHeader extends ManifestHeader {
 
 	/**
 	 * Method not applicable for headers that are sorted
-	 * @param element
-	 * @param update
 	 */
 	protected PDEManifestElement removeManifestElement(PDEManifestElement element, boolean update) {
 		if (fSort) {

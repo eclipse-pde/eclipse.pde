@@ -27,10 +27,6 @@ public class BundleClasspathHeader extends CompositeManifestHeader {
 		addManifestElement(name);
 	}
 
-	/**
-	 * @param name
-	 * @param index
-	 */
 	public void addLibrary(String name, int index) {
 		addManifestElement(name, index);
 	}

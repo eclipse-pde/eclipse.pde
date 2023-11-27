@@ -39,8 +39,6 @@ public class BundleImporterTests {
 
 	/**
 	 * Tests that a import description can be created for a known plug-in
-	 *
-	 * @throws CoreException
 	 */
 	@Test
 	public void testGetImportDescriptions() throws CoreException {

@@ -630,7 +630,6 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 	 * feature is not found, but feature with a M.m.s.qualifier exists it will
 	 * be returned.
 	 *
-	 * @param siteFeature
 	 * @return IFeature or null
 	 */
 	public static IFeature findFeature(ISiteFeature siteFeature) {
@@ -801,7 +800,6 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 	 * @param model site model to create the feature from
 	 * @param sourceFeature the feature to copy settings out of
 	 * @return a new site feature instance
-	 * @throws CoreException
 	 */
 	private ISiteFeature copySiteFeature(ISiteModel model, ISiteFeature sourceFeature) throws CoreException {
 		ISiteFeature sfeature = model.getFactory().createFeature();

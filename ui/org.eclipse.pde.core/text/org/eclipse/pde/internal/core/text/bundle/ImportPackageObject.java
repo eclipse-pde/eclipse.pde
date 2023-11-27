@@ -77,11 +77,6 @@ public class ImportPackageObject extends PackageObject {
 		firePropertyChanged(this, Constants.RESOLUTION_DIRECTIVE, Boolean.toString(old), Boolean.toString(optional));
 	}
 
-	/**
-	 * @param model
-	 * @param header
-	 * @param versionAttribute
-	 */
 	public void reconnect(IBundleModel model, ImportPackageHeader header, String versionAttribute) {
 		super.reconnect(model, header, versionAttribute);
 		// No transient fields

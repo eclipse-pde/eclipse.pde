@@ -50,10 +50,6 @@ public class SiteInputContext extends XMLInputContext {
 	public static final String CONTEXT_ID = "site-context"; //$NON-NLS-1$
 	private final boolean storageModel = false;
 
-	/**
-	 * @param editor
-	 * @param input
-	 */
 	public SiteInputContext(PDEFormEditor editor, IEditorInput input, boolean primary) {
 		super(editor, input, primary);
 		create();

@@ -90,7 +90,6 @@ public class FeatureSelectionDialog extends FilteredItemsSelectionDialog {
 
 		/**
 		 *
-		 * @param model
 		 * @return id of matched plugin or null if no match
 		 */
 		public String matchesPluginId(IFeatureModel model) {

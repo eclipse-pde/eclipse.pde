@@ -100,7 +100,6 @@ public class RefactoringUtils {
 	 * Collects the complete set of {@link IApiProblemFilter}s for the given
 	 * collection of {@link IType}s
 	 *
-	 * @param types
 	 * @return the complete collection of {@link IApiProblemFilter}s or an empty
 	 *         list, never <code>null</code>
 	 */
@@ -127,7 +126,6 @@ public class RefactoringUtils {
 	 * Collects the complete list of {@link IType}s affected from within the
 	 * {@link IPackageFragment}
 	 *
-	 * @param fragment
 	 * @return the complete collection of affected {@link IType}s or an empty
 	 *         list, never <code>null</code>
 	 */
@@ -167,8 +165,6 @@ public class RefactoringUtils {
 	 * Creates the {@link Change} for {@link IApiProblemFilter}s affected by a
 	 * package fragment rename
 	 *
-	 * @param fragment
-	 * @param newname
 	 * @return the change for the package fragment rename
 	 */
 	static Change createRenameFilterChanges(IPackageFragment fragment, String newname) {
@@ -178,9 +174,7 @@ public class RefactoringUtils {
 	/**
 	 * Gets the {@link IApiFilterStore} for the given {@link IProject}
 	 *
-	 * @param project
 	 * @return the filter store for the given project or <code>null</code>
-	 * @throws CoreException
 	 */
 	static IApiFilterStore resolveFilterStore(IProject project) throws CoreException {
 		IApiComponent component = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline().getApiComponent(project);
@@ -192,10 +186,6 @@ public class RefactoringUtils {
 
 	/**
 	 * Returns the new fully qualified name for the filter
-	 *
-	 * @param type
-	 * @param newname
-	 * @return
 	 */
 	static String getNewQualifiedName(IType type, String newname) {
 		IType dtype = type.getDeclaringType();
@@ -214,8 +204,6 @@ public class RefactoringUtils {
 	/**
 	 * Returns the new type name with the new package qualification
 	 *
-	 * @param newname
-	 * @param oldtypename
 	 * @return the new fully qualified type name
 	 */
 	static String getNewQualifiedName(String newname, String oldtypename) {
@@ -228,8 +216,6 @@ public class RefactoringUtils {
 	 * removes the last segment of the path, appends the new name and resets the
 	 * extension
 	 *
-	 * @param oldpath
-	 * @param typename
 	 * @return the new resource path to use
 	 */
 	static String getNewResourcePath(IPath oldpath, String typename) {

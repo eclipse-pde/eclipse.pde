@@ -29,9 +29,6 @@ public class PatternWizard extends Wizard {
 
 	/**
 	 * Constructor
-	 *
-	 * @param pattern
-	 * @param kind
 	 */
 	public PatternWizard(String pattern, int kind) {
 		setWindowTitle(Messages.PatternWizard_use_scan_patterns);

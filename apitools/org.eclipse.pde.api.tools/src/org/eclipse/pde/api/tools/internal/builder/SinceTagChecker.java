@@ -53,8 +53,6 @@ public class SinceTagChecker extends ASTVisitor {
 
 	/**
 	 * Constructor
-	 *
-	 * @param nameStart
 	 */
 	public SinceTagChecker(int nameStart) {
 		this.nameStart = nameStart;
@@ -96,10 +94,6 @@ public class SinceTagChecker extends ASTVisitor {
 		return visitAbstractTypeDeclaration(node);
 	}
 
-	/**
-	 * @param declaration
-	 * @return
-	 */
 	private boolean visitAbstractTypeDeclaration(AbstractTypeDeclaration declaration) {
 		if ((this.bits & ABORT) != 0) {
 			return false;
@@ -159,8 +153,6 @@ public class SinceTagChecker extends ASTVisitor {
 
 	/**
 	 * Processes a javadoc tag
-	 *
-	 * @param bodyDeclaration
 	 */
 	private void processJavadoc(BodyDeclaration bodyDeclaration) {
 		Javadoc javadoc = bodyDeclaration.getJavadoc();

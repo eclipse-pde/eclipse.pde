@@ -39,11 +39,6 @@ public abstract class AbstractControlValidator implements IControlValidator, IVa
 
 	private final IProject fProject;
 
-	/**
-	 * @param managedForm
-	 * @param control
-	 * @param project
-	 */
 	public AbstractControlValidator(IManagedForm managedForm, Control control, IProject project) {
 		fProject = project;
 		fManagedForm = managedForm;

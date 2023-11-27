@@ -290,10 +290,6 @@ public class PDEManifestElement extends BundleObject {
 		fHeader = header;
 	}
 
-	/**
-	 * @param model
-	 * @param header
-	 */
 	public void reconnect(IBundleModel model, ManifestHeader header) {
 		super.reconnect(model);
 		// Transient Field:  Header

@@ -192,8 +192,6 @@ public class MissingRefReportConverter extends UseReportConverter {
 		/**
 		 * Returns the HTML markup for the problems table header.
 		 *
-		 * @param sectionname
-		 * @param type
 		 * @return the default references table header
 		 */
 		String getProblemsTableHeader(String sectionname, String type) {
@@ -211,7 +209,6 @@ public class MissingRefReportConverter extends UseReportConverter {
 		}
 
 		/**
-		 * @param bundle
 		 * @return the page title
 		 */
 		protected String getProblemTitle(String bundle) {
@@ -411,8 +408,6 @@ public class MissingRefReportConverter extends UseReportConverter {
 	/**
 	 * Returns the HTML markup for one entry in the problem summary table.
 	 *
-	 * @param report
-	 * @param link
 	 * @return a single reference table entry
 	 */
 	private Object getReferenceTableEntry(Report report, String link) {

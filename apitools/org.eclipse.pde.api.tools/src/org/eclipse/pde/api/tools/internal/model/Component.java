@@ -173,7 +173,6 @@ public abstract class Component extends AbstractApiTypeContainer implements IApi
 	 * Lazily creates a new {@link IApiFilterStore} when it is requested
 	 *
 	 * @return the current {@link IApiFilterStore} for this component
-	 * @throws CoreException
 	 */
 	protected abstract IApiFilterStore createApiFilterStore() throws CoreException;
 

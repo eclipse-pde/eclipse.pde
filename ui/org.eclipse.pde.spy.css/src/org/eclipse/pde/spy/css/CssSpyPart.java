@@ -410,8 +410,6 @@ public class CssSpyPart {
 
 	/**
 	 * Create contents of the spy.
-	 *
-	 * @param parent
 	 */
 	@PostConstruct
 	protected Control createDialogArea(Composite parent, IEclipseContext ctx) {

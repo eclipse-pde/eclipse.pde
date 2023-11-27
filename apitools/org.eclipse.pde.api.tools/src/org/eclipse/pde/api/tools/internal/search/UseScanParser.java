@@ -110,7 +110,6 @@ public class UseScanParser {
 	 *            {@link IReference#T_TYPE_REFERENCE},
 	 *            {@link IReference#T_METHOD_REFERENCE} or
 	 *            {@link IReference#T_FIELD_REFERENCE}
-	 * @throws SAXException
 	 */
 	protected void processElement(String uri, String localName, String name, Attributes attributes, int type) throws SAXException {
 		if (name != null) {
@@ -203,7 +202,6 @@ public class UseScanParser {
 	/**
 	 * Parses the problem messages from the attributes
 	 *
-	 * @param attribs
 	 * @return the messages or an empty array never <code>null</code>
 	 * @since 1.1
 	 */
@@ -336,9 +334,6 @@ public class UseScanParser {
 
 	/**
 	 * Returns all the child directories from the given directory
-	 *
-	 * @param file
-	 * @return
 	 */
 	File[] getDirectories(File file) {
 		File[] directories = file.listFiles((FileFilter) pathname -> pathname.isDirectory() && !pathname.isHidden());
@@ -348,7 +343,6 @@ public class UseScanParser {
 	/**
 	 * Returns the {@link IReference} type from the file name
 	 *
-	 * @param xmlfile
 	 * @return the type from the file name
 	 */
 	private int getTypeFromFileName(File xmlfile) {
@@ -456,7 +450,6 @@ public class UseScanParser {
 	/**
 	 * Sorts the given files by name (not path).
 	 *
-	 * @param files
 	 * @return sorted files
 	 */
 	File[] sort(File[] files) {

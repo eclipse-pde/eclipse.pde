@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.genericeditor.target.extension.model;
 
 /**
  * Models the {@code <dependency>} nodes
- *
  */
 public class DependencyNode extends Node {
 

@@ -41,9 +41,6 @@ public class InvalidDuplicateTagsTests extends TagTest {
 
 	/**
 	 * Must be called before a call {@link #getDefaultProblemId()}
-	 *
-	 * @param element
-	 * @param kind
 	 */
 	private void setProblemId(int element, int kind) {
 		fPid = ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, element, kind, IApiProblem.NO_FLAGS);

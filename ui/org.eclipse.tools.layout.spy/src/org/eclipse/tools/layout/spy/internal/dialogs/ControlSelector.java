@@ -113,8 +113,6 @@ public class ControlSelector {
 	 * Finds and returns the most specific SWT control at the given location.
 	 * (Note: this does a DFS on the SWT widget hierarchy, which is slow).
 	 *
-	 * @param displayToSearch
-	 * @param locationToFind
 	 * @return the most specific SWT control at the given location
 	 */
 	public static Control findControl(Display displayToSearch, Shell toIgnore, Point locationToFind) {
@@ -136,7 +134,6 @@ public class ControlSelector {
 	/**
 	 * Finds the control at the given location.
 	 *
-	 * @param toSearch
 	 * @param locationToFind
 	 *            location (in display coordinates)
 	 * @return the control at the given location

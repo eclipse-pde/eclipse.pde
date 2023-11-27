@@ -23,9 +23,6 @@ import org.eclipse.pde.ui.templates.NewPluginTemplateWizard;
  */
 public class BuilderNewWizard extends NewPluginTemplateWizard {
 
-	/**
-	 *
-	 */
 	public BuilderNewWizard() {
 		super();
 	}

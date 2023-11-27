@@ -22,14 +22,9 @@ import org.eclipse.swt.widgets.Display;
 
 /**
  * TranslatableAttributeRow
- *
  */
 public class TranslatableAttributeRow extends ReferenceAttributeRow {
 
-	/**
-	 * @param part
-	 * @param att
-	 */
 	public TranslatableAttributeRow(IContextPart part, ISchemaAttribute att) {
 		super(part, att);
 	}

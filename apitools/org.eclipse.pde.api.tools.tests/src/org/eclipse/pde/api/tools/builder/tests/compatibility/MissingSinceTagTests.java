@@ -30,7 +30,6 @@ public class MissingSinceTagTests extends SinceTagTest {
 
 	/**
 	 * Constructor
-	 * @param name
 	 */
 	public MissingSinceTagTests(String name) {
 		super(name);

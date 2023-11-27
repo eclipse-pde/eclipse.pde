@@ -27,7 +27,6 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Wizard page for editing a feature bundle container, currently none of the options can be changed
- *
  */
 public class EditFeatureContainerPage extends EditDirectoryContainerPage {
 

@@ -157,7 +157,6 @@ public class PDEState extends MinimalState {
 	}
 
 	/**
-	 * @param uri
 	 * @return File object or {@code null} if URI can't be converted to file. In
 	 *         the later case an error is logged.
 	 */

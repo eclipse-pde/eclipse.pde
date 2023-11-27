@@ -26,20 +26,11 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
-/**
- *
- *
- */
 public class InfoFormPage extends PDEFormPage {
 	public static final String PAGE_ID = "info"; //$NON-NLS-1$
 	private final IColorManager colorManager = ColorManager.getDefault();
 	private InfoSection infoSection;
 
-	/**
-	 *
-	 * @param editor
-	 * @param title
-	 */
 	public InfoFormPage(PDEFormEditor editor, String title) {
 		super(editor, PAGE_ID, title);
 	}

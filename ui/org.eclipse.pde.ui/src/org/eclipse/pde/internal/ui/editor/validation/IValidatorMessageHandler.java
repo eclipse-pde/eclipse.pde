@@ -21,29 +21,22 @@ public interface IValidatorMessageHandler {
 
 	/**
 	 * Report a message with a given severity and associate it with a key
-	 * @param key
-	 * @param messageText
-	 * @param messageType
 	 */
 	public void addMessage(Object key, String messageText, int messageType);
 
 	/**
 	 * Report a message with a given severity.  The message will be associated
 	 * with a default message key
-	 * @param messageText
-	 * @param messageType
 	 */
 	public void addMessage(String messageText, int messageType);
 
 	/**
 	 * Remove a previously reported message associated with the given key
-	 * @param key
 	 */
 	public void removeMessage(Object key);
 
 	/**
 	 * Set an optional message prefix to be prepended to all messages on report
-	 * @param prefix
 	 */
 	public void setMessagePrefix(String prefix);
 
