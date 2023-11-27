@@ -13,13 +13,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.bnd;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
 import org.eclipse.pde.internal.core.builders.ErrorReporter;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
-import org.eclipse.pde.internal.core.natures.BndProject;
 
 import aQute.bnd.properties.IRegion;
 import aQute.bnd.properties.LineType;
@@ -32,8 +32,8 @@ public class BndErrorReporter extends ErrorReporter {
 	private BndDocument bndDocument;
 	private final Report report;
 
-	public BndErrorReporter(IProject project, Report report) {
-		super(project.getFile(BndProject.INSTRUCTIONS_FILE));
+	public BndErrorReporter(IProject project, Report report, IFile file) {
+		super(file);
 		this.report = report;
 		IDocument document = createDocument(fFile);
 		if (document != null) {
