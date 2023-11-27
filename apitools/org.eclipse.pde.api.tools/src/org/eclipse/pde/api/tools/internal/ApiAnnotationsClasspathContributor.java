@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2023 Christoph Läubrich and others.
+ * Copyright (c) 2023, 2024 Christoph Läubrich and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -22,13 +22,12 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.osgi.service.resolver.BundleDelta;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.service.resolver.StateDelta;
-import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.core.IClasspathContributor;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
@@ -77,11 +76,7 @@ public class ApiAnnotationsClasspathContributor implements IClasspathContributor
 		if (model != null) {
 			IResource resource = model.getUnderlyingResource();
 			if (resource != null) {
-				try {
-					return resource.getProject().hasNature(ApiPlugin.NATURE_ID);
-				} catch (CoreException e) {
-					// assume not compatible project then...
-				}
+				return Util.isApiProject(resource.getProject());
 			}
 		}
 		return false;

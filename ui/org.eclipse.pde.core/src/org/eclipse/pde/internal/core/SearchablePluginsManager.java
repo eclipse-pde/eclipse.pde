@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2020 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceRuleFactory;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -57,6 +59,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 
 /**
@@ -158,14 +161,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 	public IJavaProject getProxyProject() {
 		IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
 		IProject project = root.getProject(PROXY_PROJECT_NAME);
-		try {
-			if (project.exists() && project.isOpen() && project.hasNature(JavaCore.NATURE_ID)) {
-				return JavaCore.create(project);
-			}
-
-		} catch (CoreException e) {
-		}
-		return null;
+		return PluginProject.isJavaProject(project) ? JavaCore.create(project) : null;
 	}
 
 	public void shutdown() {
@@ -177,10 +173,8 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 		}
 	}
 
-	public IClasspathEntry[] computeContainerClasspathEntries() throws CoreException {
+	public IClasspathEntry[] computeContainerClasspathEntries() {
 		ArrayList<IClasspathEntry> result = new ArrayList<>();
-
-		IPluginModelBase[] wModels = PluginRegistry.getWorkspaceModels();
 
 		List<String> plugins;
 		synchronized (fPluginIdSet) {
@@ -189,14 +183,9 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 		for (String id : plugins) {
 			ModelEntry entry = PluginRegistry.findEntry(id);
 			if (entry != null) {
-				boolean addModel = true;
-				wModels = entry.getWorkspaceModels();
-				for (IPluginModelBase model : wModels) {
-					IProject project = model.getUnderlyingResource().getProject();
-					if (project.hasNature(JavaCore.NATURE_ID)) {
-						addModel = false;
-					}
-				}
+				boolean addModel = Arrays.stream(entry.getWorkspaceModels())
+						.map(IPluginModelBase::getUnderlyingResource).map(IResource::getProject)
+						.noneMatch(PluginProject::isJavaProject);
 				if (!addModel) {
 					continue;
 				}

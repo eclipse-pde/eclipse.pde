@@ -44,7 +44,7 @@ import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.ifeature.IFeatureInstallHandler;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.FeatureProject;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -206,9 +206,9 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 	private void setProjectNatures(IProject project, IFeatureModel model, SubMonitor subMonitor) throws CoreException {
 		IProjectDescription desc = project.getDescription();
 		if (needsJavaNature(model)) {
-			desc.setNatureIds(new String[] {JavaCore.NATURE_ID, PDE.FEATURE_NATURE});
+			desc.setNatureIds(new String[] {JavaCore.NATURE_ID, FeatureProject.NATURE});
 		} else {
-			desc.setNatureIds(new String[] {PDE.FEATURE_NATURE});
+			desc.setNatureIds(new String[] {FeatureProject.NATURE});
 		}
 		subMonitor.setWorkRemaining(1);
 		project.setDescription(desc, subMonitor.split(1));

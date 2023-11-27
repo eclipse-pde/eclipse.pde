@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -24,12 +23,8 @@ public class ExternalJavaSearchClasspathContainer implements IClasspathContainer
 	@Override
 	public IClasspathEntry[] getClasspathEntries() {
 		if (fEntries == null) {
-			try {
-				SearchablePluginsManager manager = PDECore.getDefault().getSearchablePluginsManager();
-				fEntries = manager.computeContainerClasspathEntries();
-			} catch (CoreException e) {
-				PDECore.logException(e);
-			}
+			SearchablePluginsManager manager = PDECore.getDefault().getSearchablePluginsManager();
+			fEntries = manager.computeContainerClasspathEntries();
 		}
 		return fEntries;
 	}

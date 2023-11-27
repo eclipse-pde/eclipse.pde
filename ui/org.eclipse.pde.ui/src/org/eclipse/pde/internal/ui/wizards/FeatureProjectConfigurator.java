@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.FeatureProject;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.ui.wizards.datatransfer.ProjectConfigurator;
@@ -45,9 +45,9 @@ public class FeatureProjectConfigurator implements ProjectConfigurator {
 
 	@Override
 	public void configure(IProject project, Set<IPath> ignoredDirectories, IProgressMonitor monitor) {
-		if (!PDE.hasFeatureNature(project)) {
+		if (!FeatureProject.isFeatureProject(project)) {
 			try {
-				CoreUtility.addNatureToProject(project, PDE.FEATURE_NATURE, monitor);
+				CoreUtility.addNatureToProject(project, FeatureProject.NATURE, monitor);
 			} catch (CoreException ex) {
 				PDEPlugin.log(ex);
 			}

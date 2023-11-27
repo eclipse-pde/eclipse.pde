@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -46,6 +46,7 @@ import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.bundle.BundleFragment;
 import org.eclipse.pde.internal.core.bundle.BundlePlugin;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.core.plugin.Fragment;
 import org.eclipse.pde.internal.core.plugin.Plugin;
 import org.eclipse.pde.internal.core.plugin.PluginBase;
@@ -89,8 +90,9 @@ public class ClasspathUtilCore {
 		// first look if we have something in the workspace...
 		IPluginModelBase model = PluginRegistry.findModel(id);
 		if (model != null && model.isEnabled()) {
-			if (isWorkspaceProject(model)) {
-				IJavaProject javaProject = JavaCore.create(model.getUnderlyingResource().getProject());
+			IResource resource = model.getUnderlyingResource();
+			if (resource != null && PluginProject.isJavaProject(resource.getProject())) {
+				IJavaProject javaProject = JavaCore.create(resource.getProject());
 				return Stream.of(JavaCore.newProjectEntry(javaProject.getPath()));
 			}
 			String location = model.getInstallLocation();
@@ -120,18 +122,6 @@ public class ClasspathUtilCore {
 			IResource resource = projectModel.getUnderlyingResource();
 			if (resource != null) {
 				return resource.getProject().getFullPath().equals(entry.getPath());
-			}
-		}
-		return false;
-	}
-
-	protected static boolean isWorkspaceProject(IPluginModelBase model) {
-		IResource resource = model.getUnderlyingResource();
-		if (resource != null) {
-			try {
-				return resource.getProject().hasNature(JavaCore.NATURE_ID);
-			} catch (CoreException e) {
-				// nothing we can do then...
 			}
 		}
 		return false;

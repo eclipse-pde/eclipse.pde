@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 IBM Corporation and others.
+ * Copyright (c) 2008, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -30,7 +30,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -62,7 +62,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 				try {
 					IJavaProject[] projects = model.getJavaProjects();
 					for (IJavaProject project : projects) {
-						if (project.getProject().hasNature(PDE.PLUGIN_NATURE)) {
+						if (PluginProject.isPluginProject(project.getProject())) {
 							set.add(project);
 						}
 					}

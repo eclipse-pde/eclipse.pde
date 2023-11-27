@@ -38,7 +38,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.internal.core.ClasspathComputer;
 import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -62,13 +62,13 @@ public class BundleProjectConfigurator implements ProjectConfigurator {
 
 	@Override
 	public void configure(IProject project, Set<IPath> ignoredDirectories, IProgressMonitor monitor) {
-		if (PDE.hasPluginNature(project)) {
+		if (PluginProject.isPluginProject(project)) {
 			// already configured, nothing else to do
 			return;
 		}
 		try {
-			CoreUtility.addNatureToProject(project, PDE.PLUGIN_NATURE, monitor);
-			if (project.hasNature(JavaCore.NATURE_ID)) {
+			CoreUtility.addNatureToProject(project, PluginProject.NATURE, monitor);
+			if (PluginProject.isJavaProject(project)) {
 				return;
 			}
 		} catch (CoreException ex) {

@@ -69,7 +69,7 @@ import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.natures.BndProject;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.core.plugin.WorkspaceFragmentModel;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
@@ -371,7 +371,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		if (isAutomaticMetadata()) {
 			CoreUtility.addNatureToProject(project, BndProject.NATURE_ID, null);
 		} else {
-			CoreUtility.addNatureToProject(project, PDE.PLUGIN_NATURE, null);
+			CoreUtility.addNatureToProject(project, PluginProject.NATURE, null);
 		}
 		if (!fData.isSimple() && !project.hasNature(JavaCore.NATURE_ID))
 			CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, null);

@@ -44,7 +44,7 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.core.schema.Schema;
 import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
 
@@ -124,7 +124,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	}
 
 	private boolean isInterestingProject(IProject project) {
-		return PDE.hasPluginNature(project) && !WorkspaceModelManager.isBinaryProject(project);
+		return PluginProject.isPluginProject(project) && !WorkspaceModelManager.isBinaryProject(project);
 	}
 
 	private void compileFile(IFile file, IProgressMonitor monitor) {
