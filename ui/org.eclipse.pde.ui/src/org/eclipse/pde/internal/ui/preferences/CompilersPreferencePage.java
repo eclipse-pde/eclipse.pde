@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,13 +21,12 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.SWTFactory;
@@ -90,15 +89,10 @@ public class CompilersPreferencePage extends PreferencePage implements IWorkbenc
 			HashSet<IJavaProject> set = new HashSet<>();
 			try {
 				IJavaProject[] projects = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot()).getJavaProjects();
-				IProject project = null;
 				for (IJavaProject javaProject : projects) {
-					project = javaProject.getProject();
-					try {
-						if (project.hasNature(PDE.PLUGIN_NATURE) && fBlock.hasProjectSpecificSettings(project)) {
-							set.add(javaProject);
-						}
-					} catch (CoreException ce) {
-						//do nothing ignore the project
+					IProject project = javaProject.getProject();
+					if (PluginProject.isPluginProject(project) && fBlock.hasProjectSpecificSettings(project)) {
+						set.add(javaProject);
 					}
 				}
 			} catch (JavaModelException jme) {

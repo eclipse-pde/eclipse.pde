@@ -37,7 +37,7 @@ import org.eclipse.pde.api.tools.tests.util.FileUtils;
 import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 import org.eclipse.pde.core.project.IPackageExportDescription;
 import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -118,7 +118,7 @@ public class ProjectCreationTests extends AbstractApiTest {
 	public void testCreatePluginProject() throws CoreException {
 		IJavaProject jproject = getTestingJavaProject(TESTING_PROJECT_NAME);
 		IProject project = jproject.getProject();
-		assertTrue("project must have the PDE nature", project.hasNature(PDE.PLUGIN_NATURE)); //$NON-NLS-1$
+		assertTrue("project must have the PDE nature", project.hasNature(PluginProject.NATURE)); //$NON-NLS-1$
 		assertTrue("project must have the java nature", project.hasNature(JavaCore.NATURE_ID)); //$NON-NLS-1$
 		assertTrue("project must have additional nature for API Tools", project.hasNature(ApiPlugin.NATURE_ID)); //$NON-NLS-1$
 		IFile file = project.getFile("build.properties"); //$NON-NLS-1$

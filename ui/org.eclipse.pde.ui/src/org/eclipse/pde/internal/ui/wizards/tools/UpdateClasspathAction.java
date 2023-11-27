@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -20,9 +20,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -30,6 +28,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -61,15 +60,11 @@ public class UpdateClasspathAction extends AbstractHandler {
 				} else if (elem instanceof IJavaProject) {
 					project = ((IJavaProject) elem).getProject();
 				}
-				try {
-					if (project != null && WorkspaceModelManager.isPluginProject(project) && project.hasNature(JavaCore.NATURE_ID)) {
-						IPluginModelBase model = PluginRegistry.findModel(project);
-						if (model != null) {
-							models.add(model);
-						}
+				if (project != null && WorkspaceModelManager.isPluginProject(project) && PluginProject.isJavaProject(project)) {
+					IPluginModelBase model = PluginRegistry.findModel(project);
+					if (model != null) {
+						models.add(model);
 					}
-				} catch (CoreException e) {
-					PDEPlugin.log(e);
 				}
 			}
 
@@ -85,13 +80,10 @@ public class UpdateClasspathAction extends AbstractHandler {
 	private IPluginModelBase[] getModelsToUpdate() {
 		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
 		ArrayList<IPluginModelBase> modelArray = new ArrayList<>();
-		try {
-			for (IPluginModelBase model : models) {
-				if (model.getUnderlyingResource().getProject().hasNature(JavaCore.NATURE_ID))
-					modelArray.add(model);
+		for (IPluginModelBase model : models) {
+			if (PluginProject.isJavaProject(model.getUnderlyingResource().getProject())) {
+				modelArray.add(model);
 			}
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
 		}
 		return modelArray.toArray(new IPluginModelBase[modelArray.size()]);
 	}

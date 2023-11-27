@@ -32,7 +32,7 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.BaseProject;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.preferences.CompilersPreferencePage;
@@ -75,7 +75,7 @@ public class ConfigureProblemSeverityForPDECompilerResolution extends AbstractMa
 
 		Map<String, Object> data = new HashMap<>();
 		data.put(CompilersPreferencePage.DATA_SELECT_OPTION_KEY, id);
-		data.put(CompilersPreferencePage.DATA_SELECT_OPTION_QUALIFIER, PDE.PLUGIN_ID);
+		data.put(CompilersPreferencePage.DATA_SELECT_OPTION_QUALIFIER, BaseProject.PDE_PLUGIN_ID);
 
 		// If other than manifest compiler option, then show workspace preference
 		// since there is no project specific settings.

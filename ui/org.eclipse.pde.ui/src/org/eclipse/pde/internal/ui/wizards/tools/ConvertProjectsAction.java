@@ -24,7 +24,9 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.FeatureProject;
+import org.eclipse.pde.internal.core.natures.PluginProject;
+import org.eclipse.pde.internal.core.natures.SiteProject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -89,9 +91,11 @@ public class ConvertProjectsAction implements IObjectActionDelegate {
 	private IProject[] getUnconvertedProjects() {
 		ArrayList<IProject> unconverted = new ArrayList<>();
 		IProject[] projects = PDEPlugin.getWorkspace().getRoot().getProjects();
-		for (int i = 0; i < projects.length; i++) {
-			if (projects[i].isOpen() && !PDE.hasPluginNature(projects[i]) && !PDE.hasFeatureNature(projects[i]) && !PDE.hasUpdateSiteNature(projects[i]) && projects[i].getName().indexOf('%') == -1 && projects[i].getLocation().toString().indexOf('%') == -1)
-				unconverted.add(projects[i]);
+		for (IProject project : projects) {
+			if (project.isOpen() && !PluginProject.isPluginProject(project) && !FeatureProject.isFeatureProject(project)
+					&& !SiteProject.isSiteProject(project) && project.getName().indexOf('%') == -1
+					&& project.getLocation().toString().indexOf('%') == -1)
+				unconverted.add(project);
 		}
 		return unconverted.toArray(new IProject[unconverted.size()]);
 	}

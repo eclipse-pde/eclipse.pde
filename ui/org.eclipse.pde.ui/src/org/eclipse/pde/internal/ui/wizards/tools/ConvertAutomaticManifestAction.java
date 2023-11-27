@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2023 Christoph Läubrich and others.
+ *  Copyright (c) 2023, 2024 Christoph Läubrich and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -26,7 +26,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
 import org.eclipse.pde.internal.core.natures.BndProject;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.PlatformUI;
@@ -45,7 +45,7 @@ public class ConvertAutomaticManifestAction extends AbstractHandler {
 			if (HandlerUtil.getCurrentSelection(event) instanceof IStructuredSelection selection) {
 				List<IProject> projects = selection.stream().map(ConvertAutomaticManifestAction::toProject)
 						.filter(Objects::nonNull)
-						.filter(proj -> PDE.hasPluginNature(proj))
+						.filter(PluginProject::isJavaProject)
 						.filter(proj -> !BndProject.isBndProject(proj)).toList();
 				if (projects.isEmpty()) {
 					MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(),

@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.ui.wizards.tools.ConvertProjectToPluginOperation;
 import org.eclipse.pde.ui.tests.PDETestCase;
@@ -59,12 +59,12 @@ public class ConvertProjectToPluginTestCase extends PDETestCase {
 
 		assertNotNull(project);
 		assertTrue(project.exists());
-		assertFalse(project.hasNature(PDE.PLUGIN_NATURE));
+		assertFalse(project.hasNature(PluginProject.NATURE));
 		assertFalse(project.hasNature(API_TOOLS_NATURE));
 
 		convertProjects(new IProject[]{project}, false);
 
-		assertTrue(project.hasNature(PDE.PLUGIN_NATURE));
+		assertTrue(project.hasNature(PluginProject.NATURE));
 		assertFalse(project.hasNature(API_TOOLS_NATURE));
 		assertTrue(PDEProject.getManifest(project).exists());
 		assertTrue(PDEProject.getBuildProperties(project).exists());
@@ -87,14 +87,14 @@ public class ConvertProjectToPluginTestCase extends PDETestCase {
 		for (IProject project : projects) {
 			assertNotNull(project);
 			assertTrue(project.exists());
-			assertFalse(project.hasNature(PDE.PLUGIN_NATURE));
+			assertFalse(project.hasNature(PluginProject.NATURE));
 			assertFalse(project.hasNature(API_TOOLS_NATURE));
 		}
 
 		convertProjects(projects, false);
 
 		for (IProject project : projects) {
-			assertTrue(project.hasNature(PDE.PLUGIN_NATURE));
+			assertTrue(project.hasNature(PluginProject.NATURE));
 			assertFalse(project.hasNature(API_TOOLS_NATURE));
 			assertTrue(PDEProject.getManifest(project).exists());
 			assertTrue(PDEProject.getBuildProperties(project).exists());
@@ -118,14 +118,14 @@ public class ConvertProjectToPluginTestCase extends PDETestCase {
 		for (IProject project : projects) {
 			assertNotNull(project);
 			assertTrue(project.exists());
-			assertFalse(project.hasNature(PDE.PLUGIN_NATURE));
+			assertFalse(project.hasNature(PluginProject.NATURE));
 			assertFalse(project.hasNature(API_TOOLS_NATURE));
 		}
 
 		convertProjects(projects, true);
 
 		for (IProject project : projects) {
-			assertTrue(project.hasNature(PDE.PLUGIN_NATURE));
+			assertTrue(project.hasNature(PluginProject.NATURE));
 			assertTrue(project.hasNature(API_TOOLS_NATURE));
 			assertTrue(PDEProject.getManifest(project).exists());
 			assertTrue(PDEProject.getBuildProperties(project).exists());

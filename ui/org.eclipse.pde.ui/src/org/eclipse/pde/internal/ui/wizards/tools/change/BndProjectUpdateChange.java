@@ -27,7 +27,7 @@ import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.pde.internal.core.natures.BndProject;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public final class BndProjectUpdateChange extends Change {
@@ -73,7 +73,7 @@ public final class BndProjectUpdateChange extends Change {
 			}).toArray(String[]::new);
 		}
 		ICommand[] commands = Stream.concat(Arrays.stream(description.getBuildSpec()).filter(command -> {
-			if (PDE.MANIFEST_BUILDER_ID.equals(command.getBuilderName())
+			if (PluginProject.MANIFEST_BUILDER_ID.equals(command.getBuilderName())
 					|| "org.eclipse.pde.SchemaBuilder".equals(command.getBuilderName())) { //$NON-NLS-1$
 				return false;
 			}

@@ -13,21 +13,26 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.natures;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 
 public class FeatureProject extends BaseProject {
 
-	public FeatureProject() {
-		super();
-	}
+	public static final String NATURE = PDE_PLUGIN_ID + ".FeatureNature"; //$NON-NLS-1$
+	public static final String BUILDER_ID = PDE_PLUGIN_ID + ".FeatureBuilder"; //$NON-NLS-1$
 
 	@Override
 	public void configure() throws CoreException {
-		addToBuildSpec(PDE.FEATURE_BUILDER_ID);
+		addToBuildSpec(BUILDER_ID);
 	}
 
 	@Override
 	public void deconfigure() throws CoreException {
-		removeFromBuildSpec(PDE.FEATURE_BUILDER_ID);
+		removeFromBuildSpec(BUILDER_ID);
 	}
+
+	public static boolean isFeatureProject(IProject project) {
+		return hasNature(project, NATURE);
+	}
+
 }

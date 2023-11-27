@@ -50,6 +50,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceType
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.ScannerMessages;
 import org.eclipse.pde.api.tools.internal.util.Util;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -221,7 +222,7 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 
 	@Override
 	public synchronized void saving(ISaveContext context) throws CoreException {
-		if (context.getKind() == ISaveContext.PROJECT_SAVE && !Util.isJavaProject(context.getProject())) {
+		if (context.getKind() == ISaveContext.PROJECT_SAVE && !PluginProject.isJavaProject(context.getProject())) {
 			return;
 		}
 

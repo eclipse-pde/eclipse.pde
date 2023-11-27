@@ -46,7 +46,8 @@ import org.eclipse.pde.internal.build.IXMLConstants;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.core.exports.BuildUtilities;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.FeatureProject;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -129,7 +130,7 @@ public abstract class BaseBuildAction extends AbstractHandler {
 		// Force the build if autobuild is off
 		IProject project = file.getProject();
 		if (!project.getWorkspace().isAutoBuilding()) {
-			String builderID = ICoreConstants.FEATURE_FILENAME_DESCRIPTOR.equals(file.getName()) ? PDE.FEATURE_BUILDER_ID : PDE.MANIFEST_BUILDER_ID;
+			String builderID = ICoreConstants.FEATURE_FILENAME_DESCRIPTOR.equals(file.getName()) ? FeatureProject.BUILDER_ID : PluginProject.MANIFEST_BUILDER_ID;
 			project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, builderID, null, monitor);
 		}
 

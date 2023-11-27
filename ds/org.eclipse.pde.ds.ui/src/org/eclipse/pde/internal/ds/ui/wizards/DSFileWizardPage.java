@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2024 Code 9 Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -36,7 +36,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.internal.core.bundle.WorkspaceBundlePluginModel;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.ds.ui.Activator;
 import org.eclipse.pde.internal.ds.ui.Messages;
@@ -123,18 +123,12 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 	}
 
 	private void setComponentNameText(IProject project) {
-		try {
-			if (project.hasNature(PDE.PLUGIN_NATURE)) {
-				WorkspaceBundlePluginModel model = new WorkspaceBundlePluginModel(
-						PDEProject.getManifest(project),
-						null);
-				model.load();
-				String header = model.getBundleModel().getBundle().getHeader(
-						Constants.BUNDLE_SYMBOLICNAME);
-				String[] h = header.split(";"); //$NON-NLS-1$
-				fDSComponentNameText.setText(h[0]);
-			}
-		} catch (CoreException e) {
+		if (PluginProject.isPluginProject(project)) {
+			WorkspaceBundlePluginModel model = new WorkspaceBundlePluginModel(PDEProject.getManifest(project), null);
+			model.load();
+			String header = model.getBundleModel().getBundle().getHeader(Constants.BUNDLE_SYMBOLICNAME);
+			String[] h = header.split(";"); //$NON-NLS-1$
+			fDSComponentNameText.setText(h[0]);
 		}
 	}
 

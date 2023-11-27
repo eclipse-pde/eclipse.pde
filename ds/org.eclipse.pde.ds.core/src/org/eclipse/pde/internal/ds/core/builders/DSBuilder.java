@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -35,12 +35,12 @@ import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.builders.DefaultSAXParser;
 import org.eclipse.pde.internal.core.builders.PDEBuilderHelper;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.ds.core.Activator;
 import org.eclipse.pde.internal.ds.core.Messages;
 
 public class DSBuilder extends IncrementalProjectBuilder {
 
-	private static String PDE_NATURE = "org.eclipse.pde.PluginNature"; //$NON-NLS-1$
 	private static IProject[] EMPTY_LIST = new IProject[0];
 
 	class ResourceVisitor implements IResourceVisitor {
@@ -52,15 +52,8 @@ public class DSBuilder extends IncrementalProjectBuilder {
 
 		@Override
 		public boolean visit(IResource resource) {
-			if (resource instanceof IProject) {
-				// TODO only check PDE projects...
-				IProject project = (IProject) resource;
-				try {
-					return (project.hasNature(PDE_NATURE));
-				} catch (CoreException e) {
-					// TODO log exception
-					return false;
-				}
+			if (resource instanceof IProject project) {
+				return PluginProject.isPluginProject(project);
 			}
 			if (resource instanceof IFile) {
 				// see if this is it
@@ -84,20 +77,11 @@ public class DSBuilder extends IncrementalProjectBuilder {
 		@Override
 		public boolean visit(IResourceDelta delta) {
 			IResource resource = delta.getResource();
-
-			if (resource instanceof IProject) {
-				// TODO only check PDE projects...
-				IProject project = (IProject) resource;
-				try {
-					return (project.hasNature(PDE_NATURE));
-				} catch (CoreException e) {
-					// TODO log exception
-					return false;
-				}
+			if (resource instanceof IProject project) {
+				return PluginProject.isPluginProject(project);
 			}
-			if (resource instanceof IFile) {
+			if (resource instanceof IFile candidate) {
 				// see if this is it
-				IFile candidate = (IFile) resource;
 				if (isDSFile(candidate)) {
 					// That's it, but only check it if it has been added or changed
 					if (delta.getKind() != IResourceDelta.REMOVED) {

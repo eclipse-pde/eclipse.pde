@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -40,6 +40,7 @@ import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.pde.core.project.IPackageExportDescription;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.osgi.framework.Version;
 
 /**
@@ -201,7 +202,7 @@ public class ProjectUtils {
 	public static IJavaProject createJavaProject(String projectName, String[] additionalNatures) throws CoreException {
 		IProgressMonitor monitor = new NullProgressMonitor();
 		IProject project = createProject(projectName, monitor);
-		if (!project.hasNature(JavaCore.NATURE_ID)) {
+		if (!PluginProject.isJavaProject(project)) {
 			addNatureToProject(project, JavaCore.NATURE_ID, monitor);
 		}
 		if (additionalNatures != null) {

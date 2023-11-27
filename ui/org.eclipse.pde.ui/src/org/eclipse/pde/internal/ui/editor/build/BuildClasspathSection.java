@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2017 IBM Corporation and others.
+ *  Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -41,7 +41,7 @@ import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
@@ -293,17 +293,13 @@ public class BuildClasspathSection extends TableSection {
 		dialog.addFilter(new ViewerFilter() {
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				if (element instanceof IProject) {
-					try {
-						return ((IProject) element).hasNature(PDE.PLUGIN_NATURE);
-					} catch (CoreException e) {
-					}
-					return false;
-				} else if (element instanceof IResource) {
+				if (element instanceof IProject project) {
+					return PluginProject.isPluginProject(project);
+				} else if (element instanceof IResource resource) {
 					IBuildModel model = getBuildModel();
 					IBuildEntry entry = model.getBuild().getEntry(IBuildPropertiesConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
 					if (entry != null)
-						return !entry.contains(getRelativePathTokenName((IResource) element));
+						return !entry.contains(getRelativePathTokenName(resource));
 				}
 				return true;
 			}

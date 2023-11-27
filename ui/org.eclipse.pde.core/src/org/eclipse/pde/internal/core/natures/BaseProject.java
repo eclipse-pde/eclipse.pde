@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -23,11 +23,9 @@ import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.pde.internal.core.PDECore;
 
 public abstract class BaseProject extends PlatformObject implements IProjectNature {
-	private IProject project;
+	public static final String PDE_PLUGIN_ID = "org.eclipse.pde"; //$NON-NLS-1$
 
-	public BaseProject() {
-		super();
-	}
+	private IProject project;
 
 	protected void addToBuildSpec(String builderID) throws CoreException {
 
@@ -107,4 +105,13 @@ public abstract class BaseProject extends PlatformObject implements IProjectNatu
 	public void setProject(IProject project) {
 		this.project = project;
 	}
+
+	static boolean hasNature(IProject project, String nature) {
+		try {
+			return project.hasNature(nature);
+		} catch (CoreException e) {
+			return false;
+		}
+	}
+
 }
