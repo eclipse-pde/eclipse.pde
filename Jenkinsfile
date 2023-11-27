@@ -1,3 +1,5 @@
+def deployBranch = 'master'
+
 pipeline {
 	options {
 		timeout(time: 40, unit: 'MINUTES')
@@ -12,12 +14,15 @@ pipeline {
 		maven 'apache-maven-latest'
 		jdk 'temurin-jdk17-latest'
 	}
+	environment {
+		MVN_GOALS = getMavenGoals()
+	}
 	stages {
 		stage('Build') {
 			steps {
 				wrap([$class: 'Xvnc', useXauthority: true]) {
 					sh '''
-						mvn clean verify --batch-mode -Dmaven.repo.local=$WORKSPACE/.m2/repository \
+						mvn clean ${MVN_GOALS} --batch-mode -Dmaven.repo.local=$WORKSPACE/.m2/repository \
 						-Pbree-libs \
 						-Papi-check \
 						-Pjavadoc \
@@ -38,4 +43,11 @@ pipeline {
 			}
 		}
 	}
+}
+
+def getMavenGoals() {
+	//if(env.BRANCH_NAME == deployBranch) {
+		return "deploy -DdeployAtEnd=true"
+	//}
+	//	return "verify"
 }

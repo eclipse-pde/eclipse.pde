@@ -38,6 +38,19 @@
     <module>features</module>
     <module>org.eclipse.pde.doc.user</module>
   </modules>
+  
+  <distributionManagement>
+        <repository>
+            <id>repo.eclipse.org</id>
+            <name>PDE - Releases</name>
+            <url>https://repo.eclipse.org/content/repositories/pde/</url>
+        </repository>
+        <snapshotRepository>
+            <id>repo.eclipse.org</id>
+            <name>PDE - Snapshots</name>
+            <url>https://repo.eclipse.org/content/repositories/pde-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
   <!--
     To build individual bundles, we specify a repository where to find parent pom,
@@ -103,7 +116,16 @@
               </execution>
             </executions>
           </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-deploy-plugin</artifactId>
+            <version>3.1.1</version>
+          </plugin>
         </plugins>
+        <pluginManagement>
+            <plugins>
+            </plugins>
+        </pluginManagement>
       </build>
     </profile>
   </profiles>
