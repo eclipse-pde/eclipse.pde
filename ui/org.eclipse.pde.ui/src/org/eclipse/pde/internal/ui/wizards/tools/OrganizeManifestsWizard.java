@@ -25,9 +25,9 @@ import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -75,7 +75,7 @@ public class OrganizeManifestsWizard extends RefactoringWizard {
 				if (element instanceof IResource) {
 					IProject project = ((IResource) element).getProject();
 					if (project != null) {
-						if (project.hasNature(IBundleProjectDescription.PLUGIN_NATURE)) {
+						if (PDE.hasPluginNature(project)) {
 							IPluginModelBase pluginModel = PDECore.getDefault().getModelManager().findModel(project);
 							if (pluginModel != null) {
 								IBuildModel buildModel = PluginRegistry.createBuildModel(pluginModel);

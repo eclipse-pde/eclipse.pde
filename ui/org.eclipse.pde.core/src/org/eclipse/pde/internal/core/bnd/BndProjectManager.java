@@ -36,6 +36,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.annotations.OSGiAnnotationsClasspathContributor;
 import org.eclipse.pde.internal.core.natures.BndProject;
+import org.eclipse.pde.internal.core.natures.PDE;
 
 import aQute.bnd.build.Container;
 import aQute.bnd.build.Container.TYPE;
@@ -51,7 +52,7 @@ public class BndProjectManager {
 	private static Workspace workspace;
 
 	public static Optional<Project> getBndProject(IProject project) throws Exception {
-		if (BndProject.isBndProject(project)) {
+		if (PDE.isBndProject(project)) {
 			IPath projectPath = project.getLocation();
 			if (projectPath != null) {
 				File projectFolder = projectPath.toFile();

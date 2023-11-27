@@ -57,6 +57,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 
 /**
@@ -158,14 +159,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 	public IJavaProject getProxyProject() {
 		IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
 		IProject project = root.getProject(PROXY_PROJECT_NAME);
-		try {
-			if (project.exists() && project.isOpen() && project.hasNature(JavaCore.NATURE_ID)) {
-				return JavaCore.create(project);
-			}
-
-		} catch (CoreException e) {
-		}
-		return null;
+		return PDE.hasJavaNature(project) ? JavaCore.create(project) : null;
 	}
 
 	public void shutdown() {

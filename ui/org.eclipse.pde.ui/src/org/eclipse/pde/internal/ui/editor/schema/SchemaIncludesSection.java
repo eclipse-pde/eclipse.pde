@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,7 +17,6 @@ package org.eclipse.pde.internal.ui.editor.schema;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -60,13 +59,10 @@ public class SchemaIncludesSection extends TableSection {
 	class PDEProjectFilter extends ViewerFilter {
 		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			if (element instanceof IProject) {
-				try {
-					return ((IProject) element).hasNature(PDE.PLUGIN_NATURE);
-				} catch (CoreException e) {
-				}
-			} else if (element instanceof IFile) {
-				return isUnlistedInclude((IFile) element);
+			if (element instanceof IProject project) {
+				return PDE.hasPluginNature(project);
+			} else if (element instanceof IFile file) {
+				return isUnlistedInclude(file);
 			}
 			return true;
 		}

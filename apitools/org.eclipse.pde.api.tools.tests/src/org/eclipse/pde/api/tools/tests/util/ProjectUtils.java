@@ -34,6 +34,7 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.tests.AbstractApiTest;
 import org.eclipse.pde.core.project.IBundleClasspathEntry;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
@@ -201,7 +202,7 @@ public class ProjectUtils {
 	public static IJavaProject createJavaProject(String projectName, String[] additionalNatures) throws CoreException {
 		IProgressMonitor monitor = new NullProgressMonitor();
 		IProject project = createProject(projectName, monitor);
-		if (!project.hasNature(JavaCore.NATURE_ID)) {
+		if (!Util.isJavaProject(project)) {
 			addNatureToProject(project, JavaCore.NATURE_ID, monitor);
 		}
 		if (additionalNatures != null) {

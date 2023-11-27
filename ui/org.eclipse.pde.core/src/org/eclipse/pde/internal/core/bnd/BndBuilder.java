@@ -40,6 +40,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.core.natures.BndProject;
+import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.core.project.PDEProject;
 
 import aQute.bnd.build.Project;
@@ -71,7 +72,7 @@ public class BndBuilder extends IncrementalProjectBuilder {
 	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		IProject project = getProject();
-		if (BndProject.isBndProject(project) && (requireBuild(project) || hasRelevantDelta(getDelta(project)))) {
+		if (PDE.isBndProject(project) && (requireBuild(project) || hasRelevantDelta(getDelta(project)))) {
 			if (USE_JOB) {
 				Job buildJob = buildJobMap.compute(project, (p, oldJob) -> {
 					Job job = Job.create(NLS.bind(PDECoreMessages.BundleBuilder_building, project.getName()),

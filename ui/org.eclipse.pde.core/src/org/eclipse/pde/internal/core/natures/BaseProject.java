@@ -25,10 +25,6 @@ import org.eclipse.pde.internal.core.PDECore;
 public abstract class BaseProject extends PlatformObject implements IProjectNature {
 	private IProject project;
 
-	public BaseProject() {
-		super();
-	}
-
 	protected void addToBuildSpec(String builderID) throws CoreException {
 
 		IProjectDescription description = getProject().getDescription();

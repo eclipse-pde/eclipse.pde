@@ -30,7 +30,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
@@ -56,13 +56,12 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 	static class ApiJavaElementContentProvider extends StandardJavaElementContentProvider {
 		@Override
 		public Object[] getChildren(Object element) {
-			if (element instanceof IJavaModel) {
-				IJavaModel model = (IJavaModel) element;
-				HashSet<IJavaProject> set = new HashSet<>();
+			if (element instanceof IJavaModel model) {
+				Set<IJavaProject> set = new HashSet<>();
 				try {
 					IJavaProject[] projects = model.getJavaProjects();
 					for (IJavaProject project : projects) {
-						if (project.getProject().hasNature(ApiPlugin.NATURE_ID)) {
+						if (Util.isApiProject(project.getProject())) {
 							set.add(project);
 						}
 					}

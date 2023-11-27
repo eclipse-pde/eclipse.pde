@@ -55,7 +55,7 @@ import org.eclipse.pde.bnd.ui.autocomplete.AddBundleCompletionProposal;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
-import org.eclipse.pde.internal.core.natures.BndProject;
+import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.correction.java.FindClassResolutionsOperation.AbstractClassResolutionCollector;
@@ -282,7 +282,7 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 			@Override
 			public void addResolutionModification(IProject project, ExportPackageDescription desc, CompilationUnit cu,
 					String qualifiedTypeToImport) {
-				if (BndProject.isBndProject(project)) {
+				if (PDE.isBndProject(project)) {
 					// for bnd projects the proposal to import a package is not
 					// really useful as import package is computed automatically
 					return;
@@ -318,7 +318,7 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 			public Object addRequireBundleModification(IProject project, ExportPackageDescription desc, int relevance,
 					CompilationUnit cu, String qualifiedTypeToImport) {
 				Object proposal;
-				if (BndProject.isBndProject(project)) {
+				if (PDE.isBndProject(project)) {
 					proposal = createAddBundleCompletionProposal(project, desc, relevance, cu, qualifiedTypeToImport);
 				} else {
 					proposal = super.addRequireBundleModification(project, desc, relevance, cu,

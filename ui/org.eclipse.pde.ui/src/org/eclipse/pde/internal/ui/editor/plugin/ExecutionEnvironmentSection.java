@@ -46,6 +46,7 @@ import org.eclipse.pde.internal.core.ClasspathComputer;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
+import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.core.text.bundle.ExecutionEnvironment;
 import org.eclipse.pde.internal.core.text.bundle.PDEManifestElement;
 import org.eclipse.pde.internal.core.text.bundle.RequiredExecutionEnvironmentHeader;
@@ -70,6 +71,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -173,38 +175,27 @@ public class ExecutionEnvironmentSection extends TableSection {
 		link.setLayoutData(gd);
 
 		final IProject project = getPage().getPDEEditor().getCommonProject();
-		try {
-			if (project != null && project.hasNature(JavaCore.NATURE_ID)) {
-				link = toolkit.createHyperlink(container, PDEUIMessages.ExecutionEnvironmentSection_updateClasspath, SWT.NONE);
-				link.addHyperlinkListener(new IHyperlinkListener() {
-					@Override
-					public void linkEntered(HyperlinkEvent e) {
-					}
-
-					@Override
-					public void linkExited(HyperlinkEvent e) {
-					}
-
-					@Override
-					public void linkActivated(HyperlinkEvent e) {
-						try {
-							getPage().getEditor().doSave(null);
-							IPluginModelBase model = PluginRegistry.findModel(project);
-							if (model != null) {
-								ClasspathComputer.setClasspath(project, model);
-								if (PDEPlugin.getWorkspace().isAutoBuilding()) {
-									doFullBuild(project);
-								}
+		if (project != null && PDE.hasJavaNature(project)) {
+			link = toolkit.createHyperlink(container, PDEUIMessages.ExecutionEnvironmentSection_updateClasspath, SWT.NONE);
+			link.addHyperlinkListener(new HyperlinkAdapter() {
+				@Override
+				public void linkActivated(HyperlinkEvent e) {
+					try {
+						getPage().getEditor().doSave(null);
+						IPluginModelBase model = PluginRegistry.findModel(project);
+						if (model != null) {
+							ClasspathComputer.setClasspath(project, model);
+							if (PDEPlugin.getWorkspace().isAutoBuilding()) {
+								doFullBuild(project);
 							}
-						} catch (CoreException e1) {
 						}
+					} catch (CoreException e1) {
 					}
-				});
-				gd = new GridData();
-				gd.horizontalSpan = 2;
-				link.setLayoutData(gd);
-			}
-		} catch (CoreException e1) {
+				}
+			});
+			gd = new GridData();
+			gd.horizontalSpan = 2;
+			link.setLayoutData(gd);
 		}
 
 		makeActions();

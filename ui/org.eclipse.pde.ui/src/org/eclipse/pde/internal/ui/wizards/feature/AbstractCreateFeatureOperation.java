@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2023 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -105,7 +105,7 @@ public abstract class AbstractCreateFeatureOperation extends WorkspaceModifyOper
 		fProject.open(monitor);
 		IProjectDescription desc = fProject.getWorkspace().newProjectDescription(fProject.getName());
 		desc.setLocation(fLocation);
-		if (!fProject.hasNature(PDE.FEATURE_NATURE))
+		if (!PDE.hasFeatureNature(fProject))
 			CoreUtility.addNatureToProject(fProject, PDE.FEATURE_NATURE, monitor);
 
 		if (fFeatureData.hasCustomHandler()) {

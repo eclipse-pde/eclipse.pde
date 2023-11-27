@@ -799,7 +799,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @since 1.1
 	 */
 	boolean shouldAbort(IProject project) throws CoreException {
-		return !project.isAccessible() || !project.hasNature(ApiPlugin.NATURE_ID) || hasBeenBuilt(project) || hasFatalProblems(project);
+		return !Util.isApiProject(project) || hasBeenBuilt(project) || hasFatalProblems(project);
 	}
 
 	/**
@@ -1297,7 +1297,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 *
 	 * @return the list of projects required
 	 */
-	IProject[] getRequiredProjects(boolean includebinaries) throws CoreException {
+	IProject[] getRequiredProjects(boolean includebinaries) {
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		if (this.currentproject == null || workspaceRoot == null) {
 			return new IProject[0];
@@ -1323,16 +1323,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				IProject p = null;
 				switch (entry.getEntryKind()) {
 					case IClasspathEntry.CPE_PROJECT: {
-						p = workspaceRoot.getProject(path.lastSegment()); // missing
-																			// projects
-																			// are
-																			// considered
-																			// too
-						if (isOptional(entry) && !p.hasNature(ApiPlugin.NATURE_ID)) {// except
-																						// if
-																						// entry
-																						// is
-																						// optional
+						p = workspaceRoot.getProject(path.lastSegment()); // missing projects are considered too
+						if (isOptional(entry) && !Util.isApiProject(p)) {// except if entry is optional
 							p = null;
 						}
 						break;
