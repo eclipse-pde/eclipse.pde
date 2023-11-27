@@ -58,7 +58,7 @@ License
 Support us with processing power
 --------------------------------
 
-If your Organizations is an [Eclipse Member](https://www.eclipse.org/membership/exploreMembership.php) you can help us by [sponsoring one of the included resource packs](https://wiki.eclipse.org/CBI#Assigning_Resource_Packs_to_a_Project) to speed up builds. Organizations can check how many Resource Packs they have left for project sponsoring on the [membership portal](https://membership.eclipse.org/portal/login).
+If your Organizations is an [Eclipse Member](https://www.eclipse.org/membership/exploreMembership.php) you can help us by [sponsoring one of the included resource packs](https://github.com/eclipse-cbi/cbi/wiki#assigning-additional-resources-to-a-project) to speed up builds. Organizations can check how many Resource Packs they have left for project sponsoring on the [membership portal](https://membership.eclipse.org/portal/login).
 
 The following Organizations support PDE getting processing power for their builds:
 * <img src="https://www.eclipse.org/favicon.ico" width="16" height="16"> [Eclipse Foundation](https://www.eclipse.org/sponsor/) - host our CI Infrastructure, become a friend of Eclipse and support the Eclipse Foundation in general
