@@ -70,7 +70,7 @@ import org.eclipse.pde.internal.core.SourceLocationManager;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.bundle.WorkspaceBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -1261,8 +1261,8 @@ public class PluginImportOperation extends WorkspaceJob {
 
 	private void setProjectNatures(IProject project, IPluginModelBase model) throws CoreException {
 		IProjectDescription desc = project.getDescription();
-		if (!desc.hasNature(PDE.PLUGIN_NATURE)) {
-			CoreUtility.addNatureToProject(project, PDE.PLUGIN_NATURE, null);
+		if (!desc.hasNature(PluginProject.NATURE)) {
+			CoreUtility.addNatureToProject(project, PluginProject.NATURE, null);
 		}
 		if (!desc.hasNature(JavaCore.NATURE_ID) && needsJavaNature(project, model)) {
 			CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, null);

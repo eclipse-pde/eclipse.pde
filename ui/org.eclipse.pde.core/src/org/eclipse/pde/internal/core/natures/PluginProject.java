@@ -13,25 +13,34 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.natures;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.JavaCore;
 
 public class PluginProject extends BaseProject {
-	/**
-	 * PluginProject constructor comment.
-	 */
-	public PluginProject() {
-		super();
-	}
+
+	public static final String MANIFEST_BUILDER_ID = PDE_PLUGIN_ID + ".ManifestBuilder"; //$NON-NLS-1$
+	public static final String SCHEMA_BUILDER_ID = PDE_PLUGIN_ID + ".SchemaBuilder"; //$NON-NLS-1$
+	public static final String NATURE = PDE_PLUGIN_ID + ".PluginNature"; //$NON-NLS-1$
 
 	@Override
 	public void configure() throws CoreException {
-		addToBuildSpec(PDE.MANIFEST_BUILDER_ID);
-		addToBuildSpec(PDE.SCHEMA_BUILDER_ID);
+		addToBuildSpec(MANIFEST_BUILDER_ID);
+		addToBuildSpec(SCHEMA_BUILDER_ID);
 	}
 
 	@Override
 	public void deconfigure() throws CoreException {
-		removeFromBuildSpec(PDE.MANIFEST_BUILDER_ID);
-		removeFromBuildSpec(PDE.SCHEMA_BUILDER_ID);
+		removeFromBuildSpec(MANIFEST_BUILDER_ID);
+		removeFromBuildSpec(SCHEMA_BUILDER_ID);
 	}
+
+	public static boolean isPluginProject(IProject project) {
+		return hasNature(project, NATURE);
+	}
+
+	public static boolean isJavaProject(IProject project) {
+		return hasNature(project, JavaCore.NATURE_ID);
+	}
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2024 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -37,7 +37,7 @@ import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureInfo;
 import org.eclipse.pde.internal.core.ifeature.IFeatureInstallHandler;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.FeatureProject;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
@@ -105,8 +105,8 @@ public abstract class AbstractCreateFeatureOperation extends WorkspaceModifyOper
 		fProject.open(monitor);
 		IProjectDescription desc = fProject.getWorkspace().newProjectDescription(fProject.getName());
 		desc.setLocation(fLocation);
-		if (!fProject.hasNature(PDE.FEATURE_NATURE))
-			CoreUtility.addNatureToProject(fProject, PDE.FEATURE_NATURE, monitor);
+		if (!FeatureProject.isFeatureProject(fProject))
+			CoreUtility.addNatureToProject(fProject, FeatureProject.NATURE, monitor);
 
 		if (fFeatureData.hasCustomHandler()) {
 			if (!fProject.hasNature(JavaCore.NATURE_ID))

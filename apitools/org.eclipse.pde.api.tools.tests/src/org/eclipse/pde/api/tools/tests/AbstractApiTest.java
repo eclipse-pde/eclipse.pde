@@ -44,7 +44,7 @@ import org.eclipse.pde.api.tools.util.tests.ResourceEventWaiter;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.ui.tests.util.FreezeMonitor;
 import org.junit.After;
 import org.junit.Before;
@@ -155,8 +155,8 @@ public class AbstractApiTest {
 		}
 
 		// create project and import source
-		IJavaProject jproject = ProjectUtils.createPluginProject(name, new String[] {
-				PDE.PLUGIN_NATURE, ApiPlugin.NATURE_ID });
+		IJavaProject jproject = ProjectUtils.createPluginProject(name,
+				new String[] { PluginProject.NATURE, ApiPlugin.NATURE_ID });
 		assertNotNull("The java project must have been created", jproject); //$NON-NLS-1$
 
 		IPackageFragmentRoot root = jproject.getPackageFragmentRoot(jproject.getProject().getFolder(ProjectUtils.SRC_FOLDER));

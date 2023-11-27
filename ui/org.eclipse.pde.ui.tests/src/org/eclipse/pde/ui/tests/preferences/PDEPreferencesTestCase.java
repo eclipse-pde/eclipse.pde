@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.BaseProject;
 import org.eclipse.pde.internal.launching.ILaunchingPreferenceConstants;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
@@ -112,7 +112,7 @@ public class PDEPreferencesTestCase {
 	@Test
 	public void testCompilerPreferences(){
 		// Testing the compiler preferences set by PDECore in org.eclipse.pde
-		PDEPreferencesManager preferences = new PDEPreferencesManager(PDE.PLUGIN_ID);
+		PDEPreferencesManager preferences = new PDEPreferencesManager(BaseProject.PDE_PLUGIN_ID);
 		assertEquals(preferences.getDefaultInt(CompilerFlags.P_UNRESOLVED_IMPORTS), CompilerFlags.ERROR);
 		assertEquals(preferences.getDefaultInt(CompilerFlags.P_DEPRECATED), CompilerFlags.WARNING);
 		assertEquals(preferences.getDefaultInt(CompilerFlags.P_MISSING_VERSION_EXP_PKG), CompilerFlags.IGNORE);

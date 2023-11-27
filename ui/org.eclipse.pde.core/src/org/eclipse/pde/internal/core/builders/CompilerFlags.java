@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.BaseProject;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
@@ -126,7 +126,7 @@ public class CompilerFlags {
 	public static String getString(IProject project, String flagId) {
 		IPreferencesService service = Platform.getPreferencesService();
 		IScopeContext[] contexts = project == null ? null : new IScopeContext[] {new ProjectScope(project)};
-		return service.getString(PDE.PLUGIN_ID, flagId, "", project == null ? null : contexts); //$NON-NLS-1$
+		return service.getString(BaseProject.PDE_PLUGIN_ID, flagId, "", project == null ? null : contexts); //$NON-NLS-1$
 	}
 
 	/**
@@ -134,7 +134,7 @@ public class CompilerFlags {
 	 */
 	public static void save() {
 		try {
-			InstanceScope.INSTANCE.getNode(PDE.PLUGIN_ID).flush();
+			InstanceScope.INSTANCE.getNode(BaseProject.PDE_PLUGIN_ID).flush();
 		} catch (BackingStoreException e) {
 		}
 	}

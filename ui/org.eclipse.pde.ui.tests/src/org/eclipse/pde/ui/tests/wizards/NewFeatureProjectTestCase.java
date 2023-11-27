@@ -26,7 +26,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.FeatureProject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.wizards.feature.CreateFeaturePatchOperation;
 import org.eclipse.pde.internal.ui.wizards.feature.CreateFeatureProjectOperation;
@@ -76,7 +76,7 @@ public class NewFeatureProjectTestCase extends NewProjectTestCase {
 	}
 
 	private void verifyFeatureNature() {
-		assertTrue("Verifying feature nature...", hasNature(PDE.FEATURE_NATURE));
+		assertTrue("Verifying feature nature...", hasNature(FeatureProject.NATURE));
 	}
 
 	@Test

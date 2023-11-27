@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2024 Code 9 Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -472,17 +472,12 @@ public class DSErrorReporter extends XMLErrorReporter {
 
 	}
 
-	private void validateJavaElement(String fullyQualifiedName,
-			String elementName, String attrName, int index) {
-		try {
-			if (fProject.hasNature(JavaCore.NATURE_ID)) {
-				IJavaProject jp = JavaCore.create(fProject);
-				if (!DSJavaHelper.isOnClasspath(fullyQualifiedName, (jp))) {
-					reportJavaTypeNotFound(elementName, attrName,
-							fullyQualifiedName, index);
-				}
+	private void validateJavaElement(String fullyQualifiedName, String elementName, String attrName, int index) {
+		if (org.eclipse.pde.internal.core.natures.PluginProject.isJavaProject(fProject)) {
+			IJavaProject jp = JavaCore.create(fProject);
+			if (!DSJavaHelper.isOnClasspath(fullyQualifiedName, (jp))) {
+				reportJavaTypeNotFound(elementName, attrName, fullyQualifiedName, index);
 			}
-		} catch (CoreException e) {
 		}
 	}
 

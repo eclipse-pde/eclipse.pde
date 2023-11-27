@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2023 IBM Corporation and others.
+ * Copyright (c) 2005, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -55,7 +55,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.BundleHelper;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.builders.PDEBuilderHelper;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.core.util.ManifestUtils;
 import org.eclipse.pde.internal.core.util.UtilMessages;
 import org.osgi.framework.BundleException;
@@ -339,8 +339,7 @@ public class MinimalState {
 		for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
 			if (PDEBuilderHelper.hasManifestBuilder(project)) {
 				try {
-					project.build(IncrementalProjectBuilder.FULL_BUILD, PDE.MANIFEST_BUILDER_ID, null,
-							null);
+					project.build(IncrementalProjectBuilder.FULL_BUILD, PluginProject.MANIFEST_BUILDER_ID, null, null);
 				} catch (CoreException e) { // ignore
 					status.add(e.getStatus());
 				}

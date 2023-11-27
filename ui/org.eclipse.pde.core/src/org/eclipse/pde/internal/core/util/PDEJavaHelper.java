@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2019 IBM Corporation and others.
+ * Copyright (c) 2005, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,7 +18,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
@@ -47,6 +46,7 @@ import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.core.SearchablePluginsManager;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 
 public class PDEJavaHelper {
 
@@ -296,19 +296,18 @@ public class PDEJavaHelper {
 			libPaths.add(path.append(libName));
 		}
 		IProject[] projects = PDECore.getWorkspace().getRoot().getProjects();
-		for (int i = 0; i < projects.length; i++) {
+		for (IProject project : projects) {
+			if (!PluginProject.isJavaProject(project)) {
+				continue;
+			}
+			IJavaProject jp = JavaCore.create(project);
 			try {
-				if (!projects[i].hasNature(JavaCore.NATURE_ID) || !projects[i].isOpen()) {
-					continue;
-				}
-				IJavaProject jp = JavaCore.create(projects[i]);
 				Map<IPath, IPackageFragmentRoot> rootsByPath = null;
-				ListIterator<IPath> li = libPaths.listIterator();
-				while (li.hasNext()) {
+				for (IPath libPath : libPaths) {
 					if (rootsByPath == null) {
 						rootsByPath = getRootsByPath(jp);
 					}
-					IPackageFragmentRoot root = rootsByPath.get(li.next());
+					IPackageFragmentRoot root = rootsByPath.get(libPath);
 					if (root != null) {
 						IPackageFragment frag = root.getPackageFragment(packageName);
 						if (frag.exists()) {

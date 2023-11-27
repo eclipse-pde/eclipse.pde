@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.SiteProject;
 import org.eclipse.pde.internal.core.site.WorkspaceSiteModel;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
@@ -63,7 +63,7 @@ public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 
 		CoreUtility.createProject(fProject, fPath, monitor);
 		fProject.open(monitor);
-		CoreUtility.addNatureToProject(fProject, PDE.SITE_NATURE, monitor);
+		CoreUtility.addNatureToProject(fProject, SiteProject.NATURE, monitor);
 		monitor.worked(1);
 
 		if (fWebLocation != null) {

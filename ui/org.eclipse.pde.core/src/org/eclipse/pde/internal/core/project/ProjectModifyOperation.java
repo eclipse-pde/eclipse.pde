@@ -69,6 +69,7 @@ import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 import org.eclipse.pde.internal.core.text.bundle.BundleModelFactory;
 import org.eclipse.pde.internal.core.text.bundle.BundleSymbolicNameHeader;
@@ -163,7 +164,7 @@ public class ProjectModifyOperation {
 		sub.split(1);
 		configureNatures(description);
 		sub.split(1);
-		if (project.hasNature(JavaCore.NATURE_ID)) {
+		if (PluginProject.isJavaProject(project)) {
 			configureJavaProject(description, before, jpExisted);
 		}
 		sub.split(1);

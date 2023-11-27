@@ -43,7 +43,7 @@ import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.BinaryRepositoryProvider;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation;
 import org.eclipse.pde.ui.tests.PDETestCase;
 import org.eclipse.team.core.RepositoryProvider;
@@ -182,7 +182,7 @@ public class BaseImportTestCase extends PDETestCase {
 						project.getPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY));
 			}
 		}
-		assertTrue(project.hasNature(PDE.PLUGIN_NATURE));
+		assertTrue(project.hasNature(PluginProject.NATURE));
 		assertEquals(isJava, project.hasNature(JavaCore.NATURE_ID));
 		if (isJava) {
 			IJavaProject jProject = JavaCore.create(project);

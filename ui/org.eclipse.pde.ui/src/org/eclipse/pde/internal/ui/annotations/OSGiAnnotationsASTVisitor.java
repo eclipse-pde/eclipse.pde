@@ -32,7 +32,7 @@ import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.annotations.CustomHeaderAnnotationProcessor;
 import org.eclipse.pde.internal.core.annotations.ExportPackageAnnotationProcessor;
 import org.eclipse.pde.internal.core.annotations.OSGiAnnotationProcessor;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 
@@ -55,7 +55,7 @@ public class OSGiAnnotationsASTVisitor extends ASTVisitor {
 			return true;
 		}
 		IProject project = javaProject.getProject();
-		if (!PDE.hasPluginNature(project) || WorkspaceModelManager.isBinaryProject(project)) {
+		if (!PluginProject.isPluginProject(project) || WorkspaceModelManager.isBinaryProject(project)) {
 			return true;
 		}
 		List<OSGiAnnotationProcessor> processors = getPackageProcessors(packageDeclaration.getName().toString());
