@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Tests Plug-in
 Bundle-SymbolicName: org.eclipse.pde.build.tests;singleton:=true
-Bundle-Version: 1.4.200.qualifier
+Bundle-Version: 1.4.300.qualifier
 Bundle-Activator: org.eclipse.pde.build.tests.Activator
 Export-Package: org.eclipse.pde.build.internal.tests;x-internal:=true,
  org.eclipse.pde.build.internal.tests.ant;x-internal:=true,
