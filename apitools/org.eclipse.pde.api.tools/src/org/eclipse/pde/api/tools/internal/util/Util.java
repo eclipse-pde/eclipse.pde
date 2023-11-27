@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2023 IBM Corporation and others.
+ * Copyright (c) 2007, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -356,12 +356,8 @@ public final class Util {
 		for (IProject allProject : allProjects) {
 			project = allProject;
 			if (project.isAccessible()) {
-				try {
-					if (project.hasNature(org.eclipse.pde.api.tools.internal.provisional.ApiPlugin.NATURE_ID)) {
-						temp.add(project);
-					}
-				} catch (CoreException e) {
-					// should not happen
+				if (Util.isApiProject(project)) {
+					temp.add(project);
 				}
 			}
 		}
@@ -382,20 +378,13 @@ public final class Util {
 	public static IProject[] getApiProjectsMinSourceLevel(String sourcelevel) {
 		IProject[] allProjects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		ArrayList<IProject> temp = new ArrayList<>();
-		IProject project = null;
 		for (IProject allProject : allProjects) {
-			project = allProject;
-			if (project.isAccessible()) {
-				try {
-					if (project.hasNature(org.eclipse.pde.api.tools.internal.provisional.ApiPlugin.NATURE_ID)) {
-						IJavaProject jp = JavaCore.create(project);
-						String src = jp.getOption(JavaCore.COMPILER_SOURCE, true);
-						if (src != null && src.compareTo(sourcelevel) >= 0) {
-							temp.add(project);
-						}
-					}
-				} catch (CoreException e) {
-					// should not happen
+			IProject project = allProject;
+			if (Util.isApiProject(project)) {
+				IJavaProject jp = JavaCore.create(project);
+				String src = jp.getOption(JavaCore.COMPILER_SOURCE, true);
+				if (src != null && src.compareTo(sourcelevel) >= 0) {
+					temp.add(project);
 				}
 			}
 		}
@@ -1461,22 +1450,7 @@ public final class Util {
 	 */
 	public static boolean isApiProject(IProject project) {
 		try {
-			return project.hasNature(ApiPlugin.NATURE_ID);
-		} catch (CoreException e) {
-			return false;
-		}
-	}
-
-	/**
-	 * Returns if the given project is a java project
-	 *
-	 * @param project the given project
-	 * @return <code>true</code> if the project is a java project,
-	 *         <code>false</code> otherwise
-	 */
-	public static boolean isJavaProject(IProject project) {
-		try {
-			return project.hasNature(JavaCore.NATURE_ID);
+			return project.isOpen() && project.hasNature(ApiPlugin.NATURE_ID);
 		} catch (CoreException e) {
 			return false;
 		}

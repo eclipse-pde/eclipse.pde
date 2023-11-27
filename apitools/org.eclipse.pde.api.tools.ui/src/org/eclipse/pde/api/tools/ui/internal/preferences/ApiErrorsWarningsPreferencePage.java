@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2018 IBM Corporation and others.
+ * Copyright (c) 2007, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -20,13 +20,12 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
@@ -110,15 +109,10 @@ public class ApiErrorsWarningsPreferencePage extends PreferencePage implements I
 			Set<IJavaProject> set = new HashSet<>();
 			try {
 				IJavaProject[] projects = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot()).getJavaProjects();
-				IProject project = null;
 				for (IJavaProject p : projects) {
-					project = p.getProject();
-					try {
-						if (project.hasNature(ApiPlugin.NATURE_ID) && block.hasProjectSpecificSettings(project)) {
-							set.add(p);
-						}
-					} catch (CoreException ce) {
-						// do nothing ignore the project
+					IProject project = p.getProject();
+					if (Util.isApiProject(project) && block.hasProjectSpecificSettings(project)) {
+						set.add(p);
 					}
 				}
 			} catch (JavaModelException jme) {

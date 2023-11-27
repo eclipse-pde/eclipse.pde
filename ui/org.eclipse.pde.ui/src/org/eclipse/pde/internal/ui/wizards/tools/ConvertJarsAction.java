@@ -35,7 +35,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.wizards.plugin.NewLibraryPluginProjectWizard;
 import org.eclipse.swt.widgets.Display;
@@ -108,7 +108,7 @@ public class ConvertJarsAction implements IObjectActionDelegate {
 					try {
 						IPackageFragmentRoot packageFragment = (IPackageFragmentRoot) obj;
 						if (packageFragment.getKind() == IPackageFragmentRoot.K_BINARY) {
-							if (PDE.hasPluginNature(packageFragment.getJavaProject().getProject())) {
+							if (PluginProject.isPluginProject(packageFragment.getJavaProject().getProject())) {
 								if (packageFragment.getRawClasspathEntry().getEntryKind() == IClasspathEntry.CPE_LIBRARY)
 									continue;
 							}

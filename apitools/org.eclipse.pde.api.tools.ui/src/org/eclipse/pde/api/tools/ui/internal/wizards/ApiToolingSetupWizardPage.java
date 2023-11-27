@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2018 IBM Corporation and others.
+ * Copyright (c) 2007, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,7 +16,6 @@ package org.eclipse.pde.api.tools.ui.internal.wizards;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,7 +39,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ViewerComparator;
@@ -57,6 +55,7 @@ import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionListener;
@@ -248,24 +247,15 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 	 */
 	private IProject[] getInputProjects() {
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-		ArrayList<IProject> pjs = new ArrayList<>();
-		for (IProject project : projects) {
-			try {
-				if (acceptProject(project)) {
-					pjs.add(project);
-				}
-			} catch (CoreException ce) {
-			}
-		}
-		return pjs.toArray(new IProject[pjs.size()]);
+		return Arrays.stream(projects).filter(this::acceptProject).toArray(IProject[]::new);
 	}
 
-	private boolean acceptProject(IProject project) throws CoreException {
+	private boolean acceptProject(IProject project) {
 		if (project == null) {
 			return false;
 		}
-		return (project.hasNature(JavaCore.NATURE_ID) && project.hasNature("org.eclipse.pde.PluginNature")) //$NON-NLS-1$
-				&& !project.hasNature(ApiPlugin.NATURE_ID) && !Util.isBinaryProject(project);
+		return PluginProject.isJavaProject(project) && PluginProject.isPluginProject(project)
+				&& !Util.isApiProject(project) && !Util.isBinaryProject(project);
 	}
 
 	/**
@@ -281,25 +271,10 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 					IWorkbenchSite site = part.getSite();
 					if (site != null) {
 						ISelectionProvider provider = site.getSelectionProvider();
-						if (provider != null) {
-							ISelection selection = provider.getSelection();
-							if (selection instanceof IStructuredSelection) {
-								Object[] jps = ((IStructuredSelection) provider.getSelection()).toArray();
-								ArrayList<IProject> pjs = new ArrayList<>();
-								for (Object jp : jps) {
-									if (jp instanceof IAdaptable) {
-										IAdaptable adapt = (IAdaptable) jp;
-										IProject pj = adapt.getAdapter(IProject.class);
-										try {
-											if (acceptProject(pj)) {
-												pjs.add(pj);
-											}
-										} catch (CoreException ce) {
-										}
-									}
-								}
-								return pjs.toArray();
-							}
+						if (provider != null && provider.getSelection() instanceof IStructuredSelection selection) {
+							return Arrays.stream(selection.toArray()).filter(IAdaptable.class::isInstance)
+									.map(IAdaptable.class::cast).map(a -> a.getAdapter(IProject.class))
+									.filter(this::acceptProject).toArray();
 						}
 					}
 				}

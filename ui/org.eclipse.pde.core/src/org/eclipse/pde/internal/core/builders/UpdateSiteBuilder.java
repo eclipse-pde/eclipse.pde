@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -29,9 +29,8 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.SiteProject;
 
 public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 	class DeltaVisitor implements IResourceDeltaVisitor {
@@ -47,12 +46,7 @@ public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 
 			if (resource instanceof IProject project) {
 				// Only check projects with feature nature
-				try {
-					return (project.hasNature(PDE.SITE_NATURE));
-				} catch (CoreException e) {
-					PDECore.logException(e);
-					return false;
-				}
+				return SiteProject.isSiteProject(project);
 			}
 			if (resource instanceof IFile candidate) {
 				// see if this is it

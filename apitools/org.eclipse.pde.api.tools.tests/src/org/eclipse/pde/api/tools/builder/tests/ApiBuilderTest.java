@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2019 IBM Corporation and others.
+ * Copyright (c) 2008, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -69,6 +69,7 @@ import org.eclipse.pde.api.tools.tests.util.FileUtils;
 import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.ui.tests.util.FreezeMonitor;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
@@ -1154,7 +1155,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 			contents.append(System.lineSeparator());
 			contents.append("    is open: " + project.isOpen()); //$NON-NLS-1$
 			contents.append(System.lineSeparator());
-			if (project.hasNature(JavaCore.NATURE_ID) && project.isAccessible()) {
+			if (PluginProject.isJavaProject(project) && project.isAccessible()) {
 				IJavaProject javaProject = JavaCore.create(project);
 				boolean ignoreUnresolvedEntry = true;
 				IClasspathEntry[] projectClassPath = javaProject.getResolvedClasspath(ignoreUnresolvedEntry);

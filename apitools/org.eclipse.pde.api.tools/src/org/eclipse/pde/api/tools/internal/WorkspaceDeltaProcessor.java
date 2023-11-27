@@ -34,6 +34,7 @@ import org.eclipse.pde.api.tools.internal.builder.BuildState;
 import org.eclipse.pde.api.tools.internal.model.ApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.util.Util;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 
 /**
  * Standard delta processor for us to track element state changes in the workspace
@@ -239,7 +240,7 @@ public class WorkspaceDeltaProcessor implements IElementChangedListener, IResour
 						resource = element.getResource();
 						if (element.getResource().getType() == IResource.PROJECT) {
 							IProject project = (IProject) resource;
-							if (Util.isApiProject(project) || Util.isJavaProject(project)) {
+							if (Util.isApiProject(project) || PluginProject.isJavaProject(project)) {
 								if ((element.getFlags() & IResourceDelta.DESCRIPTION) != 0) {
 									cleanAndDisposeWorkspaceBaseline(resource);
 									break;
@@ -252,7 +253,7 @@ public class WorkspaceDeltaProcessor implements IElementChangedListener, IResour
 						resource = element.getResource();
 						if (element.getResource().getType() == IResource.PROJECT) {
 							IProject project = (IProject) resource;
-							if (Util.isApiProject(project) || Util.isJavaProject(project)) {
+							if (Util.isApiProject(project) || PluginProject.isJavaProject(project)) {
 									cleanAndDisposeWorkspaceBaseline(resource);
 									break;
 							}
@@ -265,7 +266,7 @@ public class WorkspaceDeltaProcessor implements IElementChangedListener, IResour
 			case IResourceChangeEvent.PRE_DELETE: {
 				if (resource.getType() == IResource.PROJECT) {
 					IProject project = (IProject) resource;
-					if (Util.isApiProject(project) || Util.isJavaProject(project)) {
+					if (Util.isApiProject(project) || PluginProject.isJavaProject(project)) {
 						if (ApiPlugin.DEBUG_WORKSPACE_DELTA_PROCESSOR) {
 							if (event.getType() == IResourceChangeEvent.PRE_CLOSE) {
 								System.out.println("processed PRE_CLOSE delta for project: [" + resource.getName() + "]"); //$NON-NLS-1$ //$NON-NLS-2$

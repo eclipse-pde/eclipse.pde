@@ -47,7 +47,7 @@ import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
 
 /**
@@ -133,8 +133,8 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 			if (project.exists()) {
 				project.delete(true, new NullProgressMonitor());
 			}
-			jproject = ProjectUtils.createPluginProject(projectName, new String[] {
-					PDE.PLUGIN_NATURE, ApiPlugin.NATURE_ID });
+			jproject = ProjectUtils.createPluginProject(projectName,
+					new String[] { PluginProject.NATURE, ApiPlugin.NATURE_ID });
 			addProject(jproject.getProject());
 		} catch (CoreException ce) {
 			ApiPlugin.log(ce);

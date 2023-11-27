@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -32,7 +32,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.FeatureProject;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.osgi.framework.Bundle;
 
@@ -50,12 +50,7 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 
 			if (resource instanceof IProject project) {
 				// Only check projects with feature nature
-				try {
-					return (project.hasNature(PDE.FEATURE_NATURE));
-				} catch (CoreException e) {
-					PDECore.logException(e);
-					return false;
-				}
+				return FeatureProject.isFeatureProject(project);
 			}
 			if (resource instanceof IFile candidate) {
 				// see if this is it

@@ -34,6 +34,7 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.core.project.PDEProject;
 
 import aQute.bnd.osgi.Jar;
@@ -65,7 +66,7 @@ public class ProjectJar extends Jar {
 			return filter.test(r);
 		};
 		FileResource.addResources(this, outputFolder, resourceScanner);
-		if (project.hasNature(JavaCore.NATURE_ID)) {
+		if (PluginProject.isJavaProject(project)) {
 			IJavaProject javaProject = JavaCore.create(project);
 			IWorkspaceRoot workspaceRoot = project.getWorkspace().getRoot();
 			IClasspathEntry[] classpath = javaProject.getResolvedClasspath(true);

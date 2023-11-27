@@ -47,6 +47,7 @@ import org.eclipse.pde.internal.core.ClasspathComputer;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.core.text.bundle.ExecutionEnvironment;
 import org.eclipse.pde.internal.core.text.bundle.RequiredExecutionEnvironmentHeader;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
@@ -160,27 +161,24 @@ public class ExecutionEnvironmentSection extends TableSection {
 		link.setLayoutData(gd);
 
 		final IProject project = getPage().getPDEEditor().getCommonProject();
-		try {
-			if (project != null && project.hasNature(JavaCore.NATURE_ID)) {
-				link = toolkit.createHyperlink(container, PDEUIMessages.ExecutionEnvironmentSection_updateClasspath, SWT.NONE);
-				link.addHyperlinkListener(IHyperlinkListener.linkActivatedAdapter(e -> {
-					try {
-						getPage().getEditor().doSave(null);
-						IPluginModelBase model = PluginRegistry.findModel(project);
-						if (model != null) {
-							ClasspathComputer.setClasspath(project, model);
-							if (PDEPlugin.getWorkspace().isAutoBuilding()) {
-								doFullBuild(project);
-							}
+		if (project != null && PluginProject.isJavaProject(project)) {
+			link = toolkit.createHyperlink(container, PDEUIMessages.ExecutionEnvironmentSection_updateClasspath, SWT.NONE);
+			link.addHyperlinkListener(IHyperlinkListener.linkActivatedAdapter(e -> {
+				try {
+					getPage().getEditor().doSave(null);
+					IPluginModelBase model = PluginRegistry.findModel(project);
+					if (model != null) {
+						ClasspathComputer.setClasspath(project, model);
+						if (PDEPlugin.getWorkspace().isAutoBuilding()) {
+							doFullBuild(project);
 						}
-					} catch (CoreException e1) {
 					}
-				}));
-				gd = new GridData();
-				gd.horizontalSpan = 2;
-				link.setLayoutData(gd);
-			}
-		} catch (CoreException e1) {
+				} catch (CoreException e1) {
+				}
+			}));
+			gd = new GridData();
+			gd.horizontalSpan = 2;
+			link.setLayoutData(gd);
 		}
 
 		makeActions();

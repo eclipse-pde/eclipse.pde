@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2017 IBM Corporation and others.
+ *  Copyright (c) 2005, 2024 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -26,7 +26,6 @@ import java.util.Optional;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
@@ -55,6 +54,7 @@ import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.core.text.bundle.Bundle;
 import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
 import org.eclipse.pde.internal.core.text.bundle.ExportPackageObject;
@@ -232,13 +232,8 @@ public class ExportPackageSection extends TableSection {
 	private Optional<IProject> getProjectWithJavaNature() {
 		Optional<IPluginModelBase> model = Optional.ofNullable(getModel());
 		Optional<IProject> project = model.map(IPluginModelBase::getUnderlyingResource).map(IResource::getProject);
-		return project.filter(p -> {
-			try { // Ensure the project is a Java project
-				return p.hasNature(JavaCore.NATURE_ID);
-			} catch (CoreException e) {
-				return false;
-			}
-		});
+		// Ensure the project is a Java project
+		return project.filter(PluginProject::isJavaProject);
 	}
 
 	private Map<String, IPackageFragment> createCurrentExportPackageMap() {
@@ -406,53 +401,52 @@ public class ExportPackageSection extends TableSection {
 	private void handleAdd() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		final IProject project = model.getUnderlyingResource().getProject();
-		try {
-			if (project.hasNature(JavaCore.NATURE_ID)) {
-				ILabelProvider labelProvider = new JavaElementLabelProvider();
-				final ConditionalListSelectionDialog dialog = new ConditionalListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), labelProvider, PDEUIMessages.ExportPackageSection_dialogButtonLabel);
-				final Collection<String> pckgs = fHeader == null ? Collections.emptySet() : fHeader.getPackageNames();
-				final boolean allowJava = "true".equals(getBundle().getHeader(ICoreConstants.ECLIPSE_JREBUNDLE)); //$NON-NLS-1$
-				Runnable runnable = () -> {
-					ArrayList<IPackageFragment> elements = new ArrayList<>();
-					ArrayList<IPackageFragment> conditional = new ArrayList<>();
-					IPackageFragment[] fragments = PDEJavaHelper.getPackageFragments(JavaCore.create(project), pckgs, allowJava);
-					for (IPackageFragment fragment : fragments) {
-						try {
-							if (fragment.containsJavaResources()) {
-								elements.add(fragment);
-							} else {
-								conditional.add(fragment);
-							}
-						} catch (JavaModelException e) {
+		if (PluginProject.isJavaProject(project)) {
+			ILabelProvider labelProvider = new JavaElementLabelProvider();
+			final ConditionalListSelectionDialog dialog = new ConditionalListSelectionDialog(
+					PDEPlugin.getActiveWorkbenchShell(), labelProvider,
+					PDEUIMessages.ExportPackageSection_dialogButtonLabel);
+			final Collection<String> pckgs = fHeader == null ? Collections.emptySet() : fHeader.getPackageNames();
+			final boolean allowJava = "true".equals(getBundle().getHeader(ICoreConstants.ECLIPSE_JREBUNDLE)); //$NON-NLS-1$
+			Runnable runnable = () -> {
+				ArrayList<IPackageFragment> elements = new ArrayList<>();
+				ArrayList<IPackageFragment> conditional = new ArrayList<>();
+				IPackageFragment[] fragments = PDEJavaHelper.getPackageFragments(JavaCore.create(project), pckgs, allowJava);
+				for (IPackageFragment fragment : fragments) {
+					try {
+						if (fragment.containsJavaResources()) {
+							elements.add(fragment);
+						} else {
+							conditional.add(fragment);
 						}
-					}
-					dialog.setElements(elements.toArray());
-					dialog.setConditionalElements(conditional.toArray());
-					dialog.setMultipleSelection(true);
-					dialog.setMessage(PDEUIMessages.PackageSelectionDialog_label);
-					dialog.setTitle(PDEUIMessages.ExportPackageSection_title);
-					dialog.create();
-					PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IHelpContextIds.EXPORT_PACKAGES);
-					SWTUtil.setDialogSize(dialog, 400, 500);
-				};
-				BusyIndicator.showWhile(Display.getCurrent(), runnable);
-				if (dialog.open() == Window.OK) {
-					Object[] selected = dialog.getResult();
-					if (fHeader != null) {
-						for (Object selectedObject : selected) {
-							IPackageFragment candidate = (IPackageFragment) selectedObject;
-							fHeader.addPackage(new ExportPackageObject(fHeader, candidate, getVersionAttribute()));
-						}
-					} else {
-						getBundle().setHeader(getExportedPackageHeader(), getValue(selected));
-						// the way events get triggered, updateButtons isn't called
-						if (selected.length > 0)
-							getTablePart().setButtonEnabled(CALCULATE_USE_INDEX, true);
+					} catch (JavaModelException e) {
 					}
 				}
-				labelProvider.dispose();
+				dialog.setElements(elements.toArray());
+				dialog.setConditionalElements(conditional.toArray());
+				dialog.setMultipleSelection(true);
+				dialog.setMessage(PDEUIMessages.PackageSelectionDialog_label);
+				dialog.setTitle(PDEUIMessages.ExportPackageSection_title);
+				dialog.create();
+				PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IHelpContextIds.EXPORT_PACKAGES);
+				SWTUtil.setDialogSize(dialog, 400, 500);
+			};
+			BusyIndicator.showWhile(Display.getCurrent(), runnable);
+			if (dialog.open() == Window.OK) {
+				Object[] selected = dialog.getResult();
+				if (fHeader != null) {
+					for (Object selectedObject : selected) {
+						IPackageFragment candidate = (IPackageFragment) selectedObject;
+						fHeader.addPackage(new ExportPackageObject(fHeader, candidate, getVersionAttribute()));
+					}
+				} else {
+					getBundle().setHeader(getExportedPackageHeader(), getValue(selected));
+					// the way events get triggered, updateButtons isn't called
+					if (selected.length > 0)
+						getTablePart().setButtonEnabled(CALCULATE_USE_INDEX, true);
+				}
 			}
-		} catch (CoreException e) {
+			labelProvider.dispose();
 		}
 	}
 

@@ -41,7 +41,13 @@ Export-Package:
  org.eclipse.pde.internal.core.iproduct;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.ischema;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.isite;x-friends:="org.eclipse.pde.ui",
- org.eclipse.pde.internal.core.natures;x-friends:="org.eclipse.pde.ui,org.eclipse.pde.ds.ui,org.eclipse.pde.api.tools.tests",
+ org.eclipse.pde.internal.core.natures;
+  x-friends:="org.eclipse.pde.api.tools.ui,
+   org.eclipse.pde.ds.core,
+   org.eclipse.pde.ds.ui,
+   org.eclipse.pde.ui,
+   org.eclipse.pde.api.tools.tests,
+   org.eclipse.pde.api.tools",
  org.eclipse.pde.internal.core.plugin;
   x-friends:="org.eclipse.pde.ui,
    org.eclipse.pde.ds.ui,

@@ -25,7 +25,9 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.FeatureProject;
+import org.eclipse.pde.internal.core.natures.PluginProject;
+import org.eclipse.pde.internal.core.natures.SiteProject;
 
 public class PDEBuilderHelper {
 
@@ -74,15 +76,16 @@ public class PDEBuilderHelper {
 	}
 
 	public static boolean isPDEProject(IProject project) {
-		return project != null && project.isAccessible()
-				&& (PDE.hasPluginNature(project) || PDE.hasFeatureNature(project) || PDE.hasUpdateSiteNature(project));
+		return project != null && project.isAccessible() && //
+				(PluginProject.isPluginProject(project) || FeatureProject.isFeatureProject(project)
+						|| SiteProject.isSiteProject(project));
 	}
 
 	public static boolean hasManifestBuilder(IProject project) {
 		if (project != null && project.isAccessible()) {
 			try {
 				return Arrays.stream(project.getDescription().getBuildSpec())
-						.anyMatch(cmd -> PDE.MANIFEST_BUILDER_ID.equals(cmd.getBuilderName()));
+						.anyMatch(cmd -> PluginProject.MANIFEST_BUILDER_ID.equals(cmd.getBuilderName()));
 			} catch (CoreException e) {
 				// must assume then that it has not the required builder
 			}

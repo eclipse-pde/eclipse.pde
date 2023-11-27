@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2020 IBM Corporation and others.
+ * Copyright (c) 2007, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -45,7 +45,7 @@ import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.bundle.WorkspaceBundlePluginModel;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.core.util.IdUtil;
@@ -118,11 +118,11 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 		}
 
 		// Nature check - do we need to do anything at all?
-		if (projectToConvert.hasNature(PDE.PLUGIN_NATURE)) {
+		if (PluginProject.isPluginProject(projectToConvert)) {
 			return;
 		}
 
-		CoreUtility.addNatureToProject(projectToConvert, PDE.PLUGIN_NATURE, monitor);
+		CoreUtility.addNatureToProject(projectToConvert, PluginProject.NATURE, monitor);
 		// Setup API Tooling, which requires the java nature
 		if (enableApiAnalysis) {
 			if (!projectToConvert.hasNature(JavaCore.NATURE_ID)) {

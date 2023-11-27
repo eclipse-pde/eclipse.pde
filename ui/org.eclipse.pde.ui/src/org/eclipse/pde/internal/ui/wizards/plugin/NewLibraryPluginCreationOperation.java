@@ -75,7 +75,7 @@ import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -220,7 +220,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 			return false;
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		IProject other = workspaceRoot.getProject(entry.getPath().segment(0));
-		if (!PDE.hasPluginNature(other))
+		if (!PluginProject.isPluginProject(other))
 			return false;
 		if (PDEProject.getFragmentXml(other).exists())
 			return false;

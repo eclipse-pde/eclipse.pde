@@ -38,7 +38,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.BaseProject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.correction.ResolutionGenerator;
 import org.eclipse.pde.ui.tests.PDETestCase;
@@ -236,7 +236,7 @@ public abstract class AbstractBuildValidationTest {
 	 */
 	protected void setPreferences(IProject project, int severity) throws BackingStoreException {
 		ProjectScope scope = new ProjectScope(project);
-		IEclipsePreferences projectPrefs = scope.getNode(PDE.PLUGIN_ID);
+		IEclipsePreferences projectPrefs = scope.getNode(BaseProject.PDE_PLUGIN_ID);
 		projectPrefs.putInt(CompilerFlags.P_BUILD, severity);
 		projectPrefs.putInt(CompilerFlags.P_BUILD_MISSING_OUTPUT, severity);
 		projectPrefs.putInt(CompilerFlags.P_BUILD_SOURCE_LIBRARY, severity);

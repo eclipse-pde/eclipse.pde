@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2023 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -84,6 +84,7 @@ import org.eclipse.pde.internal.core.builders.IncrementalErrorReporter.VirtualMa
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.search.PluginJavaSearchUtil;
 import org.eclipse.pde.internal.core.util.IdUtil;
@@ -119,11 +120,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		if (fModel == null || !validateBundleSymbolicName()) {
 			return;
 		}
-		try {
-			if (fProject.hasNature(JavaCore.NATURE_ID)) {
-				validateAutomaticModuleName();
-			}
-		} catch (CoreException e1) {
+		if (PluginProject.isJavaProject(fProject)) {
+			validateAutomaticModuleName();
 		}
 		if (!validateVersionOfRequireBundle()) {
 			return;
@@ -564,14 +562,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		}
 
 		// if we aren't a java project, let's not check for a BREE
-		try {
-			if (!fProject.hasNature(JavaCore.NATURE_ID)) {
-				return;
-			}
-		} catch (CoreException e) {
+		if (!PluginProject.isJavaProject(fProject)) {
 			return;
 		}
-
 		String[] bundleEnvs = desc.getExecutionEnvironments();
 		if (bundleEnvs == null || bundleEnvs.length == 0) {
 			// No EE specified
@@ -975,19 +968,13 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			return;
 		}
 
-		if (isCheckUnknownClass()) {
-			try {
-				if (fProject.hasNature(JavaCore.NATURE_ID)) {
-					IJavaProject javaProject = JavaCore.create(fProject);
-
-					// Look for this activator in the project's classpath
-					if (!PDEJavaHelper.isOnClasspath(activator, javaProject)) {
-						VirtualMarker marker = report(NLS.bind(PDECoreMessages.BundleErrorReporter_NoExist, activator), getLine(header, activator), CompilerFlags.P_UNKNOWN_CLASS, PDEMarkerFactory.M_UNKNOWN_ACTIVATOR, PDEMarkerFactory.CAT_FATAL);
-						addMarkerAttribute(marker,PDEMarkerFactory.compilerKey,  CompilerFlags.P_UNKNOWN_CLASS);
-					}
-				}
-			} catch (CoreException ce) {
-			}
+		if (isCheckUnknownClass() && PluginProject.isJavaProject(fProject)
+				&& !PDEJavaHelper.isOnClasspath(activator, JavaCore.create(fProject))) {
+			// Look for this activator in the project's classpath
+			VirtualMarker marker = report(NLS.bind(PDECoreMessages.BundleErrorReporter_NoExist, activator),
+					getLine(header, activator), CompilerFlags.P_UNKNOWN_CLASS, PDEMarkerFactory.M_UNKNOWN_ACTIVATOR,
+					PDEMarkerFactory.CAT_FATAL);
+			addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_UNKNOWN_CLASS);
 		}
 	}
 
@@ -1368,13 +1355,11 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			IResource resource = model.getUnderlyingResource();
 			if (resource != null) {
 				addProjectPackages(resource.getProject());
-			} else {
+			} else if (PluginProject.isJavaProject(fProject)) {
 				try {
-					if (fProject.hasNature(JavaCore.NATURE_ID)) {
-						IPackageFragment[] fragments = PluginJavaSearchUtil.collectPackageFragments(new IPluginModelBase[] {model}, JavaCore.create(fProject), false);
-						for (IPackageFragment fragment : fragments) {
-							fProjectPackages.add(fragment.getElementName());
-						}
+					IPackageFragment[] fragments = PluginJavaSearchUtil.collectPackageFragments(new IPluginModelBase[] { model }, JavaCore.create(fProject), false);
+					for (IPackageFragment fragment : fragments) {
+						fProjectPackages.add(fragment.getElementName());
 					}
 				} catch (CoreException ce) {
 				}
@@ -1394,13 +1379,13 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	}
 
 	private void addProjectPackages(IProject proj) {
-		try {
-			if (proj.hasNature(JavaCore.NATURE_ID)) {
-				IJavaProject jp = JavaCore.create(proj);
-				IPackageFragmentRoot[] roots = jp.getPackageFragmentRoots();
-				for (int i = 0; i < roots.length; i++) {
-					if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE || (roots[i].getKind() == IPackageFragmentRoot.K_BINARY && !roots[i].isExternal())) {
-						IJavaElement[] children = roots[i].getChildren();
+		if (PluginProject.isJavaProject(proj)) {
+			try {
+				IPackageFragmentRoot[] roots = JavaCore.create(proj).getPackageFragmentRoots();
+				for (IPackageFragmentRoot root : roots) {
+					if (root.getKind() == IPackageFragmentRoot.K_SOURCE
+							|| (root.getKind() == IPackageFragmentRoot.K_BINARY && !root.isExternal())) {
+						IJavaElement[] children = root.getChildren();
 						for (IJavaElement element : children) {
 							IPackageFragment f = (IPackageFragment) element;
 							String name = f.getElementName();
@@ -1413,8 +1398,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 						}
 					}
 				}
+			} catch (CoreException ce) {
 			}
-		} catch (CoreException ce) {
 		}
 	}
 
