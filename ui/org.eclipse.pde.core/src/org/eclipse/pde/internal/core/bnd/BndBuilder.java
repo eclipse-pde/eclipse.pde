@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.bnd;
 
+import java.io.File;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -42,6 +44,8 @@ import org.eclipse.pde.internal.core.project.PDEProject;
 
 import aQute.bnd.build.Project;
 import aQute.bnd.build.ProjectBuilder;
+import aQute.bnd.osgi.Builder;
+import aQute.bnd.osgi.Jar;
 
 public class BndBuilder extends IncrementalProjectBuilder {
 
@@ -154,8 +158,32 @@ public class BndBuilder extends IncrementalProjectBuilder {
 				builder.setBase(bnd.getBase());
 				ProjectJar jar = new ProjectJar(project, CLASS_FILTER);
 				builder.setJar(jar);
+				// build the main jar
 				builder.build();
-				new BndErrorReporter(project, bnd).validateContent(monitor);
+				new BndErrorReporter(project, bnd, project.getFile(BndProject.INSTRUCTIONS_FILE))
+						.validateContent(monitor);
+				// now build sub jars
+				List<Builder> subBuilders = builder.getSubBuilders();
+				if (subBuilders.size() > 0) {
+					for (Builder subBuilder : subBuilders) {
+						File outputFile = subBuilder.getOutputFile(null);
+						if (outputFile != null) {
+							Jar subJar = subBuilder.build();
+							subJar.write(outputFile);
+							for (IFile file : project.getWorkspace().getRoot()
+									.findFilesForLocationURI(outputFile.toURI())) {
+								file.refreshLocal(IResource.DEPTH_ZERO, monitor);
+							}
+							File propertiesFile = subBuilder.getPropertiesFile();
+							if (propertiesFile != null) {
+								for (IFile file : project.getWorkspace().getRoot()
+										.findFilesForLocationURI(propertiesFile.toURI())) {
+									new BndErrorReporter(project, subBuilder, file).validateContent(monitor);
+								}
+							}
+						}
+					}
+				}
 			}
 			if (monitor.isCanceled()) {
 				return;
