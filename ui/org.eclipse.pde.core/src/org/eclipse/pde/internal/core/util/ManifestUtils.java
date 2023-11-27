@@ -245,8 +245,6 @@ public class ManifestUtils {
 
 	/**
 	 * Closes the stream and file
-	 * @param stream
-	 * @param jarFile
 	 */
 	private static void closeZipFileAndStream(InputStream stream, ZipFile jarFile) {
 		try {

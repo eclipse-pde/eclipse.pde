@@ -217,9 +217,6 @@ public class GeneralInfoSection extends PDESection {
 		}
 	}
 
-	/**
-	 * @param event
-	 */
 	private void handleModelEventWorldChanged(IModelChangedEvent event) {
 		refresh();
 		// Note:  A deferred selection event is fired from radio buttons when

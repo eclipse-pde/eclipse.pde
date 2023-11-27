@@ -81,7 +81,6 @@ public abstract class XMLUtil {
 
 	/**
 	 * Get the ISchemaElement corresponding to this IDocumentElementNode
-	 * @param node
 	 * @param extensionPoint the extension point of the schema, if <code>null</code> it will be deduced
 	 * @return the ISchemaElement for <code>node</code>
 	 */
@@ -122,7 +121,6 @@ public abstract class XMLUtil {
 
 	/**
 	 * Get the ISchemaAttribute corresponding to this IDocumentAttributeNode
-	 * @param attr
 	 * @param extensionPoint the extension point of the schema, if <code>null</code> it will be deduced
 	 * @return the ISchemaAttribute for <code>attr</code>
 	 */
@@ -180,11 +178,6 @@ public abstract class XMLUtil {
 		return id;
 	}
 
-	/**
-	 * @param project
-	 * @param attInfo
-	 * @param counter
-	 */
 	public static String createDefaultName(IProject project, ISchemaAttribute attInfo, int counter) {
 		if (attInfo.getType().getName().equals("boolean")) //$NON-NLS-1$
 			return "true"; //$NON-NLS-1$
@@ -193,9 +186,6 @@ public abstract class XMLUtil {
 		return project.getName() + "." + tag + counter; //$NON-NLS-1$
 	}
 
-	/**
-	 * @param elementInfo
-	 */
 	public static int getCounterValue(ISchemaElement elementInfo) {
 		Hashtable<String, Integer> counters = PDEPlugin.getDefault().getDefaultNameCounters();
 		String counterKey = getCounterKey(elementInfo);

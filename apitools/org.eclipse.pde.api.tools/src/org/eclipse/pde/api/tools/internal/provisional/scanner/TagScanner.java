@@ -589,7 +589,6 @@ public class TagScanner {
 		/**
 		 * Determine if the flags contain private or package default flags
 		 *
-		 * @param flags
 		 * @return <code>true</code> if the flags are private or default,
 		 *         <code>false</code> otherwise
 		 */
@@ -605,8 +604,6 @@ public class TagScanner {
 
 	/**
 	 * Delegate for getting the singleton instance of the scanner
-	 *
-	 * @return
 	 */
 	public static final TagScanner newScanner() {
 		if (fSingleton == null) {

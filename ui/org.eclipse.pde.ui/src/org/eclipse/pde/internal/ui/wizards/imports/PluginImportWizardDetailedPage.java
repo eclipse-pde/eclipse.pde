@@ -146,7 +146,6 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 
 	/**
 	 * This filter is used to remove older plug-ins from view
-	 *
 	 */
 	private static class VersionFilter extends ViewerFilter {
 		private final HashMap<String, Version> versions = new HashMap<>();

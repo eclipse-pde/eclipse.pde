@@ -64,9 +64,6 @@ public class PluginReference extends PlatformObject {
 		return getPlugin() != null;
 	}
 
-	/**
-	 * @param model
-	 */
 	public void reconnect(IPluginModelBase model) {
 		// Transient Field:  Plugin
 		IPlugin plugin = null;

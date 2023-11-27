@@ -73,9 +73,6 @@ public class PDESourceViewer {
 
 	/**
 	 * Utility method for creating a field for syntax highlighting
-	 * @param parent
-	 * @param heightHint
-	 * @param widthHint
 	 */
 	public void createUI(Composite parent, int heightHint, int widthHint) {
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);

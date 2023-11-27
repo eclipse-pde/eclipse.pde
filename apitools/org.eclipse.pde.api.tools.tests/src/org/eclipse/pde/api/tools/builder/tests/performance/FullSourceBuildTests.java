@@ -51,8 +51,6 @@ public class FullSourceBuildTests extends PerformanceTest {
 	/**
 	 * Tests a full build of a 3.4 workspace with source from debug.core and pre-reqs
 	 * against a baseline of 3.3 binary plug-ins.
-	 *
-	 * @throws Exception
 	 */
 	public void testFullBuild() throws Exception {
 		tagAsSummary("Full Build", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
@@ -85,8 +83,6 @@ public class FullSourceBuildTests extends PerformanceTest {
 	/**
 	 * Tests a clean and full build of a 3.4 workspace with source from debug.core and pre-reqs
 	 * against a baseline of 3.3 binary plug-ins.
-	 *
-	 * @throws Exception
 	 */
 	public void testCleanFullBuild() throws Exception {
 		tagAsSummary("Clean & Full Build", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$

@@ -37,8 +37,6 @@ public interface IComponentDescriptor extends IElementDescriptor {
 	/**
 	 * Returns the version id for this component or <code>null</code> if
 	 * unspecified.
-	 *
-	 * @return
 	 */
 	public String getVersion();
 

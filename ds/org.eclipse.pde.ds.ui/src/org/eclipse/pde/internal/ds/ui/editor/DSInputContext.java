@@ -42,11 +42,6 @@ public class DSInputContext extends XMLInputContext {
 
 	public static final String CONTEXT_ID = "ds-context"; //$NON-NLS-1$
 
-	/**
-	 * @param editor
-	 * @param input
-	 * @param primary
-	 */
 	public DSInputContext(PDEFormEditor editor, IEditorInput input, boolean primary) {
 		super(editor, input, primary);
 		create();

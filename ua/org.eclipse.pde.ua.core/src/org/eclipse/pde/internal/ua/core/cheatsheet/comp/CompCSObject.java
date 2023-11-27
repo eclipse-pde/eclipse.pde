@@ -68,10 +68,6 @@ public abstract class CompCSObject extends PlatformObject implements
 		DEFAULT_SUBSTITUTE_CHARS.put(Character.valueOf('\"'), "&quot;"); //$NON-NLS-1$
 	}
 
-	/**
-	 * @param model
-	 * @param parent
-	 */
 	public CompCSObject(ICompCSModel model, ICompCSObject parent) {
 		fModel = model;
 		fParent = parent;
@@ -139,22 +135,11 @@ public abstract class CompCSObject extends PlatformObject implements
 		}
 	}
 
-	/**
-	 * @param property
-	 * @param oldValue
-	 * @param newValue
-	 */
 	protected void firePropertyChanged(String property, Object oldValue,
 			Object newValue) {
 		firePropertyChanged(this, property, oldValue, newValue);
 	}
 
-	/**
-	 * @param object
-	 * @param property
-	 * @param oldValue
-	 * @param newValue
-	 */
 	private void firePropertyChanged(ICompCSObject object, String property,
 			Object oldValue, Object newValue) {
 		if (fModel.isEditable()) {
@@ -164,19 +149,10 @@ public abstract class CompCSObject extends PlatformObject implements
 		}
 	}
 
-	/**
-	 * @param child
-	 * @param changeType
-	 */
 	protected void fireStructureChanged(ICompCSObject child, int changeType) {
 		fireStructureChanged(new ICompCSObject[] { child }, changeType);
 	}
 
-	/**
-	 * @param newValue
-	 * @param oldValue
-	 * @param changeType
-	 */
 	protected void fireStructureChanged(ICompCSObject newValue,
 			ICompCSObject oldValue) {
 
@@ -192,10 +168,6 @@ public abstract class CompCSObject extends PlatformObject implements
 		fireStructureChanged(object, changeType);
 	}
 
-	/**
-	 * @param children
-	 * @param changeType
-	 */
 	private void fireStructureChanged(ICompCSObject[] children, int changeType) {
 		if (fModel.isEditable()) {
 			IModelChangeProvider provider = fModel;
@@ -204,21 +176,12 @@ public abstract class CompCSObject extends PlatformObject implements
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	protected boolean isEditable() {
 		return getModel().isEditable();
 	}
 
-	/**
-	 * @param element
-	 */
 	protected abstract void parseAttributes(Element element);
 
-	/**
-	 * @param element
-	 */
 	protected void parseContent(Element element) {
 		// Process children
 		NodeList children = element.getChildNodes();
@@ -232,26 +195,14 @@ public abstract class CompCSObject extends PlatformObject implements
 		}
 	}
 
-	/**
-	 * @param element
-	 */
 	protected abstract void parseElement(Element element);
 
-	/**
-	 * @param element
-	 */
 	protected abstract void parseText(Text text);
 
-	/**
-	 * @param buffer
-	 */
 	protected abstract void writeAttributes(StringBuilder buffer);
 
 	/**
 	 * Writes child elements or child content
-	 *
-	 * @param indent
-	 * @param writer
 	 */
 	protected abstract void writeElements(String indent, PrintWriter writer);
 

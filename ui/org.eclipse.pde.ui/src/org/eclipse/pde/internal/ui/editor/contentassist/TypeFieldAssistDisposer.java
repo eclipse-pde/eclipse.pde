@@ -21,7 +21,6 @@ import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
 
 /**
  * TypeFieldAssistDisposer
- *
  */
 public class TypeFieldAssistDisposer {
 
@@ -29,17 +28,11 @@ public class TypeFieldAssistDisposer {
 
 	private final TypeContentProposalListener fListener;
 
-	/**
-	 *
-	 */
 	public TypeFieldAssistDisposer(ContentAssistCommandAdapter adapter, TypeContentProposalListener listener) {
 		fAdapter = adapter;
 		fListener = listener;
 	}
 
-	/**
-	 *
-	 */
 	public void dispose() {
 		if (fAdapter == null) {
 			return;

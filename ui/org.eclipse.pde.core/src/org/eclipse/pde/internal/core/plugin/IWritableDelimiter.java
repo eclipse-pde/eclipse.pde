@@ -18,7 +18,6 @@ import java.io.PrintWriter;
 
 /**
  * IWritableDelimeter
- *
  */
 public interface IWritableDelimiter {
 

@@ -52,7 +52,6 @@ public class Factory {
 	 * id of a component that actually exists: no resolution or lookup of any
 	 * kind is done with the descriptor.
 	 *
-	 * @param componentid
 	 * @return a new component descriptor
 	 */
 	public static IComponentDescriptor componentDescriptor(String componentid) {
@@ -65,7 +64,6 @@ public class Factory {
 	 * component that actually exists: no resolution or lookup of any kind is
 	 * done with the descriptor.
 	 *
-	 * @param componentid
 	 * @param version version descriptor or <code>null</code> if none
 	 * @return a new component descriptor
 	 */
@@ -90,7 +88,6 @@ public class Factory {
 	 * fully qualified name. Package names are dot qualified and type names are
 	 * '$'-qualified.
 	 *
-	 * @param fullyQualifiedName
 	 * @return an {@link ITypeDescriptor} for the type
 	 */
 	public static IReferenceTypeDescriptor typeDescriptor(String fullyQualifiedName) {

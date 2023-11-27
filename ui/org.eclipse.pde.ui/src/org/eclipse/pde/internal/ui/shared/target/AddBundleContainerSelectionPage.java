@@ -153,7 +153,6 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 
 	/**
 	 * Creates the IWizardNode instances that provide choices for the user to select
-	 * @param wizardSelectionViewer
 	 */
 	private void initViewerContents(TableViewer wizardSelectionViewer) {
 		List<AbstractBundleContainerNode> choices = new ArrayList<>();

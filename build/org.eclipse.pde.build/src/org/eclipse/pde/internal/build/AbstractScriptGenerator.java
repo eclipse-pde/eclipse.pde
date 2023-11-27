@@ -111,8 +111,6 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	/**
 	 * Starting point for script generation. See subclass implementations for
 	 * individual comments.
-	 * 
-	 * @throws CoreException
 	 */
 	public abstract void generate() throws CoreException;
 
@@ -320,7 +318,6 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	 * Return a build time site referencing things to be built.   
 	 * @param refresh : indicate if a refresh must be performed. Although this flag is set to true, a new site is not rebuild if the urls of the site did not changed 
 	 * @return BuildTimeSite
-	 * @throws CoreException
 	 */
 	public BuildTimeSite getSite(boolean refresh) throws CoreException {
 		if (siteFactory != null && refresh == false)
@@ -389,8 +386,6 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 
 	/**
 	 * Sets the pluginPath.
-	 * 
-	 * @param path
 	 */
 	public void setPluginPath(String[] path) {
 		pluginPath = path;

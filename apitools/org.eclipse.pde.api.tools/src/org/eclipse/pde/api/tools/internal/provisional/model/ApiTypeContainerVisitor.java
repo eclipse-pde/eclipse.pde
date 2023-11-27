@@ -56,9 +56,6 @@ public abstract class ApiTypeContainerVisitor {
 	 * The default implementation does nothing and returns <code>true</code>.
 	 * Subclasses may re-implement.
 	 * </p>
-	 *
-	 * @param container
-	 * @return
 	 */
 	public boolean visit(IApiTypeContainer container) {
 		return true;
@@ -69,8 +66,6 @@ public abstract class ApiTypeContainerVisitor {
 	 * <p>
 	 * The default implementation does nothing. Subclasses may re-implement.
 	 * </p>
-	 *
-	 * @param container
 	 */
 	public void end(IApiTypeContainer container) {
 		// subclasses my re-implement

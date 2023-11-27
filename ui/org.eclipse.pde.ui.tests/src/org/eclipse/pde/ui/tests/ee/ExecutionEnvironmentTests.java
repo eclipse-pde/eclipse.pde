@@ -53,9 +53,6 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 
 	/**
 	 * Deletes the specified project.
-	 *
-	 * @param name
-	 * @throws CoreException
 	 */
 	protected void deleteProject(String name) throws CoreException {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
@@ -84,9 +81,6 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 
 	/**
 	 * Validates that the project's option is as expected
-	 *
-	 * @param optionName
-	 * @param expectedValue
 	 */
 	protected void validateOption(IJavaProject project, String optionName, String expectedValue) {
 		String option = project.getOption(optionName, true);
@@ -95,10 +89,6 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 
 	/**
 	 * Validates the JRE class path container is as expected.
-	 *
-	 * @param project
-	 * @param conatinerPath
-	 * @throws JavaModelException
 	 */
 	protected void validateSystemLibrary(IJavaProject project, IPath conatinerPath) throws JavaModelException {
 		IClasspathEntry[] classpath = project.getRawClasspath();
@@ -135,8 +125,6 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 	 * TODO The VM this is run on must be included in the compatible JREs for
 	 * the custom environment. See
 	 * {@link EnvironmentAnalyzerDelegate#analyze(org.eclipse.jdt.launching.IVMInstall, IProgressMonitor)}
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testCustomEnvironment() throws Exception {
@@ -169,8 +157,6 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 	 * Creates a plug-in project with a J2SE-1.4 execution environment.
 	 * Validates that compiler compliance settings and build path are correct
 	 * and that class files are generated with correct target level.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testJava4Environment() throws Exception {
@@ -201,8 +187,6 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 	 * Creates a plug-in project without an execution environment. Validates
 	 * that compiler compliance settings and build path reflect default
 	 * workspace settings.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testNoEnvironment() throws Exception {
@@ -232,8 +216,6 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 	 * Modifies the compliance options and then updates the class path again.
 	 * Ensures that the enum and assert identifier options get overwritten with
 	 * minimum 'warning' severity.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testMinimumComplianceOverwrite() throws Exception {
@@ -277,8 +259,6 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 	 * Modifies the compliance options and then updates the class path again.
 	 * Ensures that the enum and assert identifier options do not overwrite
 	 * existing 'error' severity.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testMinimumComplianceNoOverwrite() throws Exception {

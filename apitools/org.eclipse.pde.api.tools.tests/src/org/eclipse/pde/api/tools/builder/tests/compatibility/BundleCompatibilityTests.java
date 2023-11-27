@@ -41,7 +41,6 @@ public class BundleCompatibilityTests extends CompatibilityTest {
 
 	/**
 	 * Constructor
-	 * @param name
 	 */
 	public BundleCompatibilityTests(String name) {
 		super(name);

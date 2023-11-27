@@ -139,7 +139,6 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 	/**
 	 * Cleans the API description for the given project.
 	 *
-	 * @param project
 	 * @param delete whether to delete the file on disk
 	 * @param remove whether to remove the cached API description
 	 */
@@ -167,8 +166,6 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 
 	/**
 	 * Notifies the API description that the underlying project has changed.
-	 *
-	 * @param project
 	 */
 	synchronized void projectChanged(IJavaProject project) {
 		ProjectApiDescription desc = (ProjectApiDescription) fDescriptions.get(project);
@@ -180,8 +177,6 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 	/**
 	 * Notifies the API description that the underlying project classpath has
 	 * changed.
-	 *
-	 * @param project
 	 */
 	synchronized void projectClasspathChanged(IJavaProject project) {
 		ProjectApiDescription desc = (ProjectApiDescription) fDescriptions.get(project);
@@ -192,8 +187,6 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 
 	/**
 	 * Flushes the changed element from the model cache
-	 *
-	 * @param element
 	 */
 	void flushElementCache(IJavaElement element) {
 		switch (element.getElementType()) {
@@ -253,10 +246,7 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 	 * Restores the API description from its saved file, if any and returns true
 	 * if successful.
 	 *
-	 * @param project
-	 * @param description
 	 * @return whether the restore succeeded
-	 * @throws CoreException
 	 */
 	private boolean restoreDescription(IJavaProject project, ProjectApiDescription description) throws CoreException {
 		File file = API_DESCRIPTIONS_CONTAINER_PATH.append(project.getElementName()).append(IApiCoreConstants.API_DESCRIPTION_XML_NAME).toFile();
@@ -432,7 +422,6 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 	 *
 	 * @param message error message
 	 * @param exception underlying exception, or <code>null</code>
-	 * @throws CoreException
 	 */
 	private static void abort(String message, Throwable exception) throws CoreException {
 		IStatus status = Status.error(message, exception);

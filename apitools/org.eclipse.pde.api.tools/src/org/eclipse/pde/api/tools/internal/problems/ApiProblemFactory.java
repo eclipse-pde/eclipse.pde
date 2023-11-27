@@ -51,9 +51,6 @@ public class ApiProblemFactory {
 	/**
 	 * Creates a new {@link IApiProblemFilter}
 	 *
-	 * @param componentid
-	 * @param problem
-	 * @param comment
 	 * @return the new {@link IApiProblemFilter}
 	 * @since 1.1
 	 */
@@ -101,7 +98,6 @@ public class ApiProblemFactory {
 	/**
 	 * Returns the deep hash code of the complete listing of message arguments
 	 *
-	 * @param arguments
 	 * @return the hash code of the message arguments
 	 */
 	private static int argumentsHashcode(String[] arguments) {
@@ -405,8 +401,6 @@ public class ApiProblemFactory {
 	 * arguments. Returns a not found message if no localized message cannot be
 	 * created.
 	 *
-	 * @param messageid
-	 * @param messageargs
 	 * @return a localized message for the given arguments or a 'not found'
 	 *         message
 	 */
@@ -476,10 +470,6 @@ public class ApiProblemFactory {
 	/**
 	 * Creates a problem id from the composite members of a problem id.
 	 *
-	 * @param category
-	 * @param element
-	 * @param kind
-	 * @param flags
 	 * @return a new problem id
 	 */
 	public static int createProblemId(int category, int element, int kind, int flags) {
@@ -491,7 +481,6 @@ public class ApiProblemFactory {
 	 * <code>-1</code> if the marker is <code>null</code> or the marker does not
 	 * contain the {@link IApiMarkerConstants#MARKER_ATTR_PROBLEM_ID} attribute
 	 *
-	 * @param marker
 	 * @return the {@link IApiProblem} id or <code>-1</code>
 	 * @since 1.0.400
 	 */
@@ -509,7 +498,6 @@ public class ApiProblemFactory {
 	 * @see IApiProblem#getKind()
 	 * @see IDelta#getKind()
 	 *
-	 * @param problemid
 	 * @return the kind from the given problem id
 	 */
 	public static int getProblemKind(int problemid) {
@@ -523,7 +511,6 @@ public class ApiProblemFactory {
 	 * @see IElementDescriptor#getElementType()
 	 * @see IDelta#getElementType()
 	 *
-	 * @param problemid
 	 * @return the element kind from the given problem id
 	 */
 	public static int getProblemElementKind(int problemid) {
@@ -536,7 +523,6 @@ public class ApiProblemFactory {
 	 *
 	 * @see IDelta#getFlags()
 	 *
-	 * @param problemid
 	 * @return the flags from the given problem id
 	 */
 	public static int getProblemFlags(int problemid) {
@@ -549,7 +535,6 @@ public class ApiProblemFactory {
 	 *
 	 * @see IApiProblem#getCategory()
 	 *
-	 * @param problemid
 	 * @return the category of this problem id
 	 */
 	public static int getProblemCategory(int problemid) {
@@ -559,7 +544,6 @@ public class ApiProblemFactory {
 	/**
 	 * Convenience method to get the message id from a problem id
 	 *
-	 * @param problemid
 	 * @return the message id to use for the given problem id
 	 */
 	public static int getProblemMessageId(int problemid) {
@@ -569,10 +553,6 @@ public class ApiProblemFactory {
 	/**
 	 * Returns the problem message id for the given problem parameters.
 	 *
-	 * @param category
-	 * @param element
-	 * @param kind
-	 * @param flags
 	 * @return the id of the message to use for the given problem parameters or
 	 *         <code>0</code>
 	 */
@@ -1001,10 +981,6 @@ public class ApiProblemFactory {
 	/**
 	 * Returns the problem severity id for the given problem parameters.
 	 *
-	 * @param category
-	 * @param element
-	 * @param kind
-	 * @param flags
 	 * @return the id of the preference to use to lookup the user specified
 	 *         severity level for the given {@link IApiProblem}
 	 */

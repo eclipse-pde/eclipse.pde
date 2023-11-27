@@ -21,7 +21,6 @@ package org.eclipse.pde.internal.ds.core;
  * @since 3.4
  * @see IDSModel
  * @see IDSComponent
- *
  */
 public interface IDSDocumentFactory {
 

@@ -81,8 +81,6 @@ public class PluginBlock extends AbstractPluginBlock {
 
 	/**
 	 * Refresh the enable state of this block using the current launch config
-	 * @param enable
-	 * @throws CoreException
 	 */
 	public void initialize(boolean enable) throws CoreException {
 		// To support lazy loading of the table we need to set some launch configuration attributes when the combo changes

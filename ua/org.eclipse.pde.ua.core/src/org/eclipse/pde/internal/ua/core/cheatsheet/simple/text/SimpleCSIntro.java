@@ -25,9 +25,6 @@ public class SimpleCSIntro extends SimpleCSObject implements ISimpleCSIntro {
 
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * @param model
-	 */
 	public SimpleCSIntro(ISimpleCSModel model) {
 		super(model, ELEMENT_INTRO);
 	}

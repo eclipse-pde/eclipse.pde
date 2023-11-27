@@ -50,8 +50,6 @@ public class ApiDescriptionTests extends PerformanceTest {
 	/**
 	 * Tests a clean and visit jdt-ui source project. Populates the entire API
 	 * description.
-	 *
-	 * @throws Exception
 	 */
 	public void testCleanVisit() throws Exception {
 		tagAsSummary("Build API description from source tags", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$

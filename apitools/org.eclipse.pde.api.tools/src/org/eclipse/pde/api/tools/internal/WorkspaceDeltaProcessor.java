@@ -53,8 +53,6 @@ public class WorkspaceDeltaProcessor implements IElementChangedListener, IResour
 
 	/**
 	 * Processes the java element deltas of interest
-	 *
-	 * @param deltas
 	 */
 	void processJavaElementDeltas(IJavaElementDelta[] deltas, IJavaProject project) {
 		for (IJavaElementDelta delta : deltas) {

@@ -28,9 +28,6 @@ public class CompCSModelFactory implements ICompCSModelFactory {
 
 	private final ICompCSModel fModel;
 
-	/**
-	 * @param model
-	 */
 	public CompCSModelFactory(ICompCSModel model) {
 		fModel = model;
 	}

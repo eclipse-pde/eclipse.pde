@@ -96,8 +96,6 @@ public class XmlReferenceDescriptorWriter {
 
 	/**
 	 * Writes the given references to XML files.
-	 *
-	 * @param references
 	 */
 	public void writeReferences(IReferenceDescriptor[] references) {
 		if (fLocation != null) {
@@ -132,8 +130,6 @@ public class XmlReferenceDescriptorWriter {
 	 * vmap (Reference Type -> tmap)
 	 * tmap (Referenced Member -> Reference Descriptor)
 	 * </pre>
-	 *
-	 * @param references
 	 */
 	private void collateResults(IReferenceDescriptor[] references) throws CoreException {
 		if (fReferenceMap == null) {
@@ -161,10 +157,8 @@ public class XmlReferenceDescriptorWriter {
 	/**
 	 * Resolves the id to use for the component in the mapping
 	 *
-	 * @param component
 	 * @return the id to use for the component in the mapping, includes the
 	 *         version information as well
-	 * @throws CoreException
 	 */
 	private String getId(IComponentDescriptor component) {
 		return component.getId() + " (" + component.getVersion() + ')'; //$NON-NLS-1$
@@ -174,7 +168,6 @@ public class XmlReferenceDescriptorWriter {
 	 * Returns a formatted version of the references xml file name for use
 	 * during conversion via the default XSLT file
 	 *
-	 * @param groupname
 	 * @return a formatted version of the references file name
 	 */
 	private String getFormattedTypeName(String groupname) {
@@ -192,9 +185,6 @@ public class XmlReferenceDescriptorWriter {
 
 	/**
 	 * Returns the name for the file of references base on the given type
-	 *
-	 * @param type
-	 * @return
 	 */
 	private String getRefTypeName(int type) {
 		return switch (type)
@@ -209,7 +199,6 @@ public class XmlReferenceDescriptorWriter {
 	/**
 	 * Writes out the XML for the given api element using the collated
 	 * {@link IReference}s
-	 *
 	 */
 	private void writeXML(File parent) throws CoreException, IOException {
 		for (var entry : fReferenceMap.entrySet()) {
@@ -246,10 +235,6 @@ public class XmlReferenceDescriptorWriter {
 	 *
 	 * @param origin the name of the bundle that has the references in it
 	 * @param referee the name of the bundle that is referenced
-	 * @param parent
-	 * @param name
-	 * @param map
-	 * @param visibility
 	 */
 	private void writeGroup(String origin, String referee, File parent, String name,
 			Map<String, Set<IReferenceDescriptor>> map, int visibility)
@@ -355,10 +340,6 @@ public class XmlReferenceDescriptorWriter {
 
 	/**
 	 * gets the root kind element
-	 *
-	 * @param root
-	 * @param kind
-	 * @return
 	 */
 	private Element findTypeElement(Element root, String tname) {
 		if (tname == null) {
@@ -377,10 +358,6 @@ public class XmlReferenceDescriptorWriter {
 
 	/**
 	 * gets the root kind element
-	 *
-	 * @param root
-	 * @param kind
-	 * @return
 	 */
 	private Element findKindElement(Element root, Integer kind) {
 		Element kelement = null;
@@ -397,10 +374,6 @@ public class XmlReferenceDescriptorWriter {
 	/**
 	 * Writes the attributes from the given {@link IReference} into a new
 	 * {@link Element} that is added to the given parent.
-	 *
-	 * @param document
-	 * @param parent
-	 * @param reference
 	 */
 	private void writeReference(Document document, Element parent, IReferenceDescriptor reference) throws CoreException {
 		Integer kind = Integer.valueOf(reference.getReferenceKind());
@@ -450,10 +423,6 @@ public class XmlReferenceDescriptorWriter {
 
 	/**
 	 * Returns the text to set in the attribute for the given {@link IApiMember}
-	 *
-	 * @param member
-	 * @return
-	 * @throws CoreException
 	 */
 	private String getText(IMemberDescriptor member) throws CoreException {
 		return switch (member.getElementType())

@@ -277,9 +277,6 @@ public class ConfigurationSection extends PDESection {
 		}
 	}
 
-	/**
-	 * @param event
-	 */
 	private void handleModelEventWorldChanged(IModelChangedEvent event) {
 		// This section can get disposed if the configuration is changed from
 		// plugins to features or vice versa.  Subsequently, the configuration

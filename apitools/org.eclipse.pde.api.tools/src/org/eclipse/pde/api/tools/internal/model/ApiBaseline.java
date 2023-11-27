@@ -351,8 +351,6 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 
 	/**
 	 * Adds an {@link IApiComponent} to the fComponentsById mapping
-	 *
-	 * @param component
 	 */
 	protected void addComponent(IApiComponent component) {
 		if (isDisposed() || component == null) {
@@ -580,11 +578,6 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * Resolves the listing of {@link IApiComponent}s that export the given
 	 * package name. The collection of {@link IApiComponent}s is written into
 	 * the specified list <code>componentList</code>
-	 *
-	 * @param component
-	 * @param packageName
-	 * @param componentsList
-	 * @throws CoreException
 	 */
 	private void resolvePackage0(IApiComponent component, String packageName, List<IApiComponent> componentsList)
 			throws CoreException {
@@ -631,9 +624,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	/**
 	 * Returns all of the visible dependent components from the current state
 	 *
-	 * @param components
 	 * @return the listing of visible dependent components to the given ones
-	 * @throws CoreException
 	 */
 	public IApiComponent[] getVisibleDependentComponents(IApiComponent[] components) throws CoreException {
 		ArrayList<BundleDescription> bundles = getBundleDescriptions(components);
@@ -935,7 +926,6 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	/**
 	 * Clear cached settings for the given package.
 	 *
-	 * @param packageName
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @nooverride This method is not intended to be re-implemented or extended
 	 *             by clients.

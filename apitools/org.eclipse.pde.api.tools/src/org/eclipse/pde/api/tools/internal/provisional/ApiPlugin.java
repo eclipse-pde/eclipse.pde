@@ -471,7 +471,6 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 
 	/**
 	 * @noreference This method is not intended to be referenced by clients.
-	 * @param message
 	 */
 	public static void logInfoMessage(String message) {
 		// this message is intentionally not internationalized, as an exception
@@ -515,8 +514,6 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 	 * Adds the given save participant to the listing of participants to be
 	 * notified when the workbench saving life-cycle occurs. If the specified
 	 * participant is <code>null</code> no changes are made.
-	 *
-	 * @param participant
 	 */
 	public void addSaveParticipant(ISaveParticipant participant) {
 		if (participant != null) {
@@ -527,8 +524,6 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 	/**
 	 * Removes the given save participant from the current listing. If the
 	 * specified participant is <code>null</code> no changes are made.
-	 *
-	 * @param participant
 	 */
 	public void removeSaveParticipant(ISaveParticipant participant) {
 		if (participant != null) {
@@ -747,7 +742,6 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 	 * <li>if no nodes could be determined from the given contexts</li>
 	 * </ul>
 	 *
-	 * @param context
 	 * @return the array of {@link IEclipsePreferences} to look in or
 	 *         <code>null</code>.
 	 * @since 1.1
@@ -772,7 +766,6 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 	/**
 	 * Returns if the given project has project-specific settings.
 	 *
-	 * @param project
 	 * @return true if the project has specific settings, false otherwise
 	 * @since 1.1
 	 */

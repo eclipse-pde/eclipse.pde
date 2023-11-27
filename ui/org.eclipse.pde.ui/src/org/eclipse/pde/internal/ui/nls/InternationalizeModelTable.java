@@ -24,7 +24,6 @@ import java.util.List;
  * to which plug-ins will be internationalized.
  *
  * @author Team Azure
- *
  */
 public class InternationalizeModelTable<T> {
 	private final List<T> fModels;
@@ -38,8 +37,6 @@ public class InternationalizeModelTable<T> {
 	/**
 	 * Adds the model to the model table. Takes into consideration the specified
 	 * selection.
-	 * @param model
-	 * @param selected
 	 */
 	public void addToModelTable(T model, boolean selected) {
 		if (selected)
@@ -50,7 +47,6 @@ public class InternationalizeModelTable<T> {
 
 	/**
 	 * Adds the model to the model table.
-	 * @param model
 	 */
 	public void addModel(T model) {
 		fModels.add(model);
@@ -58,7 +54,6 @@ public class InternationalizeModelTable<T> {
 
 	/**
 	 * Removes the specified model from the model table.
-	 * @param model
 	 */
 	public void removeModel(T model) {
 		fModels.remove(model);

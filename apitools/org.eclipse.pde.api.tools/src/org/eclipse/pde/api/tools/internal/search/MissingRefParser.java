@@ -101,11 +101,6 @@ class MissingRefParser extends UseScanParser {
 
 	static final FileFilter filter = pathname -> pathname.isFile() && pathname.getName().endsWith(".xml"); //$NON-NLS-1$
 
-	/**
-	 * @param xmlLocation
-	 * @param visitor
-	 * @throws Exception
-	 */
 	public void parse(String xmlLocation, MissingRefVisitor visitor) throws Exception {
 		if (xmlLocation == null) {
 			throw new Exception(SearchMessages.missing_xml_files_location);

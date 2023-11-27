@@ -58,8 +58,6 @@ public class TagScannerTests {
 	/**
 	 * Creates a new empty API component description, not owned by any
 	 * component.
-	 *
-	 * @return
 	 */
 	protected IApiDescription newDescription() {
 		return new ApiDescription(null);
@@ -67,9 +65,6 @@ public class TagScannerTests {
 
 	/**
 	 * Creates a new {@link ArchiveApiTypeContainer} on the given path
-	 *
-	 * @param path
-	 * @return
 	 */
 	protected IApiTypeContainer newArchiveClassFileContainer(IPath path) {
 		return new ArchiveApiTypeContainer(null, path.toOSString());
@@ -79,7 +74,6 @@ public class TagScannerTests {
 	 * Returns a new compilation unit on the standard test source path with the
 	 * specified name appended
 	 *
-	 * @param name
 	 * @return a new compilation unit
 	 */
 	private CompilationUnit getCompilationUnit(String name) {
@@ -90,10 +84,6 @@ public class TagScannerTests {
 	/**
 	 * Performs the scan to populate the manifest and traps exceptions thrown
 	 * from the scanner
-	 *
-	 * @param name
-	 * @param manifest
-	 * @param cfc
 	 */
 	protected void doScan(String name, IApiDescription manifest, IApiTypeContainer cfc) {
 		try {
@@ -106,9 +96,6 @@ public class TagScannerTests {
 	/**
 	 * Performs the scan to populate the manifest and traps exceptions thrown
 	 * from the scanner
-	 *
-	 * @param name
-	 * @param manifest
 	 */
 	protected void doScan(String name, IApiDescription manifest) {
 		try {
@@ -121,10 +108,6 @@ public class TagScannerTests {
 	/**
 	 * Performs the scan to populate the manifest and traps exceptions thrown
 	 * from the scanner
-	 *
-	 * @param name
-	 * @param manifest
-	 * @param cfc
 	 */
 	protected void doScan(String name, IApiDescription manifest, Map<String, String> options) {
 		try {
@@ -1267,7 +1250,6 @@ public class TagScannerTests {
 	/**
 	 * Tests only default methods annotate API descriptions with @nooverride
 	 *
-	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=427495
 	 */
 	@Test
@@ -1285,7 +1267,6 @@ public class TagScannerTests {
 	/**
 	 * Tests default methods annotate API descriptions with @noreference
 	 *
-	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=427495
 	 */
 	@Test
@@ -1304,7 +1285,6 @@ public class TagScannerTests {
 	 * Tests default methods annotate API descriptions with @noreference
 	 * and @nooverride
 	 *
-	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=427495
 	 */
 	@Test
@@ -1324,7 +1304,6 @@ public class TagScannerTests {
 	 * Tests resolving methods with generic type parameters. The resolution
 	 * process calls into {@link Signatures#getMethodSignatureFromNode}
 	 *
-	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=484268
 	 */
 	@Test

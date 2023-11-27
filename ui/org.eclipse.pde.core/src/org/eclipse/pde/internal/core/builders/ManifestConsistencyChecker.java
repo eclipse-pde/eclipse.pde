@@ -458,7 +458,6 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	 *
 	 * @param resource resource to delete markers from
 	 * @param depth one of the depth constants in {@link IResource}
-	 * @throws CoreException
 	 */
 	private void cleanProblems(IResource resource, int depth) throws CoreException {
 		if (resource.exists()) {

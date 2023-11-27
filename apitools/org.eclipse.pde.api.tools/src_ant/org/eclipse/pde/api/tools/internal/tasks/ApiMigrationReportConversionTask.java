@@ -85,8 +85,6 @@ public class ApiMigrationReportConversionTask extends CommonUtilsTask {
 	 * Set the group of {@link String} patterns to use as heuristics to filter
 	 * references to names matching any of the given patterns during the report
 	 * conversion
-	 *
-	 * @param patterns
 	 */
 	public void setToFilterPatterns(String patterns) {
 		this.toPatterns = parsePatterns(patterns);
@@ -96,8 +94,6 @@ public class ApiMigrationReportConversionTask extends CommonUtilsTask {
 	 * Set the group of {@link String} patterns to use as heuristics to filter
 	 * references from names matching any of the given patterns during the
 	 * report conversion
-	 *
-	 * @param patterns
 	 */
 	public void setFilterPatterns(String patterns) {
 		this.filterPatterns = parsePatterns(patterns);
@@ -114,8 +110,6 @@ public class ApiMigrationReportConversionTask extends CommonUtilsTask {
 	 * <p>
 	 * The location is an absolute path.
 	 * </p>
-	 *
-	 * @param xsltFileLocation
 	 */
 	public void setXSLTFile(String xsltFileLocation) {
 		this.xsltFileLocation = xsltFileLocation;

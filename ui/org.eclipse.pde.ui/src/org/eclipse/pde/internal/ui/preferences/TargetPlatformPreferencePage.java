@@ -390,7 +390,6 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 
 	/**
 	 * Performs resolve of selected target in fTableViewer
-	 *
 	 */
 	private void performResolve(Object element) {
 		if (!(element instanceof final ITargetDefinition target)) {

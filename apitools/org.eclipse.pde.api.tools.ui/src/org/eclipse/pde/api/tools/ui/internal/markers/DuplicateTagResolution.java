@@ -27,8 +27,6 @@ public class DuplicateTagResolution extends UnsupportedTagResolution {
 
 	/**
 	 * Constructor
-	 *
-	 * @param marker
 	 */
 	public DuplicateTagResolution(IMarker marker) {
 		super(marker);

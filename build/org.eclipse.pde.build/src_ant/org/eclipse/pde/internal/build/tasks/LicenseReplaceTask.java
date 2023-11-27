@@ -295,7 +295,6 @@ public class LicenseReplaceTask extends Task {
 
 	/**
 	 * The directory containing the feature 
-	 * @param path
 	 */
 	public void setFeatureFilePath(String path) {
 		filePath = path;
@@ -303,7 +302,6 @@ public class LicenseReplaceTask extends Task {
 
 	/**
 	 * The directory containing the license feature
-	 * @param path
 	 */
 	public void setLicenseFilePath(String path) {
 		licensePath = path;

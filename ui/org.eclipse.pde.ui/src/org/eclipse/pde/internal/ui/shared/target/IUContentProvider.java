@@ -26,7 +26,6 @@ import org.eclipse.pde.internal.core.target.P2TargetUtils;
 
 /**
  * Content Provider for the  {@link IUBundleContainer} target location
- *
  */
 public class IUContentProvider implements ITreeContentProvider {
 

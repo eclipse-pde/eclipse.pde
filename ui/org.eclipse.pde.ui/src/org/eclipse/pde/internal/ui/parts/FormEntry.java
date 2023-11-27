@@ -56,7 +56,6 @@ public class FormEntry {
 
 	/**
 	 * The default constructor. Call 'createControl' to make it.
-	 *
 	 */
 	public FormEntry(Composite parent, FormToolkit toolkit, String labelText, int style) {
 		createControl(parent, toolkit, labelText, style, null, false, 0, 0);
@@ -64,12 +63,6 @@ public class FormEntry {
 
 	/**
 	 * This constructor create all the controls right away.
-	 *
-	 * @param parent
-	 * @param toolkit
-	 * @param labelText
-	 * @param browseText
-	 * @param linkLabel
 	 */
 	public FormEntry(Composite parent, FormToolkit toolkit, String labelText, String browseText, boolean linkLabel) {
 		this(parent, toolkit, labelText, browseText, linkLabel, 0);
@@ -178,8 +171,6 @@ public class FormEntry {
 
 	/**
 	 * Attaches the listener for the entry.
-	 *
-	 * @param listener
 	 */
 	public void setFormEntryListener(IFormEntryListener listener) {
 		if (fLabel != null && fLabel instanceof Hyperlink) {
@@ -218,7 +209,6 @@ public class FormEntry {
 	/**
 	 * If dirty, commits the text in the widget to the value and notifies the
 	 * listener. This call clears the 'dirty' flag.
-	 *
 	 */
 	public void commit() {
 		if (fDirty) {
@@ -246,7 +236,6 @@ public class FormEntry {
 
 	/**
 	 * Returns the text control.
-	 *
 	 */
 	public Text getText() {
 		return fText;
@@ -266,7 +255,6 @@ public class FormEntry {
 	/**
 	 * Returns the current entry value. If the entry is dirty and was not
 	 * commited, the value may be different from the text in the widget.
-	 *
 	 */
 	public String getValue() {
 		return fValue.trim();
@@ -274,7 +262,6 @@ public class FormEntry {
 
 	/**
 	 * Returns true if the text has been modified.
-	 *
 	 */
 	public boolean isDirty() {
 		return fDirty;
@@ -296,8 +283,6 @@ public class FormEntry {
 
 	/**
 	 * Sets the value of this entry.
-	 *
-	 * @param value
 	 */
 	public void setValue(String value) {
 		if (fText != null)
@@ -308,9 +293,6 @@ public class FormEntry {
 	/**
 	 * Sets the value of this entry with the possibility to turn the
 	 * notification off.
-	 *
-	 * @param value
-	 * @param blockNotification
 	 */
 	public void setValue(String value, boolean blockNotification) {
 		fIgnoreModify = blockNotification;
@@ -331,7 +313,6 @@ public class FormEntry {
 	 * If GridData was used, set the width hint.  If TableWrapData was used
 	 * set the max width.  If no layout data was specified, this method does
 	 * nothing.
-	 * @param width
 	 */
 	public void setTextWidthHint(int width) {
 		Object data = getText().getLayoutData();

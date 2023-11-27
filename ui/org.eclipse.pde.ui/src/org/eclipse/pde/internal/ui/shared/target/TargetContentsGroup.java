@@ -1138,7 +1138,6 @@ public class TargetContentsGroup {
 
 	/**
 	 * Content provider for the content tree.  Allows for different groupings to be used.
-	 *
 	 */
 	class TreeContentProvider implements ITreeContentProvider {
 		@Override

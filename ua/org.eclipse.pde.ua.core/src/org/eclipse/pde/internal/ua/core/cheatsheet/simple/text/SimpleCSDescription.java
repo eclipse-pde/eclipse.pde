@@ -26,9 +26,6 @@ public class SimpleCSDescription extends SimpleCSObject implements
 
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * @param model
-	 */
 	public SimpleCSDescription(ISimpleCSModel model) {
 		super(model, ELEMENT_DESCRIPTION);
 	}

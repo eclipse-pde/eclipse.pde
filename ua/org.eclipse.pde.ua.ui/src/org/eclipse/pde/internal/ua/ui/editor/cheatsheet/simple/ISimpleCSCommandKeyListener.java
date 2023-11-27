@@ -16,13 +16,9 @@ package org.eclipse.pde.internal.ua.ui.editor.cheatsheet.simple;
 
 /**
  * ISimpleCSCommandKeyListener
- *
  */
 public interface ISimpleCSCommandKeyListener {
 
-	/**
-	 * @param event
-	 */
 	public void newCommandKey(NewCommandKeyEvent event);
 
 }

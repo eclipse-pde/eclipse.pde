@@ -27,7 +27,6 @@ import org.eclipse.ui.forms.widgets.Form;
 
 /**
  * CompCSTreeValidator
- *
  */
 public class CompCSGroupValidator {
 

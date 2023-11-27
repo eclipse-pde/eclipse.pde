@@ -25,9 +25,6 @@ public class SimpleCSRepeatedSubItem extends SimpleCSObject implements
 
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * @param model
-	 */
 	public SimpleCSRepeatedSubItem(ISimpleCSModel model) {
 		super(model, ELEMENT_REPEATED_SUBITEM);
 	}

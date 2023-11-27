@@ -153,9 +153,6 @@ public interface IFeature extends IFeatureObject, IVersionable, IEnvironment {
 	 */
 	public String getImageName();
 
-	/**
-	 *
-	 */
 	IPluginModelBase getReferencedModel(IFeaturePlugin reference);
 
 	/**

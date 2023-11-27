@@ -23,9 +23,6 @@ public class HostDescriptoin extends RequirementSpecification implements IHostDe
 
 	/**
 	 * Constructs a host description.
-	 *
-	 * @param name
-	 * @param range
 	 */
 	public HostDescriptoin(String name, VersionRange range) {
 		super(name, range, false, false);

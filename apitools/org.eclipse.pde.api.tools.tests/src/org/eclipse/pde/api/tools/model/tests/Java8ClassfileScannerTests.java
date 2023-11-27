@@ -59,8 +59,6 @@ public class Java8ClassfileScannerTests extends ScannerTest {
 
 	/**
 	 * Tests getting an invoke dynamic ref for a static method ref
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testStaticMethodRef() throws Exception {
@@ -71,8 +69,6 @@ public class Java8ClassfileScannerTests extends ScannerTest {
 
 	/**
 	 * Tests getting an invoke dynamic ref for an instance method ref
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testInstanceMethodRef() throws Exception {
@@ -84,8 +80,6 @@ public class Java8ClassfileScannerTests extends ScannerTest {
 	/**
 	 * Tests an invoke dynamic reference to an instance method of an arbitrary
 	 * object
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testArbitraryObjectMethodRef() throws Exception {
@@ -96,8 +90,6 @@ public class Java8ClassfileScannerTests extends ScannerTest {
 
 	/**
 	 * Tests an invoke dynamic reference to a constructor method ref
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testConstructorMethodRef() throws Exception {
@@ -108,8 +100,6 @@ public class Java8ClassfileScannerTests extends ScannerTest {
 
 	/**
 	 * Cleans up after the tests are done. This must be the last test run
-	 *
-	 * @throws Exception
 	 */
 	@AfterClass
 	public static void testCleanup() throws Exception {

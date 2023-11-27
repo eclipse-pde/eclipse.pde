@@ -49,7 +49,6 @@ public class OSGiSettingsTab extends AbstractLauncherTab {
 
 	/**
 	 * Constructor
-	 *
 	 */
 	public OSGiSettingsTab() {
 		fImage = PDEPluginImages.DESC_SETTINGS_OBJ.createImage();

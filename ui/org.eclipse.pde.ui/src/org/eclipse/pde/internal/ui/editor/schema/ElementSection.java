@@ -141,10 +141,6 @@ public class ElementSection extends TreeSection {
 		createSectionToolbar(section, toolkit);
 	}
 
-	/**
-	 * @param section
-	 * @param toolkit
-	 */
 	private void createSectionToolbar(Section section, FormToolkit toolkit) {
 
 		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
@@ -605,9 +601,6 @@ public class ElementSection extends TreeSection {
 		}
 	}
 
-	/**
-	 * @param event
-	 */
 	private void handleModelEventWorldChanged(IModelChangedEvent event) {
 		// Note:  Cannot use event.  There are no changed objects within it
 		// This method acts like a refresh

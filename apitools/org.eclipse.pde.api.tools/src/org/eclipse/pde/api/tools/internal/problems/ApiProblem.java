@@ -240,7 +240,6 @@ public class ApiProblem implements IApiProblem {
 	/**
 	 * Compares the complete list of message arguments
 	 *
-	 * @param arguments
 	 * @return true if all of the arguments are equal, false otherwise
 	 */
 	private boolean argumentsEqual(String[] arguments) {
@@ -261,7 +260,6 @@ public class ApiProblem implements IApiProblem {
 	/**
 	 * Returns the deep hash code of the complete listing of message arguments
 	 *
-	 * @param arguments
 	 * @return the hash code of the message arguments
 	 */
 	private int argumentsHashcode(String[] arguments) {
@@ -311,7 +309,6 @@ public class ApiProblem implements IApiProblem {
 	 * Returns the string representation of an element descriptor type or
 	 * <code>null</code> if the kind is unknown
 	 *
-	 * @param kind
 	 * @return the string of the kind or <code>null</code>
 	 */
 	public static String getDescriptorKind(int kind) {
@@ -340,7 +337,6 @@ public class ApiProblem implements IApiProblem {
 	/**
 	 * Returns the string representation of the kind of since tab api problem
 	 *
-	 * @param kind
 	 * @return the string for the since tag api problem kind
 	 */
 	public static String getTagsProblemKindName(int kind) {
@@ -360,7 +356,6 @@ public class ApiProblem implements IApiProblem {
 	 * Returns the string representation of the kind of usage problem for an
 	 * {@link IApiProblem} kind
 	 *
-	 * @param kind
 	 * @return the string for the usage API problem kind
 	 */
 	public static String getUsageProblemKindName(int kind) {
@@ -393,7 +388,6 @@ public class ApiProblem implements IApiProblem {
 	/**
 	 * Returns the string representation of the version problem kind.
 	 *
-	 * @param kind
 	 * @return the string of the version API problem kind
 	 */
 	public static String getVersionProblemKindName(int kind) {
@@ -422,7 +416,6 @@ public class ApiProblem implements IApiProblem {
 	/**
 	 * Returns the string representation of the API component problem kind
 	 *
-	 * @param kind
 	 * @return the string of the API component problem kind
 	 */
 	public static String getApiComponentResolutionProblemKindName(int kind) {
@@ -438,7 +431,6 @@ public class ApiProblem implements IApiProblem {
 	/**
 	 * Returns the string representation of the API baseline problem kind
 	 *
-	 * @param kind
 	 * @return the string of the API baseline problem kind
 	 */
 	public static String getApiBaselineProblemKindName(int kind) {
@@ -458,9 +450,6 @@ public class ApiProblem implements IApiProblem {
 	/**
 	 * Returns the string representation of the API Use Scan breakage problem
 	 * kind
-	 *
-	 * @param kind
-	 * @return
 	 */
 	public static String getApiUseScanProblemKindName(int kind) {
 		switch (kind) {
@@ -480,8 +469,6 @@ public class ApiProblem implements IApiProblem {
 	 * Returns the string representation of the kind of an {@link IApiProblem},
 	 * given its category
 	 *
-	 * @param category
-	 * @param kind
 	 * @return the string of the {@link IApiProblem} kind
 	 */
 	public static String getProblemKind(int category, int kind) {
@@ -508,8 +495,6 @@ public class ApiProblem implements IApiProblem {
 	/**
 	 * Return the string representation of the flags for a problem
 	 *
-	 * @param category
-	 * @param flags
 	 * @return the string for the problem flags
 	 */
 	public static String getProblemFlagsName(int category, int flags) {
@@ -567,8 +552,6 @@ public class ApiProblem implements IApiProblem {
 	 * Returns the string representation of the element kind of an
 	 * {@link IApiProblem}, given its category
 	 *
-	 * @param category
-	 * @param kind
 	 * @return the string of the {@link IApiProblem} element kind
 	 */
 	public static String getProblemElementKind(int category, int kind) {
@@ -595,7 +578,6 @@ public class ApiProblem implements IApiProblem {
 	/**
 	 * Returns a string representation of the category of an API problem
 	 *
-	 * @param category
 	 * @return the string of the API problem category
 	 */
 	public static String getProblemCategory(int category) {

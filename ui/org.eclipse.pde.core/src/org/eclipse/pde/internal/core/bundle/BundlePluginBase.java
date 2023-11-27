@@ -153,10 +153,6 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 		fireStructureChanged(library, true);
 	}
 
-	/**
-	 * @param library
-	 * @param header
-	 */
 	private void addLibrary(IPluginLibrary library, IManifestHeader header) {
 		String value = header == null ? null : header.getValue();
 		StringBuilder buffer = new StringBuilder(value == null ? "" : value); //$NON-NLS-1$
@@ -817,10 +813,6 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 		fireStructureChanged(iimport, true);
 	}
 
-	/**
-	 * @param iimport
-	 * @param index
-	 */
 	private void addImport(IPluginImport iimport, int index) {
 		// Get the header
 		IManifestHeader header = getManifestHeader(Constants.REQUIRE_BUNDLE);

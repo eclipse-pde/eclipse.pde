@@ -63,8 +63,6 @@ public class UseScanTests extends PerformanceTestCase {
 
 	/**
 	 * Cleans the location if it exists
-	 *
-	 * @param file
 	 */
 	private void scrubReportLocation(File file) {
 		if (file.exists() && file.isDirectory()) {

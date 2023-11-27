@@ -42,10 +42,6 @@ public class AntFilterStore extends FilterStore {
 	public static ArrayList<IApiProblem> filteredAPIProblems = new ArrayList<>();
 	/**
 	 * Constructor
-	 *
-	 * @param debug
-	 * @param filtersRoot
-	 * @param componentID
 	 */
 	public AntFilterStore(String filtersRoot, String componentID) {
 		fComponentId = componentID;

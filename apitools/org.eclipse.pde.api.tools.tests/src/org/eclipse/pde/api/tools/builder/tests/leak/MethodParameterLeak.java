@@ -506,7 +506,6 @@ public class MethodParameterLeak extends LeakTest {
 	/**
 	 * Tests that a protected method with an internal parameter is not reported in a final class
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=257113
-	 * @param inc
 	 */
 	private void x19(boolean inc) {
 		expectingNoProblems();
@@ -525,7 +524,6 @@ public class MethodParameterLeak extends LeakTest {
 	/**
 	 * Tests that a protected method with an internal parameter is not reported in a final class
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=257113
-	 * @param inc
 	 */
 	private void x20(boolean inc) {
 		expectingNoProblems();

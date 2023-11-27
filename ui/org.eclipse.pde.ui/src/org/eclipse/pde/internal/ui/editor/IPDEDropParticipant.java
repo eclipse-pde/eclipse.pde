@@ -16,7 +16,6 @@ package org.eclipse.pde.internal.ui.editor;
 
 /**
  * IPDEDropParticipant
- *
  */
 public interface IPDEDropParticipant {
 

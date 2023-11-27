@@ -32,10 +32,6 @@ public class BundleModel extends AbstractEditingModel implements IBundleModel {
 	private final IBundle fBundle;
 	private IBundleModelFactory fFactory;
 
-	/**
-	 * @param document
-	 * @param isReconciling
-	 */
 	public BundleModel(IDocument document, boolean isReconciling) {
 		super(document, isReconciling);
 		fBundle = new Bundle(this);

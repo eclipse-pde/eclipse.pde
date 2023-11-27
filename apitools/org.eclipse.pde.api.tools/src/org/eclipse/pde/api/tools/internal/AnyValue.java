@@ -23,8 +23,6 @@ public class AnyValue {
 
 	/**
 	 * Constructor
-	 *
-	 * @param arg
 	 */
 	public AnyValue(String arg) {
 		// do nothing

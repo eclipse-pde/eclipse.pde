@@ -23,7 +23,6 @@ public interface ICompCS extends ICompCSObject {
 
 	/**
 	 * Attribute: name
-	 *
 	 */
 	public String getFieldName();
 
@@ -34,7 +33,6 @@ public interface ICompCS extends ICompCSObject {
 
 	/**
 	 * Elements: taskGroup, task
-	 *
 	 */
 	public ICompCSTaskObject getFieldTaskObject();
 

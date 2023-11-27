@@ -25,7 +25,6 @@ import org.eclipse.pde.internal.ds.core.IDSObject;
  * @since 3.4
  * @see IDSComponent
  * @see IDSObject
- *
  */
 public class DSImplementation extends DSObject implements IDSImplementation {
 

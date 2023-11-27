@@ -19,9 +19,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public class BooleanAttributeRow extends ChoiceAttributeRow {
-	/**
-	 * @param att
-	 */
 	public BooleanAttributeRow(IContextPart part, ISchemaAttribute att) {
 		super(part, att);
 	}

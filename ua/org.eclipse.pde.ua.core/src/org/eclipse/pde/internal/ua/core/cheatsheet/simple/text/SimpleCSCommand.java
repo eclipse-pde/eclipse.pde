@@ -29,9 +29,6 @@ public class SimpleCSCommand extends SimpleCSRunObject implements
 	// TODO: MP: TEO: HIGH: Verify translate attribute values okay - no
 	// translate before
 
-	/**
-	 * @param model
-	 */
 	public SimpleCSCommand(ISimpleCSModel model) {
 		super(model, ELEMENT_COMMAND);
 	}

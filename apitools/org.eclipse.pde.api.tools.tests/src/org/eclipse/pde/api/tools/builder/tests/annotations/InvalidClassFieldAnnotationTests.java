@@ -22,8 +22,6 @@ public class InvalidClassFieldAnnotationTests extends FieldAnnotationTest {
 
 	/**
 	 * Constructor
-	 *
-	 * @param name
 	 */
 	public InvalidClassFieldAnnotationTests(String name) {
 		super(name);

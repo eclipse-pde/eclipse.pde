@@ -60,7 +60,6 @@ public class BuildTimeSiteFactory /*extends BaseSiteFactory*/ implements IPDEBui
 	 * Note that the site object is not recomputed if no change has been done.
 	 * 
 	 * @return ISite
-	 * @throws CoreException
 	 */
 	public BuildTimeSite createSite() throws CoreException {
 		if (site != null && urlsChanged == false)

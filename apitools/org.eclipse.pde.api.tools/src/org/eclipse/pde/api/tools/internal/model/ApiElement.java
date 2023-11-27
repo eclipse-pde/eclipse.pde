@@ -84,8 +84,6 @@ public abstract class ApiElement implements IApiElement {
 	/**
 	 * Sets the name of this {@link ApiElement} to the new name, iff the new
 	 * name is not <code>null</code>, otherwise no change is made.
-	 *
-	 * @param newname
 	 */
 	protected void setName(String newname) {
 		if (newname != null) {
@@ -98,7 +96,6 @@ public abstract class ApiElement implements IApiElement {
 	 *
 	 * @param message message
 	 * @param e underlying exception or <code>null</code>
-	 * @throws CoreException
 	 */
 	protected void abort(String message, Throwable e) throws CoreException {
 		throw abortException(message, e);

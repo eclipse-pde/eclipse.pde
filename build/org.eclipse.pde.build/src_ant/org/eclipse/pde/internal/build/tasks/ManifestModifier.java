@@ -48,7 +48,6 @@ public class ManifestModifier extends Task {
 	/**
 	 * Indicate new values to add to the manifest. The format of the parameter is key|value#key|value#...
 	 * If a value is specified to null, the key will be removed from the manifest. 
-	 * @param values
 	 */
 	public void setKeyValue(String values) {
 		StringTokenizer tokenizer = new StringTokenizer(values, DELIM, false);
@@ -123,10 +122,6 @@ public class ManifestModifier extends Task {
 		manifest.getMainAttributes().remove(new Attributes.Name(key));
 	}
 
-	/**
-	 * 
-	 * @param path
-	 */
 	public void setManifestLocation(String path) {
 		manifestLocation = path;
 	}

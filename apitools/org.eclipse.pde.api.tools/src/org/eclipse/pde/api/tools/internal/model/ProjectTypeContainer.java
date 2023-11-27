@@ -78,11 +78,6 @@ public class ProjectTypeContainer extends ApiElement implements IApiTypeContaine
 
 	/**
 	 * Visits the given {@link IContainer}
-	 *
-	 * @param container
-	 * @param pkgName
-	 * @param visitor
-	 * @throws CoreException
 	 */
 	private void doVisit(IContainer container, String pkgName, ApiTypeContainerVisitor visitor) throws CoreException {
 		IResource[] members = container.members();

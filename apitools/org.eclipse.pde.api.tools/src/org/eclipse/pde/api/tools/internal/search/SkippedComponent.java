@@ -38,8 +38,6 @@ public class SkippedComponent implements IApiElement {
 	/**
 	 * Constructor
 	 *
-	 * @param componentid
-	 * @param version
 	 * @param errors the {@link ResolverError}s, if any, that prevented this
 	 *            component from being scanned
 	 */
@@ -141,8 +139,6 @@ public class SkippedComponent implements IApiElement {
 	/**
 	 * Resolves the root errors for the given set of errors
 	 *
-	 * @param rerrors
-	 * @param collector
 	 * @return the resolved leaf set of problem messages
 	 */
 	private String[] resolveRootErrors(ResolverError[] rerrors) {
