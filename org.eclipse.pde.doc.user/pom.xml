@@ -39,6 +39,16 @@
     <plugins>
           <plugin>
             <groupId>org.eclipse.tycho</groupId>
+            <artifactId>tycho-p2-plugin</artifactId>
+            <configuration>
+                <ignoredPatterns combine.children="append">
+                    <!-- Javadoc changes on every build-->
+                    <pattern>reference/api/**/*</pattern>
+                </ignoredPatterns>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.eclipse.tycho</groupId>
             <artifactId>target-platform-configuration</artifactId>
             <configuration>
               <dependency-resolution>
@@ -163,7 +173,7 @@
                         <excludePackageNames>*.internal.*</excludePackageNames>
                         <windowtitle>Eclipse PDE API Specification</windowtitle>
                         <doctitle>Eclipse PDE API Specification</doctitle>
-                        <header><![CDATA[<span style='font-size:small'><b>Eclipse PDE</b><br>2023-12 (4.30)</span> ]]></header>
+                        <header><![CDATA[<span style='font-size:small'><b>Eclipse PDE</b><br>${releaseName} (${releaseNumberSDK})</span>]]></header>
                         <bottom><![CDATA[<br><span style='font-size:small;float:right'>Copyright (c) 2000, 2023 Eclipse Contributors and others. All rights reserved.</span><span style='font-size:small'><a href='{@docRoot}/../misc/api-usage-rules.html'>Guidelines for using Eclipse APIs.</a></span>]]></bottom>
                         <sourcepath>${eclipse.pde.build}/org.eclipse.pde.build/src
                                     ;${eclipse.pde.ui.apitools}/org.eclipse.pde.api.tools.annotations/src
@@ -174,11 +184,11 @@
                             <!-- This is used to make linkt to other docs from eclipse relative -->
                             <offlineLink>
                                 <url>./../../../org.eclipse.platform.doc.isv/reference/api</url>
-                                <location>../../unpack/org.eclipse.platform.doc.isv/reference/api</location>
+                                <location>${project.build.directory}/unpack/org.eclipse.platform.doc.isv/reference/api</location>
                             </offlineLink>
                             <offlineLink>
                                 <url>./../../../org.eclipse.jdt.doc.isv/reference/api</url>
-                                <location>../../unpack/org.eclipse.jdt.doc.isv/reference/api</location>
+                                <location>${project.build.directory}/unpack/org.eclipse.jdt.doc.isv/reference/api</location>
                             </offlineLink>
                         </offlineLinks>
                     </configuration>
