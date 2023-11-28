@@ -1131,7 +1131,8 @@ public class P2TargetUtils {
 	}
 
 	/**
-	 * @return the phase set to execute, includes the configuration phase if {@link #getIncludeConfigurePhase()} is <code>true<code>
+	 * @return the phase set to execute, includes the configuration phase if
+	 *         {@link #getIncludeConfigurePhase()} is <code>true</code>
 	 */
 	@SuppressWarnings("restriction")
 	private IPhaseSet createPhaseSet() {
