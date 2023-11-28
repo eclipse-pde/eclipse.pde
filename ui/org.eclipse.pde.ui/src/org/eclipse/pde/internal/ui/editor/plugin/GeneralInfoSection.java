@@ -16,14 +16,18 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
+import java.util.stream.Stream;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.layout.RowLayoutFactory;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
@@ -41,6 +45,8 @@ import org.eclipse.pde.internal.ui.editor.validation.TextValidator;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -55,7 +61,7 @@ import org.osgi.framework.Constants;
  * Provides the first section of the manifest editor describing the bundle id/name/version/etc.
  */
 public abstract class GeneralInfoSection extends PDESection {
-	private static String PLATFORM_FILTER = "Eclipse-PlatformFilter"; //$NON-NLS-1$
+	private static final String PLATFORM_FILTER = "Eclipse-PlatformFilter"; //$NON-NLS-1$
 
 	private FormEntry fIdEntry;
 	private FormEntry fVersionEntry;
@@ -76,6 +82,10 @@ public abstract class GeneralInfoSection extends PDESection {
 	private IPluginModelBase fModel;
 
 	protected Button fSingleton;
+
+	private Button fBundleShapeDefault;
+	private Button fBundleShapeJar;
+	private Button fBundleShapeDir;
 
 	public GeneralInfoSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION);
@@ -102,6 +112,7 @@ public abstract class GeneralInfoSection extends PDESection {
 		if (isBundle() && ((ManifestEditor) getPage().getEditor()).isEquinox())
 			createPlatformFilterEntry(client, toolkit, actionBars);
 		createSpecificControls(client, toolkit, actionBars);
+		createBundleShape(client, toolkit, PDEUIMessages.PluginGeneralInfoSection_bundleshape);
 		toolkit.paintBordersFor(client);
 
 		addListeners();
@@ -340,6 +351,23 @@ public abstract class GeneralInfoSection extends PDESection {
 			IManifestHeader header = getSingletonHeader();
 			fSingleton.setSelection(header instanceof BundleSymbolicNameHeader && ((BundleSymbolicNameHeader) header).isSingleton());
 		}
+		// Select the corresponding 'Bundle-Shape' radio button (eventually)
+		Stream.of(fBundleShapeDefault, fBundleShapeJar, fBundleShapeDir).forEach(b -> b.setSelection(false));
+		Button selectedBundleShape = fBundleShapeDefault;
+		IManifestHeader header = getBundle().getManifestHeader(ICoreConstants.ECLIPSE_BUNDLE_SHAPE);
+		if (header != null) {
+			String value = header.getValue();
+			if (value != null) {
+				selectedBundleShape = switch (value) {
+					case ICoreConstants.SHAPE_JAR -> fBundleShapeJar;
+					case ICoreConstants.SHAPE_DIR -> fBundleShapeDir;
+					default -> null; // unsupported value
+				};
+			}
+		}
+		if (selectedBundleShape != null) {
+			selectedBundleShape.setSelection(true);
+		}
 		super.refresh();
 	}
 
@@ -400,4 +428,38 @@ public abstract class GeneralInfoSection extends PDESection {
 		}));
 	}
 
+	protected void createBundleShape(Composite parent, FormToolkit toolkit, String label) {
+		Composite c = new Composite(parent, SWT.NONE);
+		TableWrapData td = new TableWrapData();
+		td.colspan = 3;
+		c.setLayoutData(td);
+		RowLayoutFactory.fillDefaults().spacing(5).applyTo(c);
+		toolkit.createLabel(c, label, SWT.NONE);
+		fBundleShapeDefault = toolkit.createButton(c, PDEUIMessages.GeneralInfoSection_BundleShape_default, SWT.RADIO);
+		fBundleShapeJar = toolkit.createButton(c, PDEUIMessages.GeneralInfoSection_BundleShape_jar, SWT.RADIO);
+		fBundleShapeDir = toolkit.createButton(c, PDEUIMessages.GeneralInfoSection_BundleShape_dir, SWT.RADIO);
+		fBundleShapeDir.setToolTipText(PDEUIMessages.GeneralInfoSection_BundleShape_dir_tooltip);
+		fBundleShapeJar.setToolTipText(PDEUIMessages.GeneralInfoSection_BundleShape_jar_tooltip);
+		fBundleShapeDefault.setToolTipText(PDEUIMessages.GeneralInfoSection_BundleShape_default_tooltip);
+		fBundleShapeDefault.setSelection(true);
+		fBundleShapeJar.addSelectionListener(SelectionListener
+				.widgetSelectedAdapter(event -> setBundleShapeHeader(event, ICoreConstants.SHAPE_JAR)));
+		fBundleShapeDir.addSelectionListener(SelectionListener
+				.widgetSelectedAdapter(event -> setBundleShapeHeader(event, ICoreConstants.SHAPE_DIR)));
+		fBundleShapeDefault.addSelectionListener(
+				SelectionListener.widgetSelectedAdapter(event -> setBundleShapeHeader(event, null)));
+	}
+
+	private void setBundleShapeHeader(SelectionEvent event, String shape) {
+		if (((Button) event.widget).getSelection()) {
+			IBundle bundle = getBundle();
+			if (shape != null) {
+				bundle.setHeader(ICoreConstants.ECLIPSE_BUNDLE_SHAPE, shape);
+			} else {
+				// Setting the header's value to null removes it (setting the
+				// header to null is not sufficient)
+				bundle.getManifestHeader(ICoreConstants.ECLIPSE_BUNDLE_SHAPE).setValue(null);
+			}
+		}
+	}
 }
