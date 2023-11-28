@@ -2150,6 +2150,12 @@ public class PDEUIMessages extends NLS {
 	public static String ProductFileWizadPage_basic;
 	public static String Product_overview_exporting;
 	public static String GeneralInfoSection_desc;
+	public static String GeneralInfoSection_BundleShape_default;
+	public static String GeneralInfoSection_BundleShape_dir;
+	public static String GeneralInfoSection_BundleShape_jar;
+	public static String GeneralInfoSection_BundleShape_default_tooltip;
+	public static String GeneralInfoSection_BundleShape_dir_tooltip;
+	public static String GeneralInfoSection_BundleShape_jar_tooltip;
 	public static String ProductInfoSection_desc;
 	public static String ProductInfoSection_id;
 	public static String ProductInfoSection_product;
@@ -2568,6 +2574,8 @@ public class PDEUIMessages extends NLS {
 	public static String PluginGeneralInfoSection_lazyStart;
 
 	public static String PluginGeneralInfoSection_singleton;
+
+	public static String PluginGeneralInfoSection_bundleshape;
 
 	public static String FragmentGeneralInfoSection_singleton;
 
