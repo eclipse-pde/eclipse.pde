@@ -742,12 +742,12 @@ public interface IApiProblem {
 	public String[] getExtraMarkerAttributeIds();
 
 	/**
-	 * Returns the respective values for the extra marker attributes associated
-	 * to this problem when persisted into a marker by the JavaBuilder. Each
-	 * value must correspond to a matching attribute name, as defined by
-	 * {@link #getExtraMarkerAttributeIds()}. The values must be eligible for
-	 * marker creation, as defined by
-	 * <code> IMarker#setAttributes(String[], Object[])}.
+	 * Returns the respective values for the extra marker attributes associated to
+	 * this problem when persisted into a marker by the JavaBuilder. Each value must
+	 * correspond to a matching attribute name, as defined by
+	 * {@link #getExtraMarkerAttributeIds()}. The values must be eligible for marker
+	 * creation, as defined by
+	 * <code> IMarker#setAttributes(String[], Object[])}</code>.
 	 *
 	 * @return the values of the corresponding extra marker attributes
 	 */

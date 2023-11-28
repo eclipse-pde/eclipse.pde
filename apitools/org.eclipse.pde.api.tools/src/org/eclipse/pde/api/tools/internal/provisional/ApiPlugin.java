@@ -65,7 +65,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 
 	/**
 	 * Constant representing the expected name for an execution environment
-	 * description fragment Value is <code>org.eclipse.pde.api.tools.ee"
+	 * description fragment Value is <code>"org.eclipse.pde.api.tools.ee"</code>
 	 */
 	private static final String EE_DESCRIPTION_PREFIX = "org.eclipse.pde.api.tools.ee"; //$NON-NLS-1$
 	/**

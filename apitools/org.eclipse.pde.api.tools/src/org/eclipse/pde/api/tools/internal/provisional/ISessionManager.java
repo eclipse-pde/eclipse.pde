@@ -71,7 +71,7 @@ public interface ISessionManager {
 	/**
 	 * Returns the active session or <code>null</code> if there is no session.
 	 *
-	 * @return active session or <code>null</null>
+	 * @return active session or <code>null</code>
 	 */
 	public ISession getActiveSession();
 

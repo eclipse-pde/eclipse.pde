@@ -512,10 +512,10 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 	}
 
 	/**
-	 * Returns <code>true</code if the given component should be filtered from
+	 * Returns <code>true</code> if the given component should be filtered from
 	 * results of this task. This may be because the name is a match or partial
-	 * match to the exlude list or the name is not a match to the include list.
-	 * If no include or exclude list is provided, no filtering is done and
+	 * match to the exlude list or the name is not a match to the include list. If
+	 * no include or exclude list is provided, no filtering is done and
 	 * <code>false</code> is returned.
 	 *
 	 * @param componentID name of the api component (symbolic name of a bundle)
