@@ -80,24 +80,25 @@ public class ConvertSchemaToHTML extends Task {
 	}
 
 	/**
-	 * Optional attribute providing a comma <code>','</code> delimited
-	 * list of file paths to search for plug-ins that provide schema
-	 * files included by the schema files being converted.
+	 * Optional attribute providing a comma <code>','</code> delimited list of
+	 * file paths to search for plug-ins that provide schema files included by
+	 * the schema files being converted.
 	 * <p>
-	 * When a schema file includes another, the html will include the
-	 * element definitions from the included schema if it is available.
-	 * If the schema does not exist in the same plug-in, the task will
-	 * assume the schema url is of the form
-	 * <code>schema://<pluginID>/<schemaPath>. It will extract the plug-in
-	 * ID and look for a folder of that name in the same directory as the
-	 * parent schema's host plug-in. If the plug-ins are not all in the same
-	 * directory, this attribute can be used to locate them.
-	 * </p><p>
-	 * The paths can be absolute file paths or paths relative to the ant
-	 * base directory <code>${basedir}</code>.
+	 * When a schema file includes another, the html will include the element
+	 * definitions from the included schema if it is available. If the schema
+	 * does not exist in the same plug-in, the task will assume the schema url
+	 * is of the form <code>schema://<pluginID>/<schemaPath></code>. It will
+	 * extract the plug-in ID and look for a folder of that name in the same
+	 * directory as the parent schema's host plug-in. If the plug-ins are not
+	 * all in the same directory, this attribute can be used to locate them.
+	 * </p>
+	 * <p>
+	 * The paths can be absolute file paths or paths relative to the ant base
+	 * directory <code>${basedir}</code>.
 	 * </p>
 	 *
-	 * @param additionalSearchPaths comma delimited list of search paths
+	 * @param additionalSearchPaths
+	 *            comma delimited list of search paths
 	 */
 	public void setAdditionalSearchPaths(String additionalSearchPaths) {
 		this.additionalSearchPaths = additionalSearchPaths;
