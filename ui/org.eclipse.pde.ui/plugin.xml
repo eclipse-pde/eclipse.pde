@@ -2514,7 +2514,8 @@
          name="Bnd Repository Location">
       <targetLocation
             locationFactory="org.eclipse.pde.internal.ui.bndtools.RepositoryTargetLocation$Factory"
-            type="BndRepositoryLocation">
+            type="BndRepositoryLocation"
+            canUpdate="false">
       </targetLocation>
    </extension>
 
@@ -2536,7 +2537,7 @@
          name="Bnd Run Descriptor Location">
       <targetLocation
             locationFactory="org.eclipse.pde.internal.ui.bndtools.RunDescriptorTargetLocation$Factory"
-            type="BndRunDescriptorLocation">
+            type="BndRunDescriptorLocation" canUpdate="false">
       </targetLocation>
    </extension>
 </plugin>
