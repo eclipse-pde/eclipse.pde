@@ -62,4 +62,5 @@ If your Organizations is an [Eclipse Member](https://www.eclipse.org/membership/
 
 The following Organizations support PDE getting processing power for their builds:
 * <img src="https://www.eclipse.org/favicon.ico" width="16" height="16"> [Eclipse Foundation](https://www.eclipse.org/sponsor/) - host our CI Infrastructure, become a friend of Eclipse and support the Eclipse Foundation in general
+* <img src="https://www.sap.com/favicon.ico"     width="16" height="16"> [SAP SE](https://www.eclipse.org/membership/showMember.php?member_id=665) - sponsors two resource packs with 2 CPU / 8 GB RAM each
 
