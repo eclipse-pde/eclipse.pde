@@ -231,7 +231,8 @@ public abstract class NewPluginProjectFromTemplateWizard extends NewWizard imple
 			for (IConfigurationElement element : elements) {
 				if (element.getName().equals(TAG_WIZARD)) {
 					if (templateID.equals(element.getAttribute(WizardElement.ATT_ID))) {
-						return WizardElement.create(element);
+						return WizardElement.create(element, WizardElement.ATT_NAME, WizardElement.ATT_ID,
+								WizardElement.ATT_CLASS);
 					}
 				}
 			}

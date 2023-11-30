@@ -21,13 +21,11 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.ElementList;
 import org.eclipse.pde.internal.ui.wizards.Category;
 import org.eclipse.pde.internal.ui.wizards.WizardCollectionElement;
 import org.eclipse.pde.internal.ui.wizards.WizardElement;
-import org.eclipse.swt.graphics.Image;
 
 public class NewExtensionRegistryReader {
 	public static final String TAG_WIZARD = "wizard"; //$NON-NLS-1$
@@ -61,41 +59,17 @@ public class NewExtensionRegistryReader {
 	}
 
 	protected WizardElement createWizardElement(IConfigurationElement config) {
-		String name = config.getAttribute(WizardElement.ATT_NAME);
-		String id = config.getAttribute(WizardElement.ATT_ID);
 		String className = config.getAttribute(WizardElement.ATT_CLASS);
 		String template = config.getAttribute(WizardElement.ATT_TEMPLATE);
-		if (name == null || id == null)
+		if (className == null && template == null) {
 			return null;
-		if (className == null && template == null)
-			return null;
-		WizardElement element = new WizardElement(config);
-		String imageName = config.getAttribute(WizardElement.ATT_ICON);
-		if (imageName != null) {
-			String pluginID = config.getNamespaceIdentifier();
-			Image image = PDEPlugin.getDefault().getLabelProvider().getImageFromPlugin(pluginID, imageName);
-			element.setImage(image);
 		}
-		return element;
+		return WizardElement.create(config, WizardElement.ATT_NAME, WizardElement.ATT_ID);
 	}
 
 	protected WizardElement createEditorWizardElement(IConfigurationElement config) {
-		String name = config.getAttribute(WizardElement.ATT_NAME);
-		String id = config.getAttribute(WizardElement.ATT_ID);
-		String className = config.getAttribute(WizardElement.ATT_CLASS);
-		String point = config.getAttribute(WizardElement.ATT_POINT);
-		if (name == null || id == null || className == null)
-			return null;
-		if (point == null)
-			return null;
-		WizardElement element = new WizardElement(config);
-		String imageName = config.getAttribute(WizardElement.ATT_ICON);
-		if (imageName != null) {
-			String pluginID = config.getNamespaceIdentifier();
-			Image image = PDEPlugin.getDefault().getLabelProvider().getImageFromPlugin(pluginID, imageName);
-			element.setImage(image);
-		}
-		return element;
+		return WizardElement.create(config, WizardElement.ATT_NAME, WizardElement.ATT_ID, WizardElement.ATT_CLASS,
+				WizardElement.ATT_POINT);
 	}
 
 	protected String getCategoryStringFor(IConfigurationElement config) {
