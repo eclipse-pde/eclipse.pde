@@ -42,7 +42,7 @@ public class WizardElement extends NamedElement implements IPluginContribution {
 	protected IConfigurationElement configurationElement;
 	private IConfigurationElement template;
 
-	public WizardElement(IConfigurationElement config) {
+	WizardElement(IConfigurationElement config) {
 		super(config.getAttribute(ATT_NAME));
 		this.configurationElement = config;
 	}
@@ -167,12 +167,12 @@ public class WizardElement extends NamedElement implements IPluginContribution {
 		return null;
 	}
 
-	public static WizardElement create(IConfigurationElement config) {
-		String name = config.getAttribute(ATT_NAME);
-		String id = config.getAttribute(ATT_ID);
-		String className = config.getAttribute(ATT_CLASS);
-		if (name == null || id == null || className == null)
-			return null;
+	public static WizardElement create(IConfigurationElement config, String... requiredAttributes) {
+		for (String required : requiredAttributes) {
+			if (config.getAttribute(required) == null) {
+				return null;
+			}
+		}
 		WizardElement element = new WizardElement(config);
 		String imageName = config.getAttribute(ATT_ICON);
 		if (imageName != null) {

@@ -35,7 +35,6 @@ import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.pde.internal.ui.wizards.NewWizard;
 import org.eclipse.pde.internal.ui.wizards.WizardElement;
 import org.eclipse.pde.ui.IPluginContentWizard;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
@@ -157,19 +156,7 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 	}
 
 	protected WizardElement createWizardElement(IConfigurationElement config) {
-		String name = config.getAttribute(WizardElement.ATT_NAME);
-		String id = config.getAttribute(WizardElement.ATT_ID);
-		String className = config.getAttribute(WizardElement.ATT_CLASS);
-		if (name == null || id == null || className == null)
-			return null;
-		WizardElement element = new WizardElement(config);
-		String imageName = config.getAttribute(WizardElement.ATT_ICON);
-		if (imageName != null) {
-			String pluginID = config.getNamespaceIdentifier();
-			Image image = PDEPlugin.getDefault().getLabelProvider().getImageFromPlugin(pluginID, imageName);
-			element.setImage(image);
-		}
-		return element;
+		return WizardElement.create(config, WizardElement.ATT_NAME, WizardElement.ATT_ID, WizardElement.ATT_CLASS);
 	}
 
 	public ElementList getAvailableCodegenWizards() {
