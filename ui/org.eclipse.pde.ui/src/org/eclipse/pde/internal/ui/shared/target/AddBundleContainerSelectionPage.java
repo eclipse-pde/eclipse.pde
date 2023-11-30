@@ -350,20 +350,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 	 * @return new wizard element
 	 */
 	protected WizardElement createWizardElement(IConfigurationElement config) {
-		String name = config.getAttribute(WizardElement.ATT_NAME);
-		String id = config.getAttribute(WizardElement.ATT_ID);
-		if (name == null || id == null)
-			return null;
-		WizardElement element = new WizardElement(config);
-
-		String imageName = config.getAttribute(WizardElement.ATT_ICON);
-		Image image = null;
-		if (imageName != null) {
-			String pluginID = config.getNamespaceIdentifier();
-			image = PDEPlugin.getDefault().getLabelProvider().getImageFromPlugin(pluginID, imageName);
-		}
-		element.setImage(image);
-		return element;
+		return WizardElement.create(config, WizardElement.ATT_NAME, WizardElement.ATT_ID);
 	}
 
 	/**

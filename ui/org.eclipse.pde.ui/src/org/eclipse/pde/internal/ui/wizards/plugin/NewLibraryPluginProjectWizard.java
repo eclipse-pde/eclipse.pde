@@ -31,7 +31,6 @@ import org.eclipse.pde.internal.ui.wizards.NewWizard;
 import org.eclipse.pde.internal.ui.wizards.WizardElement;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkingSet;
@@ -107,19 +106,7 @@ public class NewLibraryPluginProjectWizard extends NewWizard implements IExecuta
 	}
 
 	protected WizardElement createWizardElement(IConfigurationElement config) {
-		String name = config.getAttribute(WizardElement.ATT_NAME);
-		String id = config.getAttribute(WizardElement.ATT_ID);
-		String className = config.getAttribute(WizardElement.ATT_CLASS);
-		if (name == null || id == null || className == null)
-			return null;
-		WizardElement element = new WizardElement(config);
-		String imageName = config.getAttribute(WizardElement.ATT_ICON);
-		if (imageName != null) {
-			String pluginID = config.getNamespaceIdentifier();
-			Image image = PDEPlugin.getDefault().getLabelProvider().getImageFromPlugin(pluginID, imageName);
-			element.setImage(image);
-		}
-		return element;
+		return WizardElement.create(config, WizardElement.ATT_NAME, WizardElement.ATT_ID, WizardElement.ATT_CLASS);
 	}
 
 	@Override
