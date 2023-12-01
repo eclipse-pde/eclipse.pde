@@ -32,7 +32,7 @@ public class NewProjectCreationFromTemplatePage extends NewProjectCreationPage {
 	@Override
 	protected void createFormatGroup(Composite container) {
 		super.createFormatGroup(container);
-		Boolean osgiFlag = TemplateWizardHelper.getFlag(fTemplateWizard, TemplateWizardHelper.FLAG_OSGI);
+		Boolean osgiFlag = fTemplateWizard.getFlag(TemplateWizardHelper.FLAG_OSGI);
 		if (osgiFlag != null) {
 			boolean isOSGi = osgiFlag.booleanValue();
 			fEclipseButton.setSelection(!isOSGi);
@@ -46,7 +46,7 @@ public class NewProjectCreationFromTemplatePage extends NewProjectCreationPage {
 	@Override
 	protected void createProjectTypeGroup(Composite container) {
 		super.createProjectTypeGroup(container);
-		Boolean javaFlag = TemplateWizardHelper.getFlag(fTemplateWizard, TemplateWizardHelper.FLAG_JAVA);
+		Boolean javaFlag = fTemplateWizard.getFlag(TemplateWizardHelper.FLAG_JAVA);
 		if (javaFlag != null) {
 			boolean isJava = javaFlag.booleanValue();
 			fJavaButton.setSelection(isJava);

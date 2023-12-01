@@ -54,13 +54,13 @@ public class TemplateListSelectionPage extends WizardListSelectionPage {
 			boolean automatic = osgi && data.isAutomaticMetadataGeneration();
 			WizardElement welement = (WizardElement) element;
 			boolean active = TemplateWizardHelper.isActive(welement);
-			boolean uiFlag = TemplateWizardHelper.getFlag(welement, TemplateWizardHelper.FLAG_UI, true);
-			boolean javaFlag = TemplateWizardHelper.getFlag(welement, TemplateWizardHelper.FLAG_JAVA, true);
-			boolean rcpFlag = TemplateWizardHelper.getFlag(welement, TemplateWizardHelper.FLAG_RCP, false);
-			boolean osgiFlag = TemplateWizardHelper.getFlag(welement, TemplateWizardHelper.FLAG_OSGI, false);
+			boolean uiFlag = welement.getFlag(TemplateWizardHelper.FLAG_UI, true);
+			boolean javaFlag = welement.getFlag(TemplateWizardHelper.FLAG_JAVA, true);
+			boolean rcpFlag = welement.getFlag(TemplateWizardHelper.FLAG_RCP, false);
+			boolean osgiFlag = welement.getFlag(TemplateWizardHelper.FLAG_OSGI, false);
 			boolean bndFlag = osgiFlag && javaFlag
-					&& TemplateWizardHelper.getFlag(welement, TemplateWizardHelper.FLAG_BND, false);
-			boolean activatorFlag = TemplateWizardHelper.getFlag(welement, TemplateWizardHelper.FLAG_ACTIVATOR, false);
+					&& welement.getFlag(TemplateWizardHelper.FLAG_BND, false);
+			boolean activatorFlag = welement.getFlag(TemplateWizardHelper.FLAG_ACTIVATOR, false);
 
 			//filter out wizards from disabled activities
 			if (!active)
