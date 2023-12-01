@@ -32,7 +32,7 @@ public class PluginContentFromTemplatePage extends PluginContentPage {
 	@Override
 	protected void createRCPQuestion(Composite parent, int horizontalSpan) {
 		super.createRCPQuestion(parent, horizontalSpan);
-		Boolean rcpFlag = TemplateWizardHelper.getFlag(fTemplateWizard, TemplateWizardHelper.FLAG_RCP);
+		Boolean rcpFlag = fTemplateWizard.getFlag(TemplateWizardHelper.FLAG_RCP);
 		if (rcpFlag != null) {
 			boolean isRCP = rcpFlag.booleanValue();
 			fYesButton.setSelection(isRCP);
@@ -45,13 +45,13 @@ public class PluginContentFromTemplatePage extends PluginContentPage {
 	@Override
 	protected void createPluginClassGroup(Composite container) {
 		super.createPluginClassGroup(container);
-		Boolean activatorFlag = TemplateWizardHelper.getFlag(fTemplateWizard, TemplateWizardHelper.FLAG_ACTIVATOR);
+		Boolean activatorFlag = fTemplateWizard.getFlag(TemplateWizardHelper.FLAG_ACTIVATOR);
 		if (activatorFlag != null) {
 			fGenerateActivator.setSelection(activatorFlag.booleanValue());
 			fGenerateActivator.setEnabled(false);
 			fNameText.setEnabled(activatorFlag.booleanValue());
 		}
-		Boolean uiFlag = TemplateWizardHelper.getFlag(fTemplateWizard, TemplateWizardHelper.FLAG_UI);
+		Boolean uiFlag = fTemplateWizard.getFlag(TemplateWizardHelper.FLAG_UI);
 		if (uiFlag != null) {
 			fUIPlugin.setSelection(uiFlag.booleanValue());
 			fUIPlugin.setEnabled(false);
