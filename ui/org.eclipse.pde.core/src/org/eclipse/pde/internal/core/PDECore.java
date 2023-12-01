@@ -40,6 +40,7 @@ import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.internal.core.bnd.BndResourceChangeListener;
+import org.eclipse.pde.internal.core.bnd.BndWorkspaceServiceFactory;
 import org.eclipse.pde.internal.core.builders.FeatureRebuilder;
 import org.eclipse.pde.internal.core.builders.PluginRebuilder;
 import org.eclipse.pde.internal.core.project.BundleProjectService;
@@ -47,8 +48,12 @@ import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.core.target.P2TargetUtils;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
+import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
+
+import aQute.bnd.build.Workspace;
 
 public class PDECore extends Plugin implements DebugOptionsListener {
 	public static final String PLUGIN_ID = "org.eclipse.pde.core"; //$NON-NLS-1$
@@ -347,6 +352,8 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 		});
 		bndResourceChangeListener = new BndResourceChangeListener();
 		workspace.addResourceChangeListener(bndResourceChangeListener);
+		fBundleContext.registerService(Workspace.class, new BndWorkspaceServiceFactory(),
+				FrameworkUtil.asDictionary(Map.of(Constants.SERVICE_RANKING, -10)));
 	}
 
 	public BundleContext getBundleContext() {
