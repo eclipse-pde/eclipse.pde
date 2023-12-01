@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2018 EclipseSource Inc. and others.
+ * Copyright (c) 2010, 2023 EclipseSource Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,6 +17,7 @@
 package org.eclipse.pde.internal.core.target;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -69,6 +71,7 @@ import org.eclipse.equinox.p2.metadata.MetadataFactory.InstallableUnitDescriptio
 import org.eclipse.equinox.p2.metadata.Version;
 import org.eclipse.equinox.p2.planner.IPlanner;
 import org.eclipse.equinox.p2.planner.IProfileChangeRequest;
+import org.eclipse.equinox.p2.query.CollectionResult;
 import org.eclipse.equinox.p2.query.IQuery;
 import org.eclipse.equinox.p2.query.IQueryResult;
 import org.eclipse.equinox.p2.query.IQueryable;
@@ -1078,11 +1081,40 @@ public class P2TargetUtils {
 			request.setInstallableUnitProfileProperty(unit, PROP_INSTALLED_IU, Boolean.toString(true));
 		}
 
-		ProvisioningContext context = new ProvisioningContext(getAgent());
+		IProvisioningAgent agent = getAgent();
+		List<IInstallableUnit> extraInstallableUnits = new ArrayList<>();
+		List<IArtifactRepository> extraArtifactRepositories = new ArrayList<>();
+		List<IMetadataRepository> extraMetadataRepositories = new ArrayList<>();
+		getAdditionalProvisionIUs(target, container -> {
+			List<IInstallableUnit> installableUnits = InstallableUnitGenerator //
+					.generateInstallableUnits(container.getBundles(), container.getFeatures()) //
+					.toList();
+			extraArtifactRepositories.add(new FileArtifactRepository(agent, container));
+			extraMetadataRepositories.add(new FileMetadataRepository(agent, installableUnits));
+			extraInstallableUnits.addAll(installableUnits);
+		});
+		ProvisioningContext context = new ProvisioningContext(agent) {
+			@Override
+			public IQueryable<IArtifactRepository> getArtifactRepositories(IProgressMonitor monitor) {
+				return (query, monitor2) -> {
+					List<IArtifactRepository> artifactRepositories = new ArrayList<>();
+					try {
+						IQueryable<IArtifactRepository> oldQueryable = super.getArtifactRepositories(monitor2);
+						Field f = oldQueryable.getClass().getDeclaredField("repositories");
+						f.setAccessible(true);
+						artifactRepositories.addAll((List<IArtifactRepository>) f.get(oldQueryable));
+					} catch(Exception e) {
+						e.printStackTrace();
+					}
+					artifactRepositories.addAll(extraArtifactRepositories);
+					return new CollectionResult(artifactRepositories);
+				};
+			}
+		};
 		context.setProperty(ProvisioningContext.FOLLOW_REPOSITORY_REFERENCES, Boolean.toString(true));
 		context.setMetadataRepositories(getMetadataRepositories(target).toArray(URI[]::new));
 		context.setArtifactRepositories(getArtifactRepositories(target).toArray(URI[]::new));
-		context.setExtraInstallableUnits(getAdditionalProvisionIUs(target));
+		context.setExtraInstallableUnits(extraInstallableUnits);
 
 		IProvisioningPlan plan = planner.getProvisioningPlan(request, context, subMonitor.split(20));
 		IStatus status = plan.getStatus();
@@ -1553,8 +1585,8 @@ public class P2TargetUtils {
 		return result;
 	}
 
-	private List<IInstallableUnit> getAdditionalProvisionIUs(ITargetDefinition target) throws CoreException {
-		List<IInstallableUnit> result = new ArrayList<>();
+	private void getAdditionalProvisionIUs(ITargetDefinition target, Consumer<ITargetLocation> callback)
+			throws CoreException {
 		ITargetLocation[] containers = target.getTargetLocations();
 		if (containers != null) {
 			for (ITargetLocation container : containers) {
@@ -1564,17 +1596,15 @@ public class P2TargetUtils {
 				}
 				if (container instanceof TargetReferenceBundleContainer targetRefContainer) {
 					ITargetDefinition referencedTargetDefinition = targetRefContainer.getTargetDefinition();
-					result.addAll(getAdditionalProvisionIUs(referencedTargetDefinition));
+					getAdditionalProvisionIUs(referencedTargetDefinition, callback);
 					continue;
 				}
 				if (!container.isResolved()) {
 					container.resolve(target, new NullProgressMonitor());
 				}
-				InstallableUnitGenerator.generateInstallableUnits(container.getBundles(), container.getFeatures())
-						.forEach(result::add);
+				callback.accept(container);
 			}
 		}
-		return result;
 	}
 
 	private static final String NATIVE_ARTIFACTS = "nativeArtifacts"; //$NON-NLS-1$

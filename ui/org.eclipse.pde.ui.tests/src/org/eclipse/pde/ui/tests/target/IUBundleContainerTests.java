@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2018 IBM Corporation and others.
+ * Copyright (c) 2009, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,16 +17,22 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.jar.JarFile;
 
 import javax.xml.parsers.DocumentBuilder;
 
@@ -37,8 +43,11 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.publisher.eclipse.BundlesAction;
+import org.eclipse.equinox.p2.publisher.eclipse.FeaturesAction;
 import org.eclipse.equinox.p2.query.IQueryResult;
 import org.eclipse.equinox.p2.query.QueryUtil;
+import org.eclipse.equinox.p2.repository.artifact.IArtifactRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -47,6 +56,8 @@ import org.eclipse.pde.core.target.ITargetHandle;
 import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.target.DirectoryBundleContainer;
+import org.eclipse.pde.internal.core.target.FileArtifactRepository;
 import org.eclipse.pde.internal.core.target.IUBundleContainer;
 import org.eclipse.pde.internal.core.target.P2TargetUtils;
 import org.eclipse.pde.internal.core.target.TargetDefinition;
@@ -180,6 +191,66 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	public void testResolveSingleBundle() throws Exception {
 		String[] bundles = new String[]{"bundle.a1"};
 		doResolutionTest(new String[]{"bundle.a1"}, bundles);
+	}
+
+	/**
+	 * Tests whether the in-memory artifact repository is correctly created from
+	 * a non-IU target location.
+	 */
+	@Test
+	public void testResolveFileRepository() throws Exception {
+		File repoFolder = new File(getURI("/tests/sites/site.a.b"));
+		// DirectoryBundleContainer expects features to be unpacked
+		unjarAll(new File(repoFolder, "features"));
+		ITargetLocation container = new DirectoryBundleContainer(repoFolder.getAbsolutePath());
+
+		ITargetDefinition definition = getNewTarget();
+		definition.setTargetLocations(new ITargetLocation[] { container });
+
+		container.resolve(definition, null);
+		IArtifactRepository repo = new FileArtifactRepository(null, container);
+
+		assertTrue(repo.contains(BundlesAction.createBundleArtifactKey("bundle.a1", "1.0.0")));
+		assertTrue(repo.contains(BundlesAction.createBundleArtifactKey("bundle.a2", "1.0.0")));
+		assertTrue(repo.contains(BundlesAction.createBundleArtifactKey("bundle.a3", "1.0.0")));
+		assertTrue(repo.contains(BundlesAction.createBundleArtifactKey("bundle.b1", "1.0.0")));
+		assertTrue(repo.contains(BundlesAction.createBundleArtifactKey("bundle.b2", "1.0.0")));
+		assertTrue(repo.contains(BundlesAction.createBundleArtifactKey("bundle.b3", "1.0.0")));
+		assertTrue(repo.contains(FeaturesAction.createFeatureArtifactKey("feature.a", "1.0.0")));
+		assertTrue(repo.contains(FeaturesAction.createFeatureArtifactKey("feature.b", "1.0.0")));
+	}
+
+	private void unjarAll(File directory) throws IOException {
+		for (File jarFile : directory.listFiles()) {
+			if (!jarFile.isFile() || !jarFile.getName().endsWith(".jar")) {
+				continue;
+			}
+			String jarFileName = jarFile.getName();
+			String jarFileBaseName = jarFileName.substring(0, jarFileName.length() - ".jar".length());
+
+			File outDir = new File(directory, jarFileBaseName);
+			outDir.mkdir();
+			outDir.deleteOnExit();
+
+			try (JarFile jar = new JarFile(jarFile)) {
+				jar.stream().forEach(jarEntry -> {
+					File outFile = new File(outDir, jarEntry.getName());
+					outFile.deleteOnExit();
+					if (outFile.isDirectory()) {
+						outFile.mkdir();
+						return;
+					}
+					try (InputStream is = jar.getInputStream(jarEntry)) {
+						try (OutputStream os = new FileOutputStream(outFile)) {
+							is.transferTo(os);
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+						fail(e.getMessage());
+					}
+				});
+			}
+		}
 	}
 
 	/**
