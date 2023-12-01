@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2018 IBM Corporation and others.
+ * Copyright (c) 2009, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -36,9 +36,15 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.p2.metadata.IArtifactKey;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.publisher.eclipse.BundlesAction;
+import org.eclipse.equinox.p2.publisher.eclipse.FeaturesAction;
 import org.eclipse.equinox.p2.query.IQueryResult;
 import org.eclipse.equinox.p2.query.QueryUtil;
+import org.eclipse.equinox.p2.repository.artifact.IArtifactDescriptor;
+import org.eclipse.equinox.p2.repository.artifact.IArtifactRepository;
+import org.eclipse.equinox.p2.repository.artifact.spi.ArtifactDescriptor;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -47,11 +53,13 @@ import org.eclipse.pde.core.target.ITargetHandle;
 import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.target.DirectoryBundleContainer;
 import org.eclipse.pde.internal.core.target.IUBundleContainer;
 import org.eclipse.pde.internal.core.target.P2TargetUtils;
 import org.eclipse.pde.internal.core.target.TargetDefinition;
 import org.eclipse.pde.internal.core.target.TargetDefinitionPersistenceHelper;
 import org.eclipse.pde.internal.core.target.TargetPersistence38Helper;
+import org.eclipse.pde.internal.core.target.VirtualArtifactRepository;
 import org.eclipse.pde.ui.tests.PDETestsPlugin;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -180,6 +188,68 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	public void testResolveSingleBundle() throws Exception {
 		String[] bundles = new String[]{"bundle.a1"};
 		doResolutionTest(new String[]{"bundle.a1"}, bundles);
+	}
+
+	/**
+	 * Tests whether the in-memory artifact repository is correctly created from
+	 * a non-IU target location.
+	 */
+	@Test
+	public void testResolveVirtualArtifactRepository() throws Exception {
+		IArtifactRepository repo = createVirtualArtifactRepository();
+		IArtifactKey artifactKey;
+		// Bundles
+		artifactKey = BundlesAction.createBundleArtifactKey("org.junit4", "4.7.0.v20100104");
+		assertTrue(repo.contains(artifactKey));
+		artifactKey = BundlesAction.createBundleArtifactKey("org.junit", "3.8.2.v20090203-1005");
+		assertTrue(repo.contains(artifactKey));
+		artifactKey = BundlesAction.createBundleArtifactKey("org.junit", "4.7.0.v20091118-1515");
+		assertTrue(repo.contains(artifactKey));
+		artifactKey = BundlesAction.createBundleArtifactKey("org.eclipse.jdt", "3.6.0.v200912170819");
+		assertTrue(repo.contains(artifactKey));
+		artifactKey = BundlesAction.createBundleArtifactKey("org.eclipse.jdt.source", "3.6.0.v201001051537");
+		assertTrue(repo.contains(artifactKey));
+		artifactKey = BundlesAction.createBundleArtifactKey("org.eclipse.jdt.launching", "3.5.100.v20091203");
+		assertTrue(repo.contains(artifactKey));
+		artifactKey = BundlesAction.createBundleArtifactKey("org.eclipse.jdt.launching.source", "3.5.100.v20100104");
+		assertTrue(repo.contains(artifactKey));
+		// Features
+		artifactKey = FeaturesAction.createFeatureArtifactKey("org.eclipse.jdt",
+				"3.6.0.v20100105-0800-7z8VFR9FMTb52_pOyKHhoek1");
+		assertTrue(repo.contains(artifactKey));
+		artifactKey = FeaturesAction.createFeatureArtifactKey("org.eclipse.jdt.source",
+				"3.6.0.v20100105-0800-7z8VFR9FMTb52_pOyKHhoek1");
+		assertTrue(repo.contains(artifactKey));
+	}
+
+	/**
+	 * Tests whether the artifacts can be downloaded from the in-memory
+	 * repository.
+	 */
+	@Test
+	public void testGetVirtualRepositoryArtifact() throws Exception {
+		IArtifactRepository repo = createVirtualArtifactRepository();
+		// Bundles
+		IArtifactKey artifactKey = BundlesAction.createBundleArtifactKey("bundle", "1.0.0");
+		IArtifactDescriptor artifactDesriptor = new ArtifactDescriptor(artifactKey);
+		assertEquals(IStatus.ERROR,
+				repo.getArtifact(artifactDesriptor, new ByteArrayOutputStream(), null).getSeverity());
+
+		artifactKey = BundlesAction.createBundleArtifactKey("org.junit", "3.8.2.v20090203-1005");
+		artifactDesriptor = new ArtifactDescriptor(artifactKey);
+		assertEquals(IStatus.OK,
+				repo.getArtifact(artifactDesriptor, new ByteArrayOutputStream(), null).getSeverity());
+		// Features
+		artifactKey = FeaturesAction.createFeatureArtifactKey("feature", "1.0.0");
+		artifactDesriptor = new ArtifactDescriptor(artifactKey);
+		assertEquals(IStatus.ERROR,
+				repo.getArtifact(artifactDesriptor, new ByteArrayOutputStream(), null).getSeverity());
+
+		artifactKey = FeaturesAction.createFeatureArtifactKey("org.eclipse.jdt",
+				"3.6.0.v20100105-0800-7z8VFR9FMTb52_pOyKHhoek1");
+		artifactDesriptor = new ArtifactDescriptor(artifactKey);
+		assertEquals(IStatus.OK,
+				repo.getArtifact(artifactDesriptor, new ByteArrayOutputStream(), null).getSeverity());
 	}
 
 	/**
@@ -327,9 +397,26 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	}
 
 	/**
-	 * Creates an IU bundle container with the specified IUs from the test repository.
+	 * Creates an in-memory artifact repository over
+	 * {@code modified-jdt-features.zip}
 	 *
-	 * @param unitIds identifiers of IU's to add to the container
+	 * @return in-memory artifact repository
+	 */
+	protected VirtualArtifactRepository createVirtualArtifactRepository() throws Exception {
+		File repoFolder = extractModifiedFeatures().toFile();
+		ITargetLocation container = new DirectoryBundleContainer(repoFolder.getAbsolutePath());
+		ITargetDefinition definition = getNewTarget();
+		definition.setTargetLocations(new ITargetLocation[] { container });
+		container.resolve(definition, null);
+		return new VirtualArtifactRepository(null, container);
+	}
+
+	/**
+	 * Creates an IU bundle container with the specified IUs from the test
+	 * repository.
+	 *
+	 * @param unitIds
+	 *            identifiers of IU's to add to the container
 	 * @return bundle container
 	 */
 	protected IUBundleContainer createContainer(String[] unitIds) throws Exception {
