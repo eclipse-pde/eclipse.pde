@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2021 IBM Corporation and others.
+ * Copyright (c) 2009, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -80,6 +80,8 @@ public class Messages extends NLS {
 	public static String RemoteTargetHandle_invalid_URI;
 	public static String RemoteTargetHandle_malformed_URL;
 	public static String RemoteTargetHandle_ioproblem;
+	public static String VirtualArtifactRepository_0;
+	public static String VirtualArtifactRepository_1;
 
 
 	static {
