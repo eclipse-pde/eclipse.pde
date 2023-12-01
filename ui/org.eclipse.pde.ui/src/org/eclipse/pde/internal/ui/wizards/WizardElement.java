@@ -65,6 +65,26 @@ public class WizardElement extends NamedElement implements IPluginContribution {
 		return description;
 	}
 
+	public Boolean getFlag(String name) {
+		if (configurationElement != null) {
+			String value = configurationElement.getAttribute(name);
+			if (value != null) {
+				return Boolean.valueOf(value.equalsIgnoreCase("true")); //$NON-NLS-1$
+			}
+		}
+		return null;
+	}
+
+	public boolean getFlag(String name, boolean defaultValue) {
+		if (configurationElement != null) {
+			String value = configurationElement.getAttribute(name);
+			if (value != null) {
+				return value.equalsIgnoreCase("true"); //$NON-NLS-1$
+			}
+		}
+		return defaultValue;
+	}
+
 	/**
 	 * We allow replacement variables in description values as well. This is to
 	 * allow extension template description reuse in project template wizards.

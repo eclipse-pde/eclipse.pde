@@ -27,22 +27,6 @@ public class TemplateWizardHelper {
 	public static final String FLAG_BND = "bnd"; //$NON-NLS-1$
 	public static final String FLAG_ACTIVATOR = "requiresActivator"; //$NON-NLS-1$
 
-	public static Boolean getFlag(WizardElement element, String name) {
-		IConfigurationElement config = element.getConfigurationElement();
-		String value = config.getAttribute(name);
-		if (value == null)
-			return null;
-		return Boolean.valueOf(value.equalsIgnoreCase("true")); //$NON-NLS-1$
-	}
-
-	public static boolean getFlag(WizardElement element, String name, boolean defaultValue) {
-		IConfigurationElement config = element.getConfigurationElement();
-		String value = config.getAttribute(name);
-		if (value == null)
-			return defaultValue;
-		return value.equalsIgnoreCase("true"); //$NON-NLS-1$
-	}
-
 	public static boolean isActive(WizardElement element) {
 		IConfigurationElement config = element.getConfigurationElement();
 		final String pluginId = config.getNamespaceIdentifier();
