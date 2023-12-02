@@ -164,22 +164,23 @@ public class BndBuilder extends IncrementalProjectBuilder {
 						.validateContent(monitor);
 				// now build sub jars
 				List<Builder> subBuilders = builder.getSubBuilders();
-				if (subBuilders.size() > 0) {
-					for (Builder subBuilder : subBuilders) {
-						File outputFile = subBuilder.getOutputFile(null);
-						if (outputFile != null) {
-							Jar subJar = subBuilder.build();
-							subJar.write(outputFile);
+				for (Builder subBuilder : subBuilders) {
+					if (subBuilder == builder) {
+						continue;
+					}
+					File outputFile = subBuilder.getOutputFile(null);
+					if (outputFile != null) {
+						Jar subJar = subBuilder.build();
+						subJar.write(outputFile);
+						for (IFile file : project.getWorkspace().getRoot()
+								.findFilesForLocationURI(outputFile.toURI())) {
+							file.refreshLocal(IResource.DEPTH_ZERO, monitor);
+						}
+						File propertiesFile = subBuilder.getPropertiesFile();
+						if (propertiesFile != null) {
 							for (IFile file : project.getWorkspace().getRoot()
-									.findFilesForLocationURI(outputFile.toURI())) {
-								file.refreshLocal(IResource.DEPTH_ZERO, monitor);
-							}
-							File propertiesFile = subBuilder.getPropertiesFile();
-							if (propertiesFile != null) {
-								for (IFile file : project.getWorkspace().getRoot()
-										.findFilesForLocationURI(propertiesFile.toURI())) {
-									new BndErrorReporter(project, subBuilder, file).validateContent(monitor);
-								}
+									.findFilesForLocationURI(propertiesFile.toURI())) {
+								new BndErrorReporter(project, subBuilder, file).validateContent(monitor);
 							}
 						}
 					}
