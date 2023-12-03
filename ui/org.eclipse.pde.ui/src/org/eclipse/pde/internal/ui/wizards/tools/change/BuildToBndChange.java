@@ -17,20 +17,27 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.jar.JarFile;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.pde.core.build.IBuild;
@@ -50,13 +57,11 @@ public class BuildToBndChange extends Change {
 	private IBuildModel model;
 	private IProject project;
 	private IFile instructionfile;
-	private boolean make;
 
-	public BuildToBndChange(IProject project, IBuildModel model, IFile instructionfile, boolean make) {
+	public BuildToBndChange(IProject project, IBuildModel model, IFile instructionfile) {
 		this.project = project;
 		this.model = model;
 		this.instructionfile = instructionfile;
-		this.make = make;
 	}
 
 	@Override
@@ -97,14 +102,11 @@ public class BuildToBndChange extends Change {
 			processBinIncludes(build, editModel);
 			processAdditionalBundles(build, editModel);
 			processExtraClasspath(build, editModel);
-			if (make) {
-				editModel.genericSet(Constants.MAKE, "(*).(jar);type=bnd; recipe=\".jars/$1.bnd\""); //$NON-NLS-1$
-			}
+			processJars(build, editModel);
 			editModel.saveChangesTo(document);
 			if (instructionfile.exists()) {
 				instructionfile.setContents(new ByteArrayInputStream(document.get().getBytes(StandardCharsets.UTF_8)),
-						true, true,
-						pm);
+						true, true, pm);
 			} else {
 				instructionfile.create(new ByteArrayInputStream(document.get().getBytes(StandardCharsets.UTF_8)), true,
 						pm);
@@ -113,19 +115,74 @@ public class BuildToBndChange extends Change {
 		return null;
 	}
 
+	private void processJars(IBuild build, BndEditModel editModel) {
+		List<String> includeResource = new ArrayList<>(editModel.getIncludeResource());
+		List<String> makeJars = new ArrayList<>();
+		for (IBuildEntry buildEntry : build.getBuildEntries()) {
+			String name = buildEntry.getName();
+			if (name.startsWith(IBuildEntry.JAR_PREFIX)) {
+				String jarName = name.substring(IBuildEntry.JAR_PREFIX.length());
+				if (jarName.equals(".")) { //$NON-NLS-1$
+					continue;
+				}
+				String outputFolder = Optional.ofNullable(build.getEntry(IBuildEntry.OUTPUT_PREFIX + jarName)).stream()
+						.flatMap(entry -> Arrays.stream(entry.getTokens())).findFirst()
+						.orElseGet(() -> getOutputFolderFromJava(buildEntry.getTokens()));
+				String outputForInclude = getIncludeResourceForBinInclude(jarName);
+				includeResource.remove(outputForInclude);
+				includeResource.add(outputForInclude + ";lib:=true"); //$NON-NLS-1$
+				makeJars.add(String.format("%s;type=jar;input=\"%s\"", jarName, outputFolder)); //$NON-NLS-1$
+			}
+		}
+		if (!makeJars.isEmpty()) {
+			// See https://github.com/bndtools/bnd/issues/5919
+			// TODO need to use generic set instead of
+			// editModel.setIncludeResource(includeResource);
+			editModel.genericSet(Constants.INCLUDERESOURCE, includeResource);
+			editModel.genericSet(Constants.MAKE, makeJars.stream().collect(Collectors.joining(", "))); //$NON-NLS-1$
+		}
+
+	}
+
+	private String getOutputFolderFromJava(String[] sourceTokens) {
+		try {
+			IJavaProject javaProject = JavaCore.create(project);
+			IPath outputLocation = javaProject.getOutputLocation();
+			IClasspathEntry[] classpath = javaProject.getRawClasspath();
+			for (IClasspathEntry entry : classpath) {
+				if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+					for (String token : sourceTokens) {
+						if (IPath.fromPortableString(token).equals(entry.getPath())) {
+							IPath srcLoc = entry.getOutputLocation();
+							if (srcLoc != null) {
+								outputLocation = srcLoc;
+							}
+							break;
+						}
+					}
+				}
+			}
+			return project.getWorkspace().getRoot().getFolder(outputLocation).getProjectRelativePath()
+					.toPortableString();
+		} catch (CoreException e) {
+			// this should never happen but just in case return a sensible
+			// default...
+			return "bin/"; //$NON-NLS-1$
+		}
+	}
+
 	private void processBinIncludes(IBuild build, BndEditModel editModel) {
 		IBuildEntry entry = build.getEntry(IBuildEntry.BIN_INCLUDES);
 		if (entry == null) {
 			return;
 		}
 		List<String> list = Arrays.stream(entry.getTokens()).filter(str -> isCustomResource(str, build))
-				.map(str -> str.contains("/") ? (String.format("%s=%s", str, str)) : str) //$NON-NLS-1$ //$NON-NLS-2$
-				.toList();
+				.map(str -> getIncludeResourceForBinInclude(str)).toList();
 		// can't use editModel.addIncludeResource because of
 		// https://github.com/bndtools/bnd/pull/5904
 		editModel.genericSet(Constants.INCLUDERESOURCE, list);
-
 	}
+
 
 	private boolean isCustomResource(String str, IBuild build) {
 		if (".".equals(str)) { //$NON-NLS-1$
@@ -167,8 +224,7 @@ public class BuildToBndChange extends Change {
 						IContentDescription description = file.getContentDescription();
 						if (description != null) {
 							IContentType contentType = description.getContentType();
-							if (contentType != null
-									&& DS_CONTENT_TYPE_ID.equals(contentType.getId())) {
+							if (contentType != null && DS_CONTENT_TYPE_ID.equals(contentType.getId())) {
 								// a DS component... these will be generated so
 								// we can ignore it
 								continue;
@@ -208,6 +264,10 @@ public class BuildToBndChange extends Change {
 	@Override
 	public Object getModifiedElement() {
 		return instructionfile;
+	}
+
+	private static String getIncludeResourceForBinInclude(String str) {
+		return str.contains("/") ? (String.format("%s=%s", str, str)) : str;//$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 }
