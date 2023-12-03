@@ -75,6 +75,7 @@ import org.eclipse.jdt.core.dom.MemberValuePair;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.NormalAnnotation;
+import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.SingleMemberAnnotation;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.StringLiteral;
@@ -1373,7 +1374,14 @@ public class AnnotationVisitor extends ASTVisitor {
 	}
 
 	private void setPropertyValue(IDSProperty property, Expression expression) {
-		if (expression instanceof StringLiteral string) {
+		if (expression instanceof QualifiedName name) {
+			Object constantExpressionValue = name.resolveConstantExpressionValue();
+			if (constantExpressionValue == null) {
+				removeAttribute(property, IDSConstants.ATTRIBUTE_PROPERTY_VALUE, null);
+			} else {
+				property.setPropertyValue(constantExpressionValue.toString());
+			}
+		} else if (expression instanceof StringLiteral string) {
 			property.setPropertyValue(string.getLiteralValue());
 		} else if (expression instanceof ArrayInitializer array) {
 			removeAttribute(property, IDSConstants.ATTRIBUTE_PROPERTY_VALUE, null);
@@ -1385,6 +1393,8 @@ public class AnnotationVisitor extends ASTVisitor {
 						return string.getLiteralValue();
 					} else if (arrayExpression instanceof TypeLiteral type) {
 						return type.getType().resolveBinding().getQualifiedName();
+					} else if (expression instanceof QualifiedName name) {
+						return String.valueOf(name.resolveConstantExpressionValue());
 					}
 					return expression.toString();
 				}).collect(Collectors.joining(TextUtil.getDefaultLineDelimiter()));
