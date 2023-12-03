@@ -124,6 +124,8 @@ public class ManifestToBndChange extends Change {
 			editModel.genericSet(Constants.EXPORT_PACKAGE, null);
 		}
 		editModel.setBuildPath(bundleClasspath);
+		// see https://github.com/bndtools/bnd/issues/5920
+		editModel.setGenericString(Constants.SOURCES, "false"); //$NON-NLS-1$
 		editModel.saveChangesTo(document);
 		instructionFile.create(new ByteArrayInputStream(document.get().getBytes(StandardCharsets.UTF_8)), true, pm);
 		return null;

@@ -155,6 +155,9 @@ public class BndBuilder extends IncrementalProjectBuilder {
 					super.addClasspath(jar);
 				}
 			}) {
+				// unless we have https://github.com/bndtools/bnd/pull/5918 we
+				// need to host the plugin here...
+				builder.addBasicPlugin(new MakeJar());
 				builder.setBase(bnd.getBase());
 				ProjectJar jar = new ProjectJar(project, CLASS_FILTER);
 				builder.setJar(jar);
