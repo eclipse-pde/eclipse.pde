@@ -245,7 +245,7 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 		specVersionCombo.getControl().setFont(JFaceResources.getDialogFont());
 		specVersionCombo.setContentProvider(ArrayContentProvider.getInstance());
 		specVersionCombo.setInput(List.of(DSAnnotationVersion.V1_2, DSAnnotationVersion.V1_3, DSAnnotationVersion.V1_4,
-				DSAnnotationVersion.V1_4));
+				DSAnnotationVersion.V1_5));
 		specVersionCombo.setSelection(new StructuredSelection(DSAnnotationVersion.V1_5));
 		specVersionCombo.addSelectionChangedListener(new ISelectionChangedListener() {
 
