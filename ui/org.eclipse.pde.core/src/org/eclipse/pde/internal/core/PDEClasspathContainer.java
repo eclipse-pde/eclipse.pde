@@ -49,10 +49,11 @@ public class PDEClasspathContainer {
 	private static final IAccessRule EXCLUDE_ALL_RULE = JavaCore.newAccessRule(IPath.fromOSString("**/*"), IAccessRule.K_NON_ACCESSIBLE | IAccessRule.IGNORE_IF_BETTER); //$NON-NLS-1$
 
 	protected void addProjectEntry(IProject project, List<Rule> rules, boolean exportsExternalAnnotations,
-			List<IClasspathEntry> entries) throws CoreException {
+			List<IClasspathEntry> entries, boolean test) throws CoreException {
 		if (project.hasNature(JavaCore.NATURE_ID)) {
 			IAccessRule[] accessRules = rules != null ? getAccessRules(rules) : null;
-			IClasspathAttribute[] extraAttribs = getClasspathAttributesForProject(project, exportsExternalAnnotations);
+			IClasspathAttribute[] extraAttribs = getClasspathAttributesForProject(project, exportsExternalAnnotations,
+					test);
 			IClasspathEntry entry = JavaCore.newProjectEntry(project.getFullPath(), accessRules, true, extraAttribs, false);
 			if (!entries.contains(entry)) {
 				entries.add(entry);
@@ -60,36 +61,42 @@ public class PDEClasspathContainer {
 		}
 	}
 
-	private IClasspathAttribute[] getClasspathAttributesForProject(IProject project, boolean exportsExternalAnnotations)
-			throws JavaModelException {
+	private IClasspathAttribute[] getClasspathAttributesForProject(IProject project, boolean exportsExternalAnnotations,
+			boolean test) throws JavaModelException {
+		List<IClasspathAttribute> attributes = new ArrayList<>();
+		if (test) {
+			attributes.add(newClasspathAttribute(IClasspathAttribute.TEST, "true")); //$NON-NLS-1$
+		}
 		if (exportsExternalAnnotations) {
 			String annotationPath = JavaCore.create(project).getOutputLocation().toString();
-			return new IClasspathAttribute[] {
-					JavaCore.newClasspathAttribute(IClasspathAttribute.EXTERNAL_ANNOTATION_PATH, annotationPath) };
+			attributes
+					.add(JavaCore.newClasspathAttribute(IClasspathAttribute.EXTERNAL_ANNOTATION_PATH, annotationPath));
 		}
-		return new IClasspathAttribute[0];
+		return attributes.toArray(IClasspathAttribute[]::new);
 	}
 
-	public static IClasspathEntry[] getExternalEntries(IPluginModelBase model) {
+	public static IClasspathEntry[] getExternalEntries(IPluginModelBase model, boolean test) {
 		List<IClasspathEntry> entries = new ArrayList<>();
-		addExternalPlugin(model, List.of(), entries);
+		addExternalPlugin(model, List.of(), entries, test);
 		return entries.toArray(new IClasspathEntry[entries.size()]);
 	}
 
-	protected static void addExternalPlugin(IPluginModelBase model, List<Rule> rules, List<IClasspathEntry> entries) {
+	protected static void addExternalPlugin(IPluginModelBase model, List<Rule> rules, List<IClasspathEntry> entries,
+			boolean test) {
 		boolean isJarShape = new File(model.getInstallLocation()).isFile();
 		if (isJarShape) {
 			IPath srcPath = ClasspathUtilCore.getSourceAnnotation(model, ".", isJarShape); //$NON-NLS-1$
 			if (srcPath == null) {
 				srcPath = IPath.fromOSString(model.getInstallLocation());
 			}
-			addLibraryEntry(IPath.fromOSString(model.getInstallLocation()), srcPath, rules, getClasspathAttributes(model), entries);
+			addLibraryEntry(IPath.fromOSString(model.getInstallLocation()), srcPath, rules,
+					getClasspathAttributes(model, test), entries);
 
 			// If the jarred plugin contains any jarred libraries they must be extracted as the compiler can't handle nested jar files
 			File[] extractedLibraries = PDECore.getDefault().getModelManager().getExternalModelManager().getExtractedLibraries(model);
 			for (File libraryFile : extractedLibraries) {
 				IPath path = IPath.fromOSString(libraryFile.getAbsolutePath());
-				addLibraryEntry(path, path, rules, getClasspathAttributes(model), entries);
+				addLibraryEntry(path, path, rules, getClasspathAttributes(model, test), entries);
 			}
 		} else {
 			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
@@ -99,7 +106,8 @@ public class PDEClasspathContainer {
 				if (srcPath == null) {
 					srcPath = IPath.fromOSString(model.getInstallLocation());
 				}
-				addLibraryEntry(IPath.fromOSString(model.getInstallLocation()), srcPath, rules, getClasspathAttributes(model), entries);
+				addLibraryEntry(IPath.fromOSString(model.getInstallLocation()), srcPath, rules,
+						getClasspathAttributes(model, test), entries);
 			} else {
 				for (IPluginLibrary library : libraries) {
 					if (IPluginLibrary.RESOURCE.equals(library.getType())) {
@@ -117,7 +125,7 @@ public class PDEClasspathContainer {
 					}
 					if (path != null) {
 						addLibraryEntry(path, ClasspathUtilCore.getSourceAnnotation(model, expandedName, isJarShape),
-								rules, getClasspathAttributes(model), entries);
+								rules, getClasspathAttributes(model, test), entries);
 					}
 				}
 			}
@@ -150,7 +158,7 @@ public class PDEClasspathContainer {
 		return accessRules;
 	}
 
-	private static IClasspathAttribute[] getClasspathAttributes(IPluginModelBase model) {
+	private static IClasspathAttribute[] getClasspathAttributes(IPluginModelBase model, boolean test) {
 		List<IClasspathAttribute> attributes = new ArrayList<>();
 		JavadocLocationManager manager = PDECore.getDefault().getJavadocLocationManager();
 		String location = manager.getJavadocLocation(model);
@@ -160,6 +168,9 @@ public class PDEClasspathContainer {
 		if (model.getPluginBase().exportsExternalAnnotations()) {
 			String installLocation = model.getInstallLocation();
 			attributes.add(newClasspathAttribute(IClasspathAttribute.EXTERNAL_ANNOTATION_PATH, installLocation));
+		}
+		if (test) {
+			attributes.add(newClasspathAttribute(IClasspathAttribute.TEST, "true")); //$NON-NLS-1$
 		}
 		return attributes.toArray(IClasspathAttribute[]::new);
 	}

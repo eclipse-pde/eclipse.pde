@@ -161,7 +161,7 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 			for (IPluginModelBase model : models) {
 				if (isPerfectMatch(model, IPath.fromOSString(location))) {
 					// try all source zips found in the source code locations
-					IClasspathEntry[] entries = PDEClasspathContainer.getExternalEntries(model);
+					IClasspathEntry[] entries = PDEClasspathContainer.getExternalEntries(model, false);
 					for (IClasspathEntry entrie : entries) {
 						IRuntimeClasspathEntry rte = convertClasspathEntry(entrie);
 						if (rte != null)
