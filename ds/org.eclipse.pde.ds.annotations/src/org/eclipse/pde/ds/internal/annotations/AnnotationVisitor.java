@@ -79,6 +79,7 @@ import org.eclipse.jdt.core.dom.SingleMemberAnnotation;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.StringLiteral;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.eclipse.jdt.core.dom.TypeLiteral;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentRewriteSession;
@@ -1339,9 +1340,8 @@ public class AnnotationVisitor extends ASTVisitor {
 			List<MemberValuePair> values = normal.values();
 			for (MemberValuePair pair : values) {
 				String propName = pair.getName().getFullyQualifiedName();
-				String propValue = getExpressionValue(pair.getValue());
 				String key = NameGenerator.createPropertyName(propName, prefix, specVersion);
-				map.get(key).setPropertyValue(propValue);
+				setPropertyValue(map.get(key), pair.getValue());
 			}
 		}
 		if (propertyType instanceof MarkerAnnotation marker && map.isEmpty()) {
@@ -1358,22 +1358,47 @@ public class AnnotationVisitor extends ASTVisitor {
 			property.setPropertyName(NameGenerator.createClassPropertyName(fqdn, prefix));
 			Expression expression = single.getValue();
 			property.setPropertyType(getPropertyType(expression.resolveTypeBinding()));
-			property.setPropertyValue(getExpressionValue(expression));
+			setPropertyValue(property, expression);
 			newPropMap.remove(property.getName()); // force re-insert (append)
 			newPropMap.put(property.getName(), property);
 			return;
 		}
 		for (IDSProperty prop : map.values()) {
 			newPropMap.remove(prop.getName()); // force re-insert (append)
-			newPropMap.put(prop.getName(), prop);
+			if (prop.getPropertyValue() != null || prop.getPropertyElemBody() != null) {
+				// only insert if it has a value...
+				newPropMap.put(prop.getName(), prop);
+			}
 		}
 	}
 
-	private String getExpressionValue(Expression expression) {
+	private void setPropertyValue(IDSProperty property, Expression expression) {
 		if (expression instanceof StringLiteral string) {
-			return string.getLiteralValue();
+			property.setPropertyValue(string.getLiteralValue());
+		} else if (expression instanceof ArrayInitializer array) {
+			removeAttribute(property, IDSConstants.ATTRIBUTE_PROPERTY_VALUE, null);
+			@SuppressWarnings("unchecked")
+			List<Expression> expressions = array.expressions();
+			if (!expressions.isEmpty()) {
+				String body = expressions.stream().map(arrayExpression -> {
+					if (arrayExpression instanceof StringLiteral string) {
+						return string.getLiteralValue();
+					} else if (arrayExpression instanceof TypeLiteral type) {
+						return type.getType().resolveBinding().getQualifiedName();
+					}
+					return expression.toString();
+				}).collect(Collectors.joining(TextUtil.getDefaultLineDelimiter()));
+				if (expressions.size() == 1) {
+					property.setPropertyValue(body);
+				} else {
+					property.setPropertyElemBody(body);
+				}
+			}
+		} else if (expression instanceof TypeLiteral type) {
+			property.setPropertyValue(type.getType().resolveBinding().getQualifiedName());
+		} else {
+			property.setPropertyValue(expression.toString());
 		}
-		return expression.toString();
 	}
 
 	private String getPrefix(ITypeBinding typeBinding) {
@@ -1877,21 +1902,24 @@ public class AnnotationVisitor extends ASTVisitor {
 			removeAttribute(property, IDSConstants.ATTRIBUTE_PROPERTY_VALUE, null);
 		} else {
 			if (returnType.isArray()) {
-				StringBuilder body = new StringBuilder();
-				for (Object item : ((Object[]) value)) {
-					String itemValue = getPropertyValue(item);
-					if (itemValue == null || (itemValue = itemValue.trim()).isEmpty()) {
-						continue;
-					}
+				Object[] objects = (Object[]) value;
+				if (objects.length > 0) {
+					StringBuilder body = new StringBuilder();
+					for (Object item : objects) {
+						String itemValue = getPropertyValue(item);
+						if (itemValue == null || (itemValue = itemValue.trim()).isEmpty()) {
+							continue;
+						}
 
-					if (body.length() > 0) {
-						body.append(TextUtil.getDefaultLineDelimiter());
-					}
+						if (body.length() > 0) {
+							body.append(TextUtil.getDefaultLineDelimiter());
+						}
 
-					body.append(itemValue);
+						body.append(itemValue);
+					}
+					property.setPropertyElemBody(body.toString());
 				}
 				removeAttribute(property, IDSConstants.ATTRIBUTE_PROPERTY_VALUE, null);
-				property.setPropertyElemBody(body.toString());
 			} else {
 				property.setPropertyValue(getPropertyValue(value));
 			}
