@@ -13,9 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.tools;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -42,8 +40,6 @@ import org.eclipse.ltk.core.refactoring.participants.SharableParticipants;
 import org.eclipse.ltk.core.refactoring.resource.DeleteResourceChange;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.build.IBuild;
-import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
@@ -53,7 +49,6 @@ import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.tools.change.BndProjectUpdateChange;
 import org.eclipse.pde.internal.ui.wizards.tools.change.BuildToBndChange;
-import org.eclipse.pde.internal.ui.wizards.tools.change.CreateJarChange;
 import org.eclipse.pde.internal.ui.wizards.tools.change.CreatePackageInfoChange;
 import org.eclipse.pde.internal.ui.wizards.tools.change.ManifestToBndChange;
 import org.eclipse.pde.internal.ui.wizards.tools.change.PreferenceChange;
@@ -139,23 +134,7 @@ public class ConvertAutomaticManifestProcessor extends RefactoringProcessor {
 				}
 			}
 		}
-		IBuild build = buildModel.getBuild();
-		boolean make = false;
-		for (IBuildEntry buildEntry : build.getBuildEntries()) {
-			String name = buildEntry.getName();
-			if (name.startsWith(IBuildEntry.JAR_PREFIX)) {
-				String jarName = name.substring(IBuildEntry.JAR_PREFIX.length());
-				if (jarName.equals(".")) { //$NON-NLS-1$
-					continue;
-				}
-				String outputFolder = Optional.ofNullable(build.getEntry(IBuildEntry.OUTPUT_PREFIX + jarName)).stream()
-						.flatMap(entry -> Arrays.stream(entry.getTokens())).findFirst().orElse(null);
-				change.add(
-						new CreateJarChange(project, instructionsFile, jarName, buildEntry.getTokens(), outputFolder));
-				make = true;
-			}
-		}
-		change.add(new BuildToBndChange(project, buildModel, instructionsFile, make));
+		change.add(new BuildToBndChange(project, buildModel, instructionsFile));
 		IFile buildProperties = PDEProject.getBuildProperties(project);
 		if (buildProperties.exists()) {
 			change.add(new DeleteResourceChange(buildProperties.getFullPath(), true));
