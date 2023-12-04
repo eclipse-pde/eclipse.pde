@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2018 IBM Corporation and others.
+ *  Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Christoph Läubrich - add bnd support
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
@@ -60,6 +61,7 @@ import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 
 import aQute.bnd.build.Container;
 import aQute.bnd.build.Project;
+import aQute.bnd.osgi.Constants;
 
 public class RequiredPluginsClasspathContainer extends PDEClasspathContainer implements IClasspathContainer {
 
@@ -235,11 +237,20 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		try {
 			Optional<Project> bndProject = BndProjectManager.getBndProject(project);
 			if (bndProject.isPresent()) {
-				for (Container container : bndProject.get().getBuildpath()) {
+				Project bnd = bndProject.get();
+				for (Container container : bnd.getBuildpath()) {
 					addExtraModel(desc, added, entries, container.getBundleSymbolicName());
 				}
-				for (Container container : bndProject.get().getTestpath()) {
+				for (Container container : bnd.getTestpath()) {
 					addExtraModel(desc, added, entries, container.getBundleSymbolicName());
+				}
+				String cp = bnd.getProperty(Constants.CLASSPATH);
+				if (cp != null) {
+					String[] tokens = cp.split(","); //$NON-NLS-1$
+					for (int i = 0; i < tokens.length; i++) {
+						tokens[i] = tokens[i].trim();
+					}
+					addExtraClasspathEntries(entries, tokens);
 				}
 			}
 		} catch (Exception e) {
