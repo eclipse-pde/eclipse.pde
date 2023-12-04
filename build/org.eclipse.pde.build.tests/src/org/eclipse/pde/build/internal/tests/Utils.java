@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.build.internal.tests;
 
+import static org.junit.Assume.assumeTrue;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -377,7 +379,10 @@ public class Utils {
 			// Eclipse.app/Contents/Eclipse).
 			baseLocation = baseLocation.getParentFile().getParentFile();
 		}
-		executableLocation = findExecutable(new File(baseLocation.getParent(), "deltapack/eclipse"));
+		File fallback = new File(baseLocation.getParent(), "deltapack/eclipse");
+		executableLocation = findExecutable(fallback);
+		assumeTrue("All attempts to find the executable failed including fallback to " + fallback.getAbsolutePath(),
+				executableLocation != null);
 		return executableLocation;
 	}
 
