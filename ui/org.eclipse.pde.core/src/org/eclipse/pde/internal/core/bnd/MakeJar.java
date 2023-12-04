@@ -13,16 +13,17 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.bnd;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
 import aQute.bnd.osgi.About;
+import aQute.bnd.osgi.AbstractResource;
 import aQute.bnd.osgi.Builder;
 import aQute.bnd.osgi.Constants;
 import aQute.bnd.osgi.Jar;
-import aQute.bnd.osgi.JarResource;
 import aQute.bnd.osgi.Resource;
 import aQute.bnd.service.MakePlugin;
 
@@ -43,20 +44,32 @@ public class MakeJar implements MakePlugin {
 		if (!folder.isDirectory()) {
 			return null;
 		}
-		Jar jar = new Jar(folder);
-		Manifest manifest = new Manifest();
-		Attributes mainAttributes = manifest.getMainAttributes();
-		mainAttributes.put(Attributes.Name.MANIFEST_VERSION, "1.0"); //$NON-NLS-1$
-		if (!Boolean.parseBoolean(argumentsOnMake.get("noExtra"))) { //$NON-NLS-1$
-			mainAttributes.putValue(Constants.CREATED_BY,
-					String.format("%s (%s)", System.getProperty("java.version"), System.getProperty("java.vendor"))); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-			mainAttributes.putValue(Constants.TOOL, "Bnd-" + About.getBndVersion()); //$NON-NLS-1$
-			if (!Boolean.parseBoolean(argumentsOnMake.get("reproducible"))) { //$NON-NLS-1$
-				mainAttributes.putValue(Constants.BND_LASTMODIFIED, Long.toString(System.currentTimeMillis()));
+		boolean noExtra = Boolean.parseBoolean(argumentsOnMake.get("noExtra")); //$NON-NLS-1$
+		boolean reproducible = Boolean.parseBoolean(argumentsOnMake.get("reproducible")); //$NON-NLS-1$
+		return new AbstractResource(System.currentTimeMillis()) {
+
+			@Override
+			protected byte[] getBytes() throws Exception {
+				try (Jar jar = new Jar(folder)) {
+					Manifest manifest = new Manifest();
+					Attributes mainAttributes = manifest.getMainAttributes();
+					mainAttributes.put(Attributes.Name.MANIFEST_VERSION, "1.0"); //$NON-NLS-1$
+					if (!noExtra) {
+						mainAttributes.putValue(Constants.CREATED_BY, String.format("%s (%s)", //$NON-NLS-1$
+								System.getProperty("java.version"), System.getProperty("java.vendor"))); //$NON-NLS-1$ //$NON-NLS-2$
+						mainAttributes.putValue(Constants.TOOL, "Bnd-" + About.getBndVersion()); //$NON-NLS-1$
+						if (!reproducible) {
+							mainAttributes.putValue(Constants.BND_LASTMODIFIED,
+									Long.toString(lastModified()));
+						}
+					}
+					jar.setManifest(manifest);
+					ByteArrayOutputStream stream = new ByteArrayOutputStream();
+					jar.write(stream);
+					return stream.toByteArray();
+				}
 			}
-		}
-		jar.setManifest(manifest);
-		return new JarResource(jar);
+		};
 	}
 
 }
