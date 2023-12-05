@@ -46,16 +46,16 @@ import aQute.bnd.build.Workspace;
 import biz.aQute.resolve.Bndrun;
 
 public class RunDescriptorTargetLocation extends BndTargetLocation {
-	static final String	TYPE							= "BndRunDescriptorLocation";
+	static final String	TYPE							= "BndRunDescriptorLocation"; //$NON-NLS-1$
 
-	static final String	ELEMENT_RUN_DESCRIPTOR			= "bndrun";
-	static final String	ATTRIBUTE_RUN_DESCRIPTOR_FILE	= "file";
+	static final String	ELEMENT_RUN_DESCRIPTOR			= "bndrun"; //$NON-NLS-1$
+	static final String	ATTRIBUTE_RUN_DESCRIPTOR_FILE	= "file"; //$NON-NLS-1$
 
 	private String		bndrunFileName;
 	private IFile		bndrunFile;
 
 	public RunDescriptorTargetLocation() {
-		super(TYPE, "bndrun.gif");
+		super(TYPE, "bndrun.gif"); //$NON-NLS-1$
 	}
 
 	public RunDescriptorTargetLocation setRunDescriptor(IFile bndrunFile) {
@@ -106,15 +106,15 @@ public class RunDescriptorTargetLocation extends BndTargetLocation {
 			Collection<Container> containers = bndRun.getRunbundles();
 			List<TargetBundle> bundles = new ArrayList<>(containers.size());
 
-			monitor.beginTask("Resolving Bundles", containers.size());
+			monitor.beginTask("Resolving Bundles", containers.size()); //$NON-NLS-1$
 
 			int i = 0;
 			for (Container container : containers) {
 				try {
 					bundles.add(new TargetBundle(container.getFile()));
 				} catch (Exception e) {
-					throw new CoreException(new Status(IStatus.ERROR, PLUGIN_ID, "Invalid plugin in run descriptor: "
-						+ container.getBundleSymbolicName() + " @ " + getLocation(false), e));
+					throw new CoreException(new Status(IStatus.ERROR, PLUGIN_ID, "Invalid plugin in run descriptor: " //$NON-NLS-1$
+						+ container.getBundleSymbolicName() + " @ " + getLocation(false), e)); //$NON-NLS-1$
 				}
 
 				if (monitor.isCanceled())
@@ -141,7 +141,7 @@ public class RunDescriptorTargetLocation extends BndTargetLocation {
 		if (resource instanceof IFile) {
 			bndrunFile = (IFile) resource;
 		} else {
-			throw new CoreException(new Status(IStatus.ERROR, PLUGIN_ID, "No file at path: " + bndrunFileName));
+			throw new CoreException(new Status(IStatus.ERROR, PLUGIN_ID, "No file at path: " + bndrunFileName)); //$NON-NLS-1$
 		}
 	}
 
@@ -176,7 +176,7 @@ public class RunDescriptorTargetLocation extends BndTargetLocation {
 				}
 			}
 
-			throw new CoreException(new Status(IStatus.ERROR, PLUGIN_ID, "No run descriptor file specified"));
+			throw new CoreException(new Status(IStatus.ERROR, PLUGIN_ID, "No run descriptor file specified")); //$NON-NLS-1$
 		}
 	}
 

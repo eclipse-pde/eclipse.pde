@@ -40,10 +40,11 @@ public abstract class BndTargetLocationFactory implements ITargetLocationFactory
 		if (this.type.equals(type)) {
 			Element locationElement;
 			try {
+				@SuppressWarnings("restriction")
 				DocumentBuilder docBuilder = org.eclipse.core.internal.runtime.XmlProcessorFactory
 						.createDocumentBuilderFactoryIgnoringDOCTYPE()
 					.newDocumentBuilder();
-				Document document = docBuilder.parse(new ByteArrayInputStream(serializedXML.getBytes("UTF-8")));
+				Document document = docBuilder.parse(new ByteArrayInputStream(serializedXML.getBytes("UTF-8"))); //$NON-NLS-1$
 				locationElement = document.getDocumentElement();
 
 				if (this.type.equals(locationElement.getAttribute(BndTargetLocation.ATTRIBUTE_LOCATION_TYPE))) {
@@ -51,7 +52,7 @@ public abstract class BndTargetLocationFactory implements ITargetLocationFactory
 				}
 			} catch (Exception e) {
 				ILog.get()
-						.error("Problem reading target location " + type);
+						.error("Problem reading target location " + type); //$NON-NLS-1$
 				return null;
 			}
 		}

@@ -52,20 +52,20 @@ import aQute.bnd.build.Workspace;
 
 public abstract class BndTargetLocation extends AbstractBundleContainer
 	implements ITargetLocationHandler, ILabelProvider {
-	static final String		PLUGIN_ID							= "bndtools.pde";
+	static final String		PLUGIN_ID							= "bndtools.pde"; //$NON-NLS-1$
 
-	static final String		MESSAGE_UNABLE_TO_LOCATE_WORKSPACE	= "Unable to locate the Bnd workspace";
-	static final String		MESSAGE_UNABLE_TO_RESOLVE_BUNDLES	= "Unable to resolve bundles";
+	static final String		MESSAGE_UNABLE_TO_LOCATE_WORKSPACE	= "Unable to locate the Bnd workspace"; //$NON-NLS-1$
+	static final String		MESSAGE_UNABLE_TO_RESOLVE_BUNDLES	= "Unable to resolve bundles"; //$NON-NLS-1$
 
-	static final String		ELEMENT_LOCATION					= "location";
-	static final String		ATTRIBUTE_LOCATION_TYPE				= "type";
+	static final String		ELEMENT_LOCATION					= "location"; //$NON-NLS-1$
+	static final String		ATTRIBUTE_LOCATION_TYPE				= "type"; //$NON-NLS-1$
 
 	private final String	type;
 	private final Image		containerIcon;
 
 	public BndTargetLocation(String type, String containerIconName) {
 		this.type = Objects.requireNonNull(type);
-		this.containerIcon = PDEPluginImages.get("/icons/bndtools/" + containerIconName);
+		this.containerIcon = PDEPluginImages.get("/icons/bndtools/" + containerIconName); //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("unchecked")
@@ -73,10 +73,8 @@ public abstract class BndTargetLocation extends AbstractBundleContainer
 	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter == ILabelProvider.class) {
 			return (T) this;
-
-		} else {
-			return super.getAdapter(adapter);
 		}
+		return super.getAdapter(adapter);
 	}
 
 
@@ -146,7 +144,7 @@ public abstract class BndTargetLocation extends AbstractBundleContainer
 			Transformer transformer = org.eclipse.core.internal.runtime.XmlProcessorFactory
 					.createTransformerFactoryWithErrorOnDOCTYPE()
 				.newTransformer();
-			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes"); //$NON-NLS-1$
 			transformer.transform(new DOMSource(document), result);
 			return result.getWriter()
 				.toString();

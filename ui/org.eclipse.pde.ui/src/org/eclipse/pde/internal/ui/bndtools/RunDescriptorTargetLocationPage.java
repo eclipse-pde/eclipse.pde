@@ -42,7 +42,7 @@ import aQute.bnd.build.Workspace;
 import biz.aQute.resolve.Bndrun;
 
 public class RunDescriptorTargetLocationPage extends BndTargetLocationPage {
-	private static final String			FILE_EXTENSION	= "bndrun";
+	private static final String			FILE_EXTENSION	= "bndrun"; //$NON-NLS-1$
 
 	private RunDescriptorTargetLocation	targetLocation;
 
@@ -51,8 +51,8 @@ public class RunDescriptorTargetLocationPage extends BndTargetLocationPage {
 
 	public RunDescriptorTargetLocationPage(ITargetDefinition targetDefinition,
 		RunDescriptorTargetLocation targetLocation) {
-		super("AddBndRunDescriptorContainer", "Add Bnd Run Descriptor",
-			"Select a Bnd run descriptor to be added to your target", targetDefinition);
+		super(BndToolsMessages.RunDescriptorTargetLocationPage_AddBndRunDescriptorContainer, BndToolsMessages.RunDescriptorTargetLocationPage_AddBndRunDescriptor,
+			BndToolsMessages.RunDescriptorTargetLocationPage_Select, targetDefinition);
 
 		if (targetLocation != null) {
 			this.targetLocation = targetLocation;
@@ -64,9 +64,9 @@ public class RunDescriptorTargetLocationPage extends BndTargetLocationPage {
 	public void createControl(Composite parent) {
 		Composite composite = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);
 
-		SWTFactory.createLabel(composite, "Run descriptor:", 1);
+		SWTFactory.createLabel(composite, BndToolsMessages.RunDescriptorTargetLocationPage_RunDescriptor, 1);
 		TreeViewer projectTree = createRunDescriptorSelectionArea(composite);
-		SWTFactory.createLabel(composite, "Run bundles:", 1);
+		SWTFactory.createLabel(composite, BndToolsMessages.RunDescriptorTargetLocationPage_RunBundles, 1);
 		bundleList = createBundleListArea(composite, 1);
 
 		setControl(composite);
@@ -77,7 +77,7 @@ public class RunDescriptorTargetLocationPage extends BndTargetLocationPage {
 
 		if (projectTree.getTree()
 			.getItems().length == 0)
-			logError("No run descriptors found in workspace", null);
+			logError("No run descriptors found in workspace", null); //$NON-NLS-1$
 	}
 
 	private TreeViewer createRunDescriptorSelectionArea(Composite composite) {
@@ -118,7 +118,7 @@ public class RunDescriptorTargetLocationPage extends BndTargetLocationPage {
 				return element instanceof IFile;
 			}
 		};
-		bndrunFilter.setPattern("*");
+		bndrunFilter.setPattern("*"); //$NON-NLS-1$
 		return new ViewerFilter[] {
 			bndrunFilter
 		};
@@ -137,7 +137,7 @@ public class RunDescriptorTargetLocationPage extends BndTargetLocationPage {
 
 				try (Bndrun bndRun = new Bndrun(workspace, file)) {
 					for (Container bundle : bndRun.getRunbundles()) {
-						bundles.add(bundle.getBundleSymbolicName() + " - " + bundle.getVersion());
+						bundles.add(bundle.getBundleSymbolicName() + " - " + bundle.getVersion()); //$NON-NLS-1$
 					}
 					bundleList.setInput(bundles);
 				}
@@ -145,7 +145,7 @@ public class RunDescriptorTargetLocationPage extends BndTargetLocationPage {
 				setPageComplete(true);
 
 				if (bundles.isEmpty())
-					logWarning("Run descriptor is empty: " + runDescriptorFile.getFullPath(), null);
+					logWarning("Run descriptor is empty: " + runDescriptorFile.getFullPath(), null); //$NON-NLS-1$
 				else
 					resetMessage();
 			} catch (Exception e) {
