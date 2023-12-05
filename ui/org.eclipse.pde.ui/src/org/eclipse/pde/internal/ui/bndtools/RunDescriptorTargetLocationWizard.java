@@ -26,7 +26,7 @@ public class RunDescriptorTargetLocationWizard extends Wizard implements ITarget
 	private RunDescriptorTargetLocationPage	targetLocationPage;
 
 	public RunDescriptorTargetLocationWizard() {
-		setWindowTitle("Run Descriptor Target Location");
+		setWindowTitle("Run Descriptor Target Location"); //$NON-NLS-1$
 	}
 
 	@Override
