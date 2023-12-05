@@ -41,18 +41,18 @@ import aQute.bnd.service.RepositoryPlugin;
 import aQute.bnd.version.Version;
 
 public class RepositoryTargetLocation extends BndTargetLocation {
-	static final String			TYPE									= "BndRepositoryLocation";
+	static final String			TYPE									= "BndRepositoryLocation"; //$NON-NLS-1$
 
-	static final String			MESSAGE_UNABLE_TO_RESOLVE_REPOSITORIES	= "Unable to resolve Bnd repository plugins";
+	static final String			MESSAGE_UNABLE_TO_RESOLVE_REPOSITORIES	= "Unable to resolve Bnd repository plugins"; //$NON-NLS-1$
 
-	static final String			ELEMENT_REPOSITORY						= "repository";
-	static final String			ATTRIBUTE_REPOSITORY_NAME				= "name";
+	static final String			ELEMENT_REPOSITORY						= "repository"; //$NON-NLS-1$
+	static final String			ATTRIBUTE_REPOSITORY_NAME				= "name"; //$NON-NLS-1$
 
 	private String				repositoryName;
 	private RepositoryPlugin	repository;
 
 	public RepositoryTargetLocation() {
-		super(TYPE, "database.png");
+		super(TYPE, "database.png"); //$NON-NLS-1$
 	}
 
 	public RepositoryTargetLocation setRepository(String repositoryName) {
@@ -95,12 +95,12 @@ public class RepositoryTargetLocation extends BndTargetLocation {
 		try {
 			List<TargetBundle> bundles = new ArrayList<>();
 
-			List<String> bsns = repository.list("*");
-			monitor.beginTask("Resolving Bundles", bsns.size());
+			List<String> bsns = repository.list("*"); //$NON-NLS-1$
+			monitor.beginTask("Resolving Bundles", bsns.size()); //$NON-NLS-1$
 
 			int i = 0;
 			for (String bsn : bsns) {
-				if (bsn.contains(":")) {
+				if (bsn.contains(":")) { //$NON-NLS-1$
 					continue;
 				}
 				Version version = repository.versions(bsn)
@@ -111,7 +111,7 @@ public class RepositoryTargetLocation extends BndTargetLocation {
 					bundles.add(new TargetBundle(download));
 				} catch (Exception e) {
 					throw new CoreException(new Status(IStatus.WARNING, PLUGIN_ID,
-						"Invalid plugin in repository: " + bsn + " @ " + getLocation(false), e));
+						"Invalid plugin in repository: " + bsn + " @ " + getLocation(false), e)); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 
 				if (monitor.isCanceled())
@@ -152,14 +152,14 @@ public class RepositoryTargetLocation extends BndTargetLocation {
 
 		if (this.repository == null)
 			throw new CoreException(
-				new Status(IStatus.ERROR, PLUGIN_ID, "Unable to locate the named repository: " + repositoryName));
+				new Status(IStatus.ERROR, PLUGIN_ID, "Unable to locate the named repository: " + repositoryName)); //$NON-NLS-1$
 	}
 
 	@Override
 	public String getLocation(boolean resolve) throws CoreException {
 		if (resolve)
 			resolveRepository();
-		return repository != null ? repository.getLocation() : "";
+		return repository != null ? repository.getLocation() : ""; //$NON-NLS-1$
 	}
 
 	@Override
@@ -188,7 +188,7 @@ public class RepositoryTargetLocation extends BndTargetLocation {
 				}
 			}
 
-			throw new CoreException(new Status(IStatus.ERROR, PLUGIN_ID, "No repository name specified"));
+			throw new CoreException(new Status(IStatus.ERROR, PLUGIN_ID, "No repository name specified")); //$NON-NLS-1$
 		}
 	}
 

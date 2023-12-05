@@ -26,7 +26,7 @@ public class RepositoryTargetLocationWizard extends Wizard implements ITargetLoc
 	private RepositoryTargetLocationPage	targetLocationPage;
 
 	public RepositoryTargetLocationWizard() {
-		setWindowTitle("Bnd Repository Target Location");
+		setWindowTitle(BndToolsMessages.RepositoryTargetLocationWizard_BndRepositoryTargetLocation);
 	}
 
 	@Override

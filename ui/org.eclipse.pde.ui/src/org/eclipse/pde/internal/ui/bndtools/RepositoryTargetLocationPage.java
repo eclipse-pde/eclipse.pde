@@ -38,7 +38,7 @@ import aQute.bnd.service.RepositoryPlugin;
 import aQute.bnd.service.ResolutionPhase;
 
 public class RepositoryTargetLocationPage extends BndTargetLocationPage {
-	private static final String				CACHE_REPOSITORY	= "cache";
+	private static final String				CACHE_REPOSITORY	= "cache"; //$NON-NLS-1$
 
 	private RepositoryTargetLocation		targetLocation;
 
@@ -49,7 +49,7 @@ public class RepositoryTargetLocationPage extends BndTargetLocationPage {
 	private Text							pluginLocationText;
 
 	public RepositoryTargetLocationPage(ITargetDefinition targetDefinition, RepositoryTargetLocation targetLocation) {
-		super("AddBndRepositoryContainer", "Add Bnd Repository", "Select a Bnd repository to be added to your target",
+		super(BndToolsMessages.RepositoryTargetLocationPage_AddBndRepositoryContainer, BndToolsMessages.RepositoryTargetLocationPage_AddBndRepository, BndToolsMessages.RepositoryTargetLocationPage_ToBeAdded,
 			targetDefinition);
 
 		if (targetLocation != null) {
@@ -88,7 +88,7 @@ public class RepositoryTargetLocationPage extends BndTargetLocationPage {
 	}
 
 	private String getLocation() {
-		return repository != null ? repository.getLocation() : "";
+		return repository != null ? repository.getLocation() : ""; //$NON-NLS-1$
 	}
 
 	@Override
@@ -96,7 +96,7 @@ public class RepositoryTargetLocationPage extends BndTargetLocationPage {
 		Composite composite = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH, 0, 0);
 
 		Combo pluginsCombo = createRepositoryComboArea(composite);
-		SWTFactory.createLabel(composite, "Contents: ", 2);
+		SWTFactory.createLabel(composite, BndToolsMessages.RepositoryTargetLocationPage_Contents, 2);
 		bundleList = createBundleListArea(composite, 2);
 
 		updateTarget();
@@ -127,10 +127,10 @@ public class RepositoryTargetLocationPage extends BndTargetLocationPage {
 			names[i++] = plugin.getName();
 		}
 
-		SWTFactory.createLabel(composite, "Repository: ", 1);
+		SWTFactory.createLabel(composite, BndToolsMessages.RepositoryTargetLocationPage_Repository, 1);
 		final Combo pluginsCombo = SWTFactory.createCombo(composite, SWT.READ_ONLY, 1, GridData.FILL_HORIZONTAL, names);
 
-		SWTFactory.createLabel(composite, "Location: ", 1);
+		SWTFactory.createLabel(composite, BndToolsMessages.RepositoryTargetLocationPage_Location, 1);
 		pluginLocationText = SWTFactory.createText(composite, SWT.READ_ONLY, 1, GridData.FILL_HORIZONTAL);
 		pluginLocationText.setText(getLocation());
 
@@ -162,7 +162,7 @@ public class RepositoryTargetLocationPage extends BndTargetLocationPage {
 			pluginLocationText.setText(getLocation());
 			setPageComplete(true);
 		} catch (Exception e) {
-			logError("Unable to list bundles for repository: " + repository.getName(), e);
+			logError("Unable to list bundles for repository: " + repository.getName(), e); //$NON-NLS-1$
 			clearTarget();
 		}
 	}
@@ -176,12 +176,12 @@ public class RepositoryTargetLocationPage extends BndTargetLocationPage {
 	protected Collection<?> getBundles() throws Exception {
 		List<String> bundles = new ArrayList<>();
 		if (repository != null) {
-			for (String bsn : repository.list("*")) {
-				bundles.add(bsn + " - " + repository.versions(bsn)
+			for (String bsn : repository.list("*")) { //$NON-NLS-1$
+				bundles.add(bsn + " - " + repository.versions(bsn) //$NON-NLS-1$
 					.last());
 			}
 			if (bundles.isEmpty())
-				logWarning("Repository is empty: " + repository.getName(), null);
+				logWarning("Repository is empty: " + repository.getName(), null); //$NON-NLS-1$
 			else
 				resetMessage();
 		}
