@@ -16,6 +16,12 @@ jobs:
   check-merge-commits:
     if: github.event_name == 'pull_request'
     uses: eclipse-platform/eclipse.platform.releng.aggregator/.github/workflows/checkMergeCommits.yml@master
+
   build:
-    uses: eclipse-platform/eclipse.platform.releng.aggregator/.github/workflows/mavenBuild.yml@master
+    steps:
+    - uses: eclipse-platform/eclipse.platform.releng.aggregator/.github/workflows/mavenBuild.yml@master
+    - name: Try to fail
+      run: exit 1
+    - name: Print message if we don't fail
+      run: echo Should not get here
 
