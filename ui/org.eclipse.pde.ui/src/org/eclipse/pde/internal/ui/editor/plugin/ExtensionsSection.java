@@ -104,7 +104,6 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.internal.BidiUtil;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
@@ -1058,7 +1057,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 			// add RTL zero length character just before the ( and the LTR character just after to ensure:
 			// 1. The leading parenthesis takes proper orientation when running in BiDi configuration
 			// Assumption: baseName (taken from the schema definition), is only Latin characters and is therefore always displayed LTR
-			if (BidiUtil.isBidiPlatform())
+			if (SWTUtil.isBidi())
 				return fullName + " \u200f(\u200e" + baseName + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 			return fullName + " (" + baseName + ')'; //$NON-NLS-1$
 		}

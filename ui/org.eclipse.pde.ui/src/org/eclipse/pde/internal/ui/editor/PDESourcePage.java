@@ -655,4 +655,8 @@ public abstract class PDESourcePage extends org.eclipse.ui.internal.genericedito
 		return range;
 	}
 
+	@Override
+	protected void initializeEditor() {
+		super.initializeEditor();
+	}
 }
