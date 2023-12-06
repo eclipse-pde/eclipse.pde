@@ -106,4 +106,13 @@ public class SWTUtil {
 		height = Math.max(computedSize.y, height);
 		dialog.getShell().setSize(width, height);
 	}
+
+	public static boolean isBidi() {
+		@SuppressWarnings("restriction")
+		boolean bidi = org.eclipse.swt.internal.BidiUtil.isBidiPlatform();
+		return bidi;
+		// XXX Consider using public API
+		// org.eclipse.jface.util.BidiUtils.getBidiSupport()
+		// however that has a different meaning.
+	}
 }

@@ -291,8 +291,10 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	/**
 	 * copied and edited from jdt.core
 	 *
-	 * @see org.eclipse.jdt.internal.compiler.env.AutomaticModuleNaming#determineAutomaticModuleNameFromFileName(String,
-	 *      boolean, boolean)
+	 * <p>
+	 * see
+	 * {@code org.eclipse.jdt.internal.compiler.env.AutomaticModuleNaming#determineAutomaticModuleNameFromFileName(String, boolean, boolean)}
+	 *
 	 * @param name
 	 *            bundle symbolic name
 	 * @return automatic module name corresponding to BSN

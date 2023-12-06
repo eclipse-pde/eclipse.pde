@@ -22,7 +22,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jdt.internal.compiler.classfmt.ClassFileConstants;
+import org.eclipse.jdt.core.Flags;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.model.StubArchiveApiTypeContainer.ArchiveApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -38,7 +38,6 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
-
 /**
  * Class adapter used to create an API type structure
  */
@@ -78,7 +77,7 @@ public class TypeStructureBuilder extends ClassVisitor {
 		// component
 		if ((laccess & Opcodes.ACC_DEPRECATED) != 0) {
 			laccess &= ~Opcodes.ACC_DEPRECATED;
-			laccess |= ClassFileConstants.AccDeprecated;
+			laccess |= Flags.AccDeprecated;
 		}
 		fType = new ApiType(fComponent, name.replace('/', '.'), simpleSig.toString(), signature, laccess, enclosingName, fFile);
 		if (superName != null) {
@@ -133,7 +132,7 @@ public class TypeStructureBuilder extends ClassVisitor {
 		int laccess = access;
 		if ((access & Opcodes.ACC_DEPRECATED) != 0) {
 			laccess &= ~Opcodes.ACC_DEPRECATED;
-			laccess |= ClassFileConstants.AccDeprecated;
+			laccess |= Flags.AccDeprecated;
 		}
 		fType.addField(name, desc, signature, laccess, value);
 		return null;
@@ -145,7 +144,7 @@ public class TypeStructureBuilder extends ClassVisitor {
 		int laccess = access;
 		if ((laccess & Opcodes.ACC_DEPRECATED) != 0) {
 			laccess &= ~Opcodes.ACC_DEPRECATED;
-			laccess |= ClassFileConstants.AccDeprecated;
+			laccess |= Flags.AccDeprecated;
 		}
 		if (exceptions != null && exceptions.length > 0) {
 			names = new String[exceptions.length];
