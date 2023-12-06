@@ -16,6 +16,12 @@ jobs:
   check-merge-commits:
     if: github.event_name == 'pull_request'
     uses: eclipse-platform/eclipse.platform.releng.aggregator/.github/workflows/checkMergeCommits.yml@master
+  check-dash-licenses:
+    uses: eclipse/dash-licenses/.github/workflows/mavenLicenseCheck.yml@master
+    with:
+      projectId: eclipse.pde
+    secrets:
+      gitlabAPIToken: ${{ secrets.PDE_GITLAB_API_TOKEN }}
   build:
     uses: eclipse-platform/eclipse.platform.releng.aggregator/.github/workflows/mavenBuild.yml@master
 
