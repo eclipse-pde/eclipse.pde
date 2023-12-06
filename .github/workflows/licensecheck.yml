@@ -1,14 +1,6 @@
-name: License vetting status check
+name: Request license-review
 
 on:
-  push:
-    branches: 
-      - 'master'
-      - 'tycho-*'
-  pull_request:
-    branches: 
-     - 'master'
-     - 'tycho-*'
   issue_comment:
     types: [created]
 
@@ -18,6 +10,6 @@ jobs:
       pull-requests: write
     uses: eclipse/dash-licenses/.github/workflows/mavenLicenseCheck.yml@master
     with:
-      projectId: technology.tycho
+      projectId: eclipse.pde
     secrets:
       gitlabAPIToken: ${{ secrets.PDE_GITLAB_API_TOKEN }}
