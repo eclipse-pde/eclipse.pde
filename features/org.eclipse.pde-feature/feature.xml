@@ -25,6 +25,7 @@
       <import plugin="org.osgi.annotation.bundle"/>
       <import plugin="org.osgi.service.component.annotations"/>
       <import plugin="org.osgi.service.metatype.annotations"/>
+      <import plugin="org.bndtools.templates.template"/>
    </requires>
 
    <plugin
