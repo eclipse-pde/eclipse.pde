@@ -272,10 +272,6 @@ public class TypeStructureBuilder extends ClassVisitor {
 	/**
 	 * Builds a type structure with the given .class file bytes in the specified
 	 * API component.
-	 *
-	 * @param bytes class file bytes
-	 * @param component originating API component
-	 * @param file associated class file
 	 */
 	public static void setEnclosingMethod(IApiType enclosingType, ApiType currentAnonymousLocalType) {
 		IApiTypeRoot typeRoot = enclosingType.getTypeRoot();
