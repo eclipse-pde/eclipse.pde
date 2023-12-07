@@ -33,7 +33,7 @@ pipeline {
 						apiAnalyzer-workspace/.metadata/*.log')
 					junit '**/target/surefire-reports/*.xml'
 					discoverGitReferenceBuild referenceJob: 'eclipse.pde/master'
-					recordIssues publishAllIssues: true, tools: [java(), mavenConsole(), javaDoc()], qualityGates: [[threshold: 1, type: 'NEW', unstable: true]]
+					recordIssues publishAllIssues: true, tools: [java(), mavenConsole(), javaDoc()], qualityGates: [[threshold: 1, type: 'DELTA', unstable: true]]
 				}
 			}
 		}
