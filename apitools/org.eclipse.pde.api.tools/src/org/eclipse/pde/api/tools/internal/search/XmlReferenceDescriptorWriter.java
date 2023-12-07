@@ -81,7 +81,6 @@ public class XmlReferenceDescriptorWriter {
 	 *
 	 * @param location the absolute path in the local file system to the folder
 	 *            to write the reports to
-	 * @param debug if debugging infos should be written out to the console
 	 */
 	@SuppressWarnings("restriction")
 	public XmlReferenceDescriptorWriter(String location) {
