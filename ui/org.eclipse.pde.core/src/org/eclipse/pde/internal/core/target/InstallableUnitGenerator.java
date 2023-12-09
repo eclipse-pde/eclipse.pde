@@ -81,11 +81,14 @@ public class InstallableUnitGenerator {
 					PublisherInfo publisherInfo = new PublisherInfo();
 					publisherInfo.setArtifactOptions(IPublisherInfo.A_INDEX);
 					BundleDescription bundleDescription = BundlesAction.createBundleDescription(headers, null);
-					IInstallableUnit iu = BundlesAction.createBundleIU(bundleDescription,
-							BundlesAction.createBundleArtifactKey(bundleDescription.getSymbolicName(),
-									bundleDescription.getVersion().toString()),
-							publisherInfo);
-					return Stream.of(iu);
+					// null if bundle contains invalid manifest headers
+					if (bundleDescription != null) {
+						IInstallableUnit iu = BundlesAction.createBundleIU(bundleDescription,
+								BundlesAction.createBundleArtifactKey(bundleDescription.getSymbolicName(),
+										bundleDescription.getVersion().toString()),
+								publisherInfo);
+						return Stream.of(iu);
+					}
 				} catch (IOException e) {
 					// can't use it then...
 				}
