@@ -144,9 +144,13 @@ public abstract class P2TestCase extends PDETestCase {
 		URI baseURI = repository.getLocationURI();
 
 		File base = new File(Platform.getInstallLocation().getURL().getPath());
+		assertTrue("Install location " + base.getAbsolutePath() + " does not exists", base.exists());
 		base = new File(base, "p2/org.eclipse.equinox.p2.engine/profileRegistry/SDKProfile.profile");
+		assertTrue("SDKProfile " + base.getAbsolutePath() + " does not exists", base.exists());
 		File[] profiles = base.listFiles();
+		assertNotNull("can't read folder " + base.getAbsolutePath(), profiles);
 		Arrays.sort(profiles);
+		assertTrue("No profiles found in " + base.getAbsolutePath(), profiles.length > 0);
 		File profile = profiles[profiles.length - 1];
 
 		CompositeMetadataRepository repo = (CompositeMetadataRepository) metadataManager.createRepository(baseURI,
