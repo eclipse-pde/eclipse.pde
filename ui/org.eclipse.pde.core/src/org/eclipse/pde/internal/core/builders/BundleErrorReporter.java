@@ -587,7 +587,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 							IPath currentPath = entry.getPath();
 							if (JavaRuntime.newDefaultJREContainerPath().matchingFirstSegments(currentPath) > 0) {
 								String eeId = JavaRuntime.getExecutionEnvironmentId(currentPath);
-								if (eeId != null) {
+								IHeader header = getHeader(Constants.REQUIRE_CAPABILITY);
+								if (eeId != null && header == null) {
 									VirtualMarker marker = report(PDECoreMessages.BundleErrorReporter_noExecutionEnvironmentSet, 1, sev, PDEMarkerFactory.M_EXECUTION_ENVIRONMENT_NOT_SET, PDEMarkerFactory.CAT_EE);
 									addMarkerAttribute(marker, "ee_id", eeId); //$NON-NLS-1$
 									addMarkerAttribute(marker,PDEMarkerFactory.compilerKey,	CompilerFlags.P_INCOMPATIBLE_ENV);
@@ -615,7 +616,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			if (vm != null) {
 				for (IExecutionEnvironment systemEnv : systemEnvs) {
 					// Get strictly compatible EE for the default VM
-					if (systemEnv.isStrictlyCompatible(vm)) {
+					IHeader header = getHeader(Constants.REQUIRE_CAPABILITY);
+					if (systemEnv.isStrictlyCompatible(vm) && header == null) {
 						VirtualMarker marker = report(PDECoreMessages.BundleErrorReporter_noExecutionEnvironmentSet, 1, sev, PDEMarkerFactory.M_EXECUTION_ENVIRONMENT_NOT_SET, PDEMarkerFactory.CAT_EE);
 						addMarkerAttribute(marker, "ee_id", systemEnv.getId()); //$NON-NLS-1$
 						addMarkerAttribute(marker,PDEMarkerFactory.compilerKey, CompilerFlags.P_INCOMPATIBLE_ENV);
