@@ -102,6 +102,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	private boolean fOsgiR4;
 	private IPluginModelBase fModel;
 	private Set<String> fProjectPackages;
+	private static final String osgiEE = "osgi.ee"; //$NON-NLS-1$
 
 	public BundleErrorReporter(IFile file) {
 		super(file);
@@ -553,6 +554,21 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		}
 	}
 
+	private boolean isCompatibleOsgiEE() {
+		IHeader header = getHeader(Constants.REQUIRE_CAPABILITY);
+		if (header == null) {
+			return false;
+		}
+		String ee = header.getValue();
+		String[] parts = ee.split(";"); //$NON-NLS-1$
+		if (parts[0] == null) {
+			return false;
+		}
+		if (!parts[0].equalsIgnoreCase(osgiEE)) {
+			return false;
+		}
+		return true;
+	}
 	private void validateRequiredExecutionEnvironment() {
 		int sev = CompilerFlags.getFlag(fProject, CompilerFlags.P_INCOMPATIBLE_ENV);
 		if (sev == CompilerFlags.IGNORE) {
@@ -587,8 +603,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 							IPath currentPath = entry.getPath();
 							if (JavaRuntime.newDefaultJREContainerPath().matchingFirstSegments(currentPath) > 0) {
 								String eeId = JavaRuntime.getExecutionEnvironmentId(currentPath);
-								IHeader header = getHeader(Constants.REQUIRE_CAPABILITY);
-								if (eeId != null && header == null) {
+								if (eeId != null && !isCompatibleOsgiEE()) {
 									VirtualMarker marker = report(PDECoreMessages.BundleErrorReporter_noExecutionEnvironmentSet, 1, sev, PDEMarkerFactory.M_EXECUTION_ENVIRONMENT_NOT_SET, PDEMarkerFactory.CAT_EE);
 									addMarkerAttribute(marker, "ee_id", eeId); //$NON-NLS-1$
 									addMarkerAttribute(marker,PDEMarkerFactory.compilerKey,	CompilerFlags.P_INCOMPATIBLE_ENV);
@@ -616,8 +631,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			if (vm != null) {
 				for (IExecutionEnvironment systemEnv : systemEnvs) {
 					// Get strictly compatible EE for the default VM
-					IHeader header = getHeader(Constants.REQUIRE_CAPABILITY);
-					if (systemEnv.isStrictlyCompatible(vm) && header == null) {
+					if (systemEnv.isStrictlyCompatible(vm) && !isCompatibleOsgiEE()) {
 						VirtualMarker marker = report(PDECoreMessages.BundleErrorReporter_noExecutionEnvironmentSet, 1, sev, PDEMarkerFactory.M_EXECUTION_ENVIRONMENT_NOT_SET, PDEMarkerFactory.CAT_EE);
 						addMarkerAttribute(marker, "ee_id", systemEnv.getId()); //$NON-NLS-1$
 						addMarkerAttribute(marker,PDEMarkerFactory.compilerKey, CompilerFlags.P_INCOMPATIBLE_ENV);
