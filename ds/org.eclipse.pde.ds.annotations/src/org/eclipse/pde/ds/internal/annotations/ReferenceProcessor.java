@@ -87,13 +87,16 @@ public class ReferenceProcessor {
 
 		ITypeBinding serviceType;
 		Object value;
-		if ((value = params.get("service")) instanceof ITypeBinding) { //$NON-NLS-1$
+		if ((value = params.get(VALUE_REFERENCE_FIELD_COLLECTION_TYPE_SERVICE)) instanceof ITypeBinding) { // $NON-NLS-1$
 			serviceType = (ITypeBinding) value;
 			if (!errorLevel.isIgnore() && argTypes.length > 0) {
 				if (DSAnnotationVersion.V1_3.isEqualOrHigherThan(specVersion)) {
 					for (ITypeBinding argType : argTypes) {
 						if (!isValidArgumentForService(argType, serviceType)) {
-							problemReporter.reportProblem(annotation, "service", NLS.bind(Messages.AnnotationProcessor_invalidReference_serviceType, argType.getName(), serviceType.getName()), argType.getName(), serviceType.getName()); //$NON-NLS-1$
+							problemReporter.reportProblem(annotation, VALUE_REFERENCE_FIELD_COLLECTION_TYPE_SERVICE,
+									NLS.bind(Messages.AnnotationProcessor_invalidReference_serviceType,
+											argType.getName(), serviceType.getName()),
+									argType.getName(), serviceType.getName()); // $NON-NLS-1$
 							break;
 						}
 					}
@@ -103,7 +106,10 @@ public class ReferenceProcessor {
 					if (!(ServiceReference.class.getName().equals(erasure)
 							&& ((typeArgs = argTypes[0].getTypeArguments()).length == 0 || serviceType.isAssignmentCompatible(typeArgs[0])))
 							&& !serviceType.isAssignmentCompatible(argTypes[0])) {
-						problemReporter.reportProblem(annotation, "service", NLS.bind(Messages.AnnotationProcessor_invalidReference_serviceType, argTypes[0].getName(), serviceType.getName()), argTypes[0].getName(), serviceType.getName()); //$NON-NLS-1$
+						problemReporter.reportProblem(annotation, VALUE_REFERENCE_FIELD_COLLECTION_TYPE_SERVICE,
+								NLS.bind(Messages.AnnotationProcessor_invalidReference_serviceType,
+										argTypes[0].getName(), serviceType.getName()),
+								argTypes[0].getName(), serviceType.getName()); // $NON-NLS-1$
 					}
 				}
 			}
@@ -530,7 +536,7 @@ public class ReferenceProcessor {
 		}
 
 		ITypeBinding serviceType;
-		Object serviceProperty = params.get("service");
+		Object serviceProperty = params.get(VALUE_REFERENCE_FIELD_COLLECTION_TYPE_SERVICE);
 		if ((value = serviceProperty) instanceof ITypeBinding) { // $NON-NLS-1$
 			serviceType = (ITypeBinding) value;
 			if (!errorLevel.isIgnore()) {
@@ -546,7 +552,10 @@ public class ReferenceProcessor {
 
 				if (targetType != null) {
 					if (!isValidFieldForService(targetType, serviceType)) {
-						problemReporter.reportProblem(annotation, "service", NLS.bind(Messages.AnnotationProcessor_invalidReference_incompatibleServiceType, targetType.getName(), serviceType.getName()), targetType.getName(), serviceType.getName()); //$NON-NLS-1$
+						problemReporter.reportProblem(annotation, VALUE_REFERENCE_FIELD_COLLECTION_TYPE_SERVICE,
+								NLS.bind(Messages.AnnotationProcessor_invalidReference_incompatibleServiceType,
+										targetType.getName(), serviceType.getName()),
+								targetType.getName(), serviceType.getName()); // $NON-NLS-1$
 					}
 				}
 			}
@@ -591,7 +600,7 @@ public class ReferenceProcessor {
 			}
 			if (fieldCollectionType == null && DSAnnotationVersion.V1_4.isEqualOrHigherThan(specVersion)) {
 				// TODO workaround for https://github.com/osgi/osgi/issues/641
-				fieldCollectionType = "service";
+				fieldCollectionType = VALUE_REFERENCE_FIELD_COLLECTION_TYPE_SERVICE;
 			}
 		}
 
@@ -876,14 +885,16 @@ public class ReferenceProcessor {
 	public DSAnnotationVersion processReference(IDSReference reference, ITypeBinding typeBinding, Annotation annotation, IAnnotationBinding annotationBinding, Map<String, Object> params, Map<String, Annotation> names) {
 		ITypeBinding serviceType;
 		Object value;
-		if ((value = params.get("service")) instanceof ITypeBinding) { //$NON-NLS-1$
+		if ((value = params.get(VALUE_REFERENCE_FIELD_COLLECTION_TYPE_SERVICE)) instanceof ITypeBinding) { // $NON-NLS-1$
 			serviceType = (ITypeBinding) value;
 		} else {
 			// service must be explicitly specified; default to Object
 			serviceType = annotation.getAST().resolveWellKnownType(Object.class.getName());
 
 			if (!errorLevel.isIgnore()) {
-				problemReporter.reportProblem(annotation, null, NLS.bind(Messages.AnnotationProcessor_invalidReference_missingRequiredParam, "service")); //$NON-NLS-1$
+				problemReporter.reportProblem(annotation, null,
+						NLS.bind(Messages.AnnotationProcessor_invalidReference_missingRequiredParam,
+								VALUE_REFERENCE_FIELD_COLLECTION_TYPE_SERVICE));
 			}
 		}
 
