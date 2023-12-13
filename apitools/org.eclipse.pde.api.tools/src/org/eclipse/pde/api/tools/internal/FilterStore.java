@@ -124,7 +124,7 @@ public class FilterStore implements IApiFilterStore {
 			// This filter store does not support resources so all filters are
 			// stored under GLOBAL
 			Set<IApiProblemFilter> globalFilters = fFilterMap.get(GLOBAL);
-			if (globalFilters != null && globalFilters.size() > 0) {
+			if (globalFilters != null && !globalFilters.isEmpty()) {
 				for (IApiProblemFilter filter : filters) {
 					removed &= globalFilters.remove(filter);
 				}
@@ -416,8 +416,7 @@ public class FilterStore implements IApiFilterStore {
 			return -1;
 		}
 		try {
-			int number = Integer.parseInt(value);
-			return number;
+			return Integer.parseInt(value);
 		} catch (NumberFormatException nfe) {
 			// ignore
 		}

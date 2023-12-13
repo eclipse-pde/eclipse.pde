@@ -159,8 +159,7 @@ public class Factory {
 	public static IApiTypeContainer newScope(IApiComponent[] components) throws CoreException {
 		LinkedList<IApiTypeContainer> compList = new LinkedList<>();
 		Collections.addAll(compList, components);
-		CompositeApiTypeContainer scope = new CompositeApiTypeContainer(components[0].getBaseline(), compList);
-		return scope;
+		return new CompositeApiTypeContainer(components[0].getBaseline(), compList);
 	}
 
 	/**
