@@ -1093,8 +1093,6 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 *
 	 * @param message
 	 *            a prefix for the logged message
-	 * @param severity
-	 *            the severity of the logged entry
 	 * @param projectNames
 	 *            the names of the projects for which to log classpaths
 	 */

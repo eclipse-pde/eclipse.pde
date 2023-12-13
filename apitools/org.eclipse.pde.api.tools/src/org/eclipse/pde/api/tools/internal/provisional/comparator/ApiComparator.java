@@ -298,9 +298,6 @@ public class ApiComparator {
 	 * @param component the given component to compare with
 	 * @param visibilityModifiers the given visibility that triggers what
 	 *            visibility should be used for the comparison
-	 * @param force a flag to force the comparison of nested API components with
-	 *            the same versions
-	 * @param monitor
 	 *
 	 * @return a delta, an empty delta if no difference is found or null if the
 	 *         delta detection failed

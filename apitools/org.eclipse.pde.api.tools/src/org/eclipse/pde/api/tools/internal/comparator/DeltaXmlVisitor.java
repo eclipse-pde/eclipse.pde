@@ -42,7 +42,6 @@ public class DeltaXmlVisitor extends DeltaVisitor {
 	/**
 	 * Constructs a new visitor for the given component.
 	 *
-	 * @param component API component
 	 * @throws CoreException if unable to construct the visitor
 	 */
 	public DeltaXmlVisitor() throws CoreException {

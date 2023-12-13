@@ -118,8 +118,6 @@ public class ProjectCreationTests {
 	/**
 	 * Provides a project for the test case.
 	 *
-	 * @param test
-	 *            test case
 	 * @return project which does not yet exist
 	 * @exception CoreException
 	 *                on failure

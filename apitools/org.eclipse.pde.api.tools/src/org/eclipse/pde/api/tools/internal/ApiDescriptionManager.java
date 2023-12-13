@@ -108,10 +108,10 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 	}
 
 	/**
-	 * Returns an API description for the given project component and connect it
-	 * to the given bundle description.
+	 * Returns an API description for the given project component and connect it to
+	 * the given bundle description.
 	 *
-	 * @param project Java project
+	 * @param component Java project
 	 * @param bundle
 	 *
 	 * @return API description

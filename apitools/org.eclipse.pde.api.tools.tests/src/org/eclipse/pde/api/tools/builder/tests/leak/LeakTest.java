@@ -142,11 +142,11 @@ public abstract class LeakTest extends ApiBuilderTest {
 	 * @param incremental
 	 *            if an incremental build should be performed
 	 */
-	protected void deployLeakTest(String sourcename, boolean incremantal) {
+	protected void deployLeakTest(String sourcename, boolean incremental) {
 		try {
 			IPath path = WORKSPACE_PATH.append(sourcename);
 			createWorkspaceFile(path, TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append(getTestSourcePath()).append(sourcename));
-			if (incremantal) {
+			if (incremental) {
 				incrementalBuild();
 			} else {
 				fullBuild();

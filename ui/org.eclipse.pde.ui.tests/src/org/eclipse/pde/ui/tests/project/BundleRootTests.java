@@ -54,7 +54,6 @@ public class BundleRootTests {
 	/**
 	 * Creates and returns a project for the test case.
 	 *
-	 * @param test test case
 	 * @return project test project
 	 * @exception CoreException on failure
 	 */
@@ -71,7 +70,6 @@ public class BundleRootTests {
 	/**
 	 * Provides a project for the test case.
 	 *
-	 * @param test test case
 	 * @return project which does not yet exist
 	 * @exception CoreException on failure
 	 */
