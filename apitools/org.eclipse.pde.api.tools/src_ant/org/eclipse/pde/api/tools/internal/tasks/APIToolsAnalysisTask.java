@@ -175,9 +175,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 		}
 		List<Entry<String, IApiProblem[]>> allEntries = new ArrayList<>();
 		allEntries.addAll(entrySet);
-		Collections.sort(allEntries, (entry1, entry2) -> {
-			return entry1.getKey().compareTo(entry2.getKey());
-		});
+		Collections.sort(allEntries, (entry1, entry2) -> entry1.getKey().compareTo(entry2.getKey()));
 		Summary[] summaries = new Summary[size];
 		int i = 0;
 		for (Map.Entry<String, IApiProblem[]> entry : allEntries) {
@@ -255,7 +253,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 
 		// Write out a list of components skipped because they aren't API Tools
 		// enabled
-		if (nonAPIBundleNames != null && nonAPIBundleNames.size() != 0) {
+		if (nonAPIBundleNames != null && !nonAPIBundleNames.isEmpty()) {
 			String contents = null;
 			try {
 				Document document = Util.newDocument();
@@ -570,9 +568,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 		root.appendChild(apiProblems);
 		Element element = null;
 		// sort the problem by type name
-		Collections.sort(problems, (p1, p2) -> {
-			return p1.getTypeName().compareTo(p2.getTypeName());
-		});
+		Collections.sort(problems, (p1, p2) -> p1.getTypeName().compareTo(p2.getTypeName()));
 		for (IApiProblem problem : problems) {
 			int severity = getSeverity(problem);
 			counter.addProblem(severity);

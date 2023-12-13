@@ -335,8 +335,7 @@ public class UseScanParser {
 	 * Returns all the child directories from the given directory
 	 */
 	File[] getDirectories(File file) {
-		File[] directories = file.listFiles((FileFilter) pathname -> pathname.isDirectory() && !pathname.isHidden());
-		return directories;
+		return file.listFiles((FileFilter) pathname -> pathname.isDirectory() && !pathname.isHidden());
 	}
 
 	/**

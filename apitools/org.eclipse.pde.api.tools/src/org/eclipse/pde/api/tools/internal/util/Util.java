@@ -383,7 +383,7 @@ public final class Util {
 			}
 		}
 		IProject[] projects = null;
-		if (temp.size() != 0) {
+		if (!temp.isEmpty()) {
 			projects = new IProject[temp.size()];
 			temp.toArray(projects);
 		}
@@ -417,7 +417,7 @@ public final class Util {
 			}
 		}
 		IProject[] projects = null;
-		if (temp.size() != 0) {
+		if (!temp.isEmpty()) {
 			projects = new IProject[temp.size()];
 			temp.toArray(projects);
 		}
@@ -1278,8 +1278,8 @@ public final class Util {
 			}
 			// Perhaps a constructor on an inner type?
 			IJavaElement parent = type.getParent();
-			if (parent instanceof IType) {
-				String parentTypeSig = Signature.createTypeSignature(((IType) parent).getFullyQualifiedName(), true);
+			if (parent instanceof IType parentType) {
+				String parentTypeSig = Signature.createTypeSignature(parentType.getFullyQualifiedName(), true);
 				if (Signatures.matches(parentTypeSig, parameterTypes[0])) {
 					IMethod constructor = type.getMethod(selector, Arrays.copyOfRange(parameterTypes, 1, parameterTypes.length));
 					try {
@@ -1374,7 +1374,7 @@ public final class Util {
 		Map<String, String> lookup = new HashMap<>();
 		Stream.concat(Stream.of(typeTPs), Stream.of(methodTPs)).forEach(tp -> {
 			try {
-				String sigs[] = tp.getBoundsSignatures();
+				String[] sigs = tp.getBoundsSignatures();
 				lookup.put(tp.getElementName(), sigs.length == 1 ? sigs[0] : "Ljava.lang.Object;"); //$NON-NLS-1$
 			} catch (JavaModelException e) {
 				/* ignore */
@@ -1790,8 +1790,7 @@ public final class Util {
 	 * @throws CoreException if unable to serialize the document
 	 */
 	public static String serializeDocument(Document document) throws CoreException {
-		try {
-			ByteArrayOutputStream s = new ByteArrayOutputStream();
+		try (ByteArrayOutputStream s = new ByteArrayOutputStream()) {
 			@SuppressWarnings("restriction")
 			TransformerFactory factory = org.eclipse.core.internal.runtime.XmlProcessorFactory
 					.createTransformerFactoryWithErrorOnDOCTYPE();
@@ -1802,7 +1801,7 @@ public final class Util {
 			DOMSource source = new DOMSource(document);
 			StreamResult outputTarget = new StreamResult(s);
 			transformer.transform(source, outputTarget);
-			return s.toString(IApiCoreConstants.UTF_8);
+			return s.toString(StandardCharsets.UTF_8);
 		} catch (TransformerException | IOException e) {
 			throw new CoreException(Status.error("Unable to serialize XML document.", e)); //$NON-NLS-1$
 		}
@@ -2407,14 +2406,14 @@ public final class Util {
 	 * Default comparator that orders {@link IApiComponent} by their ID
 	 */
 	public static final Comparator<Object> componentsorter = (o1, o2) -> {
-		if (o1 instanceof IApiComponent && o2 instanceof IApiComponent) {
-			return ((IApiComponent) o1).getSymbolicName().compareTo(((IApiComponent) o2).getSymbolicName());
+		if (o1 instanceof IApiComponent comp1 && o2 instanceof IApiComponent comp2) {
+			return comp1.getSymbolicName().compareTo(comp2.getSymbolicName());
 		}
-		if (o1 instanceof SkippedComponent && o2 instanceof SkippedComponent) {
-			return ((SkippedComponent) o1).getComponentId().compareTo(((SkippedComponent) o2).getComponentId());
+		if (o1 instanceof SkippedComponent s1 && o2 instanceof SkippedComponent s2) {
+			return s1.getComponentId().compareTo(s2.getComponentId());
 		}
-		if (o1 instanceof String && o2 instanceof String) {
-			return ((String) o1).compareTo((String) o2);
+		if (o1 instanceof String s1 && o2 instanceof String s2) {
+			return s1.compareTo(s2);
 		}
 		return -1;
 	};
@@ -2501,8 +2500,8 @@ public final class Util {
 	 * Default comparator that orders {@link File}s by their name
 	 */
 	public static final Comparator<Object> filesorter = (o1, o2) -> {
-		if (o1 instanceof File && o2 instanceof File) {
-			return ((File) o1).getName().compareTo(((File) o2).getName());
+		if (o1 instanceof File f1 && o2 instanceof File f2) {
+			return f1.getName().compareTo(f2.getName());
 		}
 		return 0;
 	};

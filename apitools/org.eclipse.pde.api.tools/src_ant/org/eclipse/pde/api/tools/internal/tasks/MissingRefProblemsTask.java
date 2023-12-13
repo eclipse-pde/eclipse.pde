@@ -280,9 +280,7 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 		}
 		List<Map.Entry<String, IApiProblem[]>> allEntries = new ArrayList<>();
 		allEntries.addAll(entrySet);
-		Collections.sort(allEntries, (entry1, entry2) -> {
-			return entry1.getKey().compareTo(entry2.getKey());
-		});
+		Collections.sort(allEntries, (entry1, entry2) -> entry1.getKey().compareTo(entry2.getKey()));
 		Summary[] summaries = new Summary[size];
 		int i = 0;
 		for (Map.Entry<String, IApiProblem[]> entry : allEntries) {
@@ -365,9 +363,7 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 		root.appendChild(apiProblems);
 		Element element = null;
 		// sort the problem by type name
-		Collections.sort(problems, (p1, p2) -> {
-			return p1.getTypeName().compareTo(p2.getTypeName());
-		});
+		Collections.sort(problems, (p1, p2) -> p1.getTypeName().compareTo(p2.getTypeName()));
 		for (IApiProblem problem : problems) {
 			element = document.createElement(IApiXmlConstants.ELEMENT_API_PROBLEM);
 			element.setAttribute(IApiXmlConstants.ATTR_TYPE_NAME, String.valueOf(problem.getTypeName()));
