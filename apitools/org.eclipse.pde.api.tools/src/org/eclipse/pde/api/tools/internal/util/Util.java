@@ -830,10 +830,10 @@ public final class Util {
 	}
 
 	/**
-	 * Return a string that represents the given kind. Returns
-	 * {@link #UNKNOWN_KIND} if the kind cannot be determined.
+	 * Return a string that represents the given kind. Returns {@link #UNKNOWN_KIND}
+	 * if the kind cannot be determined.
 	 *
-	 * @param delta the given kind
+	 * @param kind the given kind
 	 * @return a string that represents the given kind.
 	 */
 	public static String getDeltaKindName(int kind) {

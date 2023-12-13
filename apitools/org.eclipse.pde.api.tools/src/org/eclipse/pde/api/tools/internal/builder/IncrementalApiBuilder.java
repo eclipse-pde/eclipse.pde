@@ -188,11 +188,6 @@ public class IncrementalApiBuilder {
 
 	/**
 	 * Constructor
-	 *
-	 * @param project the current project context being built
-	 * @param delta the {@link IResourceDelta} from the build framework
-	 * @param buildstate the current build state from the
-	 *            {@link org.eclipse.jdt.internal.core.builder.JavaBuilder}
 	 */
 	public IncrementalApiBuilder(ApiAnalysisBuilder builder) {
 		this.builder = builder;

@@ -167,8 +167,8 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	/**
 	 * Creates a problem for a specific reference in the workspace
 	 *
-	 * @param reference reference
-	 * @param associated java project (with reference source location)
+	 * @param reference   reference
+	 * @param javaProject java project (with reference source location)
 	 * @return problem or <code>null</code> if none
 	 * @exception CoreException if something goes wrong
 	 */

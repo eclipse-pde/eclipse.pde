@@ -384,10 +384,7 @@ public class ApiProblemFactory {
 	 * Returns the localized message for the given {@link IApiProblem}. Returns
 	 * <code>null</code> if no localized message cannot be created.
 	 *
-	 * @param problemid the id of the problem to create a message for
-	 * @param arguments the arguments to pass into the localized string. The
-	 *            arguments are passed in to the string in the order they appear
-	 *            in the array.
+	 * @param problem   the problem to create a message for
 	 *
 	 * @return a localized message for the given {@link IApiProblem} or
 	 *         <code>null</code>

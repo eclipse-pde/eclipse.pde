@@ -220,7 +220,6 @@ public class UseScanParser {
 	 *
 	 * @param xmlLocation root of API use scan (XML directory).
 	 * @param monitor progress monitor
-	 * @param baseline API baseline to resolve references in
 	 */
 	public void parse(String xmlLocation, IProgressMonitor monitor, UseScanVisitor usv) throws Exception {
 		if (xmlLocation == null) {

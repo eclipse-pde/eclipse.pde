@@ -259,12 +259,11 @@ public class CompareTask extends CommonUtilsTask {
 	 * </p>
 	 *
 	 * <p>
-	 * If the given string doesn't match one of the two values, a build
-	 * exception is thrown. If none is set, then the default visibility is
-	 * "API".
+	 * If the given string doesn't match one of the two values, a build exception is
+	 * thrown. If none is set, then the default visibility is "API".
 	 * </p>
 	 *
-	 * @param visibility the given visibility
+	 * @param value the given visibility
 	 * @throws BuildException if the given value is not "API" or "ALL".
 	 */
 	public void setVisibility(String value) {
@@ -301,11 +300,11 @@ public class CompareTask extends CommonUtilsTask {
 	 * </p>
 	 *
 	 * <p>
-	 * This is optional. If not set, the whole given baseline will be compared
-	 * with the given reference baseline.
+	 * This is optional. If not set, the whole given baseline will be compared with
+	 * the given reference baseline.
 	 * </p>
 	 *
-	 * @param elements the given components
+	 * @param componentsList the given components
 	 */
 	public void setComponents(String componentsList) {
 		this.componentsList = componentsList;

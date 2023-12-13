@@ -408,10 +408,10 @@ public final class Signatures {
 	}
 
 	/**
-	 * Convert fully qualified signature to unqualified one. The descriptor can
-	 * be dot or slashed based.
+	 * Convert fully qualified signature to unqualified one. The descriptor can be
+	 * dot or slashed based.
 	 *
-	 * @param descriptor the given descriptor to convert
+	 * @param signature the given descriptor to convert
 	 * @return the converted signature
 	 */
 	public static String dequalifySignature(String signature) {
