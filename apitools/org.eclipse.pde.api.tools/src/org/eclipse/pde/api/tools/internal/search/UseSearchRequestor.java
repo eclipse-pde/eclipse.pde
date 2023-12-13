@@ -121,16 +121,16 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	/**
 	 * Constructor
 	 *
-	 * @param elements an array of {@link IApiElement}s for the search engine to
-	 *            use
-	 * @param scope the raw list of {@link IApiElement}s to extract references
-	 *            from
-	 * @param searchkinds the kinds of references to search for. <br>
-	 *            Options include:
-	 *            <ol>
-	 *            <li>{@link #INCLUDE_API}</li>
-	 *            <li>{@link #INCLUDE_INTERNAL}</li>
-	 *            </ol>
+	 * @param elementnames an array of {@link IApiElement}s for the search engine to
+	 *                     use
+	 * @param scope        the raw list of {@link IApiElement}s to extract
+	 *                     references from
+	 * @param searchkinds  the kinds of references to search for. <br>
+	 *                     Options include:
+	 *                     <ol>
+	 *                     <li>{@link #INCLUDE_API}</li>
+	 *                     <li>{@link #INCLUDE_INTERNAL}</li>
+	 *                     </ol>
 	 */
 	public UseSearchRequestor(Set<String> elementnames, IApiElement[] scope, int searchkinds) {
 		fSearchMask = searchkinds;

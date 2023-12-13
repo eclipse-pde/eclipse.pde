@@ -562,15 +562,15 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 	}
 
 	/**
-	 * Comma-separated list of the locations of the API Use Scans that you want
-	 * to check against the reference baseline.
+	 * Comma-separated list of the locations of the API Use Scans that you want to
+	 * check against the reference baseline.
 	 *
 	 * <p>
 	 * It can be a .zip file or a directory that corresponds to the API Use Scan
 	 * report. This is the directory is which you can find the XML folder.
 	 * </p>
 	 *
-	 * @param baselineLocation the given location for the baseline to analyze
+	 * @param apiUseScans the given location for the baseline to analyze
 	 */
 	public void setAPIUseScans(String apiUseScans) {
 		this.apiUseScans = apiUseScans;
@@ -581,20 +581,20 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 	 * Set the output location where the reports will be generated.
 	 *
 	 * <p>
-	 * Once the task is completed, reports are available in this directory using
-	 * a structure similar to the filter root. A sub-folder is created for each
-	 * component that has problems to be reported. Each sub-folder contains a
-	 * file called "report.xml".
+	 * Once the task is completed, reports are available in this directory using a
+	 * structure similar to the filter root. A sub-folder is created for each
+	 * component that has problems to be reported. Each sub-folder contains a file
+	 * called "report.xml".
 	 * </p>
 	 *
 	 * <p>
 	 * A special folder called "allNonApiBundles" is also created in this folder
-	 * that contains a xml file called "report.xml". This file lists all the
-	 * bundles that are not using the api tooling nature.
+	 * that contains a xml file called "report.xml". This file lists all the bundles
+	 * that are not using the api tooling nature.
 	 * </p>
 	 *
-	 * @param baselineLocation the given location for the reference baseline to
-	 *            analyze
+	 * @param reportLocation the given location for the reference baseline to
+	 *                       analyze
 	 */
 	public void setReport(String reportLocation) {
 		this.reportLocation = reportLocation;

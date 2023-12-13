@@ -118,7 +118,6 @@ public class ApiScopeVisitor {
 	 * </p>
 	 *
 	 * @param typeRoot the given API type root being visited
-	 * @return whether types in the container should be visited
 	 * @throws CoreException if an exception occurs during the visit
 	 */
 	public void visit(IApiTypeRoot typeRoot) throws CoreException {

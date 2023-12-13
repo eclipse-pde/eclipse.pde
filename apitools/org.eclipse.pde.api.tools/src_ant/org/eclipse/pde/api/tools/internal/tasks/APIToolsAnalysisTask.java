@@ -858,20 +858,20 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 	 * Set the output location where the reports will be generated.
 	 *
 	 * <p>
-	 * Once the task is completed, reports are available in this directory using
-	 * a structure similar to the filter root. A sub-folder is created for each
-	 * component that has problems to be reported. Each sub-folder contains a
-	 * file called "report.xml".
+	 * Once the task is completed, reports are available in this directory using a
+	 * structure similar to the filter root. A sub-folder is created for each
+	 * component that has problems to be reported. Each sub-folder contains a file
+	 * called "report.xml".
 	 * </p>
 	 *
 	 * <p>
 	 * A special folder called "allNonApiBundles" is also created in this folder
-	 * that contains a xml file called "report.xml". This file lists all the
-	 * bundles that are not using the API Tools nature.
+	 * that contains a xml file called "report.xml". This file lists all the bundles
+	 * that are not using the API Tools nature.
 	 * </p>
 	 *
-	 * @param baselineLocation the given location for the reference baseline to
-	 *            analyze
+	 * @param reportLocation the given location for the reference baseline to
+	 *                       analyze
 	 */
 	public void setReport(String reportLocation) {
 		this.reportLocation = reportLocation;

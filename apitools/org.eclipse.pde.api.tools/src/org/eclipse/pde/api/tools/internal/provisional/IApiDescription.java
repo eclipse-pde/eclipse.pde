@@ -71,11 +71,11 @@ public interface IApiDescription {
 	public IStatus setSuperclass(IElementDescriptor element, String superclass);
 
 	/**
-	 * Sets the superclass for the specified element and returns a status
-	 * describing whether the operation succeeded.
+	 * Sets the superclass for the specified element and returns a status describing
+	 * whether the operation succeeded.
 	 *
-	 * @param element the element the restrictions apply to
-	 * @param superclass the superclass name of the element
+	 * @param element         the element the restrictions apply to
+	 * @param superinterfaces the superinterfaces names of the element
 	 *
 	 * @return status of the operation
 	 */
@@ -98,8 +98,6 @@ public interface IApiDescription {
 	 * succeeded.
 	 *
 	 * @param element the element the visibility applies to
-	 * @param visibility element visibility. See
-	 *            {@linkplain VisibilityModifiers} for supported modifiers
 	 *
 	 * @return status of the operation
 	 */
@@ -110,8 +108,6 @@ public interface IApiDescription {
 	 * describing whether the operation succeeded.
 	 *
 	 * @param element the element the restrictions apply to
-	 * @param restrictions the restrictions to place on the element. See
-	 *            {@linkplain RestrictionModifiers} for supported modifiers
 	 *
 	 * @return status of the operation
 	 */

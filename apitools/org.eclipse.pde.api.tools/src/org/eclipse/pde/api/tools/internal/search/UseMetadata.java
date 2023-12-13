@@ -346,7 +346,7 @@ public class UseMetadata implements IMetadata {
 	/**
 	 * Allows additional filters to be set. This method accepts <code>null</code>
 	 *
-	 * @param additional filter to set
+	 * @param additionalfilters additional filter to set
 	 */
 	public void setAdditionalfilters(String additionalfilters) {
 		this.additionalfilters = additionalfilters;

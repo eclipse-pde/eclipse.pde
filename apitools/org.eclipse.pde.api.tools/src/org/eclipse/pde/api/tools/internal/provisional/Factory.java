@@ -97,12 +97,12 @@ public class Factory {
 	}
 
 	/**
-	 * Utility method to create a type descriptor for a method contained within
-	 * the given type
+	 * Utility method to create a type descriptor for a method contained within the
+	 * given type
 	 *
-	 * @param typename the name of the enclosing type for the method
-	 * @param name the name of the method
-	 * @param signaturethe signature of the method
+	 * @param typename  the name of the enclosing type for the method
+	 * @param name      the name of the method
+	 * @param signature the signature of the method
 	 * @return an {@link IMethodDescriptor} for the method
 	 */
 	public static IMethodDescriptor methodDescriptor(String typename, String name, String signature) {

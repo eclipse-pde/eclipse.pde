@@ -69,8 +69,8 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 	/**
 	 * Creates a visitor to resolve references in the given baseline
 	 *
-	 * @param base baseline
-	 * @param location to create XML report
+	 * @param base        baseline
+	 * @param xmlLocation to create XML report
 	 */
 	public ReferenceLookupVisitor(IApiBaseline base, String xmlLocation) {
 		baseline = base;

@@ -42,7 +42,6 @@ public final class ReferenceResolver {
 	 * Resolves retained references.
 	 *
 	 * @param references list of {@link IReference} to resolve
-	 * @param progress monitor
 	 * @throws CoreException if something goes wrong
 	 */
 	public static void resolveReferences(List<IReference> references, IProgressMonitor monitor) throws CoreException {

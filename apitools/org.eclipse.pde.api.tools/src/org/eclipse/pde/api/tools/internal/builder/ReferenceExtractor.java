@@ -1032,7 +1032,6 @@ public class ReferenceExtractor extends ClassVisitor {
 	 * the type is a primitive type.
 	 *
 	 * @param type referenced type
-	 * @param linenumber line number where referenced
 	 * @param kind kind of reference
 	 * @return reference added, or <code>null</code> if none
 	 */
@@ -1050,7 +1049,6 @@ public class ReferenceExtractor extends ClassVisitor {
 	 *
 	 * @param declaringType type declaring the field being referenced
 	 * @param name of the field being referenced
-	 * @param linenumber line number where referenced
 	 * @param kind kind of reference
 	 * @return reference added, or <code>null</code> if none
 	 */
@@ -1070,7 +1068,6 @@ public class ReferenceExtractor extends ClassVisitor {
 	 *            lookup)
 	 * @param name of the method being referenced
 	 * @param signature signature of the method
-	 * @param linenumber line number where referenced
 	 * @param kind kind of reference
 	 * @param flags the flags for the reference
 	 * @return reference added, or <code>null</code> if none
@@ -1084,13 +1081,12 @@ public class ReferenceExtractor extends ClassVisitor {
 	}
 
 	/**
-	 * Adds a reference to the given target member from the given line number in
-	 * the class file being scanned. If the target member is contained in the
-	 * class file being scanned it is discarded based on the setting to include
-	 * local references.
+	 * Adds a reference to the given target member from the given line number in the
+	 * class file being scanned. If the target member is contained in the class file
+	 * being scanned it is discarded based on the setting to include local
+	 * references.
 	 *
-	 * @param target reference
-	 * @param reference added, or <code>null</code> if none
+	 * @param target reference added, or <code>null</code> if none
 	 */
 	protected Reference addReference(Reference target) {
 		if (this.consider(target)) {

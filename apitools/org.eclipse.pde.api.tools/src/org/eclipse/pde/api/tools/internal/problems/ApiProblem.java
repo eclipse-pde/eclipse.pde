@@ -87,17 +87,16 @@ public class ApiProblem implements IApiProblem {
 	/**
 	 * Constructor
 	 *
-	 * @param resource the resource this problem occurs on / in
-	 * @param typeName the qualified type name this problem occurs on / in
-	 * @param messageargs arguments to be passed into a localized message for
-	 *            the problem
+	 * @param path        the resource this problem occurs on / in
+	 * @param typeName    the qualified type name this problem occurs on / in
+	 * @param messageargs arguments to be passed into a localized message for the
+	 *                    problem
 	 * @param argumentids the ids of arguments passed into the problem
-	 * @param arguments the arguments that correspond to the listing of ids
-	 * @param linenumber the line this problem occurred on
-	 * @param charstart the char selection start position
-	 * @param charend the char selection end position
-	 * @param severity the severity level of the problem
-	 * @param id the id of the problem
+	 * @param arguments   the arguments that correspond to the listing of ids
+	 * @param linenumber  the line this problem occurred on
+	 * @param charstart   the char selection start position
+	 * @param charend     the char selection end position
+	 * @param id          the id of the problem
 	 */
 	public ApiProblem(String path, String typeName, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int id) {
 		this.fResourcePath = path;
