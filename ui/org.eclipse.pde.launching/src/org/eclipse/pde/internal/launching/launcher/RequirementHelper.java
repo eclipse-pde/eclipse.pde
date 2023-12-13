@@ -83,7 +83,6 @@ public class RequirementHelper {
 	 * checked will depend on whether a product, an application or a junit application is being launched.
 	 *
 	 * @param config launch configuration to get attributes from
-	 * @param plugins list of plugin models to look for product extensions in
 	 * @return list of string plug-in IDs that are required by the config's application/product settings
 	 * @throws CoreException if there is a problem reading the launch config
 	 */

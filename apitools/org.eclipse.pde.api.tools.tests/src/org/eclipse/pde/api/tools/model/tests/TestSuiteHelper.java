@@ -358,9 +358,11 @@ public class TestSuiteHelper {
 	 * in an OSGi framework.
 	 * </p>
 	 *
-	 * @param ee execution environment description file
+	 * @param eeFile
+	 *            execution environment description file
 	 * @return API baseline
-	 * @exception CoreException if unable to create a baseline
+	 * @exception CoreException
+	 *                if unable to create a baseline
 	 */
 	public static IApiBaseline newApiBaseline(String name, File eeFile) throws CoreException {
 		return ApiModelFactory.newApiBaseline(name, eeFile);
