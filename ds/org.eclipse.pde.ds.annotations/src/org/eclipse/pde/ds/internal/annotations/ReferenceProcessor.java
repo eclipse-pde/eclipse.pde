@@ -168,27 +168,24 @@ public class ReferenceProcessor {
 		validateReferenceName(name, annotation, names);
 
 		String cardinality = null;
-		if ((value = params.get("cardinality")) instanceof IVariableBinding) { //$NON-NLS-1$
-			IVariableBinding cardinalityBinding = (IVariableBinding) value;
+		if ((value = params.get("cardinality")) instanceof IVariableBinding cardinalityBinding) { //$NON-NLS-1$
 			cardinality = DSEnums.getReferenceCardinality(cardinalityBinding.getName());
 		}
 
 		String policy = null;
-		if ((value = params.get("policy")) instanceof IVariableBinding) { //$NON-NLS-1$
-			IVariableBinding policyBinding = (IVariableBinding) value;
+		if ((value = params.get("policy")) instanceof IVariableBinding policyBinding) { //$NON-NLS-1$
 			policy = DSEnums.getReferencePolicy(policyBinding.getName());
 		}
 
 		String target = null;
-		if ((value = params.get("target")) instanceof String) { //$NON-NLS-1$
-			target = (String) value;
+		if ((value = params.get("target")) instanceof String s) { //$NON-NLS-1$
+			target = s;
 			validateReferenceTarget(annotation, target);
 		}
 
 		String unbind;
 		IMethodBinding unbindMethod = null;
-		if ((value = params.get("unbind")) instanceof String) { //$NON-NLS-1$
-			String unbindValue = (String) value;
+		if ((value = params.get("unbind")) instanceof String unbindValue) { //$NON-NLS-1$
 			if ("-".equals(unbindValue)) { //$NON-NLS-1$
 				unbind = null;
 			} else {
@@ -220,15 +217,13 @@ public class ReferenceProcessor {
 		}
 
 		String policyOption = null;
-		if ((value = params.get("policyOption")) instanceof IVariableBinding) { //$NON-NLS-1$
-			IVariableBinding policyOptionBinding = (IVariableBinding) value;
+		if ((value = params.get("policyOption")) instanceof IVariableBinding policyOptionBinding) { //$NON-NLS-1$
 			policyOption = DSEnums.getReferencePolicyOption(policyOptionBinding.getName());
 		}
 
 		String updated;
 		IMethodBinding updatedMethod = null;
-		if ((value = params.get("updated")) instanceof String) { //$NON-NLS-1$
-			String updatedValue = (String) value;
+		if ((value = params.get("updated")) instanceof String updatedValue) { //$NON-NLS-1$
 			if ("-".equals(updatedValue)) { //$NON-NLS-1$
 				updated = null;
 			} else {
@@ -252,8 +247,7 @@ public class ReferenceProcessor {
 
 		String referenceScope = null;
 		if (DSAnnotationVersion.V1_3.isEqualOrHigherThan(specVersion)) {
-			if ((value = params.get("scope")) instanceof IVariableBinding) { //$NON-NLS-1$
-				IVariableBinding referenceScopeBinding = (IVariableBinding) value;
+			if ((value = params.get("scope")) instanceof IVariableBinding referenceScopeBinding) { //$NON-NLS-1$
 				referenceScope = DSEnums.getReferenceScope(referenceScopeBinding.getName());
 			}
 
@@ -288,9 +282,8 @@ public class ReferenceProcessor {
 	}
 
 	public String getReferenceName(String methodName, Map<String, Object> params) {
-		Object value;
-		if ((value = params.get("name")) instanceof String) { //$NON-NLS-1$
-			return (String) value;
+		if (params.get("name") instanceof String s) { //$NON-NLS-1$
+			return s;
 		}
 
 		return getReferenceName(methodName);
@@ -357,8 +350,7 @@ public class ReferenceProcessor {
 		}
 
 		String fieldOption = null;
-		if ((value = params.get("fieldOption")) instanceof IVariableBinding) { //$NON-NLS-1$
-			IVariableBinding fieldOptionBinding = (IVariableBinding) value;
+		if ((value = params.get("fieldOption")) instanceof IVariableBinding fieldOptionBinding) { //$NON-NLS-1$
 			fieldOption = DSEnums.getFieldOption(fieldOptionBinding.getName());
 			if (!errorLevel.isIgnore()) {
 				if (field == null) {
@@ -509,8 +501,7 @@ public class ReferenceProcessor {
 		DSAnnotationVersion requiredVersion = DSAnnotationVersion.V1_3;
 		String cardinality = null;
 		Object value;
-		if ((value = params.get("cardinality")) instanceof IVariableBinding) { //$NON-NLS-1$
-			IVariableBinding cardinalityBinding = (IVariableBinding) value;
+		if ((value = params.get("cardinality")) instanceof IVariableBinding cardinalityBinding) { //$NON-NLS-1$
 			cardinality = DSEnums.getReferenceCardinality(cardinalityBinding.getName());
 		}
 
@@ -606,8 +597,8 @@ public class ReferenceProcessor {
 
 		String fieldName = fieldBinding.getName();
 		String name;
-		if ((value = params.get("name")) instanceof String) { //$NON-NLS-1$
-			name = (String) value;
+		if ((value = params.get("name")) instanceof String s) { //$NON-NLS-1$
+			name = s;
 		} else {
 			name = fieldName;
 		}
@@ -615,9 +606,7 @@ public class ReferenceProcessor {
 		validateReferenceName(name, annotation, names);
 
 		if (!errorLevel.isIgnore()) {
-			String fieldVal;
-			if ((value = params.get("field")) instanceof String) { //$NON-NLS-1$
-				fieldVal = (String) value;
+			if ((value = params.get("field")) instanceof String fieldVal) { //$NON-NLS-1$
 				if (!fieldName.equals(fieldVal)) {
 					problemReporter.reportProblem(annotation, "field", Messages.AnnotationProcessor_invalidReference_fieldNameMismatch, fieldVal); //$NON-NLS-1$
 				}
@@ -625,8 +614,7 @@ public class ReferenceProcessor {
 		}
 
 		String policy = null;
-		if ((value = params.get("policy")) instanceof IVariableBinding) { //$NON-NLS-1$
-			IVariableBinding policyBinding = (IVariableBinding) value;
+		if ((value = params.get("policy")) instanceof IVariableBinding policyBinding) { //$NON-NLS-1$
 			policy = DSEnums.getReferencePolicy(policyBinding.getName());
 		} else if (Modifier.isVolatile(modifiers)) {
 			policy = IDSConstants.VALUE_REFERENCE_POLICY_DYNAMIC;
@@ -639,20 +627,17 @@ public class ReferenceProcessor {
 		}
 
 		String policyOption = null;
-		if ((value = params.get("policyOption")) instanceof IVariableBinding) { //$NON-NLS-1$
-			IVariableBinding policyOptionBinding = (IVariableBinding) value;
+		if ((value = params.get("policyOption")) instanceof IVariableBinding policyOptionBinding) { //$NON-NLS-1$
 			policyOption = DSEnums.getReferencePolicyOption(policyOptionBinding.getName());
 		}
 
 		String referenceScope = null;
-		if ((value = params.get("scope")) instanceof IVariableBinding) { //$NON-NLS-1$
-			IVariableBinding referenceScopeBinding = (IVariableBinding) value;
+		if ((value = params.get("scope")) instanceof IVariableBinding referenceScopeBinding) { //$NON-NLS-1$
 			referenceScope = DSEnums.getReferenceScope(referenceScopeBinding.getName());
 		}
 
 		String fieldOption = null;
-		if ((value = params.get("fieldOption")) instanceof IVariableBinding) { //$NON-NLS-1$
-			IVariableBinding fieldOptionBinding = (IVariableBinding) value;
+		if ((value = params.get("fieldOption")) instanceof IVariableBinding fieldOptionBinding) { //$NON-NLS-1$
 			fieldOption = DSEnums.getFieldOption(fieldOptionBinding.getName());
 			if (!errorLevel.isIgnore()) {
 				if (VALUE_REFERENCE_FIELD_OPTION_REPLACE.equals(fieldOption)) {
@@ -911,14 +896,12 @@ public class ReferenceProcessor {
 		}
 
 		String cardinality = null;
-		if ((value = params.get("cardinality")) instanceof IVariableBinding) { //$NON-NLS-1$
-			IVariableBinding cardinalityBinding = (IVariableBinding) value;
+		if ((value = params.get("cardinality")) instanceof IVariableBinding cardinalityBinding) { //$NON-NLS-1$
 			cardinality = DSEnums.getReferenceCardinality(cardinalityBinding.getName());
 		}
 
 		String policy = null;
-		if ((value = params.get("policy")) instanceof IVariableBinding) { //$NON-NLS-1$
-			IVariableBinding policyBinding = (IVariableBinding) value;
+		if ((value = params.get("policy")) instanceof IVariableBinding policyBinding) { //$NON-NLS-1$
 			policy = DSEnums.getReferencePolicy(policyBinding.getName());
 		}
 
@@ -929,14 +912,12 @@ public class ReferenceProcessor {
 		}
 
 		String policyOption = null;
-		if ((value = params.get("policyOption")) instanceof IVariableBinding) { //$NON-NLS-1$
-			IVariableBinding policyOptionBinding = (IVariableBinding) value;
+		if ((value = params.get("policyOption")) instanceof IVariableBinding policyOptionBinding) { //$NON-NLS-1$
 			policyOption = DSEnums.getReferencePolicyOption(policyOptionBinding.getName());
 		}
 
 		String referenceScope = null;
-		if ((value = params.get("scope")) instanceof IVariableBinding) { //$NON-NLS-1$
-			IVariableBinding referenceScopeBinding = (IVariableBinding) value;
+		if ((value = params.get("scope")) instanceof IVariableBinding referenceScopeBinding) { //$NON-NLS-1$
 			referenceScope = DSEnums.getReferenceScope(referenceScopeBinding.getName());
 		}
 
