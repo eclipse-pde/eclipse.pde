@@ -28,8 +28,6 @@ import jakarta.inject.Inject;
  * The column Label and content Provider used to display information in context
  * data TreeViewer. Two instances for label provider are created : one for key,
  * one for values
- *
- * @see ContextDataPart
  */
 public class BundleDataProvider extends ColumnLabelProvider {
 

@@ -701,7 +701,7 @@ public class ReferenceExtractor extends ClassVisitor {
 
 		public void computeLineNumbers() {
 
-			if (this.lineInfos.size() < 1 || this.labelsAndLocations.size() < 1) {
+			if (this.lineInfos.isEmpty() || this.labelsAndLocations.isEmpty()) {
 				// nothing to do
 				return;
 			}
@@ -721,11 +721,11 @@ public class ReferenceExtractor extends ClassVisitor {
 			// Iterate over List of Labels and SourceLocations.
 			List<Object> computedEntries = new ArrayList<>();
 			for (Object current : this.labelsAndLocations) {
-				if (current instanceof Label) {
+				if (current instanceof Label label) {
 					// label
 					Integer lineValue = this.lineMap.get(current);
 					if (lineValue != null) {
-						computedEntries.add(new LineInfo(lineValue.intValue(), (Label) current));
+						computedEntries.add(new LineInfo(lineValue.intValue(), label));
 					} else {
 						computedEntries.add(current);
 					}
@@ -1295,8 +1295,8 @@ public class ReferenceExtractor extends ClassVisitor {
 		if (fIsVisitMembers) {
 			IApiMember member = this.getMember();
 			IApiType owner = null;
-			if (member instanceof IApiType) {
-				owner = (IApiType) member;
+			if (member instanceof IApiType apiType) {
+				owner = apiType;
 			} else {
 				try {
 					owner = member.getEnclosingType();
@@ -1417,7 +1417,7 @@ public class ReferenceExtractor extends ClassVisitor {
 			if (superclass != null) {
 				return superclass;
 			}
-			IApiType ints[] = type.getSuperInterfaces();
+			IApiType[] ints = type.getSuperInterfaces();
 			for (IApiType j : ints) {
 				IApiType superint = getDefaultDefined(j, name, signature, false);
 				if (superint != null) {

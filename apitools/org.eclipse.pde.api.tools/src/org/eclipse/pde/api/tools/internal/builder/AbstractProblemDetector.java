@@ -1006,7 +1006,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * @return the API problem if problem or null
 	 */
 	public IApiProblem checkAndCreateProblem(IReference reference, IProgressMonitor monitor) throws CoreException {
-		if (isProblem(reference, monitor) == false) {
+		if (!isProblem(reference, monitor)) {
 			return null;
 		}
 		return createProblem(reference);

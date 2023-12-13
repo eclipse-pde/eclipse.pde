@@ -140,7 +140,7 @@ public class UseScanManager {
 					unavailableMembers.add(apiUseType);
 				}
 			}
-			if (unavailableMembers.size() > 0) {
+			if (!unavailableMembers.isEmpty()) {
 				fetch(apiComponent, unavailableMembers.toArray(new String[unavailableMembers.size()]), references,
 						localmonitor.split(9));
 			}
@@ -353,7 +353,7 @@ public class UseScanManager {
 		String[] locations = apiUseScanPaths.split(ESCAPE_REGEX + LOCATION_DELIM);
 		ArrayList<String> locationList = new ArrayList<>(locations.length);
 		for (String location : locations) {
-			String values[] = location.split(ESCAPE_REGEX + STATE_DELIM);
+			String[] values = location.split(ESCAPE_REGEX + STATE_DELIM);
 			if (Boolean.parseBoolean(values[1])) {
 				locationList.add(values[0]);
 			}
