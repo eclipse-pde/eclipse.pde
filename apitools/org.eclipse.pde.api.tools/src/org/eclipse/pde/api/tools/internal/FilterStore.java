@@ -382,8 +382,6 @@ public class FilterStore implements IApiFilterStore {
 	 * turned on or off
 	 *
 	 * @param problems the problems to add the the store
-	 * @param persist if the filters should be auto-persisted after they are
-	 *            added
 	 */
 	protected void internalAddFilters(IApiProblem[] problems, String[] comments) {
 		if (problems == null || problems.length == 0) {

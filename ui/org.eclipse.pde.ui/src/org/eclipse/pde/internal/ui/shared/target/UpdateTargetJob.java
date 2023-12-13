@@ -60,8 +60,6 @@ public class UpdateTargetJob extends Job {
 	 * changes were made to the target.
 	 * </p>
 	 *
-	 * @param target
-	 *            the target being updated
 	 * @param updateActions
 	 *            maps {@link ITargetLocation}s to the {@link Set} of selected
 	 *            children items that should be updated. The sets may be empty,

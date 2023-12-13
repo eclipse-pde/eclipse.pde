@@ -32,12 +32,16 @@ public class TypeFilterChange extends FilterChange {
 	/**
 	 * Constructor
 	 *
-	 * @param store the store the filter is to be updated in
-	 * @param filter the filter being changed
-	 * @param primaryname the name of the primary type (the name of the
-	 *            resource)
-	 * @param newname the new value to set in the filter
-	 * @param kind the kind of the change
+	 * @param store
+	 *            the store the filter is to be updated in
+	 * @param filter
+	 *            the filter being changed
+	 * @param newname
+	 *            the name of the primary type (the name of the resource)
+	 * @param newpath
+	 *            the new value to set in the filter
+	 * @param kind
+	 *            the kind of the change
 	 */
 	public TypeFilterChange(IApiFilterStore store, IApiProblemFilter filter, String newname, String newpath, int kind) {
 		super(store, filter, kind);

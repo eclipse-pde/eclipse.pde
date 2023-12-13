@@ -273,10 +273,14 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	/**
 	 * Processes the change from original to updated
 	 *
-	 * @param typename the name of the type to query
-	 * @param membername the name of the member
-	 * @param signature the signature of the member
-	 * @param the tags we expect to see
+	 * @param typename
+	 *            the name of the type to query
+	 * @param membername
+	 *            the name of the member
+	 * @param signature
+	 *            the signature of the member
+	 * @param expectedtags
+	 *            the tags we expect to see
 	 */
 	protected void processUpdatedItem(String typename, String innertypename, String membername, String signature, String[] expectedtags) throws Exception {
 		try {

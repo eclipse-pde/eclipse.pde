@@ -42,13 +42,13 @@ public class ApiField extends ApiMember implements IApiField {
 	/**
 	 * Constructor
 	 *
-	 * @param parent the enclosing type of the field
-	 * @param name the name of the field
-	 * @param signature the signature for the field
+	 * @param enclosing  the enclosing type of the field
+	 * @param name       the name of the field
+	 * @param signature  the signature for the field
 	 * @param genericSig the generic signature of the field
-	 * @param flags the flags for the field
-	 * @param value the value assigned to the field
-	 * @param value constant value or <code>null</code> if none
+	 * @param flags      the flags for the field
+	 * @param value      the value assigned to the field, constant value or
+	 *                   <code>null</code> if none
 	 */
 	protected ApiField(IApiType enclosing, String name, String signature, String genericSig, int flags, Object value) {
 		super(enclosing, name, signature, genericSig, IApiElement.FIELD, flags);

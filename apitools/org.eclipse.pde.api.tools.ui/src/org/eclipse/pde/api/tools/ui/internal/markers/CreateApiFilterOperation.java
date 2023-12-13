@@ -63,10 +63,6 @@ public class CreateApiFilterOperation extends Job {
 	/**
 	 * Constructor
 	 *
-	 * @param element the element to create the filter for (method, field,
-	 *            class, enum, etc)
-	 * @param kind the kind of filter to create
-	 *
 	 * @see IApiProblemFilter#getKinds()
 	 */
 	public CreateApiFilterOperation(IMarker[] markers, boolean addingcomments) {

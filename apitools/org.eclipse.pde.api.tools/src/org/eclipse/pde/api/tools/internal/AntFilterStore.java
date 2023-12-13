@@ -91,8 +91,6 @@ public class AntFilterStore extends FilterStore {
 	 * turned on or off
 	 *
 	 * @param problems the problems to add the the store
-	 * @param persist if the filters should be auto-persisted after they are
-	 *            added
 	 */
 	@Override
 	protected void internalAddFilters(IApiProblem[] problems, String[] comments) {

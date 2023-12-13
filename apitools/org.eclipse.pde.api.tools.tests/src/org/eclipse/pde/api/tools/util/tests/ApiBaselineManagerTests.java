@@ -307,10 +307,13 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	/**
 	 * Adds the package with the given name to the given package fragment root
 	 *
-	 * @param the project to add the package to
-	 * @param srcroot the absolute path to the package fragment root to add the
-	 *            new package to
-	 * @param packagename the name of the new package
+	 * @param project
+	 *            the project to add the package to
+	 * @param srcroot
+	 *            the absolute path to the package fragment root to add the new
+	 *            package to
+	 * @param packagename
+	 *            the name of the new package
 	 * @return the new {@link IPackageFragment} or <code>null</code>
 	 */
 	public IPackageFragment assertTestPackage(IJavaProject project, IPath srcroot, String packagename) throws JavaModelException {

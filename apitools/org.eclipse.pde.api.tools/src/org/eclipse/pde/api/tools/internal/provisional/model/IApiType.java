@@ -60,15 +60,15 @@ public interface IApiType extends IApiMember {
 	public IApiField[] getFields();
 
 	/**
-	 * Returns the method with the specified name and signature in this type.
-	 * For example, <code>"foo", "(Ljava.lang.String;I)V"</code>, retrieves the
-	 * method <code>foo(String, int)</code>. To retrieve a constructor,
+	 * Returns the method with the specified name and signature in this type. For
+	 * example, <code>"foo", "(Ljava.lang.String;I)V"</code>, retrieves the method
+	 * <code>foo(String, int)</code>. To retrieve a constructor,
 	 * <code>"<init>"</code> must specified must be as method name.
 	 *
-	 * @param name method name
-	 * @param parameterTypeSignatures parameter types
-	 * @return the method with the specified name and parameter types in this
-	 *         type or <code>null</code>
+	 * @param name      method name
+	 * @param signature parameter types
+	 * @return the method with the specified name and parameter types in this type
+	 *         or <code>null</code>
 	 */
 	public IApiMethod getMethod(String name, String signature);
 

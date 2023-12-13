@@ -90,8 +90,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 	/**
 	 * Constructor
 	 *
-	 * @param owningComponent the id of the component that owns this filter
-	 *            store
+	 * @param project the java project that owns this filter store
 	 */
 	public ApiFilterStore(IJavaProject project) {
 		Assert.isNotNull(project);
