@@ -117,13 +117,6 @@ public class Reference implements IReference {
 	 * Adds the given collection of
 	 * {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem}
 	 * s to the backing listing.
-	 *
-	 * @param origin where the reference occurred from
-	 * @param typeName name of the referenced type where virtual method lookup
-	 *            begins
-	 * @param methodName name of the referenced method
-	 * @param signature signature of the referenced method
-	 * @param kind kind of method reference
 	 */
 	public boolean addProblems(IApiProblem problem) {
 		if (problem == null) {

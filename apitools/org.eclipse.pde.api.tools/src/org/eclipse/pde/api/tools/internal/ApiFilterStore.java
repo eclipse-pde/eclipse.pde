@@ -626,13 +626,12 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 	}
 
 	/**
-	 * Returns all of the unused filters for this store at the moment in time
-	 * this method is called.
+	 * Returns all of the unused filters for this store at the moment in time this
+	 * method is called.
 	 *
-	 * @param the resource the filter applies to
-	 * @param typeName the name of the type the filter appears on
-	 * @param categories the collection of {@link IApiProblem} categories to
-	 *            ignore
+	 * @param resource   the resource the filter applies to
+	 * @param typeName   the name of the type the filter appears on
+	 * @param categories the collection of {@link IApiProblem} categories to ignore
 	 * @see {@link IApiProblem#getCategory()}
 	 * @return the listing of currently unused filters or an empty list, never
 	 *         <code>null</code>

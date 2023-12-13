@@ -152,12 +152,12 @@ public class ApiFileGenerationTask extends Task/* APIFileGenerator */ {
 	 *
 	 * <br>
 	 * <br>
-	 * This is a list of locations for source files that will be scanned. They
-	 * are separated by the platform path separator. Each entry must exist. <br>
+	 * This is a list of locations for source files that will be scanned. They are
+	 * separated by the platform path separator. Each entry must exist. <br>
 	 * <br>
 	 * They should be specified using absolute paths.
 	 *
-	 * @param manifests the given extra source locations
+	 * @param sourceLocations the given extra source locations
 	 */
 	public void setExtraSourceLocations(String sourceLocations) {
 		apiFileGenerator.sourceLocations = sourceLocations;

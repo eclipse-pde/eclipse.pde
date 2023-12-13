@@ -45,7 +45,6 @@ public class ResourceApiTypeRoot extends AbstractApiTypeRoot {
 	 *
 	 * @param parent the {@link IApiElement} parent or <code>null</code> if none
 	 * @param file underlying resource
-	 * @param component API component the class file originates from
 	 */
 	public ResourceApiTypeRoot(IApiElement parent, IFile file, String typeName) {
 		super(parent, typeName);

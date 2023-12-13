@@ -117,14 +117,14 @@ public class UseScanManager {
 	}
 
 	/**
-	 * Returns the references for a given <code>IApiComponent</code>. If it can
-	 * not find them in cache, they will be fetched from the API Use Scans and
-	 * stored.
+	 * Returns the references for a given <code>IApiComponent</code>. If it can not
+	 * find them in cache, they will be fetched from the API Use Scans and stored.
 	 *
 	 * @param apiComponent component whose references have to be fetched
-	 * @param refTypes reference types for which the references has to be
-	 *            computed in the given <code>IApiComponent</code>. If
-	 *            <code>null</code> or empty, all references will be returned
+	 * @param apiUseTypes  reference types for which the references has to be
+	 *                     computed in the given <code>IApiComponent</code>. If
+	 *                     <code>null</code> or empty, all references will be
+	 *                     returned
 	 * @return the array of reference descriptors
 	 */
 	public IReferenceDescriptor[] getExternalDependenciesFor(IApiComponent apiComponent, String[] apiUseTypes, IProgressMonitor monitor) {
