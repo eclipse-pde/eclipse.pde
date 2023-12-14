@@ -49,7 +49,6 @@ import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
 import org.eclipse.pde.internal.core.text.bundle.ExportPackageObject;
 import org.eclipse.pde.internal.core.text.bundle.ImportPackageHeader;
 import org.eclipse.pde.internal.core.text.bundle.ImportPackageObject;
-import org.eclipse.pde.internal.core.text.bundle.ManifestHeader;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -321,14 +320,17 @@ public class JavaResolutionFactory {
 					if (!(model instanceof IBundlePluginModelBase base))
 						return;
 					IBundle bundle = base.getBundleModel().getBundle();
-					String pkgId = ((ExportPackageDescription) getChangeObject()).getName();
+					ExportPackageDescription desc = (ExportPackageDescription) getChangeObject();
+					String pkgId = desc.getName();
 					IManifestHeader header = bundle.getManifestHeader(Constants.IMPORT_PACKAGE);
 					if (header == null) {
-						bundle.setHeader(Constants.IMPORT_PACKAGE, pkgId);
-					} else if (header instanceof ImportPackageHeader ipHeader) {
-						int manifestVersion = BundlePluginBase.getBundleManifestVersion(bundle);
-						String versionAttr = (manifestVersion < 2) ? ICoreConstants.PACKAGE_SPECIFICATION_VERSION : Constants.VERSION_ATTRIBUTE;
-						ImportPackageObject impObject = new ImportPackageObject((ManifestHeader) header, (ExportPackageDescription) getChangeObject(), versionAttr);
+						header = bundle.getModel().getFactory().createHeader(Constants.IMPORT_PACKAGE, pkgId);
+					}
+					if (header instanceof ImportPackageHeader ipHeader) {
+						String versionAttr = (BundlePluginBase.getBundleManifestVersion(bundle) < 2)
+								? ICoreConstants.PACKAGE_SPECIFICATION_VERSION
+								: Constants.VERSION_ATTRIBUTE;
+						ImportPackageObject impObject = new ImportPackageObject(ipHeader, desc, versionAttr);
 						if (!isUndo()) {
 							ipHeader.addPackage(impObject);
 						} else {

@@ -32,9 +32,11 @@ public class ImportPackageObject extends PackageObject {
 	private static final long serialVersionUID = 1L;
 
 	private static String getVersion(ExportPackageDescription desc) {
-		String version = desc.getVersion().toString();
-		if (!version.equals(Version.emptyVersion.toString())) {
-			return desc.getVersion().toString();
+		Version version = desc.getVersion();
+		if (version != null && !Version.emptyVersion.equals(version)) {
+			return new VersionRange(
+					"[" + version.getMajor() + "." + version.getMinor() + "," + (version.getMajor() + 1) + "]") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$//$NON-NLS-4$
+							.toString();
 		}
 		return null;
 	}
