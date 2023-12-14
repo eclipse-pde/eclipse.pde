@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core.target;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -22,9 +23,11 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
+import java.util.zip.ZipOutputStream;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -34,6 +37,7 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.internal.p2.core.helpers.FileUtils;
 import org.eclipse.equinox.internal.p2.metadata.expression.QueryResult;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.ProvisionException;
@@ -123,8 +127,17 @@ public class VirtualArtifactRepository extends AbstractArtifactRepository {
 			if (location == null) {
 				throw new FileNotFoundException(bundleInfo.getSymbolicName());
 			}
-			try (InputStream is = location.toURL().openStream()) {
-				is.transferTo(destination);
+
+			File bundleLocation = new File(location);
+			if (bundleLocation.isFile()) {
+				try (InputStream is = new FileInputStream(bundleLocation)) {
+					is.transferTo(destination);
+				}
+			} else {
+				ZipOutputStream zip = new ZipOutputStream(destination);
+				FileUtils.zip(zip, bundleLocation, Set.of(), FileUtils.createRootPathComputer(bundleLocation));
+				zip.finish();
+				zip.flush();
 			}
 		} else if (artifactModel instanceof IFeatureModel featureModel) {
 			String installLocation = featureModel.getInstallLocation();
