@@ -31,10 +31,6 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlType;
 
 /**
- * <p>Java-Klasse für Toption complex type.
- * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
- * 
  * <pre>
  * &lt;complexType name="Toption">
  *   &lt;complexContent>

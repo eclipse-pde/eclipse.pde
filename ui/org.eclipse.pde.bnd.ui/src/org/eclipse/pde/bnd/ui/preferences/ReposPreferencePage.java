@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2019 bndtools project and others.
+ * Copyright (c) 2015, 2023 bndtools project and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,22 +12,28 @@
  *     Neil Bartlett <njbartlett@gmail.com>  - initial API and implementation
  *     Sean Bright <sean.bright@gmail.com> - ongoing enhancements
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
+ *     Christoph Läubrich - adapt to PDE code base
  *******************************************************************************/
-package bndtools.preferences.ui;
+package org.eclipse.pde.bnd.ui.preferences;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import org.bndtools.utils.swt.AddRemoveButtonBarPart;
-import org.bndtools.utils.swt.AddRemoveButtonBarPart.AddRemoveListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
+import org.eclipse.pde.bnd.ui.AddRemoveButtonBarPart;
+import org.eclipse.pde.bnd.ui.AddRemoveButtonBarPart.AddRemoveListener;
+import org.eclipse.pde.bnd.ui.URLDialog;
+import org.eclipse.pde.bnd.ui.URLLabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -43,23 +49,26 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.service.prefs.BackingStoreException;
 
-import bndtools.preferences.BndPreferences;
-import bndtools.shared.URLDialog;
-import bndtools.shared.URLLabelProvider;
 
-public class ReposPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
+public class ReposPreferencePage extends PreferencePage implements IWorkbenchPreferencePage, ReposPreference {
 
+	private static final String REPO_DEFAULT = "https://raw.githubusercontent.com/bndtools/bundle-hub/master/index.xml.gz";
 	private boolean			enableTemplateRepo;
 	private List<String>	templateRepos;
 	private TableViewer		vwrRepos;
+	private IEclipsePreferences preferences;
 
 	@Override
 	public void init(IWorkbench workbench) {
-		BndPreferences prefs = new BndPreferences();
-
-		enableTemplateRepo = prefs.getEnableTemplateRepo();
-		templateRepos = new ArrayList<>(prefs.getTemplateRepoUriList());
+		preferences = (IEclipsePreferences) InstanceScope.INSTANCE
+				.getNode(FrameworkUtil.getBundle(ReposPreferencePage.class).getSymbolicName())
+				.node(TEMPLATE_LOADER_NODE);
+		enableTemplateRepo = preferences.getBoolean(KEY_ENABLE_TEMPLATE_REPOSITORIES, DEF_ENABLE_TEMPLATE_REPOSITORIES);
+		templateRepos = TEMPLATE_REPOSITORIES_PARSER.apply(preferences.get(KEY_TEMPLATE_REPO_URI_LIST,
+				REPO_DEFAULT));
 	}
 
 	@Override
@@ -96,7 +105,7 @@ public class ReposPreferencePage extends PreferencePage implements IWorkbenchPre
 		final Table tblRepos = new Table(group, SWT.BORDER | SWT.MULTI);
 		vwrRepos = new TableViewer(tblRepos);
 		vwrRepos.setContentProvider(ArrayContentProvider.getInstance());
-		vwrRepos.setLabelProvider(new URLLabelProvider(tblRepos.getDisplay()));
+		vwrRepos.setLabelProvider(new URLLabelProvider());
 		vwrRepos.setInput(templateRepos);
 
 		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
@@ -185,11 +194,22 @@ public class ReposPreferencePage extends PreferencePage implements IWorkbenchPre
 
 	@Override
 	public boolean performOk() {
-		BndPreferences prefs = new BndPreferences();
-
-		prefs.setEnableTemplateRepo(enableTemplateRepo);
-		prefs.setTemplateRepoUriList(templateRepos);
-
+		String repoList = templateRepos.stream().collect(Collectors.joining("\t"));
+		if (enableTemplateRepo == DEF_ENABLE_TEMPLATE_REPOSITORIES) {
+			preferences.remove(KEY_ENABLE_TEMPLATE_REPOSITORIES);
+			if (REPO_DEFAULT.equals(repoList)) {
+				preferences.remove(KEY_TEMPLATE_REPO_URI_LIST);
+			} else {
+				preferences.put(KEY_TEMPLATE_REPO_URI_LIST, repoList);
+			}
+		} else {
+			preferences.putBoolean(KEY_ENABLE_TEMPLATE_REPOSITORIES, enableTemplateRepo);
+			preferences.put(KEY_TEMPLATE_REPO_URI_LIST, repoList);
+		}
+		try {
+			preferences.flush();
+		} catch (BackingStoreException e) {
+		}
 		return true;
 	}
 
