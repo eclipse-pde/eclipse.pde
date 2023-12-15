@@ -20,10 +20,6 @@ import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für Tscalar.
- * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
- * <p>
  * <pre>
  * &lt;simpleType name="Tscalar">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">

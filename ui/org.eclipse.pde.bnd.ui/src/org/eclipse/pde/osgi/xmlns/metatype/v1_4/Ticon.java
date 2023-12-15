@@ -33,10 +33,6 @@ import jakarta.xml.bind.annotation.XmlSchemaType;
 import jakarta.xml.bind.annotation.XmlType;
 
 /**
- * <p>Java-Klasse für Ticon complex type.
- * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
- * 
  * <pre>
  * &lt;complexType name="Ticon">
  *   &lt;complexContent>

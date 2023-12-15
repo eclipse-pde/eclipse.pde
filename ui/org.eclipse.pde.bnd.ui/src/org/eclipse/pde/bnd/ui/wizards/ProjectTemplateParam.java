@@ -12,7 +12,7 @@
  *     Neil Bartlett <njbartlett@gmail.com>  - initial API and implementation
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
  *******************************************************************************/
-package bndtools.wizards.project;
+package org.eclipse.pde.bnd.ui.wizards;
 
 public enum ProjectTemplateParam {
 

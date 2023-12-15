@@ -34,10 +34,6 @@ import jakarta.xml.bind.annotation.XmlElementRefs;
 import jakarta.xml.bind.annotation.XmlType;
 
 /**
- * <p>Java-Klasse für Tmetadata complex type.
- * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
- * 
  * <pre>
  * &lt;complexType name="Tmetadata">
  *   &lt;complexContent>

@@ -12,7 +12,7 @@
  *     Neil Bartlett <njbartlett@gmail.com>  - initial API and implementation
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
  *******************************************************************************/
-package org.bndtools.core.ui.wizards.shared;
+package org.eclipse.pde.bnd.ui.templating;
 
 import java.util.Arrays;
 import java.util.Collection;
