@@ -13,8 +13,9 @@
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
  *     Fr Jeremy Krieg <fr.jkrieg@greekwelfaresa.org.au> - ongoing enhancements
  *     Scott Lewis <scottslewis@gmail.com> - ongoing enhancements
+ *     Christoph Läubrich - Adjust to PDE codebase
  *******************************************************************************/
-package org.bndtools.core.ui.wizards.shared;
+package org.eclipse.pde.bnd.ui.wizards;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,11 +25,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.bndtools.templating.Template;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.bnd.ui.Resources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -39,9 +42,7 @@ import org.eclipse.swt.widgets.Text;
 import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
-import bndtools.Plugin;
-
-public class TemplateParamsWizardPage extends WizardPage implements ISkippableWizardPage {
+public class TemplateParamsWizardPage extends WizardPage {
 
 	private final Set<String>			fixedAttribs	= new HashSet<>();
 
@@ -65,7 +66,7 @@ public class TemplateParamsWizardPage extends WizardPage implements ISkippableWi
 	@Override
 	public void createControl(Composite parent) {
 		setTitle("Template Parameters");
-		setImageDescriptor(Plugin.imageDescriptorFromPlugin("icons/bndtools-wizban.png")); //$NON-NLS-1$
+		setImageDescriptor(Resources.getImageDescriptor("/icons/bndtools-wizban.png")); //$NON-NLS-1$
 
 		container = new Composite(parent, SWT.NONE);
 		setControl(container);
@@ -139,6 +140,7 @@ public class TemplateParamsWizardPage extends WizardPage implements ISkippableWi
 				for (Control fieldControl : fieldControls) {
 					fieldControl.setEnabled(false);
 				}
+				ILog.get().error("Error loading template metadata: ", e);
 			}
 		}
 		currentPanel = panel;
@@ -236,7 +238,6 @@ public class TemplateParamsWizardPage extends WizardPage implements ISkippableWi
 		return (defaultValue != null && defaultValue.startsWith("<") && defaultValue.endsWith(">")) ? true : false;
 	}
 
-	@Override
 	public boolean shouldSkip() {
 		return skip;
 	}

@@ -13,16 +13,16 @@
  *     Sean Bright <sean.bright@gmail.com> - ongoing enhancements
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
  *******************************************************************************/
-package org.bndtools.core.ui.wizards.shared;
+package org.eclipse.pde.bnd.ui.templating;
 
 import java.util.Map;
 
 import org.bndtools.templating.Category;
 import org.bndtools.templating.Template;
-import org.bndtools.utils.jface.BoldStyler;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.ViewerCell;
+import org.eclipse.pde.bnd.ui.BoldStyler;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;

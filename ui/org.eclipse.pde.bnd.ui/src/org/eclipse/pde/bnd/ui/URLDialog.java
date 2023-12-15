@@ -13,7 +13,7 @@
  *     Neil Bartlett <njbartlett@gmail.com> - ongoing enhancements
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
  *******************************************************************************/
-package bndtools.shared;
+package org.eclipse.pde.bnd.ui;
 
 import java.io.File;
 import java.net.URI;

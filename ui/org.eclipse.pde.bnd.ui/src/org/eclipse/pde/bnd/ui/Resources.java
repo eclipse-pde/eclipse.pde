@@ -21,11 +21,20 @@ public class Resources implements BundleActivator {
 		disposeResources();
 	}
 
+	public synchronized static ImageDescriptor getImageDescriptor(String key) {
+		ImageRegistry registry = getImageRegistry();
+		ImageDescriptor descriptor = registry.getDescriptor(key);
+		if (descriptor == null) {
+			ImageDescriptor fromURL = ImageDescriptor.createFromURL(Resources.class.getResource(key));
+			registry.put(key, fromURL);
+			return fromURL;
+		}
+		return descriptor;
+	}
+
 	public synchronized static Image getImage(String key) {
 		ImageRegistry registry = getImageRegistry();
-		if (registry.getDescriptor(key) == null) {
-			registry.put(key, ImageDescriptor.createFromURL(Resources.class.getResource(key)));
-		}
+		getImageDescriptor(key); // make sure the descriptor is added!
 		return registry.get(key);
 	}
 	

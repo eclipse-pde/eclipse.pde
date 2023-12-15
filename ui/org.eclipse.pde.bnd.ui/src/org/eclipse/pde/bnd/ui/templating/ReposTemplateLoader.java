@@ -13,9 +13,9 @@
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
  *     Raymond Auge <raymond.auge@liferay.com> - ongoing enhancements
  *     Fr Jeremy Krieg <fr.jkrieg@greekwelfaresa.org.au> - ongoing enhancements
+ *     Christoph Läubrich - adapt to PDE codebase
  *******************************************************************************/
-package org.bndtools.core.templating.repobased;
-
+package org.eclipse.pde.bnd.ui.templating;
 import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
@@ -27,12 +27,18 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import org.bndtools.templating.Template;
 import org.bndtools.templating.TemplateEngine;
 import org.bndtools.templating.TemplateLoader;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.eclipse.pde.bnd.ui.preferences.ReposPreference;
+import org.eclipse.pde.bnd.ui.preferences.ReposPreferencePage;
 import org.osgi.framework.Constants;
 import org.osgi.framework.namespace.IdentityNamespace;
 import org.osgi.resource.Capability;
@@ -55,10 +61,8 @@ import aQute.bnd.osgi.resource.CapReqBuilder;
 import aQute.bnd.osgi.resource.ResourceUtils;
 import aQute.bnd.osgi.resource.ResourceUtils.IdentityCapability;
 import aQute.bnd.repository.osgi.OSGiRepository;
-import aQute.lib.strings.Strings;
+import aQute.bnd.service.RepositoryPlugin;
 import aQute.service.reporter.Reporter;
-import bndtools.central.Central;
-import bndtools.preferences.BndPreferences;
 
 @Component(name = "org.bndtools.templating.repos", property = {
 	"source=workspace", Constants.SERVICE_DESCRIPTION + "=Load templates from the Workspace and Repositories",
@@ -72,11 +76,14 @@ public class ReposTemplateLoader implements TemplateLoader {
 
 	private final ConcurrentMap<String, TemplateEngine>	engines			= new ConcurrentHashMap<>();
 
-	// for testing
-	Workspace											workspace		= null;
+	@Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
+	private final List<Workspace> workspaces = new CopyOnWriteArrayList<>();
 
 	private PromiseFactory								promiseFactory;
 	private ExecutorService								localExecutor	= null;
+
+	@Reference(target = IScopeContext.BUNDLE_SCOPE_FILTER)
+	private IScopeContext bundleScope;
 
 	@Reference(cardinality = ReferenceCardinality.OPTIONAL, policyOption = ReferencePolicyOption.GREEDY)
 	void setExecutorService(ExecutorService executor) {
@@ -115,13 +122,15 @@ public class ReposTemplateLoader implements TemplateLoader {
 			.buildSyntheticRequirement();
 
 		// Try to get the repositories and BundleLocator from the workspace
-		List<Repository> workspaceRepos;
+		List<Repository> workspaceRepos = new ArrayList<>();
 		BundleLocator tmpLocator;
 		try {
-			if (workspace == null)
-				workspace = Central.getWorkspace();
-			workspaceRepos = workspace.getPlugins(Repository.class);
-			tmpLocator = new RepoPluginsBundleLocator(workspace.getRepositories());
+			List<RepositoryPlugin> wsRepo = new ArrayList<>();
+			for (Workspace workspace : workspaces) {
+				workspaceRepos.addAll(workspace.getPlugins(Repository.class));
+				wsRepo.addAll(workspace.getRepositories());
+			}
+			tmpLocator = new RepoPluginsBundleLocator(wsRepo);
 		} catch (Exception e) {
 			workspaceRepos = Collections.emptyList();
 			tmpLocator = new DirectDownloadBundleLocator();
@@ -175,20 +184,19 @@ public class ReposTemplateLoader implements TemplateLoader {
 	}
 
 	private void addPreferenceConfiguredRepos(List<Repository> repos, Reporter reporter) {
-		BndPreferences bndPrefs = null;
-		try {
-			bndPrefs = new BndPreferences();
-		} catch (Exception e) {
-			// e.printStackTrace();
-		}
 
-		if (bndPrefs != null && bndPrefs.getEnableTemplateRepo()) {
-			List<String> repoUris = bndPrefs.getTemplateRepoUriList();
-			try {
-				OSGiRepository prefsRepo = loadRepo(repoUris, reporter);
-				repos.add(prefsRepo);
-			} catch (Exception ex) {
-				reporter.exception(ex, "Error loading preference repository: %s", repoUris);
+		IEclipsePreferences preferences = bundleScope.getNode(ReposPreference.TEMPLATE_LOADER_NODE);
+		if (preferences.getBoolean(ReposPreferencePage.KEY_ENABLE_TEMPLATE_REPOSITORIES,
+				ReposPreference.DEF_ENABLE_TEMPLATE_REPOSITORIES)) {
+			List<String> list = ReposPreference.TEMPLATE_REPOSITORIES_PARSER
+					.apply(preferences.get(ReposPreference.KEY_TEMPLATE_REPO_URI_LIST, ""));
+			if (!list.isEmpty()) {
+				try {
+					OSGiRepository prefsRepo = loadRepo(list, reporter);
+					repos.add(prefsRepo);
+				} catch (Exception ex) {
+					reporter.exception(ex, "Error loading preference repository: %s", list);
+				}
 			}
 		}
 	}
@@ -196,6 +204,7 @@ public class ReposTemplateLoader implements TemplateLoader {
 	private OSGiRepository loadRepo(List<String> uris, Reporter reporter) throws Exception {
 		OSGiRepository repo = new OSGiRepository();
 		repo.setReporter(reporter);
+		Workspace workspace = workspaces.stream().findFirst().orElse(null);
 		if (workspace != null) {
 			repo.setRegistry(workspace);
 		} else {
@@ -204,7 +213,7 @@ public class ReposTemplateLoader implements TemplateLoader {
 			repo.setRegistry(p);
 		}
 		Map<String, String> map = new HashMap<>();
-		map.put("locations", Strings.join(uris));
+		map.put("locations", uris.stream().collect(Collectors.joining(",")));
 		repo.setProperties(map);
 		return repo;
 	}

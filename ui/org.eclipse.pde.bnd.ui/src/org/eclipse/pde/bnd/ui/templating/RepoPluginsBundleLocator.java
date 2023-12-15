@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2019 bndtools project and others.
+ * Copyright (c) 2015, 2023 bndtools project and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,17 +11,20 @@
  * Contributors:
  *     Neil Bartlett <njbartlett@gmail.com>  - initial API and implementation
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
+ *     Christoph Läubrich - adapt to PDE codebase
  *******************************************************************************/
-package org.bndtools.core.templating.repobased;
+package org.eclipse.pde.bnd.ui.templating;
 
 import java.io.File;
+import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import aQute.bnd.service.RepositoryPlugin;
-import aQute.lib.io.IO;
 
 public class RepoPluginsBundleLocator implements BundleLocator {
 
@@ -51,11 +54,13 @@ public class RepoPluginsBundleLocator implements BundleLocator {
 		// Fall back to direct download
 		// TODO: need some kind of download/cache service to avoid repeated
 		// downloads
-		File tempFile = File.createTempFile("download", "jar");
-		tempFile.deleteOnExit();
+		Path tempFile = Files.createTempFile("download", "jar");
+		tempFile.toFile().deleteOnExit();
 
-		IO.copy(location.toURL(), tempFile);
-		return tempFile;
+		try (InputStream stream = location.toURL().openStream()) {
+			Files.copy(stream, tempFile);
+		}
+		return tempFile.toFile();
 	}
 
 }

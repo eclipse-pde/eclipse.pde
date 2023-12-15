@@ -11,7 +11,7 @@
  * Contributors:
  *     Scott Lewis <scottslewis@gmail.com> - initial API and implementation
  *******************************************************************************/
-package org.bndtools.core.ui.wizards.shared;
+package org.eclipse.pde.bnd.ui.templating;
 
 import java.net.URL;
 import java.nio.file.Path;
