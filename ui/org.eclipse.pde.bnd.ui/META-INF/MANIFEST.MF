@@ -11,7 +11,9 @@ Import-Package: aQute.bnd.build;version="4.5.0",
  aQute.bnd.exceptions;version="3.0.0",
  aQute.bnd.header;version="2.6.0",
  aQute.bnd.osgi,
- aQute.bnd.result;version="2.0.0"
+ aQute.bnd.result;version="2.0.0",
+ jakarta.xml.bind;version="4.0.1",
+ jakarta.xml.bind.annotation;version="4.0.1"
 Require-Bundle: org.eclipse.jdt.ui,
  org.eclipse.jdt.core,
  org.eclipse.core.resources,
