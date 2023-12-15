@@ -16,7 +16,7 @@ package org.eclipse.pde.internal.core.target;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.URI;
@@ -26,7 +26,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
+import java.util.jar.Manifest;
 import java.util.zip.ZipOutputStream;
 
 import org.eclipse.core.runtime.Assert;
@@ -127,14 +129,11 @@ public class VirtualArtifactRepository extends AbstractArtifactRepository {
 			if (location == null) {
 				throw new FileNotFoundException(bundleInfo.getSymbolicName());
 			}
-
 			File bundleLocation = new File(location);
 			if (bundleLocation.isFile()) {
-				try (InputStream is = new FileInputStream(bundleLocation)) {
-					is.transferTo(destination);
-				}
+				Files.copy(bundleLocation.toPath(), destination);
 			} else {
-				ZipOutputStream zip = new ZipOutputStream(destination);
+				ZipOutputStream zip = getZipStream(destination, bundleLocation);
 				FileUtils.zip(zip, bundleLocation, Set.of(), FileUtils.createRootPathComputer(bundleLocation));
 				zip.finish();
 				zip.flush();
@@ -159,6 +158,16 @@ public class VirtualArtifactRepository extends AbstractArtifactRepository {
 		} else {
 			throw new IllegalArgumentException(artifactModel.toString());
 		}
+	}
+
+	private ZipOutputStream getZipStream(OutputStream destination, File bundleLocation) throws IOException {
+		File manifestFile = new File(bundleLocation, JarFile.MANIFEST_NAME);
+		if (manifestFile.isFile()) {
+			try (FileInputStream fileInputStream = new FileInputStream(manifestFile)) {
+				return new JarOutputStream(destination, new Manifest(fileInputStream));
+			}
+		}
+		return new ZipOutputStream(destination);
 	}
 
 	@Override
