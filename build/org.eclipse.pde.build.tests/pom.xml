@@ -29,6 +29,8 @@
 				<deltaPackDir>${project.build.directory}/deltapack/eclipse</deltaPackDir>
 				<mirrorDir>${project.build.directory}/mirror-site</mirrorDir>
 				<sdkProfile>SDKProfile</sdkProfile>
+				<!-- now enable the test for this run if not suppressed by commandline -->
+				<skipTests>false</skipTests>
 			</properties>
 			<build>
 				<plugins>
@@ -148,7 +150,7 @@
 							<testRuntime>p2Installed</testRuntime>
 							<work>${sdkWorkDir}</work>
 							<profileName>${sdkProfile}</profileName>
-							<skipTests>true</skipTests> <!-- this supress the default execution -->
+							<skipTests>true</skipTests> <!-- this supresses the default execution regardless of user property given -->
 						</configuration>
 						<executions>
 							<execution>
@@ -157,12 +159,12 @@
 									<goal>test</goal>
 								</goals>
 								<configuration>
-									<skipTests>false</skipTests>
 									<testClass>org.eclipse.pde.build.tests.PDEBuildTestSuite</testClass>
 									<systemProperties>
 										<pde.build.includeP2>false</pde.build.includeP2>
 									</systemProperties>
 									<osgiDataDirectory>${project.build.directory}/ws-pde</osgiDataDirectory>
+									<skipTests>${skipTests}</skipTests>
 								</configuration>
 							</execution>
 							<execution>
@@ -171,12 +173,12 @@
 									<goal>test</goal>
 								</goals>
 								<configuration>
-									<skipTests>false</skipTests>
 									<testClass>org.eclipse.pde.build.tests.P2TestSuite</testClass>
 									<systemProperties>
 										<pde.build.includeP2>true</pde.build.includeP2>
 									</systemProperties>
 									<osgiDataDirectory>${project.build.directory}/ws-p2</osgiDataDirectory>
+									<skipTests>${skipTests}</skipTests>
 								</configuration>
 							</execution>
 						</executions>
