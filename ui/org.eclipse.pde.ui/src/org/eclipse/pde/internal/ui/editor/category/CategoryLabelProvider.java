@@ -35,7 +35,7 @@ class CategoryLabelProvider extends LabelProvider {
 
 	private Image fSiteFeatureImage;
 	private Image fMissingSiteFeatureImage;
-	private final Image fSiteBundleImage;
+	private Image fSiteBundleImage;
 	private final Image fMissingSiteBundleImage;
 	private Image fPageImage;
 	private Image fCatDefImage;
@@ -106,6 +106,10 @@ class CategoryLabelProvider extends LabelProvider {
 		if ((fSiteFeatureImage != null) && (fSiteFeatureImage.isDisposed() == false)) {
 			fSiteFeatureImage.dispose();
 			fSiteFeatureImage = null;
+		}
+		if ((fSiteBundleImage != null) && (fSiteBundleImage.isDisposed() == false)) {
+			fSiteBundleImage.dispose();
+			fSiteBundleImage = null;
 		}
 		if ((fMissingSiteFeatureImage != null) && (fMissingSiteFeatureImage.isDisposed() == false)) {
 			fMissingSiteFeatureImage.dispose();
