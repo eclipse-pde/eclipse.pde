@@ -355,11 +355,11 @@ public class FeatureExportOperation extends Job {
 			}
 			antProperties.put(IXMLConstants.PROPERTY_ARCHIVE_FULLPATH, fInfo.destinationDirectory + File.separator + filename);
 		} else {
-			String dir = fInfo.destinationDirectory;
+			StringBuilder dir = new StringBuilder().append(fInfo.destinationDirectory);
 			if (fInfo.targets != null && !groupedConfigurations()) {
-				dir += File.separatorChar + os + '.' + ws + '.' + arch;
+				dir.append(File.separatorChar).append(os).append('.').append(ws).append('.').append(arch);
 			}
-			antProperties.put(IXMLConstants.PROPERTY_ASSEMBLY_TMP, dir);
+			antProperties.put(IXMLConstants.PROPERTY_ASSEMBLY_TMP, dir.toString());
 		}
 	}
 

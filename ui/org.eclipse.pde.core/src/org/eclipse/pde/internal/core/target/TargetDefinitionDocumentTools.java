@@ -145,15 +145,15 @@ public class TargetDefinitionDocumentTools {
 		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode("org.eclipse.ui.editors"); //$NON-NLS-1$
 		boolean spacesForTabs = preferences.getBoolean("spacesForTabs", false); //$NON-NLS-1$
 
-		String newLineString = "\n"; //$NON-NLS-1$
+		StringBuilder newLineString = new StringBuilder("\n"); //$NON-NLS-1$
 		if (addIndent) {
 			if (spacesForTabs) {
 				int tabWidth = preferences.getInt("tabWidth", 4); //$NON-NLS-1$
 				char[] chars = new char[tabWidth];
 				Arrays.fill(chars, ' ');
-				newLineString += new String(chars);
+				newLineString.append(chars);
 			} else {
-				newLineString += "\t"; //$NON-NLS-1$
+				newLineString.append("\t"); //$NON-NLS-1$
 			}
 		}
 		Node previousSibling = parent.getPreviousSibling();
@@ -161,12 +161,12 @@ public class TargetDefinitionDocumentTools {
 			String textContentString = previousSibling.getTextContent();
 			int indexOfLastNewLine = Math.max(textContentString.lastIndexOf('\n'), textContentString.lastIndexOf('\r'));
 			if (indexOfLastNewLine >= 0) {
-				newLineString += textContentString.substring(indexOfLastNewLine + 1);
+				newLineString.append(textContentString.substring(indexOfLastNewLine + 1));
 			} else {
-				newLineString += textContentString;
+				newLineString.append(textContentString);
 			}
 		}
-		parent.appendChild(parent.getOwnerDocument().createTextNode(newLineString));
+		parent.appendChild(parent.getOwnerDocument().createTextNode(newLineString.toString()));
 	}
 
 	/**

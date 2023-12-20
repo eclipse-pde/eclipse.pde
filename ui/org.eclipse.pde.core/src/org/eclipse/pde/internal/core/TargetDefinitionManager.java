@@ -78,10 +78,10 @@ public class TargetDefinitionManager implements IRegistryChangeListener {
 			}
 
 			private String getString(IConfigurationElement elem) {
-				String name = elem.getAttribute("name"); //$NON-NLS-1$
+				StringBuilder name = new StringBuilder().append(elem.getAttribute("name")); //$NON-NLS-1$
 				String id = elem.getAttribute("id"); //$NON-NLS-1$
-				name = name + " [" + id + "]"; //$NON-NLS-1$ //$NON-NLS-2$
-				return name;
+				name.append(" [").append(id).append("]"); //$NON-NLS-1$ //$NON-NLS-2$
+				return name.toString();
 			}
 
 		});

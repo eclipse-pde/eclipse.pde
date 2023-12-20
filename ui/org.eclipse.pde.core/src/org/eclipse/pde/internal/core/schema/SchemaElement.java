@@ -93,24 +93,24 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 		if (children.length == 0) {
 			return "EMPTY"; //$NON-NLS-1$
 		}
-		String text = kind == ISchemaCompositor.GROUP ? "(" : ""; //$NON-NLS-1$ //$NON-NLS-2$
+		StringBuilder text = new StringBuilder().append(kind == ISchemaCompositor.GROUP ? "(" : ""); //$NON-NLS-1$ //$NON-NLS-2$
 		for (int i = 0; i < children.length; i++) {
 			ISchemaObject object = children[i];
 			String child = calculateChildRepresentation(object, addLinks);
 
-			text += child;
+			text.append(child);
 			if (i < children.length - 1) {
 				if (kind == ISchemaCompositor.SEQUENCE) {
-					text += " , "; //$NON-NLS-1$
+					text.append(" , "); //$NON-NLS-1$
 				} else if (kind == ISchemaCompositor.CHOICE) {
-					text += " | "; //$NON-NLS-1$
+					text.append(" | "); //$NON-NLS-1$
 				}
 			}
 		}
 		if (kind == ISchemaCompositor.GROUP) {
-			text += ")"; //$NON-NLS-1$
+			text.append(")"); //$NON-NLS-1$
 		}
-		return text;
+		return text.toString();
 	}
 
 	@Override

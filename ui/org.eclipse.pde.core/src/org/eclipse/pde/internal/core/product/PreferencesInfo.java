@@ -100,12 +100,12 @@ public class PreferencesInfo extends ProductObject implements IPreferencesInfo {
 			writer.println(indent + "   <sourcefile path=\"" + getWritableString(fSourceFilePath.trim()) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		boolean overwrite = fOverwrite != null && "true".equals(fOverwrite); //$NON-NLS-1$
-		String targetFile = indent + "   <targetfile overwrite=\"" + overwrite + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+		StringBuilder targetFile = new StringBuilder().append(indent).append("   <targetfile overwrite=\"").append(overwrite).append("\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (fPreferenceCustomizationPath != null && fPreferenceCustomizationPath.length() > 0) {
-			targetFile += " path=\"" + getWritableString(fPreferenceCustomizationPath.trim()) + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+			targetFile.append(" path=\"").append(getWritableString(fPreferenceCustomizationPath.trim())).append("\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		targetFile += "/>"; //$NON-NLS-1$
-		writer.println(targetFile);
+		targetFile.append("/>"); //$NON-NLS-1$
+		writer.println(targetFile.toString());
 		writer.println(indent + "</preferencesInfo>"); //$NON-NLS-1$
 	}
 
