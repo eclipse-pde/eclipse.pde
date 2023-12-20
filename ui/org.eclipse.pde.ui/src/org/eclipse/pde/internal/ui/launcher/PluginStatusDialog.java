@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2016 IBM Corporation and others.
+ *  Copyright (c) 2005, 2023 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -11,12 +11,18 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487943
+ *     Dinesh Palanisamy (ETAS GmbH) - Issue 305
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
 import java.util.Map;
 
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -29,10 +35,15 @@ import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
@@ -80,6 +91,7 @@ public class PluginStatusDialog extends TrayDialog {
 	}
 
 	private boolean fShowCancelButton;
+	private boolean fShowLink;
 	private Map<?, ?> fInput;
 	private TreeViewer treeViewer;
 
@@ -97,6 +109,10 @@ public class PluginStatusDialog extends TrayDialog {
 
 	public void showCancelButton(boolean showCancel) {
 		fShowCancelButton = showCancel;
+	}
+
+	public void showLink(boolean showLink) {
+		fShowLink = showLink;
 	}
 
 	public void setInput(Map<?, ?> input) {
@@ -119,9 +135,37 @@ public class PluginStatusDialog extends TrayDialog {
 
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
+		if (fShowLink) {
+			createLink(parent, IDialogConstants.YES_ID, PDEUIMessages.PluginStatusDialog_validationLink, true);
+		}
 		createButton(parent, IDialogConstants.OK_ID, PDEUIMessages.PluginStatusDialog_continueButtonLabel, true);
 		if (fShowCancelButton) {
 			createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+		}
+	}
+
+	private void createLink(Composite parent, int yesId, String pluginStatusDialog_validationLink, boolean b) {
+		GridLayout layout = (GridLayout) parent.getLayout();
+		layout.numColumns = 2;
+		layout.makeColumnsEqualWidth = false;
+		Link link = new Link(parent, SWT.NONE);
+		link.setText(PDEUIMessages.PluginStatusDialog_validationLink);
+		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
+		ILaunch[] launches = manager.getLaunches();
+		if (launches.length >= 1) {
+		ILaunch iLaunch = launches[launches.length - 1];
+		ILaunchConfiguration launchConfiguration = iLaunch.getLaunchConfiguration();
+			link.addSelectionListener(new SelectionAdapter() {
+			    @Override
+			    public void widgetSelected(SelectionEvent e) {
+					// Closing the validation dialog to avoid cyclic dependency
+					setReturnCode(CANCEL);
+					close();
+					DebugUITools.openLaunchConfigurationDialog(Display.getCurrent().getActiveShell(),
+							launchConfiguration,
+							"org.eclipse.debug.ui.launchGroup.run", null); //$NON-NLS-1$
+				}
+			  });
 		}
 	}
 
