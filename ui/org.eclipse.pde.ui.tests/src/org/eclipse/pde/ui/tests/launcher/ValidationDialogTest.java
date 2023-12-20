@@ -14,11 +14,13 @@
 
 package org.eclipse.pde.ui.tests.launcher;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.jface.window.IShellProvider;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.launcher.PluginStatusDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -55,6 +57,10 @@ public class ValidationDialogTest {
 			} else if ((control instanceof Link)) {
 				isEditLaunchConfigurationLinkAvilable(element, control);
 				break;
+			} else if ((control instanceof Button) && (control.getToolTipText() != null) && (control.getToolTipText()
+					.equals(PDEUIMessages.PluginStatusDialog_copyValidationError_Tooltip))) {
+				isCopyValidationButtonAvilable(element, control);
+				break;
 			}
 		}
 	}
@@ -62,6 +68,13 @@ public class ValidationDialogTest {
 	private void isEditLaunchConfigurationLinkAvilable(Control[] element, Control control) {
 		Control editConfigLink = element[0];
 		((Link) control).notifyListeners(SWT.Selection, new Event());
-		assertNotNull(editConfigLink.isVisible());
+		assertTrue(editConfigLink.isVisible());
+	}
+
+	private void isCopyValidationButtonAvilable(Control[] element, Control control) {
+		Control copyValidationError = element[1];
+		((Button) control).notifyListeners(SWT.Selection, new Event());
+		assertTrue(copyValidationError.isVisible());
+
 	}
 }

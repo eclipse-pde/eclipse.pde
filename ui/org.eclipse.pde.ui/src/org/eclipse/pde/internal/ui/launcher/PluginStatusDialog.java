@@ -11,10 +11,13 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487943
- *     Dinesh Palanisamy (ETAS GmbH) - Issue 305
+ *     Dinesh Palanisamy (ETAS GmbH) - Issue 305, 223
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.util.Map;
 
 import org.eclipse.core.runtime.MultiStatus;
@@ -32,6 +35,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
@@ -39,6 +43,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -137,6 +142,8 @@ public class PluginStatusDialog extends TrayDialog {
 	protected void createButtonsForButtonBar(Composite parent) {
 		if (fShowLink) {
 			createLink(parent, IDialogConstants.YES_ID, PDEUIMessages.PluginStatusDialog_validationLink, true);
+			createCopyValidationButton(parent, IDialogConstants.YES_ID,
+					PDEUIMessages.PluginStatusDialog_copyValidationError_Button, true);
 		}
 		createButton(parent, IDialogConstants.OK_ID, PDEUIMessages.PluginStatusDialog_continueButtonLabel, true);
 		if (fShowCancelButton) {
@@ -169,6 +176,34 @@ public class PluginStatusDialog extends TrayDialog {
 		}
 	}
 
+	private void createCopyValidationButton(Composite parent, int yesId,
+			String pluginStatusDialog_copyValidationErrorButton, boolean b) {
+		Button copyValidationError = new Button(parent, SWT.PUSH);
+		copyValidationError.setText(PDEUIMessages.PluginStatusDialog_copyValidationError_Button);
+		copyValidationError.setToolTipText(PDEUIMessages.PluginStatusDialog_copyValidationError_Tooltip);
+		setButtonLayoutData(copyValidationError);
+		copyValidationError.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				StringBuilder validationError = new StringBuilder();
+				PDELabelProvider pdeLabelProvider = new PDELabelProvider();
+				for (Map.Entry<?, ?> validationEntry : fInput.entrySet()) {
+					if (validationEntry.getKey() != null) {
+						validationError
+								.append(pdeLabelProvider.getText(validationEntry.getKey()) + System.lineSeparator());
+						Object[] valueObject = (Object[]) validationEntry.getValue();
+						for (Object valueString : valueObject) {
+							validationError.append("   " + valueString.toString() + System.lineSeparator()); //$NON-NLS-1$
+						}
+					}
+				}
+				StringSelection strSelection = new StringSelection(validationError.toString());
+				Clipboard systemClipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+				systemClipboard.setContents(strSelection, null);
+			}
+		});
+	}
+
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
@@ -179,7 +214,7 @@ public class PluginStatusDialog extends TrayDialog {
 	protected Control createDialogArea(Composite parent) {
 		Composite container = (Composite) super.createDialogArea(parent);
 		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.widthHint = 400;
+		gd.widthHint = 700;
 		gd.heightHint = 300;
 		container.setLayoutData(gd);
 
@@ -191,6 +226,7 @@ public class PluginStatusDialog extends TrayDialog {
 		treeViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		treeViewer.setComparator(new ViewerComparator());
 		treeViewer.setInput(fInput);
+		treeViewer.expandAll();
 		treeViewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		getShell().setText(PDEUIMessages.PluginStatusDialog_pluginValidation);
