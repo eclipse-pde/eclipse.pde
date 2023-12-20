@@ -28,6 +28,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	LaunchConfigurationHelperTestCase.class, //
 	LaunchConfigurationMigrationTest.class, //
 	ProductEditorLaunchingTest.class, //
+	ValidationDialogTest.class, //
 })
 public class AllLauncherTests {
 
