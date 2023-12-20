@@ -57,6 +57,7 @@ public class PluginValidationStatusHandler implements IStatusHandler {
 		display.syncExec(() -> {
 			IShellProvider shellProvider = PlatformUI.getWorkbench().getModalDialogShellProvider();
 			PluginStatusDialog dialog = new PluginStatusDialog(shellProvider.getShell());
+			dialog.showLink(true);
 			dialog.showCancelButton(true);
 			dialog.setInput(op.getInput());
 			result[0] = dialog.open();
