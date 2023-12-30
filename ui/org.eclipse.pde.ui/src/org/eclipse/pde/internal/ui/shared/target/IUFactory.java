@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
+import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,8 +26,15 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.equinox.p2.core.IProvisioningAgent;
+import org.eclipse.equinox.p2.core.ProvisionException;
+import org.eclipse.equinox.p2.operations.RepositoryTracker;
+import org.eclipse.equinox.p2.repository.artifact.IArtifactRepositoryManager;
+import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
+import org.eclipse.equinox.p2.ui.ProvisioningUI;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreePath;
@@ -164,12 +172,60 @@ public class IUFactory implements IAdapterFactory, ITargetLocationHandler {
 
 	@Override
 	public IStatus reload(ITargetDefinition target, ITargetLocation[] targetLocations, IProgressMonitor monitor) {
-		// delete profile
 		try {
-			// TODO might want to merge forceCheckTarget into delete Profile?
+			SubMonitor convert = SubMonitor.convert(monitor, 100);
+			// delete profile
+			convert.setTaskName(Messages.IUFactory_taskDeleteProfile);
 			P2TargetUtils.forceCheckTarget(target);
 			P2TargetUtils.deleteProfile(target.getHandle());
-			return Status.OK_STATUS;
+			convert.worked(25);
+			// refresh p2 managed caches...
+			IProvisioningAgent agent = P2TargetUtils.getAgent();
+			IArtifactRepositoryManager artifactRepositoryManager = agent.getService(IArtifactRepositoryManager.class);
+			IMetadataRepositoryManager metadataRepositoryManager = agent.getService(IMetadataRepositoryManager.class);
+			ProvisioningUI ui = ProvisioningUI.getDefaultUI();
+			ui.signalRepositoryOperationStart();
+			try {
+				RepositoryTracker repositoryTracker = ui.getRepositoryTracker();
+				convert.setTaskName(Messages.IUFactory_taskRefreshRepositories);
+				MultiStatus reloadStatus = new MultiStatus(IUFactory.class, 0,
+						Messages.IUFactory_errorRefreshRepositories);
+				for (ITargetLocation targetLocation : targetLocations) {
+					if (targetLocation instanceof IUBundleContainer iu) {
+						URI[] repositories = iu.getRepositories();
+						if (repositories != null) {
+							convert.setWorkRemaining(repositories.length * 2);
+							for (URI repositoryUri : repositories) {
+								repositoryTracker.clearRepositoryNotFound(repositoryUri);
+								try {
+									if (artifactRepositoryManager != null) {
+										artifactRepositoryManager.refreshRepository(repositoryUri, convert.split(1));
+									}
+									if (metadataRepositoryManager != null) {
+										metadataRepositoryManager.refreshRepository(repositoryUri, convert.split(1));
+									}
+								} catch (CoreException e) {
+									IStatus error = e.getStatus();
+									if (error.getCode() == ProvisionException.REPOSITORY_NOT_FOUND) {
+										repositoryTracker.addNotFound(repositoryUri);
+									}
+									reloadStatus.add(error);
+								}
+							}
+						}
+					}
+				}
+				if (reloadStatus.isOK()) {
+					return Status.OK_STATUS;
+				}
+				IStatus[] children = reloadStatus.getChildren();
+				if (children.length == 1) {
+					return children[0];
+				}
+				return reloadStatus;
+			} finally {
+				ui.signalRepositoryOperationComplete(null, false);
+			}
 		} catch (CoreException e) {
 			return e.getStatus();
 		}
