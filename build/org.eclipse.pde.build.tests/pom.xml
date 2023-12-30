@@ -116,28 +116,19 @@
 						</executions>
 					</plugin>
 					<plugin>
-						<!-- TODO provide as mojo in p2-plugin! -->
 						<groupId>org.eclipse.tycho</groupId>
-						<artifactId>tycho-eclipse-plugin</artifactId>
+						<artifactId>tycho-p2-repository-plugin</artifactId>
 						<version>${tycho.version}</version>
 						<executions>
 							<execution>
 								<id>repo-to-runnable</id>
 								<goals>
-									<goal>eclipse-run</goal>
+									<goal>repo-to-runnable</goal>
 								</goals>
 								<phase>pre-integration-test</phase>
 								<configuration>
-									<installation>${sdkWorkDir}</installation>
-									<work>${project.build.directory}/ws-repo</work>
-									<applicationArgs>
-										<arg>-application</arg>
-										<arg>org.eclipse.equinox.p2.repository.repo2runnable</arg>
-										<arg>-source</arg>
-										<arg>file:${mirrorDir}</arg>
-										<arg>-destination</arg>
-										<arg>file:${deltaPackDir}</arg>
-									</applicationArgs>
+									<source>file:${mirrorDir}</source>
+									<destination>file:${deltaPackDir}</destination>
 								</configuration>
 							</execution>
 						</executions>
