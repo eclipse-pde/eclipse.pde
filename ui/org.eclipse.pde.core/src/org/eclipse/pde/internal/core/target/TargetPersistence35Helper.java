@@ -247,7 +247,7 @@ public class TargetPersistence35Helper {
 				}
 			}
 			flags |= Boolean.parseBoolean(includeAllPlatforms) ? IUBundleContainer.INCLUDE_ALL_ENVIRONMENTS : 0;
-			container = new IUBundleContainer(iuIDs, iuVer, uris, flags);
+			container = TargetPlatformService.getDefault().newIULocation(iuIDs, iuVer, uris, flags);
 			break;
 		default:
 			break;
