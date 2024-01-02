@@ -157,36 +157,10 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * @param repositories metadata repositories used to search for IU's or <code>null</code> for default set
 	 * @param resolutionFlags bitmask of flags to control IU resolution, possible flags are {@link IUBundleContainer#INCLUDE_ALL_ENVIRONMENTS}, {@link IUBundleContainer#INCLUDE_REQUIRED}, {@link IUBundleContainer#INCLUDE_SOURCE}, {@link IUBundleContainer#INCLUDE_CONFIGURE_PHASE}
 	 */
-	IUBundleContainer(String[] ids, String[] versions, URI[] repositories, int resolutionFlags) {
+	IUBundleContainer(String[] ids, Version[] versions, URI[] repositories, int resolutionFlags) {
 		fIds = ids;
 		fFlags = resolutionFlags;
-		fVersions = new Version[versions.length];
-		for (int i = 0; i < versions.length; i++) {
-			fVersions[i] = Version.create(versions[i]);
-
-		}
-		if (repositories == null || repositories.length == 0) {
-			fRepos = null;
-		} else {
-			fRepos = repositories;
-		}
-	}
-
-	/**
-	 * Constructs a installable unit bundle container for the specified units.
-	 *
-	 * @param units IU's
-	 * @param repositories metadata repositories used to search for IU's or <code>null</code> for default set
-	 * @param resolutionFlags bitmask of flags to control IU resolution, possible flags are {@link IUBundleContainer#INCLUDE_ALL_ENVIRONMENTS}, {@link IUBundleContainer#INCLUDE_REQUIRED}, {@link IUBundleContainer#INCLUDE_SOURCE}, {@link IUBundleContainer#INCLUDE_CONFIGURE_PHASE}
-	 */
-	IUBundleContainer(IInstallableUnit[] units, URI[] repositories, int resolutionFlags) {
-		fIds = new String[units.length];
-		fFlags = resolutionFlags;
-		fVersions = new Version[units.length];
-		for (int i = 0; i < units.length; i++) {
-			fIds[i] = units[i].getId();
-			fVersions[i] = units[i].getVersion();
-		}
+		fVersions = versions;
 		if (repositories == null || repositories.length == 0) {
 			fRepos = null;
 		} else {
@@ -378,51 +352,52 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	}
 
 	/**
-	 * Update the root IUs to the latest available in the repos associated with this container.
+	 * Update the root IUs to the latest available in the repos associated with
+	 * this container.
 	 *
-	 * @param toUpdate the set of IU ids in this container to consider updating.  If empty
-	 * then update everything
-	 * @param monitor progress monitor or <code>null</code>
-	 * @return whether this container was changed as part of this update and must be resolved
-	 * @exception CoreException if unable to retrieve IU's
+	 * @param toUpdate
+	 *            the set of IU ids in this container to consider updating. If
+	 *            empty then update everything
+	 * @param monitor
+	 *            progress monitor or <code>null</code>
+	 * @return a new instance with updated versions or <code>null</code> if
+	 *         nothing was changed as result of the update
+	 * @exception CoreException
+	 *                if unable to retrieve IU's
 	 */
-	public synchronized boolean update(Set<String> toUpdate, IProgressMonitor monitor) throws CoreException {
+	public synchronized IUBundleContainer update(Set<String> toUpdate, IProgressMonitor monitor) throws CoreException {
 		SubMonitor progress = SubMonitor.convert(monitor, 100);
-		IQueryable<IInstallableUnit> source = P2TargetUtils.getQueryableMetadata(fRepos, progress.split(30));
+		URI[] updateRepos = fRepos == null ? null : fRepos.clone();
+		IQueryable<IInstallableUnit> source = P2TargetUtils.getQueryableMetadata(updateRepos, progress.split(30));
 		boolean updated = false;
-		SubMonitor loopProgress = progress.split(70).setWorkRemaining(fIds.length);
-		for (int i = 0; i < fIds.length; i++) {
-			if (!toUpdate.isEmpty() && !toUpdate.contains(fIds[i])) {
+		String[] updateIDs = fIds.clone();
+		Version[] updateVersions = fVersions.clone();
+		SubMonitor loopProgress = progress.split(70).setWorkRemaining(updateIDs.length);
+		for (int i = 0; i < updateIDs.length; i++) {
+			if (!toUpdate.isEmpty() && !toUpdate.contains(updateIDs[i])) {
 				continue;
 			}
-			IQuery<IInstallableUnit> query = QueryUtil.createLatestQuery(QueryUtil.createIUQuery(fIds[i]));
+			IQuery<IInstallableUnit> query = QueryUtil.createLatestQuery(QueryUtil.createIUQuery(updateIDs[i]));
 			IQueryResult<IInstallableUnit> queryResult = source.query(query, loopProgress.split(1));
 			Iterator<IInstallableUnit> it = queryResult.iterator();
 			// bail if the feature is no longer available.
 			if (!it.hasNext()) {
-				throw new CoreException(Status.error(NLS.bind(Messages.IUBundleContainer_1, fIds[i])));
+				throw new CoreException(Status.error(NLS.bind(Messages.IUBundleContainer_1, updateIDs[i])));
 			}
 			IInstallableUnit iu = it.next();
 			// if the version is different from the spec (up or down), record the change.
-			if (!iu.getVersion().equals(fVersions[i])) {
+			if (!iu.getVersion().equals(updateVersions[i])) {
 				updated = true;
 				// if the spec was not specific (e.g., 0.0.0) the target def itself has changed.
-				if (!fVersions[i].equals(Version.emptyVersion)) {
-					fVersions[i] = iu.getVersion();
+				if (!updateVersions[i].equals(Version.emptyVersion)) {
+					updateVersions[i] = iu.getVersion();
 				}
 			}
 		}
 		if (updated) {
-			// Increase the sequence number to reload the p2 locations
-			if (fTarget instanceof TargetDefinition) {
-				((TargetDefinition) fTarget).incrementSequenceNumber();
-			}
+			return new IUBundleContainer(updateIDs, updateVersions, updateRepos, fFlags);
 		}
-		if (!updated) {
-			// Things have changed so mark the container as unresolved
-			clearResolutionStatus();
-		}
-		return updated;
+		return null;
 	}
 
 	/**
@@ -807,4 +782,5 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		sb.append(']');
 		return sb.toString();
 	}
+
 }

@@ -114,28 +114,41 @@ public class IUFactory implements IAdapterFactory, ITargetLocationHandler {
 				wrappersMap.computeIfAbsent(wrapper.getParent(), k -> new HashSet<>()).add(wrapper.getIU().getId());
 			}
 		}
-		boolean changed = false;
+		Map<IUBundleContainer, IUBundleContainer> updatedContainer = new HashMap<>();
 		SubMonitor subMonitor = SubMonitor.convert(monitor, (containers.size() + wrappersMap.size()) * 100);
 		for (IUBundleContainer container : containers) {
 			try {
-				changed |= container.update(Collections.emptySet(), subMonitor.split(100));
+				IUBundleContainer update = container.update(Collections.emptySet(), subMonitor.split(100));
+				updatedContainer.put(container, update);
 			} catch (CoreException e) {
 				return e.getStatus();
 			}
 		}
 		for (Entry<IUBundleContainer, Set<String>> entry : wrappersMap.entrySet()) {
-			SubMonitor split = subMonitor.split(100);
 			IUBundleContainer container = entry.getKey();
 			if (containers.contains(container)) {
 				continue;
 			}
 			try {
-				changed |= container.update(entry.getValue(), split);
+				IUBundleContainer update = container.update(entry.getValue(), subMonitor.split(100));
+				updatedContainer.put(container, update);
 			} catch (CoreException e) {
 				return e.getStatus();
 			}
 		}
-		return changed ? Status.OK_STATUS : STATUS_NO_CHANGE;
+		if (updatedContainer.isEmpty()) {
+			return Status.OK_STATUS;
+		}
+		// update changed location
+		ITargetLocation[] targetLocations = target.getTargetLocations();
+		for (int i = 0; i < targetLocations.length; i++) {
+			IUBundleContainer updated = updatedContainer.remove(targetLocations[i]);
+			if (updated != null) {
+				targetLocations[i] = updated;
+			}
+		}
+		target.setTargetLocations(targetLocations);
+		return STATUS_NO_CHANGE;
 	}
 
 	@Override
@@ -199,10 +212,30 @@ public class IUFactory implements IAdapterFactory, ITargetLocationHandler {
 								repositoryTracker.clearRepositoryNotFound(repositoryUri);
 								try {
 									if (artifactRepositoryManager != null) {
-										artifactRepositoryManager.refreshRepository(repositoryUri, convert.split(1));
+										boolean contains = artifactRepositoryManager.contains(repositoryUri);
+										if (!contains) {
+											artifactRepositoryManager.addRepository(repositoryUri);
+										}
+										try {
+											artifactRepositoryManager.refreshRepository(repositoryUri,
+													convert.split(1));
+										} finally {
+											if (!contains) {
+												artifactRepositoryManager.removeRepository(repositoryUri);
+											}
+										}
 									}
 									if (metadataRepositoryManager != null) {
-										metadataRepositoryManager.refreshRepository(repositoryUri, convert.split(1));
+										boolean contains = metadataRepositoryManager.contains(repositoryUri);
+										if (!contains) {
+											metadataRepositoryManager.addRepository(repositoryUri);
+										}
+										try {
+											metadataRepositoryManager.refreshRepository(repositoryUri,
+													convert.split(1));
+										} finally {
+											metadataRepositoryManager.removeRepository(repositoryUri);
+										}
 									}
 								} catch (CoreException e) {
 									IStatus error = e.getStatus();

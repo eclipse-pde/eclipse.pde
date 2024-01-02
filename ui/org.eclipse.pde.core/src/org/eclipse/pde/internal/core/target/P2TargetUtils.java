@@ -293,6 +293,7 @@ public class P2TargetUtils {
 		if (result.fProfile instanceof org.eclipse.equinox.internal.p2.engine.Profile) {
 			((org.eclipse.equinox.internal.p2.engine.Profile) result.fProfile).setProperty(PROP_SEQUENCE_NUMBER, "-1"); //$NON-NLS-1$
 		}
+		result.fProfile = null;
 	}
 
 	/**
