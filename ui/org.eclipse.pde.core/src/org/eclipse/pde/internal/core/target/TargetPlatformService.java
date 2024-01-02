@@ -59,6 +59,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.metadata.Version;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -640,12 +641,22 @@ public class TargetPlatformService implements ITargetPlatformService {
 
 	@Override
 	public ITargetLocation newIULocation(IInstallableUnit[] units, URI[] repositories, int resolutionFlags) {
-		return new IUBundleContainer(units, repositories, resolutionFlags);
+		String[] fIds = new String[units.length];
+		Version[] fVersions = new Version[units.length];
+		for (int i = 0; i < units.length; i++) {
+			fIds[i] = units[i].getId();
+			fVersions[i] = units[i].getVersion();
+		}
+		return new IUBundleContainer(fIds, fVersions, repositories, resolutionFlags);
 	}
 
 	@Override
 	public ITargetLocation newIULocation(String[] unitIds, String[] versions, URI[] repositories, int resolutionFlags) {
-		return new IUBundleContainer(unitIds, versions, repositories, resolutionFlags);
+		Version[] fVersions = new Version[versions.length];
+		for (int i = 0; i < versions.length; i++) {
+			fVersions[i] = Version.create(versions[i]);
+		}
+		return new IUBundleContainer(unitIds, fVersions, repositories, resolutionFlags);
 	}
 
 }
