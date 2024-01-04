@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2018 IBM Corporation and others.
+ * Copyright (c) 2011, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -358,7 +358,7 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 	/**
 	 * Adds {@link IApiProblem}s to the given document and root
 	 */
-	private void insertAPIProblems(Element root, Document document, List<IApiProblem> problems) throws CoreException {
+	private void insertAPIProblems(Element root, Document document, List<IApiProblem> problems) {
 		Element apiProblems = document.createElement(IApiXmlConstants.ELEMENT_API_PROBLEMS);
 		root.appendChild(apiProblems);
 		Element element = null;

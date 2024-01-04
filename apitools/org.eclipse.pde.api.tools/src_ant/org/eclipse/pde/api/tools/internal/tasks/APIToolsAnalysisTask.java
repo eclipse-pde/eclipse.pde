@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 IBM Corporation and others.
+ * Copyright (c) 2008, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -563,7 +563,8 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 	 * @return an element that contains all the api problem nodes or null if an
 	 *         error occurred
 	 */
-	private void insertAPIProblems(Element root, Document document, List<IApiProblem> problems, ProblemCounter counter) throws CoreException {
+	private void insertAPIProblems(Element root, Document document, List<IApiProblem> problems,
+			ProblemCounter counter) {
 		Element apiProblems = document.createElement(IApiXmlConstants.ELEMENT_API_PROBLEMS);
 		root.appendChild(apiProblems);
 		Element element = null;
