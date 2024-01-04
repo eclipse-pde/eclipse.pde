@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 IBM Corporation and others.
+ * Copyright (c) 2008, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -307,7 +307,7 @@ public class AnalysisReportConversionTask extends Task {
 	/**
 	 * Write out the index file
 	 */
-	private void dumpIndexFile(File reportsRoot, Summary[] summaries, Summary allNonApiBundleSummary) {
+	private void dumpIndexFile(Summary[] summaries, Summary allNonApiBundleSummary) {
 		File htmlFile = new File(this.htmlReportsLocation, "index.html"); //$NON-NLS-1$
 		try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(htmlFile)))) {
 			if (allNonApiBundleSummary != null) {
@@ -469,7 +469,7 @@ public class AnalysisReportConversionTask extends Task {
 				if (!summariesList.isEmpty() || nonApiBundleSummary != null) {
 					Summary[] summaries = new Summary[summariesList.size()];
 					summariesList.toArray(summaries);
-					dumpIndexFile(reportsRoot, summaries, nonApiBundleSummary);
+					dumpIndexFile(summaries, nonApiBundleSummary);
 				}
 			}
 		} catch (SAXException | IOException e) {
