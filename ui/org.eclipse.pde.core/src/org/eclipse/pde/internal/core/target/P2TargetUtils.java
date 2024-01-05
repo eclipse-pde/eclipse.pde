@@ -1452,6 +1452,14 @@ public class P2TargetUtils {
 	 * @param additionalRepos the set to which additional repos are added.
 	 */
 	private void findWorkspaceRepos(Set<URI> additionalRepos) {
+		if (Boolean.parseBoolean(System.getProperty("pde.usePoolsInfo", "true"))) { //$NON-NLS-1$ //$NON-NLS-2$
+			try {
+				additionalRepos.addAll(RepositoryHelper.getWorkspaceBundlePools().stream().map(Path::toUri).toList());
+			} catch (Exception e) {
+				//$FALL-THROUGH$
+			}
+		}
+
 		IPreferencesService prefs = getPreferences();
 		if (prefs == null) {
 			return;
