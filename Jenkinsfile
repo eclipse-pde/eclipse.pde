@@ -21,7 +21,8 @@ pipeline {
 						-Pbree-libs \
 						-Papi-check \
 						-Pjavadoc \
-						-Dmaven.test.error.ignore=true -Dmaven.test.failure.ignore=true
+						-Dmaven.test.error.ignore=true -Dmaven.test.failure.ignore=true \
+						-Dtycho.debug.artifactcomparator
 					'''
 				}
 			}
@@ -31,6 +32,7 @@ pipeline {
 						*/target/work/data/.metadata/*.log,\
 						*/tests/target/work/data/.metadata/*.log,\
 						apiAnalyzer-workspace/.metadata/*.log,\
+						*/target/artifactcomparison/**,\
 						repository/target/repository/**')
 					junit '**/target/surefire-reports/*.xml'
 					discoverGitReferenceBuild referenceJob: 'eclipse.pde/master'
