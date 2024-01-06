@@ -22,7 +22,8 @@ pipeline {
 						-Papi-check \
 						-Pjavadoc \
 						-Dmaven.test.error.ignore=true -Dmaven.test.failure.ignore=true \
-						-Dtycho.debug.artifactcomparator
+						-Dtycho.debug.artifactcomparator \
+						-Dpde.docs.baselinemode=fail
 					'''
 				}
 			}
