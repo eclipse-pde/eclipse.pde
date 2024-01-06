@@ -21,11 +21,31 @@
   <packaging>eclipse-plugin</packaging>
   
   <properties>
-    <eclipse.pde.ui.apitools>../apitools</eclipse.pde.ui.apitools>
-    <eclipse.pde.ui.ui>../ui</eclipse.pde.ui.ui>
-    <eclipse.pde.build>../build</eclipse.pde.build>
+    <eclipse.pde.ui.apitools>${basedir}/../apitools</eclipse.pde.ui.apitools>
+    <eclipse.pde.ui.ui>${basedir}/../ui</eclipse.pde.ui.ui>
+    <eclipse.pde.build>${basedir}/../build</eclipse.pde.build>
   </properties>
   
+  <profiles>
+		<profile>
+			<!-- Only enable this for individual bundles builds as otherhwise the ibuild repository is not aviable and we might run into problems -->
+			<id>build-individual-bundles</id>
+			<properties>
+				<pde.docs.baselinemode>warn</pde.docs.baselinemode>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						 <groupId>org.eclipse.tycho</groupId>
+				        <artifactId>tycho-p2-plugin</artifactId>
+				        <configuration>
+							<baselineMode>${pde.docs.baselinemode}</baselineMode>
+						</configuration>
+					</plugin>
+				</plugins>
+  			</build>
+		</profile>
+  </profiles>
   <build>
     <pluginManagement>
       <plugins>
@@ -37,6 +57,16 @@
       </plugins>
     </pluginManagement>
     <plugins>
+		<plugin>
+		    <artifactId>maven-clean-plugin</artifactId>
+		    <configuration>
+		      <filesets>
+		        <fileset>
+		          <directory>reference/api</directory>
+		        </fileset>
+		      </filesets>
+		    </configuration>
+		  </plugin>
           <plugin>
             <groupId>org.eclipse.tycho</groupId>
             <artifactId>target-platform-configuration</artifactId>
@@ -109,11 +139,11 @@
                     </goals>
                     <configuration>
                         <manifests>
-                            <manifest>${basedir}/${eclipse.pde.ui.ui}/org.eclipse.ui.trace/plugin.xml</manifest>
-                            <manifest>${basedir}/${eclipse.pde.ui.ui}/org.eclipse.pde.core/plugin.xml</manifest>
-                            <manifest>${basedir}/${eclipse.pde.build}/org.eclipse.pde.build/plugin.xml</manifest>
-                            <manifest>${basedir}/${eclipse.pde.ui.ui}/org.eclipse.pde.ui/plugin.xml</manifest>
-                            <manifest>${basedir}/${eclipse.pde.ui.ui}/org.eclipse.pde.launching/plugin.xml</manifest>
+                            <manifest>${eclipse.pde.ui.ui}/org.eclipse.ui.trace/plugin.xml</manifest>
+                            <manifest>${eclipse.pde.ui.ui}/org.eclipse.pde.core/plugin.xml</manifest>
+                            <manifest>${eclipse.pde.build}/org.eclipse.pde.build/plugin.xml</manifest>
+                            <manifest>${eclipse.pde.ui.ui}/org.eclipse.pde.ui/plugin.xml</manifest>
+                            <manifest>${eclipse.pde.ui.ui}/org.eclipse.pde.launching/plugin.xml</manifest>
                         </manifests>
                         <destination>${basedir}/reference/extension-points</destination>
                     </configuration>
@@ -154,7 +184,7 @@
             <executions>
                 <execution>
                     <id>attach-javadocs</id>
-                    <phase>prepare-package</phase>
+                    <phase>process-classes</phase>
                     <goals>
                         <goal>javadoc</goal>
                     </goals>
@@ -190,7 +220,6 @@
             <executions>
               <execution>
                 <id>copy-resources</id>
-                <!-- here the phase you need -->
                 <phase>prepare-package</phase>
                 <goals>
                   <goal>copy-resources</goal>

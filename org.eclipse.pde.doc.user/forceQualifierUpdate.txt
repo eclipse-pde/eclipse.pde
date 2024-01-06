@@ -1,1 +1,2 @@
 Regenerate docs
+Changed JQuery
