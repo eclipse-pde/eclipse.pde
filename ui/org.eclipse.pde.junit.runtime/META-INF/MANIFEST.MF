@@ -12,4 +12,5 @@ Export-Package: org.eclipse.pde.internal.junit.runtime;x-internal:=true
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.ui.testing;resolution:=optional
+DynamicImport-Package: org.junit.platform.engine
 Automatic-Module-Name: org.eclipse.pde.junit.runtime
