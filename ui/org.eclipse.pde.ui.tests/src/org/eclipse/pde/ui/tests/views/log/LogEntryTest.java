@@ -17,7 +17,6 @@ package org.eclipse.pde.ui.tests.views.log;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import java.text.ParseException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -26,7 +25,7 @@ import org.junit.Test;
 
 public class LogEntryTest {
 	@Test
-	public void testProcessEntry() throws ParseException {
+	public void testProcessEntry() throws Exception {
 		LogEntry entry = new LogEntry();
 		entry.processEntry("!ENTRY org.eclipse.pde.ui 1 100 2009-01-03 11:15:30.123");
 
@@ -40,7 +39,7 @@ public class LogEntryTest {
 	}
 
 	@Test
-	public void testProcessFrameworkEntry() throws ParseException {
+	public void testProcessFrameworkEntry() throws Exception {
 		LogEntry entry = new LogEntry();
 		entry.processEntry("!ENTRY org.eclipse.osgi 2009-01-07 11:15:30.123");
 
@@ -54,7 +53,7 @@ public class LogEntryTest {
 	}
 
 	@Test
-	public void testProcessSubEntry() throws ParseException {
+	public void testProcessSubEntry() throws Exception {
 		LogEntry entry = new LogEntry();
 		int depth = entry.processSubEntry("!SUBENTRY 1 org.eclipse.osgi 1 101 2009-01-08 11:15:30.123");
 
@@ -70,7 +69,7 @@ public class LogEntryTest {
 	}
 
 	@Test
-	public void testProcessFrameworkSubEntry() throws ParseException {
+	public void testProcessFrameworkSubEntry() throws Exception {
 		LogEntry entry = new LogEntry();
 		int depth = entry.processSubEntry("!SUBENTRY 1 org.eclipse.osgi 2009-01-01 11:15:30.123");
 
@@ -86,30 +85,37 @@ public class LogEntryTest {
 	}
 
 	@Test
-	public void testInvalidEntry() {
+	public void testInvalidEntry() throws Exception {
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=271733
 
 		try {
 			LogEntry entry = new LogEntry();
 			entry.processEntry("!ENTRY org.eclipse.core.contenttype 4 0");
-			fail("Should throw ParseException for invalid entry");
-		} catch (ParseException e) {
+			fail("Should throw IllegalArgumentException for invalid entry");
+		} catch (IllegalArgumentException e) {
 			// good
 		}
 
 		try {
 			LogEntry entry = new LogEntry();
 			entry.processEntry("!ENTRY org.eclipse.ui 4 0");
-			fail("Should throw ParseException for invalid entry");
-		} catch (ParseException e) {
+			fail("Should throw IllegalArgumentException for invalid entry");
+		} catch (IllegalArgumentException e) {
 			// good
 		}
 
 		try {
 			LogEntry entry = new LogEntry();
 			entry.processEntry("!ENTRY org.eclipse.ui 4 0");
-			fail("Should throw ParseException for invalid entry");
-		} catch (ParseException e) {
+			fail("Should throw IllegalArgumentException for invalid entry");
+		} catch (IllegalArgumentException e) {
+			// good
+		}
+		try {
+			LogEntry entry = new LogEntry();
+			entry.processEntry("!SUBENTRY 1 Failed to read file 4 0 2024-01-11 13:20:30.288");
+			fail("Should throw IllegalArgumentException for invalid entry");
+		} catch (IllegalArgumentException e) {
 			// good
 		}
 	}
