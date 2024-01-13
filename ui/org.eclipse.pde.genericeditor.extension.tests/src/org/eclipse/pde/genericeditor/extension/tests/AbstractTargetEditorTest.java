@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2018 Red Hat Inc. and others
+ * Copyright (c) 2017, 2024 Red Hat Inc. and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -45,7 +45,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.osgi.framework.FrameworkUtil;
 
-public class AbstractTargetEditorTest {
+public abstract class AbstractTargetEditorTest {
 
 	static TargetDefinitionContentAssist contentAssist = new TargetDefinitionContentAssist();
 	private IProject project;
@@ -70,15 +70,17 @@ public class AbstractTargetEditorTest {
 
 	protected ITextViewer getTextViewerForTarget(String name) throws Exception {
 		IFile targetFile = project.getFile(name + ".target");
-		InputStream testStream = FrameworkUtil.getBundle(this.getClass())
+		try (InputStream testStream = FrameworkUtil.getBundle(this.getClass())
 				.getEntry("testing-files/target-files/" + name + ".txt").openStream();
-		String normalizedLineFeeds = new BufferedReader(new InputStreamReader(testStream)).lines()
-				.collect(Collectors.joining("\n"));
-		InputStream normalizedStream = new ByteArrayInputStream(normalizedLineFeeds.getBytes(StandardCharsets.UTF_8));
-		targetFile.create(normalizedStream, true, new NullProgressMonitor());
-		IEditorPart editor = IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(),
-				targetFile, "org.eclipse.ui.genericeditor.GenericEditor");
-		return (ITextViewer) editor.getAdapter(ITextOperationTarget.class);
+				BufferedReader reader = new BufferedReader(new InputStreamReader(testStream))) {
+			String normalizedLineFeeds = reader.lines().collect(Collectors.joining("\n"));
+			InputStream normalizedStream = new ByteArrayInputStream(
+					normalizedLineFeeds.getBytes(StandardCharsets.UTF_8));
+			targetFile.create(normalizedStream, true, new NullProgressMonitor());
+			IEditorPart editor = IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(),
+					targetFile, "org.eclipse.ui.genericeditor.GenericEditor");
+			return (ITextViewer) editor.getAdapter(ITextOperationTarget.class);
+		}
 	}
 
 	protected String getLocationForSite(String name) {
