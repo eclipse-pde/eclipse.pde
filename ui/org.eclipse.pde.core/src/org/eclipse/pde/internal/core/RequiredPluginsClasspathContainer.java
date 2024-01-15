@@ -61,6 +61,7 @@ import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 
 import aQute.bnd.build.Container;
 import aQute.bnd.build.Project;
+import aQute.bnd.build.Workspace;
 import aQute.bnd.osgi.Constants;
 
 public class RequiredPluginsClasspathContainer extends PDEClasspathContainer implements IClasspathContainer {
@@ -83,6 +84,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 
 	/**
 	 * Cached list of {@link IClasspathContributor} from plug-in extensions
+	 *
 	 * @see #getClasspathContributors()
 	 */
 	private static List<IClasspathContributor> fClasspathContributors = null;
@@ -151,6 +153,22 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 					return entries;
 				}
 			}
+			// maybe it is a plain bnd workspace project, the classpath
+			// container should support these as well
+			IFile bnd = project.getFile(Project.BNDFILE);
+			if (bnd.exists()) {
+				IPath location = project.getLocation();
+				if (location != null) {
+					File projectDir = location.toFile();
+					if (projectDir != null) {
+						Project plainBnd = Workspace.getProject(projectDir);
+						IClasspathEntry[] entries = BndProjectManager
+								.getClasspathEntries(plainBnd, project.getWorkspace().getRoot())
+								.toArray(IClasspathEntry[]::new);
+						return entries;
+					}
+				}
+			}
 		} catch (Exception e) {
 			PDECore.getDefault().getLog().error("Can't compute classpath!", e); //$NON-NLS-1$
 		}
@@ -170,7 +188,8 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 
 			Map<BundleDescription, List<Rule>> map = retrieveVisiblePackagesFromState(desc);
 
-			// Add any library entries contributed via classpath contributor extension (Bug 363733)
+			// Add any library entries contributed via classpath contributor
+			// extension (Bug 363733)
 			for (IClasspathContributor cc : getClasspathContributors()) {
 				List<IClasspathEntry> classpathEntries = cc.getInitialEntries(desc);
 				if (classpathEntries != null && !classpathEntries.isEmpty()) {
@@ -260,14 +279,17 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 
 	/**
 	 * Return the list of {@link IClasspathContributor}s provided by the
-	 * <code>org.eclipse.pde.core.pluginClasspathContributors</code> extension point.
+	 * <code>org.eclipse.pde.core.pluginClasspathContributors</code> extension
+	 * point.
+	 *
 	 * @return list of classpath contributors from the extension point
 	 */
 	private static synchronized List<IClasspathContributor> getClasspathContributors() {
 		if (fClasspathContributors == null) {
 			fClasspathContributors = new ArrayList<>();
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
-			IConfigurationElement[] elements = registry.getConfigurationElementsFor("org.eclipse.pde.core.pluginClasspathContributors"); //$NON-NLS-1$
+			IConfigurationElement[] elements = registry
+					.getConfigurationElementsFor("org.eclipse.pde.core.pluginClasspathContributors"); //$NON-NLS-1$
 			for (IConfigurationElement element : elements) {
 				try {
 					fClasspathContributors.add((IClasspathContributor) element.createExecutableExtension("class")); //$NON-NLS-1$
@@ -397,7 +419,8 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			return false;
 		}
 
-		// Add any library entries contributed via classpath contributor extension (Bug 363733)
+		// Add any library entries contributed via classpath contributor
+		// extension (Bug 363733)
 		for (IClasspathContributor cc : getClasspathContributors()) {
 			List<IClasspathEntry> classpathEntries = cc.getEntriesForDependency(hostBundle, desc);
 			if (classpathEntries == null || classpathEntries.isEmpty()) {
@@ -461,7 +484,8 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		IBuildEntry[] buildEntries = fBuild.getBuildEntries();
 		for (IBuildEntry entry : buildEntries) {
 			String name = entry.getName();
-			if (name.equals(IBuildPropertiesConstants.PROPERTY_JAR_EXTRA_CLASSPATH) || name.startsWith(IBuildPropertiesConstants.PROPERTY_EXTRAPATH_PREFIX)) {
+			if (name.equals(IBuildPropertiesConstants.PROPERTY_JAR_EXTRA_CLASSPATH)
+					|| name.startsWith(IBuildPropertiesConstants.PROPERTY_EXTRAPATH_PREFIX)) {
 				addExtraClasspathEntries(entries, entry.getTokens());
 			}
 		}
@@ -473,7 +497,8 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			if (!path.isAbsolute()) {
 				File file = new File(fModel.getInstallLocation(), path.toString());
 				if (file.exists()) {
-					IFile resource = PDECore.getWorkspace().getRoot().getFileForLocation(IPath.fromOSString(file.getAbsolutePath()));
+					IFile resource = PDECore.getWorkspace().getRoot()
+							.getFileForLocation(IPath.fromOSString(file.getAbsolutePath()));
 					if (resource != null && resource.getProject().equals(fModel.getUnderlyingResource().getProject())) {
 						addExtraLibrary(resource.getFullPath(), null, entries);
 						continue;
@@ -635,7 +660,8 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		if (path.segmentCount() > 1) {
 			IPath srcPath = null;
 			if (model != null) {
-				IPath shortPath = path.removeFirstSegments(path.matchingFirstSegments(IPath.fromOSString(model.getInstallLocation())));
+				IPath shortPath = path.removeFirstSegments(
+						path.matchingFirstSegments(IPath.fromOSString(model.getInstallLocation())));
 				srcPath = ClasspathUtilCore.getSourceAnnotation(model, shortPath.toString());
 			} else {
 				String filename = ClasspathUtilCore.getSourceZipName(path.lastSegment());
@@ -652,12 +678,12 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	}
 
 	/**
-	 * Tries to compute a full set of bundle dependencies, including not exported
-	 * bundle dependencies and bundles contributing packages possibly imported by
-	 * any of bundles in the dependency graph.
+	 * Tries to compute a full set of bundle dependencies, including not
+	 * exported bundle dependencies and bundles contributing packages possibly
+	 * imported by any of bundles in the dependency graph.
 	 *
-	 * @return never null, but possibly empty project list which all projects in the
-	 *         workspace this container depends on, directly or indirectly.
+	 * @return never null, but possibly empty project list which all projects in
+	 *         the workspace this container depends on, directly or indirectly.
 	 */
 	public List<IProject> getAllProjectDependencies() {
 		IWorkspaceRoot root = PDECore.getWorkspace().getRoot();

@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.ui.correction.java;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -26,6 +27,8 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.ui.correction.java.FindClassResolutionsOperation.AbstractClassResolutionCollector;
+
+import aQute.bnd.build.Project;
 
 /**
  * Offers a classpath fix proposal if the broken import statement can be
@@ -80,8 +83,14 @@ public class UnresolvedImportFixProcessor extends ClasspathFixProcessor {
 
 	@Override
 	public ClasspathFixProposal[] getFixImportProposals(IJavaProject project, String name) throws CoreException {
-		if (!WorkspaceModelManager.isPluginProject(project.getProject()))
+		if (!WorkspaceModelManager.isPluginProject(project.getProject())) {
+			IFile bnd = project.getProject().getFile(Project.BNDFILE);
+			if (bnd.exists()) {
+				// it could be a bnd workspace project!
+				return new ClasspathFixProposal[] { new AddPdeClasspathContainerClasspathFixProposal(project) };
+			}
 			return new ClasspathFixProposal[0];
+		}
 		ClasspathFixCollector collector = new ClasspathFixCollector();
 		// Add require bundles for junit5
 		if (name.startsWith("junit-jupiter") || name.startsWith("junit-platform") || name.startsWith("org.junit.jupiter") || name.startsWith("org.junit.platform")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
