@@ -16,8 +16,10 @@ package org.eclipse.pde.internal.core.bnd;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -104,11 +106,16 @@ public class BndProjectManager {
 	}
 
 	static void publishContainerEntries(List<IClasspathEntry> entries, Collection<Container> containers,
-			boolean isTest) {
+			boolean isTest, Set<Project> mapped) {
 		for (Container container : containers) {
 			TYPE type = container.getType();
 			if (type == TYPE.PROJECT) {
-				continue;
+				Project project = container.getProject();
+				if (mapped.contains(project)) {
+					// it is already mapped as a project dependency...
+					continue;
+				}
+				mapped.add(project);
 			}
 			File file = container.getFile();
 			if (file.exists()) {
@@ -127,6 +134,7 @@ public class BndProjectManager {
 
 	public static List<IClasspathEntry> getClasspathEntries(Project project, IWorkspaceRoot root) throws Exception {
 		List<IClasspathEntry> entries = new ArrayList<>();
+		Set<Project> mapped = new HashSet<>();
 		for (Project dep : project.getBuildDependencies()) {
 			File base = dep.getBase();
 			@SuppressWarnings("deprecation")
@@ -134,13 +142,14 @@ public class BndProjectManager {
 			for (IContainer container : containers) {
 				if (container instanceof IProject p) {
 					entries.add(JavaCore.newProjectEntry(p.getFullPath()));
+					mapped.add(dep);
 				}
 			}
 		}
-		publishContainerEntries(entries, project.getBootclasspath(), false);
-		publishContainerEntries(entries, project.getBuildpath(), false);
-		publishContainerEntries(entries, project.getClasspath(), false);
-		publishContainerEntries(entries, project.getTestpath(), true);
+		publishContainerEntries(entries, project.getBootclasspath(), false, mapped);
+		publishContainerEntries(entries, project.getBuildpath(), false, mapped);
+		publishContainerEntries(entries, project.getClasspath(), false, mapped);
+		publishContainerEntries(entries, project.getTestpath(), true, mapped);
 		return entries;
 	}
 

@@ -3314,6 +3314,10 @@ public class PDEUIMessages extends NLS {
 	public static String AddBundleManifestVersionResolution_description;
 	public static String AddBundleManifestVersionResolution_label;
 
+	public static String AddPdeClasspathContainerClasspathFixProposal_0;
+
+	public static String AddPdeClasspathContainerClasspathFixProposal_1;
+
 	public static String AddToJavaSearchJob_0;
 
 	public static String AnnotationHover_version_change;
