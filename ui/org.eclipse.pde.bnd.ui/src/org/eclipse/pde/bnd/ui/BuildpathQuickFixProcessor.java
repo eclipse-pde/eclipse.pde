@@ -68,8 +68,6 @@ import org.eclipse.jdt.ui.text.java.IInvocationContext;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.eclipse.jdt.ui.text.java.IProblemLocation;
 import org.eclipse.jdt.ui.text.java.IQuickFixProcessor;
-import org.osgi.service.component.annotations.Component;
-
 import aQute.bnd.build.Container;
 import aQute.bnd.build.Project;
 import aQute.bnd.build.ProjectBuilder;
@@ -82,7 +80,6 @@ import aQute.bnd.osgi.Descriptors;
 import aQute.bnd.osgi.Descriptors.TypeRef;
 import aQute.bnd.result.Result;
 
-@Component
 public class BuildpathQuickFixProcessor implements IQuickFixProcessor {
 	// Useful for giving pretty debug output for problems; if you come across
 	// a new problem you can uncomment this and uncomment the println in
