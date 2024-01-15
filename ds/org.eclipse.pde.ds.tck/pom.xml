@@ -75,6 +75,8 @@
 								<local>true</local>
 								<!-- See https://github.com/osgi/osgi/issues/636 -->
 								<failOnError>false</failOnError>
+								<!-- See https://github.com/osgi/osgi/issues/636 -->
+								<printMarker>false</printMarker>
 								<bundles>
 									<bundle>org.eclipse.pde.core</bundle>
 									<bundle>org.eclipse.pde.ds.annotations</bundle>
