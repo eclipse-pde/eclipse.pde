@@ -86,6 +86,7 @@
             <configuration>
               <dependency-resolution>
                 <extraRequirements>
+				   <!-- documentation we depend on -->
                   <requirement>
                     <type>eclipse-plugin</type>
                     <id>org.eclipse.jdt.doc.isv</id>
@@ -93,7 +94,18 @@
                   </requirement>
                   <requirement>
                     <type>eclipse-plugin</type>
+                    <id>org.eclipse.platform.doc.isv</id>
+                    <versionRange>0.0.0</versionRange>
+                  </requirement>
+                  <!-- projects we create documentation from -->
+                  <requirement>
+                    <type>eclipse-plugin</type>
                     <id>org.eclipse.pde.build</id>
+                    <versionRange>0.0.0</versionRange>
+                  </requirement>
+                  <requirement>
+                    <type>eclipse-plugin</type>
+                    <id>org.eclipse.pde.api.tools.annotations</id>
                     <versionRange>0.0.0</versionRange>
                   </requirement>
                   <requirement>
@@ -103,37 +115,12 @@
                   </requirement>
                   <requirement>
                     <type>eclipse-plugin</type>
-                    <id>com.ibm.icu</id>
+                    <id>org.eclipse.pde.launching</id>
                     <versionRange>0.0.0</versionRange>
                   </requirement>
                   <requirement>
                     <type>eclipse-plugin</type>
-                    <id>org.eclipse.jdt.debug</id>
-                    <versionRange>0.0.0</versionRange>
-                  </requirement>
-                  <requirement>
-                    <type>eclipse-plugin</type>
-                    <id>org.eclipse.jdt.junit</id>
-                    <versionRange>0.0.0</versionRange>
-                  </requirement>
-                  <requirement>
-                    <type>eclipse-plugin</type>
-                    <id>org.eclipse.update.configurator</id>
-                    <versionRange>0.0.0</versionRange>
-                  </requirement>
-                  <requirement>
-                    <type>eclipse-plugin</type>
-                    <id>org.eclipse.ui.views.log</id>
-                    <versionRange>0.0.0</versionRange>
-                  </requirement>
-                  <requirement>
-                    <type>eclipse-plugin</type>
-                    <id>org.eclipse.jdt.doc.isv</id>
-                    <versionRange>0.0.0</versionRange>
-                  </requirement>
-                   <requirement>
-                    <type>eclipse-plugin</type>
-                    <id>org.eclipse.platform.doc.isv</id>
+                    <id>org.eclipse.pde.ui</id>
                     <versionRange>0.0.0</versionRange>
                   </requirement>
                 </extraRequirements>
@@ -207,7 +194,7 @@
                         <windowtitle>Eclipse PDE API Specification</windowtitle>
                         <doctitle>Eclipse PDE API Specification</doctitle>
                         <header><![CDATA[<span style='font-size:small'><b>Eclipse PDE</b><br>${releaseName} (${releaseNumberSDK})</span>]]></header>
-                        <bottom><![CDATA[<br><span style='font-size:small;float:right'>Copyright (c) 2000, 2023 Eclipse Contributors and others. All rights reserved.</span><span style='font-size:small'><a href='{@docRoot}/../misc/api-usage-rules.html'>Guidelines for using Eclipse APIs.</a></span>]]></bottom>
+                        <bottom><![CDATA[<br><span style='font-size:small;float:right'>Copyright (c) 2000, 2024 Eclipse Contributors and others. All rights reserved.</span><span style='font-size:small'><a href='{@docRoot}/../misc/api-usage-rules.html'>Guidelines for using Eclipse APIs.</a></span>]]></bottom>
                         <sourcepath>${eclipse.pde.build}/org.eclipse.pde.build/src
                                     ;${eclipse.pde.ui.apitools}/org.eclipse.pde.api.tools.annotations/src
                                     ;${eclipse.pde.ui.ui}/org.eclipse.pde.core/src
