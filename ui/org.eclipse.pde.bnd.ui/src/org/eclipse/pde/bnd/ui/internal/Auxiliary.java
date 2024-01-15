@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2021 bndtools project and others.
+ * Copyright (c) 2015, 2024 bndtools project and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,51 +11,49 @@
  * Contributors:
  *     Peter Kriens <Peter.Kriens@aqute.biz> - initial API and implementation
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
+ *     Christoph Läubrich - adapt to PDE codebase
  *******************************************************************************/
 package org.eclipse.pde.bnd.ui.internal;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
-import org.osgi.framework.ServiceRegistration;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 import org.osgi.framework.hooks.weaving.WeavingHook;
 import org.osgi.framework.hooks.weaving.WovenClass;
 import org.osgi.framework.wiring.BundleWiring;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.util.tracker.BundleTracker;
 
+import aQute.bnd.build.Workspace;
 import aQute.bnd.header.Attrs;
 import aQute.bnd.header.Parameters;
-import aQute.bnd.osgi.About;
 import aQute.bnd.osgi.Constants;
 import aQute.bnd.osgi.Verifier;
-import aQute.bnd.version.Version;
-import aQute.bnd.version.VersionRange;
 
 /**
  * This class extends the dynamic imports of bndlib with any exported package
  * from OSGi that specifies a 'bnd-plugins' attribute. Its value is either true
  * or a version range on the bnd version.
  */
-class Auxiliary implements Closeable, WeavingHook {
-	private final BundleContext						context;
-	private final AtomicBoolean						closed	= new AtomicBoolean(false);
-	private final ServiceRegistration<WeavingHook>	hook;
+@Component(service=WeavingHook.class)
+public class Auxiliary implements WeavingHook {
 	private final BundleTracker<Bundle>				tracker;
-	private final Bundle							bndlib;
 	private final Deque<String>						delta	= new ConcurrentLinkedDeque<>();
-
-	Auxiliary(BundleContext context, Bundle bndlib) {
-		this.bndlib = bndlib;
-		this.context = context;
+	
+	@Activate
+	public Auxiliary(BundleContext context) {
 		this.tracker = new BundleTracker<Bundle>(context, Bundle.RESOLVED + Bundle.ACTIVE + Bundle.STARTING, null) {
 			@Override
 			public Bundle addingBundle(Bundle bundle, BundleEvent event) {
@@ -68,14 +66,13 @@ class Auxiliary implements Closeable, WeavingHook {
 
 		};
 		this.tracker.open();
-		this.hook = this.context.registerService(WeavingHook.class, this, null);
 	}
 
 	/*
 	 * Parse the exports and see
 	 */
 	private boolean doImport(String exports) {
-		if (closed.get() || exports == null || exports.isEmpty())
+		if (exports == null || exports.isEmpty())
 			return false;
 
 		Parameters out = new Parameters();
@@ -93,7 +90,7 @@ class Auxiliary implements Closeable, WeavingHook {
 			if (!(plugins.isEmpty() || "true".equalsIgnoreCase(plugins))) {
 				if (Verifier.isVersionRange(plugins)) {
 					VersionRange range = new VersionRange(plugins);
-					if (!range.includes(About._3_0)) // TODO
+					if (!range.includes(new Version(3, 0, 0)))
 						continue;
 				}
 			}
@@ -115,7 +112,7 @@ class Auxiliary implements Closeable, WeavingHook {
 
 			if (Verifier.isVersion(v)) {
 				Version version = new Version(v);
-				attrs.put("version", new VersionRange(true, version, version, true).toString());
+				attrs.put("version", new VersionRange(VersionRange.LEFT_CLOSED, version, version, VersionRange.RIGHT_CLOSED).toString());
 			}
 			out.put(e.getKey(), attrs);
 		}
@@ -135,7 +132,7 @@ class Auxiliary implements Closeable, WeavingHook {
 		if (wiring == null)
 			return;
 
-		if (wiring.getBundle() != bndlib)
+		if (wiring.getBundle() != FrameworkUtil.getBundle(Workspace.class))
 			return;
 
 		List<String> dynamicImports = wovenClass.getDynamicImports();
@@ -144,12 +141,9 @@ class Auxiliary implements Closeable, WeavingHook {
 		}
 	}
 
-	@Override
+	@Deactivate
 	public void close() throws IOException {
-		if (closed.getAndSet(true) == false) {
-			hook.unregister();
-			tracker.close();
-		}
+		tracker.close();
 	}
 
 }
