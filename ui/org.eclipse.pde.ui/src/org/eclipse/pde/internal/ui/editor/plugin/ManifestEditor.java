@@ -432,18 +432,18 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 			manifestFile = new File(dir, ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
 		}
 		try {
-			if (manifestFile.exists()) {
+			if (manifestFile != null && manifestFile.exists()) {
 				IFileStore store = EFS.getStore(manifestFile.toURI());
 				IEditorInput in = new FileStoreEditorInput(store);
 				manager.putContext(in, new BundleInputContext(this, in, file == manifestFile));
 			}
-			if (pluginFile.exists()) {
+			if (pluginFile != null && pluginFile.exists()) {
 				IFileStore store = EFS.getStore(pluginFile.toURI());
 				IEditorInput in = new FileStoreEditorInput(store);
 				manager.putContext(in, new PluginInputContext(this, in, file == pluginFile,
 						name.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR)));
 			}
-			if (buildFile.exists()) {
+			if (buildFile != null && buildFile.exists()) {
 				IFileStore store = EFS.getStore(buildFile.toURI());
 				IEditorInput in = new FileStoreEditorInput(store);
 				manager.putContext(in, new BuildInputContext(this, in, file == buildFile));
