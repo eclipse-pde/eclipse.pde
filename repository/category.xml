@@ -6,6 +6,10 @@
    <feature id="org.eclipse.pde.spies.source" version="0.0.0"/>
    <feature id="org.eclipse.pde.unittest.junit" version="0.0.0"/>
    <feature id="org.eclipse.pde.unittest.junit.source" version="0.0.0"/>
+   <feature id="org.eclipse.e4.core.tools.feature" version="0.0.0"/>
+   <feature id="org.eclipse.e4.core.tools.feature.source" version="0.0.0"/>
+   <feature id="org.eclipse.e4.tools.persistence.feature" version="0.0.0"/>
+   <feature id="org.eclipse.e4.tools.persistence.feature.source" version="0.0.0"/>
    <!-- Tests -->
    <bundle id="org.eclipse.pde.ua.tests"/>
    <bundle id="org.eclipse.pde.ui.tests"/>

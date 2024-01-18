@@ -16,15 +16,16 @@ pipeline {
 		stage('Build') {
 			steps {
 				wrap([$class: 'Xvnc', useXauthority: true]) {
-					sh '''
+					sh """
 						mvn clean verify --batch-mode -Dmaven.repo.local=$WORKSPACE/.m2/repository \
 						-Pbree-libs \
 						-Papi-check \
 						-Pjavadoc \
+						${env.BRANCH_NAME=='master' ? '-Peclipse-sign': ''} \
 						-Dmaven.test.error.ignore=true -Dmaven.test.failure.ignore=true \
 						-Dtycho.debug.artifactcomparator \
 						-Dpde.docs.baselinemode=fail
-					'''
+					"""
 				}
 			}
 			post {
@@ -42,5 +43,18 @@ pipeline {
 				}
 			}
 		}
+		stage('Deploy') {
+			when {
+				branch 'master'
+			}
+            steps {
+                sshagent ( ['projects-storage.eclipse.org-bot-ssh']) {
+                     sh '''
+                        ssh genie.pde@projects-storage.eclipse.org "rm -rf /home/data/httpd/download.eclipse.org/pde/builds/master/*"
+                        scp -r repository/target/repository/* genie.pde@projects-storage.eclipse.org:/home/data/httpd/download.eclipse.org/pde/builds/master/
+                        '''
+                }
+            }
+        }
 	}
 }
