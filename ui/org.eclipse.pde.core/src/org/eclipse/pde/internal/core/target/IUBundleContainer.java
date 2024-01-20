@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2021 IBM Corporation and others.
+ * Copyright (c) 2009, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,6 +15,7 @@
  *     Manumitting Technologies Inc - bug 437726: wrong error messages opening target definition
  *     Alexander Fedorov (ArSysOp) - Bug 542425, Bug 574629
  *     Christoph Läubrich - Bug 568865 - [target] add advanced editing capabilities for custom target platforms
+ *     					- support wildcard in IU
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
@@ -33,7 +34,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -75,6 +79,10 @@ import org.w3c.dom.Element;
  * @since 3.5
  */
 public class IUBundleContainer extends AbstractBundleContainer {
+
+	private static final String QUESTION_MARK = "?"; //$NON-NLS-1$
+
+	private static final String ASTERIX = "*"; //$NON-NLS-1$
 
 	/**
 	 * Constant describing the type of bundle container
@@ -262,14 +270,22 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	IInstallableUnit[] cacheIUs(ITargetDefinition target) throws CoreException {
 		IProfile profile = fSynchronizer.getProfile();
 		ArrayList<IInstallableUnit> result = new ArrayList<>();
-		MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.IUBundleContainer_ProblemsLoadingRepositories, null);
+		MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0,
+				Messages.IUBundleContainer_ProblemsLoadingRepositories, null);
 		for (int i = 0; i < fIds.length; i++) {
-			IQuery<IInstallableUnit> query = QueryUtil.createIUQuery(fIds[i], fVersions[i]);
-			IQueryResult<IInstallableUnit> queryResult = profile.query(query, null);
-			if (queryResult.isEmpty()) {
-				status.add(Status.error(NLS.bind(Messages.IUBundleContainer_1, fIds[i] + " " + fVersions[i]))); //$NON-NLS-1$
+			String id = fIds[i];
+			Version version = fVersions[i];
+			Pattern pattern = createIdPattern(id, status);
+			if (pattern == null) {
+				IQuery<IInstallableUnit> query = QueryUtil.createIUQuery(id, version);
+				IQueryResult<IInstallableUnit> queryResult = profile.query(query, null);
+				if (queryResult.isEmpty()) {
+					status.add(Status.error(NLS.bind(Messages.IUBundleContainer_1, id + " " + version))); //$NON-NLS-1$
+				} else {
+					result.add(queryResult.iterator().next());
+				}
 			} else {
-				result.add(queryResult.iterator().next());
+				queryWithPattern(profile, result, version, pattern);
 			}
 		}
 		if (!status.isOK()) {
@@ -744,12 +760,20 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		List<IInstallableUnit> result = new ArrayList<>();
 		for (int j = 0; j < fIds.length; j++) {
 			// For versions such as 0.0.0, the IU query may return multiple IUs, so we check which is the latest version
-			IQuery<IInstallableUnit> query = QueryUtil.createLatestQuery(QueryUtil.createIUQuery(fIds[j], fVersions[j]));
-			IQueryResult<IInstallableUnit> queryResult = repos.query(query, null);
-			if (queryResult.isEmpty()) {
-				status.add(Status.error(NLS.bind(Messages.IUBundleContainer_1, fIds[j] + " " + fVersions[j])));//$NON-NLS-1$
+			String id = fIds[j];
+			Version version = fVersions[j];
+			Pattern pattern = createIdPattern(id, status);
+			IQueryResult<IInstallableUnit> queryResult;
+			if (pattern == null) {
+				IQuery<IInstallableUnit> query = QueryUtil.createLatestQuery(QueryUtil.createIUQuery(id, version));
+				queryResult = repos.query(query, null);
+				if (queryResult.isEmpty()) {
+					status.add(Status.error(NLS.bind(Messages.IUBundleContainer_1, id + " " + version)));//$NON-NLS-1$
+				} else {
+					result.add(queryResult.iterator().next());
+				}
 			} else {
-				result.add(queryResult.iterator().next());
+				queryWithPattern(repos, result, version, pattern);
 			}
 		}
 		if (!status.isOK()) {
@@ -757,6 +781,37 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			throw new CoreException(status);
 		}
 		return result.toArray(new IInstallableUnit[0]);
+	}
+
+	private static void queryWithPattern(IQueryable<IInstallableUnit> repos, List<IInstallableUnit> result,
+			Version version,
+			Pattern pattern) {
+		Stream<IInstallableUnit> allMatchingPattern = repos.query(QueryUtil.ALL_UNITS, null).stream()
+				.filter(iu -> pattern.matcher(iu.getId()).matches());
+		if (version == null || Version.emptyVersion.equals(version)) {
+			allMatchingPattern
+					.collect(Collectors.groupingBy(IInstallableUnit::getId)).values().stream().flatMap(
+					list -> list.stream().sorted(Comparator.comparing(IInstallableUnit::getVersion).reversed()))
+					.forEach(result::add);
+		} else {
+			allMatchingPattern.filter(iu -> version.compareTo(iu.getVersion()) == 0).forEach(result::add);
+		}
+	}
+
+	private static Pattern createIdPattern(String id, MultiStatus status) {
+		if (id.contains(ASTERIX) || id.contains(QUESTION_MARK)) {
+			try {
+				String pattern = id;
+				pattern = pattern.replace(".", "\\."); //$NON-NLS-1$//$NON-NLS-2$
+				pattern = pattern.replace("-", "\\-"); //$NON-NLS-1$ //$NON-NLS-2$
+				pattern = pattern.replace('?', '.');
+				pattern = pattern.replace("*", ".*"); //$NON-NLS-1$ //$NON-NLS-2$
+				return Pattern.compile(String.format("^%s$", pattern), Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
+			} catch (IllegalArgumentException iae) {
+				status.add(Status.error(Messages.IUBundleContainer_12, iae));
+			}
+		}
+		return null;
 	}
 
 	@Override
