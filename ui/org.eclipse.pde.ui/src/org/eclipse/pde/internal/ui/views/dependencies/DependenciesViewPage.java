@@ -60,6 +60,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.part.Page;
+import org.osgi.resource.Resource;
 
 public abstract class DependenciesViewPage extends Page {
 	class FocusOnSelectionAction extends Action {
@@ -197,8 +198,8 @@ public abstract class DependenciesViewPage extends Page {
 		ISharedPluginModel model = null;
 		if (selectionElement instanceof BundleSpecification) {
 			model = PluginRegistry.findModel(((BundleSpecification) selectionElement).getName());
-		} else if (selectionElement instanceof BundleDescription) {
-			model = PluginRegistry.findModel((BundleDescription) selectionElement);
+		} else if (selectionElement instanceof Resource) {
+			model = PluginRegistry.findModel((Resource) selectionElement);
 		} else if (selectionElement instanceof IPluginBase) {
 			// root
 			model = ((IPluginBase) selectionElement).getModel();
@@ -398,11 +399,11 @@ public abstract class DependenciesViewPage extends Page {
 			} else if (selectionElement instanceof IPluginObject) {
 				base = (IPluginModelBase) ((IPluginObject) selectionElement).getModel();
 			} else if (selectionElement instanceof BundleSpecification) {
-				BundleDescription desc = (BundleDescription) ((BundleSpecification) selectionElement).getSupplier();
+				Resource desc = (BundleDescription) ((BundleSpecification) selectionElement).getSupplier();
 				if (desc != null)
 					base = PluginRegistry.findModel(desc);
-			} else if (selectionElement instanceof BundleDescription) {
-				base = PluginRegistry.findModel((BundleDescription) selectionElement);
+			} else if (selectionElement instanceof Resource) {
+				base = PluginRegistry.findModel((Resource) selectionElement);
 			}
 			if (base != null && base.getUnderlyingResource() != null) {
 				fRefactorAction.setSelection(base);

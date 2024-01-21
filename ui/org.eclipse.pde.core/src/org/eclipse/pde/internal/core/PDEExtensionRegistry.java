@@ -36,6 +36,7 @@ import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.plugin.PluginExtension;
 import org.eclipse.pde.internal.core.plugin.PluginExtensionPoint;
 import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.osgi.resource.Resource;
 
 public class PDEExtensionRegistry {
 
@@ -260,7 +261,8 @@ public class PDEExtensionRegistry {
 			return null;
 		}
 		long bundleId = Long.parseLong(contributor.getActualId());
-		BundleDescription desc = PDECore.getDefault().getModelManager().getState().getState().getBundle(Long.parseLong(contributor.getActualId()));
+		Resource desc = PDECore.getDefault().getModelManager().getState().getState()
+				.getBundle(Long.parseLong(contributor.getActualId()));
 		if (desc != null) {
 			return PluginRegistry.findModel(desc);
 		}

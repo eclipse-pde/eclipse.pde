@@ -77,6 +77,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+import org.osgi.resource.Resource;
 
 /**
  * Section of the product editor on the {@code Contents} page that lists all
@@ -285,7 +286,7 @@ public class PluginSection extends AbstractProductContentSection<PluginSection> 
 		BundleDescription[] bundles = TargetPlatformHelper.getState().getBundles();
 		for (BundleDescription bundleDescription : bundles) {
 			if (!product.containsPlugin(bundleDescription.getSymbolicName())) {
-				IPluginModelBase pluginModel = PluginRegistry.findModel(bundleDescription);
+				IPluginModelBase pluginModel = PluginRegistry.findModel((Resource) bundleDescription);
 				if (pluginModel != null) {
 					pluginModelBaseList.add(pluginModel);
 				}

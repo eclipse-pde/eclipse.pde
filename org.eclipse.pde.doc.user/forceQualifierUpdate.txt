@@ -1,2 +1,3 @@
 Regenerate docs
 Changed year
+Changed javadoc / new API

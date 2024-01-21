@@ -19,6 +19,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -39,6 +41,7 @@ import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
@@ -50,6 +53,7 @@ import org.osgi.resource.Capability;
 import org.osgi.resource.Requirement;
 import org.osgi.resource.Resource;
 import org.osgi.service.repository.ContentNamespace;
+import org.osgi.service.repository.Repository;
 import org.osgi.service.repository.RepositoryContent;
 
 import aQute.bnd.osgi.Instruction;
@@ -77,7 +81,7 @@ public class TargetRepository extends BaseRepository implements RepositoryPlugin
 		}
 		Optional<File> bundle = description.map(BundleDescription::getLocation).map(location -> new File(location))
 				.filter(File::isFile).or(() -> {
-					IPluginModelBase model = PluginRegistry.findModel(description.get());
+					IPluginModelBase model = PluginRegistry.findModel((Resource) description.get());
 					if (model != null) {
 						IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
 						String installLocation = model.getInstallLocation();
@@ -167,7 +171,7 @@ public class TargetRepository extends BaseRepository implements RepositoryPlugin
 
 	public List<Capability> findProvider(Requirement requirement) {
 		String namespace = requirement.getNamespace();
-		return bundles(null).map(BundleDescriptionRepositoryResource::new)
+		return bundles(null).map(r -> new BundleDescriptionRepositoryResource(this, r))
 				.flatMap(resource -> ResourceUtils.capabilityStream(resource, namespace))
 				.filter(ResourceUtils.matcher(requirement, ResourceUtils::filterPredicate))
 				.collect(ResourceUtils.toCapabilities());
@@ -232,11 +236,13 @@ public class TargetRepository extends BaseRepository implements RepositoryPlugin
 		return instance;
 	}
 
-	private static final class BundleDescriptionRepositoryResource implements RepositoryContent, Resource {
+	private static final class BundleDescriptionRepositoryResource implements RepositoryContent, Resource, IAdaptable {
 
 		private BundleDescription bundle;
+		private Repository repository;
 
-		public BundleDescriptionRepositoryResource(BundleDescription bundle) {
+		public BundleDescriptionRepositoryResource(Repository repository, BundleDescription bundle) {
+			this.repository = repository;
 			this.bundle = bundle;
 		}
 
@@ -301,6 +307,35 @@ public class TargetRepository extends BaseRepository implements RepositoryPlugin
 				}
 			}
 			throw new RuntimeException(new FileNotFoundException());
+		}
+
+		@Override
+		public <T> T getAdapter(Class<T> adapter) {
+			if (adapter == BundleDescription.class) {
+				return adapter.cast(bundle);
+			}
+			if (adapter == File.class) {
+				String location = bundle.getLocation();
+				if (location != null) {
+					File file = new File(location);
+					if (file.isFile()) {
+						return adapter.cast(file);
+					}
+				}
+			}
+			if (adapter == Path.class) {
+				String location = bundle.getLocation();
+				if (location != null) {
+					Path path = Path.of(location);
+					if (Files.isRegularFile(path)) {
+						return adapter.cast(path);
+					}
+				}
+			}
+			if (adapter == Repository.class) {
+				return adapter.cast(repository);
+			}
+			return null;
 		}
 
 	}

@@ -72,6 +72,7 @@ import org.eclipse.pde.internal.core.text.build.BuildModel;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
 import org.osgi.framework.Constants;
+import org.osgi.resource.Resource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -925,7 +926,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			return false;
 		}
 		for (BundleDescription fragment : fragments) {
-			IPluginModelBase fragmentModel = PluginRegistry.findModel(fragment);
+			IPluginModelBase fragmentModel = PluginRegistry.findModel((Resource) fragment);
 			if (fragmentModel != null && fragmentModel.getUnderlyingResource() != null) {
 				IProject project = fragmentModel.getUnderlyingResource().getProject();
 				if (project.findMember(libname) != null) {

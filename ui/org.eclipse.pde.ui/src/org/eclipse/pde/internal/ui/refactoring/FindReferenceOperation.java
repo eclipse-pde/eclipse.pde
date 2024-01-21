@@ -32,6 +32,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.osgi.framework.Constants;
+import org.osgi.resource.Resource;
 
 public class FindReferenceOperation implements IWorkspaceRunnable {
 
@@ -69,7 +70,8 @@ public class FindReferenceOperation implements IWorkspaceRunnable {
 			SubMonitor iterationMonitor = subMonitor.split(1);
 			for (BundleSpecification require : requires) {
 				if (require.getName().equals(oldId)) {
-					CreateHeaderChangeOperation op = new CreateHeaderChangeOperation(PluginRegistry.findModel(dependent), Constants.REQUIRE_BUNDLE, oldId, fNewId);
+					CreateHeaderChangeOperation op = new CreateHeaderChangeOperation(
+							PluginRegistry.findModel((Resource) dependent), Constants.REQUIRE_BUNDLE, oldId, fNewId);
 					op.run(iterationMonitor);
 					TextFileChange change = op.getChange();
 					if (change != null) {
@@ -85,7 +87,7 @@ public class FindReferenceOperation implements IWorkspaceRunnable {
 		BundleDescription[] fragments = fDesc.getFragments();
 		SubMonitor subMonitor = SubMonitor.convert(monitor, fragments.length);
 		String id = fDesc.getSymbolicName();
-		for (BundleDescription fragment : fragments) {
+		for (Resource fragment : fragments) {
 			IPluginModelBase base = PluginRegistry.findModel(fragment);
 			SubMonitor iterationMonitor = subMonitor.split(1);
 			if (base instanceof IFragmentModel && id.equals(((IFragmentModel) (base)).getFragment().getPluginId())) {
@@ -110,7 +112,9 @@ public class FindReferenceOperation implements IWorkspaceRunnable {
 			if (friends != null)
 				for (String friend : friends) {
 					if (friend.equals(id)) {
-						CreateHeaderChangeOperation op = new CreateHeaderChangeOperation(PluginRegistry.findModel(pkg.getExporter()), Constants.EXPORT_PACKAGE, id, fNewId);
+						CreateHeaderChangeOperation op = new CreateHeaderChangeOperation(
+								PluginRegistry.findModel((Resource) pkg.getExporter()), Constants.EXPORT_PACKAGE, id,
+								fNewId);
 						op.run(iterationMonitor);
 						TextFileChange change = op.getChange();
 						if (change != null)
