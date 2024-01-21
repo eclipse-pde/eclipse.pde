@@ -92,6 +92,7 @@ import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
+import org.osgi.resource.Resource;
 import org.osgi.service.prefs.BackingStoreException;
 
 public class ManifestEditor extends PDELauncherFormEditor implements IShowEditorInput {
@@ -113,7 +114,7 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		return openPluginEditor(PluginRegistry.findModel(id));
 	}
 
-	public static IEditorPart openPluginEditor(BundleDescription bd) {
+	public static IEditorPart openPluginEditor(Resource bd) {
 		return openPluginEditor(PluginRegistry.findModel(bd));
 	}
 

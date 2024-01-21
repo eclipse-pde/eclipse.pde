@@ -117,6 +117,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 import org.eclipse.ui.progress.IElementCollector;
 import org.eclipse.ui.progress.PendingUpdateAdapter;
+import org.osgi.resource.Resource;
 
 public class PluginsView extends ViewPart implements IPluginModelListener {
 
@@ -684,7 +685,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 				.map(IPluginModelBase.class::cast).toList();
 		Set<BundleDescription> set = DependencyManager.getSelfAndDependencies(models);
 		ArrayList<IPluginModelBase> result = new ArrayList<>(set.size());
-		for (BundleDescription bundle : set) {
+		for (Resource bundle : set) {
 			IPluginModelBase model = PluginRegistry.findModel(bundle);
 			if (model != null)
 				result.add(model);

@@ -33,6 +33,7 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.osgi.resource.Resource;
 
 public class PDEClasspathContainer {
 
@@ -171,7 +172,7 @@ public class PDEClasspathContainer {
 			BundleDescription[] fragments = desc.getFragments();
 			for (BundleDescription fragment : fragments) {
 				if (new File(fragment.getLocation(), libraryName).exists()) {
-					return PluginRegistry.findModel(fragment);
+					return PluginRegistry.findModel((Resource) fragment);
 				}
 			}
 		}

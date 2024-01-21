@@ -104,6 +104,7 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
+import org.osgi.resource.Resource;
 
 public class ImportPackageSection extends TableSection {
 
@@ -611,7 +612,7 @@ public class ImportPackageSection extends TableSection {
 		}
 		BundleDescription[] hosts = hostSpec.getHosts();
 		// At least one of fragment hosts has to have extensible API
-		for (BundleDescription host : hosts) {
+		for (Resource host : hosts) {
 			if (ClasspathUtilCore.hasExtensibleAPI(PluginRegistry.findModel(host)))
 				return false;
 		}

@@ -84,6 +84,7 @@ import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.launching.PDESourcePathProvider;
 import org.eclipse.pde.ui.launcher.EclipseLaunchShortcut;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.osgi.resource.Resource;
 
 public class LaunchAction extends Action {
 
@@ -377,7 +378,7 @@ public class LaunchAction extends Action {
 		if (product.includeRequirementsAutomatically()) {
 			Stream<BundleDescription> bundles = includedPlugins.stream().map(IPluginModelBase::getBundleDescription);
 			Set<BundleDescription> closure = DependencyManager.findRequirementsClosure(bundles.toList());
-			return closure.stream().map(PluginRegistry::findModel);
+			return closure.stream().map(Resource.class::cast).map(PluginRegistry::findModel);
 		}
 		return includedPlugins.stream();
 	}

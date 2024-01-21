@@ -36,6 +36,7 @@ import java.util.TreeMap;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -65,6 +66,7 @@ import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.LoadTargetDefinitionJob;
 import org.eclipse.pde.core.target.TargetBundle;
 import org.eclipse.pde.internal.core.target.P2TargetUtils;
+import org.osgi.resource.Resource;
 
 public class PluginModelManager implements IModelProviderListener {
 	private static final String fExternalPluginListFile = "SavedExternalPluginList.txt"; //$NON-NLS-1$
@@ -1072,14 +1074,17 @@ public class PluginModelManager implements IModelProviderListener {
 	/**
 	 * Returns a plug-in model associated with the given bundle description
 	 *
-	 * @param desc the bundle description
+	 * @param resource
+	 *            the bundle description
 	 *
-	 * @return a plug-in model associated with the given bundle description or <code>null</code>
-	 * 			if none exists
+	 * @return a plug-in model associated with the given bundle description or
+	 *         <code>null</code> if none exists
 	 */
-	public IPluginModelBase findModel(BundleDescription desc) {
-		ModelEntry entry = (desc != null) ? findEntry(desc.getSymbolicName()) : null;
-		return entry == null ? null : entry.getModel(desc);
+	public IPluginModelBase findModel(Resource resource) {
+		return Adapters.of(resource, BundleDescription.class).map(bd -> {
+			ModelEntry entry = findEntry(bd.getSymbolicName());
+			return entry == null ? null : entry.getModel(bd);
+		}).orElse(null);
 	}
 
 	/**

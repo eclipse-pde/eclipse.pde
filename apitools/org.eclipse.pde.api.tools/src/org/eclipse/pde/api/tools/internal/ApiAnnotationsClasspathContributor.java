@@ -29,6 +29,7 @@ import org.eclipse.pde.core.IClasspathContributor;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
+import org.osgi.resource.Resource;
 
 public class ApiAnnotationsClasspathContributor implements IClasspathContributor {
 
@@ -36,7 +37,7 @@ public class ApiAnnotationsClasspathContributor implements IClasspathContributor
 
 	@Override
 	public List<IClasspathEntry> getInitialEntries(BundleDescription project) {
-		IPluginModelBase projectModel = PluginRegistry.findModel(project);
+		IPluginModelBase projectModel = PluginRegistry.findModel((Resource) project);
 		if (hasApiNature(projectModel)) {
 			return ClasspathUtilCore.classpathEntries(annotations().filter(model -> !model.equals(projectModel)))
 					.collect(Collectors.toList());
