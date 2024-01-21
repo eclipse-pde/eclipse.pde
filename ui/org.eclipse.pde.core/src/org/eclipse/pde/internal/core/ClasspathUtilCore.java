@@ -19,7 +19,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.core.resources.IResource;
@@ -28,6 +31,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.build.IBuild;
@@ -82,25 +86,40 @@ public class ClasspathUtilCore {
 	}
 
 	public static Stream<IClasspathEntry> classpathEntries(Stream<IPluginModelBase> models) {
-		return models.flatMap(model -> {
-			String location = model.getInstallLocation();
-			if (location == null) {
-				return Stream.empty();
+		Map<Boolean, List<IPluginModelBase>> collect = models.collect(Collectors.partitioningBy(model -> {
+			IResource resource = model.getUnderlyingResource();
+			if (resource != null) {
+				try {
+					return resource.getProject().hasNature(JavaCore.NATURE_ID);
+				} catch (CoreException e) {
+					// nothing we can do then...
+				}
 			}
-			boolean isJarShape = new File(location).isFile();
-			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
-			if (isJarShape || libraries.length == 0) {
-				return Stream.of(IPath.fromOSString(location));
-			}
-			return Arrays.stream(libraries).filter(library -> !IPluginLibrary.RESOURCE.equals(library.getType()))
-					.map(library -> {
-						String name = library.getName();
-						String expandedName = ClasspathUtilCore.expandLibraryName(name);
-						IPath path = ClasspathUtilCore.getPath(model, expandedName, isJarShape);
-						return path;
-					}).filter(Objects::nonNull);
-		}).map(path -> JavaCore.newLibraryEntry(path, path, IPath.ROOT, new IAccessRule[0], new IClasspathAttribute[0],
-				false));
+			return false;
+		}));
+		List<IPluginModelBase> javaModels = collect.get(true);
+		List<IPluginModelBase> externalModels = collect.get(false);
+		return Stream.concat(
+				javaModels.stream().map(m -> JavaCore.create(m.getUnderlyingResource().getProject()))
+						.map(IJavaProject::getPath).map(JavaCore::newProjectEntry),
+				externalModels.stream().flatMap(model -> {
+					String location = model.getInstallLocation();
+					if (location == null) {
+						return Stream.empty();
+					}
+					boolean isJarShape = new File(location).isFile();
+					IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
+					if (isJarShape || libraries.length == 0) {
+						return Stream.of(IPath.fromOSString(location));
+					}
+					return Arrays.stream(libraries)
+							.filter(library -> !IPluginLibrary.RESOURCE.equals(library.getType())).map(library -> {
+								String name = library.getName();
+								String expandedName = ClasspathUtilCore.expandLibraryName(name);
+								return ClasspathUtilCore.getPath(model, expandedName, isJarShape);
+							}).filter(Objects::nonNull);
+				}).map(path -> JavaCore.newLibraryEntry(path, path, IPath.ROOT, new IAccessRule[0],
+						new IClasspathAttribute[0], false)));
 	}
 
 	private static void addLibraryEntry(IPluginLibrary library, Collection<ClasspathLibrary> entries) {

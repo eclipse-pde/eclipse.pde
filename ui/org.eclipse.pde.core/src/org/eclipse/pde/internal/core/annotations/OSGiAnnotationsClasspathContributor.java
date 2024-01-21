@@ -43,9 +43,11 @@ public class OSGiAnnotationsClasspathContributor implements IClasspathContributo
 
 	@Override
 	public List<IClasspathEntry> getInitialEntries(BundleDescription project) {
-		IPluginModelBase model = PluginRegistry.findModel(project);
-		if (model != null) {
-			return ClasspathUtilCore.classpathEntries(annotations()).collect(Collectors.toList());
+		IPluginModelBase projectModel = PluginRegistry.findModel(project);
+		if (projectModel != null) {
+			return ClasspathUtilCore
+					.classpathEntries(annotations().filter(model -> !model.equals(projectModel)))
+					.collect(Collectors.toList());
 		}
 		return Collections.emptyList();
 	}
