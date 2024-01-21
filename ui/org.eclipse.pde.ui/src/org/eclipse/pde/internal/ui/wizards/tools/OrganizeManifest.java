@@ -105,6 +105,7 @@ import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
 import org.osgi.framework.Constants;
+import org.osgi.resource.Resource;
 import org.osgi.service.prefs.BackingStoreException;
 
 import aQute.bnd.header.Attrs;
@@ -427,7 +428,7 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 		HostSpecification hostSpec = bundleDesc.getHost();
 		if (hostSpec != null) {
 			BundleDescription[] hosts = hostSpec.getHosts();
-			for (BundleDescription host : hosts) {
+			for (Resource host : hosts) {
 				IPluginModelBase hostModel = PluginRegistry.findModel(host);
 				if (hostModel != null) {
 					findTranslatedXMLStrings(getTextModel(hostModel, false), list);

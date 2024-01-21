@@ -67,6 +67,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.Version;
+import org.osgi.resource.Resource;
 
 public class TargetPlatformHelper {
 	private TargetPlatformHelper() { // static use only
@@ -609,7 +610,7 @@ public class TargetPlatformHelper {
 	}
 
 	private static String[] getValue(BundleDescription bundle, PDEState state) {
-		IPluginModelBase model = PluginRegistry.findModel(bundle);
+		IPluginModelBase model = PluginRegistry.findModel((Resource) bundle);
 		String[] result = null;
 		if (model != null) {
 			IPluginLibrary[] libs = model.getPluginBase().getLibraries();

@@ -92,6 +92,7 @@ import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Version;
+import org.osgi.resource.Resource;
 
 public class PDELabelProvider extends SharedLabelProvider {
 	private static final String SYSTEM_BUNDLE = "system.bundle"; //$NON-NLS-1$
@@ -248,7 +249,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 	public String getObjectText(BundleDescription bundle) {
 		String id = bundle.getSymbolicName();
 		if (isFullNameModeEnabled()) {
-			IPluginModelBase model = PluginRegistry.findModel(bundle);
+			IPluginModelBase model = PluginRegistry.findModel((Resource) bundle);
 			if (model != null) {
 				return model.getPluginBase().getTranslatedName();
 			}

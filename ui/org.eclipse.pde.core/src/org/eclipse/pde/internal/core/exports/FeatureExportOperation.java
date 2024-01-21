@@ -102,6 +102,7 @@ import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.target.TargetMetadataCollector;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.resource.Resource;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -366,8 +367,8 @@ public class FeatureExportOperation extends Job {
 
 	public void deleteBuildFiles(Object object) throws CoreException {
 		IModel model = null;
-		if (object instanceof BundleDescription) {
-			model = PluginRegistry.findModel((BundleDescription) object);
+		if (object instanceof Resource r) {
+			model = PluginRegistry.findModel(r);
 		} else if (object instanceof IModel) {
 			model = (IModel) object;
 		}
@@ -1189,7 +1190,8 @@ public class FeatureExportOperation extends Job {
 
 	static boolean isWorkspacePlugin(BundleDescription bundle) {
 		ModelEntry entry = PluginRegistry.findEntry(bundle.getSymbolicName());
-		return entry != null && Arrays.asList(entry.getWorkspaceModels()).contains(PluginRegistry.findModel(bundle));
+		return entry != null
+				&& Arrays.asList(entry.getWorkspaceModels()).contains(PluginRegistry.findModel((Resource) bundle));
 	}
 
 	public static void errorFound() {

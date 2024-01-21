@@ -52,6 +52,7 @@ import org.eclipse.test.performance.Dimension;
 import org.eclipse.test.performance.PerformanceTestCase;
 import org.junit.Assert;
 import org.osgi.framework.Version;
+import org.osgi.resource.Resource;
 
 /**
  * Tests the time it takes to resolve a target definition and set it as the target platform.
@@ -235,7 +236,7 @@ public class TargetPlatformPerfTest extends PerformanceTestCase {
 		for (BundleSpecification element : required) {
 			if (!allBundleNames.contains(element.getName())) {
 				allBundleNames.add(element.getName());
-				model = PluginRegistry.findModel(element.getBundle());
+				model = PluginRegistry.findModel((Resource) element.getBundle());
 				openRequiredBundles(model, allBundleNames);
 			}
 		}

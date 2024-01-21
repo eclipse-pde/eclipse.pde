@@ -28,6 +28,7 @@ import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.osgi.framework.Version;
+import org.osgi.resource.Resource;
 
 /**
  * The central access point for models representing plug-ins found in the workspace
@@ -118,13 +119,30 @@ public class PluginRegistry {
 	/**
 	 * Returns a plug-in model associated with the given bundle description
 	 *
-	 * @param desc the bundle description
+	 * @param desc
+	 *            the bundle description
 	 *
-	 * @return a plug-in model associated with the given bundle description or <code>null</code>
-	 * 			if none exists
+	 * @return a plug-in model associated with the given bundle description or
+	 *         <code>null</code> if none exists
+	 * @deprecated Instead use {@link #findModel(Resource)}
 	 */
+	@Deprecated(forRemoval = true)
 	public static IPluginModelBase findModel(BundleDescription desc) {
-		return PDECore.getDefault().getModelManager().findModel(desc);
+		return findModel((Resource) desc);
+	}
+
+	/**
+	 * Returns a plug-in model associated with the given resource
+	 *
+	 * @param resource
+	 *            the (OSGi) resource to find a model for
+	 *
+	 * @return a plug-in model associated with the given bundle description or
+	 *         <code>null</code> if none exists
+	 * @since 3.18
+	 */
+	public static IPluginModelBase findModel(Resource resource) {
+		return PDECore.getDefault().getModelManager().findModel(resource);
 	}
 
 	/**

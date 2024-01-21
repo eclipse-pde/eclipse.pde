@@ -33,6 +33,7 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.IStateDeltaListener;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.osgi.resource.Resource;
 
 public class PluginRebuilder implements IStateDeltaListener, IResourceChangeListener {
 
@@ -107,7 +108,7 @@ public class PluginRebuilder implements IStateDeltaListener, IResourceChangeList
 					continue;
 				}
 
-				IPluginModelBase model = PluginRegistry.findModel(bundleDelta.getBundle());
+				IPluginModelBase model = PluginRegistry.findModel((Resource) bundleDelta.getBundle());
 				IResource resource = model == null ? null : model.getUnderlyingResource();
 				if (resource != null) {
 					fProjectNames.add(resource.getProject().getName());

@@ -39,6 +39,7 @@ import org.osgi.framework.wiring.BundleRequirement;
 import org.osgi.framework.wiring.BundleRevision;
 import org.osgi.framework.wiring.BundleWire;
 import org.osgi.framework.wiring.BundleWiring;
+import org.osgi.resource.Resource;
 
 /**
  * Utility class to return bundle description collections for a variety of
@@ -225,7 +226,7 @@ public class DependencyManager {
 		return Constants.RESOLUTION_OPTIONAL.equals(requirement.getDirectives().get(Constants.RESOLUTION_DIRECTIVE));
 	}
 
-	private static boolean isTestWorkspaceProject(BundleDescription f) {
+	private static boolean isTestWorkspaceProject(Resource f) {
 		// Be defensive when declaring a fragment as 'test'-fragment
 		IPluginModelBase pluginModel = PluginRegistry.findModel(f);
 		if (pluginModel != null) {

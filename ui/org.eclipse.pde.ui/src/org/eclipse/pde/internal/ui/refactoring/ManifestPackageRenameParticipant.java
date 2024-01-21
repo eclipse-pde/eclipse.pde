@@ -34,6 +34,7 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.osgi.resource.Resource;
 
 public class ManifestPackageRenameParticipant extends PDERenameParticipant {
 
@@ -72,7 +73,7 @@ public class ManifestPackageRenameParticipant extends PDERenameParticipant {
 				BundleDescription[] dependents = desc.getDependents();
 				for (BundleDescription dependent : dependents) {
 					if (isAffected(desc, dependent)) {
-						IPluginModelBase candidate = PluginRegistry.findModel(dependent);
+						IPluginModelBase candidate = PluginRegistry.findModel((Resource) dependent);
 						if (candidate instanceof IBundlePluginModelBase) {
 							IFile file = (IFile) candidate.getUnderlyingResource();
 							addBundleManifestChange(file, result, pm);

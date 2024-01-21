@@ -75,6 +75,7 @@ import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
 import org.eclipse.pde.internal.launching.PDEMessages;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.osgi.framework.Version;
+import org.osgi.resource.Resource;
 
 public class BundleLauncherHelper {
 
@@ -157,7 +158,7 @@ public class BundleLauncherHelper {
 				? DependencyManager.getDependencies(bundle2startLevel.keySet(), DependencyManager.Options.INCLUDE_OPTIONAL_DEPENDENCIES)
 				: DependencyManager.getDependencies(bundle2startLevel.keySet());
 
-		requiredDependencies.stream() //
+		requiredDependencies.stream().map(Resource.class::cast) //
 				.map(PluginRegistry::findModel).filter(Objects::nonNull) //
 				.forEach(p -> addDefaultStartingBundle(bundle2startLevel, p));
 	}

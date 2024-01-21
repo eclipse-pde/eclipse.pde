@@ -50,6 +50,7 @@ import org.eclipse.pde.internal.ui.launcher.LaunchAction;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.launching.PDESourcePathProvider;
 import org.eclipse.ui.IEditorPart;
+import org.osgi.resource.Resource;
 
 /**
  * A launch shortcut capable of launching an Eclipse application.
@@ -297,7 +298,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 		Set<String> wsplugins = new HashSet<>();
 		Set<String> explugins = new HashSet<>();
 		Set<BundleDescription> plugins = DependencyManager.getSelfAndDependencies(Set.of(fModel));
-		for (BundleDescription plugin : plugins) {
+		for (Resource plugin : plugins) {
 			IPluginModelBase model = PluginRegistry.findModel(plugin);
 			if (model == null || !model.isEnabled())
 				continue;

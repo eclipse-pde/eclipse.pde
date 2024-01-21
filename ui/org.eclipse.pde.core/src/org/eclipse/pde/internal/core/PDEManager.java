@@ -29,6 +29,7 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.plugin.ExternalPluginModelBase;
 import org.osgi.framework.Constants;
+import org.osgi.resource.Resource;
 
 public class PDEManager {
 
@@ -37,7 +38,7 @@ public class PDEManager {
 		BundleDescription desc = getBundleDescription(model);
 		if (desc != null) {
 			BundleDescription[] fragments = desc.getFragments();
-			for (BundleDescription fragment : fragments) {
+			for (Resource fragment : fragments) {
 				IPluginModelBase candidate = PluginRegistry.findModel(fragment);
 				if (candidate instanceof IFragmentModel) {
 					result.add(candidate);

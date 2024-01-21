@@ -47,6 +47,7 @@ import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.TargetBundle;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.osgi.framework.Version;
+import org.osgi.resource.Resource;
 
 /**
  * Manages where PDE should look when looking for source.  The locations may
@@ -392,7 +393,8 @@ public class SourceLocationManager implements ICoreConstants {
 			IConfigurationElement[] children = extension.getConfigurationElements();
 			RegistryContributor contributor = (RegistryContributor) extension.getContributor();
 			long bundleId = Long.parseLong(contributor.getActualId());
-			BundleDescription desc = PDECore.getDefault().getModelManager().getState().getState().getBundle(Long.parseLong(contributor.getActualId()));
+			Resource desc = PDECore.getDefault().getModelManager().getState().getState()
+					.getBundle(Long.parseLong(contributor.getActualId()));
 			IPluginModelBase base = null;
 			if (desc != null) {
 				base = PluginRegistry.findModel(desc);

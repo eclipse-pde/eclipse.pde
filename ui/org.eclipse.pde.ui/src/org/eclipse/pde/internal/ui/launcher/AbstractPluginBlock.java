@@ -104,6 +104,7 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 import org.eclipse.ui.dialogs.PatternFilter;
+import org.osgi.resource.Resource;
 
 public abstract class AbstractPluginBlock {
 
@@ -876,7 +877,8 @@ public abstract class AbstractPluginBlock {
 				: new Options[] { Options.INCLUDE_NON_TEST_FRAGMENTS };
 		Set<BundleDescription> additionalBundles = DependencyManager.getDependencies(toCheck, options);
 
-		additionalBundles.stream().map(PluginRegistry::findModel).filter(Objects::nonNull).forEach(toCheck::add);
+		additionalBundles.stream().map(Resource.class::cast).map(PluginRegistry::findModel).filter(Objects::nonNull)
+				.forEach(toCheck::add);
 
 		checked = toCheck.toArray();
 		setCheckedElements(checked);

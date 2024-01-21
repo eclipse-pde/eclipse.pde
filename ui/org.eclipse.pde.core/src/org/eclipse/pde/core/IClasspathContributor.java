@@ -19,6 +19,7 @@ import java.util.List;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.osgi.resource.Resource;
 
 /**
  * Implementors of this interface can contribute additional {@link IClasspathEntry}
@@ -38,15 +39,19 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 public interface IClasspathContributor {
 
 	/**
-	 * Get any additional classpath entries to add to a project when its classpath is
-	 * first computed.  The provided {@link BundleDescription} describes the plug-in
-	 * project that the classpath is being computed for.  Additional PDE model information
-	 * can be obtained using {@link PluginRegistry#findModel(BundleDescription)}.
+	 * Get any additional classpath entries to add to a project when its
+	 * classpath is first computed. The provided {@link BundleDescription}
+	 * describes the plug-in project that the classpath is being computed for.
+	 * Additional PDE model information can be obtained using
+	 * {@link PluginRegistry#findModel(Resource)}.
 	 *
-	 * @param project the bundle descriptor for the plug-in project having its classpath computed
-	 * @return additional classpath entries to add to the project, possibly empty, must not be <code>null</code>
+	 * @param project
+	 *            the bundle descriptor for the plug-in project having its
+	 *            classpath computed
+	 * @return additional classpath entries to add to the project, possibly
+	 *         empty, must not be <code>null</code>
 	 */
-	public List<IClasspathEntry> getInitialEntries(BundleDescription project);
+	List<IClasspathEntry> getInitialEntries(BundleDescription project);
 
 	/**
 	 * Get any additional classpath entries to add to a project when a new bundle
@@ -59,5 +64,5 @@ public interface IClasspathContributor {
 	 * @param addedDependency the bundle descriptor for the bundle being added to the classpath as a dependency
 	 * @return additional classpath entries to add to the project, possibly empty, must not be <code>null</code>
 	 */
-	public List<IClasspathEntry> getEntriesForDependency(BundleDescription project, BundleDescription addedDependency);
+	List<IClasspathEntry> getEntriesForDependency(BundleDescription project, BundleDescription addedDependency);
 }
