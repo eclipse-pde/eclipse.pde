@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.VersionRange;
@@ -408,13 +409,16 @@ public class PluginRegistry {
 	 */
 	public static IBuildModel createBuildModel(IPluginModelBase model) throws CoreException {
 		if (model != null) {
-			IProject project = model.getUnderlyingResource().getProject();
-			if (project != null) {
-				IFile buildFile = PDEProject.getBuildProperties(project);
-				if (buildFile.exists()) {
-					IBuildModel buildModel = new WorkspaceBuildModel(buildFile);
-					buildModel.load();
-					return buildModel;
+			IResource resource = model.getUnderlyingResource();
+			if (resource != null) {
+				IProject project = resource.getProject();
+				if (project != null) {
+					IFile buildFile = PDEProject.getBuildProperties(project);
+					if (buildFile.exists()) {
+						IBuildModel buildModel = new WorkspaceBuildModel(buildFile);
+						buildModel.load();
+						return buildModel;
+					}
 				}
 			}
 		}

@@ -1,27 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.pde.core" version="2">
+    <resource path="src/org/eclipse/pde/core/ModelChangedEvent.java" type="org.eclipse.pde.core.ModelChangedEvent">
+        <filter comment="This is PDEs own implementation" id="576725006">
+            <message_arguments>
+                <message_argument value="IModelChangedEvent"/>
+                <message_argument value="ModelChangedEvent"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/pde/internal/core/project/BundleProjectService.java" type="org.eclipse.pde.internal.core.project.BundleProjectService">
         <filter comment="Platform Team allows use of bundle importers for PDE import from source repository" id="640712815">
             <message_arguments>
                 <message_argument value="Team"/>
                 <message_argument value="BundleProjectService"/>
                 <message_argument value="getBundleImporters()"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/pde/internal/core/target/ExportTargetJob.java" type="org.eclipse.pde.internal.core.target.ExportTargetJob">
-        <filter comment="Using IProvidedCapability is the only current available option to export a p2 target correctly" id="640712815">
-            <message_arguments>
-                <message_argument value="IProvidedCapability"/>
-                <message_argument value="ExportTargetJob"/>
-                <message_argument value="getName()"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Using IProvidedCapability is the only current available option to export a p2 target correctly" id="640712815">
-            <message_arguments>
-                <message_argument value="IProvidedCapability"/>
-                <message_argument value="ExportTargetJob"/>
-                <message_argument value="getNamespace()"/>
             </message_arguments>
         </filter>
     </resource>

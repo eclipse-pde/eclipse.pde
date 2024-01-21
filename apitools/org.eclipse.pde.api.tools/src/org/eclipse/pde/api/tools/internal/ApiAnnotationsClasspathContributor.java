@@ -36,9 +36,10 @@ public class ApiAnnotationsClasspathContributor implements IClasspathContributor
 
 	@Override
 	public List<IClasspathEntry> getInitialEntries(BundleDescription project) {
-		IPluginModelBase model = PluginRegistry.findModel(project);
-		if (hasApiNature(model)) {
-			return ClasspathUtilCore.classpathEntries(annotations()).collect(Collectors.toList());
+		IPluginModelBase projectModel = PluginRegistry.findModel(project);
+		if (hasApiNature(projectModel)) {
+			return ClasspathUtilCore.classpathEntries(annotations().filter(model -> !model.equals(projectModel)))
+					.collect(Collectors.toList());
 		}
 		return Collections.emptyList();
 	}
