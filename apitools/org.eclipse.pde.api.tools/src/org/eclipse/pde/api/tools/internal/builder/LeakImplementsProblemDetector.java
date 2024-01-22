@@ -64,7 +64,9 @@ public class LeakImplementsProblemDetector extends AbstractTypeLeakDetector {
 				if (annotations != null) {
 					if (RestrictionModifiers.isImplementRestriction(annotations.getRestrictions())) {
 						IApiAnnotations annotationsSource = member.getApiComponent().getApiDescription().resolveAnnotations(sourceMember.getHandle());
-						if (annotationsSource != null && !RestrictionModifiers.isImplementRestriction(annotationsSource.getRestrictions())) {
+						if (annotationsSource != null
+								&& !RestrictionModifiers.isImplementRestriction(annotationsSource.getRestrictions())
+								&& !RestrictionModifiers.isExtendRestriction(annotationsSource.getRestrictions())) {
 							isProb= true;
 						}
 					}

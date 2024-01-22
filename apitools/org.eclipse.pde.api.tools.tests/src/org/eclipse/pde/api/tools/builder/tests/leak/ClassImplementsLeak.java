@@ -340,5 +340,20 @@ public class ClassImplementsLeak extends LeakTest {
 		deployLeakTest(typename + ".java", inc); //$NON-NLS-1$
 	}
 
+	/**
+	 * Tests that an noextend API class that implements noimplement interface
+	 * is not a leak
+	 */
+	public void testNoExtendClassImplementsNoImplementInterface13F() {
+		x13(false);
+	}
 
+	public void testNoExtendClassImplementsNoImplementInterface13I() {
+		x13(true);
+	}
+
+	private void x13(boolean inc) {
+		String typename = "test37"; //$NON-NLS-1$
+		deployLeakTest(typename + ".java", inc); //$NON-NLS-1$
+	}
 }
