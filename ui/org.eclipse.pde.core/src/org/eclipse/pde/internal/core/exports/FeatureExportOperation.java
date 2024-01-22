@@ -295,7 +295,8 @@ public class FeatureExportOperation extends Job {
 		}
 	}
 
-	protected void doExport(String featureID, String version, String featureLocation, String[][] configs, IProgressMonitor monitor) throws CoreException, InvocationTargetException {
+	protected void doExport(String featureID, String version, String featureLocation, String[][] configs,
+			IProgressMonitor monitor) throws CoreException {
 		fHasErrors = false;
 
 		int subTaskLength = 6 + (configs.length * 4) + (publishingP2Metadata() ? 2 : 0);
@@ -441,7 +442,8 @@ public class FeatureExportOperation extends Job {
 	 * @param properties map of user properties
 	 * @param monitor progress monitor
 	 */
-	protected void runScript(String location, String[] targets, Map<String, String> properties, IProgressMonitor monitor) throws InvocationTargetException, CoreException {
+	protected void runScript(String location, String[] targets, Map<String, String> properties,
+			IProgressMonitor monitor) throws CoreException {
 		AntRunner runner = new AntRunner();
 		runner.addUserProperties(properties);
 		runner.setAntHome(location);

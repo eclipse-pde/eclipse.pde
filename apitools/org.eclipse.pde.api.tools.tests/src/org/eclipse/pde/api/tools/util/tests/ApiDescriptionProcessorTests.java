@@ -18,7 +18,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -198,7 +197,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 		assertTrue("the source dir must exist", src.exists()); //$NON-NLS-1$
 		assertTrue("the source dir must be a directory", src.isDirectory()); //$NON-NLS-1$
 		assertNotNull("the srcroot for the test java project must not be null", srcroot); //$NON-NLS-1$
-		FileUtils.importFilesFromDirectory(src, srcroot.getPath().append("javadoc"), new NullProgressMonitor()); //$NON-NLS-1$
+		FileUtils.importFilesFromDirectory(src, srcroot.getPath().append("javadoc")); //$NON-NLS-1$
 
 		ApiToolingSetupRefactoring refactoring = new ApiToolingSetupRefactoring();
 		CompositeChange change = new CompositeChange("Test"); //$NON-NLS-1$
@@ -264,8 +263,6 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 				}
 			}
 		} catch (CoreException e) {
-			ApiUIPlugin.log(e);
-		} catch (IOException e) {
 			ApiUIPlugin.log(e);
 		}
 	}

@@ -44,7 +44,7 @@ public class AntScript implements IAntScript {
 	 * 
 	 * @param out the output stream to write the script to
 	 */
-	public AntScript(OutputStream out) throws IOException {
+	public AntScript(OutputStream out) {
 		this.out = out;
 		output = new PrintWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8));
 		output.println(XML_PROLOG);

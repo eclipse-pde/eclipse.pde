@@ -502,7 +502,7 @@ public class PDEModelUtility {
 	/**
 	 * @return the {@link IBaseModel} for the new model
 	 */
-	private static IBaseModel prepareBundlePluginModel(IFile[] files, IDocument[] docs, boolean generateEditNames) throws CoreException {
+	private static IBaseModel prepareBundlePluginModel(IFile[] files, IDocument[] docs, boolean generateEditNames) {
 		AbstractEditingModel[] models = new AbstractEditingModel[docs.length];
 
 		boolean isFragment = false;

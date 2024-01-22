@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModel;
@@ -127,7 +126,7 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 			public void execute(IProgressMonitor monitor) {
 				try {
 					runOperation(mode, monitor);
-				} catch (CoreException | BadLocationException e) {
+				} catch (CoreException e) {
 					PDEPlugin.logException(e);
 				} finally {
 					monitor.done();
@@ -196,7 +195,7 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 			fUsePluginsAtBuildButton.setSelection(true);
 	}
 
-	private void runOperation(int mode, IProgressMonitor monitor) throws CoreException, BadLocationException {
+	private void runOperation(int mode, IProgressMonitor monitor) throws CoreException {
 		WorkspaceFeatureModel model = (WorkspaceFeatureModel) fFeatureEditor.getAggregateModel();
 		IFeature feature = model.getFeature();
 		if (fIsForceVersionEnabled) {
@@ -238,7 +237,8 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 		return mode;
 	}
 
-	private void synchronizeVersion(int mode, String featureVersion, IFeaturePlugin ref, IProgressMonitor monitor) throws CoreException, BadLocationException {
+	private void synchronizeVersion(int mode, String featureVersion, IFeaturePlugin ref, IProgressMonitor monitor)
+			throws CoreException {
 		String id = ref.getId();
 
 		switch (mode) {

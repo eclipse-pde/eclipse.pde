@@ -255,17 +255,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		try {
 			@SuppressWarnings("resource") // intentional return AntScript without closed stream
 			OutputStream scriptStream = new BufferedOutputStream(new FileOutputStream(scriptLocation + '/' + scriptName));
-			try {
-				return new AntScript(scriptStream);
-			} catch (IOException e) {
-				try {
-					scriptStream.close();
-				} catch (IOException e1) {
-					e.addSuppressed(e1);
-				}
-				String message = NLS.bind(Messages.exception_writingFile, scriptLocation + '/' + scriptName);
-				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
-			}
+			return new AntScript(scriptStream);
 		} catch (FileNotFoundException e) {
 			String message = NLS.bind(Messages.exception_writingFile, scriptLocation + '/' + scriptName);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));

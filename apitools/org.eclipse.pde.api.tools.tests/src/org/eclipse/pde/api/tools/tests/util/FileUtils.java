@@ -21,10 +21,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -37,7 +35,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
@@ -74,9 +71,7 @@ public class FileUtils {
 				subDirs.add(file);
 			}
 		}
-		Iterator<File> iter = subDirs.iterator();
-		while (iter.hasNext()) {
-			File subDir = iter.next();
+		for (File subDir : subDirs) {
 			addJavaFiles(subDir, collection);
 		}
 	}
@@ -84,7 +79,7 @@ public class FileUtils {
 	/**
 	 * Imports files from the specified root directory into the specified path
 	 */
-	public static void importFilesFromDirectory(File rootDir, IPath destPath, IProgressMonitor monitor) throws InvocationTargetException, IOException {
+	public static void importFilesFromDirectory(File rootDir, IPath destPath) {
 		IResource findMember = ResourcesPlugin.getWorkspace().getRoot().getFolder(destPath);
 		File dest = findMember.getLocation().toFile();
 		if (!dest.exists()) {
@@ -100,7 +95,7 @@ public class FileUtils {
 	/**
 	 * Imports the specified file to the destination path
 	 */
-	public static void importFileFromDirectory(File file, IPath destPath, IProgressMonitor monitor) throws InvocationTargetException, IOException {
+	public static void importFileFromDirectory(File file, IPath destPath) {
 		IResource findMember = null;
 		if (destPath.segmentCount() == 1) {
 			findMember = ResourcesPlugin.getWorkspace().getRoot().getProject(destPath.lastSegment());

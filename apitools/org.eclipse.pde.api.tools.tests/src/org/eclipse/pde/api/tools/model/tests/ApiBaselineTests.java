@@ -19,7 +19,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -85,7 +84,7 @@ public class ApiBaselineTests {
 	 * Resolves a package
 	 */
 	@Test
-	public void testResolvePackage() throws FileNotFoundException, CoreException {
+	public void testResolvePackage() throws CoreException {
 		assertNotNull("the testing baseline should exist", fBaseline); //$NON-NLS-1$
 		IApiComponent[] components = fBaseline.resolvePackage(fBaseline.getApiComponent(COMPONENT_B), COMPONENT_A);
 		assertNotNull("No component", components); //$NON-NLS-1$
@@ -97,7 +96,7 @@ public class ApiBaselineTests {
 	 * Resolves a package within a single component
 	 */
 	@Test
-	public void testResolvePackageWithinComponent() throws FileNotFoundException, CoreException {
+	public void testResolvePackageWithinComponent() throws CoreException {
 		assertNotNull("the testing baseline should exist", fBaseline); //$NON-NLS-1$
 		IApiComponent[] components = fBaseline.resolvePackage(fBaseline.getApiComponent(COMPONENT_A), "a.b.c"); //$NON-NLS-1$
 		assertNotNull("No component", components); //$NON-NLS-1$
@@ -109,7 +108,7 @@ public class ApiBaselineTests {
 	 * Resolves a system package
 	 */
 	@Test
-	public void testResolveJavaLangPackage() throws FileNotFoundException, CoreException {
+	public void testResolveJavaLangPackage() throws CoreException {
 		assertNotNull("the testing baseline should exist", fBaseline); //$NON-NLS-1$
 		IApiComponent[] components = fBaseline.resolvePackage(fBaseline.getApiComponent(COMPONENT_B), "java.lang"); //$NON-NLS-1$
 		assertNotNull("No component", components); //$NON-NLS-1$
@@ -121,7 +120,7 @@ public class ApiBaselineTests {
 	 * Resolves a system package
 	 */
 	@Test
-	public void testResolveSystemPackage() throws FileNotFoundException, CoreException {
+	public void testResolveSystemPackage() throws CoreException {
 		assertNotNull("the testing baseline should exist", fBaseline); //$NON-NLS-1$
 		IApiComponent[] components = fBaseline.resolvePackage(fBaseline.getApiComponent(COMPONENT_B), "org.w3c.dom"); //$NON-NLS-1$
 		assertNotNull("No component", components); //$NON-NLS-1$
@@ -133,7 +132,7 @@ public class ApiBaselineTests {
 	 * Finds the class file for java.lang.Object
 	 */
 	@Test
-	public void testFindJavaLangObject() throws FileNotFoundException, CoreException {
+	public void testFindJavaLangObject() throws CoreException {
 		assertNotNull("the testing baseline should exist", fBaseline); //$NON-NLS-1$
 		IApiComponent[] components = fBaseline.resolvePackage(fBaseline.getApiComponent(COMPONENT_B), "java.lang"); //$NON-NLS-1$
 		assertNotNull("No component", components); //$NON-NLS-1$

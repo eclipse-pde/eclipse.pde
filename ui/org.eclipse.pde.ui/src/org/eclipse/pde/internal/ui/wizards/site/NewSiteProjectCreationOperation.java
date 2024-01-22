@@ -86,7 +86,7 @@ public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 	/**
 	 * @return location of the created site.xml
 	 */
-	private IFile createSiteManifest() throws CoreException {
+	private IFile createSiteManifest() {
 		IFile file = fProject.getFile("site.xml"); //$NON-NLS-1$
 		if (file.exists())
 			return file;

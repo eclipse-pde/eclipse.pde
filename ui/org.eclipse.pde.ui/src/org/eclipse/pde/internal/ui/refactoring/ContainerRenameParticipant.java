@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.pde.core.plugin.PluginRegistry;
@@ -124,7 +123,7 @@ public class ContainerRenameParticipant extends PDERenameParticipant {
 						return result;
 					}
 				}
-			} catch (CoreException | MalformedTreeException | BadLocationException e) {
+			} catch (CoreException | MalformedTreeException e) {
 			} finally {
 				FileBuffers.getTextFileBufferManager().disconnect(manifest.getFullPath(), LocationKind.NORMALIZE,
 						subMonitor.split(1));

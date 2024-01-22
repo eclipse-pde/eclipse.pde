@@ -123,7 +123,7 @@ public class XmlSearchReporter implements IApiSearchReporter {
 	 * @return the id to use for the component in the mapping, includes the
 	 *         version information as well
 	 */
-	String getId(IApiComponent component) throws CoreException {
+	String getId(IApiComponent component) {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append(component.getSymbolicName()).append(" ").append('(').append(component.getVersion()).append(')'); //$NON-NLS-1$
 		return buffer.toString();

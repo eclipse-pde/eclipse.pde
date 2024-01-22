@@ -20,7 +20,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -243,7 +242,7 @@ public class ApiDescriptionTests {
 	 * D has SPI visibility for component "a.friend"
 	 */
 	@Test
-	public void testRestoreFromXML() throws FileNotFoundException, IOException, CoreException {
+	public void testRestoreFromXML() throws CoreException {
 		IPath path = TestSuiteHelper.getPluginDirectoryPath();
 		path = path.append("test-xml"); //$NON-NLS-1$
 		File file = path.toFile();

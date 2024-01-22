@@ -108,7 +108,7 @@ public class TargetDefinitionPersistenceHelper {
 	 *            output stream to write xml to
 	 */
 	public static void persistXML(ITargetDefinition definition, OutputStream output)
-			throws CoreException, ParserConfigurationException, TransformerException, IOException, SAXException {
+			throws TransformerException {
 		Document document = definition.getDocument();
 		NodeList childNodes = document.getChildNodes();
 		int length = childNodes.getLength();

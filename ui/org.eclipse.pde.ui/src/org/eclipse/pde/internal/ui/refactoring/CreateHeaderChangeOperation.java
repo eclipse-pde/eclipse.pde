@@ -23,7 +23,6 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
@@ -111,7 +110,7 @@ public class CreateHeaderChangeOperation implements IWorkspaceRunnable {
 					return getTextChange(listener, manifest);
 				}
 			}
-		} catch (MalformedTreeException | CoreException | BadLocationException e) {
+		} catch (MalformedTreeException | CoreException e) {
 		} finally {
 			FileBuffers.getTextFileBufferManager().disconnect(manifest.getFullPath(), LocationKind.NORMALIZE,
 					subMonitor.split(1));
