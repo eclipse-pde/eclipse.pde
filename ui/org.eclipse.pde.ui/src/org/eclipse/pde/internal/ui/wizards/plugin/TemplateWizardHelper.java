@@ -29,6 +29,9 @@ public class TemplateWizardHelper {
 
 	public static boolean isActive(WizardElement element) {
 		IConfigurationElement config = element.getConfigurationElement();
+		if (config == null) {
+			return true;
+		}
 		final String pluginId = config.getNamespaceIdentifier();
 		final String contributionId = config.getAttribute("id"); //$NON-NLS-1$
 		IPluginContribution contribution = new IPluginContribution() {

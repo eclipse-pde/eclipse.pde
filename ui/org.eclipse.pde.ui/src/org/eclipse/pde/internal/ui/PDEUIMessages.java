@@ -645,6 +645,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String BaseWizardSelectionPage_noDesc;
 
+	public static String BaseWizardSelectionPage_loadingDesc;
+
 	public static String ChooseClassXMLResolution_label;
 
 	public static String ChooseManifestClassResolution_label;
@@ -1193,6 +1195,8 @@ public class PDEUIMessages extends NLS {
 	public static String NewPluginProjectFromTemplateWizard_0;
 
 	public static String NewPluginProjectFromTemplateWizard_1;
+
+	public static String NewPluginProjectWizard_0;
 
 	public static String NewProjectWizard_MainPage_ftitle;
 	public static String NewProductFileWizard_windowTitle;

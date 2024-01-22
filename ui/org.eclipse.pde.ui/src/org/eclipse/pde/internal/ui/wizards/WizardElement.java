@@ -16,19 +16,25 @@ package org.eclipse.pde.internal.ui.wizards;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.bndtools.templating.Template;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
+import org.eclipse.pde.internal.ui.wizards.plugin.TemplatePluginContentWizard;
+import org.eclipse.pde.internal.ui.wizards.plugin.TemplateWizardHelper;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IPluginContribution;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.Version;
 
 /**
  * Handle to a configuration element representing a wizard class.
  */
-public class WizardElement extends NamedElement implements IPluginContribution {
+public class WizardElement extends NamedElement implements IPluginContribution, IAdaptable {
 
 	public static final String ATT_NAME = "name"; //$NON-NLS-1$
 	public static final String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
@@ -39,16 +45,27 @@ public class WizardElement extends NamedElement implements IPluginContribution {
 	public static final String ATT_POINT = "point"; //$NON-NLS-1$
 
 	private String description;
-	protected IConfigurationElement configurationElement;
+	private IConfigurationElement configurationElement;
 	private IConfigurationElement template;
+	private Template bndTemplate;
+	private String id;
 
 	WizardElement(IConfigurationElement config) {
 		super(config.getAttribute(ATT_NAME));
 		this.configurationElement = config;
 	}
 
+	WizardElement(Template template, String id) {
+		super(template.getName());
+		this.bndTemplate = template;
+		this.id = id;
+	}
+
 	public Object createExecutableExtension() throws CoreException {
-		return configurationElement.createExecutableExtension(ATT_CLASS);
+		if (configurationElement != null) {
+			return configurationElement.createExecutableExtension(ATT_CLASS);
+		}
+		return new TemplatePluginContentWizard(bndTemplate);
 	}
 
 	public IConfigurationElement getConfigurationElement() {
@@ -56,11 +73,14 @@ public class WizardElement extends NamedElement implements IPluginContribution {
 	}
 
 	public String getDescription() {
-		if (description == null) {
+		if (description == null && configurationElement != null) {
 			IConfigurationElement[] children = configurationElement.getChildren(TAG_DESCRIPTION);
 			if (children.length > 0) {
 				description = expandDescription(children[0].getValue());
 			}
+		}
+		if (description == null && bndTemplate != null) {
+			description = bndTemplate.getShortDescription();
 		}
 		return description;
 	}
@@ -81,8 +101,21 @@ public class WizardElement extends NamedElement implements IPluginContribution {
 			if (value != null) {
 				return value.equalsIgnoreCase("true"); //$NON-NLS-1$
 			}
+		} else if (bndTemplate != null) {
+			return TemplateWizardHelper.FLAG_BND.equals(name);
 		}
 		return defaultValue;
+	}
+
+	public String getName() {
+		return getLabel();
+	}
+
+	public Version getVersion() {
+		if (bndTemplate != null) {
+			return bndTemplate.getVersion();
+		}
+		return Version.emptyVersion;
 	}
 
 	/**
@@ -138,15 +171,29 @@ public class WizardElement extends NamedElement implements IPluginContribution {
 	}
 
 	public String getID() {
-		return configurationElement.getAttribute(ATT_ID);
+		if (configurationElement != null) {
+			return configurationElement.getAttribute(ATT_ID);
+		}
+		return id;
 	}
 
 	public void setImage(Image image) {
 		this.image = image;
 	}
 
+	@Override
+	public Image getImage() {
+		if (this.image == null && bndTemplate != null) {
+			setImage(Adapters.adapt(bndTemplate, Image.class));
+		}
+		return this.image;
+	}
+
 	public String getTemplateId() {
-		return configurationElement.getAttribute(ATT_TEMPLATE);
+		if (configurationElement != null) {
+			return configurationElement.getAttribute(ATT_TEMPLATE);
+		}
+		return null;
 	}
 
 	public boolean isTemplate() {
@@ -154,7 +201,7 @@ public class WizardElement extends NamedElement implements IPluginContribution {
 	}
 
 	public IConfigurationElement getTemplateElement() {
-		if (template == null)
+		if (template == null && configurationElement != null)
 			template = findTemplateElement();
 		return template;
 	}
@@ -163,7 +210,8 @@ public class WizardElement extends NamedElement implements IPluginContribution {
 		String templateId = getTemplateId();
 		if (templateId == null)
 			return null;
-		IConfigurationElement[] templates = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.pde.ui.templates"); //$NON-NLS-1$
+		IConfigurationElement[] templates = Platform.getExtensionRegistry()
+				.getConfigurationElementsFor("org.eclipse.pde.ui.templates"); //$NON-NLS-1$
 		for (IConfigurationElement template : templates) {
 			String id = template.getAttribute("id"); //$NON-NLS-1$
 			if (id != null && id.equals(templateId))
@@ -201,6 +249,22 @@ public class WizardElement extends NamedElement implements IPluginContribution {
 			element.setImage(image);
 		}
 		return element;
+	}
+
+	public static WizardElement create(Template template, String id) {
+		String name = template.getName();
+		if (name == null || name.isBlank()) {
+			return null;
+		}
+		return new WizardElement(template, id);
+	}
+
+	@Override
+	public <T> T getAdapter(Class<T> adapter) {
+		if (adapter == Template.class) {
+			return adapter.cast(bndTemplate);
+		}
+		return null;
 	}
 
 }
