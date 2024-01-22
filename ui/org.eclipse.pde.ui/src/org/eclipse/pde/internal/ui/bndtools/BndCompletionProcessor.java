@@ -32,6 +32,7 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
+import org.eclipse.swt.widgets.Display;
 
 import aQute.bnd.help.Syntax;
 
@@ -52,8 +53,8 @@ public class BndCompletionProcessor implements IContentAssistProcessor {
 					ICompletionProposal[] found = proposals(prefix, offset);
 					if (found.length == 1) {
 						found[0].apply(document);
-						viewer.setSelectedRange(offset + (found[0].getDisplayString().length() - prefix.length() + 2),
-								0);
+						Display.getDefault().execute(() -> viewer.setSelectedRange(
+								offset + (found[0].getDisplayString().length() - prefix.length() + 2), 0));
 						return new ICompletionProposal[0];
 					}
 					return found;

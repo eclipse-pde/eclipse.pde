@@ -15,44 +15,38 @@
  *******************************************************************************/
 package org.eclipse.pde.bnd.ui.templating;
 
-import java.util.Map;
-
 import org.bndtools.templating.Category;
 import org.bndtools.templating.Template;
+import org.eclipse.core.runtime.Adapters;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.pde.bnd.ui.BoldStyler;
+import org.eclipse.pde.bnd.ui.Resources;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Version;
 
-public class RepoTemplateLabelProvider extends StyledCellLabelProvider {
+public class RepoTemplateLabelProvider extends StyledCellLabelProvider implements ILabelProvider {
 
-	private static final Image			IMG_FOLDER	= PlatformUI.getWorkbench()
-		.getSharedImages()
-		.getImage(ISharedImages.IMG_OBJ_FOLDER);
-
-	private final Map<Template, Image>	loadedImages;
-	private final Image					defaultIcon;
-
-	public RepoTemplateLabelProvider(Map<Template, Image> loadedImages, Image defaultIcon) {
-		this.loadedImages = loadedImages;
-		this.defaultIcon = defaultIcon;
-	}
+	private static final Image IMG_FOLDER = PlatformUI.getWorkbench().getSharedImages()
+			.getImage(ISharedImages.IMG_OBJ_FOLDER);
 
 	@Override
 	public void update(ViewerCell cell) {
 		Object element = cell.getElement();
-
-		if (element instanceof Category) {
-			Category cat = (Category) element;
+		Category cat = Adapters.adapt(element, Category.class);
+		if (cat != null) {
 			cell.setText(cat.getName());
 			cell.setImage(IMG_FOLDER);
-		} else if (element instanceof Template) {
-			Template template = (Template) element;
-
+			cell.setStyleRanges(new StyleRange[0]);
+			return;
+		}
+		Template template = Adapters.adapt(element, Template.class);
+		if (template != null) {
 			// Name
 			StyledString label = new StyledString(template.getName(), BoldStyler.INSTANCE_DEFAULT);
 
@@ -61,7 +55,7 @@ public class RepoTemplateLabelProvider extends StyledCellLabelProvider {
 			if (version != null) {
 				label.append(" ");
 				label.append(String.format("%d.%d.%d", version.getMajor(), version.getMinor(), version.getMicro()),
-					BoldStyler.INSTANCE_COUNTER);
+						BoldStyler.INSTANCE_COUNTER);
 				String q = version.getQualifier();
 				if (q != null && !q.isEmpty())
 					label.append("." + q, StyledString.COUNTER_STYLER);
@@ -70,19 +64,33 @@ public class RepoTemplateLabelProvider extends StyledCellLabelProvider {
 			String description = template.getShortDescription();
 			if (description != null) {
 				label.append(" \u2014 [", StyledString.QUALIFIER_STYLER)
-					.append(template.getShortDescription(), StyledString.QUALIFIER_STYLER)
-					.append("]", StyledString.QUALIFIER_STYLER);
+						.append(template.getShortDescription(), StyledString.QUALIFIER_STYLER)
+						.append("]", StyledString.QUALIFIER_STYLER);
 			}
 
 			cell.setText(label.toString());
 			cell.setStyleRanges(label.getStyleRanges());
 
-			Image image = loadedImages.get(template);
+			Image image = Adapters.adapt(template, Image.class);
 			if (image == null)
-				cell.setImage(defaultIcon);
+				cell.setImage(Resources.getImage("/icons/template.gif"));
 			else
 				cell.setImage(image);
+			return;
 		}
+		cell.setStyleRanges(new StyleRange[0]);
+		cell.setText(getText(element));
+		cell.setImage(getImage(element));
+	}
+
+	@Override
+	public Image getImage(Object element) {
+		return null;
+	}
+
+	@Override
+	public String getText(Object element) {
+		return null;
 	}
 
 }

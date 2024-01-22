@@ -1,5 +1,44 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.pde.ui" version="2">
+    <resource path="src/org/eclipse/pde/internal/ui/editor/EmptyOutlinePage.java" type="org.eclipse.pde.internal.ui.editor.EmptyOutlinePage">
+        <filter id="574668824">
+            <message_arguments>
+                <message_argument value="ISortableContentOutlinePage"/>
+                <message_argument value="EmptyOutlinePage"/>
+                <message_argument value="IPage"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/internal/ui/editor/IContextPart.java" type="org.eclipse.pde.internal.ui.editor.IContextPart">
+        <filter comment="only internal API" id="571473929">
+            <message_arguments>
+                <message_argument value="IModelChangedListener"/>
+                <message_argument value="IContextPart"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/internal/ui/editor/PDEProjectionViewer.java" type="org.eclipse.pde.internal.ui.editor.PDEProjectionViewer">
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="ProjectionViewer"/>
+                <message_argument value="PDEProjectionViewer"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/internal/ui/editor/bnd/BndModel.java" type="org.eclipse.pde.internal.ui.editor.bnd.BndModel">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IBaseModel"/>
+                <message_argument value="BndModel"/>
+            </message_arguments>
+        </filter>
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IModelChangeProvider"/>
+                <message_argument value="BndModel"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/pde/internal/ui/editor/category/SiteBundleAdapter.java" type="org.eclipse.pde.internal.ui.editor.category.SiteBundleAdapter">
         <filter comment="PDE UI may use restricted code from PDE Core" id="574619656">
             <message_arguments>
@@ -8,11 +47,27 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/pde/internal/ui/editor/category/SiteCategoryDefinitionAdapter.java" type="org.eclipse.pde.internal.ui.editor.category.SiteCategoryDefinitionAdapter">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IWritable"/>
+                <message_argument value="SiteCategoryDefinitionAdapter"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/pde/internal/ui/editor/category/SiteFeatureAdapter.java" type="org.eclipse.pde.internal.ui.editor.category.SiteFeatureAdapter">
         <filter comment="PDE UI may use restricted code from PDE Core" id="574619656">
             <message_arguments>
                 <message_argument value="IWritable"/>
                 <message_argument value="SiteFeatureAdapter"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/internal/ui/editor/plugin/JavaAttributeWizardPage.java" type="org.eclipse.pde.internal.ui.editor.plugin.JavaAttributeWizardPage">
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="NewClassWizardPage"/>
+                <message_argument value="JavaAttributeWizardPage"/>
             </message_arguments>
         </filter>
     </resource>
@@ -29,6 +84,48 @@
             <message_arguments>
                 <message_argument value="IWritable"/>
                 <message_argument value="SiteFeatureAdapter"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/internal/ui/editor/text/PDEMarkerAnnotationModel.java" type="org.eclipse.pde.internal.ui.editor.text.PDEMarkerAnnotationModel">
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="ResourceMarkerAnnotationModel"/>
+                <message_argument value="PDEMarkerAnnotationModel"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/internal/ui/launcher/PluginBlock.java" type="org.eclipse.pde.internal.ui.launcher.PluginBlock">
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="JUnitLaunchConfigurationDelegate"/>
+                <message_argument value="PluginBlock"/>
+                <message_argument value="getRequiredJunitRuntimePlugins(ILaunchConfiguration)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/internal/ui/refactoring/RenamePluginProcessor.java" type="org.eclipse.pde.internal.ui.refactoring.RenamePluginProcessor">
+        <filter id="572522506">
+            <message_arguments>
+                <message_argument value="RenameResourceDescriptor"/>
+                <message_argument value="RenamePluginProcessor"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/internal/ui/search/dependencies/DependencyExtentSearchResultPage.java" type="org.eclipse.pde.internal.ui.search.dependencies.DependencyExtentSearchResultPage$LabelProvider">
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="JavaElementLabelProvider"/>
+                <message_argument value="LabelProvider"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/internal/ui/shared/target/EditTargetContainerPage.java" type="org.eclipse.pde.internal.ui.shared.target.EditTargetContainerPage">
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="ITargetLocation"/>
+                <message_argument value="EditTargetContainerPage"/>
+                <message_argument value="getLocation(boolean)"/>
             </message_arguments>
         </filter>
     </resource>
@@ -63,6 +160,30 @@
                 <message_argument value="TeamUI"/>
                 <message_argument value="RepositoryImportWizard"/>
                 <message_argument value="getPages(String)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/internal/ui/wizards/product/NewProductFileWizard.java" type="org.eclipse.pde.internal.ui.wizards.product.NewProductFileWizard">
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="BasicNewResourceWizard"/>
+                <message_argument value="NewProductFileWizard"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/internal/ui/wizards/target/MoveTargetDefinitionWizard.java" type="org.eclipse.pde.internal.ui.wizards.target.MoveTargetDefinitionWizard">
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="BasicNewResourceWizard"/>
+                <message_argument value="MoveTargetDefinitionWizard"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/internal/ui/wizards/target/NewTargetDefinitionWizard.java" type="org.eclipse.pde.internal.ui.wizards.target.NewTargetDefinitionWizard">
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="BasicNewResourceWizard"/>
+                <message_argument value="NewTargetDefinitionWizard"/>
             </message_arguments>
         </filter>
     </resource>

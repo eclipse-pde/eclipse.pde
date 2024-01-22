@@ -84,6 +84,12 @@
                id="org.eclipse.pde.ui.TargetPlatformPreferencePage">
          </keywordReference>
       </page>
+      <page
+            name="%preferences.bnd.templaterepo.name"
+            category="org.eclipse.pde.ui.MainPreferencePage"
+            class="org.eclipse.pde.bnd.ui.preferences.ReposPreferencePage"
+            id="org.eclipse.pde.bnd.ui.preferences.ReposPreferencePage">
+      </page>
    </extension>
    <extension
    		point="org.eclipse.ui.keywords">

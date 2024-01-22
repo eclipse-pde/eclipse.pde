@@ -17,21 +17,36 @@ package org.eclipse.pde.internal.ui.wizards.plugin;
 
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+
+import org.bndtools.templating.Template;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.IWizardNode;
+import org.eclipse.pde.bnd.ui.templating.RepoTemplateLabelProvider;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.ElementList;
+import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.pde.internal.ui.wizards.WizardElement;
 import org.eclipse.pde.internal.ui.wizards.WizardListSelectionPage;
 import org.eclipse.pde.internal.ui.wizards.WizardNode;
 import org.eclipse.pde.ui.IBasePluginWizard;
 import org.eclipse.pde.ui.IPluginContentWizard;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -41,6 +56,7 @@ public class TemplateListSelectionPage extends WizardListSelectionPage {
 	private final ContentPage fContentPage;
 	private Button fUseTemplate;
 	private String fInitialTemplateId;
+	private Map<Template, CompletableFuture<String>> templateTextLoadings = new HashMap<>();
 
 	class WizardFilter extends ViewerFilter {
 		@Override
@@ -58,13 +74,20 @@ public class TemplateListSelectionPage extends WizardListSelectionPage {
 			boolean javaFlag = welement.getFlag(TemplateWizardHelper.FLAG_JAVA, true);
 			boolean rcpFlag = welement.getFlag(TemplateWizardHelper.FLAG_RCP, false);
 			boolean osgiFlag = welement.getFlag(TemplateWizardHelper.FLAG_OSGI, false);
-			boolean bndFlag = osgiFlag && javaFlag
-					&& welement.getFlag(TemplateWizardHelper.FLAG_BND, false);
 			boolean activatorFlag = welement.getFlag(TemplateWizardHelper.FLAG_ACTIVATOR, false);
+			boolean requireBnd = welement.getFlag(TemplateWizardHelper.FLAG_BND, false);
 
 			//filter out wizards from disabled activities
 			if (!active)
 				return false;
+			// filter out items that require bnd but not having automatic
+			// enabled
+			if (automatic) {
+				return !simple && requireBnd;
+			} else if (requireBnd) {
+				// if BND is required this can't work otherwise!
+				return false;
+			}
 			//osgi projects need java
 			if (osgi && simple)
 				return false;
@@ -80,11 +103,6 @@ public class TemplateListSelectionPage extends WizardListSelectionPage {
 			//filter out non-RCP wizard if RCP option is selected
 			if (!osgi && (rcp != rcpFlag))
 				return false;
-			// filter out items that require bnd but not having automatic
-			// enabled
-			if (automatic && !bndFlag) {
-				return false;
-			}
 			//filter out non-UI wizards if UI option is selected for rcp and osgi projects
 			return (osgi == osgiFlag && ((!osgiFlag && !rcpFlag) || ui == uiFlag));
 		}
@@ -107,6 +125,17 @@ public class TemplateListSelectionPage extends WizardListSelectionPage {
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
+		wizardSelectionViewer.setLabelProvider(new RepoTemplateLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				return ListUtil.TABLE_LABEL_PROVIDER.getText(element);
+			}
+
+			@Override
+			public Image getImage(Object element) {
+				return ListUtil.TABLE_LABEL_PROVIDER.getImage(element);
+			}
+		});
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.NEW_PROJECT_CODE_GEN_PAGE);
 	}
 
@@ -148,6 +177,39 @@ public class TemplateListSelectionPage extends WizardListSelectionPage {
 				break;
 			}
 		}
+	}
+
+	@Override
+	protected String getWizardDescription(WizardElement element) {
+		Template template = Adapters.adapt(element, Template.class);
+		if (template != null) {
+			URI helpContent = template.getHelpContent();
+			if (helpContent != null) {
+				CompletableFuture<String> future = templateTextLoadings.computeIfAbsent(template, tmpl -> {
+					CompletableFuture<String> f = CompletableFuture.supplyAsync(() -> {
+						try (InputStream stream = helpContent.toURL().openStream()) {
+							return new String(stream.readAllBytes(), StandardCharsets.UTF_8);
+						} catch (IOException e) {
+							e.printStackTrace();
+							return PDEUIMessages.BaseWizardSelectionPage_noDesc;
+						}
+					});
+					f.thenAcceptAsync(helpText -> {
+						if (wizardSelectionViewer.getStructuredSelection().getFirstElement() == element) {
+							setDescriptionText(helpText);
+						}
+					}, wizardSelectionViewer.getControl().getDisplay());
+					return f;
+				});
+				try {
+					return future.getNow(PDEUIMessages.BaseWizardSelectionPage_loadingDesc);
+				} catch (CancellationException | CompletionException e) {
+					// fall through to show no help ...
+				}
+			}
+			return PDEUIMessages.BaseWizardSelectionPage_noDesc;
+		}
+		return super.getWizardDescription(element);
 	}
 
 	@Override

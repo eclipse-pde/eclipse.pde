@@ -14,7 +14,19 @@
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.SortedMap;
+import java.util.stream.Collectors;
 
+import org.bndtools.templating.Template;
+import org.bndtools.templating.TemplateLoader;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -23,8 +35,12 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -37,6 +53,12 @@ import org.eclipse.pde.internal.ui.wizards.WizardElement;
 import org.eclipse.pde.ui.IPluginContentWizard;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
+import org.osgi.framework.Constants;
+import org.osgi.framework.ServiceReference;
+import org.osgi.util.promise.Promise;
+import org.osgi.util.tracker.ServiceTracker;
+
+import aQute.bnd.osgi.Processor;
 
 public class NewPluginProjectWizard extends NewWizard implements IExecutableExtension {
 	public static final String PLUGIN_POINT = "pluginContent"; //$NON-NLS-1$
@@ -176,6 +198,66 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 					}
 				}
 			}
+		}
+		try {
+			IWizardContainer container = getContainer();
+			if (container == null) {
+				// can happen in tests or when the wizard is not setup
+				// properly...
+				return wizards;
+			}
+			container.run(true, true, new IRunnableWithProgress() {
+
+				@Override
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					ServiceTracker<TemplateLoader, TemplateLoader> tracker = new ServiceTracker<>(
+							PDEPlugin.getDefault().getBundle().getBundleContext(), TemplateLoader.class, null);
+					tracker.open();
+					try {
+						SortedMap<ServiceReference<TemplateLoader>, TemplateLoader> tracked = tracker.getTracked();
+						SubMonitor subMonitor = SubMonitor.convert(monitor, PDEUIMessages.NewPluginProjectWizard_0,
+								tracked.size());
+						Map<String, List<WizardElement>> templatesByCategory = new HashMap<>();
+						for (Entry<ServiceReference<TemplateLoader>, TemplateLoader> entry : tracked.entrySet()) {
+							ServiceReference<TemplateLoader> reference = entry.getKey();
+							TemplateLoader templateLoader = entry.getValue();
+							String label = (String) reference.getProperty(Constants.SERVICE_DESCRIPTION);
+							if (label == null) {
+								label = (String) reference.getProperty("component.name"); //$NON-NLS-1$
+							}
+							if (label == null) {
+								label = "Template Loader  " + templateLoader.getClass().getSimpleName(); //$NON-NLS-1$
+							}
+							subMonitor.subTask(label);
+							Promise<? extends Collection<Template>> templates = templateLoader.findTemplates("project", //$NON-NLS-1$
+									new Processor());
+							Collection<Template> loadedTemplates = templates.getValue();
+							int templ = 0;
+							for (Template template : loadedTemplates) {
+								WizardElement element = WizardElement.create(template,
+										templateLoader.getClass().getName() + "." + (templ++)); //$NON-NLS-1$
+								if (element != null) {
+									templatesByCategory.computeIfAbsent(
+											Objects.requireNonNullElse(template.getCategory(), ""), //$NON-NLS-1$
+											nil -> new ArrayList<>()).add(element);
+								}
+							}
+						}
+						for (List<WizardElement> list : templatesByCategory.values()) {
+							list.stream().collect(Collectors.groupingBy(WizardElement::getName)).values().stream()
+									.map(elements -> elements.stream()
+											.max(Comparator.comparing(WizardElement::getVersion)).orElse(null))
+									.filter(Objects::nonNull).forEach(wizards::add);
+						}
+					} finally {
+						tracker.close();
+					}
+				}
+			});
+		} catch (InvocationTargetException e) {
+			PDEPlugin.getDefault().getLog().error("Loading Templates from OSGi registry failed", e); //$NON-NLS-1$
+		} catch (InterruptedException e) {
+			// canceled
 		}
 		return wizards;
 	}
