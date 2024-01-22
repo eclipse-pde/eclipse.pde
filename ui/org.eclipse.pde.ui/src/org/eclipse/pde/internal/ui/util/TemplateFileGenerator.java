@@ -423,7 +423,7 @@ public class TemplateFileGenerator implements IVariableProvider {
 	 *         <samp>null </samp> if none found.
 	 */
 
-	protected IFolder getSourceFolder(IProgressMonitor monitor) throws CoreException {
+	protected IFolder getSourceFolder(IProgressMonitor monitor) {
 		IFolder sourceFolder = null;
 
 		try {

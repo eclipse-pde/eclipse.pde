@@ -60,9 +60,17 @@ public abstract class PDEMoveParticipant extends MoveParticipant implements ISha
 
 	protected abstract boolean isInterestingForExtensions();
 
+	/**
+	 * @throws CoreException
+	 *             may be thrown by overrides
+	 */
 	protected void addChange(CompositeChange result, IFile file, IProgressMonitor pm) throws CoreException {
 	}
 
+	/**
+	 * @throws CoreException
+	 *             may be thrown by overrides
+	 */
 	protected void addChange(CompositeChange result, IProgressMonitor pm) throws CoreException {
 	}
 

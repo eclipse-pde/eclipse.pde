@@ -111,7 +111,7 @@ public class UseScanParser {
 	 *            {@link IReference#T_METHOD_REFERENCE} or
 	 *            {@link IReference#T_FIELD_REFERENCE}
 	 */
-	protected void processElement(String uri, String localName, String name, Attributes attributes, int type) throws SAXException {
+	protected void processElement(String uri, String localName, String name, Attributes attributes, int type) {
 		if (name != null) {
 			switch (name) {
 				case IApiXmlConstants.REFERENCES -> {

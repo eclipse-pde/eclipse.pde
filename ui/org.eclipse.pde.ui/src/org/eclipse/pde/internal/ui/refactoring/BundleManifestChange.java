@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
@@ -62,7 +61,7 @@ public class BundleManifestChange {
 			bundle.getModel().addModelChangedListener(listener);
 			addPackage(bundle, change);
 			return createChange(listener, file);
-		} catch (CoreException | MalformedTreeException | BadLocationException e) {
+		} catch (CoreException | MalformedTreeException e) {
 		} finally {
 			FileBuffers.getTextFileBufferManager().disconnect(file.getFullPath(), LocationKind.NORMALIZE, monitor);
 		}
@@ -100,7 +99,7 @@ public class BundleManifestChange {
 					change.setMovedElements(list.toArray(new PDEManifestElement[list.size()]));
 				return change;
 			}
-		} catch (CoreException | MalformedTreeException | BadLocationException e) {
+		} catch (CoreException | MalformedTreeException e) {
 		} finally {
 			FileBuffers.getTextFileBufferManager().disconnect(file.getFullPath(), LocationKind.NORMALIZE, monitor);
 		}
@@ -144,7 +143,7 @@ public class BundleManifestChange {
 				}
 			}
 			return createChange(listener, file);
-		} catch (CoreException | MalformedTreeException | BadLocationException e) {
+		} catch (CoreException | MalformedTreeException e) {
 		} finally {
 			FileBuffers.getTextFileBufferManager().disconnect(file.getFullPath(), LocationKind.NORMALIZE, monitor);
 		}
@@ -232,7 +231,7 @@ public class BundleManifestChange {
 	/**
 	 * @return the bundle for the given {@link IFile}
 	 */
-	public static Bundle getBundle(IFile file, IProgressMonitor monitor) throws CoreException, MalformedTreeException, BadLocationException {
+	public static Bundle getBundle(IFile file, IProgressMonitor monitor) throws CoreException, MalformedTreeException {
 		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 		manager.connect(file.getFullPath(), LocationKind.NORMALIZE, monitor);
 

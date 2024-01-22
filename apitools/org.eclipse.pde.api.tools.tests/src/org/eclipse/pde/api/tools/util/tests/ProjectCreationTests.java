@@ -19,8 +19,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -85,15 +83,14 @@ public class ProjectCreationTests extends AbstractApiTest {
 	 * Tests importing the java source for the Javadoc tag update tests
 	 */
 	@Test
-	public void testImportJavadocTestSource() throws InvocationTargetException, IOException, JavaModelException {
+	public void testImportJavadocTestSource() throws JavaModelException {
 		File dest = new File(JAVADOC_SRC_DIR);
 		assertTrue("the source dir must exist", dest.exists()); //$NON-NLS-1$
 		assertTrue("the source dir must be a directory", dest.isDirectory()); //$NON-NLS-1$
 		IJavaProject project = getTestingJavaProject(TESTING_PROJECT_NAME);
 		IPackageFragmentRoot srcroot = project.getPackageFragmentRoot(ProjectUtils.SRC_FOLDER);
 		assertNotNull("the srcroot for the test java project must not be null", srcroot); //$NON-NLS-1$
-		FileUtils.importFilesFromDirectory(dest, project.getPath().append(srcroot.getPath()).append("javadoc"), //$NON-NLS-1$
-				new NullProgressMonitor());
+		FileUtils.importFilesFromDirectory(dest, project.getPath().append(srcroot.getPath()).append("javadoc")); //$NON-NLS-1$
 		// try to look up a file to test if it worked
 		IType type = project.findType("javadoc.JavadocTestClass1", new NullProgressMonitor()); //$NON-NLS-1$
 		assertNotNull("the JavadocTestClass1 type should exist in the javadoc package", type); //$NON-NLS-1$
@@ -103,7 +100,7 @@ public class ProjectCreationTests extends AbstractApiTest {
 	 * Tests importing the java source for the javadoc tag reading tests
 	 */
 	@Test
-	public void testImportClassesTestSource() throws InvocationTargetException, IOException {
+	public void testImportClassesTestSource() {
 		File dest = new File(JAVADOC_READ_SRC_DIR);
 		assertTrue("the source dir must exist", dest.exists()); //$NON-NLS-1$
 		assertTrue("the source dir must be a directory", dest.isDirectory()); //$NON-NLS-1$
@@ -111,8 +108,7 @@ public class ProjectCreationTests extends AbstractApiTest {
 		IPackageFragmentRoot srcroot = project.getPackageFragmentRoot(ProjectUtils.SRC_FOLDER);
 		assertNotNull("the srcroot for the test java project must not be null", srcroot); //$NON-NLS-1$
 		FileUtils.importFilesFromDirectory(dest,
-				project.getPath().append(srcroot.getPath()).append("a").append("b").append("c"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				new NullProgressMonitor());
+				project.getPath().append(srcroot.getPath()).append("a").append("b").append("c")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	/**

@@ -32,7 +32,6 @@ import org.eclipse.compare.structuremergeviewer.StructureRootNode;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -90,7 +89,7 @@ public class ManifestStructureCreator extends StructureCreator {
 		return null;
 	}
 
-	private void parseManifest(DocumentRangeNode root, IDocument doc, IProgressMonitor monitor) throws IOException {
+	private void parseManifest(DocumentRangeNode root, IDocument doc, IProgressMonitor monitor) {
 		int lineStart = 0;
 		int[] args = new int[2];
 		args[0] = 0; // here we return the line number
@@ -222,14 +221,7 @@ public class ManifestStructureCreator extends StructureCreator {
 				return isEditable;
 			}
 		};
-		try {
-			parseManifest(rootNode, document, monitor);
-		} catch (IOException ex) {
-			if (adapter != null)
-				adapter.disconnect(input);
-			throw new CoreException(Status.error(PDEUIMessages.ManifestStructureCreator_errorMessage, ex));
-		}
-
+		parseManifest(rootNode, document, monitor);
 		return rootNode;
 	}
 

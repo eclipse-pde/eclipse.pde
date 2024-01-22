@@ -109,8 +109,6 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 			public void execute(IProgressMonitor monitor) {
 				try {
 					runOperation(mode, monitor);
-				} catch (CoreException | InvocationTargetException e) {
-					PDEPlugin.logException(e);
 				} finally {
 					monitor.done();
 				}
@@ -194,7 +192,7 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 		}
 	}
 
-	private void runOperation(int mode, IProgressMonitor monitor) throws CoreException, InvocationTargetException {
+	private void runOperation(int mode, IProgressMonitor monitor) {
 		ISiteFeature[] siteFeatures;
 		if (mode == SELECTED_FEATURES) {
 			siteFeatures = fSiteFeatures;

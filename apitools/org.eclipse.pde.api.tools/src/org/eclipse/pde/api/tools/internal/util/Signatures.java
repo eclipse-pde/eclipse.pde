@@ -186,7 +186,7 @@ public final class Signatures {
 	 *
 	 * @return the de-qualified method signature
 	 */
-	public static String getMethodSignature(IMethodDescriptor method, boolean includereturn) throws CoreException {
+	public static String getMethodSignature(IMethodDescriptor method, boolean includereturn) {
 		StringBuilder buffer = new StringBuilder();
 		String methodsig = method.getSignature();
 		String methodname = getMethodName(method);
@@ -224,7 +224,7 @@ public final class Signatures {
 	 * @return the name for the method. If the method is a constructor the
 	 *         simple name of the enclosing type is substituted.
 	 */
-	public static String getMethodName(IMethodDescriptor method) throws CoreException {
+	public static String getMethodName(IMethodDescriptor method) {
 		String mname = method.getName();
 		if ("<init>".equals(method.getName())) { //$NON-NLS-1$
 			IReferenceTypeDescriptor type = method.getEnclosingType();

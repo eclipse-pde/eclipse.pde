@@ -19,14 +19,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.pde.api.tools.internal.ApiFilterStore;
@@ -71,7 +68,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 		IJavaProject project = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME);
 		IPackageFragmentRoot srcroot = project.findPackageFragmentRoot(project.getProject().getFullPath().append("src")); //$NON-NLS-1$
 		assertNotNull("the default src root must exist", srcroot); //$NON-NLS-1$
-		FileUtils.importFileFromDirectory(projectSrc, srcroot.getPath(), new NullProgressMonitor());
+		FileUtils.importFileFromDirectory(projectSrc, srcroot.getPath());
 
 		// Import the test .api_filters file
 		File xmlsrc = XML_LOC.append(".api_filters").toFile(); //$NON-NLS-1$
@@ -80,7 +77,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 		assertNotNull("no project", project); //$NON-NLS-1$
 		IProject project2 = project.getProject();
 		IPath settings = project2.getFullPath().append(".settings"); //$NON-NLS-1$
-		FileUtils.importFileFromDirectory(xmlsrc, settings, new NullProgressMonitor());
+		FileUtils.importFileFromDirectory(xmlsrc, settings);
 		IResource filters = project2.findMember("/.settings/.api_filters", true); //$NON-NLS-1$
 		assertNotNull("the .api_filters file must exist in the testing project", filters); //$NON-NLS-1$
 	}
@@ -242,10 +239,10 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 	 * Tests that a filter store will not be annotated from a bundle
 	 */
 	@Test
-	public void testAnnotateStoreFromBundle() throws InvocationTargetException, IOException, CoreException {
+	public void testAnnotateStoreFromBundle() throws CoreException {
 		IProject project = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME).getProject();
-		FileUtils.importFileFromDirectory(PLUGIN_LOC.append("component_c_1.0.0.jar").toFile(), project.getFullPath(), //$NON-NLS-1$
-				new NullProgressMonitor());
+		FileUtils.importFileFromDirectory(PLUGIN_LOC.append("component_c_1.0.0.jar").toFile(), project.getFullPath()); //$NON-NLS-1$
+
 		IResource res = project.findMember("component_c_1.0.0.jar"); //$NON-NLS-1$
 		assertNotNull("the jar should exist in the project dir", res); //$NON-NLS-1$
 		IResource jar = project.findMember("component_c_1.0.0.jar"); //$NON-NLS-1$

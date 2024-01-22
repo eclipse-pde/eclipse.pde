@@ -141,7 +141,8 @@ public final class ApiSearchEngine {
 	 * Runs the given list of references through the search requestor to
 	 * determine if they should be kept or not
 	 */
-	List<IReference> acceptReferences(IApiSearchRequestor requestor, IApiType type, List<IReference> references, IProgressMonitor monitor) throws CoreException {
+	List<IReference> acceptReferences(IApiSearchRequestor requestor, IApiType type, List<IReference> references,
+			IProgressMonitor monitor) {
 		ArrayList<IReference> refs = new ArrayList<>();
 		IReference ref = null;
 		SubMonitor localmonitor = SubMonitor.convert(monitor, references.size());

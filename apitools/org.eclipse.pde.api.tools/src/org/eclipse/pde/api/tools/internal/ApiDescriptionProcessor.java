@@ -58,7 +58,6 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
-import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -166,12 +165,10 @@ public class ApiDescriptionProcessor {
 						type = typeInProject;
 					}
 					if (type != null) {
-						processTagUpdates(type, refType, apiDescription, members, fCollector);
+						processTagUpdates(type, apiDescription, members, fCollector);
 					}
 				} catch (CoreException e) {
 					addStatus(e.getStatus());
-				} catch (BadLocationException e) {
-					addStatus(Status.error(ScannerMessages.ComponentXMLScanner_0 + element.toString(), e));
 				}
 				members.clear();
 			}
@@ -499,7 +496,8 @@ public class ApiDescriptionProcessor {
 	 * @param project the java project to update
 	 * @param componentxml the component.xml file to update from
 	 */
-	public static void collectTagUpdates(IJavaProject project, File componentxml, Map<IFile, Set<TextEdit>> collector) throws CoreException, IOException {
+	public static void collectTagUpdates(IJavaProject project, File componentxml, Map<IFile, Set<TextEdit>> collector)
+			throws CoreException {
 		IApiDescription description = new ApiDescription(null);
 		annotateApiSettings(project, description, serializeComponentXml(componentxml));
 		// visit the types
@@ -518,7 +516,8 @@ public class ApiDescriptionProcessor {
 	 *
 	 * @param members members with API annotations
 	 */
-	static void processTagUpdates(IType type, IReferenceTypeDescriptor desc, IApiDescription description, List<IElementDescriptor> members, Map<IFile, Set<TextEdit>> collector) throws CoreException, BadLocationException {
+	static void processTagUpdates(IType type, IApiDescription description,
+			List<IElementDescriptor> members, Map<IFile, Set<TextEdit>> collector) throws CoreException {
 		ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
 		ICompilationUnit cunit = type.getCompilationUnit();
 		if (cunit != null) {

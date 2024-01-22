@@ -122,7 +122,11 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	}
 
 	/**
-	 * Function used to modify Manifest just before it is written out (after all project artifacts have been created.
+	 * Function used to modify Manifest just before it is written out (after all
+	 * project artifacts have been created.
+	 *
+	 * @throws CoreException
+	 *             may be thrown by overrides
 	 */
 	protected void adjustManifests(IProgressMonitor monitor, IProject project, IPluginBase bundle) throws CoreException {
 		// if libraries are exported, compute export package (173393)
@@ -186,6 +190,15 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		}
 	}
 
+	/**
+	 * @throws CoreException
+	 *             may be thrown by overrides
+	 * @throws JavaModelException
+	 *             may be thrown by overrides
+	 * @throws InvocationTargetException
+	 *             may be thrown by overrides
+	 * @throws InterruptedException may be thrown by overrides
+	 */
 	protected void createContents(IProgressMonitor monitor, IProject project) throws CoreException, JavaModelException, InvocationTargetException, InterruptedException {
 	}
 
