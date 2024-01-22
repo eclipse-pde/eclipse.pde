@@ -72,7 +72,7 @@ public class PackagerTask extends Task {
 	 * @param archivesFormat an ampersand separated list of configuration (for example win32, win32 - zip, x86 & macoxs, carbon, ppc - tar).
 	 * @since 3.0
 	 */
-	public void setArchivesFormat(String archivesFormat) throws CoreException {
+	public void setArchivesFormat(String archivesFormat) {
 		generator.setArchivesFormat(archivesFormat);
 	}
 

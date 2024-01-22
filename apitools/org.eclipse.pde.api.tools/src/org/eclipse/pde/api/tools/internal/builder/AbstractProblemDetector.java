@@ -721,7 +721,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 				if (reference.getLineNumber() > -1) {
 					try {
 						int offset = document.getLineOffset(reference.getLineNumber());
-						method = quickLookup(jtype, document, reference, offset);
+						method = quickLookup(jtype, offset);
 					} catch (BadLocationException ble) {
 						// ignore
 					}
@@ -759,7 +759,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * Performs a quick look-up using the offset into the the
 	 * {@link ICompilationUnit}
 	 */
-	protected IMethod quickLookup(final IType jtype, IDocument document, IReference reference, int offset) throws JavaModelException {
+	protected IMethod quickLookup(final IType jtype, int offset) throws JavaModelException {
 		if (offset > -1) {
 			IJavaElement element = jtype.getCompilationUnit().getElementAt(offset);
 			if (element != null) {
@@ -900,7 +900,8 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * @param reference provides line number
 	 * @return method name range
 	 */
-	protected Position getMethodNameRange(boolean isContructor, String name, IDocument document, IReference reference) throws CoreException, BadLocationException {
+	protected Position getMethodNameRange(boolean isContructor, String name, IDocument document, IReference reference)
+			throws BadLocationException {
 		int linenumber = reference.getLineNumber();
 		if (linenumber > 0) {
 			// line number are 1-based for the reference, but 0-based for the

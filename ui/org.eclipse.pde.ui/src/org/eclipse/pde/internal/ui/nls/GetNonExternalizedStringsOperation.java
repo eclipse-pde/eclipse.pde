@@ -140,7 +140,7 @@ public class GetNonExternalizedStringsOperation implements IRunnableWithProgress
 		}, monitor);
 	}
 
-	private void inspectManifest(IBundlePluginModelBase model, IProgressMonitor monitor) throws CoreException {
+	private void inspectManifest(IBundlePluginModelBase model, IProgressMonitor monitor) {
 		IFile manifestFile = (IFile) model.getBundleModel().getUnderlyingResource();
 		IBundle bundle = model.getBundleModel().getBundle();
 		for (String translatableHeader : ICoreConstants.TRANSLATABLE_HEADERS) {
@@ -150,7 +150,7 @@ public class GetNonExternalizedStringsOperation implements IRunnableWithProgress
 		}
 	}
 
-	private void inspectXML(IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
+	private void inspectXML(IPluginModelBase model, IProgressMonitor monitor) {
 		IFile file;
 		if (model instanceof IBundlePluginModelBase) {
 			ISharedExtensionsModel extModel = ((IBundlePluginModelBase) model).getExtensionsModel();

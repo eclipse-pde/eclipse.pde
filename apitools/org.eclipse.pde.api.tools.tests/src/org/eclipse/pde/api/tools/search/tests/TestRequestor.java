@@ -143,7 +143,7 @@ public class TestRequestor implements IApiSearchRequestor {
 	 * Checks the given {@link IApiComponent} to see if we allow it to appear in the scope or not
 	 * @return true if the given component should be allowed in the scope false otherwise
 	 */
-	private boolean acceptComponent0(IApiComponent component) throws CoreException {
+	private boolean acceptComponent0(IApiComponent component) {
 		return component != null &&
 				!this.excluded.contains(component.getSymbolicName()) &&
 				isApiComponent(component);

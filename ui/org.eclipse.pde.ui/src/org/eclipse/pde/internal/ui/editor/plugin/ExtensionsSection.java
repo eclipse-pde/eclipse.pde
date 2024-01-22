@@ -1818,7 +1818,8 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		}
 	}
 
-	private void doDropMove(IPluginExtension targetExtensionObject, IPluginExtension sourceExtensionObject, int targetLocation) throws CoreException {
+	private void doDropMove(IPluginExtension targetExtensionObject, IPluginExtension sourceExtensionObject,
+			int targetLocation) {
 		// Get the model
 		IPluginModelBase model = getPluginModelBase();
 		// Ensure the model is defined

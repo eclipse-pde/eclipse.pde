@@ -14,7 +14,6 @@
 package org.eclipse.pde.api.tools.ui.internal.wizards;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -360,7 +359,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 				}
 				projectchange.add(change);
 			}
-		} catch (CoreException | IOException e) {
+		} catch (CoreException e) {
 			ApiUIPlugin.log(e);
 		}
 	}

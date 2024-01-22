@@ -18,7 +18,6 @@ package org.eclipse.pde.internal.core.exports;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -130,8 +129,6 @@ public class ProductExportOperation extends FeatureExportOperation {
 			doExport(featureID, null, fFeatureLocation, configurations, subMonitor.split(8));
 		} catch (IOException e) {
 			PDECore.log(e);
-		} catch (InvocationTargetException e) {
-			return Status.error(PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, e.getTargetException());
 		} catch (CoreException e) {
 			if (errorMessage != null) {
 				return parseErrorMessage(e);

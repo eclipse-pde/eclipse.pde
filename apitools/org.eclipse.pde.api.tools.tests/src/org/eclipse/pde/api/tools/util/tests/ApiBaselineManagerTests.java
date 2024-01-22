@@ -19,8 +19,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -299,9 +297,9 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 * @param sourcename the name of the source file without an extension e.g.
 	 *            TestClass1
 	 */
-	public void assertTestSource(IPackageFragmentRoot root, String packagename, String sourcename) throws InvocationTargetException, IOException {
+	public void assertTestSource(IPackageFragmentRoot root, String packagename, String sourcename) {
 		IPackageFragment fragment = root.getPackageFragment(packagename);
-		FileUtils.importFileFromDirectory(SRC_LOC.append(sourcename + ".java").toFile(), fragment.getPath(), new NullProgressMonitor()); //$NON-NLS-1$
+		FileUtils.importFileFromDirectory(SRC_LOC.append(sourcename + ".java").toFile(), fragment.getPath()); //$NON-NLS-1$
 	}
 
 	/**
@@ -334,14 +332,14 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 *            imported to
 	 * @param libname the name of the library
 	 */
-	public IFolder assertTestLibrary(IJavaProject project, IPath folderpath, String libname) throws CoreException, InvocationTargetException, IOException {
+	public IFolder assertTestLibrary(IJavaProject project, IPath folderpath, String libname) throws CoreException {
 		IFolder folder = null;
 		// import library
 		folder = project.getProject().getFolder(folderpath);
 		if (!folder.exists()) {
 			folder.create(false, true, null);
 		}
-		FileUtils.importFileFromDirectory(PLUGIN_LOC.append(libname).toFile(), folder.getFullPath(), null);
+		FileUtils.importFileFromDirectory(PLUGIN_LOC.append(libname).toFile(), folder.getFullPath());
 		IPath libPath = folder.getFullPath().append(libname);
 
 		// add to manifest bundle classpath
@@ -468,9 +466,8 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 		assertNotNull("The testing project must exist", project); //$NON-NLS-1$
 		IPackageFragmentRoot root = project.findPackageFragmentRoot(IPath.fromOSString(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute());
 		assertNotNull("the 'src' package fragment root must exist", root); //$NON-NLS-1$
-		NullProgressMonitor monitor = new NullProgressMonitor();
 		IPackageFragment fragment = root.getPackageFragment("a.b.c"); //$NON-NLS-1$
-		FileUtils.importFileFromDirectory(SRC_LOC.append("TestClass2.java").toFile(), fragment.getPath(), monitor); //$NON-NLS-1$
+		FileUtils.importFileFromDirectory(SRC_LOC.append("TestClass2.java").toFile(), fragment.getPath()); //$NON-NLS-1$
 		ICompilationUnit element = (ICompilationUnit) project.findElement(IPath.fromOSString("a/b/c/TestClass2.java")); //$NON-NLS-1$
 		assertNotNull("TestClass2 must exist in the test project", element); //$NON-NLS-1$
 		updateTagInSource(element, "TestClass2", null, "@noinstantiate", false); //$NON-NLS-1$ //$NON-NLS-2$

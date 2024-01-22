@@ -242,7 +242,8 @@ public class NLSFragmentGenerator {
 	 * Creates a fragment project for the specified plug-in and populates
 	 * the field data.
 	 */
-	private void createNLFragment(final IPluginModelBase plugin, final IProject project, final Locale locale) throws CoreException, InvocationTargetException, InterruptedException {
+	private void createNLFragment(final IPluginModelBase plugin, final IProject project, final Locale locale)
+			throws InvocationTargetException, InterruptedException {
 		FragmentFieldData fragmentData = populateFieldData(plugin, locale);
 
 		IProjectProvider projectProvider = new IProjectProvider() {

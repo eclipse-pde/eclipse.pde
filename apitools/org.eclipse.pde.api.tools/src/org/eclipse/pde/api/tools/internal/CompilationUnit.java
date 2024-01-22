@@ -144,9 +144,8 @@ public class CompilationUnit {
 	 * Returns the encoding for this compilation unit.
 	 *
 	 * @return the encoding to use
-	 * @since 1.0.600
 	 */
-	public String getEncoding() throws CoreException {
+	public String getEncoding() {
 		return this.encoding;
 	}
 

@@ -570,7 +570,7 @@ public class TargetEditor extends FormEditor {
 		try {
 			TargetDefinitionPersistenceHelper.persistXML(getTarget(), byteArrayOutputStream);
 			fTargetDocument.set(new String(byteArrayOutputStream.toByteArray()));
-		} catch (CoreException | ParserConfigurationException | TransformerException | IOException | SAXException e) {
+		} catch (TransformerException e) {
 			PDEPlugin.log(e);
 		}
 		fTargetDocument.addDocumentListener(fTargetDocumentListener);
