@@ -57,7 +57,7 @@ public abstract class ApiTypeContainerVisitor {
 	 * Subclasses may re-implement.
 	 * </p>
 	 */
-	public boolean visit(IApiTypeContainer container) {
+	public boolean visit(@SuppressWarnings("unused") IApiTypeContainer container) {
 		return true;
 	}
 
@@ -67,7 +67,7 @@ public abstract class ApiTypeContainerVisitor {
 	 * The default implementation does nothing. Subclasses may re-implement.
 	 * </p>
 	 */
-	public void end(IApiTypeContainer container) {
+	public void end(@SuppressWarnings("unused") IApiTypeContainer container) {
 		// subclasses my re-implement
 	}
 

@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
@@ -44,7 +43,7 @@ public final class ReferenceResolver {
 	 * @param references list of {@link IReference} to resolve
 	 * @throws CoreException if something goes wrong
 	 */
-	public static void resolveReferences(List<IReference> references, IProgressMonitor monitor) throws CoreException {
+	public static void resolveReferences(List<IReference> references) throws CoreException {
 		// sort references by target type for 'shared' resolution
 		int refcount = references.size();
 		Map<String, List<IReference>> sigtoref = new LinkedHashMap<>(refcount);
@@ -73,7 +72,7 @@ public final class ReferenceResolver {
 		}
 		// resolve references
 		start = System.currentTimeMillis();
-		resolveReferenceSets(sigtoref, monitor);
+		resolveReferenceSets(sigtoref);
 		end = System.currentTimeMillis();
 		if (ApiPlugin.DEBUG_REFERENCE_RESOLVER) {
 			System.out.println("Reference resolver: resolved unique references in " + (end - start) + "ms"); //$NON-NLS-1$//$NON-NLS-2$
@@ -95,7 +94,7 @@ public final class ReferenceResolver {
 	 * @param map the mapping of keys to sets of {@link IReference}s
 	 * @throws CoreException if something bad happens
 	 */
-	private static void resolveReferenceSets(Map<String, List<IReference>> map, IProgressMonitor monitor) throws CoreException {
+	private static void resolveReferenceSets(Map<String, List<IReference>> map) throws CoreException {
 		IReference ref = null;
 		for (List<IReference> refs : map.values()) {
 			ref = refs.get(0);

@@ -72,7 +72,7 @@ public class CompareOperation extends Job {
 	protected IStatus run(IProgressMonitor monitor) {
 		monitor.beginTask(ActionMessages.CompareDialogCollectingElementTaskName, IProgressMonitor.UNKNOWN);
 		String baselineName = this.baseline.getName();
-		final IApiScope scope = walkStructureSelection(this.selection, monitor);
+		final IApiScope scope = walkStructureSelection(this.selection);
 		try {
 			monitor.subTask(ActionMessages.CompareDialogComputeDeltasTaskName);
 			try {
@@ -112,7 +112,7 @@ public class CompareOperation extends Job {
 	/**
 	 * @return the scope
 	 */
-	public static ApiScope walkStructureSelection(IStructuredSelection structuredSelection, IProgressMonitor monitor) {
+	public static ApiScope walkStructureSelection(IStructuredSelection structuredSelection) {
 		Object[] selected = structuredSelection.toArray();
 		ApiScope scope = new ApiScope();
 		IApiBaseline workspaceBaseline = ApiBaselineManager.getManager().getWorkspaceBaseline();

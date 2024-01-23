@@ -154,10 +154,9 @@ public class RefactoringUtils {
 	 * are affected by the rename of a type
 	 *
 	 * @param type the type being renamed
-	 * @param newname the new name to be set on the resource
 	 * @return the rename type change for updating filters
 	 */
-	static Change createRenameFilterChanges(IType type, String newname) {
+	static Change createRenameFilterChanges(IType type) {
 		return createDeleteFilterChanges(type);
 	}
 
@@ -167,7 +166,7 @@ public class RefactoringUtils {
 	 *
 	 * @return the change for the package fragment rename
 	 */
-	static Change createRenameFilterChanges(IPackageFragment fragment, String newname) {
+	static Change createRenameFilterChanges(IPackageFragment fragment) {
 		return createDeleteFilterChanges(fragment);
 	}
 
@@ -199,16 +198,6 @@ public class RefactoringUtils {
 			newqname = dtype.getFullyQualifiedName() + '$' + newname;
 		}
 		return newqname;
-	}
-
-	/**
-	 * Returns the new type name with the new package qualification
-	 *
-	 * @return the new fully qualified type name
-	 */
-	static String getNewQualifiedName(String newname, String oldtypename) {
-		// TODO switch out the package resolution
-		return oldtypename;
 	}
 
 	/**

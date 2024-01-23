@@ -512,7 +512,7 @@ public class ApiType extends ApiMember implements IApiType {
 	 *
 	 * @param name member type name
 	 */
-	public void addMemberType(String name, int modifiers) {
+	public void addMemberType(String name) {
 		if (fMemberTypes == null) {
 			fMemberTypes = new LinkedHashMap<>();
 		}

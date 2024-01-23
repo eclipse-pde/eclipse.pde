@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.problems;
 
+import java.util.Arrays;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
@@ -256,21 +258,6 @@ public class ApiProblem implements IApiProblem {
 		return equal;
 	}
 
-	/**
-	 * Returns the deep hash code of the complete listing of message arguments
-	 *
-	 * @return the hash code of the message arguments
-	 */
-	private int argumentsHashcode(String[] arguments) {
-		if (fMessageArguments == null) {
-			return 0;
-		}
-		int hashcode = 0;
-		for (String fMessageArgument : fMessageArguments) {
-			hashcode += fMessageArgument.hashCode();
-		}
-		return hashcode;
-	}
 
 	@Override
 	public String toString() {
@@ -296,7 +283,8 @@ public class ApiProblem implements IApiProblem {
 
 	@Override
 	public int hashCode() {
-		return getId() + (fResourcePath != null ? fResourcePath.hashCode() : 0) + argumentsHashcode(fMessageArguments) + (fTypeName != null ? fTypeName.hashCode() : 0);
+		return getId() + (fResourcePath != null ? fResourcePath.hashCode() : 0) + Arrays.hashCode(fMessageArguments)
+				+ (fTypeName != null ? fTypeName.hashCode() : 0);
 	}
 
 	@Override

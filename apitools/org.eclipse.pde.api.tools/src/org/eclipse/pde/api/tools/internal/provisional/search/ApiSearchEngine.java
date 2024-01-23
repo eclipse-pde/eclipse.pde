@@ -133,7 +133,7 @@ public final class ApiSearchEngine {
 		String name = type.getSimpleName() == null ? SearchMessages.ApiSearchEngine_anonymous_type : type.getSimpleName();
 		SubMonitor localmonitor = SubMonitor.convert(monitor, MessageFormat.format(SearchMessages.ApiSearchEngine_extracting_refs_from, name), 2);
 		List<IReference> refs = type.extractReferences(requestor.getReferenceKinds(), localmonitor.split(1));
-		ReferenceResolver.resolveReferences(refs, localmonitor.split(1));
+		ReferenceResolver.resolveReferences(refs);
 		return refs;
 	}
 
