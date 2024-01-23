@@ -51,7 +51,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -698,22 +697,6 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 			return false;
 		}
 		return true;
-	}
-
-	/**
-	 * Handles browsing for a file with a given set of valid extensions
-	 */
-	void handleFileBrowse(Text text, String message, String[] extensions) {
-		FileDialog dialog = new FileDialog(getShell());
-		dialog.setFilterExtensions(extensions);
-		String loctext = text.getText().trim();
-		if (loctext.length() > 0) {
-			dialog.setFilterPath(loctext);
-		}
-		String newpath = dialog.open();
-		if (newpath != null) {
-			text.setText(newpath);
-		}
 	}
 
 	/**

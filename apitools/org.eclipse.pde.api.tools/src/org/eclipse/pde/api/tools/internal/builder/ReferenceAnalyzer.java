@@ -240,7 +240,7 @@ public class ReferenceAnalyzer {
 			// 2. resolve problematic references
 			localMonitor.subTask(BuilderMessages.ReferenceAnalyzer_analyzing_api_checking_use);
 			if (fReferences.size() != 0) {
-				ReferenceResolver.resolveReferences(fReferences, localMonitor.split(1));
+				ReferenceResolver.resolveReferences(fReferences);
 			}
 			// 3. create problems
 			List<IApiProblem> allProblems = new LinkedList<>();

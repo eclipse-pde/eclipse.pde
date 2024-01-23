@@ -198,7 +198,7 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IApiToolsHelpContextIds.APIBASELINE_PREF_PAGE);
 
 		block = new ApiBaselinesConfigurationBlock((IWorkbenchPreferenceContainer) getContainer());
-		block.createControl(comp, this);
+		block.createControl(comp);
 		Dialog.applyDialogFont(comp);
 		return comp;
 	}
