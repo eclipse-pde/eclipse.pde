@@ -17,6 +17,7 @@ import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
 import org.eclipse.osgi.service.resolver.VersionConstraint;
 import org.eclipse.osgi.util.NLS;
+import org.osgi.framework.VersionRange;
 
 public class MessageHelper {
 	public static String getResolutionFailureMessage(VersionConstraint unsatisfied) {
@@ -33,7 +34,7 @@ public class MessageHelper {
 	}
 
 	private static String toString(VersionConstraint constraint) {
-		org.eclipse.osgi.service.resolver.VersionRange versionRange = constraint.getVersionRange();
+		VersionRange versionRange = constraint.getVersionRange();
 		if (versionRange == null)
 			return constraint.getName();
 		return constraint.getName() + '_' + versionRange;

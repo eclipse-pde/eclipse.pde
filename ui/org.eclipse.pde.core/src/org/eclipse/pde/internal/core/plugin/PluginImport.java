@@ -20,13 +20,13 @@ import java.util.Locale;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
-import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.plugin.IMatchRules;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.ISharedPluginModel;
+import org.eclipse.pde.internal.build.Utils;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
@@ -36,6 +36,7 @@ import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.ManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.RequireBundleObject;
 import org.osgi.framework.Constants;
+import org.osgi.framework.VersionRange;
 import org.w3c.dom.Node;
 
 public class PluginImport extends IdentifiablePluginObject implements IPluginImport, Serializable {
@@ -99,7 +100,7 @@ public class PluginImport extends IdentifiablePluginObject implements IPluginImp
 		String bundleVersion = element.getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE);
 		if (bundleVersion != null) {
 			try {
-				VersionRange versionRange = new VersionRange(bundleVersion);
+				VersionRange versionRange = Utils.parseVersionRange(bundleVersion);
 				this.version = bundleVersion;
 				this.match = PluginBase.getMatchRule(versionRange);
 			} catch (IllegalArgumentException e) {
@@ -112,11 +113,11 @@ public class PluginImport extends IdentifiablePluginObject implements IPluginImp
 		this.reexported = importModel.isExported();
 		this.optional = importModel.isOptional();
 		VersionRange versionRange = importModel.getVersionRange();
-		if (versionRange == null || VersionRange.emptyRange.equals(versionRange)) {
+		if (versionRange == null || Utils.EMPTY_RANGE.equals(versionRange)) {
 			this.version = null;
 			match = IMatchRules.NONE;
 		} else {
-			this.version = versionRange.getMinimum() != null ? versionRange.getMinimum().toString() : null;
+			this.version = versionRange.getLeft() != null ? versionRange.getLeft().toString() : null;
 			match = PluginBase.getMatchRule(versionRange);
 		}
 	}

@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
-import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IMatchRules;
 import org.eclipse.pde.core.plugin.IPluginBase;
@@ -32,6 +31,7 @@ import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.PDEState;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -398,7 +398,7 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 	}
 
 	public static int getMatchRule(VersionRange versionRange) {
-		if (versionRange == null || versionRange.getMinimum() == null) {
+		if (versionRange == null || versionRange.getLeft() == null) {
 			return IMatchRules.NONE;
 		}
 
@@ -409,7 +409,7 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 			return IMatchRules.GREATER_OR_EQUAL;
 		} else if (minimum.equals(maximum)) {
 			return IMatchRules.PERFECT;
-		} else if (!versionRange.isIncluded(minimum) || versionRange.isIncluded(maximum)) {
+		} else if (!versionRange.includes(minimum) || versionRange.includes(maximum)) {
 			return IMatchRules.NONE; // no real match rule for this
 		} else if (minimum.getMajor() == maximum.getMajor() - 1) {
 			return IMatchRules.COMPATIBLE;

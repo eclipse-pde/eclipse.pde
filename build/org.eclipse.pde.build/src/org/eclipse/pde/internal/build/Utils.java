@@ -44,7 +44,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.ant.AntScript;
@@ -52,6 +51,7 @@ import org.eclipse.pde.internal.build.site.BuildTimeFeature;
 import org.eclipse.pde.internal.build.site.BuildTimeSite;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 
 /**
  * General utility class.
@@ -110,60 +110,77 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		return BASE_64_ENCODING.charAt(number);
 	}
 
+	public static final VersionRange EMPTY_RANGE = new VersionRange("0.0.0"); //$NON-NLS-1$
+
 	public static VersionRange createVersionRange(String versionId) {
 		VersionRange range = null;
 		if (versionId == null || versionId.length() == 0 || GENERIC_VERSION_NUMBER.equals(versionId))
-			range = VersionRange.emptyRange;
+			range = EMPTY_RANGE;
 		else {
 			int qualifierIdx = versionId.indexOf(IBuildPropertiesConstants.PROPERTY_QUALIFIER);
 			if (qualifierIdx != -1) {
 				String newVersion = versionId.substring(0, qualifierIdx);
-				if (newVersion.endsWith(".")) //$NON-NLS-1$
+				if (newVersion.endsWith(".")) { //$NON-NLS-1$
 					newVersion = newVersion.substring(0, newVersion.length() - 1);
-
+				}
 				Version lower = new Version(newVersion);
 				Version upper = null;
 				String newQualifier = incrementQualifier(lower.getQualifier());
-				if (newQualifier == null)
+				if (newQualifier == null) {
 					upper = new Version(lower.getMajor(), lower.getMinor(), lower.getMicro() + 1);
-				else
+				} else {
 					upper = new Version(lower.getMajor(), lower.getMinor(), lower.getMicro(), newQualifier);
-				range = new VersionRange(lower, true, upper, false);
+				}
+				range = new VersionRange(VersionRange.LEFT_CLOSED, lower, upper, VersionRange.RIGHT_OPEN);
 			} else {
-				range = new VersionRange(new Version(versionId), true, new Version(versionId), true);
+				range = new VersionRange(VersionRange.LEFT_CLOSED, new Version(versionId), new Version(versionId), VersionRange.RIGHT_CLOSED);
 			}
 		}
 		return range;
 	}
 
+	public static VersionRange createVersionRange(String lowerBound, boolean includeLowerBound, String upperBound, boolean includeUpperBound) {
+		char leftType = includeLowerBound ? VersionRange.LEFT_CLOSED : VersionRange.LEFT_OPEN;
+		char rightType = includeUpperBound ? VersionRange.RIGHT_CLOSED : VersionRange.RIGHT_OPEN;
+		return new VersionRange(leftType, Version.parseVersion(lowerBound), Version.parseVersion(upperBound), rightType);
+	}
+
+	public static VersionRange createExactVersionRange(Version version) {
+		return new VersionRange(VersionRange.LEFT_CLOSED, version, version, VersionRange.RIGHT_CLOSED);
+	}
+
+	public static VersionRange parseVersionRange(String version) {
+		return version != null && !version.isEmpty() ? new VersionRange(version) : EMPTY_RANGE;
+	}
+
 	public static VersionRange createVersionRange(FeatureEntry entry) {
 		String versionSpec = entry.getVersion();
-		if (versionSpec == null)
-			return VersionRange.emptyRange;
-
+		if (versionSpec == null) {
+			return EMPTY_RANGE;
+		}
 		Version version = new Version(versionSpec);
-		if (version.equals(Version.emptyVersion))
-			return VersionRange.emptyRange;
-
+		if (version.equals(Version.emptyVersion)) {
+			return EMPTY_RANGE;
+		}
 		String match = entry.getMatch();
 		if (!entry.isRequires() || match == null) {
 			return createVersionRange(versionSpec);
 		}
 
 		if (match.equals("perfect")) //$NON-NLS-1$
-			return new VersionRange(version, true, version, true);
+			return new VersionRange(VersionRange.LEFT_CLOSED, version, version, VersionRange.RIGHT_CLOSED);
 		if (match.equals("equivalent")) { //$NON-NLS-1$
 			Version upper = new Version(version.getMajor(), version.getMinor() + 1, 0);
-			return new VersionRange(version, true, upper, false);
+			return new VersionRange(VersionRange.LEFT_CLOSED, version, upper, VersionRange.RIGHT_OPEN);
 		}
 		if (match.equals("compatible")) { //$NON-NLS-1$
 			Version upper = new Version(version.getMajor() + 1, 0, 0);
-			return new VersionRange(version, true, upper, false);
+			return new VersionRange(VersionRange.LEFT_CLOSED, version, upper, VersionRange.RIGHT_OPEN);
 		}
 		if (match.equals("greaterOrEqual")) //$NON-NLS-1$
-			return new VersionRange(version, true, new VersionRange(null).getMaximum(), true);
+			return new VersionRange(VersionRange.LEFT_CLOSED, version, null, VersionRange.RIGHT_CLOSED);
 
-		return VersionRange.emptyRange;
+		return EMPTY_RANGE;
 	}
 
 	private static String incrementQualifier(String qualifier) {

@@ -45,7 +45,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.text.Document;
-import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -73,6 +72,7 @@ import org.junit.rules.TestName;
 import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 
 /**
  * Test project creation API.
@@ -81,11 +81,9 @@ import org.osgi.framework.Version;
  */
 public class ProjectCreationTests {
 
-	protected static final IBundleClasspathEntry DEFAULT_BUNDLE_CLASSPATH_ENTRY;
-
-	static {
-		DEFAULT_BUNDLE_CLASSPATH_ENTRY = getBundleProjectService().newBundleClasspathEntry(null, null, IPath.fromOSString("."));
-	}
+	protected static final IBundleClasspathEntry DEFAULT_BUNDLE_CLASSPATH_ENTRY = getBundleProjectService()
+			.newBundleClasspathEntry(null, null, IPath.fromOSString("."));
+	private static final VersionRange NO_VERSION = null;
 
 	@Rule
 	public TestName testName = new TestName();
@@ -263,7 +261,7 @@ public class ProjectCreationTests {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
 		IBundleProjectService service = getBundleProjectService();
-		IHostDescription host = service.newHost("some.host", null);
+		IHostDescription host = service.newHost("some.host", NO_VERSION);
 		description.setHost(host);
 		description.apply(null);
 
@@ -312,7 +310,7 @@ public class ProjectCreationTests {
 		description.setBundleVersion(new Version("1.2.2"));
 		IBundleProjectService service = getBundleProjectService();
 		IHostDescription host = service.newHost("some.host",
-				new VersionRange(new Version("1.0.0"), true, new Version("2.0.0"), false));
+				new VersionRange(VersionRange.LEFT_CLOSED, new Version("1.0.0"), new Version("2.0.0"), VersionRange.RIGHT_OPEN));
 		description.setHost(host);
 		description.setActivationPolicy(Constants.ACTIVATION_LAZY);
 		IBundleClasspathEntry e1 = service.newBundleClasspathEntry(IPath.fromOSString("frag"), IPath.fromOSString("bin"),
@@ -647,10 +645,10 @@ public class ProjectCreationTests {
 		description.setExtensionRegistry(true);
 		description.setExecutionEnvironments(new String[] { "J2SE-1.4" });
 		IRequiredBundleDescription rb1 = service.newRequiredBundle("org.eclipse.core.resources",
-				new VersionRange(new Version(3, 5, 0), true, new Version(4, 0, 0), false), true, false);
-		IRequiredBundleDescription rb2 = service.newRequiredBundle("org.eclipse.core.variables", null, false, false);
+				new VersionRange(VersionRange.LEFT_CLOSED, new Version(3, 5, 0), new Version(4, 0, 0), VersionRange.RIGHT_OPEN), true, false);
+		IRequiredBundleDescription rb2 = service.newRequiredBundle("org.eclipse.core.variables", NO_VERSION, false, false);
 		description.setRequiredBundles(new IRequiredBundleDescription[] { rb1, rb2 });
-		IPackageImportDescription pi1 = service.newPackageImport("com.ibm.icu.text", null, false);
+		IPackageImportDescription pi1 = service.newPackageImport("com.ibm.icu.text", NO_VERSION, false);
 		description.setPackageImports(new IPackageImportDescription[] { pi1 });
 		description.setHeader("SomeHeader", "something");
 		// test version override with explicit header setting
@@ -797,11 +795,11 @@ public class ProjectCreationTests {
 		IProject project = description.getProject();
 		IBundleProjectService service = getBundleProjectService();
 
-		IRequiredBundleDescription requireDesc = service.newRequiredBundle("requiredBundleOne", null, false, false);
+		IRequiredBundleDescription requireDesc = service.newRequiredBundle("requiredBundleOne", NO_VERSION, false, false);
 		IRequiredBundleDescription requireDesc2 = service.newRequiredBundle("requiredBundleTwo",
 				new VersionRange("[1.0.0,2.0.0)"), false, false);
-		IRequiredBundleDescription requireDesc3 = service.newRequiredBundle("requiredBundleThree", null, true, false);
-		IRequiredBundleDescription requireDesc4 = service.newRequiredBundle("requiredBundleFour", null, false, true);
+		IRequiredBundleDescription requireDesc3 = service.newRequiredBundle("requiredBundleThree", NO_VERSION, true, false);
+		IRequiredBundleDescription requireDesc4 = service.newRequiredBundle("requiredBundleFour", NO_VERSION, false, true);
 		description.setRequiredBundles(
 				new IRequiredBundleDescription[] { requireDesc, requireDesc2, requireDesc3, requireDesc4 });
 
@@ -813,11 +811,11 @@ public class ProjectCreationTests {
 				new String[] { "d.e.f", "g.h.i" });
 		description.setPackageExports(new IPackageExportDescription[] { ex0, ex1, ex2, ex3 });
 
-		IPackageImportDescription importDesc = service.newPackageImport("importPkgOne", null, false);
+		IPackageImportDescription importDesc = service.newPackageImport("importPkgOne", NO_VERSION, false);
 		IPackageImportDescription importDesc2 = service.newPackageImport("importPkgTwo",
 				new VersionRange("[1.0.0,2.0.0)"), false);
-		IPackageImportDescription importDesc3 = service.newPackageImport("importPkgThree", null, true);
-		IPackageImportDescription importDesc4 = service.newPackageImport("importPkgFour", null, false);
+		IPackageImportDescription importDesc3 = service.newPackageImport("importPkgThree", NO_VERSION, true);
+		IPackageImportDescription importDesc4 = service.newPackageImport("importPkgFour", NO_VERSION, false);
 		description.setPackageImports(
 				new IPackageImportDescription[] { importDesc, importDesc2, importDesc3, importDesc4 });
 
@@ -830,8 +828,8 @@ public class ProjectCreationTests {
 		assertEquals("Wrong number of package imports", 4, d2.getPackageImports().length);
 
 		// add entries
-		IRequiredBundleDescription requireDesc5 = service.newRequiredBundle("requiredBundleFive", null, false, false);
-		IRequiredBundleDescription requireDesc6 = service.newRequiredBundle("requiredBundleSix", null, false, false);
+		IRequiredBundleDescription requireDesc5 = service.newRequiredBundle("requiredBundleFive", NO_VERSION, false, false);
+		IRequiredBundleDescription requireDesc6 = service.newRequiredBundle("requiredBundleSix", NO_VERSION, false, false);
 		description.setRequiredBundles(new IRequiredBundleDescription[] { requireDesc, requireDesc2, requireDesc3,
 				requireDesc4, requireDesc5, requireDesc6 });
 
@@ -841,8 +839,8 @@ public class ProjectCreationTests {
 				new String[] { "d.e.f", "g.h.i" });
 		description.setPackageExports(new IPackageExportDescription[] { ex0, ex1, ex2, ex3, ex4, ex5 });
 
-		IPackageImportDescription importDesc5 = service.newPackageImport("importPkgFive", null, true);
-		IPackageImportDescription importDesc6 = service.newPackageImport("importPkgSix", null, false);
+		IPackageImportDescription importDesc5 = service.newPackageImport("importPkgFive", NO_VERSION, true);
+		IPackageImportDescription importDesc6 = service.newPackageImport("importPkgSix", NO_VERSION, false);
 		description.setPackageImports(new IPackageImportDescription[] { importDesc, importDesc2, importDesc3,
 				importDesc4, importDesc5, importDesc6 });
 
@@ -887,7 +885,7 @@ public class ProjectCreationTests {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
 		IBundleProjectService service = getBundleProjectService();
-		IHostDescription host = service.newHost("some.host", null);
+		IHostDescription host = service.newHost("some.host", NO_VERSION);
 		description.setHeader("HeaderOne", "one"); // arbitrary header
 		description.setHost(host);
 		description.apply(null);
@@ -1152,10 +1150,10 @@ public class ProjectCreationTests {
 		description.setExtensionRegistry(true);
 		description.setExecutionEnvironments(new String[] { "J2SE-1.4" });
 		IRequiredBundleDescription rb1 = service.newRequiredBundle("org.eclipse.core.resources",
-				new VersionRange(new Version(3, 5, 0), true, new Version(4, 0, 0), false), true, false);
-		IRequiredBundleDescription rb2 = service.newRequiredBundle("org.eclipse.core.variables", null, false, false);
+				new VersionRange(VersionRange.LEFT_CLOSED, new Version(3, 5, 0), new Version(4, 0, 0), VersionRange.RIGHT_OPEN), true, false);
+		IRequiredBundleDescription rb2 = service.newRequiredBundle("org.eclipse.core.variables", NO_VERSION, false, false);
 		description.setRequiredBundles(new IRequiredBundleDescription[] { rb1, rb2 });
-		IPackageImportDescription pi1 = service.newPackageImport("com.ibm.icu.text", null, false);
+		IPackageImportDescription pi1 = service.newPackageImport("com.ibm.icu.text", NO_VERSION, false);
 		description.setPackageImports(new IPackageImportDescription[] { pi1 });
 		description.apply(null);
 
@@ -1470,11 +1468,9 @@ public class ProjectCreationTests {
 	@Test
 	public void testHeaderFormatting() throws CoreException, IOException {
 		IBundleProjectDescription description = newProject();
-		IPackageImportDescription imp1 = getBundleProjectService().newPackageImport("org.eclipse.osgi", null, false);
-		IPackageImportDescription imp2 = getBundleProjectService().newPackageImport("org.eclipse.core.runtime", null,
-				false);
-		IPackageImportDescription imp3 = getBundleProjectService().newPackageImport("org.eclipse.core.resources", null,
-				false);
+		IPackageImportDescription imp1 = getBundleProjectService().newPackageImport("org.eclipse.osgi", NO_VERSION, false);
+		IPackageImportDescription imp2 = getBundleProjectService().newPackageImport("org.eclipse.core.runtime", NO_VERSION, false);
+		IPackageImportDescription imp3 = getBundleProjectService().newPackageImport("org.eclipse.core.resources", NO_VERSION, false);
 		description.setPackageImports(new IPackageImportDescription[] { imp1, imp2, imp3 });
 		IPackageExportDescription ex1 = getBundleProjectService().newPackageExport("a.b.c", null, true, null);
 		IPackageExportDescription ex2 = getBundleProjectService().newPackageExport("a.b.c.d", null, true, null);

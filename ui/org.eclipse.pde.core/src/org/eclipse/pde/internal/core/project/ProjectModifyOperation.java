@@ -38,7 +38,6 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModelFactory;
@@ -81,6 +80,7 @@ import org.eclipse.pde.internal.core.text.bundle.PackageFriend;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
@@ -519,8 +519,8 @@ public class ProjectModifyOperation {
 			IHostDescription host = description.getHost();
 			if (!isEqual(host, before.getHost())) {
 				fragment.setPluginId(host.getName());
-				if (host.getVersionRange() != null) {
-					fragment.setPluginVersion(host.getVersionRange().toString());
+				if (host.getVersion() != null) {
+					fragment.setPluginVersion(host.getVersion().toString());
 				} else {
 					// must explicitly set to null, else it appears as 0.0.0
 					fragment.setPluginVersion(null);
@@ -548,7 +548,7 @@ public class ProjectModifyOperation {
 			}
 			if (dependencies != null) {
 				for (IRequiredBundleDescription req : dependencies) {
-					VersionRange range = req.getVersionRange();
+					VersionRange range = req.getVersion();
 					IPluginImport iimport = fModel.getPluginFactory().createImport();
 					iimport.setId(req.getName());
 					if (range != null) {
@@ -604,7 +604,7 @@ public class ProjectModifyOperation {
 					ImportPackageHeader header = (ImportPackageHeader) factory.createHeader(Constants.IMPORT_PACKAGE, ""); //$NON-NLS-1$
 					for (IPackageImportDescription pkg : packages) {
 						ImportPackageObject ip = header.addPackage(pkg.getName());
-						VersionRange range = pkg.getVersionRange();
+						VersionRange range = pkg.getVersion();
 						if (range != null) {
 							ip.setVersion(range.toString());
 						}

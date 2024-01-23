@@ -42,12 +42,12 @@ import org.eclipse.equinox.internal.p2.publisher.eclipse.ProductFile;
 import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;
 import org.eclipse.equinox.simpleconfigurator.manipulator.SimpleConfiguratorManipulator;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.internal.build.site.BuildTimeFeature;
 import org.eclipse.pde.internal.build.site.P2Utils;
 import org.eclipse.pde.internal.build.site.PDEState;
 import org.osgi.framework.Filter;
 import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 
 public class ProductGenerator extends AbstractScriptGenerator {
 	private static final String SIMPLE_CONFIGURATOR_CONFIG_URL = "org.eclipse.equinox.simpleconfigurator.configUrl"; //$NON-NLS-1$
@@ -219,7 +219,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			productVersionString = productVersion.getMajor() + "." + productVersion.getMinor() + "." + productVersion.getMicro() + ".$qualifier$"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			productRangeString = "[" + productVersionString + "," + productVersionString + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		} else {
-			productRangeString = new VersionRange(new Version(productVersionString), true, new Version(productVersionString), true).toString();
+			productRangeString = Utils.createExactVersionRange(new Version(productVersionString)).toString();
 		}
 
 		if (cus) {
@@ -251,7 +251,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 
 		BundleDescription launcher = assembly.getPlugin(BUNDLE_EQUINOX_LAUNCHER, null);
 		if (launcher != null && launchers) {
-			VersionRange launcherRange = new VersionRange(launcher.getVersion(), true, launcher.getVersion(), true);
+			VersionRange launcherRange = Utils.createExactVersionRange(launcher.getVersion());
 
 			// include the launcher jar
 			P2InfUtils.printRequires(buffer, null, index++, P2InfUtils.NAMESPACE_IU, BUNDLE_EQUINOX_LAUNCHER, launcherRange, launcher.getPlatformFilter(), true);
@@ -272,7 +272,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			//in case of no version on the product, the branding defaults to the version of the launcher provider
 			if (executableFeature != null && productVersionString.equals(Version.emptyVersion.toString())) {
 				String brandedVersion = executableFeature.getVersion();
-				brandedRange = new VersionRange(new Version(brandedVersion), true, new Version(brandedVersion), true).toString();
+				brandedRange = Utils.createExactVersionRange(new Version(brandedVersion)).toString();
 			}
 
 			List<Config> configs = getConfigInfos();
@@ -284,7 +284,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 					fragmentName += '.' + config.getArch();
 				BundleDescription fragment = assembly.getPlugin(fragmentName, null);
 				if (fragment != null) {
-					VersionRange fragmentRange = new VersionRange(fragment.getVersion(), true, fragment.getVersion(), true);
+					VersionRange fragmentRange = Utils.createExactVersionRange(fragment.getVersion());
 					//include the launcher fragment
 					P2InfUtils.printRequires(buffer, null, index++, P2InfUtils.NAMESPACE_IU, fragmentName, fragmentRange, fragment.getPlatformFilter(), true);
 

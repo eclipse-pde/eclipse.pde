@@ -17,8 +17,8 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
-import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.ManifestElement;
+import org.eclipse.pde.internal.build.Utils;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEState;
@@ -26,6 +26,7 @@ import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 
 public class ImportPackageObject extends PackageObject {
 
@@ -102,10 +103,10 @@ public class ImportPackageObject extends PackageObject {
 		PDEState pdeState = PDECore.getDefault().getModelManager().getState();
 		ExportPackageDescription[] exportedPackages = pdeState.getState().getExportedPackages();
 
-		VersionRange versionRange = new VersionRange(getVersion());
+		VersionRange versionRange = Utils.parseVersionRange(getVersion());
 		return Arrays.stream(exportedPackages)
 				.filter(p -> p.getName().equals(getName()))
-				.anyMatch(p -> versionRange.isIncluded(p.getVersion()));
+				.anyMatch(p -> versionRange.includes(p.getVersion()));
 	}
 
 }

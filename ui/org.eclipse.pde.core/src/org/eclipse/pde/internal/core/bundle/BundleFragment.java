@@ -14,8 +14,8 @@
 package org.eclipse.pde.internal.core.bundle;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.ManifestElement;
+import org.eclipse.pde.internal.build.Utils;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleFragment;
@@ -24,6 +24,7 @@ import org.eclipse.pde.internal.core.plugin.PluginBase;
 import org.eclipse.pde.internal.core.text.bundle.FragmentHostHeader;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
+import org.osgi.framework.VersionRange;
 
 public class BundleFragment extends BundlePluginBase implements IBundleFragment {
 
@@ -38,8 +39,8 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 	public String getPluginVersion() {
 		String version = getAttribute(Constants.FRAGMENT_HOST, Constants.BUNDLE_VERSION_ATTRIBUTE);
 		try {
-			VersionRange versionRange = new VersionRange(version);
-			return versionRange.getMinimum() != null ? versionRange.getMinimum().toString() : version;
+			VersionRange versionRange = Utils.parseVersionRange(version);
+			return versionRange.getLeft().toString();
 		} catch (IllegalArgumentException e) {
 		}
 		return version;
@@ -48,7 +49,7 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 	@Override
 	public int getRule() {
 		String version = getAttribute(Constants.FRAGMENT_HOST, Constants.BUNDLE_VERSION_ATTRIBUTE);
-		VersionRange versionRange = new VersionRange(version);
+		VersionRange versionRange = Utils.parseVersionRange(version);
 		return PluginBase.getMatchRule(versionRange);
 	}
 
