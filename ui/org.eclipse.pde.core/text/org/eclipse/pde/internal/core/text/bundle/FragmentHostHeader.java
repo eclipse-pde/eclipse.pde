@@ -13,9 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text.bundle;
 
-import org.eclipse.osgi.service.resolver.VersionRange;
+import org.eclipse.pde.internal.build.Utils;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.osgi.framework.Constants;
+import org.osgi.framework.VersionRange;
 
 public class FragmentHostHeader extends SingleManifestHeader {
 
@@ -38,7 +39,7 @@ public class FragmentHostHeader extends SingleManifestHeader {
 	}
 
 	public VersionRange getHostRange() {
-		return new VersionRange(getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE));
+		return Utils.parseVersionRange(getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE));
 	}
 
 }

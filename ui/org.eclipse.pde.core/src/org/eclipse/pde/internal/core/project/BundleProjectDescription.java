@@ -33,7 +33,6 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
@@ -47,6 +46,7 @@ import org.eclipse.pde.core.project.IHostDescription;
 import org.eclipse.pde.core.project.IPackageExportDescription;
 import org.eclipse.pde.core.project.IPackageImportDescription;
 import org.eclipse.pde.core.project.IRequiredBundleDescription;
+import org.eclipse.pde.internal.build.Utils;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
@@ -54,6 +54,7 @@ import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 
 /**
  * A bundle project description contains the meta-data required to define
@@ -444,7 +445,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	 */
 	private VersionRange getRange(String version) {
 		if (version != null) {
-			return new VersionRange(version);
+			return Utils.parseVersionRange(version);
 		}
 		return null;
 	}

@@ -18,10 +18,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ViewerComparator;
-import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.build.Utils;
 import org.eclipse.pde.internal.core.util.UtilMessages;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -38,6 +38,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 
 public class PluginVersionPart {
 
@@ -116,9 +117,10 @@ public class PluginVersionPart {
 		try {
 			if (version != null && !version.equals("")) { //$NON-NLS-1$
 				fVersionRange = new VersionRange(version);
-				Version max = fVersionRange.getMaximum();
-				if (max.getMajor() != Integer.MAX_VALUE && fVersionRange.getMinimum().compareTo(fVersionRange.getMaximum()) < 0)
+				Version max = fVersionRange.getRight();
+				if (max != null && fVersionRange.getLeft().compareTo(max) < 0) {
 					fIsRanged = true;
+				}
 			}
 		} catch (IllegalArgumentException e) {
 			// illegal version string passed
@@ -203,20 +205,20 @@ public class PluginVersionPart {
 
 	public void preloadFields() {
 		if (fRangeAllowed) {
-			fMinVersionText.setText((fVersionRange != null) ? fVersionRange.getMinimum().toString() : ""); //$NON-NLS-1$
-			fMaxVersionText.setText((fVersionRange != null && fVersionRange.getMaximum().getMajor() != Integer.MAX_VALUE) ? fVersionRange.getMaximum().toString() : ""); //$NON-NLS-1$
+			fMinVersionText.setText((fVersionRange != null) ? fVersionRange.getLeft().toString() : ""); //$NON-NLS-1$
+			fMaxVersionText.setText((fVersionRange != null && fVersionRange.getRight() != null) ? fVersionRange.getRight().toString() : ""); //$NON-NLS-1$
 
 			if (fVersionRange != null)
-				fMinVersionBound.select((fVersionRange.getIncludeMinimum()) ? 0 : 1);
+				fMinVersionBound.select((fVersionRange.getLeftType() == VersionRange.LEFT_CLOSED) ? 0 : 1);
 			else
 				fMinVersionBound.select(0);
 
 			if (fVersionRange != null && getMaxVersion().length() > 0)
-				fMaxVersionBound.select((fVersionRange.getIncludeMaximum()) ? 0 : 1);
+				fMaxVersionBound.select((fVersionRange.getRightType() == VersionRange.RIGHT_CLOSED) ? 0 : 1);
 			else
 				fMaxVersionBound.select(1);
 		}
-		fMinVersionText.setText((fVersionRange != null) ? fVersionRange.getMinimum().toString() : ""); //$NON-NLS-1$
+		fMinVersionText.setText((fVersionRange != null) ? fVersionRange.getLeft().toString() : ""); //$NON-NLS-1$
 	}
 
 	private IStatus validateVersion(String text, Text textWidget, boolean shortErrorMessage) {
@@ -324,9 +326,10 @@ public class PluginVersionPart {
 			String maxV = getMaxVersion();
 			boolean minI = getMinInclusive();
 			boolean maxI = getMaxInclusive();
-			if (minV.equals(maxV))
+			if (minV.equals(maxV)) {
 				minI = maxI = true;
-			return new VersionRange(new Version(minV), minI, new Version(maxV), maxI).toString();
+			}
+			return Utils.createVersionRange(minV, minI, maxV, maxI).toString();
 		}
 		if (!fRangeAllowed) {
 			if (getMinVersion().length() > 0) {
@@ -335,7 +338,7 @@ public class PluginVersionPart {
 			return ""; //$NON-NLS-1$
 		}
 		if (getMinVersion().length() == 0 && getMaxVersion().length() > 0) {
-			return new VersionRange(null, getMinInclusive(), new Version(getMaxVersion()), getMaxInclusive()).toString();
+			return Utils.createVersionRange(null, getMinInclusive(), getMaxVersion(), getMaxInclusive()).toString();
 		}
 		if (getMinVersion().length() > 0) {
 			return new Version(getMinVersion()).toString();

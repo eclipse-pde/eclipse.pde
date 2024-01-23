@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
-import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginBase;
@@ -49,6 +48,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FilteredItemsSelectionDialog;
 import org.osgi.framework.Constants;
+import org.osgi.framework.VersionRange;
 
 public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 
@@ -211,12 +211,13 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 				String version = ipo.getVersion();
 				if (version != null) {
 					try {
-						if (!new VersionRange(version).isIncluded(exported[i].getVersion()))
-						 {
+						if (!new VersionRange(version).includes(exported[i].getVersion())) {
 							continue;
-						// NFE if ImportPackageObject's version is improperly formatted - ignore any matching imported packages since version is invalid
 						}
-					} catch (NumberFormatException e) {
+					} catch (IllegalArgumentException e) {
+						// if ImportPackageObject's version is improperly
+						// formatted - ignore any matching imported packages
+						// since version is invalid
 						continue;
 					}
 				}

@@ -32,7 +32,7 @@ public class FilteringState extends PDEState {
 
 		SortedSet<ReachablePlugin> includedMatches = allPlugins.subSet(new ReachablePlugin(toAdd.getSymbolicName(), ReachablePlugin.WIDEST_RANGE), new ReachablePlugin(toAdd.getSymbolicName(), ReachablePlugin.NARROWEST_RANGE));
 		for (ReachablePlugin constraint : includedMatches) {
-			if (constraint.getRange().isIncluded(toAdd.getVersion()))
+			if (constraint.getRange().includes(toAdd.getVersion()))
 				return super.addBundleDescription(toAdd);
 		}
 		return false;

@@ -15,9 +15,9 @@ package org.eclipse.pde.internal.core.util;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.core.plugin.IMatchRules;
 import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 
 public class VersionUtil {
 

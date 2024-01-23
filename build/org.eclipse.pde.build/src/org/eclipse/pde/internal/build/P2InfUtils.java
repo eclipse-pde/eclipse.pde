@@ -12,8 +12,8 @@
  ******************************************************************************/
 package org.eclipse.pde.internal.build;
 
-import org.eclipse.osgi.service.resolver.VersionRange;
 import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 
 public class P2InfUtils {
 	public static final int INSTRUCTION_INSTALL = 0;
@@ -33,7 +33,7 @@ public class P2InfUtils {
 	}
 
 	public static void printBundleCU(StringBuffer buffer, int i, String name, String cuVersion, Version hostVersion, String filter, String[] instructions) {
-		VersionRange hostRange = new VersionRange(hostVersion, true, hostVersion, true);
+		VersionRange hostRange = Utils.createExactVersionRange(hostVersion);
 		//cuVersion may not be a proper OSGi version at this point (ie 1.0.0.$qualifier$)
 		String cuRange = "[" + cuVersion + "," + cuVersion + "]"; //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
 		String prefix = "units." + i + '.'; //$NON-NLS-1$

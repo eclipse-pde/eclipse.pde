@@ -37,7 +37,7 @@ public interface IVersionRange {
 	/**
 	 * Returns the maximum version in this range.
 	 *
-	 * @return maximum version
+	 * @return maximum version, {@code null} if no explicit upper bound is exists.
 	 */
 	public String getMaximumVersion();
 

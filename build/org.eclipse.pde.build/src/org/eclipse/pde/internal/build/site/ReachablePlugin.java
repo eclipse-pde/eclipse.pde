@@ -13,18 +13,20 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.site;
 
+import java.util.Objects;
+
 import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;
-import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.internal.build.Utils;
 import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 
 /**
  * ReachablePlugin's are sorted first by id, then by the width of the version range.
  * With equal range width, R1 < R2 if R1.range.getMinimum() < R2.range.getMaximum()
  */
 public class ReachablePlugin implements Comparable<Object> {
-	public static final VersionRange WIDEST_RANGE = VersionRange.emptyRange;
-	public static final VersionRange NARROWEST_RANGE = new VersionRange(Version.emptyVersion, true, Version.emptyVersion, false);
+	public static final VersionRange WIDEST_RANGE = Utils.EMPTY_RANGE;
+	public static final VersionRange NARROWEST_RANGE = new VersionRange(VersionRange.LEFT_CLOSED, Version.emptyVersion, Version.emptyVersion, VersionRange.RIGHT_OPEN);
 
 	private final String id;
 	private final VersionRange range;
@@ -47,24 +49,27 @@ public class ReachablePlugin implements Comparable<Object> {
 		return range;
 	}
 
+	private static final Version VERSION_MAX = new Version(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
+
 	@Override
 	public int compareTo(Object o) {
-		if (o instanceof ReachablePlugin) {
-			ReachablePlugin toCompare = (ReachablePlugin) o;
+		if (o instanceof ReachablePlugin toCompare) {
 			int result = id.compareTo(toCompare.id);
 			if (result != 0)
 				return result;
 			//We want the object with the widest version range to sort first
-			result = substract(toCompare.range.getMaximum(), toCompare.range.getMinimum()).compareTo(substract(range.getMaximum(), range.getMinimum()));
+			Version right = range.getRight() == null ? VERSION_MAX : range.getRight();
+			Version toCompareRight = toCompare.range.getRight() == null ? VERSION_MAX : toCompare.range.getRight();
+			result = substract(toCompareRight, toCompare.range.getLeft()).compareTo(substract(right, range.getLeft()));
 			if (result != 0)
 				return result;
-			if (range.getIncludeMaximum() && !toCompare.range.getIncludeMaximum())
-				return -1;
-			if (!range.getIncludeMaximum() && toCompare.range.getIncludeMaximum())
-				return 1;
+			result = -Boolean.compare(range.getRightType() == VersionRange.RIGHT_CLOSED, toCompare.range.getRightType() == VersionRange.RIGHT_CLOSED);
+			if (result != 0) {
+				return result;
+			}
 			if (this.equals(o))
 				return 0;
-			result = range.getMinimum().compareTo(toCompare.range.getMaximum());
+			result = range.getLeft().compareTo(toCompareRight);
 			if (result != 0)
 				return result;
 			//Give up
@@ -102,17 +107,12 @@ public class ReachablePlugin implements Comparable<Object> {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof ReachablePlugin) {
-			ReachablePlugin toCompare = (ReachablePlugin) obj;
-			if (!id.equals(toCompare.id))
-				return false;
-			if (range.getIncludeMinimum() != toCompare.range.getIncludeMinimum())
-				return false;
-			if (range.getIncludeMaximum() != toCompare.range.getIncludeMaximum())
-				return false;
-			return range.getMinimum().equals(toCompare.range.getMinimum()) && range.getMaximum().equals(toCompare.range.getMaximum());
-		}
-		return false;
+		return obj instanceof ReachablePlugin toCompare //
+				&& Objects.equals(id, toCompare.id) //
+				&& range.getLeftType() == toCompare.range.getLeftType() //
+				&& range.getRightType() == toCompare.range.getRightType() // 
+				&& Objects.equals(range.getLeft(), toCompare.range.getLeft())//
+				&& Objects.equals(range.getRight(), toCompare.range.getRight());
 	}
 
 	@Override

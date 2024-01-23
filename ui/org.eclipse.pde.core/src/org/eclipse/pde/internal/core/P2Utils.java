@@ -80,6 +80,7 @@ import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.build.BundleHelper;
+import org.eclipse.pde.internal.build.Utils;
 import org.eclipse.pde.internal.core.ifeature.IEnvironment;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
@@ -895,11 +896,14 @@ public class P2Utils {
 		return Version.createOSGi(version.getMajor(), version.getMinor(), version.getMicro(), version.getQualifier());
 	}
 
-	private static VersionRange fromOSGiVersionRange(org.eclipse.osgi.service.resolver.VersionRange range) {
-		if (range.equals(org.eclipse.osgi.service.resolver.VersionRange.emptyRange)) {
+	private static VersionRange fromOSGiVersionRange(org.osgi.framework.VersionRange range) {
+		if (range.equals(Utils.EMPTY_RANGE)) {
 			return VersionRange.emptyRange;
 		}
-		return new VersionRange(fromOSGiVersion(range.getMinimum()), range.getIncludeMinimum(), fromOSGiVersion(range.getRight()), range.getIncludeMaximum());
+		return new VersionRange(fromOSGiVersion(range.getLeft()),
+				range.getLeftType() == org.osgi.framework.VersionRange.LEFT_CLOSED,
+				fromOSGiVersion(range.getRight()),
+				range.getRightType() == org.osgi.framework.VersionRange.RIGHT_CLOSED);
 	}
 
 	public static record ProductInfo(String id, String version, String name) {

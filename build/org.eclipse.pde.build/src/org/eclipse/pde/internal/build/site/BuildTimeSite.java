@@ -47,7 +47,6 @@ import org.eclipse.osgi.service.resolver.NativeCodeSpecification;
 import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.osgi.service.resolver.StateHelper;
 import org.eclipse.osgi.service.resolver.VersionConstraint;
-import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.AbstractScriptGenerator;
 import org.eclipse.pde.internal.build.BundleHelper;
@@ -60,6 +59,7 @@ import org.eclipse.pde.internal.build.Utils;
 import org.eclipse.pde.internal.build.site.compatibility.FeatureReference;
 import org.osgi.framework.Filter;
 import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 
 /**
  * This site represent a site at build time. A build time site is made of code
@@ -304,9 +304,9 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 	}
 
 	private BuildTimeFeature findFeature(String featureId, VersionRange range, boolean throwsException) throws CoreException {
-		if (range == null)
-			range = VersionRange.emptyRange;
-
+		if (range == null) {
+			range = Utils.EMPTY_RANGE;
+		}
 		if (!featuresResolved)
 			resolveFeatureReferences();
 
@@ -315,7 +315,7 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 			Set<BuildTimeFeature> featureSet = featureCache.get(featureId);
 			for (BuildTimeFeature feature : featureSet) {
 				Version featureVersion = new Version(feature.getVersion());
-				if (range.isIncluded(featureVersion)) {
+				if (range.includes(featureVersion)) {
 					return feature;
 				}
 			}
@@ -323,7 +323,7 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 
 		if (throwsException) {
 			String message = null;
-			if (range.equals(VersionRange.emptyRange))
+			if (range.equals(Utils.EMPTY_RANGE))
 				message = NLS.bind(Messages.exception_missingFeature, featureId);
 			else
 				message = NLS.bind(Messages.exception_missingFeatureInRange, featureId, range);
@@ -422,7 +422,7 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 								expanded[includedRefs.length] = added;
 								includedRefs = expanded;
 							} else if (extraEntries[j].startsWith("plugin@")) { //$NON-NLS-1$
-								VersionRange range = new VersionRange(version, true, version.equals(Version.emptyVersion) ? (Version) null : version, true);
+								VersionRange range = version.equals(Version.emptyVersion) ? Utils.EMPTY_RANGE : Utils.createExactVersionRange(version);
 								allPlugins.add(new ReachablePlugin(id, range));
 							}
 						}

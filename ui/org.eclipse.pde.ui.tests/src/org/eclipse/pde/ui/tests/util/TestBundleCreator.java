@@ -34,6 +34,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.exports.FeatureExportInfo;
 import org.eclipse.pde.internal.core.exports.PluginExportOperation;
 import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 
 public class TestBundleCreator {
 
@@ -74,7 +75,7 @@ public class TestBundleCreator {
 
 			List<IRequiredBundleDescription> requiredBundles = new ArrayList<>();
 			for (int j = 1; j < Math.max(j, 200); j++) {
-				IRequiredBundleDescription req = service.newRequiredBundle(TEST_BUNDLE_NAME + Integer.toString(j), null, false, false);
+				IRequiredBundleDescription req = service.newRequiredBundle(TEST_BUNDLE_NAME + j, (VersionRange) null, false, false);
 				requiredBundles.add(req);
 			}
 			description.setRequiredBundles(requiredBundles.toArray(new IRequiredBundleDescription[requiredBundles.size()]));

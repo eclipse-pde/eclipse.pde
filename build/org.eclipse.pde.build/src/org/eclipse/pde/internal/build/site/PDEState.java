@@ -53,7 +53,6 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.service.resolver.StateObjectFactory;
-import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.AbstractScriptGenerator;
@@ -68,6 +67,7 @@ import org.eclipse.pde.internal.build.Utils;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 
 // This class provides a higher level API on the state
 public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
@@ -692,7 +692,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			VersionRange qualifierRange = Utils.createVersionRange(version);
 			//bundles are sorted, start at the high end
 			for (int i = bundles.length - 1; i >= 0; i--) {
-				if (qualifierRange.isIncluded(bundles[i].getVersion()) && (!resolved || bundles[i].isResolved()))
+				if (qualifierRange.includes(bundles[i].getVersion()) && (!resolved || bundles[i].isResolved()))
 					return bundles[i];
 			}
 		}

@@ -44,10 +44,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.target.NameVersionDescriptor;
+import org.eclipse.pde.internal.build.Utils;
 import org.eclipse.pde.internal.core.ClasspathComputer;
 import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.ui.tests.launcher.AbstractLaunchTest;
@@ -358,7 +358,7 @@ public class DependencyManagerTest {
 			boolean setTestAttribute) throws CoreException {
 
 		IProject project = ProjectUtils.createPluginProject(projectName, projectName, "1.0.0", (d, s) -> {
-			d.setHost(s.newHost(hostName, VersionRange.emptyRange));
+			d.setHost(s.newHost(hostName, Utils.EMPTY_RANGE));
 		});
 		IPluginModelBase model = PluginRegistry.findModel(project);
 		if (setTestAttribute) { // set test attribute in classpath
