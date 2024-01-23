@@ -122,7 +122,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	/**
 	 * Constant to match any value for ws, os, arch.
 	 */
-	private final AnyValue ANY_VALUE = new AnyValue("*"); //$NON-NLS-1$
+	private final AnyValue ANY_VALUE = new AnyValue();
 
 	/**
 	 * Cache of resolved packages.

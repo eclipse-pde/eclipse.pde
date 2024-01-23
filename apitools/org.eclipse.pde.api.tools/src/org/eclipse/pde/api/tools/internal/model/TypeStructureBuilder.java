@@ -113,7 +113,7 @@ public class TypeStructureBuilder extends ClassVisitor {
 			if (currentOuterName.equals(fType.getName())) {
 				// this is a real type member defined in the descriptor (not
 				// just a reference to a type member)
-				fType.addMemberType(currentName, access);
+				fType.addMemberType(currentName);
 			} else if (currentName.equals(fType.getName())) {
 				fType.setModifiers(access);
 				fType.setSimpleName(innerName);

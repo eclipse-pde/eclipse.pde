@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
@@ -648,7 +647,7 @@ public class ClassFileComparator {
 						}
 						IApiTypeRoot memberType2 = this.component2.findTypeRoot(typeMember.getName());
 						ClassFileComparator comparator = new ClassFileComparator(typeMember, memberType2, this.component, this.component2, this.apiBaseline1, this.apiBaseline2, this.visibilityModifiers);
-						IDelta delta2 = comparator.getDelta(null);
+						IDelta delta2 = comparator.getDelta();
 						if (delta2 != null && delta2 != ApiComparator.NO_DELTA) {
 							this.addDelta(delta2);
 						}
@@ -981,7 +980,7 @@ public class ClassFileComparator {
 	 *
 	 * @return the changes in the type descriptor or <code>null</code>
 	 */
-	public IDelta getDelta(IProgressMonitor monitor) {
+	public IDelta getDelta() {
 		try {
 			this.delta = createDelta();
 			// check visibility

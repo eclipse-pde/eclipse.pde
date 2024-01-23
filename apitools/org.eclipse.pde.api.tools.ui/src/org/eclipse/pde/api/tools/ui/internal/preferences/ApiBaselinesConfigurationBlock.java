@@ -287,7 +287,7 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 	 *
 	 * @param parent the parent control
 	 */
-	public Control createControl(Composite parent, final ApiBaselinePreferencePage page) {
+	Control createControl(Composite parent) {
 		fParent = parent;
 		fMainComp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL, 0, 0);
 		Group optionsProfileGroup = SWTFactory.createGroup(fMainComp, PreferenceMessages.ApiProfilesConfigurationBlock_options_group_title, 2, 1, GridData.FILL_BOTH);

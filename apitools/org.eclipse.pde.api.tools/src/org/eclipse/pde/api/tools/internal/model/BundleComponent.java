@@ -329,9 +329,12 @@ public class BundleComponent extends Component {
 	 * Returns the {@link BundleDescription} for the given manifest + state or
 	 * throws an exception, never returns <code>null</code>
 	 *
+	 * @param location to be used by override
+	 *
 	 * @return the {@link BundleDescription} or throws an exception
 	 */
-	protected BundleDescription getBundleDescription(Map<String, String> manifest, String location, long id) throws BundleException {
+	protected BundleDescription getBundleDescription(Map<String, String> manifest, String location, long id)
+			throws BundleException {
 		State state = getState();
 		BundleDescription bundle = lookupBundle(state, manifest);
 		if (bundle != null) {

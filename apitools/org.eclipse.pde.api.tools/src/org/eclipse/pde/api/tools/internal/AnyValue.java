@@ -24,7 +24,7 @@ public class AnyValue {
 	/**
 	 * Constructor
 	 */
-	public AnyValue(String arg) {
+	public AnyValue() {
 		// do nothing
 	}
 

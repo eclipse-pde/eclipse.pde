@@ -211,7 +211,7 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 			addUseDetectors(fDetectors, project);
 		}
 		if ((fKindMask & K_SYSTEM) > 0) {
-			addSystemDetector(fDetectors, project);
+			addSystemDetector(project);
 		}
 		if ((fKindMask & K_LEAK) > 0) {
 			addLeakDetectors(fDetectors, project);
@@ -261,7 +261,7 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 	/**
 	 * Adds the system detector to the given listing
 	 */
-	private void addSystemDetector(List<IApiProblemDetector> detectors, IProject project) {
+	private void addSystemDetector(IProject project) {
 		if (project != null) {
 			// do not add the detector even if the setting is not ignore if
 			// there are no EE descriptions installed

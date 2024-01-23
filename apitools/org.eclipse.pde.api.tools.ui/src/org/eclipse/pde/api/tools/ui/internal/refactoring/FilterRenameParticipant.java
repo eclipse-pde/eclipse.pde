@@ -50,10 +50,10 @@ public class FilterRenameParticipant extends RenameParticipant {
 	public Change createPreChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		switch (this.element.getElementType()) {
 			case IJavaElement.TYPE: {
-				return RefactoringUtils.createRenameFilterChanges((IType) this.element, getArguments().getNewName());
+				return RefactoringUtils.createRenameFilterChanges((IType) this.element);
 			}
 			case IJavaElement.PACKAGE_FRAGMENT: {
-				return RefactoringUtils.createRenameFilterChanges((IPackageFragment) this.element, getArguments().getNewName());
+				return RefactoringUtils.createRenameFilterChanges((IPackageFragment) this.element);
 			}
 			default:
 				break;

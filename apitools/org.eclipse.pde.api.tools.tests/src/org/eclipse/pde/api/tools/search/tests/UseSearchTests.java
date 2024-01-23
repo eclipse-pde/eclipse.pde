@@ -128,7 +128,7 @@ public class UseSearchTests extends SearchTest {
 	 * and the {@link XMLApiSearchReporter} in it
 	 * @return the default composite search reporter
 	 */
-	IApiSearchReporter getCompositeReporter(String path, boolean debug) {
+	IApiSearchReporter getCompositeReporter(boolean debug) {
 		IApiSearchReporter[] reporters = new IApiSearchReporter[2];
 		reporters[0] = TEST_REPORTER;
 		reporters[1] = new XmlSearchReporter(XML_PATH.toOSString(), debug);
@@ -149,7 +149,7 @@ public class UseSearchTests extends SearchTest {
 					new String[] {P2_NAME, P3_NAME},
 					new int[][] {{IReference.REF_FIELDDECL, IReference.REF_FIELDDECL}, {IReference.REF_FIELDDECL, IReference.REF_FIELDDECL, IReference.REF_FIELDDECL}});
 			TEST_REPORTER.setExpectedNotSearched(null);
-			engine.search(getTestBaseline(), TEST_REQUESTOR, getCompositeReporter(XML_PATH.toOSString(), false), null);
+			engine.search(getTestBaseline(), TEST_REQUESTOR, getCompositeReporter(false), null);
 			setProjectsUsedBy(
 					new String[] {getProjectId(P1_NAME, DEFAULT_VERSION), getProjectId(P2_NAME, DEFAULT_VERSION)},
 					new String[][] {{getProjectId(P2_NAME, DEFAULT_VERSION), getProjectId(P3_NAME, DEFAULT_VERSION)}, {getProjectId(P3_NAME, DEFAULT_VERSION)}});
@@ -174,7 +174,7 @@ public class UseSearchTests extends SearchTest {
 					new String[] {P2_NAME, P3_NAME},
 					new int[][] {{IReference.REF_FIELDDECL, IReference.REF_FIELDDECL}, {IReference.REF_FIELDDECL, IReference.REF_FIELDDECL, IReference.REF_FIELDDECL}});
 			TEST_REPORTER.setExpectedNotSearched(null);
-			engine.search(getTestBaseline(), TEST_REQUESTOR, getCompositeReporter(XML_PATH.toOSString(), true), null);
+			engine.search(getTestBaseline(), TEST_REQUESTOR, getCompositeReporter(true), null);
 			setProjectsUsedBy(
 					new String[] {getProjectId(P1_NAME, DEFAULT_VERSION), getProjectId(P2_NAME, DEFAULT_VERSION)},
 					new String[][] {{getProjectId(P2_NAME, DEFAULT_VERSION), getProjectId(P3_NAME, DEFAULT_VERSION)}, {getProjectId(P3_NAME, DEFAULT_VERSION)}});

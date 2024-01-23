@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.CoreException;
  *
  * @since 1.0.0
  */
+@SuppressWarnings("unused") // parameters unused in this implementation but used in overrides
 public class ApiScopeVisitor {
 	/**
 	 * End visiting an {@link IApiComponent}.

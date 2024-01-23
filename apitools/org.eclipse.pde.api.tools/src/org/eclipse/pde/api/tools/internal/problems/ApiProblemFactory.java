@@ -16,6 +16,7 @@ package org.eclipse.pde.api.tools.internal.problems;
 import java.text.ChoiceFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
@@ -86,29 +87,13 @@ public class ApiProblemFactory {
 				}
 				// the message arguments
 				String[] margs = splitHandle(args[3], ApiProblemFilter.HANDLE_ARGUMENTS_DELIMITER);
-				hashcode += argumentsHashcode(margs);
+				hashcode += Arrays.hashCode(margs);
 			} catch (Exception e) {
 				// ignore
 			}
 			return hashcode;
 		}
 		return -1;
-	}
-
-	/**
-	 * Returns the deep hash code of the complete listing of message arguments
-	 *
-	 * @return the hash code of the message arguments
-	 */
-	private static int argumentsHashcode(String[] arguments) {
-		if (arguments == null) {
-			return 0;
-		}
-		int hashcode = 0;
-		for (String argument : arguments) {
-			hashcode += argument.hashCode();
-		}
-		return hashcode;
 	}
 
 	private static String[] splitHandle(String messageArguments, String delimiter) {

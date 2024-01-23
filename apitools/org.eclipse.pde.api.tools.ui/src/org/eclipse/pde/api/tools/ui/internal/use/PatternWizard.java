@@ -40,14 +40,14 @@ public class PatternWizard extends Wizard {
 	public void addPages() {
 		if (this.pattern == null) {
 			addPage(new PatternSelectionPage());
-			addPage(new DescriptionPatternPage(null, -1));
+			addPage(new DescriptionPatternPage(null));
 			addPage(new ArchivePatternPage(null));
 			addPage(new ReportPatternPage(null, -1));
 		} else {
 			switch (this.kind) {
 				case Pattern.API:
 				case Pattern.INTERNAL: {
-					addPage(new DescriptionPatternPage(this.pattern, this.kind));
+					addPage(new DescriptionPatternPage(this.pattern));
 					break;
 				}
 				case Pattern.JAR: {

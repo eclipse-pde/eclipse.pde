@@ -287,7 +287,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			// usage checks
 			checkApiUsage(bcontext, component, localMonitor.split(1));
 			// tag validation
-			checkTagValidation(bcontext, component, localMonitor.split(1));
+			checkTagValidation(bcontext, localMonitor.split(1));
 			if (checkfilters) {
 				// check for unused filters only if the scans have been done
 				checkUnusedProblemFilters(bcontext, component, localMonitor.split(1));
@@ -1115,7 +1115,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	/**
 	 * Checks the validation of tags for the given {@link IApiComponent}
 	 */
-	private void checkTagValidation(final IBuildContext context, final IApiComponent component, IProgressMonitor monitor) {
+	private void checkTagValidation(final IBuildContext context, IProgressMonitor monitor) {
 		boolean tags = ignoreInvalidTagCheck();
 		boolean annotations = ignoreInvalidAnnotationCheck();
 		if (tags && annotations) {

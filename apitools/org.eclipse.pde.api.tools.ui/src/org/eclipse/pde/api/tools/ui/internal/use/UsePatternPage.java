@@ -41,6 +41,10 @@ public abstract class UsePatternPage extends WizardPage {
 		this.dirty = true;
 	}
 
+	/**
+	 * @param isediting
+	 *            to be used by overrides
+	 */
 	protected void resetMessage(boolean isediting) {
 		// do nothing by default
 	}

@@ -18,6 +18,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Objects;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.preferences.DefaultScope;
@@ -570,7 +572,8 @@ public class ApiProblemTests extends AbstractApiTest {
 		IApiProblem problem = ApiProblemFactory.newApiProblem(IPath.fromOSString("x/y/z").toPortableString(), null, new String[] { "test1, test2, test3" }, null, null, 2, 2, 2, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE); //$NON-NLS-1$ //$NON-NLS-2$
 		assertNotNull("there should have been a new problem created", problem); //$NON-NLS-1$
 		assertEquals("the hashcode should be equal to the sum of: id, resourcepath.hashCode", //$NON-NLS-1$
-				problem.hashCode(), (problem.getId() + problem.getResourcePath().hashCode() + argumentsHashcode(new String[] { "test1, test2, test3" }))); //$NON-NLS-1$
+				problem.hashCode(), (problem.getId() + problem.getResourcePath().hashCode()
+						+ Objects.hash("test1, test2, test3"))); //$NON-NLS-1$
 	}
 
 	/**
@@ -581,20 +584,7 @@ public class ApiProblemTests extends AbstractApiTest {
 		IApiProblem problem = ApiProblemFactory.newApiProblem(null, null, new String[] { "test1, test2, test3" }, null, null, 2, 2, 2, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IDelta.ANNOTATION_DEFAULT_VALUE); //$NON-NLS-1$
 		assertNotNull("there should have been a new problem created", problem); //$NON-NLS-1$
 		assertEquals("the hashcode should be equal to the sum of: id, resourcepath.hashCode", //$NON-NLS-1$
-				problem.hashCode(), (problem.getId() + 0 + argumentsHashcode(new String[] { "test1, test2, test3" }))); //$NON-NLS-1$
+				problem.hashCode(), (problem.getId() + 0 + Objects.hash("test1, test2, test3"))); //$NON-NLS-1$
 	}
 
-	/**
-	 * Helper method to get a hash code for problem arguments
-	 */
-	private int argumentsHashcode(String[] arguments) {
-		if (arguments == null) {
-			return 0;
-		}
-		int hashcode = 0;
-		for (String argument : arguments) {
-			hashcode += argument.hashCode();
-		}
-		return hashcode;
-	}
 }

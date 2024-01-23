@@ -600,17 +600,19 @@ public class ApiDescription implements IApiDescription {
 	}
 
 	/**
-	 * Returns whether a new node should be inserted into the API description
-	 * when resolving the annotations for an element if a node is not already
-	 * present, in the context of the given component.
+	 * Returns whether a new node should be inserted into the API description when
+	 * resolving the annotations for an element if a node is not already present, in
+	 * the context of the given component.
 	 * <p>
-	 * Default implementation returns <code>false</code>. Subclasses should
-	 * override this method as required.
+	 * Default implementation returns <code>false</code>. Subclasses should override
+	 * this method as required.
 	 * </p>
 	 *
-	 * @return whether a new node should be inserted into the API description
-	 *         when resolving the annotations for an element if a node is not
-	 *         already present
+	 * @param elementDescriptor to be used by overrides
+	 *
+	 * @return whether a new node should be inserted into the API description when
+	 *         resolving the annotations for an element if a node is not already
+	 *         present
 	 */
 	protected boolean isInsertOnResolve(IElementDescriptor elementDescriptor) {
 		return false;
