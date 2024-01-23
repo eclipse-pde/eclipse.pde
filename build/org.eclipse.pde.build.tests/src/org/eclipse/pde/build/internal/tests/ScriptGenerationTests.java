@@ -59,7 +59,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.internal.p2.publisher.eclipse.Messages;
 import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;
-import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.build.internal.tests.ant.AntUtils;
 import org.eclipse.pde.build.tests.BuildConfiguration;
 import org.eclipse.pde.build.tests.PDETestCase;
@@ -76,6 +75,7 @@ import org.eclipse.pde.internal.build.site.QualifierReplacer;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 
 public class ScriptGenerationTests extends PDETestCase {
 
@@ -704,45 +704,45 @@ public class ScriptGenerationTests extends PDETestCase {
 	@Test
 	public void testBug247091_2() throws Exception {
 		VersionRange range = org.eclipse.pde.internal.build.Utils.createVersionRange("1.0.0");
-		assertTrue(range.getIncludeMinimum());
-		assertTrue(range.getIncludeMaximum());
-		assertEquals(range.getMinimum(), new Version("1.0.0"));
+		assertEquals(VersionRange.LEFT_CLOSED, range.getLeftType());
+		assertEquals(VersionRange.RIGHT_CLOSED, range.getRightType());
+		assertEquals(range.getLeft(), new Version("1.0.0"));
 		assertEquals(range.getRight(), new Version("1.0.0"));
 
 		range = org.eclipse.pde.internal.build.Utils.createVersionRange("1.0.0.qualifier");
-		assertTrue(range.getIncludeMinimum());
-		assertFalse(range.getIncludeMaximum());
-		assertEquals(range.getMinimum(), new Version("1.0.0"));
+		assertEquals(VersionRange.LEFT_CLOSED, range.getLeftType());
+		assertEquals(VersionRange.RIGHT_OPEN, range.getRightType());
+		assertEquals(range.getLeft(), new Version("1.0.0"));
 		assertEquals(range.getRight(), new Version("1.0.1"));
 
 		range = org.eclipse.pde.internal.build.Utils.createVersionRange("1.0.0.zqualifier");
-		assertTrue(range.getIncludeMinimum());
-		assertFalse(range.getIncludeMaximum());
-		assertEquals(range.getMinimum(), new Version("1.0.0.z"));
+		assertEquals(VersionRange.LEFT_CLOSED, range.getLeftType());
+		assertEquals(VersionRange.RIGHT_OPEN, range.getRightType());
+		assertEquals(range.getLeft(), new Version("1.0.0.z"));
 		assertEquals(range.getRight(), new Version("1.0.1"));
 
 		range = org.eclipse.pde.internal.build.Utils.createVersionRange("1.0.0.abcqualifier");
-		assertTrue(range.getIncludeMinimum());
-		assertFalse(range.getIncludeMaximum());
-		assertEquals(range.getMinimum(), new Version("1.0.0.abc"));
+		assertEquals(VersionRange.LEFT_CLOSED, range.getLeftType());
+		assertEquals(VersionRange.RIGHT_OPEN, range.getRightType());
+		assertEquals(range.getLeft(), new Version("1.0.0.abc"));
 		assertEquals(range.getRight(), new Version("1.0.0.abd"));
 
 		range = org.eclipse.pde.internal.build.Utils.createVersionRange("1.0.0.abzqualifier");
-		assertTrue(range.getIncludeMinimum());
-		assertFalse(range.getIncludeMaximum());
-		assertEquals(range.getMinimum(), new Version("1.0.0.abz"));
+		assertEquals(VersionRange.LEFT_CLOSED, range.getLeftType());
+		assertEquals(VersionRange.RIGHT_OPEN, range.getRightType());
+		assertEquals(range.getLeft(), new Version("1.0.0.abz"));
 		assertEquals(range.getRight(), new Version("1.0.0.ac"));
 
 		range = org.eclipse.pde.internal.build.Utils.createVersionRange("1.0.0.abzzqualifier");
-		assertTrue(range.getIncludeMinimum());
-		assertFalse(range.getIncludeMaximum());
-		assertEquals(range.getMinimum(), new Version("1.0.0.abzz"));
+		assertEquals(VersionRange.LEFT_CLOSED, range.getLeftType());
+		assertEquals(VersionRange.RIGHT_OPEN, range.getRightType());
+		assertEquals(range.getLeft(), new Version("1.0.0.abzz"));
 		assertEquals(range.getRight(), new Version("1.0.0.ac"));
 
 		range = org.eclipse.pde.internal.build.Utils.createVersionRange("1.0.0.abzz_qualifier");
-		assertTrue(range.getIncludeMinimum());
-		assertFalse(range.getIncludeMaximum());
-		assertEquals(range.getMinimum(), new Version("1.0.0.abzz_"));
+		assertEquals(VersionRange.LEFT_CLOSED, range.getLeftType());
+		assertEquals(VersionRange.RIGHT_OPEN, range.getRightType());
+		assertEquals(range.getLeft(), new Version("1.0.0.abzz_"));
 		assertEquals(range.getRight(), new Version("1.0.0.abzza"));
 
 	}

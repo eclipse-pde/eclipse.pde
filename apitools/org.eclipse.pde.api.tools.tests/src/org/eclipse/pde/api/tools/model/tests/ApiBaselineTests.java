@@ -37,7 +37,6 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
-import org.eclipse.pde.api.tools.internal.util.Util;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -70,12 +69,12 @@ public class ApiBaselineTests {
 			fBaseline = TestSuiteHelper.createTestingBaseline(TEST_PLUGINS);
 			assertNotNull("the testing baseline should exist", fBaseline); //$NON-NLS-1$
 			List<IRequiredComponentDescription> reqs = new ArrayList<>();
-			reqs.add(new RequiredComponentDescription("org.eclipse.core.runtime", new BundleVersionRange(Util.EMPTY_STRING))); //$NON-NLS-1$
+			reqs.add(new RequiredComponentDescription("org.eclipse.core.runtime", new BundleVersionRange("0.0.0"))); //$NON-NLS-1$ //$NON-NLS-2$
 			validateComponent(fBaseline, COMPONENT_A, "A Plug-in", _1_0_0, "J2SE-1.5", reqs); //$NON-NLS-1$ //$NON-NLS-2$
 
 			reqs = new ArrayList<>();
-			reqs.add(new RequiredComponentDescription("org.eclipse.core.runtime", new BundleVersionRange(Util.EMPTY_STRING))); //$NON-NLS-1$
-			reqs.add(new RequiredComponentDescription(COMPONENT_A, new BundleVersionRange(Util.EMPTY_STRING)));
+			reqs.add(new RequiredComponentDescription("org.eclipse.core.runtime", new BundleVersionRange("0.0.0"))); //$NON-NLS-1$ //$NON-NLS-2$
+			reqs.add(new RequiredComponentDescription(COMPONENT_A, new BundleVersionRange("0.0.0"))); //$NON-NLS-1$
 			validateComponent(fBaseline, COMPONENT_B, "B Plug-in", _1_0_0, "J2SE-1.4", reqs); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}

@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text.bundle;
 
-import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.osgi.framework.VersionRange;
 
 public class BundleVersionHeader extends SingleManifestHeader {
 

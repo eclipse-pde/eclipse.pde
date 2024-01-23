@@ -25,8 +25,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.osgi.service.resolver.VersionRange;
 import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 
 /**
  * Model entry point for Eclipse runtime. Provides information about runtime bundles, services and extension points.
@@ -386,25 +386,12 @@ public class RegistryModel {
 		if (versionOrRange == null) {
 			return true;
 		}
-
 		try {
-			Version version = Version.parseVersion(versionOrRange);
-			if (hostVersion.compareTo(version) >= 0)
-				return true;
-
-		} catch (IllegalArgumentException e) {
-			// wrong formatting, try VersionRange
-		}
-
-		try {
-			VersionRange range = new VersionRange(versionOrRange);
-			if (range.isIncluded(hostVersion))
-				return true;
-
+			// only versions are parsed as right open range without upper limit
+			return new VersionRange(versionOrRange).includes(hostVersion);
 		} catch (IllegalArgumentException e2) {
 			// wrong range formatting
 		}
-
 		return false;
 	}
 

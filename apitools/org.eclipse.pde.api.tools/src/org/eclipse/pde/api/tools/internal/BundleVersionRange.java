@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal;
 
-import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.api.tools.internal.provisional.IVersionRange;
 import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 
 /**
  * Implementation of a required component description based on OSGi bundles.
@@ -48,22 +48,23 @@ public class BundleVersionRange implements IVersionRange {
 
 	@Override
 	public String getMaximumVersion() {
-		return fRange.getMaximum().toString();
+		Version right = fRange.getRight();
+		return right != null ? right.toString() : null;
 	}
 
 	@Override
 	public String getMinimumVersion() {
-		return fRange.getMinimum().toString();
+		return fRange.getLeft().toString();
 	}
 
 	@Override
 	public boolean isIncludeMaximum() {
-		return fRange.getIncludeMaximum();
+		return fRange.getRightType() == VersionRange.RIGHT_CLOSED;
 	}
 
 	@Override
 	public boolean isIncludeMinimum() {
-		return fRange.getIncludeMinimum();
+		return fRange.getLeftType() == VersionRange.LEFT_CLOSED;
 	}
 
 	@Override
@@ -86,7 +87,7 @@ public class BundleVersionRange implements IVersionRange {
 
 	@Override
 	public boolean isIncluded(String version) {
-		return fRange.isIncluded(new Version(version));
+		return fRange.includes(new Version(version));
 	}
 
 }

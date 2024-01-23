@@ -41,7 +41,6 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.pde.core.project.IPackageImportDescription;
@@ -53,6 +52,7 @@ import org.eclipse.ui.ide.IDE;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
+import org.osgi.framework.VersionRange;
 
 public abstract class AbstractNewClassWizard extends Wizard implements INewWizard {
 	private static final String JAVA = ".java"; //$NON-NLS-1$
@@ -178,7 +178,7 @@ public abstract class AbstractNewClassWizard extends Wizard implements INewWizar
 
 			if (requiredBundles.size() > 0) {
 				for (final String b : requiredBundles) {
-					descs.add(service.newRequiredBundle(b, null, false, false));
+					descs.add(service.newRequiredBundle(b, (VersionRange) null, false, false));
 				}
 				description.setRequiredBundles(descs.toArray(new IRequiredBundleDescription[0]));
 				description.apply(new NullProgressMonitor());
@@ -212,7 +212,7 @@ public abstract class AbstractNewClassWizard extends Wizard implements INewWizar
 		for (final String p : parts) {
 			if (p.startsWith("version=")) { //$NON-NLS-1$
 				final String version = p.substring("version=".length() + 1, p.length() - 1); //$NON-NLS-1$
-				return new VersionRange(version.trim());
+				return new VersionRange(version.isBlank() ? "0.0.0" : version.trim()); //$NON-NLS-1$
 			}
 		}
 		return null;

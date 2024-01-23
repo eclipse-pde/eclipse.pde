@@ -39,15 +39,15 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.equinox.internal.p2.publisher.eclipse.ProductFile;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.internal.build.ant.FileSet;
 import org.eclipse.pde.internal.build.builder.BuildDirector;
 import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator;
 import org.eclipse.pde.internal.build.site.BuildTimeFeature;
 import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 
 public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
-	private static final VersionRange OLD_EXECUTABLE_RANGE = new VersionRange(Version.emptyVersion, true, new Version(3, 3, 200, "v20090306-1900"), false); //$NON-NLS-1$
+	private static final VersionRange OLD_EXECUTABLE_RANGE = new VersionRange(VersionRange.LEFT_CLOSED, Version.emptyVersion, new Version(3, 3, 200, "v20090306-1900"), VersionRange.RIGHT_OPEN); //$NON-NLS-1$
 	private AssemblyInformation assemblyInformation = null;
 	private boolean assembling = false;
 	private boolean versionsList = false;
@@ -505,9 +505,9 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		if (!feature.getId().equals(FEATURE_EQUINOX_EXECUTABLE))
 			return false;
 
-		if (feature.isBinary() || !OLD_EXECUTABLE_RANGE.isIncluded(new Version(feature.getVersion())))
+		if (feature.isBinary() || !OLD_EXECUTABLE_RANGE.includes(new Version(feature.getVersion()))) {
 			return false;
-
+		}
 		Properties properties = getFeatureBuildProperties(feature);
 		return properties != null && Boolean.valueOf((String) properties.get(PROPERTY_CUSTOM)).booleanValue();
 	}
