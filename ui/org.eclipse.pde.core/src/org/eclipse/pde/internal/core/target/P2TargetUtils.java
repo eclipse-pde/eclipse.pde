@@ -287,13 +287,18 @@ public class P2TargetUtils {
 		}
 	}
 
-	@SuppressWarnings("restriction")
 	public static void forceCheckTarget(final ITargetDefinition target) {
 		final P2TargetUtils result = getSynchronizer(target);
-		if (result.fProfile instanceof org.eclipse.equinox.internal.p2.engine.Profile) {
-			((org.eclipse.equinox.internal.p2.engine.Profile) result.fProfile).setProperty(PROP_SEQUENCE_NUMBER, "-1"); //$NON-NLS-1$
+		result.resetProfile();
+	}
+
+	@SuppressWarnings("restriction")
+	private synchronized void resetProfile() {
+		IProfile profile = getProfile();
+		if (profile instanceof org.eclipse.equinox.internal.p2.engine.Profile) {
+			((org.eclipse.equinox.internal.p2.engine.Profile) profile).setProperty(PROP_SEQUENCE_NUMBER, "-1"); //$NON-NLS-1$
 		}
-		result.fProfile = null;
+		fProfile = null;
 	}
 
 	/**
@@ -517,22 +522,22 @@ public class P2TargetUtils {
 	 * @return whether or not the profile and target definitions match
 	 * @throws CoreException in unable to retrieve profile
 	 */
-	private boolean checkProfile(ITargetDefinition target) throws CoreException {
+	private boolean checkProfile(ITargetDefinition target, final IProfile profile) throws CoreException {
 		// make sure we have a profile to validate
-		if (fProfile == null) {
+		if (profile == null) {
 			return false;
 		}
 
 		// check that the target and profiles are in sync. If they are then life is good.
 		// If they are not equal, there is still a chance that everything is ok.
-		String profileNumber = fProfile.getProperty(PROP_SEQUENCE_NUMBER);
+		String profileNumber = profile.getProperty(PROP_SEQUENCE_NUMBER);
 		if (Integer.toString(((TargetDefinition) target).getSequenceNumber()).equals(profileNumber)) {
 			return true;
 		}
 
 		// check if all environments setting is the same
 		boolean all = false;
-		String value = fProfile.getProperty(PROP_ALL_ENVIRONMENTS);
+		String value = profile.getProperty(PROP_ALL_ENVIRONMENTS);
 		if (value != null) {
 			all = Boolean.parseBoolean(value);
 			if (!Boolean.toString(getIncludeAllEnvironments()).equals(value)) {
@@ -544,35 +549,35 @@ public class P2TargetUtils {
 		String property = null;
 		if (!all) {
 			property = generateEnvironmentProperties(target);
-			value = fProfile.getProperty(IProfile.PROP_ENVIRONMENTS);
+			value = profile.getProperty(IProfile.PROP_ENVIRONMENTS);
 			if (!property.equals(value)) {
 				return false;
 			}
 		}
 		property = generateNLProperty(target);
-		value = fProfile.getProperty(IProfile.PROP_NL);
+		value = profile.getProperty(IProfile.PROP_NL);
 		if (!property.equals(value)) {
 			return false;
 		}
 
 		// check provisioning mode: slice versus plan
-		if (!getProvisionMode(target).equals(fProfile.getProperty(PROP_PROVISION_MODE))) {
+		if (!getProvisionMode(target).equals(profile.getProperty(PROP_PROVISION_MODE))) {
 			return false;
 		}
 
 		// check that the include source flag matches what the profile represents
-		if (getIncludeSource() != Boolean.parseBoolean(fProfile.getProperty(PROP_AUTO_INCLUDE_SOURCE))) {
+		if (getIncludeSource() != Boolean.parseBoolean(profile.getProperty(PROP_AUTO_INCLUDE_SOURCE))) {
 			return false;
 		}
 
-		if (getIncludeConfigurePhase() != Boolean.parseBoolean(fProfile.getProperty(PROP_INCLUDE_CONFIGURE_PHASE))) {
+		if (getIncludeConfigurePhase() != Boolean.parseBoolean(profile.getProperty(PROP_INCLUDE_CONFIGURE_PHASE))) {
 			return false;
 		}
 
 		// check top level IU's. If any have been removed from the containers that are
 		// still in the profile, we need to recreate (rather than uninstall)
 		IUProfilePropertyQuery propertyQuery = new IUProfilePropertyQuery(PROP_INSTALLED_IU, Boolean.toString(true));
-		IQueryResult<IInstallableUnit> queryResult = fProfile.query(propertyQuery, null);
+		IQueryResult<IInstallableUnit> queryResult = profile.query(propertyQuery, null);
 		Iterator<IInstallableUnit> iterator = queryResult.iterator();
 		Set<NameVersionDescriptor> installedIUs = new HashSet<>();
 		while (iterator.hasNext()) {
@@ -709,7 +714,7 @@ public class P2TargetUtils {
 			return false;
 		}
 		try {
-			return synchronizer.checkProfile(target);
+			return synchronizer.checkProfile(target, synchronizer.getProfile());
 		} catch (CoreException e) {
 			return false;
 		}
@@ -726,21 +731,21 @@ public class P2TargetUtils {
 			return false;
 		}
 		try {
-			synchronizer.updateProfileFromRegistry(target);
-			return synchronizer.checkProfile(target);
+			return synchronizer.checkProfile(target, synchronizer.updateProfileFromRegistry(target));
 		} catch (CoreException e) {
 			return false;
 		}
 	}
 
 
-	private void updateProfileFromRegistry(ITargetDefinition target) {
+	private synchronized IProfile updateProfileFromRegistry(ITargetDefinition target) {
 		if (fProfile == null) {
 			try {
 				fProfile = getProfileRegistry().getProfile(getProfileId(target));
 			} catch (CoreException e) {
 			}
 		}
+		return fProfile;
 	}
 
 	/**
@@ -801,14 +806,15 @@ public class P2TargetUtils {
 	 */
 	public synchronized void synchronize(ITargetDefinition target, IProgressMonitor monitor) throws CoreException {
 		SubMonitor progress = SubMonitor.convert(monitor, 100);
-
+		IProfile profile = getProfile();
 		// Happiness if we have a profile and it checks out or if we can load one and it checks out.
-		if (fProfile == null) {
-			fProfile = getProfileRegistry().getProfile(getProfileId(target));
+		if (profile == null) {
+			profile = getProfileRegistry().getProfile(getProfileId(target));
 		}
-		if (fProfile != null && checkProfile(target)) {
+		if (profile != null && checkProfile(target, profile)) {
 			// always push the changes to the target because there can be many target objects
 			// for the same synchronizer (doh!)
+			fProfile = profile;
 			notify(target, progress.split(25));
 			return;
 		}
@@ -816,7 +822,7 @@ public class P2TargetUtils {
 		// Either no profile was found or it was stale.  Delete the current profile and recreate.
 		// This keeps the internal agent data clean and does not cost us much.
 		deleteProfile(target.getHandle());
-		createProfile(target);
+		profile = createProfile(target);
 
 		if (progress.isCanceled()) {
 			return;
@@ -826,14 +832,15 @@ public class P2TargetUtils {
 		try {
 			// Now resolve the profile and refresh the relate IU containers
 			if (getIncludeAllRequired()) {
-				resolveWithPlanner(target, progress.split(60));
+				resolveWithPlanner(target, profile, progress.split(60));
 			} else {
-				resolveWithSlicer(target, progress.split(60));
+				resolveWithSlicer(target, profile, progress.split(60));
 			}
-
+			fProfile = profile;
 			// If we are updating a profile then delete the old snapshot on success.
 			notify(target, progress.split(15));
 		} catch (CoreException e) {
+			fProfile = null;
 			// There was at least one problem getting the contents, delete the profile so we don't cache in a bad state, Bug 439034
 			// TODO ALL we really want to delete is the sequence property, so that checkProfile will compare settings and contents
 			try {
@@ -845,7 +852,7 @@ public class P2TargetUtils {
 		}
 	}
 
-	private void createProfile(ITargetDefinition target) throws CoreException, ProvisionException {
+	private IProfile createProfile(ITargetDefinition target) throws CoreException, ProvisionException {
 		// create a new profile
 		IProfileRegistry registry = getProfileRegistry();
 		if (registry == null) {
@@ -862,7 +869,7 @@ public class P2TargetUtils {
 		properties.put(PROP_ALL_ENVIRONMENTS, Boolean.toString(getIncludeAllEnvironments()));
 		properties.put(PROP_AUTO_INCLUDE_SOURCE, Boolean.toString(getIncludeSource()));
 		properties.put(PROP_INCLUDE_CONFIGURE_PHASE, Boolean.toString(getIncludeConfigurePhase()));
-		fProfile = registry.addProfile(getProfileId(target), properties);
+		return registry.addProfile(getProfileId(target), properties);
 	}
 
 	/**
@@ -1062,7 +1069,8 @@ public class P2TargetUtils {
 	 * @param monitor for reporting progress
 	 * @throws CoreException if there is a problem with the requirements or there is a problem downloading
 	 */
-	private void resolveWithPlanner(ITargetDefinition target, IProgressMonitor monitor) throws CoreException {
+	private void resolveWithPlanner(ITargetDefinition target, IProfile profile, IProgressMonitor monitor)
+			throws CoreException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.IUBundleContainer_0, 220);
 
 		// Get the root IUs for every relevant container in the target definition
@@ -1070,10 +1078,10 @@ public class P2TargetUtils {
 
 		// create the provisioning plan
 		IPlanner planner = getPlanner();
-		IProfileChangeRequest request = planner.createChangeRequest(fProfile);
+		IProfileChangeRequest request = planner.createChangeRequest(profile);
 		// first remove everything that was explicitly installed.  Then add it back.  This has the net effect of
 		// removing everything that is no longer needed.
-		computeRemovals(fProfile, request, getIncludeSource());
+		computeRemovals(profile, request, getIncludeSource());
 		request.addAll(Arrays.asList(units));
 		for (IInstallableUnit unit : units) {
 			request.setInstallableUnitProfileProperty(unit, PROP_INSTALLED_IU, Boolean.toString(true));
@@ -1123,12 +1131,12 @@ public class P2TargetUtils {
 		// Now that we have a plan with all the binary and explicit bundles, do a second pass and add
 		// in all the source.
 		try {
-			planInSourceBundles(fProfile, context, subMonitor.split(60));
+			planInSourceBundles(profile, context, subMonitor.split(60));
 		} catch (CoreException e) {
 			// XXX Review required: is adding in the source critical or optional?
 			// We failed adding in the source so remove the intermediate profile and rethrow
 			try {
-				getProfileRegistry().removeProfile(fProfile.getProfileId(), fProfile.getTimestamp());
+				getProfileRegistry().removeProfile(profile.getProfileId(), profile.getTimestamp());
 			} catch (CoreException e2) {
 				PDECore.log(e2.getStatus());
 			}
@@ -1281,7 +1289,8 @@ public class P2TargetUtils {
 	 * @param monitor for reporting progress
 	 * @throws CoreException if there is a problem interacting with the repositories
 	 */
-	private void resolveWithSlicer(ITargetDefinition target, IProgressMonitor monitor) throws CoreException {
+	private void resolveWithSlicer(ITargetDefinition target, IProfile profile, IProgressMonitor monitor)
+			throws CoreException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.IUBundleContainer_0, 110);
 
 		// resolve IUs
@@ -1320,7 +1329,7 @@ public class P2TargetUtils {
 		context.setMetadataRepositories(uris);
 		context.setArtifactRepositories(getArtifactRepositories(target).toArray(URI[]::new));
 		context.setProperty(ProvisioningContext.FOLLOW_REPOSITORY_REFERENCES, Boolean.toString(true));
-		IProvisioningPlan plan = engine.createPlan(fProfile, context);
+		IProvisioningPlan plan = engine.createPlan(profile, context);
 		setPlanProperties(plan, target, TargetDefinitionPersistenceHelper.MODE_SLICER);
 
 		Set<IInstallableUnit> newSet = queryResult.toSet();
@@ -1333,7 +1342,7 @@ public class P2TargetUtils {
 		}
 
 		// remove all units that are in the current profile but not in the new slice
-		Set<IInstallableUnit> toRemove = fProfile.query(QueryUtil.ALL_UNITS, null).toSet();
+		Set<IInstallableUnit> toRemove = profile.query(QueryUtil.ALL_UNITS, null).toSet();
 		toRemove.removeAll(newSet);
 		for (IInstallableUnit name : toRemove) {
 			plan.removeInstallableUnit(name);
@@ -1688,7 +1697,7 @@ public class P2TargetUtils {
 	/**
 	 * @return the profile associated with this synchronizer
 	 */
-	IProfile getProfile() {
+	synchronized IProfile getProfile() {
 		return fProfile;
 	}
 
