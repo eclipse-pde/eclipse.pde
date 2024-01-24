@@ -2528,9 +2528,9 @@
             class="org.eclipse.pde.internal.ui.bndtools.RepositoryTargetLocationWizard"
             icon="platform:/plugin/org.eclipse.pde.ui/icons/bndtools/database.png"
             id="bndtools.RepositoryTargetLocationProvisioner"
-            name="Bnd Repository">
+            name="%RepositoryTargetLocationProvisioner.name">
          <description>
-            Download plug-ins from a repository defined in a Bnd workspace
+            %RepositoryTargetLocationProvisioner.description
          </description>
       </locationProvider>
    </extension>
@@ -2551,9 +2551,9 @@
             class="org.eclipse.pde.internal.ui.bndtools.RunDescriptorTargetLocationWizard"
             icon="platform:/plugin/org.eclipse.pde.ui/icons/bndtools/bndrun.gif"
             id="bndtools.RunDescriptorTargetLocationProvisioner"
-            name="Bnd Run Descriptor">
+            name="%RunDescriptorTargetLocationProvisioner.name">
          <description>
-            The set of bundles defined by a Bnd run descriptor
+            %RunDescriptorTargetLocationProvisioner.description
          </description>
       </locationProvider>
    </extension>
