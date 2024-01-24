@@ -41,7 +41,7 @@ record ComponentActivationAnnotation(String activate, Annotation annotation, Met
 	}
 
 	public boolean isType() {
-		return binding instanceof ITypeBinding method;
+		return binding instanceof ITypeBinding;
 	}
 
 	public int parameterCount() {
