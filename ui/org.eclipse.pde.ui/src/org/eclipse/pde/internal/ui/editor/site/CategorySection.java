@@ -218,18 +218,16 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 				 */
 				@Override
 				protected int determineLocation(DropTargetEvent event) {
-					if (!(event.item instanceof Item item)) {
-						return LOCATION_NONE;
-					}
-					Point coordinates = new Point(event.x, event.y);
-					coordinates = getViewer().getControl().toControl(coordinates);
-					if (item != null) {
+					if (event.item instanceof Item item) {
+						Point coordinates = new Point(event.x, event.y);
+						coordinates = getViewer().getControl().toControl(coordinates);
 						Rectangle bounds = getBounds(item);
 						if (bounds == null) {
 							return LOCATION_NONE;
 						}
+						return LOCATION_ON;
 					}
-					return LOCATION_ON;
+					return LOCATION_NONE;
 				}
 
 				@Override
