@@ -46,6 +46,7 @@ public class GeneralInfoSection extends PDESection {
 	private FormEntry fNameEntry;
 	private FormEntry fVersionEntry;
 	private Button fLaunchersButton;
+	private Button fJreButton;
 
 	private static int NUM_COLUMNS = 3;
 
@@ -146,12 +147,20 @@ public class GeneralInfoSection extends PDESection {
 	}
 
 	private void createLaunchersOption(Composite client, FormToolkit toolkit) {
+		// includes launcher
 		fLaunchersButton = toolkit.createButton(client, PDEUIMessages.ProductInfoSection_launchers, SWT.CHECK);
 		GridData data = new GridData();
 		data.horizontalSpan = 2;
 		fLaunchersButton.setLayoutData(data);
 		fLaunchersButton.setEnabled(isEditable());
 		fLaunchersButton.addSelectionListener(widgetSelectedAdapter(e -> getProduct().setIncludeLaunchers(fLaunchersButton.getSelection())));
+		// includes JRE
+		fJreButton = toolkit.createButton(client, PDEUIMessages.ProductInfoSection_jre, SWT.CHECK);
+		fJreButton.setLayoutData(data);
+		fJreButton.setEnabled(isEditable());
+		fJreButton.addSelectionListener(
+				widgetSelectedAdapter(e -> getProduct().setIncludeJre(fJreButton.getSelection())));
+
 	}
 
 	@Override
@@ -191,6 +200,7 @@ public class GeneralInfoSection extends PDESection {
 			fVersionEntry.setValue(product.getVersion(), true);
 		}
 		fLaunchersButton.setSelection(product.includeLaunchers());
+		fJreButton.setSelection(product.includeJre());
 		super.refresh();
 	}
 

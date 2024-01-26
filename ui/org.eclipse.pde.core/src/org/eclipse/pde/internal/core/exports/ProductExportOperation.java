@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -50,6 +51,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.iproduct.IJREInfo;
 import org.eclipse.pde.internal.core.iproduct.ILauncherInfo;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
+import org.eclipse.pde.internal.core.product.JREInfo;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 
 public class ProductExportOperation extends FeatureExportOperation {
@@ -204,7 +206,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 			}
 		}
 
-		IJREInfo jreInfo = fProduct.getJREInfo();
+		IJREInfo jreInfo = getJreInfo();
 		if (jreInfo != null) {
 			for (String[] configuration : configurations) {
 				String[] config = configuration;
@@ -261,6 +263,30 @@ public class ProductExportOperation extends FeatureExportOperation {
 			}
 		}
 		save(new File(file, ICoreConstants.BUILD_FILENAME_DESCRIPTOR), properties, "Build Configuration"); //$NON-NLS-1$
+	}
+
+	private IJREInfo getJreInfo() {
+		if (fProduct.includeJre()) {
+			return new JREInfo(fProduct.getModel()) {
+
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public boolean includeJREWithProduct(String os) {
+					// always true for all os
+					return true;
+				}
+
+				@Override
+				public File getJVMLocation(String os) {
+					// always the default vm install, that is the one from the
+					// target definition
+					return JavaRuntime.getDefaultVMInstall().getInstallLocation();
+				}
+
+			};
+		}
+		return fProduct.getJREInfo();
 	}
 
 	@Override

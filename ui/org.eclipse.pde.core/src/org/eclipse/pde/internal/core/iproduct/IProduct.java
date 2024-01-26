@@ -50,6 +50,7 @@ public interface IProduct extends IProductObject {
 	String P_INTRO_ID = "introId"; //$NON-NLS-1$
 	String P_VERSION = "version"; //$NON-NLS-1$
 	String P_INCLUDE_LAUNCHERS = "includeLaunchers"; //$NON-NLS-1$
+	String P_INCLUDE_JRE = "includeJRE"; //$NON-NLS-1$
 	String P_INCLUDE_REQUIREMENTS_AUTOMATICALLY = "autoIncludeRequirements"; //$NON-NLS-1$
 
 	String getId();
@@ -67,6 +68,8 @@ public interface IProduct extends IProductObject {
 	ProductType getType();
 
 	boolean includeLaunchers();
+
+	boolean includeJre();
 
 	boolean includeRequirementsAutomatically();
 
@@ -186,5 +189,7 @@ public interface IProduct extends IProductObject {
 	boolean containsPlugin(String id);
 
 	boolean containsFeature(String id);
+
+	void setIncludeJre(boolean includeJre);
 
 }
