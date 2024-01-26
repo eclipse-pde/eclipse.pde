@@ -2157,6 +2157,7 @@ public class PDEUIMessages extends NLS {
 	public static String ProductInfoSection_app;
 	public static String ProductInfoSection_appTooltip;
 	public static String ProductInfoSection_launchers;
+	public static String ProductInfoSection_jre;
 	public static String SplashSection_title;
 	public static String SplashSection_desc;
 	public static String SplashSection_plugin;

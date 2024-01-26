@@ -77,6 +77,7 @@ public class Product extends ProductObject implements IProduct {
 	private IJREInfo fJVMInfo;
 	private ProductType fType = ProductType.BUNDLES;
 	private boolean fIncludeLaunchers = true;
+	private boolean fIncludeJre = false;
 	private boolean fAutoIncludeRequirements = true;
 	private IWindowImages fWindowImages;
 	private ISplashInfo fSplashInfo;
@@ -207,6 +208,9 @@ public class Product extends ProductObject implements IProduct {
 		}
 		writer.print(" " + P_TYPE + "=\"" + fType + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		writer.print(" " + P_INCLUDE_LAUNCHERS + "=\"" + fIncludeLaunchers + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (fIncludeJre) {
+			writer.print(" " + P_INCLUDE_JRE + "=\"true\""); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		writer.print(" " + P_INCLUDE_REQUIREMENTS_AUTOMATICALLY + "=\"" + fAutoIncludeRequirements + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		writer.println(">"); //$NON-NLS-1$
 
@@ -366,6 +370,8 @@ public class Product extends ProductObject implements IProduct {
 			}
 			String launchers = element.getAttribute(P_INCLUDE_LAUNCHERS);
 			fIncludeLaunchers = launchers.isBlank() || "true".equals(launchers); //$NON-NLS-1$
+			String jre = element.getAttribute(P_INCLUDE_JRE);
+			fIncludeJre = Boolean.parseBoolean(jre);
 			String autoAdd = element.getAttribute(P_INCLUDE_REQUIREMENTS_AUTOMATICALLY);
 			fAutoIncludeRequirements = autoAdd.isBlank() || "true".equals(autoAdd); //$NON-NLS-1$
 
@@ -876,11 +882,26 @@ public class Product extends ProductObject implements IProduct {
 	}
 
 	@Override
+	public boolean includeJre() {
+		return fIncludeJre;
+	}
+
+	@Override
 	public void setIncludeLaunchers(boolean include) {
 		boolean old = fIncludeLaunchers;
 		fIncludeLaunchers = include;
 		if (isEditable()) {
 			firePropertyChanged(P_INCLUDE_LAUNCHERS, Boolean.toString(old), Boolean.toString(fIncludeLaunchers));
 		}
+	}
+
+	@Override
+	public void setIncludeJre(boolean include) {
+		boolean old = fIncludeJre;
+		fIncludeJre = include;
+		if (isEditable()) {
+			firePropertyChanged(P_INCLUDE_LAUNCHERS, Boolean.toString(old), Boolean.toString(fIncludeJre));
+		}
+
 	}
 }
