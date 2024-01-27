@@ -485,6 +485,12 @@ public interface IPDELauncherConstants {
 	String SELECTED_FEATURES = "selected_features"; //$NON-NLS-1$
 
 	/**
+	 * Launch configuration attribute key. The value is a List specifying the features that are selected as root features.
+	 * @since 3.12
+	 */
+	String ROOT_FEATURES = "root_features"; //$NON-NLS-1$
+
+	/**
 	 * Launch configuration attribute key. The value is a boolean specifying
 	 * if the feature-based launching mode should be used.
 	 * This mode will launch with all the workspace and external features
