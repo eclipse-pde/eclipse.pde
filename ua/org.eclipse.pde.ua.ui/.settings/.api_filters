@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.pde.ua.ui" version="2">
+    <resource path="src/org/eclipse/pde/internal/ua/ui/wizards/cheatsheet/NewCSFileWizard.java" type="org.eclipse.pde.internal.ua.ui.wizards.cheatsheet.NewCSFileWizard">
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="BasicNewFileResourceWizard"/>
+                <message_argument value="NewCSFileWizard"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/internal/ua/ui/wizards/ctxhelp/NewCtxHelpWizard.java" type="org.eclipse.pde.internal.ua.ui.wizards.ctxhelp.NewCtxHelpWizard">
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="BasicNewFileResourceWizard"/>
+                <message_argument value="NewCtxHelpWizard"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/internal/ua/ui/wizards/toc/TocHTMLWizard.java" type="org.eclipse.pde.internal.ua.ui.wizards.toc.TocHTMLWizard">
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="BasicNewFileResourceWizard"/>
+                <message_argument value="TocHTMLWizard"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

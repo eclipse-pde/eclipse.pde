@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.pde.spy.preferences" version="2">
+    <resource path="src/org/eclipse/pde/spy/preferences/viewer/PreferenceEntriesContentProvider.java" type="org.eclipse.pde.spy.preferences.viewer.PreferenceEntriesContentProvider">
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="ObservableSetTreeContentProvider&lt;E&gt;"/>
+                <message_argument value="PreferenceEntriesContentProvider"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

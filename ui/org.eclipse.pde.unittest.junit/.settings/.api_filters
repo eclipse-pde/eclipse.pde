@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.pde.unittest.junit" version="2">
+    <resource path="src/org/eclipse/pde/unittest/junit/internal/launcher/JUnitPluginTabGroup.java" type="org.eclipse.pde.unittest.junit.internal.launcher.JUnitPluginTabGroup">
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="AbstractPDELaunchConfigurationTabGroup"/>
+                <message_argument value="JUnitPluginTabGroup"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/unittest/junit/launcher/JUnitPluginLaunchConfigurationDelegate.java" type="org.eclipse.pde.unittest.junit.launcher.JUnitPluginLaunchConfigurationDelegate">
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="JUnitLaunchConfigurationDelegate"/>
+                <message_argument value="JUnitPluginLaunchConfigurationDelegate"/>
+                <message_argument value="getRequiredJunitRuntimePlugins(ILaunchConfiguration)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/unittest/junit/launcher/JUnitPluginTestTab.java" type="org.eclipse.pde.unittest.junit.launcher.JUnitPluginTestTab">
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="TestTab"/>
+                <message_argument value="JUnitPluginTestTab"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
