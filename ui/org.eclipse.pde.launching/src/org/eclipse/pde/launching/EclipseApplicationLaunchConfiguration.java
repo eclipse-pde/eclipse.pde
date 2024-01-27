@@ -18,6 +18,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -37,6 +38,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.launching.IPDEConstants;
 import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
@@ -86,6 +88,8 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 	 */
 	private String fWorkspaceLocation;
 
+	private Map<IFeature, Boolean> fFeatures;
+
 	@Override
 	public String[] getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
 		ArrayList<String> programArgs = new ArrayList<>();
@@ -116,7 +120,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 		}
 
 		String productID = LaunchConfigurationHelper.getProductID(configuration);
-		Properties prop = LaunchConfigurationHelper.createConfigIniFile(configuration, productID, fAllBundles, fModels, getConfigDir(configuration));
+		Properties prop = LaunchConfigurationHelper.createConfigIniFile(configuration, productID, fAllBundles, fFeatures, fModels, getConfigDir(configuration));
 		boolean showSplash = prop.containsKey("osgi.splashPath") || prop.containsKey("splashLocation"); //$NON-NLS-1$ //$NON-NLS-2$
 		TargetPlatformHelper.checkPluginPropertiesConsistency(fAllBundles, getConfigDir(configuration));
 		programArgs.add("-configuration"); //$NON-NLS-1$
@@ -204,8 +208,12 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 	@Override
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		fWorkspaceLocation = null;
-
-		fModels = BundleLauncherHelper.getMergedBundleMap(configuration, false);
+		if (configuration.getAttribute(IPDELauncherConstants.GENERATE_PROFILE, false)) {
+			fFeatures = new HashMap<>();
+		} else {
+			fFeatures = null;
+		}
+		fModels = BundleLauncherHelper.getMergedBundleMap(configuration, false, fFeatures);
 		fAllBundles = fModels.keySet().stream().collect(Collectors.groupingBy(m -> m.getPluginBase().getId()));
 
 		validateConfigIni(configuration);

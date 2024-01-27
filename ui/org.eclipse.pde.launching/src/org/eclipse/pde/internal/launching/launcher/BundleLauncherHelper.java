@@ -105,6 +105,10 @@ public class BundleLauncherHelper {
 	}
 
 	public static Map<IPluginModelBase, String> getMergedBundleMap(ILaunchConfiguration configuration, boolean osgi) throws CoreException {
+		return getMergedBundleMap(configuration, osgi, null);
+	}
+
+	public static Map<IPluginModelBase, String> getMergedBundleMap(ILaunchConfiguration configuration, boolean osgi, Map<IFeature, Boolean> features) throws CoreException {
 
 		ILaunchConfigurationWorkingCopy wc = getWorkingCopy(configuration);
 		if (!osgi) {
@@ -118,6 +122,14 @@ public class BundleLauncherHelper {
 						addBundleToMap(map, model, DEFAULT_START_LEVELS);
 					}
 				}
+				if (features != null) {
+					ITargetDefinition target = PDECore.getDefault().acquireService(ITargetPlatformService.class).getWorkspaceTargetDefinition();
+					FeatureModelManager fmm = PDECore.getDefault().getFeatureModelManager();
+					Stream.concat(Arrays.stream(fmm.getWorkspaceModels()), Arrays.stream(fmm.getExternalModels()))//
+							.map(m -> m.getFeature())//
+							.filter(f -> f.matchesEnvironment(target))//
+							.forEach(f -> features.put(f, Boolean.FALSE));
+				}
 				return map;
 			}
 
@@ -126,7 +138,7 @@ public class BundleLauncherHelper {
 		}
 
 		if (wc.getAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, false)) {
-			return getMergedBundleMapFeatureBased(wc);
+			return getMergedBundleMapFeatureBased(wc, features);
 		}
 
 		Map<IPluginModelBase, String> selectedBundles = getAllSelectedPluginBundles(wc);
@@ -165,14 +177,19 @@ public class BundleLauncherHelper {
 
 	// --- feature based launches ---
 
-	private static Map<IPluginModelBase, String> getMergedBundleMapFeatureBased(ILaunchConfiguration configuration) throws CoreException {
+	private static Map<IPluginModelBase, String> getMergedBundleMapFeatureBased(ILaunchConfiguration configuration, Map<IFeature, Boolean> features) throws CoreException {
 
 		String defaultPluginResolution = configuration.getAttribute(IPDELauncherConstants.FEATURE_PLUGIN_RESOLUTION, IPDELauncherConstants.LOCATION_WORKSPACE);
 		ITargetDefinition target = PDECore.getDefault().acquireService(ITargetPlatformService.class).getWorkspaceTargetDefinition();
 		boolean addRequirements = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_INCLUDE_REQUIREMENTS, true);
 
 		Map<IFeature, String> feature2resolution = getSelectedFeatures(configuration, target, addRequirements);
-
+		if (features != null) {
+			Set<String> rootFeatures = configuration.getAttribute(IPDELauncherConstants.ROOT_FEATURES, emptySet());
+			for (IFeature feature : feature2resolution.keySet()) {
+				features.put(feature, rootFeatures.contains(feature.getId()));
+			}
+		}
 		// Get the feature model for each selected feature id and resolve its plugins
 		Set<IPluginModelBase> launchPlugins = new HashSet<>();
 

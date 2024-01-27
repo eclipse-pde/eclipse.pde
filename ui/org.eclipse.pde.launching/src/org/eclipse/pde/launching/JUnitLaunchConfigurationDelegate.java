@@ -221,7 +221,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		// Create the platform configuration for the runtime workbench
 		String productID = LaunchConfigurationHelper.getProductID(configuration);
 		IPluginBase testPlugin = getTestPlugin(configuration);
-		LaunchConfigurationHelper.createConfigIniFile(configuration, productID, fAllBundles, fModels, getConfigurationDirectory(configuration));
+		LaunchConfigurationHelper.createConfigIniFile(configuration, productID, fAllBundles, null, fModels, getConfigurationDirectory(configuration));
 		TargetPlatformHelper.checkPluginPropertiesConsistency(fAllBundles, getConfigurationDirectory(configuration));
 
 		programArgs.add("-configuration"); //$NON-NLS-1$

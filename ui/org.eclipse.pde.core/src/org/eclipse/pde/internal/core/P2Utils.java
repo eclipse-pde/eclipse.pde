@@ -18,14 +18,18 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 
@@ -34,7 +38,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.internal.p2.metadata.InstallableUnit;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.IProvisioningAgentProvider;
 import org.eclipse.equinox.p2.engine.IEngine;
@@ -45,23 +51,33 @@ import org.eclipse.equinox.p2.engine.IProvisioningPlan;
 import org.eclipse.equinox.p2.engine.PhaseSetFactory;
 import org.eclipse.equinox.p2.engine.ProvisioningContext;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.metadata.ILicense;
 import org.eclipse.equinox.p2.metadata.IProvidedCapability;
 import org.eclipse.equinox.p2.metadata.IRequirement;
 import org.eclipse.equinox.p2.metadata.ITouchpointType;
+import org.eclipse.equinox.p2.metadata.IUpdateDescriptor;
 import org.eclipse.equinox.p2.metadata.MetadataFactory;
 import org.eclipse.equinox.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.metadata.Version;
 import org.eclipse.equinox.p2.metadata.VersionRange;
+import org.eclipse.equinox.p2.metadata.expression.IMatchExpression;
 import org.eclipse.equinox.p2.planner.ProfileInclusionRules;
 import org.eclipse.equinox.simpleconfigurator.manipulator.SimpleConfiguratorManipulator;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
+import org.eclipse.pde.core.plugin.IMatchRules;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.build.BundleHelper;
+import org.eclipse.pde.internal.core.ifeature.IEnvironment;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
+import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
+import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
+import org.eclipse.pde.internal.core.ifeature.IFeatureInfo;
+import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.core.plugin.PluginBase;
 import org.osgi.framework.Constants;
 
@@ -70,6 +86,7 @@ import org.osgi.framework.Constants;
  *
  * @since 3.4
  */
+@SuppressWarnings("restriction")
 public class P2Utils {
 
 	public static final String P2_FLAVOR_DEFAULT = "tooling"; //$NON-NLS-1$
@@ -370,17 +387,56 @@ public class P2Utils {
 	}
 
 	/**
-	 * Generates a profile containing metadata for all of the bundles in the provided collection.
-	 * The profile will have the given profile ID and will be persisted in the profile registry
-	 * directory inside the given p2 data area.
+	 * Generates a profile containing metadata for all of the bundles in the
+	 * provided collection. The profile will have the given profile ID and will
+	 * be persisted in the profile registry directory inside the given p2 data
+	 * area.
 	 *
-	 * @param profileID the ID to be used when creating the profile, if a profile with the same name exists, it will be overwritten
-	 * @param p2DataArea the directory which contains p2 data including the profile registry, if the directory path doesn't exist it will be created
-	 * @param bundles the collection of IPluginModelBase objects representing bundles to create metadata for and add to the profile
+	 * @param profileID
+	 *            the ID to be used when creating the profile, if a profile with
+	 *            the same name exists, it will be overwritten
+	 * @param p2DataArea
+	 *            the directory which contains p2 data including the profile
+	 *            registry, if the directory path doesn't exist it will be
+	 *            created
+	 * @param bundles
+	 *            the collection of IPluginModelBase objects representing
+	 *            bundles to create metadata for and add to the profile
 	 *
-	 * @throws CoreException if the profile cannot be generated
+	 * @throws CoreException
+	 *             if the profile cannot be generated
 	 */
-	public static void createProfile(String profileID, File p2DataArea, Collection<List<IPluginModelBase>> bundles) throws CoreException {
+	public static void createProfile(String profileID, File p2DataArea, Collection<List<IPluginModelBase>> bundles)
+			throws CoreException {
+		createProfile(profileID, p2DataArea, bundles, null);
+	}
+
+	/**
+	 * Generates a profile containing metadata for all of the bundles in the
+	 * provided collection. The profile will have the given profile ID and will
+	 * be persisted in the profile registry directory inside the given p2 data
+	 * area.
+	 *
+	 * @param profileID
+	 *            the ID to be used when creating the profile, if a profile with
+	 *            the same name exists, it will be overwritten
+	 * @param p2DataArea
+	 *            the directory which contains p2 data including the profile
+	 *            registry, if the directory path doesn't exist it will be
+	 *            created
+	 * @param bundles
+	 *            the collection of IPluginModelBase objects representing
+	 *            bundles to create metadata for and add to the profile
+	 * @param featureMap
+	 *            the map of IFeature objects representing features to create
+	 *            metadata for and add to the profile, if the mapping is true it
+	 *            is assumed a root feature
+	 *
+	 * @throws CoreException
+	 *             if the profile cannot be generated
+	 */
+	public static void createProfile(String profileID, File p2DataArea, Collection<List<IPluginModelBase>> bundles,
+			Map<IFeature, Boolean> featureMap) throws CoreException {
 		// Acquire the required p2 services, creating an agent in the target p2 metadata area
 		IProvisioningAgentProvider provider = PDECore.getDefault().acquireService(IProvisioningAgentProvider.class);
 		if (provider == null) {
@@ -427,6 +483,16 @@ public class P2Utils {
 			plan.addInstallableUnit(iu);
 			plan.setInstallableUnitProfileProperty(iu, "org.eclipse.equinox.p2.internal.inclusion.rules", ProfileInclusionRules.createOptionalInclusionRule(iu)); //$NON-NLS-1$
 		}
+		if (featureMap != null && !featureMap.isEmpty()) {
+			Map<String, List<IPluginBase>> plugins = bundles.stream().flatMap(Collection::stream)
+					.map(IPluginModelBase::getPluginBase)
+					.collect(Collectors.groupingBy(m -> m.getPluginBase().getId()));
+			Map<String, List<IFeature>> features = featureMap.keySet().stream()
+					.collect(Collectors.groupingBy(IFeature::getId));
+			for (Entry<IFeature, Boolean> featureEntry : featureMap.entrySet()) {
+				createFeatureIUs(featureEntry.getKey(), featureEntry.getValue(), plan, plugins, features);
+			}
+		}
 		IPhaseSet phaseSet = PhaseSetFactory.createDefaultPhaseSetExcluding(new String[] {PhaseSetFactory.PHASE_CHECK_TRUST, PhaseSetFactory.PHASE_COLLECT, PhaseSetFactory.PHASE_CONFIGURE, PhaseSetFactory.PHASE_UNCONFIGURE, PhaseSetFactory.PHASE_UNINSTALL});
 		IStatus status = engine.perform(plan, phaseSet, new NullProgressMonitor());
 
@@ -452,6 +518,200 @@ public class P2Utils {
 		env.append("osgi.arch="); //$NON-NLS-1$
 		env.append(TargetPlatform.getOSArch());
 		return env.toString();
+	}
+
+	private static void createFeatureIUs(IFeature feature, boolean root, IProvisioningPlan plan,
+			Map<String, List<IPluginBase>> plugins, Map<String, List<IFeature>> features) {
+		// see
+		// org.eclipse.equinox.p2.publisher.eclipse.FeaturesAction.createGroupIU(Feature,
+		// List<IInstallableUnit>, IPublisherInfo)
+		InstallableUnitDescription iu = new MetadataFactory.InstallableUnitDescription();
+		iu.setId(getGroupId(feature.getId()));
+		Version version = Version.parseVersion(feature.getVersion());
+		iu.setVersion(version);
+		iu.setProperty(IInstallableUnit.PROP_NAME, feature.getLabel());
+		IFeatureInfo description = feature.getFeatureInfo(IFeature.INFO_DESCRIPTION);
+		if (description != null) {
+			setProperty(iu, IInstallableUnit.PROP_DESCRIPTION, description.getDescription());
+			setProperty(iu, IInstallableUnit.PROP_DESCRIPTION_URL, description.getURL());
+		}
+		setProperty(iu, IInstallableUnit.PROP_PROVIDER, feature.getProviderName());
+		IFeatureInfo license = feature.getFeatureInfo(IFeature.INFO_LICENSE);
+		if (license != null) {
+			iu.setLicenses(new ILicense[] {
+					MetadataFactory.createLicense(toURIOrNull(license.getURL()), license.getDescription()) });
+		}
+		IFeatureInfo copyright = feature.getFeatureInfo(IFeature.INFO_COPYRIGHT);
+		if (copyright != null) {
+			iu.setCopyright(
+					MetadataFactory.createCopyright(toURIOrNull(copyright.getURL()), copyright.getDescription()));
+		}
+		iu.setUpdateDescriptor(MetadataFactory.createUpdateDescriptor(iu.getId(),
+				new VersionRange(Version.emptyVersion, true, iu.getVersion(), false), IUpdateDescriptor.NORMAL, null));
+		List<IRequirement> required = new ArrayList<>();
+		for (IFeatureChild includedFeature : feature.getIncludedFeatures()) {
+			Version v = Version.parseVersion(includedFeature.getVersion());
+			VersionRange range;
+			if (Version.emptyVersion.equals(v)) {
+				range = features.get(includedFeature.getId()).stream().max(Comparator.comparing(IFeature::getVersion))
+						.map(IFeature::getVersion).map(Version::parseVersion)
+						.map(P2Utils::strictVersionRange).orElse(VersionRange.emptyRange);
+			} else {
+				range = strictVersionRange(version);
+			}
+			required.add(MetadataFactory.createRequirement(IInstallableUnit.NAMESPACE_IU_ID,
+					getGroupId(includedFeature.getId()),
+					range, getFilter(includedFeature.getFilter(), false, includedFeature), includedFeature.isOptional(),
+					false));
+		}
+		for (IFeaturePlugin plugin : feature.getPlugins()) {
+			Version v = Version.parseVersion(plugin.getVersion());
+			VersionRange range;
+			if (Version.emptyVersion.equals(v)) {
+				range = plugins.get(plugin.getId()).stream().max(Comparator.comparing(IPluginBase::getVersion))
+						.map(IPluginBase::getVersion).map(Version::parseVersion).map(P2Utils::strictVersionRange)
+						.orElse(VersionRange.emptyRange);
+			} else {
+				range = strictVersionRange(version);
+			}
+			required.add(MetadataFactory.createRequirement(IInstallableUnit.NAMESPACE_IU_ID, plugin.getId(), range,
+					getFilter(plugin.getFilter(), false, plugin), false,
+					false));
+		}
+		for (IFeatureImport fimport : feature.getImports()) {
+			VersionRange range = getRangeForImport(fimport);
+			if (fimport.getType() == IFeatureImport.FEATURE) {
+				required.add(MetadataFactory.createRequirement(IInstallableUnit.NAMESPACE_IU_ID,
+						getGroupId(fimport.getId()), range, getFilter(fimport.getFilter(), false, null), false, false));
+			} else if (fimport.getType() == IFeatureImport.PLUGIN) {
+				required.add(MetadataFactory.createRequirement(IInstallableUnit.NAMESPACE_IU_ID, fimport.getId(), range,
+						getFilter(fimport.getFilter(), false, null), false, false));
+			}
+		}
+
+		iu.setRequirements(required.toArray(IRequirement[]::new));
+		iu.setTouchpointType(ITouchpointType.NONE);
+		iu.setProperty(InstallableUnitDescription.PROP_TYPE_GROUP, Boolean.TRUE.toString());
+		iu.setFilter(getFilter(null, false, feature));
+		List<IProvidedCapability> providedCapabilities = new ArrayList<>();
+		providedCapabilities.add(
+				MetadataFactory.createProvidedCapability(IInstallableUnit.NAMESPACE_IU_ID, iu.getId(),
+						iu.getVersion()));
+		iu.setCapabilities(providedCapabilities.toArray(IProvidedCapability[]::new));
+		IInstallableUnit unit = MetadataFactory.createInstallableUnit(iu);
+		plan.addInstallableUnit(unit);
+		if (root) {
+			plan.setInstallableUnitProfileProperty(unit, IProfile.PROP_PROFILE_ROOT_IU, Boolean.TRUE.toString());
+		}
+	}
+
+	public static VersionRange getRangeForImport(IFeatureImport featureImport) {
+		String version = featureImport.getVersion();
+		if (version != null && !version.isEmpty()) {
+			try {
+				org.osgi.framework.Version osgi = org.osgi.framework.Version.parseVersion(version);
+				Version minVersion = Version.parseVersion(version);
+				switch (featureImport.getMatch()) {
+				case IMatchRules.NONE:
+				case IMatchRules.COMPATIBLE:
+					// Compatible - The dependency version must be at least at
+					// the
+					// version specified, or at a higher service level or minor
+					// level (major version level must equal the specified
+					// version).
+					return new VersionRange(minVersion, true, Version.createOSGi(osgi.getMajor() + 1, 0, 0), false);
+				case IMatchRules.EQUIVALENT:
+					// Equivalent - The dependency version must be at least at
+					// the version specified, or at a higher service level
+					// (major and minor version levels must equal the specified
+					// version).
+					return new VersionRange(minVersion, true,
+							Version.createOSGi(osgi.getMajor(), osgi.getMinor() + 1, 0), false);
+				case IMatchRules.PERFECT:
+					// Perfect - The dependency version must match exactly the
+					// specified version.
+					return strictVersionRange(minVersion);
+				case IMatchRules.GREATER_OR_EQUAL:
+					// Greater or Equal - The dependency version must be at
+					// least at the version specified, or at a higher service,
+					// minor or major level.
+					return new VersionRange(minVersion, true, Version.MAX_VERSION, true);
+				}
+			} catch (RuntimeException e) {
+				// ignore
+			}
+		}
+		return VersionRange.emptyRange;
+	}
+
+	private static VersionRange strictVersionRange(Version version) {
+		return new VersionRange(version, true, version, true);
+	}
+
+	private static IMatchExpression<IInstallableUnit> getFilter(String baseFilter, boolean isImport,
+			IEnvironment environment) {
+		StringBuilder result = new StringBuilder();
+		result.append("(&"); //$NON-NLS-1$
+		if (baseFilter != null) {
+			result.append(baseFilter);
+		}
+		if (isImport) {
+			result.append("(!(org.eclipse.equinox.p2.exclude.import=true))"); //$NON-NLS-1$
+		}
+		if (environment != null) {
+			expandFilter(environment.getOS(), "osgi.os", result); //$NON-NLS-1$
+			expandFilter(environment.getWS(), "osgi.ws", result); //$NON-NLS-1$
+			expandFilter(environment.getArch(), "osgi.arch", result);//$NON-NLS-1$
+			expandFilter(environment.getNL(), "osgi.nl", result); //$NON-NLS-1$
+		}
+		if (result.length() == 2) {
+			return null;
+		}
+		result.append(')');
+		return InstallableUnit.parseFilter(result.toString());
+	}
+
+	private static void expandFilter(String filter, String osgiFilterValue, StringBuilder result) {
+		if (filter != null && filter.length() != 0) {
+			StringTokenizer token = new StringTokenizer(filter, ","); //$NON-NLS-1$
+			if (token.countTokens() == 1) {
+				result.append('(' + osgiFilterValue + '=' + filter + ')');
+			} else {
+				result.append("(|"); //$NON-NLS-1$
+				while (token.hasMoreElements()) {
+					result.append('(' + osgiFilterValue + '=' + token.nextToken() + ')');
+				}
+				result.append(')');
+			}
+		}
+	}
+
+	private static String getGroupId(String id) {
+		if (id == null) {
+			return null;
+		}
+		return id + ".feature.group"; //$NON-NLS-1$
+	}
+
+	/**
+	 * Returns a URI corresponding to the given URL in string form, or null if a
+	 * well formed URI could not be created.
+	 */
+	private static URI toURIOrNull(String url) {
+		if (url == null) {
+			return null;
+		}
+		try {
+			return URIUtil.fromString(url);
+		} catch (URISyntaxException e) {
+			return null;
+		}
+	}
+
+	private static void setProperty(InstallableUnitDescription iu, String key, String value) {
+		if (value != null && !value.isEmpty()) {
+			iu.setProperty(key, value);
+		}
 	}
 
 	/**

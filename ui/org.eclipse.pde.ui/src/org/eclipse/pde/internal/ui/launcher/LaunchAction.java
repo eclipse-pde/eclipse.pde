@@ -180,6 +180,7 @@ public class LaunchAction extends Action {
 		} else {
 			wc.removeAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES);
 			wc.removeAttribute(IPDELauncherConstants.SELECTED_FEATURES);
+			wc.removeAttribute(IPDELauncherConstants.ROOT_FEATURES);
 			wc.removeAttribute(IPDELauncherConstants.ADDITIONAL_PLUGINS);
 		}
 		wc.setAttribute(IPDELauncherConstants.AUTOMATIC_INCLUDE_REQUIREMENTS,
@@ -212,7 +213,12 @@ public class LaunchAction extends Action {
 		} // only add absent plugins
 
 		wc.setAttribute(IPDELauncherConstants.SELECTED_FEATURES, selectedFeatures);
+		Set<String> rootFeatures = Arrays.stream(fProduct.getFeatures()).filter(pf -> pf.isRootInstallMode())
+				.map(pf -> pf.getId())
+				.collect(Collectors.toSet());
+		wc.setAttribute(IPDELauncherConstants.ROOT_FEATURES, rootFeatures);
 		wc.setAttribute(IPDELauncherConstants.ADDITIONAL_PLUGINS, additionalPlugins);
+
 	}
 
 	private void appendBundle(Set<String> plugins, IPluginModelBase model, Optional<AdditionalPluginData> pConfig) {
