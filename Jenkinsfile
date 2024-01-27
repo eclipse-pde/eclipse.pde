@@ -33,7 +33,8 @@ pipeline {
 						*/target/work/data/.metadata/*.log,\
 						*/tests/target/work/data/.metadata/*.log,\
 						apiAnalyzer-workspace/.metadata/*.log,\
-						*/target/artifactcomparison/**,\
+						**/target/artifactcomparison/**,\
+						**/target/compilelogs/**,\
 						repository/target/repository/**')
 					junit '**/target/surefire-reports/*.xml'
 					discoverGitReferenceBuild referenceJob: 'eclipse.pde/master'
