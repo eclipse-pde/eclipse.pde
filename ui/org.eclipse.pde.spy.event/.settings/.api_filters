@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.pde.spy.event" version="2">
+    <resource path="src/org/eclipse/pde/spy/event/internal/ui/CapturedEventTree.java" type="org.eclipse.pde.spy.event.internal.ui.CapturedEventTree">
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="TreeViewer"/>
+                <message_argument value="CapturedEventTree"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

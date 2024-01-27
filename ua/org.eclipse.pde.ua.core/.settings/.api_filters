@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.pde.ua.core" version="2">
+    <resource path="src/org/eclipse/pde/internal/ua/core/cheatsheet/comp/CompCSModel.java" type="org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSModel">
+        <filter id="572522506">
+            <message_arguments>
+                <message_argument value="ModelChangedEvent"/>
+                <message_argument value="CompCSModel"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/internal/ua/core/cheatsheet/comp/CompCSObject.java" type="org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSObject">
+        <filter id="572522506">
+            <message_arguments>
+                <message_argument value="ModelChangedEvent"/>
+                <message_argument value="CompCSObject"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/internal/ua/core/cheatsheet/comp/CompCSWorkspaceModel.java" type="org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSWorkspaceModel">
+        <filter id="574668824">
+            <message_arguments>
+                <message_argument value="IWorkspaceModel"/>
+                <message_argument value="CompCSWorkspaceModel"/>
+                <message_argument value="IEditableModel"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/internal/ua/core/cheatsheet/simple/ISimpleCSModel.java" type="org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSModel">
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="IModel"/>
+                <message_argument value="ISimpleCSModel"/>
+            </message_arguments>
+        </filter>
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="IModelChangeProvider"/>
+                <message_argument value="ISimpleCSModel"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/internal/ua/core/icheatsheet/comp/ICompCSModel.java" type="org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModel">
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="IModel"/>
+                <message_argument value="ICompCSModel"/>
+            </message_arguments>
+        </filter>
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="IModelChangeProvider"/>
+                <message_argument value="ICompCSModel"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/internal/ua/core/icheatsheet/comp/ICompCSObject.java" type="org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject">
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="IWritable"/>
+                <message_argument value="ICompCSObject"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
