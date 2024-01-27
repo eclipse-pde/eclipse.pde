@@ -43,6 +43,7 @@ import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.P2Utils;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.launching.IPDEConstants;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 
@@ -123,6 +124,23 @@ public class LaunchConfigurationHelper {
 	 * @return a properties object containing the properties written out to config.ini
 	 */
 	public static Properties createConfigIniFile(ILaunchConfiguration configuration, String productID, Map<String, List<IPluginModelBase>> bundles, Map<IPluginModelBase, String> bundlesWithStartLevels, File configurationDirectory) throws CoreException {
+		return createConfigIniFile(configuration, productID, bundles, null, bundlesWithStartLevels, configurationDirectory);
+	}
+
+	/**
+	 * Writes out the config.ini and other configuration files based on the bundles being launched.  This includes
+	 * writing out bundles.info if the simple configurator is being used or platform.xml if update configurator
+	 * is being used.
+	 *
+	 * @param configuration launch configuration
+	 * @param productID id of the product being launched, may be <code>null</code>
+	 * @param bundles map of bundle id to plug-in model, these are the bundles being launched
+	 * @param features collection of features to install in the profile, might be null
+	 * @param bundlesWithStartLevels map of plug-in model to a string containing start level information
+	 * @param configurationDirectory config directory where the created files will be placed
+	 * @return a properties object containing the properties written out to config.ini
+	 */
+	public static Properties createConfigIniFile(ILaunchConfiguration configuration, String productID, Map<String, List<IPluginModelBase>> bundles, Map<IFeature, Boolean> features, Map<IPluginModelBase, String> bundlesWithStartLevels, File configurationDirectory) throws CoreException {
 		Properties properties = null;
 		// if we are to generate a config.ini, start with the values in the target platform's config.ini - bug 141918
 		if (configuration.getAttribute(IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, true)) {
@@ -198,7 +216,7 @@ public class LaunchConfigurationHelper {
 
 				// Unless we are restarting an existing profile, generate/overwrite the profile
 				if (!configuration.getAttribute(IPDEConstants.RESTART, false) || !P2Utils.profileExists(profileID, p2DataArea)) {
-					P2Utils.createProfile(profileID, p2DataArea, bundles.values());
+					P2Utils.createProfile(profileID, p2DataArea, bundles.values(), features);
 				}
 				properties.setProperty("eclipse.p2.profile", profileID); //$NON-NLS-1$
 			}
