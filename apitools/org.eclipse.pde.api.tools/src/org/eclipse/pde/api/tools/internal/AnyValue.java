@@ -22,9 +22,13 @@ package org.eclipse.pde.api.tools.internal;
 public class AnyValue {
 
 	/**
-	 * Constructor
+	 * A constructor that takes an unused argument. Do not remove this seemingly
+	 * pointless constructor because it's used by
+	 * {@code org.eclipse.osgi.internal.framework.FilterImpl.Equal.valueOf(Class<?>)}
+	 * to ensure that the completely bogus {@link #equals(Object)} method is called
+	 * to match any filter value whatsoever.
 	 */
-	public AnyValue() {
+	public AnyValue(@SuppressWarnings("unused") String arg) {
 		// do nothing
 	}
 
