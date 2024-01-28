@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.e4.tools.compat" version="2">
+    <resource path="src/org/eclipse/e4/tools/compat/internal/ContextServiceFactory.java" type="org.eclipse.e4.tools.compat.internal.ContextServiceFactory">
+        <filter id="574664731">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.tools.compat.internal.ContextServiceFactory.create(Class, IServiceLocator, IServiceLocator)"/>
+                <message_argument value="IStylingEngine"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/tools/compat/internal/PartHelper.java" type="org.eclipse.e4.tools.compat.internal.PartHelper">
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="IStylingEngine"/>
+                <message_argument value="PartHelper"/>
+                <message_argument value="setClassname(Object, String)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
