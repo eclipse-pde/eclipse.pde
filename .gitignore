@@ -1,5 +1,5 @@
-/*/*/bin/
-/*/*/bin_ant/
+bin/
+bin_ant/
 *~
 *.rej
 *.bak
