@@ -177,7 +177,7 @@
             project="org.eclipse.pde"/>
         <operand
             xsi:type="workingsets:ExclusionPredicate"
-            excludedWorkingSet="//'pde.workingsets'/@workingSets[name='PDE%20API%20Tools'] //'pde.workingsets'/@workingSets[name='PDE%20Tests'] //'pde.workingsets'/@workingSets[name='PDE%20Build']"/>
+            excludedWorkingSet="//'pde.workingsets'/@workingSets[name='PDE%20API%20Tools'] //'pde.workingsets'/@workingSets[name='PDE%20Tests'] //'pde.workingsets'/@workingSets[name='PDE%20Build'] //'pde.workingsets'/@workingSets[name='E4%20Tools']"/>
       </predicate>
     </workingSet>
     <workingSet
@@ -220,6 +220,18 @@
         <operand
             xsi:type="workingsets:ExclusionPredicate"
             excludedWorkingSet="//'pde.workingsets'/@workingSets[name='PDE%20Build']"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="E4 Tools">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.pde"/>
+        <operand
+            xsi:type="predicates:NamePredicate"
+            pattern="org\.eclipse\.e4\.tools.*"/>
       </predicate>
     </workingSet>
   </setupTask>
