@@ -40,15 +40,22 @@ import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobFunction;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.pde.api.tools.internal.builder.ApiAnalysisBuilder;
 import org.eclipse.pde.api.tools.internal.builder.ApiAnalysisBuilder.ApiAnalysisJob;
+import org.eclipse.pde.api.tools.internal.builder.ApiAnalysisBuilder.ApiAnalysisJobRule;
 import org.eclipse.pde.api.tools.internal.model.ApiBaseline;
 import org.eclipse.pde.api.tools.internal.model.ApiModelCache;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
@@ -633,20 +640,56 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		if (workspacebaseline == null) {
 			return;
 		}
-		Job.getJobManager().cancel(ApiAnalysisJob.class);
-		IApiBaseline oldBaseline = null;
-		synchronized (this) {
-			if (workspacebaseline != null) {
-				if (ApiPlugin.DEBUG_BASELINE_MANAGER) {
-					System.out.println("disposing workspace baseline"); //$NON-NLS-1$
+		final IApiBaseline originalBaseline = workspacebaseline;
+		IJobFunction runnable = m -> {
+			IApiBaseline oldBaseline = null;
+			synchronized (ApiBaselineManager.this) {
+				if (workspacebaseline != null && originalBaseline == workspacebaseline) {
+					if (ApiPlugin.DEBUG_BASELINE_MANAGER) {
+						System.out.println("disposing workspace baseline"); //$NON-NLS-1$
+					}
+					oldBaseline = workspacebaseline;
+					StubApiComponent.disposeAllCaches();
+					workspacebaseline = null;
 				}
-				oldBaseline = workspacebaseline;
-				StubApiComponent.disposeAllCaches();
-				workspacebaseline = null;
 			}
+			if (oldBaseline != null) {
+				oldBaseline.dispose();
+			}
+			return Status.OK_STATUS;
+		};
+
+		if (ApiAnalysisBuilder.isRunningAsJob()) {
+			Job.getJobManager().cancel(ApiAnalysisJob.class);
+			Job.getJobManager().cancel(ApiBaselineManager.class);
+			Job job = new Job("Disposing Workspace API Baseline") { //$NON-NLS-1$
+				@Override
+				public IStatus run(IProgressMonitor monitor) {
+					return runnable.run(monitor);
+				}
+
+				@Override
+				public boolean belongsTo(Object family) {
+					return super.belongsTo(family) || family == ApiBaselineManager.class;
+				}
+			};
+			job.setRule(new ApiBaselineManagerRule());
+			job.setSystem(true);
+			job.schedule();
+		} else {
+			runnable.run(new NullProgressMonitor());
 		}
-		if (oldBaseline != null) {
-			oldBaseline.dispose();
+	}
+
+	public static final class ApiBaselineManagerRule implements ISchedulingRule {
+		@Override
+		public boolean contains(ISchedulingRule rule) {
+			return isConflicting(rule);
+		}
+
+		@Override
+		public boolean isConflicting(ISchedulingRule rule) {
+			return rule instanceof ApiBaselineManagerRule || rule instanceof ApiAnalysisJobRule;
 		}
 	}
 

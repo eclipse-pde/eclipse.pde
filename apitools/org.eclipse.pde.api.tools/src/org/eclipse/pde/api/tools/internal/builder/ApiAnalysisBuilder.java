@@ -63,6 +63,7 @@ import org.eclipse.jdt.internal.core.builder.State;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.api.tools.internal.ApiBaselineManager.ApiBaselineManagerRule;
 import org.eclipse.pde.api.tools.internal.ApiDescriptionManager;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
@@ -571,12 +572,13 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		 * In case the analysis job was interrupted by the resource changes, let wait
 		 * for the build and start analysis again
 		 */
-		private void waitForBuildAndReschedule(IProgressMonitor monitor, CoreException e) {
+		private void waitForBuildAndReschedule(IProgressMonitor monitor, Exception e) {
 			try {
 				Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, monitor);
 			} catch (OperationCanceledException | InterruptedException e1) {
 				// nothing to do
 			}
+			cancelSimilarJobs(fullBuild);
 			IStatus s = new Status(IStatus.INFO, ApiAnalysisBuilder.class,
 					"Re-scheduling API analysis for " + project.getName(), e); //$NON-NLS-1$
 			ApiPlugin.log(s);
@@ -599,7 +601,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		}
 	}
 
-	private static class ApiAnalysisJobRule implements ISchedulingRule {
+	public static final class ApiAnalysisJobRule implements ISchedulingRule {
 
 		private final IProject project;
 
@@ -614,6 +616,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 
 		@Override
 		public boolean isConflicting(ISchedulingRule rule) {
+			if (rule instanceof ApiBaselineManagerRule) {
+				return true;
+			}
 			if (!(rule instanceof ApiAnalysisJobRule other)) {
 				return false;
 			}
