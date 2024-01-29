@@ -634,7 +634,7 @@ public class TargetContentsGroup {
 	}
 
 	/**
-	 * Parses a bunlde's manifest into a dictionary. The bundle may be in a jar
+	 * Parses a bundle's manifest into a dictionary. The bundle may be in a jar
 	 * or in a directory at the specified location.
 	 *
 	 * @param bundleLocation root location of the bundle
@@ -642,44 +642,36 @@ public class TargetContentsGroup {
 	 * @throws IOException if unable to parse
 	 */
 	protected Map<String, String> loadManifest(File bundleLocation) throws IOException {
-		ZipFile jarFile = null;
-		InputStream manifestStream = null;
 		String extension = IPath.fromOSString(bundleLocation.getName()).getFileExtension();
-		try {
-			if (extension != null && extension.equals("jar") && bundleLocation.isFile()) { //$NON-NLS-1$
-				jarFile = new ZipFile(bundleLocation, ZipFile.OPEN_READ);
+		if (extension != null && extension.equals("jar") && bundleLocation.isFile()) { //$NON-NLS-1$
+			try (ZipFile jarFile = new ZipFile(bundleLocation, ZipFile.OPEN_READ)) {
 				ZipEntry manifestEntry = jarFile.getEntry(JarFile.MANIFEST_NAME);
-				if (manifestEntry != null) {
-					manifestStream = jarFile.getInputStream(manifestEntry);
+				if (manifestEntry == null) {
+					return null;
 				}
-			} else {
-				File file = new File(bundleLocation, JarFile.MANIFEST_NAME);
-				if (file.exists())
-					manifestStream = new FileInputStream(file);
+				InputStream manifestStream = jarFile.getInputStream(manifestEntry);
+				return loadManifest(manifestStream);
 			}
-			if (manifestStream == null) {
-				return null;
-			}
+		}
+		File file = new File(bundleLocation, JarFile.MANIFEST_NAME);
+		if (!file.exists()) {
+			return null;
+		}
+		try (InputStream manifestStream = new FileInputStream(file)) {
+			return loadManifest(manifestStream);
+		}
+	}
+
+	private Map<String, String> loadManifest(InputStream manifestStream) throws IOException {
+		if (manifestStream == null) {
+			return null;
+		}
+		try {
 			return ManifestElement.parseBundleManifest(manifestStream, new Hashtable<>(10));
 		} catch (BundleException e) {
 			PDEPlugin.log(e);
-		} finally {
-			try {
-				if (manifestStream != null) {
-					manifestStream.close();
-				}
-			} catch (IOException e) {
-				PDEPlugin.log(e);
-			}
-			try {
-				if (jarFile != null) {
-					jarFile.close();
-				}
-			} catch (IOException e) {
-				PDEPlugin.log(e);
-			}
+			return null;
 		}
-		return null;
 	}
 
 	/**

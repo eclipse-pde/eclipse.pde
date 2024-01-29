@@ -215,34 +215,29 @@ public class PDERegistryStrategy extends RegistryStrategy {
 		if (input == null) {
 			return;
 		}
-		InputStream is = null;
-		ZipFile jfile = null;
-
 		try {
 			if (new File(base.getInstallLocation()).isDirectory()) {
 				// Directory bundle, access the extensions file directly
-				is = new FileInputStream(input);
+				try (InputStream is = new BufferedInputStream(new FileInputStream(input))) {
+					registry.addContribution(is, contributor, true, input.getPath(), null, fKey);
+				}
 			} else {
 				// Archived bundle, need to extract the file
-				jfile = new ZipFile(input, ZipFile.OPEN_READ);
-				String fileName = (base.isFragmentModel()) ? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR
-						: ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR;
-				ZipEntry entry = jfile.getEntry(fileName);
-				if (entry != null) {
-					is = jfile.getInputStream(entry);
+				try (ZipFile jfile = new ZipFile(input, ZipFile.OPEN_READ)) {
+					String fileName = (base.isFragmentModel()) ? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR
+							: ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR;
+					ZipEntry entry = jfile.getEntry(fileName);
+					if (entry != null) {
+						try (InputStream is = jfile.getInputStream(entry)) {
+							if (is != null) {
+								registry.addContribution(new BufferedInputStream(is), contributor, true,
+										input.getPath(), null, fKey);
+							}
+						}
+					}
 				}
 			}
-			if (is != null) {
-				registry.addContribution(new BufferedInputStream(is), contributor, true, input.getPath(), null, fKey);
-			}
-		} catch (IOException e) {
-		} finally {
-			if (jfile != null) {
-				try {
-					jfile.close();
-				} catch (IOException e) {
-				}
-			}
+		} catch (IOException ignored) {
 		}
 	}
 
