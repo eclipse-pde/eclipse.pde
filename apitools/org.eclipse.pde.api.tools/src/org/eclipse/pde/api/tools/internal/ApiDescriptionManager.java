@@ -13,11 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -251,8 +249,8 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 	private boolean restoreDescription(IJavaProject project, ProjectApiDescription description) throws CoreException {
 		File file = API_DESCRIPTIONS_CONTAINER_PATH.append(project.getElementName()).append(IApiCoreConstants.API_DESCRIPTION_XML_NAME).toFile();
 		if (file.exists()) {
-			try (BufferedInputStream stream = new BufferedInputStream(new FileInputStream(file))) {
-				String xml = new String(Util.getInputStreamAsCharArray(stream, StandardCharsets.UTF_8));
+			try {
+				String xml = Files.readString(file.toPath());
 				Element root = Util.parseDocument(xml);
 				if (!root.getNodeName().equals(IApiXmlConstants.ELEMENT_COMPONENT)) {
 					abort(ScannerMessages.ComponentXMLScanner_0, null);

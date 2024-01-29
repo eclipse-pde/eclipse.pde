@@ -790,36 +790,27 @@ public class PluginImportOperation extends WorkspaceJob {
 		}
 
 		// Check for source inside the binary plug-in
-		ZipFile zip = null;
-		try {
-			IImportStructureProvider provider;
-			Object root;
-			if (isJARd(model)) {
-				zip = new ZipFile(new File(model.getInstallLocation()));
-				provider = new ZipFileStructureProvider(zip);
-				root = ((ZipFileStructureProvider) provider).getRoot();
-			} else {
-				provider = FileSystemStructureProvider.INSTANCE;
-				root = new File(model.getInstallLocation());
-			}
-			List<?> children = provider.getChildren(root);
-			for (Object child : children) {
-				String label = provider.getLabel(child);
-				if (label.equals(DEFAULT_SOURCE_DIR)) {
-					return true;
-				}
-			}
-		} catch (IOException e) {
-			// Do nothing, any other problems will be caught during binary import
-		} finally {
-			if (zip != null) {
-				try {
-					zip.close();
-				} catch (IOException e) {
-				}
+		if (isJARd(model)) {
+			try (ZipFile zip = new ZipFile(new File(model.getInstallLocation()))) {
+				IImportStructureProvider provider = new ZipFileStructureProvider(zip);
+				Object root = ((ZipFileStructureProvider) provider).getRoot();
+				return canFindSource(provider, root);
+			} catch (IOException e) {
+				return false;
 			}
 		}
+		Object root = new File(model.getInstallLocation());
+		return canFindSource(FileSystemStructureProvider.INSTANCE, root);
+	}
 
+	private boolean canFindSource(IImportStructureProvider provider, Object root) {
+		List<?> children = provider.getChildren(root);
+		for (Object child : children) {
+			String label = provider.getLabel(child);
+			if (label.equals(DEFAULT_SOURCE_DIR)) {
+				return true;
+			}
+		}
 		return false;
 	}
 
@@ -1030,39 +1021,33 @@ public class PluginImportOperation extends WorkspaceJob {
 	 * @return true if source was found inside the binary plug-in, false otherwise
 	 */
 	private boolean handleInternalSource(IPluginModelBase model, WorkspaceBuildModel buildModel, Map<IPath, IPath> packageLocations) throws CoreException, ZipException, IOException {
-		IImportStructureProvider provider;
-		Object root;
-		IPath prefixPath;
 		IPath defaultSourcePath = IPath.fromOSString(DEFAULT_SOURCE_DIR);
-		ZipFile zip = null;
-		try {
-			if (isJARd(model)) {
-				zip = new ZipFile(new File(model.getInstallLocation()));
-				provider = new ZipFileStructureProvider(zip);
-				root = ((ZipFileStructureProvider) provider).getRoot();
-				prefixPath = defaultSourcePath;
-			} else {
-				provider = FileSystemStructureProvider.INSTANCE;
-				File rootFile = new File(model.getInstallLocation());
-				root = rootFile;
-				prefixPath = IPath.fromOSString(rootFile.getPath()).append(defaultSourcePath);
-			}
-
-			ArrayList<Object> collected = new ArrayList<>();
-			PluginImportHelper.collectResourcesFromFolder(provider, root, defaultSourcePath, collected);
-			if (!collected.isEmpty()) {
-				Set<IPath> packages = new HashSet<>();
-				PluginImportHelper.collectJavaPackages(provider, collected, prefixPath, packages);
-				addPackageEntries(packages, defaultSourcePath, packageLocations);
-				addBuildEntry(buildModel, "source." + DEFAULT_LIBRARY_NAME, DEFAULT_SOURCE_DIR + "/"); //$NON-NLS-1$ //$NON-NLS-2$
-				return true;
-			}
-			return false;
-		} finally {
-			if (zip != null) {
-				zip.close();
+		if (isJARd(model)) {
+			try (ZipFile zip = new ZipFile(new File(model.getInstallLocation()))) {
+				IImportStructureProvider provider = new ZipFileStructureProvider(zip);
+				Object root = ((ZipFileStructureProvider) provider).getRoot();
+				return handleInternalSource(buildModel, packageLocations, provider, root, defaultSourcePath, defaultSourcePath);
 			}
 		}
+		IImportStructureProvider provider = FileSystemStructureProvider.INSTANCE;
+		File rootFile = new File(model.getInstallLocation());
+		IPath prefixPath = IPath.fromOSString(rootFile.getPath()).append(defaultSourcePath);
+		return handleInternalSource(buildModel, packageLocations, provider, rootFile, prefixPath, defaultSourcePath);
+	}
+
+	private boolean handleInternalSource(WorkspaceBuildModel buildModel, Map<IPath, IPath> packageLocations,
+			IImportStructureProvider provider, Object root, IPath prefixPath, IPath defaultSourcePath)
+			throws CoreException {
+		ArrayList<Object> collected = new ArrayList<>();
+		PluginImportHelper.collectResourcesFromFolder(provider, root, defaultSourcePath, collected);
+		if (!collected.isEmpty()) {
+			Set<IPath> packages = new HashSet<>();
+			PluginImportHelper.collectJavaPackages(provider, collected, prefixPath, packages);
+			addPackageEntries(packages, defaultSourcePath, packageLocations);
+			addBuildEntry(buildModel, "source." + DEFAULT_LIBRARY_NAME, DEFAULT_SOURCE_DIR + "/"); //$NON-NLS-1$ //$NON-NLS-2$
+			return true;
+		}
+		return false;
 	}
 
 	/**

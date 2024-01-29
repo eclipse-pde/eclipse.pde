@@ -14,10 +14,9 @@
 package org.eclipse.pde.api.tools.internal;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -65,46 +64,28 @@ public class SystemApiDescriptionProcessor {
 	 */
 	public static String serializeComponentXml(File location) {
 		if (location.exists()) {
-			ZipFile jarFile = null;
-			InputStream stream = null;
 			try {
 				String extension = IPath.fromOSString(location.getName()).getFileExtension();
 				if (extension != null && extension.equals("jar") && location.isFile()) { //$NON-NLS-1$
-					jarFile = new ZipFile(location, ZipFile.OPEN_READ);
-					ZipEntry manifestEntry = jarFile.getEntry(IApiCoreConstants.SYSTEM_API_DESCRIPTION_XML_NAME);
-					if (manifestEntry != null) {
-						stream = jarFile.getInputStream(manifestEntry);
+					try (ZipFile jarFile = new ZipFile(location, ZipFile.OPEN_READ)) {
+						ZipEntry manifestEntry = jarFile.getEntry(IApiCoreConstants.SYSTEM_API_DESCRIPTION_XML_NAME);
+						if (manifestEntry != null) {
+							byte[] allBytes = jarFile.getInputStream(manifestEntry).readAllBytes();
+							return new String(allBytes, StandardCharsets.UTF_8);
+						}
 					}
 				} else if (location.isDirectory()) {
 					File file = new File(location, IApiCoreConstants.SYSTEM_API_DESCRIPTION_XML_NAME);
 					if (file.exists()) {
-						stream = new FileInputStream(file);
+						return Files.readString(file.toPath());
 					}
 				} else if (location.isFile()) {
 					if (location.getName().equals(IApiCoreConstants.SYSTEM_API_DESCRIPTION_XML_NAME)) {
-						stream = new FileInputStream(location);
+						return Files.readString(location.toPath());
 					}
-				}
-				if (stream != null) {
-					return new String(Util.getInputStreamAsCharArray(stream, StandardCharsets.UTF_8));
 				}
 			} catch (IOException e) {
 				ApiPlugin.log(e);
-			} finally {
-				try {
-					if (stream != null) {
-						stream.close();
-					}
-				} catch (IOException e) {
-					ApiPlugin.log(e);
-				}
-				try {
-					if (jarFile != null) {
-						jarFile.close();
-					}
-				} catch (IOException e) {
-					ApiPlugin.log(e);
-				}
 			}
 		}
 		return null;

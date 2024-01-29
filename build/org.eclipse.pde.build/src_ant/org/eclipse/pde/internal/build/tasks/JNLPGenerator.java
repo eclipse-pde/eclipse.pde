@@ -118,41 +118,39 @@ public class JNLPGenerator extends DefaultHandler {
 	 * Parses the specified url and constructs a feature
 	 */
 	public void process() {
-		InputStream in = null;
 		final String FEATURE_XML = "feature.xml"; //$NON-NLS-1$
-
 		try {
-			ZipFile featureArchive = null;
-			InputStream nlsStream = null;
+			ZipFile featureArchive;
+			InputStream nlsStream;
+			InputStream in;
 			if (featureRoot.isFile()) {
 				featureArchive = new ZipFile(featureRoot);
 				nlsStream = getNLSStream(featureArchive);
 				ZipEntry featureXML = featureArchive.getEntry(FEATURE_XML);
 				in = featureArchive.getInputStream(featureXML);
 			} else {
+				featureArchive = null;
 				nlsStream = getNLSStream(this.featureRoot);
 				in = new BufferedInputStream(new FileInputStream(new File(featureRoot, FEATURE_XML)));
 			}
-			try {
-				if (nlsStream != null) {
-					nlsBundle = new PropertyResourceBundle(nlsStream);
-					nlsStream.close();
+			try (featureArchive; nlsStream; in) {
+				try {
+					if (nlsStream != null) {
+						nlsBundle = new PropertyResourceBundle(nlsStream);
+					}
+				} catch (IOException e) {
+					// do nothing
 				}
-			} catch (IOException e) {
-				// do nothing
-			}
-			try {
-				parser.parse(new InputSource(in), this);
-				writeResourceEpilogue();
-				writeEpilogue();
-			} catch (SAXException e) {
-				//Ignore the exception
+				try {
+					parser.parse(new InputSource(in), this);
+					writeResourceEpilogue();
+					writeEpilogue();
+				} catch (SAXException e) {
+					//Ignore the exception
+				}
 			} finally {
-				in.close();
 				if (out != null)
 					out.close();
-				if (featureArchive != null)
-					featureArchive.close();
 			}
 		} catch (IOException e) {
 			//Ignore the exception
