@@ -35,7 +35,8 @@ Require-Bundle: org.eclipse.jdt.ui,
  org.eclipse.jface.text,
  org.eclipse.swt,
  org.eclipse.jface,
- org.eclipse.ui.workbench
+ org.eclipse.ui.workbench,
+ org.eclipse.core.expressions
 Automatic-Module-Name: org.eclipse.pde.bnd.ui
 Bundle-Activator: org.eclipse.pde.bnd.ui.Resources
 Bundle-RequiredExecutionEnvironment: JavaSE-17

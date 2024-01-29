@@ -1684,7 +1684,7 @@
                 name="%classpathFixProcessor.unresolvedImport.name">
                 <enablement>
                    <with variable="project">
-		              <test property="org.eclipse.jdt.core.isInJavaProjectWithNature" value="org.eclipse.pde.PluginNature"/>
+		              <test property="org.eclipse.pde.bnd.isOSGiClasspathProject" />
                    </with>
                 </enablement>
                 <overrides id="org.eclipse.jdt.ui.text.correction.DefaultClasspathFixProcessor"/>
