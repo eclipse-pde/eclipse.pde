@@ -1761,14 +1761,12 @@ public final class Util {
 	 * @return the contents of the file as a {@link String} or <code>null</code>
 	 */
 	public static String getFileContentAsString(File file) {
-		String contents = null;
-		try (FileInputStream stream = new FileInputStream(file)) {
-			char[] array = getInputStreamAsCharArray(stream, StandardCharsets.UTF_8);
-			contents = new String(array);
+		try {
+			return Files.readString(file.toPath());
 		} catch (IOException ioe) {
 			ApiPlugin.log(ioe);
+			return null;
 		}
-		return contents;
 	}
 
 	/**

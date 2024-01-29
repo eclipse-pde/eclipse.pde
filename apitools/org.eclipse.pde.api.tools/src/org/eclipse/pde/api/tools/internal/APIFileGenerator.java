@@ -18,10 +18,11 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -212,39 +213,25 @@ public class APIFileGenerator {
 					File currentManifest = new File(allManifestFile);
 					Set<String> currentApiPackages = null;
 					if (currentManifest.exists()) {
-						BufferedInputStream inputStream = null;
-						ZipFile zipFile = null;
 						try {
 							if (isZipJarFile(currentManifest.getName())) {
-								zipFile = new ZipFile(currentManifest);
-								final ZipEntry entry = zipFile.getEntry("META-INF/MANIFEST.MF"); //$NON-NLS-1$
-								if (entry != null) {
-									inputStream = new BufferedInputStream(zipFile.getInputStream(entry));
+								try (ZipFile zipFile = new ZipFile(currentManifest)) {
+									final ZipEntry entry = zipFile.getEntry("META-INF/MANIFEST.MF"); //$NON-NLS-1$
+									if (entry != null) {
+										InputStream inputStream = zipFile.getInputStream(entry);
+										manifestMap = ManifestElement.parseBundleManifest(inputStream, null);
+										currentApiPackages = collectApiPackageNames(manifestMap);
+
+									}
 								}
 							} else {
-								inputStream = new BufferedInputStream(new FileInputStream(currentManifest));
-							}
-							if (inputStream != null) {
-								manifestMap = ManifestElement.parseBundleManifest(inputStream, null);
-								currentApiPackages = collectApiPackageNames(manifestMap);
+								try (InputStream inputStream = new FileInputStream(currentManifest)) {
+									manifestMap = ManifestElement.parseBundleManifest(inputStream, null);
+									currentApiPackages = collectApiPackageNames(manifestMap);
+								}
 							}
 						} catch (IOException | BundleException e) {
 							ApiPlugin.log(e);
-						} finally {
-							if (inputStream != null) {
-								try {
-									inputStream.close();
-								} catch (IOException e) {
-									// ignore
-								}
-							}
-							if (zipFile != null) {
-								try {
-									zipFile.close();
-								} catch (IOException e) {
-									// ignore
-								}
-							}
 						}
 					}
 					if (currentApiPackages != null) {
@@ -424,8 +411,8 @@ public class APIFileGenerator {
 		if (!dotProjectFile.exists()) {
 			return false;
 		}
-		try (BufferedInputStream stream = new BufferedInputStream(new FileInputStream(dotProjectFile))) {
-			String contents = new String(Util.getInputStreamAsCharArray(stream, StandardCharsets.UTF_8));
+		try {
+			String contents = Files.readString(dotProjectFile.toPath());
 			return containsAPIToolsNature(contents);
 		} catch (IOException e) {
 			e.printStackTrace();

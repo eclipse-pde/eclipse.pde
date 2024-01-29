@@ -177,36 +177,26 @@ public class CoreUtility {
 	}
 
 	public static org.eclipse.jface.text.Document getTextDocument(File bundleLocation, String path) {
-		ZipFile jarFile = null;
-		InputStream stream = null;
 		try {
 			String extension = IPath.fromOSString(bundleLocation.getName()).getFileExtension();
 			if ("jar".equals(extension) && bundleLocation.isFile()) { //$NON-NLS-1$
-				jarFile = new ZipFile(bundleLocation, ZipFile.OPEN_READ);
-				ZipEntry manifestEntry = jarFile.getEntry(path);
-				if (manifestEntry != null) {
-					stream = jarFile.getInputStream(manifestEntry);
+				try (ZipFile jarFile = new ZipFile(bundleLocation, ZipFile.OPEN_READ)) {
+					ZipEntry manifestEntry = jarFile.getEntry(path);
+					if (manifestEntry != null) {
+						InputStream stream = jarFile.getInputStream(manifestEntry);
+						return getTextDocument(stream);
+					}
 				}
 			} else {
 				File file = new File(bundleLocation, path);
 				if (file.exists()) {
-					stream = new FileInputStream(file);
+					try (InputStream stream = new FileInputStream(file)) {
+						return getTextDocument(stream);
+					}
 				}
 			}
-			return getTextDocument(stream);
 		} catch (IOException e) {
 			PDECore.logException(e);
-		} finally {
-			try {
-				if (jarFile != null) {
-					jarFile.close();
-				}
-				if (stream != null) {
-					stream.close();
-				}
-			} catch (IOException e) {
-				PDECore.logException(e);
-			}
 		}
 		return null;
 	}
