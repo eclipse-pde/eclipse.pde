@@ -177,7 +177,7 @@
             project="org.eclipse.pde"/>
         <operand
             xsi:type="workingsets:ExclusionPredicate"
-            excludedWorkingSet="//'pde.workingsets'/@workingSets[name='PDE%20API%20Tools'] //'pde.workingsets'/@workingSets[name='PDE%20Tests'] //'pde.workingsets'/@workingSets[name='PDE%20Build'] //'pde.workingsets'/@workingSets[name='E4%20Tools']"/>
+            excludedWorkingSet="//'pde.workingsets'/@workingSets[name='PDE%20API%20Tools'] //'pde.workingsets'/@workingSets[name='PDE%20Tests'] //'pde.workingsets'/@workingSets[name='PDE%20E4%20Tools'] //'pde.workingsets'/@workingSets[name='PDE%20Releng']"/>
       </predicate>
     </workingSet>
     <workingSet
@@ -196,7 +196,7 @@
       </predicate>
     </workingSet>
     <workingSet
-        name="PDE Build">
+        name="PDE E4 Tools">
       <predicate
           xsi:type="predicates:AndPredicate">
         <operand
@@ -204,7 +204,10 @@
             project="org.eclipse.pde"/>
         <operand
             xsi:type="predicates:NamePredicate"
-            pattern="org\.eclipse\.pde\.build(\.tests)?"/>
+            pattern="org\.eclipse\.e4\.(core|tools).*"/>
+        <operand
+            xsi:type="workingsets:ExclusionPredicate"
+            excludedWorkingSet="//'pde.workingsets'/@workingSets[name='PDE%20Tests'] //'pde.workingsets'/@workingSets[name='PDE%20Releng']"/>
       </predicate>
     </workingSet>
     <workingSet
@@ -216,14 +219,11 @@
             project="org.eclipse.pde"/>
         <operand
             xsi:type="predicates:NamePredicate"
-            pattern=".*\.tests.*"/>
-        <operand
-            xsi:type="workingsets:ExclusionPredicate"
-            excludedWorkingSet="//'pde.workingsets'/@workingSets[name='PDE%20Build']"/>
+            pattern=".*\.(tests?|tck).*"/>
       </predicate>
     </workingSet>
     <workingSet
-        name="E4 Tools">
+        name="PDE Releng">
       <predicate
           xsi:type="predicates:AndPredicate">
         <operand
@@ -231,7 +231,7 @@
             project="org.eclipse.pde"/>
         <operand
             xsi:type="predicates:NamePredicate"
-            pattern="org\.eclipse\.e4\.tools.*"/>
+            pattern=".*(\.setup|[-.]feature)"/>
       </predicate>
     </workingSet>
   </setupTask>
