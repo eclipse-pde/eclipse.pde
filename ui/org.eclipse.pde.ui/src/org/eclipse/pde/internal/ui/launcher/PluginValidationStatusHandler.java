@@ -59,7 +59,7 @@ public class PluginValidationStatusHandler implements IStatusHandler {
 			PluginStatusDialog dialog = new PluginStatusDialog(shellProvider.getShell());
 			dialog.showLink(true);
 			dialog.showCancelButton(true);
-			dialog.setInput(op.getInput());
+			dialog.setInput(op);
 			result[0] = dialog.open();
 		});
 		if (result[0] == IDialogConstants.CANCEL_ID)

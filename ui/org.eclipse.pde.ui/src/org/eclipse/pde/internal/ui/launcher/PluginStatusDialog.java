@@ -18,10 +18,7 @@ package org.eclipse.pde.internal.ui.launcher;
 import java.util.Map;
 
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -31,12 +28,12 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.pde.internal.launching.launcher.LaunchValidationOperation;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -94,6 +91,7 @@ public class PluginStatusDialog extends TrayDialog {
 	private boolean fShowLink;
 	private Map<?, ?> fInput;
 	private TreeViewer treeViewer;
+	private ILaunchConfiguration fLaunchConfiguration;
 
 	public PluginStatusDialog(Shell parentShell, int style) {
 		super(parentShell);
@@ -115,8 +113,9 @@ public class PluginStatusDialog extends TrayDialog {
 		fShowLink = showLink;
 	}
 
-	public void setInput(Map<?, ?> input) {
-		fInput = input;
+	public void setInput(LaunchValidationOperation operation) {
+		fInput = operation.getInput();
+		fLaunchConfiguration = operation.fLaunchConfiguration;
 	}
 
 	@Override
@@ -136,7 +135,7 @@ public class PluginStatusDialog extends TrayDialog {
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		if (fShowLink) {
-			createLink(parent, IDialogConstants.YES_ID, PDEUIMessages.PluginStatusDialog_validationLink, true);
+			createLink(parent);
 		}
 		createButton(parent, IDialogConstants.OK_ID, PDEUIMessages.PluginStatusDialog_continueButtonLabel, true);
 		if (fShowCancelButton) {
@@ -144,28 +143,20 @@ public class PluginStatusDialog extends TrayDialog {
 		}
 	}
 
-	private void createLink(Composite parent, int yesId, String pluginStatusDialog_validationLink, boolean b) {
+	private void createLink(Composite parent) {
 		GridLayout layout = (GridLayout) parent.getLayout();
 		layout.numColumns = 2;
 		layout.makeColumnsEqualWidth = false;
 		Link link = new Link(parent, SWT.NONE);
 		link.setText(PDEUIMessages.PluginStatusDialog_validationLink);
-		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-		ILaunch[] launches = manager.getLaunches();
-		if (launches.length >= 1) {
-		ILaunch iLaunch = launches[launches.length - 1];
-		ILaunchConfiguration launchConfiguration = iLaunch.getLaunchConfiguration();
-			link.addSelectionListener(new SelectionAdapter() {
-			    @Override
-			    public void widgetSelected(SelectionEvent e) {
-					// Closing the validation dialog to avoid cyclic dependency
-					setReturnCode(CANCEL);
-					close();
-					DebugUITools.openLaunchConfigurationDialog(Display.getCurrent().getActiveShell(),
-							launchConfiguration,
-							"org.eclipse.debug.ui.launchGroup.run", null); //$NON-NLS-1$
-				}
-			  });
+		if (fLaunchConfiguration != null) {
+			link.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+				// Closing the validation dialog to avoid cyclic dependency
+				setReturnCode(CANCEL);
+				close();
+				DebugUITools.openLaunchConfigurationDialog(Display.getCurrent().getActiveShell(), fLaunchConfiguration,
+						"org.eclipse.debug.ui.launchGroup.run", null); //$NON-NLS-1$
+			}));
 		}
 	}
 

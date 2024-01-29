@@ -391,7 +391,7 @@ public class FeatureBlock {
 				if (fDialog == null) {
 					if (fOperation.hasErrors()) {
 						fDialog = new PluginStatusDialog(getShell(), SWT.MODELESS | SWT.CLOSE | SWT.BORDER | SWT.TITLE | SWT.RESIZE);
-						fDialog.setInput(fOperation.getInput());
+						fDialog.setInput(fOperation);
 						fDialog.open();
 						fDialog = null;
 					} else if (fOperation.isEmpty()) {
