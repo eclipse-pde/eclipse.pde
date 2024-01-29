@@ -11,4 +11,21 @@
 			</handledMarkerTypes>
 		</quickFixProcessor>
 	</extension>
+    <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="org.eclipse.pde.bnd.ui.OSGiPropertyTester"
+            id="org.eclipse.pde.bnd.osgitester.javaproject"
+            namespace="org.eclipse.pde.bnd"
+            properties="isOSGiClasspathProject"
+            type="org.eclipse.jdt.core.IJavaProject">
+      </propertyTester>
+      <propertyTester
+            class="org.eclipse.pde.bnd.ui.OSGiPropertyTester"
+            id="org.eclipse.pde.bnd.osgitester.project"
+            namespace="org.eclipse.pde.bnd"
+            properties="isOSGiClasspathProject"
+            type="org.eclipse.core.resources.IProject">
+      </propertyTester>
+   </extension>
 </plugin>
