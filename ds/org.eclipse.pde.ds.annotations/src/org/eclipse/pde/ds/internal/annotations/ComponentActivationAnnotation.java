@@ -28,14 +28,14 @@ record ComponentActivationAnnotation(String activate, Annotation annotation, Met
 
 	public boolean isMethod() {
 		if (binding instanceof IMethodBinding method) {
-			return !((IMethodBinding) binding).isConstructor();
+			return !method.isConstructor();
 		}
 		return false;
 	}
 
 	public boolean isConstructor() {
 		if (binding instanceof IMethodBinding method) {
-			return ((IMethodBinding) binding).isConstructor();
+			return method.isConstructor();
 		}
 		return false;
 	}

@@ -1345,7 +1345,7 @@ public class AnnotationVisitor extends ASTVisitor {
 				setPropertyValue(map.get(key), pair.getValue());
 			}
 		}
-		if (propertyType instanceof MarkerAnnotation marker && map.isEmpty()) {
+		if (propertyType instanceof MarkerAnnotation && map.isEmpty()) {
 			IDSProperty property = dsFactory.createProperty();
 			property.setPropertyName(NameGenerator.createClassPropertyName(fqdn, prefix));
 			property.setPropertyType(IDSConstants.VALUE_PROPERTY_TYPE_BOOLEAN);
