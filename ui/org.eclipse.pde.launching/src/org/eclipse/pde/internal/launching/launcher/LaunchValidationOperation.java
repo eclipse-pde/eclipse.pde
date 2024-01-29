@@ -42,7 +42,7 @@ import org.eclipse.pde.internal.core.TargetPlatformHelper;
 public class LaunchValidationOperation implements IWorkspaceRunnable {
 
 	private BundleValidationOperation fOperation;
-	protected final ILaunchConfiguration fLaunchConfiguration;
+	public final ILaunchConfiguration fLaunchConfiguration;
 	protected final Set<IPluginModelBase> fModels;
 
 	public LaunchValidationOperation(ILaunchConfiguration configuration, Set<IPluginModelBase> models) {
