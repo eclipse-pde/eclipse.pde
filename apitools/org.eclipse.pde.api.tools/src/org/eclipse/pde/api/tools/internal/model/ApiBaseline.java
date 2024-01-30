@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -39,6 +41,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -47,6 +50,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.IVMInstallChangedListener;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.PropertyChangeEvent;
@@ -63,6 +67,7 @@ import org.eclipse.osgi.service.resolver.StateHelper;
 import org.eclipse.osgi.service.resolver.StateObjectFactory;
 import org.eclipse.pde.api.tools.internal.AnyValue;
 import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
+import org.eclipse.pde.api.tools.internal.ApiBaselineManager.ApiBaselineManagerRule;
 import org.eclipse.pde.api.tools.internal.CoreMessages;
 import org.eclipse.pde.api.tools.internal.builder.ApiAnalysisBuilder.ApiAnalysisJob;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -165,7 +170,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * The VM install this baseline is bound to for system libraries or
 	 * <code>null</code>. Only used in the IDE when OSGi is running.
 	 */
-	private IVMInstall fVMBinding;
+	private volatile IVMInstall fVMBinding;
 
 	private volatile boolean disposed;
 
@@ -423,7 +428,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		if (ApiPlugin.isRunningInFramework() && fAutoResolve) {
 			IStatus error = null;
 			IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
-			Map<IVMInstall, Set<String>> vmToEEs = new HashMap<>();
+			Map<IVMInstall, Set<String>> vmToEEs = new TreeMap<>(new VmVersionComparator());
 			for (String ee : ees) {
 				IExecutionEnvironment environment = manager.getEnvironment(ee);
 				if (environment != null) {
@@ -433,43 +438,22 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 					}
 				}
 			}
-			// select VM that is compatible with most required environments
-			// keep list of all VMs
+			// The list is sorted with highest VM version first
 			List<IVMInstall> allVMInstalls = new ArrayList<>(vmToEEs.keySet());
-			String systemEE = null;
-			if (!allVMInstalls.isEmpty()) {
-				for (IVMInstall iVMInstall : allVMInstalls) {
-					// find the EE this VM is strictly compatible with
-					IExecutionEnvironment[] environments = manager.getExecutionEnvironments();
-					for (IExecutionEnvironment environment : environments) {
-						if (environment.isStrictlyCompatible(iVMInstall)) {
-							systemEE = environment.getId();
-							break;
-						}
-					}
-					if (systemEE == null) {
-						// https://bugs.eclipse.org/bugs/show_bug.cgi?id=383261
-						// we don't need to compute anything here, in all cases
-						// if
-						// we fail to find a compatible EE, fall back to highest
-						// known.
-						systemEE = "JavaSE-" + JavaCore.latestSupportedJavaVersion(); //$NON-NLS-1$
-					}
-					// only update if different from current or missing VM
-					// binding
-					if (!systemEE.equals(getExecutionEnvironment()) || fVMBinding == null) {
-						try {
-							File file = Util.createEEFile(iVMInstall, systemEE);
-							JavaRuntime.addVMInstallChangedListener(this);
-							fVMBinding = iVMInstall;
-							ExecutionEnvironmentDescription ee = new ExecutionEnvironmentDescription(file);
-							initialize(ee);
-							file.delete();
-						} catch (CoreException | IOException e) {
-							error = Status.error(CoreMessages.ApiBaseline_2, e);
-						}
-					}
+			for (IVMInstall iVMInstall : allVMInstalls) {
+				try {
+					File tmpEeFile = Util.createEEFile(iVMInstall);
+					initialize(new ExecutionEnvironmentDescription(tmpEeFile));
+					tmpEeFile.delete();
+					fVMBinding = iVMInstall;
+					break;
+				} catch (CoreException | IOException e) {
+					error = Status.error(CoreMessages.ApiBaseline_2, e);
 				}
+			}
+
+			if (fVMBinding != null) {
+				JavaRuntime.addVMInstallChangedListener(this);
 			} else {
 				// no VMs match any required EE
 				error = Status.error(CoreMessages.ApiBaseline_6);
@@ -494,6 +478,70 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 			} else {
 				fEEStatus = error;
 			}
+		}
+	}
+
+	/**
+	 * Sorts highest VM version first
+	 */
+	static final class VmVersionComparator implements Comparator<IVMInstall> {
+
+		private static final String UNKNOWN_VERSION = "UNKNOWN"; //$NON-NLS-1$
+		private static final Integer UNKNOWN_VERSION_ORDINAL = Integer.valueOf(-1);
+		private static final Map<String, Integer> KNOWN_VERSIONS_MAP;
+		static {
+			List<String> allVersions = JavaCore.getAllVersions();
+			KNOWN_VERSIONS_MAP = new HashMap<>(allVersions.size() + 1);
+			for (int i = 0; i < allVersions.size(); i++) {
+				KNOWN_VERSIONS_MAP.put(allVersions.get(i), Integer.valueOf(i));
+			}
+			KNOWN_VERSIONS_MAP.put(UNKNOWN_VERSION, UNKNOWN_VERSION_ORDINAL);
+		}
+
+		@Override
+		public int compare(IVMInstall o1, IVMInstall o2) {
+			String vmVersion1 = getSimpleVmVersion(o1);
+			String vmVersion2 = getSimpleVmVersion(o2);
+			Integer ordinal1 = getVmOrdinal(vmVersion1);
+			Integer ordinal2 = getVmOrdinal(vmVersion2);
+			// reversed order, so highest version is sorted first
+			return ordinal2.compareTo(ordinal1);
+		}
+
+		@SuppressWarnings("nls")
+		private static String getSimpleVmVersion(IVMInstall vm) {
+			if (!(vm instanceof IVMInstall2 vm2)) {
+				return UNKNOWN_VERSION;
+			}
+			String javaVersion = vm2.getJavaVersion();
+			if (javaVersion == null) {
+				return UNKNOWN_VERSION;
+			}
+			javaVersion = javaVersion.strip();
+			if (javaVersion.length() > 2 && javaVersion.startsWith("1.")) {
+				// 1.8.0 -> 1.8
+				javaVersion = javaVersion.substring(0, 3);
+			} else {
+				int firstDot = javaVersion.indexOf(".");
+				if (firstDot > 0) {
+					// 21.0.1 -> 21
+					javaVersion = javaVersion.substring(0, firstDot);
+				}
+			}
+			return javaVersion;
+		}
+
+		private static Integer getVmOrdinal(String vmVersion) {
+			Integer value = KNOWN_VERSIONS_MAP.get(vmVersion);
+			if (value == null) {
+				try {
+					// assume it is > Java 21 and can be parsed as integer
+					return Integer.valueOf(vmVersion);
+				} catch (Exception e) {
+					return UNKNOWN_VERSION_ORDINAL;
+				}
+			}
+			return value;
 		}
 	}
 
@@ -956,22 +1004,47 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * Re-binds the VM this baseline is bound to.
 	 */
 	private void rebindVM() {
-		Job.createSystem("Rebinding JVM", monitor -> { //$NON-NLS-1$
-			try {
-				// Let all the already running job finish first, to avoid errors
-				Job.getJobManager().join(ApiAnalysisJob.class, monitor);
-			} catch (OperationCanceledException | InterruptedException e) {
-				ApiPlugin.log("Interrupted while rebinding JVM", e); //$NON-NLS-1$
-				return;
+		final IVMInstall originalVm = fVMBinding;
+		Job.getJobManager().cancel(ApiAnalysisJob.class);
+		Job job = new Job("Rebinding JVM") { //$NON-NLS-1$
+
+			@Override
+			public IStatus run(IProgressMonitor monitor) {
+				if (monitor.isCanceled() || ApiBaseline.this.isDisposed()) {
+					return Status.CANCEL_STATUS;
+				}
+				try {
+					// Let all the already running job finish first, to avoid errors
+					Job.getJobManager().join(ApiAnalysisJob.class, monitor);
+				} catch (OperationCanceledException | InterruptedException e) {
+					ApiPlugin.log("Interrupted while rebinding JVM", e); //$NON-NLS-1$
+					return Status.CANCEL_STATUS;
+				}
+				if (originalVm != fVMBinding) {
+					return Status.CANCEL_STATUS;
+				}
+				fVMBinding = null;
+				IApiComponent[] components = getApiComponents();
+				HashSet<String> ees = new HashSet<>();
+				for (IApiComponent component2 : components) {
+					try {
+						ees.addAll(Arrays.asList(component2.getExecutionEnvironments()));
+					} catch (CoreException e) {
+						ApiPlugin.log("Error reading execution environment from " + component2, e); //$NON-NLS-1$
+					}
+				}
+				resolveSystemLibrary(ees);
+				return Status.OK_STATUS;
 			}
-			fVMBinding = null;
-			IApiComponent[] components = getApiComponents();
-			HashSet<String> ees = new HashSet<>();
-			for (IApiComponent component2 : components) {
-				ees.addAll(Arrays.asList(component2.getExecutionEnvironments()));
+
+			@Override
+			public boolean belongsTo(Object family) {
+				return super.belongsTo(family) || family == ApiBaseline.class;
 			}
-			resolveSystemLibrary(ees);
-		}).schedule();
+		};
+		job.setRule(new ApiBaselineManagerRule());
+		job.setSystem(true);
+		job.schedule();
 	}
 
 	@Override
