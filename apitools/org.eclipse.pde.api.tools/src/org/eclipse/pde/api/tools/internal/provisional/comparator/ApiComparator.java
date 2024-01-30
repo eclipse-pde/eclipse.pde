@@ -645,9 +645,12 @@ public class ApiComparator {
 									// anonymous)
 									return;
 								}
-								int visibility = 0;
+								int visibility;
 								if (elementDescription != null) {
 									visibility = elementDescription.getVisibility();
+								} else {
+									// Annotation is missing, not an API?
+									visibility = 0;
 								}
 								IApiTypeRoot typeRoot2 = null;
 								if (isSWT) {

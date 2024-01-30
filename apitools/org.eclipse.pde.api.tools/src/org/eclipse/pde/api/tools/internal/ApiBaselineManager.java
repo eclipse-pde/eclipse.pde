@@ -483,6 +483,8 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 					}
 				}
 				restored = components.toArray(new IApiComponent[components.size()]);
+				// Avoid unstable bundle traversal order to simplify our life 
+				Arrays.sort(restored, (o1, o2) -> o1.getName().compareTo(o2.getName()));
 			}
 		} catch (IOException | SAXException e) {
 			throw new CoreException(Status.error("Error restoring API baseline", e)); //$NON-NLS-1$
@@ -637,10 +639,10 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	 * the next request.
 	 */
 	public void disposeWorkspaceBaseline() {
-		if (workspacebaseline == null) {
+		final IApiBaseline originalBaseline = workspacebaseline;
+		if (originalBaseline == null) {
 			return;
 		}
-		final IApiBaseline originalBaseline = workspacebaseline;
 		IJobFunction runnable = m -> {
 			IApiBaseline oldBaseline = null;
 			synchronized (ApiBaselineManager.this) {

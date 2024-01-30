@@ -117,6 +117,8 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jdt.launching.environments.ExecutionEnvironmentDescription;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.FilterStore;
@@ -440,15 +442,31 @@ public final class Util {
 	}
 
 	/**
-	 * Creates an EE file for the given JRE and specified EE id
+	 * Creates an EE file for the given JRE
 	 */
-	public static File createEEFile(IVMInstall jre, String eeid) throws IOException {
+	public static File createEEFile(IVMInstall jre) throws IOException {
+		String eeid = getStrictCompatibleEE(jre);
 		String string = Util.generateEEContents(jre, eeid);
 		File eeFile = createTempFile("eed", ".ee"); //$NON-NLS-1$ //$NON-NLS-2$
 		try (FileOutputStream outputStream = new FileOutputStream(eeFile)) {
 			outputStream.write(string.getBytes(StandardCharsets.UTF_8));
 		}
 		return eeFile;
+	}
+
+	private static String getStrictCompatibleEE(IVMInstall iVMInstall) {
+		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
+		IExecutionEnvironment[] environments = manager.getExecutionEnvironments();
+		for (IExecutionEnvironment environment : environments) {
+			if (environment.isStrictlyCompatible(iVMInstall)) {
+				return environment.getId();
+			}
+		}
+		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=383261
+		// we don't need to compute anything here, in all cases
+		// if we fail to find a compatible EE, fall back to highest
+		// known.
+		return "JavaSE-" + JavaCore.latestSupportedJavaVersion(); //$NON-NLS-1$
 	}
 
 	/**
