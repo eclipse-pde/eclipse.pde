@@ -504,21 +504,13 @@ public class DeltaSession implements ISession {
 									IApiComponent p = providers[index];
 									if (!p.equals(apiComponent)) {
 										String id2 = p.getSymbolicName();
-										if (Util.ORG_ECLIPSE_SWT.equals(id2)) {
-											typeRoot = p.findTypeRoot(typeName);
-										} else {
-											typeRoot = p.findTypeRoot(typeName, id2);
-										}
+										typeRoot = p.findTypeRoot(typeName, id2);
 									}
 									index++;
 								}
 								break;
 							default:
-								if (Util.ORG_ECLIPSE_SWT.equals(id)) {
-									typeRoot = apiComponent.findTypeRoot(typeName);
-								} else {
-									typeRoot = apiComponent.findTypeRoot(typeName, id);
-								}
+								typeRoot = apiComponent.findTypeRoot(typeName, id);
 						}
 						if (typeRoot != null) {
 							IApiType structure = typeRoot.getStructure();
@@ -554,21 +546,13 @@ public class DeltaSession implements ISession {
 										IApiComponent p = providers[index];
 										if (!p.equals(apiComponent)) {
 											String id2 = p.getSymbolicName();
-											if (Util.ORG_ECLIPSE_SWT.equals(id2)) {
-												typeRoot = p.findTypeRoot(typeName);
-											} else {
-												typeRoot = p.findTypeRoot(typeName, id2);
-											}
+											typeRoot = p.findTypeRoot(typeName, id2);
 										}
 										index++;
 									}
 									break;
 								default:
-									if (Util.ORG_ECLIPSE_SWT.equals(id)) {
-										typeRoot = apiComponent.findTypeRoot(typeName);
-									} else {
-										typeRoot = apiComponent.findTypeRoot(typeName, id);
-									}
+									typeRoot = apiComponent.findTypeRoot(typeName, id);
 							}
 							if (typeRoot != null) {
 								IApiType structure = typeRoot.getStructure();

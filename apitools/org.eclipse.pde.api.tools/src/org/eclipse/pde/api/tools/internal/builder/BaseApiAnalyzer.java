@@ -1309,11 +1309,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 		IApiTypeRoot classFile = null;
 		try {
-			if (Util.ORG_ECLIPSE_SWT.equals(id)) {
-				classFile = component.findTypeRoot(typeName);
-			} else {
-				classFile = component.findTypeRoot(typeName, id);
-			}
+			classFile = component.findTypeRoot(typeName, id);
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
 		}
@@ -1331,11 +1327,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				IApiComponent p = providers[index];
 				if (!p.equals(component)) {
 					String id2 = p.getSymbolicName();
-					if (Util.ORG_ECLIPSE_SWT.equals(id2)) {
-						classFile = p.findTypeRoot(typeName);
-					} else {
-						classFile = p.findTypeRoot(typeName, id2);
-					}
+					classFile = p.findTypeRoot(typeName, id2);
 					if (classFile != null) {
 						IRequiredComponentDescription[] components = component.getRequiredComponents();
 						for (IRequiredComponentDescription description : components) {
@@ -1865,15 +1857,10 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					if (Flags.isProtected(modifiers)) {
 						String typeName = delta.getTypeName();
 						if (typeName != null) {
-							IApiTypeRoot typeRoot = null;
 							IApiType type = null;
 							try {
 								String id = component.getSymbolicName();
-								if (Util.ORG_ECLIPSE_SWT.equals(id)) {
-									typeRoot = component.findTypeRoot(typeName);
-								} else {
-									typeRoot = component.findTypeRoot(typeName, id);
-								}
+								IApiTypeRoot typeRoot = component.findTypeRoot(typeName, id);
 								if (typeRoot == null) {
 									String packageName = Signatures.getPackageName(typeName);
 									// check if the type is provided by a
@@ -1885,11 +1872,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 										IApiComponent p = providers[index];
 										if (!p.equals(component)) {
 											String id2 = p.getSymbolicName();
-											if (Util.ORG_ECLIPSE_SWT.equals(id2)) {
-												typeRoot = p.findTypeRoot(typeName);
-											} else {
-												typeRoot = p.findTypeRoot(typeName, id2);
-											}
+											typeRoot = p.findTypeRoot(typeName, id2);
 										}
 										index++;
 									}

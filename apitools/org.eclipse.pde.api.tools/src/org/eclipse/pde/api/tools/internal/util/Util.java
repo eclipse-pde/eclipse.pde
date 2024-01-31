@@ -307,8 +307,6 @@ public final class Util {
 
 	public static final IPath MANIFEST_PROJECT_RELATIVE_PATH = IPath.fromOSString(JarFile.MANIFEST_NAME);
 
-	public static final String ORG_ECLIPSE_SWT = "org.eclipse.swt"; //$NON-NLS-1$
-
 	public static final int LATEST_OPCODES_ASM = Opcodes.ASM9;
 
 	/**
