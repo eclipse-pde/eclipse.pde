@@ -555,25 +555,17 @@ public class BundleComponent extends Component {
 		List<IApiComponent> all = new ArrayList<>();
 		// build the classpath from bundle and all fragments
 		all.add(this);
-		boolean considerFragments = true;
-		if (Util.ORG_ECLIPSE_SWT.equals(getSymbolicName())) {
-			// if SWT is a project to be built/analyzed don't consider its
-			// fragments
-			considerFragments = !isApiEnabled();
-		}
-		if (considerFragments) {
-			BundleDescription[] fragments = getBundleDescription().getFragments();
-			for (BundleDescription fragment : fragments) {
-				if (!fragment.isResolved()) {
-					continue;
-				}
-				IApiComponent component = getBaseline().getApiComponent(fragment.getSymbolicName());
-				if (component != null) {
-					// force initialization of the fragment so we can
-					// retrieve its class file containers
-					component.getApiTypeContainers();
-					all.add(component);
-				}
+		BundleDescription[] fragments = getBundleDescription().getFragments();
+		for (BundleDescription fragment : fragments) {
+			if (!fragment.isResolved()) {
+				continue;
+			}
+			IApiComponent component = getBaseline().getApiComponent(fragment.getSymbolicName());
+			if (component != null) {
+				// force initialization of the fragment so we can
+				// retrieve its class file containers
+				component.getApiTypeContainers();
+				all.add(component);
 			}
 		}
 		Iterator<IApiComponent> iterator = all.iterator();

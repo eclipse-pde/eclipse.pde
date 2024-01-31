@@ -176,88 +176,85 @@ public class APIFileGenerator {
 			}
 			apiDescriptionFile.delete();
 		}
-		File[] allFiles = null;
 		Map<String, String> manifestMap = null;
-		IApiTypeContainer classFileContainer = null;
-		if (!this.projectLocation.endsWith(Util.ORG_ECLIPSE_SWT)) {
-			// create the directory class file container used to resolve
-			// signatures during tag scanning
-			String[] allBinaryLocations = this.binaryLocations.split(File.pathSeparator);
-			List<IApiTypeContainer> allContainers = new ArrayList<>();
-			IApiTypeContainer container = null;
-			for (String allBinaryLocation : allBinaryLocations) {
-				container = getContainer(allBinaryLocation);
-				if (container == null) {
-					throw new IllegalArgumentException(
-							NLS.bind(CoreMessages.api_generation_invalidBinaryLocation, allBinaryLocation));
-				}
-				allContainers.add(container);
+		// create the directory class file container used to resolve
+		// signatures during tag scanning
+		String[] allBinaryLocations = this.binaryLocations.split(File.pathSeparator);
+		List<IApiTypeContainer> allContainers = new ArrayList<>();
+		IApiTypeContainer container = null;
+		for (String allBinaryLocation : allBinaryLocations) {
+			container = getContainer(allBinaryLocation);
+			if (container == null) {
+				throw new IllegalArgumentException(
+						NLS.bind(CoreMessages.api_generation_invalidBinaryLocation, allBinaryLocation));
 			}
-			classFileContainer = new CompositeApiTypeContainer(null, allContainers);
-			File manifestFile = null;
-			File manifestDir = new File(root, "META-INF"); //$NON-NLS-1$
-			if (manifestDir.exists() && manifestDir.isDirectory()) {
-				manifestFile = new File(manifestDir, "MANIFEST.MF"); //$NON-NLS-1$
+			allContainers.add(container);
+		}
+		IApiTypeContainer classFileContainer = new CompositeApiTypeContainer(null, allContainers);
+		File manifestFile = null;
+		File manifestDir = new File(root, "META-INF"); //$NON-NLS-1$
+		if (manifestDir.exists() && manifestDir.isDirectory()) {
+			manifestFile = new File(manifestDir, "MANIFEST.MF"); //$NON-NLS-1$
+		}
+		if (manifestFile != null && manifestFile.exists()) {
+			try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(manifestFile));) {
+				manifestMap = ManifestElement.parseBundleManifest(inputStream, null);
+				this.apiPackages = collectApiPackageNames(manifestMap);
+			} catch (IOException | BundleException e) {
+				ApiPlugin.log(e);
 			}
-			if (manifestFile != null && manifestFile.exists()) {
-				try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(manifestFile));) {
-					manifestMap = ManifestElement.parseBundleManifest(inputStream, null);
-					this.apiPackages = collectApiPackageNames(manifestMap);
-				} catch (IOException | BundleException e) {
-					ApiPlugin.log(e);
-				}
-			}
-			if (this.manifests != null) {
-				String[] allManifestFiles = this.manifests.split(File.pathSeparator);
-				for (String allManifestFile : allManifestFiles) {
-					File currentManifest = new File(allManifestFile);
-					Set<String> currentApiPackages = null;
-					if (currentManifest.exists()) {
-						try {
-							if (isZipJarFile(currentManifest.getName())) {
-								try (ZipFile zipFile = new ZipFile(currentManifest)) {
-									final ZipEntry entry = zipFile.getEntry("META-INF/MANIFEST.MF"); //$NON-NLS-1$
-									if (entry != null) {
-										InputStream inputStream = zipFile.getInputStream(entry);
-										manifestMap = ManifestElement.parseBundleManifest(inputStream, null);
-										currentApiPackages = collectApiPackageNames(manifestMap);
-
-									}
-								}
-							} else {
-								try (InputStream inputStream = new FileInputStream(currentManifest)) {
+		}
+		if (this.manifests != null) {
+			String[] allManifestFiles = this.manifests.split(File.pathSeparator);
+			for (String allManifestFile : allManifestFiles) {
+				File currentManifest = new File(allManifestFile);
+				Set<String> currentApiPackages = null;
+				if (currentManifest.exists()) {
+					try {
+						if (isZipJarFile(currentManifest.getName())) {
+							try (ZipFile zipFile = new ZipFile(currentManifest)) {
+								final ZipEntry entry = zipFile.getEntry("META-INF/MANIFEST.MF"); //$NON-NLS-1$
+								if (entry != null) {
+									InputStream inputStream = zipFile.getInputStream(entry);
 									manifestMap = ManifestElement.parseBundleManifest(inputStream, null);
 									currentApiPackages = collectApiPackageNames(manifestMap);
+
 								}
 							}
-						} catch (IOException | BundleException e) {
-							ApiPlugin.log(e);
-						}
-					}
-					if (currentApiPackages != null) {
-						if (this.apiPackages == null) {
-							this.apiPackages = currentApiPackages;
 						} else {
-							this.apiPackages.addAll(currentApiPackages);
+							try (InputStream inputStream = new FileInputStream(currentManifest)) {
+								manifestMap = ManifestElement.parseBundleManifest(inputStream, null);
+								currentApiPackages = collectApiPackageNames(manifestMap);
+							}
 						}
+					} catch (IOException | BundleException e) {
+						ApiPlugin.log(e);
+					}
+				}
+				if (currentApiPackages != null) {
+					if (this.apiPackages == null) {
+						this.apiPackages = currentApiPackages;
+					} else {
+						this.apiPackages.addAll(currentApiPackages);
 					}
 				}
 			}
-			FileFilter fileFilter = path -> (path.isFile() && Util.isJavaFileName(path.getName()) && isApi(path.getParent())) || path.isDirectory();
-			allFiles = Util.getAllFiles(root, fileFilter);
-			if (this.sourceLocations != null) {
-				String[] allSourceLocations = this.sourceLocations.split(File.pathSeparator);
-				for (String currentSourceLocation : allSourceLocations) {
-					File[] allFiles2 = Util.getAllFiles(new File(currentSourceLocation), fileFilter);
-					if (allFiles2 != null) {
-						if (allFiles == null) {
-							allFiles = allFiles2;
-						} else {
-							int length = allFiles.length;
-							int length2 = allFiles2.length;
-							System.arraycopy(allFiles, 0, (allFiles = new File[length + length2]), 0, length);
-							System.arraycopy(allFiles2, 0, allFiles, length, length2);
-						}
+		}
+		FileFilter fileFilter = path -> (path.isFile() && Util.isJavaFileName(path.getName())
+				&& isApi(path.getParent())) || path.isDirectory();
+		File[] allFiles = Util.getAllFiles(root, fileFilter);
+		if (this.sourceLocations != null) {
+			String[] allSourceLocations = this.sourceLocations.split(File.pathSeparator);
+			for (String currentSourceLocation : allSourceLocations) {
+				File[] allFiles2 = Util.getAllFiles(new File(currentSourceLocation), fileFilter);
+				if (allFiles2 != null) {
+					if (allFiles == null) {
+						allFiles = allFiles2;
+					} else {
+						int length = allFiles.length;
+						int length2 = allFiles2.length;
+						System.arraycopy(allFiles, 0, (allFiles = new File[length + length2]), 0, length);
+						System.arraycopy(allFiles2, 0, allFiles, length, length2);
 					}
 				}
 			}
