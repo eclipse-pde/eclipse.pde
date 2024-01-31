@@ -357,13 +357,8 @@ public class ApiComparator {
 				return NO_DELTA;
 			}
 			String typeName = typeRoot2.getTypeName();
-			IApiTypeRoot typeRoot = null;
 			String id = component.getSymbolicName();
-			if (Util.ORG_ECLIPSE_SWT.equals(id)) {
-				typeRoot = component.findTypeRoot(typeName);
-			} else {
-				typeRoot = component.findTypeRoot(typeName, id);
-			}
+			IApiTypeRoot typeRoot = component.findTypeRoot(typeName, id);
 			final IApiDescription apiDescription2 = component2.getApiDescription();
 			IApiAnnotations elementDescription2 = apiDescription2.resolveAnnotations(typeDescriptor2.getHandle());
 			int visibility = 0;
@@ -614,17 +609,9 @@ public class ApiComparator {
 	private static IDelta internalCompare(final IApiComponent component, final IApiComponent component2, final IApiBaseline referenceBaseline, final IApiBaseline baseline, final int visibilityModifiers, final Delta globalDelta, final IProgressMonitor monitor) throws CoreException {
 		final Set<String> typeRootBaseLineNames = new HashSet<>();
 		final String id = component.getSymbolicName();
-		IApiTypeContainer[] typeRootContainers = null;
-		IApiTypeContainer[] typeRootContainers2 = null;
 		final SubMonitor localmonitor = SubMonitor.convert(monitor, 4);
-		final boolean isSWT = Util.ORG_ECLIPSE_SWT.equals(id);
-		if (isSWT) {
-			typeRootContainers = component.getApiTypeContainers();
-			typeRootContainers2 = component2.getApiTypeContainers();
-		} else {
-			typeRootContainers = component.getApiTypeContainers(id);
-			typeRootContainers2 = component2.getApiTypeContainers(id);
-		}
+		IApiTypeContainer[] typeRootContainers = component.getApiTypeContainers(id);
+		IApiTypeContainer[] typeRootContainers2 = component2.getApiTypeContainers(id);
 		final IApiDescription apiDescription = component.getApiDescription();
 		final IApiDescription apiDescription2 = component2.getApiDescription();
 		if (typeRootContainers != null) {
@@ -652,12 +639,7 @@ public class ApiComparator {
 									// Annotation is missing, not an API?
 									visibility = 0;
 								}
-								IApiTypeRoot typeRoot2 = null;
-								if (isSWT) {
-									typeRoot2 = component2.findTypeRoot(typeName);
-								} else {
-									typeRoot2 = component2.findTypeRoot(typeName, id);
-								}
+								IApiTypeRoot typeRoot2 = component2.findTypeRoot(typeName, id);
 								IApiComponent provider = null;
 								IApiDescription providerApiDesc = null;
 								boolean reexported = false;
@@ -673,11 +655,7 @@ public class ApiComparator {
 										IApiComponent p = providers[index];
 										if (!p.equals(component2)) {
 											String id2 = p.getSymbolicName();
-											if (Util.ORG_ECLIPSE_SWT.equals(id2)) {
-												typeRoot2 = p.findTypeRoot(typeName);
-											} else {
-												typeRoot2 = p.findTypeRoot(typeName, id2);
-											}
+											typeRoot2 = p.findTypeRoot(typeName, id2);
 											if (typeRoot2 != null) {
 												provider = p;
 												providerApiDesc = p.getApiDescription();
@@ -813,12 +791,7 @@ public class ApiComparator {
 											if (elementDescription != null) {
 												visibility = elementDescription.getVisibility();
 											}
-											IApiTypeRoot typeRoot2 = null;
-											if (isSWT) {
-												typeRoot2 = component2.findTypeRoot(typeName);
-											} else {
-												typeRoot2 = component2.findTypeRoot(typeName, id);
-											}
+											IApiTypeRoot typeRoot2 = component2.findTypeRoot(typeName, id);
 											IApiDescription providerApiDesc = null;
 											if (typeRoot2 == null) {
 												// check if the type is provided
@@ -831,11 +804,7 @@ public class ApiComparator {
 													IApiComponent p = providers[index];
 													if (!p.equals(component2)) {
 														String id2 = p.getSymbolicName();
-														if (Util.ORG_ECLIPSE_SWT.equals(id2)) {
-															typeRoot2 = p.findTypeRoot(typeName);
-														} else {
-															typeRoot2 = p.findTypeRoot(typeName, id2);
-														}
+														typeRoot2 = p.findTypeRoot(typeName, id2);
 														if (typeRoot2 != null) {
 															providerApiDesc = p.getApiDescription();
 														}
