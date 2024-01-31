@@ -58,6 +58,7 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.core.bnd.BndProjectManager;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
+import org.eclipse.pde.internal.core.natures.BndProject;
 import org.osgi.resource.Resource;
 
 import aQute.bnd.build.Container;
@@ -145,12 +146,9 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				try (Project bnd = bndProject.get()) {
 					IClasspathEntry[] entries = BndProjectManager
 							.getClasspathEntries(bnd, project.getWorkspace().getRoot()).toArray(IClasspathEntry[]::new);
-					for (String err : bnd.getErrors()) {
-						System.out.println("ERR: " + err); //$NON-NLS-1$
-					}
-					for (String warn : bnd.getWarnings()) {
-						System.out.println("WARN: " + warn); //$NON-NLS-1$
-					}
+					debugProblems(bnd);
+					project.setSessionProperty(PDECore.BND_CLASSPATH_INSTRUCTION_FILE,
+							project.getFile(BndProject.INSTRUCTIONS_FILE));
 					return entries;
 				}
 			}
@@ -163,9 +161,13 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 					File projectDir = location.toFile();
 					if (projectDir != null) {
 						Project plainBnd = Workspace.getProject(projectDir);
+						plainBnd.refresh();
 						IClasspathEntry[] entries = BndProjectManager
 								.getClasspathEntries(plainBnd, project.getWorkspace().getRoot())
 								.toArray(IClasspathEntry[]::new);
+						debugProblems(plainBnd);
+						plainBnd.clear();
+						project.setSessionProperty(PDECore.BND_CLASSPATH_INSTRUCTION_FILE, bnd);
 						return entries;
 					}
 				}
@@ -177,6 +179,17 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			System.out.println("********Returned an empty container"); //$NON-NLS-1$
 		}
 		return new IClasspathEntry[0];
+	}
+
+	protected void debugProblems(Project bnd) {
+		if (PDECore.DEBUG_CLASSPATH) {
+			for (String err : bnd.getErrors()) {
+				System.out.println("ERR: " + err); //$NON-NLS-1$
+			}
+			for (String warn : bnd.getWarnings()) {
+				System.out.println("WARN: " + warn); //$NON-NLS-1$
+			}
+		}
 	}
 
 	private List<IClasspathEntry> computePluginEntriesByModel() {
