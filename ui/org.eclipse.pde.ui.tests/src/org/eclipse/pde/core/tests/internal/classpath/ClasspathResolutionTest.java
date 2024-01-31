@@ -75,7 +75,7 @@ public class ClasspathResolutionTest {
 		loadTargetPlatform("org.w3c.dom.events");
 		IProject project = ProjectUtils.importTestProject("tests/projects/demoMissedSystemModulePackage");
 		project.build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
-		IJavaProject javaProject = (IJavaProject) project.getNature(JavaCore.NATURE_ID);
+		IJavaProject javaProject = JavaCore.create(project);
 		RequiredPluginsClasspathContainer container = new RequiredPluginsClasspathContainer(
 				PDECore.getDefault().getModelManager().findModel(project), project);
 		for (IClasspathEntry entry : container.getClasspathEntries()) {
