@@ -34,7 +34,6 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.RequiredPluginsClasspathContainer;
-import org.eclipse.pde.internal.core.natures.BndProject;
 
 public class BndResourceChangeListener implements IResourceChangeListener {
 
@@ -50,9 +49,12 @@ public class BndResourceChangeListener implements IResourceChangeListener {
 					public boolean visit(IResourceDelta delta) throws CoreException {
 						IResource resource = delta.getResource();
 						if (resource instanceof IFile file) {
-							if (BndProject.INSTRUCTIONS_FILE.equals(file.getName())
-									&& BndProject.isBndProject(file.getProject())) {
-								updateProjects.add(file.getProject());
+							IProject project = file.getProject();
+							Object sessionProperty = project.getSessionProperty(PDECore.BND_CLASSPATH_INSTRUCTION_FILE);
+							if (sessionProperty instanceof IFile instr) {
+								if (instr.equals(file)) {
+									updateProjects.add(file.getProject());
+								}
 							}
 						}
 						return true;
