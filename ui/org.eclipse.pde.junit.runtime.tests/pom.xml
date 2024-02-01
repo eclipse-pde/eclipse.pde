@@ -26,9 +26,6 @@
 	<artifactId>org.eclipse.pde.junit.runtime.tests</artifactId>
 	<version>3.7.200-SNAPSHOT</version>
 	<packaging>eclipse-test-plugin</packaging>
-	<properties>
-		<code.ignoredWarnings>-warn:-discouraged</code.ignoredWarnings>
-	</properties>
 	<build>
 		<plugins>
 			<plugin>
