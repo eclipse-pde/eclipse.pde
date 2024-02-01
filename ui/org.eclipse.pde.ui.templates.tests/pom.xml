@@ -22,7 +22,6 @@
   <packaging>eclipse-test-plugin</packaging>
 
   <properties>
-    <code.ignoredWarnings>-warn:-discouraged</code.ignoredWarnings>
   	<testSuite>${project.artifactId}</testSuite>
   	<testClass>org.eclipse.pde.ui.templates.tests.TestPDETemplates</testClass>
   </properties>
