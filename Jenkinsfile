@@ -21,7 +21,7 @@ pipeline {
 						-Pbree-libs \
 						-Papi-check \
 						-Pjavadoc \
-						${env.BRANCH_NAME=='master' ? '-Peclipse-sign': ''} \
+						-Peclipse-sign \
 						-Dmaven.test.error.ignore=true -Dmaven.test.failure.ignore=true \
 						-Dtycho.debug.artifactcomparator \
 						-Dpde.docs.baselinemode=fail
