@@ -22,7 +22,6 @@
   <packaging>eclipse-test-plugin</packaging>
 
   <properties>
-    <code.ignoredWarnings>-warn:-discouraged</code.ignoredWarnings>
     <defaultSigning-excludeInnerJars>true</defaultSigning-excludeInnerJars>
   	<testSuite>${project.artifactId}</testSuite>
   	<testClass>org.eclipse.pde.ui.tests.AllPDETests</testClass>
