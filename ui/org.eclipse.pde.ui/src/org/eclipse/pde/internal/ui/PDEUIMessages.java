@@ -591,6 +591,7 @@ public class PDEUIMessages extends NLS {
 	public static String MainPreferencePage_WorkspacePluginsOverrideTarget;
 	public static String MainPreferencePage_WorkspacePluginsOverrideTargetTooltip;
 	public static String MainPreferencePage_DisableAPIAnalysisBuilder;
+	public static String MainPreferencePage_RunAPIAnalysisBuilderAsJob;
 
 	public static String MainPreferencePage_test_plugin_pattern_group;
 	public static String MainPreferencePage_test_plugin_pattern_label;
