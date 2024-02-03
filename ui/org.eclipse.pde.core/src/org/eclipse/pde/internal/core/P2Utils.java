@@ -553,7 +553,8 @@ public class P2Utils {
 			Version v = Version.parseVersion(includedFeature.getVersion());
 			VersionRange range;
 			if (Version.emptyVersion.equals(v)) {
-				range = features.get(includedFeature.getId()).stream().max(Comparator.comparing(IFeature::getVersion))
+				range = features.getOrDefault(includedFeature.getId(), List.of()).stream()
+						.max(Comparator.comparing(IFeature::getVersion))
 						.map(IFeature::getVersion).map(Version::parseVersion)
 						.map(P2Utils::strictVersionRange).orElse(VersionRange.emptyRange);
 			} else {
@@ -568,7 +569,8 @@ public class P2Utils {
 			Version v = Version.parseVersion(plugin.getVersion());
 			VersionRange range;
 			if (Version.emptyVersion.equals(v)) {
-				range = plugins.get(plugin.getId()).stream().max(Comparator.comparing(IPluginBase::getVersion))
+				range = plugins.getOrDefault(plugin.getId(), List.of()).stream()
+						.max(Comparator.comparing(IPluginBase::getVersion))
 						.map(IPluginBase::getVersion).map(Version::parseVersion).map(P2Utils::strictVersionRange)
 						.orElse(VersionRange.emptyRange);
 			} else {
