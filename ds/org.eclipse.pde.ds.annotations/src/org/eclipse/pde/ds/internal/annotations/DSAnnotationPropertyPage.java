@@ -246,7 +246,7 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 		specVersionCombo.setContentProvider(ArrayContentProvider.getInstance());
 		specVersionCombo.setInput(List.of(DSAnnotationVersion.V1_2, DSAnnotationVersion.V1_3, DSAnnotationVersion.V1_4,
 				DSAnnotationVersion.V1_5));
-		specVersionCombo.setSelection(new StructuredSelection(DSAnnotationVersion.V1_5));
+		specVersionCombo.setSelection(new StructuredSelection(DSAnnotationVersion.DEFAULT_VERSION));
 		specVersionCombo.addSelectionChangedListener(new ISelectionChangedListener() {
 
 			@Override
@@ -311,7 +311,7 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 
 		boolean enableValue = prefs.getBoolean(Activator.PREF_ENABLED, false);
 		String pathValue = prefs.get(Activator.PREF_PATH, Activator.DEFAULT_PATH);
-		String specVersion = prefs.get(Activator.PREF_SPEC_VERSION, DSAnnotationVersion.V1_4.name());
+		String specVersion = prefs.get(Activator.PREF_SPEC_VERSION, DSAnnotationVersion.DEFAULT_VERSION.name());
 		String errorLevel = prefs.get(Activator.PREF_VALIDATION_ERROR_LEVEL, ValidationErrorLevel.error.name());
 		String missingUnbindMethodLevel = prefs.get(Activator.PREF_MISSING_UNBIND_METHOD_ERROR_LEVEL, errorLevel);
 		boolean generateBAPL = prefs.getBoolean(Activator.PREF_GENERATE_BAPL, true);
@@ -335,7 +335,7 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 		try {
 			specVersionEnum = DSAnnotationVersion.valueOf(specVersion);
 		} catch (IllegalArgumentException e) {
-			specVersionEnum = DSAnnotationVersion.V1_4;
+			specVersionEnum = DSAnnotationVersion.DEFAULT_VERSION;
 		}
 
 		specVersionCombo.setSelection(new StructuredSelection(specVersionEnum));

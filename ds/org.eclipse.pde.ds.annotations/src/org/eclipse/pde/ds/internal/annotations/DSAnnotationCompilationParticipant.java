@@ -154,7 +154,10 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 			result = NEEDS_FULL_BUILD;
 		}
 
-		String specVersionStr = prefs.getString(Activator.PLUGIN_ID, Activator.PREF_SPEC_VERSION, DSAnnotationVersion.V1_3.name(),  new IScopeContext[] { new ProjectScope(project.getProject()), InstanceScope.INSTANCE, DefaultScope.INSTANCE });
+		String specVersionStr = prefs.getString(Activator.PLUGIN_ID, Activator.PREF_SPEC_VERSION,
+				DSAnnotationVersion.DEFAULT_VERSION.name(), new IScopeContext[] {
+						new ProjectScope(project.getProject()),
+						InstanceScope.INSTANCE, DefaultScope.INSTANCE });
 		DSAnnotationVersion specVersion = getEnumValue(specVersionStr, DSAnnotationVersion.class, DSAnnotationVersion.V1_3);
 
 		if (specVersion != state.getSpecVersion()) {
