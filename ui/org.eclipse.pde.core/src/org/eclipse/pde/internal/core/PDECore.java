@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
@@ -35,6 +36,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.debug.DebugOptionsListener;
 import org.eclipse.pde.core.IBundleClasspathResolver;
+import org.eclipse.pde.core.IClasspathContributor;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.pde.core.target.ITargetDefinition;
@@ -52,6 +54,7 @@ import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
+import org.osgi.util.tracker.ServiceTracker;
 
 import aQute.bnd.build.Workspace;
 
@@ -67,7 +70,8 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 
 	public static final QualifiedName EXTERNAL_PROJECT_PROPERTY = new QualifiedName(PLUGIN_ID, "imported"); //$NON-NLS-1$
 	public static final QualifiedName TOUCH_PROJECT = new QualifiedName(PLUGIN_ID, "TOUCH_PROJECT"); //$NON-NLS-1$
-	public static final QualifiedName BND_CLASSPATH_INSTRUCTION_FILE = new QualifiedName(PLUGIN_ID, "BND_CLASSPATH_PROJECT"); //$NON-NLS-1$
+	public static final QualifiedName BND_CLASSPATH_INSTRUCTION_FILE = new QualifiedName(PLUGIN_ID,
+			"BND_CLASSPATH_PROJECT"); //$NON-NLS-1$
 
 	public static final QualifiedName SCHEMA_PREVIEW_FILE = new QualifiedName(PLUGIN_ID, "SCHEMA_PREVIEW_FILE"); //$NON-NLS-1$
 
@@ -100,7 +104,9 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 	}
 
 	/**
-	 * Returns the singleton instance of if the {@link PDEPreferencesManager} for this bundle
+	 * Returns the singleton instance of if the {@link PDEPreferencesManager}
+	 * for this bundle
+	 *
 	 * @return the preference manager for this bundle
 	 *
 	 * @since 3.5
@@ -193,6 +199,8 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 
 	private BndResourceChangeListener bndResourceChangeListener;
 
+	private ServiceTracker<IClasspathContributor, IClasspathContributor> classpathContributorServiceTracker;
+
 	public PDECore() {
 		inst = this;
 	}
@@ -267,9 +275,10 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 	}
 
 	/**
-	 * Returns the singleton instance of the classpath container resolver manager used to dynamically
-	 * resolve a project's classpath. Clients may contribute a {@link IBundleClasspathResolver} to the
-	 * manager through the <code>org.eclipse.pde.core.bundleClasspathResolvers</code> extension.
+	 * Returns the singleton instance of the classpath container resolver
+	 * manager used to dynamically resolve a project's classpath. Clients may
+	 * contribute a {@link IBundleClasspathResolver} to the manager through the
+	 * <code>org.eclipse.pde.core.bundleClasspathResolvers</code> extension.
 	 *
 	 * @return singleton instance of the classpath container resolver manager
 	 */
@@ -388,7 +397,8 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 			fFeatureModelManager.shutdown();
 			fFeatureModelManager = null;
 		}
-		// always shut down extension registry before model manager (since it needs data from model manager)
+		// always shut down extension registry before model manager (since it
+		// needs data from model manager)
 		if (fExtensionRegistry != null) {
 			fExtensionRegistry.stop();
 			fExtensionRegistry = null;
@@ -436,5 +446,21 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 		DEBUG_MODEL = DEBUG && options.getBooleanOption(MODEL_DEBUG, false);
 		DEBUG_TARGET_PROFILE = DEBUG && options.getBooleanOption(TARGET_PROFILE_DEBUG, false);
 		DEBUG_VALIDATION = DEBUG && options.getBooleanOption(VALIDATION_DEBUG, false);
+	}
+
+	/**
+	 * @return a stream of currently registered {@link IClasspathContributor}s
+	 *         from the OSGi service factory
+	 */
+	public synchronized Stream<IClasspathContributor> getClasspathContributors() {
+		if (fBundleContext == null) {
+			return Stream.empty();
+		}
+		if (classpathContributorServiceTracker == null) {
+			classpathContributorServiceTracker = new ServiceTracker<>(fBundleContext, IClasspathContributor.class,
+					null);
+			classpathContributorServiceTracker.open();
+		}
+		return classpathContributorServiceTracker.getTracked().values().stream();
 	}
 }
