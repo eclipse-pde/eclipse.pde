@@ -35,20 +35,20 @@
 			<build>
 				<plugins>
 					<!-- needed unless https://github.com/eclipse-tycho/tycho/pull/3450 is fixed / used to work with sign profile -->
-					<plugin>
-						<groupId>org.eclipse.tycho</groupId>
-						<artifactId>tycho-p2-plugin</artifactId>
-						<version>${tycho.version}</version>
-						<executions>
-							<execution>
-								<id>p2-metadata</id>
-								<goals>
-									<goal>p2-metadata</goal>
-								</goals>
-								<phase>pre-integration-test</phase>
-							</execution>
-						</executions>
-					</plugin>
+<!--					<plugin>-->
+<!--						<groupId>org.eclipse.tycho</groupId>-->
+<!--						<artifactId>tycho-p2-plugin</artifactId>-->
+<!--						<version>${tycho.version}</version>-->
+<!--						<executions>-->
+<!--							<execution>-->
+<!--								<id>p2-metadata</id>-->
+<!--								<goals>-->
+<!--									<goal>p2-metadata</goal>-->
+<!--								</goals>-->
+<!--								<phase>pre-integration-test</phase>-->
+<!--							</execution>-->
+<!--						</executions>-->
+<!--					</plugin>-->
 					
 					<plugin>
 						<groupId>org.eclipse.tycho</groupId>
