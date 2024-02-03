@@ -30,6 +30,7 @@ import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Stream;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -89,7 +90,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	 *
 	 * @see #getClasspathContributors()
 	 */
-	private static List<IClasspathContributor> fClasspathContributors = null;
+	private static List<IClasspathContributor> fClasspathContributors;
 
 	private final IProject project;
 
@@ -204,12 +205,8 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 
 			// Add any library entries contributed via classpath contributor
 			// extension (Bug 363733)
-			for (IClasspathContributor cc : getClasspathContributors()) {
-				List<IClasspathEntry> classpathEntries = cc.getInitialEntries(desc);
-				if (classpathEntries != null && !classpathEntries.isEmpty()) {
-					entries.addAll(classpathEntries);
-				}
-			}
+			getClasspathContributors().map(cc -> cc.getInitialEntries(desc))
+					.flatMap(Collection::stream).forEach(entries::add);
 
 			Set<BundleDescription> added = new HashSet<>();
 
@@ -298,7 +295,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	 *
 	 * @return list of classpath contributors from the extension point
 	 */
-	private static synchronized List<IClasspathContributor> getClasspathContributors() {
+	private static synchronized Stream<IClasspathContributor> getClasspathContributors() {
 		if (fClasspathContributors == null) {
 			fClasspathContributors = new ArrayList<>();
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
@@ -312,7 +309,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				}
 			}
 		}
-		return fClasspathContributors;
+		return Stream.concat(fClasspathContributors.stream(), PDECore.getDefault().getClasspathContributors());
 	}
 
 	private Map<BundleDescription, List<Rule>> retrieveVisiblePackagesFromState(BundleDescription desc) {
@@ -435,14 +432,8 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 
 		// Add any library entries contributed via classpath contributor
 		// extension (Bug 363733)
-		for (IClasspathContributor cc : getClasspathContributors()) {
-			List<IClasspathEntry> classpathEntries = cc.getEntriesForDependency(hostBundle, desc);
-			if (classpathEntries == null || classpathEntries.isEmpty()) {
-				continue;
-			}
-			entries.addAll(classpathEntries);
-		}
-
+		getClasspathContributors().map(cc -> cc.getEntriesForDependency(hostBundle, desc)).flatMap(Collection::stream)
+				.forEach(entries::add);
 		if (resource != null) {
 			addProjectEntry(resource.getProject(), rules, model.getPluginBase().exportsExternalAnnotations(), entries);
 		} else {
