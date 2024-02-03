@@ -14,8 +14,10 @@
  *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core.text;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
@@ -27,7 +29,6 @@ import org.eclipse.pde.internal.ds.core.IDSProperties;
 import org.eclipse.pde.internal.ds.core.IDSProperty;
 import org.eclipse.pde.internal.ds.core.IDSReference;
 import org.eclipse.pde.internal.ds.core.IDSService;
-
 
 /**
  * Represents the root "component" entry in a DS xml file. There may be only one
@@ -75,8 +76,7 @@ public class DSComponent extends DSObject implements IDSComponent {
 
 	@Override
 	public boolean canAddChild(int objectType) {
-		return objectType == TYPE_IMPLEMENTATION
-				|| objectType == TYPE_PROPERTIES || objectType == TYPE_PROPERTY
+		return objectType == TYPE_IMPLEMENTATION || objectType == TYPE_PROPERTIES || objectType == TYPE_PROPERTY
 				|| objectType == TYPE_SERVICE || objectType == TYPE_REFERENCE;
 	}
 
@@ -242,14 +242,10 @@ public class DSComponent extends DSObject implements IDSComponent {
 
 	@Override
 	public String[] getAttributesNames() {
-		return new String[] { IDSConstants.ATTRIBUTE_COMPONENT_ENABLED,
-				IDSConstants.ATTRIBUTE_COMPONENT_FACTORY,
-				IDSConstants.ATTRIBUTE_COMPONENT_IMMEDIATE,
-				IDSConstants.ATTRIBUTE_COMPONENT_NAME,
-				IDSConstants.ATTRIBUTE_COMPONENT_CONFIGURATION_POLICY,
-				IDSConstants.ATTRIBUTE_COMPONENT_ACTIVATE,
-				IDSConstants.ATTRIBUTE_COMPONENT_DEACTIVATE,
-				IDSConstants.ATTRIBUTE_COMPONENT_MODIFIED };
+		return new String[] { IDSConstants.ATTRIBUTE_COMPONENT_ENABLED, IDSConstants.ATTRIBUTE_COMPONENT_FACTORY,
+				IDSConstants.ATTRIBUTE_COMPONENT_IMMEDIATE, IDSConstants.ATTRIBUTE_COMPONENT_NAME,
+				IDSConstants.ATTRIBUTE_COMPONENT_CONFIGURATION_POLICY, IDSConstants.ATTRIBUTE_COMPONENT_ACTIVATE,
+				IDSConstants.ATTRIBUTE_COMPONENT_DEACTIVATE, IDSConstants.ATTRIBUTE_COMPONENT_MODIFIED };
 	}
 
 	@Override
@@ -290,6 +286,24 @@ public class DSComponent extends DSObject implements IDSComponent {
 	@Override
 	public void setModifiedeMethod(String name) {
 		setXMLAttribute(ATTRIBUTE_COMPONENT_MODIFIED, name);
+	}
+
+	@Override
+	public void setNamespace(String namespace) {
+		String oldNs = getNamespace();
+		super.setNamespace(namespace);
+		if (!Objects.equals(namespace, oldNs)) {
+			firePropertyChanged("xml_namespace", oldNs, namespace); //$NON-NLS-1$
+		}
+	}
+
+	@Override
+	public void setNamespacePrefix(String prefix) {
+		String oldPrefix = getNamespacePrefix();
+		super.setNamespacePrefix(prefix);
+		if (!Objects.equals(oldPrefix, prefix)) {
+			firePropertyChanged("xml_namespace_prefix", oldPrefix, prefix); //$NON-NLS-1$
+		}
 	}
 
 }

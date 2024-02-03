@@ -30,6 +30,8 @@ public enum DSAnnotationVersion {
 
 	V1_5("1.5", "http://www.osgi.org/xmlns/scr/v1.5.0"); //$NON-NLS-1$
 
+	public static final DSAnnotationVersion DEFAULT_VERSION = DSAnnotationVersion.V1_4;
+
 	private final String namespace;
 	private String version;
 
