@@ -14,6 +14,7 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.29.0,4.0.0)",
  org.eclipse.core.filebuffers;bundle-version="[3.8.200,4.0.0)",
  org.eclipse.equinox.frameworkadmin;bundle-version="[2.3.0,3.0.0)",
  org.eclipse.core.variables;bundle-version="[3.6.200,4.0.0)"
+Service-Component: OSGI-INF/org.eclipse.pde.api.tools.internal.ApiAnnotationsClasspathContributor.xml
 Export-Package: org.eclipse.pde.api.tools.internal;x-friends:="org.eclipse.pde.api.tools.tests,org.eclipse.pde.api.tools.ui,org.eclipse.pde.api.tools.generator",
  org.eclipse.pde.api.tools.internal.builder;x-friends:="org.eclipse.pde.api.tools.ui,org.eclipse.pde.api.tools.tests",
  org.eclipse.pde.api.tools.internal.comparator;x-friends:="org.eclipse.pde.api.tools.ui,org.eclipse.pde.api.tools.tests",
