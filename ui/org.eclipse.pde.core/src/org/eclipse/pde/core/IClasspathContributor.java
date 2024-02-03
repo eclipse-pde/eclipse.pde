@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 BestSolution.at and others.
+ * Copyright (c) 2013, 2024 BestSolution.at and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     BestSolution.at - initial API and implementation
  *     IBM Corporation - ongoing enhancements
+ *     Christoph Läubrich - allow register as a service
  *******************************************************************************/
 package org.eclipse.pde.core;
 
@@ -22,16 +23,18 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.osgi.resource.Resource;
 
 /**
- * Implementors of this interface can contribute additional {@link IClasspathEntry}
- * to a plug-in project as the classpath is computed. The contributor is consulted
- * when the initial classpath for a plug-in project is calculated as well as whenever
- * a new bundle dependency is created.
+ * Implementors of this interface can contribute additional
+ * {@link IClasspathEntry} to a plug-in project as the classpath is computed.
+ * The contributor is consulted when the initial classpath for a plug-in project
+ * is calculated as well as whenever a new bundle dependency is created.
  * <p>
- * A classpath contributor is declared as an extension (<code>org.eclipse.pde.core.pluginClasspathContributors</code>).
+ * A classpath contributor is declared as an extension
+ * (<code>org.eclipse.pde.core.pluginClasspathContributors</code>) or registered
+ * as an OSGi service in the service registry.
  * </p>
  * <p>
- * The added classpath entries are only stored as long as the project classpath is and will
- * not be considered during plug-in or feature export.
+ * The added classpath entries are only stored as long as the project classpath
+ * is and will not be considered during plug-in or feature export.
  * </p>
  *
  * @since 3.9
