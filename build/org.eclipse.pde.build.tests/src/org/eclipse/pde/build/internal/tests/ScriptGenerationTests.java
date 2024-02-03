@@ -23,9 +23,11 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -870,7 +872,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		Target main = antProject.getTargets().get("main");
 		assertNotNull(main);
 		Object[] children = AntUtils.getChildrenByName(main, "parallel");
-		assertEquals(4, children.length);
+		assertEquals(getScript(buildScript), 4, children.length);
 
 		Task[] tasks = AntUtils.getParallelTasks((Parallel) children[0]);
 		assertEquals(2, tasks.length);
@@ -901,6 +903,19 @@ public class ScriptGenerationTests extends PDETestCase {
 		tasks = AntUtils.getParallelTasks((Parallel) children[3]);
 		assertEquals(1, tasks.length);
 		assertEquals("plugins/F", tasks[0].getRuntimeConfigurableWrapper().getAttributeMap().get("dir"));
+	}
+
+	private String getScript(IFile buildScript) {
+		try {
+			return new String(buildScript.getContents().readAllBytes(), StandardCharsets.UTF_8);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "-no script-";
 	}
 
 	public static class TestQualifierDirector extends BuildDirector {
