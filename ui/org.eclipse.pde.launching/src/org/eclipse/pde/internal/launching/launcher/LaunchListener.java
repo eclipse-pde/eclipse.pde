@@ -135,7 +135,7 @@ public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
 	private void launchTerminated(final ILaunch launch, int returnValue) throws CoreException {
 		if (managedLaunches.contains(launch)) {
 			update(launch, true);
-			if (returnValue == 23 || returnValue == 24) {
+			if (returnValue == 23) {
 				doRestart(launch);
 				return;
 			}
