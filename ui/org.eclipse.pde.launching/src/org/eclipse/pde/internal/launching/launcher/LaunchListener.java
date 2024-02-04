@@ -31,6 +31,7 @@ import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.equinox.app.IApplication;
 import org.eclipse.pde.internal.launching.IPDEConstants;
 import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
 import org.eclipse.pde.internal.launching.PDEMessages;
@@ -135,7 +136,7 @@ public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
 	private void launchTerminated(final ILaunch launch, int returnValue) throws CoreException {
 		if (managedLaunches.contains(launch)) {
 			update(launch, true);
-			if (returnValue == 23 || returnValue == 24) {
+			if (returnValue == IApplication.EXIT_RESTART) {
 				doRestart(launch);
 				return;
 			}
