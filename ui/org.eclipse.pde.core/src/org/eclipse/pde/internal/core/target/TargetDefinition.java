@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
@@ -879,7 +880,7 @@ public class TargetDefinition implements ITargetDefinition {
 				Objects.equals(getVMArguments(), definition.getVMArguments()) && //
 				Objects.equals(getJREContainer(), definition.getJREContainer()) && //
 				Arrays.equals(getIncluded(), definition.getIncluded()) && //
-				Arrays.equals(getTargetLocations(), definition.getTargetLocations()) && //
+				unorderedArraysEqualsSerialized(getTargetLocations(), definition.getTargetLocations()) && //
 				Arrays.equals(getImplicitDependencies(), definition.getImplicitDependencies());
 	}
 
@@ -899,8 +900,22 @@ public class TargetDefinition implements ITargetDefinition {
 				isArgsNullOrEqual(getVMArguments(), definition.getVMArguments()) && //
 				Objects.equals(getJREContainer(), definition.getJREContainer()) && //
 				Arrays.equals(getIncluded(), definition.getIncluded()) && //
-				Arrays.equals(getTargetLocations(), definition.getTargetLocations()) && //
+				unorderedArraysEqualsSerialized(getTargetLocations(), definition.getTargetLocations()) && //
 				Arrays.equals(getImplicitDependencies(), definition.getImplicitDependencies());
+	}
+
+	private static boolean unorderedArraysEqualsSerialized(ITargetLocation[] one, ITargetLocation[] two) {
+		if (one == two) {
+			return true;
+		}
+		if (one == null || two == null || one.length != two.length) {
+			return false;
+		}
+		Set<Object> oneXml = Arrays.stream(one).filter(Objects::nonNull)
+				.map(l -> Objects.requireNonNullElse(l.serialize(), l)).collect(Collectors.toSet());
+		Set<Object> twoXml = Arrays.stream(two).filter(Objects::nonNull)
+				.map(l -> Objects.requireNonNullElse(l.serialize(), l)).collect(Collectors.toSet());
+		return oneXml.equals(twoXml);
 	}
 
 	private boolean isArgsNullOrEqual(String args1, String args2) {
