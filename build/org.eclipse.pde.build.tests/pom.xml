@@ -17,7 +17,6 @@
 		<!-- This is used in the ibuilds where the tycho test execution is
 		DISABLED and instead we rely on the test.xml! -->
 		<skipTests>true</skipTests>
-		<ignoredWarnings>${tests.ignoredWarnings}</ignoredWarnings>
 	</properties>
 
 	<profiles>
