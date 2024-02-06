@@ -47,9 +47,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.internal.junit.launcher.ITestKind;
-import org.eclipse.jdt.internal.junit.launcher.JUnitLaunchConfigurationConstants;
-import org.eclipse.jdt.internal.junit.launcher.TestKindRegistry;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMRunner;
@@ -288,7 +285,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		}
 		//  if element is a test class annotated with @RunWith(JUnitPlatform.class, we add this in program arguments
 		@SuppressWarnings("restriction")
-		String attrRunWithJunitPlatformAnnotation = JUnitLaunchConfigurationConstants.ATTR_RUN_WITH_JUNIT_PLATFORM_ANNOTATION;
+		String attrRunWithJunitPlatformAnnotation = org.eclipse.jdt.internal.junit.launcher.JUnitLaunchConfigurationConstants.ATTR_RUN_WITH_JUNIT_PLATFORM_ANNOTATION;
 		if (configuration.getAttribute(attrRunWithJunitPlatformAnnotation, false)) {
 			programArgs.add("-runasjunit5"); //$NON-NLS-1$
 		}
@@ -533,16 +530,16 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	 */
 	@SuppressWarnings("restriction")
 	public static Collection<String> getRequiredJunitRuntimePlugins(ILaunchConfiguration configuration) {
-		ITestKind testKind = JUnitLaunchConfigurationConstants.getTestRunnerKind(configuration);
+		org.eclipse.jdt.internal.junit.launcher.ITestKind testKind = org.eclipse.jdt.internal.junit.launcher.JUnitLaunchConfigurationConstants.getTestRunnerKind(configuration);
 		if (testKind.isNull()) {
 			return Collections.emptyList();
 		}
 		List<String> plugins = new ArrayList<>();
 		plugins.add("org.eclipse.pde.junit.runtime"); //$NON-NLS-1$
 
-		if (TestKindRegistry.JUNIT4_TEST_KIND_ID.equals(testKind.getId())) {
+		if (org.eclipse.jdt.internal.junit.launcher.TestKindRegistry.JUNIT4_TEST_KIND_ID.equals(testKind.getId())) {
 			plugins.add("org.eclipse.jdt.junit4.runtime"); //$NON-NLS-1$
-		} else if (TestKindRegistry.JUNIT5_TEST_KIND_ID.equals(testKind.getId())) {
+		} else if (org.eclipse.jdt.internal.junit.launcher.TestKindRegistry.JUNIT5_TEST_KIND_ID.equals(testKind.getId())) {
 			plugins.add("org.eclipse.jdt.junit5.runtime"); //$NON-NLS-1$
 		}
 		return plugins;
