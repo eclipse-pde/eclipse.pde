@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Hannes Wellmann - Add 'value' element to provide a way to supply contextual information to clients
  *******************************************************************************/
 package org.eclipse.pde.api.tools.annotations;
 
@@ -34,4 +35,13 @@ import java.lang.annotation.Target;
 		ElementType.FIELD })
 @Retention(RetentionPolicy.CLASS)
 public @interface NoReference {
+
+	/**
+	 * A message to provide contextual information to clients about why this
+	 * annotations is applied.
+	 *
+	 * @since 1.3
+	 */
+	String value() default "This element is not intended to be referenced by clients.";
+
 }
