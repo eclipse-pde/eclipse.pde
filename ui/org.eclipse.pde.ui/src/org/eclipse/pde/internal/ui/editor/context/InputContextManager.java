@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.ui.editor.context;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -77,9 +79,11 @@ public abstract class InputContextManager implements IResourceChangeListener {
 	 * Saves dirty contexts.
 	 */
 	public void save(IProgressMonitor monitor) {
-		for (InputContext context : inputContexts.values()) {
+		Collection<InputContext> values = inputContexts.values();
+		SubMonitor subMon = SubMonitor.convert(monitor, values.size());
+		for (InputContext context : values) {
 			if (context.mustSave())
-				context.doSave(monitor);
+				context.doSave(subMon.newChild(1));
 		}
 	}
 
