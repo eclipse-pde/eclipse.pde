@@ -50,7 +50,9 @@ public class BndResourceChangeListener implements IResourceChangeListener {
 						IResource resource = delta.getResource();
 						if (resource instanceof IFile file) {
 							IProject project = file.getProject();
-							Object sessionProperty = project.getSessionProperty(PDECore.BND_CLASSPATH_INSTRUCTION_FILE);
+							Object sessionProperty = project.isOpen()
+									? project.getSessionProperty(PDECore.BND_CLASSPATH_INSTRUCTION_FILE)
+									: null;
 							if (sessionProperty instanceof IFile instr) {
 								if (instr.equals(file)) {
 									updateProjects.add(file.getProject());
