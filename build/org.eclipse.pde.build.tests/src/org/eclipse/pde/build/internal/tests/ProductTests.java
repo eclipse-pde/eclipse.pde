@@ -53,6 +53,7 @@ import org.eclipse.pde.build.tests.BuildConfiguration;
 import org.eclipse.pde.build.tests.PDETestCase;
 import org.eclipse.pde.internal.build.AbstractScriptGenerator;
 import org.eclipse.pde.internal.build.AssemblyInformation;
+import org.eclipse.pde.internal.build.BundleHelper;
 import org.eclipse.pde.internal.build.Config;
 import org.eclipse.pde.internal.build.ProductGenerator;
 import org.eclipse.pde.internal.swt.tools.IconExe;
@@ -313,7 +314,7 @@ public class ProductTests extends PDETestCase {
 		Config win32 = new Config("win32,win32,x86");
 		Config linux = new Config("linux, gtk, x86");
 		AssemblyInformation assembly = new AssemblyInformation();
-		StateObjectFactory factory = Platform.getPlatformAdmin().getFactory();
+		StateObjectFactory factory = BundleHelper.getPlatformAdmin().getFactory();
 
 		BundleDescription a = factory.createBundleDescription(1, "a", Version.emptyVersion, null, null, null, null,
 				null, true, true, true, null, null, null, null);
@@ -566,8 +567,9 @@ public class ProductTests extends PDETestCase {
 		assertLogContainsLine(config, "osgi.bundles=org.eclipse.equinox.simpleconfigurator@1:start");
 		assertLogContainsLine(info,
 				"org.eclipse.core.runtime_" + versions.get("org.eclipse.core.runtime") + ".jar,3,false");
-		assertLogContainsLine(info, "org.eclipse.equinox.app_" + versions.get("org.eclipse.equinox.app") + ".jar,3,false"); // bug
-																														// 274901
+		assertLogContainsLine(info,
+				"org.eclipse.equinox.app_" + versions.get("org.eclipse.equinox.app") + ".jar,3,false"); // bug
+		// 274901
 		assertLogContainsLine(info,
 				"org.eclipse.equinox.common_" + versions.get("org.eclipse.equinox.common") + ".jar,1,true");
 	}

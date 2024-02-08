@@ -32,7 +32,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -51,6 +50,7 @@ import org.eclipse.osgi.service.resolver.StateObjectFactory;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.build.BundleHelper;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.util.ManifestUtils;
 import org.eclipse.pde.internal.core.util.UtilMessages;
@@ -80,13 +80,13 @@ public class MinimalState {
 	protected String fSystemBundle = IPDEBuildConstants.BUNDLE_OSGI;
 
 	static {
-		stateObjectFactory = Platform.getPlatformAdmin().getFactory();
+		stateObjectFactory = BundleHelper.getPlatformAdmin().getFactory();
 	}
 
 	protected MinimalState(MinimalState state) {
 		this.fState = stateObjectFactory.createState(state.fState);
 		this.fState.setPlatformProperties(state.fState.getPlatformProperties());
-		this.fState.setResolver(Platform.getPlatformAdmin().createResolver());
+		this.fState.setResolver(BundleHelper.getPlatformAdmin().createResolver());
 		this.fId = state.fId;
 		this.fEEListChanged = state.fEEListChanged;
 		this.fExecutionEnvironments = state.fExecutionEnvironments;

@@ -78,6 +78,7 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.build.AbstractScriptGenerator;
 import org.eclipse.pde.internal.build.BuildScriptGenerator;
+import org.eclipse.pde.internal.build.BundleHelper;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.build.IXMLConstants;
@@ -818,7 +819,7 @@ public class FeatureExportOperation extends Job {
 
 	protected void copyState(State state) {
 		fStateCopy = state.getFactory().createState(state);
-		fStateCopy.setResolver(Platform.getPlatformAdmin().createResolver());
+		fStateCopy.setResolver(BundleHelper.getPlatformAdmin().createResolver());
 		fStateCopy.setPlatformProperties(state.getPlatformProperties());
 	}
 

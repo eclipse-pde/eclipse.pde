@@ -65,6 +65,7 @@ public class Messages extends NLS {
 	public static String exception_errorConverting;
 	public static String exception_cannotAcquireService;
 	public static String exception_missing_pdebuild_folder;
+	public static String PluginModelManager_PlatformAdminMissingErrorMessage;
 
 	// build.xml
 	public static String build_plugin_buildJars;
