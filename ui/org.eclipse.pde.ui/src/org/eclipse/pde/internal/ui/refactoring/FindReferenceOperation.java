@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
@@ -30,6 +29,7 @@ import org.eclipse.osgi.service.resolver.StateHelper;
 import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.build.BundleHelper;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.osgi.framework.Constants;
 import org.osgi.resource.Resource;
@@ -102,7 +102,7 @@ public class FindReferenceOperation implements IWorkspaceRunnable {
 	}
 
 	private void findXFriendReferences(ArrayList<TextFileChange> changes, IProgressMonitor monitor) throws CoreException {
-		StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
+		StateHelper helper = BundleHelper.getPlatformAdmin().getStateHelper();
 		ExportPackageDescription[] pkgs = helper.getVisiblePackages(fDesc);
 		String id = fDesc.getSymbolicName();
 		SubMonitor subMonitor = SubMonitor.convert(monitor, pkgs.length);

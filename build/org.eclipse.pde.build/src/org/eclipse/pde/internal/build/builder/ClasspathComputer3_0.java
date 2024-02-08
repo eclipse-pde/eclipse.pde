@@ -33,7 +33,6 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -209,7 +208,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 
 	private Map<String, String> getVisiblePackages(BundleDescription model) {
 		Map<String, String> packages = new HashMap<>(20);
-		StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
+		StateHelper helper = BundleHelper.getPlatformAdmin().getStateHelper();
 		addVisiblePackagesFromState(helper, model, packages);
 		if (model.getHost() != null)
 			addVisiblePackagesFromState(helper, (BundleDescription) model.getHost().getSupplier(), packages);

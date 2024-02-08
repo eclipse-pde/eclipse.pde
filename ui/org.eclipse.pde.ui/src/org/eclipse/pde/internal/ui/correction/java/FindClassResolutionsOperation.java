@@ -26,7 +26,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IJavaElement;
@@ -50,6 +49,7 @@ import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
 import org.eclipse.osgi.service.resolver.StateHelper;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.build.BundleHelper;
 import org.eclipse.pde.internal.core.PDECore;
 
 /**
@@ -398,7 +398,7 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 		if (base != null) {
 			BundleDescription desc = base.getBundleDescription();
 
-			StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
+			StateHelper helper = BundleHelper.getPlatformAdmin().getStateHelper();
 			ExportPackageDescription[] visiblePkgs = helper.getVisiblePackages(desc);
 
 			HashSet<ExportPackageDescription> set = new HashSet<>();

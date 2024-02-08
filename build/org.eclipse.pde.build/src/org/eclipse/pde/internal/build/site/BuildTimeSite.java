@@ -37,7 +37,6 @@ import java.util.TreeSet;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.equinox.p2.publisher.eclipse.Feature;
 import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;
@@ -175,7 +174,7 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 			if (reportResolutionErrors) {
 				MultiStatus errors = new MultiStatus(IPDEBuildConstants.PI_PDEBUILD, 1, Messages.exception_registryResolution, null);
 				BundleDescription[] all = state.getState().getBundles();
-				StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
+				StateHelper helper = BundleHelper.getPlatformAdmin().getStateHelper();
 				for (BundleDescription element : all) {
 					if (!element.isResolved()) {
 						ResolverError[] resolutionErrors = state.getState().getResolverErrors(element);
@@ -222,7 +221,7 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 	}
 
 	public static IStatus missingPlugin(BundleDescription bundle, ResolverError[] resolutionErrors, Feature containingFeature, boolean throwException) throws CoreException {
-		StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
+		StateHelper helper = BundleHelper.getPlatformAdmin().getStateHelper();
 		VersionConstraint[] versionErrors = helper.getUnsatisfiedConstraints(bundle);
 
 		String message = NLS.bind(Messages.exception_unresolvedPlugin, bundle.getSymbolicName() + '_' + bundle.getVersion().toString());

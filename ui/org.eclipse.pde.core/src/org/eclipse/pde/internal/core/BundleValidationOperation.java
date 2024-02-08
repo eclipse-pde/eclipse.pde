@@ -23,7 +23,6 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -31,6 +30,7 @@ import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.service.resolver.StateObjectFactory;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.build.BundleHelper;
 
 public class BundleValidationOperation implements IWorkspaceRunnable {
 
@@ -53,7 +53,7 @@ public class BundleValidationOperation implements IWorkspaceRunnable {
 	@Override
 	public void run(IProgressMonitor monitor) throws CoreException {
 		if (FACTORY == null) {
-			FACTORY = Platform.getPlatformAdmin().getFactory();
+			FACTORY = BundleHelper.getPlatformAdmin().getFactory();
 		}
 		SubMonitor subMonitor = SubMonitor.convert(monitor, fModels.size() + 1);
 		fState = FACTORY.createState(true);

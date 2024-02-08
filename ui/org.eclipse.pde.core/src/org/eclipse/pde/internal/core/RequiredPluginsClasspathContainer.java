@@ -56,6 +56,7 @@ import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.build.BundleHelper;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.core.bnd.BndProjectManager;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
@@ -314,7 +315,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 
 	private Map<BundleDescription, List<Rule>> retrieveVisiblePackagesFromState(BundleDescription desc) {
 		Map<BundleDescription, List<Rule>> visiblePackages = new HashMap<>();
-		StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
+		StateHelper helper = BundleHelper.getPlatformAdmin().getStateHelper();
 		addVisiblePackagesFromState(helper, desc, visiblePackages);
 		if (desc.getHost() != null) {
 			addVisiblePackagesFromState(helper, (BundleDescription) desc.getHost().getSupplier(), visiblePackages);

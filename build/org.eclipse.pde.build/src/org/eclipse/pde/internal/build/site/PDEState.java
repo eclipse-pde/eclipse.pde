@@ -45,7 +45,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -110,9 +109,9 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	}
 
 	public PDEState() {
-		factory = Platform.getPlatformAdmin().getFactory();
+		factory = BundleHelper.getPlatformAdmin().getFactory();
 		state = factory.createState(false);
-		state.setResolver(Platform.getPlatformAdmin().createResolver());
+		state.setResolver(BundleHelper.getPlatformAdmin().createResolver());
 		id = 0;
 		bundleClasspaths = new HashMap<>();
 		patchBundles = new HashMap<>();
@@ -856,7 +855,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		if (lastSortingDate != getState().getTimeStamp()) {
 			lastSortingDate = getState().getTimeStamp();
 			BundleDescription[] toSort = getState().getResolvedBundles();
-			Platform.getPlatformAdmin().getStateHelper().sortBundles(toSort);
+			BundleHelper.getPlatformAdmin().getStateHelper().sortBundles(toSort);
 			sortedBundles = Arrays.asList(toSort);
 		}
 		return sortedBundles;

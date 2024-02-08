@@ -21,7 +21,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -41,7 +40,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
@@ -52,7 +50,6 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.osgi.service.resolver.BundleDelta;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
-import org.eclipse.osgi.service.resolver.PlatformAdmin;
 import org.eclipse.osgi.service.resolver.StateDelta;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelProviderEvent;
@@ -556,14 +553,6 @@ public class PluginModelManager implements IModelProviderListener {
 	/** Has to be called synchronized with fEntriesSynchronizer **/
 	private void initializeTable(IProgressMonitor monitor) {
 		if (fEntries != null) {
-			return;
-		}
-
-		// Check if PlatformAdmin service is available (Bug 413450)
-		PlatformAdmin pAdmin = Platform.getPlatformAdmin();
-		if (pAdmin == null) {
-			PDECore.logErrorMessage(PDECoreMessages.PluginModelManager_PlatformAdminMissingErrorMessage);
-			fEntries = Collections.emptyMap();
 			return;
 		}
 

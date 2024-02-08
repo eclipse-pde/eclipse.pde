@@ -31,11 +31,13 @@ import org.eclipse.equinox.p2.core.ProvisionException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.NativeCodeDescription;
 import org.eclipse.osgi.service.resolver.NativeCodeSpecification;
+import org.eclipse.osgi.service.resolver.PlatformAdmin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Filter;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
+import org.osgi.util.tracker.ServiceTracker;
 
 public class BundleHelper {
 	private Bundle bundle;
@@ -44,12 +46,17 @@ public class BundleHelper {
 	private boolean debug = false;
 	private ILog log = null;
 
+	private final ServiceTracker<PlatformAdmin, PlatformAdmin> platformTracker;
+
 	public static BundleHelper getDefault() {
 		return defaultInstance;
 	}
 
 	static void close() {
 		if (defaultInstance != null) {
+			if (defaultInstance.platformTracker != null) {
+				defaultInstance.platformTracker.close();
+			}
 			defaultInstance.context = null;
 			defaultInstance.bundle = null;
 			defaultInstance = null;
@@ -63,6 +70,18 @@ public class BundleHelper {
 		defaultInstance = this;
 		bundle = context.getBundle();
 		debug = "true".equalsIgnoreCase(Platform.getDebugOption(IPDEBuildConstants.PI_PDEBUILD + "/debug")); //$NON-NLS-1$ //$NON-NLS-2$
+		platformTracker = new ServiceTracker<>(context, PlatformAdmin.class, null);
+		platformTracker.open();
+	}
+
+	public static PlatformAdmin getPlatformAdmin() {
+		if (defaultInstance != null) {
+			PlatformAdmin service = defaultInstance.platformTracker.getService();
+			if (service != null) {
+				return service;
+			}
+		}
+		throw new IllegalStateException(Messages.PluginModelManager_PlatformAdminMissingErrorMessage);
 	}
 
 	public final URL find(IPath path) {
