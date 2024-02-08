@@ -43,7 +43,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -71,6 +70,7 @@ import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.build.BundleHelper;
 import org.eclipse.pde.internal.core.AbstractNLModel;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.NLResourceHelper;
@@ -136,7 +136,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		if (desc == null && fModel.getInstallLocation() != null) {
 			// There was a problem creating the OSGi bundle description, possibly a bad header
 			try {
-				StateObjectFactory stateObjectFactory = Platform.getPlatformAdmin().getFactory();
+				StateObjectFactory stateObjectFactory = BundleHelper.getPlatformAdmin().getFactory();
 				File bundleLocation = new File(fModel.getInstallLocation());
 				Map<String, String> manifest = ManifestUtils.loadManifest(bundleLocation);
 				TargetWeaver.weaveManifest(manifest, bundleLocation);
