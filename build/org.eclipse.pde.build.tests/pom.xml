@@ -35,6 +35,22 @@
 				<plugins>
 					<plugin>
 						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>target-platform-configuration</artifactId>
+						<configuration>
+							<dependency-resolution>
+								<extraRequirements>
+									<requirement>
+										<!-- require the pde feature so we get this always from the reactor -->
+										<type>eclipse-feature</type>
+										<id>org.eclipse.pde</id>
+										<versionRange>0.0.0</versionRange>
+									</requirement>
+								</extraRequirements>
+							</dependency-resolution>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.eclipse.tycho</groupId>
 						<artifactId>tycho-maven-plugin</artifactId>
 					</plugin>
 					<plugin>
@@ -98,6 +114,20 @@
 					</plugin>
 					<plugin>
 						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>tycho-p2-publisher-plugin</artifactId>
+						<version>${tycho.version}</version>
+						<executions>
+							<execution>
+								<id>publish-products</id>
+								<goals>
+									<goal>publish-products</goal>
+								</goals>
+								<phase>pre-integration-test</phase>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.eclipse.tycho</groupId>
 						<artifactId>tycho-surefire-plugin</artifactId>
 						<configuration>
 							<product>org.eclipse.sdk.ide</product>
@@ -111,15 +141,7 @@
 							</repositories>
 							<install>
 								<iu>
-									<id>org.eclipse.sdk.ide</id>
-								</iu>
-								<iu>
-									<id>org.eclipse.test</id>
-									<feature>true</feature>
-								</iu>
-								<iu>
-									<id>org.eclipse.tips.feature</id>
-									<feature>true</feature>
+									<id>org.eclipse.sdk.test.ide</id>
 								</iu>
 							</install>
 						</configuration>
