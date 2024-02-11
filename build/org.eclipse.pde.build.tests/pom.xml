@@ -33,61 +33,9 @@
 			</properties>
 			<build>
 				<plugins>
-					<!-- needed unless https://github.com/eclipse-tycho/tycho/pull/3450 is fixed / used to work with sign profile -->
-					<plugin>
-						<groupId>org.eclipse.tycho</groupId>
-						<artifactId>tycho-p2-plugin</artifactId>
-						<version>${tycho.version}</version>
-						<executions>
-							<execution>
-								<id>p2-metadata</id>
-								<goals>
-									<goal>p2-metadata</goal>
-								</goals>
-								<phase>pre-integration-test</phase>
-							</execution>
-						</executions>
-					</plugin>
-					
 					<plugin>
 						<groupId>org.eclipse.tycho</groupId>
 						<artifactId>tycho-maven-plugin</artifactId>
-					</plugin>
-					<plugin>
-						<groupId>org.eclipse.tycho</groupId>
-						<artifactId>tycho-p2-director-plugin</artifactId>
-						<version>${tycho.version}</version>
-						<configuration>
-								<destination>${sdkWorkDir}</destination>
-								<profile>${sdkProfile}</profile>
-								<installFeatures>true</installFeatures>
-						</configuration>
-						<executions>
-							<!-- first provision an install of the current eclipse IDE -->
-						    <execution>
-								<id>install-sdk</id>
-								<goals>
-									<goal>director</goal>
-								</goals>
-								<phase>pre-integration-test</phase>
-								<configuration>
-									<repositories>${eclipse-p2-repo.url}</repositories>
-									<install>
-										<iu>
-											<id>org.eclipse.sdk.ide</id>
-										</iu>
-										<iu>
-											<id>org.eclipse.tips.feature</id>
-											<feature>true</feature>
-										</iu>
-										<iu>
-											<id>org.eclipse.test</id>
-											<feature>true</feature>
-										</iu>
-									</install>
-								</configuration>
-							</execution>
-						</executions>
 					</plugin>
 					<plugin>
 						<groupId>org.eclipse.tycho.extras</groupId>
@@ -154,9 +102,26 @@
 						<configuration>
 							<product>org.eclipse.sdk.ide</product>
 							<testRuntime>p2Installed</testRuntime>
-							<work>${sdkWorkDir}</work>
 							<profileName>${sdkProfile}</profileName>
 							<skipTests>true</skipTests> <!-- this supresses the default execution regardless of user property given -->
+							<repositories>
+								<repository>
+									<url>${eclipse-p2-repo.url}</url>
+								</repository>
+							</repositories>
+							<install>
+								<iu>
+									<id>org.eclipse.sdk.ide</id>
+								</iu>
+								<iu>
+									<id>org.eclipse.test</id>
+									<feature>true</feature>
+								</iu>
+								<iu>
+									<id>org.eclipse.tips.feature</id>
+									<feature>true</feature>
+								</iu>
+							</install>
 						</configuration>
 						<executions>
 							<execution>
@@ -165,6 +130,7 @@
 									<goal>test</goal>
 								</goals>
 								<configuration>
+									<work>${sdkWorkDir}/pde</work>
 									<testClass>org.eclipse.pde.build.tests.PDEBuildTestSuite</testClass>
 									<systemProperties>
 										<pde.build.includeP2>false</pde.build.includeP2>
@@ -179,6 +145,7 @@
 									<goal>test</goal>
 								</goals>
 								<configuration>
+									<work>${sdkWorkDir}/p2</work>
 									<testClass>org.eclipse.pde.build.tests.P2TestSuite</testClass>
 									<systemProperties>
 										<pde.build.includeP2>true</pde.build.includeP2>
