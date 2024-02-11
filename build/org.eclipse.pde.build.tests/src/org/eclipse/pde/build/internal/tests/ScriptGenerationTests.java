@@ -18,6 +18,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeFalse;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -827,8 +828,9 @@ public class ScriptGenerationTests extends PDETestCase {
 	}
 
 	@Test
-	@Ignore("this test fails on some linux versions for unkown reasons")
 	public void testBug238177() throws Exception {
+		assumeFalse(Platform.getOS().equals(Platform.OS_LINUX)); // test fails on some linux for unkown reasons
+
 		IFolder buildFolder = newTest("238177");
 		IFolder a = Utils.createFolder(buildFolder, "plugins/A");
 		IFolder b = Utils.createFolder(buildFolder, "plugins/B");
