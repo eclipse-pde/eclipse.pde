@@ -5,7 +5,7 @@
 		<quickFixProcessor
 			id="org.eclipse.pde.bnd.ui.buildpathquickfix"
 			name="Buildpath Quick Fix"
-			class="org.eclipse.pde.bnd.ui.BuildpathQuickFixProcessor">
+			class="org.eclipse.pde.bnd.ui.quickfix.BuildpathQuickFixProcessor">
 			<handledMarkerTypes>
 				<markerType id="org.eclipse.jdt.core.problem" />
 			</handledMarkerTypes>
