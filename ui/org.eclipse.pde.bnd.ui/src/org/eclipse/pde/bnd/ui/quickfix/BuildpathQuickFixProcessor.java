@@ -14,7 +14,7 @@
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
  *     Christoph Läubrich - adapt to PDE codebase
  *******************************************************************************/
-package org.eclipse.pde.bnd.ui;
+package org.eclipse.pde.bnd.ui.quickfix;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -68,6 +68,8 @@ import org.eclipse.jdt.ui.text.java.IInvocationContext;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.eclipse.jdt.ui.text.java.IProblemLocation;
 import org.eclipse.jdt.ui.text.java.IQuickFixProcessor;
+import org.eclipse.pde.bnd.ui.autocomplete.AddBundleCompletionProposal;
+
 import aQute.bnd.build.Container;
 import aQute.bnd.build.Project;
 import aQute.bnd.build.ProjectBuilder;

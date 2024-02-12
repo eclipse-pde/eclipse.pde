@@ -14,7 +14,7 @@
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
  *     Christoph Läubrich - adapt to PDE codebase
  *******************************************************************************/
-package org.eclipse.pde.bnd.ui;
+package org.eclipse.pde.bnd.ui.autocomplete;
 
 import java.io.File;
 import java.util.Map;
@@ -35,6 +35,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.text.java.IInvocationContext;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.eclipse.jface.text.contentassist.IContextInformation;
+import org.eclipse.pde.bnd.ui.Resources;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 
