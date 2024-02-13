@@ -16,10 +16,13 @@ package org.eclipse.pde.ui.tests.model.bundle;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.RequiredExecutionEnvironmentHeader;
+import org.eclipse.pde.internal.core.util.ManifestUtils;
 import org.eclipse.text.edits.TextEdit;
 import org.junit.Test;
 import org.osgi.framework.Constants;
@@ -216,6 +219,33 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 		expected.append(" J2SE-1.4,\n");
 		expected.append(" OSGi/Minimum-1.1\n");
 		assertEquals(expected.toString(), fDocument.get(pos, length));
+	}
+
+	@Test
+	public void testManifestUtils_parseRequiredEEsFromFilter() throws Exception {
+		{
+			Set<String> ees = new HashSet<>();
+			ManifestUtils.parseRequiredEEsFromFilter("(&(osgi.ee=JavaSE)(version=1.8))", ees::add);
+			assertEquals(Set.of("JavaSE-1.8"), ees);
+		}
+		{
+			Set<String> ees = new HashSet<>();
+			ManifestUtils.parseRequiredEEsFromFilter("(& ( version=17 ) ( osgi.ee=JavaSE ) )", ees::add);
+			assertEquals(Set.of("JavaSE-17"), ees);
+		}
+		{
+			Set<String> ees = new HashSet<>();
+			ManifestUtils.parseRequiredEEsFromFilter("(&(osgi.ee=JavaSE)(version>=1.6)(version<=1.8))", ees::add);
+			assertEquals(Set.of("JavaSE-1.6", "JavaSE-1.7", "JavaSE-1.8"), ees);
+		}
+		{
+			// Equivalent to
+			// Bundle-RequiredExecutionEnvironment: JavaSE-17, JavaSE-21
+			Set<String> ees = new HashSet<>();
+			ManifestUtils.parseRequiredEEsFromFilter(
+					"(| (&(version=17)(osgi.ee=JavaSE)) (&(osgi.ee=JavaSE)(version=21)) )", ees::add);
+			assertEquals(Set.of("JavaSE-17", "JavaSE-21"), ees);
+		}
 	}
 
 	private RequiredExecutionEnvironmentHeader getRequiredExecutionEnvironmentHeader() {
