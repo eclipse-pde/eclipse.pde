@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2018 IBM Corporation and others.
+ * Copyright (c) 2006, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,8 +10,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Hannes Wellmann - Add utility method to derive the BREE of a resource from its EE requirements
  *******************************************************************************/
 package org.eclipse.pde.internal.core.util;
+
+import static org.osgi.framework.namespace.ExecutionEnvironmentNamespace.CAPABILITY_VERSION_ATTRIBUTE;
+import static org.osgi.framework.namespace.ExecutionEnvironmentNamespace.EXECUTION_ENVIRONMENT_NAMESPACE;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,7 +28,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Consumer;
 import java.util.jar.JarFile;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -32,24 +39,34 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.TargetWeaver;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
+import org.osgi.framework.Filter;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.namespace.ExecutionEnvironmentNamespace;
+import org.osgi.resource.Namespace;
+import org.osgi.resource.Requirement;
+import org.osgi.resource.Resource;
 
 public class ManifestUtils {
 
@@ -77,7 +94,7 @@ public class ManifestUtils {
 	 * <p>
 	 * If this method is being called from a dev mode workspace, the returned map
 	 * should be passed to {@link TargetWeaver#weaveManifest(Map, File)} so that the
-	 * bundle classpath can be corrected. 
+	 * bundle classpath can be corrected.
 	 * </p>
 	 * <p>
 	 * This method is called by
@@ -285,4 +302,95 @@ public class ManifestUtils {
 		sb.append(values[values.length - 1]);
 		return sb.toString();
 	}
+
+	/**
+	 * Returns the list all execution-environments required by the given OSGi
+	 * resource. Only registered EEs are considered.
+	 *
+	 * @param resource
+	 *            the osgi resource
+	 * @return a list containing the id's of all required EEs
+	 * @see ExecutionEnvironmentNamespace#EXECUTION_ENVIRONMENT_NAMESPACE
+	 * @see IExecutionEnvironmentsManager#getExecutionEnvironments()
+	 */
+	public static Stream<String> getRequiredExecutionEnvironments(Resource resource) {
+		List<Requirement> requirements = resource.getRequirements(EXECUTION_ENVIRONMENT_NAMESPACE);
+		return requirements.stream()
+				.map(requirement -> requirement.getDirectives().get(Namespace.REQUIREMENT_FILTER_DIRECTIVE))
+				.mapMulti(ManifestUtils::parseRequiredEEsFromFilter);
+	}
+
+	// provide fast-path for simple filters like: (&(osgi.ee=JavaSE)(version=17)
+	private static final Map<String, String> SIMPLE_EE_FILTERS = new HashMap<>();
+	private static final Map<String, Map<String, String>> AVAILABLE_EE_ATTRIBUTES = new HashMap<>();
+
+	static {
+		// Manually add ancient EE id that are difficult to parse
+		AVAILABLE_EE_ATTRIBUTES.put("CDC-1.0/Foundation-1.0", //$NON-NLS-1$
+				Map.of(EXECUTION_ENVIRONMENT_NAMESPACE, "CDC/Foundation", CAPABILITY_VERSION_ATTRIBUTE, "1.0")); //$NON-NLS-1$ //$NON-NLS-2$
+		AVAILABLE_EE_ATTRIBUTES.put("CDC-1.1/Foundation-1.1", //$NON-NLS-1$
+				Map.of(EXECUTION_ENVIRONMENT_NAMESPACE, "CDC/Foundation", CAPABILITY_VERSION_ATTRIBUTE, "1.1")); //$NON-NLS-1$ //$NON-NLS-2$
+
+		for (String eeId : TargetPlatformHelper.getKnownExecutionEnvironments()) {
+			String eeName;
+			String eeVersion;
+			// Extract the osgi.ee name and version attribute from the EE id
+			Map<String, String> predefinedAttributes = AVAILABLE_EE_ATTRIBUTES.get(eeId);
+			if (predefinedAttributes == null) {
+				if (eeId.indexOf('/') >= eeId.indexOf('-')) {
+					ILog.get().error("Cannot reliably parse filter attributes from BREE with id: " + eeId); //$NON-NLS-1$
+					continue;
+				}
+				int versionSeparator = eeId.lastIndexOf('-');
+				if (versionSeparator < 0) {
+					throw new IllegalArgumentException("Missing version-separator in EE Id"); //$NON-NLS-1$
+				}
+				eeName = eeId.substring(0, versionSeparator);
+				// OSGi spec chapter 3.4.1 Bundle-RequiredExecutionEnvironment
+				if ("J2SE".equals(eeName)) { //$NON-NLS-1$
+					eeName = "JavaSE"; //$NON-NLS-1$
+				}
+				eeVersion = eeId.substring(versionSeparator + 1);
+
+				AVAILABLE_EE_ATTRIBUTES.put(eeId,
+						Map.of(EXECUTION_ENVIRONMENT_NAMESPACE, eeName, CAPABILITY_VERSION_ATTRIBUTE, eeVersion));
+			} else {
+				eeName = predefinedAttributes.get(EXECUTION_ENVIRONMENT_NAMESPACE);
+				eeVersion = predefinedAttributes.get(CAPABILITY_VERSION_ATTRIBUTE);
+			}
+			String eeNamespace = EXECUTION_ENVIRONMENT_NAMESPACE;
+			String versionAttribute = CAPABILITY_VERSION_ATTRIBUTE;
+			String filter1 = "(&(" + eeNamespace + "=" + eeName + ")(" + versionAttribute + "=" + eeVersion + "))"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			String filter2 = "(&(" + versionAttribute + "=" + eeVersion + ")(" + eeNamespace + "=" + eeName + "))"; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			SIMPLE_EE_FILTERS.put(filter1, eeId); // add both variants
+			SIMPLE_EE_FILTERS.put(filter2, eeId);
+		}
+	}
+
+	private static final Pattern WHITESPACE = Pattern.compile("\\s*"); //$NON-NLS-1$
+
+	public static void parseRequiredEEsFromFilter(String eeFilter, Consumer<String> collector) {
+		if (eeFilter == null) {
+			return;
+		}
+		if (eeFilter.chars().anyMatch(Character::isWhitespace)) {
+			eeFilter = WHITESPACE.matcher(eeFilter).replaceAll(""); //$NON-NLS-1$
+		}
+		String ee = SIMPLE_EE_FILTERS.get(eeFilter);
+		if (ee != null) {
+			collector.accept(ee);
+		} else {
+			try { // complex filter. Collect all matching EEs
+				Filter filter = FrameworkUtil.createFilter(eeFilter);
+				AVAILABLE_EE_ATTRIBUTES.forEach((eeId, eeAttributes) -> {
+					if (filter.matches(eeAttributes)) {
+						collector.accept(eeId);
+					}
+				});
+			} catch (InvalidSyntaxException e) { // should not happen
+				throw new IllegalArgumentException("Invalid execution environment filter", e); //$NON-NLS-1$
+			}
+		}
+	}
+
 }
