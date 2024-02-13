@@ -1797,6 +1797,8 @@ public class PDEUIMessages extends NLS {
 	public static String PluginWorkingSet_noPluginsChecked;
 	public static String PluginStatusDialog_pluginValidation;
 	public static String PluginStatusDialog_validationLink;
+	public static String PluginStatusDialog_copyValidationError_Button;
+	public static String PluginStatusDialog_copyValidationError_Tooltip;
 	public static String PluginsView_openWith;
 	public static String PluginsView_import;
 	public static String PluginsView_select;
