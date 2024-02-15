@@ -35,10 +35,10 @@ import org.eclipse.swt.graphics.Point;
  */
 public class APIToolsJavadocCompletionProposal implements IJavaCompletionProposal, ICompletionProposalExtension2, ICompletionProposalExtension3 {
 
-	private String fReplaceText = null;
-	private String fDisplayText = null;
-	private Image fImage = null;
-	private CompletionContext fContext = null;
+	private final String fReplaceText;
+	private final String fDisplayText;
+	private final Image fImage;
+	private final CompletionContext fContext;
 
 	/**
 	 * Constructor
