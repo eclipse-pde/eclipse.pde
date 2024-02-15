@@ -1020,7 +1020,9 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		if (toLoad != null) {
 			fActiveTarget = toLoad;
 		}
-		fTableViewer.refresh(true);
+		if (!fTableViewer.getControl().isDisposed()) {
+			fTableViewer.refresh(true);
+		}
 		updateButtons();
 		return super.performOk();
 	}
