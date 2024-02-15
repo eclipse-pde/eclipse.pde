@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.core.text.bundle;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -23,13 +24,13 @@ import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.IDocumentKey;
-import org.eclipse.pde.internal.core.util.HeaderMap;
 import org.osgi.framework.Constants;
 
 public class Bundle implements IBundle {
 
 	private final BundleModel fModel;
-	private final Map<String, IManifestHeader> fDocumentHeaders = new HeaderMap<>();
+	private final Map<String, IManifestHeader> fDocumentHeaders = new ConcurrentSkipListMap<>(
+			String::compareToIgnoreCase);
 
 	public Bundle(BundleModel model) {
 		fModel = model;
@@ -149,7 +150,7 @@ public class Bundle implements IBundle {
 
 	@Override
 	public Map<String, IManifestHeader> getManifestHeaders() {
-		HeaderMap<String, IManifestHeader> copy = new HeaderMap<>();
+		Map<String, IManifestHeader> copy = new ConcurrentSkipListMap<>(String::compareToIgnoreCase);
 		copy.putAll(fDocumentHeaders);
 		return copy;
 	}
