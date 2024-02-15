@@ -16,16 +16,17 @@ package org.eclipse.pde.internal.core.bundle;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.ManifestHeader;
-import org.eclipse.pde.internal.core.util.HeaderMap;
 import org.osgi.framework.Constants;
 
 public class Bundle extends BundleObject implements IBundle {
 	private static final long serialVersionUID = 1L;
-	private final Map<String, IManifestHeader> fDocumentHeaders = new HeaderMap<>();
+	private final Map<String, IManifestHeader> fDocumentHeaders = new ConcurrentSkipListMap<>(
+			String::compareToIgnoreCase);
 
 	@Override
 	public void setHeader(String key, String value) {
@@ -100,7 +101,7 @@ public class Bundle extends BundleObject implements IBundle {
 
 	@Override
 	public Map<String, IManifestHeader> getManifestHeaders() {
-		HeaderMap<String, IManifestHeader> copy = new HeaderMap<>();
+		Map<String, IManifestHeader> copy = new ConcurrentSkipListMap<>(String::compareToIgnoreCase);
 		copy.putAll(fDocumentHeaders);
 		return copy;
 	}

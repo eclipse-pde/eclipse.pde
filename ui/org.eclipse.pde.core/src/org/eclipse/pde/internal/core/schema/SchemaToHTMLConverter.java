@@ -27,6 +27,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.function.Consumer;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -45,7 +46,6 @@ import org.eclipse.pde.internal.core.ischema.ISchemaInclude;
 import org.eclipse.pde.internal.core.plugin.ExternalFragmentModel;
 import org.eclipse.pde.internal.core.plugin.ExternalPluginModel;
 import org.eclipse.pde.internal.core.plugin.ExternalPluginModelBase;
-import org.eclipse.pde.internal.core.util.HeaderMap;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.xml.sax.SAXException;
@@ -143,7 +143,8 @@ public class SchemaToHTMLConverter {
 
 		if (OSGiFile.exists()) {
 			try (FileInputStream manifestStream = new FileInputStream(OSGiFile)) {
-				Map<String, String> headers = ManifestElement.parseBundleManifest(manifestStream, new HeaderMap<>());
+				Map<String, String> headers = ManifestElement.parseBundleManifest(manifestStream,
+						new ConcurrentSkipListMap<>(String::compareToIgnoreCase));
 				String value = headers.get(Constants.BUNDLE_SYMBOLICNAME);
 				if (value == null) {
 					return null;

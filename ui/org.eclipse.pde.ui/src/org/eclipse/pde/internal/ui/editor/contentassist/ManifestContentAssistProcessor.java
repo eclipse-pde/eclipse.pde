@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.IJavaProject;
@@ -48,7 +49,6 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.util.HeaderMap;
 import org.eclipse.pde.internal.core.util.PDEJavaHelper;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
@@ -125,7 +125,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 	}
 
 	protected final void parseDocument(IDocument doc) {
-		fHeaders = new HeaderMap<>();
+		fHeaders = new ConcurrentSkipListMap<>(String::compareToIgnoreCase);
 		int numLines = doc.getNumberOfLines();
 		int offset = 0;
 		// since we are searching the line after the current line to peak ahead to see if it is a new header, start with the index of 1
