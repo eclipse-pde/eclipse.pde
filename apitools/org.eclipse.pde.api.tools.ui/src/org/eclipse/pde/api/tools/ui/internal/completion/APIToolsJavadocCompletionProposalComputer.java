@@ -15,10 +15,10 @@ package org.eclipse.pde.api.tools.ui.internal.completion;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.CompletionContext;
@@ -71,10 +71,10 @@ import org.eclipse.swt.graphics.Image;
  */
 public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletionProposalComputer {
 
-	private String fErrorMessage = null;
-	private Image fImageHandle = null;
-	private ASTParser fParser = null;
-	HashMap<String, Boolean> fExistingTags = null;
+	private volatile String fErrorMessage = null;
+	private volatile Image fImageHandle = null;
+	private volatile ASTParser fParser = null;
+	private final Map<String, Boolean> fExistingTags = new ConcurrentHashMap<>();
 
 	/**
 	 * Collects all of the existing API Tools Javadoc tags form a given Javadoc
@@ -85,9 +85,6 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 		public boolean visit(Javadoc node) {
 			Set<String> tagnames = ApiPlugin.getJavadocTagManager().getAllTagNames();
 			List<TagElement> tags = node.tags();
-			if (fExistingTags == null) {
-				fExistingTags = new HashMap<>(tags.size());
-			}
 			String name = null;
 			for (TagElement tag : tags) {
 				name = tag.getTagName();
@@ -135,8 +132,12 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 				if (!isVisible(element)) {
 					return Collections.emptyList();
 				}
-				ImageDescriptor imagedesc = jcontext.getLabelProvider().createImageDescriptor(org.eclipse.jdt.core.CompletionProposal.create(org.eclipse.jdt.core.CompletionProposal.JAVADOC_BLOCK_TAG, offset));
-				fImageHandle = (imagedesc == null ? null : imagedesc.createImage());
+				if (fImageHandle == null) {
+					ImageDescriptor imagedesc = jcontext.getLabelProvider()
+							.createImageDescriptor(org.eclipse.jdt.core.CompletionProposal
+									.create(org.eclipse.jdt.core.CompletionProposal.JAVADOC_BLOCK_TAG, offset));
+					fImageHandle = (imagedesc == null ? null : imagedesc.createImage());
+				}
 				int type = getType(element);
 				int member = IApiJavadocTag.MEMBER_NONE;
 				switch (element.getElementType()) {
@@ -377,11 +378,11 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 	public void sessionEnded() {
 		if (fImageHandle != null) {
 			fImageHandle.dispose();
+			fImageHandle = null;
 		}
 		fParser = null;
 		if (fExistingTags != null) {
 			fExistingTags.clear();
-			fExistingTags = null;
 		}
 		fErrorMessage = null;
 	}
