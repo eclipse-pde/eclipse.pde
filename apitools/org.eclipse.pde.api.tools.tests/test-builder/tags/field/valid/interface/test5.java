@@ -17,7 +17,7 @@ package a.b.c;
  * Tests all of the allowed uses of the @noreference tag
  * on interface fields
  * 
- * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=402393
+ * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=402393"
  */
 public interface test5 {
 	/**

@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class modeling the &ltunit&gt tag in a target definition.
+ * Class modeling the &lt;unit&gt; tag in a target definition.
  */
 public class UnitNode extends Node {
 

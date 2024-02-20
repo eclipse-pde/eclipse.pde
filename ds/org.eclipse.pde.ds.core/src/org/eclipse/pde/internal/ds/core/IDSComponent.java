@@ -18,7 +18,9 @@ package org.eclipse.pde.internal.ds.core;
 /**
  * A component is a normal Java class contained within a bundle
  *
+ * <pre>{@code
  * <component> ::= <implementation> <properties> * <service> ? <reference> *
+ * }</pre>
  */
 public interface IDSComponent extends IDSObject {
 

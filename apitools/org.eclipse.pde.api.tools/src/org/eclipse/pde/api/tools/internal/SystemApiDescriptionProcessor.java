@@ -60,7 +60,6 @@ public class SystemApiDescriptionProcessor {
 	 * @param location root location of the component.xml file, or the
 	 *            component.xml file itself
 	 * @return component XML as a string or <code>null</code> if none
-	 * @throws IOException if unable to parse
 	 */
 	public static String serializeComponentXml(File location) {
 		if (location.exists()) {

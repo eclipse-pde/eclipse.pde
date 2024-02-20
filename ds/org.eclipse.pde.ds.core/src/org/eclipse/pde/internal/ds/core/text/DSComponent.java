@@ -35,7 +35,9 @@ import org.eclipse.pde.internal.ds.core.IDSService;
  * root node in the file and all other nodes must be inside the root. The
  * structure of component XML grammar is:
  *
+ * <pre>{@code
  * <component> ::= <implementation> <properties> * <service> ? <reference> *
+ * }</pre>
  *
  * @since 3.4
  * @see DSObject

@@ -14,7 +14,7 @@
 package org.eclipse.pde.api.tools.internal.model;
 
 /**
- * A key for a method - name & signature based.
+ * A key for a method - name and signature based.
  *
  * @since 1.1
  */

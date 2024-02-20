@@ -36,7 +36,6 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescri
  *
  * MemberDescriptions are visited in the order they are keyed for the backing
  * {@link HashMap}
- * </p>
  *
  * @since 1.0.0
  */

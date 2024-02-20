@@ -74,7 +74,7 @@ public class RepositoryCache {
 	 * Example:
 	 *
 	 * <pre>
-	 *  &ltunit id="org.^
+	 *  &lt;unit id="org.^
 	 * </pre>
 	 *
 	 * where ^ is an autocomplete call. Prefix in this case will be 'org.'
@@ -98,13 +98,15 @@ public class RepositoryCache {
 
 	/**
 	 *
-	 * Method used to narrow down proposals in case a prefix is provided. Example:
+	 * Method used to narrow down proposals in case a prefix is provided.
+	 * Example:
 	 *
 	 * <pre>
-	 *  &ltunit id="eclipse^
+	 *  &lt;unit id="eclipse^
 	 * </pre>
 	 *
-	 * where ^ is an autocomplete call. Search term in this case will be '*eclipse*'
+	 * where ^ is an autocomplete call. Search term in this case will be
+	 * '*eclipse*'
 	 *
 	 * @param repo
 	 *            repository URL

@@ -167,8 +167,6 @@ public final class JavadocTagManager {
 	 * @see #ANNOTATION_NOINSTANTIATE
 	 * @see #ANNOTATION_NOOVERRIDE
 	 * @see #ANNOTATION_NOREFERENCE
-	 *
-	 * @sine 1.0.600
 	 */
 	public static final Set<String> ALL_ANNOTATIONS = Set.of( //
 			ANNOTATION_NOEXTEND, //
