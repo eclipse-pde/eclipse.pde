@@ -535,7 +535,7 @@ public class TagScannerTests {
 	 * have no restriction tags, but the parent class does. Scans the file
 	 * <code>TestField7</code>
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=434444
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=434444"
 	 */
 	@Test
 	public void testFieldBaseClassInheritedNotSupported() {
@@ -568,7 +568,7 @@ public class TagScannerTests {
 	 * have no restriction tags, but the parent class does. Scans the file
 	 * <code>TestField8</code>
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=434444
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=434444"
 	 */
 	@Test
 	public void testFieldBaseClassInheritedNotSupported2() {
@@ -586,7 +586,7 @@ public class TagScannerTests {
 	 * <br>
 	 * Scans the file <code>TestField11</code>
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=434444
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=434444"
 	 */
 	@Test
 	public void testFieldBaseClassInheritedNotSupported3() {
@@ -1250,7 +1250,7 @@ public class TagScannerTests {
 	/**
 	 * Tests only default methods annotate API descriptions with @nooverride
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=427495
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=427495"
 	 */
 	@Test
 	public void testJava8InterfaceMethod1() throws Exception {
@@ -1267,7 +1267,7 @@ public class TagScannerTests {
 	/**
 	 * Tests default methods annotate API descriptions with @noreference
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=427495
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=427495"
 	 */
 	@Test
 	public void testJava8InterfaceMethod2() throws Exception {
@@ -1285,7 +1285,7 @@ public class TagScannerTests {
 	 * Tests default methods annotate API descriptions with @noreference
 	 * and @nooverride
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=427495
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=427495"
 	 */
 	@Test
 	public void testJava8InterfaceMethod3() throws Exception {
@@ -1304,7 +1304,7 @@ public class TagScannerTests {
 	 * Tests resolving methods with generic type parameters. The resolution
 	 * process calls into {@link Signatures#getMethodSignatureFromNode}
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=484268
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=484268"
 	 */
 	@Test
 	public void testGenericMethodWithBounds() throws Exception {

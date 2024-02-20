@@ -40,11 +40,11 @@ public interface IApiTypeContainer extends IApiElement {
 	public static final int COMPONENT = 4;
 
 	/**
-	 * Returns the names of all packages in this container in dot separated
-	 * format. Does not include empty packages.
+	 * Returns the names of all packages in this container in dot separated format.
+	 * Does not include empty packages.
 	 *
 	 * @return names of all packages in this container
-	 * @exception if unable to retrieve package names
+	 * @throws CoreException if unable to retrieve package names
 	 */
 	public String[] getPackageNames() throws CoreException;
 
@@ -53,21 +53,21 @@ public interface IApiTypeContainer extends IApiElement {
 	 * <code>null</code> if none.
 	 *
 	 * @param qualifiedName fully qualified type name. Package names are dot
-	 *            separated and type names are '$'-separated.
+	 *                      separated and type names are '$'-separated.
 	 * @return {@link IApiTypeRoot} or <code>null</code>
-	 * @exception if an exception occurs retrieving the class file
+	 * @throws CoreException if an exception occurs retrieving the class file
 	 */
 	public IApiTypeRoot findTypeRoot(String qualifiedName) throws CoreException;
 
 	/**
-	 * Returns the {@link IApiTypeRoot} with the given fully qualified name
-	 * coming from the component with the given id or <code>null</code> if none.
+	 * Returns the {@link IApiTypeRoot} with the given fully qualified name coming
+	 * from the component with the given id or <code>null</code> if none.
 	 *
 	 * @param qualifiedName fully qualified type name. Package names are dot
-	 *            separated and type names are '$'-separated.
-	 * @param id the API component id to consider
+	 *                      separated and type names are '$'-separated.
+	 * @param id            the API component id to consider
 	 * @return {@link IApiTypeRoot} or <code>null</code>
-	 * @exception if an exception occurs retrieving the class file
+	 * @throws CoreException if an exception occurs retrieving the class file
 	 */
 	public IApiTypeRoot findTypeRoot(String qualifiedName, String id) throws CoreException;
 
@@ -75,7 +75,7 @@ public interface IApiTypeContainer extends IApiElement {
 	 * Visits all {@link IApiTypeRoot} in this container.
 	 *
 	 * @param visitor class file visitor.
-	 * @exception CoreException if unable to visit this container
+	 * @throws CoreException if unable to visit this container
 	 */
 	public void accept(ApiTypeContainerVisitor visitor) throws CoreException;
 
@@ -94,7 +94,7 @@ public interface IApiTypeContainer extends IApiElement {
 	 * <li>{@link #ARCHIVE}</li>
 	 * <li>{@link #DIRECTORY}</li>
 	 * <li>{@link #FOLDER}</li>
-	 * <li>{@link #STUB}</li>
+	 * <li>{@link #COMPONENT}</li>
 	 * </ul>
 	 *
 	 * @return the type of container this is

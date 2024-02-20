@@ -524,7 +524,7 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	 * Tests that the correct markers are created and placed for classes with inner types
 	 * that illegally implement interfaces
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258"
 	 * @since 1.0.300
 	 */
 	@Override
@@ -536,7 +536,7 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	 * Tests that the correct markers are created and placed for local types
 	 * that illegally implement interfaces
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258"
 	 * @since 1.0.300
 	 */
 	@Override
@@ -571,7 +571,7 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	 * that illegally implement interfaces, where there are more than one local type in the
 	 * compilation unit indirectly implementing the same interface via the same proxy interface
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258"
 	 * @since 1.0.300
 	 */
 	@Override
@@ -584,7 +584,7 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	 * that illegally implement interfaces, where there are more than one local type in the
 	 * compilation unit indirectly implementing the same interface via the same proxy interface
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258"
 	 * @since 1.0.300
 	 */
 	@Override
@@ -613,7 +613,7 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	 * Tests that the correct markers are created and placed for anonymous types
 	 * that illegally implement interfaces
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258"
 	 * @since 1.0.300
 	 */
 	@Override
@@ -626,7 +626,7 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	 * that illegally implement interfaces, where there are more than one local type in the
 	 * compilation unit indirectly implementing the same interface via the same proxy interface
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258"
 	 * @since 1.0.300
 	 */
 	@Override

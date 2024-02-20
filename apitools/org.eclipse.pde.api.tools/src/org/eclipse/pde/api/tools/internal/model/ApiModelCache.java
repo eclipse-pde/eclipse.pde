@@ -348,9 +348,6 @@ public final class ApiModelCache {
 	 * if present
 	 *
 	 * @return true if the {@link IApiElement} was removed false otherwise
-	 * @throws CoreException if there is a problem accessing any of the
-	 *             {@link IApiElement} info in order to remove it from the cache
-	 *             - pass the exception along.
 	 */
 	public boolean removeElementInfo(IApiElement element) {
 		if (element == null) {

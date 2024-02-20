@@ -632,7 +632,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 	 * @param resource   the resource the filter applies to
 	 * @param typeName   the name of the type the filter appears on
 	 * @param categories the collection of {@link IApiProblem} categories to ignore
-	 * @see {@link IApiProblem#getCategory()}
+	 * @see IApiProblem#getCategory
 	 * @return the listing of currently unused filters or an empty list, never
 	 *         <code>null</code>
 	 */

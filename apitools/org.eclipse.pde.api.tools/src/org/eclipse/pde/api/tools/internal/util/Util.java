@@ -1824,8 +1824,6 @@ public final class Util {
 	/**
 	 * Unzip the contents of the given zip in the given directory (create it if
 	 * it doesn't exist)
-	 *
-	 * @throws IOException, CoreException
 	 */
 	public static void unzip(String zipPath, String destDirPath) throws IOException, CoreException {
 		byte[] buf = new byte[8192];
