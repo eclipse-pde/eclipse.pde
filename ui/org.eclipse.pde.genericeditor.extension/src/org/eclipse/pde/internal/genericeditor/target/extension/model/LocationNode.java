@@ -15,7 +15,7 @@
 package org.eclipse.pde.internal.genericeditor.target.extension.model;
 
 /**
- * Models the &ltlocation&gt nodes
+ * Models the &lt;location&gt; nodes
  */
 public class LocationNode extends Node {
 

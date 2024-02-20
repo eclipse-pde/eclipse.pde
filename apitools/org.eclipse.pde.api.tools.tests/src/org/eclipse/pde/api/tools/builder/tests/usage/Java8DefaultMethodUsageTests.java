@@ -505,7 +505,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 * Tests that we do not find any problems referencing default methods in JDK
 	 * types
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432"
 	 */
 	public void testSystemComponentNoDefaultMethodsReportedF() throws Exception {
 		x15(false);
@@ -515,7 +515,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 * Tests that we do not find any problems referencing default methods in JDK
 	 * types
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432"
 	 */
 	public void testSystemComponentNoDefaultMethodsReportedI() throws Exception {
 		x15(true);
@@ -533,7 +533,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 * Tests that we find problems referencing default methods in other bundle
 	 * types
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432"
 	 */
 	public void testOtherBundleDefaultMethodCallF() throws Exception {
 		x16(false);
@@ -543,7 +543,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 * Tests that we find problems referencing default methods in other bundle
 	 * types
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432"
 	 */
 	public void testOtherBundleDefaultMethodCallI() throws Exception {
 		x16(true);
@@ -568,7 +568,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 * Tests that we find problems referencing default methods in other bundle
 	 * types
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432"
 	 */
 	public void testOtherBundleDefaultMethodCall2F() throws Exception {
 		x17(false);
@@ -578,7 +578,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 * Tests that we find problems referencing default methods in other bundle
 	 * types
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432"
 	 */
 	public void testOtherBundleDefaultMethodCall2I() throws Exception {
 		x17(true);
@@ -603,7 +603,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 * Tests that we find problems referencing default methods in other bundle
 	 * types
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432"
 	 */
 	public void testOtherBundleDefaultMethodCall3F() throws Exception {
 		x18(false);
@@ -613,7 +613,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 * Tests that we find problems referencing default methods in other bundle
 	 * types
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432"
 	 */
 	public void testOtherBundleDefaultMethodCall3I() throws Exception {
 		x18(true);
@@ -638,7 +638,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 * Tests that we find problems referencing default methods in other bundle
 	 * types
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432"
 	 */
 	public void testOtherBundleDefaultMethodCall4F() throws Exception {
 		x19(false);
@@ -648,7 +648,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 * Tests that we find problems referencing default methods in other bundle
 	 * types
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432"
 	 */
 	public void testOtherBundleDefaultMethodCall4I() throws Exception {
 		x19(true);

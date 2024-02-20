@@ -47,7 +47,7 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	 * Tests that the hashcodes from an {@link IApiProblem} and an
 	 * {@link IApiProblemFilter} handle are the same.
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=404173
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=404173"
 	 * @since 1.0.400
 	 */
 	@Test
@@ -62,7 +62,7 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	 * Tests that the hashcodes from an {@link IApiProblem} and an
 	 * {@link IApiProblemFilter} handle are the same.
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=404173
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=404173"
 	 * @since 1.0.400
 	 */
 	@Test
@@ -80,7 +80,7 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	 * This test is expected to not be equal since you could never have a class
 	 * named <code>null</code>
 	 *
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=404173
+	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=404173"
 	 * @since 1.0.400
 	 */
 	@Test

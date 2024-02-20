@@ -62,8 +62,8 @@ public interface IApiType extends IApiMember {
 	/**
 	 * Returns the method with the specified name and signature in this type. For
 	 * example, <code>"foo", "(Ljava.lang.String;I)V"</code>, retrieves the method
-	 * <code>foo(String, int)</code>. To retrieve a constructor,
-	 * <code>"<init>"</code> must specified must be as method name.
+	 * <code>foo(String, int)</code>. To retrieve a constructor, {@code "<init>"}
+	 * must specified must be as method name.
 	 *
 	 * @param name      method name
 	 * @param signature parameter types
