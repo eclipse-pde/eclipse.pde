@@ -35,7 +35,7 @@ public class FragmentModel extends PluginModelBase implements IFragmentModel {
 	}
 
 	@Override
-	public BundleDescription getBundleDescription() {
+	public BundleDescription getBundleResource() {
 		return null;
 	}
 
