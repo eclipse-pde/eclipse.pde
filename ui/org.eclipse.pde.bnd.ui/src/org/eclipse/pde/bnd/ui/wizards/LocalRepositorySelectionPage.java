@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2020 bndtools project and others.
+ * Copyright (c) 2010, 2024 bndtools project and others.
  *
 * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,8 +12,9 @@
  *     Neil Bartlett <njbartlett@gmail.com> - initial API and implementation
  *     Ferry Huberts <ferry.huberts@pelagic.nl> - ongoing enhancements
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
+ *     Christoph Läubrich - Adapt to PDE codebase
 *******************************************************************************/
-package bndtools.wizards.workspace;
+package org.eclipse.pde.bnd.ui.wizards;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -28,15 +29,14 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.bnd.ui.model.repo.RepositoryTreeContentProvider;
+import org.eclipse.pde.bnd.ui.model.repo.RepositoryTreeLabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 
 import aQute.bnd.build.Workspace;
 import aQute.bnd.service.RepositoryPlugin;
-import bndtools.central.Central;
-import bndtools.model.repo.RepositoryTreeContentProvider;
-import bndtools.model.repo.RepositoryTreeLabelProvider;
 
 class LocalRepositorySelectionPage extends WizardPage {
 	private static final ILogger		logger				= Logger.getLogger(LocalRepositorySelectionPage.class);
@@ -46,12 +46,15 @@ class LocalRepositorySelectionPage extends WizardPage {
 	private final PropertyChangeSupport	propSupport			= new PropertyChangeSupport(this);
 	private RepositoryPlugin			selectedRepository	= null;
 
-	LocalRepositorySelectionPage(String pageName) {
-		this(pageName, null);
+	private Workspace workspace;
+
+	LocalRepositorySelectionPage(Workspace workspace, String pageName) {
+		this(workspace, pageName, null);
 	}
 
-	LocalRepositorySelectionPage(String pageName, RepositoryPlugin selectedRepository) {
+	LocalRepositorySelectionPage(Workspace workspace, String pageName, RepositoryPlugin selectedRepository) {
 		super(pageName);
+		this.workspace = workspace;
 		this.selectedRepository = selectedRepository;
 	}
 
@@ -73,7 +76,6 @@ class LocalRepositorySelectionPage extends WizardPage {
 		});
 
 		try {
-			Workspace workspace = Central.getWorkspace();
 			viewer.setInput(workspace);
 			if (selectedRepository != null)
 				viewer.setSelection(new StructuredSelection(selectedRepository));

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2020 bndtools project and others.
+ * Copyright (c) 2010, 2024 bndtools project and others.
  *
 * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,24 +14,23 @@
  *     Neil Bartlett <njbartlett@gmail.com> - ongoing enhancements
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
  *     Peter Kriens <peter.kriens@aqute.biz> - ongoing enhancements
+ *     Christoph Läubrich - Adapt to PDE codebase
 *******************************************************************************/
-package bndtools.model.repo;
+package org.eclipse.pde.bnd.ui.model.repo;
 
 import java.io.File;
 import java.text.MessageFormat;
 
-
-mport org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Path;
 
-import org.eclipse.jface.util.ILogger;
 import aQute.bnd.build.Project;
 
 public class ProjectBundle implements IAdaptable {
-	private static final ILogger	logger	= Logger.getLogger(ProjectBundle.class);
 
 	private final Project			project;
 	private final String			bsn;
@@ -70,8 +69,9 @@ public class ProjectBundle implements IAdaptable {
 						.getFileForLocation(path);
 				}
 			} catch (Exception e) {
-				logger.logError(
-					MessageFormat.format("Error retrieving bundle {0} from project {1}.", bsn, project.getName()), e);
+				ILog.get().error(
+						MessageFormat.format("Error retrieving bundle {0} from project {1}.", bsn, project.getName()),
+						e);
 			}
 		}
 		return result;

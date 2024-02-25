@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2023 bndtools project and others.
+ * Copyright (c) 2010, 2024 bndtools project and others.
  *
 * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,12 +13,12 @@
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
  *     Christoph Rueger <chrisrueger@gmail.com> - ongoing enhancements
  *     Peter Kriens <peter.kriens@aqute.biz> - ongoing enhancements
+ *     Christoph Läubrich - Adapt to PDE codebase
 *******************************************************************************/
-package bndtools.utils;
+package org.eclipse.pde.bnd.ui;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.bndtools.core.ui.icons.Icons;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -73,7 +73,7 @@ public class EditorUtils {
 		};
 		btn.setEnabled(true);
 		btn.setToolTipText(tooltipText);
-		btn.setImageDescriptor(Icons.desc("help"));
+		btn.setImageDescriptor(Resources.getImageDescriptor("help.gif"));
 
 		return btn;
 	}

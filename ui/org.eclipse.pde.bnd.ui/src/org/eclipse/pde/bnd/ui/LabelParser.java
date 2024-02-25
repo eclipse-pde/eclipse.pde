@@ -11,7 +11,7 @@
  * Contributors:
  *     Christoph Rueger <chrisrueger@gmail.com> - initial API and implementation
 *******************************************************************************/
-package bndtools.utils;
+package org.eclipse.pde.bnd.ui;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

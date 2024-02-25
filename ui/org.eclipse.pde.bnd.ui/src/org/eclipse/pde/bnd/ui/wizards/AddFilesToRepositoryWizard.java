@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2021 bndtools project and others.
+ * Copyright (c) 2010, 2024 bndtools project and others.
  *
 * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,18 +14,22 @@
  *     PK Søreide <per.kristian.soreide@gmail.com> - ongoing enhancements
  *     Gregory Amerson <gregory.amerson@liferay.com> - ongoing enhancements
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
+ *     Christoph Läubrich - Adapt to PDE codebase
 *******************************************************************************/
-package bndtools.wizards.workspace;
+package org.eclipse.pde.bnd.ui.wizards;
 
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.Files;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
@@ -35,30 +39,30 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.pde.bnd.ui.Central;
+import org.eclipse.pde.bnd.ui.RefreshFileJob;
 
+import aQute.bnd.build.Workspace;
 import aQute.bnd.osgi.Jar;
 import aQute.bnd.service.Refreshable;
 import aQute.bnd.service.RepositoryPlugin;
-import aQute.lib.io.IO;
-import bndtools.Plugin;
-import bndtools.central.Central;
-import bndtools.central.RefreshFileJob;
-import bndtools.types.Pair;
 
 public class AddFilesToRepositoryWizard extends Wizard {
 
 	private RepositoryPlugin						repository;
 	private final File[]							files;
-	private List<Pair<String, String>>				selectedBundles;
+	private List<Entry<String, String>> selectedBundles;
 
 	private final LocalRepositorySelectionPage		repoSelectionPage;
 	private final AddFilesToRepositoryWizardPage	fileSelectionPage;
+	private Workspace workspace;
 
-	public AddFilesToRepositoryWizard(RepositoryPlugin repository, File[] initialFiles) {
+	public AddFilesToRepositoryWizard(Workspace workspace, RepositoryPlugin repository, File[] initialFiles) {
+		this.workspace = workspace;
 		this.repository = repository;
 		this.files = initialFiles;
 
-		repoSelectionPage = new LocalRepositorySelectionPage("repoSelectionPage", repository);
+		repoSelectionPage = new LocalRepositorySelectionPage(workspace, "repoSelectionPage", repository);
 
 		fileSelectionPage = new AddFilesToRepositoryWizardPage("fileSelectionPage");
 		fileSelectionPage.setFiles(files);
@@ -79,7 +83,8 @@ public class AddFilesToRepositoryWizard extends Wizard {
 		WorkspaceJob job = new WorkspaceJob("Adding files to repository") {
 			@Override
 			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-				MultiStatus status = new MultiStatus(Plugin.PLUGIN_ID, 0, "Failed to install one or more bundles",
+				MultiStatus status = new MultiStatus(AddFilesToRepositoryWizard.class, 0,
+						"Failed to install one or more bundles",
 					null);
 				List<File> files = fileSelectionPage.getFiles();
 				List<File> refresh = new ArrayList<>();
@@ -89,15 +94,14 @@ public class AddFilesToRepositoryWizard extends Wizard {
 					try (Jar jar = new Jar(file)) {
 						String bsn = jar.getBsn();
 						String version = jar.getVersion();
-						selectedBundles.add(Pair.newInstance(bsn, (version != null) ? version : "0"));
+						selectedBundles.add(Map.entry(bsn, (version != null) ? version : "0"));
 					} catch (Exception e) {
-						status.add(new Status(IStatus.ERROR, Plugin.PLUGIN_ID, 0,
-							MessageFormat.format("Failed to analyse JAR: {0}", file.getPath()), e));
+						status.add(Status.error(MessageFormat.format("Failed to analyze JAR: {0}", file.getPath()), e));
 						progress.worked(1);
 						continue;
 					}
 
-					try (InputStream in = new BufferedInputStream(IO.stream(file))) {
+					try (InputStream in = new BufferedInputStream(Files.newInputStream(file.toPath()))) {
 						RepositoryPlugin.PutResult result = repository.put(in, new RepositoryPlugin.PutOptions());
 						URI artifact = result.artifact;
 						if ((artifact != null) && artifact.getScheme()
@@ -105,11 +109,11 @@ public class AddFilesToRepositoryWizard extends Wizard {
 							refresh.add(new File(artifact));
 						}
 						if (repository instanceof Refreshable) {
-							Central.refreshPlugin((Refreshable) repository, true);
+							Central.refreshPlugin(workspace, (Refreshable) repository, true);
 						}
 					} catch (Exception e) {
-						status.add(new Status(IStatus.ERROR, Plugin.PLUGIN_ID, 0,
-							MessageFormat.format("Failed to add JAR to repository: {0}", file.getPath()), e));
+						status.add(Status.error(
+								MessageFormat.format("Failed to add JAR to repository: {0}", file.getPath()), e));
 						progress.worked(1);
 						continue;
 					}
@@ -126,7 +130,7 @@ public class AddFilesToRepositoryWizard extends Wizard {
 		return true;
 	}
 
-	public List<Pair<String, String>> getSelectedBundles() {
+	public List<Entry<String, String>> getSelectedBundles() {
 		return Collections.unmodifiableList(selectedBundles);
 	}
 }

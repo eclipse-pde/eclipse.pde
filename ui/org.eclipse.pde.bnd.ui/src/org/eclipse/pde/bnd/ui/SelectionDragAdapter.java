@@ -13,7 +13,7 @@
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
  *     Raymond Augé <raymond.auge@liferay.com> - ongoing enhancements
 *******************************************************************************/
-package bndtools.utils;
+package org.eclipse.pde.bnd.ui;
 
 import java.util.Iterator;
 
@@ -21,13 +21,12 @@ import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.pde.bnd.ui.model.repo.RepositoryBundle;
+import org.eclipse.pde.bnd.ui.model.repo.RepositoryBundleVersion;
+import org.eclipse.pde.bnd.ui.model.repo.RepositoryResourceElement;
 import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.DragSourceListener;
 import org.eclipse.swt.dnd.TextTransfer;
-
-import bndtools.model.repo.RepositoryBundle;
-import bndtools.model.repo.RepositoryBundleVersion;
-import bndtools.model.repo.RepositoryResourceElement;
 
 public class SelectionDragAdapter implements DragSourceListener {
 

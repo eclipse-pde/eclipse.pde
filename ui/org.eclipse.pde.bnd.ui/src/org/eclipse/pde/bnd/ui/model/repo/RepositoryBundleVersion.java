@@ -17,7 +17,7 @@
  *     BJ Hargrave <bj@bjhargrave.com> - ongoing enhancements
  *     Raymond Augé <raymond.auge@liferay.com> - ongoing enhancements
  *******************************************************************************/
-package bndtools.model.repo;
+package org.eclipse.pde.bnd.ui.model.repo;
 
 import java.util.Map;
 

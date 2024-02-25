@@ -12,7 +12,7 @@
  *     Raymond Augé <raymond.auge@liferay.com> - initial API and implementation
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
 *******************************************************************************/
-package bndtools.dnd.gav;
+package org.eclipse.pde.bnd.ui.dnd;
 
 import static org.eclipse.swt.dnd.DND.DROP_COPY;
 

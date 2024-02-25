@@ -12,7 +12,7 @@
  *     Neil Bartlett <njbartlett@gmail.com> - initial API and implementation
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
 *******************************************************************************/
-package org.bndtools.utils.jface;
+package org.eclipse.pde.bnd.ui;
 
 import org.eclipse.jface.viewers.StyledString.Styler;
 import org.eclipse.swt.SWT;

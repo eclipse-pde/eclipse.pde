@@ -16,7 +16,7 @@
  *     Rüdiger Herrmann <ruediger.herrmann@gmx.de> - ongoing enhancements
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
 *******************************************************************************/
-package org.bndtools.utils.resources;
+package org.eclipse.pde.bnd.ui;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -95,7 +95,6 @@ public final class ResourceUtils {
 		return getVersion(getIdentityCapability(resource));
 	}
 
-	@SuppressWarnings("unused")
 	public static Capability getContentCapability(Resource resource) throws IllegalArgumentException {
 		List<Capability> caps = resource.getCapabilities(ContentNamespace.CONTENT_NAMESPACE);
 

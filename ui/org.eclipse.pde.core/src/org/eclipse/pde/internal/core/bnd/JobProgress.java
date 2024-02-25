@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2019 bndtools project and others.
+ * Copyright (c) 2016, 2024 bndtools project and others.
  *
 * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,23 +11,20 @@
  * Contributors:
  *     Gregory Amerson <gregory.amerson@liferay.com> - initial API and implementation
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
+ *     Christoph Läubrich - adapt to pde codebase
 *******************************************************************************/
-package bndtools.central;
+package org.eclipse.pde.internal.core.bnd;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.bndtools.api.ILogger;
-import org.bndtools.api.Logger;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
 import aQute.bnd.service.progress.ProgressPlugin;
-import bndtools.Plugin;
 
 public class JobProgress implements ProgressPlugin {
-	static final ILogger logger = Logger.getLogger(JobProgress.class);
 
 	@Override
 	public Task startTask(String name, int size) {
@@ -46,7 +43,6 @@ public class JobProgress implements ProgressPlugin {
 			super(name);
 			this.name = name;
 			this.size = size;
-			logger.logInfo(name, null);
 		}
 
 		@Override
@@ -60,8 +56,7 @@ public class JobProgress implements ProgressPlugin {
 						Thread.sleep(100);
 					} catch (InterruptedException e) {
 						monitor.setCanceled(true);
-						status.compareAndSet(null,
-							new Status(IStatus.CANCEL, Plugin.PLUGIN_ID, "InterruptedException", e));
+						status.compareAndSet(null, Status.CANCEL_STATUS);
 						Thread.currentThread()
 							.interrupt();
 					}
@@ -78,7 +73,7 @@ public class JobProgress implements ProgressPlugin {
 		private boolean isCanceled(IProgressMonitor m) {
 			boolean canceled = m.isCanceled();
 			if (canceled) {
-				status.compareAndSet(null, new Status(IStatus.CANCEL, Plugin.PLUGIN_ID, "Canceled"));
+				status.compareAndSet(null, Status.CANCEL_STATUS);
 			}
 			return canceled;
 		}
@@ -94,8 +89,11 @@ public class JobProgress implements ProgressPlugin {
 
 		@Override
 		public void done(String message, Throwable error) {
-			status.compareAndSet(null,
-				new Status(error == null ? IStatus.OK : IStatus.ERROR, Plugin.PLUGIN_ID, message, error));
+			if (error == null) {
+				status.compareAndSet(null, Status.OK_STATUS);
+			} else {
+				status.compareAndSet(null, Status.error(message, error));
+			}
 		}
 
 		@Override

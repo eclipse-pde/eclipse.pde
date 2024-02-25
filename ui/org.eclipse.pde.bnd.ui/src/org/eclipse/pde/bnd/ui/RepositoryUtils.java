@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2021 bndtools project and others.
+ * Copyright (c) 2013, 2024 bndtools project and others.
  *
 * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,8 +15,9 @@
  *     Sean Bright <sean@malleable.com> - ongoing enhancements
  *     Peter Kriens <peter.kriens@aqute.biz> - ongoing enhancements
  *     Raymond Augé <raymond.auge@liferay.com> - ongoing enhancements
+ *     Christoph Läubrich - Adapt to PDE codebase
 *******************************************************************************/
-package bndtools.central;
+package org.eclipse.pde.bnd.ui;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -53,17 +54,10 @@ public class RepositoryUtils {
 		}, Objects::nonNull);
 	}
 
-	public static List<RepositoryPlugin> listRepositories(boolean hideCache) {
-		Workspace workspace;
-		try {
-			workspace = Central.getWorkspace();
-		} catch (Exception e1) {
+	public static List<RepositoryPlugin> listRepositories(final Workspace localWorkspace, final boolean hideCache) {
+		if (localWorkspace == null) {
 			return Collections.emptyList();
 		}
-		return listRepositories(workspace, hideCache);
-	}
-
-	public static List<RepositoryPlugin> listRepositories(final Workspace localWorkspace, final boolean hideCache) {
 		try {
 			return localWorkspace.readLocked(() -> {
 				List<RepositoryPlugin> plugins = localWorkspace.getPlugins(RepositoryPlugin.class);
@@ -72,9 +66,10 @@ public class RepositoryUtils {
 
 				// Add the workspace repo if the provided workspace == the
 				// global bnd workspace
-				Workspace bndWorkspace = Central.getWorkspaceIfPresent();
-				if ((bndWorkspace == localWorkspace) && !bndWorkspace.isDefaultWorkspace())
-					repos.add(Central.getWorkspaceRepository());
+				// TODO
+//				Workspace bndWorkspace = Central.getWorkspaceIfPresent();
+//				if ((bndWorkspace == localWorkspace) && !bndWorkspace.isDefaultWorkspace())
+//					repos.add(Central.getWorkspaceRepository());
 
 				// Add the repos from the provided workspace
 				for (RepositoryPlugin plugin : plugins) {
@@ -89,7 +84,7 @@ public class RepositoryUtils {
 				for (RepositoryPlugin repo : repos) {
 					if (repo instanceof RegistryPlugin) {
 						RegistryPlugin registry = (RegistryPlugin) repo;
-						registry.setRegistry(bndWorkspace);
+						registry.setRegistry(localWorkspace);
 					}
 				}
 
