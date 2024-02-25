@@ -12,7 +12,7 @@
  *     Gregory Amerson <gregory.amerson@liferay.com> - initial API and implementation
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
 *******************************************************************************/
-package bndtools.model.repo;
+package org.eclipse.pde.bnd.ui.model.repo;
 
 public class LoadingContentElement {
 

@@ -57,6 +57,8 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.util.tracker.ServiceTracker;
 
 import aQute.bnd.build.Workspace;
+import aQute.bnd.service.RepositoryListenerPlugin;
+import aQute.bnd.service.clipboard.Clipboard;
 
 public class PDECore extends Plugin implements DebugOptionsListener {
 	public static final String PLUGIN_ID = "org.eclipse.pde.core"; //$NON-NLS-1$
@@ -200,6 +202,10 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 	private BndResourceChangeListener bndResourceChangeListener;
 
 	private ServiceTracker<IClasspathContributor, IClasspathContributor> classpathContributorServiceTracker;
+
+	private ServiceTracker<Clipboard, Clipboard> clipBoardsServiceTracker;
+
+	private ServiceTracker<RepositoryListenerPlugin, RepositoryListenerPlugin> repositoryListenerServiceTracker;
 
 	public PDECore() {
 		inst = this;
@@ -462,5 +468,29 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 			classpathContributorServiceTracker.open();
 		}
 		return classpathContributorServiceTracker.getTracked().values().stream();
+	}
+
+	public synchronized Clipboard getClipboardPlugin() {
+		if (fBundleContext == null) {
+			return null;
+		}
+		if (clipBoardsServiceTracker == null) {
+			clipBoardsServiceTracker = new ServiceTracker<>(fBundleContext, Clipboard.class, null);
+			clipBoardsServiceTracker.open();
+		}
+		return clipBoardsServiceTracker.getService();
+	}
+
+	public synchronized Stream<RepositoryListenerPlugin> getRepositoryListenerPlugins() {
+		if (fBundleContext == null) {
+			return Stream.empty();
+		}
+		if (repositoryListenerServiceTracker == null) {
+			repositoryListenerServiceTracker = new ServiceTracker<>(fBundleContext, RepositoryListenerPlugin.class,
+					null);
+			repositoryListenerServiceTracker.open();
+		}
+		return repositoryListenerServiceTracker.getTracked().values().stream();
+
 	}
 }

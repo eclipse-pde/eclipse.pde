@@ -12,7 +12,7 @@
  *     Sean Bright <sean@malleable.com> - initial API and implementation
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
 *******************************************************************************/
-package bndtools.preferences;
+package org.eclipse.pde.bnd.ui.preferences;
 
 public interface WorkspaceOfflineChangeListener {
 	void workspaceOfflineChanged(boolean offline);

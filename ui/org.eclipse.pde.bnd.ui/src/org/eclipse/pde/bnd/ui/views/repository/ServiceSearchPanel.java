@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2021 bndtools project and others.
+ * Copyright (c) 2015, 2024 bndtools project and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,10 +12,11 @@
  *     Neil Bartlett <njbartlett@gmail.com> - initial API and implementation
  *     BJ Hargrave <bj@bjhargrave.com> - ongoing enhancements
  *     Peter Kriens <Peter.Kriens@aqute.biz> - ongoing enhancements
+ *     Christoph Läubrich - adapt to pde code base
  *******************************************************************************/
-package bndtools.views.repository;
+package org.eclipse.pde.bnd.ui.views.repository;
 
-import org.bndtools.core.ui.icons.Icons;
+import org.eclipse.pde.bnd.ui.Resources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
@@ -82,7 +83,7 @@ public class ServiceSearchPanel extends SearchPanel {
 
 	@Override
 	public Image createImage(Device device) {
-		return Icons.image("service");
+		return Resources.getImage("service");
 	}
 
 	@Override

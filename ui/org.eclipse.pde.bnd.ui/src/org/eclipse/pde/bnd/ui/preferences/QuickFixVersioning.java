@@ -11,7 +11,7 @@
  * Contributors:
  *     Fr Jeremy Krieg <fr.jkrieg@greekwelfaresa.org.au> - initial API and implementation
 *******************************************************************************/
-package bndtools.preferences;
+package org.eclipse.pde.bnd.ui.preferences;
 
 public enum QuickFixVersioning {
 

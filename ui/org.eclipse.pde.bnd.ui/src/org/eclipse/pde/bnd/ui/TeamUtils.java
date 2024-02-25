@@ -12,7 +12,7 @@
  *     Ferry Huberts <ferry.huberts@pelagic.nl> - initial API and implementation
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
 *******************************************************************************/
-package bndtools.team;
+package org.eclipse.pde.bnd.ui;
 
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.team.core.RepositoryProvider;

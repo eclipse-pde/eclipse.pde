@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2023 bndtools project and others.
+ * Copyright (c) 2010, 2024 bndtools project and others.
  *
 * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,15 +15,15 @@
  *     Sean Bright <sean@malleable.com> - ongoing enhancements
  *     Gregory Amerson <gregory.amerson@liferay.com> - ongoing enhancements
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
+ *     Christoph Läubrich - Adapt to PDE codebase
 *******************************************************************************/
-package bndtools.model.repo;
+package org.eclipse.pde.bnd.ui.model.repo;
 
-import org.bndtools.core.ui.icons.Icons;
-import org.bndtools.core.ui.icons.Icons.IconBuilder;
-import org.bndtools.utils.jface.HyperlinkStyler;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.ViewerCell;
+import org.eclipse.pde.bnd.ui.HyperlinkStyler;
+import org.eclipse.pde.bnd.ui.Resources;
 import org.eclipse.swt.graphics.Image;
 
 import aQute.bnd.build.Project;
@@ -34,11 +34,11 @@ import aQute.bnd.service.RepositoryPlugin;
 public class RepositoryTreeLabelProvider extends StyledCellLabelProvider
 	implements org.eclipse.jface.viewers.ILabelProvider {
 
-	final Image				arrowImg	= Icons.image("arrow_down");
-	final Image				bundleImg	= Icons.image("bundle");
-	final Image				matchImg	= Icons.image("match");
-	final Image				projectImg	= Icons.image("project");
-	final Image				loadingImg	= Icons.image("loading");
+	final Image arrowImg = Resources.getImage("arrow_down.png");
+	final Image bundleImg = Resources.getImage("bundle.png");
+	final Image matchImg = Resources.getImage("star-small.png");
+	final Image projectImg = Resources.getImage("$IMG_OBJ_PROJECT");
+	final Image loadingImg = Resources.getImage("loading_16x16.gif");
 
 	private final boolean	showRepoId;
 
@@ -65,20 +65,11 @@ public class RepositoryTreeLabelProvider extends StyledCellLabelProvider
 						name = repo.getName();
 					label.append(name);
 
-					IconBuilder ib = Icons.builder(repo.getIcon());
-					if (repo.canWrite()) {
-						ib.bottomLeft("writable_decorator");
-					}
-					if (repo.isRemote()) {
-						ib.bottomRight("remote_decorator");
-					}
-
 					if (status != null) {
-						ib.topLeft("error_decorator");
 						label.append(" : ");
 						label.append(status, StyledString.QUALIFIER_STYLER);
 					}
-					image = ib.build();
+					image = Resources.getImage(repo.getIcon());
 				}
 			} else if (element instanceof Project) {
 				if (index == 0) {
@@ -158,7 +149,7 @@ public class RepositoryTreeLabelProvider extends StyledCellLabelProvider
 			}
 		} catch (Exception e) {
 			label.append("error: " + Exceptions.causes(e));
-			image = Icons.image("error");
+			image = Resources.getImage("error");
 		}
 
 		cell.setText(label.getString());

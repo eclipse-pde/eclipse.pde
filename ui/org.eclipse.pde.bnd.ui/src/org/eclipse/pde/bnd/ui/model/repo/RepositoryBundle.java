@@ -14,7 +14,7 @@
  *     Peter Kriens <Peter.Kriens@aqute.biz> - ongoing enhancements
  *     BJ Hargrave <bj@bjhargrave.com> - ongoing enhancements
  *******************************************************************************/
-package bndtools.model.repo;
+package org.eclipse.pde.bnd.ui.model.repo;
 
 import java.util.Map;
 import java.util.SortedSet;

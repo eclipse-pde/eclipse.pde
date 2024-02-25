@@ -11,7 +11,7 @@
  * Contributors:
  *     Raymond Augé <raymond.auge@liferay.com> - initial API and implementation
  *******************************************************************************/
-package bndtools.model.repo;
+package org.eclipse.pde.bnd.ui.model.repo;
 
 import org.osgi.resource.Resource;
 

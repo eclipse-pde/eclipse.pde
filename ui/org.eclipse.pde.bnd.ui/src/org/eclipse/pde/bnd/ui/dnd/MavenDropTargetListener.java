@@ -12,10 +12,7 @@
  *     Raymond Augé <raymond.auge@liferay.com> - initial API and implementation
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
 *******************************************************************************/
-package bndtools.dnd.gav;
-
-import static bndtools.dnd.gav.MavenDropTargetListener.Syntax.MAVEN;
-import static bndtools.dnd.gav.MavenDropTargetListener.Syntax.MAVEN_NO_VERSION;
+package org.eclipse.pde.bnd.ui.dnd;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
@@ -40,10 +37,10 @@ public class MavenDropTargetListener extends GAVDropTargetListener {
 	@Override
 	void format(FormatEvent formatEvent) {
 		if (formatEvent.isNoVersion()) {
-			format(formatEvent.getResource(), MAVEN_NO_VERSION, formatEvent.getLineAtInsertionPoint(),
+			format(formatEvent.getResource(), Syntax.MAVEN_NO_VERSION, formatEvent.getLineAtInsertionPoint(),
 				formatEvent.getIndentPrefix(), indent(isTabs(), getSize()));
 		} else {
-			format(formatEvent.getResource(), MAVEN, formatEvent.getLineAtInsertionPoint(),
+			format(formatEvent.getResource(), Syntax.MAVEN, formatEvent.getLineAtInsertionPoint(),
 				formatEvent.getIndentPrefix(), indent(isTabs(), getSize()));
 		}
 	}
@@ -98,6 +95,13 @@ public class MavenDropTargetListener extends GAVDropTargetListener {
 			.append("<artifactId>")
 			.append(identity)
 			.append("</artifactId>\n");
+		if (classifier!=null &&!classifier.isBlank()) {
+			sb.append(indentPrefix)
+			.append(indent)
+			.append("<classifier>")
+			.append(version)
+			.append("</classifier>\n");
+		}
 
 		switch (syntax) {
 			case MAVEN :

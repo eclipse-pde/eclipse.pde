@@ -11,7 +11,7 @@
  * Contributors:
  *     Christoph Rueger <chrisrueger@gmail.com> - initial API and implementation
 *******************************************************************************/
-package bndtools.views;
+package org.eclipse.pde.bnd.ui.views;
 
 /**
  * Topics for the EventBroker which is used for communication between different

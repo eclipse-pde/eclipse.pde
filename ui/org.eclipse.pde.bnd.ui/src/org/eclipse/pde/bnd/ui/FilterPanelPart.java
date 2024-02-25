@@ -15,7 +15,7 @@
  *     BJ Hargrave <bj@bjhargrave.com> - ongoing enhancements
  *     Peter Kriens <Peter.Kriens@aqute.biz> - ongoing enhancements
  *******************************************************************************/
-package org.bndtools.utils.swt;
+package org.eclipse.pde.bnd.ui;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
