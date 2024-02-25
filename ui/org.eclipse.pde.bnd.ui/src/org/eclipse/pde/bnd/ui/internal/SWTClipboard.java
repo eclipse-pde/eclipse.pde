@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2020, 2020 bndtools project and others.
+ * Copyright (c) 2020, 2024 bndtools project and others.
  *
 * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,8 +10,9 @@
  *
  * Contributors:
  *     Peter Kriens <peter.kriens@aqute.biz> - initial API and implementation
+ *     Christoph Läubrich - Adapt to PDE codebase
 *******************************************************************************/
-package bndtools.central;
+package org.eclipse.pde.bnd.ui.internal;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -20,9 +21,11 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Display;
+import org.osgi.service.component.annotations.Component;
 
 import aQute.bnd.service.clipboard.Clipboard;
 
+@Component(service = Clipboard.class)
 public class SWTClipboard implements Clipboard {
 	private static final Transfer[] TEXT_TRANSFER = new Transfer[] {
 		TextTransfer.getInstance()

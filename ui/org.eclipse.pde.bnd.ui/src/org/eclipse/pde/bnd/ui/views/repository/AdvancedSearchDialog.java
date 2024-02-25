@@ -13,7 +13,7 @@
  *     BJ Hargrave <bj@bjhargrave.com> - ongoing enhancements
  *     Christoph Rueger <chrisrueger@gmail.com> - ongoing enhancements
  *******************************************************************************/
-package bndtools.views.repository;
+package org.eclipse.pde.bnd.ui.views.repository;
 
 import java.beans.PropertyChangeListener;
 import java.util.LinkedHashMap;

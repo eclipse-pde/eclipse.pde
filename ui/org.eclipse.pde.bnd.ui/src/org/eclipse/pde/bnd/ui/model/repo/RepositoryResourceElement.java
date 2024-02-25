@@ -16,12 +16,12 @@
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
  *     Christoph Rueger <chrisrueger@gmail.com> - ongoing enhancements
 *******************************************************************************/
-package bndtools.model.repo;
+package org.eclipse.pde.bnd.ui.model.repo;
 
 import java.util.Objects;
 
-import org.bndtools.utils.resources.ResourceUtils;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.pde.bnd.ui.ResourceUtils;
 import org.osgi.framework.Version;
 import org.osgi.resource.Resource;
 
@@ -60,7 +60,6 @@ public class RepositoryResourceElement implements ResourceProvider, IAdaptable {
 		return resource;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
 		return repositoryBundleVersion.getAdapter(adapter);

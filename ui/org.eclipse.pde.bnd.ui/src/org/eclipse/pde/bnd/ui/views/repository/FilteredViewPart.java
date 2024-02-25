@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2021 bndtools project and others.
+ * Copyright (c) 2010, 2024 bndtools project and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,14 +12,15 @@
  *     Neil Bartlett <njbartlett@gmail.com> - initial API and implementation
  *     BJ Hargrave <bj@bjhargrave.com> - ongoing enhancements
  *     Peter Kriens <Peter.Kriens@aqute.biz> - ongoing enhancements
+ *     Christoph Läubrich - adjust to pde code base
  *******************************************************************************/
-package bndtools.views.repository;
+package org.eclipse.pde.bnd.ui.views.repository;
 
-import org.bndtools.core.ui.icons.Icons;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.pde.bnd.ui.FilterPanelPart;
+import org.eclipse.pde.bnd.ui.Resources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.layout.GridData;
@@ -34,8 +35,7 @@ import org.eclipse.ui.part.ViewPart;
  */
 public abstract class FilteredViewPart extends ViewPart {
 
-	private final FilterPanelPart	filterPanel	= new FilterPanelPart(Plugin.getDefault()
-		.getScheduler());
+	private final FilterPanelPart filterPanel = new FilterPanelPart(Resources.getScheduler());
 
 	private Action					filterAction;
 
@@ -120,7 +120,7 @@ public abstract class FilteredViewPart extends ViewPart {
 	private class FilterAction extends Action {
 		public FilterAction() {
 			super("Filter", IAction.AS_CHECK_BOX);
-			setImageDescriptor(Icons.desc("/icons/filter.gif"));
+			setImageDescriptor(Resources.getImageDescriptor("/icons/filter.gif"));
 		}
 
 		@Override

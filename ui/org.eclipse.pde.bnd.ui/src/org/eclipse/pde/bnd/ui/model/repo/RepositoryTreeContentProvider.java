@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2021 bndtools project and others.
+ * Copyright (c) 2010, 2024 bndtools project and others.
  *
 * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,8 +16,9 @@
  *     Gregory Amerson <gregory.amerson@liferay.com> - ongoing enhancements
  *     Raymond Augé <raymond.auge@liferay.com> - ongoing enhancements
  *     Fr Jeremy Krieg <fr.jkrieg@greekwelfaresa.org.au> - ongoing enhancements
+ *     Christoph Läubrich - Adapt to PDE codebase
 *******************************************************************************/
-package bndtools.model.repo;
+package org.eclipse.pde.bnd.ui.model.repo;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -34,14 +35,16 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.stream.Stream;
 
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.util.ILogger;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.pde.bnd.ui.plugins.EclipseWorkspaceRepository;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.resource.Capability;
 import org.osgi.resource.Requirement;
@@ -56,14 +59,10 @@ import aQute.bnd.service.IndexProvider;
 import aQute.bnd.service.RepositoryPlugin;
 import aQute.bnd.service.ResolutionPhase;
 import aQute.bnd.version.Version;
-import bndtools.central.Central;
-import bndtools.central.EclipseWorkspaceRepository;
 
 public class RepositoryTreeContentProvider implements ITreeContentProvider {
 
 	private static final String									CACHE_REPOSITORY		= "cache";
-	private static final ILogger								logger					= Logger
-		.getLogger(RepositoryTreeContentProvider.class);
 
 	private final EnumSet<ResolutionPhase>						phases;
 
@@ -187,8 +186,9 @@ public class RepositoryTreeContentProvider implements ITreeContentProvider {
 		workspace.getErrors()
 			.clear();
 		List<RepositoryPlugin> repoPlugins = workspace.getPlugins(RepositoryPlugin.class);
+		ILog log = ILog.get();
 		for (String error : workspace.getErrors()) {
-			logger.logError(error, null);
+			log.error(error);
 		}
 		for (RepositoryPlugin repoPlugin : repoPlugins) {
 			if (CACHE_REPOSITORY.equals(repoPlugin.getName()))
@@ -246,7 +246,7 @@ public class RepositoryTreeContentProvider implements ITreeContentProvider {
 				result[i++] = bundle;
 			}
 		} catch (Exception e) {
-			logger.logError(MessageFormat.format("Error querying sub-bundles for project {0}.", project.getName()), e);
+			ILog.get().error(MessageFormat.format("Error querying sub-bundles for project {0}.", project.getName()), e);
 		}
 		return result;
 	}
@@ -257,7 +257,7 @@ public class RepositoryTreeContentProvider implements ITreeContentProvider {
 			versions = bundle.getRepo()
 				.versions(bundle.getBsn());
 		} catch (Exception e) {
-			logger.logError(MessageFormat.format("Error querying versions for bundle {0} in repository {1}.",
+			ILog.get().error(MessageFormat.format("Error querying versions for bundle {0} in repository {1}.",
 				bundle.getBsn(), bundle.getRepo()
 					.getName()),
 				e);
@@ -286,10 +286,11 @@ public class RepositoryTreeContentProvider implements ITreeContentProvider {
 				result = searchR5Repository(repoPlugin, (Repository) repoPlugin);
 			} else if (repoPlugin instanceof WorkspaceRepository) {
 				try {
-					EclipseWorkspaceRepository workspaceRepo = Central.getEclipseWorkspaceRepository();
+					EclipseWorkspaceRepository workspaceRepo = EclipseWorkspaceRepository
+							.get(ResourcesPlugin.getWorkspace());
 					result = searchR5Repository(repoPlugin, workspaceRepo);
 				} catch (Exception e) {
-					logger.logError("Error querying workspace repository", e);
+					ILog.get().error("Error querying workspace repository", e);
 				}
 			}
 			return result;
@@ -321,8 +322,8 @@ public class RepositoryTreeContentProvider implements ITreeContentProvider {
 						bsns = repoPlugin.list(wildcardFilter);
 					} catch (Exception e) {
 						String message = MessageFormat.format("Error querying repository {0}.", repoPlugin.getName());
-						logger.logError(message, e);
-						status = new Status(IStatus.ERROR, Plugin.PLUGIN_ID, message, e);
+						ILog.get().error(message, e);
+						status = Status.error(message, e);
 					}
 					if (bsns != null) {
 						Collections.sort(bsns);

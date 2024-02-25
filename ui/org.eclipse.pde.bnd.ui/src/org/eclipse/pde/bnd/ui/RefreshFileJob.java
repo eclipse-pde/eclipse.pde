@@ -14,7 +14,7 @@
  *     Carter Smithhart <carter.smithhart@gmail.com> - ongoing enhancements
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
 *******************************************************************************/
-package bndtools.central;
+package org.eclipse.pde.bnd.ui;
 
 import java.io.File;
 import java.util.Collections;

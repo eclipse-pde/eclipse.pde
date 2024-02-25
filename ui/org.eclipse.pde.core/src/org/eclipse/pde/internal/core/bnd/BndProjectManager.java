@@ -97,7 +97,13 @@ public class BndProjectManager {
 				run.setProperty(Constants.STANDALONE, TRUE);
 				IPath path = PDECore.getDefault().getStateLocation().append(Project.BNDCNF);
 				workspace = Workspace.createStandaloneWorkspace(run, path.toFile().toURI());
+				workspace.set("workspaceName", Messages.BndProjectManager_WorkspaceName); //$NON-NLS-1$
+				workspace.set("workspaceDescription", Messages.BndProjectManager_WorkspaceDescription); //$NON-NLS-1$
 				workspace.addBasicPlugin(TargetRepository.getTargetRepository());
+				workspace.addBasicPlugin(new JobProgress());
+				workspace.addBasicPlugin(new SupplierClipboard(() -> PDECore.getDefault().getClipboardPlugin()));
+				workspace.addBasicPlugin(
+						new DelegateRepositoryListener(() -> PDECore.getDefault().getRepositoryListenerPlugins()));
 				workspace.refresh();
 			}
 		}

@@ -12,7 +12,7 @@
  *     Neil Bartlett <njbartlett@gmail.com> - initial API and implementation
  *     BJ Hargrave <bj@bjhargrave.com> - ongoing enhancements
  *******************************************************************************/
-package bndtools.views.repository;
+package org.eclipse.pde.bnd.ui.views.repository;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -75,7 +75,7 @@ public abstract class SearchPanel implements IPersistable {
 		propSupport.firePropertyChange(PROP_VALUE, oldRequiremenmt, requirement);
 	}
 
-	public Image createImage(@SuppressWarnings("unused") Device device) {
+	public Image createImage(Device device) {
 		return null;
 	}
 

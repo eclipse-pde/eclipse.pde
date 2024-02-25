@@ -11,10 +11,10 @@
  * Contributors:
  *     Christoph Rueger <chrisrueger@gmail.com> - initial API and implementation
 *******************************************************************************/
-package bndtools.editor.common;
+package org.eclipse.pde.bnd.ui;
 
-import static bndtools.utils.EditorUtils.createHelpButton;
-import static bndtools.utils.EditorUtils.createHelpButtonWithText;
+import static org.eclipse.pde.bnd.ui.EditorUtils.createHelpButton;
+import static org.eclipse.pde.bnd.ui.EditorUtils.createHelpButtonWithText;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;

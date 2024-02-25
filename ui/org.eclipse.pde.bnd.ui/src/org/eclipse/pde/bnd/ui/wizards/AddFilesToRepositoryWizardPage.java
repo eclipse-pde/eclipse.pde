@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2021 bndtools project and others.
+ * Copyright (c) 2010, 2024 bndtools project and others.
  *
 * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,8 +13,9 @@
  *     Ferry Huberts <ferry.huberts@pelagic.nl> - ongoing enhancements
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
  *     Peter Kriens <peter.kriens@aqute.biz> - ongoing enhancements
+ *     Christoph Läubrich - Adapt to PDE codebase
 *******************************************************************************/
-package bndtools.wizards.workspace;
+package org.eclipse.pde.bnd.ui.wizards;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -22,15 +23,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.jar.Attributes;
 
 import org.bndtools.api.ILogger;
 import org.bndtools.api.Logger;
-import org.bndtools.core.ui.icons.Icons;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -41,6 +41,8 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.bnd.ui.FileExtensionFilter;
+import org.eclipse.pde.bnd.ui.Resources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -59,20 +61,17 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.osgi.framework.Constants;
 
 import aQute.bnd.osgi.Jar;
-import bndtools.Plugin;
-import bndtools.types.Pair;
-import bndtools.utils.FileExtensionFilter;
 
 public class AddFilesToRepositoryWizardPage extends WizardPage {
 	private static final ILogger					logger		= Logger
 		.getLogger(AddFilesToRepositoryWizardPage.class);
 
-	private final static Image						jarImg		= Icons.image("jar");
-	private final static Image						warnImg		= Icons.image("/icons/warning_obj.gif");
-	private final static Image						errorImg	= Icons.image("/icons/error.gif");
-	private final static Image						okayImg		= Icons.image("/icons/tick.png");
+	private final static Image jarImg = Resources.getImage("jar.gif");
+	private final static Image warnImg = Resources.getImage("warning_obj.gif");
+	private final static Image errorImg = Resources.getImage("error.gif");
+	private final static Image okayImg = Resources.getImage("tick.png");
 
-	private final Map<File, Pair<String, String>>	bsnMap		= new HashMap<>();
+	private final Map<File, Entry<String, String>> bsnMap = new HashMap<>();
 	private final List<File>						files		= new ArrayList<>(1);
 
 	private TableViewer								viewer;
@@ -106,14 +105,13 @@ public class AddFilesToRepositoryWizardPage extends WizardPage {
 			String bsn = attribs.getValue(Constants.BUNDLE_SYMBOLICNAME);
 			String version = attribs.getValue(Constants.BUNDLE_VERSION);
 
-			bsnMap.put(file, Pair.newInstance(bsn, version));
+			bsnMap.put(file, Map.entry(bsn, version));
 		} catch (Exception e) {
 			logger.logError("Error reading JAR file content", e);
 		}
 	}
 
 	@Override
-	@SuppressWarnings("unused")
 	public void createControl(Composite parent) {
 		setTitle("Add Files to Repository");
 
@@ -139,7 +137,7 @@ public class AddFilesToRepositoryWizardPage extends WizardPage {
 			@Override
 			public void update(ViewerCell cell) {
 				File file = (File) cell.getElement();
-				Pair<String, String> bundleId = bsnMap.get(file);
+				Entry<String, String> bundleId = bsnMap.get(file);
 
 				int index = cell.getColumnIndex();
 				if (index == 0) {
@@ -160,8 +158,8 @@ public class AddFilesToRepositoryWizardPage extends WizardPage {
 						cell.setImage(errorImg);
 						cell.setText("Not a JAR file");
 					} else {
-						String bsn = bundleId.getFirst();
-						String version = bundleId.getSecond();
+						String bsn = bundleId.getKey();
+						String version = bundleId.getValue();
 						if (bsn == null) {
 							cell.setImage(warnImg);
 							cell.setText("Not a Bundle JAR");
@@ -227,9 +225,9 @@ public class AddFilesToRepositoryWizardPage extends WizardPage {
 			new WorkbenchContentProvider());
 		dialog.setValidator(selection -> {
 			if (selection.length > 0 && selection[0] instanceof IFile) {
-				return new Status(IStatus.OK, Plugin.PLUGIN_ID, IStatus.OK, "", null); //$NON-NLS-1$
+				return Status.OK_STATUS;
 			}
-			return new Status(IStatus.ERROR, Plugin.PLUGIN_ID, IStatus.ERROR, "", null); //$NON-NLS-1$
+			return Status.error(""); //$NON-NLS-1$
 		});
 		dialog.setAllowMultiple(true);
 		dialog.setTitle("JAR File Selection");
@@ -298,11 +296,11 @@ public class AddFilesToRepositoryWizardPage extends WizardPage {
 		String warning = null;
 
 		for (File file : files) {
-			Pair<String, String> pair = bsnMap.get(file);
+			Entry<String, String> pair = bsnMap.get(file);
 			if (pair == null) {
 				error = "One or more selected files is not a JAR.";
 			} else {
-				String bsn = pair.getFirst();
+				String bsn = pair.getKey();
 				if (bsn == null) {
 					warning = "One or more selected files is not a Bundle JAR";
 				}

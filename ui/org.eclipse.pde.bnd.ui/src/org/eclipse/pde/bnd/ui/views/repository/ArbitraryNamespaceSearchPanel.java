@@ -12,7 +12,7 @@
  *     Neil Bartlett <njbartlett@gmail.com> - initial API and implementation
  *     BJ Hargrave <bj@bjhargrave.com> - ongoing enhancements
  *******************************************************************************/
-package bndtools.views.repository;
+package org.eclipse.pde.bnd.ui.views.repository;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;

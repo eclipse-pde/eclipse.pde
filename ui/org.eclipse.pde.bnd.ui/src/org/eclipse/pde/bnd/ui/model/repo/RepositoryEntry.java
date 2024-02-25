@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2021 bndtools project and others.
+ * Copyright (c) 2015, 2024 bndtools project and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,8 +12,9 @@
  *     Neil Bartlett <njbartlett@gmail.com> - initial API and implementation
  *     BJ Hargrave <bj@bjhargrave.com> - ongoing enhancements
  *     Raymond Augé <raymond.auge@liferay.com> - ongoing enhancements
+ *     Christoph Läubrich - Adapt to PDE codebase
  *******************************************************************************/
-package bndtools.model.repo;
+package org.eclipse.pde.bnd.ui.model.repo;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -26,8 +27,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.util.ILogger;
 import org.osgi.framework.namespace.IdentityNamespace;
 import org.osgi.resource.Resource;
 import org.osgi.service.repository.ExpressionCombiner;
@@ -63,8 +64,6 @@ abstract class VersionFinder {
 }
 
 public abstract class RepositoryEntry implements IAdaptable, ResourceProvider {
-
-	private static final ILogger	logger	= Logger.getLogger(RepositoryEntry.class);
 
 	private final RepositoryPlugin	repo;
 	private final String			bsn;
@@ -121,7 +120,7 @@ public abstract class RepositoryEntry implements IAdaptable, ResourceProvider {
 				result = location == Location.local || location == Location.remote_cached;
 			}
 		} catch (Exception e) {
-			logger.logError(MessageFormat.format("Failed to query repository {0} for bundle {1} version {2}.",
+			ILog.get().error(MessageFormat.format("Failed to query repository {0} for bundle {1} version {2}.",
 				repo.getName(), bsn, versionFinder), e);
 		}
 		return result;
@@ -147,7 +146,7 @@ public abstract class RepositoryEntry implements IAdaptable, ResourceProvider {
 			}
 			return repo.get(bsn, version, Collections.emptyMap());
 		} catch (Exception e) {
-			logger.logError(MessageFormat.format("Failed to query repository {0} for bundle {1} version {2}.",
+			ILog.get().error(MessageFormat.format("Failed to query repository {0} for bundle {1} version {2}.",
 				repo.getName(), bsn, versionFinder), Exceptions.unrollCause(e, InvocationTargetException.class));
 			return null;
 		}

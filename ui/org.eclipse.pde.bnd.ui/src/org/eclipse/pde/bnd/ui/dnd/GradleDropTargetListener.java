@@ -12,12 +12,7 @@
  *     Raymond Augé <raymond.auge@liferay.com> - initial API and implementation
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
 *******************************************************************************/
-package bndtools.dnd.gav;
-
-import static bndtools.dnd.gav.GradleDropTargetListener.Syntax.GRADLE_MAP;
-import static bndtools.dnd.gav.GradleDropTargetListener.Syntax.GRADLE_MAP_NO_VERSION;
-import static bndtools.dnd.gav.GradleDropTargetListener.Syntax.GRADLE_STRING;
-import static bndtools.dnd.gav.GradleDropTargetListener.Syntax.GRADLE_STRING_NO_VERSION;
+package org.eclipse.pde.bnd.ui.dnd;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
@@ -45,10 +40,11 @@ public class GradleDropTargetListener extends GAVDropTargetListener {
 	void format(FormatEvent formatEvent) {
 		if (formatEvent.isNoVersion()) {
 			format(formatEvent.getResource(),
-				formatEvent.useAlternateSyntax() ? GRADLE_MAP_NO_VERSION : GRADLE_STRING_NO_VERSION,
+					formatEvent.useAlternateSyntax() ? Syntax.GRADLE_MAP_NO_VERSION : Syntax.GRADLE_STRING_NO_VERSION,
 				formatEvent.getLineAtInsertionPoint(), formatEvent.getIndentPrefix(), indent(isTabs(), getSize()));
 		} else {
-			format(formatEvent.getResource(), formatEvent.useAlternateSyntax() ? GRADLE_MAP : GRADLE_STRING,
+			format(formatEvent.getResource(),
+					formatEvent.useAlternateSyntax() ? Syntax.GRADLE_MAP : Syntax.GRADLE_STRING,
 				formatEvent.getLineAtInsertionPoint(), formatEvent.getIndentPrefix(), indent(isTabs(), getSize()));
 		}
 	}

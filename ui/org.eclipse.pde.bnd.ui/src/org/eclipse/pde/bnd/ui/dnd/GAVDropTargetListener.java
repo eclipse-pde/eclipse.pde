@@ -12,7 +12,7 @@
  *     Raymond Augé <raymond.auge@liferay.com> - initial API and implementation
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
 *******************************************************************************/
-package bndtools.dnd.gav;
+package org.eclipse.pde.bnd.ui.dnd;
 
 import static java.util.Objects.requireNonNull;
 
@@ -23,6 +23,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.bnd.ui.model.repo.RepositoryBundle;
 import org.eclipse.pde.bnd.ui.model.repo.RepositoryBundleVersion;
+import org.eclipse.pde.bnd.ui.model.repo.RepositoryResourceElement;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyledText;
@@ -35,7 +36,6 @@ import org.eclipse.swt.widgets.Display;
 import org.osgi.resource.Resource;
 
 import aQute.bnd.service.RepositoryPlugin;
-import bndtools.model.repo.RepositoryResourceElement;
 
 public abstract class GAVDropTargetListener implements DropTargetListener {
 

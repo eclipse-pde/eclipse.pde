@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2019 bndtools project and others.
+ * Copyright (c) 2015, 2024 bndtools project and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,8 +11,9 @@
  * Contributors:
  *     Neil Bartlett <njbartlett@gmail.com> - initial API and implementation
  *     BJ Hargrave <bj@bjhargrave.com> - ongoing enhancements
+ *     Christoph Läubrich - Adapt to PDE codebase
  *******************************************************************************/
-package bndtools.views.repository;
+package org.eclipse.pde.bnd.ui.views.repository;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -29,6 +30,8 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.pde.bnd.ui.model.repo.RepositoryBundle;
+import org.eclipse.pde.bnd.ui.model.repo.RepositoryBundleVersion;
 
 import aQute.bnd.service.RemoteRepositoryPlugin;
 import aQute.bnd.service.RepositoryPlugin;
@@ -36,9 +39,6 @@ import aQute.bnd.service.ResourceHandle;
 import aQute.bnd.service.ResourceHandle.Location;
 import aQute.bnd.service.Strategy;
 import aQute.bnd.version.Version;
-import bndtools.Plugin;
-import bndtools.model.repo.RepositoryBundle;
-import bndtools.model.repo.RepositoryBundleVersion;
 
 public class RepoDownloadJob extends Job {
 
@@ -63,8 +63,7 @@ public class RepoDownloadJob extends Job {
 		boolean locked = LOCK.tryLock();
 		try {
 			while (!locked) {
-				monitor.setBlocked(new Status(IStatus.INFO, Plugin.PLUGIN_ID, 0,
-					"Waiting for other download jobs to complete.", null));
+				monitor.setBlocked(Status.info("Waiting for other download jobs to complete."));
 				if (progress.isCanceled())
 					return Status.CANCEL_STATUS;
 
@@ -74,7 +73,7 @@ public class RepoDownloadJob extends Job {
 			}
 			monitor.clearBlocked();
 
-			MultiStatus status = new MultiStatus(Plugin.PLUGIN_ID, 0,
+			MultiStatus status = new MultiStatus(RepoDownloadJob.class, 0,
 				"One or more repository files failed to download.", null);
 			monitor.setTaskName("Expanding repository contents");
 			List<RepositoryBundleVersion> rbvs = new LinkedList<>();
@@ -87,7 +86,7 @@ public class RepoDownloadJob extends Job {
 				}
 				rbvs.addAll(bundleVersions);
 			} catch (Exception e) {
-				return new Status(IStatus.ERROR, Plugin.PLUGIN_ID, 0, "Error listing repository contents", e);
+				return Status.error("Error listing repository contents", e);
 			}
 
 			monitor.setWorkRemaining(rbvs.size());
@@ -108,8 +107,8 @@ public class RepoDownloadJob extends Job {
 						handle.request();
 					}
 				} catch (Exception e) {
-					status.add(new Status(IStatus.ERROR, Plugin.PLUGIN_ID, 0,
-						String.format("Download of %s:%s with remote name %s failed", rbv.getBsn(), rbv.getVersion(),
+					status.add(Status.error(String.format("Download of %s:%s with remote name %s failed", rbv.getBsn(),
+							rbv.getVersion(),
 							resourceName),
 						e));
 				} finally {
