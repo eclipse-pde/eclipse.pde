@@ -60,16 +60,8 @@ The execution environment listed in the table is based on the needs of the bundl
 
 ## I have prerequisites that require version X to run, so shouldn't I require version X too?
 
-No. You should seek to use the smallest BREE (Bundle-RequiredExecutionEnvironment) possible. 
-There's several reasons to use a BREE smaller than your prerequisites. 
-One is just sound architecture. 
-Things might change in the future, so you want to code your bundle based on your needs. 
-Maybe that prerequisite will be refactored out next release. 
-Similarly, you do not (normally) have control over your prerequisites BREEs. 
-They might lower theirs, they might raise it ... no reason to hard code some assumption in your bundle, based on your prerequisites.
-
-Another reason for staying at a lower BREE (or at least not exposing types from a later BREE in your bundle's APIs) is to avoid compilation errors / maintenance overhead in downstream bundles. 
-Example: If one of your API types implements java.lang.Iterable from J2SE-1.5, then this forces all dependent bundles to move to J2SE-1.5 as well -- otherwise, they don't compile any more (although the interface addition may be binary compatible).
+This is not necessary and was not recommended in the past.
+However, with the the fast evolving Java runtime environment, you may want to update your BREE if your pre-requisites require a higher Java version so that you can take advantages of the new features in Java.
 
 ## Setting the Execution Environment
 
