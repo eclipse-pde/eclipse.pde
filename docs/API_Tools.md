@@ -193,7 +193,7 @@ Running an API use scan (IDE)
 In the IDE API use scans can be run from the External tools dialog. 
 The benefits of providing the scanning as an external tool are many, the foremost being: 1. you can create as many different configurations as you want for scanning different distributions of your products and 2. each configuration can have its own persisted settings.
 
-[![The external tools dialog showing a use scan configuration](/images/4/4e/Usescan-ext-dialog.png)](/File:Usescan-ext-dialog.png "The external tools dialog showing a use scan configuration")
+![The external tools dialog showing a use scan configuration](https://raw.githubusercontent.com/eclipse-pde/eclipse.pde/master/docs/images/Usescan-ext-dialog.png)
 
 ### Creating a new scan configuration
 
@@ -361,11 +361,11 @@ It can be found by using the Generate Javadoc command located in the Project mai
 
 Once the wizard starts you will have to locate the Javadoc executable (if not already specified) and select the bundles you wish to generate Javadoc for.
 
-[![The first page of the Generate Javadoc wizard](/images/6/69/Jdoc_wizard_p1.png)](/File:Jdoc_wizard_p1.png "The first page of the Generate Javadoc wizard")
+![The first page of the Generate Javadoc wizard](https://raw.githubusercontent.com/eclipse-pde/eclipse.pde/master/docs/images/Jdoc_wizard_p1.png)
 
 On the next page, you can configure additional options.
 
-[![The second page of the Generate Javadoc wizard](/images/0/09/Jdoc_wizard_p2.png)](/File:Jdoc_wizard_p2.png "The second page of the Generate Javadoc wizard")
+![The second page of the Generate Javadoc wizard](https://raw.githubusercontent.com/eclipse-pde/eclipse.pde/master/docs/images/Jdoc_wizard_p2.png)
 
 On the last page is where we need to tell the wizard about the custom API tools tags. 
 In the `Extra Javadoc options` area you will want to enter the following tag definitions:
@@ -382,11 +382,11 @@ In the `Extra Javadoc options` area you will want to enter the following tag def
 
 The wizard will then look like the following:
 
-[![The third page of the Generate Javadoc wizard](/images/f/f4/Jdoc_wizard_p3.png)](/File:Jdoc_wizard_p3.png "The third page of the Generate Javadoc wizard")
+![The third page of the Generate Javadoc wizard](https://raw.githubusercontent.com/eclipse-pde/eclipse.pde/master/docs/images/Jdoc_wizard_p3.png)
 
 Once you press finish and the Javadoc tool completes you should see API tools tag restrictions appearing in your documentation like the following example:
 
-[![How the API tools tags look in the HTML documentation](/images/4/4d/Doc_example.png)](/File:Doc_example.png "How the API tools tags look in the HTML documentation")
+![How the API tools tags look in the HTML documentation](https://raw.githubusercontent.com/eclipse-pde/eclipse.pde/master/docs/images/Doc_example.png)
 
 ### Using the Commandline
 

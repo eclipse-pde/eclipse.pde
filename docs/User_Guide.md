@@ -58,7 +58,7 @@ Contents
     *   [4.12 Extension Points Reference](#Extension-Points-Reference)
     *   [4.13 Other Reference Information](#Other-Reference-Information)
     *   [4.14 Defining API Restrictions](#Defining-API-Restrictions)
-    *   [4.15 Javadoc @since Tag Management](#Javadoc-.40since-Tag-Management)
+    *   [4.15 Javadoc @since Tag Management](#Javadoc-since-Tag-Management)
 *   [5 Tips and Tricks](#Tips-and-Tricks)
     *   [5.1 Creating a Rich Client Application](#Creating-a-Rich-Client-Application)
     *   [5.2 Creating an Eclipse Plug-in](#Creating-an-Eclipse-Plug-in)
@@ -250,26 +250,26 @@ The second step in setting up a build is to copy the template build.properties f
 
 **Overview of the directory structure**
 
-<buildDirectory>/
- plugins/
-  pluginToBuildA
-  pluginToBuildB
- myProduct.product
-  ...
- features/
-  featureToBuild
-  ...
-<buildConfiguration>/
- build.properties
-<baseLocation>
- plugins/
-  org.eclipse.core.runtime
-  org.eclipse.ui
-   ...
- features/
-  org.eclipse.rcp
-  org.eclipse.platform.launchers
-  ...
+		<buildDirectory>/
+		 plugins/
+		  pluginToBuildA
+		  pluginToBuildB
+		 myProduct.product
+		  ...
+		 features/
+		  featureToBuild
+		  ...
+		<buildConfiguration>/
+		 build.properties
+		<baseLocation>
+		 plugins/
+		  org.eclipse.core.runtime
+		  org.eclipse.ui
+		   ...
+		 features/
+		  org.eclipse.rcp
+		  org.eclipse.platform.launchers
+		  ...
 
 **Running the build**
 
@@ -280,10 +280,10 @@ To run the build you will use the org.elipse.ant.core.antRunner application. Whe
 
 Run the antRunner application using the following command:
 
-java -jar eclipseInstall/plugins/org.eclipse.equinox.launcher_version.jar
- -application org.eclipse.ant.core.antRunner
- -buildfile eclipseInstall/plugins/org.eclipse.pde.build_version/scripts/productBuild/productBuild.xml
- -Dbuilder=path to the build configuration folder
+		java -jar eclipseInstall/plugins/org.eclipse.equinox.launcher_version.jar
+		 -application org.eclipse.ant.core.antRunner
+		 -buildfile eclipseInstall/plugins/org.eclipse.pde.build_version/scripts/productBuild/productBuild.xml
+		 -Dbuilder=path to the build configuration folder
 
 **Advanced Scenarios**
 
@@ -330,10 +330,10 @@ To run the build you will use the org.elipse.ant.core.antRunner application. Whe
 
 Run the antRunner application using the following command:
 
-java -jar <eclipseInstall>/plugins/org.eclipse.equinox.launcher_<version>.jar 
- -application org.eclipse.ant.core.antRunner 
- -buildfile <<eclipseInstall>/plugins/org.eclipse.pde.build_<version>/scripts/build.xml> 
- -Dbuilder=<path to the build configuration folder>
+		java -jar <eclipseInstall>/plugins/org.eclipse.equinox.launcher_<version>.jar 
+		 -application org.eclipse.ant.core.antRunner 
+		 -buildfile <<eclipseInstall>/plugins/org.eclipse.pde.build_<version>/scripts/build.xml> 
+		 -Dbuilder=<path to the build configuration folder>
 
 Once the build is complete, you can get the result in the build directory in the folder named I.TestBuild (this name can be configured by setting the buildLabel property).
 
@@ -349,22 +349,22 @@ A feature used to drive a plug-in build is a standard feature. What makes it dif
 
 Example:
 
-build.properties:  topLevelElementId = acme.build.feature
-customTargets.xml : 
-	<target name="preSetup">
-		<eclipse.generateFeature
-			featureId="acme.build.feature"
-			buildDirectory="${buildDirectory}"
-			baseLocation="${baseLocation}"
-			productFile="${product}"
-			verify="false"
-			pluginPath="${pluginPath}"
-			configInfo="${configs}"
-			pluginList="acme.plugin.A,acme.plugin.B"
-			featureList="${featureList}"
-			includeLaunchers="false"
-		/>
-	</target>
+		build.properties:  topLevelElementId = acme.build.feature
+		customTargets.xml : 
+			<target name="preSetup">
+				<eclipse.generateFeature
+					featureId="acme.build.feature"
+					buildDirectory="${buildDirectory}"
+					baseLocation="${baseLocation}"
+					productFile="${product}"
+					verify="false"
+					pluginPath="${pluginPath}"
+					configInfo="${configs}"
+					pluginList="acme.plugin.A,acme.plugin.B"
+					featureList="${featureList}"
+					includeLaunchers="false"
+				/>
+			</target>
 
 Once you have created the feature to drive the build, follow the instructions on building features.
 
@@ -475,22 +475,22 @@ Ant scripts are typically generated using the Plug-in Development Environment (P
 
 The pluginList, featureList, and fragmentList arguments of the eclipse.generateFeature task all support attributes. These arguments all take the form:
 
-List = <element-id>\[;<attribute>=<value>\]* \[,<element-id>\[;<attribute>=<value>\]*\]*
+		List = <element-id>\[;<attribute>=<value>\]* \[,<element-id>\[;<attribute>=<value>\]*\]*
 
 Each attribute=value pair will be inserted into the generated xml corresponding to the given element. Example:
 
-featureList = org.eclipse.feature;optional=true
-pluginList = org.eclipse.plugin.A;unpack=true
-fragmentList=org.eclipse.fragment.a;os=win32,org.eclipse.fragment.b;os=linux;ws=gtk;arch=x86
- <feature ...>
-  ...
-   <includes id="org.eclipse.feature" version="0.0.0" optional="true" />
-    ...
-    <plugin id="org.eclipse.plugin.A" version="0.0.0" unpack="true" />
-    <plugin id="org.eclipse.fragment.a" version="0.0.0" os="win32" fragment="true" />
-    <plugin id="org.eclipse.fragment.b" version="0.0.0" os="linux" ws="gtk" arch="x86" fragment="true" />
-    ...
- </feature>
+		featureList = org.eclipse.feature;optional=true
+		pluginList = org.eclipse.plugin.A;unpack=true
+		fragmentList=org.eclipse.fragment.a;os=win32,org.eclipse.fragment.b;os=linux;ws=gtk;arch=x86
+		 <feature ...>
+		  ...
+		   <includes id="org.eclipse.feature" version="0.0.0" optional="true" />
+		    ...
+		    <plugin id="org.eclipse.plugin.A" version="0.0.0" unpack="true" />
+		    <plugin id="org.eclipse.fragment.a" version="0.0.0" os="win32" fragment="true" />
+		    <plugin id="org.eclipse.fragment.b" version="0.0.0" os="linux" ws="gtk" arch="x86" fragment="true" />
+		    ...
+		 </feature>
 
 **Directory file format**
 
@@ -500,7 +500,7 @@ Directory files are used to indicate where the plug-ins and features can be obta
 
 The tasks previously described only work if Eclipse is running. In the particular scenario of executing Ant scripts using Eclipse tasks,the scripts must be run using the Eclipse Ant Runner application. The command line for this particular case is the following:
 
-java -jar plugins/org.eclipse.equinox.launcher_<version>.jar -application org.eclipse.ant.core.antRunner -buildfile build.xml
+		java -jar plugins/org.eclipse.equinox.launcher_<version>.jar -application org.eclipse.ant.core.antRunner -buildfile build.xml
 
 Note that the parameters appearing after the application are the parameters that are passed to Ant.
 
