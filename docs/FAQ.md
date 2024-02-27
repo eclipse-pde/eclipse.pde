@@ -50,10 +50,11 @@ PDE provides highly customizable launch configurations for self-hosting, but the
 
 To create a new launch configuration, open the launch configuration dialog from the main menu, selecting **Run > Run Configurations**. From there you must create a new **Eclipse Application**. Pressing Run will launch the runtime workbench using code from your workspace and target platform.
 
-PDE Build
----------
+Build
+-----
 
-[Build FAQ](/PDE/Build/FAQ "PDE/Build./FAQ").md 
+For building PDE artifacts it is recommended to use [Maven Tycho](https://github.com/eclipse-tycho/tycho).
+
 Target Management
 -----------------
 
@@ -61,7 +62,7 @@ Target Management
 
 This happens because PDE detects a newer version of the OSGi runtime in your target platform than in your host installation. To resolve this problem, don't point to a target that may contain future versions of Eclipse or just upgrade your current host to a newer version of Eclipse. In the end, this message is trying to convey that PDE is backwards compatible only, not forward compatible.
 
-Also, see our [Target Definitions](/PDE/Target_Definitions "PDE/Target Definitions") page.
+Also, see our [Target Definitions](https://github.com/eclipse-pde/eclipse.pde/blob/master/docs/Target_Definitions.md) page.
 
 Products
 --------
@@ -94,11 +95,7 @@ API Tooling
 
 ### How do I enable API Tooling for my projects
 
-Enabling API Tooling on a project is described [here](/PDE/API_Tools/User_Guide "PDE/API Tools/User Guide").
-
-### How do I enable API Tooling for headless builds
-
-See the [PDE/Build FAQ](/PDE/Build./FAQ#How_do_I_enable_API_tooling_in_a_headless_build.md "PDE/Build./FAQ").md .
+Enabling API Tooling on a project is described [here](https://github.com/eclipse-pde/eclipse.pde/blob/master/docs/User_Guide.md).
 
 Build and Deployment Errors
 ---------------------------
@@ -112,7 +109,7 @@ The first step in diagnosing deployment errors is to examine your _workspace_/.m
 Typical startup problems are:
 
 1.  Missing necessary files (e.g., plugin.xml, Application.e4xmi) in your build.properties. As a result, these files are not being exported. Such errors are typically revealed in your .log.
-2.  Unspecified start levels for key bundles like org.eclipse.equinox.ds. Start levels are generally specified in your .product file, though it is possible to provide hints through \[[p2 metadata](https://help.eclipse.org/helios/index.jsp?topic=/org.eclipse.platform.doc.isv/guide/p2_customizing_metadata.html%7Ccustomized)\] for a bundle.
+2.  Unspecified start levels for key bundles like org.eclipse.equinox.ds. Start levels are generally specified in your .product file, though it is possible to provide hints through \[[p2 metadata](https://help.eclipse.org/latest/index.jsp?topic=/org.eclipse.platform.doc.isv/guide/p2_customizing_metadata.html)\] for a bundle.
 
 A typical .product file might include the following configuration stanza:
 
@@ -126,7 +123,7 @@ A typical .product file might include the following configuration stanza:
 
 ### My bundles aren't loading
 
-See [Where Is My Bundle?](/Where_Is_My_Bundle "Where Is My Bundle") for an overview of how to use the OSGi console for diagnosing problems.
+See [Where Is My Bundle?](https://github.com/eclipse-equinox/equinox/blob/master/docs/Where_Is_My_Bundle.md) for an overview of how to use the OSGi console for diagnosing problems.
 
 ### Why aren't my launcher icons being found?
 
@@ -176,40 +173,40 @@ org.eclipse.pde.PluginNature
 
 A typical .project in a plug-in project will look like this:
 
-    <?xml version="1.0" encoding="UTF-8"?>
-    <projectDescription>
-        <name>org.eclipse.ui.views.log</name>
-        <comment></comment>
-        <projects>
-        </projects>
-        <buildSpec>
-            <buildCommand>
-                <name>org.eclipse.jdt.core.javabuilder</name>
-                <arguments>
-                </arguments>
-            </buildCommand>
-            <buildCommand>
-                <name>org.eclipse.pde.ManifestBuilder</name>
-                <arguments>
-                </arguments>
-            </buildCommand>
-            <buildCommand>
-                <name>org.eclipse.pde.SchemaBuilder</name>
-                <arguments>
-                </arguments>
-            </buildCommand>
-            <buildCommand>
-                <name>org.eclipse.pde.api.tools.apiAnalysisBuilder</name>
-                <arguments>
-                </arguments>
-            </buildCommand>
-        </buildSpec>
-        <natures>
-            <nature>org.eclipse.pde.PluginNature</nature>
-            <nature>org.eclipse.jdt.core.javanature</nature>
-            <nature>org.eclipse.pde.api.tools.apiAnalysisNature</nature>
-        </natures>
-    </projectDescription>
+        <?xml version="1.0" encoding="UTF-8"?>
+        <projectDescription>
+            <name>org.eclipse.ui.views.log</name>
+            <comment></comment>
+            <projects>
+            </projects>
+            <buildSpec>
+                <buildCommand>
+                    <name>org.eclipse.jdt.core.javabuilder</name>
+                    <arguments>
+                    </arguments>
+                </buildCommand>
+                <buildCommand>
+                    <name>org.eclipse.pde.ManifestBuilder</name>
+                    <arguments>
+                    </arguments>
+                </buildCommand>
+                <buildCommand>
+                    <name>org.eclipse.pde.SchemaBuilder</name>
+                    <arguments>
+                    </arguments>
+                </buildCommand>
+                <buildCommand>
+                    <name>org.eclipse.pde.api.tools.apiAnalysisBuilder</name>
+                    <arguments>
+                    </arguments>
+                </buildCommand>
+            </buildSpec>
+            <natures>
+                <nature>org.eclipse.pde.PluginNature</nature>
+                <nature>org.eclipse.jdt.core.javanature</nature>
+                <nature>org.eclipse.pde.api.tools.apiAnalysisNature</nature>
+            </natures>
+        </projectDescription>
 
 ### How do source attachments for bundles work
 

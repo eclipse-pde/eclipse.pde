@@ -53,15 +53,14 @@ If you have an issue, feel free to add it here. Make sure to link to the bug rep
 
 ### Redownloading of Bundles
 
-Each Eclipse [workspace](/Workspace "Workspace") has its own **cache** (aka _bundle pool_) of the target bundles. However on every new workspace the target bundles will be downloaded again.
+Each Eclipse Workspace has its own **cache** (aka _bundle pool_) of the target bundles. However on every new workspace the target bundles will be downloaded again.
 
-Future [p2](/P2 "P2") version will consider additional artifact repositories. Once that it is enabled, the bundle pool can be added for the current running Eclipse IDE as well as the PDE target bundle pool for all known “recently used” workspaces. The net effect is that you pick features from one metadata repo and the content, if already local, is just copied. No downloading. Of course, new content is still downloaded as needed.
+Future p2 version will consider additional artifact repositories. Once that it is enabled, the bundle pool can be added for the current running Eclipse IDE as well as the PDE target bundle pool for all known “recently used” workspaces. The net effect is that you pick features from one metadata repo and the content, if already local, is just copied. No downloading. Of course, new content is still downloaded as needed.
 
 We are looking at exposing some preferences to allow additional artifact repositories to be listed. Makes sense, just need to put a UI on it.
 
 Sidenote: People have suggested that PDE manage just one artifact repository/bundle pool for all target definitions for all workspaces. This would save disk space for sure but introduces some additional complexity in managing concurrent repo access as well as garbage collection. It would be great but for now, this is the next best thing.
 
-Can you think of additional improvements? Please post your thoughts on [\[1\]](http://mcaffer.com/2010/12/populate-target-definitions-faster/).
 
 Links
 -----
