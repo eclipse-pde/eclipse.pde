@@ -1,38 +1,31 @@
 ## What are Execution Environments?
 
-Execution environments (EEs) are symbolic representations of JREs. For
-example, rather than talking about a specific JRE, with a specific name
-at a specific location on your disk, you can talk about the J2SE-1.4
-execution environment. The system can then be configured to use a
-specific JRE to implement that execution environment.
+Execution environments (EEs) are symbolic representations of JREs. 
+For example, rather than talking about a specific JRE, with a specific name at a specific location on your disk, you can talk about the JavaSE-1.8 execution environment.
+The system can then be configured to use a specific JRE to implement that execution environment.
 
-Execution environments are relevant both to development (compile) time
-and runtime.
+Execution environments are relevant both to development (compile) time and runtime.
 
 ## So what does this mean to me and my bundles?
 
-Good bundles have minimal dependencies. This allows them to be used in a
-wider range of situations and results in a smaller overall footprint for
-applications built of these bundles. The execution environment needed by
-your bundle is key in both situations.
+Good bundles have minimal dependencies. 
+This allows them to be used in a wider range of situations and results in a smaller overall footprint for applications built of these bundles. 
+The execution environment needed by your bundle is key in both situations.
 
-Consider the different outcomes for some bundle A that requires just
-Foundation 1.0 and a bundle B that requires J2SE-1.5. First, A can be
-used in embedded devices where Foundation 1.0 is quite popular. Second,
-an application written entirely of bundles such as A can ship on a
-Foundation 1.0 JRE. This results in a 40-50MB disk/transfer footprint
-savings over J2SE-1.5 JREs!
+Consider the different outcomes for some bundle A that requires just Foundation 1.0 and a bundle B that requires JavaSE-1.8. 
+First, A can be used in embedded devices where Foundation 1.0 is quite popular. 
+Second, an application written entirely of bundles such as A can ship on a Foundation 1.0 JRE. 
+This results in a huge disk/transfer footprint savings over JavaSE-1.8 JREs!
 
-## Wow! Is this hard to setup?
+## How can this be configured?
 
-Not really. [OSGi](https://en.wikipedia.org/wiki/OSGi) allows bundles to be marked with
-the minimum execution environment they require (see the [ Setting the
+[OSGi](https://en.wikipedia.org/wiki/OSGi) allows bundles to be marked with the minimum execution environment they require (see the [ Setting the
 Execution Environment](#setting-the-execution-environment)).
 Setting this value has two effects.
 
 1.  The compiler attempts to compile your bundle against the JRE
     associated with the EE you choose. For example, if you set your EE
-    to be J2SE-1.3, then the compiler will help you stick to that and
+    to be JavaSE-21, then the compiler will help you stick to that and
     not let you use APIs which exist in other class library versions. If
     you choose to increase your EE level, then you are forced to
     explicitly do so, rather than finding out later that you did it
@@ -40,20 +33,19 @@ Setting this value has two effects.
 2.  The Equinox runtime will refuse to resolve/run your bundle if the
     current running JRE does not meet the minimum standard you
     specified. For example, if you attempt to install bundle B from
-    above (requires J2SE-1.5) on a system running Foundation 1.0, B will
+    above (requires JavaSE-21) on a system running Foundation 1.0, B will
     not resolve or run.
 
-[This page describes](https://wiki.eclipse.org/PDE/Resources/Execution_Environments)
-how Execution Environments are defined within the PDE environment.
+This page describes how Execution Environments are defined within the PDE environment.
 
 ## Which Execution Environment should I use?
 
-**This section is outdated. The general consensus today with more frequent Java releases is to keep EE more up to date for developer productivity.
+**This section is outdated. 
+The general consensus today with more frequent Java releases is to keep EE more up to date for developer productivity.
 See also [SimRel Release Requirements for Execution Environment](https://github.com/eclipse-simrel/.github/blob/main/wiki/SimRel/Simultaneous_Release_Requirements.md#execution-environment)**
 
-As discussed above, you should seek to use the smallest EE which give
-you all the features you require. Practically speaking, when creating a
-new OSGi bundle J2SE-1.8 is a reasonable starting point. Given that this
+As discussed above, you should seek to use the smallest EE which give you all the features you require. 
+Practically speaking, when creating a new OSGi bundle J2SE-1.8 is a reasonable starting point. Given that this
 version is currently actively maintained by Oracle (see [Java support by
 Oracle](https://www.oracle.com/technetwork/java/eol-135779.html)) and the
 pervasive use of generics in both the OSGi framework and other
