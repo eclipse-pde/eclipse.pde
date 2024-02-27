@@ -668,7 +668,8 @@ Menus and Actions
 
 ### API Tooling Setup
 
-Select the **API Tooling Setup** command \[ ![Pde category menu.gif](https://raw.githubusercontent.com/eclipse-pde/eclipse.pde/master/docs/images/Pde_category_menu.gif)\] to start the API Setup wizard.
+
+Select the **API Tooling Setup** command ![Pde category menu.gif](https://raw.githubusercontent.com/eclipse.pde/master/docs/images/Pde_category_menu.gif) to start the API Setup wizard.
 
 ### API Baseline
 
