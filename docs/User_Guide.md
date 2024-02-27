@@ -378,7 +378,7 @@ Since Ant scripts use the replacement variables in build.properties, you can typ
 
 To create scripts, you can simply select **Create Ant Build File** while a suitable manifest file (plugin.xml, fragment.xml or feature.xml) is selected in the Navigator or Package Explorer views. The command will generate the build script. After selecting Run Ant... from the pop-up menu while the newly generated script file is selected, the following wizard will open:
 
-![Pde-feature-jar.png](https://raw.githubusercontent.com/eclipse.pde/master/docs/images/Pde-feature-jar.png)
+![Pde-feature-jar.png](https://raw.githubusercontent.com/eclipse-pde/eclipse.pde/master/docs/images/Pde-feature-jar.png)
 
 The standard Ant wizard allows customization in two ways: by providing the execution arguments and by selecting one or more build targets.
 
@@ -536,7 +536,7 @@ This section explains how to enable a new plug-ins for API analysis.
 3.  Fill the first page as you would do for any other plug-in and click Next.
 4.  Check the option _Enable API Analysis_.
 
-![Pde plugin creation wizard.png](https://raw.githubusercontent.com/eclipse.pde/master/docs/images/Pde_plugin_creation_wizard.png)
+![Pde plugin creation wizard.png](https://raw.githubusercontent.com/eclipse-pde/eclipse.pde/master/docs/images/Pde_plugin_creation_wizard.png)
 
 1.  Complete your Plug-in setup
 2.  Click Finish.
@@ -585,7 +585,7 @@ If you want to remove an existing API filter, do the following steps:
 *   Right-click on the project and select **Properties**.
 *   Go to Plug-in Development > API Problem Filters
 
-![Pde api filter properties.png](https://raw.githubusercontent.com/eclipse.pde/master/docs/images/Pde_api_filter_properties.png)
+![Pde api filter properties.png](https://raw.githubusercontent.com/eclipse-pde/eclipse.pde/master/docs/images/Pde_api_filter_properties.png)
 
 *   From the list of existing filters, select the one you want to remove
 *   Select **Remove**.
@@ -668,7 +668,7 @@ Menus and Actions
 
 ### API Tooling Setup
 
-Select the **API Tooling Setup** command \[ ![Pde category menu.gif](https://raw.githubusercontent.com/eclipse.pde/master/docs/images/Pde_category_menu.gif)\] to start the API Setup wizard.
+Select the **API Tooling Setup** command \[ ![Pde category menu.gif](https://raw.githubusercontent.com/eclipse-pde/eclipse.pde/master/docs/images/Pde_category_menu.gif)\] to start the API Setup wizard.
 
 ### API Baseline
 
@@ -690,7 +690,7 @@ API problems are created during project builds (auto and full builds), the tooli
 2.  **Binary Incompatibilities** \- changes between versions are not binary compatible.
 3.  **Version Problems** \- plug-in versions or code versions (@since tags) not correct.
 
-![Pde-errorwarning-prop-page.png](https://raw.githubusercontent.com/eclipse.pde/master/docs/images/Pde-errorwarning-prop-page.png)
+![Pde-errorwarning-prop-page.png](https://raw.githubusercontent.com/eclipse-pde/eclipse.pde/master/docs/images/Pde-errorwarning-prop-page.png)
 
 You can also configure the problem severities for the entire workspace as well using the **Plug-in Development > API Errors/Warnings** preference page.
 
@@ -707,7 +707,7 @@ To locate this property page:
 1.  Open the context menu for any API tooling enabled project and select **Properties**.
 2.  Navigate to **Plug-in Development > API Problem Filters**.
 
-![Pde-api-problem-filter-prop.png](https://raw.githubusercontent.com/eclipse.pde/master/docs/images/Pde-api-problem-filter-prop.png)
+![Pde-api-problem-filter-prop.png](https://raw.githubusercontent.com/eclipse-pde/eclipse.pde/master/docs/images/Pde-api-problem-filter-prop.png)
 
 Quickfixes
 ----------
