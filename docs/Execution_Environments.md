@@ -45,47 +45,31 @@ The general consensus today with more frequent Java releases is to keep EE more 
 See also [SimRel Release Requirements for Execution Environment](https://github.com/eclipse-simrel/.github/blob/main/wiki/SimRel/Simultaneous_Release_Requirements.md#execution-environment)**
 
 As discussed above, you should seek to use the smallest EE which give you all the features you require. 
-Practically speaking, when creating a new OSGi bundle J2SE-1.8 is a reasonable starting point. Given that this
-version is currently actively maintained by Oracle (see [Java support by
-Oracle](https://www.oracle.com/technetwork/java/eol-135779.html)) and the
-pervasive use of generics in both the OSGi framework and other
-libraries, lower EE settings are only practical in very specialized
-applications. If your particular bundle requires capabilities from a
-later EE, then specify a higher EE, but keep in mind this may limit
-adoption of your bundle for applications using an older Java runtime.
+Practically speaking, when creating a new OSGi bundle JavaSE-17 is a reasonable starting point. 
+Lower EE settings are only practical in very specialized applications. 
+If your particular bundle requires capabilities from a later EE, then specify a higher EE, but keep in mind this may limit adoption of your bundle for applications using an older Java runtime.
 
-Once a particular EE has been chosen, it should be left alone unless
-there is a clear advantage to moving up. Increasing your EE can create a
-lot of work with no real value, such as exposing your code to new
-warnings, deprecations, etc.
+Once a particular EE has been chosen, it should be left alone unless there is a clear advantage to moving up. 
+Increasing your EE can create a lot of work with no real value, such as exposing your code to new warnings, deprecations, etc.
 
-Projects should not leave these choices to chance. Dependency structures
-are key parts of an architecture. For example, the [Eclipse
-Project](https://eclipse.org/eclipse) has explicitly identified EEs for
-all of their bundles. These choices are documented in the [project
-plan](https://www.eclipse.org/projects/project-plan.php?projectid=eclipse#appendix).
-The execution environment listed in the table is based on the needs of
-the bundle and the expected use scenarios for the bundle.
+Projects should not leave these choices to chance. 
+Dependency structures are key parts of an architecture. 
+For example, the [Eclipse Project](https://eclipse.org/eclipse) has explicitly identified EEs for all of their bundles. 
+These choices are documented in the [project plan](https://www.eclipse.org/projects/project-plan.php?projectid=eclipse#appendix).
+The execution environment listed in the table is based on the needs of the bundle and the expected use scenarios for the bundle.
 
 ## I have prerequisites that require version X to run, so shouldn't I require version X too?
 
-No. You should seek to use the smallest BREE
-(Bundle-RequiredExecutionEnvironment) possible. There's several reasons
-to use a BREE smaller than your prerequisites. One is just sound
-architecture. Things might change in the future, so you want to code
-your bundle based on your needs. Maybe that prerequisite will be
-refactored out next release. Similarly, you do not (normally) have
-control over your prerequisites BREEs. They might lower theirs, they
-might raise it ... no reason to hard code some assumption in your
-bundle, based on your prerequisites.
+No. You should seek to use the smallest BREE (Bundle-RequiredExecutionEnvironment) possible. 
+There's several reasons to use a BREE smaller than your prerequisites. 
+One is just sound architecture. 
+Things might change in the future, so you want to code your bundle based on your needs. 
+Maybe that prerequisite will be refactored out next release. 
+Similarly, you do not (normally) have control over your prerequisites BREEs. 
+They might lower theirs, they might raise it ... no reason to hard code some assumption in your bundle, based on your prerequisites.
 
-Another reason for staying at a lower BREE (or at least not exposing
-types from a later BREE in your bundle's APIs) is to avoid compilation
-errors / maintenance overhead in downstream bundles. Example: If one of
-your API types implements java.lang.Iterable from J2SE-1.5, then this
-forces all dependent bundles to move to J2SE-1.5 as well -- otherwise,
-they don't compile any more (although the interface addition may be
-binary compatible).
+Another reason for staying at a lower BREE (or at least not exposing types from a later BREE in your bundle's APIs) is to avoid compilation errors / maintenance overhead in downstream bundles. 
+Example: If one of your API types implements java.lang.Iterable from J2SE-1.5, then this forces all dependent bundles to move to J2SE-1.5 as well -- otherwise, they don't compile any more (although the interface addition may be binary compatible).
 
 ## Setting the Execution Environment
 
@@ -156,7 +140,7 @@ exports) the XML APIs.
 **Compiling:** If you have your EE set to be one (like Foundation 1.0)
 which doesn't provide the XML APIs, then in order to compile and run you
 need to retrieve a bundle that provides these APIs such as `org.w3c.dom`
-from Maven (perhaps via [Orbit](https://github.com/eclipse-orbit)).
+from Maven (perhaps via [Orbit](https://github.com/eclipse-orbit).
 **Running:** If you are running your application with a (for instance)
 Foundation VM and you have a bundle which provides the XML APIs, you
 need to set the following system propery:
