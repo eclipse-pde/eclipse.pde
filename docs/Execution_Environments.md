@@ -212,9 +212,9 @@ specification. These are summarized in the table below.
 
 ## Installing Execution Environment Descriptions
 
-Latest Execution Environment Descriptions can be installed from the
-current release update site:  
-[<https://download.eclipse.org/eclipse/updates/4.3>](https://download.eclipse.org/eclipse/updates/4.3)  
+Latest Execution Environment Descriptions can be installed from the release update site, for example:
+
+[Eclipse 4.3 update site](https://download.eclipse.org/eclipse/updates/4.3)  
 When using the 4.3 Kepler update site the environments are contained in
 a single installable unit labelled "API Tools Execution Environment
 Descriptions" inside a category of the same name. Previous releases
