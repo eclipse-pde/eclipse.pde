@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -10,11 +10,16 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sudhindra Kulkarni (ETAS GmbH) - Issue #769
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangedEvent;
@@ -26,6 +31,7 @@ import org.eclipse.pde.internal.core.bundle.BundleFragmentModel;
 import org.eclipse.pde.internal.core.bundle.BundlePluginModel;
 import org.eclipse.pde.internal.core.bundle.BundlePluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.FormOutlinePage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.build.BuildInputContext;
@@ -53,16 +59,32 @@ public class PluginInputContextManager extends InputContextManager {
 		return findPluginModel();
 	}
 
+
 	@Override
-	protected void structureChanged(IFile file, boolean added) {
-		// If a plugin.xml file has been added to the project the editor should update
-		if (added && ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR.equalsIgnoreCase(file.getName())) {
-			IProject project = getCommonProject();
-			if (project == null || project.equals(file.getProject())) {
-				monitorFile(file);
-			}
+	public void resourceChanged(IResourceChangeEvent event) {
+		IResourceDelta delta = event.getDelta();
+		try {
+			delta.accept(delta1 -> {
+				int kind = delta1.getKind();
+				IResource resource = delta1.getResource();
+				if (resource instanceof IFile) {
+					IFile file = (IFile) resource;
+					IProject project = getCommonProject();
+					if (project == null || project.equals(file.getProject())) {
+						if (kind == IResourceDelta.ADDED
+								&& ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR.equalsIgnoreCase(file.getName())) {
+							monitorFile(file);
+							return false;
+						}
+					}
+				}
+				return true;
+			});
+
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
 		}
-		super.structureChanged(file, added);
+		super.resourceChanged(event);
 	}
 
 	@Override
