@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.pde"
       label="%featureName"
-      version="3.15.300.qualifier"
+      version="3.15.400.qualifier"
       provider-name="%providerName"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
@@ -26,7 +26,7 @@
       <import plugin="org.osgi.service.component.annotations"/>
       <import plugin="org.osgi.service.metatype.annotations"/>
       <import plugin="org.bndtools.templates.template"/>
-      <import plugin="biz.aQute.repository" />
+      <import plugin="biz.aQute.repository"/>
    </requires>
 
    <plugin
