@@ -35,7 +35,7 @@ public class PluginModel extends PluginModelBase implements IPluginModel {
 	}
 
 	@Override
-	public BundleDescription getBundleDescription() {
+	public BundleDescription getBundleResource() {
 		return null;
 	}
 
