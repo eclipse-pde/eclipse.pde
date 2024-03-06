@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core.feature;
 
 import java.io.PrintWriter;
+import java.util.function.Predicate;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.IPlugin;
@@ -36,7 +37,7 @@ public class FeatureImport extends VersionableObject implements IFeatureImport {
 
 	public IPlugin getPlugin() {
 		if (id != null && fType == PLUGIN) {
-			IPluginModelBase model = PluginRegistry.findModel(id, version, fMatch, null);
+			IPluginModelBase model = PluginRegistry.findModel(id, version, fMatch, (Predicate<IPluginModelBase>) null);
 			return model instanceof IPluginModel ? ((IPluginModel) model).getPlugin() : null;
 		}
 		return null;

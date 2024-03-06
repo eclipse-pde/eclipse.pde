@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.eclipse.core.resources.IFile;
@@ -217,7 +218,8 @@ public class PluginSection extends AbstractProductContentSection<PluginSection> 
 		}
 		List<BundleDescription> list = Stream.of(plugins).map(plugin -> {
 			String version = VersionUtil.isEmptyVersion(plugin.getVersion()) ? null : plugin.getVersion();
-			return PluginRegistry.findModel(plugin.getId(), version, IMatchRules.PERFECT, null);
+			return PluginRegistry.findModel(plugin.getId(), version, IMatchRules.PERFECT,
+					(Predicate<IPluginModelBase>) null);
 		}).filter(Objects::nonNull).map(IPluginModelBase::getBundleDescription).toList();
 
 		DependencyManager.Options[] options = includeOptional
