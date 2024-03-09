@@ -149,7 +149,7 @@ public class GeneralInfoSection extends PDESection {
 	private void createLaunchersOption(Composite client, FormToolkit toolkit) {
 		// includes launcher
 		fLaunchersButton = toolkit.createButton(client, PDEUIMessages.ProductInfoSection_launchers, SWT.CHECK);
-		GridData data = new GridData();
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		fLaunchersButton.setLayoutData(data);
 		fLaunchersButton.setEnabled(isEditable());
