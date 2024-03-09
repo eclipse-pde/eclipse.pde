@@ -24,6 +24,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -40,8 +41,10 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
@@ -77,6 +80,7 @@ import org.eclipse.pde.api.tools.internal.util.SourceDefaultHandler;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.internal.core.TargetWeaver;
 import org.eclipse.pde.internal.core.util.ManifestUtils;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
@@ -820,6 +824,16 @@ public class BundleComponent extends Component {
 		return null;
 	}
 
+	// 3.125.0.v20240206-1259
+	private static final List<String> FIXED_API_DESCRIPTIONS = Arrays.asList(
+			"org.eclipse.swt.win32.win32.x86_64_3.125.0.v20240227-1638", //$NON-NLS-1$
+			"org.eclipse.swt.gtk.linux.x86_64_3.125.0.v20240227-1638", //$NON-NLS-1$
+			"org.eclipse.swt.gtk.linux.ppc64le_3.125.0.v20240227-1638", //$NON-NLS-1$
+			"org.eclipse.swt.gtk.linux.aarch64_3.125.0.v20240227-1638", //$NON-NLS-1$
+			"org.eclipse.swt.cocoa.macosx.aarch64_3.125.0.v20240227-1638", //$NON-NLS-1$
+			"org.eclipse.swt.cocoa.macosx.x86_64_3.125.0.v20240227-1638" //$NON-NLS-1$
+	);
+
 	/**
 	 * Parses a bundle's .api_description XML into a string. The file may be in
 	 * a jar or in a directory at the specified location.
@@ -833,13 +847,19 @@ public class BundleComponent extends Component {
 		InputStream stream = null;
 		String contents;
 		try {
-			String extension = IPath.fromOSString(bundleLocation.getName()).getFileExtension();
+			String fileName = bundleLocation.getName();
+			String extension = IPath.fromOSString(fileName).getFileExtension();
 			if (extension != null && extension.equals("jar") && bundleLocation.isFile()) { //$NON-NLS-1$
-				jarFile = new ZipFile(bundleLocation, ZipFile.OPEN_READ);
-				ZipEntry manifestEntry = jarFile.getEntry(IApiCoreConstants.API_DESCRIPTION_XML_NAME);
-				if (manifestEntry != null) {
-					// new file is present
-					stream = jarFile.getInputStream(manifestEntry);
+				String bundleAndVersion = fileName.substring(0, fileName.length() - ".jar".length()); //$NON-NLS-1$
+				if (FIXED_API_DESCRIPTIONS.contains(bundleAndVersion)) {
+					stream = loadFixedBundleApiDescription(bundleAndVersion);
+				} else {
+					jarFile = new ZipFile(bundleLocation, ZipFile.OPEN_READ);
+					ZipEntry manifestEntry = jarFile.getEntry(IApiCoreConstants.API_DESCRIPTION_XML_NAME);
+					if (manifestEntry != null) {
+						// new file is present
+						stream = jarFile.getInputStream(manifestEntry);
+					}
 				}
 			} else {
 				File file = new File(bundleLocation, IApiCoreConstants.API_DESCRIPTION_XML_NAME);
@@ -857,6 +877,20 @@ public class BundleComponent extends Component {
 			closingZipFileAndStream(stream, jarFile);
 		}
 		return contents;
+	}
+
+	/**
+	 * See https://github.com/eclipse-platform/eclipse.platform.swt/issues/1093 and
+	 * https://github.com/eclipse-pde/eclipse.pde/issues/1187.
+	 *
+	 * @param bundleAndVersion platform specific bundle name with version
+	 * @return stream opened for reading api description
+	 * @throws IOException
+	 */
+	private static InputStream loadFixedBundleApiDescription(String bundleAndVersion) throws IOException {
+		Bundle bundle = Platform.getBundle("org.eclipse.pde.api.tools"); //$NON-NLS-1$
+		IPath pathInBundle = IPath.fromOSString("fixed_api_descriptions/" + bundleAndVersion + ".api_description"); //$NON-NLS-1$ //$NON-NLS-2$
+		return FileLocator.openStream(bundle, pathInBundle, false);
 	}
 
 	/**
