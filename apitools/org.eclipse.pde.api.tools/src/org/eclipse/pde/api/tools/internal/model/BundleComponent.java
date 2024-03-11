@@ -824,14 +824,14 @@ public class BundleComponent extends Component {
 		return null;
 	}
 
-	// 3.125.0.v20240206-1259
+	// Content is from 3.125.0.v20240206-1259, id's are from 4.31 release
 	private static final List<String> FIXED_API_DESCRIPTIONS = Arrays.asList(
-			"org.eclipse.swt.win32.win32.x86_64_3.125.0.v20240227-1638", //$NON-NLS-1$
-			"org.eclipse.swt.gtk.linux.x86_64_3.125.0.v20240227-1638", //$NON-NLS-1$
-			"org.eclipse.swt.gtk.linux.ppc64le_3.125.0.v20240227-1638", //$NON-NLS-1$
-			"org.eclipse.swt.gtk.linux.aarch64_3.125.0.v20240227-1638", //$NON-NLS-1$
-			"org.eclipse.swt.cocoa.macosx.aarch64_3.125.0.v20240227-1638", //$NON-NLS-1$
-			"org.eclipse.swt.cocoa.macosx.x86_64_3.125.0.v20240227-1638" //$NON-NLS-1$
+			"org.eclipse.swt.win32.win32.x86-64-3.125.0.v20240227-1638", //$NON-NLS-1$
+			"org.eclipse.swt.gtk.linux.x86-64-3.125.0.v20240227-1638", //$NON-NLS-1$
+			"org.eclipse.swt.gtk.linux.ppc64le-3.125.0.v20240227-1638", //$NON-NLS-1$
+			"org.eclipse.swt.gtk.linux.aarch64-3.125.0.v20240227-1638", //$NON-NLS-1$
+			"org.eclipse.swt.cocoa.macosx.aarch64-3.125.0.v20240227-1638", //$NON-NLS-1$
+			"org.eclipse.swt.cocoa.macosx.x86-64-3.125.0.v20240227-1638" //$NON-NLS-1$
 	);
 
 	/**
@@ -850,7 +850,10 @@ public class BundleComponent extends Component {
 			String fileName = bundleLocation.getName();
 			String extension = IPath.fromOSString(fileName).getFileExtension();
 			if (extension != null && extension.equals("jar") && bundleLocation.isFile()) { //$NON-NLS-1$
-				String bundleAndVersion = fileName.substring(0, fileName.length() - ".jar".length()); //$NON-NLS-1$
+				// TODO: remove this if(FIXED_API_DESCRIPTIONS) branch after switching to 4.32
+				// baseline (assuming it will have proper SWT API descriptions, see
+				// https://github.com/eclipse-pde/eclipse.pde/pull/1191)
+				String bundleAndVersion = fileName.substring(0, fileName.length() - ".jar".length()).replace('_', '-'); //$NON-NLS-1$
 				if (FIXED_API_DESCRIPTIONS.contains(bundleAndVersion)) {
 					stream = loadFixedBundleApiDescription(bundleAndVersion);
 				} else {
