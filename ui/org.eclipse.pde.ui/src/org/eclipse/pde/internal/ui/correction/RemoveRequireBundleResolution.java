@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2019 IBM Corporation and others.
+ *  Copyright (c) 2005, 2024 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *	   Latha Patil (ETAS GmbH) - Issue #685
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
@@ -33,6 +34,11 @@ public class RemoveRequireBundleResolution extends AbstractManifestMarkerResolut
 	@Override
 	protected void createChange(BundleModel model) {
 		fBundleId = marker.getAttribute("bundleId", null); //$NON-NLS-1$
+		// Issue 685 - If `fBundleId` can be null, it might indicate that the marker is related to the removal of import/export packages or others.
+		if (fBundleId == null) {
+			MultiFixResolution multiFixResolution = new MultiFixResolution(marker, null);
+			multiFixResolution.run(marker);
+		}
 		Bundle bundle = (Bundle) model.getBundle();
 		RequireBundleHeader header = (RequireBundleHeader) bundle.getManifestHeader(Constants.REQUIRE_BUNDLE);
 		if (header != null)
