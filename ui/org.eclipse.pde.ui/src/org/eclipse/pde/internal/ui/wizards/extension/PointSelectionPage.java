@@ -23,7 +23,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Locale;
-import java.util.Set;
+import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -122,7 +122,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 	private final IPluginModelBase fModel;
 	private Button fFilterCheck;
 	private IPluginExtensionPoint fCurrentPoint;
-	private final Set<String> fAvailableImports;
+	private final Map<String, Boolean> fAvailableImports;
 	private final IProject fProject;
 	private Label fTemplateLabel;
 	private ExtensionTreeSelectionPage fWizardsPage;
@@ -147,7 +147,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 			if (point instanceof PluginExtensionPointNode)
 				return true;
 
-			return fAvailableImports.contains(point.getPluginBase().getId());
+			return fAvailableImports.keySet().contains(point.getPluginBase().getId());
 		}
 	}
 
@@ -511,7 +511,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 			}
 
 			String pluginID = fCurrentPoint.getPluginBase().getId();
-			if (!(fCurrentPoint instanceof PluginExtensionPointNode) && !fAvailableImports.contains(pluginID) && !(fCurrentPoint.getPluginBase() instanceof IFragment)) {
+			if (!(fCurrentPoint instanceof PluginExtensionPointNode) && !fAvailableImports.keySet().contains(pluginID) && !(fCurrentPoint.getPluginBase() instanceof IFragment)) {
 				if (MessageDialog.openQuestion(getShell(), PDEUIMessages.NewExtensionWizard_PointSelectionPage_dependencyTitle, NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_dependencyMessage, new String[] {pluginID, fCurrentPoint.getId()}))) {
 					IPluginImport importNode = fModel.getPluginFactory().createImport();
 					importNode.setId(pluginID);

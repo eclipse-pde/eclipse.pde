@@ -16,6 +16,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui;
 
+import java.util.HashMap;
 import java.util.Locale;
 
 import org.eclipse.core.resources.IProject;
@@ -86,6 +87,7 @@ import org.eclipse.pde.internal.core.text.bundle.ExportPackageObject;
 import org.eclipse.pde.internal.core.text.bundle.ImportPackageObject;
 import org.eclipse.pde.internal.core.text.bundle.PackageObject;
 import org.eclipse.pde.internal.core.util.VersionUtil;
+import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
@@ -96,6 +98,11 @@ import org.osgi.resource.Resource;
 
 public class PDELabelProvider extends SharedLabelProvider {
 	private static final String SYSTEM_BUNDLE = "system.bundle"; //$NON-NLS-1$
+	private IPluginModelBase currentModel;
+
+	public IPluginModelBase getCurrentPluginModel() {
+		return currentModel;
+	}
 
 	public PDELabelProvider() {
 	}
@@ -203,6 +210,13 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		if (pluginBase.getModel() != null && !pluginBase.getModel().isInSync())
 			text += " " + PDEUIMessages.PluginModelManager_outOfSync; //$NON-NLS-1$
+
+		HashMap<String, Boolean> existingImports = PluginSelectionDialog.getExistingImports(currentModel, false);
+		if (existingImports.get(pluginBase.getId()) != null && existingImports.get(pluginBase.getId())) {
+			text += " " + PDEUIMessages.PluginModelManager_alreadyAddedViaReexport; //$NON-NLS-1$
+		} else if (existingImports.get(pluginBase.getId()) != null && !existingImports.get(pluginBase.getId())) {
+			text += " " + PDEUIMessages.PluginModelManager_alreadyAdded; //$NON-NLS-1$
+		}
 		return text;
 	}
 
@@ -952,4 +966,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 		return versionRange;
 	}
 
+	public void setCurrentModel(IPluginModelBase currentModel) {
+		this.currentModel = currentModel;
+	}
 }

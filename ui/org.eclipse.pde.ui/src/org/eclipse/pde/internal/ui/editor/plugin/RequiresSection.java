@@ -20,8 +20,10 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.CoreException;
@@ -288,7 +290,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 
 	@Override
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
-		Set<String> existingImportsSet = null;
+		Map<String, Boolean> existingImportsMap = null;
 		// Only import objects that are not already existing imports can be
 		// pasted
 		for (Object sourceObject : sourceObjects) {
@@ -298,12 +300,12 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 			}
 			// Get the current import objects and store them for searching
 			// purposes
-			if (existingImportsSet == null) {
-				existingImportsSet = PluginSelectionDialog.getExistingImports(getModel(), false);
+			if (existingImportsMap == null) {
+				existingImportsMap = PluginSelectionDialog.getExistingImports(getModel(), false);
 			}
 			// Only import object that do not exist are allowed
 			ImportObject importObject = (ImportObject) sourceObject;
-			if (existingImportsSet.contains(importObject.getImport().getId())) {
+			if (existingImportsMap.keySet().contains(importObject.getImport().getId())) {
 				return false;
 			}
 		}
@@ -427,21 +429,28 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 
 	private void handleAdd() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-		PluginSelectionDialog dialog = new PluginSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), getAvailablePlugins(model), true);
+		PluginSelectionDialog dialog = new PluginSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), getAvailablePlugins(model), true, model);
 		dialog.create();
 		if (dialog.open() == Window.OK) {
 			Object[] models = dialog.getResult();
-			IPluginImport[] imports = new IPluginImport[models.length];
+			List<IPluginImport> imports = new ArrayList<>();
+			HashMap<String, Boolean> existingImports = PluginSelectionDialog.getExistingImports(model, false);
 			try {
 				for (int i = 0; i < models.length; i++) {
+					if (!existingImports.keySet().contains(((IPluginModel) models[i]).getPluginBase().getId())) {
 					IPluginModel candidate = (IPluginModel) models[i];
 					String pluginId = candidate.getPlugin().getId();
 					IPluginImport importNode = createImport(model.getPluginFactory(), pluginId);
 					String version = VersionUtil.computeInitialPluginVersion(candidate.getPlugin().getVersion());
 					importNode.setVersion(version);
-					imports[i] = importNode;
+					imports.add(importNode);
+					}
 				}
-				addImports(model.getPluginBase(), imports);
+				if (imports.size() > 0) {
+					IPluginImport[] pluginImports = new IPluginImport[imports.size()];
+					pluginImports = imports.toArray(pluginImports);
+					addImports(model.getPluginBase(), pluginImports);
+				}
 			} catch (CoreException e) {
 			}
 		}
@@ -497,15 +506,14 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 
 	private IPluginModelBase[] getAvailablePlugins(IPluginModelBase model) {
 		IPluginModelBase[] plugins = PluginRegistry.getActiveModels(false);
-		Set<String> existingImports = PluginSelectionDialog.getExistingImports(model, false);
+		HashMap<String, Boolean> existingImports = PluginSelectionDialog.getExistingImports(model, false);
 		ArrayList<IPluginModelBase> result = new ArrayList<>();
 		for (int i = 0; i < plugins.length; i++) {
-			if (!existingImports.contains(plugins[i].getPluginBase().getId())) {
+			if (!getModel().getPluginBase().getId().equals(plugins[i].getPluginBase().getId()))
 				result.add(plugins[i]);
-			}
 		}
 
-		if (!existingImports.contains("system.bundle")) //$NON-NLS-1$
+		if (!existingImports.keySet().contains("system.bundle")) //$NON-NLS-1$
 			addSystemBundle(result);
 		return result.toArray(new IPluginModelBase[result.size()]);
 	}

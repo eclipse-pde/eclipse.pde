@@ -26,6 +26,7 @@ import java.util.Optional;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
@@ -41,6 +42,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -75,6 +77,7 @@ import org.eclipse.pde.internal.ui.util.TextUtil;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -402,10 +405,10 @@ public class ExportPackageSection extends TableSection {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		final IProject project = model.getUnderlyingResource().getProject();
 		if (PluginProject.isJavaProject(project)) {
-			ILabelProvider labelProvider = new JavaElementLabelProvider();
+			ILabelProvider labelProvider = new ExportPackgeLabelProvider();
 			final ConditionalListSelectionDialog dialog = new ConditionalListSelectionDialog(
 					PDEPlugin.getActiveWorkbenchShell(), labelProvider,
-					PDEUIMessages.ExportPackageSection_dialogButtonLabel);
+					PDEUIMessages.ExportPackageSection_dialogButtonLabel,fHeader);
 			final Collection<String> pckgs = fHeader == null ? Collections.emptySet() : fHeader.getPackageNames();
 			final boolean allowJava = "true".equals(getBundle().getHeader(ICoreConstants.ECLIPSE_JREBUNDLE)); //$NON-NLS-1$
 			Runnable runnable = () -> {
@@ -437,7 +440,9 @@ public class ExportPackageSection extends TableSection {
 				if (fHeader != null) {
 					for (Object selectedObject : selected) {
 						IPackageFragment candidate = (IPackageFragment) selectedObject;
+						if (!fHeader.getPackageNames().contains(candidate.getElementName())){
 						fHeader.addPackage(new ExportPackageObject(fHeader, candidate, getVersionAttribute()));
+						}
 					}
 				} else {
 					getBundle().setHeader(getExportedPackageHeader(), getValue(selected));
@@ -620,4 +625,27 @@ public class ExportPackageSection extends TableSection {
 		Action action = new CalculateUsesAction(proj, (IBundlePluginModelBase) getPage().getModel());
 		action.run();
 	}
+
+	class ExportPackgeLabelProvider extends LabelProvider {
+		JavaElementLabelProvider javaElementLabel = new JavaElementLabelProvider();
+		@Override
+		public String getText(Object element) {
+
+			if (element instanceof IJavaElement javaElement) {
+				String text = javaElementLabel.getText(javaElement);
+				final Collection<String> pckgs = fHeader == null ? Collections.emptySet() : fHeader.getPackageNames();
+				if (!pckgs.isEmpty() && pckgs.contains(text)) {
+					return text + " " + PDEUIMessages.PluginModelManager_alreadyExported; //$NON-NLS-1$
+				}
+
+			}
+			return javaElementLabel.getText(element);
+		}
+
+		@Override
+		public Image getImage(Object element) {
+			return javaElementLabel.getImage(element);
+		}
+	}
+
 }
