@@ -1680,7 +1680,7 @@ public class UseReportConverter extends HTMLConvertor {
 		}
 		// try looking in the default 'xml' directory as a raw report root
 		// might have been specified
-		return new File(getReportsRoot() + File.separator + "xml", "meta" + XML_EXTENSION); //$NON-NLS-1$ //$NON-NLS-2$
+		return new File(getReportsRoot() + File.separator + "xml", type + XML_EXTENSION); //$NON-NLS-1$
 	}
 
 	/**
