@@ -35,6 +35,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.IntStream;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -86,12 +87,12 @@ public class UseReportConverter extends HTMLConvertor {
 	 */
 	class Visitor extends UseScanVisitor {
 
-		ArrayList<Report> reports = new ArrayList<>();
+		List<Report> reports = new ArrayList<>();
 		Report currentreport = null;
 		Type currenttype = null, currentreferee = null;
 		Member currentmember = null;
-		HashMap<IReferenceTypeDescriptor, Type> keys = new HashMap<>();
-		ArrayList<Type> referees = new ArrayList<>();
+		Map<IReferenceTypeDescriptor, Type> keys = new HashMap<>();
+		List<Type> referees = new ArrayList<>();
 
 		/**
 		 * Returns if the reference should be reported or not
@@ -179,21 +180,10 @@ public class UseReportConverter extends HTMLConvertor {
 			if (desc == null) {
 				return false;
 			}
-			this.currenttype = this.keys.get(desc);
-			if (this.currenttype == null) {
-				this.currenttype = new Type(desc);
-				this.keys.put(desc, this.currenttype);
-			}
-			TreeMap<IMemberDescriptor, Member> map = this.currentreport.children.get(this.currenttype);
-			if (map == null) {
-				map = new TreeMap<>(compare);
-				this.currentreport.children.put(this.currenttype, map);
-			}
-			this.currentmember = map.get(referencedMember);
-			if (this.currentmember == null) {
-				this.currentmember = new Member(referencedMember);
-				map.put(referencedMember, this.currentmember);
-			}
+			this.currenttype = this.keys.computeIfAbsent(desc, Type::new);
+			Map<IMemberDescriptor, Member> map = this.currentreport.children.computeIfAbsent(this.currenttype,
+					t -> new TreeMap<>(compare));
+			this.currentmember = map.computeIfAbsent(referencedMember, Member::new);
 			return true;
 		}
 
@@ -597,7 +587,7 @@ public class UseReportConverter extends HTMLConvertor {
 		this.xmlLocation = xmlroot;
 		this.htmlLocation = htmlroot;
 		if (topatterns != null) {
-			ArrayList<Pattern> pats = new ArrayList<>(topatterns.length);
+			List<Pattern> pats = new ArrayList<>(topatterns.length);
 			for (String topattern : topatterns) {
 				try {
 					pats.add(Pattern.compile(topattern));
@@ -613,7 +603,7 @@ public class UseReportConverter extends HTMLConvertor {
 			}
 		}
 		if (frompatterns != null) {
-			ArrayList<Pattern> pats = new ArrayList<>(frompatterns.length);
+			List<Pattern> pats = new ArrayList<>(frompatterns.length);
 			for (String frompattern : frompatterns) {
 				try {
 					pats.add(Pattern.compile(frompattern));
@@ -885,14 +875,13 @@ public class UseReportConverter extends HTMLConvertor {
 	 * HTML report location
 	 */
 	void writeMetaPage(File htmlroot) throws Exception {
-		File meta = null;
 		File file = new File(getReportsRoot(), "meta.xml"); //$NON-NLS-1$
 		if (!file.exists()) {
 			// do nothing if no meta.xml file
 			return;
 		}
 		String filename = "meta"; //$NON-NLS-1$
-		meta = new File(htmlroot, filename + HTML_EXTENSION);
+		File meta = new File(htmlroot, filename + HTML_EXTENSION);
 		if (!meta.exists()) {
 			meta.createNewFile();
 		}
@@ -1165,9 +1154,8 @@ public class UseReportConverter extends HTMLConvertor {
 		buffer.append("<td bgcolor=\"").append(REFERENCES_TABLE_HEADER_COLOUR).append("\">").append(OPEN_B) //$NON-NLS-1$ //$NON-NLS-2$
 				.append(SearchMessages.UseReportConverter_member).append("</b></td>\n"); //$NON-NLS-1$
 		buffer.append(CLOSE_TR);
-		IElementDescriptor desc = null;
 		for (Entry<IMemberDescriptor, Member> entry : map.entrySet()) {
-			desc = entry.getKey();
+			IElementDescriptor desc = entry.getKey();
 			buffer.append(OPEN_TR);
 			buffer.append("<td align=\"left\">\n"); //$NON-NLS-1$
 			buffer.append(OPEN_B);
@@ -1362,23 +1350,21 @@ public class UseReportConverter extends HTMLConvertor {
 			}
 			buffer.append(OPEN_P);
 			buffer.append(NLS.bind(SearchMessages.UseReportConverter_bundles_that_were_not_searched, new String[] {
-					useNotSearchedXml == false ? "<a href=\"./not_searched.html\">" : "<a href=\"../xml/not_searched.xml\">", //$NON-NLS-1$//$NON-NLS-2$
+					!useNotSearchedXml ? "<a href=\"./not_searched.html\">" : "<a href=\"../xml/not_searched.xml\">", //$NON-NLS-1$//$NON-NLS-2$
 					"</a></p>\n" }));//$NON-NLS-1$
-			String additional = getAdditionalIndexInfo(scanResult.size() > 0);
+			String additional = getAdditionalIndexInfo(!scanResult.isEmpty());
 			if (additional != null) {
 				buffer.append(additional);
 			}
-			if (scanResult.size() > 0) {
+			if (!scanResult.isEmpty()) {
 				buffer.append(OPEN_P).append(SearchMessages.UseReportConverter_inlined_description).append(CLOSE_P);
 				buffer.append(getColourLegend());
 				buffer.append(getReferencesTableHeader(SearchMessages.UseReportConverter_references, SearchMessages.UseReportConverter_bundle, true));
-				if (scanResult.size() > 0) {
-					File refereehtml = null;
-					String link = null;
+				if (!scanResult.isEmpty()) {
 					for (Object obj : scanResult) {
 						if (obj instanceof Report report) {
-							refereehtml = new File(getReportsRoot(), report.name + File.separator + "index.html"); //$NON-NLS-1$
-							link = extractLinkFrom(getReportsRoot(), refereehtml.getAbsolutePath());
+							File refereehtml = new File(getReportsRoot(), report.name + File.separator + "index.html"); //$NON-NLS-1$
+							String link = extractLinkFrom(getReportsRoot(), refereehtml.getAbsolutePath());
 							buffer.append(getReferenceTableEntry(report.counts, link, report.name, true));
 						}
 					}
@@ -1583,31 +1569,23 @@ public class UseReportConverter extends HTMLConvertor {
 		}
 
 	}
+
 	/**
 	 * Returns the use metadata from this scan
 	 */
 	IMetadata getMetadata() throws Exception {
 		if (this.metadata == null) {
-			File xml = null;
-			try {
-				xml = new File(getReportsRoot(), "meta" + XML_EXTENSION); //$NON-NLS-1$
-				if (!xml.exists()) {
-					// try looking in the default 'xml' directory as a raw
-					// report root
-					// might have been specified
-					xml = new File(getReportsRoot() + File.separator + "xml", "meta" + XML_EXTENSION); //$NON-NLS-1$//$NON-NLS-2$
-				}
-				if (xml.exists()) {
+			File xml = getXML("meta"); //$NON-NLS-1$
+			if (xml.exists()) {
+				try {
 					String xmlstr = Util.getFileContentAsString(xml);
 					Element doc = Util.parseDocument(xmlstr.trim());
 					this.metadata = new UseMetadata();
-					Element element = null;
-					String value = null, name = null;
 					NodeList nodes = doc.getElementsByTagName("*"); //$NON-NLS-1$
 					for (int i = 0; i < nodes.getLength(); i++) {
-						element = (Element) nodes.item(i);
-						value = element.getAttribute(UseMetadata.VALUE);
-						name = element.getNodeName();
+						Element element = (Element) nodes.item(i);
+						String value = element.getAttribute(UseMetadata.VALUE);
+						String name = element.getNodeName();
 						if (UseMetadata.FLAGS.equals(name)) {
 							try {
 								this.metadata.setSearchflags(Integer.parseInt(value));
@@ -1657,9 +1635,10 @@ public class UseReportConverter extends HTMLConvertor {
 							continue;
 						}
 					}
+				} catch (CoreException e) {
+					throw new Exception(NLS.bind(SearchMessages.UseReportConverter_core_exep_reading_metadata,
+							xml.getAbsolutePath()));
 				}
-			} catch (CoreException e) {
-				throw new Exception(NLS.bind(SearchMessages.UseReportConverter_core_exep_reading_metadata, xml.getAbsolutePath()));
 			}
 		}
 		return this.metadata;
@@ -1670,16 +1649,9 @@ public class UseReportConverter extends HTMLConvertor {
 	 */
 	int getFilteredCount() throws Exception {
 		if (this.filteredCount == -1) {
-			File xml = null;
-			try {
-				xml = new File(getReportsRoot(), "counts" + XML_EXTENSION); //$NON-NLS-1$
-				if (!xml.exists()) {
-					// try looking in the default 'xml' directory as a raw
-					// report root
-					// might have been specified
-					xml = new File(getReportsRoot() + File.separator + "xml", "meta" + XML_EXTENSION); //$NON-NLS-1$//$NON-NLS-2$
-				}
-				if (xml.exists()) {
+			File xml = getXML("counts"); //$NON-NLS-1$
+			if (xml.exists()) {
+				try {
 					String xmlstr = Util.getFileContentAsString(xml);
 					Element doc = Util.parseDocument(xmlstr.trim());
 
@@ -1692,12 +1664,23 @@ public class UseReportConverter extends HTMLConvertor {
 							filteredCount = Integer.parseInt(value);
 						}
 					}
+				} catch (CoreException e) {
+					throw new Exception(NLS.bind(SearchMessages.UseReportConverter_core_exep_reading_metadata,
+							xml.getAbsolutePath()));
 				}
-			} catch (CoreException e) {
-				throw new Exception(NLS.bind(SearchMessages.UseReportConverter_core_exep_reading_metadata, xml.getAbsolutePath()));
 			}
 		}
 		return filteredCount;
+	}
+
+	private File getXML(String type) {
+		File xml = new File(getReportsRoot(), type + XML_EXTENSION);
+		if (xml.exists()) {
+			return xml;
+		}
+		// try looking in the default 'xml' directory as a raw report root
+		// might have been specified
+		return new File(getReportsRoot() + File.separator + "xml", "meta" + XML_EXTENSION); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -1706,16 +1689,9 @@ public class UseReportConverter extends HTMLConvertor {
 	 * @return the array of patterns or <code>null</code>
 	 */
 	private String[] readPatterns(Element element) {
-		String[] pats = null;
 		NodeList patterns = element.getElementsByTagName(UseMetadata.PATTERN);
-		int length = patterns.getLength();
-		if (length > 0) {
-			pats = new String[length];
-			for (int j = 0; j < length; j++) {
-				pats[j] = ((Element) patterns.item(j)).getAttribute(UseMetadata.VALUE);
-			}
-		}
-		return pats;
+		return IntStream.range(0, patterns.getLength()).mapToObj(patterns::item).map(Element.class::cast)
+				.map(e -> e.getAttribute(UseMetadata.VALUE)).toArray(String[]::new);
 	}
 
 	/**
