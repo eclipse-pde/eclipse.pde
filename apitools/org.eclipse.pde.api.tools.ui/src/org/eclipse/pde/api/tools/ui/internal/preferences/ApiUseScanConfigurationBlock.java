@@ -281,9 +281,9 @@ public class ApiUseScanConfigurationBlock {
 	 */
 	private void save() {
 		try {
-			ArrayList<Key> changes = new ArrayList<>();
+			List<Key> changes = new ArrayList<>();
 			collectChanges(fLookupOrder[0], changes);
-			if (changes.size() > 0) {
+			if (!changes.isEmpty()) {
 				fManager.applyChanges();
 			}
 

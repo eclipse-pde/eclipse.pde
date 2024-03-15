@@ -17,7 +17,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -74,10 +76,8 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 	public static final String ID = "org.eclipse.pde.api.tools.ui.apiusescan.prefpage"; //$NON-NLS-1$
 
 	private IWorkingCopyManager fManager;
-	CheckboxTableViewer fTableViewer;
-	HashSet<String> fLocationList = new HashSet<>();
-	Button remove = null;
-	Button editbutton = null;
+	private CheckboxTableViewer fTableViewer;
+	private final Set<String> fLocationList = new HashSet<>();
 
 	/**
 	 * Column provider for the use scan table
@@ -161,10 +161,10 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 			}
 		}));
 
-		editbutton = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiUseScanPreferencePage_1, null);
+		Button editbutton = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiUseScanPreferencePage_1, null);
 		editbutton.setEnabled(false);
 		editbutton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> edit()));
-		remove = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiUseScanPreferencePage_6, null);
+		Button remove = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiUseScanPreferencePage_6, null);
 		remove.setEnabled(false);
 		remove.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> removeLocation()));
 
@@ -175,7 +175,7 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 		});
 		fTableViewer.addDoubleClickListener(event -> edit());
 
-		HashMap<String, Object> linkdata = new HashMap<>();
+		Map<String, Object> linkdata = new HashMap<>();
 		linkdata.put(ApiErrorsWarningsPreferencePage.INITIAL_TAB, Integer.valueOf(ApiErrorsWarningsConfigurationBlock.API_USE_SCANS_PAGE_ID));
 		PreferenceLinkArea apiErrorLinkArea = new PreferenceLinkArea(comp, SWT.NONE, ApiErrorsWarningsPreferencePage.ID, PreferenceMessages.ApiUseScanPreferencePage_9, (IWorkbenchPreferenceContainer) getContainer(), linkdata);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
@@ -275,15 +275,11 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 	 * Validates that the scan are all still valid
 	 */
 	private void validateScans() {
-		if (fLocationList.size() > 0) {
-			String loc = null;
-			for (Iterator<String> iterator = fLocationList.iterator(); iterator.hasNext();) {
-				loc = iterator.next();
-				if (!UseScanManager.isValidScanLocation(loc)) {
-					setErrorMessage(NLS.bind(PreferenceMessages.ApiUseScanPreferencePage_8, loc));
-					setValid(false);
-					return;
-				}
+		for (String loc : fLocationList) {
+			if (!UseScanManager.isValidScanLocation(loc)) {
+				setErrorMessage(NLS.bind(PreferenceMessages.ApiUseScanPreferencePage_8, loc));
+				setValid(false);
+				return;
 			}
 		}
 		setValid(true);
@@ -324,11 +320,11 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 
 		String location = getStoredValue(IApiCoreConstants.API_USE_SCAN_LOCATION, null);
 
-		ArrayList<String> checkedLocations = new ArrayList<>();
+		List<String> checkedLocations = new ArrayList<>();
 		if (location != null && location.length() > 0) {
 			String[] locations = location.split(UseScanManager.ESCAPE_REGEX + UseScanManager.LOCATION_DELIM);
 			for (String locationString : locations) {
-				String values[] = locationString.split(UseScanManager.ESCAPE_REGEX + UseScanManager.STATE_DELIM);
+				String[] values = locationString.split(UseScanManager.ESCAPE_REGEX + UseScanManager.STATE_DELIM);
 				fLocationList.add(values[0]);
 				if (Boolean.parseBoolean(values[1])) {
 					checkedLocations.add(values[0]);
@@ -362,10 +358,9 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 			IProject[] projects = Util.getApiProjects();
 			// If there are API projects in the workspace, ask the user if they
 			// should be cleaned and built to run the new tooling
-			if (projects != null) {
-				if (MessageDialog.openQuestion(getShell(), PreferenceMessages.ApiUseScanPreferencePage_11, PreferenceMessages.ApiUseScanPreferencePage_12)) {
-					Util.getBuildJob(projects).schedule();
-				}
+			if (projects != null && MessageDialog.openQuestion(getShell(),
+					PreferenceMessages.ApiUseScanPreferencePage_11, PreferenceMessages.ApiUseScanPreferencePage_12)) {
+				Util.getBuildJob(projects).schedule();
 			}
 		}
 		if (hasLocationChanges && newCheckedLocations.length == 0) {
@@ -392,9 +387,7 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 						IResource.DEPTH_INFINITE);
 			} catch (CoreException e) {
 			}
-
 		}
-		return;
 	}
 
 	/**
@@ -409,11 +402,11 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 			return false;
 		}
 
-		ArrayList<String> oldCheckedElements = new ArrayList<>();
+		List<String> oldCheckedElements = new ArrayList<>();
 		if (oldLocations != null && oldLocations.length() > 0) {
 			String[] locations = oldLocations.split(UseScanManager.ESCAPE_REGEX + UseScanManager.LOCATION_DELIM);
 			for (String location : locations) {
-				String values[] = location.split(UseScanManager.ESCAPE_REGEX + UseScanManager.STATE_DELIM);
+				String[] values = location.split(UseScanManager.ESCAPE_REGEX + UseScanManager.STATE_DELIM);
 				if (Boolean.parseBoolean(values[1])) {
 					oldCheckedElements.add(values[0]);
 				}

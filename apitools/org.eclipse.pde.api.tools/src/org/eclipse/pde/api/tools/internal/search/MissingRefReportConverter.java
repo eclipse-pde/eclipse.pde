@@ -101,18 +101,15 @@ public class MissingRefReportConverter extends UseReportConverter {
 				StringBuilder typeProblems = new StringBuilder();
 				StringBuilder methodProblems = new StringBuilder();
 				StringBuilder fieldProblems = new StringBuilder();
-				Integer key = null;
-				TreeMap<String, List<IApiProblem>> types = null;
-				for (Entry<Integer, TreeMap<String, List<IApiProblem>>> entry : report.apiProblems.entrySet()) {
-					key = entry.getKey();
-					types = entry.getValue();
-					switch (key.intValue()) {
+				report.apiProblems.forEach((key, types) -> {
+					switch (key.intValue())
+						{
 						case IApiProblem.API_USE_SCAN_TYPE_PROBLEM -> typeProblems.append(getProblemTable(types));
 						case IApiProblem.API_USE_SCAN_METHOD_PROBLEM -> methodProblems.append(getProblemTable(types));
 						case IApiProblem.API_USE_SCAN_FIELD_PROBLEM -> fieldProblems.append(getProblemTable(types));
 						default -> { /**/ }
 						}
-				}
+				});
 				buffer.append(getProblemsTableHeader(SearchMessages.MissingRefReportConverter_ProblemDetails, SearchMessages.MissingRefReportConverter_ProblemTypes));
 				if (typeProblems.length() > 0) {
 					buffer.append(getProblemRow(typeProblems, SearchMessages.MissingRefReportConverter_Type));
@@ -243,17 +240,15 @@ public class MissingRefReportConverter extends UseReportConverter {
 		int fieldProblems = 0;
 
 		public void add(List<IApiProblem> apipbs) {
-			List<IApiProblem> list = null;
-			TreeMap<String, List<IApiProblem>> types = null;
 			for (IApiProblem pb : apipbs) {
-				Integer key = Integer.valueOf(pb.getKind());
-				types = this.apiProblems.get(key);
+				Integer key = pb.getKind();
+				TreeMap<String, List<IApiProblem>> types = this.apiProblems.get(key);
 				if (types == null) {
 					types = new TreeMap<>(missingcompare);
 					this.apiProblems.put(key, types);
 				}
 				String tname = pb.getTypeName();
-				list = types.get(tname);
+				List<IApiProblem> list = types.get(tname);
 				if (list == null) {
 					list = new ArrayList<>();
 					types.put(tname, list);
@@ -312,7 +307,7 @@ public class MissingRefReportConverter extends UseReportConverter {
 			System.out.println("Parsing use scan..."); //$NON-NLS-1$
 			start = System.currentTimeMillis();
 		}
-		List<?> result = parse();
+		List<Report> result = parse();
 		if (ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
 			System.out.println("done in: " + (System.currentTimeMillis() - start) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			System.out.println("Sorting reports and writing index..."); //$NON-NLS-1$
@@ -362,9 +357,9 @@ public class MissingRefReportConverter extends UseReportConverter {
 			buffer.append(OPEN_P);
 			buffer.append(NLS.bind(SearchMessages.MissingRefReportConverter_NotSearched, new String[] {
 					"<a href=\"./not_searched.html\">", "</a></p>\n" })); //$NON-NLS-1$//$NON-NLS-2$
-			if (result.size() > 0) {
+			if (!result.isEmpty()) {
 				buffer.append(getProblemSummaryTable());
-				if (result.size() > 0) {
+				if (!result.isEmpty()) {
 					for (Object obj : result) {
 						if (obj instanceof Report report) {
 							File refereehtml = new File(getReportsRoot(), report.name + File.separator + "index.html"); //$NON-NLS-1$
@@ -507,7 +502,7 @@ public class MissingRefReportConverter extends UseReportConverter {
 	/**
 	 * Parse the XML directories and report.xml and generate HTML for them
 	 */
-	protected List<?> parse() throws Exception {
+	protected List<Report> parse() throws Exception {
 		MissingRefParser lparser = new MissingRefParser();
 		MissingRefVisitor visitor = new MissingRefVisitor();
 		lparser.parse(getXmlLocation(), visitor);
