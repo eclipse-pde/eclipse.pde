@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2022 IBM Corporation and others.
+ * Copyright (c) 2010, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -30,7 +30,7 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEManager;
-import org.eclipse.pde.internal.core.natures.BndProject;
+import org.eclipse.pde.internal.core.natures.PDE;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
@@ -67,7 +67,7 @@ public class PDEProject {
 				return project.getFolder(path);
 			}
 		}
-		if (BndProject.isBndProject(project)) {
+		if (PDE.isBndProject(project)) {
 			try {
 				IFolder outputFolder = getJavaOutputFolder(project);
 				if (outputFolder != null) {

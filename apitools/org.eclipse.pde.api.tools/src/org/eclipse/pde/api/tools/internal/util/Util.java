@@ -373,12 +373,8 @@ public final class Util {
 		for (IProject allProject : allProjects) {
 			project = allProject;
 			if (project.isAccessible()) {
-				try {
-					if (project.hasNature(org.eclipse.pde.api.tools.internal.provisional.ApiPlugin.NATURE_ID)) {
-						temp.add(project);
-					}
-				} catch (CoreException e) {
-					// should not happen
+				if (Util.isApiProject(project)) {
+					temp.add(project);
 				}
 			}
 		}
@@ -399,20 +395,13 @@ public final class Util {
 	public static IProject[] getApiProjectsMinSourceLevel(String sourcelevel) {
 		IProject[] allProjects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		ArrayList<IProject> temp = new ArrayList<>();
-		IProject project = null;
 		for (IProject allProject : allProjects) {
-			project = allProject;
-			if (project.isAccessible()) {
-				try {
-					if (project.hasNature(org.eclipse.pde.api.tools.internal.provisional.ApiPlugin.NATURE_ID)) {
-						IJavaProject jp = JavaCore.create(project);
-						String src = jp.getOption(JavaCore.COMPILER_SOURCE, true);
-						if (src != null && src.compareTo(sourcelevel) >= 0) {
-							temp.add(project);
-						}
-					}
-				} catch (CoreException e) {
-					// should not happen
+			IProject project = allProject;
+			if (Util.isApiProject(project)) {
+				IJavaProject jp = JavaCore.create(project);
+				String src = jp.getOption(JavaCore.COMPILER_SOURCE, true);
+				if (src != null && src.compareTo(sourcelevel) >= 0) {
+					temp.add(project);
 				}
 			}
 		}
@@ -1523,7 +1512,7 @@ public final class Util {
 	 */
 	public static boolean isApiProject(IProject project) {
 		try {
-			return project.hasNature(ApiPlugin.NATURE_ID);
+			return project.isOpen() && project.hasNature(ApiPlugin.NATURE_ID);
 		} catch (CoreException e) {
 			return false;
 		}
@@ -1536,12 +1525,9 @@ public final class Util {
 	 * @return <code>true</code> if the project is a java project,
 	 *         <code>false</code> otherwise
 	 */
+	@SuppressWarnings("restriction")
 	public static boolean isJavaProject(IProject project) {
-		try {
-			return project.hasNature(JavaCore.NATURE_ID);
-		} catch (CoreException e) {
-			return false;
-		}
+		return org.eclipse.pde.internal.core.natures.PDE.hasJavaNature(project);
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2020 IBM Corporation and others.
+ * Copyright (c) 2008, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -913,26 +913,30 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 						projects = new IProject[] {fProject};
 					}
 					SubMonitor subMonitor = SubMonitor.convert(monitor, projects.length * 2);
-					for (IProject project : projects) {
+					for (IProject projectToBuild : projects) {
 						SubMonitor iterationMonitor = subMonitor.split(2).setWorkRemaining(2);
-						IProject projectToBuild = project;
-						if (!projectToBuild.isOpen())
+						if (!projectToBuild.isOpen()) {
 							continue;
+						}
 						ICommand[] commands;
-						if (projectToBuild.isAccessible())
+						if (projectToBuild.isAccessible()) {
 							commands = ((Project) projectToBuild).internalGetDescription().getBuildSpec(false);
-						else
+						} else {
 							commands = null;
-						if (projectToBuild.hasNature(PDE.PLUGIN_NATURE)) {
-							if (fBuilders.contains(PDE.MANIFEST_BUILDER_ID)	&& hasBuilder(commands, "org.eclipse.pde.ManifestBuilder")) { //$NON-NLS-1$
+						}
+						if (PDE.hasPluginNature(projectToBuild)) {
+							if (fBuilders.contains(PDE.MANIFEST_BUILDER_ID)
+									&& hasBuilder(commands, PDE.MANIFEST_BUILDER_ID)) {
 								projectToBuild.build(IncrementalProjectBuilder.FULL_BUILD, PDE.MANIFEST_BUILDER_ID,
 										null, iterationMonitor.split(1));
 							}
-							if (fBuilders.contains(PDE.SCHEMA_BUILDER_ID) && hasBuilder(commands,"org.eclipse.pde.SchemaBuilder")) { //$NON-NLS-1$
+							if (fBuilders.contains(PDE.SCHEMA_BUILDER_ID)
+									&& hasBuilder(commands, PDE.SCHEMA_BUILDER_ID)) {
 								projectToBuild.build(IncrementalProjectBuilder.FULL_BUILD, PDE.SCHEMA_BUILDER_ID, null,
 										iterationMonitor.split(1));
 							}
-						} else if (projectToBuild.hasNature(PDE.FEATURE_NATURE)  && hasBuilder(commands,"org.eclipse.pde.FeatureBuilder")) { //$NON-NLS-1$
+						} else if (PDE.hasFeatureNature(projectToBuild)
+								&& hasBuilder(commands, PDE.FEATURE_BUILDER_ID)) {
 							if (fBuilders.contains(PDE.FEATURE_BUILDER_ID)) {
 								projectToBuild.build(IncrementalProjectBuilder.FULL_BUILD, PDE.FEATURE_BUILDER_ID, null,
 										iterationMonitor.split(2));

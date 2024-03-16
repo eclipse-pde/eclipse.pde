@@ -62,6 +62,7 @@ import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.LoadTargetDefinitionJob;
 import org.eclipse.pde.core.target.TargetBundle;
+import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.core.target.P2TargetUtils;
 import org.osgi.resource.Resource;
 
@@ -323,45 +324,39 @@ public class PluginModelManager implements IModelProviderListener {
 			IPluginModelBase[] models = getWorkspaceModels();
 			for (IPluginModelBase model : models) {
 				IProject project = model.getUnderlyingResource().getProject();
-				try {
-					if (project.hasNature(JavaCore.NATURE_ID)) {
-						map.put(JavaCore.create(project), new RequiredPluginsClasspathContainer(model, project));
-					}
-				} catch (CoreException e) {
+				if (PDE.hasJavaNature(project)) {
+					map.put(JavaCore.create(project), new RequiredPluginsClasspathContainer(model, project));
 				}
 			}
 		} else {
 			BundleDelta[] deltas = delta.getChanges();
 			for (BundleDelta bundleDelta : deltas) {
-				try {
-					// update classpath for workspace plug-ins that are housed in a
-					// Java project hand have been affected by the processd model changes.
-					IPluginModelBase model = findModel(bundleDelta.getBundle());
-					IResource resource = model == null ? null : model.getUnderlyingResource();
-					if (resource != null) {
-						IProject project = resource.getProject();
-						if (project.hasNature(JavaCore.NATURE_ID)) {
-							IJavaProject jProject = JavaCore.create(project);
-							if (!map.containsKey(jProject)) {
-								map.put(jProject, new RequiredPluginsClasspathContainer(model, project));
-							}
+				// update classpath for workspace plug-ins that are housed in a
+				// Java project hand have been affected by the processd model changes.
+				IPluginModelBase model = findModel(bundleDelta.getBundle());
+				IResource resource = model == null ? null : model.getUnderlyingResource();
+				if (resource != null) {
+					IProject project = resource.getProject();
+					if (PDE.hasJavaNature(project)) {
+						IJavaProject jProject = JavaCore.create(project);
+						if (!map.containsKey(jProject)) {
+							map.put(jProject, new RequiredPluginsClasspathContainer(model, project));
 						}
 					}
-				} catch (CoreException e) {
 				}
 			}
 			// do secondary dependencies
 			IPluginModelBase[] models = getWorkspaceModels();
 			for (IPluginModelBase model : models) {
 				IProject project = model.getUnderlyingResource().getProject();
+				if (!PDE.hasJavaNature(project)) {
+					continue;
+				}
+				IJavaProject jProject = JavaCore.create(project);
+				if (map.containsKey(jProject)) {
+					continue;
+				}
 				try {
-					if (!project.hasNature(JavaCore.NATURE_ID)) {
-						continue;
-					}
-					IJavaProject jProject = JavaCore.create(project);
-					if (map.containsKey(jProject)) {
-						continue;
-					}
 					IBuild build = ClasspathUtilCore.getBuild(model);
 					if (build != null && build.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES) != null) {
 						map.put(jProject, new RequiredPluginsClasspathContainer(model, build, project));

@@ -25,7 +25,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
-import org.eclipse.pde.internal.core.natures.BndProject;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -45,8 +44,8 @@ public class ConvertAutomaticManifestAction extends AbstractHandler {
 			if (HandlerUtil.getCurrentSelection(event) instanceof IStructuredSelection selection) {
 				List<IProject> projects = selection.stream().map(ConvertAutomaticManifestAction::toProject)
 						.filter(Objects::nonNull)
-						.filter(proj -> PDE.hasPluginNature(proj))
-						.filter(proj -> !BndProject.isBndProject(proj)).toList();
+						.filter(PDE::hasPluginNature)
+						.filter(proj -> !PDE.isBndProject(proj)).toList();
 				if (projects.isEmpty()) {
 					MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(),
 							PDEUIMessages.ConvertAutomaticManifestWizardPage_title,

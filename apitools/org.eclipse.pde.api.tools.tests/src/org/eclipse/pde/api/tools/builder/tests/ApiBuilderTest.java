@@ -65,6 +65,7 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
+import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.api.tools.tests.util.FileUtils;
 import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
@@ -1146,7 +1147,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 			contents.append(System.lineSeparator());
 			contents.append("    is open: " + project.isOpen()); //$NON-NLS-1$
 			contents.append(System.lineSeparator());
-			if (project.hasNature(JavaCore.NATURE_ID) && project.isAccessible()) {
+			if (Util.isJavaProject(project) && project.isAccessible()) {
 				IJavaProject javaProject = JavaCore.create(project);
 				boolean ignoreUnresolvedEntry = true;
 				IClasspathEntry[] projectClassPath = javaProject.getResolvedClasspath(ignoreUnresolvedEntry);

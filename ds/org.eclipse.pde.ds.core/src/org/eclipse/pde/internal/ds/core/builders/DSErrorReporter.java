@@ -472,17 +472,13 @@ public class DSErrorReporter extends XMLErrorReporter {
 
 	}
 
-	private void validateJavaElement(String fullyQualifiedName,
-			String elementName, String attrName, int index) {
-		try {
-			if (fProject.hasNature(JavaCore.NATURE_ID)) {
-				IJavaProject jp = JavaCore.create(fProject);
-				if (!DSJavaHelper.isOnClasspath(fullyQualifiedName, (jp))) {
-					reportJavaTypeNotFound(elementName, attrName,
-							fullyQualifiedName, index);
-				}
+	@SuppressWarnings("restriction")
+	private void validateJavaElement(String fullyQualifiedName, String elementName, String attrName, int index) {
+		if (org.eclipse.pde.internal.core.natures.PDE.hasJavaNature(fProject)) {
+			IJavaProject jp = JavaCore.create(fProject);
+			if (!DSJavaHelper.isOnClasspath(fullyQualifiedName, (jp))) {
+				reportJavaTypeNotFound(elementName, attrName, fullyQualifiedName, index);
 			}
-		} catch (CoreException e) {
 		}
 	}
 

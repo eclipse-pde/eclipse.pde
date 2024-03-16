@@ -46,6 +46,7 @@ import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.bundle.BundleFragment;
 import org.eclipse.pde.internal.core.bundle.BundlePlugin;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
+import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.core.plugin.Fragment;
 import org.eclipse.pde.internal.core.plugin.Plugin;
 import org.eclipse.pde.internal.core.plugin.PluginBase;
@@ -88,14 +89,7 @@ public class ClasspathUtilCore {
 	public static Stream<IClasspathEntry> classpathEntries(Stream<IPluginModelBase> models) {
 		Map<Boolean, List<IPluginModelBase>> collect = models.collect(Collectors.partitioningBy(model -> {
 			IResource resource = model.getUnderlyingResource();
-			if (resource != null) {
-				try {
-					return resource.getProject().hasNature(JavaCore.NATURE_ID);
-				} catch (CoreException e) {
-					// nothing we can do then...
-				}
-			}
-			return false;
+			return resource != null && PDE.hasJavaNature(resource.getProject());
 		}));
 		List<IPluginModelBase> javaModels = collect.get(true);
 		List<IPluginModelBase> externalModels = collect.get(false);

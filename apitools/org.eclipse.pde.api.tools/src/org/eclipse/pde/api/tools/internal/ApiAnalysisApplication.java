@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019, 2021 Red Hat Inc. and others.
+ * Copyright (c) 2019, 2023 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import org.eclipse.core.resources.ICommand;
@@ -54,6 +55,7 @@ import org.eclipse.pde.core.target.LoadTargetDefinitionJob;
 import org.eclipse.pde.core.target.TargetBundle;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.osgi.framework.Bundle;
 
@@ -376,11 +378,13 @@ public class ApiAnalysisApplication implements IApplication {
 		return project;
 	}
 
+	@SuppressWarnings("restriction")
+	private static final Set<String> REMOVED_BUILDERS = Set.of(PDE.MANIFEST_BUILDER_ID, PDE.SCHEMA_BUILDER_ID);
+
 	private static ICommand[] removeManifestAndSchemaBuilders(ICommand[] buildSpec) {
 		// remove manifest and schema builders
-		return Arrays.stream(buildSpec).filter(x -> !("org.eclipse.pde.ManifestBuilder".equals(x.getBuilderName()) //$NON-NLS-1$
-				|| "org.eclipse.pde.SchemaBuilder".equals(x.getBuilderName())) //$NON-NLS-1$
-		).toArray(ICommand[]::new);
+		return Arrays.stream(buildSpec).filter(x -> !REMOVED_BUILDERS.contains(x.getBuilderName()))
+				.toArray(ICommand[]::new);
 	}
 
 	@Override

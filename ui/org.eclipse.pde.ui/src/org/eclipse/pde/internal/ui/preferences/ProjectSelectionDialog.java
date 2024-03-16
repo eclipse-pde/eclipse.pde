@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 IBM Corporation and others.
+ * Copyright (c) 2008, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -62,7 +62,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 				try {
 					IJavaProject[] projects = model.getJavaProjects();
 					for (IJavaProject project : projects) {
-						if (project.getProject().hasNature(PDE.PLUGIN_NATURE)) {
+						if (PDE.hasPluginNature(project.getProject())) {
 							set.add(project);
 						}
 					}

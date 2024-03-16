@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2023 Code 9 Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -123,18 +123,12 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 	}
 
 	private void setComponentNameText(IProject project) {
-		try {
-			if (project.hasNature(PDE.PLUGIN_NATURE)) {
-				WorkspaceBundlePluginModel model = new WorkspaceBundlePluginModel(
-						PDEProject.getManifest(project),
-						null);
-				model.load();
-				String header = model.getBundleModel().getBundle().getHeader(
-						Constants.BUNDLE_SYMBOLICNAME);
-				String[] h = header.split(";"); //$NON-NLS-1$
-				fDSComponentNameText.setText(h[0]);
-			}
-		} catch (CoreException e) {
+		if (PDE.hasPluginNature(project)) {
+			WorkspaceBundlePluginModel model = new WorkspaceBundlePluginModel(PDEProject.getManifest(project), null);
+			model.load();
+			String header = model.getBundleModel().getBundle().getHeader(Constants.BUNDLE_SYMBOLICNAME);
+			String[] h = header.split(";"); //$NON-NLS-1$
+			fDSComponentNameText.setText(h[0]);
 		}
 	}
 

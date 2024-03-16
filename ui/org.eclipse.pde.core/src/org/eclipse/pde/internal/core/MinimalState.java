@@ -52,6 +52,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.BundleHelper;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
+import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.core.util.ManifestUtils;
 import org.eclipse.pde.internal.core.util.UtilMessages;
 import org.osgi.framework.BundleException;
@@ -299,7 +300,6 @@ public class MinimalState {
 			}
 		});
 	}
-	private static final String PDE_MANIFEST_BUILDER = "org.eclipse.pde.ManifestBuilder"; //$NON-NLS-1$
 
 	public static void triggerSystemPackagesReload() {
 		final String jobFamily = "pde.internal.ReresolveStateAfterVMorEEchanges"; //$NON-NLS-1$
@@ -336,7 +336,7 @@ public class MinimalState {
 		MultiStatus status = new MultiStatus(MinimalState.class, 0, "Reload of JRE system-packages encountered issues"); //$NON-NLS-1$
 		for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
 			try {
-				project.build(IncrementalProjectBuilder.FULL_BUILD, PDE_MANIFEST_BUILDER, null, null);
+				project.build(IncrementalProjectBuilder.FULL_BUILD, PDE.MANIFEST_BUILDER_ID, null, null);
 			} catch (CoreException e) { // ignore
 				status.add(e.getStatus());
 			}

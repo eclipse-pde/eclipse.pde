@@ -54,6 +54,7 @@ import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
+import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
@@ -597,13 +598,9 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 	}
 
 	private boolean isJavaProject() {
-		try {
-			IBuildModel buildModel = getBuildModel();
-			IProject project = buildModel.getUnderlyingResource().getProject();
-			return project.hasNature(JavaCore.NATURE_ID);
-		} catch (CoreException e) {
-		}
-		return false;
+		IBuildModel buildModel = getBuildModel();
+		IProject project = buildModel.getUnderlyingResource().getProject();
+		return PDE.hasJavaNature(project);
 	}
 
 	private boolean isReadOnly() {

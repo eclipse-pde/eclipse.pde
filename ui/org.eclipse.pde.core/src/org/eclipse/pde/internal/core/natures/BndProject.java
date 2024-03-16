@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.natures;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.bnd.BndBuilder;
 
@@ -36,20 +35,4 @@ public class BndProject extends BaseProject {
 	public void deconfigure() throws CoreException {
 		removeFromBuildSpec(BndBuilder.BUILDER_ID);
 	}
-
-	public static boolean isBndProject(IProject project) {
-		if (project.isOpen() && hasRequiredNatures(project)) {
-			return true;
-		}
-		return false;
-	}
-
-	private static boolean hasRequiredNatures(IProject project) {
-		try {
-			return project.hasNature(BndProject.NATURE_ID);
-		} catch (CoreException e) {
-			return false;
-		}
-	}
-
 }
