@@ -157,7 +157,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		try {
 			DeltaXmlVisitor xmlVisitor = new DeltaXmlVisitor();
 			delta.accept(xmlVisitor);
-			assertNotNull("No XML", xmlVisitor.getXML()); //$NON-NLS-1$
+			assertNotNull("No XML", xmlVisitor.getDocument()); //$NON-NLS-1$
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
 		}
@@ -2469,7 +2469,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		try {
 			DeltaXmlVisitor xmlVisitor = new DeltaXmlVisitor();
 			delta.accept(xmlVisitor);
-			assertNotNull("No XML", xmlVisitor.getXML()); //$NON-NLS-1$
+			assertNotNull("No XML", xmlVisitor.getDocument()); //$NON-NLS-1$
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
 		}
