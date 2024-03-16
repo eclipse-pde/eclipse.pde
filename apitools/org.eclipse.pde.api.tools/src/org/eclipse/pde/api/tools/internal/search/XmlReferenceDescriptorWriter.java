@@ -13,13 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.search;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -299,11 +295,7 @@ public class XmlReferenceDescriptorWriter {
 				}
 			}
 			root.setAttribute(IApiXmlConstants.ATTR_REFERENCE_COUNT, Integer.toString(count));
-			try (BufferedWriter writer = new BufferedWriter(
-					new OutputStreamWriter(new FileOutputStream(out), StandardCharsets.UTF_8))) {
-				writer.write(Util.serializeDocument(doc));
-				writer.flush();
-			}
+			Util.writeDocumentToFile(doc, out.toPath());
 		}
 	}
 

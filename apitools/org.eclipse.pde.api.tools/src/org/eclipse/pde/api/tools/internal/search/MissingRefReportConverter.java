@@ -14,11 +14,9 @@
 package org.eclipse.pde.api.tools.internal.search;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -77,16 +75,8 @@ public class MissingRefReportConverter extends UseReportConverter {
 		}
 
 		private void writeIndexFileForComponent(Report report) throws Exception {
-			File originhtml = null;
+			Path originhtml = Path.of(getHtmlLocation(), report.name, "index.html"); //$NON-NLS-1$
 			try {
-				File htmlroot = new File(getHtmlLocation(), report.name);
-				if (!htmlroot.exists()) {
-					htmlroot.mkdirs();
-				}
-				originhtml = new File(htmlroot, "index.html"); //$NON-NLS-1$
-				if (!originhtml.exists()) {
-					originhtml.createNewFile();
-				}
 				StringBuilder buffer = new StringBuilder();
 				buffer.append(HTML_HEADER);
 				buffer.append(OPEN_HTML).append(OPEN_HEAD).append(CONTENT_TYPE_META);
@@ -126,13 +116,9 @@ public class MissingRefReportConverter extends UseReportConverter {
 				buffer.append(W3C_FOOTER);
 				buffer.append(CLOSE_BODY);
 
-				try (PrintWriter writer = new PrintWriter(
-						new OutputStreamWriter(new FileOutputStream(originhtml), StandardCharsets.UTF_8))) {
-					writer.println(buffer.toString());
-					writer.flush();
-				}
+				writeString(originhtml, buffer);
 			} catch (IOException ioe) {
-				throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, originhtml.getAbsolutePath()));
+				throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, originhtml.toAbsolutePath()), ioe);
 			}
 		}
 
@@ -326,11 +312,8 @@ public class MissingRefReportConverter extends UseReportConverter {
 	protected void writeIndexPage(List<?> result) throws Exception {
 		Collections.sort(result, (o1, o2) -> ((Report) o1).name.compareTo(((Report) o2).name));
 
+		Path reportIndex = Path.of(getHtmlLocation(), "index.html"); //$NON-NLS-1$
 		try {
-			File reportIndex = new File(getHtmlLocation(), "index.html"); //$NON-NLS-1$
-			if (!reportIndex.exists()) {
-				reportIndex.createNewFile();
-			}
 			// setReportIndex(reportIndex);
 
 			StringBuilder buffer = new StringBuilder();
@@ -375,14 +358,9 @@ public class MissingRefReportConverter extends UseReportConverter {
 			buffer.append(W3C_FOOTER);
 			buffer.append(CLOSE_BODY).append(CLOSE_HTML);
 
-			// write the file
-			try (PrintWriter writer = new PrintWriter(
-					new OutputStreamWriter(new FileOutputStream(reportIndex), StandardCharsets.UTF_8))) {
-				writer.print(buffer.toString());
-				writer.flush();
-			}
+			Files.writeString(reportIndex, buffer);
 		} catch (IOException e) {
-			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, getReportIndex().getAbsolutePath()));
+			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, reportIndex.toAbsolutePath()), e);
 		}
 	}
 

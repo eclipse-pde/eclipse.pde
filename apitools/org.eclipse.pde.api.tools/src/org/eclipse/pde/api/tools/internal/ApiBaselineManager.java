@@ -16,12 +16,10 @@ package org.eclipse.pde.api.tools.internal;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -322,7 +320,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	 * Persists all of the cached elements to individual xml files named with
 	 * the id of the API baseline
 	 */
-	private void persistStateCache() throws CoreException, IOException {
+	private void persistStateCache() throws CoreException {
 		if (savelocation == null) {
 			return;
 		}
@@ -333,45 +331,31 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 			node.remove(DEFAULT_BASELINE);
 		}
 		if (baselinecache != null && !hasinfos.isEmpty()) {
-			File dir = new File(savelocation.toOSString());
-			Files.createDirectories(dir.toPath());
-			IApiBaseline baseline = null;
+			Path dir = savelocation.toPath();
 			for (Entry<String, IApiBaseline> entry : baselinecache.entrySet()) {
 				String id = entry.getKey();
-				baseline = entry.getValue();
+				IApiBaseline baseline = entry.getValue();
 				if (!isBaselineLoaded(baseline)) {
 					continue;
 				}
-				File file = savelocation.append(id + BASELINE_FILE_EXTENSION).toFile();
-				if (!file.exists()) {
-					try {
-						Files.createFile(file.toPath());
-					} catch (IOException ioe) {
-						ApiPlugin.log(new IOException("Unable to save API baseline with id: '" + id + "'", ioe)); //$NON-NLS-1$ //$NON-NLS-2$
-						continue;
-					}
-				}
-				try (FileOutputStream fout = new FileOutputStream(file)) {
-					writeBaselineDescription(baseline, fout);
-					// need to save the api baseline state in order to be able
-					// to reload it later
-					handlecache.put(baseline.getName(), file.getAbsolutePath());
-					fout.flush();
-				}
+				Path file = dir.resolve(id + BASELINE_FILE_EXTENSION);
+				writeBaselineDescription(baseline, file);
+				// need to save the api baseline state in order to be able
+				// to reload it later
+				handlecache.put(baseline.getName(), file.toAbsolutePath().toString());
 			}
 		}
 	}
 
 	/**
-	 * Writes out the current state of the {@link IApiBaseline} as XML to the
-	 * given output stream
+	 * Writes the current state of the {@link IApiBaseline} as XML to the given file
 	 */
-	private void writeBaselineDescription(IApiBaseline baseline, OutputStream stream) throws CoreException {
-		String xml = getProfileXML(baseline);
+	private void writeBaselineDescription(IApiBaseline baseline, Path file) throws CoreException {
+		Document xml = getProfileXML(baseline);
 		try {
-			stream.write(xml.getBytes(StandardCharsets.UTF_8));
+			Util.writeDocumentToFile(xml, file);
 		} catch (IOException e) {
-			throw new CoreException(Status.error("Error writing pofile descrition", e)); //$NON-NLS-1$
+			throw new CoreException(Status.error("Error writing profile descrition", e)); //$NON-NLS-1$
 		}
 	}
 
@@ -383,7 +367,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	 * @throws CoreException if an exception occurs while retrieving the xml
 	 *             string representation
 	 */
-	private String getProfileXML(IApiBaseline baseline) throws CoreException {
+	private Document getProfileXML(IApiBaseline baseline) throws CoreException {
 		Document document = Util.newDocument();
 		Element root = document.createElement(IApiXmlConstants.ELEMENT_APIPROFILE);
 		document.appendChild(root);
@@ -417,7 +401,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 			// clear the temporary hashset
 			allComponentSet.clear();
 		}
-		return Util.serializeDocument(document);
+		return document;
 	}
 
 	/**
@@ -483,7 +467,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 					}
 				}
 				restored = components.toArray(new IApiComponent[components.size()]);
-				// Avoid unstable bundle traversal order to simplify our life 
+				// Avoid unstable bundle traversal order to simplify our life
 				Arrays.sort(restored, (o1, o2) -> o1.getName().compareTo(o2.getName()));
 			}
 		} catch (IOException | SAXException e) {
@@ -512,13 +496,9 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		if (!fNeedsSaving) {
 			return;
 		}
-		try {
-			persistStateCache();
-			cleanStateCache();
-			fNeedsSaving = false;
-		} catch (IOException e) {
-			ApiPlugin.log(e);
-		}
+		persistStateCache();
+		cleanStateCache();
+		fNeedsSaving = false;
 	}
 
 	/**

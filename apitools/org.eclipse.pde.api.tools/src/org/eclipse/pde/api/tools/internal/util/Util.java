@@ -14,21 +14,17 @@
 package org.eclipse.pde.api.tools.internal.util;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.LineNumberReader;
-import java.io.PrintWriter;
+import java.io.OutputStream;
 import java.io.StringReader;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
@@ -448,9 +444,7 @@ public final class Util {
 		String eeid = getStrictCompatibleEE(jre);
 		String string = Util.generateEEContents(jre, eeid);
 		File eeFile = createTempFile("eed", ".ee"); //$NON-NLS-1$ //$NON-NLS-2$
-		try (FileOutputStream outputStream = new FileOutputStream(eeFile)) {
-			outputStream.write(string.getBytes(StandardCharsets.UTF_8));
-		}
+		Files.writeString(eeFile.toPath(), string);
 		return eeFile;
 	}
 
@@ -1758,21 +1752,6 @@ public final class Util {
 	}
 
 	/**
-	 * Save the given contents into the given file. The file parent folder must
-	 * exist.
-	 *
-	 * @param file the given file target
-	 * @param contents the given contents
-	 * @throws IOException if an IOException occurs while saving the file
-	 */
-	public static void saveFile(File file, String contents) throws IOException {
-		try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-			writer.write(contents);
-			writer.flush();
-		}
-	}
-
-	/**
 	 * Returns the contents of the given file as a string, or <code>null</code>
 	 *
 	 * @param file the file to get the contents for
@@ -1799,6 +1778,20 @@ public final class Util {
 	}
 
 	/**
+	 * Serializes the given XML document into the given file.
+	 *
+	 * @param document XML document to serialize
+	 * @param file     the file to which the document is written
+	 * @throws CoreException if unable to serialize the document
+	 */
+	public static void writeDocumentToFile(Document document, Path file) throws CoreException, IOException {
+		Files.createDirectories(file.getParent());
+		try (OutputStream out = Files.newOutputStream(file)) {
+			serializeDocument(document, out);
+		}
+	}
+
+	/**
 	 * Serializes the given XML document into a UTF-8 string.
 	 *
 	 * @param document XML document to serialize
@@ -1806,7 +1799,13 @@ public final class Util {
 	 * @throws CoreException if unable to serialize the document
 	 */
 	public static String serializeDocument(Document document) throws CoreException {
-		try (ByteArrayOutputStream s = new ByteArrayOutputStream()) {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		serializeDocument(document, out);
+		return out.toString(StandardCharsets.UTF_8);
+	}
+
+	private static void serializeDocument(Document document, OutputStream s) throws CoreException {
+		try (s) {
 			@SuppressWarnings("restriction")
 			TransformerFactory factory = org.eclipse.core.internal.runtime.XmlProcessorFactory
 					.createTransformerFactoryWithErrorOnDOCTYPE();
@@ -1817,7 +1816,6 @@ public final class Util {
 			DOMSource source = new DOMSource(document);
 			StreamResult outputTarget = new StreamResult(s);
 			transformer.transform(source, outputTarget);
-			return s.toString(StandardCharsets.UTF_8);
 		} catch (TransformerException | IOException e) {
 			throw new CoreException(Status.error("Unable to serialize XML document.", e)); //$NON-NLS-1$
 		}
@@ -1828,38 +1826,19 @@ public final class Util {
 	 * it doesn't exist)
 	 */
 	public static void unzip(String zipPath, String destDirPath) throws IOException, CoreException {
-		byte[] buf = new byte[8192];
-		File destDir = new File(destDirPath);
-		try (InputStream zipIn = new FileInputStream(zipPath); ZipInputStream zis = new ZipInputStream(new BufferedInputStream(zipIn));) {
+		try (ZipInputStream zis = new ZipInputStream(new BufferedInputStream(new FileInputStream(zipPath)));) {
+			Path destDir = Path.of(destDirPath).toAbsolutePath().normalize();
 			ZipEntry zEntry;
 			while ((zEntry = zis.getNextEntry()) != null) {
+				Path entryTarget = resolveEntryTarget(destDir, zEntry.getName());
 				// if it is empty directory, create it
 				if (zEntry.isDirectory()) {
-					new File(destDir, zEntry.getName()).mkdirs();
+					Files.createDirectories(entryTarget);
 					continue;
 				}
 				// if it is a file, extract it
-				String filePath = zEntry.getName();
-				int lastSeparator = filePath.lastIndexOf("/"); //$NON-NLS-1$
-				String fileDir = ""; //$NON-NLS-1$
-				if (lastSeparator >= 0) {
-					fileDir = filePath.substring(0, lastSeparator);
-				}
-				// create directory for a file
-				new File(destDir, fileDir).mkdirs();
-				// write file
-				String destDirCanonicalPath = destDir.getCanonicalPath();
-				File outFile = new File(destDir, filePath);
-				String outFileCanonicalPath = outFile.getCanonicalPath();
-				if (!outFileCanonicalPath.startsWith(destDirCanonicalPath + File.separator)) {
-					throw new CoreException(Status.error(MessageFormat.format("Entry is outside of the target dir: : {0}", filePath), null)); //$NON-NLS-1$
-				}
-				try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(outFile))) {
-					int n = 0;
-					while ((n = zis.read(buf)) >= 0) {
-						outputStream.write(buf, 0, n);
-					}
-				}
+				Files.createDirectories(entryTarget.getParent());
+				Files.copy(zis, entryTarget);
 			}
 		}
 	}
@@ -1868,36 +1847,30 @@ public final class Util {
 	 * Unzip the contents of the given zip in the given directory (create it if
 	 * it doesn't exist)
 	 */
-	public static void guntar(String zipPath, String destDirPath) throws TarException, IOException {
+	public static void guntar(String zipPath, String destDirPath) throws TarException, IOException, CoreException {
 		try (TarFile tarFile = new TarFile(new File(zipPath))) {
-			byte[] buf = new byte[8192];
+			Path destDir = Path.of(destDirPath).toAbsolutePath().normalize();
 			for (TarEntry zEntry : tarFile.entries()) {
+				Path entryTarget = resolveEntryTarget(destDir, zEntry.getName());
 				// if it is empty directory, create it
 				if (zEntry.getFileType() == TarEntry.DIRECTORY) {
-					new File(destDirPath, zEntry.getName()).mkdirs();
+					Files.createDirectories(entryTarget);
 					continue;
 				}
 				// if it is a file, extract it
-				String filePath = zEntry.getName();
-				int lastSeparator = filePath.lastIndexOf("/"); //$NON-NLS-1$
-				String fileDir = ""; //$NON-NLS-1$
-				if (lastSeparator >= 0) {
-					fileDir = filePath.substring(0, lastSeparator);
-				}
-				// create directory for a file
-				new File(destDirPath, fileDir).mkdirs();
-				// write file
-				File outFile = new File(destDirPath, filePath);
-				try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(outFile))) {
-					int n = 0;
-					try (BufferedInputStream stream = new BufferedInputStream(tarFile.getInputStream(zEntry))) {
-						while ((n = stream.read(buf)) >= 0) {
-							outputStream.write(buf, 0, n);
-						}
-					}
-				}
+				Files.createDirectories(entryTarget.getParent());
+				Files.copy(tarFile.getInputStream(zEntry), entryTarget);
 			}
 		}
+	}
+
+	private static Path resolveEntryTarget(Path destDir, String name) throws CoreException {
+		Path entryTarget = destDir.resolve(name);
+		if (!entryTarget.normalize().startsWith(destDir)) {
+			throw new CoreException(
+					Status.error(MessageFormat.format("Entry is outside of the target dir: : {0}", name), null)); //$NON-NLS-1$
+		}
+		return entryTarget;
 	}
 
 	/**
@@ -1907,16 +1880,13 @@ public final class Util {
 		// generate a fake 1.6 ee file
 		try {
 			File fakeEEFile = createTempFile("eefile", ".ee"); //$NON-NLS-1$ //$NON-NLS-2$
-			try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(fakeEEFile)))) {
-				writer.print("-Djava.home="); //$NON-NLS-1$
-				writer.println(System.getProperty("java.home")); //$NON-NLS-1$
-				writer.print("-Dee.bootclasspath="); //$NON-NLS-1$
-				writer.println(getJavaClassLibsAsString());
-				writer.println("-Dee.language.level=1.6"); //$NON-NLS-1$
-				writer.println("-Dee.class.library.level=JavaSE-1.6"); //$NON-NLS-1$
-				writer.flush();
-				return fakeEEFile;
-			}
+			Files.writeString(fakeEEFile.toPath(), String.format("""
+					-Djava.home=%s
+					-Dee.bootclasspath=%s
+					-Dee.language.level=1.6
+					-Dee.class.library.level=JavaSE-1.6
+					""", System.getProperty("java.home"), getJavaClassLibsAsString())); //$NON-NLS-1$//$NON-NLS-2$
+			return fakeEEFile;
 		} catch (IOException e) {
 			return null;
 		}
