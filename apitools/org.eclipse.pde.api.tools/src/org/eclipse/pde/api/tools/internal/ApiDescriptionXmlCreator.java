@@ -136,13 +136,12 @@ public class ApiDescriptionXmlCreator extends ApiDescriptionVisitor {
 	}
 
 	/**
-	 * Returns the settings as a UTF-8 string containing XML.
+	 * Returns the settings as a XML {@link Document}.
 	 *
-	 * @return XML
 	 * @throws CoreException if something goes wrong
 	 */
-	public String getXML() throws CoreException {
-		return Util.serializeDocument(fDoc);
+	public Document getXML() {
+		return fDoc;
 	}
 
 	@Override

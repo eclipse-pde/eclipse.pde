@@ -13,9 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.tasks;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -160,23 +158,16 @@ public class CompareTask extends CommonUtilsTask {
 			throw new BuildException(Messages.errorInComparison);
 		}
 		// dump the report in the appropriate folder
-		File outputDir = new File(this.reportLocation);
-		if (!outputDir.exists()) {
-			if (!outputDir.mkdirs()) {
-				throw new BuildException(NLS.bind(Messages.errorCreatingParentReportFile, outputDir.getAbsolutePath()));
-			}
-		}
 		File outputFile = new File(this.reportLocation, REPORT_XML_FILE_NAME);
 		if (outputFile.exists()) {
 			// delete the file
 			// TODO we might want to customize it
 			outputFile.delete();
 		}
-		try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile))) {
+		try {
 			FilterListDeltaVisitor visitor = new FilterListDeltaVisitor(excludedElements, includedElements, FilterListDeltaVisitor.CHECK_ALL);
 			delta.accept(visitor);
-			writer.write(visitor.getXML());
-			writer.flush();
+			Util.writeDocumentToFile(visitor.getDocument(), outputFile.toPath());
 			if (this.debug) {
 				String potentialExcludeList = visitor.getPotentialExcludeList();
 				if (potentialExcludeList.length() != 0) {

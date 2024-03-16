@@ -191,7 +191,6 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 	private void dumpReport(Summary[] summaries, List<String> nonAPIBundleNames, Map<String, Object> bundlesWithErrors) {
 		ProblemCounter counter = new ProblemCounter();
 		for (Summary summary : summaries) {
-			String contents = null;
 			String componentID = summary.componentID;
 
 			// Filtering should be done during analysis to save time, but filter
@@ -241,20 +240,15 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 					}
 					report.appendChild(category);
 				}
-
-				contents = Util.serializeDocument(document);
+				saveReport(componentID, document, "report.xml"); //$NON-NLS-1$
 			} catch (DOMException | CoreException e) {
 				throw new BuildException(e);
-			}
-			if (contents != null) {
-				saveReport(componentID, contents, "report.xml"); //$NON-NLS-1$
 			}
 		}
 
 		// Write out a list of components skipped because they aren't API Tools
 		// enabled
 		if (nonAPIBundleNames != null && !nonAPIBundleNames.isEmpty()) {
-			String contents = null;
 			try {
 				Document document = Util.newDocument();
 				Element report = document.createElement(IApiXmlConstants.ELEMENT_API_TOOL_REPORT);
@@ -267,17 +261,13 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 						report.appendChild(bundle);
 					}
 				}
-				contents = Util.serializeDocument(document);
+				saveReport("Skipped Bundles", document, "report.xml"); //$NON-NLS-1$ //$NON-NLS-2$
 			} catch (DOMException | CoreException e) {
 				throw new BuildException(e);
-			}
-			if (contents != null) {
-				saveReport("Skipped Bundles", contents, "report.xml"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 
 		// Write out problem count file
-		String contents = null;
 		try {
 			Document document = Util.newDocument();
 			Element root = document.createElement(IApiXmlConstants.ELEMENT_REPORTED_COUNT);
@@ -285,12 +275,9 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 			root.setAttribute(IApiXmlConstants.ATTR_TOTAL, Integer.toString(counter.total));
 			root.setAttribute(IApiXmlConstants.ATTR_COUNT_WARNINGS, Integer.toString(counter.warnings));
 			root.setAttribute(IApiXmlConstants.ATTR_COUNT_ERRORS, Integer.toString(counter.errors));
-			contents = Util.serializeDocument(document);
+			saveReport(null, document, "counts.xml"); //$NON-NLS-1$
 		} catch (DOMException | CoreException e) {
 			throw new BuildException(e);
-		}
-		if (contents != null) {
-			saveReport(null, contents, "counts.xml"); //$NON-NLS-1$
 		}
 	}
 

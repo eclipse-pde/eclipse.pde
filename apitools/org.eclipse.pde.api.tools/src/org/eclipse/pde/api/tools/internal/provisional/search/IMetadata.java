@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional.search;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 import org.eclipse.core.runtime.CoreException;
 
@@ -31,5 +31,5 @@ public interface IMetadata {
 	 *
 	 * @param file the file to write to
 	 */
-	public void serializeToFile(File file) throws IOException, CoreException;
+	public void serializeToFile(Path file) throws IOException, CoreException;
 }

@@ -16,6 +16,7 @@ package org.eclipse.pde.api.tools.internal;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,6 +50,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceType
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.ScannerMessages;
 import org.eclipse.pde.api.tools.internal.util.Util;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -227,11 +229,10 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 			IJavaProject project = entry.getKey();
 			ProjectApiDescription desc = (ProjectApiDescription) entry.getValue();
 			if (desc.isModified()) {
-				File dir = API_DESCRIPTIONS_CONTAINER_PATH.append(project.getElementName()).toFile();
-				dir.mkdirs();
-				String xml = desc.getXML();
+				Path dir = API_DESCRIPTIONS_CONTAINER_PATH.append(project.getElementName()).toPath();
+				Document xml = desc.getXML();
 				try {
-					Util.saveFile(new File(dir, IApiCoreConstants.API_DESCRIPTION_XML_NAME), xml);
+					Util.writeDocumentToFile(xml, dir.resolve(IApiCoreConstants.API_DESCRIPTION_XML_NAME));
 					desc.setModified(false);
 				} catch (IOException e) {
 					abort(MessageFormat.format(ScannerMessages.ApiDescriptionManager_0, project.getElementName()), e);

@@ -14,13 +14,10 @@
 package org.eclipse.pde.api.tools.internal.tasks;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -201,7 +198,7 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 			profile.dispose();
 			StubApiComponent.disposeAllCaches();
 			deleteBaseline(super.currentBaselineLocation, baselineInstallDir);
-			writeMetaData(new File(this.reportLocation, "meta.xml")); //$NON-NLS-1$
+			writeMetaData(Path.of(this.reportLocation, "meta.xml")); //$NON-NLS-1$
 		}
 		Summary[] summaries = createAllSummaries(allProblems);
 
@@ -253,18 +250,11 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 		this.properties.put(IApiProblemTypes.API_USE_SCAN_FIELD_SEVERITY, ApiPlugin.VALUE_ERROR);
 	}
 
-	private void writeMetaData(File file) {
+	private void writeMetaData(Path file) {
 		try {
-			if (!file.exists()) {
-				file.getParentFile().mkdirs();
-				if (!file.createNewFile()) {
-					return; // could not create meta.xml
-				}
-			}
 			if (super.debug) {
-				System.out.println("Writing metadata to " + file.getAbsolutePath()); //$NON-NLS-1$
+				System.out.println("Writing metadata to " + file.toAbsolutePath()); //$NON-NLS-1$
 			}
-
 			MissingRefMetadata metadata = new MissingRefMetadata(super.currentBaselineLocation, super.reportLocation, this.apiUseScans);
 			metadata.serializeToFile(file);
 		} catch (IOException | CoreException e) {
@@ -291,9 +281,7 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 
 	private void dumpReport(Summary[] summaries) {
 		for (Summary summary : summaries) {
-			String contents = null;
 			String componentID = summary.fComponentID;
-
 			try {
 				Document document = Util.newDocument();
 				Element report = document.createElement(IApiXmlConstants.ELEMENT_API_TOOL_REPORT);
@@ -307,12 +295,9 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 				insertAPIProblems(category, document, summary.fApiProblems);
 				report.appendChild(category);
 
-				contents = Util.serializeDocument(document);
+				saveReport(componentID, document, "report.xml"); //$NON-NLS-1$
 			} catch (DOMException | CoreException e) {
 				throw new BuildException(e);
-			}
-			if (contents != null) {
-				saveReport(componentID, contents, "report.xml"); //$NON-NLS-1$
 			}
 		}
 
@@ -326,14 +311,7 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 			if (this.debug) {
 				System.out.println("Writing file for projects that were not searched..."); //$NON-NLS-1$
 			}
-			File rootfile = new File(reportLocation);
-			if (!rootfile.exists()) {
-				rootfile.mkdirs();
-			}
-			File file = new File(rootfile, "not_searched.xml"); //$NON-NLS-1$
-			if (!file.exists()) {
-				file.createNewFile();
-			}
+			Path file = Path.of(reportLocation, "not_searched.xml"); //$NON-NLS-1$
 			Document doc = Util.newDocument();
 			Element root = doc.createElement(IApiXmlConstants.ELEMENT_COMPONENTS);
 			root.setAttribute("ShowMissing", "false"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -346,10 +324,7 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 				comp.setAttribute(IApiXmlConstants.SKIPPED_DETAILS, component.getErrorDetails());
 				root.appendChild(comp);
 			}
-			try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));) {
-				writer.write(Util.serializeDocument(doc));
-				writer.flush();
-			}
+			Util.writeDocumentToFile(doc, file);
 		} catch (IOException | CoreException e) {
 			ApiPlugin.log(e);
 		}
