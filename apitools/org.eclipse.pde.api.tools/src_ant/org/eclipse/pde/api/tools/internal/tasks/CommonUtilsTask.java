@@ -13,10 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.tasks;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -32,6 +31,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.util.FilteredElements;
 import org.eclipse.pde.api.tools.internal.util.TarException;
 import org.eclipse.pde.api.tools.internal.util.Util;
+import org.w3c.dom.Document;
 
 /**
  * Common code for API Tools Ant tasks.
@@ -132,11 +132,9 @@ public abstract class CommonUtilsTask extends Task {
 					Util.guntar(location, installDir.getAbsolutePath());
 				}
 			} catch (IOException e) {
-				throw new BuildException(NLS.bind(Messages.couldNotUnzip, new String[] {
-						location, installDir.getAbsolutePath() }));
+				throw new BuildException(NLS.bind(Messages.couldNotUnzip, location, installDir.getAbsolutePath()));
 			} catch (TarException e) {
-				throw new BuildException(NLS.bind(Messages.couldNotUntar, new String[] {
-						location, installDir.getAbsolutePath() }));
+				throw new BuildException(NLS.bind(Messages.couldNotUntar, location, installDir.getAbsolutePath()));
 			} catch (CoreException e) {
 				throw new BuildException(e.getMessage());
 			}
@@ -167,30 +165,19 @@ public abstract class CommonUtilsTask extends Task {
 	 *
 	 * @param componentID Name of the component to create a child directory for
 	 *            or <code>null</code> to put the report in the XML root
-	 * @param contents contents to output to the report
+	 * @param document the document to output to the report
 	 * @param reportname name of the file to output to
 	 */
-	protected void saveReport(String componentID, String contents, String reportname) {
-		File dir = new File(this.reportLocation);
-		if (!dir.exists()) {
-			if (!dir.mkdirs()) {
-				throw new BuildException(NLS.bind(Messages.errorCreatingReportDirectory, this.reportLocation));
-			}
-		}
+	protected void saveReport(String componentID, Document document, String reportname) {
+		Path dir = Path.of(this.reportLocation);
 		// If the caller has provided a component id, create a child directory
 		if (componentID != null) {
-			dir = new File(dir, componentID);
-			if (!dir.exists()) {
-				if (!dir.mkdirs()) {
-					throw new BuildException(NLS.bind(Messages.errorCreatingReportDirectory, dir));
-				}
-			}
+			dir = dir.resolve(componentID);
 		}
-		File reportFile = new File(dir, reportname);
-		try (BufferedWriter writer = new BufferedWriter(new FileWriter(reportFile))) {
-			writer.write(contents);
-			writer.flush();
-		} catch (IOException e) {
+		Path reportFile = dir.resolve(reportname);
+		try {
+			Util.writeDocumentToFile(document, reportFile);
+		} catch (IOException | CoreException e) {
 			ApiPlugin.log(e);
 		}
 	}

@@ -114,17 +114,13 @@ public class ExportSessionAction extends Action {
 								return Status.error(ActionMessages.ExportSessionAction_failed_to_create_parent_folders);
 							}
 						}
-						try (BufferedWriter writer = new BufferedWriter(new FileWriter(xmlOutputFile))) {
-							DeltaXmlVisitor visitor = new DeltaXmlVisitor();
-							Object data = activeSession.getModel().getRoot().getData();
-							if (data instanceof IDelta) {
-								IDelta delta = (IDelta) data;
-								progress.split(25);
-								delta.accept(visitor);
-								writer.write(visitor.getXML());
-								writer.flush();
-								progress.worked(25);
-							}
+						DeltaXmlVisitor visitor = new DeltaXmlVisitor();
+						Object data = activeSession.getModel().getRoot().getData();
+						if (data instanceof IDelta delta) {
+							progress.split(25);
+							delta.accept(visitor);
+							Util.writeDocumentToFile(visitor.getDocument(), xmlOutputFile.toPath());
+							progress.worked(25);
 						}
 					} catch (IOException | CoreException e) {
 						ApiPlugin.log(e);

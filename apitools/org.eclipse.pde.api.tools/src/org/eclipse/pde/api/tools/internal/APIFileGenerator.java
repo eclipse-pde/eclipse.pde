@@ -23,6 +23,7 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -48,6 +49,7 @@ import org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
+import org.w3c.dom.Document;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -151,24 +153,14 @@ public class APIFileGenerator {
 			return;
 		}
 		// check if the .api_description file exists
-		File targetProjectFolder = new File(this.targetFolder);
-		if (!targetProjectFolder.exists()) {
-			targetProjectFolder.mkdirs();
-		} else if (!targetProjectFolder.isDirectory()) {
+		Path apiDescriptionFile = Path.of(this.targetFolder, IApiCoreConstants.API_DESCRIPTION_XML_NAME);
+		Path projectFolder = apiDescriptionFile.getParent();
+		if (Files.exists(projectFolder) && !Files.isDirectory(projectFolder)) {
 			if (this.debug) {
 				System.err.println("Must be a directory : " + this.targetFolder); //$NON-NLS-1$
 			}
 			throw new IllegalArgumentException(
 					NLS.bind(CoreMessages.api_generation_targetFolderNotADirectory, this.targetFolder));
-		}
-		File apiDescriptionFile = new File(targetProjectFolder, IApiCoreConstants.API_DESCRIPTION_XML_NAME);
-		if (apiDescriptionFile.exists()) {
-			// get rid of the existing one
-			// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=414053
-			if (this.debug) {
-				System.out.println("Existing api description file deleted"); //$NON-NLS-1$
-			}
-			apiDescriptionFile.delete();
 		}
 		// create the directory class file container used to resolve
 		// signatures during tag scanning
@@ -282,8 +274,8 @@ public class APIFileGenerator {
 		try {
 			ApiDescriptionXmlCreator xmlVisitor = new ApiDescriptionXmlCreator(this.projectName, this.projectName);
 			apiDescription.accept(xmlVisitor, null);
-			String xml = xmlVisitor.getXML();
-			Util.saveFile(apiDescriptionFile, xml);
+			Document xml = xmlVisitor.getXML();
+			Util.writeDocumentToFile(xml, apiDescriptionFile);
 		} catch (CoreException | IOException e) {
 			ApiPlugin.log(e);
 		}

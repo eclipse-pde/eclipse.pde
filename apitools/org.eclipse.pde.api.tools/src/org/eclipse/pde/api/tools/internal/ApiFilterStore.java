@@ -15,6 +15,7 @@ package org.eclipse.pde.api.tools.internal;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -122,7 +123,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 						}
 						return Status.CANCEL_STATUS;
 					}
-					String xml = getStoreAsXml(filters);
+					Document xml = getXmlDocument(filters);
 					IFile file = project.getFile(API_FILTERS_XML_PATH);
 					if (xml == null) {
 						if (ApiPlugin.DEBUG_FILTER_STORE) {
@@ -149,25 +150,15 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 						lineDelimiter = TextUtilities.getDefaultLineDelimiter(document);
 					}
 
-					String lineSeparator = System.lineSeparator();
-					if (lineDelimiter != null && !lineDelimiter.equals(lineSeparator)) {
-						xml = xml.replaceAll(lineSeparator, lineDelimiter);
-					}
-					try (InputStream xstream = Util.getInputStreamFromString(xml)) {
-						if (xstream == null) {
-							return Status.CANCEL_STATUS;
+					if (file.getProject().isAccessible()) {
+						String lineSeparator = System.lineSeparator();
+						if (lineDelimiter != null && !lineDelimiter.equals(lineSeparator)) {
+							String content = Util.serializeDocument(xml).replaceAll(lineSeparator, lineDelimiter);
+							Files.writeString(file.getLocation().toPath(), content);
+						} else {
+							Util.writeDocumentToFile(xml, file.getLocation().toPath());
 						}
-						if (file.getProject().isAccessible()) {
-							if (!file.exists()) {
-								IFolder folder = (IFolder) file.getParent();
-								if (!folder.exists()) {
-									folder.create(true, true, localmonitor);
-								}
-								file.create(xstream, true, localmonitor);
-							} else {
-								file.setContents(xstream, true, false, localmonitor);
-							}
-						}
+						file.refreshLocal(IResource.DEPTH_ZERO, localmonitor);
 					}
 					fTriggeredChange = true;
 					fNeedsSaving = false;
@@ -365,7 +356,8 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 	 * @param filtermap the mapping of filters to convert to XML
 	 * @return an XML string representation of the given mapping of filters
 	 */
-	synchronized String getStoreAsXml(Map<IResource, Map<String, Set<IApiProblemFilter>>> filtermap) throws CoreException {
+	synchronized Document getXmlDocument(Map<IResource, Map<String, Set<IApiProblemFilter>>> filtermap)
+			throws CoreException {
 		if (filtermap == null) {
 			if (ApiPlugin.DEBUG_FILTER_STORE) {
 				System.out.println("no filter map returning null XML for project [" + fProject.getElementName() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -467,7 +459,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 				}
 			}
 		}
-		return Util.serializeDocument(document);
+		return document;
 	}
 
 	@Override

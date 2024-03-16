@@ -639,7 +639,7 @@ public class ProjectApiDescription extends ApiDescription {
 	/**
 	 * Returns this API description as XML.
 	 */
-	public synchronized String getXML() throws CoreException {
+	public synchronized Document getXML() throws CoreException {
 		Document document = Util.newDocument();
 		Element component = document.createElement(IApiXmlConstants.ELEMENT_COMPONENT);
 		component.setAttribute(IApiXmlConstants.ATTR_ID, getJavaProject().getElementName());
@@ -647,7 +647,7 @@ public class ProjectApiDescription extends ApiDescription {
 		component.setAttribute(IApiXmlConstants.ATTR_VERSION, IApiXmlConstants.API_DESCRIPTION_CURRENT_VERSION);
 		document.appendChild(component);
 		persistChildren(document, component, fPackageMap);
-		return Util.serializeDocument(document);
+		return document;
 	}
 
 	/**
