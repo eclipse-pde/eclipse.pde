@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -67,7 +66,7 @@ public class FilterStore implements IApiFilterStore {
 	/**
 	 * The mapping of filters for this store.
 	 */
-	protected Map<String, Set<IApiProblemFilter>> fFilterMap = null;
+	protected HashMap<String, Set<IApiProblemFilter>> fFilterMap = null;
 	/**
 	 * The bundle component backing this store
 	 */
