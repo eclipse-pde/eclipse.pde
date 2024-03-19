@@ -23,9 +23,9 @@
 
   <properties>
     <defaultSigning-excludeInnerJars>true</defaultSigning-excludeInnerJars>
-  	<testSuite>${project.artifactId}</testSuite>
-  	<testClass>org.eclipse.pde.ui.tests.AllPDETests</testClass>
-  	<surefire.testArgLine>-DDetectVMInstallationsJob.disabled=true</surefire.testArgLine>
+      <testSuite>${project.artifactId}</testSuite>
+      <testClass>org.eclipse.pde.ui.tests.AllPDETests</testClass>
+      <surefire.testArgLine>-DDetectVMInstallationsJob.disabled=true</surefire.testArgLine>
   </properties>
 
   <build>
@@ -45,6 +45,22 @@
           </dependencies>
         </configuration>
       </plugin>
+            <plugin>
+                <groupId>org.eclipse.tycho</groupId>
+                <artifactId>target-platform-configuration</artifactId>
+                <configuration>
+                    <dependency-resolution>
+                        <extraRequirements>
+                            <requirement>
+                                <!-- require the pde feature so we get additional dependencies -->
+                                <type>eclipse-feature</type>
+                                <id>org.eclipse.pde</id>
+                                <versionRange>0.0.0</versionRange>
+                            </requirement>
+                        </extraRequirements>
+                    </dependency-resolution>
+                </configuration>
+            </plugin>
     </plugins>
   </build>
 
