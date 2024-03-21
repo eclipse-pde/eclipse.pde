@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %name
 Bundle-SymbolicName: org.eclipse.pde.spy.core;singleton:=true
-Bundle-Version: 1.1.300.qualifier
+Bundle-Version: 1.1.400.qualifier
 Automatic-Module-Name: org.eclipse.pde.spy.core
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-17
