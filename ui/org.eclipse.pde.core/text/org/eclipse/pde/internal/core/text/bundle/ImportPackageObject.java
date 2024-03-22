@@ -35,7 +35,7 @@ public class ImportPackageObject extends PackageObject {
 		Version version = desc.getVersion();
 		if (version != null && !Version.emptyVersion.equals(version)) {
 			return new VersionRange(
-					"[" + version.getMajor() + "." + version.getMinor() + "," + (version.getMajor() + 1) + "]") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$//$NON-NLS-4$
+					"[" + version.getMajor() + "." + version.getMinor() + "," + (version.getMajor() + 1) + ")") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$//$NON-NLS-4$
 							.toString();
 		}
 		return null;
