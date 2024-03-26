@@ -100,16 +100,6 @@ public class DeltaXmlVisitor extends DeltaVisitor {
 	}
 
 	/**
-	 * Returns the settings as a UTF-8 string containing XML.
-	 *
-	 * @return XML
-	 * @throws CoreException if something goes wrong
-	 */
-	public String getXML() throws CoreException {
-		return Util.serializeDocument(fDoc);
-	}
-
-	/**
 	 * Return the xml dom document this visitor generates. Use {@link #getXML()}
 	 * to get the serialized xml string.
 	 *

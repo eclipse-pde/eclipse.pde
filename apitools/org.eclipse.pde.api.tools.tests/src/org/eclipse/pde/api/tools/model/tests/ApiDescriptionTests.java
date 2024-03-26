@@ -48,6 +48,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.junit.Test;
+import org.w3c.dom.Document;
 
 /**
  * Tests API manifest implementation.
@@ -347,7 +348,7 @@ public class ApiDescriptionTests {
 	 * @return XML for the API description
 	 * @throws CoreException if something goes terribly wrong
 	 */
-	private String getApiDescriptionXML(IApiComponent apiComponent) throws CoreException {
+	private Document getApiDescriptionXML(IApiComponent apiComponent) throws CoreException {
 		ApiDescriptionXmlCreator xmlVisitor = new ApiDescriptionXmlCreator(apiComponent);
 		apiComponent.getApiDescription().accept(xmlVisitor, null);
 		return xmlVisitor.getXML();
@@ -377,7 +378,7 @@ public class ApiDescriptionTests {
 
 		// write back to XML and then re-create
 		IApiComponent component = TestSuiteHelper.createTestingApiComponent("test", "test", settings); //$NON-NLS-1$ //$NON-NLS-2$
-		String writeXML = getApiDescriptionXML(component);
+		String writeXML = Util.serializeDocument(getApiDescriptionXML(component));
 
 		IApiDescription restored = new ApiDescription(null);
 		ApiDescriptionProcessor.annotateApiSettings(null, restored, writeXML);

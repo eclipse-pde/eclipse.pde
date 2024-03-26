@@ -13,9 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.tasks;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -30,6 +28,7 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.util.FilteredElements;
+import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * Ant task to retrieve all deprecation changes (addition or removal) between
@@ -138,19 +137,11 @@ public class APIDeprecationTask extends CommonUtilsTask {
 				// delete the file
 				// TODO we might want to customize it
 				outputFile.delete();
-			} else {
-				File outputDir = outputFile.getParentFile();
-				if (!outputDir.exists()) {
-					if (!outputDir.mkdirs()) {
-						throw new BuildException(NLS.bind(Messages.errorCreatingParentReportFile, outputDir.getAbsolutePath()));
-					}
-				}
 			}
-			try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile))) {
+			try {
 				FilterListDeltaVisitor visitor = new FilterListDeltaVisitor(excludedElements, includedElements, FilterListDeltaVisitor.CHECK_DEPRECATION);
 				delta.accept(visitor);
-				writer.write(visitor.getXML());
-				writer.flush();
+				Util.writeDocumentToFile(visitor.getDocument(), outputFile.toPath());
 				if (this.debug) {
 					String potentialExcludeList = visitor.getPotentialExcludeList();
 					if (potentialExcludeList.length() != 0) {

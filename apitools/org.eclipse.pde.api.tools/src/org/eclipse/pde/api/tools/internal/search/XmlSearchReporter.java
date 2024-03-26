@@ -13,12 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.search;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -140,15 +136,8 @@ public class XmlSearchReporter implements IApiSearchReporter {
 		if (this.debug) {
 			System.out.println("Writing file for projects that were not searched..."); //$NON-NLS-1$
 		}
-		File rootfile = new File(fLocation);
-		File file = new File(rootfile, "not_searched.xml"); //$NON-NLS-1$
+		Path file = Path.of(fLocation, "not_searched.xml"); //$NON-NLS-1$
 		try {
-			if (!rootfile.exists()) {
-				rootfile.mkdirs();
-			}
-			if (!file.exists()) {
-				file.createNewFile();
-			}
 			Document doc = Util.newDocument();
 			Element root = doc.createElement(IApiXmlConstants.ELEMENT_COMPONENTS);
 			doc.appendChild(root);
@@ -162,10 +151,7 @@ public class XmlSearchReporter implements IApiSearchReporter {
 				comp.setAttribute(IApiXmlConstants.SKIPPED_DETAILS, component.getErrorDetails());
 				root.appendChild(comp);
 			}
-			try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));) {
-				writer.write(Util.serializeDocument(doc));
-				writer.flush();
-			}
+			Util.writeDocumentToFile(doc, file);
 		} catch (IOException | CoreException e) {
 			ApiPlugin.log("Failed to report missing projects into " + file, e); //$NON-NLS-1$
 		}
@@ -180,14 +166,7 @@ public class XmlSearchReporter implements IApiSearchReporter {
 			if (this.debug) {
 				System.out.println("Writing file for projects that were not searched..."); //$NON-NLS-1$
 			}
-			File rootfile = new File(fLocation);
-			if (!rootfile.exists()) {
-				rootfile.mkdirs();
-			}
-			File file = new File(rootfile, "meta.xml"); //$NON-NLS-1$
-			if (!file.exists()) {
-				file.createNewFile();
-			}
+			Path file = Path.of(fLocation, "meta.xml"); //$NON-NLS-1$
 			data.serializeToFile(file);
 		} catch (IOException | CoreException ce) {
 			ApiPlugin.log(ce);
@@ -199,16 +178,8 @@ public class XmlSearchReporter implements IApiSearchReporter {
 		if (this.debug) {
 			System.out.println("Writing file for counting total references..."); //$NON-NLS-1$
 		}
-		File rootfile = new File(fLocation);
-		File file = new File(rootfile, "counts.xml"); //$NON-NLS-1$
+		Path file = Path.of(fLocation, "counts.xml"); //$NON-NLS-1$
 		try {
-			if (!rootfile.exists()) {
-				rootfile.mkdirs();
-			}
-			if (!file.exists()) {
-				file.createNewFile();
-			}
-
 			Document doc = Util.newDocument();
 			Element root = doc.createElement(IApiXmlConstants.ELEMENT_REPORTED_COUNT);
 			doc.appendChild(root);
@@ -217,10 +188,7 @@ public class XmlSearchReporter implements IApiSearchReporter {
 			root.setAttribute(IApiXmlConstants.ATTR_COUNT_INTERNAL, Integer.toString(internalCount));
 			root.setAttribute(IApiXmlConstants.ATTR_COUNT_FILTERED, Integer.toString(AntFilterStore.filteredAPIProblems.size()));
 
-			try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));) {
-				writer.write(Util.serializeDocument(doc));
-				writer.flush();
-			}
+			Util.writeDocumentToFile(doc, file);
 		} catch (IOException | CoreException e) {
 			ApiPlugin.log("Failed to report tota counts into " + file, e); //$NON-NLS-1$
 		}

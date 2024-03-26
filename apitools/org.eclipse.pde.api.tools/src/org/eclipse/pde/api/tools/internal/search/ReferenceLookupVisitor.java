@@ -13,12 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.search;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -198,25 +194,15 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 
 	@Override
 	public void endVisitScan() {
-		File rootfile = new File(location);
-		File file = new File(rootfile, "not_searched.xml"); //$NON-NLS-1$
+		Path file = Path.of(location, "not_searched.xml"); //$NON-NLS-1$
 		try {
 			// generate missing bundles information
-			if (!rootfile.exists()) {
-				rootfile.mkdirs();
-			}
-			if (!file.exists()) {
-				file.createNewFile();
-			}
 			Document doc = Util.newDocument();
 			Element root = doc.createElement(IApiXmlConstants.ELEMENT_COMPONENTS);
 			doc.appendChild(root);
 			addMissingComponents(missingComponents, SearchMessages.ReferenceLookupVisitor_0, doc, root);
 			addMissingComponents(skippedComponents, SearchMessages.SkippedComponent_component_was_excluded, doc, root);
-			try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));) {
-				writer.write(Util.serializeDocument(doc));
-				writer.flush();
-			}
+			Util.writeDocumentToFile(doc, file);
 		} catch (IOException | CoreException e) {
 			ApiPlugin.log("Failed to report missing bundles into " + file, e); //$NON-NLS-1$
 		}

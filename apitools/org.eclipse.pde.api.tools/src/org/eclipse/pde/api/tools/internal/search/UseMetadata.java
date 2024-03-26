@@ -13,12 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.search;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor;
@@ -138,7 +134,7 @@ public class UseMetadata implements IMetadata {
 		this.description = description;
 	}
 	@Override
-	public void serializeToFile(File file) throws IOException, CoreException {
+	public void serializeToFile(Path file) throws IOException, CoreException {
 		Document doc = Util.newDocument();
 		Element root = doc.createElement(METADATA);
 		doc.appendChild(root);
@@ -196,11 +192,7 @@ public class UseMetadata implements IMetadata {
 		root.appendChild(child);
 		child.setAttribute(VALUE, this.additionalfilters);
 
-		try (BufferedWriter writer = new BufferedWriter(
-				new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8))) {
-			writer.write(Util.serializeDocument(doc));
-			writer.flush();
-		}
+		Util.writeDocumentToFile(doc, file);
 	}
 
 	/**
