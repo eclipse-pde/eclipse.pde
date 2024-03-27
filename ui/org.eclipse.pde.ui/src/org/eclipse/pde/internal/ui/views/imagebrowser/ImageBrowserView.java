@@ -12,6 +12,7 @@
  *     Christian Pontesegger - initial API and implementation
  *     IBM Corporation - ongoing enhancements
  *     Alena Laskavaia - Bug 481613 pagination controls
+ *     Latha Patil	   - Issue 822 Current page in pagination control is not highlighted in Dark Theme
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.views.imagebrowser;
@@ -27,6 +28,8 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.e4.ui.css.swt.theme.ITheme;
+import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.RowLayoutFactory;
@@ -87,10 +90,12 @@ import org.eclipse.ui.part.ViewPart;
  * Provides the PDE Image browser view which displays all icons and images from plug-ins.  The plug-ins
  * can be loaded from the target platform, the workspace or the current install.
  */
+@SuppressWarnings("restriction")
 public class ImageBrowserView extends ViewPart implements IImageTarget {
 
 	private static final String COMMAND_SAVE_TO_WORKSPACE = "org.eclipse.pde.ui.imagebrowser.saveToWorkspace"; //$NON-NLS-1$
 	protected final static String VIEW_ID = "org.eclipse.pde.ui.ImageBrowserView"; //$NON-NLS-1$
+	private static final String DISABLE_CSS = "org.eclipse.e4.ui.css.disabled"; //$NON-NLS-1$
 
 	private final UpdateUI mUIJob = new UpdateUI();
 
@@ -123,6 +128,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 	private ImageElement imageElement;
 
 	private Action saveAction;
+	private boolean isDarkTheme = false;
 
 	public ImageBrowserView() {
 		// create default filters
@@ -144,6 +150,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		mFilters.add(enabledIcons);
 		textPatternFilter = new StringFilter("*"); //$NON-NLS-1$
 		mFilters.add(textPatternFilter);
+		isDarkTheme = isDarkThemeApplied();
 	}
 
 	@Override
@@ -363,6 +370,16 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 							scanImages();
 						}
 					});
+				} else {
+					// Remove Cursor for current page
+					pageLink.setCursor(null);
+					// FIXME :#1168 Issue (Current page is not highlighted in
+					// Dark theme) - This is the temporary fix provided . Actual
+					// fix has to be done in CSS styling.
+					if (isDarkTheme) {
+						pageLink.setData(DISABLE_CSS, Boolean.TRUE);
+						pageLink.setForeground(getDisplay().getSystemColor(SWT.COLOR_TRANSPARENT));
+						}
 				}
 
 			}
@@ -587,5 +604,14 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 			// TODO Auto-generated method stub
 
 		}
+	}
+
+	private boolean isDarkThemeApplied() {
+		IThemeEngine themeEngine = PlatformUI.getWorkbench().getService(IThemeEngine.class);
+		if (themeEngine != null) {
+			ITheme activeTheme = themeEngine.getActiveTheme();
+			return (activeTheme != null && activeTheme.getLabel() != null && activeTheme.getLabel().equals("Dark")); //$NON-NLS-1$
+		}
+		return false;
 	}
 }
