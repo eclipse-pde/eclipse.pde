@@ -114,13 +114,21 @@ public class ImportPackageSection extends TableSection {
 
 	private ImportPackageHeader fHeader;
 
-	static class ImportItemWrapper {
+	public static class ImportItemWrapper {
 		Object fUnderlying;
+		private boolean isImported = false;
+
+		public boolean isAlreadyImported() {
+			return isImported;
+		}
 
 		public ImportItemWrapper(Object underlying) {
 			fUnderlying = underlying;
 		}
 
+		public void setAlreadyImported() {
+			this.isImported = true;
+		}
 		@Override
 		public String toString() {
 			return getName();
@@ -180,7 +188,7 @@ public class ImportPackageSection extends TableSection {
 		}
 	}
 
-	static class ImportPackageDialogLabelProvider extends LabelProvider {
+	class ImportPackageDialogLabelProvider extends LabelProvider {
 		@Override
 		public Image getImage(Object element) {
 			return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PACKAGE);
@@ -200,6 +208,10 @@ public class ImportPackageSection extends TableSection {
 				// 		it would be displayed incorrectly when running RTL.
 				buffer.append(' ');
 				buffer.append(PDELabelProvider.formatVersion(version.toString()));
+			}
+			if (p.isAlreadyImported() && fHeader != null && fHeader.hasPackage(p.getName())) {
+				buffer.append(' ');
+				buffer.append(PDEUIMessages.PluginModelManager_alreadyImported);
 			}
 			return buffer.toString();
 		}
@@ -464,7 +476,8 @@ public class ImportPackageSection extends TableSection {
 				Set<String> names = new HashSet<>(); // set of String names, do not allow the same package to be added twice
 				for (int i = 0; i < selected.length; i++) {
 					ImportPackageObject impObject = null;
-					if (selected[i] instanceof ImportItemWrapper)
+					if (selected[i] instanceof ImportItemWrapper
+							&& !((ImportItemWrapper) selected[i]).isAlreadyImported())
 						selected[i] = ((ImportItemWrapper) selected[i]).fUnderlying;
 
 					if (selected[i] instanceof ExportPackageDescription)
@@ -530,8 +543,14 @@ public class ImportPackageSection extends TableSection {
 				NameVersionDescriptor nameVersion = new NameVersionDescriptor(exportedPackage.getName(), exportedPackage.getVersion().toString(), NameVersionDescriptor.TYPE_PACKAGE);
 				if (("java".equals(name) || name.startsWith("java.")) && !allowJava) //$NON-NLS-1$ //$NON-NLS-2$
 					continue;
-				if (nameVersions.add(nameVersion) && (fHeader == null || !fHeader.hasPackage(name)))
-					elements.add(new ImportItemWrapper(exportedPackage));
+				if (nameVersions.add(nameVersion)) {
+					ImportItemWrapper importItemWrapper = new ImportItemWrapper(exportedPackage);
+					elements.add(importItemWrapper);
+					if (fHeader != null && fHeader.hasPackage(name)) {
+						importItemWrapper.setAlreadyImported();
+					}
+				}
+
 			}
 			IPluginModelBase model = (IPluginModelBase) getPage().getPDEEditor().getAggregateModel();
 			if (model instanceof IBundlePluginModelBase) {
@@ -544,8 +563,13 @@ public class ImportPackageSection extends TableSection {
 							String name = pkg.getName();
 							String version = pkg.getVersion();
 							NameVersionDescriptor nameVersion = new NameVersionDescriptor(name, version, NameVersionDescriptor.TYPE_PACKAGE);
-							if (nameVersions.add(nameVersion) && (fHeader == null || !fHeader.hasPackage(name)))
-								elements.add(new ImportItemWrapper(pkg));
+							if (nameVersions.add(nameVersion)) {
+								ImportItemWrapper importItemWrapper = new ImportItemWrapper(pkg);
+								elements.add(importItemWrapper);
+								if (fHeader != null && fHeader.hasPackage(name)) {
+									importItemWrapper.setAlreadyImported();
+								}
+							}
 						}
 					}
 				}
