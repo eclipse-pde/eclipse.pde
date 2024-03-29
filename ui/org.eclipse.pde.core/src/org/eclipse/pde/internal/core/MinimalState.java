@@ -52,6 +52,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.BundleHelper;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
+import org.eclipse.pde.internal.core.builders.PDEBuilderHelper;
 import org.eclipse.pde.internal.core.util.ManifestUtils;
 import org.eclipse.pde.internal.core.util.UtilMessages;
 import org.osgi.framework.BundleException;
@@ -335,10 +336,12 @@ public class MinimalState {
 		// Perform PDE-Manifest build, to re-validate all Manifests
 		MultiStatus status = new MultiStatus(MinimalState.class, 0, "Reload of JRE system-packages encountered issues"); //$NON-NLS-1$
 		for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
-			try {
-				project.build(IncrementalProjectBuilder.FULL_BUILD, PDE_MANIFEST_BUILDER, null, null);
-			} catch (CoreException e) { // ignore
-				status.add(e.getStatus());
+			if (PDEBuilderHelper.isPDEProject(project)) {
+				try {
+					project.build(IncrementalProjectBuilder.FULL_BUILD, PDE_MANIFEST_BUILDER, null, null);
+				} catch (CoreException e) { // ignore
+					status.add(e.getStatus());
+				}
 			}
 		}
 		return status;
