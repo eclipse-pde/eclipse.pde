@@ -27,6 +27,7 @@
       <import plugin="org.osgi.service.metatype.annotations"/>
       <import plugin="org.bndtools.templates.template"/>
       <import plugin="biz.aQute.repository"/>
+      <import plugin="bndtools.jareditor"/>
    </requires>
 
    <plugin
