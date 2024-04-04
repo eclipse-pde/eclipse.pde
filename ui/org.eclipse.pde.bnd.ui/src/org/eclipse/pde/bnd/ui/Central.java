@@ -349,7 +349,6 @@ public class Central {
 		return workspace.getProjectFromFile(projectDir);
 	}
 
-	@SuppressWarnings("resource")
 	public static Project getProject(Workspace workspace, IProject p) throws Exception {
 		return Optional.ofNullable(p.getLocation())
 			.map(IPath::toFile)
