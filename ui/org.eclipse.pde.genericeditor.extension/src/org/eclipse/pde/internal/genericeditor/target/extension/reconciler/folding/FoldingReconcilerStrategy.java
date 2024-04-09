@@ -60,6 +60,9 @@ public class FoldingReconcilerStrategy implements IReconcilingStrategy, IReconci
 
 	@Override
 	public void initialReconcile() {
+		if (projectionViewer == null || document == null) {
+			return;
+		}
 		ProjectionAnnotationModel projectionAnnotationModel = projectionViewer.getProjectionAnnotationModel();
 		if (document.get().equals(oldDocument) || projectionAnnotationModel == null)
 			return;
