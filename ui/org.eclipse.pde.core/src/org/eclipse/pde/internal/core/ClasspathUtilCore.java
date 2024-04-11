@@ -16,18 +16,18 @@ package org.eclipse.pde.internal.core;
 import static java.util.Collections.singleton;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -85,41 +85,60 @@ public class ClasspathUtilCore {
 		return entries;
 	}
 
-	public static Stream<IClasspathEntry> classpathEntries(Stream<IPluginModelBase> models) {
-		Map<Boolean, List<IPluginModelBase>> collect = models.collect(Collectors.partitioningBy(model -> {
-			IResource resource = model.getUnderlyingResource();
-			if (resource != null) {
-				try {
-					return resource.getProject().hasNature(JavaCore.NATURE_ID);
-				} catch (CoreException e) {
-					// nothing we can do then...
-				}
+	public static Stream<IClasspathEntry> classpathEntriesForBundle(String id) {
+		// first look if we have something in the workspace...
+		IPluginModelBase model = PluginRegistry.findModel(id);
+		if (model != null && model.isEnabled()) {
+			if (isWorkspaceProject(model)) {
+				IJavaProject javaProject = JavaCore.create(model.getUnderlyingResource().getProject());
+				return Stream.of(JavaCore.newProjectEntry(javaProject.getPath()));
 			}
-			return false;
-		}));
-		List<IPluginModelBase> javaModels = collect.get(true);
-		List<IPluginModelBase> externalModels = collect.get(false);
-		return Stream.concat(
-				javaModels.stream().map(m -> JavaCore.create(m.getUnderlyingResource().getProject()))
-						.map(IJavaProject::getPath).map(JavaCore::newProjectEntry),
-				externalModels.stream().flatMap(model -> {
-					String location = model.getInstallLocation();
-					if (location == null) {
-						return Stream.empty();
-					}
-					boolean isJarShape = new File(location).isFile();
-					IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
-					if (isJarShape || libraries.length == 0) {
-						return Stream.of(IPath.fromOSString(location));
-					}
-					return Arrays.stream(libraries)
-							.filter(library -> !IPluginLibrary.RESOURCE.equals(library.getType())).map(library -> {
-								String name = library.getName();
-								String expandedName = ClasspathUtilCore.expandLibraryName(name);
-								return ClasspathUtilCore.getPath(model, expandedName, isJarShape);
-							}).filter(Objects::nonNull);
-				}).map(path -> JavaCore.newLibraryEntry(path, path, IPath.ROOT, new IAccessRule[0],
-						new IClasspathAttribute[0], false)));
+			String location = model.getInstallLocation();
+			if (location == null) {
+				return Stream.empty();
+			}
+			boolean isJarShape = new File(location).isFile();
+			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
+			if (isJarShape || libraries.length == 0) {
+				return Stream.of(getEntryForPath(IPath.fromOSString(location)));
+			}
+			return Arrays.stream(libraries).filter(library -> !IPluginLibrary.RESOURCE.equals(library.getType()))
+					.map(library -> {
+						String name = library.getName();
+						String expandedName = ClasspathUtilCore.expandLibraryName(name);
+						return ClasspathUtilCore.getPath(model, expandedName, isJarShape);
+					}).filter(Objects::nonNull).map(ClasspathUtilCore::getEntryForPath);
+		}
+		// if not found in the models, try to use one from the running eclipse
+		return Optional.ofNullable(Platform.getBundle(id)).map(bundle -> bundle.adapt(File.class)).filter(File::exists)
+				.map(File::toPath).map(Path::normalize).map(path -> IPath.fromOSString(path.toString()))
+				.map(ClasspathUtilCore::getEntryForPath).stream();
+	}
+
+	public static boolean isEntryForModel(IClasspathEntry entry, IPluginModelBase projectModel) {
+		if (entry.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
+			IResource resource = projectModel.getUnderlyingResource();
+			if (resource != null) {
+				return resource.getProject().getFullPath().equals(entry.getPath());
+			}
+		}
+		return false;
+	}
+
+	protected static boolean isWorkspaceProject(IPluginModelBase model) {
+		IResource resource = model.getUnderlyingResource();
+		if (resource != null) {
+			try {
+				return resource.getProject().hasNature(JavaCore.NATURE_ID);
+			} catch (CoreException e) {
+				// nothing we can do then...
+			}
+		}
+		return false;
+	}
+
+	private static IClasspathEntry getEntryForPath(IPath path) {
+		return JavaCore.newLibraryEntry(path, path, IPath.ROOT, new IAccessRule[0], new IClasspathAttribute[0], false);
 	}
 
 	private static void addLibraryEntry(IPluginLibrary library, Collection<ClasspathLibrary> entries) {

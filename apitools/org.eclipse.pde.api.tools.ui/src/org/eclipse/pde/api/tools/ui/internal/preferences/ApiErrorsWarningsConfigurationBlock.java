@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionException;
@@ -585,10 +586,10 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 			ControlData data = (ControlData) widget.getData();
 			Key key = data.getKey();
 			String newValue = null;
-			if (widget instanceof Button) {
-				newValue = data.getValue(((Button) widget).getSelection());
-			} else if (widget instanceof Combo) {
-				newValue = data.getValue(((Combo) widget).getSelectionIndex());
+			if (widget instanceof Button button) {
+				newValue = data.getValue(button.getSelection());
+			} else if (widget instanceof Combo combo) {
+				newValue = data.getValue(combo.getSelectionIndex());
 			} else {
 				return;
 			}
@@ -677,22 +678,22 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 	/**
 	 * Listing of all of the {@link ExpandableComposite}s in the block
 	 */
-	private final ArrayList<ExpandableComposite> fExpComps = new ArrayList<>();
+	private final List<ExpandableComposite> fExpComps = new ArrayList<>();
 
 	/**
 	 * Listing of all of the {@link Combo}s added to the block
 	 */
-	private final ArrayList<Combo> fCombos = new ArrayList<>();
+	private final List<Combo> fCombos = new ArrayList<>();
 
 	/**
 	 * Map of combo and label
 	 */
-	private final HashMap<Combo, Label> fComboLabelMap = new HashMap<>();
+	private final Map<Combo, Label> fComboLabelMap = new HashMap<>();
 
 	/**
 	 * Listing of all of the {@link Button} with SWT.check added to the block
 	 */
-	private final ArrayList<Button> fCheckBoxes = new ArrayList<>();
+	private final List<Button> fCheckBoxes = new ArrayList<>();
 
 	/**
 	 * Control used inside the system library ee group
@@ -1241,8 +1242,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 	 * Returns the scrolling parent for the given ExpandibleComposite object
 	 */
 	ScrolledComposite getScrollingParent(Object obj) {
-		if (obj instanceof ExpandableComposite) {
-			ExpandableComposite ecomp = (ExpandableComposite) obj;
+		if (obj instanceof ExpandableComposite ecomp) {
 			Composite parent = ecomp.getParent();
 			while (parent != null && !(parent instanceof ScrolledComposite)) {
 				parent = parent.getParent();
@@ -1251,8 +1251,8 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 				return (ScrolledComposite) parent;
 			}
 		}
-		if (obj instanceof ScrolledComposite) {
-			return (ScrolledComposite) obj;
+		if (obj instanceof ScrolledComposite scrolledComposite) {
+			return scrolledComposite;
 		}
 		return null;
 	}
@@ -1299,9 +1299,9 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 	private void save() {
 		if (fDirty) {
 			try {
-				ArrayList<Key> changes = new ArrayList<>();
+				List<Key> changes = new ArrayList<>();
 				collectChanges(fLookupOrder[0], changes);
-				if (changes.size() > 0) {
+				if (!changes.isEmpty()) {
 					if (fRebuildcount < 1) {
 						fRebuildcount++;
 						fManager.applyChanges();

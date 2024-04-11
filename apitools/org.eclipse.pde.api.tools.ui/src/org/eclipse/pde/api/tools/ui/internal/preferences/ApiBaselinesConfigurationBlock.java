@@ -14,6 +14,7 @@
 package org.eclipse.pde.api.tools.ui.internal.preferences;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
@@ -187,7 +188,7 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 	 *
 	 * @return the new {@link Key} for the {@link ApiUIPlugin} preference store
 	 */
-	protected final static Key getApiToolsKey(String key) {
+	protected static final Key getApiToolsKey(String key) {
 		return new Key(ApiPlugin.PLUGIN_ID, key);
 	}
 
@@ -222,8 +223,7 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 	private final SelectionListener selectionlistener = new SelectionAdapter() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
-			if (e.widget instanceof Combo) {
-				Combo combo = (Combo) e.widget;
+			if (e.widget instanceof Combo combo) {
 				ControlData data = (ControlData) combo.getData();
 				data.key.setStoredValue(fLookupOrder[0], combo.getText(), fManager);
 				fDirty = true;
@@ -236,11 +236,11 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 	 * Listing of all of the {@link Combo}s added to the block
 	 */
 
-	private final ArrayList<Combo> fCombos = new ArrayList<>();
+	private final List<Combo> fCombos = new ArrayList<>();
 	/**
 	 * Listing of the label in the block
 	 */
-	private final ArrayList<Label> fLabels = new ArrayList<>();
+	private final List<Label> fLabels = new ArrayList<>();
 
 	/**
 	 * The context of settings locations to search for values in
@@ -323,7 +323,7 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 	private void save() {
 		if (fDirty) {
 			try {
-				ArrayList<Key> changes = new ArrayList<>();
+				List<Key> changes = new ArrayList<>();
 				collectChanges(fLookupOrder[0], changes);
 				filterOutChanges(changes);
 				if (changes.size() == 1 && changes.get(0).equals(KEY_MISSING_DEFAULT_API_PROFILE)) {
@@ -345,10 +345,8 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 							updateMissingBaselineMarkerSeverity(IMarker.SEVERITY_WARNING);
 						}
 						// if ignore to warning - calculate
-						if (original.equals(ApiPlugin.VALUE_IGNORE)) {
-							if (hasBaseline == false) {
-								createMissingBaselineMarker(IMarker.SEVERITY_WARNING);
-							}
+						if (original.equals(ApiPlugin.VALUE_IGNORE) && !hasBaseline) {
+							createMissingBaselineMarker(IMarker.SEVERITY_WARNING);
 						}
 
 					} else if (newval.equals(ApiPlugin.VALUE_ERROR)) {
@@ -357,17 +355,15 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 							updateMissingBaselineMarkerSeverity(IMarker.SEVERITY_ERROR);
 						}
 						// if ignore to warning - calculate
-						if (original.equals(ApiPlugin.VALUE_IGNORE)) {
-							if (hasBaseline == false) {
-								createMissingBaselineMarker(IMarker.SEVERITY_ERROR);
-							}
+						if (original.equals(ApiPlugin.VALUE_IGNORE) && !hasBaseline) {
+							createMissingBaselineMarker(IMarker.SEVERITY_ERROR);
 						}
 					}
 					fDirty = false;
 					return;
 				}
 				// code below probably redundant now
-				if (changes.size() > 0) {
+				if (!changes.isEmpty()) {
 					if (ApiBaselinePreferencePage.rebuildcount < 1) {
 						ApiBaselinePreferencePage.rebuildcount++;
 						fManager.applyChanges();
@@ -393,7 +389,7 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 	}
 
 	// Filter out redundant change
-	private void filterOutChanges(ArrayList<Key> changes) {
+	private void filterOutChanges(List<Key> changes) {
 		if (changes.size() == 2) {
 			Key k1 = changes.get(0);
 			String original1 = k1.getStoredValue(fLookupOrder[0], null);
@@ -401,10 +397,8 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 			if (original1 == null && newval1 == null) {
 				changes.remove(0);
 			}
-			if (original1 != null && newval1 != null) {
-				if (original1.equals(newval1)) {
-					changes.remove(0);
-				}
+			if (original1 != null && newval1 != null && original1.equals(newval1)) {
+				changes.remove(0);
 			}
 			if (changes.size() == 2) {
 				Key k2 = changes.get(1);
@@ -413,10 +407,8 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 				if (original2 == null && newval2 == null) {
 					changes.remove(1);
 				}
-				if (original2 != null && newval2 != null) {
-					if (original2.equals(newval2)) {
-						changes.remove(1);
-					}
+				if (original2 != null && newval2 != null && original2.equals(newval2)) {
+					changes.remove(1);
 				}
 			}
 
@@ -424,7 +416,7 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 	}
 
 	private void updateMissingBaselineMarkerSeverity(int severity) {
-		ArrayList<IMarker> marker = findMissingBaselineMarker();
+		List<IMarker> marker = findMissingBaselineMarker();
 
 		for (IMarker iMarker : marker) {
 			try {
@@ -436,7 +428,7 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 	}
 
 	private void deleteMissingBaselineMarker() {
-		ArrayList<IMarker> marker = findMissingBaselineMarker();
+		List<IMarker> marker = findMissingBaselineMarker();
 		for (IMarker iMarker : marker) {
 			try {
 				iMarker.delete();
@@ -508,17 +500,15 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 		}
 	}
 
-	private ArrayList<IMarker> findMissingBaselineMarker() {
-		ArrayList<IMarker> markList = new ArrayList<>();
+	private List<IMarker> findMissingBaselineMarker() {
+		List<IMarker> markList = new ArrayList<>();
 		int missing_plugin = ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_API_BASELINE,
 				IElementDescriptor.RESOURCE, IApiProblem.API_PLUGIN_NOT_PRESENT_IN_BASELINE, IApiProblem.NO_FLAGS);
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		try {
 			IMarker[] findMarkers = root.findMarkers(IApiMarkerConstants.DEFAULT_API_BASELINE_PROBLEM_MARKER, false,
 					IResource.DEPTH_ZERO);
-			for (IMarker iMarker : findMarkers) {
-				markList.add(iMarker);
-			}
+			Collections.addAll(markList, findMarkers);
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
 		}
@@ -526,11 +516,10 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 		if (apiProjects == null) {
 			return markList;
 		}
-		for (IProject iProject : apiProjects) {
-			IMarker[] findMarkers;
+		for (IProject project : apiProjects) {
 			try {
-				findMarkers = iProject.findMarkers(IApiMarkerConstants.DEFAULT_API_BASELINE_PROBLEM_MARKER, false,
-						IResource.DEPTH_ZERO);
+				IMarker[] findMarkers = project.findMarkers(IApiMarkerConstants.DEFAULT_API_BASELINE_PROBLEM_MARKER,
+						false, IResource.DEPTH_ZERO);
 				for (IMarker iMarker : findMarkers) {
 					int id = ApiProblemFactory.getProblemId(iMarker);
 					if (id == missing_plugin) {
@@ -639,13 +628,10 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 	public void selectOption(int index) {
 		if (fCombos.get(index) != null && !fCombos.get(index).isDisposed()) {
 			fCombos.get(index).setFocus();
-			if (fLabels.get(index) != null && !(fLabels.get(index).isDisposed())) {
-				if (org.eclipse.jface.util.Util.isMac()) {
-					if (fLabels.get(index) != null) {
-						highlight(fCombos.get(index).getParent(), fLabels.get(index), fCombos.get(index),
-								ConfigurationBlock.HIGHLIGHT_FOCUS);
-					}
-				}
+			Label label = fLabels.get(index);
+			if (label != null && !label.isDisposed() && org.eclipse.jface.util.Util.isMac()) {
+				highlight(fCombos.get(index).getParent(), label, fCombos.get(index),
+						ConfigurationBlock.HIGHLIGHT_FOCUS);
 			}
 		}
 	}

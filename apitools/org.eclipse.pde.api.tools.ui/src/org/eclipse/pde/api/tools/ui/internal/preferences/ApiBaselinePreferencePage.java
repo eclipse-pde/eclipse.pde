@@ -17,7 +17,9 @@ package org.eclipse.pde.api.tools.ui.internal.preferences;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -84,9 +86,9 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 
 	IApiBaselineManager manager = ApiPlugin.getDefault().getApiBaselineManager();
 
-	private static HashSet<String> removed = new HashSet<>(8);
+	private static Set<String> removed = new HashSet<>(8);
 	CheckboxTableViewer tableviewer = null;
-	ArrayList<IApiBaseline> backingcollection = new ArrayList<>(8);
+	List<IApiBaseline> backingcollection = new ArrayList<>(8);
 	String newdefault = null;
 	private Button newbutton = null;
 
@@ -271,8 +273,7 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 	 * @return if the profile is the default or not
 	 */
 	protected boolean isDefault(Object element) {
-		if (element instanceof IApiBaseline) {
-			IApiBaseline profile = (IApiBaseline) element;
+		if (element instanceof IApiBaseline profile) {
 			if (newdefault == null) {
 				IApiBaseline def = ApiPlugin.getDefault().getApiBaselineManager().getDefaultApiBaseline();
 				if (def != null) {
@@ -378,7 +379,6 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 			}
 
 		}
-		return;
 	}
 
 	/**
@@ -429,11 +429,9 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 	}
 	@Override
 	public void applyData(Object data) {
-		if (data instanceof Map) {
-			Map<?, ?> pageData = (Map<?, ?>) data;
+		if (data instanceof Map<?, ?> pageData) {
 			Object key = pageData.get(ApiErrorsWarningsPreferencePage.DATA_SELECT_OPTION_KEY);
-			if (key instanceof String) {
-				String option = (String) key;
+			if (key instanceof String option) {
 				if (option.equals(ApiBaselinePreferencePage.MISSING_BASELINE_OPTION)) {
 					block.selectOption(0);
 				}

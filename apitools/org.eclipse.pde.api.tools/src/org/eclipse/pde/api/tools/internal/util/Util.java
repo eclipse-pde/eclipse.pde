@@ -40,6 +40,7 @@ import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,6 +49,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -1619,7 +1621,7 @@ public final class Util {
 	 *         false otherwise
 	 */
 	public static boolean isZipJarFile(String fileName) {
-		String normalizedFileName = fileName.toLowerCase();
+		String normalizedFileName = fileName.toLowerCase(Locale.ENGLISH);
 		return normalizedFileName.endsWith(DOT_ZIP) || normalizedFileName.endsWith(DOT_JAR);
 	}
 
@@ -1631,7 +1633,7 @@ public final class Util {
 	 *         otherwise
 	 */
 	public static boolean isTGZFile(String fileName) {
-		String normalizedFileName = fileName.toLowerCase();
+		String normalizedFileName = fileName.toLowerCase(Locale.ENGLISH);
 		return normalizedFileName.endsWith(DOT_TAR_GZ) || normalizedFileName.endsWith(DOT_TGZ);
 	}
 
@@ -1651,7 +1653,7 @@ public final class Util {
 	 * @return true if the name is for a class file false otherwise
 	 */
 	public static boolean isClassFile(String fileName) {
-		return fileName.toLowerCase().endsWith(DOT_CLASS_SUFFIX);
+		return fileName.toLowerCase(Locale.ENGLISH).endsWith(DOT_CLASS_SUFFIX);
 	}
 
 	public static boolean isDefault(int accessFlags) {
@@ -1691,7 +1693,7 @@ public final class Util {
 	 * @return true if the name is for a java source file, false otherwise
 	 */
 	public static boolean isJavaFileName(String fileName) {
-		return fileName.toLowerCase().endsWith(DOT_JAVA_SUFFIX);
+		return fileName.toLowerCase(Locale.ENGLISH).endsWith(DOT_JAVA_SUFFIX);
 	}
 
 	/**
@@ -1934,8 +1936,8 @@ public final class Util {
 	 *
 	 * @return a new temp directory
 	 */
-	public static File createTempDirectory(String prefix) throws IOException {
-		return recordTempFile(Files.createTempDirectory(prefix).toFile());
+	public static Path createTempDirectory(String prefix) throws IOException {
+		return recordTempFile(Files.createTempDirectory(prefix).toFile()).toPath();
 	}
 
 	private static File recordTempFile(File file) throws IOException {

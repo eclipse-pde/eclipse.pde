@@ -30,7 +30,8 @@ public class TargetPlatformFoldingReconciler extends Reconciler {
 	@Override
 	public void install(ITextViewer textViewer) {
 		super.install(textViewer);
-		ProjectionViewer pViewer = (ProjectionViewer) textViewer;
-		fStrategy.setProjectionViewer(pViewer);
+		if (textViewer instanceof ProjectionViewer pv) {
+			fStrategy.setProjectionViewer(pv);
+		}
 	}
 }

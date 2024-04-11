@@ -181,12 +181,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 			if (desc == null) {
 				return false;
 			}
-			this.currenttype = this.keys.get(desc);
-			if (this.currenttype == null) {
-				this.currenttype = new Type2(desc);
-				this.keys.put(desc, this.currenttype);
-			}
-
+			this.currenttype = this.keys.computeIfAbsent(desc, Type2::new);
 			currentProducer.types.put(desc, currenttype);
 
 			this.currentmember = new Member(referencedMember);
@@ -494,15 +489,15 @@ public class ConsumerReportConvertor extends UseReportConverter {
 			buffer.append(OPEN_P);
 			buffer.append(NLS.bind(SearchMessages.UseReportConverter_bundles_that_were_not_searched, new String[] {
 					"<a href=\"./not_searched.html\">", "</a></p>\n" })); //$NON-NLS-1$//$NON-NLS-2$
-			String additional = getAdditionalIndexInfo(scanResult.size() > 0);
+			String additional = getAdditionalIndexInfo(!scanResult.isEmpty());
 			if (additional != null) {
 				buffer.append(additional);
 			}
-			if (scanResult.size() > 0) {
+			if (!scanResult.isEmpty()) {
 				buffer.append(OPEN_P).append(SearchMessages.UseReportConverter_inlined_description).append(CLOSE_P);
 				buffer.append(getColourLegend());
 				buffer.append(getReferencesTableHeader(SearchMessages.ConsumerReportConvertor_ProducerListHeader, SearchMessages.UseReportConverter_bundle, true));
-				if (scanResult.size() > 0) {
+				if (!scanResult.isEmpty()) {
 					File refereehtml = null;
 					String link = null;
 					for (Object obj : scanResult) {
@@ -630,20 +625,16 @@ public class ConsumerReportConvertor extends UseReportConverter {
 			producerTypes.addAll(producer.types.keySet());
 			Collections.sort(producerTypes, compare);
 
-			CountGroup counts = null;
-			String link = null;
-			File typefile = null;
-			Type2 type = null;
 			for (IReferenceTypeDescriptor iReferenceTypeDescriptor : producerTypes) {
-				type = producer.types.get(iReferenceTypeDescriptor);
-				counts = type.counts;
+				Type2 type = producer.types.get(iReferenceTypeDescriptor);
+				CountGroup counts = type.counts;
 
 				String fqname = Signatures.getQualifiedTypeSignature((IReferenceTypeDescriptor) type.desc);
-				typefile = new File(htmlroot, fqname + HTML_EXTENSION);
+				File typefile = new File(htmlroot, fqname + HTML_EXTENSION);
 				if (!typefile.exists()) {
 					typefile.createNewFile();
 				}
-				link = extractLinkFrom(htmlroot, typefile.getAbsolutePath());
+				String link = extractLinkFrom(htmlroot, typefile.getAbsolutePath());
 				buffer.append(getReferenceTableEntry(counts, link, fqname, false));
 				writeTypePage(type.referencingMembers, type, typefile, fqname);
 			}

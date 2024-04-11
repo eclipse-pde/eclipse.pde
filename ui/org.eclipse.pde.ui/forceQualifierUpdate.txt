@@ -5,3 +5,4 @@ Bug 572892 - 4.20 I-Build: I20210415-1800 - Comparator Errors Found
 #383: Eclipse 4.26.0 Integration Build: I20221106-2230 Unstable! 
 https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1184
 https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1781
+https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1923

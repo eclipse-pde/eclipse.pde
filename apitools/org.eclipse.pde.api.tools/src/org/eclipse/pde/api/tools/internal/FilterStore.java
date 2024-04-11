@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -58,9 +59,10 @@ public class FilterStore implements IApiFilterStore {
 	 */
 	public static final int CURRENT_STORE_VERSION = 2;
 	/**
-	 * Constant representing the name of the .settings folder
+	 * Constant representing the path of the default path of the .api_filters file.
 	 */
-	static final String SETTINGS_FOLDER = ".settings"; //$NON-NLS-1$
+	static final IPath API_FILTERS_XML_PATH = IPath.fromOSString(".settings") //$NON-NLS-1$
+			.append(IApiCoreConstants.API_FILTERS_XML_NAME);
 	/**
 	 * The mapping of filters for this store.
 	 */
@@ -68,12 +70,13 @@ public class FilterStore implements IApiFilterStore {
 	/**
 	 * The bundle component backing this store
 	 */
-	private BundleComponent fComponent = null;
+	private final BundleComponent fComponent;
 
 	/**
 	 * Constructor
 	 */
 	public FilterStore() {
+		fComponent = null;
 	}
 
 	/**
@@ -89,11 +92,7 @@ public class FilterStore implements IApiFilterStore {
 			initializeApiFilters();
 			// This store does not use resources so all filters are stored in
 			// the global set
-			Set<IApiProblemFilter> globalFilters = fFilterMap.get(GLOBAL);
-			if (globalFilters == null) {
-				globalFilters = new HashSet<>();
-				fFilterMap.put(GLOBAL, globalFilters);
-			}
+			Set<IApiProblemFilter> globalFilters = fFilterMap.computeIfAbsent(GLOBAL, n -> new HashSet<>());
 			Collections.addAll(globalFilters, filters);
 		}
 	}
@@ -155,7 +154,7 @@ public class FilterStore implements IApiFilterStore {
 						filterstream = jarFile.getInputStream(filterfile);
 					}
 				} else {
-					File file = new File(loc, SETTINGS_FOLDER + File.separator + IApiCoreConstants.API_FILTERS_XML_NAME);
+					File file = new File(loc, API_FILTERS_XML_PATH.toOSString());
 					if (file.exists()) {
 						if (ApiPlugin.DEBUG_FILTER_STORE) {
 							System.out.println("found api filter file: [" + fComponent.getName() + "] at " + file); //$NON-NLS-1$ //$NON-NLS-2$
@@ -182,10 +181,7 @@ public class FilterStore implements IApiFilterStore {
 		if (fFilterMap == null || fFilterMap.isEmpty()) {
 			return false;
 		}
-		Set<IApiProblemFilter> globalFilters = fFilterMap.get(GLOBAL);
-		if (globalFilters == null) {
-			return false;
-		}
+		Set<IApiProblemFilter> globalFilters = fFilterMap.getOrDefault(GLOBAL, Set.of());
 		for (IApiProblemFilter filter : globalFilters) {
 			if (problemsMatch(filter.getUnderlyingProblem(), problem)) {
 				if (ApiPlugin.DEBUG_FILTER_STORE) {
@@ -260,17 +256,14 @@ public class FilterStore implements IApiFilterStore {
 					if (filterProblemIndex == -1) {
 						return false; // simple names should match
 					}
-					if (filterProblemMessageArgument.substring(filterProblemIndex + 1).equals(problemMessageArgument)) {
-						continue;
-					} else {
+					if (!filterProblemMessageArgument.substring(filterProblemIndex + 1)
+							.equals(problemMessageArgument)) {
 						return false;
 					}
 				} else if (filterProblemIndex != -1) {
 					return false; // fully qualified name should match
 				} else {
-					if (problemMessageArgument.substring(index + 1).equals(filterProblemMessageArgument)) {
-						continue;
-					} else {
+					if (!problemMessageArgument.substring(index + 1).equals(filterProblemMessageArgument)) {
 						return false;
 					}
 				}
@@ -332,8 +325,8 @@ public class FilterStore implements IApiFilterStore {
 			return;
 		}
 		NodeList resources = root.getElementsByTagName(IApiXmlConstants.ELEMENT_RESOURCE);
-		ArrayList<IApiProblem> newfilters = new ArrayList<>();
-		ArrayList<String> comments = new ArrayList<>();
+		List<IApiProblem> newfilters = new ArrayList<>();
+		List<String> comments = new ArrayList<>();
 		for (int i = 0; i < resources.getLength(); i++) {
 			Element element = (Element) resources.item(i);
 			String typeName = element.getAttribute(IApiXmlConstants.ATTR_TYPE);
@@ -389,11 +382,7 @@ public class FilterStore implements IApiFilterStore {
 		}
 		// This filter store doesn't handle resources so all filters are added
 		// to GLOBAL
-		Set<IApiProblemFilter> globalFilters = fFilterMap.get(GLOBAL);
-		if (globalFilters == null) {
-			globalFilters = new HashSet<>();
-			fFilterMap.put(GLOBAL, globalFilters);
-		}
+		Set<IApiProblemFilter> globalFilters = fFilterMap.computeIfAbsent(GLOBAL, n -> new HashSet<>());
 
 		for (int i = 0; i < problems.length; i++) {
 			IApiProblem problem = problems[i];

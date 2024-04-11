@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.ui.internal.preferences;
 
-import java.util.HashSet;
+import java.util.Arrays;
 import java.util.Set;
 
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -30,7 +30,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
@@ -56,20 +56,12 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 	static class ApiJavaElementContentProvider extends StandardJavaElementContentProvider {
 		@Override
 		public Object[] getChildren(Object element) {
-			if (element instanceof IJavaModel) {
-				IJavaModel model = (IJavaModel) element;
-				HashSet<IJavaProject> set = new HashSet<>();
+			if (element instanceof IJavaModel model) {
 				try {
-					IJavaProject[] projects = model.getJavaProjects();
-					for (IJavaProject project : projects) {
-						if (project.getProject().hasNature(ApiPlugin.NATURE_ID)) {
-							set.add(project);
-						}
-					}
+					return Arrays.stream(model.getJavaProjects()).filter(Util::isApiProject).distinct().toArray();
 				} catch (CoreException ce) {
-					// ignore
+					return new Object[0];
 				}
-				return set.toArray();
 			}
 			return super.getChildren(element);
 		}
@@ -80,10 +72,10 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 	Set<IJavaProject> fProjectsWithSpecifics;
 
 	// sizing constants
-	private final static int SIZING_SELECTION_WIDGET_HEIGHT = 250;
-	private final static int SIZING_SELECTION_WIDGET_WIDTH = 300;
+	private static final int SIZING_SELECTION_WIDGET_HEIGHT = 250;
+	private static final int SIZING_SELECTION_WIDGET_WIDTH = 300;
 
-	private final static String DIALOG_SETTINGS_SHOW_ALL = "ProjectSelectionDialog.show_all"; //$NON-NLS-1$
+	private static final String DIALOG_SETTINGS_SHOW_ALL = "ProjectSelectionDialog.show_all"; //$NON-NLS-1$
 
 	/**
 	 * The filter for the viewer

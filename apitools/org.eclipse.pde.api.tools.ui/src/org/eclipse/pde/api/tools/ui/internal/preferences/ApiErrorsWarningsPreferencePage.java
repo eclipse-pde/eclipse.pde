@@ -16,6 +16,7 @@ package org.eclipse.pde.api.tools.ui.internal.preferences;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -106,7 +107,7 @@ public class ApiErrorsWarningsPreferencePage extends PreferencePage implements I
 		link.setFont(comp.getFont());
 		link.setText(PreferenceMessages.ApiErrorsWarningsPreferencePage_1);
 		link.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
-			HashSet<IJavaProject> set = new HashSet<>();
+			Set<IJavaProject> set = new HashSet<>();
 			try {
 				IJavaProject[] projects = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot()).getJavaProjects();
 				IProject project = null;
@@ -125,7 +126,7 @@ public class ApiErrorsWarningsPreferencePage extends PreferencePage implements I
 			}
 			ProjectSelectionDialog psd = new ProjectSelectionDialog(getShell(), set);
 			if (psd.open() == IDialogConstants.OK_ID) {
-				HashMap<String, Boolean> data = new HashMap<>();
+				Map<String, Boolean> data = new HashMap<>();
 				data.put(NO_LINK, Boolean.TRUE);
 				PreferencesUtil.createPropertyDialogOn(getShell(), ((IJavaProject) psd.getFirstResult()).getProject(),
 						IApiToolsConstants.ID_ERRORS_WARNINGS_PROP_PAGE,

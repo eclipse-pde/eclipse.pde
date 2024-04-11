@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -39,7 +40,7 @@ public class AntFilterStore extends FilterStore {
 
 	String fComponentId = null;
 	String fFiltersRoot = null;
-	public static ArrayList<IApiProblem> filteredAPIProblems = new ArrayList<>();
+	public static final List<IApiProblem> filteredAPIProblems = new ArrayList<>();
 	/**
 	 * Constructor
 	 */
@@ -99,11 +100,7 @@ public class AntFilterStore extends FilterStore {
 		}
 		// This filter store doesn't handle resources so all filters are added
 		// to GLOBAL
-		Set<IApiProblemFilter> globalFilters = fFilterMap.get(GLOBAL);
-		if (globalFilters == null) {
-			globalFilters = new HashSet<>();
-			fFilterMap.put(GLOBAL, globalFilters);
-		}
+		Set<IApiProblemFilter> globalFilters = fFilterMap.computeIfAbsent(GLOBAL, n -> new HashSet<>());
 
 		for (int i = 0; i < problems.length; i++) {
 			IApiProblem problem = problems[i];
