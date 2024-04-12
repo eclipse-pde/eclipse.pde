@@ -32,11 +32,11 @@ public abstract class ErrorReporter {
 	protected static final String[] BOOLEAN_VALUES = new String[] { "true", "false" }; //$NON-NLS-1$ //$NON-NLS-2$
 
 	protected final IFile fFile;
-	protected IProject fProject;
+	protected final IProject fProject;
 
 	private final IncrementalErrorReporter fErrorReporter;
 
-	public ErrorReporter(IFile file) {
+	protected ErrorReporter(IFile file) {
 		fFile = file;
 		fErrorReporter = new IncrementalErrorReporter(file);
 		fProject = file.getProject();
