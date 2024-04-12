@@ -20,16 +20,19 @@ package org.eclipse.pde.internal.core.builders;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
@@ -76,6 +79,7 @@ import org.osgi.resource.Resource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 public class BuildErrorReporter extends ErrorReporter implements IBuildPropertiesConstants {
 
@@ -96,16 +100,16 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	private static final String JavaSE_1_7 = "JavaSE-1.7"; //$NON-NLS-1$
 	private static final String JavaSE_1_8 = "JavaSE-1.8"; //$NON-NLS-1$
 
-	static class BuildProblem {
-		String fEntryToken;
-		String fEntryName;
-		String fMessage;
-		String fCategory;
-		int fFixId;
-		int fSeverity;
-		String fCompilerKey;
-		HashMap<String, String> attributes;
-		int fExtraBuntryEntryIndex;
+	private static class BuildProblem {
+		private final String fEntryToken;
+		private final String fEntryName;
+		private final String fMessage;
+		private final String fCategory;
+		private final int fFixId;
+		private final int fSeverity;
+		private final String fCompilerKey;
+		private Map<String, String> attributes;
+		private int fExtraBuntryEntryIndex;
 
 		BuildProblem(String name, String token, String message, int fixId, int severity, String compilerKey, String category) {
 			fEntryName = name;
@@ -120,19 +124,10 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 
 		@Override
 		public boolean equals(Object obj) {
-			if (!(obj instanceof BuildProblem bp)) {
-				return false;
-			}
-			if (!fEntryName.equals(bp.fEntryName)) {
-				return false;
-			}
-			if (fEntryToken != null && !fEntryToken.equals(bp.fEntryToken)) {
-				return false;
-			}
-			if (fFixId != bp.fFixId) {
-				return false;
-			}
-			return true;
+			return obj instanceof BuildProblem bp //
+					&& fEntryName.equals(bp.fEntryName) //
+					&& Objects.equals(fEntryToken, bp.fEntryToken) //
+					&& fFixId == bp.fFixId;
 		}
 
 		public void addExtraBuildEntryTokenAttribute(String entry, String value) {
@@ -148,7 +143,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			attributes.put(attributeName, value);
 		}
 
-		public void addAttributes(HashMap<String, String> attributes) {
+		public void addAttributes(Map<String, String> attributes) {
 			if (attributes == null) {
 				attributes = new HashMap<>(1);
 			}
@@ -172,7 +167,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 
 	}
 
-	protected ArrayList<BuildProblem> fProblemList = new ArrayList<>();
+	protected List<BuildProblem> fProblemList = new ArrayList<>();
 	protected int fBuildSeverity;
 	protected int fClasspathSeverity;
 	protected int fJavaComplianceSeverity;
@@ -212,7 +207,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 
 		// if there are any errors report using the text model
 		if (!fProblemList.isEmpty()) {
-			reportErrors(prepareTextBuildModel(monitor));
+			reportErrors(prepareTextBuildModel());
 		}
 	}
 
@@ -228,11 +223,11 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		IBuildEntry javacTarget = null;
 		IBuildEntry jreCompilationProfile = null;
 		IBuildEntry javaProjectWarnings = null;
-		ArrayList<IBuildEntry> javacWarnings = new ArrayList<>();
-		ArrayList<IBuildEntry> javacErrors = new ArrayList<>();
-		ArrayList<IBuildEntry> sourceEntries = new ArrayList<>(1);
-		ArrayList<String> sourceEntryKeys = new ArrayList<>(1);
-		ArrayList<IBuildEntry> outputEntries = new ArrayList<>(1);
+		List<IBuildEntry> javacWarnings = new ArrayList<>();
+		List<IBuildEntry> javacErrors = new ArrayList<>();
+		List<IBuildEntry> sourceEntries = new ArrayList<>(1);
+		List<String> sourceEntryKeys = new ArrayList<>(1);
+		List<IBuildEntry> outputEntries = new ArrayList<>(1);
 		Map<String, String> encodingEntries = new HashMap<>();
 		IBuildEntry[] entries = build.getBuildEntries();
 		for (IBuildEntry entry : entries) {
@@ -284,19 +279,17 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		}
 
 		// validation not relying on build flag
-		if (fClasspathSeverity != CompilerFlags.IGNORE) {
-			if (bundleList != null) {
-				validateDependencyManagement(bundleList);
-			}
+		if (fClasspathSeverity != CompilerFlags.IGNORE && bundleList != null) {
+			validateDependencyManagement(bundleList);
 		}
 
 		if (jarsExtra != null) {
 			validateJarsExtraClasspath(jarsExtra);
 		}
-		validateIncludes(binIncludes, sourceEntryKeys, fBinInclSeverity,CompilerFlags.P_BUILD_BIN_INCLUDES);
-		validateIncludes(binExcludes, sourceEntryKeys, fBinInclSeverity,CompilerFlags.P_BUILD_BIN_INCLUDES);
-		validateIncludes(srcIncludes, sourceEntryKeys, fSrcInclSeverity,CompilerFlags.P_BUILD_SRC_INCLUDES);
-		validateIncludes(srcExcludes, sourceEntryKeys, fSrcInclSeverity,CompilerFlags.P_BUILD_SRC_INCLUDES);
+		validateIncludes(binIncludes, sourceEntryKeys, fBinInclSeverity, CompilerFlags.P_BUILD_BIN_INCLUDES);
+		validateIncludes(binExcludes, sourceEntryKeys, fBinInclSeverity, CompilerFlags.P_BUILD_BIN_INCLUDES);
+		validateIncludes(srcIncludes, sourceEntryKeys, fSrcInclSeverity, CompilerFlags.P_BUILD_SRC_INCLUDES);
+		validateIncludes(srcExcludes, sourceEntryKeys, fSrcInclSeverity, CompilerFlags.P_BUILD_SRC_INCLUDES);
 		validateSourceFoldersInSrcIncludes(srcIncludes);
 
 		try {
@@ -306,12 +299,11 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 				validateMissingLibraries(sourceEntryKeys, cpes);
 				validateSourceEntries(sourceEntries, srcExcludes, cpes);
 				SourceEntryErrorReporter srcEntryErrReporter = new SourceEntryErrorReporter(fFile, build);
-				srcEntryErrReporter.initialize(sourceEntries, outputEntries, cpes, fProject);
+				srcEntryErrReporter.initialize(sourceEntries, outputEntries, cpes);
 				srcEntryErrReporter.validate();
-				ArrayList<BuildProblem> problems = srcEntryErrReporter.getProblemList();
-				for (int i = 0; i < problems.size(); i++) {
-					if (!fProblemList.contains(problems.get(i))) {
-						fProblemList.add(problems.get(i));
+				for (BuildProblem problem : srcEntryErrReporter.fProblemList) {
+					if (!fProblemList.contains(problem)) {
+						fProblemList.add(problem);
 					}
 				}
 
@@ -332,12 +324,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	 * @return list of library names
 	 */
 	private List<String> getSourceLibraries(List<IBuildEntry> sourceEntries) {
-		List<String> libraries = new ArrayList<>();
-		for (IBuildEntry entry : sourceEntries) {
-			String libName = entry.getName().substring(PROPERTY_SOURCE_PREFIX.length());
-			libraries.add(libName);
-		}
-		return libraries;
+		return sourceEntries.stream().map(e -> e.getName().substring(PROPERTY_SOURCE_PREFIX.length())).toList();
 	}
 
 	/**
@@ -346,22 +333,18 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	 *
 	 * @param libraryNames list of library names (javacWarnings/javacErrors require an entry for each source library)
 	 */
-	private void validateExecutionEnvironment(IBuildEntry javacSourceEntry, IBuildEntry javacTargetEntry, IBuildEntry jreCompilationProfileEntry, ArrayList<IBuildEntry> javacWarningsEntries, ArrayList<IBuildEntry> javacErrorsEntries, List<String> libraryNames) {
+	private void validateExecutionEnvironment(IBuildEntry javacSourceEntry, IBuildEntry javacTargetEntry,
+			IBuildEntry jreCompilationProfileEntry, List<IBuildEntry> javacWarningsEntries,
+			List<IBuildEntry> javacErrorsEntries, List<String> libraryNames) {
 		// if there is no source to compile, don't worry about compiler settings
 		IJavaProject project = JavaCore.create(fProject);
 		if (project.exists()) {
-			IClasspathEntry[] classpath = null;
+			boolean source = false;
 			try {
-				classpath = project.getRawClasspath();
+				source = Arrays.stream(project.getRawClasspath())
+						.anyMatch(e -> e.getEntryKind() == IClasspathEntry.CPE_SOURCE);
 			} catch (JavaModelException e) {
 				PDECore.log(e);
-				return;
-			}
-			boolean source = false;
-			for (IClasspathEntry entry : classpath) {
-				if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
-					source = true;
-				}
 			}
 			if (!source) {
 				return;
@@ -448,7 +431,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 				}
 
 				boolean warnForJavacWarnings = message != null || javacSourceEntry != null || javacTargetEntry != null || jreCompilationProfileEntry != null;
-				if (warnForJavacWarnings == false) {
+				if (!warnForJavacWarnings) {
 					return;
 				}
 
@@ -468,7 +451,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	 * @param javacErrorsEntries list of build entries with the java compiler errors prefix javacErrors.
 	 * @param libraryNames list of String library names
 	 */
-	private void checkJavaComplianceSettings(String complianceLevel, ArrayList<IBuildEntry> javacWarningsEntries, ArrayList<IBuildEntry> javacErrorsEntries, List<String> libraryNames) {
+	private void checkJavaComplianceSettings(String complianceLevel, List<IBuildEntry> javacWarningsEntries,
+			List<IBuildEntry> javacErrorsEntries, List<String> libraryNames) {
 		List<String> complianceWarnSettings = new ArrayList<>(3);
 		List<String> complianceErrorSettings = new ArrayList<>(3);
 
@@ -598,7 +582,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			int latest = Integer.parseInt(latestSupportedJavaVersion);
 			for (int i = 9; i <= latest; i++) {
 				if (String.valueOf(i).equals(srcCompatibility) && String.valueOf(i).equals(clsCompatibility)) {
-					executionEnv = "JavaSE-" + String.valueOf(i); //$NON-NLS-1$
+					executionEnv = "JavaSE-" + i; //$NON-NLS-1$
 					compliance = String.valueOf(i);
 					break;
 				}
@@ -645,7 +629,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 
 		// make sure "." library is included if present
 		String defaultLibraryName = PROPERTY_OUTPUT_PREFIX + "."; //$NON-NLS-1$
-		if (outputEntries.stream().anyMatch(e -> e.getName().equals(defaultLibraryName))) {
+		if (outputEntries.stream().map(IBuildEntry::getName).anyMatch(defaultLibraryName::equals)) {
 			validateBinIncludes(binIncludes, "."); //$NON-NLS-1$
 		}
 
@@ -654,8 +638,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		if (model == null) {
 			return;
 		}
-		if (model instanceof IBundlePluginModelBase && !(model instanceof IBundleFragmentModel)) {
-			IBundleModel bm = ((IBundlePluginModelBase) model).getBundleModel();
+		if (model instanceof IBundlePluginModelBase modelBase && !(modelBase instanceof IBundleFragmentModel)) {
+			IBundleModel bm = modelBase.getBundleModel();
 			IManifestHeader mh = bm.getBundle().getManifestHeader(Constants.BUNDLE_LOCALIZATION);
 			IPath resourcePath = null;
 			String entry = null;
@@ -673,10 +657,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 					resourcePath = IPath.fromOSString(entry);
 				}
 			}
-			if (entry != null) {
-				if (PDEProject.getBundleRoot(fProject).exists(resourcePath)) {
-					validateBinIncludes(binIncludes, entry);
-				}
+			if (entry != null && PDEProject.getBundleRoot(fProject).exists(resourcePath)) {
+				validateBinIncludes(binIncludes, entry);
 			}
 		}
 
@@ -685,11 +667,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	// if we're defining fragments, make sure they have entries in plugin.xml
 	private void validateFragmentContributions(IBuildEntry binIncludes) {
 		try {
-			@SuppressWarnings("restriction")
-			DocumentBuilder newDocumentBuilder = org.eclipse.core.internal.runtime.XmlProcessorFactory
-					.createDocumentBuilderWithErrorOnDOCTYPE();
-			newDocumentBuilder.setErrorHandler(new PDEErrorHandler());
-			Document doc = newDocumentBuilder.parse(PDEProject.getPluginXml(fProject).getContents());
+			Document doc = parsePluginXML();
 			XPath xpath = XPathFactory.newInstance().newXPath();
 			NodeList list = (NodeList) xpath.evaluate("/plugin/extension[@point='org.eclipse.e4.workbench.model']/fragment/@uri", doc, XPathConstants.NODESET); //$NON-NLS-1$
 			for (int i = 0; i < list.getLength(); i++) {
@@ -703,11 +681,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	// if we're defining an application, make sure it has entries in plugin.xml
 	private void validateApplicationContributions(IBuildEntry binIncludes) {
 		try {
-			@SuppressWarnings("restriction")
-			DocumentBuilder newDocumentBuilder = org.eclipse.core.internal.runtime.XmlProcessorFactory
-					.createDocumentBuilderWithErrorOnDOCTYPE();
-			newDocumentBuilder.setErrorHandler(new PDEErrorHandler());
-			Document doc = newDocumentBuilder.parse(PDEProject.getPluginXml(fProject).getContents());
+			Document doc = parsePluginXML();
 			XPath xpath = XPathFactory.newInstance().newXPath();
 			// are we an application?
 			Node nodeProduct = (Node) xpath.evaluate("/plugin/extension[@point='org.eclipse.core.runtime.products']/product", doc, XPathConstants.NODE); //$NON-NLS-1$
@@ -743,18 +717,22 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		}
 	}
 
+	private Document parsePluginXML() throws ParserConfigurationException, SAXException, IOException, CoreException {
+		@SuppressWarnings("restriction")
+		DocumentBuilder builder = org.eclipse.core.internal.runtime.XmlProcessorFactory
+				.createDocumentBuilderWithErrorOnDOCTYPE();
+		builder.setErrorHandler(new PDEErrorHandler());
+		return builder.parse(PDEProject.getPluginXml(fProject).getContents());
+	}
+
 	private void validateBinIncludes(IBuildEntry binIncludes, String key) {
 		if (binIncludes == null) {
 			return;
 		}
-		String[] tokens = binIncludes.getTokens();
-		boolean exists = false;
-		for (String token : tokens) {
+		boolean exists = Arrays.stream(binIncludes.getTokens()).anyMatch(token -> {
 			if (key.startsWith(token)) {
-				exists = true;
-				break;
+				return true;
 			}
-
 			// check for wildcards
 			IPath project = fFile.getProject().getLocation();
 			if (project != null && token != null) {
@@ -762,12 +740,12 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 				File[] files = projectFile.listFiles(new WildcardFilenameFilter(token));
 				for (File file : files) {
 					if (file.toString().endsWith(key)) {
-						exists = true;
-						break;
+						return true;
 					}
 				}
 			}
-		}
+			return false;
+		});
 
 		if (!exists) {
 			prepareError(PROPERTY_BIN_INCLUDES, key, NLS.bind(PDECoreMessages.BuildErrorReporter_binIncludesMissing, key), PDEMarkerFactory.B_ADDITION, fBinInclSeverity,CompilerFlags.P_BUILD_BIN_INCLUDES, PDEMarkerFactory.CAT_FATAL);
@@ -778,10 +756,10 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		String platform = "platform:/plugin/"; //$NON-NLS-1$
 		String[] tokens = javaExtra.getTokens();
 		IPath projectPath = javaExtra.getModel().getUnderlyingResource().getProject().getLocation();
-		for (int i = 0; i < tokens.length; i++) {
+		for (String token : tokens) {
 			boolean exists = true;
-			if (tokens[i].startsWith(platform)) {
-				String path = tokens[i].substring(platform.length());
+			if (token.startsWith(platform)) {
+				String path = token.substring(platform.length());
 				int sep = path.indexOf(IPath.SEPARATOR);
 				if (sep > -1) {
 					IPluginModelBase model = PluginRegistry.findModel(path.substring(0, sep));
@@ -802,16 +780,17 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 					}
 				}
 			} else {
-				exists = projectPath.append(tokens[i]).toFile().exists();
+				exists = projectPath.append(token).toFile().exists();
 			}
 
-			if (!exists && !startsWithAntVariable(tokens[i])) {
-				prepareError(PROPERTY_JAR_EXTRA_CLASSPATH, tokens[i], NLS.bind(PDECoreMessages.BuildErrorReporter_cannotFindJar, tokens[i]), PDEMarkerFactory.M_ONLY_CONFIG_SEV, fBuildSeverity,CompilerFlags.P_BUILD ,PDEMarkerFactory.CAT_OTHER);
+			if (!exists && !startsWithAntVariable(token)) {
+				prepareError(PROPERTY_JAR_EXTRA_CLASSPATH, token, NLS.bind(PDECoreMessages.BuildErrorReporter_cannotFindJar, token), PDEMarkerFactory.M_ONLY_CONFIG_SEV, fBuildSeverity,CompilerFlags.P_BUILD ,PDEMarkerFactory.CAT_OTHER);
 			}
 		}
 	}
 
-	private void validateMissingSourceInBinIncludes(IBuildEntry binIncludes, ArrayList<String> sourceEntryKeys, IBuild build) {
+	private void validateMissingSourceInBinIncludes(IBuildEntry binIncludes, List<String> sourceEntryKeys,
+			IBuild build) {
 		if (binIncludes == null) {
 			return;
 		}
@@ -826,8 +805,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		if (!pluginLibraryNames.contains(".")) { //$NON-NLS-1$
 			pluginLibraryNames.add("."); //$NON-NLS-1$)
 		}
-		for (int i = 0; i < sourceEntryKeys.size(); i++) {
-			String key = sourceEntryKeys.get(i);
+		for (String sourceEntryKey : sourceEntryKeys) {
+			String key = sourceEntryKey;
 			if (!pluginLibraryNames.contains(key)) {
 				return; // do not report error for folders if the library itself does not exists on plug-in classpath
 			}
@@ -869,7 +848,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		}
 	}
 
-	private void validateMissingLibraries(ArrayList<String> sourceEntryKeys, IClasspathEntry[] cpes) {
+	private void validateMissingLibraries(List<String> sourceEntryKeys, IClasspathEntry[] cpes) {
 		boolean srcFolderExists = false;
 		// no need to flag anything if the project contains no source folders.
 		for (IClasspathEntry entry : cpes) {
@@ -886,13 +865,10 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		if (model == null) {
 			return;
 		}
-		if (model instanceof IBundlePluginModelBase && !(model instanceof IBundleFragmentModel)) {
-			IBundleModel bm = ((IBundlePluginModelBase) model).getBundleModel();
-			IManifestHeader mh = bm.getBundle().getManifestHeader(Constants.BUNDLE_CLASSPATH);
-			if ((mh == null || mh.getValue() == null)) {
-				if (!sourceEntryKeys.contains(DEF_SOURCE_ENTRY)) {
-					prepareError(DEF_SOURCE_ENTRY, null, PDECoreMessages.BuildErrorReporter_sourceMissing, PDEMarkerFactory.M_ONLY_CONFIG_SEV, fSrcLibSeverity,CompilerFlags.P_BUILD_SOURCE_LIBRARY, PDEMarkerFactory.CAT_OTHER);
-				}
+		if (model instanceof IBundlePluginModelBase modelBase && !(model instanceof IBundleFragmentModel)) {
+			IManifestHeader mh = modelBase.getBundleModel().getBundle().getManifestHeader(Constants.BUNDLE_CLASSPATH);
+			if ((mh == null || mh.getValue() == null) && !sourceEntryKeys.contains(DEF_SOURCE_ENTRY)) {
+				prepareError(DEF_SOURCE_ENTRY, null, PDECoreMessages.BuildErrorReporter_sourceMissing, PDEMarkerFactory.M_ONLY_CONFIG_SEV, fSrcLibSeverity,CompilerFlags.P_BUILD_SOURCE_LIBRARY, PDEMarkerFactory.CAT_OTHER);
 			}
 		}
 		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
@@ -960,7 +936,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		return false;
 	}
 
-	private void validateSourceEntries(ArrayList<IBuildEntry> sourceEntries, IBuildEntry srcExcludes, IClasspathEntry[] cpes) {
+	private void validateSourceEntries(List<IBuildEntry> sourceEntries, IBuildEntry srcExcludes,
+			IClasspathEntry[] cpes) {
 		if (sourceEntries == null || sourceEntries.isEmpty()) {
 			return;
 		}
@@ -1027,7 +1004,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 
 	}
 
-	private void validateIncludes(IBuildEntry includes, ArrayList<String> sourceIncludes, int severity, String compilerKey) {
+	private void validateIncludes(IBuildEntry includes, List<String> sourceIncludes, int severity, String compilerKey) {
 		if (includes == null) {
 			return;
 		}
@@ -1179,7 +1156,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		return result.toString();
 	}
 
-	private BuildModel prepareTextBuildModel(IProgressMonitor monitor) {
+	private BuildModel prepareTextBuildModel() {
 		try {
 			IDocument doc = createDocument(fFile);
 			if (doc == null) {
@@ -1202,9 +1179,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			return;
 		}
 
-		for (int i = 0; i < fProblemList.size(); i++) {
-			BuildProblem bp = fProblemList.get(i);
-
+		for (BuildProblem bp : fProblemList) {
 			int lineNum;
 			IBuildEntry buildEntry = bm.getBuild().getEntry(bp.fEntryName);
 			if (buildEntry == null || bp.fEntryName == null) {
@@ -1218,7 +1193,9 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			if (lineNum > 0) {
 				VirtualMarker marker = report(bp.fMessage, lineNum, bp.fFixId, bp.fEntryName, bp.fEntryToken,
 						bp.fSeverity, bp.fCategory);
-				addMarkerAttribute(marker,PDEMarkerFactory.compilerKey,bp.fCompilerKey);
+				if (marker != null) {
+					marker.setAttribute(PDEMarkerFactory.compilerKey, bp.fCompilerKey);
+				}
 				if (marker != null && bp.attributes != null) {
 					for (Map.Entry<String, String> entry : bp.attributes.entrySet()) {
 						String attribute = entry.getKey();
@@ -1295,9 +1272,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	}
 
 	protected BuildProblem prepareError(String name, String token, String message, int fixId, int severity, String compilerKey, String category) {
-		BuildProblem bp = new BuildProblem(name, token, message, fixId, severity,compilerKey, category);
-		for (int i = 0; i < fProblemList.size(); i++) {
-			BuildProblem listed = fProblemList.get(i);
+		BuildProblem bp = new BuildProblem(name, token, message, fixId, severity, compilerKey, category);
+		for (BuildProblem listed : fProblemList) {
 			if (listed.equals(bp)) {
 				if (bp.attributes != null) {
 					listed.addAttributes(bp.attributes);
@@ -1333,11 +1309,5 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			}
 		}
 		return false;
-	}
-
-	protected void addMarkerAttribute(VirtualMarker marker, String attr, String value) {
-		if (marker != null) {
-			marker.setAttribute(attr, value);
-		}
 	}
 }

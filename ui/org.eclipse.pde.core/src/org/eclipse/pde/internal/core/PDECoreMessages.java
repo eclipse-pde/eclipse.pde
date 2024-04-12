@@ -332,7 +332,6 @@ public class PDECoreMessages extends NLS {
 
 	public static String SourceEntryErrorReporter_0;
 	public static String SourceEntryErrorReporter_1;
-	public static String SourceEntryErrorReporter_10;
 	public static String SourceEntryErrorReporter_2;
 	public static String SourceEntryErrorReporter_3;
 	public static String SourceEntryErrorReporter_4;
