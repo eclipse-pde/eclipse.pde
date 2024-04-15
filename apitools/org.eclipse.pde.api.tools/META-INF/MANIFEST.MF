@@ -31,8 +31,7 @@ Export-Package: org.eclipse.pde.api.tools.internal;x-friends:="org.eclipse.pde.a
  org.eclipse.pde.api.tools.internal.provisional.scanner;x-friends:="org.eclipse.pde.api.tools.tests,org.eclipse.pde.api.tools.ui",
  org.eclipse.pde.api.tools.internal.provisional.search;x-friends:="org.eclipse.pde.api.tools.tests,org.eclipse.pde.api.tools.ui",
  org.eclipse.pde.api.tools.internal.search;x-friends:="org.eclipse.pde.api.tools.tests,org.eclipse.pde.api.tools.ui",
- org.eclipse.pde.api.tools.internal.util;x-friends:="org.eclipse.pde.api.tools.tests,org.eclipse.pde.api.tools.ui,org.eclipse.pde.api.tools.generator",
- org.eclipse.pde.api.tools.internal.util.profiles;x-internal:=true
+ org.eclipse.pde.api.tools.internal.util;x-friends:="org.eclipse.pde.api.tools.tests,org.eclipse.pde.api.tools.ui,org.eclipse.pde.api.tools.generator"
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Import-Package: com.ibm.icu.util,
  org.objectweb.asm;version="[9.5.0,10.0.0)",
