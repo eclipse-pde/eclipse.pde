@@ -99,7 +99,7 @@ public abstract class SearchTest {
 		if (!file.exists()) {
 			fail("The baseline test directory must exist"); //$NON-NLS-1$
 		}
-		IApiBaseline base = ApiModelFactory.newApiBaseline(name, Util.getEEDescriptionFile());
+		IApiBaseline base = ApiModelFactory.newApiBaseline(name, Util.getEEDescriptionFile(), null);
 		File[] jars = file.listFiles((FileFilter) pathname -> {
 			String name1 = pathname.getName();
 			if (Util.isArchive(name1)) {

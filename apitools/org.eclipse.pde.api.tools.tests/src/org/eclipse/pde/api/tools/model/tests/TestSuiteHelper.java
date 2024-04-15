@@ -13,9 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.model.tests;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -24,6 +22,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -32,6 +31,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.compiler.batch.BatchCompiler;
+import org.eclipse.jdt.launching.environments.ExecutionEnvironmentDescription;
 import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.model.ApiType;
@@ -86,8 +86,8 @@ public class TestSuiteHelper {
 	 * @return API baseline
 	 */
 	public static IApiBaseline createBaseline(String name, File rootDirectory) throws CoreException {
-		File eeFile = getEEDescriptionFile();
-		IApiBaseline baseline = newApiBaseline(name, eeFile);
+		ExecutionEnvironmentDescription ee = getEEDescription();
+		IApiBaseline baseline = ApiModelFactory.newApiBaseline(name, ee, null);
 		// create a component for each jar/directory in the folder
 		File[] files = rootDirectory.listFiles();
 		List<IApiComponent> components = new ArrayList<>();
@@ -325,8 +325,8 @@ public class TestSuiteHelper {
 		File file = path.toFile();
 		String name = baselineid == null ? "test" : baselineid; //$NON-NLS-1$
 		if (file.exists()) {
-			File eeFile = getEEDescriptionFile();
-			IApiBaseline baseline = newApiBaseline(name, eeFile);
+			ExecutionEnvironmentDescription ee = getEEDescription();
+			IApiBaseline baseline = ApiModelFactory.newApiBaseline(name, ee, null);
 			// create a component for each jar/directory in the folder
 			File[] files = file.listFiles();
 			List<IApiComponent> components = new ArrayList<>();
@@ -351,24 +351,6 @@ public class TestSuiteHelper {
 	}
 
 	/**
-	 * Constructs a new {@link IApiProfile} with the given name, id, version,
-	 * and environment.
-	 * <p>
-	 * Attempts to locate OSGi execution environment baseline when not running
-	 * in an OSGi framework.
-	 * </p>
-	 *
-	 * @param eeFile
-	 *            execution environment description file
-	 * @return API baseline
-	 * @exception CoreException
-	 *                if unable to create a baseline
-	 */
-	public static IApiBaseline newApiBaseline(String name, File eeFile) throws CoreException {
-		return ApiModelFactory.newApiBaseline(name, eeFile);
-	}
-
-	/**
 	 * Creates a new {@link IApiType} for testing
 	 *
 	 * @return a new testing {@link IApiType}
@@ -380,32 +362,20 @@ public class TestSuiteHelper {
 	/**
 	 * Gets the .ee file supplied to run tests based on system property.
 	 */
-	public static File getEEDescriptionFile() {
+	public static ExecutionEnvironmentDescription getEEDescription() throws CoreException {
 		String eePath = System.getProperty("ee.file"); //$NON-NLS-1$
 		if (eePath == null) {
-			// generate a fake 11 ee file
-			File fakeEEFile = null;
-			try {
-				fakeEEFile = Util.createTempFile("eefile", ".ee"); //$NON-NLS-1$ //$NON-NLS-2$
-				try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(fakeEEFile)))) {
-				writer.print("-Djava.home="); //$NON-NLS-1$
-				writer.println(System.getProperty("java.home")); //$NON-NLS-1$
-				writer.print("-Dee.bootclasspath="); //$NON-NLS-1$
-				writer.println(org.eclipse.pde.api.tools.internal.util.Util.getJavaClassLibsAsString());
-				writer.println("-Dee.language.level=17"); //$NON-NLS-1$
-				writer.println("-Dee.class.library.level=JavaSE-17"); //$NON-NLS-1$
-				writer.flush();
-				}
-			} catch (IOException e) {
-				// ignore
-			}
-			fakeEEFile.deleteOnExit();
-			eePath = fakeEEFile.getAbsolutePath();
+			// generate a fake 17 ee file
+			return new ExecutionEnvironmentDescription(Map.of( //
+					ExecutionEnvironmentDescription.JAVA_HOME, System.getProperty("java.home"), //$NON-NLS-1$
+					ExecutionEnvironmentDescription.BOOT_CLASS_PATH,
+					org.eclipse.pde.api.tools.internal.util.Util.getJavaClassLibsAsString(),
+					ExecutionEnvironmentDescription.LANGUAGE_LEVEL, "17", //$NON-NLS-1$
+					ExecutionEnvironmentDescription.CLASS_LIB_LEVEL, "JavaSE-17")); //$NON-NLS-1$
 		}
-		Assert.assertNotNull("-Dee.file not specified", eePath); //$NON-NLS-1$
 		File eeFile = new File(eePath);
 		Assert.assertTrue("EE file does not exist: " + eePath, eeFile.exists()); //$NON-NLS-1$
-		return eeFile;
+		return new ExecutionEnvironmentDescription(eeFile);
 	}
 
 	/**
