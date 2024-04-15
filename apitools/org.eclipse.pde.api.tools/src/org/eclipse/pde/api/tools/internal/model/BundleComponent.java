@@ -15,20 +15,18 @@ package org.eclipse.pde.api.tools.internal.model;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.text.MessageFormat;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,8 +38,10 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
@@ -77,8 +77,10 @@ import org.eclipse.pde.api.tools.internal.util.SourceDefaultHandler;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.internal.core.TargetWeaver;
 import org.eclipse.pde.internal.core.util.ManifestUtils;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
+import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.Version;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -341,8 +343,7 @@ public class BundleComponent extends Component {
 			return bundle;
 		}
 		StateObjectFactory factory = StateObjectFactory.defaultFactory;
-		Hashtable<String, String> dictionaryManifest = new Hashtable<>(manifest);
-		bundle = factory.createBundleDescription(state, dictionaryManifest, fLocation, id);
+		bundle = factory.createBundleDescription(state, FrameworkUtil.asDictionary(manifest), fLocation, id);
 		state.addBundle(bundle);
 		return bundle;
 	}
@@ -459,7 +460,8 @@ public class BundleComponent extends Component {
 	 *            backing component
 	 * @throws CoreException if an error occurs
 	 */
-	public static void initializeApiDescription(IApiDescription apiDesc, BundleDescription bundle, Set<String> packages) throws CoreException {
+	public static void initializeApiDescription(IApiDescription apiDesc, BundleDescription bundle,
+			Set<String> packages) {
 		for (String name : packages) {
 			apiDesc.setVisibility(Factory.packageDescriptor(name), VisibilityModifiers.PRIVATE);
 		}
@@ -552,7 +554,7 @@ public class BundleComponent extends Component {
 	@Override
 	protected List<IApiTypeContainer> createApiTypeContainers() throws CoreException {
 		List<IApiTypeContainer> containers = new ArrayList<>(5);
-		List<IApiComponent> all = new ArrayList<>();
+		List<BundleComponent> all = new ArrayList<>();
 		// build the classpath from bundle and all fragments
 		all.add(this);
 		BundleDescription[] fragments = getBundleDescription().getFragments();
@@ -565,29 +567,25 @@ public class BundleComponent extends Component {
 				// force initialization of the fragment so we can
 				// retrieve its class file containers
 				component.getApiTypeContainers();
-				all.add(component);
+				all.add((BundleComponent) component);
 			}
 		}
-		Iterator<IApiComponent> iterator = all.iterator();
+
 		Set<String> entryNames = new HashSet<>(5);
-		while (iterator.hasNext()) {
-			BundleComponent component = (BundleComponent) iterator.next();
+		for (BundleComponent component : all) {
 			Map<String, String> manifest = component.getManifest();
 			if (manifest != null) {
 				try {
-					String[] paths = getClasspathEntries(manifest);
+					List<String> paths = getClasspathEntries(manifest);
 					for (String path : paths) {
 						// don't re-process the same entry twice (except default
 						// entries ".")
-						if (!(".".equals(path))) { //$NON-NLS-1$
-							if (entryNames.contains(path)) {
-								continue;
-							}
+						if (!".".equals(path) && entryNames.contains(path)) { //$NON-NLS-1$
+							continue;
 						}
 						IApiTypeContainer container = component.createApiTypeContainer(path);
 						if (container == null) {
-							for (IApiComponent iApiComponent : all) {
-								BundleComponent other = (BundleComponent) iApiComponent;
+							for (BundleComponent other : all) {
 								if (other != component) {
 									container = other.createApiTypeContainer(path);
 								}
@@ -625,19 +623,14 @@ public class BundleComponent extends Component {
 	 *
 	 * @return classpath entries as bundle relative paths
 	 */
-	protected static String[] getClasspathEntries(Map<String, String> manifest) throws BundleException {
+	private static List<String> getClasspathEntries(Map<String, String> manifest) throws BundleException {
 		ManifestElement[] classpath = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, manifest.get(Constants.BUNDLE_CLASSPATH));
-		String elements[];
 		if (classpath == null) {
 			// default classpath is '.'
-			elements = new String[] { "." }; //$NON-NLS-1$
+			return List.of("."); //$NON-NLS-1$
 		} else {
-			elements = new String[classpath.length];
-			for (int i = 0; i < classpath.length; i++) {
-				elements[i] = classpath[i].getValue();
-			}
+			return Arrays.stream(classpath).map(ManifestElement::getValue).toList();
 		}
-		return elements;
 	}
 
 	/**
@@ -676,9 +669,9 @@ public class BundleComponent extends Component {
 						if (entry != null) {
 							if (entry.isDirectory()) {
 								// extract the dir and all children
-								File dir = Util.createTempDirectory(TMP_API_FILE_PREFIX);
+								Path dir = Util.createTempDirectory(TMP_API_FILE_PREFIX).toRealPath();
 								extractDirectory(zip, entry.getName(), dir);
-								return new DirectoryApiTypeContainer(this, dir.getCanonicalPath());
+								return new DirectoryApiTypeContainer(this, dir.toString());
 							} else {
 								if (Util.isArchive(path)) {
 									// Create a uniquely named temp-directory and extract the file inside it.
@@ -686,9 +679,9 @@ public class BundleComponent extends Component {
 									// due to pre-existing files in the temp dir or when comparing with
 									// a baseline during API analysis: one file would simply overwrite
 									// the other one and thus a difference cannot be found.
-									File dir = Util.createTempDirectory(TMP_API_FILE_PREFIX);
-									File file = extractEntry(zip, entry, dir);
-									return new ArchiveApiTypeContainer(this, file.getCanonicalPath());
+									Path dir = Util.createTempDirectory(TMP_API_FILE_PREFIX).toRealPath();
+									Path file = extractEntry(zip, entry, dir);
+									return new ArchiveApiTypeContainer(this, file.toRealPath().toString());
 								}
 							}
 						}
@@ -713,26 +706,13 @@ public class BundleComponent extends Component {
 	 *             fails to write the file(s)
 	 * @throws IOException, CoreException
 	 */
-	static void extractDirectory(ZipFile zip, String pathprefix, File parent) throws IOException, CoreException {
-		Enumeration<? extends ZipEntry> entries = zip.entries();
+	private static void extractDirectory(ZipFile zip, String pathprefix, Path parent)
+			throws IOException {
 		String prefix = (pathprefix == null ? Util.EMPTY_STRING : pathprefix);
-		while (entries.hasMoreElements()) {
+		for (Enumeration<? extends ZipEntry> entries = zip.entries(); entries.hasMoreElements();) {
 			ZipEntry entry = entries.nextElement();
 			String name = entry.getName();
 			if (name.startsWith(prefix)) {
-				String parentDirCanonicalPath = parent.getCanonicalPath();
-				File file = new File(parent, name);
-				if (!file.toPath().normalize().startsWith(parent.toPath().normalize())) {
-					throw new ZipException("Bad zip entry: " + name); //$NON-NLS-1$
-				}
-				String destCanonicalPath = file.getCanonicalPath();
-				if (!destCanonicalPath.startsWith(parentDirCanonicalPath + File.separator)) {
-					throw new CoreException(Status.error(MessageFormat.format("Entry is outside of the target dir: : {0}", name))); //$NON-NLS-1$
-				}
-				if (entry.isDirectory()) {
-					file.mkdir();
-					continue;
-				}
 				extractEntry(zip, entry, parent);
 			}
 		}
@@ -748,20 +728,15 @@ public class BundleComponent extends Component {
 	 * @return the file handle to the extracted entry, <code>null</code>
 	 *         otherwise
 	 */
-	static File extractEntry(ZipFile zip, ZipEntry entry, File parent) throws IOException {
+	private static Path extractEntry(ZipFile zip, ZipEntry entry, Path parent) throws IOException {
 		try (InputStream inputStream = zip.getInputStream(entry)) {
 			String name = entry.getName();
-			File file = new File(parent, name);
-			if (!file.toPath().normalize().startsWith(parent.toPath().normalize())) {
+			Path file = parent.resolve(name).normalize();
+			if (!file.startsWith(parent)) {
 				throw new ZipException("Bad zip entry: " + name); //$NON-NLS-1$
 			}
-			File lparent = file.getParentFile();
-			if (!lparent.exists()) {
-				lparent.mkdirs();
-			}
-			try (FileOutputStream outputStream = new FileOutputStream(file)) {
-				inputStream.transferTo(outputStream);
-			}
+			Files.createDirectories(file.getParent());
+			Files.copy(inputStream, file);
 			return file;
 		}
 	}
@@ -820,6 +795,16 @@ public class BundleComponent extends Component {
 		return null;
 	}
 
+	// Content is from 3.125.0.v20240206-1259, id's are from 4.31 release
+	private static final List<String> FIXED_API_DESCRIPTIONS = Arrays.asList(
+			"org.eclipse.swt.win32.win32.x86-64-3.125.0.v20240227-1638", //$NON-NLS-1$
+			"org.eclipse.swt.gtk.linux.x86-64-3.125.0.v20240227-1638", //$NON-NLS-1$
+			"org.eclipse.swt.gtk.linux.ppc64le-3.125.0.v20240227-1638", //$NON-NLS-1$
+			"org.eclipse.swt.gtk.linux.aarch64-3.125.0.v20240227-1638", //$NON-NLS-1$
+			"org.eclipse.swt.cocoa.macosx.aarch64-3.125.0.v20240227-1638", //$NON-NLS-1$
+			"org.eclipse.swt.cocoa.macosx.x86-64-3.125.0.v20240227-1638" //$NON-NLS-1$
+	);
+
 	/**
 	 * Parses a bundle's .api_description XML into a string. The file may be in
 	 * a jar or in a directory at the specified location.
@@ -833,13 +818,22 @@ public class BundleComponent extends Component {
 		InputStream stream = null;
 		String contents;
 		try {
-			String extension = IPath.fromOSString(bundleLocation.getName()).getFileExtension();
+			String fileName = bundleLocation.getName();
+			String extension = IPath.fromOSString(fileName).getFileExtension();
 			if (extension != null && extension.equals("jar") && bundleLocation.isFile()) { //$NON-NLS-1$
-				jarFile = new ZipFile(bundleLocation, ZipFile.OPEN_READ);
-				ZipEntry manifestEntry = jarFile.getEntry(IApiCoreConstants.API_DESCRIPTION_XML_NAME);
-				if (manifestEntry != null) {
-					// new file is present
-					stream = jarFile.getInputStream(manifestEntry);
+				// TODO: remove this if(FIXED_API_DESCRIPTIONS) branch after switching to 4.32
+				// baseline (assuming it will have proper SWT API descriptions, see
+				// https://github.com/eclipse-pde/eclipse.pde/pull/1191)
+				String bundleAndVersion = fileName.substring(0, fileName.length() - ".jar".length()).replace('_', '-'); //$NON-NLS-1$
+				if (FIXED_API_DESCRIPTIONS.contains(bundleAndVersion)) {
+					stream = loadFixedBundleApiDescription(bundleAndVersion);
+				} else {
+					jarFile = new ZipFile(bundleLocation, ZipFile.OPEN_READ);
+					ZipEntry manifestEntry = jarFile.getEntry(IApiCoreConstants.API_DESCRIPTION_XML_NAME);
+					if (manifestEntry != null) {
+						// new file is present
+						stream = jarFile.getInputStream(manifestEntry);
+					}
 				}
 			} else {
 				File file = new File(bundleLocation, IApiCoreConstants.API_DESCRIPTION_XML_NAME);
@@ -860,28 +854,17 @@ public class BundleComponent extends Component {
 	}
 
 	/**
-	 * Returns a URL describing a file inside a bundle.
+	 * See https://github.com/eclipse-platform/eclipse.platform.swt/issues/1093 and
+	 * https://github.com/eclipse-pde/eclipse.pde/issues/1187.
 	 *
-	 * @param bundleLocation root location of the bundle. May be a directory or
-	 *            a file (jar)
-	 * @param filePath bundle relative path to desired file
-	 * @return URL to the file
+	 * @param bundleAndVersion platform specific bundle name with version
+	 * @return stream opened for reading api description
+	 * @throws IOException
 	 */
-	protected static URL getFileInBundle(File bundleLocation, String filePath) throws MalformedURLException {
-		String extension = IPath.fromOSString(bundleLocation.getName()).getFileExtension();
-		StringBuilder urlSt = new StringBuilder();
-		if (extension != null && extension.equals("jar") && bundleLocation.isFile()) { //$NON-NLS-1$
-			urlSt.append("jar:file:"); //$NON-NLS-1$
-			urlSt.append(bundleLocation.getAbsolutePath());
-			urlSt.append("!/"); //$NON-NLS-1$
-			urlSt.append(filePath);
-		} else {
-			urlSt.append("file:"); //$NON-NLS-1$
-			urlSt.append(bundleLocation.getAbsolutePath());
-			urlSt.append(File.separatorChar);
-			urlSt.append(filePath);
-		}
-		return new URL(urlSt.toString());
+	private static InputStream loadFixedBundleApiDescription(String bundleAndVersion) throws IOException {
+		Bundle bundle = Platform.getBundle("org.eclipse.pde.api.tools"); //$NON-NLS-1$
+		IPath pathInBundle = IPath.fromOSString("fixed_api_descriptions/" + bundleAndVersion + ".api_description"); //$NON-NLS-1$ //$NON-NLS-2$
+		return FileLocator.openStream(bundle, pathInBundle, false);
 	}
 
 	@Override
@@ -902,12 +885,9 @@ public class BundleComponent extends Component {
 	@Override
 	public IRequiredComponentDescription[] getRequiredComponents() throws CoreException {
 		BundleSpecification[] requiredBundles = getBundleDescription().getRequiredBundles();
-		IRequiredComponentDescription[] req = new IRequiredComponentDescription[requiredBundles.length];
-		for (int i = 0; i < requiredBundles.length; i++) {
-			BundleSpecification bundle = requiredBundles[i];
-			req[i] = new RequiredComponentDescription(bundle.getName(), new BundleVersionRange(bundle.getVersionRange()), bundle.isOptional(), bundle.isExported());
-		}
-		return req;
+		return Arrays.stream(requiredBundles).map( //
+				b -> new RequiredComponentDescription(b.getName(), new BundleVersionRange(b.getVersionRange()), b.isOptional(), b.isExported()))
+				.toArray(IRequiredComponentDescription[]::new);
 	}
 
 	@Override
@@ -1013,21 +993,14 @@ public class BundleComponent extends Component {
 		}
 		// check for the old format
 		String pluginXMLContents = readFileContents(IApiCoreConstants.PLUGIN_XML_NAME, location);
-		if (pluginXMLContents != null) {
-			if (containsSourceExtensionPoint(pluginXMLContents)) {
-				return true;
-			}
+		if (pluginXMLContents != null && containsSourceExtensionPoint(pluginXMLContents)) {
+			return true;
 		}
 		// check if it contains a fragment.xml with the appropriate extension
 		// point
 		pluginXMLContents = readFileContents(IApiCoreConstants.FRAGMENT_XML_NAME, location);
-		if (pluginXMLContents != null) {
-			if (containsSourceExtensionPoint(pluginXMLContents)) {
-				return true;
-			}
-		}
-		// parse XML contents to find extension points
-		return false;
+		// if false, parse XML contents to find extension points
+		return pluginXMLContents != null && containsSourceExtensionPoint(pluginXMLContents);
 	}
 
 	/**

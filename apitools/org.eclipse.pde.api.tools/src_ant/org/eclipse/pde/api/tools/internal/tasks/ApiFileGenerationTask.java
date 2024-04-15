@@ -41,10 +41,10 @@ public class ApiFileGenerationTask extends Task/* APIFileGenerator */ {
 	 *
 	 * <br>
 	 * <br>
-	 * This is the folder that contains all the source files for the given
-	 * project. <br>
+	 * This is the folder that contains all the source files for the given project.
 	 * <br>
-	 * The location is set using an absolute path.</p>
+	 * <br>
+	 * The location is set using an absolute path.
 	 *
 	 * @param projectLocation the given project location
 	 */
@@ -59,7 +59,7 @@ public class ApiFileGenerationTask extends Task/* APIFileGenerator */ {
 	 * <br>
 	 * This is the folder in which the generated files are generated. <br>
 	 * <br>
-	 * The location is set using an absolute path.</p>
+	 * The location is set using an absolute path.
 	 *
 	 * @param targetLocation the given target location
 	 */

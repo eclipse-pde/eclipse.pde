@@ -15,8 +15,10 @@ package org.eclipse.pde.api.tools.internal;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -76,7 +78,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 	/**
 	 * Map used to collect unused {@link IApiProblemFilter}s
 	 */
-	private HashMap<IResource, Set<IApiProblemFilter>> fUnusedFilters = null;
+	private Map<IResource, Set<IApiProblemFilter>> fUnusedFilters = null;
 
 	/**
 	 * The backing {@link IJavaProject}
@@ -85,7 +87,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 
 	boolean fNeedsSaving = false;
 	boolean fTriggeredChange = false;
-	HashMap<IResource, Map<String, Set<IApiProblemFilter>>> fFilterMap;
+	Map<IResource, Map<String, Set<IApiProblemFilter>>> fFilterMap;
 
 	/**
 	 * Constructor
@@ -105,7 +107,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 		if (!fNeedsSaving) {
 			return;
 		}
-		final HashMap<IResource, Map<String, Set<IApiProblemFilter>>> filters = new LinkedHashMap<>(fFilterMap);
+		final Map<IResource, Map<String, Set<IApiProblemFilter>>> filters = new LinkedHashMap<>(fFilterMap);
 		WorkspaceJob job = new WorkspaceJob(Util.EMPTY_STRING) {
 			@Override
 			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
@@ -121,8 +123,8 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 						}
 						return Status.CANCEL_STATUS;
 					}
-					String xml = getStoreAsXml(filters);
-					IFile file = project.getFile(getFilterFilePath(false));
+					Document xml = getXmlDocument(filters);
+					IFile file = project.getFile(API_FILTERS_XML_PATH);
 					if (xml == null) {
 						if (ApiPlugin.DEBUG_FILTER_STORE) {
 							System.out.println("no XML to persist for plugin project component [" + fProject.getElementName() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -148,25 +150,15 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 						lineDelimiter = TextUtilities.getDefaultLineDelimiter(document);
 					}
 
-					String lineSeparator = System.lineSeparator();
-					if (lineDelimiter != null && !lineDelimiter.equals(lineSeparator)) {
-						xml = xml.replaceAll(lineSeparator, lineDelimiter);
-					}
-					try (InputStream xstream = Util.getInputStreamFromString(xml)) {
-						if (xstream == null) {
-							return Status.CANCEL_STATUS;
+					if (file.getProject().isAccessible()) {
+						String lineSeparator = System.lineSeparator();
+						if (lineDelimiter != null && !lineDelimiter.equals(lineSeparator)) {
+							String content = Util.serializeDocument(xml).replaceAll(lineSeparator, lineDelimiter);
+							Files.writeString(file.getLocation().toPath(), content);
+						} else {
+							Util.writeDocumentToFile(xml, file.getLocation().toPath());
 						}
-						if (file.getProject().isAccessible()) {
-							if (!file.exists()) {
-								IFolder folder = (IFolder) file.getParent();
-								if (!folder.exists()) {
-									folder.create(true, true, localmonitor);
-								}
-								file.create(xstream, true, localmonitor);
-							} else {
-								file.setContents(xstream, true, false, localmonitor);
-							}
-						}
+						file.refreshLocal(IResource.DEPTH_ZERO, localmonitor);
 					}
 					fTriggeredChange = true;
 					fNeedsSaving = false;
@@ -212,11 +204,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 				pTypeNames.put(typeName, pfilters);
 				fFilterMap.put(resource, pTypeNames);
 			} else {
-				pfilters = pTypeNames.get(typeName);
-				if (pfilters == null) {
-					pfilters = new HashSet<>();
-					pTypeNames.put(typeName, pfilters);
-				}
+				pfilters = pTypeNames.computeIfAbsent(typeName, n -> new HashSet<>());
 			}
 			fNeedsSaving |= pfilters.add(filter);
 		}
@@ -249,11 +237,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 		if (pTypeNames == null) {
 			return FilterStore.NO_FILTERS;
 		}
-		List<IApiProblemFilter> allFilters = new ArrayList<>();
-		for (Set<IApiProblemFilter> values : pTypeNames.values()) {
-			allFilters.addAll(values);
-		}
-		return allFilters.toArray(new IApiProblemFilter[allFilters.size()]);
+		return pTypeNames.values().stream().flatMap(Set::stream).toArray(IApiProblemFilter[]::new);
 	}
 
 	@Override
@@ -309,8 +293,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 	@Override
 	public synchronized IResource[] getResources() {
 		initializeApiFilters();
-		Set<IResource> resources = fFilterMap.keySet();
-		return resources.toArray(new IResource[resources.size()]);
+		return fFilterMap.keySet().toArray(IResource[]::new);
 	}
 
 	@Override
@@ -373,7 +356,8 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 	 * @param filtermap the mapping of filters to convert to XML
 	 * @return an XML string representation of the given mapping of filters
 	 */
-	synchronized String getStoreAsXml(Map<IResource, Map<String, Set<IApiProblemFilter>>> filtermap) throws CoreException {
+	synchronized Document getXmlDocument(Map<IResource, Map<String, Set<IApiProblemFilter>>> filtermap)
+			throws CoreException {
 		if (filtermap == null) {
 			if (ApiPlugin.DEBUG_FILTER_STORE) {
 				System.out.println("no filter map returning null XML for project [" + fProject.getElementName() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -394,13 +378,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 		Set<Entry<IResource, Map<String, Set<IApiProblemFilter>>>> allFiltersEntrySet = filtermap.entrySet();
 		List<Entry<IResource, Map<String, Set<IApiProblemFilter>>>> allFiltersEntries = new ArrayList<>(allFiltersEntrySet.size());
 		allFiltersEntries.addAll(allFiltersEntrySet);
-		Collections.sort(allFiltersEntries, (o1, o2) -> {
-			Entry<IResource, Map<String, Set<IApiProblemFilter>>> entry1 = o1;
-			Entry<IResource, Map<String, Set<IApiProblemFilter>>> entry2 = o2;
-			String path1 = entry1.getKey().getFullPath().toOSString();
-			String path2 = entry2.getKey().getFullPath().toOSString();
-			return path1.compareTo(path2);
-		});
+		Collections.sort(allFiltersEntries, Comparator.comparing(e -> e.getKey().getFullPath().toOSString()));
 		for (Entry<IResource, Map<String, Set<IApiProblemFilter>>> allFiltersEntry : allFiltersEntries) {
 			IResource resource = allFiltersEntry.getKey();
 			Map<String, Set<IApiProblemFilter>> pTypeNames = allFiltersEntry.getValue();
@@ -410,13 +388,8 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 			Set<Entry<String, Set<IApiProblemFilter>>> allTypeNamesEntriesSet = pTypeNames.entrySet();
 			List<Entry<String, Set<IApiProblemFilter>>> allTypeNamesEntries = new ArrayList<>(allTypeNamesEntriesSet.size());
 			allTypeNamesEntries.addAll(allTypeNamesEntriesSet);
-			Collections.sort(allTypeNamesEntries, (o1, o2) -> {
-				Entry<String, Set<IApiProblemFilter>> entry1 = o1;
-				Entry<String, Set<IApiProblemFilter>> entry2 = o2;
-				String typeName1 = entry1.getKey();
-				String typeName2 = entry2.getKey();
-				return typeName1.compareTo(typeName2);
-			});
+
+			Collections.sort(allTypeNamesEntries, Comparator.comparing(Entry::getKey));
 			for (Entry<String, Set<IApiProblemFilter>> entry : allTypeNamesEntries) {
 				String typeName = entry.getKey();
 				Set<IApiProblemFilter> filters = entry.getValue();
@@ -486,7 +459,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 				}
 			}
 		}
-		return Util.serializeDocument(document);
+		return document;
 	}
 
 	@Override
@@ -498,21 +471,17 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 			System.out.println("initializing api filter map for project [" + fProject.getElementName() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		fFilterMap = new LinkedHashMap<>(5);
-		IPath filepath = getFilterFilePath(true);
-		IResource file = ResourcesPlugin.getWorkspace().getRoot().findMember(filepath, true);
-		if (file == null) {
+		IFile filterFile = fProject.getProject().getFile(API_FILTERS_XML_PATH);
+		if (!filterFile.exists()) {
 			if (ApiPlugin.DEBUG_FILTER_STORE) {
 				System.out.println(".api_filter file not found during initialization for project [" + fProject.getElementName() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			return;
 		}
-		IFile filterFile = (IFile) file;
-		if (filterFile.exists()) {
-			try (InputStream contents = filterFile.getContents()) {
-				readFilterFile(contents);
-			} catch (CoreException | IOException e) {
-				ApiPlugin.log(e);
-			}
+		try (InputStream contents = filterFile.getContents()) {
+			readFilterFile(contents);
+		} catch (CoreException | IOException e) {
+			ApiPlugin.log(e);
 		}
 		// need to reset the flag during initialization if we are not going to
 		// persist
@@ -563,17 +532,6 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 	 */
 	public void needsSaving() {
 		fNeedsSaving = true;
-	}
-
-	/**
-	 * @return the {@link IPath} to the filters file
-	 */
-	IPath getFilterFilePath(boolean includeproject) {
-		if (includeproject) {
-			IPath path = fProject.getPath();
-			return path.append(FilterStore.SETTINGS_FOLDER).append(IApiCoreConstants.API_FILTERS_XML_NAME);
-		}
-		return IPath.fromOSString(FilterStore.SETTINGS_FOLDER).append(IApiCoreConstants.API_FILTERS_XML_NAME);
 	}
 
 	static String getLineDelimiterPreference(IFile file) {
@@ -632,7 +590,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 	 * @param resource   the resource the filter applies to
 	 * @param typeName   the name of the type the filter appears on
 	 * @param categories the collection of {@link IApiProblem} categories to ignore
-	 * @see {@link IApiProblem#getCategory()}
+	 * @see IApiProblem#getCategory
 	 * @return the listing of currently unused filters or an empty list, never
 	 *         <code>null</code>
 	 */
@@ -738,7 +696,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 			return;
 		}
 		if (event.getType() == IResourceChangeEvent.POST_CHANGE) {
-			IPath path = getFilterFilePath(true);
+			IPath path = fProject.getPath().append(API_FILTERS_XML_PATH);
 			IResourceDelta leafdelta = event.getDelta().findMember(path);
 			if (leafdelta == null) {
 				return;

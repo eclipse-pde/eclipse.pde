@@ -88,8 +88,8 @@ public interface IDSSingleProperty extends IDSObject {
 	 *
 	 * For example, a component that needs an array of hosts can use the
 	 * following property definition:
-	 * <code> <property name="hosts"> www.acme.com
-	 * backup.acme.com </property> <\code>
+	 * {@code <property name="hosts"> www.acme.com
+	 * backup.acme.com </property>}
 	 *
 	 * @param body
 	 *            New body

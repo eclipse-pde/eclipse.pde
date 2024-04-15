@@ -13,12 +13,12 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.tasks;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,6 +37,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiScope;
 import org.eclipse.pde.api.tools.internal.util.FilteredElements;
+import org.eclipse.pde.api.tools.internal.util.Util;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -91,19 +92,10 @@ public class APIFreezeTask extends CommonUtilsTask {
 				System.out.println("No include list location"); //$NON-NLS-1$
 			}
 		}
-		File outputFile = new File(this.reportLocation);
-		if (outputFile.exists()) {
-			if (outputFile.isDirectory()) {
-				// the output file cannot be a directory
-				throw new BuildException(NLS.bind(Messages.reportLocationHasToBeAFile, outputFile.getAbsolutePath()));
-			}
-		} else {
-			File outputDir = outputFile.getParentFile();
-			if (!outputDir.exists()) {
-				if (!outputDir.mkdirs()) {
-					throw new BuildException(NLS.bind(Messages.errorCreatingParentReportFile, outputDir.getAbsolutePath()));
-				}
-			}
+		Path outputFile = Path.of(this.reportLocation);
+		if (Files.isDirectory(outputFile)) {
+			// the output file cannot be a directory
+			throw new BuildException(NLS.bind(Messages.reportLocationHasToBeAFile, outputFile.toAbsolutePath()));
 		}
 		int index = this.reportLocation.lastIndexOf('.');
 		if (index == -1 || !this.reportLocation.substring(index).equalsIgnoreCase(".xml")) { //$NON-NLS-1$
@@ -172,7 +164,7 @@ public class APIFreezeTask extends CommonUtilsTask {
 		}
 		if (delta != ApiComparator.NO_DELTA) {
 			// dump the report in the appropriate folder
-			try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile))) {
+			try {
 				FilterListDeltaVisitor visitor = new FilterListDeltaVisitor(excludedElements, includedElements, FilterListDeltaVisitor.CHECK_OTHER);
 				delta.accept(visitor);
 
@@ -182,10 +174,7 @@ public class APIFreezeTask extends CommonUtilsTask {
 					// to add warnings in the html
 					addResolverErrors(doc);
 				}
-
-				String serializedXml = org.eclipse.pde.api.tools.internal.util.Util.serializeDocument(doc);
-				writer.write(serializedXml);
-				writer.flush();
+				Util.writeDocumentToFile(doc, outputFile);
 				if (this.debug) {
 					String potentialExcludeList = visitor.getPotentialExcludeList();
 					if (potentialExcludeList.length() != 0) {
@@ -201,13 +190,12 @@ public class APIFreezeTask extends CommonUtilsTask {
 			}
 		} else {
 			// create a xml file with 0 delta and a comment
-			try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile))) {
-				writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"); //$NON-NLS-1$
-				writer.newLine();
-				writer.write("<deltas/>"); //$NON-NLS-1$
-				writer.newLine();
-				writer.write("<!-- API freeze task complete.  No problems to report -->"); //$NON-NLS-1$
-				writer.flush();
+			try {
+				Files.writeString(outputFile, """
+						<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+						<deltas/>
+						<!-- API freeze task complete.  No problems to report -->
+						"""); //$NON-NLS-1$
 			} catch (IOException e) {
 				ApiPlugin.log(e);
 			}

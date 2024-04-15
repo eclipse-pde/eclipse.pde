@@ -13,16 +13,23 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.bnd;
 
+import org.bndtools.versioncontrol.ignores.manager.api.VersionControlIgnoresManager;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.AdapterTypes;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
 import aQute.bnd.build.Project;
 
-@Component(service = IAdapterFactory.class, property = {
-		IAdapterFactory.SERVICE_PROPERTY_ADAPTABLE_CLASS + "=org.eclipse.core.resources.IProject",
-		IAdapterFactory.SERVICE_PROPERTY_ADAPTER_NAMES + "=aQute.bnd.build.Project" })
+@Component(service = IAdapterFactory.class)
+@AdapterTypes(adaptableClass = IProject.class, adapterNames = { Project.class, VersionControlIgnoresManager.class })
 public class PdeBndAdapter implements IAdapterFactory {
+
+	@Reference(cardinality = ReferenceCardinality.OPTIONAL, policy = ReferencePolicy.DYNAMIC)
+	private volatile VersionControlIgnoresManager versionControlIgnoresManager;
 
 	@Override
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
@@ -36,12 +43,10 @@ public class PdeBndAdapter implements IAdapterFactory {
 				}
 			}
 		}
+		if (adapterType == VersionControlIgnoresManager.class) {
+			return adapterType.cast(versionControlIgnoresManager);
+		}
 		return null;
-	}
-
-	@Override
-	public Class<?>[] getAdapterList() {
-		return new Class<?>[] { Project.class };
 	}
 
 }

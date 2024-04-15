@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2012, 2014 Christian Pontesegger and others.
+ *  Copyright (c) 2012, 2024 Christian Pontesegger and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -91,6 +91,29 @@ public abstract class AbstractRepository extends Job {
 		}
 	}
 
+	protected ImageData createImageData(final File file) throws CoreException {
+		try (InputStream s = new BufferedInputStream(new FileInputStream(file))) {
+			return new ImageData(s);
+		} catch (IOException e) {
+			throw new CoreException(Status.error(
+					"Failed to close stream on: " + file.getAbsolutePath(), e)); //$NON-NLS-1$
+		}
+	}
+
+	protected ImageData createImageData(final File jarFile, final ZipEntry entry) throws CoreException {
+		try (ZipFile zipFile = new ZipFile(jarFile)) {
+			try (InputStream inputStream = zipFile.getInputStream(entry)) {
+				return new ImageData(inputStream);
+			} catch (SWTException e) {
+				// invalid image format
+				throw new CoreException(Status.error(NLS.bind(PDEUIMessages.AbstractRepository_ErrorLoadingImageFromJar, jarFile.getAbsolutePath(), entry.getName()), e));
+			}
+		} catch (IOException e) {
+			throw new CoreException(Status.error(
+					"Failed to close stream on: " + jarFile.getAbsolutePath(), e)); //$NON-NLS-1$
+		}
+	}
+
 	protected boolean isImage(final File resource) {
 		if (resource.isFile())
 			return isImageName(resource.getName());
@@ -117,15 +140,7 @@ public abstract class AbstractRepository extends Job {
 			while ((entries.hasMoreElements()) && (!monitor.isCanceled())) {
 				ZipEntry entry = entries.nextElement();
 				if (isImageName(entry.getName())) {
-					try (InputStream inputStream = zipFile.getInputStream(entry)) {
-						ImageData imageData = new ImageData(inputStream);
-						addImageElement(new ImageElement(imageData, jarFile.getName(), entry.getName()));
-					} catch (IOException e) {
-						PDEPlugin.log(e);
-					} catch (SWTException e) {
-						// invalid image format
-						PDEPlugin.log(Status.error(NLS.bind(PDEUIMessages.AbstractRepository_ErrorLoadingImageFromJar, jarFile.getAbsolutePath(), entry.getName()), e));
-					}
+					addImageElement(new ImageElement(() -> createImageData(jarFile, entry), jarFile.getName(), entry.getName()));
 				}
 			}
 		} catch (IOException e) {
@@ -158,13 +173,8 @@ public abstract class AbstractRepository extends Job {
 							locations.add(resource);
 
 						} else {
-							try {
-								if (isImage(resource)) {
-									addImageElement(new ImageElement(createImageData((IFile) resource), pluginName, resource.getAbsolutePath().substring(directoryPathLength)));
-								}
-
-							} catch (Exception e) {
-								// could not create image for location
+							if (isImage(resource)) {
+								addImageElement(new ImageElement(() -> createImageData(resource), pluginName, resource.getAbsolutePath().substring(directoryPathLength)));
 							}
 						}
 					}

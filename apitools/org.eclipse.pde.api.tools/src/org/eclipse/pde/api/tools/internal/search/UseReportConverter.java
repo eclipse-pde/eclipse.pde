@@ -16,12 +16,11 @@ package org.eclipse.pde.api.tools.internal.search;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -35,10 +34,10 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.IntStream;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
-import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -46,7 +45,6 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.Signature;
@@ -86,12 +84,12 @@ public class UseReportConverter extends HTMLConvertor {
 	 */
 	class Visitor extends UseScanVisitor {
 
-		ArrayList<Report> reports = new ArrayList<>();
+		List<Report> reports = new ArrayList<>();
 		Report currentreport = null;
 		Type currenttype = null, currentreferee = null;
 		Member currentmember = null;
-		HashMap<IReferenceTypeDescriptor, Type> keys = new HashMap<>();
-		ArrayList<Type> referees = new ArrayList<>();
+		Map<IReferenceTypeDescriptor, Type> keys = new HashMap<>();
+		List<Type> referees = new ArrayList<>();
 
 		/**
 		 * Returns if the reference should be reported or not
@@ -179,21 +177,10 @@ public class UseReportConverter extends HTMLConvertor {
 			if (desc == null) {
 				return false;
 			}
-			this.currenttype = this.keys.get(desc);
-			if (this.currenttype == null) {
-				this.currenttype = new Type(desc);
-				this.keys.put(desc, this.currenttype);
-			}
-			TreeMap<IMemberDescriptor, Member> map = this.currentreport.children.get(this.currenttype);
-			if (map == null) {
-				map = new TreeMap<>(compare);
-				this.currentreport.children.put(this.currenttype, map);
-			}
-			this.currentmember = map.get(referencedMember);
-			if (this.currentmember == null) {
-				this.currentmember = new Member(referencedMember);
-				map.put(referencedMember, this.currentmember);
-			}
+			this.currenttype = this.keys.computeIfAbsent(desc, Type::new);
+			Map<IMemberDescriptor, Member> map = this.currentreport.children.computeIfAbsent(this.currenttype,
+					t -> new TreeMap<>(compare));
+			this.currentmember = map.computeIfAbsent(referencedMember, Member::new);
 			return true;
 		}
 
@@ -597,7 +584,7 @@ public class UseReportConverter extends HTMLConvertor {
 		this.xmlLocation = xmlroot;
 		this.htmlLocation = htmlroot;
 		if (topatterns != null) {
-			ArrayList<Pattern> pats = new ArrayList<>(topatterns.length);
+			List<Pattern> pats = new ArrayList<>(topatterns.length);
 			for (String topattern : topatterns) {
 				try {
 					pats.add(Pattern.compile(topattern));
@@ -613,7 +600,7 @@ public class UseReportConverter extends HTMLConvertor {
 			}
 		}
 		if (frompatterns != null) {
-			ArrayList<Pattern> pats = new ArrayList<>(frompatterns.length);
+			List<Pattern> pats = new ArrayList<>(frompatterns.length);
 			for (String frompattern : frompatterns) {
 				try {
 					pats.add(Pattern.compile(frompattern));
@@ -766,93 +753,8 @@ public class UseReportConverter extends HTMLConvertor {
 		return htmlIndex;
 	}
 
-	protected void setReportIndex(File index) {
-		htmlIndex = index;
-	}
-
-	/**
-	 * Applies the given XSLT to the given XML to produce HTML in the given file
-	 */
-	protected void applyXSLT(File xsltFile, File xmlfile, File htmloutput) throws TransformerException, Exception {
-		Source xslt = null;
-		if (xsltFile != null) {
-			xslt = new StreamSource(xsltFile);
-		} else {
-			InputStream defaultXsltInputStream = UseReportConverter.class.getResourceAsStream(DEFAULT_XSLT);
-			if (defaultXsltInputStream != null) {
-				xslt = new StreamSource(new BufferedInputStream(defaultXsltInputStream));
-			}
-		}
-		if (xslt == null) {
-			throw new Exception(SearchMessages.UseReportConverter_no_xstl_specified);
-		}
-		applyXSLT(xslt, xmlfile, htmloutput);
-	}
-
-	/**
-	 * Applies the given XSLT source to the given XML file outputting to the
-	 * given HTML file
-	 */
-	protected void applyXSLT(Source xslt, File xmlfile, File htmlfile) throws TransformerException {
-		Source xml = new StreamSource(xmlfile);
-		Result html = new StreamResult(htmlfile);
-		@SuppressWarnings("restriction")
-		Transformer former = org.eclipse.core.internal.runtime.XmlProcessorFactory
-				.createTransformerFactoryWithErrorOnDOCTYPE().newTransformer(xslt);
-		former.transform(xml, html);
-	}
-
-	/**
-	 * Transforms the given set of xml files with the given XSLT and places the
-	 * result into a corresponding HTML file
-	 */
-	protected void tranformXml(File[] xmlfiles, File xsltFile) {
-		File html = null;
-		for (File xmlfile : xmlfiles) {
-			try {
-				File htmlroot = new File(getHtmlLocation(), getHTMLFileLocation(xmlfile));
-				if (!htmlroot.exists()) {
-					htmlroot.mkdirs();
-				}
-				html = new File(getNameFromXMLFilename(xmlfile));
-				applyXSLT(xsltFile, xmlfile, html);
-			} catch (Exception e) {
-				ApiPlugin.log(e);
-			}
-		}
-	}
-
-	/**
-	 * Gets the HTML path to write out the transformed XML file to
-	 */
-	protected String getHTMLFileLocation(File xmlfile) {
-		File reportRoot = new File(getXmlLocation());
-		IPath xml = IPath.fromOSString(xmlfile.getPath());
-		IPath report = IPath.fromOSString(reportRoot.getPath());
-		int segments = xml.matchingFirstSegments(report);
-		if (segments > 0) {
-			if (xml.getDevice() != null) {
-				xml = xml.setDevice(null);
-			}
-			IPath html = xml.removeFirstSegments(segments);
-			return html.removeLastSegments(1).toOSString();
-		}
-		return null;
-	}
-
-	/**
-	 * Returns the name to use for the corresponding HTML file from the given
-	 * XML file
-	 *
-	 * @return the HTML name to use
-	 */
-	protected String getNameFromXMLFilename(File xmlFile) {
-		String fileName = xmlFile.getAbsolutePath();
-		int index = fileName.lastIndexOf('.');
-		StringBuilder buffer = new StringBuilder();
-		buffer.append(fileName.substring(getReportsRoot().getAbsolutePath().length(), index)).append(HTML_EXTENSION);
-		File htmlFile = new File(getHtmlLocation(), String.valueOf(buffer));
-		return htmlFile.getAbsolutePath();
+	protected void setReportIndex(Path index) {
+		htmlIndex = index.toFile();
 	}
 
 	/**
@@ -885,17 +787,12 @@ public class UseReportConverter extends HTMLConvertor {
 	 * HTML report location
 	 */
 	void writeMetaPage(File htmlroot) throws Exception {
-		File meta = null;
 		File file = new File(getReportsRoot(), "meta.xml"); //$NON-NLS-1$
 		if (!file.exists()) {
 			// do nothing if no meta.xml file
 			return;
 		}
-		String filename = "meta"; //$NON-NLS-1$
-		meta = new File(htmlroot, filename + HTML_EXTENSION);
-		if (!meta.exists()) {
-			meta.createNewFile();
-		}
+		Path meta = htmlroot.toPath().resolve("meta" + HTML_EXTENSION); //$NON-NLS-1$
 		StringBuilder buffer = new StringBuilder();
 		buffer.append(HTML_HEADER);
 		buffer.append(OPEN_HTML).append(OPEN_HEAD).append(CONTENT_TYPE_META);
@@ -907,12 +804,10 @@ public class UseReportConverter extends HTMLConvertor {
 		buffer.append(W3C_FOOTER);
 
 		// write file
-		try (PrintWriter writer = new PrintWriter(
-				new OutputStreamWriter(new FileOutputStream(meta), StandardCharsets.UTF_8))) {
-			writer.println(buffer.toString());
-			writer.flush();
+		try {
+			Files.writeString(meta, buffer);
 		} catch (IOException ioe) {
-			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, meta.getAbsolutePath()));
+			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, meta.toAbsolutePath()), ioe);
 		}
 	}
 
@@ -923,14 +818,8 @@ public class UseReportConverter extends HTMLConvertor {
 	 */
 	protected boolean writeMissingBundlesPage(final File htmlroot) throws Exception {
 		boolean hasMissing = false;
-		File missing = null;
+		Path missing = htmlroot.toPath().resolve("missing" + HTML_EXTENSION); //$NON-NLS-1$
 		try {
-			String filename = "missing"; //$NON-NLS-1$
-			missing = new File(htmlroot, filename + HTML_EXTENSION);
-			if (!missing.exists()) {
-				missing.createNewFile();
-			}
-
 			File file = new File(getReportsRoot(), "not_searched.xml"); //$NON-NLS-1$
 			if (!file.exists()) {
 				// try <root>/xml in case a raw reports root was specified
@@ -964,14 +853,9 @@ public class UseReportConverter extends HTMLConvertor {
 			buffer.append(BR).append("<a href=\"not_searched.html\">").append(SearchMessages.UseReportConverter_back_to_not_searched).append(CLOSE_A); //$NON-NLS-1$
 			buffer.append(W3C_FOOTER);
 
-			// write file
-			try (PrintWriter writer = new PrintWriter(
-					new OutputStreamWriter(new FileOutputStream(missing), StandardCharsets.UTF_8))) {
-				writer.println(buffer.toString());
-				writer.flush();
-			}
+			Files.writeString(missing, buffer);
 		} catch (IOException ioe) {
-			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, missing.getAbsolutePath()));
+			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, missing.toAbsolutePath()), ioe);
 		}
 		return hasMissing;
 	}
@@ -981,33 +865,29 @@ public class UseReportConverter extends HTMLConvertor {
 	 * they appeared in an exclude list or they have no .api_description file
 	 */
 	void writeNotSearchedPage(final File htmlroot) throws Exception {
-		File originhtml = null;
+		String filename = "not_searched"; //$NON-NLS-1$
+		File originhtml = new File(htmlroot, filename + HTML_EXTENSION);
 		try {
-			String filename = "not_searched"; //$NON-NLS-1$
-			originhtml = new File(htmlroot, filename + HTML_EXTENSION);
-			if (!originhtml.exists()) {
-				originhtml.createNewFile();
-			}
 			File xml = new File(getReportsRoot(), filename + XML_EXTENSION);
 			if (!xml.exists()) {
 				// try <root>/xml in case a raw report root is specified
 				xml = new File(getReportsRoot() + File.separator + "xml", filename + XML_EXTENSION); //$NON-NLS-1$
 			}
-			try (InputStream defaultXsltInputStream = UseReportConverter.class.getResourceAsStream(getNotSearchedXSLPath())) {
-				Source xslt = (defaultXsltInputStream != null)
-						? xslt = new StreamSource(new BufferedInputStream(defaultXsltInputStream))
-						: null;
+			try (InputStream xsltStream = UseReportConverter.class.getResourceAsStream(getNotSearchedXSLPath());
+					OutputStream htmlOut = Files.newOutputStream(originhtml.toPath())) {
+				Source xslt = (xsltStream != null) ? new StreamSource(new BufferedInputStream(xsltStream)) : null;
 				if (xslt == null) {
 					throw new Exception(SearchMessages.UseReportConverter_no_xstl_specified);
 				}
 				if (xml.exists()) {
-					try {
-						applyXSLT(xslt, xml, originhtml);
-					} catch (TransformerException e) {
-						useNotSearchedXml = true;
-						ApiPlugin.logErrorMessage(SearchMessages.UseReportConverter_te_applying_xslt_skipped);
-					}
+					@SuppressWarnings("restriction")
+					Transformer former = org.eclipse.core.internal.runtime.XmlProcessorFactory
+							.createTransformerFactoryWithErrorOnDOCTYPE().newTransformer(xslt);
+					former.transform(new StreamSource(xml), new StreamResult(htmlOut));
 				}
+			} catch (TransformerException e) {
+				useNotSearchedXml = true;
+				ApiPlugin.logErrorMessage(SearchMessages.UseReportConverter_te_applying_xslt_skipped);
 			}
 		} catch (IOException ioe) {
 			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, originhtml.getAbsolutePath()));
@@ -1034,16 +914,9 @@ public class UseReportConverter extends HTMLConvertor {
 	 * @param referees the listing of referencing bundles
 	 */
 	protected void writeReferencedMemberPage(final Report report, final List<Type> referees) throws Exception {
-		File originhtml = null;
+		Path htmlroot = Path.of(getHtmlLocation(), report.name);
+		Path originhtml = htmlroot.resolve("index.html"); //$NON-NLS-1$
 		try {
-			File htmlroot = new File(getHtmlLocation(), report.name);
-			if (!htmlroot.exists()) {
-				htmlroot.mkdirs();
-			}
-			originhtml = new File(htmlroot, "index.html"); //$NON-NLS-1$
-			if (!originhtml.exists()) {
-				originhtml.createNewFile();
-			}
 			StringBuilder buffer = new StringBuilder();
 			buffer.append(HTML_HEADER);
 			buffer.append(OPEN_HTML).append(OPEN_HEAD).append(CONTENT_TYPE_META);
@@ -1066,11 +939,8 @@ public class UseReportConverter extends HTMLConvertor {
 				CountGroup counts = type.counts;
 
 				String fqname = Signatures.getQualifiedTypeSignature((IReferenceTypeDescriptor) type.desc);
-				File typefile = new File(htmlroot, fqname + HTML_EXTENSION);
-				if (!typefile.exists()) {
-					typefile.createNewFile();
-				}
-				String link = extractLinkFrom(htmlroot, typefile.getAbsolutePath());
+				Path typefile = htmlroot.resolve(fqname + HTML_EXTENSION);
+				String link = extractLinkFrom(htmlroot.toFile(), typefile.toAbsolutePath().toString());
 				buffer.append(getReferenceTableEntry(counts, link, fqname, false));
 				writeTypePage(map, type, typefile, fqname);
 			}
@@ -1098,13 +968,9 @@ public class UseReportConverter extends HTMLConvertor {
 			buffer.append(OPEN_P).append("<a href=\"../index.html\">").append(SearchMessages.UseReportConverter_back_to_bundle_index).append(CLOSE_A).append(CLOSE_P); //$NON-NLS-1$
 			buffer.append(W3C_FOOTER);
 
-			try (PrintWriter writer = new PrintWriter(
-					new OutputStreamWriter(new FileOutputStream(originhtml), StandardCharsets.UTF_8))) {
-				writer.println(buffer.toString());
-				writer.flush();
-			}
+			writeString(originhtml, buffer);
 		} catch (IOException ioe) {
-			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, originhtml.getAbsolutePath()));
+			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, originhtml.toAbsolutePath()));
 		}
 	}
 
@@ -1146,7 +1012,7 @@ public class UseReportConverter extends HTMLConvertor {
 	/**
 	 * Writes the page that displays all of the members used in a type
 	 */
-	void writeTypePage(Map<IMemberDescriptor, Member> map, Type type, File typefile, String typename) throws Exception {
+	void writeTypePage(Map<IMemberDescriptor, Member> map, Type type, Path typefile, String typename) throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append(HTML_HEADER);
 		buffer.append(OPEN_HTML).append(OPEN_HEAD).append(CONTENT_TYPE_META);
@@ -1165,9 +1031,8 @@ public class UseReportConverter extends HTMLConvertor {
 		buffer.append("<td bgcolor=\"").append(REFERENCES_TABLE_HEADER_COLOUR).append("\">").append(OPEN_B) //$NON-NLS-1$ //$NON-NLS-2$
 				.append(SearchMessages.UseReportConverter_member).append("</b></td>\n"); //$NON-NLS-1$
 		buffer.append(CLOSE_TR);
-		IElementDescriptor desc = null;
 		for (Entry<IMemberDescriptor, Member> entry : map.entrySet()) {
-			desc = entry.getKey();
+			IElementDescriptor desc = entry.getKey();
 			buffer.append(OPEN_TR);
 			buffer.append("<td align=\"left\">\n"); //$NON-NLS-1$
 			buffer.append(OPEN_B);
@@ -1186,13 +1051,10 @@ public class UseReportConverter extends HTMLConvertor {
 				.append(SearchMessages.UseReportConverter_back_to_bundle_index).append(CLOSE_A).append(CLOSE_P);
 		buffer.append(W3C_FOOTER);
 
-		// write the file
-		try (PrintWriter writer = new PrintWriter(
-				new OutputStreamWriter(new FileOutputStream(typefile), StandardCharsets.UTF_8))) {
-			writer.print(buffer.toString());
-			writer.flush();
+		try {
+			Files.writeString(typefile, buffer);
 		} catch (IOException ioe) {
-			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, typefile.getAbsolutePath()));
+			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, typefile.toAbsolutePath()));
 		}
 	}
 
@@ -1328,12 +1190,8 @@ public class UseReportConverter extends HTMLConvertor {
 	 */
 	protected void writeIndexPage(List<?> scanResult) throws Exception {
 		Collections.sort(scanResult, (o1, o2) -> ((Report) o1).name.compareTo(((Report) o2).name));
-
+		Path reportIndex = Path.of(getHtmlLocation(), "index.html"); //$NON-NLS-1$
 		try {
-			File reportIndex = new File(getHtmlLocation(), "index.html"); //$NON-NLS-1$
-			if (!reportIndex.exists()) {
-				reportIndex.createNewFile();
-			}
 			setReportIndex(reportIndex);
 
 			StringBuilder buffer = new StringBuilder();
@@ -1362,23 +1220,21 @@ public class UseReportConverter extends HTMLConvertor {
 			}
 			buffer.append(OPEN_P);
 			buffer.append(NLS.bind(SearchMessages.UseReportConverter_bundles_that_were_not_searched, new String[] {
-					useNotSearchedXml == false ? "<a href=\"./not_searched.html\">" : "<a href=\"../xml/not_searched.xml\">", //$NON-NLS-1$//$NON-NLS-2$
+					!useNotSearchedXml ? "<a href=\"./not_searched.html\">" : "<a href=\"../xml/not_searched.xml\">", //$NON-NLS-1$//$NON-NLS-2$
 					"</a></p>\n" }));//$NON-NLS-1$
-			String additional = getAdditionalIndexInfo(scanResult.size() > 0);
+			String additional = getAdditionalIndexInfo(!scanResult.isEmpty());
 			if (additional != null) {
 				buffer.append(additional);
 			}
-			if (scanResult.size() > 0) {
+			if (!scanResult.isEmpty()) {
 				buffer.append(OPEN_P).append(SearchMessages.UseReportConverter_inlined_description).append(CLOSE_P);
 				buffer.append(getColourLegend());
 				buffer.append(getReferencesTableHeader(SearchMessages.UseReportConverter_references, SearchMessages.UseReportConverter_bundle, true));
-				if (scanResult.size() > 0) {
-					File refereehtml = null;
-					String link = null;
+				if (!scanResult.isEmpty()) {
 					for (Object obj : scanResult) {
 						if (obj instanceof Report report) {
-							refereehtml = new File(getReportsRoot(), report.name + File.separator + "index.html"); //$NON-NLS-1$
-							link = extractLinkFrom(getReportsRoot(), refereehtml.getAbsolutePath());
+							File refereehtml = new File(getReportsRoot(), report.name + File.separator + "index.html"); //$NON-NLS-1$
+							String link = extractLinkFrom(getReportsRoot(), refereehtml.getAbsolutePath());
 							buffer.append(getReferenceTableEntry(report.counts, link, report.name, true));
 						}
 					}
@@ -1390,14 +1246,9 @@ public class UseReportConverter extends HTMLConvertor {
 			buffer.append(W3C_FOOTER);
 			buffer.append(CLOSE_BODY).append(CLOSE_HTML);
 
-			// write the file
-			try (PrintWriter writer = new PrintWriter(
-					new OutputStreamWriter(new FileOutputStream(reportIndex), StandardCharsets.UTF_8))) {
-				writer.print(buffer.toString());
-				writer.flush();
-			}
+			Files.writeString(reportIndex, buffer);
 		} catch (IOException e) {
-			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, getReportIndex().getAbsolutePath()));
+			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, reportIndex.toAbsolutePath()));
 		}
 	}
 
@@ -1583,31 +1434,28 @@ public class UseReportConverter extends HTMLConvertor {
 		}
 
 	}
+
+	void writeString(Path file, CharSequence string) throws IOException {
+		Files.createDirectories(file.getParent());
+		Files.writeString(file, string);
+	}
+
 	/**
 	 * Returns the use metadata from this scan
 	 */
 	IMetadata getMetadata() throws Exception {
 		if (this.metadata == null) {
-			File xml = null;
-			try {
-				xml = new File(getReportsRoot(), "meta" + XML_EXTENSION); //$NON-NLS-1$
-				if (!xml.exists()) {
-					// try looking in the default 'xml' directory as a raw
-					// report root
-					// might have been specified
-					xml = new File(getReportsRoot() + File.separator + "xml", "meta" + XML_EXTENSION); //$NON-NLS-1$//$NON-NLS-2$
-				}
-				if (xml.exists()) {
+			File xml = getXML("meta"); //$NON-NLS-1$
+			if (xml.exists()) {
+				try {
 					String xmlstr = Util.getFileContentAsString(xml);
 					Element doc = Util.parseDocument(xmlstr.trim());
 					this.metadata = new UseMetadata();
-					Element element = null;
-					String value = null, name = null;
 					NodeList nodes = doc.getElementsByTagName("*"); //$NON-NLS-1$
 					for (int i = 0; i < nodes.getLength(); i++) {
-						element = (Element) nodes.item(i);
-						value = element.getAttribute(UseMetadata.VALUE);
-						name = element.getNodeName();
+						Element element = (Element) nodes.item(i);
+						String value = element.getAttribute(UseMetadata.VALUE);
+						String name = element.getNodeName();
 						if (UseMetadata.FLAGS.equals(name)) {
 							try {
 								this.metadata.setSearchflags(Integer.parseInt(value));
@@ -1657,9 +1505,10 @@ public class UseReportConverter extends HTMLConvertor {
 							continue;
 						}
 					}
+				} catch (CoreException e) {
+					throw new Exception(NLS.bind(SearchMessages.UseReportConverter_core_exep_reading_metadata,
+							xml.getAbsolutePath()));
 				}
-			} catch (CoreException e) {
-				throw new Exception(NLS.bind(SearchMessages.UseReportConverter_core_exep_reading_metadata, xml.getAbsolutePath()));
 			}
 		}
 		return this.metadata;
@@ -1670,16 +1519,9 @@ public class UseReportConverter extends HTMLConvertor {
 	 */
 	int getFilteredCount() throws Exception {
 		if (this.filteredCount == -1) {
-			File xml = null;
-			try {
-				xml = new File(getReportsRoot(), "counts" + XML_EXTENSION); //$NON-NLS-1$
-				if (!xml.exists()) {
-					// try looking in the default 'xml' directory as a raw
-					// report root
-					// might have been specified
-					xml = new File(getReportsRoot() + File.separator + "xml", "meta" + XML_EXTENSION); //$NON-NLS-1$//$NON-NLS-2$
-				}
-				if (xml.exists()) {
+			File xml = getXML("counts"); //$NON-NLS-1$
+			if (xml.exists()) {
+				try {
 					String xmlstr = Util.getFileContentAsString(xml);
 					Element doc = Util.parseDocument(xmlstr.trim());
 
@@ -1692,12 +1534,23 @@ public class UseReportConverter extends HTMLConvertor {
 							filteredCount = Integer.parseInt(value);
 						}
 					}
+				} catch (CoreException e) {
+					throw new Exception(NLS.bind(SearchMessages.UseReportConverter_core_exep_reading_metadata,
+							xml.getAbsolutePath()));
 				}
-			} catch (CoreException e) {
-				throw new Exception(NLS.bind(SearchMessages.UseReportConverter_core_exep_reading_metadata, xml.getAbsolutePath()));
 			}
 		}
 		return filteredCount;
+	}
+
+	private File getXML(String type) {
+		File xml = new File(getReportsRoot(), type + XML_EXTENSION);
+		if (xml.exists()) {
+			return xml;
+		}
+		// try looking in the default 'xml' directory as a raw report root
+		// might have been specified
+		return new File(getReportsRoot() + File.separator + "xml", type + XML_EXTENSION); //$NON-NLS-1$
 	}
 
 	/**
@@ -1706,16 +1559,9 @@ public class UseReportConverter extends HTMLConvertor {
 	 * @return the array of patterns or <code>null</code>
 	 */
 	private String[] readPatterns(Element element) {
-		String[] pats = null;
 		NodeList patterns = element.getElementsByTagName(UseMetadata.PATTERN);
-		int length = patterns.getLength();
-		if (length > 0) {
-			pats = new String[length];
-			for (int j = 0; j < length; j++) {
-				pats[j] = ((Element) patterns.item(j)).getAttribute(UseMetadata.VALUE);
-			}
-		}
-		return pats;
+		return IntStream.range(0, patterns.getLength()).mapToObj(patterns::item).map(Element.class::cast)
+				.map(e -> e.getAttribute(UseMetadata.VALUE)).toArray(String[]::new);
 	}
 
 	/**

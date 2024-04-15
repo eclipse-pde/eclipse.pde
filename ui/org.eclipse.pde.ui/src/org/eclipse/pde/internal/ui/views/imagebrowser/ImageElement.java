@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2012 Christian Pontesegger and others.
+ *  Copyright (c) 2012, 2024 Christian Pontesegger and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -14,21 +14,27 @@
 
 package org.eclipse.pde.internal.ui.views.imagebrowser;
 
+import java.lang.ref.SoftReference;
+import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.swt.graphics.ImageData;
 
 public class ImageElement {
 
 	private static final Pattern PLUGIN_PATTERN = Pattern.compile("([a-zA-Z0-9]+\\.[a-zA-Z0-9\\.]+)_.+"); //$NON-NLS-1$
-	private final ImageData mImageData;
+	private SoftReference<ImageData> mImageData;
+	private final Callable<ImageData> mImageProvider;
 	private final String mPlugin;
 	private final String mPath;
 
-	public ImageElement(final ImageData image, final String plugin, final String path) {
-		mImageData = image;
+	public ImageElement(final Callable<ImageData> imageProvider, final String plugin, final String path) {
+		mImageData = new SoftReference<>(null);
+		mImageProvider = imageProvider;
 		mPlugin = plugin;
 		mPath = path;
 	}
@@ -52,7 +58,18 @@ public class ImageElement {
 	}
 
 	public ImageData getImageData() {
-		return mImageData;
+		ImageData imageData = mImageData.get();
+		if (imageData == null) {
+			try {
+				imageData = mImageProvider.call();
+			} catch (Exception e) {
+				// could not create image for location
+				PDECore.log(e);
+				imageData = ImageDescriptor.getMissingImageDescriptor().getImageData(100);
+			}
+			mImageData = new SoftReference<>(imageData);
+		}
+		return imageData;
 	}
 
 	public String getFileName() {

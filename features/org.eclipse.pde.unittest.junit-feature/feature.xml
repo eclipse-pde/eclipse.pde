@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.pde.unittest.junit"
       label="%featureName"
-      version="1.0.700.qualifier"
+      version="1.0.800.qualifier"
       provider-name="%providerName"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">

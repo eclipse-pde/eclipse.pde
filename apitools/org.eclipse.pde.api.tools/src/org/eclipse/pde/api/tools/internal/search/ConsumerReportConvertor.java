@@ -14,11 +14,9 @@
 package org.eclipse.pde.api.tools.internal.search;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,7 +26,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.osgi.util.NLS;
@@ -181,12 +178,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 			if (desc == null) {
 				return false;
 			}
-			this.currenttype = this.keys.get(desc);
-			if (this.currenttype == null) {
-				this.currenttype = new Type2(desc);
-				this.keys.put(desc, this.currenttype);
-			}
-
+			this.currenttype = this.keys.computeIfAbsent(desc, Type2::new);
 			currentProducer.types.put(desc, currenttype);
 
 			this.currentmember = new Member(referencedMember);
@@ -459,12 +451,8 @@ public class ConsumerReportConvertor extends UseReportConverter {
 	@Override
 	protected void writeIndexPage(List<?> scanResult) throws Exception {
 		Collections.sort(scanResult, (o1, o2) -> ((Consumer) o1).name.compareTo(((Consumer) o2).name));
-
+		Path reportIndex = Path.of(getHtmlLocation(), "index.html"); //$NON-NLS-1$
 		try {
-			File reportIndex = new File(getHtmlLocation(), "index.html"); //$NON-NLS-1$
-			if (!reportIndex.exists()) {
-				reportIndex.createNewFile();
-			}
 			setReportIndex(reportIndex);
 
 			StringBuilder buffer = new StringBuilder();
@@ -494,15 +482,15 @@ public class ConsumerReportConvertor extends UseReportConverter {
 			buffer.append(OPEN_P);
 			buffer.append(NLS.bind(SearchMessages.UseReportConverter_bundles_that_were_not_searched, new String[] {
 					"<a href=\"./not_searched.html\">", "</a></p>\n" })); //$NON-NLS-1$//$NON-NLS-2$
-			String additional = getAdditionalIndexInfo(scanResult.size() > 0);
+			String additional = getAdditionalIndexInfo(!scanResult.isEmpty());
 			if (additional != null) {
 				buffer.append(additional);
 			}
-			if (scanResult.size() > 0) {
+			if (!scanResult.isEmpty()) {
 				buffer.append(OPEN_P).append(SearchMessages.UseReportConverter_inlined_description).append(CLOSE_P);
 				buffer.append(getColourLegend());
 				buffer.append(getReferencesTableHeader(SearchMessages.ConsumerReportConvertor_ProducerListHeader, SearchMessages.UseReportConverter_bundle, true));
-				if (scanResult.size() > 0) {
+				if (!scanResult.isEmpty()) {
 					File refereehtml = null;
 					String link = null;
 					for (Object obj : scanResult) {
@@ -520,13 +508,9 @@ public class ConsumerReportConvertor extends UseReportConverter {
 			buffer.append(W3C_FOOTER);
 			buffer.append(CLOSE_BODY).append(CLOSE_HTML);
 
-			// write the file
-			try (PrintWriter writer = new PrintWriter(
-					new OutputStreamWriter(new FileOutputStream(reportIndex), StandardCharsets.UTF_8))) {
-				writer.print(buffer.toString());
-			}
+			Files.writeString(reportIndex, buffer);
 		} catch (IOException e) {
-			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, getReportIndex().getAbsolutePath()));
+			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, reportIndex.toAbsolutePath()), e);
 		}
 	}
 
@@ -539,16 +523,8 @@ public class ConsumerReportConvertor extends UseReportConverter {
 	 * @param producers a map of producer name to a {@link Producer} object
 	 */
 	protected void writeConsumerReport(Consumer consumer, Map<String, Producer> producers) throws Exception {
-		File originhtml = null;
+		Path originhtml = Path.of(getHtmlLocation(), consumer.name, "index.html"); //$NON-NLS-1$
 		try {
-			File htmlroot = new File(getHtmlLocation(), consumer.name);
-			if (!htmlroot.exists()) {
-				htmlroot.mkdirs();
-			}
-			originhtml = new File(htmlroot, "index.html"); //$NON-NLS-1$
-			if (!originhtml.exists()) {
-				originhtml.createNewFile();
-			}
 			StringBuilder buffer = new StringBuilder();
 			buffer.append(HTML_HEADER);
 			buffer.append(OPEN_HTML).append(OPEN_HEAD).append(CONTENT_TYPE_META);
@@ -581,13 +557,9 @@ public class ConsumerReportConvertor extends UseReportConverter {
 			buffer.append(OPEN_P).append("<a href=\"../index.html\">").append(SearchMessages.UseReportConverter_back_to_bundle_index).append(CLOSE_A).append(CLOSE_P); //$NON-NLS-1$
 			buffer.append(W3C_FOOTER);
 
-			try (PrintWriter writer = new PrintWriter(
-					new OutputStreamWriter(new FileOutputStream(originhtml), StandardCharsets.UTF_8))) {
-				writer.println(buffer.toString());
-				writer.flush();
-			}
+			writeString(originhtml, buffer);
 		} catch (IOException ioe) {
-			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, originhtml.getAbsolutePath()), ioe);
+			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, originhtml.toAbsolutePath()), ioe);
 		}
 	}
 
@@ -601,16 +573,9 @@ public class ConsumerReportConvertor extends UseReportConverter {
 	 * @param producer producer to write the report for
 	 */
 	protected void writeProducerReport(Consumer parentConsumer, Producer producer) throws Exception {
-		File originhtml = null;
+		Path htmlroot = Path.of(getHtmlLocation(), parentConsumer.name, producer.name);
+		Path originhtml = htmlroot.resolve("index.html"); //$NON-NLS-1$
 		try {
-			File htmlroot = IPath.fromOSString(getHtmlLocation()).append(parentConsumer.name).append(producer.name).toFile();
-			if (!htmlroot.exists()) {
-				htmlroot.mkdirs();
-			}
-			originhtml = new File(htmlroot, "index.html"); //$NON-NLS-1$
-			if (!originhtml.exists()) {
-				originhtml.createNewFile();
-			}
 			StringBuilder buffer = new StringBuilder();
 			buffer.append(HTML_HEADER);
 			buffer.append(OPEN_HTML).append(OPEN_HEAD).append(CONTENT_TYPE_META);
@@ -630,20 +595,13 @@ public class ConsumerReportConvertor extends UseReportConverter {
 			producerTypes.addAll(producer.types.keySet());
 			Collections.sort(producerTypes, compare);
 
-			CountGroup counts = null;
-			String link = null;
-			File typefile = null;
-			Type2 type = null;
 			for (IReferenceTypeDescriptor iReferenceTypeDescriptor : producerTypes) {
-				type = producer.types.get(iReferenceTypeDescriptor);
-				counts = type.counts;
+				Type2 type = producer.types.get(iReferenceTypeDescriptor);
+				CountGroup counts = type.counts;
 
 				String fqname = Signatures.getQualifiedTypeSignature((IReferenceTypeDescriptor) type.desc);
-				typefile = new File(htmlroot, fqname + HTML_EXTENSION);
-				if (!typefile.exists()) {
-					typefile.createNewFile();
-				}
-				link = extractLinkFrom(htmlroot, typefile.getAbsolutePath());
+				Path typefile = htmlroot.resolve(fqname + HTML_EXTENSION);
+				String link = extractLinkFrom(htmlroot.toFile(), typefile.toAbsolutePath().toString());
 				buffer.append(getReferenceTableEntry(counts, link, fqname, false));
 				writeTypePage(type.referencingMembers, type, typefile, fqname);
 			}
@@ -653,13 +611,9 @@ public class ConsumerReportConvertor extends UseReportConverter {
 			buffer.append(OPEN_P).append("<a href=\"../index.html\">").append(NLS.bind(SearchMessages.ConsumerReportConvertor_BackLinkToConsumer, parentConsumer.name)).append(CLOSE_A).append(CLOSE_P); //$NON-NLS-1$
 			buffer.append(W3C_FOOTER);
 
-			try (PrintWriter writer = new PrintWriter(
-					new OutputStreamWriter(new FileOutputStream(originhtml), StandardCharsets.UTF_8))) {
-				writer.println(buffer.toString());
-				writer.flush();
-			}
+			writeString(originhtml, buffer);
 		} catch (IOException ioe) {
-			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, originhtml.getAbsolutePath()));
+			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, originhtml.toAbsolutePath()), ioe);
 		}
 	}
 

@@ -13,12 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.search;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.text.DateFormat;
 import java.util.Calendar;
 
@@ -88,17 +85,15 @@ public class MissingRefMetadata implements IMetadata {
 	 */
 	public static MissingRefMetadata getMetadata(File xmlFile) throws Exception {
 		MissingRefMetadata metadata = new MissingRefMetadata();
-		try {
-			if (xmlFile.exists()) {
+		if (xmlFile.exists()) {
+			try {
 				String xmlstr = Util.getFileContentAsString(xmlFile);
 				Element doc = Util.parseDocument(xmlstr.trim());
-				Element element = null;
-				String value = null, name = null;
 				NodeList nodes = doc.getElementsByTagName("*"); //$NON-NLS-1$
 				for (int i = 0; i < nodes.getLength(); i++) {
-					element = (Element) nodes.item(i);
-					value = element.getAttribute(MissingRefMetadata.VALUE);
-					name = element.getNodeName();
+					Element element = (Element) nodes.item(i);
+					String value = element.getAttribute(MissingRefMetadata.VALUE);
+					String name = element.getNodeName();
 
 					if (PROFILE.equals(name)) {
 						metadata.setProfile(value);
@@ -117,15 +112,16 @@ public class MissingRefMetadata implements IMetadata {
 						continue;
 					}
 				}
+			} catch (CoreException e) {
+				throw new Exception(
+						NLS.bind(SearchMessages.MissingRefMetadata_CoreExceptionInParsing, xmlFile.getAbsolutePath()));
 			}
-		} catch (CoreException e) {
-			throw new Exception(NLS.bind(SearchMessages.MissingRefMetadata_CoreExceptionInParsing, xmlFile.getAbsolutePath()));
 		}
 		return metadata;
 	}
 
 	@Override
-	public void serializeToFile(File file) throws IOException, CoreException {
+	public void serializeToFile(Path file) throws IOException, CoreException {
 		Document doc = Util.newDocument();
 		Element root = doc.createElement(MissingRefMetadata.METADATA);
 		doc.appendChild(root);
@@ -146,11 +142,7 @@ public class MissingRefMetadata implements IMetadata {
 		root.appendChild(child);
 		child.setAttribute(MissingRefMetadata.VALUE, apiusescans);
 
-		try (BufferedWriter writer = new BufferedWriter(
-				new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8))) {
-			writer.write(Util.serializeDocument(doc));
-			writer.flush();
-		}
+		Util.writeDocumentToFile(doc, file);
 	}
 
 	/**

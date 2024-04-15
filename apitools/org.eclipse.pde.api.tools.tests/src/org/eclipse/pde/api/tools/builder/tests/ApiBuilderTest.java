@@ -16,11 +16,9 @@ package org.eclipse.pde.api.tools.builder.tests;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -65,6 +63,7 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
+import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.api.tools.tests.util.FileUtils;
 import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
@@ -75,6 +74,7 @@ import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 import org.osgi.service.prefs.BackingStoreException;
+import org.w3c.dom.Document;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -335,7 +335,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		// create API Description, this should be the first step because
 		// otherwise we might trigger a resource change that maybe invalidates
 		// our component before we can process it!
-		String xml = componentToXml(apiComponent);
+		Document xml = componentToXml(apiComponent);
 		// now we have the xml and can go on...
 		File root = baselineLocation.toFile();
 		File componentDir = new File(root, project.getName());
@@ -357,14 +357,10 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		IFolder output = project.getFolder("bin"); //$NON-NLS-1$
 		FileUtils.copyFolder(output, componentDir);
 		// copy description
-		File desc = new File(componentDir, ".api_description"); //$NON-NLS-1$
-		desc.createNewFile();
-		try (FileOutputStream stream = new FileOutputStream(desc)) {
-			stream.write(xml.getBytes(StandardCharsets.UTF_8));
-		}
+		Util.writeDocumentToFile(xml, componentDir.toPath().resolve(".api_description")); //$NON-NLS-1$
 	}
 
-	private static String componentToXml(IApiComponent apiComponent) throws CoreException {
+	private static Document componentToXml(IApiComponent apiComponent) throws CoreException {
 		ApiDescriptionXmlCreator visitor = new ApiDescriptionXmlCreator(apiComponent);
 		apiComponent.getApiDescription().accept(visitor, null);
 		return visitor.getXML();

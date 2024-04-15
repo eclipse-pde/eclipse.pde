@@ -17,8 +17,8 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
+import java.util.Locale;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -133,7 +133,7 @@ public class UseScanManager {
 			references = apiComponent.getExternalDependencies();
 		}
 		SubMonitor localmonitor = SubMonitor.convert(monitor, SearchMessages.collecting_external_dependencies, 10);
-		ArrayList<String> unavailableMembers = new ArrayList<>();
+		List<String> unavailableMembers = new ArrayList<>();
 		if (apiUseTypes != null && apiUseTypes.length > 0) {
 			for (String apiUseType : apiUseTypes) {
 				if (!references.hasReferencesTo(apiUseType)) {
@@ -294,36 +294,33 @@ public class UseScanManager {
 	 *         <code>false</code> otherwise
 	 */
 	public static boolean isValidArchive(File file) {
-		String fname = file.getName().toLowerCase();
+		String fname = file.getName().toLowerCase(Locale.ENGLISH);
 		if (file.exists() && Util.isArchive(fname)) {
-			Enumeration<? extends ZipEntry> entries = null;
 			if (fname.endsWith(Util.DOT_JAR)) {
 				try (JarFile jfile = new JarFile(file)) {
-					entries = jfile.entries();
+					return containsUseScans(jfile);
 				} catch (IOException ioe) {
 					return false;
 				}
 			} else if (fname.endsWith(Util.DOT_ZIP)) {
 				try (ZipFile zfile = new ZipFile(file)) {
-					entries = zfile.entries();
+					return containsUseScans(zfile);
 				} catch (IOException e) {
 					return false;
 				}
 			}
-			if (entries != null) {
-				while (entries.hasMoreElements()) {
-					ZipEntry o = entries.nextElement();
-					if (o.isDirectory()) {
-						IPath path = IPath.fromOSString(o.getName());
-						int count = path.segmentCount();
-						if (count > 2) {
-							return NAME_REGEX.matcher(path.segment(0)).matches() || NAME_REGEX.matcher(path.segment(1)).matches();
-						}
-					}
-				}
-			}
 		}
 		return false;
+	}
+
+	private static boolean containsUseScans(ZipFile zfile) {
+		return zfile.stream().filter(ZipEntry::isDirectory).anyMatch(o -> {
+			IPath path = IPath.fromOSString(o.getName());
+			if (path.segmentCount() > 2) {
+				return NAME_REGEX.matcher(path.segment(0)).matches() || NAME_REGEX.matcher(path.segment(1)).matches();
+			}
+			return false;
+		});
 	}
 
 	/**
@@ -333,8 +330,7 @@ public class UseScanManager {
 	 */
 	public static boolean isValidScanLocation(String location) {
 		if (location != null && location.length() > 0) {
-			IPath path = IPath.fromOSString(location);
-			File file = path.toFile();
+			File file = new File(location);
 			return isValidDirectory(file) || isValidArchive(file);
 		}
 		return false;
@@ -351,7 +347,7 @@ public class UseScanManager {
 		}
 
 		String[] locations = apiUseScanPaths.split(ESCAPE_REGEX + LOCATION_DELIM);
-		ArrayList<String> locationList = new ArrayList<>(locations.length);
+		List<String> locationList = new ArrayList<>(locations.length);
 		for (String location : locations) {
 			String[] values = location.split(ESCAPE_REGEX + STATE_DELIM);
 			if (Boolean.parseBoolean(values[1])) {

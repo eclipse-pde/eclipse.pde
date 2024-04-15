@@ -23,6 +23,7 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -48,6 +49,7 @@ import org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
+import org.w3c.dom.Document;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -111,12 +113,6 @@ public class APIFileGenerator {
 	public boolean allowNonApiProject = false;
 	public String encoding;
 
-	private static boolean isZipJarFile(String fileName) {
-		String normalizedFileName = fileName.toLowerCase();
-		return normalizedFileName.endsWith(".zip") //$NON-NLS-1$
-				|| normalizedFileName.endsWith(".jar"); //$NON-NLS-1$
-	}
-
 	public void generateAPIFile() {
 		if (this.binaryLocations == null || this.projectName == null || this.projectLocation == null || this.targetFolder == null) {
 			StringWriter out = new StringWriter();
@@ -157,26 +153,15 @@ public class APIFileGenerator {
 			return;
 		}
 		// check if the .api_description file exists
-		File targetProjectFolder = new File(this.targetFolder);
-		if (!targetProjectFolder.exists()) {
-			targetProjectFolder.mkdirs();
-		} else if (!targetProjectFolder.isDirectory()) {
+		Path apiDescriptionFile = Path.of(this.targetFolder, IApiCoreConstants.API_DESCRIPTION_XML_NAME);
+		Path projectFolder = apiDescriptionFile.getParent();
+		if (Files.exists(projectFolder) && !Files.isDirectory(projectFolder)) {
 			if (this.debug) {
 				System.err.println("Must be a directory : " + this.targetFolder); //$NON-NLS-1$
 			}
 			throw new IllegalArgumentException(
 					NLS.bind(CoreMessages.api_generation_targetFolderNotADirectory, this.targetFolder));
 		}
-		File apiDescriptionFile = new File(targetProjectFolder, IApiCoreConstants.API_DESCRIPTION_XML_NAME);
-		if (apiDescriptionFile.exists()) {
-			// get rid of the existing one
-			// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=414053
-			if (this.debug) {
-				System.out.println("Existing api description file deleted"); //$NON-NLS-1$
-			}
-			apiDescriptionFile.delete();
-		}
-		Map<String, String> manifestMap = null;
 		// create the directory class file container used to resolve
 		// signatures during tag scanning
 		String[] allBinaryLocations = this.binaryLocations.split(File.pathSeparator);
@@ -196,6 +181,7 @@ public class APIFileGenerator {
 		if (manifestDir.exists() && manifestDir.isDirectory()) {
 			manifestFile = new File(manifestDir, "MANIFEST.MF"); //$NON-NLS-1$
 		}
+		Map<String, String> manifestMap = null;
 		if (manifestFile != null && manifestFile.exists()) {
 			try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(manifestFile));) {
 				manifestMap = ManifestElement.parseBundleManifest(inputStream, null);
@@ -211,7 +197,7 @@ public class APIFileGenerator {
 				Set<String> currentApiPackages = null;
 				if (currentManifest.exists()) {
 					try {
-						if (isZipJarFile(currentManifest.getName())) {
+						if (Util.isZipJarFile(currentManifest.getName())) {
 							try (ZipFile zipFile = new ZipFile(currentManifest)) {
 								final ZipEntry entry = zipFile.getEntry("META-INF/MANIFEST.MF"); //$NON-NLS-1$
 								if (entry != null) {
@@ -288,8 +274,8 @@ public class APIFileGenerator {
 		try {
 			ApiDescriptionXmlCreator xmlVisitor = new ApiDescriptionXmlCreator(this.projectName, this.projectName);
 			apiDescription.accept(xmlVisitor, null);
-			String xml = xmlVisitor.getXML();
-			Util.saveFile(apiDescriptionFile, xml);
+			Document xml = xmlVisitor.getXML();
+			Util.writeDocumentToFile(xml, apiDescriptionFile);
 		} catch (CoreException | IOException e) {
 			ApiPlugin.log(e);
 		}
@@ -320,7 +306,7 @@ public class APIFileGenerator {
 	 *             names fail for some reason
 	 */
 	private Set<String> collectApiPackageNames(Map<String, String> manifestmap) throws BundleException {
-		HashSet<String> set = new HashSet<>();
+		Set<String> set = new HashSet<>();
 		ManifestElement[] packages = ManifestElement.parseHeader(Constants.EXPORT_PACKAGE, manifestmap.get(Constants.EXPORT_PACKAGE));
 		if (packages != null) {
 			for (int i = 0; i < packages.length; i++) {
@@ -358,7 +344,7 @@ public class APIFileGenerator {
 		if (!f.exists()) {
 			return null;
 		}
-		if (isZipJarFile(location)) {
+		if (Util.isZipJarFile(location)) {
 			return new ArchiveApiTypeContainer(null, location);
 		} else {
 			return new DirectoryApiTypeContainer(null, location);

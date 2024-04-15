@@ -46,8 +46,6 @@ public interface IApiMember extends IApiElement {
 	 * unknown. Modifiers are as defined by {@link org.eclipse.jdt.core.Flags}
 	 *
 	 * @return modifiers bit mask
-	 * @exception CoreException if this element does not exist or there in an
-	 *                error reading its underlying storage
 	 */
 	public int getModifiers();
 

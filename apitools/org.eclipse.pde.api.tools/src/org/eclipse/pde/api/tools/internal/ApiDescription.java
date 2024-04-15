@@ -242,22 +242,22 @@ public class ApiDescription implements IApiDescription {
 	}
 
 	/**
-	 * This is a map of component names to a map of package names to package
-	 * node objects represented as:
+	 * This is a map of component names to a map of package names to package node
+	 * objects represented as:
 	 *
-	 * <pre>
+	 * <pre>{@code
 	 * HashMap<IElementDescriptor(package), ManifestNode(package)>
-	 * </pre>
+	 * }</pre>
 	 */
 	protected Map<IElementDescriptor, ManifestNode> fPackageMap = new LinkedHashMap<>();
 
 	/**
-	 * This map holds the mapping of special access kinds for packages and has
-	 * the form:
+	 * This map holds the mapping of special access kinds for packages and has the
+	 * form:
 	 *
-	 * <pre>
+	 * <pre>{@code
 	 * HashMap<IPackageDescriptor(package), HashMap<IElementDescriptor(component), IApiAccess>>
-	 * </pre>
+	 * }</pre>
 	 */
 	protected HashMap<IPackageDescriptor, HashMap<IElementDescriptor, IApiAccess>> fAccessMap = new HashMap<>();
 

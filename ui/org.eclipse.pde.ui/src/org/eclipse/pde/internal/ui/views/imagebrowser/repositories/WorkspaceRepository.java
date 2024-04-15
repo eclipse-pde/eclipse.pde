@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2012, 2015 Christian Pontesegger and others.
+ *  Copyright (c) 2012, 2024 Christian Pontesegger and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -78,12 +78,8 @@ public class WorkspaceRepository extends AbstractRepository {
 							case IResource.FILE :
 								// look for image files
 								if (isImageName(proxy.getName())) {
-									try {
-										IFile resource = (IFile) proxy.requestResource();
-										addImageElement(new ImageElement(createImageData(resource), pluginName, resource.getProjectRelativePath().toPortableString()));
-									} catch (Exception e) {
-										// could not create image for location
-									}
+									IFile resource = (IFile) proxy.requestResource();
+									addImageElement(new ImageElement(() -> createImageData(resource), pluginName, resource.getProjectRelativePath().toPortableString()));
 
 									if (monitor.isCanceled())
 										throw new OperationCanceledException();
