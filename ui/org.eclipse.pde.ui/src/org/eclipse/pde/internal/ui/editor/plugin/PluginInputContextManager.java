@@ -64,12 +64,12 @@ public class PluginInputContextManager extends InputContextManager {
 	public void resourceChanged(IResourceChangeEvent event) {
 		IResourceDelta delta = event.getDelta();
 		try {
+			IProject project = getCommonProject();
 			delta.accept(delta1 -> {
 				int kind = delta1.getKind();
 				IResource resource = delta1.getResource();
 				if (resource instanceof IFile) {
 					IFile file = (IFile) resource;
-					IProject project = getCommonProject();
 					if (project == null || project.equals(file.getProject())) {
 						if (kind == IResourceDelta.ADDED
 								&& ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR.equalsIgnoreCase(file.getName())) {
