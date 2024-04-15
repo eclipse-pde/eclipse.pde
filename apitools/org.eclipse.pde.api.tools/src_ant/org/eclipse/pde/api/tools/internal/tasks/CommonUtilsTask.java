@@ -78,7 +78,7 @@ public abstract class CommonUtilsTask extends Task {
 			} else if (eeFileLocation != null) {
 				baseline = ApiModelFactory.newApiBaseline(baselineName, new File(eeFileLocation));
 			} else {
-				baseline = ApiModelFactory.newApiBaseline(baselineName, Util.getEEDescriptionFile());
+				baseline = ApiModelFactory.newApiBaseline(baselineName, Util.getEEDescriptionFile(), null);
 			}
 
 			IApiComponent[] components = ApiModelFactory.addComponents(baseline, installLocation, null);

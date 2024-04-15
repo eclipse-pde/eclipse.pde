@@ -42,7 +42,7 @@ public class ComponentManifestTests {
 		path = path.append("test-manifests"); //$NON-NLS-1$
 		File file = path.toFile();
 		assertTrue("Missing manifest directory", file.exists()); //$NON-NLS-1$
-		IApiBaseline baseline = TestSuiteHelper.newApiBaseline("test", TestSuiteHelper.getEEDescriptionFile()); //$NON-NLS-1$
+		IApiBaseline baseline = ApiModelFactory.newApiBaseline("test", TestSuiteHelper.getEEDescription(), null); //$NON-NLS-1$
 		try {
 			IApiComponent component = ApiModelFactory.newApiComponent(baseline, file.getAbsolutePath());
 			baseline.addApiComponents(new IApiComponent[] { component });
@@ -84,7 +84,7 @@ public class ComponentManifestTests {
 		path = path.append("test-manifests"); //$NON-NLS-1$
 		File file = path.toFile();
 		assertTrue("Missing manifest directory", file.exists()); //$NON-NLS-1$
-		IApiBaseline baseline = TestSuiteHelper.newApiBaseline("test", TestSuiteHelper.getEEDescriptionFile()); //$NON-NLS-1$
+		IApiBaseline baseline = ApiModelFactory.newApiBaseline("test", TestSuiteHelper.getEEDescription(), null); //$NON-NLS-1$
 		try {
 			IApiComponent component = ApiModelFactory.newApiComponent(baseline, file.getAbsolutePath());
 			baseline.addApiComponents(new IApiComponent[] { component });

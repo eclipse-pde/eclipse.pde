@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.URIUtil;
+import org.eclipse.jdt.launching.environments.ExecutionEnvironmentDescription;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -158,13 +159,13 @@ public class ApiModelFactory {
 	 * </p>
 	 *
 	 * @param name baseline name
-	 * @param eeDescription execution environment description file
+	 * @param eeFile execution environment description file
 	 * @return a new {@link IApiBaseline}
 	 * @throws CoreException if unable to create a new baseline with the
 	 *             specified attributes
 	 */
-	public static IApiBaseline newApiBaseline(String name, File eeDescription) throws CoreException {
-		return new ApiBaseline(name, eeDescription);
+	public static IApiBaseline newApiBaseline(String name, File eeFile) throws CoreException {
+		return newApiBaseline(name, eeFile != null ? new ExecutionEnvironmentDescription(eeFile) : null, null);
 	}
 
 	/**
@@ -185,7 +186,7 @@ public class ApiModelFactory {
 	 *             specified attributes
 	 */
 	public static IApiBaseline newApiBaseline(String name, String location) throws CoreException {
-		return new ApiBaseline(name, null, location);
+		return newApiBaseline(name, (ExecutionEnvironmentDescription) null, location);
 	}
 
 	/**
@@ -200,14 +201,33 @@ public class ApiModelFactory {
 	 * </p>
 	 *
 	 * @param name baseline name
-	 * @param eeDescription execution environment description file
+	 * @param eeFile execution environment description file
 	 * @param location the given baseline's location
 	 * @return a new {@link IApiBaseline}
 	 * @throws CoreException if unable to create a new baseline with the
 	 *             specified attributes
 	 */
-	public static IApiBaseline newApiBaseline(String name, File eeDescription, String location) throws CoreException {
-		return new ApiBaseline(name, eeDescription, location);
+	public static IApiBaseline newApiBaseline(String name, File eeFile, String location) throws CoreException {
+		return newApiBaseline(name, eeFile != null ? new ExecutionEnvironmentDescription(eeFile) : null, location);
+	}
+
+	/**
+	 * Creates a new empty API baseline with the specified execution environment.
+	 * <p>
+	 * The execution environment description describes how an execution environment
+	 * profile is provided by or mapped to a specific JRE.
+	 * </p>
+	 *
+	 * @param name          baseline name
+	 * @param ee execution environment description
+	 * @param location      the given baseline's location
+	 * @return a new {@link IApiBaseline}
+	 * @throws CoreException if unable to create a new baseline with the specified
+	 *                       attributes
+	 */
+	public static IApiBaseline newApiBaseline(String name, ExecutionEnvironmentDescription ee, String location)
+			throws CoreException {
+		return new ApiBaseline(name, ee, location);
 	}
 
 	/**
@@ -331,8 +351,8 @@ public class ApiModelFactory {
 	private static String generateTargetLocation(ITargetDefinition definition) {
 		StringBuilder sb = new StringBuilder(TARGET_PREFIX);
 		sb.append(IPath.SEPARATOR);
-		if (definition instanceof TargetDefinition) {
-			sb.append(((TargetDefinition) definition).getSequenceNumber());
+		if (definition instanceof TargetDefinition target) {
+			sb.append(target.getSequenceNumber());
 		}
 		sb.append(IPath.SEPARATOR);
 		sb.append(getDefinitionIdentifier(definition));
@@ -349,11 +369,11 @@ public class ApiModelFactory {
 		ITargetHandle targetHandle = definition.getHandle();
 		// It would be nicer if ITargetHandle had #getURI() or something
 		String location;
-		if (targetHandle instanceof WorkspaceFileTargetHandle) {
-			IFile file = ((WorkspaceFileTargetHandle) targetHandle).getTargetFile();
+		if (targetHandle instanceof WorkspaceFileTargetHandle workspaceHandle) {
+			IFile file = workspaceHandle.getTargetFile();
 			location = file.getFullPath().toPortableString();
-		} else if (targetHandle instanceof ExternalFileTargetHandle) {
-			URI uri = ((ExternalFileTargetHandle) targetHandle).getLocation();
+		} else if (targetHandle instanceof ExternalFileTargetHandle externalHandle) {
+			URI uri = externalHandle.getLocation();
 			location = uri.toASCIIString();
 		} else {
 			// LocalTargetHandle#toString() returns file name,

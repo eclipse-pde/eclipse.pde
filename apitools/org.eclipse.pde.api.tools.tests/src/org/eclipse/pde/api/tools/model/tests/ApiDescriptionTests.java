@@ -248,7 +248,7 @@ public class ApiDescriptionTests {
 		path = path.append("test-xml"); //$NON-NLS-1$
 		File file = path.toFile();
 		assertTrue("Missing xml directory", file.exists()); //$NON-NLS-1$
-		IApiBaseline baseline = TestSuiteHelper.newApiBaseline("test", TestSuiteHelper.getEEDescriptionFile()); //$NON-NLS-1$
+		IApiBaseline baseline = ApiModelFactory.newApiBaseline("test", TestSuiteHelper.getEEDescription(), null); //$NON-NLS-1$
 		IApiComponent component = ApiModelFactory.newApiComponent(baseline, file.getAbsolutePath());
 		baseline.addApiComponents(new IApiComponent[] { component });
 

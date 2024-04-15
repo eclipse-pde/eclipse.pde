@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2023 IBM Corporation and others.
+ * Copyright (c) 2007, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.model;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
@@ -191,35 +190,21 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	/**
 	 * Constructs a new API baseline with the given attributes.
 	 *
-	 * @param name          baseline name
-	 * @param eeDescription execution environment description file
+	 * @param name     baseline name
+	 * @param ee       execution environment description file
+	 * @param location the given baseline location
 	 * @throws CoreException if unable to create a baseline with the given
 	 *                       attributes
 	 */
-	public ApiBaseline(String name, File eeDescription) throws CoreException {
-		this(name, eeDescription, null);
-	}
-
-	/**
-	 * Constructs a new API baseline with the given attributes.
-	 *
-	 * @param name          baseline name
-	 * @param eeDescription execution environment description file
-	 * @param location      the given baseline location
-	 * @throws CoreException if unable to create a baseline with the given
-	 *                       attributes
-	 */
-	public ApiBaseline(String name, File eeDescription, String location) throws CoreException {
+	public ApiBaseline(String name, ExecutionEnvironmentDescription ee, String location) throws CoreException {
 		this(name);
-		if (eeDescription != null) {
+		if (ee != null) {
 			fAutoResolve = false;
-			ExecutionEnvironmentDescription ee = new ExecutionEnvironmentDescription(eeDescription);
 			initialize(ee);
 			fEEStatus = Status.OK_STATUS;
 		}
 		this.fLocation = location;
 	}
-
 
 	/**
 	 * Initializes this baseline to resolve in the execution environment
@@ -411,12 +396,11 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 			}
 			// The list is sorted with highest VM version first
 			List<IVMInstall> allVMInstalls = new ArrayList<>(vmToEEs.keySet());
-			for (IVMInstall iVMInstall : allVMInstalls) {
+			for (IVMInstall vmInstall : allVMInstalls) {
 				try {
-					File tmpEeFile = Util.createEEFile(iVMInstall);
-					initialize(new ExecutionEnvironmentDescription(tmpEeFile));
-					tmpEeFile.delete();
-					fVMBinding = iVMInstall;
+					ExecutionEnvironmentDescription ee = Util.createEEDescription(vmInstall);
+					initialize(ee);
+					fVMBinding = vmInstall;
 					break;
 				} catch (CoreException | IOException e) {
 					error = Status.error(CoreMessages.ApiBaseline_2, e);

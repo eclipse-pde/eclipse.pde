@@ -52,6 +52,7 @@ import java.util.StringTokenizer;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -112,7 +113,6 @@ import org.eclipse.jdt.internal.core.PackageFragment;
 import org.eclipse.jdt.internal.core.SourceType;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jdt.launching.environments.ExecutionEnvironmentDescription;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
@@ -307,21 +307,6 @@ public final class Util {
 	public static final int LATEST_OPCODES_ASM = Opcodes.ASM9;
 
 	/**
-	 * Appends a property to the given string buffer with the given key and
-	 * value in the format "key=value\n".
-	 *
-	 * @param buffer buffer to append to
-	 * @param key key
-	 * @param value value
-	 */
-	private static void appendProperty(StringBuilder buffer, String key, String value) {
-		buffer.append(key);
-		buffer.append('=');
-		buffer.append(value);
-		buffer.append('\n');
-	}
-
-	/**
 	 * Collects all of the deltas from the given parent delta
 	 */
 	public static List<IDelta> collectAllDeltas(IDelta delta) {
@@ -437,14 +422,17 @@ public final class Util {
 	}
 
 	/**
-	 * Creates an EE file for the given JRE
+	 * Creates an EE description for the given JRE
 	 */
-	public static File createEEFile(IVMInstall jre) throws IOException {
+	public static ExecutionEnvironmentDescription createEEDescription(IVMInstall jre) throws IOException {
 		String eeid = getStrictCompatibleEE(jre);
-		String string = Util.generateEEContents(jre, eeid);
-		File eeFile = createTempFile("eed", ".ee"); //$NON-NLS-1$ //$NON-NLS-2$
-		Files.writeString(eeFile.toPath(), string);
-		return eeFile;
+		String paths = Arrays.stream(JavaRuntime.getLibraryLocations(jre))
+				.map(lib -> lib.getSystemLibraryPath().toOSString()).collect(Collectors.joining(File.pathSeparator));
+
+		return new ExecutionEnvironmentDescription(Map.of( //
+				ExecutionEnvironmentDescription.JAVA_HOME, jre.getInstallLocation().getCanonicalPath(),
+				ExecutionEnvironmentDescription.BOOT_CLASS_PATH, paths, //
+				ExecutionEnvironmentDescription.CLASS_LIB_LEVEL, eeid));
 	}
 
 	private static String getStrictCompatibleEE(IVMInstall iVMInstall) {
@@ -473,30 +461,6 @@ public final class Util {
 			return o2 == null;
 		}
 		return o1.equals(o2);
-	}
-
-	/**
-	 * Returns an execution environment description for the given VM.
-	 *
-	 * @param vm JRE to create an definition for
-	 * @return an execution environment description for the given VM
-	 * @throws IOException if unable to generate description
-	 */
-	public static String generateEEContents(IVMInstall vm, String eeId) throws IOException {
-		StringBuilder buffer = new StringBuilder();
-		appendProperty(buffer, ExecutionEnvironmentDescription.JAVA_HOME, vm.getInstallLocation().getCanonicalPath());
-		StringBuilder paths = new StringBuilder();
-		LibraryLocation[] libraryLocations = JavaRuntime.getLibraryLocations(vm);
-		for (int i = 0; i < libraryLocations.length; i++) {
-			LibraryLocation lib = libraryLocations[i];
-			paths.append(lib.getSystemLibraryPath().toOSString());
-			if (i < (libraryLocations.length - 1)) {
-				paths.append(File.pathSeparatorChar);
-			}
-		}
-		appendProperty(buffer, ExecutionEnvironmentDescription.BOOT_CLASS_PATH, paths.toString());
-		appendProperty(buffer, ExecutionEnvironmentDescription.CLASS_LIB_LEVEL, eeId);
-		return buffer.toString();
 	}
 
 	/**
@@ -1852,21 +1816,16 @@ public final class Util {
 
 	/**
 	 * Gets the .ee file supplied to run tests based on system property.
+	 *
+	 * @throws CoreException
 	 */
-	public static File getEEDescriptionFile() {
+	public static ExecutionEnvironmentDescription getEEDescriptionFile() {
 		// generate a fake 1.6 ee file
-		try {
-			File fakeEEFile = createTempFile("eefile", ".ee"); //$NON-NLS-1$ //$NON-NLS-2$
-			Files.writeString(fakeEEFile.toPath(), String.format("""
-					-Djava.home=%s
-					-Dee.bootclasspath=%s
-					-Dee.language.level=1.6
-					-Dee.class.library.level=JavaSE-1.6
-					""", System.getProperty("java.home"), getJavaClassLibsAsString())); //$NON-NLS-1$//$NON-NLS-2$
-			return fakeEEFile;
-		} catch (IOException e) {
-			return null;
-		}
+		return new ExecutionEnvironmentDescription(Map.of( //
+				ExecutionEnvironmentDescription.JAVA_HOME, System.getProperty("java.home"), //$NON-NLS-1$
+				ExecutionEnvironmentDescription.BOOT_CLASS_PATH, getJavaClassLibsAsString(),
+				ExecutionEnvironmentDescription.LANGUAGE_LEVEL, "1.6", //$NON-NLS-1$
+				ExecutionEnvironmentDescription.CLASS_LIB_LEVEL, "JavaSE-1.6")); //$NON-NLS-1$
 	}
 
 	/**
@@ -1898,15 +1857,7 @@ public final class Util {
 	 *         of the current default system VM.
 	 */
 	public static String getJavaClassLibsAsString() {
-		String[] libs = Util.getJavaClassLibs();
-		StringBuilder buffer = new StringBuilder();
-		for (int i = 0, max = libs.length; i < max; i++) {
-			if (i > 0) {
-				buffer.append(File.pathSeparatorChar);
-			}
-			buffer.append(libs[i]);
-		}
-		return String.valueOf(buffer);
+		return String.join(File.pathSeparator, getJavaClassLibs());
 	}
 
 	/**
