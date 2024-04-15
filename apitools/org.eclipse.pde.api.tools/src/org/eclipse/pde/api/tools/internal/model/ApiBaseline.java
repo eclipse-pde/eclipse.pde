@@ -17,8 +17,6 @@ package org.eclipse.pde.api.tools.internal.model;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,12 +38,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.JavaCore;
@@ -58,6 +54,7 @@ import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jdt.launching.environments.ExecutionEnvironmentDescription;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
+import org.eclipse.osgi.launch.Equinox;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
@@ -77,7 +74,6 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.internal.core.BuildDependencyCollector;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 
@@ -233,44 +229,18 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * @throws CoreException if unable to initialize based on the given id
 	 */
 	private void initialize(ExecutionEnvironmentDescription ee) throws CoreException {
-		Properties properties = null;
 		String environmentId = ee.getProperty(ExecutionEnvironmentDescription.CLASS_LIB_LEVEL);
-		if (ApiPlugin.isRunningInFramework()) {
-			properties = getJavaProfileProperties(environmentId);
-			if (properties == null) {
-				// Java10 onwards, we take profile via this method
-				@SuppressWarnings("restriction")
-				IExecutionEnvironment ev = org.eclipse.jdt.internal.launching.environments.EnvironmentsManager
-						.getDefault().getEnvironment(environmentId);
-				properties = ev.getProfileProperties();
-
-			}
-		} else {
-			properties = Util.getEEProfile(environmentId);
+		Properties properties = getJavaProfileProperties(environmentId);
+		if (properties == null && ApiPlugin.isRunningInFramework()) {
+			// Java10 onwards, we take profile via this method
+			IExecutionEnvironment ev = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(environmentId);
+			properties = ev.getProfileProperties();
 		}
 		if (properties == null) {
 			abort("Unknown execution environment: " + environmentId, null); //$NON-NLS-1$
 		} else {
 			initialize(properties, ee);
 		}
-	}
-
-	private static Properties getPropertiesFromURL(URL profileURL) {
-		try {
-			URL resolvedURL = FileLocator.resolve(profileURL);
-			URLConnection openConnection = resolvedURL.openConnection();
-			openConnection.setUseCaches(false);
-			try (InputStream is = openConnection.getInputStream()) {
-				if (is != null) {
-					Properties profile = new Properties();
-					profile.load(is);
-					return profile;
-				}
-			}
-		} catch (IOException e) {
-			ApiPlugin.log(e);
-		}
-		return null;
 	}
 
 	/**
@@ -280,13 +250,14 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * @return properties file or <code>null</code> if none
 	 */
 	public static Properties getJavaProfileProperties(String ee) {
-		Bundle osgiBundle = Platform.getBundle("org.eclipse.osgi"); //$NON-NLS-1$
-		if (osgiBundle == null) {
-			return null;
-		}
-		URL profileURL = osgiBundle.getEntry(ee.replace('/', '_') + ".profile"); //$NON-NLS-1$
-		if (profileURL != null) {
-			return getPropertiesFromURL(profileURL);
+		try (InputStream is = Equinox.class.getResourceAsStream('/' + ee.replace('/', '_') + ".profile")) { //$NON-NLS-1$
+			if (is != null) {
+				Properties profile = new Properties();
+				profile.load(is);
+				return profile;
+			}
+		} catch (IOException e) {
+			ApiPlugin.log(e);
 		}
 		return null;
 	}

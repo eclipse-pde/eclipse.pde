@@ -47,7 +47,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.jar.JarFile;
@@ -1003,28 +1002,6 @@ public final class Util {
 			}
 		}
 		return new org.eclipse.jface.text.Document(cu.getSource());
-	}
-
-	/**
-	 * Returns the OSGi profile properties corresponding to the given execution
-	 * environment id, or <code>null</code> if none.
-	 *
-	 * @param eeId OSGi profile identifier
-	 *
-	 * @return the corresponding properties or <code>null</code> if none
-	 */
-	public static Properties getEEProfile(String eeId) {
-		String profileName = eeId + ".profile"; //$NON-NLS-1$
-		try (InputStream stream = Util.class.getResourceAsStream("profiles/" + profileName)) { //$NON-NLS-1$
-			if (stream != null) {
-				Properties profile = new Properties();
-				profile.load(stream);
-				return profile;
-			}
-		} catch (IOException e) {
-			ApiPlugin.log(e);
-		}
-		return null;
 	}
 
 	/**
