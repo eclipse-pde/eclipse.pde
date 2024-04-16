@@ -6,3 +6,4 @@ Bug 572892 - 4.20 I-Build: I20210415-1800 - Comparator Errors Found
 https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1184
 https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1781
 https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1923
+https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1979
