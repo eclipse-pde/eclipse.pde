@@ -577,30 +577,6 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	// Old JDKs can for example be obtained from https://www.oracle.com/java/technologies/downloads/archive/
 	@SuppressWarnings("nls")
 	private static final Map<String, List<String>> PRE_JAVA_9_SYSTEM_PACKAGES = Map.of(//
-			"JRE-1.1", List.of("java.applet", //
-					"java.awt", //
-					"java.awt.datatransfer", //
-					"java.awt.event", //
-					"java.awt.image", //
-					"java.awt.peer", //
-					"java.beans", //
-					"java.io", //
-					"java.lang", //
-					"java.lang.reflect", //
-					"java.math", //
-					"java.net", //
-					"java.rmi", //
-					"java.rmi.dgc", //
-					"java.rmi.registry", //
-					"java.rmi.server", //
-					"java.security", //
-					"java.security.acl", //
-					"java.security.interfaces", //
-					"java.sql", //
-					"java.text", //
-					"java.text.resources", //
-					"java.util", //
-					"java.util.zip"),
 			"J2SE-1.2", List.of("java.applet", //
 					"java.awt", //
 					"java.awt.color", //
