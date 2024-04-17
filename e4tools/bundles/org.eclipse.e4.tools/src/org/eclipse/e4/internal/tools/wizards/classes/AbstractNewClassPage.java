@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2017 BestSolution.at and others.
+ * Copyright (c) 2010, 2024 BestSolution.at and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -517,7 +517,7 @@ public abstract class AbstractNewClassPage extends WizardPage {
 						Messages.AbstractNewClassPage_NameMustBeQualified);
 			}
 
-			return JavaConventions.validateJavaTypeName(name, JavaCore.VERSION_1_3, JavaCore.VERSION_1_3);
+			return JavaConventions.validateJavaTypeName(name, JavaCore.VERSION_1_3, JavaCore.VERSION_1_3, null);
 		}
 	}
 
