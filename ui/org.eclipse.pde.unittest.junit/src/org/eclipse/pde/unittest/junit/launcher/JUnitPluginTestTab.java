@@ -22,7 +22,6 @@ public class JUnitPluginTestTab extends TestTab {
 
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
-		// TODO Auto-generated method stub
 		super.performApply(config);
 
 		new ConfigureViewerSupport(JUnitPluginTestPlugin.UNIT_TEST_VIEW_SUPPORT_ID).apply(config);
