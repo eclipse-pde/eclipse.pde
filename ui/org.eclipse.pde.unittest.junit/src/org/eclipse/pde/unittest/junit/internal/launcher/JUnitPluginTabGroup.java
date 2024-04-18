@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2021 Red Hat Inc. and others.
+ * Copyright (c) 2021, 2024 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,6 +19,7 @@ import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.EnvironmentTab;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.debug.ui.PrototypeTab;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaArgumentsTab;
 import org.eclipse.jdt.internal.junit.launcher.AssertionVMArg;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -36,7 +37,7 @@ public class JUnitPluginTabGroup extends AbstractPDELaunchConfigurationTabGroup 
 		ILaunchConfigurationTab[] tabs = null;
 		tabs = new ILaunchConfigurationTab[] { new JUnitPluginTestTab(), new PluginJUnitMainTab(),
 				new JavaArgumentsTab(), new PluginsTab(), new ConfigurationTab(true), new TracingTab(),
-				new EnvironmentTab(), new CommonTab() };
+				new EnvironmentTab(), new CommonTab(), new PrototypeTab() };
 		setTabs(tabs);
 	}
 
