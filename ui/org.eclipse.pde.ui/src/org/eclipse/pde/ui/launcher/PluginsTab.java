@@ -59,6 +59,7 @@ public class PluginsTab extends AbstractLauncherTab {
 	private Combo fDefaultAutoStart;
 	private Spinner fDefaultStartLevel;
 	private final Listener fListener;
+	private boolean fActivated;
 
 	private static final int DEFAULT_SELECTION = 0;
 	private static final int PLUGIN_SELECTION = 1;
@@ -156,6 +157,16 @@ public class PluginsTab extends AbstractLauncherTab {
 
 	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
+		// Long-running initialization happens on first activation of this tab
+	}
+
+	@Override
+	public void activated(ILaunchConfigurationWorkingCopy configuration) {
+		if (fActivated) {
+			// Since this method can be expensive, only activate this tab once.
+			return;
+		}
+
 		try {
 			int index = DEFAULT_SELECTION;
 			if (configuration.getAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, false)) {
@@ -171,6 +182,9 @@ public class PluginsTab extends AbstractLauncherTab {
 			fDefaultAutoStart.setText(Boolean.toString(auto));
 			int level = configuration.getAttribute(IPDELauncherConstants.DEFAULT_START_LEVEL, 4);
 			fDefaultStartLevel.setSelection(level);
+
+			// If everything ran smoothly, this tab is activated
+			fActivated = true;
 		} catch (CoreException e) {
 			PDEPlugin.log(e);
 		}
@@ -188,7 +202,9 @@ public class PluginsTab extends AbstractLauncherTab {
 		int index = fSelectionCombo.getSelectionIndex();
 		configuration.setAttribute(IPDELauncherConstants.USE_DEFAULT, index == DEFAULT_SELECTION);
 		configuration.setAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, index == FEATURE_SELECTION);
-		fBlock.performApply(configuration);
+		if (fActivated) {
+			fBlock.performApply(configuration);
+		}
 		// clear default values for auto-start and start-level if default
 		String autoText = fDefaultAutoStart.getText();
 		if (Boolean.toString(false).equals(autoText)) {
@@ -217,16 +233,9 @@ public class PluginsTab extends AbstractLauncherTab {
 		return fImage;
 	}
 
-	/**
-	 * Validates the tab.  If the feature option is chosen, and the workspace is not correctly set up,
-	 * the error message is set.
-	 *
-	 * @see org.eclipse.pde.ui.launcher.AbstractLauncherTab#validateTab()
-	 */
 	@Override
 	public void validateTab() {
-		String errorMessage = null;
-		setErrorMessage(errorMessage);
+		setErrorMessage(null);
 	}
 
 	@Override
