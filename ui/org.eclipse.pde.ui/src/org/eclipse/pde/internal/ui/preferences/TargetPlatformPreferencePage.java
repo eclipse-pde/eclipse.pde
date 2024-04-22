@@ -744,9 +744,6 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			}
 			fRemoved.addAll(selected);
 			fTargets.removeAll(selected);
-			for (ITargetDefinition element : selected) {
-				TargetPlatformHelper.getTargetDefinitionMap().remove(element.getHandle());
-			}
 			// Quick hack because the first refresh loses the checkedState, which is being used to bold the active target
 			fTableViewer.refresh(false);
 			fTableViewer.refresh(true);

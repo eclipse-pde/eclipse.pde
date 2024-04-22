@@ -766,6 +766,22 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	}
 
 	/**
+	 * Test for https://github.com/eclipse-pde/eclipse.pde/issues/1246
+	 */
+	@Test
+	public void testDeleteCleansCaches() throws Exception {
+		ITargetDefinition definition = getNewTarget();
+		try {
+			assertFalse(TargetPlatformHelper.getTargetDefinitionMap().containsKey(definition.getHandle()));
+			definition.resolve(null);
+			assertTrue(TargetPlatformHelper.getTargetDefinitionMap().containsKey(definition.getHandle()));
+		} finally {
+			getTargetService().deleteTarget(definition.getHandle());
+			assertFalse(TargetPlatformHelper.getTargetDefinitionMap().containsKey(definition.getHandle()));
+		}
+	}
+
+	/**
 	 * Tests that a single (lower) version of a bundle can be included in the
 	 * target platform.
 	 */
