@@ -74,6 +74,7 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.core.TargetDefinitionManager;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
@@ -156,6 +157,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 			fExtTargetHandles.remove(((ExternalFileTargetHandle) handle).getLocation());
 		}
 		((AbstractTargetHandle) handle).delete();
+		TargetPlatformHelper.getTargetDefinitionMap().remove(handle);
 	}
 
 	@Override
