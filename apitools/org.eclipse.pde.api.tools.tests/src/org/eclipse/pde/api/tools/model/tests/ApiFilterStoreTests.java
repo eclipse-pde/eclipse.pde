@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 IBM Corporation and others.
+ * Copyright (c) 2008, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -183,8 +183,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 		IApiProblem problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(),
 				null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_USAGE, 0, RestrictionModifiers.NO_IMPLEMENT,
 				IApiProblem.NO_FLAGS);
-		IApiFilterStore store;
-		store = component.getFilterStore();
+		IApiFilterStore store = component.getFilterStore();
 		store.removeFilters(new IApiProblemFilter[] {
 				ApiProblemFactory.newProblemFilter(component.getSymbolicName(), problem, null) });
 		assertFalse("src/x/y/z/C4.java should not have a filter", store.isFiltered(problem)); //$NON-NLS-1$
@@ -203,8 +202,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 		IApiProblem problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(),
 				null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_USAGE, 0, RestrictionModifiers.NO_IMPLEMENT,
 				IApiProblem.NO_FLAGS);
-		IApiFilterStore store;
-		store = component.getFilterStore();
+		IApiFilterStore store = component.getFilterStore();
 		store.addFilters(new IApiProblemFilter[] {
 				ApiProblemFactory.newProblemFilter(component.getSymbolicName(), problem, null) });
 		assertTrue("src/x/y/z/C4.java should have a filter", store.isFiltered(problem)); //$NON-NLS-1$
@@ -226,8 +224,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 		IApiProblem problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(),
 				null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_USAGE, 0, RestrictionModifiers.NO_IMPLEMENT,
 				IApiProblem.NO_FLAGS);
-		IApiFilterStore store;
-		store = component.getFilterStore();
+		IApiFilterStore store = component.getFilterStore();
 		store.addFiltersFor(new IApiProblem[] { problem });
 		assertTrue("src/x/y/z/C4.java should have a filter", store.isFiltered(problem)); //$NON-NLS-1$
 		store.removeFilters(new IApiProblemFilter[] {
