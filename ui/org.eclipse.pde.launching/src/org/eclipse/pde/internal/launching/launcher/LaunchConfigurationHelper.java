@@ -41,6 +41,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.P2Utils;
+import org.eclipse.pde.internal.core.P2Utils.ProductInfo;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
@@ -216,7 +217,16 @@ public class LaunchConfigurationHelper {
 
 				// Unless we are restarting an existing profile, generate/overwrite the profile
 				if (!configuration.getAttribute(IPDEConstants.RESTART, false) || !P2Utils.profileExists(profileID, p2DataArea)) {
-					P2Utils.createProfile(profileID, p2DataArea, bundles.values(), features);
+					ProductInfo productInfo;
+					String productId = configuration.getAttribute(IPDELauncherConstants.PRODUCT_ID, ""); //$NON-NLS-1$
+					String productVersion = configuration.getAttribute(IPDELauncherConstants.PRODUCT_VERSION, "0.0.0"); //$NON-NLS-1$
+					String productName = configuration.getAttribute(IPDELauncherConstants.PRODUCT_NAME, ""); //$NON-NLS-1$
+					if (productId.isBlank()) {
+						productInfo = null;
+					} else {
+						productInfo = new ProductInfo(productId, productVersion, productName);
+					}
+					P2Utils.createProfile(profileID, p2DataArea, bundles.values(), features, productInfo);
 				}
 				properties.setProperty("eclipse.p2.profile", profileID); //$NON-NLS-1$
 			}

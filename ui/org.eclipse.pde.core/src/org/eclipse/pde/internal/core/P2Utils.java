@@ -41,6 +41,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.internal.p2.metadata.InstallableUnit;
+import org.eclipse.equinox.internal.p2.publisher.eclipse.IProductDescriptor;
+import org.eclipse.equinox.internal.p2.publisher.eclipse.ProductContentType;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.IProvisioningAgentProvider;
 import org.eclipse.equinox.p2.engine.IEngine;
@@ -56,12 +58,18 @@ import org.eclipse.equinox.p2.metadata.IProvidedCapability;
 import org.eclipse.equinox.p2.metadata.IRequirement;
 import org.eclipse.equinox.p2.metadata.ITouchpointType;
 import org.eclipse.equinox.p2.metadata.IUpdateDescriptor;
+import org.eclipse.equinox.p2.metadata.IVersionedId;
 import org.eclipse.equinox.p2.metadata.MetadataFactory;
 import org.eclipse.equinox.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.metadata.Version;
 import org.eclipse.equinox.p2.metadata.VersionRange;
 import org.eclipse.equinox.p2.metadata.expression.IMatchExpression;
 import org.eclipse.equinox.p2.planner.ProfileInclusionRules;
+import org.eclipse.equinox.p2.publisher.PublisherInfo;
+import org.eclipse.equinox.p2.publisher.PublisherResult;
+import org.eclipse.equinox.p2.publisher.eclipse.ProductAction;
+import org.eclipse.equinox.p2.query.QueryUtil;
+import org.eclipse.equinox.p2.repository.IRepositoryReference;
 import org.eclipse.equinox.simpleconfigurator.manipulator.SimpleConfiguratorManipulator;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
@@ -408,7 +416,7 @@ public class P2Utils {
 	 */
 	public static void createProfile(String profileID, File p2DataArea, Collection<List<IPluginModelBase>> bundles)
 			throws CoreException {
-		createProfile(profileID, p2DataArea, bundles, null);
+		createProfile(profileID, p2DataArea, bundles, null, null);
 	}
 
 	/**
@@ -436,7 +444,7 @@ public class P2Utils {
 	 *             if the profile cannot be generated
 	 */
 	public static void createProfile(String profileID, File p2DataArea, Collection<List<IPluginModelBase>> bundles,
-			Map<IFeature, Boolean> featureMap) throws CoreException {
+			Map<IFeature, Boolean> featureMap, ProductInfo productInfo) throws CoreException {
 		// Acquire the required p2 services, creating an agent in the target p2 metadata area
 		IProvisioningAgentProvider provider = PDECore.getDefault().acquireService(IProvisioningAgentProvider.class);
 		if (provider == null) {
@@ -492,6 +500,158 @@ public class P2Utils {
 			for (Entry<IFeature, Boolean> featureEntry : featureMap.entrySet()) {
 				createFeatureIUs(featureEntry.getKey(), featureEntry.getValue(), plan, plugins, features);
 			}
+		}
+		if (productInfo != null) {
+			ProductAction productAction = new ProductAction(null, new IProductDescriptor() {
+
+				@Override
+				public boolean useFeatures() {
+					return false;
+				}
+
+				@Override
+				public boolean includeLaunchers() {
+					return false;
+				}
+
+				@Override
+				public boolean hasFeatures() {
+					return false;
+				}
+
+				@Override
+				public boolean hasBundles() {
+					return false;
+				}
+
+				@Override
+				public String getVersion() {
+					return productInfo.version();
+				}
+
+				@Override
+				public String getVMArguments(String os, String arch) {
+					return null;
+				}
+
+				@Override
+				public String getVMArguments(String os) {
+					return null;
+				}
+
+				@Override
+				public String getVM(String os) {
+					return null;
+				}
+
+				@Override
+				public String getSplashLocation() {
+					return null;
+				}
+
+				@Override
+				public List<IRepositoryReference> getRepositoryEntries() {
+					return List.of();
+				}
+
+				@Override
+				public String getProgramArguments(String os, String arch) {
+					return null;
+				}
+
+				@Override
+				public String getProgramArguments(String os) {
+					return null;
+				}
+
+				@Override
+				public String getProductName() {
+					return productInfo.name();
+				}
+
+				@Override
+				public String getProductId() {
+					return null;
+				}
+
+				@Override
+				public ProductContentType getProductContentType() {
+					return ProductContentType.MIXED;
+				}
+
+				@Override
+				public File getLocation() {
+					return null;
+				}
+
+				@Override
+				public String getLicenseURL() {
+					return null;
+				}
+
+				@Override
+				public String getLicenseText() {
+					return null;
+				}
+
+				@Override
+				public String getLauncherName() {
+					return null;
+				}
+
+				@Override
+				public String getId() {
+					return productInfo.id();
+				}
+
+				@Override
+				public String[] getIcons(String os) {
+					return null;
+				}
+
+				@Override
+				public List<IVersionedId> getFeatures(int options) {
+					return List.of();
+				}
+
+				@Override
+				public List<IVersionedId> getFeatures() {
+					return List.of();
+				}
+
+				@Override
+				public Map<String, String> getConfigurationProperties(String os, String arch) {
+					return null;
+				}
+
+				@Override
+				public Map<String, String> getConfigurationProperties() {
+					return null;
+				}
+
+				@Override
+				public String getConfigIniPath(String os) {
+					return null;
+				}
+
+				@Override
+				public List<IVersionedId> getBundles() {
+					return List.of();
+				}
+
+				@Override
+				public List<BundleInfo> getBundleInfos() {
+					return List.of();
+				}
+
+				@Override
+				public String getApplication() {
+					return null;
+				}
+			}, P2_FLAVOR_DEFAULT, null);
+			PublisherResult results = new PublisherResult();
+			productAction.perform(new PublisherInfo(), results, null);
+			results.query(QueryUtil.ALL_UNITS, null).forEach(plan::addInstallableUnit);
 		}
 		IPhaseSet phaseSet = PhaseSetFactory.createDefaultPhaseSetExcluding(new String[] {PhaseSetFactory.PHASE_CHECK_TRUST, PhaseSetFactory.PHASE_COLLECT, PhaseSetFactory.PHASE_CONFIGURE, PhaseSetFactory.PHASE_UNCONFIGURE, PhaseSetFactory.PHASE_UNINSTALL});
 		IStatus status = engine.perform(plan, phaseSet, new NullProgressMonitor());
@@ -793,5 +953,9 @@ public class P2Utils {
 			return VersionRange.emptyRange;
 		}
 		return new VersionRange(fromOSGiVersion(range.getMinimum()), range.getIncludeMinimum(), fromOSGiVersion(range.getRight()), range.getIncludeMaximum());
+	}
+
+	public static record ProductInfo(String id, String version, String name) {
+
 	}
 }
