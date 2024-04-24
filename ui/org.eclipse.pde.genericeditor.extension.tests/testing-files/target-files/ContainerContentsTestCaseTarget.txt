@@ -10,7 +10,7 @@
 		<location configuration="/test/path/to/configuration/location/" path="/test/path/to/eclipse/" type="Profile"/>
 		<location id="org.eclipse.test" path="${eclipse_home}" type="Feature" version="1.2.3"/>
 		<location path="/test/path/to/eclipse/" type="Profile"/>
-		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
+		<location followRepositoryReferences="false" includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
 			<repository location="TESTURI"/>
 			<repository location="TESTURI2"/>
 			<unit id="unit1" version="1.0.0"/>

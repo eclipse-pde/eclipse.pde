@@ -59,6 +59,7 @@ public class IULocationFactory implements ITargetLocationFactory {
 			String includeAllPlatforms = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_ALL_PLATFORMS);
 			String includeSource = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_SOURCE);
 			String includeConfigurePhase = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_CONFIGURE_PHASE);
+			String followRepositoryReferences = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_FOLLOW_REPOSITORY_REFERENCES);
 
 			NodeList list = location.getChildNodes();
 			List<String> ids = new ArrayList<>();
@@ -101,6 +102,13 @@ public class IULocationFactory implements ITargetLocationFactory {
 			flags |= Boolean.parseBoolean(includeAllPlatforms) ? IUBundleContainer.INCLUDE_ALL_ENVIRONMENTS : 0;
 			flags |= Boolean.parseBoolean(includeSource) ? IUBundleContainer.INCLUDE_SOURCE : 0;
 			flags |= Boolean.parseBoolean(includeConfigurePhase) ? IUBundleContainer.INCLUDE_CONFIGURE_PHASE : 0;
+			// For backwards compatibility, followRepositoryReferences should be
+			// true when it's absent
+			if (followRepositoryReferences.isEmpty()) {
+				flags |= IUBundleContainer.FOLLOW_REPOSITORY_REFERENCES;
+			} else {
+				flags |= Boolean.parseBoolean(followRepositoryReferences) ? IUBundleContainer.FOLLOW_REPOSITORY_REFERENCES : 0;
+			}
 			return TargetPlatformService.getDefault().newIULocation(iuIDs, iuVer, uris,
 					flags);
 		}
