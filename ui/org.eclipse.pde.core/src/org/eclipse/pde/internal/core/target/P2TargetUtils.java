@@ -1046,7 +1046,8 @@ public class P2TargetUtils {
 		Collection<IRepositoryReference> references = repository.getReferences();
 		SubMonitor subMonitor = SubMonitor.convert(monitor, references.size() * 2);
 		for (IRepositoryReference reference : references) {
-			if (reference.getType() == IRepository.TYPE_METADATA && seen.add(reference)) {
+			if (reference.getType() == IRepository.TYPE_METADATA && reference.getOptions() == IRepository.ENABLED
+					&& seen.add(reference)) {
 				try {
 					IMetadataRepository referencedRepository = manager.loadRepository(reference.getLocation(),
 							subMonitor.split(1));
