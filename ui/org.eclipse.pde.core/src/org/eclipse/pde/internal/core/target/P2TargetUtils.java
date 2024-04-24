@@ -216,8 +216,19 @@ public class P2TargetUtils {
 	private boolean fIncludeConfigurePhase = false;
 
 	/**
-	 * Deletes any profiles associated with target definitions that no longer exist
-	 * and returns a list of profile identifiers that were deleted.
+	 * Whether repository references should be resolved. If this option is
+	 * false, references will be skipped entirely. In essence, this forces
+	 * repositories to be self-contained.
+	 *
+	 * <p>
+	 * <code>true</code> by default
+	 * </p>
+	 */
+	private boolean fFollowRepositoryReferences = true;
+
+	/**
+	 * Deletes any profiles associated with target definitions that no longer
+	 * exist and returns a list of profile identifiers that were deleted.
 	 */
 	public static List<String> cleanOrphanedTargetDefinitionProfiles() throws CoreException {
 		List<String> list = new ArrayList<>();
@@ -703,6 +714,26 @@ public class P2TargetUtils {
 		return fIncludeConfigurePhase;
 	}
 
+
+	/**
+	 * Set whether or not repository references should be followed
+	 *
+	 * @param value whether or not repository references should be followed
+	 */
+	public void setFollowRepositoryReferences(boolean value) {
+		fFollowRepositoryReferences = value;
+	}
+
+
+	/**
+	 * Return whether or not repository references should be followed
+	 *
+	 * @return whether or not repository references should be followed
+	 */
+	public boolean isFollowRepositoryReferences() {
+		return fFollowRepositoryReferences;
+	}
+
 	/**
 	 * Return whether or not the given target has a matching profile that is in sync
 	 * @param target the target to check
@@ -1004,11 +1035,12 @@ public class P2TargetUtils {
 	 * Return a queryable on the metadata defined in the given repo locations
 	 *
 	 * @param repos the repos to lookup
+	 * @param followRepositoryReferences whether to follow repository references
 	 * @param monitor the progress monitor
 	 * @return the set of metadata repositories found
 	 * @throws CoreException if there is a problem getting the repositories
 	 */
-	static IQueryable<IInstallableUnit> getQueryableMetadata(URI[] repos, IProgressMonitor monitor) throws CoreException {
+	static IQueryable<IInstallableUnit> getQueryableMetadata(URI[] repos, boolean followRepositoryReferences, IProgressMonitor monitor) throws CoreException {
 		IMetadataRepositoryManager manager = getRepoManager();
 		if (repos == null) {
 			repos = manager.getKnownRepositories(IRepositoryManager.REPOSITORIES_ALL);
@@ -1017,7 +1049,6 @@ public class P2TargetUtils {
 		int repoCount = repos.length;
 		SubMonitor subMonitor = SubMonitor.convert(monitor, repoCount * 2);
 
-		Set<IRepositoryReference> seen = new HashSet<>();
 		List<IMetadataRepository> result = new ArrayList<>(repoCount);
 		List<IMetadataRepository> additional = new ArrayList<>();
 		MultiStatus repoStatus = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.IUBundleContainer_ProblemsLoadingRepositories, null);
@@ -1025,7 +1056,9 @@ public class P2TargetUtils {
 			try {
 				IMetadataRepository repository = manager.loadRepository(repos[i], subMonitor.split(1));
 				result.add(repository);
-				addReferences(repository, additional, seen, manager, subMonitor.split(1));
+				if (followRepositoryReferences) {
+					addReferences(repository, additional, new HashSet<>(), manager, subMonitor.split(1));
+				}
 			} catch (ProvisionException e) {
 				repoStatus.add(e.getStatus());
 			}
@@ -1046,8 +1079,7 @@ public class P2TargetUtils {
 		Collection<IRepositoryReference> references = repository.getReferences();
 		SubMonitor subMonitor = SubMonitor.convert(monitor, references.size() * 2);
 		for (IRepositoryReference reference : references) {
-			if (reference.getType() == IRepository.TYPE_METADATA && reference.getOptions() == IRepository.ENABLED
-					&& seen.add(reference)) {
+			if (reference.getType() == IRepository.TYPE_METADATA && reference.isEnabled() && seen.add(reference)) {
 				try {
 					IMetadataRepository referencedRepository = manager.loadRepository(reference.getLocation(),
 							subMonitor.split(1));
@@ -1103,7 +1135,8 @@ public class P2TargetUtils {
 						QueryUtil.compoundQueryable(extraMetadataRepositories));
 			}
 		};
-		context.setProperty(ProvisioningContext.FOLLOW_REPOSITORY_REFERENCES, Boolean.toString(true));
+		context.setProperty(ProvisioningContext.FOLLOW_REPOSITORY_REFERENCES, Boolean.toString(isFollowRepositoryReferences()));
+		context.setProperty(ProvisioningContext.FOLLOW_ARTIFACT_REPOSITORY_REFERENCES, Boolean.toString(isFollowRepositoryReferences()));
 		context.setMetadataRepositories(getMetadataRepositories(target).toArray(URI[]::new));
 		context.setArtifactRepositories(getArtifactRepositories(target).toArray(URI[]::new));
 
@@ -1302,7 +1335,8 @@ public class P2TargetUtils {
 			return;
 		}
 		URI[] uris = repositories.toArray(URI[]::new);
-		IQueryable<IInstallableUnit> allMetadata = getQueryableMetadata(uris, subMonitor.split(5));
+		IQueryable<IInstallableUnit> allMetadata = getQueryableMetadata(uris, isFollowRepositoryReferences(),
+				subMonitor.split(5));
 
 		// do an initial slice to add everything the user requested
 		IQueryResult<IInstallableUnit> queryResult = slice(units, allMetadata, target, subMonitor.split(5));
@@ -1329,7 +1363,8 @@ public class P2TargetUtils {
 		ProvisioningContext context = new ProvisioningContext(getAgent());
 		context.setMetadataRepositories(uris);
 		context.setArtifactRepositories(getArtifactRepositories(target).toArray(URI[]::new));
-		context.setProperty(ProvisioningContext.FOLLOW_REPOSITORY_REFERENCES, Boolean.toString(true));
+		context.setProperty(ProvisioningContext.FOLLOW_REPOSITORY_REFERENCES, Boolean.toString(isFollowRepositoryReferences()));
+		context.setProperty(ProvisioningContext.FOLLOW_ARTIFACT_REPOSITORY_REFERENCES, Boolean.toString(isFollowRepositoryReferences()));
 		IProvisioningPlan plan = engine.createPlan(profile, context);
 		setPlanProperties(plan, target, TargetDefinitionPersistenceHelper.MODE_SLICER);
 

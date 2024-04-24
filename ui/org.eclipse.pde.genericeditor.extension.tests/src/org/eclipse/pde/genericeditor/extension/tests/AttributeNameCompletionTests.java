@@ -30,8 +30,8 @@ public class AttributeNameCompletionTests extends AbstractTargetEditorTest {
 		// target
 		expectedProposalsByOffset.put(8, new String[] { "name", "sequenceNumber" });
 		// location
-		expectedProposalsByOffset.put(33, new String[] { "includeAllPlatforms", "includeConfigurePhase", "includeMode",
-				"includeSource", "type" });
+		expectedProposalsByOffset.put(33, new String[] { "followRepositoryReferences", "includeAllPlatforms",
+				"includeConfigurePhase", "includeMode", "includeSource", "type" });
 		// unit
 		expectedProposalsByOffset.put(41, new String[] { "id", "version" });
 		// repository
@@ -85,8 +85,7 @@ public class AttributeNameCompletionTests extends AbstractTargetEditorTest {
 				offset = Math.min(nextSpace, nextOpen);
 			}
 
-			ICompletionProposal[] completionProposals = contentAssist.computeCompletionProposals(textViewer,
-					offset);
+			ICompletionProposal[] completionProposals = contentAssist.computeCompletionProposals(textViewer, offset);
 			if (completionProposals.length != 0) {
 				Assert.fail("There should not be any proposals at index " + offset + ". Following proposals found: "
 						+ proposalListToString(completionProposals));

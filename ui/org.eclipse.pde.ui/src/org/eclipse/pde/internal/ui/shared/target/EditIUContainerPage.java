@@ -110,6 +110,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	private Button fAllPlatformsButton;
 	private Button fIncludeSourceButton;
 	private Button fConfigurePhaseButton;
+	private Button fFollowRepositoryReferencesButton;
 	private Text fDetailsText;
 	private final ProvisioningUI profileUI;
 	private Thread refreshThread;
@@ -154,6 +155,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		flags |= fAllPlatformsButton.getSelection() ? IUBundleContainer.INCLUDE_ALL_ENVIRONMENTS : 0;
 		flags |= fIncludeSourceButton.getSelection() ? IUBundleContainer.INCLUDE_SOURCE : 0;
 		flags |= fConfigurePhaseButton.getSelection() ? IUBundleContainer.INCLUDE_CONFIGURE_PHASE : 0;
+		flags |= fFollowRepositoryReferencesButton.getSelection() ? IUBundleContainer.FOLLOW_REPOSITORY_REFERENCES : 0;
 		IUBundleContainer container = (IUBundleContainer) service.newIULocation(fAvailableIUGroup.getCheckedLeafIUs(), fRepoLocation != null ? new URI[] {fRepoLocation} : null, flags);
 		return container;
 	}
@@ -409,6 +411,8 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		fIncludeSourceButton.addSelectionListener(widgetSelectedAdapter(e -> warnIfGlobalSettingChanged()));
 		fConfigurePhaseButton = SWTFactory.createCheckButton(slicerGroup, Messages.EditIUContainerPage_IncludeConfigurePhase, null, true, 1);
 		fConfigurePhaseButton.addSelectionListener(widgetSelectedAdapter(e -> warnIfGlobalSettingChanged()));
+		fFollowRepositoryReferencesButton = SWTFactory.createCheckButton(slicerGroup, Messages.EditIUContainerPage_17, null, true, 1);
+		fFollowRepositoryReferencesButton.addSelectionListener(widgetSelectedAdapter(e -> warnIfGlobalSettingChanged()));
 
 	}
 
@@ -431,6 +435,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 				noChange &= fAllPlatformsButton.getSelection() == iuContainer.getIncludeAllEnvironments();
 				noChange &= fIncludeSourceButton.getSelection() == iuContainer.getIncludeSource();
 				noChange &= fConfigurePhaseButton.getSelection() == iuContainer.getIncludeConfigurePhase();
+				noChange &= fFollowRepositoryReferencesButton.getSelection() == iuContainer.IsFollowRepositoryReferences();
 			}
 		}
 		if (noChange) {
@@ -575,6 +580,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 			fAllPlatformsButton.setSelection(fEditContainer.getIncludeAllEnvironments());
 			fIncludeSourceButton.setSelection(fEditContainer.getIncludeSource());
 			fConfigurePhaseButton.setSelection(fEditContainer.getIncludeConfigurePhase());
+			fFollowRepositoryReferencesButton.setSelection(fEditContainer.IsFollowRepositoryReferences());
 		} else {
 			// If we are creating a new container, but there is an existing iu container we should use it's settings (otherwise we overwrite them)
 			ITargetLocation[] knownContainers = fTarget.getTargetLocations();
@@ -585,6 +591,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 						fAllPlatformsButton.setSelection(((IUBundleContainer) knownContainer).getIncludeAllEnvironments());
 						fIncludeSourceButton.setSelection(((IUBundleContainer) knownContainer).getIncludeSource());
 						fConfigurePhaseButton.setSelection(((IUBundleContainer) knownContainer).getIncludeConfigurePhase());
+						fFollowRepositoryReferencesButton.setSelection(((IUBundleContainer) knownContainer).IsFollowRepositoryReferences());
 					}
 				}
 			}

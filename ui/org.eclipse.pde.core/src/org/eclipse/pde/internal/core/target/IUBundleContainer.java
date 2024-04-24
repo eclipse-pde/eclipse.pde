@@ -111,6 +111,12 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 */
 	public static final int INCLUDE_CONFIGURE_PHASE = 1 << 3;
 
+
+	/**
+	 * Whether this container should follow repository references.
+	 */
+	public static final int FOLLOW_REPOSITORY_REFERENCES = 1 << 4;
+
 	/**
 	 * IU identifiers.
 	 */
@@ -152,10 +158,20 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	/**
 	 * Constructs a installable unit bundle container for the specified units.
 	 *
-	 * @param ids IU identifiers
-	 * @param versions IU versions
-	 * @param repositories metadata repositories used to search for IU's or <code>null</code> for default set
-	 * @param resolutionFlags bitmask of flags to control IU resolution, possible flags are {@link IUBundleContainer#INCLUDE_ALL_ENVIRONMENTS}, {@link IUBundleContainer#INCLUDE_REQUIRED}, {@link IUBundleContainer#INCLUDE_SOURCE}, {@link IUBundleContainer#INCLUDE_CONFIGURE_PHASE}
+	 * @param ids
+	 *            IU identifiers
+	 * @param versions
+	 *            IU versions
+	 * @param repositories
+	 *            metadata repositories used to search for IU's or
+	 *            <code>null</code> for default set
+	 * @param resolutionFlags
+	 *            bitmask of flags to control IU resolution, possible flags are
+	 *            {@link IUBundleContainer#INCLUDE_ALL_ENVIRONMENTS},
+	 *            {@link IUBundleContainer#INCLUDE_REQUIRED},
+	 *            {@link IUBundleContainer#INCLUDE_SOURCE},
+	 *            {@link IUBundleContainer#INCLUDE_CONFIGURE_PHASE},
+	 *            {@link IUBundleContainer#FOLLOW_REPOSITORY_REFERENCES}
 	 */
 	IUBundleContainer(String[] ids, Version[] versions, URI[] repositories, int resolutionFlags) {
 		fIds = ids;
@@ -368,7 +384,8 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	public synchronized IUBundleContainer update(Set<String> toUpdate, IProgressMonitor monitor) throws CoreException {
 		SubMonitor progress = SubMonitor.convert(monitor, 100);
 		URI[] updateRepos = fRepos == null ? null : fRepos.clone();
-		IQueryable<IInstallableUnit> source = P2TargetUtils.getQueryableMetadata(updateRepos, progress.split(30));
+		IQueryable<IInstallableUnit> source = P2TargetUtils.getQueryableMetadata(updateRepos, IsFollowRepositoryReferences(),
+				progress.split(30));
 		boolean updated = false;
 		String[] updateIDs = fIds.clone();
 		Version[] updateVersions = fVersions.clone();
@@ -550,7 +567,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	public boolean getIncludeAllRequired() {
 		// if this container has not been associated with a container, return its own value
 		if (fSynchronizer == null) {
-			return (fFlags & INCLUDE_REQUIRED) == INCLUDE_REQUIRED;
+			return (fFlags & INCLUDE_REQUIRED) != 0;
 		}
 		return fSynchronizer.getIncludeAllRequired();
 	}
@@ -566,7 +583,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	public boolean getIncludeAllEnvironments() {
 		// if this container has not been associated with a container, return its own value
 		if (fSynchronizer == null) {
-			return (fFlags & INCLUDE_ALL_ENVIRONMENTS) == INCLUDE_ALL_ENVIRONMENTS;
+			return (fFlags & INCLUDE_ALL_ENVIRONMENTS) != 0;
 		}
 		return fSynchronizer.getIncludeAllEnvironments();
 	}
@@ -580,7 +597,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	public boolean getIncludeSource() {
 		// if this container has not been associated with a container, return its own value
 		if (fSynchronizer == null) {
-			return (fFlags & INCLUDE_SOURCE) == INCLUDE_SOURCE;
+			return (fFlags & INCLUDE_SOURCE) != 0;
 		}
 		return fSynchronizer.getIncludeSource();
 	}
@@ -593,9 +610,23 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	public boolean getIncludeConfigurePhase() {
 		// if this container has not been associated with a container, return its own value
 		if (fSynchronizer == null) {
-			return (fFlags & INCLUDE_CONFIGURE_PHASE) == INCLUDE_CONFIGURE_PHASE;
+			return (fFlags & INCLUDE_CONFIGURE_PHASE) != 0;
 		}
 		return fSynchronizer.getIncludeConfigurePhase();
+	}
+
+	/**
+	 * Returns whether or not repository references should be followed
+	 *
+	 * @return whether or not repository references should be followed
+	 */
+	public boolean IsFollowRepositoryReferences() {
+		// if this container has not been associated with a container, return
+		// its own value
+		if (fSynchronizer == null) {
+			return (fFlags & FOLLOW_REPOSITORY_REFERENCES) != 0;
+		}
+		return fSynchronizer.isFollowRepositoryReferences();
 	}
 
 	/**
@@ -663,6 +694,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		fSynchronizer.setIncludeAllEnvironments((fFlags & INCLUDE_ALL_ENVIRONMENTS) == INCLUDE_ALL_ENVIRONMENTS);
 		fSynchronizer.setIncludeSource((fFlags & INCLUDE_SOURCE) == INCLUDE_SOURCE);
 		fSynchronizer.setIncludeConfigurePhase((fFlags & INCLUDE_CONFIGURE_PHASE) == INCLUDE_CONFIGURE_PHASE);
+		fSynchronizer.setFollowRepositoryReferences((fFlags & FOLLOW_REPOSITORY_REFERENCES) == FOLLOW_REPOSITORY_REFERENCES);
 	}
 
 	@Override
@@ -684,6 +716,18 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		containerElement.setAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_ALL_PLATFORMS, Boolean.toString(getIncludeAllEnvironments()));
 		containerElement.setAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_SOURCE, Boolean.toString(getIncludeSource()));
 		containerElement.setAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_CONFIGURE_PHASE, Boolean.toString(getIncludeConfigurePhase()));
+		// Include references was only added quite late, defaults to true and
+		// most users will never edit it.
+		// As such, for stability, conciseness, and readability, we specifically
+		// don't serialize its default state.
+		boolean includeReferences = IsFollowRepositoryReferences();
+		if (includeReferences) {
+			containerElement.removeAttribute(TargetDefinitionPersistenceHelper.ATTR_FOLLOW_REPOSITORY_REFERENCES);
+		} else {
+			containerElement.setAttribute(TargetDefinitionPersistenceHelper.ATTR_FOLLOW_REPOSITORY_REFERENCES,
+					Boolean.toString(includeReferences));
+		}
+
 		URI[] repositories = getRepositories();
 		if (repositories != null) {
 			Arrays.sort(repositories);
@@ -739,7 +783,8 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	}
 
 	IInstallableUnit[] getRootIUs(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
-		IQueryable<IInstallableUnit> repos = P2TargetUtils.getQueryableMetadata(getRepositories(), monitor);
+		IQueryable<IInstallableUnit> repos = P2TargetUtils.getQueryableMetadata(getRepositories(),
+				IsFollowRepositoryReferences(), monitor);
 		MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.IUBundleContainer_ProblemsLoadingRepositories, null);
 		List<IInstallableUnit> result = new ArrayList<>();
 		for (int j = 0; j < fIds.length; j++) {
