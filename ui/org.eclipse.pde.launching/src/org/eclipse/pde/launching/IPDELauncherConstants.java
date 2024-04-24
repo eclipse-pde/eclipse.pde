@@ -66,6 +66,27 @@ public interface IPDELauncherConstants {
 	String PRODUCT = "product"; //$NON-NLS-1$
 
 	/**
+	 * Launch configuration attribute key. The value is a string specifying
+	 * the product id to be published in the profile of the run if enabled.
+	 * @since 3.13
+	 */
+	String PRODUCT_ID = "productId"; //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute key. The value is a string specifying
+	 * the product version to be published in the profile of the run if enabled.
+	 * @since 3.13
+	 */
+	String PRODUCT_VERSION = "productVersion"; //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute key. The value is a string specifying
+	 * the product name to be published in the profile of the run if enabled.
+	 * @since 3.13
+	 */
+	String PRODUCT_NAME = "productName"; //$NON-NLS-1$
+
+	/**
 	 * Launch configuration attribute key. The value is a boolean specifying
 	 * if the launch should appear in product-mode.  If the value is <code>false</code>,
 	 * the launch takes place in application-mode.
