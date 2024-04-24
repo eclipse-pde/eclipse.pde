@@ -49,6 +49,7 @@ public interface ITargetConstants {
 	String TARGET_SEQ_NO_ATTR = "sequenceNumber"; //$NON-NLS-1$
 	String LOCATION_INCLUDE_PLATFORMS_ATTR = "includeAllPlatforms"; //$NON-NLS-1$
 	String LOCATION_INCLUDE_CONFIG_PHASE_ATTR = "includeConfigurePhase"; //$NON-NLS-1$
+	String LOCATION_FOLLOW_REPOSITORY_REFERENCES_ATTR = "followRepositoryReferences";
 	String LOCATION_INCLUDE_MODE_ATTR = "includeMode"; //$NON-NLS-1$
 	String LOCATION_INCLUDE_SOURCE_ATTR = "includeSource"; //$NON-NLS-1$
 	String LOCATION_ID_ATTR = "id"; //$NON-NLS-1$

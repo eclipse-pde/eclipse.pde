@@ -87,6 +87,7 @@ public class TargetDefinitionPersistenceHelper {
 	static final String ATTR_INCLUDE_ALL_PLATFORMS = "includeAllPlatforms"; //$NON-NLS-1$
 	static final String ATTR_INCLUDE_SOURCE = "includeSource"; //$NON-NLS-1$
 	static final String ATTR_INCLUDE_CONFIGURE_PHASE = "includeConfigurePhase"; //$NON-NLS-1$
+	static final String ATTR_FOLLOW_REPOSITORY_REFERENCES = "followRepositoryReferences"; //$NON-NLS-1$
 	static final String ATTR_VERSION = "version"; //$NON-NLS-1$
 	static final String ATTR_CONFIGURATION = "configuration"; //$NON-NLS-1$
 	static final String ATTR_SEQUENCE_NUMBER = "sequenceNumber"; //$NON-NLS-1$

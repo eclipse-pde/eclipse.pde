@@ -92,6 +92,7 @@ public class Messages extends NLS {
 	public static String EditIUContainerPage_14;
 	public static String EditIUContainerPage_15;
 	public static String EditIUContainerPage_16;
+	public static String EditIUContainerPage_17;
 	public static String EditIUContainerPage_2;
 	public static String EditIUContainerPage_3;
 	public static String EditIUContainerPage_4;
