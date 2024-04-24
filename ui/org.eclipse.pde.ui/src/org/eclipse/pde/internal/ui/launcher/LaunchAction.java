@@ -147,6 +147,24 @@ public class LaunchAction extends Action {
 	private ILaunchConfigurationWorkingCopy refreshConfiguration(ILaunchConfigurationWorkingCopy wc) {
 		wc.setAttribute(IPDELauncherConstants.PRODUCT, fProduct.getProductId());
 		wc.setAttribute(IPDELauncherConstants.APPLICATION, fProduct.getApplication());
+		String productId = fProduct.getId();
+		if (productId == null || productId.isEmpty()) {
+			wc.removeAttribute(IPDELauncherConstants.PRODUCT_ID);
+		} else {
+			wc.setAttribute(IPDELauncherConstants.PRODUCT_ID, productId);
+		}
+		String productVersion = fProduct.getVersion();
+		if (productVersion == null || productVersion.isEmpty()) {
+			wc.removeAttribute(IPDELauncherConstants.PRODUCT_VERSION);
+		} else {
+			wc.setAttribute(IPDELauncherConstants.PRODUCT_VERSION, productVersion);
+		}
+		String productName = fProduct.getName();
+		if (productName == null || productName.isEmpty()) {
+			wc.removeAttribute(IPDELauncherConstants.PRODUCT_NAME);
+		} else {
+			wc.setAttribute(IPDELauncherConstants.PRODUCT_NAME, productName);
+		}
 
 		if (TargetPlatformHelper.usesNewApplicationModel()) {
 			wc.setAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, "3.3"); //$NON-NLS-1$
