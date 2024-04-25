@@ -352,7 +352,8 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 		for (IBuildEntry sourceEntry : sourceEntries) {
 			String libName = sourceEntry.getName().substring(PROPERTY_SOURCE_PREFIX.length());
 			if (!pluginLibraryNames.contains(libName)) {
-				prepareError(sourceEntry.getName(), null, NLS.bind(PDECoreMessages.SourceEntryErrorReporter_MissingLibrary, libName), PDEMarkerFactory.B_REMOVAL, fSrcLibSeverity,CompilerFlags.P_BUILD_SOURCE_LIBRARY, PDEMarkerFactory.CAT_OTHER);
+				String msg = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_MissingLibrary, libName);
+				prepareSourceError(sourceEntry.getName(), null, msg, PDEMarkerFactory.B_REMOVAL);
 			}
 			String[] tokens = sourceEntry.getTokens();
 			for (final String token : tokens) {
@@ -366,7 +367,8 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 		for (IBuildEntry outputEntry : outputEntries) {
 			String libName = outputEntry.getName().substring(PROPERTY_OUTPUT_PREFIX.length());
 			if (!pluginLibraryNames.contains(libName)) {
-				prepareError(outputEntry.getName(), null, NLS.bind(PDECoreMessages.SourceEntryErrorReporter_MissingLibrary, libName), PDEMarkerFactory.B_REMOVAL, fOututLibSeverity,CompilerFlags.P_BUILD_OUTPUT_LIBRARY, PDEMarkerFactory.CAT_OTHER);
+				String msg = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_MissingLibrary, libName);
+				prepareOutputError(outputEntry.getName(), null, msg, PDEMarkerFactory.B_REMOVAL);
 			}
 			String[] tokens = outputEntry.getTokens();
 			for (String token : tokens) {
@@ -420,7 +422,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 						} else {
 							message = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_InvalidOutputFolder, outputPath.toString());
 						}
-						prepareError(PROPERTY_OUTPUT_PREFIX + libName, outputFolder.getToken(), message, PDEMarkerFactory.B_REMOVAL, fOututLibSeverity, CompilerFlags.P_BUILD_OUTPUT_LIBRARY,PDEMarkerFactory.CAT_OTHER);
+						prepareOutputError(PROPERTY_OUTPUT_PREFIX + libName, outputFolder.getToken(), message, PDEMarkerFactory.B_REMOVAL);
 					}
 				} else {
 					if (outputFolderLibs.isEmpty()) {
@@ -430,9 +432,9 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 							IPluginLibrary[] libs = model.getPluginBase().getLibraries();
 							String message = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_MissingOutputLibForClassFolder, outputPath.toString());
 							if (libs.length > 0) {
-								prepareError(PROPERTY_OUTPUT_PREFIX, null, message, PDEMarkerFactory.M_ONLY_CONFIG_SEV, fOututLibSeverity,CompilerFlags.P_BUILD_OUTPUT_LIBRARY, PDEMarkerFactory.CAT_OTHER);
+								prepareOutputError(PROPERTY_OUTPUT_PREFIX, null, message, PDEMarkerFactory.M_ONLY_CONFIG_SEV);
 							} else {
-								prepareError(DEF_OUTPUT_ENTRY, outputPath.toString(), message, PDEMarkerFactory.B_ADDITION, fOututLibSeverity, CompilerFlags.P_BUILD_OUTPUT_LIBRARY,PDEMarkerFactory.CAT_OTHER);
+								prepareOutputError(DEF_OUTPUT_ENTRY, outputPath.toString(), message, PDEMarkerFactory.B_ADDITION);
 							}
 						}
 
@@ -463,19 +465,19 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 							for (SourceFolder srcFolder : sourceFolders) {
 								for (String libName : srcFolder.getLibs()) {
 									String message = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_DifferentTargetLibrary, erringSrcFolders);
-									prepareError(PROPERTY_SOURCE_PREFIX + libName, srcFolder.getToken(), message, PDEMarkerFactory.M_ONLY_CONFIG_SEV, fSrcLibSeverity,CompilerFlags.P_BUILD_SOURCE_LIBRARY, PDEMarkerFactory.CAT_OTHER);
+									prepareSourceError(PROPERTY_SOURCE_PREFIX + libName, srcFolder.getToken(), message, PDEMarkerFactory.M_ONLY_CONFIG_SEV);
 								}
 							}
 					}
 				}
 				for (String outputFolderLib : outputFolderLibs) {
 					String message = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_ExtraOutputFolder, outputFolder.getPath().toString(), PROPERTY_SOURCE_PREFIX + outputFolderLib);
-					prepareError(PROPERTY_OUTPUT_PREFIX + outputFolderLib, outputFolder.getToken(), message, PDEMarkerFactory.B_REMOVAL, fOututLibSeverity,CompilerFlags.P_BUILD_OUTPUT_LIBRARY, PDEMarkerFactory.CAT_OTHER);
+					prepareOutputError(PROPERTY_OUTPUT_PREFIX + outputFolderLib, outputFolder.getToken(), message, PDEMarkerFactory.B_REMOVAL);
 				}
 
 				if (outputFolder.getDupeLibName() != null) {
 					String message = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_DupeOutputFolder, outputPath.toString(), PROPERTY_OUTPUT_PREFIX + outputFolder.getDupeLibName());
-					prepareError(PROPERTY_OUTPUT_PREFIX + outputFolder.getDupeLibName(), outputFolder.getToken(), message, PDEMarkerFactory.M_ONLY_CONFIG_SEV, fOututLibSeverity, CompilerFlags.P_BUILD_OUTPUT_LIBRARY,PDEMarkerFactory.CAT_OTHER);
+					prepareOutputError(PROPERTY_OUTPUT_PREFIX + outputFolder.getDupeLibName(), outputFolder.getToken(), message, PDEMarkerFactory.M_ONLY_CONFIG_SEV);
 				}
 			}
 		});
@@ -539,7 +541,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 				}
 
 				for (String libName : sourceFolder.getLibs()) {
-					prepareError(PROPERTY_SOURCE_PREFIX + libName, sourceFolder.getToken(), message, PDEMarkerFactory.B_REMOVAL, fSrcLibSeverity,CompilerFlags.P_BUILD_SOURCE_LIBRARY, PDEMarkerFactory.CAT_OTHER);
+					prepareSourceError(PROPERTY_SOURCE_PREFIX + libName, sourceFolder.getToken(), message, PDEMarkerFactory.B_REMOVAL);
 				}
 			} else {
 				if (outputFolder.getLibs().isEmpty() && sourceFolder.getLibs().size() == 1) {
@@ -554,7 +556,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 
 				if (sourceFolder.getDupeLibName() != null) {
 					String message = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_DupeSourceFolder, sourcePath.toString(), PROPERTY_SOURCE_PREFIX + sourceFolder.getDupeLibName());
-					prepareError(PROPERTY_SOURCE_PREFIX + sourceFolder.getDupeLibName(), sourceFolder.getToken(), message, PDEMarkerFactory.M_ONLY_CONFIG_SEV, fSrcLibSeverity,CompilerFlags.P_BUILD_SOURCE_LIBRARY, PDEMarkerFactory.CAT_OTHER);
+					prepareSourceError(PROPERTY_SOURCE_PREFIX + sourceFolder.getDupeLibName(), sourceFolder.getToken(), message, PDEMarkerFactory.M_ONLY_CONFIG_SEV);
 				}
 
 				toValidate.add(sourceFolder);
@@ -612,16 +614,18 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 							String expected = defaultLibraryEncodings.remove(lib);
 							if (expected != null) {
 								if (!specified.equals(expected)) {
-									prepareError(name, expected, NLS.bind(PDECoreMessages.SourceEntryErrorReporter_0, new String[] {expected, specified, lib}), PDEMarkerFactory.B_REPLACE, fEncodingSeverity,CompilerFlags.P_BUILD_ENCODINGS, PDEMarkerFactory.CAT_OTHER);
+									String msg = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_0, new String[] { expected, specified, lib });
+									prepareEncodingError(name, expected, msg, PDEMarkerFactory.B_REPLACE);
 								}
 							} else {
 								// encoding is specified, but workspace does not specify one
-								prepareError(name, null, NLS.bind(PDECoreMessages.SourceEntryErrorReporter_1, new String[] {specified, lib}), PDEMarkerFactory.B_REMOVAL, fEncodingSeverity,CompilerFlags.P_BUILD_ENCODINGS,PDEMarkerFactory.CAT_OTHER);
+								String msg = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_1, specified, lib);
+								prepareEncodingError(name, null, msg, PDEMarkerFactory.B_REMOVAL);
 							}
 						} else {
 							// syntax error
 							defaultLibraryEncodings.remove(lib);
-							prepareError(name, null, NLS.bind(PDECoreMessages.SourceEntryErrorReporter_2, lib), PDEMarkerFactory.M_ONLY_CONFIG_SEV, fEncodingSeverity,CompilerFlags.P_BUILD_ENCODINGS, PDEMarkerFactory.CAT_OTHER);
+							prepareEncodingError(name, null, NLS.bind(PDECoreMessages.SourceEntryErrorReporter_2, lib), PDEMarkerFactory.M_ONLY_CONFIG_SEV);
 						}
 					}
 				} else if (name.startsWith(PROPERTY_JAVAC_CUSTOM_ENCODINGS_PREFIX)) {
@@ -638,21 +642,22 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 								IResource member = bundleRoot.findMember(path);
 								if (member == null) {
 									// error - missing resource
-									String message = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_3, new String[] {encoding, path});
-									prepareError(name, special, message, PDEMarkerFactory.B_REMOVAL, fEncodingSeverity,CompilerFlags.P_BUILD_ENCODINGS, PDEMarkerFactory.CAT_OTHER);
+									String msg = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_3, encoding, path);
+									prepareEncodingError(name, special, msg, PDEMarkerFactory.B_REMOVAL);
 								} else {
 									encodings.add(new EncodingEntry(member, encoding));
 								}
 							} else {
 								// syntax error - invalid
 								String message = PDECoreMessages.SourceEntryErrorReporter_4;
-								prepareError(name, special, message, PDEMarkerFactory.M_ONLY_CONFIG_SEV, fEncodingSeverity,CompilerFlags.P_BUILD_ENCODINGS, PDEMarkerFactory.CAT_OTHER);
+								prepareEncodingError(name, special, message, PDEMarkerFactory.M_ONLY_CONFIG_SEV);
 							}
 						}
 						// compare with workspace encodings
 						List<EncodingEntry> workspace = fCustomEncodings.remove(lib);
 						if (workspace == null) {
-							prepareError(name, null, NLS.bind(PDECoreMessages.SourceEntryErrorReporter_5, lib), PDEMarkerFactory.B_REMOVAL,fEncodingSeverity,CompilerFlags.P_BUILD_ENCODINGS, PDEMarkerFactory.CAT_OTHER);
+							String msg = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_5, lib);
+							prepareEncodingError(name, null, msg, PDEMarkerFactory.B_REMOVAL);
 						} else {
 							Map<IResource, String> map = new HashMap<>();
 							for (EncodingEntry ee : workspace) {
@@ -662,10 +667,12 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 								String specified = ee.getEncoding();
 								String expected = map.remove(ee.getResource());
 								if (expected == null) {
-									prepareError(name, ee.getValue(), NLS.bind(PDECoreMessages.SourceEntryErrorReporter_6, new String[] {expected, ee.getResource().getProjectRelativePath().toString()}), PDEMarkerFactory.B_REMOVAL, fEncodingSeverity, CompilerFlags.P_BUILD_ENCODINGS,PDEMarkerFactory.CAT_OTHER);
+									String msg = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_6, expected, ee.getResource().getProjectRelativePath());
+									prepareEncodingError(name, ee.toString(), msg, PDEMarkerFactory.B_REMOVAL);
 								} else {
 									if (!specified.equals(expected)) {
-										prepareError(name, ee.getValue(), NLS.bind(PDECoreMessages.SourceEntryErrorReporter_7, new String[] {expected, ee.getResource().getProjectRelativePath().toString(), specified}), PDEMarkerFactory.M_ONLY_CONFIG_SEV, fEncodingSeverity,CompilerFlags.P_BUILD_ENCODINGS, PDEMarkerFactory.CAT_OTHER);
+										String msg = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_7, new String[] { expected, ee.getResource().getProjectRelativePath().toString(), specified });
+										prepareEncodingError(name, ee.toString(), msg, PDEMarkerFactory.M_ONLY_CONFIG_SEV);
 									}
 								}
 							}
@@ -673,8 +680,8 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 							if (!map.isEmpty()) {
 								map.forEach((res, expected) -> {
 									String missing = new EncodingEntry(res, expected).toString();
-									String m = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_8, new String[] {expected, res.getProjectRelativePath().toString()});
-									prepareError(name, missing, m, PDEMarkerFactory.B_ADDITION, fEncodingSeverity,CompilerFlags.P_BUILD_ENCODINGS, PDEMarkerFactory.CAT_OTHER);
+									String msg = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_8, expected, res.getProjectRelativePath().toString());
+									prepareEncodingError(name, missing, msg, PDEMarkerFactory.B_ADDITION);
 								});
 							}
 						}
@@ -685,14 +692,15 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 
 			// check for unspecified default encodings
 			defaultLibraryEncodings.forEach((lib, expected) -> {
-				prepareError(PROPERTY_JAVAC_DEFAULT_ENCODING_PREFIX + lib, expected, NLS.bind(PDECoreMessages.SourceEntryErrorReporter_9, new String[] {expected, lib}), PDEMarkerFactory.B_ADDITION, fEncodingSeverity,CompilerFlags.P_BUILD_ENCODINGS, PDEMarkerFactory.CAT_OTHER);
+				String msg = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_9, expected, lib);
+				prepareEncodingError(PROPERTY_JAVAC_DEFAULT_ENCODING_PREFIX + lib, expected, msg, PDEMarkerFactory.B_ADDITION);
 			});
 
 			// check for unspecified custom encodings
 			fCustomEncodings.forEach((lib, encodings) -> {
 				for (EncodingEntry encoding : encodings) {
-					String m = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_8, new String[] {encoding.getEncoding(), encoding.getResource().getProjectRelativePath().toString()});
-					prepareError(PROPERTY_JAVAC_CUSTOM_ENCODINGS_PREFIX + lib, encoding.toString(), m, PDEMarkerFactory.B_ADDITION, fEncodingSeverity, CompilerFlags.P_BUILD_ENCODINGS,PDEMarkerFactory.CAT_OTHER);
+					String msg = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_8, encoding.getEncoding(), encoding.getResource().getProjectRelativePath());
+					prepareEncodingError(PROPERTY_JAVAC_CUSTOM_ENCODINGS_PREFIX + lib, encoding.toString(), msg, PDEMarkerFactory.B_ADDITION);
 				}
 			});
 		}

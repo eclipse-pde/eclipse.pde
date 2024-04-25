@@ -176,7 +176,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	protected int fBinInclSeverity;
 	protected int fMissingOutputLibSeverity;
 	protected int fSrcLibSeverity;
-	protected int fOututLibSeverity;
+	protected int fOutputLibSeverity;
 	protected int fEncodingSeverity;
 
 	public BuildErrorReporter(IFile buildFile) {
@@ -185,7 +185,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		fClasspathSeverity = CompilerFlags.getFlag(fFile.getProject(), CompilerFlags.P_UNRESOLVED_IMPORTS);
 		fMissingOutputLibSeverity = CompilerFlags.getFlag(fFile.getProject(), CompilerFlags.P_BUILD_MISSING_OUTPUT);
 		fSrcLibSeverity = CompilerFlags.getFlag(fFile.getProject(), CompilerFlags.P_BUILD_SOURCE_LIBRARY);
-		fOututLibSeverity = CompilerFlags.getFlag(fFile.getProject(), CompilerFlags.P_BUILD_OUTPUT_LIBRARY);
+		fOutputLibSeverity = CompilerFlags.getFlag(fFile.getProject(), CompilerFlags.P_BUILD_OUTPUT_LIBRARY);
 		fJavaComplianceSeverity = CompilerFlags.getFlag(fFile.getProject(), CompilerFlags.P_BUILD_JAVA_COMPLIANCE);
 		fJavaCompilerSeverity = CompilerFlags.getFlag(fFile.getProject(), CompilerFlags.P_BUILD_JAVA_COMPILER);
 		fSrcInclSeverity = CompilerFlags.getFlag(fFile.getProject(), CompilerFlags.P_BUILD_SRC_INCLUDES);
@@ -233,7 +233,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		for (IBuildEntry entry : entries) {
 			String name = entry.getName();
 			if (entry.getTokens().length == 0) {
-				prepareError(name, null, PDECoreMessages.BuildErrorReporter_emptyEntry, PDEMarkerFactory.B_REMOVAL, PDEMarkerFactory.CAT_FATAL);
+				prepareError(name, null, PDECoreMessages.BuildErrorReporter_emptyEntry, PDEMarkerFactory.B_REMOVAL, fBuildSeverity, CompilerFlags.P_BUILD, PDEMarkerFactory.CAT_FATAL);
 			} else if (name.equals(PROPERTY_BIN_INCLUDES)) {
 				binIncludes = entry;
 			} else if (name.equals(PROPERTY_BIN_EXCLUDES)) {
@@ -385,11 +385,11 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 				if (projectJavaCompatibility != null) {
 					if (jreCompilationProfileEntry == null) {
 						message = NLS.bind(PDECoreMessages.BuildErrorReporter_ProjectSpecificJavaComplianceMissingEntry, PROPERTY_JRE_COMPILATION_PROFILE, PDECoreMessages.BuildErrorReporter_CompilercomplianceLevel);
-						prepareError(PROPERTY_JRE_COMPILATION_PROFILE, projectJavaCompatibility, message, PDEMarkerFactory.B_JAVA_ADDDITION, fJavaComplianceSeverity,CompilerFlags.P_BUILD_JAVA_COMPLIANCE, PDEMarkerFactory.CAT_EE);
+						prepareComplianceError(PROPERTY_JRE_COMPILATION_PROFILE, projectJavaCompatibility, message, PDEMarkerFactory.B_JAVA_ADDDITION);
 					} else {
 						if (!projectJavaCompatibility.equalsIgnoreCase(jreCompilationProfileEntry.getTokens()[0])) {
 							message = NLS.bind(PDECoreMessages.BuildErrorReporter_ProjectSpecificJavaComplianceDifferentToken, PROPERTY_JRE_COMPILATION_PROFILE, PDECoreMessages.BuildErrorReporter_CompilercomplianceLevel);
-							prepareError(PROPERTY_JRE_COMPILATION_PROFILE, projectJavaCompatibility, message, PDEMarkerFactory.B_REPLACE, fJavaComplianceSeverity,CompilerFlags.P_BUILD_JAVA_COMPLIANCE, PDEMarkerFactory.CAT_EE);
+							prepareComplianceError(PROPERTY_JRE_COMPILATION_PROFILE, projectJavaCompatibility, message, PDEMarkerFactory.B_REPLACE);
 						}
 					}
 				} else {
@@ -397,16 +397,16 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 					if (projectSourceCompatibility.equals(defaultComplianceOptions.get(JavaCore.COMPILER_SOURCE))) {
 						if (javacSourceEntry != null) {
 							message = NLS.bind(PDECoreMessages.BuildErrorReporter_BuildEntryNotRequiredMatchesDefault, PROPERTY_JAVAC_SOURCE, PDECoreMessages.BuildErrorReporter_SourceCompatibility);
-							prepareError(PROPERTY_JAVAC_SOURCE, null, message, PDEMarkerFactory.B_REMOVAL, fJavaComplianceSeverity,CompilerFlags.P_BUILD_JAVA_COMPLIANCE, PDEMarkerFactory.CAT_EE);
+							prepareComplianceError(PROPERTY_JAVAC_SOURCE, null, message, PDEMarkerFactory.B_REMOVAL);
 						}
 					} else {
 						if (javacSourceEntry == null) {
 							message = NLS.bind(PDECoreMessages.BuildErrorReporter_ProjectSpecificJavaComplianceMissingEntry, PROPERTY_JAVAC_SOURCE, PDECoreMessages.BuildErrorReporter_SourceCompatibility);
-							prepareError(PROPERTY_JAVAC_SOURCE, projectSourceCompatibility, message, PDEMarkerFactory.B_JAVA_ADDDITION, fJavaComplianceSeverity,CompilerFlags.P_BUILD_JAVA_COMPLIANCE, PDEMarkerFactory.CAT_EE);
+							prepareComplianceError(PROPERTY_JAVAC_SOURCE, projectSourceCompatibility, message, PDEMarkerFactory.B_JAVA_ADDDITION);
 						} else {
 							if (!projectSourceCompatibility.equalsIgnoreCase(javacSourceEntry.getTokens()[0])) {
 								message = NLS.bind(PDECoreMessages.BuildErrorReporter_ProjectSpecificJavaComplianceDifferentToken, PROPERTY_JAVAC_SOURCE, PDECoreMessages.BuildErrorReporter_SourceCompatibility);
-								prepareError(PROPERTY_JAVAC_SOURCE, projectSourceCompatibility, message, PDEMarkerFactory.B_REPLACE, fJavaComplianceSeverity,CompilerFlags.P_BUILD_JAVA_COMPLIANCE, PDEMarkerFactory.CAT_EE);
+								prepareComplianceError(PROPERTY_JAVAC_SOURCE, projectSourceCompatibility, message, PDEMarkerFactory.B_REPLACE);
 							}
 						}
 					}
@@ -415,16 +415,16 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 					if (projectClassCompatibility.equals(defaultComplianceOptions.get(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM))) {
 						if (javacTargetEntry != null) {
 							message = NLS.bind(PDECoreMessages.BuildErrorReporter_BuildEntryNotRequiredMatchesDefault, PROPERTY_JAVAC_TARGET, PDECoreMessages.BuildErrorReporter_GeneratedClassFilesCompatibility);
-							prepareError(PROPERTY_JAVAC_TARGET, null, message, PDEMarkerFactory.B_REMOVAL, fJavaComplianceSeverity,CompilerFlags.P_BUILD_JAVA_COMPLIANCE, PDEMarkerFactory.CAT_EE);
+							prepareComplianceError(PROPERTY_JAVAC_TARGET, null, message, PDEMarkerFactory.B_REMOVAL);
 						}
 					} else {
 						if (javacTargetEntry == null) {
 							message = NLS.bind(PDECoreMessages.BuildErrorReporter_ProjectSpecificJavaComplianceMissingEntry, PROPERTY_JAVAC_TARGET, PDECoreMessages.BuildErrorReporter_GeneratedClassFilesCompatibility);
-							prepareError(PROPERTY_JAVAC_TARGET, projectClassCompatibility, message, PDEMarkerFactory.B_JAVA_ADDDITION, fJavaComplianceSeverity,CompilerFlags.P_BUILD_JAVA_COMPLIANCE, PDEMarkerFactory.CAT_EE);
+							prepareComplianceError(PROPERTY_JAVAC_TARGET, projectClassCompatibility, message, PDEMarkerFactory.B_JAVA_ADDDITION);
 						} else {
 							if (!projectClassCompatibility.equalsIgnoreCase(javacTargetEntry.getTokens()[0])) {
 								message = NLS.bind(PDECoreMessages.BuildErrorReporter_ProjectSpecificJavaComplianceDifferentToken, PROPERTY_JAVAC_TARGET, PDECoreMessages.BuildErrorReporter_GeneratedClassFilesCompatibility);
-								prepareError(PROPERTY_JAVAC_TARGET, projectClassCompatibility, message, PDEMarkerFactory.B_REPLACE, fJavaComplianceSeverity,CompilerFlags.P_BUILD_JAVA_COMPLIANCE, PDEMarkerFactory.CAT_EE);
+								prepareComplianceError(PROPERTY_JAVAC_TARGET, projectClassCompatibility, message, PDEMarkerFactory.B_REPLACE);
 							}
 						}
 					}
@@ -499,7 +499,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 							missingTokens = join(missingTokens, '-' + currentIdentifier);
 						}
 						String message = NLS.bind(PDECoreMessages.BuildErrorReporter_ProjectSpecificJavaComplianceMissingEntry, PROPERTY_JAVAC_WARNINGS_PREFIX + libName);
-						prepareError(PROPERTY_JAVAC_WARNINGS_PREFIX + libName, missingTokens, message, PDEMarkerFactory.B_JAVA_ADDDITION, fJavaComplianceSeverity,CompilerFlags.P_BUILD_JAVA_COMPLIANCE, PDEMarkerFactory.CAT_EE);
+						prepareComplianceError(PROPERTY_JAVAC_WARNINGS_PREFIX + libName, missingTokens, message, PDEMarkerFactory.B_JAVA_ADDDITION);
 					} else {
 						String missingTokens = ""; //$NON-NLS-1$
 						for (String currentIdentifier : complianceWarnSettings) {
@@ -509,7 +509,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 						}
 						if (missingTokens.length() > 0) {
 							String message = NLS.bind(PDECoreMessages.BuildErrorReporter_ProjectSpecificJavaComplianceDifferentToken, PROPERTY_JAVAC_WARNINGS_PREFIX + libName);
-							prepareError(PROPERTY_JAVAC_WARNINGS_PREFIX + libName, missingTokens, message, PDEMarkerFactory.B_JAVA_ADDDITION, fJavaComplianceSeverity,CompilerFlags.P_BUILD_JAVA_COMPLIANCE, PDEMarkerFactory.CAT_EE);
+							prepareComplianceError(PROPERTY_JAVAC_WARNINGS_PREFIX + libName, missingTokens, message, PDEMarkerFactory.B_JAVA_ADDDITION);
 						}
 					}
 				}
@@ -531,7 +531,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 							missingTokens = join(missingTokens, '-' + currentIdentifier);
 						}
 						String message = NLS.bind(PDECoreMessages.BuildErrorReporter_ProjectSpecificJavaComplianceMissingEntry, PROPERTY_JAVAC_ERRORS_PREFIX + libName);
-						prepareError(PROPERTY_JAVAC_ERRORS_PREFIX + libName, missingTokens, message, PDEMarkerFactory.B_JAVA_ADDDITION, fJavaComplianceSeverity,CompilerFlags.P_BUILD_JAVA_COMPLIANCE, PDEMarkerFactory.CAT_EE);
+						prepareComplianceError(PROPERTY_JAVAC_ERRORS_PREFIX + libName, missingTokens, message, PDEMarkerFactory.B_JAVA_ADDDITION);
 					} else {
 						String missingTokens = ""; //$NON-NLS-1$
 						for (String currentIdentifier : complianceErrorSettings) {
@@ -541,7 +541,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 						}
 						if (missingTokens.length() > 0) {
 							String message = NLS.bind(PDECoreMessages.BuildErrorReporter_ProjectSpecificJavaComplianceDifferentToken, PROPERTY_JAVAC_ERRORS_PREFIX + libName);
-							prepareError(PROPERTY_JAVAC_ERRORS_PREFIX + libName, missingTokens, message, PDEMarkerFactory.B_JAVA_ADDDITION, fJavaComplianceSeverity,CompilerFlags.P_BUILD_JAVA_COMPLIANCE, PDEMarkerFactory.CAT_EE);
+							prepareComplianceError(PROPERTY_JAVAC_ERRORS_PREFIX + libName, missingTokens, message, PDEMarkerFactory.B_JAVA_ADDDITION);
 						}
 					}
 				}
@@ -748,7 +748,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		});
 
 		if (!exists) {
-			prepareError(PROPERTY_BIN_INCLUDES, key, NLS.bind(PDECoreMessages.BuildErrorReporter_binIncludesMissing, key), PDEMarkerFactory.B_ADDITION, fBinInclSeverity,CompilerFlags.P_BUILD_BIN_INCLUDES, PDEMarkerFactory.CAT_FATAL);
+			String msg = NLS.bind(PDECoreMessages.BuildErrorReporter_binIncludesMissing, key);
+			prepareBinIncludesError(PROPERTY_BIN_INCLUDES, key, msg, PDEMarkerFactory.B_ADDITION);
 		}
 	}
 
@@ -784,7 +785,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			}
 
 			if (!exists && !startsWithAntVariable(token)) {
-				prepareError(PROPERTY_JAR_EXTRA_CLASSPATH, token, NLS.bind(PDECoreMessages.BuildErrorReporter_cannotFindJar, token), PDEMarkerFactory.M_ONLY_CONFIG_SEV, fBuildSeverity,CompilerFlags.P_BUILD ,PDEMarkerFactory.CAT_OTHER);
+				String msg = NLS.bind(PDECoreMessages.BuildErrorReporter_cannotFindJar, token);
+				prepareBuildError(PROPERTY_JAR_EXTRA_CLASSPATH, token, msg, PDEMarkerFactory.M_ONLY_CONFIG_SEV);
 			}
 		}
 	}
@@ -843,7 +845,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 				}
 			}
 			if (!found) {
-				prepareError(PROPERTY_BIN_INCLUDES, key, NLS.bind(PDECoreMessages.BuildErrorReporter_binIncludesMissing, key), PDEMarkerFactory.B_ADDITION, fBinInclSeverity,CompilerFlags.P_BUILD_BIN_INCLUDES, PDEMarkerFactory.CAT_FATAL);
+				String msg = NLS.bind(PDECoreMessages.BuildErrorReporter_binIncludesMissing, key);
+				prepareBinIncludesError(PROPERTY_BIN_INCLUDES, key, msg, PDEMarkerFactory.B_ADDITION);
 			}
 		}
 	}
@@ -868,7 +871,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		if (model instanceof IBundlePluginModelBase modelBase && !(model instanceof IBundleFragmentModel)) {
 			IManifestHeader mh = modelBase.getBundleModel().getBundle().getManifestHeader(Constants.BUNDLE_CLASSPATH);
 			if ((mh == null || mh.getValue() == null) && !sourceEntryKeys.contains(DEF_SOURCE_ENTRY)) {
-				prepareError(DEF_SOURCE_ENTRY, null, PDECoreMessages.BuildErrorReporter_sourceMissing, PDEMarkerFactory.M_ONLY_CONFIG_SEV, fSrcLibSeverity,CompilerFlags.P_BUILD_SOURCE_LIBRARY, PDEMarkerFactory.CAT_OTHER);
+				prepareSourceError(DEF_SOURCE_ENTRY, null, PDECoreMessages.BuildErrorReporter_sourceMissing, PDEMarkerFactory.M_ONLY_CONFIG_SEV);
 			}
 		}
 		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
@@ -876,7 +879,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			String libname = library.getName();
 			if (libname.equals(".")) { //$NON-NLS-1$
 				if (!sourceEntryKeys.contains(DEF_SOURCE_ENTRY)) {
-					prepareError(DEF_SOURCE_ENTRY, null, PDECoreMessages.BuildErrorReporter_sourceMissing, PDEMarkerFactory.M_ONLY_CONFIG_SEV, fSrcLibSeverity,CompilerFlags.P_BUILD_SOURCE_LIBRARY, PDEMarkerFactory.CAT_OTHER);
+					prepareSourceError(DEF_SOURCE_ENTRY, null, PDECoreMessages.BuildErrorReporter_sourceMissing, PDEMarkerFactory.M_ONLY_CONFIG_SEV);
 					continue;
 				}
 			} else if (fProject.findMember(libname) != null) {
@@ -886,7 +889,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			}
 			String sourceEntryKey = PROPERTY_SOURCE_PREFIX + libname;
 			if (!sourceEntryKeys.contains(sourceEntryKey) && !containedInFragment(model.getBundleDescription(), libname)) {
-				prepareError(sourceEntryKey, null, NLS.bind(PDECoreMessages.BuildErrorReporter_missingEntry, sourceEntryKey), PDEMarkerFactory.B_ADDITION, PDEMarkerFactory.CAT_OTHER);
+				String msg = NLS.bind(PDECoreMessages.BuildErrorReporter_missingEntry, sourceEntryKey);
+				prepareBuildError(sourceEntryKey, null, msg, PDEMarkerFactory.B_ADDITION);
 			}
 		}
 	}
@@ -956,7 +960,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			if (element == null || excludeList.contains(element)) {
 				continue;
 			}
-			BuildProblem error = prepareError(name, element, NLS.bind(message, element, name), PDEMarkerFactory.B_ADDITION, fSrcLibSeverity,CompilerFlags.P_BUILD_SOURCE_LIBRARY, PDEMarkerFactory.CAT_OTHER);
+			BuildProblem error = prepareSourceError(name, element, NLS.bind(message, element, name), PDEMarkerFactory.B_ADDITION);
 			error.addExtraBuildEntryTokenAttribute(PROPERTY_SRC_EXCLUDES, element);
 		}
 	}
@@ -998,7 +1002,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			}
 
 			if (errorMessage != null) {
-				prepareError(includes.getName(), token, errorMessage, PDEMarkerFactory.B_REMOVAL, fSrcInclSeverity,CompilerFlags.P_BUILD_SRC_INCLUDES, PDEMarkerFactory.CAT_OTHER);
+				prepareError(includes.getName(), token, errorMessage, PDEMarkerFactory.B_REMOVAL, fSrcInclSeverity, CompilerFlags.P_BUILD_SRC_INCLUDES, PDEMarkerFactory.CAT_OTHER);
 			}
 		}
 
@@ -1045,7 +1049,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			}
 
 			if (message != null) {
-				prepareError(includes.getName(), token, message, fixId, severity,compilerKey, PDEMarkerFactory.CAT_OTHER);
+				prepareError(includes.getName(), token, message, fixId, severity, compilerKey, PDEMarkerFactory.CAT_OTHER);
 			}
 		}
 	}
@@ -1059,7 +1063,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		String[] bundles = bundleList.getTokens();
 		for (String bundle : bundles) {
 			if (PluginRegistry.findModel(bundle) == null) {
-				prepareError(IBuildEntry.SECONDARY_DEPENDENCIES, bundle, NLS.bind(PDECoreMessages.BuildErrorReporter_cannotFindBundle, bundle), PDEMarkerFactory.M_ONLY_CONFIG_SEV, fClasspathSeverity,CompilerFlags.P_UNRESOLVED_IMPORTS, PDEMarkerFactory.CAT_OTHER);
+				String msg = NLS.bind(PDECoreMessages.BuildErrorReporter_cannotFindBundle, bundle);
+				prepareError(IBuildEntry.SECONDARY_DEPENDENCIES, bundle, msg, PDEMarkerFactory.M_ONLY_CONFIG_SEV, fClasspathSeverity, CompilerFlags.P_UNRESOLVED_IMPORTS, PDEMarkerFactory.CAT_OTHER);
 			}
 		}
 
@@ -1110,7 +1115,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 							token = prefFile.toString();
 							message = NLS.bind(PDECoreMessages.BuildErrorReporter_buildEntryMissingValidRelativePath, PROPERTY_PROJECT_SETTINGS);
 						}
-						prepareError(PROPERTY_PROJECT_SETTINGS, token, message, PDEMarkerFactory.B_REPLACE, fJavaCompilerSeverity,CompilerFlags.P_BUILD_JAVA_COMPILER, PDEMarkerFactory.CAT_EE);
+						prepareCompilerError(PROPERTY_PROJECT_SETTINGS, token, message, PDEMarkerFactory.B_REPLACE);
 					}
 				} else {
 					String token = null;
@@ -1125,11 +1130,11 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 						token = prefFile.toString();
 					}
 					String message = NLS.bind(PDECoreMessages.BuildErrorReporter_buildEntryMissingProjectSpecificSettings, PROPERTY_PROJECT_SETTINGS);
-					prepareError(PROPERTY_PROJECT_SETTINGS, token, message, PDEMarkerFactory.B_JAVA_ADDDITION, fJavaCompilerSeverity,CompilerFlags.P_BUILD_JAVA_COMPILER, PDEMarkerFactory.CAT_EE);
+					prepareCompilerError(PROPERTY_PROJECT_SETTINGS, token, message, PDEMarkerFactory.B_JAVA_ADDDITION);
 				}
 			} else if (useJavaProjectSettings != null) {
 				String message = NLS.bind(PDECoreMessages.BuildErrorReporter_buildEntryInvalidWhenNoProjectSettings, PROPERTY_PROJECT_SETTINGS);
-				prepareError(PROPERTY_PROJECT_SETTINGS, null, message, PDEMarkerFactory.B_REMOVAL, fJavaCompilerSeverity,CompilerFlags.P_BUILD_JAVA_COMPILER, PDEMarkerFactory.CAT_EE);
+				prepareCompilerError(PROPERTY_PROJECT_SETTINGS, null, message, PDEMarkerFactory.B_REMOVAL);
 			}
 		}
 	}
@@ -1267,8 +1272,38 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		return 0;
 	}
 
-	protected BuildProblem prepareError(String name, String token, String message, int fixId, String category) {
-		return prepareError(name, token, message, fixId, fBuildSeverity,CompilerFlags.P_BUILD, category);
+	private void prepareBuildError(String name, String token, String message, int fixId) {
+		prepareError(name, token, message, fixId, fBuildSeverity, CompilerFlags.P_BUILD, PDEMarkerFactory.CAT_OTHER);
+	}
+
+	protected void prepareCompilerError(String name, String token, String message, int fixId) {
+		prepareError(name, token, message, fixId, fJavaCompilerSeverity, CompilerFlags.P_BUILD_JAVA_COMPILER,
+				PDEMarkerFactory.CAT_EE);
+	}
+
+	protected void prepareComplianceError(String name, String token, String message, int fixId) {
+		prepareError(name, token, message, fixId, fJavaComplianceSeverity, CompilerFlags.P_BUILD_JAVA_COMPLIANCE,
+				PDEMarkerFactory.CAT_EE);
+	}
+
+	protected void prepareEncodingError(String name, String token, String message, int fixId) {
+		prepareError(name, token, message, fixId, fEncodingSeverity, CompilerFlags.P_BUILD_ENCODINGS,
+				PDEMarkerFactory.CAT_OTHER);
+	}
+
+	protected BuildProblem prepareSourceError(String name, String token, String message, int fixId) {
+		return prepareError(name, token, message, fixId, fSrcLibSeverity, CompilerFlags.P_BUILD_SOURCE_LIBRARY,
+				PDEMarkerFactory.CAT_OTHER);
+	}
+
+	protected void prepareOutputError(String name, String token, String message, int fixId) {
+		prepareError(name, token, message, fixId, fOutputLibSeverity, CompilerFlags.P_BUILD_OUTPUT_LIBRARY,
+				PDEMarkerFactory.CAT_OTHER);
+	}
+
+	private void prepareBinIncludesError(String name, String token, String message, int fixId) {
+		prepareError(name, token, message, fixId, fBinInclSeverity, CompilerFlags.P_BUILD_BIN_INCLUDES,
+				PDEMarkerFactory.CAT_FATAL);
 	}
 
 	protected BuildProblem prepareError(String name, String token, String message, int fixId, int severity, String compilerKey, String category) {
