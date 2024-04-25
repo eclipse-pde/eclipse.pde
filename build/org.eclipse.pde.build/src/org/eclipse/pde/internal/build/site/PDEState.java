@@ -33,7 +33,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.function.UnaryOperator;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
@@ -49,7 +48,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
@@ -618,43 +616,9 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 					"java.util.zip"));
 
 	private static Collection<String> querySystemPackages(IVMInstall vm, IExecutionEnvironment environment) {
-		if (!JavaRuntime.isModularJava(vm)) {
-			Set<String> classFileDirectories = new HashSet<>();
-			for (LibraryLocation libLocation : JavaRuntime.getLibraryLocations(vm)) {
-				IPath path = libLocation.getSystemLibraryPath();
-				if (path != null) {
-					try (ZipFile zip = new ZipFile(path.toFile())) {
-						// Collect names of all directories that contain a .class file
-						zip.stream().filter(e -> !e.isDirectory()).map(ZipEntry::getName) //
-								.filter(n -> n.endsWith(".class") && n.indexOf('/') > 0) //$NON-NLS-1$
-								.map(n -> n.substring(0, n.lastIndexOf('/'))) //
-								.forEach(classFileDirectories::add);
-					} catch (Exception e) {
-						LOGGER.error("Failed to read packages in JVM library for " + vm + ", at " + path, e); //$NON-NLS-1$ //$NON-NLS-2$
-					}
-				}
-			}
-			return classFileDirectories.stream().map(n -> n.replace('/', '.')).sorted().toList();
-		}
-
-		String release = environment != null ? environment.getProfileProperties().getProperty(JavaCore.COMPILER_COMPLIANCE) : null;
 		try {
-			Collection<String> packages = new TreeSet<>();
-			String jrtPath = "lib/" + org.eclipse.jdt.internal.compiler.util.JRTUtil.JRT_FS_JAR; //$NON-NLS-1$
-			String path = new File(vm.getInstallLocation(), jrtPath).toString(); // $NON-NLS-1$
-			var jrt = org.eclipse.jdt.internal.core.builder.ClasspathLocation.forJrtSystem(path, null, null, release);
-			for (String moduleName : jrt.getModuleNames(null)) {
-				var module = jrt.getModule(moduleName);
-				if (module == null) {
-					continue;
-				}
-				for (var packageExport : module.exports()) {
-					if (!packageExport.isQualified()) {
-						packages.add(new String(packageExport.name()));
-					}
-				}
-			}
-			return packages;
+			String release = environment != null ? environment.getProfileProperties().getProperty(JavaCore.COMPILER_COMPLIANCE) : null;
+			return JavaRuntime.getProvidedVMPackages(vm, release);
 		} catch (CoreException e) {
 			ILog.of(PDEState.class).log(Status.error("Failed to read system packages for " + environment, e)); //$NON-NLS-1$
 		}
