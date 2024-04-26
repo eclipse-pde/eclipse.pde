@@ -13,13 +13,13 @@
  *******************************************************************************/
 package org.eclipse.pde.genericeditor.extension.tests;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -50,8 +50,7 @@ public class Bug531602FormattingTests extends AbstractTargetEditorTest {
 		ByteArrayOutputStream actualOutput = new ByteArrayOutputStream();
 		targetDefinition.setProgramArguments(null);
 		TargetDefinitionPersistenceHelper.persistXML(targetDefinition, actualOutput);
-		assertEquals(expectedOutput.toString(StandardCharsets.UTF_8.toString()),
-				actualOutput.toString(StandardCharsets.UTF_8.toString()));
+		assertEquals(expectedOutput.toString(UTF_8.toString()), actualOutput.toString(UTF_8.toString()));
 	}
 
 	@Test
@@ -105,9 +104,6 @@ public class Bug531602FormattingTests extends AbstractTargetEditorTest {
 		confirmMatch(targetDefinition, "ITargetLocationExtensionTestCaseTarget.txt");
 	}
 
-	public static void assertEqualStringIgnoreDelim(String actual, String expected) throws IOException {
-		StringAsserts.assertEqualStringIgnoreDelim(actual, expected);
-	}
 	private void confirmMatch(ITargetDefinition targetDefinition, String expectedDefinitionPath) throws Exception {
 		try (Scanner s = new Scanner(FrameworkUtil.getBundle(this.getClass())
 				.getEntry("testing-files/target-files/" + expectedDefinitionPath).openStream()).useDelimiter("\\A")) {
@@ -123,7 +119,7 @@ public class Bug531602FormattingTests extends AbstractTargetEditorTest {
 			ByteArrayOutputStream actualOutput = new ByteArrayOutputStream();
 			TargetDefinitionPersistenceHelper.persistXML(targetDefinition, actualOutput);
 
-			assertEqualStringIgnoreDelim(result, actualOutput.toString(StandardCharsets.UTF_8.toString()));
+			StringAsserts.assertEqualStringIgnoreDelim(actualOutput.toString(UTF_8.toString()), result);
 		} catch (IOException e) {
 		}
 	}
