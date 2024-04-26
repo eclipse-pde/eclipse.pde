@@ -1270,15 +1270,12 @@ public class TargetDefinition implements ITargetDefinition {
 			for (int i = 0; i < nodes.getLength(); i++) {
 				Node node = nodes.item(i);
 				if (node instanceof Element) {
-					if (repoURL == null
-							&& node.getNodeName().equalsIgnoreCase(TargetDefinitionPersistenceHelper.REPOSITORY)) {
+					String nodeName = node.getNodeName();
+					if (repoURL == null && nodeName.equalsIgnoreCase(TargetDefinitionPersistenceHelper.REPOSITORY)) {
 						repoURL = ((Element) node).getAttribute(TargetDefinitionPersistenceHelper.LOCATION);
-						if (!oldContainersByRepo.containsKey(repoURL)) {
-							oldContainersByRepo.put(repoURL, new ArrayList<>());
-						}
+						oldContainersByRepo.putIfAbsent(repoURL, new ArrayList<>());
 						oldContainersByRepo.get(repoURL).add(container);
-					} else if (node.getNodeName()
-							.equalsIgnoreCase(TargetDefinitionPersistenceHelper.INSTALLABLE_UNIT)) {
+					} else if (nodeName.equalsIgnoreCase(TargetDefinitionPersistenceHelper.INSTALLABLE_UNIT)) {
 						units.add((Element) node);
 					}
 				}
@@ -1299,11 +1296,10 @@ public class TargetDefinition implements ITargetDefinition {
 			for (int i = 0; i < nodes.getLength(); i++) {
 				Node node = nodes.item(i);
 				if (node instanceof Element) {
-					if (repoURL == null
-							&& node.getNodeName().equalsIgnoreCase(TargetDefinitionPersistenceHelper.REPOSITORY)) {
+					String nodeName = node.getNodeName();
+					if (repoURL == null && nodeName.equalsIgnoreCase(TargetDefinitionPersistenceHelper.REPOSITORY)) {
 						repoURL = ((Element) node).getAttribute(TargetDefinitionPersistenceHelper.LOCATION);
-					} else if (node.getNodeName()
-							.equalsIgnoreCase(TargetDefinitionPersistenceHelper.INSTALLABLE_UNIT)) {
+					} else if (nodeName.equalsIgnoreCase(TargetDefinitionPersistenceHelper.INSTALLABLE_UNIT)) {
 						units.add((Element) node);
 					}
 				}
