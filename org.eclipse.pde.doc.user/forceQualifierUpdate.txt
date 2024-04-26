@@ -4,3 +4,4 @@ Modernize pde.project description interfaces: https://github.com/eclipse-pde/ecl
 Rework PluginRegistry API and introduce VersionMatchRule enum : https://github.com/eclipse-pde/eclipse.pde/pull/1163
 Comparator errors in I20240904-0240
 Add missing reference/api content
+https://github.com/eclipse-pde/eclipse.pde/issues/1250

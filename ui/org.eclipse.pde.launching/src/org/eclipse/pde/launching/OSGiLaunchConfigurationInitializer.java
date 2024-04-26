@@ -94,7 +94,7 @@ public class OSGiLaunchConfigurationInitializer {
 		}
 		configuration.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, workspaceBundles);
 		configuration.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, targetBundles);
-		configuration.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
+		configuration.removeAttribute(IPDELauncherConstants.AUTOMATIC_ADD);
 	}
 
 	private boolean isSourceBundle(PDEState pdeState, IPluginModelBase model) {

@@ -72,9 +72,9 @@ public class JUnitWorkbenchLaunchShortcut extends JUnitLaunchShortcut {
 		// Plug-ins to launch
 		configuration.setAttribute(IPDELauncherConstants.USE_DEFAULT, true);
 		configuration.setAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false);
-		configuration.setAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, false); // ignored
-		configuration.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true); // ignored
-		configuration.setAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, true); // ignored
+		configuration.removeAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES);
+		configuration.removeAttribute(IPDELauncherConstants.AUTOMATIC_ADD);
+		configuration.removeAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL);
 
 		// Program arguments
 		String programArgs = LaunchArgumentsHelper.getInitialProgramArguments();

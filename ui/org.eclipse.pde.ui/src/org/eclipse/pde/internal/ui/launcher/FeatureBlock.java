@@ -1203,7 +1203,12 @@ public class FeatureBlock {
 			config.setAttribute(IPDELauncherConstants.AUTOMATIC_INCLUDE_REQUIREMENTS, includeRequirements);
 			fAutoIncludeRequirementsButtonChanged = false;
 		}
-		config.setAttribute(IPDELauncherConstants.SHOW_SELECTED_ONLY, fFilterButton.getSelection());
+		boolean showSelectedOnly = fFilterButton.getSelection();
+		if (showSelectedOnly) {
+			config.setAttribute(IPDELauncherConstants.SHOW_SELECTED_ONLY, true);
+		} else {
+			config.removeAttribute(IPDELauncherConstants.SHOW_SELECTED_ONLY);
+		}
 		config.setAttribute(IPDELauncherConstants.FEATURE_DEFAULT_LOCATION, fFeatureWorkspaceButton.getSelection() ? IPDELauncherConstants.LOCATION_WORKSPACE : IPDELauncherConstants.LOCATION_EXTERNAL);
 		config.setAttribute(IPDELauncherConstants.FEATURE_PLUGIN_RESOLUTION, fWorkspacePluginButton.getSelection() ? IPDELauncherConstants.LOCATION_WORKSPACE : IPDELauncherConstants.LOCATION_EXTERNAL);
 		config.setAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, fAutoValidate.getSelection());
@@ -1256,7 +1261,7 @@ public class FeatureBlock {
 	}
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-		config.setAttribute(IPDELauncherConstants.SHOW_SELECTED_ONLY, false);
+		config.removeAttribute(IPDELauncherConstants.SHOW_SELECTED_ONLY);
 		config.setAttribute(IPDELauncherConstants.FEATURE_DEFAULT_LOCATION, IPDELauncherConstants.LOCATION_WORKSPACE);
 		config.setAttribute(IPDELauncherConstants.FEATURE_PLUGIN_RESOLUTION, IPDELauncherConstants.LOCATION_WORKSPACE);
 		config.setAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, true);

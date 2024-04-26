@@ -160,7 +160,12 @@ public class OSGiFrameworkBlock {
 
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(IPDELauncherConstants.USE_DEFAULT, fLaunchWithCombo.getSelectionIndex() == 0);
-		config.setAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, fLaunchWithCombo.getSelectionIndex() == 1);
+		boolean useCustomFeatures = fLaunchWithCombo.getSelectionIndex() == 1;
+		if (useCustomFeatures) {
+			config.setAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, true);
+		} else {
+			config.removeAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES);
+		}
 		config.setAttribute(IPDELauncherConstants.DEFAULT_AUTO_START, Boolean.toString(true).equals(fDefaultAutoStart.getText()));
 		config.setAttribute(IPDELauncherConstants.DEFAULT_START_LEVEL, fDefaultStartLevel.getSelection());
 

@@ -61,7 +61,11 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 				}
 			}
 		}
-		config.setAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_BUNDLES, buffer.getNameSet());
+		if (!buffer.getNameSet().isEmpty()) {
+			config.setAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_BUNDLES, buffer.getNameSet());
+		} else {
+			config.removeAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_BUNDLES);
+		}
 	}
 
 	public void initializeFrom(ILaunchConfiguration configuration) throws CoreException {

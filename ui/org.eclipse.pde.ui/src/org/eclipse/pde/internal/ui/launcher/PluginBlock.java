@@ -156,7 +156,12 @@ public class PluginBlock extends AbstractPluginBlock {
 					}
 				}
 			}
-			config.setAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_BUNDLES, buffer.getNameSet());
+			if (!buffer.getNameSet().isEmpty()) {
+				config.setAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_BUNDLES,
+						buffer.getNameSet());
+			} else {
+				config.removeAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_BUNDLES);
+			}
 		}
 	}
 
