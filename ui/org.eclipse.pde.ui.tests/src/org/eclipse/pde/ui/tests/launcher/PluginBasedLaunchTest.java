@@ -154,7 +154,7 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
 			wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, Set.of("plugin.a*1.0.0", "plugin.b"));
-			wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
+			wc.removeAttribute(IPDELauncherConstants.AUTOMATIC_ADD);
 			wc.setAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_BUNDLES, Set.of("plugin.a*2.0.0", "plugin.c"));
 			wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES,
 					Set.of("plugin.x*2.0.0", "plugin.x*3.0.0", "plugin.y"));
@@ -371,7 +371,7 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
 			wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, Set.of("plugin.a*1.0.0"));
-			wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
+			wc.removeAttribute(IPDELauncherConstants.AUTOMATIC_ADD);
 		};
 
 		Set<BundleLocationDescriptor> expectedBundles = Set.of( //
@@ -394,7 +394,7 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
 			wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, Set.of("plugin.a*1.0.0"));
-			wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
+			wc.removeAttribute(IPDELauncherConstants.AUTOMATIC_ADD);
 			wc.setAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_BUNDLES, Set.of("plugin.c"));
 		};
 
@@ -417,7 +417,7 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
 			wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, Set.of("plugin.a*1.0.0"));
-			wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
+			wc.removeAttribute(IPDELauncherConstants.AUTOMATIC_ADD);
 			wc.setAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_BUNDLES, Set.of("plugin.c*1.0.0"));
 		};
 
@@ -447,7 +447,7 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
 			wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, Set.of("plugin.a*1.0.0"));
-			wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
+			wc.removeAttribute(IPDELauncherConstants.AUTOMATIC_ADD);
 			wc.setAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_BUNDLES,
 					Set.of("plugin.a*2.0.0", "plugin.a*4.0.0"));
 		};
@@ -471,7 +471,7 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
 			wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, Set.of());
-			wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
+			wc.removeAttribute(IPDELauncherConstants.AUTOMATIC_ADD);
 			wc.setAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_BUNDLES,
 					Set.of("plugin.a*1.0.0", "plugin.a*3.0.0"));
 		};
@@ -494,7 +494,7 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
 			wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, Set.of("plugin.a*2.0.0"));
-			wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
+			wc.removeAttribute(IPDELauncherConstants.AUTOMATIC_ADD);
 			wc.setAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_BUNDLES, Set.of("plugin.a"));
 		};
 
@@ -516,7 +516,7 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
 			wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, Set.of("plugin.a*1.0.0.202111250056"));
-			wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
+			wc.removeAttribute(IPDELauncherConstants.AUTOMATIC_ADD);
 		};
 
 		Set<BundleLocationDescriptor> expectedBundles = Set.of( //
@@ -777,7 +777,7 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 				bundle("plugin.b", "1.0.1"));
 
 		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
-			wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
+			wc.removeAttribute(IPDELauncherConstants.AUTOMATIC_ADD);
 			wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, Set.of("plugin.a", "plugin.b*1.0.1"));
 		};
 
@@ -799,7 +799,7 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 				bundle("plugin.a", "1.0.0.202111102345"));
 
 		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
-			wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
+			wc.removeAttribute(IPDELauncherConstants.AUTOMATIC_ADD);
 			wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, Set.of("plugin.a*1.0.0.202111102345"));
 		};
 
@@ -1044,7 +1044,7 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 		ILaunchConfigurationType type = launchManager.getLaunchConfigurationType("org.eclipse.pde.ui.RuntimeWorkbench");
 		ILaunchConfigurationWorkingCopy wc = type.newInstance(null, name);
 		wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, false);
-		wc.setAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, false);
+		wc.removeAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES);
 		wc.setAttribute(IPDELauncherConstants.USE_DEFAULT, false);
 		return wc;
 	}
