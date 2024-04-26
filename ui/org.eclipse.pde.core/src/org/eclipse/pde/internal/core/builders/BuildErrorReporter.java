@@ -19,8 +19,9 @@
 package org.eclipse.pde.internal.core.builders;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -28,8 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.function.Predicate;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
@@ -149,22 +149,6 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			}
 			attributes.putAll(attributes);
 		}
-	}
-
-	static class WildcardFilenameFilter implements FilenameFilter {
-
-		private final Pattern pattern;
-
-		public WildcardFilenameFilter(String file) {
-			pattern = PatternConstructor.createPattern(file, false);
-		}
-
-		@Override
-		public boolean accept(File dir, String name) {
-			Matcher matcher = pattern.matcher(name);
-			return matcher.matches();
-		}
-
 	}
 
 	protected List<BuildProblem> fProblemList = new ArrayList<>();
@@ -736,12 +720,15 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			// check for wildcards
 			IPath project = fFile.getProject().getLocation();
 			if (project != null && token != null) {
-				File projectFile = project.toFile();
-				File[] files = projectFile.listFiles(new WildcardFilenameFilter(token));
-				for (File file : files) {
-					if (file.toString().endsWith(key)) {
-						return true;
+				Predicate<String> isMatch = toMatcher(token);
+				try (var files = Files.newDirectoryStream(project.toPath(),
+						path -> isMatch.test(path.getFileName().toString()));) {
+					for (Path file : files) {
+						if (file.toString().endsWith(key)) {
+							return true;
+						}
 					}
+				} catch (IOException e) { // ignore
 				}
 			}
 			return false;
@@ -820,29 +807,14 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 					continue;
 				}
 			}
-			key = key.substring(PROPERTY_SOURCE_PREFIX.length());
-			boolean found = false;
-			String[] binIncludesTokens = binIncludes.getTokens();
-			for (String token : binIncludesTokens) {
-				Pattern pattern = PatternConstructor.createPattern(token, false);
-				if (pattern.matcher(key).matches()) {
-					found = true;
-				}
-			}
+			String libName = key.substring(PROPERTY_SOURCE_PREFIX.length());
+			List<Predicate<String>> matchers = Arrays.stream(binIncludes.getTokens()).map(BuildErrorReporter::toMatcher)
+					.toList();
+			boolean found = matchers.stream().anyMatch(m -> m.test(libName));
 			// account for trailing slash on class file folders
-			if (!found) {
-				IPath path = IPath.fromOSString(key);
-				if (path.getFileExtension() == null) {
-					if (!key.endsWith("/")) { //$NON-NLS-1$
-						key = key + "/"; //$NON-NLS-1$
-						for (String token : binIncludesTokens) {
-							Pattern pattern = PatternConstructor.createPattern(token, false);
-							if (pattern.matcher(key).matches()) {
-								found = true;
-							}
-						}
-					}
-				}
+			if (!found && IPath.fromOSString(libName).getFileExtension() == null && !libName.endsWith("/")) { //$NON-NLS-1$
+				String folderName = libName + "/"; //$NON-NLS-1$
+				found = matchers.stream().anyMatch(m -> m.test(folderName));
 			}
 			if (!found) {
 				String msg = NLS.bind(PDECoreMessages.BuildErrorReporter_binIncludesMissing, key);
@@ -1331,6 +1303,10 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			marker.setAttribute(PDEMarkerFactory.BK_BUILD_TOKEN, buildToken);
 		}
 		return marker;
+	}
+
+	private static Predicate<String> toMatcher(String token) {
+		return PatternConstructor.createPattern(token, false).asMatchPredicate();
 	}
 
 	public boolean isCustomBuild() {
