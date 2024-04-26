@@ -1290,6 +1290,8 @@ public class TargetDefinition implements ITargetDefinition {
 			}
 		}
 
+		// The containers that were only updated. Doesn't include brand-new ones
+		List<Element> updatedContainers = new ArrayList<>(newContainers);
 		for (Element container : newContainers) {
 			NodeList nodes = container.getChildNodes();
 			List<Element> units = new ArrayList<>();
@@ -1321,9 +1323,15 @@ public class TargetDefinition implements ITargetDefinition {
 				} else {
 					Node movedContainer = fDocument.importNode(container, true);
 					TargetDefinitionDocumentTools.addChildWithIndent(containersElement, movedContainer);
+					updatedContainers.remove(container);
 				}
 			}
 		}
+
+		// Use a mock comparator, we only want to use the
+		// "elementAttributesComparator" also used in updateElements
+		TargetDefinitionDocumentTools.updateElements(containersElement, oldContainers, updatedContainers,
+				(Element e1, Element e2) -> 0);
 
 		for (Entry<String, List<Element>> entry : oldContainersByRepo.entrySet()) {
 			entry.getValue().forEach(TargetDefinitionDocumentTools::removeChildAndWhitespace);
