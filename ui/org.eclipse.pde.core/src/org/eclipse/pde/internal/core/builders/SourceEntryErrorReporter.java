@@ -16,7 +16,7 @@ package org.eclipse.pde.internal.core.builders;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,7 +26,6 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -169,126 +168,23 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 	 * Represents a default or custom encoding property for a resource
 	 * within a library.
 	 */
-	static class EncodingEntry {
-
-		private final String fEncoding;
-		private final IResource fResource;
-
-		/**
-		 * Constructs an encoding entry for the given resource.
-		 *
-		 * @param resource resource
-		 * @param encoding the encoding identifier
-		 */
-		EncodingEntry(IResource resource, String encoding) {
-			fEncoding = encoding;
-			fResource = resource;
-		}
-
-		/**
-		 * Returns the explicit encoding for this entry.
-		 *
-		 * @return explicit encoding
-		 */
-		public String getEncoding() {
-			return fEncoding;
-		}
-
-		/**
-		 * Returns the resource this encoding is associated with.
-		 *
-		 * @return associated resource
-		 */
-		public IResource getResource() {
-			return fResource;
-		}
-
-		@Override
-		public String toString() {
-			return getValue();
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (obj instanceof EncodingEntry other) {
-				return other.fEncoding.equals(fEncoding) && other.fResource.equals(fResource);
-			}
-			return false;
-		}
-
-		@Override
-		public int hashCode() {
-			return fEncoding.hashCode() + fResource.hashCode();
-		}
+	private record EncodingEntry(IResource resource, String encoding) {
 
 		/**
 		 * Returns the generated value of this entry for the build.properties file.
 		 *
 		 * @return value to enter into build.properties
 		 */
-		String getValue() {
-			StringBuilder buf = new StringBuilder();
-			IContainer root = PDEProject.getBundleRoot(fResource.getProject());
-			buf.append(fResource.getFullPath().makeRelativeTo(root.getFullPath()).makeAbsolute());
-			buf.append('[');
-			buf.append(fEncoding);
-			buf.append(']');
-			return buf.toString();
-		}
-
-	}
-
-	/**
-	 * Visits a source folder gathering encodings.
-	 */
-	class Visitor implements IResourceVisitor {
-
-		String[] fLibs = null;
-
-		Visitor(SourceFolder folder) {
-			List<String> list = folder.getLibs();
-			fLibs = list.toArray(new String[list.size()]);
-		}
-
 		@Override
-		public boolean visit(IResource resource) throws CoreException {
-			String encoding = null;
-			switch (resource.getType()) {
-				case IResource.FOLDER :
-					encoding = ((IFolder) resource).getDefaultCharset(false);
-					break;
-				case IResource.FILE :
-					IFile file = (IFile) resource;
-					// only worry about .java files
-					if (file.getFileExtension() != null && file.getFileExtension().equals("java")) { //$NON-NLS-1$
-						encoding = file.getCharset(false);
-					}
-					break;
-			}
-			if (encoding != null) {
-				EncodingEntry entry = new EncodingEntry(resource, encoding);
-				for (String lib : fLibs) {
-					List<EncodingEntry> encodings = fCustomEncodings.get(lib);
-					if (encodings == null) {
-						encodings = new ArrayList<>();
-						fCustomEncodings.put(lib, encodings);
-					}
-					encodings.add(entry);
-				}
-			}
-			return true;
+		public String toString() {
+			IContainer root = PDEProject.getBundleRoot(resource().getProject());
+			return resource.getFullPath().makeRelativeTo(root.getFullPath()).makeAbsolute() + "[" + encoding + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
-
 	}
 
 	private final Map<IPath, SourceFolder> fSourceFolderMap = new HashMap<>(4);
 	private final Map<IPath, OutputFolder> fOutputFolderMap = new HashMap<>(4);
 	private IBuild fBuild = null;
-
-	/**
-	 * Maps library name to custom {@link EncodingEntry}'s for this library.
-	 */
-	Map<String, List<EncodingEntry>> fCustomEncodings = new HashMap<>();
 
 	public void initialize(List<IBuildEntry> sourceEntries, List<IBuildEntry> outputEntries, IClasspathEntry[] cpes) {
 		IPath defaultOutputLocation = null;
@@ -485,43 +381,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 
 	private List<SourceFolder> validateSourceEntries() {
 
-		class MissingOutputEntry {
-			private final List<String> fSrcFolders = new ArrayList<>(1);
-			private final List<String> fOutputFolders = new ArrayList<>(1);
-
-			public String getOutputList() {
-				return generateList(fOutputFolders);
-			}
-
-			public String getSourceList() {
-				return generateList(fSrcFolders);
-			}
-
-			private String generateList(List<String> strings) {
-				StringBuilder buffer = new StringBuilder();
-				Iterator<String> iterator = strings.iterator();
-				while (iterator.hasNext()) {
-					String next = iterator.next();
-					buffer.append(next);
-					if (iterator.hasNext()) {
-						buffer.append(',');
-						buffer.append(' ');
-					}
-				}
-				return buffer.toString();
-			}
-
-			public void addSrcFolder(String sourcePath) {
-				if (!fSrcFolders.contains(sourcePath)) {
-					fSrcFolders.add(sourcePath);
-				}
-			}
-
-			public void addOutputFolder(String outputPath) {
-				if (!fOutputFolders.contains(outputPath)) {
-					fOutputFolders.add(outputPath);
-				}
-			}
+		record MissingOutputEntry(Set<String> fSrcFolders, Set<String> fOutputFolders) {
 		}
 
 		Map<String, MissingOutputEntry> missingOutputEntryErrors = new HashMap<>(4);
@@ -549,9 +409,9 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 
 					String libName = sourceFolder.getLibs().get(0);
 					MissingOutputEntry errorEntry = missingOutputEntryErrors.computeIfAbsent(libName,
-							n -> new MissingOutputEntry());
-					errorEntry.addSrcFolder(sourcePath.toString());
-					errorEntry.addOutputFolder(outputFolder.getToken());
+							n -> new MissingOutputEntry(new LinkedHashSet<>(1), new LinkedHashSet<>(1)));
+					errorEntry.fSrcFolders().add(sourcePath.toString());
+					errorEntry.fOutputFolders().add(outputFolder.getToken());
 				}
 
 				if (sourceFolder.getDupeLibName() != null) {
@@ -564,8 +424,10 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 		});
 
 		missingOutputEntryErrors.forEach((libName, errorEntry) -> {
-			String message = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_MissingOutputEntry, errorEntry.getSourceList(), PROPERTY_OUTPUT_PREFIX + libName);
-			prepareError(PROPERTY_OUTPUT_PREFIX + libName, errorEntry.getOutputList(), message, PDEMarkerFactory.B_ADDITION, fMissingOutputLibSeverity,CompilerFlags.P_BUILD_MISSING_OUTPUT, PDEMarkerFactory.CAT_OTHER);
+			String sourceList = String.join(", ", errorEntry.fSrcFolders()); //$NON-NLS-1$
+			String outputList = String.join(", ", errorEntry.fOutputFolders()); //$NON-NLS-1$
+			String message = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_MissingOutputEntry, sourceList, PROPERTY_OUTPUT_PREFIX + libName);
+			prepareError(PROPERTY_OUTPUT_PREFIX + libName, outputList, message, PDEMarkerFactory.B_ADDITION, fMissingOutputLibSeverity,CompilerFlags.P_BUILD_MISSING_OUTPUT, PDEMarkerFactory.CAT_OTHER);
 		});
 		return toValidate;
 	}
@@ -578,6 +440,9 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 			// Maps library name to default encoding for that library (or not
 			// present if there is no explicit default encoding specified).
 			Map<String, String> defaultLibraryEncodings = new HashMap<>();
+			// Maps library name to custom EncodingEntry 's for this library.
+			Map<String, List<EncodingEntry>> customEncodings = new HashMap<>();
+
 			// build map of expected encodings
 			for (SourceFolder sourceFolder : toValidate) {
 				IPath sourcePath = sourceFolder.getPath();
@@ -592,7 +457,24 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 							defaultLibraryEncodings.put(lib, encoding);
 						}
 					}
-					container.accept(new Visitor(sourceFolder));
+					container.accept(resource -> {
+						String resourceEncoding = switch (resource.getType()) {
+						case IResource.FOLDER -> ((IFolder) resource).getDefaultCharset(false);
+						case IResource.FILE -> {
+							IFile file = (IFile) resource;
+							// only worry about .java files
+							yield "java".equals(file.getFileExtension()) ? file.getCharset(false) : null; //$NON-NLS-1$
+						}
+						default -> null;
+						};
+						if (resourceEncoding != null) {
+							EncodingEntry entry = new EncodingEntry(resource, resourceEncoding);
+							for (String lib : sourceFolder.getLibs()) {
+								customEncodings.computeIfAbsent(lib, l -> new ArrayList<>()).add(entry);
+							}
+						}
+						return true;
+					});
 				} catch (CoreException e) {
 					// Can't validate if unable to retrieve encoding
 					PDECore.log(e);
@@ -654,24 +536,24 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 							}
 						}
 						// compare with workspace encodings
-						List<EncodingEntry> workspace = fCustomEncodings.remove(lib);
+						List<EncodingEntry> workspace = customEncodings.remove(lib);
 						if (workspace == null) {
 							String msg = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_5, lib);
 							prepareEncodingError(name, null, msg, PDEMarkerFactory.B_REMOVAL);
 						} else {
 							Map<IResource, String> map = new HashMap<>();
 							for (EncodingEntry ee : workspace) {
-								map.put(ee.getResource(), ee.getEncoding());
+								map.put(ee.resource(), ee.encoding());
 							}
 							for (EncodingEntry ee : encodings) {
-								String specified = ee.getEncoding();
-								String expected = map.remove(ee.getResource());
+								String specified = ee.encoding();
+								String expected = map.remove(ee.resource());
 								if (expected == null) {
-									String msg = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_6, expected, ee.getResource().getProjectRelativePath());
+									String msg = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_6, expected, ee.resource().getProjectRelativePath());
 									prepareEncodingError(name, ee.toString(), msg, PDEMarkerFactory.B_REMOVAL);
 								} else {
 									if (!specified.equals(expected)) {
-										String msg = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_7, new String[] { expected, ee.getResource().getProjectRelativePath().toString(), specified });
+										String msg = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_7, new String[] { expected, ee.resource().getProjectRelativePath().toString(), specified });
 										prepareEncodingError(name, ee.toString(), msg, PDEMarkerFactory.M_ONLY_CONFIG_SEV);
 									}
 								}
@@ -697,9 +579,9 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 			});
 
 			// check for unspecified custom encodings
-			fCustomEncodings.forEach((lib, encodings) -> {
+			customEncodings.forEach((lib, encodings) -> {
 				for (EncodingEntry encoding : encodings) {
-					String msg = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_8, encoding.getEncoding(), encoding.getResource().getProjectRelativePath());
+					String msg = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_8, encoding.encoding(), encoding.resource().getProjectRelativePath());
 					prepareEncodingError(PROPERTY_JAVAC_CUSTOM_ENCODINGS_PREFIX + lib, encoding.toString(), msg, PDEMarkerFactory.B_ADDITION);
 				}
 			});
