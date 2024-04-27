@@ -291,7 +291,7 @@ public class TargetPlatformHelper {
 	private static boolean containsNotEmptyIULocation(ITargetLocation[] locations) {
 		return locations != null && Arrays.stream(locations) //
 				.filter(IUBundleContainer.class::isInstance).map(IUBundleContainer.class::cast)
-				.map(IUBundleContainer::getRepositories).anyMatch(uri -> uri != null && uri.length > 0);
+				.map(IUBundleContainer::getRepositories).anyMatch(uri -> !uri.isEmpty());
 	}
 
 	public static Set<String> getApplicationNameSet() {
