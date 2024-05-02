@@ -1327,7 +1327,7 @@ public class TargetDefinition implements ITargetDefinition {
 		// Use a mock comparator, we only want to use the
 		// "elementAttributesComparator" also used in updateElements
 		TargetDefinitionDocumentTools.updateElements(containersElement, oldContainers, updatedContainers,
-				(Element e1, Element e2) -> 0);
+				(e1, e2) -> 0);
 
 		for (Entry<String, List<Element>> entry : oldContainersByRepo.entrySet()) {
 			entry.getValue().forEach(TargetDefinitionDocumentTools::removeChildAndWhitespace);

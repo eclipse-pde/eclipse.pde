@@ -13,13 +13,13 @@
  *******************************************************************************/
 package org.eclipse.pde.genericeditor.extension.tests;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -50,7 +50,7 @@ public class Bug531602FormattingTests extends AbstractTargetEditorTest {
 		ByteArrayOutputStream actualOutput = new ByteArrayOutputStream();
 		targetDefinition.setProgramArguments(null);
 		TargetDefinitionPersistenceHelper.persistXML(targetDefinition, actualOutput);
-		assertEquals(expectedOutput.toString(UTF_8.toString()), actualOutput.toString(UTF_8.toString()));
+		assertEquals(expectedOutput.toString(StandardCharsets.UTF_8), actualOutput.toString(StandardCharsets.UTF_8));
 	}
 
 	@Test
@@ -119,7 +119,7 @@ public class Bug531602FormattingTests extends AbstractTargetEditorTest {
 			ByteArrayOutputStream actualOutput = new ByteArrayOutputStream();
 			TargetDefinitionPersistenceHelper.persistXML(targetDefinition, actualOutput);
 
-			StringAsserts.assertEqualStringIgnoreDelim(actualOutput.toString(UTF_8.toString()), result);
+			StringAsserts.assertEqualStringIgnoreDelim(actualOutput.toString(StandardCharsets.UTF_8), result);
 		} catch (IOException e) {
 		}
 	}
