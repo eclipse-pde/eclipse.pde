@@ -1049,6 +1049,7 @@ public class P2TargetUtils {
 		int repoCount = repos.length;
 		SubMonitor subMonitor = SubMonitor.convert(monitor, repoCount * 2);
 
+		Set<IRepositoryReference> seen = new HashSet<>();
 		List<IMetadataRepository> result = new ArrayList<>(repoCount);
 		List<IMetadataRepository> additional = new ArrayList<>();
 		MultiStatus repoStatus = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.IUBundleContainer_ProblemsLoadingRepositories, null);
@@ -1057,7 +1058,7 @@ public class P2TargetUtils {
 				IMetadataRepository repository = manager.loadRepository(repos[i], subMonitor.split(1));
 				result.add(repository);
 				if (followRepositoryReferences) {
-					addReferences(repository, additional, new HashSet<>(), manager, subMonitor.split(1));
+					addReferences(repository, additional, seen, manager, subMonitor.split(1));
 				}
 			} catch (ProvisionException e) {
 				repoStatus.add(e.getStatus());
