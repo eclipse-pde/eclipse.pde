@@ -1328,8 +1328,9 @@ public class AnnotationVisitor extends ASTVisitor {
 
 	private void collectComponentPropertyTypes(IDSDocumentFactory dsFactory,
 			LinkedHashMap<String, IDSProperty> newPropMap, Annotation propertyType) {
-		String fqdn = propertyType.getTypeName().getFullyQualifiedName();
 		ITypeBinding propertyTypeBinding = propertyType.resolveTypeBinding();
+		String simpleName = propertyTypeBinding.getName();
+
 		String prefix = getPrefix(propertyTypeBinding);
 		IMethodBinding[] methods = propertyTypeBinding.getDeclaredMethods();
 		Map<String, IDSProperty> map = Arrays.stream(methods)
@@ -1347,7 +1348,7 @@ public class AnnotationVisitor extends ASTVisitor {
 		}
 		if (propertyType instanceof MarkerAnnotation && map.isEmpty()) {
 			IDSProperty property = dsFactory.createProperty();
-			property.setPropertyName(NameGenerator.createClassPropertyName(fqdn, prefix));
+			property.setPropertyName(NameGenerator.createClassPropertyName(simpleName, prefix));
 			property.setPropertyType(IDSConstants.VALUE_PROPERTY_TYPE_BOOLEAN);
 			property.setPropertyValue(String.valueOf(Boolean.TRUE));
 			newPropMap.remove(property.getName()); // force re-insert (append)
@@ -1356,7 +1357,7 @@ public class AnnotationVisitor extends ASTVisitor {
 		}
 		if (propertyType instanceof SingleMemberAnnotation single && map.size() == 1) {
 			IDSProperty property = dsFactory.createProperty();
-			property.setPropertyName(NameGenerator.createClassPropertyName(fqdn, prefix));
+			property.setPropertyName(NameGenerator.createClassPropertyName(simpleName, prefix));
 			Expression expression = single.getValue();
 			property.setPropertyType(getPropertyType(expression.resolveTypeBinding()));
 			setPropertyValue(property, expression);
