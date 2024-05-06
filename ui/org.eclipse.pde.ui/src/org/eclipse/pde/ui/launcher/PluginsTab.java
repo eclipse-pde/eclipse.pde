@@ -217,16 +217,9 @@ public class PluginsTab extends AbstractLauncherTab {
 		return fImage;
 	}
 
-	/**
-	 * Validates the tab.  If the feature option is chosen, and the workspace is not correctly set up,
-	 * the error message is set.
-	 *
-	 * @see org.eclipse.pde.ui.launcher.AbstractLauncherTab#validateTab()
-	 */
 	@Override
 	public void validateTab() {
-		String errorMessage = null;
-		setErrorMessage(errorMessage);
+		setErrorMessage(null);
 	}
 
 	@Override
