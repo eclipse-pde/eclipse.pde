@@ -37,6 +37,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -384,7 +385,7 @@ public class PluginModelManager implements IModelProviderListener {
 				index++;
 			}
 			// TODO Consider always running in a job - better reporting and cancellation options
-			if (runAsynch) {
+			if (runAsynch || ResourcesPlugin.getWorkspace().isTreeLocked()) {
 				// We may be in the UI thread, so the classpath is updated in a job to avoid blocking (bug 376135)
 				fUpdateJob.add(projects, containers);
 				fUpdateJob.schedule();
@@ -393,6 +394,7 @@ public class PluginModelManager implements IModelProviderListener {
 				try {
 					JavaCore.setClasspathContainer(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH, projects, containers, null);
 				} catch (JavaModelException e) {
+					ILog.get().error("Setting classpath containers failed!", e); //$NON-NLS-1$
 				}
 			}
 		}

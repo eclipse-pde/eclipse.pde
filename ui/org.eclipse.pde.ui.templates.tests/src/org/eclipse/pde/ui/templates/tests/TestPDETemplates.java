@@ -21,6 +21,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.IFile;
@@ -50,6 +51,7 @@ import org.eclipse.pde.internal.ui.wizards.plugin.PluginFieldData;
 import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.pde.ui.IPluginContentWizard;
 import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.junit.Assert;
 import org.junit.Assume;
@@ -159,7 +161,26 @@ public class TestPDETemplates {
 	@Test
 	public void configureProjectAndCheckMarkers() throws CoreException {
 		project.build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
+		long deadline = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(60);
+		Display current = Display.getCurrent();
+		while (true) {
+			if (current != null) {
+				while (current.readAndDispatch()) {
+					Thread.onSpinWait();
+				}
+			}
+			try {
+				assertErrorFree();
+				break;
+			} catch (AssertionError e) {
+				if (System.currentTimeMillis() > deadline) {
+					throw e;
+				}
+			}
+		}
+	}
 
+	private void assertErrorFree() throws CoreException {
 		IMarker[] markers = project.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
 
 		// ignore missing package export marker
@@ -179,7 +200,9 @@ public class TestPDETemplates {
 			markers = new IMarker[0];
 		}
 
-		assertEquals("Template '" + template.getLabel() + "' generates errors.", 0, markers.length);
+		assertEquals("Template '" + template.getLabel() + "' generates errors: "
+				+ Arrays.stream(markers).map(String::valueOf).collect(Collectors.joining(System.lineSeparator())), 0,
+				markers.length);
 	}
 
 	@Test
