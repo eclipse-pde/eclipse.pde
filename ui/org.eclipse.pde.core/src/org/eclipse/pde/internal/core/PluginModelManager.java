@@ -383,8 +383,16 @@ public class PluginModelManager implements IModelProviderListener {
 				containers[index] = entry.getValue();
 				index++;
 			}
+			for (IJavaProject jp : map.keySet()) {
+				try {
+					jp.getProject().setSessionProperty(PDECore.TOUCH_PROJECT, Boolean.TRUE);
+				} catch (CoreException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 			// TODO Consider always running in a job - better reporting and cancellation options
-			if (runAsynch) {
+			if (runAsynch || ResourcesPlugin.getWorkspace().isTreeLocked()) {
 				// We may be in the UI thread, so the classpath is updated in a job to avoid blocking (bug 376135)
 				fUpdateJob.add(projects, containers);
 				fUpdateJob.schedule();
@@ -393,6 +401,7 @@ public class PluginModelManager implements IModelProviderListener {
 				try {
 					JavaCore.setClasspathContainer(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH, projects, containers, null);
 				} catch (JavaModelException e) {
+					e.printStackTrace();
 				}
 			}
 		}
