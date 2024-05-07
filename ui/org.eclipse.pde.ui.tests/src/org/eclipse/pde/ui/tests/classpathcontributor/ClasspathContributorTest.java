@@ -18,8 +18,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.IClasspathContainer;
@@ -30,6 +31,7 @@ import org.eclipse.pde.core.IClasspathContributor;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.ui.tests.classpathresolver.ClasspathResolverTest;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
+import org.eclipse.swt.widgets.Display;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -50,18 +52,37 @@ public class ClasspathContributorTest {
 	@Test
 	public void testAdditionalClasspathEntries() throws Exception {
 		IProject project = ProjectUtils.importTestProject("tests/projects/" + ClasspathResolverTest.bundleName);
-		List<IClasspathEntry> expected = new ArrayList<>(TestClasspathContributor.entries);
-		expected.addAll(TestClasspathContributor.entries2);
-		IJavaProject jProject = JavaCore.create(project);
-		IClasspathContainer container = JavaCore.getClasspathContainer(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH, jProject);
-		assertNotNull("Could not find PDE classpath container", container);
-		IClasspathEntry[] classpath = container.getClasspathEntries();
-		for (IClasspathEntry element : classpath) {
-			if (!isPdeDependency(element)) {
-				assertTrue("Unexpected classpath entry found: " + element, expected.remove(element));
+		long deadline = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(60);
+		while (true) {
+			Display current = Display.getCurrent();
+			if (current != null) {
+				while (current.readAndDispatch()) {
+					Thread.onSpinWait();
+				}
+			}
+			try {
+				List<IClasspathEntry> expected = new ArrayList<>(TestClasspathContributor.entries);
+				expected.addAll(TestClasspathContributor.entries2);
+				IJavaProject jProject = JavaCore.create(project);
+				IClasspathContainer container = JavaCore.getClasspathContainer(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH,
+						jProject);
+				assertNotNull("Could not find PDE classpath container", container);
+				IClasspathEntry[] classpath = container.getClasspathEntries();
+				for (IClasspathEntry element : classpath) {
+					if (!isPdeDependency(element)) {
+						assertTrue("Unexpected classpath entry found: " + element, expected.remove(element));
+					}
+				}
+				assertTrue("Expected classpath entry not found: "
+						+ expected.stream().map(String::valueOf).collect(Collectors.joining(System.lineSeparator())),
+						expected.isEmpty());
+				break;
+			} catch (AssertionError e) {
+				if (System.currentTimeMillis() > deadline) {
+					throw e;
+				}
 			}
 		}
-		assertTrue("Expected classpath entry not found: " + Arrays.toString(expected.toArray()), expected.isEmpty());
 	}
 
 	private boolean isPdeDependency(IClasspathEntry element) {
