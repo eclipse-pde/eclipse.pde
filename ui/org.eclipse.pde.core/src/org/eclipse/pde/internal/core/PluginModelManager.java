@@ -1261,4 +1261,15 @@ public class PluginModelManager implements IModelProviderListener {
 	public void removeExtensionDeltaListener(IExtensionDeltaListener listener) {
 		fWorkspaceManager.removeExtensionDeltaListener(listener);
 	}
+
+	public void update(IProject project) {
+		synchronized (fEntriesSynchronizer) {
+			IPluginModelBase model = fWorkspaceManager.getModel(project);
+			if (model == null) {
+				fWorkspaceManager.createModel(project, true);
+			} else {
+				fWorkspaceManager.updateModel(project, model);
+			}
+		}
+	}
 }

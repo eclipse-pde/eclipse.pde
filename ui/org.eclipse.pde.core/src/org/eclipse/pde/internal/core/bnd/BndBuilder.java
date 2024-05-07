@@ -38,6 +38,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
+import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.core.natures.BndProject;
 import org.eclipse.pde.internal.core.project.PDEProject;
@@ -188,6 +189,8 @@ public class BndBuilder extends IncrementalProjectBuilder {
 						}
 					}
 				}
+				PluginModelManager modelManager = PDECore.getDefault().getModelManager();
+				modelManager.update(project);
 			}
 			if (monitor.isCanceled()) {
 				return;

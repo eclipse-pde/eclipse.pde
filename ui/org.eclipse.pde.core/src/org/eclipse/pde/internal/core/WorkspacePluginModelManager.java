@@ -332,29 +332,33 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager<IPluginMo
 		} else if (kind == IResourceDelta.ADDED || model == null) {
 			createModel(project, true);
 		} else if (kind == IResourceDelta.CHANGED && (IResourceDelta.CONTENT & delta.getFlags()) != 0) {
-			if (model instanceof IBundlePluginModelBase) {
-				// check to see if localization changed (bug 146912)
-				String oldLocalization = ((IBundlePluginModelBase) model).getBundleLocalization();
-				IBundleModel bmodel = ((IBundlePluginModelBase) model).getBundleModel();
-				boolean wasFragment = bmodel.isFragmentModel();
-				Map<String, IManifestHeader> oldHeaders = bmodel.getBundle().getManifestHeaders();
+			updateModel(project, model);
+		}
+	}
 
-				loadModel(bmodel, true);
-				String newLocalization = ((IBundlePluginModelBase) model).getBundleLocalization();
+	protected void updateModel(IProject project, IPluginModelBase model) {
+		if (model instanceof IBundlePluginModelBase) {
+			// check to see if localization changed (bug 146912)
+			String oldLocalization = ((IBundlePluginModelBase) model).getBundleLocalization();
+			IBundleModel bmodel = ((IBundlePluginModelBase) model).getBundleModel();
+			boolean wasFragment = bmodel.isFragmentModel();
+			Map<String, IManifestHeader> oldHeaders = bmodel.getBundle().getManifestHeaders();
 
-				// Fragment-Host header was added or removed
-				if (wasFragment != bmodel.isFragmentModel()) {
-					removeModel(project);
-					createModel(project, true);
-				} else {
-					if (model instanceof AbstractNLModel && (oldLocalization != null && (newLocalization == null || !oldLocalization.equals(newLocalization))) || (newLocalization != null && (oldLocalization == null || !newLocalization.equals(oldLocalization)))) {
-						((AbstractNLModel) model).resetNLResourceHelper();
-					}
+			loadModel(bmodel, true);
+			String newLocalization = ((IBundlePluginModelBase) model).getBundleLocalization();
 
-					Map<String, IManifestHeader> newHeaders = bmodel.getBundle().getManifestHeaders();
-					if (hasModelChanged(oldHeaders, newHeaders)) {
-						addChange(model, IModelProviderEvent.MODELS_CHANGED);
-					}
+			// Fragment-Host header was added or removed
+			if (wasFragment != bmodel.isFragmentModel()) {
+				removeModel(project);
+				createModel(project, true);
+			} else {
+				if (model instanceof AbstractNLModel && (oldLocalization != null && (newLocalization == null || !oldLocalization.equals(newLocalization))) || (newLocalization != null && (oldLocalization == null || !newLocalization.equals(oldLocalization)))) {
+					((AbstractNLModel) model).resetNLResourceHelper();
+				}
+
+				Map<String, IManifestHeader> newHeaders = bmodel.getBundle().getManifestHeaders();
+				if (hasModelChanged(oldHeaders, newHeaders)) {
+					addChange(model, IModelProviderEvent.MODELS_CHANGED);
 				}
 			}
 		}
