@@ -251,7 +251,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 				wc.setAttribute(IPDELauncherConstants.USE_PRODUCT, true);
 				wc.setAttribute(IPDELauncherConstants.PRODUCT, product);
 			}
-			wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
+			wc.removeAttribute(IPDELauncherConstants.AUTOMATIC_ADD);
 		} else {
 			String defaultProduct = TargetPlatform.getDefaultProduct();
 			if (defaultProduct != null) {
