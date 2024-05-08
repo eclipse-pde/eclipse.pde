@@ -37,7 +37,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -117,12 +116,10 @@ public class PluginModelManager implements IModelProviderListener {
 		/**
 		 * Queues more projects/containers.
 		 */
-		void add(IJavaProject[] projects, IClasspathContainer[] containers) {
+		void add(IJavaProject project, IClasspathContainer container) {
 			synchronized (fProjects) {
-				for (int i = 0; i < containers.length; i++) {
-					fProjects.add(projects[i]);
-					fContainers.add(containers[i]);
-				}
+				fProjects.add(project);
+				fContainers.add(container);
 			}
 		}
 
@@ -299,7 +296,7 @@ public class PluginModelManager implements IModelProviderListener {
 			}
 			// trigger a classpath update for all workspace plug-ins affected by the
 			// processed batch of changes, run asynch for manifest changes
-			updateAffectedEntries(stateDelta, (e.getEventTypes() & IModelProviderEvent.MODELS_CHANGED) != 0);
+			updateAffectedEntries(stateDelta);
 			fireStateDelta(stateDelta);
 
 		}
@@ -314,9 +311,8 @@ public class PluginModelManager implements IModelProviderListener {
 	 *
 	 * @param delta  a state delta containing a list of bundles affected by the processed
 	 * 				changes, may be <code>null</code> to indicate the entire target has changed
-	 * @param runAsynch whether classpath updates should be done in an asynchronous job
 	 */
-	private void updateAffectedEntries(StateDelta delta, boolean runAsynch) {
+	private void updateAffectedEntries(StateDelta delta) {
 		Map<IJavaProject, RequiredPluginsClasspathContainer> map = new HashMap<>();
 		if (delta == null) {
 			// if the delta is null, then the entire target changed.
@@ -374,29 +370,10 @@ public class PluginModelManager implements IModelProviderListener {
 
 		if (!map.isEmpty()) {
 			// update class path for all affected workspace plug-ins in one operation
-			Iterator<Entry<IJavaProject, RequiredPluginsClasspathContainer>> iterator = map.entrySet().iterator();
-			IJavaProject[] projects = new IJavaProject[map.size()];
-			IClasspathContainer[] containers = new IClasspathContainer[projects.length];
-			int index = 0;
-			while (iterator.hasNext()) {
-				Entry<IJavaProject, RequiredPluginsClasspathContainer> entry = iterator.next();
-				projects[index] = entry.getKey();
-				containers[index] = entry.getValue();
-				index++;
+			for (Entry<IJavaProject, RequiredPluginsClasspathContainer> entry : map.entrySet()) {
+				fUpdateJob.add(entry.getKey(), entry.getValue());
 			}
-			// TODO Consider always running in a job - better reporting and cancellation options
-			if (runAsynch || ResourcesPlugin.getWorkspace().isTreeLocked()) {
-				// We may be in the UI thread, so the classpath is updated in a job to avoid blocking (bug 376135)
-				fUpdateJob.add(projects, containers);
-				fUpdateJob.schedule();
-			} else {
-				// else update synchronously
-				try {
-					JavaCore.setClasspathContainer(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH, projects, containers, null);
-				} catch (JavaModelException e) {
-					ILog.get().error("Setting classpath containers failed!", e); //$NON-NLS-1$
-				}
-			}
+			fUpdateJob.schedule();
 		}
 	}
 
@@ -640,7 +617,7 @@ public class PluginModelManager implements IModelProviderListener {
 		PDECore.getDefault().getExtensionsRegistry().targetReloaded();
 		if (oldState != null) {
 			// Need to update classpath entries
-			updateAffectedEntries(null, true);
+			updateAffectedEntries(null);
 		}
 
 		// Fire a state change event to touch all projects if the target content has changed since last model init
