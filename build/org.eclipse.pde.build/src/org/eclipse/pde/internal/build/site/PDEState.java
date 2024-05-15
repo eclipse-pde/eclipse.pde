@@ -823,13 +823,6 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		state.resolve();
 	}
 
-	private File getOSGiLocation() {
-		BundleDescription osgiBundle = state.getBundle(BUNDLE_OSGI, null);
-		if (osgiBundle == null)
-			return null;
-		return new File(osgiBundle.getLocation());
-	}
-
 	private String[] getJavaProfiles() {
 		return getProfileManager().getJavaProfiles();
 	}
@@ -884,20 +877,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 
 	public ProfileManager getProfileManager() {
 		if (profileManager == null) {
-			File osgi = getOSGiLocation();
-			String[] sources = null;
-			if (osgi != null) {
-				if (eeSources != null) {
-					sources = new String[eeSources.length + 1];
-					sources[0] = osgi.getAbsolutePath();
-					System.arraycopy(eeSources, 0, sources, 1, eeSources.length);
-				} else {
-					sources = new String[] {osgi.getAbsolutePath()};
-				}
-				profileManager = new ProfileManager(sources, false);
-			} else {
-				profileManager = new ProfileManager(eeSources, true);
-			}
+			profileManager = new ProfileManager(eeSources, true);
 		}
 		return profileManager;
 	}
