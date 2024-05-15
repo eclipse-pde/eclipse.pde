@@ -42,7 +42,6 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
-import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.osgi.framework.Bundle;
 
@@ -247,6 +246,12 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	}
 
 	private void validateProject(int type, IProgressMonitor monitor) {
+		if (!PDEBuilderHelper.hasManifestBuilder(getProject())) {
+			ILog.get().error(String.format(
+					"eclipse.pde/issues/1185: validateBuildPropertiesExists called for project without ManifestBuilder: %s", //$NON-NLS-1$
+					getProject().getName()), new IllegalStateException());
+			return;
+		}
 		SubMonitor subMonitor = SubMonitor.convert(monitor, PDECoreMessages.ManifestConsistencyChecker_builderTaskName, getWorkAmount(type));
 		if ((type & STRUCTURE) != 0) {
 			validateProjectStructure(type, subMonitor.split(1));
@@ -374,14 +379,6 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			}
 			// if build.properties doesn't exist and build problems != IGNORE, create a marker on the project bug 172451
 			try {
-				if (!project.hasNature(PDE.PLUGIN_NATURE)) {
-					// how did this happen?
-					ILog.get().error(
-							"eclipse.pde/issues/1185: validateBuildPropertiesExists called for project without plugin nature: " //$NON-NLS-1$
-									+ project.getName(), 
-							new IllegalStateException());
-					return;
-				}
 				Map<String, Object> attributes = new HashMap<>();
 				attributes.put(IMarker.SEVERITY, CompilerFlags.ERROR == severity ? IMarker.SEVERITY_ERROR : IMarker.SEVERITY_WARNING);
 				attributes.put(IMarker.MESSAGE, PDECoreMessages.ManifestConsistencyChecker_buildDoesNotExist);
