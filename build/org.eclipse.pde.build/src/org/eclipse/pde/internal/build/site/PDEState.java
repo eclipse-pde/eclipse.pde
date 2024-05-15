@@ -104,6 +104,10 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		addedBundle = new ArrayList<>();
 		unqualifiedBundles = new ArrayList<>();
 		//forceQualifiers();
+		for (BundleDescription bundle : state.getBundles()) {
+			Dictionary<String, String> manifest = loadManifest(new File(bundle.getLocation()));
+			rememberManifestEntries(bundle, manifest, MANIFEST_ENTRIES);
+		}
 	}
 
 	public PDEState() {
