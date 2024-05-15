@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests;
 
-import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 
 import java.io.IOException;
@@ -27,8 +26,10 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -94,22 +95,40 @@ public abstract class PDETestCase {
 		// Delete any projects that were created
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		IProject[] projects = workspaceRoot.getProjects();
-		String firstFailureMessage = null;
+		AssertionError error = null;
 		for (IProject project : projects) {
 			try {
-				project.delete(true, new NullProgressMonitor());
+				deleteProject(project);
 			} catch (CoreException e) {
 				String message = "Failed to delete " + project;
-				if (firstFailureMessage == null) {
-					firstFailureMessage = message;
+				if (error == null) {
+					error = new AssertionError(message);
+					error.initCause(e);
+				} else {
+					error.addSuppressed(e);
 				}
 				PDETestsPlugin.getDefault().getLog().error(message, e);
 			}
 		}
 		TestUtils.waitForJobs(name.getMethodName(), 10, 10000);
 		FreezeMonitor.done();
-		if (firstFailureMessage != null) {
-			fail(firstFailureMessage);
+		if (error != null) {
+			throw error;
+		}
+	}
+
+	private void deleteProject(IProject project) throws CoreException {
+		try {
+			project.delete(true, new NullProgressMonitor());
+		} catch (CoreException e) {
+			try {
+				TimeUnit.SECONDS.sleep(1);
+			} catch (InterruptedException e1) {
+			}
+			project.refreshLocal(IResource.DEPTH_INFINITE, null);
+			if (project.exists()) {
+				project.delete(true, new NullProgressMonitor());
+			}
 		}
 	}
 
