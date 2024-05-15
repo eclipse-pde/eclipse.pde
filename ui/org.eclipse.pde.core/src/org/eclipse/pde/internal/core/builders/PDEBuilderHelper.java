@@ -14,10 +14,12 @@
 package org.eclipse.pde.internal.core.builders;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.pde.core.build.IBuild;
@@ -74,6 +76,18 @@ public class PDEBuilderHelper {
 	public static boolean isPDEProject(IProject project) {
 		return project != null && project.isAccessible()
 				&& (PDE.hasPluginNature(project) || PDE.hasFeatureNature(project) || PDE.hasUpdateSiteNature(project));
+	}
+
+	public static boolean hasManifestBuilder(IProject project) {
+		if (project != null && project.isAccessible()) {
+			try {
+				return Arrays.stream(project.getDescription().getBuildSpec())
+						.anyMatch(cmd -> PDE.MANIFEST_BUILDER_ID.equals(cmd.getBuilderName()));
+			} catch (CoreException e) {
+				// must assume then that it has not the required builder
+			}
+		}
+		return false;
 	}
 
 }
