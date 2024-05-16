@@ -34,6 +34,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.views.log.LogView;
 
@@ -60,7 +61,7 @@ public class LaunchTerminationStatusHandler implements IStatusHandler {
 			try {
 				File log = LaunchListener.getMostRecentLogFile(launch.getLaunchConfiguration());
 				if (log != null && log.exists()) {
-					MessageDialog dialog = new MessageDialog(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.Launcher_error_title, null, // accept the default window icon
+					MessageDialog dialog = new MessageDialog(PlatformUI.getWorkbench().getModalDialogShellProvider().getShell(), PDEUIMessages.Launcher_error_title, null, // accept the default window icon
 							PDEUIMessages.Launcher_error_code13, MessageDialog.ERROR, new String[] {PDEUIMessages.Launcher_error_displayInLogView, PDEUIMessages.Launcher_error_displayInSystemEditor, IDialogConstants.NO_LABEL}, OPEN_IN_ERROR_LOG_VIEW);
 					int dialog_value = dialog.open();
 					if (dialog_value == OPEN_IN_ERROR_LOG_VIEW) {
