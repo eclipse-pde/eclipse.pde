@@ -15,25 +15,24 @@ package org.eclipse.pde.ui.tests.target;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -43,7 +42,6 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetLocation;
-import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.eclipse.pde.core.target.TargetBundle;
 import org.eclipse.pde.internal.core.ICoreConstants;
@@ -51,14 +49,10 @@ import org.eclipse.pde.internal.core.P2Utils;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
-import org.eclipse.pde.internal.core.target.TargetDefinition;
-import org.eclipse.pde.internal.core.target.TargetDefinitionPersistenceHelper;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.pde.internal.launching.launcher.LaunchArgumentsHelper;
 import org.eclipse.pde.ui.tests.PDETestCase;
-import org.eclipse.pde.ui.tests.PDETestsPlugin;
 import org.junit.Test;
-import org.osgi.framework.ServiceReference;
 
 /**
  * Tests for target definitions. The tested targets will be created in the
@@ -76,19 +70,6 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			"a.typical.bundle", "1.1.0.200907071100");
 
 	/**
-	 * Returns the target platform service or <code>null</code> if none
-	 *
-	 * @return target platform service
-	 */
-	@Override
-	protected ITargetPlatformService getTargetService() {
-		ServiceReference<ITargetPlatformService> reference = PDETestsPlugin.getBundleContext()
-				.getServiceReference(ITargetPlatformService.class);
-		assertNotNull("Missing target platform service", reference);
-		return PDETestsPlugin.getBundleContext().getService(reference);
-	}
-
-	/**
 	 * Retrieves all bundles (source and code) in the given target definition
 	 * returning them as a set of URIs.
 	 *
@@ -96,16 +77,11 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	 *            target definition
 	 * @return all bundle URIs
 	 */
-	protected Set<URI> getAllBundleURIs(ITargetDefinition target) throws Exception {
+	private static Set<URI> getAllBundleURIs(ITargetDefinition target) throws Exception {
 		if (!target.isResolved()) {
 			target.resolve(null);
 		}
-		TargetBundle[] bundles = target.getBundles();
-		Set<URI> urls = new HashSet<>(bundles.length);
-		for (TargetBundle bundle : bundles) {
-			urls.add(bundle.getBundleInfo().getLocation());
-		}
-		return urls;
+		return Arrays.stream(target.getBundles()).map(b -> b.getBundleInfo().getLocation()).collect(Collectors.toSet());
 	}
 
 	/**
@@ -116,13 +92,9 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	public void testResetTargetPlatform() throws Exception {
 		ITargetDefinition definition = getDefaultTargetPlatorm();
 		Set<URI> uris = getAllBundleURIs(definition);
-		Set<URI> fragments = new HashSet<>();
-		TargetBundle[] bundles = definition.getBundles();
-		for (TargetBundle bundle : bundles) {
-			if (bundle.isFragment()) {
-				fragments.add(bundle.getBundleInfo().getLocation());
-			}
-		}
+		Set<URI> fragments = Arrays.stream(definition.getBundles()) //
+				.filter(TargetBundle::isFragment).map(b -> b.getBundleInfo().getLocation())
+				.collect(Collectors.toCollection(HashSet::new));
 
 		// current platform
 		IPluginModelBase[] models = TargetPlatformHelper.getPDEState().getTargetModels();
@@ -130,8 +102,8 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		// should be equivalent
 		assertEquals("Should have same number of bundles", uris.size(), models.length);
 		for (IPluginModelBase model : models) {
-			String location = model.getInstallLocation();
-			URI uri = new File(location).toURI();
+			Path location = Path.of(model.getInstallLocation());
+			URI uri = location.toUri();
 			assertTrue("Missing plug-in " + location, uris.contains(uri));
 			if (model.isFragmentModel()) {
 				assertTrue("Missing fragment", fragments.remove(uri));
@@ -152,14 +124,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		ITargetDefinition definition = getNewTarget();
 		ITargetLocation container = getTargetService().newProfileLocation(TargetPlatform.getDefaultLocation(), null);
 		definition.setTargetLocations(new ITargetLocation[] { container });
-		Set<URI> uris = getAllBundleURIs(definition);
-
-		// the old way
-		IPath location = IPath.fromOSString(TargetPlatform.getDefaultLocation());
-		URL[] pluginPaths = P2Utils.readBundlesTxt(location.toOSString(), location.append("configuration").toFile());
-		// pluginPaths will be null (and NPE) when self-hosting and the target
-		// platform is not a real installation
-		assertBundlePathsEqual(pluginPaths, uris);
+		assertTargetContentIsEqualToRuntimeBundles(definition);
 	}
 
 	/**
@@ -182,8 +147,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		for (NameVersionDescriptor info : restrictions) {
 			set.remove(info.getId());
 		}
-		assertTrue("Wrong bundles", set.isEmpty());
-
+		assertEquals("Wrong bundles", 0, set.size());
 	}
 
 	/**
@@ -198,21 +162,14 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		definition.setTargetLocations(new ITargetLocation[] { container });
 		List<BundleInfo> infos = getAllBundleInfos(definition);
 		// find right versions
-		String v1 = null;
-		String v2 = null;
-		Iterator<BundleInfo> iterator = infos.iterator();
-		while (iterator.hasNext() && (v2 == null || v1 == null)) {
-			BundleInfo info = iterator.next();
-			if (info.getSymbolicName().equals("org.eclipse.jdt.launching")) {
-				v1 = info.getVersion();
-			} else if (info.getSymbolicName().equals("org.eclipse.jdt.debug")) {
-				v2 = info.getVersion();
-			}
-		}
-		assertNotNull(v1);
-		assertFalse(v1.equals(BundleInfo.EMPTY_VERSION));
-		assertNotNull(v2);
-		assertFalse(v2.equals(BundleInfo.EMPTY_VERSION));
+		String v1 = infos.stream().filter(info -> info.getSymbolicName().equals("org.eclipse.jdt.launching"))
+				.map(info -> info.getVersion()).findFirst().orElse(null);
+		String v2 = infos.stream().filter(info -> info.getSymbolicName().equals("org.eclipse.jdt.debug"))
+				.map(info -> info.getVersion()).findFirst().orElse(null);
+		assertNotNull("Missing bundle 'org.eclipse.jdt.launching'", v1);
+		assertNotEquals(BundleInfo.EMPTY_VERSION, v1);
+		assertNotNull("Missing bundle 'org.eclipse.jdt.debug'", v2);
+		assertNotEquals(BundleInfo.EMPTY_VERSION, v2);
 
 		NameVersionDescriptor[] restrictions = new NameVersionDescriptor[] {
 				new NameVersionDescriptor("org.eclipse.jdt.launching", v1),
@@ -221,9 +178,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		infos = getAllBundleInfos(definition);
 
 		assertEquals("Wrong number of bundles", 2, infos.size());
-		iterator = infos.iterator();
-		while (iterator.hasNext()) {
-			BundleInfo info = iterator.next();
+		for (BundleInfo info : infos) {
 			if (info.getSymbolicName().equals("org.eclipse.jdt.launching")) {
 				assertEquals(v1, info.getVersion());
 			} else if (info.getSymbolicName().equals("org.eclipse.jdt.debug")) {
@@ -271,14 +226,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		ITargetDefinition definition = getNewTarget();
 		ITargetLocation container = getTargetService().newProfileLocation("${eclipse_home}", null);
 		definition.setTargetLocations(new ITargetLocation[] { container });
-		Set<URI> uris = getAllBundleURIs(definition);
-
-		// the old way
-		IPath location = IPath.fromOSString(TargetPlatform.getDefaultLocation());
-		URL[] pluginPaths = P2Utils.readBundlesTxt(location.toOSString(), location.append("configuration").toFile());
-		// pluginPaths will be null (and NPE) when self-hosting and the target
-		// platform is not a real installation
-		assertBundlePathsEqual(pluginPaths, uris);
+		assertTargetContentIsEqualToRuntimeBundles(definition);
 	}
 
 	/**
@@ -295,14 +243,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		ITargetLocation container = getTargetService().newProfileLocation("${eclipse_home}",
 				"${eclipse_home}/configuration");
 		definition.setTargetLocations(new ITargetLocation[] { container });
-		Set<URI> uris = getAllBundleURIs(definition);
-
-		// the old way
-		IPath location = IPath.fromOSString(TargetPlatform.getDefaultLocation());
-		URL[] pluginPaths = P2Utils.readBundlesTxt(location.toOSString(), location.append("configuration").toFile());
-		// pluginPaths will be null (and NPE) when self-hosting and the target
-		// platform is not a real installation
-		assertBundlePathsEqual(pluginPaths, uris);
+		assertTargetContentIsEqualToRuntimeBundles(definition);
 	}
 
 	/**
@@ -337,80 +278,6 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	}
 
 	/**
-	 * Returns the given input stream as a byte array
-	 *
-	 * @param stream
-	 *            the stream to get as a byte array
-	 * @param length
-	 *            the length to read from the stream or -1 for unknown
-	 * @return the given input stream as a byte array
-	 */
-	public static byte[] getInputStreamAsByteArray(InputStream stream, int length) throws IOException {
-		byte[] contents;
-		if (length == -1) {
-			contents = new byte[0];
-			int contentsLength = 0;
-			int amountRead = -1;
-			do {
-				// read at least 8K
-				int amountRequested = Math.max(stream.available(), 8192);
-				// resize contents if needed
-				if (contentsLength + amountRequested > contents.length) {
-					System.arraycopy(contents, 0, contents = new byte[contentsLength + amountRequested],
-							0,
-							contentsLength);
-				}
-				// read as many bytes as possible
-				amountRead = stream.read(contents, contentsLength, amountRequested);
-				if (amountRead > 0) {
-					// remember length of contents
-					contentsLength += amountRead;
-				}
-			} while (amountRead != -1);
-			// resize contents if necessary
-			if (contentsLength < contents.length) {
-				System.arraycopy(contents, 0, contents = new byte[contentsLength], 0, contentsLength);
-			}
-		} else {
-			contents = new byte[length];
-			int len = 0;
-			int readSize = 0;
-			while ((readSize != -1) && (len != length)) {
-				// See PR 1FMS89U
-				// We record first the read size. In this case length is the
-				// actual
-				// read size.
-				len += readSize;
-				readSize = stream.read(contents, len, length - len);
-			}
-		}
-		return contents;
-	}
-
-	/**
-	 * Returns the location of the JDT feature in the running host as a path in
-	 * the local file system.
-	 *
-	 * @return path to JDT feature
-	 */
-	protected IPath getJdtFeatureLocation() {
-		IPath path = IPath.fromOSString(TargetPlatform.getDefaultLocation());
-		path = path.append("features");
-		File dir = path.toFile();
-		assertTrue("Missing features directory", dir.exists() && !dir.isFile());
-		String[] files = dir.list();
-		String location = null;
-		for (String file : files) {
-			if (file.startsWith("org.eclipse.jdt_")) {
-				location = path.append(file).toOSString();
-				break;
-			}
-		}
-		assertNotNull("Missing JDT feature", location);
-		return IPath.fromOSString(location);
-	}
-
-	/**
 	 * Tests a JDT feature bundle container contains the appropriate bundles
 	 */
 	@Test
@@ -440,12 +307,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		for (TargetBundle bundle : bundles) {
 			expected.remove(bundle.getBundleInfo().getSymbolicName());
 		}
-		Iterator<String> iterator = expected.iterator();
-		while (iterator.hasNext()) {
-			String name = iterator.next();
-			System.err.println("Missing: " + name);
-		}
-		assertTrue("Wrong bundles in JDT feature", expected.isEmpty());
+		assertTrue("Wrong bundles in JDT feature. Missing: " + expected, expected.isEmpty());
 
 		// should be no source bundles
 		for (TargetBundle bundle : bundles) {
@@ -494,12 +356,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 				}
 			}
 		}
-		Iterator<String> iterator = expected.iterator();
-		while (iterator.hasNext()) {
-			String name = iterator.next();
-			System.err.println("Missing: " + name);
-		}
-		assertTrue("Wrong bundles in JDT feature", expected.isEmpty());
+		assertTrue("Wrong bundles in JDT feature. Missing: " + expected, expected.isEmpty());
 
 		// should be no source bundles
 		for (TargetBundle bundle : bundles) {
@@ -531,8 +388,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		for (NameVersionDescriptor info : restrictions) {
 			set.remove(info.getId());
 		}
-		assertTrue("Wrong bundles", set.isEmpty());
-
+		assertEquals("Wrong bundles", 0, set.size());
 	}
 
 	/**
@@ -609,12 +465,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 				expected.remove(model.getPluginBase().getId());
 				assertTrue(model.isEnabled());
 			}
-			Iterator<String> iterator = expected.iterator();
-			while (iterator.hasNext()) {
-				String name = iterator.next();
-				System.err.println("Missing: " + name);
-			}
-			assertTrue("Wrong bundles in target platform", expected.isEmpty());
+			assertTrue("Wrong bundles in target platform. Missing: " + expected, expected.isEmpty());
 		} finally {
 			resetTargetPlatform();
 		}
@@ -636,34 +487,6 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		} finally {
 			resetTargetPlatform();
 		}
-	}
-
-	protected void assertTargetDefinitionsEqual(ITargetDefinition targetA, ITargetDefinition targetB) {
-		assertTrue("Target content not equal", ((TargetDefinition) targetA).isContentEqual(targetB));
-	}
-
-	protected void assertBundlePathsEqual(URL[] legacyPluginPaths, Set<URI> bundleUris) throws URISyntaxException {
-		for (URL legacyPluginPath : legacyPluginPaths) {
-			assertTrue("Missing plug-in " + legacyPluginPath, bundleUris.contains(legacyPluginPath.toURI()));
-		}
-		assertEquals("Should have same number of bundles", legacyPluginPaths.length, bundleUris.size());
-	}
-
-	/**
-	 * Reads a target definition file from the tests/targets/target-files
-	 * location with the given name. Note that ".target" will be appended.
-	 *
-	 * @return target definition
-	 */
-	protected ITargetDefinition readOldTarget(String name) throws Exception {
-		URL url = PDETestsPlugin.getBundleContext().getBundle()
-				.getEntry("/tests/targets/target-files/" + name + ".target");
-		File file = new File(FileLocator.toFileURL(url).getFile());
-		ITargetDefinition target = getNewTarget();
-		try (FileInputStream stream = new FileInputStream(file)) {
-			TargetDefinitionPersistenceHelper.initFromXML(target, stream);
-		}
-		return target;
 	}
 
 	/**
@@ -830,7 +653,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 				new NameVersionDescriptor[] { MULTI_VERSION_LOW_DESCRIPTION, MULTI_VERSION_HIGH_DESCRIPTION });
 	}
 
-	protected void doIncludeVersions(NameVersionDescriptor[] descriptions) throws Exception {
+	private void doIncludeVersions(NameVersionDescriptor[] descriptions) throws Exception {
 		String bsn = MULTI_VERSION_LOW_DESCRIPTION.getId();
 
 		IPath extras = extractMultiVersionPlugins();
@@ -864,5 +687,27 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			getTargetService().deleteTarget(target.getHandle());
 			resetTargetPlatform();
 		}
+	}
+
+	private void assertTargetContentIsEqualToRuntimeBundles(ITargetDefinition definition) throws Exception {
+		Path home = Path.of(TargetPlatform.getDefaultLocation());
+		Path configuration = home.resolve("configuration");
+		Set<URI> pluginPaths = readBundlesTxt(home, configuration);
+		// pluginPaths will be empty when self-hosting and the target platform
+		// is not a real installation
+		assertFalse(pluginPaths.isEmpty());
+		assertEquals(pluginPaths, getAllBundleURIs(definition));
+	}
+
+	private static Set<URI> readBundlesTxt(Path platformHome, Path configurationArea) {
+		BundleInfo[] bundles = P2Utils.readBundles(platformHome.toString(), configurationArea.toFile());
+		if (bundles == null) {
+			return Set.of();
+		}
+		BundleInfo[] srcBundles = P2Utils.readSourceBundles(platformHome.toString(), configurationArea.toFile());
+		Stream<BundleInfo> allBundles = srcBundles == null || srcBundles.length == 0 ? Arrays.stream(bundles)
+				: (Stream.of(bundles, srcBundles).flatMap(Arrays::stream));
+		return allBundles.map(info -> new File(info.getLocation()).toURI())
+				.collect(Collectors.toCollection(LinkedHashSet::new));
 	}
 }
