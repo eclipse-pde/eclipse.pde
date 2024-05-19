@@ -108,46 +108,6 @@ public class P2Utils {
 	public static final String CAPABILITY_NS_JAVA_PACKAGE = "java.package"; //$NON-NLS-1$
 
 	/**
-	 * Returns bundles defined by the 'bundles.info' file in the
-	 * specified location, or <code>null</code> if none. The "bundles.info" file
-	 * is assumed to be at a fixed location relative to the configuration area URL.
-	 * This method will also look for a "source.info".  If available, any source
-	 * bundles found will also be added to the returned list.  If bundle URLs found
-	 * in the bundles.info are relative, they will be appended to platformHome to
-	 * make them absolute.
-	 *
-	 * @param platformHome absolute path in the local file system to an installation
-	 * @param configurationArea url location of the configuration directory to search for bundles.info and source.info
-	 * @return URLs of all bundles in the installation or <code>null</code> if not able
-	 * 	to locate a bundles.info
-	 */
-	public static URL[] readBundlesTxt(String platformHome, File configurationArea) {
-		if (configurationArea == null) {
-			return null;
-		}
-		try {
-			BundleInfo[] bundles = readBundles(platformHome, configurationArea);
-			if (bundles == null) {
-				return null;
-			}
-			int length = bundles.length;
-			BundleInfo[] srcBundles = readSourceBundles(platformHome, configurationArea);
-			if (srcBundles != null) {
-				length += srcBundles.length;
-			}
-			URL[] urls = new URL[length];
-			copyURLs(urls, 0, bundles);
-			if (srcBundles != null && srcBundles.length > 0) {
-				copyURLs(urls, bundles.length, srcBundles);
-			}
-			return urls;
-		} catch (MalformedURLException e) {
-			PDECore.log(e);
-			return null;
-		}
-	}
-
-	/**
 	 * Returns bundles defined by the 'bundles.info' relative to the given
 	 * home and configuration area, or <code>null</code> if none.
 	 * The "bundles.info" file is assumed to be at a fixed location relative to the
@@ -204,19 +164,6 @@ public class P2Utils {
 		} catch (IOException e) {
 			PDECore.log(e);
 			return null;
-		}
-	}
-
-	/**
-	 * Copies URLs from the given bundle info objects into the specified array starting at the given index.
-	 *
-	 * @param dest array to copy URLs into
-	 * @param start index to start copying into
-	 * @param infos associated bundle infos
-	 */
-	private static void copyURLs(URL[] dest, int start, BundleInfo[] infos) throws MalformedURLException {
-		for (BundleInfo info : infos) {
-			dest[start++] = new File(info.getLocation()).toURL();
 		}
 	}
 
