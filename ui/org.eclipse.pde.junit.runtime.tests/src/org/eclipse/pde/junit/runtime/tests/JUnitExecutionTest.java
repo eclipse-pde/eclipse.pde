@@ -17,17 +17,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.regex.Pattern;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -39,10 +35,14 @@ import org.eclipse.jdt.junit.model.ITestElement.FailureTrace;
 import org.eclipse.jdt.junit.model.ITestElement.Result;
 import org.eclipse.jdt.junit.model.ITestElementContainer;
 import org.eclipse.jdt.junit.model.ITestRunSession;
+import org.eclipse.pde.ui.tests.util.ProjectUtils;
+import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
@@ -53,51 +53,52 @@ import org.osgi.framework.FrameworkUtil;
 @RunWith(Parameterized.class)
 public class JUnitExecutionTest {
 
-	@Parameter
-	public TestInput input;
+	@ClassRule
+	public static final TestRule CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
 
 	@BeforeClass
 	public static void setupProjects() throws Exception {
-		TargetPlatformUtil.setRunningPlatformAsTarget();
+		Pattern junitRuntimeIDs = Pattern
+				.compile("\\.junit\\d*\\.runtime|junit\\..+\\.engine$|org\\.junit\\.platform\\.launcher");
+		TargetPlatformUtil.setRunningPlatformSubSetAsTarget(TargetPlatformUtil.class + "_target", b -> {
+			// filter out junit.runtime and test engine bundles from the target platform
+			// this tests the scenario where PDE supplies them from the host installation
+			return !junitRuntimeIDs.matcher(b.getSymbolicName()).find();
+		});
 
 		Bundle bundle = FrameworkUtil.getBundle(JUnitExecutionTest.class);
 
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-		for (URL resource : Collections.list(bundle.findEntries("test-bundles", "*", false))) {
-			IPath resourcePath = IPath.fromOSString(FileLocator.toFileURL(resource).getPath());
-			IPath descriptionPath = resourcePath.append(IProjectDescription.DESCRIPTION_FILE_NAME);
-			if (!descriptionPath.toFile().exists())
-				continue;
-
-			IProjectDescription projectDescription = workspaceRoot.getWorkspace()
-					.loadProjectDescription(descriptionPath);
-			IProject project = workspaceRoot.getProject(resourcePath.lastSegment());
-			if (!project.exists()) {
-				project.create(projectDescription, null);
-				project.open(null);
-			}
+		for (URL resource : Collections.list(bundle.findEntries("test-bundles", "verification.tests.*", false))) {
+			ProjectUtils.importTestProject(FileLocator.toFileURL(resource));
 		}
-		
 		workspaceRoot.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, null);
 	}
 
 	@Parameters(name = "{0}")
-	public static Collection<TestInput> parameters() {
-		return Arrays.asList(
-				new TestInput("JUnit5", "verification.tests.junit5"),
-				new TestInput("JUnit5 Fragment", "verification.tests.junit5.fragment"),
-				new TestInput("JUnit4", "verification.tests.junit4"),
-				new TestInput("JUnit4 Fragment", "verification.tests.junit4.fragment"),
-				new TestInput("JUnit4 (JUnitPlatform)", "verification.tests.junit4.platform"),
-				new TestInput("JUnit4 (JUnitPlatform) Fragment", "verification.tests.junit4.platform.fragment"),
-				new TestInput("Java 11 bundle with module limit", "verification.tests.limitmodules"),
-				new TestInput("Using a 'test' source folder", "verification.tests.testfolder")
-				);
+	public static Object[][] parameters() {
+		return new Object[][] { { "JUnit5", getJProject("verification.tests.junit5") },
+				{ "JUnit5 Fragment", getJProject("verification.tests.junit5.fragment") },
+				{ "JUnit4", getJProject("verification.tests.junit4") },
+				{ "JUnit4 Fragment", getJProject("verification.tests.junit4.fragment") },
+				{ "JUnit4 (JUnitPlatform)", getJProject("verification.tests.junit4.platform") },
+				{ "JUnit4 (JUnitPlatform) Fragment", getJProject("verification.tests.junit4.platform.fragment") },
+				{ "Java 11 bundle with module limit", getJProject("verification.tests.limitmodules") },
+				{ "Using a 'test' source folder", getJProject("verification.tests.testfolder") } };
 	}
+
+	static IJavaProject getJProject(String projectName) {
+		return JavaCore.create(ResourcesPlugin.getWorkspace().getRoot().getProject(projectName));
+	}
+
+	@Parameter(0)
+	public String testCaseName; // Just for display
+	@Parameter(1)
+	public IJavaProject project;
 
 	@Test
 	public void executeType() throws Exception {
-		IType testClass = input.findType("Test1");
+		IType testClass = findType(project, "Test1");
 		ITestRunSession session = TestExecutionUtil.runTest(testClass);
 
 		assertThat(session.getChildren()).hasSize(1);
@@ -106,7 +107,7 @@ public class JUnitExecutionTest {
 
 	@Test
 	public void executePackage() throws Exception {
-		IPackageFragment testPackage = input.findType("Test1").getPackageFragment();
+		IPackageFragment testPackage = findType(project, "Test1").getPackageFragment();
 		ITestRunSession session = TestExecutionUtil.runTest(testPackage);
 
 		assertThat(session.getChildren()).hasSize(2);
@@ -115,7 +116,7 @@ public class JUnitExecutionTest {
 
 	@Test
 	public void executeProject() throws Exception {
-		ITestRunSession session = TestExecutionUtil.runTest(input.project);
+		ITestRunSession session = TestExecutionUtil.runTest(project);
 
 		assertThat(session.getChildren()).hasSize(2);
 		assertSuccessful(session);
@@ -123,7 +124,7 @@ public class JUnitExecutionTest {
 
 	@Test
 	public void executeMethod() throws Exception {
-		IMethod testMethod = input.findType("Test1").getMethod("test1", new String[0]);
+		IMethod testMethod = findType(project, "Test1").getMethod("test1", new String[0]);
 		Assume.assumeTrue(testMethod.exists());
 		ITestRunSession session = TestExecutionUtil.runTest(testMethod);
 
@@ -145,7 +146,8 @@ public class JUnitExecutionTest {
 	private static void addFailureTraces(ITestElement element, AssertionError assertionFailedError) {
 		FailureTrace trace = element.getFailureTrace();
 		if (trace != null) {
-			assertionFailedError.addSuppressed(new AssertionError("FailureTrace of " + element + ":\n\n" + trace.getTrace()));
+			assertionFailedError
+					.addSuppressed(new AssertionError("FailureTrace of " + element + ":\n\n" + trace.getTrace()));
 		}
 
 		if (element instanceof ITestElementContainer) {
@@ -155,28 +157,10 @@ public class JUnitExecutionTest {
 		}
 	}
 
-	static class TestInput {
-		private final String displayName;
-
-		final IJavaProject project;
-
-		public TestInput(String displayName, String projectName) {
-			this.displayName = displayName;
-			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-			this.project = JavaCore.create(project);
-		}
-
-		@Override
-		public String toString() {
-			return displayName;
-		}
-
-		public IType findType(String name) throws JavaModelException {
-			IType type = project.findType(project.getElementName(), name);
-			assertNotNull(type);
-			Assert.assertTrue(type.exists());
-			return type;
-		}
+	static IType findType(IJavaProject project, String name) throws JavaModelException {
+		IType type = project.findType(project.getElementName(), name);
+		assertNotNull(type);
+		Assert.assertTrue(type.exists());
+		return type;
 	}
-
 }

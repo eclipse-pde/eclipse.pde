@@ -169,6 +169,10 @@ public class ProjectUtils {
 		if (entry == null) {
 			throw new IllegalArgumentException(path + " does not exist");
 		}
+		return importTestProject(entry);
+	}
+
+	public static IProject importTestProject(URL entry) throws CoreException {
 		IPath projectFile = IPath.fromPortableString(entry.getPath()).append(IProjectDescription.DESCRIPTION_FILE_NAME);
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IProjectDescription projectDescription = workspace.loadProjectDescription(projectFile);
