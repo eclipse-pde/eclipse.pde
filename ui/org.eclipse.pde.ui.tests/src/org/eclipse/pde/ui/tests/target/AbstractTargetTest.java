@@ -178,7 +178,7 @@ public abstract class AbstractTargetTest extends PDETestCase {
 					file.createNewFile();
 					try (InputStream inputStream = new BufferedInputStream(zipFile.getInputStream(entry));
 							BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
-						byte[] bytes = LocalTargetDefinitionTests.getInputStreamAsByteArray(inputStream, -1);
+						byte[] bytes = inputStream.readAllBytes();
 						outputStream.write(bytes);
 					}
 				}

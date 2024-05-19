@@ -45,7 +45,6 @@ import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.core.target.LoadTargetDefinitionJob;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.ui.tests.PDETestsPlugin;
-import org.eclipse.pde.ui.tests.target.LocalTargetDefinitionTests;
 import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
 import org.eclipse.pde.ui.tests.util.TestBundleCreator;
 import org.eclipse.test.performance.Dimension;
@@ -274,7 +273,7 @@ public class TargetPlatformPerfTest extends PerformanceTestCase {
 					file.createNewFile();
 					try (InputStream inputStream = new BufferedInputStream(zipFile.getInputStream(entry));
 							BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
-						byte[] bytes = LocalTargetDefinitionTests.getInputStreamAsByteArray(inputStream, -1);
+						byte[] bytes = inputStream.readAllBytes();
 						outputStream.write(bytes);
 					}
 				}

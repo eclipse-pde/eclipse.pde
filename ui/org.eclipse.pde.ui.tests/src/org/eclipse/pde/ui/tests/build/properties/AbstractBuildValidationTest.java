@@ -51,7 +51,6 @@ import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.correction.ResolutionGenerator;
 import org.eclipse.pde.ui.tests.PDETestsPlugin;
-import org.eclipse.pde.ui.tests.target.LocalTargetDefinitionTests;
 import org.eclipse.ui.IMarkerResolution;
 import org.junit.Before;
 import org.osgi.service.prefs.BackingStoreException;
@@ -243,7 +242,7 @@ public abstract class AbstractBuildValidationTest {
 					file.createNewFile();
 					try (InputStream inputStream = new BufferedInputStream(zipFile.getInputStream(entry));
 							BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
-						byte[] bytes = LocalTargetDefinitionTests.getInputStreamAsByteArray(inputStream, -1);
+						byte[] bytes = inputStream.readAllBytes();
 						outputStream.write(bytes);
 					}
 				}
