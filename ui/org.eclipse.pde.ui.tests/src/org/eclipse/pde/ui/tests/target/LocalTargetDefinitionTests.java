@@ -57,7 +57,6 @@ import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.pde.internal.launching.launcher.LaunchArgumentsHelper;
 import org.eclipse.pde.ui.tests.PDETestCase;
 import org.eclipse.pde.ui.tests.PDETestsPlugin;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.osgi.framework.ServiceReference;
 
@@ -70,11 +69,6 @@ import org.osgi.framework.ServiceReference;
  * @since 3.5
  */
 public class LocalTargetDefinitionTests extends AbstractTargetTest {
-
-	@BeforeClass
-	public static void requireStandaloneEclipseSDKEnvironment() {
-		PDETestCase.assumeRunningInStandaloneEclipseSDK();
-	}
 
 	public static final NameVersionDescriptor MULTI_VERSION_LOW_DESCRIPTION = new NameVersionDescriptor(
 			"a.typical.bundle", "1.0.0.200907071058");
@@ -153,6 +147,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	 */
 	@Test
 	public void testDefaultTargetPlatform() throws Exception {
+		PDETestCase.assumeRunningInStandaloneEclipseSDK();
 		// the new way
 		ITargetDefinition definition = getNewTarget();
 		ITargetLocation container = getTargetService().newProfileLocation(TargetPlatform.getDefaultLocation(), null);
@@ -197,6 +192,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	 */
 	@Test
 	public void testVersionRestrictedDefaultTargetPlatform() throws Exception {
+		PDETestCase.assumeRunningInStandaloneEclipseSDK();
 		ITargetDefinition definition = getNewTarget();
 		ITargetLocation container = getTargetService().newProfileLocation(TargetPlatform.getDefaultLocation(), null);
 		definition.setTargetLocations(new ITargetLocation[] { container });
@@ -243,6 +239,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	 */
 	@Test
 	public void testMissingVersionRestrictedDefaultTargetPlatform() throws Exception {
+		PDETestCase.assumeRunningInStandaloneEclipseSDK();
 		ITargetDefinition definition = getNewTarget();
 		ITargetLocation container = getTargetService().newProfileLocation(TargetPlatform.getDefaultLocation(), null);
 		NameVersionDescriptor[] restrictions = new NameVersionDescriptor[] {
@@ -269,6 +266,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	 */
 	@Test
 	public void testEclipseHomeTargetPlatform() throws Exception {
+		PDETestCase.assumeRunningInStandaloneEclipseSDK();
 		// the new way
 		ITargetDefinition definition = getNewTarget();
 		ITargetLocation container = getTargetService().newProfileLocation("${eclipse_home}", null);
@@ -291,6 +289,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	 */
 	@Test
 	public void testEclipseHomeTargetPlatformAndConfigurationArea() throws Exception {
+		PDETestCase.assumeRunningInStandaloneEclipseSDK();
 		// the new way
 		ITargetDefinition definition = getNewTarget();
 		ITargetLocation container = getTargetService().newProfileLocation("${eclipse_home}",
@@ -312,6 +311,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	 */
 	@Test
 	public void testDirectoryBundleContainer() throws Exception {
+		PDETestCase.assumeRunningInStandaloneEclipseSDK();
 		ITargetDefinition definition = getNewTarget();
 		ITargetLocation container = getTargetService()
 				.newDirectoryLocation(TargetPlatform.getDefaultLocation() + "/plugins");
@@ -327,6 +327,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	 */
 	@Test
 	public void testVariableDirectoryBundleContainer() throws Exception {
+		PDETestCase.assumeRunningInStandaloneEclipseSDK();
 		ITargetDefinition definition = getNewTarget();
 		ITargetLocation container = getTargetService().newDirectoryLocation("${eclipse_home}/plugins");
 		definition.setTargetLocations(new ITargetLocation[] { container });
@@ -681,6 +682,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	 */
 	@Test
 	public void testArgumentsInstallDirectory() throws Exception {
+		PDETestCase.assumeRunningInStandaloneEclipseSDK();
 		ITargetLocation installDirectory = getTargetService().newDirectoryLocation(TargetPlatform.getDefaultLocation());
 		String[] installArgs = installDirectory.getVMArguments();
 		assertNotNull("Install directory should have arguments", installArgs);
@@ -702,6 +704,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	 */
 	@Test
 	public void testArgumentsProfileContainer() throws Exception {
+		PDETestCase.assumeRunningInStandaloneEclipseSDK();
 		ITargetLocation profileContainer = getTargetService().newProfileLocation(TargetPlatform.getDefaultLocation(),
 				null);
 		String[] arguments = profileContainer.getVMArguments();
@@ -771,6 +774,9 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	@Test
 	public void testDeleteCleansCaches() throws Exception {
 		ITargetDefinition definition = getNewTarget();
+		// dummy content to ensure the target is cached
+		ITargetLocation container = getTargetService().newProfileLocation(TargetPlatform.getDefaultLocation(), null);
+		definition.setTargetLocations(new ITargetLocation[] { container });
 		try {
 			assertFalse(TargetPlatformHelper.getTargetDefinitionMap().containsKey(definition.getHandle()));
 			definition.resolve(null);
