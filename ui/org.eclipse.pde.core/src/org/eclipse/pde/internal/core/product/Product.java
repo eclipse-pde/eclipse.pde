@@ -900,7 +900,7 @@ public class Product extends ProductObject implements IProduct {
 		boolean old = fIncludeJre;
 		fIncludeJre = include;
 		if (isEditable()) {
-			firePropertyChanged(P_INCLUDE_LAUNCHERS, Boolean.toString(old), Boolean.toString(fIncludeJre));
+			firePropertyChanged(P_INCLUDE_JRE, Boolean.toString(old), Boolean.toString(fIncludeJre));
 		}
 
 	}
