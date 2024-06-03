@@ -2901,6 +2901,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String RequiredExecutionEnvironmentSection_add;
 
+	public static String RequiredExecutionEnvironmentSection_upgrade;
+
 	public static String RequiredExecutionEnvironmentSection_remove;
 
 	public static String RequiredExecutionEnvironmentSection_up;
