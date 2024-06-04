@@ -18,7 +18,7 @@
     <relativePath>../../</relativePath>
   </parent>
   <artifactId>org.eclipse.pde</artifactId>
-  <version>3.13.2700-SNAPSHOT</version>
+  <version>3.13.2800-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 
   <build>
