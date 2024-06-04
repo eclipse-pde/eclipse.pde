@@ -134,8 +134,8 @@ public class ExecutionEnvironmentSection extends TableSection {
 
 	public ExecutionEnvironmentSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION,
-				new String[] { PDEUIMessages.RequiredExecutionEnvironmentSection_add,
-						PDEUIMessages.RequiredExecutionEnvironmentSection_upgrade,
+				new String[] {  PDEUIMessages.RequiredExecutionEnvironmentSection_upgrade,
+						PDEUIMessages.RequiredExecutionEnvironmentSection_add,
 						PDEUIMessages.RequiredExecutionEnvironmentSection_remove,
 						PDEUIMessages.RequiredExecutionEnvironmentSection_up,
 						PDEUIMessages.RequiredExecutionEnvironmentSection_down });
