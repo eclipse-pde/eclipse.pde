@@ -21,7 +21,7 @@
 
   <groupId>eclipse.platform.ui</groupId>
   <artifactId>org.eclipse.e4.tools.emf.ui</artifactId>
-  <version>4.8.400-SNAPSHOT</version>
+  <version>4.8.500-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 
   <properties>
@@ -33,11 +33,6 @@
       <plugin>
         <groupId>org.eclipse.tycho</groupId>
         <artifactId>tycho-compiler-plugin</artifactId>
-        <configuration>
-          <compilerArgs>
-            <arg>-warn:-raw,unchecked</arg>
-          </compilerArgs>
-        </configuration>
       </plugin>
     </plugins>
  </build>
