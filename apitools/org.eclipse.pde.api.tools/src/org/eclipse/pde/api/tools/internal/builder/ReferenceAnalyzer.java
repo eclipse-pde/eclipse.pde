@@ -146,7 +146,7 @@ public class ReferenceAnalyzer {
 	 * are interested in. Provides a fast way to hand references off to
 	 * interested problem detectors.
 	 */
-	IApiProblemDetector[][] fIndexedDetectors;
+	private IApiProblemDetector[][] fIndexedDetectors;
 
 	/**
 	 * Indexes the problem detectors by the reference kinds they are interested
@@ -230,10 +230,14 @@ public class ReferenceAnalyzer {
 	 */
 	public IApiProblem[] analyze(IApiComponent component, IApiTypeContainer scope, IProgressMonitor monitor) throws CoreException {
 		SubMonitor localMonitor = SubMonitor.convert(monitor, 4);
-		// build problem detectors
-		IApiProblemDetector[] detectors = buildProblemDetectors(component, ProblemDetectorBuilder.K_ALL, localMonitor.split(1));
-		// analyze
 		try {
+			// build problem detectors
+			IApiProblemDetector[] detectors = buildProblemDetectors(component, ProblemDetectorBuilder.K_ALL,
+					localMonitor.split(1));
+			if (detectors.length == 0) {
+				return EMPTY_RESULT;
+			}
+			// analyze
 			// 1. extract references
 			localMonitor.subTask(BuilderMessages.ReferenceAnalyzer_analyzing_api_checking_use);
 			extractReferences(scope, localMonitor.split(1));
