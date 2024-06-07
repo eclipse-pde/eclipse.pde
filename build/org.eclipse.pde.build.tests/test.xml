@@ -158,9 +158,6 @@
       <iu
         id="org.eclipse.jdt.source.feature.group"
         version="" />
-      <iu
-        id="org.eclipse.rcp.configuration.feature.group"
-        version="" />
 
       <iu
         id="org.eclipse.equinox.executable"
