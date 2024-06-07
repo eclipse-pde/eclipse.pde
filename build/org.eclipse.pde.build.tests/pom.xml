@@ -80,7 +80,6 @@
 										<iu><id>org.eclipse.platform.feature.group</id></iu>
 										<iu><id>org.eclipse.jdt.feature.group</id></iu>
 										<iu><id>org.eclipse.jdt.source.feature.group</id></iu>
-										<iu><id>org.eclipse.rcp.configuration.feature.group</id></iu>
 										<iu><id>org.eclipse.equinox.executable</id></iu>
 										<iu><id>org.eclipse.e4.rcp.feature.group</id></iu>
 										<iu><id>org.eclipse.e4.rcp.source.feature.group</id></iu>
