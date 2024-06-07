@@ -70,6 +70,7 @@ import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.preferences.TargetPlatformPreferencePage;
 import org.eclipse.pde.internal.ui.shared.target.ITargetChangedListener;
 import org.eclipse.pde.internal.ui.shared.target.TargetContentsGroup;
 import org.eclipse.pde.internal.ui.shared.target.TargetLocationsGroup;
@@ -87,6 +88,7 @@ import org.eclipse.ui.IURIEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.forms.AbstractFormPart;
 import org.eclipse.ui.forms.HyperlinkGroup;
@@ -406,8 +408,19 @@ public class TargetEditor extends FormEditor {
 		export.setToolTipText("Export"); //$NON-NLS-1$
 		export.setImageDescriptor(PDEPluginImages.DESC_EXPORT_TARGET_TOOL);
 
+		Action openTPPreference = new Action("openTPPreference") { //$NON-NLS-1$
+			@Override
+			public void run() {
+				PreferencesUtil.createPreferenceDialogOn(getSite().getShell(), TargetPlatformPreferencePage.PAGE_ID,
+						null, null).open();
+			}
+		};
+		openTPPreference.setToolTipText(PDEUIMessages.AbstractTargetPage_openPreferences);
+		openTPPreference.setImageDescriptor(PDEPluginImages.DESC_SETTINGS_OBJ);
+
 		form.getToolBarManager().add(setAsTarget);
 		form.getToolBarManager().add(export);
+		form.getToolBarManager().add(openTPPreference);
 		form.getToolBarManager().add(help);
 		form.updateToolBar();
 
