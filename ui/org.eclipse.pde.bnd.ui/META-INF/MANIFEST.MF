@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Generic UI components related to BND
 Bundle-SymbolicName: org.eclipse.pde.bnd.ui;singleton:=true
 Bundle-Vendor: Eclipse.org
-Bundle-Version: 1.1.0.qualifier
+Bundle-Version: 1.1.100.qualifier
 Export-Package: org.eclipse.pde.bnd.ui.autocomplete;version="1.0.0";x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.bnd.ui.plugins;x-internal:=true,
  org.eclipse.pde.bnd.ui.preferences;version="1.0.0";x-friends:="org.eclipse.pde.ui",
