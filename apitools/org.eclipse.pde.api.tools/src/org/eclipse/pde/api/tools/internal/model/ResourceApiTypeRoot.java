@@ -13,9 +13,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.model;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -57,13 +54,7 @@ public class ResourceApiTypeRoot extends AbstractApiTypeRoot {
 			return fContents;
 		}
 		modifiedTimeStamp = fFile.getModificationStamp();
-		try (InputStream stream = fFile.getContents(true)) {
-			fContents = stream.readAllBytes();
-			return fContents;
-		} catch (IOException ioe) {
-			abort("Unable to read class file: " + getTypeName(), ioe); //$NON-NLS-1$
-			return null;
-		}
+		return fFile.readAllBytes();
 	}
 
 	@Override
