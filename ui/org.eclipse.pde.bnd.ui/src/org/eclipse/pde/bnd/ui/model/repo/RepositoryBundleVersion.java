@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2019 bndtools project and others.
+ * Copyright (c) 2010, 2024 bndtools project and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -27,7 +27,7 @@ import aQute.bnd.service.Actionable;
 import aQute.bnd.service.Strategy;
 import aQute.bnd.version.Version;
 
-public class RepositoryBundleVersion extends RepositoryEntry implements Actionable, ResourceProvider {
+public class RepositoryBundleVersion extends RepositoryEntry implements Actionable {
 
 	private final Version			version;
 	private final RepositoryBundle	bundle;
