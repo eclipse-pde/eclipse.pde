@@ -15,7 +15,7 @@ package org.eclipse.pde.internal.ui.editor.contentassist.display;
 
 import org.eclipse.jdt.core.IBuffer;
 import org.eclipse.jdt.core.formatter.IndentManipulation;
-import org.eclipse.jface.internal.text.html.SingleCharReader;
+import org.eclipse.text.readers.SingleCharacterReader;
 
 /**
  * Reads a java doc comment from a java doc comment. Skips star-character
@@ -24,7 +24,7 @@ import org.eclipse.jface.internal.text.html.SingleCharReader;
  * XXX: copied from <code>org.eclipse.jdt.ui</code>.
  * </p>
  */
-public class JavaDocCommentReader extends SingleCharReader {
+public class JavaDocCommentReader extends SingleCharacterReader {
 
 	private IBuffer fBuffer;
 
