@@ -357,6 +357,7 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 	 */
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor)
 			throws CoreException {
+		launchMode = launch.getLaunchMode();
 		fWorkspaceLocation = null;
 		fConfigDir = null;
 		fModels = BundleLauncherHelper.getMergedBundleMap(configuration, false);
@@ -377,7 +378,6 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 			if (autoValidate)
 				validatePluginDependencies(configuration, subMonitor.split(1));
 			validateProjectDependencies(configuration, subMonitor.split(1));
-			LauncherUtils.setLastLaunchMode(launch.getLaunchMode());
 			clear(configuration, subMonitor.split(1));
 		}
 		launch.setAttribute(PDE_JUNIT_SHOW_COMMAND, "false"); //$NON-NLS-1$
@@ -1013,6 +1013,7 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 
 	// key is a model, value is startLevel:autoStart
 	private Map<IPluginModelBase, String> fModels;
+	private String launchMode;
 
 	private static final String PDE_JUNIT_SHOW_COMMAND = "pde.junit.showcommandline"; //$NON-NLS-1$
 
@@ -1234,7 +1235,7 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 		SubMonitor subMon = SubMonitor.convert(monitor, 50);
 
 		// Clear workspace and prompt, if necessary
-		LauncherUtils.clearWorkspace(configuration, fWorkspaceLocation, subMon.split(25));
+		LauncherUtils.clearWorkspace(configuration, fWorkspaceLocation, launchMode, subMon.split(25));
 
 		subMon.setWorkRemaining(25);
 
@@ -1267,7 +1268,8 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 	 */
 	protected void validatePluginDependencies(ILaunchConfiguration configuration, IProgressMonitor monitor)
 			throws CoreException {
-		EclipsePluginValidationOperation op = new EclipsePluginValidationOperation(configuration, fModels.keySet());
+		EclipsePluginValidationOperation op = new EclipsePluginValidationOperation(configuration, fModels.keySet(),
+				launchMode);
 		LaunchPluginValidator.runValidationOperation(op, monitor);
 	}
 }

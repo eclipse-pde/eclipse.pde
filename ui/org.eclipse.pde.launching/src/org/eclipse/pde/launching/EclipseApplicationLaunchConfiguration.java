@@ -195,7 +195,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 		}
 
 		// Clear workspace and prompt, if necessary
-		LauncherUtils.clearWorkspace(configuration, fWorkspaceLocation, subMon.split(1));
+		LauncherUtils.clearWorkspace(configuration, fWorkspaceLocation, launchMode, subMon.split(1));
 
 		// clear config area, if necessary
 		if (configuration.getAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, false)) {
@@ -238,7 +238,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 
 	@Override
 	protected void validatePluginDependencies(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
-		EclipsePluginValidationOperation op = new EclipsePluginValidationOperation(configuration, fModels.keySet());
+		EclipsePluginValidationOperation op = new EclipsePluginValidationOperation(configuration, fModels.keySet(), launchMode);
 		LaunchPluginValidator.runValidationOperation(op, monitor);
 	}
 
