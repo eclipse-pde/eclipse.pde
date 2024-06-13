@@ -122,6 +122,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 
 	// key is a model, value is startLevel:autoStart
 	private Map<IPluginModelBase, String> fModels;
+	private String launchMode;
 
 	private static final String PDE_JUNIT_SHOW_COMMAND = "pde.junit.showcommandline"; //$NON-NLS-1$
 
@@ -469,6 +470,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		fConfigDir = null;
 		fModels = BundleLauncherHelper.getMergedBundleMap(configuration, false);
 		fAllBundles = fModels.keySet().stream().collect(Collectors.groupingBy(m -> m.getPluginBase().getId(), LinkedHashMap::new, Collectors.toCollection(ArrayList::new)));
+		launchMode = launch.getLaunchMode();
 
 		// implicitly add the plug-ins required for JUnit testing if necessary
 		addRequiredJunitRuntimePlugins(configuration);
@@ -481,10 +483,10 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		boolean autoValidate = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false);
 		SubMonitor subMonitor = SubMonitor.convert(monitor, autoValidate ? 3 : 4);
 		if (isShowCommand == false) {
-			if (autoValidate)
+			if (autoValidate) {
 				validatePluginDependencies(configuration, subMonitor.split(1));
+			}
 			validateProjectDependencies(configuration, subMonitor.split(1));
-			LauncherUtils.setLastLaunchMode(launch.getLaunchMode());
 			clear(configuration, subMonitor.split(1));
 		}
 		launch.setAttribute(PDE_JUNIT_SHOW_COMMAND, "false"); //$NON-NLS-1$
@@ -580,7 +582,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		SubMonitor subMon = SubMonitor.convert(monitor, 50);
 
 		// Clear workspace and prompt, if necessary
-		LauncherUtils.clearWorkspace(configuration, fWorkspaceLocation, subMon.split(25));
+		LauncherUtils.clearWorkspace(configuration, fWorkspaceLocation, launchMode, subMon.split(25));
 
 		subMon.setWorkRemaining(25);
 
@@ -615,7 +617,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	 * 			a progress monitor
 	 */
 	protected void validatePluginDependencies(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
-		EclipsePluginValidationOperation op = new EclipsePluginValidationOperation(configuration, fModels.keySet());
+		EclipsePluginValidationOperation op = new EclipsePluginValidationOperation(configuration, fModels.keySet(), launchMode);
 		LaunchPluginValidator.runValidationOperation(op, monitor);
 	}
 }
