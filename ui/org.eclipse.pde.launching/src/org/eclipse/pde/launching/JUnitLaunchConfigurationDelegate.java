@@ -465,6 +465,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 
 	@Override
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
+		LauncherUtils.setLastLaunchMode(launch.getLaunchMode());
 		fWorkspaceLocation = null;
 		fConfigDir = null;
 		fModels = BundleLauncherHelper.getMergedBundleMap(configuration, false);
@@ -484,7 +485,6 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 			if (autoValidate)
 				validatePluginDependencies(configuration, subMonitor.split(1));
 			validateProjectDependencies(configuration, subMonitor.split(1));
-			LauncherUtils.setLastLaunchMode(launch.getLaunchMode());
 			clear(configuration, subMonitor.split(1));
 		}
 		launch.setAttribute(PDE_JUNIT_SHOW_COMMAND, "false"); //$NON-NLS-1$

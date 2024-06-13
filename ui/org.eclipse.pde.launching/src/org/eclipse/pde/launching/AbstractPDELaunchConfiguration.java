@@ -427,6 +427,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 * from the launch configuration
 	 */
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
+		LauncherUtils.setLastLaunchMode(launch.getLaunchMode());
 		String attribute = launch.getAttribute(PDE_LAUNCH_SHOW_COMMAND);
 		boolean isShowCommand = false;
 		if (attribute != null) {
@@ -439,7 +440,6 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 				validatePluginDependencies(configuration, subMonitor.split(10));
 			}
 			validateProjectDependencies(configuration, subMonitor.split(10));
-			LauncherUtils.setLastLaunchMode(launch.getLaunchMode());
 			clear(configuration, subMonitor.split(10));
 		}
 		launch.setAttribute(PDE_LAUNCH_SHOW_COMMAND, "false"); //$NON-NLS-1$

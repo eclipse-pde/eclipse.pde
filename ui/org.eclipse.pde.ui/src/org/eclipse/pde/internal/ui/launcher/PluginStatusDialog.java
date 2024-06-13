@@ -20,6 +20,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -29,6 +30,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.internal.launching.launcher.LaunchValidationOperation;
+import org.eclipse.pde.internal.launching.launcher.LauncherUtils;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -45,9 +47,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * Dialog that opens when plug-in validation fails during launching.  Displays
- * a list of problems discovered.  Allows the user to continue the launch or
- * cancel if @link {@link #showCancelButton(boolean)} is set to true.
+ * Dialog that opens when plug-in validation fails during launching. Displays a
+ * list of problems discovered. Allows the user to continue the launch or cancel
+ * if @link {@link #showCancelButton(boolean)} is set to true.
  */
 public class PluginStatusDialog extends TrayDialog {
 
@@ -154,8 +156,16 @@ public class PluginStatusDialog extends TrayDialog {
 				// Closing the validation dialog to avoid cyclic dependency
 				setReturnCode(CANCEL);
 				close();
+				ILaunchGroup launchGroup = DebugUITools.getLaunchGroup(fLaunchConfiguration,
+						LauncherUtils.getLastLaunchMode());
+				String groupIdentifier = null;
+				if (launchGroup != null) {
+					groupIdentifier = launchGroup.getIdentifier();
+				} else {
+					groupIdentifier = "org.eclipse.debug.ui.launchGroup.run"; //$NON-NLS-1$
+				}
 				DebugUITools.openLaunchConfigurationDialog(Display.getCurrent().getActiveShell(), fLaunchConfiguration,
-						"org.eclipse.debug.ui.launchGroup.run", null); //$NON-NLS-1$
+						groupIdentifier, null);
 			}));
 		}
 	}
@@ -195,11 +205,9 @@ public class PluginStatusDialog extends TrayDialog {
 		return super.close();
 	}
 
-
 	protected String getDialogSectionName() {
 		return PDEPlugin.getPluginId() + ".PLUGIN_STATUS_DIALOG"; //$NON-NLS-1$
 	}
-
 
 	public void refresh(Map<?, ?> input) {
 		fInput = input;

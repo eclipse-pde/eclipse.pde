@@ -156,7 +156,7 @@ public class LauncherUtils {
 						result = ((Integer) statusHandler.handleStatus(status, workspaceFile.getPath())).intValue();
 				}
 
-				if (result == 2 /*Cancel Button*/|| result == -1 /*Dialog close button*/) {
+				if (result == 2 /*Cancel Button*/ || result == -1 /*Dialog close button*/) {
 					throw new CoreException(Status.CANCEL_STATUS);
 				} else if (result == 0) {
 					if (configuration.getAttribute(IPDEConstants.DOCLEARLOG, false)) {
@@ -333,7 +333,7 @@ public class LauncherUtils {
 				File file = new File(getDirectory(), FILE_NAME);
 				if (file.exists()) {
 					try (FileInputStream fis = new FileInputStream(file)) {
-					fLastRun.load(fis);
+						fLastRun.load(fis);
 					}
 				}
 			} catch (IOException e) {
@@ -389,5 +389,13 @@ public class LauncherUtils {
 	 */
 	public static void setLastLaunchMode(String launchMode) {
 		fLastLaunchMode = launchMode;
+	}
+
+	/**
+	 * @return the last known launch mode
+	 * @see #setLastLaunchMode(String)
+	 */
+	public static String getLastLaunchMode() {
+		return fLastLaunchMode;
 	}
 }
