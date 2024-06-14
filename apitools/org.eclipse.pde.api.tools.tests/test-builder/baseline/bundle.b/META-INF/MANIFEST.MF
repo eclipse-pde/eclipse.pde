@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: API Tools Tests Plug-in B
+Bundle-SymbolicName: bundle.b
+Bundle-Version: 1.0.0
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=17))"
+Export-Package: test
