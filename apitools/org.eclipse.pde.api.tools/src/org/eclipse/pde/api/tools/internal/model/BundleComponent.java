@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2021 IBM Corporation and others.
+ * Copyright (c) 2007, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -82,7 +82,6 @@ import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.Version;
-import org.osgi.framework.namespace.ExecutionEnvironmentNamespace;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -92,8 +91,6 @@ import org.xml.sax.SAXException;
  * @since 1.0.0
  */
 public class BundleComponent extends Component {
-
-	private static final String[] NO_EXECUTION_ENRIONMENTS = new String[0];
 
 	static final String TMP_API_FILE_PREFIX = "api"; //$NON-NLS-1$
 
@@ -164,7 +161,7 @@ public class BundleComponent extends Component {
 	 * @see #getExecutionEnvironments()
 	 * @see #hasDeclaredRequiredEE(Map)
 	 */
-	private volatile boolean fHasDeclaredRequiredEE;
+	private volatile String[] fdeclaredRequiredEE;
 
 	/**
 	 * Constructs a new API component from the specified location in the file
@@ -312,7 +309,7 @@ public class BundleComponent extends Component {
 				BundleDescription bundleDescription = getBundleDescription(manifest, fLocation, fBundleId);
 				fSymbolicName = bundleDescription.getSymbolicName();
 				fVersion = bundleDescription.getVersion();
-				fHasDeclaredRequiredEE = hasDeclaredRequiredEE(manifest);
+				fdeclaredRequiredEE = ManifestUtils.getRequiredExecutionEnvironments(bundleDescription).toArray(String[]::new);
 				setName(manifest.get(Constants.BUNDLE_NAME));
 				fBundleDescription = bundleDescription;
 			} catch (BundleException e) {
@@ -889,7 +886,7 @@ public class BundleComponent extends Component {
 	public String[] getExecutionEnvironments() throws CoreException {
 		// Return the EE from the description only if explicitly specified in the
 		// manifest.
-		return fHasDeclaredRequiredEE ? getBundleDescription().getExecutionEnvironments() : NO_EXECUTION_ENRIONMENTS;
+		return fdeclaredRequiredEE;
 	}
 
 	@Override
@@ -1204,28 +1201,4 @@ public class BundleComponent extends Component {
 		throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ApiPlugin.REPORT_BASELINE_IS_DISPOSED,
 				NLS.bind(Messages.BundleApiComponent_baseline_disposed, getName(), baseline.getName()), disposeSource));
 	}
-
-	/*
-	 * This is a copy of
-	 * org.eclipse.pde.internal.core.MinimalState.hasDeclaredRequiredEE(Map<String,
-	 * String>). PDE ends up adding a synthetic EE to the manifest when that method
-	 * returns false, and that ends up in the bundle description such that we cannot
-	 * determine whether the EE was actually present or was synthesized. So we
-	 * repeat that computation here
-	 */
-	@SuppressWarnings("deprecation")
-	private boolean hasDeclaredRequiredEE(Map<String, String> manifest) {
-		if (manifest.containsKey(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT)) {
-			return true;
-		}
-		try {
-			String capability = manifest.get(Constants.REQUIRE_CAPABILITY);
-			ManifestElement[] header = ManifestElement.parseHeader(Constants.REQUIRE_CAPABILITY, capability);
-			return header != null && Arrays.stream(header).map(ManifestElement::getValue)
-					.anyMatch(ExecutionEnvironmentNamespace.EXECUTION_ENVIRONMENT_NAMESPACE::equals);
-		} catch (BundleException e) {
-			return false; // ignore
-		}
-	}
-
 }

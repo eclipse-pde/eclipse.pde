@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2018 IBM Corporation and others.
+ * Copyright (c) 2009, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.compatibility;
+
+import static org.junit.Assert.assertArrayEquals;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -66,13 +68,13 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 	}
 
 	/**
-	 * Returns the type container associated with the "bundle.a" project in the
+	 * Returns the type container associated with the given project in the
 	 * workspace.
 	 */
-	protected IApiTypeContainer getTypeContainer() throws CoreException {
+	protected IApiTypeContainer getTypeContainer(String projectName) throws CoreException {
 		IApiBaseline baseline = ApiBaselineManager.getManager().getWorkspaceBaseline();
 		assertNotNull("Missing workspace baseline", baseline); //$NON-NLS-1$
-		IApiComponent component = baseline.getApiComponent(getEnv().getProject("bundle.a")); //$NON-NLS-1$
+		IApiComponent component = baseline.getApiComponent(getEnv().getProject(projectName));
 		assertNotNull("Missing API component", component); //$NON-NLS-1$
 		IApiTypeContainer[] containers = component.getApiTypeContainers();
 		assertEquals("Wrong number of API type containers", 1, containers.length); //$NON-NLS-1$
@@ -155,10 +157,25 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 	}
 
 	/**
+	 * Tests whether the execution environment can be extracted from both the
+	 * {@code Bundle-RequiredExecutionEnvironment} and the
+	 * {@code Require-Capability} header.
+	 */
+	public void testExecutionEnvironment() throws CoreException {
+		IApiTypeContainer bundleA = getTypeContainer("bundle.a"); //$NON-NLS-1$
+		assertArrayEquals("Unable to find BREE for bundle using 'Bundle-RequiredExecutionEvironment'", //$NON-NLS-1$
+				new String[] { "J2SE-1.5" }, bundleA.getApiComponent().getExecutionEnvironments()); //$NON-NLS-1$
+
+		IApiTypeContainer bundleB = getTypeContainer("bundle.b"); //$NON-NLS-1$
+		assertArrayEquals("Unable to find BREE for bundle using 'Require-Capability'", //$NON-NLS-1$
+				new String[] { "JavaSE-17" }, bundleB.getApiComponent().getExecutionEnvironments()); //$NON-NLS-1$
+	}
+
+	/**
 	 * Tests all packages are returned.
 	 */
 	public void testPackageNames() throws CoreException {
-		IApiTypeContainer container = getTypeContainer();
+		IApiTypeContainer container = getTypeContainer("bundle.a"); //$NON-NLS-1$
 		assertEquals("Should be a project type container", IApiTypeContainer.FOLDER, container.getContainerType()); //$NON-NLS-1$
 
 		// build expected list
@@ -184,7 +201,7 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 	 * Test type lookup.
 	 */
 	public void testFindType() throws CoreException {
-		IApiTypeContainer container = getTypeContainer();
+		IApiTypeContainer container = getTypeContainer("bundle.a"); //$NON-NLS-1$
 		IApiTypeRoot root = container.findTypeRoot("a.classes.fields.AddPrivateField"); //$NON-NLS-1$
 		assertNotNull("Unable to find type 'a.classes.fields.AddPrivateField'", root); //$NON-NLS-1$
 		IApiType structure = root.getStructure();
@@ -195,7 +212,7 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 	 * Test that type lookup fails for a type that is not in the project.
 	 */
 	public void testMissingType() throws CoreException {
-		IApiTypeContainer container = getTypeContainer();
+		IApiTypeContainer container = getTypeContainer("bundle.a"); //$NON-NLS-1$
 		IApiTypeRoot root = container.findTypeRoot("some.bogus.Type"); //$NON-NLS-1$
 		assertNull("Should not be able to find type 'some.bogus.Type'", root); //$NON-NLS-1$
 	}
@@ -218,7 +235,7 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 				typeNames.add(typeroot.getTypeName());
 			}
 		};
-		getTypeContainer().accept(visitor);
+		getTypeContainer("bundle.a").accept(visitor); //$NON-NLS-1$
 
 		// validate type names
 		Set<String> set = collectAllTypeNames();
