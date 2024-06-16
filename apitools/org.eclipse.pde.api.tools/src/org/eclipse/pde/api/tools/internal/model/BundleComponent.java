@@ -268,9 +268,15 @@ public class BundleComponent extends Component {
 	 *
 	 * @return true if the bundle at the given location is valid false otherwise
 	 */
-	public boolean isValidBundle() throws CoreException {
-		Map<String, String> manifest = getManifest();
-		return manifest != null && (manifest.get(Constants.BUNDLE_NAME) != null && manifest.get(Constants.BUNDLE_VERSION) != null);
+	public boolean isValidBundle() {
+		try {
+			Map<String, String> manifest = getManifest();
+			return manifest != null
+					&& (manifest.get(Constants.BUNDLE_NAME) != null && manifest.get(Constants.BUNDLE_VERSION) != null);
+		} catch (CoreException e) {
+			// if loading the manifest fails, this is NOT a valid bundle obviously...
+		}
+		return false;
 	}
 
 	@Override
