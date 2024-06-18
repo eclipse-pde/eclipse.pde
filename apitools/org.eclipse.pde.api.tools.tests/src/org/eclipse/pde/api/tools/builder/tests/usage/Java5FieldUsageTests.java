@@ -39,7 +39,7 @@ public class Java5FieldUsageTests extends FieldUsageTests {
 
 	@Override
 	protected String getTestCompliance() {
-		return JavaCore.VERSION_1_5;
+		return JavaCore.VERSION_1_8;
 	}
 
 	@Override

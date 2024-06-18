@@ -1117,9 +1117,9 @@ public class TagScannerTests {
 	public void testEnumMethodWithNoReference() {
 		IApiDescription manifest = newDescription();
 		Map<String, String> options = JavaCore.getDefaultOptions();
-		options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_5);
-		options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_5);
-		options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_5);
+		options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_8);
+		options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_8);
+		options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
 		doScan("a/b/c/TestMethod21.java", manifest, options); //$NON-NLS-1$
 	}
 

@@ -100,22 +100,10 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	public void setProjectCompliance(IJavaProject project, String compliance) {
 		int requiredComplianceFlag = 0;
 		String compilerVersion = null;
-		if (JavaCore.VERSION_1_4.equals(compliance)) {
-			requiredComplianceFlag = AbstractCompilerTest.F_1_4;
-			compilerVersion = JavaCore.VERSION_1_4;
-		} else if (JavaCore.VERSION_1_5.equals(compliance)) {
-			requiredComplianceFlag = AbstractCompilerTest.F_1_5;
-			compilerVersion = JavaCore.VERSION_1_5;
-		} else if (JavaCore.VERSION_1_6.equals(compliance)) {
-			requiredComplianceFlag = AbstractCompilerTest.F_1_6;
-			compilerVersion = JavaCore.VERSION_1_6;
-		} else if (JavaCore.VERSION_1_7.equals(compliance)) {
-			requiredComplianceFlag = AbstractCompilerTest.F_1_7;
-			compilerVersion = JavaCore.VERSION_1_7;
-		} else if (JavaCore.VERSION_1_8.equals(compliance)) {
+		if (JavaCore.VERSION_1_8.equals(compliance)) {
 			requiredComplianceFlag = AbstractCompilerTest.F_1_8;
 			compilerVersion = JavaCore.VERSION_1_8;
-		} else if (!JavaCore.VERSION_1_4.equals(compliance) && !JavaCore.VERSION_1_3.equals(compliance)) {
+		} else {
 			throw new UnsupportedOperationException("Test framework doesn't support compliance level: " + compliance); //$NON-NLS-1$
 		}
 		if (requiredComplianceFlag != 0) {

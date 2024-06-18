@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.ToolFactory;
 import org.eclipse.jdt.core.util.IClassFileReader;
+import org.eclipse.jdt.internal.compiler.classfmt.ClassFileConstants;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.pde.core.plugin.PluginRegistry;
@@ -130,7 +131,7 @@ public class ExportBundleTests extends PDETestCase {
 			}
 
 			assertTrue("Missing exported bundle", Files.exists(path));
-			validateTargetLevel(path.toString(), "no/sound/export/Activator.class", 47);
+			validateTargetLevel(path.toString(), "no/sound/export/Activator.class", ClassFileConstants.MAJOR_VERSION_1_8);
 		} finally {
 			TestUtils.waitForJobs(name.getMethodName(), 10, 5000);
 			deleteProject("no.sound.export");
@@ -139,14 +140,14 @@ public class ExportBundleTests extends PDETestCase {
 	}
 
 	/**
-	 * Exports a plug-in project with a J2SE-1.4 execution environment and
+	 * Exports a plug-in project with a JavaSE-1.8 execution environment and
 	 * validates class file target level.
 	 */
 	@Test
-	public void testExport14Environment() throws Exception {
+	public void testExport18Environment() throws Exception {
 		try {
-			IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("J2SE-1.4");
-			IJavaProject project = ProjectUtils.createPluginProject("j2se14.export", env);
+			IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("JavaSE-1.8");
+			IJavaProject project = ProjectUtils.createPluginProject("j2se18.export", env);
 			assertTrue("Project was not created", project.exists());
 
 			final FeatureExportInfo info = new FeatureExportInfo();
@@ -177,7 +178,7 @@ public class ExportBundleTests extends PDETestCase {
 			long l6 = System.currentTimeMillis();
 
 			// veriry exported bundle exists
-			Path path = EXPORT_PATH.resolve("plugins/j2se14.export_1.0.0.jar");
+			Path path = EXPORT_PATH.resolve("plugins/j2se18.export_1.0.0.jar");
 			long l7 = System.currentTimeMillis();
 
 			TestUtils.processUIEvents(100);
@@ -231,10 +232,10 @@ public class ExportBundleTests extends PDETestCase {
 			System.out.println("================================\nEnd of BUG 424597");
 
 			assertTrue("Missing exported bundle", Files.exists(path));
-			validateTargetLevel(path.toString(), "j2se14/export/Activator.class", 46);
+			validateTargetLevel(path.toString(), "j2se18/export/Activator.class", ClassFileConstants.MAJOR_VERSION_1_8);
 		} finally {
 			TestUtils.waitForJobs(name.getMethodName(), 10, 5000);
-			deleteProject("j2se14.export");
+			deleteProject("j2se18.export");
 			delete(EXPORT_PATH.toFile());
 		}
 	}

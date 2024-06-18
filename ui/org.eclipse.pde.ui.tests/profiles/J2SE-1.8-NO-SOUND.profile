@@ -58,10 +58,10 @@ org.osgi.framework.executionenvironment = \
  OSGi/Minimum-1.1,\
  JRE-1.1,\
  J2SE-1.2,\
- J2SE-1.3-NO-SOUND
-osgi.java.profile.name = J2SE-1.3-NO-SOUND
-org.eclipse.jdt.core.compiler.compliance=1.3
-org.eclipse.jdt.core.compiler.source=1.3
-org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.3
+ J2SE-1.8-NO-SOUND
+osgi.java.profile.name = J2SE-1.8-NO-SOUND
+org.eclipse.jdt.core.compiler.compliance=1.8
+org.eclipse.jdt.core.compiler.source=1.8
+org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.8
 org.eclipse.jdt.core.compiler.problem.assertIdentifier=error
 org.eclipse.jdt.core.compiler.problem.enumIdentifier=error
