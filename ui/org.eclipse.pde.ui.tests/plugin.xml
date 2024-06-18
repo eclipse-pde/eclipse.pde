@@ -19,9 +19,9 @@
    <extension
          point="org.eclipse.jdt.launching.executionEnvironments">
       <environment
-            description="Java 1.3 without sound APIs (PDE test suite)"
-            id="J2SE-1.3-NO-SOUND"
-            profileProperties="profiles/J2SE-1.3-NO-SOUND.profile">
+            description="Java 1.8 without sound APIs (PDE test suite)"
+            id="J2SE-1.8-NO-SOUND"
+            profileProperties="profiles/J2SE-1.8-NO-SOUND.profile">
       </environment>
       <analyzer
             class="org.eclipse.pde.ui.tests.ee.EnvironmentAnalyzerDelegate"

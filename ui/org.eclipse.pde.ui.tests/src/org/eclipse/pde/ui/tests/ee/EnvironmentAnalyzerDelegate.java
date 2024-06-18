@@ -34,7 +34,7 @@ public class EnvironmentAnalyzerDelegate implements IExecutionEnvironmentAnalyze
 	/**
 	 * Environment identifier
 	 */
-	public static final String EE_NO_SOUND = "J2SE-1.3-NO-SOUND";
+	public static final String EE_NO_SOUND = "J2SE-1.8-NO-SOUND";
 
 	@Override
 	public CompatibleEnvironment[] analyze(IVMInstall vm, IProgressMonitor monitor) throws CoreException {

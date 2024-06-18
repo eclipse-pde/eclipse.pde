@@ -186,7 +186,7 @@ public class ProjectUtils {
 		description.setExtensionRegistry(true);
 		description.setEquinox(true);
 		description.setBundleVersion(new Version("1.0.0")); //$NON-NLS-1$
-		description.setExecutionEnvironments(new String[] { "J2SE-1.5" }); //$NON-NLS-1$
+		description.setExecutionEnvironments(new String[] { "JavaSE-1.8" }); //$NON-NLS-1$
 		description.apply(null);
 		AbstractApiTest.waitForAutoBuild();
 		return JavaCore.create(project);

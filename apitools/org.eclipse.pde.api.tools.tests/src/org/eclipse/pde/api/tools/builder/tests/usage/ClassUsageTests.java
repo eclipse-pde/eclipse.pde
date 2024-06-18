@@ -336,13 +336,17 @@ public class ClassUsageTests extends UsageTest {
 	private void x19(boolean inc) {
 		int localId = getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.LOCAL_TYPE);
 		int indId = getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.INDIRECT_LOCAL_REFERENCE);
-		setExpectedProblemIds(new int[] {localId, indId});
+		setExpectedProblemIds(new int[] {localId, indId, localId, indId});
 		String typename = "testC11"; //$NON-NLS-1$
 		setExpectedLineMappings(new LineMapping[] {
+				new LineMapping(24, localId, new String[] { "local3", "x.y.z.testC11.inner1.method2()", "INoImpl3" }), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				new LineMapping(26, indId, new String[] { "local4", "x.y.z.testC11.inner1.method2()", "INoImpl6", "INoImpl2" }), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				new LineMapping(32, localId, new String[] { "local1", "x.y.z.testC11.method1()", "INoImpl2" }), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				new LineMapping(34, indId, new String[] { "local2", "x.y.z.testC11.method1()", "INoImpl5", "INoImpl2" }) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		});
 		setExpectedMessageArgs(new String[][] {
+				{"local3", "x.y.z.testC11.inner1.method2()", "INoImpl3"}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				{"local4", "x.y.z.testC11.inner1.method2()", "INoImpl6", "INoImpl2"}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				{"local1", "x.y.z.testC11.method1()", "INoImpl2"}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				{"local2", "x.y.z.testC11.method1()", "INoImpl5", "INoImpl2"}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		});
@@ -375,12 +379,15 @@ public class ClassUsageTests extends UsageTest {
 
 	private void x20(boolean inc) {
 		int indId = getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.INDIRECT_LOCAL_REFERENCE);
-		setExpectedProblemIds(new int[] {indId});
+		setExpectedProblemIds(new int[] {indId, indId});
 		setExpectedLineMappings(new LineMapping[] {
+				new LineMapping(21, indId,
+						new String[] { "local4", "x.y.z.testC12.inner1.method2()", "INoImpl5", "INoImpl2" }), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				new LineMapping(27, indId,
 						new String[] { "local2", "x.y.z.testC12.method1()", "INoImpl5", "INoImpl2" }), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			});
 		setExpectedMessageArgs(new String[][] {
+				{"local4", "x.y.z.testC12.inner1.method2()", "INoImpl5", "INoImpl2"}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				{"local2", "x.y.z.testC12.method1()", "INoImpl5", "INoImpl2"} //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		});
 		String typename = "testC12"; //$NON-NLS-1$
@@ -412,11 +419,13 @@ public class ClassUsageTests extends UsageTest {
 
 	private void x21(boolean inc) {
 		int indId = getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.ANONYMOUS_TYPE);
-		setExpectedProblemIds(new int[] {indId});
+		setExpectedProblemIds(new int[] { indId, indId });
 		setExpectedLineMappings(new LineMapping[] {
+				new LineMapping(22, indId, new String[] { "x.y.z.testC13.inner.method()", "INoImpl2" }), //$NON-NLS-1$ //$NON-NLS-2$
 				new LineMapping(28, indId, new String[] { "x.y.z.testC13.testC13()", "INoImpl2" }) //$NON-NLS-1$ //$NON-NLS-2$
 			});
 		setExpectedMessageArgs(new String[][] {
+				{ "x.y.z.testC13.inner.method()", "INoImpl2" }, //$NON-NLS-1$ //$NON-NLS-2$
 				{"x.y.z.testC13.testC13()", "INoImpl2"} //$NON-NLS-1$ //$NON-NLS-2$
 		});
 		String typename = "testC13"; //$NON-NLS-1$
