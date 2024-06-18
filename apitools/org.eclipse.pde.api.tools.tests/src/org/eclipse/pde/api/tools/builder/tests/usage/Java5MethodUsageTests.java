@@ -42,7 +42,7 @@ public class Java5MethodUsageTests extends MethodUsageTests {
 
 	@Override
 	protected String getTestCompliance() {
-		return JavaCore.VERSION_1_5;
+		return JavaCore.VERSION_1_8;
 	}
 
 	@Override

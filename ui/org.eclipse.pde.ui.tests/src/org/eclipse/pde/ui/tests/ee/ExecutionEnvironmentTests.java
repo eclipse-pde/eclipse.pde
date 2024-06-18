@@ -36,6 +36,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.ToolFactory;
 import org.eclipse.jdt.core.util.IClassFileReader;
+import org.eclipse.jdt.internal.compiler.classfmt.ClassFileConstants;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -134,9 +135,9 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 			IJavaProject project = ProjectUtils.createPluginProject("no.sound", env);
 			assertTrue("Project was not created", project.exists());
 
-			validateOption(project, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_3);
-			validateOption(project, JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_3);
-			validateOption(project, JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_3);
+			validateOption(project, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_8);
+			validateOption(project, JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
+			validateOption(project, JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_8);
 			validateOption(project, JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.ERROR);
 			validateOption(project, JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.ERROR);
 
@@ -147,39 +148,39 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 			waitForBuild();
 			IFile file = project.getProject().getFile("/bin/no/sound/Activator.class");
 			assertTrue("Activator class missing", file.exists());
-			validateTargetLevel(file.getLocation().toOSString(), 47);
+			validateTargetLevel(file.getLocation().toOSString(), ClassFileConstants.MAJOR_VERSION_1_8);
 		} finally {
 			deleteProject("no.sound");
 		}
 	}
 
 	/**
-	 * Creates a plug-in project with a J2SE-1.4 execution environment.
+	 * Creates a plug-in project with a JavaSE-17 execution environment.
 	 * Validates that compiler compliance settings and build path are correct
 	 * and that class files are generated with correct target level.
 	 */
 	@Test
-	public void testJava4Environment() throws Exception {
+	public void testJava8Environment() throws Exception {
 		try {
-			IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("J2SE-1.4");
-			IJavaProject project = ProjectUtils.createPluginProject("j2se14.plug", env);
+			IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("JavaSE-1.8");
+			IJavaProject project = ProjectUtils.createPluginProject("j2se18.plug", env);
 			assertTrue("Project was not created", project.exists());
 
-			validateOption(project, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_2);
-			validateOption(project, JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_3);
-			validateOption(project, JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_4);
-			validateOption(project, JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.WARNING);
-			validateOption(project, JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.WARNING);
+			validateOption(project, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_8);
+			validateOption(project, JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
+			validateOption(project, JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_8);
+			validateOption(project, JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.ERROR);
+			validateOption(project, JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.ERROR);
 
 			validateSystemLibrary(project, JavaRuntime.newJREContainerPath(env));
 
 			project.getProject().build(IncrementalProjectBuilder.FULL_BUILD, null);
 			waitForBuild();
-			IFile file = project.getProject().getFile("/bin/j2se14/plug/Activator.class");
+			IFile file = project.getProject().getFile("/bin/j2se18/plug/Activator.class");
 			assertTrue("Activator class missing", file.exists());
-			validateTargetLevel(file.getLocation().toOSString(), 46);
+			validateTargetLevel(file.getLocation().toOSString(), ClassFileConstants.MAJOR_VERSION_1_8);
 		} finally {
-			deleteProject("j2se14.plug");
+			deleteProject("j2se18.plug");
 		}
 	}
 
@@ -211,7 +212,7 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 	}
 
 	/**
-	 * Creates a plug-in project with a J2SE-1.4 execution environment.
+	 * Creates a plug-in project with a JavaSE-1.8 execution environment.
 	 * Validates that compiler compliance settings and build path are correct.
 	 * Modifies the compliance options and then updates the class path again.
 	 * Ensures that the enum and assert identifier options get overwritten with
@@ -220,15 +221,15 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 	@Test
 	public void testMinimumComplianceOverwrite() throws Exception {
 		try {
-			IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("J2SE-1.4");
-			IJavaProject project = ProjectUtils.createPluginProject("j2se14.ignore", env);
+			IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("JavaSE-1.8");
+			IJavaProject project = ProjectUtils.createPluginProject("j2se18.ignore", env);
 			assertTrue("Project was not created", project.exists());
 
-			validateOption(project, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_2);
-			validateOption(project, JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_3);
-			validateOption(project, JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_4);
-			validateOption(project, JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.WARNING);
-			validateOption(project, JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.WARNING);
+			validateOption(project, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_8);
+			validateOption(project, JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
+			validateOption(project, JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_8);
+			validateOption(project, JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.ERROR);
+			validateOption(project, JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.ERROR);
 
 			validateSystemLibrary(project, JavaRuntime.newJREContainerPath(env));
 
@@ -238,23 +239,23 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 			validateOption(project, JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.IGNORE);
 			validateOption(project, JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.IGNORE);
 
-			// updating class path should increase severity to warning
+			// updating class path should increase severity to error
 			IPluginModelBase model = PluginRegistry.findModel(project.getProject());
 			UpdateClasspathJob.scheduleFor(List.of(model), false).join();
 			// re-validate options
-			validateOption(project, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_2);
-			validateOption(project, JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_3);
-			validateOption(project, JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_4);
-			validateOption(project, JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.WARNING);
-			validateOption(project, JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.WARNING);
+			validateOption(project, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_8);
+			validateOption(project, JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
+			validateOption(project, JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_8);
+			validateOption(project, JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.ERROR);
+			validateOption(project, JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.ERROR);
 
 		} finally {
-			deleteProject("j2se14.ignore");
+			deleteProject("j2se18.ignore");
 		}
 	}
 
 	/**
-	 * Creates a plug-in project with a J2SE-1.4 execution environment.
+	 * Creates a plug-in project with a JavaSE-1.8 execution environment.
 	 * Validates that compiler compliance settings and build path are correct.
 	 * Modifies the compliance options and then updates the class path again.
 	 * Ensures that the enum and assert identifier options do not overwrite
@@ -263,15 +264,15 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 	@Test
 	public void testMinimumComplianceNoOverwrite() throws Exception {
 		try {
-			IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("J2SE-1.4");
-			IJavaProject project = ProjectUtils.createPluginProject("j2se14.error", env);
+			IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("JavaSE-1.8");
+			IJavaProject project = ProjectUtils.createPluginProject("j2se18.error", env);
 			assertTrue("Project was not created", project.exists());
 
-			validateOption(project, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_2);
-			validateOption(project, JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_3);
-			validateOption(project, JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_4);
-			validateOption(project, JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.WARNING);
-			validateOption(project, JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.WARNING);
+			validateOption(project, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_8);
+			validateOption(project, JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
+			validateOption(project, JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_8);
+			validateOption(project, JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.ERROR);
+			validateOption(project, JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.ERROR);
 
 			validateSystemLibrary(project, JavaRuntime.newJREContainerPath(env));
 
@@ -281,19 +282,19 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 			validateOption(project, JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.ERROR);
 			validateOption(project, JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.ERROR);
 
-			// updating class path should increase severity to warning
+			// updating class path should increase severity to error
 			IPluginModelBase model = PluginRegistry.findModel(project.getProject());
 			UpdateClasspathJob.scheduleFor(List.of(model), false).join();
 
 			// re-validate options
-			validateOption(project, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_2);
-			validateOption(project, JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_3);
-			validateOption(project, JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_4);
+			validateOption(project, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_8);
+			validateOption(project, JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
+			validateOption(project, JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_8);
 			validateOption(project, JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.ERROR);
 			validateOption(project, JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.ERROR);
 
 		} finally {
-			deleteProject("j2se14.error");
+			deleteProject("j2se18.error");
 		}
 	}
 

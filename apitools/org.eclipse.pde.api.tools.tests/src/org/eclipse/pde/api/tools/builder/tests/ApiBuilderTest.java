@@ -419,7 +419,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 * @return the default compiler compliance to use for the test
 	 */
 	protected String getTestCompliance() {
-		return JavaCore.VERSION_1_4;
+		return JavaCore.VERSION_1_8;
 	}
 
 	/**
@@ -449,7 +449,19 @@ public abstract class ApiBuilderTest extends BuilderTests {
 				String[] messageArgs = args[i];
 				int messageId = ApiProblemFactory.getProblemMessageId(expectedProblemIds[i]);
 				String message = ApiProblemFactory.getLocalizedMessage(messageId, messageArgs);
-				assertTrue("Missing expected problem: " + message, messages.remove(message)); //$NON-NLS-1$
+
+				boolean match = messages.remove(message);
+				if (!match) {
+					System.err.println("Observed problems:"); //$NON-NLS-1$
+					for (ApiProblem p : problems) {
+						System.err.println(p);
+					}
+					System.err.println("Expected massages:"); //$NON-NLS-1$
+					for (String p : messages) {
+						System.err.println(p);
+					}
+				}
+				assertTrue("Missing expected problem: " + message, match); //$NON-NLS-1$
 			}
 			if (messages.size() > 0) {
 				StringBuilder buffer = new StringBuilder();

@@ -42,7 +42,7 @@ public abstract class Java7UsageTest extends ApiBuilderTest {
 
 	@Override
 	protected String getTestCompliance() {
-		return JavaCore.VERSION_1_7;
+		return JavaCore.VERSION_1_8;
 	}
 
 	@Override
