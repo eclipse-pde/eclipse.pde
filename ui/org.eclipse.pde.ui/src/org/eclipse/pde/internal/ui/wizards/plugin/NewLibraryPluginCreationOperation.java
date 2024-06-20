@@ -572,7 +572,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 							for (IResource child : children) {
 								if (child instanceof IContainer)
 									stack.push(child);
-								else if ("class".equals(((IFile) child).getFileExtension())) { //$NON-NLS-1$
+								else if ("class".equals(child.getFileExtension())) { //$NON-NLS-1$
 									String path = folder.getProjectRelativePath().toString();
 									ignorePkgs.add(path.replace('/', '.'));
 								}

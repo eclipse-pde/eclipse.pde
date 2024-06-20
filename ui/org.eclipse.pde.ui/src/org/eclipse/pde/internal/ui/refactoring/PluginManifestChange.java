@@ -98,7 +98,7 @@ public class PluginManifestChange {
 					if (textChange != null) {
 						TextEdit edit = textChange.getEdit();
 						if (edit instanceof MultiTextEdit) {
-							((MultiTextEdit) edit).addChild(multiEdit);
+							edit.addChild(multiEdit);
 							multiEdit = ((MultiTextEdit) edit);
 						} else
 							multiEdit.addChild(edit);

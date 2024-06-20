@@ -421,7 +421,7 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 					.getCurrentPage();
 			// Replace the current dirty model with the model reloaded from
 			// file
-			fModel = ((ICompCS) object).getModel();
+			fModel = object.getModel();
 			// Reset the treeviewer using the new model as input
 			// TODO: MP: CompCS: This is redundant and should be deleted
 			fTreeViewer.setInput(fModel);

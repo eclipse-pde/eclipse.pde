@@ -382,7 +382,7 @@ public class PluginImportOperation extends WorkspaceJob {
 					IResource resource = content.getAdapter(IResource.class);
 					if (resource instanceof IProject) {
 						// TODO For now just list everything in the map
-						String id = ((IProject) resource).getName();
+						String id = resource.getName();
 						List<IWorkingSet> workingSets = fProjectWorkingSets.get(id);
 						if (workingSets == null) {
 							workingSets = new ArrayList<>();

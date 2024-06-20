@@ -367,7 +367,7 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 		if (obj instanceof BundleSpecification)
 			obj = ((BundleSpecification) obj).getSupplier();
 		else if (obj instanceof ImportPackageSpecification)
-			obj = ((ExportPackageDescription) ((ImportPackageSpecification) obj).getSupplier()).getSupplier();
+			obj = ((ImportPackageSpecification) obj).getSupplier().getSupplier();
 		if (obj instanceof BundleDescription)
 			return (BundleDescription) obj;
 		return null;

@@ -266,7 +266,7 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 		}
 		String elementName = null;
 		if (getParent() instanceof ISchemaElement) {
-			elementName = ((ISchemaElement) getParent()).getName();
+			elementName = getParent().getName();
 			if (elementName == null) {
 				return null;
 			}

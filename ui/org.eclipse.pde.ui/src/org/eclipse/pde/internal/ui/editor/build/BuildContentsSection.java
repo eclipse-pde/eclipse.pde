@@ -505,7 +505,7 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 				fDoRefresh = true;
 				return false;
 			}
-		} else if (resource instanceof IProject && ((IProject) resource).equals(project)) {
+		} else if (resource instanceof IProject && resource.equals(project)) {
 			return delta.getKind() != IResourceDelta.REMOVED;
 		}
 		return true;
