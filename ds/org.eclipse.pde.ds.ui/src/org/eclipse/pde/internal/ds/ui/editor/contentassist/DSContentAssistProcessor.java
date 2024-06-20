@@ -567,10 +567,10 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 				fRange = ((IDocumentAttributeNode) fRange)
 						.getEnclosingElement();
 		} else if (fRange instanceof IDocumentElementNode) {
-			if (((IDocumentElementNode) fRange).getOffset() == offset)
+			if (fRange.getOffset() == offset)
 				fRange = ((IDocumentElementNode) fRange).getParentNode();
 		} else if (fRange instanceof IDocumentTextNode) {
-			if (((IDocumentTextNode) fRange).getOffset() == offset)
+			if (fRange.getOffset() == offset)
 				fRange = ((IDocumentTextNode) fRange).getEnclosingElement();
 		}
 	}

@@ -61,7 +61,7 @@ public class ValidationDialogTest {
 
 	private void isEditLaunchConfigurationLinkAvilable(Control[] element, Control control) {
 		Control editConfigLink = element[0];
-		((Link) control).notifyListeners(SWT.Selection, new Event());
+		control.notifyListeners(SWT.Selection, new Event());
 		assertNotNull(editConfigLink.isVisible());
 	}
 }

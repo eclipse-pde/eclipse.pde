@@ -124,7 +124,7 @@ public class ComboPart {
 
 	public void setEnabled(boolean enabled) {
 		if (combo instanceof Combo)
-			((Combo) combo).setEnabled(enabled);
+			combo.setEnabled(enabled);
 		else
 			((CCombo) combo).setEnabled(enabled);
 	}

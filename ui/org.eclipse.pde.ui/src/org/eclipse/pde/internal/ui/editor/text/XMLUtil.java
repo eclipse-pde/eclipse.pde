@@ -73,9 +73,9 @@ public abstract class XMLUtil {
 		if (range instanceof IDocumentAttributeNode)
 			return withinRange(((IDocumentAttributeNode) range).getValueOffset(), ((IDocumentAttributeNode) range).getValueLength(), offset);
 		if (range instanceof IDocumentElementNode)
-			return withinRange(((IDocumentElementNode) range).getOffset(), ((IDocumentElementNode) range).getLength(), offset);
+			return withinRange(range.getOffset(), range.getLength(), offset);
 		if (range instanceof IDocumentTextNode)
-			return withinRange(((IDocumentTextNode) range).getOffset(), ((IDocumentTextNode) range).getLength(), offset);
+			return withinRange(range.getOffset(), range.getLength(), offset);
 		return false;
 	}
 

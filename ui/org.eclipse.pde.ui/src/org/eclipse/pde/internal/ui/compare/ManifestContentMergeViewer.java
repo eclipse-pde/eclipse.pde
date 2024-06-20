@@ -57,7 +57,7 @@ public class ManifestContentMergeViewer extends TextMergeViewer {
 
 			Font font = JFaceResources.getFont(ManifestContentMergeViewer.class.getName());
 			if (font != null) {
-				((SourceViewer) textViewer).getTextWidget().setFont(font);
+				textViewer.getTextWidget().setFont(font);
 			}
 		}
 	}

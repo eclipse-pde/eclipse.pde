@@ -54,19 +54,19 @@ public class NewClassCreationWizard extends JavaAttributeWizard {
 		if (fIsInterface) {
 			((NewInterfaceWizardPage) fMainPage).init(StructuredSelection.EMPTY);
 			if (className != null)
-				((NewInterfaceWizardPage) fMainPage).setTypeName(className, true);
+				fMainPage.setTypeName(className, true);
 			if (packageRoot != null)
-				((NewInterfaceWizardPage) fMainPage).setPackageFragmentRoot(packageRoot, true);
+				fMainPage.setPackageFragmentRoot(packageRoot, true);
 			if (packageName != null)
-				((NewInterfaceWizardPage) fMainPage).setPackageFragment(packageName, true);
+				fMainPage.setPackageFragment(packageName, true);
 		} else {
 			((NewClassWizardPage) fMainPage).init(StructuredSelection.EMPTY);
 			if (className != null)
-				((NewClassWizardPage) fMainPage).setTypeName(className, true);
+				fMainPage.setTypeName(className, true);
 			if (packageRoot != null)
-				((NewClassWizardPage) fMainPage).setPackageFragmentRoot(packageRoot, true);
+				fMainPage.setPackageFragmentRoot(packageRoot, true);
 			if (packageName != null)
-				((NewClassWizardPage) fMainPage).setPackageFragment(packageName, true);
+				fMainPage.setPackageFragment(packageName, true);
 		}
 	}
 

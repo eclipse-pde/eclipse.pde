@@ -239,13 +239,13 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 
 	private void applyElement(String indent, String delim, StringBuilder documentInsertBuffer) {
 		documentInsertBuffer.append('<');
-		documentInsertBuffer.append(((ISchemaElement) fSchemaObject).getName());
+		documentInsertBuffer.append(fSchemaObject.getName());
 		documentInsertBuffer.append('>');
 		documentInsertBuffer.append(delim);
 		documentInsertBuffer.append(indent);
 		documentInsertBuffer.append('<');
 		documentInsertBuffer.append('/');
-		documentInsertBuffer.append(((ISchemaElement) fSchemaObject).getName());
+		documentInsertBuffer.append(fSchemaObject.getName());
 		documentInsertBuffer.append('>');
 	}
 
@@ -368,7 +368,7 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 			return;
 		}
 		// Get the offset of the extension element
-		int targetOffset = ((IDocumentElementNode) range).getOffset();
+		int targetOffset = range.getOffset();
 		// Search this plug-ins extensions for the proper one
 		IPluginExtension[] extensions = base.getExtensions();
 		for (IPluginExtension extension : extensions) {
@@ -388,7 +388,7 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 	private void setSelectionOffsets(IDocument document, ISchemaElement schemaElement, IPluginParent pluginParent) {
 		if (pluginParent instanceof IPluginExtension) {
 			String point = ((IPluginExtension) pluginParent).getPoint();
-			IPluginObject[] children = ((IPluginExtension) pluginParent).getChildren();
+			IPluginObject[] children = pluginParent.getChildren();
 			if (children != null && children.length > 0 && children[0] instanceof IPluginParent) {
 				pluginParent = (IPluginParent) children[0];
 				schemaElement = XMLUtil.getSchemaElement((IDocumentElementNode) pluginParent, point);
