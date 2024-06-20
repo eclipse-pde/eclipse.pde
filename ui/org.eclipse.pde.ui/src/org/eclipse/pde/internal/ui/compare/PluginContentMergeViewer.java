@@ -69,7 +69,7 @@ public class PluginContentMergeViewer extends TextMergeViewer {
 			((SourceViewer) textViewer).configure(configuration);
 			Font font = JFaceResources.getFont(PluginContentMergeViewer.class.getName());
 			if (font != null)
-				((SourceViewer) textViewer).getTextWidget().setFont(font);
+				textViewer.getTextWidget().setFont(font);
 		}
 	}
 

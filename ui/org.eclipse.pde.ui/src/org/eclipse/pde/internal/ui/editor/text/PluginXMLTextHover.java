@@ -120,7 +120,7 @@ public class PluginXMLTextHover extends PDETextHover {
 
 	private ISchemaObject getSchemaObject(ISchema schema, IPluginObject object) {
 		if (object instanceof IPluginElement)
-			return schema.findElement(((IPluginElement) object).getName());
+			return schema.findElement(object.getName());
 		if (object instanceof IPluginExtension)
 			return schema.findElement("extension"); //$NON-NLS-1$
 		if (object instanceof IDocumentAttributeNode)

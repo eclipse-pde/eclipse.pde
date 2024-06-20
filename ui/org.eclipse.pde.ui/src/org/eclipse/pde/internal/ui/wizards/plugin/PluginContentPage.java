@@ -344,7 +344,7 @@ public class PluginContentPage extends ContentPage {
 	 * @return if the field data is using the OSGi framework
 	 */
 	private boolean isPureOSGi() {
-		return ((PluginFieldData) fData).getOSGiFramework() != null;
+		return fData.getOSGiFramework() != null;
 	}
 
 	@Override

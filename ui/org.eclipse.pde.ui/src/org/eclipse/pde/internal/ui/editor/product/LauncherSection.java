@@ -410,7 +410,7 @@ public class LauncherSection extends PDESection {
 	public void commit(boolean onSave) {
 		fNameEntry.commit();
 		for (int i = 0; i < fIcons.size(); i++)
-			((FormEntry) fIcons.get(i)).commit();
+			fIcons.get(i).commit();
 		super.commit(onSave);
 	}
 
@@ -418,7 +418,7 @@ public class LauncherSection extends PDESection {
 	public void cancelEdit() {
 		fNameEntry.cancelEdit();
 		for (int i = 0; i < fIcons.size(); i++)
-			((FormEntry) fIcons.get(i)).commit();
+			fIcons.get(i).commit();
 		super.cancelEdit();
 	}
 

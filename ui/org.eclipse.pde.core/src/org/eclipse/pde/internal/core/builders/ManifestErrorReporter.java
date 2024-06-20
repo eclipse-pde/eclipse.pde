@@ -94,7 +94,7 @@ public abstract class ManifestErrorReporter extends XMLErrorReporter {
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child instanceof Text) {
-				textFound = ((Text) child).getNodeValue().trim().length() > 0;
+				textFound = child.getNodeValue().trim().length() > 0;
 			} else if (child instanceof Element) {
 				reportIllegalElement((Element) child, CompilerFlags.ERROR);
 			}

@@ -20,7 +20,6 @@ import org.eclipse.pde.internal.ua.ui.editor.cheatsheet.simple.ISimpleCSCommandK
 import org.eclipse.pde.internal.ua.ui.editor.cheatsheet.simple.NewCommandKeyEvent;
 import org.eclipse.pde.internal.ua.ui.editor.cheatsheet.simple.SimpleCSCommandManager;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
-import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Combo;
@@ -43,9 +42,9 @@ public class SimpleCSCommandComboPart extends ComboPart implements ISimpleCSComm
 		if (combo == null) {
 			return;
 		} else if (combo instanceof Combo) {
-			((Combo) combo).addDisposeListener(listener);
+			combo.addDisposeListener(listener);
 		} else {
-			((CCombo) combo).addDisposeListener(listener);
+			combo.addDisposeListener(listener);
 		}
 	}
 
