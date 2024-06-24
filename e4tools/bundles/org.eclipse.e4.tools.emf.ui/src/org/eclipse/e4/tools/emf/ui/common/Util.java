@@ -326,7 +326,7 @@ public class Util {
 						IResource r = rd.getResource();
 						if (r instanceof IFile)
 						{
-							if ("e4xmi".equals(((IFile) r).getFileExtension())) { //$NON-NLS-1$
+							if ("e4xmi".equals(r.getFileExtension())) { //$NON-NLS-1$
 								modelResourceSet = null;
 								break;
 							}

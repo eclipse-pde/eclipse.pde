@@ -865,7 +865,7 @@ public class ControlFactory {
 		});
 		@SuppressWarnings("unchecked")
 		final Binding binding = context.bindValue(textProp.observeDelayed(200, t),
-				((IValueProperty<Object, Object>) EMFEditProperties.value(editor.getEditingDomain(), feature))
+				EMFEditProperties.value(editor.getEditingDomain(), feature)
 				.observeDetail(editor.getMaster()),
 				new UpdateValueStrategy<>().setAfterConvertValidator(new ContributionURIValidator()),
 				new UpdateValueStrategy<>());
