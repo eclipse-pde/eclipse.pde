@@ -386,7 +386,7 @@ public abstract class MenuItemEditor<M extends MMenuItem> extends AbstractCompon
 	@Override
 	public List<Action> getActions(Object element) {
 		final ArrayList<Action> l = new ArrayList<>(super.getActions(element));
-		if (((MUIElement) getMaster().getValue()).getVisibleWhen() == null) {
+		if (getMaster().getValue().getVisibleWhen() == null) {
 			l.add(addExpression);
 		}
 		return l;
