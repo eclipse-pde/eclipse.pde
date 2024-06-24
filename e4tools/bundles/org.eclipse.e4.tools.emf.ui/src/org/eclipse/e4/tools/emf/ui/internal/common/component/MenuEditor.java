@@ -455,7 +455,7 @@ public class MenuEditor extends AbstractComponentEditor<MMenu> {
 	public List<Action> getActions(Object element) {
 		final ArrayList<Action> l = new ArrayList<>(super.getActions(element));
 		l.addAll(actions);
-		if (((MUIElement) getMaster().getValue()).getVisibleWhen() == null) {
+		if (getMaster().getValue().getVisibleWhen() == null) {
 			l.add(addExpression);
 		}
 		return l;
