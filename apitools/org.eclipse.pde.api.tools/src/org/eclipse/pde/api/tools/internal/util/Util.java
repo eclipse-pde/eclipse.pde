@@ -89,6 +89,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.Flags;
+import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
@@ -2673,5 +2674,35 @@ public final class Util {
 		return type;
 	}
 
+	/**
+	 * Returns whether the type is made available via a
+	 * {@link IClasspathEntry#isTest() test classpath entry}.
+	 *
+	 * @param type the type in question.
+	 * @return whether the type is made available via a test classpath entry.
+	 */
+	public static boolean isTest(IType type) {
+		try {
+			if (type != null) {
+				IPackageFragment packageFragment = type.getPackageFragment();
+				if (packageFragment != null) {
+					IJavaElement parent = packageFragment.getParent();
+					if (parent != null) {
+						IResource underlyingResource = parent.getUnderlyingResource();
+						if (underlyingResource != null) {
+							IClasspathEntry classPathEntry = type.getJavaProject()
+									.getClasspathEntryFor(underlyingResource.getFullPath());
+							if (classPathEntry.isTest()) {
+								return true;
+							}
+						}
+					}
+				}
+			}
+		} catch (JavaModelException e) {
+			// ignore
+		}
+		return false;
+	}
 
 }
