@@ -1547,7 +1547,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			return;
 		}
 		IMember member = Util.getIMember(delta, fJavaProject);
-		if (member == null || member.isBinary()) {
+		if (member == null || member.isBinary() || member instanceof IType iType && Util.isTest(iType)) {
 			return;
 		}
 		ICompilationUnit cunit = member.getCompilationUnit();

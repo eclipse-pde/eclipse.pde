@@ -185,7 +185,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 			if (typeInProject != null) {
 				type =typeInProject;
 			}
-			if (type == null) {
+			if (type == null || Util.isTest(type)) {
 				return null;
 			}
 			ICompilationUnit compilationUnit = type.getCompilationUnit();
