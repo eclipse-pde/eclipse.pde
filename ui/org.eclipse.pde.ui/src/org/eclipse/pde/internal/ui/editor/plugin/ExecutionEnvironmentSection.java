@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2017 IBM Corporation and others.
+ *  Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -12,11 +12,16 @@
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487988
  *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 351356
+ *     Latha Patil (ETAS GmbH) - Issue 1178
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Iterator;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -70,6 +75,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.dialogs.FilteredList;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -127,7 +133,12 @@ public class ExecutionEnvironmentSection extends TableSection {
 	}
 
 	public ExecutionEnvironmentSection(PDEFormPage page, Composite parent) {
-		super(page, parent, Section.DESCRIPTION, new String[] {PDEUIMessages.RequiredExecutionEnvironmentSection_add, PDEUIMessages.RequiredExecutionEnvironmentSection_remove, PDEUIMessages.RequiredExecutionEnvironmentSection_up, PDEUIMessages.RequiredExecutionEnvironmentSection_down});
+		super(page, parent, Section.DESCRIPTION,
+				new String[] {  PDEUIMessages.RequiredExecutionEnvironmentSection_upgrade,
+						PDEUIMessages.RequiredExecutionEnvironmentSection_add,
+						PDEUIMessages.RequiredExecutionEnvironmentSection_remove,
+						PDEUIMessages.RequiredExecutionEnvironmentSection_up,
+						PDEUIMessages.RequiredExecutionEnvironmentSection_down });
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
@@ -187,17 +198,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 
 					@Override
 					public void linkActivated(HyperlinkEvent e) {
-						try {
-							getPage().getEditor().doSave(null);
-							IPluginModelBase model = PluginRegistry.findModel(project);
-							if (model != null) {
-								ClasspathComputer.setClasspath(project, model);
-								if (PDEPlugin.getWorkspace().isAutoBuilding()) {
-									doFullBuild(project);
-								}
-							}
-						} catch (CoreException e1) {
-						}
+						updateClasspathSettings(project);
 					}
 				});
 				gd = new GridData();
@@ -218,6 +219,19 @@ public class ExecutionEnvironmentSection extends TableSection {
 		section.setClient(container);
 	}
 
+	private void updateClasspathSettings(final IProject project) {
+		try {
+			getPage().getEditor().doSave(null);
+			IPluginModelBase model = PluginRegistry.findModel(project);
+			if (model != null) {
+				ClasspathComputer.setClasspath(project, model);
+				if (PDEPlugin.getWorkspace().isAutoBuilding()) {
+					doFullBuild(project);
+				}
+			}
+		} catch (CoreException e1) {
+		}
+	}
 	@Override
 	public void dispose() {
 		IBundleModel model = getBundleModel();
@@ -235,9 +249,10 @@ public class ExecutionEnvironmentSection extends TableSection {
 	protected void buttonSelected(int index) {
 		switch (index) {
 			case 0 -> handleAdd();
-			case 1 -> handleRemove();
-			case 2 -> handleUp();
-			case 3 -> handleDown();
+			case 1 -> handleUpgrade();
+			case 2 -> handleRemove();
+			case 3 -> handleUp();
+			case 4 -> handleDown();
 		}
 	}
 
@@ -270,6 +285,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 	}
 
 	private void updateButtons() {
+		String javaExecutionEnvironmentMatcher = "(?i)\\b(jre|javase|j2se).*\\b"; //$NON-NLS-1$
 		Table table = fEETable.getTable();
 		int count = table.getItemCount();
 		boolean canMoveUp = count > 0 && table.getSelection().length == 1 && table.getSelectionIndex() > 0;
@@ -277,9 +293,11 @@ public class ExecutionEnvironmentSection extends TableSection {
 
 		TablePart tablePart = getTablePart();
 		tablePart.setButtonEnabled(0, isEditable());
-		tablePart.setButtonEnabled(1, isEditable() && table.getSelection().length > 0);
-		tablePart.setButtonEnabled(2, isEditable() && canMoveUp);
-		tablePart.setButtonEnabled(3, isEditable() && canMoveDown);
+		tablePart.setButtonEnabled(1, isEditable() && table.getItemCount() == 1
+				&& table.getItem(0).getText().matches(javaExecutionEnvironmentMatcher));
+		tablePart.setButtonEnabled(2, isEditable() && table.getSelection().length > 0);
+		tablePart.setButtonEnabled(3, isEditable() && canMoveUp);
+		tablePart.setButtonEnabled(4, isEditable() && canMoveDown);
 	}
 
 	private void handleDown() {
@@ -311,7 +329,15 @@ public class ExecutionEnvironmentSection extends TableSection {
 	}
 
 	private void handleAdd() {
-		ElementListSelectionDialog dialog = new ElementListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), new EELabelProvider());
+		ElementListSelectionDialog dialog = new ElementListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(),
+				new EELabelProvider()) {
+			@Override
+			protected FilteredList createFilteredList(Composite parent) {
+				FilteredList filteredList = super.createFilteredList(parent);
+				filteredList.setComparator(new VersionComparator());
+				return filteredList;
+			}
+		};
 		dialog.setElements(getEnvironments());
 		dialog.setAllowDuplicates(false);
 		dialog.setMultipleSelection(true);
@@ -321,6 +347,28 @@ public class ExecutionEnvironmentSection extends TableSection {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IHelpContextIds.EXECUTION_ENVIRONMENT_SELECTION);
 		if (dialog.open() == Window.OK) {
 			addExecutionEnvironments(dialog.getResult());
+		}
+	}
+
+	private void handleUpgrade() {
+
+		RequiredExecutionEnvironmentHeader header = getHeader();
+		IExecutionEnvironment[] executionEnvironments = JavaRuntime.getExecutionEnvironmentsManager()
+				.getExecutionEnvironments();
+		if (executionEnvironments.length > 0) {
+			ExecutionEnvironment[] addedExecutionEnvironments = header.getEnvironments();
+			// Remove existing EE ( Upgrade is allowed only when single Java EE
+			// is present in the header)
+			getHeader().removeExecutionEnvironment(addedExecutionEnvironments[0]);
+
+			SortedMap<String, IExecutionEnvironment> executionEnvironmentMap = new TreeMap<>(new VersionComparator());
+			Arrays.asList(executionEnvironments).forEach(executionEnvironment -> executionEnvironmentMap
+					.put(executionEnvironment.getId(), executionEnvironment));
+			// add highest Java EE to the header
+			header.addExecutionEnvironment(executionEnvironmentMap.get(executionEnvironmentMap.firstKey()));
+
+			final IProject project = getPage().getPDEEditor().getCommonProject();
+			updateClasspathSettings(project);
 		}
 	}
 
@@ -679,4 +727,32 @@ public class ExecutionEnvironmentSection extends TableSection {
 		return true;
 	}
 
+	/*
+	 * Class to compare execution environments based on version
+	 */
+	public class VersionComparator implements Comparator<String> {
+
+		@Override
+		public int compare(String executionEnvironment1, String executionEnvironment2) {
+
+			String version1[] = getVersionString(executionEnvironment1).split("\\."); //$NON-NLS-1$
+			String version2[] = getVersionString(executionEnvironment2).split("\\."); //$NON-NLS-1$
+
+			int minVersionLength = Math.min(version1.length, version2.length);
+			for (int i = 0; i < minVersionLength; i++) {
+				Integer v1 = Integer.parseInt(version1[i]);
+				Integer v2 = Integer.parseInt(version2[i]);
+				int comparisionResult = v2.compareTo(v1);
+				if (comparisionResult != 0) {
+					return comparisionResult;
+				}
+			}
+			return Integer.compare(version1.length, version2.length);
+		}
+
+		private String getVersionString(String executionEnvironment) {
+			String versionMatcher = ".*?((?<!\\w)\\d+([.]\\d+)*).*"; //$NON-NLS-1$
+			return executionEnvironment.replaceAll(versionMatcher, "$1"); //$NON-NLS-1$
+		}
+	}
 }
