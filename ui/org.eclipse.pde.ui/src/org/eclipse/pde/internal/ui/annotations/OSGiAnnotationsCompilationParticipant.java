@@ -22,7 +22,7 @@ import org.eclipse.jdt.core.compiler.CompilationParticipant;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 
 public class OSGiAnnotationsCompilationParticipant extends CompilationParticipant {
 
@@ -34,7 +34,7 @@ public class OSGiAnnotationsCompilationParticipant extends CompilationParticipan
 	@Override
 	public boolean isActive(IJavaProject javaProject) {
 		IProject project = javaProject.getProject();
-		return (project.isOpen() && PDE.hasPluginNature(project) && !WorkspaceModelManager.isBinaryProject(project));
+		return (project.isOpen() && PluginProject.isPluginProject(project) && !WorkspaceModelManager.isBinaryProject(project));
 	}
 
 	@Override

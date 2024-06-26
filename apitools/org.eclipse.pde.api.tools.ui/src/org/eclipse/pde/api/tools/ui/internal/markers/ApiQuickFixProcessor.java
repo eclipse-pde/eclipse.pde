@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) Sep 26, 2018 IBM Corporation and others.
+ * Copyright (c) Sep 26, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -52,6 +52,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.util.Signatures;
+import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.refactoring.CreateFileChange;
@@ -134,7 +135,7 @@ public class ApiQuickFixProcessor implements IQuickFixProcessor {
 		List<IJavaCompletionProposal> proposals = new ArrayList<>();
 		ICompilationUnit unit = context.getCompilationUnit();
 		IProject project = unit.getJavaProject().getProject();
-		if (!project.hasNature(ApiPlugin.NATURE_ID)) {
+		if (!Util.isApiProject(project)) {
 			return new IJavaCompletionProposal[0];
 		}
 		IFile build = project.getFile("build.properties"); //$NON-NLS-1$
@@ -166,8 +167,7 @@ public class ApiQuickFixProcessor implements IQuickFixProcessor {
 	public static Change createChange(ICompilationUnit unit, String qualifiedname) throws CoreException {
 		IProject project = unit.getJavaProject().getProject();
 		IFile buildProperties = project.getFile("build.properties"); //$NON-NLS-1$
-		boolean isBundle = project.hasNature(ApiPlugin.NATURE_ID);
-		if (!isBundle) {
+		if (!Util.isApiProject(project)) {
 			return new NullChange();
 		}
 		return new CompositeChange(MarkerMessages.UnknownAnnotationResolution_3, new Change[] {

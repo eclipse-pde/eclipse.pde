@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 
@@ -79,7 +79,7 @@ public interface IBundleProjectDescription {
 	/**
 	 * Constant for the PDE Plug-in project nature, value is <code>"org.eclipse.pde.PluginNature"</code>.
 	 */
-	String PLUGIN_NATURE = PDE.PLUGIN_NATURE;
+	String PLUGIN_NATURE = PluginProject.NATURE;
 
 	/**
 	 * Creates or modifies a bundle project and associated artifacts based current settings.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2023 Christoph Läubrich and others.
+ *  Copyright (c) 2023, 2024 Christoph Läubrich and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -36,6 +36,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.annotations.OSGiAnnotationsClasspathContributor;
 import org.eclipse.pde.internal.core.natures.BndProject;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 
 import aQute.bnd.build.Container;
 import aQute.bnd.build.Container.TYPE;
@@ -69,7 +70,7 @@ public class BndProjectManager {
 
 	private static void setupProject(Project bnd, IProject project) throws CoreException {
 		IPath base = project.getFullPath();
-		if (project.hasNature(JavaCore.NATURE_ID)) {
+		if (PluginProject.isJavaProject(project)) {
 			IJavaProject javaProject = JavaCore.create(project);
 			IClasspathEntry[] classpath = javaProject.getRawClasspath();
 			List<String> src = new ArrayList<>(1);

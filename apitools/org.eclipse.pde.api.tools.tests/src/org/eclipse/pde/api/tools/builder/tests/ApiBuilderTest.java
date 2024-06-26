@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2019 IBM Corporation and others.
+ * Copyright (c) 2008, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -1154,7 +1154,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 			contents.append(System.lineSeparator());
 			contents.append("    is open: " + project.isOpen()); //$NON-NLS-1$
 			contents.append(System.lineSeparator());
-			if (project.hasNature(JavaCore.NATURE_ID) && project.isAccessible()) {
+			if (Util.isJavaProject(project) && project.isAccessible()) {
 				IJavaProject javaProject = JavaCore.create(project);
 				boolean ignoreUnresolvedEntry = true;
 				IClasspathEntry[] projectClassPath = javaProject.getResolvedClasspath(ignoreUnresolvedEntry);

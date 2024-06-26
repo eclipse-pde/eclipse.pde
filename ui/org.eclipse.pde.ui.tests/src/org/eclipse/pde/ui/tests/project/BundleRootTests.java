@@ -31,7 +31,7 @@ import org.eclipse.pde.core.project.IBundleClasspathEntry;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.junit.Rule;
 import org.junit.Test;
@@ -191,7 +191,7 @@ public class BundleRootTests {
 		assertNull("Wrong project location URI", d2.getLocationURI());
 		String[] natureIds = d2.getNatureIds();
 		assertEquals("Wrong number of natures", 2, natureIds.length);
-		assertEquals("Wrong nature", PDE.PLUGIN_NATURE, natureIds[0]);
+		assertEquals("Wrong nature", PluginProject.NATURE, natureIds[0]);
 		assertEquals("Wrong nature", JavaCore.NATURE_ID, natureIds[1]);
 		assertNull("Wrong imports", d2.getPackageImports());
 		assertNull("Wrong exports", d2.getPackageExports());
@@ -231,7 +231,7 @@ public class BundleRootTests {
 		IBundleProjectDescription bpd = service.getDescription(project);
 		bpd.setBundleVendor("Some Vendor");
 		bpd.setBundleVersion(new Version("2.0.0"));
-		bpd.setNatureIds(new String[]{PDE.PLUGIN_NATURE, JavaCore.NATURE_ID});
+		bpd.setNatureIds(new String[] { PluginProject.NATURE, JavaCore.NATURE_ID });
 		bpd.apply(null);
 
 		// validate
@@ -257,7 +257,7 @@ public class BundleRootTests {
 		assertNull("Wrong project location URI", d2.getLocationURI());
 		String[] natureIds = d2.getNatureIds();
 		assertEquals("Wrong number of natures", 2, natureIds.length);
-		assertEquals("Wrong nature", PDE.PLUGIN_NATURE, natureIds[0]);
+		assertEquals("Wrong nature", PluginProject.NATURE, natureIds[0]);
 		assertEquals("Wrong nature", JavaCore.NATURE_ID, natureIds[1]);
 		assertNull("Wrong imports", d2.getPackageImports());
 		assertNull("Wrong exports", d2.getPackageExports());

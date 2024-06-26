@@ -28,7 +28,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeatureInstallHandler;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.FeatureProject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.wizards.imports.FeatureImportOperation;
 import org.eclipse.pde.internal.ui.wizards.imports.FeatureImportWizard.ReplaceQuery;
@@ -78,7 +78,7 @@ public class ImportFeatureProjectsTestCase extends NewProjectTestCase {
 		IFeatureModel[] imported = PDECore.getDefault().getFeatureModelManager().getWorkspaceModels();
 		for (IFeatureModel element : imported) {
 			lookingAtProject(element);
-			assertTrue("Verifying feature nature...", hasNature(PDE.FEATURE_NATURE));
+			assertTrue("Verifying feature nature...", hasNature(FeatureProject.NATURE));
 			IFeatureInstallHandler installHandler = element.getFeature().getInstallHandler();
 			boolean shouldHaveJavaNature = installHandler != null ? installHandler.getLibrary() != null : false;
 			assertEquals("Verifying java nature...", hasNature(JavaCore.NATURE_ID), shouldHaveJavaNature);

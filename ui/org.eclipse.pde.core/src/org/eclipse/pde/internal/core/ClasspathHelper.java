@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2022 IBM Corporation and others.
+ * Copyright (c) 2003, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -57,6 +57,7 @@ import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.core.project.PDEProject;
 
 public class ClasspathHelper {
@@ -262,8 +263,8 @@ public class ClasspathHelper {
 
 	private static Set<IPath> getDevPaths(IPluginModelBase model, boolean checkExcluded, Set<IPluginModelBase> plugins) {
 		IProject project = model.getUnderlyingResource().getProject();
-		try {
-			if (project.hasNature(JavaCore.NATURE_ID)) {
+		if (PluginProject.isJavaProject(project)) {
+			try {
 				Map<IPath, List<IPath>> classpathMap = getClasspathMap(project, checkExcluded, false);
 				IBuild build = getBuild(project);
 				Set<IPath> result = new LinkedHashSet<>();
@@ -294,8 +295,8 @@ public class ClasspathHelper {
 				// if no build.properties, add all output folders
 				classpathMap.values().forEach(l -> addPaths(l, project, result));
 				return result;
+			} catch (CoreException e) {
 			}
-		} catch (CoreException e) {
 		}
 		return Collections.emptySet();
 	}

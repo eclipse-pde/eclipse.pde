@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 IBM Corporation and others.
+ * Copyright (c) 2008, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -22,8 +22,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -31,6 +29,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -133,13 +132,10 @@ public class NewLibraryPluginCreationUpdateRefPage extends WizardPage {
 	private void computeUnmigrated() {
 		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
 		ArrayList<IPluginModelBase> modelArray = new ArrayList<>();
-		try {
-			for (IPluginModelBase model : models) {
-				if (model.getUnderlyingResource().getProject().hasNature(JavaCore.NATURE_ID))
-					modelArray.add(model);
+		for (IPluginModelBase model : models) {
+			if (PluginProject.isJavaProject(model.getUnderlyingResource().getProject())) {
+				modelArray.add(model);
 			}
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
 		}
 		fUnmigrated = modelArray.toArray(new IPluginModelBase[modelArray.size()]);
 	}

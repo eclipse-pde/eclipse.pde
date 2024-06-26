@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2021 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -36,6 +35,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 
 public class JavaAttributeWizardPage extends NewClassWizardPage {
@@ -77,14 +77,7 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 		this.model = model;
 		this.project = project;
 		this.attInfo = attInfo;
-		try {
-			if (project.hasNature(JavaCore.NATURE_ID))
-				this.javaProject = JavaCore.create(project);
-			else
-				this.javaProject = null;
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
-		}
+		this.javaProject = PluginProject.isJavaProject(project) ? JavaCore.create(project) : null;
 		initialValues = new InitialClassProperties();
 		initialValues.initialClassName = className;
 	}

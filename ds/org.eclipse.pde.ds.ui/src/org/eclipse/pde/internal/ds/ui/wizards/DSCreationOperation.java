@@ -36,7 +36,7 @@ import org.eclipse.pde.core.build.IBuildModelFactory;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
@@ -81,7 +81,7 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 		createContent();
 		subMonitor.worked(1);
 		openFile();
-		if (PDE.hasPluginNature(fFile.getProject())) {
+		if (PluginProject.isPluginProject(fFile.getProject())) {
 			writeManifest(fFile.getProject(), subMonitor.split(1));
 			writeBuildProperties(fFile.getProject(), subMonitor.split(1));
 		}

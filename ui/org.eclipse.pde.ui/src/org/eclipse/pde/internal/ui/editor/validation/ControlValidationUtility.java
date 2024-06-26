@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2011 IBM Corporation and others.
+ *  Copyright (c) 2007, 2024 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -15,7 +15,6 @@
 package org.eclipse.pde.internal.ui.editor.validation;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -27,6 +26,7 @@ import org.eclipse.pde.internal.core.AbstractNLModel;
 import org.eclipse.pde.internal.core.NLResourceHelper;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.core.util.PDEJavaHelper;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -106,19 +106,14 @@ public class ControlValidationUtility {
 		}
 
 		// Check to see if the class is on the plug-in classpath
-		try {
-			if (project.hasNature(JavaCore.NATURE_ID)) {
-				IJavaProject javaProject = JavaCore.create(project);
-				// Look for this activator in the project's classpath
-				if (!PDEJavaHelper.isOnClasspath(value, javaProject)) {
-					validator.addMessage(PDEUIMessages.ControlValidationUtility_errorMsgNotOnClasspath, messageType);
-					return false;
-				}
+		if (PluginProject.isJavaProject(project)) {
+			IJavaProject javaProject = JavaCore.create(project);
+			// Look for this activator in the project's classpath
+			if (!PDEJavaHelper.isOnClasspath(value, javaProject)) {
+				validator.addMessage(PDEUIMessages.ControlValidationUtility_errorMsgNotOnClasspath, messageType);
+				return false;
 			}
-		} catch (CoreException ce) {
-			// Ignore
 		}
-
 		return true;
 	}
 

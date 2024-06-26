@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.natures.SiteProject;
 import org.eclipse.pde.internal.core.site.WorkspaceSiteModel;
 import org.eclipse.pde.internal.ui.wizards.site.NewSiteProjectCreationOperation;
 import org.eclipse.swt.widgets.Display;
@@ -89,8 +89,7 @@ public class NewSiteProjectTestCase {
 		assertTrue("Project not created.", project.exists()); //$NON-NLS-1$
 		assertTrue("Project not open.", project.isOpen()); //$NON-NLS-1$
 		try {
-			assertTrue("Site nature not added.", project //$NON-NLS-1$
-					.hasNature(PDE.SITE_NATURE));
+			assertTrue("Site nature not added.", project.hasNature(SiteProject.NATURE));
 		} catch (Exception e) {
 		}
 		assertTrue("site.xml not created.", project //$NON-NLS-1$

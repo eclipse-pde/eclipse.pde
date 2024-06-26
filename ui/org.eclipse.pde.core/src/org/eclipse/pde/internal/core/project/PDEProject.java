@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2022 IBM Corporation and others.
+ * Copyright (c) 2010, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -31,6 +31,7 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEManager;
 import org.eclipse.pde.internal.core.natures.BndProject;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
@@ -82,7 +83,7 @@ public class PDEProject {
 	}
 
 	public static IFolder getJavaOutputFolder(IProject project) throws CoreException {
-		if (project.hasNature(JavaCore.NATURE_ID)) {
+		if (PluginProject.isJavaProject(project)) {
 			IJavaProject javaProject = JavaCore.create(project);
 			IPath outputLocation = javaProject.getOutputLocation();
 			IWorkspaceRoot workspaceRoot = project.getWorkspace().getRoot();
