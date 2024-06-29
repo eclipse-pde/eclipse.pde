@@ -197,7 +197,8 @@ public class BundleComponent extends Component {
 			synchronized (this) {
 				fManifest = null;
 				fBundleDescription = null;
-				disposeSource = new RuntimeException("Component was disposed here"); //$NON-NLS-1$
+				String message = String.format("Component was disposed here [%s]", Thread.currentThread().getName()); //$NON-NLS-1$
+				disposeSource = new RuntimeException(message);
 			}
 		}
 	}
@@ -1199,6 +1200,8 @@ public class BundleComponent extends Component {
 	 */
 	protected void baselineDisposed(IApiBaseline baseline) throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ApiPlugin.REPORT_BASELINE_IS_DISPOSED,
-				NLS.bind(Messages.BundleApiComponent_baseline_disposed, getName(), baseline.getName()), disposeSource));
+				NLS.bind(Messages.BundleApiComponent_baseline_disposed,
+						new Object[] { getName(), baseline.getName(), Thread.currentThread().getName() }),
+				disposeSource));
 	}
 }
