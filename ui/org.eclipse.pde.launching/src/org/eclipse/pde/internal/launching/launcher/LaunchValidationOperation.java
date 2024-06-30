@@ -43,11 +43,17 @@ public class LaunchValidationOperation implements IWorkspaceRunnable {
 
 	private BundleValidationOperation fOperation;
 	public final ILaunchConfiguration fLaunchConfiguration;
+	public final String fLaunchMode;
 	protected final Set<IPluginModelBase> fModels;
 
 	public LaunchValidationOperation(ILaunchConfiguration configuration, Set<IPluginModelBase> models) {
+		this(configuration, models, null);
+	}
+
+	public LaunchValidationOperation(ILaunchConfiguration configuration, Set<IPluginModelBase> models, String launchMode) {
 		fLaunchConfiguration = configuration;
 		fModels = models;
+		fLaunchMode = launchMode;
 	}
 
 	@Override

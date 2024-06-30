@@ -75,6 +75,7 @@ import org.osgi.framework.Version;
 public abstract class AbstractPDELaunchConfiguration extends LaunchConfigurationDelegate {
 
 	protected File fConfigDir = null;
+	String launchMode;
 
 	/**
 	 * This field will control the addition of argument --add-modules=ALL-SYSTEM in the VM arguments
@@ -427,6 +428,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 * from the launch configuration
 	 */
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
+		launchMode = launch.getLaunchMode();
 		String attribute = launch.getAttribute(PDE_LAUNCH_SHOW_COMMAND);
 		boolean isShowCommand = false;
 		if (attribute != null) {
@@ -439,7 +441,6 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 				validatePluginDependencies(configuration, subMonitor.split(10));
 			}
 			validateProjectDependencies(configuration, subMonitor.split(10));
-			LauncherUtils.setLastLaunchMode(launch.getLaunchMode());
 			clear(configuration, subMonitor.split(10));
 		}
 		launch.setAttribute(PDE_LAUNCH_SHOW_COMMAND, "false"); //$NON-NLS-1$
@@ -556,7 +557,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 */
 	protected void validatePluginDependencies(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
 		Set<IPluginModelBase> models = BundleLauncherHelper.getMergedBundleMap(configuration, false).keySet();
-		EclipsePluginValidationOperation op = new EclipsePluginValidationOperation(configuration, models);
+		EclipsePluginValidationOperation op = new EclipsePluginValidationOperation(configuration, models, launchMode);
 		LaunchPluginValidator.runValidationOperation(op, monitor);
 	}
 

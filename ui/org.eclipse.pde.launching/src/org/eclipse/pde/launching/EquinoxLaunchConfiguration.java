@@ -192,7 +192,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 
 	@Override
 	protected void validatePluginDependencies(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
-		LaunchValidationOperation op = new LaunchValidationOperation(configuration, fModels.keySet());
+		LaunchValidationOperation op = new LaunchValidationOperation(configuration, fModels.keySet(), launchMode);
 		LaunchPluginValidator.runValidationOperation(op, monitor);
 	}
 
