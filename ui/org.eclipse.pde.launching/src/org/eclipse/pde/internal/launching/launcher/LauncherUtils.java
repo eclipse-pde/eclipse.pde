@@ -39,7 +39,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.IStatusHandler;
@@ -80,11 +79,6 @@ public class LauncherUtils {
 	private static final String TIMESTAMP = "timestamp"; //$NON-NLS-1$
 	private static final String FILE_NAME = "dep-timestamp.properties"; //$NON-NLS-1$
 	private static Properties fLastRun;
-	/**
-	 * Stores the last known launch mode so status handlers can open the correct launch configuration dialog
-	 * @see LauncherUtils#setLastLaunchMode(String)
-	 */
-	private static String fLastLaunchMode;
 
 	/**
 	 * Checks if the workspace being launched is already in use or needs to be cleared
@@ -98,7 +92,7 @@ public class LauncherUtils {
 	 * @throws CoreException
 	 * 			if unable to retrieve launch attribute values or the clear operation was cancelled
 	 */
-	public static void clearWorkspace(ILaunchConfiguration configuration, String workspace, IProgressMonitor monitor) throws CoreException {
+	public static void clearWorkspace(ILaunchConfiguration configuration, String workspace, String launchMode, IProgressMonitor monitor) throws CoreException {
 
 		SubMonitor subMon = SubMonitor.convert(monitor, 100);
 
@@ -136,7 +130,7 @@ public class LauncherUtils {
 			Status status = new Status(IStatus.ERROR, IPDEConstants.PLUGIN_ID, WORKSPACE_LOCKED, null, null);
 			IStatusHandler statusHandler = DebugPlugin.getDefault().getStatusHandler(status);
 			if (statusHandler != null)
-				statusHandler.handleStatus(status, new Object[] {workspace, configuration, fLastLaunchMode});
+				statusHandler.handleStatus(status, new Object[] {workspace, configuration, launchMode});
 			throw new CoreException(Status.CANCEL_STATUS);
 		}
 
@@ -381,21 +375,4 @@ public class LauncherUtils {
 		return true;
 	}
 
-	/**
-	 * Updates the stores launch mode.  This should be called on any PDE Eclipse launch.  The launch mode
-	 * is passed to the status handler so it can open the correct launch configuration dialog
-	 *
-	 * @param launchMode last known launch mode, see {@link ILaunch#getLaunchMode()}
-	 */
-	public static void setLastLaunchMode(String launchMode) {
-		fLastLaunchMode = launchMode;
-	}
-
-	/**
-	 * @return the last known launch mode
-	 * @see #setLastLaunchMode(String)
-	 */
-	public static String getLastLaunchMode() {
-		return fLastLaunchMode;
-	}
 }

@@ -20,6 +20,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -30,7 +31,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.internal.launching.launcher.LaunchValidationOperation;
-import org.eclipse.pde.internal.launching.launcher.LauncherUtils;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -94,6 +94,7 @@ public class PluginStatusDialog extends TrayDialog {
 	private Map<?, ?> fInput;
 	private TreeViewer treeViewer;
 	private ILaunchConfiguration fLaunchConfiguration;
+	private String launchMode;
 
 	public PluginStatusDialog(Shell parentShell, int style) {
 		super(parentShell);
@@ -118,6 +119,7 @@ public class PluginStatusDialog extends TrayDialog {
 	public void setInput(LaunchValidationOperation operation) {
 		fInput = operation.getInput();
 		fLaunchConfiguration = operation.fLaunchConfiguration;
+		launchMode = operation.fLaunchMode;
 	}
 
 	@Override
@@ -156,14 +158,10 @@ public class PluginStatusDialog extends TrayDialog {
 				// Closing the validation dialog to avoid cyclic dependency
 				setReturnCode(CANCEL);
 				close();
-				ILaunchGroup launchGroup = DebugUITools.getLaunchGroup(fLaunchConfiguration,
-						LauncherUtils.getLastLaunchMode());
-				String groupIdentifier = null;
-				if (launchGroup != null) {
-					groupIdentifier = launchGroup.getIdentifier();
-				} else {
-					groupIdentifier = "org.eclipse.debug.ui.launchGroup.run"; //$NON-NLS-1$
-				}
+				ILaunchGroup launchGroup = DebugUITools.getLaunchGroup(fLaunchConfiguration, launchMode);
+				String groupIdentifier = launchGroup != null //
+						? launchGroup.getIdentifier()
+						: IDebugUIConstants.ID_RUN_LAUNCH_GROUP;
 				DebugUITools.openLaunchConfigurationDialog(Display.getCurrent().getActiveShell(), fLaunchConfiguration,
 						groupIdentifier, null);
 			}));

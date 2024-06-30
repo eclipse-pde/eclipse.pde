@@ -40,7 +40,11 @@ public class EclipsePluginValidationOperation extends LaunchValidationOperation 
 	private final Map<Object, Object[]> fExtensionErrors = new HashMap<>(2);
 
 	public EclipsePluginValidationOperation(ILaunchConfiguration configuration, Set<IPluginModelBase> models) {
-		super(configuration, models);
+		this(configuration, models, null);
+	}
+
+	public EclipsePluginValidationOperation(ILaunchConfiguration configuration, Set<IPluginModelBase> models, String launchMode) {
+		super(configuration, models, launchMode);
 	}
 
 	@Override
