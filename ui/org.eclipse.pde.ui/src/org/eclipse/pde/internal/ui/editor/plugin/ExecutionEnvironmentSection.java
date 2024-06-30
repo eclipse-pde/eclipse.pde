@@ -16,14 +16,17 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -41,6 +44,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
@@ -51,6 +55,7 @@ import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.core.text.bundle.ExecutionEnvironment;
 import org.eclipse.pde.internal.core.text.bundle.RequiredExecutionEnvironmentHeader;
+import org.eclipse.pde.internal.core.util.ManifestUtils;
 import org.eclipse.pde.internal.core.util.VMUtil;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -79,7 +84,10 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
+import org.osgi.framework.namespace.ExecutionEnvironmentNamespace;
+import org.osgi.resource.Namespace;
 
 public class ExecutionEnvironmentSection extends TableSection {
 
@@ -144,12 +152,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 		fEETable = tablePart.getTableViewer();
 		fEETable.setContentProvider((IStructuredContentProvider) inputElement -> {
 			if (inputElement instanceof IBundleModel model) {
-				IBundle bundle = model.getBundle();
-				@SuppressWarnings("deprecation")
-				IManifestHeader header = bundle.getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
-				if (header instanceof RequiredExecutionEnvironmentHeader breeHeader) {
-					return breeHeader.getElements();
-				}
+				return getRequiredEEs(model.getBundle()).toArray();
 			}
 			return new Object[0];
 		});
@@ -261,8 +264,8 @@ public class ExecutionEnvironmentSection extends TableSection {
 		IStructuredSelection ssel = fEETable.getStructuredSelection();
 		if (!ssel.isEmpty()) {
 			for (Object object : ssel) {
-				if (object instanceof ExecutionEnvironment ee) {
-					getHeader().removeExecutionEnvironment(ee.getName());
+				if (object instanceof IExecutionEnvironment ee) {
+					getHeader().removeExecutionEnvironment(ee.getId());
 				}
 			}
 		}
@@ -320,14 +323,8 @@ public class ExecutionEnvironmentSection extends TableSection {
 
 	@SuppressWarnings("deprecation")
 	private void addExecutionEnvironments(Object[] result) {
-		List<String> ees = Arrays.stream(result).map(resultObject -> {
-			if (resultObject instanceof IExecutionEnvironment ee) {
-				return ee.getId();
-			} else if (resultObject instanceof ExecutionEnvironment ee) {
-				return ee.getName();
-			}
-			return null;
-		}).filter(Objects::nonNull).toList();
+		List<String> ees = Arrays.stream(result).filter(IExecutionEnvironment.class::isInstance)
+				.map(IExecutionEnvironment.class::cast).map(IExecutionEnvironment::getId).toList();
 
 		IManifestHeader header = getHeader();
 		if (header == null) {
@@ -348,14 +345,46 @@ public class ExecutionEnvironmentSection extends TableSection {
 	}
 
 	private IExecutionEnvironment[] getEnvironments() {
-		RequiredExecutionEnvironmentHeader header = getHeader();
 		IExecutionEnvironmentsManager eeManager = JavaRuntime.getExecutionEnvironmentsManager();
 		IExecutionEnvironment[] envs = eeManager.getExecutionEnvironments();
-		if (header == null) {
-			return envs;
+		IBundle bundle = getBundle();
+		if (bundle != null) {
+			List<IExecutionEnvironment> requiredEEs = getRequiredEEs(bundle).toList();
+			if (!requiredEEs.isEmpty()) {
+				return Arrays.stream(envs).filter(ee -> !requiredEEs.contains(ee))
+						.toArray(IExecutionEnvironment[]::new);
+			}
 		}
-		List<IExecutionEnvironment> ees = header.getElementNames().stream().map(eeManager::getEnvironment).toList();
-		return Arrays.stream(envs).filter(ee -> !ees.contains(ee)).toArray(IExecutionEnvironment[]::new);
+		return envs;
+	}
+
+	private Stream<IExecutionEnvironment> getRequiredEEs(IBundle bundle) {
+		List<String> requiredEEs = new ArrayList<>(1);
+		RequiredExecutionEnvironmentHeader breeHeader = getHeader();
+		if (breeHeader != null) {
+			requiredEEs.addAll(breeHeader.getEnvironments());
+		}
+		IManifestHeader requiredCapabilitiesHeader = bundle.getManifestHeader(Constants.REQUIRE_CAPABILITY);
+		if (requiredCapabilitiesHeader != null) {
+			addRequiredEEs(requiredCapabilitiesHeader, requiredEEs::add);
+		}
+		return requiredEEs.stream().sorted(VMUtil.ASCENDING_EE_JAVA_VERSION)
+				.map(JavaRuntime.getExecutionEnvironmentsManager()::getEnvironment);
+	}
+
+	static void addRequiredEEs(IManifestHeader requiredCapabilitiesHeader, Consumer<String> eeCollector) {
+		String eeRequirement = requiredCapabilitiesHeader.getValue();
+		try {
+			ManifestElement[] required = ManifestElement.parseHeader(Constants.REQUIRE_CAPABILITY, eeRequirement);
+			for (ManifestElement requiredCapability : required) {
+				if (ExecutionEnvironmentNamespace.EXECUTION_ENVIRONMENT_NAMESPACE.equals(requiredCapability.getValue())) {
+					String filter = requiredCapability.getDirective(Namespace.REQUIREMENT_FILTER_DIRECTIVE);
+					ManifestUtils.parseRequiredEEsFromFilter(filter, eeCollector);
+				}
+			}
+		} catch (BundleException e) {
+			ILog.get().error("Failed to parse " + Constants.REQUIRE_CAPABILITY + " header: " + eeRequirement, e); //$NON-NLS-1$//$NON-NLS-2$
+		}
 	}
 
 	@Override
