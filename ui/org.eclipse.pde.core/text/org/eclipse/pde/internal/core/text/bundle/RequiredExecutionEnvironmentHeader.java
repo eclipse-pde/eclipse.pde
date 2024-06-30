@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2024 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core.text.bundle;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.osgi.util.ManifestElement;
@@ -32,10 +33,6 @@ public class RequiredExecutionEnvironmentHeader extends CompositeManifestHeader 
 		return new ExecutionEnvironment(this, element.getValue());
 	}
 
-	public boolean hasExecutionEnvironment(IExecutionEnvironment env) {
-		return hasElement(env.getId());
-	}
-
 	public void addExecutionEnvironment(IExecutionEnvironment env) {
 		addManifestElement(new ExecutionEnvironment(this, env.getId()));
 	}
@@ -45,13 +42,13 @@ public class RequiredExecutionEnvironmentHeader extends CompositeManifestHeader 
 	}
 
 	public void addExecutionEnvironments(Object[] envs) {
-		ArrayList<ExecutionEnvironment> list = new ArrayList<>(envs.length);
+		List<ExecutionEnvironment> list = new ArrayList<>(envs.length);
 		for (Object envObject : envs) {
 			ExecutionEnvironment env = null;
-			if (envObject instanceof ExecutionEnvironment) {
-				env = (ExecutionEnvironment) envObject;
-			} else if (envObject instanceof IExecutionEnvironment) {
-				env = new ExecutionEnvironment(this, ((IExecutionEnvironment) envObject).getId());
+			if (envObject instanceof ExecutionEnvironment ee) {
+				env = ee;
+			} else if (envObject instanceof IExecutionEnvironment ee) {
+				env = new ExecutionEnvironment(this, ee.getId());
 			}
 			if (env != null && !hasElement(env.getName())) {
 				list.add(env);
@@ -61,10 +58,6 @@ public class RequiredExecutionEnvironmentHeader extends CompositeManifestHeader 
 		if (!list.isEmpty()) {
 			addManifestElements(list.toArray(new ExecutionEnvironment[list.size()]));
 		}
-	}
-
-	public void addExecutionEnvironments(ExecutionEnvironment[] envs) {
-		addManifestElements(envs);
 	}
 
 	public ExecutionEnvironment removeExecutionEnvironment(ExecutionEnvironment env) {
