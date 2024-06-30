@@ -15,11 +15,18 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.ModelChangedEvent;
+import org.eclipse.pde.core.plugin.IMatchRules;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.PluginRegistry.PluginFilter;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.IModelChangeProviderExtension;
 import org.eclipse.pde.internal.core.bundle.BundleFragmentModel;
@@ -95,11 +102,30 @@ public class PluginInputContextManager extends InputContextManager {
 
 	private void bundleAdded(InputContext bundleContext) {
 		IBundleModel model = (IBundleModel) bundleContext.getModel();
-		if (model.isFragmentModel())
+		if (model.isFragmentModel()) {
 			bmodel = new BundleFragmentModel();
-		else
+		} else {
 			bmodel = new BundlePluginModel();
+		}
 		bmodel.setBundleModel(model);
+
+		// Set the BundleDescription from the model in the target-platform
+		IResource resource = bmodel.getUnderlyingResource();
+		IPluginModelBase targetModel;
+		if (resource != null) {
+			targetModel = PluginRegistry.findModel(resource.getProject());
+		} else {
+			IPluginBase pluginBase = bmodel.getPluginBase();
+			IPath installLocation = IPath.fromOSString(model.getInstallLocation());
+			targetModel = PluginRegistry.findModel(pluginBase.getId(), pluginBase.getVersion(), IMatchRules.PERFECT,
+					new PluginFilter() {
+						@Override
+						public boolean accept(IPluginModelBase model) {
+							return installLocation.equals(IPath.fromOSString(model.getInstallLocation()));
+						}
+					});
+		}
+		bmodel.setBundleDescription(targetModel.getBundleDescription());
 		syncExtensions();
 	}
 

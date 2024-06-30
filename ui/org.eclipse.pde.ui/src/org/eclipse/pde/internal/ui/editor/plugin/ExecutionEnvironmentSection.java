@@ -51,6 +51,7 @@ import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.ExecutionEnvironment;
 import org.eclipse.pde.internal.core.text.bundle.PDEManifestElement;
 import org.eclipse.pde.internal.core.text.bundle.RequiredExecutionEnvironmentHeader;
+import org.eclipse.pde.internal.core.util.ManifestUtils;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
@@ -79,6 +80,7 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.osgi.framework.Constants;
+import org.osgi.resource.Resource;
 
 public class ExecutionEnvironmentSection extends TableSection {
 
@@ -139,13 +141,10 @@ public class ExecutionEnvironmentSection extends TableSection {
 		createViewerPartControl(container, SWT.FULL_SELECTION | SWT.MULTI, 2, toolkit);
 		fEETable = tablePart.getTableViewer();
 		fEETable.setContentProvider((IStructuredContentProvider) inputElement -> {
-			if (inputElement instanceof IBundleModel model) {
-				IBundle bundle = model.getBundle();
-				@SuppressWarnings("deprecation")
-				IManifestHeader header = bundle.getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
-				if (header instanceof RequiredExecutionEnvironmentHeader breeHeader) {
-					return breeHeader.getEnvironments();
-				}
+			IPluginModelBase model = getPluginModel();
+			if (model != null) {
+				Resource bundle = model.getBundleDescription();
+				return ManifestUtils.getRequiredExecutionEnvironments(bundle).toArray(String[]::new);
 			}
 			return new Object[0];
 		});
@@ -331,14 +330,19 @@ public class ExecutionEnvironmentSection extends TableSection {
 	}
 
 	private IExecutionEnvironment[] getEnvironments() {
-		RequiredExecutionEnvironmentHeader header = getHeader();
 		IExecutionEnvironmentsManager eeManager = JavaRuntime.getExecutionEnvironmentsManager();
 		IExecutionEnvironment[] envs = eeManager.getExecutionEnvironments();
-		if (header == null) {
-			return envs;
+		IPluginModelBase model = getPluginModel();
+		if (model != null) {
+			List<IExecutionEnvironment> requiredEEs = ManifestUtils
+					.getRequiredExecutionEnvironments(model.getBundleDescription()) //
+					.map(eeManager::getEnvironment).toList();
+			if (!requiredEEs.isEmpty()) {
+				return Arrays.stream(envs).filter(ee -> !requiredEEs.contains(ee))
+						.toArray(IExecutionEnvironment[]::new);
+			}
 		}
-		List<IExecutionEnvironment> ees = header.getElementNames().stream().map(eeManager::getEnvironment).toList();
-		return Arrays.stream(envs).filter(ee -> !ees.contains(ee)).toArray(IExecutionEnvironment[]::new);
+		return envs;
 	}
 
 	@Override
@@ -404,11 +408,13 @@ public class ExecutionEnvironmentSection extends TableSection {
 	}
 
 	protected boolean isFragment() {
+		IPluginModelBase model = getPluginModel();
+		return model != null && model.isFragmentModel();
+	}
+
+	private IPluginModelBase getPluginModel() {
 		InputContextManager manager = getPage().getPDEEditor().getContextManager();
-		if (manager.getAggregateModel() instanceof IPluginModelBase model) {
-			return model.isFragmentModel();
-		}
-		return false;
+		return manager.getAggregateModel() instanceof IPluginModelBase model ? model : null;
 	}
 
 	@Override
