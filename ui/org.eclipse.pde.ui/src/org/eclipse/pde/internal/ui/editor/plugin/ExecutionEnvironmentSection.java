@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2017 IBM Corporation and others.
+ *  Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -15,8 +15,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Arrays;
+import java.util.List;
+import java.util.StringJoiner;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -29,6 +30,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
@@ -66,11 +68,11 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
-import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
@@ -84,7 +86,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 	private Action fRemoveAction;
 	private Action fAddAction;
 
-	class EELabelProvider extends LabelProvider {
+	private static class EELabelProvider extends LabelProvider {
 
 		private final Image fImage;
 
@@ -112,20 +114,6 @@ public class ExecutionEnvironmentSection extends TableSection {
 		}
 	}
 
-	static class ContentProvider implements IStructuredContentProvider {
-		@Override
-		public Object[] getElements(Object inputElement) {
-			if (inputElement instanceof IBundleModel model) {
-				IBundle bundle = model.getBundle();
-				IManifestHeader header = bundle.getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
-				if (header instanceof RequiredExecutionEnvironmentHeader) {
-					return ((RequiredExecutionEnvironmentHeader) header).getEnvironments();
-				}
-			}
-			return new Object[0];
-		}
-	}
-
 	public ExecutionEnvironmentSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION, new String[] {PDEUIMessages.RequiredExecutionEnvironmentSection_add, PDEUIMessages.RequiredExecutionEnvironmentSection_remove, PDEUIMessages.RequiredExecutionEnvironmentSection_up, PDEUIMessages.RequiredExecutionEnvironmentSection_down});
 		createClient(getSection(), page.getEditor().getToolkit());
@@ -150,24 +138,24 @@ public class ExecutionEnvironmentSection extends TableSection {
 
 		createViewerPartControl(container, SWT.FULL_SELECTION | SWT.MULTI, 2, toolkit);
 		fEETable = tablePart.getTableViewer();
-		fEETable.setContentProvider(new ContentProvider());
+		fEETable.setContentProvider((IStructuredContentProvider) inputElement -> {
+			if (inputElement instanceof IBundleModel model) {
+				IBundle bundle = model.getBundle();
+				@SuppressWarnings("deprecation")
+				IManifestHeader header = bundle.getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
+				if (header instanceof RequiredExecutionEnvironmentHeader breeHeader) {
+					return breeHeader.getEnvironments();
+				}
+			}
+			return new Object[0];
+		});
 		fEETable.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 
 		Hyperlink link = toolkit.createHyperlink(container, PDEUIMessages.BuildExecutionEnvironmentSection_configure, SWT.NONE);
-		link.addHyperlinkListener(new IHyperlinkListener() {
-			@Override
-			public void linkEntered(HyperlinkEvent e) {
-			}
-
-			@Override
-			public void linkExited(HyperlinkEvent e) {
-			}
-
-			@Override
-			public void linkActivated(HyperlinkEvent e) {
-				SWTFactory.showPreferencePage(PDEPlugin.getActiveWorkbenchShell(), "org.eclipse.jdt.debug.ui.jreProfiles", null); //$NON-NLS-1$
-			}
-		});
+		link.addHyperlinkListener(IHyperlinkListener.linkActivatedAdapter(e -> {
+			Shell shell = PDEPlugin.getActiveWorkbenchShell();
+			SWTFactory.showPreferencePage(shell, "org.eclipse.jdt.debug.ui.jreProfiles", null); //$NON-NLS-1$
+		}));
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		link.setLayoutData(gd);
@@ -176,30 +164,19 @@ public class ExecutionEnvironmentSection extends TableSection {
 		try {
 			if (project != null && project.hasNature(JavaCore.NATURE_ID)) {
 				link = toolkit.createHyperlink(container, PDEUIMessages.ExecutionEnvironmentSection_updateClasspath, SWT.NONE);
-				link.addHyperlinkListener(new IHyperlinkListener() {
-					@Override
-					public void linkEntered(HyperlinkEvent e) {
-					}
-
-					@Override
-					public void linkExited(HyperlinkEvent e) {
-					}
-
-					@Override
-					public void linkActivated(HyperlinkEvent e) {
-						try {
-							getPage().getEditor().doSave(null);
-							IPluginModelBase model = PluginRegistry.findModel(project);
-							if (model != null) {
-								ClasspathComputer.setClasspath(project, model);
-								if (PDEPlugin.getWorkspace().isAutoBuilding()) {
-									doFullBuild(project);
-								}
+				link.addHyperlinkListener(IHyperlinkListener.linkActivatedAdapter(e -> {
+					try {
+						getPage().getEditor().doSave(null);
+						IPluginModelBase model = PluginRegistry.findModel(project);
+						if (model != null) {
+							ClasspathComputer.setClasspath(project, model);
+							if (PDEPlugin.getWorkspace().isAutoBuilding()) {
+								doFullBuild(project);
 							}
-						} catch (CoreException e1) {
 						}
+					} catch (CoreException e1) {
 					}
-				});
+				}));
 				gd = new GridData();
 				gd.horizontalSpan = 2;
 				link.setLayoutData(gd);
@@ -300,9 +277,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 	private void handleRemove() {
 		IStructuredSelection ssel = fEETable.getStructuredSelection();
 		if (!ssel.isEmpty()) {
-			Iterator<?> iter = ssel.iterator();
-			while (iter.hasNext()) {
-				Object object = iter.next();
+			for (Object object : ssel) {
 				if (object instanceof ExecutionEnvironment) {
 					getHeader().removeExecutionEnvironment((ExecutionEnvironment) object);
 				}
@@ -324,24 +299,21 @@ public class ExecutionEnvironmentSection extends TableSection {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private void addExecutionEnvironments(Object[] result) {
 		IManifestHeader header = getHeader();
 		if (header == null) {
-			StringBuilder buffer = new StringBuilder();
+			StringJoiner buffer = new StringJoiner("," + getLineDelimiter() + " "); //$NON-NLS-1$//$NON-NLS-2$
 			for (Object resultObject : result) {
-				String id = null;
-				if (resultObject instanceof IExecutionEnvironment)
-					id = ((IExecutionEnvironment) resultObject).getId();
-				else if (resultObject instanceof ExecutionEnvironment)
-					id = ((ExecutionEnvironment) resultObject).getName();
-				else
+				String id;
+				if (resultObject instanceof IExecutionEnvironment ee) {
+					id = ee.getId();
+				} else if (resultObject instanceof ExecutionEnvironment ee) {
+					id = ee.getName();
+				} else {
 					continue;
-				if (buffer.length() > 0) {
-					buffer.append(","); //$NON-NLS-1$
-					buffer.append(getLineDelimiter());
-					buffer.append(" "); //$NON-NLS-1$
 				}
-				buffer.append(id);
+				buffer.add(id);
 			}
 			getBundle().setHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, buffer.toString());
 		} else {
@@ -358,17 +330,15 @@ public class ExecutionEnvironmentSection extends TableSection {
 		return TextUtil.getDefaultLineDelimiter();
 	}
 
-	private Object[] getEnvironments() {
+	private IExecutionEnvironment[] getEnvironments() {
 		RequiredExecutionEnvironmentHeader header = getHeader();
-		IExecutionEnvironment[] envs = JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments();
-		if (header == null)
+		IExecutionEnvironmentsManager eeManager = JavaRuntime.getExecutionEnvironmentsManager();
+		IExecutionEnvironment[] envs = eeManager.getExecutionEnvironments();
+		if (header == null) {
 			return envs;
-		ArrayList<Object> list = new ArrayList<>();
-		for (int i = 0; i < envs.length; i++) {
-			if (!header.hasExecutionEnvironment(envs[i]))
-				list.add(envs[i]);
 		}
-		return list.toArray();
+		List<IExecutionEnvironment> ees = header.getElementNames().stream().map(eeManager::getEnvironment).toList();
+		return Arrays.stream(envs).filter(ee -> !ees.contains(ee)).toArray(IExecutionEnvironment[]::new);
 	}
 
 	@Override
@@ -425,12 +395,12 @@ public class ExecutionEnvironmentSection extends TableSection {
 
 	protected RequiredExecutionEnvironmentHeader getHeader() {
 		IBundle bundle = getBundle();
-		if (bundle == null)
+		if (bundle == null) {
 			return null;
+		}
+		@SuppressWarnings("deprecation")
 		IManifestHeader header = bundle.getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
-		if (header instanceof RequiredExecutionEnvironmentHeader)
-			return (RequiredExecutionEnvironmentHeader) header;
-		return null;
+		return header instanceof RequiredExecutionEnvironmentHeader breeHeader ? breeHeader : null;
 	}
 
 	protected boolean isFragment() {
@@ -471,10 +441,11 @@ public class ExecutionEnvironmentSection extends TableSection {
 	protected boolean canPaste(Object target, Object[] objects) {
 		RequiredExecutionEnvironmentHeader header = getHeader();
 		for (Object object : objects) {
-			if (object instanceof ExecutionEnvironment) {
-				String env = ((ExecutionEnvironment) object).getName();
-				if (header == null || !header.hasElement(env))
+			if (object instanceof ExecutionEnvironment executionEnvironment) {
+				String env = executionEnvironment.getName();
+				if (header == null || !header.hasElement(env)) {
 					return true;
+				}
 			}
 		}
 		return false;
@@ -576,12 +547,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 
 	private boolean validateDropMoveModel(ExecutionEnvironment sourceEEObject, ExecutionEnvironment targetEEObject) {
 		// Objects have to be from the same model
-		IBundleModel sourceModel = sourceEEObject.getModel();
-		IBundleModel targetModel = targetEEObject.getModel();
-		if (sourceModel.equals(targetModel)) {
-			return true;
-		}
-		return false;
+		return sourceEEObject.getModel().equals(targetEEObject.getModel());
 	}
 
 	private boolean validateDropMoveSanity(Object targetObject, Object[] sourceObjects) {
@@ -590,10 +556,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 			return false;
 		}
 		// Validate source objects
-		if (validateDragMoveSanity(sourceObjects) == false) {
-			return false;
-		}
-		return true;
+		return validateDragMoveSanity(sourceObjects);
 	}
 
 	@Override

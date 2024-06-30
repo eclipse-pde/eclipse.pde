@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2023 IBM Corporation and others.
+ *  Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -132,18 +132,20 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 
 	public static IEditorPart open(Object object, boolean source) {
 		SHOW_SOURCE = source;
-		if (object instanceof IPluginObject) {
-			ISharedPluginModel model = ((IPluginObject) object).getModel();
-			if (model instanceof IBundlePluginModelProvider)
-				model = ((IBundlePluginModelProvider) model).getBundlePluginModel();
-			if (model instanceof IPluginModelBase) {
-				String filename = ((IPluginModelBase) model).isFragmentModel()
+		if (object instanceof IPluginObject pluginObject) {
+			ISharedPluginModel model = pluginObject.getModel();
+			if (model instanceof IBundlePluginModelProvider provider) {
+				model = provider.getBundlePluginModel();
+			}
+			if (model instanceof IPluginModelBase pluginModel) {
+				String filename = pluginModel.isFragmentModel() //
 						? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR
 						: ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR;
 				if (!(object instanceof IPluginExtension) && !(object instanceof IPluginExtensionPoint)) {
 					String installLocation = model.getInstallLocation();
-					if (installLocation == null)
+					if (installLocation == null) {
 						return null;
+					}
 					File file = new File(installLocation);
 					if (file.isFile()) {
 						if (CoreUtility.jarContainsResource(file, ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR, false)) {
@@ -154,14 +156,15 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 					}
 				}
 				IResource resource = model.getUnderlyingResource();
-				if (resource == null)
+				if (resource == null) {
 					return openExternalPlugin(new File(model.getInstallLocation()), filename);
-				IProject project = resource.getProject();
-				return openWorkspacePlugin(PDEProject.getBundleRelativeFile(project, IPath.fromOSString(filename)));
+				}
+				IFile filePath = PDEProject.getBundleRelativeFile(resource.getProject(), IPath.fromOSString(filename));
+				return openEditor(new FileEditorInput(filePath));
 			}
 		}
-		if (object instanceof BaseDescription) {
-			BundleDescription desc = ((BaseDescription) object).getSupplier();
+		if (object instanceof BaseDescription baseDescription) {
+			BundleDescription desc = baseDescription.getSupplier();
 			String id = desc.getSymbolicName();
 			String version = desc.getVersion().toString();
 
@@ -173,10 +176,6 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 			}
 		}
 		return null;
-	}
-
-	private static IEditorPart openWorkspacePlugin(IFile pluginFile) {
-		return openEditor(new FileEditorInput(pluginFile));
 	}
 
 	private static IEditorPart openExternalPlugin(File location, String filename) {
@@ -201,7 +200,7 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		return null;
 	}
 
-	public static IEditorPart openEditor(IEditorInput input) {
+	private static IEditorPart openEditor(IEditorInput input) {
 		if (input != null) {
 			try {
 				return PDEPlugin.getActivePage().openEditor(input, IPDEUIConstants.MANIFEST_EDITOR_ID);
