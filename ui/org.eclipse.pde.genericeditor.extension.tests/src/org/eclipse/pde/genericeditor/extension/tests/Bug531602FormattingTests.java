@@ -50,8 +50,7 @@ public class Bug531602FormattingTests extends AbstractTargetEditorTest {
 		ByteArrayOutputStream actualOutput = new ByteArrayOutputStream();
 		targetDefinition.setProgramArguments(null);
 		TargetDefinitionPersistenceHelper.persistXML(targetDefinition, actualOutput);
-		assertEquals(expectedOutput.toString(StandardCharsets.UTF_8.toString()),
-				actualOutput.toString(StandardCharsets.UTF_8.toString()));
+		assertEquals(expectedOutput.toString(StandardCharsets.UTF_8), actualOutput.toString(StandardCharsets.UTF_8));
 	}
 
 	@Test
@@ -105,9 +104,6 @@ public class Bug531602FormattingTests extends AbstractTargetEditorTest {
 		confirmMatch(targetDefinition, "ITargetLocationExtensionTestCaseTarget.txt");
 	}
 
-	public static void assertEqualStringIgnoreDelim(String actual, String expected) throws IOException {
-		StringAsserts.assertEqualStringIgnoreDelim(actual, expected);
-	}
 	private void confirmMatch(ITargetDefinition targetDefinition, String expectedDefinitionPath) throws Exception {
 		try (Scanner s = new Scanner(FrameworkUtil.getBundle(this.getClass())
 				.getEntry("testing-files/target-files/" + expectedDefinitionPath).openStream()).useDelimiter("\\A")) {
@@ -123,7 +119,7 @@ public class Bug531602FormattingTests extends AbstractTargetEditorTest {
 			ByteArrayOutputStream actualOutput = new ByteArrayOutputStream();
 			TargetDefinitionPersistenceHelper.persistXML(targetDefinition, actualOutput);
 
-			assertEqualStringIgnoreDelim(result, actualOutput.toString(StandardCharsets.UTF_8.toString()));
+			StringAsserts.assertEqualStringIgnoreDelim(actualOutput.toString(StandardCharsets.UTF_8), result);
 		} catch (IOException e) {
 		}
 	}
