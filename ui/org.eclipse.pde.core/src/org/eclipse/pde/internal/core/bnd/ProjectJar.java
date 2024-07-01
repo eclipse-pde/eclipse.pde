@@ -85,7 +85,7 @@ public class ProjectJar extends Jar {
 	@Override
 	public void setManifest(Manifest manifest) {
 		super.setManifest(manifest);
-		ManifestResource resource = new ManifestResource(manifest);
+		ManifestResource resource = new FormatedManifestResource(manifest);
 		// We must handle this with a little care here, first we put it as a
 		// resource, what will make other parts of BND find it and copy it to
 		// the output location(so it can be found when using the output as a
