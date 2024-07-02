@@ -16,6 +16,7 @@
 package org.eclipse.pde.internal.ui.bndtools;
 
 import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -44,7 +45,8 @@ public abstract class BndTargetLocationFactory implements ITargetLocationFactory
 				DocumentBuilder docBuilder = org.eclipse.core.internal.runtime.XmlProcessorFactory
 						.createDocumentBuilderFactoryIgnoringDOCTYPE()
 					.newDocumentBuilder();
-				Document document = docBuilder.parse(new ByteArrayInputStream(serializedXML.getBytes("UTF-8"))); //$NON-NLS-1$
+				Document document = docBuilder
+						.parse(new ByteArrayInputStream(serializedXML.getBytes(StandardCharsets.UTF_8)));
 				locationElement = document.getDocumentElement();
 
 				if (this.type.equals(locationElement.getAttribute(BndTargetLocation.ATTRIBUTE_LOCATION_TYPE))) {
