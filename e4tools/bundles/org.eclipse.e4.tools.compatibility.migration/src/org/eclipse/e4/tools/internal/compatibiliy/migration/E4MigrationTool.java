@@ -84,6 +84,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -160,7 +161,7 @@ public final class E4MigrationTool {
 		E4MigrationTool converter = new E4MigrationTool();
 		IMemento memento;
 		try (FileInputStream input = new FileInputStream(sourceMementoFile)) {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(input, "utf-8")); //$NON-NLS-1$
+			BufferedReader reader = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8));
 			memento = XMLMemento.createReadRoot(reader);
 		}
 
