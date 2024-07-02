@@ -13,20 +13,20 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
+import java.util.Set;
+
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
-import org.eclipse.pde.internal.core.text.bundle.ExecutionEnvironment;
 import org.eclipse.pde.internal.core.text.bundle.RequiredExecutionEnvironmentHeader;
 import org.osgi.framework.Constants;
 
 public class ReplaceExecEnvironment extends AbstractManifestMarkerResolution {
 
-	String fRequiredEE;
+	private final String fRequiredEE;
 
 	public ReplaceExecEnvironment(int type, IMarker marker) {
 		super(type, marker);
@@ -40,23 +40,17 @@ public class ReplaceExecEnvironment extends AbstractManifestMarkerResolution {
 
 	@Override
 	protected void createChange(BundleModel model) {
+		@SuppressWarnings("deprecation")
 		IManifestHeader header = model.getBundle().getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
 		if (header instanceof RequiredExecutionEnvironmentHeader reqHeader) {
-			ExecutionEnvironment[] bundleEnvs = reqHeader.getEnvironments();
-			IExecutionEnvironment[] systemEnvs = JavaRuntime.getExecutionEnvironmentsManager()
-					.getExecutionEnvironments();
-
-			for (IExecutionEnvironment systemEnv : systemEnvs) {
-				if (systemEnv.getId().equals(fRequiredEE)) {
-					for (ExecutionEnvironment bundleEnv : bundleEnvs) {
-						reqHeader.removeExecutionEnvironment(bundleEnv);
-					}
-					reqHeader.addExecutionEnvironment(systemEnv);
+			Set<String> systemEnvs = TargetPlatformHelper.getPDEState().getfProvidedExecutionEnvironments();
+			if (systemEnvs.contains(fRequiredEE)) {
+				for (String ee : reqHeader.getEnvironments()) {
+					reqHeader.removeExecutionEnvironment(ee);
 				}
-
+				reqHeader.addExecutionEnvironment(fRequiredEE);
 			}
 		}
-
 	}
 
 }

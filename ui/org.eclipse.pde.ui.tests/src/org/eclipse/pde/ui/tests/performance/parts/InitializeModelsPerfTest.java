@@ -22,7 +22,6 @@ import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.core.target.LoadTargetDefinitionJob;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.ui.tests.PDETestCase;
 import org.eclipse.test.performance.Dimension;
 import org.eclipse.test.performance.PerformanceTestCase;
@@ -37,7 +36,6 @@ public class InitializeModelsPerfTest extends PerformanceTestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		PDETestCase.delete(PDECore.getDefault().getStateLocation().toFile());
-		TargetPlatformHelper.getKnownExecutionEnvironments();
 	}
 
 	public void testModels() throws Exception {

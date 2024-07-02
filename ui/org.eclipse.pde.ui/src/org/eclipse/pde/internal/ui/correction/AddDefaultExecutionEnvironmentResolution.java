@@ -15,8 +15,6 @@
 package org.eclipse.pde.internal.ui.correction;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
@@ -26,11 +24,8 @@ import org.osgi.framework.Constants;
 
 public class AddDefaultExecutionEnvironmentResolution extends AbstractManifestMarkerResolution {
 
-
-
 	public AddDefaultExecutionEnvironmentResolution(int type, IMarker marker) {
 		super(type, marker);
-
 	}
 
 	@Override
@@ -46,9 +41,8 @@ public class AddDefaultExecutionEnvironmentResolution extends AbstractManifestMa
 		// Get header
 		header = model.getBundle().getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
 
-		if (header != null && header instanceof RequiredExecutionEnvironmentHeader) {
-			IExecutionEnvironment ee = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(id);
-			((RequiredExecutionEnvironmentHeader) header).addExecutionEnvironment(ee);
+		if (header instanceof RequiredExecutionEnvironmentHeader breeHeader) {
+			breeHeader.addExecutionEnvironment(id);
 		}
 	}
 

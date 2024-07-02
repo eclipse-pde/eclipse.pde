@@ -16,7 +16,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
@@ -74,7 +73,6 @@ import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.ui.forms.editor.FormEditor;
 import org.osgi.framework.Constants;
 
 public class BundleSourcePage extends KeyValueSourcePage {
@@ -100,34 +98,23 @@ public class BundleSourcePage extends KeyValueSourcePage {
 
 	private PDERefactoringAction fRenameAction;
 
-	/**
-	 * BundleOutlineContentProvider
-	 */
 	private class BundleOutlineContentProvider implements ITreeContentProvider {
 
 		@Override
 		public Object[] getChildren(Object parent) {
 			// Need an identifying class for label provider
-			if (parent instanceof ImportPackageHeader) {
-				return ((ImportPackageHeader) parent).getPackages();
-			} else if (parent instanceof ExportPackageHeader) {
-				return ((ExportPackageHeader) parent).getPackages();
-			} else if (parent instanceof RequiredExecutionEnvironmentHeader) {
-				return ((RequiredExecutionEnvironmentHeader) parent).getEnvironments();
-			} else if (parent instanceof RequireBundleHeader) {
-				return ((RequireBundleHeader) parent).getRequiredBundles();
+			if (parent instanceof ImportPackageHeader importHeader) {
+				return importHeader.getPackages();
+			} else if (parent instanceof ExportPackageHeader exportHeader) {
+				return exportHeader.getPackages();
+			} else if (parent instanceof RequiredExecutionEnvironmentHeader breeHeader) {
+				return breeHeader.getElements();
+			} else if (parent instanceof RequireBundleHeader requireBundleHeader) {
+				return requireBundleHeader.getRequiredBundles();
 			} else if (parent instanceof BundleClasspathHeader) {
-				return getPluginLibraries();
+				return getBundleClasspathLibraries();
 			}
 			return new Object[0];
-		}
-
-		private Object[] getPluginLibraries() {
-			IPluginLibrary[] libraries = getBundleClasspathLibraries();
-			if ((libraries == null) || (libraries.length == 0)) {
-				return new Object[0];
-			}
-			return libraries;
 		}
 
 		@Override
@@ -144,13 +131,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		public Object[] getElements(Object parent) {
 			if (parent instanceof BundleModel model) {
 				Map<String, IManifestHeader> manifest = ((Bundle) model.getBundle()).getHeaders();
-				ArrayList<IDocumentKey> keys = new ArrayList<>();
-				for (IManifestHeader header : manifest.values()) {
-					if (header.getOffset() > -1) {
-						keys.add(header);
-					}
-				}
-				return keys.toArray();
+				return manifest.values().stream().filter(header -> header.getOffset() > -1).toArray();
 			}
 			return new Object[0];
 		}
@@ -159,13 +140,14 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	private IPluginLibrary[] getBundleClasspathLibraries() {
 		// The bundle classpath header has no model data members
 		// Retrieve the plug-in library equivalents from the editor model
-		FormEditor editor = getEditor();
-		if (editor instanceof PDEFormEditor formEditor) {
-			IBaseModel baseModel = formEditor.getAggregateModel();
-			if (baseModel instanceof IPluginModelBase) {
-				IPluginLibrary[] libraries = ((IPluginModelBase) baseModel).getPluginBase().getLibraries();
-				return libraries;
-			}
+		IPluginModelBase pluginModel = getPluginModel();
+		return pluginModel != null ? pluginModel.getPluginBase().getLibraries() : new IPluginLibrary[0];
+	}
+
+	private IPluginModelBase getPluginModel() {
+		if (getEditor() instanceof PDEFormEditor formEditor
+				&& formEditor.getAggregateModel() instanceof IPluginModelBase pluginModel) {
+			return pluginModel;
 		}
 		return null;
 	}
@@ -174,14 +156,14 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		// TODO: MP: QO: LOW: Move to PDELabelProvider
 		@Override
 		public String getText(Object obj) {
-			if (obj instanceof PackageObject) {
-				return ((PackageObject) obj).getName();
-			} else if (obj instanceof ExecutionEnvironment) {
-				return ((ExecutionEnvironment) obj).getName();
-			} else if (obj instanceof RequireBundleObject) {
-				return getTextRequireBundle(((RequireBundleObject) obj));
-			} else if (obj instanceof ManifestHeader) {
-				return ((ManifestHeader) obj).getName();
+			if (obj instanceof PackageObject packageObject) {
+				return packageObject.getName();
+			} else if (obj instanceof ExecutionEnvironment ee) {
+				return ee.getName();
+			} else if (obj instanceof RequireBundleObject requireBundle) {
+				return getTextRequireBundle(requireBundle);
+			} else if (obj instanceof ManifestHeader header) {
+				return header.getName();
 			}
 			return super.getText(obj);
 		}
@@ -225,9 +207,9 @@ public class BundleSourcePage extends KeyValueSourcePage {
 				return labelProvider.get(PDEPluginImages.DESC_PACKAGE_OBJ);
 			} else if (obj instanceof ExecutionEnvironment) {
 				return labelProvider.get(PDEPluginImages.DESC_JAVA_LIB_OBJ);
-			} else if (obj instanceof RequireBundleObject) {
+			} else if (obj instanceof RequireBundleObject requireBundle) {
 				int flags = SharedLabelProvider.F_EXTERNAL;
-				if (((RequireBundleObject) obj).isReexported()) {
+				if (requireBundle.isReexported()) {
 					flags = flags | SharedLabelProvider.F_EXPORT;
 				}
 				return labelProvider.get(PDEPluginImages.DESC_REQ_PLUGIN_OBJ, flags);
@@ -319,16 +301,9 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	 * @return true if the offset is within the range; false, otherwise
 	 */
 	private boolean isWithinCurrentRange(int offset, IDocumentRange range) {
-
-		if (range == null) {
-			// Range not set
-			return false;
-		} else if (offset >= range.getOffset() && (offset <= (range.getOffset() + range.getLength()))) {
-			// Offset within range
-			return true;
-		}
-		// Offset not within range
-		return false;
+		return range != null //
+				&& offset >= range.getOffset() //
+				&& (offset <= range.getOffset() + range.getLength());
 	}
 
 	/**
@@ -338,26 +313,13 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	 * and before the current range (e.g. the previous ranges parameters)
 	 */
 	private boolean isWithinPreviousRange(int offset, IDocumentRange current_range, IDocumentRange previous_range) {
-
-		if ((current_range == null) || (previous_range == null)) {
-			// Range not set
-			return false;
-		} else if ((offset >= previous_range.getOffset() + previous_range.getLength()) && ((offset <= current_range.getOffset()))) {
-			// Offset within range
-			return true;
-		}
-		// Offset not within range
-		return false;
+		return current_range != null && previous_range != null
+				&& (offset >= previous_range.getOffset() + previous_range.getLength())
+				&& offset <= current_range.getOffset();
 	}
 
 	private boolean isBeforePreviousRange(int offset, IDocumentRange previousRange) {
-
-		if (previousRange == null) {
-			return false;
-		} else if (offset < previousRange.getOffset()) {
-			return true;
-		}
-		return false;
+		return previousRange != null && offset < previousRange.getOffset();
 	}
 
 	private IDocumentRange getRangeElementChild(IBundleModel model, int offset, CompositeManifestHeader header) {
@@ -406,12 +368,9 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	}
 
 	private boolean isWithinLastElementParamRange(int offset, IDocumentRange currentRange, IDocumentRange headerRange) {
-		if (currentRange == null) {
-			return false;
-		} else if ((offset >= currentRange.getOffset() + currentRange.getLength()) && (offset <= (headerRange.getOffset() + headerRange.getLength()))) {
-			return true;
-		}
-		return false;
+		return currentRange != null //
+				&& (offset >= currentRange.getOffset() + currentRange.getLength())
+				&& (offset <= (headerRange.getOffset() + headerRange.getLength()));
 	}
 
 	private void setChildTargetOutlineSelection(String headerName, PDEManifestElement element) {
@@ -429,12 +388,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	 * objects
 	 */
 	private Object getBundleClasspathOutlineSelection(PDEManifestElement manifestElement) {
-
 		IPluginLibrary[] libraries = getBundleClasspathLibraries();
-		// Ensure there are libraries
-		if ((libraries == null) || (libraries.length == 0)) {
-			return null;
-		}
 		// Linearly search for the equivalent library object
 		for (IPluginLibrary library : libraries) {
 			if (manifestElement.getValue().equals(library.getName())) {
@@ -479,30 +433,30 @@ public class BundleSourcePage extends KeyValueSourcePage {
 
 		Object selection = getSelection();
 
-		if (selection instanceof ImportObject) {
-			IPluginModelBase base = ((ImportObject) selection).getImport().getPluginModel();
-			if (base instanceof IBundlePluginModelBase)
-				return getSpecificRange(((IBundlePluginModelBase) base).getBundleModel(), Constants.REQUIRE_BUNDLE, ((ImportObject) selection).getId());
-		} else if (selection instanceof ImportPackageObject) {
-			return getSpecificRange(((ImportPackageObject) selection).getModel(), Constants.IMPORT_PACKAGE, ((ImportPackageObject) selection).getValue());
-		} else if (selection instanceof ExportPackageObject) {
-			return getSpecificRange(((ExportPackageObject) selection).getModel(), Constants.EXPORT_PACKAGE, ((ExportPackageObject) selection).getValue());
-		} else if (selection instanceof IPluginLibrary) {
-			IPluginModelBase base = ((IPluginLibrary) selection).getPluginModel();
-			if (base instanceof IBundlePluginModelBase)
-				return getSpecificRange(((IBundlePluginModelBase) base).getBundleModel(), Constants.BUNDLE_CLASSPATH, ((IPluginLibrary) selection).getName());
-		} else if (selection instanceof ExecutionEnvironment) {
-			return getSpecificRange(((ExecutionEnvironment) selection).getModel(), Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, ((ExecutionEnvironment) selection).getValue());
-		} else if (selection instanceof RequireBundleObject) {
-			return getSpecificRange(((RequireBundleObject) selection).getModel(), Constants.REQUIRE_BUNDLE, ((RequireBundleObject) selection).getId());
+		if (selection instanceof ImportObject importObject) {
+			if (importObject.getImport().getPluginModel() instanceof IBundlePluginModelBase pluginModel) {
+				return getSpecificRange(pluginModel.getBundleModel(), Constants.REQUIRE_BUNDLE, importObject.getId());
+			}
+		} else if (selection instanceof ImportPackageObject packageImport) {
+			return getSpecificRange(packageImport.getModel(), Constants.IMPORT_PACKAGE, packageImport.getValue());
+		} else if (selection instanceof ExportPackageObject packageExport) {
+			return getSpecificRange(packageExport.getModel(), Constants.EXPORT_PACKAGE, packageExport.getValue());
+		} else if (selection instanceof IPluginLibrary library) {
+			if (library.getPluginModel() instanceof IBundlePluginModelBase pluginModel) {
+				return getSpecificRange(pluginModel.getBundleModel(), Constants.BUNDLE_CLASSPATH, library.getName());
+			}
+		} else if (selection instanceof ExecutionEnvironment ee) {
+			return getSpecificRange(ee.getModel(), Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, ee.getName());
+		} else if (selection instanceof RequireBundleObject requiredBundle) {
+			return getSpecificRange(requiredBundle.getModel(), Constants.REQUIRE_BUNDLE, requiredBundle.getId());
 		}
 		return null;
 	}
 
 	public static IDocumentRange getSpecificRange(IBundleModel model, IManifestHeader header, String element) {
-		if (header == null || !(model instanceof IEditingModel))
+		if (header == null || !(model instanceof IEditingModel)) {
 			return null;
-
+		}
 		final int[] range = new int[] {-1, -1}; // { offset, length }
 		try {
 			int start = header.getOffset() + header.getName().length();
@@ -578,11 +532,11 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		return true;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-		if (IHyperlinkDetector.class.equals(adapter))
-			return (T) new BundleHyperlinkDetector(this);
+		if (IHyperlinkDetector.class.equals(adapter)) {
+			return adapter.cast(new BundleHyperlinkDetector(this));
+		}
 		return super.getAdapter(adapter);
 	}
 
@@ -593,9 +547,9 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		setSelectedObject(object);
 
 		// Highlight the selection if it is a manifest header
-		if (object instanceof IDocumentKey) {
-			setHighlightRange((IDocumentKey) object);
-			setCurrentHighlightRangeOffset(((IDocumentKey) object).getOffset());
+		if (object instanceof IDocumentKey key) {
+			setHighlightRange(key);
+			setCurrentHighlightRangeOffset(key.getOffset());
 			// We don't set the selected range because it will cause the
 			// manifest header and all its value to be selected
 			return;
@@ -610,14 +564,14 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		// Get the model
 		IBaseModel model = getInputContext().getModel();
 		// Ensure we have an editing model
-		if ((model instanceof AbstractEditingModel) == false) {
+		if (!(model instanceof AbstractEditingModel editingModel)) {
 			return;
 		}
 		// If the range offset is undefined or the source viewer is dirty,
 		// forcibly adjust the offsets and try to find the range again
 		if ((range.getOffset() == -1) || isDirty()) {
 			try {
-				((AbstractEditingModel) model).adjustOffsets(((AbstractEditingModel) model).getDocument());
+				editingModel.adjustOffsets(editingModel.getDocument());
 			} catch (CoreException e) {
 				// Ignore
 			}
@@ -634,21 +588,21 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		super.handleSelectionChangedSourcePage(event);
 		ISelection selection = event.getSelection();
 		// Ensure we have a selection
-		if (selection.isEmpty() || ((selection instanceof ITextSelection) == false)) {
+		if (selection.isEmpty() || !(selection instanceof ITextSelection textSelection)) {
 			return;
 		}
 		// If the page has been edited, adjust the offsets; otherwise, our
 		// caculated ranges will be out of sync
 		IBaseModel model = getInputContext().getModel();
-		if (model instanceof AbstractEditingModel && isDirty()) {
+		if (model instanceof AbstractEditingModel editingModel && isDirty()) {
 			try {
-				((AbstractEditingModel) model).adjustOffsets(((AbstractEditingModel) model).getDocument());
+				editingModel.adjustOffsets(editingModel.getDocument());
 			} catch (CoreException e) {
 				// Ignore
 			}
 		}
 		// Synchronize using the current cursor position in this page
-		synchronizeOutlinePage(((ITextSelection) selection).getOffset());
+		synchronizeOutlinePage(textSelection.getOffset());
 	}
 
 	@Override

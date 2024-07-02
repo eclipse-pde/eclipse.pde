@@ -13,12 +13,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
+import java.util.Set;
+
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
-import org.eclipse.pde.internal.core.text.bundle.ExecutionEnvironment;
 import org.eclipse.pde.internal.core.text.bundle.RequiredExecutionEnvironmentHeader;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.osgi.framework.Constants;
@@ -33,18 +33,11 @@ public class RemoveUnknownExecEnvironments extends AbstractManifestMarkerResolut
 	protected void createChange(BundleModel model) {
 		IManifestHeader header = model.getBundle().getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
 		if (header instanceof RequiredExecutionEnvironmentHeader reqHeader) {
-			ExecutionEnvironment[] bundleEnvs = reqHeader.getEnvironments();
-			IExecutionEnvironment[] systemEnvs = JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments();
-			for (ExecutionEnvironment bundleEnv : bundleEnvs) {
-				boolean found = false;
-				for (IExecutionEnvironment systemEnv : systemEnvs) {
-					if (bundleEnv.getName().equals(systemEnv.getId())) {
-						found = true;
-						break;
-					}
+			Set<String> systemEnvs = TargetPlatformHelper.getPDEState().getfProvidedExecutionEnvironments();
+			for (String ee : reqHeader.getEnvironments()) {
+				if (!systemEnvs.contains(ee)) {
+					reqHeader.removeExecutionEnvironment(ee);
 				}
-				if (!found)
-					reqHeader.removeExecutionEnvironment(bundleEnv);
 			}
 		}
 	}
