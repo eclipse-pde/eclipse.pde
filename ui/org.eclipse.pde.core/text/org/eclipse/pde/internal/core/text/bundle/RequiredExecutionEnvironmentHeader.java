@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core.text.bundle;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
@@ -33,8 +34,8 @@ public class RequiredExecutionEnvironmentHeader extends CompositeManifestHeader 
 		return new ExecutionEnvironment(this, element.getValue());
 	}
 
-	public void addExecutionEnvironment(IExecutionEnvironment env) {
-		addManifestElement(new ExecutionEnvironment(this, env.getId()));
+	public void addExecutionEnvironment(String eeId) {
+		addManifestElement(new ExecutionEnvironment(this, eeId));
 	}
 
 	public void addExecutionEnvironment(ExecutionEnvironment environment, int index) {
@@ -60,8 +61,8 @@ public class RequiredExecutionEnvironmentHeader extends CompositeManifestHeader 
 		}
 	}
 
-	public ExecutionEnvironment removeExecutionEnvironment(ExecutionEnvironment env) {
-		return (ExecutionEnvironment) removeManifestElement(env);
+	public ExecutionEnvironment removeExecutionEnvironment(String eeId) {
+		return (ExecutionEnvironment) removeManifestElement(eeId);
 	}
 
 	/**
@@ -71,11 +72,9 @@ public class RequiredExecutionEnvironmentHeader extends CompositeManifestHeader 
 		return (ExecutionEnvironment) removeManifestElement(environment, true);
 	}
 
-	public ExecutionEnvironment[] getEnvironments() {
+	public List<String> getEnvironments() {
 		PDEManifestElement[] elements = getElements();
-		ExecutionEnvironment[] result = new ExecutionEnvironment[elements.length];
-		System.arraycopy(elements, 0, result, 0, elements.length);
-		return result;
+		return Arrays.stream(elements).map(PDEManifestElement::getValue).toList();
 	}
 
 }

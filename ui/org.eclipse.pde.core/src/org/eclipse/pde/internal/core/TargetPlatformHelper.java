@@ -22,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -352,8 +353,8 @@ public class TargetPlatformHelper {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static Dictionary<String, String>[] getPlatformProperties(String[] profilesArr, MinimalState state) {
-		List<String> profiles = profilesArr != null ? Arrays.asList(profilesArr) : List.of();
+	public static Dictionary<String, String>[] getPlatformProperties(Set<String> profilesArr, MinimalState state) {
+		Collection<String> profiles = profilesArr != null ? profilesArr : List.of();
 		// add java profiles for those EE's that have a .profile file in the
 		// current system bundle
 		List<Dictionary<String, String>> result = new ArrayList<>(profiles.size());
@@ -392,20 +393,16 @@ public class TargetPlatformHelper {
 		return org.eclipse.pde.internal.build.site.PDEState.getSystemPackages(environment, profileProperties);
 	}
 
-	public static String[] getKnownExecutionEnvironments() {
+	public static List<String> getKnownExecutionEnvironments() {
 		String jreProfile = System.getProperty("pde.jreProfile"); //$NON-NLS-1$
 		if (jreProfile != null && jreProfile.length() > 0) {
 			if ("none".equals(jreProfile)) { //$NON-NLS-1$
-				return new String[0];
+				return List.of();
 			}
-			return new String[] { jreProfile };
+			return List.of(jreProfile);
 		}
 		IExecutionEnvironment[] environments = JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments();
-		String[] ids = new String[environments.length];
-		for (int i = 0; i < environments.length; i++) {
-			ids[i] = environments[i].getId();
-		}
-		return ids;
+		return Arrays.stream(environments).map(IExecutionEnvironment::getId).toList();
 	}
 
 	/**

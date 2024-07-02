@@ -141,7 +141,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 				@SuppressWarnings("deprecation")
 				IManifestHeader header = bundle.getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
 				if (header instanceof RequiredExecutionEnvironmentHeader breeHeader) {
-					return breeHeader.getEnvironments();
+					return breeHeader.getElements();
 				}
 			}
 			return new Object[0];
@@ -275,8 +275,8 @@ public class ExecutionEnvironmentSection extends TableSection {
 		IStructuredSelection ssel = fEETable.getStructuredSelection();
 		if (!ssel.isEmpty()) {
 			for (Object object : ssel) {
-				if (object instanceof ExecutionEnvironment) {
-					getHeader().removeExecutionEnvironment((ExecutionEnvironment) object);
+				if (object instanceof ExecutionEnvironment ee) {
+					getHeader().removeExecutionEnvironment(ee.getName());
 				}
 			}
 		}

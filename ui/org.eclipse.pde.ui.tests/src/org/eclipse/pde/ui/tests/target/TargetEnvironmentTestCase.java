@@ -138,7 +138,7 @@ public class TargetEnvironmentTestCase {
 	public void testStateEEProperties() {
 		Dictionary<?, ?>[] platformProps = TargetPlatformHelper.getState().getPlatformProperties();
 
-		String[] profiles = TargetPlatformHelper.getKnownExecutionEnvironments();
+		List<String> profiles = TargetPlatformHelper.getKnownExecutionEnvironments();
 		for (String profile : profiles) {
 			IExecutionEnvironment environment = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(profile);
 			if (environment != null) {
