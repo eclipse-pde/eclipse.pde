@@ -20,8 +20,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Dictionary;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -71,9 +73,8 @@ public class MinimalState {
 	// this could be due to the system bundle changing location
 	// or initially when the ee list is first created.
 
-	private String[] fExecutionEnvironments; // an ordered list of
-												// known/supported execution
-												// environments
+	/** ordered set of known/supported execution environments */
+	private Set<String> fExecutionEnvironments;
 
 	private boolean fNoProfile;
 
@@ -365,17 +366,22 @@ public class MinimalState {
 	}
 
 	private void setExecutionEnvironments() {
-		String[] knownExecutionEnviroments = TargetPlatformHelper.getKnownExecutionEnvironments();
-		if (knownExecutionEnviroments.length == 0) {
+		List<String> knownExecutionEnviroments = TargetPlatformHelper.getKnownExecutionEnvironments();
+		if (knownExecutionEnviroments.isEmpty()) {
 			String jreProfile = System.getProperty("pde.jreProfile"); //$NON-NLS-1$
 			if (jreProfile != null && !jreProfile.isEmpty() && "none".equals(jreProfile)) { //$NON-NLS-1$
 				fNoProfile = true;
 			}
 		}
 		if (!fNoProfile) {
-			fExecutionEnvironments = knownExecutionEnviroments;
+			fExecutionEnvironments = Collections.unmodifiableSet(new LinkedHashSet<>(knownExecutionEnviroments));
 		}
 		fEEListChanged = true; // always indicate the list has changed
+	}
+
+	/** Returns an ordered Set of known/supported execution environments */
+	public Set<String> getfProvidedExecutionEnvironments() {
+		return fExecutionEnvironments; // TODO: use SequencedSet once available
 	}
 
 	public void addBundleDescription(BundleDescription toAdd) {

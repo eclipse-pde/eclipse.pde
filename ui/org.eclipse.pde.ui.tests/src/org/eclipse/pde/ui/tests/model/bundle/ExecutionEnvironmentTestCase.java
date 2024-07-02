@@ -16,11 +16,9 @@ package org.eclipse.pde.ui.tests.model.bundle;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
-import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
+import java.util.List;
+
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
-import org.eclipse.pde.internal.core.text.bundle.ExecutionEnvironment;
 import org.eclipse.pde.internal.core.text.bundle.RequiredExecutionEnvironmentHeader;
 import org.eclipse.text.edits.TextEdit;
 import org.junit.Test;
@@ -64,11 +62,11 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 		buffer.append("Bundle-RequiredExecutionEnvironment: J2SE-1.4\n");
 		fDocument.set(buffer.toString());
 		load(true);
-		IManifestHeader header = fModel.getBundle().getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
+		RequiredExecutionEnvironmentHeader header = getRequiredExecutionEnvironmentHeader();
 		assertNotNull(header);
 
-		ExecutionEnvironment env = ((RequiredExecutionEnvironmentHeader) header).getEnvironments()[0];
-		((RequiredExecutionEnvironmentHeader) header).removeExecutionEnvironment(env);
+		String env = header.getEnvironments().get(0);
+		header.removeExecutionEnvironment(env);
 
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
@@ -87,9 +85,8 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 		fDocument.set(buffer.toString());
 		load(true);
 
-		IManifestHeader header = fModel.getBundle().getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
-		IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("J2SE-1.5");
-		((RequiredExecutionEnvironmentHeader) header).addExecutionEnvironment(env);
+		RequiredExecutionEnvironmentHeader header = getRequiredExecutionEnvironmentHeader();
+		header.addExecutionEnvironment("J2SE-1.5");
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
 
@@ -114,14 +111,10 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 		buffer.append("Bundle-RequiredExecutionEnvironment: J2SE-1.4\n");
 		fDocument.set(buffer.toString());
 		load(true);
-		IManifestHeader header = fModel.getBundle().getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
-		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
-		IExecutionEnvironment env1 = manager.getEnvironment("CDC-1.1/Foundation-1.1");
-		IExecutionEnvironment env2 = manager.getEnvironment("J2SE-1.5");
-		IExecutionEnvironment env3 = manager.getEnvironment("OSGi/Minimum-1.1");
-		((RequiredExecutionEnvironmentHeader) header).addExecutionEnvironment(env1);
-		((RequiredExecutionEnvironmentHeader) header).addExecutionEnvironment(env2);
-		((RequiredExecutionEnvironmentHeader) header).addExecutionEnvironment(env3);
+		RequiredExecutionEnvironmentHeader header = getRequiredExecutionEnvironmentHeader();
+		header.addExecutionEnvironment("CDC-1.1/Foundation-1.1");
+		header.addExecutionEnvironment("J2SE-1.5");
+		header.addExecutionEnvironment("OSGi/Minimum-1.1");
 
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
@@ -150,9 +143,9 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 		buffer.append(" OSGi/Minimum-1.1\n");
 		fDocument.set(buffer.toString());
 		load(true);
-		IManifestHeader header = fModel.getBundle().getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
-		ExecutionEnvironment env = ((RequiredExecutionEnvironmentHeader) header).getEnvironments()[1];
-		((RequiredExecutionEnvironmentHeader) header).removeExecutionEnvironment(env);
+		RequiredExecutionEnvironmentHeader header = getRequiredExecutionEnvironmentHeader();
+		String env = header.getEnvironments().get(1);
+		header.removeExecutionEnvironment(env);
 
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
@@ -179,10 +172,10 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 		buffer.append(" OSGi/Minimum-1.1\n");
 		fDocument.set(buffer.toString());
 		load(true);
-		IManifestHeader header = fModel.getBundle().getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
-		ExecutionEnvironment[] envs = ((RequiredExecutionEnvironmentHeader) header).getEnvironments();
-		((RequiredExecutionEnvironmentHeader) header).removeExecutionEnvironment(envs[1]);
-		((RequiredExecutionEnvironmentHeader) header).removeExecutionEnvironment(envs[0]);
+		RequiredExecutionEnvironmentHeader header = getRequiredExecutionEnvironmentHeader();
+		List<String> envs = header.getEnvironments();
+		header.removeExecutionEnvironment(envs.get(1));
+		header.removeExecutionEnvironment(envs.get(0));
 
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
@@ -207,9 +200,8 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 		fDocument.set(buffer.toString());
 		load(true);
 
-		IManifestHeader header = fModel.getBundle().getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
-		IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("OSGi/Minimum-1.1");
-		((RequiredExecutionEnvironmentHeader) header).addExecutionEnvironment(env);
+		RequiredExecutionEnvironmentHeader header = getRequiredExecutionEnvironmentHeader();
+		header.addExecutionEnvironment("OSGi/Minimum-1.1");
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
 
@@ -224,7 +216,11 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 		expected.append(" J2SE-1.4,\n");
 		expected.append(" OSGi/Minimum-1.1\n");
 		assertEquals(expected.toString(), fDocument.get(pos, length));
+	}
 
+	private RequiredExecutionEnvironmentHeader getRequiredExecutionEnvironmentHeader() {
+		return (RequiredExecutionEnvironmentHeader) fModel.getBundle()
+				.getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
 	}
 
 }
