@@ -39,7 +39,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -49,7 +48,6 @@ import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.ExecutionEnvironment;
-import org.eclipse.pde.internal.core.text.bundle.PDEManifestElement;
 import org.eclipse.pde.internal.core.text.bundle.RequiredExecutionEnvironmentHeader;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -67,7 +65,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.PlatformUI;
@@ -482,164 +479,4 @@ public class ExecutionEnvironmentSection extends TableSection {
 		buildJob.setRule(ResourcesPlugin.getWorkspace().getRuleFactory().buildRule());
 		buildJob.schedule();
 	}
-
-	@Override
-	protected boolean isDragAndDropEnabled() {
-		return true;
-	}
-
-	@Override
-	public boolean canDragMove(Object[] sourceObjects) {
-		if (validateDragMoveSanity(sourceObjects) == false) {
-			return false;
-		}
-		return true;
-	}
-
-	@Override
-	public boolean canDropMove(Object targetObject, Object[] sourceObjects, int targetLocation) {
-		// Sanity check
-		if (validateDropMoveSanity(targetObject, sourceObjects) == false) {
-			return false;
-		}
-		// Multiple selection not supported
-		ExecutionEnvironment sourceEEObject = (ExecutionEnvironment) sourceObjects[0];
-		ExecutionEnvironment targetEEObject = (ExecutionEnvironment) targetObject;
-		// Validate model
-		if (validateDropMoveModel(sourceEEObject, targetEEObject) == false) {
-			return false;
-		}
-		// Validate move
-		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
-			// Get the previous element of the target
-			RequiredExecutionEnvironmentHeader header = getHeader();
-			// Ensure we have a header
-			if (header == null) {
-				return false;
-			}
-			// Get the previous element of the target
-			PDEManifestElement previousElement = header.getPreviousElement(targetEEObject);
-			// Ensure the previous element is not the source
-			if (sourceEEObject.equals(previousElement)) {
-				return false;
-			}
-			return true;
-		} else if (targetLocation == ViewerDropAdapter.LOCATION_AFTER) {
-			// Get the next element of the target
-			RequiredExecutionEnvironmentHeader header = getHeader();
-			// Ensure we have a header
-			if (header == null) {
-				return false;
-			}
-			// Get the next element of the target
-			PDEManifestElement nextElement = header.getNextElement(targetEEObject);
-			// Ensure the next element is not the source
-			if (sourceEEObject.equals(nextElement)) {
-				return false;
-			}
-			return true;
-		} else if (targetLocation == ViewerDropAdapter.LOCATION_ON) {
-			// Not supported
-			return false;
-		}
-		return false;
-	}
-
-	private boolean validateDropMoveModel(ExecutionEnvironment sourceEEObject, ExecutionEnvironment targetEEObject) {
-		// Objects have to be from the same model
-		return sourceEEObject.getModel().equals(targetEEObject.getModel());
-	}
-
-	private boolean validateDropMoveSanity(Object targetObject, Object[] sourceObjects) {
-		// Validate target object
-		if ((targetObject instanceof ExecutionEnvironment) == false) {
-			return false;
-		}
-		// Validate source objects
-		return validateDragMoveSanity(sourceObjects);
-	}
-
-	@Override
-	public void doDropMove(Object targetObject, Object[] sourceObjects, int targetLocation) {
-		// Sanity check
-		if (validateDropMoveSanity(targetObject, sourceObjects) == false) {
-			Display.getDefault().beep();
-			return;
-		}
-		// Multiple selection not supported
-		ExecutionEnvironment sourceEEObject = (ExecutionEnvironment) sourceObjects[0];
-		ExecutionEnvironment targetEEObject = (ExecutionEnvironment) targetObject;
-		// Validate move
-		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
-			// Get the header
-			RequiredExecutionEnvironmentHeader header = getHeader();
-			// Ensure we have a header
-			if (header == null) {
-				return;
-			}
-			// Get the index of the target
-			int index = header.indexOf(targetEEObject);
-			// Ensure the target index was found
-			if (index == -1) {
-				return;
-			}
-			// Add source as sibling of target (before)
-			header.addExecutionEnvironment(sourceEEObject, index);
-			return;
-		} else if (targetLocation == ViewerDropAdapter.LOCATION_AFTER) {
-			// Get the header
-			RequiredExecutionEnvironmentHeader header = getHeader();
-			// Ensure we have a header
-			if (header == null) {
-				return;
-			}
-			// Get the index of the target
-			int index = header.indexOf(targetEEObject);
-			// Ensure the target index was found
-			if (index == -1) {
-				return;
-			}
-			// Add source as sibling of target (before)
-			header.addExecutionEnvironment(sourceEEObject, index + 1);
-			return;
-		} else if (targetLocation == ViewerDropAdapter.LOCATION_ON) {
-			// NO-OP.  Not supported
-		}
-	}
-
-	@Override
-	public void doDragRemove(Object[] sourceObjects) {
-		// Validate source
-		if (validateDragMoveSanity(sourceObjects) == false) {
-			return;
-		}
-		// Get the source
-		ExecutionEnvironment environment = (ExecutionEnvironment) sourceObjects[0];
-		// Get the header
-		RequiredExecutionEnvironmentHeader header = getHeader();
-		// Ensure we have a header
-		if (header == null) {
-			return;
-		}
-		// Remove the source
-		doSelect(false);
-		header.removeExecutionEnvironmentUnique(environment);
-		doSelect(true);
-	}
-
-	private boolean validateDragMoveSanity(Object[] sourceObjects) {
-		// Validate source
-		if (sourceObjects == null) {
-			// No objects
-			return false;
-		} else if (sourceObjects.length != 1) {
-			// Multiple selection not supported
-			return false;
-		} else if ((sourceObjects[0] instanceof ExecutionEnvironment) == false) {
-			// Must be the right type
-			return false;
-		}
-		return true;
-	}
-
 }
