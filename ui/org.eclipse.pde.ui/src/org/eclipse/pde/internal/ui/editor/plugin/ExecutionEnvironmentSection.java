@@ -17,7 +17,7 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.StringJoiner;
+import java.util.Objects;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -298,24 +298,22 @@ public class ExecutionEnvironmentSection extends TableSection {
 
 	@SuppressWarnings("deprecation")
 	private void addExecutionEnvironments(Object[] result) {
+		List<String> ees = Arrays.stream(result).map(resultObject -> {
+			if (resultObject instanceof IExecutionEnvironment ee) {
+				return ee.getId();
+			} else if (resultObject instanceof ExecutionEnvironment ee) {
+				return ee.getName();
+			}
+			return null;
+		}).filter(Objects::nonNull).toList();
+
 		IManifestHeader header = getHeader();
 		if (header == null) {
-			StringJoiner buffer = new StringJoiner("," + getLineDelimiter() + " "); //$NON-NLS-1$//$NON-NLS-2$
-			for (Object resultObject : result) {
-				String id;
-				if (resultObject instanceof IExecutionEnvironment ee) {
-					id = ee.getId();
-				} else if (resultObject instanceof ExecutionEnvironment ee) {
-					id = ee.getName();
-				} else {
-					continue;
-				}
-				buffer.add(id);
-			}
-			getBundle().setHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, buffer.toString());
+			String eeList = String.join("," + getLineDelimiter() + " ", ees); //$NON-NLS-1$//$NON-NLS-2$
+			getBundle().setHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, eeList);
 		} else {
 			RequiredExecutionEnvironmentHeader ee = (RequiredExecutionEnvironmentHeader) header;
-			ee.addExecutionEnvironments(result);
+			ee.addExecutionEnvironments(ees);
 		}
 	}
 
@@ -451,8 +449,9 @@ public class ExecutionEnvironmentSection extends TableSection {
 	@Override
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
-		if (getPage().getModel().isEditable())
+		if (getPage().getModel().isEditable()) {
 			updateButtons();
+		}
 	}
 
 	@Override
