@@ -69,8 +69,7 @@ public class PluginElementNode extends PluginParentNode implements IPluginElemen
 		IDocumentTextNode node = getTextNode();
 		String oldText = node == null ? null : node.getText();
 		if (node == null) {
-			node = new DocumentTextNode();
-			node.setEnclosingElement(this);
+			node = new DocumentTextNode(this);
 			addTextNode(node);
 		}
 		node.setText(text.trim());

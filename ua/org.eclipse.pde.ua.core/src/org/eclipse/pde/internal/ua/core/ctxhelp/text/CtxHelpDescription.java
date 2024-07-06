@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ua.core.ctxhelp.text;
 
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 
 /**
@@ -35,8 +36,8 @@ public class CtxHelpDescription extends CtxHelpObject {
 	}
 
 	@Override
-	protected IDocumentTextNode createDocumentTextNode() {
-		return new CtxHelpDescriptionTextNode();
+	protected IDocumentTextNode createDocumentTextNode(IDocumentElementNode enclosingElement) {
+		return new CtxHelpDescriptionTextNode(enclosingElement);
 	}
 
 	@Override

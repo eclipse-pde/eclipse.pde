@@ -45,8 +45,7 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 	@Override
 	public IDocumentTextNode createDocumentTextNode(String content,
 			IDocumentElementNode parent) {
-		IDocumentTextNode textNode = new SimpleCSDocumentTextNode();
-		textNode.setEnclosingElement(parent);
+		IDocumentTextNode textNode = new SimpleCSDocumentTextNode(parent);
 		parent.addTextNode(textNode);
 		textNode.setText(content);
 		return textNode;

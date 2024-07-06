@@ -17,6 +17,7 @@ package org.eclipse.pde.internal.ua.core.ctxhelp.text;
 import java.util.HashSet;
 
 import org.eclipse.pde.internal.core.text.DocumentTextNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 
 public class CtxHelpDescriptionTextNode extends DocumentTextNode {
@@ -30,15 +31,14 @@ public class CtxHelpDescriptionTextNode extends DocumentTextNode {
 		TAG_EXCEPTIONS.add("/b"); //$NON-NLS-1$
 	}
 
-	public CtxHelpDescriptionTextNode() {
-		super();
+	public CtxHelpDescriptionTextNode(IDocumentElementNode enclosingElement) {
+		super(enclosingElement);
 	}
 
 	@Override
 	public String write() {
 		String content = getText().trim();
-		return PDETextHelper.translateWriteText(content, TAG_EXCEPTIONS,
-				SUBSTITUTE_CHARS);
+		return PDETextHelper.translateWriteText(content, TAG_EXCEPTIONS, SUBSTITUTE_CHARS);
 	}
 
 }
