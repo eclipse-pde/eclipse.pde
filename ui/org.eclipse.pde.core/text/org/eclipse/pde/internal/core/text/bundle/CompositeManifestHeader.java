@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.core.text.bundle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -33,21 +34,24 @@ public class CompositeManifestHeader extends ManifestHeader {
 	private static final long serialVersionUID = 1L;
 
 	private final boolean fSort;
+	private final Comparator<String> fElementComparator;
 
 	protected List<PDEManifestElement> fManifestElements;
 
 	protected Map<String, PDEManifestElement> fElementMap;
 
 	public CompositeManifestHeader(String name, String value, IBundle bundle, String lineDelimiter) {
-		this(name, value, bundle, lineDelimiter, false);
+		this(name, value, bundle, lineDelimiter, null);
 	}
 
-	public CompositeManifestHeader(String name, String value, IBundle bundle, String lineDelimiter, boolean sort) {
+	public CompositeManifestHeader(String name, String value, IBundle bundle, String lineDelimiter,
+			Comparator<String> elementComparator) {
 		fName = name;
 		fBundle = bundle;
 		fLineDelimiter = lineDelimiter;
 		setModel(fBundle.getModel());
-		fSort = sort;
+		fSort = elementComparator != null;
+		fElementComparator = elementComparator;
 		fValue = value;
 		processValue(value);
 	}
@@ -120,7 +124,7 @@ public class CompositeManifestHeader extends ManifestHeader {
 		element.setHeader(this);
 		if (fSort) {
 			if (fElementMap == null) {
-				fElementMap = new TreeMap<>();
+				fElementMap = new TreeMap<>(fElementComparator);
 			}
 			fElementMap.put(element.getValue(), element);
 		} else {

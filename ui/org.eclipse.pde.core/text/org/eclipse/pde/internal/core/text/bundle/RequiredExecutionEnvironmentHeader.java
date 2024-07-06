@@ -19,13 +19,14 @@ import java.util.List;
 
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.util.VMUtil;
 
 public class RequiredExecutionEnvironmentHeader extends CompositeManifestHeader {
 
 	private static final long serialVersionUID = 1L;
 
 	public RequiredExecutionEnvironmentHeader(String name, String value, IBundle bundle, String lineDelimiter) {
-		super(name, value, bundle, lineDelimiter);
+		super(name, value, bundle, lineDelimiter, VMUtil.ASCENDING_EE_JAVA_VERSION);
 	}
 
 	@Override

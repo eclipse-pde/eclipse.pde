@@ -112,7 +112,9 @@ public class ExecutionEnvironmentSection extends TableSection {
 	}
 
 	public ExecutionEnvironmentSection(PDEFormPage page, Composite parent) {
-		super(page, parent, Section.DESCRIPTION, new String[] {PDEUIMessages.RequiredExecutionEnvironmentSection_add, PDEUIMessages.RequiredExecutionEnvironmentSection_remove, PDEUIMessages.RequiredExecutionEnvironmentSection_up, PDEUIMessages.RequiredExecutionEnvironmentSection_down});
+		super(page, parent, Section.DESCRIPTION, new String[] { //
+				PDEUIMessages.RequiredExecutionEnvironmentSection_add,
+				PDEUIMessages.RequiredExecutionEnvironmentSection_remove });
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
@@ -210,8 +212,6 @@ public class ExecutionEnvironmentSection extends TableSection {
 		switch (index) {
 			case 0 -> handleAdd();
 			case 1 -> handleRemove();
-			case 2 -> handleUp();
-			case 3 -> handleDown();
 		}
 	}
 
@@ -245,30 +245,9 @@ public class ExecutionEnvironmentSection extends TableSection {
 
 	private void updateButtons() {
 		Table table = fEETable.getTable();
-		int count = table.getItemCount();
-		boolean canMoveUp = count > 0 && table.getSelection().length == 1 && table.getSelectionIndex() > 0;
-		boolean canMoveDown = count > 0 && table.getSelection().length == 1 && table.getSelectionIndex() < count - 1;
-
 		TablePart tablePart = getTablePart();
 		tablePart.setButtonEnabled(0, isEditable());
 		tablePart.setButtonEnabled(1, isEditable() && table.getSelection().length > 0);
-		tablePart.setButtonEnabled(2, isEditable() && canMoveUp);
-		tablePart.setButtonEnabled(3, isEditable() && canMoveDown);
-	}
-
-	private void handleDown() {
-		int selection = fEETable.getTable().getSelectionIndex();
-		swap(selection, selection + 1);
-	}
-
-	private void handleUp() {
-		int selection = fEETable.getTable().getSelectionIndex();
-		swap(selection, selection - 1);
-	}
-
-	public void swap(int index1, int index2) {
-		RequiredExecutionEnvironmentHeader header = getHeader();
-		header.swap(index1, index2);
 	}
 
 	private void handleRemove() {
