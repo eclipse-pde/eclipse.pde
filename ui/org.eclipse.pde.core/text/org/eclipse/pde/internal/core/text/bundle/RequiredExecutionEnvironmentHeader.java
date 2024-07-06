@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 
@@ -42,34 +41,20 @@ public class RequiredExecutionEnvironmentHeader extends CompositeManifestHeader 
 		addManifestElement(environment, index, true);
 	}
 
-	public void addExecutionEnvironments(Object[] envs) {
-		List<ExecutionEnvironment> list = new ArrayList<>(envs.length);
-		for (Object envObject : envs) {
-			ExecutionEnvironment env = null;
-			if (envObject instanceof ExecutionEnvironment ee) {
-				env = ee;
-			} else if (envObject instanceof IExecutionEnvironment ee) {
-				env = new ExecutionEnvironment(this, ee.getId());
-			}
-			if (env != null && !hasElement(env.getName())) {
-				list.add(env);
+	public void addExecutionEnvironments(List<String> eeIDs) {
+		List<ExecutionEnvironment> list = new ArrayList<>(eeIDs.size());
+		for (String eeID : eeIDs) {
+			if (!hasElement(eeID)) {
+				list.add(new ExecutionEnvironment(this, eeID));
 			}
 		}
-
 		if (!list.isEmpty()) {
-			addManifestElements(list.toArray(new ExecutionEnvironment[list.size()]));
+			addManifestElements(list);
 		}
 	}
 
 	public ExecutionEnvironment removeExecutionEnvironment(String eeId) {
 		return (ExecutionEnvironment) removeManifestElement(eeId);
-	}
-
-	/**
-	 * Remove operation performed using the actual object rather than its value
-	 */
-	public ExecutionEnvironment removeExecutionEnvironmentUnique(ExecutionEnvironment environment) {
-		return (ExecutionEnvironment) removeManifestElement(environment, true);
 	}
 
 	public List<String> getEnvironments() {
