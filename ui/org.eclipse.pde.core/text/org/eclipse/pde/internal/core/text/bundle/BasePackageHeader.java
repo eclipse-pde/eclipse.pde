@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text.bundle;
 
+import java.util.Comparator;
+
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
@@ -25,7 +27,7 @@ public abstract class BasePackageHeader extends CompositeManifestHeader {
 	private static final long serialVersionUID = 1L;
 
 	public BasePackageHeader(String name, String value, IBundle bundle, String lineDelimiter) {
-		super(name, value, bundle, lineDelimiter, true);
+		super(name, value, bundle, lineDelimiter, Comparator.naturalOrder());
 	}
 
 	protected String getVersionAttribute() {

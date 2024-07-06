@@ -15,12 +15,17 @@
 package org.eclipse.pde.internal.core.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.Map;
+import java.util.Properties;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -96,12 +101,33 @@ public class VMUtil {
 		IPath containerPath = JavaRuntime.newJREContainerPath(ee);
 		IVMInstall vmi = JavaRuntime.getVMInstall(containerPath);
 		if (vmi == null) {
-			throw new CoreException(createErrorStatus(NLS.bind(UtilMessages.VMHelper_noJreForExecEnv, ee.getId())));
+			throw new CoreException(Status.error(NLS.bind(UtilMessages.VMHelper_noJreForExecEnv, ee.getId())));
 		}
 		return vmi.getName();
 	}
 
-	public static IStatus createErrorStatus(String message) {
-		return Status.error(message, null);
+	private static final Map<String, Double> JAVA_VERSION_OF_EE = Arrays.stream(getExecutionEnvironments())
+			.collect(Collectors.toMap(IExecutionEnvironment::getId, VMUtil::getJavaTargetVersion));
+
+	public static final Comparator<String> ASCENDING_EE_JAVA_VERSION = Comparator
+			.comparingDouble((String ee) -> JAVA_VERSION_OF_EE.getOrDefault(ee, 0.0))
+			.thenComparing(Comparator.naturalOrder());
+
+	public static double getJavaTargetVersion(IExecutionEnvironment ee) {
+		return switch (ee.getId()) {
+		// The EE's handled explicitly have unexpected java targets.
+		// See https://github.com/eclipse-equinox/equinox/pull/655
+		case "J2SE-1.2" -> 1.2; //$NON-NLS-1$
+		case "J2SE-1.3" -> 1.3; //$NON-NLS-1$
+		case "J2SE-1.4" -> 1.4; //$NON-NLS-1$
+		default -> {
+			Properties properties = ee.getProfileProperties();
+			Object target = properties != null //
+					? properties.get(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM)
+					: null;
+			yield target instanceof String version ? Double.parseDouble(version) : 0.0;
+		}
+		};
 	}
+
 }
