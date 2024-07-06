@@ -693,8 +693,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		IDocumentTextNode node = getTextNode();
 		if (node == null) {
 			// Text does not exist, create it
-			node = createDocumentTextNode();
-			node.setEnclosingElement(this);
+			node = createDocumentTextNode(this);
 			addTextNode(node);
 		}
 		// Update text on node
@@ -732,8 +731,8 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		return new DocumentAttributeNode();
 	}
 
-	protected IDocumentTextNode createDocumentTextNode() {
-		return new DocumentTextNode();
+	protected IDocumentTextNode createDocumentTextNode(IDocumentElementNode enclosingElement) {
+		return new DocumentTextNode(enclosingElement);
 	}
 
 	@Override

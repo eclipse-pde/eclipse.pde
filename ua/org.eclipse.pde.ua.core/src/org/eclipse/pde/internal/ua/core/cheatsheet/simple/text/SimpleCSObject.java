@@ -82,8 +82,8 @@ public abstract class SimpleCSObject extends DocumentObject implements
 	}
 
 	@Override
-	protected IDocumentTextNode createDocumentTextNode() {
-		return new SimpleCSDocumentTextNode();
+	protected IDocumentTextNode createDocumentTextNode(IDocumentElementNode enclosingElement) {
+		return new SimpleCSDocumentTextNode(enclosingElement);
 	}
 
 }

@@ -42,8 +42,7 @@ public abstract class DocumentNodeFactory implements IDocumentNodeFactory {
 
 	@Override
 	public IDocumentTextNode createDocumentTextNode(String content, IDocumentElementNode parent) {
-		IDocumentTextNode textNode = new DocumentTextNode();
-		textNode.setEnclosingElement(parent);
+		IDocumentTextNode textNode = new DocumentTextNode(parent);
 		parent.addTextNode(textNode);
 		textNode.setText(content);
 		return textNode;

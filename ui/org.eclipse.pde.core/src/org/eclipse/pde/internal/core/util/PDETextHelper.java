@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.util;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -42,10 +40,7 @@ public class PDETextHelper {
 	}
 
 	public static boolean isDefined(String text) {
-		if ((text == null) || (text.isEmpty())) {
-			return false;
-		}
-		return true;
+		return text != null && !text.isEmpty();
 	}
 
 	public static boolean isDefinedAfterTrim(String text) {
@@ -101,11 +96,12 @@ public class PDETextHelper {
 		return result;
 	}
 
-	public static String translateWriteText(String text, HashMap<Character, String> substituteChars) {
+	public static String translateWriteText(String text, Map<Character, String> substituteChars) {
 		return translateWriteText(text, null, substituteChars);
 	}
 
-	public static String translateWriteText(String text, HashSet<String> tagExceptions, HashMap<Character, String> substituteChars) {
+	public static String translateWriteText(String text, Set<String> tagExceptions,
+			Map<Character, String> substituteChars) {
 		// Ensure not null
 		if (text == null) {
 			return ""; //$NON-NLS-1$

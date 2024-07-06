@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 
@@ -21,15 +21,13 @@ public class DocumentTextNode extends DocumentXMLNode implements IDocumentTextNo
 
 	private static final long serialVersionUID = 1L;
 
-	protected static final HashMap<Character, String> SUBSTITUTE_CHARS = new HashMap<>(5);
-
-	static {
-		SUBSTITUTE_CHARS.put(Character.valueOf('&'), "&amp;"); //$NON-NLS-1$
-		SUBSTITUTE_CHARS.put(Character.valueOf('<'), "&lt;"); //$NON-NLS-1$
-		SUBSTITUTE_CHARS.put(Character.valueOf('>'), "&gt;"); //$NON-NLS-1$
-		SUBSTITUTE_CHARS.put(Character.valueOf('\''), "&apos;"); //$NON-NLS-1$
-		SUBSTITUTE_CHARS.put(Character.valueOf('\"'), "&quot;"); //$NON-NLS-1$
-	}
+	protected static final Map<Character, String> SUBSTITUTE_CHARS = Map.of( //
+			Character.valueOf('&'), "&amp;", //$NON-NLS-1$
+			Character.valueOf('<'), "&lt;", //$NON-NLS-1$
+			Character.valueOf('>'), "&gt;", //$NON-NLS-1$
+			Character.valueOf('\''), "&apos;", //$NON-NLS-1$
+			Character.valueOf('\"'), "&quot;" //$NON-NLS-1$
+	);
 
 	private transient int fOffset;
 	private transient int fLength;
@@ -37,15 +35,10 @@ public class DocumentTextNode extends DocumentXMLNode implements IDocumentTextNo
 
 	private String fText;
 
-	public DocumentTextNode() {
+	public DocumentTextNode(IDocumentElementNode enclosingElement) {
 		fOffset = -1;
 		fLength = 0;
-		fEnclosingElement = null;
-	}
-
-	@Override
-	public void setEnclosingElement(IDocumentElementNode node) {
-		fEnclosingElement = node;
+		fEnclosingElement = enclosingElement;
 	}
 
 	@Override

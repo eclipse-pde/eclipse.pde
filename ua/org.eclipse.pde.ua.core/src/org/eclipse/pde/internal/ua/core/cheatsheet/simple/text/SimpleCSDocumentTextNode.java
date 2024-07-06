@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.ua.core.cheatsheet.simple.text;
 import java.util.HashSet;
 
 import org.eclipse.pde.internal.core.text.DocumentTextNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 
 public class SimpleCSDocumentTextNode extends DocumentTextNode {
@@ -30,15 +31,14 @@ public class SimpleCSDocumentTextNode extends DocumentTextNode {
 		TAG_EXCEPTIONS.add("br/"); //$NON-NLS-1$
 	}
 
-	public SimpleCSDocumentTextNode() {
-		super();
+	public SimpleCSDocumentTextNode(IDocumentElementNode enclosingElement) {
+		super(enclosingElement);
 	}
 
 	@Override
 	public String write() {
 		String content = getText().trim();
-		return PDETextHelper.translateWriteText(content, TAG_EXCEPTIONS,
-				SUBSTITUTE_CHARS);
+		return PDETextHelper.translateWriteText(content, TAG_EXCEPTIONS, SUBSTITUTE_CHARS);
 	}
 
 }
