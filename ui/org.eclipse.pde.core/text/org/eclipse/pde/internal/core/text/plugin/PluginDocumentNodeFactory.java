@@ -143,8 +143,7 @@ public class PluginDocumentNodeFactory implements IPluginModelFactory, IDocument
 
 	@Override
 	public IDocumentTextNode createDocumentTextNode(String content, IDocumentElementNode parent) {
-		DocumentTextNode textNode = new DocumentTextNode();
-		textNode.setEnclosingElement(parent);
+		DocumentTextNode textNode = new DocumentTextNode(parent);
 		parent.addTextNode(textNode);
 		textNode.setText(content.trim());
 		return textNode;

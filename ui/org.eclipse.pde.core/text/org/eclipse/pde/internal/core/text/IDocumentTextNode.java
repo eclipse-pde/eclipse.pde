@@ -17,10 +17,7 @@ import java.io.Serializable;
 
 public interface IDocumentTextNode extends IDocumentRange, Serializable, IDocumentXMLNode {
 
-	public static final String F_PROPERTY_CHANGE_TYPE_PCDATA = "type_pcdata"; //$NON-NLS-1$
-
-	// Used by text edit operations
-	void setEnclosingElement(IDocumentElementNode node);
+	String F_PROPERTY_CHANGE_TYPE_PCDATA = "type_pcdata"; //$NON-NLS-1$
 
 	IDocumentElementNode getEnclosingElement();
 
@@ -33,9 +30,9 @@ public interface IDocumentTextNode extends IDocumentRange, Serializable, IDocume
 	void setLength(int length);
 
 	// Not used by text edit operations
-	public void reconnect(IDocumentElementNode parent);
+	void reconnect(IDocumentElementNode parent);
 
 	// Not used by text edit operations
-	public String write();
+	String write();
 
 }
