@@ -2905,10 +2905,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String RequiredExecutionEnvironmentSection_remove;
 
-	public static String RequiredExecutionEnvironmentSection_up;
-
-	public static String RequiredExecutionEnvironmentSection_down;
-
 	public static String RequiredExecutionEnvironmentSection_fragmentDesc;
 
 	public static String RequiredExecutionEnvironmentSection_pluginDesc;

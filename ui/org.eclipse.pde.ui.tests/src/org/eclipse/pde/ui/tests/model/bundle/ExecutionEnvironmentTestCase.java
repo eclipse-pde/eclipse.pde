@@ -17,7 +17,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
@@ -131,10 +130,10 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineOffset(7) - fDocument.getLineOffset(3);
 		assertEquals("""
-				Bundle-RequiredExecutionEnvironment: J2SE-1.4,
-				 CDC-1.1/Foundation-1.1,
-				 J2SE-1.5,
-				 OSGi/Minimum-1.1
+				Bundle-RequiredExecutionEnvironment: CDC-1.1/Foundation-1.1,
+				 OSGi/Minimum-1.1,
+				 J2SE-1.4,
+				 J2SE-1.5
 				""", fDocument.get(pos, length));
 	}
 
@@ -150,8 +149,7 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 				""");
 		load(true);
 		RequiredExecutionEnvironmentHeader header = getRequiredExecutionEnvironmentHeader();
-		String env = header.getEnvironments().get(1);
-		header.removeExecutionEnvironment(env);
+		header.removeExecutionEnvironment("CDC-1.1/Foundation-1.1");
 
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
@@ -163,8 +161,8 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineOffset(5) - fDocument.getLineOffset(3);
 		assertEquals("""
-				Bundle-RequiredExecutionEnvironment: J2SE-1.4,
-				 OSGi/Minimum-1.1
+				Bundle-RequiredExecutionEnvironment: OSGi/Minimum-1.1,
+				 J2SE-1.4
 				""", fDocument.get(pos, length));
 	}
 
@@ -180,9 +178,8 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 				""");
 		load(true);
 		RequiredExecutionEnvironmentHeader header = getRequiredExecutionEnvironmentHeader();
-		List<String> envs = header.getEnvironments();
-		header.removeExecutionEnvironment(envs.get(1));
-		header.removeExecutionEnvironment(envs.get(0));
+		header.removeExecutionEnvironment("CDC-1.1/Foundation-1.1");
+		header.removeExecutionEnvironment("J2SE-1.4");
 
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
@@ -221,8 +218,8 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 
 		assertEquals("""
 				Bundle-RequiredExecutionEnvironment:\s
-				 J2SE-1.4,
-				 OSGi/Minimum-1.1
+				 OSGi/Minimum-1.1,
+				 J2SE-1.4
 				""", fDocument.get(pos, length));
 	}
 
