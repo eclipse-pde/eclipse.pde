@@ -14,9 +14,11 @@
 package org.eclipse.pde.internal.core.text.bundle;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.Vector;
 
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.IModelChangedEvent;
@@ -32,7 +34,7 @@ public class CompositeManifestHeader extends ManifestHeader {
 
 	private final boolean fSort;
 
-	protected ArrayList<Object> fManifestElements;
+	protected List<PDEManifestElement> fManifestElements;
 
 	protected Map<String, PDEManifestElement> fElementMap;
 
@@ -105,12 +107,12 @@ public class CompositeManifestHeader extends ManifestHeader {
 		addManifestElement(element, true);
 	}
 
-	protected void addManifestElements(PDEManifestElement[] elements) {
+	protected void addManifestElements(List<? extends PDEManifestElement> elements) {
 		for (PDEManifestElement element : elements) {
 			addManifestElement(element, false);
 		}
 		update(false);
-		fireStructureChanged(elements, IModelChangedEvent.INSERT);
+		fireStructureChanged(elements.toArray(PDEManifestElement[]::new), IModelChangedEvent.INSERT);
 	}
 
 	protected void addManifestElement(PDEManifestElement element, boolean update) {
@@ -145,7 +147,7 @@ public class CompositeManifestHeader extends ManifestHeader {
 			}
 		} else if (fManifestElements != null) {
 			for (int i = 0; i < fManifestElements.size(); i++) {
-				PDEManifestElement element = (PDEManifestElement) fManifestElements.get(i);
+				PDEManifestElement element = fManifestElements.get(i);
 				if (name.equals(element.getValue())) {
 					object = fManifestElements.remove(i);
 				}
@@ -183,8 +185,7 @@ public class CompositeManifestHeader extends ManifestHeader {
 		}
 
 		if (fManifestElements != null) {
-			for (int i = 0; i < fManifestElements.size(); i++) {
-				PDEManifestElement element = (PDEManifestElement) fManifestElements.get(i);
+			for (PDEManifestElement element : fManifestElements) {
 				if (name.equals(element.getValue())) {
 					return true;
 				}
@@ -193,13 +194,9 @@ public class CompositeManifestHeader extends ManifestHeader {
 		return false;
 	}
 
-	public Vector<String> getElementNames() {
+	public List<String> getElementNames() {
 		PDEManifestElement[] elements = getElements();
-		Vector<String> vector = new Vector<>(elements.length);
-		for (PDEManifestElement element : elements) {
-			vector.add(element.getValue());
-		}
-		return vector;
+		return Arrays.stream(elements).map(PDEManifestElement::getValue).toList();
 	}
 
 	public void swap(int index1, int index2) {
@@ -208,17 +205,14 @@ public class CompositeManifestHeader extends ManifestHeader {
 		}
 		int size = fManifestElements.size();
 		if (index1 >= 0 && index2 >= 0 && size > Math.max(index1, index2)) {
-			Object object1 = fManifestElements.get(index1);
-			Object object2 = fManifestElements.get(index2);
-			fManifestElements.set(index1, object2);
-			fManifestElements.set(index2, object1);
+			Collections.swap(fManifestElements, index1, index2);
 			update(true);
 		}
 	}
 
 	protected PDEManifestElement getElementAt(int index) {
 		if (fManifestElements != null && fManifestElements.size() > index) {
-			return (PDEManifestElement) fManifestElements.get(index);
+			return fManifestElements.get(index);
 		}
 		return null;
 	}
@@ -228,7 +222,7 @@ public class CompositeManifestHeader extends ManifestHeader {
 	 */
 	public PDEManifestElement getPreviousElement(PDEManifestElement targetElement) {
 		// Ensure we have elements
-		if (fSort == true) {
+		if (fSort) {
 			return null;
 		} else if (fManifestElements == null) {
 			return null;
@@ -247,9 +241,7 @@ public class CompositeManifestHeader extends ManifestHeader {
 		}
 		// 1 <= index < size()
 		// Get the previous element
-		PDEManifestElement previousElement = (PDEManifestElement) fManifestElements.get(targetIndex - 1);
-
-		return previousElement;
+		return fManifestElements.get(targetIndex - 1);
 	}
 
 	/**
@@ -257,7 +249,7 @@ public class CompositeManifestHeader extends ManifestHeader {
 	 */
 	public PDEManifestElement getNextElement(PDEManifestElement targetElement) {
 		// Ensure we have elements
-		if (fSort == true) {
+		if (fSort) {
 			return null;
 		} else if (fManifestElements == null) {
 			return null;
@@ -278,9 +270,7 @@ public class CompositeManifestHeader extends ManifestHeader {
 		}
 		// 0 <= index < last element < size()
 		// Get the next element
-		PDEManifestElement nextElement = (PDEManifestElement) fManifestElements.get(targetIndex + 1);
-
-		return nextElement;
+		return fManifestElements.get(targetIndex + 1);
 	}
 
 	/**
@@ -293,7 +283,7 @@ public class CompositeManifestHeader extends ManifestHeader {
 			elementCount = fManifestElements.size();
 		}
 		// 0 <= index <= size()
-		if (fSort == true) {
+		if (fSort) {
 			return;
 		} else if (index < 0) {
 			return;
@@ -332,31 +322,6 @@ public class CompositeManifestHeader extends ManifestHeader {
 			return -1;
 		}
 		return fManifestElements.indexOf(targetElement);
-	}
-
-	/**
-	 * Method not applicable for headers that are sorted
-	 */
-	protected PDEManifestElement removeManifestElement(PDEManifestElement element, boolean update) {
-		if (fSort) {
-			return null;
-		} else if (fManifestElements == null) {
-			return null;
-		} else if (fManifestElements.isEmpty()) {
-			return null;
-		}
-		// Remove the element
-		boolean removed = fManifestElements.remove(element);
-		PDEManifestElement removedElement = null;
-		if (removed) {
-			removedElement = element;
-		}
-		// Fire event
-		if (update) {
-			update(false);
-			fireStructureChanged(removedElement, IModelChangedEvent.REMOVE);
-		}
-		return removedElement;
 	}
 
 }
