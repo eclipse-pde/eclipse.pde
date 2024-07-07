@@ -37,11 +37,12 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 
 	@Test
 	public void testAddExecutionEnvironmentHeader() throws Exception {
-		StringBuilder buffer = new StringBuilder();
-		buffer.append("Manifest-Version: 1.0\n");
-		buffer.append("Bundle-ManifestVersion: 2\n");
-		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
-		fDocument.set(buffer.toString());
+		String text = """
+				Manifest-Version: 1.0
+				Bundle-ManifestVersion: 2
+				Bundle-SymoblicName: com.example.xyz
+				""";
+		fDocument.set(text);
 		load(true);
 		fModel.getBundle().setHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, "J2SE-1.4");
 
@@ -53,17 +54,17 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 		assertEquals(1, ops.length);
 
 		ops[0].apply(fDocument);
-		assertEquals(buffer.toString() + header.write(), fDocument.get());
+		assertEquals(text + header.write(), fDocument.get());
 	}
 
 	@Test
 	public void testRemoveExistingExecutionEnvironment() throws Exception {
-		StringBuilder buffer = new StringBuilder();
-		buffer.append("Manifest-Version: 1.0\n");
-		buffer.append("Bundle-ManifestVersion: 2\n");
-		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
-		buffer.append("Bundle-RequiredExecutionEnvironment: J2SE-1.4\n");
-		fDocument.set(buffer.toString());
+		fDocument.set("""
+				Manifest-Version: 1.0
+				Bundle-ManifestVersion: 2
+				Bundle-SymoblicName: com.example.xyz
+				Bundle-RequiredExecutionEnvironment: J2SE-1.4
+				""");
 		load(true);
 		RequiredExecutionEnvironmentHeader header = getRequiredExecutionEnvironmentHeader();
 		assertNotNull(header);
@@ -80,12 +81,12 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 
 	@Test
 	public void testAddExecutionEnvironment() throws Exception {
-		StringBuilder buffer = new StringBuilder();
-		buffer.append("Manifest-Version: 1.0\n");
-		buffer.append("Bundle-ManifestVersion: 2\n");
-		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
-		buffer.append("Bundle-RequiredExecutionEnvironment: J2SE-1.4\n");
-		fDocument.set(buffer.toString());
+		fDocument.set("""
+				Manifest-Version: 1.0
+				Bundle-ManifestVersion: 2
+				Bundle-SymoblicName: com.example.xyz
+				Bundle-RequiredExecutionEnvironment: J2SE-1.4
+				""");
 		load(true);
 
 		RequiredExecutionEnvironmentHeader header = getRequiredExecutionEnvironmentHeader();
@@ -100,19 +101,20 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineLength(3) + fDocument.getLineLength(4);
 
-		StringBuilder expected = new StringBuilder("Bundle-RequiredExecutionEnvironment: J2SE-1.4,\n");
-		expected.append(" J2SE-1.5\n");
-		assertEquals(expected.toString(), fDocument.get(pos, length));
+		assertEquals("""
+				Bundle-RequiredExecutionEnvironment: J2SE-1.4,
+				 J2SE-1.5
+				""", fDocument.get(pos, length));
 	}
 
 	@Test
 	public void testAddMulitplieExecutionEnvironmnets() throws Exception {
-		StringBuilder buffer = new StringBuilder();
-		buffer.append("Manifest-Version: 1.0\n");
-		buffer.append("Bundle-ManifestVersion: 2\n");
-		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
-		buffer.append("Bundle-RequiredExecutionEnvironment: J2SE-1.4\n");
-		fDocument.set(buffer.toString());
+		fDocument.set("""
+				Manifest-Version: 1.0
+				Bundle-ManifestVersion: 2
+				Bundle-SymoblicName: com.example.xyz
+				Bundle-RequiredExecutionEnvironment: J2SE-1.4
+				""");
 		load(true);
 		RequiredExecutionEnvironmentHeader header = getRequiredExecutionEnvironmentHeader();
 		header.addExecutionEnvironment("CDC-1.1/Foundation-1.1");
@@ -128,23 +130,24 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineOffset(7) - fDocument.getLineOffset(3);
-		StringBuilder expected = new StringBuilder("Bundle-RequiredExecutionEnvironment: J2SE-1.4,\n");
-		expected.append(" CDC-1.1/Foundation-1.1,\n");
-		expected.append(" J2SE-1.5,\n");
-		expected.append(" OSGi/Minimum-1.1\n");
-		assertEquals(expected.toString(), fDocument.get(pos, length));
+		assertEquals("""
+				Bundle-RequiredExecutionEnvironment: J2SE-1.4,
+				 CDC-1.1/Foundation-1.1,
+				 J2SE-1.5,
+				 OSGi/Minimum-1.1
+				""", fDocument.get(pos, length));
 	}
 
 	@Test
 	public void testRemoveExecutionEnvironment() throws Exception {
-		StringBuilder buffer = new StringBuilder();
-		buffer.append("Manifest-Version: 1.0\n");
-		buffer.append("Bundle-ManifestVersion: 2\n");
-		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
-		buffer.append("Bundle-RequiredExecutionEnvironment: J2SE-1.4,\n");
-		buffer.append(" CDC-1.1/Foundation-1.1,\n");
-		buffer.append(" OSGi/Minimum-1.1\n");
-		fDocument.set(buffer.toString());
+		fDocument.set("""
+				Manifest-Version: 1.0
+				Bundle-ManifestVersion: 2
+				Bundle-SymoblicName: com.example.xyz
+				Bundle-RequiredExecutionEnvironment: J2SE-1.4,
+				 CDC-1.1/Foundation-1.1,
+				 OSGi/Minimum-1.1
+				""");
 		load(true);
 		RequiredExecutionEnvironmentHeader header = getRequiredExecutionEnvironmentHeader();
 		String env = header.getEnvironments().get(1);
@@ -159,21 +162,22 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineOffset(5) - fDocument.getLineOffset(3);
-		StringBuilder expected = new StringBuilder("Bundle-RequiredExecutionEnvironment: J2SE-1.4,\n");
-		expected.append(" OSGi/Minimum-1.1\n");
-		assertEquals(expected.toString(), fDocument.get(pos, length));
+		assertEquals("""
+				Bundle-RequiredExecutionEnvironment: J2SE-1.4,
+				 OSGi/Minimum-1.1
+				""", fDocument.get(pos, length));
 	}
 
 	@Test
 	public void testRemoveMultipleExecutionEnvironments() throws Exception {
-		StringBuilder buffer = new StringBuilder();
-		buffer.append("Manifest-Version: 1.0\n");
-		buffer.append("Bundle-ManifestVersion: 2\n");
-		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
-		buffer.append("Bundle-RequiredExecutionEnvironment: J2SE-1.4,\n");
-		buffer.append(" CDC-1.1/Foundation-1.1,\n");
-		buffer.append(" OSGi/Minimum-1.1\n");
-		fDocument.set(buffer.toString());
+		fDocument.set("""
+				Manifest-Version: 1.0
+				Bundle-ManifestVersion: 2
+				Bundle-SymoblicName: com.example.xyz
+				Bundle-RequiredExecutionEnvironment: J2SE-1.4,
+				 CDC-1.1/Foundation-1.1,
+				 OSGi/Minimum-1.1
+				""");
 		load(true);
 		RequiredExecutionEnvironmentHeader header = getRequiredExecutionEnvironmentHeader();
 		List<String> envs = header.getEnvironments();
@@ -194,13 +198,13 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 
 	@Test
 	public void testPreserveSpacing() throws Exception {
-		StringBuilder buffer = new StringBuilder();
-		buffer.append("Manifest-Version: 1.0\n");
-		buffer.append("Bundle-ManifestVersion: 2\n");
-		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
-		buffer.append("Bundle-RequiredExecutionEnvironment: \n");
-		buffer.append(" J2SE-1.4\n");
-		fDocument.set(buffer.toString());
+		fDocument.set("""
+				Manifest-Version: 1.0
+				Bundle-ManifestVersion: 2
+				Bundle-SymoblicName: com.example.xyz
+				Bundle-RequiredExecutionEnvironment:\s
+				 J2SE-1.4
+				""");
 		load(true);
 
 		RequiredExecutionEnvironmentHeader header = getRequiredExecutionEnvironmentHeader();
@@ -215,10 +219,11 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineOffset(6) - fDocument.getLineOffset(3);
 
-		StringBuilder expected = new StringBuilder("Bundle-RequiredExecutionEnvironment: \n");
-		expected.append(" J2SE-1.4,\n");
-		expected.append(" OSGi/Minimum-1.1\n");
-		assertEquals(expected.toString(), fDocument.get(pos, length));
+		assertEquals("""
+				Bundle-RequiredExecutionEnvironment:\s
+				 J2SE-1.4,
+				 OSGi/Minimum-1.1
+				""", fDocument.get(pos, length));
 	}
 
 	@Test
