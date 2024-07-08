@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     EclipseSource Corporation - ongoing enhancements
  *     Rapicorp Corporation - ongoing enhancements
+ *     SAP SE - support macOS bundle URL types
  *******************************************************************************/
 package org.eclipse.pde.internal.core.product;
 
@@ -24,6 +25,7 @@ import org.eclipse.pde.internal.core.iproduct.IIntroInfo;
 import org.eclipse.pde.internal.core.iproduct.IJREInfo;
 import org.eclipse.pde.internal.core.iproduct.ILauncherInfo;
 import org.eclipse.pde.internal.core.iproduct.ILicenseInfo;
+import org.eclipse.pde.internal.core.iproduct.IMacBundleUrlType;
 import org.eclipse.pde.internal.core.iproduct.IPluginConfiguration;
 import org.eclipse.pde.internal.core.iproduct.IPreferencesInfo;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
@@ -126,6 +128,11 @@ public class ProductModelFactory implements IProductModelFactory {
 	@Override
 	public ICSSInfo createCSSInfo() {
 		return new CSSInfo(fModel);
+	}
+
+	@Override
+	public IMacBundleUrlType createMacBundleUrlType() {
+		return new MacBundleUrlType(fModel);
 	}
 
 }
