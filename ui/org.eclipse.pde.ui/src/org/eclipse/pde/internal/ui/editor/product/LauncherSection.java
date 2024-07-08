@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,29 +11,48 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 438509
+ *     SAP SE - support macOS bundle URL types
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.equinox.bidi.StructuredTextTypeHandlerFactory;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.StatusDialog;
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.util.BidiUtils;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.iproduct.ILauncherInfo;
+import org.eclipse.pde.internal.core.iproduct.IMacBundleUrlType;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
+import org.eclipse.pde.internal.core.iproduct.IProductModelFactory;
+import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.pde.internal.ui.editor.EditorUtilities;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
@@ -41,6 +60,7 @@ import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.editor.validation.TextValidator;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
+import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.util.FileExtensionFilter;
 import org.eclipse.pde.internal.ui.util.FileValidator;
 import org.eclipse.swt.SWT;
@@ -48,7 +68,10 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -57,6 +80,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.PartInitException;
@@ -92,6 +118,7 @@ public class LauncherSection extends PDESection {
 	private Composite fLinuxSection;
 	private Composite fMacSection;
 	private Composite fWin32Section;
+	private MacBundleUrlTypesComposite fMacBundleUrlTypesComposite;
 
 	class IconEntry extends FormEntry {
 		String fIconId;
@@ -323,11 +350,229 @@ public class LauncherSection extends PDESection {
 	}
 
 	private Composite addMacSection(Composite parent, FormToolkit toolkit) {
-		Composite comp = createComposite(parent, toolkit);
+		Composite compOuter = toolkit.createComposite(parent);
+		GridLayoutFactory.fillDefaults().numColumns(2).applyTo(compOuter);
+		Composite comp = createComposite(compOuter, toolkit);
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 1).applyTo(comp);
 		createLabel(comp, toolkit, PDEUIMessages.LauncherSection_macLabel, 3);
 		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_file, ILauncherInfo.MACOSX_ICON));
+		fMacBundleUrlTypesComposite = new MacBundleUrlTypesComposite(compOuter, toolkit);
 		toolkit.paintBordersFor(comp);
-		return comp;
+		return compOuter;
+	}
+
+	private class MacBundleUrlTypesComposite {
+
+		private MacBundleUrlTypesPartAdapter fTablePart;
+		private TableViewer fBundleUrlTypesTable;
+
+		private class LabelProvider extends PDELabelProvider {
+			@Override
+			public Image getColumnImage(Object obj, int index) {
+				return null;
+			}
+
+			@Override
+			public String getColumnText(Object obj, int index) {
+				IMacBundleUrlType bundleUrlType = (IMacBundleUrlType) obj;
+				return switch (index) {
+					case 0 -> bundleUrlType.getScheme();
+					case 1 -> bundleUrlType.getName();
+					default -> null;
+				};
+			}
+		}
+
+		public MacBundleUrlTypesComposite(Composite comp, FormToolkit toolkit) {
+			createLabel(comp, toolkit,
+					PDEUIMessages.LauncherSection_macBundleUrlTypes_LauncherSection_macBundleUrlTypesTitle, 2);
+			fTablePart = new MacBundleUrlTypesPartAdapter(
+					new String[] { PDEUIMessages.LauncherSection_macBundleUrlTypes_Add,
+							PDEUIMessages.LauncherSection_macBundleUrlTypes_Edit,
+							PDEUIMessages.LauncherSection_macBundleUrlTypes_Remove });
+			fTablePart.createControl(comp, SWT.FULL_SELECTION, 1, toolkit);
+			fBundleUrlTypesTable = (TableViewer) fTablePart.getViewer();
+			fBundleUrlTypesTable.setComparator(new ViewerComparator());
+			fBundleUrlTypesTable.addDoubleClickListener(event -> handleEdit());
+			fBundleUrlTypesTable.getTable().addKeyListener(KeyListener.keyReleasedAdapter(e -> {
+				if (e.keyCode == SWT.DEL) {
+					handleRemove();
+				}
+			}));
+
+			Table table = fBundleUrlTypesTable.getTable();
+			TableColumn schemeColumn = new TableColumn(table, SWT.LEFT);
+			schemeColumn.setText(PDEUIMessages.LauncherSection_macBundleUrlTypes_SchemeColumn);
+			schemeColumn.setWidth(160);
+
+			TableColumn nameColumn = new TableColumn(table, SWT.LEFT);
+			nameColumn.setText(PDEUIMessages.LauncherSection_macBundleUrlTypes_NameColumn);
+			nameColumn.setWidth(220);
+
+			table.addControlListener(ControlListener.controlResizedAdapter(e -> {
+				int size = table.getSize().x;
+				schemeColumn.setWidth(size / 10 * 4);
+				nameColumn.setWidth(size / 10 * 6);
+			}));
+
+			table.setHeaderVisible(true);
+			fBundleUrlTypesTable.setLabelProvider(new LabelProvider());
+			fBundleUrlTypesTable.setContentProvider((IStructuredContentProvider) inputElement -> {
+				if (inputElement instanceof IProduct product) {
+					return product.getLauncherInfo().getMacBundleUrlTypes().toArray();
+				}
+				return new Object[0];
+			});
+			fBundleUrlTypesTable.setInput(getProduct());
+
+			updateButtons();
+		}
+
+		private class MacBundleUrlTypesPartAdapter extends TablePart {
+
+			public MacBundleUrlTypesPartAdapter(String[] buttonLabels) {
+				super(buttonLabels);
+			}
+
+			@Override
+			public void selectionChanged(IStructuredSelection selection) {
+				getManagedForm().fireSelectionChanged(LauncherSection.this, selection);
+				updateButtons();
+			}
+
+			@Override
+			public void buttonSelected(Button button, int index) {
+				switch (index) {
+					case 0 -> handleAdd();
+					case 1 -> handleEdit();
+					case 2 -> handleRemove();
+				}
+			}
+		}
+
+		private void handleAdd() {
+			openBundleURLTypeDialog(null, getExistingBundleUrlTypes());
+		}
+
+		private void handleEdit() {
+			IStructuredSelection ssel = fBundleUrlTypesTable.getStructuredSelection();
+			if (!ssel.isEmpty() && ssel.getFirstElement() instanceof IMacBundleUrlType propertyToEdit) {
+				Set<IMacBundleUrlType> existing = getExistingBundleUrlTypes();
+				existing.remove(propertyToEdit);
+				openBundleURLTypeDialog(propertyToEdit, existing);
+			}
+		}
+
+		private void openBundleURLTypeDialog(IMacBundleUrlType propertyToEdit, Set<IMacBundleUrlType> existing) {
+			BundleUrlTypeDialog dialog = new BundleUrlTypeDialog(PDEPlugin.getActiveWorkbenchShell(), propertyToEdit,
+					existing);
+			if (dialog.open() == Window.OK) {
+				IMacBundleUrlType result = dialog.getResult();
+				if (result != null) {
+					fBundleUrlTypesTable.refresh();
+					fBundleUrlTypesTable.setSelection(new StructuredSelection(result));
+					updateButtons();
+				}
+			}
+		}
+
+		private Set<IMacBundleUrlType> getExistingBundleUrlTypes() {
+			return new HashSet<>(getProduct().getLauncherInfo().getMacBundleUrlTypes());
+		}
+
+		private void handleRemove() {
+			IStructuredSelection ssel = fBundleUrlTypesTable.getStructuredSelection();
+			if (!ssel.isEmpty()) {
+				List<IMacBundleUrlType> bundleUrlTypes = ssel.toList();
+				getProduct().getLauncherInfo().removeMacBundleUrlTypes(bundleUrlTypes);
+				fBundleUrlTypesTable.refresh(false);
+			}
+		}
+
+		private void updateButtons() {
+			ISelection selection = fBundleUrlTypesTable.getStructuredSelection();
+			fTablePart.setButtonEnabled(0, isEditable());
+			fTablePart.setButtonEnabled(1, isEditable() && !selection.isEmpty());
+			fTablePart.setButtonEnabled(2, isEditable() && !selection.isEmpty());
+		}
+
+		private class BundleUrlTypeDialog extends StatusDialog {
+
+			private Text fScheme;
+			private Text fName;
+			private IMacBundleUrlType fEdit;
+			private final Set<IMacBundleUrlType> fExistingBundleUrlTypes;
+
+			public BundleUrlTypeDialog(Shell shell, IMacBundleUrlType bundleUrlType,
+					Set<IMacBundleUrlType> existingBundleUrlTypes) {
+				super(shell);
+				fEdit = bundleUrlType;
+				fExistingBundleUrlTypes = existingBundleUrlTypes;
+				setTitle(PDEUIMessages.LauncherSection_macBundleUrlTypes_DialogTitle);
+			}
+
+			@Override
+			protected Control createDialogArea(Composite parent) {
+				Composite comp = (Composite) super.createDialogArea(parent);
+				((GridLayout) comp.getLayout()).numColumns = 2;
+				SWTFactory.createLabel(comp, PDEUIMessages.LauncherSection_macBundleUrlTypes_Scheme, 1);
+				fScheme = SWTFactory.createSingleText(comp, 1);
+				fScheme.addModifyListener(e -> validate());
+				SWTFactory.createLabel(comp, PDEUIMessages.LauncherSection_macBundleUrlTypes_Name, 1);
+				fName = SWTFactory.createSingleText(comp, 1);
+				fName.addModifyListener(e -> validate());
+
+				if (fEdit != null) {
+					if (fEdit.getScheme() != null) {
+						fScheme.setText(fEdit.getScheme());
+					}
+					if (fEdit.getName() != null) {
+						fName.setText(fEdit.getName());
+					}
+				}
+				// Disable ok button on startup
+				updateStatus(Status.error("")); //$NON-NLS-1$
+				return comp;
+			}
+
+			protected void validate() {
+				String scheme = fScheme.getText().trim();
+				String name = fName.getText().trim();
+				if (scheme.length() == 0) {
+					updateStatus(Status.error(PDEUIMessages.LauncherSection_macBundleUrlTypes_ErrorNoScheme));
+				} else if (name.length() == 0) {
+					updateStatus(Status.error(PDEUIMessages.LauncherSection_macBundleUrlTypes_ErrorNoName));
+				} else if (fExistingBundleUrlTypes.stream().map(IMacBundleUrlType::getScheme)
+						.anyMatch(scheme::equals)) {
+					updateStatus(Status.error(
+							NLS.bind(PDEUIMessages.LauncherSection_macBundleUrlTypes_ErrorSchemeExists, scheme)));
+				} else {
+					updateStatus(Status.OK_STATUS);
+				}
+			}
+
+			@Override
+			protected void okPressed() {
+				if (fEdit != null) {
+					getProduct().getLauncherInfo().removeMacBundleUrlTypes(List.of(fEdit));
+				}
+				IProductModelFactory factory = getModel().getFactory();
+				fEdit = factory.createMacBundleUrlType();
+				fEdit.setScheme(fScheme.getText().trim());
+				fEdit.setName(fName.getText().trim());
+				getProduct().getLauncherInfo().addMacBundleUrlTypes(List.of(fEdit));
+				super.okPressed();
+			}
+
+			@Override
+			protected Control createHelpControl(Composite parent) {
+				return parent;
+			}
+
+			public IMacBundleUrlType getResult() {
+				return fEdit;
+			}
+		}
 	}
 
 	private Composite createComposite(Composite parent, FormToolkit toolkit) {
@@ -357,6 +602,10 @@ public class LauncherSection extends PDESection {
 		fSingleWinIconValidator.setRefresh(true);
 
 		updateWinEntries(useIco);
+
+		fMacBundleUrlTypesComposite.fBundleUrlTypesTable.setInput(getProduct());
+		fMacBundleUrlTypesComposite.fBundleUrlTypesTable.refresh();
+		fMacBundleUrlTypesComposite.updateButtons();
 
 		super.refresh();
 	}
