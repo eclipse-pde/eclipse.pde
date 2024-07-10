@@ -1,7 +1,7 @@
 ## What are Execution Environments?
 
 Execution environments (EEs) are symbolic representations of JREs. 
-For example, rather than talking about a specific JRE, with a specific name at a specific location on your disk, you can talk about the JavaSE-1.8 execution environment.
+For example, rather than talking about a specific JRE, with a specific name at a specific location on your disk, you can talk about the JavaSE-21 execution environment.
 The system can then be configured to use a specific JRE to implement that execution environment.
 
 Execution environments are relevant both to development (compile) time and runtime.
@@ -12,10 +12,9 @@ Good bundles have minimal dependencies.
 This allows them to be used in a wider range of situations and results in a smaller overall footprint for applications built of these bundles. 
 The execution environment needed by your bundle is key in both situations.
 
-Consider the different outcomes for some bundle A that requires just Foundation 1.0 and a bundle B that requires JavaSE-1.8. 
-First, A can be used in embedded devices where Foundation 1.0 is quite popular. 
-Second, an application written entirely of bundles such as A can ship on a Foundation 1.0 JRE. 
-This results in a huge disk/transfer footprint savings over JavaSE-1.8 JREs!
+Consider the different outcomes for some bundle A that requires just JavaSE-17 and a bundle B that requires JavaSE-21. 
+First, A can be used by applications using Java version 17. 
+Second, an application written entirely of bundles such as A can ship on a Java 17 JRE. 
 
 ## How can this be configured?
 
@@ -33,7 +32,7 @@ Setting this value has two effects.
 2.  The Equinox runtime will refuse to resolve/run your bundle if the
     current running JRE does not meet the minimum standard you
     specified. For example, if you attempt to install bundle B from
-    above (requires JavaSE-21) on a system running Foundation 1.0, B will
+    above (requires JavaSE-21) on a system running JavaSE-17, B will
     not resolve or run.
 
 This page describes how Execution Environments are defined within the PDE environment.
@@ -65,7 +64,7 @@ However, with the the fast evolving Java runtime environment, you may want to up
 
 ## Setting the Execution Environment
 
-1.  Use Eclipse-SDK 3.2.x or later.
+1.  Use Eclipse-SDK in its latest version.
 2.  Right click on your bundle's `MANIFEST.MF` and select **Open With...
     \> Plug-in Manifest Editor**.
 3.  Select the **Overview** tab.
@@ -77,80 +76,29 @@ However, with the the fast evolving Java runtime environment, you may want to up
 7.  Select the link "update the classpath and compiler compliance
     settings".
 8.  Ensure you have no compiling errors in your workspace.  
-    Remember, for the BREE's to correctly effect compile errors in the
-    workbench, you must have the proper `Execution Environments` defined
-    under `Installed JREs` in your workbench preferences. It is quite
-    normal to have 3 or more JREs installed such as for `J2SE-1.4`,
-    `J2SE-1.5`, and `JavaSE-1.6`.
 9.  Release your changes to the repository.
 
 ## Special cases
 
-### Foundation class libraries
-
-Bundles that require just Foundation 1.0 should in fact list Foundation
-1.0 **and** J2SE-1.3 in their execution environments. This is because
-Foundation 1.0 is not a proper subset of 1.3 (it includes some
-additional javax.microedition classes). Listing them both in essence
-says that only the intersection of the two EEs is valid for use in the
-bundle. The situation is the same for Foundation 1.1 and J2SE-1.4.
 
 ### Compiling against more than is required
 
 In some cases, a bundle may optionally use function from newer execution
 environments if available but fall back to some other behaviour if not.
 Such bundles must be compiled against the maximum EE actually used in
-their code. For instance, the `org.eclipse.osgi` bundle uses
-`java.nio.*` classes from J2SE-1.4 if available. It can however run
-against the OSGI/Minimum-1.0 EE. As a result, it must be compiled
-against J2SE-1.4.
+their code. 
 
 In these cases you must list both the EE required for compilation and
 the absolute minimum EE for runtime in the **Execution Environment**
 section of the bundle **Overview**. The EE needed for compilation
-against must appear **first** in the list. So for `org.eclipse.osgi`,
-the list (in order) is *J2SE-1.4* then *OSGI/Minimum-1.0*.
+against must appear **first** in the list. 
 
-### XML and other optional JRE pieces
-
-You must distinguish between core parts of a JRE and optional parts. For
-example, the XML support is not a core part of the class libraries until
-J2SE-1.4. There are in fact many ways to get XML support added to almost
-any execution environment.
-
-While you can gain access to these classes by specifying the related EE,
-that overly restricts your bundles. The better approach is to ignore
-this type of class when choosing the minimum EE for your bundle and
-instead specify Import-Package clauses in the manifest.mf of your
-bundle. The IDE and runtime will then find other bundles that export the
-needed packages and wire the bundles together.
-
-This approach allows, for example, a bundle listing the J2SE-1.3 EE to
-use XML function as long as there is another bundle that provides (i.e.,
-exports) the XML APIs.
-
-**Compiling:** If you have your EE set to be one (like Foundation 1.0)
-which doesn't provide the XML APIs, then in order to compile and run you
-need to retrieve a bundle that provides these APIs such as `org.w3c.dom`
-from Maven (perhaps via [Orbit](https://github.com/eclipse-orbit).
-**Running:** If you are running your application with a (for instance)
-Foundation VM and you have a bundle which provides the XML APIs, you
-need to set the following system propery:
-`-Dosgi.framework.extensions=org.w3c.dom` to make OSGi aware of the XML
-code.
 
 ## Managing Execution Environments
 
 For the most part the Eclipse IDE manages the execution environments for
 you. You do however have to have the relevant JREs installed on your
 machine and configured into your IDE.
-
-Most JREs can be acquired from Oracle via their
-[main web site](https://www.oracle.com/us/java/) or their [handy
-archive
-site](https://www.oracle.com/technetwork/java/archive-139210.html). Note
-that the best source for suitable Foundation 1.\* JREs is IBM's J9. See
-[ Getting J9](https://eclipse.dev/openj9/) for more details.
 
 When you install a new JRE, the IDE analyzes the function it provides
 and identifies the set of EEs it can support. The IDE distinguishes
@@ -169,39 +117,20 @@ your bundle's project will fail to compile.
 
 The set of execution environments is extensible but the Eclipse IDE
 includes support for the environments set out in the OSGi R4
-specification. These are summarized in the table below.
+specification. Some examples are listed in the table below.
 
-| EE Name                    | Description                                                                                                                                                        |
-|----------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **OSGi/Minimum-1.0**       | OSGi Minimum Execution Environment 1.0 - This is a subset of the J2ME Foundation 1.0 class libraries defined by OSGi to be the base for framework implementations. |
-| **OSGi/Minimum-1.1**       | OSGi Minimum Execution Environment 1.1 - This is a subset of the J2ME Foundation class libraries defined by OSGi to be the base for framework implementations.     |
-| **CDC-1.0/Foundation-1.0** | J2ME Foundation 1.0 - With the exception of some MicroEdition IO classes, Foundation 1.0 is a subset of J2SE 1.3.                                                  |
-| **CDC-1.1/Foundation-1.1** | J2ME Foundation 1.1 - With the exception of some MicroEdition IO classes, Foundation 1.1 is a subset of J2SE 1.4.                                                  |
-| **JRE-1.1**                |                                                                                                                                                                    |
-| **J2SE-1.2**               |                                                                                                                                                                    |
-| **J2SE-1.3**               |                                                                                                                                                                    |
-| **J2SE-1.4**               |                                                                                                                                                                    |
-| **J2SE-1.5**               |                                                                                                                                                                    |
-| **JavaSE-1.6**             |                                                                                                                                                                    |
-| **JavaSE-1.7**             |                                                                                                                                                                    |
-| **JavaSE-1.8**             |                                                                                                                                                                    |
+| EE Name                    | Description                                                                                                                                                       |
+|---------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **JavaSE-11**             | Java 11 release                                                                                                                                                    |
+| **JavaSE-17**             | Java 17 release                                                                                                                                                    |
+| **JavaSE-11**             | Java 17 release                                                                                                                                                    |
 
 ## Installing Execution Environment Descriptions
 
 Latest Execution Environment Descriptions can be installed from the release update site, for example:
 
-[Eclipse 4.3 update site](https://download.eclipse.org/eclipse/updates/4.3)  
-When using the 4.3 Kepler update site the environments are contained in
-a single installable unit labelled "API Tools Execution Environment
-Descriptions" inside a category of the same name. Previous releases
-provided each execution environment description as a separate
-installable unit.
+[Eclipse latest update site](https://download.eclipse.org/eclipse/updates/latest)  
 
 ![](images/ExecutionEnvironmentDescriptionInstallation.png "images/ExecutionEnvironmentDescriptionInstallation.png")
 
-## External Links
-
-[How to setup some plugins to use java 1.5 in a java 1.4 workspace? (A
-step by step explanation by Michael
-Scharf)](https://michaelscharf.blogspot.com/2006/07/how-to-setup-some-plugins-to-use-java.html)
 
