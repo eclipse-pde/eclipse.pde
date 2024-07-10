@@ -125,12 +125,3 @@ specification. Some examples are listed in the table below.
 | **JavaSE-17**             | Java 17 release                                                                                                                                                    |
 | **JavaSE-11**             | Java 17 release                                                                                                                                                    |
 
-## Installing Execution Environment Descriptions
-
-Latest Execution Environment Descriptions can be installed from the release update site, for example:
-
-[Eclipse latest update site](https://download.eclipse.org/eclipse/updates/latest)  
-
-![](images/ExecutionEnvironmentDescriptionInstallation.png "images/ExecutionEnvironmentDescriptionInstallation.png")
-
-
