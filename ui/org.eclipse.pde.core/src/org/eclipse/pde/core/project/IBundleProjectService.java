@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2020 IBM Corporation and others.
+ * Copyright (c) 2010, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,8 +17,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.ServiceCaller;
-import org.eclipse.osgi.service.resolver.VersionRange;
 import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 
 /**
  * Service used to create and configure bundle project descriptions.
@@ -55,8 +55,17 @@ public interface IBundleProjectService {
 	 * @param name symbolic name of the host
 	 * @param range version constraint or <code>null</code>
 	 * @return host description
+	 * @since 3.19
 	 */
 	IHostDescription newHost(String name, VersionRange range);
+
+	/**
+	 * @deprecated Instead use {@link #newHost(String, VersionRange)}
+	 */
+	@Deprecated(forRemoval = true, since = "4.19")
+	default IHostDescription newHost(String name, org.eclipse.osgi.service.resolver.VersionRange range) {
+		return newHost(name, (VersionRange) range);
+	}
 
 	/**
 	 * Creates and returns a new package import description.
@@ -65,8 +74,19 @@ public interface IBundleProjectService {
 	 * @param range version constraint or <code>null</code>
 	 * @param optional whether the import is optional
 	 * @return package import description
+	 * @since 3.19
 	 */
 	IPackageImportDescription newPackageImport(String name, VersionRange range, boolean optional);
+
+	/**
+	 * @deprecated Instead use
+	 *             {@link #newPackageImport(String, VersionRange, boolean)}
+	 */
+	@Deprecated(forRemoval = true, since = "4.19")
+	default IPackageImportDescription newPackageImport(String name,
+			org.eclipse.osgi.service.resolver.VersionRange range, boolean optional) {
+		return newPackageImport(name, (VersionRange) range, optional);
+	}
 
 	/**
 	 * Constructs a new package export description.
@@ -88,8 +108,19 @@ public interface IBundleProjectService {
 	 * @param optional whether the required bundle is optional
 	 * @param export whether the required bundle is re-exported
 	 * @return required bundle description
+	 * @since 3.19
 	 */
 	IRequiredBundleDescription newRequiredBundle(String name, VersionRange range, boolean optional, boolean export);
+
+	/**
+	 * @deprecated Instead use
+	 *             {@link #newRequiredBundle(String, VersionRange, boolean, boolean)}
+	 */
+	@Deprecated(forRemoval = true, since = "4.19")
+	default IRequiredBundleDescription newRequiredBundle(String name,
+			org.eclipse.osgi.service.resolver.VersionRange range, boolean optional, boolean export) {
+		return newRequiredBundle(name, (VersionRange) range, optional, export);
+	}
 
 	/**
 	 * Creates and returns a new bundle classpath entry defining the relationship
