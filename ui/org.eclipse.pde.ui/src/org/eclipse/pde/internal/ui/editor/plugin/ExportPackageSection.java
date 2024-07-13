@@ -18,12 +18,23 @@
 
 package org.eclipse.pde.internal.ui.editor.plugin;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -31,6 +42,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.actions.FindReferencesAction;
@@ -38,10 +50,12 @@ import org.eclipse.jdt.ui.actions.ShowInPackageViewAction;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -75,6 +89,7 @@ import org.eclipse.pde.internal.ui.util.TextUtil;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -226,7 +241,22 @@ public class ExportPackageSection extends TableSection {
 	}
 
 	private boolean canAddExportedPackages() {
-		return isEditable() && getProjectWithJavaNature().isPresent();
+		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
+		final IProject project = model.getUnderlyingResource().getProject();
+		try {
+			if (isEditable() && getProjectWithJavaNature().isPresent()) {
+				return true;
+			} else if (isEditable() && hasPluginNature(project)) {
+				return true;
+			}
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	private boolean hasPluginNature(IProject project) throws CoreException {
+		return project.isNatureEnabled("org.eclipse.pde.PluginNature"); //$NON-NLS-1$
 	}
 
 	private Optional<IProject> getProjectWithJavaNature() {
@@ -406,11 +436,11 @@ public class ExportPackageSection extends TableSection {
 	private void handleAdd() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		final IProject project = model.getUnderlyingResource().getProject();
+		final Collection<String> pckgs = fHeader == null ? Collections.emptySet() : fHeader.getPackageNames();
 		try {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
 				ILabelProvider labelProvider = new JavaElementLabelProvider();
 				final ConditionalListSelectionDialog dialog = new ConditionalListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), labelProvider, PDEUIMessages.ExportPackageSection_dialogButtonLabel);
-				final Collection<String> pckgs = fHeader == null ? Collections.emptySet() : fHeader.getPackageNames();
 				final boolean allowJava = "true".equals(getBundle().getHeader(ICoreConstants.ECLIPSE_JREBUNDLE)); //$NON-NLS-1$
 				Runnable runnable = () -> {
 					ArrayList<IPackageFragment> elements = new ArrayList<>();
@@ -444,25 +474,160 @@ public class ExportPackageSection extends TableSection {
 							fHeader.addPackage(new ExportPackageObject(fHeader, candidate, getVersionAttribute()));
 						}
 					} else {
-						getBundle().setHeader(getExportedPackageHeader(), getValue(selected));
-						// the way events get triggered, updateButtons isn't called
-						if (selected.length > 0)
-							getTablePart().setButtonEnabled(CALCULATE_USE_INDEX, true);
+						addPackageIntoManifestFile(selected);
 					}
 				}
 				labelProvider.dispose();
+			} else if (hasPluginNature(project)) {
+				ILabelProvider labelProvider = nonJavaLabelProvider();
+				final ConditionalListSelectionDialog dialog = new ConditionalListSelectionDialog(
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), labelProvider,
+						PDEUIMessages.ExportPackageSection_dialogButtonLabel);
+				try {
+					InputStream inputStream = project.getFile("META-INF/MANIFEST.MF").getContents(); //$NON-NLS-1$
+					BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+					List<String> jarPaths = extractJars(reader);
+					Set<String> packageNames = new HashSet<>();
+					packageNames.addAll(getPackageNamesFromJar(jarPaths, pckgs, project));
+					if (!packageNames.isEmpty()) {
+						dialogforNonJavaPrj(dialog, packageNames);
+						if (dialog.open() == Window.OK) {
+							Object[] selected = dialog.getResult();
+							if (fHeader != null) {
+								for (Object selectedObject : selected) {
+									fHeader.addPackage(new ExportPackageObject(fHeader, selectedObject.toString(), null,
+											getVersionAttribute()));
+								}
+							} else {
+								addPackageIntoManifestFile(selected);
+							}
+						}
+					} else {
+						MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Information", //$NON-NLS-1$
+								"No packages are available for export."); //$NON-NLS-1$
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				} finally {
+					labelProvider.dispose();
+				}
 			}
 		} catch (CoreException e) {
 		}
 	}
 
+	private void dialogforNonJavaPrj(final ConditionalListSelectionDialog dialog, Set<String> packageNames) {
+		dialog.setElements(packageNames.toArray());
+		dialog.setMultipleSelection(true);
+		dialog.setMessage(PDEUIMessages.PackageSelectionDialog_label);
+		dialog.setTitle(PDEUIMessages.ExportPackageSection_title);
+		dialog.create();
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IHelpContextIds.EXPORT_PACKAGES);
+	}
+
+	private void addPackageIntoManifestFile(Object[] selected) {
+		getBundle().setHeader(getExportedPackageHeader(), getValue(selected));
+		// the way events get triggered, updateButtons isn't
+		// called
+		if (selected.length > 0)
+			getTablePart().setButtonEnabled(CALCULATE_USE_INDEX, true);
+	}
+
+	private ILabelProvider nonJavaLabelProvider() {
+		ILabelProvider labelProvider = new LabelProvider() {
+			@Override
+			public Image getImage(Object element) {
+				return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PACKAGE);
+			}
+		};
+		return labelProvider;
+	}
+
+	private List<String> extractJars(BufferedReader reader) throws IOException {
+		List<String> jarPaths = new ArrayList<>();
+		String line;
+		while ((line = reader.readLine()) != null) {
+			if (line.startsWith("Bundle-ClassPath:")) { //$NON-NLS-1$
+				String[] entries = line.substring("Bundle-ClassPath:".length()).trim().split(","); //$NON-NLS-1$ //$NON-NLS-2$
+				for (String entry : entries) {
+					entry = entry.trim();
+					if (!entry.isEmpty() && !entry.equals(".") && !entry.equals("*")) { //$NON-NLS-1$ //$NON-NLS-2$
+						jarPaths.add(entry);
+					}
+				}
+				while ((line = reader.readLine()) != null && Character.isWhitespace(line.charAt(0))) {
+					entries = line.trim().split(","); //$NON-NLS-1$
+					for (String entry : entries) {
+						entry = entry.trim();
+						if (!entry.isEmpty() && !entry.equals(".") && !entry.equals("*")) { //$NON-NLS-1$ //$NON-NLS-2$
+							jarPaths.add(entry);
+						}
+					}
+				}
+				break;
+			}
+		}
+		return jarPaths;
+	}
+
+	public static IResource getPackageResource(IProject project, String packageName) {
+		IFolder folder = project.getFolder(packageName.replace('.', '/'));
+		if (folder.exists()) {
+			return folder;
+		}
+		return null;
+	}
+
+	public static Set<String> getPackageNamesFromJar(List<String> jarPaths, Collection<String> existingPackages,
+			IProject project) {
+		Set<String> packName = new HashSet<>();
+		String location = project.getLocation().toOSString();
+		for (String jarFilePath : jarPaths) {
+			try (JarFile jarFile = new JarFile(location + "\\" + jarFilePath)) { //$NON-NLS-1$
+				Enumeration<JarEntry> entries = jarFile.entries();
+				while (entries.hasMoreElements()) {
+					JarEntry entry = entries.nextElement();
+					if (entry.isDirectory() && !entry.getName().equals("META-INF")) { //$NON-NLS-1$
+						String packageName = entry.getName().replace('/', '.');
+						if (!existingPackages.contains(packageName)) {
+							packName.add(packageName);
+						}
+					} else if (entry.getName().endsWith(".class")) { //$NON-NLS-1$
+						String packageName = getPackageNameFromClassName(entry.getName());
+						if (!existingPackages.contains(packageName)) {
+							packName.add(packageName);
+						}
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return packName;
+	}
+
+	private static String getPackageNameFromClassName(String className) {
+		int lastSlashIndex = className.lastIndexOf('/');
+		if (lastSlashIndex != -1) {
+			return className.substring(0, lastSlashIndex).replace('/', '.');
+		}
+		return "";
+	}
+
 	private String getValue(Object[] objects) {
 		StringBuilder buffer = new StringBuilder();
 		for (Object object : objects) {
-			IPackageFragment fragment = (IPackageFragment) object;
-			if (buffer.length() > 0)
-				buffer.append("," + getLineDelimiter() + " "); //$NON-NLS-1$ //$NON-NLS-2$
-			buffer.append(fragment.getElementName());
+			if (object instanceof IPackageFragment) {
+				IPackageFragment fragment = (IPackageFragment) object;
+				if (buffer.length() > 0)
+					buffer.append("," + getLineDelimiter() + " "); //$NON-NLS-1$ //$NON-NLS-2$
+				buffer.append(fragment.getElementName());
+			} else if (object instanceof String) {
+				String str = (String) object;
+				if (buffer.length() > 0)
+					buffer.append("," + getLineDelimiter() + " "); //$NON-NLS-1$ //$NON-NLS-2$
+				buffer.append(str);
+			}
 		}
 		return buffer.toString();
 	}
