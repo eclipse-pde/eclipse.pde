@@ -263,20 +263,8 @@ public class IncrementalApiBuilder {
 			IPluginModelBase currentModel = this.builder.getCurrentModel();
 			if (currentModel != null) {
 				String id = currentModel.getBundleDescription().getSymbolicName();
-				IApiComponent comp = wbaseline.getApiComponent(id);
-				Set<IApiComponent> apiComponentMultiple = wbaseline.getAllApiComponents(id);
-				if (!apiComponentMultiple.isEmpty()) {
-					// add the exact match
-					for (IApiComponent iApiComponent : apiComponentMultiple) {
-						Version workspaceBaselineVersion = new Version(iApiComponent.getVersion());// removes
-																									// qualifier
-						Version currentProjectVersion = currentModel.getBundleDescription().getVersion();
-						if (new Version(currentProjectVersion.getMajor(), currentProjectVersion.getMinor(), currentProjectVersion.getMicro()).compareTo(workspaceBaselineVersion) == 0) {
-							comp = iApiComponent;
-							break;
-						}
-					}
-				}
+				Version version = currentModel.getBundleDescription().getVersion();
+				IApiComponent comp = wbaseline.getApiComponent(id, version);
 				if (comp == null) {
 					return;
 				}
