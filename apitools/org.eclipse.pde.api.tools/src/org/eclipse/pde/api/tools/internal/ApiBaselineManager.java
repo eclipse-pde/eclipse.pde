@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -65,9 +66,9 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.DependencyManager;
+import org.osgi.resource.Resource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -682,45 +683,21 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	 */
 	private IApiBaseline createWorkspaceBaseline() throws CoreException {
 		long time = System.currentTimeMillis();
-		IApiBaseline baseline = null;
+		IApiBaseline baseline = new WorkspaceBaseline();
 		try {
-			baseline = new WorkspaceBaseline();
 			// populate it with only projects that are API aware
 			List<IPluginModelBase> models = Arrays.asList(PluginRegistry.getWorkspaceModels());
 			Set<BundleDescription> bundles = DependencyManager.getSelfAndDependencies(models);
-			List<IApiComponent> componentsList = new ArrayList<>(bundles.size());
-			for (BundleDescription bundle : bundles) {
-				String id = bundle.getSymbolicName();
-				ModelEntry modelEntry = PluginRegistry.findEntry(id);
-				IPluginModelBase[] workspaceModels = modelEntry.getWorkspaceModels();
-				IApiComponent apiComponent = null;
-				if (workspaceModels.length == 0) {
-					// external model - reexported case
-					IPluginModelBase externalModel = PluginRegistry.findModel(id);
-					if (externalModel != null) {
+			IApiComponent[] components = bundles.stream().map(Resource.class::cast) //
+					.map(PluginRegistry::findModel).filter(Objects::nonNull).map(model -> {
 						try {
-							apiComponent = ApiModelFactory.newApiComponent(baseline, externalModel);
-							if (apiComponent != null) {
-								componentsList.add(apiComponent);
-							}
+							return ApiModelFactory.newApiComponent(baseline, model);
 						} catch (CoreException e) {
 							ApiPlugin.log(e);
+							return null;
 						}
-					}
-					continue;
-				}
-				for (IPluginModelBase iPluginModelBase : workspaceModels) {
-					try {
-						apiComponent = ApiModelFactory.newApiComponent(baseline, iPluginModelBase);
-						if (apiComponent != null) {
-							componentsList.add(apiComponent);
-						}
-					} catch (CoreException e) {
-						ApiPlugin.log(e);
-					}
-				}
-			}
-			baseline.addApiComponents(componentsList.toArray(new IApiComponent[componentsList.size()]));
+					}).filter(Objects::nonNull).toArray(IApiComponent[]::new);
+			baseline.addApiComponents(components);
 		} finally {
 			if (ApiPlugin.DEBUG_BASELINE_MANAGER) {
 				System.out.println("Time to create a workspace baseline : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$

@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
@@ -619,27 +620,6 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	}
 
 	/**
-	 * Returns all of the visible dependent components from the current state
-	 *
-	 * @return the listing of visible dependent components to the given ones
-	 */
-	public IApiComponent[] getVisibleDependentComponents(IApiComponent[] components) throws CoreException {
-		ArrayList<BundleDescription> bundles = getBundleDescriptions(components);
-		BundleDescription[] descs = getState().getStateHelper().getDependentBundles(bundles.toArray(new BundleDescription[bundles.size()]));
-		HashSet<BundleDescription> visible = new HashSet<>();
-		ExportPackageDescription[] packages = null;
-		for (BundleDescription desc : descs) {
-			packages = getState().getStateHelper().getVisiblePackages(desc);
-			for (ExportPackageDescription package1 : packages) {
-				if (bundles.contains(package1.getSupplier())) {
-					visible.add(desc);
-				}
-			}
-		}
-		return getApiComponents(visible);
-	}
-
-	/**
 	 * Returns whether the specified package is supplied by the system library.
 	 *
 	 * @param packageName package name
@@ -870,45 +850,18 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		ApiModelCache.getCache().removeElementInfo(this);
 	}
 
-	/**
-	 * Returns an array of API components corresponding to the given bundle
-	 * descriptions.
-	 *
-	 * @param bundles bundle descriptions
-	 * @return corresponding API components
-	 */
-	private IApiComponent[] getApiComponents(Collection<BundleDescription> bundles) {
-		ArrayList<IApiComponent> dependents = new ArrayList<>(bundles.size());
-		for (BundleDescription bundle : bundles) {
-			IApiComponent component = getApiComponent(bundle.getSymbolicName());
-			if (component != null) {
-				dependents.add(component);
-			}
-		}
-		return dependents.toArray(new IApiComponent[dependents.size()]);
-	}
-
-	/**
-	 * Returns an array of bundle descriptions corresponding to the given API
-	 * components.
-	 *
-	 * @param components API components
-	 * @return corresponding bundle descriptions
-	 */
-	private ArrayList<BundleDescription> getBundleDescriptions(IApiComponent[] components) throws CoreException {
-		ArrayList<BundleDescription> bundles = new ArrayList<>(components.length);
-		for (IApiComponent component : components) {
-			if (component instanceof BundleComponent) {
-				bundles.add(((BundleComponent) component).getBundleDescription());
-			}
-		}
-		return bundles;
-	}
-
 	@Override
 	public IApiComponent[] getPrerequisiteComponents(IApiComponent[] components) throws CoreException {
-		ArrayList<BundleDescription> bundles = getBundleDescriptions(components);
-		return getApiComponents(BuildDependencyCollector.collectBuildRelevantDependencies(bundles));
+		List<BundleDescription> bundles = new ArrayList<>(components.length);
+		for (IApiComponent component : components) {
+			if (component instanceof BundleComponent bundleComponent) {
+				bundles.add(bundleComponent.getBundleDescription());
+			}
+		}
+		Collection<BundleDescription> dependencies = BuildDependencyCollector.collectBuildRelevantDependencies(bundles);
+		return dependencies.stream().map(BundleDescription::getSymbolicName) //
+				.map(id -> getApiComponent(id)).filter(Objects::nonNull) //
+				.toArray(IApiComponent[]::new);
 	}
 
 	/**
