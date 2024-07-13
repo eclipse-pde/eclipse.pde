@@ -323,34 +323,27 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 			return;
 		}
 
-		IApiComponent comp = fComponentsById.get(component.getSymbolicName());
-
+		IApiComponent comp = fComponentsById.put(component.getSymbolicName(), component);
 		// if more than 1 components, store all of them
 		if (comp != null) {
-			if (fAllComponentsById.containsKey(component.getSymbolicName())) {
-				Set<IApiComponent> allComponents = fAllComponentsById.get(component.getSymbolicName());
-				if (!allComponents.contains(component)) {
-					allComponents.add(component);
-				}
-			} else {
-				TreeSet<IApiComponent> allComponents = new TreeSet<>(
-						(comp1, comp2) -> {
-					if (comp2.getVersion().equals(comp1.getVersion())) {
-						if (comp2.getVersion().contains("JavaSE")) { //$NON-NLS-1$
-							ApiPlugin.logInfoMessage("Multiple locations for the same Java = " //$NON-NLS-1$
-									+ comp1.getLocation() + comp2.getLocation());
+			Set<IApiComponent> allComponents = fAllComponentsById.computeIfAbsent(component.getSymbolicName(),
+					name -> new TreeSet<>((comp1, comp2) -> {
+						String version2 = comp2.getVersion();
+						String version1 = comp1.getVersion();
+						if (version2.equals(version1)) {
+							if (version2.contains("JavaSE")) { //$NON-NLS-1$
+								ApiPlugin.logInfoMessage("Multiple locations for the same Java = " + comp1.getLocation() //$NON-NLS-1$
+										+ comp2.getLocation());
+							}
+							return 0;
 						}
-						return 0;
-					}
-					return new Version(comp2.getVersion()).compareTo(new Version(comp1.getVersion()));
-				});
+						return new Version(version2).compareTo(new Version(version1));
+					}));
+			if (allComponents.isEmpty()) {
 				allComponents.add(comp);
-				allComponents.add(component);
-				fAllComponentsById.put(component.getSymbolicName(), allComponents);
 			}
+			allComponents.add(component);
 		}
-
-		fComponentsById.put(component.getSymbolicName(), component);
 		if (component instanceof ProjectComponent projectApiComponent) {
 			fComponentsByProjectNames.put(projectApiComponent.getJavaProject().getProject().getName(), component);
 		}
@@ -671,6 +664,25 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	}
 
 	@Override
+	public IApiComponent getApiComponent(String id, Version version) {
+		loadBaselineInfos();
+		if (disposed) {
+			return null;
+		}
+		IApiComponent component = fComponentsById.get(id);
+		if (hasSameMMMVersion(version, component)) {
+			return component;
+		}
+		Set<IApiComponent> allComponents = fAllComponentsById.get(id);
+		return allComponents.stream().filter(c -> hasSameMMMVersion(version, c)).findFirst().orElse(null);
+	}
+
+	private static boolean hasSameMMMVersion(Version ref, IApiComponent component) {
+		Version v = new Version(component.getVersion());
+		return ref.getMajor() == v.getMajor() && ref.getMinor() == v.getMinor() && ref.getMicro() == v.getMicro();
+	}
+
+	@Override
 	public Set<IApiComponent> getAllApiComponents(String id) {
 		loadBaselineInfos();
 		if (disposed) {
@@ -859,9 +871,11 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 			}
 		}
 		Collection<BundleDescription> dependencies = BuildDependencyCollector.collectBuildRelevantDependencies(bundles);
-		return dependencies.stream().map(BundleDescription::getSymbolicName) //
-				.map(id -> getApiComponent(id)).filter(Objects::nonNull) //
-				.toArray(IApiComponent[]::new);
+		return dependencies.stream().map(bundle -> {
+			String id = bundle.getSymbolicName();
+			Version version = bundle.getVersion();
+			return getApiComponent(id, version);
+		}).filter(Objects::nonNull).toArray(IApiComponent[]::new);
 	}
 
 	/**
