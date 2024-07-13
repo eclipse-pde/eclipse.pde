@@ -17,7 +17,7 @@ jobs:
     if: github.event_name == 'pull_request'
     uses: eclipse-platform/eclipse.platform.releng.aggregator/.github/workflows/checkMergeCommits.yml@master
   check-dash-licenses:
-    uses: eclipse/dash-licenses/.github/workflows/mavenLicenseCheck.yml@master
+    uses: eclipse-dash/dash-licenses/.github/workflows/mavenLicenseCheck.yml@master
     with:
       projectId: eclipse.pde
   build:
