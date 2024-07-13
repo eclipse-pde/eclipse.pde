@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.core.project;
 
-import org.eclipse.osgi.service.resolver.VersionRange;
+import org.osgi.framework.VersionRange;
 
 /**
  * Describes a fragment host. Instances of this class can be created
@@ -30,14 +30,22 @@ public interface IHostDescription {
 	 *
 	 * @return symbolic name of the host
 	 */
-	public String getName();
+	String getName();
 
 	/**
 	 * Returns the version constraint of the host or <code>null</code>
 	 * if unspecified.
 	 *
 	 * @return version constraint or <code>null</code>
+	 * @since 3.19
 	 */
-	public VersionRange getVersionRange();
+	VersionRange getVersion();
+
+	/** @deprecated Instead use {@link #getVersion()} */
+	@Deprecated(forRemoval = true, since = "4.19")
+	default org.eclipse.osgi.service.resolver.VersionRange getVersionRange() {
+		VersionRange version = getVersion();
+		return version != null ? new org.eclipse.osgi.service.resolver.VersionRange(version.toString()) : null;
+	}
 
 }
