@@ -27,6 +27,7 @@ import java.util.Optional;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
@@ -42,6 +43,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -408,8 +410,8 @@ public class ExportPackageSection extends TableSection {
 		final IProject project = model.getUnderlyingResource().getProject();
 		try {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
-				ILabelProvider labelProvider = new JavaElementLabelProvider();
-				final ConditionalListSelectionDialog dialog = new ConditionalListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), labelProvider, PDEUIMessages.ExportPackageSection_dialogButtonLabel);
+				ILabelProvider labelProvider = new ExportPackgeLabelProvider();
+				final ConditionalListSelectionDialog dialog = new ConditionalListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), labelProvider, PDEUIMessages.ExportPackageSection_dialogButtonLabel, fHeader);
 				final Collection<String> pckgs = fHeader == null ? Collections.emptySet() : fHeader.getPackageNames();
 				final boolean allowJava = "true".equals(getBundle().getHeader(ICoreConstants.ECLIPSE_JREBUNDLE)); //$NON-NLS-1$
 				Runnable runnable = () -> {
@@ -441,6 +443,7 @@ public class ExportPackageSection extends TableSection {
 					if (fHeader != null) {
 						for (Object selectedObject : selected) {
 							IPackageFragment candidate = (IPackageFragment) selectedObject;
+							if (!fHeader.getPackageNames().contains(candidate.getElementName()))
 							fHeader.addPackage(new ExportPackageObject(fHeader, candidate, getVersionAttribute()));
 						}
 					} else {
@@ -626,4 +629,22 @@ public class ExportPackageSection extends TableSection {
 		Action action = new CalculateUsesAction(proj, (IBundlePluginModelBase) getPage().getModel());
 		action.run();
 	}
+
+	class ExportPackgeLabelProvider extends LabelProvider {
+		JavaElementLabelProvider javaElementLabel = new JavaElementLabelProvider();
+		@Override
+		public String getText(Object element) {
+
+			if (element instanceof IJavaElement javaElement) {
+				String text = javaElementLabel.getText(javaElement);
+				final Collection<String> pckgs = fHeader == null ? Collections.emptySet() : fHeader.getPackageNames();
+				if (!pckgs.isEmpty() && pckgs.contains(text)) {
+					return text + " " + PDEUIMessages.PluginModelManager_alreadyExported; //$NON-NLS-1$
+				}
+
+			}
+			return javaElementLabel.getText(element);
+		}
+	}
+
 }
