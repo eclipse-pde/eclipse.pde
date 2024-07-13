@@ -1,6 +1,12 @@
-name: Request license-review
+# This workflow will check for Maven projects if the licenses of all (transitive) dependencies are vetted.
+
+name: License status
 
 on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
   issue_comment:
     types: [created]
 
@@ -12,4 +18,4 @@ jobs:
     with:
       projectId: eclipse.pde
     secrets:
-      gitlabAPIToken: ${{ secrets.PDE_GITLAB_API_TOKEN }}
+      gitlabAPIToken: ${{ github.event_name == 'issue_comment' && secrets.PDE_GITLAB_API_TOKEN || '' }}
