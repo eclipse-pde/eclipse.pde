@@ -810,7 +810,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 		assertTestPackage(project, IPath.fromOSString(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute(), "export1"); //$NON-NLS-1$
 
 		// export the package
-		ProjectUtils.addExportedPackage(project.getProject(), "export1", true, null); //$NON-NLS-1$
+		ProjectUtils.addExportedPackage(project.getProject(), "export1", true, List.of()); //$NON-NLS-1$
 
 		// check the description
 		IApiAnnotations annot = getTestProjectApiDescription().resolveAnnotations(Factory.packageDescriptor("export1")); //$NON-NLS-1$
@@ -853,7 +853,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 * sets the given package name to be an Exported-Package
 	 */
 	private void setPackageToApi(IJavaProject project, String name) throws CoreException {
-		ProjectUtils.addExportedPackage(project.getProject(), name, false, null);
+		ProjectUtils.addExportedPackage(project.getProject(), name, false, List.of());
 	}
 
 	IJavaProject getTestingProject() {

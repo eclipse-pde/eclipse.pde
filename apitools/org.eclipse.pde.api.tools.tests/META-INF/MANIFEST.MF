@@ -43,6 +43,7 @@ Bundle-Activator: org.eclipse.pde.api.tools.tests.ApiTestsPlugin
 Bundle-ActivationPolicy: lazy
 Eclipse-BundleShape: dir
 Import-Package: junit.framework,
+ org.assertj.core.api;version="[3.26.0,4.0.0)",
  org.eclipse.equinox.frameworkadmin,
  org.junit,
  org.junit.runner,

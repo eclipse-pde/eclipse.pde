@@ -29,8 +29,15 @@ public interface IRequiredBundleDescription {
 	 * Returns the symbolic name of the required bundle.
 	 *
 	 * @return symbolic name of the required bundle
+	 * @since 3.19
 	 */
-	String getName();
+	String name();
+
+	/** @deprecated Instead use {@link #name()} */
+	@Deprecated(since = "3.19")
+	default String getName() {
+		return name();
+	}
 
 	/**
 	 * Returns the version constraint of the required bundle or <code>null</code>
@@ -39,12 +46,12 @@ public interface IRequiredBundleDescription {
 	 * @return version constraint or <code>null</code>
 	 * @since 3.19
 	 */
-	VersionRange getVersion();
+	VersionRange version();
 
-	/** @deprecated Instead use {@link #getVersion()} */
+	/** @deprecated Instead use {@link #version()} */
 	@Deprecated(forRemoval = true, since = "3.19 (removal in 2026-09 or later)")
 	default org.eclipse.osgi.service.resolver.VersionRange getVersionRange() {
-		VersionRange version = getVersion();
+		VersionRange version = version();
 		return version != null ? new org.eclipse.osgi.service.resolver.VersionRange(version.toString()) : null;
 	}
 

@@ -13,12 +13,14 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.util.tests;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -137,7 +139,7 @@ public class ProjectCreationTests extends AbstractApiTest {
 	private IPackageExportDescription getExport(IPackageExportDescription[] exports, String packageName) {
 		if (exports != null) {
 			for (IPackageExportDescription export : exports) {
-				if (export.getName().equals(packageName)) {
+				if (export.name().equals(packageName)) {
 					return export;
 				}
 			}
@@ -153,12 +155,12 @@ public class ProjectCreationTests extends AbstractApiTest {
 	 * @param friendcount the desired friend count
 	 */
 	private void assertExportedPackage(IPackageExportDescription export, boolean internalstate, int friendcount) {
-		String packagename = export.getName();
+		String packagename = export.name();
 		assertTrue("the package " + packagename + " must not be internal", export.isApi() == !internalstate); //$NON-NLS-1$ //$NON-NLS-2$
 		if (friendcount == 0) {
-			assertNull("the package should not have any friends", export.getFriends()); //$NON-NLS-1$
+			assertThat(export.friends()).isEmpty();
 		} else {
-			assertEquals("the package " + packagename + " must not have friends", friendcount, export.getFriends().length); //$NON-NLS-1$ //$NON-NLS-2$
+			assertEquals("the package " + packagename + " must not have friends", friendcount, export.friends().size()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -170,7 +172,7 @@ public class ProjectCreationTests extends AbstractApiTest {
 		String packagename = "org.eclipse.apitools.test"; //$NON-NLS-1$
 		IJavaProject jproject = getTestingJavaProject(TESTING_PROJECT_NAME);
 		IProject project = jproject.getProject();
-		ProjectUtils.addExportedPackage(project, packagename, false, null);
+		ProjectUtils.addExportedPackage(project, packagename, false, List.of());
 		IPackageExportDescription[] exports = ProjectUtils.getExportedPackages(project);
 		assertExportedPackage(getExport(exports, packagename), false, 0);
 	}
@@ -183,7 +185,7 @@ public class ProjectCreationTests extends AbstractApiTest {
 		String packagename = "org.eclipse.apitools.test.internal"; //$NON-NLS-1$
 		IJavaProject jproject = getTestingJavaProject(TESTING_PROJECT_NAME);
 		IProject project = jproject.getProject();
-		ProjectUtils.addExportedPackage(project, packagename, true, null);
+		ProjectUtils.addExportedPackage(project, packagename, true, List.of());
 		IPackageExportDescription[] exports = ProjectUtils.getExportedPackages(project);
 		assertExportedPackage(getExport(exports, packagename), true, 0);
 	}
@@ -196,8 +198,7 @@ public class ProjectCreationTests extends AbstractApiTest {
 		String packagename = "org.eclipse.apitools.test.4friends"; //$NON-NLS-1$
 		IJavaProject jproject = getTestingJavaProject(TESTING_PROJECT_NAME);
 		IProject project = jproject.getProject();
-		ProjectUtils.addExportedPackage(project, packagename, false, new String[] {
-				"F1", "F2", "F3", "F4" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		ProjectUtils.addExportedPackage(project, packagename, false, List.of("F1", "F2", "F3", "F4")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		IPackageExportDescription[] exports = ProjectUtils.getExportedPackages(project);
 		assertExportedPackage(getExport(exports, packagename), true, 4);
 	}
@@ -209,8 +210,9 @@ public class ProjectCreationTests extends AbstractApiTest {
 	public void testAddMultipleExportedPackages() throws CoreException {
 		IJavaProject jproject = getTestingJavaProject(TESTING_PROJECT_NAME);
 		IProject project = jproject.getProject();
-		ProjectUtils.addExportedPackage(project, "org.eclipse.apitools.test.multi.friends", false, new String[] { "F1", "F2", "F3", "F4" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-		ProjectUtils.addExportedPackage(project, "org.eclipse.apitools.test.multi.internal", true, null); //$NON-NLS-1$
+		ProjectUtils.addExportedPackage(project, "org.eclipse.apitools.test.multi.friends", false, //$NON-NLS-1$
+				List.of("F1", "F2", "F3", "F4")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		ProjectUtils.addExportedPackage(project, "org.eclipse.apitools.test.multi.internal", true, List.of()); //$NON-NLS-1$
 		IPackageExportDescription[] exports = ProjectUtils.getExportedPackages(project);
 		assertExportedPackage(getExport(exports, "org.eclipse.apitools.test.multi.friends"), true, 4); //$NON-NLS-1$
 		assertExportedPackage(getExport(exports, "org.eclipse.apitools.test.multi.internal"), true, 0); //$NON-NLS-1$
@@ -223,8 +225,8 @@ public class ProjectCreationTests extends AbstractApiTest {
 	public void testRemoveExistingExportedPackage() throws CoreException {
 		IJavaProject jproject = getTestingJavaProject(TESTING_PROJECT_NAME);
 		IProject project = jproject.getProject();
-		ProjectUtils.addExportedPackage(project, "org.eclipse.apitools.test.remove1", false, new String[] { "F1" }); //$NON-NLS-1$ //$NON-NLS-2$
-		ProjectUtils.addExportedPackage(project, "org.eclipse.apitools.test.remove2", true, null); //$NON-NLS-1$
+		ProjectUtils.addExportedPackage(project, "org.eclipse.apitools.test.remove1", false, List.of("F1")); //$NON-NLS-1$ //$NON-NLS-2$
+		ProjectUtils.addExportedPackage(project, "org.eclipse.apitools.test.remove2", true, List.of()); //$NON-NLS-1$
 		IPackageExportDescription[] exports = ProjectUtils.getExportedPackages(project);
 		assertExportedPackage(getExport(exports, "org.eclipse.apitools.test.remove1"), true, 1); //$NON-NLS-1$
 		assertExportedPackage(getExport(exports, "org.eclipse.apitools.test.remove2"), true, 0); //$NON-NLS-1$
@@ -241,7 +243,7 @@ public class ProjectCreationTests extends AbstractApiTest {
 	public void testRemoveNonExistingExportedPackage() throws CoreException {
 		IJavaProject jproject = getTestingJavaProject(TESTING_PROJECT_NAME);
 		IProject project = jproject.getProject();
-		ProjectUtils.addExportedPackage(project, "org.eclipse.apitools.test.removeA", false, new String[] { "F1" }); //$NON-NLS-1$ //$NON-NLS-2$
+		ProjectUtils.addExportedPackage(project, "org.eclipse.apitools.test.removeA", false, List.of("F1")); //$NON-NLS-1$ //$NON-NLS-2$
 		IPackageExportDescription[] exports = ProjectUtils.getExportedPackages(project);
 		assertExportedPackage(getExport(exports, "org.eclipse.apitools.test.removeA"), true, 1); //$NON-NLS-1$
 		ProjectUtils.removeExportedPackage(project, "org.eclipse.apitools.test.dont.exist"); //$NON-NLS-1$
