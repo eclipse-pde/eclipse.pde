@@ -42,9 +42,9 @@ import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.pde.core.plugin.IMatchRules;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.VersionMatchRule;
 import org.eclipse.pde.internal.core.DependencyManager;
 import org.eclipse.pde.internal.core.DependencyManager.Options;
 import org.eclipse.pde.internal.core.ICoreConstants;
@@ -217,7 +217,7 @@ public class PluginSection extends AbstractProductContentSection<PluginSection> 
 		}
 		List<BundleDescription> list = Stream.of(plugins).map(plugin -> {
 			String version = VersionUtil.isEmptyVersion(plugin.getVersion()) ? null : plugin.getVersion();
-			return PluginRegistry.findModel(plugin.getId(), version, IMatchRules.PERFECT, null);
+			return PluginRegistry.findModel(plugin.getId(), version, VersionMatchRule.PERFECT);
 		}).filter(Objects::nonNull).map(IPluginModelBase::getBundleDescription).toList();
 
 		DependencyManager.Options[] options = includeOptional

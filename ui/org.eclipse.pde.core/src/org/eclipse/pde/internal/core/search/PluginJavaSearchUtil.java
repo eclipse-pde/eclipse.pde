@@ -44,7 +44,7 @@ public class PluginJavaSearchUtil {
 	public static IPluginModelBase[] getPluginImports(IPluginImport dep) {
 		HashSet<IPluginModelBase> set = new HashSet<>();
 		VersionRange range = new VersionRange(dep.getVersion());
-		collectAllPrerequisites(PluginRegistry.findModel(dep.getId(), range, null), set);
+		collectAllPrerequisites(PluginRegistry.findModel(dep.getId(), range), set);
 		return set.toArray(new IPluginModelBase[set.size()]);
 	}
 
