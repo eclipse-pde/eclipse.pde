@@ -17,6 +17,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import java.util.List;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -24,10 +26,9 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.core.plugin.IMatchRules;
-import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.core.plugin.PluginRegistry.PluginFilter;
+import org.eclipse.pde.core.plugin.VersionMatchRule;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.junit.Test;
 import org.osgi.framework.FrameworkUtil;
@@ -42,7 +43,7 @@ public class PluginRegistryTests {
 
 	@Test
 	public void testMatchNone() {
-		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.jdt.debug", null, IMatchRules.NONE, null);
+		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.jdt.debug", null, (VersionMatchRule) null);
 		assertNotNull(model);
 		assertEquals("org.eclipse.jdt.debug", model.getPluginBase().getId());
 	}
@@ -50,34 +51,34 @@ public class PluginRegistryTests {
 	@Test
 	public void testMatchGreaterOrEqual() {
 		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.jdt.debug", "3.0.0",
-				IMatchRules.GREATER_OR_EQUAL, null);
+				VersionMatchRule.GREATER_OR_EQUAL);
 		assertNotNull(model);
 		assertEquals("org.eclipse.jdt.debug", model.getPluginBase().getId());
 	}
 
 	@Test
 	public void testMatchPerfect() {
-		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.jdt.debug", "3.0.0", IMatchRules.PERFECT, null);
+		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.jdt.debug", "3.0.0", VersionMatchRule.PERFECT);
 		assertNull(model);
 	}
 
 	@Test
 	public void testMatchCompatible() {
-		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.jdt.debug", "3.6.0", IMatchRules.COMPATIBLE,
-				null);
+		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.jdt.debug", "3.6.0",
+				VersionMatchRule.COMPATIBLE);
 		assertNotNull(model);
 		assertEquals("org.eclipse.jdt.debug", model.getPluginBase().getId());
 	}
 
 	@Test
 	public void testMatchCompatibleNone() {
-		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.pde.core", "2.6.0", IMatchRules.COMPATIBLE,
-				null);
+		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.pde.core", "2.6.0", VersionMatchRule.COMPATIBLE);
 		assertNull(model);
 	}
 
 	@Test
 	public void testMatchPrefix() {
+		@SuppressWarnings("removal") // Test special behavior of old API
 		IPluginModelBase model = PluginRegistry.findModel("org.eclipse", "3.6.0", IMatchRules.PREFIX, null);
 		// prefix rule is not supported by this API, should return null
 		assertNull(model);
@@ -85,81 +86,53 @@ public class PluginRegistryTests {
 
 	@Test
 	public void testRangeNone() {
-		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.jdt.debug", null, (PluginFilter) null);
+		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.jdt.debug", null);
 		assertNotNull(model);
 		assertEquals("org.eclipse.jdt.debug", model.getPluginBase().getId());
 	}
 
 	@Test
 	public void testOverlapRange() {
-		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.jdt.debug", new VersionRange("[2.0.0,4.0.0)"),
-				null);
+		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.jdt.debug", new VersionRange("[2.0.0,4.0.0)"));
 		assertNotNull(model);
 		assertEquals("org.eclipse.jdt.debug", model.getPluginBase().getId());
 	}
 
 	@Test
 	public void testMinRange() {
-		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.jdt.debug", new VersionRange("3.0.0"), null);
+		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.jdt.debug", new VersionRange("3.0.0"));
 		assertNotNull(model);
 		assertEquals("org.eclipse.jdt.debug", model.getPluginBase().getId());
 	}
 
 	@Test
 	public void testUnmatchedRange() {
-		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.pde.core", new VersionRange("[1.0.0,2.0.0)"),
-				null);
+		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.pde.core", new VersionRange("[1.0.0,2.0.0)"));
 		assertNull(model);
 	}
 
 	@Test
 	public void testRangeWithFilterMatch() {
-		PluginFilter filter = new PluginFilter() {
-			@Override
-			public boolean accept(IPluginModelBase model) {
-				IPluginBase base = model.getPluginBase();
-				if (base != null) {
-					String id = base.getId();
-					if (id != null) {
-						return id.startsWith("org.eclipse");
-					}
-				}
-				return false;
-			}
-		};
-		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.jdt.debug", new VersionRange("[2.0.0,4.0.0)"),
-				filter);
+		IPluginModelBase model = PluginRegistry.findModels("org.eclipse.jdt.debug", new VersionRange("[2.0.0,4.0.0)"))
+				.filter(m -> m.getPluginBase().getId().startsWith("org.eclipse")).findFirst().orElse(null);
 		assertNotNull(model);
 		assertEquals("org.eclipse.jdt.debug", model.getPluginBase().getId());
 	}
 
 	@Test
 	public void testRangeWithFilterNoMatch() {
-		PluginFilter filter = new PluginFilter() {
-			@Override
-			public boolean accept(IPluginModelBase model) {
-				IPluginBase base = model.getPluginBase();
-				if (base != null) {
-					String id = base.getId();
-					if (id != null) {
-						return id.startsWith("xyz");
-					}
-				}
-				return false;
-			}
-		};
-		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.jdt.debug", new VersionRange("[2.0.0,4.0.0)"),
-				filter);
+		IPluginModelBase model = PluginRegistry.findModels("org.eclipse.jdt.debug", new VersionRange("[2.0.0,4.0.0)"))
+				.filter(m -> m.getPluginBase().getId().startsWith("xyz")).findFirst().orElse(null);
 		assertNull(model);
 	}
 
 	@Test
 	public void testSingleRangeMatch() {
-		IPluginModelBase[] models = PluginRegistry.findModels("org.eclipse.jdt.debug",
-				new VersionRange("[1.0.0,4.0.0)"), null);
+		List<IPluginModelBase> models = PluginRegistry
+				.findModels("org.eclipse.jdt.debug", new VersionRange("[1.0.0,4.0.0)")).toList();
 		assertNotNull(models);
-		assertEquals(1, models.length);
-		assertEquals("org.eclipse.jdt.debug", models[0].getPluginBase().getId());
+		assertEquals(1, models.size());
+		assertEquals("org.eclipse.jdt.debug", models.get(0).getPluginBase().getId());
 	}
 
 	@Test
@@ -175,11 +148,12 @@ public class PluginRegistryTests {
 
 			waitForBuild();
 
-			IPluginModelBase[] models = PluginRegistry.findModels("org.junit", new VersionRange("[3.8.2,4.8.2]"), null);
+			List<IPluginModelBase> models = PluginRegistry.findModels("org.junit", new VersionRange("[3.8.2,4.8.2]"))
+					.toList();
 			assertNotNull(models);
-			assertEquals(1, models.length);
-			assertEquals("org.junit", models[0].getPluginBase().getId());
-			assertEquals(project, models[0].getUnderlyingResource().getProject());
+			assertEquals(1, models.size());
+			assertEquals("org.junit", models.get(0).getPluginBase().getId());
+			assertEquals(project, models.get(0).getUnderlyingResource().getProject());
 
 		} finally {
 			if (project.exists()) {
@@ -194,8 +168,7 @@ public class PluginRegistryTests {
 		Version testsVersion = FrameworkUtil.getBundle(PluginRegistryTests.class).getVersion();
 		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.pde.ui.tests",
 				String.format("%s.%s.%s", testsVersion.getMajor(), testsVersion.getMinor(), testsVersion.getMicro()),
-				IMatchRules.EQUIVALENT,
-				null);
+				VersionMatchRule.EQUIVALENT);
 		assertNotNull("NOTE: This test might also fail because the version of the bundle got changed.", model);
 		assertEquals("org.eclipse.pde.ui.tests", model.getPluginBase().getId());
 	}

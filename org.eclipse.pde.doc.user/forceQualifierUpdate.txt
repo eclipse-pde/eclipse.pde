@@ -1,3 +1,4 @@
 # To force a version qualifier update add the issue here
 Fix deprecation tag 'since' value
 Modernize pde.project description interfaces: https://github.com/eclipse-pde/eclipse.pde/pull/1341
+Rework PluginRegistry API and introduce VersionMatchRule enum : https://github.com/eclipse-pde/eclipse.pde/pull/1163

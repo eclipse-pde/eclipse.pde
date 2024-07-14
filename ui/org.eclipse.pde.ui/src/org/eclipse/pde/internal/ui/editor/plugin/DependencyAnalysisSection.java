@@ -16,11 +16,11 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.core.plugin.IMatchRules;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.VersionMatchRule;
 import org.eclipse.pde.internal.core.builders.DependencyLoop;
 import org.eclipse.pde.internal.core.builders.DependencyLoopFinder;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
@@ -102,7 +102,7 @@ public class DependencyAnalysisSection extends PDESection {
 		// The pluginModel set for this page does not have a BundleDescriptor
 		// set, therefore search the pluginModel from the registry that has it
 		IPluginBase pluginBase = pluginModel.getPluginBase();
-		return PluginRegistry.findModel(pluginBase.getId(), pluginBase.getVersion(), IMatchRules.PERFECT, null);
+		return PluginRegistry.findModel(pluginBase.getId(), pluginBase.getVersion(), VersionMatchRule.PERFECT);
 	}
 
 	private void doFindLoops(IPluginModelBase pluginModelBase) {
