@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,10 +14,13 @@
 package org.eclipse.pde.core.plugin;
 
 /**
- * This interface contains constants used throughout the plug-in
- * for plug-in reference matching. These rules are used to
- * control when determining if two compared versions are
- * equivalent.
+ * This interface contains constants used throughout the plug-in for plug-in
+ * reference matching. These rules are used to control when determining if two
+ * compared versions are equivalent.
+ *
+ * <p>
+ * New code should use {@link VersionMatchRule} instead.
+ * </p>
  *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
