@@ -19,11 +19,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -100,15 +103,6 @@ public final class BundleProjectService implements IBundleProjectService {
 	}
 
 	record HostDescription(String name, VersionRange version) implements IHostDescription {
-		@Override
-		public String getName() {
-			return name();
-		}
-
-		@Override
-		public VersionRange getVersion() {
-			return version();
-		}
 	}
 
 	@Override
@@ -118,39 +112,18 @@ public final class BundleProjectService implements IBundleProjectService {
 
 	record PackageImportDescription(String name, VersionRange version, boolean isOptional)
 			implements IPackageImportDescription {
-		@Override
-		public String getName() {
-			return name();
-		}
-
-		@Override
-		public VersionRange getVersion() {
-			return version();
-		}
 	}
 
 	@Override
-	public IPackageExportDescription newPackageExport(String name, Version version, boolean api, String[] friends) {
-		List<String> friendsList = friends != null ? List.of(friends) : List.of();
-		return new PackageExportDescription(name, version, friendsList, friendsList.isEmpty() ? api : false);
+	public IPackageExportDescription newPackageExport(String name, Version version, boolean api,
+			Collection<String> friends) {
+		return new PackageExportDescription(name, version, friends, friends.isEmpty() ? api : false);
 	}
 
-	record PackageExportDescription(String name, Version version, List<String> friends, boolean isApi)
+	record PackageExportDescription(String name, Version version, SortedSet<String> friends, boolean isApi)
 			implements IPackageExportDescription {
-
-		@Override
-		public String getName() {
-			return name();
-		}
-
-		@Override
-		public Version getVersion() {
-			return version();
-		}
-
-		@Override
-		public String[] getFriends() {
-			return friends.isEmpty() ? null : friends.toArray(String[]::new);
+		public PackageExportDescription(String name, Version version, Collection<String> friends, boolean isApi) {
+			this(name, version, Collections.unmodifiableSortedSet(new TreeSet<>(friends)), isApi);
 		}
 	}
 
@@ -161,15 +134,6 @@ public final class BundleProjectService implements IBundleProjectService {
 
 	record RequiredBundleDescription(String name, VersionRange version, boolean isExported, boolean isOptional)
 			implements IRequiredBundleDescription {
-		@Override
-		public String getName() {
-			return name();
-		}
-
-		@Override
-		public VersionRange getVersion() {
-			return version();
-		}
 	}
 
 	@Override

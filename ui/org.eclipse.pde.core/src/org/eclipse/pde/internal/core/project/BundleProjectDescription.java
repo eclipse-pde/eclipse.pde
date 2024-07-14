@@ -293,7 +293,8 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 					if (directive != null) {
 						friends = ManifestElement.getArrayFromList(directive);
 					}
-					exports[i] = getBundleProjectService().newPackageExport(exp.getValue(), getVersion(pv), !internal, friends);
+					exports[i] = getBundleProjectService().newPackageExport(exp.getValue(), getVersion(pv), !internal,
+							friends != null ? List.of(friends) : List.of());
 				}
 				setPackageExports(exports);
 			}

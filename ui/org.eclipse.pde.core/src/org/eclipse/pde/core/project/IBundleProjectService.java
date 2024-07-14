@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.core.project;
 
+import java.util.Collection;
+import java.util.List;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -94,11 +97,22 @@ public interface IBundleProjectService {
 	 * @param name fully qualified package name
 	 * @param version version or <code>null</code>
 	 * @param api whether the package is considered API
-	 * @param friends symbolic names of bundles that are friends, or <code>null</code>; when
+	 * @param friends symbolic names of bundles that are friends; when
 	 *  friends are specified the package will not be API
 	 * @return package export description
+	 * @since 3.19
 	 */
-	IPackageExportDescription newPackageExport(String name, Version version, boolean api, String[] friends);
+	IPackageExportDescription newPackageExport(String name, Version version, boolean api, Collection<String> friends);
+
+	/**
+	 * @deprecated Instead use
+	 *             {@link #newPackageExport(String, Version, boolean, Collection)}
+	 */
+	@Deprecated(since = "3.19")
+	default IPackageExportDescription newPackageExport(String name, Version version, boolean api, String[] friends) {
+		return newPackageExport(name, version, api, friends != null ? List.of(friends) : List.of());
+	}
+
 
 	/**
 	 * Creates and returns a new required bundle description.

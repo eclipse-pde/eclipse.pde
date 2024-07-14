@@ -28,6 +28,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -519,12 +520,11 @@ public class ProjectCreationTests {
 		IBundleProjectService service = getBundleProjectService();
 		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, IPath.fromOSString("."));
 		description.setBundleClasspath(new IBundleClasspathEntry[] { spec });
-		IPackageExportDescription ex0 = service.newPackageExport("a.b.c", new Version("2.0.0"), true, null);
-		IPackageExportDescription ex1 = service.newPackageExport("a.b.c.interal", null, false, null);
-		IPackageExportDescription ex2 = service.newPackageExport("a.b.c.interal.x", null, false,
-				new String[] { "x.y.z" });
+		IPackageExportDescription ex0 = service.newPackageExport("a.b.c", new Version("2.0.0"), true, List.of());
+		IPackageExportDescription ex1 = service.newPackageExport("a.b.c.interal", null, false, List.of());
+		IPackageExportDescription ex2 = service.newPackageExport("a.b.c.interal.x", null, false, List.of("x.y.z"));
 		IPackageExportDescription ex3 = service.newPackageExport("a.b.c.interal.y", new Version("1.2.3"), false,
-				new String[] { "d.e.f", "g.h.i" });
+				List.of("d.e.f", "g.h.i"));
 		description.setPackageExports(new IPackageExportDescription[] { ex0, ex1, ex2, ex3 });
 		description.setActivationPolicy(Constants.ACTIVATION_LAZY);
 		description.apply(null);
@@ -716,12 +716,11 @@ public class ProjectCreationTests {
 		IPath src = IPath.fromOSString("srcA");
 		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, IPath.fromOSString("a.jar"));
 		description.setBundleClasspath(new IBundleClasspathEntry[] { spec });
-		IPackageExportDescription ex0 = service.newPackageExport("a.b.c", new Version("2.0.0"), true, null);
-		IPackageExportDescription ex1 = service.newPackageExport("a.b.c.interal", null, false, null);
-		IPackageExportDescription ex2 = service.newPackageExport("a.b.c.interal.x", null, false,
-				new String[] { "x.y.z" });
+		IPackageExportDescription ex0 = service.newPackageExport("a.b.c", new Version("2.0.0"), true, List.of());
+		IPackageExportDescription ex1 = service.newPackageExport("a.b.c.interal", null, false, List.of());
+		IPackageExportDescription ex2 = service.newPackageExport("a.b.c.interal.x", null, false, List.of("x.y.z"));
 		IPackageExportDescription ex3 = service.newPackageExport("a.b.c.interal.y", new Version("1.2.3"), false,
-				new String[] { "d.e.f", "g.h.i" });
+				List.of("d.e.f", "g.h.i"));
 		description.setPackageExports(new IPackageExportDescription[] { ex0, ex1, ex2, ex3 });
 		description.apply(null);
 
@@ -730,8 +729,7 @@ public class ProjectCreationTests {
 		IPath srcB = IPath.fromOSString("srcB");
 		IBundleClasspathEntry specB = service.newBundleClasspathEntry(srcB, null, IPath.fromOSString("b.jar"));
 		modify.setBundleClasspath(new IBundleClasspathEntry[] { specB });
-		IPackageExportDescription ex4 = service.newPackageExport("x.y.z.interal", null, false,
-				new String[] { "zz.top" });
+		IPackageExportDescription ex4 = service.newPackageExport("x.y.z.interal", null, false, List.of("zz.top"));
 		modify.setPackageExports(new IPackageExportDescription[] { ex0, ex2, ex4, ex3 }); // remove,
 		// add,
 		// re-order
@@ -803,12 +801,11 @@ public class ProjectCreationTests {
 		description.setRequiredBundles(
 				new IRequiredBundleDescription[] { requireDesc, requireDesc2, requireDesc3, requireDesc4 });
 
-		IPackageExportDescription ex0 = service.newPackageExport("a.b.c", new Version("2.0.0"), true, null);
-		IPackageExportDescription ex1 = service.newPackageExport("a.b.c.interal", null, false, null);
-		IPackageExportDescription ex2 = service.newPackageExport("a.b.c.interal.x", null, false,
-				new String[] { "x.y.z" });
+		IPackageExportDescription ex0 = service.newPackageExport("a.b.c", new Version("2.0.0"), true, List.of());
+		IPackageExportDescription ex1 = service.newPackageExport("a.b.c.interal", null, false, List.of());
+		IPackageExportDescription ex2 = service.newPackageExport("a.b.c.interal.x", null, false, List.of("x.y.z"));
 		IPackageExportDescription ex3 = service.newPackageExport("a.b.c.interal.y", new Version("1.2.3"), false,
-				new String[] { "d.e.f", "g.h.i" });
+				List.of("d.e.f", "g.h.i"));
 		description.setPackageExports(new IPackageExportDescription[] { ex0, ex1, ex2, ex3 });
 
 		IPackageImportDescription importDesc = service.newPackageImport("importPkgOne", NO_VERSION, false);
@@ -833,10 +830,9 @@ public class ProjectCreationTests {
 		description.setRequiredBundles(new IRequiredBundleDescription[] { requireDesc, requireDesc2, requireDesc3,
 				requireDesc4, requireDesc5, requireDesc6 });
 
-		IPackageExportDescription ex4 = service.newPackageExport("a.b.c.interal.x2", null, false,
-				new String[] { "x.y.z" });
+		IPackageExportDescription ex4 = service.newPackageExport("a.b.c.interal.x2", null, false, List.of("x.y.z"));
 		IPackageExportDescription ex5 = service.newPackageExport("a.b.c.interal.y2", new Version("1.2.3"), false,
-				new String[] { "d.e.f", "g.h.i" });
+				List.of("d.e.f", "g.h.i"));
 		description.setPackageExports(new IPackageExportDescription[] { ex0, ex1, ex2, ex3, ex4, ex5 });
 
 		IPackageImportDescription importDesc5 = service.newPackageImport("importPkgFive", NO_VERSION, true);
@@ -945,8 +941,8 @@ public class ProjectCreationTests {
 		IBundleClasspathEntry one = service.newBundleClasspathEntry(null, null, IPath.fromOSString("one.jar"));
 		IBundleClasspathEntry two = service.newBundleClasspathEntry(null, null, IPath.fromOSString("lib/two.jar"));
 		description.setBundleClasspath(new IBundleClasspathEntry[] { one, two });
-		IPackageExportDescription exp1 = service.newPackageExport("org.eclipse.one", new Version("1.0.0"), true, null);
-		IPackageExportDescription exp2 = service.newPackageExport("org.eclipse.two", new Version("1.0.0"), true, null);
+		IPackageExportDescription exp1 = service.newPackageExport("org.eclipse.one", new Version("1.0.0"), true, List.of());
+		IPackageExportDescription exp2 = service.newPackageExport("org.eclipse.two", new Version("1.0.0"), true, List.of());
 		description.setPackageExports(new IPackageExportDescription[] { exp1, exp2 });
 		description.setBundleVersion(new Version("1.0.0"));
 		description.setExecutionEnvironments(new String[] { "J2SE-1.5" });
@@ -1026,8 +1022,8 @@ public class ProjectCreationTests {
 		IBundleClasspathEntry one = service.newBundleClasspathEntry(null, IPath.fromOSString("bin1"), IPath.fromOSString("one.jar"));
 		IBundleClasspathEntry two = service.newBundleClasspathEntry(null, IPath.fromOSString("bin2"), IPath.fromOSString("two.jar"));
 		description.setBundleClasspath(new IBundleClasspathEntry[] { one, two });
-		IPackageExportDescription exp1 = service.newPackageExport("org.eclipse.one", new Version("1.0.0"), true, null);
-		IPackageExportDescription exp2 = service.newPackageExport("org.eclipse.two", new Version("1.0.0"), true, null);
+		IPackageExportDescription exp1 = service.newPackageExport("org.eclipse.one", new Version("1.0.0"), true, List.of());
+		IPackageExportDescription exp2 = service.newPackageExport("org.eclipse.two", new Version("1.0.0"), true, List.of());
 		description.setPackageExports(new IPackageExportDescription[] { exp1, exp2 });
 		description.setBundleVersion(new Version("1.0.0"));
 		description.setExecutionEnvironments(new String[] { "J2SE-1.5" });
@@ -1472,9 +1468,9 @@ public class ProjectCreationTests {
 		IPackageImportDescription imp2 = getBundleProjectService().newPackageImport("org.eclipse.core.runtime", NO_VERSION, false);
 		IPackageImportDescription imp3 = getBundleProjectService().newPackageImport("org.eclipse.core.resources", NO_VERSION, false);
 		description.setPackageImports(new IPackageImportDescription[] { imp1, imp2, imp3 });
-		IPackageExportDescription ex1 = getBundleProjectService().newPackageExport("a.b.c", null, true, null);
-		IPackageExportDescription ex2 = getBundleProjectService().newPackageExport("a.b.c.d", null, true, null);
-		IPackageExportDescription ex3 = getBundleProjectService().newPackageExport("a.b.c.e", null, true, null);
+		IPackageExportDescription ex1 = getBundleProjectService().newPackageExport("a.b.c", null, true, List.of());
+		IPackageExportDescription ex2 = getBundleProjectService().newPackageExport("a.b.c.d", null, true, List.of());
+		IPackageExportDescription ex3 = getBundleProjectService().newPackageExport("a.b.c.e", null, true, List.of());
 		description.setPackageExports(new IPackageExportDescription[] { ex1, ex2, ex3 });
 		IProject project = description.getProject();
 		description.apply(null);
@@ -1613,8 +1609,8 @@ public class ProjectCreationTests {
 		IBundleClasspathEntry one = service.newBundleClasspathEntry(IPath.fromOSString("src"),
 				IPath.fromOSString("WebContent/WEB-INF/classes"), IPath.fromOSString("WebContent/WEB-INF/classes"));
 		description.setBundleClasspath(new IBundleClasspathEntry[] { one });
-		IPackageExportDescription exp1 = service.newPackageExport("org.eclipse.one", new Version("1.0.0"), true, null);
-		IPackageExportDescription exp2 = service.newPackageExport("org.eclipse.two", new Version("1.0.0"), true, null);
+		IPackageExportDescription exp1 = service.newPackageExport("org.eclipse.one", new Version("1.0.0"), true, List.of());
+		IPackageExportDescription exp2 = service.newPackageExport("org.eclipse.two", new Version("1.0.0"), true, List.of());
 		description.setPackageExports(new IPackageExportDescription[] { exp1, exp2 });
 		description.setBundleVersion(new Version("1.0.0"));
 		description.setExecutionEnvironments(new String[] { "J2SE-1.5" });
@@ -1675,12 +1671,12 @@ public class ProjectCreationTests {
 		IBundleProjectService service = getBundleProjectService();
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
-		IPackageExportDescription e1 = service.newPackageExport("a.b.c", null, true, null);
+		IPackageExportDescription e1 = service.newPackageExport("a.b.c", null, true, List.of());
 		description.setPackageExports(new IPackageExportDescription[] { e1 });
 		description.apply(null);
 
 		IBundleProjectDescription d2 = service.getDescription(project);
-		IPackageExportDescription e2 = service.newPackageExport("a.b.c.internal", null, false, null);
+		IPackageExportDescription e2 = service.newPackageExport("a.b.c.internal", null, false, List.of());
 		d2.setPackageExports(new IPackageExportDescription[] { e1, e2 });
 		d2.apply(null);
 

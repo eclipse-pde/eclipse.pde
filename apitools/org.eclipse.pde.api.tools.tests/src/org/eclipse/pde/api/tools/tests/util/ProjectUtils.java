@@ -367,7 +367,7 @@ public class ProjectUtils {
 		if (exports != null) {
 			List<IPackageExportDescription> list = new ArrayList<>();
 			for (IPackageExportDescription export : exports) {
-				if (!packagename.equals(export.getName())) {
+				if (!packagename.equals(export.name())) {
 					list.add(export);
 				}
 			}
@@ -389,7 +389,8 @@ public class ProjectUtils {
 	 * @param friends a listing of friends for this exported package
 	 * @throws CoreException if something bad happens
 	 */
-	public static void addExportedPackage(IProject project, String packagename, boolean internal, String[] friends) throws CoreException {
+	public static void addExportedPackage(IProject project, String packagename, boolean internal, List<String> friends)
+			throws CoreException {
 		if (!project.exists() || packagename == null) {
 			// do no work
 			return;

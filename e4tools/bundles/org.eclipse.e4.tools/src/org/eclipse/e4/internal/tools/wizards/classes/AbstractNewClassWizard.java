@@ -173,7 +173,7 @@ public abstract class AbstractNewClassWizard extends Wizard implements INewWizar
 				descs.addAll(Arrays.asList(arTmp));
 			}
 			for (final IRequiredBundleDescription bd : descs) {
-				requiredBundles.remove(bd.getName());
+				requiredBundles.remove(bd.name());
 			}
 
 			if (requiredBundles.size() > 0) {
@@ -188,7 +188,7 @@ public abstract class AbstractNewClassWizard extends Wizard implements INewWizar
 				imDescs.addAll(Arrays.asList(currentImportPacks));
 			}
 			for (final IPackageImportDescription ds : imDescs) {
-				requiredImportPacks.remove(ds.getName());
+				requiredImportPacks.remove(ds.name());
 			}
 			if (!requiredImportPacks.isEmpty()) {
 				for (final String i : requiredImportPacks) {
