@@ -518,9 +518,9 @@ public class ProjectModifyOperation {
 			// host specification
 			IHostDescription host = description.getHost();
 			if (!isEqual(host, before.getHost())) {
-				fragment.setPluginId(host.getName());
-				if (host.getVersion() != null) {
-					fragment.setPluginVersion(host.getVersion().toString());
+				fragment.setPluginId(host.name());
+				if (host.version() != null) {
+					fragment.setPluginVersion(host.version().toString());
 				} else {
 					// must explicitly set to null, else it appears as 0.0.0
 					fragment.setPluginVersion(null);
@@ -548,9 +548,9 @@ public class ProjectModifyOperation {
 			}
 			if (dependencies != null) {
 				for (IRequiredBundleDescription req : dependencies) {
-					VersionRange range = req.getVersion();
+					VersionRange range = req.version();
 					IPluginImport iimport = fModel.getPluginFactory().createImport();
-					iimport.setId(req.getName());
+					iimport.setId(req.name());
 					if (range != null) {
 						iimport.setVersion(range.toString());
 						iimport.setMatch(IMatchRules.COMPATIBLE);
@@ -603,8 +603,8 @@ public class ProjectModifyOperation {
 				} else {
 					ImportPackageHeader header = (ImportPackageHeader) factory.createHeader(Constants.IMPORT_PACKAGE, ""); //$NON-NLS-1$
 					for (IPackageImportDescription pkg : packages) {
-						ImportPackageObject ip = header.addPackage(pkg.getName());
-						VersionRange range = pkg.getVersion();
+						ImportPackageObject ip = header.addPackage(pkg.name());
+						VersionRange range = pkg.version();
 						if (range != null) {
 							ip.setVersion(range.toString());
 						}
@@ -622,13 +622,13 @@ public class ProjectModifyOperation {
 				} else {
 					ExportPackageHeader header = (ExportPackageHeader) factory.createHeader(Constants.EXPORT_PACKAGE, ""); //$NON-NLS-1$
 					for (IPackageExportDescription pkg : exports) {
-						ExportPackageObject epo = header.addPackage(pkg.getName());
-						Version version = pkg.getVersion();
+						ExportPackageObject epo = header.addPackage(pkg.name());
+						Version version = pkg.version();
 						if (version != null) {
 							epo.setVersion(version.toString());
 						}
-						String[] friends = pkg.getFriends();
-						if (friends != null) {
+						Set<String> friends = pkg.friends();
+						if (!friends.isEmpty()) {
 							for (String friend : friends) {
 								epo.addFriend(new PackageFriend(epo, friend));
 							}

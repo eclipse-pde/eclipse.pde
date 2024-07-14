@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.core.project;
 
+import java.util.Set;
+import java.util.SortedSet;
+
 import org.osgi.framework.Version;
 
 /**
@@ -29,28 +32,50 @@ public interface IPackageExportDescription {
 	 * Returns the fully qualified name of the exported package.
 	 *
 	 * @return fully qualified name of the exported package
+	 * @since 3.19
 	 */
-	public String getName();
+	String name();
+
+	/** @deprecated Instead use {@link #name()} */
+	@Deprecated(since = "3.19")
+	default String getName() {
+		return name();
+	}
 
 	/**
-	 * Returns the version of the exported package or <code>null</code>
-	 * if unspecified.
+	 * Returns the version of the exported package or <code>null</code> if
+	 * unspecified.
 	 *
 	 * @return version or <code>null</code>
+	 * @since 3.19
 	 */
-	public Version getVersion();
+	Version version();
+
+	/** @deprecated Instead use {@link #version()} */
+	@Deprecated(since = "3.19")
+	default Version getVersion() {
+		return version();
+	}
 
 	/**
-	 * Returns the declared friends of this package or <code>null</code> if none.
+	 * Returns the declared friends of this package.
 	 *
-	 * @return friends as bundle symbolic names or <code>null</code>
+	 * @return friends as bundle symbolic names, may be empty
+	 * @since 3.19
 	 */
-	public String[] getFriends();
+	SortedSet<String> friends();
+
+	/** @deprecated Instead use {@link #friends()} */
+	@Deprecated(since = "3.19")
+	default String[] getFriends() {
+		Set<String> friends = friends();
+		return friends.isEmpty() ? null : friends.toArray(String[]::new);
+	}
 
 	/**
 	 * Returns whether the package is exported as API, or is internal.
 	 *
 	 * @return whether the package is exported as API
 	 */
-	public boolean isApi();
+	boolean isApi();
 }

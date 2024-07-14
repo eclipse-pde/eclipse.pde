@@ -29,8 +29,15 @@ public interface IPackageImportDescription {
 	 * Returns the fully qualified name of the imported package.
 	 *
 	 * @return fully qualified name of the imported package
+	 * @since 3.19
 	 */
-	String getName();
+	String name();
+
+	/** @deprecated Instead use {@link #name()} */
+	@Deprecated(since = "3.19")
+	default String getName() {
+		return name();
+	}
 
 	/**
 	 * Returns the version constraint of the imported package or <code>null</code>
@@ -39,12 +46,12 @@ public interface IPackageImportDescription {
 	 * @return version constraint or <code>null</code>
 	 * @since 3.19
 	 */
-	VersionRange getVersion();
+	VersionRange version();
 
-	/** @deprecated Instead use {@link #getVersion()} */
+	/** @deprecated Instead use {@link #version()} */
 	@Deprecated(forRemoval = true, since = "3.19 (removal in 2026-09 or later)")
 	default org.eclipse.osgi.service.resolver.VersionRange getVersionRange() {
-		VersionRange version = getVersion();
+		VersionRange version = version();
 		return version != null ? new org.eclipse.osgi.service.resolver.VersionRange(version.toString()) : null;
 	}
 
