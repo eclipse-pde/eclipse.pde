@@ -52,9 +52,9 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.pde.core.plugin.IMatchRules;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.VersionMatchRule;
 import org.eclipse.pde.internal.core.DependencyManager;
 import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.core.PDECore;
@@ -382,7 +382,7 @@ public class LaunchAction extends Action {
 			if (id == null || version == null) {
 				continue;
 			}
-			IPluginModelBase model = PluginRegistry.findModel(id, version, IMatchRules.EQUIVALENT, null);
+			IPluginModelBase model = PluginRegistry.findModel(id, version, VersionMatchRule.EQUIVALENT);
 			if (model == null) {
 				model = PluginRegistry.findModel(id);
 			}

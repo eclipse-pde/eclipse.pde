@@ -89,7 +89,7 @@ public class ImportObject extends PluginReference implements IWritable, Serializ
 	protected IPluginModelBase findModel() {
 		String version = iimport.getVersion();
 		VersionRange range = new VersionRange(version);
-		return PluginRegistry.findModel(getId(), range, null);
+		return PluginRegistry.findModel(getId(), range);
 	}
 
 }

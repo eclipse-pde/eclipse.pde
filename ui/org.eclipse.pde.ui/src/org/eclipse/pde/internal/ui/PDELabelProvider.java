@@ -31,7 +31,6 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IFragmentModel;
-import org.eclipse.pde.core.plugin.IMatchRules;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.core.plugin.IPluginBase;
@@ -44,6 +43,7 @@ import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.VersionMatchRule;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
@@ -385,7 +385,8 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	public String getObjectText(ISiteBundle obj) {
-		IPluginModelBase modelBase = PluginRegistry.findModel(obj.getId(), obj.getVersion(), IMatchRules.COMPATIBLE, null);
+		IPluginModelBase modelBase = PluginRegistry.findModel(obj.getId(), obj.getVersion(),
+				VersionMatchRule.COMPATIBLE);
 		if (modelBase != null)
 			return getObjectText(modelBase.getPluginBase());
 		return preventNull(obj.getId());

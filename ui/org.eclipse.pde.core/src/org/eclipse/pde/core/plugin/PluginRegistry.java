@@ -302,7 +302,7 @@ public class PluginRegistry {
 	 */
 	@Deprecated(forRemoval = true, since = "3.19 (removal in 2026-09 or later)")
 	public static IPluginModelBase findModel(String id, String version, int match, PluginFilter filter) {
-		VersionMatchRule rule = VersionUtil.matchRuleFromLiteral(match);
+		VersionMatchRule rule = safeToRuleLiteral(match);
 		return findModels(id, version, rule).filter(asPredicate(filter)).findFirst().orElse(null);
 	}
 
@@ -345,8 +345,18 @@ public class PluginRegistry {
 	 */
 	@Deprecated(forRemoval = true, since = "3.19 (removal in 2026-09 or later)")
 	public static IPluginModelBase[] findModels(String id, String version, int match, PluginFilter filter) {
-		VersionMatchRule rule = VersionUtil.matchRuleFromLiteral(match);
+		VersionMatchRule rule = safeToRuleLiteral(match);
 		return findModels(id, version, rule).filter(asPredicate(filter)).toArray(IPluginModelBase[]::new);
+	}
+
+	private static VersionMatchRule safeToRuleLiteral(int match) {
+		VersionMatchRule rule;
+		try {
+			rule = VersionUtil.matchRuleFromLiteral(match);
+		} catch (IllegalArgumentException e) {
+			rule = VersionMatchRule.PERFECT;
+		}
+		return rule;
 	}
 
 	/**
