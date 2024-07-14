@@ -89,110 +89,94 @@ public final class BundleProjectService implements IBundleProjectService {
 	private BundleProjectService() {
 	}
 
-	/**
-	 * Returns a bundle description for the given project.
-	 * If the project does not exist, the description can be used to create
-	 * a new bundle project. If the project does exist, the description can be used to
-	 * modify a project.
-	 *
-	 * @param project project
-	 * @return bundle description for the associated project
-	 * @exception CoreException if unable to create a description on an existing project
-	 */
 	@Override
 	public IBundleProjectDescription getDescription(IProject project) throws CoreException {
 		return new BundleProjectDescription(project);
 	}
 
-	/**
-	 * Creates and returns a new host description.
-	 *
-	 * @param name symbolic name of the host
-	 * @param range version constraint or <code>null</code>
-	 * @return host description
-	 */
 	@Override
 	public IHostDescription newHost(String name, VersionRange range) {
-		return new HostDescriptoin(name, range);
+		return new HostDescription(name, range);
 	}
 
-	/**
-	 * Creates and returns a new package import description.
-	 *
-	 * @param name fully qualified name of imported package
-	 * @param range version constraint or <code>null</code>
-	 * @param optional whether the import is optional
-	 * @return package import description
-	 */
+	record HostDescription(String name, VersionRange version) implements IHostDescription {
+		@Override
+		public String getName() {
+			return name();
+		}
+
+		@Override
+		public VersionRange getVersion() {
+			return version();
+		}
+	}
+
 	@Override
 	public IPackageImportDescription newPackageImport(String name, VersionRange range, boolean optional) {
 		return new PackageImportDescription(name, range, optional);
 	}
 
-	/**
-	 * Constructs a new package export description.
-	 *
-	 * @param name fully qualified package name
-	 * @param version version or <code>null</code>
-	 * @param api whether the package is considered API
-	 * @param friends symbolic names of bundles that are friends, or <code>null</code>; when
-	 *  friends are specified the package will not be API
-	 * @return package export description
-	 */
-	@Override
-	public IPackageExportDescription newPackageExport(String name, Version version, boolean api, String[] friends) {
-		return new PackageExportDescription(name, version, friends, api);
+	record PackageImportDescription(String name, VersionRange version, boolean isOptional)
+			implements IPackageImportDescription {
+		@Override
+		public String getName() {
+			return name();
+		}
+
+		@Override
+		public VersionRange getVersion() {
+			return version();
+		}
 	}
 
-	/**
-	 * Creates and returns a new required bundle description.
-	 *
-	 * @param name symbolic name of required bundle
-	 * @param range version constraint or <code>null</code>
-	 * @param optional whether the required bundle is optional
-	 * @param export whether the required bundle is re-exported
-	 * @return required bundle description
-	 */
+	@Override
+	public IPackageExportDescription newPackageExport(String name, Version version, boolean api, String[] friends) {
+		List<String> friendsList = friends != null ? List.of(friends) : List.of();
+		return new PackageExportDescription(name, version, friendsList, friendsList.isEmpty() ? api : false);
+	}
+
+	record PackageExportDescription(String name, Version version, List<String> friends, boolean isApi)
+			implements IPackageExportDescription {
+
+		@Override
+		public String getName() {
+			return name();
+		}
+
+		@Override
+		public Version getVersion() {
+			return version();
+		}
+
+		@Override
+		public String[] getFriends() {
+			return friends.isEmpty() ? null : friends.toArray(String[]::new);
+		}
+	}
+
 	@Override
 	public IRequiredBundleDescription newRequiredBundle(String name, VersionRange range, boolean optional, boolean export) {
 		return new RequiredBundleDescription(name, range, export, optional);
 	}
 
-	/**
-	 * Creates and returns a new bundle classpath entry defining the relationship
-	 * between a source, binaries, and library on the Bundle-Classpath header.
-	 * <p>
-	 * When a source folder is specified, the binary folder defines its output
-	 * folder, or may be <code>null</code> to indicate that the project's default output
-	 * folder is used by the source folder. When only a binary folder is specified, there
-	 * is no source associated with the folder. When no source or binary are specified,
-	 * it indicates the library is included in the project as an archive.
-	 * </p>
-	 * @param sourceFolder source folder or <code>null</code>
-	 * @param binaryFolder binary folder or <code>null</code>
-	 * @param library associated entry on the Bundle-Classpath header or <code>null</code>
-	 * 	to indicate default entry "."
-	 */
+	record RequiredBundleDescription(String name, VersionRange version, boolean isExported, boolean isOptional)
+			implements IRequiredBundleDescription {
+		@Override
+		public String getName() {
+			return name();
+		}
+
+		@Override
+		public VersionRange getVersion() {
+			return version();
+		}
+	}
+
 	@Override
 	public IBundleClasspathEntry newBundleClasspathEntry(IPath sourceFolder, IPath binaryFolder, IPath library) {
 		return new BundleClasspathSpecification(sourceFolder, binaryFolder, library);
 	}
 
-	/**
-	 * Sets the location within the project where the root of the bundle and its associated
-	 * artifacts will reside, or <code>null</code> to indicate the default bundle root location
-	 * should be used (project folder).
-	 * <p>
-	 * The bundle root is the folder containing the <code>META-INF/</code> folder. When the bundle
-	 * root location is modified, existing bundle artifacts at the old root are not moved or modified.
-	 * When creating a new bundle project {@link IBundleProjectDescription#setBundleRoot(IPath)} can
-	 * be used to specify an initial bundle root location. To modify the bundle root location of an
-	 * existing project, this method must be used.
-	 * </p>
-	 * @param project project that must exist and be open
-	 * @param bundleRoot project relative path to bundle root artifacts in the project or <code>null</code>
-	 * @throws CoreException if setting the root fails
-	 */
 	@Override
 	public void setBundleRoot(IProject project, IPath bundleRoot) throws CoreException {
 		PDEProject.setBundleRoot(project, (bundleRoot == null) ? null : project.getFolder(bundleRoot));
