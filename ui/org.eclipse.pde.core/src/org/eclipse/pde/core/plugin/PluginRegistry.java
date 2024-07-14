@@ -365,7 +365,7 @@ public class PluginRegistry {
 				max = model;
 				maxV = version;
 			} else {
-				if (VersionUtil.isGreaterOrEqualTo(version, maxV)) {
+				if (VersionMatchRule.GREATER_OR_EQUAL.matches(version, maxV)) {
 					max = model;
 					maxV = version;
 				}
