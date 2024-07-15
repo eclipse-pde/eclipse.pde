@@ -2901,6 +2901,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String EditorUtilities_missingIcoNote;
 
+	public static String RequiredExecutionEnvironmentSection_modify;
+
 	public static String RequiredExecutionEnvironmentSection_add;
 
 	public static String RequiredExecutionEnvironmentSection_remove;
