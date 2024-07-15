@@ -12,6 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487988
  *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 351356
+ *     Latha Patil (ETAS GmbH) - Issue 1178 Add 'Change' button to change a Plugin's required EE and classpath
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
@@ -50,6 +51,7 @@ import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.core.text.bundle.ExecutionEnvironment;
 import org.eclipse.pde.internal.core.text.bundle.RequiredExecutionEnvironmentHeader;
+import org.eclipse.pde.internal.core.util.VMUtil;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
@@ -71,6 +73,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.dialogs.FilteredList;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
@@ -114,6 +117,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 
 	public ExecutionEnvironmentSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION, new String[] { //
+				PDEUIMessages.RequiredExecutionEnvironmentSection_modify,
 				PDEUIMessages.RequiredExecutionEnvironmentSection_add,
 				PDEUIMessages.RequiredExecutionEnvironmentSection_remove });
 		createClient(getSection(), page.getEditor().getToolkit());
@@ -160,21 +164,11 @@ public class ExecutionEnvironmentSection extends TableSection {
 		gd.horizontalSpan = 2;
 		link.setLayoutData(gd);
 
-		final IProject project = getPage().getPDEEditor().getCommonProject();
+		IProject project = getPage().getPDEEditor().getCommonProject();
 		if (project != null && PluginProject.isJavaProject(project)) {
 			link = toolkit.createHyperlink(container, PDEUIMessages.ExecutionEnvironmentSection_updateClasspath, SWT.NONE);
 			link.addHyperlinkListener(IHyperlinkListener.linkActivatedAdapter(e -> {
-				try {
-					getPage().getEditor().doSave(null);
-					IPluginModelBase model = PluginRegistry.findModel(project);
-					if (model != null) {
-						ClasspathComputer.setClasspath(project, model);
-						if (PDEPlugin.getWorkspace().isAutoBuilding()) {
-							doFullBuild(project);
-						}
-					}
-				} catch (CoreException e1) {
-				}
+				updateClasspathSettings(project);
 			}));
 			gd = new GridData();
 			gd.horizontalSpan = 2;
@@ -192,6 +186,19 @@ public class ExecutionEnvironmentSection extends TableSection {
 		section.setClient(container);
 	}
 
+	private void updateClasspathSettings(IProject project) {
+		try {
+			getPage().getEditor().doSave(null);
+			IPluginModelBase model = PluginRegistry.findModel(project);
+			if (model != null) {
+				ClasspathComputer.setClasspath(project, model);
+				if (PDEPlugin.getWorkspace().isAutoBuilding()) {
+					doFullBuild(project);
+				}
+			}
+		} catch (CoreException e1) {
+		}
+	}
 	@Override
 	public void dispose() {
 		IBundleModel model = getBundleModel();
@@ -208,8 +215,9 @@ public class ExecutionEnvironmentSection extends TableSection {
 	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
-			case 0 -> handleAdd();
-			case 1 -> handleRemove();
+			case 0 -> handleModify();
+			case 1 -> handleAdd();
+			case 2 -> handleRemove();
 		}
 	}
 
@@ -244,8 +252,9 @@ public class ExecutionEnvironmentSection extends TableSection {
 	private void updateButtons() {
 		Table table = fEETable.getTable();
 		TablePart tablePart = getTablePart();
-		tablePart.setButtonEnabled(0, isEditable());
-		tablePart.setButtonEnabled(1, isEditable() && table.getSelection().length > 0);
+		tablePart.setButtonEnabled(0, isEditable() && table.getItemCount() == 1);
+		tablePart.setButtonEnabled(1, isEditable());
+		tablePart.setButtonEnabled(2, isEditable() && table.getSelection().length > 0);
 	}
 
 	private void handleRemove() {
@@ -260,17 +269,53 @@ public class ExecutionEnvironmentSection extends TableSection {
 	}
 
 	private void handleAdd() {
-		ElementListSelectionDialog dialog = new ElementListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), new EELabelProvider());
+		Object[] selection = showEESelectionDialog(true);
+		if (selection != null) {
+			addExecutionEnvironments(selection);
+		}
+	}
+
+	private void handleModify() {
+		RequiredExecutionEnvironmentHeader header = getHeader();
+		Object[] selection = showEESelectionDialog(false);
+		if (selection != null) {
+
+			List<String> existingEEs = header.getEnvironments();
+			// Remove existing EE (Upgrade is allowed only if a single EE is
+			// present in the header)
+			getHeader().removeExecutionEnvironment(existingEEs.get(0));
+
+			// add selected Java EE to the header
+			addExecutionEnvironments(selection);
+
+			IProject project = getPage().getPDEEditor().getCommonProject();
+			updateClasspathSettings(project);
+		}
+
+	}
+
+	private Object[] showEESelectionDialog(boolean allowMultiSelection) {
+		ElementListSelectionDialog dialog = new ElementListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(),
+				new EELabelProvider()) {
+			@Override
+			protected FilteredList createFilteredList(Composite parent) {
+				FilteredList filteredList = super.createFilteredList(parent);
+				filteredList.setComparator(VMUtil.ASCENDING_EE_JAVA_VERSION.reversed());
+				return filteredList;
+			}
+		};
 		dialog.setElements(getEnvironments());
 		dialog.setAllowDuplicates(false);
-		dialog.setMultipleSelection(true);
+		dialog.setMultipleSelection(allowMultiSelection);
 		dialog.setTitle(PDEUIMessages.RequiredExecutionEnvironmentSection_dialog_title);
 		dialog.setMessage(PDEUIMessages.RequiredExecutionEnvironmentSection_dialogMessage);
 		dialog.create();
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IHelpContextIds.EXECUTION_ENVIRONMENT_SELECTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(),
+				IHelpContextIds.EXECUTION_ENVIRONMENT_SELECTION);
 		if (dialog.open() == Window.OK) {
-			addExecutionEnvironments(dialog.getResult());
+			return dialog.getResult();
 		}
+		return null;
 	}
 
 	@SuppressWarnings("deprecation")
