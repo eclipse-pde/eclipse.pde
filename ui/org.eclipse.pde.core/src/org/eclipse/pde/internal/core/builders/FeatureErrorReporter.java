@@ -17,6 +17,7 @@ package org.eclipse.pde.internal.core.builders;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -415,8 +416,8 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 	private void validateFeatureExists(Element element, Attr attr) {
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.F_UNRESOLVED_FEATURES);
 		if (severity != CompilerFlags.IGNORE) {
-			IFeatureModel[] models = PDECore.getDefault().getFeatureModelManager().findFeatureModels(attr.getValue());
-			if (models.length == 0) {
+			List<IFeatureModel> models = PDECore.getDefault().getFeatureModelManager().findFeatureModels(attr.getValue());
+			if (models.isEmpty()) {
 				VirtualMarker marker = report(NLS.bind(PDECoreMessages.Builders_Feature_freference, attr.getValue()), getLine(element, attr.getName()), severity, PDEMarkerFactory.CAT_OTHER);
 				addMarkerAttribute(marker, PDEMarkerFactory.compilerKey,  CompilerFlags.F_UNRESOLVED_FEATURES);
 			}

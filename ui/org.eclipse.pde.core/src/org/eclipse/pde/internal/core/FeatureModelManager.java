@@ -14,7 +14,10 @@
 package org.eclipse.pde.internal.core;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
@@ -64,7 +67,7 @@ public class FeatureModelManager {
 	/**
 	 * List of IFeatureModelListener
 	 */
-	private final ArrayList<IFeatureModelListener> fListeners;
+	private final List<IFeatureModelListener> fListeners;
 
 	public FeatureModelManager() {
 		fWorkspaceManager = new WorkspaceFeatureModelManager();
@@ -137,14 +140,7 @@ public class FeatureModelManager {
 	 */
 	public IFeatureModel[] getModels() {
 		init();
-		IFeatureModel[] allModels = fActiveModels.getAll();
-		ArrayList<IFeatureModel> valid = new ArrayList<>(allModels.length);
-		for (final IFeatureModel model : allModels) {
-			if (model.isValid()) {
-				valid.add(model);
-			}
-		}
-		return valid.toArray(new IFeatureModel[valid.size()]);
+		return fActiveModels.getAllValidFeatures();
 	}
 
 	/**
@@ -176,13 +172,11 @@ public class FeatureModelManager {
 	 */
 	public IFeatureModel findFeatureModel(String id, String version) {
 		init();
-		IFeatureModel[] models = fActiveModels.get(id, version);
-
 		if (VersionUtil.isEmptyVersion(version)) {
 			return findFeatureModel(id);
 		}
-
-		for (final IFeatureModel model : models) {
+		List<IFeatureModel> models = fActiveModels.get(id, version);
+		for (IFeatureModel model : models) {
 			if (model.isValid()) {
 				return model;
 			}
@@ -220,35 +214,17 @@ public class FeatureModelManager {
 	 *
 	 * @return IFeature model[]
 	 */
-	public IFeatureModel[] findFeatureModels(String id) {
+	public List<IFeatureModel> findFeatureModels(String id) {
 		init();
-		IFeatureModel[] models = fActiveModels.get(id);
-		ArrayList<IFeatureModel> valid = new ArrayList<>(models.length);
-		for (final IFeatureModel model : models) {
-			if (model.isValid()) {
-				valid.add(model);
-			}
-		}
-		return valid.toArray(new IFeatureModel[valid.size()]);
+		return fActiveModels.getAllValidFeatures(id);
 	}
 
+	private static final Comparator<IFeatureModel> FEATURE_VERSION = Comparator
+			.comparing(f -> Version.parseVersion(f.getFeature().getVersion()));
+
 	public IFeatureModel findFeatureModel(String id) {
-		IFeatureModel[] models = findFeatureModels(id);
-		IFeatureModel result = null;
-		for (final IFeatureModel model : models) {
-			if (result == null) {
-				result = model;
-			} else {
-				final String version = result.getFeature().getVersion();
-				final String version2 = model.getFeature().getVersion();
-				Version vid = Version.parseVersion(version);
-				Version vid2 = Version.parseVersion(version2);
-				if (VersionUtil.isGreaterOrEqualTo(vid2, vid)) {
-					result = model;
-				}
-			}
-		}
-		return result;
+		List<IFeatureModel> models = findFeatureModels(id);
+		return models.stream().max(FEATURE_VERSION).orElse(null);
 	}
 
 	private void handleModelsChanged(IModelProviderEvent e) {
@@ -256,7 +232,7 @@ public class FeatureModelManager {
 		IFeatureModelDelta delta = processEvent(e);
 
 		Object[] entries = fListeners.toArray();
-		for (final Object entry : entries) {
+		for (Object entry : entries) {
 			((IFeatureModelListener) entry).modelsChanged(delta);
 		}
 	}
@@ -270,8 +246,8 @@ public class FeatureModelManager {
 		Set<Idver> affectedIdVers = null;
 		if ((e.getEventTypes() & IModelProviderEvent.MODELS_REMOVED) != 0) {
 			IModel[] removed = e.getRemovedModels();
-			for (int i = 0; i < removed.length; i++) {
-				if (!(removed[i] instanceof IFeatureModel model)) {
+			for (IModel element : removed) {
+				if (!(element instanceof IFeatureModel model)) {
 					continue;
 				}
 				FeatureTable.Idver idver = fActiveModels.remove(model);
@@ -289,8 +265,8 @@ public class FeatureModelManager {
 		}
 		if ((e.getEventTypes() & IModelProviderEvent.MODELS_ADDED) != 0) {
 			IModel[] added = e.getAddedModels();
-			for (int i = 0; i < added.length; i++) {
-				if (!(added[i] instanceof IFeatureModel model)) {
+			for (IModel element : added) {
+				if (!(element instanceof IFeatureModel model)) {
 					continue;
 				}
 				if (model.getUnderlyingResource() != null) {
@@ -308,12 +284,12 @@ public class FeatureModelManager {
 					}
 					String id = model.getFeature().getId();
 					String version = model.getFeature().getVersion();
-					if (fInactiveModels.get(id, version).length > 0) {
+					if (!fInactiveModels.get(id, version).isEmpty()) {
 						// ignore duplicate external models
 						continue;
 					}
-					IFeatureModel[] activeModels = fActiveModels.get(id, version);
-					for (final IFeatureModel activeModel : activeModels) {
+					List<IFeatureModel> activeModels = fActiveModels.get(id, version);
+					for (IFeatureModel activeModel : activeModels) {
 						if (activeModel.getUnderlyingResource() == null) {
 							// ignore duplicate external models
 							continue;
@@ -332,15 +308,16 @@ public class FeatureModelManager {
 		/* 1. Reinsert with a new id and version, if necessary */
 		if ((e.getEventTypes() & IModelProviderEvent.MODELS_CHANGED) != 0) {
 			IModel[] changed = e.getChangedModels();
-			for (int i = 0; i < changed.length; i++) {
-				if (!(changed[i] instanceof IFeatureModel model)) {
+			for (IModel element : changed) {
+				if (!(element instanceof IFeatureModel model)) {
 					continue;
 				}
 				String id = model.getFeature().getId();
 				String version = model.getFeature().getVersion();
 
 				FeatureTable.Idver oldIdver = fActiveModels.get(model);
-				if (oldIdver != null && !oldIdver.equals(id, version)) {
+				if (oldIdver != null
+						&& (!Objects.equals(oldIdver.id(), id) || !Objects.equals(oldIdver.version(), version))) {
 					// version changed
 					FeatureTable.Idver idver = fActiveModels.add(model);
 					if (affectedIdVers == null) {
@@ -364,8 +341,8 @@ public class FeatureModelManager {
 		 */
 		if ((e.getEventTypes() & IModelProviderEvent.MODELS_CHANGED) != 0) {
 			IModel[] changed = e.getChangedModels();
-			for (int i = 0; i < changed.length; i++) {
-				if (!(changed[i] instanceof IFeatureModel model)) {
+			for (IModel element : changed) {
+				if (!(element instanceof IFeatureModel model)) {
 					continue;
 				}
 				if (!delta.contains(model, IFeatureModelDelta.ADDED | IFeatureModelDelta.REMOVED)) {
@@ -379,14 +356,14 @@ public class FeatureModelManager {
 
 	private void adjustExternalVisibility(FeatureModelDelta delta, Set<Idver> affectedIdVers) {
 		if (affectedIdVers != null) {
-			for (final Idver idver : affectedIdVers) {
-				IFeatureModel[] affectedModels = fActiveModels.get(idver);
-				if (affectedModels.length > 1) {
+			for (Idver idver : affectedIdVers) {
+				List<IFeatureModel> affectedModels = fActiveModels.get(idver);
+				if (affectedModels.size() > 1) {
 					/*
 					 * there must have been at least one workspace and one
 					 * external model
 					 */
-					for (final IFeatureModel model : affectedModels) {
+					for (IFeatureModel model : affectedModels) {
 						if (model.getUnderlyingResource() == null) {
 							// move external to inactive
 							fActiveModels.remove(model);
@@ -396,14 +373,15 @@ public class FeatureModelManager {
 					}
 				}
 
-				if (affectedModels.length <= 0) {
+				if (affectedModels.isEmpty()) {
 					// no workspace model
-					IFeatureModel[] models = fInactiveModels.get(idver);
-					if (models.length > 0) {
+					List<IFeatureModel> models = fInactiveModels.get(idver);
+					if (!models.isEmpty()) {
+						IFeatureModel firstModel = models.get(0);
 						// external model exists, move it to active
-						fInactiveModels.remove(models[0]);
-						fActiveModels.add(models[0]);
-						delta.add(models[0], IFeatureModelDelta.ADDED);
+						fInactiveModels.remove(firstModel);
+						fActiveModels.add(firstModel);
+						delta.add(firstModel, IFeatureModelDelta.ADDED);
 					}
 				}
 			}

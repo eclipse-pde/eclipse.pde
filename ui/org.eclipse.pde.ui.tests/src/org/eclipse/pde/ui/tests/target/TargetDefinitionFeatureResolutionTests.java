@@ -388,14 +388,14 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 
 		assertNull(featureContainer.getFeatures());
 
-		IFeatureModel[] possibleFeatures = PDECore.getDefault().getFeatureModelManager().findFeatureModels("org.eclipse.pde");
-		assertTrue(possibleFeatures.length > 0);
+		List<IFeatureModel> possibleFeatures = PDECore.getDefault().getFeatureModelManager().findFeatureModels("org.eclipse.pde");
+		assertFalse(possibleFeatures.isEmpty());
 
 		featureContainer.resolve(definition, null);
 		TargetFeature[] features = featureContainer.getFeatures();
 		assertNotNull(features);
 		assertEquals(features.length, 1);
-		assertEquals(features[0].getId(),possibleFeatures[0].getFeature().getId());
+		assertEquals(features[0].getId(), possibleFeatures.get(0).getFeature().getId());
 	}
 
 }
