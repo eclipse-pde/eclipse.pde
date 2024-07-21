@@ -188,7 +188,7 @@ public class VMHelper {
 			IExecutionEnvironment ee = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(eeId);
 			String vmName = VMUtil.getVMInstallName(ee);
 			if (ee != null) {
-				IVMInstall vm = getVMInstall(vmName);
+				IVMInstall vm = VMUtil.getVMInstall(vmName);
 				if (vm != null) {
 					return vm;
 				}
@@ -197,7 +197,7 @@ public class VMHelper {
 
 		// Find a default JRE
 		String defaultVMName = VMHelper.getDefaultVMInstallName(configuration);
-		IVMInstall vm = getVMInstall(defaultVMName);
+		IVMInstall vm = VMUtil.getVMInstall(defaultVMName);
 		if (vm != null) {
 			return vm;
 		}
@@ -205,17 +205,6 @@ public class VMHelper {
 		// No valid vm available, throw exception
 		throw new CoreException(Status.error(NLS.bind(PDEMessages.WorkbenchLauncherConfigurationDelegate_noJRE, defaultVMName)));
 
-	}
-
-	public static IVMInstall getVMInstall(String name) {
-		if (name != null) {
-			IVMInstall[] installs = VMUtil.getAllVMInstances();
-			for (IVMInstall install : installs) {
-				if (install.getName().equals(name))
-					return install;
-			}
-		}
-		return JavaRuntime.getDefaultVMInstall();
 	}
 
 	public static IVMInstall createLauncher(ILaunchConfiguration configuration) throws CoreException {
