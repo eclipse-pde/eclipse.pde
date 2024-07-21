@@ -252,7 +252,7 @@ public class JREBlock {
 		if (fJreButton.getSelection()) {
 			if (fJreCombo.getSelectionIndex() != -1) {
 				String jreName = fJreCombo.getText();
-				IVMInstall install = VMHelper.getVMInstall(jreName);
+				IVMInstall install = VMUtil.getVMInstall(jreName);
 				// remove the name to make portable
 				jrePath = JavaRuntime.newJREContainerPath(install);
 			}
@@ -324,7 +324,7 @@ public class JREBlock {
 		if (fJreButton.getSelection()) {
 			if (fJreCombo.getSelectionIndex() != -1) {
 				String jreName = fJreCombo.getText();
-				IVMInstall install = VMHelper.getVMInstall(jreName);
+				IVMInstall install = VMUtil.getVMInstall(jreName);
 				// remove the name to make portable
 				jrePath = JavaRuntime.newJREContainerPath(install);
 			}
