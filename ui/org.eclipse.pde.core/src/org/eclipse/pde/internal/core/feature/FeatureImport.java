@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core.feature;
 
 import java.io.PrintWriter;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.IPlugin;
@@ -50,27 +51,20 @@ public class FeatureImport extends VersionableObject implements IFeatureImport {
 		return null;
 	}
 
-	private IFeature findFeature(IFeatureModel[] models, String id, String version, int match) {
-
-		for (IFeatureModel model : models) {
-			IFeature feature = model.getFeature();
-			String pid = feature.getId();
-			String pversion = feature.getVersion();
-			if (VersionUtil.compare(pid, pversion, id, version, match)) {
-				return feature;
-			}
-		}
-		return null;
-	}
-
 	/**
 	 * Finds a feature with the given ID and satisfying constraints
 	 * of the version and the match.
 	 * @return IFeature or null
 	 */
 	public IFeature findFeature(String id, String version, int match) {
-		IFeatureModel[] models = PDECore.getDefault().getFeatureModelManager().findFeatureModels(id);
-		return findFeature(models, id, version, match);
+		List<IFeatureModel> models = PDECore.getDefault().getFeatureModelManager().findFeatureModels(id);
+		for (IFeatureModel model : models) {
+			IFeature feature = model.getFeature();
+			if (id.equals(feature.getId()) && VersionUtil.compare(feature.getVersion(), version, match)) {
+				return feature;
+			}
+		}
+		return null;
 	}
 
 	@Override

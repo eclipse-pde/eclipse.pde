@@ -15,7 +15,10 @@ package org.eclipse.pde.internal.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.StringJoiner;
 
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
@@ -27,128 +30,53 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
  * Idver stays unchanged until the models reinserted.
  */
 class FeatureTable {
-	public static class Idver {
-		private final String fId;
 
-		private final String fVer;
-
-		public Idver(String id, String version) {
-			fId = id;
-			fVer = version;
-		}
-
-		public String getId() {
-			return fId;
-		}
-
-		public String getVer() {
-			return fVer;
-		}
-
-		@Override
-		public int hashCode() {
-			int code = 0;
-			if (fId != null) {
-				code += fId.hashCode();
-			}
-			if (fVer != null) {
-				code += fVer.hashCode();
-			}
-
-			return code;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj) {
-				return true;
-			}
-			if (!(obj instanceof Idver)) {
-				return false;
-			}
-			return equals(((Idver) obj).getId(), ((Idver) obj).getVer());
-		}
-
-		public boolean equals(String id, String version) {
-			boolean sameId = fId == null && id == null || fId != null && fId.equals(id);
-			boolean sameVer = fVer == null && version == null || fVer != null && fVer.equals(version);
-			return sameId && sameVer;
-
-		}
-
-		@Override
-		public String toString() {
-			return fId + "_" + fVer; //$NON-NLS-1$
-		}
+	static record Idver(String id, String version) {
 	}
-
-	private static final IFeatureModel[] NO_MODELS = new IFeatureModel[0];
 
 	/**
 	 * Map of IFeatureModel to Idver
 	 */
-	private final Map<IFeatureModel, Idver> fModel2idver;
+	private final Map<IFeatureModel, Idver> fModel2idver = new HashMap<>();
 
 	/**
-	 * Map of Idver to ArrayList of IFeatureModel
+	 * Map of Idver to List of IFeatureModel
 	 */
-	private final Map<Idver, ArrayList<IFeatureModel>> fIdver2models;
+	private final Map<Idver, List<IFeatureModel>> fIdver2models = new HashMap<>();
 
 	/**
-	 * Map of Id to ArrayList of Idver
+	 * Map of Id to List of Idver
 	 */
-	private final Map<String, ArrayList<Idver>> fId2idvers;
-
-	public FeatureTable() {
-
-		fModel2idver = new HashMap<>();
-		fIdver2models = new HashMap<>();
-		fId2idvers = new HashMap<>();
-	}
+	private final Map<String, List<Idver>> fId2idvers = new HashMap<>();
 
 	public synchronized Idver get(IFeatureModel model) {
 		return fModel2idver.get(model);
 	}
 
-	public synchronized IFeatureModel[] get(String id, String version) {
-		return getImpl(new Idver(id, version));
+	public List<IFeatureModel> get(String id, String version) {
+		return get(new Idver(id, version));
 	}
 
-	public synchronized IFeatureModel[] get(Idver idver) {
-		return getImpl(idver);
-	}
-
-	private IFeatureModel[] getImpl(Idver idver) {
-		ArrayList<IFeatureModel> models = fIdver2models.get(idver);
+	public synchronized List<IFeatureModel> get(Idver idver) {
+		List<IFeatureModel> models = fIdver2models.get(idver);
 		if (models == null) {
-			return NO_MODELS;
+			return List.of();
 		}
-		return models.toArray(new IFeatureModel[models.size()]);
+		return List.copyOf(models); // decouple returned list from this table
 	}
 
-	public synchronized IFeatureModel[] get(String id) {
-		ArrayList<Idver> idvers = fId2idvers.get(id);
+	public synchronized List<IFeatureModel> getAllValidFeatures(String id) {
+		List<Idver> idvers = fId2idvers.get(id);
 		if (idvers == null) {
-			return NO_MODELS;
+			return List.of();
 		}
-		ArrayList<IFeatureModel> allModels = new ArrayList<>();
-		for (int i = 0; i < idvers.size(); i++) {
-			Idver idver = idvers.get(i);
-			ArrayList<IFeatureModel> models = fIdver2models.get(idver);
-			if (models == null) {
-				continue;
-			}
-			allModels.addAll(models);
-		}
-		return allModels.toArray(new IFeatureModel[allModels.size()]);
+		return idvers.stream().map(fIdver2models::get) //
+				.filter(Objects::nonNull).flatMap(List::stream) //
+				.filter(IFeatureModel::isValid).toList();
 	}
 
-	public synchronized IFeatureModel[] getAll() {
-		return getAllImpl();
-	}
-
-	private IFeatureModel[] getAllImpl() {
-		return fModel2idver.keySet().toArray(new IFeatureModel[fModel2idver.size()]);
+	public synchronized IFeatureModel[] getAllValidFeatures() {
+		return fModel2idver.keySet().stream().filter(IFeatureModel::isValid).toArray(IFeatureModel[]::new);
 	}
 
 	/**
@@ -165,28 +93,22 @@ class FeatureTable {
 		if (idver == null) {
 			return null;
 		}
-		ArrayList<IFeatureModel> models = fIdver2models.get(idver);
-		for (int i = 0; i < models.size(); i++) {
-			if (models.get(i) == model) {
-				models.remove(i);
-				break;
-			}
-		}
-		if (models.isEmpty()) {
-			fIdver2models.remove(idver);
-
-			ArrayList<Idver> idvers = fId2idvers.get(idver.getId());
-			for (int i = 0; i < idvers.size(); i++) {
-				if (idvers.get(i).equals(idver)) {
-					idvers.remove(i);
-					break;
-				}
-			}
-			if (idvers.isEmpty()) {
-				fId2idvers.remove(idver.getId());
-			}
+		if (removeValueFromMultimap(fIdver2models, idver, model)) {
+			removeValueFromMultimap(fId2idvers, idver.id(), idver);
 		}
 		return idver;
+	}
+
+	/**
+	 * Removes the given key-value mappings from the given multi-value map.
+	 *
+	 * @return true if the map contains no more value for the given key
+	 */
+	private static <K, V> boolean removeValueFromMultimap(Map<K, List<V>> map, K key, V value) {
+		return map.computeIfPresent(key, (k, values) -> {
+			values.remove(value);
+			return values.isEmpty() ? null : values;
+		}) == null;
 	}
 
 	/**
@@ -204,18 +126,10 @@ class FeatureTable {
 
 		fModel2idver.put(model, idver);
 
-		ArrayList<IFeatureModel> models = fIdver2models.get(idver);
-		if (models == null) {
-			models = new ArrayList<>(1);
-			fIdver2models.put(idver, models);
-		}
+		List<IFeatureModel> models = fIdver2models.computeIfAbsent(idver, iv -> new ArrayList<>(1));
 		models.add(model);
 
-		ArrayList<Idver> idvers = fId2idvers.get(id);
-		if (idvers == null) {
-			idvers = new ArrayList<>(1);
-			fId2idvers.put(id, idvers);
-		}
+		List<Idver> idvers = fId2idvers.computeIfAbsent(id, i -> new ArrayList<>(1));
 		idvers.add(idver);
 
 		return idver;
@@ -223,21 +137,13 @@ class FeatureTable {
 
 	@Override
 	public synchronized String toString() {
-		IFeatureModel[] models = getAllImpl();
-		StringBuilder buf = new StringBuilder(30 * models.length);
-		buf.append("["); //$NON-NLS-1$
-		for (int i = 0; i < models.length; i++) {
-			if (i > 0) {
-				buf.append(",  "); //$NON-NLS-1$
-			}
-			buf.append(get(models[i]));
-			buf.append("@"); //$NON-NLS-1$
-			buf.append(models[i].getFeature().getId());
-			buf.append("_"); //$NON-NLS-1$
-			buf.append(models[i].getFeature().getVersion());
+		StringJoiner joiner = new StringJoiner(", ", "[", "]"); //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
+		for (IFeatureModel model : fModel2idver.keySet()) {
+			IFeature feature = model.getFeature();
+			String str = get(model) + "@" + feature.getId() + "_" + feature.getVersion(); //$NON-NLS-1$ //$NON-NLS-2$
+			joiner.add(str);
 		}
-		buf.append("]"); //$NON-NLS-1$
-		return buf.toString();
+		return joiner.toString();
 	}
 
 }

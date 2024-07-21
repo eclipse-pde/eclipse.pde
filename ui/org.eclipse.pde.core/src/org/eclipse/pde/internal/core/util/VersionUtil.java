@@ -44,13 +44,6 @@ public class VersionUtil {
 		return Status.OK_STATUS;
 	}
 
-	public static boolean compare(String id1, String version1, String id2, String version2, int match) {
-		if (!(id1.equals(id2))) {
-			return false;
-		}
-		return compare(version1, version2, match);
-	}
-
 	public static boolean compare(String version1, String version2, int match) {
 		try {
 			Version v1 = Version.parseVersion(version1);
