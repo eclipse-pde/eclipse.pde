@@ -21,6 +21,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.pde.internal.core.util.VMUtil;
 import org.eclipse.pde.internal.launching.IPDEConstants;
 
 public class PDEMigrationDelegate implements ILaunchConfigurationMigrationDelegate {
@@ -51,7 +52,7 @@ public class PDEMigrationDelegate implements ILaunchConfigurationMigrationDelega
 		if (candidate.hasAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH)) {
 			String name = candidate.getAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, (String) null);
 			if (name != null) {
-				IVMInstall vm = VMHelper.getVMInstall(name);
+				IVMInstall vm = VMUtil.getVMInstall(name);
 				if (vm != null) {
 					IPath path = JavaRuntime.newJREContainerPath(vm);
 					candidate.setAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, path.toPortableString());

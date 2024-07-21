@@ -14,20 +14,19 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.util;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
@@ -35,23 +34,12 @@ import org.eclipse.osgi.util.NLS;
 
 public class VMUtil {
 
-	public static IVMInstall[] getAllVMInstances() {
-		ArrayList<IVMInstall> res = new ArrayList<>();
-		IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
-		for (IVMInstallType type : types) {
-			IVMInstall[] installs = type.getVMInstalls();
-			Collections.addAll(res, installs);
-		}
-		return res.toArray(new IVMInstall[res.size()]);
+	public static Stream<IVMInstall> getAllVMInstances() {
+		return Arrays.stream(JavaRuntime.getVMInstallTypes()).flatMap(type -> Arrays.stream(type.getVMInstalls()));
 	}
 
 	public static String[] getVMInstallNames() {
-		IVMInstall[] installs = getAllVMInstances();
-		String[] names = new String[installs.length];
-		for (int i = 0; i < installs.length; i++) {
-			names[i] = installs[i].getName();
-		}
-		return names;
+		return getAllVMInstances().map(IVMInstall::getName).toArray(String[]::new);
 	}
 
 	/**
@@ -77,11 +65,9 @@ public class VMUtil {
 
 	public static IVMInstall getVMInstall(String name) {
 		if (name != null) {
-			IVMInstall[] installs = getAllVMInstances();
-			for (IVMInstall install : installs) {
-				if (install.getName().equals(name)) {
-					return install;
-				}
+			Optional<IVMInstall> install = getAllVMInstances().filter(i -> i.getName().equals(name)).findFirst();
+			if (install.isPresent()) {
+				return install.get();
 			}
 		}
 		return JavaRuntime.getDefaultVMInstall();
@@ -114,20 +100,11 @@ public class VMUtil {
 			.thenComparing(Comparator.naturalOrder());
 
 	public static double getJavaTargetVersion(IExecutionEnvironment ee) {
-		return switch (ee.getId()) {
-		// The EE's handled explicitly have unexpected java targets.
-		// See https://github.com/eclipse-equinox/equinox/pull/655
-		case "J2SE-1.2" -> 1.2; //$NON-NLS-1$
-		case "J2SE-1.3" -> 1.3; //$NON-NLS-1$
-		case "J2SE-1.4" -> 1.4; //$NON-NLS-1$
-		default -> {
-			Properties properties = ee.getProfileProperties();
-			Object target = properties != null //
-					? properties.get(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM)
-					: null;
-			yield target instanceof String version ? Double.parseDouble(version) : 0.0;
-		}
-		};
+		Properties properties = ee.getProfileProperties();
+		Object target = properties != null //
+				? properties.get(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM)
+				: null;
+		return target instanceof String version ? Double.parseDouble(version) : 0.0;
 	}
 
 }
