@@ -42,7 +42,7 @@ public interface IRequiredBundleDescription {
 	VersionRange getVersion();
 
 	/** @deprecated Instead use {@link #getVersion()} */
-	@Deprecated(forRemoval = true, since = "4.19")
+	@Deprecated(forRemoval = true, since = "3.19 (removal in 2026-09 or later)")
 	default org.eclipse.osgi.service.resolver.VersionRange getVersionRange() {
 		VersionRange version = getVersion();
 		return version != null ? new org.eclipse.osgi.service.resolver.VersionRange(version.toString()) : null;

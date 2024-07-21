@@ -62,7 +62,7 @@ public interface IBundleProjectService {
 	/**
 	 * @deprecated Instead use {@link #newHost(String, VersionRange)}
 	 */
-	@Deprecated(forRemoval = true, since = "4.19")
+	@Deprecated(forRemoval = true, since = "3.19 (removal in 2026-09 or later)")
 	default IHostDescription newHost(String name, org.eclipse.osgi.service.resolver.VersionRange range) {
 		return newHost(name, (VersionRange) range);
 	}
@@ -82,7 +82,7 @@ public interface IBundleProjectService {
 	 * @deprecated Instead use
 	 *             {@link #newPackageImport(String, VersionRange, boolean)}
 	 */
-	@Deprecated(forRemoval = true, since = "4.19")
+	@Deprecated(forRemoval = true, since = "3.19 (removal in 2026-09 or later)")
 	default IPackageImportDescription newPackageImport(String name,
 			org.eclipse.osgi.service.resolver.VersionRange range, boolean optional) {
 		return newPackageImport(name, (VersionRange) range, optional);
@@ -116,7 +116,7 @@ public interface IBundleProjectService {
 	 * @deprecated Instead use
 	 *             {@link #newRequiredBundle(String, VersionRange, boolean, boolean)}
 	 */
-	@Deprecated(forRemoval = true, since = "4.19")
+	@Deprecated(forRemoval = true, since = "3.19 (removal in 2026-09 or later)")
 	default IRequiredBundleDescription newRequiredBundle(String name,
 			org.eclipse.osgi.service.resolver.VersionRange range, boolean optional, boolean export) {
 		return newRequiredBundle(name, (VersionRange) range, optional, export);
