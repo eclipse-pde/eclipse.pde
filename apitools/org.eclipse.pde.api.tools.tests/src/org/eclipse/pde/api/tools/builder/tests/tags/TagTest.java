@@ -170,7 +170,7 @@ public abstract class TagTest extends ApiBuilderTest {
 
 	@Override
 	protected String getTestingProjectName() {
-		return "tagproject"; //$NON-NLS-1$
+		return "java8tags"; //$NON-NLS-1$
 	}
 
 	/**

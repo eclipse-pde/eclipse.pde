@@ -164,7 +164,7 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 	public void testExecutionEnvironment() throws CoreException {
 		IApiTypeContainer bundleA = getTypeContainer("bundle.a"); //$NON-NLS-1$
 		assertArrayEquals("Unable to find BREE for bundle using 'Bundle-RequiredExecutionEvironment'", //$NON-NLS-1$
-				new String[] { "J2SE-1.5" }, bundleA.getApiComponent().getExecutionEnvironments()); //$NON-NLS-1$
+				new String[] { "JavaSE-1.8" }, bundleA.getApiComponent().getExecutionEnvironments()); //$NON-NLS-1$
 
 		IApiTypeContainer bundleB = getTypeContainer("bundle.b"); //$NON-NLS-1$
 		assertArrayEquals("Unable to find BREE for bundle using 'Require-Capability'", //$NON-NLS-1$

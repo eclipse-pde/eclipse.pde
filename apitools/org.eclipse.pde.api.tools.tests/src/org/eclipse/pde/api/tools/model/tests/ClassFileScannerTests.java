@@ -55,8 +55,8 @@ public class ClassFileScannerTests extends ScannerTest {
 		String[] sourceFilePaths = new String[] { ROOT_PATH.toOSString() };
 		result &= TestSuiteHelper.compile(sourceFilePaths, WORKSPACE_ROOT.toOSString(), TestSuiteHelper.getCompilerOptions());
 		assertTrue("working directory should compile", result); //$NON-NLS-1$
-		result &= TestSuiteHelper.compile(ROOT_PATH.append("Test12.java").toOSString(), WORKSPACE_ROOT.toOSString(), new String[] {"-1.4", "-preserveAllLocals", "-nowarn" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		assertTrue("Test12 should compile to 1.4", result); //$NON-NLS-1$
+		result &= TestSuiteHelper.compile(ROOT_PATH.append("Test12.java").toOSString(), WORKSPACE_ROOT.toOSString(), new String[] {"-1.8", "-preserveAllLocals", "-nowarn" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		assertTrue("Test12 should compile to 1.8", result); //$NON-NLS-1$
 		return result;
 	}
 
