@@ -1068,9 +1068,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printProperty(PROPERTY_PREREQ_COMPILE_LOG, Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + "/prereqErrors.log"); //$NON-NLS-1$
 
 		if (javacSource == null)
-			script.printProperty(IXMLConstants.PROPERTY_JAVAC_SOURCE, "1.3"); //$NON-NLS-1$
+			script.printProperty(IXMLConstants.PROPERTY_JAVAC_SOURCE, "1.8"); //$NON-NLS-1$
 		if (javacTarget == null)
-			script.printProperty(IXMLConstants.PROPERTY_JAVAC_TARGET, "1.2"); //$NON-NLS-1$  
+			script.printProperty(IXMLConstants.PROPERTY_JAVAC_TARGET, "1.8"); //$NON-NLS-1$  
 		if (bootClasspath == null) {
 			script.println("<condition property=\"dir_bootclasspath\" value=\"${java.home}/../Classes\">");//$NON-NLS-1$  
 			script.println("\t<and>"); //$NON-NLS-1$
