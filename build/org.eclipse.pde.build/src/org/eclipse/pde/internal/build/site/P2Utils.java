@@ -16,10 +16,8 @@ package org.eclipse.pde.internal.build.site;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -45,7 +43,7 @@ public class P2Utils {
 
 	/**
 	 * Returns bundles defined by the 'bundles.info' file in the
-	 * specified location, or <code>null</code> if none. The "bundles.info" file
+	 * specified location, or an empty list if none. The "bundles.info" file
 	 * is assumed to be at a fixed relative location to the specified file.  This 
 	 * method will also look for a "source.info".  If available, any source
 	 * bundles found will also be added to the returned list.
@@ -54,7 +52,7 @@ public class P2Utils {
 	 * @return URLs of all bundles in the installation or <code>null</code> if not able
 	 * 	to locate a bundles.info
 	 */
-	public static URL[] readBundlesTxt(String platformHome) {
+	public static List<File> readBundlesTxt(String platformHome) {
 		SimpleConfiguratorManipulator manipulator = BundleHelper.getDefault().acquireService(SimpleConfiguratorManipulator.class);
 
 		File root = new File(platformHome);
@@ -72,22 +70,7 @@ public class P2Utils {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		URL[] bundles = null;
-		if (infos.size() > 0) {
-			bundles = new URL[infos.size()];
-			for (int i = 0; i < bundles.length; i++) {
-				try {
-					bundles[i] = new File(infos.get(i).getLocation()).toURL();
-				} catch (MalformedURLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		} else {
-			bundles = new URL[0];
-		}
-		return bundles;
+		return infos.stream().map(BundleInfo::getLocation).map(File::new).toList();
 	}
 
 	/**
