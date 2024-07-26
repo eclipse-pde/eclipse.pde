@@ -18,6 +18,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Properties;
 import java.util.jar.JarFile;
 
@@ -27,19 +28,18 @@ import org.eclipse.pde.build.Constants;
 import org.eclipse.pde.internal.build.AbstractScriptGenerator;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.build.PDEUIStateWrapper;
-import org.eclipse.pde.internal.build.Utils;
 
 public class BuildTimeSiteContentProvider implements IPDEBuildConstants {
 	private final String installedBaseURL;
-	private final String[] urls;
+	private final List<File> files;
 	private final PDEUIStateWrapper pdeUIState;
 	private BuildTimeSite site;
 	private boolean filterP2Base = false;
 
-	public BuildTimeSiteContentProvider(String[] urls, String installedBaseURL, PDEUIStateWrapper initialState) {
+	public BuildTimeSiteContentProvider(List<File> urls, String installedBaseURL, PDEUIStateWrapper initialState) {
 		//super(null);
 		this.installedBaseURL = installedBaseURL;
-		this.urls = urls;
+		this.files = urls;
 		this.pdeUIState = initialState;
 	}
 
@@ -52,7 +52,7 @@ public class BuildTimeSiteContentProvider implements IPDEBuildConstants {
 	}
 
 	public Collection<File> getPluginPaths() {
-		Collection<File> pluginsToCompile = findPluginXML(Utils.asFile(urls));
+		Collection<File> pluginsToCompile = findPluginXML(files);
 		if (installedBaseURL != null) {
 			pluginsToCompile.addAll(Arrays.asList(PluginPathFinder.getPluginPaths(installedBaseURL, filterP2Base)));
 		}
@@ -64,7 +64,7 @@ public class BuildTimeSiteContentProvider implements IPDEBuildConstants {
 	}
 
 	//For every entry, return all the children of this entry is it is named plugins, otherwise return the entry itself  
-	private Collection<File> findPluginXML(File[] location) {
+	private Collection<File> findPluginXML(List<File> location) {
 		Collection<File> collectedElements = new ArrayList<>(10);
 		for (File element : location) {
 			File f = new File(element, DEFAULT_PLUGIN_LOCATION);

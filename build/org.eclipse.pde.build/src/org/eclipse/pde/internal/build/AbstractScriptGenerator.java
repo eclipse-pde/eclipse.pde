@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -84,7 +85,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	private static PDEUIStateWrapper pdeUIState;
 
 	/** Location of the plug-ins and fragments. */
-	protected String[] sitePaths;
+	protected List<File> sitePaths;
 	protected String[] pluginPath;
 	protected BuildTimeSiteFactory siteFactory;
 
@@ -343,17 +344,14 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	 * Method getPaths.  These are the paths used for the BuildTimeSite
 	 * @return URL[]
 	 */
-	private String[] getPaths() {
+	private List<File> getPaths() {
 		if (sitePaths == null) {
 			if (pluginPath != null) {
-				sitePaths = new String[pluginPath.length + 1];
-				System.arraycopy(pluginPath, 0, sitePaths, 0, pluginPath.length);
-				sitePaths[sitePaths.length - 1] = workingDirectory;
+				sitePaths = Stream.concat(Arrays.stream(pluginPath), Stream.of(workingDirectory)).map(File::new).toList();
 			} else {
-				sitePaths = new String[] {workingDirectory};
+				sitePaths = List.of(new File(workingDirectory));
 			}
 		}
-
 		return sitePaths;
 	}
 
