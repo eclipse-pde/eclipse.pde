@@ -54,7 +54,7 @@ public class BuildTimeSiteContentProvider implements IPDEBuildConstants {
 	public Collection<File> getPluginPaths() {
 		Collection<File> pluginsToCompile = findPluginXML(files);
 		if (installedBaseURL != null) {
-			pluginsToCompile.addAll(Arrays.asList(PluginPathFinder.getPluginPaths(installedBaseURL, filterP2Base)));
+			pluginsToCompile.addAll(PluginPathFinder.getPluginPaths(installedBaseURL, filterP2Base));
 		}
 		return pluginsToCompile;
 	}
