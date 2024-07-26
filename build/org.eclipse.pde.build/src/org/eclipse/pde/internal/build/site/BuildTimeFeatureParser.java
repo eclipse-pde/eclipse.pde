@@ -17,7 +17,8 @@ package org.eclipse.pde.internal.build.site;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.eclipse.equinox.internal.p2.publisher.eclipse.FeatureManifestParser;
 import org.eclipse.equinox.p2.publisher.eclipse.Feature;
@@ -30,10 +31,9 @@ public class BuildTimeFeatureParser extends FeatureManifestParser {
 		return new BuildTimeFeature(id, version);
 	}
 
-	public Feature parse(URL featureURL) throws SAXException, IOException {
-		InputStream in = featureURL.openStream();
-		try (in) {
-			return super.parse(in, featureURL);
+	public Feature parse(Path featurePath) throws SAXException, IOException {
+		try (InputStream in = Files.newInputStream(featurePath)) {
+			return super.parse(in, featurePath.toUri().toURL());
 		}
 	}
 }

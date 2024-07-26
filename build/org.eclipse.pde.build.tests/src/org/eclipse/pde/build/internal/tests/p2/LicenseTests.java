@@ -118,10 +118,10 @@ public class LicenseTests extends P2TestCase {
 		BuildTimeFeatureFactory factory = new BuildTimeFeatureFactory();
 
 		IFile licenseFeatureFile = buildFolder.getFile("features/L1/feature.xml");
-		BuildTimeFeature licenseFeature = factory.parseBuildFeature(licenseFeatureFile.getLocationURI().toURL());
+		BuildTimeFeature licenseFeature = factory.parseBuildFeature(licenseFeatureFile.getLocation().toPath());
 
 		IFile originalFeatureFile = buildFolder.getFile("features/F1/feature.xml");
-		BuildTimeFeature originalFeature = factory.parseBuildFeature(originalFeatureFile.getLocationURI().toURL());
+		BuildTimeFeature originalFeature = factory.parseBuildFeature(originalFeatureFile.getLocation().toPath());
 
 		assertEquals(licenseFeature.getLicenseURL(), URIUtil.toUnencodedString(actualLicense.getLocation()));
 		assertEquals(licenseFeature.getLicense(), actualLicense.getBody());
@@ -130,7 +130,7 @@ public class LicenseTests extends P2TestCase {
 		IFile actualFeatureFile = buildFolder.getFile("checkFeature.xml");
 		Utils.extractFromZip(buildFolder, "I.TestBuild/F1-TestBuild.zip", "eclipse/features/F1_1.0.0/feature.xml",
 				actualFeatureFile);
-		BuildTimeFeature actualFeature = factory.parseBuildFeature(actualFeatureFile.getLocationURI().toURL());
+		BuildTimeFeature actualFeature = factory.parseBuildFeature(actualFeatureFile.getLocation().toPath());
 
 		assertNotNull(actualFeature.getLicense());
 		assertEquals(licenseFeature.getLicense(), actualFeature.getLicense());
@@ -435,13 +435,13 @@ public class LicenseTests extends P2TestCase {
 		IFile actualFeatureFile = buildFolder.getFile("checkFeature.xml");
 		assertTrue(Utils.extractFromZip(buildFolder, "I.TestBuild/F1-TestBuild.zip",
 				"eclipse/features/F1_1.0.0/feature.xml", actualFeatureFile));
-		BuildTimeFeature actualFeature = factory.parseBuildFeature(actualFeatureFile.getLocationURI().toURL());
+		BuildTimeFeature actualFeature = factory.parseBuildFeature(actualFeatureFile.getLocation().toPath());
 
 		IFile licenseFeatureFile = buildFolder.getFile("features/L1/feature.xml");
-		BuildTimeFeature licenseFeature = factory.parseBuildFeature(licenseFeatureFile.getLocationURI().toURL());
+		BuildTimeFeature licenseFeature = factory.parseBuildFeature(licenseFeatureFile.getLocation().toPath());
 
 		IFile originalFeatureFile = buildFolder.getFile("features/F1/feature.xml");
-		BuildTimeFeature originalFeature = factory.parseBuildFeature(originalFeatureFile.getLocationURI().toURL());
+		BuildTimeFeature originalFeature = factory.parseBuildFeature(originalFeatureFile.getLocation().toPath());
 
 		assertNotNull(errorMessage + "license was null", actualFeature.getLicense());
 		assertEquals(errorMessage + "license text not equal", licenseFeature.getLicense(), actualFeature.getLicense());
@@ -529,7 +529,7 @@ public class LicenseTests extends P2TestCase {
 		runAntScript(buildXml.getLocation().toOSString(), new String[] { "test" },
 				buildFolder.getLocation().toOSString(), null);
 		BuildTimeFeature feature = new BuildTimeFeatureFactory()
-				.parseBuildFeature(featureFolder.getFile("feature.xml").getLocationURI().toURL());
+				.parseBuildFeature(featureFolder.getFile("feature.xml").getLocation().toPath());
 
 		assertEquals(feature.getLicense().trim(), "This is legal stuff");
 	}

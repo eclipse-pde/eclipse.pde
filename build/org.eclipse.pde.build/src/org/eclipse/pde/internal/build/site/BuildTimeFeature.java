@@ -14,12 +14,9 @@
 package org.eclipse.pde.internal.build.site;
 
 import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
-import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.equinox.p2.publisher.eclipse.Feature;
 import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;
 import org.eclipse.pde.build.Constants;
@@ -52,7 +49,7 @@ public class BuildTimeFeature extends Feature {
 	private int contextQualifierLength = -1;
 	private BuildTimeSiteContentProvider contentProvider = null;
 	private BuildTimeSite site = null;
-	private URL url = null;
+	private Path path = null;
 	private String rootLocation = null;
 
 	public FeatureEntry[] getRawIncludedFeatureReferences() {
@@ -156,12 +153,12 @@ public class BuildTimeFeature extends Feature {
 		return contentProvider;
 	}
 
-	public URL getURL() {
-		return url;
+	public Path getPath() {
+		return path;
 	}
 
-	public void setURL(URL url) {
-		this.url = url;
+	public void setPath(Path path) {
+		this.path = path;
 	}
 
 	/**
@@ -169,18 +166,15 @@ public class BuildTimeFeature extends Feature {
 	 */
 	public String getRootLocation() {
 		if (rootLocation == null) {
-			URL location = getURL();
-			if (location == null)
+			Path location = getPath();
+			if (location == null) {
 				return null;
-			try {
-				URI locationURI = URIUtil.toURI(location);
-				rootLocation = URIUtil.toFile(locationURI).getAbsolutePath();
-			} catch (URISyntaxException e) {
-				rootLocation = location.getPath();
 			}
-			int i = rootLocation.lastIndexOf(Constants.FEATURE_FILENAME_DESCRIPTOR);
-			if (i != -1)
-				rootLocation = rootLocation.substring(0, i);
+			location = location.toAbsolutePath();
+			if (location.endsWith(Constants.FEATURE_FILENAME_DESCRIPTOR)) {
+				location = location.getParent();
+			}
+			rootLocation = location.toString() + File.separator;
 		}
 		return rootLocation;
 	}
@@ -193,5 +187,13 @@ public class BuildTimeFeature extends Feature {
 					return entry;
 		}
 		return null;
+	}
+
+	private static final Path FEATURE_XML_PATH = Path.of(FEATURE_XML);
+
+	static Path ensureEndsWithFeatureXml(Path path) {
+		return path != null && !path.endsWith(BuildTimeFeature.FEATURE_XML_PATH) //
+				? path.resolve(BuildTimeFeature.FEATURE_XML_PATH)
+				: path;
 	}
 }

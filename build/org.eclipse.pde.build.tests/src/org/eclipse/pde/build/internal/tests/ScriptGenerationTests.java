@@ -290,7 +290,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertResourceFile(buildFolder, "features/sdk/feature.xml");
 		IFile feature = buildFolder.getFile("features/sdk/feature.xml");
 		BuildTimeFeatureFactory factory = new BuildTimeFeatureFactory();
-		BuildTimeFeature model = factory.parseBuildFeature(feature.getLocationURI().toURL());
+		BuildTimeFeature model = factory.parseBuildFeature(feature.getLocation().toPath());
 
 		FeatureEntry[] included = model.getIncludedFeatureReferences();
 		assertEquals(included.length, 3);
@@ -485,7 +485,7 @@ public class ScriptGenerationTests extends PDETestCase {
 				buildFolder.getLocation().toOSString(), null);
 
 		BuildTimeFeatureFactory factory = new BuildTimeFeatureFactory();
-		BuildTimeFeature feature = factory.parseBuildFeature(featureXML.getLocationURI().toURL());
+		BuildTimeFeature feature = factory.parseBuildFeature(featureXML.getLocation().toPath());
 		FeatureEntry[] pluginEntryModels = feature.getPluginEntries();
 		assertEquals(pluginEntryModels[0].getId(), "foo");
 		assertEquals(pluginEntryModels[0].getVersion(), "1.0.0.vA");
@@ -532,7 +532,7 @@ public class ScriptGenerationTests extends PDETestCase {
 
 		BuildTimeFeatureFactory factory = new BuildTimeFeatureFactory();
 		try {
-			factory.parseBuildFeature(featureXML.getLocationURI().toURL());
+			factory.parseBuildFeature(featureXML.getLocation().toPath());
 		} catch (CoreException e) {
 			assertTrue(e.getStatus().toString().indexOf(Messages.feature_parse_emptyRequires) > 0);
 			return;

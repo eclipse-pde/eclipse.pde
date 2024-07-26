@@ -189,7 +189,7 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 		root = root.append(element);
 		try {
 			BuildTimeFeatureFactory factory = new BuildTimeFeatureFactory();
-			return factory.createFeature(root.toFile().toURL(), null);
+			return factory.createFeature(root.toPath(), null);
 		} catch (Exception e) {
 			String message = NLS.bind(TaskMessages.error_creatingFeature, element);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, e));

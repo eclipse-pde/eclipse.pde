@@ -13,8 +13,6 @@
 package org.eclipse.pde.internal.build.site;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -25,7 +23,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.build.Constants;
-import org.eclipse.pde.internal.build.BundleHelper;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.build.Messages;
 import org.eclipse.pde.internal.build.PDEUIStateWrapper;
@@ -96,23 +93,13 @@ public class BuildTimeSiteFactory /*extends BaseSiteFactory*/ implements IPDEBui
 
 		}
 
-		URL featureURL;
-		FeatureReference featureRef;
-
 		for (File featureXML : featureXMLs) {
 			if (featureXML.exists()) {
-				// Here we could not use toURL() on currentFeatureDir, because the URL has a slash after the colons (file:/c:/foo) whereas the plugins don't
-				// have it (file:d:/eclipse/plugins) and this causes problems later to compare URLs... and compute relative paths
-				try {
-					featureURL = new URL("file:" + featureXML.getAbsolutePath()); //$NON-NLS-1$
-					featureRef = createFeatureReferenceModel();
-					featureRef.setSiteModel(site);
-					featureRef.setURLString(featureURL.toExternalForm());
-					//featureRef.setType(BuildTimeFeatureFactory.BUILDTIME_FEATURE_FACTORY_ID);
-					site.addFeatureReferenceModel(featureRef);
-				} catch (MalformedURLException e) {
-					BundleHelper.getDefault().getLog().log(new Status(IStatus.WARNING, PI_PDEBUILD, WARNING_MISSING_SOURCE, NLS.bind(Messages.warning_cannotLocateSource, featureXML.getAbsolutePath()), e));
-				}
+				FeatureReference featureRef = createFeatureReferenceModel();
+				featureRef.setSiteModel(site);
+				featureRef.setPath(featureXML.toPath().toAbsolutePath());
+				//featureRef.setType(BuildTimeFeatureFactory.BUILDTIME_FEATURE_FACTORY_ID);
+				site.addFeatureReferenceModel(featureRef);
 			}
 		}
 		BuildTimeSiteContentProvider contentProvider = new BuildTimeSiteContentProvider(sitePaths, installedBaseURL, pdeUIState);

@@ -490,7 +490,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			File featuresFolder = new File(root, DEFAULT_FEATURE_LOCATION);
 			File featureLocation = new File(featuresFolder, elementName);
 			try {
-				feature = factory.createFeature(featureLocation.toURL(), null);
+				feature = factory.createFeature(featureLocation.toPath(), null);
 				featureProperties = new Properties();
 				try (InputStream featureStream = new BufferedInputStream(new FileInputStream(new File(featureLocation, PROPERTIES_FILE)))) {
 					featureProperties.load(featureStream);
@@ -555,8 +555,8 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		}
 		try {
 			BuildTimeFeatureFactory factory = BuildTimeFeatureFactory.getInstance();
-			File featureFolder = new File(destination.toString());
-			feature = factory.createFeature(featureFolder.toURL(), null);
+			File featureFolder = destination.toFile();
+			feature = factory.createFeature(featureFolder.toPath(), null);
 
 			//We only delete here, so if an exception is thrown the user can still see the retrieve.xml 
 			target.delete();
