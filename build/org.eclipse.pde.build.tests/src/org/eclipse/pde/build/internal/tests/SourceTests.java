@@ -75,7 +75,7 @@ public class SourceTests extends PDETestCase {
 		IFolder jdtSource = buildFolder.getFolder("features").getFolder("jdt.source");
 		IFile featureXML = jdtSource.getFile("feature.xml");
 		BuildTimeFeatureFactory factory = new BuildTimeFeatureFactory();
-		BuildTimeFeature feature = factory.parseBuildFeature(featureXML.getLocationURI().toURL());
+		BuildTimeFeature feature = factory.parseBuildFeature(featureXML.getLocation().toPath());
 		assertTrue(feature.getDescription() != null);
 	}
 
@@ -175,7 +175,7 @@ public class SourceTests extends PDETestCase {
 		IFile feature = buildFolder.getFile("features/a.feature.source/feature.xml");
 
 		BuildTimeFeatureFactory factory = new BuildTimeFeatureFactory();
-		factory.parseBuildFeature(feature.getLocationURI().toURL());
+		factory.parseBuildFeature(feature.getLocation().toPath());
 	}
 
 	// test that source can come before the feature it is based on
@@ -302,7 +302,7 @@ public class SourceTests extends PDETestCase {
 		IFile featureFile = buildFolder.getFile("features/source/feature.xml");
 
 		BuildTimeFeatureFactory factory = new BuildTimeFeatureFactory();
-		BuildTimeFeature feature = factory.parseBuildFeature(featureFile.getLocationURI().toURL());
+		BuildTimeFeature feature = factory.parseBuildFeature(featureFile.getLocation().toPath());
 		FeatureEntry[] entries = feature.getRawIncludedFeatureReferences();
 		assertTrue(entries.length == 1);
 		assertEquals(entries[0].getId(), "org.eclipse.rcp");
@@ -374,7 +374,7 @@ public class SourceTests extends PDETestCase {
 
 		IFile feature = buildFolder.getFile("features/rcp.source/feature.xml");
 		BuildTimeFeatureFactory factory = new BuildTimeFeatureFactory();
-		BuildTimeFeature model = factory.parseBuildFeature(feature.getLocationURI().toURL());
+		BuildTimeFeature model = factory.parseBuildFeature(feature.getLocation().toPath());
 
 		FeatureEntry[] included = model.getPluginEntries();
 		assertEquals(included.length, 2);
@@ -661,7 +661,7 @@ public class SourceTests extends PDETestCase {
 		IFile feature = buildFolder.getFile("tmp/eclipse/features/f.source_1.0.0/feature.xml");
 		assertResourceFile(feature);
 		BuildTimeFeatureFactory factory = new BuildTimeFeatureFactory();
-		BuildTimeFeature model = factory.parseBuildFeature(feature.getLocationURI().toURL());
+		BuildTimeFeature model = factory.parseBuildFeature(feature.getLocation().toPath());
 		FeatureEntry[] included = model.getPluginEntries();
 		assertEquals(1, included.length);
 		for (FeatureEntry element : included) {

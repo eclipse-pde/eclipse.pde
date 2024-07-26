@@ -13,8 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.site.compatibility;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.nio.file.Path;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.equinox.p2.publisher.eclipse.Feature;
@@ -23,39 +22,31 @@ import org.eclipse.pde.internal.build.site.BuildTimeSite;
 
 public class FeatureReference {
 	private BuildTimeSite site;
-	private String urlString;
-	private URL url;
+	private Path path;
 	private Feature feature;
 
 	public void setSiteModel(BuildTimeSite site) {
 		this.site = site;
 	}
 
-	public void setURLString(String externalForm) {
-		urlString = externalForm;
+	public void setPath(Path path) {
+		this.path = path;
 	}
 
 	public Feature getFeature() throws CoreException {
-		if (feature != null)
+		if (feature != null) {
 			return feature;
-
-		if (site != null)
-			feature = site.createFeature(getURL());
-		else {
+		}
+		if (site != null) {
+			feature = site.createFeature(path);
+		} else {
 			BuildTimeFeatureFactory factory = BuildTimeFeatureFactory.getInstance();
-			feature = factory.createFeature(getURL(), null);
+			feature = factory.createFeature(path, null);
 		}
 		return feature;
 	}
 
-	public URL getURL() {
-		if (url == null)
-			try {
-				url = new URL(urlString);
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		return url;
+	public Path getPath() {
+		return path;
 	}
 }
