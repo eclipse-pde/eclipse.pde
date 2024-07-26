@@ -18,8 +18,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -70,7 +69,7 @@ import org.osgi.framework.VersionRange;
 public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLConstants {
 	private final BuildTimeFeatureFactory factory = new BuildTimeFeatureFactory();
 	private final Map<String, Set<BuildTimeFeature>> featureCache = new HashMap<>();
-	private final Map<URL, BuildTimeFeature> featureURLCache = new HashMap<>();
+	private final Map<Path, BuildTimeFeature> featureFileCache = new HashMap<>();
 	private List<FeatureReference> featureReferences;
 	private BuildTimeSiteContentProvider contentProvider;
 	private boolean featuresResolved = false;
@@ -341,7 +340,7 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 				feature2.getFeature();
 			} catch (CoreException e) {
 				// just log the exception, but do not re-throw it - let other features to be resolved 
-				String message = NLS.bind(Messages.exception_featureParse, feature2.getURL());
+				String message = NLS.bind(Messages.exception_featureParse, feature2.getPath());
 				IStatus status = new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, e);
 				BundleHelper.getDefault().getLog().log(status);
 			}
@@ -350,23 +349,11 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 	}
 
 	public void addFeatureReferenceModel(File featureXML) {
-		URL featureURL;
-		FeatureReference featureRef;
 		if (featureXML.exists()) {
-			// Here we could not use toURL() on currentFeatureDir, because the
-			// URL has a slash after the colons (file:/c:/foo) whereas the
-			// plugins don't
-			// have it (file:d:/eclipse/plugins) and this causes problems later
-			// to compare URLs... and compute relative paths
-			try {
-				featureURL = new URL("file:" + featureXML.getAbsolutePath() + '/'); //$NON-NLS-1$
-				featureRef = new FeatureReference();
-				featureRef.setSiteModel(this);
-				featureRef.setURLString(featureURL.toExternalForm());
-				addFeatureReferenceModel(featureRef);
-			} catch (MalformedURLException e) {
-				BundleHelper.getDefault().getLog().log(new Status(IStatus.WARNING, PI_PDEBUILD, WARNING_MISSING_SOURCE, NLS.bind(Messages.warning_cannotLocateSource, featureXML.getAbsolutePath()), e));
-			}
+			FeatureReference featureRef = new FeatureReference();
+			featureRef.setSiteModel(this);
+			featureRef.setPath(featureXML.toPath().toAbsolutePath());
+			addFeatureReferenceModel(featureRef);
 		}
 	}
 
@@ -475,14 +462,15 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 		// TODO Auto-generated method stub
 	}
 
-	public Feature createFeature(URL url) throws CoreException {
-		BuildTimeFeature feature = featureURLCache.get(url);
-		if (feature != null)
+	public Feature createFeature(Path path) throws CoreException {
+		path = BuildTimeFeature.ensureEndsWithFeatureXml(path);
+		BuildTimeFeature feature = featureFileCache.get(path);
+		if (feature != null) {
 			return feature;
-
-		feature = factory.createFeature(url, this);
+		}
+		feature = factory.createFeature(path, this);
 		feature.setFeatureContentProvider(getSiteContentProvider());
-		featureURLCache.put(url, feature);
+		featureFileCache.put(path, feature);
 
 		if (featureCache.containsKey(feature.getId())) {
 			Set<BuildTimeFeature> set = featureCache.get(feature.getId());

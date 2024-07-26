@@ -309,7 +309,7 @@ public class PublishingTests extends P2TestCase {
 		assertFalse(hasZipped);
 
 		BuildTimeFeatureFactory factory = new BuildTimeFeatureFactory();
-		BuildTimeFeature model = factory.parseBuildFeature(featureXML.getLocationURI().toURL());
+		BuildTimeFeature model = factory.parseBuildFeature(featureXML.getLocation().toPath());
 		assertEquals("1.0.0.12345", model.getVersion());
 		assertEquals("1.0.0.12345", model.getPluginEntries()[0].getVersion());
 	}

@@ -80,8 +80,7 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 
 	private String getFinalName(BuildTimeFeature feature) {
 		if (!AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER)) {
-			IPath featurePath = IPath.fromOSString(feature.getURL().getPath());
-			return featurePath.segment(featurePath.segmentCount() - 2);
+			return feature.getPath().getParent().getFileName().toString();
 		}
 		return feature.getId() + "_" + feature.getVersion(); //$NON-NLS-1$
 	}
