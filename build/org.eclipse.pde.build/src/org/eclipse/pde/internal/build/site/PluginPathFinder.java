@@ -16,7 +16,6 @@ package org.eclipse.pde.internal.build.site;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,7 +24,6 @@ import java.util.Properties;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
-import org.eclipse.pde.internal.build.Utils;
 
 public class PluginPathFinder {
 	private static final String DROPINS = "dropins"; //$NON-NLS-1$
@@ -66,8 +64,8 @@ public class PluginPathFinder {
 	 * @param features false for plugin sites, true for feature sites
 	 * @return array of ".../plugins" or ".../features" Files
 	 */
-	private static File[] getSites(String platformHome, boolean features) {
-		ArrayList<File> sites = new ArrayList<>();
+	private static List<File> getSites(String platformHome, boolean features) {
+		List<File> sites = new ArrayList<>();
 
 		File file = new File(platformHome, features ? IPDEBuildConstants.DEFAULT_FEATURE_LOCATION : IPDEBuildConstants.DEFAULT_PLUGIN_LOCATION);
 		if (!features && !file.exists())
@@ -84,7 +82,7 @@ public class PluginPathFinder {
 				}
 			}
 		}
-		return sites.toArray(new File[sites.size()]);
+		return sites;
 	}
 
 	private static List<File> getDropins(String platformHome, boolean features) {
@@ -132,41 +130,37 @@ public class PluginPathFinder {
 			}
 		}
 
-		results.addAll(scanLocations(sites.toArray(new File[sites.size()])));
+		results.addAll(scanLocations(sites));
 		return results;
 	}
 
-	public static File[] getFeaturePaths(String platformHome) {
+	public static List<File> getFeaturePaths(String platformHome) {
 		return getPaths(platformHome, true, false);
 	}
 
-	public static File[] getPluginPaths(String platformHome, boolean filterP2Base) {
+	public static List<File> getPluginPaths(String platformHome, boolean filterP2Base) {
 		return getPaths(platformHome, false, filterP2Base);
 	}
 
-	public static File[] getPluginPaths(String platformHome) {
-		return getPaths(platformHome, false, false);
-	}
-
-	public static File[] getPaths(String platformHome, boolean features, boolean filterP2Base) {
+	public static List<File> getPaths(String platformHome, boolean features, boolean filterP2Base) {
 
 		if (filterP2Base) {
-			URL[] urls = P2Utils.readBundlesTxt(platformHome);
-			if (urls != null && urls.length > 0) {
-				return Utils.asFile(urls);
+			List<File> files = P2Utils.readBundlesTxt(platformHome);
+			if (files != null && !files.isEmpty()) {
+				return files;
 			}
 		}
 
 		List<File> list = scanLocations(getSites(platformHome, features));
 		list.addAll(getDropins(platformHome, features));
-		return Utils.asFile(list);
+		return list;
 	}
 
 	/**
 	 * Scan given plugin/feature directories or jars for existence
 	 * @return URLs to plugins/features
 	 */
-	private static List<File> scanLocations(File[] sites) {
+	private static List<File> scanLocations(List<File> sites) {
 		ArrayList<File> result = new ArrayList<>();
 		for (File site : sites) {
 			if (site == null || !site.exists())

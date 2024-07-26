@@ -87,7 +87,7 @@ public class BuildTimeSiteFactory /*extends BaseSiteFactory*/ implements IPDEBui
 				featureXMLs.addAll(installedFeatures);
 
 			// extract features from platform.xml
-			File[] featureDirectories = PluginPathFinder.getFeaturePaths(installedBaseURL);
+			List<File> featureDirectories = PluginPathFinder.getFeaturePaths(installedBaseURL);
 			for (File element : featureDirectories) {
 				File featureXML = new File(element, Constants.FEATURE_FILENAME_DESCRIPTOR);
 				if (featureXML.exists())

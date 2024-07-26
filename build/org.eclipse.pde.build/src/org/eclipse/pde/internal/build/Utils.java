@@ -20,8 +20,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -258,72 +256,6 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	}
 
 	/**
-	 * Converts an array of strings into an array of URLs.
-	 * 
-	 * @return URL[]
-	 */
-	public static URL[] asURL(String[] target) throws CoreException {
-		if (target == null)
-			return null;
-		try {
-			URL[] result = new URL[target.length];
-			for (int i = 0; i < target.length; i++)
-				result[i] = new URL(target[i]);
-			return result;
-		} catch (MalformedURLException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_MALFORMED_URL, e.getMessage(), e));
-		}
-	}
-
-	public static URL[] asURL(Collection<File> target) throws CoreException {
-		if (target == null)
-			return null;
-		try {
-			URL[] result = new URL[target.size()];
-			int i = 0;
-			for (File file : target) {
-				result[i++] = file.toURL();
-			}
-			return result;
-		} catch (MalformedURLException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_MALFORMED_URL, e.getMessage(), e));
-		}
-	}
-
-	public static File[] asFile(String[] target) {
-		if (target == null)
-			return new File[0];
-		File[] result = new File[target.length];
-		for (int i = 0; i < result.length; i++) {
-			result[i] = new File(target[i]);
-		}
-		return result;
-	}
-
-	public static File[] asFile(URL[] target) {
-		if (target == null)
-			return new File[0];
-		File[] result = new File[target.length];
-		for (int i = 0; i < result.length; i++) {
-			result[i] = new File(target[i].getFile());
-		}
-		return result;
-	}
-
-	public static File[] asFile(Collection<?> collection) {
-		if (collection.size() == 0)
-			return new File[0];
-		Object first = collection.iterator().next();
-		if (first instanceof String)
-			return asFile(collection.toArray(new String[collection.size()]));
-		else if (first instanceof URL)
-			return asFile(collection.toArray(new URL[collection.size()]));
-		else if (first instanceof File)
-			return collection.toArray(new File[collection.size()]);
-		throw new IllegalArgumentException();
-	}
-
-	/**
 	 * Return a string which is a concatination of each member of the given
 	 * collection, separated by the given separator.
 	 * 
@@ -396,19 +328,13 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	}
 
 	static public void copyFile(String src, String dest) throws IOException {
-		File source = new File(src);
-		if (!source.exists())
+		Path source = Path.of(src);
+		if (!Files.isRegularFile(source)) {
 			return;
-		File destination = new File(dest);
-		File destDir = destination.getParentFile();
-		if ((!destDir.exists() && !destDir.mkdirs()) || destDir.isFile())
-			return; //we will fail trying to create the file, TODO log warning/error
-
-		copy(source, destination);
-	}
-
-	public static void copy(File source, File destination) throws IOException {
-		org.eclipse.pde.internal.publishing.Utils.copy(source, destination);
+		}
+		Path destination = Path.of(dest);
+		Files.createDirectories(destination.getParent());
+		Files.copy(source, destination);
 	}
 
 	public static void writeProperties(Properties properites, File outputFile, String comment) throws IOException {
