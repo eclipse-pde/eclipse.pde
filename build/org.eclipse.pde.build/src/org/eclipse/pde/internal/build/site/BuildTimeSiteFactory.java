@@ -17,6 +17,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -39,7 +40,7 @@ public class BuildTimeSiteFactory /*extends BaseSiteFactory*/ implements IPDEBui
 	private boolean urlsChanged = false;
 
 	// URLs from the the site will be built
-	private String[] sitePaths;
+	private List<File> sitePaths;
 	private String[] eeSources;
 
 	//	address of the site used as a base
@@ -135,28 +136,16 @@ public class BuildTimeSiteFactory /*extends BaseSiteFactory*/ implements IPDEBui
 		BuildTimeSiteFactory.installedBaseLocation = installedBaseSite;
 	}
 
-	public void setSitePaths(String[] urls) {
+	public void setSitePaths(List<File> paths) {
 		if (sitePaths == null) {
-			sitePaths = urls;
+			sitePaths = paths;
 			urlsChanged = true;
 			return;
 		}
 
 		//Check if urls are not the same than sitePaths.  
-		int i = 0;
-		boolean found = true;
-		while (found && i < sitePaths.length) {
-			found = false;
-			for (String url : urls) {
-				if (sitePaths[i].equals(url)) {
-					found = true;
-					break;
-				}
-			}
-			i++;
-		}
-		if (!found) {
-			sitePaths = urls;
+		if (!new HashSet<>(this.sitePaths).equals(new HashSet<>(paths))) {
+			sitePaths = paths;
 			urlsChanged = true;
 		}
 	}
@@ -169,7 +158,7 @@ public class BuildTimeSiteFactory /*extends BaseSiteFactory*/ implements IPDEBui
 	private Collection<File> findFeatureXMLs() {
 		Collection<File> features = new ArrayList<>();
 		Collection<File> foundFeatures = null;
-		for (String sitePath : sitePaths) {
+		for (File sitePath : sitePaths) {
 			File file = new File(sitePath, Constants.FEATURE_FILENAME_DESCRIPTOR);
 			if (file.exists()) {
 				//path is a feature itself
@@ -177,10 +166,10 @@ public class BuildTimeSiteFactory /*extends BaseSiteFactory*/ implements IPDEBui
 				continue;
 			} else if (new File(sitePath, DEFAULT_FEATURE_LOCATION).exists()) {
 				//path is a eclipse root and contains a features subdirectory
-				foundFeatures = Utils.findFiles(new File(sitePath), DEFAULT_FEATURE_LOCATION, Constants.FEATURE_FILENAME_DESCRIPTOR);
+				foundFeatures = Utils.findFiles(sitePath, DEFAULT_FEATURE_LOCATION, Constants.FEATURE_FILENAME_DESCRIPTOR);
 			} else {
 				// treat as a flat directory containing features
-				foundFeatures = Utils.findFiles(new File(sitePath), ".", Constants.FEATURE_FILENAME_DESCRIPTOR); //$NON-NLS-1$
+				foundFeatures = Utils.findFiles(sitePath, ".", Constants.FEATURE_FILENAME_DESCRIPTOR); //$NON-NLS-1$
 			}
 			if (foundFeatures != null)
 				features.addAll(foundFeatures);
