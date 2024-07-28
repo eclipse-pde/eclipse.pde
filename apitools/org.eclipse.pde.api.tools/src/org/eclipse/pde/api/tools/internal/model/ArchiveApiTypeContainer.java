@@ -14,21 +14,16 @@
 package org.eclipse.pde.api.tools.internal.model;
 
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.internal.compiler.util.JRTUtil;
 import org.eclipse.pde.api.tools.internal.provisional.model.ApiTypeContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
@@ -42,13 +37,6 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  * @since 1.0.0
  */
 public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeContainer {
-
-	/**
-	 * Keep a map of the JRT file system.
-	 *
-	 * @see #getLocation()
-	 */
-	private static final Map<Path, FileSystem> JRTS = new ConcurrentHashMap<>();
 
 	/**
 	 * {@link IApiTypeRoot} implementation within an archive
@@ -147,26 +135,15 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 	 *
 	 * @return the path corresponding to the location.
 	 */
-	@SuppressWarnings("nls")
+	@SuppressWarnings("restriction")
 	private Path getLocation() throws IOException {
 		Path path = Path.of(fLocation);
-		if (fLocation.endsWith("jrt-fs.jar")) {
-			AtomicReference<IOException> exception = new AtomicReference<>();
-			FileSystem jrtFileSystem = JRTS.computeIfAbsent(path.toRealPath(), it -> {
-				Path jrePath = it.getParent().getParent();
-				try {
-					return FileSystems.newFileSystem(URI.create("jrt:/"), Map.of("java.home", jrePath.toString()));
-				} catch (IOException e) {
-					exception.set(e);
-					return null;
-				}
-			});
-			if (exception.get() != null) {
-				throw exception.get();
-			}
-			return jrtFileSystem.getPath("modules");
+		if (fLocation.endsWith(org.eclipse.jdt.internal.compiler.util.JRTUtil.JRT_FS_JAR)) {
+			Path jreRoot = path.getParent().getParent();
+			FileSystem jrtFileSystem = org.eclipse.jdt.internal.compiler.util.JRTUtil.getJrtFileSystem(jreRoot);
+			return jrtFileSystem.getPath("modules"); //$NON-NLS-1$
 		} else {
-			return JRTUtil.getJarFileSystem(path).getPath("/");
+			return org.eclipse.jdt.internal.compiler.util.JRTUtil.getJarFileSystem(path).getPath("/"); //$NON-NLS-1$
 		}
 	}
 
