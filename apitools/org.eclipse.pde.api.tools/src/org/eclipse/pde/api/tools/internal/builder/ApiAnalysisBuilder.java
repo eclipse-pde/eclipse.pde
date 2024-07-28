@@ -120,6 +120,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 *
 	 * @since 1.0.3
 	 */
+	@SuppressWarnings("deprecation")
 	public static final Set<String> IMPORTANT_HEADERS = Set.of(Constants.SYSTEM_BUNDLE_SYMBOLICNAME,
 			Constants.BUNDLE_VERSION, Constants.REQUIRE_BUNDLE, Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT,
 			Constants.EXPORT_PACKAGE, Constants.IMPORT_PACKAGE, Constants.BUNDLE_CLASSPATH);

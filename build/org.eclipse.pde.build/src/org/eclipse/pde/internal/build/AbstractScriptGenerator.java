@@ -254,7 +254,6 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 
 	protected static AntScript newAntScript(String scriptLocation, String scriptName) throws CoreException {
 		try {
-			@SuppressWarnings("resource") // intentional return AntScript without closed stream
 			OutputStream scriptStream = new BufferedOutputStream(new FileOutputStream(scriptLocation + '/' + scriptName));
 			return new AntScript(scriptStream);
 		} catch (FileNotFoundException e) {

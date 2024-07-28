@@ -385,17 +385,18 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
+	private static final String FRAMEWORK_EXECUTIONENVIRONMENT = Constants.FRAMEWORK_EXECUTIONENVIRONMENT;
+
 	public void resolveState() {
 		List<Config> configs = AbstractScriptGenerator.getConfigInfos();
-		ArrayList<Dictionary<String, Object>> properties = new ArrayList<>(); //Collection of dictionaries
-		Dictionary<String, Object> prop;
+		List<Dictionary<String, Object>> properties = new ArrayList<>(); //Collection of dictionaries
 
 		// initialize profileManager and get the JRE profiles
 		String[] javaProfiles = getJavaProfiles();
-		String ee = null;
 
 		for (Config aConfig : configs) {
-			prop = new Hashtable<>();
+			Dictionary<String, Object> prop = new Hashtable<>();
 			if (AbstractScriptGenerator.getPropertyAsBoolean(RESOLVER_DEV_MODE))
 				prop.put(PROPERTY_RESOLVER_MODE, VALUE_DEVELOPMENT);
 			String os = aConfig.getOs();
@@ -427,38 +428,37 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			properties.add(prop);
 		}
 
-		Properties profileProps = null;
 		boolean added = false;
 		String eeJava9 = null;
 		//javaProfiles are sorted, go in reverse order, and if when we hit 0 we haven't added any yet, 
 		//then add that last profile so we have something.
 		for (int j = javaProfiles.length - 1; j >= 0; j--) {
 			// add a property set for each EE that is defined in the build.
-			profileProps = profileManager.getProfileProperties(javaProfiles[j]);
+			Properties profileProps = profileManager.getProfileProperties(javaProfiles[j]);
 			if (profileProps != null) {
 				String profileName = profileProps.getProperty(ProfileManager.PROFILE_NAME);
 				if (AbstractScriptGenerator.getImmutableAntProperty(profileName) != null || (j == 0 && !added)) {
 					IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(javaProfiles[j]);
 					String systemPackages = getSystemPackages(env, profileProps);
-					ee = profileProps.getProperty(Constants.FRAMEWORK_EXECUTIONENVIRONMENT);
+					String ee = profileProps.getProperty(FRAMEWORK_EXECUTIONENVIRONMENT);
 
-					prop = new Hashtable<>();
+					Dictionary<String, Object> prop = new Hashtable<>();
 					prop.put(ProfileManager.SYSTEM_PACKAGES, systemPackages);
 					if (profileName.equals("JavaSE-9")) { //$NON-NLS-1$
 						eeJava9 = ee;
 					}
-					prop.put(Constants.FRAMEWORK_EXECUTIONENVIRONMENT, ee);
+					prop.put(FRAMEWORK_EXECUTIONENVIRONMENT, ee);
 					properties.add(prop);
 					added = true;
 				}
 			}
 		}
 		// from java 10 and beyond 
-		ArrayList<String> eeJava10AndBeyond = new ArrayList<>();
+		List<String> eeJava10AndBeyond = new ArrayList<>();
 		for (int i = 10; i <= LAST_SUPPORTED_JDK; i++) {
 			eeJava10AndBeyond.add("JavaSE-" + i);//$NON-NLS-1$		
 		}
-		prop = new Hashtable<>();
+		Dictionary<String, Object> prop = new Hashtable<>();
 		String previousEE = eeJava9;
 		for (String execEnvID : eeJava10AndBeyond) {
 			prop = new Hashtable<>();
@@ -470,7 +470,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 				continue;
 			}
 			prop.put(ProfileManager.SYSTEM_PACKAGES, systemPackages);
-			prop.put(Constants.FRAMEWORK_EXECUTIONENVIRONMENT, currentEE);
+			prop.put(FRAMEWORK_EXECUTIONENVIRONMENT, currentEE);
 			previousEE = currentEE;
 			properties.add(prop);
 		}
