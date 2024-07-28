@@ -34,6 +34,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
 import org.eclipse.osgi.service.resolver.State;
@@ -1067,10 +1068,12 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printProperty(PROPERTY_JAVAC_COMPILERARG, ""); //$NON-NLS-1$  
 		script.printProperty(PROPERTY_PREREQ_COMPILE_LOG, Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + "/prereqErrors.log"); //$NON-NLS-1$
 
-		if (javacSource == null)
-			script.printProperty(IXMLConstants.PROPERTY_JAVAC_SOURCE, "1.8"); //$NON-NLS-1$
-		if (javacTarget == null)
-			script.printProperty(IXMLConstants.PROPERTY_JAVAC_TARGET, "1.8"); //$NON-NLS-1$  
+		if (javacSource == null) {
+			script.printProperty(IXMLConstants.PROPERTY_JAVAC_SOURCE, JavaCore.getAllJavaSourceVersionsSupportedByCompiler().first());
+		}
+		if (javacTarget == null) {
+			script.printProperty(IXMLConstants.PROPERTY_JAVAC_TARGET, JavaCore.getAllJavaSourceVersionsSupportedByCompiler().first());
+		}
 		if (bootClasspath == null) {
 			script.println("<condition property=\"dir_bootclasspath\" value=\"${java.home}/../Classes\">");//$NON-NLS-1$  
 			script.println("\t<and>"); //$NON-NLS-1$
