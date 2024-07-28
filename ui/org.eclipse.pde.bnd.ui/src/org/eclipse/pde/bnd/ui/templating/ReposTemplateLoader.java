@@ -96,7 +96,7 @@ public class ReposTemplateLoader implements TemplateLoader {
 		engines.put(name, engine);
 	}
 
-	void removeTemplateEngine(@SuppressWarnings("unused") TemplateEngine engine, Map<String, Object> svcProps) {
+	void removeTemplateEngine(TemplateEngine engine, Map<String, Object> svcProps) {
 		String name = (String) svcProps.get("name");
 		engines.remove(name);
 	}
