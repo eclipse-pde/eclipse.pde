@@ -32,6 +32,7 @@
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-surefire-plugin</artifactId>
 				<configuration>
+					<testClass>org.eclipse.pde.junit.runtime.tests.JUnitRuntimeTests</testClass>
 					<useUIHarness>true</useUIHarness>
 					<useUIThread>true</useUIThread>
 				</configuration>
