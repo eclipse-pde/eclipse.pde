@@ -24,7 +24,7 @@
 		<relativePath>../../</relativePath>
 	</parent>
 	<artifactId>org.eclipse.pde.junit.runtime.tests</artifactId>
-	<version>3.7.300-SNAPSHOT</version>
+	<version>3.7.400-SNAPSHOT</version>
 	<packaging>eclipse-test-plugin</packaging>
 	<build>
 		<plugins>
