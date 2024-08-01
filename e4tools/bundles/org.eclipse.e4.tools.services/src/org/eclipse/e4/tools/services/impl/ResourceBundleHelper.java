@@ -17,9 +17,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import java.security.AccessController;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
 import java.util.List;
 import java.util.Locale;
 import java.util.MissingResourceException;
@@ -396,28 +393,21 @@ public class ResourceBundleHelper {
 			ResourceBundle bundle = null;
 			if (format.equals("java.properties")) { //$NON-NLS-1$
 				final String resourceName = toResourceName(bundleName, "properties"); //$NON-NLS-1$
-				PrivilegedExceptionAction<InputStream> action = (PrivilegedExceptionAction<InputStream>) () -> {
-					URL url = osgiBundle.getEntry(resourceName);
-					if (url != null) {
-						URLConnection connection = url.openConnection();
-						if (connection != null) {
-							// Disable caches to get fresh data for
-							// reloading.
-							connection.setUseCaches(false);
-							return connection.getInputStream();
+				URL url = osgiBundle.getEntry(resourceName);
+				if (url != null) {
+					URLConnection connection = url.openConnection();
+					if (connection != null) {
+						// Disable caches to get fresh data for
+						// reloading.
+						connection.setUseCaches(false);
+						try (InputStream stream = connection.getInputStream()) {
+							if (stream != null) {
+								bundle = new PropertyResourceBundle(stream);
+							}
 						}
 					}
-					return null;
-				};
-				try (InputStream stream = AccessController.doPrivileged(action)) {
-					if (stream != null) {
-						bundle = new PropertyResourceBundle(stream);
-					}
-				} catch (final PrivilegedActionException e) {
-					throw (IOException) e.getException();
 				}
-			}
-			else {
+			} else {
 				throw new IllegalArgumentException("unknown format: " + format); //$NON-NLS-1$
 			}
 			return bundle;
