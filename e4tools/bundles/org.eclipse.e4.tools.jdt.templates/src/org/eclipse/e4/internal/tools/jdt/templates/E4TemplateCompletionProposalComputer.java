@@ -28,8 +28,8 @@ import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.text.java.AbstractTemplateCompletionProposalComputer;
 import org.eclipse.jdt.internal.ui.text.template.contentassist.TemplateEngine;
 import org.eclipse.jdt.ui.text.java.JavaContentAssistInvocationContext;
-import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.TemplateContextType;
+import org.eclipse.text.templates.ContextTypeRegistry;
 
 /**
  * Computer that computes the template proposals for the E4 context type.
