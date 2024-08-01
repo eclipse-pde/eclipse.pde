@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2017 Red Hat Inc., and others
+ * Copyright (c) 2014, 2024 Red Hat Inc., and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -33,7 +33,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.internal.ui.wizards.importer.ProjectWithJavaResourcesImportConfigurator;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.internal.core.ClasspathComputer;
@@ -150,8 +149,10 @@ public class BundleProjectConfigurator implements ProjectConfigurator {
 
 	@Override
 	public Set<IFolder> getFoldersToIgnore(IProject project, IProgressMonitor monitor) {
-		Set<IFolder> res = new HashSet<>();
-		res.addAll(new ProjectWithJavaResourcesImportConfigurator().getFoldersToIgnore(project, monitor));
+		@SuppressWarnings("restriction")
+		Set<IFolder> res = new HashSet<>(
+				new org.eclipse.jdt.internal.ui.wizards.importer.ProjectWithJavaResourcesImportConfigurator()
+						.getFoldersToIgnore(project, monitor));
 		IFile buildPropertiesFile = PDEProject.getBuildProperties(project);
 		Properties buildProperties = new Properties();
 		if (!buildPropertiesFile.exists()) {

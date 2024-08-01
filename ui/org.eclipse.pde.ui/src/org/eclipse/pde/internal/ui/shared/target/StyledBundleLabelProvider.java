@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2021 IBM Corporation and others.
+ * Copyright (c) 2009, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -190,6 +190,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 		} else if (element instanceof IUWrapper) {
 			styledString = getStyledString(((IUWrapper) element).getIU());
 		} else if (element instanceof IInstallableUnit iu) {
+			@SuppressWarnings("restriction")
 			String name = fTranslations.getIUProperty(iu, IInstallableUnit.PROP_NAME);
 			if (name == null) {
 				name = iu.getId();
