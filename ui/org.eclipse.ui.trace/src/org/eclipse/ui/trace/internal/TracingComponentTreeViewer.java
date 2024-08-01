@@ -32,8 +32,7 @@ public class TracingComponentTreeViewer extends FilteredTree {
 	 *            The parent composite
 	 */
 	public TracingComponentTreeViewer(final Composite parent) {
-
-		super(parent, SWT.NONE, new TracingComponentViewerFilter(), true);
+		super(parent, SWT.NONE, new TracingComponentViewerFilter(), true, true);
 		setInitialText(Messages.filterSearchText);
 	}
 
