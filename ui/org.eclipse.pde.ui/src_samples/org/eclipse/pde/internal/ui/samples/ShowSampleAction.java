@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2018 IBM Corporation and others.
+ *  Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -250,6 +250,7 @@ public class ShowSampleAction extends Action implements IIntroAction {
 	/**
 	 * Apply the profile changes to the currently running configuration.
 	 */
+	@SuppressWarnings("restriction")
 	void applyConfiguration() throws CoreException {
 		BundleContext context = FrameworkUtil.getBundle(getClass()).getBundleContext();
 		ServiceReference<Configurator> reference = context.getServiceReference(Configurator.class);

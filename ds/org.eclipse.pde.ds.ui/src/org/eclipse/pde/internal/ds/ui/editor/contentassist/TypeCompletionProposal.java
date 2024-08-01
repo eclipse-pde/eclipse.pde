@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2024 Code 9 Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -113,17 +113,16 @@ public class TypeCompletionProposal implements ICompletionProposal, ICompletionP
 	}
 
 	@Override
+	@SuppressWarnings("restriction")
 	public IInformationControlCreator getInformationControlCreator() {
 		if (!BrowserInformationControl.isAvailable(null))
 			return null;
 
 		if (fCreator == null) {
 			fCreator = new AbstractReusableInformationControlCreator() {
-
 				@Override
 				public IInformationControl doCreateInformationControl(Shell parent) {
-					return new BrowserInformationControl(parent,
-							JFaceResources.DIALOG_FONT, false);
+					return new BrowserInformationControl(parent, JFaceResources.DIALOG_FONT, false);
 				}
 			};
 		}
