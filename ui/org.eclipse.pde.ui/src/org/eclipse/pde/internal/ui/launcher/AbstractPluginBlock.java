@@ -948,10 +948,25 @@ public abstract class AbstractPluginBlock {
 			config.setAttribute(IPDELauncherConstants.AUTOMATIC_INCLUDE_REQUIREMENTS, includeRequirements);
 			fAutoIncludeRequirementsButtonChanged = false;
 		}
-		config.setAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, fIncludeOptionalButton.getSelection());
-		config.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, fAddWorkspaceButton.getSelection());
+		boolean includeOptional = fIncludeOptionalButton.getSelection();
+		if (!includeOptional) {
+			config.setAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, false);
+		} else {
+			config.removeAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL);
+		}
+		boolean automaticAdd = fAddWorkspaceButton.getSelection();
+		if (!automaticAdd) {
+			config.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, false);
+		} else {
+			config.removeAttribute(IPDELauncherConstants.AUTOMATIC_ADD);
+		}
 		config.setAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, fAutoValidate.getSelection());
-		config.setAttribute(IPDELauncherConstants.SHOW_SELECTED_ONLY, fFilterButton.getSelection());
+		boolean showSelectedOnly = fFilterButton.getSelection();
+		if (showSelectedOnly) {
+			config.setAttribute(IPDELauncherConstants.SHOW_SELECTED_ONLY, true);
+		} else {
+			config.removeAttribute(IPDELauncherConstants.SHOW_SELECTED_ONLY);
+		}
 		savePluginState(config);
 		updateCounter();
 	}
@@ -959,10 +974,10 @@ public abstract class AbstractPluginBlock {
 	protected abstract void savePluginState(ILaunchConfigurationWorkingCopy config);
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-		config.setAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, true);
-		config.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
+		config.removeAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL);
+		config.removeAttribute(IPDELauncherConstants.AUTOMATIC_ADD);
 		config.setAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, true);
-		config.setAttribute(IPDELauncherConstants.SHOW_SELECTED_ONLY, false);
+		config.removeAttribute(IPDELauncherConstants.SHOW_SELECTED_ONLY);
 	}
 
 	public void enableViewer(boolean enable) {
