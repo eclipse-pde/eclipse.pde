@@ -273,7 +273,6 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 		tracingTreeTitleLabel.setText(Messages.tracingTreeTile);
 		filterTree = new TracingComponentTreeViewer(parent);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(getViewerTree());
-		getViewer().setUseHashlookup(true);
 		getViewerTree().setHeaderVisible(false);
 		getViewer().setLabelProvider(new TracingComponentLabelProvider());
 		getViewer().setContentProvider(new TracingComponentContentProvider());
