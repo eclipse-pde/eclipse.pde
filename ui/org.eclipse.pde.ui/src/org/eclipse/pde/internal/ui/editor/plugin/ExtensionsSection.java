@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -261,10 +261,10 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 	}
 
 	private static ISchema getSchema(IPluginParent parent) {
-		if (parent instanceof IPluginExtension) {
-			return getSchema((IPluginExtension) parent);
-		} else if (parent instanceof IPluginElement) {
-			return getSchema((IPluginElement) parent);
+		if (parent instanceof IPluginExtension pluginExtension) {
+			return getSchema(pluginExtension);
+		} else if (parent instanceof IPluginElement pluginElement) {
+			return getSchema(pluginElement);
 		} else {
 			return null;
 		}
@@ -1604,35 +1604,27 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		if (validateDropMoveParent(targetElementObject, sourceElementObject) == false) {
 			return false;
 		}
-
+		IDocumentElementNode sourceExtensionNode = (IDocumentElementNode) sourceElementObject;
+		IDocumentElementNode targetExtensionNode = (IDocumentElementNode) targetElementObject;
 		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
-			IDocumentElementNode previousNode = ((IDocumentElementNode) targetElementObject).getPreviousSibling();
-			if (sourceElementObject.equals(previousNode)) {
-				return false;
-			}
-			IPluginObject targetParentObject = targetElementObject.getParent();
-			if ((targetParentObject instanceof IPluginParent) == false) {
+			if (sourceExtensionNode.equals(targetExtensionNode.getPreviousSibling())) {
 				return false;
 			}
 			// Paste element as a sibling of the other element (before)
-			return validateDropMoveSchema((IPluginParent) targetParentObject, sourceElementObject);
+			return targetElementObject.getParent() instanceof IPluginParent targetParent
+					&& validateDropMoveSchema(targetParent, sourceElementObject);
 		} else if (targetLocation == ViewerDropAdapter.LOCATION_AFTER) {
-			IDocumentElementNode nextNode = ((IDocumentElementNode) sourceElementObject).getPreviousSibling();
-			if (targetElementObject.equals(nextNode)) {
-				return false;
-			}
-			IPluginObject targetParentObject = targetElementObject.getParent();
-			if ((targetParentObject instanceof IPluginParent) == false) {
+			if (targetExtensionNode.equals(sourceExtensionNode.getPreviousSibling())) {
 				return false;
 			}
 			// Paste element as a sibling of the other element (after)
-			return validateDropMoveSchema((IPluginParent) targetParentObject, sourceElementObject);
+			return targetElementObject.getParent() instanceof IPluginParent targetParent
+					&& validateDropMoveSchema(targetParent, sourceElementObject);
 		} else if (targetLocation == ViewerDropAdapter.LOCATION_ON) {
-			IDocumentElementNode targetExtensionNode = (IDocumentElementNode) targetElementObject;
 			int childCount = targetExtensionNode.getChildCount();
 			if (childCount != 0) {
 				IDocumentElementNode lastNode = targetExtensionNode.getChildAt(childCount - 1);
-				if (sourceElementObject.equals(lastNode)) {
+				if (sourceExtensionNode.equals(lastNode)) {
 					return false;
 				}
 			}
@@ -1658,17 +1650,13 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 	}
 
 	private boolean canDropMove(IPluginExtension targetExtensionObject, IPluginElement sourceElementObject, int targetLocation) {
-
-		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
-			return false;
-		} else if (targetLocation == ViewerDropAdapter.LOCATION_AFTER) {
-			return false;
-		} else if (targetLocation == ViewerDropAdapter.LOCATION_ON) {
+		if (targetLocation == ViewerDropAdapter.LOCATION_ON) {
+			IDocumentElementNode sourceExtensionNode = (IDocumentElementNode) sourceElementObject;
 			IDocumentElementNode targetExtensionNode = (IDocumentElementNode) targetExtensionObject;
 			int childCount = targetExtensionNode.getChildCount();
 			if (childCount != 0) {
 				IDocumentElementNode lastNode = targetExtensionNode.getChildAt(childCount - 1);
-				if (sourceElementObject.equals(lastNode)) {
+				if (sourceExtensionNode.equals(lastNode)) {
 					return false;
 				}
 			}
@@ -1704,15 +1692,11 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 			// Something is seriously wrong, we are a plug-in parent
 			return false;
 		}
-		// We have a schema complex type.  Either the target object has
+		// We have a schema complex type. Either the target object has
 		// attributes or the element has children.
-		// Generate the list of element proposals
 		TreeSet<ISchemaElement> elementSet = XMLElementProposalComputer.computeElementProposal(schemaElement, targetPluginNode);
-		// Iterate over set of valid element proposals
-		Iterator<ISchemaElement> iterator = elementSet.iterator();
-		while (iterator.hasNext()) {
-			// Get the proposal element tag name
-			String targetTagName = iterator.next().getName();
+		for (ISchemaElement elementProposal : elementSet) {
+			String targetTagName = elementProposal.getName();
 			// Only a source element that is found within the set of element
 			// proposals can be pasted
 			String sourceNodeTagName = ((IDocumentElementNode) sourcePluginObject).getXMLTagName();
@@ -1724,25 +1708,17 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 	}
 
 	private boolean canDropMove(IPluginExtension targetExtensionObject, IPluginExtension sourceExtensionObject, int targetLocation) {
-
-		if (targetLocation == ViewerDropAdapter.LOCATION_BEFORE) {
-			IDocumentElementNode previousNode = ((IDocumentElementNode) targetExtensionObject).getPreviousSibling();
-			if (sourceExtensionObject.equals(previousNode)) {
-				return false;
-			}
+		IDocumentElementNode targetExtensionNode = (IDocumentElementNode) targetExtensionObject;
+		IDocumentElementNode sourceExtensionNode = (IDocumentElementNode) sourceExtensionObject;
+		return switch (targetLocation) {
 			// Paste extension as sibling of extension (before)
-			return true;
-		} else if (targetLocation == ViewerDropAdapter.LOCATION_AFTER) {
-			IDocumentElementNode nextNode = ((IDocumentElementNode) sourceExtensionObject).getPreviousSibling();
-			if (targetExtensionObject.equals(nextNode)) {
-				return false;
-			}
+			case ViewerDropAdapter.LOCATION_BEFORE -> !sourceExtensionNode
+					.equals(targetExtensionNode.getPreviousSibling());
 			// Paste extension as sibling of extension (after)
-			return true;
-		} else if (targetLocation == ViewerDropAdapter.LOCATION_ON) {
-			return false;
-		}
-		return false;
+			case ViewerDropAdapter.LOCATION_AFTER -> !targetExtensionNode
+					.equals(sourceExtensionNode.getPreviousSibling());
+			default -> false;
+		};
 	}
 
 	@Override

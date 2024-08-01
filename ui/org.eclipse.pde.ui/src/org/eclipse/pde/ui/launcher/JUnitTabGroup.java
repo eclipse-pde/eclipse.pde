@@ -48,9 +48,11 @@ public class JUnitTabGroup extends AbstractPDELaunchConfigurationTabGroup {
 		} catch (CoreException e) {
 			vmArgs = ""; //$NON-NLS-1$
 		}
-		vmArgs = AssertionVMArg.enableAssertInArgString(vmArgs);
-		if (vmArgs.length() > 0)
-			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs);
+		@SuppressWarnings("restriction")
+		String extraVMArgs = AssertionVMArg.enableAssertInArgString(vmArgs);
+		if (!extraVMArgs.isEmpty()) {
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, extraVMArgs);
+		}
 	}
 
 }
