@@ -4,9 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.security.AccessController;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
 import java.util.List;
 import java.util.Locale;
 import java.util.PropertyResourceBundle;
@@ -248,7 +245,6 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 			this.useFallback = useFallback;
 		}
 
-		@SuppressWarnings("resource")
 		@Override
 		public ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader,
 				boolean reload) throws IllegalAccessException, InstantiationException, IOException {
@@ -257,18 +253,8 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 			ResourceBundle bundle = null;
 			if (format.equals("java.properties")) { //$NON-NLS-1$
 				final String resourceName = toResourceName(bundleName, "properties"); //$NON-NLS-1$
-				InputStream stream = null;
-				try {
-					stream = AccessController.doPrivileged((PrivilegedExceptionAction<InputStream>) () -> getResourceAsStream(resourceName));
-				} catch (final PrivilegedActionException e) {
-					throw (IOException) e.getException();
-				}
-				if (stream != null) {
-					try {
-						bundle = new PropertyResourceBundle(stream);
-					} finally {
-						stream.close();
-					}
+				try (InputStream stream = getResourceAsStream(resourceName);) {
+					bundle = new PropertyResourceBundle(stream);
 				}
 			} else {
 				throw new IllegalArgumentException("unknown format: " + format); //$NON-NLS-1$

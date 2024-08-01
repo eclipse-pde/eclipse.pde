@@ -28,18 +28,4 @@
     <skipAPIAnalysis>true</skipAPIAnalysis> <!-- https://bugs.eclipse.org/bugs/show_bug.cgi?id=548572 -->
   </properties>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.eclipse.tycho</groupId>
-        <artifactId>tycho-compiler-plugin</artifactId>
-        <configuration>
-          <compilerArgs>
-            <arg>-warn:-raw,unchecked</arg>
-          </compilerArgs>
-        </configuration>
-      </plugin>
-    </plugins>
- </build>
-
 </project>
