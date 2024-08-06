@@ -63,7 +63,7 @@ public class VersionUtil {
 
 	public static VersionMatchRule matchRuleFromLiteral(int literal) {
 		return switch (literal) {
-		case IMatchRules.NONE -> VersionMatchRule.NONE;
+		case IMatchRules.NONE -> VersionMatchRule.COMPATIBLE;
 		case IMatchRules.EQUIVALENT -> VersionMatchRule.EQUIVALENT;
 		case IMatchRules.COMPATIBLE -> VersionMatchRule.COMPATIBLE;
 		case IMatchRules.PERFECT -> VersionMatchRule.PERFECT;

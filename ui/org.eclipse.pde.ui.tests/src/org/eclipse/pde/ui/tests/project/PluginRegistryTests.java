@@ -43,7 +43,7 @@ public class PluginRegistryTests {
 
 	@Test
 	public void testMatchNone() {
-		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.jdt.debug", null, VersionMatchRule.NONE);
+		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.jdt.debug", null, (VersionMatchRule) null);
 		assertNotNull(model);
 		assertEquals("org.eclipse.jdt.debug", model.getPluginBase().getId());
 	}

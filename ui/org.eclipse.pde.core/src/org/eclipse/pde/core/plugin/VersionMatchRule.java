@@ -20,20 +20,6 @@ import org.osgi.framework.VersionRange;
  * @since 3.19
  */
 public enum VersionMatchRule {
-	/** No rule. */
-	NONE("none") { //$NON-NLS-1$ // TODO: check this?!
-		@Override
-		public VersionRange rangeFor(Version reference) {
-			// TODO: or include all range?
-			return COMPATIBLE.rangeFor(reference);
-		}
-
-		@Override
-		public boolean matches(Version version, Version reference) {
-			// TODO: or always true?
-			return COMPATIBLE.matches(version, reference);
-		}
-	},
 	/**
 	 * A rule that matches if a version is perfectly
 	 * {@link Version#equals(Object) equals} to a reference.
