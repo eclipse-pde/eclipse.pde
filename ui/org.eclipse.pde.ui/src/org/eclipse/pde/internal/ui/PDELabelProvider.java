@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -81,7 +82,6 @@ import org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition;
 import org.eclipse.pde.internal.core.isite.ISiteFeature;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
-import org.eclipse.pde.internal.core.text.bundle.ExecutionEnvironment;
 import org.eclipse.pde.internal.core.text.bundle.ExportPackageObject;
 import org.eclipse.pde.internal.core.text.bundle.ImportPackageObject;
 import org.eclipse.pde.internal.core.text.bundle.PackageObject;
@@ -171,8 +171,8 @@ public class PDELabelProvider extends SharedLabelProvider {
 		if (obj instanceof PackageObject) {
 			return getObjectText((PackageObject) obj);
 		}
-		if (obj instanceof ExecutionEnvironment) {
-			return getObjectText((ExecutionEnvironment) obj);
+		if (obj instanceof IExecutionEnvironment ee) {
+			return preventNull(ee.getId());
 		}
 		if (obj instanceof Locale) {
 			return getObjectText((Locale) obj);
@@ -181,10 +181,6 @@ public class PDELabelProvider extends SharedLabelProvider {
 			return getObjectText((IStatus) obj);
 		}
 		return super.getText(obj);
-	}
-
-	private String getObjectText(ExecutionEnvironment environment) {
-		return preventNull(environment.getName());
 	}
 
 	public String getObjectText(IPluginBase pluginBase) {
@@ -529,8 +525,8 @@ public class PDELabelProvider extends SharedLabelProvider {
 		if (obj instanceof PackageObject) {
 			return getObjectImage((PackageObject) obj);
 		}
-		if (obj instanceof ExecutionEnvironment) {
-			return getObjectImage((ExecutionEnvironment) obj);
+		if (obj instanceof IExecutionEnvironment) {
+			return get(PDEPluginImages.DESC_JAVA_LIB_OBJ);
 		}
 		if (obj instanceof ResolverError) {
 			return getObjectImage((ResolverError) obj);
@@ -552,10 +548,6 @@ public class PDELabelProvider extends SharedLabelProvider {
 			case ResolverError.FRAGMENT_BUNDLE_PERMISSION, ResolverError.FRAGMENT_CONFLICT -> get(PDEPluginImages.DESC_FRAGMENT_OBJ);
 			default -> get(PDEPluginImages.DESC_PLUGIN_OBJ);
 		};
-	}
-
-	private Image getObjectImage(ExecutionEnvironment environment) {
-		return get(PDEPluginImages.DESC_JAVA_LIB_OBJ);
 	}
 
 	private Image getObjectImage(IPlugin plugin) {
