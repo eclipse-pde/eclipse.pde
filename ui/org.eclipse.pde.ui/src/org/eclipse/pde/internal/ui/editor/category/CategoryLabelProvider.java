@@ -17,8 +17,8 @@
 package org.eclipse.pde.internal.ui.editor.category;
 
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.pde.core.plugin.IMatchRules;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.VersionMatchRule;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.isite.ISiteBundle;
 import org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition;
@@ -65,7 +65,7 @@ class CategoryLabelProvider extends LabelProvider {
 		}
 		if (element instanceof SiteBundleAdapter) {
 			ISiteBundle bundle = ((SiteBundleAdapter) element).bundle;
-			if (PluginRegistry.findModel(bundle.getId(), bundle.getVersion(), IMatchRules.COMPATIBLE, null) == null) {
+			if (PluginRegistry.findModel(bundle.getId(), bundle.getVersion(), VersionMatchRule.COMPATIBLE) == null) {
 				return this.fMissingSiteBundleImage;
 			}
 			return this.fSiteBundleImage;
