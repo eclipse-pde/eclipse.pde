@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2023 IBM Corporation and others.
+ * Copyright (c) 2005, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,6 +16,7 @@
  *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 547323
  *     Hannes Wellmann - Bug 570760 - Option to automatically add requirements to product-launch
  *     Hannes Wellmann - Bug 325614 - Support mixed products (features and bundles)
+ *     SAP SE - support macOS bundle URL types
  *******************************************************************************/
 package org.eclipse.pde.internal.core.product;
 

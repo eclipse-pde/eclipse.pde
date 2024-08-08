@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2023 IBM Corporation and others.
+ * Copyright (c) 2014, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,6 +17,7 @@
  *     Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *     Kit Lo (IBM) - Bug 244461 - Duplicating colon in error message
  *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 547222
+ *     SAP SE - support macOS bundle URL types
  *******************************************************************************/
 package org.eclipse.pde.internal.ui;
 
@@ -1176,6 +1177,18 @@ public class PDEUIMessages extends NLS {
 	public static String LauncherSection_256High;
 	public static String LauncherSection_linuxLabel;
 	public static String LauncherSection_macLabel;
+	public static String LauncherSection_macBundleUrlTypes_DialogTitle;
+	public static String LauncherSection_macBundleUrlTypes_Scheme;
+	public static String LauncherSection_macBundleUrlTypes_Name;
+	public static String LauncherSection_macBundleUrlTypes_ErrorNoScheme;
+	public static String LauncherSection_macBundleUrlTypes_ErrorNoName;
+	public static String LauncherSection_macBundleUrlTypes_ErrorSchemeExists;
+	public static String LauncherSection_macBundleUrlTypes_Add;
+	public static String LauncherSection_macBundleUrlTypes_Edit;
+	public static String LauncherSection_macBundleUrlTypes_Remove;
+	public static String LauncherSection_macBundleUrlTypes_LauncherSection_macBundleUrlTypesTitle;
+	public static String LauncherSection_macBundleUrlTypes_SchemeColumn;
+	public static String LauncherSection_macBundleUrlTypes_NameColumn;
 	public static String OSGiBundlesTab_frameworkLabel;
 
 	// Preferences ####################################

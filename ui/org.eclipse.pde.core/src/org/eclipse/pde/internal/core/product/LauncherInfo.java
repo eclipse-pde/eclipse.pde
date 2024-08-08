@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2016 IBM Corporation and others.
+ *  Copyright (c) 2005, 2024 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -11,15 +11,22 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 438509
+ *     SAP SE - support macOS bundle URL types
  *******************************************************************************/
 package org.eclipse.pde.internal.core.product;
 
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.TreeMap;
 
+import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.iproduct.ILauncherInfo;
+import org.eclipse.pde.internal.core.iproduct.IMacBundleUrlType;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
+import org.eclipse.pde.internal.core.iproduct.IProductObject;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -30,6 +37,7 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 	private boolean fUseIcoFile;
 	private final Map<String, String> fIcons = new HashMap<>();
 	private String fLauncherName;
+	private final TreeMap<String, IMacBundleUrlType> fMacBundleUrlTypes = new TreeMap<>();
 
 	public LauncherInfo(IProductModel model) {
 		super(model);
@@ -131,6 +139,26 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 
 	private void parseMac(Element element) {
 		fIcons.put(MACOSX_ICON, element.getAttribute("icon")); //$NON-NLS-1$
+		NodeList children = element.getChildNodes();
+		for (int i = 0; i < children.getLength(); i++) {
+			if (children.item(i).getNodeType() == Node.ELEMENT_NODE) {
+				Node child = children.item(i);
+				String name = child.getNodeName();
+				if (name.equals("bundleUrlTypes")) { //$NON-NLS-1$
+					NodeList grandChildren = child.getChildNodes();
+					for (int j = 0; j < grandChildren.getLength(); j++) {
+						Node grandChild = grandChildren.item(j);
+						if (grandChild.getNodeType() == Node.ELEMENT_NODE) {
+							if (grandChild.getNodeName().equals("bundleUrlType")) { //$NON-NLS-1$
+								IMacBundleUrlType bundleUrlType = getModel().getFactory().createMacBundleUrlType();
+								bundleUrlType.parse(grandChild);
+								fMacBundleUrlTypes.put(bundleUrlType.getScheme(), bundleUrlType);
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 	private void parseLinux(Element element) {
@@ -180,8 +208,24 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 
 	private void writeMac(String indent, PrintWriter writer) {
 		String icon = fIcons.get(MACOSX_ICON);
-		if (icon != null && icon.length() > 0) {
-			writer.println(indent + "<macosx icon=\"" + getWritableString(icon) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (icon != null && icon.length() > 0 || !fMacBundleUrlTypes.isEmpty()) {
+			writer.print(indent + "<macosx"); //$NON-NLS-1$
+			if (icon != null && icon.length() > 0) {
+				writer.print(" icon=\"" + getWritableString(icon) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			if (fMacBundleUrlTypes.isEmpty()) {
+				writer.println("/>"); //$NON-NLS-1$
+			} else {
+				writer.println(">"); //$NON-NLS-1$
+				writer.println(indent + "   <bundleUrlTypes>"); //$NON-NLS-1$
+				Iterator<IMacBundleUrlType> iter = fMacBundleUrlTypes.values().iterator();
+				while (iter.hasNext()) {
+					IMacBundleUrlType bundleUrlType = iter.next();
+					bundleUrlType.write(indent + "      ", writer); //$NON-NLS-1$
+				}
+				writer.println(indent + "   </bundleUrlTypes>"); //$NON-NLS-1$
+				writer.println(indent + "</macosx>"); //$NON-NLS-1$
+			}
 		}
 	}
 
@@ -189,6 +233,58 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 		String icon = fIcons.get(LINUX_ICON);
 		if (icon != null && icon.length() > 0) {
 			writer.println(indent + "<linux icon=\"" + getWritableString(icon) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
+
+	@Override
+	public IMacBundleUrlType[] getMacBundleUrlTypes() {
+		return fMacBundleUrlTypes.values().toArray(new IMacBundleUrlType[0]);
+	}
+
+	@Override
+	public void addMacBundleUrlTypes(IMacBundleUrlType[] bundleUrlTypes) {
+		boolean modified = false;
+		for (int i = 0; i < bundleUrlTypes.length; i++) {
+			if (bundleUrlTypes[i] == null) {
+				continue;
+			}
+			String scheme = bundleUrlTypes[i].getScheme();
+			if (scheme == null || fMacBundleUrlTypes.containsKey(scheme)) {
+				bundleUrlTypes[i] = null;
+				continue;
+			}
+
+			bundleUrlTypes[i].setModel(getModel());
+			fMacBundleUrlTypes.put(scheme, bundleUrlTypes[i]);
+			modified = true;
+		}
+		if (modified && isEditable()) {
+			fireStructureChanged(bundleUrlTypes, IModelChangedEvent.INSERT);
+		}
+	}
+
+	@Override
+	public void removeMacBundleUrlTypes(IMacBundleUrlType[] bundleUrlTypes) {
+		boolean modified = false;
+		LinkedList<Object> removedUrlSchemes = new LinkedList<>();
+		for (IMacBundleUrlType urlScheme : bundleUrlTypes) {
+			String scheme = urlScheme.getScheme();
+			if (fMacBundleUrlTypes.remove(scheme) != null) {
+				modified = true;
+				Object removedScheme = fMacBundleUrlTypes.remove(scheme);
+				if (removedScheme != null) {
+					removedUrlSchemes.add(removedScheme);
+				}
+			}
+		}
+		if (isEditable()) {
+			if (modified) {
+				fireStructureChanged(bundleUrlTypes, IModelChangedEvent.REMOVE);
+			}
+			if (!removedUrlSchemes.isEmpty()) {
+				fireStructureChanged(removedUrlSchemes.toArray(new IProductObject[removedUrlSchemes.size()]),
+						IModelChangedEvent.REMOVE);
+			}
 		}
 	}
 
