@@ -16,7 +16,8 @@ package org.eclipse.pde.core.plugin;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.osgi.framework.wiring.BundleRevision;
+import org.osgi.resource.Resource;
 
 /**
  * A ModelEntry object has an ID and keeps track of all workspace plug-ins and target
@@ -105,7 +106,7 @@ public class ModelEntry extends PlatformObject {
 	private IPluginModelBase getBestCandidate(IPluginModelBase[] models) {
 		IPluginModelBase result = null;
 		for (IPluginModelBase model : models) {
-			if (model.getBundleDescription() == null) {
+			if (model.getBundleResource() == null) {
 				continue;
 			}
 
@@ -119,9 +120,11 @@ public class ModelEntry extends PlatformObject {
 				continue;
 			}
 
-			BundleDescription current = result.getBundleDescription();
-			BundleDescription candidate = model.getBundleDescription();
-			if (!current.isResolved() && candidate.isResolved()) {
+			BundleRevision current = result.getBundleDescription();
+			BundleRevision candidate = model.getBundleDescription();
+			// TODO: check if getWiring()!=null is really equivalent to
+			// BundleDescription.isResolved()
+			if (current.getWiring() == null && candidate.getWiring() != null) {
 				result = model;
 				continue;
 			}
@@ -175,32 +178,40 @@ public class ModelEntry extends PlatformObject {
 	}
 
 	/**
-	 * Return the plug-in model associated with the given bundle description or
-	 * <code>null</code> if none is found.
+	 * Return the plug-in model associated with the given bundle
+	 * {@link Resource} or <code>null</code> if none is found.
 	 *
-	 * @param desc  the given bundle description
+	 * @param resource
+	 *            the given bundle resource
 	 *
-	 * @return the plug-in model associated with the given bundle description if such a
-	 * model exists.
+	 * @return the plug-in model associated with the given bundle description if
+	 *         such a model exists.
+	 * @since 3.19
 	 */
-	public IPluginModelBase getModel(BundleDescription desc) {
-		if (desc == null) {
+	public IPluginModelBase getModel(Resource resource) {
+		if (resource == null) {
 			return null;
 		}
 
-		for (int i = 0; i < fWorkspaceEntries.size(); i++) {
-			IPluginModelBase model = fWorkspaceEntries.get(i);
-			if (desc.equals(model.getBundleDescription())) {
+		for (IPluginModelBase model : fWorkspaceEntries) {
+			if (resource.equals(model.getBundleResource())) {
 				return model;
 			}
 		}
-		for (int i = 0; i < fExternalEntries.size(); i++) {
-			IPluginModelBase model = fExternalEntries.get(i);
-			if (desc.equals(model.getBundleDescription())) {
+		for (IPluginModelBase model : fExternalEntries) {
+			if (resource.equals(model.getBundleResource())) {
 				return model;
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * @deprecated Instead use {@link #getModel(Resource) }
+	 */
+	@Deprecated(forRemoval = true, since = "4.19")
+	public IPluginModelBase getModel(org.eclipse.osgi.service.resolver.BundleDescription desc) {
+		return getModel((Resource) desc);
 	}
 
 	/**

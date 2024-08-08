@@ -333,7 +333,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 	}
 
 	@Override
-	public BundleDescription getBundleDescription() {
+	public BundleDescription getBundleResource() {
 		return fBundleDescription;
 	}
 

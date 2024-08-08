@@ -17,6 +17,7 @@ package org.eclipse.pde.core;
 
 import java.util.List;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.PluginRegistry;
@@ -40,6 +41,8 @@ import org.osgi.resource.Resource;
  * @since 3.9
  */
 public interface IClasspathContributor {
+	// TODO: The cleaner way would be to create a completely new interface and
+	// deprecate this one. But how to name it?
 
 	/**
 	 * Get any additional classpath entries to add to a project when its
@@ -53,8 +56,21 @@ public interface IClasspathContributor {
 	 *            classpath computed
 	 * @return additional classpath entries to add to the project, possibly
 	 *         empty, must not be <code>null</code>
+	 * @since 3.19
 	 */
-	List<IClasspathEntry> getInitialEntries(BundleDescription project);
+	default List<IClasspathEntry> getInitialEntries(IProject project) {
+		BundleDescription description = PluginRegistry.findModel(project).getBundleDescription();
+		return getInitialEntries(description);
+	}
+
+	/**
+	 * @deprecated Instead implement {@link #getInitialEntries(IProject)}
+	 */
+	@Deprecated(forRemoval = true, since = "4.19")
+	default List<IClasspathEntry> getInitialEntries(BundleDescription project) {
+		throw new UnsupportedOperationException(
+				"This method is deprecated. Implement and call getInitialEntries(IProject) instead");
+	}
 
 	/**
 	 * Get any additional classpath entries to add to a project when a new bundle
@@ -66,6 +82,22 @@ public interface IClasspathContributor {
 	 * @param project the bundle descriptor for the plug-in project having its classpath computed
 	 * @param addedDependency the bundle descriptor for the bundle being added to the classpath as a dependency
 	 * @return additional classpath entries to add to the project, possibly empty, must not be <code>null</code>
+	 * @since 3.19
 	 */
-	List<IClasspathEntry> getEntriesForDependency(BundleDescription project, BundleDescription addedDependency);
+	default List<IClasspathEntry> getEntriesForDependency(IProject project, Resource addedDependency) {
+		BundleDescription description = PluginRegistry.findModel(project).getBundleDescription();
+		return getEntriesForDependency(description, (BundleDescription) addedDependency);
+	}
+
+	/**
+	 * @deprecated Instead implement
+	 *             {@link #getEntriesForDependency(IProject, Resource)}
+	 */
+	@Deprecated(forRemoval = true, since = "4.19")
+	default List<IClasspathEntry> getEntriesForDependency(BundleDescription project,
+			BundleDescription addedDependency) {
+		throw new UnsupportedOperationException(
+				"This method is deprecated. Implement and call getEntriesForDependency(IProject, Resource) instead");
+	}
+
 }
