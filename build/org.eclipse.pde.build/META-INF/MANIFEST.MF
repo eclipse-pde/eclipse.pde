@@ -25,7 +25,7 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.29.0,4.0.0)",
  org.eclipse.equinox.p2.repository.tools;bundle-version="[2.4.200,3.0.0)";resolution:=optional,
  org.eclipse.equinox.p2.publisher.eclipse;bundle-version="1.5.200",
  org.eclipse.jdt.core;bundle-version="[3.36.0,4.0.0)",
- org.eclipse.jdt.launching;bundle-version="[3.21.0,4.0.0)"
+ org.eclipse.jdt.launching;bundle-version="[3.22.0,4.0.0)"
 Import-Package: org.eclipse.equinox.frameworkadmin;version="[2.0.0,3.0.0)",
  org.eclipse.equinox.internal.p2.core.helpers,
  org.eclipse.equinox.internal.p2.engine,
