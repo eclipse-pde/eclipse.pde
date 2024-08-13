@@ -16,9 +16,9 @@ package org.eclipse.pde.core.plugin;
 import java.net.URL;
 
 import org.eclipse.core.runtime.URIUtil;
-import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.core.build.IBuildModel;
+import org.osgi.resource.Resource;
 
 /**
  * This type of model is created by parsing the manifest file.
@@ -63,7 +63,7 @@ public interface IPluginModelBase extends ISharedExtensionsModel, IModelChangePr
 	 * @deprecated This method has always returned <code>null</code>.
 	 *   Since 3.7, use {@link PluginRegistry#createBuildModel(IPluginModelBase)} instead.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "4.19")
 	IBuildModel getBuildModel();
 
 	/**
@@ -128,20 +128,35 @@ public interface IPluginModelBase extends ISharedExtensionsModel, IModelChangePr
 	 * an encoding tool such as {@link URIUtil}. Deprecated in
 	 * 4.3.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "4.19")
 	URL getNLLookupLocation();
 
 	/**
-	 * Returns the bundle description of the plug-in
-	 * in case the plug-in uses the new OSGi bundle layout.
+	 * Returns the bundle {@link Resource} of the plug-in in case the plug-in
+	 * uses the OSGi bundle layout.
 	 *
-	 * @return bundle description if this is an OSGi plug-in,
-	 * or <code>null</code> if the plug-in is in a classic
-	 * format.
+	 * @return resource if this is an OSGi plug-in, or <code>null</code> if the
+	 *         plug-in is in a legacy format.
+	 * @since 3.19
+	 */
+	Resource getBundleResource();
+	// TODO: is the legacy format still supported? If yes, remove support for
+	// that as well?
+
+	/**
+	 * Returns the bundle description of the plug-in in case the plug-in uses
+	 * the new OSGi bundle layout.
+	 *
+	 * @return bundle description if this is an OSGi plug-in, or
+	 *         <code>null</code> if the plug-in is in a classic format.
 	 *
 	 * @since 3.0
+	 * @deprecated Instead use {@link #getBundleResource() }
 	 */
-	BundleDescription getBundleDescription();
+	@Deprecated(forRemoval = true, since = "4.19")
+	default org.eclipse.osgi.service.resolver.BundleDescription getBundleDescription() {
+		return (org.eclipse.osgi.service.resolver.BundleDescription) getBundleResource();
+	}
 
 	/**
 	 * Associates the bundle description of the plug-in
@@ -152,6 +167,11 @@ public interface IPluginModelBase extends ISharedExtensionsModel, IModelChangePr
 	 * with this model
 	 *
 	 * @since 3.0
+	 * @deprecated Users should never modify the OSGi bundle representation of a
+	 *             plugin-model, this is only done by PDE itself.
 	 */
-	void setBundleDescription(BundleDescription description);
+	@Deprecated(forRemoval = true, since = "4.19")
+	void setBundleDescription(org.eclipse.osgi.service.resolver.BundleDescription description);
+	// FIXME: I don't think users should be able to set a resource/desription.
+	// But check possible use-cases again.
 }
