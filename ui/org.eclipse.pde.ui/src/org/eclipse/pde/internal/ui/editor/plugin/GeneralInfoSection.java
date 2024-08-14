@@ -354,19 +354,22 @@ public abstract class GeneralInfoSection extends PDESection {
 		// Select the corresponding 'Bundle-Shape' radio button (eventually)
 		Stream.of(fBundleShapeDefault, fBundleShapeJar, fBundleShapeDir).forEach(b -> b.setSelection(false));
 		Button selectedBundleShape = fBundleShapeDefault;
-		IManifestHeader header = getBundle().getManifestHeader(ICoreConstants.ECLIPSE_BUNDLE_SHAPE);
-		if (header != null) {
-			String value = header.getValue();
-			if (value != null) {
-				selectedBundleShape = switch (value) {
-					case ICoreConstants.SHAPE_JAR -> fBundleShapeJar;
-					case ICoreConstants.SHAPE_DIR -> fBundleShapeDir;
-					default -> null; // unsupported value
-				};
+		IBundle bundle = getBundle();
+		if (bundle != null) {
+			IManifestHeader header = bundle.getManifestHeader(ICoreConstants.ECLIPSE_BUNDLE_SHAPE);
+			if (header != null) {
+				String value = header.getValue();
+				if (value != null) {
+					selectedBundleShape = switch (value) {
+						case ICoreConstants.SHAPE_JAR -> fBundleShapeJar;
+						case ICoreConstants.SHAPE_DIR -> fBundleShapeDir;
+						default -> null; // unsupported value
+					};
+				}
 			}
-		}
-		if (selectedBundleShape != null) {
-			selectedBundleShape.setSelection(true);
+			if (selectedBundleShape != null) {
+				selectedBundleShape.setSelection(true);
+			}
 		}
 		super.refresh();
 	}
