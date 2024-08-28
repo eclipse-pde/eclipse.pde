@@ -58,7 +58,9 @@ public class WidgetTreeProvider implements ITreeContentProvider {
 		NodeList kids = element.getChildNodes();
 		ArrayList<Object> children = new ArrayList<>(kids.getLength());
 		for (int i = 0; i < kids.getLength(); i++) {
-			children.add(((CSSStylableElement) kids.item(i)).getNativeWidget());
+			if (kids.item(i) instanceof CSSStylableElement kid) {
+				children.add(kid.getNativeWidget());
+			}
 		}
 		return children.toArray();
 	}
