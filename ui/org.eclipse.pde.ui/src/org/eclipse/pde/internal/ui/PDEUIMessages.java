@@ -18,6 +18,7 @@
  *     Kit Lo (IBM) - Bug 244461 - Duplicating colon in error message
  *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 547222
  *     SAP SE - support macOS bundle URL types
+ *     Tue Ton - support for FreeBSD
  *******************************************************************************/
 package org.eclipse.pde.internal.ui;
 
@@ -1175,6 +1176,7 @@ public class PDEUIMessages extends NLS {
 	public static String LauncherSection_48Low;
 	public static String LauncherSection_48High;
 	public static String LauncherSection_256High;
+	public static String LauncherSection_freebsdLabel;
 	public static String LauncherSection_linuxLabel;
 	public static String LauncherSection_macLabel;
 	public static String LauncherSection_macBundleUrlTypes_DialogTitle;

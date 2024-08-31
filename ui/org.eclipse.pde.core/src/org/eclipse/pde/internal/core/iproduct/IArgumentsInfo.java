@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2018 IBM Corporation and others.
+ *  Copyright (c) 2005, 2025 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -11,17 +11,20 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 438509
+ *     Tue Ton - support for FreeBSD
  *******************************************************************************/
 package org.eclipse.pde.internal.core.iproduct;
 
 public interface IArgumentsInfo extends IProductObject {
 
 	public static final String P_PROG_ARGS = "programArgs"; //$NON-NLS-1$
+	public static final String P_PROG_ARGS_FBSD = "programArgsFbsd"; //$NON-NLS-1$
 	public static final String P_PROG_ARGS_LIN = "programArgsLin"; //$NON-NLS-1$
 	public static final String P_PROG_ARGS_MAC = "programArgsMac"; //$NON-NLS-1$
 	public static final String P_PROG_ARGS_WIN = "programArgsWin"; //$NON-NLS-1$
 
 	public static final String P_VM_ARGS = "vmArgs"; //$NON-NLS-1$
+	public static final String P_VM_ARGS_FBSD = "vmArgsFbsd"; //$NON-NLS-1$
 	public static final String P_VM_ARGS_LIN = "vmArgsLin"; //$NON-NLS-1$
 	public static final String P_VM_ARGS_MAC = "vmArgsMac"; //$NON-NLS-1$
 	public static final String P_VM_ARGS_WIN = "vmArgsWin"; //$NON-NLS-1$
@@ -33,6 +36,7 @@ public interface IArgumentsInfo extends IProductObject {
 	public static final int L_ARGS_LINUX = 1;
 	public static final int L_ARGS_MACOS = 2;
 	public static final int L_ARGS_WIN32 = 3;
+	public static final int L_ARGS_FREEBSD = 4;
 
 	public static final int L_ARGS_ARCH_ALL = 0;
 	public static final int L_ARGS_ARCH_X86 = 1;

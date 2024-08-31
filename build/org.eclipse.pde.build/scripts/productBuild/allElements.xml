@@ -1,5 +1,5 @@
 <!--
-     Copyright (c) 2006, 2008 IBM Corporation and others.
+     Copyright (c) 2006, 2025 IBM Corporation and others.
 
      This program and the accompanying materials
      are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
     
      Contributors:
          IBM Corporation - initial API and implementation
+         Tue Ton - support for FreeBSD
  -->
 <project name="Product Build allElements Delegator">
 	<property name="defaultAssemblyEnabled" value="true" />
@@ -66,6 +67,13 @@
 		</ant>
  	</target>
 	
+	<property name="assemble.org.eclipse.pde.build.container.feature.freebsd.gtk.x86_64" value="true" />
+	<target name="assemble.org.eclipse.pde.build.container.feature.freebsd.gtk.x86_64">
+		<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
+			<property name="archiveName" value="${archiveNamePrefix}-freebsd.gtk.x86_64"/>
+		</ant>
+	</target>
+
 	<property name="assemble.org.eclipse.pde.build.container.feature.group.group.group" value="true" />
  	<target name="assemble.org.eclipse.pde.build.container.feature.group.group.group">
  		<ant antfile="${assembleScriptName}" dir="${buildDirectory}">			

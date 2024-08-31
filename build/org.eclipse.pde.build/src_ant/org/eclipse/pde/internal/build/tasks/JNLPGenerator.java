@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2021 IBM Corporation and others.
+ *  Copyright (c) 2005, 2025 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     G&H Softwareentwicklung GmbH - internationalization implementation (bug 150933)
  *     Michael Seele -  remove offline-allowed  (bug 153403)
+ *     Tue Ton - support for FreeBSD
  *******************************************************************************/
 
 package org.eclipse.pde.internal.build.tasks;
@@ -333,6 +334,9 @@ public class JNLPGenerator extends DefaultHandler {
 		}
 		if ("linux".equalsIgnoreCase(os)) { //$NON-NLS-1$
 			return "Linux"; //$NON-NLS-1$
+		}
+		if ("freebsd".equalsIgnoreCase(os)) { //$NON-NLS-1$
+			return "FreeBSD"; //$NON-NLS-1$
 		}
 		if ("solaris".equalsIgnoreCase(os)) { //$NON-NLS-1$
 			return "Solaris"; //$NON-NLS-1$

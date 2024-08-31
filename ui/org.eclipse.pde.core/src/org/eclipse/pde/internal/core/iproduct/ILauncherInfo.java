@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2024 IBM Corporation and others.
+ *  Copyright (c) 2005, 2025 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 438509
  *     SAP SE - support macOS bundle URL types
+ *     Tue Ton - support for FreeBSD
  *******************************************************************************/
 package org.eclipse.pde.internal.core.iproduct;
 
@@ -19,6 +20,7 @@ import java.util.List;
 
 public interface ILauncherInfo extends IProductObject {
 
+	String FREEBSD_ICON = "freebsdIcon"; //$NON-NLS-1$
 	String LINUX_ICON = "linuxIcon"; //$NON-NLS-1$
 
 	String MACOSX_ICON = "macosxIcon"; //$NON-NLS-1$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 438509
+ *     Tue Ton - support for FreeBSD
  *******************************************************************************/
 package org.eclipse.pde.internal.core.product;
 
@@ -28,17 +29,20 @@ import org.w3c.dom.NodeList;
 
 public class JREInfo extends ProductObject implements IJREInfo {
 
+	private static final String JRE_FBSD = "freebsd"; //$NON-NLS-1$
 	private static final String JRE_LIN = "linux"; //$NON-NLS-1$
 	private static final String JRE_MAC = "macos"; //$NON-NLS-1$
 	private static final String JRE_SOL = "solaris"; //$NON-NLS-1$
 	private static final String JRE_WIN = "windows"; //$NON-NLS-1$
 
 	private static final long serialVersionUID = 1L;
+	private IPath fJVMFbsd;
 	private IPath fJVMLin;
 	private IPath fJVMMac;
 	private IPath fJVMSol;
 	private IPath fJVMWin;
 
+	private boolean bIncludeFbsd;
 	private boolean bIncludeLin;
 	private boolean bIncludeMac;
 	private boolean bIncludeSol;
@@ -52,6 +56,8 @@ public class JREInfo extends ProductObject implements IJREInfo {
 	public IPath getJREContainerPath(String os) {
 		if (Platform.OS_WIN32.equals(os)) {
 			return fJVMWin;
+		} else if (Platform.OS_FREEBSD.equals(os)) {
+			return fJVMFbsd;
 		} else if (Platform.OS_LINUX.equals(os)) {
 			return fJVMLin;
 		} else if (Platform.OS_MACOSX.equals(os)) {
@@ -67,6 +73,12 @@ public class JREInfo extends ProductObject implements IJREInfo {
 			fJVMWin = jreContainerPath;
 			if (isEditable()) {
 				firePropertyChanged(JRE_WIN, old, fJVMWin);
+			}
+		} else if (Platform.OS_FREEBSD.equals(os)) {
+			IPath old = fJVMFbsd;
+			fJVMFbsd = jreContainerPath;
+			if (isEditable()) {
+				firePropertyChanged(JRE_FBSD, old, fJVMFbsd);
 			}
 		} else if (Platform.OS_LINUX.equals(os)) {
 			IPath old = fJVMLin;
@@ -105,6 +117,10 @@ public class JREInfo extends ProductObject implements IJREInfo {
 				Node includeNode = child.getAttributes().getNamedItem("include"); //$NON-NLS-1$
 				boolean include = includeNode != null ? Boolean.parseBoolean(includeNode.getNodeValue()) : true;
 				switch (child.getNodeName()) {
+				case JRE_FBSD:
+					fJVMFbsd = getPath(child);
+					bIncludeFbsd = include;
+					break;
 				case JRE_LIN:
 					fJVMLin = getPath(child);
 					bIncludeLin = include;
@@ -148,6 +164,12 @@ public class JREInfo extends ProductObject implements IJREInfo {
 	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.println(indent + "<vm>"); //$NON-NLS-1$
+		if (fJVMFbsd != null) {
+			writer.print(indent);
+			writer.print("   <" + JRE_FBSD + " include=\"" + bIncludeFbsd + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			writer.print(fJVMFbsd.toPortableString());
+			writer.println("</" + JRE_FBSD + ">"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		if (fJVMLin != null) {
 			writer.print(indent);
 			writer.print("   <" + JRE_LIN + " include=\"" + bIncludeLin + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -179,6 +201,8 @@ public class JREInfo extends ProductObject implements IJREInfo {
 	public boolean includeJREWithProduct(String os) {
 		if (Platform.OS_WIN32.equals(os)) {
 			return bIncludeWin;
+		} else if (Platform.OS_FREEBSD.equals(os)) {
+			return bIncludeFbsd;
 		} else if (Platform.OS_LINUX.equals(os)) {
 			return bIncludeLin;
 		} else if (Platform.OS_MACOSX.equals(os)) {
@@ -194,6 +218,12 @@ public class JREInfo extends ProductObject implements IJREInfo {
 			bIncludeWin = includeJRE;
 			if (isEditable()) {
 				firePropertyChanged(JRE_WIN, old, Boolean.valueOf(bIncludeWin));
+			}
+		} else if (Platform.OS_FREEBSD.equals(os)) {
+			Boolean old = Boolean.valueOf(bIncludeFbsd);
+			bIncludeFbsd = includeJRE;
+			if (isEditable()) {
+				firePropertyChanged(JRE_FBSD, old, Boolean.valueOf(bIncludeFbsd));
 			}
 		} else if (Platform.OS_LINUX.equals(os)) {
 			Boolean old = Boolean.valueOf(bIncludeLin);

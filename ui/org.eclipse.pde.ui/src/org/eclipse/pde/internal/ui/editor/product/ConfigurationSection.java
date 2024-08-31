@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 438509
+ *     Tue Ton - support for FreeBSD
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
@@ -69,8 +70,8 @@ public class ConfigurationSection extends PDESection {
 	private FormEntry fCustomEntry;
 	private boolean fBlockChanges;
 
-	private static final String[] TAB_LABELS = { "linux", "macosx", "win32" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	private static final String[] TAB_OS = { Platform.OS_LINUX, Platform.OS_MACOSX, Platform.OS_WIN32 };
+	private static final String[] TAB_LABELS = { "linux", "macosx", "win32", "freebsd" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	private static final String[] TAB_OS = { Platform.OS_LINUX, Platform.OS_MACOSX, Platform.OS_WIN32, Platform.OS_FREEBSD };
 
 	private CTabFolder fTabFolder;
 	private int fLastTab;

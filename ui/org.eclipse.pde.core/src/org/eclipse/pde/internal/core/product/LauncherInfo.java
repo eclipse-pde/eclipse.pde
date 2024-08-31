@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2024 IBM Corporation and others.
+ *  Copyright (c) 2005, 2025 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 438509
  *     SAP SE - support macOS bundle URL types
+ *     Tue Ton - support for FreeBSD
  *******************************************************************************/
 package org.eclipse.pde.internal.core.product;
 
@@ -98,6 +99,9 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 				if (child.getNodeType() == Node.ELEMENT_NODE) {
 					String name = child.getNodeName();
 					switch (name) {
+					case "freebsd": //$NON-NLS-1$
+						parseFreeBSD((Element) child);
+						break;
 					case "linux": //$NON-NLS-1$
 						parseLinux((Element) child);
 						break;
@@ -161,6 +165,10 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 		}
 	}
 
+	private void parseFreeBSD(Element element) {
+		fIcons.put(FREEBSD_ICON, element.getAttribute("icon")); //$NON-NLS-1$
+	}
+
 	private void parseLinux(Element element) {
 		fIcons.put(LINUX_ICON, element.getAttribute("icon")); //$NON-NLS-1$
 	}
@@ -173,6 +181,7 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 		}
 		writer.println(">"); //$NON-NLS-1$
 
+		writeFreeBSD(indent + "   ", writer); //$NON-NLS-1$
 		writeLinux(indent + "   ", writer); //$NON-NLS-1$
 		writeMac(indent + "   ", writer); //$NON-NLS-1$
 		writerWin(indent + "   ", writer); //$NON-NLS-1$
@@ -224,6 +233,13 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 				writer.println(indent + "   </bundleUrlTypes>"); //$NON-NLS-1$
 				writer.println(indent + "</macosx>"); //$NON-NLS-1$
 			}
+		}
+	}
+
+	private void writeFreeBSD(String indent, PrintWriter writer) {
+		String icon = fIcons.get(FREEBSD_ICON);
+		if (icon != null && icon.length() > 0) {
+			writer.println(indent + "<freebsd icon=\"" + getWritableString(icon) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 

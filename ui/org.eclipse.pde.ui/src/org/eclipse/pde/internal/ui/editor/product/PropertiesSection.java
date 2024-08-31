@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2018 IBM Corporation and others.
+ * Copyright (c) 2010, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - Initial API and implementation
  *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 438509
+ *     Tue Ton - support for FreeBSD
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
@@ -131,7 +132,7 @@ public class PropertiesSection extends TableSection {
 		private final Set<IConfigurationProperty> fExistingProperties;
 
 		private final String[] COMBO_OSLABELS = new String[] { PDEUIMessages.PropertiesSection_All, Platform.OS_LINUX,
-				Platform.OS_MACOSX, Platform.OS_WIN32 };
+				Platform.OS_MACOSX, Platform.OS_WIN32, Platform.OS_FREEBSD };
 		private final String[] COMBO_ARCHLABELS = new String[] { PDEUIMessages.PropertiesSection_All,
 				IArgumentsInfo.ARCH_X86,
 				Platform.ARCH_X86_64 };

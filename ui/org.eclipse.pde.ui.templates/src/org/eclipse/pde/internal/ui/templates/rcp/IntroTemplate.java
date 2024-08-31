@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473694, 486261
+ *     Tue Ton - support for FreeBSD
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.templates.rcp;
@@ -173,7 +174,7 @@ public class IntroTemplate extends PDETemplateSection {
 		presentationElement.setAttribute("home-page-id", "root"); //$NON-NLS-1$ //$NON-NLS-2$
 		IPluginElement implementationElement = factory.createElement(presentationElement);
 		implementationElement.setName("implementation"); //$NON-NLS-1$
-		implementationElement.setAttribute("os", "win32,linux,macosx"); //$NON-NLS-1$ //$NON-NLS-2$
+		implementationElement.setAttribute("os", "win32,linux,macosx,freebsd"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (getTargetVersion() == 3.0) {
 			implementationElement.setAttribute("style", "content/shared.css"); //$NON-NLS-1$//$NON-NLS-2$
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2021 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *      IBM Corporation - initial API and implementation
+ *      Tue Ton - support for FreeBSD
  *******************************************************************************/
 package org.eclipse.pde.internal.build;
 
@@ -615,7 +616,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 			arguments.add("-sf"); //$NON-NLS-1$
 			arguments.add(links[i]);
 			arguments.add(links[i + 1]);
-			script.printExecTask("ln", dir, arguments, "Linux"); //$NON-NLS-1$ //$NON-NLS-2$
+			script.printExecTask("ln", dir, arguments, "Linux,FreeBSD"); //$NON-NLS-1$ //$NON-NLS-2$
 			arguments.clear();
 		}
 	}
