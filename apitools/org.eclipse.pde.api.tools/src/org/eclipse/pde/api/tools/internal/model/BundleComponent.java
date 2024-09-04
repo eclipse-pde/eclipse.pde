@@ -82,6 +82,7 @@ import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.Version;
+import org.osgi.framework.namespace.ExecutionEnvironmentNamespace;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -91,6 +92,8 @@ import org.xml.sax.SAXException;
  * @since 1.0.0
  */
 public class BundleComponent extends Component {
+
+	private static final String[] NO_EXECUTION_ENVIRONMENTS = new String[0];
 
 	static final String TMP_API_FILE_PREFIX = "api"; //$NON-NLS-1$
 
@@ -310,7 +313,12 @@ public class BundleComponent extends Component {
 				BundleDescription bundleDescription = getBundleDescription(manifest, fLocation, fBundleId);
 				fSymbolicName = bundleDescription.getSymbolicName();
 				fVersion = bundleDescription.getVersion();
-				fdeclaredRequiredEE = ManifestUtils.getRequiredExecutionEnvironments(bundleDescription).toArray(String[]::new);
+				if (hasDeclaredRequiredEE(manifest)) {
+					fdeclaredRequiredEE = ManifestUtils.getRequiredExecutionEnvironments(bundleDescription)
+							.toArray(String[]::new);
+				} else {
+					fdeclaredRequiredEE = NO_EXECUTION_ENVIRONMENTS;
+				}
 				setName(manifest.get(Constants.BUNDLE_NAME));
 				fBundleDescription = bundleDescription;
 			} catch (BundleException e) {
@@ -1204,4 +1212,28 @@ public class BundleComponent extends Component {
 						new Object[] { getName(), baseline.getName(), Thread.currentThread().getName() }),
 				disposeSource));
 	}
+
+	/*
+	 * This is a copy of
+	 * org.eclipse.pde.internal.core.MinimalState.hasDeclaredRequiredEE(Map<String,
+	 * String>). PDE ends up adding a synthetic EE to the manifest when that method
+	 * returns false, and that ends up in the bundle description such that we cannot
+	 * determine whether the EE was actually present or was synthesized. So we
+	 * repeat that computation here
+	 */
+	@SuppressWarnings("deprecation")
+	private boolean hasDeclaredRequiredEE(Map<String, String> manifest) {
+		if (manifest.containsKey(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT)) {
+			return true;
+		}
+		try {
+			String capability = manifest.get(Constants.REQUIRE_CAPABILITY);
+			ManifestElement[] header = ManifestElement.parseHeader(Constants.REQUIRE_CAPABILITY, capability);
+			return header != null && Arrays.stream(header).map(ManifestElement::getValue)
+					.anyMatch(ExecutionEnvironmentNamespace.EXECUTION_ENVIRONMENT_NAMESPACE::equals);
+		} catch (BundleException e) {
+			return false; // ignore
+		}
+	}
+
 }
