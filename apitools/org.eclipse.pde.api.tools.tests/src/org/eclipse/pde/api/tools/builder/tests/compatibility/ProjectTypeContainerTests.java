@@ -13,11 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.compatibility;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertArrayEquals;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -68,18 +68,25 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 	}
 
 	/**
-	 * Returns the type container associated with the given project in the
-	 * workspace.
+	 * Returns the component associated with the given project in the workspace.
 	 */
-	protected IApiTypeContainer getTypeContainer(String projectName) throws CoreException {
+	private IApiComponent getComponent(String projectName) {
 		IApiBaseline baseline = ApiBaselineManager.getManager().getWorkspaceBaseline();
 		assertNotNull("Missing workspace baseline", baseline); //$NON-NLS-1$
 		IApiComponent component = baseline.getApiComponent(getEnv().getProject(projectName));
 		assertNotNull("Missing API component", component); //$NON-NLS-1$
+		return component;
+	}
+
+	/**
+	 * Returns the type container associated with the given project in the
+	 * workspace.
+	 */
+	private IApiTypeContainer getTypeContainer(String projectName) throws CoreException {
+		IApiComponent component = getComponent(projectName);
 		IApiTypeContainer[] containers = component.getApiTypeContainers();
 		assertEquals("Wrong number of API type containers", 1, containers.length); //$NON-NLS-1$
-		IApiTypeContainer container = containers[0];
-		return container;
+		return containers[0];
 	}
 
 	protected IPackageFragment[] getAllPackages() throws CoreException {
@@ -162,13 +169,13 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 	 * {@code Require-Capability} header.
 	 */
 	public void testExecutionEnvironment() throws CoreException {
-		IApiTypeContainer bundleA = getTypeContainer("bundle.a"); //$NON-NLS-1$
+		IApiComponent bundleA = getComponent("bundle.a"); //$NON-NLS-1$
 		assertArrayEquals("Unable to find BREE for bundle using 'Bundle-RequiredExecutionEvironment'", //$NON-NLS-1$
-				new String[] { "JavaSE-1.8" }, bundleA.getApiComponent().getExecutionEnvironments()); //$NON-NLS-1$
+				new String[] { "JavaSE-1.8" }, bundleA.getExecutionEnvironments()); //$NON-NLS-1$
 
-		IApiTypeContainer bundleB = getTypeContainer("bundle.b"); //$NON-NLS-1$
+		IApiComponent bundleB = getComponent("bundle.b"); //$NON-NLS-1$
 		assertArrayEquals("Unable to find BREE for bundle using 'Require-Capability'", //$NON-NLS-1$
-				new String[] { "JavaSE-17" }, bundleB.getApiComponent().getExecutionEnvironments()); //$NON-NLS-1$
+				new String[] { "JavaSE-17" }, bundleB.getExecutionEnvironments()); //$NON-NLS-1$
 	}
 
 	/**
@@ -178,23 +185,8 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 		IApiTypeContainer container = getTypeContainer("bundle.a"); //$NON-NLS-1$
 		assertEquals("Should be a project type container", IApiTypeContainer.FOLDER, container.getContainerType()); //$NON-NLS-1$
 
-		// build expected list
-		Set<String> set = getAllPackageNames();
-
-		// assertEquals("Wrong number of package names", set.size(),
-		// names.length);
-		for (String name : container.getPackageNames()) {
-			set.remove(name);
-		}
-		if (!set.isEmpty()) {
-			System.out.println("LEFTOVERS"); //$NON-NLS-1$
-			Iterator<String> iterator = set.iterator();
-			while (iterator.hasNext()) {
-				String string = iterator.next();
-				System.out.println(string);
-			}
-		}
-		assertTrue("Missing/wrong packages in type container", set.isEmpty()); //$NON-NLS-1$
+		assertThat(container.getPackageNames()).withFailMessage("Missing/wrong packages in type container") //$NON-NLS-1$
+				.containsAll(getAllPackageNames());
 	}
 
 	/**
@@ -238,38 +230,10 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 		getTypeContainer("bundle.a").accept(visitor); //$NON-NLS-1$
 
 		// validate type names
-		Set<String> set = collectAllTypeNames();
-		Iterator<String> iterator = typeNames.iterator();
-		while (iterator.hasNext()) {
-			set.remove(iterator.next());
-		}
-		if (!set.isEmpty()) {
-			System.out.println("LEFTOVER TYPES"); //$NON-NLS-1$
-			Iterator<String> iterator2 = set.iterator();
-			while (iterator2.hasNext()) {
-				String string = iterator2.next();
-				System.out.println(string);
-			}
-		}
-		assertTrue("Missing/wrong types in type container", set.isEmpty()); //$NON-NLS-1$
+		assertThat(typeNames).containsAll(collectAllTypeNames());
 
 		// validate package names
-		// build expected list
-		set = getAllPackageNames();
-		iterator = pkgNames.iterator();
-		while (iterator.hasNext()) {
-			set.remove(iterator.next());
-		}
-		if (!set.isEmpty()) {
-			System.out.println("LEFTOVER PACKAGES"); //$NON-NLS-1$
-			Iterator<String> iterator2 = set.iterator();
-			while (iterator2.hasNext()) {
-				String string = iterator2.next();
-				System.out.println(string);
-			}
-		}
-		assertTrue("Missing/wrong packages in type container", set.isEmpty()); //$NON-NLS-1$
-
+		assertThat(pkgNames).containsAll(getAllPackageNames());
 	}
 
 }

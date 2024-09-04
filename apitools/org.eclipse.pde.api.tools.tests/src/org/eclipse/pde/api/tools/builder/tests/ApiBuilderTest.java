@@ -356,7 +356,9 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		}
 		// copy over .class files
 		IFolder output = project.getFolder("bin"); //$NON-NLS-1$
-		FileUtils.copyFolder(output, componentDir);
+		if (output.exists()) {
+			FileUtils.copyFolder(output, componentDir);
+		}
 		// copy description
 		Util.writeDocumentToFile(xml, componentDir.toPath().resolve(".api_description")); //$NON-NLS-1$
 	}
