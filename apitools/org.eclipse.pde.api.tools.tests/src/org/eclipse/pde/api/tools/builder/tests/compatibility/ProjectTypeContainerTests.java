@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
@@ -176,6 +177,20 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 		IApiComponent bundleB = getComponent("bundle.b"); //$NON-NLS-1$
 		assertArrayEquals("Unable to find BREE for bundle using 'Require-Capability'", //$NON-NLS-1$
 				new String[] { "JavaSE-17" }, bundleB.getExecutionEnvironments()); //$NON-NLS-1$
+	}
+
+	/**
+	 * Tests whether missing execution environments in the manifest are detected
+	 * correctly.
+	 */
+	public void testNoExecutionEnvironment() throws CoreException {
+		// Verify that the test-project is an existing java project in order to
+		// ensure it gets the EE of the bound JDK injected (because it does not
+		// declare an EE in its Manifest).
+		assertTrue(JavaCore.create(ResourcesPlugin.getWorkspace().getRoot().getProject("bundle.c")).exists()); //$NON-NLS-1$
+		IApiComponent bundleC = getComponent("bundle.c"); //$NON-NLS-1$
+		assertArrayEquals("Expected no EE because none is specified in the Manifest", //$NON-NLS-1$
+				new String[] {}, bundleC.getExecutionEnvironments());
 	}
 
 	/**
