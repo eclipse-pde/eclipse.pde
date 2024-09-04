@@ -172,6 +172,16 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 	}
 
 	/**
+	 * Tests whether missing execution environments in the manifest are detected
+	 * correctly.
+	 */
+	public void testNoExecutionEnvironment() throws CoreException {
+		IApiTypeContainer bundleC = getTypeContainer("bundle.c"); //$NON-NLS-1$
+		assertArrayEquals("Expected no EE because none is specified in the Manifest", //$NON-NLS-1$
+				new String[] {}, bundleC.getApiComponent().getExecutionEnvironments());
+	}
+
+	/**
 	 * Tests all packages are returned.
 	 */
 	public void testPackageNames() throws CoreException {
