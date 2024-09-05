@@ -15,7 +15,6 @@ package org.eclipse.pde.api.tools.internal.model;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -93,7 +92,7 @@ public class WorkspaceBaseline extends ApiBaseline {
 				continue;
 			}
 			addComponent(component);
-			ees.addAll(Arrays.asList(component.getExecutionEnvironments()));
+			ees.addAll(component.getExecutionEnvironments());
 		}
 		resolveSystemLibrary(ees);
 	}

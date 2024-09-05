@@ -41,7 +41,7 @@ public class SystemLibraryApiComponent extends Component {
 	/**
 	 * Execution environment profile symbolic name.
 	 */
-	protected String[] fExecEnv;
+	protected List<String> fExecEnv;
 
 	/**
 	 * Associated library locations.
@@ -133,13 +133,13 @@ public class SystemLibraryApiComponent extends Component {
 	}
 
 	@Override
-	public String[] getExecutionEnvironments() {
+	public List<String> getExecutionEnvironments() {
 		return fExecEnv;
 	}
 
 	@Override
 	public String getSymbolicName() {
-		return fExecEnv[0];
+		return fExecEnv.get(0);
 	}
 
 	@Override
@@ -164,9 +164,9 @@ public class SystemLibraryApiComponent extends Component {
 	 */
 	private void init(ExecutionEnvironmentDescription description) {
 		fLibraries = description.getLibraryLocations();
-		fExecEnv = new String[] { description.getProperty(ExecutionEnvironmentDescription.CLASS_LIB_LEVEL) };
-		fVersion = fExecEnv[0];
-		setName(fExecEnv[0]);
+		fExecEnv = List.of(description.getProperty(ExecutionEnvironmentDescription.CLASS_LIB_LEVEL));
+		fVersion = fExecEnv.get(0);
+		setName(fExecEnv.get(0));
 		fLocation = description.getProperty(ExecutionEnvironmentDescription.JAVA_HOME);
 	}
 
@@ -200,8 +200,8 @@ public class SystemLibraryApiComponent extends Component {
 	}
 
 	@Override
-	public String[] getLowestEEs() {
-		return null;
+	public List<String> getLowestEEs() {
+		return List.of();
 	}
 
 	@Override

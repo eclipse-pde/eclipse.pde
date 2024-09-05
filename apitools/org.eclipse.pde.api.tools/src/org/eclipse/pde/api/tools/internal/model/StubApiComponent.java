@@ -155,9 +155,9 @@ public class StubApiComponent extends SystemLibraryApiComponent {
 		super(baseline);
 		IPath path = IPath.fromOSString(fileName);
 		fLibraries = new LibraryLocation[] { new LibraryLocation(path, null, null) };
-		fExecEnv = new String[] { profileName };
-		fVersion = fExecEnv[0];
-		setName(fExecEnv[0]);
+		fExecEnv = List.of(profileName);
+		fVersion = fExecEnv.get(0);
+		setName(fExecEnv.get(0));
 		fLocation = path.toOSString();
 	}
 

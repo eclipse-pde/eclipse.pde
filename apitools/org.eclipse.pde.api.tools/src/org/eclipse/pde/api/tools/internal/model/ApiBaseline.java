@@ -370,7 +370,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 			BundleDescription description = component.getBundleDescription();
 			getState().addBundle(description);
 			addComponent(component);
-			ees.addAll(Arrays.asList(component.getExecutionEnvironments()));
+			ees.addAll(component.getExecutionEnvironments());
 		}
 		resolveSystemLibrary(ees);
 		getState().resolve();
@@ -934,11 +934,11 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 				fVMBinding = null;
 				IApiComponent[] components = getApiComponents();
 				HashSet<String> ees = new HashSet<>();
-				for (IApiComponent component2 : components) {
+				for (IApiComponent component : components) {
 					try {
-						ees.addAll(Arrays.asList(component2.getExecutionEnvironments()));
+						ees.addAll(component.getExecutionEnvironments());
 					} catch (CoreException e) {
-						ApiPlugin.log("Error reading execution environment from " + component2, e); //$NON-NLS-1$
+						ApiPlugin.log("Error reading execution environment from " + component, e); //$NON-NLS-1$
 					}
 				}
 				resolveSystemLibrary(ees);

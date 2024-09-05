@@ -1516,8 +1516,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	}
 
 	private boolean hasExecutionEnvironmentChanged(IApiComponent reference, IApiComponent component) {
-		String[] refExecutionEnv = null;
-		String[] compExecutionEnv = null;
+		List<String> refExecutionEnv = List.of();
+		List<String> compExecutionEnv = List.of();
 		try {
 			refExecutionEnv = reference.getExecutionEnvironments();
 		} catch (CoreException e) {
@@ -1528,13 +1528,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
 		}
-		if (refExecutionEnv == null && compExecutionEnv == null) {
-			return false;
-		} else if (refExecutionEnv == null || compExecutionEnv == null) {
-			return true;
-		}
 		// any change in BREE list would generate a minor version increase
-		return !new HashSet<>(Arrays.asList(refExecutionEnv)).equals(new HashSet<>(Arrays.asList(compExecutionEnv)));
+		return !new HashSet<>(refExecutionEnv).equals(new HashSet<>(compExecutionEnv));
 	}
 
 	/**

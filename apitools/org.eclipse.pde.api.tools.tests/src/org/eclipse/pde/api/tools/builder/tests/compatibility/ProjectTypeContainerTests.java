@@ -14,7 +14,6 @@
 package org.eclipse.pde.api.tools.builder.tests.compatibility;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertArrayEquals;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -171,12 +170,12 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 	 */
 	public void testExecutionEnvironment() throws CoreException {
 		IApiComponent bundleA = getComponent("bundle.a"); //$NON-NLS-1$
-		assertArrayEquals("Unable to find BREE for bundle using 'Bundle-RequiredExecutionEvironment'", //$NON-NLS-1$
-				new String[] { "JavaSE-1.8" }, bundleA.getExecutionEnvironments()); //$NON-NLS-1$
+		assertEquals("Unable to find BREE for bundle using 'Bundle-RequiredExecutionEvironment'", //$NON-NLS-1$
+				List.of("JavaSE-1.8"), bundleA.getExecutionEnvironments()); //$NON-NLS-1$
 
 		IApiComponent bundleB = getComponent("bundle.b"); //$NON-NLS-1$
-		assertArrayEquals("Unable to find BREE for bundle using 'Require-Capability'", //$NON-NLS-1$
-				new String[] { "JavaSE-17" }, bundleB.getExecutionEnvironments()); //$NON-NLS-1$
+		assertEquals("Unable to find BREE for bundle using 'Require-Capability'", //$NON-NLS-1$
+				List.of("JavaSE-17"), bundleB.getExecutionEnvironments()); //$NON-NLS-1$
 	}
 
 	/**
@@ -189,8 +188,8 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 		// declare an EE in its Manifest).
 		assertTrue(JavaCore.create(ResourcesPlugin.getWorkspace().getRoot().getProject("bundle.c")).exists()); //$NON-NLS-1$
 		IApiComponent bundleC = getComponent("bundle.c"); //$NON-NLS-1$
-		assertArrayEquals("Expected no EE because none is specified in the Manifest", //$NON-NLS-1$
-				new String[] {}, bundleC.getExecutionEnvironments());
+		assertEquals("Expected no EE because none is specified in the Manifest", //$NON-NLS-1$
+				List.of(), bundleC.getExecutionEnvironments());
 	}
 
 	/**

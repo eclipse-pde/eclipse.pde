@@ -263,8 +263,8 @@ public class ApiComparator {
 			final Delta globalDelta = new Delta();
 
 			// check the EE first
-			Set<String> referenceEEs = Util.convertAsSet(referenceComponent.getExecutionEnvironments());
-			Set<String> componentsEEs = Util.convertAsSet(component2.getExecutionEnvironments());
+			Set<String> referenceEEs = new HashSet<>(referenceComponent.getExecutionEnvironments());
+			Set<String> componentsEEs = new HashSet<>(component2.getExecutionEnvironments());
 			SubMonitor referencesLoopMonitor = localmonitor.split(1).setWorkRemaining(referenceEEs.size());
 			for (String currentEE : referenceEEs) {
 				referencesLoopMonitor.split(1);

@@ -105,10 +105,10 @@ public class BundleComponent extends Component {
 	 * creation. Only these headers are maintained in the manifest dictionary to
 	 * reduce footprint.
 	 */
-	private static final String[] MANIFEST_HEADERS = new String[] {
+	private static final List<String> MANIFEST_HEADERS = List.of(
 			IApiCoreConstants.ECLIPSE_SOURCE_BUNDLE,
 			Constants.BUNDLE_CLASSPATH, Constants.BUNDLE_NAME,
-			Constants.BUNDLE_VERSION };
+			Constants.BUNDLE_VERSION);
 
 	/**
 	 * Whether there is an underlying .api_description file
@@ -138,7 +138,7 @@ public class BundleComponent extends Component {
 	/**
 	 * Cached value for the lowest EEs
 	 */
-	private volatile String[] lowestEEs;
+	private volatile List<String> lowestEEs;
 
 	/**
 	 * Flag to know if this component is a binary bundle in the workspace i.e.
@@ -162,7 +162,7 @@ public class BundleComponent extends Component {
 	 * @see #getExecutionEnvironments()
 	 * @see #hasDeclaredRequiredEE(Map)
 	 */
-	private volatile String[] fdeclaredRequiredEE;
+	private volatile List<String> fdeclaredRequiredEE;
 
 	/**
 	 * Constructs a new API component from the specified location in the file
@@ -252,7 +252,7 @@ public class BundleComponent extends Component {
 	 */
 	protected synchronized void doManifestCompaction() {
 		Map<String, String> temp = fManifest;
-		fManifest = new Hashtable<>(MANIFEST_HEADERS.length, 1);
+		fManifest = new Hashtable<>(MANIFEST_HEADERS.size(), 1);
 		for (String header : MANIFEST_HEADERS) {
 			String value = temp.get(header);
 			if (value != null) {
@@ -312,8 +312,8 @@ public class BundleComponent extends Component {
 				fSymbolicName = bundleDescription.getSymbolicName();
 				fVersion = bundleDescription.getVersion();
 				fdeclaredRequiredEE = MinimalState.hasDeclaredRequiredEE(manifest)
-						? ManifestUtils.getRequiredExecutionEnvironments(bundleDescription).toArray(String[]::new)
-						: new String[0];
+						? ManifestUtils.getRequiredExecutionEnvironments(bundleDescription).toList()
+						: List.of();
 				setName(manifest.get(Constants.BUNDLE_NAME));
 				fBundleDescription = bundleDescription;
 			} catch (BundleException e) {
@@ -887,7 +887,7 @@ public class BundleComponent extends Component {
 	}
 
 	@Override
-	public String[] getExecutionEnvironments() throws CoreException {
+	public List<String> getExecutionEnvironments() throws CoreException {
 		// Return the EE from the description only if explicitly specified in the
 		// manifest.
 		return fdeclaredRequiredEE;
@@ -1084,103 +1084,92 @@ public class BundleComponent extends Component {
 	}
 
 	@Override
-	public String[] getLowestEEs() throws CoreException {
+	public List<String> getLowestEEs() throws CoreException {
 		if (lowestEEs != null) {
 			return lowestEEs;
 		}
-		String[] executionEnvironments = getExecutionEnvironments();
-		String[] ees = computeLowestEEs(executionEnvironments);
+		List<String> executionEnvironments = getExecutionEnvironments();
+		List<String> ees = computeLowestEEs(executionEnvironments);
 		synchronized (this) {
 			lowestEEs = ees;
 			return lowestEEs;
 		}
 	}
 
-	private static String[] computeLowestEEs(String[] executionEnvironments) {
-		String[] temp = null;
-
-		int length = executionEnvironments.length;
-		switch (length) {
-			case 0:
-				return null;
-			case 1:
-				temp = new String[] { executionEnvironments[0] };
-				break;
-			default:
+	private static List<String> computeLowestEEs(List<String> executionEnvironments) {
+		return switch (executionEnvironments.size())
+			{
+			case 0, 1 -> executionEnvironments;
+			default -> {
+				List<String> temp = List.of();
 				int values = ProfileModifiers.NO_PROFILE_VALUE;
-				for (int i = 0; i < length; i++) {
-					values |= ProfileModifiers.getValue(executionEnvironments[i]);
+				for (String ee : executionEnvironments) {
+					values |= ProfileModifiers.getValue(ee);
 				}
 				if (ProfileModifiers.isJRE(values)) {
 					if (ProfileModifiers.isJRE_1_1(values)) {
-						temp = new String[] { ProfileModifiers.JRE_1_1_NAME };
+						temp = List.of(ProfileModifiers.JRE_1_1_NAME);
 					} else if (ProfileModifiers.isJ2SE_1_2(values)) {
-						temp = new String[] { ProfileModifiers.J2SE_1_2_NAME };
+						temp = List.of(ProfileModifiers.J2SE_1_2_NAME);
 					} else if (ProfileModifiers.isJ2SE_1_3(values)) {
-						temp = new String[] { ProfileModifiers.J2SE_1_3_NAME };
+						temp = List.of(ProfileModifiers.J2SE_1_3_NAME);
 					} else if (ProfileModifiers.isJ2SE_1_4(values)) {
-						temp = new String[] { ProfileModifiers.J2SE_1_4_NAME };
+						temp = List.of(ProfileModifiers.J2SE_1_4_NAME);
 					} else if (ProfileModifiers.isJ2SE_1_5(values)) {
-						temp = new String[] { ProfileModifiers.J2SE_1_5_NAME };
+						temp = List.of(ProfileModifiers.J2SE_1_5_NAME);
 					} else if (ProfileModifiers.isJAVASE_1_6(values)) {
-						temp = new String[] { ProfileModifiers.JAVASE_1_6_NAME };
+						temp = List.of(ProfileModifiers.JAVASE_1_6_NAME);
 					} else if (ProfileModifiers.isJAVASE_1_7(values)) {
-						temp = new String[] { ProfileModifiers.JAVASE_1_7_NAME };
+						temp = List.of(ProfileModifiers.JAVASE_1_7_NAME);
 					} else if (ProfileModifiers.isJAVASE_1_8(values)) {
-						temp = new String[] { ProfileModifiers.JAVASE_1_8_NAME };
+						temp = List.of(ProfileModifiers.JAVASE_1_8_NAME);
 					} else {
-						temp = new String[] { ProfileModifiers.JAVASE_9_NAME };
+						temp = List.of(ProfileModifiers.JAVASE_9_NAME);
 					}
 				}
 				if (ProfileModifiers.isCDC_Foundation(values)) {
 					if (ProfileModifiers.isCDC_1_0_FOUNDATION_1_0(values)) {
-						if (temp != null) {
-							temp = new String[] {
-									temp[0],
-									ProfileModifiers.CDC_1_0_FOUNDATION_1_0_NAME };
+						if (!temp.isEmpty()) {
+							temp = List.of(temp.get(0), ProfileModifiers.CDC_1_0_FOUNDATION_1_0_NAME);
 						} else {
-							temp = new String[] { ProfileModifiers.CDC_1_0_FOUNDATION_1_0_NAME };
+							temp = List.of(ProfileModifiers.CDC_1_0_FOUNDATION_1_0_NAME);
 						}
 					} else {
-						if (temp != null) {
-							temp = new String[] {
-									temp[0],
-									ProfileModifiers.CDC_1_1_FOUNDATION_1_1_NAME };
+						if (!temp.isEmpty()) {
+							temp = List.of(temp.get(0), ProfileModifiers.CDC_1_1_FOUNDATION_1_1_NAME);
 						} else {
-							temp = new String[] { ProfileModifiers.CDC_1_1_FOUNDATION_1_1_NAME };
+							temp = List.of(ProfileModifiers.CDC_1_1_FOUNDATION_1_1_NAME);
 						}
 					}
 				}
 				if (ProfileModifiers.isOSGi(values)) {
 					if (ProfileModifiers.isOSGI_MINIMUM_1_0(values)) {
-						if (temp != null) {
-							int tempLength = temp.length;
-							System.arraycopy(temp, 0, (temp = new String[tempLength + 1]), 0, tempLength);
-							temp[tempLength] = ProfileModifiers.OSGI_MINIMUM_1_0_NAME;
+						if (!temp.isEmpty()) {
+							temp = new ArrayList<>(temp);
+							temp.add(ProfileModifiers.OSGI_MINIMUM_1_0_NAME);
 						} else {
-							temp = new String[] { ProfileModifiers.OSGI_MINIMUM_1_0_NAME };
+							temp = List.of(ProfileModifiers.OSGI_MINIMUM_1_0_NAME);
 						}
 					} else if (ProfileModifiers.isOSGI_MINIMUM_1_1(values)) {
-						if (temp != null) {
-							int tempLength = temp.length;
-							System.arraycopy(temp, 0, (temp = new String[tempLength + 1]), 0, tempLength);
-							temp[tempLength] = ProfileModifiers.OSGI_MINIMUM_1_1_NAME;
+						if (!temp.isEmpty()) {
+							temp = new ArrayList<>(temp);
+							temp.add(ProfileModifiers.OSGI_MINIMUM_1_1_NAME);
 						} else {
-							temp = new String[] { ProfileModifiers.OSGI_MINIMUM_1_1_NAME };
+							temp = List.of(ProfileModifiers.OSGI_MINIMUM_1_1_NAME);
 						}
 					} else {
 						// OSGI_MINIMUM_1_2
-						if (temp != null) {
-							int tempLength = temp.length;
-							System.arraycopy(temp, 0, (temp = new String[tempLength + 1]), 0, tempLength);
-							temp[tempLength] = ProfileModifiers.OSGI_MINIMUM_1_2_NAME;
+						if (!temp.isEmpty()) {
+							temp = new ArrayList<>(temp);
+							temp.add(ProfileModifiers.OSGI_MINIMUM_1_2_NAME);
 						} else {
-							temp = new String[] { ProfileModifiers.OSGI_MINIMUM_1_2_NAME };
+							temp = List.of(ProfileModifiers.OSGI_MINIMUM_1_2_NAME);
 						}
 					}
 				}
-		}
-		return temp;
+				yield temp;
+			}
+			};
 	}
 
 	@Override

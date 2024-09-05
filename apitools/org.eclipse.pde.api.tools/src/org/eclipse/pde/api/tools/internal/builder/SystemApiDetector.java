@@ -294,8 +294,8 @@ public class SystemApiDetector extends AbstractProblemDetector {
 		try {
 			IApiMember member = reference.getMember();
 			IApiComponent apiComponent = member.getApiComponent();
-			String[] lowestEEs = apiComponent.getLowestEEs();
-			if (lowestEEs == null) {
+			List<String> lowestEEs = apiComponent.getLowestEEs();
+			if (lowestEEs.isEmpty()) {
 				// this should not be true for Eclipse bundle as they should
 				// always have a EE set
 				return false;

@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional.model;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
@@ -75,7 +77,7 @@ public interface IApiComponent extends IApiTypeContainer {
 	 * @return execution environment identifier
 	 * @throws CoreException if its baseline is disposed
 	 */
-	public String[] getExecutionEnvironments() throws CoreException;
+	public List<String> getExecutionEnvironments() throws CoreException;
 
 	/**
 	 * Returns {@link IApiTypeContainer}s containing the {@link IApiTypeRoot}s
@@ -218,7 +220,7 @@ public interface IApiComponent extends IApiTypeContainer {
 	 * @return execution environment identifiers
 	 * @throws CoreException if its baseline is disposed
 	 */
-	public String[] getLowestEEs() throws CoreException;
+	public List<String> getLowestEEs() throws CoreException;
 
 	/**
 	 * Returns the list of errors found during the component resolution.
