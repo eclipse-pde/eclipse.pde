@@ -75,6 +75,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.util.SourceDefaultHandler;
 import org.eclipse.pde.api.tools.internal.util.Util;
+import org.eclipse.pde.internal.core.MinimalState;
 import org.eclipse.pde.internal.core.TargetWeaver;
 import org.eclipse.pde.internal.core.util.ManifestUtils;
 import org.osgi.framework.Bundle;
@@ -310,7 +311,9 @@ public class BundleComponent extends Component {
 				BundleDescription bundleDescription = getBundleDescription(manifest, fLocation, fBundleId);
 				fSymbolicName = bundleDescription.getSymbolicName();
 				fVersion = bundleDescription.getVersion();
-				fdeclaredRequiredEE = ManifestUtils.getRequiredExecutionEnvironments(bundleDescription).toArray(String[]::new);
+				fdeclaredRequiredEE = MinimalState.hasDeclaredRequiredEE(manifest)
+						? ManifestUtils.getRequiredExecutionEnvironments(bundleDescription).toArray(String[]::new)
+						: new String[0];
 				setName(manifest.get(Constants.BUNDLE_NAME));
 				fBundleDescription = bundleDescription;
 			} catch (BundleException e) {
