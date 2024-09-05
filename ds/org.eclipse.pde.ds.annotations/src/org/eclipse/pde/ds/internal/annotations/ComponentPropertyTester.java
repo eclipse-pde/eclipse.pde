@@ -31,8 +31,9 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
 
 /**
- * Tests if a type (or any nested type) has a {@link Component} annotation with
- * no <code>name</code> attribute.
+ * Tests if a type (or any nested type) has a
+ * {@link org.osgi.service.component.annotations.Component} annotation with no
+ * <code>name</code> attribute.
  */
 @SuppressWarnings("restriction")
 public class ComponentPropertyTester extends PropertyTester {

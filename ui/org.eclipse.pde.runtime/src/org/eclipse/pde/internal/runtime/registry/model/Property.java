@@ -56,16 +56,17 @@ public class Property extends ModelObject implements Comparable<Property> {
 	 *
 	 * <p>
 	 * The {@link Property}s are compared according to the following rules:
+	 * </p>
 	 * <ul>
 	 * <li>objectClass is always less than everything else</li>
 	 * <li>properties with names starting with "service." are considered "less"
 	 * than other properties.</li>
 	 * <li>regular properties are considered "more" than other properties</li>
 	 * </ul>
-	 * </p>
 	 *
 	 * <p>
 	 * When sorting an array of properties with the following code:
+	 * </p>
 	 *
 	 * <pre>
 	 * Property[] properties = ...;
@@ -78,7 +79,6 @@ public class Property extends ModelObject implements Comparable<Property> {
 	 * <li>service.id</li>
 	 * <li>service.id</li>
 	 * </ul>
-	 * </p>
 	 *
 	 * @param other
 	 *            other property to be compared against
