@@ -177,8 +177,8 @@ public class TestSuiteHelper {
 			}
 
 			@Override
-			public String[] getExecutionEnvironments() {
-				return null;
+			public List<String> getExecutionEnvironments() {
+				return List.of();
 			}
 
 			@Override
@@ -256,8 +256,8 @@ public class TestSuiteHelper {
 			}
 
 			@Override
-			public String[] getLowestEEs() {
-				return null;
+			public List<String> getLowestEEs() {
+				return List.of();
 			}
 
 			@Override

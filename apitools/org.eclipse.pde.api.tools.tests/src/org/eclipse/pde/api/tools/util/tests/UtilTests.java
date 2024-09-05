@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -385,8 +386,8 @@ public class UtilTests {
 				return null;
 			}
 			@Override
-			public String[] getExecutionEnvironments() throws CoreException {
-				return null;
+			public List<String> getExecutionEnvironments() throws CoreException {
+				return List.of();
 			}
 			@Override
 			public IApiTypeContainer[] getApiTypeContainers() throws CoreException {
@@ -436,8 +437,8 @@ public class UtilTests {
 				return false;
 			}
 			@Override
-			public String[] getLowestEEs() throws CoreException {
-				return null;
+			public List<String> getLowestEEs() throws CoreException {
+				return List.of();
 			}
 			@Override
 			public ResolverError[] getErrors() throws CoreException {

@@ -17,6 +17,7 @@ package org.eclipse.pde.api.tools.ui.internal.wizards;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -67,12 +68,8 @@ public abstract class ApiBaselineWizardPage extends WizardPage {
 			if (parentElement instanceof IApiComponent) {
 				try {
 					IApiComponent component = (IApiComponent) parentElement;
-					String[] ees = component.getExecutionEnvironments();
-					ArrayList<EEEntry> entries = new ArrayList<>(ees.length);
-					for (String ee : ees) {
-						entries.add(new EEEntry(ee));
-					}
-					return entries.toArray();
+					List<String> ees = component.getExecutionEnvironments();
+					return ees.stream().map(EEEntry::new).toArray();
 				} catch (CoreException e) {
 					ApiPlugin.log(e);
 				}
@@ -85,7 +82,7 @@ public abstract class ApiBaselineWizardPage extends WizardPage {
 			if (element instanceof IApiComponent) {
 				try {
 					IApiComponent component = (IApiComponent) element;
-					return component.getExecutionEnvironments().length > 0;
+					return !component.getExecutionEnvironments().isEmpty();
 				} catch (CoreException e) {
 					ApiPlugin.log(e);
 				}

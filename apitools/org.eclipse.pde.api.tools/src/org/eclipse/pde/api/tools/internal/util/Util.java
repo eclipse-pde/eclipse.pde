@@ -40,14 +40,11 @@ import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
@@ -2051,19 +2048,6 @@ public final class Util {
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * Turns the given array of strings into a {@link HashSet}
-	 *
-	 * @return a new {@link HashSet} of the string array
-	 */
-	public static Set<String> convertAsSet(String[] values) {
-		Set<String> set = new HashSet<>();
-		if (values != null && values.length != 0) {
-			Collections.addAll(set, values);
-		}
-		return set;
 	}
 
 	/**
