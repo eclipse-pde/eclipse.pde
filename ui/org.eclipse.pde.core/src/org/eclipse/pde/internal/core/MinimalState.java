@@ -161,7 +161,7 @@ public class MinimalState {
 	}
 
 	@SuppressWarnings("deprecation")
-	private boolean hasDeclaredRequiredEE(Map<String, String> manifest) {
+	public static boolean hasDeclaredRequiredEE(Map<String, String> manifest) {
 		if (manifest.containsKey(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT)) {
 			return true;
 		}
