@@ -136,8 +136,8 @@ public class BadClassfileTests {
 			}
 
 			@Override
-			public String[] getLowestEEs() throws CoreException {
-				return null;
+			public List<String> getLowestEEs() throws CoreException {
+				return List.of();
 			}
 
 			@Override
@@ -151,8 +151,8 @@ public class BadClassfileTests {
 			}
 
 			@Override
-			public String[] getExecutionEnvironments() throws CoreException {
-				return null;
+			public List<String> getExecutionEnvironments() throws CoreException {
+				return List.of();
 			}
 
 			@Override

@@ -159,9 +159,8 @@ public class ApiBaselineTests {
 		assertEquals("Id: ", id, component.getSymbolicName()); //$NON-NLS-1$
 		assertEquals("Name: ", name, component.getName()); //$NON-NLS-1$
 		assertEquals("Version: ", version, component.getVersion()); //$NON-NLS-1$
-		String[] envs = component.getExecutionEnvironments();
-		assertEquals("Wrong number of execution environments", 1, envs.length); //$NON-NLS-1$
-		assertEquals("Version: ", environment, envs[0]); //$NON-NLS-1$
+		List<String> envs = component.getExecutionEnvironments();
+		assertEquals("Wrong execution environments: ", List.of(environment), envs); //$NON-NLS-1$
 
 		IRequiredComponentDescription[] actual = component.getRequiredComponents();
 		assertEquals("Wrong number of required components", requiredComponents.size(), actual.length); //$NON-NLS-1$

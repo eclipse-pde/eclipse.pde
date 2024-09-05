@@ -49,9 +49,8 @@ public class ComponentManifestTests {
 			assertEquals("Id: ", "org.eclipse.debug.ui", component.getSymbolicName()); //$NON-NLS-1$ //$NON-NLS-2$
 			assertEquals("Name: ", "Debug Platform UI", component.getName()); //$NON-NLS-1$ //$NON-NLS-2$
 			assertEquals("Version: ", "3.3.100", component.getVersion()); //$NON-NLS-1$ //$NON-NLS-2$
-			String[] envs = component.getExecutionEnvironments();
-			assertEquals("Wrong number of execution environments", 1, envs.length); //$NON-NLS-1$
-			assertEquals("Version: ", "J2SE-1.4", envs[0]); //$NON-NLS-1$ //$NON-NLS-2$
+			List<String> envs = component.getExecutionEnvironments();
+			assertEquals("Wrong execution environments", List.of("J2SE-1.4"), envs); //$NON-NLS-1$ //$NON-NLS-2$
 
 			IRequiredComponentDescription[] requiredComponents = component.getRequiredComponents();
 			assertEquals("Wrong number of required components", 11, requiredComponents.length); //$NON-NLS-1$

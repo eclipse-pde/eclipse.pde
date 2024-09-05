@@ -313,8 +313,10 @@ public class ApiType extends ApiMember implements IApiType {
 			return;
 		}
 		Component component = (Component) parent;
-		String[] executionEnvironments = component.getExecutionEnvironments();
-		String javaEE = getJavaEE(executionEnvironments);
+		List<String> executionEnvironments = component.getExecutionEnvironments();
+		String javaEE = executionEnvironments.stream()
+				.filter(ee -> ee.startsWith("JavaSE-") || ee.startsWith("J2SE-")) //$NON-NLS-1$//$NON-NLS-2$
+				.findFirst().orElse(null);
 		if (javaEE != null) {
 			for (int i = 0; i < components.length; i++) {
 				IApiComponent iComponent = components[i];
@@ -340,15 +342,6 @@ public class ApiType extends ApiMember implements IApiType {
 			return parent;
 		}
 		return getParentComponent(parent);
-	}
-
-	private String getJavaEE(String[] executionEnvironments) {
-		for (String ee : executionEnvironments) {
-			if (ee.startsWith("JavaSE-") || ee.startsWith("J2SE-")) { //$NON-NLS-1$ //$NON-NLS-2$
-				return ee;
-			}
-		}
-		return null;
 	}
 
 	/**
