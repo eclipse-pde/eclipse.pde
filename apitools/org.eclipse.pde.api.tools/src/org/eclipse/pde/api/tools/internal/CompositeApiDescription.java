@@ -63,17 +63,12 @@ public class CompositeApiDescription implements IApiDescription {
 		IApiAnnotations bestMatchAnnotation = null;
 		for (IApiDescription fDescription : fDescriptions) {
 			IApiAnnotations ann = fDescription.resolveAnnotations(element);
-			boolean isExact = false;
 			if (ann != null) {
 				bestMatchAnnotation = ann;
+				if (ann.isExact()) {
+					return ann; // if exact, return else keep looking for best match
+				}
 			}
-			if (ann instanceof ApiAnnotations) {
-				isExact = ((ApiAnnotations) ann).isExact();
-			}
-			if (isExact) {
-				return ann; // if exact, return else keep looking for best match
-			}
-
 		}
 		return bestMatchAnnotation;
 	}

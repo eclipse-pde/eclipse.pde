@@ -35,4 +35,17 @@ public interface IApiAnnotations {
 	 */
 	public int getRestrictions();
 
+	/**
+	 * Returns whether these API annotations are based on an exact match of the
+	 * originating element.
+	 *
+	 * @return whether these API annotations are based on an exact match of the
+	 *         originating element.
+	 *
+	 * @since 1.3.600
+	 */
+	default boolean isExact() {
+		return false;
+	}
+
 }
