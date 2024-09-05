@@ -63,7 +63,7 @@ public class LaunchArgumentsHelper {
 
 	/**
 	 * Returns the location that will be used as the workspace when launching or
-	 * an empty string if the user has specified the <code>-data &#64none</code>
+	 * an empty string if the user has specified the {@code -data @none}
 	 * argument for no workspace.  Will replace variables, so this method should
 	 * only be called when variable substitution (may prompt the user) is appropriate.
 	 *

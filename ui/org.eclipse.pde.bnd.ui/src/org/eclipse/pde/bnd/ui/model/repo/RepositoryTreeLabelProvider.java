@@ -159,7 +159,7 @@ public class RepositoryTreeLabelProvider extends StyledCellLabelProvider
 
 	/**
 	 * Return the text to be shown as a tooltip.
-	 * <p/>
+	 * <p>
 	 * TODO allow markdown to be used. Not sure how to create a rich text
 	 * tooltip though. Would also be nice if we could copy/paste from the
 	 * tooltip like in the JDT.

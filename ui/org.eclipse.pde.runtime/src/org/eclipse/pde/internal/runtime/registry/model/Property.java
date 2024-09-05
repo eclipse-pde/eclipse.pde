@@ -62,8 +62,6 @@ public class Property extends ModelObject implements Comparable<Property> {
 	 * than other properties.</li>
 	 * <li>regular properties are considered "more" than other properties</li>
 	 * </ul>
-	 * </p>
-	 *
 	 * <p>
 	 * When sorting an array of properties with the following code:
 	 *
@@ -78,7 +76,6 @@ public class Property extends ModelObject implements Comparable<Property> {
 	 * <li>service.id</li>
 	 * <li>service.id</li>
 	 * </ul>
-	 * </p>
 	 *
 	 * @param other
 	 *            other property to be compared against
