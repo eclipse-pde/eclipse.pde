@@ -42,4 +42,8 @@ public class TypeAnnotations implements IApiAnnotations {
 		return fAnnotations.getRestrictions();
 	}
 
+	@Override
+	public boolean isExact() {
+		return fAnnotations != null && fAnnotations.isExact();
+	}
 }

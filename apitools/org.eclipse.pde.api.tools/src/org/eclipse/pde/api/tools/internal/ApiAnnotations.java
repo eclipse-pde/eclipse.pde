@@ -72,6 +72,7 @@ public class ApiAnnotations implements IApiAnnotations {
 		isExact = equals;
 	}
 
+	@Override
 	public boolean isExact() {
 		return isExact;
 	}
