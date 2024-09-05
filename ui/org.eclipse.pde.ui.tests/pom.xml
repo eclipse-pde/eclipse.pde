@@ -18,7 +18,7 @@
     <relativePath>../../</relativePath>
   </parent>
   <artifactId>org.eclipse.pde.ui.tests</artifactId>
-  <version>3.12.600-SNAPSHOT</version>
+  <version>3.12.700-SNAPSHOT</version>
   <packaging>eclipse-test-plugin</packaging>
 
   <properties>

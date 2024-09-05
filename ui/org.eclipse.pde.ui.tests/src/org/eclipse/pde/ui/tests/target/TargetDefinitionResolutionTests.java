@@ -70,7 +70,7 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 	 * Tests that if we find a bundle with a bad or missing manifest when
 	 * resolving we create the correct status.
 	 *
-	 * @see TargetBundle.STATUS_INVALID_MANIFEST
+	 * @see org.eclipse.pde.core.target.TargetBundle#STATUS_INVALID_MANIFEST
 	 */
 	@Test
 	public void testInvalidManifest() throws Exception {
