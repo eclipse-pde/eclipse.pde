@@ -23,7 +23,7 @@ import org.eclipse.pde.core.IModelChangeProvider;
  *
  * @since 3.4
  * @see IDSComponent
- * @see IDSFactory
+ * @see IDSDocumentFactory
  */
 public interface IDSModel extends IModelChangeProvider, IModel {
 
