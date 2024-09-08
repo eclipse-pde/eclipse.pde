@@ -242,7 +242,6 @@ public class SampleWizard extends Wizard implements INewWizard, IExecutableExten
 
 	/**
 	 * @return Returns the switchPerspective.
-	 * @todo Generated comment
 	 */
 	public boolean isSwitchPerspective() {
 		return switchPerspective;
@@ -250,7 +249,6 @@ public class SampleWizard extends Wizard implements INewWizard, IExecutableExten
 
 	/**
 	 * @param switchPerspective The switchPerspective to set.
-	 * @todo Generated comment
 	 */
 	public void setSwitchPerspective(boolean switchPerspective) {
 		this.switchPerspective = switchPerspective;
@@ -258,7 +256,6 @@ public class SampleWizard extends Wizard implements INewWizard, IExecutableExten
 
 	/**
 	 * @return Returns the selectRevealEnabled.
-	 * @todo Generated comment
 	 */
 	public boolean isSelectRevealEnabled() {
 		return selectRevealEnabled;
@@ -266,7 +263,6 @@ public class SampleWizard extends Wizard implements INewWizard, IExecutableExten
 
 	/**
 	 * @param selectRevealEnabled The selectRevealEnabled to set.
-	 * @todo Generated comment
 	 */
 	public void setSelectRevealEnabled(boolean selectRevealEnabled) {
 		this.selectRevealEnabled = selectRevealEnabled;
@@ -274,7 +270,6 @@ public class SampleWizard extends Wizard implements INewWizard, IExecutableExten
 
 	/**
 	 * @return Returns the activitiesEnabled.
-	 * @todo Generated comment
 	 */
 	public boolean getActivitiesEnabled() {
 		return activitiesEnabled;
@@ -282,7 +277,6 @@ public class SampleWizard extends Wizard implements INewWizard, IExecutableExten
 
 	/**
 	 * @param activitiesEnabled The activitiesEnabled to set.
-	 * @todo Generated comment
 	 */
 	public void setActivitiesEnabled(boolean activitiesEnabled) {
 		this.activitiesEnabled = activitiesEnabled;

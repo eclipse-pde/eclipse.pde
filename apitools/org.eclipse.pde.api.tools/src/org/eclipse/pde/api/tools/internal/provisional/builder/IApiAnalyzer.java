@@ -56,8 +56,8 @@ public interface IApiAnalyzer {
 	 * @param context the build context reported from the
 	 *            {@link ApiAnalysisBuilder}
 	 * @param monitor to report progress
-	 * @see PluginProjectApiComponent
-	 * @see BundleApiComponent
+	 * @see org.eclipse.pde.api.tools.internal.model.ProjectComponent
+	 * @see org.eclipse.pde.api.tools.internal.model.BundleComponent
 	 */
 	public void analyzeComponent(final BuildState buildState, final IApiFilterStore filterStore, final Properties preferences, final IApiBaseline baseline, final IApiComponent component, final IBuildContext context, IProgressMonitor monitor);
 

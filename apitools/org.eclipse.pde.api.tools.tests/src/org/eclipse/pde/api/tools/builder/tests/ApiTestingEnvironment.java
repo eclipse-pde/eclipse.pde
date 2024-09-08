@@ -183,7 +183,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * @return all API usage problem markers
 	 * @throws CoreException
 	 *
-	 * @see {@link IApiMarkerConstants#API_USAGE_PROBLEM_MARKER}
+	 * @see IApiMarkerConstants#API_USAGE_PROBLEM_MARKER
 	 */
 	protected IMarker[] getAllUsageMarkers(IResource resource) throws CoreException {
 		if (resource == null) {
@@ -241,7 +241,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * @return all unsupported tag problem markers
 	 * @throws CoreException
 	 *
-	 * @see {@link IApiMarkerConstants#UNSUPPORTED_TAG_PROBLEM_MARKER}
+	 * @see IApiMarkerConstants#UNSUPPORTED_TAG_PROBLEM_MARKER
 	 */
 	protected IMarker[] getAllUnsupportedTagMarkers(IResource resource) throws CoreException {
 		if (resource == null) {
@@ -277,7 +277,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * @return all compatibility problem markers
 	 * @throws CoreException
 	 *
-	 * @see {@link IApiMarkerConstants#COMPATIBILITY_PROBLEM_MARKER}
+	 * @see IApiMarkerConstants#COMPATIBILITY_PROBLEM_MARKER
 	 */
 	protected IMarker[] getAllCompatibilityMarkers(IResource resource) throws CoreException {
 		if (resource == null) {
@@ -296,7 +296,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * @return all API baseline problem markers
 	 * @throws CoreException
 	 *
-	 * @see {@link IApiMarkerConstants#DEFAULT_API_BASELINE_PROBLEM_MARKER}
+	 * @see IApiMarkerConstants#DEFAULT_API_BASELINE_PROBLEM_MARKER
 	 */
 	protected IMarker[] getAllApiBaselineMarkers(IResource resource) throws CoreException {
 		if (resource == null) {
@@ -315,7 +315,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * @return all since tag problem markers
 	 * @throws CoreException
 	 *
-	 * @see {@link IApiMarkerConstants#SINCE_TAGS_PROBLEM_MARKER}
+	 * @see IApiMarkerConstants#SINCE_TAGS_PROBLEM_MARKER
 	 */
 	protected IMarker[] getAllSinceTagMarkers(IResource resource) throws CoreException {
 		if (resource == null) {
@@ -333,7 +333,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * @return all version problem markers
 	 * @throws CoreException
 	 *
-	 * @see {@link IApiMarkerConstants#VERSION_NUMBERING_PROBLEM_MARKER}
+	 * @see IApiMarkerConstants#VERSION_NUMBERING_PROBLEM_MARKER
 	 */
 	protected IMarker[] getAllVersionMarkers(IResource resource) throws CoreException {
 		if (resource == null) {
@@ -352,7 +352,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * @return all unused problem filter markers
 	 * @throws CoreException
 	 *
-	 * @see {@link IApiMarkerConstants#UNUSED_FILTER_PROBLEM_MARKER}
+	 * @see IApiMarkerConstants#UNUSED_FILTER_PROBLEM_MARKER
 	 */
 	protected IMarker[] getAllUnusedApiProblemFilterMarkers(IResource resource) throws CoreException {
 		if (resource == null) {
@@ -456,7 +456,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	}
 
 	/**
-	 * Returns the current workspace {@link IApiProfile}
+	 * Returns the current workspace {@link IApiBaseline}
 	 *
 	 * @return the workspace baseline
 	 */

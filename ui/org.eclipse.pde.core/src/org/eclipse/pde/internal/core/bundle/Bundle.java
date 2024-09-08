@@ -62,7 +62,7 @@ public class Bundle extends BundleObject implements IBundle {
 	 * headers previously loaded will be cleared. Empty value strings will create empty headers.
 	 * Null values will be ignored.
 	 *
-	 * @param headers map<String, String> of manifest key and values
+	 * @param headers Map&lt;String, String&gt; of manifest key and values
 	 */
 	public void load(Map<String, String> headers) {
 		fDocumentHeaders.clear();

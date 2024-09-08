@@ -19,10 +19,11 @@ import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter;
 import org.eclipse.pde.api.tools.internal.provisional.search.IMetadata;
+import org.eclipse.pde.api.tools.internal.search.XmlSearchReporter;
 
 /**
- * Test implementation of a search reporter that delegates to two
- * reporters: The {@link TestReporter} and the {@link XMLApiSearchReporter}
+ * Test implementation of a search reporter that delegates to two reporters: The
+ * {@link TestReporter} and the {@link XmlSearchReporter}
  *
  * <p>The {@link TestReporter} is always called first to validate we are getting the references / skipped
  * components that we are expecting to see</p>

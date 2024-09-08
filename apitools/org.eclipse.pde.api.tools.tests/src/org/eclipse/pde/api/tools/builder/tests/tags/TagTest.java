@@ -146,10 +146,10 @@ public abstract class TagTest extends ApiBuilderTest {
 
 	/**
 	 * Returns an array composed only of the specified number of
-	 * {@link #PROBLEM_ID}
+	 * {@link #getDefaultProblemId()}
 	 *
-	 * @return an array of {@link #PROBLEM_ID} of the specified size, or an
-	 *         empty array if the specified size is < 1
+	 * @return an array of {@link #getDefaultProblemId()} of the specified size,
+	 *         or an empty array if the specified size is smaller 1
 	 */
 	protected int[] getDefaultProblemSet(int problemcount) {
 		if (problemcount < 1) {
@@ -175,7 +175,7 @@ public abstract class TagTest extends ApiBuilderTest {
 
 	/**
 	 * Deploys a build test for API Javadoc tags using the given source file,
-	 * looking for problems specified from {@link #getExpectedProblemIds()()}
+	 * looking for problems specified from {@link #getExpectedProblemIds()}
 	 *
 	 * @param incremental if an incremental build should take place
 	 * @param usedefault if the default package should be used or not

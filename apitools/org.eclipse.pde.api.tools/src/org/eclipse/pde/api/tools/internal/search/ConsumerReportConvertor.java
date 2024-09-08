@@ -567,7 +567,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 	 * Writes the html report for a given producer. The page lists all the types
 	 * that are referenced by the parent consumer that are from the producer.
 	 * <p>
-	 * Called from {@link #writeConsumerReport(Consumer)}
+	 * Called from {@link #writeConsumerReport(Consumer, Map)}
 	 * </p>
 	 *
 	 * @param producer producer to write the report for

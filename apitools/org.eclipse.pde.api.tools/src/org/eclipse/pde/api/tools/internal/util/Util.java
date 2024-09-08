@@ -1788,8 +1788,6 @@ public final class Util {
 
 	/**
 	 * Gets the .ee file supplied to run tests based on system property.
-	 *
-	 * @throws CoreException
 	 */
 	public static ExecutionEnvironmentDescription getEEDescriptionFile() {
 		// generate a fake 1.6 ee file

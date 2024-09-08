@@ -22,7 +22,7 @@ import org.osgi.framework.VersionRange;
 
 /**
  * ReachablePlugin's are sorted first by id, then by the width of the version range.
- * With equal range width, R1 < R2 if R1.range.getMinimum() < R2.range.getMaximum()
+ * With equal range width, {@code R1 < R2} if {@code R1.range.getMinimum() < R2.range.getMaximum()}
  */
 public class ReachablePlugin implements Comparable<Object> {
 	public static final VersionRange WIDEST_RANGE = Utils.EMPTY_RANGE;

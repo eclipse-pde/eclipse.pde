@@ -98,7 +98,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	/** flag indicating if missing properties file should be logged */
 	private boolean ignoreMissingPropertiesFile = true;
 
-	/** flag indicating if we should generate the plugin & feature versions lists */
+	/** flag indicating if we should generate the plugin and feature versions lists */
 	protected boolean generateVersionsList = false;
 
 	private Properties antProperties = null;
@@ -497,7 +497,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	/**
-	 * Whether or not to generate plugin & feature versions lists
+	 * Whether or not to generate plugin and feature versions lists
 	 */
 	public void setGenerateVersionsList(boolean generateVersionsList) {
 		this.generateVersionsList = generateVersionsList;

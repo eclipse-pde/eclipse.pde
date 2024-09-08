@@ -148,7 +148,7 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 	}
 
 	/**
-	 * @see org.eclipse.pde.api.tools.internal.AbstractApiTypeContainer#accept(org.eclipse.pde.api.tools.internal.provisional.ApiTypeContainerVisitor)
+	 * @see AbstractApiTypeContainer#accept(ApiTypeContainerVisitor)
 	 */
 	@Override
 	public void accept(ApiTypeContainerVisitor visitor) throws CoreException {
@@ -181,7 +181,7 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 	}
 
 	/**
-	 * @see org.eclipse.pde.api.tools.internal.AbstractApiTypeContainer#close()
+	 * @see AbstractApiTypeContainer#close()
 	 */
 	@Override
 	public synchronized void close() throws CoreException {
@@ -189,7 +189,7 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 	}
 
 	/**
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#findTypeRoot(java.lang.String)
+	 * @see IApiTypeContainer#findTypeRoot(java.lang.String)
 	 */
 	@Override
 	public IApiTypeRoot findTypeRoot(String qualifiedName) throws CoreException {
@@ -206,7 +206,7 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 	}
 
 	/**
-	 * @see org.eclipse.pde.api.tools.internal.AbstractApiTypeContainer#getPackageNames()
+	 * @see AbstractApiTypeContainer#getPackageNames()
 	 */
 	@Override
 	public String[] getPackageNames() throws CoreException {
@@ -262,8 +262,7 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 	}
 
 	/**
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#findTypeRoot(java.lang.String,
-	 *      java.lang.String)
+	 * @see IApiTypeContainer#findTypeRoot(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public IApiTypeRoot findTypeRoot(String qualifiedName, String id) throws CoreException {

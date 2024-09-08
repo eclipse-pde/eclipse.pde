@@ -88,7 +88,7 @@ public class Factory {
 	 * fully qualified name. Package names are dot qualified and type names are
 	 * '$'-qualified.
 	 *
-	 * @return an {@link ITypeDescriptor} for the type
+	 * @return an {@link IReferenceTypeDescriptor} for the type
 	 */
 	public static IReferenceTypeDescriptor typeDescriptor(String fullyQualifiedName) {
 		String packageName = Signatures.getPackageName(fullyQualifiedName);

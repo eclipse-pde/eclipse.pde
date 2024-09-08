@@ -269,9 +269,6 @@ public final class ApiUseTask extends CommonUtilsTask {
 		archivePatterns = parsePatterns(patterns);
 	}
 
-	/**
-	 * @see org.eclipse.pde.api.tools.internal.tasks.UseTask#assertParameters()
-	 */
 	protected void assertParameters() throws BuildException {
 		if (this.reportLocation == null) {
 			StringWriter out = new StringWriter();

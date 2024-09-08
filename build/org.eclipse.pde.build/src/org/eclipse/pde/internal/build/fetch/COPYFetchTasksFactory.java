@@ -33,21 +33,21 @@ import org.eclipse.pde.internal.build.Utils;
  * copying from a specific location (id: <code>COPY</code>).
  * <p>
  * Map file arguments:
- * <code>&lt;ROOT_LOCATION&gt;[,&lt;ELEMENT_LOCATION&gt;]</code>
+ * {@code <ROOT_LOCATION>[,<ELEMENT_LOCATION>] }
+ * </p>
  * <dl>
  * <dt>ROOT_LOCATION</dt>
  * <dd>The ROOT_LOCATION (eg. <code>/source/eclipse</code>, or
  * <code>D:/dev/myproduct</code>) is used as root path to determine the
  * location to fetch. It can be overwritten via the
  * <code>fetchTag</code> to fetch from another location (for example, on a different machine).</dd>
- * </dl>
  * <dt>ELEMENT_LOCATION</dt>
  * <dd>A path withing the ROOT_LOCATION (eg.
  * <code>org.eclipse.sdk-feature/features/org.eclipse.rcp</code>) to retrive
  * the element from if it is not within the root. If this is not provided the
  * default path will be used which simply maps to the element name.</dd>
  * </dl>
- * </p>
+ * 
  */
 public class COPYFetchTasksFactory implements IFetchFactory, IPDEBuildConstants {
 	public static final String ID = "COPY"; //$NON-NLS-1$

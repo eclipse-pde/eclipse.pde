@@ -140,7 +140,7 @@ public class SignaturesTests {
 	}
 
 	/**
-	 * Tests the {@link Signatures#getQualifiedMethodSignature(org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor, boolean)} method
+	 * Tests the {@link Signatures#getQualifiedMethodSignature(IMethodDescriptor, boolean, boolean)} method
 	 */
 	@Test
 	public void testGetQualifiedMethodSignature2() throws Exception {
