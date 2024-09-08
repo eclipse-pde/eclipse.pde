@@ -140,7 +140,7 @@ public class FetchTask extends Task {
 
 	/** 
 	 * Set the configuration for which the script should be generated. The default is set to be configuration independent.
-	 * @param configInfo an ampersand separated list of configuration (for example win32, win32, x86 & macoxs, carbon, ppc).
+	 * @param configInfo an ampersand separated list of configuration (for example {@code win32, win32, x86 & macoxs, carbon, ppc}).
 	 * @since 3.0
 	 */
 	public void setConfigInfo(String configInfo) throws CoreException {

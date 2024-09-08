@@ -164,11 +164,16 @@ public abstract class StructuredViewerSection extends PDESection implements IPDE
 	}
 
 	/**
-	 * <p>Given the index of TreeViewer item and the size of the array of its immediate
-	 * siblings, gets the index of the desired new selection as follows:
-	 * <ul><li>if this is the only item, return -1 (meaning select the parent)</li>
+	 * <p>
+	 * Given the index of TreeViewer item and the size of the array of its
+	 * immediate siblings, gets the index of the desired new selection as
+	 * follows:
+	 * </p>
+	 * <ul>
+	 * <li>if this is the only item, return -1 (meaning select the parent)</li>
 	 * <li>if this is the last item, return the index of the predecessor</li>
-	 * <li>otherwise, return the index of the successor</li></p>
+	 * <li>otherwise, return the index of the successor</li>
+	 * </ul>
 	 *
 	 * @param thisIndex
 	 * 			the item's index

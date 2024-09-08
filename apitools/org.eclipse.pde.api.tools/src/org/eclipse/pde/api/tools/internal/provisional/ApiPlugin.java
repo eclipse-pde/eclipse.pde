@@ -494,7 +494,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 	 * {@link org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline}
 	 * s stored in the manager.
 	 *
-	 * @return the singleton instance of the {@link IApiProfileManager}
+	 * @return the singleton instance of the {@link IApiBaselineManager}
 	 */
 	public IApiBaselineManager getApiBaselineManager() {
 		return ApiBaselineManager.getManager();

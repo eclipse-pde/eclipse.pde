@@ -714,7 +714,7 @@ public interface IApiProblem {
 
 	/**
 	 * Returns the names of the extra marker attributes associated to this
-	 * problem when persisted into a marker by the {@link ApiProblemReporter}.
+	 * problem when persisted into a marker.
 	 * By default, no EXTRA attributes is persisted, and an {@link IApiProblem}
 	 * only persists the following attributes:
 	 * <ul>

@@ -477,7 +477,6 @@ public class BundleComponent extends Component {
 	 * @param bundle the bundle to load from
 	 * @param packages the complete set of packages names originating from the
 	 *            backing component
-	 * @throws CoreException if an error occurs
 	 */
 	public static void initializeApiDescription(IApiDescription apiDesc, BundleDescription bundle,
 			Set<String> packages) {
@@ -568,7 +567,7 @@ public class BundleComponent extends Component {
 	}
 
 	/**
-	 * @see org.eclipse.pde.api.tools.internal.AbstractApiTypeContainer#createApiTypeContainers()
+	 * @see AbstractApiTypeContainer#createApiTypeContainers()
 	 */
 	@Override
 	protected List<IApiTypeContainer> createApiTypeContainers() throws CoreException {

@@ -33,8 +33,7 @@ import org.eclipse.pde.internal.build.Utils;
 /**
  * An <code>FetchTaskFactory</code> for building fetch scripts that will
  * fetch content from a CVS repository (id: <code>CVS</code>).
- * <p>
- * <code><pre>
+ * <pre>
  * Map file format:
  * 	type@id,[version]=CVS,args
  * args is a comma-separated list of key/value pairs
@@ -45,8 +44,7 @@ import org.eclipse.pde.internal.build.Utils;
  * 	path - optional path relative to the cvsRoot
  * 	prebuilt - optional boolean value indicating that the entry points to a pre-built bundle in the repository
  * 	tag - mandatory CVS tag
- * </pre></code>
- * </p>
+ * </pre>
  */
 public class CVSFetchTaskFactory implements IFetchFactory {
 	public static final String ID = "CVS"; //$NON-NLS-1$

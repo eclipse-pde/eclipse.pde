@@ -69,7 +69,7 @@ public class PackagerTask extends Task {
 
 	/** 
 	 * Set on a configuration basis, the format of the archive being produced. The default is set to be configuration independent.
-	 * @param archivesFormat an ampersand separated list of configuration (for example win32, win32 - zip, x86 & macoxs, carbon, ppc - tar).
+	 * @param archivesFormat an ampersand separated list of configuration (for example {@code win32, win32 - zip, x86 & macoxs, carbon, ppc - tar}).
 	 * @since 3.0
 	 */
 	public void setArchivesFormat(String archivesFormat) {

@@ -156,7 +156,7 @@ public final class ApiMigrationTask extends CommonUtilsTask {
 	}
 
 	/**
-	 * @see org.eclipse.pde.api.tools.internal.tasks.UseTask#assertParameters()
+	 * @see ApiUseTask#assertParameters()
 	 */
 	protected void assertParameters() throws BuildException {
 		if (this.reportLocation == null) {

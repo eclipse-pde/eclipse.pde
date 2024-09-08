@@ -927,7 +927,7 @@ public interface IDelta {
 	 * {@link IDelta#METHOD_ELEMENT_TYPE}, {@link IDelta#INTERFACE_ELEMENT_TYPE}
 	 * , {@link IDelta#CLASS_ELEMENT_TYPE}, {@link IDelta#FIELD_ELEMENT_TYPE},
 	 * {@link IDelta#API_COMPONENT_ELEMENT_TYPE} and
-	 * {@link IDelta#API_PROFILE_ELEMENT_TYPE}.
+	 * {@link IDelta#API_BASELINE_ELEMENT_TYPE}.
 	 *
 	 * @return flags that describe how an element has changed
 	 */

@@ -48,8 +48,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  * <br>
  * The logic in this class must be kept in sync with how we determine what is
  * visible in out completion proposal code
- *
- * @see org.eclipse.pde.api.tools.ui.internal.completion.APIToolsJavadocCompletionProposalComputer
+ * {@code org.eclipse.pde.api.tools.ui.internal.completion.APIToolsJavadocCompletionProposalComputer}
  *
  * @since 1.0.0
  */

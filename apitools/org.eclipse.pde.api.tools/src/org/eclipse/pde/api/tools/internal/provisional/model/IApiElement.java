@@ -24,8 +24,7 @@ package org.eclipse.pde.api.tools.internal.provisional.model;
 public interface IApiElement {
 
 	/**
-	 * Constant representing an
-	 * {@link org.eclipse.pde.api.tools.internal.provisional.IApiComponent}
+	 * Constant representing an {@link IApiComponent}
 	 */
 	public int COMPONENT = 1;
 
@@ -35,8 +34,7 @@ public interface IApiElement {
 	public int TYPE = 2;
 
 	/**
-	 * Constant representing an
-	 * {@link org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer}
+	 * Constant representing an {@link IApiTypeContainer}
 	 */
 	public int API_TYPE_CONTAINER = 3;
 
@@ -56,8 +54,7 @@ public interface IApiElement {
 	public int METHOD = 6;
 
 	/**
-	 * Constant representing an
-	 * {@link org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot}
+	 * Constant representing an {@link IApiTypeRoot}
 	 */
 	public int API_TYPE_ROOT = 7;
 

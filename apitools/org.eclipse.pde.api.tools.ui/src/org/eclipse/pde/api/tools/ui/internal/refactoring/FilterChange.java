@@ -96,26 +96,6 @@ public abstract class FilterChange extends Change {
 		return NLS.bind(RefactoringMessages.FilterChange_remove_used_filter, problem.getMessage());
 	}
 
-	/**
-	 * Returns the name to use for a {@link #RENAME} change operation
-	 *
-	 * @return the name for a {@link #RENAME} change
-	 */
-	protected String getRenameName() {
-		IApiProblem problem = this.filter.getUnderlyingProblem();
-		return NLS.bind(RefactoringMessages.FilterChange_remove_used_filter, new Object[] { problem.getMessage() });
-	}
-
-	/**
-	 * Returns the name to use for a {@link #MOVE} change operation
-	 *
-	 * @return the name for a {@link #MOVE} change
-	 */
-	protected String getMoveName() {
-		IApiProblem problem = this.filter.getUnderlyingProblem();
-		return NLS.bind(RefactoringMessages.FilterChange_remove_used_filter, new Object[] { problem.getMessage() });
-	}
-
 	@Override
 	public String getName() {
 		switch (this.kind) {

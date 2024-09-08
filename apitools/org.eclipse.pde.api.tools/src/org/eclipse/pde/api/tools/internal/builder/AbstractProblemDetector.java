@@ -170,7 +170,6 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * @param reference   reference
 	 * @param javaProject java project (with reference source location)
 	 * @return problem or <code>null</code> if none
-	 * @exception CoreException if something goes wrong
 	 */
 	protected IApiProblem createProblem(IReference reference, IJavaProject javaProject) {
 		IProject project = javaProject.getProject();

@@ -74,8 +74,8 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 	public static final String ID = "org.eclipse.pde.api.tools.ui.apiprofiles.prefpage"; //$NON-NLS-1$
 
 	/**
-	 * Override to tell the label provider about uncommitted {@link IApiProfile}
-	 * s that might have been set to be the new default
+	 * Override to tell the label provider about uncommitted
+	 * {@link IApiBaseline}s that might have been set to be the new default
 	 */
 	class BaselineLabelProvider extends ApiToolsLabelProvider {
 		@Override
@@ -206,11 +206,12 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 	}
 
 	/**
-	 * Returns if the {@link IApiProfile} with the given name has been removed,
+	 * Returns if the {@link IApiBaseline} with the given name has been removed,
 	 * but not yet committed back to the manager
 	 *
-	 * @param name the name of the {@link IApiProfile}
-	 * @return true if the {@link IApiProfile} has been removed from the page,
+	 * @param name
+	 *            the name of the {@link IApiBaseline}
+	 * @return true if the {@link IApiBaseline} has been removed from the page,
 	 *         false otherwise
 	 */
 	public static boolean isRemovedBaseline(String name) {
@@ -267,7 +268,7 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 	}
 
 	/**
-	 * Returns if the specified {@link IApiProfile} is the default profile or
+	 * Returns if the specified {@link IApiBaseline} is the default profile or
 	 * not
 	 *
 	 * @return if the profile is the default or not
@@ -314,7 +315,7 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 
 	/**
 	 * Applies the changes from the current change set to the
-	 * {@link ApiProfileManager}. When done the current change set is cleared.
+	 * {@link IApiBaselineManager}. When done the current change set is cleared.
 	 */
 	protected void applyChanges() {
 		if (!dirty) {

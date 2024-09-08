@@ -71,7 +71,7 @@ public class JNLPGeneratorTask extends Task {
 
 	/**
 	 * The locale in which the jnlp file generated should be translated into.
-	 *The translation values are read from the feature_<locale>.properties file.
+	 *The translation values are read from the feature_&lt;locale&gt;.properties file.
 	 * @param nlsString - the locale in which to generate the jnlp files.
 	 * */
 	public void setLocale(String nlsString) {

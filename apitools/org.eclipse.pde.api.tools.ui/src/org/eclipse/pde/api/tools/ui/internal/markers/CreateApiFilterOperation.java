@@ -63,7 +63,9 @@ public class CreateApiFilterOperation extends Job {
 	/**
 	 * Constructor
 	 *
-	 * @see IApiProblemFilter#getKinds()
+	 * @see IApiProblemFilter#getUnderlyingProblem()
+	 * @see IApiProblem#getKind()
+	 * @see IApiProblem#getElementKind()
 	 */
 	public CreateApiFilterOperation(IMarker[] markers, boolean addingcomments) {
 		super(MarkerMessages.CreateApiFilterOperation_0);

@@ -52,7 +52,7 @@ import org.eclipse.ui.ide.IDE.SharedImages;
 public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelProvider, IFontProvider {
 
 	/**
-	 * Font for the default {@link IApiProfile}
+	 * Font for the default {@link IApiBaseline}
 	 */
 	private Font font = null;
 
@@ -237,7 +237,7 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 	}
 
 	/**
-	 * Returns if the specified {@link IApiProfile} is the default profile or
+	 * Returns if the specified {@link IApiBaseline} is the default profile or
 	 * not
 	 *
 	 * @return if the profile is the default or not

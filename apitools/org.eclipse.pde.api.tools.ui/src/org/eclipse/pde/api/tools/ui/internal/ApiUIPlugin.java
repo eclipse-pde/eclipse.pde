@@ -150,7 +150,7 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * @return the id of this plugin. Value is
-	 *         <code><org.eclipse.pde.api.tools.ui></code>
+	 *         {@code org.eclipse.pde.api.tools.ui}
 	 */
 	public static String getPluginIdentifier() {
 		return PLUGIN_ID;

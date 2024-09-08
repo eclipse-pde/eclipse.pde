@@ -80,7 +80,7 @@ public abstract class AbstractApiTypeRoot extends ApiElement implements IApiType
 	}
 
 	/**
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot#getApiComponent()
+	 * @see IApiTypeRoot#getApiComponent()
 	 */
 	@Override
 	public IApiComponent getApiComponent() {

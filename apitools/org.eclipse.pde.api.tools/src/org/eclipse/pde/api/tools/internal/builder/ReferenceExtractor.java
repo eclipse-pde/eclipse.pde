@@ -883,7 +883,7 @@ public class ReferenceExtractor extends ClassVisitor {
 	private final boolean fIncludeLocalRefs = false;
 
 	/**
-	 * Bit mask of {@link ReferenceModifiers} to extract.
+	 * Bit mask of {@link IReference} constants to extract.
 	 */
 	private int fReferenceKinds = 0;
 
@@ -932,7 +932,7 @@ public class ReferenceExtractor extends ClassVisitor {
 	 * @param type the type to extract references from
 	 * @param collector the listing of references to annotate from this pass
 	 * @param referenceKinds kinds of references to extract as defined by
-	 *            {@link ReferenceModifiers}
+	 *            {@link IReference}
 	 */
 	public ReferenceExtractor(IApiType type, Set<Reference> collector, int referenceKinds) {
 		super(Util.LATEST_OPCODES_ASM, new ClassNode());

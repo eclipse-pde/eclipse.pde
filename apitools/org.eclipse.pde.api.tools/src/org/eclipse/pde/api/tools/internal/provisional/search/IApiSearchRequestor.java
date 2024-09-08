@@ -31,7 +31,7 @@ public interface IApiSearchRequestor {
 	 * Search mask that will cause the engine to consider API references when
 	 * searching
 	 *
-	 * @see #includesApi()
+	 * @see #includesAPI()
 	 */
 	public static final int INCLUDE_API = 0x0001;
 	/**
@@ -98,8 +98,7 @@ public interface IApiSearchRequestor {
 	/**
 	 * Returns the or'd listing of {@link IReference} kinds to look for.
 	 *
-	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.ReferenceModifiers
-	 *      for a complete listing of reference kinds
+	 * @see IReference for a complete listing of reference kinds
 	 *
 	 * @return the listing of {@link IReference} kinds to consider during the
 	 *         search this requestor is used for.

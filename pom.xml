@@ -27,6 +27,8 @@
 
   <properties>
     <tycho.scmUrl>scm:git:https://github.com/eclipse-pde/eclipse.pde.git</tycho.scmUrl>
+    <failOnJavadocErrors>true</failOnJavadocErrors>
+    <javadoc.excludePackageNames></javadoc.excludePackageNames>
   </properties>
 
   <modules>
@@ -57,6 +59,13 @@
 				   <includeAllSources>true</includeAllSources>
 			   </configuration>
 		  </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<excludePackageNames>${javadoc.excludePackageNames}</excludePackageNames>
+				</configuration>
+			</plugin>
 	  </plugins>
   </build>
 

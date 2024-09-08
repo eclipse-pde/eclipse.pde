@@ -499,8 +499,9 @@ public class UseReportConverter extends HTMLConvertor {
 
 	/**
 	 * Visibility constant indicating an element has host-fragment level of
-	 * visibility. i.e. fragments have {@link #PRIVATE_PERMISSIBLE}-like access
-	 * to the internals of their host.
+	 * visibility. i.e. fragments have
+	 * {@link VisibilityModifiers#PRIVATE_PERMISSIBLE}-like access to the internals
+	 * of their host.
 	 *
 	 * @since 1.0.1
 	 */
