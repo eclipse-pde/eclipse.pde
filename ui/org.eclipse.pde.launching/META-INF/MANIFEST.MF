@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %name
 Bundle-SymbolicName: org.eclipse.pde.launching;singleton:=true
-Bundle-Version: 3.13.100.qualifier
+Bundle-Version: 3.13.200.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-Vendor: %provider-name
 Require-Bundle: org.eclipse.jdt.junit.core;bundle-version="[3.6.0,4.0.0)",
