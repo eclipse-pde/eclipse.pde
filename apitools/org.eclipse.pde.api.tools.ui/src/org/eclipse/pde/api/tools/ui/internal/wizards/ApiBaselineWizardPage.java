@@ -107,8 +107,8 @@ public abstract class ApiBaselineWizardPage extends WizardPage {
 	}
 
 	/**
-	 * Operation that creates a new working copy for an {@link IApiProfile} that
-	 * is being edited
+	 * Operation that creates a new working copy for an {@link IApiBaseline}
+	 * that is being edited
 	 */
 	static class WorkingCopyOperation implements IRunnableWithProgress {
 
@@ -146,8 +146,8 @@ public abstract class ApiBaselineWizardPage extends WizardPage {
 		}
 
 		/**
-		 * Returns the newly created {@link IApiProfile} working copy or
-		 * <code>null</code>
+		 * Returns the newly created {@link IApiBaseline} working copy or
+		 * {@code null}
 		 *
 		 * @return the working copy or <code>null</code>
 		 */
@@ -231,7 +231,7 @@ public abstract class ApiBaselineWizardPage extends WizardPage {
 	/**
 	 * Creates or edits the profile and returns it
 	 *
-	 * @return a new {@link IApiProfile} or <code>null</code> if an error was
+	 * @return a new {@link IApiBaseline} or {@code null} if an error was
 	 *         encountered creating the new profile
 	 */
 	public abstract IApiBaseline finish() throws IOException, CoreException;

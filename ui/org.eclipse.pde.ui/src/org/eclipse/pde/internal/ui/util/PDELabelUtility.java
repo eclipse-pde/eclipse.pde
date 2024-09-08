@@ -180,9 +180,17 @@ public class PDELabelUtility {
 	}
 
 	/**
-	 * <p>Generates a name that does not conflict with any of the given names with one of two forms:
-	 * <ol><li>&quot;&lt;base&gt; (#)&quot;</li><li>&quot;&lt;base&gt;#&quot;</li></ol>
-	 * The number will be omitted if the base name alone is available.</p>
+	 * <p>
+	 * Generates a name that does not conflict with any of the given names with
+	 * one of two forms:
+	 * </p>
+	 * <ol>
+	 * <li>&quot;&lt;base&gt; (#)&quot;</li>
+	 * <li>&quot;&lt;base&gt;#&quot;</li>
+	 * </ol>
+	 * <p>
+	 * The number will be omitted if the base name alone is available.
+	 * </p>
 	 *
 	 * @param names
 	 * 			the existing names that should not be conflicted

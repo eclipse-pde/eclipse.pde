@@ -28,7 +28,7 @@ public interface IApiProblemDetector {
 	/**
 	 * Returns a bit mask of reference kinds this analyzer is interested in.
 	 *
-	 * @return bit mask of {@link ReferenceModifiers} constants
+	 * @return bit mask of {@link IReference} constants
 	 */
 	public int getReferenceKinds();
 

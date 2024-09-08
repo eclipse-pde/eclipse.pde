@@ -100,8 +100,8 @@ public class DeltaXmlVisitor extends DeltaVisitor {
 	}
 
 	/**
-	 * Return the xml dom document this visitor generates. Use {@link #getXML()}
-	 * to get the serialized xml string.
+	 * Return the xml dom document this visitor generates. Use
+	 * {@link Util#serializeDocument(Document)} to get the serialized xml string.
 	 *
 	 * @return xml dom document
 	 */

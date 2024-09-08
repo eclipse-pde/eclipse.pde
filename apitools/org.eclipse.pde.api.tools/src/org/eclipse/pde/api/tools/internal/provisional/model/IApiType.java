@@ -153,9 +153,8 @@ public interface IApiType extends IApiMember {
 	 * <code>"java.lang.Object"</code>. For anonymous types, the superclass name
 	 * is the name appearing after the 'new' keyword'. If the superclass is a
 	 * parameterized type, the string may include its type arguments enclosed in
-	 * "&lt;&gt;". If the returned string is needed for anything other than
-	 * display purposes, use {@link #getSuperclassTypeSignature()} which returns
-	 * a structured type signature string containing more precise information.
+	 * "&lt;&gt;". If the returned string is needed for anything other than display
+	 * purposes, use {@link #getSuperclass()}.
 	 * </p>
 	 *
 	 * @return the name of this type's superclass or <code>null</code>
@@ -231,8 +230,7 @@ public interface IApiType extends IApiMember {
 	 * kind. The list contains instances of {@link IReference}.
 	 *
 	 * @param referenceMask kinds of references to extract/search for as
-	 *            described by
-	 *            {@link org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers}
+	 *            described by {@link IReference} constants
 	 * @param monitor progress monitor or <code>null</code>
 	 * @return extracted {@link IReference}s, possibly an empty collection
 	 * @throws CoreException if this type does not exist or an exception occurs

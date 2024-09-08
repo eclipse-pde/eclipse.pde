@@ -102,7 +102,7 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 	}
 
 	/**
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#findTypeRoot(java.lang.String)
+	 * @see IApiTypeContainer#findTypeRoot(java.lang.String)
 	 */
 	@Override
 	public IApiTypeRoot findTypeRoot(String qualifiedName) throws CoreException {
@@ -117,8 +117,7 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 	}
 
 	/**
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#findTypeRoot(java.lang.String,
-	 *      java.lang.String)
+	 * @see IApiTypeContainer#findTypeRoot(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public IApiTypeRoot findTypeRoot(String qualifiedName, String id) throws CoreException {

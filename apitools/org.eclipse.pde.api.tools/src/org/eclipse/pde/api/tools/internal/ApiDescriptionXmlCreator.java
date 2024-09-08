@@ -137,8 +137,6 @@ public class ApiDescriptionXmlCreator extends ApiDescriptionVisitor {
 
 	/**
 	 * Returns the settings as a XML {@link Document}.
-	 *
-	 * @throws CoreException if something goes wrong
 	 */
 	public Document getXML() {
 		return fDoc;

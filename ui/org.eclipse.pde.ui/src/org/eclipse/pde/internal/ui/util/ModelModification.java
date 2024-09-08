@@ -44,9 +44,12 @@ public abstract class ModelModification {
 
 	/**
 	 * Create a full IBundlePluginModelBase modification
-	 * @param bundleFile the MANIFEST.MF file
-	 * @param xmlFile the plugin.xml/fragment.xml file for this modification (optional - can be null)
-	 * @pre bundleFile must not be <code>null</code>
+	 *
+	 * @param bundleFile
+	 *            the MANIFEST.MF file (must not be {@code null})
+	 * @param xmlFile
+	 *            the plugin.xml/fragment.xml file for this modification
+	 *            (optional - may be {@code null})
 	 */
 	public ModelModification(IFile bundleFile, IFile xmlFile) {
 		createFullBundleModification(bundleFile, xmlFile);

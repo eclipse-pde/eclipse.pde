@@ -215,8 +215,8 @@ public class ShowSampleAction extends Action implements IIntroAction {
 	}
 
 	/**
-	 * Returns a Collection<IInstallableUnit> of the installable units that contain the samples
-	 * to be installed.
+	 * Returns a Collection&lt;IInstallableUnit&gt; of the installable units
+	 * that contain the samples to be installed.
 	 */
 	protected Collection<IInstallableUnit> findSampleIUs(URI location, SubMonitor monitor) throws ProvisionException {
 		IMetadataRepository repository = provUI.loadMetadataRepository(location, false, monitor.split(5));
