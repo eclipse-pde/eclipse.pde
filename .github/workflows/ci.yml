@@ -22,4 +22,5 @@ jobs:
       projectId: eclipse.pde
   build:
     uses: eclipse-platform/eclipse.platform.releng.aggregator/.github/workflows/mavenBuild.yml@master
-
+    with:
+      maven-goals: clean verify -Ptck
