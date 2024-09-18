@@ -5,3 +5,4 @@ Rework PluginRegistry API and introduce VersionMatchRule enum : https://github.c
 Comparator errors in I20240904-0240
 Add missing reference/api content
 Pick-up javadoc changes
+Force javadoc regeneration
