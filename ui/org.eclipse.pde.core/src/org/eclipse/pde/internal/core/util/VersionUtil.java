@@ -42,7 +42,9 @@ public class VersionUtil {
 
 	public static IStatus validateVersionRange(String versionRangeString) {
 		try {
-			new VersionRange(versionRangeString);
+			if (versionRangeString != null) {
+				new VersionRange(versionRangeString);
+			}
 		} catch (IllegalArgumentException e) {
 			return Status.error(UtilMessages.BundleErrorReporter_invalidVersionRangeFormat, e);
 		}
