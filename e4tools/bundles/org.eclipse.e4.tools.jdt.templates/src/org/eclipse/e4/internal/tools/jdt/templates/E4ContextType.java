@@ -27,6 +27,7 @@ import org.eclipse.jdt.internal.corext.template.java.IJavaContext;
  */
 @SuppressWarnings("restriction")
 public class E4ContextType extends AbstractJavaContextType {
+	// Dummy change
 
 	/**
 	 * The context type id for templates working on all Java code locations in e4 projects

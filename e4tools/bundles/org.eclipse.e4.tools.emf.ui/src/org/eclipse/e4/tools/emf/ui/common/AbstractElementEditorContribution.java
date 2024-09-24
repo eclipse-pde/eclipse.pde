@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Composite;
  * <code>elementEditorTab</code> extension point.
  */
 public abstract class AbstractElementEditorContribution {
+	// Dummy change
 
 	/**
 	 * Filters the elements this extension point contribution is visible on. The
