@@ -24,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -812,7 +813,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	}
 
 	public static boolean guessUnpack(BundleDescription bundle, String[] classpath) {
-		return org.eclipse.pde.internal.publishing.Utils.guessUnpack(bundle, classpath);
+		return org.eclipse.pde.internal.publishing.Utils.guessUnpack(bundle, Arrays.asList(classpath));
 	}
 
 	public static Version extract3Segments(String s) {
