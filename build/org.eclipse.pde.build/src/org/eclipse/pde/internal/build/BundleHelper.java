@@ -215,7 +215,7 @@ public class BundleHelper {
 	}
 
 	public static String[] getClasspath(Dictionary<String, String> manifest) {
-		return org.eclipse.pde.internal.publishing.Utils.getBundleClasspath(manifest);
+		return org.eclipse.pde.internal.publishing.Utils.getBundleClasspath(manifest).toArray(String[]::new);
 	}
 
 	public static String getManifestHeader(Dictionary<String, String> manifest, String header) {
