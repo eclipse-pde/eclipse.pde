@@ -213,18 +213,10 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	}
 
 	private void refreshAvailableIUArea(final Composite parent) {
-		try {
-			if (fEditContainer == null || fEditContainer.getInstallableUnits().isEmpty()) {
-				return;
-			}
-		} catch (CoreException e) {
-			PDEPlugin.log(e);
-		}
-
-		if (refreshThread != null && refreshThread.isAlive()) {
+		if (fEditContainer == null || fEditContainer.getInstallableUnits().isEmpty()
+				|| (refreshThread != null && refreshThread.isAlive())) {
 			return;
 		}
-
 		refreshThread = new Thread(() -> {
 			try {
 				final AtomicBoolean loaded = new AtomicBoolean(false);
@@ -244,13 +236,9 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 						@SuppressWarnings("restriction")
 						final String pendingLabel = org.eclipse.ui.internal.progress.ProgressMessages.PendingUpdateAdapter_PendingLabel;
 						if (children.length > 0 && !children[0].getText().equals(pendingLabel)) {
-							try {
-								fAvailableIUGroup.getCheckboxTreeViewer().expandAll();
-								fAvailableIUGroup.setChecked(fEditContainer.getInstallableUnits().toArray());
-								fAvailableIUGroup.getCheckboxTreeViewer().collapseAll();
-							} catch (CoreException e) {
-								PDEPlugin.log(e);
-							}
+							fAvailableIUGroup.getCheckboxTreeViewer().expandAll();
+							fAvailableIUGroup.setChecked(fEditContainer.getInstallableUnits().toArray());
+							fAvailableIUGroup.getCheckboxTreeViewer().collapseAll();
 							loaded.set(true);
 						}
 					});
@@ -271,8 +259,9 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	 */
 	private void createAvailableIUArea(Composite parent) {
 		int filterConstant = AvailableIUGroup.AVAILABLE_NONE;
-		if (!profileUI.getPolicy().getRepositoriesVisible())
+		if (!profileUI.getPolicy().getRepositoriesVisible()) {
 			filterConstant = AvailableIUGroup.AVAILABLE_ALL;
+		}
 		fAvailableIUGroup = new AvailableIUGroup(profileUI, parent, parent.getFont(), fQueryContext, null, filterConstant);
 		fAvailableIUGroup.getCheckboxTreeViewer().addCheckStateListener(event -> {
 			IInstallableUnit[] units = fAvailableIUGroup.getCheckedLeafIUs();
@@ -619,28 +608,21 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 
 		// If we are editing a bundle check any installable units
 		if (fEditContainer != null) {
-			try {
-				// TODO This code does not do a good job, selecting, revealing, and collapsing all
-				// Only able to check items if we don't have categories
-				fQueryContext.setViewType(org.eclipse.equinox.internal.p2.ui.query.IUViewQueryContext.AVAILABLE_VIEW_FLAT);
-				fAvailableIUGroup.updateAvailableViewState();
-				fAvailableIUGroup.setChecked(fEditContainer.getInstallableUnits().toArray());
-				// Make sure view is back in proper state
-				updateViewContext();
-				IInstallableUnit[] units = fAvailableIUGroup.getCheckedLeafIUs();
-				if (units.length > 0) {
-					fAvailableIUGroup.getCheckboxTreeViewer().setSelection(new StructuredSelection(units[0]), true);
-					String msg = units.length == 1 ? Messages.EditIUContainerPage_itemSelected
-							: Messages.EditIUContainerPage_itemsSelected;
-					fSelectionCount.setText(NLS.bind(msg, Integer.toString(units.length)));
-				} else {
-					fSelectionCount.setText(NLS.bind(Messages.EditIUContainerPage_itemsSelected, Integer.toString(0)));
-				}
-				fAvailableIUGroup.getCheckboxTreeViewer().collapseAll();
-
-			} catch (CoreException e) {
-				PDEPlugin.log(e);
+			// TODO This code does not do a good job, selecting, revealing, and collapsing all
+			// Only able to check items if we don't have categories
+			fQueryContext.setViewType(org.eclipse.equinox.internal.p2.ui.query.IUViewQueryContext.AVAILABLE_VIEW_FLAT);
+			fAvailableIUGroup.updateAvailableViewState();
+			fAvailableIUGroup.setChecked(fEditContainer.getInstallableUnits().toArray());
+			// Make sure view is back in proper state
+			updateViewContext();
+			IInstallableUnit[] units = fAvailableIUGroup.getCheckedLeafIUs();
+			if (units.length > 0) {
+				fAvailableIUGroup.getCheckboxTreeViewer().setSelection(new StructuredSelection(units[0]), true);
 			}
+			String msg = units.length == 1 ? Messages.EditIUContainerPage_itemSelected
+					: Messages.EditIUContainerPage_itemsSelected;
+			fSelectionCount.setText(NLS.bind(msg, units.length));
+			fAvailableIUGroup.getCheckboxTreeViewer().collapseAll();
 		}
 	}
 }

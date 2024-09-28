@@ -265,7 +265,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	private void cacheIUs() throws CoreException {
 		IProfile profile = fSynchronizer.getProfile();
 		List<IInstallableUnit> result = new ArrayList<>();
-		MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.IUBundleContainer_ProblemsLoadingRepositories, null);
+		MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.IUBundleContainer_ProblemsLoadingRepositories);
 		for (IVersionedId unit : fIUs) {
 			IQuery<IInstallableUnit> query = QueryUtil.createIUQuery(unit);
 			addQueryResult(profile, query, unit, result, status);
@@ -571,14 +571,13 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * Returns the installable units defined by this container
 	 *
 	 * @return the discovered IUs
-	 * @exception CoreException if unable to retrieve IU's
 	 */
-	public List<IInstallableUnit> getInstallableUnits() throws CoreException {
+	public List<IInstallableUnit> getInstallableUnits() {
 		return fUnits;
 	}
 
 	/** Returns the declared installable unit identifiers and versions. */
-	Collection<IVersionedId> getUnits() {
+	Collection<IVersionedId> getDeclaredUnits() {
 		return Collections.unmodifiableSet(fIUs);
 	}
 
@@ -682,10 +681,10 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		}
 	}
 
-	IInstallableUnit[] getRootIUs(IProgressMonitor monitor) throws CoreException {
+	Collection<IInstallableUnit> getRootIUs(IProgressMonitor monitor) throws CoreException {
 		IQueryable<IInstallableUnit> repos = P2TargetUtils.getQueryableMetadata(getRepositories(),
 				isFollowRepositoryReferences(), monitor);
-		MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.IUBundleContainer_ProblemsLoadingRepositories, null);
+		MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.IUBundleContainer_ProblemsLoadingRepositories);
 		List<IInstallableUnit> result = new ArrayList<>();
 		for (IVersionedId iu : fIUs) {
 			// For versions such as 0.0.0, the IU query may return multiple IUs, so we check which is the latest version
@@ -696,7 +695,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			fResolutionStatus = status;
 			throw new CoreException(status);
 		}
-		return result.toArray(new IInstallableUnit[0]);
+		return result;
 	}
 
 	private void addQueryResult(IQueryable<IInstallableUnit> queryable, IQuery<IInstallableUnit> query, IVersionedId iu,
