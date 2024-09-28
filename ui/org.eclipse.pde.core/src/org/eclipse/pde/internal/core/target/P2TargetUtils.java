@@ -24,7 +24,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -503,7 +502,6 @@ public class P2TargetUtils {
 				return false;
 			}
 		}
-
 		// ensure environment & NL settings are still the same (else we need a new profile)
 		if (!all && !generateEnvironmentProperties(target).equals(profile.getProperty(IProfile.PROP_ENVIRONMENTS))) {
 			return false;
@@ -511,17 +509,13 @@ public class P2TargetUtils {
 		if (!generateNLProperty(target).equals(profile.getProperty(IProfile.PROP_NL))) {
 			return false;
 		}
-
 		// check provisioning mode: slice versus plan
 		if (!getProvisionMode().equals(profile.getProperty(PROP_PROVISION_MODE))) {
 			return false;
 		}
-
-		// check that the include source flag matches what the profile represents
 		if (getIncludeSource() != Boolean.parseBoolean(profile.getProperty(PROP_AUTO_INCLUDE_SOURCE))) {
 			return false;
 		}
-
 		if (getIncludeConfigurePhase() != Boolean.parseBoolean(profile.getProperty(PROP_INCLUDE_CONFIGURE_PHASE))) {
 			return false;
 		}
@@ -530,17 +524,17 @@ public class P2TargetUtils {
 		// still in the profile, we need to recreate (rather than uninstall)
 		IUProfilePropertyQuery propertyQuery = new IUProfilePropertyQuery(PROP_INSTALLED_IU, Boolean.toString(true));
 		IQueryResult<IInstallableUnit> queryResult = profile.query(propertyQuery, null);
+		ITargetLocation[] containers = target.getTargetLocations();
+		if (containers == null) {
+			return queryResult.isEmpty();
+		}
 		Set<NameVersionDescriptor> installedIUs = new HashSet<>();
 		for (IInstallableUnit unit : queryResult) {
 			installedIUs.add(new NameVersionDescriptor(unit.getId(), unit.getVersion().toString()));
 		}
-		ITargetLocation[] containers = target.getTargetLocations();
-		if (containers == null) {
-			return installedIUs.isEmpty();
-		}
 		for (ITargetLocation container : containers) {
 			if (container instanceof IUBundleContainer bc) {
-				for (IVersionedId iu : bc.getUnits()) {
+				for (IVersionedId iu : bc.getDeclaredUnits()) {
 					// if there is something in a container but not in the profile, recreate
 					if (!installedIUs.remove(new NameVersionDescriptor(iu.getId(), iu.getVersion().toString()))) {
 						return false;
@@ -951,7 +945,7 @@ public class P2TargetUtils {
 		Set<IRepositoryReference> seen = new HashSet<>();
 		List<IMetadataRepository> result = new ArrayList<>(repos.size());
 		List<IMetadataRepository> additional = new ArrayList<>();
-		MultiStatus repoStatus = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.IUBundleContainer_ProblemsLoadingRepositories, null);
+		MultiStatus repoStatus = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.IUBundleContainer_ProblemsLoadingRepositories);
 		for (URI location : repos) {
 			try {
 				IMetadataRepository repository = manager.loadRepository(location, subMonitor.split(1));
@@ -1007,7 +1001,7 @@ public class P2TargetUtils {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.IUBundleContainer_0, 220);
 
 		// Get the root IUs for every relevant container in the target definition
-		IInstallableUnit[] units = getRootIUs(target, subMonitor.split(20));
+		Set<IInstallableUnit> units = getRootIUs(target, subMonitor.split(20));
 
 		// create the provisioning plan
 		IPlanner planner = getPlanner();
@@ -1015,7 +1009,7 @@ public class P2TargetUtils {
 		// first remove everything that was explicitly installed.  Then add it back.  This has the net effect of
 		// removing everything that is no longer needed.
 		computeRemovals(profile, request, getIncludeSource());
-		request.addAll(Arrays.asList(units));
+		request.addAll(units);
 		for (IInstallableUnit unit : units) {
 			request.setInstallableUnitProfileProperty(unit, PROP_INSTALLED_IU, Boolean.toString(true));
 		}
@@ -1223,7 +1217,7 @@ public class P2TargetUtils {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.IUBundleContainer_0, 110);
 
 		// resolve IUs
-		IInstallableUnit[] units = getRootIUs(target, subMonitor.split(40));
+		Set<IInstallableUnit> units = getRootIUs(target, subMonitor.split(40));
 
 		Collection<URI> repositories = getMetadataRepositories(target);
 		if (repositories.isEmpty()) {
@@ -1243,9 +1237,8 @@ public class P2TargetUtils {
 		if (getIncludeSource()) {
 			// Build an IU that represents all the source bundles and slice again to add them in if available
 			IInstallableUnit sourceIU = createSourceIU(queryResult, Version.createOSGi(1, 0, 0));
-			IInstallableUnit[] units2 = new IInstallableUnit[units.length + 1];
-			System.arraycopy(units, 0, units2, 0, units.length);
-			units2[units.length] = sourceIU;
+			List<IInstallableUnit> units2 = new ArrayList<>(units);
+			units2.add(sourceIU);
 
 			queryResult = slice(units2, allMetadata, target, subMonitor.split(5));
 			if (queryResult == null || queryResult.isEmpty()) {
@@ -1298,7 +1291,9 @@ public class P2TargetUtils {
 	 * @return the result of the slice operation
 	 * @throws CoreException if a problem occurs during the slice operation that should stop this location from resolving
 	 */
-	private IQueryResult<IInstallableUnit> slice(IInstallableUnit[] units, IQueryable<IInstallableUnit> allMetadata, ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
+	private IQueryResult<IInstallableUnit> slice(Collection<IInstallableUnit> units,
+			IQueryable<IInstallableUnit> allMetadata, ITargetDefinition definition, IProgressMonitor monitor)
+			throws CoreException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
 		// slice IUs and all prerequisites
 		PermissiveSlicer slicer = null;
@@ -1313,7 +1308,7 @@ public class P2TargetUtils {
 			props.put(IProfile.PROP_INSTALL_FEATURES, Boolean.TRUE.toString());
 			slicer = new PermissiveSlicer(allMetadata, props, true, false, false, true, false);
 		}
-		IQueryable<IInstallableUnit> slice = slicer.slice(Arrays.asList(units), subMonitor.split(50));
+		IQueryable<IInstallableUnit> slice = slicer.slice(units, subMonitor.split(50));
 		IStatus sliceStatus = slicer.getStatus();
 		// If the slicer encounters an error, stop the operation
 		if (sliceStatus.getSeverity() == IStatus.ERROR) {
@@ -1454,19 +1449,20 @@ public class P2TargetUtils {
 	 * @return the discovered IUs
 	 * @exception CoreException if unable to retrieve IU's
 	 */
-	private IInstallableUnit[] getRootIUs(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
+	private Set<IInstallableUnit> getRootIUs(ITargetDefinition definition, IProgressMonitor monitor)
+			throws CoreException {
 
-		HashSet<IInstallableUnit> result = new HashSet<>();
 		ITargetLocation[] containers = definition.getTargetLocations();
 		if (containers == null) {
-			return new IInstallableUnit[0];
+			return Set.of();
 		}
-		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.IUBundleContainer_0, containers.length * 10);
-		MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.IUBundleContainer_ProblemsLoadingRepositories, null);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.IUBundleContainer_0, containers.length);
+		MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.IUBundleContainer_ProblemsLoadingRepositories);
+		Set<IInstallableUnit> result = new HashSet<>();
 		for (ITargetLocation container : containers) {
 			if (container instanceof IUBundleContainer iuContainer) {
 				try {
-					Collections.addAll(result, iuContainer.getRootIUs(subMonitor.split(10)));
+					result.addAll(iuContainer.getRootIUs(subMonitor.split(1)));
 				} catch (CoreException e) {
 					status.add(e.getStatus());
 				}
@@ -1475,7 +1471,7 @@ public class P2TargetUtils {
 		if (!status.isOK()) {
 			throw new CoreException(status);
 		}
-		return result.toArray(new IInstallableUnit[result.size()]);
+		return result;
 	}
 
 	/**

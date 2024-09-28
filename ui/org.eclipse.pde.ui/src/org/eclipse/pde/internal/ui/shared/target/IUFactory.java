@@ -15,7 +15,6 @@
 package org.eclipse.pde.internal.ui.shared.target;
 
 import java.net.URI;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -118,7 +117,7 @@ public class IUFactory implements IAdapterFactory, ITargetLocationHandler {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, containers.size() + wrappers.size());
 		for (IUBundleContainer container : containers) {
 			try {
-				IUBundleContainer update = container.update(Collections.emptySet(), subMonitor.split(1));
+				IUBundleContainer update = container.update(Set.of(), subMonitor.split(1));
 				updatedContainer.put(container, update);
 			} catch (CoreException e) {
 				return e.getStatus();
