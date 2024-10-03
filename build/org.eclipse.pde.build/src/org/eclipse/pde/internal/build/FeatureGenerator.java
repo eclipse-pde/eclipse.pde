@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2021 IBM Corporation and others.
+ * Copyright (c) 2006, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -347,11 +347,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 				// only include the fragments for the platforms we are attempting to build, since the others
 				// probably aren't around
 				for (Config config : configs) {
-					String fragment = BUNDLE_EQUINOX_LAUNCHER + '.' + config.getWs() + '.' + config.getOs();
-					//macosx doesn't have the arch on its fragment 
-					if (config.getOs().compareToIgnoreCase("macosx") != 0 || config.getArch().equals("x86_64")) {//$NON-NLS-1$ //$NON-NLS-2$
-						fragment += '.' + config.getArch();
-					}
+					String fragment = BUNDLE_EQUINOX_LAUNCHER + '.' + config.getWs() + '.' + config.getOs() + '.' + config.getArch();
 					if (!contains(fragments, fragment)) {
 						Entry entry = new Entry(fragment);
 						entry.addAttribute("unpack", "true"); //$NON-NLS-1$//$NON-NLS-2$
