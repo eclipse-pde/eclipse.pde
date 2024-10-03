@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.genericeditor.extension.tests;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.text.ITextViewer;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,8 +50,7 @@ public class Bug528706CompletionWithMultilineTagsTest extends AbstractTargetEdit
 
 	@Test
 	public void testTagValueCompletionAfterAMultiline() {
-		checkProposals(new String[] { "x86", "x86_64" },
-				contentAssist.computeCompletionProposals(textViewer, 181 + 1), 181);
+		checkProposals(Platform.knownOSArchValues(), contentAssist.computeCompletionProposals(textViewer, 181), 181);
 	}
 
 	@Test
