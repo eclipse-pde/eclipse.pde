@@ -123,6 +123,7 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 		return getCompleteProgramArguments(os, ""); //$NON-NLS-1$
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public String getCompleteProgramArguments(String os, String arch) {
 		int archIndex = L_ARGS_ARCH_ALL;
@@ -217,6 +218,7 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 		return getCompleteVMArguments(os, ""); //$NON-NLS-1$
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public String getCompleteVMArguments(String os, String arch) {
 		int archIndex = L_ARGS_ARCH_ALL;
