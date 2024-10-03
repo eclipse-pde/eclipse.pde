@@ -17,6 +17,6 @@
 linu
 
 </os>
-<arch>x</arch>
+<arch></arch>
 </environment>
 </target>

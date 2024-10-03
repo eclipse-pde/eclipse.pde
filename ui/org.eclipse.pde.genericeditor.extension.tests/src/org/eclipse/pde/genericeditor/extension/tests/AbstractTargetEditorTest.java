@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.eclipse.core.filebuffers.FileBuffers;
@@ -52,12 +54,7 @@ public abstract class AbstractTargetEditorTest {
 	protected File tempFile;
 
 	protected void checkProposals(String[] expectedProposals, ICompletionProposal[] actualProposals, int offset) {
-		assertEquals("Proposal lengths are not equal at offset " + offset + ". Actual: "
-				+ proposalListToString(actualProposals), expectedProposals.length, actualProposals.length);
-		for (int i = 0; i < actualProposals.length; i++) {
-			assertEquals("Proposal at index " + i + " did not match expected at offset " + offset,
-					actualProposals[i].getDisplayString(), expectedProposals[i]);
-		}
+		assertEquals(Arrays.asList(expectedProposals), toProposalStrings(actualProposals));
 	}
 
 	@Before
@@ -102,18 +99,11 @@ public abstract class AbstractTargetEditorTest {
 		if (proposals == null) {
 			return "null";
 		}
-		if (proposals.length == 0) {
-			return "[]";
-		}
-		StringBuilder builder = new StringBuilder();
-		builder.append('[');
-		for (ICompletionProposal proposal : proposals) {
-			builder.append(proposal.getDisplayString());
-			builder.append(", ");
-		}
-		builder.setLength(builder.length() - 2);
-		builder.append(']');
-		return builder.toString();
+		return "[" + String.join(",", toProposalStrings(proposals)) + "]";
+	}
+
+	private static List<String> toProposalStrings(ICompletionProposal[] proposals) {
+		return Arrays.stream(proposals).map(ICompletionProposal::getDisplayString).toList();
 	}
 
 	public static ITextFileBuffer getTextFileBufferFromFile(File file) {
