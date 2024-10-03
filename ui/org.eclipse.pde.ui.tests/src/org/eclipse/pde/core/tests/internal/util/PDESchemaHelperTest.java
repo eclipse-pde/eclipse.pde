@@ -51,13 +51,13 @@ public class PDESchemaHelperTest {
 		property2.setName("osgi.configuration.area");
 		property2.setValue("/usr/local/share/Eclipse");
 		property2.setOs(Platform.OS_LINUX);
-		property2.setArch(Platform.ARCH_X86);
+		property2.setArch(Platform.ARCH_AARCH64);
 		fConfigurationProperties.add(property2);
 		IConfigurationProperty property3 = fProductModelFactory.createConfigurationProperty();
 		property3.setName("p1");
 		property3.setValue("v1");
 		property3.setOs(PDESchemaHelper.ALL_OS);
-		property3.setArch(Platform.ARCH_X86);
+		property3.setArch(Platform.ARCH_X86_64);
 		fConfigurationProperties.add(property3);
 
 	}
@@ -70,12 +70,12 @@ public class PDESchemaHelperTest {
 		assertTrue(containsMatchingProperty);
 
 		containsMatchingProperty = PDESchemaHelper.containsMatchingProperty(fConfigurationProperties,
-				"osgi.configuration.area", Platform.OS_LINUX, Platform.ARCH_X86);
+				"osgi.configuration.area", Platform.OS_LINUX, Platform.ARCH_AARCH64);
 		assertTrue(containsMatchingProperty);
 
 		// specific architecture
 		containsMatchingProperty = PDESchemaHelper.containsMatchingProperty(fConfigurationProperties,
-				"org.osgi.instance.area", Platform.OS_WIN32, Platform.ARCH_X86);
+				"org.osgi.instance.area", Platform.OS_WIN32, Platform.ARCH_X86_64);
 		assertTrue(containsMatchingProperty);
 
 		containsMatchingProperty = PDESchemaHelper.containsMatchingProperty(fConfigurationProperties,
@@ -89,7 +89,7 @@ public class PDESchemaHelperTest {
 
 		// for all os but specific arch
 		containsMatchingProperty = PDESchemaHelper.containsMatchingProperty(fConfigurationProperties,
-				"org.osgi.instance.area", PDESchemaHelper.ALL_OS, Platform.ARCH_X86);
+				"org.osgi.instance.area", PDESchemaHelper.ALL_OS, Platform.ARCH_X86_64);
 		assertTrue(containsMatchingProperty);
 
 		// for different OS
@@ -104,7 +104,7 @@ public class PDESchemaHelperTest {
 
 		// all os but different architecture
 		containsMatchingProperty = PDESchemaHelper.containsMatchingProperty(fConfigurationProperties, "p1",
-				PDESchemaHelper.ALL_OS, Platform.ARCH_X86_64);
+				PDESchemaHelper.ALL_OS, Platform.ARCH_PPC64LE);
 		assertFalse(containsMatchingProperty);
 
 	}
