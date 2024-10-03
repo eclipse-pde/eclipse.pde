@@ -51,7 +51,7 @@ pipeline {
 			}
 			steps {
 				sshagent(['projects-storage.eclipse.org-bot-ssh']) {
-					 sh '''
+					 sh '''#!/bin/bash
 						ssh genie.pde@projects-storage.eclipse.org "rm -rf /home/data/httpd/download.eclipse.org/pde/builds/master/*"
 						scp -r repository/target/repository/* genie.pde@projects-storage.eclipse.org:/home/data/httpd/download.eclipse.org/pde/builds/master/
 						'''
