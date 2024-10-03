@@ -39,7 +39,9 @@ pipeline {
 						repository/target/repository/**')
 					junit '**/target/surefire-reports/*.xml'
 					discoverGitReferenceBuild referenceJob: 'eclipse.pde/master'
-					recordIssues publishAllIssues: true, tools: [eclipse(name: 'Compiler and API Tools', pattern: '**/target/compilelogs/*.xml'), mavenConsole(), javaDoc()], qualityGates: [[threshold: 1, type: 'NEW', unstable: true]]
+					recordIssues(publishAllIssues: true,
+						tools: [eclipse(name: 'Compiler and API Tools', pattern: '**/target/compilelogs/*.xml'), mavenConsole(), javaDoc()],
+						qualityGates: [[threshold: 1, type: 'NEW', unstable: true]])
 				}
 			}
 		}
@@ -47,14 +49,14 @@ pipeline {
 			when {
 				branch 'master'
 			}
-            steps {
-                sshagent ( ['projects-storage.eclipse.org-bot-ssh']) {
-                     sh '''
-                        ssh genie.pde@projects-storage.eclipse.org "rm -rf /home/data/httpd/download.eclipse.org/pde/builds/master/*"
-                        scp -r repository/target/repository/* genie.pde@projects-storage.eclipse.org:/home/data/httpd/download.eclipse.org/pde/builds/master/
-                        '''
-                }
-            }
-        }
+			steps {
+				sshagent(['projects-storage.eclipse.org-bot-ssh']) {
+					 sh '''
+						ssh genie.pde@projects-storage.eclipse.org "rm -rf /home/data/httpd/download.eclipse.org/pde/builds/master/*"
+						scp -r repository/target/repository/* genie.pde@projects-storage.eclipse.org:/home/data/httpd/download.eclipse.org/pde/builds/master/
+						'''
+				}
+			}
+		}
 	}
 }
