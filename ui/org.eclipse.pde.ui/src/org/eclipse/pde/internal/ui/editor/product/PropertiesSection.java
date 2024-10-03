@@ -130,6 +130,7 @@ public class PropertiesSection extends TableSection {
 
 		private final String[] COMBO_OSLABELS = new String[] { PDEUIMessages.PropertiesSection_All, Platform.OS_LINUX,
 				Platform.OS_MACOSX, Platform.OS_WIN32 };
+		@SuppressWarnings("deprecation")
 		private final String[] COMBO_ARCHLABELS = new String[] { PDEUIMessages.PropertiesSection_All, Platform.ARCH_X86,
 				Platform.ARCH_X86_64 };
 

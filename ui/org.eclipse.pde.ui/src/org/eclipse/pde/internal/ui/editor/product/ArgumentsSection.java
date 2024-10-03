@@ -50,6 +50,7 @@ import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
+@SuppressWarnings("deprecation")
 public class ArgumentsSection extends PDESection {
 
 	private static final String[] TAB_LABELS = new String[4];
