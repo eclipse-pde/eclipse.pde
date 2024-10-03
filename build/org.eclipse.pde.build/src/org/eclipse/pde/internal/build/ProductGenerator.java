@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2021 IBM Corporation and others.
+ * Copyright (c) 2006, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -279,9 +279,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			for (Config config : configs) {
 				if (config.equals(Config.genericConfig()))
 					continue;
-				String fragmentName = BUNDLE_EQUINOX_LAUNCHER + '.' + config.getWs() + '.' + config.getOs();
-				if (config.getOs().compareToIgnoreCase("macosx") != 0 || config.getArch().equals("x86_64")) //$NON-NLS-1$ //$NON-NLS-2$
-					fragmentName += '.' + config.getArch();
+				String fragmentName = BUNDLE_EQUINOX_LAUNCHER + '.' + config.getWs() + '.' + config.getOs() + '.' + config.getArch();
 				BundleDescription fragment = assembly.getPlugin(fragmentName, null);
 				if (fragment != null) {
 					VersionRange fragmentRange = Utils.createExactVersionRange(fragment.getVersion());
