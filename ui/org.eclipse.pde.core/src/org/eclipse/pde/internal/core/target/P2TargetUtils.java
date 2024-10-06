@@ -20,6 +20,9 @@ import static org.eclipse.pde.internal.core.target.IUBundleContainer.queryFirst;
 
 import java.io.File;
 import java.net.URI;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,9 +35,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiConsumer;
 import java.util.function.Supplier;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -161,6 +169,19 @@ public class P2TargetUtils {
 	 * Profile property that tracks whether or not the configuration phase should be executed when installing
 	 */
 	static final String PROP_INCLUDE_CONFIGURE_PHASE = PDECore.PLUGIN_ID + ".includeConfigure"; //$NON-NLS-1$
+
+	/**
+	 * Profile property that tracks whether or not repository references should
+	 * be followed when installing
+	 */
+	static final String PROP_FOLLOW_REPOSITORY_REFERENCES = PDECore.PLUGIN_ID + ".followRepositoryReferences"; //$NON-NLS-1$
+
+	/**
+	 * Profile property that keeps track the list of repositories declared in a
+	 * target definition, separated by the {@link #REPOSITORY_LIST_DELIMITER
+	 * §§§} character.
+	 */
+	static final String PROP_DECLARED_REPOSITORIES = PDECore.PLUGIN_ID + ".repositories"; //$NON-NLS-1$
 
 	/**
 	 * Table mapping {@link ITargetDefinition} to synchronizer (P2TargetUtils) instance.
@@ -519,30 +540,61 @@ public class P2TargetUtils {
 		if (getIncludeConfigurePhase() != Boolean.parseBoolean(profile.getProperty(PROP_INCLUDE_CONFIGURE_PHASE))) {
 			return false;
 		}
+		if (isFollowRepositoryReferences() != Boolean
+				.parseBoolean((profile.getProperty(PROP_FOLLOW_REPOSITORY_REFERENCES)))) {
+			return false;
+		}
+
+		List<IUBundleContainer> iuContainers = iuBundleContainersOf(target).toList();
+
+		// ensure list of repositories is still the same. If empty versions or
+		// version ranges are used, just changing the repos can change content
+		String recordedRepositories = profile.getProperty(PROP_DECLARED_REPOSITORIES);
+		Set<URI> declaredRepositories = iuContainers.stream().map(IUBundleContainer::getRepositories)
+				.flatMap(List::stream).collect(Collectors.toSet());
+		if (recordedRepositories != null && !decodeURIs(recordedRepositories).equals(declaredRepositories)) {
+			return false;
+		}
 
 		// check top level IU's. If any have been removed from the containers that are
 		// still in the profile, we need to recreate (rather than uninstall)
 		IUProfilePropertyQuery propertyQuery = new IUProfilePropertyQuery(PROP_INSTALLED_IU, Boolean.toString(true));
 		IQueryResult<IInstallableUnit> queryResult = profile.query(propertyQuery, null);
-		ITargetLocation[] containers = target.getTargetLocations();
-		if (containers == null) {
-			return queryResult.isEmpty();
-		}
+
+		// Check if each installed/root IU can be matched with exactly one
+		// IU-declaration. If not, the profile is not in sync anymore.
 		Set<NameVersionDescriptor> installedIUs = new HashSet<>();
 		for (IInstallableUnit unit : queryResult) {
 			installedIUs.add(new NameVersionDescriptor(unit.getId(), unit.getVersion().toString()));
 		}
-		for (ITargetLocation container : containers) {
-			if (container instanceof IUBundleContainer bc) {
-				for (IVersionedId iu : bc.getDeclaredUnits()) {
-					// if there is something in a container but not in the profile, recreate
-					if (!installedIUs.remove(new NameVersionDescriptor(iu.getId(), iu.getVersion().toString()))) {
-						return false;
-					}
+
+		Set<String> emptyVersionIUs = new HashSet<>();
+		for (IUBundleContainer iuContainer : iuContainers) {
+			for (IVersionedId iu : iuContainer.getDeclaredUnits()) {
+				// if there is something in a container but not in the profile, recreate
+				Version version = iu.getVersion();
+				if (version.equals(Version.emptyVersion)) {
+					emptyVersionIUs.add(iu.getId());
+				} else if (!installedIUs.remove(new NameVersionDescriptor(iu.getId(), version.toString()))) {
+					return false;
 				}
 			}
 		}
-		return installedIUs.isEmpty(); // If empty, the profile checks out.
+		if (!emptyVersionIUs.isEmpty()) {
+			// match remaining installed IUs with IUs declared with empty
+			// version. It's a full match if for each IU declared with empty
+			// version exactly one IU remains.
+			installedIUs.removeIf(iu -> emptyVersionIUs.remove(iu.getId()));
+		}
+		// If both are empty it's a full match and the profile checks out.
+		return emptyVersionIUs.isEmpty() && installedIUs.isEmpty();
+	}
+
+	private Stream<IUBundleContainer> iuBundleContainersOf(ITargetDefinition target) {
+		ITargetLocation[] locations = target.getTargetLocations();
+		return locations == null ? Stream.empty()
+				: Arrays.stream(locations).filter(IUBundleContainer.class::isInstance)
+						.map(IUBundleContainer.class::cast);
 	}
 
 	/**
@@ -670,7 +722,8 @@ public class P2TargetUtils {
 		if (synchronizer == null) {
 			return false;
 		}
-		return synchronizer.checkProfile(target, synchronizer.getProfile());
+		return synchronizer.checkProfile(target, synchronizer.getProfile())
+				&& allReferencedTargets(target).allMatch(P2TargetUtils::isResolved);
 	}
 
 	/**
@@ -683,9 +736,22 @@ public class P2TargetUtils {
 		if (synchronizer == null) {
 			return false;
 		}
-		return synchronizer.checkProfile(target, synchronizer.updateProfileFromRegistry(target));
+		return synchronizer.checkProfile(target, synchronizer.updateProfileFromRegistry(target))
+				&& allReferencedTargets(target).allMatch(P2TargetUtils::isProfileValid);
 	}
 
+	private static Stream<ITargetDefinition> allReferencedTargets(ITargetDefinition target) {
+		return Arrays.stream(target.getTargetLocations()).filter(TargetReferenceBundleContainer.class::isInstance)
+				.map(TargetReferenceBundleContainer.class::cast).flatMap(referenceContainer -> {
+					try {
+						ITargetDefinition refTarget = referenceContainer.getTargetDefinition();
+						return Stream.concat(Stream.of(refTarget), allReferencedTargets(refTarget));
+					} catch (CoreException e) {
+						ILog.get().error("Failed to retrieve referenced target", e); //$NON-NLS-1$
+					}
+					return Stream.empty();
+				});
+	}
 
 	private synchronized IProfile updateProfileFromRegistry(ITargetDefinition target) {
 		if (fProfile == null) {
@@ -803,11 +869,7 @@ public class P2TargetUtils {
 		properties.put(IProfile.PROP_INSTALL_FEATURES, Boolean.TRUE.toString());
 		properties.put(IProfile.PROP_ENVIRONMENTS, generateEnvironmentProperties(target));
 		properties.put(IProfile.PROP_NL, generateNLProperty(target));
-		properties.put(PROP_SEQUENCE_NUMBER, Integer.toString(((TargetDefinition) target).getSequenceNumber()));
-		properties.put(PROP_PROVISION_MODE, getProvisionMode());
-		properties.put(PROP_ALL_ENVIRONMENTS, Boolean.toString(getIncludeAllEnvironments()));
-		properties.put(PROP_AUTO_INCLUDE_SOURCE, Boolean.toString(getIncludeSource()));
-		properties.put(PROP_INCLUDE_CONFIGURE_PHASE, Boolean.toString(getIncludeConfigurePhase()));
+		setProperties(properties::put, target, getProvisionMode());
 		return registry.addProfile(getProfileId(target), properties);
 	}
 
@@ -1039,7 +1101,7 @@ public class P2TargetUtils {
 		if (!status.isOK()) {
 			throw new CoreException(status);
 		}
-		setPlanProperties(plan, target, TargetDefinitionPersistenceHelper.MODE_PLANNER);
+		setProperties(plan::setProfileProperty, target, TargetDefinitionPersistenceHelper.MODE_PLANNER);
 		IProvisioningPlan installerPlan = plan.getInstallerPlan();
 		if (installerPlan != null) {
 			// this plan requires an update to the installer first, log the fact and attempt
@@ -1072,12 +1134,27 @@ public class P2TargetUtils {
 		}
 	}
 
-	private void setPlanProperties(IProvisioningPlan plan, ITargetDefinition definition, String mode) {
-		plan.setProfileProperty(PROP_PROVISION_MODE, mode);
-		plan.setProfileProperty(PROP_ALL_ENVIRONMENTS, Boolean.toString(getIncludeAllEnvironments()));
-		plan.setProfileProperty(PROP_AUTO_INCLUDE_SOURCE, Boolean.toString(getIncludeSource()));
-		plan.setProfileProperty(PROP_INCLUDE_CONFIGURE_PHASE, Boolean.toString(getIncludeConfigurePhase()));
-		plan.setProfileProperty(PROP_SEQUENCE_NUMBER, Integer.toString(((TargetDefinition) definition).getSequenceNumber()));
+	private void setProperties(BiConsumer<String, String> setter, ITargetDefinition target, String mode) {
+		setter.accept(PROP_PROVISION_MODE, mode);
+		setter.accept(PROP_ALL_ENVIRONMENTS, Boolean.toString(getIncludeAllEnvironments()));
+		setter.accept(PROP_AUTO_INCLUDE_SOURCE, Boolean.toString(getIncludeSource()));
+		setter.accept(PROP_INCLUDE_CONFIGURE_PHASE, Boolean.toString(getIncludeConfigurePhase()));
+		setter.accept(PROP_FOLLOW_REPOSITORY_REFERENCES, Boolean.toString(isFollowRepositoryReferences()));
+		setter.accept(PROP_SEQUENCE_NUMBER, Integer.toString(((TargetDefinition) target).getSequenceNumber()));
+		setter.accept(PROP_DECLARED_REPOSITORIES, iuBundleContainersOf(target).map(IUBundleContainer::getRepositories)
+				.flatMap(List::stream).collect(joiningEncodeURIs()));
+	}
+
+	private static final String REPOSITORY_LIST_DELIMITER = ","; //$NON-NLS-1$
+
+	private static Collector<URI, ?, String> joiningEncodeURIs() {
+		return Collectors.mapping(u -> URLEncoder.encode(u.toASCIIString(), StandardCharsets.UTF_8),
+				Collectors.joining(REPOSITORY_LIST_DELIMITER));
+	}
+
+	private Set<URI> decodeURIs(String encodedList) {
+		return Arrays.stream(encodedList.split(REPOSITORY_LIST_DELIMITER))
+				.map(t -> URLDecoder.decode(t, StandardCharsets.UTF_8)).map(URI::create).collect(Collectors.toSet());
 	}
 
 	/**
@@ -1253,7 +1330,7 @@ public class P2TargetUtils {
 		context.setProperty(ProvisioningContext.FOLLOW_REPOSITORY_REFERENCES, Boolean.toString(isFollowRepositoryReferences()));
 		context.setProperty(ProvisioningContext.FOLLOW_ARTIFACT_REPOSITORY_REFERENCES, Boolean.toString(isFollowRepositoryReferences()));
 		IProvisioningPlan plan = engine.createPlan(profile, context);
-		setPlanProperties(plan, target, TargetDefinitionPersistenceHelper.MODE_SLICER);
+		setProperties(plan::setProfileProperty, target, TargetDefinitionPersistenceHelper.MODE_SLICER);
 
 		Set<IInstallableUnit> newSet = queryResult.toUnmodifiableSet();
 		for (IInstallableUnit unit : newSet) {
