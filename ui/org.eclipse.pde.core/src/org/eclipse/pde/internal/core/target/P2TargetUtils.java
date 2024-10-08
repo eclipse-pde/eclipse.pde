@@ -20,11 +20,13 @@ import static org.eclipse.pde.internal.core.target.IUBundleContainer.queryFirst;
 
 import java.io.File;
 import java.net.URI;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -33,9 +35,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiConsumer;
 import java.util.function.Supplier;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -66,10 +73,10 @@ import org.eclipse.equinox.p2.metadata.IArtifactKey;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.IProvidedCapability;
 import org.eclipse.equinox.p2.metadata.IRequirement;
-import org.eclipse.equinox.p2.metadata.IVersionedId;
 import org.eclipse.equinox.p2.metadata.MetadataFactory;
 import org.eclipse.equinox.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.metadata.Version;
+import org.eclipse.equinox.p2.metadata.VersionRange;
 import org.eclipse.equinox.p2.planner.IPlanner;
 import org.eclipse.equinox.p2.planner.IProfileChangeRequest;
 import org.eclipse.equinox.p2.query.IQuery;
@@ -89,9 +96,9 @@ import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetHandle;
 import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.core.target.ITargetPlatformService;
-import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.target.IUBundleContainer.UnitDescription;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
@@ -137,6 +144,13 @@ public class P2TargetUtils {
 	static final String PROP_INSTALLED_IU = PDECore.PLUGIN_ID + ".installed_iu"; //$NON-NLS-1$
 
 	/**
+	 * Installable unit property to store the version-specifications of
+	 * root/installed IU's that are declared in the target container as a
+	 * semicolon separated list.
+	 */
+	static final String PROP_IU_VERSION_DECLARATION = PDECore.PLUGIN_ID + ".iu_version_declaration"; //$NON-NLS-1$
+
+	/**
 	 * Profile property that keeps track of provisioning mode for the target
 	 * (slice versus plan).
 	 */
@@ -162,6 +176,19 @@ public class P2TargetUtils {
 	 * Profile property that tracks whether or not the configuration phase should be executed when installing
 	 */
 	static final String PROP_INCLUDE_CONFIGURE_PHASE = PDECore.PLUGIN_ID + ".includeConfigure"; //$NON-NLS-1$
+
+	/**
+	 * Profile property that tracks whether or not repository references should
+	 * be followed when installing
+	 */
+	static final String PROP_FOLLOW_REPOSITORY_REFERENCES = PDECore.PLUGIN_ID + ".followRepositoryReferences"; //$NON-NLS-1$
+
+	/**
+	 * Profile property that keeps track the list of repositories declared in a
+	 * target definition, separated by the {@link #REPOSITORY_LIST_DELIMITER
+	 * §§§} character.
+	 */
+	static final String PROP_DECLARED_REPOSITORIES = PDECore.PLUGIN_ID + ".repositories"; //$NON-NLS-1$
 
 	/**
 	 * Table mapping {@link ITargetDefinition} to synchronizer (P2TargetUtils) instance.
@@ -503,7 +530,6 @@ public class P2TargetUtils {
 				return false;
 			}
 		}
-
 		// ensure environment & NL settings are still the same (else we need a new profile)
 		if (!all && !generateEnvironmentProperties(target).equals(profile.getProperty(IProfile.PROP_ENVIRONMENTS))) {
 			return false;
@@ -511,44 +537,65 @@ public class P2TargetUtils {
 		if (!generateNLProperty(target).equals(profile.getProperty(IProfile.PROP_NL))) {
 			return false;
 		}
-
 		// check provisioning mode: slice versus plan
 		if (!getProvisionMode().equals(profile.getProperty(PROP_PROVISION_MODE))) {
 			return false;
 		}
-
-		// check that the include source flag matches what the profile represents
 		if (getIncludeSource() != Boolean.parseBoolean(profile.getProperty(PROP_AUTO_INCLUDE_SOURCE))) {
 			return false;
 		}
-
 		if (getIncludeConfigurePhase() != Boolean.parseBoolean(profile.getProperty(PROP_INCLUDE_CONFIGURE_PHASE))) {
 			return false;
+		}
+		if (isFollowRepositoryReferences() != Boolean
+				.parseBoolean((profile.getProperty(PROP_FOLLOW_REPOSITORY_REFERENCES)))) {
+			return false;
+		}
+
+		List<IUBundleContainer> iuContainers = iuBundleContainersOf(target).toList();
+
+		// ensure follow-repository-references settings are still the same
+		String recordedRepositories = profile.getProperty(PROP_DECLARED_REPOSITORIES);
+		if (recordedRepositories != null) {
+			Set<URI> declaredRepositories = iuContainers.stream().flatMap(t -> t.getRepositories().stream())
+					.collect(Collectors.toSet());
+			if (!decodeURIs(recordedRepositories).equals(declaredRepositories)) {
+				return false;
+			}
 		}
 
 		// check top level IU's. If any have been removed from the containers that are
 		// still in the profile, we need to recreate (rather than uninstall)
 		IUProfilePropertyQuery propertyQuery = new IUProfilePropertyQuery(PROP_INSTALLED_IU, Boolean.toString(true));
 		IQueryResult<IInstallableUnit> queryResult = profile.query(propertyQuery, null);
-		Set<NameVersionDescriptor> installedIUs = new HashSet<>();
+
+		// Check if each installed/root IU can be matched with exactly one
+		// IU-declaration, if not the profile is not in sync anymore.
+		Map<String, Set<VersionRange>> installedIUs = new HashMap<>();
 		for (IInstallableUnit unit : queryResult) {
-			installedIUs.add(new NameVersionDescriptor(unit.getId(), unit.getVersion().toString()));
-		}
-		ITargetLocation[] containers = target.getTargetLocations();
-		if (containers == null) {
-			return installedIUs.isEmpty();
-		}
-		for (ITargetLocation container : containers) {
-			if (container instanceof IUBundleContainer bc) {
-				for (IVersionedId iu : bc.getUnits()) {
-					// if there is something in a container but not in the profile, recreate
-					if (!installedIUs.remove(new NameVersionDescriptor(iu.getId(), iu.getVersion().toString()))) {
-						return false;
-					}
+			Set<VersionRange> declarations = installedIUs.computeIfAbsent(unit.getId(), id -> new HashSet<>(1));
+			String declaredVersions = profile.getInstallableUnitProperty(unit, PROP_IU_VERSION_DECLARATION);
+			if (declaredVersions == null) {
+				declarations.add(new VersionRange(unit.getVersion(), true, unit.getVersion(), true));
+			} else {
+				for (String declaredVersion : declaredVersions.split(VERSION_DECLARATION_SEPARATOR)) {
+					declarations.add(VersionRange.create(declaredVersion));
 				}
 			}
 		}
-		return installedIUs.isEmpty(); // If empty, the profile checks out.
+		Map<String, Set<VersionRange>> declaredIUs = iuContainers.stream() //
+				.map(IUBundleContainer::getDeclaredUnits).flatMap(Collection::stream) //
+				.collect(Collectors.groupingBy(UnitDescription::id,
+						Collectors.mapping(UnitDescription::version, Collectors.toSet())));
+
+		return installedIUs.equals(declaredIUs);
+	}
+
+	private Stream<IUBundleContainer> iuBundleContainersOf(ITargetDefinition target) {
+		ITargetLocation[] locations = target.getTargetLocations();
+		return locations == null ? Stream.empty()
+				: Arrays.stream(locations).filter(IUBundleContainer.class::isInstance)
+						.map(IUBundleContainer.class::cast);
 	}
 
 	/**
@@ -676,7 +723,8 @@ public class P2TargetUtils {
 		if (synchronizer == null) {
 			return false;
 		}
-		return synchronizer.checkProfile(target, synchronizer.getProfile());
+		return synchronizer.checkProfile(target, synchronizer.getProfile())
+				&& allReferencedTargets(target).allMatch(P2TargetUtils::isResolved);
 	}
 
 	/**
@@ -689,9 +737,22 @@ public class P2TargetUtils {
 		if (synchronizer == null) {
 			return false;
 		}
-		return synchronizer.checkProfile(target, synchronizer.updateProfileFromRegistry(target));
+		return synchronizer.checkProfile(target, synchronizer.updateProfileFromRegistry(target))
+				&& allReferencedTargets(target).allMatch(P2TargetUtils::isProfileValid);
 	}
 
+	private static Stream<ITargetDefinition> allReferencedTargets(ITargetDefinition target) {
+		return Arrays.stream(target.getTargetLocations()).filter(TargetReferenceBundleContainer.class::isInstance)
+				.map(TargetReferenceBundleContainer.class::cast).flatMap(referenceContainer -> {
+					try {
+						ITargetDefinition refTarget = referenceContainer.getTargetDefinition();
+						return Stream.concat(Stream.of(refTarget), allReferencedTargets(refTarget));
+					} catch (CoreException e) {
+						ILog.get().error("Failed to retrieve referenced target", e); //$NON-NLS-1$
+					}
+					return Stream.empty();
+				});
+	}
 
 	private synchronized IProfile updateProfileFromRegistry(ITargetDefinition target) {
 		if (fProfile == null) {
@@ -809,11 +870,7 @@ public class P2TargetUtils {
 		properties.put(IProfile.PROP_INSTALL_FEATURES, Boolean.TRUE.toString());
 		properties.put(IProfile.PROP_ENVIRONMENTS, generateEnvironmentProperties(target));
 		properties.put(IProfile.PROP_NL, generateNLProperty(target));
-		properties.put(PROP_SEQUENCE_NUMBER, Integer.toString(((TargetDefinition) target).getSequenceNumber()));
-		properties.put(PROP_PROVISION_MODE, getProvisionMode());
-		properties.put(PROP_ALL_ENVIRONMENTS, Boolean.toString(getIncludeAllEnvironments()));
-		properties.put(PROP_AUTO_INCLUDE_SOURCE, Boolean.toString(getIncludeSource()));
-		properties.put(PROP_INCLUDE_CONFIGURE_PHASE, Boolean.toString(getIncludeConfigurePhase()));
+		setProperties(properties::put, target, getProvisionMode());
 		return registry.addProfile(getProfileId(target), properties);
 	}
 
@@ -951,7 +1008,7 @@ public class P2TargetUtils {
 		Set<IRepositoryReference> seen = new HashSet<>();
 		List<IMetadataRepository> result = new ArrayList<>(repos.size());
 		List<IMetadataRepository> additional = new ArrayList<>();
-		MultiStatus repoStatus = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.IUBundleContainer_ProblemsLoadingRepositories, null);
+		MultiStatus repoStatus = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.IUBundleContainer_ProblemsLoadingRepositories);
 		for (URI location : repos) {
 			try {
 				IMetadataRepository repository = manager.loadRepository(location, subMonitor.split(1));
@@ -1007,7 +1064,7 @@ public class P2TargetUtils {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.IUBundleContainer_0, 220);
 
 		// Get the root IUs for every relevant container in the target definition
-		IInstallableUnit[] units = getRootIUs(target, subMonitor.split(20));
+		Map<IInstallableUnit, String> units = getRootIUs(target, subMonitor.split(20));
 
 		// create the provisioning plan
 		IPlanner planner = getPlanner();
@@ -1015,10 +1072,11 @@ public class P2TargetUtils {
 		// first remove everything that was explicitly installed.  Then add it back.  This has the net effect of
 		// removing everything that is no longer needed.
 		computeRemovals(profile, request, getIncludeSource());
-		request.addAll(Arrays.asList(units));
-		for (IInstallableUnit unit : units) {
+		request.addAll(units.keySet());
+		units.forEach((unit, versionDeclarations) -> {
 			request.setInstallableUnitProfileProperty(unit, PROP_INSTALLED_IU, Boolean.toString(true));
-		}
+			request.setInstallableUnitProfileProperty(unit, PROP_IU_VERSION_DECLARATION, versionDeclarations);
+		});
 
 		List<IArtifactRepository> extraArtifactRepositories = new ArrayList<>();
 		List<IMetadataRepository> extraMetadataRepositories = new ArrayList<>();
@@ -1045,7 +1103,7 @@ public class P2TargetUtils {
 		if (!status.isOK()) {
 			throw new CoreException(status);
 		}
-		setPlanProperties(plan, target, TargetDefinitionPersistenceHelper.MODE_PLANNER);
+		setProperties(plan::setProfileProperty, target, TargetDefinitionPersistenceHelper.MODE_PLANNER);
 		IProvisioningPlan installerPlan = plan.getInstallerPlan();
 		if (installerPlan != null) {
 			// this plan requires an update to the installer first, log the fact and attempt
@@ -1078,12 +1136,28 @@ public class P2TargetUtils {
 		}
 	}
 
-	private void setPlanProperties(IProvisioningPlan plan, ITargetDefinition definition, String mode) {
-		plan.setProfileProperty(PROP_PROVISION_MODE, mode);
-		plan.setProfileProperty(PROP_ALL_ENVIRONMENTS, Boolean.toString(getIncludeAllEnvironments()));
-		plan.setProfileProperty(PROP_AUTO_INCLUDE_SOURCE, Boolean.toString(getIncludeSource()));
-		plan.setProfileProperty(PROP_INCLUDE_CONFIGURE_PHASE, Boolean.toString(getIncludeConfigurePhase()));
-		plan.setProfileProperty(PROP_SEQUENCE_NUMBER, Integer.toString(((TargetDefinition) definition).getSequenceNumber()));
+	private void setProperties(BiConsumer<String, String> setter, ITargetDefinition target, String mode) {
+		setter.accept(PROP_PROVISION_MODE, mode);
+		setter.accept(PROP_ALL_ENVIRONMENTS, Boolean.toString(getIncludeAllEnvironments()));
+		setter.accept(PROP_AUTO_INCLUDE_SOURCE, Boolean.toString(getIncludeSource()));
+		setter.accept(PROP_INCLUDE_CONFIGURE_PHASE, Boolean.toString(getIncludeConfigurePhase()));
+		setter.accept(PROP_FOLLOW_REPOSITORY_REFERENCES, Boolean.toString(isFollowRepositoryReferences()));
+		setter.accept(PROP_SEQUENCE_NUMBER, Integer.toString(((TargetDefinition) target).getSequenceNumber()));
+		String repositoryList = iuBundleContainersOf(target).map(IUBundleContainer::getRepositories)
+				.flatMap(List::stream).collect(joiningEncodeURIs());
+		setter.accept(PROP_DECLARED_REPOSITORIES, repositoryList);
+	}
+
+	private static final String REPOSITORY_LIST_DELIMITER = ","; //$NON-NLS-1$
+
+	private static Collector<URI, ?, String> joiningEncodeURIs() {
+		return Collectors.mapping(u -> URLEncoder.encode(u.toASCIIString(), StandardCharsets.UTF_8),
+				Collectors.joining(REPOSITORY_LIST_DELIMITER));
+	}
+
+	private Set<URI> decodeURIs(String encodedList) {
+		return Arrays.stream(encodedList.split(REPOSITORY_LIST_DELIMITER))
+				.map(t -> URLDecoder.decode(t, StandardCharsets.UTF_8)).map(URI::create).collect(Collectors.toSet());
 	}
 
 	/**
@@ -1223,7 +1297,7 @@ public class P2TargetUtils {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.IUBundleContainer_0, 110);
 
 		// resolve IUs
-		IInstallableUnit[] units = getRootIUs(target, subMonitor.split(40));
+		Map<IInstallableUnit, String> units = getRootIUs(target, subMonitor.split(40));
 
 		Collection<URI> repositories = getMetadataRepositories(target);
 		if (repositories.isEmpty()) {
@@ -1233,7 +1307,7 @@ public class P2TargetUtils {
 				subMonitor.split(5));
 
 		// do an initial slice to add everything the user requested
-		IQueryResult<IInstallableUnit> queryResult = slice(units, allMetadata, target, subMonitor.split(5));
+		IQueryResult<IInstallableUnit> queryResult = slice(units.keySet(), allMetadata, target, subMonitor.split(5));
 		if (queryResult == null || queryResult.isEmpty()) {
 			return;
 		}
@@ -1243,9 +1317,8 @@ public class P2TargetUtils {
 		if (getIncludeSource()) {
 			// Build an IU that represents all the source bundles and slice again to add them in if available
 			IInstallableUnit sourceIU = createSourceIU(queryResult, Version.createOSGi(1, 0, 0));
-			IInstallableUnit[] units2 = new IInstallableUnit[units.length + 1];
-			System.arraycopy(units, 0, units2, 0, units.length);
-			units2[units.length] = sourceIU;
+			List<IInstallableUnit> units2 = new ArrayList<>(units.keySet());
+			units2.add(sourceIU);
 
 			queryResult = slice(units2, allMetadata, target, subMonitor.split(5));
 			if (queryResult == null || queryResult.isEmpty()) {
@@ -1260,15 +1333,16 @@ public class P2TargetUtils {
 		context.setProperty(ProvisioningContext.FOLLOW_REPOSITORY_REFERENCES, Boolean.toString(isFollowRepositoryReferences()));
 		context.setProperty(ProvisioningContext.FOLLOW_ARTIFACT_REPOSITORY_REFERENCES, Boolean.toString(isFollowRepositoryReferences()));
 		IProvisioningPlan plan = engine.createPlan(profile, context);
-		setPlanProperties(plan, target, TargetDefinitionPersistenceHelper.MODE_SLICER);
+		setProperties(plan::setProfileProperty, target, TargetDefinitionPersistenceHelper.MODE_SLICER);
 
 		Set<IInstallableUnit> newSet = queryResult.toUnmodifiableSet();
 		for (IInstallableUnit unit : newSet) {
 			plan.addInstallableUnit(unit);
 		}
-		for (IInstallableUnit unit : units) {
+		units.forEach((unit, versionDeclarations) -> {
 			plan.setInstallableUnitProfileProperty(unit, PROP_INSTALLED_IU, Boolean.toString(true));
-		}
+			plan.setInstallableUnitProfileProperty(unit, PROP_IU_VERSION_DECLARATION, versionDeclarations);
+		});
 
 		// remove all units that are in the current profile but not in the new slice
 		Set<IInstallableUnit> toRemove = profile.query(QueryUtil.ALL_UNITS, null).toSet();
@@ -1298,7 +1372,9 @@ public class P2TargetUtils {
 	 * @return the result of the slice operation
 	 * @throws CoreException if a problem occurs during the slice operation that should stop this location from resolving
 	 */
-	private IQueryResult<IInstallableUnit> slice(IInstallableUnit[] units, IQueryable<IInstallableUnit> allMetadata, ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
+	private IQueryResult<IInstallableUnit> slice(Collection<IInstallableUnit> units,
+			IQueryable<IInstallableUnit> allMetadata, ITargetDefinition definition, IProgressMonitor monitor)
+			throws CoreException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
 		// slice IUs and all prerequisites
 		PermissiveSlicer slicer = null;
@@ -1313,7 +1389,7 @@ public class P2TargetUtils {
 			props.put(IProfile.PROP_INSTALL_FEATURES, Boolean.TRUE.toString());
 			slicer = new PermissiveSlicer(allMetadata, props, true, false, false, true, false);
 		}
-		IQueryable<IInstallableUnit> slice = slicer.slice(Arrays.asList(units), subMonitor.split(50));
+		IQueryable<IInstallableUnit> slice = slicer.slice(units, subMonitor.split(50));
 		IStatus sliceStatus = slicer.getStatus();
 		// If the slicer encounters an error, stop the operation
 		if (sliceStatus.getSeverity() == IStatus.ERROR) {
@@ -1447,6 +1523,8 @@ public class P2TargetUtils {
 		}
 	}
 
+	private static final String VERSION_DECLARATION_SEPARATOR = ";"; //$NON-NLS-1$
+
 	/**
 	 * Returns the IU's for the given target related to the given containers
 	 *
@@ -1454,19 +1532,24 @@ public class P2TargetUtils {
 	 * @return the discovered IUs
 	 * @exception CoreException if unable to retrieve IU's
 	 */
-	private IInstallableUnit[] getRootIUs(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
+	private Map<IInstallableUnit, String> getRootIUs(ITargetDefinition definition, IProgressMonitor monitor)
+			throws CoreException {
 
-		HashSet<IInstallableUnit> result = new HashSet<>();
 		ITargetLocation[] containers = definition.getTargetLocations();
 		if (containers == null) {
-			return new IInstallableUnit[0];
+			return Map.of();
 		}
-		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.IUBundleContainer_0, containers.length * 10);
-		MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.IUBundleContainer_ProblemsLoadingRepositories, null);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.IUBundleContainer_0, containers.length);
+		MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.IUBundleContainer_ProblemsLoadingRepositories);
+		Map<IInstallableUnit, String> result = new HashMap<>();
 		for (ITargetLocation container : containers) {
 			if (container instanceof IUBundleContainer iuContainer) {
 				try {
-					Collections.addAll(result, iuContainer.getRootIUs(subMonitor.split(10)));
+					iuContainer.getRootIUs(subMonitor.split(1)).forEach((iu, versionDeclarations) -> {
+						String joindVersions = versionDeclarations.stream().map(VersionRange::toString)
+								.collect(Collectors.joining(VERSION_DECLARATION_SEPARATOR));
+						result.merge(iu, joindVersions, (v1, v2) -> v1 + VERSION_DECLARATION_SEPARATOR + v2);
+					});
 				} catch (CoreException e) {
 					status.add(e.getStatus());
 				}
@@ -1475,7 +1558,7 @@ public class P2TargetUtils {
 		if (!status.isOK()) {
 			throw new CoreException(status);
 		}
-		return result.toArray(new IInstallableUnit[result.size()]);
+		return result;
 	}
 
 	/**
