@@ -647,6 +647,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 				}
 			}
 			fTableViewer.refresh(true);
+			fDetails.refresh(true);
 		}
 	}
 
