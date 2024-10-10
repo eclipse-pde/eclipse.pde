@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2018 IBM Corporation and others.
+ * Copyright (c) 2014, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -22,7 +22,6 @@ import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -65,9 +64,7 @@ public abstract class MethodAnnotationTest extends AnnotationTest {
 		tests.add(ValidDefaultMethodAnnotationTests.class);
 		tests.add(InvalidInterfaceMethodAnnotationTests.class);
 		tests.add(ValidInterfaceMethodAnnotationTests.class);
-		if (ProjectUtils.isJava8Compatible()) {
-			tests.add(InvalidDefaultMethodAnnotationTests.class);
-		}
+		tests.add(InvalidDefaultMethodAnnotationTests.class);
 		return tests.toArray(new Class<?>[tests.size()]);
 	}
 

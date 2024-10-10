@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 IBM Corporation and others.
+ * Copyright (c) 2008, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -24,7 +24,6 @@ import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
 import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 import org.eclipse.pde.api.tools.builder.tests.ApiTestingEnvironment;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
-import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -74,10 +73,8 @@ public abstract class TagTest extends ApiBuilderTest {
 		classes.add(ValidAnnotationTagTests.class);
 		classes.add(InvalidAnnotationTagTests.class);
 		classes.add(InvalidDuplicateTagsTests.class);
-		if (ProjectUtils.isJava8Compatible()) {
-			classes.add(ValidJava8InterfaceTagTests.class);
-			classes.add(InvalidJava8InterfaceTagTests.class);
-		}
+		classes.add(ValidJava8InterfaceTagTests.class);
+		classes.add(InvalidJava8InterfaceTagTests.class);
 
 		return classes.toArray(new Class<?>[classes.size()]);
 	}

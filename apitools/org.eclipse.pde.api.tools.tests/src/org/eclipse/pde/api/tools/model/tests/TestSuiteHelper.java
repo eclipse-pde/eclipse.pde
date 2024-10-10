@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2021 IBM Corporation and others.
+ * Copyright (c) 2007, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -49,7 +49,6 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.search.IReferenceCollection;
 import org.eclipse.pde.api.tools.internal.search.UseScanReferences;
 import org.eclipse.pde.api.tools.internal.util.Util;
-import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 import org.junit.Assert;
 import org.osgi.framework.Bundle;
 
@@ -61,22 +60,15 @@ import org.osgi.framework.Bundle;
 public class TestSuiteHelper {
 
 	/**
-	 * Computes the compile options to use. Currently this only changes if we
-	 * are running the tests on Java 8.
+	 * Computes the compile options to use. Currently this sets params as if
+	 * running the tests on Java 8.
 	 *
 	 * @return the array of compiler options to use
 	 * @since 1.0.400
 	 */
 	public static String[] getCompilerOptions() {
-		ArrayList<String> args = new ArrayList<>();
-		if (ProjectUtils.isJava8Compatible()) {
-			args.add("-1.8"); //$NON-NLS-1$
-		} else {
-			args.add("-1.5"); //$NON-NLS-1$
-		}
-		args.add("-preserveAllLocals"); //$NON-NLS-1$
-		args.add("-nowarn"); //$NON-NLS-1$
-		return args.toArray(new String[] {});
+		List<String> args = List.of("-1.8", "-preserveAllLocals", "-nowarn"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return args.toArray(String[]::new);
 	}
 
 	/**
