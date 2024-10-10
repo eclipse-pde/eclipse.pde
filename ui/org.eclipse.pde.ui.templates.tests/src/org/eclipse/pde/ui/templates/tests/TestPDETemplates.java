@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2022 Red Hat Inc. and others.
+ * Copyright (c) 2017, 2024 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -117,17 +117,7 @@ public class TestPDETemplates {
 		data.setHasBundleStructure(true);
 		data.setSourceFolderName("src");
 		data.setOutputFolderName("bin");
-		data.setExecutionEnvironment("JavaSE-1.8");
-		String version = System.getProperty("java.specification.version"); //$NON-NLS-1$
-		int ver = -1;
-		try {
-			ver = Integer.parseInt(version);
-		} catch (NumberFormatException e) {
-			// preJava9
-		}
-		if (ver >= 9) {
-			data.setExecutionEnvironment("JavaSE-" + version);
-		}
+		data.setExecutionEnvironment("JavaSE-" + Runtime.version().feature());
 		data.setTargetVersion(ICoreConstants.TARGET_VERSION_LATEST);
 		data.setDoGenerateClass(true);
 		String pureOSGi = template.getConfigurationElement().getAttribute("pureOSGi");
