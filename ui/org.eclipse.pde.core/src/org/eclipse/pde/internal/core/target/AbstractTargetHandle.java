@@ -20,6 +20,7 @@ import java.io.InputStream;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetHandle;
+import org.eclipse.pde.core.target.TargetEvents;
 
 /**
  * Common implementation of target handles.
@@ -53,11 +54,16 @@ public abstract class AbstractTargetHandle implements ITargetHandle {
 	 */
 	abstract void delete() throws CoreException;
 
+	public final void save(ITargetDefinition definition) throws CoreException {
+		doSave(definition);
+		TargetPlatformService.scheduleEvent(TargetEvents.TOPIC_TARGET_SAVED, definition.getHandle());
+	}
+
 	/**
 	 * Saves the definition to underlying storage.
 	 *
 	 * @param definition target to save
 	 * @throws CoreException on failure
 	 */
-	abstract void save(ITargetDefinition definition) throws CoreException;
+	abstract void doSave(ITargetDefinition definition) throws CoreException;
 }

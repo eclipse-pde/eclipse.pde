@@ -193,7 +193,7 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 	}
 
 	@Override
-	void save(ITargetDefinition definition) throws CoreException {
+	void doSave(ITargetDefinition definition) throws CoreException {
 		try (OutputStream stream = getOutputStream()) {
 			((TargetDefinition) definition).write(stream);
 		} catch (IOException e) {
