@@ -126,6 +126,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 		}
 		((AbstractTargetHandle) handle).delete();
 		TargetPlatformHelper.getTargetDefinitionMap().remove(handle);
+		scheduleEvent(TargetEvents.TOPIC_TARGET_DELETED, handle);
 	}
 
 	@Override
@@ -332,6 +333,10 @@ public class TargetPlatformService implements ITargetPlatformService {
 		if (!Objects.equals(oldTarget, target)) {
 			notifyEvent(TargetEvents.TOPIC_WORKSPACE_TARGET_CHANGED, target, asyncEvents);
 		}
+	}
+
+	public static void scheduleEvent(String topic, Object data) {
+		notifyEvent(topic, data, true);
 	}
 
 	private static void notifyEvent(String topic, Object data, boolean asyncEvents) {

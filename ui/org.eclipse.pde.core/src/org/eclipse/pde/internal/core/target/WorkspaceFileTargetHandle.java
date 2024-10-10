@@ -76,7 +76,7 @@ public class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 	}
 
 	@Override
-	public void save(ITargetDefinition definition) throws CoreException {
+	void doSave(ITargetDefinition definition) throws CoreException {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		((TargetDefinition) definition).write(outputStream);
 		ByteArrayInputStream stream = new ByteArrayInputStream(outputStream.toByteArray());
