@@ -66,7 +66,6 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.api.tools.tests.util.FileUtils;
-import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.natures.PluginProject;
@@ -1036,12 +1035,8 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		classes.add(LeakTest.class);
 		classes.add(TagTest.class);
 		classes.add(AnnotationTest.class);
-		if (ProjectUtils.isJava7Compatible()) {
-			classes.add(Java7UsageTest.class);
-		}
-		if (ProjectUtils.isJava8Compatible()) {
-			classes.add(Java8UsageTest.class);
-		}
+		classes.add(Java7UsageTest.class);
+		classes.add(Java8UsageTest.class);
 		return classes.toArray(new Class[classes.size()]);
 	}
 

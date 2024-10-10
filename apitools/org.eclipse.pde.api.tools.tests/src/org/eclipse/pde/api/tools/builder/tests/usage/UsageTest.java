@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 IBM Corporation and others.
+ * Copyright (c) 2008, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -26,7 +26,6 @@ import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
 import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 import org.eclipse.pde.api.tools.builder.tests.ApiTestingEnvironment;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
-import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -214,13 +213,11 @@ public abstract class UsageTest extends ApiBuilderTest {
 		classes.add(UnusedApiProblemFilterTests.class);
 		classes.add(DependentUsageTests.class);
 		classes.add(FragmentUsageTests.class);
-		if (ProjectUtils.isJava5Compatible()) {
-			classes.add(Java5FieldUsageTests.class);
-			classes.add(Java5MethodUsageTests.class);
-			classes.add(Java5ClassUsageTests.class);
-			classes.add(AnnotationUsageTests.class);
-			// classes.add(EnumUsageTests.class);
-		}
+		classes.add(Java5FieldUsageTests.class);
+		classes.add(Java5MethodUsageTests.class);
+		classes.add(Java5ClassUsageTests.class);
+		classes.add(AnnotationUsageTests.class);
+		// classes.add(EnumUsageTests.class);
 		return classes.toArray(new Class[classes.size()]);
 	}
 }
