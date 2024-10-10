@@ -12,28 +12,119 @@
  ********************************************************************************/
 package org.eclipse.pde.core.target;
 
+import org.eclipse.e4.core.services.events.IEventBroker;
+import org.osgi.service.event.EventHandler;
+
 /**
- * Target events and event topic definitions
+ * Target events and event topic definitions. Can be used as follows:
  *
+ * <pre>
+ * EventHandler eventHandler = event -> {
+ * 	Object data = event.getProperty(IEventBroker.DATA);
+ * 	if (data instanceof ITargetHandle) {
+ * 		ITargetHandle handle = (ITargetHandle) data;
+ * 		// Work with the target handle...
+ * 	}
+ * };
+ *
+ * IEclipseContext context = EclipseContextFactory.getServiceContext(bundleContext);
+ * IEventBroker broker = context.get(IEventBroker.class);
+ * if (broker != null) {
+ * 	broker.subscribe(TargetEvents.TOPIC_TARGET_SAVED, eventHandler);
+ * 	// Do not forget to unsubscribe later!
+ * }
+ * </pre>
+ *
+ * @see ITargetPlatformService
+ * @see IEventBroker#subscribe(String, EventHandler)
+ * @see IEventBroker#subscribe(String, String, EventHandler, boolean)
+ * @see IEventBroker#unsubscribe(EventHandler)
  * @since 3.13
  */
 public class TargetEvents {
 
 	/**
-	 * Base topic for all Target events
+	 * Base topic for all target events.
 	 */
 	public static final String TOPIC_BASE = "org/eclipse/pde/core/target/TargetEvents"; //$NON-NLS-1$
 
 	/**
-	 * Topic for all Target events
+	 * Topic for all target events.
 	 */
 	public static final String TOPIC_ALL = TOPIC_BASE + "/*"; //$NON-NLS-1$
 
 	/**
-	 * Sent when workspace target definition is changed
+	 * Sent when workspace target definition is changed. Can be used as follows:
+	 *
+	 * <pre>
+	 * EventHandler eventHandler = event -> {
+	 * 	Object data = event.getProperty(IEventBroker.DATA);
+	 * 	if (data instanceof ITargetDefinition) {
+	 * 		ITargetDefinition definition = (ITargetDefinition) data;
+	 * 		// Work with the target definition...
+	 * 	}
+	 * };
+	 *
+	 * IEclipseContext context = EclipseContextFactory.getServiceContext(bundleContext);
+	 * IEventBroker broker = context.get(IEventBroker.class);
+	 * if (broker != null) {
+	 * 	broker.subscribe(TargetEvents.TOPIC_WORKSPACE_TARGET_CHANGED, eventHandler);
+	 * 	// Do not forget to unsubscribe later!
+	 * }
+	 * </pre>
 	 *
 	 * @see ITargetPlatformService#getWorkspaceTargetDefinition()
 	 */
 	public static final String TOPIC_WORKSPACE_TARGET_CHANGED = TOPIC_BASE + "/workspaceTargetChanged"; //$NON-NLS-1$
 
+	/**
+	 * Sent when a target is saved. Can be used as follows:
+	 *
+	 * <pre>
+	 * EventHandler eventHandler = event -> {
+	 * 	Object data = event.getProperty(IEventBroker.DATA);
+	 * 	if (data instanceof ITargetHandle) {
+	 * 		ITargetHandle handle = (ITargetHandle) data;
+	 * 		// Work with the target handle...
+	 * 	}
+	 * };
+	 *
+	 * IEclipseContext context = EclipseContextFactory.getServiceContext(bundleContext);
+	 * IEventBroker broker = context.get(IEventBroker.class);
+	 * if (broker != null) {
+	 * 	broker.subscribe(TargetEvents.TOPIC_TARGET_SAVED, eventHandler);
+	 * 	// Do not forget to unsubscribe later!
+	 * }
+	 * </pre>
+	 *
+	 * @see ITargetPlatformService#saveTargetDefinition(ITargetDefinition)
+	 * @see IEventBroker
+	 * @since 3.20
+	 */
+	public static final String TOPIC_TARGET_SAVED = TOPIC_BASE + "/targetSaved"; //$NON-NLS-1$
+
+	/**
+	 * Sent when a target is deleted. Can be used as follows:
+	 *
+	 * <pre>
+	 * EventHandler eventHandler = event -> {
+	 * 	Object data = event.getProperty(IEventBroker.DATA);
+	 * 	if (data instanceof ITargetHandle) {
+	 * 		ITargetHandle handle = (ITargetHandle) data;
+	 * 		// Work with the target handle...
+	 * 	}
+	 * };
+	 *
+	 * IEclipseContext context = EclipseContextFactory.getServiceContext(bundleContext);
+	 * IEventBroker broker = context.get(IEventBroker.class);
+	 * if (broker != null) {
+	 * 	broker.subscribe(TargetEvents.TOPIC_TARGET_DELETED, eventHandler);
+	 * 	// Do not forget to unsubscribe later!
+	 * }
+	 * </pre>
+	 *
+	 * @see ITargetPlatformService#deleteTarget(ITargetHandle)
+	 * @since 3.20
+	 */
+	public static final String TOPIC_TARGET_DELETED = TOPIC_BASE + "/targetDeleted"; //$NON-NLS-1$
 }

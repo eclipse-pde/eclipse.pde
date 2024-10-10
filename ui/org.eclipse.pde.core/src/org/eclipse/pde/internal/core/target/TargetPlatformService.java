@@ -78,6 +78,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.core.TargetDefinitionManager;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.osgi.framework.BundleContext;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
@@ -161,6 +162,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 		}
 		((AbstractTargetHandle) handle).delete();
 		TargetPlatformHelper.getTargetDefinitionMap().remove(handle);
+		scheduleEvent(TargetEvents.TOPIC_TARGET_DELETED, handle);
 	}
 
 	@Override
@@ -306,7 +308,8 @@ public class TargetPlatformService implements ITargetPlatformService {
 
 	@Override
 	public void saveTargetDefinition(ITargetDefinition definition) throws CoreException {
-		((AbstractTargetHandle) definition.getHandle()).save(definition);
+		ITargetHandle handle = definition.getHandle();
+		((AbstractTargetHandle) handle).save(definition);
 	}
 
 	@Override
@@ -365,24 +368,30 @@ public class TargetPlatformService implements ITargetPlatformService {
 		boolean changed = !Objects.equals(oldTarget, target);
 		if (changed) {
 			if (asyncEvents) {
-				eventSendingJob.schedule(target);
+				scheduleEvent(TargetEvents.TOPIC_WORKSPACE_TARGET_CHANGED, target);
 			} else {
-				notifyTargetChanged(target);
+				notifyEvent(TargetEvents.TOPIC_WORKSPACE_TARGET_CHANGED, target);
 			}
 		}
 	}
 
-	static void notifyTargetChanged(ITargetDefinition target) {
-		IEclipseContext context = EclipseContextFactory.getServiceContext(PDECore.getDefault().getBundleContext());
+	public final void scheduleEvent(String topic, Object data) {
+		eventSendingJob.schedule(topic, data);
+	}
+
+	private static void notifyEvent(String topic, Object data) {
+		BundleContext bundleContext = PDECore.getDefault().getBundleContext();
+		IEclipseContext context = EclipseContextFactory.getServiceContext(bundleContext);
+
 		IEventBroker broker = context.get(IEventBroker.class);
 		if (broker != null) {
-			broker.send(TargetEvents.TOPIC_WORKSPACE_TARGET_CHANGED, target);
+			broker.send(topic, data);
 		}
 	}
 
-	static class EventDispatcher extends Job {
+	private static final class EventDispatcher extends Job {
 
-		private final ConcurrentLinkedQueue<ITargetDefinition> queue;
+		private final ConcurrentLinkedQueue<EventInfo> queue;
 		private final Object myFamily;
 
 		/**
@@ -406,9 +415,9 @@ public class TargetPlatformService implements ITargetPlatformService {
 
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
-			ITargetDefinition target;
-			while ((target = queue.poll()) != null && !monitor.isCanceled()) {
-				notifyTargetChanged(target);
+			EventInfo eventInfo;
+			while ((eventInfo = queue.poll()) != null && !monitor.isCanceled()) {
+				notifyEvent(eventInfo.topic, eventInfo.data);
 			}
 			if (!queue.isEmpty() && !monitor.isCanceled()) {
 				// in case actions got faster scheduled then processed
@@ -424,9 +433,19 @@ public class TargetPlatformService implements ITargetPlatformService {
 		/**
 		 * Enqueue a task asynchronously.
 		 **/
-		public void schedule(ITargetDefinition target) {
-			queue.offer(target);
+		public void schedule(String topic, Object data) {
+			queue.offer(new EventInfo(topic, data));
 			schedule(); // will reschedule if already running
+		}
+
+		private static final class EventInfo {
+			final String topic;
+			final Object data;
+
+			EventInfo(String topic, Object data) {
+				this.topic = topic;
+				this.data = data;
+			}
 		}
 	}
 
