@@ -65,6 +65,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.core.target.P2TargetUtils;
 import org.eclipse.pde.internal.core.target.TargetDefinitionPersistenceHelper;
+import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.pde.internal.core.target.WorkspaceFileTargetHandle;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -175,6 +176,7 @@ public class TargetEditor extends FormEditor {
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
+		ITargetHandle handle = fInputHandler.getTarget().getHandle();
 		fInputHandler.setSaving(true);
 		if (!isActiveTabTextualEditor()) {
 			markStale();
@@ -184,6 +186,8 @@ public class TargetEditor extends FormEditor {
 		fDirty = false;
 		editorDirtyStateChanged();
 		fInputHandler.setSaving(false);
+
+		TargetPlatformService.scheduleEvent(TargetEvents.TOPIC_TARGET_SAVED, handle);
 	}
 
 	@Override
@@ -286,6 +290,16 @@ public class TargetEditor extends FormEditor {
 		super.dispose();
 	}
 
+	@Override
+	public <T> T getAdapter(Class<T> adapter) {
+		if (adapter.equals(ITargetHandle.class)) {
+			ITargetDefinition target = getTarget();
+			if (target != null) {
+				return adapter.cast(target.getHandle());
+			}
+		}
+		return super.getAdapter(adapter);
+	}
 	/**
 	 * Returns the target model backing this editor
 	 * @return target model
