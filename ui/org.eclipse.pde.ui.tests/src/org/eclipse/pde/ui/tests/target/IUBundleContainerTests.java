@@ -15,6 +15,7 @@ package org.eclipse.pde.ui.tests.target;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -592,14 +593,53 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	@Test
 	public void testSerialization3() throws Exception {
 		URI uri = getURI("/tests/sites/site.a.b");
-		String[] unitIds = new String[]{"feature.b.feature.group"};
+		String[] unitIds = new String[] { "feature.b.feature.group" };
 		IInstallableUnit[] units = getUnits(unitIds, uri);
-		IUBundleContainer location = createContainer(units, new URI[] {uri}, IUBundleContainer.INCLUDE_ALL_ENVIRONMENTS | IUBundleContainer.INCLUDE_SOURCE);
+		IUBundleContainer location = createContainer(units, new URI[] { uri },
+				IUBundleContainer.INCLUDE_ALL_ENVIRONMENTS | IUBundleContainer.INCLUDE_SOURCE);
 		String xml = location.serialize();
 		assertIncludeAllPlatform(xml, true);
 		assertIncludeMode(xml, "slicer");
 		assertIncludeSource(xml, true);
 		deserializationTest(location);
+	}
+
+	@Test
+	public void testSerializationOnlyLocationAttributeChanged() throws Exception {
+		URI uri = getURI("/tests/sites/site.a.b");
+		String[] unitIds = new String[]{"feature.b.feature.group"};
+		IInstallableUnit[] units = getUnits(unitIds, uri);
+
+		IUBundleContainer location1 = createContainer(units, new URI[] { uri },
+				IUBundleContainer.INCLUDE_ALL_ENVIRONMENTS | IUBundleContainer.INCLUDE_SOURCE);
+		String xml1 = location1.serialize();
+		assertIncludeAllPlatform(xml1, true);
+		assertIncludeMode(xml1, "slicer");
+		assertIncludeSource(xml1, true);
+
+		IUBundleContainer location2 = createContainer(units, new URI[] { uri },
+				IUBundleContainer.INCLUDE_ALL_ENVIRONMENTS); // no source
+		String xml2 = location2.serialize();
+		assertIncludeAllPlatform(xml2, true);
+		assertIncludeMode(xml2, "slicer");
+		assertIncludeSource(xml2, false); // no source
+
+		ITargetDefinition td = getTargetService().newTarget();
+		td.setTargetLocations(new ITargetLocation[] { location1 });
+		ByteArrayOutputStream out1 = new ByteArrayOutputStream();
+		TargetDefinitionPersistenceHelper.persistXML(td, out1);
+		String resultXmlOld = new String(out1.toByteArray());
+
+		td.setTargetLocations(new ITargetLocation[] { location2 });
+		ByteArrayOutputStream out2 = new ByteArrayOutputStream();
+		TargetDefinitionPersistenceHelper.persistXML(td, out2);
+		String resultXmlNew = new String(out2.toByteArray());
+
+		String normalizedOld = resultXmlOld.replaceAll("\r?\n[ \t]*", "");
+		String normalizedNew = resultXmlNew.replaceAll("\r?\n[ \t]*", "");
+
+		assertNotEquals(normalizedOld, normalizedNew);
+		assertEquals(normalizedOld, normalizedNew.replace("includeSource=\"false\"", "includeSource=\"true\""));
 	}
 
 	public void deserializationTest(IUBundleContainer location) throws Exception {

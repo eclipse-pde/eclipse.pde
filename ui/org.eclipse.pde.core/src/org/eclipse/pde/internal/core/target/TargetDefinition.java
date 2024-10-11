@@ -1270,15 +1270,12 @@ public class TargetDefinition implements ITargetDefinition {
 			for (int i = 0; i < nodes.getLength(); i++) {
 				Node node = nodes.item(i);
 				if (node instanceof Element) {
-					if (repoURL == null
-							&& node.getNodeName().equalsIgnoreCase(TargetDefinitionPersistenceHelper.REPOSITORY)) {
+					String nodeName = node.getNodeName();
+					if (repoURL == null && nodeName.equalsIgnoreCase(TargetDefinitionPersistenceHelper.REPOSITORY)) {
 						repoURL = ((Element) node).getAttribute(TargetDefinitionPersistenceHelper.LOCATION);
-						if (!oldContainersByRepo.containsKey(repoURL)) {
-							oldContainersByRepo.put(repoURL, new ArrayList<>());
-						}
+						oldContainersByRepo.putIfAbsent(repoURL, new ArrayList<>());
 						oldContainersByRepo.get(repoURL).add(container);
-					} else if (node.getNodeName()
-							.equalsIgnoreCase(TargetDefinitionPersistenceHelper.INSTALLABLE_UNIT)) {
+					} else if (nodeName.equalsIgnoreCase(TargetDefinitionPersistenceHelper.INSTALLABLE_UNIT)) {
 						units.add((Element) node);
 					}
 				}
@@ -1290,6 +1287,8 @@ public class TargetDefinition implements ITargetDefinition {
 			}
 		}
 
+		// The containers that were only updated. Doesn't include brand-new ones
+		List<Element> updatedContainers = new ArrayList<>(newContainers);
 		for (Element container : newContainers) {
 			NodeList nodes = container.getChildNodes();
 			List<Element> units = new ArrayList<>();
@@ -1297,11 +1296,10 @@ public class TargetDefinition implements ITargetDefinition {
 			for (int i = 0; i < nodes.getLength(); i++) {
 				Node node = nodes.item(i);
 				if (node instanceof Element) {
-					if (repoURL == null
-							&& node.getNodeName().equalsIgnoreCase(TargetDefinitionPersistenceHelper.REPOSITORY)) {
+					String nodeName = node.getNodeName();
+					if (repoURL == null && nodeName.equalsIgnoreCase(TargetDefinitionPersistenceHelper.REPOSITORY)) {
 						repoURL = ((Element) node).getAttribute(TargetDefinitionPersistenceHelper.LOCATION);
-					} else if (node.getNodeName()
-							.equalsIgnoreCase(TargetDefinitionPersistenceHelper.INSTALLABLE_UNIT)) {
+					} else if (nodeName.equalsIgnoreCase(TargetDefinitionPersistenceHelper.INSTALLABLE_UNIT)) {
 						units.add((Element) node);
 					}
 				}
@@ -1321,9 +1319,15 @@ public class TargetDefinition implements ITargetDefinition {
 				} else {
 					Node movedContainer = fDocument.importNode(container, true);
 					TargetDefinitionDocumentTools.addChildWithIndent(containersElement, movedContainer);
+					updatedContainers.remove(container);
 				}
 			}
 		}
+
+		// Use a mock comparator, we only want to use the
+		// "elementAttributesComparator" also used in updateElements
+		TargetDefinitionDocumentTools.updateElements(containersElement, oldContainers, updatedContainers,
+				(e1, e2) -> 0);
 
 		for (Entry<String, List<Element>> entry : oldContainersByRepo.entrySet()) {
 			entry.getValue().forEach(TargetDefinitionDocumentTools::removeChildAndWhitespace);
