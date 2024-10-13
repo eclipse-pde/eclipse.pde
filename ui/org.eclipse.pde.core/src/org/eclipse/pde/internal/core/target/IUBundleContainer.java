@@ -267,8 +267,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		List<IInstallableUnit> result = new ArrayList<>();
 		MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.IUBundleContainer_ProblemsLoadingRepositories);
 		for (IVersionedId unit : fIUs) {
-			IQuery<IInstallableUnit> query = QueryUtil.createIUQuery(unit);
-			addQueryResult(profile, query, unit, result, status);
+			queryIU(profile, unit, status).ifPresent(result::add);
 		}
 		if (!status.isOK()) {
 			fResolutionStatus = status;
@@ -687,9 +686,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.IUBundleContainer_ProblemsLoadingRepositories);
 		List<IInstallableUnit> result = new ArrayList<>();
 		for (IVersionedId iu : fIUs) {
-			// For versions such as 0.0.0, the IU query may return multiple IUs, so we check which is the latest version
-			IQuery<IInstallableUnit> query = QueryUtil.createLatestQuery(QueryUtil.createIUQuery(iu));
-			addQueryResult(repos, query, iu, result, status);
+			queryIU(repos, iu, status).ifPresent(result::add);
 		}
 		if (!status.isOK()) {
 			fResolutionStatus = status;
@@ -698,14 +695,16 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		return result;
 	}
 
-	private void addQueryResult(IQueryable<IInstallableUnit> queryable, IQuery<IInstallableUnit> query, IVersionedId iu,
-			List<IInstallableUnit> result, MultiStatus status) {
+	private Optional<IInstallableUnit> queryIU(IQueryable<IInstallableUnit> queryable, IVersionedId iu,
+			MultiStatus status) {
+		// For versions such as 0.0.0, the IU query may return multiple IUs, so
+		// we check which is the latest version
+		IQuery<IInstallableUnit> query = QueryUtil.createLatestQuery(QueryUtil.createIUQuery(iu));
 		Optional<IInstallableUnit> queryResult = queryFirst(queryable, query, null);
 		if (queryResult.isEmpty()) {
 			status.add(Status.error(NLS.bind(Messages.IUBundleContainer_1, iu)));
-		} else {
-			result.add(queryResult.get());
 		}
+		return queryResult;
 	}
 
 	static <T> Optional<T> queryFirst(IQueryable<T> queryable, IQuery<T> query, IProgressMonitor monitor) {
