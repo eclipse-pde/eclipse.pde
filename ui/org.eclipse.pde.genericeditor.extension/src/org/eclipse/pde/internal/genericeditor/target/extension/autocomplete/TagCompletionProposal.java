@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Red Hat Inc. and others
+ * Copyright (c) 2018, 2024 Red Hat Inc. and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -39,8 +39,7 @@ public class TagCompletionProposal extends TargetCompletionProposal {
 				new Attribute(ITargetConstants.LOCATION_PATH_ATTR, null),
 				new Attribute(ITargetConstants.LOCATION_TYPE_ATTR, ITargetConstants.LOCATION_TYPE_ATTR_VALUE_PROFILE) });
 		tagStartingAttributesAndValues.put(ITargetConstants.UNIT_TAG, new Attribute[] {
-				new Attribute(ITargetConstants.UNIT_ID_ATTR, null),
-				new Attribute(ITargetConstants.UNIT_VERSION_ATTR, ITargetConstants.UNIT_VERSION_ATTR_GENERIC) });
+				new Attribute(ITargetConstants.UNIT_ID_ATTR, null) });
 		tagStartingAttributesAndValues.put(ITargetConstants.REPOSITORY_TAG, new Attribute[] {
 				new Attribute(ITargetConstants.REPOSITORY_LOCATION_ATTR, null) });
 		tagStartingAttributesAndValues.put(ITargetConstants.TARGET_JRE_TAG, new Attribute[] {

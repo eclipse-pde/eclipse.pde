@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018, 2022 Red Hat Inc. and others
+ * Copyright (c) 2018, 2024 Red Hat Inc. and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -87,6 +87,15 @@ public class UpdateUnitVersions extends AbstractHandler {
 				List<UnitNode> repositoryUnits = cache.fetchP2UnitsFromRepo(repositoryLocation, false);
 				for (Node n2 : locationNode.getChildNodesByTag(ITargetConstants.UNIT_TAG)) {
 					UnitNode unitNode = ((UnitNode) n2);
+					String declaredVersion = unitNode.getVersion();
+
+					@SuppressWarnings("restriction")
+					// if not ok, probably a version range
+					boolean isValidExplicitVersion = org.eclipse.pde.internal.core.util.VersionUtil
+							.validateVersion(declaredVersion).isOK();
+					if (declaredVersion == null || !isValidExplicitVersion) {
+						continue;
+					}
 					List<String> versions = null;
 					for (UnitNode unit : repositoryUnits) {
 						if (unit.getId().equals(unitNode.getId())) {
@@ -99,20 +108,19 @@ public class UpdateUnitVersions extends AbstractHandler {
 					}
 					Collections.sort(versions, (v1, v2) -> (new Version(v2)).compareTo(new Version(v1)));
 					String version = versions.get(0);
-					if (version == null || version.isEmpty() || unitNode.getVersion() == null
-							|| version.equals(unitNode.getVersion())) {
+					if (version == null || version.isEmpty() || version.equals(declaredVersion)) {
 						continue;
 					}
 
 					String nodeString = documentText.substring(unitNode.getOffsetStart() + offsetChange,
 							unitNode.getOffsetEnd() + offsetChange);
 
-					nodeString = nodeString.replaceFirst("version=\"" + unitNode.getVersion() + "\"",
+					nodeString = nodeString.replaceFirst("version=\"" + declaredVersion + "\"",
 							"version=\"" + version + "\"");
 					documentText = documentText.substring(0, unitNode.getOffsetStart() + offsetChange) + nodeString
 							+ documentText.substring(unitNode.getOffsetEnd() + offsetChange, documentText.length());
 
-					offsetChange += version.length() - unitNode.getVersion().length();
+					offsetChange += version.length() - declaredVersion.length();
 				}
 			}
 			if (document.get().equals(documentText)) {
