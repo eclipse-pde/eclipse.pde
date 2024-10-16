@@ -22,7 +22,6 @@ import javax.xml.stream.XMLStreamException;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.equinox.p2.metadata.IVersionedId;
 import org.eclipse.jface.dialogs.IPageChangeProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -33,7 +32,6 @@ import org.eclipse.pde.internal.genericeditor.target.extension.model.Node;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.RepositoryCache;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.UnitNode;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.xml.Parser;
-import org.eclipse.pde.internal.genericeditor.target.extension.p2.UpdateJob;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -69,19 +67,18 @@ public class UpdateUnitVersions extends AbstractHandler {
 
 			int offsetChange = 0;
 			String documentText = document.get();
-			for (Node n1 : locationsNode.get(0).getChildNodesByTag(ITargetConstants.LOCATION_TAG)) {
-				LocationNode locationNode = (LocationNode) n1;
+
+			List<LocationNode> locationNodes = locationsNode.get(0).getChildNodesByTag(ITargetConstants.LOCATION_TAG)
+					.stream().map(LocationNode.class::cast).toList();
+
+			// Fetch all repos at once to fetch pending metadata in parallel
+			locationNodes.stream().map(LocationNode::getRepositoryLocations).flatMap(List::stream)
+					.forEach(RepositoryCache::prefetchP2MetadataOfRepository);
+
+			for (LocationNode locationNode : locationNodes) { 
 				List<String> repositoryLocations = locationNode.getRepositoryLocations();
 				if (repositoryLocations.isEmpty()) {
 					continue;
-				}
-				if (!repositoryLocations.stream().allMatch(RepositoryCache::isUpToDate)) {
-					try {
-						updateCache(locationNode);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-						continue;
-					}
 				}
 				Map<String, List<IVersionedId>> repositoryUnits = RepositoryCache
 						.fetchP2UnitsFromRepos(repositoryLocations);
@@ -127,15 +124,6 @@ public class UpdateUnitVersions extends AbstractHandler {
 			}
 			return documentText;
 		});
-	}
-
-	private void updateCache(LocationNode locationNode) throws InterruptedException {
-		Job job = new UpdateJob(locationNode);
-		job.setUser(true);
-		job.schedule();
-		while (job.getResult() == null) {
-			Thread.sleep(50);
-		}
 	}
 
 	private IDocument getDocument() {

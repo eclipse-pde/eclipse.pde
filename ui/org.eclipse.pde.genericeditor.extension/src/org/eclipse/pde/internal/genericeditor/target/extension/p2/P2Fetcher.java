@@ -17,7 +17,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.stream.Stream;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.IProvisioningAgentProvider;
 import org.eclipse.equinox.p2.core.ProvisionException;
@@ -46,14 +49,14 @@ public class P2Fetcher {
 	 *            URL string of a p2 repository
 	 * @return List of available installable unit models. See {@link UnitNode}
 	 */
-	public static Stream<IVersionedId> fetchAvailableUnits(String repositoryLocation) {
+	public static Stream<IVersionedId> fetchAvailableUnits(String repositoryLocation) throws CoreException {
+		URI uri;
 		try {
-			URI uri;
-			try {
-				uri = new URI(repositoryLocation);
-			} catch (URISyntaxException e) {
-				return Stream.empty();
-			}
+			uri = new URI(repositoryLocation);
+		} catch (URISyntaxException e) {
+			throw new CoreException(Status.error("Invalid repository URI: " + repositoryLocation, e));
+		}
+		try {
 			BundleContext context = FrameworkUtil.getBundle(P2Fetcher.class).getBundleContext();
 			ServiceReference<IProvisioningAgentProvider> sr = context
 					.getServiceReference(IProvisioningAgentProvider.class);
@@ -74,8 +77,9 @@ public class P2Fetcher {
 			return result.stream().map(iu -> new VersionedId(iu.getId(), iu.getVersion()));
 
 		} catch (Exception e) {
-			ILog.get().error("Failed to fetch metadata of repository: " + repositoryLocation, e);
-			return Stream.empty();
+			IStatus error = Status.error("Failed to fetch metadata of repository: " + repositoryLocation, e);
+			ILog.get().log(error);
+			throw new CoreException(error);
 		}
 	}
 
