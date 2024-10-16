@@ -16,10 +16,11 @@ package org.eclipse.pde.internal.genericeditor.target.extension.p2;
 import java.net.URI;
 import java.util.stream.Stream;
 
-import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.IProvisioningAgentProvider;
-import org.eclipse.equinox.p2.core.ProvisionException;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.IVersionedId;
 import org.eclipse.equinox.p2.metadata.VersionedId;
@@ -45,28 +46,20 @@ public class P2Fetcher {
 	 *            URL string of a p2 repository
 	 * @return List of available installable unit models. See {@link UnitNode}
 	 */
-	public static Stream<IVersionedId> fetchAvailableUnits(URI repositoryLocation) {
+	public static Stream<IVersionedId> fetchAvailableUnits(URI repositoryLocation, IProgressMonitor monitor)
+			throws CoreException {
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 31);
+		BundleContext context = FrameworkUtil.getBundle(P2Fetcher.class).getBundleContext();
+		ServiceReference<IProvisioningAgentProvider> sr = context.getServiceReference(IProvisioningAgentProvider.class);
 		try {
-			BundleContext context = FrameworkUtil.getBundle(P2Fetcher.class).getBundleContext();
-			ServiceReference<IProvisioningAgentProvider> sr = context
-					.getServiceReference(IProvisioningAgentProvider.class);
 			IProvisioningAgentProvider agentProvider = context.getService(sr);
-			IProvisioningAgent agent = null;
-			try {
-				agent = agentProvider.createAgent(null);
-			} catch (ProvisionException e) {
-				ILog.get().error("Failed to create provisioning-agent", e);
-			} finally {
-				context.ungetService(sr);
-			}
+			IProvisioningAgent agent = agentProvider.createAgent(null);
 			IMetadataRepositoryManager manager = agent.getService(IMetadataRepositoryManager.class);
-			IMetadataRepository repository = manager.loadRepository(repositoryLocation, null);
-			IQueryResult<IInstallableUnit> allUnits = repository.query(QueryUtil.ALL_UNITS, null);
-
+			IMetadataRepository repository = manager.loadRepository(repositoryLocation, subMonitor.split(30));
+			IQueryResult<IInstallableUnit> allUnits = repository.query(QueryUtil.ALL_UNITS, subMonitor.split(1));
 			return allUnits.stream().map(iu -> new VersionedId(iu.getId(), iu.getVersion()));
-		} catch (Exception e) {
-			ILog.get().error("Failed to fetch metadata of repository: " + repositoryLocation, e);
-			return Stream.empty();
+		} finally {
+			context.ungetService(sr);
 		}
 	}
 
