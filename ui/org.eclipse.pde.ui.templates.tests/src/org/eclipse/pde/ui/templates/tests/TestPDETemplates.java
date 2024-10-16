@@ -173,12 +173,18 @@ public class TestPDETemplates {
 	private void assertErrorFree() throws CoreException {
 		IMarker[] markers = project.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
 
+		// ignore "value of lambda parameter is not used", filtering should be
+		// removed once the min JVM level supports this warning (Java 22) and
+		// templates are fixed to not produce it
+		markers = Arrays.stream(markers).filter(
+				m -> !m.getAttribute(IMarker.MESSAGE, "").equals("The value of the lambda parameter e is not used"))
+				.toArray(IMarker[]::new);
+
 		// ignore missing package export marker
 		if (markers.length == 1 && CompilerFlags.P_MISSING_EXPORT_PKGS
 				.equals(markers[0].getAttribute(PDEMarkerFactory.compilerKey, ""))) {
 			System.out.println("Template '" + template.getLabel() + "' ignored errors.");
 			System.out.println(markers[0]);
-			System.out.println("--------------------------------------------------------");
 			markers = new IMarker[0];
 		}
 		// ignore "DS Annotations missing from permanent build path"
