@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2018, 2019 vogella GmbH and others
+ * Copyright (c) 2018, 2024 vogella GmbH and others
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -67,11 +67,10 @@ public class TargetDefinitionActivationCodeMining extends LineHeaderCodeMining {
 			}
 			boolean isCurrent = false;
 			try {
-				ITargetPlatformService service = acquireTargetPlatformService();
-				String memento = service.getWorkspaceTargetHandle().getMemento();
-				ITargetHandle targetHandle = getTargetHandle();
-				String targetMemento = targetHandle.getMemento();
-				isCurrent = Objects.equals(memento, targetMemento);
+				ITargetHandle workspaceTarget = acquireTargetPlatformService().getWorkspaceTargetHandle();
+				if (workspaceTarget != null) {
+					isCurrent = Objects.equals(workspaceTarget.getMemento(), getTargetHandle().getMemento());
+				}
 			} catch (CoreException e) {
 				// Caught with default message shown
 			}
