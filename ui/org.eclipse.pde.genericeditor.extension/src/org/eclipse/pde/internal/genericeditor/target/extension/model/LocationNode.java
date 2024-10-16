@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2017 Red Hat Inc. and others
+ * Copyright (c) 2016, 2024 Red Hat Inc. and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,19 +14,24 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.genericeditor.target.extension.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Models the &lt;location&gt; nodes
  */
 public class LocationNode extends Node {
 
-	private String repositoryLocation;
+	private List<String> repositoryLocations = new ArrayList<>();
 
-	public String getRepositoryLocation() {
-		return repositoryLocation;
+	public List<String> getRepositoryLocations() {
+		return repositoryLocations;
 	}
 
-	public void setRepositoryLocation(String repositoryLocation) {
-		this.repositoryLocation = repositoryLocation;
+	public void addRepositoryLocation(String repositoryLocation) {
+		if (repositoryLocation != null) {
+			this.repositoryLocations.add(repositoryLocation);
+		}
 	}
 
 }

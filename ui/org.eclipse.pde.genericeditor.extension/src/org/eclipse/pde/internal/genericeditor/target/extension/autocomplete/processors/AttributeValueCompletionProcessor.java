@@ -16,8 +16,10 @@
 package org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.processors;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
+import org.eclipse.equinox.p2.metadata.IVersionedId;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.InstallableUnitProposal;
@@ -28,7 +30,6 @@ import org.eclipse.pde.internal.genericeditor.target.extension.model.Node;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.RepositoryCache;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.UnitNode;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.xml.Parser;
-import org.osgi.framework.Version;
 
 /**
  * Class that computes autocompletions for attribute values. Example:
@@ -81,12 +82,12 @@ public class AttributeValueCompletionProcessor extends DelegateProcessor {
 				if (!(node.getParentNode() instanceof LocationNode location)) {
 					return getErrorCompletion();
 				}
-				String repoLocation = location.getRepositoryLocation();
-				if (repoLocation == null) {
+				List<String> repoLocations = location.getRepositoryLocations();
+				if (repoLocations.isEmpty()) {
 					return getErrorCompletion();
 				}
-				List<UnitNode> units = RepositoryCache.fetchP2UnitsFromRepo(repoLocation);
-				return toProposals(units.stream().map(UnitNode::getId).sorted(String.CASE_INSENSITIVE_ORDER));
+				Map<String, List<IVersionedId>> units = RepositoryCache.fetchP2UnitsFromRepos(repoLocations);
+				return toProposals(units.keySet().stream());
 			}
 		}
 
@@ -95,20 +96,15 @@ public class AttributeValueCompletionProcessor extends DelegateProcessor {
 				if (!(node.getParentNode() instanceof LocationNode location)) {
 					return getErrorCompletion();
 				}
-				String repoLocation = location.getRepositoryLocation();
-				if (repoLocation == null) {
+				List<String> repoLocations = location.getRepositoryLocations();
+				if (repoLocations.isEmpty()) {
 					return getErrorCompletion();
 				}
-				List<UnitNode> repositoryUnits = RepositoryCache.fetchP2UnitsFromRepo(repoLocation);
-				List<String> versions = null;
-				for (UnitNode unit : repositoryUnits) {
-					if (unit.getId().equals(node.getId())) {
-						versions = unit.getAvailableVersions();
-					}
-				}
+				Map<String, List<IVersionedId>> units = RepositoryCache.fetchP2UnitsFromRepos(repoLocations);
+				List<IVersionedId> versions = units.get(node.getId());
 				if (versions != null) {
 					Stream<String> availableVersions = Stream.concat(
-							versions.stream().sorted((v1, v2) -> new Version(v2).compareTo(new Version(v1))),
+							versions.stream().map(unit -> unit.getVersion().toString()),
 							Stream.of(ITargetConstants.UNIT_VERSION_ATTR_GENERIC));
 					return toProposals(availableVersions.distinct());
 				}
