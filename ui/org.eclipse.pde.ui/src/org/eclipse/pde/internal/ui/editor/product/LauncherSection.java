@@ -419,7 +419,10 @@ public class LauncherSection extends PDESection {
 			fBundleUrlTypesTable.setLabelProvider(new LabelProvider());
 			fBundleUrlTypesTable.setContentProvider((IStructuredContentProvider) inputElement -> {
 				if (inputElement instanceof IProduct product) {
-					return product.getLauncherInfo().getMacBundleUrlTypes().toArray();
+					ILauncherInfo launcherInfo = product.getLauncherInfo();
+					if (launcherInfo != null) {
+						return launcherInfo.getMacBundleUrlTypes().toArray();
+					}
 				}
 				return new Object[0];
 			});
@@ -477,14 +480,14 @@ public class LauncherSection extends PDESection {
 		}
 
 		private Set<IMacBundleUrlType> getExistingBundleUrlTypes() {
-			return new HashSet<>(getProduct().getLauncherInfo().getMacBundleUrlTypes());
+			return new HashSet<>(getLauncherInfo().getMacBundleUrlTypes());
 		}
 
 		private void handleRemove() {
 			IStructuredSelection ssel = fBundleUrlTypesTable.getStructuredSelection();
 			if (!ssel.isEmpty()) {
 				List<IMacBundleUrlType> bundleUrlTypes = ssel.toList();
-				getProduct().getLauncherInfo().removeMacBundleUrlTypes(bundleUrlTypes);
+				getLauncherInfo().removeMacBundleUrlTypes(bundleUrlTypes);
 				fBundleUrlTypesTable.refresh(false);
 			}
 		}
@@ -554,13 +557,13 @@ public class LauncherSection extends PDESection {
 			@Override
 			protected void okPressed() {
 				if (fEdit != null) {
-					getProduct().getLauncherInfo().removeMacBundleUrlTypes(List.of(fEdit));
+					getLauncherInfo().removeMacBundleUrlTypes(List.of(fEdit));
 				}
 				IProductModelFactory factory = getModel().getFactory();
 				fEdit = factory.createMacBundleUrlType();
 				fEdit.setScheme(fScheme.getText().trim());
 				fEdit.setName(fName.getText().trim());
-				getProduct().getLauncherInfo().addMacBundleUrlTypes(List.of(fEdit));
+				getLauncherInfo().addMacBundleUrlTypes(List.of(fEdit));
 				super.okPressed();
 			}
 
