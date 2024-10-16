@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2018 Red Hat Inc. and others
+ * Copyright (c) 2016, 2024 Red Hat Inc. and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,16 +14,15 @@
 package org.eclipse.pde.internal.genericeditor.target.extension.p2;
 
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.stream.Stream;
 
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.IProvisioningAgentProvider;
 import org.eclipse.equinox.p2.core.ProvisionException;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.metadata.IVersionedId;
+import org.eclipse.equinox.p2.metadata.VersionedId;
 import org.eclipse.equinox.p2.query.IQueryResult;
 import org.eclipse.equinox.p2.query.QueryUtil;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
@@ -46,51 +45,28 @@ public class P2Fetcher {
 	 *            URL string of a p2 repository
 	 * @return List of available installable unit models. See {@link UnitNode}
 	 */
-	public static List<UnitNode> fetchAvailableUnits(String repositoryLocation) {
-		List<UnitNode> units = new ArrayList<>();
-		IQueryResult<IInstallableUnit> result = null;
+	public static Stream<IVersionedId> fetchAvailableUnits(URI repositoryLocation) {
 		try {
-			URI uri;
-			try {
-				uri = new URI(repositoryLocation);
-			} catch (URISyntaxException e) {
-				return units;
-			}
 			BundleContext context = FrameworkUtil.getBundle(P2Fetcher.class).getBundleContext();
 			ServiceReference<IProvisioningAgentProvider> sr = context
 					.getServiceReference(IProvisioningAgentProvider.class);
-			IProvisioningAgentProvider agentProvider = null;
-			agentProvider = context.getService(sr);
+			IProvisioningAgentProvider agentProvider = context.getService(sr);
 			IProvisioningAgent agent = null;
-
 			try {
 				agent = agentProvider.createAgent(null);
 			} catch (ProvisionException e) {
-				e.printStackTrace();
+				ILog.get().error("Failed to create provisioning-agent", e);
+			} finally {
+				context.ungetService(sr);
 			}
-			IMetadataRepositoryManager manager = (IMetadataRepositoryManager) agent
-					.getService(IMetadataRepositoryManager.SERVICE_NAME);
-			IMetadataRepository repository = manager.loadRepository(uri, null);
-			result = repository.query(QueryUtil.createLatestIUQuery(), null);
+			IMetadataRepositoryManager manager = agent.getService(IMetadataRepositoryManager.class);
+			IMetadataRepository repository = manager.loadRepository(repositoryLocation, null);
+			IQueryResult<IInstallableUnit> allUnits = repository.query(QueryUtil.ALL_UNITS, null);
 
-			Iterator<IInstallableUnit> iterator = result.iterator();
-			while (iterator.hasNext()) {
-				IInstallableUnit unit = iterator.next();
-				UnitNode modelUnit = new UnitNode();
-				modelUnit.setId(unit.getId());
-				modelUnit.setVersion(unit.getVersion().getOriginal());
-				IQueryResult<IInstallableUnit> versions = repository.query(QueryUtil.createIUQuery(unit.getId()), null);
-				for (IInstallableUnit version : versions) {
-					modelUnit.getAvailableVersions().add(version.getVersion().getOriginal());
-				}
-				units.add(modelUnit);
-			}
-
-			return units;
-
+			return allUnits.stream().map(iu -> new VersionedId(iu.getId(), iu.getVersion()));
 		} catch (Exception e) {
-			e.printStackTrace();
-			return Collections.emptyList();
+			ILog.get().error("Failed to fetch metadata of repository: " + repositoryLocation, e);
+			return Stream.empty();
 		}
 	}
 
