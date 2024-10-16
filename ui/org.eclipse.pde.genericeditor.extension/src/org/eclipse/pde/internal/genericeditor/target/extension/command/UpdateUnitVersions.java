@@ -75,8 +75,7 @@ public class UpdateUnitVersions extends AbstractHandler {
 				if (repositoryLocation == null) {
 					continue;
 				}
-				RepositoryCache cache = RepositoryCache.getDefault();
-				if (!cache.isUpToDate(repositoryLocation)) {
+				if (!RepositoryCache.isUpToDate(repositoryLocation)) {
 					try {
 						updateCache(locationNode);
 					} catch (InterruptedException e) {
@@ -84,7 +83,7 @@ public class UpdateUnitVersions extends AbstractHandler {
 						continue;
 					}
 				}
-				List<UnitNode> repositoryUnits = cache.fetchP2UnitsFromRepo(repositoryLocation, false);
+				List<UnitNode> repositoryUnits = RepositoryCache.fetchP2UnitsFromRepo(repositoryLocation);
 				for (Node n2 : locationNode.getChildNodesByTag(ITargetConstants.UNIT_TAG)) {
 					UnitNode unitNode = ((UnitNode) n2);
 					String declaredVersion = unitNode.getVersion();
@@ -148,12 +147,11 @@ public class UpdateUnitVersions extends AbstractHandler {
 	private IDocument getDocument() {
 		IEditorPart editor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
 		IDocumentProvider provider = null;
-		if (editor instanceof ITextEditor) {
-			provider = ((ITextEditor) editor).getDocumentProvider();
-		} else if (editor instanceof IPageChangeProvider) {
-			Object selectedPage = ((IPageChangeProvider) editor).getSelectedPage();
-			if (selectedPage instanceof ITextEditor) {
-				provider = ((ITextEditor) selectedPage).getDocumentProvider();
+		if (editor instanceof ITextEditor textEditor) {
+			provider = textEditor.getDocumentProvider();
+		} else if (editor instanceof IPageChangeProvider pageChangeProvider) {
+			if (pageChangeProvider.getSelectedPage() instanceof ITextEditor textEditor) {
+				provider = textEditor.getDocumentProvider();
 			}
 		}
 		if(provider == null) {
