@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Red Hat Inc. and others
+ * Copyright (c) 2016, 2024 Red Hat Inc. and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -76,9 +76,9 @@ public class Parser {
 					currentNode = new DependencyNode();
 				} else if (ITargetConstants.REPOSITORY_TAG.equalsIgnoreCase(name)) {
 					currentNode = new Node();
-					if (currentParent instanceof LocationNode) {
+					if (currentParent instanceof LocationNode containerLocation) {
 						String locationValue = event.getAttributeValueByKey(ITargetConstants.REPOSITORY_LOCATION_ATTR);
-						((LocationNode) currentParent).setRepositoryLocation(locationValue);
+						containerLocation.addRepositoryLocation(locationValue);
 					}
 				} else if (ITargetConstants.TARGET_TAG.equalsIgnoreCase(name)) {
 					target = new Node();

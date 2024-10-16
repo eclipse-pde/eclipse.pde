@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2024 Red Hat Inc. and others
+ * Copyright (c) 2016 Red Hat Inc. and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -29,13 +29,13 @@ public class UpdateJob extends Job {
 	private final LocationNode node;
 
 	public UpdateJob(LocationNode node) {
-		super(Messages.UpdateJob_P2DataFetch + node.getRepositoryLocation());
+		super(Messages.UpdateJob_P2DataFetch + node.getRepositoryLocations());
 		this.node = node;
 	}
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
-		if (RepositoryCache.fetchP2UnitsFromRepo(node.getRepositoryLocation()) == null) {
+		if (RepositoryCache.fetchP2UnitsFromRepos(node.getRepositoryLocations()) == null) {
 			return Status.error(Messages.UpdateJob_ErrorMessage);
 		}
 		return Status.OK_STATUS;

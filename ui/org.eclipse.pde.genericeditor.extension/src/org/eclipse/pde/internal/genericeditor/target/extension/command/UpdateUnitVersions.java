@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.genericeditor.target.extension.command;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import javax.xml.stream.XMLStreamException;
@@ -23,6 +23,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.equinox.p2.metadata.IVersionedId;
 import org.eclipse.jface.dialogs.IPageChangeProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.IDocument;
@@ -39,7 +40,6 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
-import org.osgi.framework.Version;
 
 public class UpdateUnitVersions extends AbstractHandler {
 
@@ -71,11 +71,11 @@ public class UpdateUnitVersions extends AbstractHandler {
 			String documentText = document.get();
 			for (Node n1 : locationsNode.get(0).getChildNodesByTag(ITargetConstants.LOCATION_TAG)) {
 				LocationNode locationNode = (LocationNode) n1;
-				String repositoryLocation = locationNode.getRepositoryLocation();
-				if (repositoryLocation == null) {
+				List<String> repositoryLocations = locationNode.getRepositoryLocations();
+				if (repositoryLocations.isEmpty()) {
 					continue;
 				}
-				if (!RepositoryCache.isUpToDate(repositoryLocation)) {
+				if (!repositoryLocations.stream().allMatch(RepositoryCache::isUpToDate)) {
 					try {
 						updateCache(locationNode);
 					} catch (InterruptedException e) {
@@ -83,7 +83,8 @@ public class UpdateUnitVersions extends AbstractHandler {
 						continue;
 					}
 				}
-				List<UnitNode> repositoryUnits = RepositoryCache.fetchP2UnitsFromRepo(repositoryLocation);
+				Map<String, List<IVersionedId>> repositoryUnits = RepositoryCache
+						.fetchP2UnitsFromRepos(repositoryLocations);
 				for (Node n2 : locationNode.getChildNodesByTag(ITargetConstants.UNIT_TAG)) {
 					UnitNode unitNode = ((UnitNode) n2);
 					String declaredVersion = unitNode.getVersion();
@@ -95,19 +96,12 @@ public class UpdateUnitVersions extends AbstractHandler {
 					if (declaredVersion == null || !isValidExplicitVersion) {
 						continue;
 					}
-					List<String> versions = null;
-					for (UnitNode unit : repositoryUnits) {
-						if (unit.getId().equals(unitNode.getId())) {
-							versions = unit.getAvailableVersions();
-							break;
-						}
-					}
+					List<IVersionedId> versions = repositoryUnits.get(unitNode.getId());
 					if (versions == null || versions.isEmpty()) {
 						continue;
 					}
-					Collections.sort(versions, (v1, v2) -> (new Version(v2)).compareTo(new Version(v1)));
-					String version = versions.get(0);
-					if (version == null || version.isEmpty() || version.equals(declaredVersion)) {
+					String version = versions.get(0).getVersion().toString();
+					if (version.isEmpty() || version.equals(declaredVersion)) {
 						continue;
 					}
 
