@@ -21,11 +21,17 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.equinox.p2.metadata.IVersionedId;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.genericeditor.target.extension.p2.Messages;
 import org.eclipse.pde.internal.genericeditor.target.extension.p2.P2Fetcher;
 
 /**
@@ -42,7 +48,7 @@ public class RepositoryCache {
 		// avoid instantiation
 	}
 
-	private static final Map<URI, Map<String, List<IVersionedId>>> CACHE = new ConcurrentHashMap<>();
+	private static final Map<URI, CompletableFuture<Map<String, List<IVersionedId>>>> CACHE = new ConcurrentHashMap<>();
 
 	/**
 	 * Fetches information and caches it.
@@ -58,20 +64,46 @@ public class RepositoryCache {
 	 */
 	public static Map<String, List<IVersionedId>> fetchP2UnitsFromRepos(List<String> repositories) {
 		if (repositories.size() == 1) {
-			return fetchP2DataOfRepo(repositories.get(0));
+			return getFutureValue(fetchP2DataOfRepo(repositories.get(0)));
 		}
 		var repos = repositories.stream().map(RepositoryCache::fetchP2DataOfRepo).toList();
-		return toSortedMap(repos.stream().map(Map::values).flatMap(Collection::stream).flatMap(List::stream));
+		// Fetch all repos at once to await pending metadata in parallel
+		return toSortedMap(repos.stream().map(RepositoryCache::getFutureValue) //
+				.map(Map::values).flatMap(Collection::stream).flatMap(List::stream));
 	}
 
-	private static Map<String, List<IVersionedId>> fetchP2DataOfRepo(String repository) {
+	public static void prefetchP2MetadataOfRepository(String repository) {
+		fetchP2DataOfRepo(repository);
+	}
+
+	private static Future<Map<String, List<IVersionedId>>> fetchP2DataOfRepo(String repository) {
 		URI location;
 		try {
 			location = new URI(repository);
 		} catch (URISyntaxException e) {
-			return Map.of();
+			return CompletableFuture.failedFuture(e);
 		}
-		return CACHE.computeIfAbsent(location, repo -> toSortedMap(P2Fetcher.fetchAvailableUnits(repo)));
+		return CACHE.compute(location, (repo, f) -> {
+			if (f != null && (!f.isDone() || !f.isCompletedExceptionally() && !f.isCancelled())) {
+				return f; // computation is running or has succeeded
+			}
+			CompletableFuture<Map<String, List<IVersionedId>>> future = new CompletableFuture<>();
+			// Fetching P2 repository information is a costly operation
+			// time-wise. Thus it is done in a job.
+			Job job = Job.create(NLS.bind(Messages.UpdateJob_P2DataFetch, repo), m -> {
+				try {
+					Map<String, List<IVersionedId>> units = toSortedMap(P2Fetcher.fetchAvailableUnits(repo, m));
+					future.complete(units);
+				} catch (Throwable e) {
+					future.completeExceptionally(e);
+					// Only log the failure, don't open an error-dialog.
+					ILog.get().warn(e.getMessage(), e);
+				}
+			});
+			job.setUser(true);
+			job.schedule();
+			return future;
+		});
 	}
 
 	private static final Comparator<IVersionedId> BY_ID_FIRST_THEN_DESCENDING_VERSION = Comparator
@@ -81,6 +113,14 @@ public class RepositoryCache {
 	private static Map<String, List<IVersionedId>> toSortedMap(Stream<IVersionedId> units) {
 		return units.sorted(BY_ID_FIRST_THEN_DESCENDING_VERSION).collect(
 				Collectors.groupingBy(IVersionedId::getId, LinkedHashMap::new, Collectors.toUnmodifiableList()));
+	}
+
+	private static Map<String, List<IVersionedId>> getFutureValue(Future<Map<String, List<IVersionedId>>> future) {
+		try {
+			return future.get();
+		} catch (Exception e) { // interrupted, canceled or execution failure
+			return Map.of();
+		}
 	}
 
 	/**
@@ -128,16 +168,5 @@ public class RepositoryCache {
 		Map<String, List<IVersionedId>> allUnits = fetchP2UnitsFromRepos(List.of(repo));
 		return allUnits.values().stream().flatMap(List::stream) //
 				.filter(unit -> unit.getId().contains(searchTerm)).toList();
-	}
-
-	/**
-	 * Classic cache up-to-date check.
-	 *
-	 * @param repo
-	 *            repository URL
-	 * @return whether the cache is up to date for this repo
-	 */
-	public static boolean isUpToDate(String repo) {
-		return CACHE.get(URI.create(repo)) != null;
 	}
 }
