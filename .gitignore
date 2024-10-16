@@ -11,7 +11,11 @@ Snap.*
 *.class
 
 # maven
-target/
+# DO NOT ignore all 'target' folders because PDE has numerous packages with elements named 'target'
+/target/
+/*/target/
+/*/*/target/
+
 .DS_Store
 .polyglot.*
 pom.tycho
