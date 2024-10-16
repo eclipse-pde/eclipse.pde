@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2017 Red Hat Inc. and others
+ * Copyright (c) 2016, 2024 Red Hat Inc. and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,10 +14,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.genericeditor.target.extension.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.pde.internal.genericeditor.target.extension.p2.P2Fetcher;
 
@@ -31,41 +30,20 @@ import org.eclipse.pde.internal.genericeditor.target.extension.p2.P2Fetcher;
  */
 public class RepositoryCache {
 
-	private static RepositoryCache instance;
-
-	Map<String, List<UnitNode>> cache = new HashMap<>();
-
 	private RepositoryCache() {
-		//avoid instantiation
+		// avoid instantiation
 	}
 
-	/**
-	 * @return default instance of this cache.
-	 */
-
-	public static RepositoryCache getDefault() {
-		if (instance == null) {
-			instance = new RepositoryCache();
-		}
-		return instance;
-	}
+	private static final Map<String, List<UnitNode>> CACHE = new ConcurrentHashMap<>();
 
 	/**
 	 * Fetches information and caches it.
 	 *
-	 * @param repo
-	 *            repository URL
-	 * @param flush
-	 *            whether a flush is needed
 	 * @return list of IUs available in the 'repo' repository. Never
 	 *         <code>null</code>.
 	 */
-	public List<UnitNode> fetchP2UnitsFromRepo(String repo, boolean flush) {
-		if ((flush) || (cache.get(repo) == null)) {
-			List<UnitNode> units = P2Fetcher.fetchAvailableUnits(repo);
-			cache.put(repo, units);
-		}
-		return cache.get(repo);
+	public static List<UnitNode> fetchP2UnitsFromRepo(String repo) {
+		return CACHE.computeIfAbsent(repo, P2Fetcher::fetchAvailableUnits);
 	}
 
 	/**
@@ -85,15 +63,9 @@ public class RepositoryCache {
 	 *            A prefix used to narrow down the match list
 	 * @return A list of IUs whose id starts with 'prefix'
 	 */
-	public List<UnitNode> getUnitsByPrefix(String repo, String prefix) {
-		List<UnitNode> allUnits = fetchP2UnitsFromRepo(repo, false);
-		List<UnitNode> result = new ArrayList<>();
-		for (UnitNode unit : allUnits) {
-			if (unit.getId().startsWith(prefix)) {
-				result.add(unit);
-			}
-		}
-		return result;
+	public static List<UnitNode> getUnitsByPrefix(String repo, String prefix) {
+		List<UnitNode> allUnits = fetchP2UnitsFromRepo(repo);
+		return allUnits.stream().filter(unit -> unit.getId().startsWith(prefix)).toList();
 	}
 
 	/**
@@ -114,15 +86,9 @@ public class RepositoryCache {
 	 *            A prefix used to narrow down the match list
 	 * @return A list of IUs whose id contains 'searchTerm'
 	 */
-	public List<UnitNode> getUnitsBySearchTerm(String repo, String searchTerm) {
-		List<UnitNode> allUnits = fetchP2UnitsFromRepo(repo, false);
-		List<UnitNode> result = new ArrayList<>();
-		for (UnitNode unit : allUnits) {
-			if (unit.getId().contains(searchTerm)) {
-				result.add(unit);
-			}
-		}
-		return result;
+	public static List<UnitNode> getUnitsBySearchTerm(String repo, String searchTerm) {
+		List<UnitNode> allUnits = fetchP2UnitsFromRepo(repo);
+		return allUnits.stream().filter(unit -> unit.getId().contains(searchTerm)).toList();
 	}
 
 	/**
@@ -132,14 +98,7 @@ public class RepositoryCache {
 	 *            repository URL
 	 * @return whether the cache is up to date for this repo
 	 */
-	public boolean isUpToDate(String repo) {
-		return cache.get(repo) != null;
-	}
-
-	/**
-	 * Used to flush cache in case P2 repo information is considered stale.
-	 */
-	public void flush() {
-		cache.clear();
+	public static boolean isUpToDate(String repo) {
+		return CACHE.get(repo) != null;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018, 2020 Red Hat Inc. and others
+ * Copyright (c) 2018, 2024 Red Hat Inc. and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,13 +15,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.processors;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
-import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.InstallableUnitProposal;
 import org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.TargetDefinitionContentAssist;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants;
@@ -80,82 +78,54 @@ public class AttributeValueCompletionProcessor extends DelegateProcessor {
 		}
 		if (ITargetConstants.UNIT_ID_ATTR.equalsIgnoreCase(acKey)) {
 			if (node != null) {
-				if (!(node.getParentNode() instanceof LocationNode))
+				if (!(node.getParentNode() instanceof LocationNode location)) {
 					return getErrorCompletion();
-				LocationNode location = (LocationNode) node.getParentNode();
+				}
 				String repoLocation = location.getRepositoryLocation();
 				if (repoLocation == null) {
 					return getErrorCompletion();
 				}
-				RepositoryCache cache = RepositoryCache.getDefault();
-				List<UnitNode> units = cache.fetchP2UnitsFromRepo(repoLocation, false);
-				return convertToProposals(units);
+				List<UnitNode> units = RepositoryCache.fetchP2UnitsFromRepo(repoLocation);
+				return toProposals(units.stream().map(UnitNode::getId).sorted(String.CASE_INSENSITIVE_ORDER));
 			}
-
 		}
 
 		if (ITargetConstants.UNIT_VERSION_ATTR.equalsIgnoreCase(acKey)) {
 			if (node != null) {
-				if (!(node.getParentNode() instanceof LocationNode))
+				if (!(node.getParentNode() instanceof LocationNode location)) {
 					return getErrorCompletion();
-				LocationNode location = (LocationNode) node.getParentNode();
+				}
 				String repoLocation = location.getRepositoryLocation();
 				if (repoLocation == null) {
 					return getErrorCompletion();
 				}
-				RepositoryCache cache = RepositoryCache.getDefault();
-				List<UnitNode> repositoryUnits = cache.fetchP2UnitsFromRepo(repoLocation, false);
+				List<UnitNode> repositoryUnits = RepositoryCache.fetchP2UnitsFromRepo(repoLocation);
 				List<String> versions = null;
 				for (UnitNode unit : repositoryUnits) {
 					if (unit.getId().equals(node.getId())) {
 						versions = unit.getAvailableVersions();
 					}
 				}
-				if (versions != null)
-					return convertToVersionProposals(versions);
-
+				if (versions != null) {
+					Stream<String> availableVersions = Stream.concat(
+							versions.stream().sorted((v1, v2) -> new Version(v2).compareTo(new Version(v1))),
+							Stream.of(ITargetConstants.UNIT_VERSION_ATTR_GENERIC));
+					return toProposals(availableVersions.distinct());
+				}
 			}
-
 		}
 
 		return new ICompletionProposal[] {};
 	}
 
-	private ICompletionProposal[] convertToVersionProposals(List<String> versions) {
-		List<String> dest = new ArrayList<>();
-		dest.addAll(versions);
-		Collections.sort(dest, (v1, v2) -> (new Version(v2)).compareTo(new Version(v1)));
-		if (!versions.contains(ITargetConstants.UNIT_VERSION_ATTR_GENERIC)) {
-			dest.add(ITargetConstants.UNIT_VERSION_ATTR_GENERIC);
-		}
-
-		List<ICompletionProposal> result = new ArrayList<>();
-		for (String version : dest) {
-			StyledString displayString = TargetDefinitionContentAssist.getFilteredStyledString(version, searchTerm);
-			if (displayString == null || displayString.length() == 0) {
-				continue;
-			}
-			result.add(new InstallableUnitProposal(displayString, offset - searchTerm.length(), searchTerm.length()));
-		}
-		return result.toArray(new ICompletionProposal[result.size()]);
-	}
-
-	private ICompletionProposal[] convertToProposals(List<UnitNode> units) {
-		Collections.sort(units, (node1, node2) -> String.CASE_INSENSITIVE_ORDER.compare(node1.getId(), node2.getId()));
-		List<ICompletionProposal> result = new ArrayList<>();
-		for (UnitNode unit : units) {
-			StyledString displayString = TargetDefinitionContentAssist.getFilteredStyledString(unit.getId(),
-					searchTerm);
-			if (displayString == null || displayString.length() == 0) {
-				continue;
-			}
-			result.add(new InstallableUnitProposal(displayString, offset - searchTerm.length(), searchTerm.length()));
-		}
-		return result.toArray(new ICompletionProposal[result.size()]);
+	private ICompletionProposal[] toProposals(Stream<String> values) {
+		return values.map(value -> TargetDefinitionContentAssist.getFilteredStyledString(value, searchTerm))
+				.filter(displayString -> displayString != null && !displayString.isEmpty())
+				.map(string -> new InstallableUnitProposal(string, offset - searchTerm.length(), searchTerm.length()))
+				.toArray(ICompletionProposal[]::new);
 	}
 
 	private ICompletionProposal[] getErrorCompletion() {
-
 		String replacementString = Messages.AttributeValueCompletionProcessor_RepositoryRequired;
 		return new ICompletionProposal[] {
 				new CompletionProposal("", offset, 0, 0, null, replacementString, null, null) }; //$NON-NLS-1$
