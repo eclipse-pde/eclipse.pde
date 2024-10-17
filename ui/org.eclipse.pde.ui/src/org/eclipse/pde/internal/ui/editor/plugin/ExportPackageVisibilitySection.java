@@ -19,7 +19,11 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
@@ -373,6 +377,13 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 		getTablePart().setButtonEnabled(1, fInternalButton.getSelection() && isEditable());
 		fFriendViewer.setInput(object);
 		fBlockChanges = false;
+		getSection().setDescription(Optional.ofNullable(objects).map(this::description)
+				.orElse(PDEUIMessages.ExportPackageVisibilitySection_default));
+	}
+
+	private String description(ExportPackageObject[] packages) {
+		return Arrays.stream(packages).filter(Objects::nonNull).map(ExportPackageObject::getName)
+			.collect(Collectors.joining(", ")); //$NON-NLS-1$
 	}
 
 	private BundleInputContext getBundleContext() {
