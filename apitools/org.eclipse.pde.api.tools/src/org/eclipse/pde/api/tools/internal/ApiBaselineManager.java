@@ -23,7 +23,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -381,14 +380,14 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		Element celement = null;
 		IApiComponent[] components = baseline.getApiComponents();
 		for (IApiComponent component : components) {
-			Set<IApiComponent> allComponentSet = new HashSet<>();
+			Set<IApiComponent> allComponentSet;
 			// if the baseline has multiple versions, persist all versions
 			Set<IApiComponent> multipleComponents = baseline.getAllApiComponents(component.getSymbolicName());
 			if (multipleComponents.isEmpty()) {
 				// no multiple version - add the current component
-				allComponentSet.add(component);
+				allComponentSet = Set.of(component);
 			} else {
-				allComponentSet.addAll(multipleComponents);
+				allComponentSet = multipleComponents;
 			}
 			for (IApiComponent iApiComponent : allComponentSet) {
 				if (!iApiComponent.isSystemComponent()) {
@@ -399,8 +398,6 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 					root.appendChild(celement);
 				}
 			}
-			// clear the temporary hashset
-			allComponentSet.clear();
 		}
 		return document;
 	}
