@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.genericeditor.target.extension.command;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import javax.xml.stream.XMLStreamException;
@@ -22,7 +22,7 @@ import javax.xml.stream.XMLStreamException;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.equinox.p2.metadata.IVersionedId;
 import org.eclipse.jface.dialogs.IPageChangeProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.IDocument;
@@ -32,14 +32,12 @@ import org.eclipse.pde.internal.genericeditor.target.extension.model.Node;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.RepositoryCache;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.UnitNode;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.xml.Parser;
-import org.eclipse.pde.internal.genericeditor.target.extension.p2.UpdateJob;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
-import org.osgi.framework.Version;
 
 public class UpdateUnitVersions extends AbstractHandler {
 
@@ -69,22 +67,21 @@ public class UpdateUnitVersions extends AbstractHandler {
 
 			int offsetChange = 0;
 			String documentText = document.get();
-			for (Node n1 : locationsNode.get(0).getChildNodesByTag(ITargetConstants.LOCATION_TAG)) {
-				LocationNode locationNode = (LocationNode) n1;
-				String repositoryLocation = locationNode.getRepositoryLocation();
-				if (repositoryLocation == null) {
+
+			List<LocationNode> locationNodes = locationsNode.get(0).getChildNodesByTag(ITargetConstants.LOCATION_TAG)
+					.stream().map(LocationNode.class::cast).toList();
+
+			// Fetch all repos at once to fetch pending metadata in parallel
+			locationNodes.stream().map(LocationNode::getRepositoryLocations).flatMap(List::stream)
+					.forEach(RepositoryCache::prefetchP2MetadataOfRepository);
+
+			for (LocationNode locationNode : locationNodes) { 
+				List<String> repositoryLocations = locationNode.getRepositoryLocations();
+				if (repositoryLocations.isEmpty()) {
 					continue;
 				}
-				RepositoryCache cache = RepositoryCache.getDefault();
-				if (!cache.isUpToDate(repositoryLocation)) {
-					try {
-						updateCache(locationNode);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-						continue;
-					}
-				}
-				List<UnitNode> repositoryUnits = cache.fetchP2UnitsFromRepo(repositoryLocation, false);
+				Map<String, List<IVersionedId>> repositoryUnits = RepositoryCache
+						.fetchP2UnitsFromRepos(repositoryLocations);
 				for (Node n2 : locationNode.getChildNodesByTag(ITargetConstants.UNIT_TAG)) {
 					UnitNode unitNode = ((UnitNode) n2);
 					String declaredVersion = unitNode.getVersion();
@@ -96,19 +93,12 @@ public class UpdateUnitVersions extends AbstractHandler {
 					if (declaredVersion == null || !isValidExplicitVersion) {
 						continue;
 					}
-					List<String> versions = null;
-					for (UnitNode unit : repositoryUnits) {
-						if (unit.getId().equals(unitNode.getId())) {
-							versions = unit.getAvailableVersions();
-							break;
-						}
-					}
+					List<IVersionedId> versions = repositoryUnits.get(unitNode.getId());
 					if (versions == null || versions.isEmpty()) {
 						continue;
 					}
-					Collections.sort(versions, (v1, v2) -> (new Version(v2)).compareTo(new Version(v1)));
-					String version = versions.get(0);
-					if (version == null || version.isEmpty() || version.equals(declaredVersion)) {
+					String version = versions.get(0).getVersion().toString();
+					if (version.isEmpty() || version.equals(declaredVersion)) {
 						continue;
 					}
 
@@ -136,24 +126,14 @@ public class UpdateUnitVersions extends AbstractHandler {
 		});
 	}
 
-	private void updateCache(LocationNode locationNode) throws InterruptedException {
-		Job job = new UpdateJob(locationNode);
-		job.setUser(true);
-		job.schedule();
-		while (job.getResult() == null) {
-			Thread.sleep(50);
-		}
-	}
-
 	private IDocument getDocument() {
 		IEditorPart editor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
 		IDocumentProvider provider = null;
-		if (editor instanceof ITextEditor) {
-			provider = ((ITextEditor) editor).getDocumentProvider();
-		} else if (editor instanceof IPageChangeProvider) {
-			Object selectedPage = ((IPageChangeProvider) editor).getSelectedPage();
-			if (selectedPage instanceof ITextEditor) {
-				provider = ((ITextEditor) selectedPage).getDocumentProvider();
+		if (editor instanceof ITextEditor textEditor) {
+			provider = textEditor.getDocumentProvider();
+		} else if (editor instanceof IPageChangeProvider pageChangeProvider) {
+			if (pageChangeProvider.getSelectedPage() instanceof ITextEditor textEditor) {
+				provider = textEditor.getDocumentProvider();
 			}
 		}
 		if(provider == null) {

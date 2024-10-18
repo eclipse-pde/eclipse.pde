@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2017 Red Hat Inc. and others
+ * Copyright (c) 2016, 2024 Red Hat Inc. and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,11 +14,22 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.genericeditor.target.extension.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.equinox.p2.metadata.IVersionedId;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.genericeditor.target.extension.p2.Messages;
 import org.eclipse.pde.internal.genericeditor.target.extension.p2.P2Fetcher;
 
 /**
@@ -31,41 +42,73 @@ import org.eclipse.pde.internal.genericeditor.target.extension.p2.P2Fetcher;
  */
 public class RepositoryCache {
 
-	private static RepositoryCache instance;
-
-	Map<String, List<UnitNode>> cache = new HashMap<>();
-
 	private RepositoryCache() {
 		//avoid instantiation
 	}
 
-	/**
-	 * @return default instance of this cache.
-	 */
-
-	public static RepositoryCache getDefault() {
-		if (instance == null) {
-			instance = new RepositoryCache();
-		}
-		return instance;
-	}
+	private static final Map<String, CompletableFuture<Map<String, List<IVersionedId>>>> CACHE = new ConcurrentHashMap<>();
 
 	/**
 	 * Fetches information and caches it.
-	 *
-	 * @param repo
-	 *            repository URL
-	 * @param flush
-	 *            whether a flush is needed
-	 * @return list of IUs available in the 'repo' repository. Never
-	 *         <code>null</code>.
+	 * <p>
+	 * All available IUs are returned as a map mapping the IDs of all IUs
+	 * available in the {@code repositories} to the list of all available
+	 * {@link IVersionedId versioned IDs} for that ID. All keys are sorted in
+	 * alphabetical order and all versions are sorted in descending order.
+	 * </p>
+	 * 
+	 * @return all available units in the specified {@code repository} in a map
+	 *         mapping all IDs to all available versions.
 	 */
-	public List<UnitNode> fetchP2UnitsFromRepo(String repo, boolean flush) {
-		if ((flush) || (cache.get(repo) == null)) {
-			List<UnitNode> units = P2Fetcher.fetchAvailableUnits(repo);
-			cache.put(repo, units);
+	public static Map<String, List<IVersionedId>> fetchP2UnitsFromRepos(List<String> repositories) {
+		if (repositories.size() == 1) {
+			try {
+				return fetchP2DataOfRepo(repositories.get(0)).get();
+			} catch (InterruptedException | ExecutionException e) {
+				return Map.of();
+			}
 		}
-		return cache.get(repo);
+		List<Future<Map<String, List<IVersionedId>>>> repos = repositories.stream()
+				.map(RepositoryCache::fetchP2DataOfRepo).toList();
+		// Fetch all repos at once to await pending metadata in parallel
+		return toSortedMap(repos.stream().<Map<String, List<IVersionedId>>>map(f -> {
+			try {
+				return f.get();
+			} catch (InterruptedException | ExecutionException e) {
+				return Map.of();
+			}
+		}).map(Map::values).flatMap(Collection::stream).flatMap(List::stream));
+	}
+
+	public static void prefetchP2MetadataOfRepository(String repository) {
+		fetchP2DataOfRepo(repository);
+	}
+
+	private static Future<Map<String, List<IVersionedId>>> fetchP2DataOfRepo(String repository) {
+		return CACHE.compute(repository, (r, f) -> {
+			if (f != null && f.isDone() && !f.isCompletedExceptionally() && !f.isCancelled()) {
+				return f;
+			}
+			CompletableFuture<Map<String, List<IVersionedId>>> future = new CompletableFuture<>();
+			// Fetching P2 repository information is a costly operation
+			// time-wise. Thus it is done in a job.
+			Job job = Job.create(NLS.bind(Messages.UpdateJob_P2DataFetch, r), m -> {
+				Map<String, List<IVersionedId>> map = toSortedMap(P2Fetcher.fetchAvailableUnits(r));
+				future.complete(map);
+			});
+			job.setUser(true);
+			job.schedule();
+			return future;
+		});
+	}
+
+	private static final Comparator<IVersionedId> BY_ID_FIRST_THEN_DESCENDING_VERSION = Comparator
+			.comparing(IVersionedId::getId, String.CASE_INSENSITIVE_ORDER)
+			.thenComparing(IVersionedId::getVersion, Comparator.reverseOrder());
+
+	private static Map<String, List<IVersionedId>> toSortedMap(Stream<IVersionedId> units) {
+		return units.sorted(BY_ID_FIRST_THEN_DESCENDING_VERSION).collect(
+				Collectors.groupingBy(IVersionedId::getId, LinkedHashMap::new, Collectors.toUnmodifiableList()));
 	}
 
 	/**
@@ -85,15 +128,10 @@ public class RepositoryCache {
 	 *            A prefix used to narrow down the match list
 	 * @return A list of IUs whose id starts with 'prefix'
 	 */
-	public List<UnitNode> getUnitsByPrefix(String repo, String prefix) {
-		List<UnitNode> allUnits = fetchP2UnitsFromRepo(repo, false);
-		List<UnitNode> result = new ArrayList<>();
-		for (UnitNode unit : allUnits) {
-			if (unit.getId().startsWith(prefix)) {
-				result.add(unit);
-			}
-		}
-		return result;
+	public static List<IVersionedId> getUnitsByPrefix(String repo, String prefix) {
+		Map<String, List<IVersionedId>> allUnits = fetchP2UnitsFromRepos(List.of(repo));
+		return allUnits.values().stream().flatMap(List::stream) //
+				.filter(unit -> unit.getId().startsWith(prefix)).toList();
 	}
 
 	/**
@@ -114,32 +152,9 @@ public class RepositoryCache {
 	 *            A prefix used to narrow down the match list
 	 * @return A list of IUs whose id contains 'searchTerm'
 	 */
-	public List<UnitNode> getUnitsBySearchTerm(String repo, String searchTerm) {
-		List<UnitNode> allUnits = fetchP2UnitsFromRepo(repo, false);
-		List<UnitNode> result = new ArrayList<>();
-		for (UnitNode unit : allUnits) {
-			if (unit.getId().contains(searchTerm)) {
-				result.add(unit);
-			}
-		}
-		return result;
-	}
-
-	/**
-	 * Classic cache up-to-date check.
-	 *
-	 * @param repo
-	 *            repository URL
-	 * @return whether the cache is up to date for this repo
-	 */
-	public boolean isUpToDate(String repo) {
-		return cache.get(repo) != null;
-	}
-
-	/**
-	 * Used to flush cache in case P2 repo information is considered stale.
-	 */
-	public void flush() {
-		cache.clear();
+	public static List<IVersionedId> getUnitsBySearchTerm(String repo, String searchTerm) {
+		Map<String, List<IVersionedId>> allUnits = fetchP2UnitsFromRepos(List.of(repo));
+		return allUnits.values().stream().flatMap(List::stream) //
+				.filter(unit -> unit.getId().contains(searchTerm)).toList();
 	}
 }
