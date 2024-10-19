@@ -24,15 +24,18 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.equinox.p2.metadata.IVersionedId;
+import org.eclipse.equinox.p2.metadata.VersionedId;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.genericeditor.target.extension.p2.Messages;
 import org.eclipse.pde.internal.genericeditor.target.extension.p2.P2Fetcher;
+import org.eclipse.pde.internal.genericeditor.target.extension.p2.P2Fetcher.RepositoryContent;
 
 /**
  * This class is used to cache the p2 repositories completion information order
@@ -48,7 +51,10 @@ public class RepositoryCache {
 		// avoid instantiation
 	}
 
-	private static final Map<URI, CompletableFuture<Map<String, List<IVersionedId>>>> CACHE = new ConcurrentHashMap<>();
+	private static record RepositoryMetadata(Map<String, List<IVersionedId>> units, List<URI> children) {
+	}
+
+	private static final Map<URI, CompletableFuture<RepositoryMetadata>> CACHE = new ConcurrentHashMap<>();
 
 	/**
 	 * Fetches information and caches it.
@@ -64,22 +70,27 @@ public class RepositoryCache {
 	 */
 	public static Map<String, List<IVersionedId>> fetchP2UnitsFromRepos(List<String> repositories) {
 		if (repositories.size() == 1) {
-			return getFutureValue(fetchP2DataOfRepo(repositories.get(0)));
+			return getFutureValue(fetchP2DataOfRepo(repositories.get(0)), RepositoryMetadata::units, Map.of());
 		}
 		var repos = repositories.stream().map(RepositoryCache::fetchP2DataOfRepo).toList();
 		// Fetch all repos at once to await pending metadata in parallel
-		return toSortedMap(repos.stream().map(RepositoryCache::getFutureValue) //
+		return toSortedMap(repos.stream()
+				.map(r -> getFutureValue(r, RepositoryMetadata::units, Map.<String, List<IVersionedId>>of()))
 				.map(Map::values).flatMap(Collection::stream).flatMap(List::stream));
+	}
+
+	public static List<URI> fetchChildrenOfRepo(String repository) {
+		return getFutureValue(fetchP2DataOfRepo(repository), RepositoryMetadata::children, List.of());
 	}
 
 	public static void prefetchP2MetadataOfRepository(String repository) {
 		fetchP2DataOfRepo(repository);
 	}
 
-	private static Future<Map<String, List<IVersionedId>>> fetchP2DataOfRepo(String repository) {
+	private static Future<RepositoryMetadata> fetchP2DataOfRepo(String repository) {
 		URI location;
-		try {
-			location = new URI(repository);
+		try { // always have a trailing slash to avoid duplicated cache entries
+			location = new URI(repository + (repository.endsWith("/") ? "" : "/"));
 		} catch (URISyntaxException e) {
 			return CompletableFuture.failedFuture(e);
 		}
@@ -87,13 +98,15 @@ public class RepositoryCache {
 			if (f != null && (!f.isDone() || !f.isCompletedExceptionally() && !f.isCancelled())) {
 				return f; // computation is running or has succeeded
 			}
-			CompletableFuture<Map<String, List<IVersionedId>>> future = new CompletableFuture<>();
+			CompletableFuture<RepositoryMetadata> future = new CompletableFuture<>();
 			// Fetching P2 repository information is a costly operation
 			// time-wise. Thus it is done in a job.
 			Job job = Job.create(NLS.bind(Messages.UpdateJob_P2DataFetch, repo), m -> {
 				try {
-					Map<String, List<IVersionedId>> units = toSortedMap(P2Fetcher.fetchAvailableUnits(repo, m));
-					future.complete(units);
+					RepositoryContent content = P2Fetcher.fetchAvailableUnits(repo, m);
+					Map<String, List<IVersionedId>> units = toSortedMap(
+							content.units().stream().map(iu -> new VersionedId(iu.getId(), iu.getVersion())));
+					future.complete(new RepositoryMetadata(units, content.children()));
 				} catch (Throwable e) {
 					future.completeExceptionally(e);
 					// Only log the failure, don't open an error-dialog.
@@ -115,11 +128,12 @@ public class RepositoryCache {
 				Collectors.groupingBy(IVersionedId::getId, LinkedHashMap::new, Collectors.toUnmodifiableList()));
 	}
 
-	private static Map<String, List<IVersionedId>> getFutureValue(Future<Map<String, List<IVersionedId>>> future) {
+	private static <T> T getFutureValue(Future<RepositoryMetadata> future, Function<RepositoryMetadata, T> getter,
+			T defaultValue) {
 		try {
-			return future.get();
+			return getter.apply(future.get());
 		} catch (Exception e) { // interrupted, canceled or execution failure
-			return Map.of();
+			return defaultValue;
 		}
 	}
 
