@@ -15,6 +15,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.processors;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -109,6 +110,11 @@ public class AttributeValueCompletionProcessor extends DelegateProcessor {
 					return toProposals(availableVersions.distinct());
 				}
 			}
+		}
+
+		if (ITargetConstants.REPOSITORY_LOCATION_ATTR.equalsIgnoreCase(acKey)) {
+			List<URI> children = RepositoryCache.fetchChildrenOfRepo(searchTerm);
+			return toProposals(children.stream().map(URI::toString));
 		}
 
 		return new ICompletionProposal[] {};
