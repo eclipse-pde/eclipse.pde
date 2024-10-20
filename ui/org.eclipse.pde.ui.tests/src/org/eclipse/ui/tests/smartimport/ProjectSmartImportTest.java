@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018, 2023 Red Hat, Inc. and others.
+ * Copyright (c) 2018, 2024 Red Hat, Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -51,10 +51,10 @@ public class ProjectSmartImportTest {
 	@Parameters(name = "{0}")
 	public static Object[][] projects() {
 		return new Object[][] { //
-				{ "JavaEclipseProject", List.of("org.eclipse.jdt.core.javanature") }, //
-				{ "FeatureProject", List.of("org.eclipse.pde.FeatureNature") }, //
-				{ "PlainEclipseProject", List.of() }, //
-				{ "PlainJavaProject", List.of("org.eclipse.jdt.core.javanature") }, //
+			{ "JavaEclipseProject", List.of("org.eclipse.jdt.core.javanature") }, //
+			{ "FeatureProject", List.of("org.eclipse.pde.FeatureNature") }, //
+			{ "PlainEclipseProject", List.of() }, //
+			{ "PlainJavaProject", List.of("org.eclipse.jdt.core.javanature") }, //
 		};
 	}
 
@@ -86,7 +86,7 @@ public class ProjectSmartImportTest {
 	}
 
 	@Test
-	public void testImport() throws CoreException, InterruptedException {
+	public void testImport() throws CoreException, InterruptedException, IOException {
 		File projectPath = new File(workingDirectory.getRoot(), projectName);
 
 		var job = new org.eclipse.ui.internal.wizards.datatransfer.SmartImportJob(projectPath, null, true, false);
@@ -94,7 +94,7 @@ public class ProjectSmartImportTest {
 		job.join();
 
 		// check imported project
-		assertThat(getErrorLogFile()).isEmptyFile();
+		assertThat(getErrorLogFile()).as("Content: %s", Files.readString(getErrorLogFile())).isEmptyFile();
 		IWorkspaceRoot workspace = ResourcesPlugin.getWorkspace().getRoot();
 		assertThat(workspace.getProjects()).hasSize(1).allMatch(p -> p.getName().equals(projectName));
 		IProject project = workspace.getProject(projectName);
@@ -116,7 +116,7 @@ public class ProjectSmartImportTest {
 		}).toList();
 		assertTrue(
 				"There should be no errors in imported project: " + System.lineSeparator() + errorMarkers.stream()
-						.map(String::valueOf).collect(Collectors.joining(System.lineSeparator())),
+				.map(String::valueOf).collect(Collectors.joining(System.lineSeparator())),
 				errorMarkers.isEmpty());
 
 	}
