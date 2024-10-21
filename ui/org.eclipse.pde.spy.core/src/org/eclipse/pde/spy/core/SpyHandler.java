@@ -23,9 +23,12 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
@@ -57,28 +60,28 @@ public class SpyHandler {
 	public void run(EPartService ps, @Optional @Named(SpyProcessor.SPY_COMMAND_PARAM) String viewID, MApplication appli,
 			EModelService modelService) {
 
-		MWindow spyWindow = prepareSpyWindow(appli, modelService);
-
-		MPartStack partStack = (MPartStack) modelService.find(E4_SPIES_PART_STACK, spyWindow);
-
-		MPart p = ps.findPart(viewID);
+		// Fix #427 : search for the part in application model instead of current window
+		// because the part can be outside of the spy window or searched from another
+		// main window
+		List<MPart> parts = modelService.findElements(appli, viewID, MPart.class);
+		MPart p = (parts.size() >= 1) ? parts.get(0) : null;
 		if (p == null) {
 			// Create the part in the spyWindow...
+			MWindow spyWindow = prepareSpyWindow(appli, modelService);
+			MPartStack partStack = (MPartStack) modelService.find(E4_SPIES_PART_STACK, spyWindow);
 			p = ps.createPart(viewID);
 			partStack.getChildren().add(p);
 			partStack.setSelectedElement(p);
 		}
 
-		p.setVisible(true);
-
-		// modelService.bringToTop(spyWindow);
 		ps.activate(p, true);
+		modelService.bringToTop(p);
 
 	}
 
 	/**
-	 * Prepare the spy window : add the toolbar Item to be called for each spies
-	 * in the tool bar The structure is defined in the fragment.
+	 * Prepare the spy window : add the toolbar Item to be called for each spies in
+	 * the tool bar The structure is defined in the fragment.
 	 *
 	 * @return the model Spies window found in fragment.
 	 */
@@ -94,24 +97,17 @@ public class SpyHandler {
 		// from the
 		// snippet.
 		MTrimmedWindow tws = (MTrimmedWindow) modelService.findSnippet(appli, E4_SPIES_WINDOW);
-		
-		// Fix #579332 : must copy the snippet to keep it in the snippet list if it must be re-created later.
-		EObject eObj = (EObject) tws;
-		MTrimmedWindow tw  = (MTrimmedWindow) EcoreUtil.copy(eObj);
 
+		// Fix #579332 : must copy the snippet to keep it in the snippet list if it must
+		// be re-created later.
+		EObject eObj = (EObject) tws;
+		MTrimmedWindow tw = (MTrimmedWindow) EcoreUtil.copy(eObj);
 
 		MTrimBar trimBar = tw.getTrimBars().stream().filter(t -> t.getSide() == SideValue.TOP).findFirst().get();
 		MToolBar toolbar = (MToolBar) trimBar.getChildren().get(0);
 
 		// Get the spy command (added by fragment)
-		MCommand spyCmd = null;
-		for (MCommand cmd : appli.getCommands()) {
-			if (SpyProcessor.SPY_COMMAND.equals(cmd.getElementId())) {
-				// Do nothing if command exists
-				spyCmd = cmd;
-				break;
-			}
-		}
+		MCommand spyCmd = appli.getCommand(SpyProcessor.SPY_COMMAND);
 
 		// Create one toolbar element for each 'spy' tagged descriptor
 		for (MPartDescriptor mp : appli.getDescriptors()) {
@@ -146,10 +142,8 @@ public class SpyHandler {
 	/**
 	 * Make the spy window centered on top of main window.
 	 *
-	 * @param appli
-	 *            current appli
-	 * @param tw
-	 *            main trim window
+	 * @param appli current appli
+	 * @param tw    main trim window
 	 */
 	private void centerSpyWindow(MApplication appli, MTrimmedWindow tw) {
 		MWindow mainWindow = appli.getChildren().get(0);
@@ -162,6 +156,5 @@ public class SpyHandler {
 		tw.setWidth(spyW);
 		tw.setHeight(spyH);
 	}
-
 
 }
