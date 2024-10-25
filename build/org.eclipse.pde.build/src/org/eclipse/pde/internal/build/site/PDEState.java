@@ -441,7 +441,9 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 					ee = profileProps.getProperty(Constants.FRAMEWORK_EXECUTIONENVIRONMENT);
 
 					prop = new Hashtable<>();
-					prop.put(ProfileManager.SYSTEM_PACKAGES, systemPackages);
+					if (systemPackages != null) { 
+						prop.put(ProfileManager.SYSTEM_PACKAGES, systemPackages);
+					}
 					if (profileName.equals("JavaSE-9")) { //$NON-NLS-1$
 						eeJava9 = ee;
 					}
