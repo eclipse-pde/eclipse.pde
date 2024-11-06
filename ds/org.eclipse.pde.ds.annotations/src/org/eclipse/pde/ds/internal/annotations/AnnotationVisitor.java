@@ -258,6 +258,12 @@ public class AnnotationVisitor extends ASTVisitor {
 							if (hasInjectableConstructor) {
 								// TODO we should add an error marker that offers a quickfix to upgrade the spec
 								// version to 1.4
+								//messages. invalid --- injectable constructor
+								problemReporter.reportProblem(annotation, null,
+										NLS.bind(messages. ,
+												type.getName().getIdentifier()),
+										type.getName().getIdentifier());
+								
 							}
 							problemReporter.reportProblem(annotation, null,
 									NLS.bind(Messages.AnnotationProcessor_invalidCompImplClass_noDefaultConstructor,
