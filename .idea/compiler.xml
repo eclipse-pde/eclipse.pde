@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="org.eclipse.pde.api.tools.tests" />
+        <module name="org.eclipse.pde" />
+        <module name="org.eclipse.pde.junit.runtime.tests" />
+        <module name="org.eclipse.pde.ui.templates.tests" />
+        <module name="org.eclipse.pde.doc.user" />
+        <module name="org.eclipse.pde.genericeditor.extension.tests" />
+        <module name="org.eclipse.pde.ua.tests" />
+        <module name="org.eclipse.pde.ui.tests" />
+        <module name="org.eclipse.pde.build.tests" />
+      </profile>
+    </annotationProcessing>
+  </component>
+</project>
