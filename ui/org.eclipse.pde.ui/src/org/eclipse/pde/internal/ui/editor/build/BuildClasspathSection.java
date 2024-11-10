@@ -171,8 +171,7 @@ public class BuildClasspathSection extends TableSection {
 
 	public void initialize() {
 		getBuildModel().addModelChangedListener(this);
-		IBuildEntry entry = getBuildModel().getBuild().getEntry(IBuildPropertiesConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
-		getSection().setExpanded(entry != null && entry.getTokens().length > 0);
+		getSection().setExpanded(true);
 	}
 
 	@Override
