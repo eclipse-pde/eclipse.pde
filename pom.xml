@@ -29,7 +29,22 @@
     <tycho.scmUrl>scm:git:https://github.com/eclipse-pde/eclipse.pde.git</tycho.scmUrl>
     <failOnJavadocErrors>true</failOnJavadocErrors>
     <javadoc.excludePackageNames></javadoc.excludePackageNames>
+    <cbi-ecj-version>[3.40.0,4)</cbi-ecj-version>
   </properties>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>eclipse-snapshots</id>
+      <url>https://repo.eclipse.org/content/repositories/eclipse-snapshots</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+
+  </pluginRepositories>
 
   <modules>
     <module>apitools</module>
@@ -68,7 +83,7 @@
 	  </plugins>
   </build>
 
-  <!--
+	<!--
     To build individual bundles, we specify a repository where to find parent pom,
     in case it is not in local maven cache already
     and that parent pom also has fuller individual-bundle profile
