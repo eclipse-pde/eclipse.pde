@@ -84,6 +84,7 @@ import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.pde.ui.IFragmentFieldData;
 import org.eclipse.pde.ui.IPluginContentWizard;
 import org.eclipse.pde.ui.IPluginFieldData;
+import org.eclipse.pde.ui.templates.PluginReference;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -553,6 +554,10 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		if (fGenerator != null) {
 			IPluginReference[] refs = fGenerator.getDependencies();
 			Collections.addAll(result, refs);
+		} else if (fContentWizard == null && fData instanceof IPluginFieldData pluginData && pluginData.isUIPlugin()) {
+			// a plug-in project is being created and makes contributions to UI
+			result.add(new PluginReference("org.eclipse.swt")); //$NON-NLS-1$
+			result.add(new PluginReference("org.eclipse.jface")); //$NON-NLS-1$
 		}
 
 		if (fContentWizard != null) {
