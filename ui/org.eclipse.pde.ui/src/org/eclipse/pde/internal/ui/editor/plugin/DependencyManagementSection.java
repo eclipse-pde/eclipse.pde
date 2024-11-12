@@ -215,9 +215,9 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 
 		gd = new GridData();
 		gd.horizontalSpan = 2;
-		FormText resolveText = toolkit.createFormText(container, true);
-		resolveText.setText(PDEUIMessages.SecondaryBundlesSection_resolve, true, true);
-		resolveText.setLayoutData(gd);
+		FormText buildSectionLinkText = toolkit.createFormText(container, true);
+		buildSectionLinkText.setText(PDEUIMessages.ExtraClassPathLink, true, true);
+		buildSectionLinkText.setLayoutData(gd);
 		resolveText.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
