@@ -819,6 +819,7 @@ public class TargetDefinition implements ITargetDefinition {
 
 	@Override
 	public void setImplicitDependencies(NameVersionDescriptor[] bundles) {
+		incrementSequenceNumber();
 		if (bundles != null && bundles.length == 0) {
 			bundles = null;
 		}

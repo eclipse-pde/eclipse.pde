@@ -217,9 +217,9 @@ public class ImplicitDependenciesSection extends SectionPart {
 			if (currentBundles != null) {
 				allDependencies.addAll(Arrays.asList(currentBundles));
 			}
-			getTarget().setImplicitDependencies(allDependencies.toArray(new NameVersionDescriptor[allDependencies.size()]));
 			markDirty();
-			refresh();
+			getTarget().setImplicitDependencies(allDependencies.toArray(new NameVersionDescriptor[allDependencies.size()]));
+			updateUI();
 		}
 	}
 
@@ -260,26 +260,30 @@ public class ImplicitDependenciesSection extends SectionPart {
 					bundles.remove(removeBundle);
 				}
 			}
-			getTarget().setImplicitDependencies(bundles.toArray((new NameVersionDescriptor[bundles.size()])));
 			markDirty();
-			refresh();
+			getTarget().setImplicitDependencies(bundles.toArray((new NameVersionDescriptor[bundles.size()])));
+			updateUI();
 		}
 	}
 
 	private void handleRemoveAll() {
-		getTarget().setImplicitDependencies(null);
 		markDirty();
-		refresh();
+		getTarget().setImplicitDependencies(null);
+		updateUI();
 	}
 
 	@Override
 	public void refresh() {
 		// TODO Try to retain selection during refresh, add and remove operations
+		updateUI();
+		super.refresh();
+	}
+
+	protected void updateUI() {
 		fViewer.setInput(getTarget());
 		fViewer.refresh();
 		updateButtons();
 		updateCount();
-		super.refresh();
 	}
 
 }
