@@ -241,30 +241,45 @@ public class AnnotationVisitor extends ASTVisitor {
 					|| (noDefaultConstructor = !(hasDefaultConstructor(type)
 							|| (hasInjectableConstructor = hasInjectableConstructor(type, problemReporter))))) {
 				// interfaces, abstract types, non-static/non-public nested types, or types with no default constructor cannot be components
-				if (!errorLevel.isIgnore()) {
-					if (isInterface) {
+				if (!errorLevel.isIgnore())
+				{
+					if (isInterface)
+					{
 						problemReporter.reportProblem(annotation, null, NLS.bind(Messages.AnnotationProcessor_invalidCompImplClass_interface, type.getName().getIdentifier()), type.getName().getIdentifier());
-					} else if (isAbstract) {
+					} else if (isAbstract)
+					{
 						problemReporter.reportProblem(annotation, null, NLS.bind(Messages.AnnotationProcessor_invalidCompImplClass_abstract, type.getName().getIdentifier()), type.getName().getIdentifier());
-					} else if (isNested) {
+					} else if (isNested)
+					{
 						problemReporter.reportProblem(annotation, null, NLS.bind(Messages.AnnotationProcessor_invalidCompImplClass_notTopLevel, type.getName().getIdentifier()), type.getName().getIdentifier());
-					} else if (noDefaultConstructor) {
-						if (specVersion.isEqualOrHigherThan(DSAnnotationVersion.V1_4)) {
+					} else if (noDefaultConstructor)
+					{
+						if (specVersion.isEqualOrHigherThan(DSAnnotationVersion.V1_4))
+						{
 							problemReporter.reportProblem(annotation, null,
 									NLS.bind(Messages.AnnotationProcessor_invalidCompImplClass_compatibleConstructor,
 											type.getName().getIdentifier()),
 									type.getName().getIdentifier());
-						} else {
-							if (hasInjectableConstructor) {
+						} else
+						{
+							if (hasInjectableConstructor)
+							{
 								// TODO we should add an error marker that offers a quickfix to upgrade the spec
 								// version to 1.4
+								problemReporter.reportProblem(annotation, null,
+										NLS.bind(
+												Messages.AnnotationProcessor_invalidCompImplClass_injectableConstructor,
+												type.getName().getIdentifier()),
+										type.getName().getIdentifier());
 							}
 							problemReporter.reportProblem(annotation, null,
 									NLS.bind(Messages.AnnotationProcessor_invalidCompImplClass_noDefaultConstructor,
 											type.getName().getIdentifier()),
 									type.getName().getIdentifier());
 						}
-					} else {
+					}
+					else
+					{
 						problemReporter.reportProblem(annotation, null, NLS.bind(Messages.AnnotationProcessor_invalidComponentImplementationClass, type.getName().getIdentifier()), type.getName().getIdentifier());
 					}
 				}

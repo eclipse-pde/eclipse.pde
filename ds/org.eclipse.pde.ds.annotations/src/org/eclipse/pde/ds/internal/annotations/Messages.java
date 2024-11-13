@@ -47,6 +47,8 @@ public class Messages extends NLS {
 
 	public static String AnnotationProcessor_invalidCompImplClass_noDefaultConstructor;
 
+	public static String AnnotationProcessor_invalidCompImplClass_injectableConstructor;
+
 	public static String AnnotationProcessor_invalidCompImplClass_notPublic;
 
 	public static String AnnotationProcessor_invalidCompImplClass_notTopLevel;
