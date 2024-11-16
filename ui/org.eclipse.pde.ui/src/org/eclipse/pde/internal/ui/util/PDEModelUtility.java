@@ -54,6 +54,7 @@ import org.eclipse.pde.internal.ui.editor.build.BuildEditor;
 import org.eclipse.pde.internal.ui.editor.build.BuildInputContext;
 import org.eclipse.pde.internal.ui.editor.build.BuildSourcePage;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
+import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.editor.schema.SchemaEditor;
 import org.eclipse.pde.internal.ui.editor.schema.SchemaInputContext;
@@ -412,9 +413,13 @@ public class PDEModelUtility {
 				for (IFile file : files) {
 					if (file == null)
 						continue;
-					InputContext con = editor.getContextManager().findContext(file);
-					if (con != null)
-						con.flushEditorInput();
+					InputContextManager manager = editor.getContextManager();
+					if (manager != null){
+						InputContext con = manager.findContext(file);
+						if (con != null) {
+							con.flushEditorInput();
+						}
+					}
 				}
 				if (mod.saveOpenEditor())
 					editor.doSave(monitor);
