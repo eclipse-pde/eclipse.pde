@@ -83,8 +83,6 @@ PDE is broken into three main components:
 *   API Tooling - Tooling to assist API documentation and maintenance
 *   Build - Ant-based tools and scripts to automate build processes
 
-Discover the latest features in the What's New section.
-
 **PDE UI**
 
 PDE UI provides editors, wizards, launchers, views, and other tools to create a fully-featured environment to develop and deploy Eclipse plug-ins, fragments, features, update sites, RCP products, and OSGi bundles.
@@ -120,17 +118,14 @@ Some of the features include:
 *   **API Leak Analysis** : Identify API types and methods that leak non-API types.
 *   **Quick Fixes** : Quick fixes are provided to adjust plug-in versions and @since tags appropriately.
 
-To get started, see the tasks:
-
-TODO
 
 **PDE Build**
 
-PDE Build facilitates the automation of plug-in build processes. PDE Build produces Ant scripts based on development-time information provided by, for example, the plugin.xml and build.properties files. The generated Ant scripts, can fetch the relevant projects from a CVS repository, build jars, Javadoc, source zips, put everything together in a format ready to ship, and send it out to a remote location (e.g., a local network or a downloads server).
+PDE Build facilitates the automation of plug-in build processes. 
+PDE Build produces Ant scripts based on development-time information provided by, for example, the plugin.xml and build.properties files. 
+The generated Ant scripts, can fetch the relevant projects from a CVS repository, build jars, Javadoc, source zips, put everything together in a format ready to ship, and send it out to a remote location (e.g., a local network or a downloads server).
 
-To get started, see the following:
-
-TODO
+PDE build is not actively enhanced anymore as the platform moved to a Maven Tycho build.
 
 Concepts
 ========
@@ -215,7 +210,7 @@ The target platform and your target definitions are managed on the Target Platfo
 
 By default PDE provides a default target platform which simply points to the plug-ins in your currently running Eclipse instance (often referred to as your host). For Eclipse plug-in developers this might be all you need. RCP developers must be more careful managing their target as adding dependencies increases the size and complexity of their application. When creating a new target definition for RCP, consider using the RCP template (available with or without source).
 
-For up to the minute target troubleshooting help see the Target Definitions Wiki Page.
+See https://github.com/eclipse-pde/eclipse.pde/blob/master/docs/Target_Definitions.md
 
 Update Site
 -----------
