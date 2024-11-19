@@ -16,6 +16,8 @@ package org.eclipse.pde.api.tools.tests;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.concurrent.TimeUnit;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -194,7 +196,17 @@ public class AbstractApiTest {
 		if (pro.exists()) {
 			ResourceEventWaiter waiter = new ResourceEventWaiter(IPath.fromOSString(name), IResourceChangeEvent.POST_CHANGE,
 					IResourceDelta.CHANGED, 0);
-			pro.delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+			try {
+				pro.delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+			} catch (CoreException canNotDelete) {
+				System.gc();
+				try {
+					TimeUnit.MILLISECONDS.sleep(1);
+				} catch (InterruptedException ignored) {
+				}
+				// retry:
+				pro.delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+			}
 			Object obj = waiter.waitForEvent();
 			assertNotNull("the project delete event did not arrive", obj); //$NON-NLS-1$
 		}
