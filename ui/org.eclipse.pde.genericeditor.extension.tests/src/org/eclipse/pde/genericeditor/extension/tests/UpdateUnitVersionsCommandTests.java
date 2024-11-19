@@ -88,8 +88,10 @@ public class UpdateUnitVersionsCommandTests extends AbstractTargetEditorTest {
 		for (Entry<String, String> unit : expected.entrySet()) {
 			String expectedID = unit.getKey();
 			String expectedVersion = unit.getValue();
-			assertTrue("ID: " + expectedID + " not found in actual", actual.containsKey(expectedID));
-			assertEquals("ID: " + expectedID + " has the incorrect version.", expectedVersion, actual.get(expectedID));
+			assertTrue("ID: " + expectedID + " not found in actual. updatedText=" + updatedText,
+					actual.containsKey(expectedID));
+			assertEquals("ID: " + expectedID + " has the incorrect version. updatedText=" + updatedText,
+					expectedVersion, actual.get(expectedID));
 		}
 	}
 
