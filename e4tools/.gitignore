@@ -1,0 +1,2 @@
+# DO NOT ignore all 'target' folders in the repo-root because PDE has numerous packages with elements named 'target'
+target/
