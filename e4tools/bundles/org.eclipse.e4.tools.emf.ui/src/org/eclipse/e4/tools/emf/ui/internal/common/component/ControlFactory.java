@@ -745,12 +745,14 @@ public class ControlFactory {
 	public static <M> void createCheckBox(Composite parent, String label, String tooltip, IObservableValue<M> master,
 			EMFDataBindingContext context, IWidgetValueProperty<Button, Boolean> selectionProp,
 			IValueProperty<? super M, Boolean> modelProp) {
+		final Label l = new Label(parent, SWT.NONE);
+		l.setText(label);
+		l.setLayoutData(new GridData());
 		final Button checkBox = new Button(parent, SWT.CHECK);
-		checkBox.setText(label);
 		if (tooltip != null) {
-			checkBox.setToolTipText(tooltip);
+			l.setToolTipText(tooltip);
 		}
-		checkBox.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false, 3, 1));
+		checkBox.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false, 2, 1));
 		context.bindValue(selectionProp.observe(checkBox), modelProp.observeDetail(master));
 	}
 
