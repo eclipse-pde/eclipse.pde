@@ -31,7 +31,7 @@ public class $className$ {
 	}
 
 	/**
-	 * This method is kept for E3 compatiblity. You can remove it if you do not
+	 * This method is kept for E3 compatibility. You can remove it if you do not
 	 * mix E3 and E4 code. <br/>
 	 * With E4 code you will set directly the selection in ESelectionService and
 	 * you do not receive a ISelection
