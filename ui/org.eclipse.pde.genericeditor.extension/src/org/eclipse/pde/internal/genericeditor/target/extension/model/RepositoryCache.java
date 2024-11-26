@@ -133,6 +133,7 @@ public class RepositoryCache {
 		try {
 			return getter.apply(future.get());
 		} catch (Exception e) { // interrupted, canceled or execution failure
+			ILog.get().warn(e.getMessage(), e);
 			return defaultValue;
 		}
 	}
