@@ -36,6 +36,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.IWizardNode;
 import org.eclipse.pde.bnd.ui.templating.RepoTemplateLabelProvider;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.ElementList;
@@ -67,7 +68,8 @@ public class TemplateListSelectionPage extends WizardListSelectionPage {
 			boolean ui = data.isUIPlugin();
 			boolean rcp = data.isRCPApplicationPlugin();
 			boolean osgi = data.getOSGiFramework() != null;
-			boolean automatic = osgi && data.isAutomaticMetadataGeneration();
+			boolean automatic = osgi && data.isAutomaticMetadataGeneration()
+					&& !data.getOSGiFramework().equals(ICoreConstants.EQUINOX);
 			WizardElement welement = (WizardElement) element;
 			boolean active = TemplateWizardHelper.isActive(welement);
 			boolean uiFlag = welement.getFlag(TemplateWizardHelper.FLAG_UI, true);
