@@ -48,6 +48,9 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 	}
 
 	public static void initializeDefaults(IPreferenceStore store) {
+		if (!PlatformUI.isWorkbenchRunning()) {
+			return;
+		}
 		PreferenceConverter.setDefault(store, P_DEFAULT, DEFAULT);
 		PreferenceConverter.setDefault(store, P_PROC_INSTR, PROC_INSTR);
 		PreferenceConverter.setDefault(store, P_STRING, STRING);
@@ -61,9 +64,6 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 		PreferenceConverter.setDefault(store, P_HEADER_ATTRIBUTES, HEADER_ATTRIBUTES);
 		store.setDefault(P_HEADER_ATTRIBUTES + IPDEColorConstants.P_ITALIC_SUFFIX, true);
 		PreferenceConverter.setDefault(store, P_HEADER_ASSIGNMENT, HEADER_ASSIGNMENT);
-		if (!PlatformUI.isWorkbenchRunning()) {
-			return;
-		}
 		try {
 			Display display = PlatformUI.getWorkbench().getDisplay();
 			Runnable runnable = () -> {
