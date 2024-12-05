@@ -412,9 +412,11 @@ public class PDEModelUtility {
 				for (IFile file : files) {
 					if (file == null)
 						continue;
-					InputContext con = editor.getContextManager().findContext(file);
-					if (con != null)
-						con.flushEditorInput();
+					if (editor.getContextManager() != null){
+						InputContext con = editor.getContextManager().findContext(file);
+						if (con != null)
+							con.flushEditorInput();
+					}
 				}
 				if (mod.saveOpenEditor())
 					editor.doSave(monitor);
