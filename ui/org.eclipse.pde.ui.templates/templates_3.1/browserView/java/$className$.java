@@ -54,7 +54,7 @@ public class $className$ extends ViewPart implements ISelectionListener {
 
 	@Override
 	public void createPartControl(Composite parent) {
-		fBrowser = new Browser(parent, SWT.WEBKIT);
+		fBrowser = new Browser(parent, SWT.DEFAULT);
 		fBrowser.setText(getContent());
 		BrowserFunction prefs = new OpenPreferenceFunction(fBrowser, "openEclipsePreferences", () -> {
 			PreferenceDialog dialog = PreferencesUtil.createPreferenceDialogOn(shell, null, null, null);
