@@ -895,22 +895,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			localMonitor.subTask(NLS.bind(BuilderMessages.building_workspace_profile, currentproject.getName()));
 			localMonitor.split(1);
 			String id = currentModel.getBundleDescription().getSymbolicName();
+			Version version = currentModel.getBundleDescription().getVersion();
 			// Compatibility checks
-			IApiComponent apiComponent = wbaseline.getApiComponent(id);
-			Set<IApiComponent> apiComponentMultiple = wbaseline.getAllApiComponents(id);
-			if (!apiComponentMultiple.isEmpty()) {
-				// add the exact match
-				for (IApiComponent iApiComponent : apiComponentMultiple) {
-					Version workspaceBaselineVersion = new Version(iApiComponent.getVersion());// removes
-																								// qualifier
-					Version currentProjectVersion = currentModel.getBundleDescription().getVersion();
-					if (new Version(currentProjectVersion.getMajor(), currentProjectVersion.getMinor(),
-							currentProjectVersion.getMicro()).compareTo(workspaceBaselineVersion) == 0) {
-						apiComponent = iApiComponent;
-						break;
-					}
-				}
-			}
+			IApiComponent apiComponent = wbaseline.getApiComponent(id, version);
 			if (apiComponent != null) {
 				if (getAnalyzer() instanceof BaseApiAnalyzer) {
 					((BaseApiAnalyzer) getAnalyzer()).checkBaselineMismatch(baseline, wbaseline);
