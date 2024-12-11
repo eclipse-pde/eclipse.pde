@@ -162,6 +162,9 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 	private void updateAutomatic() {
 		boolean standardSelected = PDEUIMessages.NewProjectCreationPage_standard.equals(fOSGiCombo.getText());
 		useAutomaticMetadata.setVisible(standardSelected);
+		if (!standardSelected) {
+			useAutomaticMetadata.setSelection(false);
+		}
 	}
 
 	private void updateRuntimeDependency() {
