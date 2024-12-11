@@ -532,7 +532,8 @@ public class TargetEditor extends FormEditor {
 				fTarget = service.newTarget();
 				throw e;
 			}
-			TargetEditor.this.getTargetChangedListener().contentsChanged(fTarget, this, true, false);
+			PlatformUI.getWorkbench().getDisplay().asyncExec(
+					() -> TargetEditor.this.getTargetChangedListener().contentsChanged(fTarget, this, true, false));
 			return fTarget;
 		}
 
