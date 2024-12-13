@@ -17,6 +17,7 @@ package org.eclipse.pde.launching;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -43,6 +44,7 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMRunner;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.ICoreConstants;
@@ -112,8 +114,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 
 		VMRunnerConfiguration runnerConfig = new VMRunnerConfiguration(getMainClass(), getClasspath(configuration));
 		IVMInstall launcher = VMHelper.createLauncher(configuration);
-		boolean isModular = JavaRuntime.isModularJava(launcher);
-		runnerConfig.setVMArguments(updateVMArgumentWithAdditionalArguments(getVMArguments(configuration), isModular, configuration));
+		runnerConfig.setVMArguments(updateVMArgumentWithAdditionalArguments(getVMArguments(configuration), launcher));
 		runnerConfig.setProgramArguments(getProgramArguments(configuration));
 		runnerConfig.setWorkingDirectory(getWorkingDirectory(configuration).getAbsolutePath());
 		runnerConfig.setEnvironment(getEnvironment(configuration));
@@ -148,8 +149,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 
 		VMRunnerConfiguration runnerConfig = new VMRunnerConfiguration(getMainClass(), getClasspath(configuration));
 		IVMInstall launcher = VMHelper.createLauncher(configuration);
-		boolean isModular = JavaRuntime.isModularJava(launcher);
-		runnerConfig.setVMArguments(updateVMArgumentWithAdditionalArguments(getVMArguments(configuration), isModular, configuration));
+		runnerConfig.setVMArguments(updateVMArgumentWithAdditionalArguments(getVMArguments(configuration), launcher));
 		runnerConfig.setProgramArguments(getProgramArguments(configuration));
 		runnerConfig.setWorkingDirectory(getWorkingDirectory(configuration).getAbsolutePath());
 		runnerConfig.setEnvironment(getEnvironment(configuration));
@@ -167,79 +167,32 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 
 	}
 
-	private String[] updateVMArgumentWithAdditionalArguments(String[] args, boolean isModular, ILaunchConfiguration configuration) {
-		String modAllSystem= "--add-modules=ALL-SYSTEM"; //$NON-NLS-1$
-		String allowSecurityManager = "-Djava.security.manager=allow"; //$NON-NLS-1$
-		boolean addModuleSystem = false;
-		boolean addAllowSecurityManager = false;
-		int argLength = args.length;
-		if (isModular && !argumentContainsAttribute(args, modAllSystem)) {
-			addModuleSystem = true;
-			argLength++; // Need to add the argument
+	private String[] updateVMArgumentWithAdditionalArguments(String[] args, IVMInstall vmInstall) {
+		List<String> arguments = new ArrayList<>(Arrays.asList(args));
+		boolean isModular = JavaRuntime.isModularJava(vmInstall);
+		if (isModular) {
+			VMHelper.addNewArgument(arguments, "--add-modules", "ALL-SYSTEM"); //$NON-NLS-1$//$NON-NLS-2$
 		}
-
-		if (isEclipseBundleGreaterThanVersion(4, 24)) { // Don't add allow flags for eclipse before 4.24
-			try {
-				IVMInstall vmInstall = VMHelper.getVMInstall(configuration);
-				if (vmInstall instanceof AbstractVMInstall) {
-					AbstractVMInstall install = (AbstractVMInstall) vmInstall;
-					String vmver = install.getJavaVersion();
-					if (vmver != null && JavaCore.compareJavaVersions(vmver, JavaCore.VERSION_17) >= 0) {
-						if (!argumentContainsAttribute(args, allowSecurityManager)) {
-							addAllowSecurityManager = true;
-							argLength++; // Need to add the argument
-						}
-					}
-				}
-			} catch (CoreException e) {
-				PDELaunchingPlugin.log(e);
-			}
-		}
-		if (addModuleSystem || addAllowSecurityManager) {
-			args = Arrays.copyOf(args, argLength);
-			if (addAllowSecurityManager) {
-				args[--argLength] = allowSecurityManager;
-			}
-			if (addModuleSystem) {
-				args[--argLength] = modAllSystem;
+		if (isEclipseBundleGreaterThanVersion(4, 24) // Don't add allow flags for eclipse before 4.24
+				&& vmInstall instanceof AbstractVMInstall install) {
+			String vmver = install.getJavaVersion();
+			if (vmver != null && JavaCore.compareJavaVersions(vmver, JavaCore.VERSION_17) >= 0) {
+				VMHelper.addNewArgument(arguments, "-Djava.security.manager", "allow"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		if (!isModular) {
-			ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(args));
-			arrayList.remove(modAllSystem);
-			arrayList.trimToSize();
-			args = arrayList.toArray(new String[arrayList.size()]);
+			arguments.remove("--add-modules=ALL-SYSTEM"); //$NON-NLS-1$
 		}
-		return args;
+		return arguments.toArray(String[]::new);
 	}
-
 
 	private boolean isEclipseBundleGreaterThanVersion(int major, int minor) {
 		PDEState pdeState = TargetPlatformHelper.getPDEState();
 		if (pdeState != null) {
-			try {
-				Optional<IPluginModelBase> platformBaseModel = Arrays.stream(pdeState.getTargetModels()).filter(x -> Objects.nonNull(x.getBundleDescription())).filter(x -> ("org.eclipse.platform").equals(x.getBundleDescription().getSymbolicName()))//$NON-NLS-1$
-						.findFirst();
-				if (platformBaseModel.isPresent()) {
-					Version version = platformBaseModel.get().getBundleDescription().getVersion();
-					Version comparedVersion = new Version(major, minor, 0);
-					if (version != null && version.compareTo(comparedVersion) >= 0) {
-						return true;
-					}
-				}
-			}
-			catch (Exception ex) {
-				PDELaunchingPlugin.log(ex);
-			}
-		}
-		return false;
-
-	}
-
-	private boolean argumentContainsAttribute(String[] args, String modAllSystem) {
-		for (String string : args) {
-			if (string.equals(modAllSystem))
-				return true;
+			Optional<BundleDescription> bundle = Arrays.stream(pdeState.getTargetModels()) //
+					.map(IPluginModelBase::getBundleDescription).filter(Objects::nonNull) //
+					.filter(x -> "org.eclipse.platform".equals(x.getSymbolicName())).findFirst(); //$NON-NLS-1$
+			return bundle.map(BundleDescription::getVersion).filter(v -> v.compareTo(new Version(major, minor, 0)) >= 0).isPresent();
 		}
 		return false;
 	}

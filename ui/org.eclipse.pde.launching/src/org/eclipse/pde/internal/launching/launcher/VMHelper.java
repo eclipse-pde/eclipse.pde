@@ -232,4 +232,10 @@ public class VMHelper {
 		return JavaRuntime.newRuntimeContainerClasspathEntry(containerPath, IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
 	}
 
+	public static void addNewArgument(List<String> arguments, String key, String value) {
+		if (arguments.stream().noneMatch(a -> a.startsWith(key + "="))) { //$NON-NLS-1$
+			arguments.add(key + "=" + value); //$NON-NLS-1$
+		}
+	}
+
 }
