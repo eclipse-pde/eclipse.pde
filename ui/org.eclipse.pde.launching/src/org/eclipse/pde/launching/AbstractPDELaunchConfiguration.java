@@ -176,7 +176,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 		if (isEclipseBundleGreaterThanVersion(4, 24) // Don't add allow flags for eclipse before 4.24
 				&& vmInstall instanceof AbstractVMInstall install) {
 			String vmver = install.getJavaVersion();
-			if (vmver != null && JavaCore.compareJavaVersions(vmver, JavaCore.VERSION_17) >= 0) {
+			if (vmver != null && JavaCore.compareJavaVersions(vmver, JavaCore.VERSION_17) >= 0 && JavaCore.compareJavaVersions(vmver, JavaCore.VERSION_23) <= 0) {
 				VMHelper.addNewArgument(arguments, "-Djava.security.manager", "allow"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
