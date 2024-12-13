@@ -280,9 +280,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		IVMInstall launcher = VMHelper.createLauncher(configuration);
 		boolean isModular = JavaRuntime.isModularJava(launcher);
 		if (isModular) {
-			String modAllSystem = "--add-modules=ALL-SYSTEM"; //$NON-NLS-1$
-			if (!vmArguments.contains(modAllSystem))
-				vmArguments.add(modAllSystem);
+			VMHelper.addNewArgument(vmArguments, "--add-modules", "ALL-SYSTEM"); //$NON-NLS-1$//$NON-NLS-2$
 		}
 		//  if element is a test class annotated with @RunWith(JUnitPlatform.class, we add this in program arguments
 		@SuppressWarnings("restriction")
