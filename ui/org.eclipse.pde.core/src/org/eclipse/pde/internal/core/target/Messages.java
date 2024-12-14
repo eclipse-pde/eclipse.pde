@@ -47,6 +47,8 @@ public class Messages extends NLS {
 	public static String LocalTargetHandle_3;
 	public static String LocalTargetHandle_4;
 	public static String LocalTargetHandle_5;
+	public static String P2TargetUtils_cant_refresh_artifacts;
+	public static String P2TargetUtils_cant_refresh_metadata;
 	public static String P2TargetUtils_ProvisioningSourceTask;
 	public static String ProfileBundleContainer_0;
 	public static String ProfileBundleContainer_2;

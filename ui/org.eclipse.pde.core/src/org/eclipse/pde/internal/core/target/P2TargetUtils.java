@@ -92,6 +92,7 @@ import org.eclipse.equinox.p2.repository.artifact.IArtifactRequest;
 import org.eclipse.equinox.p2.repository.artifact.IFileArtifactRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetHandle;
 import org.eclipse.pde.core.target.ITargetLocation;
@@ -984,44 +985,108 @@ public class P2TargetUtils {
 	/**
 	 * Return a queryable on the metadata defined in the given repo locations
 	 *
-	 * @param repos the repos to lookup
-	 * @param followRepositoryReferences whether to follow repository references
-	 * @param monitor the progress monitor
+	 * @param repos
+	 *            the repos to lookup
+	 * @param followRepositoryReferences
+	 *            whether to follow repository references
+	 * @param monitor
+	 *            the progress monitor
 	 * @return the set of metadata repositories found
-	 * @throws CoreException if there is a problem getting the repositories
+	 * @throws CoreException
+	 *             if there is a problem getting the repositories
 	 */
 	static IQueryable<IInstallableUnit> getQueryableMetadata(Collection<URI> repos, boolean followRepositoryReferences,
 			IProgressMonitor monitor) throws CoreException {
-		IMetadataRepositoryManager manager = getRepoManager();
-		if (repos.isEmpty()) {
-			repos = Arrays.asList(manager.getKnownRepositories(IRepositoryManager.REPOSITORIES_ALL));
-		}
-		SubMonitor subMonitor = SubMonitor.convert(monitor, repos.size() * 2);
+		return getQueryableMetadata(repos, followRepositoryReferences, false, monitor);
+	}
 
+	/**
+	 * Return a queryable on the metadata defined in the given repo locations
+	 *
+	 * @param repos
+	 *            the repos to lookup
+	 * @param followRepositoryReferences
+	 *            whether to follow repository references
+	 * @param forceReload
+	 *            forces reloading of repositories
+	 * @param monitor
+	 *            the progress monitor
+	 * @return the set of metadata repositories found
+	 * @throws CoreException
+	 *             if there is a problem getting the repositories
+	 */
+	static IQueryable<IInstallableUnit> getQueryableMetadata(Collection<URI> repos, boolean followRepositoryReferences,
+			boolean forceReload,
+			IProgressMonitor monitor) throws CoreException {
+		IMetadataRepositoryManager metadataRepositoryManager = getRepoManager();
+		Collection<URI> existing = new LinkedHashSet<>(
+				Arrays.asList(metadataRepositoryManager.getKnownRepositories(IRepositoryManager.REPOSITORIES_ALL)));
+		if (repos.isEmpty()) {
+			repos = existing;
+		}
+		int work = repos.size() * (forceReload ? 4 : 2);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, work);
 		Set<IRepositoryReference> seen = new HashSet<>();
 		List<IMetadataRepository> result = new ArrayList<>(repos.size());
 		List<IMetadataRepository> additional = new ArrayList<>();
 		MultiStatus repoStatus = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.IUBundleContainer_ProblemsLoadingRepositories);
 		for (URI location : repos) {
 			try {
-				IMetadataRepository repository = manager.loadRepository(location, subMonitor.split(1));
+				IMetadataRepository repository = metadataRepositoryManager.loadRepository(location, subMonitor.split(1));
 				result.add(repository);
 				if (followRepositoryReferences) {
-					addReferences(repository, additional, seen, manager, subMonitor.split(1));
+					addReferences(repository, additional, seen, metadataRepositoryManager, subMonitor.split(1));
 				}
 			} catch (ProvisionException e) {
 				repoStatus.add(e.getStatus());
 			}
 		}
-
 		if (result.size() != repos.size()) {
 			throw new CoreException(repoStatus);
 		}
 		result.addAll(additional);
-		if (result.size() == 1) {
-			return result.get(0);
+		if (result.isEmpty()) {
+			return QueryUtil.compoundQueryable(List.of());
 		}
-		return QueryUtil.compoundQueryable(new LinkedHashSet<>(result));
+		Collection<IMetadataRepository> unique = new LinkedHashSet<>(result);
+		if (forceReload) {
+			List<IMetadataRepository> refreshed = new ArrayList<>();
+			subMonitor.setWorkRemaining(2 * unique.size());
+			IArtifactRepositoryManager artifactRepositoryManager = getArtifactRepositoryManager();
+			metadataRepositoryManager = getRepoManager();
+			Collection<URI> existingArtifactRepositories = new LinkedHashSet<>(
+					Arrays.asList(artifactRepositoryManager.getKnownRepositories(IRepositoryManager.REPOSITORIES_ALL)));
+			for (IMetadataRepository metadataRepository : unique) {
+				URI location = metadataRepository.getLocation();
+				if (existing.contains(location)) {
+					try {
+						refreshed.add(metadataRepositoryManager.refreshRepository(location, subMonitor.split(1)));
+					} catch (ProvisionException e) {
+						ILog.get().warn(NLS.bind(Messages.P2TargetUtils_cant_refresh_metadata, location), e);
+						// if refresh do not work, use the previously loaded
+						// repository
+						refreshed.add(metadataRepository);
+					}
+					if (existingArtifactRepositories.contains(location)) {
+						try {
+							artifactRepositoryManager.refreshRepository(location, subMonitor.split(1));
+						} catch (ProvisionException e) {
+							// we tried our best...
+							ILog.get().warn(NLS.bind(Messages.P2TargetUtils_cant_refresh_artifacts, location), e);
+						}
+					}
+				} else {
+					// the repo was just loaded as part of this call so it has
+					// to be (almost) fresh
+					refreshed.add(metadataRepository);
+				}
+			}
+			unique = refreshed;
+		}
+		if (unique.size() == 1) {
+			return unique.iterator().next();
+		}
+		return QueryUtil.compoundQueryable(unique);
 	}
 
 	private static void addReferences(IMetadataRepository repository, List<IMetadataRepository> result,
