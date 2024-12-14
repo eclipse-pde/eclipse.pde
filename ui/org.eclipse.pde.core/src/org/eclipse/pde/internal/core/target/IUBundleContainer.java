@@ -423,7 +423,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	public synchronized IUBundleContainer update(Set<String> toUpdate, IProgressMonitor monitor) throws CoreException {
 		SubMonitor progress = SubMonitor.convert(monitor, 100);
 		IQueryable<IInstallableUnit> source = P2TargetUtils.getQueryableMetadata(fRepos, isFollowRepositoryReferences(),
-				progress.split(30));
+				true, progress.split(30));
 		boolean updated = false;
 		List<UnitDeclaration> updatedUnits = new ArrayList<>(fIUs);
 		SubMonitor loopProgress = progress.split(70).setWorkRemaining(updatedUnits.size());
