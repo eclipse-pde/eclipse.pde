@@ -40,6 +40,7 @@ import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WordRule;
+import org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -50,7 +51,7 @@ public class TargetPlatformTagRule extends WordRule {
 	private static final String[] TAGS = new String[] { LOCATIONS_TAG, LOCATION_TAG, TARGET_TAG, UNIT_TAG,
 			REPOSITORY_TAG, TARGET_JRE_TAG, LAUNCHER_ARGS_TAG, VM_ARGS_TAG, PROGRAM_ARGS_TAG, ENVIRONMENT_TAG, OS_TAG,
 			WS_TAG, ARCH_TAG, NL_TAG, DEPENDENCIES_TAG, DEPENDENCY_TAG, VERSION_TAG, TYPE_TAG, GROUP_ID_TAG,
-			ARTIFACT_ID_TAG };
+			ARTIFACT_ID_TAG, ITargetConstants.IMPLICITDEPENDENCIES_TAG, ITargetConstants.PLUGIN_TAG };
 
 	private final IToken tagToken = new Token(
 			new TextAttribute(PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry()
