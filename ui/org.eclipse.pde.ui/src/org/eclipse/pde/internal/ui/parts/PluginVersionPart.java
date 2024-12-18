@@ -13,15 +13,25 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.parts;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.eclipse.pde.internal.build.Utils;
+import org.eclipse.pde.internal.core.bundle.Bundle;
+import org.eclipse.pde.internal.core.text.bundle.ManifestHeader;
+import org.eclipse.pde.internal.core.text.bundle.PackageObject;
 import org.eclipse.pde.internal.core.util.UtilMessages;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -70,17 +80,38 @@ public class PluginVersionPart {
 		protected void buttonSelected(Button button, int index) {
 			IStructuredSelection selection = getTableViewer().getStructuredSelection();
 			if (selection.size() == 1) {
-				IPluginModelBase entry = (IPluginModelBase) selection.getFirstElement();
-				String version = VersionUtil.computeInitialPluginVersion(entry.getBundleDescription().getVersion().toString());
+				String version;
+				if (isPlugin) {
+					IPluginModelBase entry = (IPluginModelBase) selection.getFirstElement();
+					version = VersionUtil
+							.computeInitialPluginVersion(entry.getBundleDescription().getVersion().toString());
+				} else {
+					PackageObject po = (PackageObject) selection.getFirstElement();
+					version = po.getVersion();
+				}
 				setVersion(version, ""); //$NON-NLS-1$
 			} else {
 				// plug-ins come back in a sorted order so we assume min/max
-				Object[] objects = selection.toArray();
-				IPluginModelBase min = (IPluginModelBase) objects[0];
-				IPluginModelBase max = (IPluginModelBase) objects[objects.length - 1];
+				String minVersion;
+				String maxVersion;
+				if (isPlugin) {
+					Object[] objects = selection.toArray();
+					IPluginModelBase min = (IPluginModelBase) objects[0];
+					IPluginModelBase max = (IPluginModelBase) objects[objects.length - 1];
 
-				String minVersion = VersionUtil.computeInitialPluginVersion(min.getBundleDescription().getVersion().toString());
-				String maxVersion = VersionUtil.computeInitialPluginVersion(max.getBundleDescription().getVersion().toString());
+					minVersion = VersionUtil
+						.computeInitialPluginVersion(min.getBundleDescription().getVersion().toString());
+					maxVersion = VersionUtil
+						.computeInitialPluginVersion(max.getBundleDescription().getVersion().toString());
+				} else {
+					Object[] objects = selection.toArray();
+					PackageObject poMin = (PackageObject) objects[0];
+					PackageObject poMax = (PackageObject) objects[objects.length - 1];
+
+					minVersion = poMin.getVersion();
+					maxVersion = poMax.getVersion();
+
+				}
 				setVersion(minVersion, maxVersion);
 			}
 		}
@@ -100,6 +131,46 @@ public class PluginVersionPart {
 
 	}
 
+
+	private static class ImportPackageVersionContentProvider implements IStructuredContentProvider {
+
+		@Override
+		public Object[] getElements(Object inputElement) {
+			IPluginModelBase[] models = PluginRegistry.getActiveModels();
+			ArrayList<PackageObject> list = new ArrayList<>();
+			Set<NameVersionDescriptor> nameVersions = new HashSet<>();
+			for (IPluginModelBase pluginModel : models) {
+				BundleDescription desc = pluginModel.getBundleDescription();
+
+				String id = desc == null ? null : desc.getSymbolicName();
+				if (id == null)
+					continue;
+				ExportPackageDescription[] exported = desc.getExportPackages();
+				for (ExportPackageDescription exportedPackage : exported) {
+					String name = exportedPackage.getName();
+					ManifestHeader mHeader = new ManifestHeader("Export-Package", "", new Bundle(), "\n"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+					PackageObject po = new PackageObject(mHeader, exportedPackage.getName(),
+							exportedPackage.getVersion().toString(), "version"); //$NON-NLS-1$
+
+					NameVersionDescriptor nameVersion = new NameVersionDescriptor(exportedPackage.getName(),
+							exportedPackage.getVersion().toString(), NameVersionDescriptor.TYPE_PACKAGE);
+					exportedPackage.getExporter().getBundle();
+
+					if (("java".equals(name) || name.startsWith("java."))) //$NON-NLS-1$ //$NON-NLS-2$
+						// $NON-NLS-2$
+						continue;
+					if (nameVersions.add(nameVersion)) {
+						if (name.equalsIgnoreCase(inputElement.toString()))
+								list.add(po);
+					}
+				}
+			}
+			return list.toArray();
+		}
+
+	}
+
+
 	private Text fMinVersionText;
 	private Text fMaxVersionText;
 	private Combo fMinVersionBound;
@@ -108,8 +179,15 @@ public class PluginVersionPart {
 	private VersionRange fVersionRange;
 	private boolean fIsRanged;
 	private final boolean fRangeAllowed;
+	private boolean isPlugin;
 
 	public PluginVersionPart(boolean rangeAllowed) {
+		this(rangeAllowed, false);
+
+	}
+
+	public PluginVersionPart(boolean rangeAllowed, boolean isPlugin) {
+		this.isPlugin = isPlugin;
 		fRangeAllowed = rangeAllowed;
 	}
 
@@ -153,9 +231,15 @@ public class PluginVersionPart {
 		part.createControl(group, SWT.FULL_SELECTION | SWT.MULTI | SWT.V_SCROLL, 1, null);
 		part.setMinimumSize(0, 75);
 		part.getViewer().setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
-		part.getViewer().setContentProvider(new PluginVersionContentProvider());
-		part.getViewer().setComparator(new ViewerComparator());
-		part.getViewer().setInput(PluginRegistry.findEntry(id));
+		if (isPlugin) {
+			part.getViewer().setContentProvider(new PluginVersionContentProvider());
+			part.getViewer().setComparator(new ViewerComparator());
+			part.getViewer().setInput(PluginRegistry.findEntry(id));
+		} else {
+			part.getViewer().setContentProvider(new ImportPackageVersionContentProvider());
+			part.getViewer().setComparator(new ViewerComparator());
+			part.getViewer().setInput(id);
+		}
 		part.setButtonEnabled(0, false);
 	}
 
