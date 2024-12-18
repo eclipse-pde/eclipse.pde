@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2021 IBM Corporation and others.
+ * Copyright (c) 2008, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -201,7 +201,7 @@ public class TestUtils {
 			Thread thread = job.getThread();
 			if (thread != null) {
 				ThreadInfo[] threadInfos = ManagementFactory.getThreadMXBean()
-						.getThreadInfo(new long[] { thread.getId() }, true, true);
+						.getThreadInfo(new long[] { thread.threadId() }, true, true);
 				if (threadInfos[0] != null) {
 					sb.append("\nthread info: ").append(threadInfos[0]);
 				}
