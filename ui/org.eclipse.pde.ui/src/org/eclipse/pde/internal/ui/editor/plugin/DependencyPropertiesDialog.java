@@ -48,18 +48,20 @@ public class DependencyPropertiesDialog extends StatusDialog {
 	private String fPluginId;
 
 	public DependencyPropertiesDialog(boolean editable, IPluginImport plugin) {
-		this(editable, true, plugin.isReexported(), plugin.isOptional(), plugin.getVersion(), true, true, plugin.getId());
+		this(editable, true, plugin.isReexported(), plugin.isOptional(), plugin.getVersion(), true, true,
+				plugin.getId(), true);
 	}
 
 	public DependencyPropertiesDialog(boolean editable, ImportPackageObject object) {
-		this(editable, false, false, object.isOptional(), object.getVersion(), true, true, null);
+		this(editable, false, false, object.isOptional(), object.getVersion(), true, true, object.getName(), false);
 	}
 
 	public DependencyPropertiesDialog(boolean editable, ExportPackageObject object) {
-		this(editable, false, false, false, object.getVersion(), false, false, null);
+		this(editable, false, false, false, object.getVersion(), false, false, null, false);
 	}
 
-	public DependencyPropertiesDialog(boolean editable, boolean showReexport, boolean export, boolean optional, String version, boolean showOptional, boolean isImport, String pluginId) {
+	public DependencyPropertiesDialog(boolean editable, boolean showReexport, boolean export, boolean optional,
+			String version, boolean showOptional, boolean isImport, String pluginId, boolean isPlugin) {
 		super(PDEPlugin.getActiveWorkbenchShell());
 		fEditable = editable;
 		fShowReexport = showReexport;
@@ -68,9 +70,9 @@ public class DependencyPropertiesDialog extends StatusDialog {
 		fShowOptional = showOptional;
 		fPluginId = pluginId;
 		if (isImport)
-			fVersionPart = new PluginVersionPart(true);
+			fVersionPart = new PluginVersionPart(true, isPlugin);
 		else
-			fVersionPart = new PluginVersionPart(false) {
+			fVersionPart = new PluginVersionPart(false, isPlugin) {
 				@Override
 				protected String getGroupText() {
 					return PDEUIMessages.DependencyPropertiesDialog_exportGroupText;
@@ -120,7 +122,6 @@ public class DependencyPropertiesDialog extends StatusDialog {
 		ModifyListener ml = e -> updateStatus(fVersionPart.validateFullVersionRangeText(true));
 		fVersionPart.addListeners(ml, ml);
 
-		// we need a better way to do this
 		if (fPluginId != null && !fPluginId.equals("system.bundle")) //$NON-NLS-1$
 			fVersionPart.createVersionSelectionField(comp, fPluginId);
 
