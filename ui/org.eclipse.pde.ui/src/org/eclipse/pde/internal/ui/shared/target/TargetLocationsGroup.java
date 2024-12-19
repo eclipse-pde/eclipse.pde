@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.TreePath;
@@ -82,6 +83,7 @@ import org.eclipse.ui.progress.UIJob;
  */
 public class TargetLocationsGroup {
 
+	private static final String LOCATION_ID_KEY = "target.location.id"; //$NON-NLS-1$
 	private static final String BUTTON_STATE = "ButtonState"; //$NON-NLS-1$
 
 	private enum DeleteButtonState {
@@ -121,6 +123,7 @@ public class TargetLocationsGroup {
 	private final ListenerList<ITargetChangedListener> fChangeListeners = new ListenerList<>();
 	private final ListenerList<ITargetChangedListener> fReloadListeners = new ListenerList<>();
 	private static final TargetLocationHandlerAdapter ADAPTER = new TargetLocationHandlerAdapter();
+	private int counter;
 
 	/**
 	 * Creates this part using the form toolkit and adds it to the given
@@ -478,24 +481,41 @@ public class TargetLocationsGroup {
 	}
 
 	private void handleUpdate() {
+		fUpdateButton.setEnabled(false);
 		ITreeSelection selection = fTreeViewer.getStructuredSelection();
 		if (selection.isEmpty()) {
-			fUpdateButton.setEnabled(false);
 			return;
 		}
+		Integer id = counter++;
+		fUpdateButton.setCursor(fUpdateButton.getDisplay().getSystemCursor(SWT.CURSOR_WAIT));
+		fUpdateButton.setData(LOCATION_ID_KEY, id);
 		List<IJobFunction> updateActions = Collections
 				.singletonList(monitor -> log(ADAPTER.update(fTarget, selection.getPaths(), monitor)));
 		JobChangeAdapter listener = new JobChangeAdapter() {
 			@Override
 			public void done(final IJobChangeEvent event) {
 				UIJob job = UIJob.create(Messages.UpdateTargetJob_UpdateJobName, monitor -> {
+					boolean showMessage = !fUpdateButton.isDisposed() && id == fUpdateButton.getData(LOCATION_ID_KEY);
+					if (showMessage) {
+						// we are the current owner so need to reset
+						// state...
+						fUpdateButton.setEnabled(!fTreeViewer.getStructuredSelection().isEmpty());
+						fUpdateButton.setCursor(null);
+						showMessage = true;
+					}
 					IStatus result = event.getJob().getResult();
 					if (!result.isOK()) {
-						if (!fTreeViewer.getControl().isDisposed()) {
-							ErrorDialog.openError(fTreeViewer.getTree().getShell(),
+						if (showMessage) {
+							ErrorDialog.openError(fUpdateButton.getShell(),
 									Messages.TargetLocationsGroup_TargetUpdateErrorDialog, result.getMessage(), result);
 						}
-					} else if (result.getCode() != ITargetLocationHandler.STATUS_CODE_NO_CHANGE) {
+					} else if (result.getCode() == ITargetLocationHandler.STATUS_CODE_NO_CHANGE) {
+						if (showMessage) {
+							MessageDialog.openInformation(fUpdateButton.getShell(),
+									Messages.UpdateTargetJob_UpdateJobName,
+									Messages.TargetLocationsGroup_TargetUpdateNoChange);
+						}
+					} else {
 						// Update was successful and changed the target, if
 						// dialog/editor still open, update it
 						if (!fTreeViewer.getControl().isDisposed()) {
@@ -517,6 +537,11 @@ public class TargetLocationsGroup {
 						} catch (CoreException e) {
 							// do nothing if we could not set the current
 							// target.
+						}
+						if (showMessage) {
+							MessageDialog.openInformation(fUpdateButton.getShell(),
+									Messages.UpdateTargetJob_UpdateJobName,
+									result.getMessage());
 						}
 					}
 				});

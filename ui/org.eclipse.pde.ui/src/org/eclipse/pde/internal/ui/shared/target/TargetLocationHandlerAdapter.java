@@ -100,6 +100,10 @@ class TargetLocationHandlerAdapter implements ITargetLocationHandler {
 		for (Entry<ITargetLocationHandler, List<TreePath>> entry : handlerMap.entrySet()) {
 			status.add(entry.getKey().update(target, entry.getValue().toArray(TreePath[]::new), subMonitor.split(100)));
 		}
+		IStatus[] children = status.getChildren();
+		if (children.length == 1) {
+			return children[0];
+		}
 		return status;
 	}
 
