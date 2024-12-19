@@ -19,7 +19,9 @@ package org.eclipse.pde.internal.core;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URL;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -70,7 +72,7 @@ public class ClasspathHelper {
 	private static final String DEV_CLASSPATH_ENTRY_SEPARATOR = ","; //$NON-NLS-1$
 	private static final String DEV_CLASSPATH_VERSION_SEPARATOR = ";"; //$NON-NLS-1$
 
-	public static String getDevEntriesProperties(String fileName, boolean checkExcluded) throws CoreException {
+	public static Path getDevEntriesProperties(String fileName, boolean checkExcluded) throws CoreException {
 		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
 		Map<String, List<IPluginModelBase>> bundleModels = Arrays.stream(models)
 				.filter(o -> o.toString() != null) //toString() used as key
@@ -80,23 +82,20 @@ public class ClasspathHelper {
 		return writeDevEntries(fileName, properties);
 	}
 
-	public static String getDevEntriesProperties(String fileName, Map<String, List<IPluginModelBase>> map)
+	public static Path getDevEntriesProperties(String fileName, Map<String, List<IPluginModelBase>> map)
 			throws CoreException {
 		Properties properties = getDevEntriesProperties(map, true);
 		return writeDevEntries(fileName, properties);
 	}
 
-	public static String writeDevEntries(String fileName, Properties properties) throws CoreException {
-		File file = new File(fileName);
-		if (!file.exists()) {
-			File directory = file.getParentFile();
-			if (directory != null && (!directory.exists() || directory.isFile())) {
-				directory.mkdirs();
+	public static Path writeDevEntries(String fileName, Properties properties) throws CoreException {
+		Path file = Path.of(fileName);
+		try {
+			Files.createDirectories(file.getParent());
+			try (OutputStream stream = new FileOutputStream(fileName)) {
+				properties.store(stream, ""); //$NON-NLS-1$
+				return file;
 			}
-		}
-		try (FileOutputStream stream = new FileOutputStream(fileName)) {
-			properties.store(stream, ""); //$NON-NLS-1$
-			return new URL("file:" + fileName).toString(); //$NON-NLS-1$
 		} catch (IOException e) {
 			PDECore.logException(e);
 			throw new CoreException(Status.error("Failed to create dev.properties file", e)); //$NON-NLS-1$
