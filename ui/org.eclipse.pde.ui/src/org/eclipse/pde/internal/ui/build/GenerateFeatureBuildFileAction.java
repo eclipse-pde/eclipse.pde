@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.ui.build;
 
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Path;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -55,8 +56,8 @@ public class GenerateFeatureBuildFileAction extends BaseBuildAction {
 		generator.setChildren(true);
 		AbstractScriptGenerator.setEmbeddedSource(AbstractScriptGenerator.getDefaultEmbeddedSource());
 
-		String url = ClasspathHelper.getDevEntriesProperties(fManifestFile.getProject().getLocation().addTrailingSeparator().toString() + "dev.properties", false); //$NON-NLS-1$
-		generator.setDevEntries(url);
+		Path path = ClasspathHelper.getDevEntriesProperties(fManifestFile.getProject().getLocation().addTrailingSeparator().toString() + "dev.properties", false); //$NON-NLS-1$
+		generator.setDevEntries(path);
 		generator.setWorkingDirectory(fManifestFile.getProject().getLocation().toOSString());
 		String configInfo = TargetPlatform.getOS() + ", " + TargetPlatform.getWS() + ", " + TargetPlatform.getOSArch(); //$NON-NLS-1$ //$NON-NLS-2$
 		AbstractScriptGenerator.setConfigInfo(configInfo); //This needs to be set before we set the format

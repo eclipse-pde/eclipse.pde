@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2021 Sonatype, Inc. and others.
+ * Copyright (c) 2011, 2024 Sonatype, Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -23,11 +23,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -133,9 +131,9 @@ public class ClasspathResolverTest {
 		mockTPWithRunningPlatformAndBundles(); // running-platform only
 
 		File devProperties = tempFolder.newFile("dev.properties").getCanonicalFile();
-		String devPropertiesURL = ClasspathHelper.getDevEntriesProperties(devProperties.getPath(), false);
+		Path devPropertiesFile = ClasspathHelper.getDevEntriesProperties(devProperties.getPath(), false);
 
-		Properties properties = loadProperties(devPropertiesURL);
+		Properties properties = loadProperties(devPropertiesFile);
 
 		String expectedDevCP = project.getFolder("cpe").getLocation().toPortableString();
 		assertEquals(expectedDevCP, properties.get(bundleName));
@@ -404,14 +402,13 @@ public class ClasspathResolverTest {
 			throws IOException, CoreException {
 		File devPropertiesFile = tempFolder.newFile("dev.properties").getCanonicalFile();
 		Map<String, List<IPluginModelBase>> bundlesMap = Map.of(HOST_BUNDLE_ID, launchedBundles);
-		String devPropertiesURL = ClasspathHelper.getDevEntriesProperties(devPropertiesFile.getPath(), bundlesMap);
-		return loadProperties(devPropertiesURL);
+		Path devProperties = ClasspathHelper.getDevEntriesProperties(devPropertiesFile.getPath(), bundlesMap);
+		return loadProperties(devProperties);
 	}
 
-	private static Properties loadProperties(String devPropertiesURL) throws IOException {
-		File propertiesFile = new File(new URL(devPropertiesURL).getPath());
+	private static Properties loadProperties(Path devPropertiesFile) throws IOException {
 		Properties devProperties = new Properties();
-		try (InputStream stream = new FileInputStream(propertiesFile)) {
+		try (InputStream stream = Files.newInputStream(devPropertiesFile )) {
 			devProperties.load(stream);
 		}
 		return devProperties;
