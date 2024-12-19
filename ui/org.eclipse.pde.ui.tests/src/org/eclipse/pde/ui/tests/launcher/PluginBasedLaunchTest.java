@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2021, 2022 Hannes Wellmann and others.
+ *  Copyright (c) 2021, 2024 Hannes Wellmann and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -27,9 +27,8 @@ import static org.osgi.framework.Constants.RESOLUTION_OPTIONAL;
 
 import java.io.File;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -1052,7 +1051,7 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 	private static final Pattern WHITESPACE = Pattern.compile("\\s+");
 
 	private Path getConfigurationFolder(ILaunchConfigurationWorkingCopy launchConfig)
-			throws CoreException, MalformedURLException {
+			throws CoreException, URISyntaxException {
 		ILaunch launch = new Launch(launchConfig, ILaunchManager.RUN_MODE, null);
 		var config = new EclipseApplicationLaunchConfiguration();
 		String commandLine = config.showCommandLine(launchConfig, ILaunchManager.RUN_MODE, launch, null);
@@ -1062,7 +1061,7 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 		try {
 			return Path.of(URI.create(configURL));
 		} catch (IllegalArgumentException e) {
-			return Path.of(new URL(configURL).getPath());
+			return Path.of(new URI(configURL).getPath());
 		}
 	}
 

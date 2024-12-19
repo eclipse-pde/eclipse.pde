@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2021 Sonatype, Inc. and others.
+ * Copyright (c) 2011, 2024 Sonatype, Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -27,7 +27,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -401,15 +402,15 @@ public class ClasspathResolverTest {
 	}
 
 	private Properties createDevEntryProperties(List<IPluginModelBase> launchedBundles)
-			throws IOException, CoreException {
+			throws IOException, CoreException, URISyntaxException {
 		File devPropertiesFile = tempFolder.newFile("dev.properties").getCanonicalFile();
 		Map<String, List<IPluginModelBase>> bundlesMap = Map.of(HOST_BUNDLE_ID, launchedBundles);
 		String devPropertiesURL = ClasspathHelper.getDevEntriesProperties(devPropertiesFile.getPath(), bundlesMap);
 		return loadProperties(devPropertiesURL);
 	}
 
-	private static Properties loadProperties(String devPropertiesURL) throws IOException {
-		File propertiesFile = new File(new URL(devPropertiesURL).getPath());
+	private static Properties loadProperties(String devPropertiesURL) throws IOException, URISyntaxException {
+		File propertiesFile = new File(new URI(devPropertiesURL).getPath());
 		Properties devProperties = new Properties();
 		try (InputStream stream = new FileInputStream(propertiesFile)) {
 			devProperties.load(stream);
