@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.build.builder;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -67,7 +68,7 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 		return executionEnvironmentMappings;
 	}
 
-	public void setDevEntries(String entries) {
+	public void setDevEntries(Path entries) {
 		devEntries = new DevClassPathHelper(entries);
 	}
 
