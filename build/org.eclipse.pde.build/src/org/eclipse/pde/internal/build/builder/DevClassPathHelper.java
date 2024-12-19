@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2017 IBM Corporation and others.
+ * Copyright (c) 2004, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,8 +15,8 @@ package org.eclipse.pde.internal.build.builder;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.IStatus;
@@ -32,18 +32,11 @@ public class DevClassPathHelper {
 	protected String[] devDefaultClasspath;
 	protected Properties devProperties = null;
 
-	public DevClassPathHelper(String devInfo) {
-		// Check the osgi.dev property to see if dev classpath entries have been defined.
-		String osgiDev = devInfo;
+	public DevClassPathHelper(Path osgiDev) {
 		if (osgiDev != null) {
-			try {
-				inDevelopmentMode = true;
-				URL location = new URL(osgiDev);
-				devProperties = load(location);
-				devDefaultClasspath = Utils.getArrayFromString(devProperties.getProperty("*")); //$NON-NLS-1$
-			} catch (MalformedURLException e) {
-				devDefaultClasspath = Utils.getArrayFromString(osgiDev);
-			}
+			inDevelopmentMode = true;
+			devProperties = load(osgiDev);
+			devDefaultClasspath = Utils.getArrayFromString(devProperties.getProperty("*")); //$NON-NLS-1$
 		}
 	}
 
@@ -66,12 +59,12 @@ public class DevClassPathHelper {
 	/*
 	 * Load the given properties file
 	 */
-	private static Properties load(URL url) {
+	private static Properties load(Path path) {
 		Properties props = new Properties();
-		try (InputStream is = url.openStream()) {
+		try (InputStream is = Files.newInputStream(path)) {
 			props.load(is);
 		} catch (IOException e) {
-			String message = NLS.bind(Messages.exception_missingFile, url.toExternalForm());
+			String message = NLS.bind(Messages.exception_missingFile, path);
 			BundleHelper.getDefault().getLog().log(new Status(IStatus.WARNING, IPDEBuildConstants.PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_READING_FILE, message, null));
 		}
 		return props;

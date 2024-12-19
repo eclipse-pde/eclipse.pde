@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2022 IBM Corporation and others.
+ * Copyright (c) 2006, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -27,6 +27,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Dictionary;
@@ -113,7 +114,7 @@ public class FeatureExportOperation extends Job {
 	// Location where the build takes place
 	protected String fBuildTempLocation;
 	protected String fBuildTempMetadataLocation;
-	private String fDevProperties;
+	private Path fDevProperties;
 	private static boolean fHasErrors;
 	protected HashMap<String, String> fAntBuildProperties;
 	protected WorkspaceExportHelper fWorkspaceExportHelper;
@@ -823,7 +824,7 @@ public class FeatureExportOperation extends Job {
 		fStateCopy.setPlatformProperties(state.getPlatformProperties());
 	}
 
-	private String getDevProperties() throws CoreException {
+	private Path getDevProperties() throws CoreException {
 		if (fDevProperties == null) {
 			fDevProperties = ClasspathHelper.getDevEntriesProperties(fBuildTempLocation + "/dev.properties", false); //$NON-NLS-1$
 		}

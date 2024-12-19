@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2021 IBM Corporation and others.
+ * Copyright (c) 2005, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -128,7 +128,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 
 		// add the output folder names
 		programArgs.add("-dev"); //$NON-NLS-1$
-		programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", fAllBundles)); //$NON-NLS-1$
+		programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", fAllBundles).toUri().toString()); //$NON-NLS-1$
 
 		String[] args = super.getProgramArguments(configuration);
 		Collections.addAll(programArgs, args);
