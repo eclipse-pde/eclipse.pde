@@ -18,6 +18,9 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.ui.shared.target.messages"; //$NON-NLS-1$
 
+	public static String UpdateTargetJob_RefreshingTarget;
+	public static String UpdateTargetJob_RefreshJobName;
+
 	public static String AddBundleContainerSelectionPage_1;
 	public static String AddBundleContainerSelectionPage_10;
 	public static String AddBundleContainerSelectionPage_2;
@@ -148,13 +151,17 @@ public class Messages extends NLS {
 	public static String TargetLocationsGroup_refresh;
 	public static String TargetLocationsGroup_1;
 
+	public static String TargetLocationsGroup_group_refresh;
+
+	public static String TargetLocationsGroup_operation_in_progress;
+
+	public static String TargetLocationsGroup_operation_running;
+
 	public static String TargetLocationsGroup_TargetUpdateErrorDialog;
 	public static String TargetStatus_NoActiveTargetPlatformStatus;
 	public static String TargetStatus_TargetStatusDefaultString;
 	public static String TargetStatus_UnresolvedTarget;
 	public static String TargetStatus_UnresolvedTargetStatus;
-	public static String UpdateTargetJob_TargetUpdateFailedStatus;
-	public static String UpdateTargetJob_TargetUpdateSuccessStatus;
 	public static String UpdateTargetJob_UpdateJobName;
 	public static String UpdateTargetJob_UpdatingTarget;
 	public static String EditTargetContainerPage_Add_Title;
