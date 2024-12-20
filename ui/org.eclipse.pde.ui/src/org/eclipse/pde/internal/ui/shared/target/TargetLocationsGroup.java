@@ -17,22 +17,19 @@ package org.eclipse.pde.internal.ui.shared.target;
 
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ICoreRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.IJobFunction;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.TreePath;
@@ -121,6 +118,7 @@ public class TargetLocationsGroup {
 	private final ListenerList<ITargetChangedListener> fChangeListeners = new ListenerList<>();
 	private final ListenerList<ITargetChangedListener> fReloadListeners = new ListenerList<>();
 	private static final TargetLocationHandlerAdapter ADAPTER = new TargetLocationHandlerAdapter();
+	private Job targetLocationJob;
 
 	/**
 	 * Creates this part using the form toolkit and adds it to the given
@@ -483,47 +481,60 @@ public class TargetLocationsGroup {
 			fUpdateButton.setEnabled(false);
 			return;
 		}
-		List<IJobFunction> updateActions = Collections
-				.singletonList(monitor -> log(ADAPTER.update(fTarget, selection.getPaths(), monitor)));
-		JobChangeAdapter listener = new JobChangeAdapter() {
-			@Override
-			public void done(final IJobChangeEvent event) {
-				UIJob job = UIJob.create(Messages.UpdateTargetJob_UpdateJobName, monitor -> {
-					IStatus result = event.getJob().getResult();
-					if (!result.isOK()) {
-						if (!fTreeViewer.getControl().isDisposed()) {
-							ErrorDialog.openError(fTreeViewer.getTree().getShell(),
-									Messages.TargetLocationsGroup_TargetUpdateErrorDialog, result.getMessage(), result);
-						}
-					} else if (result.getCode() != ITargetLocationHandler.STATUS_CODE_NO_CHANGE) {
-						// Update was successful and changed the target, if
-						// dialog/editor still open, update it
-						if (!fTreeViewer.getControl().isDisposed()) {
-							contentsChanged(true);
-							fTreeViewer.refresh(true);
-							updateButtons();
-						}
-
-						// If the target is the current platform, run a load
-						// job for the user
-						try {
-							ITargetPlatformService service = PDECore.getDefault()
-									.acquireService(ITargetPlatformService.class);
-							if (service != null) {
-								ITargetHandle currentTarget = service.getWorkspaceTargetHandle();
-								if (fTarget.getHandle().equals(currentTarget))
-									LoadTargetDefinitionJob.load(fTarget);
+		if (checkJob()) {
+			JobChangeAdapter listener = new JobChangeAdapter() {
+				@Override
+				public void done(final IJobChangeEvent event) {
+					UIJob job = UIJob.create(Messages.UpdateTargetJob_UpdateJobName, monitor -> {
+						targetLocationJob = null;
+						IStatus result = event.getJob().getResult();
+						log(result);
+						if (!result.isOK()) {
+							if (!fTreeViewer.getControl().isDisposed()) {
+								ErrorDialog.openError(fTreeViewer.getTree().getShell(),
+										Messages.TargetLocationsGroup_TargetUpdateErrorDialog, result.getMessage(),
+										result);
 							}
-						} catch (CoreException e) {
-							// do nothing if we could not set the current
-							// target.
+						} else if (result.getCode() != ITargetLocationHandler.STATUS_CODE_NO_CHANGE) {
+							// Update was successful and changed the target, if
+							// dialog/editor still open, update it
+							if (!fTreeViewer.getControl().isDisposed()) {
+								contentsChanged(true);
+								fTreeViewer.refresh(true);
+								updateButtons();
+							}
+
+							// If the target is the current platform, run a load
+							// job for the user
+							try {
+								ITargetPlatformService service = PDECore.getDefault()
+										.acquireService(ITargetPlatformService.class);
+								if (service != null) {
+									ITargetHandle currentTarget = service.getWorkspaceTargetHandle();
+									if (fTarget.getHandle().equals(currentTarget))
+										LoadTargetDefinitionJob.load(fTarget);
+								}
+							} catch (CoreException e) {
+								// do nothing if we could not set the current
+								// target.
+							}
 						}
-					}
-				});
-				job.schedule();
-			}
-		};
-		UpdateTargetJob.update(updateActions, listener);
+					});
+					job.schedule();
+				}
+			};
+			targetLocationJob = UpdateTargetJob.update(fTarget, ADAPTER, selection.getPaths(), listener,
+					targetLocationJob);
+		}
+	}
+
+	private boolean checkJob() {
+		Job job = targetLocationJob;
+		if (job == null) {
+			return true;
+		}
+		return MessageDialog.openQuestion(fTreeViewer.getControl().getShell(),
+				Messages.TargetLocationsGroup_operation_in_progress, Messages.TargetLocationsGroup_operation_running);
 	}
 
 	private void updateButtons() {
@@ -562,16 +573,28 @@ public class TargetLocationsGroup {
 			case ENABLE -> fRemoveButton.setText(Messages.BundleContainerTable_Btn_Text_Enable);
 			case TOGGLE -> fRemoveButton.setText(Messages.BundleContainerTable_Btn_Text_Toggle);
 			default -> fRemoveButton.setText(Messages.BundleContainerTable_Btn_Text_Remove);
-			}
+		}
 		fRemoveButton.setEnabled(state != DeleteButtonState.NONE);
 		fRemoveButton.setData(BUTTON_STATE, state);
 	}
 
 	private void handleReload() {
-		log(ADAPTER.reload(fTarget, fTarget.getTargetLocations(), new NullProgressMonitor()));
-		Job job = UIJob.create("Refreshing...", (ICoreRunnable) monitor -> contentsReload()); //$NON-NLS-1$
-		job.schedule();
-
+		if (checkJob()) {
+			targetLocationJob = UpdateTargetJob.refresh(fTarget, ADAPTER, new JobChangeAdapter() {
+				@Override
+				public void done(IJobChangeEvent event) {
+					IStatus result = event.getResult();
+					log(result);
+					if (result.isOK()) {
+						Job job = UIJob.create(Messages.TargetLocationsGroup_group_refresh, (ICoreRunnable) monitor -> {
+							targetLocationJob = null;
+							contentsReload();
+						});
+						job.schedule();
+					}
+				}
+			}, targetLocationJob);
+		}
 	}
 
 	private void toggleCollapse() {
