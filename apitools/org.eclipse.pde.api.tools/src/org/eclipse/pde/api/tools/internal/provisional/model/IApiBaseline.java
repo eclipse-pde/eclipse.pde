@@ -18,6 +18,7 @@ import java.util.Set;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.osgi.framework.Version;
 
 /**
  * A collection of related API components that together make up an
@@ -77,6 +78,15 @@ public interface IApiBaseline extends IApiElement {
 	 * @return API component or <code>null</code>
 	 */
 	public IApiComponent getApiComponent(String id);
+
+	/**
+	 * Returns the API component in this baseline with the given symbolic name and
+	 * version or <code>null</code> if none.
+	 *
+	 * @param id component symbolic name
+	 * @return API component or <code>null</code>
+	 */
+	public IApiComponent getApiComponent(String id, Version version);
 
 	/**
 	 * Returns all the API components in this baseline (sorted from higher to
