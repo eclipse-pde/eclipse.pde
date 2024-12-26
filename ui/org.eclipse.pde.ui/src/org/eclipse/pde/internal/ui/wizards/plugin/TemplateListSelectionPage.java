@@ -266,11 +266,15 @@ public class TemplateListSelectionPage extends WizardListSelectionPage {
 			if (((PluginFieldData) fContentPage.getData()).isRCPApplicationPlugin()) {
 				fUseTemplate.setSelection(true);
 				fUseTemplate.setEnabled(false);
+				fUseTemplate.setVisible(false);
 				wizardSelectionViewer.getControl().setEnabled(true);
-
+				setDescriptionEnabled(true);
 			} else {
+				fUseTemplate.setVisible(true);
 				if (fUseTemplate.getSelection() == false)
 					wizardSelectionViewer.getControl().setEnabled(false);
+				else
+					setDescriptionEnabled(true);
 				fUseTemplate.setEnabled(true);
 			}
 			wizardSelectionViewer.refresh();
