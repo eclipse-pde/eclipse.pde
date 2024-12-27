@@ -706,12 +706,4 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		return baseline;
 	}
 
-	@Override
-	public IApiComponent getWorkspaceComponent(String symbolicName) {
-		IApiBaseline baseline = getWorkspaceBaseline();
-		if (baseline != null) {
-			return baseline.getApiComponent(symbolicName);
-		}
-		return null;
-	}
 }

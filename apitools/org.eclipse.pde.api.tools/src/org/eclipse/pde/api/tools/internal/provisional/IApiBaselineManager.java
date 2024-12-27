@@ -14,7 +14,6 @@
 package org.eclipse.pde.api.tools.internal.provisional;
 
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
-import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 
 /**
  * Interface describing the {@link IApiBaselineManager}
@@ -98,12 +97,4 @@ public interface IApiBaselineManager {
 	 */
 	public IApiBaseline getWorkspaceBaseline();
 
-	/**
-	 * Returns the API component the workspace baseline with the given symbolic
-	 * name or <code>null</code> if none.
-	 *
-	 * @param symbolicName bundle symbolic name
-	 * @return API component from the workspace baseline or <code>null</code>
-	 */
-	public IApiComponent getWorkspaceComponent(String symbolicName);
 }

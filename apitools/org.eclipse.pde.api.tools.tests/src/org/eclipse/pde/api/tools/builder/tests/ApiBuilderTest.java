@@ -61,6 +61,7 @@ import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.util.Util;
@@ -1199,7 +1200,9 @@ public abstract class ApiBuilderTest extends BuilderTests {
 
 	private static void exportComponent(IApiBaselineManager manager, IPath baselineLocation, IProject currentProject,
 			int retry) throws Exception {
-		IApiComponent component = manager.getWorkspaceComponent(currentProject.getName());
+		IApiBaseline bl = manager.getWorkspaceBaseline();
+		assertNotNull("No Workspace baseline set", bl); //$NON-NLS-1$
+		IApiComponent component = bl.getApiComponent(currentProject.getName());
 		assertNotNull("The project was not found in the workspace baseline: " + currentProject.getName(), //$NON-NLS-1$
 				component);
 		try {
