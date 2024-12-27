@@ -30,52 +30,48 @@ public class Node {
 	private List<Node> childNodes;
 	private Node parentNode;
 
-	public int getOffsetStart() {
+	public synchronized int getOffsetStart() {
 		return offsetStart;
 	}
 
-	public void setOffsetStart(int offsetStart) {
+	public synchronized void setOffsetStart(int offsetStart) {
 		this.offsetStart = offsetStart;
 	}
 
-	public int getOffsetEnd() {
+	public synchronized int getOffsetEnd() {
 		return offsetEnd;
 	}
 
-	public void setOffsetEnd(int offsetEnd) {
+	public synchronized void setOffsetEnd(int offsetEnd) {
 		this.offsetEnd = offsetEnd;
 	}
 
-	public String getNodeTag() {
+	public synchronized String getNodeTag() {
 		return nodeTag;
 	}
 
-	public void setNodeTag(String nodeTag) {
+	public synchronized void setNodeTag(String nodeTag) {
 		this.nodeTag = nodeTag;
 	}
 
-	public List<Node> getChildNodes() {
-		List<Node> nodes = childNodes;
-		return nodes == null ? new ArrayList<>() : nodes;
+	public synchronized List<Node> getChildNodes() {
+		return childNodes == null ? List.of() : List.copyOf(childNodes);
 	}
 
-	public List<Node> getChildNodesByTag(String nodeTag) {
-		return childNodes.stream().filter(n -> Objects.equals(n.getNodeTag(), nodeTag)).collect(Collectors.toList());
+	public synchronized List<Node> getChildNodesByTag(String nodeTag) {
+		return getChildNodes().stream().filter(n -> Objects.equals(n.getNodeTag(), nodeTag))
+				.collect(Collectors.toList());
 	}
 
-	public void addChildNode(Node child) {
+	public synchronized void addChildNode(Node child) {
 		if (childNodes == null) {
 			childNodes = new ArrayList<>();
 		}
 		childNodes.add(child);
-		child.setParentNode(this);
+		child.parentNode = this;
 	}
 
-	public Node getParentNode() {
+	public synchronized Node getParentNode() {
 		return parentNode;
-	}
-
-	private void setParentNode(Node parentNode) {
-		this.parentNode = parentNode;
 	}
 }
