@@ -128,7 +128,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	/**
 	 * The current workspace baseline
 	 */
-	private volatile IApiBaseline workspacebaseline;
+	private volatile WorkspaceBaseline workspacebaseline;
 
 	/**
 	 * The default save location for persisting the cache from this manager.
@@ -548,7 +548,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 			}
 			synchronized (this) {
 				if (workspacebaseline != null) {
-					workspacebaseline.dispose();
+					workspacebaseline.disposeInternal();
 				}
 			}
 			if (handlecache != null) {
@@ -620,12 +620,12 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	 * the next request.
 	 */
 	public void disposeWorkspaceBaseline() {
-		final IApiBaseline originalBaseline = workspacebaseline;
+		final WorkspaceBaseline originalBaseline = workspacebaseline;
 		if (originalBaseline == null) {
 			return;
 		}
 		IJobFunction runnable = m -> {
-			IApiBaseline oldBaseline = null;
+			WorkspaceBaseline oldBaseline = null;
 			synchronized (ApiBaselineManager.this) {
 				if (workspacebaseline != null && originalBaseline == workspacebaseline) {
 					if (ApiPlugin.DEBUG_BASELINE_MANAGER) {
@@ -637,7 +637,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 				}
 			}
 			if (oldBaseline != null) {
-				oldBaseline.dispose();
+				oldBaseline.disposeInternal();
 			}
 			return Status.OK_STATUS;
 		};
@@ -681,9 +681,9 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	 *
 	 * @return a new workspace {@link IApiBaseline} or <code>null</code>
 	 */
-	private IApiBaseline createWorkspaceBaseline() throws CoreException {
+	private WorkspaceBaseline createWorkspaceBaseline() throws CoreException {
 		long time = System.currentTimeMillis();
-		IApiBaseline baseline = new WorkspaceBaseline();
+		WorkspaceBaseline baseline = new WorkspaceBaseline();
 		try {
 			// populate it with only projects that are API aware
 			List<IPluginModelBase> models = Arrays.asList(PluginRegistry.getWorkspaceModels());

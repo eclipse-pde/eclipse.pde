@@ -52,6 +52,14 @@ public class WorkspaceBaseline extends ApiBaseline {
 
 	@Override
 	public void dispose() {
+		throw new UnsupportedOperationException(
+				"ApiBaselineManager.disposeWorkspaceBaseline() must be used to dispose the workspace baseline"); //$NON-NLS-1$
+	}
+
+	/**
+	 * <b>Only public for technical reasons</b> do not call directly!
+	 */
+	public void disposeInternal() {
 		doDispose();
 		mismatch.clear();
 	}
