@@ -120,17 +120,17 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 	public synchronized IApiDescription getApiDescription(ProjectComponent component, BundleDescription bundle) {
 		IJavaProject project = component.getJavaProject();
 		ProjectApiDescription description = (ProjectApiDescription) fDescriptions.get(project);
-		if (description == null) {
+		if (description == null || description.baseline != component.getBaseline()) {
 			if (Util.isApiProject(project)) {
-				description = new ProjectApiDescription(project);
+				description = new ProjectApiDescription(project, component.getBaseline());
 			} else {
-				description = new NonApiProjectDescription(project);
+				description = new NonApiProjectDescription(project, component.getBaseline());
 			}
 			try {
 				restoreDescription(project, description);
 			} catch (CoreException e) {
 				ApiPlugin.log(e.getStatus());
-				description = new ProjectApiDescription(project);
+				description = new ProjectApiDescription(project, component.getBaseline());
 			}
 			fDescriptions.put(project, description);
 		}

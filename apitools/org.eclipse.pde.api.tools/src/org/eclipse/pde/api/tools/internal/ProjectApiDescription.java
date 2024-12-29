@@ -93,6 +93,11 @@ public class ProjectApiDescription extends ApiDescription {
 	private volatile boolean fInSynch;
 
 	/**
+	 * this holds the baseline this description is currently connected to
+	 */
+	IApiBaseline baseline;
+
+	/**
 	 * A node for a package.
 	 */
 	class PackageNode extends ManifestNode {
@@ -328,10 +333,13 @@ public class ProjectApiDescription extends ApiDescription {
 
 	/**
 	 * Constructs a new API description for the given project API component.
+	 *
+	 * @param baseline the baseline this description should be connected with
 	 */
-	public ProjectApiDescription(IJavaProject project) {
+	ProjectApiDescription(IJavaProject project, IApiBaseline baseline) {
 		super(project.getElementName());
 		fProject = project;
+		this.baseline = baseline;
 	}
 
 	@Override
@@ -527,12 +535,12 @@ public class ProjectApiDescription extends ApiDescription {
 	 */
 	void refreshPackages() {
 		if (fRefreshingInProgress) {
-			logPackafesRefresh();
+			logPackagesRefresh();
 			return;
 		}
 		synchronized (this) {
 			if (fRefreshingInProgress) {
-				logPackafesRefresh();
+				logPackagesRefresh();
 				return;
 			}
 			// check if in synch
@@ -569,7 +577,7 @@ public class ProjectApiDescription extends ApiDescription {
 		}
 	}
 
-	private void logPackafesRefresh() {
+	private void logPackagesRefresh() {
 		if (ApiPlugin.DEBUG_API_DESCRIPTION) {
 			StringBuilder buffer = new StringBuilder();
 			buffer.append("Refreshing manifest node: "); //$NON-NLS-1$
@@ -706,8 +714,14 @@ public class ProjectApiDescription extends ApiDescription {
 	 * @return API component
 	 * @exception CoreException if the API component cannot be located
 	 */
-	private ProjectComponent getApiComponent() throws CoreException {
-		IApiBaseline baseline = ApiBaselineManager.getManager().getWorkspaceBaseline();
+	private synchronized ProjectComponent getApiComponent() throws CoreException {
+		if (baseline == null || baseline.isDisposed()) {
+			baseline = ApiBaselineManager.getManager().getWorkspaceBaseline();
+		}
+		return getApiComponent(baseline);
+	}
+
+	private ProjectComponent getApiComponent(IApiBaseline baseline) throws CoreException {
 		ProjectComponent component = (ProjectComponent) baseline.getApiComponent(getJavaProject().getProject());
 		if (component == null) {
 			throw new CoreException(Status.error("Unable to resolve project API component for API description")); //$NON-NLS-1$
