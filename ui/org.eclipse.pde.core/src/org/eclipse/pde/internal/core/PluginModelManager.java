@@ -90,6 +90,11 @@ public class PluginModelManager implements IModelProviderListener {
 		}
 
 		@Override
+		public boolean belongsTo(Object family) {
+			return family == PluginModelManager.class;
+		}
+
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			try {
 				boolean more = false;
