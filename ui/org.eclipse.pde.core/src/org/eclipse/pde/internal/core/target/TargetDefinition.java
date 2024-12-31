@@ -1269,6 +1269,7 @@ public class TargetDefinition implements ITargetDefinition {
 					} else {
 						oldContainersByRepo.get(repoURL).remove(0);
 					}
+					TargetDefinitionDocumentTools.updateAttributes(oldContainer, container);
 				} else {
 					Node movedContainer = fDocument.importNode(container, true);
 					TargetDefinitionDocumentTools.addChildWithIndent(containersElement, movedContainer);
