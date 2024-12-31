@@ -124,7 +124,7 @@ public class TargetDefinition implements ITargetDefinition {
 	private TargetFeature[] fFeatures;
 	private TargetBundle[] fOtherBundles;
 
-	private int fSequenceNumber = -1;
+	private int fSequenceNumber;
 
 	/**
 	 * Constructs a target definition based on the given handle.
@@ -1123,7 +1123,8 @@ public class TargetDefinition implements ITargetDefinition {
 	 * @return the current sequence number after it has been increased
 	 */
 	public int incrementSequenceNumber() {
-		return ++fSequenceNumber;
+		setSequenceNumber(getSequenceNumber() + 1);
+		return getSequenceNumber();
 	}
 
 	/**
@@ -1132,7 +1133,16 @@ public class TargetDefinition implements ITargetDefinition {
 	 * @param value value to set the sequence number to
 	 */
 	void setSequenceNumber(int value) {
-		fSequenceNumber = value;
+		if (value != fSequenceNumber) {
+			fSequenceNumber = value;
+			if (fRoot != null) {
+				if (value > 0) {
+					fRoot.setAttribute(TargetDefinitionPersistenceHelper.ATTR_SEQUENCE_NUMBER, Integer.toString(value));
+				} else {
+					fRoot.removeAttribute(TargetDefinitionPersistenceHelper.ATTR_SEQUENCE_NUMBER);
+				}
+			}
+		}
 	}
 
 	private void removeElement(String... childNames) {
