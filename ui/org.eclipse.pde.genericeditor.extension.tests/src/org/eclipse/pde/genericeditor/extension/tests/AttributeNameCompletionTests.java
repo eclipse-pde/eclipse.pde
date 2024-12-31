@@ -28,7 +28,7 @@ public class AttributeNameCompletionTests extends AbstractTargetEditorTest {
 	public void testAttributeNameSuggestions() throws Exception {
 		Map<Integer, String[]> expectedProposalsByOffset = new HashMap<>();
 		// target
-		expectedProposalsByOffset.put(8, new String[] { "name", "sequenceNumber" });
+		expectedProposalsByOffset.put(8, new String[] { "name" });
 		// location
 		expectedProposalsByOffset.put(33, new String[] { "followRepositoryReferences", "includeAllPlatforms",
 				"includeConfigurePhase", "includeMode", "includeSource", "type" });

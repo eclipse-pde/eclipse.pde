@@ -124,8 +124,6 @@ public class TargetDefinition implements ITargetDefinition {
 	private TargetFeature[] fFeatures;
 	private TargetBundle[] fOtherBundles;
 
-	private int fSequenceNumber = -1;
-
 	/**
 	 * Constructs a target definition based on the given handle.
 	 */
@@ -210,7 +208,6 @@ public class TargetDefinition implements ITargetDefinition {
 
 	@Override
 	public void setArch(String arch) {
-		incrementSequenceNumber();
 		fArch = arch;
 		if (fRoot != null && arch != null && !arch.isEmpty()) {
 			Element archNode = TargetDefinitionDocumentTools.getChildElement(fRoot,
@@ -224,7 +221,6 @@ public class TargetDefinition implements ITargetDefinition {
 
 	@Override
 	public void setNL(String nl) {
-		incrementSequenceNumber();
 		fNL = nl;
 		if (fRoot != null && nl != null && !nl.isEmpty()) {
 			Element nlNode = TargetDefinitionDocumentTools.getChildElement(fRoot,
@@ -250,7 +246,6 @@ public class TargetDefinition implements ITargetDefinition {
 
 	@Override
 	public void setOS(String os) {
-		incrementSequenceNumber();
 		fOS = os;
 		if (fRoot != null && os != null && !os.isEmpty()) {
 			Element nlNode = TargetDefinitionDocumentTools.getChildElement(fRoot,
@@ -296,7 +291,6 @@ public class TargetDefinition implements ITargetDefinition {
 
 	@Override
 	public void setWS(String ws) {
-		incrementSequenceNumber();
 		fWS = ws;
 		if (fRoot != null && ws != null && !ws.isEmpty()) {
 			Element nlNode = TargetDefinitionDocumentTools.getChildElement(fRoot,
@@ -310,7 +304,6 @@ public class TargetDefinition implements ITargetDefinition {
 
 	@Override
 	public void setTargetLocations(ITargetLocation[] locations) {
-		incrementSequenceNumber();
 		// Clear the feature model cache as it is based on the bundle container locations
 		fFeatures = null;
 		fOtherBundles = null;
@@ -770,7 +763,6 @@ public class TargetDefinition implements ITargetDefinition {
 			fProgramArgs = null;
 			fVMArgs = null;
 			fWS = null;
-			fSequenceNumber = 0;
 			fDocument = null;
 			fRoot = null;
 			TargetDefinitionPersistenceHelper.initFromXML(this, stream);
@@ -819,7 +811,6 @@ public class TargetDefinition implements ITargetDefinition {
 
 	@Override
 	public void setImplicitDependencies(NameVersionDescriptor[] bundles) {
-		incrementSequenceNumber();
 		if (bundles != null && bundles.length == 0) {
 			bundles = null;
 		}
@@ -1104,26 +1095,6 @@ public class TargetDefinition implements ITargetDefinition {
 			fRoot.setAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_MODE,
 					TargetDefinitionPersistenceHelper.FEATURE);
 		}
-	}
-
-	/**
-	 * Returns the current sequence number of this target.  Sequence numbers change
-	 * whenever something in the target that affects the set of features and bundles that
-	 * would be resolved.
-	 *
-	 * @return the current sequence number
-	 */
-	public int getSequenceNumber() {
-		return fSequenceNumber;
-	}
-
-	/**
-	 * Increases the current sequence number.
-	 * @see TargetDefinition#getSequenceNumber()
-	 * @return the current sequence number after it has been increased
-	 */
-	public int incrementSequenceNumber() {
-		return ++fSequenceNumber;
 	}
 
 	private void removeElement(String... childNames) {

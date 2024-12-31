@@ -54,7 +54,7 @@ public class TargetPersistence38Helper {
 	<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 	<?pde version="3.8"?>
 
-	<target name="test" sequenceNumber="9">
+	<target name="test">
 	<locations>
 	<location path="${eclipse_home}" type="Directory"/>
 	<location path="${eclipse_home}" type="Profile"/>

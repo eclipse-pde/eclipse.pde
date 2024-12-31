@@ -24,8 +24,7 @@ public class TagCompletionProposal extends TargetCompletionProposal {
 
 	static {
 		tagStartingAttributesAndValues.put(ITargetConstants.TARGET_TAG, new Attribute[] {
-				new Attribute(ITargetConstants.TARGET_NAME_ATTR, null),
-				new Attribute(ITargetConstants.TARGET_SEQ_NO_ATTR, "1") });
+				new Attribute(ITargetConstants.TARGET_NAME_ATTR, null) });
 		tagStartingAttributesAndValues.put(ITargetConstants.LOCATION_DIRECTORY_COMPLETION_LABEL, new Attribute[] {
 				new Attribute(ITargetConstants.LOCATION_PATH_ATTR, null),
 				new Attribute(ITargetConstants.LOCATION_TYPE_ATTR, ITargetConstants.LOCATION_TYPE_ATTR_VALUE_DIRECTORY) });
