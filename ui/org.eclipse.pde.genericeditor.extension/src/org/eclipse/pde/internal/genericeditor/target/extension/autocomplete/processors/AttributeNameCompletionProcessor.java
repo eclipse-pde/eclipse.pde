@@ -47,7 +47,7 @@ public class AttributeNameCompletionProcessor extends DelegateProcessor {
 	private static final String ATTRIBUTE_NAME_FIND = "(?:\\s*(\\w*)\\s*=\\s*\".*?\")";// $NON-NLS-1$
 	private static final Pattern ATT_NAME_PATTERN = Pattern.compile(ATTRIBUTE_NAME_FIND);
 
-	private final String[] target = new String[] { ITargetConstants.TARGET_NAME_ATTR, ITargetConstants.TARGET_SEQ_NO_ATTR };
+	private final String[] target = new String[] { ITargetConstants.TARGET_NAME_ATTR };
 	private final String[] locations = new String[] {};
 	private final String[] location = new String[] { ITargetConstants.LOCATION_INCLUDE_PLATFORMS_ATTR,
 			ITargetConstants.LOCATION_INCLUDE_CONFIG_PHASE_ATTR, ITargetConstants.LOCATION_FOLLOW_REPOSITORY_REFERENCES_ATTR,

@@ -101,9 +101,6 @@ public class ToggleIncludeHandler<DescriptorType> implements ITargetLocationHand
 					include.stream());
 		}
 		target.setIncluded(stream.toArray(NameVersionDescriptor[]::new));
-		if (target instanceof TargetDefinition) {
-			((TargetDefinition) target).incrementSequenceNumber();
-		}
 		return Status.OK_STATUS;
 	}
 
