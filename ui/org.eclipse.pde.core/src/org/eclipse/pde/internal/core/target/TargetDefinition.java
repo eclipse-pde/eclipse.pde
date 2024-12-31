@@ -1126,15 +1126,6 @@ public class TargetDefinition implements ITargetDefinition {
 		return ++fSequenceNumber;
 	}
 
-	/**
-	 * Convenience method to set the sequence number to a specific
-	 * value. Used when loading a target from a persisted file.
-	 * @param value value to set the sequence number to
-	 */
-	void setSequenceNumber(int value) {
-		fSequenceNumber = value;
-	}
-
 	private void removeElement(String... childNames) {
 		if (fRoot != null) {
 			TargetDefinitionDocumentTools.removeElement(fRoot, childNames);
