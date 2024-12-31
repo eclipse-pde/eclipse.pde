@@ -90,7 +90,6 @@ public class TargetDefinitionPersistenceHelper {
 	static final String ATTR_FOLLOW_REPOSITORY_REFERENCES = "followRepositoryReferences"; //$NON-NLS-1$
 	static final String ATTR_VERSION = "version"; //$NON-NLS-1$
 	static final String ATTR_CONFIGURATION = "configuration"; //$NON-NLS-1$
-	static final String ATTR_SEQUENCE_NUMBER = "sequenceNumber"; //$NON-NLS-1$
 	static final String CONTENT = "content"; //$NON-NLS-1$
 	static final String ATTR_USE_ALL = "useAllPlugins"; //$NON-NLS-1$
 	static final String PLUGINS = "plugins"; //$NON-NLS-1$

@@ -193,14 +193,6 @@ public class TargetPersistence38Helper {
 				}
 			}
 		}
-
-		// Set the sequence number at the very end
-		String sequenceNumber = root.getAttribute(TargetDefinitionPersistenceHelper.ATTR_SEQUENCE_NUMBER);
-		try {
-			((TargetDefinition) definition).setSequenceNumber(Integer.parseInt(sequenceNumber));
-		} catch (NumberFormatException e) {
-			((TargetDefinition) definition).setSequenceNumber(0);
-		}
 	}
 
 	/**
