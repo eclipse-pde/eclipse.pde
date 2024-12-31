@@ -164,11 +164,6 @@ public class P2TargetUtils {
 	static final String PROP_ALL_ENVIRONMENTS = PDECore.PLUGIN_ID + ".all_environments"; //$NON-NLS-1$
 
 	/**
-	 * Profile property that keeps track of the target sequence number
-	 */
-	static final String PROP_SEQUENCE_NUMBER = PDECore.PLUGIN_ID + ".sequence"; //$NON-NLS-1$
-
-	/**
 	 * Profile property that tracks whether or not source to be auto-included
 	 */
 	static final String PROP_AUTO_INCLUDE_SOURCE = PDECore.PLUGIN_ID + ".autoIncludeSource"; //$NON-NLS-1$
@@ -317,11 +312,7 @@ public class P2TargetUtils {
 		result.resetProfile();
 	}
 
-	@SuppressWarnings("restriction")
 	private synchronized void resetProfile() {
-		if (getProfile() instanceof org.eclipse.equinox.internal.p2.engine.Profile profile) {
-			profile.setProperty(PROP_SEQUENCE_NUMBER, "-1"); //$NON-NLS-1$
-		}
 		fProfile = null;
 	}
 
@@ -513,13 +504,6 @@ public class P2TargetUtils {
 		// make sure we have a profile to validate
 		if (profile == null) {
 			return false;
-		}
-
-		// check that the target and profiles are in sync. If they are then life is good.
-		// If they are not equal, there is still a chance that everything is ok.
-		String profileNumber = profile.getProperty(PROP_SEQUENCE_NUMBER);
-		if (Integer.toString(((TargetDefinition) target).getSequenceNumber()).equals(profileNumber)) {
-			return true;
 		}
 
 		// check if all environments setting is the same
@@ -1200,7 +1184,6 @@ public class P2TargetUtils {
 		setter.accept(PROP_AUTO_INCLUDE_SOURCE, Boolean.toString(getIncludeSource()));
 		setter.accept(PROP_INCLUDE_CONFIGURE_PHASE, Boolean.toString(getIncludeConfigurePhase()));
 		setter.accept(PROP_FOLLOW_REPOSITORY_REFERENCES, Boolean.toString(isFollowRepositoryReferences()));
-		setter.accept(PROP_SEQUENCE_NUMBER, Integer.toString(((TargetDefinition) target).getSequenceNumber()));
 		setter.accept(PROP_DECLARED_REPOSITORIES, iuBundleContainersOf(target).map(IUBundleContainer::getRepositories)
 				.flatMap(List::stream).collect(joiningEncodeURIs()));
 	}
