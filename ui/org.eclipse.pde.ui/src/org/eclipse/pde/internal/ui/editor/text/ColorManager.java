@@ -48,19 +48,19 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 	}
 
 	public static void initializeDefaults(IPreferenceStore store) {
-		PreferenceConverter.setDefault(store, P_DEFAULT, DEFAULT);
-		PreferenceConverter.setDefault(store, P_PROC_INSTR, PROC_INSTR);
-		PreferenceConverter.setDefault(store, P_STRING, STRING);
-		PreferenceConverter.setDefault(store, P_EXTERNALIZED_STRING, EXTERNALIZED_STRING);
-		PreferenceConverter.setDefault(store, P_TAG, TAG);
-		PreferenceConverter.setDefault(store, P_XML_COMMENT, XML_COMMENT);
-		PreferenceConverter.setDefault(store, P_HEADER_KEY, HEADER_KEY);
-		PreferenceConverter.setDefault(store, P_HEADER_OSGI, HEADER_OSGI);
+		setDefault(store, P_DEFAULT, DEFAULT);
+		setDefault(store, P_PROC_INSTR, PROC_INSTR);
+		setDefault(store, P_STRING, STRING);
+		setDefault(store, P_EXTERNALIZED_STRING, EXTERNALIZED_STRING);
+		setDefault(store, P_TAG, TAG);
+		setDefault(store, P_XML_COMMENT, XML_COMMENT);
+		setDefault(store, P_HEADER_KEY, HEADER_KEY);
+		setDefault(store, P_HEADER_OSGI, HEADER_OSGI);
 		store.setDefault(P_HEADER_OSGI + IPDEColorConstants.P_BOLD_SUFFIX, true);
-		PreferenceConverter.setDefault(store, P_HEADER_VALUE, HEADER_VALUE);
-		PreferenceConverter.setDefault(store, P_HEADER_ATTRIBUTES, HEADER_ATTRIBUTES);
+		setDefault(store, P_HEADER_VALUE, HEADER_VALUE);
+		setDefault(store, P_HEADER_ATTRIBUTES, HEADER_ATTRIBUTES);
 		store.setDefault(P_HEADER_ATTRIBUTES + IPDEColorConstants.P_ITALIC_SUFFIX, true);
-		PreferenceConverter.setDefault(store, P_HEADER_ASSIGNMENT, HEADER_ASSIGNMENT);
+		setDefault(store, P_HEADER_ASSIGNMENT, HEADER_ASSIGNMENT);
 		if (!PlatformUI.isWorkbenchRunning()) {
 			return;
 		}
@@ -68,9 +68,9 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 			Display display = PlatformUI.getWorkbench().getDisplay();
 			Runnable runnable = () -> {
 				if (!display.isDisposed() && display.getHighContrast()) {
-					PreferenceConverter.setDefault(store, P_DEFAULT, DEFAULT_HIGH_CONTRAST);
-					PreferenceConverter.setDefault(store, P_HEADER_VALUE, HEADER_VALUE_HIGH_CONTRAST);
-					PreferenceConverter.setDefault(store, P_HEADER_ATTRIBUTES, HEADER_ASSIGNMENT_HIGH_CONTRAST);
+					setDefault(store, P_DEFAULT, DEFAULT_HIGH_CONTRAST);
+					setDefault(store, P_HEADER_VALUE, HEADER_VALUE_HIGH_CONTRAST);
+					setDefault(store, P_HEADER_ATTRIBUTES, HEADER_ASSIGNMENT_HIGH_CONTRAST);
 				}
 			};
 			if (display == Display.getCurrent()) {
@@ -141,5 +141,9 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 		} else {
 			putColor(event.getProperty(), StringConverter.asRGB(color.toString()));
 		}
+	}
+
+	private static void setDefault(IPreferenceStore store, String name, RGB value) {
+		store.setDefault(name, StringConverter.asString(value));
 	}
 }
