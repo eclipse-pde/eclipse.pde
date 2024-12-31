@@ -15,7 +15,10 @@
 package org.eclipse.pde.api.tools.internal.model;
 
 import java.io.File;
+import java.io.OutputStream;
 import java.net.URI;
+import java.security.DigestOutputStream;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +45,7 @@ import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.core.target.TargetBundle;
 import org.eclipse.pde.internal.core.target.ExternalFileTargetHandle;
-import org.eclipse.pde.internal.core.target.TargetDefinition;
+import org.eclipse.pde.internal.core.target.TargetDefinitionPersistenceHelper;
 import org.eclipse.pde.internal.core.target.WorkspaceFileTargetHandle;
 
 /**
@@ -340,7 +343,7 @@ public class ApiModelFactory {
 
 	/**
 	 * Create predictable location description for a target definition. Form is
-	 * <code>target:/targetSeq/definitionLocation</code>. A location must be
+	 * <code>target:/[target hashcode}/definitionLocation</code>. A location must be
 	 * compatible with {@link IPath#fromPortableString(String)}.
 	 *
 	 * @param definition the target platform definition
@@ -351,8 +354,16 @@ public class ApiModelFactory {
 	private static String generateTargetLocation(ITargetDefinition definition) {
 		StringBuilder sb = new StringBuilder(TARGET_PREFIX);
 		sb.append(IPath.SEPARATOR);
-		if (definition instanceof TargetDefinition target) {
-			sb.append(target.getSequenceNumber());
+		try {
+			MessageDigest digest = MessageDigest.getInstance("SHA-1"); //$NON-NLS-1$
+			try (DigestOutputStream output = new DigestOutputStream(OutputStream.nullOutputStream(), digest)) {
+				TargetDefinitionPersistenceHelper.persistXML(definition, output);
+			}
+			for (byte b : digest.digest()) {
+				sb.append(Integer.toHexString(b & 0xFF));
+			}
+		} catch (Exception e) {
+			// can't record a hashcode then...
 		}
 		sb.append(IPath.SEPARATOR);
 		sb.append(getDefinitionIdentifier(definition));
