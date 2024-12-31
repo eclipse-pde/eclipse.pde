@@ -482,39 +482,6 @@ public class TargetDefinitionPersistenceTests {
 		assertEquals(rawLocation, container.getLocation(false));
 	}
 
-	/**
-	 * Tests that we increment the sequence number correctly when target is
-	 * modified contents.
-	 */
-	@Test
-	public void testSequenceNumberChange() throws Exception {
-		ITargetDefinition target = readOldTarget("featureLocations");
-
-		assertEquals("Wrong name", "Features", target.getName());
-		TargetDefinition targetDef = (TargetDefinition) target;
-		int currentSeqNo = targetDef.getSequenceNumber();
-		target.setArch("x86");
-		asssertSequenceNumber("Arch", currentSeqNo, targetDef);
-
-		currentSeqNo = targetDef.getSequenceNumber();
-		target.setOS("win32");
-		asssertSequenceNumber("OS", currentSeqNo, targetDef);
-
-		currentSeqNo = targetDef.getSequenceNumber();
-		target.setNL("hi_IN");
-		asssertSequenceNumber("NL", currentSeqNo, targetDef);
-
-		currentSeqNo = targetDef.getSequenceNumber();
-		target.setWS("carbon");
-		asssertSequenceNumber("WS", currentSeqNo, targetDef);
-
-		ITargetLocation[] newContainers = new ITargetLocation[1];
-		newContainers[0] = new DirectoryBundleContainer("Path");
-		currentSeqNo = targetDef.getSequenceNumber();
-		target.setTargetLocations(newContainers);
-		asssertSequenceNumber("Bundle Containers", currentSeqNo, targetDef);
-	}
-
 	@Test
 	public void testIncludeSource() throws Exception {
 		ITargetDefinition target = readOldTarget("SoftwareSiteTarget");
@@ -682,11 +649,6 @@ public class TargetDefinitionPersistenceTests {
 
 	private void assertTargetDefinitionsEqual(ITargetDefinition targetA, ITargetDefinition targetB) {
 		assertTrue("Target content not equal", ((TargetDefinition) targetA).isContentEqual(targetB));
-	}
-
-	private void asssertSequenceNumber(String name, int currentSeqNo, TargetDefinition targetDef) {
-		assertEquals("Sequence number did not increment after updating '" + name + "'", currentSeqNo + 1,
-				targetDef.getSequenceNumber());
 	}
 
 }

@@ -15,17 +15,16 @@ package org.eclipse.pde.internal.genericeditor.target.extension.reconciler.prese
 
 import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.INCLUDE_DEPENDENCY_DEPTH;
 import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.INCLUDE_DEPENDENCY_SCOPES;
+import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.LOCATION_FOLLOW_REPOSITORY_REFERENCES_ATTR;
 import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.LOCATION_INCLUDE_CONFIG_PHASE_ATTR;
 import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.LOCATION_INCLUDE_MODE_ATTR;
 import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.LOCATION_INCLUDE_PLATFORMS_ATTR;
-import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.LOCATION_FOLLOW_REPOSITORY_REFERENCES_ATTR;
 import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.LOCATION_INCLUDE_SOURCE_ATTR;
 import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.LOCATION_TYPE_ATTR;
 import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.MISSING_MANIFEST;
 import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.REPOSITORY_LOCATION_ATTR;
 import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.TARGET_JRE_PATH_ATTR;
 import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.TARGET_NAME_ATTR;
-import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.TARGET_SEQ_NO_ATTR;
 import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.UNIT_ID_ATTR;
 import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.UNIT_VERSION_ATTR;
 
@@ -42,7 +41,7 @@ public class TargetPlatformAttributeRule extends WordRule {
 
 	private static final String[] ATTRIBUTES = new String[] { TARGET_NAME_ATTR, UNIT_VERSION_ATTR, UNIT_ID_ATTR,
 			LOCATION_INCLUDE_PLATFORMS_ATTR, LOCATION_INCLUDE_MODE_ATTR, LOCATION_TYPE_ATTR, REPOSITORY_LOCATION_ATTR,
-			TARGET_JRE_PATH_ATTR, TARGET_SEQ_NO_ATTR, LOCATION_INCLUDE_CONFIG_PHASE_ATTR,
+			TARGET_JRE_PATH_ATTR, LOCATION_INCLUDE_CONFIG_PHASE_ATTR,
 			LOCATION_FOLLOW_REPOSITORY_REFERENCES_ATTR, LOCATION_INCLUDE_SOURCE_ATTR, INCLUDE_DEPENDENCY_DEPTH,
 			INCLUDE_DEPENDENCY_SCOPES, MISSING_MANIFEST };
 	private final IToken attributeToken = new Token(
