@@ -16,7 +16,10 @@ package org.eclipse.pde.internal.core.target;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -83,6 +86,33 @@ public class TargetDefinitionDocumentTools {
 			}
 		}
 		appendTextNode(parent, false);
+	}
+
+	public static void updateAttributes(Element oldElement, Element newElement) {
+		Map<String, String> previous = asMap(oldElement.getAttributes());
+		Map<String, String> current = asMap(newElement.getAttributes());
+		HashSet<String> all = new HashSet<>();
+		all.addAll(previous.keySet());
+		all.addAll(current.keySet());
+		for (String attr : all) {
+			if (current.containsKey(attr)) {
+				// if the current element contains the attribute then set it to
+				// the current value
+				oldElement.setAttribute(attr, current.get(attr));
+			} else {
+				// otherwise remove the attribute
+				oldElement.removeAttribute(attr);
+			}
+		}
+	}
+
+	private static Map<String,String> asMap(NamedNodeMap attributes) {
+		HashMap<String, String> map = new HashMap<>();
+		for (int i = 0; i < attributes.getLength(); i++) {
+			Node item = attributes.item(i);
+			map.put(item.getNodeName(), item.getNodeValue());
+		}
+		return map;
 	}
 
 	/**
