@@ -55,6 +55,7 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
+import org.eclipse.osgi.service.resolver.BaseDescription;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
@@ -97,6 +98,7 @@ import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.Version;
 import org.osgi.framework.VersionRange;
+import org.osgi.framework.wiring.BundleCapability;
 
 public class BundleErrorReporter extends JarManifestErrorReporter {
 
@@ -184,6 +186,36 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		validateEclipseGenericCapability();
 		validateEclipseGenericRequire();
 		validateServiceComponent();
+		if (isCheckDeprecated()) {
+			validateDeprecated();
+		}
+	}
+
+	private void validateDeprecated() {
+		IHeader header = getHeader(Constants.REQUIRE_BUNDLE);
+		if (header == null) {
+			return;
+		}
+		BundleDescription desc = fModel.getBundleDescription();
+		if (desc == null) {
+			return;
+		}
+		BundleSpecification[] requiredBundles = desc.getRequiredBundles();
+		for (BundleSpecification bundleSpecification : requiredBundles) {
+			BaseDescription bundle = bundleSpecification.getSupplier();
+			if (bundle != null) {
+				BundleCapability capability = bundle.getCapability();
+				if (capability != null) {
+					String deprecatedDirective = capability.getDirectives().get("deprecated"); //$NON-NLS-1$
+					if (deprecatedDirective != null) {
+						report(NLS.bind(PDECoreMessages.BundleErrorReporter_deprecatedBundle, bundle.getName(),
+								deprecatedDirective), header.getLineNumber(), CompilerFlags.WARNING,
+								PDEMarkerFactory.CAT_DEPRECATION);
+					}
+				}
+			}
+		}
+
 	}
 
 
