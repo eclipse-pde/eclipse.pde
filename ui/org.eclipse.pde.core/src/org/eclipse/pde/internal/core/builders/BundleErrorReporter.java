@@ -22,9 +22,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Deque;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
@@ -34,6 +34,7 @@ import java.util.StringTokenizer;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -1189,7 +1190,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			}
 		}
 
-		HashMap<String, ExportPackageDescription> exported = getAvailableExportedPackages(desc.getContainingState());
+		Map<String, List<ExportPackageDescription>> exported = getAvailableExportedPackages(desc.getContainingState());
 
 		ImportPackageSpecification[] imports = desc.getImportPackages();
 		if (desc.hasDynamicImports()) {
@@ -1227,8 +1228,10 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				boolean optional = isOptional(element);
 				int severity = getRequireBundleSeverity(element, optional);
 
-				ExportPackageDescription export = exported.get(name);
-				if (export != null) {
+				List<ExportPackageDescription> exports = exported.getOrDefault(name, List.of());
+				if (!exports.isEmpty()) {
+					exports.sort(RESOLVED_FIRST);
+					for (ExportPackageDescription export : exports) {
 					if (export.getSupplier().isResolved()) {
 						Version version = export.getVersion();
 						VersionRange range = importSpec.getVersionRange();
@@ -1237,11 +1240,39 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 							addMarkerAttribute(marker,PDEMarkerFactory.compilerKey,CompilerFlags.P_UNRESOLVED_IMPORTS);
 							return;
 						}
+						String[] mandatoryAttributes = (String[]) export.getDirective(Constants.RESOLUTION_MANDATORY);
+						if (mandatoryAttributes != null) {
+							Map<String, Object> exportAttributes = export.getAttributes();
+							Map<String, Object> importAttributes = importSpec.getAttributes();
+							for (String mandatory : mandatoryAttributes) {
+								Object exportValue = exportAttributes != null ? exportAttributes.get(mandatory) : null;
+								Object importValue = importAttributes != null ? importAttributes.get(mandatory) : null;
+
+								if (importValue == null || !importValue.equals(exportValue)) {
+									VirtualMarker marker = report(
+											NLS.bind(PDECoreMessages.BundleErrorReporter_MissingMandatoryDirective,
+													new String[] { name, mandatory, export.getExporter().getName() }),
+											getPackageLine(header, element), severity,
+											PDEMarkerFactory.M_NO_MANDATORY_ATTR_IMPORT_PACKAGE,
+											PDEMarkerFactory.CAT_FATAL);
+									addMarkerAttribute(marker, PDEMarkerFactory.compilerKey,
+											CompilerFlags.P_UNRESOLVED_IMPORTS);
+
+									if (marker != null) {
+										marker.setAttribute("packageName", name); //$NON-NLS-1$
+										marker.setAttribute("mandatoryAttrName", mandatory); //$NON-NLS-1$
+										marker.setAttribute("mandatoryAttrValue", exportValue); //$NON-NLS-1$
+									}
+								}
+							}
+						}
 					} else {
 						VirtualMarker marker = report(NLS.bind(PDECoreMessages.BundleErrorReporter_unresolvedExporter,new String[] { export.getSupplier().getSymbolicName(), name }),getPackageLine(header, element), severity, PDEMarkerFactory.CAT_OTHER);
 						addMarkerAttribute(marker,PDEMarkerFactory.compilerKey, CompilerFlags.P_UNRESOLVED_IMPORTS);
 						return;
 					}
+				}
+					return;
 				}
 
 				VirtualMarker marker = report(NLS.bind(PDECoreMessages.BundleErrorReporter_PackageNotExported, name),
@@ -1249,6 +1280,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 						PDEMarkerFactory.CAT_FATAL);
 				addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_UNRESOLVED_IMPORTS);
 				if (marker != null) {
+					// marker.setAttribute(PDEMarkerFactory.M_NO_MANDATORY_ATTR_IMPORT_PACKAGE);
 					marker.setAttribute("packageName", name); //$NON-NLS-1$
 					if (optional) {
 						marker.setAttribute("optional", true); //$NON-NLS-1$
@@ -1258,24 +1290,13 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		}
 	}
 
-	private HashMap<String, ExportPackageDescription> getAvailableExportedPackages(State state) {
-		BundleDescription[] bundles = state.getBundles();
+	private static final Comparator<BaseDescription> RESOLVED_FIRST = Comparator
+			.comparing((BaseDescription d) -> d.getSupplier().isResolved()).reversed(); // false<true
 
-		HashMap<String, ExportPackageDescription> exported = new HashMap<>();
-		for (BundleDescription bundle : bundles) {
-			ExportPackageDescription[] exports = bundle.getExportPackages();
-			for (ExportPackageDescription export : exports) {
-				String name = export.getName();
-				if (exported.containsKey(name)) {
-					if (export.getSupplier().isResolved()) {
-						exported.put(name, export);
-					}
-				} else {
-					exported.put(name, export);
-				}
-			}
-		}
-		return exported;
+	private Map<String, List<ExportPackageDescription>> getAvailableExportedPackages(State state) {
+		BundleDescription[] bundles = state.getBundles();
+		return Arrays.stream(bundles).map(b -> b.getExportPackages()).flatMap(Arrays::stream)
+				.collect(Collectors.groupingBy(BaseDescription::getName, Collectors.toCollection(ArrayList::new)));
 	}
 
 	protected void validateExportPackage(IProgressMonitor monitor) {
