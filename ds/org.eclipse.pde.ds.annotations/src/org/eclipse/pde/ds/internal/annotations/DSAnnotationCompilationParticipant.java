@@ -701,8 +701,7 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 	}
 
 	private void processAnnotations(IJavaProject javaProject, Map<ICompilationUnit, BuildContext> fileMap) {
-		@SuppressWarnings("deprecation")
-		ASTParser parser = ASTParser.newParser(AST.JLS4);
+		ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
 		parser.setResolveBindings(true);
 		parser.setBindingsRecovery(true);
 		parser.setProject(javaProject);
