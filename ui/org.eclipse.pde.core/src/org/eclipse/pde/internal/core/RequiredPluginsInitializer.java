@@ -23,6 +23,7 @@ import org.eclipse.jdt.core.ClasspathContainerInitializer;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 public class RequiredPluginsInitializer extends ClasspathContainerInitializer {
@@ -36,6 +37,22 @@ public class RequiredPluginsInitializer extends ClasspathContainerInitializer {
 
 	@Override
 	public void initialize(IPath containerPath, IJavaProject javaProject) throws CoreException {
+		if (Job.getJobManager().isSuspended()) {
+			// if the jobmanager is currently suspended we can't use the
+			// schedule/join pattern here, instead we must retry the requested
+			// action once jobs are enabled again, this will the possibly
+			// trigger a rebuild if required or notify other listeners.
+			Job job = Job.create(PDECoreMessages.PluginModelManager_InitializingPluginModels, m -> {
+				setupClasspath(javaProject);
+			});
+			job.setSystem(true);
+			job.schedule();
+		} else {
+			setupClasspath(javaProject);
+		}
+	}
+
+	protected void setupClasspath(IJavaProject javaProject) throws JavaModelException {
 		IProject project = javaProject.getProject();
 		// The first project to be built may initialize the PDE models, potentially long running, so allow cancellation
 		PluginModelManager manager = PDECore.getDefault().getModelManager();
