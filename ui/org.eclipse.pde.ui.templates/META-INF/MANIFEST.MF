@@ -2,9 +2,9 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %bundleName
 Bundle-SymbolicName: org.eclipse.pde.ui.templates;singleton:=true
-Bundle-Version: 3.8.500.qualifier
+Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: %bundleVendor
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Export-Package: org.eclipse.pde.internal.ui.templates;x-internal:=true,
  org.eclipse.pde.internal.ui.templates.e4;x-internal:=true,
  org.eclipse.pde.internal.ui.templates.ide;x-internal:=true,
