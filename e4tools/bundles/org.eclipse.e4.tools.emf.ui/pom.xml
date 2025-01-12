@@ -19,7 +19,7 @@
     <relativePath>../../</relativePath>
   </parent>
 
-  <groupId>eclipse.platform.ui</groupId>
+  <groupId>org.eclipse.platform</groupId>
   <artifactId>org.eclipse.e4.tools.emf.ui</artifactId>
   <version>4.8.600-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
