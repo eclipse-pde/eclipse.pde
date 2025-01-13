@@ -29,9 +29,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.jar.JarFile;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -68,6 +71,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.internal.core.BinaryType;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.osgi.service.resolver.VersionConstraint;
 import org.eclipse.osgi.util.NLS;
@@ -75,6 +79,7 @@ import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.ApiFilterStore;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.comparator.Delta;
+import org.eclipse.pde.api.tools.internal.model.BundleComponent;
 import org.eclipse.pde.api.tools.internal.model.ProjectComponent;
 import org.eclipse.pde.api.tools.internal.model.WorkspaceBaseline;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
@@ -2043,6 +2048,11 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 		IDelta[] breakingChanges = fBuildState.getBreakingChanges();
 		IDelta[] compatibleChanges = fBuildState.getCompatibleChanges();
+		if (reference instanceof BundleComponent referenceBundle) {
+			if (component instanceof BundleComponent componentBundle) {
+				checkApiComponentPackageVersions(referenceBundle, componentBundle, breakingChanges, compatibleChanges);
+			}
+		}
 		if (breakingChanges.length != 0) {
 			// make sure that the major version has been incremented
 			if (compversion.getMajor() <= refversion.getMajor()) {
@@ -2287,6 +2297,85 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 	}
 
+	private void checkApiComponentPackageVersions(BundleComponent referenceBundle, BundleComponent componentBundle,
+			IDelta[] breakingChanges, IDelta[] compatibleChanges) throws CoreException {
+		Map<String, ExportPackageDescription> referencePackages = Arrays
+				.stream(referenceBundle.getBundleDescription().getExportPackages())
+				.collect(Collectors.toMap(ExportPackageDescription::getName, Function.identity()));
+		Map<String, ExportPackageDescription> componentPackages = Arrays
+				.stream(componentBundle.getBundleDescription().getExportPackages())
+				.collect(Collectors.toMap(ExportPackageDescription::getName, Function.identity()));
+		// a mapping between a package name and a required change
+		Map<String, RequiredPackageVersionChange> requiredChanges = new HashMap<>();
+		// we must compare compatible changes first, so these where overwritten later by
+		// breaking changes probably
+		for (IDelta delta : compatibleChanges) {
+			// a compatible change must result in a minor package version increment
+			analyzePackageDelta(delta, IApiProblem.MINOR_VERSION_CHANGE_PACKAGE, referencePackages, componentPackages,
+					requiredChanges);
+		}
+		for (IDelta delta : breakingChanges) {
+			// a breaking change must result in a major package change
+			analyzePackageDelta(delta, IApiProblem.MAJOR_VERSION_CHANGE_PACKAGE, referencePackages, componentPackages,
+					requiredChanges);
+		}
+		for (String pkg : referencePackages.keySet()) {
+			if (!componentPackages.containsKey(pkg)) {
+				// TODO a package export was removed! This should be require a major version
+				// change in bundle!
+			}
+		}
+		for (Entry<String, RequiredPackageVersionChange> entry : requiredChanges.entrySet()) {
+			addProblem(createPackageVersionProblem(entry.getKey(), entry.getValue()));
+		}
+	}
+
+	private void analyzePackageDelta(IDelta delta, int category,
+			Map<String, ExportPackageDescription> referencePackages,
+			Map<String, ExportPackageDescription> componentPackages,
+			Map<String, RequiredPackageVersionChange> requiredChanges) {
+		String packageName = delta.getTypeName();
+		if (packageName != null) {
+			int idx = packageName.lastIndexOf('.');
+			if (idx > 0) {
+				packageName = packageName.substring(0, idx);
+			}
+			ExportPackageDescription pkgRef = referencePackages.get(packageName);
+			if (pkgRef == null) {
+				return;
+			}
+			Version baselineVersion = pkgRef.getVersion();
+			if (baselineVersion == null || Version.emptyVersion.equals(baselineVersion)) {
+				return;
+			}
+			ExportPackageDescription baselinePackage = componentPackages.get(packageName);
+			if (baselinePackage == null) {
+				return;
+			}
+			Version suggested;
+			if (IApiProblem.MINOR_VERSION_CHANGE_PACKAGE == category) {
+				suggested = new Version(baselineVersion.getMajor(), baselineVersion.getMinor() + 1, 0);
+			} else {
+				suggested = new Version(baselineVersion.getMajor() + 1, baselineVersion.getMinor(), 0);
+			}
+			Version compVersion = baselinePackage.getVersion();
+			if (compVersion == null || compVersion.compareTo(baselineVersion) < 0) {
+				requiredChanges.put(packageName,
+						new RequiredPackageVersionChange(category, baselineVersion, compVersion, suggested));
+			}
+			if (compVersion.getMajor() > baselineVersion.getMajor()) {
+				return;
+			}
+			if (IApiProblem.MINOR_VERSION_CHANGE_PACKAGE == category) {
+				if (compVersion.getMinor() > baselineVersion.getMinor()) {
+					return;
+				}
+			}
+			requiredChanges.put(packageName,
+					new RequiredPackageVersionChange(category, baselineVersion, compVersion, suggested));
+		}
+	}
+
 	private boolean reportMultipleIncreaseMinorVersion(Version compversion, Version refversion) {
 		if (compversion.getMajor() == refversion.getMajor()) {
 			if (((compversion.getMinor() - refversion.getMinor()) > 1)) {
@@ -2364,6 +2453,12 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		return String.valueOf(writer.getBuffer());
 	}
 
+	private IApiProblem createPackageVersionProblem(String packageName, RequiredPackageVersionChange versionChange) {
+		return createVersionProblem(versionChange.category(),
+				new String[] { packageName, versionChange.suggested().toString(), versionChange.baseline().toString() },
+				versionChange.suggested().toString(), null, Constants.EXPORT_PACKAGE, packageName);
+	}
+
 	/**
 	 * Creates a marker on a manifest file for a version numbering problem and
 	 * returns it or <code>null</code>
@@ -2372,6 +2467,11 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @return a new {@link IApiProblem} or <code>null</code>
 	 */
 	private IApiProblem createVersionProblem(int kind, final String[] messageargs, String version, String description) {
+		return createVersionProblem(kind, messageargs, version, description, Constants.BUNDLE_VERSION, null);
+	}
+
+	private IApiProblem createVersionProblem(int kind, final String[] messageargs, String version, String description,
+			String header, String value) {
 		IResource manifestFile = null;
 		String path = JarFile.MANIFEST_NAME;
 		if (fJavaProject != null) {
@@ -2394,7 +2494,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					String line = null;
 					loop: while ((line = reader.readLine()) != null) {
 						lineCounter++;
-						if (line.startsWith(Constants.BUNDLE_VERSION)) {
+						if (line.startsWith(header)) {
 							lineNumber = lineCounter;
 							break loop;
 						}
@@ -2406,8 +2506,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 		if (lineNumber != -1 && contents != null) {
 			// initialize char start, char end
-			int index = CharOperation.indexOf(Constants.BUNDLE_VERSION.toCharArray(), contents, true);
-			loop: for (int i = index + Constants.BUNDLE_VERSION.length() + 1, max = contents.length; i < max; i++) {
+			int index = CharOperation.indexOf(header.toCharArray(), contents, true);
+			int headerOffset = index + header.length() + 1;
+			loop: for (int i = headerOffset, max = contents.length; i < max; i++) {
 				char currentCharacter = contents[i];
 				if (CharOperation.isWhitespace(currentCharacter)) {
 					continue;
@@ -2415,15 +2516,21 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				charStart = i;
 				break loop;
 			}
-			loop: for (int i = charStart + 1, max = contents.length; i < max; i++) {
-				switch (contents[i]) {
-					case '\r':
-					case '\n':
-						charEnd = i;
-						break loop;
-					default:
-						continue;
+			if (value == null) {
+				loop: for (int i = charStart + 1, max = contents.length; i < max; i++) {
+					switch (contents[i])
+						{
+						case '\r':
+						case '\n':
+							charEnd = i;
+							break loop;
+						default:
+							continue;
+						}
 				}
+			} else {
+				// TODO find the matching value in the header
+				charEnd = charStart;
 			}
 		} else {
 			lineNumber = 1;
