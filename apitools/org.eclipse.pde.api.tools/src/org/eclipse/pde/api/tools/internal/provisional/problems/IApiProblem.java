@@ -262,6 +262,16 @@ public interface IApiProblem {
 	 */
 	public static final int MINOR_VERSION_CHANGE_PACKAGE = 12;
 
+	/**
+	 * Constant representing the value of the micro version change
+	 * {@link IApiProblem} kind for a package. <br>
+	 * Value is: <code>13</code>
+	 *
+	 * @see #getKind()
+	 * @see #CATEGORY_VERSION
+	 */
+	public static final int MICRO_VERSION_CHANGE_PACKAGE = 13;
+
 	public static final int ILLEGAL_EXTEND = 1;
 
 	/**

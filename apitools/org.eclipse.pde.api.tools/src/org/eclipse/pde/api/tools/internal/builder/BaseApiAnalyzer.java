@@ -2307,14 +2307,41 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				.collect(Collectors.toMap(ExportPackageDescription::getName, Function.identity(), (a, b) -> a));
 		// a mapping between a package name and a required change
 		Map<String, RequiredPackageVersionChange> requiredChanges = new HashMap<>();
-		// we must compare compatible changes first, so these where overwritten later by
-		// breaking changes probably
+		Set<IDelta> microChanged = new HashSet<>();
+		// here we check for problems that are actually only a micro change in package
+		// version in the compatible category
 		for (IDelta delta : compatibleChanges) {
+			if (isMicroPackageChange(delta)) {
+				microChanged.add(delta);
+				analyzePackageDelta(delta, IApiProblem.MICRO_VERSION_CHANGE_PACKAGE, referencePackages,
+						componentPackages, requiredChanges);
+			}
+		}
+		// here we check for problems that are actually only a micro change in package
+		// version in the breaking category
+		for (IDelta delta : breakingChanges) {
+			if (isMicroPackageChange(delta)) {
+				microChanged.add(delta);
+				analyzePackageDelta(delta, IApiProblem.MICRO_VERSION_CHANGE_PACKAGE, referencePackages,
+						componentPackages, requiredChanges);
+			}
+		}
+		// we must compare compatible changes first, so these where overwritten later by
+		// breaking changes for a package probably
+		for (IDelta delta : compatibleChanges) {
+			if (microChanged.contains(delta)) {
+				// we have already identified the delta as a micro change
+				continue;
+			}
 			// a compatible change must result in a minor package version increment
 			analyzePackageDelta(delta, IApiProblem.MINOR_VERSION_CHANGE_PACKAGE, referencePackages, componentPackages,
 					requiredChanges);
 		}
 		for (IDelta delta : breakingChanges) {
+			if (microChanged.contains(delta)) {
+				// we have already identified the delta as a micro change
+				continue;
+			}
 			// a breaking change must result in a major package change
 			analyzePackageDelta(delta, IApiProblem.MAJOR_VERSION_CHANGE_PACKAGE, referencePackages, componentPackages,
 					requiredChanges);
@@ -2328,6 +2355,21 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		for (Entry<String, RequiredPackageVersionChange> entry : requiredChanges.entrySet()) {
 			addProblem(createPackageVersionProblem(entry.getKey(), entry.getValue()));
 		}
+	}
+
+	private boolean isMicroPackageChange(IDelta delta) {
+		if (delta.getElementType() == IDelta.INTERFACE_ELEMENT_TYPE) {
+			// for interface types we can have some changes that are actually compatible
+			// even with provider version range
+			if (delta.getKind() == IDelta.ADDED) {
+				if (delta.getFlags() == IDelta.FIELD) {
+					// adding a field to an interface is a binary compatible change for provider and
+					// consumer
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	private void analyzePackageDelta(IDelta delta, int category,
@@ -2353,7 +2395,10 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				return;
 			}
 			Version suggested;
-			if (IApiProblem.MINOR_VERSION_CHANGE_PACKAGE == category) {
+			if (IApiProblem.MICRO_VERSION_CHANGE_PACKAGE == category) {
+				suggested = new Version(baselineVersion.getMajor(), baselineVersion.getMinor(),
+						baselineVersion.getMicro() + 1);
+			} else if (IApiProblem.MINOR_VERSION_CHANGE_PACKAGE == category) {
 				suggested = new Version(baselineVersion.getMajor(), baselineVersion.getMinor() + 1, 0);
 			} else {
 				suggested = new Version(baselineVersion.getMajor() + 1, baselineVersion.getMinor(), 0);
@@ -2366,8 +2411,14 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			if (compVersion.getMajor() > baselineVersion.getMajor()) {
 				return;
 			}
-			if (IApiProblem.MINOR_VERSION_CHANGE_PACKAGE == category) {
+			if (IApiProblem.MINOR_VERSION_CHANGE_PACKAGE == category
+					|| IApiProblem.MICRO_VERSION_CHANGE_PACKAGE == category) {
 				if (compVersion.getMinor() > baselineVersion.getMinor()) {
+					return;
+				}
+			}
+			if (IApiProblem.MICRO_VERSION_CHANGE_PACKAGE == category) {
+				if (compVersion.getMicro() > baselineVersion.getMicro()) {
 					return;
 				}
 			}
