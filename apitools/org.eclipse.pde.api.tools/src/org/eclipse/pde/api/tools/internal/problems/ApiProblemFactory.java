@@ -590,7 +590,10 @@ public class ApiProblemFactory {
 						return 58;
 					case IApiProblem.MINOR_VERSION_CHANGE_UNNECESSARILY:
 						return 59;
-
+					case IApiProblem.MAJOR_VERSION_CHANGE_PACKAGE:
+						return 65;
+					case IApiProblem.MINOR_VERSION_CHANGE_PACKAGE:
+						return 63;
 					default:
 						break;
 				}

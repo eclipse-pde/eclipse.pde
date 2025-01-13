@@ -242,6 +242,26 @@ public interface IApiProblem {
 	 * @see #CATEGORY_USAGE
 	 */
 
+	/**
+	 * Constant representing the value of the major version change
+	 * {@link IApiProblem} kind for a package. <br>
+	 * Value is: <code>11</code>
+	 *
+	 * @see #getKind()
+	 * @see #CATEGORY_VERSION
+	 */
+	public static final int MAJOR_VERSION_CHANGE_PACKAGE = 11;
+
+	/**
+	 * Constant representing the value of the minor version change
+	 * {@link IApiProblem} kind for a package. <br>
+	 * Value is: <code>12</code>
+	 *
+	 * @see #getKind()
+	 * @see #CATEGORY_VERSION
+	 */
+	public static final int MINOR_VERSION_CHANGE_PACKAGE = 12;
+
 	public static final int ILLEGAL_EXTEND = 1;
 
 	/**
