@@ -123,12 +123,11 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 		return getCompleteProgramArguments(os, ""); //$NON-NLS-1$
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public String getCompleteProgramArguments(String os, String arch) {
 		int archIndex = L_ARGS_ARCH_ALL;
 		if (arch != null && arch.length() > 0) {
-			if (Platform.ARCH_X86.equals(arch)) {
+			if (ARCH_X86.equals(arch)) {
 				archIndex = L_ARGS_ARCH_X86;
 			} else if (Platform.ARCH_X86_64.equals(arch)) {
 				archIndex = L_ARGS_ARCH_X86_64;
@@ -218,12 +217,11 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 		return getCompleteVMArguments(os, ""); //$NON-NLS-1$
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public String getCompleteVMArguments(String os, String arch) {
 		int archIndex = L_ARGS_ARCH_ALL;
 		if (arch != null && arch.length() > 0) {
-			if (Platform.ARCH_X86.equals(arch)) {
+			if (ARCH_X86.equals(arch)) {
 				archIndex = L_ARGS_ARCH_X86;
 			} else if (Platform.ARCH_X86_64.equals(arch)) {
 				archIndex = L_ARGS_ARCH_X86_64;
