@@ -36,6 +36,7 @@ public interface IArgumentsInfo extends IProductObject {
 
 	public static final int L_ARGS_ARCH_ALL = 0;
 	public static final int L_ARGS_ARCH_X86 = 1;
+	public static final String ARCH_X86 = "x86";//$NON-NLS-1$
 	public static final int L_ARGS_ARCH_X86_64 = 2;
 
 	void setProgramArguments(String args, int platform);

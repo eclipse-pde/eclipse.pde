@@ -50,7 +50,6 @@ import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-@SuppressWarnings("deprecation")
 public class ArgumentsSection extends PDESection {
 
 	private static final String[] TAB_LABELS = new String[4];
@@ -64,7 +63,7 @@ public class ArgumentsSection extends PDESection {
 	private static final String[] TAB_ARCHLABELS = new String[8];
 	static {
 		TAB_ARCHLABELS[IArgumentsInfo.L_ARGS_ALL] = PDEUIMessages.ArgumentsSection_allArch;
-		TAB_ARCHLABELS[IArgumentsInfo.L_ARGS_ARCH_X86] = Platform.ARCH_X86;
+		TAB_ARCHLABELS[IArgumentsInfo.L_ARGS_ARCH_X86] = IArgumentsInfo.ARCH_X86;
 		TAB_ARCHLABELS[IArgumentsInfo.L_ARGS_ARCH_X86_64] = Platform.ARCH_X86_64;
 	}
 

@@ -34,6 +34,7 @@ import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.core.iproduct.IArgumentsInfo;
 import org.eclipse.pde.internal.core.iproduct.IConfigurationProperty;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
@@ -130,8 +131,8 @@ public class PropertiesSection extends TableSection {
 
 		private final String[] COMBO_OSLABELS = new String[] { PDEUIMessages.PropertiesSection_All, Platform.OS_LINUX,
 				Platform.OS_MACOSX, Platform.OS_WIN32 };
-		@SuppressWarnings("deprecation")
-		private final String[] COMBO_ARCHLABELS = new String[] { PDEUIMessages.PropertiesSection_All, Platform.ARCH_X86,
+		private final String[] COMBO_ARCHLABELS = new String[] { PDEUIMessages.PropertiesSection_All,
+				IArgumentsInfo.ARCH_X86,
 				Platform.ARCH_X86_64 };
 
 		public PropertyDialog(Shell shell, IConfigurationProperty property,
