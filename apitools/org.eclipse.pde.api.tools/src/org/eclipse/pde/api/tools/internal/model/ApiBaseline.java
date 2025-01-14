@@ -678,6 +678,9 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	}
 
 	private static boolean hasSameMMMVersion(Version ref, IApiComponent component) {
+		if (component == null || ref == null) {
+			return false;
+		}
 		Version v = new Version(component.getVersion());
 		return ref.getMajor() == v.getMajor() && ref.getMinor() == v.getMinor() && ref.getMicro() == v.getMicro();
 	}
