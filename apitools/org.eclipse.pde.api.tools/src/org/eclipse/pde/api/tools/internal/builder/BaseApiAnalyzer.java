@@ -2301,10 +2301,10 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			IDelta[] breakingChanges, IDelta[] compatibleChanges) throws CoreException {
 		Map<String, ExportPackageDescription> referencePackages = Arrays
 				.stream(referenceBundle.getBundleDescription().getExportPackages())
-				.collect(Collectors.toMap(ExportPackageDescription::getName, Function.identity()));
+				.collect(Collectors.toMap(ExportPackageDescription::getName, Function.identity(), (a, b) -> a));
 		Map<String, ExportPackageDescription> componentPackages = Arrays
 				.stream(componentBundle.getBundleDescription().getExportPackages())
-				.collect(Collectors.toMap(ExportPackageDescription::getName, Function.identity()));
+				.collect(Collectors.toMap(ExportPackageDescription::getName, Function.identity(), (a, b) -> a));
 		// a mapping between a package name and a required change
 		Map<String, RequiredPackageVersionChange> requiredChanges = new HashMap<>();
 		// we must compare compatible changes first, so these where overwritten later by
