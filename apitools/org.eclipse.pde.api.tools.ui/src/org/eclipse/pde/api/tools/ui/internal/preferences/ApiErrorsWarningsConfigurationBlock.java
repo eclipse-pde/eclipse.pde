@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2022 IBM Corporation and others.
+ * Copyright (c) 2007, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.ui.internal.preferences;
 
-import java.net.URL;
+import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -861,13 +861,14 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 		if (tabID == COMPATIBILITY_PAGE_ID) {
 			Link link = new Link(page, SWT.CENTER);
 			link.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 7));
-			String linkHttp = "<a href=\"https://wiki.eclipse.org/Evolving_Java-based_APIs_2\">" //$NON-NLS-1$
+			String linkHttp = "<a href=\"https://github.com/eclipse-platform/eclipse.platform/blob/master/docs/Evolving-Java-based-APIs-2.md\">" //$NON-NLS-1$
 					+ PreferenceMessages.ApiErrorsWarningsConfigurationBlock_4 + "</a>"; //$NON-NLS-1$
 			link.setText(NLS.bind(PreferenceMessages.ApiErrorsWarningsConfigurationBlock_5, linkHttp));
 			link.setSize(400, 100);
 			link.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
 				try {
-					PlatformUI.getWorkbench().getBrowserSupport().getExternalBrowser().openURL(new URL(e.text));
+					PlatformUI.getWorkbench().getBrowserSupport().getExternalBrowser()
+							.openURL(URI.create(e.text).toURL());
 				} catch (Exception ex) {
 				}
 			}));
