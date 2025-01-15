@@ -223,7 +223,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		TargetPlatformHelper.checkPluginPropertiesConsistency(fAllBundles, getConfigurationDirectory(configuration));
 
 		programArgs.add("-configuration"); //$NON-NLS-1$
-		programArgs.add("file:" + IPath.fromOSString(getConfigurationDirectory(configuration).getPath()).addTrailingSeparator().toString()); //$NON-NLS-1$
+		programArgs.add(IPath.fromOSString(getConfigurationDirectory(configuration).getPath()).addTrailingSeparator().toPath().toUri().toString());
 
 		// Specify the output folder names
 		programArgs.add("-dev"); //$NON-NLS-1$
