@@ -27,9 +27,7 @@ import static org.osgi.framework.Constants.RESOLUTION_OPTIONAL;
 
 import java.io.File;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -1052,18 +1050,13 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 	private static final Pattern WHITESPACE = Pattern.compile("\\s+");
 
 	private Path getConfigurationFolder(ILaunchConfigurationWorkingCopy launchConfig)
-			throws CoreException, MalformedURLException {
+			throws CoreException {
 		ILaunch launch = new Launch(launchConfig, ILaunchManager.RUN_MODE, null);
 		var config = new EclipseApplicationLaunchConfiguration();
 		String commandLine = config.showCommandLine(launchConfig, ILaunchManager.RUN_MODE, launch, null);
 		String configURL = WHITESPACE.splitAsStream(commandLine) //
 				.dropWhile(t -> !"-configuration".equals(t)).skip(1).findFirst().get();
-		// The configURL is not properly build, therefore this hack is necessary
-		try {
-			return Path.of(URI.create(configURL));
-		} catch (IllegalArgumentException e) {
-			return Path.of(new URL(configURL).getPath());
-		}
+		return Path.of(URI.create(configURL));
 	}
 
 	private static String getInstallLocation(IPluginModelBase plugin) {
