@@ -211,7 +211,6 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_NEWPPRJ_TOOL = create(PATH_TOOL, "newpprj_wiz.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_NEWFRAGPRJ_TOOL = create(PATH_TOOL, "newfprj_wiz.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_NEWEXP_WIZ_TOOL = create(PATH_TOOL, "newexp_wiz.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_DEPLOYCS_TOOL = create(PATH_TOOL, "new_cheatsheet_wiz.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_VALIDATE_TOOL = create(PATH_TOOL, "validate.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_EXPORT_PLUGIN_TOOL = create(PATH_TOOL, "exp_deployplug.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_EXPORT_PRODUCT_TOOL = create(PATH_TOOL, "exp_product.png"); //$NON-NLS-1$
@@ -307,7 +306,6 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_FEATURE_EXPORT_WIZ = create(PATH_WIZBAN, "exp_deployfeat_wiz.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_MIGRATE_30_WIZ = create(PATH_WIZBAN, "migrate_30_wiz.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PRODUCT_WIZ = create(PATH_WIZBAN, "product_wiz.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_CHEATSHEET_WIZ = create(PATH_WIZBAN, "new_cheatsheet_wiz.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PRODUCT_EXPORT_WIZ = create(PATH_WIZBAN, "exp_product.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_JAR_TO_PLUGIN_WIZ = create(PATH_WIZBAN, "jarToPlugin_wiz.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_EXTSTR_WIZ = create(PATH_WIZBAN, "extstr_wiz.png"); //$NON-NLS-1$
