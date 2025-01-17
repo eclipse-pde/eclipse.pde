@@ -104,6 +104,7 @@ import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.texteditor.ITextEditor;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 import org.xml.sax.SAXException;
@@ -331,6 +332,10 @@ public class TargetEditor extends FormEditor {
 				}
 			}
 		}
+
+		pages.stream().filter(ITextEditor.class::isInstance).map(ITextEditor.class::cast).filter(ITextEditor::isDirty)
+				.forEach(ITextEditor::doRevertToSaved);
+
 		setActivePage(getActivePage());
 		editorDirtyStateChanged();
 	}
