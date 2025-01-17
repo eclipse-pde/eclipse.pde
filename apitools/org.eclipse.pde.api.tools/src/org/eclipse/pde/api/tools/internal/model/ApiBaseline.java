@@ -674,6 +674,9 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 			return component;
 		}
 		Set<IApiComponent> allComponents = fAllComponentsById.get(id);
+		if (allComponents == null) {
+			return null;
+		}
 		return allComponents.stream().filter(c -> hasSameMMMVersion(version, c)).findFirst().orElse(null);
 	}
 
