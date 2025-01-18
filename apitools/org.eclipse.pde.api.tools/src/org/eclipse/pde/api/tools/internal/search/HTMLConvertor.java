@@ -13,7 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.search;
 
-import com.ibm.icu.util.ULocale;
+import java.util.Locale;
+import java.util.Set;
 
 /**
  * Contains strings and methods for writing HTML markup
@@ -77,7 +78,8 @@ public abstract class HTMLConvertor {
 	/**
 	 * Opening html tag: <code>&lt;html&gt;</code>
 	 */
-	public static final String OPEN_HTML = !ULocale.getDefault().isRightToLeft() ? "<html>\n" : "<html  dir=\"rtl\">\n";//$NON-NLS-1$ //$NON-NLS-2$
+	public static final String OPEN_HTML = !isRightToLeft() ? "<html>\n" //$NON-NLS-1$
+			: "<html  dir=\"rtl\">\n";//$NON-NLS-1$
 	/**
 	 * Closing html tag: <code>&lt;html&gt;</code>
 	 */
@@ -163,6 +165,30 @@ public abstract class HTMLConvertor {
 	 */
 	public static final String OPEN_H4 = "<h4>"; //$NON-NLS-1$
 
+	// List of RTL Languages taken from
+	// https://raw.githubusercontent.com/shadiabuhilal/rtl-detect/2eed8a33276461a24e7033d1d3a115ee64aee3f5/lib/rtl-detect.js
+	private static final Set<String> RTL_LANGUAGES = Set.of( //
+			"ae", /* Avestan */ //$NON-NLS-1$
+			"ar", /* "العربية", Arabic */ //$NON-NLS-1$
+			"arc", /* Aramaic */ //$NON-NLS-1$
+			"bcc", /* "بلوچی مکرانی", Southern Balochi */ //$NON-NLS-1$
+			"bqi", /* "بختياري", Bakthiari */ //$NON-NLS-1$
+			"ckb", /* "Soranî / کوردی", Sorani */ //$NON-NLS-1$
+			"dv", /* Dhivehi */ //$NON-NLS-1$
+			"fa", /* "فارسی", Persian */ //$NON-NLS-1$
+			"glk", /* "گیلکی", Gilaki */ //$NON-NLS-1$
+			"he", /* "עברית", Hebrew */ //$NON-NLS-1$
+			"ku", /* "Kurdî / كوردی", Kurdish */ //$NON-NLS-1$
+			"mzn", /* "مازِرونی", Mazanderani */ //$NON-NLS-1$
+			"nqo", /* N"Ko */ //$NON-NLS-1$
+			"pnb", /* "پنجابی", Western Punjabi */ //$NON-NLS-1$
+			"ps", /* "پښتو", Pashto, */ //$NON-NLS-1$
+			"sd", /* "سنڌي", Sindhi */ //$NON-NLS-1$
+			"ug", /* "Uyghurche / ئۇيغۇرچە", Uyghur */ //$NON-NLS-1$
+			"ur", /* "اردو", Urdu */ //$NON-NLS-1$
+			"yi" /* "ייִדיש", Yiddish */ //$NON-NLS-1$
+	);
+
 	/**
 	 * Opens a new <code>&lt;td&gt;</code> with the given width attribute set
 	 *
@@ -172,5 +198,9 @@ public abstract class HTMLConvertor {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("<td width=\"").append(width).append("%\">"); //$NON-NLS-1$//$NON-NLS-2$
 		return buffer.toString();
+	}
+
+	private static boolean isRightToLeft() {
+		return RTL_LANGUAGES.contains(Locale.getDefault().getLanguage());
 	}
 }
