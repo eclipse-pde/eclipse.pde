@@ -1,0 +1,17 @@
+name: Check Bundle Dependencies Version Range
+concurrency: 
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+on:
+  workflow_dispatch:
+  schedule:
+    - cron:  '0 0 * * *'
+
+jobs:
+  check-dependencies:
+    uses: eclipse-platform/eclipse.platform.releng.aggregator/.github/workflows/checkDependencies.yml@master
+    with:
+      author: Eclipse PDE Bot <pde-bot@eclipse.org>
+      bundle-folders: ui/*/ ua/*/ ds/*/ build/*/ apitools/*/ e4tools/*/
+    secrets:
+      token: ${{ secrets.PDE_BOT_PAT }}
