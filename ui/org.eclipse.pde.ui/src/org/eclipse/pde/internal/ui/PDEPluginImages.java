@@ -203,7 +203,6 @@ public class PDEPluginImages {
 	/**
 	 * TOOL16
 	 */
-	public static final ImageDescriptor DESC_DEFCON_TOOL = create(PATH_TOOL, "defcon_wiz.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_NEWEXPRJ_TOOL = create(PATH_TOOL, "newexprj_wiz.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_NEWEXP_TOOL = create(PATH_TOOL, "newexp_wiz.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_NEWEX_TOOL = create(PATH_TOOL, "newex_wiz.png"); //$NON-NLS-1$
