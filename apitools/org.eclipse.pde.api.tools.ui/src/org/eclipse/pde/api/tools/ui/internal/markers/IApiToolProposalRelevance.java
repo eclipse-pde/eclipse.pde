@@ -20,6 +20,8 @@ package org.eclipse.pde.api.tools.ui.internal.markers;
 public interface IApiToolProposalRelevance {
 
 
-	public static final int CONFIGURE_PROBLEM_SEVERITY = -1;
+	public static final int CONFIGURE_PROBLEM_SEVERITY = -10;
+	public static final int REMOVE_UNUSED_FILTER = 10;
+	public static final int FILTER_PROBLEM_WITH_COMMENT = 5;
 
 }

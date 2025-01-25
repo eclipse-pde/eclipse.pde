@@ -39,6 +39,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.IMarkerResolutionRelevance;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
 
@@ -48,7 +49,7 @@ import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
  *
  * @since 1.0.0
  */
-public class RemoveFilterProblemResolution extends WorkbenchMarkerResolution {
+public class RemoveFilterProblemResolution extends WorkbenchMarkerResolution implements IMarkerResolutionRelevance {
 
 	/**
 	 * The {@link IApiProblemFilter} to remove
@@ -165,5 +166,10 @@ public class RemoveFilterProblemResolution extends WorkbenchMarkerResolution {
 		int size = mset.size();
 		plural = size > 0;
 		return mset.toArray(new IMarker[size]);
+	}
+
+	@Override
+	public int getRelevanceForResolution() {
+		return IApiToolProposalRelevance.REMOVE_UNUSED_FILTER;
 	}
 }
