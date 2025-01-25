@@ -81,4 +81,10 @@ public class FilterProblemWithCommentResolution extends FilterProblemResolution 
 		op.setSystem(true);
 		op.schedule();
 	}
+
+	@Override
+	public int getRelevanceForResolution() {
+		return IApiToolProposalRelevance.FILTER_PROBLEM_WITH_COMMENT;
+	}
+
 }
