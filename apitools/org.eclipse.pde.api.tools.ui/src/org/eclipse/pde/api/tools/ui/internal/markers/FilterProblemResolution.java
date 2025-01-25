@@ -30,6 +30,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.IMarkerResolutionRelevance;
 import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
 
 /**
@@ -38,7 +39,7 @@ import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
  *
  * @since 1.0.0
  */
-public class FilterProblemResolution extends WorkbenchMarkerResolution {
+public class FilterProblemResolution extends WorkbenchMarkerResolution implements IMarkerResolutionRelevance {
 
 	protected IMarker fBackingMarker = null;
 	protected IJavaElement fResolvedElement = null;
