@@ -103,7 +103,7 @@ public class LayoutSpyDialog {
 	private Text diagnostics;
 	private Button showColoringButton;
 
-	private class LayoutSpyLabelProvider extends ColumnLabelProvider {
+	private static class LayoutSpyLabelProvider extends ColumnLabelProvider {
 		@Override
 		public Color getForeground(Object element) {
 			Control child = (Control) element;
