@@ -22,7 +22,7 @@ import java.util.List;
  */
 public class LocationNode extends Node {
 
-	private List<String> repositoryLocations = new ArrayList<>();
+	private final List<String> repositoryLocations = new ArrayList<>();
 
 	public List<String> getRepositoryLocations() {
 		return repositoryLocations;
