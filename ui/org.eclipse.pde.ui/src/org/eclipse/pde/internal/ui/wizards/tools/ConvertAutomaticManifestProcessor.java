@@ -56,7 +56,7 @@ import org.osgi.framework.Version;
 
 public class ConvertAutomaticManifestProcessor extends RefactoringProcessor {
 
-	private List<IProject> projects;
+	private final List<IProject> projects;
 	private boolean useProjectRoot;
 	private boolean keepRequireBundle;
 	private boolean keepImportPackage;

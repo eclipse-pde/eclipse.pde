@@ -26,7 +26,7 @@ import org.eclipse.swt.graphics.Image;
 
 public class AddPdeClasspathContainerClasspathFixProposal extends ClasspathFixProposal {
 
-	private IJavaProject project;
+	private final IJavaProject project;
 
 	public AddPdeClasspathContainerClasspathFixProposal(IJavaProject project) {
 		this.project = project;

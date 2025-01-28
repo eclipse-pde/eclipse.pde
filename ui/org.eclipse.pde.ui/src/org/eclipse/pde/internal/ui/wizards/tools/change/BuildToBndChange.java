@@ -54,9 +54,9 @@ public class BuildToBndChange extends Change {
 
 	@SuppressWarnings("restriction")
 	private static final String DS_CONTENT_TYPE_ID = org.eclipse.pde.internal.ds.core.Activator.CONTENT_TYPE_ID;
-	private IBuildModel model;
-	private IProject project;
-	private IFile instructionfile;
+	private final IBuildModel model;
+	private final IProject project;
+	private final IFile instructionfile;
 
 	public BuildToBndChange(IProject project, IBuildModel model, IFile instructionfile) {
 		this.project = project;

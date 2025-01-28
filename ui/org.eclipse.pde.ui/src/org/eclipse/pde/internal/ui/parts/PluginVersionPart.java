@@ -179,7 +179,7 @@ public class PluginVersionPart {
 	private VersionRange fVersionRange;
 	private boolean fIsRanged;
 	private final boolean fRangeAllowed;
-	private boolean isPlugin;
+	private final boolean isPlugin;
 
 	public PluginVersionPart(boolean rangeAllowed) {
 		this(rangeAllowed, false);

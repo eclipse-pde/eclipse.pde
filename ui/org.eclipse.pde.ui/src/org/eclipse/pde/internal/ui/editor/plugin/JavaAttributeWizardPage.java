@@ -44,7 +44,7 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 	private final ISchemaAttribute attInfo;
 	private final IPluginModelBase model;
 	private final InitialClassProperties initialValues;
-	private IJavaProject javaProject;
+	private final IJavaProject javaProject;
 
 	static class InitialClassProperties {
 		// populate new wizard page

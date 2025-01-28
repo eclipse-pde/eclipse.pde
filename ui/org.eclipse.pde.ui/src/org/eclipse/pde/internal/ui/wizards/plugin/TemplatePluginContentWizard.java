@@ -45,7 +45,7 @@ import aQute.bnd.build.model.EE;
 public class TemplatePluginContentWizard extends Wizard implements IPluginContentWizard {
 
 	private static final String DEFAULT_BND_INSTRUCTION = "bnd.bnd"; //$NON-NLS-1$
-	private Template template;
+	private final Template template;
 	private IFieldData data;
 	private TemplateParamsWizardPage paramsWizardPage;
 

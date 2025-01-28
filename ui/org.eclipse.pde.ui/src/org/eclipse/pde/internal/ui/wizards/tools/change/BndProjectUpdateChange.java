@@ -32,7 +32,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public final class BndProjectUpdateChange extends Change {
 
-	private IProject project;
+	private final IProject project;
 
 	public BndProjectUpdateChange(IProject project) {
 		this.project = project;
