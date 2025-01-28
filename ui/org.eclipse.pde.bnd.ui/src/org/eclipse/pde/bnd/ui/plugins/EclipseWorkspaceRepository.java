@@ -43,7 +43,7 @@ public class EclipseWorkspaceRepository extends AbstractIndexingRepository<IProj
 
 	private static final Map<IWorkspace, EclipseWorkspaceRepository> repositoryMap = new ConcurrentHashMap<>();
 	private boolean initialized;
-	private IWorkspace workspace;
+	private final IWorkspace workspace;
 
 	EclipseWorkspaceRepository(IWorkspace workspace) {
 		this.workspace = workspace;

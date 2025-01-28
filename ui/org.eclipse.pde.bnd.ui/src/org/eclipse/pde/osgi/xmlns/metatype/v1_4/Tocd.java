@@ -73,7 +73,7 @@ public class Tocd {
     @XmlAttribute(name = "id", required = true)
     protected String id;
     @XmlAnyAttribute
-    private Map<QName, String> otherAttributes = new HashMap<QName, String>();
+    private final Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
     /**
      * Gets the value of the adOrIconOrAny property.

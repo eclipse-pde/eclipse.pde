@@ -32,7 +32,7 @@ import org.osgi.service.component.annotations.Deactivate;
 @AdapterTypes(adaptableClass = Template.class, adapterNames = { ILabelProvider.class, Image.class })
 public class TemplateAdapter implements IAdapterFactory {
 
-	private RepoTemplateLabelProvider labelProvider = new RepoTemplateLabelProvider();
+	private final RepoTemplateLabelProvider labelProvider = new RepoTemplateLabelProvider();
 	private ImageRegistry imageRegistry;
 
 	@Override

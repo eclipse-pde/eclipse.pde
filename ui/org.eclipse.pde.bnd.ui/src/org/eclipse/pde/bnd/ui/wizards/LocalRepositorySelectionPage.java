@@ -46,7 +46,7 @@ class LocalRepositorySelectionPage extends WizardPage {
 	private final PropertyChangeSupport	propSupport			= new PropertyChangeSupport(this);
 	private RepositoryPlugin			selectedRepository	= null;
 
-	private Workspace workspace;
+	private final Workspace workspace;
 
 	LocalRepositorySelectionPage(Workspace workspace, String pageName) {
 		this(workspace, pageName, null);

@@ -61,7 +61,7 @@ public class Toption {
     @XmlAttribute(name = "value", required = true)
     protected String value;
     @XmlAnyAttribute
-    private Map<QName, String> otherAttributes = new HashMap<QName, String>();
+    private final Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
     /**
      * Gets the value of the any property.

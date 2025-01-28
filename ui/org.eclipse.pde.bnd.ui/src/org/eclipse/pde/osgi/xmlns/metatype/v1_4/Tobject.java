@@ -62,7 +62,7 @@ public class Tobject {
     @XmlAttribute(name = "ocdref", required = true)
     protected String ocdref;
     @XmlAnyAttribute
-    private Map<QName, String> otherAttributes = new HashMap<QName, String>();
+    private final Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
     /**
      * Gets the value of the attributeOrAny property.
