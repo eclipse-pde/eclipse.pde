@@ -43,13 +43,13 @@ import aQute.bnd.properties.Document;
 
 public class ManifestToBndChange extends Change {
 
-	private IFile manifestFile;
-	private IPluginModelBase model;
-	private boolean keepRequireBundle;
-	private boolean keepImportPackage;
-	private boolean keepBREE;
-	private boolean keepExportPackage;
-	private IFile instructionFile;
+	private final IFile manifestFile;
+	private final IPluginModelBase model;
+	private final boolean keepRequireBundle;
+	private final boolean keepImportPackage;
+	private final boolean keepBREE;
+	private final boolean keepExportPackage;
+	private final IFile instructionFile;
 
 	public ManifestToBndChange(IProject project, IFile manifest, IPluginModelBase model, IFile instructionsFile,
 			boolean keepRequireBundle,

@@ -32,7 +32,7 @@ public class ConvertAutomaticManifestsWizardSettingsPage extends UserInputWizard
 	private static final String KEY_KEEP_IMPORT_PACKAGE = "keep_import_package"; //$NON-NLS-1$
 	private static final String KEY_KEEP_EXPORT_PACKAGE = "keep_export_package"; //$NON-NLS-1$
 	private static final String KEY_KEEP_REQUIREDEXECUTIONENVIRONMENT = "keep_requiredexecutionenvironment_package"; //$NON-NLS-1$
-	private ConvertAutomaticManifestProcessor processor;
+	private final ConvertAutomaticManifestProcessor processor;
 
 	public ConvertAutomaticManifestsWizardSettingsPage(ConvertAutomaticManifestProcessor processor) {
 		super(PDEUIMessages.ConvertAutomaticManifestWizardPage_title);

@@ -117,10 +117,12 @@ public class RepositoryBundleContainerAdapterFactory implements IAdapterFactory 
 			return segment instanceof RepositoryBundleContainer || segment instanceof RequirementNode;
 		}
 
+		@Override
 		public boolean canRemove(ITargetDefinition target, TreePath treePath) {
 			return treePath.getLastSegment() instanceof RequirementNode;
 		}
 
+		@Override
 		public IStatus remove(ITargetDefinition target, TreePath[] treePaths) {
 			boolean reload = false;
 			for (TreePath path : treePaths) {

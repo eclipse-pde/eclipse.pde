@@ -39,9 +39,9 @@ public class UpdateTargetJob extends Job {
 
 	private final IJobFunction action;
 
-	private boolean update;
+	private final boolean update;
 
-	private Job cancelJob;
+	private final Job cancelJob;
 
 	/**
 	 * Schedules a new update job that will update all selected children of the
