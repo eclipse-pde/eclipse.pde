@@ -33,7 +33,7 @@ public enum DSAnnotationVersion {
 	public static final DSAnnotationVersion DEFAULT_VERSION = DSAnnotationVersion.V1_4;
 
 	private final String namespace;
-	private String version;
+	private final String version;
 
 	private DSAnnotationVersion(String version, String namespace) {
 		this.version = version;
