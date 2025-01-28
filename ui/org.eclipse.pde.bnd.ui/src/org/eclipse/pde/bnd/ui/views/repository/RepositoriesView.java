@@ -195,8 +195,8 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 
 	private Workspace workspace;
 	
-	private IObservableValue<String> workspaceName = new WritableValue<>();
-	private IObservableValue<String> workspaceDescription = new WritableValue<>();
+	private final IObservableValue<String> workspaceName = new WritableValue<>();
+	private final IObservableValue<String> workspaceDescription = new WritableValue<>();
 
 	@Override
 	public void createPartControl(final Composite parent) {

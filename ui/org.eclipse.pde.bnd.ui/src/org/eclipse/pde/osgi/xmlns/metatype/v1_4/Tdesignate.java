@@ -75,7 +75,7 @@ public class Tdesignate {
     @XmlAttribute(name = "merge")
     protected Boolean merge;
     @XmlAnyAttribute
-    private Map<QName, String> otherAttributes = new HashMap<QName, String>();
+    private final Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
     /**
      * Ruft den Wert der object-Eigenschaft ab.

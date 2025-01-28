@@ -67,7 +67,7 @@ public class Tmetadata {
     @XmlAttribute(name = "localization")
     protected String localization;
     @XmlAnyAttribute
-    private Map<QName, String> otherAttributes = new HashMap<QName, String>();
+    private final Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
     /**
      * Gets the value of the ocdOrDesignateOrAny property.

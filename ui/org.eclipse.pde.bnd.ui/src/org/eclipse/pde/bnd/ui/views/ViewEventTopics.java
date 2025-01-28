@@ -25,7 +25,7 @@ public enum ViewEventTopics {
 	 */
 	REPOSITORIESVIEW_OPEN_ADVANCED_SEARCH("EVENT/RepositoriesView/openAdvancedSearch");
 
-	private String eventtype;
+	private final String eventtype;
 
 	ViewEventTopics(String eventtype) {
 		this.eventtype = eventtype;
