@@ -45,6 +45,7 @@ public class ProjectClasspathPreferenceChangeListener implements IPreferenceChan
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_DELETE);
 	}
 
+	@Override
 	public void preferenceChange(PreferenceChangeEvent event) {
 	}
 
