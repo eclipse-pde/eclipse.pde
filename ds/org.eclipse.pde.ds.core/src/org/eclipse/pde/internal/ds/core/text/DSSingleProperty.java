@@ -22,7 +22,7 @@ import org.eclipse.pde.internal.ds.core.IDSSingleProperty;
 public abstract class DSSingleProperty extends DSObject implements IDSSingleProperty {
 
 	private static final long serialVersionUID = 1L;
-	private int type;
+	private final int type;
 
 	public DSSingleProperty(DSModel model, String element, int type) {
 		super(model, element);
