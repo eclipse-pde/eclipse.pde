@@ -24,7 +24,7 @@ import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
 
 public class PathSchemaProvider implements SchemaProvider {
 
-	private List<IPath> searchPath;
+	private final List<IPath> searchPath;
 
 	public PathSchemaProvider(List<IPath> searchPath) {
 		this.searchPath = searchPath;
