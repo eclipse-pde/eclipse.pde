@@ -57,7 +57,7 @@ public class TemplateListSelectionPage extends WizardListSelectionPage {
 	private final ContentPage fContentPage;
 	private Button fUseTemplate;
 	private String fInitialTemplateId;
-	private Map<Template, CompletableFuture<String>> templateTextLoadings = new HashMap<>();
+	private final Map<Template, CompletableFuture<String>> templateTextLoadings = new HashMap<>();
 
 	class WizardFilter extends ViewerFilter {
 		@Override

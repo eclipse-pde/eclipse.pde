@@ -40,12 +40,12 @@ import aQute.bnd.osgi.Constants;
 public class BndScanner extends RuleBasedScanner {
 	final Set<String>				instructions;
 	final Set<String>				directives	= new HashSet<>();
-	private Token T_DEFAULT;
-	private Token T_KEY;
-	private Token T_ERROR;
-	private Token T_COMMENT;
-	private Token T_INSTRUCTION;
-	private Token T_OPTION;
+	private final Token T_DEFAULT;
+	private final Token T_KEY;
+	private final Token T_ERROR;
+	private final Token T_COMMENT;
+	private final Token T_INSTRUCTION;
+	private final Token T_OPTION;
 
 	public BndScanner(IColorManager colorManager) {
 		T_DEFAULT = new Token(new TextAttribute(colorManager.getColor(IJavaColorConstants.JAVA_DEFAULT)));

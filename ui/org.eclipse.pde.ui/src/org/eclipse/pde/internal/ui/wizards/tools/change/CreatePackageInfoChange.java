@@ -31,11 +31,11 @@ public class CreatePackageInfoChange extends ResourceChange {
 
 	public static final String PACKAGE_INFO_JAVA = org.eclipse.jdt.internal.corext.util.JavaModelUtil.PACKAGE_INFO_JAVA;
 
-	private IPackageFragment fragment;
+	private final IPackageFragment fragment;
 
-	private String name;
+	private final String name;
 
-	private Version version;
+	private final Version version;
 
 	public CreatePackageInfoChange(IPackageFragment fragment, String name, Version version) {
 		this.fragment = fragment;

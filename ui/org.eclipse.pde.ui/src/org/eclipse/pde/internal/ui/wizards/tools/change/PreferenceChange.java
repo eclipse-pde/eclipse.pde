@@ -27,7 +27,7 @@ import org.osgi.service.prefs.BackingStoreException;
 
 public class PreferenceChange extends Change {
 
-	private IEclipsePreferences node;
+	private final IEclipsePreferences node;
 
 	public PreferenceChange(IEclipsePreferences node) {
 		this.node = node;
