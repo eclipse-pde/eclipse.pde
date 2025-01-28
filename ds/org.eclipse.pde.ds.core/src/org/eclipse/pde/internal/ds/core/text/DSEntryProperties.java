@@ -28,7 +28,7 @@ import org.eclipse.pde.internal.ds.core.IDSConstants;
 public abstract class DSEntryProperties extends DSObject implements IDSBundleProperties {
 
 	private static final long serialVersionUID = 1L;
-	private int type;
+	private final int type;
 
 	public DSEntryProperties(DSModel model, String elementName, int type) {
 		super(model, elementName);
