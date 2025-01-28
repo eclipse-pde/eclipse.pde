@@ -23,7 +23,7 @@ import aQute.bnd.service.RepositoryPlugin;
 
 public class DelegateRepositoryListener implements RepositoryListenerPlugin {
 
-	private Supplier<Stream<RepositoryListenerPlugin>> delegateSupplier;
+	private final Supplier<Stream<RepositoryListenerPlugin>> delegateSupplier;
 
 	public DelegateRepositoryListener(Supplier<Stream<RepositoryListenerPlugin>> delegateSupplier) {
 		this.delegateSupplier = delegateSupplier;

@@ -54,7 +54,7 @@ public class OSGiAnnotationsClasspathContributor implements IClasspathContributo
 			"org.osgi.annotation.bundle", "org.osgi.service.component.annotations", //$NON-NLS-1$ //$NON-NLS-2$
 			"org.osgi.service.metatype.annotations"); //$NON-NLS-1$
 
-	private ConcurrentMap<String, Collection<IClasspathEntry>> entryMap = new ConcurrentHashMap<>();
+	private final ConcurrentMap<String, Collection<IClasspathEntry>> entryMap = new ConcurrentHashMap<>();
 
 	@Override
 	public List<IClasspathEntry> getInitialEntries(BundleDescription project) {
