@@ -46,7 +46,7 @@ public class ApiAnnotationsClasspathContributor implements IClasspathContributor
 
 	private static final Collection<String> API_TOOLS_ANNOTATIONS = List.of("org.eclipse.pde.api.tools.annotations"); //$NON-NLS-1$
 
-	private ConcurrentMap<String, Collection<IClasspathEntry>> entryMap = new ConcurrentHashMap<>();
+	private final ConcurrentMap<String, Collection<IClasspathEntry>> entryMap = new ConcurrentHashMap<>();
 
 	@Override
 	public List<IClasspathEntry> getInitialEntries(BundleDescription project) {
