@@ -238,8 +238,8 @@ public class TargetRepository extends BaseRepository implements RepositoryPlugin
 
 	private static final class BundleDescriptionRepositoryResource implements RepositoryContent, Resource, IAdaptable {
 
-		private BundleDescription bundle;
-		private Repository repository;
+		private final BundleDescription bundle;
+		private final Repository repository;
 
 		public BundleDescriptionRepositoryResource(Repository repository, BundleDescription bundle) {
 			this.repository = repository;
@@ -346,7 +346,7 @@ public class TargetRepository extends BaseRepository implements RepositoryPlugin
 		private Capability capability;
 		private long lastLength;
 		private long lastModified;
-		private Resource resource;
+		private final Resource resource;
 
 		public ContentCapabilityCache(File file, Resource resource) {
 			this.file = file;

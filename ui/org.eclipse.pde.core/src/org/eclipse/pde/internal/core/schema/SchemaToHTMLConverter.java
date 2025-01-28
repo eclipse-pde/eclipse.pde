@@ -57,8 +57,8 @@ import org.xml.sax.SAXException;
 public class SchemaToHTMLConverter {
 
 	private final SchemaTransformer fTransformer = new SchemaTransformer();
-	private File baseDir;
-	private URL cssURL;
+	private final File baseDir;
+	private final URL cssURL;
 
 	public SchemaToHTMLConverter(File baseDir, URL cssURL) {
 		this.baseDir = baseDir;

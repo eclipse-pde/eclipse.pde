@@ -20,7 +20,7 @@ import aQute.bnd.service.clipboard.Clipboard;
 
 public class SupplierClipboard implements Clipboard {
 
-	private Supplier<Clipboard> supplier;
+	private final Supplier<Clipboard> supplier;
 
 	public SupplierClipboard(Supplier<Clipboard> supplier) {
 		this.supplier = supplier;
