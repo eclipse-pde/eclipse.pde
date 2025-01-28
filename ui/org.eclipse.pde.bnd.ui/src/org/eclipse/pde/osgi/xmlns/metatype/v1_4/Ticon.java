@@ -64,7 +64,7 @@ public class Ticon {
     @XmlSchemaType(name = "positiveInteger")
     protected BigInteger size;
     @XmlAnyAttribute
-    private Map<QName, String> otherAttributes = new HashMap<QName, String>();
+    private final Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
     /**
      * Gets the value of the any property.

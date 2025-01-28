@@ -86,7 +86,7 @@ public class Tad {
     @XmlAttribute(name = "required")
     protected Boolean required;
     @XmlAnyAttribute
-    private Map<QName, String> otherAttributes = new HashMap<QName, String>();
+    private final Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
     /**
      * Gets the value of the optionOrAny property.

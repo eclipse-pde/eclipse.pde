@@ -87,7 +87,7 @@ public class BndPreferences {
 	private static final boolean DEFAULT_PREF_EDITOR_OPEN_SOURCE_TAB = false;
 
 	private final IPreferenceStore	store;
-	private IProject project;
+	private final IProject project;
 
 	public BndPreferences(IProject project, IPreferenceStore store) {
 		this.store = store;

@@ -55,7 +55,7 @@ public class AddFilesToRepositoryWizard extends Wizard {
 
 	private final LocalRepositorySelectionPage		repoSelectionPage;
 	private final AddFilesToRepositoryWizardPage	fileSelectionPage;
-	private Workspace workspace;
+	private final Workspace workspace;
 
 	public AddFilesToRepositoryWizard(Workspace workspace, RepositoryPlugin repository, File[] initialFiles) {
 		this.workspace = workspace;

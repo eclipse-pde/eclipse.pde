@@ -41,7 +41,7 @@ public class HierarchicalLabel<T> {
 	private static final String					DELIMITER_FOR_HIERARCHY	= " :: ";
 
 	private final List<String>					labels;
-	private Function<HierarchicalLabel<T>, T>	leafActionCallback;
+	private final Function<HierarchicalLabel<T>, T>	leafActionCallback;
 
 	boolean										enabled					= true;
 	boolean										checked					= false;
