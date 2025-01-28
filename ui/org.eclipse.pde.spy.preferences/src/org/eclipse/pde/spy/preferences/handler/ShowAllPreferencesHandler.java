@@ -52,7 +52,7 @@ public class ShowAllPreferencesHandler {
 		eventBroker.post(PreferenceSpyEventTopics.PREFERENCESPY_PREFERENCE_SHOW, preferenceEntries.values());
 	}
 
-	private class PrefereneGatherer implements IPreferenceNodeVisitor {
+	private static class PrefereneGatherer implements IPreferenceNodeVisitor {
 
 		private final Map<String, PreferenceNodeEntry> preferenceEntries;
 
