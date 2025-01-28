@@ -47,7 +47,7 @@ public class LicenseReplaceTask extends Task {
 	// Path to license text
 	private String licensePath;
 
-	private class Feature {
+	private static class Feature {
 		private static final String FEATURE_START_TAG = "<feature";//$NON-NLS-1$
 		private static final String LICENSE_START_TAG = "<license"; //$NON-NLS-1$;
 		private static final String LICENSE_END_TAG = "</license>"; //$NON-NLS-1$;
