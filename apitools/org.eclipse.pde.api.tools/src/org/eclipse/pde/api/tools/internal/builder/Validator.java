@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) Sep 11, 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov (ArSysOp) - support records
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.builder;
 
@@ -25,6 +26,7 @@ import org.eclipse.jdt.core.dom.AnnotationTypeDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
+import org.eclipse.jdt.core.dom.RecordDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.pde.api.tools.internal.provisional.IApiJavadocTag;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
@@ -117,6 +119,27 @@ public abstract class Validator extends ASTVisitor {
 
 	@Override
 	public void endVisit(EnumDeclaration node) {
+		fStack.pop();
+		if (!fStack.isEmpty()) {
+			Item item = fStack.peek();
+			isvisible = item.visible;
+		}
+	}
+
+	@Override
+	public boolean visit(RecordDeclaration node) {
+		int flags = node.getModifiers();
+		if (node.isMemberTypeDeclaration()) {
+			isvisible &= Flags.isPublic(flags);
+		} else {
+			isvisible &= !Flags.isPackageDefault(flags);
+		}
+		fStack.push(new Item(getTypeName(node), node.getModifiers(), isvisible));
+		return true;
+	}
+
+	@Override
+	public void endVisit(RecordDeclaration node) {
 		fStack.pop();
 		if (!fStack.isEmpty()) {
 			Item item = fStack.peek();

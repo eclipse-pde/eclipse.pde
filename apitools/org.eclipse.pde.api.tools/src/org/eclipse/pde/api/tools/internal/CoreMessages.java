@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 IBM Corporation and others.
+ * Copyright (c) 2008, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov (ArSysOp) - support records
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal;
 
@@ -39,6 +40,7 @@ public class CoreMessages extends NLS {
 	public static String JavadocTagManager_interface_no_reference;
 	public static String JavadocTagManager_method_no_overried;
 	public static String JavadocTagManager_method_no_reference;
+	public static String JavadocTagManager_record_no_reference;
 	public static String ProjectComponent_could_not_locate_model;
 	public static String api_generation_printArguments;
 	public static String api_generation_projectLocationNotADirectory;

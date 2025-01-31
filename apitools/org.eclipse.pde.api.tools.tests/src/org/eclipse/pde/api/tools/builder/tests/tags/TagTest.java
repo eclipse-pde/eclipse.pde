@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2024 IBM Corporation and others.
+ * Copyright (c) 2008, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov (ArSysOp) - support records
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.tags;
 
@@ -70,6 +71,8 @@ public abstract class TagTest extends ApiBuilderTest {
 		classes.add(ValidMethodTagTests.class);
 		classes.add(ValidEnumTagTests.class);
 		classes.add(InvalidEnumTagTests.class);
+		classes.add(InvalidRecordTagTests.class);
+		classes.add(ValidRecordTagTests.class);
 		classes.add(ValidAnnotationTagTests.class);
 		classes.add(InvalidAnnotationTagTests.class);
 		classes.add(InvalidDuplicateTagsTests.class);
