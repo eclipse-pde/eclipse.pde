@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov (ArSysOp) - support records
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional;
 
@@ -44,6 +45,12 @@ public interface IApiJavadocTag {
 	 * is <code>128</code>
 	 */
 	public static final int TYPE_ANNOTATION = 0x1 << 7;
+
+	/**
+	 * Type constant representing the tag applies to a Java enum. Values is
+	 * <code>256</code>
+	 */
+	public static final int TYPE_RECORD = 0x1 << 8;
 
 	/**
 	 * Member constant representing the tag applies to a Java method. Values is

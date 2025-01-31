@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 IBM Corporation and others.
+ * Copyright (c) 2008, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov (ArSysOp) - support records
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.builder;
 
@@ -29,6 +30,7 @@ import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.Javadoc;
 import org.eclipse.jdt.core.dom.MarkerAnnotation;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.RecordDeclaration;
 import org.eclipse.jdt.core.dom.TagElement;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jface.text.BadLocationException;
@@ -91,6 +93,12 @@ public class TagValidator extends Validator {
 
 	@Override
 	public boolean visit(EnumDeclaration node) {
+		fProcessedAnnotations.clear();
+		return super.visit(node);
+	}
+
+	@Override
+	public boolean visit(RecordDeclaration node) {
 		fProcessedAnnotations.clear();
 		return super.visit(node);
 	}
@@ -159,12 +167,39 @@ public class TagValidator extends Validator {
 					if (tagname == null || !JavadocTagManager.ALL_TAGS.contains(tagname)) {
 						continue;
 					}
-					createTagProblem(item.typename, tag, IElementDescriptor.FIELD, IApiProblem.UNSUPPORTED_TAG_USE, IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, BuilderMessages.TagValidator_an_enum_constant);
+					createTagProblem(item.typename, tag, IElementDescriptor.FIELD, IApiProblem.UNSUPPORTED_TAG_USE,
+							IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID,
+							BuilderMessages.TagValidator_an_enum_constant);
 				}
 			}
 			case ASTNode.ANNOTATION_TYPE_DECLARATION -> {
 				Item item = getItem();
-				Set<String> supported = getSupportedTagNames(IApiJavadocTag.TYPE_ANNOTATION, IApiJavadocTag.MEMBER_NONE);
+				Set<String> supported = getSupportedTagNames(IApiJavadocTag.TYPE_ANNOTATION,
+						IApiJavadocTag.MEMBER_NONE);
+				HashSet<String> processed = new HashSet<>();
+				for (TagElement tag : tags) {
+					String tagname = tag.getTagName();
+					if (tagname == null || !JavadocTagManager.ALL_TAGS.contains(tagname)) {
+						continue;
+					}
+					if (processed.contains(tagname)) {
+						createTagProblem(item.typename, tag, IElementDescriptor.METHOD, IApiProblem.DUPLICATE_TAG_USE,
+								IApiMarkerConstants.DUPLICATE_TAG_MARKER_ID, null);
+					} else if (!supported.contains(tagname)) {
+						createTagProblem(item.typename, tag, IElementDescriptor.TYPE, IApiProblem.UNSUPPORTED_TAG_USE,
+								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID,
+								BuilderMessages.TagValidator_an_annotation);
+					} else if (!item.visible) {
+						createTagProblem(item.typename, tag, IElementDescriptor.TYPE, IApiProblem.UNSUPPORTED_TAG_USE,
+								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID,
+								BuilderMessages.TagValidator_annotation_not_visible);
+					}
+					processed.add(tagname);
+				}
+			}
+			case ASTNode.RECORD_DECLARATION -> {
+				Item item = getItem();
+				Set<String> supported = getSupportedTagNames(IApiJavadocTag.TYPE_RECORD, IApiJavadocTag.MEMBER_NONE);
 				HashSet<String> processed = new HashSet<>();
 				for (TagElement tag : tags) {
 					String tagname = tag.getTagName();
@@ -174,9 +209,12 @@ public class TagValidator extends Validator {
 					if (processed.contains(tagname)) {
 						createTagProblem(item.typename, tag, IElementDescriptor.METHOD, IApiProblem.DUPLICATE_TAG_USE, IApiMarkerConstants.DUPLICATE_TAG_MARKER_ID, null);
 					} else if (!supported.contains(tagname)) {
-						createTagProblem(item.typename, tag, IElementDescriptor.TYPE, IApiProblem.UNSUPPORTED_TAG_USE, IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, BuilderMessages.TagValidator_an_annotation);
+						createTagProblem(item.typename, tag, IElementDescriptor.TYPE, IApiProblem.UNSUPPORTED_TAG_USE,
+								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, BuilderMessages.TagValidator_a_record);
 					} else if (!item.visible) {
-						createTagProblem(item.typename, tag, IElementDescriptor.TYPE, IApiProblem.UNSUPPORTED_TAG_USE, IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, BuilderMessages.TagValidator_annotation_not_visible);
+						createTagProblem(item.typename, tag, IElementDescriptor.TYPE, IApiProblem.UNSUPPORTED_TAG_USE,
+								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID,
+								BuilderMessages.TagValidator_record_not_visible);
 					}
 					processed.add(tagname);
 				}
@@ -448,6 +486,7 @@ public class TagValidator extends Validator {
 						IElementDescriptor.METHOD, IApiProblem.UNSUPPORTED_ANNOTATION_USE,
 						IApiMarkerConstants.UNSUPPORTED_ANNOTATION_MARKER_ID,
 						BuilderMessages.TagValidator_an_annotation_method);
+				case ASTNode.RECORD_DECLARATION -> checkRecord(node, (RecordDeclaration) parent);
 				case ASTNode.FIELD_DECLARATION -> checkField(node, (FieldDeclaration) parent);
 				case ASTNode.METHOD_DECLARATION -> checkMethod(node, (MethodDeclaration) parent);
 				default -> { /**/ }
@@ -537,6 +576,34 @@ public class TagValidator extends Validator {
 				createAnnotationProblem(item.typename, node, IElementDescriptor.TYPE, IApiProblem.UNSUPPORTED_ANNOTATION_USE, IApiMarkerConstants.UNSUPPORTED_ANNOTATION_MARKER_ID, BuilderMessages.TagValidator_annotation_not_visible);
 			}
 		}
+	}
+
+	/**
+	 * Checks the annotation that appears on the given parent
+	 *
+	 * @param node the annotation
+	 * @param type the parent
+	 */
+	void checkRecord(MarkerAnnotation node, RecordDeclaration type) {
+		String name = node.getTypeName().getFullyQualifiedName();
+		Item item = getItem();
+		if (fProcessedAnnotations.contains(name)) {
+			createAnnotationProblem(item.typename, node, IElementDescriptor.TYPE, IApiProblem.DUPLICATE_ANNOTATION_USE,
+					IApiMarkerConstants.DUPLICATE_ANNOTATION_MARKER_ID, null);
+		} else {
+			Set<String> supported = ApiPlugin.getJavadocTagManager().getAnntationsForType(IApiJavadocTag.TYPE_RECORD,
+					IApiJavadocTag.MEMBER_NONE);
+			if (!supported.contains(name)) {
+				createAnnotationProblem(item.typename, node, IElementDescriptor.TYPE,
+						IApiProblem.UNSUPPORTED_ANNOTATION_USE, IApiMarkerConstants.UNSUPPORTED_ANNOTATION_MARKER_ID,
+						BuilderMessages.TagValidator_a_record);
+			} else if (!item.visible) {
+				createAnnotationProblem(item.typename, node, IElementDescriptor.TYPE,
+						IApiProblem.UNSUPPORTED_ANNOTATION_USE, IApiMarkerConstants.UNSUPPORTED_ANNOTATION_MARKER_ID,
+						BuilderMessages.TagValidator_record_not_visible);
+			}
+		}
+		fProcessedAnnotations.add(name);
 	}
 
 	/**

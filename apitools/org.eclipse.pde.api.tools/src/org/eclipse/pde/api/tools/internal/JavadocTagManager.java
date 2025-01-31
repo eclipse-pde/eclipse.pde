@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2021 IBM Corporation and others.
+ * Copyright (c) 2007, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov (ArSysOp) - support records
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal;
 
@@ -227,6 +228,7 @@ public final class JavadocTagManager {
 			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_ENUM, IApiJavadocTag.MEMBER_NONE), annots);
 			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_ENUM, IApiJavadocTag.MEMBER_FIELD), annots);
 			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_ENUM, IApiJavadocTag.MEMBER_METHOD), annots);
+			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_RECORD, IApiJavadocTag.MEMBER_NONE), annots);
 
 		}
 	}
@@ -284,6 +286,8 @@ public final class JavadocTagManager {
 			newtag.setApplicableTo(IApiJavadocTag.TYPE_ENUM, IApiJavadocTag.MEMBER_FIELD, CoreMessages.JavadocTagManager_enum_field_no_reference);
 			newtag.setApplicableTo(IApiJavadocTag.TYPE_ENUM, IApiJavadocTag.MEMBER_METHOD, CoreMessages.JavadocTagManager_enum_method_no_reference);
 			newtag.setApplicableTo(IApiJavadocTag.TYPE_ANNOTATION, IApiJavadocTag.MEMBER_NONE, CoreMessages.JavadocTagManager_annotation_no_reference);
+			newtag.setApplicableTo(IApiJavadocTag.TYPE_RECORD, IApiJavadocTag.MEMBER_NONE,
+					CoreMessages.JavadocTagManager_record_no_reference);
 			tagcache.put(newtag.getTagId(), newtag);
 			list.add(newtag);
 			tags = list.toArray(new IApiJavadocTag[list.size()]);
