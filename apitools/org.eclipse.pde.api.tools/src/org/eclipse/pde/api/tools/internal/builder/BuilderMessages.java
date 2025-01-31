@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2021 IBM Corporation and others.
+ * Copyright (c) 2008, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov (ArSysOp) - support records
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.builder;
 
@@ -70,6 +71,7 @@ public class BuilderMessages extends NLS {
 	public static String TagValidator_a_method;
 	public static String TagValidator_a_method_in_a_final_class;
 	public static String TagValidator_a_method_that_is_not_visible;
+	public static String TagValidator_a_record;
 	public static String TagValidator_a_static_final_method;
 	public static String TagValidator_a_static_method;
 	public static String TagValidator_an_abstract_class;
@@ -99,6 +101,7 @@ public class BuilderMessages extends NLS {
 	public static String TagValidator_private_enum_method;
 	public static String TagValidator_private_field;
 	public static String TagValidator_private_method;
+	public static String TagValidator_record_not_visible;
 	public static String TagValidator_static_final_constructor;
 	public static String TagValidator_static_package_constructor;
 	public static String IncrementalBuilder_builder_for_project;
