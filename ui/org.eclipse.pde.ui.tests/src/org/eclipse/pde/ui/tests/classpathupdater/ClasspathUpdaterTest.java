@@ -24,6 +24,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import org.eclipse.core.internal.events.NotificationManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -66,6 +67,9 @@ public class ClasspathUpdaterTest {
 		originalTestPluginPattern = PDECore.getDefault().getPreferencesManager()
 				.getString(ICoreConstants.TEST_PLUGIN_PATTERN);
 		expectIsTest = null;
+		// avoid setClasspath in NotifyJob concurrent to test execution:
+		Job.getJobManager().wakeUp(NotificationManager.class);
+		Job.getJobManager().join(NotificationManager.class, null);
 	}
 
 	@After
