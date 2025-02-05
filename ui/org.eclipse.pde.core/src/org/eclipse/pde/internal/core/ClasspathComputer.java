@@ -255,7 +255,7 @@ public class ClasspathComputer {
 	}
 
 	private static void addLibraryEntry(IPluginLibrary library, Map<String, IPath> sourceLibraryMap,
-			ClasspathConfiguration context) throws JavaModelException {
+			ClasspathConfiguration context) {
 		String name = ClasspathUtilCore.expandLibraryName(library.getName());
 		IResource jarFile = context.javaProject.getProject().findMember(name);
 		if (jarFile == null) {
@@ -266,18 +266,26 @@ public class ClasspathComputer {
 		boolean isExported = library.isExported();
 
 		IPackageFragmentRoot root = context.javaProject.getPackageFragmentRoot(jarFile);
-		if (root.exists() && root.getKind() == IPackageFragmentRoot.K_BINARY) {
-			IClasspathEntry oldEntry = root.getRawClasspathEntry();
-			// If we have the same binary root but new or different source, we
-			// should recreate the entry. That is when the source attachment:
-			// - is not defined: the default could be available now, or
-			// - is overridden with a different value.
-			if ((sourceAttachment == null && oldEntry.getSourceAttachmentPath() != null)
-					|| (sourceAttachment != null && sourceAttachment.equals(oldEntry.getSourceAttachmentPath()))) {
-				context.reloaded.add(oldEntry);
-				return;
+		try {
+			if (root.exists() && root.getKind() == IPackageFragmentRoot.K_BINARY) {
+				IClasspathEntry oldEntry = root.getRawClasspathEntry();
+				// If we have the same binary root but new or different source,
+				// we
+				// should recreate the entry. That is when the source
+				// attachment:
+				// - is not defined: the default could be available now, or
+				// - is overridden with a different value.
+				if ((sourceAttachment == null && oldEntry.getSourceAttachmentPath() != null)
+						|| (sourceAttachment != null && sourceAttachment.equals(oldEntry.getSourceAttachmentPath()))) {
+					context.reloaded.add(oldEntry);
+					return;
+				}
+				isExported = oldEntry.isExported();
 			}
-			isExported = oldEntry.isExported();
+		} catch (JavaModelException ignored) {
+			// For example ELEMENT_NOT_ON_CLASSPATH is expected when
+			// rawclasspath was changed manually.
+			// In any case PDE can not solve any issue beside ignoring it.
 		}
 		reloadClasspathEntry(jarFile, name, sourceAttachment, isExported, context);
 	}
