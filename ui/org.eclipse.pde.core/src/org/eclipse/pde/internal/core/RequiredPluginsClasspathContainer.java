@@ -522,7 +522,8 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				addExtraLibrary(path, null, entries);
 			} else {
 				int count = path.getDevice() == null ? 4 : 3;
-				if (path.segmentCount() >= count) {
+				int segments = path.segmentCount();
+				if (segments >= count - 1) {
 					String pluginID = path.segment(count - 2);
 					IPluginModelBase model = PluginRegistry.findModel(pluginID);
 					if (model != null && model.isEnabled()) {
@@ -530,10 +531,17 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 						path = path.removeFirstSegments(count - 1);
 						IResource underlyingResource = model.getUnderlyingResource();
 						if (underlyingResource == null) {
-							IPath result = PDECore.getDefault().getModelManager().getExternalModelManager()
-									.getNestedLibrary(model, path.toString());
-							if (result != null) {
-								addExtraLibrary(result, model, entries);
+							if (path.segmentCount() == 0) {
+								String installLocation = model.getInstallLocation();
+								if (installLocation != null) {
+									addExtraLibrary(IPath.fromOSString(installLocation), model, entries);
+								}
+							} else {
+								IPath result = PDECore.getDefault().getModelManager().getExternalModelManager()
+										.getNestedLibrary(model, path.toString());
+								if (result != null) {
+									addExtraLibrary(result, model, entries);
+								}
 							}
 						} else {
 							IFile file = underlyingResource.getProject().getFile(path);
