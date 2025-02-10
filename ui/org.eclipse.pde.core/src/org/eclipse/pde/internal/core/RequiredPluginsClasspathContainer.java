@@ -544,9 +544,17 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 								}
 							}
 						} else {
-							IFile file = underlyingResource.getProject().getFile(path);
-							if (file.exists()) {
-								addExtraLibrary(file.getFullPath(), model, entries);
+							if (path.segmentCount() == 0) {
+								IProject p = underlyingResource.getProject();
+								IClasspathEntry clsEntry = JavaCore.newProjectEntry(p.getFullPath());
+								if (!entries.contains(clsEntry)) {
+									entries.add(clsEntry);
+								}
+							} else {
+								IFile file = underlyingResource.getProject().getFile(path);
+								if (file.exists()) {
+									addExtraLibrary(file.getFullPath(), model, entries);
+								}
 							}
 						}
 					}
