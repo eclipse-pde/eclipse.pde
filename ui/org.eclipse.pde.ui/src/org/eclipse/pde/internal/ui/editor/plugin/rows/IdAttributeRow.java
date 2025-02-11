@@ -53,26 +53,28 @@ public class IdAttributeRow extends ButtonAttributeRow {
 				Entry<String, IConfigurationElement> entry = (Entry<String, IConfigurationElement>) element;
 				String text = entry.getKey();
 				IConfigurationElement value = entry.getValue();
-				String name = value.getAttribute("name"); //$NON-NLS-1$
-				if (name == null) {
-					name = value.getAttribute("label"); //$NON-NLS-1$
+				if (value != null) {
+					String name = value.getAttribute("name"); //$NON-NLS-1$
 					if (name == null) {
-						name = value.getAttribute("description"); //$NON-NLS-1$
+						name = value.getAttribute("label"); //$NON-NLS-1$
+						if (name == null) {
+							name = value.getAttribute("description"); //$NON-NLS-1$
+						}
 					}
-				}
 
-				String contributor = value.getContributor().getName();
+					String contributor = value.getContributor().getName();
 
-				if (input != null && name != null && name.startsWith("%") && contributor != null) { //$NON-NLS-1$
-					IPluginModelBase model = PluginRegistry.findModel(contributor);
-					name = model.getResourceString(name);
-				}
+					if (input != null && name != null && name.startsWith("%") && contributor != null) { //$NON-NLS-1$
+						IPluginModelBase model = PluginRegistry.findModel(contributor);
+						name = model.getResourceString(name);
+					}
 
-				if (name != null) {
-					text += " - " + name; //$NON-NLS-1$
-				}
-				if (contributor != null) {
-					text += " [" + contributor + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+					if (name != null) {
+						text += " - " + name; //$NON-NLS-1$
+					}
+					if (contributor != null) {
+						text += " [" + contributor + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+					}
 				}
 				return text;
 			}
