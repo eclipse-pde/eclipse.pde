@@ -584,15 +584,18 @@ public final class Signatures {
 							}
 							if (typeParameters != null) {
 								for (TypeParameter typeParameter : typeParameters) {
-									if (fullyQualifiedName.equals(typeParameter.getName().getFullyQualifiedName())) {
-										if (typeParameter.typeBounds().isEmpty()) {
-											yield Signature.createTypeSignature("Object", false); //$NON-NLS-1$
-										} else {
-											// the erasure of a type
-											// variable is the erasure of
-											// its leftmost bound
-											Type bound = (Type) typeParameter.typeBounds().get(0);
-											yield getTypeSignature(bound, erased);
+									if (typeParameter != null) {
+										if (fullyQualifiedName
+												.equals(typeParameter.getName().getFullyQualifiedName())) {
+											if (typeParameter.typeBounds().isEmpty()) {
+												yield Signature.createTypeSignature("Object", false); //$NON-NLS-1$
+											} else {
+												// the erasure of a type
+												// variable is the erasure of
+												// its leftmost bound
+												Type bound = (Type) typeParameter.typeBounds().get(0);
+												yield getTypeSignature(bound, erased);
+											}
 										}
 									}
 								}
