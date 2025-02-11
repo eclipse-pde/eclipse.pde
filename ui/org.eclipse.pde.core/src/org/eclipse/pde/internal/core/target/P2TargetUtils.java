@@ -1554,8 +1554,10 @@ public class P2TargetUtils {
 			Collection<IRepositoryReference> repos = new org.eclipse.equinox.internal.p2.engine.ProfileMetadataRepository(
 					getGlobalAgent(), dataArea, null).getReferences();
 			for (IRepositoryReference reference : repos) {
-				if (reference.getType() == IRepository.TYPE_ARTIFACT && reference.getLocation() != null) {
-					additionalRepos.add(reference.getLocation());
+				if (reference != null) {
+					if (reference.getType() == IRepository.TYPE_ARTIFACT && reference.getLocation() != null) {
+						additionalRepos.add(reference.getLocation());
+					}
 				}
 			}
 		} catch (CoreException e) {
