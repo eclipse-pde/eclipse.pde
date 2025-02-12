@@ -20,14 +20,11 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.emf.xpath.EcoreXPathContextFactory;
-import org.eclipse.e4.emf.xpath.XPathContext;
-import org.eclipse.e4.emf.xpath.XPathContextFactory;
 import org.eclipse.e4.tools.emf.ui.common.IEditorFeature.FeatureClass;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.Util.InternalPackage;
@@ -41,9 +38,9 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FeatureSele
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindParentReferenceElementDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.E;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VSnippetsEditor;
+import org.eclipse.e4.ui.model.ModelXPathEvaluator;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.fragment.MModelFragment;
 import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
@@ -157,8 +154,7 @@ public class StringModelFragment extends AbstractComponentEditor<MStringModelFra
 
 	@Override
 	public String getDetailLabel(Object element) {
-		if (element instanceof StringModelFragmentImpl) {
-			final StringModelFragmentImpl fragment = (StringModelFragmentImpl) element;
+		if (element instanceof StringModelFragmentImpl fragment) {
 			String ret = ""; //$NON-NLS-1$
 			if (E.notEmpty(fragment.getFeaturename())) {
 				ret += fragment.getFeaturename();
@@ -246,17 +242,17 @@ public class StringModelFragment extends AbstractComponentEditor<MStringModelFra
 
 				// Deal with non default MApplication IDs.
 				if (xpath != null) {
-					if (o instanceof MApplication) {
-						EClass found = getTargetClassFromXPath((MApplication) o, xpath);
+					if (o instanceof MApplication application) {
+						EClass found = getTargetClassFromXPath(application, xpath);
 						if (found != null) {
 							return found;
 						}
 					}
 				} else {
 					// This is a standard search with ID.
-					if ((o instanceof MApplicationElement)
+					if ((o instanceof MApplicationElement appElement)
 							&& (o.eContainingFeature() != FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS)
-							&& parentElementId.equals(((MApplicationElement) o).getElementId())) {
+							&& parentElementId.equals(appElement.getElementId())) {
 						return o.eClass();
 					}
 				}
@@ -581,24 +577,14 @@ public class StringModelFragment extends AbstractComponentEditor<MStringModelFra
 	 * @return the list of EClass(es) matching this xpath
 	 */
 	private static EClass getTargetClassFromXPath(MApplication application, String xpath) {
-
-		XPathContextFactory<EObject> f = EcoreXPathContextFactory.newInstance();
-		XPathContext xpathContext = f.newContext((EObject) application);
-		Iterator<Object> i = xpathContext.iterate(xpath);
-
 		try {
-			while (i.hasNext()) {
-				Object obj = i.next();
-				if (obj instanceof MApplicationElement) {
-					ApplicationElementImpl ae = (ApplicationElementImpl) obj;
-					return ae.eClass();
-				}
-			}
+			return ModelXPathEvaluator.findMatchingElements(application, xpath, MApplicationElement.class)
+					.map(EObject.class::cast).map(EObject::eClass) //
+					.findFirst().orElse(null);
 		} catch (Exception ex) {
 			// custom xpath functions will throw exceptions
-			ex.printStackTrace();
+			ILog.get().error("Failed to evaluate xpath: " + xpath, ex); //$NON-NLS-1$
 		}
-
 		return null;
 	}
 
