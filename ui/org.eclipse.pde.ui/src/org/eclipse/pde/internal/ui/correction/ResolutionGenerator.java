@@ -159,7 +159,7 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 	 */
 	int getProblemId(IMarker marker) {
 		int problemID = marker.getAttribute(PDEMarkerFactory.PROBLEM_ID, PDEMarkerFactory.NO_RESOLUTION);
-		if (problemID != PDEMarkerFactory.NO_RESOLUTION) {
+		if (problemID != PDEMarkerFactory.NO_RESOLUTION && problemID != PDEMarkerFactory.M_ONLY_CONFIG_SEV) {
 			return problemID;
 		}
 		return marker.getAttribute("id", PDEMarkerFactory.NO_RESOLUTION); //$NON-NLS-1$
