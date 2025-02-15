@@ -20,8 +20,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
@@ -36,10 +38,13 @@ import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 import org.osgi.framework.namespace.HostNamespace;
+import org.osgi.framework.wiring.BundleCapability;
 import org.osgi.framework.wiring.BundleRequirement;
 import org.osgi.framework.wiring.BundleRevision;
 import org.osgi.framework.wiring.BundleWire;
 import org.osgi.framework.wiring.BundleWiring;
+import org.osgi.resource.Capability;
+import org.osgi.resource.Namespace;
 import org.osgi.resource.Resource;
 
 /**
@@ -173,12 +178,12 @@ public class DependencyManager {
 
 		Set<BundleDescription> closure = new HashSet<>(bundles.size() * 4 / 3 + 1);
 		Queue<BundleDescription> pending = new ArrayDeque<>(bundles.size());
+		Map<String, List<BundleCapability>> provided = new HashMap<>();
 
 		// initialize with given bundles
 		for (BundleDescription bundle : bundles) {
-			addNewRequiredBundle(bundle, closure, pending);
+			addNewRequiredBundle(bundle, closure, pending, provided);
 		}
-
 		// perform exhaustive iterative bfs for required wires
 		while (!pending.isEmpty()) {
 			BundleDescription bundle = pending.remove();
@@ -192,7 +197,7 @@ public class DependencyManager {
 				// A fragment's host is already required by a wire
 				for (BundleDescription fragment : bundle.getFragments()) {
 					if (includeAllFragments || !isTestWorkspaceProject(fragment)) {
-						addNewRequiredBundle(fragment, closure, pending);
+						addNewRequiredBundle(fragment, closure, pending, provided);
 					}
 				}
 			}
@@ -212,7 +217,11 @@ public class DependencyManager {
 
 			List<BundleWire> requiredWires = wiring.getRequiredWires(null);
 			for (BundleWire wire : requiredWires) {
-				BundleRevision declaringBundle = wire.getRequirement().getRevision();
+				BundleRequirement requirement = wire.getRequirement();
+				if (isSingle(requirement) && isAlreadyProvided(requirement, provided)) {
+					continue;
+				}
+				BundleRevision declaringBundle = requirement.getRevision();
 				if (declaringBundle != bundle && !closure.contains(declaringBundle)) {
 					// Requirement is declared by an attached fragment, which is
 					// not included into the closure.
@@ -221,18 +230,42 @@ public class DependencyManager {
 				BundleRevision provider = wire.getCapability().getRevision();
 				// Use revision of required capability to support the case if
 				// fragments contribute new packages to their host's API.
-				if (provider instanceof BundleDescription requiredBundle && (includeOptional || !isOptional(wire.getRequirement()))) {
-					addNewRequiredBundle(requiredBundle, closure, pending);
+				if (provider instanceof BundleDescription requiredBundle && (includeOptional || !isOptional(requirement))) {
+					addNewRequiredBundle(requiredBundle, closure, pending, provided);
 				}
 			}
 		}
 		return closure;
 	}
 
+	private static boolean isSingle(BundleRequirement requirement) {
+		return Namespace.CARDINALITY_SINGLE.equals(requirement.getDirectives()
+				.getOrDefault(Namespace.REQUIREMENT_CARDINALITY_DIRECTIVE, Namespace.CARDINALITY_SINGLE));
+	}
+
+	protected static boolean isAlreadyProvided(BundleRequirement requirement,
+			Map<String, List<BundleCapability>> provided) {
+		List<BundleCapability> list = provided.get(requirement.getNamespace());
+		if (list != null && !list.isEmpty()) {
+			for (BundleCapability bundleCapability : list) {
+				if (requirement.matches(bundleCapability)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	private static void addNewRequiredBundle(BundleDescription bundle, Set<BundleDescription> requiredBundles,
-			Queue<BundleDescription> pending) {
+			Queue<BundleDescription> pending, Map<String, List<BundleCapability>> provided) {
 		if (bundle != null && bundle.isResolved() && !bundle.isRemovalPending() && requiredBundles.add(bundle)) {
 			pending.add(bundle);
+			List<Capability> capabilities = bundle.getCapabilities(null);
+			for (Capability capability : capabilities) {
+				if (capability instanceof BundleCapability bc) {
+					provided.computeIfAbsent(capability.getNamespace(), nil -> new ArrayList<>()).add(bc);
+				}
+			}
 		}
 	}
 
