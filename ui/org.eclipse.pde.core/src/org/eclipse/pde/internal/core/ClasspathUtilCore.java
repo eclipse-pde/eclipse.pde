@@ -152,8 +152,13 @@ public class ClasspathUtilCore {
 		}
 		boolean isJarShape = new File(location).isFile();
 		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
-		if (isJarShape || libraries.length == 0) {
+		if (isJarShape) {
 			return Stream.of(getEntryForPath(IPath.fromOSString(location), extra));
+		}
+		if (libraries.length == 0) {
+			List<IClasspathEntry> entries = new ArrayList<>();
+			PDEClasspathContainer.addExternalPlugin(model, null, entries);
+			return entries.stream();
 		}
 		return Arrays.stream(libraries).filter(library -> !IPluginLibrary.RESOURCE.equals(library.getType()))
 				.map(library -> {
