@@ -28,6 +28,13 @@
       <import plugin="org.bndtools.templates.template"/>
       <import plugin="biz.aQute.repository"/>
       <import plugin="bndtools.jareditor"/>
+      <import plugin="org.osgi.test.common"/>
+      <import plugin="org.osgi.test.junit5"/>
+      <import plugin="org.osgi.test.junit5.cm"/>
+      <import plugin="org.osgi.test.junit4"/>
+      <import plugin="org.osgi.test.assertj.framework"/>
+      <import plugin="org.osgi.test.assertj.log"/>
+      <import plugin="org.osgi.test.assertj.promise"/>
    </requires>
 
    <plugin
