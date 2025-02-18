@@ -122,6 +122,7 @@ public class TracingBlock {
 	private final Map<IPluginModelBase, TracingPropertySource> fPropertySources = new HashMap<>();
 	private FormToolkit fToolkit;
 	private ScrolledPageBook fPageBook;
+	private boolean activated;
 
 	/**
 	 * The last selected item in the list is stored in the dialog settings.
@@ -351,6 +352,7 @@ public class TracingBlock {
 					pluginSelected(null, false);
 				}
 			}
+			activated = true;
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
@@ -361,6 +363,11 @@ public class TracingBlock {
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
+		if (!activated) {
+			// nothing to apply as we weren't initialized before,
+			// all the data is empty anyway
+			return;
+		}
 		boolean tracingEnabled = fTracingCheck.getSelection();
 		config.setAttribute(IPDELauncherConstants.TRACING, tracingEnabled);
 		if (tracingEnabled) {
