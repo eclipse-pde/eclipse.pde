@@ -18,7 +18,6 @@ package org.eclipse.pde.internal.ui.dialogs;
 
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -26,6 +25,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IFragmentModel;
@@ -42,6 +42,7 @@ import org.eclipse.pde.internal.core.text.bundle.ImportPackageObject;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -137,6 +138,11 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 		setListLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 	}
 
+	public PluginSelectionDialog(Shell activeWorkbenchShell, IPluginModelBase[] availablePlugins,
+			boolean multipleSelection, IPluginModelBase model) {
+		this(activeWorkbenchShell, availablePlugins, multipleSelection);
+		PDEPlugin.getDefault().getLabelProvider().setCurrentModel(model);
+	}
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
@@ -153,8 +159,8 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 		return PluginRegistry.getActiveModels(includeFragments);
 	}
 
-	public static HashSet<String> getExistingImports(IPluginModelBase model, boolean includeImportPkg) {
-		HashSet<String> existingImports = new HashSet<>();
+	public static HashMap<String, Boolean> getExistingImports(IPluginModelBase model, boolean includeImportPkg) {
+		HashMap<String, Boolean> existingImports = new HashMap<>();
 		addSelfAndDirectImports(existingImports, model);
 		if (model instanceof IFragmentModel) {
 			IFragment fragment = ((IFragmentModel) model).getFragment();
@@ -169,33 +175,34 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 		return existingImports;
 	}
 
-	private static void addSelfAndDirectImports(HashSet<String> set, IPluginModelBase model) {
+	private static void addSelfAndDirectImports(HashMap<String, Boolean> existingImports, IPluginModelBase model) {
 		if (model == null) {
 			return;
 		}
-		set.add(model.getPluginBase().getId());
+		existingImports.put(model.getPluginBase().getId(), false);
 		IPluginImport[] imports = model.getPluginBase().getImports();
 		for (IPluginImport pImport : imports) {
 			String id = pImport.getId();
-			if (set.add(id)) {
-				addReexportedImport(set, id);
-			}
+			existingImports.put(id, false);
+			addReexportedImport(existingImports, id);
+
 		}
 	}
 
-	private static void addReexportedImport(HashSet<String> set, String id) {
+	private static void addReexportedImport(HashMap<String, Boolean> existingImports, String id) {
 		IPluginModelBase model = PluginRegistry.findModel(id);
 		if (model != null) {
 			IPluginImport[] imports = model.getPluginBase().getImports();
 			for (IPluginImport pImport : imports) {
-				if (pImport.isReexported() && set.add(pImport.getId())) {
-					addReexportedImport(set, pImport.getId());
+				if (pImport.isReexported()) {
+					existingImports.put(pImport.getId(), true);
+					addReexportedImport(existingImports, pImport.getId());
 				}
 			}
 		}
 	}
 
-	private static void addImportedPackages(IBundlePluginModelBase base, HashSet<String> existingImports) {
+	private static void addImportedPackages(IBundlePluginModelBase base, HashMap<String, Boolean> existingImports) {
 		HashMap<String, ImportPackageObject> map = getImportPackages(base);
 		if (map == null) {
 			return;
@@ -221,7 +228,7 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 						continue;
 					}
 				}
-				existingImports.add(exported[i].getSupplier().getSymbolicName());
+				existingImports.put(exported[i].getSupplier().getSymbolicName(), false);
 			}
 		}
 	}
@@ -298,4 +305,22 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
 
+	@Override
+	protected void updateButtonsEnableState(IStatus status) {
+		super.updateButtonsEnableState(status);
+		Button okButton = getOkButton();
+		StructuredSelection currentSelection = super.getSelectedItems();
+		HashMap<String, Boolean> existingImports = PluginSelectionDialog
+				.getExistingImports(PDEPlugin.getDefault().getLabelProvider().getCurrentPluginModel(), false);
+		if (!currentSelection.isEmpty())
+			okButton.setEnabled(false);
+		for (Object selection : currentSelection) {
+			if (selection instanceof IPluginModelBase
+					&& !(existingImports.keySet().contains(((IPluginModelBase) selection).getPluginBase().getId()))) {
+				okButton.setEnabled(true);
+				break;
+			}
+
+		}
+	}
 }
