@@ -27,39 +27,39 @@ public interface IBuildEntry extends IWritable {
 	/**
 	 * A property name for changes to the 'name' field.
 	 */
-	public static final String P_NAME = "name"; //$NON-NLS-1$
+	String P_NAME = "name"; //$NON-NLS-1$
 	/**
 	 * The prefix for any key denoting the source folders that
 	 * should be compiled into a JAR.  The suffix will
 	 * be the name of the JAR.
 	 */
-	public static final String JAR_PREFIX = "source."; //$NON-NLS-1$
+	String JAR_PREFIX = "source."; //$NON-NLS-1$
 	/**
 	 * The prefix for any key denoting output folders for a particular
 	 * JAR.  The suffix will be the name of the JAR.
 	 */
-	public static final String OUTPUT_PREFIX = "output."; //$NON-NLS-1$
+	String OUTPUT_PREFIX = "output."; //$NON-NLS-1$
 	/**
 	 * The name of the key that lists all the folders and files
 	 * to be included in the binary build.
 	 */
-	public static final String BIN_INCLUDES = "bin.includes"; //$NON-NLS-1$
+	String BIN_INCLUDES = "bin.includes"; //$NON-NLS-1$
 	/**
 	 * The name of the key that lists all the folders and files
 	 * to be included in the source build.
 	 */
-	public static final String SRC_INCLUDES = "src.includes"; //$NON-NLS-1$
+	String SRC_INCLUDES = "src.includes"; //$NON-NLS-1$
 	/**
 	 * The name of the key that declares extra library entries to be added
 	 * to the class path at build time only..
 	 */
-	public static final String JARS_EXTRA_CLASSPATH = "jars.extra.classpath"; //$NON-NLS-1$
+	String JARS_EXTRA_CLASSPATH = "jars.extra.classpath"; //$NON-NLS-1$
 	/**
 	 * The name of the key that declares additional plug-in dependencies to augment development classpath
 	 *
 	 * @since 3.2
 	 */
-	public static final String SECONDARY_DEPENDENCIES = "additional.bundles"; //$NON-NLS-1$
+	String SECONDARY_DEPENDENCIES = "additional.bundles"; //$NON-NLS-1$
 
 	/**
 	 * Adds the token to the list of token for this entry.
@@ -88,6 +88,19 @@ public interface IBuildEntry extends IWritable {
 	 * @return array of tokens
 	 */
 	String[] getTokens();
+
+	/**
+	 * Returns the first token for this entry
+	 *
+	 * @since 3.21
+	 */
+	default String getFirstToken() {
+		String[] tokens = getTokens();
+		if (tokens == null || tokens.length == 0) {
+			return null;
+		}
+		return tokens[0];
+	}
 
 	/**
 	 * Returns true if the provided token exists in this entry.
