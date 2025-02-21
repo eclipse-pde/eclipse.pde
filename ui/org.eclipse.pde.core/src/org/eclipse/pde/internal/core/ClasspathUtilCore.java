@@ -20,6 +20,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -33,6 +34,7 @@ import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.IFragment;
@@ -50,6 +52,10 @@ import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.core.plugin.Fragment;
 import org.eclipse.pde.internal.core.plugin.Plugin;
 import org.eclipse.pde.internal.core.plugin.PluginBase;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.namespace.PackageNamespace;
+import org.osgi.framework.wiring.BundleWire;
+import org.osgi.framework.wiring.BundleWiring;
 import org.osgi.resource.Resource;
 
 public class ClasspathUtilCore {
@@ -87,34 +93,97 @@ public class ClasspathUtilCore {
 	}
 
 	public static Stream<IClasspathEntry> classpathEntriesForBundle(String id) {
+		return classpathEntriesForBundle(id, false, new IClasspathAttribute[0]);
+	}
+
+	public static Stream<IClasspathEntry> classpathEntriesForBundle(String id, boolean includeRequired,
+			IClasspathAttribute[] extra) {
 		// first look if we have something in the workspace...
 		IPluginModelBase model = PluginRegistry.findModel(id);
 		if (model != null && model.isEnabled()) {
-			IResource resource = model.getUnderlyingResource();
-			if (resource != null && PluginProject.isJavaProject(resource.getProject())) {
-				IJavaProject javaProject = JavaCore.create(resource.getProject());
-				return Stream.of(JavaCore.newProjectEntry(javaProject.getPath()));
+			Stream<IClasspathEntry> modelBundleClasspath = classpathEntriesForModelBundle(model, extra);
+			if (includeRequired) {
+				return Stream.concat(modelBundleClasspath,
+						getRequiredByDescription(model.getBundleDescription(), extra));
 			}
-			String location = model.getInstallLocation();
-			if (location == null) {
-				return Stream.empty();
-			}
-			boolean isJarShape = new File(location).isFile();
-			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
-			if (isJarShape || libraries.length == 0) {
-				return Stream.of(getEntryForPath(IPath.fromOSString(location)));
-			}
-			return Arrays.stream(libraries).filter(library -> !IPluginLibrary.RESOURCE.equals(library.getType()))
-					.map(library -> {
-						String name = library.getName();
-						String expandedName = ClasspathUtilCore.expandLibraryName(name);
-						return ClasspathUtilCore.getPath(model, expandedName, isJarShape);
-					}).filter(Objects::nonNull).map(ClasspathUtilCore::getEntryForPath);
+			return modelBundleClasspath;
 		}
 		// if not found in the models, try to use one from the running eclipse
-		return Optional.ofNullable(Platform.getBundle(id)).map(bundle -> bundle.adapt(File.class)).filter(File::exists)
+		Bundle runtimeBundle = Platform.getBundle(id);
+		if (runtimeBundle == null) {
+			return Stream.empty();
+		}
+		Stream<IClasspathEntry> bundleClasspath = classpathEntriesForRuntimeBundle(runtimeBundle, extra).stream();
+		if (includeRequired) {
+			return Stream.concat(bundleClasspath, getRequiredByWire(runtimeBundle, extra));
+		}
+		return bundleClasspath;
+	}
+
+	private static Stream<IClasspathEntry> getRequiredByDescription(BundleDescription description,
+			IClasspathAttribute[] extra) {
+		BundleWiring wiring = description.getWiring();
+		if (wiring == null) {
+			return Stream.empty();
+		}
+
+		List<BundleWire> wires = wiring.getRequiredWires(PackageNamespace.PACKAGE_NAMESPACE);
+		return wires.stream().map(wire -> {
+			return wire.getProvider();
+		}).distinct().flatMap(provider -> {
+			IPluginModelBase model = PluginRegistry.findModel(provider);
+			if (model != null && model.isEnabled()) {
+				return classpathEntriesForModelBundle(model, extra);
+			}
+			return Stream.empty();
+		});
+	}
+
+	protected static Stream<IClasspathEntry> classpathEntriesForModelBundle(IPluginModelBase model,
+			IClasspathAttribute[] extra) {
+		IResource resource = model.getUnderlyingResource();
+		if (resource != null && PluginProject.isJavaProject(resource.getProject())) {
+			IJavaProject javaProject = JavaCore.create(resource.getProject());
+			return Stream.of(JavaCore.newProjectEntry(javaProject.getPath()));
+		}
+		String location = model.getInstallLocation();
+		if (location == null) {
+			return Stream.empty();
+		}
+		boolean isJarShape = new File(location).isFile();
+		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
+		if (isJarShape) {
+			return Stream.of(getEntryForPath(IPath.fromOSString(location), extra));
+		}
+		if (libraries.length == 0) {
+			List<IClasspathEntry> entries = new ArrayList<>();
+			PDEClasspathContainer.addExternalPlugin(model, null, entries);
+			return entries.stream();
+		}
+		return Arrays.stream(libraries).filter(library -> !IPluginLibrary.RESOURCE.equals(library.getType()))
+				.map(library -> {
+					String name = library.getName();
+					String expandedName = ClasspathUtilCore.expandLibraryName(name);
+					return ClasspathUtilCore.getPath(model, expandedName, isJarShape);
+				}).filter(Objects::nonNull).map(entry -> getEntryForPath(entry, extra));
+	}
+
+	public static Stream<IClasspathEntry> getRequiredByWire(Bundle bundle, IClasspathAttribute[] extra) {
+		BundleWiring wiring = bundle.adapt(BundleWiring.class);
+		if (wiring == null) {
+			return Stream.empty();
+		}
+		List<BundleWire> wires = wiring.getRequiredWires(PackageNamespace.PACKAGE_NAMESPACE);
+		return wires.stream().map(wire -> wire.getProviderWiring().getBundle()).distinct()
+				.filter(b -> b.getBundleId() != 0)
+				.flatMap(b -> classpathEntriesForRuntimeBundle(b, extra).stream());
+	}
+
+	private static Optional<IClasspathEntry> classpathEntriesForRuntimeBundle(Bundle bundle,
+			IClasspathAttribute[] extra) {
+		return Optional.ofNullable(bundle.adapt(File.class)).filter(File::exists)
 				.map(File::toPath).map(Path::normalize).map(path -> IPath.fromOSString(path.toString()))
-				.map(ClasspathUtilCore::getEntryForPath).stream();
+				.map(entry -> getEntryForPath(entry, extra));
 	}
 
 	public static boolean isEntryForModel(IClasspathEntry entry, IPluginModelBase projectModel) {
@@ -127,8 +196,8 @@ public class ClasspathUtilCore {
 		return false;
 	}
 
-	private static IClasspathEntry getEntryForPath(IPath path) {
-		return JavaCore.newLibraryEntry(path, path, IPath.ROOT, new IAccessRule[0], new IClasspathAttribute[0], false);
+	private static IClasspathEntry getEntryForPath(IPath path, IClasspathAttribute[] extra) {
+		return JavaCore.newLibraryEntry(path, path, IPath.ROOT, new IAccessRule[0], extra, false);
 	}
 
 	private static void addLibraryEntry(IPluginLibrary library, Collection<ClasspathLibrary> entries) {

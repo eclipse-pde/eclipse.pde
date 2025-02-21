@@ -687,6 +687,21 @@
             id="org.eclipse.pde.ui.JunitLaunchImage">
       </launchConfigurationTypeImage>
    </extension>
+   
+     <extension point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+	    <launchConfigurationTypeImage
+	        icon="$nl$/icons/osgi/osgi.png"
+	        configTypeID="org.eclipse.pde.ui.OSGiTestLaunchConfig"
+	        id="org.eclipse.pde.ui.OSGiTestLaunchConfig.image">
+	    </launchConfigurationTypeImage>
+	</extension>
+	<extension point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+    <launchConfigurationTabGroup
+        type="org.eclipse.pde.ui.OSGiTestLaunchConfig"
+        class="org.eclipse.pde.ui.launcher.OSGiTestTabGroup"
+        id="org.eclipse.pde.ui.OSGiTestLaunchConfig.tabgroup">
+    </launchConfigurationTabGroup>
+   </extension>
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
       <launchConfigurationTabGroup

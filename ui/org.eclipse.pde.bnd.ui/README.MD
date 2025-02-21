@@ -18,7 +18,7 @@ One problem for such a reusable component is that it usually needs to get holds 
 To mitigate we use the [Eclipse Adapter Pattern](https://www.eclipse.org/articles/Article-Adapters/) as it is widely used in Eclipse, flexible and allows
 the use of [OSGi services / Dependency Injection](https://eclipse.dev/eclipse/news/4.18/platform_isv.php#dialog-adapterfactory-as-service) already.
 
-### The IProject adapter
+### The `IProject` adapter
 
 Components need to learn the project and workspace of a bndlib backed project, for this the very first step for an integration is to provide an adapter that can
 transform an (Eclipse) `IProject` into a (bndlib) `Project` (from were the Workspace then can be derived), an example might look like this:
@@ -26,7 +26,7 @@ transform an (Eclipse) `IProject` into a (bndlib) `Project` (from were the Works
 ```
 @Component
 @AdapterTypes(adaptableClass = IProject.class, adapterNames = Project.class)
-public class BndPluginAdapter implements IAdapterFactory {
+public class BndProjectAdapter implements IAdapterFactory {
 
   @Override
   public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
@@ -37,6 +37,51 @@ public class BndPluginAdapter implements IAdapterFactory {
           // if that is the case, setup a Project that represent your tooling specific setup and return it
           Project bndProject = ... fetch or setup a project that maps to the given eclipse project...
           return adapterType.cast(bndProject);
+        }
+      }
+    }
+    return null;
+  }
+
+}
+```
+
+### The `Bndrun` adapter
+
+For some cases one would need to get hold of a `Bndrun` (e.g. for launching tests), to support this similar is needed as to create a template that then can further be customized.
+For this use-case it is required to provide an adapter that can transform an (Eclipse) `IProject` into a (bndlib) `Bndrun` that is initialized with the runrequires contain the identity
+of the project and the workspace be able to resolve such bundle.
+
+```
+@Component
+@AdapterTypes(adaptableClass = IProject.class, adapterNames = Bndrun.class)
+public class BndRunAdapter implements IAdapterFactory {
+
+  @Override
+  public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
+    if (adaptableObject instanceof IProject eclipseProject) {
+      if (adapterType == Project.class) {
+        //... here we need to determine if the project is managed by our tooling, e.g. it is a PDE, Bndtool, Maven, ... backed project
+        if (/*... is relevant ... */) {
+            Workspace workspace = .... find the workspace according to your tooling implementation
+            Path base = workspace.getBase().toPath();
+            Path file = Files.createTempFile(base, project.getName(), ".bndrun");
+            file.toFile().deleteOnExit();
+            Files.createDirectories(file.getParent());
+            Properties properties = new Properties();
+            String bsn = ... derive the symbolic name ...
+            String version = ... derive the version name ...
+            properties.setProperty(Constants.RUNREQUIRES, String.format("bnd.identity; id=%s;version=%s", bsn, version));
+            //maybe more customizations....
+            Bndrun bndrun = Bndrun.createBndrun(workspace, file.toFile());
+            //make sure the file is deleted when the bndrun is closed...
+            bndrun.addClose(new AutoCloseable() {
+
+                @Override
+                public void close() throws Exception {
+                    Files.delete(file);
+                }
+            });
         }
       }
     }
