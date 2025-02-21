@@ -149,6 +149,9 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 		case PDEMarkerFactory.M_CONFLICTING_AUTOMATIC_MODULE:
 			return new IMarkerResolution[] {
 					new RemoveRedundantAutomaticModuleHeader(AbstractPDEMarkerResolution.REMOVE_TYPE, marker) };
+		case PDEMarkerFactory.M_HEADER_INCORRECT:
+			return new IMarkerResolution[] {
+					new UpdateCorrectHeaderName(AbstractPDEMarkerResolution.RENAME_TYPE, marker) };
 		}
 		return NO_RESOLUTIONS;
 	}
