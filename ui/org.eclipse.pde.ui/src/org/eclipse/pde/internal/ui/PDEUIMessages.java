@@ -3238,6 +3238,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String AddSourceBuildEntryResolution_label;
 
+	public static String AddSpaceAfterColon_add;
+
 	public static String RemoveSeperatorBuildEntryResolution_label;
 
 	public static String ExternalizeStringsResolution_desc;
