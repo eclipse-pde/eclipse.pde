@@ -195,6 +195,11 @@ public class JarManifestErrorReporter extends ErrorReporter {
 							PDEMarkerFactory.CAT_FATAL);
 					return;
 				}
+				if (line.length() >= colon + 2 && line.charAt(colon + 1) != ' ') {
+					report(PDECoreMessages.BundleErrorReporter_noSpaceAfterColon, lineNumber, CompilerFlags.ERROR,
+							PDEMarkerFactory.M_NO_SPACE_AFTER_COLON, PDEMarkerFactory.CAT_FATAL);
+					return;
+				}
 				if (line.length() < colon + 2 || line.charAt(colon + 1) != ' ') {
 					report(PDECoreMessages.BundleErrorReporter_noSpaceValue, lineNumber, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 					return;
