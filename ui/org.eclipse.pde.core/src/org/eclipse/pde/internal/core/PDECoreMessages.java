@@ -181,6 +181,7 @@ public class PDECoreMessages extends NLS {
 	public static String BundleErrorReporter_noMainSection;
 	public static String BundleErrorReporter_duplicateHeader;
 	public static String BundleErrorReporter_noColon;
+	public static String BundleErrorReporter_noSpaceAfterColon;
 	public static String BundleErrorReporter_noSpaceValue;
 	public static String BundleErrorReporter_nameHeaderInMain;
 	public static String BundleErrorReporter_noNameHeader;
