@@ -240,7 +240,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 						ClasspathHelper.addDevClasspath(testPlugin, devProperties, relativePath.toString(), true);
 					});
 		}
-		programArgs.add(ClasspathHelper.writeDevEntries(getConfigurationDirectory(configuration).toString() + "/dev.properties", devProperties).toUri().toString()); //$NON-NLS-1$
+		programArgs.add(ClasspathHelper.writeDevEntries(getConfigurationDirectory(configuration).toString() + "/dev.properties", devProperties).toString()); //$NON-NLS-1$
 
 		// Create the .options file if tracing is turned on
 		if (configuration.getAttribute(IPDELauncherConstants.TRACING, false) && !IPDELauncherConstants.TRACING_NONE.equals(configuration.getAttribute(IPDELauncherConstants.TRACING_CHECKED, (String) null))) {

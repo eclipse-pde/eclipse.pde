@@ -545,11 +545,8 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 
 		// Specify the output folder names
 		programArgs.add("-dev"); //$NON-NLS-1$
-		programArgs
-				.add(ClasspathHelper
-						.getDevEntriesProperties(
-								getConfigurationDirectory(configuration).toString() + "/dev.properties", fAllBundles) //$NON-NLS-1$
-						.toUri().toString());
+		programArgs.add(ClasspathHelper.getDevEntriesProperties(
+				getConfigurationDirectory(configuration).toString() + "/dev.properties", fAllBundles).toString()); //$NON-NLS-1$
 
 		// Create the .options file if tracing is turned on
 		if (configuration.getAttribute(IPDELauncherConstants.TRACING, false) && !IPDELauncherConstants.TRACING_NONE

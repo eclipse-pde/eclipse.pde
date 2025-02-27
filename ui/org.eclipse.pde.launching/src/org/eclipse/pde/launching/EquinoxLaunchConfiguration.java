@@ -84,7 +84,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 		ArrayList<String> programArgs = new ArrayList<>();
 
 		programArgs.add("-dev"); //$NON-NLS-1$
-		programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", fAllBundles).toUri().toString()); //$NON-NLS-1$
+		programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", fAllBundles).toString()); //$NON-NLS-1$
 
 		saveConfigurationFile(configuration);
 		programArgs.add("-configuration"); //$NON-NLS-1$

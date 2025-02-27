@@ -128,7 +128,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 
 		// add the output folder names
 		programArgs.add("-dev"); //$NON-NLS-1$
-		programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", fAllBundles).toUri().toString()); //$NON-NLS-1$
+		programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", fAllBundles).toString()); //$NON-NLS-1$
 
 		String[] args = super.getProgramArguments(configuration);
 		Collections.addAll(programArgs, args);
