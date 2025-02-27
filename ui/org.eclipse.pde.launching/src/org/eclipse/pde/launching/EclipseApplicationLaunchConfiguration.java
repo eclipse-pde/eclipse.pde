@@ -124,7 +124,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 		boolean showSplash = prop.containsKey("osgi.splashPath") || prop.containsKey("splashLocation"); //$NON-NLS-1$ //$NON-NLS-2$
 		TargetPlatformHelper.checkPluginPropertiesConsistency(fAllBundles, getConfigDir(configuration));
 		programArgs.add("-configuration"); //$NON-NLS-1$
-		programArgs.add(IPath.fromOSString(getConfigDir(configuration).getPath()).addTrailingSeparator().toPath().toUri().toString());
+		programArgs.add("file:" + IPath.fromOSString(getConfigDir(configuration).getPath()).addTrailingSeparator().toString()); //$NON-NLS-1$
 
 		// add the output folder names
 		programArgs.add("-dev"); //$NON-NLS-1$
