@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2024 IBM Corporation and others.
+ * Copyright (c) 2014, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -77,7 +77,7 @@ public class PDEUIMessages extends NLS {
 	public static String DependenciesViewPage_showOptional;
 
 	public static String DependencyPropertiesDialog_exportGroupText;
-	public static String DependencyPropertiesDialog_closeButtonLabel;
+	public static String DependencyPropertiesDialog_applyButtonLabel;
 
 	public static String ExtensionsPage_toggleExpandState;
 	public static String ExternalizeStringsOperation_editNames_addComment;
