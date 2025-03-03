@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2025 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -83,7 +83,7 @@ public class DependencyPropertiesDialog extends StatusDialog {
 
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, IDialogConstants.OK_ID, PDEUIMessages.DependencyPropertiesDialog_closeButtonLabel, true);
+		createButton(parent, IDialogConstants.OK_ID, PDEUIMessages.DependencyPropertiesDialog_applyButtonLabel, true);
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
 
