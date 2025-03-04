@@ -1,2 +1,0 @@
-Rebuild with Java 21
-Touch for javadoc switch to java 21
