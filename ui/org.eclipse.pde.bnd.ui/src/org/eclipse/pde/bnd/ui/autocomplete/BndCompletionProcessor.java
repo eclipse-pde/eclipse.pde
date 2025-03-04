@@ -15,7 +15,7 @@
  *     BJ Hargrave <bj@bjhargrave.com> - ongoing enhancements
  *     Christoph Läubrich - adjust to coding conventions, fix missing completions on empty lines
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.bndtools;
+package org.eclipse.pde.bnd.ui.autocomplete;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,6 +36,10 @@ import org.eclipse.swt.custom.StyledText;
 
 import aQute.bnd.help.Syntax;
 
+/**
+ * The {@link BndCompletionProcessor} provides autocompletion for bnd
+ * instructions
+ */
 public class BndCompletionProcessor implements IContentAssistProcessor {
 
 	private static final Pattern PREFIX_PATTERN = Pattern.compile("(\\S+)$"); //$NON-NLS-1$
