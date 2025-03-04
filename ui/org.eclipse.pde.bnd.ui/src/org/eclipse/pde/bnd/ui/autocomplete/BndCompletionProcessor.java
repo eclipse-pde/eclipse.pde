@@ -49,6 +49,11 @@ public class BndCompletionProcessor implements IContentAssistProcessor {
 		try {
 			IDocument document = viewer.getDocument();
 			IRegion lineInfo = document.getLineInformationOfOffset(offset);
+			if (isCommentLine(document, lineInfo) || isInstructionLine(document, lineInfo)
+					|| isContinuationLine(document, lineInfo, false)) {
+				// do not even try proposals
+				return new ICompletionProposal[0];
+			}
 			if (lineInfo.getOffset() != offset) {
 				String pre = document.get(0, offset);
 				Matcher matcher = PREFIX_PATTERN.matcher(pre);
@@ -75,6 +80,44 @@ public class BndCompletionProcessor implements IContentAssistProcessor {
 			return proposals(null, offset);
 		} catch (BadLocationException e) {
 			return proposals(null, offset);
+		}
+	}
+
+	private boolean isContinuationLine(IDocument document, IRegion lineInfo, boolean onlyCurrent) {
+		int o = lineInfo.getOffset();
+		int l = lineInfo.getLength();
+		try {
+			String line = document.get(o, l);
+			if (line.trim().endsWith("\\")) {
+				// the line itself is a continuation line
+				return true;
+			} else if (onlyCurrent) {
+				return false;
+			}
+			return isContinuationLine(document, document.getLineInformationOfOffset(o - 1), true);
+		} catch (BadLocationException e) {
+			return false;
+		}
+	}
+
+	private boolean isInstructionLine(IDocument document, IRegion lineInfo) {
+		int o = lineInfo.getOffset();
+		int l = lineInfo.getLength();
+		try {
+			String line = document.get(o, l);
+			return line.indexOf(':') > -1 || line.indexOf('=') > -1;
+		} catch (BadLocationException e) {
+			return false;
+		}
+	}
+
+	protected boolean isCommentLine(IDocument document, IRegion lineInfo) {
+		int o = lineInfo.getOffset();
+		int l = lineInfo.getLength();
+		try {
+			return document.get(o, l).startsWith("#");
+		} catch (BadLocationException e) {
+			return false;
 		}
 	}
 
