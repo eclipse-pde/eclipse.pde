@@ -55,3 +55,7 @@ it currently offers these components:
 - [osgi repositories view](https://eclipse.dev/eclipse/news/4.32/pde.php#osgirepositories)
 - Formating of bnd files, quick fixes, completion proposals
 - ... more to come ...
+
+The following might be usefull in building new components or reuse existing behaviours:
+
+- BndCompletionProcessor - ContentAssistProcessor that supports autocompletion for bnd instructions 
