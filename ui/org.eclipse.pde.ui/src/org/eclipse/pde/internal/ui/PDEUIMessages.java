@@ -26,6 +26,14 @@ import org.eclipse.osgi.util.NLS;
 public class PDEUIMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.ui.pderesources";//$NON-NLS-1$
 
+	public static String PluginModelManager_alreadyImported;
+
+	public static String PluginModelManager_alreadyAdded;
+
+	public static String PluginModelManager_alreadyAddedViaReexport;
+
+	public static String PluginModelManager_alreadyExported;
+
 	public static String AbstractLauncherToolbar_noProblems;
 
 	public static String AbstractLauncherToolbar_noSelection;
