@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2020 IBM Corporation and others.
+ *  Copyright (c) 2005, 2024 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *	   Latha Patil (ETAS GmbH) - Issue #685
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
@@ -35,8 +36,19 @@ public class RemoveExportPackageResolution extends AbstractManifestMarkerResolut
 		String markerPackage = marker.getAttribute("packageName", (String) null); //$NON-NLS-1$
 		Bundle bundle = (Bundle) model.getBundle();
 		ExportPackageHeader header = (ExportPackageHeader) bundle.getManifestHeader(Constants.EXPORT_PACKAGE);
-		if (header != null)
+		if (header != null) {
+			// Issue 685 - If `markerPackage` can be null, it might indicate
+			// that the marker is related to the removal of RequireBundle or
+			// others. If it is not null, then markerPackage might represent the
+			// imported package or others, and the ExportPackageHeader(header)
+			// does not include it.
+			if (markerPackage == null || !header.hasPackage(markerPackage)) {
+				MultiFixResolution multiFixResolution = new MultiFixResolution(marker, null);
+				multiFixResolution.run(marker);
+			} else {
 			header.removePackage(markerPackage);
+			}
+		}
 	}
 
 	@Override
