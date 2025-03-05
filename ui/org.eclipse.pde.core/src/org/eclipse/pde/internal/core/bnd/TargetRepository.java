@@ -57,6 +57,7 @@ import org.osgi.service.repository.Repository;
 import org.osgi.service.repository.RepositoryContent;
 
 import aQute.bnd.osgi.Instruction;
+import aQute.bnd.osgi.Jar;
 import aQute.bnd.osgi.repository.BaseRepository;
 import aQute.bnd.osgi.resource.CapReqBuilder;
 import aQute.bnd.osgi.resource.ResourceUtils;
@@ -73,6 +74,7 @@ public class TargetRepository extends BaseRepository implements RepositoryPlugin
 	@Override
 	public File get(String bsn, aQute.bnd.version.Version version, Map<String, String> properties,
 			DownloadListener... listeners) throws Exception {
+		System.out.println("GET: " + bsn);
 		Optional<BundleDescription> description = getTargetPlatformState()
 				.map(state -> state.getBundle(bsn, convert(version)));
 		if (description.isEmpty()) {
@@ -100,7 +102,28 @@ public class TargetRepository extends BaseRepository implements RepositoryPlugin
 					return Optional.empty();
 				});
 		if (bundle.isPresent()) {
+
 			File file = bundle.get();
+			if (file.isDirectory()) {
+				// TODO Use PDEBuildJar .... marks as delete on exit...
+				// See https://github.com/bndtools/bnd/pull/6477 we always need
+				// a jar file at the moment!
+				Path output = Files.createTempFile(file.getName(), ".jar");
+				try (Jar jar = new Jar(file) {
+					@Override
+					public boolean putResource(String path, aQute.bnd.osgi.Resource resource, boolean overwrite) {
+						String prefix = "bin/";
+						if (path.startsWith(prefix)) {
+							String substring = path.substring(prefix.length());
+							return super.putResource(substring, resource, overwrite);
+						}
+						return super.putResource(path, resource, overwrite);
+					}
+				}) {
+					jar.write(output.toFile());
+				}
+				file = output.toFile();
+			}
 			for (DownloadListener l : listeners) {
 				try {
 					l.success(file);

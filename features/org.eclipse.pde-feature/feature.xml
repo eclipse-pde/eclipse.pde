@@ -28,6 +28,19 @@
       <import plugin="org.bndtools.templates.template"/>
       <import plugin="biz.aQute.repository"/>
       <import plugin="bndtools.jareditor"/>
+      <!-- TODO maybe better use a dedicated feature for easier inclusion in target platforms -->
+      <import plugin="org.osgi.test.common"/>
+      <import plugin="org.osgi.test.junit5"/>
+      <import plugin="org.osgi.test.junit5.cm"/>
+      <import plugin="org.osgi.test.junit4"/>
+      <import plugin="org.osgi.test.assertj.framework"/>
+      <import plugin="org.osgi.test.assertj.log"/>
+      <import plugin="org.osgi.test.assertj.promise"/>
+
+      <import plugin="biz.aQute.tester"/>
+      <import plugin="biz.aQute.tester.junit-platform"/>
+      <import plugin="biz.aQute.bnd.embedded-repo"/>
+      
    </requires>
 
    <plugin

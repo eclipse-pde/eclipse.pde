@@ -23,9 +23,11 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 import aQute.bnd.build.Project;
+import biz.aQute.resolve.Bndrun;
 
 @Component(service = IAdapterFactory.class)
-@AdapterTypes(adaptableClass = IProject.class, adapterNames = { Project.class, VersionControlIgnoresManager.class })
+@AdapterTypes(adaptableClass = IProject.class, adapterNames = { Project.class, VersionControlIgnoresManager.class,
+		Bndrun.class })
 public class PdeBndAdapter implements IAdapterFactory {
 
 	@Reference(cardinality = ReferenceCardinality.OPTIONAL, policy = ReferencePolicy.DYNAMIC)
@@ -33,8 +35,8 @@ public class PdeBndAdapter implements IAdapterFactory {
 
 	@Override
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
-		if (adapterType == Project.class) {
-			if (adaptableObject instanceof IProject project) {
+		if (adaptableObject instanceof IProject project) {
+			if (adapterType == Project.class) {
 				try {
 					return adapterType.cast(BndProjectManager.getBndProject(project).orElse(null));
 				} catch (Exception e) {
@@ -42,9 +44,17 @@ public class PdeBndAdapter implements IAdapterFactory {
 					return null;
 				}
 			}
-		}
-		if (adapterType == VersionControlIgnoresManager.class) {
-			return adapterType.cast(versionControlIgnoresManager);
+			if (adapterType == VersionControlIgnoresManager.class) {
+				return adapterType.cast(versionControlIgnoresManager);
+			}
+			if (adapterType == Bndrun.class) {
+				try {
+					return adapterType.cast(BndProjectManager.createBndrun(project).orElse(null));
+				} catch (Exception e) {
+					// can't adapt then...
+					return null;
+				}
+			}
 		}
 		return null;
 	}

@@ -42,6 +42,10 @@ public class JUnitTabGroup extends AbstractPDELaunchConfigurationTabGroup {
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		super.setDefaults(configuration);
 
+		enableAssertions(configuration);
+	}
+
+	static void enableAssertions(ILaunchConfigurationWorkingCopy configuration) {
 		String vmArgs;
 		try {
 			vmArgs = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""); //$NON-NLS-1$
