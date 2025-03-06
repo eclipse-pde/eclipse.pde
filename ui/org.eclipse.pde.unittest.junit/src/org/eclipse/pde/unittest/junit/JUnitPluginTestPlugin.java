@@ -85,8 +85,9 @@ public class JUnitPluginTestPlugin extends AbstractUIPlugin {
 	 */
 	public Object getService(String serviceName) {
 		ServiceReference<?> reference = fBundleContext.getServiceReference(serviceName);
-		if (reference == null)
+		if (reference == null) {
 			return null;
+		}
 		return fBundleContext.getService(reference);
 	}
 
@@ -99,8 +100,9 @@ public class JUnitPluginTestPlugin extends AbstractUIPlugin {
 	 */
 	public Bundle getBundle(String bundleName) {
 		Bundle[] bundles = getBundles(bundleName, null);
-		if (bundles != null && bundles.length > 0)
+		if (bundles != null && bundles.length > 0) {
 			return bundles[0];
+		}
 		return null;
 	}
 
@@ -113,15 +115,17 @@ public class JUnitPluginTestPlugin extends AbstractUIPlugin {
 	 */
 	public Bundle[] getBundles(String bundleName, String version) {
 		Bundle[] bundles = Platform.getBundles(bundleName, version);
-		if (bundles != null)
+		if (bundles != null) {
 			return bundles;
+		}
 
 		// Accessing unresolved bundle
 		ServiceReference<PackageAdmin> serviceRef = fBundleContext.getServiceReference(PackageAdmin.class);
 		PackageAdmin admin = fBundleContext.getService(serviceRef);
 		bundles = admin.getBundles(bundleName, version);
-		if (bundles != null && bundles.length > 0)
+		if (bundles != null && bundles.length > 0) {
 			return bundles;
+		}
 		return null;
 	}
 
@@ -133,8 +137,9 @@ public class JUnitPluginTestPlugin extends AbstractUIPlugin {
 	 */
 	public static Shell getActiveWorkbenchShell() {
 		IWorkbenchWindow workBenchWindow = getActiveWorkbenchWindow();
-		if (workBenchWindow == null)
+		if (workBenchWindow == null) {
 			return null;
+		}
 		return workBenchWindow.getShell();
 	}
 
@@ -145,11 +150,13 @@ public class JUnitPluginTestPlugin extends AbstractUIPlugin {
 	 *         active workbench window or if called from a non-UI thread
 	 */
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
-		if (fgPlugin == null)
+		if (fgPlugin == null) {
 			return null;
+		}
 		IWorkbench workBench = PlatformUI.getWorkbench();
-		if (workBench == null)
+		if (workBench == null) {
 			return null;
+		}
 		return workBench.getActiveWorkbenchWindow();
 	}
 
@@ -160,8 +167,9 @@ public class JUnitPluginTestPlugin extends AbstractUIPlugin {
 	 */
 	public static IWorkbenchPage getActivePage() {
 		IWorkbenchWindow activeWorkbenchWindow = getActiveWorkbenchWindow();
-		if (activeWorkbenchWindow == null)
+		if (activeWorkbenchWindow == null) {
 			return null;
+		}
 		return activeWorkbenchWindow.getActivePage();
 	}
 
