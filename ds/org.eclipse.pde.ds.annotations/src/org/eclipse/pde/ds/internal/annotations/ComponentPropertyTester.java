@@ -48,37 +48,43 @@ public class ComponentPropertyTester extends PropertyTester {
 
 	@Override
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
-		if (!"containsComponentWithImplicitName".equals(property)) //$NON-NLS-1$
+		if (!"containsComponentWithImplicitName".equals(property)) { //$NON-NLS-1$
 			return false;
+		}
 
-		if (!(receiver instanceof IType) && !(receiver instanceof IPackageFragment))
+		if (!(receiver instanceof IType) && !(receiver instanceof IPackageFragment)) {
 			return false;
+		}
 
 		IJavaElement element = (IJavaElement) receiver;
 		IJavaProject javaProject = element.getJavaProject();
 
 		boolean enabled = Platform.getPreferencesService().getBoolean(Activator.PLUGIN_ID, Activator.PREF_ENABLED, false, new IScopeContext[] { new ProjectScope(javaProject.getProject()), InstanceScope.INSTANCE, DefaultScope.INSTANCE });
-		if (!enabled)
+		if (!enabled) {
 			return false;
+		}
 
 		try {
 			return element.getElementType() == IJavaElement.TYPE ? containsImplicitName((IType) receiver) : containsImplicitName((IPackageFragment) receiver);
 		} catch (JavaModelException e) {
-			if (debug.isDebugging())
+			if (debug.isDebugging()) {
 				debug.trace(String.format("Error searching for components with implicit names in element: %s", element), e); //$NON-NLS-1$
+			}
 		}
 
 		return false;
 	}
 
 	private boolean containsImplicitName(IPackageFragment fragment) throws JavaModelException {
-		if (!fragment.containsJavaResources())
+		if (!fragment.containsJavaResources()) {
 			return false;
+		}
 
 		for (ICompilationUnit cu : fragment.getCompilationUnits()) {
 			for (IType type : cu.getAllTypes()) {
-				if (hasImplicitName(type))
+				if (hasImplicitName(type)) {
 					return true;
+				}
 			}
 		}
 
@@ -86,12 +92,14 @@ public class ComponentPropertyTester extends PropertyTester {
 	}
 
 	private boolean containsImplicitName(IType type) throws JavaModelException {
-		if (hasImplicitName(type))
+		if (hasImplicitName(type)) {
 			return true;
+		}
 
 		for (IType child : type.getTypes()) {
-			if (hasImplicitName(child))
+			if (hasImplicitName(child)) {
 				return true;
+			}
 		}
 
 		return false;

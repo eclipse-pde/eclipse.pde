@@ -467,8 +467,9 @@ public class AnnotationVisitor extends ASTVisitor {
 					try {
 						latch.await();
 					} catch (InterruptedException e) {
-						if (debug.isDebugging())
+						if (debug.isDebugging()) {
 							debug.trace("Interrupted while waiting for edits to complete on display thread.", e); //$NON-NLS-1$
+						}
 					}
 
 					if (ex[0] != null) {

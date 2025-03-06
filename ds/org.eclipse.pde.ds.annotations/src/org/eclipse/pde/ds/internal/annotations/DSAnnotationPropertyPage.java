@@ -152,8 +152,9 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 		link.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (PreferencesUtil.createPreferenceDialogOn(getShell(), Activator.PLUGIN_ID, new String[] { Activator.PLUGIN_ID }, null).open() == Window.OK)
+				if (PreferencesUtil.createPreferenceDialogOn(getShell(), Activator.PLUGIN_ID, new String[] { Activator.PLUGIN_ID }, null).open() == Window.OK) {
 					refreshWidgets();
+				}
 			}
 
 			@Override

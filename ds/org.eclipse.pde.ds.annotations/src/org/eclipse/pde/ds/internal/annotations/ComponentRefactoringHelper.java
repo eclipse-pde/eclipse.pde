@@ -85,11 +85,13 @@ public class ComponentRefactoringHelper {
 	}
 
 	private RefactoringArguments getArguments() {
-		if (participant instanceof RenameParticipant)
+		if (participant instanceof RenameParticipant) {
 			return ((RenameParticipant) participant).getArguments();
+		}
 
-		if (participant instanceof MoveParticipant)
+		if (participant instanceof MoveParticipant) {
 			return ((MoveParticipant) participant).getArguments();
+		}
 
 		return null;
 	}
@@ -110,19 +112,22 @@ public class ComponentRefactoringHelper {
 			ResourceChangeChecker checker = context.getChecker(ResourceChangeChecker.class);
 			IResourceChangeDescriptionFactory deltaFactory = checker.getDeltaFactory();
 			for (Map.Entry<Object, RefactoringArguments> entry : elements.entrySet()) {
-				if (progress.isCanceled())
+				if (progress.isCanceled()) {
 					throw new OperationCanceledException();
+				}
 
 				progress.worked(1);
 
 				RefactoringArguments args = entry.getValue();
-				if (!getUpdateReferences(args))
+				if (!getUpdateReferences(args)) {
 					continue;
+				}
 
 				IJavaElement element = (IJavaElement) entry.getKey();
 				IJavaProject javaProject = element.getJavaProject();
-				if (unmanaged.contains(javaProject))
+				if (unmanaged.contains(javaProject)) {
 					continue;
+				}
 
 				ProjectState state = states.get(javaProject);
 				if (state == null) {
@@ -136,10 +141,11 @@ public class ComponentRefactoringHelper {
 
 				states.put(javaProject, state);
 
-				if (element.getElementType() == IJavaElement.TYPE)
+				if (element.getElementType() == IJavaElement.TYPE) {
 					createRenames((IType) element, args, state, deltaFactory);
-				else if (element.getElementType() == IJavaElement.PACKAGE_FRAGMENT)
+				} else if (element.getElementType() == IJavaElement.PACKAGE_FRAGMENT) {
 					createRenames((IPackageFragment) element, args, state, deltaFactory);
+				}
 			}
 
 			return new RefactoringStatus();
@@ -150,11 +156,13 @@ public class ComponentRefactoringHelper {
 	}
 
 	private boolean getUpdateReferences(RefactoringArguments args) {
-		if (args instanceof RenameArguments)
+		if (args instanceof RenameArguments) {
 			return ((RenameArguments) args).getUpdateReferences();
+		}
 
-		if (args instanceof MoveArguments)
+		if (args instanceof MoveArguments) {
 			return ((MoveArguments) args).getUpdateReferences();
+		}
 
 		return false;
 	}
@@ -228,20 +236,23 @@ public class ComponentRefactoringHelper {
 		CompositeChange compositeChange = new CompositeChange(Messages.ComponentRefactoringHelper_topLevelChangeLabel);
 
 		for (Map.Entry<Object, RefactoringArguments> entry : elements.entrySet()) {
-			if (progress.isCanceled())
+			if (progress.isCanceled()) {
 				throw new OperationCanceledException();
+			}
 
 			progress.worked(1);
 
 			RefactoringArguments args = entry.getValue();
-			if (!getUpdateReferences(args))
+			if (!getUpdateReferences(args)) {
 				continue;
+			}
 
 			IJavaElement element = (IJavaElement) entry.getKey();
-			if (element.getElementType() == IJavaElement.PACKAGE_FRAGMENT)
+			if (element.getElementType() == IJavaElement.PACKAGE_FRAGMENT) {
 				collectChanges((IPackageFragment) element, compositeChange);
-			else if (element.getElementType() == IJavaElement.TYPE)
+			} else if (element.getElementType() == IJavaElement.TYPE) {
 				collectChanges((IType) element, compositeChange);
+			}
 		}
 
 		return compositeChange;
@@ -257,8 +268,9 @@ public class ComponentRefactoringHelper {
 
 	private void collectChanges(IType type, CompositeChange compositeChange) throws CoreException {
 		Change change = createChange(type);
-		if (change != null)
+		if (change != null) {
 			compositeChange.add(change);
+		}
 
 		for (IType child : type.getTypes()) {
 			collectChanges(child, compositeChange);
@@ -267,19 +279,23 @@ public class ComponentRefactoringHelper {
 
 	private Change createChange(IType type) throws CoreException {
 		IFile modelFile = modelFiles.get(type);
-		if (modelFile == null)
+		if (modelFile == null) {
 			return null;
+		}
 
 		String componentName = componentNames.get(modelFile);
-		if (componentName == null)
+		if (componentName == null) {
 			return null;
+		}
 
 		IFile newModelFile = renames.get(modelFile);
-		if (newModelFile == null)
+		if (newModelFile == null) {
 			return null;
+		}
 
-		if (debug.isDebugging())
+		if (debug.isDebugging()) {
 			debug.trace(String.format("Changing %s from %s to %s.", type.getFullyQualifiedName(), modelFile.getFullPath(), newModelFile.getFullPath())); //$NON-NLS-1$
+		}
 
 		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 		manager.connect(modelFile.getFullPath(), LocationKind.IFILE, null);
@@ -287,8 +303,9 @@ public class ComponentRefactoringHelper {
 		IDocumentAttributeNode attrName, attrClass;
 		try {
 			ITextFileBuffer buf = manager.getTextFileBuffer(modelFile.getFullPath(), LocationKind.IFILE);
-			if (buf == null)
+			if (buf == null) {
 				return null;
+			}
 
 			IDocument doc = buf.getDocument();
 			model = new DSModel(doc, false);
@@ -300,8 +317,9 @@ public class ComponentRefactoringHelper {
 			attrName = component.getDocumentAttribute(IDSConstants.ATTRIBUTE_COMPONENT_NAME);
 			attrClass = component.getImplementation().getDocumentAttribute(IDSConstants.ATTRIBUTE_IMPLEMENTATION_CLASS);
 		} finally {
-			if (model != null)
+			if (model != null) {
 				model.dispose();
+			}
 
 			manager.disconnect(modelFile.getFullPath(), LocationKind.IFILE, null);
 		}

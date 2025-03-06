@@ -51,8 +51,9 @@ public class ProjectClasspathPreferenceChangeListener implements IPreferenceChan
 
 
 	static void updateClasspathContainer(IJavaProject project, IProgressMonitor monitor) {
-		if (monitor != null)
+		if (monitor != null) {
 			monitor.beginTask(project.getElementName(), 1);
+		}
 
 		try {
 			if (monitor != null && monitor.isCanceled()) {
