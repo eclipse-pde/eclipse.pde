@@ -68,8 +68,9 @@ public class P2Tests extends P2TestCase {
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("product", "/test/test.product");
 		properties.put("configs", os + ',' + ws + ',' + arch);
-		if (!executable.equals(new File((String) properties.get("baseLocation"))))
+		if (!executable.equals(new File((String) properties.get("baseLocation")))) {
 			properties.put("pluginPath", executable.getAbsolutePath());
+		}
 
 		String repoLocation = "file:" + repo.getLocation().toOSString();
 		properties.put("generate.p2.metadata", "true");
@@ -228,8 +229,9 @@ public class P2Tests extends P2TestCase {
 		// properties.put("p2.product.qualifier", "v1234"); //bug 246060 //commented out
 		// for bug 297064
 		Utils.storeBuildProperties(buildFolder, properties);
-		if (!executable.equals(new File((String) properties.get("baseLocation"))))
+		if (!executable.equals(new File((String) properties.get("baseLocation")))) {
 			properties.put("pluginPath", executable.getAbsolutePath());
+		}
 		Utils.storeBuildProperties(buildFolder, properties);
 
 		runProductBuild(buildFolder);
@@ -339,8 +341,9 @@ public class P2Tests extends P2TestCase {
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("product", productFile.getLocation().toOSString());
 		properties.put("configs", Platform.getOS() + ',' + Platform.getWS() + ',' + Platform.getOSArch());
-		if (!executable.equals(new File((String) properties.get("baseLocation"))))
+		if (!executable.equals(new File((String) properties.get("baseLocation")))) {
 			properties.put("pluginPath", executable.getAbsolutePath());
+		}
 		String repoLocation = "file:" + repo.getLocation().toOSString();
 		properties.put("generate.p2.metadata", "true");
 		properties.put("p2.metadata.repo", repoLocation);
@@ -367,8 +370,9 @@ public class P2Tests extends P2TestCase {
 		} catch (AssertionError e) {
 			// expected
 		}
-		if (fail)
+		if (fail) {
 			fail("Unexpected CU found");
+		}
 	}
 
 	@Test
@@ -427,8 +431,9 @@ public class P2Tests extends P2TestCase {
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("product", productFile.getLocation().toOSString());
 		properties.put("configs", "win32,win32,x86");
-		if (!executable.equals(new File((String) properties.get("baseLocation"))))
+		if (!executable.equals(new File((String) properties.get("baseLocation")))) {
 			properties.put("pluginPath", executable.getAbsolutePath());
+		}
 
 		properties.put("archivesFormat", "win32,win32,x86-folder");
 		properties.put("generate.p2.metadata", "true");
@@ -896,8 +901,9 @@ public class P2Tests extends P2TestCase {
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		String repoLocation = "file:" + repo.getLocation().toOSString();
 		properties.put("configs", "win32,win32,x86");
-		if (!executable.equals(new File((String) properties.get("baseLocation"))))
+		if (!executable.equals(new File((String) properties.get("baseLocation")))) {
 			properties.put("pluginPath", executable.getAbsolutePath());
+		}
 		properties.put("product", productFile.getLocation().toOSString());
 		properties.put("generate.p2.metadata", "true");
 		properties.put("p2.metadata.repo", repoLocation);
