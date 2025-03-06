@@ -80,8 +80,9 @@ public class ProductTests extends PDETestCase {
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("product", "/rcp/rcp.product");
 		properties.put("configs", "macosx,cocoa,x86_64");
-		if (!executable.equals(new File((String) properties.get("baseLocation"))))
+		if (!executable.equals(new File((String) properties.get("baseLocation")))) {
 			properties.put("pluginPath", executable.getAbsolutePath());
+		}
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"),
 				IPath.fromOSString("/scripts/productBuild/allElements.xml"), null);
 		properties.put("allElementsFile", FileLocator.toFileURL(resource).getPath());
@@ -116,8 +117,9 @@ public class ProductTests extends PDETestCase {
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("product", "acme.product");
 		properties.put("configs", "win32,win32,x86 & linux, gtk, x86");
-		if (!executable.equals(new File((String) properties.get("baseLocation"))))
+		if (!executable.equals(new File((String) properties.get("baseLocation")))) {
 			properties.put("pluginPath", executable.getAbsolutePath());
+		}
 		Utils.storeBuildProperties(buildFolder, properties);
 
 		runProductBuild(buildFolder);
@@ -152,8 +154,9 @@ public class ProductTests extends PDETestCase {
 		properties.put("product", "test.product");
 		properties.put("configs", "macosx,cocoa,x86_64");
 		properties.put("archivesFormat", "macosx,cocoa,x86_64-folder");
-		if (!executable.equals(new File((String) properties.get("baseLocation"))))
+		if (!executable.equals(new File((String) properties.get("baseLocation")))) {
 			properties.put("pluginPath", executable.getAbsolutePath());
+		}
 		Utils.storeBuildProperties(buildFolder, properties);
 
 		runProductBuild(buildFolder);
@@ -259,8 +262,9 @@ public class ProductTests extends PDETestCase {
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("product", "/foo/foo.product");
 		properties.put("configs", "win32,win32,x86_64 & aix, gtk, ppc64");
-		if (!executable.equals(new File((String) properties.get("baseLocation"))))
+		if (!executable.equals(new File((String) properties.get("baseLocation")))) {
 			properties.put("pluginPath", executable.getAbsolutePath());
+		}
 		Utils.storeBuildProperties(buildFolder, properties);
 
 		runProductBuild(buildFolder);
@@ -377,8 +381,9 @@ public class ProductTests extends PDETestCase {
 		properties.put("includeLaunchers", "false");
 		properties.put("configs", "win32,win32,x86_64 & linux,gtk,x86_64");
 		// properties.put("archivesFormat", "win32,win32,x86-folder");
-		if (!executable.equals(new File((String) properties.get("baseLocation"))))
+		if (!executable.equals(new File((String) properties.get("baseLocation")))) {
 			properties.put("pluginPath", executable.getAbsolutePath());
+		}
 		Utils.storeBuildProperties(buildFolder, properties);
 
 		runProductBuild(buildFolder);

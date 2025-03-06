@@ -118,12 +118,15 @@ public class Utils {
 		Properties buildProperties = properties != null ? properties : new Properties();
 
 		// default contents:
-		if (!buildProperties.containsKey("source.."))
+		if (!buildProperties.containsKey("source..")) {
 			buildProperties.put("source..", "src/");
-		if (!buildProperties.containsKey("output.."))
+		}
+		if (!buildProperties.containsKey("output..")) {
 			buildProperties.put("output..", "bin/");
-		if (!buildProperties.containsKey("bin.includes"))
+		}
+		if (!buildProperties.containsKey("bin.includes")) {
 			buildProperties.put("bin.includes", "META-INF/, .");
+		}
 
 		storeBuildProperties(folder, buildProperties);
 	}
@@ -137,13 +140,15 @@ public class Utils {
 		mainAttributes.put(new Attributes.Name("Bundle-Name"), "Test Bundle " + bundleId);
 		mainAttributes.put(new Attributes.Name("Bundle-SymbolicName"), bundleId);
 		mainAttributes.put(new Attributes.Name("Bundle-Version"), bundleVersion);
-		if (additionalAttributes != null)
+		if (additionalAttributes != null) {
 			mainAttributes.putAll(additionalAttributes);
+		}
 
 		IFile manifestFile = folder.getFile(JarFile.MANIFEST_NAME);
 		IFolder metaInf = (IFolder) manifestFile.getParent();
-		if (!metaInf.exists())
+		if (!metaInf.exists()) {
 			metaInf.create(true, true, null);
+		}
 		try (OutputStream outputStream = new BufferedOutputStream(
 				new FileOutputStream(manifestFile.getLocation().toFile()))) {
 			manifest.write(outputStream);
@@ -197,8 +202,9 @@ public class Utils {
 			String baseLocation = Platform.getInstallLocation().getURL().getPath();
 			BuildTimeSiteFactory.setInstalledBaseSite(baseLocation);
 			File executable = findExecutable();
-			if (executable != null && !executable.equals(new File(baseLocation)))
+			if (executable != null && !executable.equals(new File(baseLocation))) {
 				generator.setPluginPath(new String[] { executable.getAbsolutePath() });
+			}
 		}
 		generator.setIncludeLaunchers(includeLaunchers);
 		generator.setVerify(verify);
@@ -298,8 +304,9 @@ public class Utils {
 			buffer.append("  </plugins>\n");
 		}
 
-		if (extra != null)
+		if (extra != null) {
 			buffer.append(extra);
+		}
 
 		buffer.append("</product>\n");
 
@@ -313,8 +320,9 @@ public class Utils {
 	static public IFolder createFolder(IFolder parent, String path) throws CoreException {
 		parent.refreshLocal(IResource.DEPTH_INFINITE, null);
 		IFolder folder = parent.getFolder(path);
-		if (folder.exists())
+		if (folder.exists()) {
 			return folder;
+		}
 		IFolder container = (IFolder) folder.getParent();
 		if (!container.exists()) {
 			LinkedList<IFolder> stack = new LinkedList<>();
@@ -337,22 +345,25 @@ public class Utils {
 		FilenameFilter filter = (dir, name) -> name.startsWith("org.eclipse.equinox.executable");
 		String[] files = features.list(filter);
 
-		if (files != null && files.length > 0)
+		if (files != null && files.length > 0) {
 			return baseLocation;
+		}
 		return null;
 	}
 
 	static private File executableLocation = null;
 
 	public static File findExecutable() throws IOException {
-		if (executableLocation != null)
+		if (executableLocation != null) {
 			return executableLocation;
+		}
 
 		File baseLocation = new File(Platform.getInstallLocation().getURL().getPath());
 
 		executableLocation = findExecutable(baseLocation);
-		if (executableLocation != null)
+		if (executableLocation != null) {
 			return executableLocation;
+		}
 
 		SimpleConfiguratorManipulator manipulator = BundleHelper.getDefault()
 				.acquireService(SimpleConfiguratorManipulator.class);
@@ -365,8 +376,9 @@ public class Utils {
 				if (bundle.getSymbolicName().equals(id)) {
 					URI location = bundle.getLocation();
 					executableLocation = findExecutable(URIUtil.toFile(URIUtil.append(location, "../..")));
-					if (executableLocation != null)
+					if (executableLocation != null) {
 						return executableLocation;
+					}
 					break;
 				}
 			}
@@ -407,21 +419,24 @@ public class Utils {
 			byte[] buffer = new byte[8192];
 			while (true) {
 				int bytesRead = -1;
-				if ((bytesRead = source.read(buffer)) == -1)
+				if ((bytesRead = source.read(buffer)) == -1) {
 					break;
+				}
 				destination.write(buffer, 0, bytesRead);
 			}
 		} finally {
 			try {
-				if (closeIn)
+				if (closeIn) {
 					source.close();
+				}
 			} catch (IOException e) {
 				// ignore
 			}
 			try {
 				destination.flush();
-				if (closeOut)
+				if (closeOut) {
 					destination.close();
+				}
 			} catch (IOException e) {
 				// ignore
 			}
@@ -432,13 +447,15 @@ public class Utils {
 			throws CoreException {
 		File folder = new File(buildFolder.getLocation().toOSString());
 		File archiveFile = new File(folder, zipFile);
-		if (!archiveFile.exists())
+		if (!archiveFile.exists()) {
 			return false;
+		}
 
 		try (ZipFile zip = new ZipFile(archiveFile);) {
 			ZipEntry entry = zip.getEntry(zipEntry);
-			if (entry == null)
+			if (entry == null) {
 				return false;
+			}
 			InputStream stream = new BufferedInputStream(zip.getInputStream(entry));
 			OutputStream out = new BufferedOutputStream(new FileOutputStream(outputFile.getLocation().toFile()));
 			transferStreams(stream, out);
@@ -451,8 +468,9 @@ public class Utils {
 
 	public static Properties loadProperties(IFile propertiesFile) throws CoreException {
 		propertiesFile.refreshLocal(IResource.DEPTH_INFINITE, null);
-		if (!propertiesFile.exists())
+		if (!propertiesFile.exists()) {
 			return null;
+		}
 
 		Properties props = new Properties();
 		try (InputStream stream = propertiesFile.getContents(true)) {
@@ -464,16 +482,20 @@ public class Utils {
 	}
 
 	public static void copy(File source, File target) throws IOException {
-		if (!source.exists())
+		if (!source.exists()) {
 			return;
+		}
 		if (source.isDirectory()) {
-			if (target.exists() && target.isFile())
+			if (target.exists() && target.isFile()) {
 				target.delete();
-			if (!target.exists())
+			}
+			if (!target.exists()) {
 				target.mkdirs();
+			}
 			File[] children = source.listFiles();
-			for (File element : children)
+			for (File element : children) {
 				copy(element, new File(target, element.getName()));
+			}
 			return;
 		}
 		try (InputStream input = new BufferedInputStream(new FileInputStream(source));
@@ -481,8 +503,9 @@ public class Utils {
 
 			byte[] buffer = new byte[8192];
 			int bytesRead = 0;
-			while ((bytesRead = input.read(buffer)) != -1)
+			while ((bytesRead = input.read(buffer)) != -1) {
 				output.write(buffer, 0, bytesRead);
+			}
 		}
 	}
 

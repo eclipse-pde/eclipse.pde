@@ -110,8 +110,9 @@ public abstract class PDETestCase {
 		if (!builderProject.exists()) {
 			builderProject.create(null);
 		}
-		if (!builderProject.isOpen())
+		if (!builderProject.isOpen()) {
 			builderProject.open(null);
+		}
 
 		return builderProject;
 	}
@@ -192,8 +193,9 @@ public abstract class PDETestCase {
 			System.err.println(logContent);
 			System.err.println("### log file end");
 			Throwable target = e.getTargetException();
-			if (target instanceof Exception)
+			if (target instanceof Exception) {
 				throw (Exception) target;
+			}
 			throw e;
 		}
 	}
@@ -201,10 +203,12 @@ public abstract class PDETestCase {
 	protected String[] createAntRunnerArgs(String script, String[] targets, String antHome,
 			Properties additionalProperties, String listener, String logger) {
 		int numArgs = 5 + targets.length + (additionalProperties != null ? additionalProperties.size() : 0);
-		if (listener != null)
+		if (listener != null) {
 			numArgs += 2;
-		if (logger != null)
+		}
+		if (logger != null) {
 			numArgs += 2;
+		}
 		String[] args = new String[numArgs];
 		int idx = 0;
 		args[idx++] = "-buildfile";
@@ -225,10 +229,11 @@ public abstract class PDETestCase {
 			while (e.hasMoreElements()) {
 				String key = (String) e.nextElement();
 				String value = additionalProperties.getProperty(key);
-				if (value.length() > 0)
+				if (value.length() > 0) {
 					args[idx++] = "-D" + key + "=" + additionalProperties.getProperty(key);
-				else
+				} else {
 					args[idx++] = "";
+				}
 			}
 		}
 
@@ -427,8 +432,9 @@ public abstract class PDETestCase {
 	public static void assertJarVerifies(File jarFile, boolean throwIfNotSigned) throws Exception {
 		BundleContext context = Activator.getDefault().getContext();
 		ServiceReference<SignedContentFactory> certRef = context.getServiceReference(SignedContentFactory.class);
-		if (certRef == null)
+		if (certRef == null) {
 			throw new IllegalStateException("The SignedContentFactory service is not available");
+		}
 		SignedContentFactory certFactory = context.getService(certRef);
 		try {
 			SignedContent content = certFactory.getSignedContent(jarFile);
@@ -437,8 +443,9 @@ public abstract class PDETestCase {
 				for (SignedContentEntry entrie : entries) {
 					entrie.verify();
 				}
-			} else if (throwIfNotSigned)
+			} else if (throwIfNotSigned) {
 				throw new AssertionFailedException(jarFile.toString() + " is not signed.");
+			}
 		} finally {
 			context.ungetService(certRef);
 		}

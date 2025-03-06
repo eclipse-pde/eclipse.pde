@@ -69,26 +69,35 @@ public class BuildConfiguration {
 				}
 			}
 		}
-		if (isJava9OrGreater == false)
+		if (isJava9OrGreater == false) {
 			defaultBuildConfig.put("bootclasspath", System.getProperty("sun.boot.class.path"));
+		}
 
 		defaultScriptConfig = (Properties) defaultBuildConfig.clone();
-		if (!defaultBuildConfig.containsKey("configs"))
+		if (!defaultBuildConfig.containsKey("configs")) {
 			defaultScriptConfig.put("configs", "*,*,*");
-		if (!defaultBuildConfig.containsKey("buildingOSGi"))
+		}
+		if (!defaultBuildConfig.containsKey("buildingOSGi")) {
 			defaultScriptConfig.put("buildingOSGi", TRUE);
-		if (!defaultBuildConfig.containsKey("signJars"))
+		}
+		if (!defaultBuildConfig.containsKey("signJars")) {
 			defaultScriptConfig.put("signJars", FALSE);
-		if (!defaultBuildConfig.containsKey("generateFeatureVersionSuffix"))
+		}
+		if (!defaultBuildConfig.containsKey("generateFeatureVersionSuffix")) {
 			defaultScriptConfig.put("generateFeatureVersionSuffix", FALSE);
-		if (!defaultBuildConfig.containsKey("generateVersionsLists"))
+		}
+		if (!defaultBuildConfig.containsKey("generateVersionsLists")) {
 			defaultScriptConfig.put("generateVersionsLists", TRUE);
-		if (!defaultBuildConfig.containsKey("groupConfigurations"))
+		}
+		if (!defaultBuildConfig.containsKey("groupConfigurations")) {
 			defaultScriptConfig.put("groupConfigurations", FALSE);
-		if (!defaultBuildConfig.containsKey("pluginPath"))
+		}
+		if (!defaultBuildConfig.containsKey("pluginPath")) {
 			defaultScriptConfig.put("pluginPath", "");
-		if (!defaultBuildConfig.containsKey("filteredDependencyCheck"))
+		}
+		if (!defaultBuildConfig.containsKey("filteredDependencyCheck")) {
 			defaultScriptConfig.put("filteredDependencyCheck", FALSE);
+		}
 	}
 
 	private static Properties getBuildConfig() {

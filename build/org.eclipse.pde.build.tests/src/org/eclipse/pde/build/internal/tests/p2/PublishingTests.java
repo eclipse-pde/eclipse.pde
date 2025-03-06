@@ -476,8 +476,9 @@ public class PublishingTests extends P2TestCase {
 
 	@Test
 	public void testPublishFeature_ExecutableFeature() throws Exception {
-		if (BUG_429228)
+		if (BUG_429228) {
 			return;
+		}
 
 		IFolder buildFolder = newTest("PublishFeature_Executable");
 		File executableLocation = Utils.findExecutable();
@@ -489,8 +490,9 @@ public class PublishingTests extends P2TestCase {
 				EQUINOX_EXECUTABLE);
 		properties.put("launcherName", "eclipse");
 		properties.put("p2.gathering", "true");
-		if (!executableLocation.equals(new File((String) properties.get("baseLocation"))))
+		if (!executableLocation.equals(new File((String) properties.get("baseLocation")))) {
 			properties.put("pluginPath", executableLocation.getAbsolutePath());
+		}
 		generateScripts(buildFolder, properties);
 
 		String buildXMLPath = new File(originalExecutable, "build.xml").getAbsolutePath();
@@ -671,8 +673,9 @@ public class PublishingTests extends P2TestCase {
 
 	@Test
 	public void testPublish_Brand_1() throws Exception {
-		if (BUG_429228)
+		if (BUG_429228) {
 			return;
+		}
 
 		IFolder buildFolder = newTest("brand_1");
 		IFolder rcp = Utils.createFolder(buildFolder, "rcp");
@@ -707,8 +710,9 @@ public class PublishingTests extends P2TestCase {
 
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("product", product.getLocation().toOSString());
-		if (!executableLocation.equals(new File((String) properties.get("baseLocation"))))
+		if (!executableLocation.equals(new File((String) properties.get("baseLocation")))) {
 			properties.put("pluginPath", executableLocation.getAbsolutePath());
+		}
 		// bug 274527 - cocoa.x86_64
 		properties.put("configs", "win32,win32,x86 & macosx, cocoa, x86_64");
 		properties.put("p2.gathering", "true");
@@ -783,10 +787,11 @@ public class PublishingTests extends P2TestCase {
 
 		properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("topLevelElementId", "f");
-		if (Platform.getOS().equals("linux"))
+		if (Platform.getOS().equals("linux")) {
 			properties.put("archivesFormat", "group,group,group-tar");
-		else
+		} else {
 			properties.put("archivesFormat", "group,group,group-antTar");
+		}
 		properties.put("p2.metadata.repo.name", "MyMeta");
 		properties.put("p2.metadata.repo.name", "MyArtifact");
 		properties.put("p2.compress", "true");
@@ -905,10 +910,12 @@ public class PublishingTests extends P2TestCase {
 
 		properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		String config = Platform.getOS() + ',' + Platform.getWS() + ',' + Platform.getOSArch();
-		if (!executable.equals(new File((String) properties.get("baseLocation"))))
+		if (!executable.equals(new File((String) properties.get("baseLocation")))) {
 			properties.put("pluginPath", executable.getAbsolutePath());
-		if (Platform.getOS().equals("macosx"))
+		}
+		if (Platform.getOS().equals("macosx")) {
 			properties.put("archivePrefix", "Headless.app");
+		}
 		properties.put("product", productFile.getLocation().toOSString());
 		properties.put("configs", config);
 		properties.put("archivesFormat", config + "-folder");
@@ -921,8 +928,9 @@ public class PublishingTests extends P2TestCase {
 		runProductBuild(buildFolder);
 
 		IFile configFile = buildFolder.getFile("/tmp/eclipse/configuration/config.ini");
-		if (Platform.getOS().equals("macosx"))
+		if (Platform.getOS().equals("macosx")) {
 			configFile = buildFolder.getFile("/tmp/Headless.app/Contents/Eclipse/configuration/config.ini");
+		}
 		assertLogContainsLine(configFile, "eclipse.application=headless.application");
 		assertLogContainsLine(configFile, "eclipse.product=headless.product");
 
@@ -1210,8 +1218,9 @@ public class PublishingTests extends P2TestCase {
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("configs", "win32,win32,x86");
 		properties.put("archivesFormat", "win32,win32,x86-folder");
-		if (!executable.equals(new File((String) properties.get("baseLocation"))))
+		if (!executable.equals(new File((String) properties.get("baseLocation")))) {
 			properties.put("pluginPath", executable.getAbsolutePath());
+		}
 		properties.put("product", productFile.getLocation().toOSString());
 		properties.put("p2.gathering", "true");
 		properties.put("p2.product.qualifier", "I10232"); // bug 246060
@@ -1255,8 +1264,9 @@ public class PublishingTests extends P2TestCase {
 
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("configs", "win32,win32,x86_64");
-		if (!executable.equals(new File((String) properties.get("baseLocation"))))
+		if (!executable.equals(new File((String) properties.get("baseLocation")))) {
 			properties.put("pluginPath", executable.getAbsolutePath());
+		}
 		properties.put("product", productFile.getLocation().toOSString());
 		properties.put("filteredDependencyCheck", "true");
 		properties.put("includeLaunchers", "false"); // bug 268119
@@ -1576,8 +1586,9 @@ public class PublishingTests extends P2TestCase {
 		Utils.generateProduct(productFile, "rcp.product", "1.0.0", new String[] { "f" }, true);
 
 		properties = BuildConfiguration.getBuilderProperties(buildFolder);
-		if (!executable.equals(new File((String) properties.get("baseLocation"))))
+		if (!executable.equals(new File((String) properties.get("baseLocation")))) {
 			properties.put("pluginPath", executable.getAbsolutePath());
+		}
 		properties.put("configs", "win32,win32,x86_64");
 		properties.put("product", productFile.getLocation().toOSString());
 		properties.put("filteredDependencyCheck", "true");
@@ -1644,8 +1655,9 @@ public class PublishingTests extends P2TestCase {
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("configs", "gtk,linux,x86_64");
 		properties.put("archivesFormat", "gtk,linux,x86_64-folder");
-		if (!executable.equals(new File((String) properties.get("baseLocation"))))
+		if (!executable.equals(new File((String) properties.get("baseLocation")))) {
 			properties.put("pluginPath", executable.getAbsolutePath());
+		}
 		properties.put("product", productFile.getLocation().toOSString());
 		properties.put("p2.gathering", "true");
 		properties.put("p2.product.qualifier", "I10232");
@@ -1749,8 +1761,9 @@ public class PublishingTests extends P2TestCase {
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("archivePrefix", "Eclipse.app");
 		properties.put("product", product.getLocation().toOSString());
-		if (!executable.equals(new File((String) properties.get("baseLocation"))))
+		if (!executable.equals(new File((String) properties.get("baseLocation")))) {
 			properties.put("pluginPath", executable.getAbsolutePath());
+		}
 		properties.put("configs", "macosx, cocoa, x86_64");
 		properties.put("p2.gathering", "true");
 		Utils.storeBuildProperties(buildFolder, properties);
@@ -1799,10 +1812,11 @@ public class PublishingTests extends P2TestCase {
 		Iterator<IRequirement> it = required.iterator();
 		IRequiredCapability req0 = (IRequiredCapability) it.next();
 		IRequiredCapability req1 = (IRequiredCapability) it.next();
-		if (req0.getName().equals(EQUINOX_COMMON))
+		if (req0.getName().equals(EQUINOX_COMMON)) {
 			assertEquals(req0.getRange(), new VersionRange(common.getVersion(), true, Version.MAX_VERSION, true));
-		else
+		} else {
 			assertEquals(req1.getRange(), new VersionRange(common.getVersion(), true, Version.MAX_VERSION, true));
+		}
 	}
 
 	@Test

@@ -40,8 +40,9 @@ public class AssembleTests extends PDETestCase {
 
 		Properties buildProperties = BuildConfiguration.getBuilderProperties(buildFolder);
 		buildProperties.put("topLevelElementId", "sdk");
-		if (!executable.equals(new File((String) buildProperties.get("baseLocation"))))
+		if (!executable.equals(new File((String) buildProperties.get("baseLocation")))) {
 			buildProperties.put("pluginPath", executable.getAbsolutePath());
+		}
 		buildProperties.put("configs", "win32, win32, x86_64");
 
 		Utils.storeBuildProperties(buildFolder, buildProperties);
@@ -71,8 +72,9 @@ public class AssembleTests extends PDETestCase {
 
 		Properties buildProperties = BuildConfiguration.getBuilderProperties(buildFolder);
 		buildProperties.put("topLevelElementId", "sdk");
-		if (!executable.equals(new File((String) buildProperties.get("baseLocation"))))
+		if (!executable.equals(new File((String) buildProperties.get("baseLocation")))) {
 			buildProperties.put("pluginPath", executable.getAbsolutePath());
+		}
 		buildProperties.put("configs", "*,*,* & win32, win32, x86_64 & linux, gtk, x86_64");
 
 		Utils.storeBuildProperties(buildFolder, buildProperties);
@@ -99,8 +101,9 @@ public class AssembleTests extends PDETestCase {
 
 		Properties buildProperties = BuildConfiguration.getBuilderProperties(buildFolder);
 		buildProperties.put("topLevelElementId", "sdk");
-		if (!executable.equals(new File((String) buildProperties.get("baseLocation"))))
+		if (!executable.equals(new File((String) buildProperties.get("baseLocation")))) {
 			buildProperties.put("pluginPath", executable.getAbsolutePath());
+		}
 		buildProperties.put("configs", "*,*,* & win32, win32, x86_64 & linux, gtk, x86_64");
 
 		Utils.storeBuildProperties(buildFolder, buildProperties);
@@ -133,8 +136,9 @@ public class AssembleTests extends PDETestCase {
 		Properties buildProperties = BuildConfiguration.getBuilderProperties(buildFolder);
 		buildProperties.put("archivesFormat", "*, *, * - folder");
 		buildProperties.put("signJars", "false");
-		if (!executable.equals(new File((String) buildProperties.get("baseLocation"))))
+		if (!executable.equals(new File((String) buildProperties.get("baseLocation")))) {
 			buildProperties.put("pluginPath", executable.getAbsolutePath());
+		}
 		Utils.storeBuildProperties(buildFolder, buildProperties);
 		Utils.generateAllElements(buildFolder, "sdk");
 
@@ -161,8 +165,9 @@ public class AssembleTests extends PDETestCase {
 
 		Properties buildProperties = BuildConfiguration.getBuilderProperties(buildFolder);
 		buildProperties.put("topLevelElementId", "sdk");
-		if (!executable.equals(new File((String) buildProperties.get("baseLocation"))))
+		if (!executable.equals(new File((String) buildProperties.get("baseLocation")))) {
 			buildProperties.put("pluginPath", executable.getAbsolutePath());
+		}
 		buildProperties.put("configs", "win32, win32, x86_64 & linux, gtk, x86_64");
 		buildProperties.put("archivesFormat", "group,group,group-folder");
 		buildProperties.put("groupConfigurations", "true");
