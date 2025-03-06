@@ -375,8 +375,9 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 		boolean autoValidate = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false);
 		SubMonitor subMonitor = SubMonitor.convert(monitor, autoValidate ? 3 : 4);
 		if (isShowCommand == false) {
-			if (autoValidate)
+			if (autoValidate) {
 				validatePluginDependencies(configuration, subMonitor.split(1));
+			}
 			validateProjectDependencies(configuration, subMonitor.split(1));
 			clear(configuration, subMonitor.split(1));
 		}
@@ -437,8 +438,9 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 
 	@Override
 	public String verifyMainTypeName(ILaunchConfiguration configuration) throws CoreException {
-		if (TargetPlatformHelper.getTargetVersion() >= 3.3)
+		if (TargetPlatformHelper.getTargetVersion() >= 3.3) {
 			return "org.eclipse.equinox.launcher.Main"; //$NON-NLS-1$
+		}
 		return "org.eclipse.core.launcher.Main"; //$NON-NLS-1$
 	}
 
@@ -564,8 +566,9 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 		for (String userArg : userArgs) {
 			// be forgiving if people have tracing turned on and forgot
 			// to remove the -debug from the program args field.
-			if (userArg.equals("-debug") && programArgs.contains("-debug")) //$NON-NLS-1$ //$NON-NLS-2$
+			if (userArg.equals("-debug") && programArgs.contains("-debug")) { //$NON-NLS-1$ //$NON-NLS-2$
 				continue;
+			}
 			programArgs.add(userArg);
 		}
 
@@ -648,8 +651,9 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 		programArguments.add("-port"); //$NON-NLS-1$
 		programArguments.add(String.valueOf(fPort));
 
-		if (fKeepAlive)
+		if (fKeepAlive) {
 			programArguments.add(0, "-keepalive"); //$NON-NLS-1$
+		}
 
 		ITestKind testRunnerKind = getJUnitVersion(configuration).getJUnitTestKind();
 
@@ -748,8 +752,9 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 	private static boolean isOnModulePath(IJavaProject javaProject, String typeToCheck) {
 		try {
 			IType type = javaProject.findType(typeToCheck);
-			if (type == null)
+			if (type == null) {
 				return false;
+			}
 			IPackageFragmentRoot packageFragmentRoot = (IPackageFragmentRoot) type.getPackageFragment().getParent();
 			IClasspathEntry resolvedClasspathEntry = packageFragmentRoot.getResolvedClasspathEntry();
 			return Arrays.stream(resolvedClasspathEntry.getExtraAttributes())
@@ -928,8 +933,9 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 		private void addEntry(List<String> junitEntries, final JUnitRuntimeClasspathEntry entry)
 				throws IOException, MalformedURLException, URISyntaxException {
 			String entryString = entryString(entry);
-			if (entryString != null)
+			if (entryString != null) {
 				junitEntries.add(entryString);
+			}
 		}
 
 		private String entryString(final JUnitRuntimeClasspathEntry entry)
@@ -962,8 +968,9 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 				url = bundle.getEntry(jar.getPluginRelativePath());
 			}
 
-			if (url == null)
+			if (url == null) {
 				throw new IOException();
+			}
 			return URIUtil.toFile(URIUtil.toURI(FileLocator.toFileURL(url))).getAbsolutePath(); // See bug 503050
 		}
 	}
@@ -1032,8 +1039,9 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 					javaProject.getProject().getName()), null, IStatus.OK);
 			return null;
 		}
-		if (model instanceof IFragmentModel)
+		if (model instanceof IFragmentModel) {
 			return ((IFragmentModel) model).getFragment().getPluginId();
+		}
 
 		return model.getPluginBase().getId();
 	}
@@ -1075,8 +1083,9 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 		}
 
 		// launch the UI test application
-		if (application == null)
+		if (application == null) {
 			application = IPDEConstants.UI_TEST_APPLICATION;
+		}
 		return application;
 	}
 
@@ -1123,8 +1132,9 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 	 * @return result of concatenation
 	 */
 	private String concatArg(String vmArgs, String arg) {
-		if (vmArgs.length() > 0 && !vmArgs.endsWith(" ")) //$NON-NLS-1$
+		if (vmArgs.length() > 0 && !vmArgs.endsWith(" ")) { //$NON-NLS-1$
 			vmArgs = vmArgs.concat(" "); //$NON-NLS-1$
+		}
 		return vmArgs.concat(arg);
 	}
 
@@ -1178,8 +1188,9 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 	 * @return a directory where the configuration area is located
 	 */
 	protected File getConfigurationDirectory(ILaunchConfiguration configuration) {
-		if (fConfigDir == null)
+		if (fConfigDir == null) {
 			fConfigDir = LaunchConfigurationHelper.getConfigurationArea(configuration);
+		}
 		return fConfigDir;
 	}
 
