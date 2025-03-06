@@ -87,8 +87,9 @@ public class SpyHandler {
 
 		// If window already in application, it is already prepared -> Return it
 		List<MWindow> existingWindow = modelService.findElements(appli, E4_SPIES_WINDOW, MWindow.class, null);
-		if (existingWindow.size() >= 1)
+		if (existingWindow.size() >= 1) {
 			return existingWindow.get(0);
+		}
 
 		// No spy window in main windows for the moment... extract the structure
 		// from the

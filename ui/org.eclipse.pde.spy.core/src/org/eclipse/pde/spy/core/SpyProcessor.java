@@ -133,13 +133,13 @@ public class SpyProcessor {
 
 
 		// Search for the key binding if already present
-		for (MKeyBinding kb : spyBindingTable.getBindings())
+		for (MKeyBinding kb : spyBindingTable.getBindings()) {
 			if (keySequence.equals(kb.getKeySequence())) {
 				// A binding with this key sequence is already present. Check if
 				// command is the same
-				if (kb.getCommand().getElementId().equals(cmd.getElementId()))
+				if (kb.getCommand().getElementId().equals(cmd.getElementId())) {
 					return;
-				else {
+				} else {
 					// Must log an error : key binding already exists in this
 					// table but with another command
 					System.out.println("WARNING : Cannot bind the command '" + cmd.getElementId()
@@ -148,6 +148,7 @@ public class SpyProcessor {
 					return;
 				}
 			}
+		}
 
 		// Key binding is not yet in table... can add it now.
 		MKeyBinding binding = modelService.createModelElement(MKeyBinding.class);
@@ -180,10 +181,11 @@ public class SpyProcessor {
 		// Then can add the KeyBinding if not already added
 
 		MBindingTable spyBindingTable = null;
-		for (MBindingTable bt : application.getBindingTables())
+		for (MBindingTable bt : application.getBindingTables()) {
 			if (E4_SPIES_BINDING_TABLE.equals(bt.getElementId())) {
 				spyBindingTable = bt;
 			}
+		}
 
 		// Binding table has not been yet added... Create it and bind it to
 		// org.eclipse.ui.contexts.dialogAndWindow binding context
