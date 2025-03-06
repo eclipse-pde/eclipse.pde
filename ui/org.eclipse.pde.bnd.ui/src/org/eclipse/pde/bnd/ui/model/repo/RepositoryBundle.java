@@ -36,8 +36,9 @@ public class RepositoryBundle extends RepositoryEntry implements Actionable {
 			@Override
 			Version findVersion() throws Exception {
 				SortedSet<Version> vs = repo.versions(bsn);
-				if (vs == null || vs.isEmpty())
+				if (vs == null || vs.isEmpty()) {
 					return null;
+				}
 				return vs.last();
 			}
 		});
@@ -53,8 +54,9 @@ public class RepositoryBundle extends RepositoryEntry implements Actionable {
 		try {
 			if (getRepo() instanceof Actionable) {
 				String s = ((Actionable) getRepo()).title(getBsn());
-				if (s != null)
+				if (s != null) {
 					return s;
+				}
 			}
 		} catch (Exception e) {
 			// just default
@@ -66,8 +68,9 @@ public class RepositoryBundle extends RepositoryEntry implements Actionable {
 	public String tooltip(Object... target) throws Exception {
 		if (getRepo() instanceof Actionable) {
 			String s = ((Actionable) getRepo()).tooltip(getBsn());
-			if (s != null)
+			if (s != null) {
 				return s;
+			}
 		}
 		return null;
 	}

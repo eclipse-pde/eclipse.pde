@@ -50,8 +50,9 @@ public class RepositoryResourceElement implements ResourceProvider, IAdaptable {
 
 	String getVersionString() {
 		Version version = ResourceUtils.getVersion(resource);
-		if (version == null)
+		if (version == null) {
 			version = Version.emptyVersion;
+		}
 		return version.toString();
 	}
 
@@ -75,12 +76,15 @@ public class RepositoryResourceElement implements ResourceProvider, IAdaptable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		RepositoryResourceElement other = (RepositoryResourceElement) obj;
 		return Objects.equals(resource, other.resource);
 	}

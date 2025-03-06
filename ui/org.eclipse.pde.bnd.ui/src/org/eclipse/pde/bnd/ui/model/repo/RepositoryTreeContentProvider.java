@@ -94,10 +94,11 @@ public class RepositoryTreeContentProvider implements ITreeContentProvider {
 	public void setFilter(String filter) {
 		this.rawFilter = filter;
 		if (filter == null || filter.length() == 0 || filter.trim()
-			.equals("*"))
+			.equals("*")) {
 			wildcardFilter = null;
-		else
+		} else {
 			wildcardFilter = "*" + filter.trim() + "*";
+		}
 	}
 
 	public void setRequirementFilter(Requirement requirement) {
@@ -191,17 +192,20 @@ public class RepositoryTreeContentProvider implements ITreeContentProvider {
 			log.error(error);
 		}
 		for (RepositoryPlugin repoPlugin : repoPlugins) {
-			if (CACHE_REPOSITORY.equals(repoPlugin.getName()))
+			if (CACHE_REPOSITORY.equals(repoPlugin.getName())) {
 				continue;
+			}
 			if (repoPlugin instanceof IndexProvider) {
 				IndexProvider indexProvider = (IndexProvider) repoPlugin;
-				if (!supportsPhase(indexProvider))
+				if (!supportsPhase(indexProvider)) {
 					continue;
+				}
 			}
-			if (showRepos)
+			if (showRepos) {
 				result.add(repoPlugin);
-			else
+			} else {
 				result.addAll(Arrays.asList(getRepositoryBundles(repoPlugin)));
+			}
 		}
 	}
 
@@ -210,16 +214,18 @@ public class RepositoryTreeContentProvider implements ITreeContentProvider {
 			if (input instanceof RepositoryPlugin) {
 				RepositoryPlugin repo = (RepositoryPlugin) input;
 				if (repo instanceof IndexProvider) {
-					if (!supportsPhase((IndexProvider) repo))
+					if (!supportsPhase((IndexProvider) repo)) {
 						continue;
+					}
 				}
 
 				if (showRepos) {
 					result.add(repo);
 				} else {
 					Object[] bundles = getRepositoryBundles(repo);
-					if (bundles != null && bundles.length > 0)
+					if (bundles != null && bundles.length > 0) {
 						result.addAll(Arrays.asList(bundles));
+					}
 				}
 			}
 		}
@@ -228,8 +234,9 @@ public class RepositoryTreeContentProvider implements ITreeContentProvider {
 	private boolean supportsPhase(IndexProvider provider) {
 		Set<ResolutionPhase> supportedPhases = provider.getSupportedPhases();
 		for (ResolutionPhase phase : phases) {
-			if (supportedPhases.contains(phase))
+			if (supportedPhases.contains(phase)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -340,8 +347,9 @@ public class RepositoryTreeContentProvider implements ITreeContentProvider {
 						Display.getDefault()
 							.asyncExec(() -> {
 								if (!structuredViewer.getControl()
-									.isDisposed())
+									.isDisposed()) {
 									structuredViewer.refresh(repoPlugin, true);
+								}
 							});
 					}
 
@@ -382,8 +390,9 @@ public class RepositoryTreeContentProvider implements ITreeContentProvider {
 			.findProviders(Collections.singleton(requirementFilter));
 
 		for (Entry<Requirement, Collection<Capability>> providersEntry : providers.entrySet()) {
-			for (Capability providerCap : providersEntry.getValue())
+			for (Capability providerCap : providersEntry.getValue()) {
 				resultSet.add(new RepositoryResourceElement(repoPlugin, providerCap.getResource()));
+			}
 		}
 
 		result = resultSet.toArray();

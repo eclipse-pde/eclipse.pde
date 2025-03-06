@@ -120,8 +120,9 @@ public class AddFilesToRepositoryWizard extends Wizard {
 					progress.worked(1);
 				}
 				RefreshFileJob refreshJob = new RefreshFileJob(refresh, false);
-				if (refreshJob.needsToSchedule())
+				if (refreshJob.needsToSchedule()) {
 					refreshJob.schedule();
+				}
 				progress.done();
 				return status;
 			}

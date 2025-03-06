@@ -40,10 +40,11 @@ public class URLLabelProvider extends StyledCellLabelProvider {
 			text = (element == null ? "null" : element.toString());
 		}
 
-		if (text.startsWith("file:"))
+		if (text.startsWith("file:")) {
 			img = fileImg;
-		else
+		} else {
 			img = linkImg;
+		}
 
 		cell.setText(text);
 		cell.setImage(img);

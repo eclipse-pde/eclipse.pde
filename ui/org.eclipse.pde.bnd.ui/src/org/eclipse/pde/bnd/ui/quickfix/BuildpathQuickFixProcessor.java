@@ -376,12 +376,14 @@ public class BuildpathQuickFixProcessor implements IQuickFixProcessor {
 
 			ICompilationUnit compUnit = context.getCompilationUnit();
 			IJavaProject java = compUnit.getJavaProject();
-			if (java == null)
+			if (java == null) {
 				return null;
+			}
 
 			project = Adapters.adapt(java.getProject(), Project.class);
-			if (project == null)
+			if (project == null) {
 				return null;
+			}
 
 			test = isInDir(project.getTestSrc(), compUnit.getResource());
 			workspace = project.getWorkspace();
@@ -814,8 +816,9 @@ public class BuildpathQuickFixProcessor implements IQuickFixProcessor {
 		throws CoreException, Exception {
 		try (ProjectBuilder pb = new ProjectBuilder(project)) {
 
-			if (test)
+			if (test) {
 				pb.includeTestpath();
+			}
 
 			Map<String, List<BundleId>> result = wrappedResult
 				.orElseThrow(s -> new CoreException(new Status(IStatus.ERROR, getClass(), s)));
@@ -835,8 +838,9 @@ public class BuildpathQuickFixProcessor implements IQuickFixProcessor {
 	private boolean isOnBuildOrTestPath(ProjectBuilder pb, String fqn) {
 		try {
 			TypeRef type = pb.getTypeRefFromFQN(fqn);
-			if (type == null)
+			if (type == null) {
 				return false;
+			}
 
 			String pack = type.getPackageRef()
 				.getPath();
@@ -862,8 +866,9 @@ public class BuildpathQuickFixProcessor implements IQuickFixProcessor {
 	}
 
 	private boolean isInDir(File dir, IResource resource) {
-		if (resource == null || dir == null)
+		if (resource == null || dir == null) {
 			return false;
+		}
 
 		IPath location = resource.getLocation();
 		if (location != null) {

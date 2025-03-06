@@ -139,11 +139,13 @@ public class LabelParser {
 
 		Matcher m = LABEL_PATTERN.matcher(labelExpression);
 		if (m.matches()) {
-			if (m.group(1) != null)
+			if (m.group(1) != null) {
 				enabled = false;
+			}
 
-			if (m.group(2) != null)
+			if (m.group(2) != null) {
 				checked = true;
+			}
 
 			label = m.group(3);
 

@@ -51,8 +51,9 @@ public class ArbitraryNamespaceSearchPanel extends SearchPanel {
 
 		new Label(container, SWT.NONE).setText("Namespace:");
 		final Text txtNamespace = new Text(container, SWT.BORDER);
-		if (namespace != null)
+		if (namespace != null) {
 			txtNamespace.setText(namespace);
+		}
 		txtNamespace.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		txtNamespace.addModifyListener(e -> {
 			namespace = txtNamespace.getText()
@@ -66,8 +67,9 @@ public class ArbitraryNamespaceSearchPanel extends SearchPanel {
 
 		final Text txtFilter = new Text(container, SWT.MULTI | SWT.BORDER);
 		txtFilter.setMessage("enter OSGi-style filter");
-		if (filterStr != null)
+		if (filterStr != null) {
 			txtFilter.setText(filterStr);
+		}
 		GridData gdArbitrarySearchFilter = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
 		gdArbitrarySearchFilter.heightHint = 50;
 		txtFilter.setLayoutData(gdArbitrarySearchFilter);
@@ -98,12 +100,14 @@ public class ArbitraryNamespaceSearchPanel extends SearchPanel {
 			for (int i = 0; i < namespace.length(); i++) {
 				char c = namespace.charAt(i);
 				if ('.' == c) {
-					if (i == 0 || i == namespace.length() - 1)
+					if (i == 0 || i == namespace.length() - 1) {
 						throw new IllegalArgumentException("Namespace cannot have leading or trailing '.' character");
-					else if ('.' == namespace.charAt(i - 1))
+					} else if ('.' == namespace.charAt(i - 1)) {
 						throw new IllegalArgumentException("Namespace cannot have repeated '.' characters");
-				} else if (!Character.isLetterOrDigit(c) && c != '-' && c != '_')
+					}
+				} else if (!Character.isLetterOrDigit(c) && c != '-' && c != '_') {
 					throw new IllegalArgumentException(String.format("Invalid character in namespace: '%c'", c));
+				}
 			}
 			updateFilterExpressionHint(namespace);
 
@@ -127,11 +131,12 @@ public class ArbitraryNamespaceSearchPanel extends SearchPanel {
 
 	private void updateFilterExpressionHint(String namespace) {
 		String hint;
-		if (ServiceNamespace.SERVICE_NAMESPACE.equals(namespace))
+		if (ServiceNamespace.SERVICE_NAMESPACE.equals(namespace)) {
 			hint = String.format("(%s=fully-qualified-classname)", Constants.OBJECTCLASS);
-		else
+		} else {
 			// double ampersand because it's a mnemonic in SWT... FFS!
 			hint = String.format("(&&(%s=value)(version>=1.0))", namespace);
+		}
 
 		lblFilterHint.setText("Example: " + hint);
 	}

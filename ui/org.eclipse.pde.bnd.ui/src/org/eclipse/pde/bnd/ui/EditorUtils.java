@@ -52,8 +52,9 @@ public class EditorUtils {
 	public static final IFormPart findPartByClass(IManagedForm form, Class<? extends IFormPart> clazz) {
 		IFormPart[] parts = form.getParts();
 		for (IFormPart part : parts) {
-			if (clazz.isInstance(part))
+			if (clazz.isInstance(part)) {
 				return part;
+			}
 		}
 		return null;
 	}

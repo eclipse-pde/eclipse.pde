@@ -134,8 +134,9 @@ public class ReposPreferencePage extends PreferencePage implements IWorkbenchPre
 		tblRepos.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == SWT.DEL && e.stateMask == 0)
+				if (e.keyCode == SWT.DEL && e.stateMask == 0) {
 					doRemoveRepo();
+				}
 			}
 		});
 
@@ -165,8 +166,9 @@ public class ReposPreferencePage extends PreferencePage implements IWorkbenchPre
 	private void doRemoveRepo() {
 		int[] selectedIndexes = vwrRepos.getTable()
 			.getSelectionIndices();
-		if (selectedIndexes == null)
+		if (selectedIndexes == null) {
 			return;
+		}
 		List<Object> selected = new ArrayList<>(selectedIndexes.length);
 		for (int index : selectedIndexes) {
 			selected.add(templateRepos.get(index));

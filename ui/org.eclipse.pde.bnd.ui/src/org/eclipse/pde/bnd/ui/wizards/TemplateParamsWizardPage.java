@@ -78,8 +78,9 @@ public class TemplateParamsWizardPage extends WizardPage {
 	public void setTemplate(Template template) {
 		this.template = template;
 		this.values.clear();
-		if (container != null && !container.isDisposed())
+		if (container != null && !container.isDisposed()) {
 			updateUI();
+		}
 	}
 
 	void updateUI() {
@@ -158,8 +159,9 @@ public class TemplateParamsWizardPage extends WizardPage {
 		for (AttributeDefinition ad : ads) {
 			String adId = ad.getID();
 			// Skip attribs provided the wizard
-			if (fixedAttribs.contains(adId))
+			if (fixedAttribs.contains(adId)) {
 				continue;
+			}
 			// Get the value from values map
 			String value = values.get(adId);
 			// Also get the default value if any from attribute definition
@@ -198,8 +200,9 @@ public class TemplateParamsWizardPage extends WizardPage {
 			case AttributeDefinition.STRING :
 			case AttributeDefinition.INTEGER :
 				final Text text = new Text(parent, textType);
-				if (ad.getName() != null)
+				if (ad.getName() != null) {
 					text.setMessage(ad.getName());
+				}
 
 				if (ad.getDescription() != null) {
 					ControlDecoration decor = new ControlDecoration(text, SWT.LEFT, parent);

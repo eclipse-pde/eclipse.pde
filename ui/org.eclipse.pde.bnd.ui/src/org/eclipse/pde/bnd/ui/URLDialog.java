@@ -100,8 +100,9 @@ public class URLDialog extends TitleAreaDialog {
 
 		// Listeners
 		// Load from state
-		if (location != null)
+		if (location != null) {
 			txtUrl.setText(location.toString());
+		}
 
 		return area;
 	}

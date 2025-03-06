@@ -155,8 +155,9 @@ public class AdvancedSearchDialog extends TitleAreaDialog implements IPersistabl
 		for (IMemento childMemento : children) {
 			String key = childMemento.getID();
 			SearchPanel panel = panelMap.get(key);
-			if (panel != null)
+			if (panel != null) {
 				panel.restoreState(childMemento);
+			}
 		}
 	}
 

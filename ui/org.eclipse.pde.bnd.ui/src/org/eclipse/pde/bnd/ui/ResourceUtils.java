@@ -45,8 +45,9 @@ public final class ResourceUtils {
 
 	public static Capability getIdentityCapability(Resource resource) throws IllegalArgumentException {
 		List<Capability> caps = resource.getCapabilities(IdentityNamespace.IDENTITY_NAMESPACE);
-		if (caps.isEmpty())
+		if (caps.isEmpty()) {
 			throw new IllegalArgumentException("Resource has no identity");
+		}
 		if (caps.size() > 1) {
 			// Remove the alias identity "system.bundle"
 			List<Capability> filtered = new ArrayList<>(caps.size());
@@ -60,8 +61,9 @@ public final class ResourceUtils {
 			}
 			caps = filtered;
 
-			if (caps.size() > 1)
+			if (caps.size() > 1) {
 				throw new IllegalArgumentException("Resource has multiple identity capabilities: " + ids);
+			}
 		}
 		return caps.get(0);
 	}
@@ -69,19 +71,22 @@ public final class ResourceUtils {
 	public static String getIdentity(Capability identityCapability) throws IllegalArgumentException {
 		String id = (String) identityCapability.getAttributes()
 			.get(IdentityNamespace.IDENTITY_NAMESPACE);
-		if (id == null)
+		if (id == null) {
 			throw new IllegalArgumentException("Resource identity capability has missing identity attribute");
+		}
 		return id;
 	}
 
 	public static Version getVersion(Capability identityCapability) throws IllegalArgumentException {
 		Object versionObj = identityCapability.getAttributes()
 			.get(IdentityNamespace.CAPABILITY_VERSION_ATTRIBUTE);
-		if (versionObj instanceof Version)
+		if (versionObj instanceof Version) {
 			return (Version) versionObj;
+		}
 
-		if (versionObj == null || versionObj instanceof String)
+		if (versionObj == null || versionObj instanceof String) {
 			return Version.parseVersion((String) versionObj);
+		}
 
 		throw new IllegalArgumentException(
 			"Resource identity capability has version attribute with incorrect type: " + versionObj.getClass());
@@ -98,8 +103,9 @@ public final class ResourceUtils {
 	public static Capability getContentCapability(Resource resource) throws IllegalArgumentException {
 		List<Capability> caps = resource.getCapabilities(ContentNamespace.CONTENT_NAMESPACE);
 
-		if (caps.isEmpty())
+		if (caps.isEmpty()) {
 			throw new IllegalArgumentException("Resource has no content");
+		}
 
 		// A resource may have multiple capabilities and this is acceptable
 		// according to the specification
@@ -109,14 +115,16 @@ public final class ResourceUtils {
 		Capability firstCap = null;
 		for (Capability c : caps) {
 
-			if (firstCap == null)
+			if (firstCap == null) {
 				firstCap = c;
+			}
 
 			Object url = c.getAttributes()
 				.get("url");
 
-			if (url == null)
+			if (url == null) {
 				continue;
+			}
 
 			String urlString = String.valueOf(url);
 
@@ -134,15 +142,18 @@ public final class ResourceUtils {
 	public static URI getURI(Capability contentCapability) {
 		Object uriObj = contentCapability.getAttributes()
 			.get(ContentNamespace.CAPABILITY_URL_ATTRIBUTE);
-		if (uriObj == null)
+		if (uriObj == null) {
 			throw new IllegalArgumentException("Resource content capability has missing URL attribute");
+		}
 
-		if (uriObj instanceof URI)
+		if (uriObj instanceof URI) {
 			return (URI) uriObj;
+		}
 
 		try {
-			if (uriObj instanceof URL)
+			if (uriObj instanceof URL) {
 				return ((URL) uriObj).toURI();
+			}
 
 			if (uriObj instanceof String) {
 				try {
@@ -170,24 +181,25 @@ public final class ResourceUtils {
 	public static String getVersionAttributeForNamespace(String ns) {
 		String name;
 
-		if (IdentityNamespace.IDENTITY_NAMESPACE.equals(ns))
+		if (IdentityNamespace.IDENTITY_NAMESPACE.equals(ns)) {
 			name = IdentityNamespace.CAPABILITY_VERSION_ATTRIBUTE;
-		else if (BundleNamespace.BUNDLE_NAMESPACE.equals(ns))
+		} else if (BundleNamespace.BUNDLE_NAMESPACE.equals(ns)) {
 			name = AbstractWiringNamespace.CAPABILITY_BUNDLE_VERSION_ATTRIBUTE;
-		else if (HostNamespace.HOST_NAMESPACE.equals(ns))
+		} else if (HostNamespace.HOST_NAMESPACE.equals(ns)) {
 			name = AbstractWiringNamespace.CAPABILITY_BUNDLE_VERSION_ATTRIBUTE;
-		else if (PackageNamespace.PACKAGE_NAMESPACE.equals(ns))
+		} else if (PackageNamespace.PACKAGE_NAMESPACE.equals(ns)) {
 			name = PackageNamespace.CAPABILITY_VERSION_ATTRIBUTE;
-		else if (ServiceNamespace.SERVICE_NAMESPACE.equals(ns))
+		} else if (ServiceNamespace.SERVICE_NAMESPACE.equals(ns)) {
 			name = null;
-		else if (ExecutionEnvironmentNamespace.EXECUTION_ENVIRONMENT_NAMESPACE.equals(ns))
+		} else if (ExecutionEnvironmentNamespace.EXECUTION_ENVIRONMENT_NAMESPACE.equals(ns)) {
 			name = ExecutionEnvironmentNamespace.CAPABILITY_VERSION_ATTRIBUTE;
-		else if (ExtenderNamespace.EXTENDER_NAMESPACE.equals(ns))
+		} else if (ExtenderNamespace.EXTENDER_NAMESPACE.equals(ns)) {
 			name = ExtenderNamespace.CAPABILITY_VERSION_ATTRIBUTE;
-		else if (ContractNamespace.CONTRACT_NAMESPACE.equals(ns))
+		} else if (ContractNamespace.CONTRACT_NAMESPACE.equals(ns)) {
 			name = ContractNamespace.CAPABILITY_VERSION_ATTRIBUTE;
-		else
+		} else {
 			name = null;
+		}
 
 		return name;
 	}

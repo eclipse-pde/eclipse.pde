@@ -61,8 +61,9 @@ public class RepositoryBundleVersion extends RepositoryEntry implements Actionab
 		try {
 			if (bundle.getRepo() instanceof Actionable) {
 				String s = ((Actionable) bundle.getRepo()).title(bundle.getBsn(), version);
-				if (s != null)
+				if (s != null) {
 					return s;
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -76,8 +77,9 @@ public class RepositoryBundleVersion extends RepositoryEntry implements Actionab
 		try {
 			if (bundle.getRepo() instanceof Actionable) {
 				String s = ((Actionable) bundle.getRepo()).tooltip(bundle.getBsn(), version);
-				if (s != null)
+				if (s != null) {
 					return s;
+				}
 			}
 		} catch (Exception e) {
 			// just default

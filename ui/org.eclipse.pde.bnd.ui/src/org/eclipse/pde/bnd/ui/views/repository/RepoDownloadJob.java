@@ -64,8 +64,9 @@ public class RepoDownloadJob extends Job {
 		try {
 			while (!locked) {
 				monitor.setBlocked(Status.info("Waiting for other download jobs to complete."));
-				if (progress.isCanceled())
+				if (progress.isCanceled()) {
 					return Status.CANCEL_STATUS;
+				}
 
 				try {
 					locked = LOCK.tryLock(5, TimeUnit.SECONDS);
@@ -91,8 +92,9 @@ public class RepoDownloadJob extends Job {
 
 			monitor.setWorkRemaining(rbvs.size());
 			for (RepositoryBundleVersion rbv : rbvs) {
-				if (monitor.isCanceled())
+				if (monitor.isCanceled()) {
 					return Status.CANCEL_STATUS;
+				}
 
 				String resourceName = "<<unknown>>";
 				try {
@@ -117,8 +119,9 @@ public class RepoDownloadJob extends Job {
 			}
 			return status;
 		} finally {
-			if (locked)
+			if (locked) {
 				LOCK.unlock();
+			}
 		}
 
 	}
@@ -147,8 +150,9 @@ public class RepoDownloadJob extends Job {
 	@Override
 	protected void canceling() {
 		Thread myThread = getThread();
-		if (myThread != null)
+		if (myThread != null) {
 			myThread.interrupt();
+		}
 	}
 
 }
