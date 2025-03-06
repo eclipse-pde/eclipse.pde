@@ -68,16 +68,21 @@ public abstract class PDETemplateSection extends OptionTemplateSection {
 	private String[] getDirectoryCandidates() {
 		double version = getTargetVersion();
 		ArrayList<String> result = new ArrayList<>();
-		if (version >= 3.5)
+		if (version >= 3.5) {
 			result.add("templates_3.5" + "/" + getSectionId() + "/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		if (version >= 3.4)
+		}
+		if (version >= 3.4) {
 			result.add("templates_3.4" + "/" + getSectionId() + "/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		if (version >= 3.3)
+		}
+		if (version >= 3.3) {
 			result.add("templates_3.3" + "/" + getSectionId() + "/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		if (version >= 3.2)
+		}
+		if (version >= 3.2) {
 			result.add("templates_3.2" + "/" + getSectionId() + "/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		if (version >= 3.1)
+		}
+		if (version >= 3.1) {
 			result.add("templates_3.1" + "/" + getSectionId() + "/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
 		return result.toArray(new String[result.size()]);
 	}
 
@@ -91,11 +96,13 @@ public abstract class PDETemplateSection extends OptionTemplateSection {
 		for (int i = 0; i < id.length(); i++) {
 			char ch = id.charAt(i);
 			if (buffer.length() == 0) {
-				if (Character.isJavaIdentifierStart(ch))
+				if (Character.isJavaIdentifierStart(ch)) {
 					buffer.append(Character.toLowerCase(ch));
+				}
 			} else {
-				if (Character.isJavaIdentifierPart(ch) || ch == '.')
+				if (Character.isJavaIdentifierPart(ch) || ch == '.') {
 					buffer.append(ch);
+				}
 			}
 		}
 		return buffer.toString().toLowerCase(Locale.ENGLISH);

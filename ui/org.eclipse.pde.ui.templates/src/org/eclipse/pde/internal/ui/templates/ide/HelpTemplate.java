@@ -169,8 +169,9 @@ public class HelpTemplate extends PDETemplateSection {
 		IPluginElement tocElement = factory.createElement(extension);
 		tocElement.setName("toc"); //$NON-NLS-1$
 		tocElement.setAttribute("file", "toc.xml"); //$NON-NLS-1$ //$NON-NLS-2$
-		if (primaryOption.isSelected())
+		if (primaryOption.isSelected()) {
 			tocElement.setAttribute("primary", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		extension.add(tocElement);
 
 		if (genTestOption.isSelected() && genTestOption.isEnabled()) {
@@ -186,8 +187,9 @@ public class HelpTemplate extends PDETemplateSection {
 		addNonPrimaryTopic(samplesOption, "tocsamples.xml", extension); //$NON-NLS-1$
 		addNonPrimaryTopic(tasksOption, "toctasks.xml", extension); //$NON-NLS-1$
 
-		if (!extension.isInTheModel())
+		if (!extension.isInTheModel()) {
 			plugin.add(extension);
+		}
 	}
 
 	private void addNonPrimaryTopic(BooleanOption option, String file, IPluginExtension extension) throws CoreException {

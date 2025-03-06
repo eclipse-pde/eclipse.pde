@@ -120,23 +120,26 @@ public class PreferencePageTemplate extends PDETemplateSection {
 		pageElement.setAttribute("name", getStringOption(KEY_PAGE_NAME)); //$NON-NLS-1$
 		pageElement.setAttribute("class", fullClassName); //$NON-NLS-1$
 		extension.add(pageElement);
-		if (!extension.isInTheModel())
+		if (!extension.isInTheModel()) {
 			plugin.add(extension);
+		}
 
 		IPluginExtension extension2 = createExtension("org.eclipse.core.runtime.preferences", true); //$NON-NLS-1$
 		IPluginElement prefElement = factory.createElement(extension);
 		prefElement.setName("initializer"); //$NON-NLS-1$
 		prefElement.setAttribute("class", getStringOption(KEY_PACKAGE_NAME) + ".PreferenceInitializer"); //$NON-NLS-1$ //$NON-NLS-2$
 		extension2.add(prefElement);
-		if (!extension2.isInTheModel())
+		if (!extension2.isInTheModel()) {
 			plugin.add(extension2);
+		}
 	}
 
 	@Override
 	protected String getFormattedPackageName(String id) {
 		String packageName = super.getFormattedPackageName(id);
-		if (packageName.length() != 0)
+		if (packageName.length() != 0) {
 			return packageName + ".preferences"; //$NON-NLS-1$
+		}
 		return "preferences"; //$NON-NLS-1$
 	}
 }

@@ -89,8 +89,9 @@ public class ViewRCPTemplate extends PDETemplateSection {
 		createPerspectiveViewExtension();
 		createMenuExtension();
 
-		if (getBooleanOption(KEY_PRODUCT_BRANDING))
+		if (getBooleanOption(KEY_PRODUCT_BRANDING)) {
 			createProductExtension();
+		}
 
 		IBundle bundle = ((IBundlePluginModelBase) model).getBundleModel().getBundle();
 		bundle.setHeader(Constants.IMPORT_PACKAGE, "jakarta.inject;version=\"[2.0.0,3.0.0)\""); //$NON-NLS-1$
@@ -111,8 +112,9 @@ public class ViewRCPTemplate extends PDETemplateSection {
 		run.setAttribute("class", getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(KEY_APPLICATION_CLASS)); //$NON-NLS-1$ //$NON-NLS-2$
 		element.add(run);
 
-		if (!extension.isInTheModel())
+		if (!extension.isInTheModel()) {
 			plugin.add(extension);
+		}
 	}
 
 	private void createPerspectiveExtension() throws CoreException {
@@ -126,8 +128,9 @@ public class ViewRCPTemplate extends PDETemplateSection {
 		element.setAttribute("id", plugin.getId() + ".perspective"); //$NON-NLS-1$ //$NON-NLS-2$
 		extension.add(element);
 
-		if (!extension.isInTheModel())
+		if (!extension.isInTheModel()) {
 			plugin.add(extension);
+		}
 	}
 
 	private void createViewExtension() throws CoreException {
@@ -143,8 +146,9 @@ public class ViewRCPTemplate extends PDETemplateSection {
 		view.setAttribute("inject", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		extension.add(view);
 
-		if (!extension.isInTheModel())
+		if (!extension.isInTheModel()) {
 			plugin.add(extension);
+		}
 	}
 
 	private void createPerspectiveViewExtension() throws CoreException {
@@ -166,8 +170,9 @@ public class ViewRCPTemplate extends PDETemplateSection {
 		view.setAttribute("relative", "org.eclipse.ui.editorss"); //$NON-NLS-1$ //$NON-NLS-2$
 		perspectiveExtension.add(view);
 
-		if (!extension.isInTheModel())
+		if (!extension.isInTheModel()) {
 			plugin.add(extension);
+		}
 	}
 
 	private void createMenuExtension() throws CoreException {
@@ -189,8 +194,9 @@ public class ViewRCPTemplate extends PDETemplateSection {
 		command.setAttribute("label", "Exit"); //$NON-NLS-1$ //$NON-NLS-2$
 		menu.add(command);
 
-		if (!extension.isInTheModel())
+		if (!extension.isInTheModel()) {
 			plugin.add(extension);
+		}
 	}
 
 	private void createProductExtension() throws CoreException {
@@ -214,8 +220,9 @@ public class ViewRCPTemplate extends PDETemplateSection {
 
 		extension.add(element);
 
-		if (!extension.isInTheModel())
+		if (!extension.isInTheModel()) {
 			plugin.add(extension);
+		}
 	}
 
 	@Override
@@ -240,8 +247,9 @@ public class ViewRCPTemplate extends PDETemplateSection {
 
 	@Override
 	public String[] getNewFiles() {
-		if (copyBrandingDirectory())
+		if (copyBrandingDirectory()) {
 			return new String[] {"icons/", "splash.bmp"}; //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		return super.getNewFiles();
 	}
 }
