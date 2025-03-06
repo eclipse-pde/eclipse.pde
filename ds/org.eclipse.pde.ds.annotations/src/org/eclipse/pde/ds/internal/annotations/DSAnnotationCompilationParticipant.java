@@ -117,22 +117,26 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 	public boolean isActive(IJavaProject project) {
 		IPreferencesService prefs = Platform.getPreferencesService();
 		boolean enabled = prefs.getBoolean(Activator.PLUGIN_ID, Activator.PREF_ENABLED, false, new IScopeContext[] { new ProjectScope(project.getProject()), InstanceScope.INSTANCE, DefaultScope.INSTANCE });
-		if (!enabled)
+		if (!enabled) {
 			return false;
+		}
 
 		IProject iproject = project.getProject();
-		if (!iproject.isOpen() || !PluginProject.isPluginProject(iproject))
+		if (!iproject.isOpen() || !PluginProject.isPluginProject(iproject)) {
 			return false;
+		}
 
-		if (WorkspaceModelManager.isBinaryProject(project.getProject()))
+		if (WorkspaceModelManager.isBinaryProject(project.getProject())) {
 			return false;
+		}
 		return true;
 	}
 
 	@Override
 	public int aboutToBuild(IJavaProject project) {
-		if (debug.isDebugging())
+		if (debug.isDebugging()) {
 			debug.trace(String.format("About to build project: %s", project.getElementName())); //$NON-NLS-1$
+		}
 
 		int result = READY_FOR_BUILD;
 
@@ -220,8 +224,9 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 
 			if (state == null) {
 				state = new ProjectState();
-				if (result != null && result.length > 0)
+				if (result != null && result.length > 0) {
 					result[0] = NEEDS_FULL_BUILD;
+				}
 			}
 
 			try {
@@ -237,8 +242,9 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 	private static ProjectState loadState(IProject project) throws IOException {
 		File stateFile = getStateFile(project);
 		if (!stateFile.canRead()) {
-			if (debug.isDebugging())
+			if (debug.isDebugging()) {
 				debug.trace(String.format("Missing or invalid project state file: %s", stateFile)); //$NON-NLS-1$
+			}
 
 			return null;
 		}
@@ -248,8 +254,9 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 
 			if (debug.isDebugging()) {
 				debug.trace(String.format("Loaded state for project: %s", project.getName())); //$NON-NLS-1$
-				for (String cuKey : state.getCompilationUnits())
+				for (String cuKey : state.getCompilationUnits()) {
 					debug.trace(String.format("%s -> %s", cuKey, state.getModelFiles(cuKey))); //$NON-NLS-1$
+				}
 			}
 
 			return state;
@@ -274,19 +281,22 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 					IResource file;
 					if (cu != null && cu.getElementType() == IJavaElement.COMPILATION_UNIT
 							&& (file = cu.getResource()) != null && file.exists()
-							&& file.getProject().equals(project.getProject()))
+							&& file.getProject().equals(project.getProject())) {
 						exists = true;
+					}
 				} catch (JavaModelException e) {
 					Activator.log(e);
 				}
 
 				if (!exists) {
-					if (debug.isDebugging())
+					if (debug.isDebugging()) {
 						debug.trace(String.format("Mapped CU %s no longer exists.", cuKey)); //$NON-NLS-1$
+					}
 
 					Collection<String> dsKeys = state.removeMappings(cuKey);
-					if (dsKeys != null)
+					if (dsKeys != null) {
 						abandoned.addAll(dsKeys);
+					}
 				}
 			}
 
@@ -294,8 +304,9 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 			HashSet<String> retained = new HashSet<>();
 			for (String cuKey : state.getCompilationUnits()) {
 				Collection<String> dsKeys = state.getModelFiles(cuKey);
-				if (dsKeys != null)
+				if (dsKeys != null) {
 					retained.addAll(dsKeys);
+				}
 			}
 
 			try {
