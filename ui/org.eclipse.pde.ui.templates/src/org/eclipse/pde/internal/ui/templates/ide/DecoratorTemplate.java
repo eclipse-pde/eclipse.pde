@@ -227,10 +227,11 @@ public class DecoratorTemplate extends PDETemplateSection {
 		projectObjectElement.setName("objectClass"); //$NON-NLS-1$
 		projectObjectElement.setAttribute("name", "org.eclipse.core.resources.IProject"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		if (readOnlyOption.isSelected())
+		if (readOnlyOption.isSelected()) {
 			orElement.add(folderObjectElement);
-		else if (projectOption.isSelected())
+		} else if (projectOption.isSelected()) {
 			orElement.add(projectObjectElement);
+		}
 		orElement.add(fileObjectElement);
 		andElement.add(resourceObjectElement);
 		andElement.add(orElement);
@@ -238,8 +239,9 @@ public class DecoratorTemplate extends PDETemplateSection {
 		decoratorElement.add(enablementElement);
 
 		extension.add(decoratorElement);
-		if (!extension.isInTheModel())
+		if (!extension.isInTheModel()) {
 			plugin.add(extension);
+		}
 	}
 
 	@Override
@@ -252,8 +254,9 @@ public class DecoratorTemplate extends PDETemplateSection {
 		// Package name addition to create a location for containing
 		// any classes required by the decorator.
 		String packageName = super.getFormattedPackageName(id);
-		if (packageName.length() != 0)
+		if (packageName.length() != 0) {
 			return packageName + ".decorators"; //$NON-NLS-1$
+		}
 		return "decorators"; //$NON-NLS-1$
 	}
 

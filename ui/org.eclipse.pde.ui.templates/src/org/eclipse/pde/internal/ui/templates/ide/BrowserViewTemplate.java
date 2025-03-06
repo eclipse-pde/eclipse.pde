@@ -142,8 +142,9 @@ public class BrowserViewTemplate extends PDETemplateSection {
 		viewElement.setAttribute("category", cid); //$NON-NLS-1$
 		viewElement.setAttribute("inject", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		extension.add(viewElement);
-		if (!extension.isInTheModel())
+		if (!extension.isInTheModel()) {
 			plugin.add(extension);
+		}
 
 		if (addToPerspective.isSelected()) {
 			IPluginExtension perspectiveExtension = createExtension("org.eclipse.ui.perspectiveExtensions", true); //$NON-NLS-1$
@@ -161,8 +162,9 @@ public class BrowserViewTemplate extends PDETemplateSection {
 			perspectiveElement.add(view);
 
 			perspectiveExtension.add(perspectiveElement);
-			if (!perspectiveExtension.isInTheModel())
+			if (!perspectiveExtension.isInTheModel()) {
 				plugin.add(perspectiveExtension);
+			}
 		}
 	}
 
@@ -174,8 +176,9 @@ public class BrowserViewTemplate extends PDETemplateSection {
 				IPluginAttribute att = element.getAttribute("id"); //$NON-NLS-1$
 				if (att != null) {
 					String cid = att.getValue();
-					if (cid != null && cid.equals(id))
+					if (cid != null && cid.equals(id)) {
 						return;
+					}
 				}
 			}
 		}
@@ -194,8 +197,9 @@ public class BrowserViewTemplate extends PDETemplateSection {
 	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		ArrayList<PluginReference> result = new ArrayList<>();
-		if (schemaVersion != null)
+		if (schemaVersion != null) {
 			result.add(new PluginReference("org.eclipse.core.runtime")); //$NON-NLS-1$
+		}
 		result.add(new PluginReference("org.eclipse.ui")); //$NON-NLS-1$
 		return result.toArray(new IPluginReference[result.size()]);
 	}
@@ -203,15 +207,17 @@ public class BrowserViewTemplate extends PDETemplateSection {
 	@Override
 	protected String getFormattedPackageName(String id) {
 		String packageName = super.getFormattedPackageName(id);
-		if (packageName.length() != 0)
+		if (packageName.length() != 0) {
 			return packageName + ".views"; //$NON-NLS-1$
+		}
 		return "views"; //$NON-NLS-1$
 	}
 
 	@Override
 	public Object getValue(String name) {
-		if (name.equals("useEnablement")) //$NON-NLS-1$
+		if (name.equals("useEnablement")) { //$NON-NLS-1$
 			return Boolean.valueOf(getTargetVersion() >= 3.3);
+		}
 		return super.getValue(name);
 	}
 }

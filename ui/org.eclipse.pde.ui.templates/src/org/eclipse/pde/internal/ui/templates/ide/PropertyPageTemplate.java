@@ -128,8 +128,9 @@ public class PropertyPageTemplate extends PDETemplateSection {
 		pageElement.setAttribute("nameFilter", getStringOption(KEY_NAME_FILTER)); //$NON-NLS-1$
 
 		extension.add(pageElement);
-		if (!extension.isInTheModel())
+		if (!extension.isInTheModel()) {
 			plugin.add(extension);
+		}
 	}
 
 	/**
@@ -144,8 +145,9 @@ public class PropertyPageTemplate extends PDETemplateSection {
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		ArrayList<PluginReference> result = new ArrayList<>();
 		result.add(new PluginReference("org.eclipse.core.resources")); //$NON-NLS-1$
-		if (schemaVersion != null)
+		if (schemaVersion != null) {
 			result.add(new PluginReference("org.eclipse.core.runtime")); //$NON-NLS-1$
+		}
 		result.add(new PluginReference("org.eclipse.ui")); //$NON-NLS-1$
 
 		return result.toArray(new IPluginReference[result.size()]);
@@ -154,8 +156,9 @@ public class PropertyPageTemplate extends PDETemplateSection {
 	@Override
 	protected String getFormattedPackageName(String id) {
 		String packageName = super.getFormattedPackageName(id);
-		if (packageName.length() != 0)
+		if (packageName.length() != 0) {
 			return packageName + ".properties"; //$NON-NLS-1$
+		}
 		return "properties"; //$NON-NLS-1$
 	}
 

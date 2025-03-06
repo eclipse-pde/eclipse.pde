@@ -122,8 +122,9 @@ public class E4HandlerTemplate extends PDETemplateSection {
 
 		extension.add(element);
 
-		if (!extension.isInTheModel())
+		if (!extension.isInTheModel()) {
 			plugin.add(extension);
+		}
 	}
 
 	@Override

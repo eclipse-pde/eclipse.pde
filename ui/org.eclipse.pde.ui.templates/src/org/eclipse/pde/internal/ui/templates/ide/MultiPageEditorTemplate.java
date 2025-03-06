@@ -147,15 +147,17 @@ public class MultiPageEditorTemplate extends BaseEditorTemplate {
 		editorElement.setAttribute("class", editorClassName); //$NON-NLS-1$
 		editorElement.setAttribute("contributorClass", contributorClassName); //$NON-NLS-1$
 		extension.add(editorElement);
-		if (!extension.isInTheModel())
+		if (!extension.isInTheModel()) {
 			plugin.add(extension);
+		}
 	}
 
 	@Override
 	protected String getFormattedPackageName(String id) {
 		String packageName = super.getFormattedPackageName(id);
-		if (packageName.length() != 0)
+		if (packageName.length() != 0) {
 			return packageName + ".editors"; //$NON-NLS-1$
+		}
 		return "editors"; //$NON-NLS-1$
 	}
 

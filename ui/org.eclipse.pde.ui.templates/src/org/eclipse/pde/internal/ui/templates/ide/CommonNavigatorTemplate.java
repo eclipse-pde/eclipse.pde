@@ -91,14 +91,16 @@ public class CommonNavigatorTemplate extends PDETemplateSection {
 		perspectiveElement.add(view);
 
 		perspectiveExtension.add(perspectiveElement);
-		if (!perspectiveExtension.isInTheModel())
+		if (!perspectiveExtension.isInTheModel()) {
 			plugin.add(perspectiveExtension);
+		}
 	}
 
 	private void createViewer() throws CoreException {
 		IPluginExtension viewerExtension = createExtension("org.eclipse.ui.navigator.viewer", true); //$NON-NLS-1$
-		if (!viewerExtension.isInTheModel())
+		if (!viewerExtension.isInTheModel()) {
 			plugin.add(viewerExtension);
+		}
 
 		createActionBinding(viewerExtension);
 		createContentBinding(viewerExtension);
@@ -151,8 +153,9 @@ public class CommonNavigatorTemplate extends PDETemplateSection {
 
 		viewElement.setAttribute("class", "org.eclipse.ui.navigator.CommonNavigator"); //$NON-NLS-1$  //$NON-NLS-2$
 		viewExtension.add(viewElement);
-		if (!viewExtension.isInTheModel())
+		if (!viewExtension.isInTheModel()) {
 			plugin.add(viewExtension);
+		}
 	}
 
 	@Override

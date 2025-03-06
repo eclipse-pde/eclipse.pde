@@ -131,8 +131,9 @@ public class NewWizardTemplate extends PDETemplateSection {
 		viewElement.setAttribute("class", fullClassName); //$NON-NLS-1$
 		viewElement.setAttribute("category", cid); //$NON-NLS-1$
 		extension.add(viewElement);
-		if (!extension.isInTheModel())
+		if (!extension.isInTheModel()) {
 			plugin.add(extension);
+		}
 	}
 
 	private void createCategory(IPluginExtension extension, String id) throws CoreException {
@@ -143,8 +144,9 @@ public class NewWizardTemplate extends PDETemplateSection {
 				IPluginAttribute att = element.getAttribute("id"); //$NON-NLS-1$
 				if (att != null) {
 					String cid = att.getValue();
-					if (cid != null && cid.equals(id))
+					if (cid != null && cid.equals(id)) {
 						return;
+					}
 				}
 			}
 		}
@@ -163,8 +165,9 @@ public class NewWizardTemplate extends PDETemplateSection {
 	@Override
 	protected String getFormattedPackageName(String id) {
 		String packageName = super.getFormattedPackageName(id);
-		if (packageName.length() != 0)
+		if (packageName.length() != 0) {
 			return packageName + ".wizards"; //$NON-NLS-1$
+		}
 		return "wizards"; //$NON-NLS-1$
 	}
 }

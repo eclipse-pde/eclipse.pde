@@ -118,8 +118,9 @@ public class IntroTemplate extends PDETemplateSection {
 		run.setAttribute("class", getStringOption(KEY_PACKAGE_NAME) + "." + APPLICATION_CLASS); //$NON-NLS-1$ //$NON-NLS-2$
 		element.add(run);
 
-		if (!extension.isInTheModel())
+		if (!extension.isInTheModel()) {
 			plugin.add(extension);
+		}
 
 		// org.eclipse.ui.perspectives
 		IPluginExtension perspectivesExtension = createExtension("org.eclipse.ui.perspectives", true); //$NON-NLS-1$
@@ -130,8 +131,9 @@ public class IntroTemplate extends PDETemplateSection {
 		perspectiveElement.setAttribute("id", plugin.getId() + ".perspective"); //$NON-NLS-1$ //$NON-NLS-2$
 		perspectivesExtension.add(perspectiveElement);
 
-		if (!perspectivesExtension.isInTheModel())
+		if (!perspectivesExtension.isInTheModel()) {
 			plugin.add(perspectivesExtension);
+		}
 
 		createProductExtension();
 
@@ -153,8 +155,9 @@ public class IntroTemplate extends PDETemplateSection {
 				+ '.' + VALUE_PRODUCT_ID);
 		extension2.add(introProductBindingElement);
 
-		if (!extension2.isInTheModel())
+		if (!extension2.isInTheModel()) {
 			plugin.add(extension2);
+		}
 
 		// org.eclipse.ui.intro.config
 		IPluginExtension extension3 = createExtension("org.eclipse.ui.intro.config", true); //$NON-NLS-1$
@@ -171,16 +174,18 @@ public class IntroTemplate extends PDETemplateSection {
 		IPluginElement implementationElement = factory.createElement(presentationElement);
 		implementationElement.setName("implementation"); //$NON-NLS-1$
 		implementationElement.setAttribute("os", "win32,linux,macosx"); //$NON-NLS-1$ //$NON-NLS-2$
-		if (getTargetVersion() == 3.0)
+		if (getTargetVersion() == 3.0) {
 			implementationElement.setAttribute("style", "content/shared.css"); //$NON-NLS-1$//$NON-NLS-2$
+		}
 
 		implementationElement.setAttribute("kind", "html"); //$NON-NLS-1$ //$NON-NLS-2$
 		presentationElement.add(implementationElement);
 		configurationElement.add(presentationElement);
 		extension3.add(configurationElement);
 
-		if (!extension3.isInTheModel())
+		if (!extension3.isInTheModel()) {
 			plugin.add(extension3);
+		}
 
 		// org.eclipse.ui.intro.configExtension
 		if (getValue(KEY_GENERATE_DYNAMIC_CONTENT).toString().equals(DYNAMIC_SELECTED)) {
@@ -192,8 +197,9 @@ public class IntroTemplate extends PDETemplateSection {
 			configExtensionElement.setAttribute("content", "ext.xml"); //$NON-NLS-1$ //$NON-NLS-2$
 			extension4.add(configExtensionElement);
 
-			if (!extension4.isInTheModel())
+			if (!extension4.isInTheModel()) {
 				plugin.add(extension4);
+			}
 		}
 
 	}
@@ -219,8 +225,9 @@ public class IntroTemplate extends PDETemplateSection {
 
 		extension.add(element);
 
-		if (!extension.isInTheModel())
+		if (!extension.isInTheModel()) {
 			plugin.add(extension);
+		}
 	}
 
 	@Override

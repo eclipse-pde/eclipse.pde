@@ -80,8 +80,9 @@ public class HelloRCPTemplate extends PDETemplateSection {
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		createApplicationExtension();
 		createPerspectiveExtension();
-		if (getBooleanOption(KEY_PRODUCT_BRANDING))
+		if (getBooleanOption(KEY_PRODUCT_BRANDING)) {
 			createProductExtension();
+		}
 	}
 
 	private void createApplicationExtension() throws CoreException {
@@ -99,8 +100,9 @@ public class HelloRCPTemplate extends PDETemplateSection {
 		run.setAttribute("class", getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(KEY_APPLICATION_CLASS)); //$NON-NLS-1$ //$NON-NLS-2$
 		element.add(run);
 
-		if (!extension.isInTheModel())
+		if (!extension.isInTheModel()) {
 			plugin.add(extension);
+		}
 	}
 
 	private void createPerspectiveExtension() throws CoreException {
@@ -114,8 +116,9 @@ public class HelloRCPTemplate extends PDETemplateSection {
 		element.setAttribute("id", plugin.getId() + ".perspective"); //$NON-NLS-1$ //$NON-NLS-2$
 		extension.add(element);
 
-		if (!extension.isInTheModel())
+		if (!extension.isInTheModel()) {
 			plugin.add(extension);
+		}
 	}
 
 	private void createProductExtension() throws CoreException {
@@ -139,8 +142,9 @@ public class HelloRCPTemplate extends PDETemplateSection {
 
 		extension.add(element);
 
-		if (!extension.isInTheModel())
+		if (!extension.isInTheModel()) {
 			plugin.add(extension);
+		}
 	}
 
 	@Override
@@ -165,8 +169,9 @@ public class HelloRCPTemplate extends PDETemplateSection {
 
 	@Override
 	public String[] getNewFiles() {
-		if (copyBrandingDirectory())
+		if (copyBrandingDirectory()) {
 			return new String[] {"icons/", "splash.bmp"}; //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		return super.getNewFiles();
 	}
 }

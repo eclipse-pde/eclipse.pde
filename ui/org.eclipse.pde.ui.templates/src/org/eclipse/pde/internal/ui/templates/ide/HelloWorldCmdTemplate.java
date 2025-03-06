@@ -204,8 +204,9 @@ public class HelloWorldCmdTemplate extends PDETemplateSection {
 	@Override
 	protected String getFormattedPackageName(String id) {
 		String packageName = super.getFormattedPackageName(id);
-		if (packageName.length() != 0)
+		if (packageName.length() != 0) {
 			return packageName + ".handlers"; //$NON-NLS-1$
+		}
 		return "handlers"; //$NON-NLS-1$
 	}
 }

@@ -156,8 +156,9 @@ public class ImportWizardTemplate extends PDETemplateSection {
 		wizardElement.add(descriptionElement);
 		extension.add(categoryElement);
 		extension.add(wizardElement);
-		if (!extension.isInTheModel())
+		if (!extension.isInTheModel()) {
 			plugin.add(extension);
+		}
 	}
 
 	@Override
@@ -170,8 +171,9 @@ public class ImportWizardTemplate extends PDETemplateSection {
 		// Package name addition to create a location for containing
 		// any classes required by the decorator.
 		String packageName = super.getFormattedPackageName(id);
-		if (packageName.length() != 0)
+		if (packageName.length() != 0) {
 			return packageName + ".importWizards"; //$NON-NLS-1$
+		}
 		return "importWizards"; //$NON-NLS-1$
 	}
 
