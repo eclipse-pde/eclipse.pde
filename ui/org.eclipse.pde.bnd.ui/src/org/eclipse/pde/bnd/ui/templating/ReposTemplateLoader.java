@@ -158,11 +158,13 @@ public class ReposTemplateLoader implements TemplateLoader {
 						try {
 							String engineName = (String) cap.getAttributes()
 								.get("engine");
-							if (engineName == null)
+							if (engineName == null) {
 								engineName = "stringtemplate";
+							}
 							TemplateEngine engine = engines.get(engineName);
-							if (engine != null)
+							if (engine != null) {
 								return new CapabilityBasedTemplate(cap, locator, engine);
+							}
 							reporter.error(
 								"Error loading template from resource '%s' version %s: no Template Engine available matching '%s'",
 								id, ver, engineName);

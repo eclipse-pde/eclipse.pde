@@ -50,8 +50,9 @@ public class ServiceSearchPanel extends SearchPanel {
 
 		new Label(container, SWT.NONE).setText("Service Interface:");
 		final Text txtName = new Text(container, SWT.BORDER);
-		if (serviceClass != null)
+		if (serviceClass != null) {
 			txtName.setText(serviceClass);
+		}
 		txtName.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		txtName.addModifyListener(e -> {
 			serviceClass = txtName.getText()

@@ -258,19 +258,22 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 		ViewerDropAdapter dropAdapter = new ViewerDropAdapter(viewer) {
 			@Override
 			public boolean validateDrop(Object target, int operation, TransferData transferType) {
-				if (target == null)
+				if (target == null) {
 					return false;
+				}
 
-				if (canDrop(target, transferType))
+				if (canDrop(target, transferType)) {
 					return true;
+				}
 
 				boolean valid = false;
 				if (target instanceof RepositoryPlugin) {
 					if (((RepositoryPlugin) target).canWrite()) {
 
 						if (URLTransfer.getInstance()
-							.isSupportedType(transferType))
+							.isSupportedType(transferType)) {
 							return true;
+						}
 
 						if (LocalSelectionTransfer.getTransfer()
 							.isSupportedType(transferType)) {
@@ -360,8 +363,9 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 					copied = addFilesToRepository((RepositoryPlugin) getCurrentTarget(), files);
 				} else if (data instanceof IStructuredSelection) {
 					File[] files = convertSelectionToFiles((IStructuredSelection) data);
-					if (files != null && files.length > 0)
+					if (files != null && files.length > 0) {
 						copied = addFilesToRepository((RepositoryPlugin) getCurrentTarget(), files);
+					}
 				}
 				return copied;
 			}
@@ -553,18 +557,19 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 	}
 
 	private static File[] convertSelectionToFiles(ISelection selection) {
-		if (!(selection instanceof IStructuredSelection))
+		if (!(selection instanceof IStructuredSelection)) {
 			return new File[0];
+		}
 
 		IStructuredSelection structSel = (IStructuredSelection) selection;
 		List<File> files = new ArrayList<>(structSel.size());
 
 		for (Iterator<?> iter = structSel.iterator(); iter.hasNext();) {
 			Object element = iter.next();
-			if (element instanceof IFile)
+			if (element instanceof IFile) {
 				files.add(((IFile) element).getLocation()
 					.toFile());
-			else if (element instanceof IAdaptable) {
+			} else if (element instanceof IAdaptable) {
 				IAdaptable adaptable = (IAdaptable) element;
 				IFile ifile = adaptable.getAdapter(IFile.class);
 				if (ifile != null) {
@@ -607,8 +612,9 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 	private void updatedFilter(String filterString) {
 		contentProvider.setFilter(filterString);
 		viewer.refresh();
-		if (filterString != null)
+		if (filterString != null) {
 			viewer.expandToLevel(2);
+		}
 	}
 
 	void createActions() {
@@ -631,8 +637,9 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 
 					@Override
 					public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-						if (monitor == null)
+						if (monitor == null) {
 							monitor = new NullProgressMonitor();
+						}
 
 						monitor.subTask("Refresh all repositories");
 
@@ -744,8 +751,9 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 				Set<RepositoryBundle> bundles = Collections.newSetFromMap(new IdentityHashMap<>());
 				for (RepositoryBundle bundle : selectionByType(selection, RepositoryBundle.class)) {
 					// filter out bundles that come from already-selected repos.
-					if (!repos.contains(bundle.getRepo()))
+					if (!repos.contains(bundle.getRepo())) {
 						bundles.add(bundle);
+					}
 				}
 
 				// The set of Bundle Versions included in the selection
@@ -753,8 +761,9 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 				for (RepositoryBundleVersion bundleVersion : selectionByType(selection,
 					RepositoryBundleVersion.class)) {
 					// filter out bundles that come from already-selected repos.
-					if (!repos.contains(bundleVersion.getRepo()))
+					if (!repos.contains(bundleVersion.getRepo())) {
 						bundleVersions.add(bundleVersion);
+					}
 				}
 
 				RepoDownloadJob downloadJob = new RepoDownloadJob(repos, bundles, bundleVersions);
@@ -969,23 +978,26 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 			Object java = toJava(data);
 			if (java == null) {
 				java = toJava(dropped);
-				if (java == null)
+				if (java == null) {
 					return false;
+				}
 			}
 
 			try {
 				Method m = target.getClass()
 					.getMethod(DROP_TARGET, java.getClass());
 				Boolean invoke = (Boolean) m.invoke(target, java);
-				if (!invoke)
+				if (!invoke) {
 					return false;
+				}
 			} catch (NoSuchMethodException e) {
 				return false;
 			}
 
 			RepositoryPlugin repositoryPlugin = getRepositoryPlugin(target);
-			if (repositoryPlugin != null && repositoryPlugin instanceof Refreshable)
+			if (repositoryPlugin != null && repositoryPlugin instanceof Refreshable) {
 				Central.refreshPlugin(getWorkspace(), (Refreshable) repositoryPlugin);
+			}
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1003,8 +1015,9 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 					IPath path = resource.getRawLocation();
 					if (path != null) {
 						File file = path.toFile();
-						if (file != null)
+						if (file != null) {
 							return file;
+						}
 					}
 				}
 			}
@@ -1028,19 +1041,23 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 	 */
 	Class<?> toJavaType(TransferData data) throws Exception {
 		if (URLTransfer.getInstance()
-			.isSupportedType(data))
+			.isSupportedType(data)) {
 			return URI.class;
+		}
 		if (FileTransfer.getInstance()
-			.isSupportedType(data))
+			.isSupportedType(data)) {
 			return File[].class;
+		}
 
 		if (TextTransfer.getInstance()
-			.isSupportedType(data))
+			.isSupportedType(data)) {
 			return String.class;
+		}
 
 		if (ResourceTransfer.getInstance()
-			.isSupportedType(data))
+			.isSupportedType(data)) {
 			return String.class;
+		}
 
 		if (LocalSelectionTransfer.getTransfer()
 			.isSupportedType(data)) {
@@ -1048,8 +1065,9 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 				.getSelection();
 			if (selection instanceof IStructuredSelection) {
 				Object firstElement = ((IStructuredSelection) selection).getFirstElement();
-				if (firstElement instanceof IFile)
+				if (firstElement instanceof IFile) {
 					return File.class;
+				}
 			}
 			return null;
 		}
@@ -1114,13 +1132,14 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 	}
 
 	private RepositoryPlugin getRepositoryPlugin(Object element) {
-		if (element instanceof RepositoryPlugin)
+		if (element instanceof RepositoryPlugin) {
 			return (RepositoryPlugin) element;
-		else if (element instanceof RepositoryBundle)
+		} else if (element instanceof RepositoryBundle) {
 			return ((RepositoryBundle) element).getRepo();
-		else if (element instanceof RepositoryBundleVersion)
+		} else if (element instanceof RepositoryBundleVersion) {
 			return ((RepositoryBundleVersion) element).getParentBundle()
 				.getRepo();
+		}
 
 		return null;
 	}
@@ -1150,8 +1169,9 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 					protected IStatus run(IProgressMonitor monitor) {
 						try {
 							r.run();
-							if (rp != null && rp instanceof Refreshable)
+							if (rp != null && rp instanceof Refreshable) {
 								Central.refreshPlugin(getWorkspace(), (Refreshable) rp, true);
+							}
 						} catch (final Exception e) {
 							ILog.get().error("Error executing: " + getName(), e);
 						}
@@ -1178,8 +1198,9 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 			}
 		};
 		a.setEnabled(enabled);
-		if (description != null)
+		if (description != null) {
 			a.setDescription(description);
+		}
 		a.setChecked(checked);
 
 		return a;

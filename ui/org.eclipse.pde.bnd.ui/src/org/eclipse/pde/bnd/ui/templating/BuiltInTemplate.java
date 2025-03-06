@@ -102,17 +102,19 @@ public class BuiltInTemplate implements Template {
 		BundleContext context = bundle.getBundleContext();
 		Collection<ServiceReference<TemplateEngine>> svcRefs = context.getServiceReferences(TemplateEngine.class,
 			String.format("(name=%s)", engineName));
-		if (svcRefs == null || svcRefs.isEmpty())
+		if (svcRefs == null || svcRefs.isEmpty()) {
 			throw new Exception(
 				String.format("Unable to generate built-in template '%s': no Template Engine available matching '%s'",
 					name, engineName));
+		}
 		ServiceReference<TemplateEngine> svcRef = svcRefs.iterator()
 			.next();
 		TemplateEngine engine = context.getService(svcRef);
-		if (engine == null)
+		if (engine == null) {
 			throw new Exception(
 				String.format("Unable to generate built-in template '%s': no Template Engine available matching '%s'",
 					name, engineName));
+		}
 		try {
 			return engine.generateOutputs(inputResources, parameters, monitor);
 		} finally {

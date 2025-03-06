@@ -305,8 +305,9 @@ public class BndPreferences {
 		StringBuilder sb = new StringBuilder();
 		for (Iterator<String> i = uris.iterator(); i.hasNext();) {
 			sb.append(i.next());
-			if (i.hasNext())
+			if (i.hasNext()) {
 				sb.append(' ');
+			}
 		}
 		store.setValue(PREF_TEMPLATE_REPO_URI_LIST, sb.toString());
 	}
@@ -450,8 +451,9 @@ public class BndPreferences {
 		}
 		IPropertyChangeListener l = e -> {
 			if (e.getProperty()
-				.equals(key))
+				.equals(key)) {
 				listener.accept((String) e.getNewValue());
+			}
 		};
 		addPropertyChangeListener(l);
 		listener.accept(store.getString(key));
@@ -563,12 +565,15 @@ public class BndPreferences {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		BndPreferences other = (BndPreferences) obj;
 		return Objects.equals(project, other.project) && Objects.equals(store, other.store);
 	}

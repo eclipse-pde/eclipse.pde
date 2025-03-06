@@ -77,8 +77,9 @@ class LocalRepositorySelectionPage extends WizardPage {
 
 		try {
 			viewer.setInput(workspace);
-			if (selectedRepository != null)
+			if (selectedRepository != null) {
 				viewer.setSelection(new StructuredSelection(selectedRepository));
+			}
 
 			validate(workspace);
 		} catch (Exception e) {
@@ -96,8 +97,9 @@ class LocalRepositorySelectionPage extends WizardPage {
 			setSelectedRepository((RepositoryPlugin) selection.getFirstElement());
 
 			IWizardPage nextPage = getNextPage();
-			if (nextPage != null)
+			if (nextPage != null) {
 				getContainer().showPage(nextPage);
+			}
 		});
 
 		setControl(table);
@@ -106,13 +108,14 @@ class LocalRepositorySelectionPage extends WizardPage {
 	private void validate(Workspace workspace) {
 		String error = "No writeable local repositories are configured.";
 		List<RepositoryPlugin> plugins = workspace.getPlugins(RepositoryPlugin.class);
-		if (plugins != null)
+		if (plugins != null) {
 			for (RepositoryPlugin plugin : plugins) {
 				if (plugin.canWrite()) {
 					error = null;
 					break;
 				}
 			}
+		}
 		setErrorMessage(error);
 	}
 

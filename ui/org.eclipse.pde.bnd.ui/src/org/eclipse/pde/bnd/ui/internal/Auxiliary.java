@@ -58,8 +58,9 @@ public class Auxiliary implements WeavingHook {
 			@Override
 			public Bundle addingBundle(Bundle bundle, BundleEvent event) {
 				if (!doImport(bundle.getHeaders()
-					.get(Constants.EXPORT_PACKAGE)))
+					.get(Constants.EXPORT_PACKAGE))) {
 					return null;
+				}
 
 				return super.addingBundle(bundle, event);
 			}
@@ -72,26 +73,30 @@ public class Auxiliary implements WeavingHook {
 	 * Parse the exports and see
 	 */
 	private boolean doImport(String exports) {
-		if (exports == null || exports.isEmpty())
+		if (exports == null || exports.isEmpty()) {
 			return false;
+		}
 
 		Parameters out = new Parameters();
 
 		Parameters p = new Parameters(exports);
 		for (Entry<String, Attrs> e : p.entrySet()) {
 			Attrs attrs = e.getValue();
-			if (attrs == null)
+			if (attrs == null) {
 				continue;
+			}
 
 			String plugins = attrs.get("bnd-plugins");
-			if (plugins == null)
+			if (plugins == null) {
 				continue;
+			}
 
 			if (!(plugins.isEmpty() || "true".equalsIgnoreCase(plugins))) {
 				if (Verifier.isVersionRange(plugins)) {
 					VersionRange range = new VersionRange(plugins);
-					if (!range.includes(new Version(3, 0, 0)))
+					if (!range.includes(new Version(3, 0, 0))) {
 						continue;
+					}
 				}
 			}
 
@@ -100,14 +105,16 @@ public class Auxiliary implements WeavingHook {
 			//
 
 			String v = attrs.getVersion();
-			if (v == null)
+			if (v == null) {
 				v = "0";
+			}
 
 			for (Iterator<String> i = attrs.keySet()
 				.iterator(); i.hasNext();) {
 				String key = i.next();
-				if (key.endsWith(":"))
+				if (key.endsWith(":")) {
 					i.remove();
+				}
 			}
 
 			if (Verifier.isVersion(v)) {
@@ -116,8 +123,9 @@ public class Auxiliary implements WeavingHook {
 			}
 			out.put(e.getKey(), attrs);
 		}
-		if (out.isEmpty())
+		if (out.isEmpty()) {
 			return false;
+		}
 
 		delta.offerLast(out.toString());
 		return true;
@@ -129,11 +137,13 @@ public class Auxiliary implements WeavingHook {
 			return;
 		}
 		BundleWiring wiring = wovenClass.getBundleWiring();
-		if (wiring == null)
+		if (wiring == null) {
 			return;
+		}
 
-		if (wiring.getBundle() != FrameworkUtil.getBundle(Workspace.class))
+		if (wiring.getBundle() != FrameworkUtil.getBundle(Workspace.class)) {
 			return;
+		}
 
 		List<String> dynamicImports = wovenClass.getDynamicImports();
 		for (String dynamicImport; (dynamicImport = delta.pollFirst()) != null;) {

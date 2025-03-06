@@ -100,11 +100,11 @@ public class CapabilityBasedTemplate implements Template {
 		// Get version from the capability if found, otherwise it comes from the
 		// bundle
 		Object versionObj = attrs.get("version");
-		if (versionObj instanceof Version)
+		if (versionObj instanceof Version) {
 			this.version = (Version) versionObj;
-		else if (versionObj instanceof String)
+		} else if (versionObj instanceof String) {
 			this.version = Version.parseVersion((String) versionObj);
-		else {
+		} else {
 			String v = ResourceUtils.getIdentityVersion(capability.getResource());
 			this.version = v != null ? Version.parseVersion(v) : Version.emptyVersion;
 		}
@@ -112,8 +112,9 @@ public class CapabilityBasedTemplate implements Template {
 		Object dirObj = attrs.get("dir");
 		if (dirObj instanceof String) {
 			String dirStr = ((String) dirObj).trim();
-			if (dirStr.charAt(dirStr.length() - 1) != '/')
+			if (dirStr.charAt(dirStr.length() - 1) != '/') {
 				dirStr += '/';
+			}
 			this.dir = dirStr;
 		} else {
 			this.dir = DEFAULT_DIR;
@@ -226,8 +227,9 @@ public class CapabilityBasedTemplate implements Template {
 		for (Entry<String, String> entry : params.entrySet()) {
 			AttributeDefinitionImpl ad = new AttributeDefinitionImpl(entry.getKey(), entry.getKey(), 0,
 					AttributeDefinition.STRING);
-			if (entry.getValue() != null)
+			if (entry.getValue() != null) {
 				ad.setDefaultValue(new String[] { entry.getValue() });
+			}
 			ocdImpl.addAttribute(ad, true);
 		}
 		compositeOcd.addDelegate(ocdImpl);
@@ -351,8 +353,9 @@ public class CapabilityBasedTemplate implements Template {
 	}
 
 	private synchronized File fetchBundle() throws IOException {
-		if (_bundleFile != null && _bundleFile.exists())
+		if (_bundleFile != null && _bundleFile.exists()) {
 			return _bundleFile;
+		}
 
 		Capability idCap = capability.getResource().getCapabilities(IdentityNamespace.IDENTITY_NAMESPACE).get(0);
 		String id = (String) idCap.getAttributes().get(IdentityNamespace.IDENTITY_NAMESPACE);
@@ -360,12 +363,13 @@ public class CapabilityBasedTemplate implements Template {
 		Capability contentCap = capability.getResource().getCapabilities(ContentNamespace.CONTENT_NAMESPACE).get(0);
 		URI location;
 		Object locationObj = contentCap.getAttributes().get("url");
-		if (locationObj instanceof URI)
+		if (locationObj instanceof URI) {
 			location = (URI) locationObj;
-		else if (locationObj instanceof String)
+		} else if (locationObj instanceof String) {
 			location = URI.create((String) locationObj);
-		else
+		} else {
 			throw new IOException("Template repository entry is missing url attribute");
+		}
 
 		if ("file".equals(location.getScheme())) {
 			_bundleFile = new File(location);
@@ -378,8 +382,9 @@ public class CapabilityBasedTemplate implements Template {
 			String hashStr = (String) contentCap.getAttributes().get(ContentNamespace.CONTENT_NAMESPACE);
 			try {
 				_bundleFile = locator.locate(id, hashStr, "SHA-256", location);
-				if (_bundleFile != null)
+				if (_bundleFile != null) {
 					return _bundleFile;
+				}
 			} catch (Exception e) {
 				throw new IOException("Unable to fetch bundle for template: " + getName(), e);
 			}
@@ -397,12 +402,15 @@ public class CapabilityBasedTemplate implements Template {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		CapabilityBasedTemplate other = (CapabilityBasedTemplate) obj;
 		return Objects.equals(capability, other.capability);
 	}

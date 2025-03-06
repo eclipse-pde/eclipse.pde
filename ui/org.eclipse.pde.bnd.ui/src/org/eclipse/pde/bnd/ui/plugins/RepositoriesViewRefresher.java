@@ -78,8 +78,9 @@ public class RepositoriesViewRefresher implements RepositoryListenerPlugin {
 			new WorkspaceJob("Updating repositories content") {
 				@Override
 				public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-					if (monitor == null)
+					if (monitor == null) {
 						monitor = new NullProgressMonitor();
+					}
 
 					Map<Workspace, List<WorkspaceTreeViewerRefreshModel>> map = viewers.entrySet().stream()
 							.map(entry -> {
@@ -89,9 +90,9 @@ public class RepositoriesViewRefresher implements RepositoryListenerPlugin {
 					for (Entry<Workspace, List<WorkspaceTreeViewerRefreshModel>> wsentry : map.entrySet()) {
 
 						Set<RepositoryPlugin> repos = new HashSet<>();
-						if (target != null)
+						if (target != null) {
 							repos.add(target);
-						else {
+						} else {
 							for (WorkspaceTreeViewerRefreshModel m : wsentry.getValue()) {
 								repos.addAll(m.model().getRepositories());
 							}
@@ -115,8 +116,9 @@ public class RepositoriesViewRefresher implements RepositoryListenerPlugin {
 								TreePath[] expandedTreePaths = viewer.getExpandedTreePaths();
 
 								viewer.setInput(entryRepos.get(entry));
-										if (expandedTreePaths != null && expandedTreePaths.length > 0)
-									viewer.setExpandedTreePaths(expandedTreePaths);
+										if (expandedTreePaths != null && expandedTreePaths.length > 0) {
+											viewer.setExpandedTreePaths(expandedTreePaths);
+										}
 							});
 
 						}
