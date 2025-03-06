@@ -237,8 +237,9 @@ public class ScriptGenerationTests extends PDETestCase {
 		Utils.generateBundle(tempFolder, "org.eclipse.pde.build.test.221855");
 
 		String configLocation = Platform.getConfigurationLocation().getURL().getFile();
-		if (!new File(configLocation, "org.eclipse.equinox.simpleconfigurator/bundles.info").exists())
+		if (!new File(configLocation, "org.eclipse.equinox.simpleconfigurator/bundles.info").exists()) {
 			fail("bundles.info not Found.");
+		}
 
 		File testBundle = null;
 		try {
@@ -399,8 +400,9 @@ public class ScriptGenerationTests extends PDETestCase {
 
 		// Assert classpath has the swt fragment
 		String swtFragment = "org.eclipse.swt." + Platform.getWS() + '.' + Platform.getOS();
-		if (!Platform.getWS().equals("carbon") && !Platform.getWS().equals("cocoa"))
+		if (!Platform.getWS().equals("carbon") && !Platform.getWS().equals("cocoa")) {
 			swtFragment += '.' + Platform.getOSArch();
+		}
 		assertTrue(path.indexOf(swtFragment) > 0);
 	}
 
@@ -879,9 +881,9 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertEquals(2, tasks.length);
 		String dir0 = (String) tasks[0].getRuntimeConfigurableWrapper().getAttributeMap().get("dir");
 		String dir1 = (String) tasks[1].getRuntimeConfigurableWrapper().getAttributeMap().get("dir");
-		if (dir0.equals("plugins/B"))
+		if (dir0.equals("plugins/B")) {
 			assertEquals("plugins/A", dir1);
-		else {
+		} else {
 			assertEquals("plugins/A", dir0);
 			assertEquals("plugins/B", dir1);
 		}
@@ -890,9 +892,9 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertEquals(2, tasks.length);
 		dir0 = (String) tasks[0].getRuntimeConfigurableWrapper().getAttributeMap().get("dir");
 		dir1 = (String) tasks[1].getRuntimeConfigurableWrapper().getAttributeMap().get("dir");
-		if (dir0.equals("plugins/C"))
+		if (dir0.equals("plugins/C")) {
 			assertEquals("plugins/D", dir1);
-		else {
+		} else {
 			assertEquals("plugins/D", dir0);
 			assertEquals("plugins/C", dir1);
 		}

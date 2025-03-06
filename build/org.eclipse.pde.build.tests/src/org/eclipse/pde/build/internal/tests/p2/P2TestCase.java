@@ -61,20 +61,23 @@ public abstract class P2TestCase extends PDETestCase {
 	static private void initialize() {
 		if (context == null) {
 			Bundle bundle = Platform.getBundle("org.eclipse.pde.build.tests");
-			if (bundle == null)
+			if (bundle == null) {
 				throw new IllegalStateException();
+			}
 			context = bundle.getBundleContext();
 		}
-		if (context == null)
+		if (context == null) {
 			throw new IllegalStateException();
+		}
 
 		ServiceReference<IMetadataRepositoryManager> reference = context
 				.getServiceReference(IMetadataRepositoryManager.class);
 		if (reference == null) {
 			IProvisioningAgent agent = (IProvisioningAgent) ServiceHelper.getService(context,
 					IProvisioningAgent.SERVICE_NAME);
-			if (agent == null)
+			if (agent == null) {
 				throw new IllegalStateException();
+			}
 
 			metadataManager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
 			artifactManager = (IArtifactRepositoryManager) agent.getService(IArtifactRepositoryManager.SERVICE_NAME);
@@ -87,8 +90,9 @@ public abstract class P2TestCase extends PDETestCase {
 
 		ServiceReference<IArtifactRepositoryManager> reference2 = context
 				.getServiceReference(IArtifactRepositoryManager.class);
-		if (reference2 == null)
+		if (reference2 == null) {
 			throw new IllegalStateException();
+		}
 
 		result = context.getService(reference2);
 		context.ungetService(reference2);
@@ -96,40 +100,47 @@ public abstract class P2TestCase extends PDETestCase {
 	}
 
 	public void removeMetadataRepository(URI location) throws Exception {
-		if (metadataManager == null)
+		if (metadataManager == null) {
 			initialize();
+		}
 		metadataManager.removeRepository(location);
 	}
 
 	public void removeArtifactRepository(URI location) throws Exception {
-		if (artifactManager == null)
+		if (artifactManager == null) {
 			initialize();
+		}
 		artifactManager.removeRepository(location);
 	}
 
 	public IMetadataRepository loadMetadataRepository(String metadataLocation) throws Exception {
-		if (metadataLocation == null)
+		if (metadataLocation == null) {
 			return null;
+		}
 
 		URI location = URIUtil.fromString(metadataLocation);
 		return loadMetadataRepository(location);
 	}
 
 	public IMetadataRepository loadMetadataRepository(URI location) throws Exception {
-		if (location == null)
+		if (location == null) {
 			return null;
-		if (metadataManager == null)
+		}
+		if (metadataManager == null) {
 			initialize();
+		}
 		IMetadataRepository repository = metadataManager.loadRepository(location, null);
 		assertNotNull(repository);
 		return repository;
 	}
 
 	public IArtifactRepository loadArtifactRepository(String artifactLocation) throws Exception {
-		if (artifactLocation == null)
+		if (artifactLocation == null) {
 			return null;
-		if (artifactManager == null)
+		}
+		if (artifactManager == null) {
 			initialize();
+		}
 
 		URI location = URIUtil.fromString(artifactLocation);
 		IArtifactRepository repository = artifactManager.loadRepository(location, null);
@@ -138,8 +149,9 @@ public abstract class P2TestCase extends PDETestCase {
 	}
 
 	public URI createCompositeFromBase(IFolder repository) throws Exception {
-		if (metadataManager == null)
+		if (metadataManager == null) {
 			initialize();
+		}
 
 		URI baseURI = repository.getLocationURI();
 
@@ -167,12 +179,13 @@ public abstract class P2TestCase extends PDETestCase {
 	public String getArtifactLocation(IArtifactDescriptor descriptor) {
 		IArtifactKey key = descriptor.getArtifactKey();
 		String name = key.getId() + '_' + key.getVersion();
-		if (key.getClassifier().equals("osgi.bundle"))
+		if (key.getClassifier().equals("osgi.bundle")) {
 			name = "plugins/" + name + ".jar";
-		else if (key.getClassifier().equals("org.eclipse.update.feature"))
+		} else if (key.getClassifier().equals("org.eclipse.update.feature")) {
 			name = "features/" + name + ".jar";
-		else if (key.getClassifier().equals("binary"))
+		} else if (key.getClassifier().equals("binary")) {
 			name = "binary/" + name;
+		}
 		return name;
 	}
 
@@ -184,8 +197,9 @@ public abstract class P2TestCase extends PDETestCase {
 		IQueryResult<IInstallableUnit> queryResult = repository.query(QueryUtil.createIUQuery(name), null);
 
 		IInstallableUnit unit = null;
-		if (!queryResult.isEmpty())
+		if (!queryResult.isEmpty()) {
 			unit = queryResult.iterator().next();
+		}
 		if (assertNotNull) {
 			assertEquals(1, queryResult.toUnmodifiableSet().size());
 			assertNotNull(unit);
@@ -194,12 +208,14 @@ public abstract class P2TestCase extends PDETestCase {
 	}
 
 	public void assertManagerDoesntContain(URI repo) {
-		if (metadataManager == null)
+		if (metadataManager == null) {
 			initialize();
+		}
 		assertFalse(metadataManager.contains(repo));
 
-		if (artifactManager == null)
+		if (artifactManager == null) {
 			initialize();
+		}
 		assertFalse(artifactManager.contains(repo));
 	}
 
@@ -207,8 +223,9 @@ public abstract class P2TestCase extends PDETestCase {
 		Collection<ITouchpointData> data = iu.getTouchpointData();
 		for (ITouchpointData iTouchpointData : data) {
 			ITouchpointInstruction instruction = iTouchpointData.getInstruction(phase);
-			if (instruction != null && instruction.getBody().indexOf(action) > -1)
+			if (instruction != null && instruction.getBody().indexOf(action) > -1) {
 				return;
+			}
 		}
 		fail("Action not found:" + action);
 	}
@@ -216,8 +233,9 @@ public abstract class P2TestCase extends PDETestCase {
 	public void assertProvides(IInstallableUnit iu, String namespace, String name) {
 		Collection<IProvidedCapability> caps = iu.getProvidedCapabilities();
 		for (IProvidedCapability cap : caps) {
-			if (cap.getNamespace().equals(namespace) && cap.getName().equals(name))
+			if (cap.getNamespace().equals(namespace) && cap.getName().equals(name)) {
 				return;
+			}
 
 		}
 		assertTrue(false);
@@ -227,8 +245,9 @@ public abstract class P2TestCase extends PDETestCase {
 		Collection<IRequirement> reqs = iu.getRequirements();
 		for (IRequirement iRequirement : reqs) {
 			IRequiredCapability reqCap = (IRequiredCapability) iRequirement;
-			if (reqCap.getNamespace().equals(namespace) && reqCap.getName().equals(name))
+			if (reqCap.getNamespace().equals(namespace) && reqCap.getName().equals(name)) {
 				return;
+			}
 
 		}
 		assertTrue(false);
@@ -250,8 +269,9 @@ public abstract class P2TestCase extends PDETestCase {
 			}
 		}
 
-		if (requireAll)
+		if (requireAll) {
 			assertTrue(requiredIUs.size() == 0);
+		}
 		return requiredIUs;
 	}
 }

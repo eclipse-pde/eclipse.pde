@@ -94,10 +94,11 @@ public class AntUtils {
 			AntTypeDefinition def = new AntTypeDefinition();
 			String name = ProjectHelper.genComponentName(coreTask.getURI(), coreTask.getTaskName());
 			def.setName(name);
-			if (alternateTasks != null && alternateTasks.containsKey(name))
+			if (alternateTasks != null && alternateTasks.containsKey(name)) {
 				def.setClassName(alternateTasks.get(name));
-			else
+			} else {
 				def.setClassName(coreTask.getClassName());
+			}
 			def.setClassLoader(Activator.getDefault().getClass().getClassLoader());
 			def.setAdaptToClass(Task.class);
 			def.setAdapterClass(TaskAdapter.class);
