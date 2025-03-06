@@ -143,16 +143,18 @@ public class E4ApplicationTemplate extends PDETemplateSection {
 
 		extension.add(element);
 
-		if (!extension.isInTheModel())
+		if (!extension.isInTheModel()) {
 			plugin.add(extension);
+		}
 	}
 
 	@Override
 	protected boolean isOkToCreateFolder(File sourceFolder) {
 		// We copy the files in 'org.eclipse.pde.ui.templates/templates_3.5/E4Application/*/handlers' or 'parts' if content required
 		String fname = sourceFolder.getName();
-		if (fname.endsWith("handlers") || fname.endsWith("parts")) //$NON-NLS-1$//$NON-NLS-2$
+		if (fname.endsWith("handlers") || fname.endsWith("parts")) { //$NON-NLS-1$//$NON-NLS-2$
 			return getBooleanOption(KEY_CREATE_SAMPLE_CONTENT);
+		}
 		return super.isOkToCreateFolder(sourceFolder);
 	}
 
@@ -162,8 +164,9 @@ public class E4ApplicationTemplate extends PDETemplateSection {
 		// If file is the lifeCycleClassname (with a $ at the end) we keep it only if life cycle must be created.
 		String fname = sourceFile.getName();
 
-		if (fname.equals(TEMPLATE_LIFECYCLE_FILENAME))
+		if (fname.equals(TEMPLATE_LIFECYCLE_FILENAME)) {
 			return getBooleanOption(KEY_CREATE_LIFE_CYCLE);
+		}
 
 		// There are 2 application models :
 		// the bin/Application.e4xmi containing the empty model

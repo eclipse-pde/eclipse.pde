@@ -123,8 +123,9 @@ public class E4ToolbarContributionTemplate extends PDETemplateSection {
 
 		extension.add(element);
 
-		if (!extension.isInTheModel())
+		if (!extension.isInTheModel()) {
 			plugin.add(extension);
+		}
 	}
 
 	@Override

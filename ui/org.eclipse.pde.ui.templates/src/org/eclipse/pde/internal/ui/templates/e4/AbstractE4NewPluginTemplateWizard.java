@@ -70,22 +70,25 @@ public abstract class AbstractE4NewPluginTemplateWizard extends NewPluginTemplat
 		String runtimeVersion = null;
 
 		for (IPluginImport ii : pb.getImports()) {
-			if (ii.getId().equals(ORG_ECLIPSE_UI))
+			if (ii.getId().equals(ORG_ECLIPSE_UI)) {
 				ui = ii;
+			}
 			if (ii.getId().equals(ORG_ECLIPSE_CORE_RUNTIME)) {
 				// This plugin appears twice : with and without version (due to ancestor)
-				if (ii.getVersion() == null)
+				if (ii.getVersion() == null) {
 					runtime = ii;
-				else
+				} else {
 					runtimeVersion = ii.getVersion();
+				}
 			}
 
 		}
 
 		// Remove these two bad imports...
 		try {
-			if (ui != null)
+			if (ui != null) {
 				pb.remove(ui);
+			}
 			if (runtime != null) {
 				// Remove the org.eclipse.core.runtime without any version
 				pb.remove(runtime);
@@ -124,8 +127,9 @@ public abstract class AbstractE4NewPluginTemplateWizard extends NewPluginTemplat
 				final FileEditorInput input = new FileEditorInput(file);
 				final IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 				final IWorkbenchPage page = window.getActivePage();
-				if (page != null)
+				if (page != null) {
 					page.openEditor(input, MODEL_EDITOR_ID);
+				}
 			}
 		}
 	}

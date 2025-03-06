@@ -141,8 +141,9 @@ public class BuilderTemplate extends PDETemplateSection {
 				+ "." + getStringOption(KEY_BUILDER_CLASS_NAME)); //$NON-NLS-1$
 		builder.add(run);
 
-		if (!extension1.isInTheModel())
+		if (!extension1.isInTheModel()) {
 			plugin.add(extension1);
+		}
 
 		// Nature
 		IPluginExtension extension2 = createExtension("org.eclipse.core.resources.natures", true); //$NON-NLS-1$
@@ -165,8 +166,9 @@ public class BuilderTemplate extends PDETemplateSection {
 				+ "." + getStringOption(KEY_BUILDER_ID)); //$NON-NLS-1$
 		extension2.add(builder2);
 
-		if (!extension2.isInTheModel())
+		if (!extension2.isInTheModel()) {
 			plugin.add(extension2);
+		}
 
 		// Popup Action
 		if (actionOption.isSelected()) {
@@ -190,8 +192,9 @@ public class BuilderTemplate extends PDETemplateSection {
 			command.setAttribute("name", PDETemplateMessages.BuilderTemplate_commandName + getStringOption(KEY_NATURE_NAME)); //$NON-NLS-1$
 			extension3.add(command);
 
-			if (!extension3.isInTheModel())
+			if (!extension3.isInTheModel()) {
 				plugin.add(extension3);
+			}
 
 			IPluginExtension extension4 = createExtension("org.eclipse.ui.menus", true); //$NON-NLS-1$
 			IPluginElement menuContribution = factory.createElement(extension4);
@@ -282,8 +285,9 @@ public class BuilderTemplate extends PDETemplateSection {
 					+ "." + getStringOption(KEY_NATURE_ID)); //$NON-NLS-1$
 			not.add(test2);
 
-			if (!extension4.isInTheModel())
+			if (!extension4.isInTheModel()) {
 				plugin.add(extension4);
+			}
 		}
 
 		// Marker
@@ -302,18 +306,21 @@ public class BuilderTemplate extends PDETemplateSection {
 		persistent.setAttribute("value", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		extension8.add(persistent);
 
-		if (!extension8.isInTheModel())
+		if (!extension8.isInTheModel()) {
 			plugin.add(extension8);
+		}
 	}
 
 	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		ArrayList<PluginReference> result = new ArrayList<>();
 		result.add(new PluginReference("org.eclipse.core.resources")); //$NON-NLS-1$
-		if (schemaVersion != null)
+		if (schemaVersion != null) {
 			result.add(new PluginReference("org.eclipse.core.runtime")); //$NON-NLS-1$
-		if (actionOption.isSelected())
+		}
+		if (actionOption.isSelected()) {
 			result.add(new PluginReference("org.eclipse.ui")); //$NON-NLS-1$
+		}
 
 		return result.toArray(new IPluginReference[result.size()]);
 	}
@@ -321,8 +328,9 @@ public class BuilderTemplate extends PDETemplateSection {
 	@Override
 	protected String getFormattedPackageName(String id) {
 		String packageName = super.getFormattedPackageName(id);
-		if (packageName.length() != 0)
+		if (packageName.length() != 0) {
 			return packageName + ".builder"; //$NON-NLS-1$
+		}
 		return "builder"; //$NON-NLS-1$
 	}
 

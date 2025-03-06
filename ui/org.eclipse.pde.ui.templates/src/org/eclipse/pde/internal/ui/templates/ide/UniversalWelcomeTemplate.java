@@ -113,8 +113,9 @@ public class UniversalWelcomeTemplate extends PDETemplateSection {
 				+ "/sample.xml"); //$NON-NLS-1$
 		extension.add(element);
 
-		if (!extension.isInTheModel())
+		if (!extension.isInTheModel()) {
 			plugin.add(extension);
+		}
 	}
 
 	@Override

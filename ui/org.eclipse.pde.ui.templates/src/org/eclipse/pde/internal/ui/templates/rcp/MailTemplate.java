@@ -103,8 +103,9 @@ public class MailTemplate extends PDETemplateSection {
 		run.setAttribute("class", getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(KEY_APPLICATION_CLASS)); //$NON-NLS-1$ //$NON-NLS-2$
 		element.add(run);
 
-		if (!extension.isInTheModel())
+		if (!extension.isInTheModel()) {
 			plugin.add(extension);
+		}
 	}
 
 	private void createPerspectiveExtension() throws CoreException {
@@ -118,8 +119,9 @@ public class MailTemplate extends PDETemplateSection {
 		element.setAttribute("id", plugin.getId() + ".perspective"); //$NON-NLS-1$ //$NON-NLS-2$
 		extension.add(element);
 
-		if (!extension.isInTheModel())
+		if (!extension.isInTheModel()) {
 			plugin.add(extension);
+		}
 	}
 
 	private void createViewExtension() throws CoreException {
@@ -145,8 +147,9 @@ public class MailTemplate extends PDETemplateSection {
 		view.setAttribute("id", id + ".navigationView"); //$NON-NLS-1$ //$NON-NLS-2$
 		extension.add(view);
 
-		if (!extension.isInTheModel())
+		if (!extension.isInTheModel()) {
 			plugin.add(extension);
+		}
 	}
 
 	private void createCommandExtension(boolean generateKeyBindings) throws CoreException {
@@ -206,8 +209,9 @@ public class MailTemplate extends PDETemplateSection {
 			extension.add(element);
 		}
 
-		if (!extension.isInTheModel())
+		if (!extension.isInTheModel()) {
 			plugin.add(extension);
+		}
 	}
 
 	private void createBindingsExtension() throws CoreException {
@@ -236,8 +240,9 @@ public class MailTemplate extends PDETemplateSection {
 		element.setAttribute("schemeId", "org.eclipse.ui.defaultAcceleratorConfiguration"); //$NON-NLS-1$ //$NON-NLS-2$
 		extension.add(element);
 
-		if (!extension.isInTheModel())
+		if (!extension.isInTheModel()) {
 			plugin.add(extension);
+		}
 	}
 
 	private void createProductExtension() throws CoreException {
