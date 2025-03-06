@@ -37,13 +37,15 @@ public class FileExtensionFilter extends ViewerFilter {
 		this.extensions = new String[extensions.length];
 
 		for (int i = 0; i < extensions.length; i++) {
-			if (extensions[i].length() > 0 && extensions[i].charAt(0) == '.')
+			if (extensions[i].length() > 0 && extensions[i].charAt(0) == '.') {
 				this.extensions[i] = extensions[i];
-			else
+			} else {
 				this.extensions[i] = "." + extensions[i];
+			}
 
-			if (caseInsensitive)
+			if (caseInsensitive) {
 				this.extensions[i] = this.extensions[i].toLowerCase();
+			}
 		}
 	}
 
@@ -78,24 +80,28 @@ public class FileExtensionFilter extends ViewerFilter {
 	public boolean select(Viewer viewer, Object parent, Object element) {
 		if (element instanceof IFile) {
 			String fileName = ((IFile) element).getName();
-			if (caseInsensitive)
+			if (caseInsensitive) {
 				fileName = fileName.toLowerCase(Locale.ENGLISH);
+			}
 			for (String extension : this.extensions) {
-				if (fileName.endsWith(extension))
+				if (fileName.endsWith(extension)) {
 					return true;
+				}
 			}
 			return false;
 		}
 
-		if (element instanceof IProject && !((IProject) element).isOpen())
+		if (element instanceof IProject && !((IProject) element).isOpen()) {
 			return false;
+		}
 
 		if (element instanceof IContainer) {
 			try {
 				IResource[] resources = ((IContainer) element).members();
 				for (IResource element2 : resources) {
-					if (select(viewer, parent, element2))
+					if (select(viewer, parent, element2)) {
 						return true;
+					}
 				}
 			} catch (CoreException e) {}
 		}

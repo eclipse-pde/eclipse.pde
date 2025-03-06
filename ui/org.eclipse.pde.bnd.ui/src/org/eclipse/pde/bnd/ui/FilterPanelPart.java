@@ -58,10 +58,11 @@ public class FilterPanelPart {
 																																				newFilter);
 																																		};
 																		if (display.getThread() == Thread
-																			.currentThread())
+																			.currentThread()) {
 																			update.run();
-																		else
+																		} else {
 																			display.asyncExec(update);
+																		}
 																	};
 	private ScheduledFuture<?>				scheduledFilterUpdate	= null;
 
@@ -81,8 +82,9 @@ public class FilterPanelPart {
 		txtFilter.setMessage("Enter search string");
 
 		// INITIAL PROPERTIES
-		if (filter != null)
+		if (filter != null) {
 			txtFilter.setText(filter);
+		}
 
 		// LAYOUT
 		GridLayout layout = new GridLayout(2, false);
@@ -97,8 +99,9 @@ public class FilterPanelPart {
 			public void widgetDefaultSelected(SelectionEvent ev) {
 				try {
 					scheduledFilterLock.lock();
-					if (scheduledFilterUpdate != null)
+					if (scheduledFilterUpdate != null) {
 						scheduledFilterUpdate.cancel(true);
+					}
 				} finally {
 					scheduledFilterLock.unlock();
 				}
@@ -110,8 +113,9 @@ public class FilterPanelPart {
 		txtFilter.addModifyListener(ev -> {
 			try {
 				scheduledFilterLock.lock();
-				if (scheduledFilterUpdate != null)
+				if (scheduledFilterUpdate != null) {
 					scheduledFilterUpdate.cancel(true);
+				}
 				scheduledFilterUpdate = scheduler.schedule(updateFilterTask, SEARCH_DELAY, TimeUnit.MILLISECONDS);
 			} finally {
 				scheduledFilterLock.unlock();
@@ -135,8 +139,9 @@ public class FilterPanelPart {
 	}
 
 	public void setFocus() {
-		if (txtFilter != null && !txtFilter.isDisposed())
+		if (txtFilter != null && !txtFilter.isDisposed()) {
 			txtFilter.setFocus();
+		}
 	}
 
 	public void addPropertyChangeListener(PropertyChangeListener listener) {

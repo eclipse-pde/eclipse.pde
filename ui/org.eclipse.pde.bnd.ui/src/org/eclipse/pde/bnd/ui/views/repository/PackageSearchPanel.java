@@ -50,8 +50,9 @@ public class PackageSearchPanel extends SearchPanel {
 
 		new Label(container, SWT.NONE).setText("Package Name:");
 		final Text txtPackageName = new Text(container, SWT.BORDER);
-		if (packageName != null)
+		if (packageName != null) {
 			txtPackageName.setText(packageName);
+		}
 		txtPackageName.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 		txtPackageName.addModifyListener(e -> {
 			packageName = txtPackageName.getText()
@@ -61,8 +62,9 @@ public class PackageSearchPanel extends SearchPanel {
 
 		new Label(container, SWT.NONE).setText("Version Range:");
 		final Text txtVersion = new Text(container, SWT.BORDER);
-		if (versionRangeStr != null)
+		if (versionRangeStr != null) {
 			txtVersion.setText(versionRangeStr);
+		}
 		txtVersion.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		txtVersion.addModifyListener(e -> {
 			versionRangeStr = txtVersion.getText();

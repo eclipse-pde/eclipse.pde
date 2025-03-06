@@ -89,8 +89,9 @@ public abstract class RepositoryEntry implements IAdaptable, ResourceProvider {
 		// Avoid getting the file if the requested adapter type is not
 		// supported.
 		boolean adaptable = IFile.class.equals(adapter) || File.class.equals(adapter) || URI.class.equals(adapter);
-		if (!adaptable)
+		if (!adaptable) {
 			return null;
+		}
 
 		if (IFile.class.equals(adapter)) {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace()
@@ -99,8 +100,9 @@ public abstract class RepositoryEntry implements IAdaptable, ResourceProvider {
 			return file != null ? (T) root.getFileForLocation(new Path(file.getAbsolutePath())) : null;
 		}
 
-		if (File.class.equals(adapter))
+		if (File.class.equals(adapter)) {
 			return (T) getFile(false);
+		}
 
 		if (URI.class.equals(adapter)) {
 			File file = getFile(false);

@@ -85,8 +85,9 @@ public class Central {
 		IWorkspaceRoot wsroot = ResourcesPlugin.getWorkspace()
 			.getRoot();
 		IProject cnf = wsroot.getProject(Workspace.CNFDIR);
-		if (cnf == null || !cnf.isAccessible())
+		if (cnf == null || !cnf.isAccessible()) {
 			return null;
+		}
 		return cnf.getFile(Workspace.BUILDFILE);
 	}
 
@@ -107,8 +108,9 @@ public class Central {
 
 		IProject cnfProject = eclipseWorkspace.getProject(Workspace.CNFDIR);
 		if (cnfProject.exists()) {
-			if (!cnfProject.isOpen())
+			if (!cnfProject.isOpen()) {
 				cnfProject.open(null);
+			}
 			return cnfProject.getLocation()
 				.toFile()
 				.getParentFile();
@@ -137,10 +139,12 @@ public class Central {
 	}
 
 	public static boolean isChangeDelta(IResourceDelta delta) {
-		if (IResourceDelta.MARKERS == delta.getFlags())
+		if (IResourceDelta.MARKERS == delta.getFlags()) {
 			return false;
-		if ((delta.getKind() & (IResourceDelta.ADDED | IResourceDelta.CHANGED | IResourceDelta.REMOVED)) == 0)
+		}
+		if ((delta.getKind() & (IResourceDelta.ADDED | IResourceDelta.CHANGED | IResourceDelta.REMOVED)) == 0) {
 			return false;
+		}
 		return true;
 	}
 
@@ -188,8 +192,9 @@ public class Central {
 				try {
 					String workspacePath = workspace.getBase().getAbsolutePath();
 					String absolutePath = absolute.getPath();
-					if (absolutePath.startsWith(workspacePath))
+					if (absolutePath.startsWith(workspacePath)) {
 						return new Path(absolutePath.substring(workspacePath.length()));
+					}
 					return null;
 				} catch (Exception e) {
 					throw Exceptions.duck(e);
@@ -224,8 +229,9 @@ public class Central {
 			IResource r = ResourcesPlugin.getWorkspace()
 				.getRoot()
 				.findMember(path);
-			if (r != null)
+			if (r != null) {
 				return;
+			}
 
 			IPath p = (IPath) path.clone();
 			while (p.segmentCount() > 0) {
@@ -255,8 +261,9 @@ public class Central {
 			if (rp.refresh()) {
 				changed = true;
 				File root = rp.getRoot();
-				if (root != null)
+				if (root != null) {
 					refreshedFiles.add(root);
+				}
 				if (rp instanceof RepositoryPlugin) {
 					repoChanged = true;
 				}
@@ -339,9 +346,10 @@ public class Central {
 
 	public static void refresh(Project p) throws Exception {
 		IJavaProject jp = getJavaProject(p);
-		if (jp != null)
+		if (jp != null) {
 			jp.getProject()
 				.refreshLocal(IResource.DEPTH_INFINITE, null);
+		}
 	}
 
 
@@ -369,8 +377,9 @@ public class Central {
 	 */
 
 	public static IResource toResource(File file) {
-		if (file == null)
+		if (file == null) {
 			return null;
+		}
 
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace()
 			.getRoot();
@@ -477,10 +486,11 @@ public class Central {
 				Central.refreshFile(t, monitor, derived);
 			} catch (CoreException e) {
 				errors.incrementAndGet();
-				if (reporter != null)
+				if (reporter != null) {
 					reporter.error("failed to refresh %s : %s", t, Exceptions.causes(e));
-				else
+				} else {
 					throw Exceptions.duck(e);
+				}
 			}
 		});
 		return errors.get() == 0;

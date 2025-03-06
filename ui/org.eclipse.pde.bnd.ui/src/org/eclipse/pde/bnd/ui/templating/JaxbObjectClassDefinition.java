@@ -32,8 +32,9 @@ class JaxbObjectClassDefinition implements ObjectClassDefinition {
 	private final Tocd ocd;
 
 	public JaxbObjectClassDefinition(Tocd ocd) {
-		if (ocd == null)
+		if (ocd == null) {
 			throw new NullPointerException();
+		}
 		this.ocd = ocd;
 	}
 

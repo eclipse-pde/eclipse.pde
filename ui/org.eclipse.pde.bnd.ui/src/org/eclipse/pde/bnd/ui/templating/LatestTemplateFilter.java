@@ -42,15 +42,15 @@ public class LatestTemplateFilter extends ViewerFilter {
 				Template template = (Template) element;
 				Template existing = selected.get(template.getName());
 
-				if (existing == null)
+				if (existing == null) {
 					// no selected template for this name -> add
 					selected.put(template.getName(), template);
-
-				else if (template.getVersion()
-					.compareTo(existing.getVersion()) > 0)
+				} else if (template.getVersion()
+					.compareTo(existing.getVersion()) > 0) {
 					// existing selected template for this name is lower ->
 					// replace
 					selected.put(template.getName(), template);
+				}
 			}
 			result = selected.values()
 				.toArray();

@@ -61,8 +61,9 @@ public class RepositoryTreeLabelProvider extends StyledCellLabelProvider
 					if (repo instanceof Actionable) {
 						name = ((Actionable) repo).title();
 					}
-					if (name == null)
+					if (name == null) {
 						name = repo.getName();
+					}
 					label.append(name);
 
 					if (status != null) {
@@ -187,23 +188,29 @@ public class RepositoryTreeLabelProvider extends StyledCellLabelProvider
 	 */
 	@Override
 	public String getText(Object element) {
-		if (element instanceof RepositoryPlugin rp)
+		if (element instanceof RepositoryPlugin rp) {
 			return rp.getName();
+		}
 
-		if (element instanceof Project pr)
+		if (element instanceof Project pr) {
 			return pr.getName();
+		}
 
-		if (element instanceof ProjectBundle pb)
+		if (element instanceof ProjectBundle pb) {
 			return pb.getBsn();
+		}
 
-		if (element instanceof RepositoryBundle rb)
+		if (element instanceof RepositoryBundle rb) {
 			return rb.getText();
+		}
 
-		if (element instanceof RepositoryBundleVersion rbv)
+		if (element instanceof RepositoryBundleVersion rbv) {
 			return rbv.getText();
+		}
 
-		if (element instanceof RepositoryResourceElement re)
+		if (element instanceof RepositoryResourceElement re) {
 			return re.getIdentity();
+		}
 
 		return element.toString();
 	}

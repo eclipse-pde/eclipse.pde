@@ -57,8 +57,9 @@ public class RepoTemplateLabelProvider extends StyledCellLabelProvider implement
 				label.append(String.format("%d.%d.%d", version.getMajor(), version.getMinor(), version.getMicro()),
 						BoldStyler.INSTANCE_COUNTER);
 				String q = version.getQualifier();
-				if (q != null && !q.isEmpty())
+				if (q != null && !q.isEmpty()) {
 					label.append("." + q, StyledString.COUNTER_STYLER);
+				}
 			}
 
 			String description = template.getShortDescription();
@@ -72,10 +73,11 @@ public class RepoTemplateLabelProvider extends StyledCellLabelProvider implement
 			cell.setStyleRanges(label.getStyleRanges());
 
 			Image image = Adapters.adapt(template, Image.class);
-			if (image == null)
+			if (image == null) {
 				cell.setImage(Resources.getImage("/icons/template.gif"));
-			else
+			} else {
 				cell.setImage(image);
+			}
 			return;
 		}
 		cell.setStyleRanges(new StyleRange[0]);

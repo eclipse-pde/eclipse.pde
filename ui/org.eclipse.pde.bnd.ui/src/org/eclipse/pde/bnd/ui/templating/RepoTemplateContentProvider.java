@@ -105,8 +105,9 @@ public class RepoTemplateContentProvider implements ITreeContentProvider {
 				Category cat = (Category) roots[0];
 				Iterator<Template> templateIter = cat.getTemplates()
 					.iterator();
-				if (templateIter.hasNext())
+				if (templateIter.hasNext()) {
 					result = templateIter.next();
+				}
 			}
 		}
 		return result;
