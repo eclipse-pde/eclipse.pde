@@ -32,8 +32,9 @@ public class Debug {
 	}
 
 	public static Debug getDebug(String name) {
-		if (!name.startsWith("/")) //$NON-NLS-1$
+		if (!name.startsWith("/")) { //$NON-NLS-1$
 			name = "/" + name; //$NON-NLS-1$
+		}
 
 		DebugTrace trace = null;
 		Bundle bundle = FrameworkUtil.getBundle(Activator.class);
@@ -58,42 +59,50 @@ public class Debug {
 	}
 
 	public void trace(String message) {
-		if (trace != null)
+		if (trace != null) {
 			trace.trace(option, message);
+		}
 	}
 
 	public void trace(String message, Throwable error) {
-		if (trace != null)
+		if (trace != null) {
 			trace.trace(message, message, error);
+		}
 	}
 
 	public void traceDumpStack() {
-		if (trace != null)
+		if (trace != null) {
 			trace.traceDumpStack(option);
+		}
 	}
 
 	public void traceEntry() {
-		if (trace != null)
+		if (trace != null) {
 			trace.traceEntry(option);
+		}
 	}
 
 	public void traceEntry(Object methodArgument) {
-		if (trace != null)
+		if (trace != null) {
 			trace.traceEntry(option, methodArgument);
+		}
 	}
 
 	public void traceEntry(Object[] methodArguments) {
-		if (trace != null)
+		if (trace != null) {
 			trace.traceEntry(option, methodArguments);
+		}
 	}
 
 	public void traceExit() {
-		if (trace != null)
+		if (trace != null) {
 			trace.traceExit(option);
+		}
 	}
 
 	public void traceExit(Object result) {
-		if (trace != null)
+		if (trace != null) {
 			trace.traceExit(option, result);
+		}
 	}
 }
