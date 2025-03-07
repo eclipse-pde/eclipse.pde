@@ -58,10 +58,11 @@ public class NewSiteProjectTestCase {
 					+ "<category-def name=\"new_category_1\" label=\"New Category 1\"/>" //$NON-NLS-1$
 					+ "</site>"; //$NON-NLS-1$
 			ByteArrayInputStream source = new ByteArrayInputStream(content.getBytes(StandardCharsets.US_ASCII));
-			if (file.exists())
+			if (file.exists()) {
 				file.setContents(source, true, false, new NullProgressMonitor());
-			else
+			} else {
 				file.create(source, true, new NullProgressMonitor());
+			}
 			project.delete(false, true, new NullProgressMonitor());
 		}
 	}

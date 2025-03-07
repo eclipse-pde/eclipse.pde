@@ -84,8 +84,9 @@ public class PDEPreferencesTestCase {
 		preferences.removePreferenceChangeListener(listener);
 
 		// Restore original value
-		if (originalValue != key)
+		if (originalValue != key) {
 			preferences.put(key, originalValue);
+		}
 	}
 
 	@Test
@@ -105,8 +106,9 @@ public class PDEPreferencesTestCase {
 		preferences.removePreferenceChangeListener(listener);
 
 		// Restore original value
-		if (originalValue != key)
+		if (originalValue != key) {
 			preferences.put(key, originalValue);
+		}
 	}
 
 	@Test
