@@ -104,11 +104,13 @@ public class TagCompletionProposal extends TargetCompletionProposal {
 
 	private static int getcursorPositionFromReplacementString(String replacementString) {
 		int emptyAttributeIndex = replacementString.indexOf("\"\"");
-		if (emptyAttributeIndex >= 0)
+		if (emptyAttributeIndex >= 0) {
 			return emptyAttributeIndex + 1;
+		}
 		int tagEndingIndex = replacementString.indexOf('>');
-		if (tagEndingIndex >= 0)
+		if (tagEndingIndex >= 0) {
 			return tagEndingIndex + 1;
+		}
 		return replacementString.length() + 1;
 	}
 

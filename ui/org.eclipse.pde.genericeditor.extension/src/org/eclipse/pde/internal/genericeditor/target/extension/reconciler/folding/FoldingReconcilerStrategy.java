@@ -64,8 +64,9 @@ public class FoldingReconcilerStrategy implements IReconcilingStrategy, IReconci
 			return;
 		}
 		ProjectionAnnotationModel projectionAnnotationModel = projectionViewer.getProjectionAnnotationModel();
-		if (document.get().equals(oldDocument) || projectionAnnotationModel == null)
+		if (document.get().equals(oldDocument) || projectionAnnotationModel == null) {
 			return;
+		}
 		oldDocument = document.get();
 
 		List<Position> positions = getNewPositionsOfAnnotations();

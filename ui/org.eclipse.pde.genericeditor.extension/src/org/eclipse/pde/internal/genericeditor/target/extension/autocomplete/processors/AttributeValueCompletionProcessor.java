@@ -57,11 +57,13 @@ public class AttributeValueCompletionProcessor extends DelegateProcessor {
 	public ICompletionProposal[] getCompletionProposals() {
 		Parser parser = Parser.getDefault();
 		Node rootNode = parser.getRootNode();
-		if (rootNode == null)
+		if (rootNode == null) {
 			return new ICompletionProposal[] {};
+		}
 		List<Node> locationsNode = rootNode.getChildNodesByTag(ITargetConstants.LOCATIONS_TAG);
-		if (locationsNode == null || locationsNode.isEmpty())
+		if (locationsNode == null || locationsNode.isEmpty()) {
 			return new ICompletionProposal[] {};
+		}
 		Node locationNode = null;
 		for (Node u : locationsNode.get(0).getChildNodesByTag(ITargetConstants.LOCATION_TAG)) {
 			if ((offset >= u.getOffsetStart()) && (offset < u.getOffsetEnd())) {
@@ -69,8 +71,9 @@ public class AttributeValueCompletionProcessor extends DelegateProcessor {
 				break;
 			}
 		}
-		if (locationNode == null)
+		if (locationNode == null) {
 			return new ICompletionProposal[] {};
+		}
 		UnitNode node = null;
 		for (Node u : locationNode.getChildNodesByTag(ITargetConstants.UNIT_TAG)) {
 			if ((offset >= u.getOffsetStart()) && (offset < u.getOffsetEnd())) {
