@@ -103,8 +103,9 @@ public class AllDSAnnotationsTests {
 
 	private static void copyResources(Bundle bundle, String srcPath, Path targetPath) throws IOException {
 		Enumeration<String> projectPaths = bundle.getEntryPaths(srcPath);
-		if (projectPaths == null)
+		if (projectPaths == null) {
 			return;
+		}
 
 		while (projectPaths.hasMoreElements()) {
 			String entry = projectPaths.nextElement();
