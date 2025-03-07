@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %name
 Bundle-SymbolicName: org.eclipse.pde.spy.context;singleton:=true
-Bundle-Version: 1.1.400.qualifier
+Bundle-Version: 1.1.500.qualifier
 Bundle-Vendor: %provider-name
 Automatic-Module-Name: org.eclipse.pde.spy.context
 Bundle-RequiredExecutionEnvironment: JavaSE-17
