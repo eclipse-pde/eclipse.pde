@@ -41,8 +41,9 @@ public class SyntaxValidatorListener implements IDocumentListener {
 	public void documentChanged(DocumentEvent event) {
 		IDocument fDocument = event.fDocument;
 		ITextFileBuffer textFileBuffer = ITextFileBufferManager.DEFAULT.getTextFileBuffer(event.getDocument());
-		if (textFileBuffer == null)
+		if (textFileBuffer == null) {
 			return;
+		}
 		IAnnotationModel model = textFileBuffer
 				.getAnnotationModel();
 		// clear the "org.eclipse.pde.genericeditor.error" annotations

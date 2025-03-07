@@ -116,7 +116,7 @@ public class TargetPlatformPresentationReconciler extends PresentationReconciler
 	protected TextPresentation createPresentation(IRegion damage, IDocument document) {
 		TextPresentation presentation = new TextPresentation(damage, 1000);
 		IPresentationRepairer repairer = this.getRepairer(IDocument.DEFAULT_CONTENT_TYPE);
-		if (repairer != null)
+		if (repairer != null) {
 			try {
 				ITypedRegion[] regions = TextUtilities.computePartitioning(document, getDocumentPartitioning(), 0,
 						document.getLength(), false);
@@ -128,6 +128,7 @@ public class TargetPlatformPresentationReconciler extends PresentationReconciler
 			} catch (BadLocationException e) {
 				return null;
 			}
+		}
 
 		return presentation;
 	}

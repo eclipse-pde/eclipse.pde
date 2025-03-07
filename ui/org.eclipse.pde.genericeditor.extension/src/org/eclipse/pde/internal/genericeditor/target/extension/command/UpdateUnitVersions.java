@@ -59,11 +59,13 @@ public class UpdateUnitVersions extends AbstractHandler {
 				return null;
 			}
 			Node rootNode = parser.getRootNode();
-			if (rootNode == null)
+			if (rootNode == null) {
 				return null;
+			}
 			List<Node> locationsNode = rootNode.getChildNodesByTag(ITargetConstants.LOCATIONS_TAG);
-			if (locationsNode == null || locationsNode.isEmpty())
+			if (locationsNode == null || locationsNode.isEmpty()) {
 				return null;
+			}
 
 			int offsetChange = 0;
 			String documentText = document.get();

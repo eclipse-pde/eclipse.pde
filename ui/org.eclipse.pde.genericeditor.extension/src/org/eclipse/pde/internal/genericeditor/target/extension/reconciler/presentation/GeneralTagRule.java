@@ -37,8 +37,9 @@ public class GeneralTagRule implements IRule {
 		}
 		if (c == '/') {
 			int d = scanner.read();
-			if (d == '>')
+			if (d == '>') {
 				return tagToken;
+			}
 			scanner.unread();
 		}
 		scanner.unread();
