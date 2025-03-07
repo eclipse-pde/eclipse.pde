@@ -108,14 +108,16 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 			@Override
 			protected void modifyModel(IBaseModel model,
 					IProgressMonitor monitor) throws CoreException {
-				if (!(model instanceof IBuildModel))
+				if (!(model instanceof IBuildModel)) {
 					return;
+				}
 				IFile file = PDEProject.getBuildProperties(project);
 				if (file.exists()) {
 					WorkspaceBuildModel wbm = new WorkspaceBuildModel(file);
 					wbm.load();
-					if (!wbm.isLoaded())
+					if (!wbm.isLoaded()) {
 						return;
+					}
 					IBuildModelFactory factory = wbm.getFactory();
 					String path = fFile.getFullPath().removeFirstSegments(1).toPortableString();
 					IBuildEntry entry = wbm.getBuild().getEntry(

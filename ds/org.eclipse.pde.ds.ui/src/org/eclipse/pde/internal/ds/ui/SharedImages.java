@@ -70,8 +70,9 @@ public final class SharedImages {
 		if ((flags & F_DYNAMIC) != 0) {
 			Image o = Activator.getDefault().getImageRegistry().get(
 					key + OVR_DYNAMIC);
-			if (o != null)
+			if (o != null) {
 				return o;
+			}
 			Image i = new DecorationOverlayIcon(image, SharedImages
 					.getImageDescriptor(OVR_DYNAMIC),
  IDecoration.TOP_RIGHT)

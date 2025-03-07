@@ -155,8 +155,9 @@ public class DSEditPropertiesDialog extends FormDialog {
 			public void linkActivated(HyperlinkEvent e) {
 				String value = fEntry.getValue();
 				value = handleLinkActivated(value, false);
-				if (value != null)
+				if (value != null) {
 					fEntry.setValue(value);
+				}
 			}
 
 			@Override
@@ -175,9 +176,9 @@ public class DSEditPropertiesDialog extends FormDialog {
 				IJavaProject javaProject = JavaCore.create(project);
 				IJavaElement element = javaProject.findType(value.replace('$',
 						'.'));
-				if (element != null)
+				if (element != null) {
 					JavaUI.openInEditor(element);
-				else {
+				} else {
 					// TODO create our own wizard for reuse here
 					DSNewClassCreationWizard wizard = new DSNewClassCreationWizard(
 							project, isInter, value);
@@ -208,14 +209,16 @@ public class DSEditPropertiesDialog extends FormDialog {
 				new WorkbenchLabelProvider(), new WorkbenchContentProvider());
 		dialog.setInput(project.getWorkspace());
 		IResource resource = getFile();
-		if (resource != null)
+		if (resource != null) {
 			dialog.setInitialSelection(resource);
+		}
 		dialog.addFilter(new ViewerFilter() {
 			@Override
 			public boolean select(Viewer viewer, Object parentElement,
 					Object element) {
-				if (element instanceof IProject)
+				if (element instanceof IProject) {
 					return ((IProject) element).equals(project);
+				}
 				return true;
 			}
 		});
@@ -225,16 +228,18 @@ public class DSEditPropertiesDialog extends FormDialog {
 		dialog.setValidator(selection -> {
 			if (selection != null
 					&& selection.length > 0
-					&& (selection[0] instanceof IFile || selection[0] instanceof IContainer))
+					&& (selection[0] instanceof IFile || selection[0] instanceof IContainer)) {
 				return Status.OK_STATUS;
+			}
 
 			return Status.error("", null); //$NON-NLS-1$
 		});
 		if (dialog.open() == Window.OK) {
 			IResource res = (IResource) dialog.getFirstResult();
 			IPath path = res.getProjectRelativePath();
-			if (res instanceof IContainer)
+			if (res instanceof IContainer) {
 				path = path.addTrailingSeparator();
+			}
 			String value = path.toString();
 			fEntry.setValue(value);
 		}
@@ -242,8 +247,9 @@ public class DSEditPropertiesDialog extends FormDialog {
 
 	private IResource getFile() {
 		String value = fEntry.getValue();
-		if (value.length() == 0)
+		if (value.length() == 0) {
 			return null;
+		}
 		IProject project = getProject();
 		IPath path = project.getFullPath().append(value);
 		return project.getWorkspace().getRoot().findMember(path);

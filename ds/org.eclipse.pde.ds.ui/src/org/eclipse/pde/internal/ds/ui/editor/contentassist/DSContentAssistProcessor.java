@@ -96,14 +96,16 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 			// when this happens --> reset it and reconcile
 			// how can we tell if we are looking at the wrong one... ?
 			boolean resetAndReconcile = false;
-			if (!(fRange instanceof IDocumentAttributeNode))
+			if (!(fRange instanceof IDocumentAttributeNode)) {
 				// too easy to reconcile.. this is temporary
 				resetAndReconcile = true;
+			}
 
 			if (resetAndReconcile) {
 				fRange = null;
-				if (model instanceof IReconcilingParticipant)
+				if (model instanceof IReconcilingParticipant) {
 					((IReconcilingParticipant) model).reconciled(doc);
+				}
 			}
 		}
 		// Get content assist text if any
@@ -139,12 +141,14 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 
 	private ICompletionProposal[] computeCompletionProposal(
 			IDocumentAttributeNode attr, int offset, IDocument doc) {
-		if (offset < attr.getValueOffset())
+		if (offset < attr.getValueOffset()) {
 			return null;
+		}
 		int[] offests = new int[] { offset, offset, offset };
 		String[] guess = guessContentRequest(offests, doc, false);
-		if (guess == null)
+		if (guess == null) {
 			return null;
+		}
 
 		// Element name
 		String element = guess[0];
@@ -443,8 +447,9 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 			proposals.add(proposal);
 		} else {
 			if (filter.regionMatches(true, 0, proposal.getDisplayString(), 0,
-					filter.length()))
+					filter.length())) {
 				proposals.add(proposal);
+			}
 		}
 	}
 
@@ -454,8 +459,9 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 			proposals.add(proposal);
 		} else {
 			if (filter.regionMatches(true, 0, proposal.getDisplayString(), 0,
-					filter.length()))
+					filter.length())) {
 				proposals.add(proposal);
+			}
 		}
 	}
 
@@ -463,28 +469,33 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 			int offset) {
 		int len = node.getLength();
 		int off = node.getOffset();
-		if (len == -1 || off == -1)
+		if (len == -1 || off == -1) {
 			return F_NO_ASSIST;
+		}
 
 		offset = offset - off; // look locally
 		if (offset > node.getXMLTagName().length() + 1) {
 			try {
 				String eleValue = doc.get(off, len);
 				int ind = eleValue.indexOf('>');
-				if (ind > 0 && eleValue.charAt(ind - 1) == '/')
+				if (ind > 0 && eleValue.charAt(ind - 1) == '/') {
 					ind -= 1;
+				}
 				if (offset <= ind) {
-					if (canInsertAttrib(eleValue, offset))
+					if (canInsertAttrib(eleValue, offset)) {
 						return F_ADD_ATTRIB;
+					}
 					return F_NO_ASSIST;
 				}
 				ind = eleValue.lastIndexOf('<');
-				if (ind == 0 && offset == len - 1)
+				if (ind == 0 && offset == len - 1) {
 					return F_OPEN_TAG; // childless node - check if it can be
+				}
 				// cracked open
 				if (ind + 1 < len && eleValue.charAt(ind + 1) == '/'
-						&& offset <= ind)
+						&& offset <= ind) {
 					return F_ADD_CHILD;
+				}
 			} catch (BadLocationException e) {
 			}
 		}
@@ -516,9 +527,10 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 					quoteCount += 1;
 					nodeBuffer.setLength(0);
 					attrBuffer.setLength(0);
-					if (attVal != null) // ran into 2nd quotation mark, we are
+					if (attVal != null) { // ran into 2nd quotation mark, we are
 						// out of range
 						continue;
+					}
 					offset[2] = offset[0];
 					attVal = attrValBuffer.toString();
 				} else if (Character.isWhitespace(c)) {
@@ -527,8 +539,9 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 						offset[1] = offset[0];
 						int attBuffLen = attrBuffer.length();
 						if (attBuffLen > 0
-								&& attrBuffer.charAt(attBuffLen - 1) == '=')
+								&& attrBuffer.charAt(attBuffLen - 1) == '=') {
 							attrBuffer.setLength(attBuffLen - 1);
+						}
 						attr = attrBuffer.toString();
 					}
 				} else if (c == '<') {
@@ -545,33 +558,39 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 			}
 		} catch (BadLocationException e) {
 		}
-		if (node == null)
+		if (node == null) {
 			return null;
+		}
 
-		if (quoteCount % 2 == 0)
+		if (quoteCount % 2 == 0) {
 			attVal = null;
-		else if (brokenModel)
+		} else if (brokenModel) {
 			return null; // open quotes - don't provide assist
+		}
 
 		return new String[] { node, attr, attVal };
 	}
 
 	private void assignRange(int offset) {
 		fRange = fSourcePage.getRangeElement(offset, true);
-		if (fRange == null)
+		if (fRange == null) {
 			return;
+		}
 		// if we are rigth AT (cursor before) the range, we want to contribute
 		// to its parent
 		if (fRange instanceof IDocumentAttributeNode) {
-			if (((IDocumentAttributeNode) fRange).getNameOffset() == offset)
+			if (((IDocumentAttributeNode) fRange).getNameOffset() == offset) {
 				fRange = ((IDocumentAttributeNode) fRange)
 						.getEnclosingElement();
+			}
 		} else if (fRange instanceof IDocumentElementNode) {
-			if (fRange.getOffset() == offset)
+			if (fRange.getOffset() == offset) {
 				fRange = ((IDocumentElementNode) fRange).getParentNode();
+			}
 		} else if (fRange instanceof IDocumentTextNode) {
-			if (fRange.getOffset() == offset)
+			if (fRange.getOffset() == offset) {
 				fRange = ((IDocumentTextNode) fRange).getEnclosingElement();
+			}
 		}
 	}
 
@@ -581,8 +600,9 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 
 	protected ITextSelection getCurrentSelection() {
 		ISelection sel = fSourcePage.getSelectionProvider().getSelection();
-		if (sel instanceof ITextSelection)
+		if (sel instanceof ITextSelection) {
 			return (ITextSelection) sel;
+		}
 		return null;
 	}
 

@@ -35,8 +35,9 @@ public class DSLabelProvider extends LabelProvider {
 			return getObjectText((IDSObject) obj);
 		}
 
-		if (obj instanceof IFormPage)
+		if (obj instanceof IFormPage) {
 			return ((IFormPage) obj).getTitle();
+		}
 
 		return super.getText(obj);
 	}
@@ -49,8 +50,9 @@ public class DSLabelProvider extends LabelProvider {
 		if (obj.getType() == IDSConstants.TYPE_REFERENCE) {
 			IDSReference reference = (IDSReference) obj;
 			if (reference.getName() == null
-					|| reference.getName().length() == 0)
+					|| reference.getName().length() == 0) {
 				return reference.getReferenceInterface();
+			}
 		}
 		return obj.getName();
 	}
@@ -62,9 +64,10 @@ public class DSLabelProvider extends LabelProvider {
 		}
 
 		// TODO consider changing this
-		if (obj instanceof IFormPage)
+		if (obj instanceof IFormPage) {
 			return PDEPlugin.getDefault().getLabelProvider().get(
 					PDEPluginImages.DESC_PAGE_OBJ);
+		}
 
 		return super.getImage(obj);
 	}
@@ -83,9 +86,10 @@ public class DSLabelProvider extends LabelProvider {
 			int flags = 0;
 
 			if (reference == null || reference.getReferencePolicy() == null
-					|| reference.getReferenceCardinality() == null)
+					|| reference.getReferenceCardinality() == null) {
 				return SharedImages
 						.getImage(SharedImages.DESC_REFERENCE, flags);
+			}
 
 			if (reference.getReferencePolicy().equals(
 					IDSConstants.VALUE_REFERENCE_POLICY_DYNAMIC)) {

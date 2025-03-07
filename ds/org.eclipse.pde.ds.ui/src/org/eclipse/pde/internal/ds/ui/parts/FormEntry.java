@@ -107,8 +107,9 @@ public class FormEntry {
 			fBrowse.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					if (fListener != null)
+					if (fListener != null) {
 						fListener.browseButtonSelected(FormEntry.this);
+					}
 				}
 			});
 		}
@@ -121,11 +122,13 @@ public class FormEntry {
 
 	public void setEditable(boolean editable) {
 		fText.setEditable(editable);
-		if (fLabel instanceof Hyperlink)
+		if (fLabel instanceof Hyperlink) {
 			((Hyperlink) fLabel).setUnderlined(editable);
+		}
 
-		if (fBrowse != null)
+		if (fBrowse != null) {
 			fBrowse.setEnabled(editable);
+		}
 	}
 
 	private void fillIntoGrid(Composite parent, int indent, int tcolspan) {
@@ -133,10 +136,11 @@ public class FormEntry {
 		int tspan;
 		if (layout instanceof GridLayout) {
 			int span = ((GridLayout) layout).numColumns;
-			if (tcolspan > 0)
+			if (tcolspan > 0) {
 				tspan = tcolspan;
-			else
+			} else {
 				tspan = fBrowse != null ? span - 2 : span - 1;
+			}
 			GridData gd;
 			if (fLabel != null) {
 				gd = new GridData(GridData.VERTICAL_ALIGN_CENTER);
@@ -157,10 +161,11 @@ public class FormEntry {
 			}
 		} else if (layout instanceof TableWrapLayout) {
 			int span = ((TableWrapLayout) layout).numColumns;
-			if (tcolspan > 0)
+			if (tcolspan > 0) {
 				tspan = tcolspan;
-			else
+			} else {
 				tspan = fBrowse != null ? span - 2 : span - 1;
+			}
 			TableWrapData td;
 			if (fLabel != null) {
 				td = new TableWrapData();
@@ -189,10 +194,12 @@ public class FormEntry {
 	 */
 	public void setFormEntryListener(IFormEntryListener listener) {
 		if (fLabel != null && fLabel instanceof Hyperlink) {
-			if (this.fListener != null)
+			if (this.fListener != null) {
 				((Hyperlink) fLabel).removeHyperlinkListener(this.fListener);
-			if (listener != null)
+			}
+			if (listener != null) {
 				((Hyperlink) fLabel).addHyperlinkListener(listener);
+			}
 		}
 		this.fListener = listener;
 	}
@@ -208,14 +215,16 @@ public class FormEntry {
 		fText.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusGained(FocusEvent e) {
-				if (fListener != null)
+				if (fListener != null) {
 					fListener.focusGained(FormEntry.this);
+				}
 			}
 
 			@Override
 			public void focusLost(FocusEvent e) {
-				if (fDirty)
+				if (fDirty) {
 					commit();
+				}
 			}
 		});
 	}
@@ -230,8 +239,9 @@ public class FormEntry {
 			// if (value.length()==0)
 			// value = null;
 			// notify
-			if (fListener != null)
+			if (fListener != null) {
 				fListener.textValueChanged(this);
+			}
 		}
 		fDirty = false;
 	}
@@ -241,11 +251,13 @@ public class FormEntry {
 	}
 
 	private void editOccured(ModifyEvent e) {
-		if (fIgnoreModify)
+		if (fIgnoreModify) {
 			return;
+		}
 		fDirty = true;
-		if (fListener != null)
+		if (fListener != null) {
 			fListener.textDirty(this);
+		}
 	}
 
 	/**
@@ -284,25 +296,29 @@ public class FormEntry {
 	private void keyReleaseOccured(KeyEvent e) {
 		if (e.character == '\r') {
 			// commit value
-			if (fDirty)
+			if (fDirty) {
 				commit();
+			}
 		} else if (e.character == '\u001b') { // Escape character
-			if (!fValue.equals(fText.getText()))
+			if (!fValue.equals(fText.getText())) {
 				fText.setText(fValue != null ? fValue : ""); // //$NON-NLS-1$
+			}
 																// restore
 																// old
 			fDirty = false;
 		}
-		if (fListener != null)
+		if (fListener != null) {
 			fListener.selectionChanged(FormEntry.this);
+		}
 	}
 
 	/**
 	 * Sets the value of this entry.
 	 */
 	public void setValue(String value) {
-		if (fText != null)
+		if (fText != null) {
 			fText.setText(value != null ? value : ""); //$NON-NLS-1$
+		}
 		this.fValue = (value != null) ? value : ""; //$NON-NLS-1$
 	}
 
@@ -317,12 +333,15 @@ public class FormEntry {
 	}
 
 	public void setVisible(boolean visible) {
-		if (fLabel != null)
+		if (fLabel != null) {
 			fLabel.setVisible(visible);
-		if (fText != null)
+		}
+		if (fText != null) {
 			fText.setVisible(visible);
-		if (fBrowse != null)
+		}
+		if (fBrowse != null) {
 			fBrowse.setVisible(visible);
+		}
 	}
 
 	/**
