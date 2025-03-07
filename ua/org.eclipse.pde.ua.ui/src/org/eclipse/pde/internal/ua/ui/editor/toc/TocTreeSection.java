@@ -1097,8 +1097,9 @@ public class TocTreeSection extends TreeSection {
 			boolean insertBefore, TocObject targetParent) {
 		TocObject[] tocObjects = objectsToAdd
 				.toArray(new TocObject[objectsToAdd.size()]);
-		if (tocObjects == null)
+		if (tocObjects == null) {
 			return;
+		}
 
 		for (TocObject tocObject : tocObjects) {
 			if (tocObject != null) {
@@ -1131,8 +1132,9 @@ public class TocTreeSection extends TreeSection {
 		List<?> list = fTocTree.getStructuredSelection().toList();
 		ArrayList<TocObject> objects = new ArrayList<>(list.size());
 		for (Object o : list) {
-			if (o instanceof TocObject)
+			if (o instanceof TocObject) {
 				objects.add((TocObject) o);
+			}
 		}
 		boolean beep = false;
 

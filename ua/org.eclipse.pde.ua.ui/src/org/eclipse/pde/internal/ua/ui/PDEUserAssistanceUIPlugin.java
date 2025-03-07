@@ -87,13 +87,15 @@ public class PDEUserAssistanceUIPlugin extends AbstractUIPlugin {
 			e = ((InvocationTargetException) e).getTargetException();
 		}
 		IStatus status = null;
-		if (e instanceof CoreException)
+		if (e instanceof CoreException) {
 			status = ((CoreException) e).getStatus();
-		else {
-			if (message == null)
+		} else {
+			if (message == null) {
 				message = e.getMessage();
-			if (message == null)
+			}
+			if (message == null) {
 				message = e.toString();
+			}
 			status = Status.error(message, e);
 		}
 		ResourcesPlugin.getPlugin().getLog().log(status);
@@ -112,8 +114,9 @@ public class PDEUserAssistanceUIPlugin extends AbstractUIPlugin {
 	}
 
 	public PDEUserAssistanceLabelProvider getLabelProvider() {
-		if (fLabelProvider == null)
+		if (fLabelProvider == null) {
 			fLabelProvider = new PDEUserAssistanceLabelProvider();
+		}
 		return fLabelProvider;
 	}
 }

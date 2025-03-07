@@ -83,8 +83,9 @@ public class TocOperation extends WorkspaceModifyOperation {
 				return;
 			}
 			IWorkbenchPage page = ww.getActivePage();
-			if (page == null || !fFile.exists())
+			if (page == null || !fFile.exists()) {
 				return;
+			}
 			IWorkbenchPart focusPart = page.getActivePart();
 			if (focusPart instanceof ISetSelectionTarget) {
 				ISelection selection = new StructuredSelection(fFile);

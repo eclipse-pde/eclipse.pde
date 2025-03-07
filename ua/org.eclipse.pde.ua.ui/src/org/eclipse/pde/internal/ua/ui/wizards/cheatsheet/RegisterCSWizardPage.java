@@ -111,12 +111,14 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 	private void initializePluginModel() {
 		IPluginModelBase base = PluginRegistry.findModel(getPluginProject());
 		// should never happen
-		if (base == null)
+		if (base == null) {
 			return;
-		if (base instanceof IBundlePluginModelBase)
+		}
+		if (base instanceof IBundlePluginModelBase) {
 			fExtensionsModel = ((IBundlePluginModelBase) base).getExtensionsModel();
-		else
+		} else {
 			fExtensionsModel = base;
+		}
 	}
 
 	@Override

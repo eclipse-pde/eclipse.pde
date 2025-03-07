@@ -28,8 +28,9 @@ public class NewTocFileWizard extends TocHTMLWizard {
 	@Override
 	public void addPages() {
 		fPage = new TocWizardPage("tocfile", getSelection()); //$NON-NLS-1$
-		if (fInitialPath != null)
+		if (fInitialPath != null) {
 			fPage.setContainerFullPath(fInitialPath);
+		}
 		addPage(fPage);
 	}
 
