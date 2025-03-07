@@ -54,8 +54,9 @@ public class OSGiLaunchConfigurationDelegate extends LaunchConfigurationDelegate
 			launcher.launch(configuration, mode, launch, monitor);
 		} else {
 			String name = manager.getFrameworkName(id);
-			if (name == null)
+			if (name == null) {
 				name = PDEMessages.OSGiLaunchConfiguration_selected;
+			}
 			String message = NLS.bind(PDEMessages.OSGiLaunchConfiguration_cannotFindLaunchConfiguration, name);
 			throw new CoreException(Status.error(message, null));
 		}

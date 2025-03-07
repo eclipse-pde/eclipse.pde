@@ -201,8 +201,9 @@ public class LaunchArgumentsHelper {
 			working = "${workspace_loc}/../"; //$NON-NLS-1$
 		}
 		File dir = new File(getSubstitutedString(working));
-		if (!dir.exists())
+		if (!dir.exists()) {
 			dir.mkdirs();
+		}
 		return dir;
 	}
 
@@ -224,8 +225,9 @@ public class LaunchArgumentsHelper {
 								IPluginModelBase[] models = entry.getExternalModels();
 								for (IPluginModelBase model : models) {
 									File file = new File(model.getInstallLocation());
-									if (!file.isFile())
+									if (!file.isFile()) {
 										file = new File(file, "jdi.jar"); //$NON-NLS-1$
+									}
 									if (file.exists()) {
 										map.put(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH_PREPEND, new String[] {file.getAbsolutePath()});
 										break;
@@ -335,8 +337,9 @@ public class LaunchArgumentsHelper {
 								// if source folder, find the output folder
 								if (kind == IClasspathEntry.CPE_SOURCE) {
 									IPath path = entrie.getOutputLocation();
-									if (path == null)
+									if (path == null) {
 										path = jProject.getOutputLocation();
+									}
 									path = path.removeFirstSegments(1);
 									return project.getLocation().append(path).toOSString();
 								}
@@ -359,11 +362,13 @@ public class LaunchArgumentsHelper {
 				URL url = FileLocator.resolve(bundle.getEntry("/")); //$NON-NLS-1$
 				url = FileLocator.toFileURL(url);
 				String path = url.getFile();
-				if (path.startsWith("file:")) //$NON-NLS-1$
+				if (path.startsWith("file:")) { //$NON-NLS-1$
 					path = path.substring(5);
+				}
 				path = new File(path).getAbsolutePath();
-				if (path.endsWith("!")) //$NON-NLS-1$
+				if (path.endsWith("!")) { //$NON-NLS-1$
 					path = path.substring(0, path.length() - 1);
+				}
 				return path;
 			} catch (IOException e) {
 			}
@@ -385,22 +390,25 @@ public class LaunchArgumentsHelper {
 					}
 				}
 			}
-			if (project.getFile("startup.jar").exists()) //$NON-NLS-1$
+			if (project.getFile("startup.jar").exists()) { //$NON-NLS-1$
 				return project.getFile("startup.jar").getLocation().toOSString(); //$NON-NLS-1$
+			}
 		}
 		File startupJar = IPath.fromOSString(TargetPlatform.getLocation()).append("startup.jar").toFile(); //$NON-NLS-1$
 
 		// if something goes wrong with the preferences, fall back on the startup.jar
 		// in the running eclipse.
-		if (!startupJar.exists())
+		if (!startupJar.exists()) {
 			startupJar = IPath.fromOSString(TargetPlatform.getDefaultLocation()).append("startup.jar").toFile(); //$NON-NLS-1$
+		}
 
 		return startupJar.exists() ? startupJar.getAbsolutePath() : null;
 	}
 
 	private static String getSubstitutedString(String text) throws CoreException {
-		if (text == null)
+		if (text == null) {
 			return ""; //$NON-NLS-1$
+		}
 		IStringVariableManager mgr = VariablesPlugin.getDefault().getStringVariableManager();
 		return mgr.performStringSubstitution(text);
 	}

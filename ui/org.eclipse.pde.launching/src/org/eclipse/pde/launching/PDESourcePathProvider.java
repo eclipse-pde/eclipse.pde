@@ -120,8 +120,9 @@ public class PDESourcePathProvider extends StandardSourcePathProvider {
 					rte.setSourceAttachmentPath(path);
 					rte.setSourceAttachmentRootPath(roots[j].getSourceAttachmentRootPath());
 				}
-				if (!all.contains(rte))
+				if (!all.contains(rte)) {
 					all.add(rte);
+				}
 			}
 		}
 

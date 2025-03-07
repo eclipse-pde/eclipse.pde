@@ -209,8 +209,9 @@ public class VMHelper {
 
 	public static IVMInstall createLauncher(ILaunchConfiguration configuration) throws CoreException {
 		IVMInstall launcher = getVMInstall(configuration);
-		if (!launcher.getInstallLocation().exists())
+		if (!launcher.getInstallLocation().exists()) {
 			throw new CoreException(Status.error(PDEMessages.WorkbenchLauncherConfigurationDelegate_jrePathNotFound));
+		}
 		return launcher;
 	}
 
