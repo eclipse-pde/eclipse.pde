@@ -100,8 +100,9 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 		Object element = fSelection.getFirstElement();
 		if (element != null) {
 			IProject project = getProject(element);
-			if (project != null)
+			if (project != null) {
 				setComponentNameText(project);
+			}
 		}
 		if (fDSComponentNameText.getText().trim().length() == 0) {
 			fDSComponentNameText.setText(Messages.DSFileWizardPage_ExampleComponentName);
@@ -171,8 +172,9 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 					public void widgetSelected(SelectionEvent e) {
 						String value = fDSImplementationClassText.getText();
 						value = handleLinkActivated(value, false);
-						if (value != null)
+						if (value != null) {
 							fDSImplementationClassText.setText(value);
+						}
 
 			}
 
@@ -189,9 +191,9 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 											.create(project);
 									IJavaElement element = javaProject
 											.findType(value.replace('$', '.'));
-									if (element != null)
+									if (element != null) {
 										JavaUI.openInEditor(element);
-									else {
+									} else {
 										// TODO create our own wizard for reuse
 										// here
 										DSNewClassCreationWizard wizard = new DSNewClassCreationWizard(

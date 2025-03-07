@@ -155,8 +155,9 @@ public class DSEditProvideDialog extends FormDialog {
 			public void linkActivated(HyperlinkEvent e) {
 				String value = fInterfaceEntry.getValue();
 				value = handleLinkActivated(value, false);
-				if (value != null)
+				if (value != null) {
 					fInterfaceEntry.setValue(value);
+				}
 			}
 
 			@Override
@@ -177,9 +178,9 @@ public class DSEditProvideDialog extends FormDialog {
 				IJavaProject javaProject = JavaCore.create(project);
 				IJavaElement element = javaProject.findType(value.replace('$',
 						'.'));
-				if (element != null)
+				if (element != null) {
 					JavaUI.openInEditor(element);
-				else {
+				} else {
 					// TODO create our own wizard for reuse here
 					DSNewClassCreationWizard wizard = new DSNewClassCreationWizard(
 							project, isInter, value);

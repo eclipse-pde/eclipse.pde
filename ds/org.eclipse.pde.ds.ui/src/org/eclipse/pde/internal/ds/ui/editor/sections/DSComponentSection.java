@@ -140,8 +140,9 @@ public class DSComponentSection extends PDESection {
 	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		fComponent = fModel.getDSComponent();
-		if (fComponent != null)
+		if (fComponent != null) {
 			fImplementation = fComponent.getImplementation();
+		}
 
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
@@ -149,13 +150,15 @@ public class DSComponentSection extends PDESection {
 
 		if (fNameEntry != null) {
 			Display display= fNameEntry.getText().getDisplay();
-			if (display.getThread() == Thread.currentThread())
+			if (display.getThread() == Thread.currentThread()) {
 				updateUIFields();
-			else
+			} else {
 				display.asyncExec(() -> {
-					if (!fNameEntry.getText().isDisposed())
+					if (!fNameEntry.getText().isDisposed()) {
 						updateUIFields();
+					}
 				});
+			}
 		}
 	}
 
@@ -278,8 +281,9 @@ public class DSComponentSection extends PDESection {
 					public void linkActivated(HyperlinkEvent e) {
 						String value = fClassEntry.getValue();
 						value = handleLinkActivated(value, false);
-						if (value != null)
+						if (value != null) {
 							fClassEntry.setValue(value);
+						}
 					}
 
 					@Override
@@ -298,9 +302,9 @@ public class DSComponentSection extends PDESection {
 				IJavaProject javaProject = JavaCore.create(project);
 				IJavaElement element = javaProject.findType(value.replace('$',
 						'.'));
-				if (element != null)
+				if (element != null) {
 					JavaUI.openInEditor(element);
-				else {
+				} else {
 					// TODO create our own wizard for reuse here
 					DSNewClassCreationWizard wizard = new DSNewClassCreationWizard(
 							project, isInter, value);
@@ -320,10 +324,11 @@ public class DSComponentSection extends PDESection {
 
 	private void doOpenSelectionDialog(FormEntry entry) {
 		String filter = entry.getValue();
-		if (filter.length() == 0)
+		if (filter.length() == 0) {
 			filter = "**"; //$NON-NLS-1$
-		else
+		} else {
 			filter = filter.substring(filter.lastIndexOf(".") + 1); //$NON-NLS-1$
+		}
 		String type = PDEJavaHelperUI.selectType(
 				fModel.getUnderlyingResource(),
 				IJavaElementSearchConstants.CONSIDER_CLASSES, filter, null);

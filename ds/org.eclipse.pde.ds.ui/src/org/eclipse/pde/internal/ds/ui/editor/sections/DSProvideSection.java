@@ -137,8 +137,9 @@ public class DSProvideSection extends TableSection implements
 	@Override
 	public void dispose() {
 		IDSModel model = getDSModel();
-		if (model != null)
+		if (model != null) {
 			model.removeModelChangedListener(this);
+		}
 	}
 
 	@Override
@@ -356,8 +357,9 @@ public class DSProvideSection extends TableSection implements
 				IJavaProject javaProject = JavaCore.create(project);
 				IJavaElement element = javaProject.findType(value.replace('$',
 						'.'));
-				if (element != null)
+				if (element != null) {
 					JavaUI.openInEditor(element);
+				}
 			}
 		} catch (CoreException e) {
 			Activator.logException(e);

@@ -153,13 +153,15 @@ IFormColors.TITLE));
 		}
 
 		Display display= fEnabledButton.getDisplay();
-		if (display.getThread() == Thread.currentThread())
+		if (display.getThread() == Thread.currentThread()) {
 			updateUIFields();
-		else
+		} else {
 			display.asyncExec(() -> {
-				if (!fEnabledButton.isDisposed())
+				if (!fEnabledButton.isDisposed()) {
 					updateUIFields();
+				}
 			});
+		}
 	}
 
 	public void updateUIFields() {
@@ -177,9 +179,10 @@ IFormColors.TITLE));
 			enableOrDisableImmediate();
 
 			// Attribute: Policy
-			if (fComponent.getConfigurationPolicy() != null)
+			if (fComponent.getConfigurationPolicy() != null) {
 				fConfigurationPolicy.setText(fComponent
 						.getConfigurationPolicy());
+			}
 		}
 	}
 

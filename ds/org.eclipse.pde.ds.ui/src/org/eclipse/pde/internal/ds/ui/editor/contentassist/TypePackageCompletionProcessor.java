@@ -99,8 +99,9 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 
 	protected void generateTypePackageProposals(String currentContent, IProject project, Collection<TypeCompletionProposal> c, int startOffset, int typeScope, boolean replaceEntireContents) {
 		currentContent = removeLeadingSpaces(currentContent);
-		if (c == null || currentContent.length() == 0)
+		if (c == null || currentContent.length() == 0) {
 			return;
+		}
 		int length = (replaceEntireContents) ? -1 : currentContent.length();
 		generateProposals(currentContent, project, c, startOffset, length, typeScope);
 	}
@@ -126,9 +127,10 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 				} else {
 					boolean isInterface = Flags.isInterface(proposal.getFlags());
 					String completion = new String(proposal.getCompletion());
-					if (isInterface && typeScope == IJavaSearchConstants.CLASS || (!isInterface && typeScope == IJavaSearchConstants.INTERFACE) || completion.equals("Dummy2")) //$NON-NLS-1$
+					if (isInterface && typeScope == IJavaSearchConstants.CLASS || (!isInterface && typeScope == IJavaSearchConstants.INTERFACE) || completion.equals("Dummy2")) { //$NON-NLS-1$
 						// don't want Dummy class showing up as option.
 						return;
+					}
 					int period = completion.lastIndexOf('.');
 					String cName = null, pName = null;
 					if (period == -1) {
@@ -169,7 +171,7 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 		IPackageFragmentRoot[] roots = JavaCore.create(project).getPackageFragmentRoots();
 		if (roots.length > 0) {
 			IPackageFragment frag = null;
-			for (int i = 0; i < roots.length; i++)
+			for (int i = 0; i < roots.length; i++) {
 				if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE || project.equals(roots[i].getCorrespondingResource()) || (roots[i].isArchive() && !roots[i].isExternal())) {
 					IJavaElement[] elems = roots[i].getChildren();
 					if ((elems.length > 0) && (i < elems.length) && (elems[i] instanceof IPackageFragment)) {
@@ -177,8 +179,10 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 						break;
 					}
 				}
-			if (frag != null)
+			}
+			if (frag != null) {
 				return frag.getCompilationUnit("Dummy2.java").getWorkingCopy(new NullProgressMonitor()); //$NON-NLS-1$
+			}
 		}
 		return null;
 	}
@@ -262,9 +266,11 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 	protected final String removeLeadingSpaces(String value) {
 		char[] valueArray = value.toCharArray();
 		int i = 0;
-		for (; i < valueArray.length; i++)
-			if (!Character.isWhitespace(valueArray[i]))
+		for (; i < valueArray.length; i++) {
+			if (!Character.isWhitespace(valueArray[i])) {
 				break;
+			}
+		}
 		return (i == valueArray.length) ? "" : new String(valueArray, i, valueArray.length - i); //$NON-NLS-1$
 	}
 
