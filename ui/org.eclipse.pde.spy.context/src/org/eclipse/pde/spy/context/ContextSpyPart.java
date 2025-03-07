@@ -135,8 +135,9 @@ public class ContextSpyPart {
 		GridDataFactory.fillDefaults().hint(200, SWT.DEFAULT).applyTo(filterText);
 		filterText.setMessage(Messages.ContextSpyPart_7);
 		filterText.setToolTipText(Messages.ContextSpyPart_8);
-		if (lastFilterText != null)
+		if (lastFilterText != null) {
 			filterText.setText(lastFilterText);
+		}
 		contextFilter.setPattern(lastFilterText);
 		filterText.addKeyListener(new KeyAdapter() {
 			@Override
@@ -205,10 +206,11 @@ public class ContextSpyPart {
 
 	/** Set the filter on context data part */
 	public void setFilter() {
-		if (showOnlyFilteredElements.isEnabled() && showOnlyFilteredElements.getSelection())
+		if (showOnlyFilteredElements.isEnabled() && showOnlyFilteredElements.getSelection()) {
 			contextDataPart.setFilter(contextFilter);
-		else
+		} else {
 			contextDataPart.setFilter(null);
+		}
 	}
 
 	@PreDestroy
