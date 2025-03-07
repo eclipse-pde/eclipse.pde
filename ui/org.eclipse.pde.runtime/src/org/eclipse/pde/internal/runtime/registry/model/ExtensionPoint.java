@@ -71,8 +71,9 @@ public class ExtensionPoint extends ModelObject {
 	 * @return contributor or <code>null</code> if contributor not present
 	 */
 	public Bundle getContributor() {
-		if (model == null || contributor == null)
+		if (model == null || contributor == null) {
 			return null;
+		}
 		return model.getBundle(contributor);
 	}
 
@@ -86,18 +87,23 @@ public class ExtensionPoint extends ModelObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		ExtensionPoint other = (ExtensionPoint) obj;
 		if (uniqueIdentifier == null) {
-			if (other.uniqueIdentifier != null)
+			if (other.uniqueIdentifier != null) {
 				return false;
-		} else if (!uniqueIdentifier.equals(other.uniqueIdentifier))
+			}
+		} else if (!uniqueIdentifier.equals(other.uniqueIdentifier)) {
 			return false;
+		}
 		return true;
 	}
 }

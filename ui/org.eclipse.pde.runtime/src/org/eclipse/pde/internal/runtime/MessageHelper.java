@@ -21,22 +21,26 @@ import org.osgi.framework.VersionRange;
 
 public class MessageHelper {
 	public static String getResolutionFailureMessage(VersionConstraint unsatisfied) {
-		if (unsatisfied.isResolved())
+		if (unsatisfied.isResolved()) {
 			throw new IllegalArgumentException();
-		if (unsatisfied instanceof ImportPackageSpecification)
+		}
+		if (unsatisfied instanceof ImportPackageSpecification) {
 			return NLS.bind(PDERuntimeMessages.MessageHelper_missing_imported_package, toString(unsatisfied));
-		else if (unsatisfied instanceof BundleSpecification) {
-			if (((BundleSpecification) unsatisfied).isOptional())
+		} else if (unsatisfied instanceof BundleSpecification) {
+			if (((BundleSpecification) unsatisfied).isOptional()) {
 				return NLS.bind(PDERuntimeMessages.MessageHelper_missing_optional_required_bundle, toString(unsatisfied));
+			}
 			return NLS.bind(PDERuntimeMessages.MessageHelper_missing_required_bundle, toString(unsatisfied));
-		} else
+		} else {
 			return NLS.bind(PDERuntimeMessages.MessageHelper_missing_host, toString(unsatisfied));
+		}
 	}
 
 	private static String toString(VersionConstraint constraint) {
 		VersionRange versionRange = constraint.getVersionRange();
-		if (versionRange == null)
+		if (versionRange == null) {
 			return constraint.getName();
+		}
 		return constraint.getName() + '_' + versionRange;
 	}
 

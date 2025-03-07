@@ -134,15 +134,17 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implem
 	}
 
 	private boolean isProxyService(ServiceReference<?> ref) {
-		if (ref == null)
+		if (ref == null) {
 			return false;
+		}
 		Object o = ref.getProperty(Constants.SERVICE_IMPORTED);
 		return (o != null);
 	}
 
 	private boolean isProxyService(ServiceRegistration reg) {
-		if (reg == null)
+		if (reg == null) {
 			return false;
+		}
 		Object o = reg.getProperty(Constants.SERVICE_IMPORTED);
 		return (o != null);
 	}
@@ -152,8 +154,9 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implem
 		if (element instanceof Bundle) {
 			Bundle bundle = (Bundle) element;
 
-			if (bundle.getFragmentHost() != null)
+			if (bundle.getFragmentHost() != null) {
 				return fFragmentImage;
+			}
 
 			switch (bundle.getState()) {
 				case Bundle.ACTIVE :
@@ -167,15 +170,17 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implem
 
 		if (element instanceof ServiceName) {
 			ServiceName serviceName = (ServiceName) element;
-			if (isProxyService(serviceName.getServiceReference()))
+			if (isProxyService(serviceName.getServiceReference())) {
 				return fRemoteServiceProxyImage;
+			}
 			return fServiceImage;
 		}
 
 		if (element instanceof ServiceRegistration) {
 			ServiceRegistration reg = (ServiceRegistration) element;
-			if (isProxyService(reg))
+			if (isProxyService(reg)) {
 				return fRemoteServiceProxyImage;
+			}
 			return fPluginImage;
 		}
 
@@ -220,26 +225,31 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implem
 			return null;
 		}
 
-		if (element instanceof Extension)
+		if (element instanceof Extension) {
 			return fExtensionImage;
+		}
 
-		if (element instanceof ExtensionPoint)
+		if (element instanceof ExtensionPoint) {
 			return fExtensionPointImage;
+		}
 
 		if (element instanceof BundlePrerequisite) {
 			BundlePrerequisite prereq = (BundlePrerequisite) element;
 
-			if (prereq.isPackage())
+			if (prereq.isPackage()) {
 				return fPackageImage;
+			}
 
 			return prereq.isExported() ? fExpReqPluginImage : fReqPluginImage;
 		}
 
-		if (element instanceof BundleLibrary)
+		if (element instanceof BundleLibrary) {
 			return fLibraryImage;
+		}
 
-		if (element instanceof ConfigurationElement)
+		if (element instanceof ConfigurationElement) {
 			return fGenericTagImage;
+		}
 
 		if (element instanceof Attribute) {
 			Attribute attr = (Attribute) element;
@@ -380,8 +390,9 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implem
 
 			String version = prereq.getVersion();
 			if (version != null) {
-				if (Character.isDigit(version.charAt(0)))
+				if (Character.isDigit(version.charAt(0))) {
 					version = '(' + version + ')';
+				}
 				ss.append(' ').append(version, StyledString.DECORATIONS_STYLER);
 			}
 

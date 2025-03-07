@@ -66,43 +66,56 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 			return null;
 		}
 
-		if (element instanceof Extension)
+		if (element instanceof Extension) {
 			return ((Extension) element).getConfigurationElements();
+		}
 
 		isInExtensionSet = false;
-		if (element instanceof ExtensionPoint)
+		if (element instanceof ExtensionPoint) {
 			return ((ExtensionPoint) element).getExtensions().toArray();
+		}
 
-		if (element instanceof ConfigurationElement)
+		if (element instanceof ConfigurationElement) {
 			return ((ConfigurationElement) element).getElements();
+		}
 
 		if (element instanceof Bundle) {
-			if (fRegistryBrowser.getGroupBy() != RegistryBrowser.BUNDLES) // expands only in Bundles mode
+			if (fRegistryBrowser.getGroupBy() != RegistryBrowser.BUNDLES) { // expands only in Bundles mode
 				return null;
+			}
 
 			Bundle bundle = (Bundle) element;
 
 			List<Object> folders = new ArrayList<>(9);
 
 			folders.add(new Attribute(Attribute.F_LOCATION, bundle.getLocation()));
-			if (bundle.getImports().length > 0)
+			if (bundle.getImports().length > 0) {
 				folders.add(new Folder(Folder.F_IMPORTS, bundle));
-			if (bundle.getImportedPackages().length > 0)
+			}
+			if (bundle.getImportedPackages().length > 0) {
 				folders.add(new Folder(Folder.F_IMPORTED_PACKAGES, bundle));
-			if (bundle.getExportedPackages().length > 0)
+			}
+			if (bundle.getExportedPackages().length > 0) {
 				folders.add(new Folder(Folder.F_EXPORTED_PACKAGES, bundle));
-			if (bundle.getLibraries().length > 0)
+			}
+			if (bundle.getLibraries().length > 0) {
 				folders.add(new Folder(Folder.F_LIBRARIES, bundle));
-			if (bundle.getExtensionPoints().length > 0)
+			}
+			if (bundle.getExtensionPoints().length > 0) {
 				folders.add(new Folder(Folder.F_EXTENSION_POINTS, bundle));
-			if (bundle.getExtensions().length > 0)
+			}
+			if (bundle.getExtensions().length > 0) {
 				folders.add(new Folder(Folder.F_EXTENSIONS, bundle));
-			if (bundle.getRegisteredServices().length > 0)
+			}
+			if (bundle.getRegisteredServices().length > 0) {
 				folders.add(new Folder(Folder.F_REGISTERED_SERVICES, bundle));
-			if (bundle.getServicesInUse().length > 0)
+			}
+			if (bundle.getServicesInUse().length > 0) {
 				folders.add(new Folder(Folder.F_SERVICES_IN_USE, bundle));
-			if (bundle.getFragments().length > 0)
+			}
+			if (bundle.getFragments().length > 0) {
 				folders.add(new Folder(Folder.F_FRAGMENTS, bundle));
+			}
 
 			return folders.toArray();
 		}
@@ -144,10 +157,12 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 
 			List<Folder> folders = new ArrayList<>();
 
-			if (service.getProperties().length > 0)
+			if (service.getProperties().length > 0) {
 				folders.add(new Folder(Folder.F_PROPERTIES, service));
-			if (service.getUsingBundleIds().length > 0)
+			}
+			if (service.getUsingBundleIds().length > 0) {
 				folders.add(new Folder(Folder.F_USING_BUNDLES, service));
+			}
 
 			return folders.toArray();
 		}
@@ -175,10 +190,12 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 	@Override
 	public boolean hasChildren(Object element) {
 		// Bundle and ServiceRegistration always have children
-		if (element instanceof Bundle)
+		if (element instanceof Bundle) {
 			return true;
-		if (element instanceof ServiceRegistration)
+		}
+		if (element instanceof ServiceRegistration) {
 			return true;
+		}
 
 		Object[] children = getChildren(element);
 		return children != null && children.length > 0;

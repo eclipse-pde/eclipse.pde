@@ -55,8 +55,9 @@ public class ActiveHelpSection implements ISpySection {
 		this.toolkit = toolkit;
 		final Shell shell = HandlerUtil.getActiveShell(event);
 		Object object = shell.getData();
-		if (object == null)
+		if (object == null) {
 			return;
+		}
 
 		StringBuilder helpBuffer = new StringBuilder();
 		// process help
@@ -119,12 +120,14 @@ public class ActiveHelpSection implements ISpySection {
 	@SuppressWarnings("restriction")
 	private String processControlHelp(ExecutionEvent event, SpyFormToolkit toolkit) {
 		IWorkbenchPart part = HandlerUtil.getActivePart(event);
-		if (part == null)
+		if (part == null) {
 			return null;
+		}
 
 		IWorkbenchWindow window = part.getSite().getWorkbenchWindow();
-		if (window == null)
+		if (window == null) {
 			return null;
+		}
 
 		StringBuilder buffer = new StringBuilder();
 
@@ -137,26 +140,28 @@ public class ActiveHelpSection implements ISpySection {
 
 			for (int j = 0; j < window.getActivePage().getEditorReferences().length; j++) {
 				IEditorReference er = window.getActivePage().getEditorReferences()[j];
-				if (er.getId().equals(editorPart.getEditorSite().getId()))
+				if (er.getId().equals(editorPart.getEditorSite().getId())) {
 					if (er instanceof org.eclipse.ui.internal.WorkbenchPartReference) {
 						org.eclipse.ui.internal.WorkbenchPartReference wpr = (org.eclipse.ui.internal.WorkbenchPartReference) er;
 						control = wpr.getPane().getControl();
 						shell = null;
 						break;
 					}
+				}
 			}
 		} else if (part instanceof ViewPart) {
 			ViewPart viewPart = (ViewPart) part;
 			shell = viewPart.getSite().getShell();
 			for (int j = 0; j < window.getActivePage().getViewReferences().length; j++) {
 				IViewReference vr = window.getActivePage().getViewReferences()[j];
-				if (vr.getId().equals(viewPart.getViewSite().getId()))
+				if (vr.getId().equals(viewPart.getViewSite().getId())) {
 					if (vr instanceof org.eclipse.ui.internal.WorkbenchPartReference) {
 						org.eclipse.ui.internal.WorkbenchPartReference wpr = (org.eclipse.ui.internal.WorkbenchPartReference) vr;
 						control = wpr.getPane().getControl();
 						shell = null;
 						break;
 					}
+				}
 			}
 
 		}
@@ -167,9 +172,9 @@ public class ActiveHelpSection implements ISpySection {
 			}
 		} else if (control != null) {
 			// if we don't have org.eclipse.help, we will have problems when trying to load IContextProvider
-			if (!PDERuntimePlugin.HAS_IDE_BUNDLES)
+			if (!PDERuntimePlugin.HAS_IDE_BUNDLES) {
 				processChildren(control, buffer);
-			else {
+			} else {
 				IContextProvider provider = part.getAdapter(IContextProvider.class);
 				IContext context = (provider != null) ? provider.getContext(control) : null;
 				if (context != null) {

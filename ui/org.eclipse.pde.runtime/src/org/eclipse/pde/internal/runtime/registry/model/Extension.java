@@ -34,8 +34,9 @@ public class Extension extends ModelObject {
 	}
 
 	public void setConfigurationElements(ConfigurationElement[] configurationElements) {
-		if (configurationElements == null)
+		if (configurationElements == null) {
 			throw new IllegalArgumentException();
+		}
 
 		this.configurationElements = configurationElements;
 	}
@@ -69,33 +70,44 @@ public class Extension extends ModelObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		Extension other = (Extension) obj;
 		if (contributor == null) {
-			if (other.contributor != null)
+			if (other.contributor != null) {
 				return false;
-		} else if (!contributor.equals(other.contributor))
+			}
+		} else if (!contributor.equals(other.contributor)) {
 			return false;
+		}
 		if (extensionPointUniqueIdentifier == null) {
-			if (other.extensionPointUniqueIdentifier != null)
+			if (other.extensionPointUniqueIdentifier != null) {
 				return false;
-		} else if (!extensionPointUniqueIdentifier.equals(other.extensionPointUniqueIdentifier))
+			}
+		} else if (!extensionPointUniqueIdentifier.equals(other.extensionPointUniqueIdentifier)) {
 			return false;
+		}
 		if (label == null) {
-			if (other.label != null)
+			if (other.label != null) {
 				return false;
-		} else if (!label.equals(other.label))
+			}
+		} else if (!label.equals(other.label)) {
 			return false;
+		}
 		if (namespaceIdentifier == null) {
-			if (other.namespaceIdentifier != null)
+			if (other.namespaceIdentifier != null) {
 				return false;
-		} else if (!namespaceIdentifier.equals(other.namespaceIdentifier))
+			}
+		} else if (!namespaceIdentifier.equals(other.namespaceIdentifier)) {
 			return false;
+		}
 		return true;
 	}
 
@@ -111,8 +123,9 @@ public class Extension extends ModelObject {
 	}
 
 	public ExtensionPoint getExtensionPoint() {
-		if (model == null)
+		if (model == null) {
 			return null;
+		}
 		return model.getExtensionPoint(extensionPointUniqueIdentifier);
 	}
 
@@ -120,8 +133,9 @@ public class Extension extends ModelObject {
 	 * @return contributor or <code>null</code> if contributor not present
 	 */
 	public Bundle getContributor() {
-		if (model == null || contributor == null)
+		if (model == null || contributor == null) {
 			return null;
+		}
 		return model.getBundle(contributor);
 	}
 }

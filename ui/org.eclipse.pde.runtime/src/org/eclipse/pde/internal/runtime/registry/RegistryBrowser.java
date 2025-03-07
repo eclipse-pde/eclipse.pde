@@ -143,12 +143,14 @@ public class RegistryBrowser extends ViewPart {
 	private final ViewerFilter fActiveFilter = new ViewerFilter() {
 		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			if (element instanceof ExtensionPoint)
+			if (element instanceof ExtensionPoint) {
 				element = Platform.getBundle(((ExtensionPoint) element).getNamespaceIdentifier());
-			else if (element instanceof Extension)
+			} else if (element instanceof Extension) {
 				element = Platform.getBundle(((Extension) element).getNamespaceIdentifier());
-			if (element instanceof Bundle)
+			}
+			if (element instanceof Bundle) {
 				return ((Bundle) element).getState() == Bundle.ACTIVE;
+			}
 			return true;
 		}
 	};
@@ -207,23 +209,27 @@ public class RegistryBrowser extends ViewPart {
 	@Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
-		if (memento == null)
+		if (memento == null) {
 			this.fMemento = XMLMemento.createWriteRoot("REGISTRYVIEW"); //$NON-NLS-1$
-		else
+		} else {
 			this.fMemento = memento;
+		}
 		initializeMemento();
 	}
 
 	private void initializeMemento() {
 		// show all bundles by default (i.e. not just activated ones)
-		if (fMemento.getString(SHOW_RUNNING_PLUGINS) == null)
+		if (fMemento.getString(SHOW_RUNNING_PLUGINS) == null) {
 			fMemento.putString(SHOW_RUNNING_PLUGINS, "false"); //$NON-NLS-1$
-		if (fMemento.getInteger(GROUP_BY) == null)
+		}
+		if (fMemento.getInteger(GROUP_BY) == null) {
 			fMemento.putInteger(GROUP_BY, BUNDLES);
+		}
 
 		// default to not showing advanced options to users
-		if (fMemento.getString(SHOW_ADVANCED_MODE) == null)
+		if (fMemento.getString(SHOW_ADVANCED_MODE) == null) {
 			fMemento.putString(SHOW_ADVANCED_MODE, "false"); //$NON-NLS-1$
+		}
 	}
 
 	@Override
@@ -286,8 +292,9 @@ public class RegistryBrowser extends ViewPart {
 					return c1.compareTo(c2);
 				}
 
-				if (e1 instanceof Folder && e2 instanceof Folder)
+				if (e1 instanceof Folder && e2 instanceof Folder) {
 					return ((Folder) e1).getId() - ((Folder) e2).getId();
+				}
 				if (e1 instanceof Bundle && e2 instanceof Bundle) {
 					e1 = ((Bundle) e1).getSymbolicName();
 					e2 = ((Bundle) e2).getSymbolicName();
@@ -295,8 +302,9 @@ public class RegistryBrowser extends ViewPart {
 				return super.compare(viewer, e1, e2);
 			}
 		});
-		if (fShowPluginsAction.isChecked())
+		if (fShowPluginsAction.isChecked()) {
 			fTreeViewer.addFilter(fActiveFilter);
+		}
 
 		initializeModel();
 
@@ -317,8 +325,9 @@ public class RegistryBrowser extends ViewPart {
 			IStructuredSelection selection = fTreeViewer.getStructuredSelection();
 			if (selection.size() == 1) {
 				Object obj = selection.getFirstElement();
-				if (obj instanceof Bundle)
+				if (obj instanceof Bundle) {
 					ManifestEditor.openPluginEditor(((Bundle) obj).getSymbolicName());
+				}
 			}
 		});
 	}
@@ -355,13 +364,16 @@ public class RegistryBrowser extends ViewPart {
 		// check if we should enable advanced actions
 		if (fShowAdvancedOperationsAction.isChecked() && isBundleSelected()) {
 			// control bundle state actions
-			if (selectedBundlesStopped())
+			if (selectedBundlesStopped()) {
 				manager.add(fStartAction);
-			if (selectedBundlesStarted())
+			}
+			if (selectedBundlesStarted()) {
 				manager.add(fStopAction);
+			}
 
-			if (getSelectedBundles().size() == 1)
+			if (getSelectedBundles().size() == 1) {
 				manager.add(fDiagnoseAction);
+			}
 		}
 
 		manager.add(new Separator());
@@ -372,8 +384,9 @@ public class RegistryBrowser extends ViewPart {
 
 	@Override
 	public void saveState(IMemento memento) {
-		if (memento == null || fMemento == null || fTreeViewer == null)
+		if (memento == null || fMemento == null || fTreeViewer == null) {
 			return;
+		}
 		fMemento.putString(SHOW_RUNNING_PLUGINS, Boolean.toString(fShowPluginsAction.isChecked()));
 		fMemento.putBoolean(SHOW_ADVANCED_MODE, fShowAdvancedOperationsAction.isChecked());
 		memento.putMemento(fMemento);
@@ -530,8 +543,9 @@ public class RegistryBrowser extends ViewPart {
 	}
 
 	protected Tree getUndisposedTree() {
-		if (fTreeViewer == null || fTreeViewer.getTree() == null || fTreeViewer.getTree().isDisposed())
+		if (fTreeViewer == null || fTreeViewer.getTree() == null || fTreeViewer.getTree().isDisposed()) {
 			return null;
+		}
 		return fTreeViewer.getTree();
 	}
 
@@ -555,8 +569,9 @@ public class RegistryBrowser extends ViewPart {
 				break;
 		}
 
-		if (tree == null)
+		if (tree == null) {
 			return NLS.bind(PDERuntimeMessages.RegistryView_titleSummary, (new String[] { "0", "0", type })); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		return NLS.bind(PDERuntimeMessages.RegistryView_titleSummary, (new String[] {Integer.toString(tree.getItemCount()), Integer.toString(total), type}));
 	}
 
@@ -595,8 +610,9 @@ public class RegistryBrowser extends ViewPart {
 		List<Bundle> bundles = getSelectedBundles();
 		for (Iterator<Bundle> it = bundles.iterator(); it.hasNext();) {
 			Bundle bundle = it.next();
-			if (bundle.getState() != Bundle.ACTIVE)
+			if (bundle.getState() != Bundle.ACTIVE) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -608,8 +624,9 @@ public class RegistryBrowser extends ViewPart {
 		List<Bundle> bundles = getSelectedBundles();
 		for (Iterator<Bundle> it = bundles.iterator(); it.hasNext();) {
 			Bundle bundle = it.next();
-			if (bundle.getState() == Bundle.ACTIVE)
+			if (bundle.getState() == Bundle.ACTIVE) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -624,21 +641,25 @@ public class RegistryBrowser extends ViewPart {
 	}
 
 	protected void add(Object parent, Object object) {
-		if (fTreeViewer.getTree().isDisposed())
+		if (fTreeViewer.getTree().isDisposed()) {
 			return;
+		}
 
-		if (fDrillDownAdapter.canGoHome())
+		if (fDrillDownAdapter.canGoHome()) {
 			return;
+		}
 		fTreeViewer.refresh();
 		updateTitle();
 	}
 
 	public void remove(Object object) {
-		if (fTreeViewer.getTree().isDisposed())
+		if (fTreeViewer.getTree().isDisposed()) {
 			return;
+		}
 
-		if (fDrillDownAdapter.canGoHome())
+		if (fDrillDownAdapter.canGoHome()) {
 			return;
+		}
 		fTreeViewer.refresh();
 		updateTitle();
 	}
@@ -648,8 +669,9 @@ public class RegistryBrowser extends ViewPart {
 	}
 
 	private void deferredRefresh() {
-		if (refreshThread != null)
+		if (refreshThread != null) {
 			return;
+		}
 
 		long now = System.currentTimeMillis();
 		if (now - lastRefresh > REFRESH_DELAY) {
@@ -664,8 +686,9 @@ public class RegistryBrowser extends ViewPart {
 					return;
 				}
 				refreshThread = null;
-				if (fTreeViewer.getTree().isDisposed())
+				if (fTreeViewer.getTree().isDisposed()) {
 					return;
+				}
 
 				fTreeViewer.getTree().getDisplay().asyncExec(() -> {
 					if (!fTreeViewer.getTree().isDisposed()) {
@@ -680,8 +703,9 @@ public class RegistryBrowser extends ViewPart {
 	}
 
 	void refresh(Object[] objects) {
-		if (fTreeViewer.getTree().isDisposed())
+		if (fTreeViewer.getTree().isDisposed()) {
 			return;
+		}
 
 		if (filtersEnabled()) {
 			deferredRefresh();
@@ -694,8 +718,9 @@ public class RegistryBrowser extends ViewPart {
 	}
 
 	void refresh(Object object) {
-		if (fTreeViewer.getTree().isDisposed())
+		if (fTreeViewer.getTree().isDisposed()) {
 			return;
+		}
 
 		if (filtersEnabled()) {
 			deferredRefresh();

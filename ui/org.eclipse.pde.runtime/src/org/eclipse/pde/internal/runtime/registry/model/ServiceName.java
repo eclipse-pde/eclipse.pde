@@ -45,8 +45,9 @@ public class ServiceName extends ModelObject implements Comparable<ServiceName> 
 
 	private static int hashCode(Object[] array) {
 		int prime = 31;
-		if (array == null)
+		if (array == null) {
 			return 0;
+		}
 		int result = 1;
 		for (Object o : array) {
 			result = prime * result + (o == null ? 0 : o.hashCode());
@@ -62,10 +63,12 @@ public class ServiceName extends ModelObject implements Comparable<ServiceName> 
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		ServiceName other = (ServiceName) obj;
 		return Arrays.equals(classes, other.classes);
 	}

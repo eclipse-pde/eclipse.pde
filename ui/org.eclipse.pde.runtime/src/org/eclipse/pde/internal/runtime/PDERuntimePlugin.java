@@ -106,16 +106,18 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 	}
 
 	public static void log(Throwable e) {
-		if (e instanceof InvocationTargetException)
+		if (e instanceof InvocationTargetException) {
 			e = ((InvocationTargetException) e).getTargetException();
+		}
 		IStatus status = null;
 		if (e instanceof CoreException) {
 			status = ((CoreException) e).getStatus();
 		} else if (e.getMessage() != null) {
 			status = Status.error(e.getMessage(), e);
 		}
-		if (status != null)
+		if (status != null) {
 			getDefault().getLog().log(status);
+		}
 	}
 
 	/**
