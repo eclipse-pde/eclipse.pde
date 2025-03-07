@@ -134,8 +134,9 @@ public class JUnitExecutionTest {
 
 	static void assertSuccessful(ITestRunSession session) {
 		Result testResult = session.getTestResult(true);
-		if (ITestElement.Result.OK.equals(testResult))
+		if (ITestElement.Result.OK.equals(testResult)) {
 			return;
+		}
 
 		AssertionError assertionFailedError = new AssertionError("test completed with " + testResult);
 		addFailureTraces(session, assertionFailedError);
