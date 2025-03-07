@@ -50,8 +50,9 @@ public abstract class AbstractCheatSheetModelTestCase {
 		try {
 			fModel = new SimpleCSModel(fDocument, false);
 			fModel.load();
-			if (!fModel.isLoaded() || !fModel.isValid())
+			if (!fModel.isLoaded() || !fModel.isValid()) {
 				fail("model cannot be loaded");
+			}
 			if (addListener) {
 				fListener = new XMLTextChangeListener(fModel.getDocument());
 				fModel.addModelChangedListener(fListener);
@@ -67,8 +68,9 @@ public abstract class AbstractCheatSheetModelTestCase {
 		sb.append(newline);
 		sb.append("<cheatsheet title=\"sample cheatsheet\">");
 		sb.append(newline);
-		if (body != null)
+		if (body != null) {
 			sb.append(body.toString());
+		}
 		sb.append(newline);
 		sb.append("</cheatsheet>");
 		sb.append(newline);
@@ -77,8 +79,9 @@ public abstract class AbstractCheatSheetModelTestCase {
 
 	protected void reload() {
 		TextEdit[] ops = fListener.getTextOperations();
-		if (ops.length == 0)
+		if (ops.length == 0) {
 			return;
+		}
 		MultiTextEdit multi = new MultiTextEdit();
 		multi.addChildren(ops);
 		try {
