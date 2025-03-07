@@ -38,18 +38,20 @@ public class BundleDataFilter extends ViewerFilter {
 
 	public String getBundleStrings(Bundle b, int nbColumn) {
 		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < nbColumn; i++)
+		for (int i = 0; i < nbColumn; i++) {
 			sb.append(BundleDataProvider.getText(b, i)).append("  "); //$NON-NLS-1$
+		}
 
 		return sb.toString();
 	}
 
 	/** Set the pattern and use it as lowercase */
 	public void setPattern(String newPattern) {
-		if ((newPattern == null) || (newPattern.length() == 0))
+		if ((newPattern == null) || (newPattern.length() == 0)) {
 			pattern = null;
-		else
+		} else {
 			pattern = newPattern.toLowerCase();
+		}
 	}
 
 	public boolean matchText(String text) {
