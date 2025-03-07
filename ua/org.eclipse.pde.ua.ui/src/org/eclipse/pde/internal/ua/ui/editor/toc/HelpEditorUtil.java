@@ -66,8 +66,9 @@ public class HelpEditorUtil {
 	}
 
 	public static boolean isTOCFile(IPath path) {
-		if (!hasValidTocExtension(path))
+		if (!hasValidTocExtension(path)) {
 			return false;
+		}
 
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 

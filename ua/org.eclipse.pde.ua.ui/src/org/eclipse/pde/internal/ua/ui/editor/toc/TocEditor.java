@@ -121,10 +121,12 @@ public class TocEditor extends MultiSourceEditor {
 			IStructuredSelection selection = (IStructuredSelection) getSelection();
 			for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 				Object obj = iter.next();
-				if (!(obj instanceof TocObject))
+				if (!(obj instanceof TocObject)) {
 					return false;
-				if (((TocObject) obj).getPath() == null)
+				}
+				if (((TocObject) obj).getPath() == null) {
 					return false;
+				}
 			}
 
 			return true;

@@ -69,8 +69,9 @@ public class TocSourcePage extends XMLSourcePage {
 
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-		if (IHyperlinkDetector.class.equals(adapter))
+		if (IHyperlinkDetector.class.equals(adapter)) {
 			return adapter.cast(new TocHyperlinkDetector(this));
+		}
 		return super.getAdapter(adapter);
 	}
 
@@ -88,8 +89,9 @@ public class TocSourcePage extends XMLSourcePage {
 
 		Object selectedObject = getSelection();
 
-		if (selectedObject instanceof IDocumentElementNode)
+		if (selectedObject instanceof IDocumentElementNode) {
 			return (IDocumentElementNode) selectedObject;
+		}
 
 		return null;
 	}

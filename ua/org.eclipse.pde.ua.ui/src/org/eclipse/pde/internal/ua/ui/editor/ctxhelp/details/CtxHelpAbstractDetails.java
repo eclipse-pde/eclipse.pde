@@ -66,8 +66,9 @@ public abstract class CtxHelpAbstractDetails extends PDEDetails {
 	public void createDetails(Composite parent) { // Create the main section
 		int style = ExpandableComposite.TITLE_BAR;
 
-		if (getDetailsDescription() != null)
+		if (getDetailsDescription() != null) {
 			style |= Section.DESCRIPTION;
+		}
 
 		fMainSection = getPage().createUISection(parent, getDetailsTitle(), getDetailsDescription(), style);
 		// Align the master and details section headers (misalignment caused
