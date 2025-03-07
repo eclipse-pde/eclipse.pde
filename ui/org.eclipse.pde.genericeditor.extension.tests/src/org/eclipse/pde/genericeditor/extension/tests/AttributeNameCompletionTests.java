@@ -45,8 +45,9 @@ public class AttributeNameCompletionTests extends AbstractTargetEditorTest {
 		while (offset < text.length()) {
 			int nextSpace = text.indexOf(' ', offset) + 1;
 			int nextOpen = text.indexOf('<', offset);
-			if (nextSpace == 0 && nextOpen == -1)
+			if (nextSpace == 0 && nextOpen == -1) {
 				break;
+			}
 			if (nextSpace == 0) {
 				offset = nextOpen;
 			} else if (nextOpen == -1) {
@@ -75,8 +76,9 @@ public class AttributeNameCompletionTests extends AbstractTargetEditorTest {
 		while (offset < text.length()) {
 			int nextSpace = text.indexOf("  ", offset) + 1;
 			int nextOpen = text.indexOf('<', offset);
-			if (nextSpace == 0 && nextOpen == -1)
+			if (nextSpace == 0 && nextOpen == -1) {
 				break;
+			}
 			if (nextSpace == 0) {
 				offset = nextOpen;
 			} else if (nextOpen == -1) {
