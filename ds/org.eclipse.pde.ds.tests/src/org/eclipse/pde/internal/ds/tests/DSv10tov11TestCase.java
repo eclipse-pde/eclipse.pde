@@ -41,8 +41,9 @@ public class DSv10tov11TestCase extends AbstractDSModelTestCase {
 		sb.append(newline);
 		sb.append("<component name=\"" + COMPONENT_NAME + "\">");
 		sb.append(newline);
-		if (body != null)
+		if (body != null) {
 			sb.append(body.toString());
+		}
 		sb.append(newline);
 		sb.append("</component>");
 		sb.append(newline);
