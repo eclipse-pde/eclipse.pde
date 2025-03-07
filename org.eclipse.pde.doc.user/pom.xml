@@ -194,7 +194,7 @@
                         <windowtitle>Eclipse PDE API Specification</windowtitle>
                         <doctitle>Eclipse PDE API Specification</doctitle>
                         <header><![CDATA[<span style='font-size:small'><b>Eclipse PDE</b><br>${releaseName} (${releaseNumberSDK})</span>]]></header>
-                        <bottom><![CDATA[<br><span style='font-size:small;float:right'>Copyright (c) 2000, 2024 Eclipse Contributors and others. All rights reserved.</span><span style='font-size:small'><a href='{@docRoot}/../misc/api-usage-rules.html'>Guidelines for using Eclipse APIs.</a></span>]]></bottom>
+                        <bottom><![CDATA[<br><span style='font-size:small;float:right'>Copyright (c) 2000, ${releaseYear} Eclipse Contributors and others. All rights reserved.</span><span style='font-size:small'><a href='{@docRoot}/../misc/api-usage-rules.html'>Guidelines for using Eclipse APIs.</a></span>]]></bottom>
                         <sourcepath>${eclipse.pde.build}/org.eclipse.pde.build/src
                                     ;${eclipse.pde.ui.apitools}/org.eclipse.pde.api.tools.annotations/src
                                     ;${eclipse.pde.ui.ui}/org.eclipse.pde.core/src
