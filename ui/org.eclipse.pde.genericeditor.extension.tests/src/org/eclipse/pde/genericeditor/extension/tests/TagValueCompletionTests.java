@@ -47,8 +47,9 @@ public class TagValueCompletionTests extends AbstractTargetEditorTest {
 		while (offset < text.length()) {
 			int nextClose = text.indexOf('>', offset);
 			int nextNewLine = text.indexOf('\n', offset);
-			if (nextClose == 0 && nextNewLine == -1)
+			if (nextClose == 0 && nextNewLine == -1) {
 				break;
+			}
 			if (nextClose == 0) {
 				offset = nextNewLine;
 			} else if (nextNewLine == -1) {
