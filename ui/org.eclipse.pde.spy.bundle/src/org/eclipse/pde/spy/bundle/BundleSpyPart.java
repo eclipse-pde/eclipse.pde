@@ -111,8 +111,9 @@ public class BundleSpyPart {
 		filterText.setMessage(Messages.BundleSpyPart_10);
 		filterText.setToolTipText(
 				Messages.BundleSpyPart_11);
-		if (lastFilterText != null)
+		if (lastFilterText != null) {
 			filterText.setText(lastFilterText);
+		}
 		bundleFilter.setPattern(lastFilterText);
 		filterText.addKeyListener(KeyListener.keyReleasedAdapter(e -> {
 			String textToSearch = filterText.getText();
