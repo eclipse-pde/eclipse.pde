@@ -45,16 +45,18 @@ public class DSHyperlinkDetector extends PDEHyperlinkDetector {
 	@Override
 	protected IHyperlink[] detectAttributeHyperlink(IDocumentAttributeNode attr) {
 		String attrValue = attr.getAttributeValue();
-		if (attrValue.length() == 0)
+		if (attrValue.length() == 0) {
 			return null;
+		}
 
 		if (!(attr.getEnclosingElement() instanceof IDSObject)) {
 			return null;
 		}
 		IDSObject node = (IDSObject) attr.getEnclosingElement();
 
-		if (node == null || !node.getModel().isEditable())
+		if (node == null || !node.getModel().isEditable()) {
 			return null;
+		}
 
 		IRegion linkRegion = new Region(attr.getValueOffset(), attr
 				.getValueLength());
@@ -96,8 +98,9 @@ public class DSHyperlinkDetector extends PDEHyperlinkDetector {
 			// declarations?
 		}
 
-		if (link[0] != null)
+		if (link[0] != null) {
 			return link;
+		}
 
 		return null;
 	}

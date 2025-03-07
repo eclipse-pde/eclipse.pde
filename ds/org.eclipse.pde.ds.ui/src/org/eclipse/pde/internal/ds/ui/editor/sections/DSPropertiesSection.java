@@ -166,8 +166,9 @@ public class DSPropertiesSection extends TableSection {
 	@Override
 	public void dispose() {
 		IDSModel model = getDSModel();
-		if (model != null)
+		if (model != null) {
 			model.removeModelChangedListener(this);
+		}
 	}
 
 	@Override
@@ -360,8 +361,9 @@ public class DSPropertiesSection extends TableSection {
 			@Override
 			public boolean select(Viewer viewer, Object parentElement,
 					Object element) {
-				if (element instanceof IProject)
+				if (element instanceof IProject) {
 					return ((IProject) element).equals(project);
+				}
 				return true;
 			}
 		});
@@ -370,16 +372,18 @@ public class DSPropertiesSection extends TableSection {
 		dialog.setMessage(Messages.DSPropertiesDetails_dialogMessage);
 		dialog.setValidator(selection -> {
 			if (selection != null && selection.length > 0
-					&& selection[0] instanceof IFile)
+					&& selection[0] instanceof IFile) {
 				return Status.OK_STATUS;
+			}
 
 			return Status.error("", null); //$NON-NLS-1$
 		});
 		if (dialog.open() == Window.OK) {
 			IResource res = (IResource) dialog.getFirstResult();
 			IPath path = res.getProjectRelativePath();
-			if (res instanceof IContainer)
+			if (res instanceof IContainer) {
 				path = path.addTrailingSeparator();
+			}
 			String value = path.toString();
 			addProperties(value);
 
@@ -447,8 +451,9 @@ public class DSPropertiesSection extends TableSection {
 			updateButtons();
 		}
 		fPropertiesTable.getTable().getDisplay().asyncExec(() -> {
-			if (!fPropertiesTable.getTable().isDisposed())
+			if (!fPropertiesTable.getTable().isDisposed()) {
 				updateTitle();
+			}
 		});
 	}
 

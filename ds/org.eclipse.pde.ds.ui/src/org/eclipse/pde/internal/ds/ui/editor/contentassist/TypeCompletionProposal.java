@@ -94,8 +94,9 @@ public class TypeCompletionProposal implements ICompletionProposal, ICompletionP
 
 	@Override
 	public Point getSelection(IDocument document) {
-		if (fReplacementString.equals("\"\"")) //$NON-NLS-1$
+		if (fReplacementString.equals("\"\"")) { //$NON-NLS-1$
 			return new Point(fBeginInsertPoint + 1, 0);
+		}
 		return new Point(fBeginInsertPoint + fReplacementString.length(), 0);
 	}
 
@@ -115,8 +116,9 @@ public class TypeCompletionProposal implements ICompletionProposal, ICompletionP
 	@Override
 	@SuppressWarnings("restriction")
 	public IInformationControlCreator getInformationControlCreator() {
-		if (!BrowserInformationControl.isAvailable(null))
+		if (!BrowserInformationControl.isAvailable(null)) {
 			return null;
+		}
 
 		if (fCreator == null) {
 			fCreator = new AbstractReusableInformationControlCreator() {

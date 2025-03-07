@@ -37,10 +37,12 @@ public class DSTextHover extends PDETextHover {
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 		int offset = hoverRegion.getOffset();
 		IDocumentRange range = fSourcePage.getRangeElement(offset, true);
-		if (range instanceof IDocumentTextNode)
+		if (range instanceof IDocumentTextNode) {
 			return checkTranslatedValue((IDocumentTextNode) range);
-		if (!(range instanceof IDSObject))
+		}
+		if (!(range instanceof IDSObject)) {
 			return null;
+		}
 
 		return ((IDSObject) range).getName();
 
@@ -48,9 +50,10 @@ public class DSTextHover extends PDETextHover {
 
 	private String checkTranslatedValue(IDocumentTextNode node) {
 		String value = node.getText();
-		if (value.startsWith("%")) //$NON-NLS-1$
+		if (value.startsWith("%")) { //$NON-NLS-1$
 			return ((IPluginObject) node.getEnclosingElement())
-					.getResourceString(value);
+			.getResourceString(value);
+		}
 
 		return null;
 	}

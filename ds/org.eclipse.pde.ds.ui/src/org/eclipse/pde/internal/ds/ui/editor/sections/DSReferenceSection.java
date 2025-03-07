@@ -82,10 +82,12 @@ public class DSReferenceSection extends TableSection implements
 			final Object element = cell.getElement();
 			IDSReference reference = (IDSReference) element;
 			String name = reference.getReferenceName();
-			if (name == null || name.length() == 0)
+			if (name == null || name.length() == 0) {
 				name = reference.getReferenceInterface();
-			if (name == null)
+			}
+			if (name == null) {
 				name = ""; //$NON-NLS-1$ // Better than an NPE
+			}
 			StyledString styledString = new StyledString(name);
 			String bind = reference.getReferenceBind();
 			String unbind = reference.getReferenceUnbind();
@@ -96,9 +98,10 @@ public class DSReferenceSection extends TableSection implements
 							" [" + bind + "," + unbind + "]", StyledString.DECORATIONS_STYLER); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 			String target = reference.getReferenceTarget();
-			if (target != null)
+			if (target != null) {
 				styledString.append(" " + target, //$NON-NLS-1$
 						StyledString.QUALIFIER_STYLER);
+			}
 
 			cell.setText(styledString.toString());
 			cell.setStyleRanges(styledString.getStyleRanges());
@@ -120,8 +123,9 @@ public class DSReferenceSection extends TableSection implements
 			if (inputElement instanceof IDSModel) {
 				IDSModel model = (IDSModel) inputElement;
 				IDSComponent component = model.getDSComponent();
-				if (component != null)
+				if (component != null) {
 					return component.getReferences();
+				}
 
 			}
 			return new Object[0];
@@ -178,8 +182,9 @@ public class DSReferenceSection extends TableSection implements
 	@Override
 	public void dispose() {
 		IDSModel model = getDSModel();
-		if (model != null)
+		if (model != null) {
 			model.removeModelChangedListener(this);
+		}
 	}
 
 	@Override
@@ -437,8 +442,9 @@ public class DSReferenceSection extends TableSection implements
 				IJavaProject javaProject = JavaCore.create(project);
 				IJavaElement element = javaProject.findType(value.replace('$',
 						'.'));
-				if (element != null)
+				if (element != null) {
 					JavaUI.openInEditor(element);
+				}
 			}
 		} catch (CoreException e) {
 			Activator.logException(e);

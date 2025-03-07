@@ -47,8 +47,9 @@ public class SWTUtil {
 	public static Display getStandardDisplay() {
 		Display display;
 		display = Display.getCurrent();
-		if (display == null)
+		if (display == null) {
 			display = Display.getDefault();
+		}
 		return display;
 	}
 
@@ -59,18 +60,24 @@ public class SWTUtil {
 	 * @return the shell for the given widget
 	 */
 	public static Shell getShell(Widget widget) {
-		if (widget instanceof Control)
+		if (widget instanceof Control) {
 			return ((Control) widget).getShell();
-		if (widget instanceof Caret)
+		}
+		if (widget instanceof Caret) {
 			return ((Caret) widget).getParent().getShell();
-		if (widget instanceof DragSource)
+		}
+		if (widget instanceof DragSource) {
 			return ((DragSource) widget).getControl().getShell();
-		if (widget instanceof DropTarget)
+		}
+		if (widget instanceof DropTarget) {
 			return ((DropTarget) widget).getControl().getShell();
-		if (widget instanceof Menu)
+		}
+		if (widget instanceof Menu) {
 			return ((Menu) widget).getParent().getShell();
-		if (widget instanceof ScrollBar)
+		}
+		if (widget instanceof ScrollBar) {
 			return ((ScrollBar) widget).getParent().getShell();
+		}
 
 		return null;
 	}
@@ -79,8 +86,9 @@ public class SWTUtil {
 	 * Returns a width hint for a button control.
 	 */
 	public static int getButtonWidthHint(Button button) {
-		if (button.getFont().equals(JFaceResources.getDefaultFont()))
+		if (button.getFont().equals(JFaceResources.getDefaultFont())) {
 			button.setFont(JFaceResources.getDialogFont());
+		}
 		PixelConverter converter = new PixelConverter(button);
 		int widthHint = converter.convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		return Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);

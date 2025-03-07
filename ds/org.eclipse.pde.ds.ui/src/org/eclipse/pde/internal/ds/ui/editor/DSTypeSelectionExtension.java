@@ -58,8 +58,9 @@ public class DSTypeSelectionExtension extends TypeSelectionExtension {
 	@Override
 	public ITypeInfoFilterExtension getFilterExtension() {
 		IDSService service = fModel.getDSComponent().getService();
-		if (service != null)
+		if (service != null) {
 			return new TypeInfoFilterExtension(service.getProvidedServices());
+		}
 		return null;
 	}
 
