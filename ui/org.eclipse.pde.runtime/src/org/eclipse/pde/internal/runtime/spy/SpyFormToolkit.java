@@ -101,8 +101,9 @@ public class SpyFormToolkit extends FormToolkit {
 			fileChooser.setFilterExtensions(new String[] {"*.png"}); //$NON-NLS-1$
 			fileChooser.setFilterNames(new String[] {"PNG (*.png)"}); //$NON-NLS-1$
 			String filename = fileChooser.open();
-			if (filename == null)
+			if (filename == null) {
 				return;
+			}
 
 			int filetype = determineFileType(filename);
 			if (filetype == SWT.IMAGE_UNDEFINED) {
@@ -115,14 +116,18 @@ public class SpyFormToolkit extends FormToolkit {
 
 		private int determineFileType(String filename) {
 			String ext = filename.substring(filename.lastIndexOf('.') + 1);
-			if (ext.equalsIgnoreCase("gif")) //$NON-NLS-1$
+			if (ext.equalsIgnoreCase("gif")) { //$NON-NLS-1$
 				return SWT.IMAGE_GIF;
-			if (ext.equalsIgnoreCase("ico")) //$NON-NLS-1$
+			}
+			if (ext.equalsIgnoreCase("ico")) { //$NON-NLS-1$
 				return SWT.IMAGE_ICO;
-			if (ext.equalsIgnoreCase("jpg") || ext.equalsIgnoreCase("jpeg")) //$NON-NLS-1$//$NON-NLS-2$
+			}
+			if (ext.equalsIgnoreCase("jpg") || ext.equalsIgnoreCase("jpeg")) { //$NON-NLS-1$//$NON-NLS-2$
 				return SWT.IMAGE_JPEG;
-			if (ext.equalsIgnoreCase("png")) //$NON-NLS-1$
+			}
+			if (ext.equalsIgnoreCase("png")) { //$NON-NLS-1$
 				return SWT.IMAGE_PNG;
+			}
 			return SWT.IMAGE_UNDEFINED;
 		}
 	}
@@ -161,8 +166,9 @@ public class SpyFormToolkit extends FormToolkit {
 						clipboard = new Clipboard(formText.getDisplay());
 						clipboard.setContents(new Object[] {((String) formText.getSelectedLinkHref()).substring(CLASS_PROTOCOL_PREFIX.length())}, new Transfer[] {TextTransfer.getInstance()});
 					} finally {
-						if (clipboard != null)
+						if (clipboard != null) {
 							clipboard.dispose();
+						}
 					}
 				}
 			}
@@ -234,8 +240,9 @@ public class SpyFormToolkit extends FormToolkit {
 
 	@SuppressWarnings("restriction")
 	public String createHelpIdentifierSection(IContext context) {
-		if (context instanceof org.eclipse.help.internal.context.Context)
+		if (context instanceof org.eclipse.help.internal.context.Context) {
 			return createHelpIdentifierSection(((org.eclipse.help.internal.context.Context) context).getId());
+		}
 		return ""; //$NON-NLS-1$
 	}
 
@@ -314,8 +321,9 @@ public class SpyFormToolkit extends FormToolkit {
 	}
 
 	public void createImageAction(Section section, Image image) {
-		if (image == null)
+		if (image == null) {
 			return;
+		}
 		ToolBarManager manager = createSectionToolbar(section);
 		SaveImageAction action = new SaveImageAction(image);
 		action.setText(PDERuntimeMessages.SpyFormToolkit_saveImageAs_title);

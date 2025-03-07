@@ -59,8 +59,9 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 
 	@Override
 	public void connect(IProgressMonitor monitor) {
-		if (monitor.isCanceled())
+		if (monitor.isCanceled()) {
 			return;
+		}
 
 		PDERuntimePlugin.getDefault().getBundleContext().addBundleListener(this);
 		Platform.getExtensionRegistry().addListener(this);
@@ -112,8 +113,9 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 
 	@Override
 	public void initializeBundles(IProgressMonitor monitor) {
-		if (monitor.isCanceled())
+		if (monitor.isCanceled()) {
 			return;
+		}
 
 		org.osgi.framework.Bundle[] newBundles = PDERuntimePlugin.getDefault().getBundleContext().getBundles();
 		for (org.osgi.framework.Bundle bundle : newBundles) {
@@ -128,14 +130,16 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 
 	@Override
 	public void initializeExtensionPoints(IProgressMonitor monitor) {
-		if (monitor.isCanceled())
+		if (monitor.isCanceled()) {
 			return;
+		}
 
 		IExtensionPoint[] extPoints = Platform.getExtensionRegistry().getExtensionPoints();
 		ExtensionPoint[] extPts = new ExtensionPoint[extPoints.length];
 		for (int i = 0; i < extPoints.length; i++) {
-			if (monitor.isCanceled())
+			if (monitor.isCanceled()) {
 				return;
+			}
 
 			extPts[i] = createExtensionPointAdapter(extPoints[i]);
 		}
@@ -144,8 +148,9 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 
 	@Override
 	public void initializeServices(IProgressMonitor monitor) {
-		if (monitor.isCanceled())
+		if (monitor.isCanceled()) {
 			return;
+		}
 
 		ServiceReference<?>[] references = null;
 		try {
@@ -198,20 +203,24 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 		}
 
 		BundlePrerequisite[] imports = (BundlePrerequisite[]) getManifestHeaderArray(bundle, Constants.REQUIRE_BUNDLE);
-		if (imports != null)
+		if (imports != null) {
 			adapter.setImports(imports);
+		}
 
 		BundleLibrary[] libraries = (BundleLibrary[]) getManifestHeaderArray(bundle, Constants.BUNDLE_CLASSPATH);
-		if (libraries != null)
+		if (libraries != null) {
 			adapter.setLibraries(libraries);
+		}
 
 		BundlePrerequisite[] importPackages = (BundlePrerequisite[]) getManifestHeaderArray(bundle, Constants.IMPORT_PACKAGE);
-		if (importPackages != null)
+		if (importPackages != null) {
 			adapter.setImportedPackages(importPackages);
+		}
 
 		BundlePrerequisite[] exportPackages = (BundlePrerequisite[]) getManifestHeaderArray(bundle, Constants.EXPORT_PACKAGE);
-		if (exportPackages != null)
+		if (exportPackages != null) {
 			adapter.setExportedPackages(exportPackages);
+		}
 
 		return adapter;
 	}
@@ -239,8 +248,9 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 		ConfigurationElement element = new ConfigurationElement();
 		element.setName(createName(config));
 		Attribute[] attributes = createConfigurationElementAttributes(config);
-		if (attributes != null)
+		if (attributes != null) {
 			element.setElements(attributes);
+		}
 		return element;
 	}
 
@@ -284,8 +294,9 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 				usingBundlesIds[i] = usingBundles[i].getBundleId();
 			}
 		}
-		if (usingBundlesIds != null)
+		if (usingBundlesIds != null) {
 			service.setUsingBundles(usingBundlesIds);
+		}
 
 		String[] classes = (String[]) ref.getProperty(org.osgi.framework.Constants.OBJECTCLASS);
 		String[] propertyKeys = ref.getPropertyKeys();
@@ -322,10 +333,12 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 		}
 		IPath path = IPath.fromOSString(bundleEntry.getFile());
 		String pathString = path.removeTrailingSeparator().toOSString();
-		if (pathString.startsWith("file:")) //$NON-NLS-1$
+		if (pathString.startsWith("file:")) { //$NON-NLS-1$
 			pathString = pathString.substring(5);
-		if (pathString.endsWith("!")) //$NON-NLS-1$
+		}
+		if (pathString.endsWith("!")) { //$NON-NLS-1$
 			pathString = pathString.substring(0, pathString.length() - 1);
+		}
 		return pathString;
 	}
 
@@ -333,8 +346,9 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 		String libraries = bundle.getHeaders().get(headerKey);
 		try {
 			ManifestElement[] elements = ManifestElement.parseHeader(headerKey, libraries);
-			if (elements == null)
+			if (elements == null) {
 				return null;
+			}
 			if (headerKey.equals(Constants.BUNDLE_CLASSPATH)) {
 				BundleLibrary[] array = new BundleLibrary[elements.length];
 				for (int i = 0; i < elements.length; i++) {
@@ -372,8 +386,9 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 		String[] atts = config.getAttributeNames();
 
 		Attribute[] catts = new Attribute[atts.length];
-		for (int i = 0; i < atts.length; i++)
+		for (int i = 0; i < atts.length; i++) {
 			catts[i] = new Attribute(atts[i], config.getAttribute(atts[i]));
+		}
 
 		IConfigurationElement[] children = config.getChildren();
 		Attribute[] result = new Attribute[children.length + catts.length];
@@ -387,11 +402,13 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 
 	private static String createName(IConfigurationElement config) {
 		String label = config.getAttribute("label"); //$NON-NLS-1$
-		if (label == null)
+		if (label == null) {
 			label = config.getName();
+		}
 
-		if (label == null)
+		if (label == null) {
 			label = config.getAttribute("name"); //$NON-NLS-1$
+		}
 
 		if (label == null && config.getAttribute("id") != null) { //$NON-NLS-1$
 			String[] labelSplit = config.getAttribute("id").split("\\."); //$NON-NLS-1$ //$NON-NLS-2$

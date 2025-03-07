@@ -42,18 +42,21 @@ public class ActiveFormEditorSection implements ISpySection {
 	@Override
 	public void build(ScrolledForm form, SpyFormToolkit toolkit, ExecutionEvent event) {
 		final IWorkbenchPart part = HandlerUtil.getActivePart(event);
-		if (!(part instanceof FormEditor))
+		if (!(part instanceof FormEditor)) {
 			return;
+		}
 		FormEditor multiEditor = (FormEditor) part;
 
 		Shell shell = HandlerUtil.getActiveShell(event);
 		Object object = shell.getData();
-		if (object == null)
+		if (object == null) {
 			return;
+		}
 
 		IFormPage activePage = multiEditor.getActivePageInstance();
-		if (activePage == null)
+		if (activePage == null) {
 			return;
+		}
 
 		Section section = toolkit.createSection(form.getBody(), ExpandableComposite.TITLE_BAR);
 		section.setText(PDERuntimeMessages.ActiveFormEditorSection_Active_Form_Page);

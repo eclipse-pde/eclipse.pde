@@ -127,8 +127,9 @@ public class MenuSpyDialog extends PopupDialog {
 
 	@Override
 	public boolean close() {
-		if (toolkit != null)
+		if (toolkit != null) {
 			toolkit.dispose();
+		}
 		toolkit = null;
 		return super.close();
 	}

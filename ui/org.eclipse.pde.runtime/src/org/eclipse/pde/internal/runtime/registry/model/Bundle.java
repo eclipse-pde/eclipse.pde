@@ -64,8 +64,9 @@ public class Bundle extends ModelObject {
 	}
 
 	public void setImports(BundlePrerequisite[] imports) {
-		if (imports == null)
+		if (imports == null) {
 			throw new IllegalArgumentException();
+		}
 
 		this.imports = imports;
 	}
@@ -83,8 +84,9 @@ public class Bundle extends ModelObject {
 	}
 
 	public void setLibraries(BundleLibrary[] libraries) {
-		if (libraries == null)
+		if (libraries == null) {
 			throw new IllegalArgumentException();
+		}
 
 		this.libraries = libraries;
 	}
@@ -118,26 +120,30 @@ public class Bundle extends ModelObject {
 	}
 
 	public void start() throws BundleException {
-		if (model == null)
+		if (model == null) {
 			return;
+		}
 		model.backend.start(id);
 	}
 
 	public void stop() throws BundleException {
-		if (model == null)
+		if (model == null) {
 			return;
+		}
 		model.backend.stop(id);
 	}
 
 	public MultiStatus diagnose() {
-		if (model == null)
+		if (model == null) {
 			return null;
+		}
 		return model.backend.diagnose(id);
 	}
 
 	public ExtensionPoint[] getExtensionPoints() {
-		if (model == null)
+		if (model == null) {
 			return new ExtensionPoint[0];
+		}
 		ExtensionPoint[] extPoints = model.getExtensionPoints();
 		List<ExtensionPoint> result = new ArrayList<>();
 
@@ -150,8 +156,9 @@ public class Bundle extends ModelObject {
 	}
 
 	public Extension[] getExtensions() {
-		if (model == null)
+		if (model == null) {
 			return new Extension[0];
+		}
 		ExtensionPoint[] extPoints = model.getExtensionPoints();
 		List<Extension> result = new ArrayList<>();
 
@@ -168,8 +175,9 @@ public class Bundle extends ModelObject {
 	}
 
 	public ServiceRegistration[] getRegisteredServices() {
-		if (model == null)
+		if (model == null) {
 			return new ServiceRegistration[0];
+		}
 		ServiceRegistration[] services = model.getServices();
 		List<ServiceRegistration> result = new ArrayList<>();
 
@@ -182,8 +190,9 @@ public class Bundle extends ModelObject {
 	}
 
 	public ServiceRegistration[] getServicesInUse() {
-		if (model == null)
+		if (model == null) {
 			return new ServiceRegistration[0];
+		}
 		ServiceRegistration[] services = model.getServices();
 		List<ServiceRegistration> result = new ArrayList<>();
 
@@ -211,8 +220,9 @@ public class Bundle extends ModelObject {
 	}
 
 	public Bundle[] getFragments() {
-		if (model == null)
+		if (model == null) {
 			return new Bundle[0];
+		}
 		return model.getFragments(this);
 	}
 

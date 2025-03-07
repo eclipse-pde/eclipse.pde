@@ -110,8 +110,9 @@ public class RegistryBrowserModelChangeListener implements ModelChangeListener {
 	private void refreshTopLevelElements(Object object) {
 		Object topLevelElement = getTopLevelElement(object);
 
-		if (topLevelElement == null)
+		if (topLevelElement == null) {
 			return;
+		}
 
 		if (topLevelElement.getClass().isArray()) {
 			Object[] array = (Object[]) topLevelElement;

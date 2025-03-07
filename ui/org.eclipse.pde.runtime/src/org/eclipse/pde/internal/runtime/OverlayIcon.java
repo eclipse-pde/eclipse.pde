@@ -30,23 +30,26 @@ public class OverlayIcon extends CompositeImageDescriptor {
 
 	public OverlayIcon(ImageDescriptor base, ImageDescriptor[][] overlays) {
 		fBase = base;
-		if (fBase == null)
+		if (fBase == null) {
 			fBase = ImageDescriptor.getMissingImageDescriptor();
+		}
 		fOverlays = overlays;
 		fSize = new Point(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 	}
 
 	public OverlayIcon(ImageDescriptor base, ImageDescriptor[][] overlays, Point size) {
 		fBase = base;
-		if (fBase == null)
+		if (fBase == null) {
 			fBase = ImageDescriptor.getMissingImageDescriptor();
+		}
 		fOverlays = overlays;
 		fSize = size;
 	}
 
 	protected void drawBottomLeft(ImageDescriptor[] overlays) {
-		if (overlays == null)
+		if (overlays == null) {
 			return;
+		}
 		int length = overlays.length;
 		int x = 0;
 		for (int i = 0; i < 3; i++) {
@@ -59,8 +62,9 @@ public class OverlayIcon extends CompositeImageDescriptor {
 	}
 
 	protected void drawBottomRight(ImageDescriptor[] overlays) {
-		if (overlays == null)
+		if (overlays == null) {
 			return;
+		}
 		int length = overlays.length;
 		int x = getSize().x;
 		for (int i = 2; i >= 0; i--) {
@@ -78,23 +82,28 @@ public class OverlayIcon extends CompositeImageDescriptor {
 		drawImage(bg, 0, 0);
 
 		if (fOverlays != null) {
-			if (fOverlays.length > 0)
+			if (fOverlays.length > 0) {
 				drawTopRight(fOverlays[0]);
+			}
 
-			if (fOverlays.length > 1)
+			if (fOverlays.length > 1) {
 				drawBottomRight(fOverlays[1]);
+			}
 
-			if (fOverlays.length > 2)
+			if (fOverlays.length > 2) {
 				drawBottomLeft(fOverlays[2]);
+			}
 
-			if (fOverlays.length > 3)
+			if (fOverlays.length > 3) {
 				drawTopLeft(fOverlays[3]);
+			}
 		}
 	}
 
 	protected void drawTopLeft(ImageDescriptor[] overlays) {
-		if (overlays == null)
+		if (overlays == null) {
 			return;
+		}
 		int length = overlays.length;
 		int x = 0;
 		for (int i = 0; i < 3; i++) {
@@ -107,8 +116,9 @@ public class OverlayIcon extends CompositeImageDescriptor {
 	}
 
 	protected void drawTopRight(ImageDescriptor[] overlays) {
-		if (overlays == null)
+		if (overlays == null) {
 			return;
+		}
 		int length = overlays.length;
 		int x = getSize().x;
 		for (int i = 2; i >= 0; i--) {

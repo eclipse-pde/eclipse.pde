@@ -34,22 +34,25 @@ public class ServiceRegistration extends ModelObject implements Comparable<Servi
 	}
 
 	public void setUsingBundles(long[] usingBundles) {
-		if (usingBundles == null)
+		if (usingBundles == null) {
 			throw new IllegalArgumentException();
+		}
 
 		this.usingBundles = usingBundles;
 	}
 
 	public void setName(ServiceName name) {
-		if (name == null)
+		if (name == null) {
 			throw new IllegalArgumentException();
+		}
 
 		this.name = name;
 	}
 
 	public void setProperties(Property[] properties) {
-		if (properties == null)
+		if (properties == null) {
 			throw new IllegalArgumentException();
+		}
 
 		this.properties = properties;
 	}
@@ -122,8 +125,9 @@ public class ServiceRegistration extends ModelObject implements Comparable<Servi
 			buff.append("["); //$NON-NLS-1$
 			for (int o = 0; o < objects.length; o++) {
 				Object object = objects[o];
-				if (o > 0)
+				if (o > 0) {
 					buff.append(", "); //$NON-NLS-1$
+				}
 				appendString(buff, object);
 			}
 			buff.append("]"); //$NON-NLS-1$

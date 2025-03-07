@@ -64,8 +64,9 @@ public class MenuSpyHandler extends AbstractHandler implements Listener {
 	public void handleEvent(Event event) {
 		switch (event.type) {
 		case SWT.KeyDown:
-			if (event.keyCode == SWT.ESC)
+			if (event.keyCode == SWT.ESC) {
 				break;
+			}
 		case SWT.Show:
 			if (spyCursor != null) {
 				Shell shell = event.display.getActiveShell();
