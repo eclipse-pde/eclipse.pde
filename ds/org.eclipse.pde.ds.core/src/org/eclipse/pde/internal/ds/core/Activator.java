@@ -63,8 +63,9 @@ public class Activator extends Plugin {
 	}
 
 	public static void log(Throwable e) {
-		if (e instanceof InvocationTargetException)
+		if (e instanceof InvocationTargetException) {
 			e = ((InvocationTargetException) e).getTargetException();
+		}
 		IStatus status = null;
 		if (e instanceof CoreException) {
 			status = ((CoreException) e).getStatus();

@@ -85,14 +85,16 @@ public class DSErrorReporter extends XMLErrorReporter {
 	private void validateBoolean(Element element, Attr attr) {
 		if (attr != null) {
 			String value = attr.getValue();
-			if (!value.equalsIgnoreCase("true") && !value.equalsIgnoreCase("false")) //$NON-NLS-1$ //$NON-NLS-2$
+			if (!value.equalsIgnoreCase("true") && !value.equalsIgnoreCase("false")) { //$NON-NLS-1$ //$NON-NLS-2$
 				reportIllegalAttributeValue(element, attr);
+			}
 		}
 	}
 
 	private void reportIllegalAttributeValue(Element element, Attr attr) {
-		if (attr == null || attr.getValue() == null || attr.getName() == null)
+		if (attr == null || attr.getValue() == null || attr.getName() == null) {
 			return;
+		}
 		String message = NLS.bind(Messages.DSErrorReporter_attrValue, attr
 				.getValue(), attr.getName());
 		report(message, getLine(element, attr.getName()), ERROR,
@@ -168,8 +170,9 @@ public class DSErrorReporter extends XMLErrorReporter {
 			String name) {
 		Attr attr = element
 				.getAttributeNode(IDSConstants.ATTRIBUTE_REFERENCE_NAME);
-		if (attr == null || attr.getValue() == null || attr.getName() == null)
+		if (attr == null || attr.getValue() == null || attr.getName() == null) {
 			return;
+		}
 		String message = NLS.bind(
 				Messages.DSErrorReporter_duplicateReferenceName, name);
 		report(message,
@@ -198,9 +201,10 @@ public class DSErrorReporter extends XMLErrorReporter {
 	private void reportIllegalPolicy(Element element, String policy) {
 		String name = element
 				.getAttribute(IDSConstants.ATTRIBUTE_REFERENCE_NAME);
-		if (name == null)
+		if (name == null) {
 			name = element
 					.getAttribute(IDSConstants.ATTRIBUTE_REFERENCE_INTERFACE);
+		}
 		String message = NLS.bind(Messages.DSErrorReporter_invalidPolicyValue,
 				name, policy);
 		Attr attr = element
@@ -242,8 +246,9 @@ public class DSErrorReporter extends XMLErrorReporter {
 				cardinality);
 		Attr attr = element
 				.getAttributeNode(IDSConstants.ATTRIBUTE_REFERENCE_CARDINALITY);
-		if (attr == null || attr.getValue() == null || attr.getName() == null)
+		if (attr == null || attr.getValue() == null || attr.getName() == null) {
 			return;
+		}
 		report(message, getLine(element, attr.getName()), ERROR,
 				PDEMarkerFactory.CAT_OTHER);
 	}
@@ -316,8 +321,9 @@ public class DSErrorReporter extends XMLErrorReporter {
 		while (st.hasMoreTokens()) {
 			String token = st.nextToken();
 			token = token.trim();
-			if (token.length() > 0)
+			if (token.length() > 0) {
 				validatePropertySpecificTypeValue(type, token, element);
+			}
 		}
 	}
 
@@ -395,8 +401,9 @@ public class DSErrorReporter extends XMLErrorReporter {
 			String propertyType = property.getPropertyType();
 			if (propertyType == null
 					|| propertyType
-							.equals(IDSConstants.VALUE_PROPERTY_TYPE_STRING))
+							.equals(IDSConstants.VALUE_PROPERTY_TYPE_STRING)) {
 				return; // It's OK for a property of type "String" to have a
+			}
 			// value of "".
 			if (property.getPropertyValue().equals("")) { //$NON-NLS-1$
 				String propertyName = property.getPropertyName();
@@ -601,14 +608,16 @@ public class DSErrorReporter extends XMLErrorReporter {
 	private void validateEmpty(Element element, Attr attr) {
 		if (attr != null) {
 			String value = attr.getValue();
-			if (value.equalsIgnoreCase("")) //$NON-NLS-1$
+			if (value.equalsIgnoreCase("")) { //$NON-NLS-1$
 				reportIllegalEmptyAttributeValue(element, attr);
+			}
 		}
 	}
 
 	private void reportIllegalEmptyAttributeValue(Element element, Attr attr) {
-		if (attr == null || attr.getValue() == null || attr.getName() == null)
+		if (attr == null || attr.getValue() == null || attr.getName() == null) {
 			return;
+		}
 		String message = NLS.bind(Messages.DSErrorReporter_emptyAttrValue, attr
 				.getName());
 		report(message, getLine(element, attr.getName()), ERROR,
