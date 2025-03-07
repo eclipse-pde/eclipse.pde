@@ -53,14 +53,17 @@ public abstract class AbstractSchemaPerfTest extends PerformanceTestCase {
 
 	private void setUpSchemaFile() throws Exception, IOException {
 		Bundle bundle = FrameworkUtil.getBundle(AbstractSchemaPerfTest.class);
-		if (bundle == null)
+		if (bundle == null) {
 			throw new Exception("ERROR:  Bundle uninitialized"); //$NON-NLS-1$
+		}
 		URL url = bundle.getEntry(F_FILENAME);
-		if (url == null)
+		if (url == null) {
 			throw new Exception("ERROR:  URL not found:  " + F_FILENAME); //$NON-NLS-1$
+		}
 		String path = FileLocator.resolve(url).getPath();
-		if ("".equals(path)) //$NON-NLS-1$
+		if ("".equals(path)) { //$NON-NLS-1$
 			throw new Exception("ERROR:  URL unresolved:  " + F_FILENAME); //$NON-NLS-1$
+		}
 		fXSDFile = new File(path);
 	}
 

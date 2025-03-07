@@ -514,9 +514,11 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 
 	private static RequireBundleObject getBundle(RequireBundleHeader header, String id) {
 		RequireBundleObject[] bundles = header.getRequiredBundles();
-		for (RequireBundleObject bundle : bundles)
-			if (bundle.getId().equals(id))
+		for (RequireBundleObject bundle : bundles) {
+			if (bundle.getId().equals(id)) {
 				return bundle;
+			}
+		}
 		return null;
 	}
 

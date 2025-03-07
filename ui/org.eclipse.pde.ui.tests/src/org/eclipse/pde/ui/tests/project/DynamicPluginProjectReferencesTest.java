@@ -77,8 +77,9 @@ public class DynamicPluginProjectReferencesTest {
 		IBuildConfiguration[] referencedBuildConfigs = coreCommandsProject
 				.getReferencedBuildConfigs(coreCommandsProject.getActiveBuildConfig().getName(), false);
 		for (IBuildConfiguration reference : referencedBuildConfigs) {
-			if (reference.getProject() == osgiProject)
+			if (reference.getProject() == osgiProject) {
 				return;
+			}
 		}
 
 		Assert.fail("references should include local osgi project: " + Arrays.toString(referencedBuildConfigs));
@@ -101,8 +102,9 @@ public class DynamicPluginProjectReferencesTest {
 		IBuildConfiguration[] referencedBuildConfigs = importingTargetBundle
 				.getReferencedBuildConfigs(importingTargetBundle.getActiveBuildConfig().getName(), false);
 		for (IBuildConfiguration reference : referencedBuildConfigs) {
-			if (reference.getProject() == osgiProject)
+			if (reference.getProject() == osgiProject) {
 				return;
+			}
 		}
 
 		Assert.fail("references should include local osgi project: " + Arrays.toString(referencedBuildConfigs));
