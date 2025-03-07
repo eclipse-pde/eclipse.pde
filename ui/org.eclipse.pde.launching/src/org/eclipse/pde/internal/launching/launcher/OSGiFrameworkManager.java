@@ -44,8 +44,9 @@ public class OSGiFrameworkManager implements IRegistryChangeListener {
 	private Map<String, IConfigurationElement> fFrameworks;
 
 	public IConfigurationElement[] getFrameworks() {
-		if (fFrameworks == null)
+		if (fFrameworks == null) {
 			loadElements();
+		}
 		return fFrameworks.values().toArray(new IConfigurationElement[fFrameworks.size()]);
 	}
 
@@ -60,8 +61,9 @@ public class OSGiFrameworkManager implements IRegistryChangeListener {
 		IConfigurationElement[] elements = registry.getConfigurationElementsFor(POINT_ID);
 		for (IConfigurationElement element : elements) {
 			String id = element.getAttribute(ATT_ID);
-			if (id == null || element.getAttribute(ATT_NAME) == null || element.getAttribute(ATT_DELEGATE) == null)
+			if (id == null || element.getAttribute(ATT_NAME) == null || element.getAttribute(ATT_DELEGATE) == null) {
 				continue;
+			}
 			fFrameworks.put(id, element);
 		}
 	}
@@ -70,8 +72,9 @@ public class OSGiFrameworkManager implements IRegistryChangeListener {
 		Arrays.sort(elems, (o1, o2) -> {
 			String name1 = o1.getAttribute(ATT_NAME);
 			String name2 = o2.getAttribute(ATT_NAME);
-			if (name1 != null)
+			if (name1 != null) {
 				return name1.compareToIgnoreCase(name2);
+			}
 			return 1;
 		});
 		return elems;
@@ -92,15 +95,17 @@ public class OSGiFrameworkManager implements IRegistryChangeListener {
 	}
 
 	public OSGiLaunchConfigurationInitializer getInitializer(String frameworkID) {
-		if (fFrameworks == null)
+		if (fFrameworks == null) {
 			loadElements();
+		}
 		if (fFrameworks.containsKey(frameworkID)) {
 			try {
 				IConfigurationElement element = fFrameworks.get(frameworkID);
 				if (element.getAttribute(ATT_INITIALIZER) != null) {
 					Object result = element.createExecutableExtension(ATT_INITIALIZER);
-					if (result instanceof OSGiLaunchConfigurationInitializer)
+					if (result instanceof OSGiLaunchConfigurationInitializer) {
 						return (OSGiLaunchConfigurationInitializer) result;
+					}
 				}
 			} catch (CoreException e) {
 			}
@@ -109,14 +114,16 @@ public class OSGiFrameworkManager implements IRegistryChangeListener {
 	}
 
 	public LaunchConfigurationDelegate getFrameworkLauncher(String frameworkID) {
-		if (fFrameworks == null)
+		if (fFrameworks == null) {
 			loadElements();
+		}
 		if (fFrameworks.containsKey(frameworkID)) {
 			try {
 				IConfigurationElement element = fFrameworks.get(frameworkID);
 				Object result = element.createExecutableExtension(ATT_DELEGATE);
-				if (result instanceof LaunchConfigurationDelegate)
+				if (result instanceof LaunchConfigurationDelegate) {
 					return (LaunchConfigurationDelegate) result;
+				}
 			} catch (CoreException e) {
 			}
 		}
@@ -124,8 +131,9 @@ public class OSGiFrameworkManager implements IRegistryChangeListener {
 	}
 
 	public String getFrameworkName(String frameworkID) {
-		if (fFrameworks == null)
+		if (fFrameworks == null) {
 			loadElements();
+		}
 		if (fFrameworks.containsKey(frameworkID)) {
 			IConfigurationElement element = fFrameworks.get(frameworkID);
 			return element.getAttribute(ATT_NAME);

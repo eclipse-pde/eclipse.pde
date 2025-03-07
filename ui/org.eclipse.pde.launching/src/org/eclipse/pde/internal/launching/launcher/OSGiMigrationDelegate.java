@@ -32,8 +32,9 @@ public class OSGiMigrationDelegate extends PDEMigrationDelegate {
 			wc.setAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, "3.3"); //$NON-NLS-1$
 			StringBuilder vmArgs = new StringBuilder(wc.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "")); //$NON-NLS-1$
 			if (vmArgs.indexOf("-Declipse.ignoreApp") == -1) { //$NON-NLS-1$
-				if (vmArgs.length() > 0)
+				if (vmArgs.length() > 0) {
 					vmArgs.append(" "); //$NON-NLS-1$
+				}
 				vmArgs.append("-Declipse.ignoreApp=true"); //$NON-NLS-1$
 			}
 			if (vmArgs.indexOf("-Dosgi.noShutdown") == -1) { //$NON-NLS-1$

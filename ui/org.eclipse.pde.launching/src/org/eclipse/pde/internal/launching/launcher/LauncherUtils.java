@@ -129,8 +129,9 @@ public class LauncherUtils {
 		if (isLocked) {
 			Status status = new Status(IStatus.ERROR, IPDEConstants.PLUGIN_ID, WORKSPACE_LOCKED, null, null);
 			IStatusHandler statusHandler = DebugPlugin.getDefault().getStatusHandler(status);
-			if (statusHandler != null)
+			if (statusHandler != null) {
 				statusHandler.handleStatus(status, new Object[] {workspace, configuration, launchMode});
+			}
 			throw new CoreException(Status.CANCEL_STATUS);
 		}
 
@@ -141,13 +142,15 @@ public class LauncherUtils {
 				if (configuration.getAttribute(IPDEConstants.DOCLEARLOG, false)) {
 					Status status = new Status(IStatus.ERROR, IPDEConstants.PLUGIN_ID, CLEAR_LOG, null, null);
 					IStatusHandler statusHandler = DebugPlugin.getDefault().getStatusHandler(status);
-					if (statusHandler != null)
+					if (statusHandler != null) {
 						result = ((Integer) statusHandler.handleStatus(status, null)).intValue();
+					}
 				} else {
 					Status status = new Status(IStatus.ERROR, IPDEConstants.PLUGIN_ID, DELETE_WORKSPACE, null, null);
 					IStatusHandler statusHandler = DebugPlugin.getDefault().getStatusHandler(status);
-					if (statusHandler != null)
+					if (statusHandler != null) {
 						result = ((Integer) statusHandler.handleStatus(status, workspaceFile.getPath())).intValue();
+					}
 				}
 
 				if (result == 2 /*Cancel Button*/ || result == -1 /*Dialog close button*/) {
@@ -177,8 +180,9 @@ public class LauncherUtils {
 
 	public static void validateProjectDependencies(ILaunchConfiguration launch, final IProgressMonitor monitor) {
 		PDEPreferencesManager store = PDELaunchingPlugin.getDefault().getPreferenceManager();
-		if (!store.getBoolean(org.eclipse.pde.internal.launching.ILaunchingPreferenceConstants.PROP_AUTO_MANAGE))
+		if (!store.getBoolean(org.eclipse.pde.internal.launching.ILaunchingPreferenceConstants.PROP_AUTO_MANAGE)) {
 			return;
+		}
 
 		String timeStamp;
 		boolean useDefault, autoAdd;
@@ -187,26 +191,29 @@ public class LauncherUtils {
 			autoAdd = launch.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
 			useDefault = launch.getAttribute(IPDELauncherConstants.USE_DEFAULT, true);
 			final ArrayList<IProject> projects = new ArrayList<>();
-			if (useDefault)
+			if (useDefault) {
 				handleUseDefault(timeStamp, projects);
-			else if (autoAdd)
+			} else if (autoAdd) {
 				handleDeselectedPlugins(launch, timeStamp, projects);
-			else
+			} else {
 				handleSelectedPlugins(launch, timeStamp, projects);
+			}
 
 			// If the set of projects being launched has changed, offer to organize the manifests
 			if (!projects.isEmpty()) {
 				Status status = new Status(IStatus.ERROR, IPDEConstants.PLUGIN_ID, ORGANIZE_MANIFESTS, null, null);
 				IStatusHandler statusHandler = DebugPlugin.getDefault().getStatusHandler(status);
-				if (statusHandler != null)
+				if (statusHandler != null) {
 					statusHandler.handleStatus(status, new Object[] {projects, monitor, getLastRun()});
+				}
 
 				// Store the timestamp so we can avoid repeatedly organizing the same manifest files
 				ILaunchConfigurationWorkingCopy wc = null;
-				if (launch.isWorkingCopy())
+				if (launch.isWorkingCopy()) {
 					wc = (ILaunchConfigurationWorkingCopy) launch;
-				else
+				} else {
 					wc = launch.getWorkingCopy();
+				}
 				wc.setAttribute(TIMESTAMP, Long.toString(System.currentTimeMillis()));
 				wc.doSave();
 			}
@@ -224,12 +231,14 @@ public class LauncherUtils {
 				if (entrie.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
 					File file;
 					IPath location = entrie.getOutputLocation();
-					if (location == null)
+					if (location == null) {
 						location = jp.getOutputLocation();
+					}
 					IResource res = project.getWorkspace().getRoot().findMember(location);
 					IPath path = res == null ? null : res.getLocation();
-					if (path == null)
+					if (path == null) {
 						continue;
+					}
 					file = path.toFile();
 					ArrayDeque<File> files = new ArrayDeque<>();
 					files.push(file);
@@ -238,11 +247,13 @@ public class LauncherUtils {
 						if (file.isDirectory()) {
 							File[] children = file.listFiles();
 							if (children != null) {
-								for (File element : children)
+								for (File element : children) {
 									files.push(element);
+								}
 							}
-						} else if (file.getName().endsWith(".class") && timeStamp < file.lastModified()) //$NON-NLS-1$
+						} else if (file.getName().endsWith(".class") && timeStamp < file.lastModified()) { //$NON-NLS-1$
 							timeStamp = file.lastModified();
+						}
 					}
 				}
 			}
@@ -250,8 +261,9 @@ public class LauncherUtils {
 			for (IFile file : otherFiles) {
 				if (file != null) {
 					long fileTimeStamp = file.getRawLocation().toFile().lastModified();
-					if (timeStamp < fileTimeStamp)
+					if (timeStamp < fileTimeStamp) {
 						timeStamp = fileTimeStamp;
+					}
 				}
 			}
 			return Long.toString(timeStamp);
@@ -263,11 +275,13 @@ public class LauncherUtils {
 	private static void handleUseDefault(String launcherTimeStamp, ArrayList<IProject> projects) {
 		IProject[] projs = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projs.length; i++) {
-			if (!WorkspaceModelManager.isPluginProject(projs[i]))
+			if (!WorkspaceModelManager.isPluginProject(projs[i])) {
 				continue;
+			}
 			String timestamp = getTimeStamp(projs[i]);
-			if (timestamp.compareTo(launcherTimeStamp) > 0 && shouldAdd(projs[i], launcherTimeStamp, timestamp))
+			if (timestamp.compareTo(launcherTimeStamp) > 0 && shouldAdd(projs[i], launcherTimeStamp, timestamp)) {
 				projects.add(projs[i]);
+			}
 		}
 	}
 
@@ -280,8 +294,9 @@ public class LauncherUtils {
 			if (res != null) {
 				IProject project = res.getProject();
 				String projTimeStamp = getTimeStamp(project);
-				if (projTimeStamp.compareTo(timeStamp) > 0 && shouldAdd(project, timeStamp, projTimeStamp))
+				if (projTimeStamp.compareTo(timeStamp) > 0 && shouldAdd(project, timeStamp, projTimeStamp)) {
 					projects.add(project);
+				}
 			}
 		}
 	}
@@ -290,20 +305,24 @@ public class LauncherUtils {
 		Map<IPluginModelBase, String> deSelectedPlugins = BundleLauncherHelper.getWorkspaceBundleMap(config);
 		IProject[] projs = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projs.length; i++) {
-			if (!WorkspaceModelManager.isPluginProject(projs[i]))
+			if (!WorkspaceModelManager.isPluginProject(projs[i])) {
 				continue;
+			}
 			IPluginModelBase base = PluginRegistry.findModel(projs[i]);
-			if (base == null || deSelectedPlugins.containsKey(base))
+			if (base == null || deSelectedPlugins.containsKey(base)) {
 				continue;
+			}
 			String timestamp = getTimeStamp(projs[i]);
-			if (timestamp.compareTo(launcherTimeStamp) > 0 && shouldAdd(projs[i], launcherTimeStamp, timestamp))
+			if (timestamp.compareTo(launcherTimeStamp) > 0 && shouldAdd(projs[i], launcherTimeStamp, timestamp)) {
 				projects.add(projs[i]);
+			}
 		}
 	}
 
 	public static final void shutdown() {
-		if (fLastRun == null)
+		if (fLastRun == null) {
 			return;
+		}
 		try (FileOutputStream stream = new FileOutputStream(new File(getDirectory(), FILE_NAME))) {
 			fLastRun.store(stream, "Cached timestamps"); //$NON-NLS-1$
 			stream.flush();
@@ -315,8 +334,9 @@ public class LauncherUtils {
 	private static File getDirectory() {
 		IPath path = PDECore.getDefault().getStateLocation().append(".cache"); //$NON-NLS-1$
 		File directory = new File(path.toOSString());
-		if (!directory.exists() || !directory.isDirectory())
+		if (!directory.exists() || !directory.isDirectory()) {
 			directory.mkdirs();
+		}
 		return directory;
 	}
 
@@ -339,8 +359,9 @@ public class LauncherUtils {
 
 	private static boolean shouldAdd(IProject proj, String launcherTS, String fileSystemTS) {
 		String projTS = (String) getLastRun().get(proj.getName());
-		if (projTS == null)
+		if (projTS == null) {
 			return true;
+		}
 		return ((projTS.compareTo(launcherTS) < 0) || (projTS.compareTo(fileSystemTS) < 0));
 	}
 

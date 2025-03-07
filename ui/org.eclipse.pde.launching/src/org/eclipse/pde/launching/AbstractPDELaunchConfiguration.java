@@ -125,10 +125,11 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 		setDefaultSourceLocator(configuration);
 		manageLaunch(launch);
 		IVMRunner runner = getVMRunner(configuration, mode);
-		if (runner != null)
+		if (runner != null) {
 			commandLine = runner.showCommandLine(runnerConfig, launch, subMonitor);
-		else
+		} else {
 			subMonitor.setCanceled(true);
+		}
 
 		return commandLine;
 	}
@@ -160,10 +161,11 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 		setDefaultSourceLocator(configuration);
 		manageLaunch(launch);
 		IVMRunner runner = getVMRunner(configuration, mode);
-		if (runner != null)
+		if (runner != null) {
 			runner.run(runnerConfig, launch, subMonitor.split(25));
-		else
+		} else {
 			subMonitor.setCanceled(true);
+		}
 
 	}
 
@@ -348,8 +350,9 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 		for (String userArg : userArgs) {
 			// be forgiving if people have tracing turned on and forgot
 			// to remove the -debug from the program args field.
-			if (userArg.equals("-debug") && programArgs.contains("-debug")) //$NON-NLS-1$ //$NON-NLS-2$
+			if (userArg.equals("-debug") && programArgs.contains("-debug")) { //$NON-NLS-1$ //$NON-NLS-2$
 				continue;
+			}
 			userDefined.add(userArg);
 		}
 
@@ -441,8 +444,9 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 * @since 3.3
 	 */
 	public String getMainClass() {
-		if (TargetPlatformHelper.getTargetVersion() >= 3.3)
+		if (TargetPlatformHelper.getTargetVersion() >= 3.3) {
 			return "org.eclipse.equinox.launcher.Main"; //$NON-NLS-1$
+		}
 		return "org.eclipse.core.launcher.Main"; //$NON-NLS-1$
 	}
 

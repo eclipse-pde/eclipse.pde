@@ -50,8 +50,9 @@ public class EclipsePluginValidationOperation extends LaunchValidationOperation 
 	@Override
 	public void run(IProgressMonitor monitor) throws CoreException {
 		super.run(monitor);
-		if (!fExtensionErrors.isEmpty())
+		if (!fExtensionErrors.isEmpty()) {
 			fExtensionErrors.clear();
+		}
 		validateExtensions();
 	}
 
@@ -65,10 +66,11 @@ public class EclipsePluginValidationOperation extends LaunchValidationOperation 
 					Status status = new Status(IStatus.ERROR, IPDEConstants.PLUGIN_ID, CREATE_EXTENSION_ERROR_CODE, message, null);
 					IStatusHandler statusHandler = DebugPlugin.getDefault().getStatusHandler(status);
 					Object extensionError = null;
-					if (statusHandler == null)
+					if (statusHandler == null) {
 						extensionError = status.getMessage();
-					else
+					} else {
 						extensionError = statusHandler.handleStatus(status, element);
+					}
 					fExtensionErrors.put(extensionError, EMPTY);
 				}
 			}

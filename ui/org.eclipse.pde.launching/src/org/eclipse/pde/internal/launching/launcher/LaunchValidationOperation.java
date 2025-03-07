@@ -105,10 +105,11 @@ public class LaunchValidationOperation implements IWorkspaceRunnable {
 			// find the input stream to the profile properties file
 			if (location.isDirectory()) {
 				File file = new File(location, filename);
-				if (file.exists())
+				if (file.exists()) {
 					try (InputStream is = new FileInputStream(file)) {
 						return loadProperties(is);
 					}
+				}
 			} else {
 				try (ZipFile zipFile = new ZipFile(location, ZipFile.OPEN_READ)) {
 					ZipEntry entry = zipFile.getEntry(filename);

@@ -120,8 +120,9 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 		} else {
 			bundles = getBundles(autostart);
 		}
-		if (bundles.length() > 0)
+		if (bundles.length() > 0) {
 			properties.put("osgi.bundles", bundles); //$NON-NLS-1$
+		}
 
 		if (!"3.3".equals(configuration.getAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, ""))) { //$NON-NLS-1$ //$NON-NLS-2$
 			properties.put("eclipse.ignoreApp", "true"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -137,13 +138,15 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 			IPluginModelBase model = entry.getKey();
 			String id = model.getPluginBase().getId();
 			if (!IPDEBuildConstants.BUNDLE_OSGI.equals(id)) {
-				if (buffer.length() > 0)
+				if (buffer.length() > 0) {
 					buffer.append(","); //$NON-NLS-1$
+				}
 				buffer.append(LaunchConfigurationHelper.getBundleURL(model, true));
 
 				// fragments must not be started or have a start level
-				if (model instanceof IFragmentModel)
+				if (model instanceof IFragmentModel) {
 					continue;
+				}
 
 				String data = entry.getValue();
 				appendStartData(buffer, data, defaultAuto);
@@ -163,15 +166,18 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 		int index = startData.indexOf(':');
 		String level = index > 0 ? startData.substring(0, index) : "default"; //$NON-NLS-1$
 		String auto = index > 0 && index < startData.length() - 1 ? startData.substring(index + 1) : "default"; //$NON-NLS-1$
-		if ("default".equals(auto)) //$NON-NLS-1$
+		if ("default".equals(auto)) { //$NON-NLS-1$
 			auto = Boolean.toString(defaultAuto);
-		if (!level.equals("default") || "true".equals(auto)) //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		if (!level.equals("default") || "true".equals(auto)) { //$NON-NLS-1$ //$NON-NLS-2$
 			buffer.append("@"); //$NON-NLS-1$
+		}
 
 		if (!level.equals("default")) { //$NON-NLS-1$
 			buffer.append(level);
-			if ("true".equals(auto)) //$NON-NLS-1$
+			if ("true".equals(auto)) { //$NON-NLS-1$
 				buffer.append(":"); //$NON-NLS-1$
+			}
 		}
 		if ("true".equals(auto)) { //$NON-NLS-1$
 			buffer.append("start"); //$NON-NLS-1$
@@ -210,8 +216,9 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 	@Override
 	protected void clear(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
 		// clear config area, if necessary
-		if (configuration.getAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, false))
+		if (configuration.getAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, false)) {
 			CoreUtility.deleteContent(getConfigDir(configuration), monitor);
+		}
 	}
 
 }

@@ -164,8 +164,9 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 					IClasspathEntry[] entries = PDEClasspathContainer.getExternalEntries(model);
 					for (IClasspathEntry entrie : entries) {
 						IRuntimeClasspathEntry rte = convertClasspathEntry(entrie);
-						if (rte != null)
+						if (rte != null) {
 							result.add(rte);
+						}
 					}
 					break;
 				}
@@ -179,8 +180,9 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 	}
 
 	ISourceContainer[] getJreSourceContainers() throws CoreException {
-		if (fJreSourceContainers != null)
+		if (fJreSourceContainers != null) {
 			return fJreSourceContainers;
+		}
 
 		IRuntimeClasspathEntry unresolvedJreEntry = VMHelper.getJREEntry(getLaunchConfiguration());
 		IRuntimeClasspathEntry[] resolvedJreEntries = JavaRuntime.resolveRuntimeClasspathEntry(unresolvedJreEntry, getLaunchConfiguration());
@@ -193,8 +195,9 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 	}
 
 	private IRuntimeClasspathEntry convertClasspathEntry(IClasspathEntry entry) {
-		if (entry == null)
+		if (entry == null) {
 			return null;
+		}
 
 		IPath srcPath = entry.getSourceAttachmentPath();
 		if (srcPath != null && srcPath.segmentCount() > 0) {
@@ -214,27 +217,31 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 			if (element instanceof IPackageFragmentRoot) {
 				IPackageFragmentRoot archive = (IPackageFragmentRoot) element;
 				IPath path = archive.getSourceAttachmentPath();
-				if (path == null || path.segmentCount() == 0)
+				if (path == null || path.segmentCount() == 0) {
 					continue;
+				}
 
 				IPath rootPath = archive.getSourceAttachmentRootPath();
 				boolean detectRootPath = rootPath != null && rootPath.segmentCount() > 0;
 
 				IFile archiveFile = root.getFile(path);
-				if (archiveFile.exists())
+				if (archiveFile.exists()) {
 					return new ArchiveSourceContainer(archiveFile, detectRootPath);
+				}
 
 				File file = path.toFile();
-				if (file.exists())
+				if (file.exists()) {
 					return new ExternalArchiveSourceContainer(file.getAbsolutePath(), detectRootPath);
+				}
 			}
 		}
 		return null;
 	}
 
 	private void addProjectSourceContainers(IProject project, List<IRuntimeClasspathEntry> result) throws CoreException {
-		if (project == null || !project.hasNature(JavaCore.NATURE_ID))
+		if (project == null || !project.hasNature(JavaCore.NATURE_ID)) {
 			return;
+		}
 
 		IJavaProject jProject = JavaCore.create(project);
 		result.add(JavaRuntime.newProjectRuntimeClasspathEntry(jProject));
@@ -243,8 +250,9 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 		for (IClasspathEntry entry : entries) {
 			if (entry.getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
 				IRuntimeClasspathEntry rte = convertClasspathEntry(entry);
-				if (rte != null)
+				if (rte != null) {
 					result.add(rte);
+				}
 			}
 		}
 

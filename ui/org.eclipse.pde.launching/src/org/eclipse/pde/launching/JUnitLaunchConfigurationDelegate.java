@@ -134,8 +134,9 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 
 	@Override
 	public String verifyMainTypeName(ILaunchConfiguration configuration) throws CoreException {
-		if (TargetPlatformHelper.getTargetVersion() >= 3.3)
+		if (TargetPlatformHelper.getTargetVersion() >= 3.3) {
 			return "org.eclipse.equinox.launcher.Main"; //$NON-NLS-1$
+		}
 		return "org.eclipse.core.launcher.Main"; //$NON-NLS-1$
 	}
 
@@ -254,8 +255,9 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		for (String userArg : userArgs) {
 			// be forgiving if people have tracing turned on and forgot
 			// to remove the -debug from the program args field.
-			if (userArg.equals("-debug") && programArgs.contains("-debug")) //$NON-NLS-1$ //$NON-NLS-2$
+			if (userArg.equals("-debug") && programArgs.contains("-debug")) { //$NON-NLS-1$ //$NON-NLS-2$
 				continue;
+			}
 			programArgs.add(userArg);
 		}
 
@@ -324,8 +326,9 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		}
 
 		// launch the UI test application
-		if (application == null)
+		if (application == null) {
 			application = IPDEConstants.UI_TEST_APPLICATION;
+		}
 		return application;
 	}
 
@@ -370,8 +373,9 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	 * @return result of concatenation
 	 */
 	private String concatArg(String vmArgs, String arg) {
-		if (vmArgs.length() > 0 && !vmArgs.endsWith(" ")) //$NON-NLS-1$
+		if (vmArgs.length() > 0 && !vmArgs.endsWith(" ")) { //$NON-NLS-1$
 			vmArgs = vmArgs.concat(" "); //$NON-NLS-1$
+		}
 		return vmArgs.concat(arg);
 	}
 
@@ -436,8 +440,9 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	 * @return a directory where the configuration area is located
 	 */
 	protected File getConfigurationDirectory(ILaunchConfiguration configuration) {
-		if (fConfigDir == null)
+		if (fConfigDir == null) {
 			fConfigDir = LaunchConfigurationHelper.getConfigurationArea(configuration);
+		}
 		return fConfigDir;
 	}
 
