@@ -162,8 +162,9 @@ public class ContextDataPart {
 		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			// For root elements at first level, we keep Local before Inherited
-			if ((e1 == ContextDataProvider.LOCAL_VALUE_NODE) || (e2 == ContextDataProvider.LOCAL_VALUE_NODE))
+			if ((e1 == ContextDataProvider.LOCAL_VALUE_NODE) || (e2 == ContextDataProvider.LOCAL_VALUE_NODE)) {
 				return -1;
+			}
 
 			// Now can compare the text from label provider.
 			String lp1 = labelProvider.getText(e1);

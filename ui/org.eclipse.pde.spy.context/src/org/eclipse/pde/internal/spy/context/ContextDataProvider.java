@@ -107,8 +107,9 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 
 	@Override
 	public Object[] getChildren(Object inputElement) {
-		if (selectedContext == null)
+		if (selectedContext == null) {
 			return EMPTY_RESULT;
+		}
 
 		if (inputElement == LOCAL_VALUE_NODE) {
 			Collection<Object> result = new ArrayList<>();
@@ -118,12 +119,13 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 			// For context function, we have to compute the value (if possible),
 			// and display it as a standard value
 			Map<String, Object> cfValues = new HashMap<>();
-			for (String key : selectedContext.localContextFunction().keySet())
+			for (String key : selectedContext.localContextFunction().keySet()) {
 				try {
 					cfValues.put(key, selectedContext.get(key));
 				} catch (Throwable e) {
 					cfValues.put(key, NO_VALUE_COULD_BE_COMPUTED + " (Exception : " + e.getClass().getName() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
+			}
 			result.addAll(cfValues.entrySet());
 			return result.toArray();
 
@@ -139,8 +141,9 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 
 			if (selectedContext.getRawListenerNames() != null) {
 				for (String name : selectedContext.getRawListenerNames()) {
-					if (!localKeys.contains(name) && !localContextFunctionsKeys.contains(name))
+					if (!localKeys.contains(name) && !localContextFunctionsKeys.contains(name)) {
 						result.add(name);
+					}
 				}
 			}
 			return result.isEmpty() ? new String[] { NO_VALUES_FOUND } : result.toArray();
@@ -164,8 +167,9 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 	@Override
 	@SuppressWarnings("unchecked")
 	public String getText(Object element) {
-		if (selectedContext == null)
+		if (selectedContext == null) {
 			return null;
+		}
 
 		if (element instanceof Map.Entry) {
 			Map.Entry<String, Object> mapEntry = (Map.Entry<String, Object>) element;
@@ -176,14 +180,16 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 			// value in value
 			String txt = super.getText(element);
 			if (displayKey) {
-				if (txt.contains("#")) //$NON-NLS-1$
+				if (txt.contains("#")) { //$NON-NLS-1$
 					return INJECTED_IN_METHOD;
-				else if (txt.contains("@")) //$NON-NLS-1$
+				} else if (txt.contains("@")) { //$NON-NLS-1$
 					return UPDATED_IN_CLASS;
-				else
+				} else {
 					return INJECTED_IN_FIELD;
-			} else
+				}
+			} else {
 				return txt;
+			}
 		}
 
 		return displayKey ? super.getText(element) : null;
@@ -194,8 +200,9 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 		// Return magenta color if the value could not be yet computed (for
 		// context functions)
 		String s = getText(element);
-		if ((s != null) && s.startsWith(NO_VALUE_COULD_BE_COMPUTED))
+		if ((s != null) && s.startsWith(NO_VALUE_COULD_BE_COMPUTED)) {
 			return COLOR_IF_NOT_COMPUTED;
+		}
 
 		// Return blue color if the string matches the search
 		return (contextFilter.matchText(s)) ? COLOR_IF_FOUND : null;
@@ -210,8 +217,9 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 
 	@Override
 	public Image getImage(Object element) {
-		if (!displayKey) // No image in value column, only in key column
+		if (!displayKey) { // No image in value column, only in key column
 			return null;
+		}
 
 		if (element == LOCAL_VALUE_NODE) {
 			return selectedContext == null ? null : imgReg.get(LOCAL_VARIABLE_IMG_KEY);
@@ -225,17 +233,18 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 			// value in value column
 			String txt = super.getText(element);
 
-			if (txt.contains("#")) //$NON-NLS-1$
+			if (txt.contains("#")) { //$NON-NLS-1$
 				return imgReg.get(PUBLIC_METHOD_IMG_KEY);
-			else if (txt.contains("@")) //$NON-NLS-1$
+			} else if (txt.contains("@")) { //$NON-NLS-1$
 				return imgReg.get(CONTEXT_FUNCTION_IMG_KEY);
-			else
+			} else {
 				return imgReg.get(PUBLIC_FIELD_IMG_KEY);
+			}
 
 		} else if (element instanceof Map.Entry) {
-			if (isAContextKeyFunction(element))
+			if (isAContextKeyFunction(element)) {
 				return imgReg.get(CONTEXT_FUNCTION_IMG_KEY);
-			else {
+			} else {
 				// It is a value. If it is injected somewhere, display the
 				// inject image
 				return hasChildren(element) ? imgReg.get(INJECT_IMG_KEY) : imgReg.get(VALUE_IN_CONTEXT_IMG_KEY);
@@ -262,11 +271,12 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 
 			return Messages.ContextDataProvider_26 + fname;
 		} else {
-			if (hasChildren(element))
+			if (hasChildren(element)) {
 				return Messages.ContextDataProvider_27;
-			else {
-				if (element instanceof Map.Entry)
+			} else {
+				if (element instanceof Map.Entry) {
 					return Messages.ContextDataProvider_28;
+				}
 			}
 
 		}
@@ -303,8 +313,9 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 
 	@Override
 	public Object getParent(Object element) {
-		if (element == LOCAL_VALUE_NODE || element == INHERITED_INJECTED_VALUE_NODE)
+		if (element == LOCAL_VALUE_NODE || element == INHERITED_INJECTED_VALUE_NODE) {
 			return null;
+		}
 
 		// Not computed
 		return null;

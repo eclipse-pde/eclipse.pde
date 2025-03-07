@@ -44,8 +44,9 @@ public class ContextDataFilter extends ViewerFilter {
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		if ((element == ContextDataProvider.LOCAL_VALUE_NODE)
-				|| (element == ContextDataProvider.INHERITED_INJECTED_VALUE_NODE))
+				|| (element == ContextDataProvider.INHERITED_INJECTED_VALUE_NODE)) {
 			return true;
+		}
 
 		// Must only select objects matching the pattern or objects under a kept
 		// node (to see where it is injected)
@@ -73,10 +74,11 @@ public class ContextDataFilter extends ViewerFilter {
 
 	/** Set the pattern and use it as lowercase */
 	public void setPattern(String newPattern) {
-		if ((newPattern == null) || (newPattern.length() == 0))
+		if ((newPattern == null) || (newPattern.length() == 0)) {
 			pattern = null;
-		else
+		} else {
 			pattern = newPattern.toLowerCase();
+		}
 	}
 
 	/**
@@ -129,8 +131,9 @@ public class ContextDataFilter extends ViewerFilter {
 
 			if (currentContext.getRawListenerNames() != null) {
 				for (String name : currentContext.getRawListenerNames()) {
-					if (!localKeys.contains(name) && !localContextFunctionsKeys.contains(name))
+					if (!localKeys.contains(name) && !localContextFunctionsKeys.contains(name)) {
 						result.add(name);
+					}
 				}
 			}
 
