@@ -53,8 +53,9 @@ public class TocRemoveObjectAction extends Action {
 
 	@Override
 	public void run() {
-		if (fTocObjects == null)
+		if (fTocObjects == null) {
 			return;
+		}
 
 		for (int i = 0; i < fTocObjects.length; ++i) {
 			if (fTocObjects[i] != null && fTocObjects[i].canBeRemoved()) {

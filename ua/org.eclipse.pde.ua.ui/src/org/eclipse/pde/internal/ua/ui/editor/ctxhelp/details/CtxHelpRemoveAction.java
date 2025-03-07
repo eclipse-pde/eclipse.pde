@@ -45,8 +45,9 @@ public class CtxHelpRemoveAction extends Action {
 
 	@Override
 	public void run() {
-		if (fObjects == null)
+		if (fObjects == null) {
 			return;
+		}
 
 		for (int i = 0; i < fObjects.length; ++i) {
 			if (fObjects[i] != null && fObjects[i].canBeRemoved()) {

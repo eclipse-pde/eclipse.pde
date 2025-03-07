@@ -39,8 +39,9 @@ public abstract class CSAbstractEditor extends MultiSourceEditor {
 	public void contributeToToolbar(IToolBarManager manager) {
 		// Add the register cheat sheet link to the form title area
 		if (WorkspaceModelManager.isPluginProject(getCommonProject())
-				&& getAggregateModel().isEditable())
+				&& getAggregateModel().isEditable()) {
 			manager.add(createUIControlConRegisterCS());
+		}
 	}
 
 	private ControlContribution createUIControlConRegisterCS() {

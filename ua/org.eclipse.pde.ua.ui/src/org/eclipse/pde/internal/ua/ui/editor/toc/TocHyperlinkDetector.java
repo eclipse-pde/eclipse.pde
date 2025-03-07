@@ -35,8 +35,9 @@ public class TocHyperlinkDetector extends PDEHyperlinkDetector {
 	@Override
 	protected IHyperlink[] detectAttributeHyperlink(IDocumentAttributeNode attr) {
 		String attrValue = attr.getAttributeValue();
-		if (attrValue.length() == 0)
+		if (attrValue.length() == 0) {
 			return null;
+		}
 
 		IDocumentElementNode node = attr.getEnclosingElement();
 		if (node == null || !(node instanceof TocObject) || !((TocObject) node).getModel().isEditable()) {

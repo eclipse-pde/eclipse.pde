@@ -85,12 +85,14 @@ public class RegisterTocWizardPage extends WizardPage implements IRegisterTOCDat
 	private void initializePluginModel() {
 		IPluginModelBase base = PluginRegistry.findModel(getPluginProject());
 
-		if (base == null)
+		if (base == null) {
 			return;
-		if (base instanceof IBundlePluginModelBase)
+		}
+		if (base instanceof IBundlePluginModelBase) {
 			fExtensionsModel = ((IBundlePluginModelBase) base).getExtensionsModel();
-		else
+		} else {
 			fExtensionsModel = base;
+		}
 	}
 
 	private void updateUI() {
