@@ -108,8 +108,9 @@ public class PDERuntimePluginImages {
 	}
 
 	public static Image get(String key) {
-		if (PLUGIN_REGISTRY == null)
+		if (PLUGIN_REGISTRY == null) {
 			initialize();
+		}
 		return PLUGIN_REGISTRY.get(key);
 	}
 

@@ -61,8 +61,9 @@ public class SpyIDEUtil {
 				// ignore
 			}
 		}
-		if (project != null)
+		if (project != null) {
 			openInEditor(project, clazz);
+		}
 	}
 
 	public static void openInEditor(IJavaProject project, String clazz) {

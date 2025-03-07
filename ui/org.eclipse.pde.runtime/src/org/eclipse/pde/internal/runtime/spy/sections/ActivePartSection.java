@@ -55,12 +55,14 @@ public class ActivePartSection implements ISpySection {
 	@SuppressWarnings("restriction")
 	public void build(ScrolledForm form, SpyFormToolkit toolkit, ExecutionEvent event) {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
-		if (window == null) // if we don't have an active workbench, we don't have a valid selection to analyze
+		if (window == null) { // if we don't have an active workbench, we don't have a valid selection to analyze
 			return;
+		}
 
 		final IWorkbenchPart part = HandlerUtil.getActivePart(event);
-		if (part == null)
+		if (part == null) {
 			return; // (Bug 237764) if no active part let's do nothing ...
+		}
 
 		String partType = part instanceof IEditorPart ? "editor" : "view"; //$NON-NLS-1$ //$NON-NLS-2$
 		Section section = toolkit.createSection(form.getBody(), ExpandableComposite.TITLE_BAR);

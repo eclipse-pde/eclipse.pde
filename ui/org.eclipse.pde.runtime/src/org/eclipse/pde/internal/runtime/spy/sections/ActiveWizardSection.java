@@ -39,8 +39,9 @@ public class ActiveWizardSection implements ISpySection {
 	public void build(ScrolledForm form, SpyFormToolkit toolkit, ExecutionEvent event) {
 		final Shell shell = HandlerUtil.getActiveShell(event);
 		Object object = shell.getData();
-		if (object == null)
+		if (object == null) {
 			return;
+		}
 		Class<?> clazz = object.getClass();
 
 		if (object instanceof WizardDialog) {

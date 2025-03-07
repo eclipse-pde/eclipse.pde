@@ -33,8 +33,9 @@ public class ActiveShellSection implements ISpySection {
 	public void build(ScrolledForm form, SpyFormToolkit toolkit, ExecutionEvent event) {
 		final Shell shell = HandlerUtil.getActiveShell(event);
 		Object object = shell.getData();
-		if (object == null)
+		if (object == null) {
 			return;
+		}
 		Class<?> clazz = object.getClass();
 
 		Section section = toolkit.createSection(form.getBody(), ExpandableComposite.TITLE_BAR);

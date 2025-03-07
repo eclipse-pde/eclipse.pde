@@ -296,8 +296,9 @@ public class RegistryModel {
 		synchronized (services) {
 			for (Iterator<ServiceRegistration> i = services.values().iterator(); i.hasNext();) {
 				ServiceRegistration sr = i.next();
-				if (Arrays.equals(classes, sr.getName().getClasses()))
+				if (Arrays.equals(classes, sr.getName().getClasses())) {
 					result.add(sr);
+				}
 			}
 		}
 
@@ -333,8 +334,9 @@ public class RegistryModel {
 				Bundle bundle = i.next();
 
 				if (bundle.getSymbolicName().equals(symbolicName)) {
-					if (versionMatches(bundle.getVersion(), versionRange))
+					if (versionMatches(bundle.getVersion(), versionRange)) {
 						return bundle;
+					}
 				}
 			}
 		}
@@ -348,8 +350,9 @@ public class RegistryModel {
 
 	public Bundle[] getFragments(Bundle bundle) {
 		Set<Bundle> set = fragments.get(bundle.getSymbolicName());
-		if (set == null)
+		if (set == null) {
 			return new Bundle[0];
+		}
 
 		List<Bundle> result = new ArrayList<>(set.size());
 		Version hostVersion = Version.parseVersion(bundle.getVersion());
@@ -357,8 +360,9 @@ public class RegistryModel {
 			Bundle fragment = i.next();
 			String fragmentVersionOrRange = fragment.getFragmentHostVersion();
 
-			if (versionMatches(hostVersion, fragmentVersionOrRange))
+			if (versionMatches(hostVersion, fragmentVersionOrRange)) {
 				result.add(fragment);
+			}
 		}
 
 		return result.toArray(new Bundle[result.size()]);
