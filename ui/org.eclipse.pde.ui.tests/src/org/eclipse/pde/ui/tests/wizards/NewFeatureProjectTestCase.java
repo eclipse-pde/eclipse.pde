@@ -59,18 +59,21 @@ public class NewFeatureProjectTestCase extends NewProjectTestCase {
 	}
 
 	private void createFeature(FeatureData fd, boolean patch, Object modelObject) throws Exception {
-		if (fd == null)
+		if (fd == null) {
 			fd = DEFAULT_FEATURE_DATA;
+		}
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME);
 		IPath path = Platform.getLocation();
 		IRunnableWithProgress op;
-		if ((patch && !(modelObject instanceof IFeatureModel)) || (!patch && modelObject != null && !(modelObject instanceof IPluginBase[])))
+		if ((patch && !(modelObject instanceof IFeatureModel)) || (!patch && modelObject != null && !(modelObject instanceof IPluginBase[]))) {
 			fail("Unaccepted model object passed..." + modelObject);
+		}
 
-		if (patch)
+		if (patch) {
 			op = new CreateFeaturePatchOperation(project, path, fd, (IFeatureModel) modelObject, PDEPlugin.getActiveWorkbenchShell());
-		else
+		} else {
 			op = new CreateFeatureProjectOperation(project, path, fd, (IPluginBase[]) modelObject, PDEPlugin.getActiveWorkbenchShell());
+		}
 		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
 		progressService.runInUI(progressService, op, null);
 	}
@@ -89,9 +92,10 @@ public class NewFeatureProjectTestCase extends NewProjectTestCase {
 	@Test
 	public void testCreationFeaturePatch() throws Exception {
 		IFeatureModel[] models = PDECore.getDefault().getFeatureModelManager().getModels();
-		if (models.length == 0)
+		if (models.length == 0) {
 			// cant test patches if no feature models exist
 			return;
+		}
 		createFeature(DEFAULT_FEATURE_DATA, true, models[0]);
 		verifyProjectExistence();
 		verifyFeatureNature();

@@ -172,8 +172,9 @@ public abstract class AbstractBuildValidationTest {
 			return 0;
 		}
 
-		if (value == null)
+		if (value == null) {
 			return 0;
+		}
 		return value.intValue();
 	}
 
@@ -185,8 +186,9 @@ public abstract class AbstractBuildValidationTest {
 			value = "";
 		}
 
-		if (value == null || value.equalsIgnoreCase("\"\""))
+		if (value == null || value.equalsIgnoreCase("\"\"")) {
 			value = "";
+		}
 		return value.trim();
 	}
 
@@ -197,8 +199,9 @@ public abstract class AbstractBuildValidationTest {
 		} catch (Exception e) {
 			value = "";
 		}
-		if (value == null || value.equalsIgnoreCase("\"\""))
+		if (value == null || value.equalsIgnoreCase("\"\"")) {
 			value = "";
+		}
 		return value.trim();
 	}
 

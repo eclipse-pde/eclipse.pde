@@ -38,8 +38,9 @@ public class EnvironmentAnalyzerDelegate implements IExecutionEnvironmentAnalyze
 
 	@Override
 	public CompatibleEnvironment[] analyze(IVMInstall vm, IProgressMonitor monitor) throws CoreException {
-		if (!(vm instanceof IVMInstall2 vm2))
+		if (!(vm instanceof IVMInstall2 vm2)) {
 			return new CompatibleEnvironment[0];
+		}
 		ArrayList<CompatibleEnvironment> result = new ArrayList<>();
 		String javaVersion = vm2.getJavaVersion();
 		if (javaVersion != null) {
