@@ -117,9 +117,9 @@ public class CompCSWorkspaceModel extends CompCSModel implements
 	public void load() throws CoreException {
 		if (fFile.exists()) {
 			try (InputStream stream = new BufferedInputStream(fFile.getContents(true));) {
-				if (stream.available() > 0)
+				if (stream.available() > 0) {
 					load(stream, false);
-				else {
+				} else {
 					// if we have an empty file, then mark as loaded so
 					// users changes will be saved
 					setLoaded(true);
