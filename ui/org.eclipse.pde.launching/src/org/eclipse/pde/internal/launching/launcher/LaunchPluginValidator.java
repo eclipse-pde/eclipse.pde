@@ -47,8 +47,9 @@ public class LaunchPluginValidator {
 
 		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
 
-		if (usedefault || models.length == 0)
+		if (usedefault || models.length == 0) {
 			return models;
+		}
 
 		Map<IPluginModelBase, String> bundles = BundleLauncherHelper.getWorkspaceBundleMap(configuration);
 		Collection<IPluginModelBase> result = bundles.keySet();
@@ -68,22 +69,25 @@ public class LaunchPluginValidator {
 	 */
 	public static IProject[] getAffectedProjects(ILaunchConfiguration config, boolean addFeatures) throws CoreException {
 		// if restarting, no need to check projects for errors
-		if (config.getAttribute(IPDEConstants.RESTART, false))
+		if (config.getAttribute(IPDEConstants.RESTART, false)) {
 			return new IProject[0];
+		}
 		ArrayList<IProject> projects = new ArrayList<>();
 		IPluginModelBase[] models = getSelectedWorkspacePlugins(config);
 		for (IPluginModelBase model : models) {
 			IProject project = model.getUnderlyingResource().getProject();
-			if (project.hasNature(JavaCore.NATURE_ID))
+			if (project.hasNature(JavaCore.NATURE_ID)) {
 				projects.add(project);
+			}
 		}
 
 		if (addFeatures) {
 			// add workspace feature project too (if any)
 			IProject[] allProjects = PDECore.getWorkspace().getRoot().getProjects();
 			for (int i = 0; i < allProjects.length; i++) {
-				if (WorkspaceModelManager.isFeatureProject(allProjects[i]) && !projects.contains(allProjects[i]))
+				if (WorkspaceModelManager.isFeatureProject(allProjects[i]) && !projects.contains(allProjects[i])) {
 					projects.add(allProjects[i]);
+				}
 			}
 		}
 		// add fake "Java Search" project
@@ -101,10 +105,11 @@ public class LaunchPluginValidator {
 			String message = NLS.bind(PDEMessages.PluginValidation_error, op.getInput().toString());
 			Status status = new Status(IStatus.ERROR, IPDEConstants.PLUGIN_ID, DISPLAY_VALIDATION_ERROR_CODE, message, null);
 			IStatusHandler statusHandler = DebugPlugin.getDefault().getStatusHandler(status);
-			if (statusHandler == null)
+			if (statusHandler == null) {
 				PDELaunchingPlugin.log(status);
-			else
+			} else {
 				statusHandler.handleStatus(status, op);
+			}
 		}
 	}
 

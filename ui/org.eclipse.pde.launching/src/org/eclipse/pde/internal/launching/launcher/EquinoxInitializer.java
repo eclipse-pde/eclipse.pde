@@ -55,8 +55,9 @@ public class EquinoxInitializer extends OSGiLaunchConfigurationInitializer {
 		configuration.setAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, "3.3"); //$NON-NLS-1$
 		StringBuilder vmArgs = new StringBuilder(LaunchArgumentsHelper.getInitialVMArguments());
 		if (vmArgs.indexOf("-Declipse.ignoreApp") == -1) { //$NON-NLS-1$
-			if (vmArgs.length() > 0)
+			if (vmArgs.length() > 0) {
 				vmArgs.append(" "); //$NON-NLS-1$
+			}
 			vmArgs.append("-Declipse.ignoreApp=true"); //$NON-NLS-1$
 		}
 		if (vmArgs.indexOf("-Dosgi.noShutdown") == -1) { //$NON-NLS-1$
@@ -94,8 +95,9 @@ public class EquinoxInitializer extends OSGiLaunchConfigurationInitializer {
 	}
 
 	private void initializeBundleState() {
-		if (fStartLevels == null)
+		if (fStartLevels == null) {
 			fStartLevels = new HashMap<>();
+		}
 		Properties props = TargetPlatformHelper.getConfigIniProperties();
 		if (props != null) {
 			String value = (String) props.get("osgi.bundles"); //$NON-NLS-1$
@@ -120,12 +122,14 @@ public class EquinoxInitializer extends OSGiLaunchConfigurationInitializer {
 		int index = value.indexOf("start"); //$NON-NLS-1$
 		result.append(Boolean.toString(index != -1));
 
-		if (index != -1)
+		if (index != -1) {
 			buffer.delete(index, index + 5);
+		}
 
 		int colon = value.indexOf(':');
-		if (colon != -1)
+		if (colon != -1) {
 			buffer.deleteCharAt(colon);
+		}
 
 		// delete the first char '@'
 		buffer.deleteCharAt(0);

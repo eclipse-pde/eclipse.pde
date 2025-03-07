@@ -253,8 +253,9 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 		IJavaFieldVariable variable = object.getField(field, superfield);
 		if (variable != null) {
 			IValue value = variable.getValue();
-			if (value instanceof IJavaObject)
+			if (value instanceof IJavaObject) {
 				return (IJavaObject) value;
+			}
 		}
 		return null;
 	}
@@ -293,8 +294,9 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 	private Object getSourceElement(String location, String id, String typeName, boolean checkFragments) throws CoreException {
 		if (location != null && id != null) {
 			Object result = findSourceElement(getSourceContainers(location, id), typeName);
-			if (result != null)
+			if (result != null) {
 				return result;
+			}
 
 			// don't give up yet, search fragments attached to this host
 			if (checkFragments) {
@@ -306,8 +308,9 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 						location = fragment.getLocation();
 						id = fragment.getSymbolicName();
 						result = findSourceElement(getSourceContainers(location, id), typeName);
-						if (result != null)
+						if (result != null) {
 							return result;
+						}
 					}
 				}
 			}
@@ -323,8 +326,9 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 	private Object findSourceElement(List<ISourceContainer> containers, String typeName) throws CoreException {
 		for (ISourceContainer container : containers) {
 			Object[] result = container.findSourceElements(typeName);
-			if (result.length > 0)
+			if (result.length > 0) {
 				return result[0];
+			}
 		}
 		return null;
 	}
@@ -344,8 +348,9 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 	 */
 	private static String generateSourceName(String qualifiedTypeName) {
 		int index = qualifiedTypeName.indexOf('$');
-		if (index >= 0)
+		if (index >= 0) {
 			qualifiedTypeName = qualifiedTypeName.substring(0, index);
+		}
 		return qualifiedTypeName.replace('.', File.separatorChar) + ".java"; //$NON-NLS-1$
 	}
 

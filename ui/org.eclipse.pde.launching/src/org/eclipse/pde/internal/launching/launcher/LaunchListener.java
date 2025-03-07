@@ -45,10 +45,12 @@ public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
 	}
 
 	public void manage(ILaunch launch) {
-		if (managedLaunches.isEmpty())
+		if (managedLaunches.isEmpty()) {
 			hookListener(true);
-		if (!managedLaunches.contains(launch))
+		}
+		if (!managedLaunches.contains(launch)) {
 			managedLaunches.add(launch);
+		}
 	}
 
 	@Override
@@ -96,9 +98,9 @@ public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
 		} catch (CoreException e) {
 			IStatus status = Status.error(null, e);
 			IStatusHandler statusHandler = DebugPlugin.getDefault().getStatusHandler(status);
-			if (statusHandler == null)
+			if (statusHandler == null) {
 				PDELaunchingPlugin.log(e);
-			else {
+			} else {
 				try {
 					statusHandler.handleStatus(status, null);
 				} catch (CoreException e1) {
@@ -144,9 +146,9 @@ public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
 			if (returnValue == 15) {
 				Status status = new Status(IStatus.ERROR, IPDEConstants.PLUGIN_ID, LauncherUtils.WORKSPACE_LOCKED, null, null);
 				IStatusHandler statusHandler = DebugPlugin.getDefault().getStatusHandler(status);
-				if (statusHandler == null)
+				if (statusHandler == null) {
 					PDELaunchingPlugin.log(status);
-				else {
+				} else {
 					ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
 					String workspace = launchConfiguration.getAttribute(IPDELauncherConstants.LOCATION, ""); //$NON-NLS-1$
 					statusHandler.handleStatus(status, new Object[] {workspace, launchConfiguration, launch.getLaunchMode()});
@@ -157,10 +159,11 @@ public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
 			if (returnValue == 13) {
 				IStatus status = Status.error(PDEMessages.Launcher_error_code13);
 				IStatusHandler statusHandler = DebugPlugin.getDefault().getStatusHandler(status);
-				if (statusHandler == null)
+				if (statusHandler == null) {
 					PDELaunchingPlugin.log(status);
-				else
+				} else {
 					statusHandler.handleStatus(status, launch);
+				}
 				return;
 			}
 		}
@@ -182,16 +185,18 @@ public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
 		String workspace = LaunchArgumentsHelper.getWorkspaceLocation(configuration);
 		if (workspace.length() > 0) {
 			latest = new File(workspace, ".metadata/.log"); //$NON-NLS-1$
-			if (!latest.exists())
+			if (!latest.exists()) {
 				latest = null;
+			}
 		}
 		File configDir = LaunchConfigurationHelper.getConfigurationLocation(configuration);
 		File[] children = configDir.listFiles();
 		if (children != null) {
 			for (int i = 0; i < children.length; i++) {
 				if (!children[i].isDirectory() && children[i].getName().endsWith(".log")) { //$NON-NLS-1$
-					if (latest == null || latest.lastModified() < children[i].lastModified())
+					if (latest == null || latest.lastModified() < children[i].lastModified()) {
 						latest = children[i];
+					}
 				}
 			}
 		}

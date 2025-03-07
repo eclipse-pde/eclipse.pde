@@ -70,8 +70,9 @@ public class LaunchConfigurationHelper {
 	public static void synchronizeManifests(ILaunchConfiguration config, File configDir) {
 		try {
 			String programArgs = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""); //$NON-NLS-1$
-			if (programArgs.contains("-clean")) //$NON-NLS-1$
+			if (programArgs.contains("-clean")) { //$NON-NLS-1$
 				return;
+			}
 		} catch (CoreException e) {
 		}
 		File dir = new File(configDir, "org.eclipse.osgi/manifests"); //$NON-NLS-1$
@@ -82,8 +83,9 @@ public class LaunchConfigurationHelper {
 
 	public static File getConfigurationArea(ILaunchConfiguration config) {
 		File dir = getConfigurationLocation(config);
-		if (!dir.exists())
+		if (!dir.exists()) {
 			dir.mkdirs();
+		}
 		return dir;
 	}
 
@@ -106,8 +108,9 @@ public class LaunchConfigurationHelper {
 	}
 
 	private static String getSubstitutedString(String text) throws CoreException {
-		if (text == null)
+		if (text == null) {
 			return ""; //$NON-NLS-1$
+		}
 		IStringVariableManager mgr = VariablesPlugin.getDefault().getStringVariableManager();
 		return mgr.performStringSubstitution(text);
 	}
@@ -148,10 +151,9 @@ public class LaunchConfigurationHelper {
 			String appID = configuration.getAttribute(IPDELauncherConstants.APPLICATION, (String) null);
 			properties = TargetPlatformHelper.getConfigIniProperties();
 			// if target's config.ini does not exist, lets try to fill in default values
-			if (properties == null)
+			if (properties == null) {
 				properties = new Properties();
-			// clear properties only if we are NOT launching the default product or app (bug 175437, bug 315039)
-			else if ((productID != null && !productID.equals(properties.get(PROP_PRODUCT)) || (appID != null && !appID.equals(properties.get(PROP_APPLICATION))))) {
+			} else if ((productID != null && !productID.equals(properties.get(PROP_PRODUCT)) || (appID != null && !appID.equals(properties.get(PROP_APPLICATION))))) {
 				properties.clear();
 			}
 			// if target's config.ini has the osgi.bundles header, then parse and compute the proper osgi.bundles value
@@ -166,8 +168,9 @@ public class LaunchConfigurationHelper {
 				properties = loadFromTemplate(getSubstitutedString(templateLoc));
 				// if template contains osgi.bundles, then only strip the path, do not compute the value
 				String osgiBundles = properties.getProperty(PROP_OSGI_BUNDLES);
-				if (osgiBundles != null)
+				if (osgiBundles != null) {
 					properties.setProperty(PROP_OSGI_BUNDLES, TargetPlatformHelper.stripPathInformation(osgiBundles));
+				}
 			}
 		}
 		// whether we create a new config.ini or read from one as a template, we should add the required properties - bug 161265
@@ -239,21 +242,28 @@ public class LaunchConfigurationHelper {
 	}
 
 	private static void addRequiredProperties(Properties properties, String productID, Map<String, List<IPluginModelBase>> bundles, Map<IPluginModelBase, String> bundlesWithStartLevels, boolean autoStart) {
-		if (!properties.containsKey("osgi.install.area")) //$NON-NLS-1$
+		if (!properties.containsKey("osgi.install.area")) { //$NON-NLS-1$
 			properties.setProperty("osgi.install.area", "file:" + TargetPlatform.getLocation()); //$NON-NLS-1$ //$NON-NLS-2$
-		if (!properties.containsKey("osgi.configuration.cascaded")) //$NON-NLS-1$
+		}
+		if (!properties.containsKey("osgi.configuration.cascaded")) { //$NON-NLS-1$
 			properties.setProperty("osgi.configuration.cascaded", "false"); //$NON-NLS-1$ //$NON-NLS-2$
-		if (!properties.containsKey(PROP_OSGI_FRAMEWORK))
+		}
+		if (!properties.containsKey(PROP_OSGI_FRAMEWORK)) {
 			properties.setProperty(PROP_OSGI_FRAMEWORK, IPDEBuildConstants.BUNDLE_OSGI);
-		if (!properties.containsKey("osgi.splashPath") && productID != null) //$NON-NLS-1$
+		}
+		if (!properties.containsKey("osgi.splashPath") && productID != null) { //$NON-NLS-1$
 			addSplashLocation(properties, productID, bundles);
+		}
 		// if osgi.splashPath is set, try to resolve relative paths to absolute paths
-		if (properties.containsKey("osgi.splashPath")) //$NON-NLS-1$
+		if (properties.containsKey("osgi.splashPath")) { //$NON-NLS-1$
 			resolveLocationPath(properties.getProperty("osgi.splashPath"), properties, bundles); //$NON-NLS-1$
-		if (!properties.containsKey(PROP_OSGI_BUNDLES))
+		}
+		if (!properties.containsKey(PROP_OSGI_BUNDLES)) {
 			properties.setProperty(PROP_OSGI_BUNDLES, computeOSGiBundles(TargetPlatform.getBundleList(), bundles, bundlesWithStartLevels, autoStart));
-		if (!properties.containsKey("osgi.bundles.defaultStartLevel")) //$NON-NLS-1$
+		}
+		if (!properties.containsKey("osgi.bundles.defaultStartLevel")) { //$NON-NLS-1$
 			properties.setProperty("osgi.bundles.defaultStartLevel", "4"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 	}
 
 	/**
@@ -273,8 +283,9 @@ public class LaunchConfigurationHelper {
 		// if simple configurator isn't selected & isn't in bundle list... hack it
 
 		// if using p2's simple configurator, a bundles.txt will be written, so we only need simple configurator in the config.ini
-		if (bundles.get(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR) != null)
+		if (bundles.get(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR) != null) {
 			return "org.eclipse.equinox.simpleconfigurator@1:start"; //$NON-NLS-1$
+		}
 
 		Map<IPluginModelBase, String> allBundles = new HashMap<>(bundlesWithStartLevels);
 		allBundles.keySet().removeIf(model -> IPDEBuildConstants.BUNDLE_OSGI.equals(model.getPluginBase().getId())); // write out all bundles in osgi.bundles - bug 170772
@@ -310,8 +321,9 @@ public class LaunchConfigurationHelper {
 				properties.load(stream);
 			} catch (Exception e) {
 				String message = e.getMessage();
-				if (message != null)
+				if (message != null) {
 					throw new CoreException(Status.error(message, e));
+				}
 			}
 		}
 		return properties;
@@ -330,20 +342,23 @@ public class LaunchConfigurationHelper {
 				BundleDescription desc = model.getBundleDescription();
 				if (desc != null) {
 					BundleDescription[] fragments = desc.getFragments();
-					for (BundleDescription fragment : fragments)
+					for (BundleDescription fragment : fragments) {
 						locations.add(fragment.getSymbolicName());
+					}
 				}
 			}
 			resolveLocationPath(locations, properties, map);
-		} else
+		} else {
 			resolveLocationPath(targetSplash, properties, map);
+		}
 	}
 
 	private static void resolveLocationPath(String splashPath, Properties properties, Map<String, List<IPluginModelBase>> map) {
 		ArrayList<String> locations = new ArrayList<>();
 		StringTokenizer tok = new StringTokenizer(splashPath, ","); //$NON-NLS-1$
-		while (tok.hasMoreTokens())
+		while (tok.hasMoreTokens()) {
 			locations.add(tok.nextToken());
+		}
 		resolveLocationPath(locations, properties, map);
 	}
 
@@ -355,14 +370,17 @@ public class LaunchConfigurationHelper {
 				location = location.replaceFirst("platform:/base/plugins/", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			String url = getBundleURL(location, map, false);
-			if (url == null)
+			if (url == null) {
 				continue;
-			if (buffer.length() > 0)
+			}
+			if (buffer.length() > 0) {
 				buffer.append(","); //$NON-NLS-1$
+			}
 			buffer.append(url);
 		}
-		if (buffer.length() > 0)
+		if (buffer.length() > 0) {
 			properties.setProperty("osgi.splashPath", buffer.toString()); //$NON-NLS-1$
+		}
 	}
 
 	/**
@@ -391,8 +409,9 @@ public class LaunchConfigurationHelper {
 	 * @return string url for bundle location
 	 */
 	public static String getBundleURL(IPluginModelBase model, boolean includeReference) {
-		if (model == null || model.getInstallLocation() == null)
+		if (model == null || model.getInstallLocation() == null) {
 			return null;
+		}
 		StringBuilder buf = new StringBuilder();
 		if (includeReference) {
 			buf.append(TargetPlatformHelper.REFERENCE_PREFIX);
@@ -414,8 +433,9 @@ public class LaunchConfigurationHelper {
 		if (framework != null) {
 			framework = TargetPlatformHelper.stripPathInformation(framework);
 			String url = getBundleURL(framework, map, false);
-			if (url != null)
+			if (url != null) {
 				properties.setProperty(PROP_OSGI_FRAMEWORK, url);
+			}
 		}
 
 		// Fix relative locations in framework extensions (Bug 413986)
@@ -460,8 +480,9 @@ public class LaunchConfigurationHelper {
 						}
 						if (url == null) {
 							i = token.indexOf(':');
-							if (i != -1)
+							if (i != -1) {
 								url = getBundleURL(token.substring(0, i), map, true);
+							}
 						}
 					}
 					if (url != null) {
@@ -491,17 +512,21 @@ public class LaunchConfigurationHelper {
 		int index = startData.indexOf(':');
 		String level = index > 0 ? startData.substring(0, index) : "default"; //$NON-NLS-1$
 		String auto = startData;
-		if (!startData.equals("start")) //$NON-NLS-1$
+		if (!startData.equals("start")) { //$NON-NLS-1$
 			auto = index >= 0 && index < startData.length() - 1 ? startData.substring(index + 1) : "default"; //$NON-NLS-1$
-		if ("default".equals(auto)) //$NON-NLS-1$
+		}
+		if ("default".equals(auto)) { //$NON-NLS-1$
 			auto = Boolean.toString(defaultAuto);
-		if (!level.equals("default") || "true".equals(auto) || "start".equals(auto)) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
+		if (!level.equals("default") || "true".equals(auto) || "start".equals(auto)) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			buffer.append("@"); //$NON-NLS-1$
+		}
 
 		if (!level.equals("default")) { //$NON-NLS-1$
 			buffer.append(level);
-			if ("start".equals(auto) || "true".equals(auto)) //$NON-NLS-1$ //$NON-NLS-2$
+			if ("start".equals(auto) || "true".equals(auto)) { //$NON-NLS-1$ //$NON-NLS-2$
 				buffer.append(":"); //$NON-NLS-1$
+			}
 		}
 		if ("start".equals(auto) || "true".equals(auto)) { //$NON-NLS-1$ //$NON-NLS-2$
 			buffer.append("start"); //$NON-NLS-1$
@@ -519,8 +544,9 @@ public class LaunchConfigurationHelper {
 	}
 
 	public static String getContributingPlugin(String productID) {
-		if (productID == null)
+		if (productID == null) {
 			return null;
+		}
 		int index = productID.lastIndexOf('.');
 		return index == -1 ? productID : productID.substring(0, index);
 	}
@@ -536,15 +562,19 @@ public class LaunchConfigurationHelper {
 		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions("org.eclipse.core.runtime.products", true); //$NON-NLS-1$
 		for (IExtension extension : extensions) {
 			String id = extension.getUniqueIdentifier();
-			if (id == null)
+			if (id == null) {
 				continue;
+			}
 			IConfigurationElement[] children = extension.getConfigurationElements();
-			if (children.length != 1)
+			if (children.length != 1) {
 				continue;
-			if (!"product".equals(children[0].getName())) //$NON-NLS-1$
+			}
+			if (!"product".equals(children[0].getName())) { //$NON-NLS-1$
 				continue;
-			if (appID.equals(children[0].getAttribute("application"))) //$NON-NLS-1$
+			}
+			if (appID.equals(children[0].getAttribute("application"))) { //$NON-NLS-1$
 				return id;
+			}
 		}
 		return null;
 

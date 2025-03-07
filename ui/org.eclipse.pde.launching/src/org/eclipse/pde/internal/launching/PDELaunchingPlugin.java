@@ -84,13 +84,15 @@ public class PDELaunchingPlugin extends Plugin implements IPDEConstants {
 	}
 
 	public static void log(Throwable e) {
-		if (e instanceof InvocationTargetException)
+		if (e instanceof InvocationTargetException) {
 			e = ((InvocationTargetException) e).getTargetException();
+		}
 		IStatus status = null;
-		if (e instanceof CoreException)
+		if (e instanceof CoreException) {
 			status = ((CoreException) e).getStatus();
-		else
+		} else {
 			status = Status.error(e.getMessage(), e);
+		}
 		log(status);
 	}
 
@@ -133,8 +135,9 @@ public class PDELaunchingPlugin extends Plugin implements IPDEConstants {
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		if (fLaunchListener != null)
+		if (fLaunchListener != null) {
 			fLaunchListener.shutdown();
+		}
 		if (fDebugPluginUtil != null) {
 			fDebugPluginUtil.removeListener();
 		}
@@ -143,14 +146,16 @@ public class PDELaunchingPlugin extends Plugin implements IPDEConstants {
 	}
 
 	public LaunchListener getLaunchListener() {
-		if (fLaunchListener == null)
+		if (fLaunchListener == null) {
 			fLaunchListener = new LaunchListener();
+		}
 		return fLaunchListener;
 	}
 
 	public OSGiFrameworkManager getOSGiFrameworkManager() {
-		if (fOSGiFrameworkManager == null)
+		if (fOSGiFrameworkManager == null) {
 			fOSGiFrameworkManager = new OSGiFrameworkManager();
+		}
 		return fOSGiFrameworkManager;
 	}
 

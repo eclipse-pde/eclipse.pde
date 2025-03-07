@@ -228,10 +228,11 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 
 			File templateFile = new File(templateLoc);
 			if (!templateFile.exists()) {
-				if (!LauncherUtils.generateConfigIni())
+				if (!LauncherUtils.generateConfigIni()) {
 					throw new CoreException(Status.CANCEL_STATUS);
 				// with the way the launcher works, if a config.ini file is not found one will be generated automatically.
 				// This check was to warn the user a config.ini needs to be generated. - bug 161265, comment #7
+				}
 			}
 		}
 	}
