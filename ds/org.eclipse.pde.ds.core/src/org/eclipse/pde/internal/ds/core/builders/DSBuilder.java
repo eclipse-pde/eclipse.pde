@@ -99,8 +99,9 @@ public class DSBuilder extends IncrementalProjectBuilder {
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor)
 			throws CoreException {
 		IResourceDelta delta = null;
-		if (kind != FULL_BUILD)
+		if (kind != FULL_BUILD) {
 			delta = getDelta(getProject());
+		}
 
 		if (delta == null || kind == FULL_BUILD) {
 			// Full build
@@ -122,8 +123,9 @@ public class DSBuilder extends IncrementalProjectBuilder {
 	private boolean isDSFile(IFile candidate) {
 		try {
 			IContentDescription description = candidate.getContentDescription();
-			if (description == null)
+			if (description == null) {
 				return false;
+			}
 			IContentType type = description.getContentType();
 			return Activator.CONTENT_TYPE_ID.equals(type.getId());
 		} catch (CoreException e) {
@@ -132,8 +134,9 @@ public class DSBuilder extends IncrementalProjectBuilder {
 	}
 
 	private void checkFile(IFile file, IProgressMonitor monitor) {
-		if (monitor.isCanceled())
+		if (monitor.isCanceled()) {
 			return;
+		}
 		String message = NLS.bind(Messages.DSBuilder_verifying, file
 				.getFullPath().toString());
 		monitor.subTask(message);

@@ -25,8 +25,9 @@ public class DSJavaHelper {
 
 	public static boolean isOnClasspath(String fullyQualifiedName,
 			IJavaProject project) {
-		if (fullyQualifiedName.indexOf('$') != -1)
+		if (fullyQualifiedName.indexOf('$') != -1) {
 			fullyQualifiedName = fullyQualifiedName.replace('$', '.');
+		}
 		try {
 			IType type = project.findType(fullyQualifiedName);
 			return type != null && type.exists();
