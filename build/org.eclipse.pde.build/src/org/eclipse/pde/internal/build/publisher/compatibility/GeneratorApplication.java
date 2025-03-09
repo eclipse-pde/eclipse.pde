@@ -79,8 +79,9 @@ public class GeneratorApplication extends AbstractPublisherApplication {
 				actions.add(new BundlesAction(new File[] {new File(sourceFile, "plugins")})); //$NON-NLS-1$
 				if (site != null) {
 					SiteXMLAction siteAction = new SiteXMLAction(site, ""); //$NON-NLS-1$
-					if (siteVersion != null && siteVersion.length() > 0)
+					if (siteVersion != null && siteVersion.length() > 0) {
 						siteAction.setCategoryVersion(siteVersion);
+					}
 					actions.add(siteAction);
 				}
 				break;
@@ -94,8 +95,9 @@ public class GeneratorApplication extends AbstractPublisherApplication {
 				break;
 		}
 
-		if (versionAdvice != null)
+		if (versionAdvice != null) {
 			info.addAdvice(createVersionAdvice());
+		}
 
 		return actions.toArray(new IPublisherAction[actions.size()]);
 	}
@@ -129,8 +131,9 @@ public class GeneratorApplication extends AbstractPublisherApplication {
 
 	@Override
 	protected Publisher createPublisher(PublisherInfo publisherInfo) {
-		if (result != null)
+		if (result != null) {
 			return new Publisher(publisherInfo, result);
+		}
 		return new Publisher(publisherInfo);
 	}
 

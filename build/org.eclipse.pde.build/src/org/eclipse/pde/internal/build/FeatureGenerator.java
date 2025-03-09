@@ -86,8 +86,9 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 		}
 
 		public Map<String, String> getAttributes() {
-			if (attributes != null)
+			if (attributes != null) {
 				return attributes;
+			}
 			return Collections.emptyMap();
 		}
 
@@ -140,7 +141,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			return new LinkedHashSet<>(0);
 		}
 		Set<Entry> result = new LinkedHashSet<>(contents.length);
-		for (String content : contents)
+		for (String content : contents) {
 			if (content != null) {
 				StringTokenizer tokenizer = new StringTokenizer(content, ";"); //$NON-NLS-1$
 				Entry entry = new Entry(tokenizer.nextToken());
@@ -149,13 +150,15 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 					int idx = token.indexOf('=');
 					if (idx != -1) {
 						String value = token.substring(idx + 1, token.length()).trim();
-						if (value.startsWith("\"") && value.endsWith("\"")) //$NON-NLS-1$ //$NON-NLS-2$
+						if (value.startsWith("\"") && value.endsWith("\"")) { //$NON-NLS-1$ //$NON-NLS-2$
 							value = value.substring(1, value.length() - 1); //trim off " because FeatureWriter adds them
+						}
 						entry.addAttribute(token.substring(0, idx), value);
 					}
 				}
 				result.add(entry);
 			}
+		}
 		return result;
 	}
 
@@ -182,14 +185,16 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 				List<FeatureEntry> entries = product.getProductEntries();
 				for (FeatureEntry featureEntry : entries) {
 					Entry newEntry = new Entry(featureEntry.getId(), featureEntry.getVersion());
-					if (featureEntry.unpackSet())
+					if (featureEntry.unpackSet()) {
 						newEntry.addAttribute(Utils.EXTRA_UNPACK, String.valueOf(featureEntry.isUnpack()));
-					if (featureEntry.isFragment())
+					}
+					if (featureEntry.isFragment()) {
 						fragments.add(newEntry);
-					else if (featureEntry.isPlugin())
+					} else if (featureEntry.isPlugin()) {
 						plugins.add(newEntry);
-					else
+					} else {
 						features.add(newEntry);
+					}
 				}
 			}
 			try {
@@ -204,23 +209,27 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 	}
 
 	private boolean shouldNestInclusions() {
-		if (nestedInclusions == null || nestedInclusions.equalsIgnoreCase(FALSE))
+		if (nestedInclusions == null || nestedInclusions.equalsIgnoreCase(FALSE)) {
 			return false;
+		}
 
 		if (product != null) {
 			//will need to generate a .eclipseproduct file
-			if (buildProperties == null)
+			if (buildProperties == null) {
 				buildProperties = new Properties();
+			}
 			buildProperties.put(IBuildPropertiesConstants.PROPERTY_GENERATE_ECLIPSEPRODUCT, TRUE);
 		}
 
 		//make sure there's actually something to nest
-		if ((pluginList == null || pluginList.length == 0) && (fragmentList == null || fragmentList.length == 0) && (featureList == null || featureList.length == 0) && (buildProperties == null || buildProperties.size() == 0))
+		if ((pluginList == null || pluginList.length == 0) && (fragmentList == null || fragmentList.length == 0) && (featureList == null || featureList.length == 0) && (buildProperties == null || buildProperties.size() == 0)) {
 			return false;
+		}
 
 		// use the product-id to generate a name if nestedRequirements==true
-		if (nestedInclusions.equalsIgnoreCase(TRUE))
+		if (nestedInclusions.equalsIgnoreCase(TRUE)) {
 			return product != null;
+		}
 
 		//else nestedRequirements specifies the name to use for the nested feature
 		return true;
@@ -234,16 +243,18 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			nestedId = product.getId() + ".root.feature"; //$NON-NLS-1$
 			nestedVersion = product.getVersion();
 			productKey = PRODUCT_PREFIX + product.getId();
-			if (!buildProperties.containsKey(PROPERTY_GENERATED_FEATURE_LABEL) && product.getProductName() != null)
+			if (!buildProperties.containsKey(PROPERTY_GENERATED_FEATURE_LABEL) && product.getProductName() != null) {
 				buildProperties.put(PROPERTY_GENERATED_FEATURE_LABEL, product.getProductName() + " Root Files"); //$NON-NLS-1$
+			}
 		} else {
 			nestedId = nestedInclusions;
 			nestedVersion = version != null ? version : "1.0.0.qualifier"; //$NON-NLS-1$
 		}
 
 		String extraRequires = null;
-		if (buildProperties != null && productKey != null)
+		if (buildProperties != null && productKey != null) {
 			extraRequires = (String) buildProperties.remove(productKey);
+		}
 
 		FeatureGenerator generator = new FeatureGenerator();
 		generator.setVerify(verify);
@@ -258,8 +269,9 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 		generator.generate();
 
 		//get the siteFactory back from the nested generator so we don't need to recreate it
-		if (siteFactory == null)
+		if (siteFactory == null) {
 			siteFactory = generator.siteFactory;
+		}
 
 		if (productKey != null) {
 			buildProperties = new Properties();
@@ -318,8 +330,9 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 	 */
 	private void addLauncher(PDEState state, Set<Entry> plugins, Set<Entry> fragments, Set<Entry> features) {
 		BundleDescription bundle = state.getResolvedBundle(BUNDLE_OSGI);
-		if (bundle == null)
+		if (bundle == null) {
 			return;
+		}
 		Version osgiVersion = bundle.getVersion();
 		if (osgiVersion.compareTo(new Version("3.3")) < 0) { //$NON-NLS-1$
 			// we have an OSGi version that is less than 3.3 so add the old launcher
@@ -374,8 +387,9 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 	protected void createFeature(String feature, Set<Entry> plugins, Set<Entry> fragments, Set<Entry> features) throws CoreException, FileNotFoundException {
 		String location = IPDEBuildConstants.DEFAULT_FEATURE_LOCATION + '/' + feature;
 		File directory = new File(getWorkingDirectory(), location);
-		if (!directory.exists())
+		if (!directory.exists()) {
 			directory.mkdirs();
+		}
 
 		PDEState state = verify ? getSite(false).getRegistry() : null;
 		BundleHelper helper = BundleHelper.getDefault();
@@ -394,8 +408,9 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 
 			parameters.put(ID, feature);
 			parameters.put(VERSION, version != null ? version : "1.0.0"); //$NON-NLS-1$ 
-			if (featureName != null)
+			if (featureName != null) {
 				parameters.put(LABEL, featureName);
+			}
 			writer.startTag(FEATURE, parameters, true);
 
 			boolean fragment = false;
@@ -433,9 +448,9 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 							}
 						} else {
 							//Bundle did not resolve, only ok if it was because of the platform filter
-							if (bundleVersion != null)
+							if (bundleVersion != null) {
 								bundle = state.getBundle(name, bundleVersion, false);
-							else {
+							} else {
 								//There are no resolved bundles with this name, if there is more than one unresolved just use the first
 								BundleDescription[] bundles = state.getState().getBundles(name);
 								bundle = (bundles != null && bundles.length > 0) ? bundles[0] : null;
@@ -465,8 +480,9 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 							parameters.put("ws", currentConfig.getWs()); //$NON-NLS-1$
 							parameters.put("arch", currentConfig.getArch()); //$NON-NLS-1$
 						}
-						if (fragment)
+						if (fragment) {
 							parameters.put(FRAGMENT, "true"); //$NON-NLS-1$
+						}
 
 						//add the attributes from the entry, these override values we set above
 						parameters.putAll(entry.getAttributes());
@@ -496,8 +512,9 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 				if (verify) {
 					//this will throw an exception if the feature is not found.
 					boolean exception = true;
-					if (buildProperties != null && buildProperties.containsKey("generate.feature@" + name)) //$NON-NLS-1$
+					if (buildProperties != null && buildProperties.containsKey("generate.feature@" + name)) { //$NON-NLS-1$
 						exception = false;
+					}
 					getSite(false).findFeature(name, featureVersion, exception);
 				}
 				parameters.clear();

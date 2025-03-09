@@ -62,8 +62,9 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		 * @throws NullPointerException if path is null
 		 */
 		protected ClasspathElement(String path, String subPath, String accessRules) {
-			if (path == null)
+			if (path == null) {
 				throw new NullPointerException();
+			}
 			this.path = path;
 			this.subPath = subPath;
 			this.accessRules = accessRules;
@@ -105,8 +106,9 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		}
 
 		public void addRules(String newRule) {
-			if (accessRules.equals("") || accessRules.equals(newRule)) //$NON-NLS-1$
+			if (accessRules.equals("") || accessRules.equals(newRule)) { //$NON-NLS-1$
 				return;
+			}
 			if (!newRule.equals("")) { //$NON-NLS-1$
 				String join = accessRules.substring(0, accessRules.length() - EXCLUDE_ALL_RULE.length() - 1);
 				newRule = join + newRule.substring(1);
@@ -123,10 +125,12 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		public boolean equals(Object obj) {
 			if (obj instanceof ClasspathElement) {
 				ClasspathElement element = (ClasspathElement) obj;
-				if (!path.equals(element.getPath()))
+				if (!path.equals(element.getPath())) {
 					return false;
-				if (subPath != null && subPath.equals(element.getSubPath()))
+				}
+				if (subPath != null && subPath.equals(element.getSubPath())) {
 					return false;
+				}
 				return true;
 			}
 			return false;
@@ -141,8 +145,9 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	}
 
 	private static String normalize(String path) {
-		if (path == null)
+		if (path == null) {
 			return null;
+		}
 		//always use '/' as a path separator to help with comparing paths in equals
 		return path.replaceAll("\\\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -210,8 +215,9 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		Map<String, String> packages = new HashMap<>(20);
 		StateHelper helper = BundleHelper.getPlatformAdmin().getStateHelper();
 		addVisiblePackagesFromState(helper, model, packages);
-		if (model.getHost() != null)
+		if (model.getHost() != null) {
 			addVisiblePackagesFromState(helper, (BundleDescription) model.getHost().getSupplier(), packages);
+		}
 		return packages;
 	}
 
@@ -219,8 +225,9 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		ExportPackageDescription[] exports = helper.getVisiblePackages(model);
 		for (ExportPackageDescription export : exports) {
 			BundleDescription exporter = export.getExporter();
-			if (exporter == null)
+			if (exporter == null) {
 				continue;
+			}
 
 			boolean discouraged = helper.getAccessCode(model, export) == StateHelper.ACCESS_DISCOURAGED;
 			String pattern = export.getName().replaceAll("\\.", "/") + "/*"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -229,8 +236,9 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			String packagesKey = exporter.getSymbolicName() + "_" + exporter.getVersion(); //$NON-NLS-1$
 			String rules = packages.get(packagesKey);
 			if (rules != null) {
-				if (rules.indexOf(rule) == -1)
+				if (rules.indexOf(rule) == -1) {
 					rules = rules + File.pathSeparator + rule;
+				}
 			} else {
 				rules = rule;
 			}
@@ -264,8 +272,9 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		String root = generator.getLocation(model);
 		IPath base = Utils.makeRelative(IPath.fromOSString(root), IPath.fromOSString(baseLocation));
 		Properties modelProps = getBuildPropertiesFor(model);
-		if (modelProps != AbstractScriptGenerator.MissingProperties.getInstance())
+		if (modelProps != AbstractScriptGenerator.MissingProperties.getInstance()) {
 			ModelBuildScriptGenerator.specialDotProcessing(modelProps, libraries);
+		}
 		for (String element : libraries) {
 			addDevEntries(model, baseLocation, classpath, Utils.getArrayFromString(modelProps.getProperty(PROPERTY_OUTPUT_PREFIX + element)), modelProps);
 			addPathAndCheck(model, base, element, modelProps, classpath);
@@ -278,14 +287,17 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	private void addFragmentsLibraries(BundleDescription plugin, List<Object> classpath, String baseLocation, boolean afterPlugin, boolean all) throws CoreException {
 		// if plugin is not a plugin, it's a fragment and there is no fragment for a fragment. So we return.
 		BundleDescription[] fragments = plugin.getFragments();
-		if (fragments == null)
+		if (fragments == null) {
 			return;
+		}
 
 		for (BundleDescription fragment2 : fragments) {
-			if (fragment2 == generator.getModel())
+			if (fragment2 == generator.getModel()) {
 				continue;
-			if (matchFilter(fragment2) == false)
+			}
+			if (matchFilter(fragment2) == false) {
 				continue;
+			}
 
 			requiredIds.add(Long.valueOf(fragment2.getBundleId()));
 
@@ -377,8 +389,9 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		if (libraryPath.isAbsolute()) {
 			path = libraryPath.toOSString();
 		} else if ("jar".equalsIgnoreCase(basePath.getFileExtension())) { //$NON-NLS-1$
-			if ("jar".equalsIgnoreCase(libraryPath.getFileExtension())) //$NON-NLS-1$
+			if ("jar".equalsIgnoreCase(libraryPath.getFileExtension())) { //$NON-NLS-1$
 				subPath = libraryPath.toOSString();
+			}
 			path = basePath.toOSString();
 		} else {
 			path = basePath.append(libraryPath).toOSString();
@@ -386,8 +399,9 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		path = ModelBuildScriptGenerator.replaceVariables(path, pluginKey == null ? false : generator.getCompiledElements().contains(pluginKey));
 		String secondaryPath = null;
 		if (generator.getCompiledElements().contains(pluginKey)) {
-			if (modelProperties == null || modelProperties.getProperty(IBuildPropertiesConstants.PROPERTY_SOURCE_PREFIX + libraryName) != null)
+			if (modelProperties == null || modelProperties.getProperty(IBuildPropertiesConstants.PROPERTY_SOURCE_PREFIX + libraryName) != null) {
 				path = Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + '/' + path;
+			}
 			secondaryPath = Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + "/../" + model.getSymbolicName() + '_' + model.getVersion() + '/' + libraryName; //$NON-NLS-1$
 
 		}
@@ -418,8 +432,9 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		HostSpecification host = model.getHost();
 		if (host != null) {
 			BundleDescription[] hosts = host.getHosts();
-			for (BundleDescription host2 : hosts)
+			for (BundleDescription host2 : hosts) {
 				addPluginAndPrerequisites(host2, classpath, location, pluginChain, addedPlugins);
+			}
 		}
 
 		// Add the libraries
@@ -431,8 +446,9 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			String[] libraries = getClasspathEntries(model);
 			if (libraries != null) {
 				for (String libraryName : libraries) {
-					if (jar.getName(false).equals(libraryName))
+					if (jar.getName(false).equals(libraryName)) {
 						continue;
+					}
 
 					boolean isSource = (modelProperties.getProperty(PROPERTY_SOURCE_PREFIX + libraryName) != null);
 					if (isSource) {
@@ -448,8 +464,9 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			// otherwise we add all the predecessor jars
 			String[] order = Utils.getArrayFromString(jarOrder);
 			for (String element : order) {
-				if (element.equals(jar.getName(false)))
+				if (element.equals(jar.getName(false))) {
 					break;
+				}
 				addDevEntries(model, location, classpath, Utils.getArrayFromString((String) modelProperties.get(PROPERTY_OUTPUT_PREFIX + element)), modelProperties);
 				addPathAndCheck(model, IPath.EMPTY, element, modelProperties, classpath);
 			}
@@ -473,8 +490,9 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 				//Potential pb: if the path refers to something that is being compiled (which is supposetly not the case, but who knows...)
 				//the user will get $basexx instead of $ws 
 				String[] toAdd = computeExtraPath(element, classpath, location);
-				if (toAdd != null && toAdd.length == 2)
+				if (toAdd != null && toAdd.length == 2) {
 					addPathAndCheck(null, IPath.fromOSString(toAdd[0]), toAdd[1], modelProperties, classpath);
+				}
 			}
 		}
 
@@ -484,8 +502,9 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			//Potential pb: if the path refers to something that is being compiled (which is supposetly not the case, but who knows...)
 			//the user will get $basexx instead of $ws 
 			String[] toAdd = computeExtraPath(element, classpath, location);
-			if (toAdd != null && toAdd.length == 2)
+			if (toAdd != null && toAdd.length == 2) {
 				addPathAndCheck(null, IPath.fromOSString(toAdd[0]), toAdd[1], modelProperties, classpath);
+			}
 		}
 	}
 
@@ -559,14 +578,16 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			}
 			// else exception
 			String cycleString = ""; //$NON-NLS-1$
-			for (BundleDescription bundleDescription : pluginChain)
+			for (BundleDescription bundleDescription : pluginChain) {
 				cycleString += bundleDescription.toString() + ", "; //$NON-NLS-1$
+			}
 			cycleString += target.toString();
 			String message = NLS.bind(Messages.error_pluginCycle, cycleString);
 			throw new CoreException(new Status(IStatus.ERROR, IPDEBuildConstants.PI_PDEBUILD, EXCEPTION_CLASSPATH_CYCLE, message, null));
 		}
-		if (addedPlugins.contains(target)) //the plugin we are considering has already been added	
+		if (addedPlugins.contains(target)) { //the plugin we are considering has already been added	
 			return;
+		}
 
 		// add libraries from pre-requisite plug-ins.  Don't worry about the export flag
 		// as all required plugins may be required for compilation.
@@ -590,8 +611,9 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 				continue;
 			}
 			if (inCycle && !Utils.isBinary(bundle)) {
-				if (haveNonBinary)
+				if (haveNonBinary) {
 					return false;
+				}
 				haveNonBinary = true;
 			}
 		}
@@ -606,8 +628,9 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	 * @param classpath 
 	 */
 	private void addPluginAndPrerequisites(BundleDescription target, List<Object> classpath, String baseLocation, List<BundleDescription> pluginChain, Set<BundleDescription> addedPlugins) throws CoreException {
-		if (matchFilter(target) == false)
+		if (matchFilter(target) == false) {
 			return;
+		}
 
 		addPlugin(target, classpath, baseLocation);
 		addPrerequisites(target, classpath, baseLocation, pluginChain, addedPlugins);
@@ -615,19 +638,22 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 
 	private boolean matchFilter(BundleDescription target) {
 		Filter filter = BundleHelper.getDefault().getFilter(target);
-		if (filter == null) //Target is platform independent, add it 
+		if (filter == null) { //Target is platform independent, add it 
 			return true;
+		}
 
 		FeatureEntry associatedEntry = generator.getAssociatedEntry();
-		if (associatedEntry == null)
+		if (associatedEntry == null) {
 			return true;
+		}
 
 		String os = associatedEntry.getOS();
 		String ws = associatedEntry.getWS();
 		String arch = associatedEntry.getArch();
 		String nl = associatedEntry.getNL();
-		if (os == null && ws == null && arch == null && nl == null) //I'm a platform independent plugin
+		if (os == null && ws == null && arch == null && nl == null) { //I'm a platform independent plugin
 			return true;
+		}
 
 		//The plugin for which we are generating the classpath and target are not platform independent
 		Dictionary<String, Object> properties = new Hashtable<>(3);
@@ -640,34 +666,39 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		if (ws != null) {
 			Object value = ws.indexOf(',') > -1 ? (Object) Utils.getArrayFromString(ws, ",") : ws; //$NON-NLS-1$
 			properties.put(OSGI_WS, value);
-		} else
+		} else {
 			properties.put(OSGI_WS, CatchAllValue.singleton);
+		}
 
 		if (arch != null) {
 			Object value = arch.indexOf(',') > -1 ? (Object) Utils.getArrayFromString(arch, ",") : arch; //$NON-NLS-1$
 			properties.put(OSGI_ARCH, value);
-		} else
+		} else {
 			properties.put(OSGI_ARCH, CatchAllValue.singleton);
+		}
 
 		if (nl != null) {
 			Object value = nl.indexOf(',') > -1 ? (Object) Utils.getArrayFromString(nl, ",") : nl; //$NON-NLS-1$
 			properties.put(OSGI_NL, value);
-		} else
+		} else {
 			properties.put(OSGI_NL, CatchAllValue.singleton);
+		}
 
 		return filter.match(properties);
 	}
 
 	private void addDevEntries(BundleDescription model, String baseLocation, List<Object> classpath, String[] jarSpecificEntries, Properties modelProperties) {
-		if (generator.devEntries == null && (jarSpecificEntries == null || jarSpecificEntries.length == 0))
+		if (generator.devEntries == null && (jarSpecificEntries == null || jarSpecificEntries.length == 0)) {
 			return;
+		}
 
 		String[] entries;
 		// if jarSpecificEntries is given, then it overrides devEntries 
-		if (jarSpecificEntries != null && jarSpecificEntries.length > 0)
+		if (jarSpecificEntries != null && jarSpecificEntries.length > 0) {
 			entries = jarSpecificEntries;
-		else
+		} else {
 			entries = generator.devEntries.getDevClassPath(model.getSymbolicName());
+		}
 
 		IPath root = Utils.makeRelative(IPath.fromOSString(generator.getLocation(model)), IPath.fromOSString(baseLocation));
 		for (String entry : entries) {

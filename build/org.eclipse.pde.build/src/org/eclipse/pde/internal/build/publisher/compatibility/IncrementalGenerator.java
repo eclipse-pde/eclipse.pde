@@ -44,8 +44,9 @@ public class IncrementalGenerator {
 			generator.setIncrementalResult(result);
 		} else if ("final".equals(mode) && result != null) { //$NON-NLS-1$
 			generator.setIncrementalResult(result);
-			if (configs != null)
+			if (configs != null) {
 				provider.setConfigurations(configs.toArray(new String[configs.size()]));
+			}
 			if (advice != null) {
 				for (IPublisherAdvice iPublisherAdvice : advice) {
 					provider.addAdvice(iPublisherAdvice);
@@ -66,12 +67,15 @@ public class IncrementalGenerator {
 	}
 
 	private void initialize() {
-		if (result == null)
+		if (result == null) {
 			result = new PublisherResult();
-		if (configs == null)
+		}
+		if (configs == null) {
 			configs = new ArrayList<>();
-		if (advice == null)
+		}
+		if (advice == null) {
 			advice = new ArrayList<>();
+		}
 	}
 
 }

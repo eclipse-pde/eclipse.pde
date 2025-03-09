@@ -54,8 +54,9 @@ public class ManifestModifier extends Task {
 		while (tokenizer.hasMoreElements()) {
 			String key = tokenizer.nextToken();
 			String value = tokenizer.nextToken();
-			if (value.equals("null")) //$NON-NLS-1$
+			if (value.equals("null")) { //$NON-NLS-1$
 				value = null;
+			}
 			newValues.put(key, value);
 		}
 	}
@@ -70,8 +71,9 @@ public class ManifestModifier extends Task {
 	}
 
 	private void writeManifest() {
-		if (!contentChanged)
+		if (!contentChanged) {
 			return;
+		}
 
 		try (OutputStream os = new BufferedOutputStream(new FileOutputStream(manifestLocation))) {
 			manifest.write(os);
@@ -111,8 +113,9 @@ public class ManifestModifier extends Task {
 
 	private void changeValue(String key, String value) {
 		Attributes attributes = manifest.getMainAttributes();
-		if (attributes.containsKey(key) && attributes.getValue(key).equals(value))
+		if (attributes.containsKey(key) && attributes.getValue(key).equals(value)) {
 			return;
+		}
 		contentChanged = true;
 		attributes.put(new Attributes.Name(key), value);
 	}

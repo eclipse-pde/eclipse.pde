@@ -88,8 +88,9 @@ public class GETFetchFactory implements IFetchFactory {
 		String url = rawEntry;
 		if (rawEntry.indexOf(',') != -1) {
 			StringTokenizer tokenizer = new StringTokenizer(rawEntry, SEPARATOR);
-			if (tokenizer.hasMoreTokens())
+			if (tokenizer.hasMoreTokens()) {
 				url = tokenizer.nextToken();
+			}
 			while (tokenizer.hasMoreTokens()) {
 				String token = tokenizer.nextToken();
 				int index = token.indexOf('=');
@@ -141,23 +142,28 @@ public class GETFetchFactory implements IFetchFactory {
 
 		// the rest of the attributes are optional so check if they exist before writing in the file
 		String ignoreErrors = (String) entryInfos.get(ATTRIBUTE_IGNORE_ERRORS);
-		if (ignoreErrors != null)
+		if (ignoreErrors != null) {
 			script.printAttribute(ATTRIBUTE_IGNORE_ERRORS, ignoreErrors, false);
+		}
 
 		String useTimestamp = (String) entryInfos.get(ATTRIBUTE_USE_TIMESTAMP);
-		if (useTimestamp != null)
+		if (useTimestamp != null) {
 			script.printAttribute(ATTRIBUTE_USE_TIMESTAMP, useTimestamp, false);
+		}
 
 		String verbose = (String) entryInfos.get(ATTRIBUTE_VERBOSE);
-		if (verbose != null)
+		if (verbose != null) {
 			script.printAttribute(ATTRIBUTE_VERBOSE, verbose, false);
+		}
 
 		String username = (String) entryInfos.get(ATTRIBUTE_USERNAME);
 		String password = (String) entryInfos.get(ATTRIBUTE_PASSWORD);
-		if (username != null)
+		if (username != null) {
 			script.printAttribute(ATTRIBUTE_USERNAME, username, password != null);
-		if (password != null)
+		}
+		if (password != null) {
 			script.printAttribute(ATTRIBUTE_PASSWORD, password, username != null);
+		}
 
 		script.print(TAG_CLOSE);
 

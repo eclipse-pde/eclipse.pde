@@ -38,8 +38,9 @@ public class CompileErrorTask extends Task {
 
 	@Override
 	public void execute() {
-		if (logFile == null || logFile.startsWith(ANT_PREFIX) || problemFiles.size() == 0)
+		if (logFile == null || logFile.startsWith(ANT_PREFIX) || problemFiles.size() == 0) {
 			return;
+		}
 
 		Union union = new Union(problemFiles);
 		String[] prereqFiles = union.list();
@@ -48,8 +49,9 @@ public class CompileErrorTask extends Task {
 			File file = new File(prereqFile);
 			try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
 				String line = reader.readLine();
-				if (line != null)
+				if (line != null) {
 					problems.add(line);
+				}
 			} catch (IOException e) {
 				// 
 			}
@@ -57,8 +59,9 @@ public class CompileErrorTask extends Task {
 
 		if (problems.size() > 0) {
 			File log = new File(logFile);
-			if (!log.getParentFile().exists())
+			if (!log.getParentFile().exists()) {
 				log.getParentFile().mkdirs();
+			}
 			synchronized (LOCK) {
 				try (FileWriter writer = new FileWriter(log, true)) {
 					writer.write(bundle + ": the following prerequisites contain compile errors" + NEW_LINE); //$NON-NLS-1$

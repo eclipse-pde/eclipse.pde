@@ -73,8 +73,9 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 	private void generateAuthentificationAntTask(Map<String, Object> entryInfos, IAntScript script) {
 		String password = (String) entryInfos.get(KEY_PASSWORD);
 		String cvsPassFileLocation = (String) entryInfos.get(KEY_CVSPASSFILE);
-		if (password != null)
+		if (password != null) {
 			printCVSPassTask((String) entryInfos.get(KEY_CVSROOT), password, cvsPassFileLocation, script);
+		}
 	}
 
 	@Override
@@ -97,13 +98,15 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 		// the call to CVS requires us to pass a destination directory for the files that we are
 		// retrieving, so give it the /plugins dir here
 		if (prebuilt) {
-			if (type.equals(ELEMENT_TYPE_PLUGIN))
+			if (type.equals(ELEMENT_TYPE_PLUGIN)) {
 				element = IPDEBuildConstants.DEFAULT_PLUGIN_LOCATION;
-			else if (type.equals(ELEMENT_TYPE_FEATURE))
+			} else if (type.equals(ELEMENT_TYPE_FEATURE)) {
 				element = IPDEBuildConstants.DEFAULT_FEATURE_LOCATION;
+			}
 		} else {
-			if (suggestedPath != null)
+			if (suggestedPath != null) {
 				element = suggestedPath;
+			}
 		}
 		params.put(PROP_ELEMENTNAME, element);
 		String module = entryInfos.get(KEY_PATH) == null ? element : (String) entryInfos.get(KEY_PATH);

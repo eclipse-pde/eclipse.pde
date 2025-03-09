@@ -69,8 +69,9 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 			readDirectory();
 			try (PrintWriter output = new PrintWriter(new BufferedOutputStream(new FileOutputStream(destination)))) {
 				List<String> entries = new ArrayList<>(20);
-				for (String element : elements)
+				for (String element : elements) {
 					collectEntries(entries, element);
+				}
 				generatePrologue(output);
 				generateEntries(output, entries);
 			}
@@ -109,8 +110,9 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 	 * @return String
 	 */
 	protected String getBuildId() {
-		if (buildId == null)
+		if (buildId == null) {
 			buildId = getProject().getProperty(PROPERTY_BUILD_ID);
+		}
 		return buildId;
 	}
 
@@ -119,8 +121,9 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 	 * @return String
 	 */
 	protected String getBuildQualifier() {
-		if (buildQualifier == null)
+		if (buildQualifier == null) {
 			buildQualifier = getProject().getProperty(PROPERTY_BUILD_QUALIFIER);
+		}
 		return buildQualifier;
 	}
 
@@ -129,8 +132,9 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 	 * @return String
 	 */
 	protected String getBuildType() {
-		if (buildType == null)
+		if (buildType == null) {
 			buildType = getProject().getProperty(PROPERTY_BUILD_TYPE);
+		}
 		return buildType;
 	}
 
@@ -172,10 +176,11 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 		FeatureEntry[] pluginEntries = feature.getPluginEntries();
 		for (FeatureEntry pluginEntry : pluginEntries) {
 			String elementId = pluginEntry.getId();
-			if (pluginEntry.isFragment())
+			if (pluginEntry.isFragment()) {
 				collectEntries(entries, "fragment@" + elementId); //$NON-NLS-1$
-			else
+			} else {
 				collectEntries(entries, "plugin@" + elementId); //$NON-NLS-1$
+			}
 		}
 	}
 

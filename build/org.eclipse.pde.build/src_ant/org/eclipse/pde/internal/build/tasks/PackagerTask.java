@@ -105,12 +105,14 @@ public class PackagerTask extends Task {
 		properties.setProperty(IBuildPropertiesConstants.PROPERTY_PACKAGER_MODE, "true"); //$NON-NLS-1$
 
 		String value = getProject().getProperty(IBuildPropertiesConstants.RESOLVER_DEV_MODE);
-		if (Boolean.valueOf(value).booleanValue())
+		if (Boolean.valueOf(value).booleanValue()) {
 			properties.put(IBuildPropertiesConstants.RESOLVER_DEV_MODE, "true"); //$NON-NLS-1$
+		}
 
 		value = getProject().getProperty(IBuildPropertiesConstants.PROPERTY_ALLOW_BINARY_CYCLES);
-		if (Boolean.valueOf(value).booleanValue())
+		if (Boolean.valueOf(value).booleanValue()) {
 			properties.put(IBuildPropertiesConstants.PROPERTY_ALLOW_BINARY_CYCLES, "true"); //$NON-NLS-1$
+		}
 
 		ProfileManager manager = new ProfileManager(null, true);
 		manager.copyEEProfileProperties(getProject().getProperties(), antProperties);
@@ -134,9 +136,10 @@ public class PackagerTask extends Task {
 	}
 
 	public void setNormalize(boolean value) {
-		if (value)
+		if (value) {
 			antProperties.setProperty(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER, "true"); //$NON-NLS-1$
-		else
+		} else {
 			antProperties.setProperty(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER, "false"); //$NON-NLS-1$
+		}
 	}
 }

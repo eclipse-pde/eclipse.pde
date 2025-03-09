@@ -58,8 +58,9 @@ public class UnzipperGenerator extends AbstractScriptGenerator {
 	}
 
 	private void prepareGeneration() {
-		if (packagingPropertiesLocation == null)
+		if (packagingPropertiesLocation == null) {
 			return;
+		}
 
 		Properties packagingProperties = new Properties();
 		InputStream propertyStream = null;
@@ -102,8 +103,9 @@ public class UnzipperGenerator extends AbstractScriptGenerator {
 			String[] entryDetail = Utils.getArrayFromString(zipEntry, DATA_SEPARATOR);
 			script.printComment("Uncompress " + entryDetail[ARCHIVE_NAME]); //$NON-NLS-1$
 
-			if (!entryDetail[FOLDER].equals(".")) //$NON-NLS-1$
+			if (!entryDetail[FOLDER].equals(".")) { //$NON-NLS-1$
 				script.printMkdirTask("${tempDirectory}/" + entryDetail[FOLDER]); //$NON-NLS-1$
+			}
 
 			if (delayed(entryDetail[ARCHIVE_NAME])) {
 				toUnzipWithOrder.add(entryDetail);
@@ -141,8 +143,9 @@ public class UnzipperGenerator extends AbstractScriptGenerator {
 
 	private boolean delayed(String fileName) {
 		for (String element : unzipOrder) {
-			if (fileName.startsWith(element))
+			if (fileName.startsWith(element)) {
 				return true;
+			}
 		}
 		return false;
 	}

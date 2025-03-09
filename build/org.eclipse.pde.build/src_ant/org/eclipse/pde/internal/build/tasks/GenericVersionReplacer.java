@@ -39,15 +39,18 @@ public class GenericVersionReplacer extends Task {
 		}
 
 		File foundFile = new File(root, PLUGIN);
-		if (foundFile.exists() && foundFile.isFile())
+		if (foundFile.exists() && foundFile.isFile()) {
 			callPluginVersionModifier(foundFile.getAbsolutePath(), PLUGIN);
+		}
 		foundFile = new File(root, FRAGMENT);
-		if (foundFile.exists() && foundFile.isFile())
+		if (foundFile.exists() && foundFile.isFile()) {
 			callPluginVersionModifier(foundFile.getAbsolutePath(), FRAGMENT);
+		}
 
 		foundFile = new File(root, MANIFEST);
-		if (foundFile.exists() && foundFile.isFile())
+		if (foundFile.exists() && foundFile.isFile()) {
 			callManifestModifier(foundFile.getAbsolutePath());
+		}
 	}
 
 	private void callPluginVersionModifier(String path, String input) {
@@ -64,8 +67,9 @@ public class GenericVersionReplacer extends Task {
 		modifier.setProject(getProject());
 		modifier.setManifestLocation(path);
 		modifier.setKeyValue("Bundle-Version|" + version); //$NON-NLS-1$
-		if (attributes != null)
+		if (attributes != null) {
 			modifier.setKeyValue(attributes);
+		}
 		modifier.execute();
 	}
 

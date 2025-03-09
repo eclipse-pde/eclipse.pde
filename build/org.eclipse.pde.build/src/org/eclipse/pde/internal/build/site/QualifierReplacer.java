@@ -34,25 +34,31 @@ public class QualifierReplacer implements IBuildPropertiesConstants {
 	 * @return string version with qualifier replaced
 	 */
 	public static String replaceQualifierInVersion(String version, String id, String replaceTag, Properties newVersions) {
-		if (!AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER))
+		if (!AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER)) {
 			return version;
-		if (!version.endsWith(PROPERTY_QUALIFIER))
+		}
+		if (!version.endsWith(PROPERTY_QUALIFIER)) {
 			return version;
+		}
 
 		String newQualifier = null;
 		if (replaceTag == null || replaceTag.equalsIgnoreCase(PROPERTY_CONTEXT)) {
-			if (globalQualifier != null)
+			if (globalQualifier != null) {
 				newQualifier = globalQualifier;
+			}
 
 			if (newQualifier == null && newVersions != null && newVersions.size() != 0) { //Skip the lookup in the file if there is no entries
 				newQualifier = (String) newVersions.get(getQualifierKey(id, version)); //First we check to see if there is a precise version
-				if (newQualifier == null) //If not found, then lookup for the id,0.0.0
+				if (newQualifier == null) { //If not found, then lookup for the id,0.0.0
 					newQualifier = (String) newVersions.get(id + ',' + Version.emptyVersion.toString());
-				if (newQualifier == null)
+				}
+				if (newQualifier == null) {
 					newQualifier = newVersions.getProperty(DEFAULT_MATCH_ALL);
+				}
 			}
-			if (newQualifier == null)
+			if (newQualifier == null) {
 				newQualifier = getDateQualifier();
+			}
 		} else if (replaceTag.equalsIgnoreCase(PROPERTY_NONE)) {
 			newQualifier = ""; //$NON-NLS-1$
 		} else {
@@ -60,15 +66,17 @@ public class QualifierReplacer implements IBuildPropertiesConstants {
 		}
 
 		version = version.replaceFirst(PROPERTY_QUALIFIER, newQualifier);
-		if (version.endsWith(".")) //$NON-NLS-1$
+		if (version.endsWith(".")) { //$NON-NLS-1$
 			version = version.substring(0, version.length() - 1);
+		}
 		return version;
 	}
 
 	//given a version ending in "qualifier" return the key to look up the replacement
 	public static String getQualifierKey(String id, String version) {
-		if (version == null || !version.endsWith(PROPERTY_QUALIFIER))
+		if (version == null || !version.endsWith(PROPERTY_QUALIFIER)) {
 			return null;
+		}
 
 		Version osgiVersion = new Version(version);
 		String qualifier = osgiVersion.getQualifier();
@@ -120,9 +128,10 @@ public class QualifierReplacer implements IBuildPropertiesConstants {
 	 * @param globalQualifier string replacement or <code>null</code>
 	 */
 	public static void setGlobalQualifier(String globalQualifier) {
-		if (globalQualifier == null || globalQualifier.length() == 0)
+		if (globalQualifier == null || globalQualifier.length() == 0) {
 			QualifierReplacer.globalQualifier = null;
-		else if (globalQualifier.length() > 0 && globalQualifier.charAt(0) != '$')
+		} else if (globalQualifier.length() > 0 && globalQualifier.charAt(0) != '$') {
 			QualifierReplacer.globalQualifier = globalQualifier;
+		}
 	}
 }

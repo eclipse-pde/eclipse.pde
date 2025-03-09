@@ -111,8 +111,9 @@ public class BuildScriptGeneratorTask extends Task {
 		initializeAntProperties(antProperties);
 		setEEProfileProperties(antProperties);
 
-		if (!Boolean.valueOf(antProperties.getProperty(IBuildPropertiesConstants.PROPERTY_SUPPRESS_RESOLUTION_ERRORS)).booleanValue())
+		if (!Boolean.valueOf(antProperties.getProperty(IBuildPropertiesConstants.PROPERTY_SUPPRESS_RESOLUTION_ERRORS)).booleanValue()) {
 			generator.setReportResolutionErrors(true);
+		}
 		generator.setImmutableAntProperties(antProperties);
 		BundleHelper.getDefault().setLog(this);
 		generator.generate();
@@ -121,28 +122,34 @@ public class BuildScriptGeneratorTask extends Task {
 
 	private void initializeAntProperties(Properties properties) {
 		String value = getProject().getProperty(IBuildPropertiesConstants.RESOLVER_DEV_MODE);
-		if (Boolean.valueOf(value).booleanValue())
+		if (Boolean.valueOf(value).booleanValue()) {
 			properties.put(IBuildPropertiesConstants.RESOLVER_DEV_MODE, "true"); //$NON-NLS-1$
+		}
 
 		value = getProject().getProperty(IBuildPropertiesConstants.PROPERTY_INDIVIDUAL_SOURCE);
-		if (Boolean.valueOf(value).booleanValue())
+		if (Boolean.valueOf(value).booleanValue()) {
 			properties.put(IBuildPropertiesConstants.PROPERTY_INDIVIDUAL_SOURCE, "true"); //$NON-NLS-1$
+		}
 
 		value = getProject().getProperty(IBuildPropertiesConstants.PROPERTY_ALLOW_BINARY_CYCLES);
-		if (Boolean.valueOf(value).booleanValue())
+		if (Boolean.valueOf(value).booleanValue()) {
 			properties.put(IBuildPropertiesConstants.PROPERTY_ALLOW_BINARY_CYCLES, "true"); //$NON-NLS-1$
+		}
 
 		value = getProject().getProperty(IBuildPropertiesConstants.PROPERTY_P2_GATHERING);
-		if (Boolean.valueOf(value).booleanValue())
+		if (Boolean.valueOf(value).booleanValue()) {
 			properties.put(IBuildPropertiesConstants.PROPERTY_P2_GATHERING, "true"); //$NON-NLS-1$ 
+		}
 
 		value = getProject().getProperty(IBuildPropertiesConstants.PROPERTY_SUPPRESS_RESOLUTION_ERRORS);
-		if (Boolean.valueOf(value).booleanValue())
+		if (Boolean.valueOf(value).booleanValue()) {
 			properties.put(IBuildPropertiesConstants.PROPERTY_SUPPRESS_RESOLUTION_ERRORS, "true"); //$NON-NLS-1$ 
+		}
 
 		value = getProject().getProperty(IBuildPropertiesConstants.PROPERTY_ANT_VERSION);
-		if (value != null)
+		if (value != null) {
 			properties.put(IBuildPropertiesConstants.PROPERTY_ANT_VERSION, value);
+		}
 	}
 
 	private void setEEProfileProperties(Properties antProperties) {
@@ -335,38 +342,45 @@ public class BuildScriptGeneratorTask extends Task {
 		ArrayList<URI> uris = new ArrayList<>();
 		for (String location2 : locations) {
 			String context = location2;
-			if (context == null || context.startsWith("${") || context.length() == 0) //$NON-NLS-1$
+			if (context == null || context.startsWith("${") || context.length() == 0) { //$NON-NLS-1$
 				continue;
+			}
 
-			if (!context.startsWith("file:")) //$NON-NLS-1$
+			if (!context.startsWith("file:")) { //$NON-NLS-1$
 				context = "file:" + context; //$NON-NLS-1$
+			}
 			try {
 				uris.add(URIUtil.fromString(context));
 			} catch (URISyntaxException e) {
 				log("Invalid repository location:" + context); //$NON-NLS-1$
 			}
 		}
-		if (uris.size() > 0)
+		if (uris.size() > 0) {
 			generator.setContextMetadataRepositories(uris.toArray(new URI[uris.size()]));
+		}
 	}
 
 	public void setSourceBundleFeatureId(String value) {
-		if (value != null && !value.startsWith("${")) //$NON-NLS-1$
+		if (value != null && !value.startsWith("${")) { //$NON-NLS-1$
 			generator.setSourceBundleFeatureId(value);
+		}
 	}
 
 	public void setSourceBundleTemplateFeature(String value) {
-		if (value != null && !value.startsWith("${")) //$NON-NLS-1$
+		if (value != null && !value.startsWith("${")) { //$NON-NLS-1$
 			generator.setSourceBundleTemplateFeature(value);
+		}
 	}
 
 	public void setSourceBundleFeatureVersion(String value) {
-		if (value != null && !value.startsWith("${")) //$NON-NLS-1$
+		if (value != null && !value.startsWith("${")) { //$NON-NLS-1$
 			generator.setSourceBundleFeatureVersion(value);
+		}
 	}
 
 	public void setSourceBundleMode(String value) {
-		if (value != null && !value.startsWith("${")) //$NON-NLS-1$
+		if (value != null && !value.startsWith("${")) { //$NON-NLS-1$
 			generator.setSourceBundleMode(value);
+		}
 	}
 }

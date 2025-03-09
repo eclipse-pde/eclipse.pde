@@ -59,8 +59,9 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 
 	@Override
 	protected Collection<BuildTimeFeature> getArchiveRootFileProviders() {
-		if (!archiveRootProviders.isEmpty())
+		if (!archiveRootProviders.isEmpty()) {
 			return archiveRootProviders;
+		}
 		return super.getArchiveRootFileProviders();
 	}
 
@@ -69,12 +70,14 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 		final String DOT_JAR = '.' + JAR;
 		if (!AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER)) {
 			IPath path = IPath.fromOSString(bundle.getLocation());
-			if (shape.equals(ShapeAdvisor.FILE) && !JAR.equalsIgnoreCase(path.getFileExtension()))
+			if (shape.equals(ShapeAdvisor.FILE) && !JAR.equalsIgnoreCase(path.getFileExtension())) {
 				return path.lastSegment().concat(DOT_JAR);
+			}
 			return path.lastSegment();
 		}
-		if (shape.equals(ShapeAdvisor.FILE))
+		if (shape.equals(ShapeAdvisor.FILE)) {
 			return ModelBuildScriptGenerator.getNormalizedName(bundle) + DOT_JAR;
+		}
 		return ModelBuildScriptGenerator.getNormalizedName(bundle);
 	}
 
@@ -89,13 +92,15 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 	protected void generateGatherBinPartsTarget() { //TODO Here we should try to use cp because otherwise we will loose the permissions
 		script.printTargetDeclaration(TARGET_GATHER_BIN_PARTS, null, null, null, null);
 		String excludedFiles = null;
-		if (AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER))
+		if (AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER)) {
 			excludedFiles = "build.properties, .project, .classpath"; //$NON-NLS-1$
+		}
 		IPath baseLocation = null;
 		try {
 			String url = getSite(false).getSiteContentProvider().getInstalledBaseURL();
-			if (url != null)
+			if (url != null) {
 				baseLocation = IPath.fromOSString(url);
+			}
 		} catch (CoreException e) {
 			//nothing
 		}
@@ -144,15 +149,18 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 		if (packagingProperties.size() != 0) {
 			String filesToPackage = null;
 			filesToPackage = packagingProperties.getProperty(ROOT, null);
-			if (filesToPackage != null)
+			if (filesToPackage != null) {
 				filesToPackage += ',';
+			}
 
 			String tmp = packagingProperties.getProperty(ROOT_PREFIX + configInfo.toString("."), null); //$NON-NLS-1$
-			if (tmp != null)
+			if (tmp != null) {
 				filesToPackage += tmp;
+			}
 
-			if (filesToPackage == null)
+			if (filesToPackage == null) {
 				filesToPackage = "**/**"; //$NON-NLS-1$
+			}
 
 			FileSet rootFiles = new FileSet(Utils.getPropertyFormat("tempDirectory") + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + "/eclipse", null, filesToPackage, null, null, null, null); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 			String target = Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER); //$NON-NLS-1$
@@ -176,8 +184,9 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 
 	public void setPackagingPropertiesLocation(String packagingPropertiesLocation) throws CoreException {
 		packagingProperties = new Properties();
-		if (packagingPropertiesLocation == null || packagingPropertiesLocation.equals("")) //$NON-NLS-1$
+		if (packagingPropertiesLocation == null || packagingPropertiesLocation.equals("")) { //$NON-NLS-1$
 			return;
+		}
 
 		try (InputStream propertyStream = new BufferedInputStream(new FileInputStream(packagingPropertiesLocation))) {
 			packagingProperties.load(propertyStream);
@@ -188,8 +197,9 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 
 		if (packagingProperties.size() > 0) {
 			//This is need so that the call in assemble config script generator gather the root files 
-			if (rootFileProviders == null)
+			if (rootFileProviders == null) {
 				rootFileProviders = new ArrayList<>(1);
+			}
 			// TODO Unclear why "elt" was added as a root provider, instead we will add an empty feature
 			//	rootFileProviders.add("elt"); //$NON-NLS-1$
 			rootFileProviders.add(new BuildTimeFeature());
@@ -252,8 +262,9 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 	}
 
 	protected Object[] getFinalShape(BuildTimeFeature feature) {
-		if (AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_MODE) == true)
+		if (AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_MODE) == true) {
 			return new Object[] {getFinalName(feature), ShapeAdvisor.FOLDER};
+		}
 		return shapeAdvisor.getFinalShape(feature);
 	}
 
