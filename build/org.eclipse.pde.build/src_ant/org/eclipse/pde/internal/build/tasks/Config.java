@@ -46,21 +46,26 @@ public class Config {
 
 	@Override
 	public boolean equals(Object config) {
-		if (this == config)
+		if (this == config) {
 			return true;
+		}
 
-		if (!(config instanceof Config))
+		if (!(config instanceof Config)) {
 			return false;
+		}
 
 		Config aConfig = (Config) config;
-		if (!os.equalsIgnoreCase(aConfig.os))
+		if (!os.equalsIgnoreCase(aConfig.os)) {
 			return false;
+		}
 
-		if (!ws.equalsIgnoreCase(aConfig.ws))
+		if (!ws.equalsIgnoreCase(aConfig.ws)) {
 			return false;
+		}
 
-		if (!arch.equalsIgnoreCase(aConfig.arch))
+		if (!arch.equalsIgnoreCase(aConfig.arch)) {
 			return false;
+		}
 
 		return true;
 	}
@@ -88,19 +93,23 @@ public class Config {
 		String newWs = ws;
 		String newArch = arch;
 
-		if (ANY.equals(os))
+		if (ANY.equals(os)) {
 			newOs = value;
-		if (ANY.equals(ws))
+		}
+		if (ANY.equals(ws)) {
 			newWs = value;
-		if (ANY.equals(arch))
+		}
+		if (ANY.equals(arch)) {
 			newArch = value;
+		}
 
 		return newOs + separator + newWs + separator + newArch;
 	}
 
 	public static Config genericConfig() {
-		if (genericConfig == null)
+		if (genericConfig == null) {
 			genericConfig = new Config(ANY, ANY, ANY);
+		}
 
 		return genericConfig;
 	}

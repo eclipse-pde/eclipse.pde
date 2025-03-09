@@ -37,8 +37,9 @@ public class BuildTimeFeatureFactory /*extends BaseFeatureFactory */ implements 
 	}
 
 	public static BuildTimeFeatureFactory getInstance() {
-		if (factoryInstance == null)
+		if (factoryInstance == null) {
 			factoryInstance = new BuildTimeFeatureFactory();
+		}
 		return factoryInstance;
 	}
 

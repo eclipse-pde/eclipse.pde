@@ -51,8 +51,9 @@ public class AssembledConfigAdvice implements IConfigAdvice, IExecutableAdvice {
 		Map<String, String> props = new HashMap<>(configProps.size() + 1);
 		CollectionUtils.putAll(configProps, props);
 		int startLevel = configData.getInitialBundleStartLevel();
-		if (startLevel != BundleInfo.NO_LEVEL)
+		if (startLevel != BundleInfo.NO_LEVEL) {
 			props.put("osgi.bundles.defaultStartLevel", String.valueOf(startLevel)); //$NON-NLS-1$
+		}
 		return props;
 	}
 
@@ -62,8 +63,9 @@ public class AssembledConfigAdvice implements IConfigAdvice, IExecutableAdvice {
 	}
 
 	private File getLauncher(File root) {
-		if (launcherName == null)
+		if (launcherName == null) {
 			launcherName = "eclipse"; //$NON-NLS-1$
+		}
 		if (configSpec.indexOf(Constants.OS_MACOSX) > 0) {
 			File launcher = new File(root, launcherName + ".app/Contents/MacOS/" + launcherName); //$NON-NLS-1$
 			if (!launcher.exists()) {
@@ -72,8 +74,9 @@ public class AssembledConfigAdvice implements IConfigAdvice, IExecutableAdvice {
 			}
 			return launcher;
 		}
-		if (configSpec.indexOf("win32") > 0) //$NON-NLS-1$
+		if (configSpec.indexOf("win32") > 0) { //$NON-NLS-1$
 			return new File(root, launcherName + ".exe"); //$NON-NLS-1$
+		}
 		return new File(root, launcherName);
 	}
 

@@ -58,8 +58,9 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 
 	@Override
 	protected String getScriptName() {
-		if (backwardCompatibleName)
+		if (backwardCompatibleName) {
 			return "package" + '.' + DEFAULT_ASSEMBLE_ALL; //$NON-NLS-1$
+		}
 		return "package" + '.' + (featureId.equals("") ? "" : featureId + '.') + DEFAULT_ASSEMBLE_ALL; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
@@ -104,10 +105,11 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 
 	@Override
 	protected void printDefaultAssembleCondition() {
-		if (backwardCompatibleName)
+		if (backwardCompatibleName) {
 			script.printConditionIsSet("defaultAssemble.@{config}", "defaultAssemble", "defaultAssemblyEnabled", "assemble@{dot}@{config}.xml"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		else
+		} else {
 			script.printConditionIsSet("defaultAssemble.@{config}", "defaultAssemble", "defaultAssemblyEnabled", "assemble.@{element}@{dot}@{config}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		}
 	}
 
 	@Override
@@ -132,10 +134,11 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 
 			String versionAdvice = null;
 			if (versionsList && product != null) {
-				if (product.useFeatures())
+				if (product.useFeatures()) {
 					versionAdvice = getWorkingDirectory() + '/' + DEFAULT_FEATURE_VERSION_FILENAME_PREFIX + PROPERTIES_FILE_SUFFIX;
-				else
+				} else {
 					versionAdvice = getWorkingDirectory() + '/' + DEFAULT_PLUGIN_VERSION_FILENAME_PREFIX + PROPERTIES_FILE_SUFFIX;
+				}
 			}
 			generateP2FinalCall(script, productPath, versionAdvice);
 			script.printTargetEnd();
@@ -157,8 +160,9 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 
 		if (productFileLocation != null) {
 			script.printAttribute("productFile", productFileLocation, true); //$NON-NLS-1$
-			if (versionAdvice != null)
+			if (versionAdvice != null) {
 				script.printAttribute("versionAdvice", versionAdvice, true); //$NON-NLS-1$
+			}
 		} else {
 			script.printAttribute("root", Utils.getPropertyFormat(PROPERTY_P2_ROOT_NAME), true); //$NON-NLS-1$
 			script.printAttribute("rootVersion", Utils.getPropertyFormat(PROPERTY_P2_ROOT_VERSION), true); //$NON-NLS-1$
@@ -182,8 +186,9 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 	 * @return The location of the generated script, or null
 	 */
 	public static String generateP2ProductScript(String workingDir, String productFileLocation, Properties versionAdvice) throws CoreException {
-		if (!loadP2Class())
+		if (!loadP2Class()) {
 			return null;
+		}
 
 		File working = new File(workingDir);
 		working.mkdirs();
@@ -213,8 +218,9 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 			p2Script.printTargetEnd();
 			p2Script.printProjectEnd();
 		} finally {
-			if (p2Script != null)
+			if (p2Script != null) {
 				p2Script.close();
+			}
 		}
 		return workingDir + "/p2product.xml"; //$NON-NLS-1$
 	}

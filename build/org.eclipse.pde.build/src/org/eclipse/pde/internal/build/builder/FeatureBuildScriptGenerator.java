@@ -86,25 +86,28 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 
 		Properties properties = getBuildProperties();
 		customFeatureCallbacks = properties.getProperty(PROPERTY_CUSTOM_BUILD_CALLBACKS);
-		if (TRUE.equalsIgnoreCase(customFeatureCallbacks))
+		if (TRUE.equalsIgnoreCase(customFeatureCallbacks)) {
 			customFeatureCallbacks = DEFAULT_CUSTOM_BUILD_CALLBACKS_FILE;
-		else if (FALSE.equalsIgnoreCase(customFeatureCallbacks))
+		} else if (FALSE.equalsIgnoreCase(customFeatureCallbacks)) {
 			customFeatureCallbacks = null;
+		}
 		customCallbacksBuildpath = properties.getProperty(PROPERTY_CUSTOM_CALLBACKS_BUILDPATH, "."); //$NON-NLS-1$
 		customCallbacksFailOnError = properties.getProperty(PROPERTY_CUSTOM_CALLBACKS_FAILONERROR, FALSE);
 		customCallbacksInheritAll = properties.getProperty(PROPERTY_CUSTOM_CALLBACKS_INHERITALL);
 
 		String sourceFeatureName = getBuildProperties().getProperty(PROPERTY_SOURCE_FEATURE_NAME);
-		if (sourceFeatureName == null)
+		if (sourceFeatureName == null) {
 			sourceFeatureName = feature.getId().endsWith(".source") ? feature.getId() : feature.getId() + ".source"; //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		sourceFeatureFullNameVersioned = sourceFeatureName + "_" + feature.getVersion(); //$NON-NLS-1$
 
 	}
 
 	@Override
 	public void generate() throws CoreException {
-		if (feature.isBinary())
+		if (feature.isBinary()) {
 			return;
+		}
 
 		if (getBuildProperties() == MissingProperties.getInstance() || AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_MODE)) {
 			feature.setBinary(true);
@@ -151,8 +154,9 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 	 * Main call for generating the script.
 	 */
 	private void generateBuildScript() throws CoreException {
-		if (BundleHelper.getDefault().isDebugging())
+		if (BundleHelper.getDefault().isDebugging()) {
 			System.out.println("Generating feature " + featureFullName); //$NON-NLS-1$
+		}
 		generatePrologue();
 		generateAllPluginsTarget();
 		generateAllFeaturesTarget();
@@ -310,8 +314,9 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		Map<String, String> common = root.get(Utils.ROOT_COMMON);
 		for (Config aConfig : getConfigInfos()) {
 			String configKey = aConfig.toString("."); //$NON-NLS-1$
-			if (root.containsKey(configKey) || common.size() > 0)
+			if (root.containsKey(configKey) || common.size() > 0) {
 				director.getAssemblyData().addRootFileProvider(aConfig, feature);
+			}
 		}
 
 		script.println();
@@ -329,8 +334,9 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		}
 
 		String include = (String) getBuildProperties().get(PROPERTY_BIN_INCLUDES);
-		if (include == null || include.indexOf("feature.xml") == -1) //$NON-NLS-1$
+		if (include == null || include.indexOf("feature.xml") == -1) { //$NON-NLS-1$
 			include = (include != null ? include + "," : "") + "feature.xml"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
 
 		String exclude = (String) getBuildProperties().get(PROPERTY_BIN_EXCLUDES);
 
@@ -347,10 +353,11 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		script.println("<eclipse.gatherFeature "); //$NON-NLS-1$
 		script.println("   metadataRepository=\"" + Utils.getPropertyFormat(PROPERTY_P2_BUILD_REPO) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		script.println("   artifactRepository=\"" + Utils.getPropertyFormat(PROPERTY_P2_BUILD_REPO) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		if (customFeatureCallbacks != null)
+		if (customFeatureCallbacks != null) {
 			script.println("   targetFolder=\"" + featureTemp + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		else
+		} else {
 			script.println("   buildResultFolder=\"" + featureTemp + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		script.println("   baseDirectory=\"${basedir}\""); //$NON-NLS-1$
 		if (getLicenseFeature() != null) {
 			IPath licenseLocation = Utils.makeRelative(IPath.fromOSString(getLicenseFeatureRootLocation()), IPath.fromOSString(featureRootLocation));
@@ -372,8 +379,9 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 
 		script.println();
 		script.printTargetDeclaration(TARGET_GATHER_BIN_PARTS, TARGET_INIT, PROPERTY_FEATURE_BASE, null, null);
-		if (include != null)
+		if (include != null) {
 			script.printMkdirTask(root);
+		}
 
 		Map<String, String> callbackParams = null;
 		if (customFeatureCallbacks != null) {
@@ -473,10 +481,11 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 			generator.setWorkingDirectory(getWorkingDirectory());
 			generator.setAssemblyInfo(director.getAssemblyData());
 			try {
-				if (!BuildDirector.p2Gathering && generateProductFiles)
+				if (!BuildDirector.p2Gathering && generateProductFiles) {
 					generator.generate();
-				else if (generateEclipseProduct)
+				} else if (generateEclipseProduct) {
 					generator.generateEclipseProduct();
+				}
 			} catch (CoreException e) {
 				//problem with the .product file
 				//TODO Log warning/error
@@ -506,8 +515,9 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		String configKey = aConfig.toString("."); //$NON-NLS-1$
 		Map<String, Map<String, String>> root = Utils.processRootProperties(properties, true);
 		Map<String, String> foldersToCopy = root.containsKey(configKey) ? root.get(configKey) : root.get(Utils.ROOT_COMMON);
-		if (foldersToCopy == null || foldersToCopy.isEmpty())
+		if (foldersToCopy == null || foldersToCopy.isEmpty()) {
 			return;
+		}
 
 		String configName = aConfig.toStringReplacingAny(".", ANY_STRING); //$NON-NLS-1$
 		String shouldOverwrite = properties.getProperty(PROPERTY_OVERWRITE_ROOTFILES, "true"); //$NON-NLS-1$
@@ -519,8 +529,9 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		String fileList = null;
 		for (Object folder2 : folders) {
 			String folder = (String) folder2;
-			if (folder.equals(Utils.ROOT_LINK) || folder.startsWith(Utils.ROOT_PERMISSIONS))
+			if (folder.equals(Utils.ROOT_LINK) || folder.startsWith(Utils.ROOT_PERMISSIONS)) {
 				continue;
+			}
 			fileList = foldersToCopy.get(folder);
 			String[] files = Utils.getArrayFromString(fileList, ","); //$NON-NLS-1$
 			FileSet[] fileSet = new FileSet[files.length];
@@ -580,8 +591,9 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		String jar = Utils.getPropertyFormat(PROPERTY_FEATURE_DESTINATION) + '/' + featureFullName + ".jar"; //$NON-NLS-1$
 		script.printJarTask(jar, featureTempFolder + '/' + featureFolderName, null);
 		script.printDeleteTask(featureTempFolder, null, null);
-		if (director.getGenerateJnlp())
+		if (director.getGenerateJnlp()) {
 			script.println("<eclipse.jnlpGenerator feature=\"" + AntScript.getEscaped(jar) + "\"  codebase=\"" + Utils.getPropertyFormat(IXMLConstants.PROPERTY_JNLP_CODEBASE) + "\" j2se=\"" + Utils.getPropertyFormat(IXMLConstants.PROPERTY_JNLP_J2SE) + "\" locale=\"" + Utils.getPropertyFormat(IXMLConstants.PROPERTY_JNLP_LOCALE) + "\" generateOfflineAllowed=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_GENOFFLINE) + "\" configInfo=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_CONFIGS) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ ); 
+		}
 		if (director.getSignJars()) {
 			if (director.getGenerateJnlp()) {
 				script.printProperty(PROPERTY_UNSIGN, "true"); //$NON-NLS-1$
@@ -645,26 +657,32 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		for (BundleDescription current : sortedPlugins) {
 			//If it is not a compiled element, then we don't generate a call
 			Properties bundleProperties = (Properties) current.getUserObject();
-			if (bundleProperties == null || bundleProperties.get(IS_COMPILED) == null || bundleProperties.get(IS_COMPILED) == Boolean.FALSE)
+			if (bundleProperties == null || bundleProperties.get(IS_COMPILED) == null || bundleProperties.get(IS_COMPILED) == Boolean.FALSE) {
 				continue;
+			}
 			// Get the os / ws / arch to pass as a parameter to the plugin
-			if (writtenCalls.contains(current))
+			if (writtenCalls.contains(current)) {
 				continue;
+			}
 			writtenCalls.add(current);
 			FeatureEntry[] entries = Utils.getPluginEntry(feature, current.getSymbolicName(), false); //TODO This can be improved to use the value from the user object in the bundleDescription
 			for (FeatureEntry entry : entries) {
 				List<Config> list = director.selectConfigs(entry);
-				if (list.size() == 0)
+				if (list.size() == 0) {
 					continue;
+				}
 				Map<String, String> params = null;
 				Config aMatchingConfig = list.get(0);
 				params = new HashMap<>(3);
-				if (!aMatchingConfig.getOs().equals(Config.ANY))
+				if (!aMatchingConfig.getOs().equals(Config.ANY)) {
 					params.put(PROPERTY_OS, aMatchingConfig.getOs());
-				if (!aMatchingConfig.getWs().equals(Config.ANY))
+				}
+				if (!aMatchingConfig.getWs().equals(Config.ANY)) {
 					params.put(PROPERTY_WS, aMatchingConfig.getWs());
-				if (!aMatchingConfig.getArch().equals(Config.ANY))
+				}
+				if (!aMatchingConfig.getArch().equals(Config.ANY)) {
 					params.put(PROPERTY_ARCH, aMatchingConfig.getArch());
+				}
 				IPath location = Utils.makeRelative(IPath.fromOSString(getLocation(current)), IPath.fromOSString(featureRootLocation));
 				script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, location.toString(), Utils.getPropertyFormat(PROPERTY_TARGET), null, null, params);
 			}
@@ -677,8 +695,9 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		FeatureEntry[] pluginList = feature.getPluginEntries();
 		for (FeatureEntry entry : pluginList) {
 			BundleDescription model;
-			if (director.selectConfigs(entry).size() == 0)
+			if (director.selectConfigs(entry).size() == 0) {
 				continue;
+			}
 
 			String versionRequested = entry.getVersion();
 			model = getSite(false).getRegistry().getResolvedBundle(entry.getId(), versionRequested);
@@ -701,14 +720,16 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 			String versionId = feature2.getVersion();
 			BuildTimeFeature includedFeature = getSite(false).findFeature(featureId, versionId, false);
 			if (includedFeature == null) {
-				if (feature2.isOptional())
+				if (feature2.isOptional()) {
 					continue;
+				}
 				String message = NLS.bind(Messages.exception_missingFeature, featureId + ' ' + versionId);
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, null));
 			}
 
-			if (includedFeature.isBinary())
+			if (includedFeature.isBinary()) {
 				continue;
+			}
 
 			String includedFeatureDirectory = includedFeature.getRootLocation();
 			IPath location = Utils.makeRelative(IPath.fromOSString(includedFeatureDirectory), IPath.fromOSString(featureRootLocation));
@@ -751,8 +772,9 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 	 * @return Properties the feature's build.properties
 	 */
 	protected Properties getBuildProperties() throws CoreException {
-		if (buildProperties == null)
+		if (buildProperties == null) {
 			buildProperties = readProperties(featureRootLocation, PROPERTIES_FILE, director.isIgnoreMissingPropertiesFile() ? IStatus.OK : IStatus.WARNING);
+		}
 		return buildProperties;
 	}
 

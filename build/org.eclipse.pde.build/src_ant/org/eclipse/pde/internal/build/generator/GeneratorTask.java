@@ -60,8 +60,9 @@ public class GeneratorTask extends Task {
 	}
 
 	protected GeneratorApplication getGenerator() {
-		if (generator == null)
+		if (generator == null) {
 			generator = new GeneratorApplication();
+		}
 		return generator;
 	}
 
@@ -70,12 +71,13 @@ public class GeneratorTask extends Task {
 	}
 
 	public void setArtifactRepository(String location) {
-		if (location != null && !location.startsWith(ANT_PREFIX))
+		if (location != null && !location.startsWith(ANT_PREFIX)) {
 			try {
 				getGenerator().setArtifactLocation(URIUtil.fromString(location));
 			} catch (URISyntaxException e) {
 				throw new IllegalArgumentException(NLS.bind(TaskMessages.error_artifactRepoNotURI, location));
 			}
+		}
 	}
 
 	public void setArtifactRepositoryName(String name) {
@@ -83,15 +85,17 @@ public class GeneratorTask extends Task {
 	}
 
 	public void setBase(String value) {
-		if (generator == null)
+		if (generator == null) {
 			generator = new GeneratorApplication();
 		//		generator.setBase(value);
+		}
 	}
 
 	public void setBundles(String value) {
-		if (generator == null)
+		if (generator == null) {
 			generator = new GeneratorApplication();
 		//		generator.setBundles(value);
+		}
 	}
 
 	public void setCompress(String value) {
@@ -119,20 +123,23 @@ public class GeneratorTask extends Task {
 	}
 
 	public void setExe(String value) {
-		if (info == null)
+		if (info == null) {
 			info = new PublisherInfo();
 		//		info.setExecutableLocation(value);
+		}
 	}
 
 	public void setFeatures(String value) {
-		if (generator == null)
+		if (generator == null) {
 			generator = new GeneratorApplication();
 		//		generator.setFeatures(value);
+		}
 	}
 
 	public void setFlavor(String flavor) {
-		if (flavor != null && !flavor.startsWith(ANT_PREFIX))
+		if (flavor != null && !flavor.startsWith(ANT_PREFIX)) {
 			getGenerator().setFlavor(flavor);
+		}
 	}
 
 	public void setLauncherConfig(String launcherConfig) {
@@ -156,29 +163,33 @@ public class GeneratorTask extends Task {
 	}
 
 	public void setMetadataRepository(String location) {
-		if (location != null && !location.startsWith(ANT_PREFIX))
+		if (location != null && !location.startsWith(ANT_PREFIX)) {
 			try {
 				getGenerator().setMetadataLocation(URIUtil.fromString(location));
 			} catch (URISyntaxException e) {
 				throw new IllegalArgumentException(NLS.bind(TaskMessages.error_metadataRepoNotURI, location));
 			}
+		}
 	}
 
 	public void setMetadataRepositoryName(String name) {
-		if (name != null && !name.startsWith(ANT_PREFIX))
+		if (name != null && !name.startsWith(ANT_PREFIX)) {
 			getGenerator().setMetadataRepositoryName(name);
+		}
 	}
 
 	public void setNoDefaultIUs(String value) {
-		if (info == null)
+		if (info == null) {
 			info = new PublisherInfo();
 		//		info.setAddDefaultIUs(!Boolean.valueOf(value).booleanValue());
+		}
 	}
 
 	public void setP2OS(String value) {
-		if (info == null)
+		if (info == null) {
 			info = new PublisherInfo();
 		//		info.setOS(value);
+		}
 	}
 
 	public void setProductFile(String file) {
@@ -189,29 +200,33 @@ public class GeneratorTask extends Task {
 
 	public void setPublishArtifactRepository(boolean value) {
 		int options = getInfo().getArtifactOptions();
-		if (value)
+		if (value) {
 			info.setArtifactOptions(options | IPublisherInfo.A_INDEX);
-		else
+		} else {
 			info.setArtifactOptions(options & ~IPublisherInfo.A_INDEX);
+		}
 	}
 
 	public void setPublishArtifacts(boolean value) {
 		int options = getInfo().getArtifactOptions();
-		if (value)
+		if (value) {
 			info.setArtifactOptions(options | IPublisherInfo.A_PUBLISH);
-		else
+		} else {
 			info.setArtifactOptions(options & ~IPublisherInfo.A_PUBLISH);
+		}
 	}
 
 	public void setRoot(String root) {
-		if (root == null || root.startsWith("${")) //$NON-NLS-1$
+		if (root == null || root.startsWith("${")) { //$NON-NLS-1$
 			return;
+		}
 		getGenerator().setRoodId(root);
 	}
 
 	public void setRootVersion(String rootVersion) {
-		if (rootVersion == null || rootVersion.startsWith(ANT_PREFIX))
+		if (rootVersion == null || rootVersion.startsWith(ANT_PREFIX)) {
 			return;
+		}
 		getGenerator().setRootVersion(rootVersion);
 	}
 
@@ -220,13 +235,15 @@ public class GeneratorTask extends Task {
 	}
 
 	public void setVersionAdvice(String advice) {
-		if (advice != null && !advice.startsWith(ANT_PREFIX))
+		if (advice != null && !advice.startsWith(ANT_PREFIX)) {
 			getGenerator().setVersionAdvice(advice);
+		}
 	}
 
 	public void setSite(String site) {
-		if (site == null || site.startsWith(ANT_PREFIX))
+		if (site == null || site.startsWith(ANT_PREFIX)) {
 			return;
+		}
 		try {
 			getGenerator().setSite(URIUtil.fromString(site));
 		} catch (URISyntaxException e) {
@@ -235,8 +252,9 @@ public class GeneratorTask extends Task {
 	}
 
 	public void setSiteVersion(String version) {
-		if (version == null || version.startsWith(ANT_PREFIX))
+		if (version == null || version.startsWith(ANT_PREFIX)) {
 			return;
+		}
 		getGenerator().setSiteVersion(version);
 	}
 }

@@ -47,10 +47,11 @@ public class PackagerGenerator extends BuildScriptGenerator {
 	@Override
 	protected void generatePackageScripts(AssemblyInformation assemblageInformation, String[] featureInfo, BuildTimeSiteFactory factory) throws CoreException {
 		PackageScriptGenerator assembler = null;
-		if (groupConfigs2)
+		if (groupConfigs2) {
 			assembler = new DeltaPackScriptGenerator(workingDirectory, assemblageInformation, featureInfo[0]);
-		else
+		} else {
 			assembler = new PackageScriptGenerator(workingDirectory, assemblageInformation, featureInfo[0]);
+		}
 
 		assembler.setSignJars(signJars);
 		assembler.setGenerateJnlp(generateJnlp);

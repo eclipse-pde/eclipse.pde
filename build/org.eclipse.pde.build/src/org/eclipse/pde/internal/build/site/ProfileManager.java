@@ -112,18 +112,24 @@ public class ProfileManager {
 			// need to make sure JavaSE, J2SE profiles are sorted ahead of all other profiles
 			String p1 = profile1;
 			String p2 = profile2;
-			if (p1.startsWith("JavaSE-") && !p2.startsWith("JavaSE-")) //$NON-NLS-1$ //$NON-NLS-2$
+			if (p1.startsWith("JavaSE-") && !p2.startsWith("JavaSE-")) { //$NON-NLS-1$ //$NON-NLS-2$
 				return -1;
-			if (!p1.startsWith("JavaSE-") && p2.startsWith("JavaSE-")) //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			if (!p1.startsWith("JavaSE-") && p2.startsWith("JavaSE-")) { //$NON-NLS-1$ //$NON-NLS-2$
 				return 1;
-			if (p1.startsWith("J2SE-") && !p2.startsWith("J2SE-")) //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			if (p1.startsWith("J2SE-") && !p2.startsWith("J2SE-")) { //$NON-NLS-1$ //$NON-NLS-2$
 				return -1;
-			if (!p1.startsWith("J2SE-") && p2.startsWith("J2SE-")) //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			if (!p1.startsWith("J2SE-") && p2.startsWith("J2SE-")) { //$NON-NLS-1$ //$NON-NLS-2$
 				return 1;
-			if (p1.startsWith("JavaSE/compact") && !p2.startsWith("JavaSE/compact")) //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			if (p1.startsWith("JavaSE/compact") && !p2.startsWith("JavaSE/compact")) { //$NON-NLS-1$ //$NON-NLS-2$
 				return -1;
-			if (!p1.startsWith("JavaSE/compact") && p2.startsWith("JavaSE/compact")) //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			if (!p1.startsWith("JavaSE/compact") && p2.startsWith("JavaSE/compact")) { //$NON-NLS-1$ //$NON-NLS-2$
 				return 1;
+			}
 			return -p1.compareTo(p2);
 		});
 		return profiles;
@@ -159,8 +165,9 @@ public class ProfileManager {
 
 	protected void loadRuntimeJavaProfiles() {
 		Bundle systemBundle = Platform.getBundle(IPDEBuildConstants.BUNDLE_OSGI);
-		if (systemBundle != null)
+		if (systemBundle != null) {
 			loadJavaProfiles(systemBundle);
+		}
 	}
 
 	/*
@@ -170,21 +177,23 @@ public class ProfileManager {
 		if (container instanceof File) {
 			// try the profile list first
 			File listFile = new File((File) container, PROFILE_LIST);
-			if (listFile.exists())
+			if (listFile.exists()) {
 				try {
 					return new BufferedInputStream(new FileInputStream(listFile));
 				} catch (FileNotFoundException e) {
 					return null;
 				}
+			}
 		} else if (container instanceof ZipFile) {
 			ZipFile zipFile = (ZipFile) container;
 			ZipEntry listEntry = ((ZipFile) container).getEntry(PROFILE_LIST);
-			if (listEntry != null)
+			if (listEntry != null) {
 				try {
 					return new BufferedInputStream(zipFile.getInputStream(listEntry));
 				} catch (IOException e) {
 					return null;
 				}
+			}
 		} else if (container instanceof Bundle) {
 			Bundle systemBundle = (Bundle) container;
 			URL url = systemBundle.getEntry(PROFILE_LIST);
@@ -223,20 +232,22 @@ public class ProfileManager {
 	private InputStream getEntryInputStream(Object container, Object entry) {
 		try {
 			if (entry instanceof String) {
-				if (container instanceof File)
+				if (container instanceof File) {
 					entry = new File((File) container, (String) entry);
-				else if (container instanceof ZipFile)
+				} else if (container instanceof ZipFile) {
 					entry = ((ZipFile) container).getEntry((String) entry);
-				else if (container instanceof Bundle)
+				} else if (container instanceof Bundle) {
 					entry = ((Bundle) container).getEntry((String) entry);
+				}
 			}
 
-			if (entry instanceof File)
+			if (entry instanceof File) {
 				return new BufferedInputStream(new FileInputStream((File) entry));
-			else if (entry instanceof ZipEntry)
+			} else if (entry instanceof ZipEntry) {
 				return new BufferedInputStream(((ZipFile) container).getInputStream((ZipEntry) entry));
-			else if (entry instanceof URL)
+			} else if (entry instanceof URL) {
 				return new BufferedInputStream(((URL) entry).openStream());
+			}
 		} catch (IOException e) {
 			// boo
 		}
@@ -247,9 +258,9 @@ public class ProfileManager {
 	 * ZipFile conainers aren't able to filter the entry enumeration, must filter here.
 	 */
 	private boolean isProfileEntry(Object entry) {
-		if (entry instanceof String || entry instanceof URL || entry instanceof File)
+		if (entry instanceof String || entry instanceof URL || entry instanceof File) {
 			return true;
-		else if (entry instanceof ZipEntry) {
+		} else if (entry instanceof ZipEntry) {
 			String entryName = ((ZipEntry) entry).getName();
 			return entryName.indexOf('/') < 0 && entryName.endsWith(PROFILE_EXTENSION);
 		}
@@ -271,16 +282,18 @@ public class ProfileManager {
 		Enumeration<?> entries = getProfilesEnum(container, profiles);
 		while (entries != null && entries.hasMoreElements()) {
 			Object item = entries.nextElement();
-			if (!isProfileEntry(item))
+			if (!isProfileEntry(item)) {
 				continue;
+			}
 
 			is = getEntryInputStream(container, item);
 			if (is != null) {
 				Properties props = new Properties();
 				try {
 					props.load(is);
-					if (props.containsKey(PROFILE_NAME))
+					if (props.containsKey(PROFILE_NAME)) {
 						profileMap.put((String) props.get(PROFILE_NAME), props);
+					}
 				} catch (IOException e) {
 					//boo
 				} finally {
@@ -291,8 +304,9 @@ public class ProfileManager {
 	}
 
 	private String[] getJavaProfiles(InputStream is) {
-		if (is == null)
+		if (is == null) {
 			return null;
+		}
 		Properties props = new Properties();
 		try {
 			props.load(is);

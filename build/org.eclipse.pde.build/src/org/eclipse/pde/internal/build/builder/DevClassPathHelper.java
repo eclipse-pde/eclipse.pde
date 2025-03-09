@@ -44,11 +44,13 @@ public class DevClassPathHelper {
 		String[] result = null;
 		if (id != null && devProperties != null) {
 			String entry = devProperties.getProperty(id);
-			if (entry != null)
+			if (entry != null) {
 				result = Utils.getArrayFromString(entry);
+			}
 		}
-		if (result == null)
+		if (result == null) {
 			result = devDefaultClasspath;
+		}
 		return result;
 	}
 

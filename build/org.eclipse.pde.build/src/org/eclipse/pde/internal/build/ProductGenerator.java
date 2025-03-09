@@ -79,8 +79,9 @@ public class ProductGenerator extends AbstractScriptGenerator {
 	public void generate() throws CoreException {
 		initialize();
 
-		if (productFile == null)
+		if (productFile == null) {
 			return;
+		}
 
 		String location = null, fileList = null;
 		for (Config config : getConfigInfos()) {
@@ -88,8 +89,9 @@ public class ProductGenerator extends AbstractScriptGenerator {
 
 			String rootLocation = root + location;
 			File rootDir = new File(rootLocation);
-			if ((!rootDir.exists() && !rootDir.mkdirs()) || rootDir.isFile())
+			if ((!rootDir.exists() && !rootDir.mkdirs()) || rootDir.isFile()) {
 				continue; //we will fail trying to create the files, TODO log warning/error
+			}
 
 			//add generated root files to build.properties
 			if (buildProperties != null) {
@@ -111,8 +113,9 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			}
 
 			//only the config.ini makes sense in the any config
-			if (config.getOs().equals(Config.ANY))
+			if (config.getOs().equals(Config.ANY)) {
 				continue;
+			}
 
 			//.eclipseproduct
 			createEclipseProductFile(rootLocation);
@@ -126,17 +129,20 @@ public class ProductGenerator extends AbstractScriptGenerator {
 	public void generateEclipseProduct() throws CoreException {
 		initialize();
 
-		if (productFile == null)
+		if (productFile == null) {
 			return;
+		}
 
 		String location = DEFAULT_PRODUCT_ROOT_FILES_DIR + "/ANY.ANY.ANY"; //$NON-NLS-1$
 		String rootLocation = root + location;
 		File rootDir = new File(rootLocation);
-		if ((!rootDir.exists() && !rootDir.mkdirs()) || rootDir.isFile())
+		if ((!rootDir.exists() && !rootDir.mkdirs()) || rootDir.isFile()) {
 			return; //we will fail trying to create the files,
+		}
 
-		if (buildProperties == null)
+		if (buildProperties == null) {
 			buildProperties = new Properties();
+		}
 
 		String fileList = buildProperties.getProperty(ROOT, ""); //$NON-NLS-1$
 		fileList += (fileList.length() > 0) ? ',' + location : location;
@@ -162,8 +168,9 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		File initialInf = new File(productFile.getLocation().getParent(), "p2.inf"); //$NON-NLS-1$
 		if (initialInf.exists()) {
 			Properties properties = readProperties(initialInf.getParent(), "p2.inf", IStatus.OK); //$NON-NLS-1$
-			if (!Boolean.valueOf(properties.getProperty(P2_INF_APPEND, TRUE)).booleanValue())
+			if (!Boolean.valueOf(properties.getProperty(P2_INF_APPEND, TRUE)).booleanValue()) {
 				return false;
+			}
 
 			cus = Boolean.valueOf(properties.getProperty(P2_INF_START_LEVELS, TRUE)).booleanValue();
 			launchers = Boolean.valueOf(properties.getProperty(P2_INF_LAUNCHERS, TRUE)).booleanValue();
@@ -171,8 +178,9 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		}
 
 		//only do start level cus if the .product said nothing
-		if (productFile.getConfigurationInfo().size() > 0 || productFile.haveCustomConfig())
+		if (productFile.getConfigurationInfo().size() > 0 || productFile.haveCustomConfig()) {
 			cus = false;
+		}
 
 		StringBuffer buffer = new StringBuffer();
 		if (initialInf.exists()) {
@@ -226,8 +234,9 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			BundleInfo[] infos = getDefaultStartInfo();
 			for (int i = 0; i < infos.length && infos[i] != null; i++) {
 				BundleDescription bundle = assembly.getPlugin(infos[i].getSymbolicName(), infos[i].getVersion());
-				if (bundle == null)
+				if (bundle == null) {
 					continue;
+				}
 
 				String[] instructions = new String[4];
 				instructions[P2InfUtils.INSTRUCTION_INSTALL] = INSTALL_INSTRUCTION;
@@ -235,10 +244,11 @@ public class ProductGenerator extends AbstractScriptGenerator {
 				instructions[P2InfUtils.INSTRUCTION_CONFIGURE] = "setStartLevel(startLevel:" + infos[i].getStartLevel() + ");markStarted(started:" + Boolean.toString(infos[i].isMarkedAsStarted()) + ");"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				instructions[P2InfUtils.INSTRUCTION_UNCONFIGURE] = "setStartLevel(startLevel:-1);markStarted(started:false);"; //$NON-NLS-1$
 
-				if (!GENERIC_VERSION_NUMBER.equals(productVersionString))
+				if (!GENERIC_VERSION_NUMBER.equals(productVersionString)) {
 					P2InfUtils.printBundleCU(buffer, index++, bundle.getSymbolicName(), productVersionString, bundle.getVersion(), bundle.getPlatformFilter(), instructions);
-				else
+				} else {
 					P2InfUtils.printBundleCU(buffer, index++, bundle.getSymbolicName(), bundle.getVersion(), bundle.getPlatformFilter(), instructions);
+				}
 
 			}
 		}
@@ -266,8 +276,9 @@ public class ProductGenerator extends AbstractScriptGenerator {
 
 			String brandedRange = productRangeString;
 			BuildTimeFeature executableFeature = assembly.getRootProvider(FEATURE_EQUINOX_EXECUTABLE, null);
-			if (executableFeature == null && havePDEUIState())
+			if (executableFeature == null && havePDEUIState()) {
 				executableFeature = assembly.getRootProvider("org.eclipse.pde.container.feature", null); //$NON-NLS-1$
+			}
 
 			//in case of no version on the product, the branding defaults to the version of the launcher provider
 			if (executableFeature != null && productVersionString.equals(Version.emptyVersion.toString())) {
@@ -277,8 +288,9 @@ public class ProductGenerator extends AbstractScriptGenerator {
 
 			List<Config> configs = getConfigInfos();
 			for (Config config : configs) {
-				if (config.equals(Config.genericConfig()))
+				if (config.equals(Config.genericConfig())) {
 					continue;
+				}
 				String fragmentName = BUNDLE_EQUINOX_LAUNCHER + '.' + config.getWs() + '.' + config.getOs() + '.' + config.getArch();
 				BundleDescription fragment = assembly.getPlugin(fragmentName, null);
 				if (fragment != null) {
@@ -314,8 +326,9 @@ public class ProductGenerator extends AbstractScriptGenerator {
 
 	private int generateExtraRequirements(StringBuffer buffer, int index) throws CoreException {
 		BuildTimeFeature rootFeature = getSite(false).findFeature(featureId, null, false);
-		if (rootFeature == null)
+		if (rootFeature == null) {
 			return index;
+		}
 
 		Properties properties = AbstractScriptGenerator.readProperties(IPath.fromOSString(rootFeature.getRootLocation()).toOSString(), PROPERTIES_FILE, IStatus.OK);
 		String[] extraEntries = Utils.getArrayFromString(properties.getProperty(PRODUCT_PREFIX + productFile.getId()));
@@ -329,12 +342,14 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			String versionString = version.toString();
 			if (feature) {
 				BuildTimeFeature requiredFeature = getSite(false).findFeature(id, version.toString(), false);
-				if (requiredFeature != null)
+				if (requiredFeature != null) {
 					versionString = requiredFeature.getVersion();
+				}
 			} else {
 				BundleDescription bundle = getSite(false).getRegistry().getResolvedBundle(id, version.toString());
-				if (bundle != null)
+				if (bundle != null) {
 					versionString = bundle.getVersion().toString();
+				}
 			}
 			range = Utils.createVersionRange(versionString);
 			P2InfUtils.printRequires(buffer, null, index++, P2InfUtils.NAMESPACE_IU, id + (feature ? ".feature.group" : ""), range, null, true); //$NON-NLS-1$ //$NON-NLS-2$
@@ -344,8 +359,9 @@ public class ProductGenerator extends AbstractScriptGenerator {
 
 	private String getLauncherName(BuildTimeFeature executableProvider) {
 		String name = productFile.getLauncherName();
-		if (name != null)
+		if (name != null) {
 			return name;
+		}
 		return "eclipse"; //$NON-NLS-1$
 	}
 
@@ -360,11 +376,13 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			result |= CONFIG_STYLE_SIMPLE;
 		}
 
-		if (assembly.getPlugin(BUNDLE_DS, null) != null)
+		if (assembly.getPlugin(BUNDLE_DS, null) != null) {
 			result |= CONFIG_INCLUDES_DS;
+		}
 
-		if (assembly.getPlugin(BUNDLE_EQUINOX_COMMON, null) != null)
+		if (assembly.getPlugin(BUNDLE_EQUINOX_COMMON, null) != null) {
 			return (byte) (result | CONFIG_STYLE_REFACTORED);
+		}
 
 		return (byte) (result | CONFIG_STYLE_ORIGINAL);
 	}
@@ -379,14 +397,16 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		List<FeatureEntry> pluginList = productFile.getProductEntries();
 		List<BundleDescription> results = new ArrayList<>(pluginList.size());
 		for (FeatureEntry entry : pluginList) {
-			if (!entry.isPlugin())
+			if (!entry.isPlugin()) {
 				continue;
+			}
 
 			BundleDescription bundle = assembly.getPlugin(entry.getId(), entry.getVersion());
 			if (bundle != null) {
 				Filter filter = helper.getFilter(bundle);
-				if (filter == null || filter.match(environment))
+				if (filter == null || filter.match(environment)) {
 					results.add(bundle);
+				}
 			}
 		}
 		return results;
@@ -399,10 +419,11 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		buffer.append("\n"); //$NON-NLS-1$
 
 		Collection<BundleDescription> plugins = null;
-		if (productFile.useFeatures())
+		if (productFile.useFeatures()) {
 			plugins = assembly.getPlugins(config);
-		else
+		} else {
 			plugins = getBundlesFromProductFile(config);
+		}
 
 		File bundlesTxt = P2Utils.writeBundlesTxt(plugins, configDir, productFile, (style & CONFIG_STYLE_REFACTORED) > 0);
 		if (bundlesTxt != null) {
@@ -415,15 +436,18 @@ public class ProductGenerator extends AbstractScriptGenerator {
 
 	private void printBundleInfo(StringBuffer buffer, BundleInfo info) {
 		buffer.append(info.getSymbolicName());
-		if (info.getStartLevel() != BundleInfo.NO_LEVEL || info.isMarkedAsStarted())
+		if (info.getStartLevel() != BundleInfo.NO_LEVEL || info.isMarkedAsStarted()) {
 			buffer.append('@');
+		}
 		if (info.getStartLevel() > 0) {
 			buffer.append(info.getStartLevel());
-			if (info.isMarkedAsStarted())
+			if (info.isMarkedAsStarted()) {
 				buffer.append(':');
+			}
 		}
-		if (info.isMarkedAsStarted())
+		if (info.isMarkedAsStarted()) {
 			buffer.append("start"); //$NON-NLS-1$
+		}
 	}
 
 	private void printUpdateBundles(StringBuffer buffer, int style) {
@@ -434,8 +458,9 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			for (Iterator<BundleInfo> iterator = infos.values().iterator(); iterator.hasNext();) {
 				BundleInfo info = iterator.next();
 				printBundleInfo(buffer, info);
-				if (iterator.hasNext())
+				if (iterator.hasNext()) {
 					buffer.append(',');
+				}
 			}
 		} else {
 			if ((style & CONFIG_STYLE_REFACTORED) > 0) {
@@ -474,28 +499,32 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		environment.put("osgi.arch", config.getArch()); //$NON-NLS-1$
 
 		Collection<BundleDescription> bundles = null;
-		if (productFile.useFeatures())
+		if (productFile.useFeatures()) {
 			bundles = assembly.getPlugins(config);
-		else
+		} else {
 			bundles = getBundlesFromProductFile(config);
+		}
 		BundleHelper helper = BundleHelper.getDefault();
 		Map<String, BundleInfo> infos = productFile.getConfigurationInfo();
 		boolean first = true;
 		for (BundleDescription bundle : bundles) {
 			String id = bundle.getSymbolicName();
-			if (BUNDLE_OSGI.equals(id) || BUNDLE_EQUINOX_LAUNCHER.equals(id))
+			if (BUNDLE_OSGI.equals(id) || BUNDLE_EQUINOX_LAUNCHER.equals(id)) {
 				continue;
+			}
 			Filter filter = helper.getFilter(bundle);
 			if (filter == null || filter.match(environment)) {
-				if (first)
+				if (first) {
 					first = false;
-				else
+				} else {
 					buffer.append(",\\" + newline + "  "); //$NON-NLS-1$ //$NON-NLS-2$
+				}
 				if (infos.size() > 0) {
-					if (infos.containsKey(id))
+					if (infos.containsKey(id)) {
 						printBundleInfo(buffer, infos.get(id));
-					else
+					} else {
 						buffer.append(bundle.getSymbolicName());
+					}
 				} else {
 					buffer.append(bundle.getSymbolicName());
 					if (BUNDLE_EQUINOX_COMMON.equals(id)) {
@@ -517,8 +546,9 @@ public class ProductGenerator extends AbstractScriptGenerator {
 
 	private void createConfigIni(Config config, String location) throws CoreException {
 		File configDir = new File(location + "/configuration"); //$NON-NLS-1$
-		if ((!configDir.exists() && !configDir.mkdirs()) || configDir.isFile())
+		if ((!configDir.exists() && !configDir.mkdirs()) || configDir.isFile()) {
 			return; //we will fail trying to create the file, TODO log warning/error
+		}
 
 		byte configStyle = determineConfigStyle(config);
 
@@ -527,19 +557,23 @@ public class ProductGenerator extends AbstractScriptGenerator {
 
 		Properties properties = productFile.getConfigProperties();
 		String splash = getSplashLocation(config);
-		if (splash != null)
+		if (splash != null) {
 			properties.put("osgi.splashPath", splash); //$NON-NLS-1$
+		}
 
 		String application = productFile.getApplication();
-		if (application != null)
+		if (application != null) {
 			properties.put("eclipse.application", application); //$NON-NLS-1$
+		}
 
 		String productId = productFile.getProductId();
-		if (productId != null)
+		if (productId != null) {
 			properties.put("eclipse.product", productId); //$NON-NLS-1$
+		}
 
-		if (!properties.containsKey("osgi.bundles.defaultStartLevel")) //$NON-NLS-1$
+		if (!properties.containsKey("osgi.bundles.defaultStartLevel")) { //$NON-NLS-1$
 			properties.put("osgi.bundles.defaultStartLevel", "4"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 
 		for (Object object : properties.keySet()) {
 			String key = (String) object;
@@ -569,23 +603,28 @@ public class ProductGenerator extends AbstractScriptGenerator {
 
 	private void createEclipseProductFile(String directory) throws CoreException {
 		File dir = new File(directory);
-		if ((!dir.exists() && !dir.mkdirs()) || dir.isFile())
+		if ((!dir.exists() && !dir.mkdirs()) || dir.isFile()) {
 			return; //we will fail trying to create the file, TODO log warning/error
+		}
 
 		Properties properties = new Properties();
-		if (productFile.getProductName() != null)
+		if (productFile.getProductName() != null) {
 			properties.put("name", productFile.getProductName()); //$NON-NLS-1$
-		if (productFile.getProductId() != null)
+		}
+		if (productFile.getProductId() != null) {
 			properties.put(ID, productFile.getProductId());
+		}
 
-		if (properties.size() == 0)
+		if (properties.size() == 0) {
 			return;
+		}
 
 		String branding = getBrandingPlugin();
 		if (branding != null) {
 			BundleDescription bundle = getSite(false).getRegistry().getResolvedBundle(branding);
-			if (bundle != null)
+			if (bundle != null) {
 				properties.put(VERSION, bundle.getVersion().toString());
+			}
 		}
 		File file = new File(dir, ".eclipseproduct"); //$NON-NLS-1$
 		try (OutputStream stream = new BufferedOutputStream(new FileOutputStream(file));) {
@@ -598,8 +637,9 @@ public class ProductGenerator extends AbstractScriptGenerator {
 
 	private String getBrandingPlugin() {
 		String id = productFile.getProductId();
-		if (id == null)
+		if (id == null) {
 			return null;
+		}
 		int dot = id.lastIndexOf('.');
 		return (dot != -1) ? id.substring(0, dot) : null;
 	}
@@ -611,8 +651,9 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			plugin = getBrandingPlugin();
 		}
 
-		if (plugin == null)
+		if (plugin == null) {
 			return null;
+		}
 
 		StringBuffer buffer = new StringBuffer("platform:/base/plugins/"); //$NON-NLS-1$
 		buffer.append(plugin);
@@ -648,14 +689,16 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			directory += "/" + launcher + ".app/Contents/MacOS"; //$NON-NLS-1$//$NON-NLS-2$
 		}
 		File dir = new File(directory);
-		if ((!dir.exists() && !dir.mkdirs()) || dir.isFile())
+		if ((!dir.exists() && !dir.mkdirs()) || dir.isFile()) {
 			return; //we will fail trying to create the file TODO log warning/error
+		}
 
 		String programArgs = productFile.getProgramArguments(os);
 		String vmArgs = productFile.getVMArguments(os);
 
-		if ((programArgs == null || programArgs.length() == 0) && (vmArgs == null || vmArgs.length() == 0))
+		if ((programArgs == null || programArgs.length() == 0) && (vmArgs == null || vmArgs.length() == 0)) {
 			return;
+		}
 
 		String lineDelimiter = Platform.OS_WIN32.equals(os) ? "\r\n" : "\n"; //$NON-NLS-1$ //$NON-NLS-2$
 		try (PrintWriter writer = new PrintWriter(new FileWriter(new File(dir, launcher + ".ini")))) { //$NON-NLS-1$
@@ -691,8 +734,9 @@ public class ProductGenerator extends AbstractScriptGenerator {
 
 		if (name != null && name.length() > 0) {
 			name = name.trim();
-			if (name.endsWith(".exe")) //$NON-NLS-1$
+			if (name.endsWith(".exe")) { //$NON-NLS-1$
 				name = name.substring(0, name.length() - 4);
+			}
 			return name;
 		}
 		return "eclipse"; //$NON-NLS-1$

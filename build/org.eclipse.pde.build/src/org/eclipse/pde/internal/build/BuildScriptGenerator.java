@@ -156,16 +156,18 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	 * Separate elements by kind.
 	 */
 	protected void sortElements(List<String> features, List<String> plugins) {
-		if (elements == null)
+		if (elements == null) {
 			return;
+		}
 		for (String element2 : elements) {
 			int index = element2.indexOf('@');
 			String type = element2.substring(0, index);
 			String element = element2.substring(index + 1);
-			if (type.equals(PLUGIN) || type.equals(FRAGMENT))
+			if (type.equals(PLUGIN) || type.equals(FRAGMENT)) {
 				plugins.add(element);
-			else if (type.equals(FEATURE))
+			} else if (type.equals(FEATURE)) {
 				features.add(element);
+			}
 		}
 	}
 
@@ -188,7 +190,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 				generator.setGenerateSourceReferences(sourceReferences);
 				generator.generate();
 			}
-			if (bundlesToBuild != null)
+			if (bundlesToBuild != null) {
 				for (BundleDescription element : bundlesToBuild) {
 					generator = new ModelBuildScriptGenerator();
 					generator.setReportResolutionErrors(reportResolutionErrors);
@@ -204,9 +206,11 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 					generator.setGenerateSourceReferences(sourceReferences);
 					generator.generate();
 				}
+			}
 		} finally {
-			if (generator != null)
+			if (generator != null) {
 				generator.getSite(false).getRegistry().cleanupOriginalState();
+			}
 		}
 	}
 
@@ -216,8 +220,9 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		if (versionPosition != -1) {
 			result[1] = id.substring(versionPosition + 1);
 			result[0] = id.substring(0, versionPosition);
-		} else
+		} else {
 			result[0] = id;
+		}
 		return result;
 	}
 
@@ -266,25 +271,30 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 					generator.generate(feature);
 				}
 
-				if (sourceBundleMode != null)
+				if (sourceBundleMode != null) {
 					generateSourceBundles(generator);
+				}
 
-				if (features.size() != 1)
+				if (features.size() != 1) {
 					featureInfo = new String[] {"all"}; //$NON-NLS-1$
+				}
 
-				if (flatten)
+				if (flatten) {
 					generateCompileScript(assemblageInformation, featureInfo);
+				}
 
 				if (generateAssembleScript == true) {
 					generateAssembleScripts(assemblageInformation, featureInfo, generator.siteFactory);
 
-					if (features.size() != 1)
+					if (features.size() != 1) {
 						featureInfo = new String[] {""}; //$NON-NLS-1$
+					}
 
 					generatePackageScripts(assemblageInformation, featureInfo, generator.siteFactory);
 				}
-				if (generateVersionsList)
+				if (generateVersionsList) {
 					generateVersionsLists(assemblageInformation);
+				}
 			} finally {
 				getSite(false).getRegistry().cleanupOriginalState();
 			}
@@ -305,16 +315,19 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		Set<? extends Object> allBundles = "all".equalsIgnoreCase(sourceBundleMode) ? generator.getAssemblyData().getAllPlugins() : generator.getAssemblyData().getAllCompiledPlugins(); //$NON-NLS-1$
 
 		BuildTimeFeature feature = getSite(false).findFeature(sourceBundleTemplateFeature, null, false);
-		if (feature == null)
+		if (feature == null) {
 			feature = new BuildTimeFeature(sourceBundleTemplateFeature, sourceBundleFeatureVersion);
+		}
 
-		if (sourceBundleFeatureId == null)
+		if (sourceBundleFeatureId == null) {
 			sourceBundleFeatureId = sourceBundleTemplateFeature + ".source"; //$NON-NLS-1$
+		}
 
 		for (Object bundle2 : allBundles) {
 			BundleDescription bundle = (BundleDescription) bundle2;
-			if (!Utils.isSourceBundle(bundle))
+			if (!Utils.isSourceBundle(bundle)) {
 				feature.addEntry(new FeatureEntry(bundle.getSymbolicName(), bundle.getVersion().toString(), true));
+			}
 		}
 
 		SourceGenerator sourceGenerator = new SourceGenerator();
@@ -328,8 +341,9 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	protected void generateVersionsLists(AssemblyInformation assemblageInformation) throws CoreException {
-		if (assemblageInformation == null)
+		if (assemblageInformation == null) {
 			return;
+		}
 		List<Config> configs = getConfigInfos();
 		Set<BuildTimeFeature> features = new HashSet<>();
 		Set<BundleDescription> plugins = new HashSet<>();
@@ -581,8 +595,9 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		@Override
 		public String get(Object key) {
 			String result = super.get(key);
-			if (result == null)
+			if (result == null) {
 				result = IXMLConstants.FORMAT_ANTZIP;
+			}
 			return result;
 		}
 	}

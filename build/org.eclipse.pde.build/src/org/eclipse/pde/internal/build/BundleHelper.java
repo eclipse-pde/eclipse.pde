@@ -64,8 +64,9 @@ public class BundleHelper {
 	}
 
 	BundleHelper(BundleContext context) throws RuntimeException {
-		if (defaultInstance != null)
+		if (defaultInstance != null) {
 			throw new RuntimeException("Can not instantiate bundle helper"); //$NON-NLS-1$
+		}
 		this.context = context;
 		defaultInstance = this;
 		bundle = context.getBundle();
@@ -93,8 +94,9 @@ public class BundleHelper {
 	}
 
 	public final ILog getLog() {
-		if (log == null)
+		if (log == null) {
 			return ILog.of(bundle);
+		}
 		return log;
 	}
 
@@ -131,8 +133,9 @@ public class BundleHelper {
 		} catch (InvalidSyntaxException e) {
 			// ignore
 		} finally {
-			if (serviceReferences != null)
+			if (serviceReferences != null) {
 				context.ungetService(serviceReferences[0]);
+			}
 		}
 
 		IProvisioningAgentProvider provider = acquireService(IProvisioningAgentProvider.class);
@@ -145,8 +148,9 @@ public class BundleHelper {
 
 	public <T> T acquireService(Class<T> serviceClass) {
 		ServiceReference<T> reference = context.getServiceReference(serviceClass);
-		if (reference == null)
+		if (reference == null) {
 			return null;
+		}
 		return context.getService(reference);
 	}
 
@@ -164,8 +168,9 @@ public class BundleHelper {
 	}
 
 	public Filter getFilter(BundleDescription bundleDescription) {
-		if (bundleDescription == null)
+		if (bundleDescription == null) {
 			return null;
+		}
 
 		String platformFilter = bundleDescription.getPlatformFilter();
 		String nativeFilter = null;
@@ -175,12 +180,13 @@ public class BundleHelper {
 			NativeCodeDescription[] possibleSuppliers = nativeCodeSpec.getPossibleSuppliers();
 			ArrayList<Filter> supplierFilters = new ArrayList<>(possibleSuppliers.length);
 			for (NativeCodeDescription possibleSupplier : possibleSuppliers) {
-				if (possibleSupplier.getFilter() != null)
+				if (possibleSupplier.getFilter() != null) {
 					supplierFilters.add(possibleSupplier.getFilter());
+				}
 			}
-			if (supplierFilters.size() == 1)
+			if (supplierFilters.size() == 1) {
 				nativeFilter = supplierFilters.get(0).toString();
-			else if (supplierFilters.size() > 1) {
+			} else if (supplierFilters.size() > 1) {
 				StringBuffer buffer = new StringBuffer("(|"); //$NON-NLS-1$
 				for (Filter filter : supplierFilters) {
 					buffer.append(filter.toString());
@@ -191,13 +197,15 @@ public class BundleHelper {
 		}
 
 		String filterString = null;
-		if (platformFilter != null && nativeFilter != null)
+		if (platformFilter != null && nativeFilter != null) {
 			filterString = "(&" + platformFilter + nativeFilter + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-		else
+		} else {
 			filterString = platformFilter != null ? platformFilter : nativeFilter;
+		}
 
-		if (filterString != null)
+		if (filterString != null) {
 			return createFilter(filterString);
+		}
 		return null;
 	}
 

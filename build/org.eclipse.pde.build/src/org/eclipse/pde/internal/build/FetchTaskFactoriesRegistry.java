@@ -49,8 +49,9 @@ public class FetchTaskFactoriesRegistry implements IPDEBuildConstants {
 	 */
 	public IFetchFactory getFactory(String id) {
 		Object result = cache.get(id);
-		if (result != null)
+		if (result != null) {
 			return (IFetchFactory) result;
+		}
 
 		IFetchFactory toCache = newFactory(id);
 		if (toCache != null) {

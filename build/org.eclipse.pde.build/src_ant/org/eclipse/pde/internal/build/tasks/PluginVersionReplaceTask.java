@@ -63,8 +63,9 @@ public class PluginVersionReplaceTask extends Task {
 	 * @param input 
 	 */
 	public void setInput(String input) {
-		if (input.equalsIgnoreCase("fragment.xml")) //$NON-NLS-1$
+		if (input.equalsIgnoreCase("fragment.xml")) { //$NON-NLS-1$
 			plugin = false;
+		}
 	}
 
 	@Override
@@ -87,8 +88,9 @@ public class PluginVersionReplaceTask extends Task {
 			endComment = startComment > -1 ? scan(buffer, startComment, COMMENT_END_TAG) : -1;
 		}
 
-		if (startPlugin == -1)
+		if (startPlugin == -1) {
 			return;
+		}
 
 		int endPlugin = scan(buffer, startPlugin + 1, ">"); //$NON-NLS-1$
 
@@ -96,8 +98,9 @@ public class PluginVersionReplaceTask extends Task {
 		boolean versionFound = false;
 		while (!versionFound) {
 			int versionAttr = scan(buffer, startPlugin, VERSION);
-			if (versionAttr == -1 || versionAttr > endPlugin)
+			if (versionAttr == -1 || versionAttr > endPlugin) {
 				return;
+			}
 			if (!Character.isWhitespace(buffer.charAt(versionAttr - 1))) {
 				startPlugin = versionAttr + VERSION.length();
 				continue;
@@ -107,8 +110,9 @@ public class PluginVersionReplaceTask extends Task {
 			while (Character.isWhitespace(buffer.charAt(endVersionWord)) && endVersionWord < endPlugin) {
 				endVersionWord++;
 			}
-			if (endVersionWord > endPlugin) //version has not been found 
+			if (endVersionWord > endPlugin) { //version has not been found 
 				return;
+			}
 
 			if (buffer.charAt(endVersionWord) != '=') {
 				startPlugin = endVersionWord;
@@ -140,8 +144,9 @@ public class PluginVersionReplaceTask extends Task {
 			for (String target2 : targets) {
 				if (i < buf.length() - target2.length()) {
 					String match = buf.substring(i, i + target2.length());
-					if (target2.equalsIgnoreCase(match))
+					if (target2.equalsIgnoreCase(match)) {
 						return i;
+					}
 				}
 			}
 		}

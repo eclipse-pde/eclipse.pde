@@ -47,9 +47,9 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 		GatheringComputer computer = createFeatureComputer();
 
 		GatherFeatureAction action = null;
-		if (targetFolder == null)
+		if (targetFolder == null) {
 			action = new GatherFeatureAction(new File(baseDirectory), new File(buildResultFolder));
-		else {
+		} else {
 			action = new GatherFeatureAction(new File(baseDirectory), new File(targetFolder));
 		}
 		action.setComputer(computer);
@@ -71,8 +71,9 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 
 	private void setGroupId(GatherFeatureAction action) {
 		Properties properties = getBuildProperties();
-		if (properties.containsKey(IBuildPropertiesConstants.PROPERTY_P2_GROUP_ID))
+		if (properties.containsKey(IBuildPropertiesConstants.PROPERTY_P2_GROUP_ID)) {
 			action.setGroupId(properties.getProperty(IBuildPropertiesConstants.PROPERTY_P2_GROUP_ID));
+		}
 	}
 
 	protected GatheringComputer createFeatureComputer() {
@@ -81,8 +82,9 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 		String include = (String) properties.get(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
 		String exclude = (String) properties.get(IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES);
 
-		if (include == null)
+		if (include == null) {
 			return null;
+		}
 
 		if (targetFolder != null) {
 			FileSet fileSet = new FileSet();
@@ -137,8 +139,9 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 		fileSet.setDir(new File(folder));
 		String[] splitIncludes = Utils.getArrayFromString(includes);
 		for (String entry : splitIncludes) {
-			if (entry.equals(ModelBuildScriptGenerator.DOT))
+			if (entry.equals(ModelBuildScriptGenerator.DOT)) {
 				continue;
+			}
 
 			NameEntry fileInclude = fileSet.createInclude();
 			fileInclude.setName(entry);
@@ -163,10 +166,11 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 		Map<String, Map<String, String>> configMap = Utils.processRootProperties(getBuildProperties(), true);
 		for (String config : configMap.keySet()) {
 			Map<String, String> rootMap = configMap.get(config);
-			if (config.equals(Utils.ROOT_COMMON))
+			if (config.equals(Utils.ROOT_COMMON)) {
 				config = ""; //$NON-NLS-1$
-			else
+			} else {
 				config = reorderConfig(config);
+			}
 			GatheringComputer computer = new GatheringComputer();
 			Map<FileSet, String> configFileSets = new HashMap<>();
 			ArrayList<String> permissionsKeys = new ArrayList<>();
@@ -213,18 +217,20 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 
 							String[] found = fileset.getDirectoryScanner().getIncludedFiles();
 							for (String element : found) {
-								if (key.length() > 0)
+								if (key.length() > 0) {
 									computer.addFile(key + "/" + element, new File(base, element)); //$NON-NLS-1$
-								else
+								} else {
 									computer.addFile(base.getAbsolutePath(), element);
+								}
 							}
 							configFileSets.put(fileset, key);
 						}
 					}
 				}
 			}
-			if (computer.size() > 0)
+			if (computer.size() > 0) {
 				advice.addRootfiles(config, computer);
+			}
 
 			//do permissions, out of the configFileSets, select the files to change permissions on.
 			for (String permissionKey : permissionsKeys) {
@@ -242,8 +248,9 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 				for (FileSet fileset : configFileSets.keySet()) {
 					String finalFolder = configFileSets.get(fileset);
 					String[] found = selectFiles(orSelector, finalFolder, fileset.getDirectoryScanner().getIncludedFiles());
-					if (found.length > 0)
+					if (found.length > 0) {
 						advice.addPermissions(config, permissionKey.substring(Utils.ROOT_PERMISSIONS.length()), found);
+					}
 				}
 			}
 		}
@@ -265,24 +272,28 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 			//FilenameSelector is checking based on File.separatorChar, so normalize
 			finalLocation = finalLocation.replace('/', File.separatorChar).replace('\\', File.separatorChar);
 			//FilenameSelector objects only care about the filename and not the other arguments
-			if (selector.isSelected(null, finalLocation, null))
+			if (selector.isSelected(null, finalLocation, null)) {
 				result.add(finalLocation.replace('\\', '/')); //we work with '/'
+			}
 		}
 		return result.toArray(new String[result.size()]);
 	}
 
 	public void setBuildResultFolder(String buildResultFolder) {
-		if (buildResultFolder != null && buildResultFolder.length() > 0 && !buildResultFolder.startsWith(ANT_PREFIX))
+		if (buildResultFolder != null && buildResultFolder.length() > 0 && !buildResultFolder.startsWith(ANT_PREFIX)) {
 			this.buildResultFolder = buildResultFolder;
+		}
 	}
 
 	public void setTargetFolder(String targetFolder) {
-		if (targetFolder != null && targetFolder.length() > 0 && !targetFolder.startsWith(ANT_PREFIX))
+		if (targetFolder != null && targetFolder.length() > 0 && !targetFolder.startsWith(ANT_PREFIX)) {
 			this.targetFolder = targetFolder;
+		}
 	}
 
 	public void setLicenseDirectory(String licenseDirectory) {
-		if (licenseDirectory != null && licenseDirectory.length() > 0 && !licenseDirectory.startsWith(ANT_PREFIX))
+		if (licenseDirectory != null && licenseDirectory.length() > 0 && !licenseDirectory.startsWith(ANT_PREFIX)) {
 			this.licenseDirectory = licenseDirectory;
+		}
 	}
 }

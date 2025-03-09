@@ -80,8 +80,9 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 		String url = feature.getInstallHandlerURL();
 		String library = feature.getInstallHandlerLibrary();
 		String handler = feature.getInstallHandler();
-		if (url == null && library == null && handler == null)
+		if (url == null && library == null && handler == null) {
 			return;
+		}
 		parameters.clear();
 		parameters.put("library", library); //$NON-NLS-1$
 		parameters.put("handler", handler); //$NON-NLS-1$
@@ -91,8 +92,9 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 	}
 
 	public void printDescription() {
-		if (feature.getDescription() == null && feature.getDescriptionURL() == null)
+		if (feature.getDescription() == null && feature.getDescriptionURL() == null) {
 			return;
+		}
 		parameters.clear();
 		parameters.put("url", feature.getDescriptionURL()); //$NON-NLS-1$
 
@@ -103,8 +105,9 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 	}
 
 	private void printCopyright() {
-		if (feature.getCopyright() == null && feature.getCopyrightURL() == null)
+		if (feature.getCopyright() == null && feature.getCopyrightURL() == null) {
 			return;
+		}
 		parameters.clear();
 		parameters.put("url", feature.getCopyrightURL()); //$NON-NLS-1$
 		startTag("copyright", parameters, true); //$NON-NLS-1$
@@ -114,8 +117,9 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 	}
 
 	public void printLicense() {
-		if (feature.getLicense() == null && feature.getLicenseURL() == null)
+		if (feature.getLicense() == null && feature.getLicenseURL() == null) {
 			return;
+		}
 		parameters.clear();
 		parameters.put("url", feature.getLicenseURL()); //$NON-NLS-1$
 		startTag("license", parameters, true); //$NON-NLS-1$
@@ -152,8 +156,9 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 	public void printIncludes() throws CoreException {
 		FeatureEntry[] entries = feature.getEntries();
 		for (FeatureEntry entry : entries) {
-			if (entry.isRequires() || entry.isPlugin())
+			if (entry.isRequires() || entry.isPlugin()) {
 				continue;
+			}
 
 			parameters.clear();
 			try {
@@ -174,8 +179,9 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 
 		FeatureEntry[] entries = feature.getEntries();
 		for (FeatureEntry entry : entries) {
-			if (!entry.isRequires())
+			if (!entry.isRequires()) {
 				continue;
+			}
 
 			if (!haveRequires) {
 				startTag("requires", null); //$NON-NLS-1$
@@ -193,8 +199,9 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 			parameters.put("match", entry.getMatch()); //$NON-NLS-1$
 			printTag("import", parameters, true, true, true); //$NON-NLS-1$
 		}
-		if (haveRequires)
+		if (haveRequires) {
 			endTag("requires"); //$NON-NLS-1$
+		}
 	}
 
 	//	/**
@@ -220,8 +227,9 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 	public void printPlugins() throws CoreException {
 		FeatureEntry[] entries = feature.getEntries();
 		for (FeatureEntry entry : entries) {
-			if (entry.isRequires() || !entry.isPlugin())
+			if (entry.isRequires() || !entry.isPlugin()) {
 				continue;
+			}
 			parameters.clear();
 			parameters.put(ID, entry.getId());
 
@@ -238,14 +246,16 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, message, null));
 			}
 			parameters.put(VERSION, effectivePlugin.getVersion().toString());
-			if (entry.isFragment())
+			if (entry.isFragment()) {
 				parameters.put(FRAGMENT, String.valueOf(entry.isFragment()));
+			}
 			parameters.put("os", entry.getOS()); //$NON-NLS-1$
 			parameters.put("arch", entry.getArch()); //$NON-NLS-1$
 			parameters.put("ws", entry.getWS()); //$NON-NLS-1$
 			parameters.put("nl", entry.getNL()); //$NON-NLS-1$
-			if (!entry.isUnpack())
+			if (!entry.isUnpack()) {
 				parameters.put("unpack", Boolean.FALSE.toString()); //$NON-NLS-1$
+			}
 			printTag(PLUGIN, parameters, true, true, true);
 		}
 	}

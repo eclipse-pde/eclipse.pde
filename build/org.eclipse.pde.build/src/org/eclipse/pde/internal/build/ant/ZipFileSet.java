@@ -32,10 +32,11 @@ public class ZipFileSet extends FileSet {
 	protected void print(AntScript script) {
 		script.printTab();
 		script.print("<zipfileset"); //$NON-NLS-1$
-		if (file)
+		if (file) {
 			script.printAttribute("file", dir, false); //$NON-NLS-1$
-		else
+		} else {
 			script.printAttribute("dir", dir, false); //$NON-NLS-1$
+		}
 		script.printAttribute("defaultexcludes", defaultexcludes, false); //$NON-NLS-1$
 		script.printAttribute("includes", includes, false); //$NON-NLS-1$
 		script.printAttribute("includesfile", includesfile, false); //$NON-NLS-1$
@@ -51,17 +52,19 @@ public class ZipFileSet extends FileSet {
 			script.printAttribute("prefix", prefix, false); //$NON-NLS-1$
 		}
 
-		if (file)
+		if (file) {
 			script.printAttribute("filemode", permission, false); //$NON-NLS-1$
-		else
+		} else {
 			script.printAttribute("dirmode", permission, false); //$NON-NLS-1$
+		}
 
 		script.println("/>"); //$NON-NLS-1$
 	}
 
 	private boolean prefixHasWildcards() {
-		if (prefix == null)
+		if (prefix == null) {
 			return false;
+		}
 		return (prefix.indexOf('*') != -1 || prefix.indexOf('?') != -1);
 	}
 }

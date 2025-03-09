@@ -50,8 +50,9 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 	private Properties mapContent;
 
 	private void displayDebugInfo() {
-		if (!BundleHelper.getDefault().isDebugging())
+		if (!BundleHelper.getDefault().isDebugging()) {
 			return;
+		}
 
 		System.out.println("Filters: " + (filters != null ? Utils.getStringFromArray(filters, ", ") : "NONE")); //$NON-NLS-1$ 	//$NON-NLS-2$ 	//$NON-NLS-3$
 		System.out.println("Component filter: " + (componentFilter != null ? Utils.getStringFromArray(componentFilter, ", ") : "NONE")); //$NON-NLS-1$ 	//$NON-NLS-2$ 	//$NON-NLS-3$
@@ -161,17 +162,20 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 	//Return true if the filters specified to be packaged match the entry.
 	//When no filter is specified on the entry or there is no filtering, then the file is fetched 
 	private boolean filterByFilter(String filterString) {
-		if (filters.length == 0)
+		if (filters.length == 0) {
 			return true;
+		}
 
 		String[] entryFilters = Utils.getArrayFromStringWithBlank(filterString, ","); //$NON-NLS-1$
-		if (entryFilters.length == 0)
+		if (entryFilters.length == 0) {
 			return true;
+		}
 
 		for (String entryFilter : entryFilters) {
 			for (String filter : filters) {
-				if (filter.equals(entryFilter))
+				if (filter.equals(entryFilter)) {
 					return true;
+				}
 			}
 		}
 		return false;
@@ -180,8 +184,9 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 	//Return true, if the entryConfigs match the config we are packaging
 	private boolean filterByConfig(String entryConfigString) {
 		String[] entryConfigs = Utils.getArrayFromStringWithBlank(entryConfigString, FILTER_SEPARATOR);
-		if (entryConfigs.length == 0 || containsGenericConfig(getConfigInfos()))
+		if (entryConfigs.length == 0 || containsGenericConfig(getConfigInfos())) {
 			return true;
+		}
 
 		for (String entryConfig : entryConfigs) {
 			Iterator<Config> iter = getConfigInfos().iterator();
@@ -196,24 +201,28 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 	}
 
 	boolean containsGenericConfig(List<Config> configs) {
-		if (configs == null)
+		if (configs == null) {
 			return false;
+		}
 		Iterator<Config> iter = configs.iterator();
 		while (iter.hasNext()) {
-			if (Config.genericConfig().equals(iter.next()))
+			if (Config.genericConfig().equals(iter.next())) {
 				return true;
+			}
 		}
 		return false;
 	}
 
 	//Return true if the componentName is listed in the component filter, or if no filter is specified
 	private boolean filterByComponentName(String componentName) {
-		if (componentName.equals(UNKNOWN) || componentFilter == null)
+		if (componentName.equals(UNKNOWN) || componentFilter == null) {
 			return true;
+		}
 
 		for (String element : componentFilter) {
-			if (element.equalsIgnoreCase(componentName) || element.equalsIgnoreCase(UNKNOWN))
+			if (element.equalsIgnoreCase(componentName) || element.equalsIgnoreCase(UNKNOWN)) {
 				return true;
+			}
 		}
 		return false;
 	}

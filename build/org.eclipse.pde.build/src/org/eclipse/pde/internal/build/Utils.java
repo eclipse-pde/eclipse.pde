@@ -113,9 +113,9 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 
 	public static VersionRange createVersionRange(String versionId) {
 		VersionRange range = null;
-		if (versionId == null || versionId.length() == 0 || GENERIC_VERSION_NUMBER.equals(versionId))
+		if (versionId == null || versionId.length() == 0 || GENERIC_VERSION_NUMBER.equals(versionId)) {
 			range = EMPTY_RANGE;
-		else {
+		} else {
 			int qualifierIdx = versionId.indexOf(IBuildPropertiesConstants.PROPERTY_QUALIFIER);
 			if (qualifierIdx != -1) {
 				String newVersion = versionId.substring(0, qualifierIdx);
@@ -166,8 +166,9 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 			return createVersionRange(versionSpec);
 		}
 
-		if (match.equals("perfect")) //$NON-NLS-1$
+		if (match.equals("perfect")) { //$NON-NLS-1$
 			return new VersionRange(VersionRange.LEFT_CLOSED, version, version, VersionRange.RIGHT_CLOSED);
+		}
 		if (match.equals("equivalent")) { //$NON-NLS-1$
 			Version upper = new Version(version.getMajor(), version.getMinor() + 1, 0);
 			return new VersionRange(VersionRange.LEFT_CLOSED, version, upper, VersionRange.RIGHT_OPEN);
@@ -176,8 +177,9 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 			Version upper = new Version(version.getMajor() + 1, 0, 0);
 			return new VersionRange(VersionRange.LEFT_CLOSED, version, upper, VersionRange.RIGHT_OPEN);
 		}
-		if (match.equals("greaterOrEqual")) //$NON-NLS-1$
+		if (match.equals("greaterOrEqual")) { //$NON-NLS-1$
 			return new VersionRange(VersionRange.LEFT_CLOSED, version, null, VersionRange.RIGHT_CLOSED);
+		}
 
 		return EMPTY_RANGE;
 	}
@@ -187,8 +189,9 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 
 		for (; idx >= 0; idx--) {
 			//finding last non-'z' character
-			if (qualifier.charAt(idx) != 'z')
+			if (qualifier.charAt(idx) != 'z') {
 				break;
+			}
 		}
 
 		if (idx >= 0) {
@@ -208,13 +211,15 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	 * specified.
 	 */
 	public static String[] getArrayFromString(String list, String separator) {
-		if (list == null || list.trim().equals("")) //$NON-NLS-1$
+		if (list == null || list.trim().equals("")) { //$NON-NLS-1$
 			return new String[0];
+		}
 		List<String> result = new ArrayList<>();
 		for (StringTokenizer tokens = new StringTokenizer(list, separator); tokens.hasMoreTokens();) {
 			String token = tokens.nextToken().trim();
-			if (!token.equals("")) //$NON-NLS-1$
+			if (!token.equals("")) { //$NON-NLS-1$
 				result.add(token);
+			}
 		}
 		return result.toArray(new String[result.size()]);
 	}
@@ -226,15 +231,17 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	 * the string a,,b returns the following array [a, ,b]
 	 */
 	public static String[] getArrayFromStringWithBlank(String list, String separator) {
-		if (list == null || list.trim().length() == 0)
+		if (list == null || list.trim().length() == 0) {
 			return new String[0];
+		}
 		List<String> result = new ArrayList<>();
 		boolean previousWasSeparator = true;
 		for (StringTokenizer tokens = new StringTokenizer(list, separator, true); tokens.hasMoreTokens();) {
 			String token = tokens.nextToken().trim();
 			if (token.equals(separator)) {
-				if (previousWasSeparator)
+				if (previousWasSeparator) {
 					result.add(""); //$NON-NLS-1$
+				}
 				previousWasSeparator = true;
 			} else {
 				result.add(token);
@@ -270,10 +277,11 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		StringBuffer result = new StringBuffer();
 		boolean first = true;
 		for (Object name : collection) {
-			if (first)
+			if (first) {
 				first = false;
-			else
+			} else {
 				result.append(separator);
+			}
 			result.append(name);
 		}
 		return result.toString();
@@ -293,8 +301,9 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		StringBuffer result = new StringBuffer();
 		for (int i = 0; i < values.length; i++) {
 			if (values[i] != null) {
-				if (i > 0)
+				if (i > 0) {
 					result.append(separator);
+				}
 				result.append(values[i]);
 			}
 		}
@@ -314,17 +323,20 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	public static IPath makeRelative(IPath location, IPath base) {
 		//can't make relative if the devices don't match
 		if (location.getDevice() == null) {
-			if (base.getDevice() != null)
+			if (base.getDevice() != null) {
 				return location;
+			}
 		} else {
-			if (!location.getDevice().equalsIgnoreCase(base.getDevice()))
+			if (!location.getDevice().equalsIgnoreCase(base.getDevice())) {
 				return location;
+			}
 		}
 		int baseCount = base.segmentCount();
 		int count = base.matchingFirstSegments(location);
 		String temp = ""; //$NON-NLS-1$
-		for (int j = 0; j < baseCount - count; j++)
+		for (int j = 0; j < baseCount - count; j++) {
 			temp += "../"; //$NON-NLS-1$
+		}
 		return IPath.fromOSString(temp).append(location.removeFirstSegments(count));
 	}
 
@@ -350,15 +362,17 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 
 	public static FeatureEntry[] getPluginEntry(BuildTimeFeature feature, String pluginId, boolean raw) {
 		FeatureEntry[] plugins;
-		if (raw)
+		if (raw) {
 			plugins = feature.getRawPluginEntries();
-		else
+		} else {
 			plugins = feature.getPluginEntries();
+		}
 		List<FeatureEntry> foundEntries = new ArrayList<>(5);
 
 		for (FeatureEntry plugin2 : plugins) {
-			if (plugin2.getId().equals(pluginId))
+			if (plugin2.getId().equals(pluginId)) {
 				foundEntries.add(plugin2);
+			}
 		}
 		return foundEntries.toArray(new FeatureEntry[foundEntries.size()]);
 
@@ -378,14 +392,16 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		Collection<File> collectedElements = new ArrayList<>(10);
 
 		File[] featureDirectoryContent = new File(from, foldername).listFiles();
-		if (featureDirectoryContent == null)
+		if (featureDirectoryContent == null) {
 			return null;
+		}
 
 		for (File element : featureDirectoryContent) {
 			if (element.isDirectory()) {
 				File[] featureFiles = element.listFiles((FilenameFilter) (dir, name) -> name.equals(filename));
-				if (featureFiles.length != 0)
+				if (featureFiles.length != 0) {
 					collectedElements.add(featureFiles[0]);
+				}
 			}
 		}
 		return collectedElements;
@@ -393,8 +409,9 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 
 	public static boolean isIn(FeatureEntry[] array, FeatureEntry element) {
 		for (FeatureEntry element2 : array) {
-			if (element2.getId().equals(element.getId()) && element2.getVersion().equals(element.getVersion()))
+			if (element2.getId().equals(element.getId()) && element2.getVersion().equals(element.getVersion())) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -408,8 +425,9 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 				for (File file : files) {
 					if (file.isDirectory()) {
 						File subDir = new File(toDir, file.getName());
-						if (!subDir.exists())
+						if (!subDir.exists()) {
 							subDir.mkdirs();
+						}
 						Collection<String> subFiles = copyFiles(fromDir + '/' + file.getName(), toDir + '/' + file.getName());
 						for (String sub : subFiles) {
 							copiedFiles.add(file.getName() + '/' + sub);
@@ -432,25 +450,29 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 
 	public static List<BundleDescription> extractPlugins(List<BundleDescription> initialList, Set<BundleDescription> toExtract) {
 		//TODO This algorithm needs to be  improved
-		if (initialList.size() == toExtract.size())
+		if (initialList.size() == toExtract.size()) {
 			return initialList;
+		}
 		List<BundleDescription> result = new ArrayList<>(toExtract.size());
 		for (BundleDescription element : initialList) {
 			if (toExtract.contains(element)) {
 				result.add(element);
-				if (result.size() == toExtract.size())
+				if (result.size() == toExtract.size()) {
 					break;
+				}
 			}
 		}
 		return result;
 	}
 
 	public static int isStringIn(String[] searched, String toSearch) {
-		if (searched == null || toSearch == null)
+		if (searched == null || toSearch == null) {
 			return -1;
+		}
 		for (int i = 0; i < searched.length; i++) {
-			if (toSearch.startsWith(searched[i]))
+			if (toSearch.startsWith(searched[i])) {
 				return i;
+			}
 		}
 		return -1;
 	}
@@ -531,14 +553,16 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		}
 
 		//and also add the common properties independently
-		if (mergeCommon || common.size() > 0)
+		if (mergeCommon || common.size() > 0) {
 			map.put(ROOT_COMMON, common);
+		}
 		return map;
 	}
 
 	public static void generatePermissions(Properties featureProperties, Config aConfig, String targetRootProperty, AntScript script) {
-		if (featureProperties == null)
+		if (featureProperties == null) {
 			return;
+		}
 		String configInfix = aConfig.toString("."); //$NON-NLS-1$
 		String configPath = aConfig.toStringReplacingAny(".", ANY_STRING); //$NON-NLS-1$
 		String prefixPermissions = ROOT_PREFIX + configInfix + '.' + PERMISSIONS + '.';
@@ -570,8 +594,9 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	public static String removeEndingSlashes(String value) {
 		String[] params = Utils.getArrayFromString(value, ","); //$NON-NLS-1$
 		for (int i = 0; i < params.length; i++) {
-			if (params[i].endsWith("/")) //$NON-NLS-1$
+			if (params[i].endsWith("/")) { //$NON-NLS-1$
 				params[i] = params[i].substring(0, params[i].length() - 1);
+			}
 		}
 		return Utils.getStringFromArray(params, ","); //$NON-NLS-1$
 	}
@@ -639,8 +664,9 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 
 	public static String getSourceBundleHeader(BundleDescription bundle) {
 		Properties bundleProperties = (Properties) bundle.getUserObject();
-		if (bundleProperties == null || !bundleProperties.containsKey(ECLIPSE_SOURCE_BUNDLE))
+		if (bundleProperties == null || !bundleProperties.containsKey(ECLIPSE_SOURCE_BUNDLE)) {
 			return ""; //$NON-NLS-1$
+		}
 
 		String header = bundleProperties.getProperty(ECLIPSE_SOURCE_BUNDLE);
 		return header;
@@ -653,14 +679,16 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	 */
 	public static File getOldSourceLocation(BundleDescription bundle) {
 		Properties props = (Properties) bundle.getUserObject();
-		if (props == null || !props.containsKey(OLD_BUNDLE_LOCATION))
+		if (props == null || !props.containsKey(OLD_BUNDLE_LOCATION)) {
 			return null;
+		}
 
 		String oldBundleLocation = props.getProperty(OLD_BUNDLE_LOCATION);
 		if (oldBundleLocation != null) {
 			File previousSrcRoot = new File(oldBundleLocation, "src"); //$NON-NLS-1$
-			if (previousSrcRoot.exists())
+			if (previousSrcRoot.exists()) {
 				return previousSrcRoot;
+			}
 		}
 
 		return null;
@@ -668,8 +696,9 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 
 	public static Map<String, Map<String, String>> parseSourceBundleEntry(BundleDescription bundle) {
 		String header = getSourceBundleHeader(bundle);
-		if (header.length() == 0)
+		if (header.length() == 0) {
 			return Collections.emptyMap();
+		}
 
 		HashMap<String, Map<String, String>> map = new HashMap<>();
 		ManifestElement[] elements;
@@ -705,15 +734,17 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	public static Map<String, Object> parseExtraBundlesString(String input, boolean onlyId) {
 		Map<String, Object> results = new HashMap<>();
 		StringTokenizer tokenizer = null;
-		if (onlyId)
-			if (input.startsWith("plugin@")) //$NON-NLS-1$
+		if (onlyId) {
+			if (input.startsWith("plugin@")) { //$NON-NLS-1$
 				tokenizer = new StringTokenizer(input.substring(7), ";"); //$NON-NLS-1$
-			else if (input.startsWith("exclude@") || input.startsWith("feature@")) //$NON-NLS-1$ //$NON-NLS-2$
+			} else if (input.startsWith("exclude@") || input.startsWith("feature@")) { //$NON-NLS-1$ //$NON-NLS-2$
 				tokenizer = new StringTokenizer(input.substring(8), ";"); //$NON-NLS-1$
-			else
+			} else {
 				tokenizer = new StringTokenizer(input, ";"); //$NON-NLS-1$
-		else
+			}
+		} else {
 			tokenizer = new StringTokenizer(input, ";"); //$NON-NLS-1$
+		}
 
 		results.put(EXTRA_ID, tokenizer.nextToken());
 		results.put(EXTRA_VERSION, Version.emptyVersion);
@@ -725,38 +756,44 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 			int idx = token.indexOf('=');
 			if (idx > 0 && idx < token.length() - 1) {
 				value = token.substring(idx + 1).trim();
-				if (value.charAt(0) == '"' && value.charAt(value.length() - 1) == '"')
+				if (value.charAt(0) == '"' && value.charAt(value.length() - 1) == '"') {
 					value = value.substring(1, value.length() - 1);
+				}
 			}
-			if (token.startsWith(EXTRA_VERSION))
+			if (token.startsWith(EXTRA_VERSION)) {
 				results.put(EXTRA_VERSION, new Version(value));
-			else if (token.startsWith(EXTRA_UNPACK))
+			} else if (token.startsWith(EXTRA_UNPACK)) {
 				results.put(EXTRA_UNPACK, Boolean.valueOf(value));
-			else if (token.startsWith(EXTRA_OS))
+			} else if (token.startsWith(EXTRA_OS)) {
 				results.put(EXTRA_OS, value);
-			else if (token.startsWith(EXTRA_WS))
+			} else if (token.startsWith(EXTRA_WS)) {
 				results.put(EXTRA_WS, value);
-			else if (token.startsWith(EXTRA_ARCH))
+			} else if (token.startsWith(EXTRA_ARCH)) {
 				results.put(EXTRA_ARCH, value);
-			else if (token.startsWith(EXTRA_OPTIONAL))
+			} else if (token.startsWith(EXTRA_OPTIONAL)) {
 				results.put(EXTRA_OPTIONAL, Boolean.valueOf(value));
+			}
 		}
 		return results;
 	}
 
 	static public boolean matchVersions(String version1, String version2) {
-		if (version1 == null)
+		if (version1 == null) {
 			version1 = GENERIC_VERSION_NUMBER;
-		if (version2 == null)
+		}
+		if (version2 == null) {
 			version2 = GENERIC_VERSION_NUMBER;
+		}
 
-		if (version1.equals(version2) || version1.equals(GENERIC_VERSION_NUMBER) || version2.equals(GENERIC_VERSION_NUMBER))
+		if (version1.equals(version2) || version1.equals(GENERIC_VERSION_NUMBER) || version2.equals(GENERIC_VERSION_NUMBER)) {
 			return true;
+		}
 
 		if (version1.endsWith(PROPERTY_QUALIFIER) || version2.endsWith(PROPERTY_QUALIFIER)) {
 			int idx = version1.indexOf(PROPERTY_QUALIFIER);
-			if (idx > -1)
+			if (idx > -1) {
 				version1 = version1.substring(0, idx);
+			}
 			idx = version2.indexOf(PROPERTY_QUALIFIER);
 
 			version1 = version1.substring(0, idx);
@@ -775,18 +812,22 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	public static void updateVersion(File buildFile, String propertyName, String newVersion) throws IOException {
 		String value = Files.readString(buildFile.toPath());
 		int pos = value.indexOf(propertyName);
-		if (pos == -1)
+		if (pos == -1) {
 			return;
+		}
 		pos = value.indexOf("value", pos); //$NON-NLS-1$
-		if (pos == -1)
+		if (pos == -1) {
 			return;
+		}
 		int begin = value.indexOf("\"", pos); //$NON-NLS-1$
-		if (begin == -1)
+		if (begin == -1) {
 			return;
+		}
 		begin++;
 		int end = value.indexOf("\"", begin); //$NON-NLS-1$
-		if (end == -1)
+		if (end == -1) {
 			return;
+		}
 		String currentVersion = value.substring(begin, end);
 		if (!currentVersion.equals(newVersion)) {
 			Files.writeString(buildFile.toPath(), new StringBuilder(value).replace(begin, end, newVersion));
@@ -798,15 +839,17 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	}
 
 	public static void close(Object obj) {
-		if (obj == null)
+		if (obj == null) {
 			return;
+		}
 		try {
-			if (obj instanceof InputStream)
+			if (obj instanceof InputStream) {
 				((InputStream) obj).close();
-			else if (obj instanceof ZipFile)
+			} else if (obj instanceof ZipFile) {
 				((ZipFile) obj).close();
-			else if (obj instanceof OutputStream)
+			} else if (obj instanceof OutputStream) {
 				((OutputStream) obj).close();
+			}
 		} catch (IOException e) {
 			//boo
 		}
@@ -822,8 +865,9 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	}
 
 	private static boolean needsReplacement(String s) {
-		if (s.equalsIgnoreCase(GENERIC_VERSION_NUMBER) || s.endsWith(PROPERTY_QUALIFIER))
+		if (s.equalsIgnoreCase(GENERIC_VERSION_NUMBER) || s.endsWith(PROPERTY_QUALIFIER)) {
 			return true;
+		}
 		return false;
 	}
 
@@ -832,33 +876,40 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	}
 
 	public static String getEntryVersionMappings(FeatureEntry[] entries, BuildTimeSite site, AssemblyInformation assembly) {
-		if (entries == null || site == null)
+		if (entries == null || site == null) {
 			return null;
+		}
 
 		StringBuffer result = new StringBuffer();
 		for (FeatureEntry entry : entries) {
 			String versionRequested = entry.getVersion();
-			if (versionRequested == null)
+			if (versionRequested == null) {
 				versionRequested = GENERIC_VERSION_NUMBER;
+			}
 			String id = entry.getId();
 			String newVersion = null;
 
-			if (!needsReplacement(versionRequested))
+			if (!needsReplacement(versionRequested)) {
 				continue;
+			}
 
 			try {
 				if (entry.isPlugin()) {
 					BundleDescription model = null;
-					if (assembly != null)
+					if (assembly != null) {
 						model = assembly.getPlugin(entry.getId(), versionRequested);
-					if (model == null)
+					}
+					if (model == null) {
 						model = site.getRegistry().getResolvedBundle(id, versionRequested);
-					if (model != null)
+					}
+					if (model != null) {
 						newVersion = model.getVersion().toString();
+					}
 				} else {
 					BuildTimeFeature feature = site.findFeature(id, versionRequested, false);
-					if (feature != null)
+					if (feature != null) {
 						newVersion = feature.getVersion();
+					}
 				}
 			} catch (CoreException e) {
 				continue;

@@ -58,8 +58,9 @@ public class RootFileParentAction extends AbstractPublisherAction {
 		while (iter.hasNext()) {
 			IInstallableUnit iu = iter.next();
 			String id = iu.getId();
-			if (id.startsWith(idPrefix) || id.startsWith(flavorPrefix))
+			if (id.startsWith(idPrefix) || id.startsWith(flavorPrefix)) {
 				collector.add(iu);
+			}
 		}
 
 		InstallableUnitDescription descriptor = createParentIU(collector, RootFilesAction.computeIUId(baseId, flavor), Version.parseVersion(version));
@@ -70,8 +71,9 @@ public class RootFileParentAction extends AbstractPublisherAction {
 	}
 
 	private String getVersion(String rootVersion) {
-		if (rootVersion != null && !rootVersion.equals(IPDEBuildConstants.GENERIC_VERSION_NUMBER))
+		if (rootVersion != null && !rootVersion.equals(IPDEBuildConstants.GENERIC_VERSION_NUMBER)) {
 			return rootVersion;
+		}
 		return "1.0.0"; //$NON-NLS-1$
 	}
 }

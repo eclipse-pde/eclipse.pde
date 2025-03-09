@@ -60,22 +60,28 @@ public class P2IUFetchFactory implements IFetchFactory {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (this == obj)
+			if (this == obj) {
 				return true;
-			if (obj == null || getClass() != obj.getClass())
+			}
+			if (obj == null || getClass() != obj.getClass()) {
 				return false;
+			}
 
 			IUFetchInfo other = (IUFetchInfo) obj;
 			if (id == null) {
-				if (other.id != null)
+				if (other.id != null) {
 					return false;
-			} else if (!id.equals(other.id))
+				}
+			} else if (!id.equals(other.id)) {
 				return false;
+			}
 			if (version == null) {
-				if (other.version != null)
+				if (other.version != null) {
 					return false;
-			} else if (!version.equals(other.version))
+				}
+			} else if (!version.equals(other.version)) {
 				return false;
+			}
 			return true;
 		}
 	}
@@ -167,8 +173,9 @@ public class P2IUFetchFactory implements IFetchFactory {
 		IUFetchInfo iuFetchInfo = new IUFetchInfo((String) entryInfos.get(KEY_ID), (String) entryInfos.get(KEY_VERSION));
 
 		List<IUFetchInfo> iusToFetch = iusToFetchBySource.get(sourceRepository);
-		if (!iusToFetch.contains(iuFetchInfo))
+		if (!iusToFetch.contains(iuFetchInfo)) {
 			iusToFetch.add(iuFetchInfo);
+		}
 
 	}
 
@@ -218,23 +225,26 @@ public class P2IUFetchFactory implements IFetchFactory {
 		for (String arg : arguments) {
 			// if we have at least one arg without an equals sign then we are malformed and should bail
 			int index = arg.indexOf('=');
-			if (index == -1)
+			if (index == -1) {
 				throwException(NLS.bind(Messages.error_incorrectDirectoryEntry, entryInfos.get(KEY_ELEMENT_NAME)), null);
+			}
 			String key = arg.substring(0, index);
 			String value = arg.substring(index + 1);
 			table.put(key, value);
 		}
 
 		entryInfos.put(KEY_ID, table.get(KEY_ID));
-		if (table.containsKey(KEY_VERSION))
+		if (table.containsKey(KEY_VERSION)) {
 			entryInfos.put(KEY_VERSION, table.get(KEY_VERSION));
-		else
+		} else {
 			entryInfos.put(KEY_VERSION, ""); //$NON-NLS-1$
+		}
 		entryInfos.put(KEY_REPOSITORY, table.get(KEY_REPOSITORY));
 
 		// we need an IU id, and repository
-		if (entryInfos.get(KEY_ID) == null || entryInfos.get(KEY_REPOSITORY) == null)
+		if (entryInfos.get(KEY_ID) == null || entryInfos.get(KEY_REPOSITORY) == null) {
 			throwException(NLS.bind(Messages.error_directoryEntryRequiresIdAndRepo, entryInfos.get(KEY_ELEMENT_NAME)), null);
+		}
 	}
 
 }

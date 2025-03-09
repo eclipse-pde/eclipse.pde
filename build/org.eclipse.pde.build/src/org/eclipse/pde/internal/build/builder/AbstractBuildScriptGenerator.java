@@ -55,8 +55,9 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	abstract protected Properties getBuildProperties() throws CoreException;
 
 	static public Properties getExecutionEnvironmentMappings() {
-		if (executionEnvironmentMappings != null)
+		if (executionEnvironmentMappings != null) {
 			return executionEnvironmentMappings;
+		}
 
 		Properties properties = new Properties();
 		try (InputStream stream = BundleHelper.getDefault().getBundle().getEntry("data/env.properties").openStream()) { //$NON-NLS-1$
@@ -101,22 +102,25 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 		if (element.getOS() != null && !element.getOS().equals(Config.ANY)) {
 			for (Iterator<Config> iter = result.iterator(); iter.hasNext();) {
 				Config config = iter.next();
-				if (!isMatching(element.getOS(), config.getOs()))
+				if (!isMatching(element.getOS(), config.getOs())) {
 					iter.remove();
+				}
 			}
 		}
 		if (element.getWS() != null && !element.getWS().equals(Config.ANY)) {
 			for (Iterator<Config> iter = result.iterator(); iter.hasNext();) {
 				Config config = iter.next();
-				if (!isMatching(element.getWS(), config.getWs()))
+				if (!isMatching(element.getWS(), config.getWs())) {
 					iter.remove();
+				}
 			}
 		}
 		if (element.getArch() != null && !element.getArch().equals(Config.ANY)) {
 			for (Iterator<Config> iter = result.iterator(); iter.hasNext();) {
 				Config config = iter.next();
-				if (!isMatching(element.getArch(), config.getArch()))
+				if (!isMatching(element.getArch(), config.getArch())) {
 					iter.remove();
+				}
 			}
 		}
 		return result;
@@ -126,15 +130,17 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 		StringTokenizer stok = new StringTokenizer(candidateValues, ","); //$NON-NLS-1$
 		while (stok.hasMoreTokens()) {
 			String token = stok.nextToken().toUpperCase();
-			if (configValue.equalsIgnoreCase(token))
+			if (configValue.equalsIgnoreCase(token)) {
 				return true;
+			}
 		}
 		return false;
 	}
 
 	public Set<String> getCompiledElements() {
-		if (compiledElements == null)
+		if (compiledElements == null) {
 			compiledElements = new HashSet<>();
+		}
 		return compiledElements;
 	}
 
@@ -154,8 +160,9 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	 * @return Returns the ignoreMissingPropertiesFile.
 	 */
 	public boolean isIgnoreMissingPropertiesFile() {
-		if (BundleHelper.getDefault().isDebugging())
+		if (BundleHelper.getDefault().isDebugging()) {
 			return false;
+		}
 		return ignoreMissingPropertiesFile;
 	}
 

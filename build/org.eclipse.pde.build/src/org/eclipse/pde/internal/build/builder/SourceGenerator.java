@@ -115,8 +115,9 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 	}
 
 	private Properties getBuildProperties() throws CoreException {
-		if (buildProperties == null)
+		if (buildProperties == null) {
 			buildProperties = AbstractScriptGenerator.readProperties(featureRootLocation, PROPERTIES_FILE, IStatus.OK);
+		}
 		return buildProperties;
 	}
 
@@ -132,13 +133,15 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		FeatureEntry[] pluginList = feature.getPluginEntries();
 		for (FeatureEntry entry : pluginList) {
 			BundleDescription model;
-			if (director.selectConfigs(entry).size() == 0)
+			if (director.selectConfigs(entry).size() == 0) {
 				continue;
+			}
 
 			String versionRequested = entry.getVersion();
 			model = getSite().getRegistry().getResolvedBundle(entry.getId(), versionRequested);
-			if (model == null)
+			if (model == null) {
 				continue;
+			}
 
 			collectSourcePlugins(feature, entry, model);
 		}
@@ -146,8 +149,9 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 
 	private void collectSourcePlugins(BuildTimeFeature feature, FeatureEntry pluginEntry, BundleDescription model) throws CoreException {
 		//don't gather if we are doing individual source bundles
-		if (individualSourceBundles)
+		if (individualSourceBundles) {
 			return;
+		}
 
 		// The generic entry may not be part of the configuration we are building however,
 		// the code for a non platform specific plugin still needs to go into a generic source plugin
@@ -189,8 +193,9 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 
 			FeatureEntry[] plugins = feature.getPluginEntries();
 			for (FeatureEntry plugin2 : plugins) {
-				if (director.selectConfigs(plugin2).size() == 0)
+				if (director.selectConfigs(plugin2).size() == 0) {
 					continue;
+				}
 				createSourceBundle(sourceFeature, plugin2);
 			}
 		} else {
@@ -218,8 +223,9 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			// see if we have a plug-in or a fragment
 			if (extraEntries[i].startsWith("feature@")) { //$NON-NLS-1$
 				entry = new FeatureEntry(id, version.toString(), false);
-				if (items.containsKey(Utils.EXTRA_OPTIONAL))
+				if (items.containsKey(Utils.EXTRA_OPTIONAL)) {
 					entry.setOptional(((Boolean) items.get(Utils.EXTRA_OPTIONAL)).booleanValue());
+				}
 				entry.setEnvironment((String) items.get(Utils.EXTRA_OS), (String) items.get(Utils.EXTRA_WS), (String) items.get(Utils.EXTRA_ARCH), null);
 				sourceFeature.addEntry(entry);
 			} else if (extraEntries[i].startsWith("plugin@")) { //$NON-NLS-1$
@@ -234,8 +240,9 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 				entry.setEnvironment((String) items.get(Utils.EXTRA_OS), (String) items.get(Utils.EXTRA_WS), (String) items.get(Utils.EXTRA_ARCH), null);
 				sourceFeature.addEntry(entry);
 			} else if (extraEntries[i].startsWith("exclude@")) { //$NON-NLS-1$
-				if (excludedEntries == null)
+				if (excludedEntries == null) {
 					excludedEntries = new HashMap<>();
+				}
 
 				if (excludedEntries.containsKey(id)) {
 					excludedEntries.get(id).add(version);
@@ -251,12 +258,14 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 	private void generateSourceFragments(BuildTimeFeature sourceFeature, FeatureEntry sourcePlugin) throws CoreException {
 		Map<String, Set<BundleDescription>> fragments = director.sourceToGather.getElementEntries();
 		for (Config configInfo : AbstractScriptGenerator.getConfigInfos()) {
-			if (configInfo.equals(Config.genericConfig()))
+			if (configInfo.equals(Config.genericConfig())) {
 				continue;
+			}
 			String sourceFragmentId = sourceFeature.getId() + "." + configInfo.toString("."); //$NON-NLS-1$ //$NON-NLS-2$
 			Set<BundleDescription> fragmentEntries = fragments.get(sourceFragmentId);
-			if (fragmentEntries == null || fragmentEntries.size() == 0)
+			if (fragmentEntries == null || fragmentEntries.size() == 0) {
 				continue;
+			}
 			FeatureEntry sourceFragment = new FeatureEntry(sourceFragmentId, sourceFeature.getVersion(), true);
 			sourceFragment.setEnvironment(configInfo.getOs(), configInfo.getWs(), configInfo.getArch(), null);
 			sourceFragment.setFragment(true);
@@ -269,10 +278,12 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 
 	private String computeSourceFeatureName(Feature featureForName, boolean withNumber) throws CoreException {
 		String sourceFeatureName = getBuildProperties().getProperty(PROPERTY_SOURCE_FEATURE_NAME);
-		if (sourceFeatureName == null)
+		if (sourceFeatureName == null) {
 			sourceFeatureName = sourceFeatureId;
-		if (sourceFeatureName == null)
+		}
+		if (sourceFeatureName == null) {
 			sourceFeatureName = featureForName.getId() + ".source"; //$NON-NLS-1$
+		}
 		return sourceFeatureName + (withNumber ? "_" + featureForName.getVersion() : ""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
@@ -385,8 +396,9 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		}
 		PDEState state = getSite().getRegistry();
 		BundleDescription oldBundle = state.getResolvedBundle(fragment.getId());
-		if (oldBundle != null)
+		if (oldBundle != null) {
 			state.getState().removeBundle(oldBundle);
+		}
 		state.addBundle(sourceFragmentDir);
 	}
 
@@ -446,14 +458,16 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			startComment = buffer.indexOf(COMMENT_START_TAG, endComment);
 			endComment = startComment > -1 ? buffer.indexOf(COMMENT_END_TAG, startComment) : -1;
 		}
-		if (startTag == -1)
+		if (startTag == -1) {
 			return;
+		}
 		int endTag = buffer.indexOf(">", startTag); //$NON-NLS-1$
 		boolean attrFound = false;
 		while (!attrFound) {
 			int startAttributeWord = buffer.indexOf(attr, startTag);
-			if (startAttributeWord == -1 || startAttributeWord > endTag)
+			if (startAttributeWord == -1 || startAttributeWord > endTag) {
 				return;
+			}
 			if (!Character.isWhitespace(buffer.charAt(startAttributeWord - 1))) {
 				startTag = startAttributeWord + attr.length();
 				continue;
@@ -504,8 +518,9 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		if (excludedEntries != null && excludedEntries.containsKey(bundle.getSymbolicName())) {
 			List<Version> excludedVersions = excludedEntries.get(bundle.getSymbolicName());
 			for (Version version : excludedVersions) {
-				if (Utils.matchVersions(bundle.getVersion().toString(), version.toString()))
+				if (Utils.matchVersions(bundle.getVersion().toString(), version.toString())) {
 					return null;
+				}
 			}
 		}
 
@@ -531,8 +546,9 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 
 						FeatureEntry existingEntry = sourceFeature.findPluginEntry(sourceEntry.getId(), sourceEntry.getVersion());
 						if (existingEntry == null || existingEntry.getVersion() == GENERIC_VERSION_NUMBER) {
-							if (existingEntry != null)
+							if (existingEntry != null) {
 								sourceFeature.removeEntry(existingEntry);
+							}
 							sourceFeature.addEntry(sourceEntry);
 							return sourceEntry;
 						}
@@ -552,8 +568,9 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 
 	private String getSourceRoot(CompiledEntry entry) {
 		String jarName = entry.getName(false);
-		if (jarName.equals(ModelBuildScriptGenerator.DOT))
+		if (jarName.equals(ModelBuildScriptGenerator.DOT)) {
 			return jarName;
+		}
 		String srcName = ModelBuildScriptGenerator.getSRCName(entry.getName(false));
 		return srcName.substring(0, srcName.length() - 4); //remove .zip
 	}
@@ -568,8 +585,9 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		attributes.put(new Name(org.osgi.framework.Constants.BUNDLE_SYMBOLICNAME), sourceEntry.getId());
 		attributes.put(new Name(org.osgi.framework.Constants.BUNDLE_VERSION), originalBundle.getVersion().toString());
 
-		if (originalBundle.getPlatformFilter() != null)
+		if (originalBundle.getPlatformFilter() != null) {
 			attributes.put(new Name(ECLIPSE_PLATFORM_FILTER), originalBundle.getPlatformFilter());
+		}
 
 		Properties origBuildProperties = getBuildProperties(originalBundle);
 		String extraRoots = (String) origBuildProperties.get(PROPERTY_SRC_ROOTS);
@@ -578,13 +596,15 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		if (entries.length > 0 || extraRoots != null) {
 			sourceHeader += ";roots:=\""; //$NON-NLS-1$
 			for (int i = 0; i < entries.length; i++) {
-				if (i > 0)
+				if (i > 0) {
 					sourceHeader += ',';
+				}
 				sourceHeader += getSourceRoot(entries[i]);
 			}
 			if (extraRoots != null) {
-				if (entries.length > 0)
+				if (entries.length > 0) {
 					sourceHeader += ',';
+				}
 				sourceHeader += extraRoots;
 			}
 			sourceHeader += '\"';
@@ -607,9 +627,9 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		String vendorKey = (vendor != null && vendor.startsWith("%")) ? vendor.substring(1) : null; //$NON-NLS-1$
 		String nameKey = (name != null && name.startsWith("%")) ? name.substring(1) : null; //$NON-NLS-1$;
 
-		if (localization == null)
+		if (localization == null) {
 			localization = PLUGIN;
-		else {
+		} else {
 			//read the localization properties from original bundle
 			Properties localizationProperties = null;
 			File localizationFile = new File(originalBundle.getLocation(), localization + ".properties"); //$NON-NLS-1$
@@ -622,23 +642,28 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			}
 
 			if (localizationProperties != null) {
-				if (vendorKey != null)
+				if (vendorKey != null) {
 					vendor = localizationProperties.getProperty(vendorKey);
-				if (nameKey != null)
+				}
+				if (nameKey != null) {
 					name = localizationProperties.getProperty(nameKey);
+				}
 			}
 		}
 
 		// name not specified, use the source bundle id and externalize it anyway
-		if (name == null)
+		if (name == null) {
 			name = sourceEntry.getId();
-		else
+		} else {
 			name += " Source"; //$NON-NLS-1$
-		if (nameKey == null)
+		}
+		if (nameKey == null) {
 			nameKey = "pluginName"; //$NON-NLS-1$
+		}
 		// if vendor is not specified, we don't know what to put there
-		if (vendor != null && vendorKey == null)
+		if (vendor != null && vendorKey == null) {
 			vendorKey = "providerName"; //$NON-NLS-1$
+		}
 
 		attributes.put(new Name(org.osgi.framework.Constants.BUNDLE_LOCALIZATION), localization);
 		attributes.put(new Name(org.osgi.framework.Constants.BUNDLE_NAME), "%" + nameKey); //$NON-NLS-1$
@@ -672,8 +697,9 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 
 		PDEState state = getSite().getRegistry();
 		BundleDescription oldBundle = state.getResolvedBundle(sourceEntry.getId(), sourceEntry.getVersion());
-		if (oldBundle != null)
+		if (oldBundle != null) {
 			state.getState().removeBundle(oldBundle);
+		}
 		state.addBundle(sourcePluginDirURL.toFile());
 
 		director.sourceToGather.addElementEntry(sourceEntry.getId(), originalBundle);
@@ -773,8 +799,9 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			copiedFiles.add(Constants.BUNDLE_FILENAME_DESCRIPTOR);//Because the manifest.mf is not copied, we need to add it to the file
 			Properties sourceBuildProperties = new Properties();
 			String binIncludes = Utils.getStringFromCollection(copiedFiles, ","); //$NON-NLS-1$
-			if (extraFiles != null)
+			if (extraFiles != null) {
 				binIncludes += "," + extraFiles; //$NON-NLS-1$
+			}
 			sourceBuildProperties.put(PROPERTY_BIN_INCLUDES, binIncludes);
 			sourceBuildProperties.put(SOURCE_PLUGIN_ATTRIBUTE, original);
 			try {

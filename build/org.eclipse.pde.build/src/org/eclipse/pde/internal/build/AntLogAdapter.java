@@ -52,8 +52,9 @@ public class AntLogAdapter implements ILog {
 			String exceptionMessage = status.getException() != null ? status.getException().getMessage() : null;
 
 			log.invoke(antLog, new Object[] {statusMessage, Integer.valueOf(mapLogLevels(status.getSeverity()))});
-			if (exceptionMessage != null && !exceptionMessage.equals(statusMessage))
+			if (exceptionMessage != null && !exceptionMessage.equals(statusMessage)) {
 				log.invoke(antLog, new Object[] {exceptionMessage, Integer.valueOf(mapLogLevels(status.getSeverity()))});
+			}
 			IStatus[] nestedStatus = status.getChildren();
 			if (nestedStatus != null) {
 				for (IStatus element : nestedStatus) {

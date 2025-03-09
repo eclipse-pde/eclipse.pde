@@ -98,13 +98,15 @@ public class IdReplaceTask extends Task {
 		for (StringTokenizer tokens = new StringTokenizer(values, COMMA); tokens.hasMoreTokens();) {
 			String token = tokens.nextToken().trim();
 			String id = EMPTY;
-			if (!token.equals(EMPTY))
+			if (!token.equals(EMPTY)) {
 				id = token;
+			}
 
 			String version = EMPTY;
 			token = tokens.nextToken().trim();
-			if (!token.equals(EMPTY))
+			if (!token.equals(EMPTY)) {
 				version = token;
+			}
 			pluginIds.put(id, version);
 		}
 	}
@@ -119,13 +121,15 @@ public class IdReplaceTask extends Task {
 		for (StringTokenizer tokens = new StringTokenizer(values, COMMA); tokens.hasMoreTokens();) {
 			String token = tokens.nextToken().trim();
 			String id = EMPTY;
-			if (!token.equals(EMPTY))
+			if (!token.equals(EMPTY)) {
 				id = token;
+			}
 
 			String version = EMPTY;
 			token = tokens.nextToken().trim();
-			if (!token.equals(EMPTY))
+			if (!token.equals(EMPTY)) {
 				version = token;
+			}
 			featureIds.put(id, version);
 		}
 	}
@@ -152,8 +156,9 @@ public class IdReplaceTask extends Task {
 			endComment = startComment > -1 ? scan(buffer, startComment, COMMENT_END_TAG) : -1;
 		}
 
-		if (startFeature == -1)
+		if (startFeature == -1) {
 			return;
+		}
 
 		int endFeature = scan(buffer, startFeature, ">"); //$NON-NLS-1$
 
@@ -162,11 +167,13 @@ public class IdReplaceTask extends Task {
 			while (!versionFound) {
 				int startVersionWord = scan(buffer, startFeature, VERSION);
 				if (startVersionWord == -1 || startVersionWord > endFeature) {
-					if (!isProduct)
+					if (!isProduct) {
 						return;
+					}
 
-					if (selfVersion == null || selfVersion.equals(GENERIC_VERSION_NUMBER))
+					if (selfVersion == null || selfVersion.equals(GENERIC_VERSION_NUMBER)) {
 						break;
+					}
 
 					buffer.insert(endFeature, INSERT_VERSION);
 					startVersionWord = endFeature + 1;
@@ -206,8 +213,9 @@ public class IdReplaceTask extends Task {
 			int startPlugin = scan(buffer, startElement + 1, PLUGIN_START_TAG, true);
 			int startInclude = scan(buffer, startElement + 1, isProduct ? FEATURE_START_TAG : INCLUDES_START_TAG, true);
 
-			if (startPlugin == -1 && startInclude == -1)
+			if (startPlugin == -1 && startInclude == -1) {
 				break;
+			}
 
 			startComment = scan(buffer, startElement + 1, COMMENT_START_TAG);
 			endComment = startComment > -1 ? scan(buffer, startComment, COMMENT_END_TAG) : -1;
@@ -262,11 +270,13 @@ public class IdReplaceTask extends Task {
 				endElementId = scan(buffer, startElementId + 1, BACKSLASH);
 			}
 
-			if (startVersionId > endElement)
+			if (startVersionId > endElement) {
 				startVersionId = -1;
+			}
 
-			if (startId == -1 || (!isProduct && startVersionId == -1))
+			if (startId == -1 || (!isProduct && startVersionId == -1)) {
 				break;
+			}
 
 			String version = null;
 			if (startVersionId == -1) {
@@ -305,8 +315,9 @@ public class IdReplaceTask extends Task {
 			startElement = (endElementId > endVersionId) ? endElementId - change : endVersionId - change;
 		}
 
-		if (!contentChanged)
+		if (!contentChanged) {
 			return;
+		}
 
 		try (OutputStreamWriter w = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(filePath)), StandardCharsets.UTF_8)) {
 			w.write(buffer.toString());
@@ -331,8 +342,9 @@ public class IdReplaceTask extends Task {
 				if (i < buf.length() - candidate.length()) {
 					String match = buf.substring(i, i + candidate.length());
 					if (candidate.equalsIgnoreCase(match)) {
-						if (!wholeWord || Character.isWhitespace(buf.charAt(i + candidate.length())))
+						if (!wholeWord || Character.isWhitespace(buf.charAt(i + candidate.length()))) {
 							return i;
+						}
 					}
 				}
 			}

@@ -96,21 +96,26 @@ public class BrandP2Task extends Repo2RunnableTask {
 
 	@Override
 	public void execute() {
-		if (launcherName == null || launcherName.startsWith(ANT_PREFIX) || config == null)
+		if (launcherName == null || launcherName.startsWith(ANT_PREFIX) || config == null) {
 			return; //TODO error/warning
+		}
 
-		if (launcherProvider == null || launcherProvider.startsWith("${")) //$NON-NLS-1$
+		if (launcherProvider == null || launcherProvider.startsWith("${")) { //$NON-NLS-1$
 			launcherProvider = IPDEBuildConstants.FEATURE_EQUINOX_EXECUTABLE;
+		}
 
 		IProvisioningAgent agent = BundleHelper.getDefault().acquireService(IProvisioningAgent.class);
-		if (agent == null)
+		if (agent == null) {
 			throw new BuildException(TaskMessages.error_agentService);
+		}
 		IMetadataRepositoryManager metadataManager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
-		if (metadataManager == null)
+		if (metadataManager == null) {
 			throw new BuildException(TaskMessages.error_metadataRepoManagerService);
+		}
 		IArtifactRepositoryManager artifactManager = (IArtifactRepositoryManager) agent.getService(IArtifactRepositoryManager.SERVICE_NAME);
-		if (artifactManager == null)
+		if (artifactManager == null) {
 			throw new BuildException(TaskMessages.error_artifactRepoManagerService);
+		}
 
 		IMetadataRepository metadataRepo = loadMetadataRepository(metadataManager);
 		IArtifactRepository artifactRepo = loadArtifactRepository(artifactManager);
@@ -136,21 +141,24 @@ public class BrandP2Task extends Repo2RunnableTask {
 		URI destination = IPath.fromOSString(getRootFolder()).toFile().toURI();
 
 		if (metadataManager != null) {
-			if (removeMetadataRepo)
+			if (removeMetadataRepo) {
 				metadataManager.removeRepository(metadataURI);
+			}
 			metadataManager.removeRepository(destination);
 		}
 
 		if (artifactManager != null) {
-			if (removeArtifactRepo)
+			if (removeArtifactRepo) {
 				artifactManager.removeRepository(artifactURI);
+			}
 			artifactManager.removeRepository(destination);
 		}
 	}
 
 	private IArtifactRepository loadArtifactRepository(IArtifactRepositoryManager manager) throws BuildException {
-		if (artifactURI == null)
+		if (artifactURI == null) {
 			throw new BuildException(TaskMessages.error_noArtifactRepo);
+		}
 
 		removeArtifactRepo = !manager.contains(artifactURI);
 
@@ -161,15 +169,17 @@ public class BrandP2Task extends Repo2RunnableTask {
 			throw new BuildException(NLS.bind(TaskMessages.error_loadRepository, artifactURI.toString()));
 		}
 
-		if (!repo.isModifiable())
+		if (!repo.isModifiable()) {
 			throw new BuildException(NLS.bind(TaskMessages.error_unmodifiableRepository, artifactURI.toString()));
+		}
 
 		return repo;
 	}
 
 	private IMetadataRepository loadMetadataRepository(IMetadataRepositoryManager manager) throws BuildException {
-		if (metadataURI == null)
+		if (metadataURI == null) {
 			throw new BuildException(TaskMessages.error_noMetadataRepo);
+		}
 
 		removeMetadataRepo = !manager.contains(metadataURI);
 
@@ -180,8 +190,9 @@ public class BrandP2Task extends Repo2RunnableTask {
 			throw new BuildException(NLS.bind(TaskMessages.error_loadRepository, metadataURI.toString()));
 		}
 
-		if (!repo.isModifiable())
+		if (!repo.isModifiable()) {
 			throw new BuildException(NLS.bind(TaskMessages.error_unmodifiableRepository, metadataURI.toString()));
+		}
 		return repo;
 	}
 
@@ -201,8 +212,9 @@ public class BrandP2Task extends Repo2RunnableTask {
 	}
 
 	protected void callBrandingIron() {
-		if (!new File(getRootFolder()).exists())
+		if (!new File(getRootFolder()).exists()) {
 			return;
+		}
 
 		BrandingIron iron = new BrandingIron();
 		iron.setName(launcherName);
@@ -226,8 +238,9 @@ public class BrandP2Task extends Repo2RunnableTask {
 	protected void publishBrandedIU(IMetadataRepository metadataRepo, IArtifactRepository artifactRepo, IInstallableUnit originalIU) {
 		String id = productId + "_root." + getConfigString(); //$NON-NLS-1$
 		Version version = Version.parseVersion(productVersion);
-		if (version.equals(Version.emptyVersion))
+		if (version.equals(Version.emptyVersion)) {
 			version = originalIU.getVersion();
+		}
 		org.eclipse.equinox.p2.metadata.MetadataFactory.InstallableUnitDescription newIUDescription = new MetadataFactory.InstallableUnitDescription();
 		newIUDescription.setSingleton(originalIU.isSingleton());
 		newIUDescription.setId(id);
@@ -284,18 +297,20 @@ public class BrandP2Task extends Repo2RunnableTask {
 	private static final String CONFIGURE = "configure"; //$NON-NLS-1$
 
 	private List<ITouchpointData> brandTouchpointData(Collection<ITouchpointData> data) {
-		if (config.getOs().equals("macosx")) //$NON-NLS-1$
+		if (config.getOs().equals("macosx")) { //$NON-NLS-1$
 			return brandMacTouchpointData();
+		}
 		ArrayList<ITouchpointData> results = new ArrayList<>(data.size() + 1);
 		results.addAll(data);
 
 		boolean haveChmod = false;
 
 		String brandedLauncher = null;
-		if (config.getOs().equals("win32")) //$NON-NLS-1$
+		if (config.getOs().equals("win32")) { //$NON-NLS-1$
 			brandedLauncher = launcherName + ".exe"; //$NON-NLS-1$
-		else
+		} else {
 			brandedLauncher = launcherName;
+		}
 
 		for (int i = 0; i < results.size(); i++) {
 			ITouchpointData td = results.get(i);
@@ -304,8 +319,9 @@ public class BrandP2Task extends Repo2RunnableTask {
 			String[] phases = new String[] {INSTALL, CONFIGURE};
 			for (String element : phases) {
 				ITouchpointInstruction instruction = td.getInstruction(element);
-				if (instruction == null)
+				if (instruction == null) {
 					continue;
+				}
 
 				boolean phaseChanged = false;
 				String[] actions = Utils.getArrayFromString(instruction.getBody(), ";"); //$NON-NLS-1$
@@ -373,8 +389,9 @@ public class BrandP2Task extends Repo2RunnableTask {
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0; i < elements.length; i++) {
 			buffer.append(elements[i]);
-			if (i < elements.length - 1)
+			if (i < elements.length - 1) {
 				buffer.append(separator);
+			}
 		}
 		return buffer.toString();
 	}
@@ -387,8 +404,9 @@ public class BrandP2Task extends Repo2RunnableTask {
 			buffer.append(key);
 			buffer.append(':');
 			buffer.append(map.get(key));
-			if (iterator.hasNext())
+			if (iterator.hasNext()) {
 				buffer.append(',');
+			}
 		}
 		buffer.append(')');
 		return buffer.toString();
@@ -408,12 +426,14 @@ public class BrandP2Task extends Repo2RunnableTask {
 	}
 
 	public void setConfig(String config) {
-		if (config == null || config.startsWith(ANT_PREFIX))
+		if (config == null || config.startsWith(ANT_PREFIX)) {
 			return;
+		}
 
 		String[] elements = Utils.getArrayFromStringWithBlank(config, "."); //$NON-NLS-1$
-		if (elements.length != 3)
+		if (elements.length != 3) {
 			throw new BuildException(NLS.bind(TaskMessages.error_invalidConfig, config));
+		}
 
 		this.config = new Config(elements);
 	}
@@ -439,8 +459,9 @@ public class BrandP2Task extends Repo2RunnableTask {
 	}
 
 	public void setProductVersion(String productVersion) {
-		if (productVersion != null && !productVersion.startsWith(ANT_PREFIX))
+		if (productVersion != null && !productVersion.startsWith(ANT_PREFIX)) {
 			this.productVersion = productVersion;
+		}
 	}
 
 	public void setRepository(String location) {

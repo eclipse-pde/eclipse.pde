@@ -74,8 +74,9 @@ public class GatherBundleTask extends AbstractPublisherTask {
 		if (targetFolder != null) {
 			File targetFile = new File(targetFolder);
 			action = new GatherBundleAction(targetFile, targetFile);
-		} else
+		} else {
 			action = new GatherBundleAction(new File(baseDirectory), new File(buildResultFolder));
+		}
 		action.setComputer(computer);
 		action.setUnpack(unpack);
 
@@ -103,8 +104,9 @@ public class GatherBundleTask extends AbstractPublisherTask {
 			NameEntry excludes = fileSet.createExclude();
 			excludes.setName(JarFile.MANIFEST_NAME);
 
-			if (new File(targetFolder, JarFile.MANIFEST_NAME).exists())
+			if (new File(targetFolder, JarFile.MANIFEST_NAME).exists()) {
 				computer.addFile(targetFolder, JarFile.MANIFEST_NAME);
+			}
 			computer.addFiles(targetFolder, fileSet.getDirectoryScanner().getIncludedFiles());
 			return computer;
 		}
@@ -126,8 +128,9 @@ public class GatherBundleTask extends AbstractPublisherTask {
 		fileSet.setDir(new File(baseDirectory));
 
 		for (String entry : splitIncludes) {
-			if (entry.equals(ModelBuildScriptGenerator.DOT))
+			if (entry.equals(ModelBuildScriptGenerator.DOT)) {
 				continue;
+			}
 
 			NameEntry fileInclude = fileSet.createInclude();
 			fileInclude.setName(entry);
@@ -155,8 +158,9 @@ public class GatherBundleTask extends AbstractPublisherTask {
 			LinkedHashSet<String> set = new LinkedHashSet<>(includedFiles);
 
 			// Manifest must go first, and must have been specifically excluded earlier from the buildResultFolder to not get added.
-			if (new File(buildResultFolder, JarFile.MANIFEST_NAME).exists())
+			if (new File(buildResultFolder, JarFile.MANIFEST_NAME).exists()) {
 				computer.addFile(buildResultFolder, JarFile.MANIFEST_NAME);
+			}
 
 			// The plugin.xml and fragment.xml may have had versions changed, take them from the buildResultFolder
 			if (set.contains(Constants.PLUGIN_FILENAME_DESCRIPTOR) && new File(buildResultFolder, Constants.PLUGIN_FILENAME_DESCRIPTOR).exists()) {
@@ -168,8 +172,9 @@ public class GatherBundleTask extends AbstractPublisherTask {
 				computer.addFile(buildResultFolder, Constants.FRAGMENT_FILENAME_DESCRIPTOR);
 			}
 
-			if (new File(buildResultFolder, API_DESCRIPTION).exists())
+			if (new File(buildResultFolder, API_DESCRIPTION).exists()) {
 				computer.addFile(buildResultFolder, API_DESCRIPTION);
+			}
 
 			//everything else
 			computer.addFiles(baseDirectory, set.toArray(new String[set.size()]));
@@ -266,18 +271,21 @@ public class GatherBundleTask extends AbstractPublisherTask {
 	}
 
 	public void setUnpack(String unpack) {
-		if (unpack != null && unpack.length() > 0 && !unpack.startsWith(ANT_PREFIX))
+		if (unpack != null && unpack.length() > 0 && !unpack.startsWith(ANT_PREFIX)) {
 			this.unpack = unpack;
+		}
 	}
 
 	public void setGatheredSource(String gatheredSource) {
-		if (gatheredSource != null && gatheredSource.length() > 0 && !gatheredSource.startsWith(ANT_PREFIX))
+		if (gatheredSource != null && gatheredSource.length() > 0 && !gatheredSource.startsWith(ANT_PREFIX)) {
 			this.gatheredSource = gatheredSource;
+		}
 	}
 
 	public void setTargetFolder(String targetFolder) {
-		if (targetFolder != null && targetFolder.length() > 0 && !targetFolder.startsWith(ANT_PREFIX))
+		if (targetFolder != null && targetFolder.length() > 0 && !targetFolder.startsWith(ANT_PREFIX)) {
 			this.targetFolder = targetFolder;
+		}
 	}
 
 	public void addConfiguredOutputFolder(OutputFileSet output) {

@@ -39,16 +39,18 @@ public class ElementCollector extends BuildDirector {
 				generate(nestedFeature, false);
 			} catch (CoreException exception) {
 				//If the referenced feature is not optional, there is a real problem and the exception is re-thrown. 
-				if (exception.getStatus().getCode() != EXCEPTION_FEATURE_MISSING || (exception.getStatus().getCode() == EXCEPTION_FEATURE_MISSING && !referencedFeature.isOptional()))
+				if (exception.getStatus().getCode() != EXCEPTION_FEATURE_MISSING || (exception.getStatus().getCode() == EXCEPTION_FEATURE_MISSING && !referencedFeature.isOptional())) {
 					throw exception;
+				}
 			}
 		}
 	}
 
 	@Override
 	protected void collectElementToAssemble(BuildTimeFeature featureToCollect) {
-		if (assemblyData == null)
+		if (assemblyData == null) {
 			return;
+		}
 		List<Config> correctConfigs = selectConfigs(featureToCollect);
 		// Here, we could sort if the feature is a common one or not by comparing the size of correctConfigs
 		for (Config config : correctConfigs) {

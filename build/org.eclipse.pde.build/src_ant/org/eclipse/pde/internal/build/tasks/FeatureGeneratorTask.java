@@ -52,8 +52,9 @@ public class FeatureGeneratorTask extends Task {
 
 	private void initializeAntProperties(Properties properties) {
 		String value = getProject().getProperty(IBuildPropertiesConstants.RESOLVER_DEV_MODE);
-		if (Boolean.valueOf(value).booleanValue())
+		if (Boolean.valueOf(value).booleanValue()) {
 			antProperties.put(IBuildPropertiesConstants.RESOLVER_DEV_MODE, "true"); //$NON-NLS-1$
+		}
 
 		ProfileManager manager = new ProfileManager(null, true);
 		manager.copyEEProfileProperties(getProject().getProperties(), antProperties);
@@ -99,8 +100,9 @@ public class FeatureGeneratorTask extends Task {
 	 * @param pluginList a comma separated list of plugin ids
 	 */
 	public void setPluginList(String pluginList) {
-		if (pluginList != null && !pluginList.startsWith(ANT_PREFIX))
+		if (pluginList != null && !pluginList.startsWith(ANT_PREFIX)) {
 			generator.setPluginList(Utils.getArrayFromString(pluginList));
+		}
 	}
 
 	/**
@@ -108,8 +110,9 @@ public class FeatureGeneratorTask extends Task {
 	 * @param fragmentList a comma separated list of plugin ids
 	 */
 	public void setFragmentList(String fragmentList) {
-		if (fragmentList != null && !fragmentList.startsWith(ANT_PREFIX))
+		if (fragmentList != null && !fragmentList.startsWith(ANT_PREFIX)) {
 			generator.setFragmentList(Utils.getArrayFromString(fragmentList));
+		}
 	}
 
 	/**
@@ -117,8 +120,9 @@ public class FeatureGeneratorTask extends Task {
 	 * @param featureList a comma separated list of feature ids
 	 */
 	public void setFeatureList(String featureList) {
-		if (featureList != null && !featureList.startsWith(ANT_PREFIX))
+		if (featureList != null && !featureList.startsWith(ANT_PREFIX)) {
 			generator.setFeatureList(Utils.getArrayFromString(featureList));
+		}
 	}
 
 	/**
@@ -160,8 +164,9 @@ public class FeatureGeneratorTask extends Task {
 	}
 
 	public void setNestedInclusions(String nested) {
-		if (nested != null && !nested.startsWith(ANT_PREFIX))
+		if (nested != null && !nested.startsWith(ANT_PREFIX)) {
 			generator.setNestedInclusions(nested);
+		}
 	}
 
 	public void setFilterP2Base(boolean value) {

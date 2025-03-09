@@ -60,8 +60,9 @@ public class BuildTimeSiteFactory /*extends BaseSiteFactory*/ implements IPDEBui
 	 * @return ISite
 	 */
 	public BuildTimeSite createSite() throws CoreException {
-		if (site != null && urlsChanged == false)
+		if (site != null && urlsChanged == false) {
 			return site;
+		}
 
 		urlsChanged = false;
 		site = createSiteMapModel();
@@ -80,15 +81,17 @@ public class BuildTimeSiteFactory /*extends BaseSiteFactory*/ implements IPDEBui
 
 			installedBaseURL = installedBaseLocation;
 			Collection<File> installedFeatures = Utils.findFiles(new File(installedBaseLocation), DEFAULT_FEATURE_LOCATION, Constants.FEATURE_FILENAME_DESCRIPTOR);
-			if (installedFeatures != null)
+			if (installedFeatures != null) {
 				featureXMLs.addAll(installedFeatures);
+			}
 
 			// extract features from platform.xml
 			List<File> featureDirectories = PluginPathFinder.getFeaturePaths(installedBaseURL);
 			for (File element : featureDirectories) {
 				File featureXML = new File(element, Constants.FEATURE_FILENAME_DESCRIPTOR);
-				if (featureXML.exists())
+				if (featureXML.exists()) {
 					featureXMLs.add(featureXML);
+				}
 			}
 
 		}
@@ -158,8 +161,9 @@ public class BuildTimeSiteFactory /*extends BaseSiteFactory*/ implements IPDEBui
 				// treat as a flat directory containing features
 				foundFeatures = Utils.findFiles(sitePath, ".", Constants.FEATURE_FILENAME_DESCRIPTOR); //$NON-NLS-1$
 			}
-			if (foundFeatures != null)
+			if (foundFeatures != null) {
 				features.addAll(foundFeatures);
+			}
 		}
 		return features;
 	}

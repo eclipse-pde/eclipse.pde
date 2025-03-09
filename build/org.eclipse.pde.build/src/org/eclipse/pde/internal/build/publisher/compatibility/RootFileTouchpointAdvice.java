@@ -42,8 +42,9 @@ public class RootFileTouchpointAdvice extends RootFilesAdvice implements ITouchp
 		String os = config[1];
 
 		String launcherName = product != null ? product.getLauncherName() : null;
-		if (launcherName == null)
+		if (launcherName == null) {
 			launcherName = "eclipse"; //$NON-NLS-1$
+		}
 
 		File root = getRoot();
 		File launcherFile = new File(root, launcherName);

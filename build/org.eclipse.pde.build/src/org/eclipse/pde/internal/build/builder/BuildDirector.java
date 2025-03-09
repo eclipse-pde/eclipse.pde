@@ -101,8 +101,9 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 	private final Map<String, String> extractedLocations = new HashMap<>();
 
 	public String getExtractedRoot(ClasspathElement element) {
-		if (element.getSubPath() == null)
+		if (element.getSubPath() == null) {
 			return element.getPath();
+		}
 
 		String absolute = element.getAbsolutePath();
 		if (extractedLocations.containsKey(absolute)) {
@@ -111,8 +112,9 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 
 		//Use the jar name, append a suffix if that name is already taken
 		String name = new File(absolute).getName();
-		if (name.endsWith(".jar")) //$NON-NLS-1$
+		if (name.endsWith(".jar")) { //$NON-NLS-1$
 			name = name.substring(0, name.length() - 4);
+		}
 		String destination = name;
 		while (extractedLocations.containsValue(destination)) {
 			destination = name + '_' + Integer.toHexString(destination.hashCode());
@@ -133,8 +135,9 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 		FeatureEntry[] pluginList = feature.getPluginEntries();
 		for (FeatureEntry entry : pluginList) {
 			BundleDescription model;
-			if (selectConfigs(entry).size() == 0)
+			if (selectConfigs(entry).size() == 0) {
 				continue;
+			}
 
 			String versionRequested = entry.getVersion();
 			model = getSite(false).getRegistry().getResolvedBundle(entry.getId(), versionRequested);
@@ -145,9 +148,9 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 				if (individual) {
 					BundleDescription originalBundle = getSite(false).getRegistry().getResolvedBundle(extraEntries[0]);
 					if (originalBundle != null) {
-						if (!Utils.isBinary(originalBundle))
+						if (!Utils.isBinary(originalBundle)) {
 							generateEmbeddedSource(entry, extraEntries, individual);
-						else if (model == null) {
+						} else if (model == null) {
 							String message = NLS.bind(Messages.exception_unableToGenerateSourceFromBinary, entry.getId(), originalBundle.getSymbolicName() + "_" + originalBundle.getVersion()); //$NON-NLS-1$
 							IStatus status = new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, message, null);
 							throw new CoreException(status);
@@ -205,8 +208,9 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 		}
 		/* else do it the old way */
 		BuildTimeFeature baseFeature = getSite(false).findFeature(extraEntries[0], null, true);
-		if (baseFeature != null)
+		if (baseFeature != null) {
 			generateSourceFeature(baseFeature, pluginEntry.getId(), extraEntries, false);
+		}
 	}
 
 	/**
@@ -238,10 +242,12 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 	}
 
 	protected void generate(BuildTimeFeature feature, boolean generateProductFiles) throws CoreException {
-		if (analyseIncludedFeatures)
+		if (analyseIncludedFeatures) {
 			generateIncludedFeatureBuildFile(feature);
-		if (analysePlugins)
+		}
+		if (analysePlugins) {
 			generateChildrenScripts(feature);
+		}
 
 		collectElementToAssemble(feature);
 
@@ -287,8 +293,9 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 	}
 
 	private void absorbExceptionIfOptionalFeature(FeatureEntry entry, CoreException toAbsorb) throws CoreException {
-		if (toAbsorb.getStatus().getCode() != EXCEPTION_FEATURE_MISSING || (toAbsorb.getStatus().getCode() == EXCEPTION_FEATURE_MISSING && !entry.isOptional()))
+		if (toAbsorb.getStatus().getCode() != EXCEPTION_FEATURE_MISSING || (toAbsorb.getStatus().getCode() == EXCEPTION_FEATURE_MISSING && !entry.isOptional())) {
 			throw toAbsorb;
+		}
 	}
 
 	private void generateChildrenScripts(BuildTimeFeature feature) throws CoreException {
@@ -375,11 +382,13 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 
 		Properties properties = getBuildProperties(buildFeature);
 		int significantDigits = getIntProperty((String) properties.get(PROPERTY_SIGNIFICANT_VERSION_DIGITS), -1);
-		if (significantDigits == -1)
+		if (significantDigits == -1) {
 			significantDigits = getIntProperty(AbstractScriptGenerator.getImmutableAntProperty(PROPERTY_SIGNIFICANT_VERSION_DIGITS), Integer.MAX_VALUE);
+		}
 		int maxGeneratedLength = getIntProperty((String) properties.get(PROPERTY_GENERATED_VERSION_LENGTH), -1);
-		if (maxGeneratedLength == -1)
+		if (maxGeneratedLength == -1) {
 			maxGeneratedLength = getIntProperty(AbstractScriptGenerator.getImmutableAntProperty(PROPERTY_GENERATED_VERSION_LENGTH), 28);
+		}
 
 		long majorSum = 0L;
 		long minorSum = 0L;
@@ -444,8 +453,9 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 			} else {
 				if (versionRequested.endsWith(PROPERTY_QUALIFIER)) {
 					int resultingLength = versionRequested.length() - PROPERTY_QUALIFIER.length();
-					if (versionRequested.charAt(resultingLength - 1) == '.')
+					if (versionRequested.charAt(resultingLength - 1) == '.') {
 						resultingLength--;
+					}
 					versionRequested = versionRequested.substring(0, resultingLength);
 				}
 				version = new Version(versionRequested);
@@ -515,15 +525,18 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 	}
 
 	private void generateModels(List<BundleDescription> models) throws CoreException {
-		if (scriptGeneration == false)
+		if (scriptGeneration == false) {
 			return;
-		if (binaryFeature == false || models.isEmpty())
+		}
+		if (binaryFeature == false || models.isEmpty()) {
 			return;
+		}
 
 		Set<BundleDescription> generatedScripts = new HashSet<>(models.size());
 		for (BundleDescription model : models) {
-			if (generatedScripts.contains(model))
+			if (generatedScripts.contains(model)) {
 				continue;
+			}
 			generatedScripts.add(model);
 
 			//Get the corresponding plug-in entries (from a feature object) associated with the model
@@ -531,15 +544,17 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 			//are configuration agnostic so we only generate once.
 			@SuppressWarnings("rawtypes")
 			Set matchingEntries = (Set) ((Properties) model.getUserObject()).get(PLUGIN_ENTRY);
-			if (matchingEntries == null || matchingEntries.isEmpty())
+			if (matchingEntries == null || matchingEntries.isEmpty()) {
 				return;
+			}
 
 			@SuppressWarnings("rawtypes")
 			Iterator entryIter = matchingEntries.iterator();
 			FeatureEntry correspondingEntry = (FeatureEntry) entryIter.next();
 			List<Config> list = selectConfigs(correspondingEntry);
-			if (list.size() == 0)
+			if (list.size() == 0) {
 				continue;
+			}
 
 			ModelBuildScriptGenerator generator = new ModelBuildScriptGenerator();
 			generator.setBuildSiteFactory(siteFactory);
@@ -593,8 +608,9 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 	}
 
 	protected void collectElementToAssemble(BuildTimeFeature featureToCollect) throws CoreException {
-		if (assemblyData == null || featureToCollect == null)
+		if (assemblyData == null || featureToCollect == null) {
 			return;
+		}
 
 		String binIncludes = getBuildProperties(featureToCollect).getProperty(PROPERTY_BIN_INCLUDES);
 
@@ -607,18 +623,21 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 		//at this point, we have a non-binary feature with empty bin includes
 		//when building p2, containers (features without bin.includes) need to be collected, 
 		//with the exception of the pde generated containers.
-		if (!BuildDirector.p2Gathering)
+		if (!BuildDirector.p2Gathering) {
 			return;
+		}
 
-		if (featureToCollect.getId().equals(CONTAINER_FEATURE) || featureToCollect.getId().equals(UI_CONTAINER_FEATURE))
+		if (featureToCollect.getId().equals(CONTAINER_FEATURE) || featureToCollect.getId().equals(UI_CONTAINER_FEATURE)) {
 			return;
+		}
 
 		basicCollectElementToAssemble(featureToCollect);
 	}
 
 	private void basicCollectElementToAssemble(BuildTimeFeature featureToCollect) {
-		if (assemblyData == null)
+		if (assemblyData == null) {
 			return;
+		}
 		List<Config> correctConfigs = selectConfigs(featureToCollect);
 		// Here, we could sort if the feature is a common one or not by
 		// comparing the size of correctConfigs
@@ -694,8 +713,9 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 	}
 
 	protected void collectElementToAssemble(FeatureEntry entryToCollect) throws CoreException {
-		if (assemblyData == null)
+		if (assemblyData == null) {
 			return;
+		}
 		List<Config> correctConfigs = selectConfigs(entryToCollect);
 		String versionRequested = entryToCollect.getVersion();
 		BundleDescription effectivePlugin = null;
