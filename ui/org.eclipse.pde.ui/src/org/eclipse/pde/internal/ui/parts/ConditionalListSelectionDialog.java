@@ -16,10 +16,14 @@ package org.eclipse.pde.internal.ui.parts;
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.text.StringMatcher;
+import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.plugin.ImportPackageSection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -34,10 +38,17 @@ public class ConditionalListSelectionDialog extends ElementListSelectionDialog {
 	private final String fButtonText;
 	private Object[] fElements;
 	private Object[] fConditionalElements;
+	private ExportPackageHeader exportPackageHeader;
 
 	public ConditionalListSelectionDialog(Shell parent, ILabelProvider renderer, String buttonText) {
 		super(parent, renderer);
 		fButtonText = buttonText;
+	}
+
+	public ConditionalListSelectionDialog(Shell activeWorkbenchShell, ILabelProvider labelProvider,
+			String exportPackageSection_dialogButtonLabel, ExportPackageHeader fHeader) {
+		this(activeWorkbenchShell, labelProvider, exportPackageSection_dialogButtonLabel);
+		exportPackageHeader = fHeader;
 	}
 
 	@Override
@@ -62,6 +73,7 @@ public class ConditionalListSelectionDialog extends ElementListSelectionDialog {
 			else
 				setListElements(fElements);
 		}));
+		button.setSelection(true);
 		return comp;
 	}
 
@@ -109,6 +121,34 @@ public class ConditionalListSelectionDialog extends ElementListSelectionDialog {
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.OK_ID, PDEUIMessages.ManifestEditor_addActionText, true);
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+	}
+
+	@Override
+	protected void updateButtonsEnableState(IStatus status) {
+		super.updateButtonsEnableState(status);
+		Button okButton = getOkButton();
+		Object[] currentSelection = fFilteredList.getSelection();
+		if(currentSelection.length>0)
+			okButton.setEnabled(false);
+		for (Object selection : currentSelection) {
+			if (selection instanceof ImportPackageSection.ImportItemWrapper) {
+				if (!((ImportPackageSection.ImportItemWrapper) selection).isAlreadyImported()) {
+				okButton.setEnabled(true);
+				break;
+			}
+			}
+			else if (selection instanceof IPackageFragment) {
+				if (exportPackageHeader == null || exportPackageHeader.getPackageNames().isEmpty()) {
+					okButton.setEnabled(true);
+					break;
+				}
+				else if (!exportPackageHeader.getPackageNames()
+								.contains(((IPackageFragment) selection).getElementName())) {
+				okButton.setEnabled(true);
+				break;
+			}
+		}	
+		}
 	}
 
 }

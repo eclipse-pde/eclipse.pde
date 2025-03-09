@@ -362,7 +362,7 @@ public class PDEJavaHelper {
 					if (name.length() == 0) {
 						name = "."; //$NON-NLS-1$
 					}
-					if ((fragment.hasChildren() || fragment.getNonJavaResources().length > 0) && !existingPackages.contains(name)) {
+					if ((fragment.hasChildren() || fragment.getNonJavaResources().length > 0)) {
 						if (!name.equals("java") || !name.startsWith("java.") || allowJava) { //$NON-NLS-1$ //$NON-NLS-2$
 							map.put(fragment.getPath().makeRelative() + "_" + fragment.getElementName(), fragment); //$NON-NLS-1$
 						}
