@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2016 IBM Corporation and others.
+ *  Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -18,21 +18,21 @@ package org.eclipse.pde.internal.ui.wizards.feature;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.parts.WizardCheckboxTreePart;
+import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
 import org.eclipse.swt.widgets.Composite;
 
 public class BasePluginListPage extends WizardPage {
-	protected WizardCheckboxTreePart treePart;
+	protected WizardCheckboxTablePart tablePart;
 
 	public BasePluginListPage(String pageName) {
 		super(pageName);
-		treePart = new WizardCheckboxTreePart(null);
+		tablePart = new WizardCheckboxTablePart(null);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
 	public BasePluginListPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
-		treePart = new WizardCheckboxTreePart(null);
+		tablePart = new WizardCheckboxTablePart(null);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
@@ -51,7 +51,7 @@ public class BasePluginListPage extends WizardPage {
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible) {
-			treePart.getControl().setFocus();
+			tablePart.getControl().setFocus();
 		}
 	}
 
