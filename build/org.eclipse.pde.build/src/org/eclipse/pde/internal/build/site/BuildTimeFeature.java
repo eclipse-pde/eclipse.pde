@@ -56,8 +56,9 @@ public class BuildTimeFeature extends Feature {
 		ArrayList<FeatureEntry> included = new ArrayList<>();
 		FeatureEntry[] entries = getEntries();
 		for (FeatureEntry entry : entries) {
-			if (entry.isRequires() || entry.isPlugin())
+			if (entry.isRequires() || entry.isPlugin()) {
 				continue;
+			}
 			included.add(entry);
 		}
 		return included.toArray(new FeatureEntry[included.size()]);
@@ -67,8 +68,9 @@ public class BuildTimeFeature extends Feature {
 		ArrayList<FeatureEntry> included = new ArrayList<>();
 		FeatureEntry[] entries = getEntries();
 		for (FeatureEntry entry : entries) {
-			if (entry.isRequires() || entry.isPlugin())
+			if (entry.isRequires() || entry.isPlugin()) {
 				continue;
+			}
 
 			if (SiteManager.isValidEnvironment(entry)) {
 				included.add(entry);
@@ -82,8 +84,9 @@ public class BuildTimeFeature extends Feature {
 		ArrayList<FeatureEntry> plugins = new ArrayList<>();
 		FeatureEntry[] entries = getEntries();
 		for (FeatureEntry entry : entries) {
-			if (entry.isRequires() || !entry.isPlugin())
+			if (entry.isRequires() || !entry.isPlugin()) {
 				continue;
+			}
 			if (SiteManager.isValidEnvironment(entry)) {
 				plugins.add(entry);
 			}
@@ -95,8 +98,9 @@ public class BuildTimeFeature extends Feature {
 		ArrayList<FeatureEntry> plugins = new ArrayList<>();
 		FeatureEntry[] entries = getEntries();
 		for (FeatureEntry entry : entries) {
-			if (entry.isRequires() || !entry.isPlugin())
+			if (entry.isRequires() || !entry.isPlugin()) {
 				continue;
+			}
 			plugins.add(entry);
 		}
 		return plugins.toArray(new FeatureEntry[plugins.size()]);
@@ -106,8 +110,9 @@ public class BuildTimeFeature extends Feature {
 		ArrayList<FeatureEntry> imports = new ArrayList<>();
 		FeatureEntry[] entries = getEntries();
 		for (FeatureEntry entry : entries) {
-			if (!entry.isRequires())
+			if (!entry.isRequires()) {
 				continue;
+			}
 			imports.add(entry);
 		}
 		return imports.toArray(new FeatureEntry[imports.size()]);
@@ -117,10 +122,11 @@ public class BuildTimeFeature extends Feature {
 		if (binary == null) {
 			String root = getRootLocation();
 			File properties = new File(root, IPDEBuildConstants.PROPERTIES_FILE);
-			if (!properties.exists())
+			if (!properties.exists()) {
 				binary = Boolean.TRUE;
-			else
+			} else {
 				binary = Boolean.FALSE;
+			}
 		}
 		return binary.booleanValue();
 	}
@@ -182,9 +188,11 @@ public class BuildTimeFeature extends Feature {
 	public FeatureEntry findPluginEntry(String id, String version) {
 		FeatureEntry[] entries = getEntries();
 		for (FeatureEntry entry : entries) {
-			if (entry.isPlugin() && entry.getId().equals(id))
-				if (Utils.matchVersions(version, entry.getVersion()))
+			if (entry.isPlugin() && entry.getId().equals(id)) {
+				if (Utils.matchVersions(version, entry.getVersion())) {
 					return entry;
+				}
+			}
 		}
 		return null;
 	}

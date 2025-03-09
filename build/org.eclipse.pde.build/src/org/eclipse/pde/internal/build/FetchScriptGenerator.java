@@ -154,8 +154,9 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			closeScript();
 		}
 
-		if (recursiveGeneration && mapInfos.get(IFetchFactory.KEY_ELEMENT_TYPE).equals(IFetchFactory.ELEMENT_TYPE_FEATURE))
+		if (recursiveGeneration && mapInfos.get(IFetchFactory.KEY_ELEMENT_TYPE).equals(IFetchFactory.ELEMENT_TYPE_FEATURE)) {
 			generateFetchFilesForIncludedFeatures();
+		}
 
 		saveRepositoryTags();
 	}
@@ -190,8 +191,9 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		FeatureEntry[] referencedFeatures = feature.getIncludedFeatureReferences();
 		for (FeatureEntry referencedFeature : referencedFeatures) {
 			String featureId = referencedFeature.getId();
-			if (featureProperties.containsKey(GENERATION_SOURCE_FEATURE_PREFIX + featureId))
+			if (featureProperties.containsKey(GENERATION_SOURCE_FEATURE_PREFIX + featureId)) {
 				continue;
+			}
 
 			FetchScriptGenerator generator = new FetchScriptGenerator("feature@" + featureId + ',' + referencedFeature.getVersion()); //$NON-NLS-1$
 			generator.setDirectoryLocation(directoryLocation);
@@ -233,8 +235,9 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		script.println();
 		script.printTargetDeclaration(TARGET_FETCH, null, null, null, null);
 		//don't do a fetch element for the generated container feature
-		if (!mapInfos.get(IFetchFactory.KEY_ELEMENT_NAME).equals(IPDEBuildConstants.CONTAINER_FEATURE))
+		if (!mapInfos.get(IFetchFactory.KEY_ELEMENT_NAME).equals(IPDEBuildConstants.CONTAINER_FEATURE)) {
 			script.printAntCallTask(TARGET_FETCH_ELEMENT, true, null);
+		}
 		if (mapInfos.get(IFetchFactory.KEY_ELEMENT_TYPE).equals(IFetchFactory.ELEMENT_TYPE_FEATURE)) {
 			script.printAntCallTask(TARGET_FETCH_PLUGINS, true, null);
 			script.printAntCallTask(TARGET_FETCH_RECURSIVELY, true, null);
@@ -244,8 +247,9 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 
 	protected void generateFetchElementTarget() {
 		//don't try to fetch a generated container feature
-		if (mapInfos.get(IFetchFactory.KEY_ELEMENT_NAME).equals(IPDEBuildConstants.CONTAINER_FEATURE))
+		if (mapInfos.get(IFetchFactory.KEY_ELEMENT_NAME).equals(IPDEBuildConstants.CONTAINER_FEATURE)) {
 			return;
+		}
 		script.printTargetDeclaration(TARGET_FETCH_ELEMENT, null, FEATURE_ONLY, null, null);
 		try {
 			generateFetchEntry(element, elementVersion, false);
@@ -358,9 +362,9 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			}
 
 			//Included features can be available in the baseLocation.
-			if (getRepositoryInfo(IFetchFactory.ELEMENT_TYPE_FEATURE + '@' + featureId, new Version(compiledFeature.getVersion())) != null)
+			if (getRepositoryInfo(IFetchFactory.ELEMENT_TYPE_FEATURE + '@' + featureId, new Version(compiledFeature.getVersion())) != null) {
 				script.printAntTask(Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + '/' + FETCH_FILE_PREFIX + featureId + ".xml", null, TARGET_FETCH, null, null, null); //$NON-NLS-1$
-			else if (getSite(false).findFeature(featureId, null, false) == null) {
+			} else if (getSite(false).findFeature(featureId, null, false) == null) {
 				String message = NLS.bind(Messages.error_cannotFetchNorFindFeature, featureId);
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, null));
 			}
@@ -372,16 +376,17 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		Map<String, Object> mapFileEntry = mapInfos;
 		if (!entry.equals(element)) {
 			mapFileEntry = processMapFileEntry(entry, version);
-			if (mapFileEntry == null)
+			if (mapFileEntry == null) {
 				return false;
+			}
 		}
 
 		IFetchFactory factory = (IFetchFactory) mapFileEntry.get(FETCH_TASK_FACTORY);
 		String elementToFetch = (String) mapFileEntry.get(IFetchFactory.KEY_ELEMENT_NAME);
 		String type = (String) mapFileEntry.get(IFetchFactory.KEY_ELEMENT_TYPE);
-		if (!manifestFileOnly)
+		if (!manifestFileOnly) {
 			factory.generateRetrieveElementCall(mapFileEntry, computeFinalLocation(type, elementToFetch, (Version) mapFileEntry.get(MATCHED_VERSION)), script);
-		else {
+		} else {
 			String[] files;
 			if (type.equals(IFetchFactory.ELEMENT_TYPE_FEATURE)) {
 				files = new String[] {Constants.FEATURE_FILENAME_DESCRIPTOR};
@@ -399,24 +404,27 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 
 		//key to use for version and source references properties files
 		String key = null;
-		if (version.getQualifier().endsWith(PROPERTY_QUALIFIER))
+		if (version.getQualifier().endsWith(PROPERTY_QUALIFIER)) {
 			key = QualifierReplacer.getQualifierKey(elementToFetch, version.toString());
-		else
+		} else {
 			key = elementToFetch + ',' + new Version(version.getMajor(), version.getMinor(), version.getMicro()).toString();
+		}
 		//Keep track of the element that are being fetched. To simplify the lookup in the qualifier replacer, the versioned that was initially looked up is used as key in the file
 		Properties tags = null;
-		if (type.equals(IFetchFactory.ELEMENT_TYPE_FEATURE))
+		if (type.equals(IFetchFactory.ELEMENT_TYPE_FEATURE)) {
 			tags = repositoryFeatureTags;
-		else
+		} else {
 			tags = repositoryPluginTags;
+		}
 		if (mapFileEntry.get(IFetchFactory.KEY_ELEMENT_TAG) != null) {
 			tags.put(key, mapFileEntry.get(IFetchFactory.KEY_ELEMENT_TAG));
 		}
 
 		if (!type.equals(IFetchFactory.ELEMENT_TYPE_FEATURE)) {
 			String sourceURLs = (String) mapFileEntry.get(Constants.KEY_SOURCE_REFERENCES);
-			if (sourceURLs != null)
+			if (sourceURLs != null) {
 				sourceReferences.put(key, sourceURLs);
+			}
 		}
 		return true;
 	}
@@ -426,8 +434,9 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	 * generated so we can reduce replication.
 	 */
 	protected void generateMkdirs(String location) {
-		if (mkdirLocations.contains(location))
+		if (mkdirLocations.contains(location)) {
 			return;
+		}
 		mkdirLocations.add(location);
 		script.printMkdirTask(location);
 	}
@@ -451,12 +460,14 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			}
 
 			boolean generated = true;
-			if (child.isFragment())
+			if (child.isFragment()) {
 				generated = generateFetchEntry(IFetchFactory.ELEMENT_TYPE_FRAGMENT + '@' + elementId, versionId, !Utils.isIn(compiledChildren, child));
-			else
+			} else {
 				generated = generateFetchEntry(IFetchFactory.ELEMENT_TYPE_PLUGIN + '@' + elementId, versionId, !Utils.isIn(compiledChildren, child));
-			if (generated == false)
+			}
+			if (generated == false) {
 				generateFetchEntry(IFetchFactory.ELEMENT_TYPE_BUNDLE + '@' + elementId, versionId, !Utils.isIn(compiledChildren, child));
+			}
 		}
 
 		elementId = feature.getLicenseFeature();
@@ -465,8 +476,9 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		}
 
 		String version = feature.getLicenseFeatureVersion();
-		if (version == null)
+		if (version == null) {
 			version = IPDEBuildConstants.GENERIC_VERSION_NUMBER;
+		}
 		generateFetchEntry(IFetchFactory.ELEMENT_TYPE_FEATURE + '@' + elementId, new Version(version), false);
 	}
 
@@ -536,8 +548,9 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			Map<String, String> retrieveProp = new HashMap<>();
 			retrieveProp.put("fetch.failonerror", "true"); //$NON-NLS-1$//$NON-NLS-2$
 			retrieveProp.put("buildDirectory", getWorkingDirectory()); //$NON-NLS-1$
-			if (fetchCache != null)
+			if (fetchCache != null) {
 				retrieveProp.put(IBuildPropertiesConstants.PROPERTY_FETCH_CACHE, fetchCache);
+			}
 			if (scriptRunner != null) {
 				scriptRunner.runScript(target, TARGET_MAIN, retrieveProp);
 			} else {
@@ -590,13 +603,16 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			String[] list = root.list();
 			// for some unknown reason, list() can return null.  
 			// Just skip the children If it does.
-			if (list != null)
-				for (String element2 : list)
+			if (list != null) {
+				for (String element2 : list) {
 					result &= clear(new java.io.File(root, element2));
+				}
+			}
 		}
 		try {
-			if (root.exists())
+			if (root.exists()) {
 				result &= root.delete();
+			}
 		} catch (Exception e) {
 			// ignore any exceptions
 			result = false;
@@ -606,10 +622,11 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 
 	protected IPath computeFinalLocation(String type, String elementName, Version version) {
 		IPath location = IPath.fromOSString(Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY));
-		if (type.equals(IFetchFactory.ELEMENT_TYPE_FEATURE))
+		if (type.equals(IFetchFactory.ELEMENT_TYPE_FEATURE)) {
 			location = location.append(DEFAULT_FEATURE_LOCATION);
-		else
+		} else {
 			location = location.append(DEFAULT_PLUGIN_LOCATION);
+		}
 		return location.append(elementName + (version.equals(Version.emptyVersion) ? "" : '_' + version.toString())); //$NON-NLS-1$
 	}
 
@@ -651,22 +668,25 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 				}
 			}
 		}
-		if (result != null)
+		if (result != null) {
 			return new Object[] {result, matchedVersion};
+		}
 
 		//Here we start dealing with the case #3.
 		initializeSortedDirectory();
 		//Among all the plug-ins, find all the ones for the given elementName
 		SortedMap<MapFileEntry, Object> candidates = directory.subMap(new MapFileEntry(elementName, Version.emptyVersion), new MapFileEntry(elementName, versionMax));
-		if (candidates.size() == 0)
+		if (candidates.size() == 0) {
 			return null;
+		}
 
 		Map.Entry<MapFileEntry, Object> bestMatch = null;
 		for (Entry<MapFileEntry, Object> entry : candidates.entrySet()) {
 			MapFileEntry aCandidate = entry.getKey();
 			//Find the exact match
-			if (aCandidate.v.equals(version))
+			if (aCandidate.v.equals(version)) {
 				return new Object[] {(String) entry.getValue(), version};
+			}
 
 			if (bestMatch != null) {
 				if (bestMatch.getKey().v.compareTo(entry.getKey().v) < 1) {
@@ -676,21 +696,24 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 				bestMatch = entry;
 			}
 		}
-		if (!Version.emptyVersion.equals(version)) //The request was for a particular version number and it has not been found
+		if (!Version.emptyVersion.equals(version)) { //The request was for a particular version number and it has not been found
 			return null;
+		}
 		return new Object[] {(String) bestMatch.getValue(), bestMatch.getKey().v};
 	}
 
 	private static final Version versionMax = new Version(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
 
 	private void initializeSortedDirectory() {
-		if (directory != null)
+		if (directory != null) {
 			return;
+		}
 		directory = new TreeMap<>();
 		for (Entry<Object, Object> entry : directoryFile.entrySet()) {
 			String[] entryInfo = Utils.getArrayFromString((String) entry.getKey());
-			if (entryInfo.length == 0)
+			if (entryInfo.length == 0) {
 				continue;
+			}
 			directory.put(new MapFileEntry(entryInfo[0], entryInfo.length == 2 ? new Version(entryInfo[1]) : Version.emptyVersion), entry.getValue());
 		}
 	}
@@ -709,8 +732,9 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			if (o instanceof MapFileEntry) {
 				MapFileEntry entry = (MapFileEntry) o;
 				int result = id.compareTo(entry.id);
-				if (result != 0)
+				if (result != 0) {
 					return result;
+				}
 				return v.compareTo(entry.v);
 			}
 			return -1;
@@ -805,8 +829,9 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 
 		String[] entries = Utils.getArrayFromString(value);
 		for (String entry : entries) {
-			if (entry == null)
+			if (entry == null) {
 				continue;
+			}
 
 			String[] elements = Utils.getArrayFromString(entry, ";"); //$NON-NLS-1$
 
@@ -831,10 +856,11 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 				for (int j = 1; j < elements.length; j++) {
 					String projectOverride = elements[j];
 					idx = projectOverride.indexOf('=');
-					if (idx != -1)
+					if (idx != -1) {
 						overrides.setProperty(projectOverride.substring(0, idx), projectOverride.substring(idx + 1, projectOverride.length()).trim());
-					else
+					} else {
 						throw new IllegalArgumentException("FetchTag " + entry); //$NON-NLS-1$
+					}
 				}
 			}
 		}

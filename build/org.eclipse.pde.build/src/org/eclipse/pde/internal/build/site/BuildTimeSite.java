@@ -126,8 +126,9 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 			} catch (IOException e) {
 				// ignore
 			}
-			if (result.contains(bundle))
+			if (result.contains(bundle)) {
 				continue;
+			}
 			result.add(bundle);
 		}
 		return result;
@@ -153,8 +154,9 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 			} else {
 				state = new PDEState();
 			}
-			if (platformProperties != null)
+			if (platformProperties != null) {
 				state.setPlatformProperties(platformProperties);
+			}
 
 			Collection<File> bundles = removeDuplicates(provider.getPluginPaths());
 			state.addBundles(bundles);
@@ -167,8 +169,9 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 			state.resolveState();
 			BundleDescription[] allBundles = state.getState().getBundles();
 			BundleDescription[] resolvedBundles = state.getState().getResolvedBundles();
-			if (allBundles.length == resolvedBundles.length)
+			if (allBundles.length == resolvedBundles.length) {
 				return state;
+			}
 
 			if (reportResolutionErrors) {
 				MultiStatus errors = new MultiStatus(IPDEBuildConstants.PI_PDEBUILD, 1, Messages.exception_registryResolution, null);
@@ -180,8 +183,9 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 						VersionConstraint[] versionErrors = helper.getUnsatisfiedConstraints(element);
 
 						//ignore problems when they are caused by bundles not being built for the right config
-						if (isConfigError(element, resolutionErrors, AbstractScriptGenerator.getConfigInfos()))
+						if (isConfigError(element, resolutionErrors, AbstractScriptGenerator.getConfigInfos())) {
 							continue;
+						}
 
 						String errorMessage = "Bundle " + element.getSymbolicName() + ":\n" + getResolutionErrorMessage(resolutionErrors); //$NON-NLS-1$ //$NON-NLS-2$
 						for (VersionConstraint versionError : versionErrors) {
@@ -190,12 +194,14 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 						errors.add(new Status(IStatus.WARNING, IPDEBuildConstants.PI_PDEBUILD, IStatus.WARNING, errorMessage, null));
 					}
 				}
-				if (errors.getChildren().length > 0)
+				if (errors.getChildren().length > 0) {
 					BundleHelper.getDefault().getLog().log(errors);
+				}
 			}
 		}
-		if (!state.getState().isResolved())
+		if (!state.getState().isResolved()) {
 			state.state.resolve(true);
+		}
 		return state;
 	}
 
@@ -203,17 +209,20 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 		BundleDescription bundle = state.getBundle(id, version, false);
 		if (bundle == null) {
 			String message = NLS.bind(Messages.exception_missingPlugin, id + "_" + version); //$NON-NLS-1$
-			if (containingFeature != null)
+			if (containingFeature != null) {
 				message = NLS.bind(Messages.includedFromFeature, containingFeature.getId(), message);
+			}
 			IStatus status = new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, message, null);
-			if (throwException)
+			if (throwException) {
 				throw new CoreException(status);
+			}
 			return status;
 		}
 
 		//we expect this bundle to not be resolved, but just in case...
-		if (bundle.isResolved())
+		if (bundle.isResolved()) {
 			return null;
+		}
 
 		ResolverError[] resolutionErrors = state.getState().getResolverErrors(bundle);
 		return missingPlugin(bundle, resolutionErrors, containingFeature, throwException);
@@ -224,16 +233,18 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 		VersionConstraint[] versionErrors = helper.getUnsatisfiedConstraints(bundle);
 
 		String message = NLS.bind(Messages.exception_unresolvedPlugin, bundle.getSymbolicName() + '_' + bundle.getVersion().toString());
-		if (containingFeature != null)
+		if (containingFeature != null) {
 			message = NLS.bind(Messages.includedFromFeature, containingFeature.getId(), message);
+		}
 		message += ":\n" + BuildTimeSite.getResolutionErrorMessage(resolutionErrors); //$NON-NLS-1$
 		for (VersionConstraint versionError : versionErrors) {
 			message += '\t' + BuildTimeSite.getResolutionFailureMessage(versionError) + '\n';
 		}
 
 		IStatus status = new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, message, null);
-		if (throwException)
+		if (throwException) {
 			throw new CoreException(status);
+		}
 		return status;
 	}
 
@@ -258,10 +269,12 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 	//Check if the set of errors contain a platform filter
 	static private ResolverError hasPlatformFilterError(ResolverError[] errors) {
 		for (ResolverError error : errors) {
-			if ((error.getType() & ResolverError.PLATFORM_FILTER) != 0)
+			if ((error.getType() & ResolverError.PLATFORM_FILTER) != 0) {
 				return error;
-			if ((error.getType() & ResolverError.NO_NATIVECODE_MATCH) != 0)
+			}
+			if ((error.getType() & ResolverError.NO_NATIVECODE_MATCH) != 0) {
 				return error;
+			}
 		}
 		return null;
 	}
@@ -269,22 +282,27 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 	static public String getResolutionErrorMessage(ResolverError[] errors) {
 		String errorMessage = ""; //$NON-NLS-1$
 		for (ResolverError error : errors) {
-			if ((error.getType() & (ResolverError.SINGLETON_SELECTION | ResolverError.FRAGMENT_CONFLICT | ResolverError.IMPORT_PACKAGE_USES_CONFLICT | ResolverError.REQUIRE_BUNDLE_USES_CONFLICT | ResolverError.MISSING_EXECUTION_ENVIRONMENT)) != 0)
+			if ((error.getType() & (ResolverError.SINGLETON_SELECTION | ResolverError.FRAGMENT_CONFLICT | ResolverError.IMPORT_PACKAGE_USES_CONFLICT | ResolverError.REQUIRE_BUNDLE_USES_CONFLICT | ResolverError.MISSING_EXECUTION_ENVIRONMENT)) != 0) {
 				errorMessage += '\t' + error.toString() + '\n';
+			}
 		}
 		return errorMessage;
 	}
 
 	static public String getResolutionFailureMessage(VersionConstraint unsatisfied) {
-		if (unsatisfied.isResolved())
+		if (unsatisfied.isResolved()) {
 			throw new IllegalArgumentException();
-		if (unsatisfied instanceof ImportPackageSpecification)
+		}
+		if (unsatisfied instanceof ImportPackageSpecification) {
 			return NLS.bind(Messages.unsatisfied_import, displayVersionConstraint(unsatisfied));
-		if (unsatisfied instanceof NativeCodeSpecification)
+		}
+		if (unsatisfied instanceof NativeCodeSpecification) {
 			return NLS.bind(Messages.unsatisfied_nativeSpec, unsatisfied.toString());
+		}
 		if (unsatisfied instanceof BundleSpecification) {
-			if (((BundleSpecification) unsatisfied).isOptional())
+			if (((BundleSpecification) unsatisfied).isOptional()) {
 				return NLS.bind(Messages.unsatisfied_optionalBundle, displayVersionConstraint(unsatisfied));
+			}
 			return NLS.bind(Messages.unsatisfied_required, displayVersionConstraint(unsatisfied));
 		}
 		return NLS.bind(Messages.unsatisfied_host, displayVersionConstraint(unsatisfied));
@@ -292,8 +310,9 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 
 	static private String displayVersionConstraint(VersionConstraint constraint) {
 		VersionRange versionSpec = constraint.getVersionRange();
-		if (versionSpec == null)
+		if (versionSpec == null) {
 			return constraint.getName();
+		}
 		return constraint.getName() + '_' + versionSpec;
 	}
 
@@ -306,8 +325,9 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 		if (range == null) {
 			range = Utils.EMPTY_RANGE;
 		}
-		if (!featuresResolved)
+		if (!featuresResolved) {
 			resolveFeatureReferences();
+		}
 
 		if (featureCache.containsKey(featureId)) {
 			//Set is ordered highest version to lowest, return the first that matches the range
@@ -322,10 +342,11 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 
 		if (throwsException) {
 			String message = null;
-			if (range.equals(Utils.EMPTY_RANGE))
+			if (range.equals(Utils.EMPTY_RANGE)) {
 				message = NLS.bind(Messages.exception_missingFeature, featureId);
-			else
+			} else {
 				message = NLS.bind(Messages.exception_missingFeatureInRange, featureId, range);
+			}
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, null));
 		}
 
@@ -358,8 +379,9 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 	}
 
 	public void addFeatureReferenceModel(FeatureReference featureReference) {
-		if (this.featureReferences == null)
+		if (this.featureReferences == null) {
 			this.featureReferences = new ArrayList<>();
+		}
 
 		this.featureReferences.add(featureReference);
 		featuresResolved = false;
@@ -370,8 +392,9 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 		SortedSet<ReachablePlugin> allPlugins = new TreeSet<>();
 		for (String string : rootFeaturesForFilter) {
 			BuildTimeFeature correspondingFeature = findFeature(string, (String) null, true);
-			if (correspondingFeature == null)
+			if (correspondingFeature == null) {
 				return null;
+			}
 			rootFeatures.add(correspondingFeature);
 		}
 		for (String string : rootPluginsForFiler) {
@@ -389,9 +412,9 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 			for (int i = 0; i < includedRefs.length; i++) {
 				String featureId = includedRefs[i].getId();
 				BuildTimeFeature nested = findFeature(featureId, includedRefs[i].getVersion(), false);
-				if (nested != null)
+				if (nested != null) {
 					rootFeatures.add(nested);
-				else {
+				} else {
 					// missing feature, ok if it will be a generated source feature
 					Properties props = AbstractScriptGenerator.readProperties(toAnalyse.getRootLocation(), PROPERTIES_FILE, IStatus.OK);
 					boolean doSourceFeatureGeneration = props.containsKey(IBuildPropertiesConstants.GENERATION_SOURCE_FEATURE_PREFIX + featureId);
@@ -453,8 +476,9 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 	}
 
 	public FeatureReference[] getRawFeatureReferences() {
-		if (featureReferences == null || featureReferences.size() == 0)
+		if (featureReferences == null || featureReferences.size() == 0) {
 			return new FeatureReference[0];
+		}
 		return featureReferences.toArray(new FeatureReference[featureReferences.size()]);
 	}
 

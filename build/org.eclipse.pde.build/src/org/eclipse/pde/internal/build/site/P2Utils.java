@@ -62,10 +62,12 @@ public class P2Utils {
 		List<BundleInfo> infos = new ArrayList<>();
 		try {
 			//streams are closed for us
-			if (bundlesTxt.exists())
+			if (bundlesTxt.exists()) {
 				infos.addAll(Arrays.asList(manipulator.loadConfiguration(new FileInputStream(bundlesTxt), root.toURI())));
-			if (sourceTxt.exists())
+			}
+			if (sourceTxt.exists()) {
 				infos.addAll(Arrays.asList(manipulator.loadConfiguration(new FileInputStream(sourceTxt), root.toURI())));
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -121,8 +123,9 @@ public class P2Utils {
 					if (userInfos.containsKey(modelName)) {
 						BundleInfo userInfo = userInfos.get(modelName);
 						int start = userInfo.getStartLevel();
-						if (start <= 0)
+						if (start <= 0) {
 							start = defaultStartLevel;
+						}
 						info.setStartLevel(start);
 						info.setMarkedAsStarted(userInfo.isMarkedAsStarted());
 					} else {
@@ -150,10 +153,11 @@ public class P2Utils {
 						info.setMarkedAsStarted(false);
 					}
 				}
-				if (Utils.isSourceBundle(desc))
+				if (Utils.isSourceBundle(desc)) {
 					sourceInfos.add(info);
-				else
+				} else {
 					bundleInfos.add(info);
+				}
 			}
 		}
 

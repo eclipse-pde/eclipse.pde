@@ -33,8 +33,9 @@ public class BuildApplication implements IApplication {
 		context.applicationRunning();
 
 		IExtension extension = Platform.getExtensionRegistry().getExtension("org.eclipse.ant.core.antRunner"); //$NON-NLS-1$
-		if (extension == null)
+		if (extension == null) {
 			return null;
+		}
 		IConfigurationElement element = extension.getConfigurationElements()[0];
 		Object ee = element.createExecutableExtension("run"); //$NON-NLS-1$
 		String[] args = (String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS);
@@ -49,8 +50,9 @@ public class BuildApplication implements IApplication {
 
 	private String[] updateArgs(String[] args) throws IOException {
 		for (String string : args) {
-			if (string.equals("-f") || string.equals("-buildfile")) //$NON-NLS-1$ //$NON-NLS-2$
+			if (string.equals("-f") || string.equals("-buildfile")) { //$NON-NLS-1$ //$NON-NLS-2$
 				return args;
+			}
 		}
 		int length = args.length;
 		String[] result = new String[length + 2];

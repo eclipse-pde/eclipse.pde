@@ -76,8 +76,9 @@ public class JNLPGeneratorTask extends Task {
 	 * */
 	public void setLocale(String nlsString) {
 		String[] strings = nlsString.split("_"); //$NON-NLS-1$
-		if (nlsString.charAt(0) == '$')
+		if (nlsString.charAt(0) == '$') {
 			return;
+		}
 
 		if (strings != null) {
 			switch (strings.length) {
@@ -101,10 +102,12 @@ public class JNLPGeneratorTask extends Task {
 	}
 
 	public void setGenerateOfflineAllowed(String generateOfflineAllowed) {
-		if (generateOfflineAllowed.equalsIgnoreCase("false")) //$NON-NLS-1$
+		if (generateOfflineAllowed.equalsIgnoreCase("false")) { //$NON-NLS-1$
 			this.generateOfflineAllowed = false;
-		if (generateOfflineAllowed.equalsIgnoreCase("true")) //$NON-NLS-1$
+		}
+		if (generateOfflineAllowed.equalsIgnoreCase("true")) { //$NON-NLS-1$
 			this.generateOfflineAllowed = false;
+		}
 	}
 
 	public void setConfigInfo(String configs) {

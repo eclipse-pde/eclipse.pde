@@ -42,16 +42,18 @@ public class XMLWriter extends PrintWriter {
 	}
 
 	public void printSimpleTag(String name, Object value) {
-		if (value == null)
+		if (value == null) {
 			return;
+		}
 		printTag(name, null, true, false, false);
 		print(getEscaped(String.valueOf(value)));
 		printTag('/' + name, null, false, true, false);
 	}
 
 	public void printTabulation() {
-		for (int i = 0; i < tab; i++)
+		for (int i = 0; i < tab; i++) {
 			super.print('\t');
+		}
 	}
 
 	public void printTag(String name, Map<String, String> parameters) {
@@ -62,7 +64,7 @@ public class XMLWriter extends PrintWriter {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<"); //$NON-NLS-1$
 		sb.append(name);
-		if (parameters != null)
+		if (parameters != null) {
 			for (Enumeration<String> enumeration = Collections.enumeration(parameters.keySet()); enumeration.hasMoreElements();) {
 				sb.append(" "); //$NON-NLS-1$
 				String key = enumeration.nextElement();
@@ -73,16 +75,20 @@ public class XMLWriter extends PrintWriter {
 					sb.append("\""); //$NON-NLS-1$
 				}
 			}
-		if (close)
+		}
+		if (close) {
 			sb.append("/>"); //$NON-NLS-1$
-		else
+		} else {
 			sb.append(">"); //$NON-NLS-1$
-		if (shouldTab)
+		}
+		if (shouldTab) {
 			printTabulation();
-		if (newLine)
+		}
+		if (newLine) {
 			println(sb.toString());
-		else
+		} else {
 			print(sb.toString());
+		}
 	}
 
 	public void startTag(String name, Map<String, String> parameters) {
@@ -100,8 +106,9 @@ public class XMLWriter extends PrintWriter {
 
 	public static String getEscaped(String s) {
 		StringBuffer result = new StringBuffer(s.length() + 10);
-		for (int i = 0; i < s.length(); ++i)
+		for (int i = 0; i < s.length(); ++i) {
 			appendEscapedChar(result, s.charAt(i));
+		}
 		return result.toString();
 	}
 
@@ -125,9 +132,10 @@ public class XMLWriter extends PrintWriter {
 	}
 
 	public void printlnEscaped(String s) {
-		if (s != null)
+		if (s != null) {
 			println(getEscaped(s));
-		else
+		} else {
 			println();
+		}
 	}
 }

@@ -82,8 +82,9 @@ public class BuildTimeSiteContentProvider implements IPDEBuildConstants {
 						String root = properties.getProperty(BUNDLE_ROOT_PATH);
 						if (root != null) {
 							File actualRoot = new File(element, root);
-							if (actualRoot.exists())
+							if (actualRoot.exists()) {
 								collectedElements.add(actualRoot);
+							}
 						}
 					} catch (CoreException e) {
 						// nope
@@ -100,8 +101,9 @@ public class BuildTimeSiteContentProvider implements IPDEBuildConstants {
 	}
 
 	public File getBaseProfile() {
-		if (installedBaseURL == null)
+		if (installedBaseURL == null) {
 			return null;
+		}
 
 		File configurationFolder = new File(installedBaseURL, "configuration"); //$NON-NLS-1$
 		if (configurationFolder.exists()) {
@@ -111,12 +113,14 @@ public class BuildTimeSiteContentProvider implements IPDEBuildConstants {
 				String profileName = config.getProperty("eclipse.p2.profile"); //$NON-NLS-1$
 				if (dataArea != null && profileName != null) {
 					int idx = dataArea.indexOf("@config.dir"); //$NON-NLS-1$
-					if (idx != -1)
+					if (idx != -1) {
 						dataArea = dataArea.substring(0, idx) + configurationFolder.getAbsolutePath() + dataArea.substring(idx + 11);
+					}
 
 					File profileArea = new File(dataArea, "org.eclipse.equinox.p2.engine/profileRegistry/" + profileName + ".profile"); //$NON-NLS-1$ //$NON-NLS-2$
-					if (profileArea.exists())
+					if (profileArea.exists()) {
 						return profileArea;
+					}
 				}
 			} catch (CoreException e) {
 				//won't happend

@@ -88,11 +88,13 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		}
 
 		public String getName(boolean resolved) {
-			if (!resolved)
+			if (!resolved) {
 				return name;
+			}
 
-			if (resolvedName == null)
+			if (resolvedName == null) {
 				resolvedName = replaceVariables(name, true);
+			}
 
 			return resolvedName;
 		}
@@ -163,8 +165,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	@Override
 	public void generate() throws CoreException {
 		//If it is a binary plugin, then we don't generate scripts
-		if (binaryPlugin)
+		if (binaryPlugin) {
 			return;
+		}
 
 		if (model == null) {
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ELEMENT_MISSING, Messages.error_missingElement, null));
@@ -176,8 +179,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		//			return;
 
 		initializeVariables();
-		if (BundleHelper.getDefault().isDebugging())
+		if (BundleHelper.getDefault().isDebugging()) {
 			System.out.println("Generating plugin " + model.getSymbolicName()); //$NON-NLS-1$
+		}
 
 		String custom = (String) getBuildProperties().get(PROPERTY_CUSTOM);
 		if (custom != null && custom.equalsIgnoreCase("true")) { //$NON-NLS-1$
@@ -211,10 +215,11 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 		Properties properties = getBuildProperties();
 		customBuildCallbacks = properties.getProperty(PROPERTY_CUSTOM_BUILD_CALLBACKS);
-		if (TRUE.equalsIgnoreCase(customBuildCallbacks))
+		if (TRUE.equalsIgnoreCase(customBuildCallbacks)) {
 			customBuildCallbacks = DEFAULT_CUSTOM_BUILD_CALLBACKS_FILE;
-		else if (FALSE.equalsIgnoreCase(customBuildCallbacks))
+		} else if (FALSE.equalsIgnoreCase(customBuildCallbacks)) {
 			customBuildCallbacks = null;
+		}
 
 		customCallbacksBuildpath = properties.getProperty(PROPERTY_CUSTOM_CALLBACKS_BUILDPATH, "."); //$NON-NLS-1$
 		customCallbacksFailOnError = properties.getProperty(PROPERTY_CUSTOM_CALLBACKS_FAILONERROR, FALSE);
@@ -245,11 +250,13 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		String projectWarningSettings = getBuildProperties().getProperty(PROPERTY_PROJECT_SETTINGS);
 		if (Boolean.valueOf(projectWarningSettings).booleanValue()) {
 			//find default prefs file
-			if (new File(model.getLocation(), JDT_CORE_PREFS).exists())
+			if (new File(model.getLocation(), JDT_CORE_PREFS).exists()) {
 				warningProperties = JDT_CORE_PREFS;
+			}
 		} else if (projectWarningSettings != null && !FALSE.equalsIgnoreCase(projectWarningSettings)) {
-			if (new File(model.getLocation(), projectWarningSettings).exists())
+			if (new File(model.getLocation(), projectWarningSettings).exists()) {
 				warningProperties = projectWarningSettings;
+			}
 		}
 	}
 
@@ -285,9 +292,11 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			String buildOrder = properties.getProperty(PROPERTY_JAR_ORDER);
 			if (buildOrder != null) {
 				String[] order = Utils.getArrayFromString(buildOrder);
-				for (int i = 0; i < order.length; i++)
-					if (order[i].equals(DOT))
+				for (int i = 0; i < order.length; i++) {
+					if (order[i].equals(DOT)) {
 						order[i] = EXPANDED_DOT;
+					}
+				}
 				properties.setProperty(PROPERTY_JAR_ORDER, Utils.getStringFromArray(order, ",")); //$NON-NLS-1$
 			}
 
@@ -299,9 +308,11 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			String includeString = properties.getProperty(PROPERTY_BIN_INCLUDES);
 			if (includeString != null) {
 				String[] includes = Utils.getArrayFromString(includeString);
-				for (int i = 0; i < includes.length; i++)
-					if (includes[i].equals(DOT))
+				for (int i = 0; i < includes.length; i++) {
+					if (includes[i].equals(DOT)) {
 						includes[i] = EXPANDED_DOT + '/';
+					}
+				}
 				properties.setProperty(PROPERTY_BIN_INCLUDES, Utils.getStringFromArray(includes, ",")); //$NON-NLS-1$
 			}
 			return true;
@@ -363,8 +374,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		if (pluginsToGatherSourceFrom != null) {
 			for (BundleDescription plugin : pluginsToGatherSourceFrom) {
 				// We are not trying to gather the source from ourself since we are generated and we know we don't have source...
-				if (plugin.getSymbolicName().equals(model.getSymbolicName()))
+				if (plugin.getSymbolicName().equals(model.getSymbolicName())) {
 					continue;
+				}
 
 				if (Utils.isBinary(plugin)) {
 					// this plug-in wasn't compiled, take source from the previous source plug-in
@@ -411,8 +423,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			String jarName = availableJar.getName(true);
 			String jarLocation = getJARLocation(jarName);
 			//avoid destructive cleans
-			if (jarLocation.equals("") || jarLocation.startsWith(DOT + DOT) || jarLocation.equals(Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER))) //$NON-NLS-1$
+			if (jarLocation.equals("") || jarLocation.startsWith(DOT + DOT) || jarLocation.equals(Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER))) { //$NON-NLS-1$
 				continue;
+			}
 			if (availableJar.type == CompiledEntry.JAR) {
 				script.printDeleteTask(null, jarLocation, null);
 			} else {
@@ -582,38 +595,43 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			for (String key : workspaceOutputFolders.keySet()) {
 				Set<IPath> paths = workspaceOutputFolders.get(key);
 				for (IPath path : paths) {
-					if (binaryFolders.length() > 0)
+					if (binaryFolders.length() > 0) {
 						binaryFolders.append(File.pathSeparator);
+					}
 					binaryFolders.append(Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/' + path.toString());
 				}
-				if (key.equals(DOT))
+				if (key.equals(DOT)) {
 					classpathEntries.remove(EXPANDED_DOT);
-				else
+				} else {
 					classpathEntries.remove(key);
+				}
 			}
 		} else {
 			for (int i = 0; i < binaries.length; i++) {
 				if (binaries[i] != null) {
-					if (i > 0)
+					if (i > 0) {
 						binaryFolders.append(File.pathSeparator);
+					}
 					binaryFolders.append(target + '/' + binaries[i]);
 					classpathEntries.remove(binaries[i]);
 				}
 			}
 			if (dotIncluded) {
-				if (binaryFolders.length() > 0)
+				if (binaryFolders.length() > 0) {
 					binaryFolders.append(File.pathSeparator);
+				}
 				binaryFolders.append(Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + '/' + EXPANDED_DOT);
 				classpathEntries.remove(EXPANDED_DOT);
 			}
 		}
 		for (String entry : classpathEntries) {
 			if (entry.equals(EXPANDED_DOT) || new File(model.getLocation(), entry).exists()) {
-				if (binaryFolders.length() > 0)
+				if (binaryFolders.length() > 0) {
 					binaryFolders.append(File.pathSeparator);
-				if (entry.equals(EXPANDED_DOT))
+				}
+				if (entry.equals(EXPANDED_DOT)) {
 					binaryFolders.append(model.getLocation());
-				else {
+				} else {
 					binaryFolders.append(model.getLocation() + '/' + entry);
 				}
 			}
@@ -638,10 +656,11 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 					IPath hostPath = IPath.fromOSString(hostLocation);
 					location = Utils.makeRelative(hostPath.append(JarFile.MANIFEST_NAME), IPath.fromOSString(modelLocation));
 				}
-				if (location.isAbsolute())
+				if (location.isAbsolute()) {
 					params.put(PROPERTY_EXTRA_MANIFESTS, location.toString());
-				else
+				} else {
 					params.put(PROPERTY_EXTRA_MANIFESTS, Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/' + location.toString());
+				}
 			}
 		}
 		script.printAntCallTask(TARGET_API_GENERATION, true, params);
@@ -696,16 +715,18 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.println("   buildResultFolder=\"" + Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 
 		//if the feature specifies the bundle shape, or the bundle itself doesn't have a preferred shape, then use the feature shape value (true by default)
-		if (associatedEntry != null && (associatedEntry.unpackSet() || !Utils.hasBundleShapeHeader(model)))
+		if (associatedEntry != null && (associatedEntry.unpackSet() || !Utils.hasBundleShapeHeader(model))) {
 			script.println("   unpack=\"" + String.valueOf(associatedEntry.isUnpack()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 
 		if (customBuildCallbacks != null) {
 			script.println("   targetFolder=\"" + root + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 			script.println("/>"); //$NON-NLS-1$
 		} else {
 			script.println("   baseDirectory=\"${basedir}\""); //$NON-NLS-1$
-			if (Utils.isSourceBundle(model))
+			if (Utils.isSourceBundle(model)) {
 				script.println("   gatheredSource=\"" + Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + "/sources\""); //$NON-NLS-1$//$NON-NLS-2$
+			}
 
 			if (workspaceOutputFolders == null || workspaceOutputFolders.size() == 0 || customBuildCallbacks != null) {
 				script.println("/>"); //$NON-NLS-1$
@@ -827,46 +848,54 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	private Set<BundleDescription> getPluginSourceProviders() throws CoreException {
 		Set<BundleDescription> pluginSet = featureGenerator.sourceToGather.getElementEntries().get(model.getSymbolicName());
-		if (pluginSet != null && pluginSet.size() > 0)
+		if (pluginSet != null && pluginSet.size() > 0) {
 			return pluginSet;
+		}
 
 		String sourceAttribute = getBuildProperties().getProperty(SOURCE_PLUGIN_ATTRIBUTE);
-		if (Boolean.valueOf(sourceAttribute).booleanValue())
+		if (Boolean.valueOf(sourceAttribute).booleanValue()) {
 			return null;
+		}
 
 		String[] tokens = Utils.getArrayFromString(sourceAttribute, ";"); //$NON-NLS-1$
 		pluginSet = new HashSet<>();
 		for (int i = 0; i + 1 < tokens.length; i += 2) {
 			BundleDescription fromPlugin = getSite(false).getRegistry().getBundle(tokens[i], tokens[i + 1], true);
-			if (fromPlugin != null && !Utils.isBinary(fromPlugin))
+			if (fromPlugin != null && !Utils.isBinary(fromPlugin)) {
 				pluginSet.add(fromPlugin);
+			}
 		}
 		return pluginSet;
 	}
 
 	private void genarateIdReplacementCall(String location) {
 		Properties bundleProperties = (Properties) model.getUserObject();
-		if (bundleProperties == null)
+		if (bundleProperties == null) {
 			return;
+		}
 
 		String qualifier = bundleProperties.getProperty(PROPERTY_QUALIFIER);
 		String sourceReference = getSourceReference(bundleProperties);
-		if (qualifier == null && sourceReference == null)
+		if (qualifier == null && sourceReference == null) {
 			return;
+		}
 
 		Map<String, String> arguments = new HashMap<>();
 		arguments.put("path", AntScript.getEscaped(location)); //$NON-NLS-1$
-		if (qualifier != null)
+		if (qualifier != null) {
 			arguments.put("version", model.getVersion().toString()); //$NON-NLS-1$
-		if (sourceReference != null)
+		}
+		if (sourceReference != null) {
 			arguments.put("attributes", ECLIPSE_SOURCE_REF + '|' + sourceReference); //$NON-NLS-1$
+		}
 		script.printElement("eclipse.versionReplacer", arguments); //$NON-NLS-1$
 	}
 
 	private String getSourceReference(Properties bundleProperties) {
 		String reference = (String) bundleProperties.get(PROPERTY_SOURCE_REFERENCE);
-		if (!sourceReferences || reference == null)
+		if (!sourceReferences || reference == null) {
 			return null;
+		}
 
 		String originalEntry = (String) bundleProperties.get(ECLIPSE_SOURCE_REF);
 		if (originalEntry != null) {
@@ -875,13 +904,15 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				StringBuffer newEntry = new StringBuffer();
 				boolean changed = false;
 				for (int i = 0; i < elements.length; i++) {
-					if (i > 0)
+					if (i > 0) {
 						newEntry.append(',');
+					}
 					if (elements[i].getValue().equals(PDE_SOURCE_REF)) {
 						newEntry.append(reference);
 						changed = true;
-					} else
+					} else {
 						newEntry.append(elements[i].toString());
+					}
 				}
 				return changed ? newEntry.toString() : null; //returning null is no change
 			} catch (BundleException e) {
@@ -970,8 +1001,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printAntCallTask(TARGET_GATHER_BIN_PARTS, true, params);
 		script.printJarTask(pluginUpdateJarDestination, Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER) + '/' + fullName, null, "merge"); //$NON-NLS-1$
 		script.printDeleteTask(Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER), null, null);
-		if (signJars)
+		if (signJars) {
 			script.println("<eclipse.jarProcessor sign=\"" + Utils.getPropertyFormat(PROPERTY_SIGN) + "\" unsign=\"" + Utils.getPropertyFormat(PROPERTY_UNSIGN) + "\" jar=\"" + AntScript.getEscaped(pluginUpdateJarDestination) + "\" alias=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_ALIAS) + "\" keystore=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_KEYSTORE) + "\" storepass=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_STOREPASS) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ 
+		}
 		script.printTargetEnd();
 	}
 
@@ -1099,12 +1131,15 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			jreProfile = null;
 		}
 
-		if (javacSource != null)
+		if (javacSource != null) {
 			script.printProperty(PROPERTY_BUNDLE_JAVAC_SOURCE, javacSource);
-		if (javacTarget != null)
+		}
+		if (javacTarget != null) {
 			script.printProperty(PROPERTY_BUNDLE_JAVAC_TARGET, javacTarget);
-		if (bootClasspath != null)
+		}
+		if (bootClasspath != null) {
 			script.printProperty(PROPERTY_BUNDLE_BOOTCLASSPATH, bootClasspath);
+		}
 
 		String source, target = null;
 		String[] modelEnvironments = model.getExecutionEnvironments();
@@ -1119,27 +1154,35 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 		ProfileManager profileManager = getSite(false).getRegistry().getProfileManager();
 		for (String environment : environments) {
-			if (bootClasspath == null)
+			if (bootClasspath == null) {
 				script.printConditionIsSet(PROPERTY_BUNDLE_BOOTCLASSPATH, Utils.getPropertyFormat(environment), environment);
+			}
 
 			source = profileManager.getJavacSource(environment);
-			if (source == null)
+			if (source == null) {
 				source = (String) environmentMappings.get(environment + '.' + IXMLConstants.PROPERTY_JAVAC_SOURCE);
+			}
 			target = profileManager.getJavacTarget(environment);
-			if (target == null)
+			if (target == null) {
 				target = (String) environmentMappings.get(environment + '.' + IXMLConstants.PROPERTY_JAVAC_TARGET);
-			if (javacSource == null && source != null)
+			}
+			if (javacSource == null && source != null) {
 				script.printConditionIsSet(PROPERTY_BUNDLE_JAVAC_SOURCE, source, environment);
-			if (javacTarget == null && target != null)
+			}
+			if (javacTarget == null && target != null) {
 				script.printConditionIsSet(PROPERTY_BUNDLE_JAVAC_TARGET, target, environment);
+			}
 		}
 
-		if (javacSource == null)
+		if (javacSource == null) {
 			script.printProperty(PROPERTY_BUNDLE_JAVAC_SOURCE, Utils.getPropertyFormat(IXMLConstants.PROPERTY_JAVAC_SOURCE));
-		if (javacTarget == null)
+		}
+		if (javacTarget == null) {
 			script.printProperty(PROPERTY_BUNDLE_JAVAC_TARGET, Utils.getPropertyFormat(IXMLConstants.PROPERTY_JAVAC_TARGET));
-		if (bootClasspath == null)
+		}
+		if (bootClasspath == null) {
 			script.printProperty(PROPERTY_BUNDLE_BOOTCLASSPATH, Utils.getPropertyFormat(PROPERTY_BOOTCLASSPATH));
+		}
 		script.println();
 	}
 
@@ -1216,8 +1259,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		CompiledEntry[] availableJars = extractEntriesToCompile(properties);
 		compiledJarNames = new ArrayList<>(availableJars.length);
 		Map<String, CompiledEntry> jars = new HashMap<>(availableJars.length);
-		for (CompiledEntry availableJar : availableJars)
+		for (CompiledEntry availableJar : availableJars) {
 			jars.put(availableJar.getName(false), availableJar);
+		}
 
 		// Put the jars in a correct compile order
 		String jarOrder = (String) getBuildProperties().get(PROPERTY_JAR_ORDER);
@@ -1227,8 +1271,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			String[] order = Utils.getArrayFromString(jarOrder);
 			for (String element : order) {
 				CompiledEntry jar = jars.get(element);
-				if (jar == null)
+				if (jar == null) {
 					continue;
+				}
 
 				compiledJarNames.add(jar);
 				generateCompilationTarget(classpath.getClasspath(pluginModel, jar), jar);
@@ -1340,8 +1385,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		} catch (CoreException e) {
 			return;
 		}
-		if (properties == null && classpath.size() == 0)
+		if (properties == null && classpath.size() == 0) {
 			return;
+		}
 
 		String name = entry.getName(false);
 
@@ -1349,8 +1395,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		if (excludes != null) {
 			javac.setExcludes(Utils.getArrayFromString(excludes, ",")); //$NON-NLS-1$
 		}
-		if (name.equals(EXPANDED_DOT))
+		if (name.equals(EXPANDED_DOT)) {
 			name = DOT;
+		}
 
 		// Bug 303960 potentially use a custom compiler adapter
 		String compilerAdapter = properties.getProperty(PROPERTY_COMPILER_ADAPTER);
@@ -1362,12 +1409,14 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 		// Bug 303960 get compilerArg property
 		String compilerArg = properties.getProperty(PROPERTY_JAVAC_COMPILERARG);
-		if (compilerArg != null)
+		if (compilerArg != null) {
 			javac.setSpecificCompileArgs(compilerArg);
+		}
 
 		String defaultEncodingVal = properties.getProperty(PROPERTY_JAVAC_DEFAULT_ENCODING_PREFIX + name);
-		if (defaultEncodingVal != null)
+		if (defaultEncodingVal != null) {
 			javac.setEncoding(defaultEncodingVal);
+		}
 
 		String customEncodingsVal = properties.getProperty(PROPERTY_JAVAC_CUSTOM_ENCODINGS_PREFIX + name);
 		String warningLevels = properties.getProperty(PROPERTY_JAVAC_WARNINGS_PREFIX + name);
@@ -1387,8 +1436,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		try {
 			try {
 				//only create the file if we are going to write something in it
-				if (warningLevels != null || customEncodingsVal != null || errorLevels != null)
+				if (warningLevels != null || customEncodingsVal != null || errorLevels != null) {
 					writer = new BufferedWriter(new FileWriter(file));
+				}
 
 				if (warningLevels != null) {
 					writer.write("-warn:" + warningLevels + "\n"); //$NON-NLS-1$//$NON-NLS-2$
@@ -1414,10 +1464,11 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 							ClasspathElement element = (ClasspathElement) object;
 							if (element.getPath() != null && element.getAccessRules().length() > 0) {
 								String path = null;
-								if (element.getSubPath() == null)
+								if (element.getSubPath() == null) {
 									path = element.getPath();
-								else
+								} else {
 									path = featureGenerator.getExtractedRoot(element) + '/' + element.getSubPath();
+								}
 
 								if (path.startsWith(Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER))) {
 									//remove leading ${build.result.folder}/
@@ -1425,18 +1476,21 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 								}
 								//remove leading ../../..
 								path = path.replaceFirst("^(\\.\\.[\\\\/])*", ""); //$NON-NLS-1$//$NON-NLS-2$
-								if (writer == null)
+								if (writer == null) {
 									writer = new BufferedWriter(new FileWriter(file));
+								}
 								writer.write(ADAPTER_ACCESS + path + element.getAccessRules() + "\n"); //$NON-NLS-1$
 							}
 						}
 					}
 				}
-				if (writer != null)
+				if (writer != null) {
 					javac.setCompileArgsFile(Utils.getPropertyFormat(PROPERTY_BASEDIR) + "/" + file.getName()); //$NON-NLS-1$
+				}
 			} finally {
-				if (writer != null)
+				if (writer != null) {
 					writer.close();
+				}
 			}
 		} catch (IOException e1) {
 			//ignore
@@ -1459,9 +1513,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		for (Object object : classpath) {
 			ClasspathElement element = (ClasspathElement) object;
 
-			if (element.getSubPath() == null)
+			if (element.getSubPath() == null) {
 				extracted.add(element);
-			else {
+			} else {
 				String destPath = featureGenerator.getExtractedRoot(element);
 				String destDir = Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + '/' + "nestedJars" + '/' + destPath.toString(); //$NON-NLS-1$
 				script.printMkdirTask(destDir);
@@ -1544,16 +1598,18 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 					//nothing to do, will assume non-modular
 				}
 				String source = null;
-				if (profileManager != null)
+				if (profileManager != null) {
 					source = profileManager.getJavacSource(ee);
+				}
 				int parseInt = -1;
 				try {
 					parseInt = Integer.parseInt(source);
 				} catch (NumberFormatException ne) {
 					//by default non-modular for 1.8 etc and below
 				}
-				if (parseInt >= 9)
+				if (parseInt >= 9) {
 					isModular = true;
+				}
 			}
 			javac.setBootClasspath(isModular == true ? null : Utils.getPropertyFormat(PROPERTY_BUNDLE_BOOTCLASSPATH));
 			javac.setDestdir(destdir);
@@ -1566,10 +1622,12 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			javac.setCompileArgs(Utils.getPropertyFormat(PROPERTY_JAVAC_COMPILERARG));
 			javac.setSrcdir(sources);
 			javac.setLogExtension(Utils.getPropertyFormat(PROPERTY_LOG_EXTENSION));
-			if (warningProperties != null)
+			if (warningProperties != null) {
 				javac.setWarningProperties(Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/' + warningProperties);
-			if (generateErrorPropertyAttribute)
+			}
+			if (generateErrorPropertyAttribute) {
 				javac.setErrorProperty(PROPERTY_COMPILATION_ERROR);
+			}
 			generateCompilerSettings(javac, entry, classpath);
 
 			script.print(javac);
@@ -1587,8 +1645,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				excludes = "**/package.htm*"; //$NON-NLS-1$
 			}
 			String excludedFromJar = entry.getExcludedFromJar();
-			if (excludedFromJar != null)
+			if (excludedFromJar != null) {
 				excludes += ',' + excludedFromJar;
+			}
 
 			fileSets[i] = new FileSet(sources[i], null, null, null, excludes, null, null);
 		}
@@ -1602,10 +1661,11 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		String jarLocation = getJARLocation(entry.getName(true));
 		if (entry.getType() != CompiledEntry.FOLDER) {
 			script.printMkdirTask(IPath.fromOSString(jarLocation).removeLastSegments(1).toString());
-			if (workspaceFiles != null)
+			if (workspaceFiles != null) {
 				script.printJarTask(jarLocation, destdir, workspaceFiles, getEmbeddedManifestFile(entry, destdir), null, "preserve"); //$NON-NLS-1$
-			else
+			} else {
 				script.printJarTask(jarLocation, destdir, getEmbeddedManifestFile(entry, destdir));
+			}
 			script.printDeleteTask(destdir, null, null);
 		}
 
@@ -1622,8 +1682,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 */
 	private boolean shouldGenerateErrorAttribute() {
 		//When exporting from the UI it is hard to know the ant version, for now don't generate the attribute
-		if (havePDEUIState())
+		if (havePDEUIState()) {
 			return false;
+		}
 
 		//version string should look something like: "Apache Ant version 1.7.1 compiled on June 27 2008"
 		String versionString = getImmutableAntProperty(IBuildPropertiesConstants.PROPERTY_ANT_VERSION);
@@ -1635,16 +1696,18 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				int segment = 0;
 				//try and be flexible, find the first 3 segments of numbers, stop at any other character
 				for (char c = versionString.charAt(idx); idx < versionString.length() && segment < 3; c = versionString.charAt(++idx)) {
-					if (c == '.')
+					if (c == '.') {
 						segment++;
-					else if (!Character.isDigit(c))
+					} else if (!Character.isDigit(c)) {
 						break;
+					}
 				}
 				if (idx > 0) {
 					try {
 						Version antVersion = new Version(versionString.substring(0, idx));
-						if (antVersion.compareTo(new Version(1, 7, 1)) >= 0)
+						if (antVersion.compareTo(new Version(1, 7, 1)) >= 0) {
 							return true;
+						}
 
 						IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, WARNING_OLD_ANT, NLS.bind(Messages.warning_ant171Required, PROPERTY_P2_PUBLISHONERROR), null);
 						BundleHelper.getDefault().getLog().log(status);
@@ -1662,8 +1725,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private String getEmbeddedManifestFile(CompiledEntry jarEntry, String destdir) {
 		try {
 			String manifestName = getBuildProperties().getProperty(PROPERTY_MANIFEST_PREFIX + jarEntry.getName(true));
-			if (manifestName == null)
+			if (manifestName == null) {
 				return null;
+			}
 			return destdir + '/' + manifestName;
 		} catch (CoreException e) {
 			return null;
@@ -1683,8 +1747,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		int prefixLength = PROPERTY_SOURCE_PREFIX.length();
 		for (Entry<Object, Object> entry : properties.entrySet()) {
 			String key = (String) entry.getKey();
-			if (!(key.startsWith(PROPERTY_SOURCE_PREFIX)))
+			if (!(key.startsWith(PROPERTY_SOURCE_PREFIX))) {
 				continue;
+			}
 			key = key.substring(prefixLength);
 			String[] source = Utils.getArrayFromString((String) entry.getValue());
 			if (source.length == 0) {
@@ -1713,8 +1778,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		FileSet[] fileSets = new FileSet[sources.length];
 		int count = 0;
 		for (String element : sources) {
-			if (element != null)
+			if (element != null) {
 				fileSets[count++] = new FileSet(element, null, getFormattedSourceFileExtensions(), null, null, null, null);
+			}
 		}
 
 		String srcLocation = getSRCLocation(name);
@@ -1724,17 +1790,19 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printTargetEnd();
 
 		script.printTargetDeclaration("zip." + srcName, null, null, null, null); //$NON-NLS-1$
-		if (count != 0)
+		if (count != 0) {
 			script.printZipTask(srcLocation, null, false, false, fileSets);
+		}
 		script.printTargetEnd();
 
 		script.printTargetDeclaration("copy." + srcName, null, null, null, null); //$NON-NLS-1$
 		if (count != 0) {
 			String dest = null;
-			if (srcName.equals(SRC_ZIP))
+			if (srcName.equals(SRC_ZIP)) {
 				dest = IPath.fromOSString(srcName).removeLastSegments(1).toString(); //src.zip can go in the root
-			else
+			} else {
 				dest = srcName.substring(0, srcName.length() - 4); //remove .zip, the rest go in folders
+			}
 			String toDir = Utils.getPropertyFormat(PROPERTY_SOURCE_DESTINATION_FOLDER) + '/' + dest;
 			script.printCopyTask(null, toDir, fileSets, true, true);
 		}
@@ -1808,8 +1876,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	@Override
 	protected Properties getBuildProperties() throws CoreException {
-		if (buildProperties == null)
+		if (buildProperties == null) {
 			return buildProperties = readProperties(model.getLocation(), propertiesFileName, isIgnoreMissingPropertiesFile() ? IStatus.OK : IStatus.WARNING);
+		}
 
 		return buildProperties;
 	}
@@ -1824,8 +1893,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		if (jarName.endsWith(".jar")) { //$NON-NLS-1$
 			return jarName.substring(0, jarName.length() - 4) + SRC_ZIP;
 		}
-		if (jarName.equals(EXPANDED_DOT) || jarName.equals(DOT))
+		if (jarName.equals(EXPANDED_DOT) || jarName.equals(DOT)) {
 			return SRC_ZIP;
+		}
 		return jarName.replace('/', '.') + SRC_ZIP;
 	}
 
@@ -1856,19 +1926,24 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 * @return String
 	 */
 	static protected String replaceVariables(String sourceString, boolean compiledElement) {
-		if (sourceString == null)
+		if (sourceString == null) {
 			return null;
+		}
 
 		int i = -1;
 		String result = sourceString;
-		while ((i = result.indexOf(DESCRIPTION_VARIABLE_WS)) >= 0)
+		while ((i = result.indexOf(DESCRIPTION_VARIABLE_WS)) >= 0) {
 			result = result.substring(0, i) + "ws/" + Utils.getPropertyFormat(compiledElement ? PROPERTY_WS : PROPERTY_BASE_WS) + result.substring(i + DESCRIPTION_VARIABLE_WS.length()); //$NON-NLS-1$
-		while ((i = result.indexOf(DESCRIPTION_VARIABLE_OS)) >= 0)
+		}
+		while ((i = result.indexOf(DESCRIPTION_VARIABLE_OS)) >= 0) {
 			result = result.substring(0, i) + "os/" + Utils.getPropertyFormat(compiledElement ? PROPERTY_OS : PROPERTY_BASE_OS) + result.substring(i + DESCRIPTION_VARIABLE_OS.length()); //$NON-NLS-1$
-		while ((i = result.indexOf(DESCRIPTION_VARIABLE_ARCH)) >= 0)
+		}
+		while ((i = result.indexOf(DESCRIPTION_VARIABLE_ARCH)) >= 0) {
 			result = result.substring(0, i) + "arch/" + Utils.getPropertyFormat(compiledElement ? PROPERTY_ARCH : PROPERTY_BASE_ARCH) + result.substring(i + DESCRIPTION_VARIABLE_OS.length()); //$NON-NLS-1$		
-		while ((i = result.indexOf(DESCRIPTION_VARIABLE_NL)) >= 0)
+		}
+		while ((i = result.indexOf(DESCRIPTION_VARIABLE_NL)) >= 0) {
 			result = result.substring(0, i) + "nl/" + Utils.getPropertyFormat(compiledElement ? PROPERTY_NL : PROPERTY_BASE_NL) + result.substring(i + DESCRIPTION_VARIABLE_NL.length()); //$NON-NLS-1$
+		}
 		return result;
 	}
 
@@ -1909,8 +1984,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 * @return the model object or <code>null</code>
 	 */
 	protected BundleDescription getModel(String modelId, String modelVersion) throws CoreException {
-		if (modelVersion == null)
+		if (modelVersion == null) {
 			return getSite(false).getRegistry().getResolvedBundle(modelId);
+		}
 		return getSite(false).getRegistry().getResolvedBundle(modelId, modelVersion);
 	}
 

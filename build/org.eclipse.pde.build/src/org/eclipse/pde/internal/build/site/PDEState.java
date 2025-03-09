@@ -138,14 +138,16 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			descriptor = factory.createBundleDescription(state, enhancedManifest, bundleLocation.getAbsolutePath(), getNextId());
 			bundleClasspaths.put(Long.valueOf(descriptor.getBundleId()), BundleHelper.getClasspath(enhancedManifest));
 			String patchValue = fillPatchData(enhancedManifest);
-			if (patchValue != null)
+			if (patchValue != null) {
 				patchBundles.put(Long.valueOf(descriptor.getBundleId()), patchValue);
+			}
 			rememberQualifierTagPresence(descriptor);
 			rememberManifestConversion(descriptor, enhancedManifest);
 			rememberManifestEntries(descriptor, enhancedManifest, MANIFEST_ENTRIES);
 			rememberSourceReference(descriptor, oldVersion);
-			if (addBundleDescription(descriptor) == true && addedBundle != null)
+			if (addBundleDescription(descriptor) == true && addedBundle != null) {
 				addedBundle.add(descriptor);
+			}
 		} catch (BundleException e) {
 			IStatus status = new Status(IStatus.WARNING, IPDEBuildConstants.PI_PDEBUILD, EXCEPTION_STATE_PROBLEM, NLS.bind(Messages.exception_stateAddition, BundleHelper.getManifestHeader(enhancedManifest, Constants.BUNDLE_NAME)), e);
 			BundleHelper.getDefault().getLog().log(status);
@@ -165,12 +167,14 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	}
 
 	private void rememberSourceReference(BundleDescription descriptor, String oldVersion) {
-		if (sourceReferences == null)
+		if (sourceReferences == null) {
 			return;
+		}
 
 		String key = QualifierReplacer.getQualifierKey(descriptor.getSymbolicName(), oldVersion);
-		if (key == null || !sourceReferences.containsKey(key))
+		if (key == null || !sourceReferences.containsKey(key)) {
 			key = descriptor.getSymbolicName() + ',' + Version.emptyVersion.toString();
+		}
 		if (sourceReferences.containsKey(key)) {
 			Properties bundleProperties = (Properties) descriptor.getUserObject();
 			if (bundleProperties == null) {
@@ -182,8 +186,9 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	}
 
 	private void rememberManifestEntries(BundleDescription descriptor, Dictionary<String, String> manifest, String[] entries) {
-		if (entries == null || entries.length == 0)
+		if (entries == null || entries.length == 0) {
 			return;
+		}
 
 		Properties properties = (Properties) descriptor.getUserObject();
 		if (properties == null) {
@@ -200,8 +205,9 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	}
 
 	private void rememberManifestConversion(BundleDescription descriptor, Dictionary<String, String> manifest) {
-		if (convertedManifests == null || !convertedManifests.contains(manifest))
+		if (convertedManifests == null || !convertedManifests.contains(manifest)) {
 			return;
+		}
 
 		convertedManifests.remove(manifest);
 		Properties bundleProperties = (Properties) descriptor.getUserObject();
@@ -266,14 +272,16 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	}
 
 	private boolean addFlexibleRoot(File bundleLocation) {
-		if (!new File(bundleLocation, PDE_CORE_PREFS).exists())
+		if (!new File(bundleLocation, PDE_CORE_PREFS).exists()) {
 			return false;
+		}
 
 		try {
 			Properties properties = AbstractScriptGenerator.readProperties(bundleLocation.getAbsolutePath(), PDE_CORE_PREFS, IStatus.OK);
 			String root = properties.getProperty(BUNDLE_ROOT_PATH);
-			if (root != null)
+			if (root != null) {
 				return addBundle(new File(bundleLocation, root));
+			}
 		} catch (CoreException e) {
 			//ignore
 		}
@@ -285,8 +293,9 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		String oldVersion = null;
 		try {
 			String symbolicName = BundleHelper.getManifestHeader(manifest, Constants.BUNDLE_SYMBOLICNAME);
-			if (symbolicName == null)
+			if (symbolicName == null) {
 				return null;
+			}
 
 			symbolicName = ManifestElement.parseHeader(Constants.BUNDLE_SYMBOLICNAME, symbolicName)[0].getValue();
 			oldVersion = BundleHelper.getManifestHeader(manifest, Constants.BUNDLE_VERSION);
@@ -294,8 +303,9 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		} catch (BundleException e) {
 			//ignore
 		}
-		if (newVersion != null)
+		if (newVersion != null) {
 			manifest.put(Constants.BUNDLE_VERSION, newVersion);
+		}
 		return oldVersion;
 	}
 
@@ -315,8 +325,9 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		} catch (CoreException e) {
 			//ignore
 		}
-		if (qualifierInfo == null)
+		if (qualifierInfo == null) {
 			qualifierInfo = PROPERTY_CONTEXT;
+		}
 		return qualifierInfo;
 	}
 
@@ -348,32 +359,37 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	}
 
 	private boolean enforceSymbolicName(File bundleLocation, Dictionary<String, String> initialManifest) {
-		if (BundleHelper.getManifestHeader(initialManifest, Constants.BUNDLE_SYMBOLICNAME) != null)
+		if (BundleHelper.getManifestHeader(initialManifest, Constants.BUNDLE_SYMBOLICNAME) != null) {
 			return true;
+		}
 
 		return false;
 	}
 
 	private void enforceClasspath(Dictionary<String, String> manifest) {
 		String classpath = BundleHelper.getManifestHeader(manifest, Constants.BUNDLE_CLASSPATH);
-		if (classpath == null)
+		if (classpath == null) {
 			manifest.put(Constants.BUNDLE_CLASSPATH, "."); //$NON-NLS-1$
+		}
 	}
 
 	private void enforceVersion(Dictionary<String, String> manifest) {
 		String version = BundleHelper.getManifestHeader(manifest, Constants.BUNDLE_VERSION);
-		if (version == null)
+		if (version == null) {
 			manifest.put(Constants.BUNDLE_VERSION, "0.0.0"); //$NON-NLS-1$
+		}
 	}
 
 	private Dictionary<String, String> loadManifest(File bundleLocation) {
 		Dictionary<String, String> manifest = basicLoadManifest(bundleLocation);
-		if (manifest == null)
+		if (manifest == null) {
 			return null;
+		}
 
 		// require a Bundle-SymbolicName
-		if (!enforceSymbolicName(bundleLocation, manifest))
+		if (!enforceSymbolicName(bundleLocation, manifest)) {
 			return null;
+		}
 		enforceVersion(manifest);
 		enforceClasspath(manifest);
 		return manifest;
@@ -397,25 +413,29 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 
 		for (Config aConfig : configs) {
 			Dictionary<String, Object> prop = new Hashtable<>();
-			if (AbstractScriptGenerator.getPropertyAsBoolean(RESOLVER_DEV_MODE))
+			if (AbstractScriptGenerator.getPropertyAsBoolean(RESOLVER_DEV_MODE)) {
 				prop.put(PROPERTY_RESOLVER_MODE, VALUE_DEVELOPMENT);
+			}
 			String os = aConfig.getOs();
 			String ws = aConfig.getWs();
 			String arch = aConfig.getArch();
-			if (Config.ANY.equalsIgnoreCase(os))
+			if (Config.ANY.equalsIgnoreCase(os)) {
 				prop.put(OSGI_OS, CatchAllValue.singleton);
-			else
+			} else {
 				prop.put(OSGI_OS, os);
+			}
 
-			if (Config.ANY.equalsIgnoreCase(ws))
+			if (Config.ANY.equalsIgnoreCase(ws)) {
 				prop.put(OSGI_WS, CatchAllValue.singleton);
-			else
+			} else {
 				prop.put(OSGI_WS, ws);
+			}
 
-			if (Config.ANY.equalsIgnoreCase(arch))
+			if (Config.ANY.equalsIgnoreCase(arch)) {
 				prop.put(OSGI_ARCH, CatchAllValue.singleton);
-			else
+			} else {
 				prop.put(OSGI_ARCH, arch);
+			}
 
 			// check the user-specified platform properties
 			if (platformProperties != null) {
@@ -652,13 +672,16 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	 * bound to.
 	 */
 	public static BundleDescription[] getImportedBundles(BundleDescription root) {
-		if (root == null)
+		if (root == null) {
 			return new BundleDescription[0];
+		}
 		ExportPackageDescription[] packages = root.getResolvedImports();
 		ArrayList<BundleDescription> resolvedImports = new ArrayList<>(packages.length);
-		for (ExportPackageDescription package1 : packages)
-			if (!root.getLocation().equals(package1.getExporter().getLocation()) && !resolvedImports.contains(package1.getExporter()))
+		for (ExportPackageDescription package1 : packages) {
+			if (!root.getLocation().equals(package1.getExporter().getLocation()) && !resolvedImports.contains(package1.getExporter())) {
 				resolvedImports.add(package1.getExporter());
+			}
+		}
 		return resolvedImports.toArray(new BundleDescription[resolvedImports.size()]);
 	}
 
@@ -667,8 +690,9 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	 * have been bound to.
 	 */
 	public static BundleDescription[] getRequiredBundles(BundleDescription root) {
-		if (root == null)
+		if (root == null) {
 			return new BundleDescription[0];
+		}
 		return root.getResolvedRequires();
 	}
 
@@ -679,22 +703,25 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	public BundleDescription getBundle(String bundleId, String version, boolean resolved) {
 		if (IPDEBuildConstants.GENERIC_VERSION_NUMBER.equals(version) || version == null) {
 			BundleDescription bundle = getResolvedBundle(bundleId);
-			if (bundle == null && !resolved)
+			if (bundle == null && !resolved) {
 				bundle = getState().getBundle(bundleId, null);
+			}
 			return bundle;
 		}
 		Version parsedVersion = Version.parseVersion(version);
 		BundleDescription description = getState().getBundle(bundleId, parsedVersion);
-		if (description != null && (!resolved || description.isResolved()))
+		if (description != null && (!resolved || description.isResolved())) {
 			return description;
+		}
 
 		if (parsedVersion.getQualifier().indexOf(IBuildPropertiesConstants.PROPERTY_QUALIFIER) > -1) {
 			BundleDescription[] bundles = sortByVersion(getState().getBundles(bundleId));
 			VersionRange qualifierRange = Utils.createVersionRange(version);
 			//bundles are sorted, start at the high end
 			for (int i = bundles.length - 1; i >= 0; i--) {
-				if (qualifierRange.includes(bundles[i].getVersion()) && (!resolved || bundles[i].isResolved()))
+				if (qualifierRange.includes(bundles[i].getVersion()) && (!resolved || bundles[i].isResolved())) {
 					return bundles[i];
+				}
 			}
 		}
 		return null;
@@ -714,12 +741,14 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 
 	public BundleDescription getResolvedBundle(String bundleId) {
 		BundleDescription[] description = sortByVersion(getState().getBundles(bundleId));
-		if (description == null)
+		if (description == null) {
 			return null;
+		}
 		//bundles are sorted, start at the high end
 		for (int i = description.length - 1; i >= 0; i--) {
-			if (description[i].isResolved())
+			if (description[i].isResolved()) {
 				return description[i];
+			}
 		}
 		return null;
 	}
@@ -750,8 +779,9 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		BundleDescription[] fragments = root.getFragments();
 		List<BundleDescription> importedByFragments = new ArrayList<>();
 		for (BundleDescription fragment2 : fragments) {
-			if (!fragment2.isResolved())
+			if (!fragment2.isResolved()) {
 				continue;
+			}
 			merge(importedByFragments, getImportedBundles(fragment2));
 		}
 		BundleDescription[] result = new BundleDescription[importedByFragments.size()];
@@ -762,8 +792,9 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		BundleDescription[] fragments = root.getFragments();
 		List<BundleDescription> importedByFragments = new ArrayList<>();
 		for (BundleDescription fragment2 : fragments) {
-			if (!fragment2.isResolved())
+			if (!fragment2.isResolved()) {
 				continue;
+			}
 			merge(importedByFragments, getRequiredBundles(fragment2));
 		}
 		BundleDescription[] result = new BundleDescription[importedByFragments.size()];
@@ -772,8 +803,9 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 
 	public static void merge(List<BundleDescription> source, BundleDescription[] toAdd) {
 		for (BundleDescription element : toAdd) {
-			if (!source.contains(element))
+			if (!source.contains(element)) {
 				source.add(element);
+			}
 		}
 	}
 
@@ -807,8 +839,9 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	}
 
 	public void cleanupOriginalState() {
-		if (addedBundle == null && unqualifiedBundles == null)
+		if (addedBundle == null && unqualifiedBundles == null) {
 			return;
+		}
 
 		for (BundleDescription added : addedBundle) {
 			state.removeBundle(added);
@@ -856,16 +889,19 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	 */
 	public BundleDescription getVersionReplacement(BundleDescription bundle) {
 		Properties props = (Properties) bundle.getUserObject();
-		if (props == null)
+		if (props == null) {
 			return bundle;
+		}
 		String idString = props.getProperty(PROPERTY_VERSION_REPLACEMENT);
-		if (idString == null)
+		if (idString == null) {
 			return bundle;
+		}
 		try {
 			long newId = Long.parseLong(idString);
 			BundleDescription newBundle = state.getBundle(newId);
-			if (newBundle != null)
+			if (newBundle != null) {
 				return newBundle;
+			}
 		} catch (NumberFormatException e) {
 			// fall through
 		}

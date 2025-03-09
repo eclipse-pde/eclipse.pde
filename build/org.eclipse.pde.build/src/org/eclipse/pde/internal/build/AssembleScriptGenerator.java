@@ -72,8 +72,9 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 			generateMetadataTarget();
 			script.printProjectEnd();
 		} finally {
-			if (script != null)
+			if (script != null) {
 				script.close();
+			}
 			script = null;
 		}
 	}
@@ -83,8 +84,9 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	protected void generatePrologue() {
-		if (productQualifier != null)
+		if (productQualifier != null) {
 			script.printProperty(PROPERTY_P2_PRODUCT_QUALIFIER, productQualifier);
+		}
 		script.println();
 	}
 
@@ -141,18 +143,21 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 				basicGenerateAssembleConfigFileTargetCall(current, configInfo[0], configInfo[1], configInfo[2], configInfo[3]);
 			}
 		}
-		if (configScriptGenerator.haveP2Bundles() && !BuildDirector.p2Gathering)
+		if (configScriptGenerator.haveP2Bundles() && !BuildDirector.p2Gathering) {
 			script.printAntCallTask(TARGET_P2_METADATA, true, null);
+		}
 		script.printTargetEnd();
 	}
 
 	protected boolean shouldGroupConfigs() {
-		if (!BuildDirector.p2Gathering)
+		if (!BuildDirector.p2Gathering) {
 			return groupConfigs;
+		}
 
 		// product builds are not grouped.
-		if (configScriptGenerator.getProductFile() != null)
+		if (configScriptGenerator.getProductFile() != null) {
 			return false;
+		}
 
 		return true;
 	}
@@ -218,8 +223,9 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 
 			script.printTargetDeclaration(TARGET_P2_REPLACE_PRODUCT, null, null, null, null);
 			script.printCopyFileTask(productFile.getPath(), newProduct, true);
-			if (p2Inf.exists())
+			if (p2Inf.exists()) {
 				script.printCopyTask(p2Inf.getAbsolutePath(), getProductDir(), null, false, true);
+			}
 			generateProductReplaceTask(product, newProduct, assemblageInformation);
 			script.printTargetEnd();
 			script.println();
@@ -227,8 +233,9 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	protected void generateMetadataTarget() {
-		if (BuildDirector.p2Gathering)
+		if (BuildDirector.p2Gathering) {
 			return;
+		}
 		if (configScriptGenerator.haveP2Bundles()) {
 			ProductFile product = configScriptGenerator.getProductFile();
 			script.printTargetDeclaration(TARGET_P2_METADATA, null, TARGET_P2_METADATA, PROPERTY_RUN_PACKAGER, null);
@@ -256,10 +263,11 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 			if (product != null) {
 				script.printAttribute("productFile", Utils.getPropertyFormat(PROPERTY_P2_PRODUCT_MOD), true); //$NON-NLS-1$
 				if (versionsList) {
-					if (product.useFeatures())
+					if (product.useFeatures()) {
 						script.printAttribute("versionAdvice", getWorkingDirectory() + '/' + DEFAULT_FEATURE_VERSION_FILENAME_PREFIX + PROPERTIES_FILE_SUFFIX, true); //$NON-NLS-1$
-					else
+					} else {
 						script.printAttribute("versionAdvice", getWorkingDirectory() + '/' + DEFAULT_PLUGIN_VERSION_FILENAME_PREFIX + PROPERTIES_FILE_SUFFIX, true); //$NON-NLS-1$
+					}
 				}
 			} else {
 				script.printAttribute("root", Utils.getPropertyFormat(PROPERTY_P2_ROOT_NAME), true); //$NON-NLS-1$ 

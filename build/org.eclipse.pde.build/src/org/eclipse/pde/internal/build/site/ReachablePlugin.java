@@ -55,23 +55,27 @@ public class ReachablePlugin implements Comparable<Object> {
 	public int compareTo(Object o) {
 		if (o instanceof ReachablePlugin toCompare) {
 			int result = id.compareTo(toCompare.id);
-			if (result != 0)
+			if (result != 0) {
 				return result;
+			}
 			//We want the object with the widest version range to sort first
 			Version right = range.getRight() == null ? VERSION_MAX : range.getRight();
 			Version toCompareRight = toCompare.range.getRight() == null ? VERSION_MAX : toCompare.range.getRight();
 			result = substract(toCompareRight, toCompare.range.getLeft()).compareTo(substract(right, range.getLeft()));
-			if (result != 0)
+			if (result != 0) {
 				return result;
+			}
 			result = -Boolean.compare(range.getRightType() == VersionRange.RIGHT_CLOSED, toCompare.range.getRightType() == VersionRange.RIGHT_CLOSED);
 			if (result != 0) {
 				return result;
 			}
-			if (this.equals(o))
+			if (this.equals(o)) {
 				return 0;
+			}
 			result = range.getLeft().compareTo(toCompareRight);
-			if (result != 0)
+			if (result != 0) {
 				return result;
+			}
 			//Give up
 			return -1;
 		}

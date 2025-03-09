@@ -33,19 +33,24 @@ public class SourceFeatureWriter extends FeatureWriter {
 		// TO CHECK Here we should have the raw list...
 		FeatureEntry[] features = feature.getEntries();
 		for (FeatureEntry feature2 : features) {
-			if (feature2.isRequires() || feature2.isPlugin())
+			if (feature2.isRequires() || feature2.isPlugin()) {
 				continue;
+			}
 			parameters.clear();
 			parameters.put(ID, feature2.getId());
 			parameters.put(VERSION, feature2.getVersion());
-			if (feature2.isOptional())
+			if (feature2.isOptional()) {
 				parameters.put("optional", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-			if (feature2.getArch() != null)
+			}
+			if (feature2.getArch() != null) {
 				parameters.put("arch", feature2.getArch()); //$NON-NLS-1$
-			if (feature2.getWS() != null)
+			}
+			if (feature2.getWS() != null) {
 				parameters.put("ws", feature2.getWS()); //$NON-NLS-1$
-			if (feature2.getOS() != null)
+			}
+			if (feature2.getOS() != null) {
 				parameters.put("os", feature2.getOS()); //$NON-NLS-1$
+			}
 			printTag("includes", parameters, true, true, true); //$NON-NLS-1$
 		}
 	}

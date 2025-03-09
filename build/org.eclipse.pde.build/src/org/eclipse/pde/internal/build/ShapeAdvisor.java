@@ -75,12 +75,14 @@ public class ShapeAdvisor implements IPDEBuildConstants {
 		Properties currentProperties = bundle ? pluginsPostProcessingSteps : featuresPostProcessingSteps;
 		if (currentProperties.size() > 0) {
 			String styleFromFile = currentProperties.getProperty(name);
-			if (styleFromFile == null)
+			if (styleFromFile == null) {
 				styleFromFile = currentProperties.getProperty(IBuildPropertiesConstants.DEFAULT_FINAL_SHAPE);
+			}
 			result = styleFromFile;
 		}
-		if (forceUpdateJarFormat)
+		if (forceUpdateJarFormat) {
 			result = UPDATEJAR;
+		}
 		return result;
 	}
 
@@ -95,16 +97,17 @@ public class ShapeAdvisor implements IPDEBuildConstants {
 				for (Object entry2 : entries) {
 					FeatureEntry entry = (FeatureEntry) entry2;
 					if (entry.unpackSet()) {
-						if (result == null)
+						if (result == null) {
 							result = Boolean.valueOf(entry.isUnpack());
-						else if (result.booleanValue() != entry.isUnpack()) {
+						} else if (result.booleanValue() != entry.isUnpack()) {
 							contradiction = true;
 							break;
 						}
 					}
 				}
-				if (result != null && !contradiction)
+				if (result != null && !contradiction) {
 					return result.booleanValue();
+				}
 			}
 
 			String shape = properties.getProperty(ECLIPSE_BUNDLE_SHAPE);

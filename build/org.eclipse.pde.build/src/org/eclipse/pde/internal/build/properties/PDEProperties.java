@@ -42,17 +42,21 @@ public class PDEProperties implements IAntPropertyValueProvider {
 	@Override
 	public String getAntPropertyValue(String antPropertyName) {
 		String searchedEntry = null;
-		if (HOME.equals(antPropertyName))
+		if (HOME.equals(antPropertyName)) {
 			searchedEntry = "."; //$NON-NLS-1$
+		}
 
-		if (SCRIPTS.equals(antPropertyName))
+		if (SCRIPTS.equals(antPropertyName)) {
 			searchedEntry = "scripts"; //$NON-NLS-1$
+		}
 
-		if (TEMPLATES.equals(antPropertyName))
+		if (TEMPLATES.equals(antPropertyName)) {
 			searchedEntry = "templates"; //$NON-NLS-1$
+		}
 
-		if (searchedEntry == null)
+		if (searchedEntry == null) {
 			return null; //TODO Throw an exception or log an error
+		}
 
 		try {
 			String result = cache.get(searchedEntry);

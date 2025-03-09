@@ -48,8 +48,9 @@ public abstract class AbstractPublisherTask extends Task {
 		 * If not set, default is true if we aren't set as an artifact repo 
 		 */
 		public boolean isMetadataRepository() {
-			if (metadata != null)
+			if (metadata != null) {
 				return metadata.booleanValue();
+			}
 			return !Boolean.TRUE.equals(artifact);
 		}
 
@@ -57,8 +58,9 @@ public abstract class AbstractPublisherTask extends Task {
 		 * If not set, default is true if we aren't set as an metadata repo 
 		 */
 		public boolean isArtifactRepository() {
-			if (artifact != null)
+			if (artifact != null) {
 				return artifact.booleanValue();
+			}
 			return !Boolean.TRUE.equals(metadata);
 		}
 
@@ -98,8 +100,9 @@ public abstract class AbstractPublisherTask extends Task {
 	protected List<URI> contextArtifactRepositories = new ArrayList<>();
 
 	protected Properties getBuildProperties() {
-		if (buildProperties != null)
+		if (buildProperties != null) {
 			return buildProperties;
+		}
 
 		Properties overrideProperties = null;
 		if (overrides != null) {
@@ -194,13 +197,15 @@ public abstract class AbstractPublisherTask extends Task {
 	}
 
 	public void setBaseDirectory(String baseDirectory) {
-		if (baseDirectory != null && baseDirectory.length() > 0 && !baseDirectory.startsWith(ANT_PREFIX))
+		if (baseDirectory != null && baseDirectory.length() > 0 && !baseDirectory.startsWith(ANT_PREFIX)) {
 			this.baseDirectory = baseDirectory;
+		}
 	}
 
 	public void setOverrides(String overrides) {
-		if (overrides != null && overrides.length() > 0 && !overrides.startsWith(ANT_PREFIX))
+		if (overrides != null && overrides.length() > 0 && !overrides.startsWith(ANT_PREFIX)) {
 			this.overrides = overrides;
+		}
 	}
 
 	protected PublisherInfo getPublisherInfo() {
@@ -213,9 +218,11 @@ public abstract class AbstractPublisherTask extends Task {
 
 	// nested <contextRepository/> elements
 	public void addConfiguredContextRepository(RepoEntry repo) {
-		if (repo.isMetadataRepository())
+		if (repo.isMetadataRepository()) {
 			contextMetadataRepositories.add(repo.getRepositoryLocation());
-		if (repo.isArtifactRepository())
+		}
+		if (repo.isArtifactRepository()) {
 			contextArtifactRepositories.add(repo.getRepositoryLocation());
+		}
 	}
 }

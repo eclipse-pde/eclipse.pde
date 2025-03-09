@@ -62,13 +62,15 @@ public class CompilationScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	public void setThreadCount(int count) {
-		if (count != -1)
+		if (count != -1) {
 			this.threadCount = count;
+		}
 	}
 
 	public void setThreadsPerProcessor(int threads) {
-		if (threads != -1)
+		if (threads != -1) {
 			this.threadsPerProcessor = threads;
+		}
 	}
 
 	protected String getScriptName() {
@@ -105,8 +107,9 @@ public class CompilationScriptGenerator extends AbstractScriptGenerator {
 
 		for (BundleDescription bundle : sortedPlugins) {
 			// Individual source bundles have empty build.jars targets, skip them
-			if (Utils.isSourceBundle(bundle))
+			if (Utils.isSourceBundle(bundle)) {
 				continue;
+			}
 
 			if (parallel) {
 				if (requiredInBucket(bundle, bucket)) {
@@ -121,8 +124,9 @@ public class CompilationScriptGenerator extends AbstractScriptGenerator {
 			script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, location.toString(), TARGET_BUILD_JARS, null, null, null);
 		}
 
-		if (parallel)
+		if (parallel) {
 			script.printEndParallel();
+		}
 	}
 
 	private boolean requiredInBucket(BundleDescription bundle, Set<Long> bucket) {

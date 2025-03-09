@@ -119,8 +119,9 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		if (properties == null) {
 			immutableAntProperties = new Properties();
 			BuildDirector.p2Gathering = false;
-		} else
+		} else {
 			immutableAntProperties = properties;
+		}
 		if (getImmutableAntProperty(IBuildPropertiesConstants.PROPERTY_PACKAGER_MODE) == null) {
 			immutableAntProperties.setProperty(IBuildPropertiesConstants.PROPERTY_PACKAGER_MODE, "false"); //$NON-NLS-1$
 		}
@@ -129,8 +130,9 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 			immutableAntProperties.setProperty(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER, "true"); //$NON-NLS-1$
 		}
 
-		if (getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_P2_GATHERING))
+		if (getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_P2_GATHERING)) {
 			BuildDirector.p2Gathering = true;
+		}
 	}
 
 	public static String getImmutableAntProperty(String key) {
@@ -139,14 +141,16 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 
 	public static boolean getPropertyAsBoolean(String key) {
 		String booleanValue = getImmutableAntProperty(key, null);
-		if ("true".equalsIgnoreCase(booleanValue)) //$NON-NLS-1$
+		if ("true".equalsIgnoreCase(booleanValue)) { //$NON-NLS-1$
 			return true;
+		}
 		return false;
 	}
 
 	public static String getImmutableAntProperty(String key, String defaultValue) {
-		if (immutableAntProperties == null || !immutableAntProperties.containsKey(key))
+		if (immutableAntProperties == null || !immutableAntProperties.containsKey(key)) {
 			return defaultValue;
+		}
 		Object obj = immutableAntProperties.get(key);
 		return (obj instanceof String) ? (String) obj : null;
 	}
@@ -214,8 +218,9 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		}
 
 		public static MissingProperties getInstance() {
-			if (singleton == null)
+			if (singleton == null) {
 				singleton = new MissingProperties();
+			}
 			return singleton;
 		}
 	}
@@ -247,8 +252,9 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	}
 
 	public void openScript(String scriptLocation, String scriptName) throws CoreException {
-		if (script != null)
+		if (script != null) {
 			return;
+		}
 		script = newAntScript(scriptLocation, scriptName);
 	}
 
@@ -309,8 +315,9 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	 * @return BuildTimeSite
 	 */
 	public BuildTimeSite getSite(boolean refresh) throws CoreException {
-		if (siteFactory != null && refresh == false)
+		if (siteFactory != null && refresh == false) {
 			return siteFactory.createSite();
+		}
 
 		//If there is an exception from createSite(), we will discard the factory
 		BuildTimeSiteFactory factory = new BuildTimeSiteFactory();
@@ -325,8 +332,9 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		BuildTimeSite result = factory.createSite();
 		siteFactory = factory;
 
-		if (platformProperties != null)
+		if (platformProperties != null) {
 			result.setPlatformPropeties(platformProperties);
+		}
 
 		File baseProfile = result.getSiteContentProvider().getBaseProfile();
 		if (baseProfile != null) {
@@ -401,8 +409,9 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	}
 
 	private void ensurePDEUIStateNotNull() {
-		if (pdeUIState == null)
+		if (pdeUIState == null) {
 			pdeUIState = new PDEUIStateWrapper();
+		}
 	}
 
 	protected boolean havePDEUIState() {
@@ -443,12 +452,14 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	//Find a file in a bundle or a feature.
 	//location is assumed to be structured like : /<featureId | pluginId>/path.to.the.file
 	protected String findFile(String location, boolean makeRelative) {
-		if (location == null || location.length() == 0)
+		if (location == null || location.length() == 0) {
 			return null;
+		}
 
 		//shortcut building the site if we don't need to
-		if (new File(location).exists())
+		if (new File(location).exists()) {
 			return location;
+		}
 
 		PDEState state;
 		try {
@@ -464,8 +475,9 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 			BundleDescription bundle = matches[0];
 			if (bundle != null) {
 				String result = checkFile(IPath.fromOSString(bundle.getLocation()), path, makeRelative);
-				if (result != null)
+				if (result != null) {
 					return result;
+				}
 			}
 		}
 		// Couldn't find the file in any of the plugins, try in a feature.
@@ -475,43 +487,51 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		} catch (CoreException e) {
 			BundleHelper.getDefault().getLog().log(e.getStatus());
 		}
-		if (feature == null)
+		if (feature == null) {
 			return null;
+		}
 
 		String featureRoot = feature.getRootLocation();
-		if (featureRoot != null)
+		if (featureRoot != null) {
 			return checkFile(IPath.fromOSString(featureRoot), path, makeRelative);
+		}
 		return null;
 	}
 
 	protected String findConfigFile(ProductFile productFile, String os) {
 		String path = productFile.getConfigIniPath(os);
-		if (path == null)
+		if (path == null) {
 			return null;
+		}
 
 		String result = findFile(path, false);
-		if (result != null)
+		if (result != null) {
 			return result;
+		}
 
 		// couldn't find productFile, try it as a path directly
 		File f = new File(path);
-		if (f.exists() && f.isFile())
+		if (f.exists() && f.isFile()) {
 			return f.getAbsolutePath();
+		}
 
 		// relative to the working directory
 		f = new File(getWorkingDirectory(), path);
-		if (f.exists() && f.isFile())
+		if (f.exists() && f.isFile()) {
 			return f.getAbsolutePath();
+		}
 
 		// relative to the working directory/plugins
 		f = new File(getWorkingDirectory() + "/" + DEFAULT_PLUGIN_LOCATION, path); //$NON-NLS-1$
-		if (f.exists() && f.isFile())
+		if (f.exists() && f.isFile()) {
 			return f.getAbsolutePath();
+		}
 
 		//relative to .product file
 		f = new File(productFile.getLocation().getParent(), path);
-		if (f.exists() && f.isFile())
+		if (f.exists() && f.isFile()) {
 			return f.getAbsolutePath();
+		}
 
 		return null;
 	}
@@ -519,10 +539,12 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	private String checkFile(IPath base, IPath target, boolean makeRelative) {
 		IPath path = base.append(target.removeFirstSegments(1));
 		String result = path.toOSString();
-		if (!new File(result).exists())
+		if (!new File(result).exists()) {
 			return null;
-		if (makeRelative)
+		}
+		if (makeRelative) {
 			return Utils.makeRelative(path, IPath.fromOSString(workingDirectory)).toOSString();
+		}
 		return result;
 	}
 
@@ -536,8 +558,9 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 
 	static private URI getDownloadCacheLocation(IProvisioningAgent agent) {
 		IAgentLocation location = (IAgentLocation) agent.getService(IAgentLocation.SERVICE_NAME);
-		if (location == null)
+		if (location == null) {
 			return null;
+		}
 		return URIUtil.append(location.getDataArea("org.eclipse.equinox.p2.core"), "cache/"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
@@ -587,8 +610,9 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 
 	//return only the metadata repos, and also the ones we aren't sure about
 	private List<URI> filterRepos(URI[] contexts, FilenameFilter repoFilter) {
-		if (contexts == null)
+		if (contexts == null) {
 			return null;
+		}
 		ArrayList<URI> result = new ArrayList<>();
 		for (URI context : contexts) {
 			File repo = URIUtil.toFile(context);
@@ -597,24 +621,27 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 				result.add(context);
 			} else {
 				String[] list = repo.list(repoFilter);
-				if (list != null && list.length > 0)
+				if (list != null && list.length > 0) {
 					result.add(context);
+				}
 			}
 		}
 		return result;
 	}
 
 	private List<URI> getAssociatedRepositories(File profileFile) {
-		if (profileFile == null || !profileFile.exists() || !profileFile.getName().endsWith(".profile")) //$NON-NLS-1$
+		if (profileFile == null || !profileFile.exists() || !profileFile.getName().endsWith(".profile")) { //$NON-NLS-1$
 			return Collections.emptyList();
+		}
 
 		ArrayList<URI> result = new ArrayList<>();
 		URI profileURI = profileFile.toURI();
 		result.add(profileURI);
 
 		Map<String, Object> profileInfo = extractProfileInformation(profileFile);
-		if (profileInfo == null)
+		if (profileInfo == null) {
 			return result;
+		}
 
 		File areaFile = new File((String) profileInfo.get(PROFILE_DATA_AREA));
 		if (areaFile.exists()) {
@@ -626,8 +653,9 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 					String profileId = (String) profileInfo.get(PROFILE_ID);
 					if (timestamp == -1L) {
 						long[] timestamps = registry.listProfileTimestamps(profileId);
-						if (timestamps.length > 0)
+						if (timestamps.length > 0) {
 							timestamp = timestamps[timestamps.length - 1];
+						}
 					}
 
 					//specifying the timestamp avoids attempting to lock the profile registry
@@ -647,8 +675,9 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 								}
 							}
 							String sharedCache = profile.getProperty(IProfile.PROP_SHARED_CACHE);
-							if (sharedCache != null)
+							if (sharedCache != null) {
 								result.add(new File(cache).toURI());
+							}
 							String dropinRepositories = profile.getProperty("org.eclipse.equinox.p2.cache.extensions"); //$NON-NLS-1$
 							if (dropinRepositories != null) {
 								// #filterRepos will remove any dropin folders that require synchronization
@@ -670,8 +699,9 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 
 				//download cache
 				URI download = getDownloadCacheLocation(agent);
-				if (URIUtil.toFile(download).exists())
+				if (URIUtil.toFile(download).exists()) {
 					result.add(download);
+				}
 			}
 		}
 		return result;
@@ -683,16 +713,19 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	private static String PROFILE_REGISTRY = "registry"; //$NON-NLS-1$
 
 	private static Map<String, Object> extractProfileInformation(File target) {
-		if (target == null || !target.exists())
+		if (target == null || !target.exists()) {
 			return null;
+		}
 
 		IPath path = IPath.fromOSString(target.getAbsolutePath());
-		if (!path.lastSegment().endsWith(PROFILE) && !path.lastSegment().endsWith(PROFILE_GZ))
+		if (!path.lastSegment().endsWith(PROFILE) && !path.lastSegment().endsWith(PROFILE_GZ)) {
 			return null;
+		}
 
 		//expect at least "p2/org.eclipse.equinox.p2.engine/profileRegistry/Profile.profile"
-		if (path.segmentCount() < 4)
+		if (path.segmentCount() < 4) {
 			return null;
+		}
 
 		Map<String, Object> results = new HashMap<>();
 		results.put(PROFILE_TIMESTAMP, Long.valueOf(-1));
@@ -700,8 +733,9 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		String profileId = null;
 		if (target.isFile()) {
 			//p2/org.eclipse.equinox.p2.engine/profileRegistry/Profile.profile/123456.profile.gz
-			if (path.segmentCount() < 5)
+			if (path.segmentCount() < 5) {
 				return null;
+			}
 
 			String timestamp = path.lastSegment();
 			int idx = timestamp.indexOf('.');
@@ -751,11 +785,13 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	 * If the user has specified a platform properties then load it.
 	 */
 	public void setPlatformProperties(String filename) {
-		if (filename == null || filename.trim().length() == 0)
+		if (filename == null || filename.trim().length() == 0) {
 			return;
+		}
 		File file = new File(filename);
-		if (!file.exists())
+		if (!file.exists()) {
 			return;
+		}
 		platformProperties = new Properties();
 		try (InputStream input = new BufferedInputStream(new FileInputStream(file))) {
 			platformProperties.load(input);
@@ -768,8 +804,9 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	}
 
 	protected void generateProductReplaceTask(ProductFile product, String productFilePath, AssemblyInformation assemblyInfo) {
-		if (product == null)
+		if (product == null) {
 			return;
+		}
 
 		BuildTimeSite site = null;
 		try {
@@ -789,10 +826,11 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 
 		script.println("<eclipse.idReplacer productFilePath=\"" + AntScript.getEscaped(productFilePath) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		script.println("                    selfVersion=\"" + version + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
-		if (product.useFeatures())
+		if (product.useFeatures()) {
 			script.println("                    featureIds=\"" + mappings + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
-		else
+		} else {
 			script.println("                    pluginIds=\"" + mappings + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ 
+		}
 
 		return;
 	}

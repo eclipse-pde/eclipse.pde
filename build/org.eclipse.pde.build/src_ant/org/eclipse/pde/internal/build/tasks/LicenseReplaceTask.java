@@ -99,11 +99,13 @@ public class LicenseReplaceTask extends Task {
 				StringBuffer newLicense = new StringBuffer();
 				newLicense.append('\n');
 				newLicense.append(LICENSE_START_TAG + " " + URL_ATTR + "="); //$NON-NLS-1$//$NON-NLS-2$
-				if (licenseURL != null)
+				if (licenseURL != null) {
 					newLicense.append(licenseURL);
+				}
 				newLicense.append(" >"); //$NON-NLS-1$
-				if (licenseText != null)
+				if (licenseText != null) {
 					newLicense.append(licenseText);
+				}
 				newLicense.append(LICENSE_END_TAG);
 
 				buffer.insert(insertionPoint, newLicense.toString());
@@ -157,8 +159,9 @@ public class LicenseReplaceTask extends Task {
 		}
 
 		public void write() {
-			if (!contentChanged)
+			if (!contentChanged) {
 				return;
+			}
 
 			try (OutputStreamWriter w = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(featureFilePath)), StandardCharsets.UTF_8)) {
 				w.write(buffer.toString());
@@ -184,15 +187,17 @@ public class LicenseReplaceTask extends Task {
 			}
 
 			int startFeature = scanNoComment(buffer, 0, FEATURE_START_TAG, true);
-			if (startFeature == -1)
+			if (startFeature == -1) {
 				return;
+			}
 
 			int endFeature = scan(buffer, startFeature, ">"); //$NON-NLS-1$
 			insertionPoint = endFeature + 1;
 
 			int startLicense = scanNoComment(buffer, 0, LICENSE_START_TAG, false);
-			if (startLicense == -1)
+			if (startLicense == -1) {
 				return;
+			}
 
 			int endLicense = scan(buffer, startLicense, ">"); //$NON-NLS-1$
 
@@ -252,8 +257,9 @@ public class LicenseReplaceTask extends Task {
 					if (i < buf.length() - candidate.length()) {
 						String match = buf.substring(i, i + candidate.length());
 						if (candidate.equalsIgnoreCase(match)) {
-							if (!wholeWord || Character.isWhitespace(buf.charAt(i + candidate.length())))
+							if (!wholeWord || Character.isWhitespace(buf.charAt(i + candidate.length()))) {
 								return i;
+							}
 						}
 					}
 				}

@@ -23,25 +23,28 @@ public class TarFileSet extends ZipFileSet {
 	protected void print(AntScript script) {
 		script.printTab();
 		script.print("<tarfileset"); //$NON-NLS-1$
-		if (file)
+		if (file) {
 			script.printAttribute("file", dir, false); //$NON-NLS-1$
-		else
+		} else {
 			script.printAttribute("dir", dir, false); //$NON-NLS-1$
+		}
 		script.printAttribute("defaultexcludes", defaultexcludes, false); //$NON-NLS-1$
 		script.printAttribute("includes", includes, false); //$NON-NLS-1$
 		script.printAttribute("includesfile", includesfile, false); //$NON-NLS-1$
 		script.printAttribute("excludes", excludes, false); //$NON-NLS-1$
 		script.printAttribute("excludesfile", excludesfile, false); //$NON-NLS-1$
 		script.printAttribute("casesensitive", casesensitive, false); //$NON-NLS-1$
-		if (file)
+		if (file) {
 			script.printAttribute("fullpath", prefix, false); //$NON-NLS-1$
-		else
+		} else {
 			script.printAttribute("prefix", prefix, false); //$NON-NLS-1$
+		}
 		
-		if (file)
+		if (file) {
 			script.printAttribute("filemode", permission, false); //$NON-NLS-1$
-		else 
+		} else {
 			script.printAttribute("dirmode", permission, false); //$NON-NLS-1$
+		}
 		
 		script.println("/>"); //$NON-NLS-1$
 	}

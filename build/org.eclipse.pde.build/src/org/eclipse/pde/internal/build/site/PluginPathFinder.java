@@ -42,13 +42,15 @@ public class PluginPathFinder {
 			properties.load(fis);
 			String path = properties.getProperty("path"); //$NON-NLS-1$
 			if (path != null) {
-				if (!IPath.fromOSString(path).isAbsolute())
+				if (!IPath.fromOSString(path).isAbsolute()) {
 					path = prefix + IPath.SEPARATOR + path;
+				}
 				path += IPath.SEPARATOR + ECLIPSE + IPath.SEPARATOR;
-				if (features)
+				if (features) {
 					path += IPDEBuildConstants.DEFAULT_FEATURE_LOCATION;
-				else
+				} else {
 					path += IPDEBuildConstants.DEFAULT_PLUGIN_LOCATION;
+				}
 				if (new File(path).exists()) {
 					return path;
 				}
@@ -68,10 +70,12 @@ public class PluginPathFinder {
 		List<File> sites = new ArrayList<>();
 
 		File file = new File(platformHome, features ? IPDEBuildConstants.DEFAULT_FEATURE_LOCATION : IPDEBuildConstants.DEFAULT_PLUGIN_LOCATION);
-		if (!features && !file.exists())
+		if (!features && !file.exists()) {
 			file = new File(platformHome);
-		if (file.exists())
+		}
+		if (file.exists()) {
 			sites.add(file);
+		}
 
 		File[] linkFiles = new File(platformHome + IPath.SEPARATOR + "links").listFiles(); //$NON-NLS-1$	
 		if (linkFiles != null) {
@@ -87,8 +91,9 @@ public class PluginPathFinder {
 
 	private static List<File> getDropins(String platformHome, boolean features) {
 		File dropins = new File(platformHome, DROPINS);
-		if (!dropins.exists())
+		if (!dropins.exists()) {
 			return Collections.emptyList();
+		}
 
 		ArrayList<File> sites = new ArrayList<>();
 		ArrayList<File> results = new ArrayList<>();
@@ -98,8 +103,9 @@ public class PluginPathFinder {
 			if (content.isFile()) {
 				if (content.getName().endsWith(LINK)) {
 					String path = getSitePath(platformHome, content, features);
-					if (path != null)
+					if (path != null) {
 						sites.add(new File(path));
+					}
 				} else {
 					//bundle
 					results.add(content);
@@ -163,11 +169,13 @@ public class PluginPathFinder {
 	private static List<File> scanLocations(List<File> sites) {
 		ArrayList<File> result = new ArrayList<>();
 		for (File site : sites) {
-			if (site == null || !site.exists())
+			if (site == null || !site.exists()) {
 				continue;
+			}
 			File[] children = site.listFiles();
-			if (children != null)
+			if (children != null) {
 				result.addAll(Arrays.asList(children));
+			}
 		}
 		return result;
 	}

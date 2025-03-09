@@ -57,20 +57,23 @@ public class AssemblyInformation implements IPDEBuildConstants {
 
 		String id = plugin.getSymbolicName();
 		BundleDescription existing = bundleMap.get(id);
-		if (existing == null || existing.getVersion().compareTo(plugin.getVersion()) < 0)
+		if (existing == null || existing.getVersion().compareTo(plugin.getVersion()) < 0) {
 			bundleMap.put(id, plugin);
+		}
 		bundleMap.put(id + '_' + plugin.getVersion().toString(), plugin);
 	}
 
 	public BundleDescription getPlugin(String id, String version) {
-		if (version != null && !GENERIC_VERSION_NUMBER.equals(version))
+		if (version != null && !GENERIC_VERSION_NUMBER.equals(version)) {
 			return bundleMap.get(id + '_' + version);
+		}
 		return bundleMap.get(id);
 	}
 
 	public BuildTimeFeature getRootProvider(String id, String version) {
-		if (version != null && !GENERIC_VERSION_NUMBER.equals(version))
+		if (version != null && !GENERIC_VERSION_NUMBER.equals(version)) {
 			return rootMap.get(id + '_' + version);
+		}
 		return rootMap.get(id);
 	}
 
@@ -93,8 +96,9 @@ public class AssemblyInformation implements IPDEBuildConstants {
 		Set<BundleDescription> result = new LinkedHashSet<>(allPlugins.size());
 		for (BundleDescription bundle : allPlugins) {
 			Properties bundleProperties = ((Properties) bundle.getUserObject());
-			if (bundleProperties == null || bundleProperties.get(IS_COMPILED) == null || Boolean.FALSE == bundleProperties.get(IS_COMPILED))
+			if (bundleProperties == null || bundleProperties.get(IS_COMPILED) == null || Boolean.FALSE == bundleProperties.get(IS_COMPILED)) {
 				result.add(bundle);
+			}
 		}
 		return result;
 	}
@@ -104,8 +108,9 @@ public class AssemblyInformation implements IPDEBuildConstants {
 		Set<BundleDescription> result = new LinkedHashSet<>(allPlugins.size());
 		for (BundleDescription bundle : allPlugins) {
 			Properties bundleProperties = ((Properties) bundle.getUserObject());
-			if (bundleProperties != null && Boolean.TRUE == bundleProperties.get(IS_COMPILED))
+			if (bundleProperties != null && Boolean.TRUE == bundleProperties.get(IS_COMPILED)) {
 				result.add(bundle);
+			}
 		}
 		return result;
 	}
@@ -128,8 +133,9 @@ public class AssemblyInformation implements IPDEBuildConstants {
 		Collection<BuildTimeFeature> allFeatures = getFeatures(config);
 		ArrayList<BuildTimeFeature> result = new ArrayList<>(allFeatures.size());
 		for (BuildTimeFeature tmp : allFeatures) {
-			if (!tmp.isBinary())
+			if (!tmp.isBinary()) {
 				result.add(tmp);
+			}
 		}
 		return result;
 	}
@@ -138,8 +144,9 @@ public class AssemblyInformation implements IPDEBuildConstants {
 		Collection<BuildTimeFeature> allFeatures = getFeatures(config);
 		ArrayList<BuildTimeFeature> result = new ArrayList<>(allFeatures.size());
 		for (BuildTimeFeature tmp : allFeatures) {
-			if (tmp.isBinary())
+			if (tmp.isBinary()) {
 				result.add(tmp);
+			}
 		}
 		return result;
 	}
@@ -161,8 +168,9 @@ public class AssemblyInformation implements IPDEBuildConstants {
 
 		String id = feature.getId();
 		BuildTimeFeature existing = rootMap.get(id);
-		if (existing == null || new Version(existing.getVersion()).compareTo(new Version(feature.getVersion())) < 0)
+		if (existing == null || new Version(existing.getVersion()).compareTo(new Version(feature.getVersion())) < 0) {
 			rootMap.put(id, feature);
+		}
 		rootMap.put(id + '_' + feature.getVersion(), feature);
 	}
 
@@ -176,13 +184,16 @@ public class AssemblyInformation implements IPDEBuildConstants {
 		private final LinkedList<BuildTimeFeature> rootFileProviders = new LinkedList<>();
 
 		public void addRootFileProvider(BuildTimeFeature feature) {
-			if (rootFileProviders.contains(feature))
+			if (rootFileProviders.contains(feature)) {
 				return;
+			}
 			for (BuildTimeFeature featureDescriptor : rootFileProviders) {
-				if (feature == featureDescriptor)
+				if (feature == featureDescriptor) {
 					return;
-				if (feature.getId().equals(featureDescriptor.getId()) && feature.getVersion().equals(featureDescriptor.getVersion()))
+				}
+				if (feature.getId().equals(featureDescriptor.getId()) && feature.getVersion().equals(featureDescriptor.getVersion())) {
 					return;
+				}
 			}
 			rootFileProviders.add(feature);
 		}
@@ -205,8 +216,9 @@ public class AssemblyInformation implements IPDEBuildConstants {
 
 		public void addFeature(BuildTimeFeature feature) {
 			for (BuildTimeFeature featureDescriptor : features) {
-				if (feature.getId().equals(featureDescriptor.getId()) && (feature).getVersion().equals(featureDescriptor.getVersion()))
+				if (feature.getId().equals(featureDescriptor.getId()) && (feature).getVersion().equals(featureDescriptor.getVersion())) {
 					return;
+				}
 			}
 			features.add(feature);
 		}

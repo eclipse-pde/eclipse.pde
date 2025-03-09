@@ -79,11 +79,12 @@ public class AntScript implements IAntScript {
 		printTab();
 		output.print("<antcall"); //$NON-NLS-1$
 		printAttribute("target", target, true); //$NON-NLS-1$
-		if (inheritAll == false)
+		if (inheritAll == false) {
 			printAttribute("inheritAll", "false", false); //$NON-NLS-1$ //$NON-NLS-2$
-		if (params == null)
+		}
+		if (params == null) {
 			output.println("/>"); //$NON-NLS-1$
-		else {
+		} else {
 			output.println(">"); //$NON-NLS-1$
 			indent++;
 			Set<Map.Entry<String, String>> entries = params.entrySet();
@@ -134,10 +135,12 @@ public class AntScript implements IAntScript {
 	public void printParallel(int threadCount, int threadsPerProcessor) {
 		printTab();
 		output.print("<parallel"); //$NON-NLS-1$
-		if (threadCount > 0)
+		if (threadCount > 0) {
 			output.print(" threadCount=\'" + String.valueOf(threadCount) + "\'"); //$NON-NLS-1$ //$NON-NLS-2$
-		if (threadsPerProcessor > 0)
+		}
+		if (threadsPerProcessor > 0) {
 			output.print(" threadsPerProcessor=\'" + String.valueOf(threadsPerProcessor) + "\'"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		output.println(">"); //$NON-NLS-1$
 		indent++;
 	}
@@ -157,9 +160,11 @@ public class AntScript implements IAntScript {
 		//printAttribute("filesetmanifest", filesetManifest, false); //$NON-NLS-1$
 		output.println(">"); //$NON-NLS-1$
 		indent++;
-		for (FileSet file : files)
-			if (file != null)
+		for (FileSet file : files) {
+			if (file != null) {
 				file.print(this);
+			}
+		}
 		indent--;
 		printTab();
 		output.println("</jar>"); //$NON-NLS-1$
@@ -212,9 +217,11 @@ public class AntScript implements IAntScript {
 		printAttribute("duplicate", duplicate, false); //$NON-NLS-1$
 		output.println(">"); //$NON-NLS-1$
 		indent++;
-		for (FileSet otherFile : otherFiles)
-			if (otherFile != null)
+		for (FileSet otherFile : otherFiles) {
+			if (otherFile != null) {
 				otherFile.print(this);
+			}
+		}
 		indent--;
 		output.println("</jar>"); //$NON-NLS-1$
 	}
@@ -287,9 +294,9 @@ public class AntScript implements IAntScript {
 		printAttribute("target", target, false); //$NON-NLS-1$
 		printAttribute("output", outputParam, false); //$NON-NLS-1$
 		printAttribute("inheritAll", inheritAll, false); //$NON-NLS-1$
-		if (properties == null && references == null)
+		if (properties == null && references == null) {
 			output.println("/>"); //$NON-NLS-1$
-		else {
+		} else {
 			output.println(">"); //$NON-NLS-1$
 			indent++;
 			if (properties != null) {
@@ -324,9 +331,9 @@ public class AntScript implements IAntScript {
 		printAttribute("failonerror", failOnError, false); //$NON-NLS-1$
 		printAttribute("buildpath", buildpath, false); //$NON-NLS-1$
 		printAttribute("inheritall", inheritAll, false); //$NON-NLS-1$
-		if (properties == null && references == null)
+		if (properties == null && references == null) {
 			output.println("/>"); //$NON-NLS-1$
-		else {
+		} else {
 			output.println(">"); //$NON-NLS-1$
 			indent++;
 			if (properties != null) {
@@ -370,14 +377,16 @@ public class AntScript implements IAntScript {
 		printAttribute("filesonly", filesOnly ? "true" : "false", true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		printAttribute("whenempty", "skip", true); //$NON-NLS-1$//$NON-NLS-2$
 		printAttribute("update", update ? "true" : "false", true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		if (fileSets == null)
+		if (fileSets == null) {
 			output.println("/>"); //$NON-NLS-1$
-		else {
+		} else {
 			output.println(">"); //$NON-NLS-1$
 			indent++;
-			for (FileSet fileSet : fileSets)
-				if (fileSet != null)
+			for (FileSet fileSet : fileSets) {
+				if (fileSet != null) {
 					fileSet.print(this);
+				}
+			}
 			indent--;
 			printTab();
 			output.println("</zip>"); //$NON-NLS-1$
@@ -412,14 +421,16 @@ public class AntScript implements IAntScript {
 		printAttribute("destfile", zipfile, true); //$NON-NLS-1$
 		printAttribute("basedir", basedir, false); //$NON-NLS-1$
 		printAttribute("compression", "gzip", true); //$NON-NLS-1$//$NON-NLS-2$
-		if (fileSets == null)
+		if (fileSets == null) {
 			output.println("/>"); //$NON-NLS-1$
-		else {
+		} else {
 			output.println(">"); //$NON-NLS-1$
 			indent++;
-			for (FileSet fileSet : fileSets)
-				if (fileSet != null)
+			for (FileSet fileSet : fileSets) {
+				if (fileSet != null) {
 					fileSet.print(this);
+				}
+			}
 			indent--;
 			printTab();
 			output.println("</tar>"); //$NON-NLS-1$
@@ -436,10 +447,11 @@ public class AntScript implements IAntScript {
 	protected void printArg(String line, boolean value) {
 		printTab();
 		output.print("<arg"); //$NON-NLS-1$
-		if (value)
+		if (value) {
 			printAttribute("value", line, false); //$NON-NLS-1$
-		else
+		} else {
 			printAttribute("line", line, false); //$NON-NLS-1$
+		}
 		output.println("/>"); //$NON-NLS-1$
 	}
 
@@ -478,8 +490,9 @@ public class AntScript implements IAntScript {
 	 */
 	@Override
 	public void printAttribute(String name, String value, boolean mandatory) {
-		if (mandatory && value == null)
+		if (mandatory && value == null) {
 			value = ""; //$NON-NLS-1$
+		}
 		if (value != null) {
 			output.print(" "); //$NON-NLS-1$
 			output.print(getEscaped(name));
@@ -504,14 +517,16 @@ public class AntScript implements IAntScript {
 		printAttribute("todir", todir, false); //$NON-NLS-1$
 		printAttribute("failonerror", failOnError ? "true" : "false", true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		printAttribute("overwrite", overwrite ? "true" : "false", true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		if (fileSets == null)
+		if (fileSets == null) {
 			output.println("/>"); //$NON-NLS-1$
-		else {
+		} else {
 			output.println(">"); //$NON-NLS-1$
 			indent++;
-			for (FileSet fileSet : fileSets)
-				if (fileSet != null)
+			for (FileSet fileSet : fileSets) {
+				if (fileSet != null) {
 					fileSet.print(this);
+				}
+			}
 			indent--;
 			printTab();
 			output.println("</copy>"); //$NON-NLS-1$
@@ -525,9 +540,11 @@ public class AntScript implements IAntScript {
 		printAttribute("failonerror", failOnError ? "true" : "false", true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		output.println(">"); //$NON-NLS-1$
 		indent++;
-		for (FileSet fileSet : fileSets)
-			if (fileSet != null)
+		for (FileSet fileSet : fileSets) {
+			if (fileSet != null) {
 				fileSet.print(this);
+			}
+		}
 		indent--;
 		printTab();
 		output.println("</move>"); //$NON-NLS-1$
@@ -568,14 +585,16 @@ public class AntScript implements IAntScript {
 		printAttribute("dir", dir, false); //$NON-NLS-1$
 		printAttribute("file", file, false); //$NON-NLS-1$
 		printAttribute("quiet", quiet, false); //$NON-NLS-1$
-		if (fileSets == null)
+		if (fileSets == null) {
 			output.println("/>"); //$NON-NLS-1$
-		else {
+		} else {
 			output.println(">"); //$NON-NLS-1$
 			indent++;
-			for (FileSet fileSet : fileSets)
-				if (fileSet != null)
+			for (FileSet fileSet : fileSets) {
+				if (fileSet != null) {
 					fileSet.print(this);
+				}
+			}
 			indent--;
 			printTab();
 			output.println("</delete>"); //$NON-NLS-1$
@@ -603,9 +622,9 @@ public class AntScript implements IAntScript {
 		printAttribute("executable", executable, true); //$NON-NLS-1$
 		printAttribute("dir", dir, false); //$NON-NLS-1$
 		printAttribute("os", os, false); //$NON-NLS-1$
-		if (lineArgs == null || lineArgs.size() == 0)
+		if (lineArgs == null || lineArgs.size() == 0) {
 			output.println("/>"); //$NON-NLS-1$
-		else {
+		} else {
 			output.println(">"); //$NON-NLS-1$
 			indent++;
 			for (String arg : lineArgs) {
@@ -640,8 +659,9 @@ public class AntScript implements IAntScript {
 		printTab();
 		print("<eclipse.brand"); //$NON-NLS-1$
 		printAttribute("root", root, true); //$NON-NLS-1$
-		if (icons != null)
+		if (icons != null) {
 			printAttribute("icons", icons, true); //$NON-NLS-1$
+		}
 		printAttribute("name", name, true); //$NON-NLS-1$
 		printAttribute("os", os, true); //$NON-NLS-1$
 		println("/>"); //$NON-NLS-1$
@@ -681,8 +701,9 @@ public class AntScript implements IAntScript {
 	public void printPathStructure(String tag, String id, List<Object> paths) {
 		printTab();
 		print("<" + getEscaped(tag)); //$NON-NLS-1$
-		if (id != null)
+		if (id != null) {
 			print(" id=\"" + getEscaped(id) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		print(">"); //$NON-NLS-1$
 		println();
 
@@ -849,8 +870,9 @@ public class AntScript implements IAntScript {
 	 * Print the given number of tabs to the Ant script.
 	 */
 	public void printTab() {
-		for (int i = 0; i < indent; i++)
+		for (int i = 0; i < indent; i++) {
 			output.print("\t"); //$NON-NLS-1$
+		}
 	}
 
 	/**
@@ -972,10 +994,11 @@ public class AntScript implements IAntScript {
 	public void printConvertPathTask(String toConvert, String propertyName, boolean isEclipseResource) {
 		printTab();
 		output.print("<eclipse.convertPath"); //$NON-NLS-1$
-		if (isEclipseResource == false)
+		if (isEclipseResource == false) {
 			printAttribute("fileSystemPath", toConvert, true); //$NON-NLS-1$
-		else
+		} else {
 			printAttribute("resourcePath", toConvert, true); //$NON-NLS-1$
+		}
 		printAttribute("property", propertyName, true); //$NON-NLS-1$
 		output.println("/>"); //$NON-NLS-1$
 	}
@@ -1044,10 +1067,11 @@ public class AntScript implements IAntScript {
 	public void printMacroDef(String macroName, List<String> attributes) {
 		println("<macrodef name=\"" + macroName + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
 		indent++;
-		if (null != attributes)
+		if (null != attributes) {
 			for (String attribute : attributes) {
 				println("<attribute name=\"" + attribute + "\" />"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
+		}
 		println("<sequential>"); //$NON-NLS-1$
 		indent++;
 	}
@@ -1072,8 +1096,9 @@ public class AntScript implements IAntScript {
 
 	public static String getEscaped(String s) {
 		StringBuffer result = new StringBuffer(s.length() + 10);
-		for (int i = 0; i < s.length(); ++i)
+		for (int i = 0; i < s.length(); ++i) {
 			appendEscapedChar(result, s.charAt(i));
+		}
 		return result.toString();
 	}
 

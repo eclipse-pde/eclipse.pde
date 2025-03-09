@@ -42,20 +42,24 @@ public class FeaturesAndBundlesTask extends AbstractPublisherTask {
 		File[] b = getLocations(bundles);
 
 		BuildPublisherApplication application = createPublisherApplication();
-		if (f.length > 0)
+		if (f.length > 0) {
 			application.addAction(new FeaturesAction(f));
-		if (b.length > 0)
+		}
+		if (b.length > 0) {
 			application.addAction(new BundlesAction(b));
+		}
 		if (siteXML != null) {
 			SiteXMLAction action = new SiteXMLAction(siteXML, siteQualifier);
-			if (categoryVersion != null)
+			if (categoryVersion != null) {
 				action.setCategoryVersion(categoryVersion);
+			}
 			application.addAction(action);
 		}
 		if (categoryXML != null) {
 			CategoryXMLAction action = new CategoryXMLAction(categoryXML, siteQualifier);
-			if (categoryVersion != null)
+			if (categoryVersion != null) {
 				action.setCategoryVersion(categoryVersion);
+			}
 			application.addAction(action);
 		}
 
@@ -94,8 +98,9 @@ public class FeaturesAndBundlesTask extends AbstractPublisherTask {
 	}
 
 	public void setSiteQualifier(String siteQualifier) {
-		if (siteQualifier != null && !siteQualifier.startsWith(ANT_PREFIX))
+		if (siteQualifier != null && !siteQualifier.startsWith(ANT_PREFIX)) {
 			this.siteQualifier = siteQualifier;
+		}
 	}
 
 	public void setCategory(String value) {
@@ -109,8 +114,9 @@ public class FeaturesAndBundlesTask extends AbstractPublisherTask {
 	}
 
 	public void setCategoryVersion(String version) {
-		if (version != null && !version.startsWith(ANT_PREFIX))
+		if (version != null && !version.startsWith(ANT_PREFIX)) {
 			categoryVersion = version;
+		}
 	}
 
 	public void setSite(String value) {

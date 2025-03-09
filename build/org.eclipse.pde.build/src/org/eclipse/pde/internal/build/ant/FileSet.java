@@ -57,10 +57,12 @@ public class FileSet {
 		script.print(">"); //$NON-NLS-1$
 		script.println();
 
-		if (includes != null)
+		if (includes != null) {
 			printNames(script, "include", includes); //$NON-NLS-1$
-		if (excludes != null)
+		}
+		if (excludes != null) {
 			printNames(script, "exclude", excludes); //$NON-NLS-1$
+		}
 		script.println("</fileset>"); //$NON-NLS-1$
 	}
 

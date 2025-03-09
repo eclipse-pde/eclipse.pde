@@ -149,8 +149,9 @@ public class JNLPGenerator extends DefaultHandler {
 					//Ignore the exception
 				}
 			} finally {
-				if (out != null)
+				if (out != null) {
 					out.close();
+				}
 			}
 		} catch (IOException e) {
 			//Ignore the exception
@@ -294,22 +295,26 @@ public class JNLPGenerator extends DefaultHandler {
 	}
 
 	private void writeResourceEpilogue() {
-		if (!resourceWritten)
+		if (!resourceWritten) {
 			return;
+		}
 		out.println("\t</resources>"); //$NON-NLS-1$
 		resourceWritten = false;
 		currentOS = null;
 	}
 
 	private void writeResourcePrologue(String os, String ws, String arch) {
-		if (os == null)
+		if (os == null) {
 			os = ws;
+		}
 		os = convertOS(os);
 		arch = convertArch(arch);
-		if (resourceWritten && osMatch(os) && archMatch(arch))
+		if (resourceWritten && osMatch(os) && archMatch(arch)) {
 			return;
-		if (resourceWritten)
+		}
+		if (resourceWritten) {
 			writeResourceEpilogue();
+		}
 		out.println("\t<resources" + (os == null ? "" : " os=\"" + os + "\"") + (arch == null ? "" : " arch=\"" + arch + "\"") + ">"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$//$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$//$NON-NLS-7$ //$NON-NLS-8$
 		resourceWritten = true;
 		currentOS = os;
@@ -317,46 +322,59 @@ public class JNLPGenerator extends DefaultHandler {
 	}
 
 	private String convertOS(String os) {
-		if (os == null)
+		if (os == null) {
 			return null;
-		if ("win32".equalsIgnoreCase(os)) //$NON-NLS-1$
+		}
+		if ("win32".equalsIgnoreCase(os)) { //$NON-NLS-1$
 			return "Windows"; //$NON-NLS-1$
-		if ("macosx".equalsIgnoreCase(os)) //$NON-NLS-1$
+		}
+		if ("macosx".equalsIgnoreCase(os)) { //$NON-NLS-1$
 			return "Mac"; //$NON-NLS-1$
-		if ("linux".equalsIgnoreCase(os)) //$NON-NLS-1$
+		}
+		if ("linux".equalsIgnoreCase(os)) { //$NON-NLS-1$
 			return "Linux"; //$NON-NLS-1$
-		if ("solaris".equalsIgnoreCase(os)) //$NON-NLS-1$
+		}
+		if ("solaris".equalsIgnoreCase(os)) { //$NON-NLS-1$
 			return "Solaris"; //$NON-NLS-1$
-		if ("hpux".equalsIgnoreCase(os)) //$NON-NLS-1$
+		}
+		if ("hpux".equalsIgnoreCase(os)) { //$NON-NLS-1$
 			return "HP-UX"; //$NON-NLS-1$
-		if ("aix".equalsIgnoreCase(os)) //$NON-NLS-1$
+		}
+		if ("aix".equalsIgnoreCase(os)) { //$NON-NLS-1$
 			return "AIX"; //$NON-NLS-1$
+		}
 		return os;
 	}
 
 	private boolean osMatch(String os) {
-		if (os == currentOS)
+		if (os == currentOS) {
 			return true;
-		if (os == null)
+		}
+		if (os == null) {
 			return false;
+		}
 		return os.equals(currentOS);
 	}
 
 	private String convertArch(String arch) {
-		if (arch == null)
+		if (arch == null) {
 			return null;
+		}
 
-		if ("x86_64".equals(arch))//$NON-NLS-1$
+		if ("x86_64".equals(arch)) { //$NON-NLS-1$
 			return "x86_64"; //$NON-NLS-1$
+		}
 
 		return arch;
 	}
 
 	private boolean archMatch(String arch) {
-		if (arch == currentOS)
+		if (arch == currentOS) {
 			return true;
-		if (arch == null)
+		}
+		if (arch == null) {
 			return false;
+		}
 		return arch.equals(currentArch);
 	}
 
@@ -375,12 +393,14 @@ public class JNLPGenerator extends DefaultHandler {
 		if (isValidEnvironment(os, ws, arch)) {
 			writeResourcePrologue(os, ws, arch);
 			out.print("\t\t<extension ");//$NON-NLS-1$
-			if (name != null)
+			if (name != null) {
 				out.print("name=\"" + name + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 			if (inclusionId != null) {
 				out.print("href=\"features/" + inclusionId); //$NON-NLS-1$
-				if (inclusionVersion != null)
+				if (inclusionVersion != null) {
 					out.print('_' + inclusionVersion);
+				}
 				out.print(".jnlp\" "); //$NON-NLS-1$
 			}
 			out.println("/>"); //$NON-NLS-1$
@@ -404,8 +424,9 @@ public class JNLPGenerator extends DefaultHandler {
 	 *         translateable key
 	 */
 	private String processNLS(String string) {
-		if (string == null)
+		if (string == null) {
 			return null;
+		}
 		string = string.trim();
 		if (!string.startsWith("%")) { //$NON-NLS-1$
 			return string;
@@ -427,30 +448,37 @@ public class JNLPGenerator extends DefaultHandler {
 	}
 
 	private void writePrologue() throws IOException {
-		if (out != null)
+		if (out != null) {
 			return;
+		}
 		if (destination == null) {
 			featureRoot.getParentFile();
 			destination = featureRoot.getParent() + '/';
 		}
-		if (destination.endsWith("/") || destination.endsWith("\\")) //$NON-NLS-1$  //$NON-NLS-2$
+		if (destination.endsWith("/") || destination.endsWith("\\")) { //$NON-NLS-1$  //$NON-NLS-2$
 			destination = new File(featureRoot.getParentFile(), id + "_" + version + ".jnlp").getAbsolutePath(); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		out = new PrintWriter(new BufferedOutputStream(new FileOutputStream(destination)));
 		writePrologue();
 		out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
 		out.print("<jnlp spec=\"1.0+\" "); //$NON-NLS-1$
-		if (codebase != null)
+		if (codebase != null) {
 			out.print("codebase=\"" + codebase); //$NON-NLS-1$
+		}
 		out.println("\">"); //$NON-NLS-1$
 		out.println("\t<information>"); //$NON-NLS-1$
-		if (label != null)
+		if (label != null) {
 			out.println("\t\t<title>" + label + "</title>"); //$NON-NLS-1$ //$NON-NLS-2$
-		if (provider != null)
+		}
+		if (provider != null) {
 			out.println("\t\t<vendor>" + provider + "</vendor>"); //$NON-NLS-1$ //$NON-NLS-2$
-		if (description != null)
+		}
+		if (description != null) {
 			out.println("\t\t<description>" + description + "</description>"); //$NON-NLS-1$ //$NON-NLS-2$
-		if (generateOfflineAllowed)
+		}
+		if (generateOfflineAllowed) {
 			out.println("\t\t<offline-allowed/>"); //$NON-NLS-1$
+		}
 		out.println("\t</information>"); //$NON-NLS-1$
 		out.println("\t<security>"); //$NON-NLS-1$
 		out.println("\t\t<all-permissions/>"); //$NON-NLS-1$
@@ -466,33 +494,40 @@ public class JNLPGenerator extends DefaultHandler {
 	}
 
 	private boolean isMatching(String candidateValues, String siteValues) {
-		if (candidateValues == null)
+		if (candidateValues == null) {
 			return true;
-		if (siteValues == null)
+		}
+		if (siteValues == null) {
 			return false;
-		if ("*".equals(candidateValues)) //$NON-NLS-1$
+		}
+		if ("*".equals(candidateValues)) { //$NON-NLS-1$
 			return true;
-		if ("".equals(candidateValues)) //$NON-NLS-1$
+		}
+		if ("".equals(candidateValues)) { //$NON-NLS-1$
 			return true;
+		}
 		StringTokenizer siteTokens = new StringTokenizer(siteValues, ","); //$NON-NLS-1$
 		//$NON-NLS-1$	
 		while (siteTokens.hasMoreTokens()) {
 			StringTokenizer candidateTokens = new StringTokenizer(candidateValues, ","); //$NON-NLS-1$
 			String siteValue = siteTokens.nextToken();
 			while (candidateTokens.hasMoreTokens()) {
-				if (siteValue.equalsIgnoreCase(candidateTokens.nextToken()))
+				if (siteValue.equalsIgnoreCase(candidateTokens.nextToken())) {
 					return true;
+				}
 			}
 		}
 		return false;
 	}
 
 	private boolean isValidEnvironment(String os, String ws, String arch) {
-		if (configs.length == 0)
+		if (configs.length == 0) {
 			return true;
+		}
 		for (Config config : configs) {
-			if (isMatching(os, config.getOs()) && isMatching(ws, config.getWs()) && isMatching(arch, config.getArch()))
+			if (isMatching(os, config.getOs()) && isMatching(ws, config.getWs()) && isMatching(arch, config.getArch())) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -514,13 +549,15 @@ public class JNLPGenerator extends DefaultHandler {
 			StringTokenizer configTokens = new StringTokenizer(aConfig, ","); //$NON-NLS-1$
 			if (configTokens.countTokens() == 3) {
 				Config toAdd = new Config(configTokens.nextToken().trim(), configTokens.nextToken().trim(), configTokens.nextToken().trim());
-				if (toAdd.equals(Config.genericConfig()))
+				if (toAdd.equals(Config.genericConfig())) {
 					toAdd = Config.genericConfig();
+				}
 				configInfos.add(toAdd);
 			}
 		}
-		if (configInfos.size() == 0)
+		if (configInfos.size() == 0) {
 			configInfos.add(Config.genericConfig());
+		}
 		configs = configInfos.toArray(new Config[configInfos.size()]);
 	}
 }

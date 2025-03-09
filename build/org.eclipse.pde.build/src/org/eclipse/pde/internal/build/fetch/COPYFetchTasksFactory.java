@@ -128,9 +128,9 @@ public class COPYFetchTasksFactory implements IFetchFactory, IPDEBuildConstants 
 		script.printAttribute("failonerror", failOnError ? "true" : "false", true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		script.printAttribute("overwrite", overwrite ? "true" : "false", true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-		if (dirs == null)
+		if (dirs == null) {
 			script.println("/>"); //$NON-NLS-1$
-		else {
+		} else {
 			script.println(">"); //$NON-NLS-1$
 			for (String dir : dirs) {
 				script.printTabs();

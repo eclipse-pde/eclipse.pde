@@ -115,8 +115,9 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		script.printProperty(PROPERTY_SIGN, (signJars ? Boolean.TRUE : Boolean.FALSE).toString());
 		script.printAvailableTask(PROPERTY_CUSTOM_ASSEMBLY, "${builder}/customAssembly.xml", "${builder}/customAssembly.xml"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		if (productQualifier != null)
+		if (productQualifier != null) {
 			script.printProperty(PROPERTY_P2_PRODUCT_QUALIFIER, productQualifier);
+		}
 
 		script.printProperty(PROPERTY_P2_MIRROR_RAW, FALSE);
 		script.printProperty(PROPERTY_P2_MIRROR_SLICING_FILTER, ""); //$NON-NLS-1$
@@ -146,8 +147,9 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 	protected void generateGatherCalls() {
 		super.generateGatherCalls();
 
-		if (signJars)
+		if (signJars) {
 			script.printAntCallTask(TARGET_P2_SIGN_REPO, true, null);
+		}
 		script.println();
 	}
 
@@ -157,8 +159,9 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		if (product != null) {
 			List<Config> configs = getConfigInfos();
 			for (Config config : configs) {
-				if (Config.genericConfig().equals(config))
+				if (Config.genericConfig().equals(config)) {
 					continue;
+				}
 				script.printTab();
 				script.print("<eclipse.brand.p2.artifacts "); //$NON-NLS-1$
 				script.printAttribute("launcherName", Utils.getPropertyFormat(PROPERTY_LAUNCHER_NAME), true); //$NON-NLS-1$
@@ -228,8 +231,9 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 				//if we didn't generate the file, copy over the provided one
 				File parent = productFile.getParentFile();
 				File p2Inf = new File(parent, "p2.inf"); //$NON-NLS-1$
-				if (p2Inf.exists())
+				if (p2Inf.exists()) {
 					script.printCopyTask(p2Inf.getAbsolutePath(), productDir, null, false, true);
+				}
 			}
 
 			script.printTab();
@@ -266,8 +270,9 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 			}
 
 			for (Config config : getConfigInfos()) {
-				if (Config.genericConfig().equals(config))
+				if (Config.genericConfig().equals(config)) {
 					continue;
+				}
 
 				script.printTab();
 				script.print("\t<config"); //$NON-NLS-1$
@@ -297,15 +302,18 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 	}
 
 	protected void generateCopyConfigs(ProductFile product, String productDir) {
-		if (!product.haveCustomConfig())
+		if (!product.haveCustomConfig()) {
 			return;
+		}
 		for (Config config : getConfigInfos()) {
 			String entry = product.getConfigIniPath(config.getOs());
-			if (entry == null)
+			if (entry == null) {
 				continue;
+			}
 			File entryFile = new File(entry);
-			if (entryFile.exists() && entryFile.isAbsolute())
+			if (entryFile.exists() && entryFile.isAbsolute()) {
 				continue;
+			}
 			String path = findConfigFile(product, config.getOs());
 			if (path != null) {
 				//non-null path exists, but isn't necessarily absolute
@@ -321,13 +329,15 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		if (product == null) {
 			binaryFeatures = new ArrayList<>();
 			for (BuildTimeFeature feature : features) {
-				if (feature.isBinary())
+				if (feature.isBinary()) {
 					binaryFeatures.add(feature);
+				}
 			}
 		}
 
-		if (product == null && (binaryFeatures == null || binaryFeatures.size() == 0))
+		if (product == null && (binaryFeatures == null || binaryFeatures.size() == 0)) {
 			return;
+		}
 
 		Map<String, String> args = new HashMap<>();
 		// note that if the raw attribute (p2.mirror.raw) has not been set in the build.properties, then the default was set in #generatePrologue()
@@ -457,10 +467,11 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		script.printTargetDeclaration(TARGET_GATHER_BIN_PARTS, null, null, null, null);
 		for (BundleDescription plugin : plugins) {
 			IPath pluginLocation = IPath.fromOSString(plugin.getLocation());
-			if (Utils.isBinary(plugin))
+			if (Utils.isBinary(plugin)) {
 				binaryBundles.add(new FileSet(pluginLocation.removeLastSegments(1).toOSString(), null, pluginLocation.lastSegment(), null, null, null, null));
-			else
+			} else {
 				printCustomGatherCall(ModelBuildScriptGenerator.getNormalizedName(plugin), Utils.makeRelative(pluginLocation, IPath.fromOSString(workingDirectory)).toOSString(), PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS), null);
+			}
 		}
 
 		Set<BuildTimeFeature> featureSet = BuildDirector.p2Gathering ? new HashSet<>() : null;
@@ -477,8 +488,9 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 
 		//This will generate gather.bin.parts call to features that provides files for the root
 		for (BuildTimeFeature feature : rootFileProviders) {
-			if (featureSet.contains(feature))
+			if (featureSet.contains(feature)) {
 				continue;
+			}
 			if (isOldExecutableFeature(feature)) {
 				oldExecutableFeature = feature;
 				script.printAntCallTask(TARGET_P2_COMPATIBILITY_GATHER_EXECUTABLE, true, null);
@@ -502,8 +514,9 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 	}
 
 	private boolean isOldExecutableFeature(BuildTimeFeature feature) {
-		if (!feature.getId().equals(FEATURE_EQUINOX_EXECUTABLE))
+		if (!feature.getId().equals(FEATURE_EQUINOX_EXECUTABLE)) {
 			return false;
+		}
 
 		if (feature.isBinary() || !OLD_EXECUTABLE_RANGE.includes(new Version(feature.getVersion()))) {
 			return false;
