@@ -67,8 +67,9 @@ public class JavaAttributeWizard extends Wizard {
 
 	private IDialogSettings getSettingsSection(IDialogSettings master) {
 		IDialogSettings setting = master.getSection(STORE_SECTION);
-		if (setting == null)
+		if (setting == null) {
 			setting = master.addNewSection(STORE_SECTION);
+		}
 		return setting;
 	}
 
@@ -95,8 +96,9 @@ public class JavaAttributeWizard extends Wizard {
 				if (fProject.hasNature(JavaCore.NATURE_ID)) {
 					IJavaProject jProject = JavaCore.create(fProject);
 					IJavaElement jElement = jProject.findElement(resource.getProjectRelativePath().removeFirstSegments(1));
-					if (jElement != null)
+					if (jElement != null) {
 						JavaUI.openInEditor(jElement);
+					}
 				} else if (resource instanceof IFile) {
 					IWorkbenchPage page = PDEPlugin.getActivePage();
 					IDE.openEditor(page, (IFile) resource, true);
@@ -113,19 +115,22 @@ public class JavaAttributeWizard extends Wizard {
 	}
 
 	public String getQualifiedName() {
-		if (fMainPage.getCreatedType() == null)
+		if (fMainPage.getCreatedType() == null) {
 			return null;
+		}
 		return fMainPage.getCreatedType().getFullyQualifiedName('$');
 	}
 
 	public String getQualifiedNameWithArgs() {
 		String name = getQualifiedName();
-		if (name == null)
+		if (name == null) {
 			return null;
+		}
 		if (fMainPage instanceof JavaAttributeWizardPage) {
 			String classArgs = ((JavaAttributeWizardPage) fMainPage).getClassArgs();
-			if (classArgs != null && classArgs.length() > 0)
+			if (classArgs != null && classArgs.length() > 0) {
 				return name + ':' + classArgs;
+			}
 		}
 		return name;
 	}

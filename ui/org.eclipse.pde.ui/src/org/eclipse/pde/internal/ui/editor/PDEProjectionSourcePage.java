@@ -47,8 +47,9 @@ public abstract class PDEProjectionSourcePage extends PDESourcePage implements I
 		super(editor, id, title);
 		fColorManager = ColorManager.getDefault();
 		fConfiguration = createSourceViewerConfiguration(fColorManager);
-		if (fConfiguration != null)
+		if (fConfiguration != null) {
 			setSourceViewerConfiguration(fConfiguration);
+		}
 	}
 
 	@Override
@@ -80,8 +81,9 @@ public abstract class PDEProjectionSourcePage extends PDESourcePage implements I
 			fProjectionSupport = null;
 		}
 		fColorManager.dispose();
-		if (fConfiguration != null)
+		if (fConfiguration != null) {
 			fConfiguration.dispose();
+		}
 		super.dispose();
 	}
 
@@ -125,8 +127,9 @@ public abstract class PDEProjectionSourcePage extends PDESourcePage implements I
 
 	@Override
 	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
-		if (fConfiguration == null)
+		if (fConfiguration == null) {
 			return false;
+		}
 		return fConfiguration.affectsTextPresentation(event) || super.affectsTextPresentation(event);
 	}
 
@@ -135,8 +138,9 @@ public abstract class PDEProjectionSourcePage extends PDESourcePage implements I
 		try {
 			if (fConfiguration != null) {
 				ISourceViewer sourceViewer = getSourceViewer();
-				if (sourceViewer != null)
+				if (sourceViewer != null) {
 					fConfiguration.adaptToPreferenceChange(event);
+				}
 			}
 		} finally {
 			super.handlePreferenceStoreChanged(event);

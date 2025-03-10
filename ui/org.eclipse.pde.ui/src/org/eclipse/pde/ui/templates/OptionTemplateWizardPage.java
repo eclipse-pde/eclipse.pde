@@ -75,8 +75,9 @@ public class OptionTemplateWizardPage extends WizardPage {
 			TemplateOption option = options.get(i);
 			option.createControl(container, 2);
 		}
-		if (helpContextId != null)
+		if (helpContextId != null) {
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(container, helpContextId);
+		}
 		setControl(container);
 		Dialog.applyDialogFont(container);
 		container.forceFocus();

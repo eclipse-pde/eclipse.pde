@@ -45,10 +45,11 @@ public class JavaSearchActionGroup extends ActionGroup {
 
 		public JavaSearchAction(boolean add) {
 			this.add = add;
-			if (add)
+			if (add) {
 				setText(PDEUIMessages.PluginsView_addToJavaSearch);
-			else
+			} else {
 				setText(PDEUIMessages.PluginsView_removeFromJavaSearch);
+			}
 		}
 
 		@Override
@@ -93,12 +94,14 @@ public class JavaSearchActionGroup extends ActionGroup {
 		SearchablePluginsManager manager = PDECore.getDefault().getSearchablePluginsManager();
 		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 			model = getModel(iter.next());
-			if (model == null)
+			if (model == null) {
 				return false;
+			}
 
 			if (model.getUnderlyingResource() == null) {
-				if (add == !manager.isInJavaSearch(model.getPluginBase().getId()))
+				if (add == !manager.isInJavaSearch(model.getPluginBase().getId())) {
 					nhits++;
+				}
 			}
 		}
 		return nhits > 0;
@@ -116,8 +119,9 @@ public class JavaSearchActionGroup extends ActionGroup {
 
 	private void handleJavaSearch(final boolean add) {
 		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
-		if (selection.isEmpty())
+		if (selection.isEmpty()) {
 			return;
+		}
 
 		ArrayList<IPluginModelBase> result = new ArrayList<>();
 		SearchablePluginsManager manager = PDECore.getDefault().getSearchablePluginsManager();
@@ -127,8 +131,9 @@ public class JavaSearchActionGroup extends ActionGroup {
 				result.add(model);
 			}
 		}
-		if (result.isEmpty())
+		if (result.isEmpty()) {
 			return;
+		}
 		final IPluginModelBase[] array = result.toArray(new IPluginModelBase[result.size()]);
 
 		IRunnableWithProgress op = new JavaSearchOperation(array, add);

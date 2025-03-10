@@ -26,8 +26,9 @@ public abstract class CommandCopyFilter {
 	}
 
 	public final String filter(String serializedCommand, boolean surroundWithMarkup, String markupLabel) {
-		if (surroundWithMarkup)
+		if (surroundWithMarkup) {
 			return markup(escape(serializedCommand), markupLabel);
+		}
 		return escape(serializedCommand);
 	}
 
@@ -51,8 +52,9 @@ public abstract class CommandCopyFilter {
 
 		int index = 0;
 		for (CommandCopyFilter f : fFilters) {
-			if (f == filter)
+			if (f == filter) {
 				return index;
+			}
 			index++;
 		}
 		return -1;
@@ -105,8 +107,9 @@ public abstract class CommandCopyFilter {
 			sb.append("<a href='javascript:executeCommand(\""); //$NON-NLS-1$
 			sb.append(escapedSerializedCommand);
 			sb.append("\")'>"); //$NON-NLS-1$
-			if (markupLabel != null)
+			if (markupLabel != null) {
 				sb.append(markupLabel);
+			}
 			sb.append("</a>"); //$NON-NLS-1$
 
 			return sb.toString();

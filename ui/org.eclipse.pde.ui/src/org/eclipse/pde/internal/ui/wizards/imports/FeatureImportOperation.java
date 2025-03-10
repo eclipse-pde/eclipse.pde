@@ -142,8 +142,9 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 		subMonitor.setWorkRemaining(7);
 
 		IProjectDescription description = PDEPlugin.getWorkspace().newProjectDescription(name);
-		if (fTargetPath != null)
+		if (fTargetPath != null) {
 			description.setLocation(fTargetPath.append(name));
+		}
 
 		project.create(description, subMonitor.split(1));
 		if (!project.isOpen()) {
@@ -249,8 +250,9 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 				IResource[] res = project.members();
 				for (IResource resource : res) {
 					String path = resource.getProjectRelativePath().toString();
-					if (!path.equals(".project")) //$NON-NLS-1$
+					if (!path.equals(".project")) { //$NON-NLS-1$
 						ientry.addToken(path);
+					}
 				}
 				model.getBuild().add(ientry);
 				model.save();

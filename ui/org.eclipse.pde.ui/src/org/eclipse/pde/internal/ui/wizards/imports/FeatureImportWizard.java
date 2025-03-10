@@ -99,8 +99,9 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 	 */
 	private IPath computeTargetPath() {
 		IPath pluginsLocation = PDEPlugin.getWorkspace().getRoot().getLocation();
-		if ("plugins".equals(pluginsLocation.lastSegment())) //$NON-NLS-1$
+		if ("plugins".equals(pluginsLocation.lastSegment())) { //$NON-NLS-1$
 			return pluginsLocation.removeLastSegments(1).append("features"); //$NON-NLS-1$
+		}
 		return null;
 	}
 
@@ -119,8 +120,9 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 
 		@Override
 		public int doQuery(IProject project) {
-			if (yesToAll != 0)
+			if (yesToAll != 0) {
 				return yesToAll > 0 ? IReplaceQuery.YES : IReplaceQuery.NO;
+			}
 
 			final String message = NLS.bind(PDEUIMessages.FeatureImportWizard_messages_exists, project.getName());
 			final int[] result = {IReplaceQuery.CANCEL};

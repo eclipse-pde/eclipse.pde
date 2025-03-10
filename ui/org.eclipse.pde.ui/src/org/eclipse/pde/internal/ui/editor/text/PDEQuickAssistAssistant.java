@@ -153,8 +153,9 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 
 		@Override
 		public int compareTo(Object arg0) {
-			if (!(arg0 instanceof PDECompletionProposal obj))
+			if (!(arg0 instanceof PDECompletionProposal obj)) {
 				return -1;
+			}
 			if (getDisplayString() != null) {
 				if (obj.getDisplayString() != null) {
 					return getDisplayString().compareTo(obj.getDisplayString());
@@ -211,8 +212,9 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 				for (int i = 0; i < contributedResolutions.length; i++) {
 					IMarkerResolution resolution = contributedResolutions[i];
 					// only add contributed marker resolutions if they don't come from PDE
-					if (!(resolution instanceof AbstractPDEMarkerResolution) && !resolutions.contains(contributedResolutions[i]))
+					if (!(resolution instanceof AbstractPDEMarkerResolution) && !resolutions.contains(contributedResolutions[i])) {
 						resolutions.add(contributedResolutions[i]);
+					}
 				}
 				if (!resolutions.isEmpty()) {
 					fResMap.put(marker, resolutions.toArray(new IMarkerResolution[resolutions.size()]));

@@ -49,12 +49,14 @@ public class UnresolvedImportFixProcessor extends ClasspathFixProcessor {
 		@Override
 		public void addResolutionModification(IProject project, ExportPackageDescription desc, CompilationUnit cu,
 				String qualifiedTypeToImport) {
-			if (desc.getSupplier() == null)
+			if (desc.getSupplier() == null) {
 				return;
+			}
 			Object proposal = JavaResolutionFactory.createRequireBundleProposal(project, desc,
 					JavaResolutionFactory.TYPE_CLASSPATH_FIX, 16, cu, qualifiedTypeToImport);
-			if (proposal != null)
+			if (proposal != null) {
 				fList.add(proposal);
+			}
 		}
 
 		/*
@@ -63,12 +65,14 @@ public class UnresolvedImportFixProcessor extends ClasspathFixProcessor {
 		 */
 		public void addResolutionModification(IProject project, String desc, CompilationUnit cu,
 				String qualifiedTypeToImport) {
-			if (desc == null)
+			if (desc == null) {
 				return;
+			}
 			Object proposal = JavaResolutionFactory.createRequireBundleProposal(project, desc,
 					JavaResolutionFactory.TYPE_CLASSPATH_FIX, 16, cu, qualifiedTypeToImport);
-			if (proposal != null)
+			if (proposal != null) {
 				fList.add(proposal);
+			}
 		}
 
 		/*

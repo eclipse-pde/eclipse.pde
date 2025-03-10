@@ -72,8 +72,9 @@ public class ManifestEditorOpener {
 	}
 
 	public static Match findExactMatch(IDocument document, Match match, IEditorPart editor) {
-		if (match.getOffset() == -1 && match.getBaseUnit() == Match.UNIT_LINE)
+		if (match.getOffset() == -1 && match.getBaseUnit() == Match.UNIT_LINE) {
 			return new Match(match.getElement(), Match.UNIT_CHARACTER, 0, 0);
+		}
 		IPluginObject element = (IPluginObject) match.getElement();
 		String name = null;
 		String value = null;
@@ -115,8 +116,9 @@ public class ManifestEditorOpener {
 			FindReplaceDocumentAdapter findReplaceAdapter = new FindReplaceDocumentAdapter(document);
 			IRegion nameRegion = findReplaceAdapter.find(offset, name + "\\s*=\\s*\"" + value, false, false, false, true); //$NON-NLS-1$
 			if (nameRegion != null) {
-				if (document.get(nameRegion.getOffset() + nameRegion.getLength() - value.length(), value.length()).equals(value))
+				if (document.get(nameRegion.getOffset() + nameRegion.getLength() - value.length(), value.length()).equals(value)) {
 					return new Region(nameRegion.getOffset() + nameRegion.getLength() - value.length(), value.length());
+				}
 			}
 		} catch (BadLocationException e) {
 		}
@@ -128,8 +130,9 @@ public class ManifestEditorOpener {
 			FindReplaceDocumentAdapter findReplaceAdapter = new FindReplaceDocumentAdapter(document);
 			IRegion nameRegion = findReplaceAdapter.find(offset, value, true, true, false, false);
 			if (nameRegion != null) {
-				if (document.get(nameRegion.getOffset() + nameRegion.getLength() - value.length(), value.length()).equals(value))
+				if (document.get(nameRegion.getOffset() + nameRegion.getLength() - value.length(), value.length()).equals(value)) {
 					return new Region(nameRegion.getOffset() + nameRegion.getLength() - value.length(), value.length());
+				}
 			}
 		} catch (BadLocationException e) {
 		}
@@ -137,8 +140,9 @@ public class ManifestEditorOpener {
 	}
 
 	public static IRegion getAttributeMatch(ManifestEditor editor, Object object, IDocument document) {
-		if (object instanceof IPluginObject)
+		if (object instanceof IPluginObject) {
 			return getAttributeMatch(editor, (IPluginObject) object, document);
+		}
 
 		// assume we have a base description
 		String value = ((BaseDescription) object).getName();
@@ -155,10 +159,11 @@ public class ManifestEditorOpener {
 		IPluginObject[] elements = null;
 
 		// find equivalent models in UI text model
-		if (object instanceof IPluginExtension)
+		if (object instanceof IPluginExtension) {
 			elements = ((IPluginModelBase) editor.getAggregateModel()).getPluginBase().getExtensions();
-		else
+		} else {
 			elements = ((IPluginModelBase) editor.getAggregateModel()).getPluginBase().getExtensionPoints();
+		}
 
 		// iterate through the UI text models to find a match for a Search object.
 		for (IPluginObject element : elements) {

@@ -40,8 +40,9 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 	}
 
 	public static IColorManager getDefault() {
-		if (fColorManager == null)
+		if (fColorManager == null) {
 			fColorManager = new ColorManager();
+		}
 
 		counter += 1;
 		return fColorManager;
@@ -128,8 +129,9 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 	@Override
 	public Color getColor(String key) {
 		Color color = fColorTable.get(key);
-		if (color == null)
+		if (color == null) {
 			color = Display.getCurrent().getSystemColor(SWT.COLOR_LIST_FOREGROUND);
+		}
 		return color;
 	}
 

@@ -99,8 +99,9 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 
 		@Override
 		public Object[] getChildren(Object parentElement) {
-			if (!(parentElement instanceof ModelChange))
+			if (!(parentElement instanceof ModelChange)) {
 				return new Object[0];
+			}
 			return ((ModelChange) parentElement).getModelChangeFiles();
 		}
 
@@ -187,8 +188,9 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 		fErrorElementFilter = new ViewerFilter() {
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				if (!(element instanceof ModelChangeElement change))
+				if (!(element instanceof ModelChangeElement change)) {
 					return false;
+				}
 				return change.equals(fErrorElement);
 			}
 		};
@@ -389,8 +391,9 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 	}
 
 	private void handleSelectionChanged(SelectionChangedEvent event) {
-		if (!(event.getSelection() instanceof IStructuredSelection))
+		if (!(event.getSelection() instanceof IStructuredSelection)) {
 			return;
+		}
 		Object selection = (event.getStructuredSelection().getFirstElement());
 		if (selection == null) {
 			fCurrSelection = null;
@@ -424,8 +427,9 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 		fPropertiesViewer.refresh(updateLabels);
 		TableItem[] items = fTable.getItems();
 		for (int i = 0; i < items.length; i++) {
-			if (!(items[i].getData() instanceof ModelChangeElement))
+			if (!(items[i].getData() instanceof ModelChangeElement)) {
 				continue;
+			}
 			ModelChangeElement element = (ModelChangeElement) items[i].getData();
 			fPropertiesViewer.setChecked(element, element.isExternalized());
 		}
@@ -436,8 +440,9 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 		TreeItem item = fInputViewer.getTree().getSelection()[0];
 		IPluginModelBase model = ((ModelChange) item.getParentItem().getData()).getParentModel();
 
-		if (fSourceViewer.getDocument() != null)
+		if (fSourceViewer.getDocument() != null) {
 			fSourceViewer.unconfigure();
+		}
 		if (sourceFile.getFileExtension().equalsIgnoreCase("xml")) { //$NON-NLS-1$
 			fSourceViewer.configure(fXMLConfig);
 			fXMLSetupParticipant.setup(document);
@@ -527,16 +532,21 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 	}
 
 	private void setEnabled(Control exception, boolean enabled) {
-		if (!exception.equals(fInputViewer.getControl()))
+		if (!exception.equals(fInputViewer.getControl())) {
 			fInputViewer.getControl().setEnabled(enabled);
-		if (!exception.equals(fPropertiesViewer.getControl()))
+		}
+		if (!exception.equals(fPropertiesViewer.getControl())) {
 			fPropertiesViewer.getControl().setEnabled(enabled);
-		if (!exception.equals(fLocalizationText))
+		}
+		if (!exception.equals(fLocalizationText)) {
 			fLocalizationText.setEnabled(enabled);
-		if (!exception.equals(fSelectAll))
+		}
+		if (!exception.equals(fSelectAll)) {
 			fSelectAll.setEnabled(enabled);
-		if (!exception.equals(fDeselectAll))
+		}
+		if (!exception.equals(fDeselectAll)) {
 			fDeselectAll.setEnabled(enabled);
+		}
 	}
 
 	@Override
@@ -544,7 +554,8 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 		super.setPageComplete(complete);
 		// if the page is ready to be completed set the selection on the processor so it knows
 		// what work needs to be done
-		if (complete)
+		if (complete) {
 			((ExternalizeStringsProcessor) ((PDERefactor) getRefactoring()).getProcessor()).setChangeFiles(fInputViewer.getCheckedElements());
+		}
 	}
 }

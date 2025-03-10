@@ -64,8 +64,9 @@ public class DependencyExtentQuery implements ISearchQuery {
 
 	@Override
 	public ISearchResult getSearchResult() {
-		if (fSearchResult == null)
+		if (fSearchResult == null) {
 			fSearchResult = new DependencyExtentSearchResult(this);
+		}
 		return fSearchResult;
 	}
 

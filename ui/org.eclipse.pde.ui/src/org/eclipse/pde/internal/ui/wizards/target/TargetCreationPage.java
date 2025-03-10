@@ -101,8 +101,9 @@ public class TargetCreationPage extends WizardSelectionPage {
 		fTargetIds = new String[elements.length];
 		for (int i = 0; i < elements.length; i++) {
 			String name = elements[i].getAttribute("name"); //$NON-NLS-1$
-			if (fTargets.indexOf(name) == -1)
+			if (fTargets.indexOf(name) == -1) {
 				fTargets.add(name);
+			}
 			fTargetIds[i] = elements[i].getAttribute("id"); //$NON-NLS-1$
 		}
 		if (elements.length > 0) {
@@ -112,12 +113,14 @@ public class TargetCreationPage extends WizardSelectionPage {
 	}
 
 	protected int getInitializationOption() {
-		if (fEmptyButton.getSelection())
+		if (fEmptyButton.getSelection()) {
 			return USE_EMPTY;
-		if (fDefaultButton.getSelection())
+		}
+		if (fDefaultButton.getSelection()) {
 			return USE_DEFAULT;
-		else if (fCurrentTPButton.getSelection())
+		} else if (fCurrentTPButton.getSelection()) {
 			return USE_CURRENT_TP;
+		}
 		return USE_EXISTING_TARGET;
 	}
 

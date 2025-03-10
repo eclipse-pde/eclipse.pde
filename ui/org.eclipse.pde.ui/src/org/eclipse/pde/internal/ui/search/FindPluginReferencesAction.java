@@ -57,8 +57,9 @@ public class FindPluginReferencesAction implements IObjectActionDelegate {
 			if (sSelection.size() == 1) {
 				IFile file = (IFile) sSelection.getFirstElement();
 				IPluginModelBase model = PluginRegistry.findModel(file.getProject());
-				if (model != null)
+				if (model != null) {
 					fSearchString = model.getPluginBase().getId();
+				}
 			}
 		}
 	}

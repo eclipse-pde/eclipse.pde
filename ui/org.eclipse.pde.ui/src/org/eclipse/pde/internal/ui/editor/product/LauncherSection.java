@@ -661,16 +661,18 @@ public class LauncherSection extends PDESection {
 	@Override
 	public void commit(boolean onSave) {
 		fNameEntry.commit();
-		for (int i = 0; i < fIcons.size(); i++)
+		for (int i = 0; i < fIcons.size(); i++) {
 			fIcons.get(i).commit();
+		}
 		super.commit(onSave);
 	}
 
 	@Override
 	public void cancelEdit() {
 		fNameEntry.cancelEdit();
-		for (int i = 0; i < fIcons.size(); i++)
+		for (int i = 0; i < fIcons.size(); i++) {
 			fIcons.get(i).commit();
+		}
 		super.cancelEdit();
 	}
 
@@ -700,21 +702,25 @@ public class LauncherSection extends PDESection {
 		}
 		IResource resource = root.findMember(IPath.fromOSString(value));
 		try {
-			if (resource != null && resource instanceof IFile)
+			if (resource != null && resource instanceof IFile) {
 				IDE.openEditor(PDEPlugin.getActivePage(), (IFile) resource, true);
-			else
+			} else {
 				MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.WindowImagesSection_open, PDEUIMessages.WindowImagesSection_warning); //
+			}
 		} catch (PartInitException e) {
 		}
 	}
 
 	private String getExtension(String iconId) {
-		if (iconId.equals(ILauncherInfo.LINUX_ICON))
+		if (iconId.equals(ILauncherInfo.LINUX_ICON)) {
 			return "xpm"; //$NON-NLS-1$
-		if (iconId.equals(ILauncherInfo.MACOSX_ICON))
+		}
+		if (iconId.equals(ILauncherInfo.MACOSX_ICON)) {
 			return "icns"; //$NON-NLS-1$
-		if (iconId.equals(ILauncherInfo.P_ICO_PATH))
+		}
+		if (iconId.equals(ILauncherInfo.P_ICO_PATH)) {
 			return "ico"; //$NON-NLS-1$
+		}
 		return "bmp"; //$NON-NLS-1$
 	}
 
@@ -738,8 +744,9 @@ public class LauncherSection extends PDESection {
 				fNotebookLayout.topControl = fWin32Section;
 				break;
 		}
-		if (oldPage != fNotebookLayout.topControl)
+		if (oldPage != fNotebookLayout.topControl) {
 			fNotebook.layout();
+		}
 	}
 
 	@Override

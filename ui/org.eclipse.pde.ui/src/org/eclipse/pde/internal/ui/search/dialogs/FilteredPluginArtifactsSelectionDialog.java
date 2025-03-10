@@ -109,8 +109,9 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 
 		@Override
 		public String getText(Object object) {
-			if (object instanceof IPluginBase)
+			if (object instanceof IPluginBase) {
 				return ((IPluginBase) object).getId();
+			}
 
 			if (object instanceof IPluginImport dep) {
 				return dep.getId() + " - " //$NON-NLS-1$
@@ -121,8 +122,9 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 				return extension.getPoint() + " - " + extension.getPluginBase().getId(); //$NON-NLS-1$
 			}
 
-			if (object instanceof IPluginExtensionPoint)
+			if (object instanceof IPluginExtensionPoint) {
 				return ((IPluginExtensionPoint) object).getFullId();
+			}
 
 			if (object instanceof ExportPackageDescription epd) {
 				return epd.getName() + ' ' + '(' + epd.getVersion() + ')';
@@ -222,8 +224,9 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 		}
 
 		private Image getImage(String location) {
-			if (location != null && new File(location).isFile())
+			if (location != null && new File(location).isFile()) {
 				return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_JAR);
+			}
 			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
 		}
 
@@ -235,8 +238,9 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 
 		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			if (enabled) // select everything
+			if (enabled) { // select everything
 				return true;
+			}
 
 			if (element instanceof IPluginExtension) {
 				return false;
@@ -255,8 +259,9 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 
 		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			if (enabled) // select everything
+			if (enabled) { // select everything
 				return true;
+			}
 
 			if (element instanceof IPluginExtensionPoint) {
 				return false;
@@ -276,8 +281,9 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 
 		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			if (enabled) // select everything
+			if (enabled) { // select everything
 				return true;
+			}
 
 			if (element instanceof ExportPackageDescription) {
 				return false;
@@ -297,8 +303,9 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 
 		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			if (enabled) // select everything
+			if (enabled) { // select everything
 				return true;
+			}
 
 			if (element instanceof IFeatureModel) {
 				return false;
@@ -550,52 +557,61 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 		@Override
 		protected Object restoreItemFromMemento(IMemento memento) {
 			Integer itype = memento.getInteger(M_TYPE);
-			if (itype == null)
+			if (itype == null) {
 				return null;
+			}
 			int type = itype.intValue();
 
 			switch (type) {
 				case TYPE_PLUGIN :
 					IPluginModelBase model = getModel(memento);
-					if (model == null)
+					if (model == null) {
 						return null;
+					}
 					return model;
 				case TYPE_EXTENSION_POINT :
 					model = getModel(memento);
-					if (model == null)
+					if (model == null) {
 						return null;
+					}
 					IPluginExtensionPoint[] points = model.getPluginBase().getExtensionPoints();
 					String epid = memento.getString(M_ID);
 					for (IPluginExtensionPoint point : points) {
-						if (epid.equals(point.getFullId()))
+						if (epid.equals(point.getFullId())) {
 							return point;
+						}
 					}
 					break;
 				case TYPE_EXTENSION :
 					model = getModel(memento);
-					if (model == null)
+					if (model == null) {
 						return null;
+					}
 					IPluginExtension[] extensions = model.getPluginBase().getExtensions();
 					String eid = memento.getString(M_ID);
 					for (IPluginExtension extension : extensions) {
-						if (eid.equals(extension.getPoint()))
+						if (eid.equals(extension.getPoint())) {
 							return extension;
+						}
 					}
 					break;
 				case TYPE_EXPORTED_PACKAGE :
 					model = getModel(memento);
-					if (model == null)
+					if (model == null) {
 						return null;
+					}
 					ExportPackageDescription[] descriptions = model.getBundleDescription().getExportPackages();
 					String pid = memento.getString(M_ID);
 					for (ExportPackageDescription desc : descriptions) {
-						if (pid.equals(desc.getName()))
+						if (pid.equals(desc.getName())) {
 							return desc;
+						}
 					}
 				case TYPE_FEATURE :
 					IFeatureModel fModel = getFeatureModel(memento);
-					if (fModel == null)
+					if (fModel == null) {
 						return null;
+					}
 					return fModel;
 			}
 			return null;
@@ -618,12 +634,14 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 			String id = memento.getString(M_PLUGIN_ID);
 			String version = memento.getString(M_PLUGIN_VERSION);
 			ModelEntry entry = PluginRegistry.findEntry(id);
-			if (entry == null)
+			if (entry == null) {
 				return null;
+			}
 			IPluginModelBase[] models = entry.getActiveModels();
 			for (IPluginModelBase model : models) {
-				if (version.equals(model.getPluginBase().getVersion()))
+				if (version.equals(model.getPluginBase().getVersion())) {
 					return model;
+				}
 			}
 			return null;
 		}
@@ -707,8 +725,9 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 				// match the word
 				if (Character.isLetterOrDigit(id.charAt(i))) {
 					String word = id.substring(i, j);
-					if (matches(word))
+					if (matches(word)) {
 						return true;
+					}
 				}
 				i = j;
 			}
@@ -723,8 +742,9 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 			int id1 = getId(o1);
 			int id2 = getId(o2);
 
-			if (id1 != id2)
+			if (id1 != id2) {
 				return id1 - id2;
+			}
 			return compareSimilarObjects(o1, o2);
 		}
 
@@ -753,15 +773,17 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 			} else if (o1 instanceof IPluginExtension ipe1 && o2 instanceof IPluginExtension) {
 				IPluginExtension ipe2 = (IPluginExtension) o2;
 				int comparePointsResult = ipe1.getPoint().compareTo(ipe2.getPoint());
-				if (comparePointsResult == 0)
+				if (comparePointsResult == 0) {
 					return comparePlugins(ipe1.getPluginBase(), ipe2.getPluginBase());
+				}
 				// else
 				return comparePointsResult;
 			} else if (o1 instanceof ExportPackageDescription epd1 && o2 instanceof ExportPackageDescription) {
 				ExportPackageDescription epd2 = (ExportPackageDescription) o2;
 				int compareNamesResult = epd1.getName().compareTo(epd2.getName());
-				if (compareNamesResult == 0)
+				if (compareNamesResult == 0) {
 					return compareBundleDescriptions(epd1.getSupplier(), epd2.getSupplier());
+				}
 				// else
 				return compareNamesResult;
 			} else if (o1 instanceof IFeatureModel ifm1 && o2 instanceof IFeatureModel) {
@@ -798,8 +820,9 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 		ModelEntry entry = PluginRegistry.findEntry(id);
 		IPluginModelBase[] models = entry.getActiveModels();
 		for (IPluginModelBase model : models) {
-			if (version.equals(model.getPluginBase().getVersion()))
+			if (version.equals(model.getPluginBase().getVersion())) {
 				return model;
+			}
 		}
 		return null;
 	}

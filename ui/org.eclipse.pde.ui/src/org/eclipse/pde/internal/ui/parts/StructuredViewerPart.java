@@ -50,8 +50,9 @@ public abstract class StructuredViewerPart extends SharedPartWithButtons {
 
 	public void setMinimumSize(int width, int height) {
 		fMinSize = new Point(width, height);
-		if (fViewer != null)
+		if (fViewer != null) {
 			applyMinimumSize();
+		}
 	}
 
 	private void applyMinimumSize() {

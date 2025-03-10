@@ -37,10 +37,11 @@ import org.eclipse.ui.PlatformUI;
 public class PluginValidationStatusHandler implements IStatusHandler {
 	@Override
 	public Object handleStatus(IStatus status, Object source) throws CoreException {
-		if (status.getCode() == EclipsePluginValidationOperation.CREATE_EXTENSION_ERROR_CODE)
+		if (status.getCode() == EclipsePluginValidationOperation.CREATE_EXTENSION_ERROR_CODE) {
 			return createExtensionError((String) source);
-		else if (status.getCode() == LaunchPluginValidator.DISPLAY_VALIDATION_ERROR_CODE)
+		} else if (status.getCode() == LaunchPluginValidator.DISPLAY_VALIDATION_ERROR_CODE) {
 			displayValidationError((LaunchValidationOperation) source);
+		}
 		return null;
 	}
 
@@ -62,8 +63,9 @@ public class PluginValidationStatusHandler implements IStatusHandler {
 			dialog.setInput(op);
 			result[0] = dialog.open();
 		});
-		if (result[0] == IDialogConstants.CANCEL_ID)
+		if (result[0] == IDialogConstants.CANCEL_ID) {
 			throw new CoreException(Status.CANCEL_STATUS);
+		}
 	}
 
 }

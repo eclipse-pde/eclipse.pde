@@ -153,10 +153,11 @@ public class WorkspaceDataBlock extends BaseBlock {
 		fClearWorkspaceRadio.setEnabled(fClearWorkspaceCheck.getSelection());
 		fClearWorkspaceRadio.setSelection(!configuration.getAttribute(IPDEConstants.DOCLEARLOG, false));
 
-		if (configuration instanceof ILaunchConfigurationWorkingCopy)
+		if (configuration instanceof ILaunchConfigurationWorkingCopy) {
 			fIsCreatedLaunchConfiguration = ((ILaunchConfigurationWorkingCopy) configuration).removeAttribute(ATTR_IS_NEWLY_CREATED) != null;
-		else
+		} else {
 			fIsCreatedLaunchConfiguration = configuration.getAttribute(ATTR_IS_NEWLY_CREATED, false);
+		}
 	}
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration, boolean isJUnit) {
@@ -194,8 +195,9 @@ public class WorkspaceDataBlock extends BaseBlock {
 		int length = getLocation().length();
 		fClearWorkspaceCheck.setEnabled(length > 0);
 		fAskClearCheck.setEnabled(fClearWorkspaceCheck.getSelection() && length > 0);
-		if (length == 0)
+		if (length == 0) {
 			fClearWorkspaceCheck.setSelection(false);
+		}
 		// Equinox doesn't allow # in the workspace name (Bug 415488), this doesn't check variable substitution as doing so can open dialogs
 		String currentLocation = fLocationText.getText();
 		if (currentLocation.contains("#")) { //$NON-NLS-1$

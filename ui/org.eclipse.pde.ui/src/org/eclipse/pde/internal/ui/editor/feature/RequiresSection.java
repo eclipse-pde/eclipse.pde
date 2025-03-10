@@ -98,8 +98,9 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 				IFeatureImport[] imports = feature.getImports();
 				ArrayList<IFeatureImport> displayable = new ArrayList<>();
 				for (IFeatureImport featureImport : imports) {
-					if (featureImport.isPatch())
+					if (featureImport.isPatch()) {
 						continue;
+					}
 					displayable.add(featureImport);
 				}
 
@@ -183,8 +184,9 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 			IPluginModelBase[] allModels = PluginRegistry.getActiveModels();
 			ArrayList<IPluginModelBase> newModels = new ArrayList<>();
 			for (IPluginModelBase model : allModels) {
-				if (canAdd(model))
+				if (canAdd(model)) {
 					newModels.add(model);
+				}
 			}
 			IPluginModelBase[] candidateModels = newModels.toArray(new IPluginModelBase[newModels.size()]);
 			PluginSelectionDialog dialog = new PluginSelectionDialog(fPluginViewer.getTable().getShell(), candidateModels, true);
@@ -201,21 +203,24 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 
 	private boolean canAdd(IPluginModelBase candidate) {
 		IPluginBase plugin = candidate.getPluginBase();
-		if (candidate.isFragmentModel())
+		if (candidate.isFragmentModel()) {
 			return false;
+		}
 
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		IFeatureImport[] imports = model.getFeature().getImports();
 
 		for (IFeatureImport featureImport : imports) {
-			if (plugin.getId().equals(featureImport.getId()))
+			if (plugin.getId().equals(featureImport.getId())) {
 				return false;
+			}
 		}
 		// don't show plug-ins that are listed in this feature
 		IFeaturePlugin[] fplugins = model.getFeature().getPlugins();
 		for (IFeaturePlugin featurePlugin : fplugins) {
-			if (plugin.getId().equals(featurePlugin.getId()))
+			if (plugin.getId().equals(featurePlugin.getId())) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -225,8 +230,9 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 			IFeatureModel[] allModels = PDECore.getDefault().getFeatureModelManager().getModels();
 			ArrayList<IFeatureModel> newModels = new ArrayList<>();
 			for (IFeatureModel model : allModels) {
-				if (canAdd(model))
+				if (canAdd(model)) {
 					newModels.add(model);
+				}
 			}
 			IFeatureModel[] candidateModels = newModels.toArray(new IFeatureModel[newModels.size()]);
 			FeatureSelectionDialog dialog = new FeatureSelectionDialog(fPluginViewer.getTable().getShell(), candidateModels, true);
@@ -272,8 +278,9 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		IFeatureImport[] features = feature.getImports();
 
 		for (IFeatureImport featureImport : features) {
-			if (featureImport.getId().equals(cfeature.getId()) && featureImport.getVersion() != null && featureImport.getVersion().equals(cfeature.getVersion()))
+			if (featureImport.getId().equals(cfeature.getId()) && featureImport.getVersion() != null && featureImport.getVersion().equals(cfeature.getVersion())) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -285,8 +292,9 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		}
 		IFeature feature = model.getFeature();
 		IStructuredSelection selection = fPluginViewer.getStructuredSelection();
-		if (selection.isEmpty())
+		if (selection.isEmpty()) {
 			return;
+		}
 
 		try {
 			IFeatureImport[] deleted = new IFeatureImport[selection.size()];
@@ -339,8 +347,9 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	@Override
 	public void dispose() {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
-		if (model != null)
+		if (model != null) {
 			model.removeModelChangedListener(this);
+		}
 		PDECore.getDefault().getModelManager().removePluginModelListener(this);
 		PDECore.getDefault().getFeatureModelManager().removeFeatureModelListener(this);
 		super.dispose();
@@ -456,14 +465,16 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 			ModelEntry[] added = delta.getAddedEntries();
 			ModelEntry[] removed = delta.getRemovedEntries();
 			ModelEntry[] changed = delta.getChangedEntries();
-			if (hasModels(added) || hasModels(removed) || hasModels(changed))
+			if (hasModels(added) || hasModels(removed) || hasModels(changed)) {
 				markStale();
+			}
 		});
 	}
 
 	private boolean hasModels(ModelEntry[] entries) {
-		if (entries == null)
+		if (entries == null) {
 			return false;
+		}
 		return entries.length > 0;
 	}
 
@@ -476,14 +487,16 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 			IFeatureModel[] added = delta.getAdded();
 			IFeatureModel[] removed = delta.getRemoved();
 			IFeatureModel[] changed = delta.getChanged();
-			if (hasModels(added) || hasModels(removed) || hasModels(changed))
+			if (hasModels(added) || hasModels(removed) || hasModels(changed)) {
 				markStale();
+			}
 		});
 	}
 
 	private boolean hasModels(IFeatureModel[] models) {
-		if (models == null)
+		if (models == null) {
 			return false;
+		}
 		IFeatureModel thisModel = (IFeatureModel) getPage().getModel();
 		for (IFeatureModel model : models) {
 			if (model != thisModel) {
@@ -495,8 +508,9 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 
 	@Override
 	public void setFocus() {
-		if (fPluginViewer != null)
+		if (fPluginViewer != null) {
 			fPluginViewer.getTable().setFocus();
+		}
 	}
 
 	@Override
@@ -527,8 +541,9 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	@Override
 	protected boolean canPaste(Object target, Object[] objects) {
 		for (int i = 0; i < objects.length; i++) {
-			if (!(objects[i] instanceof FeatureImport))
+			if (!(objects[i] instanceof FeatureImport)) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -540,8 +555,9 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	protected void doPaste() {
 		Clipboard clipboard = getPage().getPDEEditor().getClipboard();
 		Object[] objects = (Object[]) clipboard.getContents(ModelDataTransfer.getInstance());
-		if (objects != null && canPaste(null, objects))
+		if (objects != null && canPaste(null, objects)) {
 			doPaste(null, objects);
+		}
 	}
 
 	/**

@@ -67,18 +67,20 @@ public class ApplicationSelectionDialog extends TrayDialog {
 		container.setLayoutData(gd);
 
 		Label label = new Label(container, SWT.NONE);
-		if (fMode.equals(ILaunchManager.DEBUG_MODE))
+		if (fMode.equals(ILaunchManager.DEBUG_MODE)) {
 			label.setText(PDEUIMessages.ApplicationSelectionDialog_debug);
-		else
+		} else {
 			label.setText(PDEUIMessages.ApplicationSelectionDialog_run);
+		}
 
 		applicationCombo = new Combo(container, SWT.READ_ONLY | SWT.DROP_DOWN);
 		applicationCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		applicationCombo.setItems(fApplicationNames);
 
 		String defaultApp = TargetPlatform.getDefaultApplication();
-		if (applicationCombo.indexOf(defaultApp) == -1)
+		if (applicationCombo.indexOf(defaultApp) == -1) {
 			applicationCombo.add(defaultApp);
+		}
 
 		applicationCombo.setText(applicationCombo.getItem(0));
 
@@ -94,8 +96,9 @@ public class ApplicationSelectionDialog extends TrayDialog {
 	}
 
 	public String getSelectedApplication() {
-		if (fSelectedApplication.equals(TargetPlatform.getDefaultApplication()))
+		if (fSelectedApplication.equals(TargetPlatform.getDefaultApplication())) {
 			return null;
+		}
 		return fSelectedApplication;
 	}
 

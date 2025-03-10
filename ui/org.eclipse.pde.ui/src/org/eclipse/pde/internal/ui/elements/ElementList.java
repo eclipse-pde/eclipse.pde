@@ -38,8 +38,9 @@ public class ElementList extends NamedElement {
 
 	@Override
 	public Object[] getChildren() {
-		if (children.isEmpty())
+		if (children.isEmpty()) {
 			return new Object[0];
+		}
 		Object[] result = new Object[children.size()];
 		children.copyInto(result);
 		return result;

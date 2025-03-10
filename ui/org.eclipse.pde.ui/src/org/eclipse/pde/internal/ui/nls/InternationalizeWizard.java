@@ -201,8 +201,9 @@ public class InternationalizeWizard extends Wizard implements IImportWizard {
 	@Override
 	public void setContainer(IWizardContainer wizardContainer) {
 		super.setContainer(wizardContainer);
-		if (getContainer() instanceof TrayDialog)
+		if (getContainer() instanceof TrayDialog) {
 			((TrayDialog) getContainer()).setHelpAvailable(false);
+		}
 	}
 
 }

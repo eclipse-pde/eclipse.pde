@@ -17,8 +17,9 @@ public class StringHelper {
 	private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
 	public static String preparePropertiesString(String s, char[] newLine) {
-		if (s == null)
+		if (s == null) {
 			return null;
+		}
 		int length = s.length();
 		int nlLength = newLine.length;
 		StringBuilder sb = new StringBuilder(length + nlLength);
@@ -27,9 +28,11 @@ public class StringHelper {
 			char c = s.charAt(i);
 			if (i + nlLength < length) {
 				boolean notNewLine = false;
-				for (int j = 0; j < nlLength; j++)
-					if (s.charAt(i + j) != newLine[j])
+				for (int j = 0; j < nlLength; j++) {
+					if (s.charAt(i + j) != newLine[j]) {
 						notNewLine = true;
+					}
+				}
 				if (!notNewLine) {
 					sb.append(unwindEscapeChars(new String(newLine)));
 					// skip the nl chars
@@ -79,8 +82,9 @@ public class StringHelper {
 			case '\\' :
 				return "\\\\";//$NON-NLS-1$
 			default :
-				if (((c < 0x0020) || (c > 0x007e)))
+				if (((c < 0x0020) || (c > 0x007e))) {
 					return new StringBuilder().append('\\').append('u').append(toHex((c >> 12) & 0xF)).append(toHex((c >> 8) & 0xF)).append(toHex((c >> 4) & 0xF)).append(toHex(c & 0xF)).toString();
+				}
 		}
 		return String.valueOf(c);
 	}
@@ -90,8 +94,9 @@ public class StringHelper {
 	}
 
 	protected static String windEscapeChars(String s) {
-		if (s == null)
+		if (s == null) {
 			return null;
+		}
 
 		char aChar;
 		int len = s.length();
@@ -159,8 +164,9 @@ public class StringHelper {
 						}
 					}
 				}
-			} else
+			} else {
 				outBuffer.append(aChar);
+			}
 		}
 		return outBuffer.toString();
 	}

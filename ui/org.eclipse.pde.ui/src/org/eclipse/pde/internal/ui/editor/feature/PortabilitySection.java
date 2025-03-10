@@ -96,14 +96,15 @@ public class PortabilitySection extends PDESection {
 	private void applyValue(String property, String value) throws CoreException {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		IFeature feature = model.getFeature();
-		if (property.equals(IEnvironment.P_NL))
+		if (property.equals(IEnvironment.P_NL)) {
 			feature.setNL(value);
-		else if (property.equals(IEnvironment.P_OS))
+		} else if (property.equals(IEnvironment.P_OS)) {
 			feature.setOS(value);
-		else if (property.equals(IEnvironment.P_WS))
+		} else if (property.equals(IEnvironment.P_WS)) {
 			feature.setWS(value);
-		else if (property.equals(IEnvironment.P_ARCH))
+		} else if (property.equals(IEnvironment.P_ARCH)) {
 			feature.setArch(value);
+		}
 	}
 
 	@Override
@@ -121,8 +122,9 @@ public class PortabilitySection extends PDESection {
 		Transfer[] transfers = new Transfer[] {TextTransfer.getInstance(), RTFTransfer.getInstance()};
 		for (TransferData type : types) {
 			for (Transfer transfer : transfers) {
-				if (transfer.isSupportedType(type))
+				if (transfer.isSupportedType(type)) {
 					return true;
+				}
 			}
 		}
 		return false;
@@ -252,16 +254,18 @@ public class PortabilitySection extends PDESection {
 	@Override
 	public void dispose() {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
-		if (model != null)
+		if (model != null) {
 			model.removeModelChangedListener(this);
+		}
 		super.dispose();
 	}
 
 	@Override
 	public void initialize(IManagedForm form) {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
-		if (model != null)
+		if (model != null) {
 			model.addModelChangedListener(this);
+		}
 		super.initialize(form);
 	}
 
@@ -305,20 +309,22 @@ public class PortabilitySection extends PDESection {
 
 	@Override
 	public void setFocus() {
-		if (fOsText != null)
+		if (fOsText != null) {
 			fOsText.getText().setFocus();
+		}
 	}
 
 	private void setValue(String property) {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		IFeature feature = model.getFeature();
-		if (property.equals(IEnvironment.P_NL))
+		if (property.equals(IEnvironment.P_NL)) {
 			fNlText.setValue(feature.getNL(), true);
-		else if (property.equals(IEnvironment.P_OS))
+		} else if (property.equals(IEnvironment.P_OS)) {
 			fOsText.setValue(feature.getOS(), true);
-		else if (property.equals(IEnvironment.P_WS))
+		} else if (property.equals(IEnvironment.P_WS)) {
 			fWsText.setValue(feature.getWS(), true);
-		else if (property.equals(IEnvironment.P_ARCH))
+		} else if (property.equals(IEnvironment.P_ARCH)) {
 			fArchText.setValue(feature.getArch(), true);
+		}
 	}
 }

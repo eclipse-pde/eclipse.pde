@@ -91,24 +91,29 @@ public class NewSiteProjectCreationPage extends WizardNewProjectCreationPage {
 	}
 
 	public String getWebLocation() {
-		if (fWebButton == null)
+		if (fWebButton == null) {
 			return null;
+		}
 
-		if (!fWebButton.getSelection())
+		if (!fWebButton.getSelection()) {
 			return null;
+		}
 
 		String text = fWebText.getText();
-		if (text.startsWith(File.separator) || text.startsWith("/")) //$NON-NLS-1$
+		if (text.startsWith(File.separator) || text.startsWith("/")) { //$NON-NLS-1$
 			text = text.substring(1);
-		if (text.endsWith(File.separator) || text.endsWith("/")) //$NON-NLS-1$
+		}
+		if (text.endsWith(File.separator) || text.endsWith("/")) { //$NON-NLS-1$
 			text = text.substring(0, text.length() - 1);
+		}
 		return text.trim();
 	}
 
 	@Override
 	protected boolean validatePage() {
-		if (!super.validatePage())
+		if (!super.validatePage()) {
 			return false;
+		}
 		String webLocation = getWebLocation();
 		if (webLocation != null && webLocation.trim().length() == 0) {
 			setErrorMessage(PDEUIMessages.SiteHTML_webError);

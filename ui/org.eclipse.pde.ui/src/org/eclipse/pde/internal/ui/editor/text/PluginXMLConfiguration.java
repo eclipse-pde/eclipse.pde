@@ -49,15 +49,17 @@ public class PluginXMLConfiguration extends XMLConfiguration {
 
 	@Override
 	public void dispose() {
-		if (fContentAssistProcessor != null)
+		if (fContentAssistProcessor != null) {
 			fContentAssistProcessor.dispose();
+		}
 		super.dispose();
 	}
 
 	@Override
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
-		if (fTextHover == null && fSourcePage != null)
+		if (fTextHover == null && fSourcePage != null) {
 			fTextHover = new PluginXMLTextHover(fSourcePage);
+		}
 		return fTextHover;
 	}
 

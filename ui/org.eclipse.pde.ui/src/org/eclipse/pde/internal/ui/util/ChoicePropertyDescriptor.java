@@ -50,8 +50,9 @@ public class ChoicePropertyDescriptor extends PropertyDescriptor {
 	@Override
 	public CellEditor createPropertyEditor(Composite parent) {
 		CellEditor editor = new ComboBoxCellEditor(parent, values, SWT.READ_ONLY);
-		if (getValidator() != null)
+		if (getValidator() != null) {
 			editor.setValidator(getValidator());
+		}
 		return editor;
 	}
 }

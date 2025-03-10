@@ -37,8 +37,9 @@ public abstract class AbstractXMLMarkerResolution extends AbstractPDEMarkerResol
 
 	@Override
 	protected void createChange(IBaseModel model) {
-		if (model instanceof IPluginModelBase)
+		if (model instanceof IPluginModelBase) {
 			createChange((IPluginModelBase) model);
+		}
 	}
 
 	protected Object findNode(IPluginModelBase base) {
@@ -47,8 +48,9 @@ public abstract class AbstractXMLMarkerResolution extends AbstractPDEMarkerResol
 			locationPath = (String) marker.getAttribute(PDEMarkerFactory.MPK_LOCATION_PATH);
 		} catch (CoreException e) {
 		}
-		if (locationPath == null)
+		if (locationPath == null) {
 			return null;
+		}
 
 		// special case for externalizing strings in manifest.mf
 		if (locationPath.charAt(0) != '(' && base instanceof IBundlePluginModelBase) {
@@ -69,16 +71,19 @@ public abstract class AbstractXMLMarkerResolution extends AbstractPDEMarkerResol
 				// when externalizing Strings in plugin.xml, we pass in both Manifest and plug-in file (bug 172080 comment #1)
 			} else if (base instanceof IBundlePluginModelBase) {
 				ISharedExtensionsModel sharedModel = ((IBundlePluginModelBase) base).getExtensionsModel();
-				if (sharedModel instanceof IPluginModelBase)
+				if (sharedModel instanceof IPluginModelBase) {
 					node = (IDocumentElementNode) ((IPluginModelBase) sharedModel).getPluginBase();
-			} else
+				}
+			} else {
 				node = (IDocumentElementNode) base.getPluginBase();
+			}
 
 			int attr = token.indexOf(XMLErrorReporter.F_ATT_PREFIX);
 			if (attr != -1) {
 				int valueIndex = token.indexOf(XMLErrorReporter.F_ATT_VALUE_PREFIX);
-				if (valueIndex == -1)
+				if (valueIndex == -1) {
 					return node.getDocumentAttribute(token.substring(attr + 1));
+				}
 				return node.getDocumentAttribute(token.substring(attr + 1, valueIndex));
 			}
 		}
@@ -92,15 +97,18 @@ public abstract class AbstractXMLMarkerResolution extends AbstractPDEMarkerResol
 		} catch (CoreException e) {
 		}
 		int lastChild = fLocationPath.lastIndexOf(')');
-		if (lastChild < 0)
+		if (lastChild < 0) {
 			return fLocationPath;
+		}
 		String item = fLocationPath.substring(lastChild + 1);
 		lastChild = item.indexOf(XMLErrorReporter.F_ATT_PREFIX);
-		if (lastChild == -1)
+		if (lastChild == -1) {
 			return item;
+		}
 		int valueIndex = item.indexOf(XMLErrorReporter.F_ATT_VALUE_PREFIX);
-		if (valueIndex == -1)
+		if (valueIndex == -1) {
 			return item.substring(lastChild + 1);
+		}
 		return item.substring(valueIndex + 1);
 	}
 

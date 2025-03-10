@@ -50,10 +50,12 @@ public class NewProductFileWizard extends BasicNewResourceWizard {
 	private IRunnableWithProgress getOperation() {
 		IFile file = fMainPage.createNewFile();
 		int option = fMainPage.getInitializationOption();
-		if (option == ProductFileWizardPage.USE_LAUNCH_CONFIG)
+		if (option == ProductFileWizardPage.USE_LAUNCH_CONFIG) {
 			return new ProductFromConfigOperation(file, fMainPage.getSelectedLaunchConfiguration());
-		if (option == ProductFileWizardPage.USE_PRODUCT)
+		}
+		if (option == ProductFileWizardPage.USE_PRODUCT) {
 			return new ProductFromExtensionOperation(file, fMainPage.getSelectedProduct());
+		}
 		return new BaseProductCreationOperation(file);
 	}
 

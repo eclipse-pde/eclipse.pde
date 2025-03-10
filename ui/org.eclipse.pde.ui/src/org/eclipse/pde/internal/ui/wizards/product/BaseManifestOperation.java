@@ -62,8 +62,9 @@ public abstract class BaseManifestOperation implements IRunnableWithProgress {
 	}
 
 	protected IPluginModelBase getModel(IFile file) {
-		if (ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR.equals(file.getName()))
+		if (ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR.equals(file.getName())) {
 			return new WorkspacePluginModel(file, false);
+		}
 		return new WorkspaceFragmentModel(file, false);
 	}
 
@@ -72,19 +73,22 @@ public abstract class BaseManifestOperation implements IRunnableWithProgress {
 		if (plugin instanceof IBundlePluginModel) {
 			IFile file = (IFile) plugin.getUnderlyingResource();
 			IStatus status = PDEPlugin.getWorkspace().validateEdit(new IFile[] {file}, fShell);
-			if (!status.isOK())
+			if (!status.isOK()) {
 				throw new CoreException(Status.error(NLS.bind(PDEUIMessages.ProductDefinitionOperation_readOnly, fPluginId), null));
+			}
 
 			ModelModification mod = new ModelModification(file) {
 				@Override
 				protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
-					if (!(model instanceof IBundlePluginModelBase modelBase))
+					if (!(model instanceof IBundlePluginModelBase modelBase)) {
 						return;
+					}
 					IBundle bundle = modelBase.getBundleModel().getBundle();
 					IManifestHeader header = bundle.getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
 					if (header instanceof BundleSymbolicNameHeader symbolic) {
-						if (!symbolic.isSingleton())
+						if (!symbolic.isSingleton()) {
 							symbolic.setSingleton(true);
+						}
 					}
 				}
 			};

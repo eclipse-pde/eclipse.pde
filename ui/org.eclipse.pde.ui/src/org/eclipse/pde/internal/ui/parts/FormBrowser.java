@@ -62,8 +62,9 @@ public class FormBrowser {
 				toolkit = null;
 			}
 		});
-		if (text != null)
+		if (text != null) {
 			formText.setText(text);
+		}
 	}
 
 	public Control getControl() {
@@ -72,14 +73,17 @@ public class FormBrowser {
 
 	public void setText(String text) {
 		this.text = text;
-		if (formText != null)
+		if (formText != null) {
 			formText.setText(text);
+		}
 	}
 
 	public void setEnabled(boolean enabled) {
-		if (formText != null)
+		if (formText != null) {
 			formText.setEnabled(enabled);
-		if (ftext != null)
+		}
+		if (ftext != null) {
 			ftext.setEnabled(enabled);
+		}
 	}
 }

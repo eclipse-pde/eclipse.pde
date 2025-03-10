@@ -52,8 +52,9 @@ public class OpenPluginSearchPageAction implements IWorkbenchWindowActionDelegat
 
 	protected void beep() {
 		Shell shell = PDEPlugin.getActiveWorkbenchShell();
-		if (shell != null && shell.getDisplay() != null)
+		if (shell != null && shell.getDisplay() != null) {
 			shell.getDisplay().beep();
+		}
 	}
 
 }

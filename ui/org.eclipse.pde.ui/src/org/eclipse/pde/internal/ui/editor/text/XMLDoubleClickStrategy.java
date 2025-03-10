@@ -42,8 +42,9 @@ public class XMLDoubleClickStrategy implements ITextDoubleClickStrategy {
 
 			while (pos >= 0) {
 				c = doc.getChar(pos);
-				if (!Character.isJavaIdentifierPart(c) && c != '.')
+				if (!Character.isJavaIdentifierPart(c) && c != '.') {
 					break;
+				}
 				--pos;
 			}
 
@@ -54,8 +55,9 @@ public class XMLDoubleClickStrategy implements ITextDoubleClickStrategy {
 
 			while (pos < length) {
 				c = doc.getChar(pos);
-				if (!Character.isJavaIdentifierPart(c) && c != '.')
+				if (!Character.isJavaIdentifierPart(c) && c != '.') {
 					break;
+				}
 				++pos;
 			}
 

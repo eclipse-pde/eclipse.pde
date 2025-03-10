@@ -47,26 +47,31 @@ public class ElementSectionDropAdapter extends ViewerDropAdapter {
 	@Override
 	public boolean validateDrop(Object target, int operation, TransferData transferType) {
 		fCurrentTransfer = transferType;
-		if (!ModelDataTransfer.getInstance().isSupportedType(fCurrentTransfer))
+		if (!ModelDataTransfer.getInstance().isSupportedType(fCurrentTransfer)) {
 			return false;
+		}
 		Object cargo = getSelectedObject();
 
 		if (cargo instanceof ISchemaObjectReference) { // dropping an element reference
 			// onto a compositor or reference
-			if ((target instanceof ISchemaCompositor || target instanceof ISchemaObjectReference))
+			if ((target instanceof ISchemaCompositor || target instanceof ISchemaObjectReference)) {
 				return true;
+			}
 		} else if (cargo instanceof ISchemaElement) { // dropping an element
 			// onto a non referenced element
-			if (target instanceof ISchemaCompositor || target instanceof ISchemaObjectReference || isNonRefElement(target) || target == null)
+			if (target instanceof ISchemaCompositor || target instanceof ISchemaObjectReference || isNonRefElement(target) || target == null) {
 				return true;
+			}
 		} else if (cargo instanceof ISchemaCompositor) { // dropping a compositor
 			// onto a non referenced element
-			if (isNonRefElement(target) || target instanceof ISchemaCompositor || target instanceof ISchemaObjectReference)
+			if (isNonRefElement(target) || target instanceof ISchemaCompositor || target instanceof ISchemaObjectReference) {
 				return true;
+			}
 		} else if (cargo instanceof ISchemaAttribute) { // dropping an attribute
 			// onto a non referenced element or attribute
-			if (isNonRefElement(target) || target instanceof ISchemaAttribute)
+			if (isNonRefElement(target) || target instanceof ISchemaAttribute) {
 				return true;
+			}
 		}
 		return false;
 	}

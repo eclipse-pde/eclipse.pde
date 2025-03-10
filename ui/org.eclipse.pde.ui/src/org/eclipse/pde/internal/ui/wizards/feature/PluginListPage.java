@@ -190,8 +190,9 @@ public class PluginListPage extends BasePluginListPage {
 				ILaunchConfigurationType type = manager.getLaunchConfigurationType(types[j]);
 				ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);
 				for (int i = 0; i < configs.length; i++) {
-					if (!DebugUITools.isPrivate(configs[i]))
+					if (!DebugUITools.isPrivate(configs[i])) {
 						launcherNames.add(configs[i].getName());
+					}
 				}
 			}
 		} catch (CoreException e) {
@@ -200,8 +201,9 @@ public class PluginListPage extends BasePluginListPage {
 	}
 
 	public ILaunchConfiguration getSelectedLaunchConfiguration() {
-		if (fInitLaunchConfigButton == null || !fInitLaunchConfigButton.getSelection())
+		if (fInitLaunchConfigButton == null || !fInitLaunchConfigButton.getSelection()) {
 			return null;
+		}
 
 		String configName = fLaunchConfigsCombo.getText();
 		try {
@@ -211,8 +213,9 @@ public class PluginListPage extends BasePluginListPage {
 				ILaunchConfigurationType type = manager.getLaunchConfigurationType(types[j]);
 				ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);
 				for (int i = 0; i < configs.length; i++) {
-					if (configs[i].getName().equals(configName) && !DebugUITools.isPrivate(configs[i]))
+					if (configs[i].getName().equals(configName) && !DebugUITools.isPrivate(configs[i])) {
 						return configs[i];
+					}
 				}
 			}
 		} catch (CoreException e) {

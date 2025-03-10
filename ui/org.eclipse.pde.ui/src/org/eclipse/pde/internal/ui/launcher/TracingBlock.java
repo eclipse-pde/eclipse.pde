@@ -400,8 +400,9 @@ public class TracingBlock {
 			for (int i = 0; i < checked.length; i++) {
 				IPluginModelBase model = (IPluginModelBase) checked[i];
 				buffer.append(model.getPluginBase().getId());
-				if (i < checked.length - 1)
+				if (i < checked.length - 1) {
 					buffer.append(',');
+				}
 			}
 			config.setAttribute(IPDELauncherConstants.TRACING_CHECKED, buffer.toString());
 		}
@@ -418,8 +419,9 @@ public class TracingBlock {
 	}
 
 	public void dispose() {
-		if (fToolkit != null)
+		if (fToolkit != null) {
 			fToolkit.dispose();
+		}
 	}
 
 	public FormToolkit getToolkit() {
@@ -454,8 +456,9 @@ public class TracingBlock {
 			IPluginModelBase[] models = PluginRegistry.getActiveModels();
 			List<IPluginModelBase> result = new ArrayList<>();
 			for (IPluginModelBase model : models) {
-				if (TracingOptionsManager.isTraceable(model))
+				if (TracingOptionsManager.isTraceable(model)) {
 					result.add(model);
+				}
 			}
 			fTraceableModels = result.toArray(new IPluginModelBase[result.size()]);
 		}
@@ -497,8 +500,9 @@ public class TracingBlock {
 	}
 
 	private TracingPropertySource getPropertySource(IPluginModelBase model) {
-		if (model == null)
+		if (model == null) {
 			return null;
+		}
 		return fPropertySources.computeIfAbsent(model, m -> {
 			String id = m.getPluginBase().getId();
 			Map<String, String> defaults = fTracingOptionsManagerDelegate.getTemplateTable(id);
@@ -520,8 +524,9 @@ public class TracingBlock {
 		}
 
 		int count = 0;
-		if (fPluginViewer != null)
+		if (fPluginViewer != null) {
 			count = fPluginViewer.getTable().getItemCount();
+		}
 		fSelectAllButton.setEnabled(enabled && count > 0);
 		fDeselectAllButton.setEnabled(enabled && count > 0);
 		fRestoreDefaultButton.setEnabled(enabled && count > 0);

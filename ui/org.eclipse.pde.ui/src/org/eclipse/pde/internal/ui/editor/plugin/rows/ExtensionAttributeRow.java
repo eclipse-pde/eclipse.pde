@@ -61,27 +61,31 @@ public abstract class ExtensionAttributeRow implements IControlHoverContentProvi
 	}
 
 	public String getName() {
-		if (att instanceof ISchemaAttribute)
+		if (att instanceof ISchemaAttribute) {
 			return ((ISchemaAttribute) att).getName();
+		}
 
 		return ((IPluginAttribute) att).getName();
 	}
 
 	protected int getUse() {
-		if (att instanceof ISchemaAttribute)
+		if (att instanceof ISchemaAttribute) {
 			return ((ISchemaAttribute) att).getUse();
+		}
 		return ISchemaAttribute.OPTIONAL;
 	}
 
 	protected boolean isDeprecated() {
-		if (att instanceof ISchemaAttribute)
+		if (att instanceof ISchemaAttribute) {
 			return ((ISchemaAttribute) att).isDeprecated();
+		}
 		return false;
 	}
 
 	protected boolean isRequired() {
-		if (att instanceof ISchemaAttribute)
+		if (att instanceof ISchemaAttribute) {
 			return ((ISchemaAttribute) att).getUse() == ISchemaAttribute.REQUIRED;
+		}
 		return false;
 	}
 
@@ -89,8 +93,9 @@ public abstract class ExtensionAttributeRow implements IControlHoverContentProvi
 		String value = ""; //$NON-NLS-1$
 		if (input != null) {
 			IPluginAttribute patt = input.getAttribute(getName());
-			if (patt != null)
+			if (patt != null) {
 				value = patt.getValue();
+			}
 		}
 		return value;
 	}
@@ -183,8 +188,9 @@ public abstract class ExtensionAttributeRow implements IControlHoverContentProvi
 	}
 
 	public void dispose() {
-		if (fIC != null)
+		if (fIC != null) {
 			fIC.dispose();
+		}
 	}
 
 	public void setInput(IPluginElement input) {

@@ -81,8 +81,9 @@ public class NewLibraryPluginProjectWizard extends NewWizard implements IExecuta
 		fMainPage = new NewLibraryPluginCreationPage("main", fPluginData, getSelection()); //$NON-NLS-1$
 		fUpdatePage = new NewLibraryPluginCreationUpdateRefPage(fPluginData, fInitialJarPaths, fInitialSelection);
 		String pname = getDefaultValue(DEF_PROJECT_NAME);
-		if (pname != null)
+		if (pname != null) {
 			fMainPage.setInitialProjectName(pname);
+		}
 
 		fProjectProvider = new IProjectProvider() {
 			@Override

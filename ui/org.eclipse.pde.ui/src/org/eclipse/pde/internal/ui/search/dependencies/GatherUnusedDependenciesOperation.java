@@ -116,25 +116,29 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 		HashMap<String, IPluginImport> usedPlugins = new HashMap<>();
 		fList = new ArrayList<>();
 		for (IPluginImport pluginImport : imports) {
-			if (subMonitor.isCanceled())
+			if (subMonitor.isCanceled()) {
 				break;
+			}
 			if (isUnused(pluginImport, subMonitor.split(3))) {
 				fList.add(pluginImport);
-			} else
+			} else {
 				usedPlugins.put(pluginImport.getId(), pluginImport);
+			}
 			updateMonitor(subMonitor, fList.size());
 		}
 
 		ArrayList<ImportPackageObject> usedPackages = new ArrayList<>();
 		if (packages != null && !subMonitor.isCanceled()) {
 			for (ImportPackageObject importPackage : packages) {
-				if (subMonitor.isCanceled())
+				if (subMonitor.isCanceled()) {
 					break;
+				}
 				if (isUnused(importPackage, exportedPackages, subMonitor.split(1))) {
 					fList.add(importPackage);
 					updateMonitor(subMonitor, fList.size());
-				} else
+				} else {
 					usedPackages.add(importPackage);
+				}
 			}
 		}
 		if (!subMonitor.isCanceled()) {
@@ -152,13 +156,15 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 					for (Object obj : fList) {
 						if (obj instanceof PluginImport) {
 							String id = ((PluginImport) obj).getId();
-							if (string.equals(id))
+							if (string.equals(id)) {
 								found.add(obj);
+							}
 						}
 					}
 				}
-				if (found.size() > 0)
+				if (found.size() > 0) {
 					fList.removeAll(found);
+				}
 			}
 
 		}
@@ -186,8 +192,9 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 	private boolean provideJavaClasses(IPluginModelBase[] models, IProgressMonitor monitor) {
 		try {
 			IProject project = fModel.getUnderlyingResource().getProject();
-			if (!project.hasNature(JavaCore.NATURE_ID))
+			if (!project.hasNature(JavaCore.NATURE_ID)) {
 				return false;
+			}
 
 			IJavaProject jProject = JavaCore.create(project);
 			IPackageFragment[] packageFragments = PluginJavaSearchUtil.collectPackageFragments(models, jProject, true);
@@ -258,8 +265,9 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 		try {
 			IProject project = fModel.getUnderlyingResource().getProject();
 
-			if (!project.hasNature(JavaCore.NATURE_ID))
+			if (!project.hasNature(JavaCore.NATURE_ID)) {
 				return false;
+			}
 
 			SubMonitor subMonitor = SubMonitor.convert(monitor, 1);
 			IJavaProject jProject = JavaCore.create(project);
@@ -278,8 +286,9 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 					new SearchParticipant[] { SearchEngine.getDefaultSearchParticipant() }, searchScope, requestor,
 					subMonitor.split(1));
 
-			if (requestor.foundMatches())
+			if (requestor.foundMatches()) {
 				return true;
+			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
@@ -293,14 +302,15 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 	public static void removeDependencies(IPluginModelBase model, Object[] elements) {
 		ImportPackageHeader pkgHeader = null;
 		for (Object element : elements) {
-			if (element instanceof IPluginImport)
+			if (element instanceof IPluginImport) {
 				try {
 					model.getPluginBase().remove((IPluginImport) element);
 				} catch (CoreException e) {
 				}
-			else if (element instanceof ImportPackageObject) {
-				if (pkgHeader == null)
+			} else if (element instanceof ImportPackageObject) {
+				if (pkgHeader == null) {
 					pkgHeader = (ImportPackageHeader) ((ImportPackageObject) element).getHeader();
+				}
 				pkgHeader.removePackage((ImportPackageObject) element);
 			}
 		}
@@ -311,20 +321,23 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 		while (li.hasNext()) {
 			ImportPackageObject ipo = li.next();
 			String bundle = ipo.getAttribute(Constants.BUNDLE_SYMBOLICNAME_ATTRIBUTE);
-			if (usedPlugins.containsKey(bundle))
+			if (usedPlugins.containsKey(bundle)) {
 				fList.add(ipo);
+			}
 		}
 
 		Iterator<String> it = usedPlugins.keySet().iterator();
 		ArrayDeque<String> plugins = new ArrayDeque<>();
-		while (it.hasNext())
+		while (it.hasNext()) {
 			plugins.push(it.next().toString());
+		}
 		SubMonitor subMonitor = SubMonitor.convert(monitor);
 		while (!(plugins.isEmpty())) {
 			String pluginId = plugins.pop();
 			IPluginModelBase base = PluginRegistry.findModel(pluginId);
-			if (base == null)
+			if (base == null) {
 				continue;
+			}
 			IPluginImport[] imports = base.getPluginBase().getImports();
 			SubMonitor iterationMonitor = subMonitor.setWorkRemaining(Math.max(plugins.size() + 1, 5)).split(1)
 					.setWorkRemaining(imports.length);

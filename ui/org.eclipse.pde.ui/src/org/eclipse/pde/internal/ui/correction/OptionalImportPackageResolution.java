@@ -38,8 +38,9 @@ public class OptionalImportPackageResolution extends AbstractManifestMarkerResol
 		ImportPackageHeader header = (ImportPackageHeader) bundle.getManifestHeader(Constants.IMPORT_PACKAGE);
 		if (header != null) {
 			ImportPackageObject pkg = header.getPackage(packageName);
-			if (pkg != null)
+			if (pkg != null) {
 				pkg.setOptional(true);
+			}
 		}
 	}
 

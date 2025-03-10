@@ -63,14 +63,17 @@ public class CreateManifestOperation implements IRunnableWithProgress {
 			FindReplaceDocumentAdapter adapter = new FindReplaceDocumentAdapter(doc);
 			MultiTextEdit multiEdit = new MultiTextEdit();
 			TextEdit edit = editRootElement(fModel.isFragmentModel() ? "fragment" : "plugin", adapter, doc, 0); //$NON-NLS-1$ //$NON-NLS-2$
-			if (edit != null)
+			if (edit != null) {
 				multiEdit.addChild(edit);
+			}
 			edit = removeElement("requires", adapter, doc, 0); //$NON-NLS-1$
-			if (edit != null)
+			if (edit != null) {
 				multiEdit.addChild(edit);
+			}
 			edit = removeElement("runtime", adapter, doc, 0); //$NON-NLS-1$
-			if (edit != null)
+			if (edit != null) {
 				multiEdit.addChild(edit);
+			}
 
 			if (multiEdit.hasChildren()) {
 				multiEdit.apply(doc);
@@ -85,8 +88,9 @@ public class CreateManifestOperation implements IRunnableWithProgress {
 		IRegion region = adapter.find(0, "<" + elementName + "[^>]*", true, true, false, true); //$NON-NLS-1$ //$NON-NLS-2$
 		if (region != null) {
 			String replacementString = "<" + elementName; //$NON-NLS-1$
-			if (doc.getChar(region.getOffset() + region.getLength()) == '/')
+			if (doc.getChar(region.getOffset() + region.getLength()) == '/') {
 				replacementString += "/"; //$NON-NLS-1$
+			}
 			return new ReplaceEdit(region.getOffset(), region.getLength(), replacementString);
 		}
 		return null;
@@ -95,8 +99,9 @@ public class CreateManifestOperation implements IRunnableWithProgress {
 	private TextEdit removeElement(String elementName, FindReplaceDocumentAdapter adapter, IDocument doc, int offset) throws BadLocationException {
 		IRegion region = adapter.find(0, "<" + elementName + "[^>]*", true, true, false, true); //$NON-NLS-1$ //$NON-NLS-2$
 		if (region != null) {
-			if (doc.getChar(region.getOffset() + region.getLength()) == '/')
+			if (doc.getChar(region.getOffset() + region.getLength()) == '/') {
 				return new DeleteEdit(region.getOffset(), region.getLength() + 1);
+			}
 			IRegion endRegion = adapter.find(0, "</" + elementName + ">", true, true, false, true); //$NON-NLS-1$ //$NON-NLS-2$
 			if (endRegion != null) {
 				int lastPos = endRegion.getOffset() + endRegion.getLength() + 1;

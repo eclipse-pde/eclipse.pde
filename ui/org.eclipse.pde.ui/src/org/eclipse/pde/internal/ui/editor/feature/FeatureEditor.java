@@ -114,9 +114,9 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 			IResource resource = model.getUnderlyingResource();
 			try {
 				IEditorInput input = null;
-				if (resource != null)
+				if (resource != null) {
 					input = new FileEditorInput((IFile) resource);
-				else {
+				} else {
 					String installLocation = model.getInstallLocation();
 					if (installLocation == null) {
 						input = new FeatureModelEditorInput(model);
@@ -185,8 +185,9 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 
 	@Override
 	public void monitoredFileAdded(IFile file) {
-		if (fInputContextManager == null)
+		if (fInputContextManager == null) {
 			return;
+		}
 		String name = file.getName();
 		if (name.equalsIgnoreCase(ICoreConstants.FEATURE_FILENAME_DESCRIPTOR)) {
 			/*
@@ -222,8 +223,9 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 			return;
 		}
 		IFormPage page = findPage(context.getId());
-		if (page != null)
+		if (page != null) {
 			removePage(context.getId());
+		}
 	}
 
 	@Override
@@ -284,8 +286,9 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 			addPage(new FeatureReferencePage(this, PDEUIMessages.FeatureEditor_ReferencePage_title));
 			addPage(new FeatureIncludesPage(this, PDEUIMessages.FeatureEditor_IncludesPage_title));
 			addPage(new FeatureDependenciesPage(this, PDEUIMessages.FeatureEditor_DependenciesPage_title));
-			if (fInputContextManager.hasContext(BuildInputContext.CONTEXT_ID))
+			if (fInputContextManager.hasContext(BuildInputContext.CONTEXT_ID)) {
 				addPage(new BuildPage(this));
+			}
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
 		}
@@ -302,20 +305,24 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 		String firstPageId = super.computeInitialPageId();
 		if (firstPageId == null) {
 			InputContext primary = fInputContextManager.getPrimaryContext();
-			if (primary != null && FeatureInputContext.CONTEXT_ID.equals(primary.getId()))
+			if (primary != null && FeatureInputContext.CONTEXT_ID.equals(primary.getId())) {
 				firstPageId = FeatureFormPage.PAGE_ID;
-			if (firstPageId == null)
+			}
+			if (firstPageId == null) {
 				firstPageId = FeatureFormPage.PAGE_ID;
+			}
 		}
 		return firstPageId;
 	}
 
 	@Override
 	protected IEditorPart createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
-		if (contextId.equals(FeatureInputContext.CONTEXT_ID))
+		if (contextId.equals(FeatureInputContext.CONTEXT_ID)) {
 			return new FeatureSourcePage(editor, title, name);
-		if (contextId.equals(BuildInputContext.CONTEXT_ID))
+		}
+		if (contextId.equals(BuildInputContext.CONTEXT_ID)) {
 			return new BuildSourcePage(editor, title, name);
+		}
 		return super.createSourcePage(editor, title, name, contextId);
 	}
 
@@ -345,16 +352,18 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 	public String getTitleProperty() {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 		String pref = store.getString(IPreferenceConstants.PROP_SHOW_OBJECTS);
-		if (pref != null && pref.equals(IPreferenceConstants.VALUE_USE_NAMES))
+		if (pref != null && pref.equals(IPreferenceConstants.VALUE_USE_NAMES)) {
 			return IFeatureObject.P_LABEL;
+		}
 		return IIdentifiable.P_ID;
 	}
 
 	private String getTitleText(IFeature feature) {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 		String pref = store.getString(IPreferenceConstants.PROP_SHOW_OBJECTS);
-		if (pref != null && pref.equals(IPreferenceConstants.VALUE_USE_NAMES))
+		if (pref != null && pref.equals(IPreferenceConstants.VALUE_USE_NAMES)) {
 			return feature.getTranslatableLabel();
+		}
 		return feature.getId();
 	}
 
@@ -368,8 +377,9 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 			Transfer[] transfers = new Transfer[] { TextTransfer.getInstance(), RTFTransfer.getInstance() };
 			for (TransferData type : types) {
 				for (Transfer transfer : transfers) {
-					if (transfer.isSupportedType(type))
+					if (transfer.isSupportedType(type)) {
 						return true;
+					}
 				}
 			}
 		} catch (SWTError e) {

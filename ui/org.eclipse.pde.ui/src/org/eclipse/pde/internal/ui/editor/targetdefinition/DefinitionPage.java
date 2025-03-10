@@ -130,10 +130,11 @@ public class DefinitionPage extends FormPage implements IHyperlinkListener {
 	@Override
 	public void linkActivated(HyperlinkEvent e) {
 		String href = (String) e.getHref();
-		if (href.equals("content")) //$NON-NLS-1$
+		if (href.equals("content")) { //$NON-NLS-1$
 			getEditor().setActivePage(ContentPage.PAGE_ID);
-		else if (href.equals("environment")) //$NON-NLS-1$
+		} else if (href.equals("environment")) { //$NON-NLS-1$
 			getEditor().setActivePage(EnvironmentPage.PAGE_ID);
+		}
 	}
 
 	@Override

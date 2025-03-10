@@ -89,8 +89,9 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 			if (element instanceof IPluginModelBase) {
 				IPluginBase plugin = ((IPluginModelBase) element).getPluginBase();
 				String showType = pref.getString(IPreferenceConstants.PROP_SHOW_OBJECTS);
-				if (showType.equals(IPreferenceConstants.VALUE_USE_IDS))
+				if (showType.equals(IPreferenceConstants.VALUE_USE_IDS)) {
 					return plugin.getId();
+				}
 				return plugin.getTranslatedName();
 			}
 			return super.getText(element);
@@ -142,8 +143,9 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 		ArrayList<PersistablePluginObject> list = new ArrayList<>();
 		for (Object checkedElement : checked) {
 			String id = ((IPluginModelBase) checkedElement).getPluginBase().getId();
-			if (id != null && id.length() > 0)
+			if (id != null && id.length() > 0) {
 				list.add(new PersistablePluginObject(id));
+			}
 		}
 		PersistablePluginObject[] objects = list.toArray(new PersistablePluginObject[list.size()]);
 
@@ -237,22 +239,25 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 			HashSet<String> set = new HashSet<>();
 			IAdaptable[] elements = fWorkingSet.getElements();
 			for (IAdaptable element : elements) {
-				if (element instanceof PersistablePluginObject)
+				if (element instanceof PersistablePluginObject) {
 					set.add(((PersistablePluginObject) element).getPluginID());
+				}
 			}
 
 			IPluginModelBase[] bases = PluginRegistry.getAllModels();
 			for (IPluginModelBase model : bases) {
 
 				String id = model.getPluginBase().getId();
-				if (id == null)
+				if (id == null) {
 					continue;
+				}
 				if (set.contains(id)) {
 					fTree.getCheckboxTreeViewer().setChecked(model, true);
 					set.remove(id);
 				}
-				if (set.isEmpty())
+				if (set.isEmpty()) {
 					break;
+				}
 			}
 			fWorkingSetName.setText(fWorkingSet.getName());
 		}

@@ -65,8 +65,9 @@ public class ComboChoiceOption extends AbstractChoiceOption {
 			fCombo.setEnabled(isEnabled());
 		}
 		fCombo.addSelectionListener(widgetSelectedAdapter(e -> {
-			if (isBlocked())
+			if (isBlocked()) {
 				return;
+			}
 			if (fCombo.getSelectionIndex() != -1) {
 				String[] choice = fChoices[fCombo.getSelectionIndex()];
 				// Since this is being fired by the combo, suppress updates
@@ -76,8 +77,9 @@ public class ComboChoiceOption extends AbstractChoiceOption {
 			}
 		}));
 
-		if (getChoice() != null)
+		if (getChoice() != null) {
 			selectChoice(getChoice());
+		}
 	}
 
 	@Override

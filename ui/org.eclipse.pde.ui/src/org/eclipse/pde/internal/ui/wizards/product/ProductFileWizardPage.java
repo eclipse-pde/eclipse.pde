@@ -121,8 +121,9 @@ public class ProductFileWizardPage extends PDEWizardNewFileCreationPage {
 
 	private void initializeState() {
 		fLaunchConfigCombo.setEnabled(false);
-		if (fLaunchConfigCombo.getItemCount() > 0)
+		if (fLaunchConfigCombo.getItemCount() > 0) {
 			fLaunchConfigCombo.setText(fLaunchConfigCombo.getItem(0));
+		}
 
 		if (fModel != null && fModel.getPluginBase().getId() != null) {
 			IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();
@@ -145,8 +146,9 @@ public class ProductFileWizardPage extends PDEWizardNewFileCreationPage {
 		fBasicButton.setSelection(true);
 
 		fProductCombo.setEnabled(false);
-		if (fProductCombo.getItemCount() > 0)
+		if (fProductCombo.getItemCount() > 0) {
 			fProductCombo.setText(fProductCombo.getItem(0));
+		}
 
 	}
 
@@ -157,15 +159,17 @@ public class ProductFileWizardPage extends PDEWizardNewFileCreationPage {
 			ILaunchConfigurationType type = manager.getLaunchConfigurationType(EclipseLaunchShortcut.CONFIGURATION_TYPE);
 			ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);
 			for (int i = 0; i < configs.length; i++) {
-				if (!DebugUITools.isPrivate(configs[i]))
+				if (!DebugUITools.isPrivate(configs[i])) {
 					list.add(configs[i].getName());
+				}
 			}
 			// add osgi launch configs to the list
 			type = manager.getLaunchConfigurationType(IPDELauncherConstants.OSGI_CONFIGURATION_TYPE);
 			configs = manager.getLaunchConfigurations(type);
 			for (int i = 0; i < configs.length; i++) {
-				if (!DebugUITools.isPrivate(configs[i]))
+				if (!DebugUITools.isPrivate(configs[i])) {
 					list.add(configs[i].getName());
+				}
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
@@ -174,8 +178,9 @@ public class ProductFileWizardPage extends PDEWizardNewFileCreationPage {
 	}
 
 	public ILaunchConfiguration getSelectedLaunchConfiguration() {
-		if (!fLaunchConfigButton.getSelection())
+		if (!fLaunchConfigButton.getSelection()) {
 			return null;
+		}
 
 		String configName = fLaunchConfigCombo.getText();
 		try {
@@ -188,8 +193,9 @@ public class ProductFileWizardPage extends PDEWizardNewFileCreationPage {
 			System.arraycopy(configs, 0, configurations, 0, configs.length);
 			System.arraycopy(configs2, 0, configurations, configs.length, configs2.length);
 			for (int i = 0; i < configurations.length; i++) {
-				if (configurations[i].getName().equals(configName) && !DebugUITools.isPrivate(configurations[i]))
+				if (configurations[i].getName().equals(configName) && !DebugUITools.isPrivate(configurations[i])) {
 					return configurations[i];
+				}
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
@@ -202,10 +208,12 @@ public class ProductFileWizardPage extends PDEWizardNewFileCreationPage {
 	}
 
 	public int getInitializationOption() {
-		if (fBasicButton.getSelection())
+		if (fBasicButton.getSelection()) {
 			return USE_DEFAULT;
-		if (fProductButton.getSelection())
+		}
+		if (fProductButton.getSelection()) {
 			return USE_PRODUCT;
+		}
 		return USE_LAUNCH_CONFIG;
 	}
 

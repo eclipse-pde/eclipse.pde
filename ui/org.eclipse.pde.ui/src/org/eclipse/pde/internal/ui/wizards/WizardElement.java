@@ -126,18 +126,22 @@ public class WizardElement extends NamedElement implements IPluginContribution, 
 	 * need to add '%%'.
 	 */
 	private String expandDescription(String source) {
-		if (source == null || source.length() == 0)
+		if (source == null || source.length() == 0) {
 			return source;
-		if (source.indexOf('%') == -1)
+		}
+		if (source.indexOf('%') == -1) {
 			return source;
+		}
 
 		Bundle bundle = Platform.getBundle(configurationElement.getNamespaceIdentifier());
-		if (bundle == null)
+		if (bundle == null) {
 			return source;
+		}
 
 		ResourceBundle resourceBundle = Platform.getResourceBundle(bundle);
-		if (resourceBundle == null)
+		if (resourceBundle == null) {
 			return source;
+		}
 		StringBuilder buf = new StringBuilder();
 		boolean keyMode = false;
 		int keyStartIndex = -1;
@@ -201,21 +205,24 @@ public class WizardElement extends NamedElement implements IPluginContribution, 
 	}
 
 	public IConfigurationElement getTemplateElement() {
-		if (template == null && configurationElement != null)
+		if (template == null && configurationElement != null) {
 			template = findTemplateElement();
+		}
 		return template;
 	}
 
 	private IConfigurationElement findTemplateElement() {
 		String templateId = getTemplateId();
-		if (templateId == null)
+		if (templateId == null) {
 			return null;
+		}
 		IConfigurationElement[] templates = Platform.getExtensionRegistry()
 				.getConfigurationElementsFor("org.eclipse.pde.ui.templates"); //$NON-NLS-1$
 		for (IConfigurationElement template : templates) {
 			String id = template.getAttribute("id"); //$NON-NLS-1$
-			if (id != null && id.equals(templateId))
+			if (id != null && id.equals(templateId)) {
 				return template;
+			}
 		}
 		return null;
 	}

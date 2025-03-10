@@ -33,8 +33,9 @@ public class ExternalizeStringsResolution extends AbstractPDEMarkerResolution {
 	@Override
 	public void run(final IMarker marker) {
 		// even for multiple error markers, this wizard must be run only once
-		if (hasRun)
+		if (hasRun) {
 			return;
+		}
 		BusyIndicator.showWhile(SWTUtil.getStandardDisplay(), () -> {
 			GetNonExternalizedStringsAction fGetExternAction = new GetNonExternalizedStringsAction();
 			IStructuredSelection selection = new StructuredSelection(marker.getResource().getProject());

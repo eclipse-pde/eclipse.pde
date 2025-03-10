@@ -390,8 +390,9 @@ public class FeatureSpecSection extends PDESection {
 
 	private boolean verifySetVersion(IFeature feature, String value) {
 		try {
-			if (VersionUtil.validateVersion(value).isOK())
+			if (VersionUtil.validateVersion(value).isOK()) {
 				feature.setVersion(value);
+			}
 		} catch (Exception e) {
 			return false;
 		}
@@ -400,8 +401,9 @@ public class FeatureSpecSection extends PDESection {
 
 	private boolean verifySetVersion(IFeatureImport featureImport, String value) {
 		try {
-			if (VersionUtil.validateVersion(value).isOK())
+			if (VersionUtil.validateVersion(value).isOK()) {
 				featureImport.setVersion(value);
+			}
 		} catch (Exception e) {
 			return false;
 		}
@@ -428,8 +430,9 @@ public class FeatureSpecSection extends PDESection {
 	@Override
 	public void dispose() {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
-		if (model != null)
+		if (model != null) {
 			model.removeModelChangedListener(this);
+		}
 		super.dispose();
 	}
 
@@ -481,8 +484,9 @@ public class FeatureSpecSection extends PDESection {
 
 	@Override
 	public void setFocus() {
-		if (fIdText != null)
+		if (fIdText != null) {
 			fIdText.getText().setFocus();
+		}
 	}
 
 	private void setIfDefined(FormEntry formText, String value) {
@@ -570,8 +574,9 @@ public class FeatureSpecSection extends PDESection {
 		Transfer[] transfers = new Transfer[] {TextTransfer.getInstance(), RTFTransfer.getInstance()};
 		for (TransferData type : types) {
 			for (Transfer transfer : transfers) {
-				if (transfer.isSupportedType(type))
+				if (transfer.isSupportedType(type)) {
 					return true;
+				}
 			}
 		}
 		return false;

@@ -80,8 +80,9 @@ public class TemplateListSelectionPage extends WizardListSelectionPage {
 			boolean requireBnd = welement.getFlag(TemplateWizardHelper.FLAG_BND, false);
 
 			//filter out wizards from disabled activities
-			if (!active)
+			if (!active) {
 				return false;
+			}
 			// filter out items that require bnd but not having automatic
 			// enabled
 			if (automatic) {
@@ -91,20 +92,25 @@ public class TemplateListSelectionPage extends WizardListSelectionPage {
 				return false;
 			}
 			//osgi projects need java
-			if (osgi && simple)
+			if (osgi && simple) {
 				return false;
+			}
 			//filter out java wizards for simple projects
-			if (simple)
+			if (simple) {
 				return !javaFlag;
+			}
 			//filter out ui wizards for non-ui plug-ins
-			if (uiFlag && !ui)
+			if (uiFlag && !ui) {
 				return false;
+			}
 			//filter out wizards that require an activator when the user specifies not to generate a class
-			if (activatorFlag && !generate)
+			if (activatorFlag && !generate) {
 				return false;
+			}
 			//filter out non-RCP wizard if RCP option is selected
-			if (!osgi && (rcp != rcpFlag))
+			if (!osgi && (rcp != rcpFlag)) {
 				return false;
+			}
 			//filter out non-UI wizards if UI option is selected for rcp and osgi projects
 			return (osgi == osgiFlag && ((!osgiFlag && !rcpFlag) || ui == uiFlag));
 		}
@@ -150,10 +156,11 @@ public class TemplateListSelectionPage extends WizardListSelectionPage {
 		fUseTemplate.setLayoutData(gd);
 		fUseTemplate.addSelectionListener(widgetSelectedAdapter(e -> {
 			wizardSelectionViewer.getControl().setEnabled(fUseTemplate.getSelection());
-			if (!fUseTemplate.getSelection())
+			if (!fUseTemplate.getSelection()) {
 				setDescription(""); //$NON-NLS-1$
-			else
+			} else {
 				setDescription(PDEUIMessages.WizardListSelectionPage_desc);
+			}
 			setDescriptionEnabled(fUseTemplate.getSelection());
 			getContainer().updateButtons();
 		}));
@@ -163,8 +170,9 @@ public class TemplateListSelectionPage extends WizardListSelectionPage {
 	@Override
 	protected void initializeViewer() {
 		wizardSelectionViewer.addFilter(new WizardFilter());
-		if (getInitialTemplateId() != null)
+		if (getInitialTemplateId() != null) {
 			selectInitialTemplate();
+		}
 		setDescriptionEnabled(false);
 	}
 
@@ -228,8 +236,9 @@ public class TemplateListSelectionPage extends WizardListSelectionPage {
 
 	@Override
 	public IPluginContentWizard getSelectedWizard() {
-		if (fUseTemplate.getSelection())
+		if (fUseTemplate.getSelection()) {
 			return super.getSelectedWizard();
+		}
 		return null;
 	}
 
@@ -273,10 +282,11 @@ public class TemplateListSelectionPage extends WizardListSelectionPage {
 				setDescriptionEnabled(true);
 			} else {
 				fUseTemplate.setVisible(true);
-				if (fUseTemplate.getSelection() == false)
+				if (fUseTemplate.getSelection() == false) {
 					wizardSelectionViewer.getControl().setEnabled(false);
-				else
+				} else {
 					setDescriptionEnabled(true);
+				}
 				fUseTemplate.setEnabled(true);
 			}
 			wizardSelectionViewer.refresh();

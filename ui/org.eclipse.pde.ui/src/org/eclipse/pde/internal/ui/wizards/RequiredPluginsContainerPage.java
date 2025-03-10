@@ -58,8 +58,9 @@ public class RequiredPluginsContainerPage extends WizardPage implements IClasspa
 	class EntryContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object parent) {
-			if (realEntries != null)
+			if (realEntries != null) {
 				return realEntries;
+			}
 			return new Object[0];
 		}
 	}
@@ -78,8 +79,9 @@ public class RequiredPluginsContainerPage extends WizardPage implements IClasspa
 		public String getText(Object obj) {
 			IClasspathEntry entry = (IClasspathEntry) obj;
 			int kind = entry.getEntryKind();
-			if (kind == IClasspathEntry.CPE_PROJECT)
+			if (kind == IClasspathEntry.CPE_PROJECT) {
 				return entry.getPath().segment(0);
+			}
 			IPath path = entry.getPath();
 			String name = path.lastSegment();
 			return name + " - " //$NON-NLS-1$
@@ -90,9 +92,9 @@ public class RequiredPluginsContainerPage extends WizardPage implements IClasspa
 		public Image getImage(Object obj) {
 			IClasspathEntry entry = (IClasspathEntry) obj;
 			int kind = entry.getEntryKind();
-			if (kind == IClasspathEntry.CPE_PROJECT)
+			if (kind == IClasspathEntry.CPE_PROJECT) {
 				return projectImage;
-			else if (kind == IClasspathEntry.CPE_LIBRARY) {
+			} else if (kind == IClasspathEntry.CPE_LIBRARY) {
 				IPath sourceAtt = entry.getSourceAttachmentPath();
 				return sourceAtt != null ? slibraryImage : libraryImage;
 			}
@@ -147,8 +149,9 @@ public class RequiredPluginsContainerPage extends WizardPage implements IClasspa
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.PLUGINS_CONTAINER_PAGE);
 		setControl(container);
 		Dialog.applyDialogFont(container);
-		if (realEntries != null)
+		if (realEntries != null) {
 			initializeView();
+		}
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.REQUIRED_PLUINGS_CONTAINER);
 	}
@@ -181,8 +184,9 @@ public class RequiredPluginsContainerPage extends WizardPage implements IClasspa
 	public void setSelection(IClasspathEntry containerEntry) {
 		this.entry = containerEntry;
 		createRealEntries();
-		if (viewer != null)
+		if (viewer != null) {
 			initializeView();
+		}
 	}
 
 	private void createRealEntries() {
@@ -202,13 +206,15 @@ public class RequiredPluginsContainerPage extends WizardPage implements IClasspa
 		} else {
 			try {
 				IClasspathContainer container = JavaCore.getClasspathContainer(entry.getPath(), javaProject);
-				if (container != null)
+				if (container != null) {
 					realEntries = container.getClasspathEntries();
+				}
 			} catch (JavaModelException e) {
 			}
 		}
-		if (realEntries == null)
+		if (realEntries == null) {
 			realEntries = new IClasspathEntry[0];
+		}
 	}
 
 	private IJavaProject getJavaProject() {

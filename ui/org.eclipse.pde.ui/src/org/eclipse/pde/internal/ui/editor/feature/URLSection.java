@@ -121,15 +121,17 @@ public class URLSection extends TableSection {
 
 	@Override
 	protected void buttonSelected(int index) {
-		if (index == 0)
+		if (index == 0) {
 			handleNew();
+		}
 	}
 
 	@Override
 	public void dispose() {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
-		if (model != null)
+		if (model != null) {
 			model.removeModelChangedListener(this);
+		}
 		super.dispose();
 	}
 
@@ -179,8 +181,9 @@ public class URLSection extends TableSection {
 	private void handleDelete() {
 		IStructuredSelection ssel = fUrlViewer.getStructuredSelection();
 
-		if (ssel.isEmpty())
+		if (ssel.isEmpty()) {
 			return;
+		}
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		if (!model.isEditable()) {
 			return;
@@ -290,8 +293,9 @@ public class URLSection extends TableSection {
 
 	@Override
 	public void setFocus() {
-		if (fUrlViewer != null)
+		if (fUrlViewer != null) {
 			fUrlViewer.getTable().setFocus();
+		}
 	}
 
 	@Override
@@ -319,8 +323,9 @@ public class URLSection extends TableSection {
 	@Override
 	protected boolean canPaste(Object target, Object[] objects) {
 		for (int i = 0; i < objects.length; i++) {
-			if (!(objects[i] instanceof FeatureURLElement))
+			if (!(objects[i] instanceof FeatureURLElement)) {
 				return false;
+			}
 		}
 		return true;
 	}

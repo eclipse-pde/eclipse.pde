@@ -151,8 +151,9 @@ public class URLDetailsSection extends PDESection implements IPartSelectionListe
 	@Override
 	public void dispose() {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
-		if (model != null)
+		if (model != null) {
 			model.removeModelChangedListener(this);
+		}
 		super.dispose();
 	}
 
@@ -186,8 +187,9 @@ public class URLDetailsSection extends PDESection implements IPartSelectionListe
 
 	@Override
 	public void setFocus() {
-		if (fUrlText != null)
+		if (fUrlText != null) {
 			fUrlText.getText().setFocus();
+		}
 	}
 
 	@Override
@@ -234,8 +236,9 @@ public class URLDetailsSection extends PDESection implements IPartSelectionListe
 		Transfer[] transfers = new Transfer[] {TextTransfer.getInstance(), RTFTransfer.getInstance()};
 		for (TransferData type : types) {
 			for (Transfer transfer : transfers) {
-				if (transfer.isSupportedType(type))
+				if (transfer.isSupportedType(type)) {
 					return true;
+				}
 			}
 		}
 		return false;
@@ -250,8 +253,9 @@ public class URLDetailsSection extends PDESection implements IPartSelectionListe
 			} else {
 				fInput = null;
 			}
-		} else
+		} else {
 			fInput = null;
+		}
 		update();
 	}
 }

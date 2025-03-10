@@ -71,8 +71,9 @@ public abstract class ChangeAwareSourceViewerConfiguration extends TextSourceVie
 				ReconcilingStrategy strategy = new ReconcilingStrategy();
 				strategy.addParticipant((IReconcilingParticipant) model);
 				ISortableContentOutlinePage outline = fSourcePage.getContentOutline();
-				if (outline instanceof IReconcilingParticipant)
+				if (outline instanceof IReconcilingParticipant) {
 					strategy.addParticipant((IReconcilingParticipant) outline);
+				}
 				fReconciler = new MonoReconciler(strategy, false);
 				fReconciler.setDelay(500);
 			}
@@ -82,8 +83,9 @@ public abstract class ChangeAwareSourceViewerConfiguration extends TextSourceVie
 
 	@Override
 	public IInformationPresenter getInformationPresenter(ISourceViewer sourceViewer) {
-		if (fSourcePage == null)
+		if (fSourcePage == null) {
 			return null;
+		}
 		if (fInfoPresenter == null && getInfoImplementationType() != SourceInformationProvider.F_NO_IMP) {
 			IInformationControlCreator icc = getInformationControlCreator(false);
 			fInfoPresenter = new InformationPresenter(icc);
@@ -92,8 +94,9 @@ public abstract class ChangeAwareSourceViewerConfiguration extends TextSourceVie
 			// Register information provider
 			IInformationProvider provider = new SourceInformationProvider(fSourcePage, icc, getInfoImplementationType());
 			String[] contentTypes = getConfiguredContentTypes(sourceViewer);
-			for (String contentType : contentTypes)
+			for (String contentType : contentTypes) {
 				fInfoPresenter.setInformationProvider(provider, contentType);
+			}
 
 			fInfoPresenter.setSizeConstraints(60, 10, true, true);
 		}
@@ -153,15 +156,18 @@ public abstract class ChangeAwareSourceViewerConfiguration extends TextSourceVie
 	@Override
 	public IHyperlinkDetector[] getHyperlinkDetectors(ISourceViewer sourceViewer) {
 		IHyperlinkDetector[] registeredDetectors = super.getHyperlinkDetectors(sourceViewer);
-		if (registeredDetectors == null)
+		if (registeredDetectors == null) {
 			return null;
+		}
 
-		if (fSourcePage == null)
+		if (fSourcePage == null) {
 			return registeredDetectors;
+		}
 
 		IHyperlinkDetector additionalDetector = fSourcePage.getAdapter(IHyperlinkDetector.class);
-		if (additionalDetector == null)
+		if (additionalDetector == null) {
 			return registeredDetectors;
+		}
 
 		IHyperlinkDetector[] allDetectors = new IHyperlinkDetector[registeredDetectors.length + 1];
 		System.arraycopy(registeredDetectors, 0, allDetectors, 0, registeredDetectors.length);

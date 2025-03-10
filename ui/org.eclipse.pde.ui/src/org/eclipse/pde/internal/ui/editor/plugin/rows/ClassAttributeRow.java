@@ -48,8 +48,9 @@ public class ClassAttributeRow extends ButtonAttributeRow {
 	protected void openReference() {
 		String name = TextUtil.trimNonAlphaChars(text.getText()).replace('$', '.');
 		name = PDEJavaHelperUI.createClass(name, getProject(), createJavaAttributeValue(name), true);
-		if (name != null)
+		if (name != null) {
 			text.setText(name);
+		}
 	}
 
 	@Override
@@ -77,18 +78,21 @@ public class ClassAttributeRow extends ButtonAttributeRow {
 		ISchemaAttribute attr = getAttribute();
 		String superName = attr != null ? attr.getBasedOn() : null;
 		int index = superName != null ? superName.indexOf(':') : -1;
-		if (index > 0)
+		if (index > 0) {
 			// if the schema specifies a class and interface, then show only types that extend the class (currently can't search on both).
 			superName = superName.substring(0, index);
-		else if (index == 0)
+		} else if (index == 0) {
 			// if only an interfaces was given (":MyInterface") use this
 			superName = superName.substring(1);
+		}
 		String filter = text.getText();
-		if (filter.length() == 0 && superName != null)
+		if (filter.length() == 0 && superName != null) {
 			filter = "**"; //$NON-NLS-1$
+		}
 		String type = PDEJavaHelperUI.selectType(resource, IJavaElementSearchConstants.CONSIDER_CLASSES_AND_INTERFACES, filter, superName);
-		if (type != null)
+		if (type != null) {
 			text.setText(type);
+		}
 
 	}
 

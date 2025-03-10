@@ -156,8 +156,9 @@ public abstract class TemplateOption extends TemplateField {
 					break;
 				}
 			}
-			if (c != '&' && c != ':')
+			if (c != '&' && c != ':') {
 				buf.append(c);
+			}
 		}
 		return buf.toString();
 	}

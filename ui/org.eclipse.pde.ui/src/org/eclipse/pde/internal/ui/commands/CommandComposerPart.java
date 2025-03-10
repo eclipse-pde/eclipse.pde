@@ -72,8 +72,9 @@ public class CommandComposerPart implements ISelectionChangedListener {
 	private static ICommandService initCommandService() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		Object serviceObject = workbench.getAdapter(ICommandService.class);
-		if (serviceObject instanceof ICommandService)
+		if (serviceObject instanceof ICommandService) {
 			return (ICommandService) serviceObject;
+		}
 		return null;
 	}
 
@@ -118,16 +119,18 @@ public class CommandComposerPart implements ISelectionChangedListener {
 		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		fCommandList = new CommandList(this, sashForm);
-		if (listener != null)
+		if (listener != null) {
 			fCommandList.addTreeSelectionListener(listener);
+		}
 
 		fCommandDetails = new CommandDetails(this, sashForm);
 
 		sashForm.setWeights(new int[] {4, 5});
 		fToolkit.adapt(sashForm, true, true);
 
-		if (fPC != null)
+		if (fPC != null) {
 			fCommandList.setSelection(fPC.getCommand());
+		}
 
 		fPC = null;
 	}
@@ -193,12 +196,14 @@ public class CommandComposerPart implements ISelectionChangedListener {
 
 		Object selectionObject = null;
 		// if preselection exists use that
-		if (fPC != null)
+		if (fPC != null) {
 			selectionObject = fPC;
-		else if (event.getSelection() instanceof IStructuredSelection)
+		} else if (event.getSelection() instanceof IStructuredSelection) {
 			selectionObject = event.getStructuredSelection().getFirstElement();
-		if (selectionObject != null && selectionObject.equals(fCommandDetails.getCommand()))
+		}
+		if (selectionObject != null && selectionObject.equals(fCommandDetails.getCommand())) {
 			return;
+		}
 		fCommandDetails.showDetailsFor(selectionObject);
 	}
 

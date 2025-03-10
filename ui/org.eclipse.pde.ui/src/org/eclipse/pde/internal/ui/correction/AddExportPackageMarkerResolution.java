@@ -60,8 +60,9 @@ public class AddExportPackageMarkerResolution extends AbstractManifestMarkerReso
 		}
 		String[] packages = values.split(","); //$NON-NLS-1$
 		String filter = PDEPlugin.getDefault().getDialogSettings().get(IOrganizeManifestsSettings.PROP_INTERAL_PACKAGE_FILTER);
-		if (filter == null)
+		if (filter == null) {
 			filter = IOrganizeManifestsSettings.VALUE_DEFAULT_FILTER;
+		}
 		Pattern pat = PatternConstructor.createPattern(filter, false);
 		for (String packageId : packages) {
 			ExportPackageObject obj = header.addPackage(packageId);
@@ -69,8 +70,9 @@ public class AddExportPackageMarkerResolution extends AbstractManifestMarkerReso
 				obj.setInternal(setInternal);
 				continue;
 			}
-			if (pat.matcher(packageId).matches())
+			if (pat.matcher(packageId).matches()) {
 				obj.setInternal(true);
+			}
 		}
 	}
 

@@ -143,8 +143,9 @@ public class PluginVersionPart {
 				BundleDescription desc = pluginModel.getBundleDescription();
 
 				String id = desc == null ? null : desc.getSymbolicName();
-				if (id == null)
+				if (id == null) {
 					continue;
+				}
 				ExportPackageDescription[] exported = desc.getExportPackages();
 				for (ExportPackageDescription exportedPackage : exported) {
 					String name = exportedPackage.getName();
@@ -156,12 +157,14 @@ public class PluginVersionPart {
 							exportedPackage.getVersion().toString(), NameVersionDescriptor.TYPE_PACKAGE);
 					exportedPackage.getExporter().getBundle();
 
-					if (("java".equals(name) || name.startsWith("java."))) //$NON-NLS-1$ //$NON-NLS-2$
+					if (("java".equals(name) || name.startsWith("java."))) { //$NON-NLS-1$ //$NON-NLS-2$
 						// $NON-NLS-2$
 						continue;
+					}
 					if (nameVersions.add(nameVersion)) {
-						if (name.equalsIgnoreCase(inputElement.toString()))
-								list.add(po);
+						if (name.equalsIgnoreCase(inputElement.toString())) {
+							list.add(po);
+						}
 					}
 				}
 			}
@@ -214,10 +217,11 @@ public class PluginVersionPart {
 	}
 
 	public void createVersionFields(Composite comp, boolean createGroup, boolean editable) {
-		if (fRangeAllowed)
+		if (fRangeAllowed) {
 			createRangeField(comp, createGroup, editable);
-		else
+		} else {
 			createSingleField(comp, createGroup, editable);
+		}
 		preloadFields();
 	}
 
@@ -292,22 +296,25 @@ public class PluginVersionPart {
 			fMinVersionText.setText((fVersionRange != null) ? fVersionRange.getLeft().toString() : ""); //$NON-NLS-1$
 			fMaxVersionText.setText((fVersionRange != null && fVersionRange.getRight() != null) ? fVersionRange.getRight().toString() : ""); //$NON-NLS-1$
 
-			if (fVersionRange != null)
+			if (fVersionRange != null) {
 				fMinVersionBound.select((fVersionRange.getLeftType() == VersionRange.LEFT_CLOSED) ? 0 : 1);
-			else
+			} else {
 				fMinVersionBound.select(0);
+			}
 
-			if (fVersionRange != null && getMaxVersion().length() > 0)
+			if (fVersionRange != null && getMaxVersion().length() > 0) {
 				fMaxVersionBound.select((fVersionRange.getRightType() == VersionRange.RIGHT_CLOSED) ? 0 : 1);
-			else
+			} else {
 				fMaxVersionBound.select(1);
+			}
 		}
 		fMinVersionText.setText((fVersionRange != null) ? fVersionRange.getLeft().toString() : ""); //$NON-NLS-1$
 	}
 
 	private IStatus validateVersion(String text, Text textWidget, boolean shortErrorMessage) {
-		if (text.length() == 0)
+		if (text.length() == 0) {
 			return Status.OK_STATUS;
+		}
 		if (!VersionUtil.validateVersion(text).isOK()) {
 			String errorMessage = null;
 			if (shortErrorMessage) {
@@ -347,8 +354,9 @@ public class PluginVersionPart {
 			return Status.error(
 					PDELabelUtility.qualifyMessage(PDELabelUtility.getFieldLabel(fMinVersionText), errorMessage));
 		}
-		if (!fRangeAllowed) // version created fine
+		if (!fRangeAllowed) { // version created fine
 			return Status.OK_STATUS;
+		}
 
 		try {
 			v2 = new Version(getMaxVersion());
@@ -373,10 +381,12 @@ public class PluginVersionPart {
 	 */
 	public IStatus validateFullVersionRangeText(boolean shortErrorMessage) {
 		IStatus status = validateVersion(getMinVersion(), fMinVersionText, shortErrorMessage);
-		if (status.isOK())
+		if (status.isOK()) {
 			status = validateVersion(getMaxVersion(), fMaxVersionText, shortErrorMessage);
-		if (status.isOK())
+		}
+		if (status.isOK()) {
 			status = validateVersionRange(shortErrorMessage);
+		}
 		return status;
 	}
 
@@ -385,20 +395,23 @@ public class PluginVersionPart {
 	}
 
 	private String getMaxVersion() {
-		if (fMaxVersionText != null)
+		if (fMaxVersionText != null) {
 			return fMaxVersionText.getText().trim();
+		}
 		return ""; //$NON-NLS-1$
 	}
 
 	private boolean getMinInclusive() {
-		if (fMinVersionBound != null)
+		if (fMinVersionBound != null) {
 			return fMinVersionBound.getSelectionIndex() == 0;
+		}
 		return false;
 	}
 
 	private boolean getMaxInclusive() {
-		if (fMaxVersionBound != null)
+		if (fMaxVersionBound != null) {
 			return fMaxVersionBound.getSelectionIndex() == 0;
+		}
 		return true;
 	}
 
@@ -431,10 +444,12 @@ public class PluginVersionPart {
 	}
 
 	public void addListeners(ModifyListener minListener, ModifyListener maxListener) {
-		if (fMinVersionText != null && minListener != null)
+		if (fMinVersionText != null && minListener != null) {
 			fMinVersionText.addModifyListener(minListener);
-		if (fRangeAllowed && fMaxVersionText != null && maxListener != null)
+		}
+		if (fRangeAllowed && fMaxVersionText != null && maxListener != null) {
 			fMaxVersionText.addModifyListener(maxListener);
+		}
 	}
 
 	protected String getGroupText() {

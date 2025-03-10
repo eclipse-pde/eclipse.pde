@@ -62,12 +62,14 @@ public class SchemaInputContext extends XMLInputContext {
 
 	@Override
 	protected IBaseModel createModel(IEditorInput input) throws CoreException {
-		if (input instanceof FileStoreEditorInput)
+		if (input instanceof FileStoreEditorInput) {
 			return createExternalModel((FileStoreEditorInput) input);
+		}
 
 		if (!(input instanceof IFileEditorInput)) {
-			if (input instanceof IStorageEditorInput)
+			if (input instanceof IStorageEditorInput) {
 				return createStorageModel((IStorageEditorInput) input);
+			}
 			return null;
 		}
 
@@ -122,11 +124,13 @@ public class SchemaInputContext extends XMLInputContext {
 		// if model is dirty, flush its content into
 		// the document so that the source editor will
 		// pick up the changes.
-		if (!(getModel() instanceof IEditable))
+		if (!(getModel() instanceof IEditable)) {
 			return;
+		}
 		IEditable editableModel = (IEditable) getModel();
-		if (editableModel.isDirty() == false)
+		if (editableModel.isDirty() == false) {
 			return;
+		}
 		try (StringWriter swriter = new StringWriter(); PrintWriter writer = new PrintWriter(swriter)) {
 			editableModel.save(writer);
 			writer.flush();

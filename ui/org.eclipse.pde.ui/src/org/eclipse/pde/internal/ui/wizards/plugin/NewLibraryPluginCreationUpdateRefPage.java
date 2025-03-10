@@ -53,8 +53,9 @@ public class NewLibraryPluginCreationUpdateRefPage extends WizardPage {
 	public class BuildpathContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object parent) {
-			if (fUnmigrated != null)
+			if (fUnmigrated != null) {
 				return fUnmigrated;
+			}
 			return new Object[0];
 		}
 	}
@@ -84,8 +85,9 @@ public class NewLibraryPluginCreationUpdateRefPage extends WizardPage {
 	}
 
 	private void computeSelected(Collection<?> initialSelection) {
-		if (initialSelection == null || initialSelection.isEmpty())
+		if (initialSelection == null || initialSelection.isEmpty()) {
 			return;
+		}
 		Set<IPluginModelBase> selected = new HashSet<>();
 		Iterator<?> iter = initialSelection.iterator();
 		while (iter.hasNext()) {

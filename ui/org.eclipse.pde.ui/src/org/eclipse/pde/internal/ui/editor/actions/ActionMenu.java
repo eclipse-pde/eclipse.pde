@@ -35,15 +35,17 @@ public class ActionMenu extends Action implements IMenuCreator {
 		if (!fActions.isEmpty()) {
 			setToolTipText(fActions.get(0).getToolTipText());
 			setImageDescriptor(fActions.get(0).getImageDescriptor());
-			if (fActions.size() > 1)
+			if (fActions.size() > 1) {
 				setMenuCreator(this);
+			}
 		}
 	}
 
 	@Override
 	public void run() {
-		if (!fActions.isEmpty())
+		if (!fActions.isEmpty()) {
 			fActions.get(0).run();
+		}
 	}
 
 	@Override
@@ -56,8 +58,9 @@ public class ActionMenu extends Action implements IMenuCreator {
 
 	@Override
 	public Menu getMenu(Control parent) {
-		if (fMenu != null)
+		if (fMenu != null) {
 			fMenu.dispose();
+		}
 		fMenu = new Menu(parent);
 		for (LauncherAction action : fActions) {
 			ActionContributionItem item = new ActionContributionItem(action);

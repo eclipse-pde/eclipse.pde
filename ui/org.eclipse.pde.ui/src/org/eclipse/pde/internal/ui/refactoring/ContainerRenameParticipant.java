@@ -70,8 +70,9 @@ public class ContainerRenameParticipant extends PDERenameParticipant {
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		// for the special case of a project rename, we need to only check the manifest for changes
 		if (fElements.size() == 1 && fElements.keySet().iterator().next() instanceof IProject) {
-			if (!getArguments().getUpdateReferences())
+			if (!getArguments().getUpdateReferences()) {
 				return null;
+			}
 			return createManifestChange(pm);
 		}
 		return super.createChange(pm);
@@ -96,8 +97,9 @@ public class ContainerRenameParticipant extends PDERenameParticipant {
 
 						String oldText = header.getId();
 						// don't update Bundle-SymbolicName if the id and project name don't match
-						if (!oldText.equals(calcProjectId))
+						if (!oldText.equals(calcProjectId)) {
 							return null;
+						}
 						// remember to create a valid OSGi Bundle-SymbolicName.  Project name does not have that guarante
 						String newId = IdUtil.getValidId(newText);
 

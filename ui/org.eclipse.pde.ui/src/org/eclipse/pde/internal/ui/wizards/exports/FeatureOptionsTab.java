@@ -167,8 +167,9 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 	protected URI getCategoryDefinition() {
 		if (doExportCategories()) {
 			File f = new File(fCategoryCombo.getText().trim());
-			if (f.exists())
+			if (f.exists()) {
 				return f.toURI();
+			}
 		}
 		return null;
 	}
@@ -207,8 +208,9 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 
 		fCategoryButton.setEnabled(fExportMetadata.getSelection() && fJarButton.getSelection());
 		fCategoryButton.setSelection(selected == null ? true : Boolean.TRUE.toString().equals(selected));
-		if (settings.get(S_CATEGORY_FILE) != null)
+		if (settings.get(S_CATEGORY_FILE) != null) {
 			fCategoryCombo.setText(settings.get(S_CATEGORY_FILE));
+		}
 		updateCategoryGeneration();
 	}
 
@@ -265,15 +267,17 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 		dialog.setInitialPattern("**"); //$NON-NLS-1$
 		dialog.create();
 		String path = combo.getText();
-		if (path.trim().length() == 0)
+		if (path.trim().length() == 0) {
 			path = PDEPlugin.getWorkspace().getRoot().getLocation().toString();
+		}
 		if (dialog.open() == Window.OK) {
 			Object[] objects = dialog.getResult();
 			if (objects.length == 1) {
 				String result = ((IResource) objects[0]).getRawLocation().toOSString();
 				if (result != null) {
-					if (combo.indexOf(result) == -1)
+					if (combo.indexOf(result) == -1) {
 						combo.add(result, 0);
+					}
 					combo.setText(result);
 				}
 			}

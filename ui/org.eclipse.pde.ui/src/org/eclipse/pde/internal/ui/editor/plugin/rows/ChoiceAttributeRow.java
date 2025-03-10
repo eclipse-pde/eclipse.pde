@@ -52,11 +52,13 @@ public class ChoiceAttributeRow extends ExtensionAttributeRow {
 		ISchemaRestriction restriction = type.getRestriction();
 		if (restriction != null) {
 			Object rchildren[] = restriction.getChildren();
-			if (getUse() != ISchemaAttribute.REQUIRED)
+			if (getUse() != ISchemaAttribute.REQUIRED) {
 				combo.add(""); //$NON-NLS-1$
+			}
 			for (Object rchild : rchildren) {
-				if (rchild instanceof ISchemaEnumeration)
+				if (rchild instanceof ISchemaEnumeration) {
 					combo.add(((ISchemaEnumeration) rchild).getName());
+				}
 			}
 		}
 		GridData gd = new GridData(span == 2 ? GridData.FILL_HORIZONTAL : GridData.HORIZONTAL_ALIGN_FILL);
@@ -65,8 +67,9 @@ public class ChoiceAttributeRow extends ExtensionAttributeRow {
 		gd.horizontalIndent = FormLayoutFactory.CONTROL_HORIZONTAL_INDENT;
 		combo.getControl().setLayoutData(gd);
 		combo.addSelectionListener(widgetSelectedAdapter(e -> {
-			if (!blockNotification)
+			if (!blockNotification) {
 				markDirty();
+			}
 		}));
 		combo.getControl().setEnabled(part.isEditable());
 	}
@@ -75,34 +78,39 @@ public class ChoiceAttributeRow extends ExtensionAttributeRow {
 	protected void update() {
 		blockNotification = true;
 		String value = getValue();
-		if (value != null && isValid(value))
+		if (value != null && isValid(value)) {
 			combo.setText(value);
-		else if (getUse() == ISchemaAttribute.REQUIRED)
+		} else if (getUse() == ISchemaAttribute.REQUIRED) {
 			combo.setText(getValidValue());
-		else
+		} else {
 			combo.setText(""); //$NON-NLS-1$
+		}
 		blockNotification = false;
 		dirty = false;
 	}
 
 	protected String getValidValue() {
 		ISchemaAttribute attInfo = getAttribute();
-		if (attInfo.getType().getRestriction() != null)
+		if (attInfo.getType().getRestriction() != null) {
 			return attInfo.getType().getRestriction().getChildren()[0].toString();
+		}
 		return ""; //$NON-NLS-1$
 	}
 
 	protected boolean isValid(String value) {
-		if (getAttribute().getUse() != ISchemaAttribute.REQUIRED && value.equals("")) //$NON-NLS-1$
+		if (getAttribute().getUse() != ISchemaAttribute.REQUIRED && value.equals("")) { //$NON-NLS-1$
 			return true;
+		}
 
 		ISchemaRestriction restriction = getAttribute().getType().getRestriction();
-		if (restriction == null)
+		if (restriction == null) {
 			return true;
+		}
 		Object[] children = restriction.getChildren();
 		for (Object rchild : children) {
-			if (rchild instanceof ISchemaEnumeration && ((ISchemaEnumeration) rchild).getName().equals(value))
+			if (rchild instanceof ISchemaEnumeration && ((ISchemaEnumeration) rchild).getName().equals(value)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -112,8 +120,9 @@ public class ChoiceAttributeRow extends ExtensionAttributeRow {
 		if (dirty && input != null) {
 			try {
 				String selection = combo.getSelection();
-				if (selection.length() == 0)
+				if (selection.length() == 0) {
 					selection = null;
+				}
 				input.setAttribute(getName(), selection);
 				dirty = false;
 			} catch (CoreException e) {

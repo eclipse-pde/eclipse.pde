@@ -56,8 +56,9 @@ public class PackageFinder {
 		monitor.beginTask(PDEUIMessages.PackageFinder_taskName, files.length);
 		for (IClassFile file : files) {
 			IClassFileReader reader = ToolFactory.createDefaultClassFileReader(file, IClassFileReader.ALL);
-			if (reader != null)
+			if (reader != null) {
 				computeReferencedTypes(reader, packages);
+			}
 			monitor.worked(1);
 		}
 		return packages;
@@ -172,11 +173,14 @@ public class PackageFinder {
 	static boolean isPrimitiveTypeSignature(String typeSig) {
 		//check for array of primitives
 		/* bug 101514 - changed >= 2 and typeSig.subString(1, typeSig.length) to incorporate multi dimensional arrays of primitives */
-		if (typeSig.length() >= 2 && typeSig.startsWith("[") && isPrimitiveTypeSignature(typeSig.substring(1, typeSig.length())))return true; //$NON-NLS-1$
+		if (typeSig.length() >= 2 && typeSig.startsWith("[") && isPrimitiveTypeSignature(typeSig.substring(1, typeSig.length()))) { //$NON-NLS-1$
+			return true;
+		}
 
 		//check for primitives
-		if (typeSig.length() != 1)
+		if (typeSig.length() != 1) {
 			return false;
+		}
 		if (typeSig.equals(Signature.SIG_VOID) || typeSig.equals(Signature.SIG_BOOLEAN) || typeSig.equals(Signature.SIG_BYTE) || typeSig.equals(Signature.SIG_CHAR) || typeSig.equals(Signature.SIG_DOUBLE) || typeSig.equals(Signature.SIG_FLOAT) || typeSig.equals(Signature.SIG_INT) || typeSig.equals(Signature.SIG_LONG) || typeSig.equals(Signature.SIG_SHORT)) {
 
 			return true;
@@ -212,8 +216,9 @@ public class PackageFinder {
 		ArrayList<IClassFile> classFiles = new ArrayList<>();
 		IBundle bundle = base.getBundleModel().getBundle();
 		String value = bundle.getHeader(Constants.BUNDLE_CLASSPATH);
-		if (value == null)
+		if (value == null) {
 			value = "."; //$NON-NLS-1$
+		}
 		ManifestElement elems[] = null;
 		try {
 			elems = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, value);
@@ -231,27 +236,31 @@ public class PackageFinder {
 	}
 
 	private static void addClassFilesFromResource(IResource res, List<IClassFile> classFiles) {
-		if (res == null)
+		if (res == null) {
 			return;
+		}
 		ArrayDeque<IResource> stack = new ArrayDeque<>();
 		if (res instanceof IContainer) {
 			stack.push(res);
 			while (!stack.isEmpty()) {
 				try {
 					IResource[] children = ((IContainer) stack.pop()).members();
-					for (IResource child : children)
+					for (IResource child : children) {
 						if (child instanceof IFile && "class".equals(child.getFileExtension())) { //$NON-NLS-1$
 							classFiles.add(JavaCore.createClassFileFrom((IFile) child));
-						} else if (child instanceof IContainer)
+						} else if (child instanceof IContainer) {
 							stack.push(child);
+						}
+					}
 				} catch (CoreException e) {
 				}
 			}
 		} else if (res instanceof IFile) {
 			if (res.getFileExtension().equals("jar") || res.getFileExtension().equals("zip")) { //$NON-NLS-1$ //$NON-NLS-2$
 				IPackageFragmentRoot root = JavaCore.create(res.getProject()).getPackageFragmentRoot(res);
-				if (root == null)
+				if (root == null) {
 					return;
+				}
 				try {
 					IJavaElement[] children = root.getChildren();
 					for (IJavaElement child : children) {
@@ -262,8 +271,9 @@ public class PackageFinder {
 					}
 				} catch (JavaModelException e) {
 				}
-			} else if (res.getFileExtension().equals("class")) //$NON-NLS-1$
+			} else if (res.getFileExtension().equals("class")) { //$NON-NLS-1$
 				JavaCore.createClassFileFrom((IFile) res);
+			}
 		}
 	}
 

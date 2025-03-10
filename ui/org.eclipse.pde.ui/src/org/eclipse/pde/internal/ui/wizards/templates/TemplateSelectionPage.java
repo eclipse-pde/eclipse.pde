@@ -66,8 +66,9 @@ public class TemplateSelectionPage extends WizardPage {
 		@Override
 		protected void updateCounter(int amount) {
 			super.updateCounter(amount);
-			if (getContainer() != null)
+			if (getContainer() != null) {
 				getContainer().updateButtons();
+			}
 		}
 	}
 
@@ -82,15 +83,17 @@ public class TemplateSelectionPage extends WizardPage {
 		@Override
 		public String getColumnText(Object obj, int index) {
 			ITemplateSection section = (ITemplateSection) obj;
-			if (index == 0)
+			if (index == 0) {
 				return section.getLabel();
+			}
 			return section.getUsedExtensionPoint();
 		}
 
 		@Override
 		public Image getColumnImage(Object obj, int index) {
-			if (index == 0)
+			if (index == 0) {
 				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_EXTENSION_OBJ);
+			}
 			return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_EXT_POINT_OBJ);
 		}
 	}
@@ -155,8 +158,9 @@ public class TemplateSelectionPage extends WizardPage {
 
 	private void initializeWizardPages() {
 		for (ITemplateSection section : fCandidates) {
-			if (section.getPagesAdded() == false)
+			if (section.getPagesAdded() == false) {
 				section.addPages((Wizard) getWizard());
+			}
 		}
 	}
 
@@ -184,15 +188,17 @@ public class TemplateSelectionPage extends WizardPage {
 
 	private void handleSelectionChanged(ITemplateSection section) {
 		String text = section != null ? section.getDescription() : ""; //$NON-NLS-1$
-		if (text.length() > 0)
+		if (text.length() > 0) {
 			text = "<p>" + text + "</p>"; //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		fDescriptionBrowser.setText(text);
 	}
 
 	@Override
 	public boolean canFlipToNextPage() {
-		if (fTablePart.getSelectionCount() == 0)
+		if (fTablePart.getSelectionCount() == 0) {
 			return false;
+		}
 		return super.canFlipToNextPage();
 	}
 
@@ -206,18 +212,21 @@ public class TemplateSelectionPage extends WizardPage {
 				fVisiblePages.add(section.getPage(j));
 			}
 		}
-		if (!fVisiblePages.isEmpty())
+		if (!fVisiblePages.isEmpty()) {
 			return fVisiblePages.get(0);
+		}
 
 		return null;
 	}
 
 	public IWizardPage getNextVisiblePage(IWizardPage page) {
-		if (page == this)
+		if (page == this) {
 			return page.getNextPage();
+		}
 		int index = fVisiblePages.indexOf(page);
-		if (index >= 0 && index < fVisiblePages.size() - 1)
+		if (index >= 0 && index < fVisiblePages.size() - 1) {
 			return fVisiblePages.get(index + 1);
+		}
 		return null;
 	}
 

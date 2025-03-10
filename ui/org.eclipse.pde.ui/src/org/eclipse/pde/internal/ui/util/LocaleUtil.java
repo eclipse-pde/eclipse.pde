@@ -41,12 +41,15 @@ public class LocaleUtil {
 		String variant = ""; //$NON-NLS-1$
 
 		StringTokenizer tokenizer = new StringTokenizer(name, "_"); //$NON-NLS-1$
-		if (tokenizer.hasMoreTokens())
+		if (tokenizer.hasMoreTokens()) {
 			language = tokenizer.nextToken();
-		if (tokenizer.hasMoreTokens())
+		}
+		if (tokenizer.hasMoreTokens()) {
 			country = tokenizer.nextToken();
-		if (tokenizer.hasMoreTokens())
+		}
+		if (tokenizer.hasMoreTokens()) {
 			variant = tokenizer.nextToken();
+		}
 
 		Locale locale = new Locale(language, country, variant);
 		return locale.toString() + " - " + locale.getDisplayName(); //$NON-NLS-1$
@@ -60,12 +63,14 @@ public class LocaleUtil {
 	 */
 	public static String trimLocalization(String localization) {
 		String sTrim = localization.trim();
-		if (sTrim.endsWith(".properties")) //$NON-NLS-1$
+		if (sTrim.endsWith(".properties")) { //$NON-NLS-1$
 			sTrim = sTrim.replaceAll(".properties", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		Pattern p = Pattern.compile(".*(_[a-z]{2}(_[A-Z]{2})?)$"); //$NON-NLS-1$
 		Matcher m = p.matcher(sTrim);
-		if (m.matches())
+		if (m.matches()) {
 			sTrim = sTrim.substring(0, m.start(1));
+		}
 		return sTrim;
 	}
 

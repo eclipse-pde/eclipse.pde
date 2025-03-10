@@ -54,8 +54,9 @@ public class DependenciesViewTreePage extends DependenciesViewPage {
 		public boolean select(Viewer v, Object parent, Object element) {
 			if (element instanceof BundleSpecification) {
 				return !((BundleSpecification) element).isOptional();
-			} else if (element instanceof ImportPackageSpecification)
+			} else if (element instanceof ImportPackageSpecification) {
 				return !Constants.RESOLUTION_OPTIONAL.equals(((ImportPackageSpecification) element).getDirective(Constants.RESOLUTION_DIRECTIVE));
+			}
 			return true;
 		}
 	}
@@ -82,27 +83,31 @@ public class DependenciesViewTreePage extends DependenciesViewPage {
 	@Override
 	public void makeContributions(IMenuManager menuManager, IToolBarManager toolBarManager, IStatusLineManager statusLineManager) {
 		super.makeContributions(menuManager, toolBarManager, statusLineManager);
-		if (toolBarManager.find(DependenciesView.TREE_ACTION_GROUP) != null)
+		if (toolBarManager.find(DependenciesView.TREE_ACTION_GROUP) != null) {
 			toolBarManager.prependToGroup(DependenciesView.TREE_ACTION_GROUP, new CollapseAllAction());
-		else
+		} else {
 			toolBarManager.add(new CollapseAllAction());
+		}
 	}
 
 	@Override
 	protected void handleShowOptional(boolean isChecked, boolean refreshIfNecessary) {
-		if (isChecked)
+		if (isChecked) {
 			fTreeViewer.removeFilter(fHideOptionalFilter);
-		else
+		} else {
 			fTreeViewer.addFilter(fHideOptionalFilter);
 		// filter automatically refreshes tree, therefore can ignore refreshIfNecessary
+		}
 	}
 
 	@Override
 	protected boolean isShowingOptional() {
 		ViewerFilter[] filters = fTreeViewer.getFilters();
-		for (ViewerFilter filter : filters)
-			if (filter.equals(fHideOptionalFilter))
+		for (ViewerFilter filter : filters) {
+			if (filter.equals(fHideOptionalFilter)) {
 				return false;
+			}
+		}
 		return true;
 	}
 

@@ -61,12 +61,14 @@ public class CreateHeaderChangeOperation implements IWorkspaceRunnable {
 	public void run(IProgressMonitor monitor) throws CoreException {
 		try {
 			IResource res = fBase.getUnderlyingResource();
-			if (res == null)
+			if (res == null) {
 				return;
+			}
 			IProject proj = res.getProject();
 			IFile file = PDEProject.getManifest(proj);
-			if (file.exists())
+			if (file.exists()) {
 				fChange = updateBundleHeader(file, monitor);
+			}
 		} finally {
 			monitor.done();
 		}
@@ -89,8 +91,9 @@ public class CreateHeaderChangeOperation implements IWorkspaceRunnable {
 					} else if (mHeader instanceof RequireBundleHeader header) {
 						RequireBundleObject bundles[] = header.getRequiredBundles();
 						for (RequireBundleObject requiredBundle : bundles) {
-							if (requiredBundle.getId().equals(fOldValue))
+							if (requiredBundle.getId().equals(fOldValue)) {
 								requiredBundle.setId(fNewValue);
+							}
 						}
 					} else if (mHeader instanceof FragmentHostHeader) {
 						((FragmentHostHeader) mHeader).setHostId(fNewValue);
@@ -129,8 +132,9 @@ public class CreateHeaderChangeOperation implements IWorkspaceRunnable {
 
 	private TextFileChange getTextChange(BundleTextChangeListener listener, IFile manifest) {
 		TextEdit[] edits = listener.getTextOperations();
-		if (edits.length == 0)
+		if (edits.length == 0) {
 			return null;
+		}
 		MultiTextEdit edit = new MultiTextEdit();
 		edit.addChildren(edits);
 		TextFileChange change = new TextFileChange("", manifest); //$NON-NLS-1$

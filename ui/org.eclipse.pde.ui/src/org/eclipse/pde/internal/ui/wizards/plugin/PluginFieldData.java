@@ -48,8 +48,9 @@ public class PluginFieldData extends AbstractFieldData implements IPluginFieldDa
 	}
 
 	public void addTemplate(ITemplateSection section) {
-		if (!templates.contains(section))
+		if (!templates.contains(section)) {
 			templates.add(section);
+		}
 	}
 
 	public ITemplateSection[] getTemplateSections() {

@@ -104,8 +104,9 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 				} else if (object instanceof IAdaptable) {
 					project = ((IAdaptable) object).getAdapter(IProject.class);
 				}
-				if (project != null && project.isOpen())
+				if (project != null && project.isOpen()) {
 					model = PluginRegistry.findModel(project);
+				}
 			}
 		}
 		launch(model, mode);
@@ -147,8 +148,9 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 	private String[] getAvailableApplications() {
 		IPluginBase plugin = fModel.getPluginBase();
 		String id = plugin.getId();
-		if (id == null || id.trim().length() == 0)
+		if (id == null || id.trim().length() == 0) {
 			return new String[0];
+		}
 
 		IPluginExtension[] extensions = plugin.getExtensions();
 		ArrayList<String> result = new ArrayList<>();
@@ -164,8 +166,9 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 	}
 
 	private String getProduct(String appName) {
-		if (appName == null)
+		if (appName == null) {
 			return TargetPlatform.getDefaultProduct();
+		}
 		if (fModel != null) {
 			IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();
 			for (IPluginExtension ext : extensions) {
@@ -230,10 +233,11 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 	 */
 	@Override
 	protected void initializeConfiguration(ILaunchConfigurationWorkingCopy wc) {
-		if (TargetPlatformHelper.usesNewApplicationModel())
+		if (TargetPlatformHelper.usesNewApplicationModel()) {
 			wc.setAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, "3.3"); //$NON-NLS-1$
-		else if (TargetPlatformHelper.getTargetVersion() >= 3.2)
+		} else if (TargetPlatformHelper.getTargetVersion() >= 3.2) {
 			wc.setAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, "3.2a"); //$NON-NLS-1$
+		}
 		wc.setAttribute(IPDELauncherConstants.LOCATION, LaunchArgumentsHelper.getDefaultWorkspaceLocation(wc.getName()));
 		initializeProgramArguments(wc);
 		initializeVMArguments(wc);
@@ -265,14 +269,16 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 
 	private void initializeProgramArguments(ILaunchConfigurationWorkingCopy wc) {
 		String programArgs = LaunchArgumentsHelper.getInitialProgramArguments();
-		if (programArgs.length() > 0)
+		if (programArgs.length() > 0) {
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, programArgs);
+		}
 	}
 
 	private void initializeVMArguments(ILaunchConfigurationWorkingCopy wc) {
 		String vmArgs = LaunchArgumentsHelper.getInitialVMArguments();
-		if (vmArgs.length() > 0)
+		if (vmArgs.length() > 0) {
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs);
+		}
 	}
 
 	/**
@@ -288,8 +294,9 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 	@Override
 	protected String getName(ILaunchConfigurationType type) {
 		// if launching default product, use default naming convention
-		if (fApplicationName == null)
+		if (fApplicationName == null) {
 			return super.getName(type);
+		}
 		String product = getProduct(fApplicationName);
 		return (product == null) ? fApplicationName : product;
 	}
@@ -300,8 +307,9 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 		Set<BundleDescription> plugins = DependencyManager.getSelfAndDependencies(Set.of(fModel));
 		for (Resource plugin : plugins) {
 			IPluginModelBase model = PluginRegistry.findModel(plugin);
-			if (model == null || !model.isEnabled())
+			if (model == null || !model.isEnabled()) {
 				continue;
+			}
 			if (model.getUnderlyingResource() == null) {
 				appendPlugin(explugins, model);
 			} else {

@@ -332,21 +332,24 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 			prev.addHyperlinkListener(new HyperlinkAdapter() {
 				@Override
 				public void linkActivated(HyperlinkEvent e) {
-					if (page > 0)
+					if (page > 0) {
 						page--;
+					}
 					scanImages();
 				}
 			});
 			prev.setBackground(getBackground());
-			if (page == 0)
+			if (page == 0) {
 				prev.setEnabled(false);
+			}
 			// Links to individual pages
 			int currentlyAvailable = imageIndex + 1;
 			int curPage = page + 1;
 			int maxPage = curPage;
 			boolean lastPage = currentlyAvailable <= curPage * maxImages;
-			if (!lastPage)
+			if (!lastPage) {
 				maxPage = Math.max(curPage + 1, 5);
+			}
 			// we only show link for 5 last pages
 			int start = Math.max(maxPage - 5 + 1, 1);
 			for (int i = start; i <= maxPage; i++) {
@@ -378,8 +381,9 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 				}
 			});
 			next.setBackground(getBackground());
-			if (lastPage)
+			if (lastPage) {
 				next.setEnabled(false);
+			}
 
 		}
 	}
@@ -394,11 +398,13 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		// make a copy of filter to avoid concurrent modification exception since UI changes mFilters list
 		ArrayList<IFilter> filters = new ArrayList<>(mFilters);
 		for (final IFilter filter : filters) {
-			if (!filter.accept(element))
+			if (!filter.accept(element)) {
 				return;
+			}
 		}
-		if (imageIndex >= page * maxImages && imageIndex < (page + 1) * maxImages)
+		if (imageIndex >= page * maxImages && imageIndex < (page + 1) * maxImages) {
 			mUIJob.addImage(element);
+		}
 		imageIndex++;
 	}
 
@@ -479,8 +485,9 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		public synchronized void addImage(final ImageElement element) {
 			mElements.add(element);
 
-			if (mElements.size() == 1)
+			if (mElements.size() == 1) {
 				Display.getDefault().asyncExec(this);
+			}
 		}
 
 		@Override
@@ -495,8 +502,9 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 						label.setText(mLastPlugin);
 						label.setBackground(label.getParent().getBackground());
 
-						if (mPluginImageContainer != null)
+						if (mPluginImageContainer != null) {
 							mPluginImageContainer.layout();
+						}
 
 						mPluginImageContainer = new Composite(imageComposite, SWT.NONE);
 						mPluginImageContainer.setLayout(mRowLayout);
@@ -518,8 +526,9 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 
 				mPluginImageContainer.layout();
 
-				if (pageNavigationControl!=null)
+				if (pageNavigationControl!=null) {
 					pageNavigationControl.dispose();
+				}
 				pageNavigationControl = new PageNavigationControl(imageComposite, SWT.NONE);
 				pageNavigationControl.setBackground(imageComposite.getBackground());
 
@@ -550,14 +559,18 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 			bounds.y += pluginBounds.y;
 			Rectangle area = scrolledComposite.getClientArea();
 			Point origin = scrolledComposite.getOrigin();
-			if (origin.x > bounds.x)
+			if (origin.x > bounds.x) {
 				origin.x = Math.max(0, bounds.x);
-			if (origin.y > bounds.y)
+			}
+			if (origin.y > bounds.y) {
 				origin.y = Math.max(0, bounds.y);
-			if (origin.x + area.width < bounds.x + bounds.width)
+			}
+			if (origin.x + area.width < bounds.x + bounds.width) {
 				origin.x = Math.max(0, bounds.x + bounds.width - area.width);
-			if (origin.y + area.height < bounds.y + bounds.height)
+			}
+			if (origin.y + area.height < bounds.y + bounds.height) {
 				origin.y = Math.max(0, bounds.y + bounds.height - area.height);
+			}
 			scrolledComposite.setOrigin(origin);
 
 			final Object data = e.widget.getData();

@@ -61,8 +61,9 @@ public class JRESection extends PDESection {
 	private static final class EELabelProvider extends LabelProvider {
 		@Override
 		public String getText(Object element) {
-			if (!(element instanceof IExecutionEnvironment env))
+			if (!(element instanceof IExecutionEnvironment env)) {
 				return ""; //$NON-NLS-1$
+			}
 			IPath path = JavaRuntime.newJREContainerPath(env);
 			IVMInstall install = JavaRuntime.getVMInstall(path);
 			String eeItem;
@@ -162,8 +163,9 @@ public class JRESection extends PDESection {
 
 	private void setEE(IExecutionEnvironment ee) {
 		IPath eePath = null;
-		if (ee != null)
+		if (ee != null) {
 			eePath = JavaRuntime.newJREContainerPath(ee);
+		}
 		getJVMLocations().setJREContainerPath(getOS(fLastTab), eePath);
 
 	}
@@ -209,8 +211,9 @@ public class JRESection extends PDESection {
 			String eeID = JavaRuntime.getExecutionEnvironmentId(jrePath);
 			IExecutionEnvironment env = VMUtil.getExecutionEnvironment(eeID);
 			if (env != null) {
-				if (!fEEsCombo.getItems().contains(env))
+				if (!fEEsCombo.getItems().contains(env)) {
 					fEEsCombo.addItem(env);
+				}
 				fEEsCombo.select(env);
 			} else {
 				IVMInstall install = JavaRuntime.getVMInstall(jrePath);

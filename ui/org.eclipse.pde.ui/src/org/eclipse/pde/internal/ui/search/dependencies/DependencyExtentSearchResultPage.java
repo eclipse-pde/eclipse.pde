@@ -48,8 +48,9 @@ public class DependencyExtentSearchResultPage extends AbstractSearchResultPage {
 		public int category(Object element) {
 			try {
 				if (element instanceof IType) {
-					if (((IType) element).isClass())
+					if (((IType) element).isClass()) {
 						return 1;
+					}
 					return 0;
 				}
 			} catch (JavaModelException e) {
@@ -61,30 +62,36 @@ public class DependencyExtentSearchResultPage extends AbstractSearchResultPage {
 	class LabelProvider extends JavaElementLabelProvider {
 		@Override
 		public Image getImage(Object element) {
-			if (element instanceof IPluginObject)
+			if (element instanceof IPluginObject) {
 				return PDEPlugin.getDefault().getLabelProvider().getImage(element);
+			}
 			return super.getImage(element);
 		}
 
 		@Override
 		public String getText(Object element) {
-			if (element instanceof IPluginExtensionPoint)
+			if (element instanceof IPluginExtensionPoint) {
 				return ((IPluginExtensionPoint) element).getFullId();
+			}
 
-			if (element instanceof IPluginExtension)
+			if (element instanceof IPluginExtension) {
 				return ((IPluginExtension) element).getPoint();
+			}
 
 			if (element instanceof IJavaElement javaElement) {
 				String text = super.getText(javaElement) + " - " //$NON-NLS-1$
 						+ javaElement.getAncestor(IJavaElement.PACKAGE_FRAGMENT).getElementName();
 				if (!(javaElement instanceof IType)) {
 					IJavaElement ancestor = javaElement.getAncestor(IJavaElement.TYPE);
-					if (ancestor == null)
+					if (ancestor == null) {
 						ancestor = javaElement.getAncestor(IJavaElement.CLASS_FILE);
-					if (ancestor == null)
+					}
+					if (ancestor == null) {
 						ancestor = javaElement.getAncestor(IJavaElement.COMPILATION_UNIT);
-					if (ancestor != null)
+					}
+					if (ancestor != null) {
 						text += "." + ancestor.getElementName(); //$NON-NLS-1$
+					}
 				}
 				return text;
 			}

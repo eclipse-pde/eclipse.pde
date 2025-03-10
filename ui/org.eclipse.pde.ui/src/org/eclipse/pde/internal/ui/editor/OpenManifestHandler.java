@@ -69,10 +69,12 @@ public class OpenManifestHandler extends AbstractHandler {
 			while (it.hasNext()) {
 				Object element = it.next();
 				IProject proj = null;
-				if (element instanceof IFile)
+				if (element instanceof IFile) {
 					proj = ((IFile) element).getProject();
-				if ((proj == null) && (element instanceof IProject))
+				}
+				if ((proj == null) && (element instanceof IProject)) {
 					proj = (IProject) element;
+				}
 				if ((proj == null) && (element instanceof IAdaptable)) {
 					IResource resource = ((IAdaptable) element).getAdapter(IResource.class);
 					if (resource != null) {
@@ -92,8 +94,9 @@ public class OpenManifestHandler extends AbstractHandler {
 					}
 				}
 
-				if (proj != null && WorkspaceModelManager.isPluginProject(proj))
+				if (proj != null && WorkspaceModelManager.isPluginProject(proj)) {
 					projects.add(proj);
+				}
 			}
 		}
 		if (!projects.isEmpty()) {
@@ -102,22 +105,26 @@ public class OpenManifestHandler extends AbstractHandler {
 				while (it.hasNext()) {
 					IProject project = it.next();
 					IFile file = PDEProject.getManifest(project);
-					if (file == null || !file.exists())
+					if (file == null || !file.exists()) {
 						file = PDEProject.getPluginXml(project);
-					if (file == null || !file.exists())
+					}
+					if (file == null || !file.exists()) {
 						file = PDEProject.getFragmentXml(project);
-					if (file == null || !file.exists())
+					}
+					if (file == null || !file.exists()) {
 						MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.OpenManifestsAction_title, NLS.bind(PDEUIMessages.OpenManifestsAction_cannotFind, project.getName()));
-					else
+					} else {
 						try {
 							IDE.openEditor(PDEPlugin.getActivePage(), file, IPDEUIConstants.MANIFEST_EDITOR_ID);
 						} catch (PartInitException e) {
 							MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.OpenManifestsAction_title, NLS.bind(PDEUIMessages.OpenManifestsAction_cannotOpen, project.getName()));
 						}
+					}
 				}
 			});
-		} else
+		} else {
 			MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.OpenManifestsAction_title, PDEUIMessages.OpenManifestAction_noManifest);
+		}
 		return null;
 	}
 

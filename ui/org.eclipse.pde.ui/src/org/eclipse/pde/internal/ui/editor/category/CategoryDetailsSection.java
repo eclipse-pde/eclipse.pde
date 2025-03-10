@@ -73,18 +73,21 @@ public class CategoryDetailsSection extends PDESection implements IPartSelection
 	private boolean alreadyExists(String name) {
 		ISiteCategoryDefinition[] defs = fCurrentCategoryDefinition.getModel().getSite().getCategoryDefinitions();
 		for (ISiteCategoryDefinition def : defs) {
-			if (def == fCurrentCategoryDefinition)
+			if (def == fCurrentCategoryDefinition) {
 				continue;
+			}
 			String dname = def.getName();
-			if (dname != null && dname.equals(name))
+			if (dname != null && dname.equals(name)) {
 				return true;
+			}
 		}
 		return false;
 	}
 
 	private void applyValue(String property, String value) throws CoreException {
-		if (fCurrentCategoryDefinition == null)
+		if (fCurrentCategoryDefinition == null) {
 			return;
+		}
 		switch (property) {
 		case PROPERTY_NAME:
 			String oldName = fCurrentCategoryDefinition.getName();
@@ -127,8 +130,9 @@ public class CategoryDetailsSection extends PDESection implements IPartSelection
 		Transfer[] transfers = new Transfer[] {TextTransfer.getInstance(), RTFTransfer.getInstance()};
 		for (TransferData type : types) {
 			for (Transfer transfer : transfers) {
-				if (transfer.isSupportedType(type))
+				if (transfer.isSupportedType(type)) {
 					return true;
+				}
 			}
 		}
 		return false;
@@ -231,15 +235,17 @@ public class CategoryDetailsSection extends PDESection implements IPartSelection
 		section.setClient(container);
 
 		ISiteModel model = (ISiteModel) getPage().getModel();
-		if (model != null)
+		if (model != null) {
 			model.addModelChangedListener(this);
+		}
 	}
 
 	@Override
 	public void dispose() {
 		ISiteModel model = (ISiteModel) getPage().getModel();
-		if (model != null)
+		if (model != null) {
 			model.removeModelChangedListener(this);
+		}
 		super.dispose();
 	}
 
@@ -318,15 +324,17 @@ public class CategoryDetailsSection extends PDESection implements IPartSelection
 			} else {
 				fCurrentCategoryDefinition = null;
 			}
-		} else
+		} else {
 			fCurrentCategoryDefinition = null;
+		}
 		refresh();
 	}
 
 	@Override
 	public void setFocus() {
-		if (fNameText != null)
+		if (fNameText != null) {
 			fNameText.getText().setFocus();
+		}
 	}
 
 	private void setValue(String property) {

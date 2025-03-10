@@ -73,8 +73,9 @@ public class TracingTab extends AbstractLauncherTab {
 	@Override
 	public void dispose() {
 		fTracingBlock.dispose();
-		if (fImage != null)
+		if (fImage != null) {
 			fImage.dispose();
+		}
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
 	}

@@ -94,8 +94,9 @@ public class SampleStandbyContent implements IStandbyContentPart {
 		moreLink.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
-				if (helpURL != null)
+				if (helpURL != null) {
 					PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(helpURL);
+				}
 			}
 		});
 		instText = toolkit.createFormText(form.getBody(), true);
@@ -131,8 +132,9 @@ public class SampleStandbyContent implements IStandbyContentPart {
 		final ISelection selection;
 		if (target != null) {
 			selection = new StructuredSelection();
-		} else
+		} else {
 			selection = new StructuredSelection();
+		}
 		final ILaunchShortcut fshortcut = shortcut;
 		BusyIndicator.showWhile(form.getDisplay(),
 				() -> fshortcut.launch(selection, debug ? ILaunchManager.DEBUG_MODE : ILaunchManager.RUN_MODE));
@@ -142,16 +144,19 @@ public class SampleStandbyContent implements IStandbyContentPart {
 		IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
 		IProject[] projects = root.getProjects();
 		ISetSelectionTarget target = findTarget();
-		if (target == null)
+		if (target == null) {
 			return;
+		}
 		String sid = sample.getAttribute("id"); //$NON-NLS-1$
-		if (sid == null)
+		if (sid == null) {
 			return;
+		}
 		ArrayList<IResource> items = new ArrayList<>();
 		for (int i = 0; i < projects.length; i++) {
 			IProject project = projects[i];
-			if (!project.exists() || !project.isOpen())
+			if (!project.exists() || !project.isOpen()) {
 				continue;
+			}
 			IFile pfile = project.getFile("sample.properties"); //$NON-NLS-1$
 			if (pfile.exists()) {
 				try (InputStream is = pfile.getContents()) {
@@ -161,25 +166,29 @@ public class SampleStandbyContent implements IStandbyContentPart {
 					if (id != null && id.equals(sid)) {
 						//match
 						IResource res = findSelectReveal(project, prop.getProperty("projectName")); //$NON-NLS-1$
-						if (res != null)
+						if (res != null) {
 							items.add(res);
+						}
 					}
 				} catch (IOException | CoreException e) {
 					PDEPlugin.logException(e);
 				}
 			}
 		}
-		if (!items.isEmpty())
+		if (!items.isEmpty()) {
 			target.selectReveal(new StructuredSelection(items));
+		}
 	}
 
 	private ISetSelectionTarget findTarget() {
 		String id = sample.getAttribute("targetViewId"); //$NON-NLS-1$
-		if (id == null)
+		if (id == null) {
 			return null;
+		}
 		IViewPart view = PDEPlugin.getActivePage().findView(id);
-		if (view == null || !(view instanceof ISetSelectionTarget))
+		if (view == null || !(view instanceof ISetSelectionTarget)) {
 			return null;
+		}
 		return (ISetSelectionTarget) view;
 	}
 
@@ -188,11 +197,13 @@ public class SampleStandbyContent implements IStandbyContentPart {
 		for (int i = 0; i < projects.length; i++) {
 			if (originalName.equals(projects[i].getAttribute("name"))) { //$NON-NLS-1$
 				String path = projects[i].getAttribute("selectReveal"); //$NON-NLS-1$
-				if (path == null)
+				if (path == null) {
 					continue;
+				}
 				IResource res = project.findMember(path);
-				if (res != null && res.exists())
+				if (res != null && res.exists()) {
 					return res;
+				}
 			}
 		}
 		return null;
@@ -209,8 +220,9 @@ public class SampleStandbyContent implements IStandbyContentPart {
 	@Override
 	public void setInput(Object input) {
 		// if the new input is null, use cached input from momento.
-		if (input != null)
+		if (input != null) {
 			this.input = (String) input;
+		}
 		String sampleId = this.input.toString();
 		IConfigurationElement[] samples = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.pde.ui.samples"); //$NON-NLS-1$
 		for (int i = 0; i < samples.length; i++) {
@@ -226,8 +238,9 @@ public class SampleStandbyContent implements IStandbyContentPart {
 
 	private void update(IConfigurationElement sample) {
 		this.sample = sample;
-		if (form == null)
+		if (form == null) {
 			return;
+		}
 		String title = sample != null ? sample.getAttribute("name") : ""; //$NON-NLS-1$ //$NON-NLS-2$
 		form.setText(title);
 		if (sample != null) {
@@ -272,8 +285,9 @@ public class SampleStandbyContent implements IStandbyContentPart {
 	* Tries to create the last content part viewed, based on sample id.
 	*/
 	private String getCachedInput(IMemento memento) {
-		if (memento == null)
+		if (memento == null) {
 			return null;
+		}
 		return memento.getString(MEMENTO_SAMPLE_ID_ATT);
 
 	}
@@ -281,8 +295,9 @@ public class SampleStandbyContent implements IStandbyContentPart {
 	@Override
 	public void saveState(IMemento memento) {
 		String currentSampleId = input;
-		if (input != null)
+		if (input != null) {
 			memento.putString(MEMENTO_SAMPLE_ID_ATT, currentSampleId);
+		}
 
 	}
 }
