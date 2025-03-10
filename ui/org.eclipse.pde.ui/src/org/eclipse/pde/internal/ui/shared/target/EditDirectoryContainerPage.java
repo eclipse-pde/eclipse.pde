@@ -173,8 +173,9 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 			dialog.setText(Messages.AddDirectoryContainerPage_4);
 			dialog.setMessage(Messages.AddDirectoryContainerPage_5);
 			String result = dialog.open();
-			if (result != null)
+			if (result != null) {
 				fInstallLocation.setText(result);
+			}
 		}));
 
 		Button variablesButton = SWTFactory.createPushButton(buttonComp, Messages.EditDirectoryContainerPage_1, null);
@@ -308,8 +309,9 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 	 * @return whether the finish button should be enabled and container creation should continue
 	 */
 	protected boolean validateInput() {
-		if (fInstallLocation.isDisposed())
+		if (fInstallLocation.isDisposed()) {
 			return false;
+		}
 
 		// Check if the text field is blank
 		if (fInstallLocation.getText().trim().length() == 0) {

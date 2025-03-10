@@ -47,8 +47,9 @@ public class SourceInformationProvider implements IInformationProvider, IInforma
 
 	@Override
 	public void partClosed(IWorkbenchPart part) {
-		if (fSourcePage != null && part == fSourcePage.getEditor() && fImpType != F_NO_IMP)
+		if (fSourcePage != null && part == fSourcePage.getEditor() && fImpType != F_NO_IMP) {
 			fSourcePage.getSite().getWorkbenchWindow().getPartService().removePartListener(this);
+		}
 	}
 
 	@Override
@@ -96,8 +97,9 @@ public class SourceInformationProvider implements IInformationProvider, IInforma
 
 	@Override
 	public IRegion getSubject(ITextViewer textViewer, int offset) {
-		if (textViewer != null)
+		if (textViewer != null) {
 			return PDEWordFinder.findWord(textViewer.getDocument(), offset);
+		}
 		return null;
 	}
 
@@ -105,8 +107,9 @@ public class SourceInformationProvider implements IInformationProvider, IInforma
 	public String getInformation(ITextViewer textViewer, IRegion subject) {
 		if (fImplementation != null) {
 			String s = fImplementation.getHoverInfo(textViewer, subject);
-			if (s != null && s.trim().length() > 0)
+			if (s != null && s.trim().length() > 0) {
 				return s;
+			}
 		}
 		return null;
 	}

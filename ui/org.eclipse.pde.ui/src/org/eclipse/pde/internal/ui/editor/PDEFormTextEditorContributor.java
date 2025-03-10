@@ -57,16 +57,18 @@ public class PDEFormTextEditorContributor extends PDEFormEditorContributor {
 				editMenu.add(new Separator(IContextMenuConstants.GROUP_OPEN));
 				editMenu.add(new Separator(IContextMenuConstants.GROUP_GENERATE));
 				editMenu.add(new Separator(IContextMenuConstants.GROUP_ADDITIONS));
-				if (fContentAssist != null)
+				if (fContentAssist != null) {
 					editMenu.prependToGroup(ITextEditorActionConstants.GROUP_ASSIST, fContentAssist);
+				}
 			}
 		}
 
 		@Override
 		public void contributeToToolBar(IToolBarManager toolBarManager) {
 			super.contributeToToolBar(toolBarManager);
-			if (fHyperlinkAction != null)
+			if (fHyperlinkAction != null) {
 				toolBarManager.add(fHyperlinkAction);
+			}
 		}
 
 		@Override
@@ -78,14 +80,18 @@ public class PDEFormTextEditorContributor extends PDEFormEditorContributor {
 			manager.setErrorMessage(null);
 
 			ITextEditor textEditor = (part instanceof ITextEditor) ? (ITextEditor) part : null;
-			if (fCorrectionAssist != null)
+			if (fCorrectionAssist != null) {
 				fCorrectionAssist.setAction(getAction(textEditor, ITextEditorActionConstants.QUICK_ASSIST));
-			if (fHyperlinkAction != null)
+			}
+			if (fHyperlinkAction != null) {
 				fHyperlinkAction.setTextEditor(textEditor);
-			if (fFormatAction != null)
+			}
+			if (fFormatAction != null) {
 				fFormatAction.setTextEditor(textEditor);
-			if (fContentAssist != null)
+			}
+			if (fContentAssist != null) {
 				fContentAssist.setAction(getAction(textEditor, ITextEditorActionConstants.CONTENT_ASSIST));
+			}
 		}
 	}
 
@@ -187,13 +193,15 @@ public class PDEFormTextEditorContributor extends PDEFormEditorContributor {
 
 	@Override
 	public void setActivePage(IEditorPart newEditor) {
-		if (fEditor == null)
+		if (fEditor == null) {
 			return;
+		}
 
 		IFormPage oldPage = fPage;
 		fPage = fEditor.getActivePageInstance();
-		if (fPage == null)
+		if (fPage == null) {
 			return;
+		}
 		// Update the quick outline action to the navigate menu
 		updateQuickOutlineMenuEntry();
 
@@ -204,8 +212,9 @@ public class PDEFormTextEditorContributor extends PDEFormEditorContributor {
 		}
 
 		boolean isSourcePage = fPage instanceof PDESourcePage;
-		if (isSourcePage && fPage.equals(oldPage))
+		if (isSourcePage && fPage.equals(oldPage)) {
 			return;
+		}
 		fSourceContributor.setActiveEditor(fPage);
 		setSourceActionBarsActive(isSourcePage);
 	}

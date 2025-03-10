@@ -119,25 +119,31 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			// filter out any items that are currently selected
 			// on a full refresh, these will have been added back to the list
-			if (fSelected.contains(element))
+			if (fSelected.contains(element)) {
 				return false;
-			if (!(element instanceof AbstractPluginModelBase))
+			}
+			if (!(element instanceof AbstractPluginModelBase)) {
 				return false;
+			}
 			String itemID = ((AbstractPluginModelBase) element).getPluginBase().getId();
-			if (fPattern.matcher(itemID).matches())
+			if (fPattern.matcher(itemID).matches()) {
 				return true;
+			}
 			return false;
 		}
 
 		public boolean setPattern(String newPattern) {
-			if (!newPattern.endsWith("*")) //$NON-NLS-1$
+			if (!newPattern.endsWith("*")) { //$NON-NLS-1$
 				newPattern += "*"; //$NON-NLS-1$
-			if (!newPattern.startsWith("*")) //$NON-NLS-1$
+			}
+			if (!newPattern.startsWith("*")) { //$NON-NLS-1$
 				newPattern = "*" + newPattern; //$NON-NLS-1$
+			}
 			if (fPattern != null) {
 				String oldPattern = fPattern.pattern();
-				if (newPattern.equals(oldPattern))
+				if (newPattern.equals(oldPattern)) {
 					return false;
+				}
 			}
 			fPattern = PatternConstructor.createPattern(newPattern, true);
 			return true;
@@ -168,8 +174,9 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			IPluginModelBase plugin = (IPluginModelBase) element;
 			Version hVersion = versions.get(plugin.getBundleDescription().getSymbolicName());
-			if (hVersion == null)
+			if (hVersion == null) {
 				return true;
+			}
 			return hVersion.equals(plugin.getBundleDescription().getVersion());
 		}
 	}
@@ -213,10 +220,11 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	private void createFilterOptions(Composite container) {
 		fFilterOldVersionButton = SWTFactory.createCheckButton(container, PDEUIMessages.ImportWizard_DetailedPage_filterDesc, null, true, 1);
 
-		if (getDialogSettings().get(SETTINGS_SHOW_LATEST) != null)
+		if (getDialogSettings().get(SETTINGS_SHOW_LATEST) != null) {
 			fFilterOldVersionButton.setSelection(getDialogSettings().getBoolean(SETTINGS_SHOW_LATEST));
-		else
+		} else {
 			fFilterOldVersionButton.setSelection(true);
+		}
 
 		fFilterOldVersionButton.addSelectionListener(widgetSelectedAdapter(e -> {
 			if (fFilterOldVersionButton.getSelection()) {
@@ -436,10 +444,12 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		int availableCount = fAvailableListViewer.getTable().getItemCount();
 		int importCount = fImportListViewer.getTable().getItemCount();
 
-		if (doAddEnablement)
+		if (doAddEnablement) {
 			updateSelectionBasedEnablement(fAvailableListViewer.getStructuredSelection(), true);
-		if (doRemoveEnablement)
+		}
+		if (doRemoveEnablement) {
 			updateSelectionBasedEnablement(fImportListViewer.getStructuredSelection(), false);
+		}
 
 		fAddAllButton.setEnabled(availableCount > 0);
 		fRemoveAllButton.setEnabled(importCount > 0);
@@ -447,10 +457,11 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	}
 
 	private void updateSelectionBasedEnablement(ISelection theSelection, boolean available) {
-		if (available)
+		if (available) {
 			fAddButton.setEnabled(!theSelection.isEmpty());
-		else
+		} else {
 			fRemoveButton.setEnabled(!theSelection.isEmpty());
+		}
 	}
 
 	private void handleAdd() {
@@ -479,8 +490,9 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 
 	private void handleFilter() {
 		String newFilter;
-		if (fFilterText == null || (newFilter = fFilterText.getText().trim()).length() == 0)
+		if (fFilterText == null || (newFilter = fFilterText.getText().trim()).length() == 0) {
 			newFilter = "*"; //$NON-NLS-1$
+		}
 		boolean changed = fAvailableFilter.setPattern(newFilter);
 		if (changed) {
 			fAvailableListViewer.refresh();
@@ -601,8 +613,9 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 
 	private void handleAddRequiredPlugins() {
 		TableItem[] items = fImportListViewer.getTable().getItems();
-		if (items.length == 0)
+		if (items.length == 0) {
 			return;
+		}
 		if (items.length == 1) {
 			IPluginModelBase model = (IPluginModelBase) items[0].getData();
 			if (model.getPluginBase().getId().equals("org.eclipse.core.boot")) { //$NON-NLS-1$

@@ -64,10 +64,12 @@ public class FeatureInputContext extends XMLInputContext {
 
 	@Override
 	protected IBaseModel createModel(IEditorInput input) throws CoreException {
-		if (input instanceof IFileEditorInput)
+		if (input instanceof IFileEditorInput) {
 			return createResourceModel((IFileEditorInput) input);
-		if (input instanceof IStorageEditorInput)
+		}
+		if (input instanceof IStorageEditorInput) {
 			return createStorageModel((IStorageEditorInput) input);
+		}
 		if (input instanceof IURIEditorInput) {
 			return createSystemFileModel((IURIEditorInput) input);
 		}
@@ -118,11 +120,13 @@ public class FeatureInputContext extends XMLInputContext {
 		// if model is dirty, flush its content into
 		// the document so that the source editor will
 		// pick up the changes.
-		if (!(getModel() instanceof IEditable))
+		if (!(getModel() instanceof IEditable)) {
 			return;
+		}
 		IEditable editableModel = (IEditable) getModel();
-		if (editableModel.isDirty() == false)
+		if (editableModel.isDirty() == false) {
 			return;
+		}
 		try (StringWriter swriter = new StringWriter(); PrintWriter writer = new PrintWriter(swriter)) {
 			editableModel.save(writer);
 			writer.flush();

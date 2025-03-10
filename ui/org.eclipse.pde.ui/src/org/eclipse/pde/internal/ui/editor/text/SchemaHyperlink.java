@@ -28,8 +28,9 @@ public class SchemaHyperlink extends AbstractHyperlink {
 
 	@Override
 	public void open() {
-		if (fResource != null)
+		if (fResource != null) {
 			SchemaEditor.openSchema(fResource.getProject().getFile(fElement));
+		}
 	}
 
 }

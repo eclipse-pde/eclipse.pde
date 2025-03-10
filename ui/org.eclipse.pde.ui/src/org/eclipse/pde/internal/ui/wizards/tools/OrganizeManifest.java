@@ -121,8 +121,9 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 	};
 
 	public static void organizeRequireBundles(IBundle bundle, boolean removeImports) {
-		if (!(bundle instanceof Bundle))
+		if (!(bundle instanceof Bundle)) {
 			return;
+		}
 
 		RequireBundleHeader header = (RequireBundleHeader) ((Bundle) bundle).getManifestHeader(Constants.REQUIRE_BUNDLE);
 		if (header != null) {
@@ -130,9 +131,9 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 			for (RequireBundleObject requiredBundle : bundles) {
 				String pluginId = requiredBundle.getId();
 				if (PluginRegistry.findModel(pluginId) == null) {
-					if (removeImports)
+					if (removeImports) {
 						header.removeBundle(requiredBundle);
-					else {
+					} else {
 						requiredBundle.setOptional(true);
 					}
 				}
@@ -141,11 +142,13 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 	}
 
 	public static void organizeExportPackages(IBundle bundle, IProject project, boolean addMissing, boolean removeUnresolved) {
-		if (!addMissing && !removeUnresolved)
+		if (!addMissing && !removeUnresolved) {
 			return;
+		}
 
-		if (!(bundle instanceof Bundle))
+		if (!(bundle instanceof Bundle)) {
 			return;
+		}
 
 		ExportPackageHeader header = (ExportPackageHeader) bundle.getManifestHeader(Constants.EXPORT_PACKAGE);
 		ExportPackageObject[] currentPkgs;
@@ -153,8 +156,9 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 			bundle.setHeader(Constants.EXPORT_PACKAGE, ""); //$NON-NLS-1$
 			header = (ExportPackageHeader) bundle.getManifestHeader(Constants.EXPORT_PACKAGE);
 			currentPkgs = new ExportPackageObject[0];
-		} else
+		} else {
 			currentPkgs = header.getPackages();
+		}
 
 		IManifestHeader bundleClasspathheader = bundle.getManifestHeader(Constants.BUNDLE_CLASSPATH);
 
@@ -165,37 +169,45 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 			try {
 				if (ManifestUtils.isImmediateRoot(root)) {
 					IJavaElement[] elements = root.getChildren();
-					for (IJavaElement element : elements)
+					for (IJavaElement element : elements) {
 						if (element instanceof IPackageFragment fragment) {
 							String name = fragment.getElementName();
-							if (name.length() == 0)
+							if (name.length() == 0) {
 								name = "."; //$NON-NLS-1$
+							}
 							if ((fragment.hasChildren() || fragment.getNonJavaResources().length > 0)) {
-								if (addMissing && !header.hasPackage(name))
+								if (addMissing && !header.hasPackage(name)) {
 									header.addPackage(new ExportPackageObject(header, fragment, Constants.VERSION_ATTRIBUTE));
-								else
+								} else {
 									packages.add(name);
+								}
 							}
 						}
+					}
 				}
 			} catch (JavaModelException e) {
 			}
 		}
 
 		// Remove packages that don't exist
-		if (removeUnresolved)
-			for (int i = 0; i < currentPkgs.length; i++)
-				if (!packages.contains(currentPkgs[i].getName()))
+		if (removeUnresolved) {
+			for (int i = 0; i < currentPkgs.length; i++) {
+				if (!packages.contains(currentPkgs[i].getName())) {
 					header.removePackage(currentPkgs[i]);
+				}
+			}
+		}
 	}
 
 	public static void markPackagesInternal(IBundle bundle, String packageFilter) {
-		if (packageFilter == null || bundle == null || !(bundle instanceof Bundle))
+		if (packageFilter == null || bundle == null || !(bundle instanceof Bundle)) {
 			return;
+		}
 
 		ExportPackageHeader header = (ExportPackageHeader) bundle.getManifestHeader(Constants.EXPORT_PACKAGE);
-		if (header == null)
+		if (header == null) {
 			return;
+		}
 
 		ExportPackageObject[] currentPkgs = header.getPackages();
 		Pattern pat = PatternConstructor.createPattern(packageFilter, false);
@@ -208,20 +220,22 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 	}
 
 	public static void organizeImportPackages(IBundle bundle, boolean removeImports) {
-		if (!(bundle instanceof Bundle))
+		if (!(bundle instanceof Bundle)) {
 			return;
+		}
 		ImportPackageHeader header = (ImportPackageHeader) ((Bundle) bundle).getManifestHeader(Constants.IMPORT_PACKAGE);
-		if (header == null)
+		if (header == null) {
 			return;
+		}
 		ImportPackageObject[] importedPackages = header.getPackages();
 		Set<String> availablePackages = getAvailableExportedPackages();
 		// get Preference
 		for (ImportPackageObject importedPackage : importedPackages) {
 			String pkgName = importedPackage.getName();
 			if (!availablePackages.contains(pkgName)) {
-				if (removeImports)
+				if (removeImports) {
 					header.removePackage(importedPackage);
-				else {
+				} else {
 					importedPackage.setOptional(true);
 				}
 			}
@@ -335,77 +349,92 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 	}
 
 	public static void removeUnneededLazyStart(IBundle bundle) {
-		if (!(bundle instanceof Bundle))
+		if (!(bundle instanceof Bundle)) {
 			return;
+		}
 		if (bundle.getHeader(Constants.BUNDLE_ACTIVATOR) == null && bundle.getHeader(ICoreConstants.SERVICE_COMPONENT) == null) {
 			String[] remove = new String[] {ICoreConstants.ECLIPSE_LAZYSTART, ICoreConstants.ECLIPSE_AUTOSTART, Constants.BUNDLE_ACTIVATIONPOLICY};
 			for (String element : remove) {
 				IManifestHeader lazy = ((Bundle) bundle).getManifestHeader(element);
-				if (lazy instanceof SingleManifestHeader)
+				if (lazy instanceof SingleManifestHeader) {
 					((SingleManifestHeader) lazy).setMainComponent(null);
+				}
 			}
 		}
 
 	}
 
 	public static Change deleteUselessPluginFile(IProject project, IPluginModelBase modelBase) {
-		if (modelBase == null)
+		if (modelBase == null) {
 			return null;
+		}
 
 		IExtensions ext = modelBase.getExtensions();
-		if (ext.getExtensionPoints().length > 0 || ext.getExtensions().length > 0)
+		if (ext.getExtensionPoints().length > 0 || ext.getExtensions().length > 0) {
 			return null;
+		}
 		IFile pluginFile = (modelBase instanceof IBundleFragmentModel) ? PDEProject.getFragmentXml(project) : PDEProject.getPluginXml(project);
 		return new DeleteResourceChange(pluginFile.getFullPath(), true);
 	}
 
 	public static TextFileChange[] removeUnusedKeys(final IProject project, final IBundle bundle, final IPluginModelBase modelBase) {
 		String localization = bundle.getLocalization();
-		if (localization == null)
+		if (localization == null) {
 			localization = "plugin"; //$NON-NLS-1$
+		}
 		IFile propertiesFile = project.getFile(localization + ".properties"); //$NON-NLS-1$
-		if (!propertiesFile.exists())
+		if (!propertiesFile.exists()) {
 			return new TextFileChange[0];
+		}
 
 		return PDEModelUtility.changesForModelModication(new ModelModification(propertiesFile) {
 			@Override
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
-				if (!(model instanceof IBuildModel))
+				if (!(model instanceof IBuildModel)) {
 					return;
+				}
 
 				IBuild build = ((IBuildModel) model).getBuild();
 				IBuildEntry[] entries = build.getBuildEntries();
 				ArrayList<String> allKeys = new ArrayList<>(entries.length);
-				for (int i = 0; i < entries.length; i++)
-					if (!allKeys.contains(entries[i].getName()))
+				for (int i = 0; i < entries.length; i++) {
+					if (!allKeys.contains(entries[i].getName())) {
 						allKeys.add(entries[i].getName());
+					}
+				}
 
 				ArrayList<String> usedkeys = new ArrayList<>();
 				findTranslatedStrings(project, modelBase, bundle, usedkeys);
 
 				allKeys.removeAll(usedkeys);
 
-				if (allKeys.isEmpty())
+				if (allKeys.isEmpty()) {
 					return;
+				}
 
 				// scan properties file for keys referencing other keys
 				for (IBuildEntry buildEntry : entries) {
 					String[] tokens = buildEntry.getTokens();
-					if (tokens == null || tokens.length == 0)
+					if (tokens == null || tokens.length == 0) {
 						continue;
+					}
 					String entry = tokens[0];
-					for (int k = 1; k < tokens.length; k++)
+					for (int k = 1; k < tokens.length; k++) {
 						entry += ',' + tokens[k];
-					if (entry.indexOf('%') == entry.lastIndexOf('%'))
+					}
+					if (entry.indexOf('%') == entry.lastIndexOf('%')) {
 						continue;
+					}
 
 					// allKeys must NOT have any duplicates
 					for (int j = 0; j < allKeys.size(); j++) {
 						String akey = '%' + allKeys.get(j) + '%';
-						if (entry.contains(akey))
+						if (entry.contains(akey)) {
 							allKeys.remove(allKeys.get(j--));
-						if (allKeys.isEmpty())
+						}
+						if (allKeys.isEmpty()) {
 							return;
+						}
 					}
 				}
 
@@ -445,33 +474,38 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 	}
 
 	private static IPluginModelBase getTextModel(IPluginModelBase model, boolean fragment) {
-		if (model instanceof PluginModel || model instanceof FragmentModel)
+		if (model instanceof PluginModel || model instanceof FragmentModel) {
 			return model;
+		}
 
 		if (model != null) {
-			if (!fileExists(model.getInstallLocation(), fragment ? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR : ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR))
+			if (!fileExists(model.getInstallLocation(), fragment ? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR : ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)) {
 				return null;
+			}
 			IDocument doc = CoreUtility.getTextDocument(new File(model.getInstallLocation()), fragment ? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR : ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
 			IPluginModelBase returnModel;
-			if (fragment)
+			if (fragment) {
 				returnModel = new FragmentModel(doc, false);
-			else
+			} else {
 				returnModel = new PluginModel(doc, false);
+			}
 			try {
 				returnModel.load();
 			} catch (CoreException e) {
 			}
 
-			if (returnModel.isLoaded())
+			if (returnModel.isLoaded()) {
 				return returnModel;
+			}
 		}
 		return null;
 	}
 
 	private static IBundle getTextBundle(IPluginModelBase model) {
 		if (model != null) {
-			if (!fileExists(model.getInstallLocation(), ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR))
+			if (!fileExists(model.getInstallLocation(), ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR)) {
 				return null;
+			}
 			IDocument doc = CoreUtility.getTextDocument(new File(model.getInstallLocation()), ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
 			IBundleModel bundleModel = new BundleModel(doc, false);
 			try {
@@ -479,63 +513,76 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 			} catch (CoreException e) {
 			}
 
-			if (bundleModel.isLoaded())
+			if (bundleModel.isLoaded()) {
 				return bundleModel.getBundle();
+			}
 		}
 		return null;
 	}
 
 	private static void findTranslatedXMLStrings(IPluginModelBase model, ArrayList<String> list) {
-		if (model == null)
+		if (model == null) {
 			return;
+		}
 
 		IPluginExtensionPoint[] points = model.getPluginBase().getExtensionPoints();
 		for (IPluginExtensionPoint point : points) {
 			String value = getTranslatedKey(point.getName());
-			if (value != null && !list.contains(value))
+			if (value != null && !list.contains(value)) {
 				list.add(value);
+			}
 		}
 		IPluginExtension[] extensions = model.getPluginBase().getExtensions();
-		for (IPluginExtension extension : extensions)
-			if (extension instanceof IDocumentElementNode)
+		for (IPluginExtension extension : extensions) {
+			if (extension instanceof IDocumentElementNode) {
 				inspectElementForTranslation((IDocumentElementNode) extension, list);
+			}
+		}
 	}
 
 	private static void inspectElementForTranslation(IDocumentElementNode parent, ArrayList<String> list) {
 		IDocumentTextNode text = parent.getTextNode();
 		String textValue = getTranslatedKey(text != null ? text.getText() : null);
-		if (textValue != null && !list.contains(textValue))
+		if (textValue != null && !list.contains(textValue)) {
 			list.add(textValue);
+		}
 
 		IDocumentAttributeNode[] attributes = parent.getNodeAttributes();
 		for (IDocumentAttributeNode attribute : attributes) {
 			String attrValue = getTranslatedKey(attribute.getAttributeValue());
-			if (attrValue != null && !list.contains(attrValue))
+			if (attrValue != null && !list.contains(attrValue)) {
 				list.add(attrValue);
+			}
 		}
 
-		if (!(parent instanceof IPluginParent))
+		if (!(parent instanceof IPluginParent)) {
 			return;
+		}
 
 		IPluginObject[] children = ((IPluginParent) parent).getChildren();
-		for (IPluginObject element : children)
-			if (element instanceof IDocumentElementNode)
+		for (IPluginObject element : children) {
+			if (element instanceof IDocumentElementNode) {
 				inspectElementForTranslation((IDocumentElementNode) element, list);
+			}
+		}
 	}
 
 	private static void findTranslatedMFStrings(IBundle bundle, ArrayList<String> list) {
-		if (bundle == null)
+		if (bundle == null) {
 			return;
+		}
 		for (String element : ICoreConstants.TRANSLATABLE_HEADERS) {
 			String key = getTranslatedKey(bundle.getHeader(element));
-			if (key != null && !list.contains(key))
+			if (key != null && !list.contains(key)) {
 				list.add(key);
+			}
 		}
 	}
 
 	private static String getTranslatedKey(String value) {
-		if (value != null && value.length() > 1 && value.charAt(0) == '%' && value.charAt(1) != '%')
+		if (value != null && value.length() > 1 && value.charAt(0) == '%' && value.charAt(1) != '%') {
 			return value.substring(1);
+		}
 		return null;
 	}
 
@@ -551,15 +598,17 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 	 * @param model -
 	 */
 	public static void prefixIconPaths(IPluginModelBase model) {
-		if (model == null)
+		if (model == null) {
 			return;
+		}
 
 		SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
 		IPluginExtension[] extensions = model.getPluginBase().getExtensions();
 		for (IPluginExtension extension : extensions) {
 			ISchema schema = registry.getSchema(extension.getPoint());
-			if (schema != null)
+			if (schema != null) {
 				inspectElementsIconPaths(schema, extension);
+			}
 		}
 	}
 
@@ -574,18 +623,21 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 					ISchemaAttribute attInfo = schemaElement.getAttribute(attribute.getName());
 					if (attInfo != null && attInfo.getKind() == IMetaAttribute.RESOURCE) {
 						String value = attribute.getValue();
-						if (value.startsWith(F_NL_PREFIX))
+						if (value.startsWith(F_NL_PREFIX)) {
 							continue;
+						}
 						int fileExtIndex = value.lastIndexOf('.');
-						if (fileExtIndex == -1)
+						if (fileExtIndex == -1) {
 							continue;
+						}
 						value = value.substring(fileExtIndex + 1);
 						for (String iconExtension : F_ICON_EXTENSIONS) {
 							if (value.equalsIgnoreCase(iconExtension)) {
 								IPath path = IPath.fromOSString(F_NL_PREFIX);
 								String newValue = attribute.getValue();
-								if (newValue.charAt(0) != IPath.SEPARATOR)
+								if (newValue.charAt(0) != IPath.SEPARATOR) {
 									path = path.addTrailingSeparator();
+								}
 								newValue = path.toString() + newValue;
 								try {
 									child.setAttribute(attribute.getName(), newValue);
@@ -602,11 +654,13 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 	}
 
 	protected static MultiTextEdit getTextEdit(IModelTextChangeListener listener) {
-		if (listener == null)
+		if (listener == null) {
 			return null;
+		}
 		TextEdit[] edits = listener.getTextOperations();
-		if (edits.length == 0)
+		if (edits.length == 0) {
 			return null;
+		}
 		MultiTextEdit multiEdit = new MultiTextEdit();
 		multiEdit.addChildren(edits);
 		return multiEdit;

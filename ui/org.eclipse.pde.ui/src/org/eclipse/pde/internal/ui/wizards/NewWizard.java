@@ -52,8 +52,9 @@ public class NewWizard extends Wizard implements INewWizard, IDefaultValueConsum
 
 	@Override
 	public final String getDefaultValue(String key) {
-		if (defaultValues == null)
+		if (defaultValues == null) {
 			return null;
+		}
 		return defaultValues.get(key);
 	}
 

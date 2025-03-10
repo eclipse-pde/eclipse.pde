@@ -109,8 +109,9 @@ public abstract class GeneralInfoSection extends PDESection {
 		createVersionEntry(client, toolkit, actionBars);
 		createNameEntry(client, toolkit, actionBars);
 		createProviderEntry(client, toolkit, actionBars);
-		if (isBundle() && ((ManifestEditor) getPage().getEditor()).isEquinox())
+		if (isBundle() && ((ManifestEditor) getPage().getEditor()).isEquinox()) {
 			createPlatformFilterEntry(client, toolkit, actionBars);
+		}
 		createSpecificControls(client, toolkit, actionBars);
 		createBundleShape(client, toolkit, PDEUIMessages.PluginGeneralInfoSection_bundleshape);
 		toolkit.paintBordersFor(client);
@@ -311,8 +312,9 @@ public abstract class GeneralInfoSection extends PDESection {
 		fVersionEntry.commit();
 		fNameEntry.commit();
 		fProviderEntry.commit();
-		if (fPlatformFilterEntry != null)
+		if (fPlatformFilterEntry != null) {
 			fPlatformFilterEntry.commit();
+		}
 		super.commit(onSave);
 	}
 
@@ -327,8 +329,9 @@ public abstract class GeneralInfoSection extends PDESection {
 			Object obj = e.getChangedObjects()[0];
 			if (obj instanceof IPluginBase) {
 				String property = e.getChangedProperty();
-				if (property != null && property.equals(getPage().getPDEEditor().getTitleProperty()))
+				if (property != null && property.equals(getPage().getPDEEditor().getTitleProperty())) {
 					getPage().getPDEEditor().updateTitle();
+				}
 			}
 		}
 	}
@@ -343,8 +346,9 @@ public abstract class GeneralInfoSection extends PDESection {
 		fProviderEntry.setValue(pluginBase.getProviderName(), true);
 		if (fPlatformFilterEntry != null) {
 			IBundle bundle = getBundle();
-			if (bundle != null)
+			if (bundle != null) {
 				fPlatformFilterEntry.setValue(bundle.getHeader(PLATFORM_FILTER), true);
+			}
 		}
 		getPage().getPDEEditor().updateTitle();
 		if (fSingleton != null) {
@@ -380,8 +384,9 @@ public abstract class GeneralInfoSection extends PDESection {
 		fNameEntry.cancelEdit();
 		fVersionEntry.cancelEdit();
 		fProviderEntry.cancelEdit();
-		if (fPlatformFilterEntry != null)
+		if (fPlatformFilterEntry != null) {
 			fPlatformFilterEntry.cancelEdit();
+		}
 		super.cancelEdit();
 	}
 
@@ -393,14 +398,16 @@ public abstract class GeneralInfoSection extends PDESection {
 
 	protected void removeListeners() {
 		IBaseModel model = getPage().getModel();
-		if (model instanceof IModelChangeProvider)
+		if (model instanceof IModelChangeProvider) {
 			((IModelChangeProvider) model).removeModelChangedListener(this);
+		}
 	}
 
 	protected void addListeners() {
 		IBaseModel model = getPage().getModel();
-		if (model instanceof IModelChangeProvider)
+		if (model instanceof IModelChangeProvider) {
 			((IModelChangeProvider) model).addModelChangedListener(this);
+		}
 	}
 
 	@Override
@@ -426,8 +433,9 @@ public abstract class GeneralInfoSection extends PDESection {
 		fSingleton.setEnabled(isEditable());
 		fSingleton.addSelectionListener(widgetSelectedAdapter(e -> {
 			IManifestHeader header = getSingletonHeader();
-			if (header instanceof BundleSymbolicNameHeader)
+			if (header instanceof BundleSymbolicNameHeader) {
 				((BundleSymbolicNameHeader) header).setSingleton(fSingleton.getSelection());
+			}
 		}));
 	}
 

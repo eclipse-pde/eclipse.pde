@@ -66,8 +66,9 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 
 	@Override
 	public void commit(boolean onSave) {
-		if (isDirty() == false)
+		if (isDirty() == false) {
 			return;
+		}
 		if (fCurrentImport != null && fVersionText.getText().isEnabled()) {
 			fVersionText.commit();
 			String value = fVersionText.getValue();
@@ -105,8 +106,9 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 
 			@Override
 			public void textDirty(FormEntry text) {
-				if (fBlockChanges)
+				if (fBlockChanges) {
 					return;
+				}
 				markDirty();
 				fBlockChanges = true;
 				resetMatchCombo(fCurrentImport);
@@ -161,8 +163,9 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 	private void createOptionalButton(FormToolkit toolkit, Composite container) {
 		fOptionalButton = toolkit.createButton(container, PDEUIMessages.ManifestEditor_MatchSection_optional, SWT.CHECK);
 		fOptionalButton.addSelectionListener(widgetSelectedAdapter(e -> {
-			if (fBlockChanges)
+			if (fBlockChanges) {
 				return;
+			}
 			if (!fBlockChanges && fCurrentImport instanceof IPluginImport) {
 				try {
 					IPluginImport iimport = (IPluginImport) fCurrentImport;
@@ -204,15 +207,17 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 	@Override
 	public void dispose() {
 		IModel model = (IModel) getPage().getModel();
-		if (model instanceof IModelChangeProvider)
+		if (model instanceof IModelChangeProvider) {
 			((IModelChangeProvider) model).removeModelChangedListener(this);
+		}
 		super.dispose();
 	}
 
 	private void initialize() {
 		IBaseModel model = getPage().getModel();
-		if (model instanceof IModelChangeProvider)
+		if (model instanceof IModelChangeProvider) {
 			((IModelChangeProvider) model).addModelChangedListener(this);
+		}
 	}
 
 	@Override
@@ -236,10 +241,11 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		if (ssel.size() == 1) {
 			Object changeObject = ((IStructuredSelection) selection).getFirstElement();
 			IPluginReference input = null;
-			if (changeObject instanceof ImportObject)
+			if (changeObject instanceof ImportObject) {
 				input = ((ImportObject) changeObject).getImport();
-			else if (changeObject instanceof IPluginReference)
+			} else if (changeObject instanceof IPluginReference) {
 				input = (IPluginReference) changeObject;
+			}
 			update(input);
 		} else {
 			update(null);

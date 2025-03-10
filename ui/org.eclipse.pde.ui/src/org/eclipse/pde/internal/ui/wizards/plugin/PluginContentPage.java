@@ -83,8 +83,9 @@ public class PluginContentPage extends ContentPage {
 	 * default tText modify listener
 	 */
 	private final ModifyListener classListener = e -> {
-		if (fInitialized)
+		if (fInitialized) {
 			fChangedGroups |= P_CLASS_GROUP;
+		}
 		validatePage();
 	};
 

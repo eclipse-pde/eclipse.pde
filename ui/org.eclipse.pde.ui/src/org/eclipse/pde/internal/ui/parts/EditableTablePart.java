@@ -73,8 +73,9 @@ public class EditableTablePart extends TablePart {
 	}
 
 	public IAction getRenameAction() {
-		if (renameAction == null)
+		if (renameAction == null) {
 			renameAction = new RenameAction();
+		}
 		return renameAction;
 	}
 

@@ -115,8 +115,9 @@ public abstract class NewPluginProjectFromTemplateWizard extends NewWizard imple
 		fProjectPage.setDescription(PDEUIMessages.NewProjectWizard_MainPage_desc);
 
 		String projectName = getDefaultValue(DEF_PROJECT_NAME);
-		if (projectName != null)
+		if (projectName != null) {
 			fProjectPage.setInitialProjectName(projectName);
+		}
 		addPage(fProjectPage);
 
 		fProjectProvider = new IProjectProvider() {
@@ -193,8 +194,9 @@ public abstract class NewPluginProjectFromTemplateWizard extends NewWizard imple
 			getContainer().run(false, true, new NewProjectCreationOperation(fPluginData, fProjectProvider, fTemplateWizard));
 
 			IWorkingSet[] workingSets = fProjectPage.getSelectedWorkingSets();
-			if (workingSets.length > 0)
+			if (workingSets.length > 0) {
 				getWorkbench().getWorkingSetManager().addToWorkingSets(fProjectProvider.getProject(), workingSets);
+			}
 
 			return true;
 		} catch (InvocationTargetException e) {

@@ -54,22 +54,25 @@ public class CategoryUndoManager extends ModelUndoManager {
 
 		switch (type) {
 			case IModelChangedEvent.INSERT :
-				if (undo)
+				if (undo) {
 					executeRemove(model, elements);
-				else
+				} else {
 					executeAdd(model, elements);
+				}
 				break;
 			case IModelChangedEvent.REMOVE :
-				if (undo)
+				if (undo) {
 					executeAdd(model, elements);
-				else
+				} else {
 					executeRemove(model, elements);
+				}
 				break;
 			case IModelChangedEvent.CHANGE :
-				if (undo)
+				if (undo) {
 					executeChange(elements[0], propertyName, event.getNewValue(), event.getOldValue());
-				else
+				} else {
 					executeChange(elements[0], propertyName, event.getOldValue(), event.getNewValue());
+				}
 		}
 	}
 
@@ -147,8 +150,9 @@ public class CategoryUndoManager extends ModelUndoManager {
 			Object object = event.getChangedObjects()[0];
 			if (object instanceof ISiteObject obj) {
 				//Ignore events from objects that are not yet in the model.
-				if (!(obj instanceof ISite) && !obj.isInTheModel())
+				if (!(obj instanceof ISite) && !obj.isInTheModel()) {
 					return;
+				}
 			}
 		}
 		super.modelChanged(event);

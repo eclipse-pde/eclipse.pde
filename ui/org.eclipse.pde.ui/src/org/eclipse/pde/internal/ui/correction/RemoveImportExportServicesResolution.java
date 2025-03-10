@@ -33,8 +33,9 @@ public class RemoveImportExportServicesResolution extends AbstractManifestMarker
 	protected void createChange(BundleModel model) {
 		Bundle bundle = (Bundle) model.getBundle();
 		IManifestHeader header = bundle.getManifestHeader(fServiceHeader);
-		if (header != null)
+		if (header != null) {
 			bundle.setHeader(fServiceHeader, null);
+		}
 	}
 
 	@Override

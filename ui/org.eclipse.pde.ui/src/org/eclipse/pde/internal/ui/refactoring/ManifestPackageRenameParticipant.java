@@ -42,8 +42,9 @@ public class ManifestPackageRenameParticipant extends PDERenameParticipant {
 	protected boolean initialize(Object element) {
 		try {
 			if (element instanceof IPackageFragment fragment) {
-				if (!fragment.containsJavaResources())
+				if (!fragment.containsJavaResources()) {
 					return false;
+				}
 				IJavaProject javaProject = (IJavaProject) fragment.getAncestor(IJavaElement.JAVA_PROJECT);
 				IProject project = javaProject.getProject();
 				if (WorkspaceModelManager.isPluginProject(project)) {
@@ -93,8 +94,9 @@ public class ManifestPackageRenameParticipant extends PDERenameParticipant {
 				if (name.equals(spec.getName())) {
 					BaseDescription supplier = spec.getSupplier();
 					if (supplier instanceof ExportPackageDescription) {
-						if (desc.equals(((ExportPackageDescription) supplier).getExporter()))
+						if (desc.equals(((ExportPackageDescription) supplier).getExporter())) {
 							return true;
+						}
 					}
 				}
 			}

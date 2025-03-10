@@ -124,10 +124,11 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Label label = new Label(group, SWT.NONE);
-		if (fFragment)
+		if (fFragment) {
 			label.setText(PDEUIMessages.NewProjectCreationPage_ftarget);
-		else
+		} else {
 			label.setText(PDEUIMessages.NewProjectCreationPage_ptarget);
+		}
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -215,8 +216,9 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 
 	@Override
 	protected boolean validatePage() {
-		if (!super.validatePage())
+		if (!super.validatePage()) {
 			return false;
+		}
 
 		String name = getProjectName();
 		if (name.indexOf('%') >= 0) {

@@ -223,8 +223,9 @@ public class EditTargetContainerPage extends WizardPage implements IEditBundleCo
 					String location = String.format("file:${project_loc:/%s}/%s", targetFile.getProject().getName(), //$NON-NLS-1$
 							targetFile.getProjectRelativePath());
 					if (!previousLocations.contains(location)) {
-						if (!alreadyContains(location))
+						if (!alreadyContains(location)) {
 							previousLocations.add(location);
+						}
 					}
 				}
 			}
@@ -296,8 +297,9 @@ public class EditTargetContainerPage extends WizardPage implements IEditBundleCo
 	 *         creation should continue
 	 */
 	protected boolean validateInput() {
-		if (furiLocation.isDisposed())
+		if (furiLocation.isDisposed()) {
 			return false;
+		}
 
 		// Check if the text field is blank
 		if (furiLocation.getText().trim().length() == 0) {

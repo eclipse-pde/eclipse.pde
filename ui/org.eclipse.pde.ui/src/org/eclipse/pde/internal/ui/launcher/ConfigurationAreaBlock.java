@@ -54,14 +54,16 @@ public class ConfigurationAreaBlock extends BaseBlock {
 		fUseDefaultLocationButton.setText(PDEUIMessages.ConfigurationTab_useDefaultLoc);
 		fUseDefaultLocationButton.addSelectionListener(widgetSelectedAdapter(e -> {
 			boolean useDefaultArea = fUseDefaultLocationButton.getSelection();
-			if (useDefaultArea)
+			if (useDefaultArea) {
 				fLocationText.setText(DEFAULT_DIR + fLastKnownConfigName);
-			else
+			} else {
 				fLocationText.setText(fLastEnteredConfigArea);
+			}
 			enableBrowseSection(!useDefaultArea);
 			fLocationText.setEditable(!useDefaultArea);
-			if (useDefaultArea)
+			if (useDefaultArea) {
 				fLocationText.setEnabled(true);
+			}
 		}));
 
 		createText(group, PDEUIMessages.ConfigurationTab_configLog, 20);
@@ -94,8 +96,9 @@ public class ConfigurationAreaBlock extends BaseBlock {
 		fUseDefaultLocationButton.setSelection(useDefaultArea);
 		enableBrowseSection(!useDefaultArea);
 		fLocationText.setEditable(!useDefaultArea);
-		if (useDefaultArea)
+		if (useDefaultArea) {
 			fLocationText.setEnabled(true);
+		}
 
 		fClearConfig.setSelection(configuration.getAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, true));
 
@@ -146,8 +149,9 @@ public class ConfigurationAreaBlock extends BaseBlock {
 
 	@Override
 	public String validate() {
-		if (fUseDefaultLocationButton.getSelection())
+		if (fUseDefaultLocationButton.getSelection()) {
 			return null;
+		}
 		return super.validate();
 	}
 }

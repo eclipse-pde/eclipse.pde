@@ -80,8 +80,9 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		}
 		Object[] objects = event.getChangedObjects();
 		for (Object object : objects) {
-			if (object instanceof ISchemaCompositor)
+			if (object instanceof ISchemaCompositor) {
 				fDtdSection.updateDTDLabel(object);
+			}
 		}
 	}
 
@@ -104,10 +105,11 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		fSection.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 
 		GridData gd;
-		if (fShowDescription)
+		if (fShowDescription) {
 			gd = new GridData(GridData.FILL_BOTH);
-		else
+		} else {
 			gd = new GridData(GridData.FILL_HORIZONTAL);
+		}
 		fSection.setLayoutData(gd);
 
 		// Align the master and details section headers (misalignment caused
@@ -119,8 +121,9 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 
 		createDetails(client);
 
-		if (fShowDescription)
+		if (fShowDescription) {
 			createDescription(client, toolkit);
+		}
 
 		// If the DTD Approximation section was requested, instantiate it and create it's contents
 		// on the same parent Composite
@@ -134,8 +137,9 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		fSection.setClient(client);
 		markDetailsPart(fSection);
 
-		if (fShowDescription)
+		if (fShowDescription) {
 			fDescriptionViewer.createUIListeners();
+		}
 		hookListeners();
 	}
 
@@ -165,8 +169,9 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		fDescriptionViewer.getDocument().addDocumentListener(new IDocumentListener() {
 			@Override
 			public void documentChanged(DocumentEvent event) {
-				if (blockListeners())
+				if (blockListeners()) {
 					return;
+				}
 				if (fSchemaObject != null) {
 					// Get the text from the event
 					IDocument document = event.getDocument();
@@ -227,31 +232,36 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 
 	@Override
 	public boolean canPaste(Clipboard clipboard) {
-		if (fShowDescription && fDescriptionViewer != null && fDescriptionViewer.getViewer().getTextWidget().isFocusControl())
+		if (fShowDescription && fDescriptionViewer != null && fDescriptionViewer.getViewer().getTextWidget().isFocusControl()) {
 			return fDescriptionViewer.canPaste();
+		}
 		return super.canPaste(clipboard);
 	}
 
 	@Override
 	public boolean doGlobalAction(String actionId) {
-		if (fShowDescription && fDescriptionViewer != null && fDescriptionViewer.getViewer().getTextWidget().isFocusControl())
+		if (fShowDescription && fDescriptionViewer != null && fDescriptionViewer.getViewer().getTextWidget().isFocusControl()) {
 			return fDescriptionViewer.doGlobalAction(actionId);
+		}
 		return super.doGlobalAction(actionId);
 	}
 
 	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
-		if (!(part instanceof ElementSection))
+		if (!(part instanceof ElementSection)) {
 			return;
+		}
 		Object obj = ((IStructuredSelection) selection).getFirstElement();
 		if (obj instanceof ISchemaObject) {
 			setBlockListeners(true);
 			ISchemaObject sObj = (ISchemaObject) obj;
 			fSchemaObject = sObj;
-			if (fShowDTD && fDtdSection != null)
+			if (fShowDTD && fDtdSection != null) {
 				fDtdSection.updateDTDLabel(obj);
-			if (fShowDescription && fDescriptionViewer != null)
+			}
+			if (fShowDescription && fDescriptionViewer != null) {
 				updateDescriptionViewer(sObj);
+			}
 			updateFields(sObj);
 			setBlockListeners(false);
 		}
@@ -349,8 +359,9 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		gd.horizontalIndent = 10;
 		fUnboundSelect.setLayoutData(gd);
 		fUnboundSelect.addSelectionListener(widgetSelectedAdapter(e -> {
-			if (blockListeners())
+			if (blockListeners()) {
 				return;
+			}
 			fMaxOccurSpinner.setEnabled(!fUnboundSelect.getSelection() && isEditableElement());
 		}));
 
@@ -358,43 +369,50 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 	}
 
 	protected int getMinOccur() {
-		if (fMinOccurSpinner != null)
+		if (fMinOccurSpinner != null) {
 			return fMinOccurSpinner.getSelection();
+		}
 		return 0;
 	}
 
 	protected int getMaxOccur() {
 		if (fMaxOccurSpinner != null) {
-			if (fMaxOccurSpinner.isEnabled())
+			if (fMaxOccurSpinner.isEnabled()) {
 				return fMaxOccurSpinner.getSelection();
+			}
 			return Integer.MAX_VALUE;
 		}
 		return 1;
 	}
 
 	protected void updateMinOccur(int min) {
-		if (fMinOccurSpinner != null)
+		if (fMinOccurSpinner != null) {
 			fMinOccurSpinner.setSelection(min);
+		}
 	}
 
 	protected void updateMaxOccur(int max) {
-		if (fMaxOccurSpinner == null)
+		if (fMaxOccurSpinner == null) {
 			return;
+		}
 		boolean isMax = max == Integer.MAX_VALUE;
 		fUnboundSelect.setSelection(isMax);
 		fMaxOccurSpinner.setEnabled(!isMax);
-		if (!isMax)
+		if (!isMax) {
 			fMaxOccurSpinner.setSelection(max);
+		}
 	}
 
 	protected void hookMinOccur(SelectionListener adapter) {
 		fMinOccurSpinner.addSelectionListener(adapter);
 		fMinOccurSpinner.addModifyListener(e -> {
-			if (blockListeners())
+			if (blockListeners()) {
 				return;
+			}
 			int minOccur = fMinOccurSpinner.getSelection();
-			if (minOccur > getMaxOccur())
+			if (minOccur > getMaxOccur()) {
 				fMinOccurSpinner.setSelection(minOccur - 1);
+			}
 		});
 	}
 
@@ -402,11 +420,13 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		fUnboundSelect.addSelectionListener(adapter);
 		fMaxOccurSpinner.addSelectionListener(adapter);
 		fMaxOccurSpinner.addModifyListener(e -> {
-			if (blockListeners())
+			if (blockListeners()) {
 				return;
+			}
 			int maxValue = fMaxOccurSpinner.getSelection();
-			if (maxValue < getMinOccur())
+			if (maxValue < getMinOccur()) {
 				fMaxOccurSpinner.setSelection(maxValue + 1);
+			}
 		});
 	}
 

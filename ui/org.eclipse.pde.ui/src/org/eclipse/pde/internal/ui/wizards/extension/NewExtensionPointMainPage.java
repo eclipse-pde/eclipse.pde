@@ -60,10 +60,12 @@ public class NewExtensionPointMainPage extends BaseExtensionPointMainPage {
 		IPluginExtensionPoint point = fModel.getFactory().createExtensionPoint();
 		try {
 			point.setId(id);
-			if (name.length() > 0)
+			if (name.length() > 0) {
 				point.setName(name);
-			if (schema.length() > 0)
+			}
+			if (schema.length() > 0) {
 				point.setSchema(schema);
+			}
 
 			plugin.add(point);
 		} catch (CoreException e) {
@@ -91,29 +93,36 @@ public class NewExtensionPointMainPage extends BaseExtensionPointMainPage {
 
 	@Override
 	protected void initializeValues() {
-		if (fPoint == null)
+		if (fPoint == null) {
 			return;
-		if (fIdText != null && fPoint.getId() != null)
+		}
+		if (fIdText != null && fPoint.getId() != null) {
 			fIdText.setText(fPoint.getId());
-		if (fNameText != null && fPoint.getName() != null)
+		}
+		if (fNameText != null && fPoint.getName() != null) {
 			fNameText.setText(fPoint.getName());
-		if (fSchemaText != null && fPoint.getSchema() != null)
+		}
+		if (fSchemaText != null && fPoint.getSchema() != null) {
 			fSchemaText.setText(fPoint.getSchema());
+		}
 	}
 
 	@Override
 	protected String validateFieldContents() {
 		String message = validateExtensionPointID();
-		if (message != null)
+		if (message != null) {
 			return message;
+		}
 
 		message = validateExtensionPointName();
-		if (message != null)
+		if (message != null) {
 			return message;
+		}
 
 		message = validateExtensionPointSchema();
-		if (message != null)
+		if (message != null) {
 			return message;
+		}
 
 		return null;
 	}

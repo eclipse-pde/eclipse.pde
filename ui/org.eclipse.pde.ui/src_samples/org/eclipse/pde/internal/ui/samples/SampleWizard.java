@@ -119,10 +119,12 @@ public class SampleWizard extends Wizard implements INewWizard, IExecutableExten
 			if (selectRevealEnabled) {
 				selectReveal(getShell());
 			}
-			if (activitiesEnabled)
+			if (activitiesEnabled) {
 				enableActivities();
-			if (sampleEditorNeeded && sampleManifest != null)
+			}
+			if (sampleEditorNeeded && sampleManifest != null) {
 				IDE.openEditor(page, sampleManifest, true);
+			}
 		} catch (InvocationTargetException | CoreException e) {
 			PDEPlugin.logException(e);
 			return false;
@@ -182,8 +184,9 @@ public class SampleWizard extends Wizard implements INewWizard, IExecutableExten
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
 			String id = element.getAttribute("id"); //$NON-NLS-1$
-			if (id == null)
+			if (id == null) {
 				continue;
+			}
 			activitiesToEnable.add(id);
 		}
 		HashSet<String> set = new HashSet<>(workbenchActivitySupport.getActivityManager().getEnabledActivityIds());

@@ -114,8 +114,9 @@ public final class BuildJob extends Job {
 						IMarker[] findMarkers = currentProject.findMarkers(null, true, IResource.DEPTH_INFINITE);
 						if (findMarkers != null) {
 							for (IMarker iMarker : findMarkers) {
-								if (iMarker.getType().startsWith((API_TOOL_PLUGIN_ID)))
+								if (iMarker.getType().startsWith((API_TOOL_PLUGIN_ID))) {
 									typesToDelete.add(iMarker.getType());
+								}
 							}
 						}
 						for (String typeMarker : typesToDelete) {

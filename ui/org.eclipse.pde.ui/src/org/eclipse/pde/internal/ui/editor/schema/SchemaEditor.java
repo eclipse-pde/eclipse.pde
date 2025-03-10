@@ -128,10 +128,11 @@ public class SchemaEditor extends MultiSourceEditor {
 
 	void previewReferenceDocument() {
 		ISchema schema = (ISchema) getAggregateModel();
-		if (fPreviewAction == null)
+		if (fPreviewAction == null) {
 			fPreviewAction = new ShowDescriptionAction(schema);
-		else
+		} else {
 			fPreviewAction.setSchema(schema);
+		}
 		fPreviewAction.run();
 	}
 
@@ -259,8 +260,9 @@ public class SchemaEditor extends MultiSourceEditor {
 	public static void openToElement(IPath path, ISchemaElement element) {
 		if (openSchema(path)) {
 			IEditorPart editorPart = PDEPlugin.getActivePage().getActiveEditor();
-			if (!(editorPart instanceof SchemaEditor schemaEditor))
+			if (!(editorPart instanceof SchemaEditor schemaEditor)) {
 				return; // something messed up, schema editor should be open
+			}
 			schemaEditor.selectReveal(element);
 		}
 	}

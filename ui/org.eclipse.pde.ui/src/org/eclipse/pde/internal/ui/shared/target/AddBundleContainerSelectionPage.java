@@ -312,8 +312,9 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 		List<AbstractBundleContainerNode> list = new ArrayList<>();
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IExtensionPoint point = registry.getExtensionPoint(PDEPlugin.getPluginId(), TARGET_LOCATION_PROVISIONER_POINT);
-		if (point == null)
+		if (point == null) {
 			return list;
+		}
 		IExtension[] extensions = point.getExtensions();
 		for (IExtension extension : extensions) {
 			IConfigurationElement[] elements = extension.getConfigurationElements();
@@ -377,8 +378,9 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 						fWizard.setContainer(getContainer());
 						fWizard.addPages();
 						IWizardPage[] pages = fWizard.getPages();
-						for (IWizardPage page : pages)
+						for (IWizardPage page : pages) {
 							addPage(page);
+						}
 					}
 
 					@Override

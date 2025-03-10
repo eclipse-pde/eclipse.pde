@@ -104,16 +104,21 @@ public class SchemaFormOutlinePage extends FormOutlinePage {
 		}
 		if (obj instanceof IDocumentSection section) {
 			String sectionId = section.getSectionId();
-			if (sectionId.equals(IDocumentSection.EXAMPLES))
+			if (sectionId.equals(IDocumentSection.EXAMPLES)) {
 				return PDEUIMessages.SchemaEditor_topic_examples;
-			if (sectionId.equals(IDocumentSection.SINCE))
+			}
+			if (sectionId.equals(IDocumentSection.SINCE)) {
 				return PDEUIMessages.SchemaEditor_topic_since;
-			if (sectionId.equals(IDocumentSection.IMPLEMENTATION))
+			}
+			if (sectionId.equals(IDocumentSection.IMPLEMENTATION)) {
 				return PDEUIMessages.SchemaEditor_topic_implementation;
-			if (sectionId.equalsIgnoreCase(IDocumentSection.API_INFO))
+			}
+			if (sectionId.equalsIgnoreCase(IDocumentSection.API_INFO)) {
 				return PDEUIMessages.SchemaEditor_topic_api;
-			if (sectionId.equals(IDocumentSection.COPYRIGHT))
+			}
+			if (sectionId.equals(IDocumentSection.COPYRIGHT)) {
 				return PDEUIMessages.SchemaEditor_topic_copyright;
+			}
 		}
 		return null;
 	}
@@ -127,10 +132,12 @@ public class SchemaFormOutlinePage extends FormOutlinePage {
 
 	@Override
 	protected String getParentPageId(Object item) {
-		if (item instanceof ISchemaElement || item instanceof ISchemaAttribute)
+		if (item instanceof ISchemaElement || item instanceof ISchemaAttribute) {
 			return SchemaFormPage.PAGE_ID;
-		if (item instanceof IDocumentSection || item instanceof ISchema)
+		}
+		if (item instanceof IDocumentSection || item instanceof ISchema) {
 			return SchemaOverviewPage.PAGE_ID;
+		}
 		return super.getParentPageId(item);
 	}
 

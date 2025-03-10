@@ -42,12 +42,13 @@ public abstract class BasePDEScanner extends BufferedRuleBasedScanner {
 		String property = event.getProperty();
 		if (affectsTextPresentation(property)) {
 			Token token = getTokenAffected(event);
-			if (property.endsWith(IPDEColorConstants.P_BOLD_SUFFIX))
+			if (property.endsWith(IPDEColorConstants.P_BOLD_SUFFIX)) {
 				adaptToStyleChange(event, token, SWT.BOLD);
-			else if (property.endsWith(IPDEColorConstants.P_ITALIC_SUFFIX))
+			} else if (property.endsWith(IPDEColorConstants.P_ITALIC_SUFFIX)) {
 				adaptToStyleChange(event, token, SWT.ITALIC);
-			else
+			} else {
 				adaptToColorChange(event, token);
+			}
 		}
 	}
 
@@ -58,13 +59,15 @@ public abstract class BasePDEScanner extends BufferedRuleBasedScanner {
 	protected abstract void initialize();
 
 	protected void adaptToStyleChange(PropertyChangeEvent event, Token token, int styleAttribute) {
-		if (token == null)
+		if (token == null) {
 			return;
+		}
 
 		boolean eventValue = false;
 		Object value = event.getNewValue();
-		if (value instanceof Boolean)
+		if (value instanceof Boolean) {
 			eventValue = ((Boolean) value).booleanValue();
+		}
 
 		TextAttribute attr = (TextAttribute) token.getData();
 		boolean activeValue = (attr.getStyle() & styleAttribute) == styleAttribute;
@@ -89,10 +92,12 @@ public abstract class BasePDEScanner extends BufferedRuleBasedScanner {
 		Color color = manager.getColor(property);
 		int style = SWT.NORMAL;
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-		if (store.getBoolean(property + IPDEColorConstants.P_BOLD_SUFFIX))
+		if (store.getBoolean(property + IPDEColorConstants.P_BOLD_SUFFIX)) {
 			style |= SWT.BOLD;
-		if (store.getBoolean(property + IPDEColorConstants.P_ITALIC_SUFFIX))
+		}
+		if (store.getBoolean(property + IPDEColorConstants.P_ITALIC_SUFFIX)) {
 			style |= SWT.ITALIC;
+		}
 		return new TextAttribute(color, null, style);
 	}
 

@@ -33,8 +33,9 @@ public class RemoveBuildEntryResolution extends BuildEntryMarkerResolution {
 
 	@Override
 	public String getLabel() {
-		if (fToken == null)
+		if (fToken == null) {
 			return NLS.bind(PDEUIMessages.RemoveBuildEntryResolution_removeEntry, fEntry);
+		}
 		return NLS.bind(PDEUIMessages.RemoveBuildEntryResolution_removeToken, fToken, fEntry);
 	}
 
@@ -47,11 +48,12 @@ public class RemoveBuildEntryResolution extends BuildEntryMarkerResolution {
 		}
 		try {
 			BuildEntry buildEntry = (BuildEntry) build.getEntry(fEntry);
-			if (buildEntry == null)
+			if (buildEntry == null) {
 				return;
-			if (fToken == null)
+			}
+			if (fToken == null) {
 				build.remove(buildEntry);
-			else {
+			} else {
 				buildEntry.removeToken(fToken);
 				if (buildEntry.getTokens().length == 0) {
 					build.remove(buildEntry);

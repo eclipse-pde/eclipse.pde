@@ -47,10 +47,11 @@ public class AcceleratedTreeScrolling implements MouseWheelListener {
 				TreeItem nextItem = item;
 				for (int i = 0; i < fSkipLines; i++) {
 					TreeItem foundItem = null;
-					if (e.count < 0) // determines scrolling direction
+					if (e.count < 0) { // determines scrolling direction
 						foundItem = NextItem(fTree, nextItem);
-					else
+					} else {
 						foundItem = PreviousItem(fTree, nextItem);
+					}
 					if (foundItem == null) {
 						break;
 					}
@@ -62,8 +63,9 @@ public class AcceleratedTreeScrolling implements MouseWheelListener {
 	}
 
 	TreeItem PreviousItem(Tree tree, TreeItem item) {
-		if (item == null)
+		if (item == null) {
 			return null;
+		}
 		TreeItem childItem = item;
 		TreeItem parentItem = childItem.getParentItem();
 		int index = parentItem == null ? tree.indexOf(childItem) : parentItem.indexOf(childItem);
@@ -80,8 +82,9 @@ public class AcceleratedTreeScrolling implements MouseWheelListener {
 	}
 
 	TreeItem NextItem(Tree tree, TreeItem item) {
-		if (item == null)
+		if (item == null) {
 			return null;
+		}
 		if (item.getExpanded()) {
 			if (item.getItemCount() > 0) {
 				return item.getItem(0);

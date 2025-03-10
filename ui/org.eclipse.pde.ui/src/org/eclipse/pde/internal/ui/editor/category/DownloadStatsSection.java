@@ -151,8 +151,9 @@ public class DownloadStatsSection extends TableSection {
 		fArtifactTable.setComparator(new ViewerComparator() {
 			@Override
 			public int category(Object element) {
-				if (element instanceof SiteFeatureAdapter)
+				if (element instanceof SiteFeatureAdapter) {
 					return 0;
+				}
 				return 1;
 			}
 		});
@@ -186,8 +187,9 @@ public class DownloadStatsSection extends TableSection {
 		Iterator<?> iterator = ssel.iterator();
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			if (object == null)
+			if (object == null) {
 				continue;
+			}
 			if (object instanceof SiteFeatureAdapter) {
 				handleRemoveSiteFeatureAdapter((SiteFeatureAdapter) object);
 			} else if (object instanceof SiteBundleAdapter) {
@@ -263,8 +265,9 @@ public class DownloadStatsSection extends TableSection {
 	 */
 	private IFeature findFeature(ISiteFeature siteFeature) {
 		IFeatureModel model = PDECore.getDefault().getFeatureModelManager().findFeatureModelRelaxed(siteFeature.getId(), siteFeature.getVersion());
-		if (model != null)
+		if (model != null) {
 			return model.getFeature();
+		}
 		return null;
 	}
 
@@ -274,8 +277,9 @@ public class DownloadStatsSection extends TableSection {
 			IFeatureModel[] allModels = PDECore.getDefault().getFeatureModelManager().getModels();
 			ArrayList<IFeatureModel> newModels = new ArrayList<>();
 			for (IFeatureModel allModel : allModels) {
-				if (canAdd(allModel))
+				if (canAdd(allModel)) {
 					newModels.add(allModel);
+				}
 			}
 			IFeatureModel[] candidateModels = newModels.toArray(new IFeatureModel[newModels.size()]);
 			FeatureSelectionDialog dialog = new FeatureSelectionDialog(fArtifactTable.getTable().getShell(), candidateModels, true);
@@ -296,8 +300,9 @@ public class DownloadStatsSection extends TableSection {
 			IPluginModelBase[] allModels = PluginRegistry.getAllModels();
 			ArrayList<IPluginModelBase> newModels = new ArrayList<>();
 			for (IPluginModelBase allModel : allModels) {
-				if (canAdd(allModel))
+				if (canAdd(allModel)) {
 					newModels.add(allModel);
+				}
 			}
 			IPluginModelBase[] candidateModels = newModels.toArray(new IPluginModelBase[newModels.size()]);
 			PluginSelectionDialog dialog = new PluginSelectionDialog(fArtifactTable.getTable().getShell(), candidateModels, true);
@@ -317,8 +322,9 @@ public class DownloadStatsSection extends TableSection {
 		IFeature cfeature = candidate.getFeature();
 
 		for (ISiteFeature bfeature : features) {
-			if (bfeature.getId().equals(cfeature.getId()) && bfeature.getVersion().equals(cfeature.getVersion()))
+			if (bfeature.getId().equals(cfeature.getId()) && bfeature.getVersion().equals(cfeature.getVersion())) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -328,8 +334,9 @@ public class DownloadStatsSection extends TableSection {
 		IPluginBase candidateBundle = candidate.getPluginBase();
 
 		for (ISiteBundle currentBundle : currentBundles) {
-			if (currentBundle.getId().equals(candidateBundle.getId()) && currentBundle.getVersion().equals(candidateBundle.getVersion()))
+			if (currentBundle.getId().equals(candidateBundle.getId()) && currentBundle.getVersion().equals(candidateBundle.getVersion())) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -370,8 +377,9 @@ public class DownloadStatsSection extends TableSection {
 	private boolean isFeaturePatch(IFeature feature) {
 		IFeatureImport[] imports = feature.getImports();
 		for (IFeatureImport import1 : imports) {
-			if (import1.isPatch())
+			if (import1.isPatch()) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -470,8 +478,9 @@ public class DownloadStatsSection extends TableSection {
 	public boolean canPaste(Clipboard clipboard) {
 		Display d = getSection().getDisplay();
 		Control c = d.getFocusControl();
-		if (c instanceof Text)
+		if (c instanceof Text) {
 			return true;
+		}
 		return false;
 	}
 
@@ -493,8 +502,9 @@ public class DownloadStatsSection extends TableSection {
 	@Override
 	public void dispose() {
 		ISiteModel model = getModel();
-		if (model != null)
+		if (model != null) {
 			model.removeModelChangedListener(this);
+		}
 		super.dispose();
 	}
 

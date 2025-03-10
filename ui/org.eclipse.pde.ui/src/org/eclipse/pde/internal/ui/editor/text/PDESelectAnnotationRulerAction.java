@@ -88,24 +88,28 @@ public class PDESelectAnnotationRulerAction extends SelectMarkerRulerAction {
 		IAnnotationAccessExtension annotationAccess = getAnnotationAccessExtension();
 
 		IDocument document = getDocument();
-		if (model == null)
+		if (model == null) {
 			return;
+		}
 
 		Iterator<Annotation> iter = model.getAnnotationIterator();
 		int layer = Integer.MIN_VALUE;
 
 		while (iter.hasNext()) {
 			Annotation annotation = iter.next();
-			if (annotation.isMarkedDeleted())
+			if (annotation.isMarkedDeleted()) {
 				continue;
+			}
 
 			int annotationLayer = annotationAccess.getLayer(annotation);
-			if (annotationLayer < layer)
+			if (annotationLayer < layer) {
 				continue;
+			}
 
 			Position position = model.getPosition(annotation);
-			if (!includesRulerLine(position, document))
+			if (!includesRulerLine(position, document)) {
 				continue;
+			}
 
 			boolean isReadOnly = fTextEditor instanceof ITextEditorExtension && ((ITextEditorExtension) fTextEditor).isEditorInputReadOnly();
 			if (!isReadOnly) {

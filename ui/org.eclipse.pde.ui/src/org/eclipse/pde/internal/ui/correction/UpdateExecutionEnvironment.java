@@ -42,8 +42,9 @@ public class UpdateExecutionEnvironment extends AbstractManifestMarkerResolution
 			} catch (CoreException e) {
 
 			}
-			if (bree != null)
+			if (bree != null) {
 				bundle.setHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, bree);
+			}
 
 		}
 	}

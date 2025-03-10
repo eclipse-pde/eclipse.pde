@@ -56,8 +56,9 @@ public class SharedLabelProvider extends LabelProvider implements ITableLabelPro
 	}
 
 	public void connect(Object consumer) {
-		if (!consumers.contains(consumer))
+		if (!consumers.contains(consumer)) {
 			consumers.add(consumer);
+		}
 	}
 
 	public void disconnect(Object consumer) {
@@ -100,8 +101,9 @@ public class SharedLabelProvider extends LabelProvider implements ITableLabelPro
 	}
 
 	public Image get(Image image, int flags) {
-		if (flags == 0)
+		if (flags == 0) {
 			return image;
+		}
 		String key = getKey(image.hashCode(), flags);
 		Image resultImage = images.get(key);
 		if (resultImage == null) {
@@ -140,42 +142,54 @@ public class SharedLabelProvider extends LabelProvider implements ITableLabelPro
 	}
 
 	private ImageDescriptor[] getLowerLeftOverlays(int flags) {
-		if ((flags & F_ERROR) != 0)
+		if ((flags & F_ERROR) != 0) {
 			return new ImageDescriptor[] {PDEPluginImages.DESC_ERROR_CO};
-		if ((flags & F_WARNING) != 0)
+		}
+		if ((flags & F_WARNING) != 0) {
 			return new ImageDescriptor[] {PDEPluginImages.DESC_WARNING_CO};
+		}
 		return null;
 	}
 
 	private ImageDescriptor[] getUpperRightOverlays(int flags) {
-		if ((flags & F_EXPORT) != 0)
+		if ((flags & F_EXPORT) != 0) {
 			return new ImageDescriptor[] {PDEPluginImages.DESC_EXPORT_CO};
-		if ((flags & F_EDIT) != 0)
+		}
+		if ((flags & F_EDIT) != 0) {
 			return new ImageDescriptor[] {PDEPluginImages.DESC_DOC_CO};
-		if ((flags & F_JAVA) != 0)
+		}
+		if ((flags & F_JAVA) != 0) {
 			return new ImageDescriptor[] {PDEPluginImages.DESC_JAVA_CO};
+		}
 		return null;
 	}
 
 	private ImageDescriptor[] getLowerRightOverlays(int flags) {
-		if ((flags & F_JAR) != 0)
+		if ((flags & F_JAR) != 0) {
 			return new ImageDescriptor[] {PDEPluginImages.DESC_JAR_CO};
-		if ((flags & F_PROJECT) != 0)
+		}
+		if ((flags & F_PROJECT) != 0) {
 			return new ImageDescriptor[] {PDEPluginImages.DESC_PROJECT_CO};
-		if ((flags & F_OPTIONAL) != 0)
+		}
+		if ((flags & F_OPTIONAL) != 0) {
 			return new ImageDescriptor[] {PDEPluginImages.DESC_OPTIONAL_CO};
-		if ((flags & F_INTERNAL) != 0)
+		}
+		if ((flags & F_INTERNAL) != 0) {
 			return new ImageDescriptor[] {PDEPluginImages.DESC_INTERNAL_CO};
-		if ((flags & F_FRIEND) != 0)
+		}
+		if ((flags & F_FRIEND) != 0) {
 			return new ImageDescriptor[] {PDEPluginImages.DESC_FRIEND_CO};
+		}
 		return null;
 	}
 
 	private ImageDescriptor[] getUpperLeftOverlays(int flags) {
-		if ((flags & F_EXTERNAL) != 0)
+		if ((flags & F_EXTERNAL) != 0) {
 			return new ImageDescriptor[] {PDEPluginImages.DESC_EXTERNAL_CO};
-		if ((flags & F_BINARY) != 0)
+		}
+		if ((flags & F_BINARY) != 0) {
 			return new ImageDescriptor[] {PDEPluginImages.DESC_BINARY_CO};
+		}
 		return null;
 	}
 
@@ -198,17 +212,20 @@ public class SharedLabelProvider extends LabelProvider implements ITableLabelPro
 		if (relativePath.startsWith(platform)) {
 			relativePath = relativePath.substring(platform.length());
 			int index = relativePath.indexOf('/');
-			if (index == -1)
+			if (index == -1) {
 				return null;
+			}
 			model = PluginRegistry.findModel(relativePath.substring(0, index));
-			if (model == null)
+			if (model == null) {
 				return null;
+			}
 			relativePath = relativePath.substring(index + 1);
 		}
 
 		String location = model.getInstallLocation();
-		if (location == null)
+		if (location == null) {
 			return null;
+		}
 
 		File pluginLocation = new File(location);
 		InputStream stream = null;
@@ -216,12 +233,13 @@ public class SharedLabelProvider extends LabelProvider implements ITableLabelPro
 		try {
 			if (pluginLocation.isDirectory()) {
 				File file = new File(pluginLocation, relativePath);
-				if (file.exists())
+				if (file.exists()) {
 					stream = new FileInputStream(file);
-				else if (relativePath.length() > 5 && relativePath.startsWith("$nl$/")) { //$NON-NLS-1$
+				} else if (relativePath.length() > 5 && relativePath.startsWith("$nl$/")) { //$NON-NLS-1$
 					file = new File(pluginLocation, relativePath.substring(5));
-					if (file.exists())
+					if (file.exists()) {
 						stream = new FileInputStream(file);
+					}
 				}
 			} else {
 				jarFile = new ZipFile(pluginLocation, ZipFile.OPEN_READ);
@@ -242,10 +260,12 @@ public class SharedLabelProvider extends LabelProvider implements ITableLabelPro
 		} catch (IOException e) {
 		} finally {
 			try {
-				if (stream != null)
+				if (stream != null) {
 					stream.close();
-				if (jarFile != null)
+				}
+				if (jarFile != null) {
 					jarFile.close();
+				}
 			} catch (IOException e) {
 			}
 		}
@@ -253,8 +273,9 @@ public class SharedLabelProvider extends LabelProvider implements ITableLabelPro
 	}
 
 	public Image getBlankImage() {
-		if (fBlankImage == null)
+		if (fBlankImage == null) {
 			fBlankImage = ImageDescriptor.getMissingImageDescriptor().createImage();
+		}
 		return fBlankImage;
 	}
 }

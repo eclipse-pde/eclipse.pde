@@ -79,10 +79,11 @@ public class EditorPreferencePage extends PreferencePage implements IWorkbenchPr
 		final Link link = new Link(parent, SWT.NONE);
 		link.setText(PDEUIMessages.EditorPreferencePage_link);
 		link.addSelectionListener(widgetSelectedAdapter(e -> {
-			if ("org.eclipse.ui.preferencePages.GeneralTextEditor".equals(e.text)) //$NON-NLS-1$
+			if ("org.eclipse.ui.preferencePages.GeneralTextEditor".equals(e.text)) { //$NON-NLS-1$
 				PreferencesUtil.createPreferenceDialogOn(link.getShell(), e.text, null, null);
-			else if ("org.eclipse.ui.preferencePages.ColorsAndFonts".equals(e.text)) //$NON-NLS-1$
+			} else if ("org.eclipse.ui.preferencePages.ColorsAndFonts".equals(e.text)) { //$NON-NLS-1$
 				PreferencesUtil.createPreferenceDialogOn(link.getShell(), e.text, null, "selectFont:org.eclipse.jface.textfont"); //$NON-NLS-1$
+			}
 		}));
 
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);

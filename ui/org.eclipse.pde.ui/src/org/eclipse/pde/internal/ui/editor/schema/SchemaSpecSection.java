@@ -94,8 +94,9 @@ public class SchemaSpecSection extends PDESection {
 	@Override
 	public void dispose() {
 		ISchema schema = (ISchema) getPage().getModel();
-		if (schema != null)
+		if (schema != null) {
 			schema.removeModelChangedListener(this);
+		}
 		super.dispose();
 	}
 

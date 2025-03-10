@@ -68,8 +68,9 @@ public class PluginReference implements IPluginReference {
 	@Override
 	public boolean equals(Object object) {
 		if (object instanceof IPluginReference source) {
-			if (id == null)
+			if (id == null) {
 				return false;
+			}
 			return id.equals(source.getId()) && ((version == null && source.getVersion() == null) || version.equals(source.getVersion()));
 		}
 		return false;

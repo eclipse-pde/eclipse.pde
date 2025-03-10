@@ -38,7 +38,8 @@ public abstract class BuildEntryMarkerResolution extends AbstractPDEMarkerResolu
 
 	@Override
 	protected void createChange(IBaseModel model) {
-		if (model instanceof BuildModel)
+		if (model instanceof BuildModel) {
 			createChange((Build) ((BuildModel) model).getBuild());
+		}
 	}
 }

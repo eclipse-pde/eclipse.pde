@@ -55,8 +55,9 @@ public abstract class InputContextManager implements IResourceChangeListener {
 	}
 
 	public void addInputContextListener(IInputContextListener listener) {
-		if (!listeners.contains(listener))
+		if (!listeners.contains(listener)) {
 			listeners.add(listener);
+		}
 	}
 
 	public void removeInputContextListener(IInputContextListener listener) {
@@ -82,16 +83,18 @@ public abstract class InputContextManager implements IResourceChangeListener {
 		Collection<InputContext> values = inputContexts.values();
 		SubMonitor subMon = SubMonitor.convert(monitor, values.size());
 		for (InputContext context : values) {
-			if (context.mustSave())
+			if (context.mustSave()) {
 				context.doSave(subMon.newChild(1));
+			}
 		}
 	}
 
 	public IProject getCommonProject() {
 		for (InputContext context : inputContexts.values()) {
 			IEditorInput input = context.getInput();
-			if (input instanceof IFileEditorInput)
+			if (input instanceof IFileEditorInput) {
 				return ((IFileEditorInput) input).getFile().getProject();
+			}
 		}
 		return null;
 	}
@@ -102,16 +105,18 @@ public abstract class InputContextManager implements IResourceChangeListener {
 
 	public InputContext findContext(String id) {
 		for (InputContext context : inputContexts.values()) {
-			if (context.getId().equals(id))
+			if (context.getId().equals(id)) {
 				return context;
+			}
 		}
 		return null;
 	}
 
 	public InputContext findContext(IResource resource) {
 		for (InputContext context : inputContexts.values()) {
-			if (context.matches(resource))
+			if (context.matches(resource)) {
 				return context;
+			}
 		}
 		return null;
 	}
@@ -165,8 +170,9 @@ public abstract class InputContextManager implements IResourceChangeListener {
 
 	public InputContext getPrimaryContext() {
 		for (InputContext context : inputContexts.values()) {
-			if (context.isPrimary())
+			if (context.isPrimary()) {
 				return context;
+			}
 		}
 		return null;
 	}
@@ -174,16 +180,18 @@ public abstract class InputContextManager implements IResourceChangeListener {
 	public InputContext[] getInvalidContexts() {
 		ArrayList<InputContext> result = new ArrayList<>();
 		for (InputContext context : inputContexts.values()) {
-			if (context.isModelCorrect() == false)
+			if (context.isModelCorrect() == false) {
 				result.add(context);
+			}
 		}
 		return result.toArray(new InputContext[result.size()]);
 	}
 
 	public boolean isDirty() {
 		for (InputContext context : inputContexts.values()) {
-			if (context.mustSave())
+			if (context.mustSave()) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -277,51 +285,60 @@ public abstract class InputContextManager implements IResourceChangeListener {
 	protected void fireStructureChange(IFile file, boolean added) {
 		for (int i = 0; i < listeners.size(); i++) {
 			IInputContextListener listener = listeners.get(i);
-			if (added)
+			if (added) {
 				listener.monitoredFileAdded(file);
-			else
+			} else {
 				listener.monitoredFileRemoved(file);
+			}
 		}
 	}
 
 	protected void fireContextChange(InputContext context, boolean added) {
 		for (int i = 0; i < listeners.size(); i++) {
 			IInputContextListener listener = listeners.get(i);
-			if (added)
+			if (added) {
 				listener.contextAdded(context);
-			else
+			} else {
 				listener.contextRemoved(context);
+			}
 		}
-		if (added)
+		if (added) {
 			hookUndo(context);
-		else
+		} else {
 			unhookUndo(context);
+		}
 	}
 
 	public void undo() {
-		if (undoManager != null && undoManager.isUndoable())
+		if (undoManager != null && undoManager.isUndoable()) {
 			undoManager.undo();
+		}
 	}
 
 	public void redo() {
-		if (undoManager != null && undoManager.isRedoable())
+		if (undoManager != null && undoManager.isRedoable()) {
 			undoManager.redo();
+		}
 	}
 
 	private void hookUndo(InputContext context) {
-		if (undoManager == null)
+		if (undoManager == null) {
 			return;
+		}
 		IBaseModel model = context.getModel();
-		if (model instanceof IModelChangeProvider)
+		if (model instanceof IModelChangeProvider) {
 			undoManager.connect((IModelChangeProvider) model);
+		}
 	}
 
 	private void unhookUndo(InputContext context) {
-		if (undoManager == null)
+		if (undoManager == null) {
 			return;
+		}
 		IBaseModel model = context.getModel();
-		if (model instanceof IModelChangeProvider)
+		if (model instanceof IModelChangeProvider) {
 			undoManager.disconnect((IModelChangeProvider) model);
+		}
 	}
 
 	/**

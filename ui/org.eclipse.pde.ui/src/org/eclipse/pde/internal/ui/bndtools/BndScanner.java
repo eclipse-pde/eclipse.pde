@@ -78,8 +78,9 @@ public class BndScanner extends RuleBasedScanner {
 	}
 
 	IToken comment(ICharacterScanner scanner) {
-		if (scanner.getColumn() != 0)
+		if (scanner.getColumn() != 0) {
 			return Token.UNDEFINED;
+		}
 
 		int c;
 		int n = 0;
@@ -94,19 +95,22 @@ public class BndScanner extends RuleBasedScanner {
 					c = scanner.read();
 					n++;
 
-					if (c == '\n' || c == '\r' || c == ICharacterScanner.EOF)
+					if (c == '\n' || c == '\r' || c == ICharacterScanner.EOF) {
 						return T_COMMENT;
+					}
 				}
 			}
-			while (n-- > 0)
+			while (n-- > 0) {
 				scanner.unread();
+			}
 			return Token.UNDEFINED;
 		}
 	}
 
 	IToken keyword(ICharacterScanner scanner) {
-		if (scanner.getColumn() != 0)
+		if (scanner.getColumn() != 0) {
 			return Token.UNDEFINED;
+		}
 
 		int c;
 		int n = 0;
@@ -131,8 +135,9 @@ public class BndScanner extends RuleBasedScanner {
 
 		if (sb.isEmpty()) {
 
-			while (n-- > 0)
+			while (n-- > 0) {
 				scanner.unread();
+			}
 
 			return Token.UNDEFINED;
 		}
@@ -166,8 +171,9 @@ public class BndScanner extends RuleBasedScanner {
 				return T_ERROR;
 			}
 		}
-		while (n-- > 0)
+		while (n-- > 0) {
 			scanner.unread();
+		}
 		return Token.UNDEFINED;
 	}
 

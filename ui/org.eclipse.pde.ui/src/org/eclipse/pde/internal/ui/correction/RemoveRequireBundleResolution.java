@@ -35,8 +35,9 @@ public class RemoveRequireBundleResolution extends AbstractManifestMarkerResolut
 		fBundleId = marker.getAttribute("bundleId", null); //$NON-NLS-1$
 		Bundle bundle = (Bundle) model.getBundle();
 		RequireBundleHeader header = (RequireBundleHeader) bundle.getManifestHeader(Constants.REQUIRE_BUNDLE);
-		if (header != null)
+		if (header != null) {
 			header.removeBundle(fBundleId);
+		}
 	}
 
 	@Override

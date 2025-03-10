@@ -97,19 +97,24 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 			Rectangle bounds = child.getBounds();
 			Rectangle area = scrollContainer.getClientArea();
 			Point origin = scrollContainer.getOrigin();
-			if (origin.x > bounds.x)
+			if (origin.x > bounds.x) {
 				origin.x = Math.max(0, bounds.x);
-			if (origin.y > bounds.y)
+			}
+			if (origin.y > bounds.y) {
 				origin.y = Math.max(0, bounds.y);
-			if (origin.x + area.width < bounds.x + bounds.width)
+			}
+			if (origin.x + area.width < bounds.x + bounds.width) {
 				origin.x = Math.max(0, bounds.x + bounds.width - area.width);
-			if (origin.y + area.height < bounds.y + bounds.height)
+			}
+			if (origin.y + area.height < bounds.y + bounds.height) {
 				origin.y = Math.max(0, bounds.y + bounds.height - area.height);
+			}
 			scrollContainer.setOrigin(origin);
 		};
 		Control[] controls = composite.getChildren();
-		for (Control control : controls)
+		for (Control control : controls) {
 			control.addListener(SWT.Activate, listener);
+		}
 
 		Dialog.applyDialogFont(composite);
 		composite.setSize(composite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
@@ -127,8 +132,9 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public void applyData(Object data) {
-		if (data == LOCATION)
+		if (data == LOCATION) {
 			fDataBlock.selectWorkspaceLocation();
+		}
 	}
 
 	@Override
@@ -193,8 +199,9 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 	@Override
 	public void validateTab() {
 		String error = fDataBlock.validate();
-		if (error == null)
+		if (error == null) {
 			error = fJreBlock.validate();
+		}
 		setErrorMessage(error);
 	}
 

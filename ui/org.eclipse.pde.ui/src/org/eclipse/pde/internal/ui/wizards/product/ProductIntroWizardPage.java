@@ -153,16 +153,21 @@ public class ProductIntroWizardPage extends WizardPage implements IHyperlinkList
 		if (error == null) {
 			String id = fIntroIdText.getText().trim();
 
-			if (id.length() == 0)
+			if (id.length() == 0) {
 				error = PDEUIMessages.ProductIntroWizardPage_introNotSet;
+			}
 
-			if (error == null)
-				for (int i = 0; i < id.length(); i++)
-					if (!id.substring(i, i + 1).matches("[a-zA-Z0-9.]")) //$NON-NLS-1$
+			if (error == null) {
+				for (int i = 0; i < id.length(); i++) {
+					if (!id.substring(i, i + 1).matches("[a-zA-Z0-9.]")) { //$NON-NLS-1$
 						error = PDEUIMessages.ProductIntroWizardPage_invalidIntroId;
+					}
+				}
+			}
 
-			if (error == null && fIntroIds.contains(id))
+			if (error == null && fIntroIds.contains(id)) {
 				error = PDEUIMessages.ProductIntroWizardPage_introIdExists;
+			}
 		}
 		setErrorMessage(error);
 		setPageComplete(error == null);
@@ -197,8 +202,9 @@ public class ProductIntroWizardPage extends WizardPage implements IHyperlinkList
 			for (IConfigurationElement element : children) {
 				if ("intro".equals(element.getName())) {//$NON-NLS-1$
 					introId = element.getAttribute("id"); //$NON-NLS-1$
-					if (introId != null)
+					if (introId != null) {
 						result.add(introId);
+					}
 				}
 			}
 		}
@@ -231,8 +237,9 @@ public class ProductIntroWizardPage extends WizardPage implements IHyperlinkList
 	public void linkActivated(HyperlinkEvent e) {
 		String extPoint = "org.eclipse.ui." + e.getHref().toString(); //$NON-NLS-1$
 		IPluginExtensionPoint point = PDECore.getDefault().getExtensionsRegistry().findExtensionPoint(extPoint);
-		if (point != null)
+		if (point != null) {
 			new ShowDescriptionAction(point, true).run();
+		}
 
 	}
 }

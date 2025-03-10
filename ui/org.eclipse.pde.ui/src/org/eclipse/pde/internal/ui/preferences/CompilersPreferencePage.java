@@ -165,8 +165,9 @@ public class CompilersPreferencePage extends PreferencePage implements IWorkbenc
 			if (link != null && fPageData.containsKey(NO_LINK)) {
 				link.setVisible(!Boolean.TRUE.equals(((Map<String, Object>) data).get(NO_LINK)));
 			}
-			if (fBlock == null)
+			if (fBlock == null) {
 				return;
+			}
 			Object key = fPageData.get(CompilersPreferencePage.DATA_SELECT_OPTION_KEY);
 			Object qualifier = fPageData.get(CompilersPreferencePage.DATA_SELECT_OPTION_QUALIFIER);
 			if (key instanceof String && qualifier instanceof String) {

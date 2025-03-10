@@ -134,8 +134,9 @@ public class ConfigureProblemSeverityForPDECompilerResolution extends AbstractMa
 		String str = marker.getAttribute(PDEMarkerFactory.compilerKey, ""); //$NON-NLS-1$
 		if (str.length() > 0) {
 			if (str.equals(CompilerFlags.S_OPEN_TAGS) || str.equals(CompilerFlags.F_UNRESOLVED_FEATURES)
-					|| str.equals(CompilerFlags.F_UNRESOLVED_PLUGINS))
+					|| str.equals(CompilerFlags.F_UNRESOLVED_PLUGINS)) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -158,11 +159,13 @@ public class ConfigureProblemSeverityForPDECompilerResolution extends AbstractMa
 	public IMarker[] findOtherMarkers(IMarker[] markers) {
 		HashSet<IMarker> mset = new HashSet<>(markers.length);
 		for (IMarker iMarker : markers) {
-			if (iMarker.equals(marker))
+			if (iMarker.equals(marker)) {
 				continue;
+			}
 			String str = iMarker.getAttribute(PDEMarkerFactory.compilerKey, ""); //$NON-NLS-1$
-			if (str.equals(id))
+			if (str.equals(id)) {
 				mset.add(iMarker);
+			}
 		}
 		int size = mset.size();
 		return mset.toArray(new IMarker[size]);

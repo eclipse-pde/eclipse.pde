@@ -166,8 +166,9 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 		selected = settings.get(S_ALLOW_BINARY_CYCLES);
 		fAllowBinaryCycles.setSelection(selected == null ? true : Boolean.TRUE.toString().equals(selected));
 
-		if (fMultiPlatform != null)
+		if (fMultiPlatform != null) {
 			fMultiPlatform.setSelection(settings.getBoolean(S_MULTI_PLATFORM));
+		}
 
 		hookListeners();
 	}
@@ -182,15 +183,18 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 
 	@Override
 	protected void pageChanged() {
-		if (getMessage() != null)
+		if (getMessage() != null) {
 			setMessage(null);
+		}
 		String error = fConfigurationGroup.validate();
-		if (error == null)
+		if (error == null) {
 			error = fExportGroup.validate();
-		if (fPageInitialized)
+		}
+		if (fPageInitialized) {
 			setErrorMessage(error);
-		else
+		} else {
 			setMessage(error);
+		}
 		setPageComplete(error == null);
 	}
 
@@ -213,8 +217,9 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 		settings.put(S_EXPORT_METADATA, doExportMetadata());
 		settings.put(S_ALLOW_BINARY_CYCLES, doBinaryCycles());
 
-		if (fMultiPlatform != null)
+		if (fMultiPlatform != null) {
 			settings.put(S_MULTI_PLATFORM, fMultiPlatform.getSelection());
+		}
 	}
 
 	protected boolean doSync() {

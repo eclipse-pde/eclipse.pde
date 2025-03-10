@@ -56,19 +56,23 @@ public class FeaturesPage extends PDEFormPage {
 			detailsPart.setPageProvider(new IDetailsPageProvider() {
 				@Override
 				public Object getPageKey(Object object) {
-					if (object instanceof SiteFeatureAdapter)
+					if (object instanceof SiteFeatureAdapter) {
 						return SiteFeatureAdapter.class;
-					if (object instanceof ISiteCategoryDefinition)
+					}
+					if (object instanceof ISiteCategoryDefinition) {
 						return ISiteCategoryDefinition.class;
+					}
 					return object.getClass();
 				}
 
 				@Override
 				public IDetailsPage getPage(Object key) {
-					if (key.equals(SiteFeatureAdapter.class))
+					if (key.equals(SiteFeatureAdapter.class)) {
 						return createFeatureDetails();
-					if (key.equals(ISiteCategoryDefinition.class))
+					}
+					if (key.equals(ISiteCategoryDefinition.class)) {
 						return createCategoryDetails();
+					}
 					return null;
 				}
 			});

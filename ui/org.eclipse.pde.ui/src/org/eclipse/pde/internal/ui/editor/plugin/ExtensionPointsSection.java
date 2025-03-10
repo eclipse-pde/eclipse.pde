@@ -72,8 +72,9 @@ public class ExtensionPointsSection extends TableSection {
 		public Object[] getElements(Object parent) {
 			IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 			IPluginBase pluginBase = model.getPluginBase();
-			if (pluginBase != null)
+			if (pluginBase != null) {
 				return pluginBase.getExtensionPoints();
+			}
 			return new Object[0];
 		}
 	}
@@ -99,16 +100,18 @@ public class ExtensionPointsSection extends TableSection {
 		pointTable.setInput(getPage());
 		selectFirstExtensionPoint();
 		IBaseModel model = getPage().getModel();
-		if (model instanceof IModelChangeProvider)
+		if (model instanceof IModelChangeProvider) {
 			((IModelChangeProvider) model).addModelChangedListener(this);
+		}
 		tablePart.setButtonEnabled(0, model.isEditable());
 	}
 
 	private void selectFirstExtensionPoint() {
 		Table table = pointTable.getTable();
 		TableItem[] items = table.getItems();
-		if (items.length == 0)
+		if (items.length == 0) {
 			return;
+		}
 		TableItem firstItem = items[0];
 		Object obj = firstItem.getData();
 		pointTable.setSelection(new StructuredSelection(obj));
@@ -121,8 +124,9 @@ public class ExtensionPointsSection extends TableSection {
 	@Override
 	public void dispose() {
 		IBaseModel model = getPage().getModel();
-		if (model instanceof IModelChangeProvider)
+		if (model instanceof IModelChangeProvider) {
 			((IModelChangeProvider) model).removeModelChangedListener(this);
+		}
 		super.dispose();
 	}
 
@@ -236,10 +240,11 @@ public class ExtensionPointsSection extends TableSection {
 
 	@Override
 	protected void buttonSelected(int index) {
-		if (index == 0)
+		if (index == 0) {
 			handleNew();
-		else if (index == 1)
+		} else if (index == 1) {
 			handleDelete();
+		}
 	}
 
 	@Override
@@ -267,20 +272,24 @@ public class ExtensionPointsSection extends TableSection {
 				IPluginBase plugin = ep.getPluginBase();
 				IPluginExtensionPoint[] points = plugin.getExtensionPoints();
 				int index = getNewSelectionIndex(getArrayIndex(points, ep), points.length);
-				if (index != -1)
+				if (index != -1) {
 					newSelection = new StructuredSelection(points[index]);
+				}
 				try {
 					String schema = ep.getSchema();
 					if (schema != null && schema.length() > 0) {
 						IProject project = ep.getModel().getUnderlyingResource().getProject();
 						IFile schemaFile = project.getFile(schema);
-						if (schemaFile != null && schemaFile.exists())
-							if (MessageDialog.openQuestion(getSection().getShell(), PDEUIMessages.ExtensionPointsSection_title, NLS.bind(PDEUIMessages.ExtensionPointsSection_message1, schemaFile.getProjectRelativePath().toString())))
+						if (schemaFile != null && schemaFile.exists()) {
+							if (MessageDialog.openQuestion(getSection().getShell(), PDEUIMessages.ExtensionPointsSection_title, NLS.bind(PDEUIMessages.ExtensionPointsSection_message1, schemaFile.getProjectRelativePath().toString()))) {
 								schemaFile.delete(true, true, new NullProgressMonitor());
+							}
+						}
 					}
 					plugin.remove(ep);
-					if (newSelection != null)
+					if (newSelection != null) {
 						pointTable.setSelection(newSelection);
+					}
 
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);

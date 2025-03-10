@@ -67,18 +67,21 @@ public class FeatureDetailsSection extends PDESection implements IPartSelectionL
 	}
 
 	private void applyIsPatch(boolean patch) throws CoreException {
-		if (fCurrentSiteFeature == null)
+		if (fCurrentSiteFeature == null) {
 			return;
+		}
 		fCurrentSiteFeature.setIsPatch(patch);
 	}
 
 	private void applyValue(String property, String value) throws CoreException {
-		if (fCurrentSiteFeature == null)
+		if (fCurrentSiteFeature == null) {
 			return;
-		if (property.equals(PROPERTY_URL))
+		}
+		if (property.equals(PROPERTY_URL)) {
 			fCurrentSiteFeature.setURL(value);
-		else if (property.equals(PROPERTY_TYPE))
+		} else if (property.equals(PROPERTY_TYPE)) {
 			fCurrentSiteFeature.setType(value);
+		}
 	}
 
 	@Override
@@ -93,16 +96,18 @@ public class FeatureDetailsSection extends PDESection implements IPartSelectionL
 		Transfer[] transfers = new Transfer[] {TextTransfer.getInstance(), RTFTransfer.getInstance()};
 		for (TransferData type : types) {
 			for (Transfer transfer : transfers) {
-				if (transfer.isSupportedType(type))
+				if (transfer.isSupportedType(type)) {
 					return true;
+				}
 			}
 		}
 		return false;
 	}
 
 	private void clearField(String property) {
-		if (property.equals(PROPERTY_URL))
+		if (property.equals(PROPERTY_URL)) {
 			fUrlText.setValue(null, true);
+		}
 	}
 
 	private void clearFields() {
@@ -157,8 +162,9 @@ public class FeatureDetailsSection extends PDESection implements IPartSelectionL
 		section.setClient(container);
 
 		ISiteModel model = (ISiteModel) getPage().getModel();
-		if (model != null)
+		if (model != null) {
 			model.addModelChangedListener(this);
+		}
 	}
 
 	private void createPatchButton(FormToolkit toolkit, Composite container) {
@@ -179,8 +185,9 @@ public class FeatureDetailsSection extends PDESection implements IPartSelectionL
 	@Override
 	public void dispose() {
 		ISiteModel model = (ISiteModel) getPage().getModel();
-		if (model != null)
+		if (model != null) {
 			model.removeModelChangedListener(this);
+		}
 		super.dispose();
 	}
 
@@ -216,23 +223,26 @@ public class FeatureDetailsSection extends PDESection implements IPartSelectionL
 			} else {
 				fCurrentSiteFeature = null;
 			}
-		} else
+		} else {
 			fCurrentSiteFeature = null;
+		}
 		refresh();
 	}
 
 	@Override
 	public void setFocus() {
-		if (fUrlText != null)
+		if (fUrlText != null) {
 			fUrlText.getText().setFocus();
+		}
 	}
 
 	private void setValue(String property) {
 		if (fCurrentSiteFeature == null) {
 			clearField(property);
 		} else {
-			if (property.equals(PROPERTY_URL))
+			if (property.equals(PROPERTY_URL)) {
 				fUrlText.setValue(fCurrentSiteFeature.getURL(), true);
+			}
 		}
 	}
 }

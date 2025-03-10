@@ -132,15 +132,17 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 
 		@Override
 		public Object[] getElements(Object inputElement) {
-			if (fAdditionalBundles == null)
+			if (fAdditionalBundles == null) {
 				return createAdditionalBundles();
+			}
 			return fAdditionalBundles.toArray();
 		}
 
 		private IBuildEntry getBuildInfo() {
 			IBuildModel model = getBuildModel(false);
-			if (model == null)
+			if (model == null) {
 				return null;
+			}
 			IBuild buildObject = model.getBuild();
 			IBuildEntry entry = buildObject.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
 			return entry;
@@ -191,8 +193,9 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 		IBuildModel model = getBuildModel(false);
 		if (model != null) {
 			IBuildEntry entry = model.getBuild().getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
-			if (entry != null && entry.getTokens().length > 0)
+			if (entry != null && entry.getTokens().length > 0) {
 				getSection().setExpanded(true);
+			}
 		}
 	}
 
@@ -271,16 +274,18 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 		if (fProject == null) {
 			IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 			IResource resource = model.getUnderlyingResource();
-			if (resource == null)
+			if (resource == null) {
 				return;
+			}
 			fProject = resource.getProject();
 		}
 		IEclipsePreferences pref = new ProjectScope(fProject).getNode(PDECore.PLUGIN_ID);
 
-		if (fImportPackageButton.getSelection())
+		if (fImportPackageButton.getSelection()) {
 			pref.putBoolean(ICoreConstants.RESOLVE_WITH_REQUIRE_BUNDLE, false);
-		else
+		} else {
 			pref.remove(ICoreConstants.RESOLVE_WITH_REQUIRE_BUNDLE);
+		}
 		try {
 			pref.flush();
 		} catch (BackingStoreException e) {
@@ -299,12 +304,14 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 			part.setButtonEnabled(3, false);
 
 			IBuildModel build = getBuildModel(false);
-			if (build != null)
+			if (build != null) {
 				build.addModelChangedListener(this);
+			}
 
 			IResource resource = model.getUnderlyingResource();
-			if (resource == null)
+			if (resource == null) {
 				return;
+			}
 			fProject = resource.getProject();
 			IEclipsePreferences pref = new ProjectScope(fProject).getNode(PDECore.PLUGIN_ID);
 			if (pref != null) {
@@ -325,8 +332,9 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 		manager.add(fOpenAction);
 		manager.add(new Separator());
 
-		if (!selection.isEmpty())
+		if (!selection.isEmpty()) {
 			manager.add(fRemoveAction);
+		}
 
 		// Add clipboard operations
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
@@ -335,8 +343,9 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 	@Override
 	public void refresh() {
 		fAdditionalBundles = null;
-		if (!fAdditionalTable.getControl().isDisposed())
+		if (!fAdditionalTable.getControl().isDisposed()) {
 			fAdditionalTable.refresh();
+		}
 		super.refresh();
 	}
 
@@ -360,8 +369,9 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 			if (ssel.size() == 1) {
 				Object obj = ssel.getFirstElement();
 				IPluginModelBase base = PluginRegistry.findModel((String) obj);
-				if (base != null)
+				if (base != null) {
 					ManifestEditor.open(base.getPluginBase(), false);
+				}
 			}
 		}
 	}
@@ -380,8 +390,9 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 				PDEFormEditor editor = getPage().getPDEEditor();
 				context = new BuildInputContext(getPage().getPDEEditor(), in, false);
 				editor.getContextManager().putContext(in, context);
-			} else
+			} else {
 				return null;
+			}
 		}
 		return (IBuildModel) context.getModel();
 	}
@@ -452,8 +463,9 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 
 		ArrayList<IPluginModelBase> result = new ArrayList<>();
 		for (int i = 0; i < plugins.length; i++) {
-			if (!currentPlugins.contains(plugins[i].getPluginBase().getId()))
+			if (!currentPlugins.contains(plugins[i].getPluginBase().getId())) {
 				result.add(plugins[i]);
+			}
 		}
 		return result.toArray(new IPluginModelBase[result.size()]);
 	}
@@ -469,8 +481,9 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 				String pluginName = (String) it.next();
 				entry.removeToken(pluginName);
 			}
-			if (entry.getTokens().length == 0)
+			if (entry.getTokens().length == 0) {
 				build.remove(entry);
+			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
@@ -630,8 +643,9 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 	@Override
 	public void dispose() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-		if (model != null)
+		if (model != null) {
 			model.removeModelChangedListener(this);
+		}
 		PDECore.getDefault().getModelManager().removePluginModelListener(this);
 		super.dispose();
 	}
@@ -642,8 +656,9 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 		final Control control = fAdditionalTable.getControl();
 		if (!control.isDisposed()) {
 			control.getDisplay().asyncExec(() -> {
-				if (!control.isDisposed())
+				if (!control.isDisposed()) {
 					fAdditionalTable.refresh();
+				}
 			});
 		}
 	}
@@ -673,14 +688,16 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 
 	private void movePlugins(int newOffset) {
 		int index = fAdditionalTable.getTable().getSelectionIndex();
-		if (index == -1)
+		if (index == -1) {
 			return; // safety check
+		}
 		IBuildModel model = getBuildModel(false);
 		if (model != null) {
 			IBuild build = model.getBuild();
 			IBuildEntry entry = build.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
-			if (entry instanceof org.eclipse.pde.internal.core.text.build.BuildEntry)
+			if (entry instanceof org.eclipse.pde.internal.core.text.build.BuildEntry) {
 				((org.eclipse.pde.internal.core.text.build.BuildEntry) entry).swap(index, index + newOffset);
+			}
 			}
 			updateButtons();
 	}

@@ -139,8 +139,9 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 			dialog.setText(Messages.AddProfileContainerPage_5);
 			dialog.setMessage(Messages.AddProfileContainerPage_6);
 			String result = dialog.open();
-			if (result != null)
+			if (result != null) {
 				fConfigLocation.setText(result);
+			}
 		}));
 
 		fConfigVariables = SWTFactory.createPushButton(buttonComp, Messages.EditProfileContainerPage_1, null);

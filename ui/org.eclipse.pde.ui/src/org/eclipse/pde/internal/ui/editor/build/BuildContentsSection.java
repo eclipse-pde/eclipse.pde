@@ -86,8 +86,9 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 		@Override
 		public Object[] getChildren(Object parent) {
 			try {
-				if (parent instanceof IFolder)
+				if (parent instanceof IFolder) {
 					return ((IFolder) parent).members();
+				}
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
 			}
@@ -97,8 +98,9 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 		public Object[] getFolderChildren(Object parent) {
 			IResource[] members = null;
 			try {
-				if (!(parent instanceof IFolder))
+				if (!(parent instanceof IFolder)) {
 					return new Object[0];
+				}
 				members = ((IFolder) parent).members();
 				ArrayList<IResource> results = new ArrayList<>();
 				for (IResource member : members) {
@@ -123,8 +125,9 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 
 		@Override
 		public boolean hasChildren(Object element) {
-			if (element instanceof IFolder)
+			if (element instanceof IFolder) {
 				return getChildren(element).length > 0;
+			}
 			return false;
 		}
 	}
@@ -160,8 +163,9 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 	public void createClient(final Section section, FormToolkit toolkit) {
 		Composite container = createClientContainer(section, 2, toolkit);
 		fBuildModel = getBuildModel();
-		if (fBuildModel.getUnderlyingResource() != null)
+		if (fBuildModel.getUnderlyingResource() != null) {
 			fBundleRoot = PDEProject.getBundleRoot(fBuildModel.getUnderlyingResource().getProject());
+		}
 
 		fTreeViewer = new CheckboxTreeViewer(toolkit.createTree(container, SWT.CHECK));
 		fTreeViewer.setContentProvider(new TreeContentProvider());
@@ -215,8 +219,9 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 			boolean uncheck = true;
 			IResource[] members = ((IFolder) parent).members();
 			for (int i = 0; i < members.length; i++) {
-				if (fTreeViewer.getChecked(members[i]) && !members[i].getName().equals(name))
+				if (fTreeViewer.getChecked(members[i]) && !members[i].getName().equals(name)) {
 					uncheck = false;
+				}
 			}
 			if (uncheck) {
 				return handleAllUnselected(parent, parent.getName());
@@ -261,15 +266,18 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 
 	protected void initializeCheckState(final IBuildEntry includes, final IBuildEntry excludes) {
 		fTreeViewer.getTree().getDisplay().asyncExec(() -> BusyIndicator.showWhile(Display.getCurrent(), () -> {
-			if (fTreeViewer.getTree().isDisposed())
+			if (fTreeViewer.getTree().isDisposed()) {
 				return;
+			}
 			ArrayList<String> fileExt = new ArrayList<>();
 			String[] inclTokens, exclTokens = new String[0];
-			if (fBundleRoot == null || includes == null)
+			if (fBundleRoot == null || includes == null) {
 				return;
+			}
 			inclTokens = includes.getTokens();
-			if (excludes != null)
+			if (excludes != null) {
 				exclTokens = excludes.getTokens();
+			}
 			Set<String> temp = new TreeSet<>();
 			Collections.addAll(temp, inclTokens);
 			Collections.addAll(temp, exclTokens);
@@ -283,8 +291,9 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 					// ignore - should be root directory
 				} else if (resource.lastIndexOf(IPath.SEPARATOR) == resource.length() - 1) {
 					IFolder folder = fBundleRoot.getFolder(IPath.fromOSString(resource));
-					if (!folder.exists())
+					if (!folder.exists()) {
 						continue;
+					}
 					fTreeViewer.setSubtreeChecked(folder, isIncluded);
 					fTreeViewer.setParentsGrayed(folder, true);
 					if (isIncluded) {
@@ -292,12 +301,14 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 						fTreeViewer.setGrayed(folder, false);
 					}
 				} else if (resource.startsWith("*.")) { //$NON-NLS-1$
-					if (isIncluded)
+					if (isIncluded) {
 						fileExt.add(resource.substring(2));
+					}
 				} else {
 					IFile file = fBundleRoot.getFile(IPath.fromOSString(resource));
-					if (!file.exists())
+					if (!file.exists()) {
 						continue;
+					}
 					fTreeViewer.setChecked(file, isIncluded);
 					fTreeViewer.setParentsGrayed(file, true);
 					if (isIncluded) {
@@ -306,8 +317,9 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 					}
 				}
 			}
-			if (fileExt.isEmpty())
+			if (fileExt.isEmpty()) {
 				return;
+			}
 			try {
 				IResource[] members = fBundleRoot.members();
 				for (int i = 0; i < members.length; i++) {
@@ -335,23 +347,26 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 			if ((!wasTopParentChecked && !includes.contains(resourceName)) || isValidIncludeEntry(includes, excludes, resource, resourceName)) {
 				includes.addToken(resourceName);
 			}
-			if (excludes != null && excludes.contains(resourceName))
+			if (excludes != null && excludes.contains(resourceName)) {
 				excludes.removeToken(resourceName);
+			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
 	}
 
 	protected boolean isValidIncludeEntry(IBuildEntry includes, IBuildEntry excludes, IResource resource, String resourceName) {
-		if (excludes == null)
+		if (excludes == null) {
 			return true;
+		}
 		IPath resPath = resource.getProjectRelativePath();
 		while (resPath.segmentCount() > 1) {
 			resPath = resPath.removeLastSegments(1);
-			if (includes.contains(resPath.toString() + IPath.SEPARATOR))
+			if (includes.contains(resPath.toString() + IPath.SEPARATOR)) {
 				return false;
-			else if (excludes.contains(resPath.toString() + IPath.SEPARATOR))
+			} else if (excludes.contains(resPath.toString() + IPath.SEPARATOR)) {
 				return true;
+			}
 		}
 		return !excludes.contains(resourceName);
 	}
@@ -365,12 +380,14 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 					IBuild build = fBuildModel.getBuild();
 					build.add(excludes);
 				}
-				if (!excludes.contains(resourceName) && (includes != null ? !includes.contains(resourceName) : true))
+				if (!excludes.contains(resourceName) && (includes != null ? !includes.contains(resourceName) : true)) {
 					excludes.addToken(resourceName);
+				}
 			}
 			if (includes != null) {
-				if (includes.contains(resourceName))
+				if (includes.contains(resourceName)) {
 					includes.removeToken(resourceName);
+				}
 				if (includes.contains("*." + resource.getFileExtension())) { //$NON-NLS-1$
 					IResource[] members = fBundleRoot.members();
 					for (int i = 0; i < members.length; i++) {
@@ -383,8 +400,9 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 							for (IBuildEntry library : libraries) {
 								String libName = library.getName().substring(7);
 								IPath path = fBundleRoot.getFile(IPath.fromOSString(libName)).getProjectRelativePath().makeRelativeTo(fBundleRoot.getProjectRelativePath());
-								if (path.segmentCount() == 1 && !includes.contains(libName) && !libName.equals(resource.getName()))
+								if (path.segmentCount() == 1 && !includes.contains(libName) && !libName.equals(resource.getName())) {
 									includes.addToken(libName);
+								}
 							}
 						}
 					}
@@ -436,8 +454,9 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 		IBuildEntry[] entries = {build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES), build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES), build.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_EXCLUDES), build.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_INCLUDES)};
 		try {
 			for (IBuildEntry entry : entries) {
-				if (entry != null && entry.getTokens().length == 0)
+				if (entry != null && entry.getTokens().length == 0) {
 					build.remove(entry);
+				}
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
@@ -480,13 +499,15 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 
 	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
-		if (fTreeViewer.getControl().isDisposed())
+		if (fTreeViewer.getControl().isDisposed()) {
 			return;
+		}
 		fDoRefresh = false;
 		IResourceDelta delta = event.getDelta();
 		try {
-			if (delta != null)
+			if (delta != null) {
 				delta.accept(this);
+			}
 			if (fDoRefresh) {
 				asyncRefresh();
 				fDoRefresh = false;
@@ -537,8 +558,9 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 		}
 		Object changeObject = event.getChangedObjects()[0];
 
-		if (!(changeObject instanceof IBuildEntry && (((IBuildEntry) changeObject).getName().equals(IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES) || ((IBuildEntry) changeObject).getName().equals(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES) || ((IBuildEntry) changeObject).getName().equals(IBuildPropertiesConstants.PROPERTY_SRC_EXCLUDES) || ((IBuildEntry) changeObject).getName().equals(IBuildPropertiesConstants.PROPERTY_SRC_INCLUDES))))
+		if (!(changeObject instanceof IBuildEntry && (((IBuildEntry) changeObject).getName().equals(IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES) || ((IBuildEntry) changeObject).getName().equals(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES) || ((IBuildEntry) changeObject).getName().equals(IBuildPropertiesConstants.PROPERTY_SRC_EXCLUDES) || ((IBuildEntry) changeObject).getName().equals(IBuildPropertiesConstants.PROPERTY_SRC_INCLUDES)))) {
 			return;
+		}
 
 		if ((fParentResource == null && fOriginalResource != null) || (fOriginalResource == null && fParentResource != null)) {
 			initializeCheckState();

@@ -1023,8 +1023,9 @@ public class TargetContentsGroup {
 	}
 
 	public boolean isFeatureModeEnabled() {
-		if (fFeaureModeButton != null)
+		if (fFeaureModeButton != null) {
 			return fFeaureModeButton.getSelection();
+		}
 		return false;
 	}
 

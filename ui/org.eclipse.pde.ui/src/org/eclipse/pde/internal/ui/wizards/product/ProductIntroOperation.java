@@ -158,14 +158,16 @@ public class ProductIntroOperation extends BaseManifestOperation implements IVar
 
 	private void modifyExistingFile(IFile file, IProgressMonitor monitor) throws CoreException {
 		IStatus status = PDEPlugin.getWorkspace().validateEdit(new IFile[] {file}, fShell);
-		if (!status.isOK())
+		if (!status.isOK()) {
 			throw new CoreException(Status.error(NLS.bind(PDEUIMessages.ProductDefinitionOperation_readOnly, fPluginId)));
+		}
 
 		ModelModification mod = new ModelModification(file) {
 			@Override
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
-				if (!(model instanceof IPluginModelBase pluginModel))
+				if (!(model instanceof IPluginModelBase pluginModel)) {
 					return;
+				}
 				IPluginExtension extension = getExtension(pluginModel, INTRO_POINT);
 				if (extension == null) {
 					extension = createIntroExtension(pluginModel);
@@ -215,8 +217,9 @@ public class ProductIntroOperation extends BaseManifestOperation implements IVar
 		}
 		if ("file".equals(locationUrl.getProtocol())) { //$NON-NLS-1$
 			File templateDirectory = new File(locationUrl.getFile());
-			if (!templateDirectory.exists())
+			if (!templateDirectory.exists()) {
 				return;
+			}
 			generateFiles(templateDirectory, fProject, true, false, monitor);
 		}
 		monitor.subTask(""); //$NON-NLS-1$
@@ -230,9 +233,9 @@ public class ProductIntroOperation extends BaseManifestOperation implements IVar
 			if (member.getName().equals("ext.xml") || //$NON-NLS-1$
 					member.getName().equals("java") || //$NON-NLS-1$
 					member.getName().equals("concept3.xhtml") || //$NON-NLS-1$
-					member.getName().equals("extContent.xhtml")) //$NON-NLS-1$
+					member.getName().equals("extContent.xhtml")) { //$NON-NLS-1$
 				continue;
-			else if (member.isDirectory()) {
+			} else if (member.isDirectory()) {
 				IContainer dstContainer = null;
 				if (firstLevel) {
 					binary = false;
@@ -244,12 +247,14 @@ public class ProductIntroOperation extends BaseManifestOperation implements IVar
 				if (dstContainer == null) {
 					dstContainer = dst.getFolder(IPath.fromOSString(member.getName()));
 				}
-				if (dstContainer instanceof IFolder && !dstContainer.exists())
+				if (dstContainer instanceof IFolder && !dstContainer.exists()) {
 					((IFolder) dstContainer).create(true, true, monitor);
+				}
 				generateFiles(member, dstContainer, false, binary, monitor);
 			} else {
-				if (firstLevel)
+				if (firstLevel) {
 					binary = false;
+				}
 				try (InputStream in = new FileInputStream(member);) {
 					copyFile(member.getName(), in, dst, binary, monitor);
 				} catch (IOException ioe) {
@@ -274,8 +279,9 @@ public class ProductIntroOperation extends BaseManifestOperation implements IVar
 	}
 
 	private InputStream getProcessedStream(String fileName, InputStream stream, boolean binary) throws IOException, CoreException {
-		if (binary)
+		if (binary) {
 			return stream;
+		}
 
 		InputStreamReader reader = new InputStreamReader(stream);
 		int bufsize = 1024;
@@ -308,9 +314,9 @@ public class ProductIntroOperation extends BaseManifestOperation implements IVar
 						replacementMode = true;
 					}
 				} else {
-					if (replacementMode)
+					if (replacementMode) {
 						keyBuffer.append(c);
-					else {
+					} else {
 						outBuffer.append(c);
 					}
 				}

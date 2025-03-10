@@ -37,10 +37,12 @@ public class JarEntryEditorInput implements IStorageEditorInput {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (!(obj instanceof JarEntryEditorInput other))
+		}
+		if (!(obj instanceof JarEntryEditorInput other)) {
 			return false;
+		}
 		return fJarEntryFile.equals(other.fJarEntryFile);
 	}
 
@@ -70,8 +72,9 @@ public class JarEntryEditorInput implements IStorageEditorInput {
 	@Override
 	public String getToolTipText() {
 		File file = fJarEntryFile.getAdapter(File.class);
-		if (file != null)
+		if (file != null) {
 			return file.getAbsolutePath();
+		}
 		return fJarEntryFile.getFullPath().toString();
 	}
 
@@ -90,8 +93,9 @@ public class JarEntryEditorInput implements IStorageEditorInput {
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Class<T> adapter) {
-		if (adapter.equals(File.class))
+		if (adapter.equals(File.class)) {
 			return (T) fJarEntryFile.getAdapter(File.class);
+		}
 		return null;
 	}
 

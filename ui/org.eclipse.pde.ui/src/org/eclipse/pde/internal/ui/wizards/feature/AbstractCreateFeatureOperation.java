@@ -96,8 +96,9 @@ public abstract class AbstractCreateFeatureOperation extends WorkspaceModifyOper
 			file = PDEProject.getFeatureXml(fProject);
 			monitor.worked(3);
 		}
-		if (file.exists())
+		if (file.exists()) {
 			openFeatureEditor(file);
+		}
 	}
 
 	private void createProject(IProgressMonitor monitor) throws CoreException {
@@ -105,17 +106,20 @@ public abstract class AbstractCreateFeatureOperation extends WorkspaceModifyOper
 		fProject.open(monitor);
 		IProjectDescription desc = fProject.getWorkspace().newProjectDescription(fProject.getName());
 		desc.setLocation(fLocation);
-		if (!FeatureProject.isFeatureProject(fProject))
+		if (!FeatureProject.isFeatureProject(fProject)) {
 			CoreUtility.addNatureToProject(fProject, FeatureProject.NATURE, monitor);
+		}
 
 		if (fFeatureData.hasCustomHandler()) {
-			if (!fProject.hasNature(JavaCore.NATURE_ID))
+			if (!fProject.hasNature(JavaCore.NATURE_ID)) {
 				CoreUtility.addNatureToProject(fProject, JavaCore.NATURE_ID, monitor);
+			}
 
 			if (fFeatureData.getSourceFolderName() != null && fFeatureData.getSourceFolderName().trim().length() > 0) {
 				IFolder folder = fProject.getFolder(fFeatureData.getSourceFolderName());
-				if (!folder.exists())
+				if (!folder.exists()) {
 					CoreUtility.createFolder(folder);
+				}
 			}
 
 			IJavaProject jproject = JavaCore.create(fProject);
@@ -135,8 +139,9 @@ public abstract class AbstractCreateFeatureOperation extends WorkspaceModifyOper
 				String source = fFeatureData.getSourceFolderName();
 				if (source != null) {
 					IBuildEntry entry = model.getFactory().createEntry(IBuildEntry.JAR_PREFIX + library);
-					if (!source.endsWith("/")) //$NON-NLS-1$
+					if (!source.endsWith("/")) { //$NON-NLS-1$
 						source += "/"; //$NON-NLS-1$
+					}
 					entry.addToken(source);
 					ientry.addToken(library);
 					model.getBuild().add(entry);
@@ -144,8 +149,9 @@ public abstract class AbstractCreateFeatureOperation extends WorkspaceModifyOper
 				String output = fFeatureData.getJavaBuildFolderName();
 				if (output != null) {
 					IBuildEntry entry = model.getFactory().createEntry(IBuildPropertiesConstants.PROPERTY_OUTPUT_PREFIX + library);
-					if (!output.endsWith("/")) //$NON-NLS-1$
+					if (!output.endsWith("/")) { //$NON-NLS-1$
 						output += "/"; //$NON-NLS-1$
+					}
 					entry.addToken(output);
 					model.getBuild().add(entry);
 				}
@@ -166,14 +172,16 @@ public abstract class AbstractCreateFeatureOperation extends WorkspaceModifyOper
 		feature.setId(fFeatureData.id);
 		feature.setVersion(fFeatureData.version);
 		feature.setProviderName(fFeatureData.provider);
-		if (fFeatureData.hasCustomHandler())
+		if (fFeatureData.hasCustomHandler()) {
 			feature.setInstallHandler(model.getFactory().createInstallHandler());
+		}
 
 		configureFeature(feature, model);
 
 		IFeatureInstallHandler handler = feature.getInstallHandler();
-		if (handler != null)
+		if (handler != null) {
 			handler.setLibrary(fFeatureData.library);
+		}
 
 		IFeatureInfo info = model.getFactory().createInfo(IFeature.INFO_COPYRIGHT);
 		feature.setFeatureInfo(info, IFeature.INFO_COPYRIGHT);

@@ -39,8 +39,9 @@ public class SrcSection extends BuildContentsSection {
 		IBuildEntry srcIncl = build.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_INCLUDES);
 		IBuildEntry srcExcl = build.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_EXCLUDES);
 
-		if (srcIncl == null)
+		if (srcIncl == null) {
 			return;
+		}
 
 		super.initializeCheckState(srcIncl, srcExcl);
 	}
@@ -66,10 +67,11 @@ public class SrcSection extends BuildContentsSection {
 
 		resourceName = handleResourceFolder(resource, resourceName);
 
-		if (isChecked)
+		if (isChecked) {
 			handleCheck(includes, excludes, resourceName, resource, wasTopParentChecked, IBuildPropertiesConstants.PROPERTY_SRC_INCLUDES);
-		else
+		} else {
 			handleUncheck(includes, excludes, resourceName, resource, IBuildPropertiesConstants.PROPERTY_SRC_EXCLUDES);
+		}
 
 		deleteEmptyEntries();
 	}

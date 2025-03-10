@@ -79,8 +79,9 @@ public class SelfHostingPropertyPage extends PropertyPage {
 				for (IClasspathEntry entry : entries) {
 					if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE && entry.getContentKind() == IPackageFragmentRoot.K_SOURCE) {
 						IPath path = entry.getOutputLocation();
-						if (path != null)
+						if (path != null) {
 							list.add(path.toString());
+						}
 					}
 				}
 			}
@@ -95,8 +96,9 @@ public class SelfHostingPropertyPage extends PropertyPage {
 
 	@Override
 	public void dispose() {
-		if (fImage != null)
+		if (fImage != null) {
 			fImage.dispose();
+		}
 	}
 
 	/**
@@ -167,16 +169,18 @@ public class SelfHostingPropertyPage extends PropertyPage {
 		for (int i = 0; i < fViewer.getTable().getItemCount(); i++) {
 			Object object = fViewer.getElementAt(i);
 			if (!fViewer.getChecked(object)) {
-				if (buffer.length() > 0)
+				if (buffer.length() > 0) {
 					buffer.append(","); //$NON-NLS-1$
+				}
 				buffer.append(object.toString());
 			}
 		}
 		if (pref != null) {
-			if (buffer.length() > 0)
+			if (buffer.length() > 0) {
 				pref.put(ICoreConstants.SELFHOSTING_BIN_EXCLUDES, buffer.toString());
-			else
+			} else {
 				pref.remove(ICoreConstants.SELFHOSTING_BIN_EXCLUDES);
+			}
 
 			try {
 				pref.flush();

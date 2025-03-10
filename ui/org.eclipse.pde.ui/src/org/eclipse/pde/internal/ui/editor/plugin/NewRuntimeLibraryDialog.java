@@ -43,17 +43,21 @@ public class NewRuntimeLibraryDialog extends SelectionStatusDialog {
 
 	class DuplicateStatusValidator {
 		public IStatus validate(String text) {
-			if (text.length() == 0)
+			if (text.length() == 0) {
 				return Status.error(PDEUIMessages.AddLibraryDialog_emptyLibraries);
+			}
 
-			if (text.indexOf(' ') != -1)
+			if (text.indexOf(' ') != -1) {
 				return Status.error(PDEUIMessages.AddLibraryDialog_nospaces);
+			}
 
-			if (libraries == null || libraries.length == 0)
+			if (libraries == null || libraries.length == 0) {
 				return Status.OK_STATUS;
+			}
 
-			if (librarySet.contains(IPath.fromOSString(ClasspathUtilCore.expandLibraryName(text))))
+			if (librarySet.contains(IPath.fromOSString(ClasspathUtilCore.expandLibraryName(text)))) {
 				return Status.error(PDEUIMessages.ManifestEditor_RuntimeLibraryDialog_validationError);
+			}
 			return Status.OK_STATUS;
 		}
 	}

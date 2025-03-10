@@ -89,8 +89,9 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 
 		@Override
 		public void widgetSelected(SelectionEvent e) {
-			if (getSelectionIndex() != getItemCount() - 1)
+			if (getSelectionIndex() != getItemCount() - 1) {
 				fRemovedId = null;
+			}
 		}
 
 		@Override
@@ -115,27 +116,32 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 				select(getItemCount() - 2);
 			}
 			super.remove(index);
-			if (selection > index)
+			if (selection > index) {
 				select(selection - 1);
+			}
 		}
 
 		public void handleExtensionDelta(IExtensionDelta[] deltas) {
 			for (IExtensionDelta delta : deltas) {
 				IExtension extension = delta.getExtension();
-				if (extension == null)
+				if (extension == null) {
 					return;
+				}
 				String id = extension.getUniqueIdentifier();
-				if (id == null)
+				if (id == null) {
 					continue;
+				}
 				if (delta.getKind() == IExtensionDelta.ADDED) {
 					int index = computeIndex(id);
 					// index of -1 means id is already in combo
-					if (index >= 0)
+					if (index >= 0) {
 						addItem(id, index);
+					}
 				} else {
 					int index = indexOf(id);
-					if (index >= 0)
+					if (index >= 0) {
 						removeItem(index);
+					}
 				}
 			}
 		}
@@ -149,17 +155,19 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 			// a ""
 			for (; i < entries.length - 1; i++) {
 				int compareValue = entries[i].compareTo(newId);
-				if (compareValue == 0)
+				if (compareValue == 0) {
 					return -1;
-				else if (compareValue > 0)
+				} else if (compareValue > 0) {
 					break;
+				}
 			}
 			return i;
 		}
 
 		public void reload(String[] newItems) {
-			if (fRemovedId == null)
+			if (fRemovedId == null) {
 				fRemovedId = getSelection();
+			}
 			setItems(newItems);
 			int index = indexOf(fRemovedId);
 			if (index > 0) {
@@ -203,8 +211,9 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 	@Override
 	public void dispose() {
 		IProductModel model = getModel();
-		if (model != null)
+		if (model != null) {
 			model.removeModelChangedListener(this);
+		}
 		PDECore.getDefault().getExtensionsRegistry().removeListener(this);
 		PDECore.getDefault().getModelManager().removeStateDeltaListener(this);
 		super.dispose();
@@ -341,8 +350,9 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		}
 
 		String prop = e.getChangedProperty();
-		if (prop == null)
+		if (prop == null) {
 			return;
+		}
 		if (prop.equals(IProduct.P_ID)) {
 			refreshProductCombo(e.getNewValue().toString());
 		} else if (prop.equals(IProduct.P_APPLICATION)) {

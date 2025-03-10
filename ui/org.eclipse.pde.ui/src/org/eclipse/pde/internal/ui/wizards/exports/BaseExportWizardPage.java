@@ -281,28 +281,33 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 
 	@Override
 	protected void pageChanged() {
-		if (getMessage() != null)
+		if (getMessage() != null) {
 			setMessage(null);
+		}
 		if (fOptionsTab != null) {
 			String path = fOptionsTab.getAntBuildFileName();
 			String warningMessage = null;
-			if (path != null && path.length() > 0 && "build.xml".equals(IPath.fromOSString(path).lastSegment())) //$NON-NLS-1$
+			if (path != null && path.length() > 0 && "build.xml".equals(IPath.fromOSString(path).lastSegment())) { //$NON-NLS-1$
 				warningMessage = PDEUIMessages.ExportOptionsTab_antReservedMessage;
+			}
 			setMessage(warningMessage, IMessageProvider.WARNING);
 		}
 		String error = fExportPart.getSelectionCount() > 0 ? null : PDEUIMessages.ExportWizard_status_noselection;
-		if (error == null)
+		if (error == null) {
 			error = validateTabs();
+		}
 		setErrorMessage(error);
 		setPageComplete(error == null);
 	}
 
 	protected String validateTabs() {
 		String message = fDestinationTab.validate();
-		if (message == null)
+		if (message == null) {
 			message = fOptionsTab.validate();
-		if (message == null && fTabFolder.getItemCount() > 2)
+		}
+		if (message == null && fTabFolder.getItemCount() > 2) {
 			message = fJARSiginingTab.validate();
+		}
 		return message;
 	}
 
@@ -318,8 +323,9 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 	protected void saveSettings(IDialogSettings settings) {
 		fDestinationTab.saveSettings(settings);
 		fOptionsTab.saveSettings(settings);
-		if (fJARSiginingTab != null)
+		if (fJARSiginingTab != null) {
 			fJARSiginingTab.saveSettings(settings);
+		}
 	}
 
 	protected boolean doExportToDirectory() {
@@ -371,8 +377,9 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 	}
 
 	protected String[] getSigningInfo() {
-		if (fJARSiginingTab == null || fTabFolder.getItemCount() < 3)
+		if (fJARSiginingTab == null || fTabFolder.getItemCount() < 3) {
 			return null;
+		}
 		return fJARSiginingTab.getSigningInfo();
 	}
 

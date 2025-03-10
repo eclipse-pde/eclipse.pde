@@ -106,8 +106,9 @@ public class FeatureImportWizardPage extends WizardPage {
 	class ContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object parent) {
-			if (fModels != null)
+			if (fModels != null) {
 				return fModels;
+			}
 			return new Object[0];
 		}
 	}
@@ -268,11 +269,13 @@ public class FeatureImportWizardPage extends WizardPage {
 			ArrayList<String> items = new ArrayList<>();
 			for (int i = 0; i < 6; i++) {
 				String curr = initialSettings.get(SETTINGS_DROPLOCATION + String.valueOf(i));
-				if (curr != null && !items.contains(curr))
+				if (curr != null && !items.contains(curr)) {
 					items.add(curr);
+				}
 			}
-			if (items.isEmpty())
+			if (items.isEmpty()) {
 				items.add(""); //$NON-NLS-1$
+			}
 			dropItems = items.toArray(new String[items.size()]);
 		}
 		fDropLocation.setItems(dropItems);
@@ -301,8 +304,9 @@ public class FeatureImportWizardPage extends WizardPage {
 			settings.put(SETTINGS_DROPLOCATION + String.valueOf(0), fDropLocation.getText());
 			String[] items = fDropLocation.getItems();
 			int nEntries = Math.min(items.length, 5);
-			for (int i = 0; i < nEntries; i++)
+			for (int i = 0; i < nEntries; i++) {
 				settings.put(SETTINGS_DROPLOCATION + String.valueOf(i + 1), items[i]);
+			}
 		}
 		if (finishPressed) {
 			settings.put(SETTINGS_DOOTHER, other);
@@ -326,14 +330,15 @@ public class FeatureImportWizardPage extends WizardPage {
 		String errorMessage = null;
 		if (isOtherLocation()) {
 			IPath curr = getDropLocation();
-			if (curr.segmentCount() == 0)
+			if (curr.segmentCount() == 0) {
 				errorMessage = PDEUIMessages.FeatureImportWizard_errors_locationMissing;
-			else if (!IPath.ROOT.isValidPath(fDropLocation.getText()))
+			} else if (!IPath.ROOT.isValidPath(fDropLocation.getText())) {
 				errorMessage = PDEUIMessages.FeatureImportWizard_errors_buildFolderInvalid;
-			else {
+			} else {
 				File file = curr.toFile();
-				if (!file.exists() || !file.isDirectory())
+				if (!file.exists() || !file.isDirectory()) {
 					errorMessage = PDEUIMessages.FeatureImportWizard_errors_buildFolderMissing;
+				}
 			}
 		}
 		setErrorMessage(errorMessage);
@@ -363,8 +368,9 @@ public class FeatureImportWizardPage extends WizardPage {
 				String currItem = fDropLocation.getText();
 				if (models.length > 0 && fDropLocation.indexOf(currItem) == -1) {
 					fDropLocation.add(currItem, 0);
-					if (fDropLocation.getItemCount() > 6)
+					if (fDropLocation.getItemCount() > 6) {
 						fDropLocation.remove(6);
+					}
 					storeSettings(false);
 				}
 
@@ -460,13 +466,16 @@ public class FeatureImportWizardPage extends WizardPage {
 			ArrayList<IFeatureModel> result = new ArrayList<>();
 			if (useRuntimeLocation) {
 				IFeatureModel[] allModels = PDECore.getDefault().getFeatureModelManager().getModels();
-				for (IFeatureModel model : allModels)
-					if (model.getUnderlyingResource() == null)
+				for (IFeatureModel model : allModels) {
+					if (model.getUnderlyingResource() == null) {
 						result.add(model);
+					}
+				}
 			} else {
 				MultiStatus errors = doLoadFeatures(result, createPath(home));
-				if (errors != null && errors.getChildren().length > 0)
+				if (errors != null && errors.getChildren().length > 0) {
 					PDEPlugin.log(errors);
+				}
 			}
 			fModels = result.toArray(new IFeatureModel[result.size()]);
 			monitor.done();
@@ -482,25 +491,29 @@ public class FeatureImportWizardPage extends WizardPage {
 
 	private File createPath(IPath dropLocation) {
 		File featuresDir = new File(dropLocation.toFile(), ICoreConstants.FEATURE_FOLDER_NAME);
-		if (featuresDir.exists())
+		if (featuresDir.exists()) {
 			return featuresDir;
+		}
 		return null;
 	}
 
 	private MultiStatus doLoadFeatures(ArrayList<IFeatureModel> result, File path) {
-		if (path == null)
+		if (path == null) {
 			return null;
+		}
 		File[] dirs = path.listFiles();
-		if (dirs == null)
+		if (dirs == null) {
 			return null;
+		}
 		ArrayList<IStatus> resultStatus = new ArrayList<>();
 		for (File dir : dirs) {
 			if (dir.isDirectory()) {
 				File manifest = new File(dir, ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
 				if (manifest.exists()) {
 					IStatus status = doLoadFeature(dir, manifest, result);
-					if (status != null)
+					if (status != null) {
 						resultStatus.add(status);
+					}
 				}
 			}
 		}
@@ -522,8 +535,9 @@ public class FeatureImportWizardPage extends WizardPage {
 			// Errors in the file
 			status = Status.error(e.getMessage(), e);
 		}
-		if (status == null)
+		if (status == null) {
 			result.add(model);
+		}
 		return status;
 	}
 

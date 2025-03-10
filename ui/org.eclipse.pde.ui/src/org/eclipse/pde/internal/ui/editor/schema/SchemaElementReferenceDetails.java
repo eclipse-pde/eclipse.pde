@@ -59,8 +59,9 @@ public class SchemaElementReferenceDetails extends AbstractSchemaDetails {
 
 	@Override
 	public void updateFields(ISchemaObject object) {
-		if (!(object instanceof SchemaElementReference))
+		if (!(object instanceof SchemaElementReference)) {
 			return;
+		}
 		fElement = (SchemaElementReference) object;
 
 		setDecription(NLS.bind(PDEUIMessages.SchemaElementReferenceDetails_description, fElement.getName()));
@@ -76,20 +77,23 @@ public class SchemaElementReferenceDetails extends AbstractSchemaDetails {
 	@Override
 	public void hookListeners() {
 		hookMinOccur(widgetSelectedAdapter(e -> {
-			if (blockListeners())
+			if (blockListeners()) {
 				return;
+			}
 			fElement.setMinOccurs(getMinOccur());
 		}));
 		hookMaxOccur(widgetSelectedAdapter(e -> {
-			if (blockListeners())
+			if (blockListeners()) {
 				return;
+			}
 			fElement.setMaxOccurs(getMaxOccur());
 		}));
 		fReferenceLink.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
-				if (blockListeners())
+				if (blockListeners()) {
 					return;
+				}
 				fireMasterSelection(new StructuredSelection(fElement.getReferencedObject()));
 			}
 		});

@@ -24,8 +24,9 @@ public class PluginContainmentAdapter implements IContainmentAdapter {
 
 	@Override
 	public boolean contains(Object containmentContext, Object element, int flags) {
-		if (!(containmentContext instanceof PersistablePluginObject) || element == null)
+		if (!(containmentContext instanceof PersistablePluginObject) || element == null) {
 			return false;
+		}
 
 		IResource resource = ((PersistablePluginObject) containmentContext).getResource();
 		return element.equals(resource);

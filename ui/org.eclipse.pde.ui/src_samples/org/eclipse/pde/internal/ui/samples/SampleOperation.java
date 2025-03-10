@@ -88,14 +88,16 @@ public class SampleOperation implements IRunnableWithProgress {
 					for (int i = 0; i < projects.length; i++) {
 						IFile file = importProject(projectNames[i], projects[i],
 								subMonitor.split(1));
-						if (file != null && sampleManifest == null)
+						if (file != null && sampleManifest == null) {
 							sampleManifest = file;
+						}
 						if (file != null) {
 							createdProjects[i] = file.getProject();
 						}
-						if (cancel)
+						if (cancel) {
 							// if user has cancelled operation, exit.
 							break;
+						}
 					}
 				} catch (InterruptedException e1) {
 					throw new OperationCanceledException();
@@ -117,8 +119,9 @@ public class SampleOperation implements IRunnableWithProgress {
 
 	private IFile importProject(String name, IConfigurationElement config, IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
 		String path = config.getAttribute("archive"); //$NON-NLS-1$
-		if (name == null || path == null)
+		if (name == null || path == null) {
 			return null;
+		}
 		IWorkspace workspace = PDEPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
 		IProject project = root.getProject(name);
@@ -194,8 +197,9 @@ public class SampleOperation implements IRunnableWithProgress {
 	}
 
 	private void writeProperty(Properties properties, String name, String value) {
-		if (value == null)
+		if (value == null) {
 			return;
+		}
 		properties.setProperty(name, value);
 	}
 

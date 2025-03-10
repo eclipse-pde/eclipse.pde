@@ -57,8 +57,9 @@ public final class RenameProjectChange extends Change {
 
 	@Override
 	public ChangeDescriptor getDescriptor() {
-		if (fDescriptor != null)
+		if (fDescriptor != null) {
 			return new RefactoringChangeDescriptor(fDescriptor);
+		}
 		return null;
 	}
 
@@ -83,10 +84,12 @@ public final class RenameProjectChange extends Change {
 	@Override
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
 		IResource resource = getResource();
-		if (resource == null || !resource.exists())
+		if (resource == null || !resource.exists()) {
 			return RefactoringStatus.createFatalErrorStatus(MessageFormat.format(PDEUIMessages.RenameProjectChange_projectDoesNotExist, fResourcePath.toString()));
-		if (ResourcesPlugin.getWorkspace().getRoot().getProject(fNewName).exists())
+		}
+		if (ResourcesPlugin.getWorkspace().getRoot().getProject(fNewName).exists()) {
 			return RefactoringStatus.createFatalErrorStatus(MessageFormat.format(PDEUIMessages.RenameProjectChange_destinationExists, fNewName));
+		}
 		return new RefactoringStatus();
 	}
 

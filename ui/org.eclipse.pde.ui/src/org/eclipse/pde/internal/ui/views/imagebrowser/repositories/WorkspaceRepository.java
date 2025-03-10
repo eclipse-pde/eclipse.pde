@@ -46,8 +46,9 @@ public class WorkspaceRepository extends AbstractRepository {
 
 	@Override
 	protected boolean populateCache(final IProgressMonitor monitor) {
-		if (fProjects == null)
+		if (fProjects == null) {
 			initialize(monitor);
+		}
 
 		if (!fProjects.isEmpty()) {
 
@@ -81,8 +82,9 @@ public class WorkspaceRepository extends AbstractRepository {
 									IFile resource = (IFile) proxy.requestResource();
 									addImageElement(new ImageElement(() -> createImageData(resource), pluginName, resource.getProjectRelativePath().toPortableString()));
 
-									if (monitor.isCanceled())
+									if (monitor.isCanceled()) {
 										throw new OperationCanceledException();
+									}
 								}
 
 								break;
@@ -102,10 +104,11 @@ public class WorkspaceRepository extends AbstractRepository {
 
 	private void initialize(IProgressMonitor monitor) {
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-		if (projects != null)
+		if (projects != null) {
 			fProjects = new ArrayList<>(Arrays.asList(projects));
-		else
+		} else {
 			fProjects = Collections.emptyList();
+		}
 	}
 
 	@Override
@@ -115,8 +118,9 @@ public class WorkspaceRepository extends AbstractRepository {
 			fProjects.clear();
 			fProjects = null;
 		}
-		if (mElementsCache != null)
+		if (mElementsCache != null) {
 			mElementsCache.clear();
+		}
 		return Status.OK_STATUS;
 	}
 

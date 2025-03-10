@@ -44,12 +44,13 @@ public class UnusedImportsDialog extends TrayDialog {
 
 		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
-			if (e1.getClass() == e2.getClass())
+			if (e1.getClass() == e2.getClass()) {
 				return super.compare(viewer, e1, e2);
-			else if (e1 instanceof ImportPackageObject)
+			} else if (e1 instanceof ImportPackageObject) {
 				return 1;
-			else
+			} else {
 				return -1;
+			}
 		}
 	}
 

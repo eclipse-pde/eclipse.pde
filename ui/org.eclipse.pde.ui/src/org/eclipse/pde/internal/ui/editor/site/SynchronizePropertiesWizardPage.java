@@ -131,8 +131,9 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 	 */
 	private IFeature getFeature(ISiteFeature siteFeature) {
 		IFeatureModel model = PDECore.getDefault().getFeatureModelManager().findFeatureModel(siteFeature.getId(), siteFeature.getVersion());
-		if (model != null)
+		if (model != null) {
 			return model.getFeature();
+		}
 		return null;
 	}
 
@@ -184,8 +185,9 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 					case ALL_FEATURES -> fAllFeaturesButton.setSelection(true);
 					default -> fSelectedFeaturesButton.setSelection(true);
 				}
-			} else
+			} else {
 				fSelectedFeaturesButton.setSelection(true);
+			}
 		} else {
 			fSelectedFeaturesButton.setEnabled(false);
 			fAllFeaturesButton.setSelection(true);
@@ -209,8 +211,9 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 
 		int mode = SELECTED_FEATURES;
 
-		if (fAllFeaturesButton.getSelection())
+		if (fAllFeaturesButton.getSelection()) {
 			mode = ALL_FEATURES;
+		}
 		settings.put(PROP_SYNCHRO_MODE, mode);
 		return mode;
 	}

@@ -40,10 +40,12 @@ public class PluginStructureViewerCreator implements IViewerCreator {
 					if (e2 instanceof DiffNode) {
 						ITypedElement e1Element = ((DiffNode) e1).getAncestor();
 						ITypedElement e2Element = ((DiffNode) e2).getAncestor();
-						if (!(e1Element instanceof DocumentRangeNode))
+						if (!(e1Element instanceof DocumentRangeNode)) {
 							e1Element = ((DiffNode) e1).getLeft();
-						if (!(e2Element instanceof DocumentRangeNode))
+						}
+						if (!(e2Element instanceof DocumentRangeNode)) {
 							e2Element = ((DiffNode) e2).getLeft();
+						}
 						if (e1Element instanceof DocumentRangeNode && e2Element instanceof DocumentRangeNode) {
 							float e1off = getRelativeOffset(((DocumentRangeNode) e1Element));
 							float e2off = getRelativeOffset(((DocumentRangeNode) e2Element));

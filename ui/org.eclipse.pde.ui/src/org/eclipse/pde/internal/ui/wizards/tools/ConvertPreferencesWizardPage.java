@@ -161,14 +161,16 @@ public class ConvertPreferencesWizardPage extends WizardPage {
 		dialog.addFilter(new FileExtensionFilter("ini")); //$NON-NLS-1$
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
 		IFile ini = getPluginCustomizeFile();
-		if (ini != null)
+		if (ini != null) {
 			dialog.setInitialSelection(ini);
+		}
 		dialog.create();
 		if (dialog.open() == Window.OK) {
 			IFile file = (IFile) dialog.getFirstResult();
 			String value = file.getFullPath().toString();
-			if (fPluginCustomizeCombo.indexOf(value) == -1)
+			if (fPluginCustomizeCombo.indexOf(value) == -1) {
 				fPluginCustomizeCombo.add(value, 0);
+			}
 			fPluginCustomizeCombo.setText(value);
 			fPluginCustomizeFilePath = value;
 			pageChanged(true);
@@ -176,16 +178,18 @@ public class ConvertPreferencesWizardPage extends WizardPage {
 	}
 
 	private IFile getCustomizationFile(String path) {
-		if (path == null || path.length() == 0)
+		if (path == null || path.length() == 0) {
 			return null;
+		}
 
 		IPath thePath = IPath.fromOSString(path);
 		return thePath.segmentCount() < 2 ? null : PDEPlugin.getWorkspace().getRoot().getFile(IPath.fromOSString(path));
 	}
 
 	private File getPreferencesFile(String path) {
-		if (path == null || path.length() == 0)
+		if (path == null || path.length() == 0) {
 			return null;
+		}
 		return new File(path);
 	}
 
@@ -197,8 +201,9 @@ public class ConvertPreferencesWizardPage extends WizardPage {
 		dialog.setFileName(fPreferencesFilePath);
 		String path = dialog.open();
 		if (path != null) {
-			if (fPreferenceCombo.indexOf(path) == -1)
+			if (fPreferenceCombo.indexOf(path) == -1) {
 				fPreferenceCombo.add(path, 0);
+			}
 			fPreferenceCombo.setText(path);
 
 			fPreferencesFilePath = path;

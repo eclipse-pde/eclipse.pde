@@ -55,8 +55,9 @@ public class PluginsContentProvider implements ITreeContentProvider {
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		if (newInput == null) {
-			if (fManager != null)
+			if (fManager != null) {
 				fManager.cancel(oldInput);
+			}
 			return;
 		}
 		fManager = new DeferredTreeContentManager((AbstractTreeViewer) viewer);
@@ -67,8 +68,9 @@ public class PluginsContentProvider implements ITreeContentProvider {
 	@Override
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof IDeferredWorkbenchAdapter) {
-			if (PDECore.getDefault().getModelManager().isInitialized())
+			if (PDECore.getDefault().getModelManager().isInitialized()) {
 				return PDECore.getDefault().getModelManager().getAllModels();
+			}
 			Object[] children = fManager.getChildren(parentElement);
 			return children;
 		}
@@ -84,8 +86,9 @@ public class PluginsContentProvider implements ITreeContentProvider {
 			return ((FileAdapter) parentElement).getChildren();
 		}
 
-		if (parentElement instanceof IPackageFragmentRoot || parentElement instanceof IPackageFragment || parentElement instanceof ICompilationUnit || parentElement instanceof IStorage)
+		if (parentElement instanceof IPackageFragmentRoot || parentElement instanceof IPackageFragment || parentElement instanceof ICompilationUnit || parentElement instanceof IStorage) {
 			return fJavaProvider.getChildren(parentElement);
+		}
 
 		return new Object[0];
 	}
@@ -112,16 +115,18 @@ public class PluginsContentProvider implements ITreeContentProvider {
 
 	@Override
 	public boolean hasChildren(Object element) {
-		if (element instanceof IDeferredWorkbenchAdapter)
+		if (element instanceof IDeferredWorkbenchAdapter) {
 			return fManager.mayHaveChildren(element);
+		}
 		if (element instanceof IPluginModelBase model) {
 			return model.getUnderlyingResource() == null && !new File(model.getInstallLocation()).isFile();
 		}
 		if (element instanceof FileAdapter fileAdapter) {
 			return fileAdapter.hasChildren();
 		}
-		if (element instanceof IPackageFragmentRoot || element instanceof IPackageFragment || element instanceof ICompilationUnit || element instanceof IStorage)
+		if (element instanceof IPackageFragmentRoot || element instanceof IPackageFragment || element instanceof ICompilationUnit || element instanceof IStorage) {
 			return fJavaProvider.hasChildren(element);
+		}
 		return false;
 	}
 
@@ -138,8 +143,9 @@ public class PluginsContentProvider implements ITreeContentProvider {
 
 			@Override
 			public void done(IJobChangeEvent event) {
-				if (event.getResult().isOK())
+				if (event.getResult().isOK()) {
 					fView.updateContentDescription();
+				}
 			}
 
 		};

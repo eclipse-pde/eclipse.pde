@@ -74,10 +74,11 @@ public class DependenciesPage extends PDEFormPage {
 			importPackageSection.getSection().descriptionVerticalSpacing = requiresSection.getSection().getTextClientHeightDifference();
 			managedForm.addPart(importPackageSection);
 			IBaseModel model = getModel();
-			if (model != null && model.isEditable())
+			if (model != null && model.isEditable()) {
 				managedForm.addPart(new DependencyManagementSection(this, left));
-			else
+			} else {
 				gd.horizontalSpan = 2;
+			}
 			section = new DependencyAnalysisSection(this, right, ExpandableComposite.COMPACT);
 		} else {
 			// No MANIFEST.MF (not a Bundle), 3.0 timeframe
@@ -100,8 +101,9 @@ public class DependenciesPage extends PDEFormPage {
 		labels.add(PDEUIMessages.RequiresSection_delete);
 		labels.add(PDEUIMessages.RequiresSection_up);
 		labels.add(PDEUIMessages.RequiresSection_down);
-		if (isBundle())
+		if (isBundle()) {
 			labels.add(PDEUIMessages.DependenciesPage_properties);
+		}
 		return labels.toArray(new String[labels.size()]);
 	}
 

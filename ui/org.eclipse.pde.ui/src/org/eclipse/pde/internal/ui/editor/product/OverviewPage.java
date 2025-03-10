@@ -96,8 +96,9 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 			((ProductLauncherFormPageHelper) getLauncherHelper()).handleSynchronize(true);
 			break;
 		case "action.export": //$NON-NLS-1$
-			if (getPDEEditor().isDirty())
+			if (getPDEEditor().isDirty()) {
 				getPDEEditor().doSave(null);
+			}
 			new ProductExportAction(getPDEEditor()).run();
 			break;
 		case "configuration": //$NON-NLS-1$

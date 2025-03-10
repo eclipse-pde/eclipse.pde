@@ -26,16 +26,18 @@ public class BooleanAttributeRow extends ChoiceAttributeRow {
 	@Override
 	public void createContents(Composite parent, FormToolkit toolkit, int span) {
 		super.createContents(parent, toolkit, span);
-		if (getUse() != ISchemaAttribute.REQUIRED)
+		if (getUse() != ISchemaAttribute.REQUIRED) {
 			combo.add(""); //$NON-NLS-1$
+		}
 		combo.add("true"); //$NON-NLS-1$
 		combo.add("false"); //$NON-NLS-1$
 	}
 
 	@Override
 	protected boolean isValid(String value) {
-		if (getUse() == ISchemaAttribute.REQUIRED)
+		if (getUse() == ISchemaAttribute.REQUIRED) {
 			return (value.equals("true") || value.equals("false")); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		return (value.equals("true") || value.equals("false") || value.equals("")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 

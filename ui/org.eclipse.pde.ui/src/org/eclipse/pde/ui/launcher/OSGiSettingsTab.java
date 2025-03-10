@@ -105,8 +105,9 @@ public class OSGiSettingsTab extends AbstractLauncherTab {
 
 	@Override
 	public void dispose() {
-		if (fImage != null)
+		if (fImage != null) {
 			fImage.dispose();
+		}
 	}
 
 	@Override
@@ -115,8 +116,9 @@ public class OSGiSettingsTab extends AbstractLauncherTab {
 
 	@Override
 	public void updateLaunchConfigurationDialog() {
-		if (!fInitializing)
+		if (!fInitializing) {
 			super.updateLaunchConfigurationDialog();
+		}
 	}
 
 	@Override

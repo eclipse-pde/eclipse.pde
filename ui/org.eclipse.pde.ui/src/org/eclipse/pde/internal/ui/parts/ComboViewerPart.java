@@ -89,21 +89,24 @@ public class ComboViewerPart {
 
 	public void setItems(Object[] items) {
 		fObjects.clear();
-		for (Object item : items)
+		for (Object item : items) {
 			fObjects.add((item == null) ? NULL_OBJECT : item);
+		}
 		refresh();
 	}
 
 	public void select(Object item) {
-		if (item != null)
+		if (item != null) {
 			fComboViewer.setSelection(new StructuredSelection(item));
-		else
+		} else {
 			fComboViewer.setSelection(null);
+		}
 	}
 
 	public void select(int index) {
-		if (index < fObjects.size())
+		if (index < fObjects.size()) {
 			select(fObjects.get(index));
+		}
 	}
 
 	public void setLabelProvider(IBaseLabelProvider labelProvider) {

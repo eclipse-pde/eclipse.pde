@@ -109,7 +109,7 @@ public class FindReferenceOperation implements IWorkspaceRunnable {
 		for (ExportPackageDescription pkg : pkgs) {
 			SubMonitor iterationMonitor = subMonitor.split(1);
 			String[] friends = (String[]) pkg.getDirective(ICoreConstants.FRIENDS_DIRECTIVE);
-			if (friends != null)
+			if (friends != null) {
 				for (String friend : friends) {
 					if (friend.equals(id)) {
 						CreateHeaderChangeOperation op = new CreateHeaderChangeOperation(
@@ -117,11 +117,13 @@ public class FindReferenceOperation implements IWorkspaceRunnable {
 								fNewId);
 						op.run(iterationMonitor);
 						TextFileChange change = op.getChange();
-						if (change != null)
+						if (change != null) {
 							changes.add(change);
+						}
 						break;
 					}
 				}
+			}
 		}
 	}
 

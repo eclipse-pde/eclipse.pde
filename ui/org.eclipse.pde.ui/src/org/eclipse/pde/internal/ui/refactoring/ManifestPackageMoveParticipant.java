@@ -64,8 +64,9 @@ public class ManifestPackageMoveParticipant extends PDEMoveParticipant {
 					IFile dest = PDEProject.getManifest(destProject);
 					if (dest.exists()) {
 						Change second = BundleManifestChange.createMoveToPackageChange(dest, change, pm);
-						if (second != null)
+						if (second != null) {
 							result.add(second);
+						}
 					}
 				}
 			}

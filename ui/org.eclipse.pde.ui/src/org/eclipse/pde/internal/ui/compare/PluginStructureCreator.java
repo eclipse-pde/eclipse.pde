@@ -115,8 +115,9 @@ public class PluginStructureCreator extends StructureCreator {
 		try {
 			parsePlugin(input, rootNode, document, labelProvider, resources, monitor);
 		} catch (CoreException ex) {
-			if (adapter != null)
+			if (adapter != null) {
 				adapter.disconnect(input);
+			}
 			throw ex;
 		}
 
@@ -142,8 +143,9 @@ public class PluginStructureCreator extends StructureCreator {
 	private void parsePlugin(Object input, DocumentRangeNode rootNode, IDocument document, PDELabelProvider labelProvider, ResourceManager resources, IProgressMonitor monitor) throws CoreException {
 		boolean isFragment = isFragment(input);
 		PluginModelBase model = createModel(input, document, isFragment);
-		if (!model.isLoaded() && model.getStatus().getSeverity() == IStatus.ERROR)
+		if (!model.isLoaded() && model.getStatus().getSeverity() == IStatus.ERROR) {
 			throw new CoreException(model.getStatus());
+		}
 
 		try {
 			String id = isFragment ? "fragment" : "plugin"; //$NON-NLS-1$ //$NON-NLS-2$

@@ -192,20 +192,23 @@ public class ConvertPreferencesWizard extends Wizard {
 											// If this key is not in the new preferences, then we want to preserve it.
 											// If it is in the preferences, we'll be picking up the new value.
 											if (!properties.containsKey(key)) {
-												if (comment != null)
+												if (comment != null) {
 													out.append(comment);
+												}
 												out.append(line);
 												out.append(lineSeparator);
 												comment = null;
 											}
 											else {
 												// put current comment
-												if (comment != null)
+												if (comment != null) {
 													out.append(comment);
+												}
 												// put comment from epf file
 												String comment2 = mapKeyCommentPreference.get(key);
-												if (comment2 != null)
+												if (comment2 != null) {
 													out.append(comment2);
+												}
 												// get the value from epf file
 												Object value = properties.get(key);
 												out.append(key + "=" + value); //$NON-NLS-1$
@@ -224,8 +227,9 @@ public class ConvertPreferencesWizard extends Wizard {
 							for (Entry<String, String> entry : properties.entrySet()) {
 								String key = entry.getKey();
 								String comment = mapKeyCommentPreference.get(key);
-								if (comment != null)
+								if (comment != null) {
 									out.append(comment);
+								}
 								String value = entry.getValue();
 								out.append(key + "=" + value); //$NON-NLS-1$
 								out.append(lineSeparator);

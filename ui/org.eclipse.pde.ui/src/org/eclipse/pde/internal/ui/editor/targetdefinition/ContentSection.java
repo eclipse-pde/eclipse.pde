@@ -71,10 +71,11 @@ public class ContentSection extends SectionPart {
 		fContentGroup.addTargetChangedListener(fEditor.getTargetChangedListener());
 		fContentGroup.addTargetChangedListener((definition, source, resolve, forceResolve) -> {
 			if (source instanceof TargetContentsGroup) {
-				if (((TargetContentsGroup) source).isFeatureModeEnabled())
+				if (((TargetContentsGroup) source).isFeatureModeEnabled()) {
 					section.setDescription(PDEUIMessages.ContentSection_2);
-				else
+				} else {
 					section.setDescription(PDEUIMessages.ContentSection_1);
+				}
 			}
 			markDirty();
 		});

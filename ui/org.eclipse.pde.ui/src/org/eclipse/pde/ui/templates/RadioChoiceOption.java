@@ -84,8 +84,9 @@ public class RadioChoiceOption extends AbstractChoiceOption {
 
 		SelectionListener listener = widgetSelectedAdapter(e -> {
 			Button b = (Button) e.widget;
-			if (isBlocked())
+			if (isBlocked()) {
 				return;
+			}
 			if (b.getSelection()) {
 				setValue(b.getData().toString());
 				getSection().validateOptions(RadioChoiceOption.this);
@@ -98,8 +99,9 @@ public class RadioChoiceOption extends AbstractChoiceOption {
 			fButtons[i].setEnabled(isEnabled());
 		}
 
-		if (getChoice() != null)
+		if (getChoice() != null) {
 			selectChoice(getChoice());
+		}
 	}
 
 	@Override

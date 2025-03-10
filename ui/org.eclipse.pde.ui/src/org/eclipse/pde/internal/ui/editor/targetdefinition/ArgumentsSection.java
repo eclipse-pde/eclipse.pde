@@ -197,8 +197,9 @@ public class ArgumentsSection extends SectionPart {
 
 	@Override
 	public void dispose() {
-		if (fImage != null)
+		if (fImage != null) {
 			fImage.dispose();
+		}
 		super.dispose();
 	}
 

@@ -71,8 +71,9 @@ public class ConfigurationTemplateBlock extends BaseBlock {
 			enableBrowseSection(!fGenerateFileButton.getSelection());
 			boolean generateConfig = fGenerateFileButton.getSelection();
 			fLocationText.setEditable(!generateConfig);
-			if (generateConfig)
+			if (generateConfig) {
 				fLocationText.setEnabled(true);
+			}
 		}));
 
 		fUseTemplateButton = new Button(group, SWT.RADIO);
@@ -103,15 +104,17 @@ public class ConfigurationTemplateBlock extends BaseBlock {
 		fUseTemplateButton.setSelection(!generateDefault);
 		enableBrowseSection(!generateDefault);
 		fLocationText.setEditable(!generateDefault);
-		if (generateDefault)
+		if (generateDefault) {
 			fLocationText.setEnabled(true);
+		}
 		fLocationText.setText(configuration.getAttribute(IPDELauncherConstants.CONFIG_TEMPLATE_LOCATION, "")); //$NON-NLS-1$
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, fGenerateFileButton.getSelection());
-		if (!fGenerateFileButton.getSelection())
+		if (!fGenerateFileButton.getSelection()) {
 			configuration.setAttribute(IPDELauncherConstants.CONFIG_TEMPLATE_LOCATION, fLocationText.getText().trim());
+		}
 	}
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
@@ -134,8 +137,9 @@ public class ConfigurationTemplateBlock extends BaseBlock {
 		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(fTab.getControl().getShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
 
 		IFile file = getFile();
-		if (file != null)
+		if (file != null) {
 			dialog.setInitialSelection(file);
+		}
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
 		dialog.addFilter(new FileNameFilter("config.ini")); //$NON-NLS-1$
 		dialog.setAllowMultiple(false);
@@ -164,8 +168,9 @@ public class ConfigurationTemplateBlock extends BaseBlock {
 					path = manager.performStringSubstitution(path, false);
 					IPath uriPath = IPath.fromOSString(path).makeAbsolute();
 					IFile[] containers = root.findFilesForLocationURI(URIUtil.toURI(uriPath));
-					if (containers.length > 0)
+					if (containers.length > 0) {
 						res = containers[0];
+					}
 				} catch (CoreException e) {
 				}
 			} else {
@@ -185,8 +190,9 @@ public class ConfigurationTemplateBlock extends BaseBlock {
 		dialog.setFilterPath(getLocation());
 		dialog.setText(PDEUIMessages.ConfigurationTab_configLocMessage);
 		String res = dialog.open();
-		if (res != null)
+		if (res != null) {
 			fLocationText.setText(res);
+		}
 	}
 
 	@Override
@@ -202,8 +208,9 @@ public class ConfigurationTemplateBlock extends BaseBlock {
 
 	@Override
 	public String validate() {
-		if (fGenerateFileButton.getSelection())
+		if (fGenerateFileButton.getSelection()) {
 			return null;
+		}
 		return super.validate();
 	}
 

@@ -67,10 +67,11 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 		viewer = getTreeViewer();
 		viewer.setContentProvider(fContentProvider);
 		viewer.setLabelProvider(fLabelProvider);
-		if (sorted)
+		if (sorted) {
 			viewer.setComparator(fViewerComparator);
-		else
+		} else {
 			viewer.setComparator(fDefaultComparator);
+		}
 		viewer.setInput(fModel);
 		viewer.expandAll();
 	}
@@ -83,11 +84,13 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 	@Override
 	public void reconciled(IDocument document) {
 		final Control control = getControl();
-		if (control == null || control.isDisposed())
+		if (control == null || control.isDisposed()) {
 			return;
+		}
 		control.getDisplay().asyncExec(() -> {
-			if (control.isDisposed())
+			if (control.isDisposed()) {
 				return;
+			}
 			control.setRedraw(false);
 			// Temporarily remove all selection listeners from the tree
 			// viewer.  This is required because the refresh fires a

@@ -36,14 +36,16 @@ public class ReconcilingStrategy implements IReconcilingStrategy {
 
 	@Override
 	public void reconcile(DirtyRegion dirtyRegion, IRegion subRegion) {
-		if (fDocument != null)
+		if (fDocument != null) {
 			notifyParticipants();
+		}
 	}
 
 	@Override
 	public void reconcile(IRegion partition) {
-		if (fDocument != null)
+		if (fDocument != null) {
 			notifyParticipants();
+		}
 	}
 
 	private synchronized void notifyParticipants() {

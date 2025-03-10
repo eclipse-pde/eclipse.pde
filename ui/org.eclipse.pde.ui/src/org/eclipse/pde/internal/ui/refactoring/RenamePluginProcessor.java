@@ -55,16 +55,18 @@ public class RenamePluginProcessor extends RefactoringProcessor {
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm, CheckConditionsContext context) throws CoreException, OperationCanceledException {
 		RefactoringStatus status = new RefactoringStatus();
 		IResource res = fInfo.getBase().getUnderlyingResource();
-		if (res == null)
+		if (res == null) {
 			status.addFatalError(PDEUIMessages.RenamePluginProcessor_externalBundleError);
-		else if (!PDEProject.getManifest(res.getProject()).exists())
+		} else if (!PDEProject.getManifest(res.getProject()).exists()) {
 			status.addFatalError(PDEUIMessages.RenamePluginProcessor_noManifestError);
+		}
 		if (fInfo.isRenameProject()) {
 			String newName = fInfo.getNewValue();
 			IProject newProject = ResourcesPlugin.getWorkspace().getRoot().getProject(newName);
 			// if destination exists and it is not the same project we are currently trying to rename, show error message
-			if (newProject.exists() && !(res.getProject().equals(newProject)))
+			if (newProject.exists() && !(res.getProject().equals(newProject))) {
 				status.addFatalError(MessageFormat.format(PDEUIMessages.RenameProjectChange_destinationExists, newName));
+			}
 		}
 		return status;
 	}
@@ -103,8 +105,9 @@ public class RenamePluginProcessor extends RefactoringProcessor {
 
 				@Override
 				public boolean select(IConfigurationElement element, RefactoringStatus status) {
-					if (PDE_CONTAINER_RENAME_PARTICIPANT.equals(element.getAttribute("id"))) //$NON-NLS-1$
+					if (PDE_CONTAINER_RENAME_PARTICIPANT.equals(element.getAttribute("id"))) { //$NON-NLS-1$
 						return false;
+					}
 					return true;
 				}
 			};
@@ -132,17 +135,20 @@ public class RenamePluginProcessor extends RefactoringProcessor {
 		if (fInfo.isRenameProject()) {
 			change.add(createProjectChange(subMonitor.split( 1)));
 		}
-		if (fInfo.isUpdateReferences())
+		if (fInfo.isUpdateReferences()) {
 			change.addAll(createReferenceChanges(subMonitor.split(2)));
+		}
 		return change;
 	}
 
 	private int getTotalWork() {
 		int total = 1;
-		if (fInfo.isRenameProject())
+		if (fInfo.isRenameProject()) {
 			total += 1;
-		if (fInfo.isUpdateReferences())
+		}
+		if (fInfo.isUpdateReferences()) {
 			total += 2;
+		}
 		return total;
 	}
 
@@ -151,8 +157,9 @@ public class RenamePluginProcessor extends RefactoringProcessor {
 		IProject project = fInfo.getBase().getUnderlyingResource().getProject();
 		String newName = fInfo.getNewValue();
 		// if project's name is already the same as the destination, then we don't have to do anything to rename project
-		if (project.getName().equals(newName))
+		if (project.getName().equals(newName)) {
 			return null;
+		}
 		descriptor.setDescription(MessageFormat.format(PDEUIMessages.RenamePluginProcessor_renameProjectDesc, project.getName(), newName));
 		descriptor.setComment(""); //$NON-NLS-1$
 		descriptor.setFlags(RefactoringDescriptor.STRUCTURAL_CHANGE | RefactoringDescriptor.MULTI_CHANGE | RefactoringDescriptor.BREAKING_CHANGE);
