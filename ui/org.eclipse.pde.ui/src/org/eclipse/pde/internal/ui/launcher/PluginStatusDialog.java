@@ -126,8 +126,9 @@ public class PluginStatusDialog extends TrayDialog {
 	protected IDialogSettings getDialogBoundsSettings() {
 		IDialogSettings settings = PDEPlugin.getDefault().getDialogSettings();
 		IDialogSettings section = settings.getSection(getDialogSectionName());
-		if (section == null)
+		if (section == null) {
 			section = settings.addNewSection(getDialogSectionName());
+		}
 		return section;
 	}
 

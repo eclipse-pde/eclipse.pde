@@ -98,8 +98,9 @@ public class OrganizeManifestsWizard extends RefactoringWizard {
 	private boolean getCustomSelection(IBuildModel model) {
 		IBuild build = model.getBuild();
 		IBuildEntry customEntry = build.getEntry(IBuildPropertiesConstants.PROPERTY_CUSTOM);
-		if (customEntry == null || customEntry.getTokens().length == 0)
+		if (customEntry == null || customEntry.getTokens().length == 0) {
 			return false;
+		}
 		return customEntry.getTokens()[0].equals("true"); //$NON-NLS-1$
 	}
 }

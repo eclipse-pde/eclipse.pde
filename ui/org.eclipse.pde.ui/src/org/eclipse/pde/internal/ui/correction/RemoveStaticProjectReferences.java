@@ -40,11 +40,13 @@ public class RemoveStaticProjectReferences extends AbstractPDEMarkerResolution {
 	public void run(IMarker marker) {
 		try {
 			IProject project = marker.getResource().getProject();
-			if (project == null)
+			if (project == null) {
 				return;
+			}
 			IProjectDescription projDesc = project.getDescription();
-			if (projDesc == null)
+			if (projDesc == null) {
 				return;
+			}
 			projDesc.setReferencedProjects(new IProject[0]);
 			project.setDescription(projDesc, null);
 		} catch (CoreException e) {

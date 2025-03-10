@@ -50,17 +50,19 @@ public class ConditionalListSelectionDialog extends ElementListSelectionDialog {
 			System.arraycopy(fElements, 0, allElements, 0, fElements.length);
 			conditionalStart = fElements.length;
 		}
-		if (fConditionalElements != null)
+		if (fConditionalElements != null) {
 			System.arraycopy(fConditionalElements, 0, allElements, conditionalStart, fConditionalElements.length);
+		}
 
 		final Button button = new Button(comp, SWT.CHECK);
 		Assert.isNotNull(fButtonText);
 		button.setText(fButtonText);
 		button.addSelectionListener(widgetSelectedAdapter(e -> {
-			if (button.getSelection())
+			if (button.getSelection()) {
 				setListElements(allElements);
-			else
+			} else {
 				setListElements(fElements);
+			}
 		}));
 		return comp;
 	}

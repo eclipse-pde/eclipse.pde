@@ -109,13 +109,15 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 	}
 
 	private IType findTypeForName(String typeName) throws JavaModelException {
-		if (typeName == null || typeName.length() == 0)
+		if (typeName == null || typeName.length() == 0) {
 			return null;
+		}
 		IType type = null;
 		String fileName = typeName.replace('.', '/') + ".java"; //$NON-NLS-1$
 		IJavaElement element = javaProject.findElement(IPath.fromOSString(fileName));
-		if (element == null)
+		if (element == null) {
 			return null;
+		}
 		if (element instanceof IOrdinaryClassFile) {
 			type = ((IOrdinaryClassFile) element).getType();
 		} else if (element instanceof ICompilationUnit) {
@@ -134,10 +136,11 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 				initialValues.classArgs = className.substring(loc + 1, className.length());
 				className = className.substring(0, loc);
 			}
-			if (loc > 0)
+			if (loc > 0) {
 				initialValues.initialClassName = className.substring(0, loc);
-			else if (loc == 0)
+			} else if (loc == 0) {
 				initialValues.initialClassName = ""; //$NON-NLS-1$
+			}
 		}
 
 		loc = className.lastIndexOf('.');
@@ -145,8 +148,9 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 			initialValues.packageName = className.substring(0, loc);
 			initialValues.initialClassName = className.substring(loc + 1);
 		}
-		if (javaProject == null)
+		if (javaProject == null) {
 			return;
+		}
 		try {
 			if (initialValues.packageFragmentRoot == null) {
 				IPackageFragmentRoot srcEntryDft = null;
@@ -157,9 +161,9 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 						break;
 					}
 				}
-				if (srcEntryDft != null)
+				if (srcEntryDft != null) {
 					initialValues.packageFragmentRoot = srcEntryDft;
-				else {
+				} else {
 					initialValues.packageFragmentRoot = javaProject.getPackageFragmentRoot(javaProject.getResource());
 				}
 				if (initialValues.packageFragment == null && initialValues.packageFragmentRoot != null && initialValues.packageName != null && initialValues.packageName.length() > 0) {
@@ -229,13 +233,15 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 	@Override
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
-		if (!fTypeNameStatus.isOK())
+		if (!fTypeNameStatus.isOK()) {
 			updateStatus(fTypeNameStatus);
+		}
 	}
 
 	public String getClassArgs() {
-		if (initialValues.classArgs == null)
+		if (initialValues.classArgs == null) {
 			return ""; //$NON-NLS-1$
+		}
 		return initialValues.classArgs;
 	}
 

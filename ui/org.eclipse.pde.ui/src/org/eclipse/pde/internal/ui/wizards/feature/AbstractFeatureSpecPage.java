@@ -92,22 +92,28 @@ public abstract class AbstractFeatureSpecPage extends WizardNewProjectCreationPa
 	@Override
 	protected boolean validatePage() {
 		boolean valid = super.validatePage();
-		if (!valid)
+		if (!valid) {
 			return valid;
-		if (fUpdateName)
+		}
+		if (fUpdateName) {
 			updateNameRelativeFields();
+		}
 		return validateBaseContent(false);
 	}
 
 	private boolean validateBaseContent(boolean validateSuper) {
-		if (validateSuper && !super.validatePage())
+		if (validateSuper && !super.validatePage()) {
 			return false;
-		if (!setValidationMessage(verifyIdRules()))
+		}
+		if (!setValidationMessage(verifyIdRules())) {
 			return false;
-		if (!setValidationMessage(verifyVersion()))
+		}
+		if (!setValidationMessage(verifyVersion())) {
 			return false;
-		if (!setValidationMessage(validateContent()))
+		}
+		if (!setValidationMessage(validateContent())) {
 			return false;
+		}
 
 		setPageComplete(true);
 		setErrorMessage(null);
@@ -115,8 +121,9 @@ public abstract class AbstractFeatureSpecPage extends WizardNewProjectCreationPa
 	}
 
 	private boolean setValidationMessage(String message) {
-		if (message == null)
+		if (message == null) {
 			return true;
+		}
 		setPageComplete(false);
 		setErrorMessage(message);
 		return false;
@@ -142,8 +149,9 @@ public abstract class AbstractFeatureSpecPage extends WizardNewProjectCreationPa
 
 	protected String verifyVersion() {
 		String value = fFeatureVersionText.getText();
-		if (!VersionUtil.validateVersion(value).isOK())
+		if (!VersionUtil.validateVersion(value).isOK()) {
 			return PDEUIMessages.NewFeatureWizard_SpecPage_versionFormat;
+		}
 		return null;
 	}
 
@@ -151,8 +159,9 @@ public abstract class AbstractFeatureSpecPage extends WizardNewProjectCreationPa
 
 	protected String verifyIdRules() {
 		String id = getFeatureId();
-		if (id == null || id.length() == 0)
+		if (id == null || id.length() == 0) {
 			return PDEUIMessages.NewFeatureWizard_SpecPage_missing;
+		}
 		if (!IdUtil.isValidCompositeID(id)) {
 			return PDEUIMessages.NewFeatureWizard_SpecPage_invalidId;
 		}
@@ -165,10 +174,12 @@ public abstract class AbstractFeatureSpecPage extends WizardNewProjectCreationPa
 
 	protected String getInstallHandlerLibrary() {
 		String library = fLibraryText.getText();
-		if (library == null || library.length() == 0)
+		if (library == null || library.length() == 0) {
 			return null;
-		if (!library.endsWith(".jar") && !library.endsWith("/") && !library.equals(".")) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
+		if (!library.endsWith(".jar") && !library.endsWith("/") && !library.equals(".")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			library += "/"; //$NON-NLS-1$
+		}
 		return library;
 	}
 

@@ -120,13 +120,15 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 			glayout.numColumns = span;
 			// Add required attributes first
 			for (ISchemaAttribute attribute : atts) {
-				if (attribute.getUse() == ISchemaAttribute.REQUIRED)
+				if (attribute.getUse() == ISchemaAttribute.REQUIRED) {
 					rows.add(createAttributeRow(attribute, client, toolkit, span));
+				}
 			}
 			// Add the non-required attributes
 			for (ISchemaAttribute attribute : atts) {
-				if (attribute.getUse() != ISchemaAttribute.REQUIRED)
+				if (attribute.getUse() != ISchemaAttribute.REQUIRED) {
 					rows.add(createAttributeRow(attribute, client, toolkit, span));
+				}
 			}
 			createSpacer(toolkit, client, span);
 		} else {
@@ -145,24 +147,25 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 
 	private ExtensionAttributeRow createAttributeRow(ISchemaAttribute att, Composite parent, FormToolkit toolkit, int span) {
 		ExtensionAttributeRow row;
-		if (att.getKind() == IMetaAttribute.JAVA)
+		if (att.getKind() == IMetaAttribute.JAVA) {
 			row = new ClassAttributeRow(this, att);
-		else if (att.getKind() == IMetaAttribute.RESOURCE)
+		} else if (att.getKind() == IMetaAttribute.RESOURCE) {
 			row = new ResourceAttributeRow(this, att);
-		else if (att.getKind() == IMetaAttribute.IDENTIFIER)
+		} else if (att.getKind() == IMetaAttribute.IDENTIFIER) {
 			row = new IdAttributeRow(this, att);
-		else if (att.isTranslatable())
+		} else if (att.isTranslatable()) {
 			row = new TranslatableAttributeRow(this, att);
-		else {
+		} else {
 			ISchemaSimpleType type = att.getType();
-			if (type.getName().equals("boolean")) //$NON-NLS-1$
+			if (type.getName().equals("boolean")) { //$NON-NLS-1$
 				row = new BooleanAttributeRow(this, att);
-			else {
+			} else {
 				ISchemaRestriction restriction = type.getRestriction();
-				if (restriction != null)
+				if (restriction != null) {
 					row = new ChoiceAttributeRow(this, att);
-				else
+				} else {
 					row = new TextAttributeRow(this, att);
+				}
 			}
 		}
 		row.createContents(parent, toolkit, span);
@@ -181,8 +184,9 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 		IStructuredSelection ssel = (IStructuredSelection) selection;
 		if (ssel.size() == 1) {
 			input = (IPluginElement) ssel.getFirstElement();
-		} else
+		} else {
 			input = null;
+		}
 		update();
 	}
 
@@ -208,16 +212,18 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 							row.setInput(input);
 						}
 					}
-				} else
+				} else {
 					refresh();
+				}
 			}
 		}
 	}
 
 	private void update() {
 		updateDescription();
-		if (schemaElement == null)
+		if (schemaElement == null) {
 			updateRows();
+		}
 		for (int i = 0; i < rows.size(); i++) {
 			ExtensionAttributeRow row = rows.get(i);
 			row.setInput(input);
@@ -225,8 +231,9 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 	}
 
 	private void updateRows() {
-		if (input == null)
+		if (input == null) {
 			return;
+		}
 		IPluginAttribute[] atts = input.getAttributes();
 		FormToolkit toolkit = getManagedForm().getToolkit();
 		boolean rowsAdded = false;
@@ -258,8 +265,9 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 	private boolean hasAttribute(String attName) {
 		for (int i = 0; i < rows.size(); i++) {
 			ExtensionAttributeRow row = rows.get(i);
-			if (row.getName().equals(attName))
+			if (row.getName().equals(attName)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -298,8 +306,9 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 
 	@Override
 	public void setFocus() {
-		if (!rows.isEmpty())
+		if (!rows.isEmpty()) {
 			rows.get(0).setFocus();
+		}
 	}
 
 	@Override
@@ -309,8 +318,9 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 			row.dispose();
 		}
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-		if (model != null)
+		if (model != null) {
 			model.removeModelChangedListener(this);
+		}
 		super.dispose();
 	}
 

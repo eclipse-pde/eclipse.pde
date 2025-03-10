@@ -53,8 +53,9 @@ public class OrganizeManifestsAction extends AbstractHandler {
 	 * @param selection selection to run organize manifest operation on
 	 */
 	public void runOrganizeManfestsAction(ISelection selection) {
-		if (!PlatformUI.getWorkbench().saveAllEditors(true))
+		if (!PlatformUI.getWorkbench().saveAllEditors(true)) {
 			return;
+		}
 
 		if (selection instanceof IStructuredSelection ssel) {
 			Iterator<?> it = ssel.iterator();
@@ -62,15 +63,16 @@ public class OrganizeManifestsAction extends AbstractHandler {
 			while (it.hasNext()) {
 				Object element = it.next();
 				IProject proj = null;
-				if (element instanceof IFile)
+				if (element instanceof IFile) {
 					proj = ((IFile) element).getProject();
-				else if (element instanceof IProject)
+				} else if (element instanceof IProject) {
 					proj = (IProject) element;
-				else if (element instanceof IJavaProject) {
+				} else if (element instanceof IJavaProject) {
 					proj = ((IJavaProject) element).getProject();
 				}
-				if (proj != null && PDEProject.getManifest(proj).exists())
+				if (proj != null && PDEProject.getManifest(proj).exists()) {
 					projects.add(proj);
+				}
 			}
 			if (!projects.isEmpty()) {
 				OrganizeManifestsProcessor processor = new OrganizeManifestsProcessor(projects);
@@ -82,8 +84,9 @@ public class OrganizeManifestsAction extends AbstractHandler {
 					op.run(PDEPlugin.getActiveWorkbenchShell(), ""); //$NON-NLS-1$
 				} catch (final InterruptedException irex) {
 				}
-			} else
+			} else {
 				MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.OrganizeManifestsWizardPage_title, PDEUIMessages.OrganizeManifestsWizardPage_errorMsg);
+			}
 		}
 	}
 }

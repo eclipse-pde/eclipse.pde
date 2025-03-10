@@ -61,10 +61,11 @@ public class XMLReconcilingStrategy extends SpellingReconcileStrategy {
 		public SpellingProblemCollector(IAnnotationModel annotationModel) {
 			Assert.isLegal(annotationModel != null);
 			fAnnotationModel = annotationModel;
-			if (fAnnotationModel instanceof ISynchronizable)
+			if (fAnnotationModel instanceof ISynchronizable) {
 				fLockObject = ((ISynchronizable) fAnnotationModel).getLockObject();
-			else
+			} else {
 				fLockObject = fAnnotationModel;
+			}
 		}
 
 		@Override
@@ -107,8 +108,9 @@ public class XMLReconcilingStrategy extends SpellingReconcileStrategy {
 	 */
 	private void deleteAllAnnotations(IRegion region) {
 		IAnnotationModel model = getAnnotationModel();
-		if (model == null)
+		if (model == null) {
 			return;
+		}
 		Iterator<Annotation> iter = model.getAnnotationIterator();
 
 		while (iter.hasNext()) {
@@ -151,8 +153,9 @@ public class XMLReconcilingStrategy extends SpellingReconcileStrategy {
 	@Override
 	protected ISpellingProblemCollector createSpellingProblemCollector() {
 		IAnnotationModel model = getAnnotationModel();
-		if (model == null)
+		if (model == null) {
 			return null;
+		}
 		return new SpellingProblemCollector(model);
 
 	}

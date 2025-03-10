@@ -72,8 +72,9 @@ public class StringOption extends TemplateOption {
 	 * @return the string version of the current value.
 	 */
 	public String getText() {
-		if (getValue() != null)
+		if (getValue() != null) {
 			return getValue().toString();
+		}
 		return null;
 	}
 
@@ -120,15 +121,17 @@ public class StringOption extends TemplateOption {
 		labelControl = createLabel(parent, 1);
 		labelControl.setEnabled(isEnabled());
 		text = new Text(parent, fStyle);
-		if (getValue() != null)
+		if (getValue() != null) {
 			text.setText(getValue().toString());
+		}
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = span - 1;
 		text.setLayoutData(gd);
 		text.setEnabled(isEnabled());
 		text.addModifyListener(e -> {
-			if (ignoreListener)
+			if (ignoreListener) {
 				return;
+			}
 			StringOption.super.setValue(text.getText());
 			getSection().validateOptions(StringOption.this);
 		});

@@ -91,8 +91,9 @@ public class MirrorsSection extends PDESection {
 	@Override
 	public void dispose() {
 		ISiteModel model = (ISiteModel) getPage().getModel();
-		if (model != null)
+		if (model != null) {
 			model.removeModelChangedListener(this);
+		}
 		super.dispose();
 	}
 
@@ -109,8 +110,9 @@ public class MirrorsSection extends PDESection {
 
 	@Override
 	public void setFocus() {
-		if (fMirrorsURLEntry != null)
+		if (fMirrorsURLEntry != null) {
 			fMirrorsURLEntry.getText().setFocus();
+		}
 	}
 
 	private void setIfDefined(FormEntry formText, String value) {
@@ -139,8 +141,9 @@ public class MirrorsSection extends PDESection {
 		Transfer[] transfers = new Transfer[] {TextTransfer.getInstance(), RTFTransfer.getInstance()};
 		for (TransferData type : types) {
 			for (Transfer transfer : transfers) {
-				if (transfer.isSupportedType(type))
+				if (transfer.isSupportedType(type)) {
 					return true;
+				}
 			}
 		}
 		return false;

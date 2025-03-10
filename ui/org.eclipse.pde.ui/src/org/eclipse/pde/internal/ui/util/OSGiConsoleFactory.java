@@ -45,22 +45,25 @@ public class OSGiConsoleFactory implements IConsoleFactory {
 				break;
 			}
 		}
-		if (!exists)
+		if (!exists) {
 			fConsoleManager.addConsoles(new IConsole[] {console});
+		}
 		fConsoleManager.showConsoleView(console);
 	}
 
 	private synchronized IOConsole getConsole() {
-		if (fConsole != null)
+		if (fConsole != null) {
 			return fConsole;
+		}
 		fConsole = new OSGiConsole(this);
 		return fConsole;
 	}
 
 	void closeConsole(OSGiConsole console) {
 		synchronized (this) {
-			if (console != fConsole)
+			if (console != fConsole) {
 				throw new IllegalArgumentException("Wrong console instance!"); //$NON-NLS-1$
+			}
 			fConsole = null;
 		}
 		fConsoleManager.removeConsoles(new IConsole[] {console});

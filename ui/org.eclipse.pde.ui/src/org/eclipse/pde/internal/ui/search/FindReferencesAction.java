@@ -80,10 +80,12 @@ public class FindReferencesAction extends BaseSearchAction {
 				input.setSearchString(extensionID);
 			} else {
 				String id = model.getPluginBase().getId();
-				if (id == null || id.trim().length() == 0)
+				if (id == null || id.trim().length() == 0) {
 					id = fPluginID;
-				if (id == null || id.trim().length() == 0)
+				}
+				if (id == null || id.trim().length() == 0) {
 					id = "*"; //$NON-NLS-1$
+				}
 				input.setSearchString(id + "." + extensionID); //$NON-NLS-1$
 			}
 			scope = new ExtensionPluginSearchScope(input);

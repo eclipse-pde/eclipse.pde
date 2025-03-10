@@ -88,8 +88,9 @@ public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 	 */
 	private IFile createSiteManifest() {
 		IFile file = fProject.getFile("site.xml"); //$NON-NLS-1$
-		if (file.exists())
+		if (file.exists()) {
 			return file;
+		}
 
 		WorkspaceSiteModel model = new WorkspaceSiteModel(file);
 		model.getSite();
@@ -108,8 +109,9 @@ public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 				return;
 			}
 			IWorkbenchPage page = ww.getActivePage();
-			if (page == null || !file.exists())
+			if (page == null || !file.exists()) {
 				return;
+			}
 			IWorkbenchPart focusPart = page.getActivePart();
 			if (focusPart instanceof ISetSelectionTarget) {
 				ISelection selection = new StructuredSelection(file);

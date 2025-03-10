@@ -48,8 +48,9 @@ public class PluginContentMergeViewer extends TextMergeViewer {
 	@Override
 	protected void configureTextViewer(final TextViewer textViewer) {
 		if (textViewer instanceof SourceViewer) {
-			if (fColorManager == null)
+			if (fColorManager == null) {
 				fColorManager = ColorManager.getDefault();
+			}
 			final XMLConfiguration configuration = new XMLConfiguration(fColorManager);
 			textViewer.getControl().addDisposeListener(e -> configuration.dispose());
 			IPropertyChangeListener propertyChangedListener = event -> {
@@ -63,13 +64,15 @@ public class PluginContentMergeViewer extends TextMergeViewer {
 			};
 			PDEPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(propertyChangedListener);
 
-			if (fPropertyChangedListeners == null)
+			if (fPropertyChangedListeners == null) {
 				fPropertyChangedListeners = new ArrayList<>(3);
+			}
 			fPropertyChangedListeners.add(propertyChangedListener);
 			((SourceViewer) textViewer).configure(configuration);
 			Font font = JFaceResources.getFont(PluginContentMergeViewer.class.getName());
-			if (font != null)
+			if (font != null) {
 				textViewer.getTextWidget().setFont(font);
+			}
 		}
 	}
 
@@ -91,12 +94,14 @@ public class PluginContentMergeViewer extends TextMergeViewer {
 	@Override
 	protected void handleDispose(DisposeEvent event) {
 		super.handleDispose(event);
-		if (fColorManager != null)
+		if (fColorManager != null) {
 			fColorManager.dispose();
+		}
 		if (fPropertyChangedListeners != null) {
 			Iterator<IPropertyChangeListener> iter = fPropertyChangedListeners.iterator();
-			while (iter.hasNext())
+			while (iter.hasNext()) {
 				PDEPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(iter.next());
+			}
 			fPropertyChangedListeners = null;
 		}
 	}

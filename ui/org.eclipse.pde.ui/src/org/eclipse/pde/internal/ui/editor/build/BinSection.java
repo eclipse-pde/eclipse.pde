@@ -40,8 +40,9 @@ public class BinSection extends BuildContentsSection {
 		IBuildEntry binIncl = build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
 		IBuildEntry binExcl = build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES);
 
-		if (binIncl == null)
+		if (binIncl == null) {
 			return;
+		}
 
 		super.initializeCheckState(binIncl, binExcl);
 	}
@@ -67,10 +68,11 @@ public class BinSection extends BuildContentsSection {
 
 		resourceName = handleResourceFolder(resource, resourceName);
 
-		if (isChecked)
+		if (isChecked) {
 			handleCheck(includes, excludes, resourceName, resource, wasTopParentChecked, IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
-		else
+		} else {
 			handleUncheck(includes, excludes, resourceName, resource, IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES);
+		}
 
 		deleteEmptyEntries();
 		fParentResource = fOriginalResource = null;
@@ -83,8 +85,9 @@ public class BinSection extends BuildContentsSection {
 		}
 		Object changeObject = event.getChangedObjects()[0];
 
-		if (!(changeObject instanceof IBuildEntry && (((IBuildEntry) changeObject).getName().equals(IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES) || ((IBuildEntry) changeObject).getName().equals(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES))))
+		if (!(changeObject instanceof IBuildEntry && (((IBuildEntry) changeObject).getName().equals(IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES) || ((IBuildEntry) changeObject).getName().equals(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES)))) {
 			return;
+		}
 
 		if ((fParentResource == null && fOriginalResource != null) || (fOriginalResource == null && fParentResource != null)) {
 			initializeCheckState();
@@ -94,21 +97,25 @@ public class BinSection extends BuildContentsSection {
 			if (event.getChangedProperty() != null && event.getChangedProperty().equals(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES)) {
 
 				if (event.getOldValue() == null && event.getNewValue() != null) {
-					if (event.getNewValue().equals(".")) //$NON-NLS-1$
+					if (event.getNewValue().equals(".")) { //$NON-NLS-1$
 						return;
+					}
 					// adding token
 					IFile file = fBundleRoot.getFile(IPath.fromOSString(event.getNewValue().toString()));
-					if (!file.exists())
+					if (!file.exists()) {
 						return;
+					}
 					fParentResource = fOriginalResource = file;
 					isChecked = true;
 				} else if (event.getOldValue() != null && event.getNewValue() == null) {
-					if (event.getOldValue().equals(".")) //$NON-NLS-1$
+					if (event.getOldValue().equals(".")) { //$NON-NLS-1$
 						return;
+					}
 					// removing token
 					IFile file = fBundleRoot.getFile(IPath.fromOSString(event.getOldValue().toString()));
-					if (!file.exists())
+					if (!file.exists()) {
 						return;
+					}
 					fParentResource = fOriginalResource = file;
 					isChecked = false;
 				} else {

@@ -99,8 +99,9 @@ public class FilteredCheckboxTree extends FilteredTree {
 			@Override
 			public void done(IJobChangeEvent event) {
 				getDisplay().asyncExec(() -> {
-					if (checkboxViewer.getTree().isDisposed())
+					if (checkboxViewer.getTree().isDisposed()) {
 						return;
+					}
 					checkboxViewer.restoreLeafCheckState();
 					});
 			}

@@ -42,8 +42,9 @@ public class Utilities {
 		if (dirRoot == null) {
 			dirRoot = System.getProperty("java.io.tmpdir"); //$NON-NLS-1$
 			// in Linux, returns '/tmp', we must add '/'
-			if (!dirRoot.endsWith(File.separator))
+			if (!dirRoot.endsWith(File.separator)) {
 				dirRoot += File.separator;
+			}
 
 			// on Unix/Linux, the temp dir is shared by many users, so we need to ensure
 			// that the top working directory is different for each user
@@ -59,8 +60,9 @@ public class Utilities {
 
 		File tmpDir = new File(tmpName);
 		verifyPath(tmpDir, false);
-		if (!tmpDir.exists())
+		if (!tmpDir.exists()) {
 			throw new FileNotFoundException(tmpName);
+		}
 		return tmpDir;
 	}
 
@@ -75,8 +77,9 @@ public class Utilities {
 	 * @since 2.0
 	 */
 	public static void shutdown() {
-		if (dirRoot == null)
+		if (dirRoot == null) {
 			return;
+		}
 		File temp = new File(dirRoot); // temp directory root for this run
 		cleanupTemp(temp);
 		temp.delete();
@@ -85,8 +88,9 @@ public class Utilities {
 	private static void cleanupTemp(File root) {
 		File[] files = root.listFiles();
 		for (int i = 0; files != null && i < files.length; i++) {
-			if (files[i].isDirectory())
+			if (files[i].isDirectory()) {
 				cleanupTemp(files[i]);
+			}
 			files[i].delete();
 		}
 	}
@@ -102,16 +106,18 @@ public class Utilities {
 		}
 
 		// already exists ... just return
-		if (path.exists())
+		if (path.exists()) {
 			return;
+		}
 
 		// does not exist ... ensure parent exists
 		File parent = path.getParentFile();
 		verifyPath(parent, false);
 
 		// ensure directories are made. Mark files or directories for deletion
-		if (!isFile)
+		if (!isFile) {
 			path.mkdir();
+		}
 		path.deleteOnExit();
 	}
 }

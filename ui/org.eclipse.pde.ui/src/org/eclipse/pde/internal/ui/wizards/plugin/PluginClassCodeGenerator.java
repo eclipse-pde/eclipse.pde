@@ -49,8 +49,9 @@ public class PluginClassCodeGenerator {
 		String className = fQualifiedClassName.substring(nameloc + 1);
 
 		IPath path = IPath.fromOSString(packageName.replace('.', '/'));
-		if (fPluginData.getSourceFolderName().trim().length() > 0)
+		if (fPluginData.getSourceFolderName().trim().length() > 0) {
 			path = IPath.fromOSString(fPluginData.getSourceFolderName()).append(path);
+		}
 
 		CoreUtility.createFolder(fProject.getFolder(path));
 
@@ -65,10 +66,11 @@ public class PluginClassCodeGenerator {
 		}
 		try (ByteArrayInputStream stream = new ByteArrayInputStream(
 				swriter.toString().getBytes(fProject.getDefaultCharset()))) {
-			if (file.exists())
+			if (file.exists()) {
 				file.setContents(stream, false, true, monitor);
-			else
+			} else {
 				file.create(stream, false, monitor);
+			}
 		} catch (IOException e) {
 
 		}
@@ -90,10 +92,11 @@ public class PluginClassCodeGenerator {
 		writer.println("/**"); //$NON-NLS-1$
 		writer.println(" * The activator class controls the plug-in life cycle"); //$NON-NLS-1$
 		writer.println(" */"); //$NON-NLS-1$
-		if (fPluginData.isUIPlugin())
+		if (fPluginData.isUIPlugin()) {
 			writer.println("public class " + className + " extends AbstractUIPlugin {"); //$NON-NLS-1$ //$NON-NLS-2$
-		else
+		} else {
 			writer.println("public class " + className + " extends Plugin {"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		writer.println();
 		writer.println("\t// The plug-in ID"); //$NON-NLS-1$
 		writer.println("\tpublic static final String PLUGIN_ID = \"" + fPluginData.getId() + "\"; //$NON-NLS-1$"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -162,10 +165,12 @@ public class PluginClassCodeGenerator {
 
 	public IPluginReference[] getDependencies() {
 		ArrayList<PluginReference> result = new ArrayList<>();
-		if (fPluginData.isUIPlugin())
+		if (fPluginData.isUIPlugin()) {
 			result.add(new PluginReference("org.eclipse.ui")); //$NON-NLS-1$
-		if (!fPluginData.isLegacy() && fPluginData.getOSGiFramework() == null)
+		}
+		if (!fPluginData.isLegacy() && fPluginData.getOSGiFramework() == null) {
 			result.add(new PluginReference(IPDEBuildConstants.BUNDLE_CORE_RUNTIME));
+		}
 		return result.toArray(new IPluginReference[result.size()]);
 	}
 

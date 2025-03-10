@@ -81,8 +81,9 @@ public class FeatureSelectionDialog extends FilteredItemsSelectionDialog {
 		@Override
 		public boolean matchItem(Object item) {
 			if (item instanceof IFeatureModel model) {
-				if (matchesFeatureId(model))
+				if (matchesFeatureId(model)) {
 					return true;
+				}
 				return matchesPluginId(model) != null;
 			}
 			return false;
@@ -119,8 +120,9 @@ public class FeatureSelectionDialog extends FilteredItemsSelectionDialog {
 			int id1 = getId(o1);
 			int id2 = getId(o2);
 
-			if (id1 != id2)
+			if (id1 != id2) {
 				return id1 - id2;
+			}
 			return compareSimilarObjects(o1, o2);
 		}
 

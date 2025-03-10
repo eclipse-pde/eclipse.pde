@@ -45,10 +45,11 @@ public class LaunchTerminationStatusHandler implements IStatusHandler {
 
 	@Override
 	public Object handleStatus(IStatus status, Object source) throws CoreException {
-		if (status.getCode() == 13)
+		if (status.getCode() == 13) {
 			handleOtherReasonsFoundInLog((ILaunch) source);
-		else if (status.getCode() == 15)
+		} else if (status.getCode() == 15) {
 			handleWorkspaceInUse();
+		}
 		return null;
 	}
 

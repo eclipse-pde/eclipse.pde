@@ -121,8 +121,9 @@ public abstract class AntGeneratingExportWizard extends BaseExportWizard {
 				}
 			}
 		}
-		if (fPage.doGenerateAntFile())
+		if (fPage.doGenerateAntFile()) {
 			generateAntBuildFile(fPage.getAntBuildFileName());
+		}
 		return true;
 	}
 
@@ -131,8 +132,9 @@ public abstract class AntGeneratingExportWizard extends BaseExportWizard {
 		if (!fPage.doExportToDirectory()) {
 			File zipFile = new File(fPage.getDestination(), fPage.getFileName());
 			if (zipFile.exists()) {
-				if (!MessageDialog.openQuestion(getContainer().getShell(), PDEUIMessages.BaseExportWizard_confirmReplace_title, NLS.bind(PDEUIMessages.BaseExportWizard_confirmReplace_desc, zipFile.getAbsolutePath())))
+				if (!MessageDialog.openQuestion(getContainer().getShell(), PDEUIMessages.BaseExportWizard_confirmReplace_title, NLS.bind(PDEUIMessages.BaseExportWizard_confirmReplace_desc, zipFile.getAbsolutePath()))) {
 					return false;
+				}
 				zipFile.delete();
 			}
 		}
@@ -144,11 +146,13 @@ public abstract class AntGeneratingExportWizard extends BaseExportWizard {
 	protected void generateAntBuildFile(String filename) {
 		String parent = IPath.fromOSString(filename).removeLastSegments(1).toOSString();
 		String buildFilename = IPath.fromOSString(filename).lastSegment();
-		if (!buildFilename.endsWith(".xml")) //$NON-NLS-1$
+		if (!buildFilename.endsWith(".xml")) { //$NON-NLS-1$
 			buildFilename += ".xml"; //$NON-NLS-1$
+		}
 		File dir = new File(new File(parent).getAbsolutePath());
-		if (!dir.exists())
+		if (!dir.exists()) {
 			dir.mkdirs();
+		}
 
 		try {
 			Document task = generateAntTask();
@@ -169,8 +173,9 @@ public abstract class AntGeneratingExportWizard extends BaseExportWizard {
 				if (project != null) {
 					project.refreshLocal(IResource.DEPTH_INFINITE, null);
 					IFile file = container.getFile(IPath.fromOSString(buildFilename));
-					if (file.exists())
+					if (file.exists()) {
 						BaseBuildAction.setDefaultValues(file);
+					}
 				}
 			}
 		} catch (CoreException e) {

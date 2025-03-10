@@ -79,11 +79,13 @@ public class GetNonExternalizedStringsOperation implements IRunnableWithProgress
 			Object[] elems = ((IStructuredSelection) fSelection).toArray();
 			fSelectedModels = new ArrayList<>(elems.length);
 			for (int i = 0; i < elems.length; i++) {
-				if (elems[i] instanceof IFile)
+				if (elems[i] instanceof IFile) {
 					elems[i] = ((IFile) elems[i]).getProject();
+				}
 
-				if (elems[i] instanceof IProject && WorkspaceModelManager.isPluginProject((IProject) elems[i]) && !WorkspaceModelManager.isBinaryProject((IProject) elems[i]))
+				if (elems[i] instanceof IProject && WorkspaceModelManager.isPluginProject((IProject) elems[i]) && !WorkspaceModelManager.isBinaryProject((IProject) elems[i])) {
 					fSelectedModels.add(elems[i]);
+				}
 			}
 
 			fModelChangeTable = new ModelChangeTable();
@@ -101,8 +103,9 @@ public class GetNonExternalizedStringsOperation implements IRunnableWithProgress
 				Iterator<Object> iterator = fSelectedModels.iterator();
 				while (iterator.hasNext() && !fCanceled) {
 					IProject project = (IProject) iterator.next();
-					if (!WorkspaceModelManager.isBinaryProject(project))
+					if (!WorkspaceModelManager.isBinaryProject(project)) {
 						getUnExternalizedStrings(project, subMonitor.split(1));
+					}
 				}
 			} else {
 				IPluginModelBase[] pluginModels = PluginRegistry.getWorkspaceModels();
@@ -110,8 +113,9 @@ public class GetNonExternalizedStringsOperation implements IRunnableWithProgress
 						PDEUIMessages.GetNonExternalizedStringsOperation_taskMessage, pluginModels.length);
 				for (int i = 0; i < pluginModels.length && !fCanceled; i++) {
 					IProject project = pluginModels[i].getUnderlyingResource().getProject();
-					if (!WorkspaceModelManager.isBinaryProject(project))
+					if (!WorkspaceModelManager.isBinaryProject(project)) {
 						getUnExternalizedStrings(project, subMonitor.split(1));
+					}
 				}
 			}
 		}
@@ -121,16 +125,18 @@ public class GetNonExternalizedStringsOperation implements IRunnableWithProgress
 		PDEModelUtility.modifyModel(new ModelModification(project) {
 			@Override
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
-				if (model instanceof IBundlePluginModelBase)
+				if (model instanceof IBundlePluginModelBase) {
 					inspectManifest((IBundlePluginModelBase) model, monitor);
+				}
 
 				if (monitor.isCanceled()) {
 					fCanceled = true;
 					return;
 				}
 
-				if (model instanceof IPluginModelBase)
+				if (model instanceof IPluginModelBase) {
 					inspectXML((IPluginModelBase) model, monitor);
+				}
 
 				if (monitor.isCanceled()) {
 					fCanceled = true;
@@ -145,8 +151,9 @@ public class GetNonExternalizedStringsOperation implements IRunnableWithProgress
 		IBundle bundle = model.getBundleModel().getBundle();
 		for (String translatableHeader : ICoreConstants.TRANSLATABLE_HEADERS) {
 			IManifestHeader header = bundle.getManifestHeader(translatableHeader);
-			if (header != null && isNotTranslated(header.getValue()))
+			if (header != null && isNotTranslated(header.getValue())) {
 				fModelChangeTable.addToChangeTable(model, manifestFile, header, selected(manifestFile));
+			}
 		}
 	}
 
@@ -154,32 +161,37 @@ public class GetNonExternalizedStringsOperation implements IRunnableWithProgress
 		IFile file;
 		if (model instanceof IBundlePluginModelBase) {
 			ISharedExtensionsModel extModel = ((IBundlePluginModelBase) model).getExtensionsModel();
-			if (extModel == null)
+			if (extModel == null) {
 				return;
+			}
 			file = (IFile) extModel.getUnderlyingResource();
-		} else
+		} else {
 			file = (IFile) model.getUnderlyingResource();
+		}
 
 		IPluginBase base = model.getPluginBase();
 		if (base instanceof IDocumentElementNode) {
 			// old style xml plugin
 			// check xml name declaration
 			IDocumentAttributeNode attr = ((IDocumentElementNode) base).getDocumentAttribute(IPluginObject.P_NAME);
-			if (attr != null && isNotTranslated(attr.getAttributeValue()))
+			if (attr != null && isNotTranslated(attr.getAttributeValue())) {
 				fModelChangeTable.addToChangeTable(model, file, attr, selected(file));
+			}
 
 			// check xml provider declaration
 			attr = ((IDocumentElementNode) base).getDocumentAttribute(IPluginBase.P_PROVIDER);
-			if (attr != null && isNotTranslated(attr.getAttributeValue()))
+			if (attr != null && isNotTranslated(attr.getAttributeValue())) {
 				fModelChangeTable.addToChangeTable(model, file, attr, selected(file));
+			}
 		}
 
 		SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
 		IPluginExtension[] extensions = model.getPluginBase().getExtensions();
 		for (IPluginExtension extension : extensions) {
 			ISchema schema = registry.getSchema(extension.getPoint());
-			if (schema != null)
+			if (schema != null) {
 				inspectExtension(schema, extension, model, file);
+			}
 		}
 
 		IPluginExtensionPoint[] extensionPoints = model.getPluginBase().getExtensionPoints();
@@ -196,9 +208,11 @@ public class GetNonExternalizedStringsOperation implements IRunnableWithProgress
 				for (IDocumentAttributeNode attribute : attributes) {
 					IPluginAttribute attr = (IPluginAttribute) attribute;
 					ISchemaAttribute attInfo = schemaElement.getAttribute(attr.getName());
-					if (attInfo != null && attInfo.isTranslatable())
-						if (isNotTranslated(attr.getValue()))
+					if (attInfo != null && attInfo.isTranslatable()) {
+						if (isNotTranslated(attr.getValue())) {
 							fModelChangeTable.addToChangeTable(memModel, file, attr, selected(file));
+						}
+					}
 				}
 			}
 		}
@@ -208,16 +222,20 @@ public class GetNonExternalizedStringsOperation implements IRunnableWithProgress
 			IPluginElement child = (IPluginElement) element;
 			ISchemaElement schemaElement = schema.findElement(child.getName());
 			if (schemaElement != null) {
-				if (schemaElement.hasTranslatableContent())
-					if (isNotTranslated(child.getText()))
+				if (schemaElement.hasTranslatableContent()) {
+					if (isNotTranslated(child.getText())) {
 						fModelChangeTable.addToChangeTable(memModel, file, child, selected(file));
+					}
+				}
 
 				IPluginAttribute[] attributes = child.getAttributes();
 				for (IPluginAttribute attr : attributes) {
 					ISchemaAttribute attInfo = schemaElement.getAttribute(attr.getName());
-					if (attInfo != null && attInfo.isTranslatable())
-						if (isNotTranslated(attr.getValue()))
+					if (attInfo != null && attInfo.isTranslatable()) {
+						if (isNotTranslated(attr.getValue())) {
 							fModelChangeTable.addToChangeTable(memModel, file, attr, selected(file));
+						}
+					}
 				}
 			}
 			inspectExtension(schema, child, memModel, file);
@@ -225,16 +243,20 @@ public class GetNonExternalizedStringsOperation implements IRunnableWithProgress
 	}
 
 	private void inspectExtensionPoint(IPluginExtensionPoint extensionPoint, IPluginModelBase memModel, IFile file) {
-		if (extensionPoint instanceof PluginExtensionPointNode)
-			if (isNotTranslated(extensionPoint.getName()))
+		if (extensionPoint instanceof PluginExtensionPointNode) {
+			if (isNotTranslated(extensionPoint.getName())) {
 				fModelChangeTable.addToChangeTable(memModel, file, ((PluginExtensionPointNode) extensionPoint).getNodeAttributesMap().get(IPluginObject.P_NAME), selected(file));
+			}
+		}
 	}
 
 	private boolean isNotTranslated(String value) {
-		if (value == null)
+		if (value == null) {
 			return false;
-		if (value.length() > 0 && value.charAt(0) == '%')
+		}
+		if (value.length() > 0 && value.charAt(0) == '%') {
 			return false;
+		}
 		return true;
 	}
 

@@ -54,8 +54,9 @@ public class BuildSourcePage extends KeyValueSourcePage {
 
 		@Override
 		public Object getParent(Object child) {
-			if (child instanceof IBuildEntry)
+			if (child instanceof IBuildEntry) {
 				return ((IBuildEntry) child).getModel();
+			}
 			return null;
 		}
 
@@ -80,8 +81,9 @@ public class BuildSourcePage extends KeyValueSourcePage {
 
 		@Override
 		public Image getImage(Object obj) {
-			if (obj instanceof IBuildEntry)
+			if (obj instanceof IBuildEntry) {
 				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_BUILD_VAR_OBJ);
+			}
 			return null;
 		}
 	}
@@ -106,8 +108,9 @@ public class BuildSourcePage extends KeyValueSourcePage {
 	}
 
 	protected IDocumentRange getRangeElement(ITextSelection selection) {
-		if (selection.isEmpty())
+		if (selection.isEmpty()) {
 			return null;
+		}
 		IBuildModel model = (IBuildModel) getInputContext().getModel();
 		return findBuildNode(model.getBuild().getBuildEntries(), selection.getOffset());
 	}
@@ -143,8 +146,9 @@ public class BuildSourcePage extends KeyValueSourcePage {
 
 		for (IBuildEntry entry : buildEntries) {
 			IDocumentKey key = (IDocumentKey) entry;
-			if (offset >= key.getOffset() && offset < key.getOffset() + key.getLength())
+			if (offset >= key.getOffset() && offset < key.getOffset() + key.getLength()) {
 				return key;
+			}
 		}
 		return null;
 	}
@@ -152,8 +156,9 @@ public class BuildSourcePage extends KeyValueSourcePage {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-		if (IHyperlinkDetector.class.equals(adapter))
+		if (IHyperlinkDetector.class.equals(adapter)) {
 			return (T) new BuildHyperlinkDetector(this);
+		}
 		return super.getAdapter(adapter);
 	}
 

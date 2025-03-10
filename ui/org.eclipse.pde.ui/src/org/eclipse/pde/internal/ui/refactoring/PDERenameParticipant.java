@@ -56,12 +56,14 @@ public abstract class PDERenameParticipant extends RenameParticipant implements 
 
 	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-		if (!getArguments().getUpdateReferences())
+		if (!getArguments().getUpdateReferences()) {
 			return null;
+		}
 		CompositeChange result = new CompositeChange(getName());
 		addBundleManifestChange(result, pm);
-		if (updateBuildProperties())
+		if (updateBuildProperties()) {
 			addBuildPropertiesChange(result, pm);
+		}
 		addChange(result, PDEProject.getPluginXml(fProject), pm);
 		addChange(result, PDEProject.getFragmentXml(fProject), pm);
 		return (result.getChildren().length == 0) ? null : result;
@@ -70,16 +72,18 @@ public abstract class PDERenameParticipant extends RenameParticipant implements 
 	private void addChange(CompositeChange result, IFile file, IProgressMonitor pm) throws CoreException {
 		if (file.exists()) {
 			Change change = PluginManifestChange.createRenameChange(file, fElements.keySet().toArray(), getNewNames(), getTextChange(file), pm);
-			if (change != null)
+			if (change != null) {
 				result.add(change);
+			}
 		}
 	}
 
 	protected String[] getNewNames() {
 		String[] result = new String[fElements.size()];
 		Iterator<String> iter = fElements.values().iterator();
-		for (int i = 0; i < fElements.size(); i++)
+		for (int i = 0; i < fElements.size(); i++) {
 			result[i] = iter.next().toString();
+		}
 		return result;
 	}
 
@@ -90,8 +94,9 @@ public abstract class PDERenameParticipant extends RenameParticipant implements 
 	protected void addBundleManifestChange(IFile file, CompositeChange result, IProgressMonitor pm) throws CoreException {
 		if (file.exists()) {
 			Change change = BundleManifestChange.createRenameChange(file, fElements.keySet().toArray(), getNewNames(), pm);
-			if (change != null)
+			if (change != null) {
 				result.add(change);
+			}
 		}
 	}
 
@@ -99,8 +104,9 @@ public abstract class PDERenameParticipant extends RenameParticipant implements 
 		IFile file = PDEProject.getBuildProperties(fProject);
 		if (file.exists()) {
 			Change change = BuildPropertiesChange.createRenameChange(file, fElements.keySet().toArray(), getNewNames(), pm);
-			if (change != null)
+			if (change != null) {
 				result.add(change);
+			}
 		}
 	}
 
@@ -114,9 +120,11 @@ public abstract class PDERenameParticipant extends RenameParticipant implements 
 
 	protected boolean containsElement(boolean javaElement) {
 		Object[] objs = fElements.keySet().toArray();
-		for (Object obj : objs)
-			if (obj instanceof IJavaElement == javaElement)
+		for (Object obj : objs) {
+			if (obj instanceof IJavaElement == javaElement) {
 				return true;
+			}
+		}
 		return false;
 	}
 }

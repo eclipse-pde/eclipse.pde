@@ -112,8 +112,9 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 	private IPluginModelBase findModel(String id) {
 		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
 		for (IPluginModelBase model : models) {
-			if (model != null && id.equals(model.getPluginBase().getId()))
+			if (model != null && id.equals(model.getPluginBase().getId())) {
 				return model;
+			}
 		}
 		return null;
 	}
@@ -149,8 +150,9 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 	 */
 	private void forceVersion(final String targetVersion, IModel modelBase, IProgressMonitor monitor) {
 		IFile file = (IFile) modelBase.getUnderlyingResource();
-		if (file == null)
+		if (file == null) {
 			return;
+		}
 
 		PDEModelUtility.modifyModel(new ModelModification(file) {
 			@Override
@@ -191,8 +193,9 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 					fUsePluginsAtBuildButton.setSelection(true);
 					break;
 			}
-		} else
+		} else {
 			fUsePluginsAtBuildButton.setSelection(true);
+		}
 	}
 
 	private void runOperation(int mode, IProgressMonitor monitor) throws CoreException {
@@ -229,10 +232,11 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 	private int saveSettings() {
 		IDialogSettings settings = getDialogSettings();
 		int mode = USE_PLUGINS_AT_BUILD;
-		if (fIsForceVersionEnabled && fUseComponentButton.getSelection())
+		if (fIsForceVersionEnabled && fUseComponentButton.getSelection()) {
 			mode = USE_FEATURE;
-		else if (fUsePluginsButton.getSelection())
+		} else if (fUsePluginsButton.getSelection()) {
 			mode = USE_PLUGINS;
+		}
 		settings.put(PROP_SYNCHRO_MODE, mode);
 		return mode;
 	}
@@ -243,17 +247,20 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 
 		switch (mode) {
 		case USE_PLUGINS_AT_BUILD:
-			if (!ICoreConstants.DEFAULT_VERSION.equals(ref.getVersion()))
+			if (!ICoreConstants.DEFAULT_VERSION.equals(ref.getVersion())) {
 				ref.setVersion(ICoreConstants.DEFAULT_VERSION);
+			}
 			break;
 		case USE_PLUGINS:
 			{
 				IPluginModelBase modelBase = PluginRegistry.findModel(id);
-				if (modelBase == null)
+				if (modelBase == null) {
 					return;
+				}
 				String baseVersion = modelBase.getPluginBase().getVersion();
-				if (!ref.getVersion().equals(baseVersion))
+				if (!ref.getVersion().equals(baseVersion)) {
 					ref.setVersion(baseVersion);
+				}
 				break;
 			}
 		case USE_FEATURE:
@@ -261,12 +268,14 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 			/* mode == USE_FEATURE */
 			{
 				IPluginModelBase modelBase = findModel(id);
-				if (modelBase == null)
+				if (modelBase == null) {
 					return;
+				}
 				ref.setVersion(featureVersion);
 				String baseVersion = modelBase.getPluginBase().getVersion();
-				if (!featureVersion.equals(baseVersion))
+				if (!featureVersion.equals(baseVersion)) {
 					forceVersion(featureVersion, modelBase, monitor);
+				}
 				break;
 			}
 		}
@@ -279,14 +288,16 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 
 		switch (mode) {
 		case USE_PLUGINS_AT_BUILD:
-			if (!ICoreConstants.DEFAULT_VERSION.equals(ref.getVersion()))
+			if (!ICoreConstants.DEFAULT_VERSION.equals(ref.getVersion())) {
 				ref.setVersion(ICoreConstants.DEFAULT_VERSION);
+			}
 			break;
 		case USE_PLUGINS:
 			FeatureModelManager fmm = PDECore.getDefault().getFeatureModelManager();
 			IFeatureModel modelBase = fmm.findFeatureModel(id);
-			if (modelBase == null)
+			if (modelBase == null) {
 				return;
+			}
 			String baseVersion = modelBase.getFeature().getVersion();
 			if (!ref.getVersion().equals(baseVersion)) {
 				ref.setVersion(baseVersion);

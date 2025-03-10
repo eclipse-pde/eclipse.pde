@@ -37,8 +37,9 @@ public class WizardCollectionElement extends ElementList implements IPluginContr
 		for (Object child : children) {
 			WizardCollectionElement currentCategory = (WizardCollectionElement) child;
 			if (currentCategory.getLabel().equals(searchString)) {
-				if (searchPath.segmentCount() == 1)
+				if (searchPath.segmentCount() == 1) {
 					return currentCategory;
+				}
 
 				return currentCategory.findChildCollection(searchPath.removeFirstSegments(1));
 			}
@@ -52,8 +53,9 @@ public class WizardCollectionElement extends ElementList implements IPluginContr
 
 		for (Object child : children) {
 			WizardElement currentWizard = (WizardElement) child;
-			if (currentWizard.getID().equals(searchId))
+			if (currentWizard.getID().equals(searchId)) {
 				return currentWizard;
+			}
 		}
 		return null;
 	}
@@ -63,8 +65,9 @@ public class WizardCollectionElement extends ElementList implements IPluginContr
 	}
 
 	public IPath getPath() {
-		if (parent == null)
+		if (parent == null) {
 			return IPath.fromOSString(""); //$NON-NLS-1$
+		}
 
 		return parent.getPath().append(getLabel());
 	}

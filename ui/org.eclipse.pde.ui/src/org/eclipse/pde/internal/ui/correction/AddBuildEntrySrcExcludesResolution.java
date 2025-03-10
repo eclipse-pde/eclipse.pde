@@ -51,11 +51,13 @@ public class AddBuildEntrySrcExcludesResolution extends BuildEntryMarkerResoluti
 				buildModel.reconciled(buildModel.getDocument());
 			}
 			BuildEntry buildEntry = (BuildEntry) build.getEntry(fEntry);
-			if (buildEntry == null)
+			if (buildEntry == null) {
 				buildEntry = new BuildEntry(fEntry, buildModel);
+			}
 
-			if (fToken != null)
+			if (fToken != null) {
 				buildEntry.addToken(fToken);
+			}
 		} catch (CoreException e) {
 		}
 	}

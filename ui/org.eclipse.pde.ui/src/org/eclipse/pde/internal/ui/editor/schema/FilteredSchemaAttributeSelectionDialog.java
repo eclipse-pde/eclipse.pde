@@ -81,8 +81,9 @@ public class FilteredSchemaAttributeSelectionDialog extends FilteredItemsSelecti
 
 		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			if (enabled) // select everything
+			if (enabled) { // select everything
 				return true;
+			}
 
 			if (element instanceof ISchemaAttribute attribute) {
 				return attribute.getUse() != ISchemaAttribute.OPTIONAL;
@@ -124,8 +125,9 @@ public class FilteredSchemaAttributeSelectionDialog extends FilteredItemsSelecti
 			if (element instanceof ISchemaAttribute attribute) {
 				if (isDuplicateElement(element)) {
 					ISchemaObject object = attribute.getParent();
-					if (object != null)
+					if (object != null) {
 						return getQualifiedName(attribute);
+					}
 				}
 			}
 			return PDEPlugin.getDefault().getLabelProvider().getText(element);
@@ -140,8 +142,9 @@ public class FilteredSchemaAttributeSelectionDialog extends FilteredItemsSelecti
 		public String decorateText(String text, Object element) {
 			if (element instanceof ISchemaAttribute attribute) {
 				ISchemaObject object = attribute.getParent();
-				if (object != null && !isDuplicateElement(element))
+				if (object != null && !isDuplicateElement(element)) {
 					return getQualifiedName(attribute);
+				}
 			}
 			return text;
 		}
@@ -214,8 +217,9 @@ public class FilteredSchemaAttributeSelectionDialog extends FilteredItemsSelecti
 				String pointID = IdUtil.getFullId(point, model);
 
 				ISchema schema = registry.getSchema(pointID);
-				if (schema == null) // if we don't find a schema
+				if (schema == null) { // if we don't find a schema
 					continue;
+				}
 				ISchemaElement[] elements = schema.getElements();
 
 				for (ISchemaElement element : elements) {
@@ -223,8 +227,9 @@ public class FilteredSchemaAttributeSelectionDialog extends FilteredItemsSelecti
 
 					for (ISchemaAttribute attribute : attributes) {
 						// only add attributes of the string kind and isn't translatable
-						if (attribute.getKind() == IMetaAttribute.STRING && ISchemaAttribute.TYPES[ISchemaAttribute.STR_IND].equals(attribute.getType().getName()) && !attribute.isTranslatable())
+						if (attribute.getKind() == IMetaAttribute.STRING && ISchemaAttribute.TYPES[ISchemaAttribute.STR_IND].equals(attribute.getType().getName()) && !attribute.isTranslatable()) {
 							contentProvider.add(attribute, itemsFilter);
+						}
 					}
 				}
 			}

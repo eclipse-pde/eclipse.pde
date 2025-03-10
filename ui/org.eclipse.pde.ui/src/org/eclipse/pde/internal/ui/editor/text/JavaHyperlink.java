@@ -36,13 +36,15 @@ public class JavaHyperlink extends AbstractHyperlink {
 	@Override
 	public void open() {
 		try {
-			if (fResource == null)
+			if (fResource == null) {
 				return;
+			}
 			if (fResource.getProject().hasNature(JavaCore.NATURE_ID)) {
 				IJavaProject javaProject = JavaCore.create(fResource.getProject());
 				IJavaElement result = javaProject.findType(fElement);
-				if (result != null)
+				if (result != null) {
 					JavaUI.openInEditor(result);
+				}
 			}
 		} catch (JavaModelException e) {
 			Display.getCurrent().beep(); // just for Dejan

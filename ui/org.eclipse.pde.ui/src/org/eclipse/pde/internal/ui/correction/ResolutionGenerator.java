@@ -57,8 +57,9 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 		switch (problemID) {
 			case PDEMarkerFactory.M_DEPRECATED_AUTOSTART :
 				// if targetVersion <= 3.3, we can add Eclipse-LazyStart header even if previous header's value was false.  We can't do this for 3.4+ since Bundle-AcativationPolicy does not have a "false" value.
-				if (marker.getAttribute(PDEMarkerFactory.ATTR_CAN_ADD, true) || TargetPlatformHelper.getTargetVersion() <= 3.3)
+				if (marker.getAttribute(PDEMarkerFactory.ATTR_CAN_ADD, true) || TargetPlatformHelper.getTargetVersion() <= 3.3) {
 					return new IMarkerResolution[] {new UpdateActivationResolution(AbstractPDEMarkerResolution.RENAME_TYPE,marker), new AddActivationHeaderResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker)};
+				}
 				return new IMarkerResolution[] {new UpdateActivationResolution(AbstractPDEMarkerResolution.RENAME_TYPE,  marker)};
 			case PDEMarkerFactory.M_JAVA_PACKAGE__PORTED :
 				return new IMarkerResolution[] {new CreateJREBundleHeaderResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker)};
@@ -170,8 +171,9 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 		for (int i = 0;; i++) {
 			try {
 				String entry = (String) marker.getAttribute(PDEMarkerFactory.BK_BUILD_ENTRY + '.' + i);
-				if (entry == null)
+				if (entry == null) {
 					break;
+				}
 				String value = (String) marker.getAttribute(PDEMarkerFactory.BK_BUILD_TOKEN + '.' + i);
 				resolutions.add(
 						new AddBuildEntrySrcExcludesResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker, entry, value));
@@ -200,8 +202,9 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 		String packageName = marker.getAttribute("packageName", (String) null); //$NON-NLS-1$
 		if (packageName != null) {
 			IResource res = marker.getResource();
-			if (res != null)
+			if (res != null) {
 				return new IMarkerResolution[] {new RemoveInternalDirectiveEntryResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, packageName,marker)};
+			}
 		}
 		return NO_RESOLUTIONS;
 	}
@@ -210,20 +213,23 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 		String packageName = marker.getAttribute("packageName", (String) null); //$NON-NLS-1$
 		if (packageName != null) {
 			IResource res = marker.getResource();
-			if (res != null)
+			if (res != null) {
 				return new IMarkerResolution[] {new RemoveExportPackageResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, marker)};
+			}
 		}
 		return NO_RESOLUTIONS;
 	}
 
 	private IMarkerResolution[] getUnresolvedImportPackageProposals(IMarker marker) {
 		String packageName = marker.getAttribute("packageName", (String) null); //$NON-NLS-1$
-		if (packageName == null)
+		if (packageName == null) {
 			return NO_RESOLUTIONS;
+		}
 
 		boolean optionalPkg = marker.getAttribute("optional", false); //$NON-NLS-1$
-		if (optionalPkg)
+		if (optionalPkg) {
 			return new IMarkerResolution[] {new RemoveImportPackageResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, marker), new ConfigureTargetPlatformResolution()};
+		}
 
 		return new IMarkerResolution[] {new RemoveImportPackageResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, marker), new OptionalImportPackageResolution(AbstractPDEMarkerResolution.RENAME_TYPE, packageName, marker), new ConfigureTargetPlatformResolution()};
 	}

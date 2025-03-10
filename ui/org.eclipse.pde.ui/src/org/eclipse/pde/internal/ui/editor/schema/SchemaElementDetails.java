@@ -75,11 +75,13 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 
 	@Override
 	public void updateFields(ISchemaObject object) {
-		if (object instanceof SchemaElementReference)
+		if (object instanceof SchemaElementReference) {
 			object = ((SchemaElementReference) object).getReferencedObject();
+		}
 		fElement = (SchemaElement) object;
-		if (fElement == null)
+		if (fElement == null) {
 			return;
+		}
 		setDecription(NLS.bind(PDEUIMessages.SchemaElementDetails_description, fElement.getName()));
 		fName.setValue(fElement.getName(), true);
 
@@ -87,8 +89,9 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 		fDepFalse.setSelection(!fElement.isDeprecated());
 
 		boolean isTranslatable = true;
-		if ((fElement.getType() instanceof ISchemaComplexType && ((ISchemaComplexType) fElement.getType()).getCompositor() != null) || fElement.getAttributeCount() != 0)
+		if ((fElement.getType() instanceof ISchemaComplexType && ((ISchemaComplexType) fElement.getType()).getCompositor() != null) || fElement.getAttributeCount() != 0) {
 			isTranslatable = false;
+		}
 
 		fTransTrue.setSelection(fElement.hasTranslatableContent());
 		fTransFalse.setSelection(!fElement.hasTranslatableContent());
@@ -107,12 +110,13 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 		fName.setFormEntryListener(new FormEntryAdapter(this) {
 			@Override
 			public void textValueChanged(FormEntry entry) {
-				if (blockListeners())
+				if (blockListeners()) {
 					return;
+				}
 				boolean revert = false;
-				if (fName.getValue().length() == 0)
+				if (fName.getValue().length() == 0) {
 					revert = true;
-				else {
+				} else {
 					ISchemaElement[] elements = fElement.getSchema().getElements();
 					for (ISchemaElement element : elements) {
 						if (element != fElement && element.getName().equalsIgnoreCase(fName.getValue())) {
@@ -121,9 +125,9 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 						}
 					}
 				}
-				if (revert)
+				if (revert) {
 					fName.setValue(fElement.getName(), true);
-				else {
+				} else {
 					fElement.setName(fName.getValue());
 					((Schema) fElement.getSchema()).updateReferencesFor(fElement, ISchema.REFRESH_RENAME);
 					setDecription(NLS.bind(PDEUIMessages.SchemaElementDetails_description, fElement.getName()));
@@ -131,13 +135,15 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 			}
 		});
 		fDepTrue.addSelectionListener(widgetSelectedAdapter(e -> {
-			if (blockListeners())
+			if (blockListeners()) {
 				return;
+			}
 			fElement.setDeprecatedProperty(fDepTrue.getSelection());
 		}));
 		fTransTrue.addSelectionListener(widgetSelectedAdapter(e -> {
-			if (blockListeners())
+			if (blockListeners()) {
 				return;
+			}
 			fElement.setTranslatableProperty(fTransTrue.getSelection());
 		}));
 	}

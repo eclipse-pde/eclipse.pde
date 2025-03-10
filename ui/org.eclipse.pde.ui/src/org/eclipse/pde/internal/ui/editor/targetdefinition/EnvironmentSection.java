@@ -190,8 +190,9 @@ public class EnvironmentSection extends SectionPart {
 							getTarget().setNL(null);
 						} else {
 							int index = value.indexOf('-');
-							if (index > 0)
+							if (index > 0) {
 								value = value.substring(0, index);
+							}
 							getTarget().setNL(value.trim());
 						}
 						markDirty();
@@ -212,24 +213,27 @@ public class EnvironmentSection extends SectionPart {
 		Collections.addAll(fOSChoices, os);
 		fOSChoices.add(""); //$NON-NLS-1$
 		String fileValue = target.getOS();
-		if (fileValue != null)
+		if (fileValue != null) {
 			fOSChoices.add(fileValue);
+		}
 
 		fWSChoices = new TreeSet<>();
 		String[] ws = Platform.knownWSValues();
 		Collections.addAll(fWSChoices, ws);
 		fWSChoices.add(""); //$NON-NLS-1$
 		fileValue = target.getWS();
-		if (fileValue != null)
+		if (fileValue != null) {
 			fWSChoices.add(fileValue);
+		}
 
 		fArchChoices = new TreeSet<>();
 		String[] arch = Platform.knownOSArchValues();
 		Collections.addAll(fArchChoices, arch);
 		fArchChoices.add(""); //$NON-NLS-1$
 		fileValue = target.getArch();
-		if (fileValue != null)
+		if (fileValue != null) {
 			fArchChoices.add(fileValue);
+		}
 
 		fNLChoices = new TreeSet<>();
 		fNLChoices.add(""); //$NON-NLS-1$
@@ -239,8 +243,9 @@ public class EnvironmentSection extends SectionPart {
 		String[] nl = LocaleUtil.getLocales();
 		Collections.addAll(fNLChoices, nl);
 		String fileValue = getTarget().getNL();
-		if (fileValue != null)
+		if (fileValue != null) {
 			fNLChoices.add(LocaleUtil.expandLocaleName(fileValue));
+		}
 		LOCALES_INITIALIZED = true;
 	}
 
@@ -278,8 +283,9 @@ public class EnvironmentSection extends SectionPart {
 	}
 
 	protected void updateChoices() {
-		if (LOCALES_INITIALIZED)
+		if (LOCALES_INITIALIZED) {
 			return;
+		}
 		// kick off thread in background to find the NL values
 		new Thread(this::initializeAllLocales).start();
 	}

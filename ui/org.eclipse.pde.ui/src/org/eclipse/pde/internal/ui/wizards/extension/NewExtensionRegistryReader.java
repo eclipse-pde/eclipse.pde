@@ -52,8 +52,9 @@ public class NewExtensionRegistryReader {
 	protected WizardCollectionElement createCollectionElement(WizardCollectionElement parent, String id, String label) {
 		WizardCollectionElement newElement = new WizardCollectionElement(id, label, parent);
 
-		if (parent != null)
+		if (parent != null) {
 			parent.add(newElement);
+		}
 
 		return newElement;
 	}
@@ -74,8 +75,9 @@ public class NewExtensionRegistryReader {
 
 	protected String getCategoryStringFor(IConfigurationElement config) {
 		String result = config.getAttribute(ATT_CATEGORY);
-		if (result == null)
+		if (result == null) {
 			result = UNCATEGORIZED_WIZARD_CATEGORY;
+		}
 
 		return result;
 	}
@@ -86,8 +88,9 @@ public class NewExtensionRegistryReader {
 		if (children != null) {
 			for (Object child : children) {
 				WizardCollectionElement currentChild = (WizardCollectionElement) child;
-				if (currentChild.getId().equals(id))
+				if (currentChild.getId().equals(id)) {
 					return currentChild;
+				}
 			}
 		}
 		return null;
@@ -115,17 +118,19 @@ public class NewExtensionRegistryReader {
 			currentCollectionElement = tempCollectionElement;
 		}
 
-		if (moveToOther)
+		if (moveToOther) {
 			moveElementToUncategorizedCategory(currentResult, element);
-		else
+		} else {
 			currentCollectionElement.getWizards().add(element);
+		}
 	}
 
 	protected void moveElementToUncategorizedCategory(WizardCollectionElement root, WizardElement element) {
 		WizardCollectionElement otherCategory = getChildWithID(root, UNCATEGORIZED_WIZARD_CATEGORY);
 
-		if (otherCategory == null)
+		if (otherCategory == null) {
 			otherCategory = createCollectionElement(root, UNCATEGORIZED_WIZARD_CATEGORY, UNCATEGORIZED_WIZARD_CATEGORY_LABEL);
+		}
 
 		otherCategory.getWizards().add(element);
 	}
@@ -153,8 +158,9 @@ public class NewExtensionRegistryReader {
 			}
 		}
 
-		if (parent != null)
+		if (parent != null) {
 			createCollectionElement(parent, category.getID(), category.getLabel());
+		}
 	}
 
 	protected void processElement(IConfigurationElement element, ElementList result, boolean shortcutsOnly) {
@@ -166,14 +172,16 @@ public class NewExtensionRegistryReader {
 				if (shortcut != null && shortcut.toLowerCase(Locale.ENGLISH).equals("true")) { //$NON-NLS-1$
 					result.add(wizard);
 				}
-			} else
+			} else {
 				insertUsingCategory(wizard, result);
+			}
 		} else if (tag.equals(TAG_EDITOR_WIZARD) && editorWizardMode) {
 			WizardElement wizard = createEditorWizardElement(element);
 			if (shortcutsOnly) {
 				result.add(wizard);
-			} else
+			} else {
 				insertUsingCategory(wizard, result);
+			}
 		} else if (tag.equals(TAG_CATEGORY)) {
 			if (shortcutsOnly == false) {
 				processCategory(element, result);
@@ -186,8 +194,9 @@ public class NewExtensionRegistryReader {
 				: (new WizardCollectionElement("root", "root", null)); //$NON-NLS-1$ //$NON-NLS-2$
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IExtensionPoint point = registry.getExtensionPoint(pluginId, pluginPointId);
-		if (point == null)
+		if (point == null) {
 			return null;
+		}
 
 		IExtension[] extensions = point.getExtensions();
 		for (IExtension extension : extensions) {

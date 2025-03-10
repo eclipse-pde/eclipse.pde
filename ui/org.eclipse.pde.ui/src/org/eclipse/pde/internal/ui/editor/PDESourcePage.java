@@ -155,8 +155,9 @@ public abstract class PDESourcePage extends org.eclipse.ui.internal.genericedito
 		stores[1] = EditorsUI.getPreferenceStore();
 		setPreferenceStore(new ChainedPreferenceStore(stores));
 		setRangeIndicator(new DefaultRangeIndicator());
-		if (isSelectionListener())
+		if (isSelectionListener()) {
 			getEditor().getSite().getSelectionProvider().addSelectionChangedListener(this);
+		}
 	}
 
 	@Override
@@ -174,8 +175,9 @@ public abstract class PDESourcePage extends org.eclipse.ui.internal.genericedito
 			fOutlinePage.dispose();
 			fOutlinePage = null;
 		}
-		if (isSelectionListener())
+		if (isSelectionListener()) {
 			getEditor().getSite().getSelectionProvider().removeSelectionChangedListener(this);
+		}
 
 		super.dispose();
 	}
@@ -223,8 +225,9 @@ public abstract class PDESourcePage extends org.eclipse.ui.internal.genericedito
 
 	@Override
 	public ISortableContentOutlinePage getContentOutline() {
-		if (fOutlinePage == null)
+		if (fOutlinePage == null) {
 			fOutlinePage = createOutlinePage();
+		}
 		return fOutlinePage;
 	}
 
@@ -336,12 +339,14 @@ public abstract class PDESourcePage extends org.eclipse.ui.internal.genericedito
 		}
 
 		ISourceViewer sourceViewer = getSourceViewer();
-		if (sourceViewer == null)
+		if (sourceViewer == null) {
 			return;
+		}
 
 		IDocument document = sourceViewer.getDocument();
-		if (document == null)
+		if (document == null) {
 			return;
+		}
 
 		int length = range.getLength();
 		setHighlightRange(offset, length == -1 ? 1 : length, moveCursor);
@@ -349,12 +354,14 @@ public abstract class PDESourcePage extends org.eclipse.ui.internal.genericedito
 
 	public void setSelectedRange(IDocumentRange range, boolean fullNodeSelection) {
 		ISourceViewer sourceViewer = getSourceViewer();
-		if (sourceViewer == null)
+		if (sourceViewer == null) {
 			return;
+		}
 
 		IDocument document = sourceViewer.getDocument();
-		if (document == null)
+		if (document == null) {
 			return;
+		}
 
 		int offset;
 		int length;
@@ -401,8 +408,9 @@ public abstract class PDESourcePage extends org.eclipse.ui.internal.genericedito
 
 	@Override
 	public final void selectionChanged(SelectionChangedEvent event) {
-		if (event.getSource() == getSelectionProvider())
+		if (event.getSource() == getSelectionProvider()) {
 			return;
+		}
 		ISelection sel = event.getSelection();
 		if (sel instanceof IStructuredSelection structuredSel) {
 
@@ -413,8 +421,9 @@ public abstract class PDESourcePage extends org.eclipse.ui.internal.genericedito
 
 			setSelectedObject(getRangeElement(textSel.getOffset(), false));
 
-		} else
+		} else {
 			fSelection = null;
+		}
 	}
 
 	/*
@@ -428,11 +437,13 @@ public abstract class PDESourcePage extends org.eclipse.ui.internal.genericedito
 
 	public void updateTextSelection() {
 		IDocumentRange range = findRange();
-		if (range == null)
+		if (range == null) {
 			return;
+		}
 		IBaseModel model = getInputContext().getModel();
-		if (!(model instanceof AbstractEditingModel))
+		if (!(model instanceof AbstractEditingModel)) {
 			return;
+		}
 
 		if (range.getOffset() == -1 || isDirty()) {
 			try {
@@ -470,8 +481,9 @@ public abstract class PDESourcePage extends org.eclipse.ui.internal.genericedito
 				menu.add(action);
 			}
 			FormatAction formatManifestAction = textContributor.getFormatAction();
-			if (isEditable() && formatManifestAction != null && formatManifestAction.isEnabled())
+			if (isEditable() && formatManifestAction != null && formatManifestAction.isEnabled()) {
 				menu.add(formatManifestAction);
+			}
 		}
 		super.editorContextMenuAboutToShow(menu);
 	}
@@ -595,27 +607,36 @@ public abstract class PDESourcePage extends org.eclipse.ui.internal.genericedito
 			IDocumentElementNode node = (IDocumentElementNode) nodeObject;
 			if (node.getOffset() <= offset && offset < node.getOffset() + node.getLength()) {
 
-				if (!searchChildren)
+				if (!searchChildren) {
 					return node;
+				}
 
-				if (node.getOffset() < offset && offset <= node.getOffset() + node.getXMLTagName().length() + 1)
+				if (node.getOffset() < offset && offset <= node.getOffset() + node.getXMLTagName().length() + 1) {
 					return node;
+				}
 
 				IDocumentAttributeNode[] attrs = node.getNodeAttributes();
-				if (attrs != null)
-					for (IDocumentAttributeNode attr : attrs)
-						if (attr.getNameOffset() <= offset && offset <= attr.getValueOffset() + attr.getValueLength())
+				if (attrs != null) {
+					for (IDocumentAttributeNode attr : attrs) {
+						if (attr.getNameOffset() <= offset && offset <= attr.getValueOffset() + attr.getValueLength()) {
 							return attr;
+						}
+					}
+				}
 
 				IDocumentTextNode textNode = node.getTextNode();
-				if (textNode != null && textNode.getOffset() <= offset && offset < textNode.getOffset() + textNode.getLength())
+				if (textNode != null && textNode.getOffset() <= offset && offset < textNode.getOffset() + textNode.getLength()) {
 					return textNode;
+				}
 
 				IDocumentElementNode[] children = node.getChildNodes();
-				if (children != null)
-					for (IDocumentElementNode child : children)
-						if (child.getOffset() <= offset && offset < child.getOffset() + child.getLength())
+				if (children != null) {
+					for (IDocumentElementNode child : children) {
+						if (child.getOffset() <= offset && offset < child.getOffset() + child.getLength()) {
 							return findNode(child, offset, searchChildren);
+						}
+					}
+				}
 
 				// not contained inside any sub elements, must be inside node
 				return node;

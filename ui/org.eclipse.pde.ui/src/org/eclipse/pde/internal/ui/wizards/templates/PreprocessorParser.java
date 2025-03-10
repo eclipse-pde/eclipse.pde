@@ -65,8 +65,9 @@ public class PreprocessorParser {
 
 		@Override
 		public String toString() {
-			if (value != null)
+			if (value != null) {
 				return "leaf[" + value.toString() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+			}
 			return "leaf[null]"; //$NON-NLS-1$
 		}
 	}
@@ -170,8 +171,9 @@ public class PreprocessorParser {
 			if (entry.root != null) {
 				Object value = entry.root.getValue();
 				if (value != null && value instanceof Boolean) {
-					if (((Boolean) value).equals(Boolean.TRUE))
+					if (((Boolean) value).equals(Boolean.TRUE)) {
 						result = true;
+					}
 				}
 			}
 		}
@@ -188,8 +190,9 @@ public class PreprocessorParser {
 		for (;;) {
 			int token = getNextToken();
 			//System.out.println("Token: " + token + ", val=\"" + tvalue+"\"");
-			if (token == T_EOF)
+			if (token == T_EOF) {
 				break;
+			}
 
 			if (token == T_VAR) {
 				Node node = new LeafNode(provider.getValue(tvalue.toString()));
@@ -229,8 +232,9 @@ public class PreprocessorParser {
 				continue;
 			}
 			if (token == T_RBR) {
-				if (exprStack.isEmpty())
+				if (exprStack.isEmpty()) {
 					throwUnexpectedToken("not )", token); //$NON-NLS-1$
+				}
 				popRoot();
 				continue;
 			}
@@ -247,24 +251,26 @@ public class PreprocessorParser {
 
 	private void replaceRoot(ExpressionNode newRoot) {
 		RootEntry entry = getCurrentRoot();
-		if (entry.root != null)
+		if (entry.root != null) {
 			newRoot.left = entry.root;
+		}
 		entry.root = newRoot;
 	}
 
 	private void pushNode(Node node) {
 		RootEntry entry = getCurrentRoot();
-		if (entry.root == null)
+		if (entry.root == null) {
 			entry.root = node;
-		else {
+		} else {
 			ExpressionNode enode = (ExpressionNode) entry.root;
-			if (enode.opcode == OP_NOT)
+			if (enode.opcode == OP_NOT) {
 				enode.right = node;
-			else {
-				if (enode.left == null)
+			} else {
+				if (enode.left == null) {
 					enode.left = node;
-				else
+				} else {
 					enode.right = node;
+				}
 			}
 		}
 	}
@@ -300,10 +306,12 @@ public class PreprocessorParser {
 				if (variable) {
 					tvalue = line.substring(vloc, loc);
 					variable = false;
-					if (tvalue.equalsIgnoreCase("false")) //$NON-NLS-1$
+					if (tvalue.equalsIgnoreCase("false")) { //$NON-NLS-1$
 						return T_FALSE;
-					if (tvalue.equalsIgnoreCase("true")) //$NON-NLS-1$
+					}
+					if (tvalue.equalsIgnoreCase("true")) { //$NON-NLS-1$
 						return T_TRUE;
+					}
 					return T_VAR;
 				}
 				if (string) {
@@ -326,8 +334,9 @@ public class PreprocessorParser {
 				vloc = loc;
 				string = true;
 				continue;
-			} else if (string)
+			} else if (string) {
 				continue;
+			}
 
 			if (!variable && Character.isJavaIdentifierStart(c)) {
 				variable = true;
@@ -339,31 +348,41 @@ public class PreprocessorParser {
 					loc--;
 					tvalue = line.substring(vloc, loc);
 					variable = false;
-					if (tvalue.equalsIgnoreCase("false")) //$NON-NLS-1$
+					if (tvalue.equalsIgnoreCase("false")) { //$NON-NLS-1$
 						return T_FALSE;
-					if (tvalue.equalsIgnoreCase("true")) //$NON-NLS-1$
+					}
+					if (tvalue.equalsIgnoreCase("true")) { //$NON-NLS-1$
 						return T_TRUE;
+					}
 					return T_VAR;
 				}
 				continue;
 			}
 
-			if (testDoubleToken(c, "!=")) //$NON-NLS-1$
+			if (testDoubleToken(c, "!=")) { //$NON-NLS-1$
 				return T_NEQ;
-			if (testDoubleToken(c, "==")) //$NON-NLS-1$
+			}
+			if (testDoubleToken(c, "==")) { //$NON-NLS-1$
 				return T_EQ;
-			if (testDoubleToken(c, "&&")) //$NON-NLS-1$
+			}
+			if (testDoubleToken(c, "&&")) { //$NON-NLS-1$
 				return T_AND;
-			if (testDoubleToken(c, "||")) //$NON-NLS-1$
+			}
+			if (testDoubleToken(c, "||")) { //$NON-NLS-1$
 				return T_OR;
-			if (testSingleToken(c, '!'))
+			}
+			if (testSingleToken(c, '!')) {
 				return T_NOT;
-			if (testSingleToken(c, '('))
+			}
+			if (testSingleToken(c, '(')) {
 				return T_LBR;
-			if (testSingleToken(c, ')'))
+			}
+			if (testSingleToken(c, ')')) {
 				return T_RBR;
-			if (c == ' ' || c == '\t' || c == '\n')
+			}
+			if (c == ' ' || c == '\t' || c == '\n') {
 				continue;
+			}
 			tvalue = "" + c; //$NON-NLS-1$
 			return T_ERROR;
 		}
@@ -378,8 +397,9 @@ public class PreprocessorParser {
 	}
 
 	private boolean testDoubleToken(char c1, String pattern) {
-		if (c1 != pattern.charAt(0))
+		if (c1 != pattern.charAt(0)) {
 			return false;
+		}
 		char c2 = line.charAt(loc);
 		if (c2 == pattern.charAt(1)) {
 			loc++;

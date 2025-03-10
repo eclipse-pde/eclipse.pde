@@ -94,18 +94,20 @@ public class SchemaIncludesSection extends TableSection {
 
 	@Override
 	protected void buttonSelected(int index) {
-		if (index == 0)
+		if (index == 0) {
 			handleNewInclude();
-		else
+		} else {
 			handleRemoveInclude();
+		}
 	}
 
 	@Override
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getManagedForm().fireSelectionChanged(this, selection);
 		getPage().getPDEEditor().setSelection(selection);
-		if (!getSchema().isEditable())
+		if (!getSchema().isEditable()) {
 			return;
+		}
 		Object object = fViewer.getStructuredSelection().getFirstElement();
 		getTablePart().setButtonEnabled(1, object instanceof ISchemaInclude);
 	}
@@ -113,8 +115,9 @@ public class SchemaIncludesSection extends TableSection {
 	@Override
 	public void dispose() {
 		ISchema schema = getSchema();
-		if (schema != null)
+		if (schema != null) {
 			schema.removeModelChangedListener(this);
+		}
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
 	}
@@ -153,8 +156,9 @@ public class SchemaIncludesSection extends TableSection {
 
 	protected void handleRemoveInclude() {
 		IStructuredSelection selection = fViewer.getStructuredSelection();
-		if (selection.isEmpty())
+		if (selection.isEmpty()) {
 			return;
+		}
 		Object[] selected = selection.toArray();
 		Schema schema = (Schema) getSchema();
 		for (Object selectedObject : selected) {
@@ -174,13 +178,15 @@ public class SchemaIncludesSection extends TableSection {
 
 		if (dialog.open() == Window.OK) {
 			Object result = dialog.getFirstResult();
-			if (!(result instanceof IFile newInclude))
+			if (!(result instanceof IFile newInclude)) {
 				return;
+			}
 			String location = getIncludeLocation(newInclude);
 			ISchemaInclude include = new SchemaInclude(getSchema(), location, false);
 			ISchema schema = getSchema();
-			if (schema instanceof Schema)
+			if (schema instanceof Schema) {
 				((Schema) schema).addInclude(include);
+			}
 		}
 	}
 
@@ -190,16 +196,18 @@ public class SchemaIncludesSection extends TableSection {
 
 	private String getIncludeLocation(IFile file) {
 		IEditorInput input = getPage().getEditorInput();
-		if (!(input instanceof IFileEditorInput))
+		if (!(input instanceof IFileEditorInput)) {
 			return null;
+		}
 		IPath schemaPath = ((IFileEditorInput) input).getFile().getFullPath();
 		IPath currPath = file.getFullPath();
 		int matchinSegments = schemaPath.matchingFirstSegments(currPath);
 		if (matchinSegments > 0) {
 			schemaPath = schemaPath.removeFirstSegments(matchinSegments);
 			currPath = currPath.removeFirstSegments(matchinSegments);
-			if (schemaPath.segmentCount() == 1)
+			if (schemaPath.segmentCount() == 1) {
 				return currPath.toString();
+			}
 			StringBuilder sb = new StringBuilder();
 			while (schemaPath.segmentCount() > 1) {
 				sb.append("../"); //$NON-NLS-1$
@@ -210,15 +218,17 @@ public class SchemaIncludesSection extends TableSection {
 		}
 		IPluginModelBase model = PluginRegistry.findModel(file.getProject());
 		String id = model.getPluginBase().getId();
-		if (id != null)
+		if (id != null) {
 			return "schema://" + id + "/" + file.getProjectRelativePath().toString(); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		return null;
 	}
 
 	private boolean isUnlistedInclude(IFile file) {
 		String location = getIncludeLocation(file);
-		if (location == null)
+		if (location == null) {
 			return false;
+		}
 		boolean unlisted = true;
 		ISchemaInclude[] includes = getSchema().getIncludes();
 		for (ISchemaInclude include : includes) {
@@ -235,8 +245,9 @@ public class SchemaIncludesSection extends TableSection {
 		Object object = selection.getFirstElement();
 		if (object instanceof ISchemaInclude) {
 			IEditorInput edinput = getPage().getEditorInput();
-			if (!(edinput instanceof IFileEditorInput))
+			if (!(edinput instanceof IFileEditorInput)) {
 				return;
+			}
 			String path = ((ISchemaInclude) object).getLocation();
 			IPath includePath = IPath.fromOSString(((ISchemaInclude) object).getLocation());
 			boolean result = false;
@@ -249,8 +260,9 @@ public class SchemaIncludesSection extends TableSection {
 				IFile file = project.getFile(currSchemaPath.removeLastSegments(1).append(includePath));
 				result = SchemaEditor.openSchema(file);
 			}
-			if (!result)
+			if (!result) {
 				MessageDialog.openWarning(getPage().getSite().getShell(), PDEUIMessages.SchemaIncludesSection_missingWarningTitle, NLS.bind(PDEUIMessages.SchemaIncludesSection_missingWarningMessage, includePath.toString()));
+			}
 		}
 	}
 

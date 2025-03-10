@@ -81,22 +81,26 @@ public class ListUtil {
 			int result = 0;
 			String name1 = getName(e1);
 			String name2 = getName(e2);
-			if (name1 != null && name2 != null)
+			if (name1 != null && name2 != null) {
 				result = getComparator().compare(name1, name2);
+			}
 			return (result != 0) ? result : super.compare(viewer, e1, e2);
 		}
 
 		private String getName(Object object) {
 
-			if (object instanceof IPluginBase)
+			if (object instanceof IPluginBase) {
 				return getPluginName((IPluginBase) object);
-			if (object instanceof IPluginModelBase)
+			}
+			if (object instanceof IPluginModelBase) {
 				return getPluginName(((IPluginModelBase) object).getPluginBase());
+			}
 			if (object instanceof ModelEntry) {
 				return getPluginName(((ModelEntry) object).getModel().getPluginBase());
 			}
-			if (object instanceof ModelChange)
+			if (object instanceof ModelChange) {
 				return getPluginName(((ModelChange) object).getParentModel().getPluginBase());
+			}
 			return null;
 		}
 

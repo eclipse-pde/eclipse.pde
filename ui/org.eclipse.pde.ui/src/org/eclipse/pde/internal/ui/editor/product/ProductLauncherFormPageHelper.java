@@ -38,8 +38,9 @@ public class ProductLauncherFormPageHelper implements ILauncherFormPageHelper {
 	@Override
 	public Object getLaunchObject() {
 		Object file = fEditor.getEditorInput().getAdapter(IFile.class);
-		if (file != null)
+		if (file != null) {
 			return file;
+		}
 		IProductModel model = (IProductModel) fEditor.getAggregateModel();
 		if (model == null) {
 			return null;
@@ -65,8 +66,9 @@ public class ProductLauncherFormPageHelper implements ILauncherFormPageHelper {
 			service.runInUI(service, op, PDEPlugin.getWorkspace().getRoot());
 		} catch (InterruptedException e) {
 		} catch (InvocationTargetException e) {
-			if (alert)
+			if (alert) {
 				MessageDialog.openError(fEditor.getSite().getShell(), "Synchronize", e.getTargetException().getMessage()); //$NON-NLS-1$
+			}
 		}
 	}
 

@@ -38,8 +38,9 @@ public class FormatAction extends Action {
 
 	@Override
 	public void run() {
-		if (fTextEditor == null || fTextEditor.getEditorInput() == null)
+		if (fTextEditor == null || fTextEditor.getEditorInput() == null) {
 			return;
+		}
 
 		try {
 			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new FormatOperation(new Object[] {fTextEditor.getEditorInput()}));

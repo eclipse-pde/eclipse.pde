@@ -32,16 +32,17 @@ public class RemoveNodeXMLResolution extends AbstractXMLMarkerResolution {
 	@Override
 	protected void createChange(IPluginModelBase model) {
 		Object node = findNode(model);
-		if (!(node instanceof IPluginObject))
+		if (!(node instanceof IPluginObject)) {
 			return;
+		}
 		try {
 			IPluginObject pluginObject = (IPluginObject) node;
 			IPluginObject parent = pluginObject.getParent();
-			if (parent instanceof IPluginParent)
+			if (parent instanceof IPluginParent) {
 				((IPluginParent) parent).remove(pluginObject);
-			else if (parent instanceof PluginBaseNode)
+			} else if (parent instanceof PluginBaseNode) {
 				((PluginBaseNode) parent).remove(pluginObject);
-			else if (pluginObject instanceof PluginAttribute attr) {
+			} else if (pluginObject instanceof PluginAttribute attr) {
 				attr.getEnclosingElement().setXMLAttribute(attr.getName(), null);
 			}
 
@@ -51,8 +52,9 @@ public class RemoveNodeXMLResolution extends AbstractXMLMarkerResolution {
 
 	@Override
 	public String getLabel() {
-		if (isAttrNode())
+		if (isAttrNode()) {
 			return NLS.bind(PDEUIMessages.RemoveNodeXMLResolution_attrLabel, getNameOfNode());
+		}
 		return NLS.bind(PDEUIMessages.RemoveNodeXMLResolution_label, getNameOfNode());
 	}
 

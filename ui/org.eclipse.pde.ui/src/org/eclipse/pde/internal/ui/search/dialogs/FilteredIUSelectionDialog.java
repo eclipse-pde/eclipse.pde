@@ -108,8 +108,9 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 			if (element instanceof IUPackage) {
 				return labelProvider.get(PDEPluginImages.DESC_PACKAGE_OBJ);
 			} else if (element instanceof IInstallableUnit iu) {
-				if (QueryUtil.isGroup(iu))
+				if (QueryUtil.isGroup(iu)) {
 					return labelProvider.get(PDEPluginImages.DESC_FEATURE_OBJ);
+				}
 				return labelProvider.get(PDEPluginImages.DESC_PLUGIN_OBJ);
 			}
 			return null;
@@ -160,10 +161,11 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 
 		@Override
 		public boolean matchItem(Object item) {
-			if (item instanceof IUPackage)
+			if (item instanceof IUPackage) {
 				return patternMatcher.matches(((IUPackage) item).getId());
-			else if (item instanceof IInstallableUnit)
+			} else if (item instanceof IInstallableUnit) {
 				return isIUMatch((IInstallableUnit) item);
+			}
 
 			return false;
 		}
@@ -175,26 +177,30 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 
 		@Override
 		public boolean isSubFilter(ItemsFilter filter) {
-			if (latest != ((IUItemsFilter) filter).latest)
+			if (latest != ((IUItemsFilter) filter).latest) {
 				return false;
+			}
 			return super.isSubFilter(filter);
 		}
 
 		@Override
 		public boolean equalsFilter(ItemsFilter obj) {
-			if (latest != ((IUItemsFilter) obj).latest)
+			if (latest != ((IUItemsFilter) obj).latest) {
 				return false;
+			}
 			return super.equals(obj);
 		}
 
 		public boolean isIUMatch(IInstallableUnit iu) {
-			if (iu.getFragments() != null && !iu.getFragments().isEmpty())
+			if (iu.getFragments() != null && !iu.getFragments().isEmpty()) {
 				return false;
+			}
 
 			String id = iu.getId();
 			String name = iu.getProperty(IInstallableUnit.PROP_NAME, null);
-			if (name == null || name.startsWith("%")) //$NON-NLS-1$
+			if (name == null || name.startsWith("%")) { //$NON-NLS-1$
 				name = ""; //$NON-NLS-1$
+			}
 			if (patternMatcher.matches(id) || patternMatcher.matches(name)) {
 				return true;
 			}
@@ -212,15 +218,17 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 	protected void fillContentProvider(AbstractContentProvider contentProvider, ItemsFilter itemsFilter, IProgressMonitor progressMonitor) throws CoreException {
 		// TODO clean up this code a bit...
 		IMetadataRepositoryManager manager = P2TargetUtils.getRepoManager();
-		if (manager == null)
+		if (manager == null) {
 			throw new CoreException(Status.error(Messages.IUBundleContainer_2));
+		}
 
 		//URI[] knownRepositories = metadataManager.getKnownRepositories(IRepositoryManager.REPOSITORIES_ALL);
 		IQuery<IInstallableUnit> pipedQuery;
-		if (fShowLatestVersionOnly)
+		if (fShowLatestVersionOnly) {
 			pipedQuery = QueryUtil.createPipeQuery(query, QueryUtil.createLatestIUQuery());
-		else
+		} else {
 			pipedQuery = query;
+		}
 
 		Iterator<IInstallableUnit> iter = manager.query(pipedQuery, progressMonitor).iterator();
 		while (iter.hasNext()) {

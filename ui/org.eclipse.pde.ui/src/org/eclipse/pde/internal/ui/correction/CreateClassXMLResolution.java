@@ -40,16 +40,18 @@ public class CreateClassXMLResolution extends AbstractXMLMarkerResolution {
 	@Override
 	protected void createChange(IPluginModelBase model) {
 		Object object = findNode(model);
-		if (!(object instanceof PluginAttribute attr))
+		if (!(object instanceof PluginAttribute attr)) {
 			return;
+		}
 
 		String name = TextUtil.trimNonAlphaChars(attr.getValue()).replace('$', '.');
 		IProject project = model.getUnderlyingResource().getProject();
 
 		JavaAttributeValue value = new JavaAttributeValue(project, model, getAttribute(attr), name);
 		name = PDEJavaHelperUI.createClass(name, project, value, true);
-		if (name != null && !name.equals(attr.getValue()))
+		if (name != null && !name.equals(attr.getValue())) {
 			attr.getEnclosingElement().setXMLAttribute(attr.getName(), name);
+		}
 	}
 
 	private ISchemaAttribute getAttribute(PluginAttribute attr) {
@@ -63,13 +65,15 @@ public class CreateClassXMLResolution extends AbstractXMLMarkerResolution {
 			}
 			element = element.getParentNode();
 		}
-		if (extension == null)
+		if (extension == null) {
 			return null;
+		}
 
 		ISchema schema = registry.getSchema(extension.getPoint());
 		ISchemaElement schemaElement = schema.findElement(attr.getEnclosingElement().getXMLTagName());
-		if (schemaElement == null)
+		if (schemaElement == null) {
 			return null;
+		}
 		return schemaElement.getAttribute(attr.getName());
 	}
 

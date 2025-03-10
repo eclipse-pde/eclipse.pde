@@ -44,8 +44,9 @@ public class LoopDialog extends TrayDialog {
 
 		@Override
 		public Object[] getChildren(Object parentElement) {
-			if (parentElement instanceof DependencyLoop)
+			if (parentElement instanceof DependencyLoop) {
 				return ((DependencyLoop) parentElement).getMembers();
+			}
 			return new Object[0];
 		}
 
@@ -69,8 +70,9 @@ public class LoopDialog extends TrayDialog {
 	class LoopLabelProvider extends LabelProvider {
 		@Override
 		public Image getImage(Object element) {
-			if (element instanceof DependencyLoop)
+			if (element instanceof DependencyLoop) {
 				return fLoopImage;
+			}
 			return PDEPlugin.getDefault().getLabelProvider().getImage(element);
 		}
 

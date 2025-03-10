@@ -33,10 +33,12 @@ public class ModelChangeLabelProvider extends PDELabelProvider {
 
 	@Override
 	public String getText(Object obj) {
-		if (obj instanceof ModelChange)
+		if (obj instanceof ModelChange) {
 			return getObjectText(((ModelChange) obj).getParentModel().getPluginBase());
-		if (obj instanceof ModelChangeFile)
+		}
+		if (obj instanceof ModelChangeFile) {
 			return getObjectText((ModelChangeFile) obj);
+		}
 		return super.getText(obj);
 	}
 
@@ -45,10 +47,11 @@ public class ModelChangeLabelProvider extends PDELabelProvider {
 		int count = pair.getNumChanges();
 		text.append(" ["); //$NON-NLS-1$
 		text.append(count);
-		if (count == 1)
+		if (count == 1) {
 			text.append(PDEUIMessages.ModelChangeLabelProvider_instance);
-		else
+		} else {
 			text.append(PDEUIMessages.ModelChangeLabelProvider_instances);
+		}
 		text.append("]"); //$NON-NLS-1$
 
 		return text.toString();
@@ -58,31 +61,38 @@ public class ModelChangeLabelProvider extends PDELabelProvider {
 	public Image getImage(Object obj) {
 		if (obj instanceof ModelChange) {
 			IPluginModelBase model = ((ModelChange) obj).getParentModel();
-			if (model instanceof IPluginModel)
+			if (model instanceof IPluginModel) {
 				return getObjectImage(((IPluginModel) model).getPlugin(), false, false);
-			if (model instanceof IFragmentModel)
+			}
+			if (model instanceof IFragmentModel) {
 				return getObjectImage(((IFragmentModel) model).getFragment(), false, false);
+			}
 		}
-		if (obj instanceof ModelChangeFile)
+		if (obj instanceof ModelChangeFile) {
 			return getObjectImage((ModelChangeFile) obj);
+		}
 		return super.getImage(obj);
 	}
 
 	private Image getObjectImage(ModelChangeFile file) {
 		String type = file.getFile().getFileExtension();
-		if ("xml".equalsIgnoreCase(type)) //$NON-NLS-1$
+		if ("xml".equalsIgnoreCase(type)) { //$NON-NLS-1$
 			return xmlImage;
-		if ("MF".equalsIgnoreCase(type)) //$NON-NLS-1$
+		}
+		if ("MF".equalsIgnoreCase(type)) { //$NON-NLS-1$
 			return manifestImage;
+		}
 		return null;
 	}
 
 	@Override
 	public void dispose() {
-		if (manifestImage != null)
+		if (manifestImage != null) {
 			manifestImage.dispose();
-		if (xmlImage != null)
+		}
+		if (xmlImage != null) {
 			xmlImage.dispose();
+		}
 		super.dispose();
 	}
 }

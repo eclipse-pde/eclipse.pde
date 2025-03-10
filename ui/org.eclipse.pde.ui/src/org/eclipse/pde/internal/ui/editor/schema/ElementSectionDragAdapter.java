@@ -44,8 +44,9 @@ public class ElementSectionDragAdapter extends DragSourceAdapter {
 	 */
 	@Override
 	public void dragSetData(DragSourceEvent event) {
-		if (event.doit == false)
+		if (event.doit == false) {
 			return;
+		}
 		if (ModelDataTransfer.getInstance().isSupportedType(event.dataType)) {
 			event.data = getSelectedModelObjects();
 			fDragData = event.data;
@@ -87,8 +88,9 @@ public class ElementSectionDragAdapter extends DragSourceAdapter {
 
 	@Override
 	public void dragFinished(DragSourceEvent event) {
-		if (event.doit == false || fDragData == null)
+		if (event.doit == false || fDragData == null) {
 			return;
+		}
 		fDragData = null;
 	}
 
@@ -100,13 +102,16 @@ public class ElementSectionDragAdapter extends DragSourceAdapter {
 		Object prev = null;
 		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 			Object obj = iter.next();
-			if (!(obj instanceof ISchemaObject))
+			if (!(obj instanceof ISchemaObject)) {
 				return false;
+			}
 			if (prev != null) {
-				if (prev.getClass().equals(obj.getClass()) == false)
+				if (prev.getClass().equals(obj.getClass()) == false) {
 					return false;
-			} else
+				}
+			} else {
 				prev = obj;
+			}
 		}
 		return true;
 	}
@@ -119,17 +124,19 @@ public class ElementSectionDragAdapter extends DragSourceAdapter {
 		ArrayList<Object> objects = new ArrayList<>();
 		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 			Object obj = iter.next();
-			if (obj instanceof ISchemaObject)
+			if (obj instanceof ISchemaObject) {
 				objects.add(obj);
-			else
+			} else {
 				return new ISchemaObject[0];
+			}
 		}
 		return objects.toArray(new ISchemaObject[objects.size()]);
 	}
 
 	public Object[] getDragData() {
-		if (fDragData instanceof Object[])
+		if (fDragData instanceof Object[]) {
 			return (Object[]) fDragData;
+		}
 		return new Object[] {fDragData};
 	}
 }

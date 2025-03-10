@@ -65,10 +65,11 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 		super(pageName);
 		fProduct = product;
 		setTitle(PDEUIMessages.ProductDefinitonWizardPage_title);
-		if (productNameDefined())
+		if (productNameDefined()) {
 			setDescription(PDEUIMessages.ProductDefinitonWizardPage_desc);
-		else
+		} else {
 			setDescription(PDEUIMessages.ProductDefinitonWizardPage_descNoName);
+		}
 	}
 
 	@Override
@@ -167,17 +168,19 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 		fApplicationCombo = new Combo(group, SWT.SINGLE | SWT.READ_ONLY);
 		fApplicationCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fApplicationCombo.setItems(TargetPlatform.getApplications());
-		if (fApplicationCombo.getItemCount() > 0)
+		if (fApplicationCombo.getItemCount() > 0) {
 			fApplicationCombo.setText(fApplicationCombo.getItem(0));
+		}
 	}
 
 	@Override
 	public void setVisible(boolean visible) {
 		if (visible) {
-			if (fProductName != null)
+			if (fProductName != null) {
 				fProductName.setFocus();
-			else
+			} else {
 				fPluginText.setFocus();
+			}
 		}
 		super.setVisible(visible);
 	}
@@ -202,8 +205,9 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 			} else if (model.getUnderlyingResource() == null) {
 				error = PDEUIMessages.ProductDefinitonWizardPage_notInWorkspace;
 			}
-			if (error == null)
+			if (error == null) {
 				error = validateId();
+			}
 			if (error == null && getProductNameSet().contains(pluginId + "." + fProductText.getText().trim())) { //$NON-NLS-1$
 				error = PDEUIMessages.ProductDefinitonWizardPage_productExists;
 			}
@@ -214,12 +218,14 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 
 	private String validateId() {
 		String id = fProductText.getText().trim();
-		if (id.length() == 0)
+		if (id.length() == 0) {
 			return PDEUIMessages.ProductDefinitonWizardPage_noProductID;
+		}
 
 		for (int i = 0; i < id.length(); i++) {
-			if (!id.substring(i, i + 1).matches("[a-zA-Z0-9_]")) //$NON-NLS-1$
+			if (!id.substring(i, i + 1).matches("[a-zA-Z0-9_]")) { //$NON-NLS-1$
 				return PDEUIMessages.ProductDefinitonWizardPage_invalidId;
+			}
 		}
 		return null;
 	}
@@ -236,8 +242,9 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 	public void linkActivated(HyperlinkEvent e) {
 		String extPoint = Platform.PI_RUNTIME + "." + e.getHref().toString(); //$NON-NLS-1$
 		IPluginExtensionPoint point = PDECore.getDefault().getExtensionsRegistry().findExtensionPoint(extPoint);
-		if (point != null)
+		if (point != null) {
 			new ShowDescriptionAction(point, true).run();
+		}
 	}
 
 	private void handleBrowse() {
@@ -249,8 +256,9 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 	}
 
 	private Set<String> getProductNameSet() {
-		if (fProductSet == null)
+		if (fProductSet == null) {
 			fProductSet = TargetPlatformHelper.getProductNameSet();
+		}
 		return fProductSet;
 	}
 

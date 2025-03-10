@@ -62,10 +62,12 @@ public class JarEntryFile extends PlatformObject implements IStorage {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-		if (adapter.equals(ZipFile.class))
+		if (adapter.equals(ZipFile.class)) {
 			return (T) fZipFile;
-		if (adapter.equals(File.class))
+		}
+		if (adapter.equals(File.class)) {
 			return (T) new File(fZipFile.getName());
+		}
 		return super.getAdapter(adapter);
 	}
 
@@ -76,8 +78,9 @@ public class JarEntryFile extends PlatformObject implements IStorage {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof JarEntryFile))
+		if (!(obj instanceof JarEntryFile)) {
 			return false;
+		}
 		return toString().equals(obj.toString());
 	}
 

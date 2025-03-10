@@ -171,8 +171,9 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 				fLen = 0;
 				while (off < docLen) {
 					char c = document.getChar(off++);
-					if (c == '"')
+					if (c == '"') {
 						break;
+					}
 					fLen += 1;
 				}
 			} catch (BadLocationException e) {
@@ -274,8 +275,9 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 		//  - refactoring
 		//  - better grouping of cases (if statements)
 		IBaseModel model = fProcessor.getModel();
-		if (model instanceof IReconcilingParticipant)
+		if (model instanceof IReconcilingParticipant) {
 			((IReconcilingParticipant) model).reconciled(document);
+		}
 
 		if (model instanceof IPluginModelBase) {
 			IPluginBase base = ((IPluginModelBase) model).getPluginBase();
@@ -286,14 +288,16 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 			if (fSchemaObject instanceof VirtualSchemaObject) {
 				switch (((VirtualSchemaObject) fSchemaObject).getVType()) {
 					case XMLContentAssistProcessor.F_EXTENSION_ATTRIBUTE_POINT_VALUE :
-						if (!(fRange instanceof IDocumentAttributeNode))
+						if (!(fRange instanceof IDocumentAttributeNode)) {
 							break;
+						}
 						int offset = ((IDocumentAttributeNode) fRange).getEnclosingElement().getOffset();
 						IPluginExtension[] extensions = base.getExtensions();
 						for (IPluginExtension extension : extensions) {
 							if (((IDocumentElementNode) extension).getOffset() == offset) {
-								if (extension.getChildCount() != 0)
+								if (extension.getChildCount() != 0) {
 									break; // don't modify existing extensions
+								}
 								fPluginParent = extension;
 								fSchemaElement = XMLUtil.getSchemaElement((IDocumentElementNode) extension, extension.getPoint());
 								break;
@@ -318,8 +322,9 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 				while (!s.isEmpty()) {
 					node = s.pop();
 					int nodeIndex = 0;
-					while ((node = node.getPreviousSibling()) != null)
+					while ((node = node.getPreviousSibling()) != null) {
 						nodeIndex += 1;
+					}
 					newSearch = newSearch.getChildAt(nodeIndex);
 				}
 				if (newSearch != null) {
@@ -439,8 +444,9 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 			int indent = offset - lineOffset;
 			char[] indentChars = document.get(lineOffset, indent).toCharArray();
 			// for every tab append a tab, for anything else append a space
-			for (char indentChar : indentChars)
+			for (char indentChar : indentChars) {
 				indBuff.append(indentChar == '\t' ? '\t' : ' ');
+			}
 		} catch (BadLocationException e) {
 		}
 		return indBuff.toString();
@@ -449,17 +455,19 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 	@Override
 	public String getAdditionalProposalInfo() {
 		if (fAddInfo == null) {
-			if (fSchemaObject == null)
+			if (fSchemaObject == null) {
 				return null;
+			}
 			StringBuilder sb = new StringBuilder();
 			HTMLPrinter.insertPageProlog(sb, 0, TextUtil.getJavaDocStyleSheerURL());
 			String desc = null;
-			if (fSchemaObject == null)
+			if (fSchemaObject == null) {
 				desc = PDEUIMessages.BaseWizardSelectionPage_noDesc;
-			else {
+			} else {
 				desc = fSchemaObject.getDescription();
-				if (desc == null || desc.trim().length() == 0)
+				if (desc == null || desc.trim().length() == 0) {
 					desc = PDEUIMessages.BaseWizardSelectionPage_noDesc;
+				}
 			}
 			sb.append(desc);
 			HTMLPrinter.addPageEpilog(sb);
@@ -485,30 +493,37 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 					return fSchemaObject.getName();
 			}
 		}
-		if (fSchemaObject instanceof ISchemaAttribute)
+		if (fSchemaObject instanceof ISchemaAttribute) {
 			return fSchemaObject.getName();
-		if (fSchemaObject != null)
+		}
+		if (fSchemaObject != null) {
 			return fSchemaObject.getName();
-		if (fRange instanceof IDocumentElementNode)
+		}
+		if (fRange instanceof IDocumentElementNode) {
 			return "...> </" + ((IDocumentElementNode) fRange).getXMLTagName() + ">"; //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		return null;
 	}
 
 	@Override
 	public Image getImage() {
-		if (fSchemaObject instanceof VirtualSchemaObject)
+		if (fSchemaObject instanceof VirtualSchemaObject) {
 			return fProcessor.getImage(((VirtualSchemaObject) fSchemaObject).getVType());
-		if (fSchemaObject instanceof ISchemaAttribute)
+		}
+		if (fSchemaObject instanceof ISchemaAttribute) {
 			return fProcessor.getImage(XMLContentAssistProcessor.F_ATTRIBUTE);
-		if (fSchemaObject instanceof ISchemaElement || fSchemaObject == null)
+		}
+		if (fSchemaObject instanceof ISchemaElement || fSchemaObject == null) {
 			return fProcessor.getImage(XMLContentAssistProcessor.F_ELEMENT);
+		}
 		return null;
 	}
 
 	@Override
 	public Point getSelection(IDocument document) {
-		if (fSelOffset == -1)
+		if (fSelOffset == -1) {
 			return null;
+		}
 		return new Point(fSelOffset, fSelLen);
 	}
 
@@ -523,8 +538,9 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 			fCreator = new AbstractReusableInformationControlCreator() {
 				@Override
 				public IInformationControl doCreateInformationControl(Shell parent) {
-					if (BrowserInformationControl.isAvailable(parent))
+					if (BrowserInformationControl.isAvailable(parent)) {
 						return new BrowserInformationControl(parent, JFaceResources.DIALOG_FONT, false);
+					}
 					return new DefaultInformationControl(parent, false);
 				}
 			};

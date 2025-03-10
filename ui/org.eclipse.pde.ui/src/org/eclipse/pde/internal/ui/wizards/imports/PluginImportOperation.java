@@ -244,11 +244,13 @@ public class PluginImportOperation extends WorkspaceJob {
 				Entry<IBundleImporter, ScmUrlImportDescription[]> entry = iterator.next();
 				IBundleImporter importer = entry.getKey();
 				ScmUrlImportDescription[] descriptions = entry.getValue();
-				if (descriptions.length == 0)
+				if (descriptions.length == 0) {
 					continue;
+				}
 				IProject[] importedProjects = importer.performImport(descriptions, subMonitor.split(1));
-				if (importedProjects != null && importedProjects.length == descriptions.length)
+				if (importedProjects != null && importedProjects.length == descriptions.length) {
 					continue;
+				}
 
 				ArrayList<String> namesOfImportedProjects = new ArrayList<>(importedProjects.length);
 				for (IProject importedProject : importedProjects) {
@@ -301,8 +303,9 @@ public class PluginImportOperation extends WorkspaceJob {
 				multiStatus.merge(e.getStatus());
 			}
 		}
-		if (!ResourcesPlugin.getWorkspace().isAutoBuilding() && fForceAutobuild)
+		if (!ResourcesPlugin.getWorkspace().isAutoBuilding() && fForceAutobuild) {
 			runBuildJob();
+		}
 		return multiStatus;
 	}
 
@@ -400,8 +403,9 @@ public class PluginImportOperation extends WorkspaceJob {
 						NLS.bind(PDEUIMessages.PluginImportOperation_Importing_plugin, plugin.getPluginBase().getId()));
 				IProject project = plugin.getUnderlyingResource().getProject();
 				try {
-					if (RepositoryProvider.isShared(project))
+					if (RepositoryProvider.isShared(project)) {
 						RepositoryProvider.unmap(project);
+					}
 					if (!safeDeleteCheck(project, monitor)) {
 						status.add(Status.error(NLS.bind(PDEUIMessages.PluginImportOperation_could_not_delete_project,
 								project.getName())));
@@ -523,8 +527,9 @@ public class PluginImportOperation extends WorkspaceJob {
 		}
 
 		// Set the classpath
-		if (project.hasNature(JavaCore.NATURE_ID) && project.findMember(".classpath") == null) //$NON-NLS-1$
+		if (project.hasNature(JavaCore.NATURE_ID) && project.findMember(".classpath") == null) { //$NON-NLS-1$
 			fProjectClasspaths.put(project, ClasspathComputer.getClasspath(project, model, sourceMap, true, false));
+		}
 	}
 
 	/**
@@ -713,8 +718,9 @@ public class PluginImportOperation extends WorkspaceJob {
 		}
 
 		project.create(monitor);
-		if (!project.isOpen())
+		if (!project.isOpen()) {
 			project.open(monitor);
+		}
 
 		// If we know that a previous project of the same name belonged to one
 		// or more working sets, add the new project to them
@@ -759,20 +765,23 @@ public class PluginImportOperation extends WorkspaceJob {
 	 * @return true is it is safe to delete the project, false otherwise
 	 */
 	private boolean safeDeleteCheck(IProject project, IProgressMonitor monitor) {
-		if (!fPluginsAreInUse)
+		if (!fPluginsAreInUse) {
 			return true;
+		}
 		IPluginModelBase base = PluginRegistry.findModel(project);
 		if (base != null) {
 			IPluginLibrary[] libraries = base.getPluginBase().getLibraries();
 			for (IPluginLibrary library : libraries) {
 				IResource res = project.findMember(library.getName());
-				if (res != null)
+				if (res != null) {
 					try {
-						if (!(ResourcesPlugin.getWorkspace().delete(new IResource[] {res}, true, monitor).isOK()))
+						if (!(ResourcesPlugin.getWorkspace().delete(new IResource[] {res}, true, monitor).isOK())) {
 							return false;
+						}
 					} catch (CoreException e) {
 						return false;
 					}
+				}
 			}
 		}
 		return true;
@@ -1152,12 +1161,14 @@ public class PluginImportOperation extends WorkspaceJob {
 				File[] files = location.listFiles();
 				for (File file : files) {
 					String token = file.getName();
-					if ((project.findMember(token) == null) && (build.getEntry(IBuildEntry.JAR_PREFIX + token) == null))
+					if ((project.findMember(token) == null) && (build.getEntry(IBuildEntry.JAR_PREFIX + token) == null)) {
 						continue;
+					}
 					if (file.isDirectory()) {
 						token = token + "/"; //$NON-NLS-1$
-						if (libraryDirs.containsKey(token))
+						if (libraryDirs.containsKey(token)) {
 							token = libraryDirs.get(token).toString();
+						}
 					}
 					entry.addToken(token);
 				}
@@ -1165,10 +1176,12 @@ public class PluginImportOperation extends WorkspaceJob {
 				String[] tokens = PluginImportHelper.getTopLevelResources(location);
 				for (String token : tokens) {
 					IResource res = project.findMember(token);
-					if ((res == null) && (build.getEntry(IBuildEntry.JAR_PREFIX + token) == null))
+					if ((res == null) && (build.getEntry(IBuildEntry.JAR_PREFIX + token) == null)) {
 						continue;
-					if ((res instanceof IFolder) && (libraryDirs.containsKey(token)))
+					}
+					if ((res instanceof IFolder) && (libraryDirs.containsKey(token))) {
 						continue;
+					}
 					entry.addToken(token);
 				}
 			}
@@ -1215,10 +1228,11 @@ public class PluginImportOperation extends WorkspaceJob {
 							buffer.append(System.lineSeparator());
 							buffer.append(" "); //$NON-NLS-1$
 						}
-						if (element.getValue().equals(".")) //$NON-NLS-1$
+						if (element.getValue().equals(".")) { //$NON-NLS-1$
 							buffer.append(ClasspathUtilCore.getFilename(base));
-						else
+						} else {
 							buffer.append(element.getValue());
+						}
 					}
 					bundle.setHeader(org.osgi.framework.Constants.BUNDLE_CLASSPATH, buffer.toString());
 				} catch (BundleException e) {
@@ -1230,16 +1244,19 @@ public class PluginImportOperation extends WorkspaceJob {
 
 	private boolean needsJavaNature(IProject project, IPluginModelBase model) {
 		// If there are class libraries we need a java nature
-		if (model.getPluginBase().getLibraries().length > 0)
+		if (model.getPluginBase().getLibraries().length > 0) {
 			return true;
+		}
 
 		// If the plug-in exports packages or requires an execution environment it has java code
 		BundleDescription desc = model.getBundleDescription();
 		if (desc != null) {
-			if (desc.getExecutionEnvironments().length > 0)
+			if (desc.getExecutionEnvironments().length > 0) {
 				return true;
-			if (desc.getExportPackages().length > 0)
+			}
+			if (desc.getExportPackages().length > 0) {
 				return true;
+			}
 		}
 
 		// If the build.properties file has a default source folder we need a java nature
@@ -1285,8 +1302,9 @@ public class PluginImportOperation extends WorkspaceJob {
 		for (IPluginLibrary library : libraries) {
 			list.add(ClasspathUtilCore.expandLibraryName(library.getName()));
 		}
-		if (libraries.length == 0 && isJARd(model))
+		if (libraries.length == 0 && isJARd(model)) {
 			list.add(DEFAULT_LIBRARY_NAME);
+		}
 		return list.toArray(new String[list.size()]);
 	}
 

@@ -27,8 +27,9 @@ public class TextEditUtilities {
 
 	public static TextEdit getInsertOperation(IDocumentElementNode node, IDocument doc) {
 		node = getHighestNodeToBeWritten(node, doc);
-		if (node.getParentNode() == null)
+		if (node.getParentNode() == null) {
 			return new InsertEdit(0, node.write(true));
+		}
 
 		if (node.getOffset() > -1) {
 			// this is an element that was of the form <element/>
@@ -44,8 +45,9 @@ public class TextEditUtilities {
 
 	public static TextEdit addAttributeOperation(IDocumentAttributeNode attr, String newValue, IDocument doc) {
 		int offset = attr.getValueOffset();
-		if (offset > -1)
+		if (offset > -1) {
 			return new ReplaceEdit(offset, attr.getValueLength(), PDEXMLHelper.getWritableString(newValue));
+		}
 
 		IDocumentElementNode node = attr.getEnclosingElement();
 		if (node.getOffset() > -1) {
@@ -65,8 +67,9 @@ public class TextEditUtilities {
 
 	private static IDocumentElementNode getHighestNodeToBeWritten(IDocumentElementNode node, IDocument doc) {
 		IDocumentElementNode parent = node.getParentNode();
-		if (parent == null)
+		if (parent == null) {
 			return node;
+		}
 		if (parent.getOffset() > -1) {
 			try {
 				String endChars = doc.get(parent.getOffset() + parent.getLength() - 2, 2);
@@ -82,8 +85,9 @@ public class TextEditUtilities {
 	private static InsertEdit insertAfterSibling(IDocumentElementNode node, IDocument doc) {
 		IDocumentElementNode sibling = node.getPreviousSibling();
 		for (;;) {
-			if (sibling == null)
+			if (sibling == null) {
 				break;
+			}
 			if (sibling.getOffset() > -1) {
 				node.setLineIndent(sibling.getLineIndent());
 				String sep = TextUtilities.getDefaultLineDelimiter(doc);
@@ -106,8 +110,9 @@ public class TextEditUtilities {
 		int i = 0;
 		try {
 			for (i = 0; i + offset < doc.getLength(); i++) {
-				if (ch == doc.get(offset + i, 1).toCharArray()[0])
+				if (ch == doc.get(offset + i, 1).toCharArray()[0]) {
 					break;
+				}
 			}
 		} catch (BadLocationException e) {
 		}

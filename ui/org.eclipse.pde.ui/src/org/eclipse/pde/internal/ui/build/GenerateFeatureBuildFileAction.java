@@ -47,8 +47,9 @@ public class GenerateFeatureBuildFileAction extends BaseBuildAction {
 		for (IFeatureModel model : models) {
 			if (model.getUnderlyingResource() != null) {
 				IResource underlying = model.getUnderlyingResource();
-				if (underlying.equals(fManifestFile) || underlying.getProject().equals(fManifestFile.getProject()))
+				if (underlying.equals(fManifestFile) || underlying.getProject().equals(fManifestFile.getProject())) {
 					fFeatureModel = model;
+				}
 			}
 		}
 
@@ -77,8 +78,9 @@ public class GenerateFeatureBuildFileAction extends BaseBuildAction {
 			IPluginModelBase refmodel = feature.getReferencedModel(reference);
 			if (refmodel != null) {
 				IResource resource = refmodel.getUnderlyingResource();
-				if (resource != null)
+				if (resource != null) {
 					resource.getProject().refreshLocal(IResource.DEPTH_ONE, monitor);
+				}
 			}
 		}
 		IFeatureChild[] included = feature.getIncludedFeatures();

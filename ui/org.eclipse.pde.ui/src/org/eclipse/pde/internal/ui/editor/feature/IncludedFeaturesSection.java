@@ -177,8 +177,9 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 	@Override
 	public void dispose() {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
-		if (model != null)
+		if (model != null) {
 			model.removeModelChangedListener(this);
+		}
 		FeatureModelManager mng = PDECore.getDefault().getFeatureModelManager();
 		mng.removeFeatureModelListener(this);
 		super.dispose();
@@ -205,16 +206,18 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 
 	private void handleUp() {
 		int index = getTablePart().getTableViewer().getTable().getSelectionIndex();
-		if (index < 1)
+		if (index < 1) {
 			return;
+		}
 		swap(index, index - 1);
 	}
 
 	private void handleDown() {
 		Table table = getTablePart().getTableViewer().getTable();
 		int index = table.getSelectionIndex();
-		if (index == table.getItemCount() - 1)
+		if (index == table.getItemCount() - 1) {
 			return;
+		}
 		swap(index, index + 1);
 	}
 
@@ -223,8 +226,9 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 			IFeatureModel[] allModels = PDECore.getDefault().getFeatureModelManager().getModels();
 			ArrayList<IFeatureModel> newModels = new ArrayList<>();
 			for (IFeatureModel model : allModels) {
-				if (canAdd(model))
+				if (canAdd(model)) {
 					newModels.add(model);
+				}
 			}
 			IFeatureModel[] candidateModels = newModels.toArray(new IFeatureModel[newModels.size()]);
 			FeatureSelectionDialog dialog = new FeatureSelectionDialog(fIncludesViewer.getTable().getShell(),
@@ -282,8 +286,9 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 		IFeatureChild[] features = feature.getIncludedFeatures();
 
 		for (IFeatureChild featureChild : features) {
-			if (featureChild.getId().equals(cfeature.getId()) && featureChild.getVersion().equals(cfeature.getVersion()))
+			if (featureChild.getId().equals(cfeature.getId()) && featureChild.getVersion().equals(cfeature.getVersion())) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -291,8 +296,9 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 	private static boolean isFeaturePatch(IFeature feature) {
 		IFeatureImport[] imports = feature.getImports();
 		for (IFeatureImport featureImport : imports) {
-			if (featureImport.isPatch())
+			if (featureImport.isPatch()) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -300,8 +306,9 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 	private void handleDelete() {
 		IStructuredSelection ssel = fIncludesViewer.getStructuredSelection();
 
-		if (ssel.isEmpty())
+		if (ssel.isEmpty()) {
 			return;
+		}
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		if (!model.isEditable()) {
 			return;
@@ -411,17 +418,20 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 			IFeatureModel[] added = delta.getAdded();
 			IFeatureModel[] removed = delta.getRemoved();
 			IFeatureModel[] changed = delta.getChanged();
-			if (hasModels(added) || hasModels(removed) || hasModels(changed))
+			if (hasModels(added) || hasModels(removed) || hasModels(changed)) {
 				markStale();
+			}
 		});
 	}
 
 	private boolean hasModels(IFeatureModel[] models) {
-		if (models == null)
+		if (models == null) {
 			return false;
+		}
 		IFeatureModel thisModel = (IFeatureModel) getPage().getModel();
-		if (thisModel == null)
+		if (thisModel == null) {
 			return false;
+		}
 		for (IFeatureModel model : models) {
 			if (model != thisModel) {
 				return true;
@@ -432,8 +442,9 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 
 	@Override
 	public void setFocus() {
-		if (fIncludesViewer != null)
+		if (fIncludesViewer != null) {
 			fIncludesViewer.getTable().setFocus();
+		}
 	}
 
 	@Override
@@ -478,8 +489,9 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 	@Override
 	protected boolean canPaste(Object target, Object[] objects) {
 		for (int i = 0; i < objects.length; i++) {
-			if (!(objects[i] instanceof FeatureChild))
+			if (!(objects[i] instanceof FeatureChild)) {
 				return false;
+			}
 		}
 		return true;
 	}

@@ -157,8 +157,9 @@ public class FeatureBlock {
 		}
 
 		public String getColumnText(Object obj, int index) {
-			if (obj instanceof NamedElement && index == COLUMN_FEATURE_NAME)
+			if (obj instanceof NamedElement && index == COLUMN_FEATURE_NAME) {
 				return ((NamedElement) obj).getLabel();
+			}
 			if (obj instanceof PluginLaunchModel pluginLaunchModel) {
 				switch (index) {
 					case COLUMN_FEATURE_NAME :
@@ -200,16 +201,18 @@ public class FeatureBlock {
 				styledString.append(" (", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
 				String version = featureModel.getVersion();
 				int index = version.indexOf('-');
-				if (index > -1)
+				if (index > -1) {
 					version = version.substring(0, index);
+				}
 				styledString.append(version, StyledString.QUALIFIER_STYLER);
 				styledString.append(")", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
 			} else if (element instanceof PluginLaunchModel pluginLaunchModel) {
 				styledString.append(" (", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
 				String version = pluginLaunchModel.getPluginModelBase().getPluginBase().getVersion();
 				int index = version.indexOf('-');
-				if (index > -1)
+				if (index > -1) {
 					version = version.substring(0, index);
+				}
 				styledString.append(version, StyledString.QUALIFIER_STYLER);
 				styledString.append(")", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
 			}
@@ -264,8 +267,9 @@ public class FeatureBlock {
 			} else if (source instanceof TreeColumn) {
 				handleColumn((TreeColumn) source, 0);
 			}
-			if (!fIsDisposed)
+			if (!fIsDisposed) {
 				fTab.updateLaunchConfigurationDialog();
+			}
 		}
 
 		private void handleSelectFeatures() {
@@ -406,9 +410,9 @@ public class FeatureBlock {
 						MessageDialog.openInformation(getShell(), PDEUIMessages.PluginStatusDialog_pluginValidation, PDEUIMessages.AbstractLauncherToolbar_noProblems);
 					}
 				} else {
-					if (fOperation.getInput().size() > 0)
+					if (fOperation.getInput().size() > 0) {
 						fDialog.refresh(fOperation.getInput());
-					else {
+					} else {
 						Map<String, IStatus> input = new HashMap<>(1);
 						input.put(PDEUIMessages.AbstractLauncherToolbar_noProblems, Status.OK_STATUS);
 						fDialog.refresh(input);
@@ -422,8 +426,9 @@ public class FeatureBlock {
 		private Shell getShell() {
 			try {
 				Control c = fTab.getControl();
-				if (!c.isDisposed())
+				if (!c.isDisposed()) {
 					return c.getShell();
+				}
 			} catch (SWTException e) {
 			}
 			return PDEPlugin.getActiveWorkbenchShell();
@@ -628,15 +633,17 @@ public class FeatureBlock {
 
 		@Override
 		public Object getParent(Object element) {
-			if (element instanceof PluginLaunchModel)
+			if (element instanceof PluginLaunchModel) {
 				return fAdditionalPluginsParentElement;
+			}
 			return null;
 		}
 
 		@Override
 		public boolean hasChildren(Object element) {
-			if (element instanceof NamedElement)
+			if (element instanceof NamedElement) {
 				return true;
+			}
 			return false;
 		}
 	}

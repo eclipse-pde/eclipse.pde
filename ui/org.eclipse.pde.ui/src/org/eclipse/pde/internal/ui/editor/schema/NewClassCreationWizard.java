@@ -46,27 +46,34 @@ public class NewClassCreationWizard extends JavaAttributeWizard {
 
 	@Override
 	public void addPages() {
-		if (fIsInterface)
+		if (fIsInterface) {
 			fMainPage = new NewInterfaceWizardPage();
-		else
+		} else {
 			fMainPage = new NewClassWizardPage();
+		}
 		addPage(fMainPage);
 		if (fIsInterface) {
 			((NewInterfaceWizardPage) fMainPage).init(StructuredSelection.EMPTY);
-			if (className != null)
+			if (className != null) {
 				fMainPage.setTypeName(className, true);
-			if (packageRoot != null)
+			}
+			if (packageRoot != null) {
 				fMainPage.setPackageFragmentRoot(packageRoot, true);
-			if (packageName != null)
+			}
+			if (packageName != null) {
 				fMainPage.setPackageFragment(packageName, true);
+			}
 		} else {
 			((NewClassWizardPage) fMainPage).init(StructuredSelection.EMPTY);
-			if (className != null)
+			if (className != null) {
 				fMainPage.setTypeName(className, true);
-			if (packageRoot != null)
+			}
+			if (packageRoot != null) {
 				fMainPage.setPackageFragmentRoot(packageRoot, true);
-			if (packageName != null)
+			}
+			if (packageName != null) {
 				fMainPage.setPackageFragment(packageName, true);
+			}
 		}
 	}
 
@@ -81,10 +88,11 @@ public class NewClassCreationWizard extends JavaAttributeWizard {
 				break;
 			}
 		}
-		if (srcEntryDft != null)
+		if (srcEntryDft != null) {
 			packageRoot = srcEntryDft;
-		else
+		} else {
 			packageRoot = javaProject.getPackageFragmentRoot(javaProject.getResource());
+		}
 
 		String packageNameString = null;
 		int index = value.lastIndexOf("."); //$NON-NLS-1$

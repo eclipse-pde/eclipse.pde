@@ -103,8 +103,9 @@ public class CommandDetails {
 
 		createBasicInfo(comp);
 
-		if (fCCP.getFilterType() == CommandComposerPart.F_FILTER_NOT_SET)
+		if (fCCP.getFilterType() == CommandComposerPart.F_FILTER_NOT_SET) {
 			createPreviewLabelComp(comp);
+		}
 		createParameters(comp);
 
 		section.setClient(comp);
@@ -164,8 +165,9 @@ public class CommandDetails {
 
 		fFilterCombo = new Combo(preLabelComp, SWT.READ_ONLY | SWT.DROP_DOWN);
 		CommandCopyFilter[] filters = CommandCopyFilter.getFilters();
-		for (CommandCopyFilter filter : filters)
+		for (CommandCopyFilter filter : filters) {
 			fFilterCombo.add(filter.getLabelText());
+		}
 		fFilterCombo.select(CommandCopyFilter.indexOf(CommandCopyFilter.NONE));
 		fFilterCombo.addSelectionListener(widgetSelectedAdapter(e -> updatePreviewText()));
 		fToolkit.adapt(fFilterCombo, true, true);
@@ -201,8 +203,9 @@ public class CommandDetails {
 					resultString = (String) obj;
 				} else {
 					ParameterType returnType = pCommand.getCommand().getReturnType();
-					if (returnType != null && returnType.getValueConverter() != null)
+					if (returnType != null && returnType.getValueConverter() != null) {
 						resultString = returnType.getValueConverter().convertToString(obj);
+					}
 				}
 				if (resultString != null) {
 					MessageDialog.openInformation(fComIDT.getShell(), PDEUIMessages.CommandDetails_commandResult, resultString);
@@ -289,18 +292,21 @@ public class CommandDetails {
 		public void modifyText(ModifyEvent e) {
 			String key = fValuesCombo.getText();
 			String value = (String) fValues.get(key);
-			if (value == null)
+			if (value == null) {
 				fParameterToValue.remove(fParameter);
-			else
+			} else {
 				fParameterToValue.put(fParameter, value);
+			}
 			updatePreviewText();
 		}
 
 		protected void dispose() {
-			if (!fValuesCombo.isDisposed())
+			if (!fValuesCombo.isDisposed()) {
 				fValuesCombo.removeModifyListener(this);
-			if (!fClearButton.isDisposed())
+			}
+			if (!fClearButton.isDisposed()) {
 				fClearButton.removeSelectionListener(this);
+			}
 		}
 	}
 
@@ -316,23 +322,26 @@ public class CommandDetails {
 			fParameterText = parameterText;
 			fParameterText.addModifyListener(this);
 
-			if (selectedObject != null)
+			if (selectedObject != null) {
 				setParameterText(selectedObject);
+			}
 
 			if (fPreSel != null) {
 				Object obj = fPreSel.getParameterMap().get(parameter.getId());
-				if (obj != null)
+				if (obj != null) {
 					fParameterText.setText(obj.toString());
+				}
 			}
 		}
 
 		@Override
 		public void modifyText(ModifyEvent e) {
 			String text = fParameterText.getText();
-			if ((text == null) || (text.trim().equals(""))) //$NON-NLS-1$
+			if ((text == null) || (text.trim().equals(""))) { //$NON-NLS-1$
 				fParameterToValue.remove(fParameter);
-			else
+			} else {
 				fParameterToValue.put(fParameter, text);
+			}
 			updatePreviewText();
 			validate();
 		}
@@ -340,16 +349,18 @@ public class CommandDetails {
 		private void setParameterText(Object selectedObject) {
 			try {
 				String converted = fValueConverter.convertToString(selectedObject);
-				if (converted != null)
+				if (converted != null) {
 					fParameterText.setText(converted);
+				}
 			} catch (ParameterValueConversionException ex) {
 				//
 			}
 		}
 
 		protected void dispose() {
-			if (!fParameterText.isDisposed())
+			if (!fParameterText.isDisposed()) {
 				fParameterText.removeModifyListener(this);
+			}
 		}
 
 		private void validate() {
@@ -362,10 +373,11 @@ public class CommandDetails {
 					error = e1.getMessage();
 				}
 			}
-			if (error == null)
+			if (error == null) {
 				fCCP.setMessage(null, IMessageProvider.NONE);
-			else
+			} else {
 				fCCP.setMessage(NLS.bind(PDEUIMessages.CommandDetails_paramValueMessage, fParameter.getName(), error), IMessageProvider.WARNING);
+			}
 		}
 	}
 
@@ -380,34 +392,40 @@ public class CommandDetails {
 
 			if (fPreSel != null) {
 				Object obj = fPreSel.getParameterMap().get(parameter.getId());
-				if (obj != null)
+				if (obj != null) {
 					fParameterText.setText(obj.toString());
+				}
 			}
 		}
 
 		@Override
 		public void modifyText(ModifyEvent e) {
 			String text = fParameterText.getText();
-			if ((text == null) || (text.trim().equals(""))) //$NON-NLS-1$
+			if ((text == null) || (text.trim().equals(""))) { //$NON-NLS-1$
 				fParameterToValue.remove(fParameter);
-			else
+			} else {
 				fParameterToValue.put(fParameter, text);
+			}
 			updatePreviewText();
 		}
 
 		public void dispose() {
-			if (!fParameterText.isDisposed())
+			if (!fParameterText.isDisposed()) {
 				fParameterText.removeModifyListener(this);
+			}
 		}
 	}
 
 	protected void dispose() {
-		for (int i = 0; i < fObjectParamList.size(); i++)
+		for (int i = 0; i < fObjectParamList.size(); i++) {
 			fObjectParamList.get(i).dispose();
-		for (int i = 0; i < fValueParamList.size(); i++)
+		}
+		for (int i = 0; i < fValueParamList.size(); i++) {
 			fValueParamList.get(i).dispose();
-		for (int i = 0; i < fTextParamList.size(); i++)
+		}
+		for (int i = 0; i < fTextParamList.size(); i++) {
 			fTextParamList.get(i).dispose();
+		}
 	}
 
 	private void populateParams(Command command, Object selectedObject) throws NotDefinedException {
@@ -428,8 +446,9 @@ public class CommandDetails {
 			paramLine.setLayout(paramLineLayout);
 			for (IParameter parameter : parameters) {
 				String nameText = parameter.getName();
-				if (!parameter.isOptional())
+				if (!parameter.isOptional()) {
 					nameText += '*';
+				}
 				fToolkit.createLabel(paramLine, NLS.bind(PDEUIMessages.CommandDetails_param, nameText));
 
 				IParameterValues parameterValues = getParameterValues(parameter);
@@ -439,8 +458,9 @@ public class CommandDetails {
 					fToolkit.adapt(parameterValuesCombo, true, true);
 
 					Map<String, Object> values = parameterValues.getParameterValues();
-					for (String key : values.keySet())
+					for (String key : values.keySet()) {
 						parameterValuesCombo.add(key);
+					}
 
 					Button clearButton = fToolkit.createButton(paramLine, PDEUIMessages.CommandDetails_clear, SWT.PUSH);
 
@@ -481,8 +501,9 @@ public class CommandDetails {
 	}
 
 	public void showDetailsFor(Object object) {
-		if (object instanceof ParameterizedCommand)
+		if (object instanceof ParameterizedCommand) {
 			object = (fPreSel = (ParameterizedCommand) object).getCommand();
+		}
 
 		if (!(object instanceof Command)) {
 			resetAllFields();
@@ -510,8 +531,9 @@ public class CommandDetails {
 		fComIDT.setText(PDEUIMessages.CommandDetails_noComSelected);
 		fParamLabel.setText(PDEUIMessages.CommandDetails_noParameters);
 
-		if (fComPrev != null)
+		if (fComPrev != null) {
 			fComPrev.setText(""); //$NON-NLS-1$
+		}
 
 		fExecLink.setVisible(false);
 		fCopyLink.setVisible(false);
@@ -529,14 +551,16 @@ public class CommandDetails {
 	}
 
 	private void createBlankParamComp() {
-		if (fParamComposite != null)
+		if (fParamComposite != null) {
 			fParamComposite.dispose();
+		}
 		fParamComposite = fCCP.createComposite(fParamParent, GridData.FILL_BOTH, 1, true, 0);
 	}
 
 	private void updatePreviewText() {
-		if (fComPrev != null)
+		if (fComPrev != null) {
 			fComPrev.setText(getFilteredCommand());
+		}
 	}
 
 	protected Command getCommand() {
@@ -544,24 +568,27 @@ public class CommandDetails {
 	}
 
 	public String getCommandName() {
-		if (fSelectedCommand != null)
+		if (fSelectedCommand != null) {
 			try {
 				return fSelectedCommand.getName();
 			} catch (NotDefinedException e) {
 				return fSelectedCommand.getId();
 			}
+		}
 		return null;
 	}
 
 	public String getSerializedString() {
-		if (fSelectedCommand != null)
+		if (fSelectedCommand != null) {
 			return getFilteredCommand();
+		}
 		return null;
 	}
 
 	public HashMap<IParameter, String> getParameters() {
-		if (fSelectedCommand != null)
+		if (fSelectedCommand != null) {
 			return fParameterToValue;
+		}
 
 		return null;
 	}

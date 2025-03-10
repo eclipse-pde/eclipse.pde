@@ -409,8 +409,9 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 					entry = model.getFactory().createEntry("bin.includes"); //$NON-NLS-1$
 					model.getBuild().add(entry);
 				}
-				if (!entry.contains(F_FILE_NAME_PLUGIN_CUSTOM))
+				if (!entry.contains(F_FILE_NAME_PLUGIN_CUSTOM)) {
 					entry.addToken(F_FILE_NAME_PLUGIN_CUSTOM);
+				}
 				model.save();
 			}
 		}

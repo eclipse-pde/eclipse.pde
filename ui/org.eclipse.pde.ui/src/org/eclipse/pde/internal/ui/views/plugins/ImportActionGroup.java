@@ -76,10 +76,11 @@ public class ImportActionGroup extends ActionGroup {
 		ISelection selection = context.getSelection();
 		if (!selection.isEmpty() && selection instanceof IStructuredSelection sSelection) {
 			String menuName = null;
-			if (sSelection.getFirstElement() instanceof IPluginExtension || sSelection.getFirstElement() instanceof IPluginExtensionPoint)
+			if (sSelection.getFirstElement() instanceof IPluginExtension || sSelection.getFirstElement() instanceof IPluginExtensionPoint) {
 				menuName = PDEUIMessages.ImportActionGroup_importContributingPlugin;
-			else
+			} else {
 				menuName = PDEUIMessages.PluginsView_import;
+			}
 			MenuManager importMenu = new MenuManager(menuName);
 			importMenu.add(new ImportAction(PluginImportOperation.IMPORT_BINARY, sSelection));
 			importMenu.add(new ImportAction(PluginImportOperation.IMPORT_BINARY_WITH_LINKS, sSelection));
@@ -93,12 +94,14 @@ public class ImportActionGroup extends ActionGroup {
 		ArrayList<IPluginModelBase> externalModels = new ArrayList<>();
 		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 			IPluginModelBase model = getModel(iter.next());
-			if (model != null && model.getUnderlyingResource() == null)
+			if (model != null && model.getUnderlyingResource() == null) {
 				externalModels.add(model);
+			}
 		}
 		Display display = Display.getCurrent();
-		if (display == null)
+		if (display == null) {
 			display = Display.getDefault();
+		}
 		IPluginModelBase[] models = externalModels.toArray(new IPluginModelBase[externalModels.size()]);
 		if (importType == PluginImportOperation.IMPORT_FROM_REPOSITORY) {
 			Map<IBundleImporter, ScmUrlImportDescription[]> importMap = getImportDescriptions(display.getActiveShell(), models);
@@ -138,8 +141,9 @@ public class ImportActionGroup extends ActionGroup {
 	public static boolean canImport(IStructuredSelection selection) {
 		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 			IPluginModelBase model = getModel(iter.next());
-			if (model != null && model.getUnderlyingResource() == null)
+			if (model != null && model.getUnderlyingResource() == null) {
 				return true;
+			}
 		}
 		return false;
 	}

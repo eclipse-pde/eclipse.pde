@@ -63,8 +63,9 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 	protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
 		try {
 			Collection<String> packages = getPublicExportedPackages();
-			if (packages.isEmpty())
+			if (packages.isEmpty()) {
 				return;
+			}
 			Map<String, HashSet<String>> pkgsAndUses = findPackageReferences(packages, monitor);
 			if (monitor.isCanceled()) {
 				return;
@@ -78,15 +79,17 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 	protected Collection<String> getPublicExportedPackages() {
 		IBundle bundle = fModel.getBundleModel().getBundle();
 		IManifestHeader header = bundle.getManifestHeader(Constants.EXPORT_PACKAGE);
-		if (header == null)
+		if (header == null) {
 			return Collections.emptySet();
+		}
 
 		ArrayList<String> list = new ArrayList<>();
 		ExportPackageObject[] pkgs = ((ExportPackageHeader) header).getPackages();
 		for (int i = 0; i < pkgs.length; i++) {
 			// don't calculate uses directive on private packages
-			if (!pkgs[i].isInternal())
+			if (!pkgs[i].isInternal()) {
 				list.add(pkgs[i].getName());
+			}
 		}
 		return list;
 	}
@@ -125,11 +128,13 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 
 	protected void findReferences(IType type, Set<String> pkgs, boolean binary, IProgressMonitor monitor)
 			throws JavaModelException {
-		if (type == null)
+		if (type == null) {
 			return;
+		}
 		// ignore private classes
-		if (Flags.isPrivate(type.getFlags()))
+		if (Flags.isPrivate(type.getFlags())) {
 			return;
+		}
 
 		IMethod[] methods = type.getMethods();
 		IField[] fields = type.getFields();
@@ -146,8 +151,9 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 			}
 		}
 		for (int i = 0; i < fields.length; i++) {
-			if (!Flags.isPrivate(fields[i].getFlags()))
+			if (!Flags.isPrivate(fields[i].getFlags())) {
 				addPackage(fields[i].getTypeSignature(), pkgs, type, binary, subMonitor.split(1));
+			}
 		}
 		addPackage(type.getSuperclassTypeSignature(), pkgs, type, binary, subMonitor.split(1));
 		addPackages(type.getSuperInterfaceTypeSignatures(), pkgs, type, binary, subMonitor.split(1));
@@ -160,10 +166,12 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 
 	protected final void addPackage(String typeSignature, Set<String> pkgs, IType type, boolean binary,
 			IProgressMonitor monitor) throws JavaModelException {
-		if (typeSignature == null)
+		if (typeSignature == null) {
 			return;
-		if (binary)
+		}
+		if (binary) {
 			typeSignature = typeSignature.replace('/', '.');
+		}
 		// if typeSignature contains a '.', test to see if it is a subClass first.  If not, assume it is a fully qualified name
 		if (typeSignature.indexOf('.') != -1) {
 			try {
@@ -183,21 +191,24 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 		} else {
 			String typeName = Signature.getSignatureSimpleName(typeSignature);
 			String[][] result = type.resolveType(typeName);
-			if (result != null)
+			if (result != null) {
 				pkgs.add(result[0][0]);
+			}
 		}
 	}
 
 	protected final void addPackages(String[] typeSignatures, Set<String> pkgs, IType type, boolean binary,
 			IProgressMonitor monitor) throws JavaModelException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, typeSignatures.length);
-		for (String typeSignature : typeSignatures)
+		for (String typeSignature : typeSignatures) {
 			addPackage(typeSignature, pkgs, type, binary, subMonitor.split(1));
+		}
 	}
 
 	protected void handleSetUsesDirectives(Map<String, HashSet<String>> pkgsAndUses) {
-		if (pkgsAndUses.isEmpty())
+		if (pkgsAndUses.isEmpty()) {
 			return;
+		}
 		setUsesDirectives(pkgsAndUses);
 	}
 
@@ -207,8 +218,9 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 		// header will not equal null b/c we would not get this far (ie. no exported packages so we would have returned earlier
 		ExportPackageObject[] pkgs = ((ExportPackageHeader) header).getPackages();
 		for (int i = 0; i < pkgs.length; i++) {
-			if (!pkgsAndUses.containsKey(pkgs[i].getName()))
+			if (!pkgsAndUses.containsKey(pkgs[i].getName())) {
 				continue;
+			}
 			String value = getDirectiveValue(pkgs[i].getName(), pkgsAndUses);
 			pkgs[i].setUsesDirective(value);
 		}
@@ -226,15 +238,17 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 				it.remove();
 				continue;
 			}
-			if (buffer == null)
+			if (buffer == null) {
 				buffer = new StringBuilder();
-			else
+			} else {
 				buffer.append(',');
+			}
 			buffer.append(usedPkgName);
 			it.remove();
 		}
-		if (usesPkgs.isEmpty())
+		if (usesPkgs.isEmpty()) {
 			pkgsAndUses.remove(pkgName);
+		}
 		return (buffer == null) ? null : buffer.toString();
 	}
 

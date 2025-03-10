@@ -49,18 +49,20 @@ public abstract class XMLUtil {
 	 */
 	public static IPluginObject getTopLevelParent(IDocumentRange range) {
 		IDocumentElementNode node = null;
-		if (range instanceof IDocumentAttributeNode)
+		if (range instanceof IDocumentAttributeNode) {
 			node = ((IDocumentAttributeNode) range).getEnclosingElement();
-		else if (range instanceof IDocumentTextNode)
+		} else if (range instanceof IDocumentTextNode) {
 			node = ((IDocumentTextNode) range).getEnclosingElement();
-		else if (range instanceof IPluginElement)
+		} else if (range instanceof IPluginElement) {
 			node = (IDocumentElementNode) range;
-		else if (range instanceof IPluginObject)
+		} else if (range instanceof IPluginObject) {
 			// not an attribute/text node/element -> return direct node
 			return (IPluginObject) range;
+		}
 
-		while (node != null && !(node instanceof IPluginExtension) && !(node instanceof IPluginExtensionPoint))
+		while (node != null && !(node instanceof IPluginExtension) && !(node instanceof IPluginExtensionPoint)) {
 			node = node.getParentNode();
+		}
 
 		return node != null ? (IPluginObject) node : null;
 	}
@@ -70,12 +72,15 @@ public abstract class XMLUtil {
 	}
 
 	public static boolean withinRange(IDocumentRange range, int offset) {
-		if (range instanceof IDocumentAttributeNode)
+		if (range instanceof IDocumentAttributeNode) {
 			return withinRange(((IDocumentAttributeNode) range).getValueOffset(), ((IDocumentAttributeNode) range).getValueLength(), offset);
-		if (range instanceof IDocumentElementNode)
+		}
+		if (range instanceof IDocumentElementNode) {
 			return withinRange(range.getOffset(), range.getLength(), offset);
-		if (range instanceof IDocumentTextNode)
+		}
+		if (range instanceof IDocumentTextNode) {
 			return withinRange(range.getOffset(), range.getLength(), offset);
+		}
 		return false;
 	}
 
@@ -87,33 +92,38 @@ public abstract class XMLUtil {
 	public static ISchemaElement getSchemaElement(IDocumentElementNode node, String extensionPoint) {
 		if (extensionPoint == null) {
 			IPluginObject obj = getTopLevelParent(node);
-			if (!(obj instanceof IPluginExtension))
+			if (!(obj instanceof IPluginExtension)) {
 				return null;
+			}
 			extensionPoint = ((IPluginExtension) obj).getPoint();
 		}
 		ISchema schema = PDECore.getDefault().getSchemaRegistry().getSchema(extensionPoint);
-		if (schema == null)
+		if (schema == null) {
 			return null;
+		}
 
 		// Bug 213457 - look up elements based on the schema in which the parent is found
-		if (schema.getIncludes().length == 0 || "extension".equals(node.getXMLTagName())) //$NON-NLS-1$
+		if (schema.getIncludes().length == 0 || "extension".equals(node.getXMLTagName())) { //$NON-NLS-1$
 			return schema.findElement(node.getXMLTagName());
+		}
 
 		// if element is not "extension" & has multiple sub-schemas,
 		// Then search for the element in the same schema in which the parent element if found.
 		ArrayDeque<String> stack = new ArrayDeque<>();
 		while (node != null) {
 			String tagName = node.getXMLTagName();
-			if ("extension".equals(tagName)) //$NON-NLS-1$
+			if ("extension".equals(tagName)) { //$NON-NLS-1$
 				break;
+			}
 			stack.push(node.getXMLTagName());
 			node = node.getParentNode();
 		}
 		ISchemaElement element = null;
 		while (!stack.isEmpty()) {
 			element = schema.findElement(stack.pop());
-			if (element == null)
+			if (element == null) {
 				return null;
+			}
 			schema = element.getSchema();
 		}
 		return element;
@@ -126,8 +136,9 @@ public abstract class XMLUtil {
 	 */
 	public static ISchemaAttribute getSchemaAttribute(IDocumentAttributeNode attr, String extensionPoint) {
 		ISchemaElement ele = getSchemaElement(attr.getEnclosingElement(), extensionPoint);
-		if (ele == null)
+		if (ele == null) {
 			return null;
+		}
 
 		return ele.getAttribute(attr.getAttributeName());
 	}
@@ -151,10 +162,12 @@ public abstract class XMLUtil {
 		} else {
 			className = expectedType;
 			int dotLoc = className.lastIndexOf('.');
-			if (dotLoc != -1)
+			if (dotLoc != -1) {
 				className = className.substring(dotLoc + 1);
-			if (className.length() > 2 && className.charAt(0) == 'I' && Character.isUpperCase(className.charAt(1)))
+			}
+			if (className.length() > 2 && className.charAt(0) == 'I' && Character.isUpperCase(className.charAt(1))) {
 				className = className.substring(1);
+			}
 		}
 		String packageName = createDefaultPackageName(project, className);
 		className += counter;
@@ -172,15 +185,17 @@ public abstract class XMLUtil {
 	public static String createDefaultPackageName(IProject project, String className) {
 		String id = project.getName().toLowerCase(Locale.ENGLISH);
 		IStatus status = JavaConventions.validatePackageName(id, PDEJavaHelper.getJavaSourceLevel(project), PDEJavaHelper.getJavaComplianceLevel(project));
-		if (status.getSeverity() == IStatus.ERROR)
+		if (status.getSeverity() == IStatus.ERROR) {
 			return className.toLowerCase(Locale.ENGLISH);
+		}
 
 		return id;
 	}
 
 	public static String createDefaultName(IProject project, ISchemaAttribute attInfo, int counter) {
-		if (attInfo.getType().getName().equals("boolean")) //$NON-NLS-1$
+		if (attInfo.getType().getName().equals("boolean")) { //$NON-NLS-1$
 			return "true"; //$NON-NLS-1$
+		}
 
 		String tag = attInfo.getParent().getName();
 		return project.getName() + "." + tag + counter; //$NON-NLS-1$
@@ -192,8 +207,9 @@ public abstract class XMLUtil {
 		Integer counter = counters.get(counterKey);
 		if (counter == null) {
 			counter = Integer.valueOf(1);
-		} else
+		} else {
 			counter = Integer.valueOf(counter.intValue() + 1);
+		}
 		counters.put(counterKey, counter);
 		return counter.intValue();
 	}

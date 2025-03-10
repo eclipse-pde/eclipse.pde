@@ -131,8 +131,9 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
 		IDocument doc = viewer.getDocument();
 		int docLen = doc.getLength();
-		if (docLen == fDocLen)
+		if (docLen == fDocLen) {
 			return null; // left/right cursor has been pressed - cancel content assist
+		}
 
 		fDocLen = docLen;
 		IBaseModel model = getModel();
@@ -152,14 +153,16 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 			// when this happens --> reset it and reconcile
 			// how can we tell if we are looking at the wrong one... ?
 			boolean resetAndReconcile = false;
-			if (!(fRange instanceof IDocumentAttributeNode))
+			if (!(fRange instanceof IDocumentAttributeNode)) {
 				// too easy to reconcile.. this is temporary
 				resetAndReconcile = true;
+			}
 
 			if (resetAndReconcile) {
 				fRange = null;
-				if (model instanceof IReconcilingParticipant)
+				if (model instanceof IReconcilingParticipant) {
 					((IReconcilingParticipant) model).reconciled(doc);
+				}
 			}
 		}
 		// Get content assist text if any
@@ -197,19 +200,23 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 
 	private void assignRange(int offset) {
 		fRange = fSourcePage.getRangeElement(offset, true);
-		if (fRange == null)
+		if (fRange == null) {
 			return;
+		}
 		// if we are rigth AT (cursor before) the range, we want to contribute
 		// to its parent
 		if (fRange instanceof IDocumentAttributeNode) {
-			if (((IDocumentAttributeNode) fRange).getNameOffset() == offset)
+			if (((IDocumentAttributeNode) fRange).getNameOffset() == offset) {
 				fRange = ((IDocumentAttributeNode) fRange).getEnclosingElement();
+			}
 		} else if (fRange instanceof IDocumentElementNode) {
-			if (fRange.getOffset() == offset)
+			if (fRange.getOffset() == offset) {
 				fRange = ((IDocumentElementNode) fRange).getParentNode();
+			}
 		} else if (fRange instanceof IDocumentTextNode) {
-			if (fRange.getOffset() == offset)
+			if (fRange.getOffset() == offset) {
 				fRange = ((IDocumentTextNode) fRange).getEnclosingElement();
+			}
 		}
 	}
 
@@ -227,12 +234,14 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	}
 
 	private ICompletionProposal[] computeCompletionProposal(IDocumentAttributeNode attr, int offset, IDocument doc) {
-		if (offset < attr.getValueOffset())
+		if (offset < attr.getValueOffset()) {
 			return null;
+		}
 		int[] offests = new int[] {offset, offset, offset};
 		String[] guess = guessContentRequest(offests, doc, false);
-		if (guess == null)
+		if (guess == null) {
 			return null;
+		}
 //		String element = guess[0];
 //		String attribute = guess[1];
 		String attrValue = guess[2];
@@ -243,13 +252,15 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 				return computeExtPointAttrProposals(attr, offset, attrValue);
 			}
 			ISchemaAttribute sAttr = XMLUtil.getSchemaAttribute(attr, ((IPluginExtension) obj).getPoint());
-			if (sAttr == null)
+			if (sAttr == null) {
 				return null;
+			}
 
 			if (sAttr.getKind() == IMetaAttribute.JAVA) {
 				IResource resource = obj.getModel().getUnderlyingResource();
-				if (resource == null)
+				if (resource == null) {
 					return null;
+				}
 				// Revisit: NEW CODE HERE
 				ArrayList<Object> list = new ArrayList<>();
 				ICompletionProposal[] proposals = null;
@@ -271,23 +282,28 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 				String[] validAttributes = PDESchemaHelper.getValidAttributes(sAttr).keySet().toArray(new String[0]);
 				Arrays.sort(validAttributes);
 				ArrayList<VirtualSchemaObject> objs = new ArrayList<>(validAttributes.length);
-				for (String validAttribute : validAttributes)
+				for (String validAttribute : validAttributes) {
 					objs.add(new VirtualSchemaObject(validAttribute, null, F_ATTRIBUTE_ID_VALUE));
+				}
 				return computeAttributeProposal(attr, offset, attrValue, objs);
 			} else { // we have an IMetaAttribute.STRING kind
-				if (sAttr.getType() == null)
+				if (sAttr.getType() == null) {
 					return null;
+				}
 				ISchemaRestriction sRestr = (sAttr.getType()).getRestriction();
 				ArrayList<VirtualSchemaObject> objs = new ArrayList<>();
 				if (sRestr == null) {
 					ISchemaSimpleType type = sAttr.getType();
-					if (type != null && type.getName().equals("boolean")) //$NON-NLS-1$
+					if (type != null && type.getName().equals("boolean")) { //$NON-NLS-1$
 						objs = F_V_BOOLS;
+					}
 				} else {
 					Object[] restrictions = sRestr.getChildren();
-					for (Object restriction : restrictions)
-						if (restriction instanceof ISchemaObject)
+					for (Object restriction : restrictions) {
+						if (restriction instanceof ISchemaObject) {
 							objs.add(new VirtualSchemaObject(((ISchemaObject) restriction).getName(), null, F_ATTRIBUTE_VALUE));
+						}
+					}
 				}
 				return computeAttributeProposal(attr, offset, attrValue, objs);
 			}
@@ -380,11 +396,13 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	}
 
 	private ICompletionProposal[] computeAttributeProposal(IDocumentAttributeNode attr, int offset, String currValue, List<VirtualSchemaObject> validValues) {
-		if (validValues == null)
+		if (validValues == null) {
 			return null;
+		}
 		ArrayList<ISchemaObject> list = new ArrayList<>();
-		for (int i = 0; i < validValues.size(); i++)
+		for (int i = 0; i < validValues.size(); i++) {
 			addToList(list, currValue, validValues.get(i));
+		}
 
 		return convertListToProposal(list, attr, offset);
 	}
@@ -402,26 +420,31 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	private int determineAssistType(IDocumentElementNode node, IDocument doc, int offset) {
 		int len = node.getLength();
 		int off = node.getOffset();
-		if (len == -1 || off == -1)
+		if (len == -1 || off == -1) {
 			return F_NO_ASSIST;
+		}
 
 		offset = offset - off; // look locally
 		if (offset > node.getXMLTagName().length() + 1) {
 			try {
 				String eleValue = doc.get(off, len);
 				int ind = eleValue.indexOf('>');
-				if (ind > 0 && eleValue.charAt(ind - 1) == '/')
+				if (ind > 0 && eleValue.charAt(ind - 1) == '/') {
 					ind -= 1;
+				}
 				if (offset <= ind) {
-					if (canInsertAttrib(eleValue, offset))
+					if (canInsertAttrib(eleValue, offset)) {
 						return F_ADD_ATTRIB;
+					}
 					return F_NO_ASSIST;
 				}
 				ind = eleValue.lastIndexOf('<');
-				if (ind == 0 && offset == len - 1)
+				if (ind == 0 && offset == len - 1) {
 					return F_OPEN_TAG; // childless node - check if it can be cracked open
-				if (ind + 1 < len && eleValue.charAt(ind + 1) == '/' && offset <= ind)
+				}
+				if (ind + 1 < len && eleValue.charAt(ind + 1) == '/' && offset <= ind) {
 					return F_ADD_CHILD;
+				}
 			} catch (BadLocationException e) {
 			}
 		}
@@ -467,19 +490,22 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		IPluginObject obj = XMLUtil.getTopLevelParent(node);
 		if (obj instanceof IPluginExtension) {
 			ISchemaElement sElem = XMLUtil.getSchemaElement(node, ((IPluginExtension) obj).getPoint());
-			if (sElem == null)
+			if (sElem == null) {
 				return null;
+			}
 			ISchemaCompositor comp = ((ISchemaComplexType) sElem.getType()).getCompositor();
-			if (comp != null)
+			if (comp != null) {
 				return new ICompletionProposal[] {new XMLCompletionProposal(node, null, offset, this)};
+			}
 		}
 		return null;
 	}
 
 	private ICompletionProposal[] computeAddAttributeProposal(int type, IDocumentElementNode node, int offset, IDocument doc, String filter, String tag) {
 		String nodeName = tag;
-		if (nodeName == null && node != null)
+		if (nodeName == null && node != null) {
 			nodeName = node.getXMLTagName();
+		}
 		if (type == F_EXTENSION || node instanceof IPluginExtension) {
 			ISchemaElement sElem = XMLUtil.getSchemaElement(node, node != null ? ((IPluginExtension) node).getPoint() : null);
 			ISchemaObject[] sAttrs = sElem != null ? sElem.getAttributes() : new ISchemaObject[] {new VirtualSchemaObject(IIdentifiable.P_ID, PDEUIMessages.XMLContentAssistProcessor_extId, F_ATTRIBUTE), new VirtualSchemaObject(IPluginObject.P_NAME, PDEUIMessages.XMLContentAssistProcessor_extName, F_ATTRIBUTE), new VirtualSchemaObject(IPluginExtension.P_POINT, PDEUIMessages.XMLContentAssistProcessor_extPoint, F_ATTRIBUTE)};
@@ -499,25 +525,29 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	}
 
 	private void addToList(ArrayList<ISchemaObject> list, String filter, ISchemaObject object) {
-		if (object == null)
+		if (object == null) {
 			return;
-		if (filter == null || filter.length() == 0)
+		}
+		if (filter == null || filter.length() == 0) {
 			list.add(object);
-		else {
+		} else {
 			String name = object.getName();
-			if (filter.regionMatches(true, 0, name, 0, filter.length()))
+			if (filter.regionMatches(true, 0, name, 0, filter.length())) {
 				list.add(object);
+			}
 		}
 	}
 
 	private ICompletionProposal[] computeBrokenModelProposal(IDocumentElementNode parent, int offset, IDocument doc) {
-		if (parent == null)
+		if (parent == null) {
 			return null;
+		}
 
 		int[] offArr = new int[] {offset, offset, offset};
 		String[] guess = guessContentRequest(offArr, doc, true);
-		if (guess == null)
+		if (guess == null) {
 			return null;
+		}
 
 		int elRepOffset = offArr[0];
 		int atRepOffset = offArr[1];
@@ -529,30 +559,37 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		IPluginObject obj = XMLUtil.getTopLevelParent(parent);
 		if (obj instanceof IPluginExtension) {
 			String point = ((IPluginExtension) obj).getPoint();
-			if (attr == null)
+			if (attr == null) {
 				// search for element proposals
 				return computeAddChildProposal(parent, elRepOffset, doc, element);
+			}
 
 			ISchemaElement sEle = XMLUtil.getSchemaElement(parent, point);
-			if (sEle == null)
+			if (sEle == null) {
 				return null;
+			}
 			sEle = sEle.getSchema().findElement(element);
-			if (sEle == null)
+			if (sEle == null) {
 				return null;
+			}
 
-			if (attr.indexOf('=') != -1)
+			if (attr.indexOf('=') != -1) {
 				// search for attribute content proposals
 				return computeBrokenModelAttributeContentProposal(parent, atValRepOffest, element, attr, attVal);
+			}
 
 			// search for attribute proposals
 			return computeAttributeProposals(sEle.getAttributes(), null, atRepOffset, attr, element);
 		} else if (parent instanceof IPluginBase) {
-			if (attr == null)
+			if (attr == null) {
 				return computeAddChildProposal(parent, elRepOffset, doc, element);
-			if (element.equalsIgnoreCase(F_STR_EXT))
+			}
+			if (element.equalsIgnoreCase(F_STR_EXT)) {
 				return computeAddAttributeProposal(F_EXTENSION, null, atRepOffset, doc, attr, F_STR_EXT);
-			if (element.equalsIgnoreCase(F_STR_EXT_PT))
+			}
+			if (element.equalsIgnoreCase(F_STR_EXT_PT)) {
 				return computeAddAttributeProposal(F_EXTENSION_POINT, null, atRepOffset, doc, attr, F_STR_EXT_PT);
+			}
 		}
 		return null;
 	}
@@ -579,8 +616,9 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 					quoteCount += 1;
 					nodeBuffer.setLength(0);
 					attrBuffer.setLength(0);
-					if (attVal != null) // ran into 2nd quotation mark, we are out of range
+					if (attVal != null) { // ran into 2nd quotation mark, we are out of range
 						continue;
+					}
 					offset[2] = offset[0];
 					attVal = attrValBuffer.toString();
 				} else if (Character.isWhitespace(c)) {
@@ -588,8 +626,9 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 					if (attr == null) {
 						offset[1] = offset[0];
 						int attBuffLen = attrBuffer.length();
-						if (attBuffLen > 0 && attrBuffer.charAt(attBuffLen - 1) == '=')
+						if (attBuffLen > 0 && attrBuffer.charAt(attBuffLen - 1) == '=') {
 							attrBuffer.setLength(attBuffLen - 1);
+						}
 						attr = attrBuffer.toString();
 					}
 				} else if (c == '<') {
@@ -606,13 +645,15 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 			}
 		} catch (BadLocationException e) {
 		}
-		if (node == null)
+		if (node == null) {
 			return null;
+		}
 
-		if (quoteCount % 2 == 0)
+		if (quoteCount % 2 == 0) {
 			attVal = null;
-		else if (brokenModel)
+		} else if (brokenModel) {
 			return null; // open quotes - don't provide assist
+		}
 
 		return new String[] {node, attr, attVal};
 	}
@@ -623,8 +664,9 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 
 	protected ITextSelection getCurrentSelection() {
 		ISelection sel = fSourcePage.getSelectionProvider().getSelection();
-		if (sel instanceof ITextSelection)
+		if (sel instanceof ITextSelection) {
 			return (ITextSelection) sel;
+		}
 		return null;
 	}
 
@@ -633,30 +675,37 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	}
 
 	private ICompletionProposal[] computeAttributeProposals(ISchemaObject[] sAttrs, IDocumentElementNode node, int offset, String filter, String parentName) {
-		if (sAttrs == null || sAttrs.length == 0)
+		if (sAttrs == null || sAttrs.length == 0) {
 			return null;
+		}
 		IDocumentAttributeNode[] attrs = node != null ? node.getNodeAttributes() : new IDocumentAttributeNode[0];
 
 		ArrayList<ISchemaObject> list = new ArrayList<>();
 		for (ISchemaObject attr : sAttrs) {
 			int k; // if we break early we wont add
-			for (k = 0; k < attrs.length; k++)
-				if (attrs[k].getAttributeName().equals(attr.getName()))
+			for (k = 0; k < attrs.length; k++) {
+				if (attrs[k].getAttributeName().equals(attr.getName())) {
 					break;
-			if (k == attrs.length)
+				}
+			}
+			if (k == attrs.length) {
 				addToList(list, filter, attr);
+			}
 		}
-		if (filter != null && filter.length() == 0)
+		if (filter != null && filter.length() == 0) {
 			list.add(0, new VirtualSchemaObject(parentName, null, F_CLOSE_TAG));
+		}
 		return convertListToProposal(list, node, offset);
 	}
 
 	private ICompletionProposal[] convertListToProposal(ArrayList<ISchemaObject> list, IDocumentRange range, int offset) {
 		ICompletionProposal[] proposals = new ICompletionProposal[list.size()];
-		if (proposals.length == 0)
+		if (proposals.length == 0) {
 			return null;
-		for (int i = 0; i < proposals.length; i++)
+		}
+		for (int i = 0; i < proposals.length; i++) {
 			proposals[i] = new XMLCompletionProposal(range, list.get(i), offset, this);
+		}
 		return proposals;
 	}
 
@@ -822,9 +871,11 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	}
 
 	public void dispose() {
-		for (int i = 0; i < fImages.length; i++)
-			if (fImages[i] != null && !fImages[i].isDisposed())
+		for (int i = 0; i < fImages.length; i++) {
+			if (fImages[i] != null && !fImages[i].isDisposed()) {
 				fImages[i].dispose();
+			}
+		}
 	}
 
 	public PDESourcePage getSourcePage() {

@@ -51,8 +51,9 @@ public abstract class AbstractLaunchShortcut implements ILaunchShortcut {
 	 */
 	protected void launch(String mode) {
 		ILaunchConfiguration configuration = findLaunchConfiguration(mode);
-		if (configuration != null)
+		if (configuration != null) {
 			DebugUITools.launch(configuration, mode);
+		}
 	}
 
 	/**

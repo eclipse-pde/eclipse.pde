@@ -81,8 +81,9 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 	protected void addListeners() {
 		if (isBundle()) {
 			IBundleModel model = getBundle().getModel();
-			if (model != null)
+			if (model != null) {
 				model.addModelChangedListener(this);
+			}
 		}
 		super.addListeners();
 	}
@@ -91,8 +92,9 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 	protected void removeListeners() {
 		if (isBundle()) {
 			IBundleModel model = getBundle().getModel();
-			if (model != null)
+			if (model != null) {
 				model.removeModelChangedListener(this);
+			}
 		}
 		super.removeListeners();
 	}
@@ -107,10 +109,12 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 			LazyStartHeader[] headers = getLazyStartHeaders();
 			// must block the refresh otherwise we have problems with multiple activation headers.
 			fBlockListener = true;
-			for (LazyStartHeader header : headers)
+			for (LazyStartHeader header : headers) {
 				header.setLazyStart(fLazyStart.getSelection());
-			if (headers.length == 0)
+			}
+			if (headers.length == 0) {
 				getBundle().setHeader(getLazyStartHeaderName(), getLazyStateHeaderValue(fLazyStart.getSelection()));
+			}
 			fBlockListener = false;
 		}));
 	}
@@ -134,8 +138,9 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 				String value = fClassEntry.getValue();
 				IProject project = getPage().getPDEEditor().getCommonProject();
 				value = PDEJavaHelperUI.createClass(value, project, createJavaAttributeValue(), false);
-				if (value != null)
+				if (value != null) {
 					fClassEntry.setValue(value);
+				}
 			}
 
 			@Override
@@ -153,8 +158,9 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 	private void doOpenSelectionDialog(String className) {
 		IResource resource = getPluginBase().getModel().getUnderlyingResource();
 		String type = PDEJavaHelperUI.selectType(resource, IJavaElementSearchConstants.CONSIDER_CLASSES, className, null);
-		if (type != null)
+		if (type != null) {
 			fClassEntry.setValue(type);
+		}
 	}
 
 	private JavaAttributeValue createJavaAttributeValue() {
@@ -177,8 +183,9 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 
 	@Override
 	public void refresh() {
-		if (fBlockListener)
+		if (fBlockListener) {
 			return;
+		}
 		// if we are refactoring, the Manifest moves before the editor closes.  This could cause the model to be null on a refresh()
 		if (getPage().getModel() instanceof IPluginModelBase model) {
 			IPlugin plugin = (IPlugin) model.getPluginBase();
@@ -203,8 +210,9 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 			String[] keys = new String[] {ICoreConstants.ECLIPSE_LAZYSTART, ICoreConstants.ECLIPSE_AUTOSTART, Constants.BUNDLE_ACTIVATIONPOLICY};
 			for (String key : keys) {
 				IManifestHeader header = bundle.getManifestHeader(key);
-				if (header != null)
+				if (header != null) {
 					headers.add(header);
+				}
 			}
 		}
 		return headers.toArray(new LazyStartHeader[headers.size()]);
@@ -216,29 +224,34 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 		IManifestHeader header = null;
 		if (bundle instanceof Bundle) {
 			double targetVersion = TargetPlatformHelper.getTargetVersion();
-			if (targetVersion >= 3.3)
+			if (targetVersion >= 3.3) {
 				header = bundle.getManifestHeader(Constants.BUNDLE_ACTIVATIONPOLICY);
-			if (header == null && targetVersion >= 3.2)
+			}
+			if (header == null && targetVersion >= 3.2) {
 				header = bundle.getManifestHeader(ICoreConstants.ECLIPSE_LAZYSTART);
-			if (header == null)
+			}
+			if (header == null) {
 				header = bundle.getManifestHeader(ICoreConstants.ECLIPSE_AUTOSTART);
+			}
 		}
 		return header;
 	}
 
 	private String getLazyStartHeaderName() {
 		if (BundlePluginBase.getBundleManifestVersion(getBundle()) >= 2) {
-			if (TargetPlatformHelper.getTargetVersion() >= 3.4)
+			if (TargetPlatformHelper.getTargetVersion() >= 3.4) {
 				return Constants.BUNDLE_ACTIVATIONPOLICY;
-			else if (TargetPlatformHelper.getTargetVersion() >= 3.2)
+			} else if (TargetPlatformHelper.getTargetVersion() >= 3.2) {
 				return ICoreConstants.ECLIPSE_LAZYSTART;
+			}
 		}
 		return ICoreConstants.ECLIPSE_AUTOSTART;
 	}
 
 	private String getLazyStateHeaderValue(boolean lazyStart) {
-		if (BundlePluginBase.getBundleManifestVersion(getBundle()) >= 2 && TargetPlatformHelper.getTargetVersion() >= 3.4)
+		if (BundlePluginBase.getBundleManifestVersion(getBundle()) >= 2 && TargetPlatformHelper.getTargetVersion() >= 3.4) {
 			return lazyStart ? Constants.ACTIVATION_LAZY : null;
+		}
 		return Boolean.toString(lazyStart);
 	}
 

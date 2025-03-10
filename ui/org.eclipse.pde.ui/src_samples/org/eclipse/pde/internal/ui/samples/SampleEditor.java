@@ -85,8 +85,9 @@ public class SampleEditor extends EditorPart {
 			IResource resource = delta.getResource();
 			if (resource instanceof IFile file) {
 				if (file.equals(((IFileEditorInput) getEditorInput()).getFile())) {
-					if (delta.getKind() == IResourceDelta.REMOVED || delta.getKind() == IResourceDelta.REPLACED)
+					if (delta.getKind() == IResourceDelta.REMOVED || delta.getKind() == IResourceDelta.REPLACED) {
 						close();
+					}
 					return false;
 				}
 			}
@@ -162,8 +163,9 @@ public class SampleEditor extends EditorPart {
 		final ISelection selection;
 		if (target != null) {
 			selection = new StructuredSelection();
-		} else
+		} else {
 			selection = new StructuredSelection();
+		}
 		final ILaunchShortcut fshortcut = shortcut;
 		BusyIndicator.showWhile(form.getDisplay(),
 				() -> fshortcut.launch(selection, debug ? ILaunchManager.DEBUG_MODE : ILaunchManager.RUN_MODE));

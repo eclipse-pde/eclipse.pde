@@ -108,18 +108,20 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 			Object item = selection.getFirstElement();
 			if (item instanceof IBuildEntry) {
 				update((IBuildEntry) item);
-			} else if (selection.isEmpty())
+			} else if (selection.isEmpty()) {
 				update(null);
+			}
 			updateDirectionalButtons();
 		}
 
 		@Override
 		public void handleDoubleClick(IStructuredSelection selection) {
 			Object element = selection.getFirstElement();
-			if (getLibrarySelection() == element)
+			if (getLibrarySelection() == element) {
 				doRename();
-			else if (element instanceof String)
+			} else if (element instanceof String) {
 				handleRenameFolder((String) element);
+			}
 		}
 
 		@Override
@@ -130,10 +132,11 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 					case F_UP_UNDEX -> updateJarsCompileOrder(true);
 					case F_DOWN_INDEX -> updateJarsCompileOrder(false);
 				}
-			} else if (getViewer() == fFolderPart.getViewer() && index == F_NEW_INDEX)
+			} else if (getViewer() == fFolderPart.getViewer() && index == F_NEW_INDEX) {
 				handleNewFolder();
-			else
+			} else {
 				button.getShell().setDefaultButton(null);
+			}
 		}
 	}
 
@@ -145,19 +148,23 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 				IBuild build = ((IBuildModel) parent).getBuild();
 				IBuildEntry jarOrderEntry = build.getEntry(PROPERTY_JAR_ORDER);
 				IBuildEntry[] libraries = BuildUtil.getBuildLibraries(build.getBuildEntries());
-				if (jarOrderEntry == null)
+				if (jarOrderEntry == null) {
 					return libraries;
+				}
 
 				ArrayList<org.eclipse.pde.core.build.IBuildEntry> libList = new ArrayList<>();
 				String[] tokens = jarOrderEntry.getTokens();
 				for (String token : tokens) {
 					IBuildEntry entry = build.getEntry(IBuildEntry.JAR_PREFIX + token);
-					if (entry != null)
+					if (entry != null) {
 						libList.add(entry);
+					}
 				}
-				for (int i = 0; i < libraries.length; i++)
-					if (!libList.contains(libraries[i]))
+				for (int i = 0; i < libraries.length; i++) {
+					if (!libList.contains(libraries[i])) {
 						libList.add(libraries[i]);
+					}
+				}
 				return libList.toArray();
 			}
 			return new Object[0];
@@ -168,8 +175,9 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 		@Override
 		public String getColumnText(Object obj, int index) {
 			String name = ((IBuildEntry) obj).getName();
-			if (name.startsWith(IBuildEntry.JAR_PREFIX))
+			if (name.startsWith(IBuildEntry.JAR_PREFIX)) {
 				return name.substring(IBuildEntry.JAR_PREFIX.length());
+			}
 			return name;
 		}
 
@@ -184,9 +192,11 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 		@Override
 		public boolean hasChildren(Object element) {
 			Object[] children = getChildren(element);
-			for (Object child : children)
-				if (child instanceof IFolder)
+			for (Object child : children) {
+				if (child instanceof IFolder) {
 					return true;
+				}
+			}
 			return false;
 		}
 	}
@@ -221,8 +231,9 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 
 	private IBuildModel getBuildModel() {
 		InputContext context = getPage().getPDEEditor().getContextManager().findContext(BuildInputContext.CONTEXT_ID);
-		if (context == null)
+		if (context == null) {
 			return null;
+		}
 		return (IBuildModel) context.getModel();
 	}
 
@@ -231,13 +242,15 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 		IBuildEntry binIncl = model.getBuild().getEntry(PROPERTY_BIN_INCLUDES);
 		IProject project = model.getUnderlyingResource().getProject();
 		IPath libPath;
-		if (libName.equals(".")) //$NON-NLS-1$
+		if (libName.equals(".")) { //$NON-NLS-1$
 			libPath = null;
-		else
+		} else {
 			libPath = project.getFile(libName).getProjectRelativePath();
+		}
 		try {
-			if (binIncl == null && !isSelected)
+			if (binIncl == null && !isSelected) {
 				return;
+			}
 			if (binIncl == null) {
 				binIncl = model.getFactory().createEntry(PROPERTY_BIN_INCLUDES);
 				model.getBuild().add(binIncl);
@@ -253,15 +266,17 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 					} else if (parent.segmentCount() > 1) {
 						parent = parent.removeLastSegments(1);
 						parentPath = parent.toString() + IPath.SEPARATOR;
-						if (binIncl.contains(parentPath) && !project.exists(parent))
+						if (binIncl.contains(parentPath) && !project.exists(parent)) {
 							binIncl.removeToken(parentPath);
+						}
 					}
 				}
 			}
-			if (isSelected && !binIncl.contains(libName))
+			if (isSelected && !binIncl.contains(libName)) {
 				binIncl.addToken(libName);
-			else if (!isSelected && binIncl.contains(libName))
+			} else if (!isSelected && binIncl.contains(libName)) {
 				binIncl.removeToken(libName);
+			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
@@ -271,17 +286,20 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 	protected void addAllJarsToBinIncludes(IBuildEntry binIncl, IProject project, IBuildModel model) {
 		try {
 			IResource[] members = project.members();
-			for (int i = 0; i < members.length; i++)
-				if (!(members[i] instanceof IFolder) && members[i].getFileExtension().equals("jar")) //$NON-NLS-1$
+			for (int i = 0; i < members.length; i++) {
+				if (!(members[i] instanceof IFolder) && members[i].getFileExtension().equals("jar")) { //$NON-NLS-1$
 					binIncl.addToken(members[i].getName());
+				}
+			}
 
 			IBuildEntry[] libraries = BuildUtil.getBuildLibraries(model.getBuild().getBuildEntries());
 			if (libraries.length != 0) {
 				for (IBuildEntry library : libraries) {
 					String libraryName = library.getName().substring(7);
 					IPath path = project.getFile(libraryName).getProjectRelativePath();
-					if (path.segmentCount() == 1 && !binIncl.contains(libraryName))
+					if (path.segmentCount() == 1 && !binIncl.contains(libraryName)) {
 						binIncl.addToken(libraryName);
+					}
 				}
 			}
 			binIncl.removeToken("*.jar"); //$NON-NLS-1$
@@ -295,10 +313,12 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 		try {
 			while (iter.hasNext()) {
 				String outputFolder = iter.next().toString();
-				if (!outputFolder.endsWith("" + IPath.SEPARATOR)) //$NON-NLS-1$
+				if (!outputFolder.endsWith("" + IPath.SEPARATOR)) { //$NON-NLS-1$
 					outputFolder = outputFolder.concat("" + IPath.SEPARATOR); //$NON-NLS-1$
-				if (!outputEntry.contains(outputFolder.toString()))
+				}
+				if (!outputEntry.contains(outputFolder.toString())) {
 					outputEntry.addToken(outputFolder.toString());
+				}
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
@@ -313,9 +333,11 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 			if (project.hasNature(JavaCore.NATURE_ID)) {
 				IJavaProject jProject = JavaCore.create(project);
 				IPackageFragmentRoot[] roots = jProject.getPackageFragmentRoots();
-				for (IPackageFragmentRoot fragmentRoot : roots)
-					if (fragmentRoot.getKind() == IPackageFragmentRoot.K_SOURCE)
+				for (IPackageFragmentRoot fragmentRoot : roots) {
+					if (fragmentRoot.getKind() == IPackageFragmentRoot.K_SOURCE) {
 						folders.add(fragmentRoot);
+					}
+				}
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
@@ -466,36 +488,43 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 		String oldName = entry.getName().substring(7);
 
 		try {
-			if (newValue.equals(entry.getName()))
+			if (newValue.equals(entry.getName())) {
 				return;
-			if (!newValue.startsWith(IBuildEntry.JAR_PREFIX))
+			}
+			if (!newValue.startsWith(IBuildEntry.JAR_PREFIX)) {
 				newValue = IBuildEntry.JAR_PREFIX + newValue;
+			}
 			if (!newValue.endsWith(".jar") && //$NON-NLS-1$
 					!newValue.endsWith("/") && //$NON-NLS-1$
-					!newValue.equals(IBuildEntry.JAR_PREFIX + ".")) //$NON-NLS-1$
+					!newValue.equals(IBuildEntry.JAR_PREFIX + ".")) { //$NON-NLS-1$
 				newValue += "/"; //$NON-NLS-1$
+			}
 
 			String newName = newValue.substring(7);
 
 			// jars.compile.order
 			IBuildEntry tempEntry = build.getEntry(PROPERTY_JAR_ORDER);
-			if (tempEntry != null && tempEntry.contains(oldName))
+			if (tempEntry != null && tempEntry.contains(oldName)) {
 				tempEntry.renameToken(oldName, newName);
+			}
 
 			// output.{source folder}.jar
 			tempEntry = build.getEntry(PROPERTY_OUTPUT_PREFIX + oldName);
-			if (tempEntry != null)
+			if (tempEntry != null) {
 				tempEntry.setName(PROPERTY_OUTPUT_PREFIX + newName);
+			}
 
 			// bin.includes
 			tempEntry = build.getEntry(PROPERTY_BIN_INCLUDES);
-			if (tempEntry != null && tempEntry.contains(oldName))
+			if (tempEntry != null && tempEntry.contains(oldName)) {
 				tempEntry.renameToken(oldName, newName);
+			}
 
 			// bin.excludes
 			tempEntry = build.getEntry(PROPERTY_BIN_EXCLUDES);
-			if (tempEntry != null && tempEntry.contains(oldName))
+			if (tempEntry != null && tempEntry.contains(oldName)) {
 				tempEntry.renameToken(oldName, newName);
+			}
 
 			// rename
 			entry.setName(newValue);
@@ -515,10 +544,11 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 	@Override
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
-			if (fEnabled && fLibraryViewer.getControl().isFocusControl())
+			if (fEnabled && fLibraryViewer.getControl().isFocusControl()) {
 				handleDelete();
-			else if (fEnabled)
+			} else if (fEnabled) {
 				handleDeleteFolder();
+			}
 			return true;
 		}
 		return false;
@@ -531,33 +561,38 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 			String oldName = entry.getName().substring(7);
 			RenameDialog dialog = new RenameDialog(fLibraryViewer.getControl().getShell(), true, getLibraryNames(), oldName);
 			dialog.setInputValidator(newText -> {
-				if (newText.indexOf(' ') != -1)
+				if (newText.indexOf(' ') != -1) {
 					return PDEUIMessages.AddLibraryDialog_nospaces;
+				}
 				return null;
 			});
 			dialog.create();
 			dialog.setTitle(PDEUIMessages.RuntimeInfoSection_rename);
 			dialog.getShell().setSize(300, 150);
-			if (dialog.open() == Window.OK)
+			if (dialog.open() == Window.OK) {
 				entryModified(entry, dialog.getNewName());
+			}
 		}
 	}
 
 	@Override
 	public void dispose() {
 		IBuildModel buildModel = getBuildModel();
-		if (buildModel != null)
+		if (buildModel != null) {
 			buildModel.removeModelChangedListener(this);
+		}
 		super.dispose();
 	}
 
 	private void refreshOutputKeys() {
-		if (!isJavaProject())
+		if (!isJavaProject()) {
 			return;
+		}
 
 		IBuildEntry buildEntry = getLibrarySelection();
-		if (buildEntry == null)
+		if (buildEntry == null) {
 			return;
+		}
 		Set<String> outputFolders = new HashSet<>();
 		String[] jarFolders = buildEntry.getTokens();
 		IPackageFragmentRoot[] sourceFolders = computeSourceFolders();
@@ -605,21 +640,24 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 
 	private boolean isReadOnly() {
 		IBuildModel model = getBuildModel();
-		if (model instanceof IEditable)
+		if (model instanceof IEditable) {
 			return !((IEditable) model).isEditable();
+		}
 		return true;
 	}
 
 	private void update(IBuildEntry variable) {
 		int index = 0;
-		if (fFolderViewer.getInput() == variable)
+		if (fFolderViewer.getInput() == variable) {
 			index = fFolderViewer.getTable().getSelectionIndex();
+		}
 
 		fFolderViewer.setInput(variable);
 		int count = fFolderViewer.getTable().getItemCount();
 		if (index != -1 && count > 0) {
-			if (index == count)
+			if (index == count) {
 				index = index - 1;
+			}
 			fFolderViewer.getTable().select(index);
 		}
 		fFolderPart.setButtonEnabled(F_NEW_INDEX, !isReadOnly() && fEnabled && variable != null);
@@ -634,8 +672,9 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 
 	protected String[] getLibraryNames() {
 		String[] libNames = new String[fLibraryViewer.getTable().getItemCount()];
-		for (int i = 0; i < libNames.length; i++)
+		for (int i = 0; i < libNames.length; i++) {
 			libNames[i] = fLibraryViewer.getTable().getItem(i).getText();
+		}
 		return libNames;
 	}
 
@@ -656,17 +695,21 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 					String name = dialog.getNewName();
 					if (!name.endsWith(".jar") //$NON-NLS-1$
 							&& !name.equals(".") //$NON-NLS-1$
-							&& !name.endsWith("/")) //$NON-NLS-1$
+							&& !name.endsWith("/")) { //$NON-NLS-1$
 						name += "/"; //$NON-NLS-1$
+					}
 
 					String keyName = name;
-					if (!keyName.startsWith(IBuildEntry.JAR_PREFIX))
+					if (!keyName.startsWith(IBuildEntry.JAR_PREFIX)) {
 						keyName = IBuildEntry.JAR_PREFIX + name;
-					if (name.startsWith(IBuildEntry.JAR_PREFIX))
+					}
+					if (name.startsWith(IBuildEntry.JAR_PREFIX)) {
 						name = name.substring(7);
+					}
 
-					if (!name.endsWith(".")) //$NON-NLS-1$
+					if (!name.endsWith(".")) { //$NON-NLS-1$
 						handleLibInBinBuild(true, name);
+					}
 
 					// add library to jars compile order
 					IBuildEntry jarOrderEntry = build.getEntry(PROPERTY_JAR_ORDER);
@@ -686,8 +729,9 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 
 						// remove and re-add all runtime libraries to compile order
 						String[] tokens = jarOrderEntry.getTokens();
-						for (String token : tokens)
+						for (String token : tokens) {
 							jarOrderEntry.removeToken(token);
+						}
 
 						for (int i2 = 0; i2 < numLib; i2++) {
 							String lib2 = ((IBuildEntry) fLibraryViewer.getElementAt(i2)).getName().substring(7);
@@ -710,9 +754,11 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 	}
 
 	private IPackageFragmentRoot getSourceFolder(String folderName, IPackageFragmentRoot[] sourceFolders) {
-		for (IPackageFragmentRoot sourceFolder : sourceFolders)
-			if (sourceFolder.getPath().removeFirstSegments(1).equals(IPath.fromOSString(folderName)))
+		for (IPackageFragmentRoot sourceFolder : sourceFolders) {
+			if (sourceFolder.getPath().removeFirstSegments(1).equals(IPath.fromOSString(folderName))) {
 				return sourceFolder;
+			}
+		}
 		return null;
 	}
 
@@ -740,8 +786,9 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 
 					// remove and re-add all runtime libraries to compile order
 					String[] tokens = entry.getTokens();
-					for (String token : tokens)
+					for (String token : tokens) {
 						entry.removeToken(token);
+					}
 
 					for (int i = 0; i < numLib; i++) {
 						Object element = fLibraryViewer.getElementAt(i);
@@ -757,18 +804,21 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 
 				// output.{source folder}.jar
 				entry = build.getEntry(PROPERTY_OUTPUT_PREFIX + libName);
-				if (entry != null)
+				if (entry != null) {
 					build.remove(entry);
+				}
 
 				// bin.includes
 				entry = build.getEntry(PROPERTY_BIN_INCLUDES);
-				if (entry != null && entry.contains(libName))
+				if (entry != null && entry.contains(libName)) {
 					entry.removeToken(libName);
+				}
 
 				// bin.excludes
 				entry = build.getEntry(PROPERTY_BIN_EXCLUDES);
-				if (entry != null && entry.contains(libName))
+				if (entry != null && entry.contains(libName)) {
 					entry.removeToken(libName);
+				}
 
 				String entryName = IBuildEntry.JAR_PREFIX + libName;
 				entry = build.getEntry(entryName);
@@ -783,11 +833,13 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 
 	private void handleDeleteFolder() {
 		Object object = fFolderViewer.getStructuredSelection().getFirstElement();
-		if (object == null)
+		if (object == null) {
 			return;
+		}
 		IBuildEntry entry = getLibrarySelection();
-		if (entry == null)
+		if (entry == null) {
 			return;
+		}
 		try {
 			entry.removeToken((String) object);
 		} catch (CoreException e) {
@@ -805,8 +857,9 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 		dialog.addFilter(new ViewerFilter() {
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				if (element instanceof IProject)
+				if (element instanceof IProject) {
 					return ((IProject) element).equals(project);
+				}
 				return element instanceof IFolder;
 			}
 		});
@@ -815,8 +868,9 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 		dialog.setMessage(message);
 
 		dialog.setValidator(selection -> {
-			if (selection == null || selection.length != 1 || !(selection[0] instanceof IFolder))
+			if (selection == null || selection.length != 1 || !(selection[0] instanceof IFolder)) {
 				return Status.error(""); //$NON-NLS-1$
+			}
 
 			String folderPath = ((IFolder) selection[0]).getProjectRelativePath().addTrailingSeparator().toString();
 			if (entry != null && entry.contains(folderPath)) {
@@ -825,8 +879,9 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 			return Status.OK_STATUS;
 		});
 
-		if (dialog.open() == Window.OK)
+		if (dialog.open() == Window.OK) {
 			return (IFolder) dialog.getFirstResult();
+		}
 		return null;
 	}
 
@@ -873,23 +928,26 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 				build.add(jarOrderEntry);
 			} else {
 				String tokens[] = jarOrderEntry.getTokens();
-				for (String token : tokens)
+				for (String token : tokens) {
 					jarOrderEntry.removeToken(token);
+				}
 			}
 
 			int numLib = fLibraryViewer.getTable().getItemCount();
 			String[] names = new String[numLib];
 			for (int i = 0; i < numLib; i++) {
 				String name = ((IBuildEntry) fLibraryViewer.getElementAt(i)).getName().substring(7);
-				if (name.equals(library1))
+				if (name.equals(library1)) {
 					name = library2;
-				else if (name.equals(library2))
+				} else if (name.equals(library2)) {
 					name = library1;
+				}
 				names[i] = name;
 			}
 
-			for (int i = 0; i < numLib; i++)
+			for (int i = 0; i < numLib; i++) {
 				jarOrderEntry.addToken(names[i]);
+			}
 
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
@@ -898,20 +956,24 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 
 	@Override
 	public void modelChanged(IModelChangedEvent event) {
-		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED)
+		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
+		}
 		Object changeObject = event.getChangedObjects()[0];
 		String keyName = event.getChangedProperty();
 
 		// check if model change applies to this section
-		if (!(changeObject instanceof IBuildEntry entry))
+		if (!(changeObject instanceof IBuildEntry entry)) {
 			return;
+		}
 		String entryName = entry.getName();
-		if (!entryName.startsWith(IBuildEntry.JAR_PREFIX) && !entryName.equals(PROPERTY_JAR_ORDER) && !entryName.equals(PROPERTY_BIN_INCLUDES))
+		if (!entryName.startsWith(IBuildEntry.JAR_PREFIX) && !entryName.equals(PROPERTY_JAR_ORDER) && !entryName.equals(PROPERTY_BIN_INCLUDES)) {
 			return;
+		}
 
-		if (entryName.equals(PROPERTY_BIN_INCLUDES))
+		if (entryName.equals(PROPERTY_BIN_INCLUDES)) {
 			return;
+		}
 
 		int type = event.getChangeType();
 
@@ -932,21 +994,24 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 				}
 			} else if (keyName != null && keyName.startsWith(IBuildEntry.JAR_PREFIX)) {
 				// modification to source.{libname}.jar
-				if (event.getOldValue() != null && event.getNewValue() != null)
+				if (event.getOldValue() != null && event.getNewValue() != null) {
 					// renaming token
 					fLibraryViewer.update(entry, null);
+				}
 
 				newSel = new StructuredSelection(entry);
 			}
 			fLibraryViewer.setSelection(newSel);
 		} else if (keyName != null && keyName.equals(PROPERTY_JAR_ORDER)) {
 			// account for change in jars compile order
-			if (event.getNewValue() == null && event.getOldValue() != null)
+			if (event.getNewValue() == null && event.getOldValue() != null) {
 				// removing token from jars compile order : do nothing
 				return;
-			if (event.getOldValue() != null && event.getNewValue() != null)
+			}
+			if (event.getOldValue() != null && event.getNewValue() != null) {
 				// renaming token from jars compile order : do nothing
 				return;
+			}
 
 			fLibraryViewer.refresh();
 			updateDirectionalButtons();

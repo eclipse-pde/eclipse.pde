@@ -79,8 +79,9 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 	protected void createSpecificControls(Composite parent, FormToolkit toolkit, IActionBars actionBars) {
 		createPluginIdEntry(parent, toolkit, actionBars);
 		createPluginVersionEntry(parent, toolkit, actionBars);
-		if (!isBundle())
+		if (!isBundle()) {
 			createMatchCombo(parent, toolkit, actionBars);
+		}
 		createSingleton(parent, toolkit, actionBars, PDEUIMessages.FragmentGeneralInfoSection_singleton);
 	}
 
@@ -317,22 +318,26 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 		} else {
 			fPluginMinVersionEntry.setValue(fragment.getPluginVersion(), true);
 		}
-		if (fMatchCombo != null)
+		if (fMatchCombo != null) {
 			fMatchCombo.select(fragment.getRule());
+		}
 		super.refresh();
 	}
 
 	protected String getAttribute(String header, String attribute) {
 		IBundle bundle = getBundle();
-		if (bundle == null)
+		if (bundle == null) {
 			return null;
+		}
 		String value = bundle.getHeader(header);
-		if (value == null)
+		if (value == null) {
 			return null;
+		}
 		try {
 			ManifestElement[] elements = ManifestElement.parseHeader(header, value);
-			if (elements.length > 0)
+			if (elements.length > 0) {
 				return elements[0].getAttribute(attribute);
+			}
 		} catch (BundleException e) {
 		}
 		return null;
@@ -349,18 +354,21 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 	private String getVersion() {
 		if (isBundle()) {
 			if (!fPluginMinVersionEntry.getValue().equals(fPluginMaxVersionEntry.getValue()) && fPluginMaxVersionEntry.getText().getEnabled()) {
-				if (fPluginMaxVersionEntry.getValue().length() == 0)
+				if (fPluginMaxVersionEntry.getValue().length() == 0) {
 					return fPluginMinVersionEntry.getValue();
+				}
 				String version;
-				if (fPluginMinVersionBound.getSelectionIndex() == 0)
+				if (fPluginMinVersionBound.getSelectionIndex() == 0) {
 					version = "["; //$NON-NLS-1$
-				else
+				} else {
 					version = "("; //$NON-NLS-1$
+				}
 				version += fPluginMinVersionEntry.getValue() + "," + fPluginMaxVersionEntry.getValue(); //$NON-NLS-1$
-				if (fPluginMaxVersionBound.getSelectionIndex() == 0)
+				if (fPluginMaxVersionBound.getSelectionIndex() == 0) {
 					version += "]"; //$NON-NLS-1$
-				else
+				} else {
 					version += ")"; //$NON-NLS-1$
+				}
 				return version;
 			}
 		}
@@ -400,8 +408,9 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 	protected void addListeners() {
 		if (isBundle()) {
 			IBundleModel model = getBundle().getModel();
-			if (model != null)
+			if (model != null) {
 				model.addModelChangedListener(this);
+			}
 		}
 		super.addListeners();
 	}
@@ -410,8 +419,9 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 	protected void removeListeners() {
 		if (isBundle()) {
 			IBundleModel model = getBundle().getModel();
-			if (model != null)
+			if (model != null) {
 				model.removeModelChangedListener(this);
+			}
 		}
 		super.removeListeners();
 	}

@@ -44,18 +44,21 @@ public abstract class KeyValueSourcePage extends PDEProjectionSourcePage {
 
 	public void setHighlightRange(IDocumentKey key) {
 		ISourceViewer sourceViewer = getSourceViewer();
-		if (sourceViewer == null)
+		if (sourceViewer == null) {
 			return;
+		}
 
 		IDocument document = sourceViewer.getDocument();
-		if (document == null)
+		if (document == null) {
 			return;
+		}
 
 		int offset = key.getOffset();
 		int length = key.getLength();
 
-		if (offset == -1 || length == -1)
+		if (offset == -1 || length == -1) {
 			return;
+		}
 		setHighlightRange(offset, length, true);
 		int nameLength = PropertiesUtil.createWritableName(key.getName()).length();
 		sourceViewer.setSelectedRange(offset, Math.min(nameLength, length));

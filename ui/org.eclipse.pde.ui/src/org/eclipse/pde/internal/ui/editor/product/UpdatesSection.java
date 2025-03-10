@@ -325,8 +325,9 @@ public class UpdatesSection extends TableSection {
 
 	private void clearEditors() {
 		Control oldEditor = fEnabledColumnEditor.getEditor();
-		if (oldEditor != null && !oldEditor.isDisposed())
+		if (oldEditor != null && !oldEditor.isDisposed()) {
 			oldEditor.dispose();
+		}
 
 	}
 
@@ -348,11 +349,13 @@ public class UpdatesSection extends TableSection {
 		// Identify the selected row
 		Table table = fRepositoryTable.getTable();
 		IStructuredSelection selection = fRepositoryTable.getStructuredSelection();
-		if (selection.isEmpty())
+		if (selection.isEmpty()) {
 			return;
+		}
 		final TableItem item = table.getSelection()[0];
-		if (item != null && !isEditable())
+		if (item != null && !isEditable()) {
 			return;
+		}
 
 		if (item != null) {
 			final IRepositoryInfo repo = (IRepositoryInfo) selection.getFirstElement();

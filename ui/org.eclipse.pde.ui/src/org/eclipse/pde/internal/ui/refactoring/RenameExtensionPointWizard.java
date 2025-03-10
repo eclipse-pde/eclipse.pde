@@ -36,10 +36,12 @@ public class RenameExtensionPointWizard extends RefactoringWizard {
 			protected String validateId(String id) {
 				String schemaVersion = fInfo.getBase().getPluginBase().getSchemaVersion();
 				if (schemaVersion == null || Float.parseFloat(schemaVersion) >= 3.2) {
-					if (!IdUtil.isValidCompositeID(id))
+					if (!IdUtil.isValidCompositeID(id)) {
 						return PDEUIMessages.BaseExtensionPointMainPage_invalidCompositeID;
-				} else if (!IdUtil.isValidSimpleID(id))
+					}
+				} else if (!IdUtil.isValidSimpleID(id)) {
 					return PDEUIMessages.BaseExtensionPointMainPage_invalidSimpleID;
+				}
 				return null;
 			}
 

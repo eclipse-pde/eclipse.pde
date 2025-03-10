@@ -102,10 +102,11 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	 */
 	protected TemplateOption addOption(String name, String label, String[][] choices, String value, int pageIndex) {
 		AbstractChoiceOption option;
-		if (choices.length == 2)
+		if (choices.length == 2) {
 			option = new RadioChoiceOption(this, name, label, choices);
-		else
+		} else {
 			option = new ComboChoiceOption(this, name, label, choices);
+		}
 		registerOption(option, value, pageIndex);
 		return option;
 	}
@@ -176,8 +177,9 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 		TemplateOption option = getOption(name);
 		if (option != null) {
 			// Only initialize options that have no value set
-			if (option.getValue() == null)
+			if (option.getValue() == null) {
 				option.setValue(value);
+			}
 		}
 	}
 
@@ -241,8 +243,9 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	 */
 	public void setOptionEnabled(String name, boolean enabled) {
 		TemplateOption option = options.get(name);
-		if (option != null)
+		if (option != null) {
 			option.setEnabled(enabled);
+		}
 	}
 
 	/**
@@ -257,8 +260,9 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	@Override
 	public Object getValue(String name) {
 		TemplateOption option = options.get(name);
-		if (option != null)
+		if (option != null) {
 			return option.getValue();
+		}
 		return super.getValue(name);
 	}
 
@@ -337,8 +341,9 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	@Override
 	public String getReplacementString(String fileName, String key) {
 		String value = getStringOption(key);
-		if (value != null)
+		if (value != null) {
 			return value;
+		}
 		return super.getReplacementString(fileName, key);
 	}
 

@@ -97,15 +97,17 @@ public class ProductConfigurationSection {
 		dialog.addFilter(new FileExtensionFilter("product")); //$NON-NLS-1$
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
 		IFile product = getProductFile();
-		if (product != null)
+		if (product != null) {
 			dialog.setInitialSelection(product);
+		}
 		dialog.create();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IHelpContextIds.PRODUCT_CONFIGURATION_SELECTION);
 		if (dialog.open() == Window.OK) {
 			IFile file = (IFile) dialog.getFirstResult();
 			String value = file.getFullPath().toString();
-			if (fProductCombo.indexOf(value) == -1)
+			if (fProductCombo.indexOf(value) == -1) {
 				fProductCombo.add(value, 0);
+			}
 			fProductCombo.setText(value);
 		}
 	}
@@ -122,8 +124,9 @@ public class ProductConfigurationSection {
 			String curr = settings.get(S_PRODUCT_CONFIG + String.valueOf(i));
 			if (curr != null && fProductCombo.indexOf(curr) == -1) {
 				IFile file = getProductFile(curr);
-				if (file.exists())
+				if (file.exists()) {
 					fProductCombo.add(curr);
+				}
 			}
 		}
 
@@ -132,8 +135,9 @@ public class ProductConfigurationSection {
 			if (object instanceof IFile file) {
 				if ("product".equals(file.getFileExtension())) { //$NON-NLS-1$
 					String entry = file.getFullPath().toString();
-					if (fProductCombo.indexOf(entry) == -1)
+					if (fProductCombo.indexOf(entry) == -1) {
 						fProductCombo.add(entry, 0);
+					}
 					fProductCombo.setText(entry);
 				}
 			} else if (object instanceof IContainer container) {
@@ -143,13 +147,15 @@ public class ProductConfigurationSection {
 						for (IResource resource : resources) {
 							if (resource instanceof IFile && resource.getName().endsWith(".product")) { //$NON-NLS-1$
 								String path = resource.getFullPath().toString();
-								if (fProductCombo.indexOf(path) == -1)
+								if (fProductCombo.indexOf(path) == -1) {
 									fProductCombo.add(path, 0);
+								}
 							}
 						}
 					}
-					if (fProductCombo.getItemCount() > 0)
+					if (fProductCombo.getItemCount() > 0) {
 						fProductCombo.setText(fProductCombo.getItem(0));
+					}
 				} catch (CoreException e) {
 				}
 			}
@@ -166,8 +172,9 @@ public class ProductConfigurationSection {
 	}
 
 	protected IFile getProductFile(String path) {
-		if (path == null || path.length() == 0)
+		if (path == null || path.length() == 0) {
 			return null;
+		}
 
 		IPath thePath = IPath.fromOSString(path);
 		return thePath.segmentCount() < 2 ? null : PDEPlugin.getWorkspace().getRoot().getFile(IPath.fromOSString(path));
@@ -177,12 +184,14 @@ public class ProductConfigurationSection {
 		IFile file = getProductFile();
 		String root = null;
 		try {
-			if (file != null && file.exists())
+			if (file != null && file.exists()) {
 				root = file.getPersistentProperty(IPDEUIConstants.DEFAULT_PRODUCT_EXPORT_ROOT);
+			}
 		} catch (CoreException e) {
 		}
-		if (root != null)
+		if (root != null) {
 			fProductRootText.setText(root);
+		}
 
 		fPage.updateProductFields();
 	}
@@ -191,14 +200,17 @@ public class ProductConfigurationSection {
 		IFile file = getProductFile();
 		String root = null;
 		try {
-			if (file != null && file.exists())
+			if (file != null && file.exists()) {
 				root = file.getPersistentProperty(IPDEUIConstants.DEFAULT_PRODUCT_EXPORT_ROOT);
+			}
 		} catch (CoreException e) {
 		}
-		if (root == null)
+		if (root == null) {
 			root = settings.get(S_PRODUCT_CONFIG);
-		if (root == null)
+		}
+		if (root == null) {
 			root = "eclipse"; //$NON-NLS-1$
+		}
 		fProductRootText.setText(root);
 	}
 
@@ -231,16 +243,19 @@ public class ProductConfigurationSection {
 
 	protected String validate() {
 		String configLocation = fProductCombo.getText().trim();
-		if (configLocation.length() == 0)
+		if (configLocation.length() == 0) {
 			return PDEUIMessages.ProductExportWizardPage_noProduct;
+		}
 
 		IPath path = IPath.fromOSString(configLocation);
 		IResource resource = PDEPlugin.getWorkspace().getRoot().findMember(path);
-		if (resource == null || !(resource instanceof IFile))
+		if (resource == null || !(resource instanceof IFile)) {
 			return PDEUIMessages.ProductExportWizardPage_productNotExists;
+		}
 
-		if (!resource.getName().endsWith(".product")) //$NON-NLS-1$
+		if (!resource.getName().endsWith(".product")) { //$NON-NLS-1$
 			return PDEUIMessages.ProductExportWizardPage_wrongExtension;
+		}
 
 		return null;
 	}

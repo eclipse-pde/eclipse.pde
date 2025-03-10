@@ -51,18 +51,21 @@ public abstract class PDETextHover implements ITextHoverExtension, ITextHover {
 
 			@Override
 			public void mouseExit(MouseEvent e) {
-				if (infoControl instanceof PDEDefaultInformationControl && ((PDEDefaultInformationControl) infoControl).isDisposed())
+				if (infoControl instanceof PDEDefaultInformationControl && ((PDEDefaultInformationControl) infoControl).isDisposed()) {
 					return;
+				}
 				infoControl.setVisible(false);
 			}
 
 			@Override
 			public void mouseHover(MouseEvent e) {
-				if (infoControl instanceof PDEDefaultInformationControl && ((PDEDefaultInformationControl) infoControl).isDisposed())
+				if (infoControl instanceof PDEDefaultInformationControl && ((PDEDefaultInformationControl) infoControl).isDisposed()) {
 					return;
+				}
 				String text = provider.getHoverContent(control);
-				if (text == null || text.trim().length() == 0)
+				if (text == null || text.trim().length() == 0) {
 					return;
+				}
 				updateHover(infoControl, text);
 				infoControl.setLocation(control.toDisplay(new Point(10, 25)));
 				infoControl.setVisible(true);
@@ -74,8 +77,9 @@ public abstract class PDETextHover implements ITextHoverExtension, ITextHover {
 		infoControl.setInformation(text);
 		Point p = infoControl.computeSizeHint();
 		infoControl.setSize(p.x, p.y);
-		if (text == null || text.trim().length() == 0)
+		if (text == null || text.trim().length() == 0) {
 			infoControl.setVisible(false);
+		}
 	}
 
 }

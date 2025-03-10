@@ -71,8 +71,9 @@ public class EditorUtilities {
 		try {
 			try (InputStream stream = getResourceStream(imagePath, product)) {
 				ImageData[] idata = new ImageLoader().load(stream);
-				if (idata != null && idata.length > 0)
+				if (idata != null && idata.length > 0) {
 					return idata;
+				}
 			}
 			message = PDEUIMessages.EditorUtilities_noImageData;
 		} catch (SWTException e) {
@@ -89,11 +90,13 @@ public class EditorUtilities {
 	}
 
 	private static boolean imageEntryInternalValidate(IValidatorMessageHandler validator, FormEntry provider, IProduct product, ValidationInfo info, int validationType) {
-		if (containsEmptyField(provider))
+		if (containsEmptyField(provider)) {
 			return true;
+		}
 		ImageData[] idata = getImageData(validator, provider, product);
-		if (idata == null)
+		if (idata == null) {
 			return false;
+		}
 
 		ValidationMessage ms = null;
 		switch (validationType) {
@@ -106,8 +109,9 @@ public class EditorUtilities {
 			case F_IMAGE_DEPTH : // do not break after F_IMAGEDEPTH since we are also checking exact size
 				ms = getMS_imageDepth(idata[0], info.requiredDepth);
 			case F_EXACT_IMAGE_SIZE :
-				if (ms == null)
+				if (ms == null) {
 					ms = getMS_exactImageSize(idata[0], info.maxWidth, info.maxHeight);
+				}
 				break;
 		}
 
@@ -154,49 +158,56 @@ public class EditorUtilities {
 			int width = data.width;
 			int height = data.height;
 			int depth = data.depth;
-			for (int w = 0; w < totalSizes; w++)
-				if (width == LauncherSection.F_WIN_ICON_DIMENSIONS[w][0] && height == LauncherSection.F_WIN_ICON_DIMENSIONS[w][1] && depth == LauncherSection.F_WIN_ICON_DEPTHS[w])
+			for (int w = 0; w < totalSizes; w++) {
+				if (width == LauncherSection.F_WIN_ICON_DIMENSIONS[w][0] && height == LauncherSection.F_WIN_ICON_DIMENSIONS[w][1] && depth == LauncherSection.F_WIN_ICON_DEPTHS[w]) {
 					found[w] = true;
+				}
+			}
 		}
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < found.length; i++) {
 			if (!found[i]) {
-				if (sb.length() == 0)
+				if (sb.length() == 0) {
 					sb.append(PDEUIMessages.EditorUtilities_icoError);
-				else
+				} else {
 					sb.append(", "); //$NON-NLS-1$
+				}
 				int width = LauncherSection.F_WIN_ICON_DIMENSIONS[i][0];
 				int height = LauncherSection.F_WIN_ICON_DIMENSIONS[i][1];
 				int depth = LauncherSection.F_WIN_ICON_DEPTHS[i];
 				sb.append(NLS.bind(PDEUIMessages.EditorUtilities_missingIcoNote, getSizeString(width, height), Integer.toString(depth)));
 			}
 		}
-		if (sb.length() > 0)
+		if (sb.length() > 0) {
 			return new ValidationMessage(sb.toString());
+		}
 		return null;
 	}
 
 	private static ValidationMessage getMS_exactImageSize(ImageData imagedata, int mwidth, int mheight) {
 		int width = imagedata.width;
 		int height = imagedata.height;
-		if (width != mwidth || height != mheight)
+		if (width != mwidth || height != mheight) {
 			return new ValidationMessage(NLS.bind(PDEUIMessages.EditorUtilities_incorrectSize, getSizeString(width, height)));
+		}
 		return null;
 	}
 
 	private static ValidationMessage getMS_maxImageSize(ImageData imagedata, int mwidth, int mheight, int wwidth, int wheight) {
 		int width = imagedata.width;
 		int height = imagedata.height;
-		if (width > mwidth || height > mheight)
+		if (width > mwidth || height > mheight) {
 			return new ValidationMessage(NLS.bind(PDEUIMessages.EditorUtilities_imageTooLarge, getSizeString(width, height)));
-		else if (width > wwidth || height > wheight)
+		} else if (width > wwidth || height > wheight) {
 			return new ValidationMessage(NLS.bind(PDEUIMessages.EditorUtilities_imageTooLargeInfo, getSizeString(wwidth, wheight)));
+		}
 		return null;
 	}
 
 	private static ValidationMessage getMS_imageDepth(ImageData imagedata, int depth) {
-		if (imagedata.depth != depth)
+		if (imagedata.depth != depth) {
 			return new ValidationMessage(NLS.bind(PDEUIMessages.EditorUtilities_incorrectImageDepth, Integer.toString(imagedata.depth)));
+		}
 		return null;
 	}
 
@@ -238,18 +249,21 @@ public class EditorUtilities {
 			IPath newPath = IPath.fromOSString(model.getInstallLocation()).append(path);
 			IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
 			IContainer container = root.getContainerForLocation(newPath);
-			if (container != null)
+			if (container != null) {
 				return container.getFullPath();
+			}
 		}
 		return path;
 	}
 
 	private static IResource getImageResource(String value, String definingPluginId) {
-		if (value == null)
+		if (value == null) {
 			return null;
+		}
 		IPath path = IPath.fromOSString(value);
-		if (path.isEmpty())
+		if (path.isEmpty()) {
 			return null;
+		}
 
 		if (!path.isAbsolute()) {
 			path = getRootPath(path, definingPluginId);
@@ -261,10 +275,11 @@ public class EditorUtilities {
 	public static void openImage(String value, String definingPluginId) {
 		IResource resource = getImageResource(value, definingPluginId);
 		try {
-			if (resource != null && resource instanceof IFile)
+			if (resource != null && resource instanceof IFile) {
 				IDE.openEditor(PDEPlugin.getActivePage(), (IFile) resource, true);
-			else
+			} else {
 				MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.AboutSection_open, PDEUIMessages.AboutSection_warning); //
+			}
 		} catch (PartInitException e) {
 		}
 	}

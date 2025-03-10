@@ -59,8 +59,9 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 
 		@Override
 		protected Token getTokenAffected(PropertyChangeEvent event) {
-			if (event.getProperty().startsWith(IPDEColorConstants.P_HEADER_OSGI))
+			if (event.getProperty().startsWith(IPDEColorConstants.P_HEADER_OSGI)) {
 				return fToken;
+			}
 			return (Token) fDefaultReturnToken;
 		}
 
@@ -117,10 +118,12 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 		@Override
 		protected Token getTokenAffected(PropertyChangeEvent event) {
 			String property = event.getProperty();
-			if (property.startsWith(IPDEColorConstants.P_HEADER_ASSIGNMENT))
+			if (property.startsWith(IPDEColorConstants.P_HEADER_ASSIGNMENT)) {
 				return fAssignmentToken;
-			if (property.startsWith(IPDEColorConstants.P_HEADER_ATTRIBUTES))
+			}
+			if (property.startsWith(IPDEColorConstants.P_HEADER_ATTRIBUTES)) {
 				return fAttributeToken;
+			}
 			return (Token) fDefaultReturnToken;
 		}
 
@@ -208,8 +211,9 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 
 	@Override
 	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
-		if (fAnnotationHover == null)
+		if (fAnnotationHover == null) {
 			fAnnotationHover = new AnnotationHover();
+		}
 		return fAnnotationHover;
 	}
 
@@ -243,8 +247,9 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 
 	@Override
 	public void adaptToPreferenceChange(PropertyChangeEvent event) {
-		if (affectsColorPresentation(event))
+		if (affectsColorPresentation(event)) {
 			fColorManager.handlePropertyChangeEvent(event);
+		}
 		fPropertyKeyScanner.adaptToPreferenceChange(event);
 		fPropertyValueScanner.adaptToPreferenceChange(event);
 	}
@@ -281,8 +286,9 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 
 	@Override
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
-		if (fTextHover == null && fSourcePage != null)
+		if (fTextHover == null && fSourcePage != null) {
 			fTextHover = new ManifestTextHover(fSourcePage);
+		}
 		return fTextHover;
 	}
 
@@ -293,8 +299,9 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 
 	@Override
 	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
-		if (fDocumentPartitioning != null)
+		if (fDocumentPartitioning != null) {
 			return fDocumentPartitioning;
+		}
 		return super.getConfiguredDocumentPartitioning(sourceViewer);
 	}
 }

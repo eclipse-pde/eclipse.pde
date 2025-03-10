@@ -140,12 +140,14 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 	class PointFilter extends ViewerFilter {
 		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			if (!fFilterCheck.getSelection())
+			if (!fFilterCheck.getSelection()) {
 				return true;
+			}
 
 			IPluginExtensionPoint point = (IPluginExtensionPoint) element;
-			if (point instanceof PluginExtensionPointNode)
+			if (point instanceof PluginExtensionPointNode) {
 				return true;
+			}
 
 			return fAvailableImports.contains(point.getPluginBase().getId());
 		}
@@ -184,10 +186,12 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 					Object[] wizards = fTemplateCollection.getWizards().getChildren();
 					for (Object wizardObject : wizards) {
 						String wizardContributorId = ((WizardElement) wizardObject).getContributingId();
-						if (wizardContributorId == null || pointID == null)
+						if (wizardContributorId == null || pointID == null) {
 							continue;
-						if (wizardObject instanceof WizardElement && wizardContributorId.equals(pointID))
+						}
+						if (wizardObject instanceof WizardElement && wizardContributorId.equals(pointID)) {
 							result.add(wizardObject);
+						}
 					}
 					return result.toArray();
 				}
@@ -204,8 +208,9 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 			for (IPluginModelBase plugin : plugins) {
 				IPluginExtensionPoint[] points = plugin.getPluginBase().getExtensionPoints();
 				String id = plugin.getPluginBase().getId();
-				if (id.equals(fModel.getPluginBase().getId()))
+				if (id.equals(fModel.getPluginBase().getId())) {
 					continue;
+				}
 				Collections.addAll(extPoints, points);
 			}
 
@@ -226,8 +231,9 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 		public String getColumnText(Object obj, int index) {
 			IPluginExtensionPoint extPoint = (IPluginExtensionPoint) obj;
 			PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
-			if (provider.isFullNameModeEnabled())
+			if (provider.isFullNameModeEnabled()) {
 				return provider.getText(extPoint);
+			}
 
 			return IdUtil.getFullId(extPoint, fModel);
 		}
@@ -316,8 +322,9 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 		fFilterText.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == SWT.ARROW_DOWN)
+				if (e.keyCode == SWT.ARROW_DOWN) {
 					fPointListViewer.getControl().setFocus();
+				}
 			}
 
 			@Override
@@ -361,8 +368,9 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 		fDescLink = new Link(templateComposite, SWT.NONE);
 		fDescLink.setText(NLS.bind(PDEUIMessages.PointSelectionPage_extPointDesc, "")); //$NON-NLS-1$
 		fDescLink.addSelectionListener(widgetSelectedAdapter(e -> {
-			if (fCurrentPoint != null)
+			if (fCurrentPoint != null) {
 				new ShowDescriptionAction(fCurrentPoint, true).run();
+			}
 		}));
 		fDescLink.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
@@ -376,8 +384,9 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 			c = fPointDescBrowser = new Browser(comp, SWT.NONE);
 		} catch (SWTError e) {
 		}
-		if (c == null)
+		if (c == null) {
 			c = fPointDescription = new Text(comp, SWT.WRAP | SWT.MULTI | SWT.V_SCROLL | SWT.READ_ONLY);
+		}
 
 		setPointDescriptionText(PDEUIMessages.NewExtensionWizard_PointSelectionPage_extPointDescription);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -411,8 +420,9 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 
 		fTemplateViewer.getTable().setLayoutData(gd);
 		TableItem[] selection = fPointListViewer.getTable().getSelection();
-		if (selection != null && selection.length > 0)
+		if (selection != null && selection.length > 0) {
 			fTemplateViewer.setInput(selection[0]);
+		}
 		fTemplateViewer.addDoubleClickListener(event -> {
 			if (canFlipToNextPage()) {
 				advanceToNextPage();
@@ -465,13 +475,15 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 	public boolean canFinish() {
 		if (fTemplateViewer != null) {
 			IStructuredSelection selection = fTemplateViewer.getStructuredSelection();
-			if (!selection.isEmpty())
+			if (!selection.isEmpty()) {
 				return false;
+			}
 		}
 		if (fPointListViewer != null) {
 			IStructuredSelection selection = fPointListViewer.getStructuredSelection();
-			if (selection.isEmpty() == false)
+			if (selection.isEmpty() == false) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -540,10 +552,11 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 		if (selection instanceof IStructuredSelection ssel) {
 			if (!ssel.isEmpty()) {
 				Object element = ssel.getFirstElement();
-				if (element instanceof WizardElement)
+				if (element instanceof WizardElement) {
 					handleTemplateSelection((WizardElement) element);
-				else if (element instanceof IPluginExtensionPoint)
+				} else if (element instanceof IPluginExtensionPoint) {
 					handlePointSelection((IPluginExtensionPoint) element);
+				}
 			} else {
 				setDescription(""); //$NON-NLS-1$
 				setDescriptionText(""); //$NON-NLS-1$
@@ -613,11 +626,12 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 		if (index == 0) {
 			// extension point page
 			IStructuredSelection selection = fTemplateViewer.getStructuredSelection();
-			if (selection.isEmpty() == false)
+			if (selection.isEmpty() == false) {
 				selectionChanged(new SelectionChangedEvent(fTemplateViewer, selection));
-			else
+			} else {
 				selectionChanged(
 						new SelectionChangedEvent(fPointListViewer, fPointListViewer.getStructuredSelection()));
+			}
 			fFilterText.setFocus();
 		} else {
 			// wizard page
@@ -632,8 +646,9 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 			@Override
 			public IBasePluginWizard createWizard() throws CoreException {
 				IExtensionWizard wizard = createWizard(wizardElement);
-				if (wizard == null)
+				if (wizard == null) {
 					throw new CoreException(Status.error(PDEUIMessages.PointSelectionPage_cannotFindTemplate));
+				}
 				wizard.init(fProject, fModel);
 				return wizard;
 			}
@@ -641,8 +656,9 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 			protected IExtensionWizard createWizard(WizardElement element) throws CoreException {
 				if (element.isTemplate()) {
 					IConfigurationElement template = element.getTemplateElement();
-					if (template == null)
+					if (template == null) {
 						return null;
+					}
 					ITemplateSection section = (ITemplateSection) template.createExecutableExtension("class"); //$NON-NLS-1$
 					return new NewExtensionTemplateWizard(section);
 				}
@@ -653,8 +669,9 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 
 	public void checkModel() {
 		IWizardNode node = getSelectedNode();
-		if (node == null)
+		if (node == null) {
 			return;
+		}
 		IWizard wizard = node.getWizard();
 		if (wizard instanceof NewExtensionTemplateWizard) {
 			if (((NewExtensionTemplateWizard) wizard).updatedDependencies()) {
@@ -667,8 +684,9 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 
 	@Override
 	public void setVisible(boolean visible) {
-		if (visible)
+		if (visible) {
 			fFilterText.setFocus();
+		}
 		super.setVisible(visible);
 	}
 
@@ -703,7 +721,8 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 			desc.append(text);
 			HTMLPrinter.addPageEpilog(desc);
 			fPointDescBrowser.setText(desc.toString());
-		} else
+		} else {
 			fPointDescription.setText(PDEHTMLHelper.stripTags(text));
+		}
 	}
 }

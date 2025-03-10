@@ -42,14 +42,16 @@ public class PluginInputContextManager extends InputContextManager {
 
 	@Override
 	public IBaseModel getAggregateModel() {
-		if (bmodel != null)
+		if (bmodel != null) {
 			return bmodel;
+		}
 		return findPluginModel();
 	}
 
 	public IModel getPluginModel() {
-		if (bmodel != null)
+		if (bmodel != null) {
 			return bmodel.getExtensionsModel();
+		}
 		return findPluginModel();
 	}
 
@@ -70,23 +72,26 @@ public class PluginInputContextManager extends InputContextManager {
 		super.fireContextChange(context, added);
 		switch (context.getId()) {
 		case BundleInputContext.CONTEXT_ID:
-			if (added)// bundle arriving
+			if (added) { // bundle arriving
 				bundleAdded(context);
-			else
+			} else {
 				// bundle going away
 				bundleRemoved(context);
+			}
 			break;
 		case BuildInputContext.CONTEXT_ID:
-			if (added)
+			if (added) {
 				buildAdded(context);
-			else
+			} else {
 				buildRemoved(context);
+			}
 			break;
 		case PluginInputContext.CONTEXT_ID:
-			if (added)
+			if (added) {
 				pluginAdded(context);
-			else
+			} else {
 				pluginRemoved(context);
+			}
 			break;
 		default:
 			break;
@@ -95,10 +100,11 @@ public class PluginInputContextManager extends InputContextManager {
 
 	private void bundleAdded(InputContext bundleContext) {
 		IBundleModel model = (IBundleModel) bundleContext.getModel();
-		if (model.isFragmentModel())
+		if (model.isFragmentModel()) {
 			bmodel = new BundleFragmentModel();
-		else
+		} else {
 			bmodel = new BundlePluginModel();
+		}
 		bmodel.setBundleModel(model);
 		syncExtensions();
 	}
@@ -108,8 +114,9 @@ public class PluginInputContextManager extends InputContextManager {
 		if (emodel != null && emodel instanceof ISharedExtensionsModel) {
 			bmodel.setExtensionsModel((ISharedExtensionsModel) emodel);
 			transferListeners(emodel, bmodel);
-		} else
+		} else {
 			bmodel.setExtensionsModel(null);
+		}
 	}
 
 	private IModel findPluginModel() {
@@ -122,8 +129,9 @@ public class PluginInputContextManager extends InputContextManager {
 			BundlePluginModelBase preserved = bmodel;
 			bmodel = null;
 			IModel emodel = findPluginModel();
-			if (emodel != null)
+			if (emodel != null) {
 				transferListeners(preserved, emodel);
+			}
 		}
 	}
 
@@ -135,21 +143,24 @@ public class PluginInputContextManager extends InputContextManager {
 			smodel.fireModelChanged(new ModelChangedEvent(smodel, IModelChangedEvent.WORLD_CHANGED, null, null));
 			// now pass the listener to the target model
 			smodel.transferListenersTo(tmodel, listener -> {
-				if (listener instanceof IFormPart || listener instanceof FormOutlinePage)
+				if (listener instanceof IFormPart || listener instanceof FormOutlinePage) {
 					return true;
+				}
 				return false;
 			});
 		}
 	}
 
 	private void pluginAdded(InputContext pluginContext) {
-		if (bmodel != null)
+		if (bmodel != null) {
 			syncExtensions();
+		}
 	}
 
 	private void pluginRemoved(InputContext pluginContext) {
-		if (bmodel != null)
+		if (bmodel != null) {
 			syncExtensions();
+		}
 	}
 
 	private void buildAdded(InputContext buildContext) {

@@ -248,8 +248,9 @@ public class EditRepositoryContainerPage extends WizardPage implements IEditBund
 	 *         creation should continue
 	 */
 	protected boolean validateInput() {
-		if (furiLocation.isDisposed())
+		if (furiLocation.isDisposed()) {
 			return false;
+		}
 
 		// Check if the text field is blank
 		if (furiLocation.getText().trim().length() == 0) {

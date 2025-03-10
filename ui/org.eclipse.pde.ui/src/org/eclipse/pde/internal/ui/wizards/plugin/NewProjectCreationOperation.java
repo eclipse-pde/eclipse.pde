@@ -141,8 +141,9 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 				break;
 			}
 			for (String filter : filters) {
-				if (filter.endsWith(".*")) //$NON-NLS-1$
+				if (filter.endsWith(".*")) { //$NON-NLS-1$
 					packages.add(filter.substring(0, filter.length() - 2));
+				}
 			}
 		}
 		if (!packages.isEmpty()) {
@@ -170,23 +171,26 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		String srcFolder = fData.getSourceFolderName();
 		if (!fData.isSimple() && srcFolder != null) {
 			String libraryName = fData.getLibraryName();
-			if (libraryName == null)
+			if (libraryName == null) {
 				libraryName = "."; //$NON-NLS-1$
+			}
 			// SOURCE.<LIBRARY_NAME>
 			IBuildEntry entry = factory.createEntry(IBuildEntry.JAR_PREFIX + libraryName);
-			if (srcFolder.length() > 0)
+			if (srcFolder.length() > 0) {
 				entry.addToken(IPath.fromOSString(srcFolder).addTrailingSeparator().toString());
-			else
+			} else {
 				entry.addToken("."); //$NON-NLS-1$
+			}
 			model.getBuild().add(entry);
 
 			// OUTPUT.<LIBRARY_NAME>
 			entry = factory.createEntry(IBuildEntry.OUTPUT_PREFIX + libraryName);
 			String outputFolder = fData.getOutputFolderName().trim();
-			if (outputFolder.length() > 0)
+			if (outputFolder.length() > 0) {
 				entry.addToken(IPath.fromOSString(outputFolder).addTrailingSeparator().toString());
-			else
+			} else {
 				entry.addToken("."); //$NON-NLS-1$
+			}
 			model.getBuild().add(entry);
 		}
 	}
@@ -237,8 +241,9 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			fragment.setPluginVersion(data.getPluginVersion());
 			fragment.setRule(data.getMatch());
 		} else {
-			if (((IPluginFieldData) fData).doGenerateClass())
+			if (((IPluginFieldData) fData).doGenerateClass()) {
 				((IPlugin) pluginBase).setClassName(((IPluginFieldData) fData).getClassname());
+			}
 		}
 		if (!fData.isSimple()) {
 			setPluginLibraries(fModel);
@@ -259,8 +264,9 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			bundle.setHeader(ICoreConstants.AUTOMATIC_MODULE_NAME, determineAutomaticModuleNameFromBSN(header));
 
 			String value = getCommaValuesFromPackagesSet(getImportPackagesSet(), fData.getVersion());
-			if (value.length() > 0)
+			if (value.length() > 0) {
 				bundle.setHeader(Constants.IMPORT_PACKAGE, value);
+			}
 
 			if (fData instanceof AbstractFieldData) {
 				// Set required EE
@@ -272,14 +278,15 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 				String framework = ((AbstractFieldData) fData).getOSGiFramework();
 				if (framework != null) {
 					// if framework is not equinox, skip equinox step below to add extra headers
-					if (!framework.equals(ICoreConstants.EQUINOX))
+					if (!framework.equals(ICoreConstants.EQUINOX)) {
 						return;
+					}
 				}
 			}
 			if (fData instanceof IPluginFieldData && ((IPluginFieldData) fData).doGenerateClass()) {
-				if (targetVersion.equals("3.1")) //$NON-NLS-1$
+				if (targetVersion.equals("3.1")) { //$NON-NLS-1$
 					bundle.setHeader(ICoreConstants.ECLIPSE_AUTOSTART, "true"); //$NON-NLS-1$
-				else {
+				} else {
 					double version = Double.parseDouble(targetVersion);
 					if (version >= 3.4) {
 						bundle.setHeader(Constants.BUNDLE_ACTIVATIONPOLICY, Constants.ACTIVATION_LAZY);
@@ -291,13 +298,14 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			}
 			if (fContentWizard != null) {
 				String[] newFiles = fContentWizard.getNewFiles();
-				if (newFiles != null)
+				if (newFiles != null) {
 					for (String newFile : newFiles) {
 						if ("plugin.properties".equals(newFile)) { //$NON-NLS-1$
 							bundle.setHeader(Constants.BUNDLE_LOCALIZATION, "plugin"); //$NON-NLS-1$
 							break;
 						}
 					}
+				}
 			}
 		}
 	}
@@ -374,12 +382,14 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		} else {
 			CoreUtility.addNatureToProject(project, PluginProject.NATURE, null);
 		}
-		if (!fData.isSimple() && !project.hasNature(JavaCore.NATURE_ID))
+		if (!fData.isSimple() && !project.hasNature(JavaCore.NATURE_ID)) {
 			CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, null);
+		}
 		if (!fData.isSimple() && fData.getSourceFolderName() != null && fData.getSourceFolderName().trim().length() > 0) {
 			IFolder folder = project.getFolder(fData.getSourceFolderName());
-			if (!folder.exists())
+			if (!folder.exists()) {
 				CoreUtility.createFolder(folder);
+			}
 		}
 		return project;
 	}
@@ -442,8 +452,9 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 				if (pref != null) {
 					pref.putBoolean(ICoreConstants.RESOLVE_WITH_REQUIRE_BUNDLE, false);
 					pref.putBoolean(ICoreConstants.EXTENSIONS_PROPERTY, false);
-					if (!ICoreConstants.EQUINOX.equals(framework))
+					if (!ICoreConstants.EQUINOX.equals(framework)) {
 						pref.putBoolean(ICoreConstants.EQUINOX_PROPERTY, false);
+					}
 					try {
 						pref.flush();
 					} catch (BackingStoreException e) {
@@ -509,10 +520,12 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	}
 
 	protected void fillBinIncludes(IProject project, IBuildEntry binEntry) throws CoreException {
-		if ((!fData.hasBundleStructure() || fContentWizard != null) && ((AbstractFieldData) fData).getOSGiFramework() == null)
+		if ((!fData.hasBundleStructure() || fContentWizard != null) && ((AbstractFieldData) fData).getOSGiFramework() == null) {
 			binEntry.addToken(fData instanceof IFragmentFieldData ? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR : ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
-		if (fData.hasBundleStructure())
+		}
+		if (fData.hasBundleStructure()) {
 			binEntry.addToken("META-INF/"); //$NON-NLS-1$
+		}
 		if (!fData.isSimple()) {
 			String libraryName = fData.getLibraryName();
 			binEntry.addToken(libraryName == null ? "." : libraryName); //$NON-NLS-1$
@@ -520,8 +533,9 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		if (fContentWizard != null) {
 			String[] files = fContentWizard.getNewFiles();
 			for (int j = 0; j < files.length; j++) {
-				if (!binEntry.contains(files[j]))
+				if (!binEntry.contains(files[j])) {
 					binEntry.addToken(files[j]);
+				}
 			}
 		}
 	}
@@ -563,8 +577,9 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		if (fContentWizard != null) {
 			IPluginReference[] refs = fContentWizard.getDependencies(fData.isLegacy() ? null : "3.0"); //$NON-NLS-1$
 			for (int j = 0; j < refs.length; j++) {
-				if (!result.contains(refs[j]))
+				if (!result.contains(refs[j])) {
 					result.add(refs[j]);
+				}
 			}
 		}
 		return result.toArray(new IPluginReference[result.size()]);
@@ -588,13 +603,16 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 
 	protected int getNumberOfWorkUnits() {
 		int numUnits = 4;
-		if (fData.hasBundleStructure())
+		if (fData.hasBundleStructure()) {
 			numUnits++;
+		}
 		if (fData instanceof IPluginFieldData data) {
-			if (data.doGenerateClass())
+			if (data.doGenerateClass()) {
 				numUnits++;
-			if (fContentWizard != null)
+			}
+			if (fContentWizard != null) {
 				numUnits++;
+			}
 		}
 		return numUnits;
 	}
@@ -688,8 +706,9 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 						IJavaElement[] children = root.getChildren();
 						for (IJavaElement element : children) {
 							IPackageFragment frag = (IPackageFragment) element;
-							if (frag.getChildren().length > 0 || frag.getNonJavaResources().length > 0)
+							if (frag.getChildren().length > 0 || frag.getNonJavaResources().length > 0) {
 								list.add(element.getElementName());
+							}
 						}
 					}
 				}

@@ -92,8 +92,9 @@ public class JARSigningTab {
 		fBrowseButton.addSelectionListener(widgetSelectedAdapter(e -> {
 			FileDialog dialog = new FileDialog(fPage.getShell(), SWT.OPEN);
 			String path = fKeystoreText.getText();
-			if (path.trim().length() == 0)
+			if (path.trim().length() == 0) {
 				path = PDEPlugin.getWorkspace().getRoot().getLocation().toString();
+			}
 			dialog.setFileName(path);
 			String res = dialog.open();
 			if (res != null) {

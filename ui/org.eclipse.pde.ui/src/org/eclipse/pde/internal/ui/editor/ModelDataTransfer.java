@@ -87,8 +87,9 @@ public class ModelDataTransfer extends ByteArrayTransfer {
 	@Override
 	protected Object nativeToJava(TransferData transferData) {
 		byte[] bytes = (byte[]) super.nativeToJava(transferData);
-		if (bytes == null)
+		if (bytes == null) {
 			return null;
+		}
 		try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes))) {
 			int count = in.readInt();
 			Object[] objects = new Object[count];

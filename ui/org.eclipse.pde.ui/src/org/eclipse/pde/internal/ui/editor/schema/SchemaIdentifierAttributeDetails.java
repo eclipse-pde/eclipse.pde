@@ -104,8 +104,9 @@ public class SchemaIdentifierAttributeDetails extends SchemaAttributeDetails {
 
 	@Override
 	public void updateFields(ISchemaObject object) {
-		if (!(object instanceof SchemaAttribute))
+		if (!(object instanceof SchemaAttribute)) {
 			return;
+		}
 		super.updateFields(object);
 
 		String basedOn = getAttribute().getBasedOn();
@@ -131,24 +132,28 @@ public class SchemaIdentifierAttributeDetails extends SchemaAttributeDetails {
 		fReferenceEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			@Override
 			public void textValueChanged(FormEntry entry) {
-				if (blockListeners())
+				if (blockListeners()) {
 					return;
+				}
 				getAttribute().setBasedOn(fReferenceEntry.getValue());
 			}
 
 			@Override
 			public void browseButtonSelected(FormEntry entry) {
-				if (blockListeners())
+				if (blockListeners()) {
 					return;
+				}
 				doOpenSelectionDialog(fReferenceEntry);
 			}
 		});
 		fAddRestriction.addSelectionListener(widgetSelectedAdapter(e -> {
-			if (blockListeners())
+			if (blockListeners()) {
 				return;
+			}
 			NewRestrictionDialog dialog = new NewRestrictionDialog(getPage().getSite().getShell());
-			if (dialog.open() != Window.OK)
+			if (dialog.open() != Window.OK) {
 				return;
+			}
 			String text = dialog.getNewRestriction();
 			if (text != null && text.length() > 0) {
 				ISchemaSimpleType type = getAttribute().getType();
@@ -159,20 +164,24 @@ public class SchemaIdentifierAttributeDetails extends SchemaAttributeDetails {
 					Collections.addAll(vres, currRes);
 				}
 				vres.add(new SchemaEnumeration(getAttribute().getSchema(), text));
-				if (res == null)
+				if (res == null) {
 					res = new ChoiceRestriction(getAttribute().getSchema());
+				}
 				res.setChildren(vres);
-				if (type instanceof SchemaSimpleType)
+				if (type instanceof SchemaSimpleType) {
 					((SchemaSimpleType) type).setRestriction(res);
+				}
 				fRestrictionsTable.refresh();
 			}
 		}));
 		fRemoveRestriction.addSelectionListener(widgetSelectedAdapter(e -> {
-			if (blockListeners())
+			if (blockListeners()) {
 				return;
+			}
 			IStructuredSelection selection = fRestrictionsTable.getStructuredSelection();
-			if (selection.isEmpty())
+			if (selection.isEmpty()) {
 				return;
+			}
 			Object[] aselection = selection.toArray();
 			ISchemaSimpleType type = getAttribute().getType();
 			ChoiceRestriction res = (ChoiceRestriction) type.getRestriction();
@@ -182,25 +191,29 @@ public class SchemaIdentifierAttributeDetails extends SchemaAttributeDetails {
 				for (ISchemaEnumeration currRe : currRes) {
 					boolean stays = true;
 					for (Object element : aselection) {
-						if (currRe.equals(element))
+						if (currRe.equals(element)) {
 							stays = false;
+						}
 					}
-					if (stays)
+					if (stays) {
 						vres.add(currRe);
+					}
 				}
 				res.setChildren(vres);
 				if (type instanceof SchemaSimpleType) {
-					if (vres.isEmpty())
+					if (vres.isEmpty()) {
 						((SchemaSimpleType) type).setRestriction(null);
-					else
+					} else {
 						((SchemaSimpleType) type).setRestriction(res);
+					}
 				}
 				fRestrictionsTable.refresh();
 			}
 		}));
 		fRestrictionsTable.addSelectionChangedListener(event -> {
-			if (blockListeners())
+			if (blockListeners()) {
 				return;
+			}
 			fRemoveRestriction.setEnabled(getAttribute().getSchema().isEditable() && !event.getSelection().isEmpty());
 		});
 	}

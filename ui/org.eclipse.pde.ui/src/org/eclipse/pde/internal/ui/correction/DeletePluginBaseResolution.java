@@ -49,8 +49,9 @@ public class DeletePluginBaseResolution extends AbstractPDEMarkerResolution {
 
 			//Since the plugin.xml is now deleted, remove the corresponding entry from the build.properties as well
 			IResource buildProperties = marker.getResource().getParent().findMember(IPDEBuildConstants.PROPERTIES_FILE);
-			if (buildProperties == null)
+			if (buildProperties == null) {
 				return;
+			}
 
 			IMarker removePluginEntryMarker = buildProperties.createMarker(
 					String.valueOf(AbstractPDEMarkerResolution.REMOVE_TYPE),

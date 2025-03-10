@@ -34,8 +34,9 @@ public class ChooseManifestClassResolution extends AbstractManifestMarkerResolut
 	protected void createChange(BundleModel model) {
 		IManifestHeader header = model.getBundle().getManifestHeader(fHeader);
 		String type = PDEJavaHelperUI.selectType(fResource, IJavaElementSearchConstants.CONSIDER_CLASSES);
-		if (type != null)
+		if (type != null) {
 			header.setValue(type);
+		}
 	}
 
 	@Override

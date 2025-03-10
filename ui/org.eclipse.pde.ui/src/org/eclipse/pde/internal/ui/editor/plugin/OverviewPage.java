@@ -126,25 +126,29 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 		Composite left = toolkit.createComposite(body);
 		left.setLayout(FormLayoutFactory.createFormPaneTableWrapLayout(false, 1));
 		left.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
-		if (isFragment())
+		if (isFragment()) {
 			fInfoSection = new FragmentGeneralInfoSection(this, left);
-		else
+		} else {
 			fInfoSection = new PluginGeneralInfoSection(this, left);
+		}
 		managedForm.addPart(fInfoSection);
-		if (isBundle())
+		if (isBundle()) {
 			managedForm.addPart(new ExecutionEnvironmentSection(this, left));
+		}
 
 		Composite right = toolkit.createComposite(body);
 		right.setLayout(FormLayoutFactory.createFormPaneTableWrapLayout(false, 1));
 		right.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		createContentSection(managedForm, right, toolkit);
-		if (isEditable() || getPDEEditor().hasInputContext(PluginInputContext.CONTEXT_ID))
+		if (isEditable() || getPDEEditor().hasInputContext(PluginInputContext.CONTEXT_ID)) {
 			createExtensionSection(managedForm, right, toolkit);
+		}
 		if (isEditable()) {
 			createTestingSection(managedForm, isBundle() ? right : left, toolkit);
 		}
-		if (isEditable())
+		if (isEditable()) {
 			createExportingSection(managedForm, right, toolkit);
+		}
 	}
 
 	private void createContentSection(IManagedForm managedForm, Composite parent, FormToolkit toolkit) {
@@ -258,17 +262,20 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 			getEditor().setActivePage(RuntimePage.PAGE_ID);
 			break;
 		case "extensions": //$NON-NLS-1$
-			if (getEditor().setActivePage(ExtensionsPage.PAGE_ID) == null)
+			if (getEditor().setActivePage(ExtensionsPage.PAGE_ID) == null) {
 				activateExtensionPages(ExtensionsPage.PAGE_ID);
+			}
 			break;
 		case "ex-points": //$NON-NLS-1$
-			if (getEditor().setActivePage(ExtensionPointsPage.PAGE_ID) == null)
+			if (getEditor().setActivePage(ExtensionPointsPage.PAGE_ID) == null) {
 				activateExtensionPages(ExtensionPointsPage.PAGE_ID);
+			}
 			break;
 		case "build": //$NON-NLS-1$
 			if (!getPDEEditor().hasInputContext(BuildInputContext.CONTEXT_ID)) {
-				if (!MessageDialog.openQuestion(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.OverviewPage_buildTitle, PDEUIMessages.OverviewPage_buildQuestion))
+				if (!MessageDialog.openQuestion(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.OverviewPage_buildTitle, PDEUIMessages.OverviewPage_buildQuestion)) {
 					return;
+				}
 				IFile file = PDEProject.getBuildProperties(getPDEEditor().getCommonProject());
 				WorkspaceBuildModel model = new WorkspaceBuildModel(file);
 				model.save();
@@ -303,8 +310,9 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 	}
 
 	private PluginExportAction getExportAction() {
-		if (fExportAction == null)
+		if (fExportAction == null) {
 			fExportAction = new PluginExportAction((PDEFormEditor) getEditor());
+		}
 		return fExportAction;
 	}
 
@@ -324,12 +332,14 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 		} catch (InvocationTargetException e) {
 			MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.OverviewPage_error, e.getCause().getMessage());
 			// if convert failed and this OverviewPage hasn't been removed from the editor, reattach listeners
-			if (!fDisposed)
+			if (!fDisposed) {
 				fInfoSection.addListeners();
+			}
 		} catch (InterruptedException e) {
 			// if convert failed and this OverviewPage hasn't been removed from the editor, reattach listeners
-			if (!fDisposed)
+			if (!fDisposed) {
 				fInfoSection.addListeners();
+			}
 		}
 	}
 
@@ -361,8 +371,9 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 					entry = buildModel.getFactory().createEntry("bin.includes"); //$NON-NLS-1$
 					build.add(entry);
 				}
-				if (!entry.contains("META-INF")) //$NON-NLS-1$
+				if (!entry.contains("META-INF")) { //$NON-NLS-1$
 					entry.addToken("META-INF/"); //$NON-NLS-1$
+				}
 			}
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
@@ -371,8 +382,9 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 
 	private void activateExtensionPages(String activePageId) {
 		MessageDialog mdiag = new MessageDialog(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.OverviewPage_extensionPageMessageTitle, null, PDEUIMessages.OverviewPage_extensionPageMessageBody, MessageDialog.QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 0);
-		if (mdiag.open() != Window.OK)
+		if (mdiag.open() != Window.OK) {
 			return;
+		}
 		try {
 			ManifestEditor manifestEditor = (ManifestEditor) getEditor();
 			manifestEditor.addExtensionTabs(3);
@@ -394,8 +406,9 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 	}
 
 	protected ILauncherFormPageHelper getLauncherHelper() {
-		if (fLauncherHelper == null)
+		if (fLauncherHelper == null) {
 			fLauncherHelper = new PluginLauncherFormPageHelper(getPDELauncherEditor());
+		}
 		return fLauncherHelper;
 	}
 }

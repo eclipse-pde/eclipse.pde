@@ -203,8 +203,9 @@ public class ProductEditor extends PDELauncherFormEditor {
 
 	@Override
 	protected ILauncherFormPageHelper getLauncherHelper() {
-		if (fLauncherHelper == null)
+		if (fLauncherHelper == null) {
 			fLauncherHelper = new ProductLauncherFormPageHelper(this);
+		}
 		return fLauncherHelper;
 	}
 }

@@ -37,11 +37,13 @@ public class Category {
 	}
 
 	public String[] getParentCategoryPath() {
-		if (parentCategoryPath != null)
+		if (parentCategoryPath != null) {
 			return parentCategoryPath;
+		}
 		String category = config.getAttribute(ATT_CATEGORY);
-		if (category == null)
+		if (category == null) {
 			return null;
+		}
 		StringTokenizer stok = new StringTokenizer(category, "/"); //$NON-NLS-1$
 		parentCategoryPath = new String[stok.countTokens()];
 		for (int i = 0; stok.hasMoreTokens(); i++) {

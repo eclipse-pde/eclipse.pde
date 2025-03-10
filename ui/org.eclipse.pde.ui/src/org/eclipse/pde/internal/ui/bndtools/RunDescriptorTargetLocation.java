@@ -117,8 +117,9 @@ public class RunDescriptorTargetLocation extends BndTargetLocation {
 						+ container.getBundleSymbolicName() + " @ " + getLocation(false), e)); //$NON-NLS-1$
 				}
 
-				if (monitor.isCanceled())
+				if (monitor.isCanceled()) {
 					return null;
+				}
 				monitor.worked(++i);
 			}
 

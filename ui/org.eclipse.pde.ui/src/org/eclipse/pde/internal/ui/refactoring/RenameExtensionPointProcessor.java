@@ -54,8 +54,9 @@ public class RenameExtensionPointProcessor extends RefactoringProcessor {
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm, CheckConditionsContext context) throws CoreException, OperationCanceledException {
 		RefactoringStatus status = new RefactoringStatus();
 		IResource res = fInfo.getBase().getUnderlyingResource();
-		if (res == null)
+		if (res == null) {
 			status.addFatalError(PDEUIMessages.RenamePluginProcessor_externalBundleError);
+		}
 		return status;
 	}
 
@@ -69,8 +70,9 @@ public class RenameExtensionPointProcessor extends RefactoringProcessor {
 		CompositeChange change = new CompositeChange(MessageFormat.format(PDEUIMessages.RenameExtensionPointProcessor_changeTitle, fInfo.getCurrentValue(), fInfo.getNewValue()));
 		SubMonitor subMonitor = SubMonitor.convert(pm, 2);
 		changeExtensionPoint(change, subMonitor.split(1));
-		if (fInfo.isUpdateReferences())
+		if (fInfo.isUpdateReferences()) {
 			findReferences(change, subMonitor.split(1));
+		}
 		return change;
 	}
 
@@ -101,8 +103,9 @@ public class RenameExtensionPointProcessor extends RefactoringProcessor {
 
 	protected void changeExtensionPoint(CompositeChange compositeChange, IProgressMonitor monitor) {
 		IFile file = getModificationFile(fInfo.getBase());
-		if (file != null)
+		if (file != null) {
 			compositeChange.addAll(PDEModelUtility.changesForModelModication(getExtensionPointModification(file), monitor));
+		}
 	}
 
 	private void findReferences(CompositeChange compositeChange, IProgressMonitor monitor) {
@@ -120,16 +123,18 @@ public class RenameExtensionPointProcessor extends RefactoringProcessor {
 
 	private String getId() {
 		String currentValue = fInfo.getCurrentValue();
-		if (currentValue.indexOf('.') > 0)
+		if (currentValue.indexOf('.') > 0) {
 			return currentValue;
+		}
 		IPluginModelBase base = PluginRegistry.findModel(fInfo.getBase().getUnderlyingResource().getProject());
 		return (base == null) ? currentValue : base.getPluginBase().getId() + "." + currentValue; //$NON-NLS-1$
 	}
 
 	private String getNewId() {
 		String newValue = fInfo.getNewValue();
-		if (newValue.indexOf('.') > 0)
+		if (newValue.indexOf('.') > 0) {
 			return newValue;
+		}
 		IPluginModelBase base = PluginRegistry.findModel(fInfo.getBase().getUnderlyingResource().getProject());
 		return (base == null) ? newValue : base.getPluginBase().getId() + "." + newValue; //$NON-NLS-1$
 	}
@@ -139,8 +144,9 @@ public class RenameExtensionPointProcessor extends RefactoringProcessor {
 		if (res != null) {
 			IProject proj = res.getProject();
 			IFile file = PDEProject.getPluginXml(proj);
-			if (file.exists())
+			if (file.exists()) {
 				return file;
+			}
 		}
 		return null;
 	}
@@ -150,8 +156,9 @@ public class RenameExtensionPointProcessor extends RefactoringProcessor {
 
 			@Override
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
-				if (!(model instanceof IPluginModelBase modelBase))
+				if (!(model instanceof IPluginModelBase modelBase)) {
 					return;
+				}
 				IPluginBase base = modelBase.getPluginBase();
 				IPluginExtensionPoint[] points = base.getExtensionPoints();
 				for (IPluginExtensionPoint point : points) {
@@ -170,14 +177,17 @@ public class RenameExtensionPointProcessor extends RefactoringProcessor {
 
 			@Override
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
-				if (!(model instanceof IPluginModelBase modelBase))
+				if (!(model instanceof IPluginModelBase modelBase)) {
 					return;
+				}
 				IPluginBase base = modelBase.getPluginBase();
 				IPluginExtension[] extensions = base.getExtensions();
 				String oldValue = getId();
-				for (IPluginExtension extension : extensions)
-					if (extension.getPoint().equals(oldValue))
+				for (IPluginExtension extension : extensions) {
+					if (extension.getPoint().equals(oldValue)) {
 						extension.setPoint(getNewId());
+					}
+				}
 			}
 		};
 	}

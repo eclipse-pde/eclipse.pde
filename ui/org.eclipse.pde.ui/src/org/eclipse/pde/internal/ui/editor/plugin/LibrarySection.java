@@ -109,10 +109,12 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 
 		@Override
 		public boolean select(Viewer viewer, Object parent, Object element) {
-			if (element instanceof IFolder)
+			if (element instanceof IFolder) {
 				return isPathValid(((IFolder) element).getProjectRelativePath());
-			if (element instanceof IFile)
+			}
+			if (element instanceof IFile) {
 				return isFileValid(((IFile) element).getProjectRelativePath());
+			}
 			return false;
 		}
 	}
@@ -234,8 +236,9 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
 		IBaseModel model = getPage().getModel();
-		if (model != null && model.isEditable())
+		if (model != null && model.isEditable()) {
 			updateButtons();
+		}
 	}
 
 	@Override
@@ -252,8 +255,9 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 	@Override
 	public void dispose() {
 		IPluginModelBase model = getModel();
-		if (model != null)
+		if (model != null) {
 			model.removeModelChangedListener(this);
+		}
 		super.dispose();
 	}
 
@@ -307,9 +311,11 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 		Object[] selection = fLibraryTable.getStructuredSelection().toArray();
 		int index = fLibraryTable.getTable().getSelectionIndex();
 		int[] indices = fLibraryTable.getTable().getSelectionIndices();
-		for (int indice : indices)
-			if (indice < index)
+		for (int indice : indices) {
+			if (indice < index) {
 				index = indice;
+			}
+		}
 
 		String[] remove = new String[selection.length];
 		for (int i = 0; i < selection.length; i++) {
@@ -328,8 +334,9 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 
 		int itemCount = fLibraryTable.getTable().getItemCount();
 		if (itemCount > 0) {
-			if (index >= itemCount)
+			if (index >= itemCount) {
 				index = itemCount - 1;
+			}
 			fLibraryTable.getTable().setSelection(index);
 			fLibraryTable.getTable().setFocus();
 		}
@@ -339,14 +346,16 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 	private void handleDown() {
 		Table table = getTablePart().getTableViewer().getTable();
 		int index = table.getSelectionIndex();
-		if (index != table.getItemCount() - 1)
+		if (index != table.getItemCount() - 1) {
 			swap(index, index + 1);
+		}
 	}
 
 	private void handleUp() {
 		int index = getTablePart().getTableViewer().getTable().getSelectionIndex();
-		if (index >= 1)
+		if (index >= 1) {
 			swap(index, index - 1);
+		}
 	}
 
 	public void swap(int index1, int index2) {
@@ -376,8 +385,9 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 
 		if (dialog.open() == Window.OK) {
 			String libName = dialog.getLibraryName();
-			if (libName == null || libName.length() == 0)
+			if (libName == null || libName.length() == 0) {
 				return;
+			}
 			try {
 				IPluginLibrary library = model.getPluginFactory().createLibrary();
 				library.setName(libName);
@@ -396,12 +406,15 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 	private void checkSourceRootEntry() {
 		IPluginModelBase pluginModel = getModel();
 		IPluginLibrary[] libraries = pluginModel.getPluginBase().getLibraries();
-		for (IPluginLibrary library : libraries)
-			if (library.getName().equals(".")) //$NON-NLS-1$
+		for (IPluginLibrary library : libraries) {
+			if (library.getName().equals(".")) { //$NON-NLS-1$
 				return;
+			}
+		}
 		IBuildModel model = getBuildModel();
-		if (model == null)
+		if (model == null) {
 			return;
+		}
 
 		IBuildEntry[] entires = model.getBuild().getBuildEntries();
 		for (IBuildEntry entry : entires) {
@@ -419,11 +432,13 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 	private IBuildModel getBuildModel() {
 		IFormPage page = getPage().getEditor().findPage(BuildInputContext.CONTEXT_ID);
 		IBaseModel model = null;
-		if (page instanceof BuildSourcePage)
+		if (page instanceof BuildSourcePage) {
 			model = ((BuildSourcePage) page).getInputContext().getModel();
+		}
 
-		if (model != null && model instanceof IBuildModel)
+		if (model != null && model instanceof IBuildModel) {
 			return (IBuildModel) model;
+		}
 		return null;
 	}
 
@@ -437,20 +452,26 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 					IJavaProject jproject = JavaCore.create(project);
 					ArrayList<String> tokens = new ArrayList<>();
 					IClasspathEntry[] entries = jproject.getRawClasspath();
-					for (IClasspathEntry cpe : entries)
-						if (cpe.getEntryKind() == IClasspathEntry.CPE_SOURCE)
+					for (IClasspathEntry cpe : entries) {
+						if (cpe.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
 							tokens.add(cpe.getPath().removeFirstSegments(1).addTrailingSeparator().toString());
-					if (tokens.isEmpty())
+						}
+					}
+					if (tokens.isEmpty()) {
 						return;
+					}
 
 					entry = bmodel.getFactory().createEntry(PROPERTY_SOURCE_PREFIX + newPath);
-					for (int i = 0; i < tokens.size(); i++)
+					for (int i = 0; i < tokens.size(); i++) {
 						entry.addToken(tokens.get(i));
+					}
 					build.add(entry);
-				} else
+				} else {
 					entry.setName(PROPERTY_SOURCE_PREFIX + newPath);
-			} else if (entry != null)
+				}
+			} else if (entry != null) {
 				build.remove(entry);
+			}
 		} catch (JavaModelException e) {
 		}
 	}
@@ -519,8 +540,9 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 			}
 			checkSourceRootEntry();
 			updateBuildProperties(new String[bundlePaths.length], bundlePaths, false);
-			if (updateClasspath[0])
+			if (updateClasspath[0]) {
 				updateJavaClasspathLibs(new String[buildPaths.length], buildPaths);
+			}
 			fLibraryTable.setSelection(new StructuredSelection(list.toArray()));
 			fLibraryTable.getTable().setFocus();
 		}
@@ -528,42 +550,51 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 
 	private void updateBuildProperties(final String[] oldPaths, final String[] newPaths, boolean modifySourceEntry) {
 		IBuildModel bmodel = getBuildModel();
-		if (bmodel == null)
+		if (bmodel == null) {
 			return;
+		}
 
 		IBuild build = bmodel.getBuild();
 
 		IBuildEntry entry = build.getEntry(PROPERTY_BIN_INCLUDES);
-		if (entry == null)
+		if (entry == null) {
 			entry = bmodel.getFactory().createEntry(PROPERTY_BIN_INCLUDES);
+		}
 
 		try {
 			// adding new entries
 			if (oldPaths[0] == null) {
-				for (String newPath : newPaths)
+				for (String newPath : newPaths) {
 					if (newPath != null) {
 						entry.addToken(newPath);
-						if (modifySourceEntry)
+						if (modifySourceEntry) {
 							configureSourceBuildEntry(bmodel, null, newPath);
+						}
 					}
 				// removing entries
+				}
 			} else if (newPaths[0] == null) {
-				for (String oldPath : oldPaths)
+				for (String oldPath : oldPaths) {
 					if (oldPath != null) {
 						entry.removeToken(oldPath);
-						if (modifySourceEntry)
+						if (modifySourceEntry) {
 							configureSourceBuildEntry(bmodel, oldPath, null);
+						}
 					}
-				if (entry.getTokens().length == 0)
+				}
+				if (entry.getTokens().length == 0) {
 					build.remove(entry);
 				// rename entries
+				}
 			} else {
-				for (int i = 0; i < oldPaths.length; i++)
+				for (int i = 0; i < oldPaths.length; i++) {
 					if (newPaths[i] != null && oldPaths[i] != null) {
 						entry.renameToken(oldPaths[i], newPaths[i]);
-						if (modifySourceEntry)
+						if (modifySourceEntry) {
 							configureSourceBuildEntry(bmodel, oldPaths[i], newPaths[i]);
+						}
 					}
+				}
 			}
 		} catch (CoreException e) {
 		}
@@ -578,32 +609,41 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 			int index = -1;
 			entryLoop: for (int i = 0; i < entries.length; i++) {
 				if (entries[i].getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
-					if (index == -1)
+					if (index == -1) {
 						index = i;
+					}
 					// do not add the old paths (handling deletion/renaming)
 					IPath path = entries[i].getPath().removeFirstSegments(1).removeTrailingSeparator();
-					for (int j = 0; j < oldPaths.length; j++)
-						if (oldPaths[j] != null && path.equals(IPath.fromOSString(oldPaths[j]).removeTrailingSeparator()))
+					for (int j = 0; j < oldPaths.length; j++) {
+						if (oldPaths[j] != null && path.equals(IPath.fromOSString(oldPaths[j]).removeTrailingSeparator())) {
 							continue entryLoop;
-				} else if (entries[i].getEntryKind() == IClasspathEntry.CPE_CONTAINER)
-					if (index == -1)
+						}
+					}
+				} else if (entries[i].getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
+					if (index == -1) {
 						index = i;
+					}
+				}
 				toBeAdded.add(entries[i]);
 			}
-			if (index == -1)
+			if (index == -1) {
 				index = entries.length;
+			}
 
 			// add paths
 			for (String newPath : newPaths) {
-				if (newPath == null)
+				if (newPath == null) {
 					continue;
+				}
 				IClasspathEntry entry = JavaCore.newLibraryEntry(project.getFullPath().append(newPath), null, null, true);
-				if (!toBeAdded.contains(entry))
+				if (!toBeAdded.contains(entry)) {
 					toBeAdded.add(index++, entry);
+				}
 			}
 
-			if (toBeAdded.size() == entries.length)
+			if (toBeAdded.size() == entries.length) {
 				return;
+			}
 
 			IClasspathEntry[] updated = toBeAdded.toArray(new IClasspathEntry[toBeAdded.size()]);
 			jproject.setRawClasspath(updated, null);
@@ -613,8 +653,9 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 
 	@Override
 	public void refresh() {
-		if (fLibraryTable.getControl().isDisposed())
+		if (fLibraryTable.getControl().isDisposed()) {
 			return;
+		}
 		fLibraryTable.setSelection(null);
 		fLibraryTable.refresh();
 		super.refresh();

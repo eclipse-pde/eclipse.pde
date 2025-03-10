@@ -65,8 +65,9 @@ public class ManifestTypeMoveParticipant extends PDEMoveParticipant {
 	protected void addChange(CompositeChange result, IFile file, IProgressMonitor pm) throws CoreException {
 		if (file.exists()) {
 			Change change = PluginManifestChange.createRenameChange(file, fElements.keySet().toArray(), getNewNames(), getTextChange(file), pm);
-			if (change != null)
+			if (change != null) {
 				result.add(change);
+			}
 		}
 	}
 
@@ -75,8 +76,9 @@ public class ManifestTypeMoveParticipant extends PDEMoveParticipant {
 		if (destination instanceof IPackageFragment && element instanceof IJavaElement) {
 			StringBuilder buffer = new StringBuilder();
 			buffer.append(((IPackageFragment) destination).getElementName());
-			if (buffer.length() > 0)
+			if (buffer.length() > 0) {
 				buffer.append('.');
+			}
 			return buffer.append(((IJavaElement) element).getElementName()).toString();
 		}
 		return super.getNewName(destination, element);
@@ -87,8 +89,9 @@ public class ManifestTypeMoveParticipant extends PDEMoveParticipant {
 		IFile file = PDEProject.getManifest(fProject);
 		if (file.exists()) {
 			Change change = BundleManifestChange.createRenameChange(file, fElements.keySet().toArray(), getNewNames(), pm);
-			if (change != null)
+			if (change != null) {
 				result.add(change);
+			}
 		}
 	}
 

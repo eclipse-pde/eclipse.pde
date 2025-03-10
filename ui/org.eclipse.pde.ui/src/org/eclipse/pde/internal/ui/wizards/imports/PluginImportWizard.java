@@ -100,8 +100,9 @@ public class PluginImportWizard extends Wizard implements IImportWizard, IPageCh
 	}
 
 	private IPluginModelBase[] getModelsToImport() {
-		if (page1.getNextPage().equals(page2))
+		if (page1.getNextPage().equals(page2)) {
 			return page2.getModelsToImport();
+		}
 		return page3.getModelsToImport();
 	}
 
@@ -114,8 +115,9 @@ public class PluginImportWizard extends Wizard implements IImportWizard, IPageCh
 		if (launchedConfiguration > 0) {
 			String message = launchedConfiguration == 1 ? PDEUIMessages.PluginImportWizard_runningConfigDesc : PDEUIMessages.PluginImportWizard_runningConfigsDesc;
 			MessageDialog dialog = new MessageDialog(getShell(), PDEUIMessages.PluginImportWizard_runningConfigsTitle, null, message, MessageDialog.WARNING, new String[] {IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL}, 0);
-			if (dialog.open() != IDialogConstants.OK_ID)
+			if (dialog.open() != IDialogConstants.OK_ID) {
 				return false;
+			}
 
 		}
 		if (page1.getImportType() == PluginImportOperation.IMPORT_FROM_REPOSITORY) {
@@ -150,8 +152,9 @@ public class PluginImportWizard extends Wizard implements IImportWizard, IPageCh
 		for (int i = 0; i < launches.length; ++i) {
 			if (!launches[i].isTerminated()) {
 				ILaunchConfiguration configuration = launches[i].getLaunchConfiguration();
-				if (configuration == null)
+				if (configuration == null) {
 					continue;
+				}
 				try {
 					var workspaceBundles = BundleLauncherHelper.getWorkspaceBundleMap(configuration).keySet();
 					for (IPluginModelBase bm : workspaceBundles) {

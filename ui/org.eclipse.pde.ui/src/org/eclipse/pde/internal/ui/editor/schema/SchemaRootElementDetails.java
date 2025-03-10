@@ -76,13 +76,16 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 
 	@Override
 	public void updateFields(ISchemaObject element) {
-		if (!(element instanceof ISchemaElement))
+		if (!(element instanceof ISchemaElement)) {
 			return;
-		if (element instanceof SchemaElementReference)
+		}
+		if (element instanceof SchemaElementReference) {
 			element = ((SchemaElementReference) element).getReferencedObject();
+		}
 		fElement = (SchemaRootElement) element;
-		if (fElement == null)
+		if (fElement == null) {
 			return;
+		}
 
 		setDecription(NLS.bind(PDEUIMessages.SchemaElementDetails_description, fElement.getName()));
 		fName.setValue(fElement.getName(), true);
@@ -110,8 +113,9 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 	@Override
 	public void hookListeners() {
 		fDepTrue.addSelectionListener(widgetSelectedAdapter(e -> {
-			if (blockListeners())
+			if (blockListeners()) {
 				return;
+			}
 			boolean deprecated = fDepTrue.getSelection();
 			fElement.setDeprecatedProperty(deprecated);
 			fSuggestion.getLabel().setEnabled(deprecated);
@@ -119,8 +123,9 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 		}));
 
 		fInternalTrue.addSelectionListener(widgetSelectedAdapter(e -> {
-			if (blockListeners())
+			if (blockListeners()) {
 				return;
+			}
 			boolean internal = fInternalTrue.getSelection();
 			fElement.setInternal(internal);
 		}));
@@ -128,8 +133,9 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 		fSuggestion.setFormEntryListener(new FormEntryAdapter(this) {
 			@Override
 			public void textValueChanged(FormEntry entry) {
-				if (blockListeners())
+				if (blockListeners()) {
 					return;
+				}
 				fElement.setDeprecatedSuggestion(fSuggestion.getValue());
 			}
 		});

@@ -39,8 +39,9 @@ public class TagManager {
 		String[] tagArray = tags.split(","); //$NON-NLS-1$
 		for (String string : tagArray) {
 			String trimTag = string.trim();
-			if (tag.equalsIgnoreCase(trimTag))
+			if (tag.equalsIgnoreCase(trimTag)) {
 				return true;
+			}
 		}
 
 		return false;
@@ -61,8 +62,9 @@ public class TagManager {
 
 	public String getTags(Command command) {
 		String tags = fCommandToTags.get(command);
-		if (tags == null)
+		if (tags == null) {
 			return ""; //$NON-NLS-1$
+		}
 		return tags;
 	}
 

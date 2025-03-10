@@ -164,8 +164,9 @@ public class BuildClasspathSection extends TableSection {
 
 	private IBuildModel getBuildModel() {
 		InputContext context = getPage().getPDEEditor().getContextManager().findContext(BuildInputContext.CONTEXT_ID);
-		if (context == null)
+		if (context == null) {
 			return null;
+		}
 		return (IBuildModel) context.getModel();
 	}
 
@@ -228,8 +229,9 @@ public class BuildClasspathSection extends TableSection {
 	@Override
 	public void dispose() {
 		IBuildModel model = getBuildModel();
-		if (model != null)
+		if (model != null) {
 			model.removeModelChangedListener(this);
+		}
 		super.dispose();
 	}
 
@@ -272,8 +274,9 @@ public class BuildClasspathSection extends TableSection {
 						entry.removeToken(selection.toString());
 
 						String[] tokens = entry.getTokens();
-						if (tokens.length == 0)
+						if (tokens.length == 0) {
 							build.remove(entry);
+						}
 
 					} catch (CoreException e) {
 						PDEPlugin.logException(e);
@@ -297,8 +300,9 @@ public class BuildClasspathSection extends TableSection {
 				} else if (element instanceof IResource resource) {
 					IBuildModel model = getBuildModel();
 					IBuildEntry entry = model.getBuild().getEntry(IBuildPropertiesConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
-					if (entry != null)
+					if (entry != null) {
 						return !entry.contains(getRelativePathTokenName(resource));
+					}
 				}
 				return true;
 			}
@@ -318,8 +322,9 @@ public class BuildClasspathSection extends TableSection {
 			for (Object element : elements) {
 				IResource elem = (IResource) element;
 				String tokenName = getRelativePathTokenName(elem);
-				if (tokenName == null)
+				if (tokenName == null) {
 					continue;
+				}
 				addClasspathToken(tokenName);
 			}
 		}
@@ -333,8 +338,9 @@ public class BuildClasspathSection extends TableSection {
 				entry = model.getFactory().createEntry(IBuildPropertiesConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
 				model.getBuild().add(entry);
 			}
-			if (!entry.contains(tokenName))
+			if (!entry.contains(tokenName)) {
 				entry.addToken(tokenName);
+			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
@@ -344,12 +350,14 @@ public class BuildClasspathSection extends TableSection {
 		IProject thisProject = getBuildModel().getUnderlyingResource().getProject();
 		IProject elemProject = elem.getProject();
 		String projectRelative = elem.getProjectRelativePath().toString();
-		if (thisProject == elemProject)
+		if (thisProject == elemProject) {
 			return projectRelative;
+		}
 
 		IPluginModelBase model = PluginRegistry.findModel(elemProject);
-		if (model != null)
+		if (model != null) {
 			return "platform:/plugin/" + model.getPluginBase().getId() + '/' + projectRelative; //$NON-NLS-1$
+		}
 		return null;
 	}
 
@@ -363,9 +371,9 @@ public class BuildClasspathSection extends TableSection {
 
 	@Override
 	public void modelChanged(IModelChangedEvent event) {
-		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED)
+		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
-		else if (event.getChangeType() == IModelChangedEvent.CHANGE) {
+		} else if (event.getChangeType() == IModelChangedEvent.CHANGE) {
 			Object changeObject = event.getChangedObjects()[0];
 
 			if (changeObject instanceof IBuildEntry && ((IBuildEntry) changeObject).getName().equals(IBuildEntry.JARS_EXTRA_CLASSPATH)) {
@@ -373,12 +381,14 @@ public class BuildClasspathSection extends TableSection {
 				int index = table.getSelectionIndex();
 				fTableViewer.refresh();
 				int count = table.getItemCount();
-				if (index == -1 || index >= count || event.getOldValue() == null)
+				if (index == -1 || index >= count || event.getOldValue() == null) {
 					index = count - 1;
-				if (count == 0)
+				}
+				if (count == 0) {
 					fTableViewer.setSelection(null);
-				else
+				} else {
 					fTableViewer.setSelection(new StructuredSelection(table.getItem(index).getData()));
+				}
 				table.setFocus();
 			}
 		}

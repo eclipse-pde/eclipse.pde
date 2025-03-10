@@ -100,8 +100,9 @@ public class PropertiesSection extends TableSection {
 	private class LabelProvider extends PDELabelProvider {
 		@Override
 		public Image getColumnImage(Object obj, int index) {
-			if (index == 0)
+			if (index == 0) {
 				return get(PDEPluginImages.DESC_PROPERTIES);
+			}
 			return null;
 		}
 

@@ -63,8 +63,9 @@ public class ExternalizeResolution extends AbstractXMLMarkerResolution {
 		ModelChangeElement element = new ModelChangeElement(change, node);
 		if (element.updateValue()) {
 			String localization = PDEManager.getBundleLocalization(model);
-			if (localization == null)
+			if (localization == null) {
 				addLocalization(model, localization = "plugin"); //$NON-NLS-1$
+			}
 			IProject project = model.getUnderlyingResource().getProject();
 			IFile file = PDEProject.getLocalizationFile(project);
 			checkPropertiesFile(file);
@@ -72,8 +73,9 @@ public class ExternalizeResolution extends AbstractXMLMarkerResolution {
 				ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 				manager.connect(file.getFullPath(), LocationKind.IFILE, null);
 				ITextFileBuffer buffer = manager.getTextFileBuffer(file.getFullPath(), LocationKind.IFILE);
-				if (buffer.isDirty())
+				if (buffer.isDirty()) {
 					buffer.commit(null, true);
+				}
 				IDocument document = buffer.getDocument();
 				ExternalizeStringsOperation.getPropertiesInsertEdit(document, element).apply(document);
 				buffer.commit(null, true);
@@ -96,10 +98,12 @@ public class ExternalizeResolution extends AbstractXMLMarkerResolution {
 			locationPath = (String) marker.getAttribute(PDEMarkerFactory.MPK_LOCATION_PATH);
 		} catch (CoreException e) {
 		}
-		if (isAttrNode())
+		if (isAttrNode()) {
 			return NLS.bind(PDEUIMessages.ExternalizeResolution_attrib, getNameOfNode());
-		if (locationPath.charAt(0) == '(')
+		}
+		if (locationPath.charAt(0) == '(') {
 			return NLS.bind(PDEUIMessages.ExternalizeResolution_text, getNameOfNode());
+		}
 		return NLS.bind(PDEUIMessages.ExternalizeResolution_header, locationPath);
 	}
 
@@ -151,9 +155,10 @@ public class ExternalizeResolution extends AbstractXMLMarkerResolution {
 			String propertiesFileComment = ExternalizeStringsOperation.getPropertiesFileComment(file);
 			try (ByteArrayInputStream pStream = new ByteArrayInputStream(propertiesFileComment.getBytes())) {
 				IContainer container = file.getParent();
-				if (!container.exists())
+				if (!container.exists()) {
 					// project will exists, therefore we can assume if !IContainer.exist(), the object is an IFolder
 					CoreUtility.createFolder((IFolder) container);
+				}
 				file.create(pStream, true, new NullProgressMonitor());
 			} catch (CoreException | IOException e1) {
 			}

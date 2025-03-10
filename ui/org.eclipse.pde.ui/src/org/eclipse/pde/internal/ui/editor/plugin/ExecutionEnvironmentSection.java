@@ -102,15 +102,17 @@ public class ExecutionEnvironmentSection extends TableSection {
 
 		@Override
 		public String getText(Object element) {
-			if (element instanceof IExecutionEnvironment)
+			if (element instanceof IExecutionEnvironment) {
 				return ((IExecutionEnvironment) element).getId();
+			}
 			return super.getText(element);
 		}
 
 		@Override
 		public void dispose() {
-			if (fImage != null)
+			if (fImage != null) {
 				fImage.dispose();
+			}
 			super.dispose();
 		}
 	}
@@ -126,10 +128,11 @@ public class ExecutionEnvironmentSection extends TableSection {
 	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(PDEUIMessages.RequiredExecutionEnvironmentSection_title);
-		if (isFragment())
+		if (isFragment()) {
 			section.setDescription(PDEUIMessages.RequiredExecutionEnvironmentSection_fragmentDesc);
-		else
+		} else {
 			section.setDescription(PDEUIMessages.RequiredExecutionEnvironmentSection_pluginDesc);
+		}
 
 		section.setLayout(FormLayoutFactory.createClearTableWrapLayout(false, 1));
 
@@ -202,8 +205,9 @@ public class ExecutionEnvironmentSection extends TableSection {
 	@Override
 	public void dispose() {
 		IBundleModel model = getBundleModel();
-		if (model != null)
+		if (model != null) {
 			model.removeModelChangedListener(this);
+		}
 	}
 
 	@Override

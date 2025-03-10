@@ -37,10 +37,11 @@ public class MultiFixResolution extends WorkbenchMarkerResolution {
 
 	public MultiFixResolution(IMarker marker, String label) {
 		fMarker = marker;
-		if (label != null)
+		if (label != null) {
 			fLabel = label;
-		else
+		} else {
 			fLabel = PDEUIMessages.MultiFixResolution_FixAll;
+		}
 		problemViewQuickFix = false;
 	}
 
@@ -105,12 +106,14 @@ public class MultiFixResolution extends WorkbenchMarkerResolution {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof MultiFixResolution multiFix))
+		if (!(obj instanceof MultiFixResolution multiFix)) {
 			return false;
+		}
 		try {
 			String categoryId = (String) multiFix.fMarker.getAttribute(PDEMarkerFactory.CAT_ID);
-			if (categoryId == null)
+			if (categoryId == null) {
 				return false;
+			}
 			return categoryId.equals(fMarker.getAttribute(PDEMarkerFactory.CAT_ID));
 		} catch (CoreException e) {
 		}

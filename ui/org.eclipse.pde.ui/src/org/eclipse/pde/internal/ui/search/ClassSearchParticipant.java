@@ -94,29 +94,34 @@ public class ClassSearchParticipant implements IQueryParticipant {
 	@Override
 	public void search(ISearchRequestor requestor, QuerySpecification querySpecification, IProgressMonitor monitor) throws CoreException {
 
-		if (querySpecification.getLimitTo() != S_LIMIT_REF && querySpecification.getLimitTo() != S_LIMIT_ALL)
+		if (querySpecification.getLimitTo() != S_LIMIT_REF && querySpecification.getLimitTo() != S_LIMIT_ALL) {
 			return;
+		}
 
 		String search = null;
 		if (querySpecification instanceof ElementQuerySpecification) {
 			IJavaElement element = ((ElementQuerySpecification) querySpecification).getElement();
-			if (element instanceof IType)
+			if (element instanceof IType) {
 				search = ((IType) element).getFullyQualifiedName('.');
-			else
+			} else {
 				search = element.getElementName();
+			}
 			int type = element.getElementType();
-			if (type == IJavaElement.TYPE)
+			if (type == IJavaElement.TYPE) {
 				fSearchFor = S_FOR_TYPES;
-			else if (type == IJavaElement.PACKAGE_FRAGMENT || type == IJavaElement.PACKAGE_FRAGMENT_ROOT)
+			} else if (type == IJavaElement.PACKAGE_FRAGMENT || type == IJavaElement.PACKAGE_FRAGMENT_ROOT) {
 				fSearchFor = S_FOR_PACKAGES;
+			}
 		} else if (querySpecification instanceof PatternQuerySpecification){
 			fSearchFor = ((PatternQuerySpecification) querySpecification).getSearchFor();
 			search = ((PatternQuerySpecification) querySpecification).getPattern();
 		}
-		if (fSearchFor != S_FOR_TYPES && fSearchFor != S_FOR_PACKAGES)
+		if (fSearchFor != S_FOR_TYPES && fSearchFor != S_FOR_PACKAGES) {
 			return;
-		if (search == null)
+		}
+		if (search == null) {
 			return;
+		}
 		fSearchPattern = PatternConstructor.createPattern(search, true);
 		fSearchRequestor = requestor;
 
@@ -125,15 +130,18 @@ public class ClassSearchParticipant implements IQueryParticipant {
 		monitor.beginTask(PDEUIMessages.ClassSearchParticipant_taskMessage, pluginModels.length);
 		for (IPluginModelBase pluginModel : pluginModels) {
 			IProject project = pluginModel.getUnderlyingResource().getProject();
-			if (!monitor.isCanceled() && encloses(enclosingPaths, project.getFullPath()))
+			if (!monitor.isCanceled() && encloses(enclosingPaths, project.getFullPath())) {
 				searchProject(project, monitor);
+			}
 		}
 	}
 
 	private boolean encloses(IPath[] paths, IPath path) {
-		for (IPath p : paths)
-			if (p.equals(path))
+		for (IPath p : paths) {
+			if (p.equals(path)) {
 				return true;
+			}
+		}
 		return false;
 	}
 
@@ -153,8 +161,9 @@ public class ClassSearchParticipant implements IQueryParticipant {
 					IPluginExtension[] extensions = pbase.getExtensions();
 					for (IPluginExtension extension : extensions) {
 						ISchema schema = registry.getSchema(extension.getPoint());
-						if (schema != null && !monitor.isCanceled())
+						if (schema != null && !monitor.isCanceled()) {
 							inspectExtension(schema, extension, file);
+						}
 					}
 				}
 			}
@@ -172,8 +181,9 @@ public class ClassSearchParticipant implements IQueryParticipant {
 			ISchemaElement schemaElement = schema.findElement(parentNode.getName());
 			if (schemaElement != null) {
 				ISchemaAttribute attInfo = schemaElement.getAttribute(node.getName());
-				if (attInfo != null && attInfo.getKind() == IMetaAttribute.JAVA)
+				if (attInfo != null && attInfo.getKind() == IMetaAttribute.JAVA) {
 					checkMatch(node.getAttribute("class"), file); //$NON-NLS-1$
+				}
 			}
 		}
 
@@ -184,8 +194,9 @@ public class ClassSearchParticipant implements IQueryParticipant {
 				IPluginAttribute[] attributes = child.getAttributes();
 				for (IPluginAttribute attr : attributes) {
 					ISchemaAttribute attInfo = schemaElement.getAttribute(attr.getName());
-					if (attInfo != null && attInfo.getKind() == IMetaAttribute.JAVA && attr instanceof IDocumentAttributeNode)
+					if (attInfo != null && attInfo.getKind() == IMetaAttribute.JAVA && attr instanceof IDocumentAttributeNode) {
 						checkMatch(attr, file);
+					}
 				}
 			}
 			inspectExtension(schema, child, file);
@@ -207,8 +218,9 @@ public class ClassSearchParticipant implements IQueryParticipant {
 			String group = matcher.group(0);
 			int offset = ((IDocumentAttributeNode) attr).getValueOffset() + value.indexOf(group);
 			int attOffset = attr.getValue().indexOf(value);
-			if (attOffset != -1)
+			if (attOffset != -1) {
 				offset += attOffset;
+			}
 			int length = group.length();
 			fSearchRequestor.reportMatch(new Match(file, Match.UNIT_CHARACTER, offset, length));
 		}
@@ -216,21 +228,24 @@ public class ClassSearchParticipant implements IQueryParticipant {
 
 	private String removeInitializationData(String attrValue) {
 		int i = attrValue.indexOf(':');
-		if (i != -1)
+		if (i != -1) {
 			return attrValue.substring(0, i).trim();
+		}
 		return attrValue;
 	}
 
 	private void inspectBundle(IBundle bundle) {
 		for (int i = 0; i < H_TOTAL; i++) {
-			if (fSearchFor == S_FOR_TYPES && (i == H_IMP || i == H_EXP))
+			if (fSearchFor == S_FOR_TYPES && (i == H_IMP || i == H_EXP)) {
 				continue;
+			}
 			IManifestHeader header = bundle.getManifestHeader(SEARCH_HEADERS[i]);
 			if (header != null) {
 				try {
 					ManifestElement[] elements = ManifestElement.parseHeader(header.getName(), header.getValue());
-					if (elements == null)
+					if (elements == null) {
 						continue;
+					}
 					for (ManifestElement element : elements) {
 						String value = null;
 						Matcher matcher = null;
@@ -269,10 +284,11 @@ public class ClassSearchParticipant implements IQueryParticipant {
 			try {
 				String headerString = pDoc.get(headerOffset, header.getLength() - header.getName().length());
 				int internalOffset = headerString.indexOf(value);
-				if (internalOffset != -1)
+				if (internalOffset != -1) {
 					offlen[0] = headerOffset + internalOffset;
-				else
+				} else {
 					offlen[0] = headerOffset + header.getName().length() + header.getValue().indexOf(value);
+				}
 				offlen[1] = value.length();
 			} catch (BadLocationException e) {
 			}
@@ -286,18 +302,21 @@ public class ClassSearchParticipant implements IQueryParticipant {
 
 	private String extractType(String value) {
 		int index = value.lastIndexOf("."); //$NON-NLS-1$
-		if (index == -1 || index == value.length() - 1)
+		if (index == -1 || index == value.length() - 1) {
 			return value;
+		}
 		return value.substring(index + 1);
 	}
 
 	private String extractPackage(String value) {
 		int index = value.lastIndexOf("."); //$NON-NLS-1$
-		if (index == -1 || index == value.length() - 1)
+		if (index == -1 || index == value.length() - 1) {
 			return value;
+		}
 		char afterPeriod = value.charAt(index + 1);
-		if (afterPeriod >= 'A' && afterPeriod <= 'Z')
+		if (afterPeriod >= 'A' && afterPeriod <= 'Z') {
 			return value.substring(0, index);
+		}
 		return value;
 	}
 

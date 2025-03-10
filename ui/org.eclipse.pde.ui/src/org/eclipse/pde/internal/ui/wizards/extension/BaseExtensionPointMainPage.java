@@ -178,10 +178,11 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fOpenSchemaButton.setLayoutData(gd);
-		if (isPluginIdNeeded())
+		if (isPluginIdNeeded()) {
 			fPluginIdText.setFocus();
-		else
+		} else {
 			fIdText.setFocus();
+		}
 		setControl(container);
 		initializeValues();
 		validatePage();
@@ -196,8 +197,9 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 	}
 
 	private InputStream createSchemaStream(String pluginId, String pointId, String name, boolean shared, IFile schemaFile) {
-		if (name.length() == 0)
+		if (name.length() == 0) {
 			name = pointId;
+		}
 		EditableSchema schema = new EditableSchema(pluginId, pointId, name, false);
 		schema.setDescription(PDEUIMessages.BaseExtensionPoint_sections_overview);
 		DocumentSection section;
@@ -275,17 +277,19 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 				try {
 					Display.getDefault().syncExec(() -> {
 						String schemaName = schema;
-						if (!schema.endsWith(".exsd")) //$NON-NLS-1$
+						if (!schema.endsWith(".exsd")) { //$NON-NLS-1$
 							schemaName = schema + ".exsd"; //$NON-NLS-1$
+						}
 
 						IFile file = fContainer.getFile(IPath.fromOSString(schema));
 						// do not overwrite if schema already exists
-						if (!file.exists())
+						if (!file.exists()) {
 							try {
 								file = generateSchemaFile(getPluginId(), id, name, shared, schemaName, monitor);
 							} catch (CoreException e) {
 								PDEPlugin.logException(e);
 							}
+						}
 
 						if (file != null && openFile) {
 							fSchemaText.setText(file.getProjectRelativePath().toString());
@@ -312,8 +316,9 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			}
 
 			int loc = schema.lastIndexOf("/"); //$NON-NLS-1$
-			if (loc != -1)
+			if (loc != -1) {
 				return schema.substring(0, loc);
+			}
 		}
 		return ""; //$NON-NLS-1$
 	}
@@ -366,8 +371,9 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 
 		// Verify not zero length
 		String id = fIdText.getText();
-		if (id.length() == 0)
+		if (id.length() == 0) {
 			return PDEUIMessages.BaseExtensionPointMainPage_missingExtensionPointID;
+		}
 
 		// For 3.2 or greater plug-ins verify that it is a valid composite ID
 		// and that it has a valid namespace
@@ -381,27 +387,31 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 
 		String schemaVersion = model.getPluginBase().getSchemaVersion();
 		if (schemaVersion == null || Float.parseFloat(schemaVersion) >= 3.2) {
-			if (!IdUtil.isValidCompositeID(id))
+			if (!IdUtil.isValidCompositeID(id)) {
 				return PDEUIMessages.BaseExtensionPointMainPage_invalidCompositeID;
+			}
 
-		} else if (!IdUtil.isValidSimpleID(id))
+		} else if (!IdUtil.isValidSimpleID(id)) {
 			return PDEUIMessages.BaseExtensionPointMainPage_invalidSimpleID;
+		}
 
 		return null;
 	}
 
 	protected String validateExtensionPointName() {
 		// Verify not zero length
-		if (fNameText.getText().length() == 0)
+		if (fNameText.getText().length() == 0) {
 			return PDEUIMessages.BaseExtensionPointMainPage_missingExtensionPointName;
+		}
 
 		return null;
 	}
 
 	protected String validateExtensionPointSchema() {
 		// Verify not zero length
-		if (fSchemaText.getText().length() == 0)
+		if (fSchemaText.getText().length() == 0) {
 			return PDEUIMessages.BaseExtensionPointMainPage_missingExtensionPointSchema;
+		}
 
 		return null;
 	}
@@ -424,8 +434,9 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		dialog.addFilter(new ViewerFilter() {
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				if (element instanceof IFile)
+				if (element instanceof IFile) {
 					return false;
+				}
 				return true;
 			}
 		});
@@ -447,8 +458,9 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 
 	private String getWorkspaceRelativePath(String path) {
 		String workspacePath = PDECore.getWorkspace().getRoot().getLocation().toString();
-		if (path.startsWith(workspacePath))
+		if (path.startsWith(workspacePath)) {
 			path = path.replaceFirst(workspacePath, ""); //$NON-NLS-1$
+		}
 		return path;
 	}
 

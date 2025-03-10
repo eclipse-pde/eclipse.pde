@@ -118,8 +118,9 @@ public abstract class BaseBuildAction extends AbstractHandler {
 		refreshLocal(subMonitor.split(1));
 		IProject project = fManifestFile.getProject();
 		IFile generatedFile = (IFile) project.findMember("build.xml"); //$NON-NLS-1$
-		if (generatedFile != null)
+		if (generatedFile != null) {
 			setDefaultValues(generatedFile);
+		}
 		subMonitor.split(1);
 
 	}
@@ -147,8 +148,9 @@ public abstract class BaseBuildAction extends AbstractHandler {
 		for (IMarker marker : markers) {
 			Object att = marker.getAttribute(IMarker.SEVERITY);
 			if (att != null && att instanceof Integer) {
-				if (((Integer) att).intValue() == IMarker.SEVERITY_ERROR)
+				if (((Integer) att).intValue() == IMarker.SEVERITY_ERROR) {
 					return true;
+				}
 			}
 		}
 		return false;
@@ -158,8 +160,9 @@ public abstract class BaseBuildAction extends AbstractHandler {
 		IProject project = fManifestFile.getProject();
 		project.refreshLocal(IResource.DEPTH_ONE, monitor);
 		IFile file = project.getFile("dev.properties"); //$NON-NLS-1$
-		if (file.exists())
+		if (file.exists()) {
 			file.delete(true, false, monitor);
+		}
 		project.refreshLocal(IResource.DEPTH_ONE, monitor);
 	}
 
@@ -175,8 +178,9 @@ public abstract class BaseBuildAction extends AbstractHandler {
 			} else {
 				launchCopy = configs.get(0).getWorkingCopy();
 			}
-			if (launchCopy == null)
+			if (launchCopy == null) {
 				return;
+			}
 
 			Map<String, String> properties = new HashMap<>();
 			properties = launchCopy.getAttribute(IAntLaunchConstants.ATTR_ANT_PROPERTIES, properties);

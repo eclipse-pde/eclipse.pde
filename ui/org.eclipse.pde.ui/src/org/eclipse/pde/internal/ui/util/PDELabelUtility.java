@@ -100,11 +100,13 @@ public class PDELabelUtility {
 					// Check if the number was already used to auto-generate an
 					// existing item
 					if (set.contains(Integer.valueOf(x)) == false) {
-						if (bracketed)
+						if (bracketed) {
 							base.append(" ("); //$NON-NLS-1$
+						}
 						base.append(x);
-						if (bracketed)
+						if (bracketed) {
 							base.append(")"); //$NON-NLS-1$
+						}
 						break;
 					}
 				}
@@ -117,9 +119,10 @@ public class PDELabelUtility {
 		if (title.toLowerCase().startsWith(base.toLowerCase())) {
 			// with brackets add on is: space, (, #, )
 			int minSizeNumAddOn = 4;
-			if (!bracketed)
+			if (!bracketed) {
 				// without brackets and space add on is just number
 				minSizeNumAddOn = 1;
+			}
 			// We found a possible auto-generated name
 			// Determine number
 			if (title.length() >= (base.length() + minSizeNumAddOn)) {
@@ -222,15 +225,18 @@ public class PDELabelUtility {
 	public static String getBaseName(String name, boolean bracketed) {
 		String result = name;
 		if (bracketed) {
-			if (result.charAt(result.length() - 1) != ')')
+			if (result.charAt(result.length() - 1) != ')') {
 				return name;
+			}
 			result = result.substring(0, result.length() - 1);
 		}
-		while (Character.isDigit(result.charAt(result.length() - 1)))
+		while (Character.isDigit(result.charAt(result.length() - 1))) {
 			result = result.substring(0, result.length() - 1);
+		}
 		if (bracketed) {
-			if (!result.substring(result.length() - 2).equals(" (")) //$NON-NLS-1$
+			if (!result.substring(result.length() - 2).equals(" (")) { //$NON-NLS-1$
 				return name;
+			}
 			result = result.substring(0, result.length() - 2);
 		}
 		return result;

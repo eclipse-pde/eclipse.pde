@@ -171,8 +171,9 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 			ModelEntry entry = PluginRegistry.findEntry(id);
 			IPluginModelBase[] models = entry.getActiveModels();
 			for (IPluginModelBase model : models) {
-				if (version.equals(model.getPluginBase().getVersion()))
+				if (version.equals(model.getPluginBase().getVersion())) {
 					return open(model.getPluginBase(), true);
+				}
 			}
 		}
 		return null;
@@ -223,8 +224,9 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 
 		String name = file.getName().toLowerCase(Locale.ENGLISH);
 		if (name.equals(ICoreConstants.MANIFEST_FILENAME_LOWER_CASE)) {
-			if (container instanceof IFolder)
+			if (container instanceof IFolder) {
 				container = container.getParent();
+			}
 			manifestFile = file;
 			buildFile = container.getFile(ICoreConstants.BUILD_PROPERTIES_PATH);
 			pluginFile = createPluginFile(container);
@@ -284,8 +286,9 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 
 	@Override
 	public void monitoredFileAdded(IFile file) {
-		if (fInputContextManager == null)
+		if (fInputContextManager == null) {
 			return;
+		}
 		String name = file.getName();
 		if (name.equalsIgnoreCase(ICoreConstants.MANIFEST_FILENAME)) {
 			if (!fInputContextManager.hasContext(BundleInputContext.CONTEXT_ID)) {
@@ -316,8 +319,9 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 	}
 
 	public void ensurePluginContextPresence() {
-		if (fInputContextManager.hasContext(PluginInputContext.CONTEXT_ID))
+		if (fInputContextManager.hasContext(PluginInputContext.CONTEXT_ID)) {
 			return;
+		}
 		IProject project = fInputContextManager.getCommonProject();
 		WorkspacePluginModelBase model = null;
 		IFile file = null;
@@ -352,8 +356,9 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 					entry = buildModel.getFactory().createEntry("bin.includes"); //$NON-NLS-1$
 					build.add(entry);
 				}
-				if (!entry.contains(filename))
+				if (!entry.contains(filename)) {
 					entry.addToken(filename);
+				}
 			}
 		} catch (CoreException e) {
 		}
@@ -371,9 +376,9 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 	public void editorContextAdded(InputContext context) {
 		addSourcePage(context.getId());
 		try {
-			if (context.getId().equals(BuildInputContext.CONTEXT_ID))
+			if (context.getId().equals(BuildInputContext.CONTEXT_ID)) {
 				addPage(BUILD_INDEX, new BuildPage(this));
-			else {
+			} else {
 				updateFirstThreePages();
 			}
 		} catch (PartInitException e) {
@@ -455,15 +460,17 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 
 	private File createPluginFile(File dir) {
 		File pluginFile = new File(dir, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
-		if (!pluginFile.exists())
+		if (!pluginFile.exists()) {
 			pluginFile = new File(dir, ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR);
+		}
 		return pluginFile;
 	}
 
 	private IFile createPluginFile(IContainer container) {
 		IFile pluginFile = container.getFile(ICoreConstants.PLUGIN_PATH);
-		if (!pluginFile.exists())
+		if (!pluginFile.exists()) {
 			pluginFile = container.getFile(ICoreConstants.FRAGMENT_PATH);
+		}
 		return pluginFile;
 	}
 
@@ -489,8 +496,9 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 	protected void createJarEntryContexts(InputContextManager manager, JarEntryEditorInput input) {
 		IStorage storage = input.getStorage();
 		try (ZipFile zip = storage.getAdapter(ZipFile.class)) {
-			if (zip == null)
+			if (zip == null) {
 				return;
+			}
 
 			if (zip.getEntry(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR) != null) {
 				input = new JarEntryEditorInput(new JarEntryFile(zip, ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR));
@@ -533,8 +541,9 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 			if (showExtensionTabs()) {
 				addExtensionTabs(extTabPosition);
 			}
-			if (fInputContextManager.hasContext(BuildInputContext.CONTEXT_ID))
+			if (fInputContextManager.hasContext(BuildInputContext.CONTEXT_ID)) {
 				addPage(new BuildPage(this));
+			}
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
 		}
@@ -657,12 +666,15 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 
 	@Override
 	protected IEditorPart createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
-		if (contextId.equals(PluginInputContext.CONTEXT_ID))
+		if (contextId.equals(PluginInputContext.CONTEXT_ID)) {
 			return new ManifestSourcePage(editor, title, name);
-		if (contextId.equals(BuildInputContext.CONTEXT_ID))
+		}
+		if (contextId.equals(BuildInputContext.CONTEXT_ID)) {
 			return new BuildSourcePage(editor, title, name);
-		if (contextId.equals(BundleInputContext.CONTEXT_ID))
+		}
+		if (contextId.equals(BundleInputContext.CONTEXT_ID)) {
 			return new BundleSourcePage(editor, title, name);
+		}
 		if (contextId.equals(BndInputContext.CONTEXT_ID)) {
 			return new BndSourcePage(editor, contextId, title);
 		}
@@ -686,11 +698,13 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 	@Override
 	public String getTitle() {
 		if (getAggregateModel() instanceof IPluginModelBase model) {
-			if (!model.isValid())
+			if (!model.isValid()) {
 				return super.getTitle();
+			}
 			String text = getTitleText(model.getPluginBase());
-			if (text == null)
+			if (text == null) {
 				return super.getTitle();
+			}
 			return model.getResourceString(text);
 		}
 		return super.getTitle();
@@ -700,16 +714,18 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 	public String getTitleProperty() {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 		String pref = store.getString(IPreferenceConstants.PROP_SHOW_OBJECTS);
-		if (pref != null && pref.equals(IPreferenceConstants.VALUE_USE_NAMES))
+		if (pref != null && pref.equals(IPreferenceConstants.VALUE_USE_NAMES)) {
 			return IPluginObject.P_NAME;
+		}
 		return IIdentifiable.P_ID;
 	}
 
 	private String getTitleText(IPluginBase pluginBase) {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 		String pref = store.getString(IPreferenceConstants.PROP_SHOW_OBJECTS);
-		if (pref != null && pref.equals(IPreferenceConstants.VALUE_USE_NAMES))
+		if (pref != null && pref.equals(IPreferenceConstants.VALUE_USE_NAMES)) {
 			return pluginBase.getName();
+		}
 		return pluginBase.getId();
 	}
 
@@ -719,20 +735,22 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		if (object instanceof IFile) {
 			String name = ((IFile) object).getName();
 			if (name.equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)
-					|| name.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR))
+					|| name.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR)) {
 				context = fInputContextManager.findContext(PluginInputContext.CONTEXT_ID);
-			else if (name.equals(ICoreConstants.MANIFEST_FILENAME))
+			} else if (name.equals(ICoreConstants.MANIFEST_FILENAME)) {
 				context = fInputContextManager.findContext(BundleInputContext.CONTEXT_ID);
-			else if (name.equals(ICoreConstants.BUILD_FILENAME_DESCRIPTOR))
+			} else if (name.equals(ICoreConstants.BUILD_FILENAME_DESCRIPTOR)) {
 				context = fInputContextManager.findContext(BuildInputContext.CONTEXT_ID);
+			}
 		} else if (object instanceof IBuildObject) {
 			context = fInputContextManager.findContext(BuildInputContext.CONTEXT_ID);
 		} else if (object instanceof IPluginExtensionPoint || object instanceof IPluginExtension) {
 			context = fInputContextManager.findContext(PluginInputContext.CONTEXT_ID);
 		} else {
 			context = fInputContextManager.findContext(BundleInputContext.CONTEXT_ID);
-			if (context == null)
+			if (context == null) {
 				context = fInputContextManager.findContext(PluginInputContext.CONTEXT_ID);
+			}
 		}
 		return context;
 	}
@@ -743,8 +761,9 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		IFormPage page = getActivePageInstance();
 		String id = page == null ? "" : page.getId(); //$NON-NLS-1$
 		if (name.equals(ICoreConstants.BUILD_FILENAME_DESCRIPTOR)) {
-			if (!BuildInputContext.CONTEXT_ID.equals(id))
+			if (!BuildInputContext.CONTEXT_ID.equals(id)) {
 				setActivePage(SHOW_SOURCE ? BuildInputContext.CONTEXT_ID : BuildPage.PAGE_ID);
+			}
 		} else if (name.equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)
 				|| name.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR)) {
 			if (!PluginInputContext.CONTEXT_ID.equals(id)) {
@@ -762,8 +781,9 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 	}
 
 	public boolean showExtensionTabs() {
-		if (fInputContextManager.hasContext(PluginInputContext.CONTEXT_ID))
+		if (fInputContextManager.hasContext(PluginInputContext.CONTEXT_ID)) {
 			return true;
+		}
 		IBaseModel model = getAggregateModel();
 		return fShowExtensions && model != null && model.isEditable();
 	}
@@ -816,8 +836,9 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 
 	@Override
 	protected ILauncherFormPageHelper getLauncherHelper() {
-		if (fLauncherHelper == null)
+		if (fLauncherHelper == null) {
 			fLauncherHelper = new PluginLauncherFormPageHelper(this);
+		}
 		return fLauncherHelper;
 	}
 }

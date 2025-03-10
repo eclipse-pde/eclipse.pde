@@ -195,8 +195,9 @@ public class JavaResolutionFactory {
 			PDEModelUtility.modifyModel(new ModelModification(getProject()) {
 				@Override
 				protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
-					if (!(model instanceof IPluginModelBase base))
+					if (!(model instanceof IPluginModelBase base)) {
 						return;
+					}
 					String[] pluginIdStrings = null;
 					if ("JUnit 5 bundles".equals(getChangeObject())) { //$NON-NLS-1$
 						pluginIdStrings = getJUnit5Bundles();
@@ -217,8 +218,9 @@ public class JavaResolutionFactory {
 									break;
 								}
 							}
-							if (duplicate)
+							if (duplicate) {
 								continue;
+							}
 							IPluginImport impt = base.getPluginFactory().createImport();
 							impt.setId(pluginId);
 							base.getPluginBase().add(impt);
@@ -290,8 +292,9 @@ public class JavaResolutionFactory {
 		public Object getModifiedElement() {
 			IFile[] files = new IFile[] {PDEProject.getManifest(getProject()), PDEProject.getPluginXml(getProject())};
 			for (IFile file : files) {
-				if (file.exists())
+				if (file.exists()) {
 					return file;
+				}
 			}
 			return super.getModifiedElement();
 		}
@@ -317,8 +320,9 @@ public class JavaResolutionFactory {
 			PDEModelUtility.modifyModel(new ModelModification(getProject()) {
 				@Override
 				protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
-					if (!(model instanceof IBundlePluginModelBase base))
+					if (!(model instanceof IBundlePluginModelBase base)) {
 						return;
+					}
 					IBundle bundle = base.getBundleModel().getBundle();
 					ExportPackageDescription desc = (ExportPackageDescription) getChangeObject();
 					String pkgId = desc.getName();
@@ -342,13 +346,14 @@ public class JavaResolutionFactory {
 
 			insertImport(getCompilationUnit(), getQualifiedTypeToImport(), pm);
 
-			if (!isUndo())
+			if (!isUndo()) {
 				return new ImportPackageManifestChange(getProject(), (ExportPackageDescription) getChangeObject()) {
 					@Override
 					public boolean isUndo() {
 						return true;
 					}
 				};
+			}
 			return null;
 		}
 
@@ -373,8 +378,9 @@ public class JavaResolutionFactory {
 		@Override
 		public Object getModifiedElement() {
 			IFile file = PDEProject.getManifest(getProject());
-			if (file.exists())
+			if (file.exists()) {
 				return file;
+			}
 			return super.getModifiedElement();
 		}
 
@@ -421,8 +427,9 @@ public class JavaResolutionFactory {
 		@Override
 		public Object getModifiedElement() {
 			IFile file = PDEProject.getManifest(getProject());
-			if (file.exists())
+			if (file.exists()) {
 				return file;
+			}
 			return super.getModifiedElement();
 		}
 
@@ -460,8 +467,9 @@ public class JavaResolutionFactory {
 	 */
 	public static final Object createRequireBundleProposal(IProject project, ExportPackageDescription desc, int type,
 			int relevance, CompilationUnit cu, String qualifiedTypeToImport) {
-		if (desc.getSupplier() == null)
+		if (desc.getSupplier() == null) {
 			return null;
+		}
 		AbstractManifestChange change = new RequireBundleManifestChange(project, desc, cu, qualifiedTypeToImport);
 		return createWrapper(change, type, relevance);
 	}
@@ -492,8 +500,9 @@ public class JavaResolutionFactory {
 	 */
 	public static final Object createRequireBundleProposal(IProject project, String desc, int type, int relevance,
 			CompilationUnit cu, String qualifiedTypeToImport) {
-		if (desc == null)
+		if (desc == null) {
 			return null;
+		}
 		AbstractManifestChange change = new RequireBundleManifestChange(project, desc, cu, qualifiedTypeToImport);
 		return createWrapper(change, type, relevance);
 	}

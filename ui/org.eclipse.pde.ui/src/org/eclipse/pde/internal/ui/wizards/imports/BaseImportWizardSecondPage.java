@@ -103,10 +103,11 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 
 	protected void createComputationsOption(Composite parent) {
 		fAddFragmentsButton = SWTFactory.createCheckButton(parent, PDEUIMessages.ImportWizard_SecondPage_addFragments, null, true, 1);
-		if (getDialogSettings().get(SETTINGS_ADD_FRAGMENTS) != null)
+		if (getDialogSettings().get(SETTINGS_ADD_FRAGMENTS) != null) {
 			fAddFragmentsButton.setSelection(getDialogSettings().getBoolean(SETTINGS_ADD_FRAGMENTS));
-		else
+		} else {
 			fAddFragmentsButton.setSelection(true);
+		}
 
 		if (!PDEPlugin.getWorkspace().isAutoBuilding()) {
 			fAutoBuildButton = SWTFactory.createCheckButton(parent, PDEUIMessages.BaseImportWizardSecondPage_autobuild, null, getDialogSettings().getBoolean(SETTINGS_AUTOBUILD), 1);
@@ -284,8 +285,9 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 	public void storeSettings() {
 		IDialogSettings settings = getDialogSettings();
 		settings.put(SETTINGS_ADD_FRAGMENTS, fAddFragmentsButton.getSelection());
-		if (fAutoBuildButton != null)
+		if (fAutoBuildButton != null) {
 			settings.put(SETTINGS_AUTOBUILD, fAutoBuildButton.getSelection());
+		}
 	}
 
 	@Override

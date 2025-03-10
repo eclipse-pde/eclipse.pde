@@ -44,12 +44,14 @@ public class TranslationHyperlink extends AbstractHyperlink {
 	private String getLocalization() {
 		String localiz = null;
 		if (fBase instanceof PluginModelBase) {
-			if (((PluginModelBase) fBase).getNLResourceHelper() != null)
+			if (((PluginModelBase) fBase).getNLResourceHelper() != null) {
 				localiz = ((PluginModelBase) fBase).getNLResourceHelper().getNLFileBasePath();
-		} else if (fBase instanceof IPluginModelBase)
+			}
+		} else if (fBase instanceof IPluginModelBase) {
 			localiz = PDEManager.getBundleLocalization((IPluginModelBase) fBase);
-		else if (fBase instanceof IBundleModel)
+		} else if (fBase instanceof IBundleModel) {
 			localiz = ((IBundleModel) fBase).getBundle().getLocalization();
+		}
 		return localiz;
 	}
 
@@ -74,16 +76,19 @@ public class TranslationHyperlink extends AbstractHyperlink {
 
 		IProject proj = fBase.getUnderlyingResource().getProject();
 		IFile file = proj.getFile(localiz + ".properties"); //$NON-NLS-1$
-		if (!file.exists())
+		if (!file.exists()) {
 			return false;
+		}
 
 		try {
 			IEditorPart editor = IDE.openEditor(PDEPlugin.getActivePage(), file);
-			if (!(editor instanceof TextEditor tEditor))
+			if (!(editor instanceof TextEditor tEditor)) {
 				return false;
+			}
 			IDocument doc = tEditor.getDocumentProvider().getDocument(tEditor.getEditorInput());
-			if (doc == null)
+			if (doc == null) {
 				return false;
+			}
 
 			try {
 				String key = fElement.substring(1);

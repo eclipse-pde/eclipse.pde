@@ -93,8 +93,9 @@ public abstract class AbstractNewFeatureWizard extends NewWizard implements IExe
 	public void addPages() {
 		fSpecPage = createFirstPage();
 		String pname = getDefaultValue(DEF_PROJECT_NAME);
-		if (pname != null)
+		if (pname != null) {
 			fSpecPage.setInitialProjectName(pname);
+		}
 
 		fSpecPage.setInitialId(getDefaultValue(DEF_FEATURE_ID));
 		fSpecPage.setInitialName(getDefaultValue(DEF_FEATURE_NAME));
@@ -119,8 +120,9 @@ public abstract class AbstractNewFeatureWizard extends NewWizard implements IExe
 		try {
 			IDialogSettings settings = getDialogSettings();
 			fSpecPage.saveSettings(settings);
-			if (settings != null && fSecondPage != null)
+			if (settings != null && fSecondPage != null) {
 				fSecondPage.saveSettings(settings);
+			}
 
 			getContainer().run(false, true, getOperation());
 			BasicNewProjectResourceWizard.updatePerspective(fConfig);

@@ -101,16 +101,18 @@ public class PortabilitySection extends PDESection implements IPartSelectionList
 	}
 
 	private void applyValue(String property, String value) throws CoreException {
-		if (fCurrentSiteFeature == null)
+		if (fCurrentSiteFeature == null) {
 			return;
-		if (property.equals(IEnvironment.P_NL))
+		}
+		if (property.equals(IEnvironment.P_NL)) {
 			fCurrentSiteFeature.setNL(value);
-		else if (property.equals(IEnvironment.P_OS))
+		} else if (property.equals(IEnvironment.P_OS)) {
 			fCurrentSiteFeature.setOS(value);
-		else if (property.equals(IEnvironment.P_WS))
+		} else if (property.equals(IEnvironment.P_WS)) {
 			fCurrentSiteFeature.setWS(value);
-		else if (property.equals(IEnvironment.P_ARCH))
+		} else if (property.equals(IEnvironment.P_ARCH)) {
 			fCurrentSiteFeature.setArch(value);
+		}
 	}
 
 	@Override
@@ -128,27 +130,30 @@ public class PortabilitySection extends PDESection implements IPartSelectionList
 		Transfer[] transfers = new Transfer[] {TextTransfer.getInstance(), RTFTransfer.getInstance()};
 		for (TransferData type : types) {
 			for (Transfer transfer : transfers) {
-				if (transfer.isSupportedType(type))
+				if (transfer.isSupportedType(type)) {
 					return true;
+				}
 			}
 		}
 		return false;
 	}
 
 	private void clearField(String property) {
-		if (property.equals(IEnvironment.P_OS))
+		if (property.equals(IEnvironment.P_OS)) {
 			fOsText.setValue(null, true);
-		else if (property.equals(IEnvironment.P_WS))
+		} else if (property.equals(IEnvironment.P_WS)) {
 			fWsText.setValue(null, true);
-		else if (property.equals(IEnvironment.P_ARCH))
+		} else if (property.equals(IEnvironment.P_ARCH)) {
 			fArchText.setValue(null, true);
+		}
 	}
 
 	private void clearFields() {
 		fOsText.setValue(null, true);
 		fWsText.setValue(null, true);
-		if (fNlText != null)
+		if (fNlText != null) {
 			fNlText.setValue(null, true);
+		}
 		fArchText.setValue(null, true);
 	}
 
@@ -156,8 +161,9 @@ public class PortabilitySection extends PDESection implements IPartSelectionList
 	public void commit(boolean onSave) {
 		fOsText.commit();
 		fWsText.commit();
-		if (fNlText != null)
+		if (fNlText != null) {
 			fNlText.commit();
+		}
 		fArchText.commit();
 		super.commit(onSave);
 	}
@@ -276,16 +282,18 @@ public class PortabilitySection extends PDESection implements IPartSelectionList
 	@Override
 	public void dispose() {
 		ISiteModel model = (ISiteModel) getPage().getModel();
-		if (model != null)
+		if (model != null) {
 			model.removeModelChangedListener(this);
+		}
 		super.dispose();
 	}
 
 	@Override
 	public void initialize(IManagedForm form) {
 		ISiteModel model = (ISiteModel) getPage().getModel();
-		if (model != null)
+		if (model != null) {
 			model.addModelChangedListener(this);
+		}
 		super.initialize(form);
 	}
 
@@ -341,29 +349,32 @@ public class PortabilitySection extends PDESection implements IPartSelectionList
 			} else {
 				fCurrentSiteFeature = null;
 			}
-		} else
+		} else {
 			fCurrentSiteFeature = null;
+		}
 		refresh();
 	}
 
 	@Override
 	public void setFocus() {
-		if (fOsText != null)
+		if (fOsText != null) {
 			fOsText.getText().setFocus();
+		}
 	}
 
 	private void setValue(String property) {
 		if (fCurrentSiteFeature == null) {
 			clearField(property);
 		} else {
-			if (property.equals(IEnvironment.P_NL))
+			if (property.equals(IEnvironment.P_NL)) {
 				fNlText.setValue(fCurrentSiteFeature.getNL(), true);
-			else if (property.equals(IEnvironment.P_OS))
+			} else if (property.equals(IEnvironment.P_OS)) {
 				fOsText.setValue(fCurrentSiteFeature.getOS(), true);
-			else if (property.equals(IEnvironment.P_WS))
+			} else if (property.equals(IEnvironment.P_WS)) {
 				fWsText.setValue(fCurrentSiteFeature.getWS(), true);
-			else if (property.equals(IEnvironment.P_ARCH))
+			} else if (property.equals(IEnvironment.P_ARCH)) {
 				fArchText.setValue(fCurrentSiteFeature.getArch(), true);
+			}
 		}
 	}
 }

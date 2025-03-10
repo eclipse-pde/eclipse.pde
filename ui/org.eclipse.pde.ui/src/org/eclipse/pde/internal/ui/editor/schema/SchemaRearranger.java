@@ -59,9 +59,10 @@ public class SchemaRearranger {
 			}
 		} else if (newParent instanceof SchemaCompositor) {
 			((SchemaCompositor) newParent).addChild(compositor);
-		} else
+		} else {
 			// unknown new parent, abort
 			return;
+		}
 
 		if (oldParent instanceof SchemaElement) {
 			ISchemaType oldType = ((SchemaElement) oldParent).getType();
@@ -94,8 +95,9 @@ public class SchemaRearranger {
 	}
 
 	public void moveElement(ISchemaObject parent, ISchemaElement element, ISchemaObject sibling) {
-		if (element == null)
+		if (element == null) {
 			return;
+		}
 		if (fSchema.equals(parent)) {
 			fSchema.moveElementToSibling(element, sibling);
 		} else if (parent instanceof ISchemaCompositor) {
@@ -126,8 +128,9 @@ public class SchemaRearranger {
 				oldType.removeAttribute(attribute);
 			}
 			attribute.setParent(newParent);
-			if (attribute instanceof SchemaAttribute)
+			if (attribute instanceof SchemaAttribute) {
 				((SchemaAttribute) attribute).setName(PDELabelUtility.generateName(newParent.getAttributeNames(), PDELabelUtility.getBaseName(attribute.getName(), false), false));
+			}
 			type.addAttribute(attribute, sibling);
 		}
 	}
@@ -176,15 +179,17 @@ public class SchemaRearranger {
 		} else {
 			complexType = (SchemaComplexType) type;
 		}
-		if (sibling instanceof ISchemaAttribute)
+		if (sibling instanceof ISchemaAttribute) {
 			complexType.addAttribute(attribute, (ISchemaAttribute) sibling);
-		else
+		} else {
 			complexType.addAttribute(attribute);
+		}
 	}
 
 	public void linkReference(ISchemaCompositor realTarget, ISchemaElement object, ISchemaObject sibling) {
-		if (sibling instanceof SchemaElementReference)
+		if (sibling instanceof SchemaElementReference) {
 			realTarget = ((SchemaElementReference) sibling).getCompositor();
+		}
 
 		SchemaCompositor parent = (SchemaCompositor) realTarget;
 		String refName = object.getName();
@@ -198,10 +203,11 @@ public class SchemaRearranger {
 		if (cparent instanceof ISchemaElement) {
 			SchemaElement element = (SchemaElement) cparent;
 			ISchemaType type = element.getType();
-			if (type instanceof SchemaComplexType && ((SchemaComplexType) type).getAttributeCount() != 0)
+			if (type instanceof SchemaComplexType && ((SchemaComplexType) type).getAttributeCount() != 0) {
 				((SchemaComplexType) type).setCompositor(null);
-			else
+			} else {
 				element.setType(new SchemaSimpleType(element.getSchema(), "string")); //$NON-NLS-1$
+			}
 
 		} else if (cparent instanceof SchemaCompositor) {
 			((SchemaCompositor) cparent).removeChild(compositor);

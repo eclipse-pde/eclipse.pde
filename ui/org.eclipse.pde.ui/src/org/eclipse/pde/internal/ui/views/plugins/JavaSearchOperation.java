@@ -42,10 +42,11 @@ public class JavaSearchOperation implements IRunnableWithProgress {
 				@Override
 				public IStatus run(IProgressMonitor monitor) {
 					SearchablePluginsManager manager = PDECore.getDefault().getSearchablePluginsManager();
-					if (fAdd)
+					if (fAdd) {
 						manager.addToJavaSearch(fModels);
-					else
+					} else {
 						manager.removeFromJavaSearch(fModels);
+					}
 					return Status.OK_STATUS;
 				}
 			};

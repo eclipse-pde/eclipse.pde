@@ -114,8 +114,9 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 	}
 
 	public Hashtable<String, Integer> getDefaultNameCounters() {
-		if (fCounters == null)
+		if (fCounters == null) {
 			fCounters = new Hashtable<>();
+		}
 		return fCounters;
 	}
 
@@ -237,8 +238,9 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 	}
 
 	public PDELabelProvider getLabelProvider() {
-		if (fLabelProvider == null)
+		if (fLabelProvider == null) {
 			fLabelProvider = new PDELabelProvider();
+		}
 		return fLabelProvider;
 	}
 
@@ -254,8 +256,9 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 	 * @since 3.2
 	 */
 	public synchronized IDocumentProvider getTextFileDocumentProvider() {
-		if (fTextFileDocumentProvider == null)
+		if (fTextFileDocumentProvider == null) {
 			fTextFileDocumentProvider = new TextFileDocumentProvider();
+		}
 		return fTextFileDocumentProvider;
 	}
 

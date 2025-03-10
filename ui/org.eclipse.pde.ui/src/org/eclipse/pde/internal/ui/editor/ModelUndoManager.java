@@ -41,8 +41,9 @@ public abstract class ModelUndoManager implements IModelUndoManager, IModelChang
 	@Override
 	public void connect(IModelChangeProvider provider) {
 		provider.addModelChangedListener(this);
-		if (operations == null)
+		if (operations == null) {
 			initialize();
+		}
 	}
 
 	@Override
@@ -63,16 +64,18 @@ public abstract class ModelUndoManager implements IModelUndoManager, IModelChang
 
 	@Override
 	public boolean isRedoable() {
-		if (operations == null)
+		if (operations == null) {
 			initialize();
+		}
 		return (cursor + 1) < operations.size();
 	}
 
 	@Override
 	public void undo() {
 		IModelChangedEvent op = getCurrentOperation();
-		if (op == null)
+		if (op == null) {
 			return;
+		}
 		ignoreChanges = true;
 		openRelatedPage(op);
 		execute(op, true);
@@ -85,8 +88,9 @@ public abstract class ModelUndoManager implements IModelUndoManager, IModelChang
 	public void redo() {
 		cursor++;
 		IModelChangedEvent op = getCurrentOperation();
-		if (op == null)
+		if (op == null) {
 			return;
+		}
 		ignoreChanges = true;
 		openRelatedPage(op);
 		execute(op, false);
@@ -104,15 +108,17 @@ public abstract class ModelUndoManager implements IModelUndoManager, IModelChang
 		if (pageId != null) {
 			IFormPage cpage = editor.getActivePageInstance();
 			IFormPage newPage = editor.findPage(pageId);
-			if (cpage != newPage)
+			if (cpage != newPage) {
 				editor.setActivePage(newPage.getId());
+			}
 		}
 	}
 
 	@Override
 	public void modelChanged(IModelChangedEvent event) {
-		if (ignoreChanges)
+		if (ignoreChanges) {
 			return;
+		}
 
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			initialize();
@@ -122,15 +128,17 @@ public abstract class ModelUndoManager implements IModelUndoManager, IModelChang
 	}
 
 	private IModelChangedEvent getCurrentOperation() {
-		if (cursor == -1 || cursor == operations.size())
+		if (cursor == -1 || cursor == operations.size()) {
 			return null;
+		}
 		return operations.get(cursor);
 	}
 
 	private IModelChangedEvent getNextOperation() {
 		int peekCursor = cursor + 1;
-		if (peekCursor >= operations.size())
+		if (peekCursor >= operations.size()) {
 			return null;
+		}
 		return operations.get(peekCursor);
 	}
 

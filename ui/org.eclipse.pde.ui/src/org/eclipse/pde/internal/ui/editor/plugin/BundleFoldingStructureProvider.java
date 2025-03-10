@@ -54,8 +54,9 @@ public class BundleFoldingStructureProvider extends AbstractFoldingStructureProv
 	}
 
 	private void addFoldingRegions(Set<Position> regions, IManifestHeader header, IDocument document) throws BadLocationException {
-		if (header == null)
+		if (header == null) {
 			return;
+		}
 		int startLine = document.getLineOfOffset(header.getOffset());
 		int endLine = document.getLineOfOffset(header.getOffset() + header.getLength() - 1);
 		if (startLine < endLine) {

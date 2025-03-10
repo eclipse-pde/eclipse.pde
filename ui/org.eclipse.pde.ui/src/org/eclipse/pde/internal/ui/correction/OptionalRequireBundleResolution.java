@@ -38,8 +38,9 @@ public class OptionalRequireBundleResolution extends AbstractManifestMarkerResol
 		if (header != null) {
 			RequireBundleObject[] requiredBundles = header.getRequiredBundles();
 			for (RequireBundleObject requiredBundle : requiredBundles) {
-				if (bundleId.equals(requiredBundle.getId()))
+				if (bundleId.equals(requiredBundle.getId())) {
 					requiredBundle.setOptional(true);
+				}
 			}
 		}
 	}

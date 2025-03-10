@@ -60,15 +60,17 @@ public class ExtensionPointsPage extends PDEFormPage {
 			detailsPart.setPageProvider(new IDetailsPageProvider() {
 				@Override
 				public Object getPageKey(Object object) {
-					if (object instanceof IPluginExtensionPoint)
+					if (object instanceof IPluginExtensionPoint) {
 						return IPluginExtensionPoint.class;
+					}
 					return object.getClass();
 				}
 
 				@Override
 				public IDetailsPage getPage(Object key) {
-					if (key.equals(IPluginExtensionPoint.class))
+					if (key.equals(IPluginExtensionPoint.class)) {
 						return new ExtensionPointDetails();
+					}
 					return null;
 				}
 			});
@@ -102,20 +104,25 @@ public class ExtensionPointsPage extends PDEFormPage {
 		IFormPage page = getPDEEditor().findPage(PluginInputContext.CONTEXT_ID);
 		if (page instanceof ManifestSourcePage) {
 			ISourceViewer viewer = ((ManifestSourcePage) page).getViewer();
-			if (viewer == null)
+			if (viewer == null) {
 				return;
+			}
 			StyledText text = viewer.getTextWidget();
-			if (text == null)
+			if (text == null) {
 				return;
+			}
 			int offset = text.getCaretOffset();
-			if (offset < 0)
+			if (offset < 0) {
 				return;
+			}
 
 			IDocumentRange range = ((ManifestSourcePage) page).getRangeElement(offset, true);
-			if (range instanceof IDocumentAttributeNode)
+			if (range instanceof IDocumentAttributeNode) {
 				range = ((IDocumentAttributeNode) range).getEnclosingElement();
-			if (range instanceof IPluginExtensionPoint)
+			}
+			if (range instanceof IPluginExtensionPoint) {
 				fExtensionPointsSection.selectExtensionPoint(new StructuredSelection(range));
+			}
 		}
 	}
 }

@@ -47,20 +47,23 @@ public class BuildPropertiesChange {
 			try {
 				BuildModel model = new BuildModel(document, false);
 				model.load();
-				if (!model.isLoaded())
+				if (!model.isLoaded()) {
 					return null;
+				}
 				PropertiesTextChangeListener listener = new PropertiesTextChangeListener(document);
 				model.addModelChangedListener(listener);
 
 				IBuild build = model.getBuild();
 				IBuildEntry[] entries = build.getBuildEntries();
 				for (int i = 0; i < affectedElements.length; i++) {
-					if (affectedElements[i] instanceof IJavaElement)
+					if (affectedElements[i] instanceof IJavaElement) {
 						continue;
+					}
 					IResource res = (IResource) affectedElements[i];
 					// if resource instanceof IProject, then the project is being renamed and there is no action to do in the build.properties for the resource
-					if (res instanceof IProject)
+					if (res instanceof IProject) {
 						continue;
+					}
 					for (IBuildEntry entry : entries) {
 						addBuildEntryEdit(entry, res, newNames[i]);
 					}

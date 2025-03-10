@@ -87,8 +87,9 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 			throws CoreException, OperationCanceledException {
 		RefactoringStatus status = new RefactoringStatus();
 		for (Object name : fProjectList) {
-			if (!(name instanceof IProject))
+			if (!(name instanceof IProject)) {
 				status.addFatalError(PDEUIMessages.OrganizeManifestsProcessor_invalidParam);
+			}
 		}
 		return status;
 	}
@@ -107,8 +108,9 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 		SubMonitor subMonitor = SubMonitor.convert(pm, PDEUIMessages.OrganizeManifestJob_taskName, fProjectList.size());
 		for (Iterator<IProject> i = fProjectList.iterator(); i.hasNext() && !pm.isCanceled();) {
 			CompositeChange projectChange = cleanProject(i.next(), subMonitor.split(1));
-			if (projectChange.getChildren().length > 0)
+			if (projectChange.getChildren().length > 0) {
 				change.add(projectChange);
+			}
 		}
 		return change;
 	}
@@ -124,24 +126,29 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 		ModelModification modification = new ModelModification(fCurrentProject) {
 			@Override
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
-				if (model instanceof IBundlePluginModelBase)
+				if (model instanceof IBundlePluginModelBase) {
 					try {
 						SubMonitor subMonitor = SubMonitor.convert(monitor);
 						runCleanup(subMonitor, (IBundlePluginModelBase) model, result);
 					} catch (InvocationTargetException | InterruptedException e) {
 						ee[0] = e;
 					}
+				}
 			}
 		};
 		Change[] changes = PDEModelUtility.changesForModelModication(modification, subMonitor);
-		for (Change changeItem : changes)
+		for (Change changeItem : changes) {
 			change.add(changeItem);
-		if (result[0] != null)
+		}
+		if (result[0] != null) {
 			change.add(result[0]);
-		if (result[1] != null)
+		}
+		if (result[1] != null) {
 			change.add(result[1]);
-		if (ee[0] != null)
+		}
+		if (ee[0] != null) {
 			PDEPlugin.log(ee[0]);
+		}
 		return change;
 	}
 
@@ -151,25 +158,30 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 		IBundle currentBundle = modelBase.getBundleModel().getBundle();
 		ISharedExtensionsModel sharedExtensionsModel = modelBase.getExtensionsModel();
 		IPluginModelBase currentExtensionsModel = null;
-		if (sharedExtensionsModel instanceof IPluginModelBase)
+		if (sharedExtensionsModel instanceof IPluginModelBase) {
 			currentExtensionsModel = (IPluginModelBase) sharedExtensionsModel;
+		}
 
 		String projectName = fCurrentProject.getName();
 		SubMonitor subMonitor = SubMonitor.convert(monitor,
 				NLS.bind(PDEUIMessages.OrganizeManifestsOperation_export, projectName), 20);
 		if (fAddMissing || fRemoveUnresolved) {
-			if (!subMonitor.isCanceled())
+			if (!subMonitor.isCanceled()) {
 				OrganizeManifest.organizeExportPackages(currentBundle, fCurrentProject, fAddMissing, fRemoveUnresolved);
-			if (fAddMissing)
+			}
+			if (fAddMissing) {
 				subMonitor.worked(1);
-			if (fRemoveUnresolved)
+			}
+			if (fRemoveUnresolved) {
 				subMonitor.worked(1);
+			}
 		}
 
 		if (fMarkInternal) {
 			subMonitor.subTask(NLS.bind(PDEUIMessages.OrganizeManifestsOperation_filterInternal, projectName));
-			if (!subMonitor.isCanceled())
+			if (!subMonitor.isCanceled()) {
 				OrganizeManifest.markPackagesInternal(currentBundle, fPackageFilter);
+			}
 			subMonitor.worked(1);
 		}
 
@@ -178,12 +190,14 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 					? NLS.bind(PDEUIMessages.OrganizeManifestsOperation_removeUnresolved, projectName)
 					: NLS.bind(PDEUIMessages.OrganizeManifestsOperation_markOptionalUnresolved, projectName);
 			subMonitor.subTask(message);
-			if (!subMonitor.isCanceled())
+			if (!subMonitor.isCanceled()) {
 				OrganizeManifest.organizeImportPackages(currentBundle, fRemoveDependencies);
+			}
 			subMonitor.worked(1);
 
-			if (!subMonitor.isCanceled())
+			if (!subMonitor.isCanceled()) {
 				OrganizeManifest.organizeRequireBundles(currentBundle, fRemoveDependencies);
+			}
 			subMonitor.worked(1);
 		}
 
@@ -216,8 +230,9 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 
 		if (fRemoveLazy) {
 			subMonitor.subTask(NLS.bind(PDEUIMessages.OrganizeManifestsOperation_lazyStart, fCurrentProject.getName()));
-			if (!subMonitor.isCanceled())
+			if (!subMonitor.isCanceled()) {
 				OrganizeManifest.removeUnneededLazyStart(currentBundle);
+			}
 			subMonitor.worked(1);
 		}
 
@@ -232,8 +247,9 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 
 		if (fPrefixIconNL) {
 			subMonitor.subTask(NLS.bind(PDEUIMessages.OrganizeManifestsOperation_nlIconPath, projectName));
-			if (!subMonitor.isCanceled())
+			if (!subMonitor.isCanceled()) {
 				OrganizeManifest.prefixIconPaths(currentExtensionsModel);
+			}
 			subMonitor.worked(1);
 		}
 
@@ -242,8 +258,9 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 			if (!subMonitor.isCanceled()) {
 				Change[] results = OrganizeManifest.removeUnusedKeys(fCurrentProject, currentBundle,
 						currentExtensionsModel);
-				if (results.length > 0)
+				if (results.length > 0) {
 					result[0] = results[0];
+				}
 			}
 			subMonitor.worked(1);
 		}

@@ -293,8 +293,9 @@ public class SplashConfigurationSection extends PDESection {
 		fMessageControls[8] = createLabel(parent, fToolkit, foreground, PDEUIMessages.SplashSection_messageColor);
 		fColorSelector = new ColorSelector(parent);
 		fColorSelector.addListener(event -> {
-			if (!event.getNewValue().equals(event.getOldValue()))
+			if (!event.getNewValue().equals(event.getOldValue())) {
 				applyColor();
+			}
 		});
 		fToolkit.adapt(fColorSelector.getButton(), true, true);
 		fMessageControls[9] = fColorSelector.getButton();
@@ -308,21 +309,24 @@ public class SplashConfigurationSection extends PDESection {
 	}
 
 	private void applyColor() {
-		if (fBlockNotification)
+		if (fBlockNotification) {
 			return;
+		}
 		RGB rgb = fColorSelector.getColorValue();
 		getSplashInfo().setForegroundColor(rgbToHEX(rgb), false);
 	}
 
 	private void applySpinners(boolean bar) {
-		if (fBlockNotification)
+		if (fBlockNotification) {
 			return;
+		}
 		Spinner[] spinners = bar ? fBarSpinners : fMessageSpinners;
 		int[] geo = new int[] {spinners[0].getSelection(), spinners[1].getSelection(), spinners[2].getSelection(), spinners[3].getSelection()};
-		if (bar)
+		if (bar) {
 			getSplashInfo().setProgressGeometry(geo, false);
-		else
+		} else {
 			getSplashInfo().setMessageGeometry(geo, false);
+		}
 	}
 
 	private Label createLabel(Composite parent, FormToolkit toolkit, Color color, String labelName) {
@@ -456,14 +460,16 @@ public class SplashConfigurationSection extends PDESection {
 	public boolean canPaste(Clipboard clipboard) {
 		Display d = getSection().getDisplay();
 		Control c = d.getFocusControl();
-		if (c instanceof Text)
+		if (c instanceof Text) {
 			return true;
+		}
 		return false;
 	}
 
 	private String rgbToHEX(RGB rgb) {
-		if (rgb == null)
+		if (rgb == null) {
 			return null;
+		}
 		return rgbToHex(rgb.red) + rgbToHex(rgb.green) + rgbToHex(rgb.blue);
 	}
 
@@ -471,14 +477,16 @@ public class SplashConfigurationSection extends PDESection {
 		value = Math.max(0, value);
 		value = Math.min(value, 255);
 		String hex = Integer.toHexString(value).toUpperCase();
-		if (hex.length() == 1)
+		if (hex.length() == 1) {
 			hex = '0' + hex;
+		}
 		return hex;
 	}
 
 	private RGB hexToRGB(String hexValue) {
-		if (hexValue == null || hexValue.length() < 6)
+		if (hexValue == null || hexValue.length() < 6) {
 			return new RGB(0, 0, 0);
+		}
 		return new RGB(Integer.parseInt(hexValue.substring(0, 2), 16), Integer.parseInt(hexValue.substring(2, 4), 16), Integer.parseInt(hexValue.substring(4, 6), 16));
 	}
 

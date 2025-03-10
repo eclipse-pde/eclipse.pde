@@ -239,10 +239,11 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 
 			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
-				if (e1 instanceof PendingUpdateAdapter)
+				if (e1 instanceof PendingUpdateAdapter) {
 					return -1;
-				else if (e2 instanceof PendingUpdateAdapter)
+				} else if (e2 instanceof PendingUpdateAdapter) {
 					return 1;
+				}
 				return super.compare(viewer, e1, e2);
 			}
 
@@ -316,10 +317,11 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 			@Override
 			public void run() {
 				boolean checked = fHideExtDisabledFilterAction.isChecked();
-				if (checked)
+				if (checked) {
 					fTreeViewer.removeFilter(fHideExtDisabledFilter);
-				else
+				} else {
 					fTreeViewer.addFilter(fHideExtDisabledFilter);
+				}
 				getSettings().put(SHOW_EXDISABLED, checked);
 				updateContentDescription();
 			}
@@ -330,10 +332,11 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 			@Override
 			public void run() {
 				boolean checked = fHideExtEnabledFilterAction.isChecked();
-				if (checked)
+				if (checked) {
 					fTreeViewer.removeFilter(fHideExtEnabledFilter);
-				else
+				} else {
 					fTreeViewer.addFilter(fHideExtEnabledFilter);
+				}
 				getSettings().put(HIDE_EXENABLED, !checked);
 				updateContentDescription();
 			}
@@ -344,10 +347,11 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 			@Override
 			public void run() {
 				boolean checked = fHideWorkspaceFilterAction.isChecked();
-				if (checked)
+				if (checked) {
 					fTreeViewer.removeFilter(fHideWorkspaceFilter);
-				else
+				} else {
 					fTreeViewer.addFilter(fHideWorkspaceFilter);
+				}
 				getSettings().put(HIDE_WRKSPC, !checked);
 				updateContentDescription();
 			}
@@ -459,8 +463,9 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 				if (file.isFile() || model.getUnderlyingResource() != null) {
 					manager.add(fOpenAction);
 				}
-				if (model.getUnderlyingResource() != null)
+				if (model.getUnderlyingResource() != null) {
 					allowRefactoring = true;
+				}
 			}
 			if (sobj instanceof FileAdapter fileAdapter && !fileAdapter.isDirectory()) {
 				manager.add(fOpenAction);
@@ -489,8 +494,9 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 				manager.add(action);
 				addSeparator = true;
 			}
-			if (addSeparator)
+			if (addSeparator) {
 				manager.add(new Separator());
+			}
 		}
 		if (!selection.isEmpty()) {
 			if (isShowInApplicable()) {
@@ -523,8 +529,9 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		manager.add(fCopyAction);
 		IMenuManager selectionMenu = new MenuManager(PDEUIMessages.PluginsView_select);
 		manager.add(selectionMenu);
-		if (!selection.isEmpty())
+		if (!selection.isEmpty()) {
 			selectionMenu.add(fSelectDependentAction);
+		}
 		selectionMenu.add(fSelectInJavaSearchAction);
 		selectionMenu.add(fSelectAllAction);
 		manager.add(new Separator());
@@ -593,12 +600,15 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		boolean hideWorkspace = settings.getBoolean(HIDE_WRKSPC);
 		boolean hideEnabledExternal = settings.getBoolean(HIDE_EXENABLED);
 		boolean hideDisabledExternal = !settings.getBoolean(SHOW_EXDISABLED);
-		if (hideWorkspace)
+		if (hideWorkspace) {
 			fTreeViewer.addFilter(fHideWorkspaceFilter);
-		if (hideEnabledExternal)
+		}
+		if (hideEnabledExternal) {
 			fTreeViewer.addFilter(fHideExtEnabledFilter);
-		if (hideDisabledExternal)
+		}
+		if (hideDisabledExternal) {
 			fTreeViewer.addFilter(fHideExtDisabledFilter);
+		}
 		fHideWorkspaceFilterAction.setChecked(!hideWorkspace);
 		fHideExtEnabledFilterAction.setChecked(!hideEnabledExternal);
 		fHideExtDisabledFilterAction.setChecked(!hideDisabledExternal);
@@ -648,10 +658,11 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 				return;
 			}
 			String editorId = adapter.getEditorId();
-			if (editorId != null && editorId.equals("@system")) //$NON-NLS-1$
+			if (editorId != null && editorId.equals("@system")) { //$NON-NLS-1$
 				handleOpenSystemEditor(adapter);
-			else
+			} else {
 				handleOpenTextEditor(adapter, editorId);
+			}
 		} else if (obj instanceof IClassFile) {
 			fOpenClassFileAction.run();
 		} else if (isOpenableStorage(obj)) {
@@ -687,8 +698,9 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		ArrayList<IPluginModelBase> result = new ArrayList<>(set.size());
 		for (Resource bundle : set) {
 			IPluginModelBase model = PluginRegistry.findModel(bundle);
-			if (model != null)
+			if (model != null) {
 				result.add(model);
+			}
 		}
 		fTreeViewer.setSelection(new StructuredSelection(result.toArray()));
 	}
@@ -700,26 +712,30 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		for (Object element : elements) {
 			if (element instanceof IPluginModelBase pluginModel) {
 				String id = pluginModel.getPluginBase().getId();
-				if (PDECore.getDefault().getSearchablePluginsManager().isInJavaSearch(id))
+				if (PDECore.getDefault().getSearchablePluginsManager().isInJavaSearch(id)) {
 					result.add(element);
+				}
 			}
 		}
 		fTreeViewer.setSelection(new StructuredSelection(result.toArray()));
 	}
 
 	private void handleOpenTextEditor(FileAdapter adapter, String editorId) {
-		if (adapter == null)
+		if (adapter == null) {
 			return;
+		}
 		IWorkbenchPage page = PDEPlugin.getActivePage();
 		if (editorId == null) {
-			if (adapter.isManifest())
+			if (adapter.isManifest()) {
 				editorId = IPDEUIConstants.MANIFEST_EDITOR_ID;
-			else if (adapter.isSchema())
+			} else if (adapter.isSchema()) {
 				editorId = IPDEUIConstants.SCHEMA_EDITOR_ID;
+			}
 		}
 		try {
-			if (editorId == null || editorId.equals("@system")) //$NON-NLS-1$
+			if (editorId == null || editorId.equals("@system")) { //$NON-NLS-1$
 				editorId = DEFAULT_EDITOR_ID;
+			}
 			IFileStore store = EFS.getStore(adapter.getFile().toURI());
 			IEditorInput in = new FileStoreEditorInput(store);
 			page.openEditor(in, editorId);
@@ -738,8 +754,9 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	}
 
 	private void handleOpenSystemEditor(FileAdapter adapter) {
-		if (adapter == null)
+		if (adapter == null) {
 			return;
+		}
 		File localFile = null;
 
 		try {
@@ -789,8 +806,9 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 
 			while (read != -1) {
 				read = fis.read(cbuffer);
-				if (read != -1)
+				if (read != -1) {
 					fos.write(cbuffer, 0, read);
+				}
 			}
 			fos.flush();
 		}
@@ -821,8 +839,9 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 
 	void updateTitle(Object newInput) {
 		IConfigurationElement config = getConfigurationElement();
-		if (config == null)
+		if (config == null) {
 			return;
+		}
 
 		if (newInput == null || newInput.equals(PDECore.getDefault().getModelManager())) {
 			updateContentDescription();
@@ -862,13 +881,15 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 
 	@Override
 	public void modelsChanged(final PluginModelDelta delta) {
-		if (fTreeViewer == null || fTreeViewer.getTree().isDisposed())
+		if (fTreeViewer == null || fTreeViewer.getTree().isDisposed()) {
 			return;
+		}
 
 		fTreeViewer.getTree().getDisplay().asyncExec(() -> {
 			int kind = delta.getKind();
-			if (fTreeViewer.getTree().isDisposed())
+			if (fTreeViewer.getTree().isDisposed()) {
 				return;
+			}
 			if ((kind & PluginModelDelta.CHANGED) != 0 || (kind & PluginModelDelta.REMOVED) != 0) {
 				// Don't know exactly what change -
 				// the safest way out is to refresh
@@ -878,8 +899,9 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 				for (ModelEntry element : added) {
 					IPluginModelBase[] models = getModels(element);
 					for (IPluginModelBase model : models) {
-						if (isVisible(model))
+						if (isVisible(model)) {
 							fTreeViewer.add(fRoot, model);
+						}
 					}
 				}
 			}

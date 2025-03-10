@@ -43,10 +43,12 @@ public class FeatureSpecPage extends AbstractFeatureSpecPage {
 	@Override
 	protected void initialize() {
 		String projectName = getProjectName();
-		if (fInitialId == null)
+		if (fInitialId == null) {
 			fFeatureIdText.setText(IdUtil.getValidId(projectName));
-		if (fInitialName == null)
+		}
+		if (fInitialName == null) {
 			fFeatureNameText.setText(projectName);
+		}
 		fFeatureVersionText.setText("1.0.0.qualifier"); //$NON-NLS-1$
 		setMessage(PDEUIMessages.NewFeatureWizard_MainPage_desc);
 	}
@@ -111,8 +113,9 @@ public class FeatureSpecPage extends AbstractFeatureSpecPage {
 
 	@Override
 	protected void updateNameRelativeFields() {
-		if (fFeatureIdText == null || fFeatureNameText == null)
+		if (fFeatureIdText == null || fFeatureNameText == null) {
 			return;
+		}
 		fSelfModification = true;
 		String id = IdUtil.getValidId(getProjectName());
 		fFeatureIdText.setText(id);

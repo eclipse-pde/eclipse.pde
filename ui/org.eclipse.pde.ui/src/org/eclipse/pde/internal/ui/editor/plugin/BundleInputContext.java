@@ -103,10 +103,11 @@ public class BundleInputContext extends UTF8InputContext {
 		Object[] objects = event.getChangedObjects();
 		if (objects != null) {
 			for (Object object : objects) {
-				if (object instanceof PDEManifestElement)
+				if (object instanceof PDEManifestElement) {
 					object = ((PDEManifestElement) object).getHeader();
-				else if (object instanceof PackageFriend)
+				} else if (object instanceof PackageFriend) {
 					object = ((PackageFriend) object).getHeader();
+				}
 
 				if (object instanceof ManifestHeader header) {
 					TextEdit op = fOperationTable.get(header);

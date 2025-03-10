@@ -39,14 +39,18 @@ public class PluginReference {
 	}
 
 	public boolean isInSync() {
-		if (model == null)
+		if (model == null) {
 			return false;
-		if (reference == null)
+		}
+		if (reference == null) {
 			return true;
-		if (!reference.getId().equals(model.getPluginBase().getId()))
+		}
+		if (!reference.getId().equals(model.getPluginBase().getId())) {
 			return false;
-		if (!reference.getVersion().equals(model.getPluginBase().getVersion()))
+		}
+		if (!reference.getVersion().equals(model.getPluginBase().getVersion())) {
 			return false;
+		}
 		return true;
 	}
 

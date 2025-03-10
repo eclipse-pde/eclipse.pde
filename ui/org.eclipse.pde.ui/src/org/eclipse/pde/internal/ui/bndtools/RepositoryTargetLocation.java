@@ -114,8 +114,9 @@ public class RepositoryTargetLocation extends BndTargetLocation {
 						"Invalid plugin in repository: " + bsn + " @ " + getLocation(false), e)); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 
-				if (monitor.isCanceled())
+				if (monitor.isCanceled()) {
 					return null;
+				}
 				monitor.worked(++i);
 			}
 
@@ -142,23 +143,27 @@ public class RepositoryTargetLocation extends BndTargetLocation {
 				.getName())) {
 				this.repository = workspace.getWorkspaceRepository();
 			} else {
-				for (RepositoryPlugin repository : workspace.getPlugins(RepositoryPlugin.class))
-					if (repositoryName.equalsIgnoreCase(repository.getName()))
+				for (RepositoryPlugin repository : workspace.getPlugins(RepositoryPlugin.class)) {
+					if (repositoryName.equalsIgnoreCase(repository.getName())) {
 						this.repository = repository;
+					}
+				}
 			}
 		} catch (Exception e) {
 			throw new CoreException(new Status(IStatus.ERROR, PLUGIN_ID, MESSAGE_UNABLE_TO_RESOLVE_REPOSITORIES, e));
 		}
 
-		if (this.repository == null)
+		if (this.repository == null) {
 			throw new CoreException(
 				new Status(IStatus.ERROR, PLUGIN_ID, "Unable to locate the named repository: " + repositoryName)); //$NON-NLS-1$
+		}
 	}
 
 	@Override
 	public String getLocation(boolean resolve) throws CoreException {
-		if (resolve)
+		if (resolve) {
 			resolveRepository();
+		}
 		return repository != null ? repository.getLocation() : ""; //$NON-NLS-1$
 	}
 

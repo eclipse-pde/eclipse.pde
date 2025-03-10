@@ -73,12 +73,14 @@ public class ShowSampleAction extends Action implements IIntroAction {
 	@Override
 	public void run(IIntroSite site, Properties params) {
 		sampleId = params.getProperty("id"); //$NON-NLS-1$
-		if (sampleId == null)
+		if (sampleId == null) {
 			return;
+		}
 
 		Runnable r = () -> {
-			if (!ensureSampleFeaturePresent())
+			if (!ensureSampleFeaturePresent()) {
 				return;
+			}
 
 			SampleWizard wizard = new SampleWizard();
 			try {
@@ -143,10 +145,12 @@ public class ShowSampleAction extends Action implements IIntroAction {
 	 */
 	private boolean ensureSampleFeaturePresent() {
 		IProfile profile = getProfile();
-		if (profile == null)
+		if (profile == null) {
 			return false;
-		if (checkFeature(profile))
+		}
+		if (checkFeature(profile)) {
 			return true;
+		}
 		// the feature is not present - ask to download
 		if (MessageDialog.openQuestion(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.ShowSampleAction_msgTitle, PDEUIMessages.ShowSampleAction_msgDesc)) {
 			return downloadFeature();
@@ -165,11 +169,13 @@ public class ShowSampleAction extends Action implements IIntroAction {
 	 */
 	private IProfile getProfile() {
 		IProvisioningAgent agent = provUI.getSession().getProvisioningAgent();
-		if (agent == null)
+		if (agent == null) {
 			return null;
+		}
 		IProfileRegistry registry = (IProfileRegistry) agent.getService(IProfileRegistry.SERVICE_NAME);
-		if (registry == null)
+		if (registry == null) {
 			return null;
+		}
 		return registry.getProfile(provUI.getProfileId());
 	}
 

@@ -35,8 +35,9 @@ public class TargetEditorContributor extends EditorActionBarContributor {
 	class RevertAction extends Action implements IUpdate {
 		@Override
 		public void run() {
-			if (fEditor != null)
+			if (fEditor != null) {
 				fEditor.doRevert();
+			}
 		}
 
 		@Override
@@ -53,8 +54,9 @@ public class TargetEditorContributor extends EditorActionBarContributor {
 			fEditor = null;
 		}
 		IActionBars bars = getActionBars();
-		if (bars == null)
+		if (bars == null) {
 			return;
+		}
 		bars.setGlobalActionHandler(ActionFactory.REVERT.getId(), getRevertAction());
 		bars.updateActionBars();
 	}

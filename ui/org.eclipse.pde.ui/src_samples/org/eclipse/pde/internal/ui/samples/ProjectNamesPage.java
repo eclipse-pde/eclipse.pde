@@ -47,8 +47,9 @@ public class ProjectNamesPage extends WizardPage {
 	@Override
 	public void setVisible(boolean visible) {
 		setPageComplete(wizard.getSelection() != null);
-		if (container != null)
+		if (container != null) {
 			updateEntries();
+		}
 		super.setVisible(visible);
 	}
 

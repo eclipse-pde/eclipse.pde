@@ -105,8 +105,9 @@ public class BuildPage extends PDEFormPage {
 		IBuildModel buildModel = getBuildModel();
 		IBuildEntry customEntry = buildModel.getBuild().getEntry(IBuildPropertiesConstants.PROPERTY_CUSTOM);
 
-		if (customEntry != null)
+		if (customEntry != null) {
 			return customEntry;
+		}
 
 		try {
 			customEntry = buildModel.getFactory().createEntry(IBuildPropertiesConstants.PROPERTY_CUSTOM);
@@ -121,8 +122,9 @@ public class BuildPage extends PDEFormPage {
 		IBuildModel model = getBuildModel();
 		IBuild build = model.getBuild();
 		IBuildEntry customEntry = build.getEntry(IBuildPropertiesConstants.PROPERTY_CUSTOM);
-		if (customEntry == null || customEntry.getTokens().length == 0)
+		if (customEntry == null || customEntry.getTokens().length == 0) {
 			return false;
+		}
 		return customEntry.getTokens()[0].equals("true"); //$NON-NLS-1$
 	}
 
@@ -142,13 +144,15 @@ public class BuildPage extends PDEFormPage {
 		String[] tokens = customEntry.getTokens();
 		try {
 			if (tokens.length != 0) {
-				for (String token : tokens)
+				for (String token : tokens) {
 					customEntry.removeToken(token);
+				}
 			}
-			if (isCustom)
+			if (isCustom) {
 				customEntry.addToken("true"); //$NON-NLS-1$
-			else
+			} else {
 				getBuildModel().getBuild().remove(customEntry);
+			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}

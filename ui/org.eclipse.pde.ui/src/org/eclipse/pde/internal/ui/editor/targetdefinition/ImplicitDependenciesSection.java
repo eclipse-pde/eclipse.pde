@@ -188,8 +188,9 @@ public class ImplicitDependenciesSection extends SectionPart {
 	 * Updates the label in the bottom right with the current count of implicit plug-ins
 	 */
 	private void updateCount() {
-		if (fCount != null && !fCount.isDisposed())
+		if (fCount != null && !fCount.isDisposed()) {
 			fCount.setText(NLS.bind(PDEUIMessages.TableSection_itemCount, Integer.toString(fViewer.getTable().getItemCount())));
+		}
 	}
 
 	protected void handleAdd() {

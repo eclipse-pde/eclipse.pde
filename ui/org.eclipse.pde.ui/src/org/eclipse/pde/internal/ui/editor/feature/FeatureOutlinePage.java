@@ -68,8 +68,9 @@ public class FeatureOutlinePage extends FormOutlinePage {
 		@Override
 		public Object getParent(Object child) {
 			String pageId = getParentPageId(child);
-			if (pageId != null)
+			if (pageId != null) {
 				return fEditor.findPage(pageId);
+			}
 			return super.getParent(child);
 		}
 	}
@@ -89,16 +90,21 @@ public class FeatureOutlinePage extends FormOutlinePage {
 
 	@Override
 	public String getParentPageId(Object item) {
-		if (item instanceof IFeaturePlugin)
+		if (item instanceof IFeaturePlugin) {
 			return FeatureReferencePage.PAGE_ID;
-		if (item instanceof IFeatureChild)
+		}
+		if (item instanceof IFeatureChild) {
 			return FeatureIncludesPage.PAGE_ID;
-		if (item instanceof IFeatureImport)
+		}
+		if (item instanceof IFeatureImport) {
 			return FeatureDependenciesPage.PAGE_ID;
-		if (item instanceof IFeatureInfo || item.equals(fDiscoveryUrls) || item instanceof IFeatureURLElement)
+		}
+		if (item instanceof IFeatureInfo || item.equals(fDiscoveryUrls) || item instanceof IFeatureURLElement) {
 			return InfoFormPage.PAGE_ID;
-		if (item instanceof IBuildEntry)
+		}
+		if (item instanceof IBuildEntry) {
 			return BuildPage.PAGE_ID;
+		}
 		return super.getParentPageId(item);
 	}
 
@@ -111,8 +117,9 @@ public class FeatureOutlinePage extends FormOutlinePage {
 		ArrayList<Object> result = new ArrayList<>();
 		for (int i = 0; i < 3; i++) {
 			IFeatureInfo info = feature.getFeatureInfo(i);
-			if (info != null)
+			if (info != null) {
 				result.add(info);
+			}
 		}
 		result.add(fDiscoveryUrls);
 		return result.toArray();
@@ -152,8 +159,9 @@ public class FeatureOutlinePage extends FormOutlinePage {
 		}
 		IFeature feature = model.getFeature();
 		IFeatureURL url = feature.getURL();
-		if (url == null)
+		if (url == null) {
 			return new Object[0];
+		}
 		return url.getDiscoveries();
 	}
 
@@ -191,10 +199,11 @@ public class FeatureOutlinePage extends FormOutlinePage {
 				// find the parent
 				Object parent = getParent(object);
 				if (parent != null) {
-					if (event.getChangeType() == IModelChangedEvent.INSERT)
+					if (event.getChangeType() == IModelChangedEvent.INSERT) {
 						fTreeViewer.add(parent, event.getChangedObjects());
-					else
+					} else {
 						fTreeViewer.remove(event.getChangedObjects());
+					}
 				} else {
 					fTreeViewer.refresh();
 					fTreeViewer.expandAll();

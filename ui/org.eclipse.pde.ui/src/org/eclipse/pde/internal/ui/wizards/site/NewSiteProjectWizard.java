@@ -47,8 +47,9 @@ public class NewSiteProjectWizard extends NewWizard implements IExecutableExtens
 		fMainPage.setTitle(PDEUIMessages.NewSiteWizard_MainPage_title);
 		fMainPage.setDescription(PDEUIMessages.NewSiteWizard_MainPage_desc);
 		String pname = getDefaultValue(DEF_PROJECT_NAME);
-		if (pname != null)
+		if (pname != null) {
 			fMainPage.setInitialProjectName(pname);
+		}
 		addPage(fMainPage);
 	}
 

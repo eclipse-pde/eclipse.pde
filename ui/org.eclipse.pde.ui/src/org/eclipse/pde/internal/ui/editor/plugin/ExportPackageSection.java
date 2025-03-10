@@ -127,10 +127,11 @@ public class ExportPackageSection extends TableSection {
 	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(PDEUIMessages.ExportPackageSection_title);
-		if (isFragment())
+		if (isFragment()) {
 			section.setDescription(PDEUIMessages.ExportPackageSection_descFragment);
-		else
+		} else {
 			section.setDescription(PDEUIMessages.ExportPackageSection_desc);
+		}
 
 		Composite container = createClientContainer(section, 2, toolkit);
 		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
@@ -143,10 +144,12 @@ public class ExportPackageSection extends TableSection {
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				String s1 = e1.toString();
 				String s2 = e2.toString();
-				if (s1.contains(" ")) //$NON-NLS-1$
+				if (s1.contains(" ")) { //$NON-NLS-1$
 					s1 = s1.substring(0, s1.indexOf(' '));
-				if (s2.contains(" ")) //$NON-NLS-1$
+				}
+				if (s2.contains(" ")) { //$NON-NLS-1$
 					s2 = s2.substring(0, s2.indexOf(' '));
+				}
 				return super.compare(viewer, s1, s2);
 			}
 		});
@@ -194,8 +197,9 @@ public class ExportPackageSection extends TableSection {
 	@Override
 	public void dispose() {
 		IBundleModel model = getBundleModel();
-		if (model != null)
+		if (model != null) {
 			model.removeModelChangedListener(this);
+		}
 		super.dispose();
 	}
 
@@ -311,10 +315,12 @@ public class ExportPackageSection extends TableSection {
 	}
 
 	private boolean shouldEnableProperties(Object[] selected) {
-		if (selected.length == 0)
+		if (selected.length == 0) {
 			return false;
-		if (selected.length == 1)
+		}
+		if (selected.length == 1) {
 			return true;
+		}
 
 		String version = ((ExportPackageObject) selected[0]).getVersion();
 		for (int i = 1; i < selected.length; i++) {
@@ -337,12 +343,14 @@ public class ExportPackageSection extends TableSection {
 
 	private IPackageFragment getPackageFragment(ISelection sel) {
 		if (sel instanceof IStructuredSelection selection) {
-			if (selection.size() != 1)
+			if (selection.size() != 1) {
 				return null;
+			}
 
 			IBaseModel model = getPage().getModel();
-			if (!(model instanceof IPluginModelBase))
+			if (!(model instanceof IPluginModelBase)) {
 				return null;
+			}
 
 			return PDEJavaHelper.getPackageFragment(((PackageObject) selection.getFirstElement()).getName(), ((IPluginModelBase) model).getPluginBase().getId(), getPage().getPDEEditor().getCommonProject());
 		}
@@ -351,13 +359,14 @@ public class ExportPackageSection extends TableSection {
 
 	private void handleGoToPackage(ISelection selection) {
 		IPackageFragment frag = getPackageFragment(selection);
-		if (frag != null)
+		if (frag != null) {
 			try {
 				IViewPart part = PDEPlugin.getActivePage().showView(JavaUI.ID_PACKAGES);
 				ShowInPackageViewAction action = new ShowInPackageViewAction(part.getSite());
 				action.run(frag);
 			} catch (PartInitException e) {
 			}
+		}
 	}
 
 	@Override
@@ -377,16 +386,18 @@ public class ExportPackageSection extends TableSection {
 		dialog.create();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IHelpContextIds.EXPORTED_PACKAGE_PROPERTIES);
 		SWTUtil.setDialogSize(dialog, 400, -1);
-		if (selected.length == 1)
+		if (selected.length == 1) {
 			dialog.setTitle(((ExportPackageObject) selected[0]).getName());
-		else
+		} else {
 			dialog.setTitle(PDEUIMessages.ExportPackageSection_props);
+		}
 		if (dialog.open() == Window.OK && isEditable()) {
 			String newVersion = dialog.getVersion();
 			for (Object selectedObject : selected) {
 				ExportPackageObject object = (ExportPackageObject) selectedObject;
-				if (!newVersion.equals(object.getVersion()))
+				if (!newVersion.equals(object.getVersion())) {
 					object.setVersion(newVersion);
+				}
 			}
 		}
 	}
@@ -442,8 +453,9 @@ public class ExportPackageSection extends TableSection {
 				} else {
 					getBundle().setHeader(getExportedPackageHeader(), getValue(selected));
 					// the way events get triggered, updateButtons isn't called
-					if (selected.length > 0)
+					if (selected.length > 0) {
 						getTablePart().setButtonEnabled(CALCULATE_USE_INDEX, true);
+					}
 				}
 			}
 			labelProvider.dispose();
@@ -454,8 +466,9 @@ public class ExportPackageSection extends TableSection {
 		StringBuilder buffer = new StringBuilder();
 		for (Object object : objects) {
 			IPackageFragment fragment = (IPackageFragment) object;
-			if (buffer.length() > 0)
+			if (buffer.length() > 0) {
 				buffer.append("," + getLineDelimiter() + " "); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 			buffer.append(fragment.getElementName());
 		}
 		return buffer.toString();
@@ -546,19 +559,22 @@ public class ExportPackageSection extends TableSection {
 		IStructuredSelection selection = fPackageViewer.getStructuredSelection();
 		manager.add(fAddAction);
 		boolean singleSelection = selection.size() == 1;
-		if (singleSelection)
+		if (singleSelection) {
 			manager.add(fGoToAction);
+		}
 		manager.add(new Separator());
-		if (!selection.isEmpty())
+		if (!selection.isEmpty()) {
 			manager.add(fRemoveAction);
+		}
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
-		if (singleSelection)
+		if (singleSelection) {
 			manager.add(new Action(PDEUIMessages.ExportPackageSection_findReferences) {
 				@Override
 				public void run() {
 					doSearch(fPackageViewer.getStructuredSelection());
 				}
 			});
+		}
 		if (shouldEnableProperties(fPackageViewer.getStructuredSelection().toArray())) {
 			manager.add(new Separator());
 			manager.add(fPropertiesAction);

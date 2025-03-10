@@ -117,8 +117,9 @@ public class PluginExportWizard extends AntGeneratingExportWizard {
 			export.setAttribute("plugins", getPluginIDs()); //$NON-NLS-1$
 			export.setAttribute("destination", fPage.getDestination()); //$NON-NLS-1$
 			String filename = fPage.getFileName();
-			if (filename != null)
+			if (filename != null) {
 				export.setAttribute("filename", filename); //$NON-NLS-1$
+			}
 			export.setAttribute("exportType", getExportOperation()); //$NON-NLS-1$
 			export.setAttribute("useJARFormat", Boolean.toString(fPage.useJARFormat())); //$NON-NLS-1$
 			export.setAttribute("exportSource", Boolean.toString(fPage.doExportSource())); //$NON-NLS-1$
@@ -126,8 +127,9 @@ public class PluginExportWizard extends AntGeneratingExportWizard {
 				export.setAttribute("exportSourceBundle", Boolean.toString(fPage.doExportSourceBundles())); //$NON-NLS-1$
 			}
 			String qualifier = fPage.getQualifier();
-			if (qualifier != null)
+			if (qualifier != null) {
 				export.setAttribute("qualifier", qualifier); //$NON-NLS-1$
+			}
 			target.appendChild(export);
 			return doc;
 		} catch (DOMException | FactoryConfigurationError | ParserConfigurationException e) {
@@ -142,8 +144,9 @@ public class PluginExportWizard extends AntGeneratingExportWizard {
 			Object object = objects[i];
 			if (object instanceof IPluginModelBase) {
 				buffer.append(((IPluginModelBase) object).getPluginBase().getId());
-				if (i < objects.length - 1)
+				if (i < objects.length - 1) {
 					buffer.append(","); //$NON-NLS-1$
+				}
 			}
 		}
 		return buffer.toString();

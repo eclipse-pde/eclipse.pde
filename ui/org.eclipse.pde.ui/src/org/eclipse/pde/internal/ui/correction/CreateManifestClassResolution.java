@@ -42,13 +42,15 @@ public class CreateManifestClassResolution extends AbstractManifestMarkerResolut
 		IProject project = model.getUnderlyingResource().getProject();
 
 		IPluginModelBase modelBase = PluginRegistry.findModel(project);
-		if (modelBase == null)
+		if (modelBase == null) {
 			return;
+		}
 
 		JavaAttributeValue value = new JavaAttributeValue(project, modelBase, null, name);
 		name = PDEJavaHelperUI.createClass(name, project, value, true);
-		if (name != null && !name.equals(header.getValue()))
+		if (name != null && !name.equals(header.getValue())) {
 			header.setValue(name);
+		}
 	}
 
 	@Override

@@ -337,8 +337,9 @@ public class TargetLocationsGroup {
 	}
 
 	private void setExpandCollapseState() {
-		if (fTreeViewer == null)
+		if (fTreeViewer == null) {
 			return;
+		}
 		if (fTreeViewer.getVisibleExpandedElements().length == 0) {
 			fExpandCollapseButton.setText(Messages.BundleContainerTable_Btn_Text_ExpandAll);
 		} else {
@@ -414,8 +415,9 @@ public class TargetLocationsGroup {
 		fTarget = target;
 		boolean isCollapsed = fTreeViewer.getVisibleExpandedElements().length == 0;
 		fTreeViewer.setInput(fTarget);
-		if (isCollapsed)
+		if (isCollapsed) {
 			fTreeViewer.collapseAll();
+		}
 		updateButtons();
 	}
 
@@ -511,8 +513,9 @@ public class TargetLocationsGroup {
 										.acquireService(ITargetPlatformService.class);
 								if (service != null) {
 									ITargetHandle currentTarget = service.getWorkspaceTargetHandle();
-									if (fTarget.getHandle().equals(currentTarget))
+									if (fTarget.getHandle().equals(currentTarget)) {
 										LoadTargetDefinitionJob.load(fTarget);
+									}
 								}
 							} catch (CoreException e) {
 								// do nothing if we could not set the current
@@ -598,8 +601,9 @@ public class TargetLocationsGroup {
 	}
 
 	private void toggleCollapse() {
-		if (fTreeViewer == null)
+		if (fTreeViewer == null) {
 			return;
+		}
 		if (fTreeViewer.getVisibleExpandedElements().length == 0) {
 			fTreeViewer.expandAll();
 			fExpandCollapseButton.setText(Messages.BundleContainerTable_Btn_Text_CollapseAll);
@@ -638,8 +642,9 @@ public class TargetLocationsGroup {
 	}
 
 	public void setExpandCollapseState(boolean b) {
-		if (fExpandCollapseButton != null)
+		if (fExpandCollapseButton != null) {
 			fExpandCollapseButton.setEnabled(b);
+		}
 	}
 
 }

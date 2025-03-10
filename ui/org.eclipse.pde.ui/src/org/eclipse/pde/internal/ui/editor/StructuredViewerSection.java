@@ -112,8 +112,9 @@ public abstract class StructuredViewerSection extends PDESection implements IPDE
 
 	protected void doPaste() {
 		IStructuredSelection ssel = getViewerSelection();
-		if (ssel.size() > 1)
+		if (ssel.size() > 1) {
 			return;
+		}
 
 		Object target = ssel.getFirstElement();
 
@@ -129,8 +130,9 @@ public abstract class StructuredViewerSection extends PDESection implements IPDE
 	public boolean canPaste(Clipboard clipboard) {
 		// TODO: MP: CCP: Checking clipboard data done incorrectly.  See Bug 37223
 		IStructuredSelection ssel = getViewerSelection();
-		if (ssel.size() > 1)
+		if (ssel.size() > 1) {
 			return false;
+		}
 
 		Object target = ssel.getFirstElement();
 		ModelDataTransfer modelTransfer = ModelDataTransfer.getInstance();
@@ -183,15 +185,17 @@ public abstract class StructuredViewerSection extends PDESection implements IPDE
 	 * 			new selection index or -1 for parent
 	 */
 	protected int getNewSelectionIndex(int thisIndex, int length) {
-		if (thisIndex == length - 1)
+		if (thisIndex == length - 1) {
 			return thisIndex - 1;
+		}
 		return thisIndex + 1;
 	}
 
 	protected int getArrayIndex(Object[] array, Object object) {
 		for (int i = 0; i < array.length; i++) {
-			if (array[i].equals(object))
+			if (array[i].equals(object)) {
 				return i;
+			}
 		}
 		return -1;
 	}

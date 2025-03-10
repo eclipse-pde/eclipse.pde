@@ -49,13 +49,15 @@ public class SiteOutlinePage extends FormOutlinePage {
 					Collections.addAll(result, catDefs);
 					ISiteFeature[] features = site.getFeatures();
 					for (ISiteFeature feature : features) {
-						if (feature.getCategories().length == 0)
+						if (feature.getCategories().length == 0) {
 							result.add(new SiteFeatureAdapter(null, feature));
+						}
 					}
 					return result.toArray();
 				}
-				if (page.getId().equals(ArchivePage.PAGE_ID))
+				if (page.getId().equals(ArchivePage.PAGE_ID)) {
 					return site.getArchives();
+				}
 			}
 		}
 		if (parent instanceof ISiteCategoryDefinition catDef) {
@@ -81,12 +83,14 @@ public class SiteOutlinePage extends FormOutlinePage {
 	@Override
 	protected String getParentPageId(Object item) {
 		String pageId = null;
-		if (item instanceof ISiteCategoryDefinition || item instanceof SiteFeatureAdapter)
+		if (item instanceof ISiteCategoryDefinition || item instanceof SiteFeatureAdapter) {
 			pageId = FeaturesPage.PAGE_ID;
-		else if (item instanceof ISiteArchive)
+		} else if (item instanceof ISiteArchive) {
 			pageId = ArchivePage.PAGE_ID;
-		if (pageId != null)
+		}
+		if (pageId != null) {
 			return pageId;
+		}
 		return super.getParentPageId(item);
 	}
 
@@ -99,7 +103,8 @@ public class SiteOutlinePage extends FormOutlinePage {
 	@Override
 	public void dispose() {
 		super.dispose();
-		if (fLabelProvider != null)
+		if (fLabelProvider != null) {
 			fLabelProvider.dispose();
+		}
 	}
 }

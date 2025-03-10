@@ -63,25 +63,29 @@ public abstract class ModelModification {
 	 */
 	public ModelModification(IProject project) {
 		IFile xml = PDEProject.getPluginXml(project);
-		if (!xml.exists())
+		if (!xml.exists()) {
 			xml = PDEProject.getFragmentXml(project);
-		if (!xml.exists())
+		}
+		if (!xml.exists()) {
 			xml = null;
+		}
 		IFile manifest = PDEProject.getManifest(project);
-		if (!manifest.exists() && xml != null)
+		if (!manifest.exists() && xml != null) {
 			singleFileModification(xml);
-		else if (manifest.exists())
+		} else if (manifest.exists()) {
 			createFullBundleModification(manifest, xml);
+		}
 	}
 
 	private void singleFileModification(IFile file) {
 		assignFile(file);
-		if (fManifestFile != null)
+		if (fManifestFile != null) {
 			fModelFile = fManifestFile;
-		else if (fXMLFile != null)
+		} else if (fXMLFile != null) {
 			fModelFile = fXMLFile;
-		else if (fPropertiesFile != null)
+		} else if (fPropertiesFile != null) {
 			fModelFile = fPropertiesFile;
+		}
 		fIsBundleModel = file.getName().equals(ICoreConstants.MANIFEST_FILENAME);
 	}
 
@@ -95,15 +99,17 @@ public abstract class ModelModification {
 	}
 
 	private void assignFile(IFile file) {
-		if (file == null)
+		if (file == null) {
 			return;
+		}
 		String name = file.getName();
-		if (name.equals(ICoreConstants.MANIFEST_FILENAME))
+		if (name.equals(ICoreConstants.MANIFEST_FILENAME)) {
 			fManifestFile = file;
-		else if (name.equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) || name.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR))
+		} else if (name.equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) || name.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR)) {
 			fXMLFile = file;
-		else if (name.endsWith(PDEModelUtility.F_PROPERTIES))
+		} else if (name.endsWith(PDEModelUtility.F_PROPERTIES)) {
 			fPropertiesFile = file;
+		}
 	}
 
 	/**

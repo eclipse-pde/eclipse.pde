@@ -86,8 +86,9 @@ public class CachedCheckboxTreeViewer extends ContainerCheckedTreeViewer {
 	 * viewer.  No events will be fired.
 	 */
 	public void restoreLeafCheckState() {
-		if (checkState == null)
+		if (checkState == null) {
 			return;
+		}
 
 		getTree().setRedraw(false);
 		// Call the super class so we don't mess up the cache

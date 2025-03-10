@@ -167,8 +167,9 @@ public class JRESection extends SectionPart {
 		fExecEnvChoices = new TreeSet<>();
 		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 		IExecutionEnvironment[] envs = manager.getExecutionEnvironments();
-		for (IExecutionEnvironment env : envs)
+		for (IExecutionEnvironment env : envs) {
 			fExecEnvChoices.add(env.getId());
+		}
 	}
 
 	protected void updateWidgets() {
@@ -202,11 +203,13 @@ public class JRESection extends SectionPart {
 			}
 		}
 
-		if (fExecEnvsCombo.getSelectionIndex() == -1)
+		if (fExecEnvsCombo.getSelectionIndex() == -1) {
 			fExecEnvsCombo.setText(fExecEnvChoices.first().toString());
+		}
 
-		if (fNamedJREsCombo.getSelectionIndex() == -1)
+		if (fNamedJREsCombo.getSelectionIndex() == -1) {
 			fNamedJREsCombo.setText(VMUtil.getDefaultVMInstallName());
+		}
 
 		updateWidgets();
 		super.refresh();

@@ -308,8 +308,9 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 
 	private String validateId() {
 		String id = fIdText.getText().trim();
-		if (id.length() == 0)
+		if (id.length() == 0) {
 			return PDEUIMessages.NewLibraryPluginCreationPage_noid;
+		}
 
 		if (!IdUtil.isValidCompositeID3_0(id)) {
 			return PDEUIMessages.NewLibraryPluginCreationPage_invalidId;
@@ -329,8 +330,9 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 			fPropertiesListener.setBlocked(false);
 		}
 
-		if (!super.validatePage())
+		if (!super.validatePage()) {
 			return false;
+		}
 		setMessage(null);
 
 		String errorMessage = validateProperties();
@@ -349,8 +351,9 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 
 	protected String validateProperties() {
 		String errorMessage = validateId();
-		if (errorMessage != null)
+		if (errorMessage != null) {
 			return errorMessage;
+		}
 
 		if (fVersionText.getText().trim().length() == 0) {
 			errorMessage = PDEUIMessages.NewLibraryPluginCreationPage_noversion;
@@ -360,8 +363,9 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 			errorMessage = PDEUIMessages.NewLibraryPluginCreationPage_noname;
 		}
 
-		if (errorMessage != null)
+		if (errorMessage != null) {
 			return errorMessage;
+		}
 
 		return errorMessage;
 	}

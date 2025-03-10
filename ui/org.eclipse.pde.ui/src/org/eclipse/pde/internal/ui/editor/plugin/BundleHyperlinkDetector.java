@@ -43,27 +43,33 @@ public class BundleHyperlinkDetector implements IHyperlinkDetector {
 
 	@Override
 	public IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region, boolean canShowMultipleHyperlinks) {
-		if (region == null)
+		if (region == null) {
 			return null;
+		}
 
 		IDocumentRange element = fSourcePage.getRangeElement(region.getOffset(), false);
-		if (!(element instanceof ManifestHeader header))
+		if (!(element instanceof ManifestHeader header)) {
 			return null;
+		}
 
-		if (!header.getModel().isEditable())
+		if (!header.getModel().isEditable()) {
 			return null;
+		}
 
 		String headerName = header.getName();
-		if (region.getOffset() <= header.getOffset() + headerName.length())
+		if (region.getOffset() <= header.getOffset() + headerName.length()) {
 			return null;
+		}
 
 		String[] translatable = ICoreConstants.TRANSLATABLE_HEADERS;
 		for (int i = 0; i < translatable.length; i++) {
-			if (!headerName.equals(translatable[i]))
+			if (!headerName.equals(translatable[i])) {
 				continue;
+			}
 			String value = header.getValue();
-			if (value == null || value.length() == 0 || value.charAt(0) != '%')
+			if (value == null || value.length() == 0 || value.charAt(0) != '%') {
 				break;
+			}
 
 			IDocumentRange range = BundleSourcePage.getSpecificRange(header.getModel(), header, value);
 			return new IHyperlink[] {new TranslationHyperlink(new Region(range.getOffset(), range.getLength()), value, header.getModel())};
@@ -71,11 +77,13 @@ public class BundleHyperlinkDetector implements IHyperlinkDetector {
 
 		if (header instanceof BundleActivatorHeader) { // add else if statments for other headers
 			String target = ((BundleActivatorHeader) element).getClassName();
-			if (target == null || target.length() == 0)
+			if (target == null || target.length() == 0) {
 				return null;
+			}
 			IDocumentRange range = BundleSourcePage.getSpecificRange(header.getModel(), header, target);
-			if (range == null)
+			if (range == null) {
 				return null;
+			}
 			return new IHyperlink[] {new JavaHyperlink(new Region(range.getOffset(), range.getLength()), target, header.getModel().getUnderlyingResource())};
 		} else if (header instanceof BasePackageHeader || header instanceof RequireBundleHeader) {
 			return matchLinkFor(header, region.getOffset());
@@ -96,44 +104,51 @@ public class BundleHyperlinkDetector implements IHyperlinkDetector {
 
 			// ensure we are over a letter or period
 			char c = value.charAt(offset);
-			if (!elementChar(c, true))
+			if (!elementChar(c, true)) {
 				return null;
+			}
 
 			// scan backwards to find the start of the word
 			int downOffset = offset;
 			c = value.charAt(--downOffset);
 			while (c != ',' && c != ':' && downOffset > 0) {
 				// c == ';' means we are at a directive / attribute name (NOT value)
-				if (c == ';' || !elementChar(c, false))
+				if (c == ';' || !elementChar(c, false)) {
 					return null;
+				}
 				downOffset -= 1;
 				c = value.charAt(downOffset);
 			}
 			// backtrack forwards to remove whitespace etc.
-			while (downOffset < offset && !elementChar(c, true))
+			while (downOffset < offset && !elementChar(c, true)) {
 				c = value.charAt(++downOffset);
+			}
 
 			// scan forwards to find the end of the word
 			int upOffset = offset;
 			c = value.charAt(upOffset);
 			int length = value.length();
 			while (c != ';' && c != ',' && upOffset < length - 1) {
-				if (!elementChar(c, false))
+				if (!elementChar(c, false)) {
 					return null;
+				}
 				upOffset += 1;
 				c = value.charAt(upOffset);
 			}
 			// backtrack to remove extra chars
-			if (c == ';' || c == ',')
+			if (c == ';' || c == ',') {
 				upOffset -= 1;
+			}
 
 			String match = value.substring(downOffset, upOffset + 1);
 			if (match.length() > 0) {
 				IRegion region = new Region(mainOffset - (offset - downOffset), match.length());
-				if (header instanceof BasePackageHeader)
+				if (header instanceof BasePackageHeader) {
 					return new IHyperlink[] {new PackageHyperlink(region, match, (BasePackageHeader) header)};
-				if (header instanceof RequireBundleHeader)
+				}
+				if (header instanceof RequireBundleHeader) {
 					return new IHyperlink[] {new BundleHyperlink(region, match)};
+				}
 			}
 		} catch (BadLocationException e) {
 		}
@@ -141,8 +156,9 @@ public class BundleHyperlinkDetector implements IHyperlinkDetector {
 	}
 
 	private boolean elementChar(char c, boolean noWhitespace) {
-		if (noWhitespace && Character.isWhitespace(c))
+		if (noWhitespace && Character.isWhitespace(c)) {
 			return false;
+		}
 		return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || c == '.' || Character.isWhitespace(c);
 	}
 

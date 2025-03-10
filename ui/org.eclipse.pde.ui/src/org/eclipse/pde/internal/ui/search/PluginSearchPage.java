@@ -63,8 +63,9 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 		@Override
 		public boolean equals(Object obj) {
 			if (obj instanceof QueryData) {
-				if (((QueryData) obj).text.equals(text))
+				if (((QueryData) obj).text.equals(text)) {
 					return true;
+				}
 			}
 			return false;
 		}
@@ -146,10 +147,12 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 	}
 
 	private int getExternalScope() {
-		if (externalScopeButtons[0].getSelection())
+		if (externalScopeButtons[0].getSelection()) {
 			return PluginSearchScope.EXTERNAL_SCOPE_ALL;
-		if (externalScopeButtons[1].getSelection())
+		}
+		if (externalScopeButtons[1].getSelection()) {
 			return PluginSearchScope.EXTERNAL_SCOPE_ENABLED;
+		}
 		return PluginSearchScope.EXTERNAL_SCOPE_NONE;
 	}
 
@@ -170,8 +173,9 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 				scope = new ExtensionPluginSearchScope(getWorkspaceScope(), getExternalScope(), getSelectedResources(), input);
 			}
 		}
-		if (scope == null)
+		if (scope == null) {
 			scope = new PluginSearchScope(getWorkspaceScope(), getExternalScope(), getSelectedResources());
+		}
 		input.setSearchScope(scope);
 		input.setSearchString(searchString);
 		input.setCaseSensitive(caseSensitive.getSelection());
@@ -179,34 +183,40 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 	}
 
 	private int getLimitTo() {
-		if (limitToButtons[0].getSelection())
+		if (limitToButtons[0].getSelection()) {
 			return PluginSearchInput.LIMIT_DECLARATIONS;
-		if (limitToButtons[1].getSelection())
+		}
+		if (limitToButtons[1].getSelection()) {
 			return PluginSearchInput.LIMIT_REFERENCES;
+		}
 		return PluginSearchInput.LIMIT_ALL;
 	}
 
 	private int getSearchFor() {
-		if (searchForButtons[0].getSelection())
+		if (searchForButtons[0].getSelection()) {
 			return PluginSearchInput.ELEMENT_PLUGIN;
-		if (searchForButtons[1].getSelection())
+		}
+		if (searchForButtons[1].getSelection()) {
 			return PluginSearchInput.ELEMENT_FRAGMENT;
+		}
 		return PluginSearchInput.ELEMENT_EXTENSION_POINT;
 	}
 
 	private Set<IResource> getSelectedResources() {
 		Set<IResource> result = new HashSet<>();
 		int scope = container.getSelectedScope();
-		if (scope == ISearchPageContainer.WORKSPACE_SCOPE)
+		if (scope == ISearchPageContainer.WORKSPACE_SCOPE) {
 			return null;
+		}
 		if (scope == ISearchPageContainer.SELECTION_SCOPE || scope == ISearchPageContainer.SELECTED_PROJECTS_SCOPE) {
 			if (container.getSelection() instanceof IStructuredSelection) {
 				IStructuredSelection selection = (IStructuredSelection) container.getSelection();
 				Iterator<?> iter = selection.iterator();
 				while (iter.hasNext()) {
 					Object item = iter.next();
-					if (item instanceof IResource)
+					if (item instanceof IResource) {
 						result.add(((IResource) item).getProject());
+					}
 				}
 			} else if (container.getActiveEditorInput() != null) {
 				result.add(container.getActiveEditorInput().getAdapter(IFile.class));
@@ -286,8 +296,9 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 		externalScopeButtons[2].setSelection(data.externalScope == PluginSearchScope.EXTERNAL_SCOPE_NONE);
 
 		container.setSelectedScope(data.workspaceScope);
-		if (data.workingSets != null)
+		if (data.workingSets != null) {
 			container.setSelectedWorkingSets(data.workingSets);
+		}
 	}
 
 	private void saveQueryData() {
@@ -300,12 +311,14 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 		data.workspaceScope = container.getSelectedScope();
 		data.workingSets = container.getSelectedWorkingSets();
 
-		if (previousQueries.contains(data))
+		if (previousQueries.contains(data)) {
 			previousQueries.remove(data);
+		}
 
 		previousQueries.add(data);
-		if (previousQueries.size() > 10)
+		if (previousQueries.size() > 10) {
 			previousQueries.remove(0);
+		}
 	}
 
 	@Override

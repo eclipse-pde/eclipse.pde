@@ -114,8 +114,9 @@ public class QueryByObjectSelection extends QueryControl {
 			for (IParameter param : params) {
 				ParameterType parameterType = command.getParameterType(param.getId());
 				if (parameterType != null) {
-					if (parameterType.isCompatible(object))
+					if (parameterType.isCompatible(object)) {
 						return true;
+					}
 				}
 			}
 		}
@@ -126,15 +127,17 @@ public class QueryByObjectSelection extends QueryControl {
 	@Override
 	protected Command[] getCommands() {
 		Object objectSelection = fObjectSelection;
-		if (objectSelection == null)
+		if (objectSelection == null) {
 			return null;
+		}
 
 		ArrayList<Command> hitList = new ArrayList<>();
 		Command[] commands = getCommandService().getDefinedCommands();
 		for (Command command : commands) {
 			try {
-				if (hasTypedParameterMatch(command, objectSelection))
+				if (hasTypedParameterMatch(command, objectSelection)) {
 					hitList.add(command);
+				}
 			} catch (CommandException ex) {
 			}
 		}

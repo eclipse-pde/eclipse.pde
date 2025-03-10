@@ -141,10 +141,12 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 			WorkspaceBuildModel model = new WorkspaceBuildModel(buildFile);
 			IBuild build = model.getBuild(true);
 			IBuildEntry entry = model.getFactory().createEntry(IBuildEntry.BIN_INCLUDES);
-			if (PDEProject.getPluginXml(projectToConvert).exists())
+			if (PDEProject.getPluginXml(projectToConvert).exists()) {
 				entry.addToken(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
-			if (PDEProject.getManifest(projectToConvert).exists())
+			}
+			if (PDEProject.getManifest(projectToConvert).exists()) {
 				entry.addToken(ICoreConstants.MANIFEST_FOLDER_NAME);
+			}
 			for (String libEntry : fLibEntries) {
 				entry.addToken(libEntry);
 			}
@@ -157,8 +159,9 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 				}
 				build.add(source);
 			}
-			if (entry.getTokens().length > 0)
+			if (entry.getTokens().length > 0) {
 				build.add(entry);
+			}
 
 			model.save();
 		}
@@ -184,10 +187,11 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 				}
 			} else if (contentType == IClasspathEntry.CPE_LIBRARY) {
 				String path = getRelativePath(element, project);
-				if (path.length() > 0)
+				if (path.length() > 0) {
 					libraries.add(path);
-				else
+				} else {
 					libraries.add("."); //$NON-NLS-1$
+				}
 			}
 		}
 		fSrcEntries = sources.toArray(new String[sources.size()]);
@@ -211,8 +215,9 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 		if (isOldTarget() || (fLibEntries.length > 0 && fSrcEntries.length > 0)) {
 			String libName = project.getName();
 			int i = libName.lastIndexOf("."); //$NON-NLS-1$
-			if (i != -1)
+			if (i != -1) {
 				libName = libName.substring(i + 1);
+			}
 			fLibraryName = libName + ".jar"; //$NON-NLS-1$
 		} else {
 			fLibraryName = "."; //$NON-NLS-1$
@@ -223,8 +228,9 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 		PDEModelUtility.modifyModel(new ModelModification(PDEProject.getManifest(project)) {
 			@Override
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
-				if (!(model instanceof IBundlePluginModelBase))
+				if (!(model instanceof IBundlePluginModelBase)) {
 					return;
+				}
 				OrganizeManifest.organizeExportPackages(((IBundlePluginModelBase) model).getBundleModel().getBundle(), project, true, true);
 			}
 		}, null);
@@ -232,8 +238,9 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 
 	private String createInitialName(String id) {
 		int loc = id.lastIndexOf('.');
-		if (loc == -1)
+		if (loc == -1) {
 			return id;
+		}
 		StringBuilder buf = new StringBuilder(id.substring(loc + 1));
 		buf.setCharAt(0, Character.toUpperCase(buf.charAt(0)));
 		return buf.toString();
@@ -307,8 +314,9 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 				}
 			}
 		}
-		if (ee != null)
+		if (ee != null) {
 			pluginBundle.setHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, ee.getId());
+		}
 
 		if (missingInfo) {
 			IPluginModelFactory factory = model.getPluginFactory();
@@ -325,8 +333,9 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 				library.setExported(true);
 				base.add(library);
 			}
-			if (TargetPlatformHelper.getTargetVersion() >= 3.1)
+			if (TargetPlatformHelper.getTargetVersion() >= 3.1) {
 				pluginBundle.setHeader(Constants.BUNDLE_MANIFESTVERSION, "2"); //$NON-NLS-1$
+			}
 		}
 
 		model.save();

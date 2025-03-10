@@ -141,12 +141,13 @@ public class ExtensionPointDetails extends PDEDetails {
 		fNameEntry.setFormEntryListener(new FormEntryAdapter(this) {
 			@Override
 			public void textValueChanged(FormEntry entry) {
-				if (fInput != null)
+				if (fInput != null) {
 					try {
 						fInput.setName(fNameEntry.getValue());
 					} catch (CoreException e) {
 						PDEPlugin.logException(e);
 					}
+				}
 			}
 		});
 		boolean editable = getPage().getModel().isEditable();
@@ -172,10 +173,11 @@ public class ExtensionPointDetails extends PDEDetails {
 					return;
 				}
 				IFile file = project.getFile(fSchemaEntry.getValue());
-				if (file.exists())
+				if (file.exists()) {
 					openSchemaFile(file);
-				else
+				} else {
 					generateSchema();
+				}
 			}
 
 			@Override
@@ -196,8 +198,9 @@ public class ExtensionPointDetails extends PDEDetails {
 							try {
 								IResource[] resources = ((IContainer) element).members();
 								for (IResource resource : resources) {
-									if (select(viewer, parent, resource))
+									if (select(viewer, parent, resource)) {
 										return true;
+									}
 								}
 							} catch (CoreException e) {
 								PDEPlugin.logException(e);
@@ -207,11 +210,13 @@ public class ExtensionPointDetails extends PDEDetails {
 					}
 				});
 				dialog.setValidator(selection -> {
-					if (selection == null || selection.length != 1 || !(selection[0] instanceof IFile file))
+					if (selection == null || selection.length != 1 || !(selection[0] instanceof IFile file)) {
 						return Status.error(PDEUIMessages.ManifestEditor_ExtensionPointDetails_validate_errorStatus);
+					}
 					String ext = file.getFullPath().getFileExtension();
-					if ("exsd".equals(ext) || "mxsd".equals(ext)) //$NON-NLS-1$ //$NON-NLS-2$
+					if ("exsd".equals(ext) || "mxsd".equals(ext)) { //$NON-NLS-1$ //$NON-NLS-2$
 						return Status.OK_STATUS;
+					}
 					return Status.error(PDEUIMessages.ManifestEditor_ExtensionPointDetails_validate_errorStatus);
 				});
 				dialog.setDoubleClickSelects(true);
@@ -219,10 +224,11 @@ public class ExtensionPointDetails extends PDEDetails {
 				dialog.setInput(project);
 				dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
 				String filePath = fSchemaEntry.getValue();
-				if (filePath != null && filePath.length() != 0 && project.exists(IPath.fromOSString(filePath)))
+				if (filePath != null && filePath.length() != 0 && project.exists(IPath.fromOSString(filePath))) {
 					dialog.setInitialSelection(project.getFile(IPath.fromOSString(filePath)));
-				else
+				} else {
 					dialog.setInitialSelection(null);
+				}
 				dialog.create();
 				PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IHelpContextIds.BROWSE_EXTENSION_POINTS_SCHEMAS);
 				if (dialog.open() == Window.OK) {
@@ -256,11 +262,13 @@ public class ExtensionPointDetails extends PDEDetails {
 				String pluginID = base.getId();
 				String schemaVersion = base.getSchemaVersion();
 				if (schemaVersion != null && Double.parseDouble(schemaVersion) >= 3.2) {
-					if (fInput.getId().indexOf('.') != -1)
+					if (fInput.getId().indexOf('.') != -1) {
 						pointID = fInput.getId();
+					}
 				}
-				if (pointID == null)
+				if (pointID == null) {
 					pointID = pluginID + "." + fInput.getId(); //$NON-NLS-1$
+				}
 				IPluginExtensionPoint extPoint = PDECore.getDefault().getExtensionsRegistry().findExtensionPoint(pointID);
 				if (e.getHref().equals("search")) { //$NON-NLS-1$
 					new FindReferencesAction(fInput, pluginID).run();
@@ -268,10 +276,11 @@ public class ExtensionPointDetails extends PDEDetails {
 					if (extPoint == null) {
 						IProject project = getPage().getPDEEditor().getCommonProject();
 						IFile file = project.getFile(fSchemaEntry.getValue());
-						if (file.exists())
+						if (file.exists()) {
 							openSchemaFile(file);
-						else
+						} else {
 							generateSchema();
+						}
 						return;
 					}
 					OpenSchemaAction action = new OpenSchemaAction();
@@ -314,8 +323,9 @@ public class ExtensionPointDetails extends PDEDetails {
 	@Override
 	public void dispose() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-		if (model != null)
+		if (model != null) {
 			model.removeModelChangedListener(this);
+		}
 		super.dispose();
 	}
 
@@ -323,8 +333,9 @@ public class ExtensionPointDetails extends PDEDetails {
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.CHANGE) {
 			Object obj = e.getChangedObjects()[0];
-			if (obj.equals(fInput))
+			if (obj.equals(fInput)) {
 				refresh();
+			}
 		}
 	}
 
@@ -347,10 +358,12 @@ public class ExtensionPointDetails extends PDEDetails {
 
 	private void updateRichText() {
 		boolean hasSchema = fSchemaEntry.getValue().length() > 0;
-		if (hasSchema && fRichTextData == SCHEMA_RTEXT_DATA)
+		if (hasSchema && fRichTextData == SCHEMA_RTEXT_DATA) {
 			return;
-		if (!hasSchema && fRichTextData == NO_SCHEMA_RTEXT_DATA)
+		}
+		if (!hasSchema && fRichTextData == NO_SCHEMA_RTEXT_DATA) {
 			return;
+		}
 		fRichTextData = hasSchema ? SCHEMA_RTEXT_DATA : NO_SCHEMA_RTEXT_DATA;
 		fRichText.setText(fRichTextData, true, false);
 		getManagedForm().getForm().reflow(true);
@@ -377,8 +390,9 @@ public class ExtensionPointDetails extends PDEDetails {
 			WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 			dialog.create();
 			SWTUtil.setDialogSize(dialog, 400, 450);
-			if (dialog.open() == Window.OK)
+			if (dialog.open() == Window.OK) {
 				update();
+			}
 		});
 	}
 
@@ -387,8 +401,9 @@ public class ExtensionPointDetails extends PDEDetails {
 		IStructuredSelection ssel = (IStructuredSelection) selection;
 		if (ssel.size() == 1) {
 			fInput = (IPluginExtensionPoint) ssel.getFirstElement();
-		} else
+		} else {
 			fInput = null;
+		}
 		update();
 	}
 

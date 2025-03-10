@@ -54,15 +54,17 @@ public abstract class WizardNode implements IWizardNode {
 
 	@Override
 	public IWizard getWizard() {
-		if (wizard != null)
+		if (wizard != null) {
 			return wizard; // we've already created it
+		}
 
 		IBasePluginWizard pluginWizard;
 		try {
 			pluginWizard = createWizard(); // create instance of target wizard
 		} catch (CoreException e) {
-			if (parentWizardPage instanceof BaseWizardSelectionPage)
+			if (parentWizardPage instanceof BaseWizardSelectionPage) {
 				((BaseWizardSelectionPage) parentWizardPage).setDescriptionText(""); //$NON-NLS-1$
+			}
 			PDEPlugin.logException(e);
 			parentWizardPage.setErrorMessage(PDEUIMessages.Errors_CreationError_NoWizard);
 			MessageDialog.openError(parentWizardPage.getWizard().getContainer().getShell(), PDEUIMessages.Errors_CreationError, PDEUIMessages.Errors_CreationError_NoWizard);

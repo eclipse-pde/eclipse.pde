@@ -359,8 +359,9 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		browseButton = SWTFactory.createPushButton(composite, PDEUIMessages.ImportWizard_FirstPage_browse, null, GridData.HORIZONTAL_ALIGN_FILL);
 		browseButton.addSelectionListener(widgetSelectedAdapter(e -> {
 			IPath chosen = chooseDropLocation();
-			if (chosen != null)
+			if (chosen != null) {
 				importDirectory.setText(chosen.toOSString());
+			}
 		}));
 	}
 
@@ -372,8 +373,9 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		BusyIndicator.showWhile(shell.getDisplay(), () -> {
 			dialog.create();
 			dialog.setMessage(targetNode.getLabelText());
-			if (dialog.open() == Window.OK)
+			if (dialog.open() == Window.OK) {
 				result[0] = true;
+			}
 		});
 		return result[0];
 	}
@@ -716,16 +718,18 @@ public class PluginImportWizardFirstPage extends WizardPage {
 			Iterator<IScmUrlImportWizardPage> iter = nextPages.iterator();
 			while (iter.hasNext()) {
 				IWizardPage nextPage = iter.next();
-				if (!isPageEmpty(nextPage))
+				if (!isPageEmpty(nextPage)) {
 					return nextPage;
+				}
 			}
 		}
 		return null;
 	}
 
 	private boolean isPageEmpty(IWizardPage page) {
-		if (!(page instanceof IScmUrlImportWizardPage))
+		if (!(page instanceof IScmUrlImportWizardPage)) {
 			return false;
+		}
 		ScmUrlImportDescription[] selection = ((IScmUrlImportWizardPage) page).getSelection();
 		return selection == null || selection.length == 0;
 	}
@@ -852,8 +856,9 @@ public class PluginImportWizardFirstPage extends WizardPage {
 
 		// First clear the selection for all pages
 		Iterator<IScmUrlImportWizardPage> iterator2 = importIdToWizardPage.values().iterator();
-		while (iterator2.hasNext())
+		while (iterator2.hasNext()) {
 			iterator2.next().setSelection(new ScmUrlImportDescription[0]);
+		}
 
 		Iterator<Entry<IBundleImporter, List<ScmUrlImportDescription>>> iterator3 = importerToImportees.entrySet().iterator();
 		while (iterator3.hasNext()) {

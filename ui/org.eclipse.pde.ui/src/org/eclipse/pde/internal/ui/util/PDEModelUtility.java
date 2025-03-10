@@ -94,12 +94,14 @@ public class PDEModelUtility {
 	 */
 	public static void connect(PDEFormEditor editor) {
 		IProject project = editor.getCommonProject();
-		if (project == null)
+		if (project == null) {
 			return;
+		}
 		if (fOpenPDEEditors.containsKey(project)) {
 			ArrayList<PDEFormEditor> list = fOpenPDEEditors.get(project);
-			if (!list.contains(editor))
+			if (!list.contains(editor)) {
 				list.add(editor);
+			}
 		} else {
 			ArrayList<PDEFormEditor> list = new ArrayList<>();
 			list.add(editor);
@@ -122,14 +124,17 @@ public class PDEModelUtility {
 				project = file.getProject();
 			}
 		}
-		if (project == null)
+		if (project == null) {
 			return;
-		if (!fOpenPDEEditors.containsKey(project))
+		}
+		if (!fOpenPDEEditors.containsKey(project)) {
 			return;
+		}
 		List<PDEFormEditor> list = fOpenPDEEditors.get(project);
 		list.remove(editor);
-		if (list.isEmpty())
+		if (list.isEmpty()) {
 			fOpenPDEEditors.remove(project);
+		}
 	}
 
 	/**
@@ -158,12 +163,14 @@ public class PDEModelUtility {
 
 	private static PDEFormEditor getOpenEditor(IProject project, String editorId) {
 		List<PDEFormEditor> list = fOpenPDEEditors.get(project);
-		if (list == null)
+		if (list == null) {
 			return null;
+		}
 		for (int i = 0; i < list.size(); i++) {
 			PDEFormEditor editor = list.get(i);
-			if (editor.getEditorSite().getId().equals(editorId))
+			if (editor.getEditorSite().getId().equals(editorId)) {
 				return editor;
+			}
 		}
 		return null;
 	}
@@ -231,8 +238,9 @@ public class PDEModelUtility {
 		IEditorPart editor = PDEPlugin.getActivePage().getActiveEditor();
 		if (editor instanceof ManifestEditor) {
 			IBaseModel model = ((ManifestEditor) editor).getAggregateModel();
-			if (model instanceof IPluginModelBase)
+			if (model instanceof IPluginModelBase) {
 				return (IPluginModelBase) model;
+			}
 		}
 		return null;
 	}
@@ -246,11 +254,13 @@ public class PDEModelUtility {
 				IPluginModelBase model = (IPluginModelBase) e.getAggregateModel();
 				if (model instanceof IBundlePluginModelBase) {
 					IBundleModel bModel = ((IBundlePluginModelBase) model).getBundleModel();
-					if (bModel instanceof IEditingModel && doc == ((IEditingModel) bModel).getDocument())
+					if (bModel instanceof IEditingModel && doc == ((IEditingModel) bModel).getDocument()) {
 						return (IEditingModel) bModel;
+					}
 					ISharedExtensionsModel eModel = ((IBundlePluginModelBase) model).getExtensionsModel();
-					if (eModel instanceof IEditingModel && doc == ((IEditingModel) eModel).getDocument())
+					if (eModel instanceof IEditingModel && doc == ((IEditingModel) eModel).getDocument()) {
 						return (IEditingModel) eModel;
+					}
 				}
 
 //				IBuildModel bModel = model.getBuildModel();
@@ -258,8 +268,9 @@ public class PDEModelUtility {
 //						doc == ((IEditingModel)bModel).getDocument())
 //					return (IEditingModel)bModel;
 
-				if (model instanceof IEditingModel && doc == ((IEditingModel) model).getDocument())
+				if (model instanceof IEditingModel && doc == ((IEditingModel) model).getDocument()) {
 					return (IEditingModel) model;
+				}
 			}
 		}
 		return null;
@@ -279,8 +290,9 @@ public class PDEModelUtility {
 	public static void modifyModel(final ModelModification modification, final IProgressMonitor monitor) {
 		// ModelModification was not supplied with the right files
 		// TODO should we just fail silently?
-		if (modification.getFile() == null)
+		if (modification.getFile() == null) {
 			return;
+		}
 
 		PDEFormEditor editor = getOpenEditor(modification);
 		IBaseModel model = getModelFromEditor(editor, modification);
@@ -297,8 +309,9 @@ public class PDEModelUtility {
 		final PDEFormEditor editor = getOpenEditor(modification);
 		if (editor != null) {
 			Display.getDefault().syncExec(() -> {
-				if (editor.isDirty())
+				if (editor.isDirty()) {
 					editor.flushEdits();
+				}
 			});
 		}
 		return generateModelEdits(modification, monitor, false);
@@ -323,30 +336,34 @@ public class PDEModelUtility {
 			ITextFileBuffer[] buffers = new ITextFileBuffer[files.length];
 			IDocument[] documents = new IDocument[files.length];
 			for (int i = 0; i < files.length; i++) {
-				if (files[i] == null || !files[i].exists())
+				if (files[i] == null || !files[i].exists()) {
 					continue;
+				}
 				manager.connect(files[i].getFullPath(), LocationKind.NORMALIZE, monitor);
 				sc++;
 				buffers[i] = manager.getTextFileBuffer(files[i].getFullPath(), LocationKind.NORMALIZE);
-				if (performEdits && buffers[i].isDirty())
+				if (performEdits && buffers[i].isDirty()) {
 					buffers[i].commit(monitor, true);
+				}
 				documents[i] = buffers[i].getDocument();
 			}
 
 			IBaseModel editModel;
-			if (modification.isFullBundleModification())
+			if (modification.isFullBundleModification()) {
 				editModel = prepareBundlePluginModel(files, documents, !performEdits);
-			else if (documents[0] == null)
+			} else if (documents[0] == null) {
 				return new TextFileChange[0];
-			else
+			} else {
 				editModel = prepareAbstractEditingModel(files[0], documents[0], !performEdits);
+			}
 
 			modification.modifyModel(editModel, monitor);
 
 			IModelTextChangeListener[] listeners = gatherListeners(editModel);
 			for (int i = 0; i < listeners.length; i++) {
-				if (listeners[i] == null)
+				if (listeners[i] == null) {
 					continue;
+				}
 				TextEdit[] currentEdits = listeners[i].getTextOperations();
 				if (currentEdits.length > 0) {
 					MultiTextEdit multi = new MultiTextEdit();
@@ -362,8 +379,9 @@ public class PDEModelUtility {
 					if (!performEdits) {
 						for (TextEdit edit : currentEdits) {
 							String name = listeners[i].getReadableName(edit);
-							if (name != null)
+							if (name != null) {
 								change.addTextEditGroup(new TextEditGroup(name, edit));
+							}
 						}
 					}
 					// save the file after the change applied
@@ -379,8 +397,9 @@ public class PDEModelUtility {
 			// dc <= sc stops this from happening
 			int dc = 0;
 			for (int i = 0; i < files.length && dc <= sc; i++) {
-				if (files[i] == null || !files[i].exists())
+				if (files[i] == null || !files[i].exists()) {
 					continue;
+				}
 				try {
 					manager.disconnect(files[i].getFullPath(), LocationKind.NORMALIZE, monitor);
 					dc++;
@@ -395,8 +414,9 @@ public class PDEModelUtility {
 	public static void setChangeTextType(TextFileChange change, IFile file) {
 		// null guard in case a folder gets passed for whatever reason
 		String name = file.getName();
-		if (name == null)
+		if (name == null) {
 			return;
+		}
 		// mark a plugin.xml or a fragment.xml as PLUGIN2 type so they will be compared
 		// with the PluginContentMergeViewer
 		String textType = name.equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) || name.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR) ? "PLUGIN2" //$NON-NLS-1$
@@ -411,8 +431,9 @@ public class PDEModelUtility {
 				mod.modifyModel(model, monitor);
 				IFile[] files = new IFile[] {mod.getManifestFile(), mod.getXMLFile(), mod.getPropertiesFile()};
 				for (IFile file : files) {
-					if (file == null)
+					if (file == null) {
 						continue;
+					}
 					InputContextManager manager = editor.getContextManager();
 					if (manager != null){
 						InputContext con = manager.findContext(file);
@@ -421,8 +442,9 @@ public class PDEModelUtility {
 						}
 					}
 				}
-				if (mod.saveOpenEditor())
+				if (mod.saveOpenEditor()) {
 					editor.doSave(monitor);
+				}
 			} catch (CoreException e) {
 				PDEPlugin.log(e);
 			}
@@ -436,63 +458,71 @@ public class PDEModelUtility {
 			return getOpenManifestEditor(project);
 		} else if (name.equals(ICoreConstants.BUILD_FILENAME_DESCRIPTOR)) {
 			PDEFormEditor openEditor = getOpenBuildPropertiesEditor(project);
-			if (openEditor == null)
+			if (openEditor == null) {
 				openEditor = getOpenManifestEditor(project);
+			}
 			return openEditor;
 		}
 		return null;
 	}
 
 	private static IBaseModel getModelFromEditor(PDEFormEditor openEditor, ModelModification modification) {
-		if (openEditor == null)
+		if (openEditor == null) {
 			return null;
+		}
 		String name = modification.getFile().getName();
 		IBaseModel model = null;
 		if (name.equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) || name.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR)) {
 			model = openEditor.getAggregateModel();
-			if (model instanceof IBundlePluginModelBase)
+			if (model instanceof IBundlePluginModelBase) {
 				model = ((IBundlePluginModelBase) model).getExtensionsModel();
+			}
 		} else if (name.equals(ICoreConstants.BUILD_FILENAME_DESCRIPTOR)) {
 			if (openEditor instanceof BuildEditor) {
 				model = openEditor.getAggregateModel();
 			} else if (openEditor instanceof ManifestEditor) {
 				IFormPage page = openEditor.findPage(BuildInputContext.CONTEXT_ID);
-				if (page instanceof BuildSourcePage)
+				if (page instanceof BuildSourcePage) {
 					model = ((BuildSourcePage) page).getInputContext().getModel();
+				}
 			}
 		} else if (name.equals(ICoreConstants.MANIFEST_FILENAME)) {
 			model = openEditor.getAggregateModel();
-			if (model instanceof IBundlePluginModelBase)
+			if (model instanceof IBundlePluginModelBase) {
 				return model;
+			}
 		}
-		if (model instanceof AbstractEditingModel)
+		if (model instanceof AbstractEditingModel) {
 			return model;
+		}
 		return null;
 	}
 
 	private static IModelTextChangeListener createListener(String filename, IDocument doc, boolean generateEditNames) {
-		if (filename.equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) || filename.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR))
+		if (filename.equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) || filename.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR)) {
 			return new XMLTextChangeListener(doc, generateEditNames);
-		else if (filename.equals(ICoreConstants.MANIFEST_FILENAME))
+		} else if (filename.equals(ICoreConstants.MANIFEST_FILENAME)) {
 			return new BundleTextChangeListener(doc, generateEditNames);
-		else if (filename.endsWith(F_PROPERTIES))
+		} else if (filename.endsWith(F_PROPERTIES)) {
 			return new PropertiesTextChangeListener(doc, generateEditNames);
+		}
 		return null;
 	}
 
 	private static AbstractEditingModel prepareAbstractEditingModel(IFile file, IDocument doc, boolean generateEditNames) {
 		AbstractEditingModel model;
 		String filename = file.getName();
-		if (filename.equals(ICoreConstants.MANIFEST_FILENAME))
+		if (filename.equals(ICoreConstants.MANIFEST_FILENAME)) {
 			model = new BundleModel(doc, true);
-		else if (filename.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR))
+		} else if (filename.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR)) {
 			model = new FragmentModel(doc, true);
-		else if (filename.equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR))
+		} else if (filename.equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)) {
 			model = new PluginModel(doc, true);
-		else if (filename.endsWith(F_PROPERTIES))
+		} else if (filename.endsWith(F_PROPERTIES)) {
 			model = new BuildModel(doc, true);
-		else
+		} else {
 			return null;
+		}
 		model.setUnderlyingResource(file);
 		try {
 			model.load();
@@ -512,14 +542,16 @@ public class PDEModelUtility {
 
 		boolean isFragment = false;
 		models[F_Bi] = prepareAbstractEditingModel(files[F_Bi], docs[F_Bi], generateEditNames);
-		if (models[F_Bi] instanceof IBundleModel)
+		if (models[F_Bi] instanceof IBundleModel) {
 			isFragment = ((IBundleModel) models[F_Bi]).getBundle().getHeader(Constants.FRAGMENT_HOST) != null;
+		}
 
 		IBundlePluginModelBase pluginModel;
-		if (isFragment)
+		if (isFragment) {
 			pluginModel = new BundleFragmentModel();
-		else
+		} else {
 			pluginModel = new BundlePluginModel();
+		}
 
 		pluginModel.setBundleModel((IBundleModel) models[F_Bi]);
 		if (files.length > F_Xi && files[F_Xi] != null) {
@@ -531,8 +563,9 @@ public class PDEModelUtility {
 
 	private static IModelTextChangeListener[] gatherListeners(IBaseModel editModel) {
 		IModelTextChangeListener[] listeners = new IModelTextChangeListener[0];
-		if (editModel instanceof AbstractEditingModel)
+		if (editModel instanceof AbstractEditingModel) {
 			listeners = new IModelTextChangeListener[] {((AbstractEditingModel) editModel).getLastTextChangeListener()};
+		}
 		if (editModel instanceof IBundlePluginModelBase modelBase) {
 			listeners = new IModelTextChangeListener[2];
 			listeners[F_Bi] = gatherListener(modelBase.getBundleModel());
@@ -543,15 +576,17 @@ public class PDEModelUtility {
 	}
 
 	private static IModelTextChangeListener gatherListener(IBaseModel model) {
-		if (model instanceof AbstractEditingModel)
+		if (model instanceof AbstractEditingModel) {
 			return ((AbstractEditingModel) model).getLastTextChangeListener();
+		}
 		return null;
 	}
 
 	private static Display getDisplay() {
 		Display display = Display.getCurrent();
-		if (display == null)
+		if (display == null) {
 			display = Display.getDefault();
+		}
 		return display;
 	}
 }

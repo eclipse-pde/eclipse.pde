@@ -45,8 +45,9 @@ public abstract class AbstractExportTab {
 				combo.add(curr);
 			}
 		}
-		if (combo.getItemCount() > 0)
+		if (combo.getItemCount() > 0) {
 			combo.setText(combo.getItem(0));
+		}
 	}
 
 	protected void saveCombo(IDialogSettings settings, String key, Combo combo) {
@@ -63,14 +64,16 @@ public abstract class AbstractExportTab {
 	protected void chooseFile(Combo combo, String[] filters) {
 		FileDialog dialog = new FileDialog(fPage.getShell(), SWT.SAVE);
 		String path = combo.getText();
-		if (path.trim().length() == 0)
+		if (path.trim().length() == 0) {
 			path = PDEPlugin.getWorkspace().getRoot().getLocation().toString();
+		}
 		dialog.setFileName(path);
 		dialog.setFilterExtensions(filters);
 		String res = dialog.open();
 		if (res != null) {
-			if (combo.indexOf(res) == -1)
+			if (combo.indexOf(res) == -1) {
 				combo.add(res, 0);
+			}
 			combo.setText(res);
 		}
 	}
@@ -83,8 +86,9 @@ public abstract class AbstractExportTab {
 	protected boolean isValidLocation(String location) {
 		try {
 			String destinationPath = new File(location).getCanonicalPath();
-			if (destinationPath == null || destinationPath.length() == 0)
+			if (destinationPath == null || destinationPath.length() == 0) {
 				return false;
+			}
 		} catch (IOException e) {
 			return false;
 		}

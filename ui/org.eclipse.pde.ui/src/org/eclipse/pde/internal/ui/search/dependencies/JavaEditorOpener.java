@@ -36,8 +36,9 @@ public class JavaEditorOpener {
 		if (element instanceof IJavaElement) {
 			editor = JavaUI.openInEditor((IJavaElement) element);
 		}
-		if (editor != null && activate)
+		if (editor != null && activate) {
 			editor.getEditorSite().getPage().activate(editor);
+		}
 		if (editor instanceof ITextEditor textEditor) {
 			textEditor.selectAndReveal(offset, length);
 		} else if (editor != null) {

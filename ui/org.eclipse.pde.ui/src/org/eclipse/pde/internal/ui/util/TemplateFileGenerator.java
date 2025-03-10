@@ -186,14 +186,16 @@ public class TemplateFileGenerator implements IVariableProvider {
 		}
 		if ("file".equals(locationUrl.getProtocol())) { //$NON-NLS-1$
 			File templateDirectory = new File(locationUrl.getFile());
-			if (!templateDirectory.exists())
+			if (!templateDirectory.exists()) {
 				return;
+			}
 			generateFiles(templateDirectory, fProject, true, false, monitor);
 		} else if ("jar".equals(locationUrl.getProtocol())) { //$NON-NLS-1$
 			String file = locationUrl.getFile();
 			int exclamation = file.indexOf('!');
-			if (exclamation < 0)
+			if (exclamation < 0) {
 				return;
+			}
 			URL fileUrl = null;
 			try {
 				fileUrl = new URL(file.substring(0, exclamation));
@@ -201,8 +203,9 @@ public class TemplateFileGenerator implements IVariableProvider {
 				return;
 			}
 			File pluginJar = new File(fileUrl.getFile());
-			if (!pluginJar.exists())
+			if (!pluginJar.exists()) {
 				return;
+			}
 			String templateDirectory = file.substring(exclamation + 1); // "/some/path/"
 			IPath path = IPath.fromOSString(templateDirectory);
 			try (ZipFile zipFile = new ZipFile(pluginJar)) {
@@ -224,8 +227,9 @@ public class TemplateFileGenerator implements IVariableProvider {
 
 				if (firstLevel) {
 					binary = false;
-					if (!isOkToCreateFolder(member))
+					if (!isOkToCreateFolder(member)) {
 						continue;
+					}
 
 					if (member.getName().equals("java")) { //$NON-NLS-1$
 						IFolder sourceFolder = getSourceFolder(monitor);
@@ -236,18 +240,21 @@ public class TemplateFileGenerator implements IVariableProvider {
 					}
 				}
 				if (dstContainer == null) {
-					if (isOkToCreateFolder(member) == false)
+					if (isOkToCreateFolder(member) == false) {
 						continue;
+					}
 					String folderName = getProcessedString(member.getName(), member.getName());
 					dstContainer = dst.getFolder(IPath.fromOSString(folderName));
 				}
-				if (dstContainer instanceof IFolder && !dstContainer.exists())
+				if (dstContainer instanceof IFolder && !dstContainer.exists()) {
 					((IFolder) dstContainer).create(true, true, monitor);
+				}
 				generateFiles(member, dstContainer, false, binary, monitor);
 			} else {
 				if (isOkToCreateFile(member)) {
-					if (firstLevel)
+					if (firstLevel) {
 						binary = false;
+					}
 					try (InputStream in = new FileInputStream(member);) {
 						copyFile(member.getName(), in, dst, binary, monitor);
 					} catch (IOException ioe) {
@@ -316,18 +323,21 @@ public class TemplateFileGenerator implements IVariableProvider {
 					}
 				}
 				if (dstContainer == null) {
-					if (isOkToCreateFolder(new File(path.toFile(), name)) == false)
+					if (isOkToCreateFolder(new File(path.toFile(), name)) == false) {
 						continue;
+					}
 					String folderName = getProcessedString(name, name);
 					dstContainer = dst.getFolder(IPath.fromOSString(folderName));
 				}
-				if (dstContainer instanceof IFolder && !dstContainer.exists())
+				if (dstContainer instanceof IFolder && !dstContainer.exists()) {
 					((IFolder) dstContainer).create(true, true, monitor);
+				}
 				generateFiles(zipFile, path.append(name), dstContainer, false, binary, monitor);
 			} else {
 				if (isOkToCreateFile(new File(path.toFile(), name))) {
-					if (firstLevel)
+					if (firstLevel) {
 						binary = false;
+					}
 					try (InputStream in = zipFile.getInputStream(zipEnry)) {
 						copyFile(name, in, dst, binary, monitor);
 					} catch (IOException ioe) {
@@ -432,8 +442,9 @@ public class TemplateFileGenerator implements IVariableProvider {
 			for (IClasspathEntry entry : classpath) {
 				if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
 					IPath path = entry.getPath().removeFirstSegments(1);
-					if (path.segmentCount() > 0)
+					if (path.segmentCount() > 0) {
 						sourceFolder = fProject.getFolder(path);
+					}
 					break;
 				}
 			}
@@ -455,24 +466,28 @@ public class TemplateFileGenerator implements IVariableProvider {
 		Object packageValue = getValue(KEY_PACKAGE_NAME);
 		//
 		String packageName = packageValue != null ? packageValue.toString() : null;
-		if (packageName == null)
+		if (packageName == null) {
 			packageName = fModel.getPluginBase().getId();
+		}
 		IPath path = IPath.fromOSString(packageName.replace('.', File.separatorChar));
-		if (sourceFolder != null)
+		if (sourceFolder != null) {
 			path = sourceFolder.getProjectRelativePath().append(path);
+		}
 
 		for (int i = 1; i <= path.segmentCount(); i++) {
 			IPath subpath = path.uptoSegment(i);
 			IFolder subfolder = fProject.getFolder(subpath);
-			if (subfolder.exists() == false)
+			if (subfolder.exists() == false) {
 				subfolder.create(true, true, monitor);
+			}
 		}
 		return fProject.getFolder(path);
 	}
 
 	private String getProcessedString(String fileName, String source) {
-		if (source.indexOf('$') == -1)
+		if (source.indexOf('$') == -1) {
 			return source;
+		}
 		int loc = -1;
 		StringBuilder buffer = new StringBuilder();
 		boolean replacementMode = false;
@@ -490,8 +505,9 @@ public class TemplateFileGenerator implements IVariableProvider {
 					loc = i + 1;
 					continue;
 				}
-			} else if (!replacementMode)
+			} else if (!replacementMode) {
 				buffer.append(c);
+			}
 		}
 		return buffer.toString();
 	}
@@ -509,8 +525,9 @@ public class TemplateFileGenerator implements IVariableProvider {
 	}
 
 	private String getKeyValue(String key) {
-		if (fModel == null)
+		if (fModel == null) {
 			return null;
+		}
 
 		// TODO: MP: SPLASH: Broken and not needed, underlying model does not have class, id, translated name parameters defined
 		if (key.equals(KEY_PLUGIN_CLASS) && fModel instanceof IPluginModel) {
@@ -554,8 +571,9 @@ public class TemplateFileGenerator implements IVariableProvider {
 	}
 
 	private InputStream getProcessedStream(String fileName, InputStream stream, boolean binary) throws IOException, CoreException {
-		if (binary)
+		if (binary) {
 			return stream;
+		}
 
 		InputStreamReader reader = new InputStreamReader(stream);
 		int bufsize = 1024;
@@ -623,14 +641,15 @@ public class TemplateFileGenerator implements IVariableProvider {
 						replacementMode = true;
 					}
 				} else {
-					if (replacementMode)
+					if (replacementMode) {
 						keyBuffer.append(c);
-					else {
+					} else {
 						outBuffer.append(c);
 						if (c == '\n') {
 							newLine = true;
-						} else
+						} else {
 							newLine = false;
+						}
 					}
 				}
 			}
@@ -641,14 +660,18 @@ public class TemplateFileGenerator implements IVariableProvider {
 	private String[] getDirectoryCandidates() {
 		double version = getTargetVersion();
 		ArrayList<String> result = new ArrayList<>();
-		if (version >= 3.3)
+		if (version >= 3.3) {
 			result.add("templates_3.3" + "/" + getSectionId() + "/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		if (version >= 3.2)
+		}
+		if (version >= 3.2) {
 			result.add("templates_3.2" + "/" + getSectionId() + "/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		if (version >= 3.1)
+		}
+		if (version >= 3.1) {
 			result.add("templates_3.1" + "/" + getSectionId() + "/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		if (version >= 3.0)
+		}
+		if (version >= 3.0) {
 			result.add("templates_3.0" + "/" + getSectionId() + "/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
 		return result.toArray(new String[result.size()]);
 	}
 
@@ -659,8 +682,9 @@ public class TemplateFileGenerator implements IVariableProvider {
 	protected double getTargetVersion() {
 		try {
 			IPluginBase plugin = fModel.getPluginBase();
-			if (plugin instanceof IBundlePluginBase)
+			if (plugin instanceof IBundlePluginBase) {
 				return Double.parseDouble(((IBundlePluginBase) plugin).getTargetVersion());
+			}
 		} catch (NumberFormatException e) {
 		}
 		return TargetPlatformHelper.getTargetVersion();

@@ -75,8 +75,9 @@ public class PDEJavaHelperUI {
 	private static HashMap<String, HashMap<String, String>> fDocMap = new HashMap<>();
 
 	public static String selectType(IResource resource, int scope) {
-		if (resource == null)
+		if (resource == null) {
 			return null;
+		}
 		IProject project = resource.getProject();
 		try {
 			SelectionDialog dialog = JavaUI.createTypeDialog(PDEPlugin.getActiveWorkbenchShell(), PlatformUI.getWorkbench().getProgressService(), PDEJavaHelper.getSearchScope(project), scope, false, ""); //$NON-NLS-1$
@@ -91,19 +92,22 @@ public class PDEJavaHelperUI {
 	}
 
 	public static String selectType(IResource resource, int scope, String filter, String superTypeName) {
-		if (resource == null)
+		if (resource == null) {
 			return null;
+		}
 		IProject project = resource.getProject();
 		try {
 			IJavaSearchScope searchScope = null;
 			if (superTypeName != null && !superTypeName.equals("java.lang.Object")) { //$NON-NLS-1$
 				IJavaProject javaProject = JavaCore.create(project);
 				IType superType = javaProject.findType(superTypeName);
-				if (superType != null)
+				if (superType != null) {
 					searchScope = SearchEngine.createStrictHierarchyScope(javaProject, superType, true, false, null);
+				}
 			}
-			if (searchScope == null)
+			if (searchScope == null) {
 				searchScope = PDEJavaHelper.getSearchScope(project);
+			}
 
 			SelectionDialog dialog = JavaUI.createTypeDialog(PDEPlugin.getActiveWorkbenchShell(), PlatformUI.getWorkbench().getProgressService(), searchScope, scope, false, filter);
 			dialog.setTitle(PDEUIMessages.ClassAttributeRow_dialogTitle);
@@ -130,18 +134,20 @@ public class PDEJavaHelperUI {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
 				IJavaProject javaProject = JavaCore.create(project);
 				IJavaElement result = null;
-				if (name.length() > 0)
+				if (name.length() > 0) {
 					result = javaProject.findType(name);
-				if (result != null)
+				}
+				if (result != null) {
 					JavaUI.openInEditor(result);
-				else {
+				} else {
 					JavaAttributeWizard wizard = new JavaAttributeWizard(value);
 					WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 					dialog.create();
 					SWTUtil.setDialogSize(dialog, 400, 500);
 					int dResult = dialog.open();
-					if (dResult == Window.OK)
+					if (dResult == Window.OK) {
 						return wizard.getQualifiedNameWithArgs();
+					}
 				}
 			} else if (createIfNoNature) {
 				IResource resource = project.findMember(IPath.fromOSString(name));
@@ -181,8 +187,9 @@ public class PDEJavaHelperUI {
 
 	public static String getJavaDoc(String constant, IJavaProject jp, String className) {
 		HashMap<String, String> map = fDocMap.get(className);
-		if (map == null)
+		if (map == null) {
 			fDocMap.put(className, map = new HashMap<>());
+		}
 		String javaDoc = map.get(constant);
 
 		if (javaDoc == null) {
@@ -190,12 +197,14 @@ public class PDEJavaHelperUI {
 				IType type = jp.findType(className);
 				if (type != null) {
 					char[] chars = constant.toCharArray();
-					for (int i = 0; i < chars.length; i++)
+					for (int i = 0; i < chars.length; i++) {
 						chars[i] = chars[i] == '-' ? '_' : Character.toUpperCase(chars[i]);
+					}
 					IField field = type.getField(new String(chars));
 					ISourceRange range = field.getJavadocRange();
-					if (range == null)
+					if (range == null) {
 						return null;
+					}
 					IBuffer buff = type.getOpenable().getBuffer();
 					JavaDocCommentReader reader = new JavaDocCommentReader(buff, range.getOffset(), range.getOffset() + range.getLength() - 1);
 					String text = getString(reader);
@@ -224,8 +233,9 @@ public class PDEJavaHelperUI {
 		char[] buffer = new char[1024];
 		int count;
 		try {
-			while ((count = reader.read(buffer)) != -1)
+			while ((count = reader.read(buffer)) != -1) {
 				buf.append(buffer, 0, count);
+			}
 		} catch (IOException e) {
 			return null;
 		}
@@ -249,10 +259,11 @@ public class PDEJavaHelperUI {
 		String description = null;
 		IBindingService bindingService = PlatformUI.getWorkbench().getAdapter(IBindingService.class);
 		TriggerSequence[] activeBindings = bindingService.getActiveBindingsFor(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
-		if (activeBindings.length == 0)
+		if (activeBindings.length == 0) {
 			description = PDEUIMessages.PDEJavaHelper_msgContentAssistAvailable;
-		else
+		} else {
 			description = NLS.bind(PDEUIMessages.PDEJavaHelper_msgContentAssistAvailableWithKeyBinding, activeBindings[0].format());
+		}
 
 		controlDecoration.setDescriptionText(description);
 

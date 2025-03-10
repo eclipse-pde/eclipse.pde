@@ -86,10 +86,11 @@ public class ProgramBlock {
 					break;
 				}
 			}
-			if (found)
+			if (found) {
 				fProductComboDecoration.hide();
-			else
+			} else {
 				fProductComboDecoration.show();
+			}
 
 		}
 	}
@@ -148,8 +149,9 @@ public class ProgramBlock {
 
 	protected void initializeProductSection(ILaunchConfiguration config) throws CoreException {
 		String productName = config.getAttribute(IPDELauncherConstants.PRODUCT, (String) null);
-		if (productName != null)
+		if (productName != null) {
 			fProductCombo.setText(productName);
+		}
 	}
 
 	protected void initializeApplicationSection(ILaunchConfiguration config) throws CoreException {
@@ -172,12 +174,14 @@ public class ProgramBlock {
 			}
 
 			int index = -1;
-			if (application != null)
+			if (application != null) {
 				index = fApplicationCombo.indexOf(application);
+			}
 
 			// use default application as specified in the install.ini of the target platform
-			if (index == -1)
+			if (index == -1) {
 				index = fApplicationCombo.indexOf(TargetPlatform.getDefaultApplication());
+			}
 
 			if (index != -1) {
 				fApplicationCombo.setText(fApplicationCombo.getItem(index));
@@ -202,10 +206,11 @@ public class ProgramBlock {
 	protected void saveApplicationSection(ILaunchConfigurationWorkingCopy config) {
 		String text = fApplicationCombo.getText();
 		String attribute = getApplicationAttribute();
-		if (text.length() == 0 || text.equals(TargetPlatform.getDefaultApplication()))
+		if (text.length() == 0 || text.equals(TargetPlatform.getDefaultApplication())) {
 			config.setAttribute(attribute, (String) null);
-		else
+		} else {
 			config.setAttribute(attribute, text);
+		}
 	}
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {

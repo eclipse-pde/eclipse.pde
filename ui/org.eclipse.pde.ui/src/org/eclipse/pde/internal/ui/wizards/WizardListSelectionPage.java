@@ -126,8 +126,9 @@ public abstract class WizardListSelectionPage extends BaseWizardSelectionPage im
 		IStructuredSelection selection = event.getStructuredSelection();
 		WizardElement currentWizardSelection = null;
 		Iterator<WizardElement> iter = selection.iterator();
-		if (iter.hasNext())
+		if (iter.hasNext()) {
 			currentWizardSelection = iter.next();
+		}
 		if (currentWizardSelection == null) {
 			setDescriptionText(""); //$NON-NLS-1$
 			setSelectedNode(null);
@@ -144,8 +145,9 @@ public abstract class WizardListSelectionPage extends BaseWizardSelectionPage im
 	}
 
 	public IWizardPage getNextPage(boolean shouldCreate) {
-		if (!shouldCreate)
+		if (!shouldCreate) {
 			return super.getNextPage();
+		}
 		IWizardNode selectedNode = getSelectedNode();
 		selectedNode.dispose();
 		IWizard wizard = selectedNode.getWizard();
@@ -153,9 +155,10 @@ public abstract class WizardListSelectionPage extends BaseWizardSelectionPage im
 			super.setSelectedNode(null);
 			return null;
 		}
-		if (shouldCreate)
+		if (shouldCreate) {
 			// Allow the wizard to create its pages
 			wizard.addPages();
+		}
 		return wizard.getStartingPage();
 	}
 
@@ -176,8 +179,9 @@ public abstract class WizardListSelectionPage extends BaseWizardSelectionPage im
 
 	public IPluginContentWizard getSelectedWizard() {
 		IWizardNode node = getSelectedNode();
-		if (node != null)
+		if (node != null) {
 			return (IPluginContentWizard) node.getWizard();
+		}
 		return null;
 	}
 

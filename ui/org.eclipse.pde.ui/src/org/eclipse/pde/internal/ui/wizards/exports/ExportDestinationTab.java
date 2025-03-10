@@ -117,8 +117,9 @@ public class ExportDestinationTab extends AbstractExportTab {
 	@Override
 	protected void initializeCombo(IDialogSettings settings, String key, Combo combo) {
 		super.initializeCombo(settings, key, combo);
-		if (!isValidLocation(combo.getText().trim())) // If default value is invalid, make it blank
+		if (!isValidLocation(combo.getText().trim())) { // If default value is invalid, make it blank
 			combo.setText(""); //$NON-NLS-1$
+		}
 	}
 
 	protected void updateExportType() {
@@ -159,15 +160,17 @@ public class ExportDestinationTab extends AbstractExportTab {
 	private void chooseDestination(Combo combo) {
 		DirectoryDialog dialog = new DirectoryDialog(fPage.getShell(), SWT.SAVE);
 		String path = combo.getText();
-		if (path.trim().length() == 0)
+		if (path.trim().length() == 0) {
 			path = PDEPlugin.getWorkspace().getRoot().getLocation().toString();
+		}
 		dialog.setFilterPath(path);
 		dialog.setText(PDEUIMessages.ExportWizard_dialog_title);
 		dialog.setMessage(PDEUIMessages.ExportWizard_dialog_message);
 		String res = dialog.open();
 		if (res != null) {
-			if (combo.indexOf(res) == -1)
+			if (combo.indexOf(res) == -1) {
 				combo.add(res, 0);
+			}
 			combo.setText(res);
 		}
 	}
@@ -186,22 +189,25 @@ public class ExportDestinationTab extends AbstractExportTab {
 
 	protected String validate() {
 		if (fArchiveFileButton.getSelection()) {
-			if (fArchiveCombo.getText().trim().length() == 0)
+			if (fArchiveCombo.getText().trim().length() == 0) {
 				return PDEUIMessages.ExportWizard_status_nofile;
-			else if (!isValidLocation(fArchiveCombo.getText().trim()))
+			} else if (!isValidLocation(fArchiveCombo.getText().trim())) {
 				return PDEUIMessages.ExportWizard_status_invaliddirectory;
+			}
 		}
 		if (fDirectoryButton.getSelection()) {
-			if (fDirectoryCombo.getText().trim().length() == 0)
+			if (fDirectoryCombo.getText().trim().length() == 0) {
 				return PDEUIMessages.ExportWizard_status_nodirectory;
-			else if (!isValidLocation(fDirectoryCombo.getText().trim()))
+			} else if (!isValidLocation(fDirectoryCombo.getText().trim())) {
 				return PDEUIMessages.ExportWizard_status_invaliddirectory;
+			}
 		}
 		if (fInstallButton.getSelection()) {
-			if (fInstallCombo.getText().trim().length() == 0)
+			if (fInstallCombo.getText().trim().length() == 0) {
 				return PDEUIMessages.ExportWizard_status_nodirectory;
-			else if (!isValidLocation(fInstallCombo.getText().trim()))
+			} else if (!isValidLocation(fInstallCombo.getText().trim())) {
 				return PDEUIMessages.ExportWizard_status_invaliddirectory;
+			}
 		}
 
 		return null;

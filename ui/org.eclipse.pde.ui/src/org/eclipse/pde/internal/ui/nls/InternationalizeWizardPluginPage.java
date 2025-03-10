@@ -138,8 +138,9 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 		fInternationalizeModelTable = modelTable;
 
 		IWizardContainer container = getContainer();
-		if (container != null)
+		if (container != null) {
 			container.updateButtons();
+		}
 	}
 
 	/**
@@ -163,8 +164,9 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 	 */
 	private void handleFilter() {
 		String newFilter;
-		if (fFilterText == null || (newFilter = fFilterText.getText().trim()).length() == 0)
+		if (fFilterText == null || (newFilter = fFilterText.getText().trim()).length() == 0) {
 			newFilter = AvailableFilter.WILDCARD;
+		}
 		boolean changed = fFilter.setPattern(newFilter);
 		if (changed) {
 			fAvailableViewer.getTable().setRedraw(false);
@@ -283,8 +285,9 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 	private IPluginModelBase findModel(String id) {
 		for (IPluginModelBase model : fModels) {
 			String modelId = model.getPluginBase().getId();
-			if (modelId != null && modelId.equals(id))
+			if (modelId != null && modelId.equals(id)) {
 				return model;
+			}
 		}
 		return null;
 	}
@@ -380,13 +383,15 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 		fSelectedViewer.addDoubleClickListener(event -> handleRemove());
 
 		fAvailableViewer.addSelectionChangedListener(event -> {
-			if (!fBlockSelectionListeners)
+			if (!fBlockSelectionListeners) {
 				updateSelectionBasedEnablement(event.getSelection(), true);
+			}
 		});
 
 		fSelectedViewer.addSelectionChangedListener(event -> {
-			if (!fBlockSelectionListeners)
+			if (!fBlockSelectionListeners) {
 				updateSelectionBasedEnablement(event.getSelection(), false);
+			}
 		});
 
 		fFilterText.addModifyListener(e -> {
@@ -485,20 +490,23 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 		int availableCount = fAvailableViewer.getTable().getItemCount();
 		int importCount = fSelectedViewer.getTable().getItemCount();
 
-		if (doAddEnablement)
+		if (doAddEnablement) {
 			updateSelectionBasedEnablement(fAvailableViewer.getStructuredSelection(), true);
-		if (doRemoveEnablement)
+		}
+		if (doRemoveEnablement) {
 			updateSelectionBasedEnablement(fSelectedViewer.getStructuredSelection(), false);
+		}
 
 		fAddAllButton.setEnabled(availableCount > 0);
 		fRemoveAllButton.setEnabled(importCount > 0);
 	}
 
 	private void updateSelectionBasedEnablement(ISelection theSelection, boolean available) {
-		if (available)
+		if (available) {
 			fAddButton.setEnabled(!theSelection.isEmpty());
-		else
+		} else {
 			fRemoveButton.setEnabled(!theSelection.isEmpty());
+		}
 	}
 
 	private void handleAdd() {

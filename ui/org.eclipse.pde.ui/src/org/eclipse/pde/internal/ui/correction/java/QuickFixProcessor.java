@@ -120,8 +120,9 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 				IPackageFragment referencedPackage = (IPackageFragment) referencedElement.getJavaElement().getAncestor(IJavaElement.PACKAGE_FRAGMENT);
 				IJavaProject currentProject = context.getCompilationUnit().getJavaProject();
 				// only find proposals for Plug-in projects
-				if (!WorkspaceModelManager.isPluginProject(currentProject.getProject()))
+				if (!WorkspaceModelManager.isPluginProject(currentProject.getProject())) {
 					return;
+				}
 				// get the packages exported by the referenced plug-in project
 				if (!referencedJavaProject.equals(currentProject)) {
 					IPluginModelBase referencedModel = PluginRegistry.findModel(referencedJavaProject.getProject());
@@ -249,8 +250,9 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 			if (className != null) {
 				IProject project = cu.getJavaElement().getJavaProject().getProject();
 				// only try to find proposals on Plug-in Projects
-				if (!WorkspaceModelManager.isPluginProject(project))
+				if (!WorkspaceModelManager.isPluginProject(project)) {
 					return;
+				}
 
 				IRunnableWithProgress findOperation = new FindClassResolutionsOperation(project, cu, className,
 						collector);
@@ -391,8 +393,9 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 				IJavaElement parent = unit.getParent();
 				if (parent != null) {
 					IJavaProject project = parent.getJavaProject();
-					if (project != null)
+					if (project != null) {
 						return WorkspaceModelManager.isPluginProject(project.getProject());
+					}
 				}
 		}
 		return false;

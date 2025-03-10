@@ -72,8 +72,9 @@ public class PluginSearchQuery implements ISearchQuery {
 
 	@Override
 	public ISearchResult getSearchResult() {
-		if (fSearchResult == null)
+		if (fSearchResult == null) {
 			fSearchResult = new SearchResult(this);
+		}
 		return fSearchResult;
 	}
 

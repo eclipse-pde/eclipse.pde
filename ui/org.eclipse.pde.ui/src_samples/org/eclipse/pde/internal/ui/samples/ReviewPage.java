@@ -41,8 +41,9 @@ public class ReviewPage extends WizardPage {
 	@Override
 	public void setVisible(boolean visible) {
 		setPageComplete(wizard.getSelection() != null);
-		if (formText != null)
+		if (formText != null) {
 			updateContent();
+		}
 		super.setVisible(visible);
 	}
 
@@ -53,10 +54,11 @@ public class ReviewPage extends WizardPage {
 		if (selection != null) {
 			setMessage(null);
 			IConfigurationElement[] desc = selection.getChildren("description"); //$NON-NLS-1$
-			if (desc.length == 1)
+			if (desc.length == 1) {
 				buf.append(NLS.bind(PDEUIMessages.ReviewPage_descContent, (new String[] {selection.getAttribute("name"), desc[0].getValue()}))); //$NON-NLS-1$
-			else
+			} else {
 				buf.append(NLS.bind(PDEUIMessages.ReviewPage_content, selection.getAttribute("name"))); //$NON-NLS-1$
+			}
 		} else {
 			setMessage(PDEUIMessages.ReviewPage_noSampleFound, IMessageProvider.WARNING);
 		}

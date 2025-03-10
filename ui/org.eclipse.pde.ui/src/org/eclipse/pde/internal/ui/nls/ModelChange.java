@@ -52,20 +52,23 @@ public class ModelChange {
 		fParent = parent;
 		fPreSelected = preSelected;
 		fBundleLocalization = PDEManager.getBundleLocalization(fParent);
-		if (fBundleLocalization == null)
+		if (fBundleLocalization == null) {
 			fBundleLocalization = DEFAULT_LOCALIZATION_PREFIX;
+		}
 	}
 
 	public void addChange(IFile file, ModelChangeElement change) {
-		if (change == null || file == null)
+		if (change == null || file == null) {
 			return;
+		}
 		String ext = file.getFileExtension();
-		if (ext.equalsIgnoreCase("xml")) //$NON-NLS-1$
+		if (ext.equalsIgnoreCase("xml")) { //$NON-NLS-1$
 			addXMLChange(file, change);
-		else if (ext.equalsIgnoreCase("MF")) //$NON-NLS-1$
+		} else if (ext.equalsIgnoreCase("MF")) { //$NON-NLS-1$
 			addMFChange(file, change);
-		else
+		} else {
 			return;
+		}
 	}
 
 	private void addXMLChange(IFile file, ModelChangeElement change) {
@@ -88,12 +91,15 @@ public class ModelChange {
 	public IFile[] getChangeFiles() {
 		IFile xmlFile = fXMLCoupling != null ? fXMLCoupling.getFile() : null;
 		IFile mfFile = fMFCoupling != null ? fMFCoupling.getFile() : null;
-		if (xmlFile != null && mfFile != null)
+		if (xmlFile != null && mfFile != null) {
 			return new IFile[] {xmlFile, mfFile};
-		if (xmlFile != null)
+		}
+		if (xmlFile != null) {
 			return new IFile[] {xmlFile};
-		if (mfFile != null)
+		}
+		if (mfFile != null) {
 			return new IFile[] {mfFile};
+		}
 		return new IFile[0];
 	}
 
@@ -117,18 +123,22 @@ public class ModelChange {
 	}
 
 	public ArrayList<?> getChangesInFile(IFile file) {
-		if (fXMLCoupling != null && file == fXMLCoupling.getFile())
+		if (fXMLCoupling != null && file == fXMLCoupling.getFile()) {
 			return fXMLCoupling.getChanges();
-		if (fMFCoupling != null && file == fMFCoupling.getFile())
+		}
+		if (fMFCoupling != null && file == fMFCoupling.getFile()) {
 			return fMFCoupling.getChanges();
+		}
 		return null;
 	}
 
 	public int getNumberOfChangesInFile(IFile file) {
-		if (fXMLCoupling != null && file == fXMLCoupling.getFile())
+		if (fXMLCoupling != null && file == fXMLCoupling.getFile()) {
 			return fXMLCoupling.getNumChanges();
-		if (fMFCoupling != null && file == fMFCoupling.getFile())
+		}
+		if (fMFCoupling != null && file == fMFCoupling.getFile()) {
 			return fMFCoupling.getNumChanges();
+		}
 		return 0;
 	}
 
@@ -141,20 +151,25 @@ public class ModelChange {
 	}
 
 	public ModelChangeFile[] getModelChangeFiles() {
-		if (fXMLCoupling != null && fMFCoupling != null)
+		if (fXMLCoupling != null && fMFCoupling != null) {
 			return new ModelChangeFile[] {fXMLCoupling, fMFCoupling};
-		if (fXMLCoupling != null)
+		}
+		if (fXMLCoupling != null) {
 			return new ModelChangeFile[] {fXMLCoupling};
-		if (fMFCoupling != null)
+		}
+		if (fMFCoupling != null) {
 			return new ModelChangeFile[] {fMFCoupling};
+		}
 		return new ModelChangeFile[0];
 	}
 
 	public void setBundleLocalization(String bundleLocalization) {
-		if (bundleLocalization == null || bundleLocalization.endsWith(LOCALIZATION_FILE_SUFFIX))
+		if (bundleLocalization == null || bundleLocalization.endsWith(LOCALIZATION_FILE_SUFFIX)) {
 			throw new IllegalArgumentException();
-		if (bundleLocalization.equals(fBundleLocalization))
+		}
+		if (bundleLocalization.equals(fBundleLocalization)) {
 			return;
+		}
 		fBundleLocalization = bundleLocalization;
 		fReloadProperties = true;
 	}

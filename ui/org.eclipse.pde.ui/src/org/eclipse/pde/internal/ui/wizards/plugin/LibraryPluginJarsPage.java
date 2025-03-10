@@ -70,8 +70,9 @@ public class LibraryPluginJarsPage extends WizardPage {
 		fData = data;
 		setTitle(PDEUIMessages.LibraryPluginJarsPage_title);
 		setDescription(PDEUIMessages.LibraryPluginJarsPage_desc);
-		if (jarPaths != null)
+		if (jarPaths != null) {
 			fJarPaths.addAll(jarPaths);
+		}
 	}
 
 	private void chooseFile() {

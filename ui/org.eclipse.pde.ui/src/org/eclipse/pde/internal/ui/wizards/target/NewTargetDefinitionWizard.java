@@ -41,8 +41,9 @@ public class NewTargetDefinitionWizard extends BasicNewResourceWizard {
 	public void addPages() {
 		ftargetCreationPage = new TargetCreationPage("profile"); //$NON-NLS-1$
 		fPage = new TargetDefinitionWizardPage("profile", getSelection()); //$NON-NLS-1$
-		if (fInitialPath != null)
+		if (fInitialPath != null) {
 			fPage.setContainerFullPath(fInitialPath);
+		}
 		addPage(fPage);
 	}
 
@@ -71,11 +72,12 @@ public class NewTargetDefinitionWizard extends BasicNewResourceWizard {
 			if (ww != null) {
 				IWorkbenchPage page = ww.getActivePage();
 				IFile file = wrkspcTargetHandle.getTargetFile();
-				if (page != null && file.exists())
+				if (page != null && file.exists()) {
 					try {
 						IDE.openEditor(page, file);
 					} catch (PartInitException e) {
 					}
+				}
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);

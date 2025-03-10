@@ -41,8 +41,9 @@ public abstract class ButtonAttributeRow extends ReferenceAttributeRow {
 		if (part.isEditable()) {
 			Button button = toolkit.createButton(parent, PDEUIMessages.ReferenceAttributeRow_browse, SWT.PUSH);
 			button.addSelectionListener(widgetSelectedAdapter(e -> {
-				if (!isReferenceModel())
+				if (!isReferenceModel()) {
 					browse();
+				}
 			}));
 			//button.setEnabled(part.isEditable());
 		}

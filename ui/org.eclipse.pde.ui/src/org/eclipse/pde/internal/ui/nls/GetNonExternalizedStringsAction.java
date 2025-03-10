@@ -66,8 +66,9 @@ public class GetNonExternalizedStringsAction extends AbstractHandler {
 			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(runnable);
 		} catch (InvocationTargetException | InterruptedException e) {
 		} finally {
-			if (runnable.wasCanceled())
+			if (runnable.wasCanceled()) {
 				return;
+			}
 			ModelChangeTable changeTable = runnable.getChangeTable();
 			if (!changeTable.isEmpty()) {
 				ExternalizeStringsProcessor processor = new ExternalizeStringsProcessor();
@@ -85,8 +86,9 @@ public class GetNonExternalizedStringsAction extends AbstractHandler {
 				 * <code>fSkipMessageDialog</code> is set to true in order for no intermediate
 				 * message to appear if all selected plug-ins were already externalized.
 				 */
-				if (!fSkipMessageDialog)
+				if (!fSkipMessageDialog) {
 					MessageDialog.openInformation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), PDEUIMessages.GetNonExternalizedStringsAction_allExternalizedTitle, PDEUIMessages.GetNonExternalizedStringsAction_allExternalizedMessage);
+				}
 			}
 		}
 	}

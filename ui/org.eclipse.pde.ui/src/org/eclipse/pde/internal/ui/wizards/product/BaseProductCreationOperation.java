@@ -103,13 +103,16 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 				String name = null;
 				String value = null;
 				IPluginAttribute attr = child.getAttribute("name"); //$NON-NLS-1$
-				if (attr != null)
+				if (attr != null) {
 					name = attr.getValue();
+				}
 				attr = child.getAttribute("value"); //$NON-NLS-1$
-				if (attr != null)
+				if (attr != null) {
 					value = attr.getValue();
-				if (name != null && value != null)
+				}
+				if (name != null && value != null) {
 					prop.put(name, value);
+				}
 			}
 		}
 		return prop;
@@ -117,8 +120,9 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 
 	protected IPluginElement getProductExtension(String productId) {
 		int lastDot = productId.lastIndexOf('.');
-		if (lastDot == -1)
+		if (lastDot == -1) {
 			return null;
+		}
 		String pluginId = productId.substring(0, lastDot);
 		IPluginModelBase model = PluginRegistry.findModel(pluginId);
 		if (model != null) {
@@ -129,8 +133,9 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 					IPluginObject[] children = extension.getChildren();
 					if (children.length > 0) {
 						IPluginElement object = (IPluginElement) children[0];
-						if (object.getName().equals("product")) //$NON-NLS-1$
+						if (object.getName().equals("product")) { //$NON-NLS-1$
 							return object;
+						}
 					}
 				}
 			}
@@ -162,11 +167,13 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 		IPluginElement element = getProductExtension(id);
 		if (element != null) {
 			IPluginAttribute attr = element.getAttribute("application"); //$NON-NLS-1$
-			if (attr != null)
+			if (attr != null) {
 				product.setApplication(attr.getValue());
+			}
 			attr = element.getAttribute("name"); //$NON-NLS-1$
-			if (attr != null)
+			if (attr != null) {
 				product.setName(attr.getValue());
+			}
 			Properties prop = getProductProperties(element);
 			String aboutText = prop.getProperty(IProductConstants.ABOUT_TEXT);
 			String aboutImage = prop.getProperty(IProductConstants.ABOUT_IMAGE);
@@ -183,10 +190,11 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 				int size = 0;
 				while (tokenizer.hasMoreTokens()) {
 					String token = tokenizer.nextToken();
-					if (token.equals(",")) //$NON-NLS-1$
+					if (token.equals(",")) { //$NON-NLS-1$
 						size++;
-					else
+					} else {
 						winImages.setImagePath(token, size);
+					}
 				}
 			}
 			product.setWindowImages(winImages);
@@ -220,8 +228,9 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 				configuration.setId(model.getPluginBase().getId());
 				// TODO do we want to set the version here?
 				String[] slinfo = sl.split(":"); //$NON-NLS-1$
-				if (slinfo.length == 0)
+				if (slinfo.length == 0) {
 					continue;
+				}
 				if (slinfo[0].equals("default")) { //$NON-NLS-1$
 					slinfo[0] = "0"; //$NON-NLS-1$
 				}
@@ -232,8 +241,9 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 		}
 		product.addPlugins(pplugins);
 		int size = configurations.size();
-		if (size > 0)
+		if (size > 0) {
 			product.addPluginConfigurations(configurations.toArray(new IPluginConfiguration[size]));
+		}
 	}
 
 	protected void addPlugins(IProductModelFactory factory, IProduct product, String[] plugins) {
@@ -253,8 +263,9 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 				return;
 			}
 			IWorkbenchPage page = ww.getActivePage();
-			if (page == null || !fFile.exists())
+			if (page == null || !fFile.exists()) {
 				return;
+			}
 			IWorkbenchPart focusPart = page.getActivePart();
 			if (focusPart instanceof ISetSelectionTarget) {
 				ISelection selection = new StructuredSelection(fFile);

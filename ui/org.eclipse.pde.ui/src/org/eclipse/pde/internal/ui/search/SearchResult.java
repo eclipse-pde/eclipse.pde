@@ -92,8 +92,9 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 					Match[] matches = getMatches(object);
 					for (Match matche : matches) {
 						IDocument document = getDocument(editor, matche);
-						if (document != null)
+						if (document != null) {
 							list.add(ManifestEditorOpener.findExactMatch(document, matche, editor));
+						}
 					}
 				}
 			}
@@ -126,16 +127,17 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 		IFile resource = editor.getEditorInput().getAdapter(IFile.class);
 		if (resource != null) {
 			IResource objectResource = underlyingResource;
-			if (objectResource != null)
+			if (objectResource != null) {
 				return resource.getProject().equals(objectResource.getProject());
+			}
 		}
 		File file = editor.getEditorInput().getAdapter(File.class);
 		if (file != null) {
 			IPath path = IPath.fromOSString(installLocation);
 			IPath filePath = null;
-			if (ICoreConstants.MANIFEST_FILENAME.equals(file.getName()))
+			if (ICoreConstants.MANIFEST_FILENAME.equals(file.getName())) {
 				filePath = IPath.fromOSString(file.getParentFile().getParent());
-			else if (file.getName().endsWith("jar")) { //$NON-NLS-1$
+			} else if (file.getName().endsWith("jar")) { //$NON-NLS-1$
 				filePath = IPath.fromOSString(file.getPath());
 			} else {
 				filePath = IPath.fromOSString(file.getParent());

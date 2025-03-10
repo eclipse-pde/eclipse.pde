@@ -124,8 +124,9 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 
 	@Override
 	public void dispose() {
-		if (fImage != null)
+		if (fImage != null) {
 			fImage.dispose();
+		}
 	}
 
 	/**
@@ -137,8 +138,9 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 	@Override
 	public void validateTab() {
 		String error = fConfigurationArea.validate();
-		if (error == null)
+		if (error == null) {
 			error = fTemplateArea.validate();
+		}
 		if (error == null) {
 			error = fSoftwareInstallArea.validate();
 		}

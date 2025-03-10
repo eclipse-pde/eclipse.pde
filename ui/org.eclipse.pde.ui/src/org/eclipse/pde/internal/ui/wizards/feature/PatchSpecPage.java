@@ -57,10 +57,12 @@ public class PatchSpecPage extends AbstractFeatureSpecPage {
 	@Override
 	protected void initialize() {
 		String projectName = getProjectName();
-		if (fInitialId == null)
+		if (fInitialId == null) {
 			fPatchIdText.setText(IdUtil.getValidId(projectName));
-		if (fInitialName == null)
+		}
+		if (fInitialName == null) {
 			fPatchNameText.setText(projectName);
+		}
 		setMessage(PDEUIMessages.FeaturePatch_MainPage_desc);
 	}
 
@@ -79,26 +81,30 @@ public class PatchSpecPage extends AbstractFeatureSpecPage {
 
 	@Override
 	public IWizardPage getNextPage() {
-		if (fFeatureToPatch == null)
+		if (fFeatureToPatch == null) {
 			return null;
+		}
 		return super.getNextPage();
 	}
 
 	private String getPatchId() {
-		if (fPatchIdText == null)
+		if (fPatchIdText == null) {
 			return ""; //$NON-NLS-1$
+		}
 		return fPatchIdText.getText();
 	}
 
 	private String getPatchName() {
-		if (fPatchNameText == null)
+		if (fPatchNameText == null) {
 			return ""; //$NON-NLS-1$
+		}
 		return fPatchNameText.getText();
 	}
 
 	private String getPatchProvider() {
-		if (fPatchProviderCombo == null)
+		if (fPatchProviderCombo == null) {
 			return ""; //$NON-NLS-1$
+		}
 		return fPatchProviderCombo.getText();
 	}
 
@@ -119,8 +125,9 @@ public class PatchSpecPage extends AbstractFeatureSpecPage {
 	@Override
 	protected String verifyIdRules() {
 		String id = fPatchIdText.getText();
-		if (id == null || id.length() == 0)
+		if (id == null || id.length() == 0) {
 			return PDEUIMessages.NewFeatureWizard_SpecPage_pmissing;
+		}
 		if (!IdUtil.isValidCompositeID(id)) {
 			return PDEUIMessages.NewFeatureWizard_SpecPage_invalidId;
 		}
@@ -223,8 +230,9 @@ public class PatchSpecPage extends AbstractFeatureSpecPage {
 
 	@Override
 	protected void updateNameRelativeFields() {
-		if (fPatchIdText == null || fPatchNameText == null)
+		if (fPatchIdText == null || fPatchNameText == null) {
 			return;
+		}
 		fSelfModification = true;
 		String id = IdUtil.getValidId(getProjectName());
 		fPatchIdText.setText(id);

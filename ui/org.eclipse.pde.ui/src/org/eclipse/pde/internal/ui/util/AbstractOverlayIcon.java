@@ -36,15 +36,17 @@ public abstract class AbstractOverlayIcon extends CompositeImageDescriptor {
 
 	public AbstractOverlayIcon(ImageDescriptor[][] overlays, Point size) {
 		fOverlays = overlays;
-		if (size != null)
+		if (size != null) {
 			fSize = size;
-		else
+		} else {
 			fSize = new Point(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+		}
 	}
 
 	protected void drawBottomLeft(ImageDescriptor[] overlays) {
-		if (overlays == null)
+		if (overlays == null) {
 			return;
+		}
 		int length = overlays.length;
 		int x = 0;
 		for (int i = 0; i < 3; i++) {
@@ -57,8 +59,9 @@ public abstract class AbstractOverlayIcon extends CompositeImageDescriptor {
 	}
 
 	protected void drawBottomRight(ImageDescriptor[] overlays) {
-		if (overlays == null)
+		if (overlays == null) {
 			return;
+		}
 		int length = overlays.length;
 		int x = getSize().x;
 		for (int i = 2; i >= 0; i--) {
@@ -77,23 +80,28 @@ public abstract class AbstractOverlayIcon extends CompositeImageDescriptor {
 		ImageData base = getBaseImageData();
 		drawImage(base, 0, 0);
 		if (fOverlays != null) {
-			if (fOverlays.length > 0)
+			if (fOverlays.length > 0) {
 				drawTopRight(fOverlays[0]);
+			}
 
-			if (fOverlays.length > 1)
+			if (fOverlays.length > 1) {
 				drawBottomRight(fOverlays[1]);
+			}
 
-			if (fOverlays.length > 2)
+			if (fOverlays.length > 2) {
 				drawBottomLeft(fOverlays[2]);
+			}
 
-			if (fOverlays.length > 3)
+			if (fOverlays.length > 3) {
 				drawTopLeft(fOverlays[3]);
+			}
 		}
 	}
 
 	protected void drawTopLeft(ImageDescriptor[] overlays) {
-		if (overlays == null)
+		if (overlays == null) {
 			return;
+		}
 		int length = overlays.length;
 		int x = 0;
 		for (int i = 0; i < 3; i++) {
@@ -106,8 +114,9 @@ public abstract class AbstractOverlayIcon extends CompositeImageDescriptor {
 	}
 
 	protected void drawTopRight(ImageDescriptor[] overlays) {
-		if (overlays == null)
+		if (overlays == null) {
 			return;
+		}
 		int length = overlays.length;
 		int x = getSize().x;
 		for (int i = 2; i >= 0; i--) {

@@ -129,14 +129,18 @@ public class PreferencesSection extends PDESection {
 		bindings[1] = info.getPreferenceCustomizationPath() == null ? null : TextProcessor.process(info.getPreferenceCustomizationPath());
 
 		boolean isOverwrite = getOverwrite();
-		if (bindings[0] == null && bindings[1] == null)
+		if (bindings[0] == null && bindings[1] == null) {
 			return isOverwrite ? PDEUIMessages.PreferencesSection_generate_overwrite1 : PDEUIMessages.PreferencesSection_generate_merge1;
-		if (bindings[0] == null && bindings[1] != null)
+		}
+		if (bindings[0] == null && bindings[1] != null) {
 			return isOverwrite ? NLS.bind(PDEUIMessages.PreferencesSection_generate_overwrite2, bindings[1]) : NLS.bind(PDEUIMessages.PreferencesSection_generate_merge2, bindings[1]);
-		if (bindings[0] != null && bindings[1] == null)
+		}
+		if (bindings[0] != null && bindings[1] == null) {
 			return isOverwrite ? NLS.bind(PDEUIMessages.PreferencesSection_generate_overwrite3, bindings[0]) : NLS.bind(PDEUIMessages.PreferencesSection_generate_merge3, bindings[0]);
-		if (bindings[0] != null && bindings[1] != null)
+		}
+		if (bindings[0] != null && bindings[1] != null) {
 			return isOverwrite ? NLS.bind(PDEUIMessages.PreferencesSection_generate_overwrite4, bindings) : NLS.bind(PDEUIMessages.PreferencesSection_generate_merge4, bindings);
+		}
 		return null;
 	}
 
@@ -215,8 +219,9 @@ public class PreferencesSection extends PDESection {
 						entry = wkspc.getFactory().createEntry("bin.includes"); //$NON-NLS-1$
 						wkspc.getBuild().add(entry);
 					}
-					if (!entry.contains(preferenceCustomizationPath))
+					if (!entry.contains(preferenceCustomizationPath)) {
 						entry.addToken(preferenceCustomizationPath);
+					}
 					wkspc.save();
 				}
 			}
@@ -344,8 +349,9 @@ public class PreferencesSection extends PDESection {
 	public boolean canPaste(Clipboard clipboard) {
 		Display d = getSection().getDisplay();
 		Control c = d.getFocusControl();
-		if (c instanceof Text)
+		if (c instanceof Text) {
 			return true;
+		}
 		return false;
 	}
 

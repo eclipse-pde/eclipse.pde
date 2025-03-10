@@ -73,10 +73,12 @@ public class ManifestTextHover extends PDETextHover {
 		IDocumentRange range = fSourcePage.getRangeElement(offset, false);
 		if (range instanceof IManifestHeader header) {
 			String headerName = header.getName();
-			if (offset >= header.getOffset() + headerName.length())
+			if (offset >= header.getOffset() + headerName.length()) {
 				return checkForTranslatable(header);
-			if (fJP != null)
+			}
+			if (fJP != null) {
 				return PDEJavaHelperUI.getOSGIConstantJavaDoc(headerName, fJP);
+			}
 		}
 		return null;
 	}
@@ -87,8 +89,9 @@ public class ManifestTextHover extends PDETextHover {
 		for (String transalatableHeader : ICoreConstants.TRANSLATABLE_HEADERS) {
 			if (name.equals(transalatableHeader) && value.startsWith("%")) { //$NON-NLS-1$
 				IBaseModel model = ((PDEFormEditor) fSourcePage.getEditor()).getAggregateModel();
-				if (model instanceof IModel)
+				if (model instanceof IModel) {
 					return ((IModel) model).getResourceString(value);
+				}
 			}
 		}
 		return null;

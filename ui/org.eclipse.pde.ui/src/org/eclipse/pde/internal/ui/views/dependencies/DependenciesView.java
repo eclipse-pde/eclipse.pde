@@ -434,8 +434,9 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 				}
 			});
 		}
-		if (fShowLoops != null)
+		if (fShowLoops != null) {
 			fShowLoops.setEnabled(fLoops != NO_LOOPS);
+		}
 	}
 
 	@Override
@@ -547,8 +548,9 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 			fInputHistory.remove(entry);
 		}
 		fInputHistory.add(0, entry);
-		if (fHistoryDropDownAction != null)
+		if (fHistoryDropDownAction != null) {
 			fHistoryDropDownAction.setEnabled(true);
+		}
 	}
 
 	private void updateHistoryEntries() {
@@ -558,8 +560,9 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 				fInputHistory.remove(i);
 			}
 		}
-		if (fHistoryDropDownAction != null)
+		if (fHistoryDropDownAction != null) {
 			fHistoryDropDownAction.setEnabled(!fInputHistory.isEmpty());
+		}
 	}
 
 	/**

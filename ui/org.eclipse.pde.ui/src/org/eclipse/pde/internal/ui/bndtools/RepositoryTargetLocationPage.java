@@ -71,16 +71,19 @@ public class RepositoryTargetLocationPage extends BndTargetLocationPage {
 			WorkspaceRepository workspaceRepository = workspace.getWorkspaceRepository();
 			repositories.add(workspaceRepository);
 			for (RepositoryPlugin repository : workspace.getPlugins(RepositoryPlugin.class)) {
-				if (CACHE_REPOSITORY.equals(repository.getName()))
+				if (CACHE_REPOSITORY.equals(repository.getName())) {
 					continue;
+				}
 				if (repository instanceof IndexProvider && !((IndexProvider) repository).getSupportedPhases()
-					.contains(ResolutionPhase.build))
+					.contains(ResolutionPhase.build)) {
 					continue;
+				}
 				repositories.add(repository);
 			}
 
-			if (this.repository == null)
+			if (this.repository == null) {
 				this.repository = workspaceRepository;
+			}
 		} catch (Exception e) {
 			repositories.clear();
 			logError(RepositoryTargetLocation.MESSAGE_UNABLE_TO_RESOLVE_REPOSITORIES, e);
@@ -106,8 +109,9 @@ public class RepositoryTargetLocationPage extends BndTargetLocationPage {
 	}
 
 	private boolean selectTargetInCombo(Combo pluginsCombo) {
-		if (repository == null)
+		if (repository == null) {
 			return false;
+		}
 
 		for (int i = 0; i < pluginsCombo.getItemCount(); i++) {
 			if (pluginsCombo.getItem(i)
@@ -180,10 +184,11 @@ public class RepositoryTargetLocationPage extends BndTargetLocationPage {
 				bundles.add(bsn + " - " + repository.versions(bsn) //$NON-NLS-1$
 					.last());
 			}
-			if (bundles.isEmpty())
+			if (bundles.isEmpty()) {
 				logWarning("Repository is empty: " + repository.getName(), null); //$NON-NLS-1$
-			else
+			} else {
 				resetMessage();
+			}
 		}
 		return bundles;
 	}

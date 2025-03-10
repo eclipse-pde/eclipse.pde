@@ -42,8 +42,9 @@ public class PDEWordFinder {
 
 			while (pos >= 0) {
 				c = document.getChar(pos);
-				if (!Character.isJavaIdentifierPart(c))
+				if (!Character.isJavaIdentifierPart(c)) {
 					break;
+				}
 				--pos;
 			}
 			start = pos;
@@ -53,8 +54,9 @@ public class PDEWordFinder {
 
 			while (pos < length) {
 				c = document.getChar(pos);
-				if (!Character.isJavaIdentifierPart(c))
+				if (!Character.isJavaIdentifierPart(c)) {
 					break;
+				}
 				++pos;
 			}
 			end = pos;
@@ -63,12 +65,13 @@ public class PDEWordFinder {
 		}
 
 		if (start >= -1 && end > -1) {
-			if (start == offset && end == offset)
+			if (start == offset && end == offset) {
 				return new Region(offset, 0);
-			else if (start == offset)
+			} else if (start == offset) {
 				return new Region(start, end - start);
-			else
+			} else {
 				return new Region(start + 1, end - start - 1);
+			}
 		}
 
 		return null;

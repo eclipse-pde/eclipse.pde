@@ -38,23 +38,28 @@ public class BuildHyperlinkDetector implements IHyperlinkDetector {
 
 	@Override
 	public IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region, boolean canShowMultipleHyperlinks) {
-		if (region == null)
+		if (region == null) {
 			return null;
+		}
 
 		IDocumentRange element = fSourcePage.getRangeElement(region.getOffset(), true);
-		if (!(element instanceof BuildEntry entry))
+		if (!(element instanceof BuildEntry entry)) {
 			return null;
+		}
 
-		if (!entry.getModel().isEditable() || !(entry.getModel() instanceof IEditingModel))
+		if (!entry.getModel().isEditable() || !(entry.getModel() instanceof IEditingModel)) {
 			return null;
+		}
 
 		String name = entry.getName();
 		// as of now only scanning bin.includes, src.includes and source.* entries
-		if (!name.equals(IBuildEntry.BIN_INCLUDES) && !name.equals(IBuildEntry.SRC_INCLUDES) && !name.startsWith(IBuildEntry.JAR_PREFIX))
+		if (!name.equals(IBuildEntry.BIN_INCLUDES) && !name.equals(IBuildEntry.SRC_INCLUDES) && !name.startsWith(IBuildEntry.JAR_PREFIX)) {
 			return null;
+		}
 
-		if (region.getOffset() <= entry.getOffset() + entry.getName().length())
+		if (region.getOffset() <= entry.getOffset() + entry.getName().length()) {
 			return null;
+		}
 
 		return matchLinkFor(entry, region.getOffset());
 	}
@@ -64,44 +69,54 @@ public class BuildHyperlinkDetector implements IHyperlinkDetector {
 			IDocument doc = ((IEditingModel) header.getModel()).getDocument();
 			String value = doc.get(header.getOffset(), header.getLength());
 			int offset = mainOffset - header.getOffset();
-			if (skipChar(value.charAt(offset)))
+			if (skipChar(value.charAt(offset))) {
 				return null;
+			}
 
 			// all chars up to the offset
 			String pre = value.substring(0, offset);
 			char[] preChars = pre.toCharArray();
 			int start = pre.lastIndexOf(',');
-			if (start == -1)
+			if (start == -1) {
 				// we are looking at 1st entry, skip to ':'
-				if ((start = value.indexOf('=')) == 0)
+				if ((start = value.indexOf('=')) == 0) {
 					return null;
+				}
+			}
 
 			// skip to 1st non whitespace char
-			while (++start < preChars.length)
-				if (!skipChar(preChars[start]))
+			while (++start < preChars.length) {
+				if (!skipChar(preChars[start])) {
 					break;
+				}
+			}
 
 			// all chars past to ofset
 			String post = value.substring(offset);
 			char[] postChars = post.toCharArray();
 			int end = post.indexOf(',');
-			if (end == -1)
+			if (end == -1) {
 				// we are looking at last entry, skip to end
 				end = post.length();
+			}
 
 			// move back to 1st non whitespace char
-			while (--end < postChars.length)
-				if (!skipChar(postChars[end]))
+			while (--end < postChars.length) {
+				if (!skipChar(postChars[end])) {
 					break;
+				}
+			}
 			end += 1;
 
 			String match = value.substring(start, preChars.length + end);
-			if (match.length() == 0 || match.indexOf('*') != -1)
+			if (match.length() == 0 || match.indexOf('*') != -1) {
 				return null;
+			}
 
 			IResource res = header.getModel().getUnderlyingResource();
-			if (res == null)
+			if (res == null) {
 				return null;
+			}
 			res = res.getProject().findMember(match);
 			return new IHyperlink[] {new ResourceHyperlink(new Region(header.getOffset() + start, match.length()), match, res)};
 

@@ -39,16 +39,19 @@ public class DependenciesViewComparator extends ViewerComparator {
 			return ((ImportPackageSpecification) obj).getName();
 		} else if (obj instanceof BundleSpecification) {
 			desc = (BundleDescription) ((BundleSpecification) obj).getSupplier();
-		} else if (obj instanceof BundleDescription)
+		} else if (obj instanceof BundleDescription) {
 			desc = (BundleDescription) obj;
-		if (desc != null)
+		}
+		if (desc != null) {
 			return PDEPlugin.getDefault().getLabelProvider().getObjectText(desc);
+		}
 		return ""; //$NON-NLS-1$
 	}
 
 	public static DependenciesViewComparator getViewerComparator() {
-		if (fComparator == null)
+		if (fComparator == null) {
 			fComparator = new DependenciesViewComparator();
+		}
 		return fComparator;
 	}
 

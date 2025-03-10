@@ -72,8 +72,9 @@ public class CalculateUsesAction extends Action {
 			@Override
 			protected void handleSetUsesDirectives(final Map<String, HashSet<String>> pkgsAndUses) {
 				Display.getDefault().asyncExec(() -> {
-					if (pkgsAndUses.isEmpty())
+					if (pkgsAndUses.isEmpty()) {
 						return;
+					}
 					setUsesDirectives(pkgsAndUses);
 				});
 			}

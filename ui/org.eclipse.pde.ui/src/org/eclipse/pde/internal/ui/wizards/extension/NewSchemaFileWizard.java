@@ -59,8 +59,9 @@ public class NewSchemaFileWizard extends Wizard implements INewWizard {
 	private IDialogSettings getSettingsSection() {
 		IDialogSettings root = PDEPlugin.getDefault().getDialogSettings();
 		IDialogSettings section = root.getSection("newExtensionPointWizard"); //$NON-NLS-1$
-		if (section == null)
+		if (section == null) {
 			section = root.addNewSection("newExtensionPointWizard"); //$NON-NLS-1$
+		}
 		return section;
 	}
 
@@ -69,8 +70,9 @@ public class NewSchemaFileWizard extends Wizard implements INewWizard {
 		Object sel = selection.getFirstElement();
 		if (sel instanceof IJavaProject) {
 			container = ((IJavaProject) sel).getProject();
-		} else if (sel instanceof IContainer)
+		} else if (sel instanceof IContainer) {
 			container = (IContainer) sel;
+		}
 	}
 
 	@Override

@@ -82,17 +82,22 @@ public class NewSchemaFileMainPage extends BaseExtensionPointMainPage {
 	public void initializeValues() {
 		if (fContainer != null) {
 			fPluginIdText.setText(fContainer.getProject().getName());
-			if (!isPluginIdFinal())
+			if (!isPluginIdFinal()) {
 				fSchemaLocationText.setText(fContainer.getProject().getName() + "/" + fContainer.getProjectRelativePath().toString()); //$NON-NLS-1$
+			}
 		}
-		if (fPoint == null)
+		if (fPoint == null) {
 			return;
-		if (fIdText != null && fPoint.getId() != null)
+		}
+		if (fIdText != null && fPoint.getId() != null) {
 			fIdText.setText(fPoint.getId());
-		if (fNameText != null && fPoint.getName() != null)
+		}
+		if (fNameText != null && fPoint.getName() != null) {
 			fNameText.setText(fPoint.getName());
-		if (fSchemaText != null && fPoint.getSchema() != null)
+		}
+		if (fSchemaText != null && fPoint.getSchema() != null) {
 			fSchemaText.setText(fPoint.getSchema());
+		}
 
 		fPluginIdText.setEnabled(!isPluginIdFinal);
 		fPluginBrowseButton.setEnabled(!isPluginIdFinal);
@@ -101,24 +106,29 @@ public class NewSchemaFileMainPage extends BaseExtensionPointMainPage {
 	@Override
 	protected String validateFieldContents() {
 		String message = validatePluginID();
-		if (message != null)
+		if (message != null) {
 			return message;
+		}
 
 		message = validateExtensionPointID();
-		if (message != null)
+		if (message != null) {
 			return message;
+		}
 
 		message = validateExtensionPointName();
-		if (message != null)
+		if (message != null) {
 			return message;
+		}
 
 		message = validateContainer();
-		if (message != null)
+		if (message != null) {
 			return message;
+		}
 
 		message = validateExtensionPointSchema();
-		if (message != null)
+		if (message != null) {
 			return message;
+		}
 
 		return null;
 	}
@@ -126,17 +136,20 @@ public class NewSchemaFileMainPage extends BaseExtensionPointMainPage {
 	protected String validatePluginID() {
 		// Verify not zero length
 		String pluginID = getPluginId();
-		if (pluginID.length() == 0)
+		if (pluginID.length() == 0) {
 			return PDEUIMessages.NewSchemaFileMainPage_missingPluginID;
+		}
 
 		// Verify plug-in ID exists
 		IPluginModelBase model = PluginRegistry.findModel(pluginID);
-		if (model == null)
+		if (model == null) {
 			return PDEUIMessages.NewSchemaFileMainPage_nonExistingPluginID;
+		}
 
 		// Verify plug-in ID is not an external model
-		if (model.getUnderlyingResource() == null)
+		if (model.getUnderlyingResource() == null) {
 			return PDEUIMessages.NewSchemaFileMainPage_externalPluginID;
+		}
 
 		return null;
 	}
@@ -145,8 +158,9 @@ public class NewSchemaFileMainPage extends BaseExtensionPointMainPage {
 		if (!isPluginIdFinal()) {
 			// Ensure not zero length
 			String newContainerName = fSchemaLocationText.getText().trim();
-			if (newContainerName.length() == 0)
+			if (newContainerName.length() == 0) {
 				return PDEUIMessages.NewSchemaFileMainPage_missingContainer;
+			}
 
 			// Ensure valid target container
 			IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
@@ -160,8 +174,9 @@ public class NewSchemaFileMainPage extends BaseExtensionPointMainPage {
 		}
 
 		// Ensure target container exists
-		if (fContainer == null || !fContainer.exists())
+		if (fContainer == null || !fContainer.exists()) {
 			return PDEUIMessages.NewSchemaFileMainPage_nonExistingContainer;
+		}
 
 		return null;
 	}

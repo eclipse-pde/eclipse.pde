@@ -217,8 +217,9 @@ public class NLSFragmentGenerator {
 	private Map<String, Object> promptForOverwrite(List<IPluginModelBase> plugins, List<Locale> locales) {
 		Map<String, Object> overwrites = new HashMap<>();
 
-		if (overwriteWithoutAsking)
+		if (overwriteWithoutAsking) {
 			return overwrites;
+		}
 
 		for (IPluginModelBase plugin : plugins) {
 			for (Locale locale : locales) {

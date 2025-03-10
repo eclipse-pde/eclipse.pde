@@ -105,8 +105,9 @@ public class InternationalizeWizardLocalePage extends InternationalizationWizard
 		fSelected = new HashSet<>();
 
 		IWizardContainer container = getContainer();
-		if (container != null)
+		if (container != null) {
 			container.updateButtons();
+		}
 	}
 
 	private void addFilter() {
@@ -124,8 +125,9 @@ public class InternationalizeWizardLocalePage extends InternationalizationWizard
 
 	private void handleFilter() {
 		String newFilter;
-		if (fFilterText == null || (newFilter = fFilterText.getText().trim()).length() == 0)
+		if (fFilterText == null || (newFilter = fFilterText.getText().trim()).length() == 0) {
 			newFilter = AvailableFilter.WILDCARD;
+		}
 		boolean changed = fFilter.setPattern(newFilter);
 		if (changed) {
 			fAvailableListViewer.getTable().setRedraw(false);
@@ -223,13 +225,15 @@ public class InternationalizeWizardLocalePage extends InternationalizationWizard
 		fSelectedListViewer.addDoubleClickListener(event -> handleRemove());
 
 		fAvailableListViewer.addSelectionChangedListener(event -> {
-			if (!fBlockSelectionListeners)
+			if (!fBlockSelectionListeners) {
 				updateSelectionBasedEnablement(event.getSelection(), true);
+			}
 		});
 
 		fSelectedListViewer.addSelectionChangedListener(event -> {
-			if (!fBlockSelectionListeners)
+			if (!fBlockSelectionListeners) {
 				updateSelectionBasedEnablement(event.getSelection(), false);
+			}
 		});
 
 		fFilterText.addModifyListener(e -> {
@@ -354,20 +358,23 @@ public class InternationalizeWizardLocalePage extends InternationalizationWizard
 		int availableCount = fAvailableListViewer.getTable().getItemCount();
 		int importCount = fSelectedListViewer.getTable().getItemCount();
 
-		if (doAddEnablement)
+		if (doAddEnablement) {
 			updateSelectionBasedEnablement(fAvailableListViewer.getStructuredSelection(), true);
-		if (doRemoveEnablement)
+		}
+		if (doRemoveEnablement) {
 			updateSelectionBasedEnablement(fSelectedListViewer.getStructuredSelection(), false);
+		}
 
 		fAddAllButton.setEnabled(availableCount > 0);
 		fRemoveAllButton.setEnabled(importCount > 0);
 	}
 
 	private void updateSelectionBasedEnablement(ISelection theSelection, boolean available) {
-		if (available)
+		if (available) {
 			fAddButton.setEnabled(!theSelection.isEmpty());
-		else
+		} else {
 			fRemoveButton.setEnabled(!theSelection.isEmpty());
+		}
 	}
 
 	private void handleAdd() {

@@ -94,11 +94,13 @@ public class ProductInputContext extends XMLInputContext {
 
 	@Override
 	protected void flushModel(IDocument doc) {
-		if (!(getModel() instanceof IEditable))
+		if (!(getModel() instanceof IEditable)) {
 			return;
+		}
 		IEditable editableModel = (IEditable) getModel();
-		if (editableModel.isDirty() == false)
+		if (editableModel.isDirty() == false) {
 			return;
+		}
 		try (StringWriter swriter = new StringWriter(); PrintWriter writer = new PrintWriter(swriter)) {
 			editableModel.save(writer);
 			writer.flush();

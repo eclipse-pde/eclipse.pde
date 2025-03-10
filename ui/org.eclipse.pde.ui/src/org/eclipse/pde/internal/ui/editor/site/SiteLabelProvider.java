@@ -49,28 +49,33 @@ class SiteLabelProvider extends LabelProvider {
 
 	@Override
 	public Image getImage(Object element) {
-		if (element instanceof ISiteCategoryDefinition)
+		if (element instanceof ISiteCategoryDefinition) {
 			return fCatDefImage;
+		}
 		if (element instanceof SiteFeatureAdapter) {
-			if (PDECore.getDefault().getFeatureModelManager().findFeatureModelRelaxed(((SiteFeatureAdapter) element).feature.getId(), ((SiteFeatureAdapter) element).feature.getVersion()) == null)
+			if (PDECore.getDefault().getFeatureModelManager().findFeatureModelRelaxed(((SiteFeatureAdapter) element).feature.getId(), ((SiteFeatureAdapter) element).feature.getVersion()) == null) {
 				return fMissingSiteFeatureImage;
+			}
 			return fSiteFeatureImage;
 		}
-		if (element instanceof IFormPage)
+		if (element instanceof IFormPage) {
 			return fPageImage;
+		}
 		return fSharedProvider.getImage(element);
 	}
 
 	@Override
 	public String getText(Object element) {
-		if (element instanceof ISiteCategoryDefinition)
+		if (element instanceof ISiteCategoryDefinition) {
 			return ((ISiteCategoryDefinition) element).getName();
+		}
 		if (element instanceof SiteFeatureAdapter) {
 			ISiteFeature feature = ((SiteFeatureAdapter) element).feature;
 			return fSharedProvider.getObjectText(feature);
 		}
-		if (element instanceof IFormPage)
+		if (element instanceof IFormPage) {
 			return ((IFormPage) element).getTitle();
+		}
 		return fSharedProvider.getText(element);
 	}
 

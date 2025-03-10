@@ -81,15 +81,15 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 
 		@Override
 		public Object getPageKey(Object object) {
-			if (object instanceof ISchemaObjectReference)
+			if (object instanceof ISchemaObjectReference) {
 				return ISchemaObjectReference.class;
-			else if (object instanceof ISchemaRootElement)
+			} else if (object instanceof ISchemaRootElement) {
 				return ISchemaRootElement.class;
-			else if (object instanceof ISchemaElement)
+			} else if (object instanceof ISchemaElement) {
 				return ISchemaElement.class;
-			else if (object instanceof ISchemaCompositor)
+			} else if (object instanceof ISchemaCompositor) {
 				return ISchemaCompositor.class;
-			else if (object instanceof ISchemaAttribute att) {
+			} else if (object instanceof ISchemaAttribute att) {
 				int kind = att.getKind();
 				switch (kind) {
 					case IMetaAttribute.JAVA :
@@ -97,12 +97,14 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 					case IMetaAttribute.IDENTIFIER :
 						return SchemaIdentifierAttributeDetails.class;
 					case IMetaAttribute.STRING :
-						if (att.getType().getName().equals(ISchemaAttribute.TYPES[ISchemaAttribute.STR_IND]))
+						if (att.getType().getName().equals(ISchemaAttribute.TYPES[ISchemaAttribute.STR_IND])) {
 							return SchemaStringAttributeDetails.class;
+						}
 				}
 				return SchemaOtherAttributeDetails.class;
-			} else
+			} else {
 				return null;
+			}
 		}
 
 		@Override
@@ -210,8 +212,9 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 	@Override
 	public void dispose() {
 		ISchema schema = (ISchema) getModel();
-		if (schema != null)
+		if (schema != null) {
 			schema.removeModelChangedListener(this);
+		}
 		super.dispose();
 	}
 
@@ -221,8 +224,9 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 			String changeProperty = event.getChangedProperty();
 			if (changeProperty != null && changeProperty.equals(ISchemaObject.P_NAME)) {
 				Object[] change = event.getChangedObjects();
-				if (change.length > 0 && change[0] instanceof ISchema)
+				if (change.length > 0 && change[0] instanceof ISchema) {
 					getManagedForm().getForm().setText(((ISchema) change[0]).getName());
+				}
 			}
 		} else if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			handleModelEventWorldChanged(event);

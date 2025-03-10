@@ -52,8 +52,9 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard, 
 	public IDialogSettings getSettingsSection(IDialogSettings master) {
 		String name = getSettingsSectionName();
 		IDialogSettings settings = master.getSection(name);
-		if (settings == null)
+		if (settings == null) {
 			settings = master.addNewSection(name);
+		}
 		return settings;
 	}
 
@@ -67,14 +68,17 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard, 
 	@Override
 	public boolean performFinish() {
 		saveSettings();
-		if (!PlatformUI.getWorkbench().saveAllEditors(true))
+		if (!PlatformUI.getWorkbench().saveAllEditors(true)) {
 			return false;
+		}
 
-		if (!performPreliminaryChecks())
+		if (!performPreliminaryChecks()) {
 			return false;
+		}
 
-		if (!confirmDelete())
+		if (!confirmDelete()) {
 			return false;
+		}
 
 		scheduleExportJob();
 		return true;

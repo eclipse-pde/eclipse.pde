@@ -65,8 +65,9 @@ public class DependencyExtentOperation {
 
 		@Override
 		public void acceptSearchMatch(SearchMatch match) throws CoreException {
-			if (!match.isInsideDocComment())
+			if (!match.isInsideDocComment()) {
 				fMatch = new Match(match.getElement(), Match.UNIT_CHARACTER, match.getOffset(), match.getLength());
+			}
 		}
 
 		public Match getMatch() {
@@ -107,8 +108,9 @@ public class DependencyExtentOperation {
 
 	private void findMatches(IPluginExtensionPoint point) {
 		String fullID = point.getFullId();
-		if (fullID == null)
+		if (fullID == null) {
 			return;
+		}
 
 		IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();
 		for (IPluginExtension extension : extensions) {
@@ -124,30 +126,34 @@ public class DependencyExtentOperation {
 
 	private void checkForJavaDependencies(IPluginModelBase[] models, IProgressMonitor monitor) {
 		try {
-			if (!fProject.hasNature(JavaCore.NATURE_ID))
+			if (!fProject.hasNature(JavaCore.NATURE_ID)) {
 				return;
+			}
 
 			IJavaProject jProject = JavaCore.create(fProject);
 			IPackageFragment[] packageFragments = PluginJavaSearchUtil.collectPackageFragments(models, jProject, true);
 			monitor.beginTask("", packageFragments.length); //$NON-NLS-1$
 			SearchEngine engine = new SearchEngine();
 			for (IPackageFragment pkgFragment : packageFragments) {
-				if (monitor.isCanceled())
+				if (monitor.isCanceled()) {
 					break;
+				}
 				monitor.subTask(PDEUIMessages.DependencyExtentOperation_inspecting + " " + pkgFragment.getElementName()); //$NON-NLS-1$
 				if (pkgFragment.hasChildren()) {
 					IJavaElement[] children = pkgFragment.getChildren();
 					for (IJavaElement child : children) {
-						if (monitor.isCanceled())
+						if (monitor.isCanceled()) {
 							break;
+						}
 						IType[] types = new IType[0];
 						if (child instanceof IOrdinaryClassFile) {
 							types = new IType[] {((IOrdinaryClassFile) child).getType()};
 						} else if (child instanceof ICompilationUnit) {
 							types = ((ICompilationUnit) child).getTypes();
 						}
-						if (types.length > 0)
+						if (types.length > 0) {
 							searchForTypesUsed(engine, child, types, PluginJavaSearchUtil.createSeachScope(jProject));
+						}
 					}
 				}
 				monitor.worked(1);
@@ -158,8 +164,9 @@ public class DependencyExtentOperation {
 
 	private void searchForTypesUsed(SearchEngine engine, IJavaElement parent, IType[] types, IJavaSearchScope scope) throws CoreException {
 		for (IType type : types) {
-			if (type.isAnonymous())
+			if (type.isAnonymous()) {
 				continue;
+			}
 			TypeReferenceSearchRequestor requestor = new TypeReferenceSearchRequestor();
 			SearchPattern pattern = SearchPattern.createPattern(type, IJavaSearchConstants.REFERENCES);
 			if (pattern == null) {
@@ -176,8 +183,9 @@ public class DependencyExtentOperation {
 				engine.search(pattern, new SearchParticipant[] { SearchEngine.getDefaultSearchParticipant() },
 						SearchEngine.createJavaSearchScope(new IJavaElement[] { parent }), decRequestor, null);
 				Match match = decRequestor.getMatch();
-				if (match != null)
+				if (match != null) {
 					fSearchResult.addMatch(match);
+				}
 			}
 		}
 

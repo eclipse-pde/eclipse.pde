@@ -69,15 +69,16 @@ public class DependencyPropertiesDialog extends StatusDialog {
 		fOptional = optional;
 		fShowOptional = showOptional;
 		fPluginId = pluginId;
-		if (isImport)
+		if (isImport) {
 			fVersionPart = new PluginVersionPart(true, isPlugin);
-		else
+		} else {
 			fVersionPart = new PluginVersionPart(false, isPlugin) {
 				@Override
 				protected String getGroupText() {
 					return PDEUIMessages.DependencyPropertiesDialog_exportGroupText;
 				}
 			};
+		}
 		fVersionPart.setVersion(version);
 	}
 
@@ -122,8 +123,9 @@ public class DependencyPropertiesDialog extends StatusDialog {
 		ModifyListener ml = e -> updateStatus(fVersionPart.validateFullVersionRangeText(true));
 		fVersionPart.addListeners(ml, ml);
 
-		if (fPluginId != null && !fPluginId.equals("system.bundle")) //$NON-NLS-1$
+		if (fPluginId != null && !fPluginId.equals("system.bundle")) { //$NON-NLS-1$
 			fVersionPart.createVersionSelectionField(comp, fPluginId);
+		}
 
 		return comp;
 	}

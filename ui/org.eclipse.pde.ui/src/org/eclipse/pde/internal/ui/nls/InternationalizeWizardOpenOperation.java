@@ -69,8 +69,9 @@ public class InternationalizeWizardOpenOperation {
 			}
 		};
 		BusyIndicator.showWhile(parent.getDisplay(), r);
-		if (canceled[0] != null)
+		if (canceled[0] != null) {
 			throw canceled[0];
+		}
 		return result[0];
 	}
 }

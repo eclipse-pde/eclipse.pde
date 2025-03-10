@@ -52,21 +52,24 @@ public class ControlStack {
 			}
 		} else if (line.startsWith("endif")) { //$NON-NLS-1$
 			// pop the stack
-			if (!stack.isEmpty())
+			if (!stack.isEmpty()) {
 				stack.pop();
+			}
 		} else {
 			// a preprocessor comment - ignore it
 		}
 	}
 
 	public boolean getCurrentState() {
-		if (stack.isEmpty())
+		if (stack.isEmpty()) {
 			return true;
+		}
 		// All control levels must evaluate to true to
 		// return result==true
 		for (Entry entry : stack) {
-			if (!entry.value)
+			if (!entry.value) {
 				return false;
+			}
 		}
 		return true;
 	}

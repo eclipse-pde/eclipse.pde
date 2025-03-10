@@ -43,7 +43,8 @@ public class ToggleLinkWithEditorAction extends Action {
 	@Override
 	public void run() {
 		PDEPlugin.getDefault().getPreferenceStore().setValue("ToggleLinkWithEditorAction.isChecked", isChecked()); //$NON-NLS-1$
-		if (isChecked())
+		if (isChecked()) {
 			fEditor.synchronizeOutlinePage();
+		}
 	}
 }

@@ -61,12 +61,14 @@ public class InternationalizeOperation implements IRunnableWithProgress {
 			fSelectedModels = new ArrayList<>(elems.length);
 			for (int i = 0; i < elems.length; i++) {
 				//If a file was selected, get its parent project
-				if (elems[i] instanceof IFile)
+				if (elems[i] instanceof IFile) {
 					elems[i] = ((IFile) elems[i]).getProject();
+				}
 
 				//Add the project to the preselected model list
-				if (elems[i] instanceof IProject && WorkspaceModelManager.isPluginProject((IProject) elems[i]) && !WorkspaceModelManager.isBinaryProject((IProject) elems[i]))
+				if (elems[i] instanceof IProject && WorkspaceModelManager.isPluginProject((IProject) elems[i]) && !WorkspaceModelManager.isBinaryProject((IProject) elems[i])) {
 					fSelectedModels.add(elems[i]);
+				}
 			}
 		}
 

@@ -37,8 +37,9 @@ public class ModelChangeFile {
 	}
 
 	public void add(ModelChangeElement element) {
-		if (fChanges.add(element))
+		if (fChanges.add(element)) {
 			fNumChanges += 1;
+		}
 	}
 
 	protected int getNumChanges() {

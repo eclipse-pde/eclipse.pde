@@ -81,16 +81,18 @@ public abstract class SyntaxColorTab {
 		}
 
 		public void setColorValue(RGB rgb) {
-			if (fColorValue.equals(rgb))
+			if (fColorValue.equals(rgb)) {
 				return;
+			}
 			RGB oldrgb = fColorValue;
 			fColorValue = rgb;
 			firePropertyChange(new PropertyChangeEvent(this, fColorKey, oldrgb, rgb));
 		}
 
 		public void setBold(boolean bold) {
-			if (bold == fBold)
+			if (bold == fBold) {
 				return;
+			}
 			Boolean oldValue = Boolean.valueOf(fBold);
 			fBold = bold;
 			Boolean newValue = Boolean.valueOf(bold);
@@ -103,8 +105,9 @@ public abstract class SyntaxColorTab {
 		}
 
 		public void setItalic(boolean italic) {
-			if (italic == fItalic)
+			if (italic == fItalic) {
 				return;
+			}
 			Boolean oldValue = Boolean.valueOf(fItalic);
 			fItalic = italic;
 			Boolean newValue = Boolean.valueOf(italic);
@@ -238,8 +241,9 @@ public abstract class SyntaxColorTab {
 		fPreviewViewer = new SourceViewer(previewComp, null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		fSourceViewerConfiguration = getSourceViewerConfiguration();
 
-		if (fSourceViewerConfiguration != null)
+		if (fSourceViewerConfiguration != null) {
 			fPreviewViewer.configure(fSourceViewerConfiguration);
+		}
 
 		fPreviewViewer.setEditable(false);
 		fPreviewViewer.getTextWidget().setFont(JFaceResources.getFont(JFaceResources.TEXT_FONT));

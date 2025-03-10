@@ -59,16 +59,18 @@ public class ProductIntroWizard extends Wizard {
 				fPluginId = fProductDefinitionPage.getDefiningPlugin();
 				fApplication = fProductDefinitionPage.getApplication();
 				String newProductName = fProductDefinitionPage.getProductName();
-				if (newProductName != null)
+				if (newProductName != null) {
 					fProduct.setName(newProductName);
+				}
 				fProduct.setProductId(getProductId());
 				fProduct.setApplication(fApplication);
 				getContainer().run(false, true, new ProductDefinitionOperation(fProduct, fPluginId, fProductId, fApplication, getContainer().getShell()));
 			}
 
 			fIntroId = fNewIntroPage.getIntroId();
-			if (fPluginId == null)
+			if (fPluginId == null) {
 				fPluginId = fNewIntroPage.getDefiningPlugin();
+			}
 			getContainer().run(false, true, new ProductIntroOperation(fProduct, fPluginId, fIntroId, getContainer().getShell()));
 		} catch (InvocationTargetException e) {
 			MessageDialog.openError(getContainer().getShell(), PDEUIMessages.ProductDefinitionWizard_error, e.getTargetException().getMessage());

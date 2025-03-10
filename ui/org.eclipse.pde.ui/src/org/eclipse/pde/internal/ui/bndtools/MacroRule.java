@@ -37,8 +37,9 @@ public class MacroRule implements IRule {
 		if (c == '$') {
 			buffer.setLength(0);
 			buffer.append('$');
-			if (scan(scanner, buffer))
+			if (scan(scanner, buffer)) {
 				return token;
+			}
 		}
 		scanner.unread();
 		return Token.UNDEFINED;
@@ -47,25 +48,29 @@ public class MacroRule implements IRule {
 
 	boolean scan(ICharacterScanner scanner, StringBuffer buffer) {
 		int c = scanner.read();
-		if (c == ICharacterScanner.EOF)
+		if (c == ICharacterScanner.EOF) {
 			return false;
+		}
 		int terminator = Macro.getTerminator((char) c);
 
-		if (terminator == 0)
+		if (terminator == 0) {
 			return false;
+		}
 
 		while (true) {
 			c = scanner.read();
 			buffer.append((char) c);
-			if (c == terminator)
+			if (c == terminator) {
 				return true;
-			else if (c == '$') {
-				if (!scan(scanner, buffer))
+			} else if (c == '$') {
+				if (!scan(scanner, buffer)) {
 					return false;
+				}
 			} else if (c == '\\') {
 				c = scanner.read();
-				if (c == ICharacterScanner.EOF)
+				if (c == ICharacterScanner.EOF) {
 					return false;
+				}
 				buffer.append((char) c);
 			}
 		}

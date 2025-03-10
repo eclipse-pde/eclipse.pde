@@ -63,16 +63,17 @@ public class BuildSourceViewerConfiguration extends ChangeAwareSourceViewerConfi
 			String property = event.getProperty();
 			if (affectsTextPresentation(property)) {
 				Token token = getTokenAffected(event);
-				if (property.endsWith(PreferenceConstants.EDITOR_BOLD_SUFFIX))
+				if (property.endsWith(PreferenceConstants.EDITOR_BOLD_SUFFIX)) {
 					adaptToStyleChange(event, token, SWT.BOLD);
-				else if (property.endsWith(PreferenceConstants.EDITOR_ITALIC_SUFFIX))
+				} else if (property.endsWith(PreferenceConstants.EDITOR_ITALIC_SUFFIX)) {
 					adaptToStyleChange(event, token, SWT.ITALIC);
-				else if (property.endsWith(PreferenceConstants.EDITOR_STRIKETHROUGH_SUFFIX))
+				} else if (property.endsWith(PreferenceConstants.EDITOR_STRIKETHROUGH_SUFFIX)) {
 					adaptToStyleChange(event, token, TextAttribute.STRIKETHROUGH);
-				else if (property.endsWith(PreferenceConstants.EDITOR_UNDERLINE_SUFFIX))
+				} else if (property.endsWith(PreferenceConstants.EDITOR_UNDERLINE_SUFFIX)) {
 					adaptToStyleChange(event, token, TextAttribute.UNDERLINE);
-				else
+				} else {
 					adaptToColorChange(event, token);
+				}
 			}
 		}
 
@@ -80,14 +81,18 @@ public class BuildSourceViewerConfiguration extends ChangeAwareSourceViewerConfi
 		protected TextAttribute createTextAttribute(String property) {
 			Color color = fColorManager.getColor(property);
 			int style = SWT.NORMAL;
-			if (fPreferenceStore.getBoolean(property + PreferenceConstants.EDITOR_BOLD_SUFFIX))
+			if (fPreferenceStore.getBoolean(property + PreferenceConstants.EDITOR_BOLD_SUFFIX)) {
 				style |= SWT.BOLD;
-			if (fPreferenceStore.getBoolean(property + PreferenceConstants.EDITOR_ITALIC_SUFFIX))
+			}
+			if (fPreferenceStore.getBoolean(property + PreferenceConstants.EDITOR_ITALIC_SUFFIX)) {
 				style |= SWT.ITALIC;
-			if (fPreferenceStore.getBoolean(property + PreferenceConstants.EDITOR_STRIKETHROUGH_SUFFIX))
+			}
+			if (fPreferenceStore.getBoolean(property + PreferenceConstants.EDITOR_STRIKETHROUGH_SUFFIX)) {
 				style |= TextAttribute.STRIKETHROUGH;
-			if (fPreferenceStore.getBoolean(property + PreferenceConstants.EDITOR_UNDERLINE_SUFFIX))
+			}
+			if (fPreferenceStore.getBoolean(property + PreferenceConstants.EDITOR_UNDERLINE_SUFFIX)) {
 				style |= TextAttribute.UNDERLINE;
+			}
 			return new TextAttribute(color, null, style);
 		}
 	}
@@ -124,8 +129,9 @@ public class BuildSourceViewerConfiguration extends ChangeAwareSourceViewerConfi
 
 			@Override
 			public boolean isWordStart(char c) {
-				if ('=' != c && ':' != c || fDocument == null)
+				if ('=' != c && ':' != c || fDocument == null) {
 					return false;
+				}
 
 				try {
 					// check whether it is the first '='
@@ -161,10 +167,12 @@ public class BuildSourceViewerConfiguration extends ChangeAwareSourceViewerConfi
 		@Override
 		protected Token getTokenAffected(PropertyChangeEvent event) {
 			String property = event.getProperty();
-			if (property.startsWith(PreferenceConstants.PROPERTIES_FILE_COLORING_ARGUMENT))
+			if (property.startsWith(PreferenceConstants.PROPERTIES_FILE_COLORING_ARGUMENT)) {
 				return fArgumentToken;
-			if (property.startsWith(PreferenceConstants.PROPERTIES_FILE_COLORING_ASSIGNMENT))
+			}
+			if (property.startsWith(PreferenceConstants.PROPERTIES_FILE_COLORING_ASSIGNMENT)) {
 				return fAssignmentToken;
+			}
 			return (Token) fDefaultReturnToken;
 		}
 
@@ -216,8 +224,9 @@ public class BuildSourceViewerConfiguration extends ChangeAwareSourceViewerConfi
 
 	@Override
 	public void adaptToPreferenceChange(PropertyChangeEvent event) {
-		if (affectsColorPresentation(event))
+		if (affectsColorPresentation(event)) {
 			fColorManager.handlePropertyChangeEvent(event);
+		}
 		fPropertyKeyScanner.adaptToPreferenceChange(event);
 		fCommentScanner.adaptToPreferenceChange(event);
 		fPropertyValueScanner.adaptToPreferenceChange(event);

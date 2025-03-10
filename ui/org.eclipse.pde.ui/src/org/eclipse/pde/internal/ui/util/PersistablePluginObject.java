@@ -60,18 +60,22 @@ public class PersistablePluginObject extends PlatformObject implements IPersista
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Class<T> adapter) {
-		if (adapter.equals(IPersistableElement.class))
+		if (adapter.equals(IPersistableElement.class)) {
 			return (T) this;
-		if (adapter.equals(IResource.class))
+		}
+		if (adapter.equals(IResource.class)) {
 			return (T) getResource();
-		if (adapter.equals(IContainmentAdapter.class))
+		}
+		if (adapter.equals(IContainmentAdapter.class)) {
 			return (T) getPluginContainmentAdapter();
+		}
 		if (adapter.equals(IJavaElement.class)) {
 			IResource res = getResource();
 			if (res instanceof IProject project) {
 				try {
-					if (project.hasNature(JavaCore.NATURE_ID))
+					if (project.hasNature(JavaCore.NATURE_ID)) {
 						return (T) JavaCore.create(project);
+					}
 				} catch (CoreException e) {
 				}
 			}
@@ -90,8 +94,9 @@ public class PersistablePluginObject extends PlatformObject implements IPersista
 	}
 
 	private static IContainmentAdapter getPluginContainmentAdapter() {
-		if (fgContainmentAdapter == null)
+		if (fgContainmentAdapter == null) {
 			fgContainmentAdapter = new PluginContainmentAdapter();
+		}
 		return fgContainmentAdapter;
 	}
 

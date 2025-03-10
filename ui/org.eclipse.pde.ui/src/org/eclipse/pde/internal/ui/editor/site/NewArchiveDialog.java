@@ -98,35 +98,40 @@ public class NewArchiveDialog extends StatusDialog {
 
 	private void dialogChanged() {
 		IStatus status = null;
-		if (fUrlText.getText().length() == 0 || fPathText.getText().length() == 0)
+		if (fUrlText.getText().length() == 0 || fPathText.getText().length() == 0) {
 			status = getEmptyErrorStatus();
-		else {
-			if (hasPath(fPathText.getText()))
+		} else {
+			if (hasPath(fPathText.getText())) {
 				status = Status.error(PDEUIMessages.NewArchiveDialog_alreadyExists);
+			}
 		}
-		if (status == null)
+		if (status == null) {
 			status = Status.OK_STATUS;
+		}
 		updateStatus(status);
 	}
 
 	private void execute() {
 		boolean add = (fSiteArchive == null);
-		if (fSiteArchive == null)
+		if (fSiteArchive == null) {
 			fSiteArchive = fSiteModel.getFactory().createArchive();
+		}
 
 		try {
 			fSiteArchive.setURL(fUrlText.getText());
 			fSiteArchive.setPath(fPathText.getText());
-			if (add)
+			if (add) {
 				fSiteModel.getSite().addArchives(new ISiteArchive[] {fSiteArchive});
+			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
 	}
 
 	private IStatus getEmptyErrorStatus() {
-		if (fErrorStatus == null)
+		if (fErrorStatus == null) {
 			fErrorStatus = Status.error(PDEUIMessages.SiteEditor_NewArchiveDialog_error);
+		}
 		return fErrorStatus;
 	}
 
@@ -155,7 +160,8 @@ public class NewArchiveDialog extends StatusDialog {
 	}
 
 	private void setIfDefined(Text text, String value) {
-		if (value != null)
+		if (value != null) {
 			text.setText(value);
+		}
 	}
 }

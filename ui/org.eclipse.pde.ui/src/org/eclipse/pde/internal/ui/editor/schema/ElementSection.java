@@ -98,8 +98,9 @@ public class ElementSection extends TreeSection {
 				ISchemaType type = ((ISchemaElement) parent).getType();
 				if (type instanceof ISchemaComplexType) {
 					Object compositor = ((ISchemaComplexType) type).getCompositor();
-					if (compositor != null)
+					if (compositor != null) {
 						types = new Object[] {compositor};
+					}
 				}
 				children = new Object[types.length + attributes.length];
 				System.arraycopy(types, 0, children, 0, types.length);
@@ -112,15 +113,17 @@ public class ElementSection extends TreeSection {
 
 		@Override
 		public Object getParent(Object child) {
-			if (child instanceof ISchemaObject)
+			if (child instanceof ISchemaObject) {
 				return ((ISchemaObject) child).getParent();
+			}
 			return null;
 		}
 
 		@Override
 		public boolean hasChildren(Object parent) {
-			if (parent instanceof ISchemaAttribute || parent instanceof ISchemaObjectReference)
+			if (parent instanceof ISchemaAttribute || parent instanceof ISchemaObjectReference) {
 				return false;
+			}
 			return getChildren(parent).length > 0;
 		}
 	}
@@ -215,12 +218,15 @@ public class ElementSection extends TreeSection {
 		Object selection = fTreeViewer.getStructuredSelection().getFirstElement();
 		ISchemaElement sourceElement = null;
 		Object current = selection;
-		while (current instanceof ISchemaCompositor)
+		while (current instanceof ISchemaCompositor) {
 			current = ((ISchemaCompositor) current).getParent();
-		if (current instanceof ISchemaElement)
+		}
+		if (current instanceof ISchemaElement) {
 			sourceElement = (ISchemaElement) current;
-		if (sourceElement != null)
+		}
+		if (sourceElement != null) {
 			new NewCompositorAction(sourceElement, selection, kind).run();
+		}
 	}
 
 	@Override
@@ -263,12 +269,14 @@ public class ElementSection extends TreeSection {
 			fTreeViewer.setSelection(new StructuredSelection(object), true);
 
 			ISelection selection = fTreeViewer.getSelection();
-			if (selection != null && !selection.isEmpty())
+			if (selection != null && !selection.isEmpty()) {
 				return true;
+			}
 			if (object instanceof ISchemaElement) {
 				ISchemaElement found = fSchema.findElement(((ISchemaElement) object).getName());
-				if (found != null)
+				if (found != null) {
 					fTreeViewer.setSelection(new StructuredSelection(found), true);
+				}
 				return found != null;
 			}
 		}
@@ -288,10 +296,11 @@ public class ElementSection extends TreeSection {
 		}
 		if (object != null) {
 			ISchemaElement element = null;
-			if (object instanceof SchemaElement)
+			if (object instanceof SchemaElement) {
 				element = (SchemaElement) object;
-			else if (object instanceof SchemaAttribute)
+			} else if (object instanceof SchemaAttribute) {
 				element = (SchemaElement) ((SchemaAttribute) object).getParent();
+			}
 
 			if (element != null && !(element instanceof ISchemaRootElement) && !(element instanceof ISchemaObjectReference)) {
 				fNewAttributeAction.setElement((SchemaElement) element);
@@ -311,8 +320,9 @@ public class ElementSection extends TreeSection {
 			}
 			if (sourceElement != null) {
 				if (object instanceof SchemaCompositor || sourceElement.getType() instanceof ISchemaSimpleType || ((ISchemaComplexType) sourceElement.getType()).getCompositor() == null) {
-					if (submenu.getItems().length > 0)
+					if (submenu.getItems().length > 0) {
 						submenu.add(new Separator());
+					}
 					submenu.add(new NewCompositorAction(sourceElement, object, ISchemaCompositor.CHOICE));
 					submenu.add(new NewCompositorAction(sourceElement, object, ISchemaCompositor.SEQUENCE));
 				}
@@ -335,8 +345,9 @@ public class ElementSection extends TreeSection {
 		manager.add(submenu);
 		if (object != null) {
 			if (!(object instanceof ISchemaRootElement)) {
-				if (manager.getItems().length > 0)
+				if (manager.getItems().length > 0) {
 					manager.add(new Separator());
+				}
 				if (!(object instanceof ISchemaAttribute && ((ISchemaAttribute) object).getParent() instanceof ISchemaRootElement)) {
 					Action deleteAction = new Action() {
 						@Override
@@ -370,8 +381,9 @@ public class ElementSection extends TreeSection {
 				selectionSource = thisObject;
 			}
 		}
-		if (nextSelection != null)
+		if (nextSelection != null) {
 			getTreeViewer().setSelection(nextSelection);
+		}
 	}
 
 	private IStructuredSelection handleDelete(Object object, boolean generateSelection) {
@@ -410,10 +422,11 @@ public class ElementSection extends TreeSection {
 			SchemaCompositor parent = (SchemaCompositor) ref.getParent();
 			ISchemaObject[] children = parent.getChildren();
 			int index = getNewSelectionIndex(getArrayIndex(children, ref), children.length);
-			if (index == -1)
+			if (index == -1) {
 				newSelection = new StructuredSelection(parent);
-			else
+			} else {
 				newSelection = new StructuredSelection(children[index]);
+			}
 		}
 		fRearranger.deleteReference(ref);
 		return newSelection;
@@ -425,8 +438,9 @@ public class ElementSection extends TreeSection {
 			ISchema parent = element.getSchema();
 			ISchemaElement[] children = parent.getElements();
 			int index = getNewSelectionIndex(getArrayIndex(children, element), children.length);
-			if (index != -1)
+			if (index != -1) {
 				newSelection = new StructuredSelection(children[index]);
+			}
 		}
 		fRearranger.deleteElement(element);
 		return newSelection;
@@ -442,13 +456,15 @@ public class ElementSection extends TreeSection {
 				ISchemaType type = parent.getType();
 				if (type instanceof ISchemaComplexType) {
 					ISchemaCompositor comp = ((ISchemaComplexType) type).getCompositor();
-					if (comp != null)
+					if (comp != null) {
 						newSelection = new StructuredSelection(comp);
-					else
+					} else {
 						newSelection = new StructuredSelection(parent);
+					}
 				}
-			} else
+			} else {
 				newSelection = new StructuredSelection(children[index]);
+			}
 		}
 		fRearranger.deleteAttribute(att);
 		return newSelection;
@@ -460,18 +476,20 @@ public class ElementSection extends TreeSection {
 			ISchemaObject parent = comp.getParent();
 			if (parent instanceof ISchemaElement element) {
 				ISchemaAttribute[] attributes = element.getAttributes();
-				if (attributes.length > 0)
+				if (attributes.length > 0) {
 					newSelection = new StructuredSelection(attributes[0]);
-				else
+				} else {
 					newSelection = new StructuredSelection(element);
+				}
 			} else {
 				ISchemaCompositor parentComp = (ISchemaCompositor) parent;
 				ISchemaObject[] children = parentComp.getChildren();
 				int index = getNewSelectionIndex(getArrayIndex(children, comp), children.length);
-				if (index == -1)
+				if (index == -1) {
 					newSelection = new StructuredSelection(parent);
-				else
+				} else {
 					newSelection = new StructuredSelection(children[index]);
+				}
 			}
 		}
 		fRearranger.deleteCompositor(comp);
@@ -481,10 +499,12 @@ public class ElementSection extends TreeSection {
 	// returns true if object a is a SchemaObject higher in the hierarchy than object b
 	// returns false if b is higher or they are equal
 	private boolean schemaObjectHigherThan(Object a, Object b) {
-		if (!(b instanceof ISchemaObject))
+		if (!(b instanceof ISchemaObject)) {
 			return true;
-		if (!(a instanceof ISchemaObject))
+		}
+		if (!(a instanceof ISchemaObject)) {
 			return false;
+		}
 		return (computeNestLevel((ISchemaObject) a) < computeNestLevel((ISchemaObject) b));
 	}
 
@@ -503,10 +523,11 @@ public class ElementSection extends TreeSection {
 		Object object = fTreeViewer.getStructuredSelection().getFirstElement();
 		if (object != null) {
 			SchemaElement element = null;
-			if (object instanceof SchemaElement)
+			if (object instanceof SchemaElement) {
 				element = (SchemaElement) object;
-			else if (object instanceof SchemaAttribute)
+			} else if (object instanceof SchemaAttribute) {
 				element = (SchemaElement) ((SchemaAttribute) object).getParent();
+			}
 
 			if (element != null && !(element instanceof ISchemaRootElement)) {
 				fNewAttributeAction.setElement(element);
@@ -533,8 +554,9 @@ public class ElementSection extends TreeSection {
 	}
 
 	public void handleModelChanged(IModelChangedEvent e) {
-		if (e.getChangedProperty() != null && e.getChangedProperty().equals(ISchemaObject.P_DESCRIPTION))
+		if (e.getChangedProperty() != null && e.getChangedProperty().equals(ISchemaObject.P_DESCRIPTION)) {
 			return;
+		}
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			handleModelEventWorldChanged(e);
 			return;
@@ -543,13 +565,15 @@ public class ElementSection extends TreeSection {
 		for (Object obj : objects) {
 			if (obj instanceof SchemaElementReference) {
 				fTreeViewer.refresh(((SchemaElementReference) obj).getCompositor());
-				if (e.getChangeType() == IModelChangedEvent.INSERT)
+				if (e.getChangeType() == IModelChangedEvent.INSERT) {
 					fTreeViewer.setSelection(new StructuredSelection(obj), true);
+				}
 			} else if (obj instanceof ISchemaElement || obj instanceof ISchemaAttribute) {
 				if (e.getChangeType() == IModelChangedEvent.CHANGE) {
 					String changeProp = e.getChangedProperty();
-					if (changeProp != null && (changeProp.equals(ISchemaObject.P_NAME) || changeProp.equals(SchemaAttribute.P_KIND)))
+					if (changeProp != null && (changeProp.equals(ISchemaObject.P_NAME) || changeProp.equals(SchemaAttribute.P_KIND))) {
 						fTreeViewer.update(obj, null);
+					}
 					Object typeCheck = e.getNewValue();
 					if (typeCheck instanceof ISchemaComplexType && changeProp.equals(SchemaElement.P_TYPE) && obj instanceof ISchemaElement) {
 						fTreeViewer.refresh(typeCheck);
@@ -584,8 +608,9 @@ public class ElementSection extends TreeSection {
 				// first compositor added/removed
 				ISchemaCompositor comp = ((ISchemaComplexType) obj).getCompositor();
 				fTreeViewer.refresh(comp);
-				if (comp != null)
+				if (comp != null) {
 					fTreeViewer.refresh(comp.getParent());
+				}
 
 				if (e.getChangeType() == IModelChangedEvent.INSERT || e.getChangeType() == IModelChangedEvent.CHANGE) {
 					ISchemaComplexType type = (ISchemaComplexType) obj;
@@ -595,8 +620,9 @@ public class ElementSection extends TreeSection {
 					}
 				}
 			} else if (obj instanceof ISchema) {
-				if (!ISchemaObject.P_NAME.equals(e.getChangedProperty()))
+				if (!ISchemaObject.P_NAME.equals(e.getChangedProperty())) {
 					fTreeViewer.refresh();
+				}
 			}
 		}
 	}
@@ -633,25 +659,29 @@ public class ElementSection extends TreeSection {
 	}
 
 	private void updateButtons() {
-		if (!fSchema.isEditable())
+		if (!fSchema.isEditable()) {
 			return;
+		}
 		IStructuredSelection selection = fTreeViewer.getStructuredSelection();
 		ISchemaObject sobject = (ISchemaObject) selection.getFirstElement();
 
 		boolean canAddAttribute = false;
 		if (sobject instanceof ISchemaElement) {
-			if (!(sobject instanceof ISchemaRootElement) && !(sobject instanceof ISchemaObjectReference))
+			if (!(sobject instanceof ISchemaRootElement) && !(sobject instanceof ISchemaObjectReference)) {
 				canAddAttribute = true;
+			}
 		} else if (sobject instanceof ISchemaAttribute) {
 			ISchemaElement element = (ISchemaElement) (sobject.getParent());
-			if (!(element instanceof ISchemaRootElement))
+			if (!(element instanceof ISchemaRootElement)) {
 				canAddAttribute = true;
+			}
 		}
 		getTreePart().setButtonEnabled(1, canAddAttribute);
 
 		boolean canAddCompositor = false;
-		if (sobject instanceof ISchemaCompositor || (sobject instanceof ISchemaElement && !(sobject instanceof SchemaElementReference) && (((ISchemaElement) sobject).getType() instanceof ISchemaSimpleType || ((ISchemaComplexType) ((ISchemaElement) sobject).getType()).getCompositor() == null)))
+		if (sobject instanceof ISchemaCompositor || (sobject instanceof ISchemaElement && !(sobject instanceof SchemaElementReference) && (((ISchemaElement) sobject).getType() instanceof ISchemaSimpleType || ((ISchemaComplexType) ((ISchemaElement) sobject).getType()).getCompositor() == null))) {
 			canAddCompositor = true;
+		}
 		getTreePart().setButtonEnabled(2, canAddCompositor);
 		getTreePart().setButtonEnabled(3, canAddCompositor);
 
@@ -667,39 +697,49 @@ public class ElementSection extends TreeSection {
 	}
 
 	private ISchemaObject getSibling(Object target, Object object) {
-		if (target instanceof ISchemaElement && object instanceof ISchemaElement)
+		if (target instanceof ISchemaElement && object instanceof ISchemaElement) {
 			return (ISchemaElement) target;
-		if (target instanceof ISchemaAttribute && object instanceof ISchemaAttribute)
+		}
+		if (target instanceof ISchemaAttribute && object instanceof ISchemaAttribute) {
 			return (ISchemaAttribute) target;
-		if (target instanceof SchemaElementReference && object instanceof ISchemaElement)
+		}
+		if (target instanceof SchemaElementReference && object instanceof ISchemaElement) {
 			return (SchemaElementReference) target;
+		}
 		return null;
 	}
 
 	private ISchemaObject getRealTarget(Object target, Object object) {
 		if (object instanceof ISchemaElement || object instanceof ISchemaObjectReference) {
-			if (target instanceof SchemaElementReference)
+			if (target instanceof SchemaElementReference) {
 				return ((SchemaElementReference) target).getCompositor();
-			if (target instanceof ISchemaCompositor)
+			}
+			if (target instanceof ISchemaCompositor) {
 				return (ISchemaCompositor) target;
-			if (object instanceof ISchemaElement)
+			}
+			if (object instanceof ISchemaElement) {
 				return fSchema;
+			}
 		}
 		if (object instanceof ISchemaAttribute) {
 			if (target instanceof ISchemaAttribute) {
 				// add it to the parent of the selected attribute
 				return ((ISchemaAttribute) target).getParent();
 			}
-			if (target instanceof ISchemaElement)
+			if (target instanceof ISchemaElement) {
 				return (ISchemaElement) target;
+			}
 		}
 		if (object instanceof ISchemaCompositor) {
-			if (target instanceof SchemaElementReference)
+			if (target instanceof SchemaElementReference) {
 				return ((SchemaElementReference) target).getCompositor();
-			if (target instanceof ISchemaElement)
+			}
+			if (target instanceof ISchemaElement) {
 				return (ISchemaElement) target;
-			if (target instanceof ISchemaCompositor)
+			}
+			if (target instanceof ISchemaCompositor) {
 				return (ISchemaCompositor) target;
+			}
 		}
 		return null;
 	}
@@ -732,9 +772,9 @@ public class ElementSection extends TreeSection {
 				return;
 			}
 			ISchema schema = element.getSchema();
-			if (schema.equals(fSchema))
+			if (schema.equals(fSchema)) {
 				fireSelection(new StructuredSelection(element));
-			else {
+			} else {
 				ISchemaInclude[] includes = fSchema.getIncludes();
 				for (ISchemaInclude include : includes) {
 					ISchema includedSchema = include.getIncludedSchema();
@@ -749,8 +789,9 @@ public class ElementSection extends TreeSection {
 	}
 
 	protected void fireSelection(ISelection selection) {
-		if (selection == null)
+		if (selection == null) {
 			selection = fTreeViewer.getSelection();
+		}
 		fTreeViewer.setSelection(selection);
 	}
 
@@ -761,12 +802,14 @@ public class ElementSection extends TreeSection {
 
 	public void handleOp(Object currentTarget, Object[] objects, int currentOperation) {
 		for (int i = 0; i < objects.length; i++) {
-			if (!(objects[i] instanceof ISchemaObject object))
+			if (!(objects[i] instanceof ISchemaObject object)) {
 				continue;
+			}
 			ISchemaObject realTarget = getRealTarget(currentTarget, object);
 			ISchemaObject sibling = getSibling(currentTarget, object);
-			if (realTarget == null)
+			if (realTarget == null) {
 				continue;
+			}
 			switch (currentOperation) {
 				case DND.DROP_COPY -> doPaste(realTarget, sibling, object);
 				case DND.DROP_MOVE -> doMove(realTarget, sibling, object);

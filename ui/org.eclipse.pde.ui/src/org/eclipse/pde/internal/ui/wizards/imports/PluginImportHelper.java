@@ -196,11 +196,12 @@ public class PluginImportHelper {
 				for (int i = 0; i < children.size(); i++) {
 					Object curr = children.get(i);
 					if (provider.isFolder(curr)) {
-						if (!isClassFolder(provider, curr))
+						if (!isClassFolder(provider, curr)) {
 							result.add(provider.getLabel(curr) + "/"); //$NON-NLS-1$
-						else {
-							if (!result.contains(".")) //$NON-NLS-1$
+						} else {
+							if (!result.contains(".")) { //$NON-NLS-1$
 								result.add("."); //$NON-NLS-1$
+							}
 						}
 					} else {
 						result.add(provider.getLabel(curr));
@@ -304,8 +305,9 @@ public class PluginImportHelper {
 				Object curr = children.get(i);
 				if (provider.isFolder(curr)) {
 					// ignore source folders
-					if (folderContainsFileExtension(provider, curr, ".java")) //$NON-NLS-1$
+					if (folderContainsFileExtension(provider, curr, ".java")) { //$NON-NLS-1$
 						continue;
+					}
 					if (provider.getFullPath(curr).equals("META-INF/")) { //$NON-NLS-1$
 						continue;
 					}

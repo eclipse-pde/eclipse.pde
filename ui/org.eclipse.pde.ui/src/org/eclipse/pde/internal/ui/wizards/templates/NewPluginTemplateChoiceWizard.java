@@ -49,8 +49,9 @@ public class NewPluginTemplateChoiceWizard extends AbstractNewPluginTemplateWiza
 
 	@Override
 	public IWizardPage getNextPage(IWizardPage page) {
-		if (fSelectionPage == null)
+		if (fSelectionPage == null) {
 			return null;
+		}
 		return fSelectionPage.getNextVisiblePage(page);
 	}
 
@@ -75,8 +76,9 @@ public class NewPluginTemplateChoiceWizard extends AbstractNewPluginTemplateWiza
 			int pageCount = section.getPageCount();
 			for (int j = 0; j < pageCount; j++) {
 				WizardPage page = section.getPage(j);
-				if (page != null && !page.isPageComplete())
+				if (page != null && !page.isPageComplete()) {
 					return false;
+				}
 			}
 		}
 		return true;
@@ -94,8 +96,9 @@ public class NewPluginTemplateChoiceWizard extends AbstractNewPluginTemplateWiza
 	}
 
 	private void addTemplate(IConfigurationElement config, ArrayList<Object> result) {
-		if (config.getName().equalsIgnoreCase("template") == false) //$NON-NLS-1$
+		if (config.getName().equalsIgnoreCase("template") == false) { //$NON-NLS-1$
 			return;
+		}
 
 		try {
 			Object template = config.createExecutableExtension("class"); //$NON-NLS-1$

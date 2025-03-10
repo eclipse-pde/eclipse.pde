@@ -39,14 +39,18 @@ public class ManifestOutlinePage extends FormOutlinePage {
 			if (page.getModel() instanceof IPluginModelBase model) {
 				if (model.isValid()) {
 					IPluginBase pluginBase = model.getPluginBase();
-					if (page.getId().equals(DependenciesPage.PAGE_ID))
+					if (page.getId().equals(DependenciesPage.PAGE_ID)) {
 						return pluginBase.getImports();
-					if (page.getId().equals(RuntimePage.PAGE_ID))
+					}
+					if (page.getId().equals(RuntimePage.PAGE_ID)) {
 						return pluginBase.getLibraries();
-					if (page.getId().equals(ExtensionsPage.PAGE_ID))
+					}
+					if (page.getId().equals(ExtensionsPage.PAGE_ID)) {
 						return pluginBase.getExtensions();
-					if (page.getId().equals(ExtensionPointsPage.PAGE_ID))
+					}
+					if (page.getId().equals(ExtensionPointsPage.PAGE_ID)) {
 						return pluginBase.getExtensionPoints();
+					}
 				}
 			}
 		}
@@ -56,18 +60,20 @@ public class ManifestOutlinePage extends FormOutlinePage {
 	@Override
 	protected String getParentPageId(Object item) {
 		String pageId = null;
-		if (item instanceof IPluginImport || item instanceof ImportPackageObject)
+		if (item instanceof IPluginImport || item instanceof ImportPackageObject) {
 			pageId = DependenciesPage.PAGE_ID;
-		else if (item instanceof IPluginLibrary || item instanceof ExportPackageObject || item instanceof PackageFriend)
+		} else if (item instanceof IPluginLibrary || item instanceof ExportPackageObject || item instanceof PackageFriend) {
 			pageId = RuntimePage.PAGE_ID;
-		else if (item instanceof IPluginExtension)
+		} else if (item instanceof IPluginExtension) {
 			pageId = ExtensionsPage.PAGE_ID;
-		else if (item instanceof IPluginExtensionPoint)
+		} else if (item instanceof IPluginExtensionPoint) {
 			pageId = ExtensionPointsPage.PAGE_ID;
-		else if (item instanceof IBuildEntry)
+		} else if (item instanceof IBuildEntry) {
 			pageId = BuildPage.PAGE_ID;
-		if (pageId != null)
+		}
+		if (pageId != null) {
 			return pageId;
+		}
 		return super.getParentPageId(item);
 	}
 }

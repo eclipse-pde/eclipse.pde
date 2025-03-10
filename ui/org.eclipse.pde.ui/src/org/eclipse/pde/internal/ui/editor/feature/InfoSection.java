@@ -197,8 +197,9 @@ public class InfoSection extends PDESection {
 		styledText.setMenu(getPage().getPDEEditor().getContextMenu());
 		styledText.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
 		//
-		if (SWT.getPlatform().equals("motif") == false) //$NON-NLS-1$
+		if (SWT.getPlatform().equals("motif") == false) { //$NON-NLS-1$
 			toolkit.paintBordersFor(page);
+		}
 		Control[] children = page.getChildren();
 		Control control = children[children.length - 1];
 		gd = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
@@ -264,8 +265,9 @@ public class InfoSection extends PDESection {
 	public boolean setFormInput(Object input) {
 		if (input instanceof IFeatureInfo info) {
 			int index = info.getIndex();
-			if (index != -1)
+			if (index != -1) {
 				fTabFolder.setSelection(index);
+			}
 			updateEditorInput(input, false);
 			return true;
 		}
@@ -286,8 +288,9 @@ public class InfoSection extends PDESection {
 	}
 
 	private void handleApply(IFeatureInfo info, int index) {
-		if (index >= 2)
+		if (index >= 2) {
 			return;
+		}
 		String urlName = fUrlText.getText();
 		String text = fDocument.get();
 		applyInfoText(info, urlName, text, index);
@@ -304,8 +307,9 @@ public class InfoSection extends PDESection {
 			IFeatureModel model = (IFeatureModel) getPage().getModel();
 			IFeature feature = model.getFeature();
 
-			if (targetInfo == null)
+			if (targetInfo == null) {
 				targetInfo = feature.getFeatureInfo(index);
+			}
 
 			if (targetInfo == null) {
 				targetInfo = model.getFactory().createInfo(index);
@@ -347,8 +351,9 @@ public class InfoSection extends PDESection {
 			fSourceConfiguration.dispose();
 		}
 		IFeatureModel featureModel = (IFeatureModel) getPage().getModel();
-		if (featureModel != null)
+		if (featureModel != null) {
 			featureModel.removeModelChangedListener(this);
+		}
 		super.dispose();
 	}
 
@@ -396,8 +401,9 @@ public class InfoSection extends PDESection {
 	}
 
 	private void updateTabImage(CTabItem item) {
-		if (item == null)
+		if (item == null) {
 			return;
+		}
 		Object info = item.getData();
 		if (info != null) {
 			item.setImage(PDEPlugin.getDefault().getLabelProvider().getImage(info));
@@ -429,8 +435,9 @@ public class InfoSection extends PDESection {
 				fNotebookLayout.topControl = fUrlsPage;
 				break;
 		}
-		if (oldPage != fNotebookLayout.topControl)
+		if (oldPage != fNotebookLayout.topControl) {
 			fNotebook.layout();
+		}
 	}
 
 	@Override
@@ -458,15 +465,17 @@ public class InfoSection extends PDESection {
 			text = info.getDescription();
 			url = info.getURL();
 		}
-		if (text == null)
+		if (text == null) {
 			text = ""; //$NON-NLS-1$
-		else
+		} else {
 			text = TextUtil.createMultiLine(text, 60, false);
+		}
 		fDocument.set(text);
-		if (url == null)
+		if (url == null) {
 			fUrlText.setText(""); //$NON-NLS-1$
-		else
+		} else {
 			fUrlText.setText(url.toString());
+		}
 		fElement = input;
 		fElementIndex = fTabFolder.getSelectionIndex();
 
@@ -483,8 +492,9 @@ public class InfoSection extends PDESection {
 				fNotebookLayout.topControl = fUrlsPage;
 				break;
 		}
-		if (oldPage != fNotebookLayout.topControl)
+		if (oldPage != fNotebookLayout.topControl) {
 			fNotebook.layout();
+		}
 
 		fIgnoreChange = false;
 	}

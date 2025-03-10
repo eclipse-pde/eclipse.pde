@@ -51,8 +51,9 @@ public abstract class TextUtil {
 				}
 			}
 			if (preformatted) {
-				if (c == '\n')
+				if (c == '\n') {
 					counter = 0;
+				}
 				buffer.append(c);
 				continue;
 			}
@@ -68,10 +69,11 @@ public abstract class TextUtil {
 				}
 			}
 			if (c == '\n') {
-				if (ignoreNewLine)
+				if (ignoreNewLine) {
 					c = ' ';
-				else
+				} else {
 					counter = 0;
+				}
 			}
 			buffer.append(c);
 		}
@@ -79,48 +81,65 @@ public abstract class TextUtil {
 	}
 
 	private static boolean isParagraph(String text, int loc) {
-		if (text.charAt(loc) != '<')
+		if (text.charAt(loc) != '<') {
 			return false;
-		if (loc + 2 >= text.length())
+		}
+		if (loc + 2 >= text.length()) {
 			return false;
-		if (text.charAt(loc + 1) != 'p')
+		}
+		if (text.charAt(loc + 1) != 'p') {
 			return false;
-		if (text.charAt(loc + 2) != '>')
+		}
+		if (text.charAt(loc + 2) != '>') {
 			return false;
+		}
 		return true;
 	}
 
 	private static boolean isPreEnd(String text, int loc) {
-		if (text.charAt(loc) != '<')
+		if (text.charAt(loc) != '<') {
 			return false;
-		if (loc + 5 >= text.length())
+		}
+		if (loc + 5 >= text.length()) {
 			return false;
-		if (text.charAt(loc + 1) != '/')
+		}
+		if (text.charAt(loc + 1) != '/') {
 			return false;
-		if (text.charAt(loc + 2) != 'p')
+		}
+		if (text.charAt(loc + 2) != 'p') {
 			return false;
-		if (text.charAt(loc + 3) != 'r')
+		}
+		if (text.charAt(loc + 3) != 'r') {
 			return false;
-		if (text.charAt(loc + 4) != 'e')
+		}
+		if (text.charAt(loc + 4) != 'e') {
 			return false;
-		if (text.charAt(loc + 5) != '>')
+		}
+		if (text.charAt(loc + 5) != '>') {
 			return false;
+		}
 		return true;
 	}
 
 	private static boolean isPreStart(String text, int loc) {
-		if (text.charAt(loc) != '<')
+		if (text.charAt(loc) != '<') {
 			return false;
-		if (loc + 4 >= text.length())
+		}
+		if (loc + 4 >= text.length()) {
 			return false;
-		if (text.charAt(loc + 1) != 'p')
+		}
+		if (text.charAt(loc + 1) != 'p') {
 			return false;
-		if (text.charAt(loc + 2) != 'r')
+		}
+		if (text.charAt(loc + 2) != 'r') {
 			return false;
-		if (text.charAt(loc + 3) != 'e')
+		}
+		if (text.charAt(loc + 3) != 'e') {
 			return false;
-		if (text.charAt(loc + 4) != '>')
+		}
+		if (text.charAt(loc + 4) != '>') {
 			return false;
+		}
 		return true;
 	}
 
@@ -141,13 +160,15 @@ public abstract class TextUtil {
 
 	public static String trimNonAlphaChars(String value) {
 		value = value.trim();
-		while (value.length() > 0 && !Character.isLetter(value.charAt(0)))
+		while (value.length() > 0 && !Character.isLetter(value.charAt(0))) {
 			value = value.substring(1, value.length());
+		}
 		int loc = value.indexOf(':');
-		if (loc != -1 && loc > 0)
+		if (loc != -1 && loc > 0) {
 			value = value.substring(0, loc);
-		else if (loc == 0)
+		} else if (loc == 0) {
 			value = ""; //$NON-NLS-1$
+		}
 		return value;
 	}
 

@@ -106,8 +106,9 @@ public class IntroSection extends PDESection {
 		td = new GridData(GridData.FILL_HORIZONTAL);
 		fIntroCombo.getControl().setLayoutData(td);
 		loadManifestAndIntroIds(false);
-		if (fAvailableIntroIds != null)
+		if (fAvailableIntroIds != null) {
 			fIntroCombo.setItems(fAvailableIntroIds);
+		}
 		fIntroCombo.add(""); //$NON-NLS-1$
 		fIntroCombo.addSelectionListener(widgetSelectedAdapter(e -> handleSelection()));
 
@@ -146,15 +147,18 @@ public class IntroSection extends PDESection {
 					if (attribute != null && attribute.equals(getProduct().getProductId())) {
 						if (fManifest == null) {
 							IPluginModelBase base = PluginRegistry.findModel(extension.getContributor().getName());
-							if (base == null)
+							if (base == null) {
 								continue;
+							}
 							fManifest = (IFile) base.getUnderlyingResource();
 						}
-						if (onlyLoadManifest)
+						if (onlyLoadManifest) {
 							return;
+						}
 						introId = element.getAttribute("introId"); //$NON-NLS-1$
-						if (introId != null)
+						if (introId != null) {
 							result.add(introId);
+						}
 					}
 				}
 			}
@@ -167,8 +171,9 @@ public class IntroSection extends PDESection {
 		if (!productDefined()) {
 			needNewProduct = true;
 			MessageDialog mdiag = new MessageDialog(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.IntroSection_undefinedProductId, null, PDEUIMessages.IntroSection_undefinedProductIdMessage, MessageDialog.QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 0);
-			if (mdiag.open() != Window.OK)
+			if (mdiag.open() != Window.OK) {
 				return;
+			}
 		}
 		ProductIntroWizard wizard = new ProductIntroWizard(getProduct(), needNewProduct);
 		WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
@@ -224,32 +229,39 @@ public class IntroSection extends PDESection {
 			product.addPlugins(new IProductPlugin[] {plugin});
 			boolean includeOptional = false;
 			IFormPage page = getPage().getEditor().findPage(DependenciesPage.PLUGIN_ID);
-			if (page != null)
+			if (page != null) {
 				includeOptional = ((DependenciesPage) page).includeOptionalDependencies();
+			}
 			PluginSection.handleAddRequired(new IProductPlugin[] {plugin}, includeOptional);
 		}
-		if (fManifest == null)
+		if (fManifest == null) {
 			loadManifestAndIntroIds(true);
-		if (fManifest != null)
+		}
+		if (fManifest != null) {
 			addRequiredBundle();
+		}
 	}
 
 	private void addRequiredBundle() {
 		ModelModification mod = new ModelModification(fManifest) {
 			@Override
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
-				if (!(model instanceof IBundlePluginModelBase modelBase))
+				if (!(model instanceof IBundlePluginModelBase modelBase)) {
 					return;
+				}
 				IBundle bundle = modelBase.getBundleModel().getBundle();
 				IManifestHeader header = bundle.getManifestHeader(Constants.REQUIRE_BUNDLE);
 				if (header instanceof RequireBundleHeader) {
 					RequireBundleObject[] requires = ((RequireBundleHeader) header).getRequiredBundles();
-					for (RequireBundleObject requiredBundle : requires)
-						if (requiredBundle.getId().equals(INTRO_PLUGIN_ID))
+					for (RequireBundleObject requiredBundle : requires) {
+						if (requiredBundle.getId().equals(INTRO_PLUGIN_ID)) {
 							return;
+						}
+					}
 					((RequireBundleHeader) header).addBundle(INTRO_PLUGIN_ID);
-				} else
+				} else {
 					bundle.setHeader(Constants.REQUIRE_BUNDLE, INTRO_PLUGIN_ID);
+				}
 			}
 		};
 		PDEModelUtility.modifyModel(mod, null);

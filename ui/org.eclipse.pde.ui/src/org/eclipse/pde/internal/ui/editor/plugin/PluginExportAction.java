@@ -58,8 +58,9 @@ public class PluginExportAction extends Action {
 
 	@Override
 	public void run() {
-		if (fEditor != null)
+		if (fEditor != null) {
 			ensureContentSaved();
+		}
 		IStructuredSelection selection;
 		IResource resource = null;
 		if (fEditor != null) {

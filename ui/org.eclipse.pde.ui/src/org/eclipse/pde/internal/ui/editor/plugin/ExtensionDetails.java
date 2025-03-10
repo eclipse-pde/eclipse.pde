@@ -112,8 +112,9 @@ public class ExtensionDetails extends AbstractPluginElementDetails {
 					action.setEnabled(true);
 					action.run();
 				} else {
-					if (input == null || input.getPoint() == null)
+					if (input == null || input.getPoint() == null) {
 						return;
+					}
 					IPluginExtensionPoint point = PDECore.getDefault().getExtensionsRegistry().findExtensionPoint(input.getPoint());
 					if (point != null) {
 						ShowDescriptionAction showDescAction = new ShowDescriptionAction(point);
@@ -140,12 +141,13 @@ public class ExtensionDetails extends AbstractPluginElementDetails {
 		name.setFormEntryListener(new FormEntryAdapter(this) {
 			@Override
 			public void textValueChanged(FormEntry entry) {
-				if (input != null)
+				if (input != null) {
 					try {
 						input.setName(name.getValue());
 					} catch (CoreException e) {
 						PDEPlugin.logException(e);
 					}
+				}
 			}
 		});
 	}
@@ -155,12 +157,13 @@ public class ExtensionDetails extends AbstractPluginElementDetails {
 		id.setFormEntryListener(new FormEntryAdapter(this) {
 			@Override
 			public void textValueChanged(FormEntry entry) {
-				if (input != null)
+				if (input != null) {
 					try {
 						input.setId(id.getValue());
 					} catch (CoreException e) {
 						PDEPlugin.logException(e);
 					}
+				}
 			}
 		});
 	}
@@ -170,8 +173,9 @@ public class ExtensionDetails extends AbstractPluginElementDetails {
 		IStructuredSelection ssel = (IStructuredSelection) selection;
 		if (ssel.size() == 1) {
 			input = (IPluginExtension) ssel.getFirstElement();
-		} else
+		} else {
 			input = null;
+		}
 		update();
 	}
 
@@ -260,8 +264,9 @@ public class ExtensionDetails extends AbstractPluginElementDetails {
 	@Override
 	public void dispose() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-		if (model != null)
+		if (model != null) {
 			model.removeModelChangedListener(this);
+		}
 		super.dispose();
 	}
 
@@ -269,8 +274,9 @@ public class ExtensionDetails extends AbstractPluginElementDetails {
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.CHANGE) {
 			Object obj = e.getChangedObjects()[0];
-			if (obj.equals(input))
+			if (obj.equals(input)) {
 				refresh();
+			}
 		}
 	}
 

@@ -37,15 +37,17 @@ public class FileExtensionFilter extends ViewerFilter {
 			return ((IFile) element).getName().toLowerCase(Locale.ENGLISH).endsWith("." + fTargetExtension); //$NON-NLS-1$
 		}
 
-		if (element instanceof IProject && !((IProject) element).isOpen())
+		if (element instanceof IProject && !((IProject) element).isOpen()) {
 			return false;
+		}
 
 		if (element instanceof IContainer) { // i.e. IProject, IFolder
 			try {
 				IResource[] resources = ((IContainer) element).members();
 				for (IResource resource : resources) {
-					if (select(viewer, parent, resource))
+					if (select(viewer, parent, resource)) {
 						return true;
+					}
 				}
 			} catch (CoreException e) {
 			}

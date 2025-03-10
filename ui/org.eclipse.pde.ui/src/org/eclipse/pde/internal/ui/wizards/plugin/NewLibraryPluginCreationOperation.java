@@ -155,8 +155,9 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 		for (IPluginModelBase element : pluginstoUpdate) {
 			SubMonitor iterationMonitor = subMonitor.split(1).setWorkRemaining(2);
 			IProject proj = element.getUnderlyingResource().getProject();
-			if (currentProject.getProject().equals(proj))
+			if (currentProject.getProject().equals(proj)) {
 				continue;
+			}
 			IJavaProject javaProject = JavaCore.create(proj);
 			IClasspathEntry[] cp = javaProject.getRawClasspath();
 			IClasspathEntry[] updated = getUpdatedClasspath(cp, currentProject);
@@ -183,24 +184,28 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 				classpath.add(entry);
 			}
 		}
-		if (requiredProjects.isEmpty())
+		if (requiredProjects.isEmpty()) {
 			return;
+		}
 		IFile file = PDEProject.getManifest(javaProject.getProject());
 		try {
 			// TODO format manifest
 			Manifest manifest = new Manifest(file.getContents());
 			String value = manifest.getMainAttributes().getValue(Constants.REQUIRE_BUNDLE);
 			StringBuilder sb = value != null ? new StringBuilder(value) : new StringBuilder();
-			if (sb.length() > 0)
+			if (sb.length() > 0) {
 				sb.append(","); //$NON-NLS-1$
+			}
 			for (int i = 0; i < requiredProjects.size(); i++) {
 				IClasspathEntry entry = requiredProjects.get(i);
-				if (i > 0)
+				if (i > 0) {
 					sb.append(","); //$NON-NLS-1$
+				}
 				sb.append(entry.getPath().segment(0));
-				if (entry.isExported())
+				if (entry.isExported()) {
 					sb.append(";visibility:=reexport"); // TODO is there a //$NON-NLS-1$
 				// constant?
+				}
 			}
 			manifest.getMainAttributes().putValue(Constants.REQUIRE_BUNDLE, sb.toString());
 			ByteArrayOutputStream content = new ByteArrayOutputStream();
@@ -216,19 +221,23 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 	}
 
 	private static boolean isPluginProjectEntry(IClasspathEntry entry) {
-		if (IClasspathEntry.CPE_PROJECT != entry.getEntryKind())
+		if (IClasspathEntry.CPE_PROJECT != entry.getEntryKind()) {
 			return false;
+		}
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		IProject other = workspaceRoot.getProject(entry.getPath().segment(0));
-		if (!PluginProject.isPluginProject(other))
+		if (!PluginProject.isPluginProject(other)) {
 			return false;
-		if (PDEProject.getFragmentXml(other).exists())
+		}
+		if (PDEProject.getFragmentXml(other).exists()) {
 			return false;
+		}
 
 		try (InputStream is = PDEProject.getManifest(other).getContents()) {
 			Manifest mf = new Manifest(is);
-			if (mf.getMainAttributes().getValue(Constants.FRAGMENT_HOST) != null)
+			if (mf.getMainAttributes().getValue(Constants.FRAGMENT_HOST) != null) {
 				return false;
+			}
 		} catch (IOException | CoreException e) {
 			// assume "not a fragment"
 		}
@@ -323,26 +332,29 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 
 	@Override
 	protected void fillBinIncludes(IProject project, IBuildEntry binEntry) throws CoreException {
-		if (fData.hasBundleStructure())
+		if (fData.hasBundleStructure()) {
 			binEntry.addToken(ICoreConstants.MANIFEST_FOLDER_NAME);
-		else
+		} else {
 			binEntry.addToken(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
+		}
 
 		if (fData.isUnzipLibraries()) {
 			IResource[] resources = project.members(false);
 			for (IResource resource : resources) {
 				String resourceName = resource.getName();
 				if (resource instanceof IFolder) {
-					if (!".settings".equals(resourceName) && !binEntry.contains(resourceName + "/")) //$NON-NLS-1$ //$NON-NLS-2$
+					if (!".settings".equals(resourceName) && !binEntry.contains(resourceName + "/")) { //$NON-NLS-1$ //$NON-NLS-2$
 						binEntry.addToken(resourceName + "/"); //$NON-NLS-1$
+					}
 				} else {
 					if (".project".equals(resourceName) //$NON-NLS-1$
 							|| ".classpath".equals(resourceName) //$NON-NLS-1$
 							|| ICoreConstants.BUILD_FILENAME_DESCRIPTOR.equals(resourceName)) {
 						continue;
 					}
-					if (!binEntry.contains(resourceName))
+					if (!binEntry.contains(resourceName)) {
 						binEntry.addToken(resourceName);
+					}
 				}
 			}
 		} else {
@@ -350,8 +362,9 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 			for (String libraryPath : libraryPaths) {
 				File jarFile = new File(libraryPath);
 				String name = jarFile.getName();
-				if (!binEntry.contains(name))
+				if (!binEntry.contains(name)) {
 					binEntry.addToken(name);
+				}
 			}
 		}
 	}
@@ -395,14 +408,16 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 
 	private void removeExportRoot(IBundle bundle) {
 		String value = bundle.getHeader(Constants.BUNDLE_CLASSPATH);
-		if (value == null)
+		if (value == null) {
 			value = "."; //$NON-NLS-1$
+		}
 		try {
 			ManifestElement[] elems = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, value);
 			StringBuilder buff = new StringBuilder(value.length());
 			for (int i = 0; i < elems.length; i++) {
-				if (!elems[i].getValue().equals(".")) //$NON-NLS-1$
+				if (!elems[i].getValue().equals(".")) { //$NON-NLS-1$
 					buff.append(elems[i].getValue());
+				}
 			}
 			bundle.setHeader(Constants.BUNDLE_CLASSPATH, buff.toString());
 		} catch (BundleException e) {
@@ -446,8 +461,9 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 
 	private void addExportedPackages(IProject project, IBundle bundle) {
 		String value = bundle.getHeader(Constants.BUNDLE_CLASSPATH);
-		if (value == null)
+		if (value == null) {
 			value = "."; //$NON-NLS-1$
+		}
 		try {
 			ManifestElement[] elems = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, value);
 			Map<String, List<String>> map = new HashMap<>();
@@ -469,8 +485,9 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 		if (buildProperties != null) {
 			WorkspaceBuildModel buildModel = new WorkspaceBuildModel(buildProperties);
 			build = buildModel.getBuild();
-		} else
+		} else {
 			build = new Build();
+		}
 		return findPackages(proj, libs, build);
 	}
 
@@ -487,36 +504,42 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 				String[] tokens = libEntry.getTokens();
 				for (String token : tokens) {
 					IResource folder = null;
-					if (token.equals(".")) //$NON-NLS-1$
+					if (token.equals(".")) { //$NON-NLS-1$
 						folder = proj;
-					else
+					} else {
 						folder = proj.getFolder(token);
-					if (folder != null)
+					}
+					if (folder != null) {
 						addPackagesFromFragRoot(jp.getPackageFragmentRoot(folder), result, filter);
+					}
 				}
 			} else {
 				IResource res = proj.findMember(libName);
-				if (res != null)
+				if (res != null) {
 					addPackagesFromFragRoot(jp.getPackageFragmentRoot(res), result, filter);
+				}
 			}
 		}
 		return result;
 	}
 
 	private void addPackagesFromFragRoot(IPackageFragmentRoot root, Collection<String> result, List<?> filter) {
-		if (root == null)
+		if (root == null) {
 			return;
+		}
 		try {
 			if (filter != null && !filter.contains("*")) { //$NON-NLS-1$
 				ListIterator<?> li = filter.listIterator();
 				while (li.hasNext()) {
 					String pkgName = li.next().toString();
-					if (pkgName.endsWith(".*")) //$NON-NLS-1$
+					if (pkgName.endsWith(".*")) { //$NON-NLS-1$
 						pkgName = pkgName.substring(0, pkgName.length() - 2);
+					}
 
 					IPackageFragment frag = root.getPackageFragment(pkgName);
-					if (frag != null)
+					if (frag != null) {
 						result.add(pkgName);
+					}
 				}
 				return;
 			}
@@ -547,10 +570,11 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 					String[] ids = new String[bases.length];
 					for (int i = 0; i < bases.length; i++) {
 						BundleDescription desc = bases[i].getBundleDescription();
-						if (desc == null)
+						if (desc == null) {
 							ids[i] = bases[i].getPluginBase().getId();
-						else
+						} else {
 							ids[i] = desc.getSymbolicName();
+						}
 					}
 					return ids;
 				}
@@ -561,8 +585,9 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 				// project packages(it includes only things in bin.includes)
 				@Override
 				protected void addProjectPackages(IBundle bundle, Set<String> ignorePkgs) {
-					if (!unzip)
+					if (!unzip) {
 						super.addProjectPackages(bundle, ignorePkgs);
+					}
 					ArrayDeque<IResource> stack = new ArrayDeque<>();
 					stack.push(fProject);
 					try {
@@ -570,9 +595,9 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 							IContainer folder = (IContainer) stack.pop();
 							IResource[] children = folder.members();
 							for (IResource child : children) {
-								if (child instanceof IContainer)
+								if (child instanceof IContainer) {
 									stack.push(child);
-								else if ("class".equals(child.getFileExtension())) { //$NON-NLS-1$
+								} else if ("class".equals(child.getFileExtension())) { //$NON-NLS-1$
 									String path = folder.getProjectRelativePath().toString();
 									ignorePkgs.add(path.replace('/', '.'));
 								}

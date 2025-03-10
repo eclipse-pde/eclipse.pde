@@ -116,8 +116,9 @@ public class DocSection extends PDESection {
 			}
 		});
 
-		if (SWT.getPlatform().equals("motif") == false) //$NON-NLS-1$
+		if (SWT.getPlatform().equals("motif") == false) { //$NON-NLS-1$
 			toolkit.paintBordersFor(container);
+		}
 		Control[] children = container.getChildren();
 		Control control = children[children.length - 1];
 		gd = new GridData(GridData.FILL_BOTH);
@@ -180,8 +181,9 @@ public class DocSection extends PDESection {
 				}
 			}
 		}
-		if (index != -1)
+		if (index != -1) {
 			fTabFolder.setSelection(index);
+		}
 		updateEditorInput(input);
 		return true;
 	}
@@ -191,26 +193,32 @@ public class DocSection extends PDESection {
 			return PDEUIMessages.SchemaEditor_topic_overview;
 		} else if (object instanceof IDocumentSection section) {
 			String sectionId = section.getSectionId();
-			if (sectionId.equals(IDocumentSection.EXAMPLES))
+			if (sectionId.equals(IDocumentSection.EXAMPLES)) {
 				return PDEUIMessages.SchemaEditor_topic_examples;
-			if (sectionId.equals(IDocumentSection.SINCE))
+			}
+			if (sectionId.equals(IDocumentSection.SINCE)) {
 				return PDEUIMessages.SchemaEditor_topic_since;
-			if (sectionId.equals(IDocumentSection.IMPLEMENTATION))
+			}
+			if (sectionId.equals(IDocumentSection.IMPLEMENTATION)) {
 				return PDEUIMessages.SchemaEditor_topic_implementation;
-			if (sectionId.equalsIgnoreCase(IDocumentSection.API_INFO))
+			}
+			if (sectionId.equalsIgnoreCase(IDocumentSection.API_INFO)) {
 				return PDEUIMessages.SchemaEditor_topic_api;
-			if (sectionId.equals(IDocumentSection.COPYRIGHT))
+			}
+			if (sectionId.equals(IDocumentSection.COPYRIGHT)) {
 				return PDEUIMessages.SchemaEditor_topic_copyright;
+			}
 		}
 		return "?"; //$NON-NLS-1$
 	}
 
 	private void handleApply() {
 		if (fElement != null) {
-			if (fElement instanceof ISchema)
+			if (fElement instanceof ISchema) {
 				((Schema) fElement).setDescription(fDocument.get());
-			else
+			} else {
 				((SchemaObject) fElement).setDescription(fDocument.get());
+			}
 			updateTabImage(fTabFolder.getSelection());
 		}
 	}
@@ -262,19 +270,21 @@ public class DocSection extends PDESection {
 	private void updateTabImage(CTabItem item) {
 		if (item != null) {
 			ISchemaObject section = (ISchemaObject) item.getData();
-			if (section != null)
+			if (section != null) {
 				item.setImage(PDEPlugin.getDefault().getLabelProvider().getImage(section));
+			}
 		}
 	}
 
 	private void updateTabSelection() {
 		int index = fTabFolder.getSelectionIndex();
-		if (fSchema.isEditable() && isDirty())
+		if (fSchema.isEditable() && isDirty()) {
 			handleApply();
+		}
 
-		if (index == 0)
+		if (index == 0) {
 			updateEditorInput(fSchema);
-		else {
+		} else {
 			IDocumentSection[] sections = fSchema.getDocumentSections();
 			updateEditorInput(sections[index - 1]);
 		}
@@ -293,8 +303,9 @@ public class DocSection extends PDESection {
 	public void updateEditorInput(Object input) {
 		fIgnoreChange = true;
 		String text = ""; //$NON-NLS-1$
-		if (input instanceof ISchemaObject)
+		if (input instanceof ISchemaObject) {
 			text = ((ISchemaObject) input).getDescription();
+		}
 		fDocument.set(text == null ? "" : text); //$NON-NLS-1$
 		fElement = input;
 		fIgnoreChange = false;
@@ -311,9 +322,9 @@ public class DocSection extends PDESection {
 	public void refresh() {
 		IDocumentSection[] sections = fSchema.getDocumentSections();
 		int index = fTabFolder.getSelectionIndex();
-		if (index == 0)
+		if (index == 0) {
 			updateEditorInput(fSchema);
-		else {
+		} else {
 			updateEditorInput(sections[index - 1]);
 		}
 		super.refresh();

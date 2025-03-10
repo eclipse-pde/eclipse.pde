@@ -119,10 +119,11 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 
 		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
-			if (PDEPlugin.getDefault().getPreferenceStore().getBoolean("ToggleLinkWithEditorAction.isChecked")) //$NON-NLS-1$
+			if (PDEPlugin.getDefault().getPreferenceStore().getBoolean("ToggleLinkWithEditorAction.isChecked")) { //$NON-NLS-1$
 				if (getFormOutline() != null) {
-					getFormOutline().setSelection(event.getSelection());
+				getFormOutline().setSelection(event.getSelection());
 				}
+			}
 		}
 
 		/**
@@ -198,8 +199,9 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	}
 
 	public IBaseModel getAggregateModel() {
-		if (fInputContextManager != null)
+		if (fInputContextManager != null) {
 			return fInputContextManager.getAggregateModel();
+		}
 		return null;
 	}
 
@@ -230,8 +232,9 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		} else if (input instanceof IURIEditorInput uriEditorInput) {
 			try {
 				IFileStore store = EFS.getStore(uriEditorInput.getURI());
-				if (!EFS.SCHEME_FILE.equals(store.getFileSystem().getScheme()))
+				if (!EFS.SCHEME_FILE.equals(store.getFileSystem().getScheme())) {
 					return;
+				}
 				FileStoreEditorInput sinput = new FileStoreEditorInput(store);
 				createSystemFileContexts(contextManager, sinput);
 			} catch (CoreException e) {
@@ -268,8 +271,9 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		super.createPages();
 		fInputContextManager.addInputContextListener(this);
 		String pageToShow = computeInitialPageId();
-		if (pageToShow != null)
+		if (pageToShow != null) {
 			setActivePage(pageToShow);
+		}
 		updateTitle();
 		if (getPageCount() == 1 && getContainer() instanceof CTabFolder) {
 			((CTabFolder) getContainer()).setTabHeight(0);
@@ -306,10 +310,12 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	protected void contextMenuAboutToShow(IMenuManager manager) {
 		PDEFormEditorContributor contributor = getContributor();
 		IFormPage page = getActivePageInstance();
-		if (page instanceof PDEFormPage)
+		if (page instanceof PDEFormPage) {
 			((PDEFormPage) page).contextMenuAboutToShow(manager);
-		if (contributor != null)
+		}
+		if (contributor != null) {
 			contributor.contextMenuAboutToShow(manager);
+		}
 	}
 
 	public PDEFormEditorContributor getContributor() {
@@ -319,24 +325,28 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	protected String computeInitialPageId() {
 		String firstPageId = null;
 		String storedFirstPageId = loadDefaultPage();
-		if (storedFirstPageId != null)
+		if (storedFirstPageId != null) {
 			firstPageId = storedFirstPageId;
+		}
 		// Regardless what is the stored value,
 		// use source page if model is not valid
 		String invalidContextId = getFirstInvalidContextId();
-		if (invalidContextId != null)
+		if (invalidContextId != null) {
 			return invalidContextId;
+		}
 		return firstPageId;
 	}
 
 	private String getFirstInvalidContextId() {
 		InputContext[] invalidContexts = fInputContextManager.getInvalidContexts();
-		if (invalidContexts.length == 0)
+		if (invalidContexts.length == 0) {
 			return null;
+		}
 		// If primary context is among the invalid ones, return that.
 		for (InputContext context : invalidContexts) {
-			if (context.isPrimary())
+			if (context.isPrimary()) {
 				return context.getId();
+			}
 		}
 		// Return the first one
 		return invalidContexts[0].getId();
@@ -344,11 +354,13 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 
 	@Override
 	public String getTitle() {
-		if (fInputContextManager == null)
+		if (fInputContextManager == null) {
 			return super.getTitle();
+		}
 		InputContext context = fInputContextManager.getPrimaryContext();
-		if (context == null)
+		if (context == null) {
 			return super.getTitle();
+		}
 		return context.getInput().getName();
 	}
 
@@ -425,8 +437,9 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 
 	public void doRevert(IEditorInput input) {
 		IFormPage currentPage = getActivePageInstance();
-		if (currentPage != null && currentPage instanceof PDEFormPage)
+		if (currentPage != null && currentPage instanceof PDEFormPage) {
 			((PDEFormPage) currentPage).cancelEdit();
+		}
 		InputContext context = fInputContextManager.getContext(input);
 		IFormPage page = findPage(context.getId());
 		if (page != null && page instanceof PDESourcePage spage) {
@@ -438,8 +451,9 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	public void flushEdits() {
 		IFormPage[] pages = getPages();
 		IManagedForm mForm = pages[getActivePage()].getManagedForm();
-		if (mForm != null)
+		if (mForm != null) {
 			mForm.commit(false);
+		}
 		for (IFormPage page : pages) {
 			if (page instanceof PDESourcePage sourcePage) {
 				sourcePage.getInputContext().flushEditorInput();
@@ -490,8 +504,9 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	private void storeDefaultPage() {
 		IEditorInput input = getEditorInput();
 		String pageId = fLastActivePageId;
-		if (pageId == null)
+		if (pageId == null) {
 			return;
+		}
 		if (input instanceof IFileEditorInput) {
 			// Triggered by opening a file in the workspace
 			// e.g. From the Package Explorer View
@@ -591,8 +606,9 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 
 	private boolean computeDirtyState() {
 		IFormPage page = getActivePageInstance();
-		if ((page != null && page.isDirty()) || (fInputContextManager != null && fInputContextManager.isDirty()))
+		if ((page != null && page.isDirty()) || (fInputContextManager != null && fInputContextManager.isDirty())) {
 			return true;
+		}
 		return super.isDirty();
 	}
 
@@ -601,26 +617,31 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	}
 
 	public void fireSaveNeeded(String contextId, boolean notify) {
-		if (contextId == null)
+		if (contextId == null) {
 			return;
+		}
 		InputContext context = fInputContextManager.findContext(contextId);
-		if (context != null)
+		if (context != null) {
 			fireSaveNeeded(context.getInput(), notify);
+		}
 	}
 
 	public void fireSaveNeeded(IEditorInput input, boolean notify) {
-		if (notify)
+		if (notify) {
 			editorDirtyStateChanged();
-		if (isDirty())
+		}
+		if (isDirty()) {
 			validateEdit(input);
+		}
 	}
 
 	@Override
 	public void editorDirtyStateChanged() {
 		super.editorDirtyStateChanged();
 		PDEFormEditorContributor contributor = getContributor();
-		if (contributor != null)
+		if (contributor != null) {
 			contributor.updateActions();
+		}
 	}
 
 	private void validateEdit(IEditorInput input) {
@@ -651,11 +672,13 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	public void gotoMarker(IMarker marker) {
 		IResource resource = marker.getResource();
 		InputContext context = fInputContextManager.findContext(resource);
-		if (context == null)
+		if (context == null) {
 			return;
+		}
 		IFormPage page = getActivePageInstance();
-		if (!context.getId().equals(page.getId()))
+		if (!context.getId().equals(page.getId())) {
 			page = setActivePage(context.getId());
+		}
 		IDE.gotoMarker(page, marker);
 	}
 
@@ -668,8 +691,9 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		}
 		if (context != null) {
 			PDESourcePage page = (PDESourcePage) setActivePage(context.getId());
-			if (page != null)
+			if (page != null) {
 				page.selectAndReveal(offset, length);
+			}
 		}
 	}
 
@@ -727,15 +751,17 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	abstract protected ISortableContentOutlinePage createContentOutline();
 
 	private void updateContentOutline(IFormPage page) {
-		if (fContentOutline == null)
+		if (fContentOutline == null) {
 			return;
+		}
 		ISortableContentOutlinePage outline = null;
 		if (page instanceof PDESourcePage) {
 			outline = ((PDESourcePage) page).getContentOutline();
 		} else {
 			outline = getFormOutline();
-			if (outline != null && outline instanceof FormOutlinePage)
+			if (outline != null && outline instanceof FormOutlinePage) {
 				((FormOutlinePage) outline).refresh();
+			}
 		}
 		fContentOutline.setPageActive(outline);
 	}
@@ -743,8 +769,9 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	@Override
 	public IFormPage setActivePage(String pageId) {
 		IFormPage page = super.setActivePage(pageId);
-		if (page != null)
+		if (page != null) {
 			updateContentOutline(page);
+		}
 		return page;
 	}
 
@@ -752,8 +779,9 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		ArrayList<Object> formPages = new ArrayList<>();
 		for (int i = 0; i < pages.size(); i++) {
 			Object page = pages.get(i);
-			if (page instanceof IFormPage)
+			if (page instanceof IFormPage) {
 				formPages.add(page);
+			}
 		}
 		return formPages.toArray(new IFormPage[formPages.size()]);
 	}
@@ -783,17 +811,19 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		Object[] objects = null;
 		String textVersion = null;
 		if (selection instanceof IStructuredSelection ssel) {
-			if (ssel.isEmpty())
+			if (ssel.isEmpty()) {
 				return;
+			}
 			objects = ssel.toArray();
 			try (StringWriter writer = new StringWriter(); PrintWriter pwriter = new PrintWriter(writer)) {
 				Class<? extends Object> objClass = null;
 				for (int i = 0; i < objects.length; i++) {
 					Object obj = objects[i];
-					if (objClass == null)
+					if (objClass == null) {
 						objClass = obj.getClass();
-					else if (objClass.equals(obj.getClass()) == false)
+					} else if (objClass.equals(obj.getClass()) == false) {
 						return;
+					}
 					if (obj instanceof IWritable) {
 						// Add a customized delimiter in between all serialized
 						// objects to format the text representation
@@ -813,8 +843,9 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		} else if (selection instanceof ITextSelection) {
 			textVersion = ((ITextSelection) selection).getText();
 		}
-		if ((textVersion == null || textVersion.length() == 0) && objects == null)
+		if ((textVersion == null || textVersion.length() == 0) && objects == null) {
 			return;
+		}
 		// set the clipboard contents
 		Object[] o = null;
 		Transfer[] t = null;
@@ -840,10 +871,12 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	}
 
 	public boolean canCopy(ISelection selection) {
-		if (selection == null)
+		if (selection == null) {
 			return false;
-		if (selection instanceof IStructuredSelection)
+		}
+		if (selection instanceof IStructuredSelection) {
 			return !selection.isEmpty();
+		}
 		if (selection instanceof ITextSelection textSelection) {
 			return textSelection.getLength() > 0;
 		}
@@ -856,8 +889,9 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 
 	void updateUndo(IAction undoAction, IAction redoAction) {
 		IModelUndoManager undoManager = fInputContextManager.getUndoManager();
-		if (undoManager != null)
+		if (undoManager != null) {
 			undoManager.setActions(undoAction, redoAction);
+		}
 	}
 
 	/**
@@ -903,8 +937,9 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 			} catch (PartInitException e) {
 				PDEPlugin.logException(e);
 			}
-		} else
+		} else {
 			addEditorPages();
+		}
 	}
 
 	protected boolean hasMissingResources() {
@@ -918,10 +953,12 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		if (fError) {
 			removePage(0);
 			addPages();
-			if (!fError)
+			if (!fError) {
 				setActivePage(OverviewPage.PAGE_ID);
-		} else
+			}
+		} else {
 			editorContextAdded(context);
+		}
 	}
 
 	public abstract void editorContextAdded(InputContext context);

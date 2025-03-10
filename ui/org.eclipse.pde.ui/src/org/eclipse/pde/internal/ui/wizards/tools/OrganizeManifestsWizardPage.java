@@ -227,8 +227,9 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 		fProcessor.setMarkInternal(selection);
 
 		String filter = settings.get(PROP_INTERAL_PACKAGE_FILTER);
-		if (filter == null)
+		if (filter == null) {
 			filter = VALUE_DEFAULT_FILTER;
+		}
 		fPackageFilter.setText(filter);
 		fProcessor.setPackageFilter(filter);
 
@@ -346,38 +347,40 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 	}
 
 	private void doProcessorSetting(Object source) {
-		if (fProcessor == null)
+		if (fProcessor == null) {
 			return;
-		if (fAddMissing.equals(source))
+		}
+		if (fAddMissing.equals(source)) {
 			fProcessor.setAddMissing(fAddMissing.getSelection());
-		else if (fMarkInternal.equals(source))
+		} else if (fMarkInternal.equals(source)) {
 			fProcessor.setMarkInternal(fMarkInternal.getSelection());
-		else if (fPackageFilter.equals(source))
+		} else if (fPackageFilter.equals(source)) {
 			fProcessor.setPackageFilter(fPackageFilter.getText());
-		else if (fRemoveUnresolved.equals(source))
+		} else if (fRemoveUnresolved.equals(source)) {
 			fProcessor.setRemoveUnresolved(fRemoveUnresolved.getSelection());
-		else if (fCalculateUses.equals(source))
+		} else if (fCalculateUses.equals(source)) {
 			fProcessor.setCalculateUses(fCalculateUses.getSelection());
-		else if (fModifyDependencies.equals(source))
+		} else if (fModifyDependencies.equals(source)) {
 			fProcessor.setModifyDep(fModifyDependencies.getSelection());
-		else if (fOptionalImport.equals(source))
+		} else if (fOptionalImport.equals(source)) {
 			fProcessor.setRemoveDependencies(!fOptionalImport.getSelection());
-		else if (fRemoveImport.equals(source))
+		} else if (fRemoveImport.equals(source)) {
 			fProcessor.setRemoveDependencies(fRemoveImport.getSelection());
-		else if (fUnusedDependencies.equals(source))
+		} else if (fUnusedDependencies.equals(source)) {
 			fProcessor.setUnusedDependencies(fUnusedDependencies.getSelection());
-		else if (fAdditonalDependencies.equals(source))
+		} else if (fAdditonalDependencies.equals(source)) {
 			fProcessor.setAddDependencies(fAdditonalDependencies.getSelection());
-		else if (fComputeImportPackages.equals(source))
+		} else if (fComputeImportPackages.equals(source)) {
 			fProcessor.setAddDependencies(fComputeImportPackages.getSelection());
-		else if (fRemoveLazy.equals(source))
+		} else if (fRemoveLazy.equals(source)) {
 			fProcessor.setRemoveLazy(fRemoveLazy.getSelection());
-		else if (fRemoveUselessFiles.equals(source))
+		} else if (fRemoveUselessFiles.equals(source)) {
 			fProcessor.setRemoveUselessFiles(fRemoveUselessFiles.getSelection());
-		else if (fFixIconNLSPaths.equals(source))
+		} else if (fFixIconNLSPaths.equals(source)) {
 			fProcessor.setPrefixIconNL(fFixIconNLSPaths.getSelection());
-		else if (fRemovedUnusedKeys.equals(source))
+		} else if (fRemovedUnusedKeys.equals(source)) {
 			fProcessor.setUnusedKeys(fRemovedUnusedKeys.getSelection());
+		}
 	}
 
 	private void hookSelectionListener(Button[] buttons, SelectionListener adapter) {

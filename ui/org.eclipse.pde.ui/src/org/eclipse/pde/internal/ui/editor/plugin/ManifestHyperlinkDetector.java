@@ -44,12 +44,14 @@ public class ManifestHyperlinkDetector extends PDEHyperlinkDetector {
 	@Override
 	protected IHyperlink[] detectAttributeHyperlink(IDocumentAttributeNode attr) {
 		String attrValue = attr.getAttributeValue();
-		if (attrValue.length() == 0)
+		if (attrValue.length() == 0) {
 			return null;
+		}
 
 		IPluginObject node = XMLUtil.getTopLevelParent(attr);
-		if (node == null || !node.getModel().isEditable())
+		if (node == null || !node.getModel().isEditable()) {
 			return null;
+		}
 
 		IPluginModelBase base = node.getPluginModel();
 		IResource res = base.getUnderlyingResource();
@@ -57,32 +59,38 @@ public class ManifestHyperlinkDetector extends PDEHyperlinkDetector {
 
 		IHyperlink[] link = new IHyperlink[1];
 		if (node instanceof IPluginExtensionPoint) {
-			if (attr.getAttributeName().equals(IPluginExtensionPoint.P_SCHEMA))
+			if (attr.getAttributeName().equals(IPluginExtensionPoint.P_SCHEMA)) {
 				link[0] = new SchemaHyperlink(linkRegion, attrValue, res);
-			else if (attr.getAttributeName().equals(IPluginObject.P_NAME))
-				if (attrValue.charAt(0) == '%')
+			} else if (attr.getAttributeName().equals(IPluginObject.P_NAME)) {
+				if (attrValue.charAt(0) == '%') {
 					link[0] = new TranslationHyperlink(linkRegion, attrValue, base);
+				}
+			}
 
 		} else if (node instanceof IPluginExtension) {
 			ISchemaAttribute sAttr = XMLUtil.getSchemaAttribute(attr, ((IPluginExtension) node).getPoint());
-			if (sAttr == null)
+			if (sAttr == null) {
 				return null;
+			}
 
 			if (sAttr.getKind() == IMetaAttribute.JAVA) {
 				link[0] = new JavaHyperlink(linkRegion, attrValue, res);
 			} else if (sAttr.getKind() == IMetaAttribute.RESOURCE) {
 				link[0] = new ResourceHyperlink(linkRegion, attrValue, res);
 			} else if (sAttr.getParent() instanceof SchemaRootElement) {
-				if (attr.getAttributeName().equals(IPluginExtension.P_POINT))
+				if (attr.getAttributeName().equals(IPluginExtension.P_POINT)) {
 					link[0] = new ExtensionHyperLink(linkRegion, attrValue);
+				}
 			} else if (sAttr.isTranslatable()) {
-				if (attrValue.charAt(0) == '%')
+				if (attrValue.charAt(0) == '%') {
 					link[0] = new TranslationHyperlink(linkRegion, attrValue, base);
+				}
 			}
 		}
 
-		if (link[0] != null)
+		if (link[0] != null) {
 			return link;
+		}
 		return null;
 	}
 
@@ -113,11 +121,13 @@ public class ManifestHyperlinkDetector extends PDEHyperlinkDetector {
 	@Override
 	protected IHyperlink[] detectTextNodeHyperlink(IDocumentTextNode node) {
 		IDocumentElementNode enclosing = node.getEnclosingElement();
-		if (!(enclosing instanceof IPluginObject))
+		if (!(enclosing instanceof IPluginObject)) {
 			return null;
+		}
 		IPluginModelBase base = ((IPluginObject) enclosing).getPluginModel();
-		if (node.getText().charAt(0) == '%')
+		if (node.getText().charAt(0) == '%') {
 			return new IHyperlink[] {new TranslationHyperlink(new Region(node.getOffset(), node.getLength()), node.getText(), base)};
+		}
 		return null;
 	}
 }

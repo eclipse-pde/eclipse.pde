@@ -42,10 +42,11 @@ public class AddBundleClassPathMarkerResolution extends AbstractManifestMarkerRe
 		IBundle bundle = model.getBundle();
 		if (bundle instanceof Bundle) {
 			BundleClasspathHeader header = (BundleClasspathHeader) bundle.getManifestHeader(Constants.BUNDLE_CLASSPATH);
-			if (header != null)
+			if (header != null) {
 				header.addLibrary(value);
-			else
+			} else {
 				model.getBundle().setHeader(Constants.BUNDLE_CLASSPATH, value);
+			}
 		}
 	}
 

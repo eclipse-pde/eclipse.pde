@@ -46,8 +46,9 @@ public class ManifestTypeRenameParticipant extends PDERenameParticipant {
 	protected String[] getOldNames() {
 		String[] result = new String[fElements.size()];
 		Iterator<Object> iter = fElements.keySet().iterator();
-		for (int i = 0; i < fElements.size(); i++)
+		for (int i = 0; i < fElements.size(); i++) {
 			result[i] = ((IType) iter.next()).getFullyQualifiedName('$');
+		}
 		return result;
 	}
 

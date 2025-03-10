@@ -53,8 +53,9 @@ public class BundleManifestChange {
 	public static Change createMoveToPackageChange(IFile file, MoveFromChange change, IProgressMonitor monitor) throws CoreException {
 		try {
 			Bundle bundle = getBundle(file, monitor);
-			if (bundle == null)
+			if (bundle == null) {
 				return null;
+			}
 
 			BundleModel model = (BundleModel) bundle.getModel();
 			BundleTextChangeListener listener = new BundleTextChangeListener(model.getDocument());
@@ -71,8 +72,9 @@ public class BundleManifestChange {
 	public static MoveFromChange createMovePackageChange(IFile file, Object[] elements, IProgressMonitor monitor) throws CoreException {
 		try {
 			Bundle bundle = getBundle(file, monitor);
-			if (bundle == null)
+			if (bundle == null) {
 				return null;
+			}
 
 			BundleModel model = (BundleModel) bundle.getModel();
 			BundleTextChangeListener listener = new BundleTextChangeListener(model.getDocument());
@@ -83,8 +85,9 @@ public class BundleManifestChange {
 				if (element instanceof IJavaElement) {
 					String packageName = ((IJavaElement) element).getElementName();
 					PDEManifestElement export = removePackage(bundle.getManifestHeader(Constants.EXPORT_PACKAGE), packageName);
-					if (export != null)
+					if (export != null) {
 						list.add(export);
+					}
 				}
 			}
 
@@ -95,8 +98,9 @@ public class BundleManifestChange {
 				edit.addChildren(operations);
 				change.setEdit(edit);
 				PDEModelUtility.setChangeTextType(change, file);
-				if (!list.isEmpty())
+				if (!list.isEmpty()) {
 					change.setMovedElements(list.toArray(new PDEManifestElement[list.size()]));
+				}
 				return change;
 			}
 		} catch (CoreException | MalformedTreeException e) {
@@ -109,8 +113,9 @@ public class BundleManifestChange {
 	public static Change createRenameChange(IFile file, Object[] elements, String[] newTexts, IProgressMonitor monitor) throws CoreException {
 		try {
 			Bundle bundle = getBundle(file, monitor);
-			if (bundle == null)
+			if (bundle == null) {
 				return null;
+			}
 
 			BundleModel model = (BundleModel) bundle.getModel();
 			BundleTextChangeListener listener = new BundleTextChangeListener(model.getDocument());
@@ -164,10 +169,11 @@ public class BundleManifestChange {
 	}
 
 	private static void renameLocalization(Bundle bundle, String oldText, String newText) {
-		if (newText.endsWith(".properties")) //$NON-NLS-1$
+		if (newText.endsWith(".properties")) { //$NON-NLS-1$
 			bundle.setHeader(Constants.BUNDLE_LOCALIZATION, LocaleUtil.trimLocalization(newText));
-		else
+		} else {
 			bundle.setHeader(Constants.BUNDLE_LOCALIZATION, null);
+		}
 	}
 
 	private static void resetHeaderValue(IManifestHeader header, boolean isPackage, String oldText, String newText) {
@@ -182,8 +188,9 @@ public class BundleManifestChange {
 	}
 
 	private static boolean isGoodMatch(String value, String oldName, boolean isPackage) {
-		if (value == null || value.length() <= oldName.length())
+		if (value == null || value.length() <= oldName.length()) {
 			return false;
+		}
 		boolean goodLengthMatch = isPackage ? value.lastIndexOf('.') <= oldName.length() : value.charAt(oldName.length()) == '$';
 		return value.startsWith(oldName) && goodLengthMatch;
 	}

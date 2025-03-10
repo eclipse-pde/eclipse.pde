@@ -63,8 +63,9 @@ public class SaveToWorkspace extends AbstractHandler {
 					boolean exists = file.exists();
 					if (exists) {
 						boolean confirm = MessageDialog.openConfirm(HandlerUtil.getActiveShell(event), PDEUIMessages.SaveToWorkspace_ConfirmOverwrite, NLS.bind(PDEUIMessages.SaveToWorkspace_ConfirmOverwriteText, result));
-						if (!confirm)
+						if (!confirm) {
 							return null;
+						}
 					}
 
 					int imageType = getImageType(result);
@@ -76,10 +77,11 @@ public class SaveToWorkspace extends AbstractHandler {
 						imageLoader.save(out, imageType);
 
 						ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-						if (exists)
+						if (exists) {
 							file.setContents(in, true, false, null);
-						else
+						} else {
 							file.create(in, true, null);
+						}
 
 						file.getParent().refreshLocal(IResource.DEPTH_ZERO, null);
 
@@ -93,17 +95,15 @@ public class SaveToWorkspace extends AbstractHandler {
 
 	private int getImageType(final IPath path) {
 		String extension = path.getFileExtension();
-		if ("gif".equalsIgnoreCase(extension)) //$NON-NLS-1$
+		if ("gif".equalsIgnoreCase(extension)) { //$NON-NLS-1$
 			return SWT.IMAGE_GIF;
-
-		else if ("bmp".equalsIgnoreCase(extension)) //$NON-NLS-1$
+		} else if ("bmp".equalsIgnoreCase(extension)) { //$NON-NLS-1$
 			return SWT.IMAGE_BMP;
-
-		else if ("png".equalsIgnoreCase(extension)) //$NON-NLS-1$
+		} else if ("png".equalsIgnoreCase(extension)) { //$NON-NLS-1$
 			return SWT.IMAGE_PNG;
-
-		else if ("ico".equalsIgnoreCase(extension)) //$NON-NLS-1$
+		} else if ("ico".equalsIgnoreCase(extension)) { //$NON-NLS-1$
 			return SWT.IMAGE_ICO;
+		}
 
 		return SWT.IMAGE_PNG;
 	}

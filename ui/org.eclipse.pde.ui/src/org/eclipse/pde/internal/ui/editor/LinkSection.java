@@ -115,15 +115,17 @@ public class LinkSection extends PDESection {
 
 	private void disposeLink(Object obj) {
 		Hyperlink link = find(obj);
-		if (link != null)
+		if (link != null) {
 			link.dispose();
+		}
 	}
 
 	private Hyperlink find(Object object) {
 		Control[] children = linkContainer.getChildren();
 		for (Control child : children) {
-			if (child.getData().equals(object))
+			if (child.getData().equals(object)) {
 				return (Hyperlink) child;
+			}
 		}
 		return null;
 	}
@@ -137,8 +139,9 @@ public class LinkSection extends PDESection {
 
 	private void update(Object object) {
 		Hyperlink link = find(object);
-		if (link != null)
+		if (link != null) {
 			update(link, object);
+		}
 	}
 
 	private void update(Hyperlink hyperlink, Object object) {
@@ -147,8 +150,9 @@ public class LinkSection extends PDESection {
 		String tooltip = labelProvider != null ? labelProvider.getToolTipText(object) : text;
 		hyperlink.setText(text);
 		hyperlink.setToolTipText(tooltip);
-		if (hyperlink instanceof ImageHyperlink)
+		if (hyperlink instanceof ImageHyperlink) {
 			((ImageHyperlink) hyperlink).setImage(image);
+		}
 		reflow();
 	}
 
@@ -170,16 +174,19 @@ public class LinkSection extends PDESection {
 	}
 
 	private void createLinks() {
-		if (contentProvider == null)
+		if (contentProvider == null) {
 			return;
+		}
 		Object[] objects = contentProvider.getElements(getManagedForm().getInput());
 		for (int i = 0; i < objects.length; i++) {
-			if (i == linkNumberLimit)
+			if (i == linkNumberLimit) {
 				break;
+			}
 			createLink(objects[i]);
 		}
-		if (objects.length > linkNumberLimit)
+		if (objects.length > linkNumberLimit) {
 			getManagedForm().getToolkit().createLabel(linkContainer, "...", SWT.NULL); //$NON-NLS-1$
+		}
 		updateMoreState(objects.length > linkNumberLimit);
 	}
 
@@ -198,8 +205,9 @@ public class LinkSection extends PDESection {
 		if (image != null) {
 			hyperlink = getManagedForm().getToolkit().createImageHyperlink(linkContainer, SWT.NULL);
 			((ImageHyperlink) hyperlink).setImage(image);
-		} else
+		} else {
 			hyperlink = getManagedForm().getToolkit().createHyperlink(linkContainer, null, SWT.NULL);
+		}
 		update(hyperlink, object);
 		hyperlink.setData(object);
 		hyperlink.addHyperlinkListener(linkHandler);

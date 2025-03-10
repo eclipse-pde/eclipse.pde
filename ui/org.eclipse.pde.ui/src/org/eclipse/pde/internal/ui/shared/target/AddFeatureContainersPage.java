@@ -239,19 +239,22 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 	 * @return multi-status containing any problems that occurred
 	 */
 	private MultiStatus doLoadFeatures(List<ExternalFeatureModel> result, File path) {
-		if (path == null)
+		if (path == null) {
 			return null;
+		}
 		File[] dirs = path.listFiles();
-		if (dirs == null)
+		if (dirs == null) {
 			return null;
+		}
 		ArrayList<IStatus> resultStatus = new ArrayList<>();
 		for (File dir : dirs) {
 			if (dir.isDirectory()) {
 				File manifest = new File(dir, ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
 				if (manifest.exists()) {
 					IStatus status = doLoadFeature(dir, manifest, result);
-					if (status != null)
+					if (status != null) {
 						resultStatus.add(status);
+					}
 				}
 			}
 		}
@@ -280,8 +283,9 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 			// Errors in the file
 			status = Status.error(e.getMessage(), e);
 		}
-		if (status == null)
+		if (status == null) {
 			result.add(model);
+		}
 		return status;
 	}
 

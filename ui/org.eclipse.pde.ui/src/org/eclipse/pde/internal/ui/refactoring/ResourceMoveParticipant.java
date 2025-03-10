@@ -52,8 +52,9 @@ public abstract class ResourceMoveParticipant extends PDEMoveParticipant {
 	protected void addChange(CompositeChange result, IFile file, IProgressMonitor pm) throws CoreException {
 		if (file.exists()) {
 			Change change = PluginManifestChange.createRenameChange(file, fElements.keySet().toArray(), getNewNames(), getTextChange(file), pm);
-			if (change != null)
+			if (change != null) {
 				result.add(change);
+			}
 		}
 	}
 
@@ -62,8 +63,9 @@ public abstract class ResourceMoveParticipant extends PDEMoveParticipant {
 		if (destination instanceof IContainer && element instanceof IResource) {
 			StringBuilder buffer = new StringBuilder();
 			buffer.append(((IContainer) destination).getProjectRelativePath().toString());
-			if (buffer.length() > 0)
+			if (buffer.length() > 0) {
 				buffer.append('/');
+			}
 			return buffer.append(((IResource) element).getName()).toString();
 		}
 		return super.getNewName(destination, element);
@@ -74,14 +76,16 @@ public abstract class ResourceMoveParticipant extends PDEMoveParticipant {
 		IFile file = PDEProject.getBuildProperties(fProject);
 		if (file.exists()) {
 			Change change = BuildPropertiesChange.createRenameChange(file, fElements.keySet().toArray(), getNewNames(), pm);
-			if (change != null)
+			if (change != null) {
 				result.add(change);
+			}
 		}
 		file = PDEProject.getManifest(fProject);
 		if (file.exists()) {
 			Change change = BundleManifestChange.createRenameChange(file, fElements.keySet().toArray(), getNewNames(), pm);
-			if (change != null)
+			if (change != null) {
 				result.add(change);
+			}
 		}
 	}
 

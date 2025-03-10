@@ -115,16 +115,18 @@ public abstract class AbstractRepository extends Job {
 	}
 
 	protected boolean isImage(final File resource) {
-		if (resource.isFile())
+		if (resource.isFile()) {
 			return isImageName(resource.getName());
+		}
 
 		return false;
 	}
 
 	protected boolean isImageName(final String fileName) {
 		for (String extension : KNOWN_EXTENSIONS) {
-			if (fileName.regionMatches(true, fileName.length() - extension.length(), extension, 0, extension.length()))
+			if (fileName.regionMatches(true, fileName.length() - extension.length(), extension, 0, extension.length())) {
 				return true;
+			}
 		}
 
 		return false;
@@ -166,8 +168,9 @@ public abstract class AbstractRepository extends Job {
 					locations.remove(next);
 
 					for (File resource : next.listFiles()) {
-						if (monitor.isCanceled())
+						if (monitor.isCanceled()) {
 							return;
+						}
 
 						if (resource.isDirectory()) {
 							locations.add(resource);

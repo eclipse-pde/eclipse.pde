@@ -36,13 +36,15 @@ public class ResourceHyperlink extends AbstractHyperlink {
 
 	@Override
 	public void open() {
-		if (fResource == null)
+		if (fResource == null) {
 			return;
+		}
 
 		IResource resource = processAbsolutePathes();
 		if (resource == null) {
-			if (fElement.indexOf("$nl$/") == 0) //$NON-NLS-1$
+			if (fElement.indexOf("$nl$/") == 0) { //$NON-NLS-1$
 				fElement = fElement.substring(5);
+			}
 			resource = fResource.getProject().findMember(fElement);
 		}
 		try {

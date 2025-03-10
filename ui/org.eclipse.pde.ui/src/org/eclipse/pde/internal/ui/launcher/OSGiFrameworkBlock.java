@@ -100,8 +100,9 @@ public class OSGiFrameworkBlock {
 		label.setLayoutData(gd);
 
 		fLauncherCombo = new Combo(composite, SWT.READ_ONLY);
-		for (IConfigurationElement configElement : fConfigElements)
+		for (IConfigurationElement configElement : fConfigElements) {
 			fLauncherCombo.add(configElement.getAttribute("name")); //$NON-NLS-1$
+		}
 		fLauncherCombo.addSelectionListener(fListener);
 
 		label = new Label(composite, SWT.NONE);
@@ -154,8 +155,9 @@ public class OSGiFrameworkBlock {
 				return;
 			}
 		}
-		if (fLauncherCombo.getItemCount() > 0)
+		if (fLauncherCombo.getItemCount() > 0) {
 			fLauncherCombo.select(0);
+		}
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
@@ -169,8 +171,9 @@ public class OSGiFrameworkBlock {
 		OSGiFrameworkManager manager = PDELaunchingPlugin.getDefault().getOSGiFrameworkManager();
 
 		// no need to persist the default OSGi framework
-		if (manager.getDefaultFramework().equals(id))
+		if (manager.getDefaultFramework().equals(id)) {
 			id = null;
+		}
 		config.setAttribute(IPDELauncherConstants.OSGI_FRAMEWORK_ID, id);
 	}
 

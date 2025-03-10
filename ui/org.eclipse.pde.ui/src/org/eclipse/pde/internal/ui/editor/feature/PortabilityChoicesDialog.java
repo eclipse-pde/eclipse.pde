@@ -115,18 +115,21 @@ public class PortabilityChoicesDialog extends TrayDialog {
 			while (stok.hasMoreElements()) {
 				String tok = stok.nextToken();
 				Choice choice = findChoice(tok);
-				if (choice != null)
+				if (choice != null) {
 					selected.add(choice);
+				}
 			}
 			checkboxTablePart.setSelection(selected.toArray());
-		} else
+		} else {
 			checkboxTablePart.selectAll(false);
+		}
 	}
 
 	private Choice findChoice(String value) {
 		for (Choice choice : choices) {
-			if (choice.getValue().equalsIgnoreCase(value))
+			if (choice.getValue().equalsIgnoreCase(value)) {
 				return choice;
+			}
 		}
 		return null;
 	}
@@ -139,13 +142,15 @@ public class PortabilityChoicesDialog extends TrayDialog {
 
 	private String computeNewValue() {
 		Object[] checked = checkboxTablePart.getSelection();
-		if (checked.length == 0)
+		if (checked.length == 0) {
 			return ""; //$NON-NLS-1$
+		}
 		StringBuilder buf = new StringBuilder();
 		for (int i = 0; i < checked.length; i++) {
 			Choice choice = (Choice) checked[i];
-			if (i > 0)
+			if (i > 0) {
 				buf.append(","); //$NON-NLS-1$
+			}
 			buf.append(choice.getValue());
 		}
 		return buf.toString();

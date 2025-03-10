@@ -60,11 +60,12 @@ public class DependenciesViewPageContentProvider implements IContentProvider, IP
 			for (ModelEntry entry : modified) {
 				if (entry.getId().equals(inputID)) {
 					// if we find a matching id to our current input, check to see if the input still exists
-					if (modelExists(entry, (IPluginModelBase) input))
+					if (modelExists(entry, (IPluginModelBase) input)) {
 						fView.updateTitle(input);
-					else
+					} else {
 						// if input model does not exist, clear view
 						fView.openTo(null);
+					}
 					return;
 				}
 			}
@@ -75,8 +76,9 @@ public class DependenciesViewPageContentProvider implements IContentProvider, IP
 		IPluginModelBase[][] entries = new IPluginModelBase[][] {entry.getExternalModels(), entry.getWorkspaceModels()};
 		for (int i = 0; i < 2; i++) {
 			for (int j = 0; j < entries[i].length; j++) {
-				if (entries[i][j].equals(input))
+				if (entries[i][j].equals(input)) {
 					return true;
+				}
 			}
 		}
 		return false;
@@ -90,13 +92,15 @@ public class DependenciesViewPageContentProvider implements IContentProvider, IP
 
 	@Override
 	public void modelsChanged(final PluginModelDelta delta) {
-		if (fViewer == null || fViewer.getControl().isDisposed())
+		if (fViewer == null || fViewer.getControl().isDisposed()) {
 			return;
+		}
 
 		fViewer.getControl().getDisplay().asyncExec(() -> {
 			int kind = delta.getKind();
-			if (fViewer.getControl().isDisposed())
+			if (fViewer.getControl().isDisposed()) {
 				return;
+			}
 			try {
 				if ((kind & PluginModelDelta.REMOVED) != 0) {
 					// called when all instances of a Bundle-SymbolicName are all removed

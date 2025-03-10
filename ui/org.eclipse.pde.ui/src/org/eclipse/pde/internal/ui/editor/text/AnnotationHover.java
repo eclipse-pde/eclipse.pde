@@ -34,14 +34,16 @@ public class AnnotationHover implements IAnnotationHover {
 	public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber) {
 		String[] messages = getMessagesForLine(sourceViewer, lineNumber);
 
-		if (messages.length == 0)
+		if (messages.length == 0) {
 			return null;
+		}
 
 		StringBuilder buffer = new StringBuilder();
 		for (int i = 0; i < messages.length; i++) {
 			buffer.append(messages[i]);
-			if (i < messages.length - 1)
+			if (i < messages.length - 1) {
 				buffer.append(System.lineSeparator());
+			}
 		}
 		return buffer.toString();
 	}
@@ -50,8 +52,9 @@ public class AnnotationHover implements IAnnotationHover {
 		IDocument document = viewer.getDocument();
 		IAnnotationModel model = viewer.getAnnotationModel();
 
-		if (model == null)
+		if (model == null) {
 			return new String[0];
+		}
 
 		ArrayList<String> messages = new ArrayList<>();
 
@@ -71,9 +74,10 @@ public class AnnotationHover implements IAnnotationHover {
 							if (descr != null) {
 								// for some cases like version increase due to
 								// BREE change
-								if (!descr.isEmpty())
+								if (!descr.isEmpty()) {
 									message = NLS.bind(PDEUIMessages.AnnotationHover_version_change,
 											new String[] { message, descr });
+								}
 							}
 
 						}

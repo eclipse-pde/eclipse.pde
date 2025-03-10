@@ -72,8 +72,9 @@ public class ChoiceOption extends TemplateOption {
 
 		SelectionListener listener = widgetSelectedAdapter(e -> {
 			Button b = (Button) e.widget;
-			if (blockListener)
+			if (blockListener) {
 				return;
+			}
 			if (b.getSelection()) {
 				ChoiceOption.super.setValue(b.getData().toString());
 				getSection().validateOptions(ChoiceOption.this);
@@ -87,8 +88,9 @@ public class ChoiceOption extends TemplateOption {
 			button.addSelectionListener(listener);
 			button.setEnabled(isEnabled());
 		}
-		if (getChoice() != null)
+		if (getChoice() != null) {
 			selectChoice(getChoice());
+		}
 	}
 
 	/**

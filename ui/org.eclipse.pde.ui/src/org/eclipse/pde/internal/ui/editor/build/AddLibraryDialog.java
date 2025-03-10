@@ -54,21 +54,26 @@ public class AddLibraryDialog extends SelectionStatusDialog {
 
 	class DuplicateStatusValidator {
 		public IStatus validate(String text) {
-			if (text.length() == 0)
+			if (text.length() == 0) {
 				return Status.error(PDEUIMessages.AddLibraryDialog_emptyLibraries);
+			}
 
-			if (text.indexOf(' ') != -1)
+			if (text.indexOf(' ') != -1) {
 				return Status.error(PDEUIMessages.AddLibraryDialog_nospaces);
+			}
 
-			if (libraries == null || libraries.length == 0)
+			if (libraries == null || libraries.length == 0) {
 				return Status.OK_STATUS;
+			}
 
-			if (!text.endsWith(".jar") && !text.endsWith("/") && !text.equals(".")) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			if (!text.endsWith(".jar") && !text.endsWith("/") && !text.equals(".")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				text += "/"; //$NON-NLS-1$
+			}
 
 			for (String library : libraries) {
-				if (library.equals(text))
+				if (library.equals(text)) {
 					return Status.error(PDEUIMessages.BuildEditor_RuntimeInfoSection_duplicateLibrary);
+				}
 			}
 			return Status.OK_STATUS;
 		}

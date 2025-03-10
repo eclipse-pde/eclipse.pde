@@ -145,8 +145,9 @@ public class XMLInsertionComputer {
 			// For simple types, insert a comment informing the user to
 			// add element content text
 			try {
-				if (pElement instanceof IPluginElement)
+				if (pElement instanceof IPluginElement) {
 					((IPluginElement) pElement).setText(NLS.bind(PDEUIMessages.XMLCompletionProposal_InfoElement, pElement.getName()));
+				}
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
 			}
@@ -232,8 +233,9 @@ public class XMLInsertionComputer {
 		// Get the underlying project
 		IResource resource = pElement.getModel().getUnderlyingResource();
 		IProject project = null;
-		if (resource != null)
+		if (resource != null) {
 			project = resource.getProject();
+		}
 		// Get all the attributes
 		ISchemaAttribute[] attributes = type.getAttributes();
 		// Generate a unique number for IDs
@@ -255,8 +257,9 @@ public class XMLInsertionComputer {
 							// if type == boolean, make sure the default value is valid
 							if (attribute.getType().getName().equals("boolean") && //$NON-NLS-1$
 									!(((String) value).equalsIgnoreCase("true") || //$NON-NLS-1$
-									((String) value).equalsIgnoreCase("false"))) //$NON-NLS-1$
+									((String) value).equalsIgnoreCase("false"))) { //$NON-NLS-1$
 								continue;
+							}
 							setAttribute(pElement, attribute.getName(), (String) value, counter);
 						}
 					}
@@ -317,13 +320,15 @@ public class XMLInsertionComputer {
 	}
 
 	protected static void computeInsertionSequence(ISchemaCompositor compositor, IPluginParent pElement, HashSet<String> visited) throws CoreException {
-		if (compositor == null)
+		if (compositor == null) {
 			return;
+		}
 		// Process the compositor the minimum number of times
 		for (int k = 0; k < compositor.getMinOccurs(); k++) {
 			// Only continue processing if the compositor is a sequence
-			if (isSequenceCompositor(compositor) == false)
+			if (isSequenceCompositor(compositor) == false) {
 				continue;
+			}
 			// We have a sequence
 			ISchemaObject[] schemaObject = compositor.getChildren();
 			// Process the compositors children
@@ -348,40 +353,50 @@ public class XMLInsertionComputer {
 				}
 			} else if (attName.equals(IPluginObject.P_NAME)) {
 				String currValue = pe.getName();
-				if (currValue == null || currValue.length() == 0)
+				if (currValue == null || currValue.length() == 0) {
 					pe.setName(attName);
+				}
 			} else if (attName.equals(IPluginExtension.P_POINT)) {
 				String currValue = pe.getPoint();
-				if (currValue == null || currValue.length() == 0)
+				if (currValue == null || currValue.length() == 0) {
 					pe.setPoint(attValue);
+				}
 			}
 		}
 	}
 
 	public static boolean hasOptionalAttributes(ISchemaElement ele) {
 		ISchemaAttribute[] attrs = ele.getAttributes();
-		for (ISchemaAttribute attr : attrs)
-			if (attr.getUse() == ISchemaAttribute.OPTIONAL || attr.getUse() == ISchemaAttribute.DEFAULT)
+		for (ISchemaAttribute attr : attrs) {
+			if (attr.getUse() == ISchemaAttribute.OPTIONAL || attr.getUse() == ISchemaAttribute.DEFAULT) {
 				return true;
+			}
+		}
 		return false;
 	}
 
 	public static boolean hasOptionalChildren(ISchemaObject obj, boolean onChild, HashSet<ISchemaObject> set) {
-		if (obj == null || set.contains(obj))
+		if (obj == null || set.contains(obj)) {
 			return false;
+		}
 		set.add(obj);
 		if (obj instanceof ISchemaElement) {
-			if (onChild && ((ISchemaElement) obj).getMinOccurs() == 0 && ((ISchemaElement) obj).getMaxOccurs() > 0)
+			if (onChild && ((ISchemaElement) obj).getMinOccurs() == 0 && ((ISchemaElement) obj).getMaxOccurs() > 0) {
 				return true;
+			}
 			ISchemaType type = ((ISchemaElement) obj).getType();
-			if (type instanceof ISchemaComplexType)
+			if (type instanceof ISchemaComplexType) {
 				return hasOptionalChildren(((ISchemaComplexType) type).getCompositor(), true, set);
+			}
 		} else if (obj instanceof ISchemaCompositor) {
 			ISchemaObject[] children = ((ISchemaCompositor) obj).getChildren();
-			if (children != null)
-				for (ISchemaObject child : children)
-					if (hasOptionalChildren(child, true, set))
+			if (children != null) {
+				for (ISchemaObject child : children) {
+					if (hasOptionalChildren(child, true, set)) {
 						return true;
+					}
+				}
+			}
 		}
 		return false;
 	}

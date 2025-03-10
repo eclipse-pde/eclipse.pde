@@ -128,8 +128,9 @@ public class PluginsLabelProvider extends LabelProvider {
 		}
 
 		if (obj instanceof IStorage) {
-			if (obj instanceof IJarEntryResource && !((IJarEntryResource) obj).isFile())
+			if (obj instanceof IJarEntryResource && !((IJarEntryResource) obj).isFile()) {
 				return folderImage;
+			}
 			return getFileImage(((IStorage) obj).getName());
 		}
 
@@ -138,8 +139,9 @@ public class PluginsLabelProvider extends LabelProvider {
 
 	private String getText(IPluginModelBase model) {
 		String text = sharedProvider.getText(model);
-		if (!model.isEnabled())
+		if (!model.isEnabled()) {
 			text = NLS.bind(PDEUIMessages.PluginsView_disabled, text);
+		}
 		return text;
 	}
 
@@ -148,11 +150,13 @@ public class PluginsLabelProvider extends LabelProvider {
 	}
 
 	private Image getImage(IPluginModelBase model) {
-		if (model.getUnderlyingResource() != null)
+		if (model.getUnderlyingResource() != null) {
 			return projectImage;
+		}
 
-		if (model instanceof IPluginModel)
+		if (model instanceof IPluginModel) {
 			return sharedProvider.getObjectImage((IPlugin) model.getPluginBase(), true, isInJavaSearch(model));
+		}
 
 		return sharedProvider.getObjectImage((IFragment) model.getPluginBase(), true, isInJavaSearch(model));
 	}

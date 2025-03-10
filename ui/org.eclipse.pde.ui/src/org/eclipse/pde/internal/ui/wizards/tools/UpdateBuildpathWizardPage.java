@@ -41,8 +41,9 @@ public class UpdateBuildpathWizardPage extends WizardPage {
 	public class BuildpathContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object parent) {
-			if (fUnmigrated != null)
+			if (fUnmigrated != null) {
 				return fUnmigrated;
+			}
 			return new Object[0];
 		}
 	}

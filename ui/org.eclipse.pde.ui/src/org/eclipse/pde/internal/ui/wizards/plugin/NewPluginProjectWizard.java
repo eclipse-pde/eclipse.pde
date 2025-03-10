@@ -92,8 +92,9 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 		fMainPage.setTitle(PDEUIMessages.NewProjectWizard_MainPage_title);
 		fMainPage.setDescription(PDEUIMessages.NewProjectWizard_MainPage_desc);
 		String pname = getDefaultValue(DEF_PROJECT_NAME);
-		if (pname != null)
+		if (pname != null) {
 			fMainPage.setInitialProjectName(pname);
+		}
 		addPage(fMainPage);
 
 		fProjectProvider = new IProjectProvider() {
@@ -117,8 +118,9 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 
 		fWizardListPage = new TemplateListSelectionPage(getAvailableCodegenWizards(), fContentPage, PDEUIMessages.WizardListSelectionPage_templates);
 		String tid = getDefaultValue(DEF_TEMPLATE_ID);
-		if (tid != null)
+		if (tid != null) {
 			fWizardListPage.setInitialTemplateId(tid);
+		}
 
 		addPage(fContentPage);
 		addPage(fWizardListPage);
@@ -161,8 +163,9 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 			getContainer().run(false, true, new NewProjectCreationOperation(fPluginData, fProjectProvider, contentWizard));
 
 			IWorkingSet[] workingSets = fMainPage.getSelectedWorkingSets();
-			if (workingSets.length > 0)
+			if (workingSets.length > 0) {
 				getWorkbench().getWorkingSetManager().addToWorkingSets(fProjectProvider.getProject(), workingSets);
+			}
 
 			return true;
 		} catch (InvocationTargetException e) {
@@ -185,8 +188,9 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 		ElementList wizards = new ElementList("CodegenWizards"); //$NON-NLS-1$
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IExtensionPoint point = registry.getExtensionPoint(PDEPlugin.getPluginId(), PLUGIN_POINT);
-		if (point == null)
+		if (point == null) {
 			return wizards;
+		}
 		IExtension[] extensions = point.getExtensions();
 		for (IExtension extension : extensions) {
 			IConfigurationElement[] elements = extension.getConfigurationElements();

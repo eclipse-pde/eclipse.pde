@@ -67,12 +67,14 @@ public class SchemaDtdDetailsSection extends AbstractFormPart {
 			changeObject = ((ISchemaAttribute) changeObject).getParent();
 		} else if (changeObject instanceof ISchemaCompositor) {
 			while (changeObject != null) {
-				if (changeObject instanceof ISchemaElement)
+				if (changeObject instanceof ISchemaElement) {
 					break;
+				}
 				changeObject = ((ISchemaCompositor) changeObject).getParent();
 			}
 		}
-		if (changeObject instanceof ISchemaElement)
+		if (changeObject instanceof ISchemaElement) {
 			fDtdText.setText(((ISchemaElement) changeObject).getDTDRepresentation(false));
+		}
 	}
 }

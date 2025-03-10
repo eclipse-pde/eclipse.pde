@@ -53,14 +53,16 @@ class CategoryLabelProvider extends LabelProvider {
 
 	@Override
 	public Image getImage(Object element) {
-		if (element instanceof ISiteCategoryDefinition)
+		if (element instanceof ISiteCategoryDefinition) {
 			return fCatDefImage;
+		}
 		if (element instanceof SiteCategoryDefinitionAdapter) {
 			return getImage(((SiteCategoryDefinitionAdapter) element).category);
 		}
 		if (element instanceof SiteFeatureAdapter) {
-			if (PDECore.getDefault().getFeatureModelManager().findFeatureModelRelaxed(((SiteFeatureAdapter) element).feature.getId(), ((SiteFeatureAdapter) element).feature.getVersion()) == null)
+			if (PDECore.getDefault().getFeatureModelManager().findFeatureModelRelaxed(((SiteFeatureAdapter) element).feature.getId(), ((SiteFeatureAdapter) element).feature.getVersion()) == null) {
 				return fMissingSiteFeatureImage;
+			}
 			return fSiteFeatureImage;
 		}
 		if (element instanceof SiteBundleAdapter) {
@@ -70,15 +72,17 @@ class CategoryLabelProvider extends LabelProvider {
 			}
 			return this.fSiteBundleImage;
 		}
-		if (element instanceof IFormPage)
+		if (element instanceof IFormPage) {
 			return fPageImage;
+		}
 		return fSharedProvider.getImage(element);
 	}
 
 	@Override
 	public String getText(Object element) {
-		if (element instanceof ISiteCategoryDefinition)
+		if (element instanceof ISiteCategoryDefinition) {
 			return ((ISiteCategoryDefinition) element).getLabel();
+		}
 		if (element instanceof SiteCategoryDefinitionAdapter) {
 			return getText(((SiteCategoryDefinitionAdapter) element).category);
 		}
@@ -90,8 +94,9 @@ class CategoryLabelProvider extends LabelProvider {
 			ISiteBundle bundle = ((SiteBundleAdapter) element).bundle;
 			return fSharedProvider.getObjectText(bundle);
 		}
-		if (element instanceof IFormPage)
+		if (element instanceof IFormPage) {
 			return ((IFormPage) element).getTitle();
+		}
 		return fSharedProvider.getText(element);
 	}
 

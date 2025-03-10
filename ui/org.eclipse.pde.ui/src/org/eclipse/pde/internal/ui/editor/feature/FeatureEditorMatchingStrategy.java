@@ -27,26 +27,32 @@ public class FeatureEditorMatchingStrategy implements IEditorMatchingStrategy {
 
 	@Override
 	public boolean matches(IEditorReference editorRef, IEditorInput input) {
-		if (!(input instanceof IFileEditorInput))
+		if (!(input instanceof IFileEditorInput)) {
 			return false;
+		}
 		IFile inputFile = ResourceUtil.getFile(input);
-		if (inputFile == null)
+		if (inputFile == null) {
 			return false;
+		}
 		try {
 			IFile currInputFile = ResourceUtil.getFile(editorRef.getEditorInput());
-			if (currInputFile == null)
+			if (currInputFile == null) {
 				return false;
-			if (!inputFile.getProject().equals(currInputFile.getProject()))
+			}
+			if (!inputFile.getProject().equals(currInputFile.getProject())) {
 				return false;
+			}
 			// build.properties matches with editors that have a feature.xml file
 			// as their input and that feature.xml is at the root
 			if (inputFile.getName().equals(ICoreConstants.FEATURE_FILENAME_DESCRIPTOR)) {
-				if (currInputFile.getName().equals(ICoreConstants.BUILD_FILENAME_DESCRIPTOR))
+				if (currInputFile.getName().equals(ICoreConstants.BUILD_FILENAME_DESCRIPTOR)) {
 					return inputFile.getProjectRelativePath().toString().equals(ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
+				}
 				return inputFile.equals(currInputFile);
 			} else if (inputFile.getName().equals(ICoreConstants.BUILD_FILENAME_DESCRIPTOR)) {
-				if (currInputFile.getName().equals(ICoreConstants.FEATURE_FILENAME_DESCRIPTOR))
+				if (currInputFile.getName().equals(ICoreConstants.FEATURE_FILENAME_DESCRIPTOR)) {
 					return currInputFile.getProjectRelativePath().toString().equals(ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
+				}
 				return inputFile.equals(currInputFile);
 			}
 			return false;

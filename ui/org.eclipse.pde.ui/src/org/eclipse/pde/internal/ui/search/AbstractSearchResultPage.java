@@ -31,8 +31,9 @@ public abstract class AbstractSearchResultPage extends AbstractTextSearchViewPag
 
 		@Override
 		public Object[] getElements(Object inputElement) {
-			if (inputElement instanceof AbstractTextSearchResult)
+			if (inputElement instanceof AbstractTextSearchResult) {
 				return ((AbstractTextSearchResult) inputElement).getElements();
+			}
 			return new Object[0];
 		}
 
@@ -50,10 +51,11 @@ public abstract class AbstractSearchResultPage extends AbstractTextSearchViewPag
 		public void elementsChanged(Object[] updatedElements) {
 			for (Object updatedElement : updatedElements) {
 				if (fSearchResult.getMatchCount(updatedElement) > 0) {
-					if (fTableViewer.testFindItem(updatedElement) != null)
+					if (fTableViewer.testFindItem(updatedElement) != null) {
 						fTableViewer.refresh(updatedElement);
-					else
+					} else {
 						fTableViewer.add(updatedElement);
+					}
 				} else {
 					fTableViewer.remove(updatedElement);
 				}
@@ -69,14 +71,16 @@ public abstract class AbstractSearchResultPage extends AbstractTextSearchViewPag
 
 	@Override
 	protected void elementsChanged(Object[] objects) {
-		if (fContentProvider != null && fContentProvider.fSearchResult != null)
+		if (fContentProvider != null && fContentProvider.fSearchResult != null) {
 			fContentProvider.elementsChanged(objects);
+		}
 	}
 
 	@Override
 	protected void clear() {
-		if (fContentProvider != null)
+		if (fContentProvider != null) {
 			fContentProvider.clear();
+		}
 	}
 
 	@Override

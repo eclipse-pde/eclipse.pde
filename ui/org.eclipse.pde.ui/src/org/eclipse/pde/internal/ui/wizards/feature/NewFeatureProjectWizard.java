@@ -55,8 +55,9 @@ public class NewFeatureProjectWizard extends AbstractNewFeatureWizard {
 		fId = data.id;
 		fVersion = data.version;
 		ILaunchConfiguration config = fProvider.getLaunchConfiguration();
-		if (config == null)
+		if (config == null) {
 			return new CreateFeatureProjectOperation(fProvider.getProject(), fProvider.getLocationPath(), data, fProvider.getPluginListSelection(), getShell());
+		}
 		return new CreateFeatureProjectFromLaunchOperation(fProvider.getProject(), fProvider.getLocationPath(), data, config, getShell());
 	}
 

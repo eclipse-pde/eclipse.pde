@@ -64,8 +64,9 @@ public abstract class PDESection extends SectionPart implements IContextPart, IA
 
 	@Override
 	public void modelChanged(IModelChangedEvent e) {
-		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED)
+		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
+		}
 	}
 
 	@Override
@@ -76,8 +77,9 @@ public abstract class PDESection extends SectionPart implements IContextPart, IA
 	@Override
 	public void fireSaveNeeded() {
 		markDirty();
-		if (getContextId() != null)
+		if (getContextId() != null) {
 			getPage().getPDEEditor().fireSaveNeeded(getContextId(), false);
+		}
 	}
 
 	@Override

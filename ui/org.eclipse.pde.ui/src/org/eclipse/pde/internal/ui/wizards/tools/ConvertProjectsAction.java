@@ -64,8 +64,9 @@ public class ConvertProjectsAction implements IObjectActionDelegate {
 				} else if (elem instanceof IJavaProject) {
 					project = ((IJavaProject) elem).getProject();
 				}
-				if (project != null)
+				if (project != null) {
 					initialSelection.add(project);
+				}
 			}
 
 			ConvertedProjectWizard wizard = new ConvertedProjectWizard(unconverted, initialSelection);
@@ -83,8 +84,9 @@ public class ConvertProjectsAction implements IObjectActionDelegate {
 
 	public Display getDisplay() {
 		Display display = Display.getCurrent();
-		if (display == null)
+		if (display == null) {
 			display = Display.getDefault();
+		}
 		return display;
 	}
 
@@ -94,8 +96,9 @@ public class ConvertProjectsAction implements IObjectActionDelegate {
 		for (IProject project : projects) {
 			if (project.isOpen() && !PluginProject.isPluginProject(project) && !FeatureProject.isFeatureProject(project)
 					&& !SiteProject.isSiteProject(project) && project.getName().indexOf('%') == -1
-					&& project.getLocation().toString().indexOf('%') == -1)
+					&& project.getLocation().toString().indexOf('%') == -1) {
 				unconverted.add(project);
+			}
 		}
 		return unconverted.toArray(new IProject[unconverted.size()]);
 	}

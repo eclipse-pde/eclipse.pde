@@ -190,8 +190,9 @@ public class ExportOptionsTab extends AbstractExportTab {
 
 	private String getInitialQualifierText(IDialogSettings settings) {
 		String qualifier = settings.get(S_QUALIFIER_NAME);
-		if (qualifier == null || qualifier.equals("")) //$NON-NLS-1$
+		if (qualifier == null || qualifier.equals("")) { //$NON-NLS-1$
 			return QualifierReplacer.getDateQualifier();
+		}
 		return qualifier;
 	}
 
@@ -232,15 +233,17 @@ public class ExportOptionsTab extends AbstractExportTab {
 	}
 
 	protected String validate() {
-		if (fSaveAsAntButton.getSelection() && fAntCombo.getText().trim().length() == 0)
+		if (fSaveAsAntButton.getSelection() && fAntCombo.getText().trim().length() == 0) {
 			return PDEUIMessages.ExportWizard_status_noantfile;
+		}
 		return null;
 	}
 
 	protected String validateAntCombo() {
 		String path = IPath.fromOSString(fAntCombo.getText()).lastSegment();
-		if ("build.xml".equals(path)) //$NON-NLS-1$
+		if ("build.xml".equals(path)) { //$NON-NLS-1$
 			return PDEUIMessages.ExportOptionsTab_antReservedMessage;
+		}
 		return null;
 	}
 
@@ -275,8 +278,9 @@ public class ExportOptionsTab extends AbstractExportTab {
 	protected String getQualifier() {
 		if (fQualifierText.isEnabled()) {
 			String qualifier = fQualifierText.getText().trim();
-			if (qualifier.length() > 0)
+			if (qualifier.length() > 0) {
 				return qualifier;
+			}
 		}
 		return null;
 	}

@@ -124,8 +124,9 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 
 	@Override
 	public void updateFields(ISchemaObject object) {
-		if (!(object instanceof SchemaAttribute))
+		if (!(object instanceof SchemaAttribute)) {
 			return;
+		}
 		fAttribute = (SchemaAttribute) object;
 		setDecription(NLS.bind(PDEUIMessages.SchemaAttributeDetails_description, fAttribute.getName()));
 		fName.setValue(fAttribute.getName(), true);
@@ -162,23 +163,26 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 		fValue.setFormEntryListener(new FormEntryAdapter(this) {
 			@Override
 			public void textValueChanged(FormEntry entry) {
-				if (blockListeners())
+				if (blockListeners()) {
 					return;
+				}
 				fAttribute.setValue(fValue.getValue());
 			}
 		});
 		fName.setFormEntryListener(new FormEntryAdapter(this) {
 			@Override
 			public void textValueChanged(FormEntry entry) {
-				if (blockListeners())
+				if (blockListeners()) {
 					return;
+				}
 				boolean revert = false;
-				if (fName.getValue().length() == 0)
+				if (fName.getValue().length() == 0) {
 					revert = true;
-				else {
+				} else {
 					ISchemaObject parent = fAttribute.getParent();
-					while (!(parent instanceof ISchemaElement))
+					while (!(parent instanceof ISchemaElement)) {
 						parent = parent.getParent();
+					}
 					ISchemaElement element = (ISchemaElement) parent;
 					ISchemaAttribute[] attributes = element.getAttributes();
 					for (ISchemaAttribute attribute : attributes) {
@@ -188,25 +192,28 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 						}
 					}
 				}
-				if (revert)
+				if (revert) {
 					fName.setValue(fAttribute.getName(), true);
-				else {
+				} else {
 					fAttribute.setName(fName.getValue());
 					setDecription(NLS.bind(PDEUIMessages.SchemaAttributeDetails_description, fAttribute.getName()));
 				}
 			}
 		});
 		fDepTrue.addSelectionListener(widgetSelectedAdapter(e -> {
-			if (blockListeners())
+			if (blockListeners()) {
 				return;
+			}
 			fAttribute.setDeprecatedProperty(fDepTrue.getSelection());
 		}));
 		fType.addSelectionListener(widgetSelectedAdapter(e -> {
-			if (blockListeners())
+			if (blockListeners()) {
 				return;
+			}
 			String typeString = fType.getSelection();
-			if (!typeString.equals(ISchemaAttribute.TYPES[ISchemaAttribute.BOOL_IND]))
+			if (!typeString.equals(ISchemaAttribute.TYPES[ISchemaAttribute.BOOL_IND])) {
 				typeString = ISchemaAttribute.TYPES[ISchemaAttribute.STR_IND];
+			}
 
 			fAttribute.setType(new SchemaSimpleType(fAttribute.getSchema(), typeString));
 
@@ -220,8 +227,9 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 			fireSelectionChange();
 		}));
 		fUseDefault.addSelectionListener(widgetSelectedAdapter(e -> {
-			if (blockListeners())
+			if (blockListeners()) {
 				return;
+			}
 			int i = fUseDefault.getSelectionIndex();
 			setBlockListeners(true);
 			fUseOther.select(i);
@@ -229,8 +237,9 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 			doUseChange(i);
 		}));
 		fUseOther.addSelectionListener(widgetSelectedAdapter(e -> {
-			if (blockListeners())
+			if (blockListeners()) {
 				return;
+			}
 			int i = fUseOther.getSelectionIndex();
 			setBlockListeners(true);
 			fUseDefault.select(i);
@@ -244,8 +253,9 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 		if (index == 2) {
 			fUseLayout.topControl = fUseCompDefault;
 			fUseComp.layout();
-			if (fValue.getValue().equals(PDEUIMessages.SchemaAttributeDetails_defaultDefaultValue))
+			if (fValue.getValue().equals(PDEUIMessages.SchemaAttributeDetails_defaultDefaultValue)) {
 				fValue.getText().setSelection(0, fValue.getValue().length());
+			}
 			fValue.getText().setFocus();
 		} else if (index != 2) {
 			fUseLayout.topControl = fUseCompOther;

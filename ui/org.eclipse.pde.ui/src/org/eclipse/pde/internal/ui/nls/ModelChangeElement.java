@@ -109,8 +109,9 @@ public class ModelChangeElement {
 		if (properties.containsKey(fKey)) {
 			String delimiter = fParent.getParentModel() instanceof IFragmentModel ? DELIM + FRAGMENT_PREFIX : DELIM;
 			int suffix = 0;
-			while (properties.containsKey(fKey + delimiter + suffix))
+			while (properties.containsKey(fKey + delimiter + suffix)) {
 				suffix += 1;
+			}
 			fKey += delimiter + suffix;
 		}
 		properties.setProperty(fKey, fValue);
@@ -132,8 +133,9 @@ public class ModelChangeElement {
 				extP.setName(key);
 			} else if (fUnderlying instanceof ManifestHeader header) {
 				header.setValue(key);
-			} else
+			} else {
 				return false;
+			}
 		} catch (CoreException e) {
 			return false;
 		}

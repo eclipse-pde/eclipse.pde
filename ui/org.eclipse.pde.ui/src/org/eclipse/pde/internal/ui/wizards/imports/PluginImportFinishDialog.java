@@ -94,15 +94,17 @@ public class PluginImportFinishDialog extends TitleAreaDialog {
 	@Override
 	public void setMessage(String newMessage) {
 		fMessage = newMessage;
-		if (fConfigured)
+		if (fConfigured) {
 			super.setMessage(fMessage, IMessageProvider.INFORMATION);
+		}
 	}
 
 	@Override
 	public void setTitle(String newTitle) {
 		fTitle = newTitle;
-		if (fConfigured)
+		if (fConfigured) {
 			super.setTitle(fTitle);
+		}
 	}
 
 }

@@ -81,8 +81,9 @@ public abstract class PDEMoveParticipant extends MoveParticipant implements ISha
 	protected String[] getNewNames() {
 		String[] result = new String[fElements.size()];
 		Iterator<String> iter = fElements.values().iterator();
-		for (int i = 0; i < fElements.size(); i++)
+		for (int i = 0; i < fElements.size(); i++) {
 			result[i] = iter.next().toString();
+		}
 		return result;
 	}
 

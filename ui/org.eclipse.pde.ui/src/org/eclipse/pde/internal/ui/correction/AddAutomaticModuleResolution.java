@@ -38,10 +38,12 @@ public class AddAutomaticModuleResolution extends AbstractManifestMarkerResoluti
 	public IMarker[] findOtherMarkers(IMarker[] markers) {
 		HashSet<IMarker> mset = new HashSet<>(markers.length);
 		for (IMarker iMarker : markers) {
-			if (iMarker.equals(mark))
+			if (iMarker.equals(mark)) {
 				continue;
-			if (getProblemId(iMarker) == PDEMarkerFactory.M_NO_AUTOMATIC_MODULE)
+			}
+			if (getProblemId(iMarker) == PDEMarkerFactory.M_NO_AUTOMATIC_MODULE) {
 				mset.add(iMarker);
+			}
 		}
 		int size = mset.size();
 		return mset.toArray(new IMarker[size]);

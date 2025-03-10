@@ -111,21 +111,24 @@ public abstract class AbstractPDELaunchConfigurationTabGroup extends AbstractLau
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		super.setDefaults(configuration);
-		if (TargetPlatformHelper.usesNewApplicationModel())
+		if (TargetPlatformHelper.usesNewApplicationModel()) {
 			configuration.setAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, "3.3"); //$NON-NLS-1$
-		else if (TargetPlatformHelper.getTargetVersion() >= 3.2)
+		} else if (TargetPlatformHelper.getTargetVersion() >= 3.2) {
 			configuration.setAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, "3.2a"); //$NON-NLS-1$
+		}
 
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, PDESourcePathProvider.ID);
 
 		// Set Program/VM arguments with preference values
 		String programArgs = LaunchArgumentsHelper.getInitialProgramArguments().trim();
-		if (programArgs.length() > 0)
+		if (programArgs.length() > 0) {
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, programArgs);
+		}
 
 		String vmArgs = LaunchArgumentsHelper.getInitialVMArguments().trim();
-		if (vmArgs.length() > 0)
+		if (vmArgs.length() > 0) {
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs);
+		}
 
 		configuration.setAttribute(IPDEConstants.APPEND_ARGS_EXPLICITLY, true);
 	}

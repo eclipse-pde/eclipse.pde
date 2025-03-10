@@ -81,15 +81,17 @@ public class FeatureExportWizard extends AntGeneratingExportWizard {
 		info.useWorkspaceCompiledClasses = fPage.useWorkspaceCompiledClasses();
 		info.destinationDirectory = fPage.getDestination();
 		info.zipFileName = fPage.getFileName();
-		if (fPage2 != null && ((FeatureExportWizardPage) fPage).doMultiPlatform())
+		if (fPage2 != null && ((FeatureExportWizardPage) fPage).doMultiPlatform()) {
 			info.targets = fPage2.getTargets();
+		}
 		info.exportMetadata = ((FeatureExportWizardPage) fPage).doExportMetadata();
 		info.items = fPage.getSelectedItems();
 		info.signingInfo = fPage.getSigningInfo();
 		info.jnlpInfo = ((FeatureExportWizardPage) fPage).getJNLPInfo();
 		info.qualifier = fPage.getQualifier();
-		if (((FeatureExportWizardPage) fPage).getCategoryDefinition() != null)
+		if (((FeatureExportWizardPage) fPage).getCategoryDefinition() != null) {
 			info.categoryDefinition = URIUtil.toUnencodedString(((FeatureExportWizardPage) fPage).getCategoryDefinition());
+		}
 
 		final boolean installAfterExport = fPage.doInstall();
 		if (installAfterExport) {
@@ -147,8 +149,9 @@ public class FeatureExportWizard extends AntGeneratingExportWizard {
 			export.setAttribute("features", getFeatureIDs()); //$NON-NLS-1$
 			export.setAttribute("destination", fPage.getDestination()); //$NON-NLS-1$
 			String filename = fPage.getFileName();
-			if (filename != null)
+			if (filename != null) {
 				export.setAttribute("filename", filename); //$NON-NLS-1$
+			}
 			export.setAttribute("exportType", getExportOperation()); //$NON-NLS-1$
 			export.setAttribute("useJARFormat", Boolean.toString(fPage.useJARFormat())); //$NON-NLS-1$
 			export.setAttribute("exportSource", Boolean.toString(fPage.doExportSource())); //$NON-NLS-1$
@@ -156,8 +159,9 @@ public class FeatureExportWizard extends AntGeneratingExportWizard {
 				export.setAttribute("exportSourceBundle", Boolean.toString(fPage.doExportSourceBundles())); //$NON-NLS-1$
 			}
 			String qualifier = fPage.getQualifier();
-			if (qualifier != null)
+			if (qualifier != null) {
 				export.setAttribute("qualifier", qualifier); //$NON-NLS-1$
+			}
 			target.appendChild(export);
 			return doc;
 		} catch (DOMException | FactoryConfigurationError | ParserConfigurationException e) {
@@ -172,8 +176,9 @@ public class FeatureExportWizard extends AntGeneratingExportWizard {
 			Object object = objects[i];
 			if (object instanceof IFeatureModel) {
 				buffer.append(((IFeatureModel) object).getFeature().getId());
-				if (i < objects.length - 1)
+				if (i < objects.length - 1) {
 					buffer.append(","); //$NON-NLS-1$
+				}
 			}
 		}
 		return buffer.toString();

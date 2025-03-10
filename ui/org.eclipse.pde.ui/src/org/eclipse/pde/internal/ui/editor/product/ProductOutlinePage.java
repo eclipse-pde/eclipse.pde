@@ -45,10 +45,12 @@ public class ProductOutlinePage extends FormOutlinePage {
 
 	@Override
 	protected String getParentPageId(Object item) {
-		if (item instanceof IProductPlugin)
+		if (item instanceof IProductPlugin) {
 			return DependenciesPage.PLUGIN_ID;
-		if (item instanceof IProductFeature)
+		}
+		if (item instanceof IProductFeature) {
 			return DependenciesPage.FEATURE_ID;
+		}
 		return super.getParentPageId(item);
 	}
 

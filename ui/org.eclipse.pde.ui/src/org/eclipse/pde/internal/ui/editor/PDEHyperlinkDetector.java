@@ -35,19 +35,24 @@ public abstract class PDEHyperlinkDetector implements IHyperlinkDetector {
 	@Override
 	public IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region, boolean canShowMultipleHyperlinks) {
 
-		if (region == null)
+		if (region == null) {
 			return null;
+		}
 
 		IDocumentRange element = fSourcePage.getRangeElement(region.getOffset(), true);
-		if (!XMLUtil.withinRange(element, region.getOffset()))
+		if (!XMLUtil.withinRange(element, region.getOffset())) {
 			return null;
+		}
 
-		if (element instanceof IDocumentAttributeNode)
+		if (element instanceof IDocumentAttributeNode) {
 			return detectAttributeHyperlink((IDocumentAttributeNode) element);
-		if (element instanceof IDocumentElementNode)
+		}
+		if (element instanceof IDocumentElementNode) {
 			return detectNodeHyperlink((IDocumentElementNode) element);
-		if (element instanceof IDocumentTextNode)
+		}
+		if (element instanceof IDocumentTextNode) {
 			return detectTextNodeHyperlink((IDocumentTextNode) element);
+		}
 		return null;
 	}
 

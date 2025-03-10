@@ -44,8 +44,9 @@ public abstract class XMLSourcePage extends PDEProjectionSourcePage {
 
 	@Override
 	protected ChangeAwareSourceViewerConfiguration createSourceViewerConfiguration(IColorManager colorManager) {
-		if (getEditor() instanceof ManifestEditor)
+		if (getEditor() instanceof ManifestEditor) {
 			return new PluginXMLConfiguration(colorManager, this);
+		}
 		return new XMLConfiguration(colorManager, this);
 	}
 }

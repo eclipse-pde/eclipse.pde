@@ -108,15 +108,17 @@ public class FeatureExportWizardPage extends BaseExportWizardPage {
 	@Override
 	protected void saveSettings(IDialogSettings settings) {
 		super.saveSettings(settings);
-		if (fJNLPTab != null)
+		if (fJNLPTab != null) {
 			fJNLPTab.saveSettings(settings);
+		}
 	}
 
 	@Override
 	protected String validateTabs() {
 		String message = super.validateTabs();
-		if (message == null && fTabFolder.getItemCount() > 3)
+		if (message == null && fTabFolder.getItemCount() > 3) {
 			message = fJNLPTab.validate();
+		}
 		return message;
 	}
 
@@ -148,8 +150,9 @@ public class FeatureExportWizardPage extends BaseExportWizardPage {
 	}
 
 	protected String[] getJNLPInfo() {
-		if (fJNLPTab == null || fTabFolder.getItemCount() < 4)
+		if (fJNLPTab == null || fTabFolder.getItemCount() < 4) {
 			return null;
+		}
 		return fJNLPTab.getJNLPInfo();
 	}
 

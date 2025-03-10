@@ -66,30 +66,34 @@ public class PluginManifestChange {
 
 			try {
 				PluginModelBase model;
-				if (ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR.equals(file.getName()))
+				if (ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR.equals(file.getName())) {
 					model = new FragmentModel(document, false);
-				else
+				} else {
 					model = new PluginModel(document, false);
+				}
 
 				model.load();
-				if (!model.isLoaded())
+				if (!model.isLoaded()) {
 					return null;
+				}
 
 				for (int i = 0; i < affectedElements.length; i++) {
 					if (model instanceof PluginModel && affectedElements[i] instanceof IJavaElement) {
 						PluginNode plugin = (PluginNode) model.getPluginBase();
 						IDocumentAttributeNode attr = plugin.getDocumentAttribute("class"); //$NON-NLS-1$
 						TextEdit edit = createTextEdit(attr, (IJavaElement) affectedElements[i], newNames[i]);
-						if (edit != null)
+						if (edit != null) {
 							multiEdit.addChild(edit);
+						}
 					}
 
 					SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
 					IPluginExtension[] extensions = model.getPluginBase().getExtensions();
 					for (IPluginExtension extension : extensions) {
 						ISchema schema = registry.getSchema(extension.getPoint());
-						if (schema != null)
+						if (schema != null) {
 							addExtensionAttributeEdit(schema, extension, multiEdit, affectedElements[i], newNames[i]);
+						}
 					}
 				}
 
@@ -100,8 +104,9 @@ public class PluginManifestChange {
 						if (edit instanceof MultiTextEdit) {
 							edit.addChild(multiEdit);
 							multiEdit = ((MultiTextEdit) edit);
-						} else
+						} else {
 							multiEdit.addChild(edit);
+						}
 					}
 					TextFileChange change = new TextFileChange("", file); //$NON-NLS-1$
 					change.setEdit(multiEdit);
@@ -130,13 +135,15 @@ public class PluginManifestChange {
 						if (element instanceof IJavaElement && attInfo.getKind() == IMetaAttribute.JAVA) {
 							IDocumentAttributeNode docAttr = (IDocumentAttributeNode) attr;
 							TextEdit edit = createTextEdit(docAttr, (IJavaElement) element, newName);
-							if (edit != null)
+							if (edit != null) {
 								multi.addChild(edit);
+							}
 						} else if (element instanceof IResource && attInfo.getKind() == IMetaAttribute.RESOURCE) {
 							IDocumentAttributeNode docAttr = (IDocumentAttributeNode) attr;
 							TextEdit edit = createTextEdit(docAttr, (IResource) element, newName);
-							if (edit != null)
+							if (edit != null) {
 								multi.addChild(edit);
+							}
 						}
 					}
 				}
@@ -146,15 +153,17 @@ public class PluginManifestChange {
 	}
 
 	private static TextEdit createTextEdit(IDocumentAttributeNode attr, IJavaElement element, String newName) {
-		if (attr == null)
+		if (attr == null) {
 			return null;
+		}
 
 		String oldName = (element instanceof IType) ? ((IType) element).getFullyQualifiedName('$') : element.getElementName();
 		String value = attr.getAttributeValue();
 		if (oldName.equals(value) || isGoodMatch(value, oldName, element instanceof IPackageFragment)) {
 			int offset = attr.getValueOffset();
-			if (offset >= 0)
+			if (offset >= 0) {
 				return new ReplaceEdit(offset, oldName.length(), newName);
+			}
 		}
 		return null;
 	}
@@ -165,16 +174,18 @@ public class PluginManifestChange {
 			String value = attr.getAttributeValue();
 			if (oldName.equals(value) || ((resource instanceof IContainer) && isGoodFolderMatch(value, oldName))) {
 				int offset = attr.getValueOffset();
-				if (offset >= 0)
+				if (offset >= 0) {
 					return new ReplaceEdit(offset, oldName.length(), newName);
+				}
 			}
 		}
 		return null;
 	}
 
 	private static boolean isGoodMatch(String value, String oldName, boolean isPackage) {
-		if (value == null || value.length() <= oldName.length())
+		if (value == null || value.length() <= oldName.length()) {
 			return false;
+		}
 		boolean goodLengthMatch = isPackage ? value.lastIndexOf('.') <= oldName.length() : value.charAt(oldName.length()) == '$';
 		return value.startsWith(oldName) && goodLengthMatch;
 	}

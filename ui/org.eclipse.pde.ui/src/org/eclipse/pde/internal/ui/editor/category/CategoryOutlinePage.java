@@ -50,8 +50,9 @@ public class CategoryOutlinePage extends FormOutlinePage {
 					Collections.addAll(result, catDefs);
 					ISiteFeature[] features = site.getFeatures();
 					for (ISiteFeature feature : features) {
-						if (feature.getCategories().length == 0)
+						if (feature.getCategories().length == 0) {
 							result.add(new SiteFeatureAdapter(null, feature));
+						}
 					}
 					ISiteBundle[] bundles = site.getBundles();
 					for (ISiteBundle bundle : bundles) {
@@ -95,10 +96,12 @@ public class CategoryOutlinePage extends FormOutlinePage {
 	@Override
 	protected String getParentPageId(Object item) {
 		String pageId = null;
-		if (item instanceof ISiteCategoryDefinition || item instanceof SiteFeatureAdapter || item instanceof SiteBundleAdapter)
+		if (item instanceof ISiteCategoryDefinition || item instanceof SiteFeatureAdapter || item instanceof SiteBundleAdapter) {
 			pageId = IUsPage.PAGE_ID;
-		if (pageId != null)
+		}
+		if (pageId != null) {
 			return pageId;
+		}
 		return super.getParentPageId(item);
 	}
 
@@ -111,7 +114,8 @@ public class CategoryOutlinePage extends FormOutlinePage {
 	@Override
 	public void dispose() {
 		super.dispose();
-		if (fLabelProvider != null)
+		if (fLabelProvider != null) {
 			fLabelProvider.dispose();
+		}
 	}
 }

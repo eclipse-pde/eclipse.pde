@@ -45,8 +45,9 @@ public class SelectionPage extends WizardPage {
 
 		@Override
 		protected void buttonSelected(Button button, int index) {
-			if (index == 0)
+			if (index == 0) {
 				doMoreInfo();
+			}
 		}
 
 		@Override

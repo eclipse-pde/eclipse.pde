@@ -378,12 +378,14 @@ public class FragmentContentPage extends ContentPage {
 		fNewVersion = Double.parseDouble(fData.getTargetVersion()) > 3.0;
 		if (updateComposite) {
 			Control oldPage = fNotebookLayout.topControl;
-			if (fNewVersion)
+			if (fNewVersion) {
 				fNotebookLayout.topControl = fNewComp;
-			else
+			} else {
 				fNotebookLayout.topControl = fOldComp;
-			if (oldPage != fNotebookLayout.topControl)
+			}
+			if (oldPage != fNotebookLayout.topControl) {
 				fNotebook.layout();
+			}
 		}
 	}
 }

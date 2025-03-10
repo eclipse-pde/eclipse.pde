@@ -60,8 +60,9 @@ public class SchemaOverviewPage extends PDEFormPage {
 
 	@Override
 	public void setActive(boolean active) {
-		if (!active)
+		if (!active) {
 			getManagedForm().commit(false);
+		}
 		super.setActive(active);
 	}
 

@@ -243,8 +243,9 @@ public class LicenseFeatureSection extends PDESection {
 				IFeatureModel[] allModels = PDECore.getDefault().getFeatureModelManager().getModels();
 				ArrayList<IFeatureModel> newModels = new ArrayList<>();
 				for (IFeatureModel model : allModels) {
-					if (canAdd(model))
+					if (canAdd(model)) {
 						newModels.add(model);
+					}
 				}
 				IFeatureModel[] candidateModels = newModels.toArray(new IFeatureModel[newModels.size()]);
 				FeatureSelectionDialog dialog = new FeatureSelectionDialog(fLicenseFeatureIDText.getShell(), candidateModels, false);

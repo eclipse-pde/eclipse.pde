@@ -40,17 +40,20 @@ public class JARFileFilter extends ViewerFilter {
 
 	@Override
 	public boolean select(Viewer viewer, Object parent, Object element) {
-		if (element instanceof IFile)
+		if (element instanceof IFile) {
 			return isFileValid(((IFile) element).getProjectRelativePath());
+		}
 
 		if (element instanceof IContainer) { // i.e. IProject, IFolder
 			try {
-				if (!((IContainer) element).isAccessible())
+				if (!((IContainer) element).isAccessible()) {
 					return false;
+				}
 				IResource[] resources = ((IContainer) element).members();
 				for (IResource resource : resources) {
-					if (select(viewer, parent, resource))
+					if (select(viewer, parent, resource)) {
 						return true;
+					}
 				}
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
@@ -61,8 +64,9 @@ public class JARFileFilter extends ViewerFilter {
 
 	public boolean isFileValid(IPath path) {
 		String ext = path.getFileExtension();
-		if (isPathValid(path) && ext != null && ext.length() != 0)
+		if (isPathValid(path) && ext != null && ext.length() != 0) {
 			return ext.equals(jarExt);
+		}
 		return false;
 	}
 

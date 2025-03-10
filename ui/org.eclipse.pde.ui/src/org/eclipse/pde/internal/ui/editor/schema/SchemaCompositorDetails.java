@@ -60,8 +60,9 @@ public class SchemaCompositorDetails extends AbstractSchemaDetails {
 
 	@Override
 	public void updateFields(ISchemaObject object) {
-		if (!(object instanceof SchemaCompositor))
+		if (!(object instanceof SchemaCompositor)) {
 			return;
+		}
 		fCompositor = (SchemaCompositor) object;
 		setDecription(NLS.bind(PDEUIMessages.SchemaCompositorDetails_description, fCompositor.getName()));
 		updateMinOccur(fCompositor.getMinOccurs());
@@ -77,18 +78,21 @@ public class SchemaCompositorDetails extends AbstractSchemaDetails {
 	@Override
 	public void hookListeners() {
 		hookMinOccur(widgetSelectedAdapter(e -> {
-			if (blockListeners())
+			if (blockListeners()) {
 				return;
+			}
 			fCompositor.setMinOccurs(getMinOccur());
 		}));
 		hookMaxOccur(widgetSelectedAdapter(e -> {
-			if (blockListeners())
+			if (blockListeners()) {
 				return;
+			}
 			fCompositor.setMaxOccurs(getMaxOccur());
 		}));
 		fKind.addSelectionListener(widgetSelectedAdapter(e -> {
-			if (blockListeners())
+			if (blockListeners()) {
 				return;
+			}
 			fCompositor.setKind(fKind.getSelectionIndex() + 1);
 			setDecription(NLS.bind(PDEUIMessages.SchemaCompositorDetails_description, fCompositor.getName()));
 		}));

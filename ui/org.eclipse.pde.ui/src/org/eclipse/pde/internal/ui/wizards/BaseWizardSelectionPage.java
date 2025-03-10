@@ -49,15 +49,17 @@ public abstract class BaseWizardSelectionPage extends WizardSelectionPage implem
 	}
 
 	public void setDescriptionText(String text) {
-		if (text == null)
+		if (text == null) {
 			text = PDEUIMessages.BaseWizardSelectionPage_noDesc;
+		}
 		descriptionBrowser.setText(text);
 	}
 
 	public void setDescriptionEnabled(boolean enabled) {
 		Control dcontrol = descriptionBrowser.getControl();
-		if (dcontrol != null)
+		if (dcontrol != null) {
 			dcontrol.setEnabled(enabled);
+		}
 		descriptionBrowser.setEnabled(enabled);
 	}
 }

@@ -59,11 +59,13 @@ public abstract class AbstractPDEMarkerResolution extends WorkbenchMarkerResolut
 	public IMarker[] findOtherMarkers(IMarker[] markers) {
 		HashSet<IMarker> mset = new HashSet<>(markers.length);
 		for (IMarker iMarker : markers) {
-			if (iMarker.equals(marker))
+			if (iMarker.equals(marker)) {
 				continue;
+			}
 			String str = iMarker.getAttribute(PDEMarkerFactory.compilerKey, ""); //$NON-NLS-1$
-			if (str.equals(marker.getAttribute(PDEMarkerFactory.compilerKey, ""))) //$NON-NLS-1$
+			if (str.equals(marker.getAttribute(PDEMarkerFactory.compilerKey, ""))) { //$NON-NLS-1$
 				mset.add(iMarker);
+			}
 		}
 		int size = mset.size();
 		return mset.toArray(new IMarker[size]);

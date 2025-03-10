@@ -43,8 +43,9 @@ public abstract class PDEOutlinePage extends ContentOutlinePage {
 		IMenuListener listener = manager -> {
 			ISelection selection = getSelection();
 			PluginSearchActionGroup actionGroup = new PluginSearchActionGroup();
-			if (fEditor != null)
+			if (fEditor != null) {
 				actionGroup.setBaseModel(fEditor.getAggregateModel());
+			}
 			actionGroup.setContext(new ActionContext(selection));
 			actionGroup.fillContextMenu(manager);
 		};

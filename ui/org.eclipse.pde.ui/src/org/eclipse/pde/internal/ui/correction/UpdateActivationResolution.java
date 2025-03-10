@@ -52,8 +52,9 @@ public class UpdateActivationResolution extends AbstractManifestMarkerResolution
 					// if lazystart = false, then use the include directive making sure to set the Bundle-ActivationPolicy header to lazy (or true).
 					String directive = (header.isLazyStart()) ? Constants.EXCLUDE_DIRECTIVE : Constants.INCLUDE_DIRECTIVE;
 					newHeader.setDirective(directive, excludes);
-					if (!header.isLazyStart())
+					if (!header.isLazyStart()) {
 						newHeader.setLazyStart(true);
+					}
 				}
 
 				// This is a HACK to overwrite the existing header with the new header.  Since newHeader has the same length/offset as the old header, the
@@ -76,15 +77,17 @@ public class UpdateActivationResolution extends AbstractManifestMarkerResolution
 
 	@Override
 	public String getDescription() {
-		if (TargetPlatformHelper.getTargetVersion() >= 3.4)
+		if (TargetPlatformHelper.getTargetVersion() >= 3.4) {
 			return PDEUIMessages.UpdateActivationResolution_bundleActivationPolicy_label;
+		}
 		return PDEUIMessages.UpdateActivationResolution_lazyStart_label;
 	}
 
 	@Override
 	public String getLabel() {
-		if (TargetPlatformHelper.getTargetVersion() >= 3.4)
+		if (TargetPlatformHelper.getTargetVersion() >= 3.4) {
 			return NLS.bind(PDEUIMessages.UpdateActivationResolution_bundleActivationPolicy_desc,  marker.getAttribute(PDEMarkerFactory.ATTR_HEADER, ICoreConstants.ECLIPSE_AUTOSTART));
+		}
 		return PDEUIMessages.UpdateActivationResolution_lazyStart_desc;
 	}
 }

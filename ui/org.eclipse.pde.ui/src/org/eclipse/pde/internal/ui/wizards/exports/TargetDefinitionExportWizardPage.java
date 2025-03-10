@@ -206,8 +206,9 @@ public class TargetDefinitionExportWizardPage extends WizardPage {
 	protected boolean isValidLocation(String location) {
 		try {
 			String destinationPath = new File(location).getCanonicalPath();
-			if (destinationPath == null || destinationPath.length() == 0)
+			if (destinationPath == null || destinationPath.length() == 0) {
 				return false;
+			}
 		} catch (IOException e) {
 			return false;
 		}

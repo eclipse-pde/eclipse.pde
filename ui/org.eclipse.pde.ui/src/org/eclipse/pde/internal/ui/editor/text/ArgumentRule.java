@@ -48,8 +48,9 @@ public class ArgumentRule extends WordPatternRule {
 	protected boolean endSequenceDetected(ICharacterScanner scanner) {
 		fCount++;
 
-		if (scanner.read() == '}')
+		if (scanner.read() == '}') {
 			return fCount > 2;
+		}
 
 		scanner.unread();
 		return super.endSequenceDetected(scanner);

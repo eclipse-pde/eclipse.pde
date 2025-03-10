@@ -81,8 +81,9 @@ public class PluginSearchActionGroup extends ActionGroup {
 	}
 
 	private void addFindDeclarationsAction(Object object, IMenuManager menu) {
-		if (object instanceof ImportObject)
+		if (object instanceof ImportObject) {
 			object = ((ImportObject) object).getImport();
+		}
 
 		if (object instanceof IPluginBase || object instanceof IPluginExtension || object instanceof IPluginImport) {
 			menu.add(new FindDeclarationsAction(object));
@@ -100,8 +101,9 @@ public class PluginSearchActionGroup extends ActionGroup {
 		} else if (object instanceof IPluginExtension) {
 			String point = ((IPluginExtension) object).getPoint();
 			IPluginExtensionPoint extPoint = PDECore.getDefault().getExtensionsRegistry().findExtensionPoint(point);
-			if (extPoint != null)
+			if (extPoint != null) {
 				menu.add(new ShowDescriptionAction(extPoint));
+			}
 		}
 	}
 

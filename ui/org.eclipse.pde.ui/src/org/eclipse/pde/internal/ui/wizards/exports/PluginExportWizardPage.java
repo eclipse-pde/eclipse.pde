@@ -89,10 +89,12 @@ public class PluginExportWizardPage extends BaseExportWizardPage {
 
 	@Override
 	protected IModel findModelFor(IAdaptable object) {
-		if (object instanceof IJavaProject)
+		if (object instanceof IJavaProject) {
 			object = ((IJavaProject) object).getProject();
-		if (object instanceof IProject)
+		}
+		if (object instanceof IProject) {
 			return PluginRegistry.findModel((IProject) object);
+		}
 		if (object instanceof PersistablePluginObject) {
 			IPluginModelBase model = PluginRegistry.findModel(((PersistablePluginObject) object).getPluginID());
 			if (model != null && model.getUnderlyingResource() != null) {

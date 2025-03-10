@@ -22,8 +22,9 @@ public class BuildUtil {
 	public static IBuildEntry[] getBuildLibraries(IBuildEntry[] entries) {
 		ArrayList<IBuildEntry> temp = new ArrayList<>();
 		for (IBuildEntry entry : entries) {
-			if (entry.getName().startsWith(IBuildEntry.JAR_PREFIX))
+			if (entry.getName().startsWith(IBuildEntry.JAR_PREFIX)) {
 				temp.add(entry);
+			}
 		}
 		IBuildEntry[] result = new IBuildEntry[temp.size()];
 		temp.toArray(result);

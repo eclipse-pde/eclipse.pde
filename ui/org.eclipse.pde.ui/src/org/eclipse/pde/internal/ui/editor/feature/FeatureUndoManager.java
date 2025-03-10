@@ -36,12 +36,15 @@ public class FeatureUndoManager extends ModelUndoManager {
 
 	@Override
 	protected String getPageId(Object obj) {
-		if (obj instanceof IFeature || obj instanceof IFeatureURL)
+		if (obj instanceof IFeature || obj instanceof IFeatureURL) {
 			return FeatureFormPage.PAGE_ID;
-		if (obj instanceof IFeaturePlugin)
+		}
+		if (obj instanceof IFeaturePlugin) {
 			return FeatureReferencePage.PAGE_ID;
-		if (obj instanceof IFeatureImport)
+		}
+		if (obj instanceof IFeatureImport) {
 			return FeatureDependenciesPage.PAGE_ID;
+		}
 		return null;
 	}
 
@@ -54,22 +57,25 @@ public class FeatureUndoManager extends ModelUndoManager {
 
 		switch (type) {
 			case IModelChangedEvent.INSERT :
-				if (undo)
+				if (undo) {
 					executeRemove(model, elements);
-				else
+				} else {
 					executeAdd(model, elements);
+				}
 				break;
 			case IModelChangedEvent.REMOVE :
-				if (undo)
+				if (undo) {
 					executeAdd(model, elements);
-				else
+				} else {
 					executeRemove(model, elements);
+				}
 				break;
 			case IModelChangedEvent.CHANGE :
-				if (undo)
+				if (undo) {
 					executeChange(elements[0], propertyName, event.getNewValue(), event.getOldValue());
-				else
+				} else {
 					executeChange(elements[0], propertyName, event.getOldValue(), event.getNewValue());
+				}
 		}
 	}
 
@@ -126,8 +132,9 @@ public class FeatureUndoManager extends ModelUndoManager {
 			if (obj instanceof IFeatureObject) {
 				IFeatureObject fobj = (IFeatureObject) event.getChangedObjects()[0];
 				// Ignore events from objects that are not yet in the model.
-				if (!(fobj instanceof IFeature) && fobj.isInTheModel() == false)
+				if (!(fobj instanceof IFeature) && fobj.isInTheModel() == false) {
 					return;
+				}
 			}
 		}
 		super.modelChanged(event);

@@ -32,14 +32,16 @@ public class PreviewReferenceAction implements IObjectActionDelegate {
 
 	@Override
 	public void run(IAction action) {
-		if (fFile == null)
+		if (fFile == null) {
 			return;
+		}
 		SchemaDescriptor sd = new SchemaDescriptor(fFile, false);
 		ISchema schema = sd.getSchema(false);
 		if (fDelegate == null) {
 			fDelegate = new ShowDescriptionAction(schema);
-		} else
+		} else {
 			fDelegate.setSchema(schema);
+		}
 		fDelegate.run();
 	}
 
@@ -48,8 +50,9 @@ public class PreviewReferenceAction implements IObjectActionDelegate {
 		fFile = null;
 		if (selection instanceof IStructuredSelection) {
 			Object obj = ((IStructuredSelection) selection).getFirstElement();
-			if (obj instanceof IFile)
+			if (obj instanceof IFile) {
 				fFile = (IFile) obj;
+			}
 		}
 	}
 }

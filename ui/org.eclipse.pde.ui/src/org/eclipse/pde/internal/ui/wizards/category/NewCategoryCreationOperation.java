@@ -63,8 +63,9 @@ public class NewCategoryCreationOperation extends WorkspaceModifyOperation {
 		IPath fFilePath = fPath.append(fFileName);
 		IFile categoryFile = PDECore.getWorkspace().getRoot().getFile(fFilePath);
 
-		if (categoryFile.exists())
+		if (categoryFile.exists()) {
 			return categoryFile;
+		}
 
 		WorkspaceSiteModel model = new WorkspaceSiteModel(categoryFile);
 		model.getSite();
@@ -83,8 +84,9 @@ public class NewCategoryCreationOperation extends WorkspaceModifyOperation {
 				return;
 			}
 			IWorkbenchPage page = ww.getActivePage();
-			if (page == null || !file.exists())
+			if (page == null || !file.exists()) {
 				return;
+			}
 			IWorkbenchPart focusPart = page.getActivePart();
 			if (focusPart instanceof ISetSelectionTarget) {
 				ISelection selection = new StructuredSelection(file);

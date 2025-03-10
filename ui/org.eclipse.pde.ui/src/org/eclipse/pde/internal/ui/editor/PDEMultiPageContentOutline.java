@@ -70,8 +70,9 @@ public class PDEMultiPageContentOutline extends Page implements IContentOutlineP
 
 	@Override
 	public void dispose() {
-		if (pagebook != null && !pagebook.isDisposed())
+		if (pagebook != null && !pagebook.isDisposed()) {
 			pagebook.dispose();
+		}
 		if (emptyPage != null) {
 			emptyPage.dispose();
 			emptyPage = null;
@@ -130,13 +131,15 @@ public class PDEMultiPageContentOutline extends Page implements IContentOutlineP
 
 	@Override
 	public void setFocus() {
-		if (currentPage != null)
+		if (currentPage != null) {
 			currentPage.setFocus();
+		}
 	}
 
 	private ISortableContentOutlinePage getEmptyPage() {
-		if (emptyPage == null)
+		if (emptyPage == null) {
 			emptyPage = new EmptyOutlinePage();
+		}
 		return emptyPage;
 	}
 
@@ -172,8 +175,9 @@ public class PDEMultiPageContentOutline extends Page implements IContentOutlineP
 	@Override
 	public void setSelection(ISelection selection) {
 		this.selection = selection;
-		if (listeners == null)
+		if (listeners == null) {
 			return;
+		}
 		SelectionChangedEvent e = new SelectionChangedEvent(this, selection);
 		for (int i = 0; i < listeners.size(); i++) {
 			listeners.get(i).selectionChanged(e);
@@ -211,8 +215,9 @@ public class PDEMultiPageContentOutline extends Page implements IContentOutlineP
 
 		private void valueChanged(final boolean on) {
 			sortingOn = on;
-			if (currentPage != null)
+			if (currentPage != null) {
 				currentPage.sort(on);
+			}
 			PDEPlugin.getDefault().getPreferenceStore().setValue("PDEMultiPageContentOutline.SortingAction.isChecked", on); //$NON-NLS-1$
 		}
 

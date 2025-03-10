@@ -63,21 +63,25 @@ public class CalleesListContentProvider extends CalleesContentProvider implement
 					BundleDescription desc = null;
 					it.remove();
 					if (candidate instanceof BundleSpecification) {
-						if (!fShowOptional && ((BundleSpecification) candidate).isOptional())
+						if (!fShowOptional && ((BundleSpecification) candidate).isOptional()) {
 							continue;
+						}
 						desc = (BundleDescription) ((BundleSpecification) candidate).getSupplier();
 						// include unresolved require-bundles
-						if (desc == null)
+						if (desc == null) {
 							elements.put(((BundleSpecification) candidate).getName(), candidate);
+						}
 					} else if (candidate instanceof BundleDescription) {
 						desc = (BundleDescription) candidate;
 					} else if (candidate instanceof ImportPackageSpecification) {
-						if (!fShowOptional && Constants.RESOLUTION_OPTIONAL.equals(((ImportPackageSpecification) candidate).getDirective(Constants.RESOLUTION_DIRECTIVE)))
+						if (!fShowOptional && Constants.RESOLUTION_OPTIONAL.equals(((ImportPackageSpecification) candidate).getDirective(Constants.RESOLUTION_DIRECTIVE))) {
 							continue;
+						}
 						desc = ((ExportPackageDescription) (((ImportPackageSpecification) candidate).getSupplier())).getExporter();
 					}
-					if (desc == null)
+					if (desc == null) {
 						continue;
+					}
 					IPluginModelBase callee = PluginRegistry.findModel(desc.getSymbolicName());
 					if (!elements.containsKey(desc.getSymbolicName())) {
 						elements.put(desc.getSymbolicName(), candidate);

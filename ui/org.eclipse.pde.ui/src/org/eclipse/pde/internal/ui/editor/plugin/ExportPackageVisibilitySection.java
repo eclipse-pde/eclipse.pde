@@ -78,8 +78,9 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 		@Override
 		public Object[] getElements(Object parent) {
 			ExportPackageObject object = (ExportPackageObject) parent;
-			if (object == null || !object.isInternal())
+			if (object == null || !object.isInternal()) {
 				return new Object[0];
+			}
 			return object.getFriends();
 		}
 	}
@@ -179,10 +180,11 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 
 	@Override
 	protected void buttonSelected(int index) {
-		if (index == ADD_INDEX)
+		if (index == ADD_INDEX) {
 			handleAdd();
-		else if (index == REMOVE_INDEX)
+		} else if (index == REMOVE_INDEX) {
 			handleRemove();
+		}
 	}
 
 	@Override
@@ -256,10 +258,12 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 	@Override
 	public void dispose() {
 		IBundleModel model = getBundleModel();
-		if (model != null)
+		if (model != null) {
 			model.removeModelChangedListener(this);
-		if (fImage != null)
+		}
+		if (fImage != null) {
 			fImage.dispose();
+		}
 		super.dispose();
 	}
 
@@ -287,8 +291,9 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 		IPluginModelBase[] models = PluginRegistry.getActiveModels(true);
 		for (IPluginModelBase model : models) {
 			String id = model.getPluginBase().getId();
-			if (!fSelectedObjects[0].hasFriend(id))
+			if (!fSelectedObjects[0].hasFriend(id)) {
 				list.add(model);
+			}
 		}
 		return list.toArray(new IPluginModelBase[list.size()]);
 	}

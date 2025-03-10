@@ -33,8 +33,9 @@ public class BuildUndoManager extends ModelUndoManager {
 
 	@Override
 	protected String getPageId(Object obj) {
-		if (obj instanceof IBuildEntry)
+		if (obj instanceof IBuildEntry) {
 			return BuildPage.PAGE_ID;
+		}
 		return null;
 	}
 
@@ -47,22 +48,25 @@ public class BuildUndoManager extends ModelUndoManager {
 
 		switch (type) {
 			case IModelChangedEvent.INSERT :
-				if (undo)
+				if (undo) {
 					executeRemove(model, elements);
-				else
+				} else {
 					executeAdd(model, elements);
+				}
 				break;
 			case IModelChangedEvent.REMOVE :
-				if (undo)
+				if (undo) {
 					executeAdd(model, elements);
-				else
+				} else {
 					executeRemove(model, elements);
+				}
 				break;
 			case IModelChangedEvent.CHANGE :
-				if (undo)
+				if (undo) {
 					executeChange(elements[0], propertyName, event.getNewValue(), event.getOldValue());
-				else
+				} else {
 					executeChange(elements[0], propertyName, event.getOldValue(), event.getNewValue());
+				}
 		}
 	}
 
@@ -111,8 +115,9 @@ public class BuildUndoManager extends ModelUndoManager {
 			if (obj instanceof IBuildObject) {
 				IBuildObject bobj = (IBuildObject) event.getChangedObjects()[0];
 				//Ignore events from objects that are not yet in the model.
-				if (!(bobj instanceof IBuild) && bobj.isInTheModel() == false)
+				if (!(bobj instanceof IBuild) && bobj.isInTheModel() == false) {
 					return;
+				}
 			}
 		}
 		super.modelChanged(event);

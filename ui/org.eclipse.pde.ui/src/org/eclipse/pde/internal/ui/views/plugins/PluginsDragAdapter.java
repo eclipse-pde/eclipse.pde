@@ -43,8 +43,9 @@ public class PluginsDragAdapter extends DragSourceAdapter {
 	public void dragSetData(DragSourceEvent event) {
 
 		//resort to a file transfer
-		if (!FileTransfer.getInstance().isSupportedType(event.dataType))
+		if (!FileTransfer.getInstance().isSupportedType(event.dataType)) {
 			return;
+		}
 
 		FileAdapter[] files = getSelectedFiles();
 
@@ -85,10 +86,11 @@ public class PluginsDragAdapter extends DragSourceAdapter {
 		ArrayList<Object> files = new ArrayList<>();
 		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 			Object obj = iter.next();
-			if (obj instanceof FileAdapter)
+			if (obj instanceof FileAdapter) {
 				files.add(obj);
-			else
+			} else {
 				return new FileAdapter[0];
+			}
 		}
 		return files.toArray(new FileAdapter[files.size()]);
 	}

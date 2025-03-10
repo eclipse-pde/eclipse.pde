@@ -48,8 +48,9 @@ public class FormatOperation implements IRunnableWithProgress {
 		mon.beginTask(PDEUIMessages.FormatManifestOperation_task, fObjects.length);
 		for (int i = 0; !mon.isCanceled() && i < fObjects.length; i++) {
 			Object obj = fObjects[i];
-			if (obj instanceof IFileEditorInput)
+			if (obj instanceof IFileEditorInput) {
 				obj = ((IFileEditorInput) obj).getFile();
+			}
 			if (obj instanceof IFile) {
 				mon.subTask(NLS.bind(PDEUIMessages.FormatManifestOperation_subtask, ((IFile) obj).getFullPath().toString()));
 				format((IFile) obj, mon);
@@ -64,12 +65,14 @@ public class FormatOperation implements IRunnableWithProgress {
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 				if (model instanceof IBundlePluginModelBase) {
 					IBundleModel bundleModel = ((IBundlePluginModelBase) model).getBundleModel();
-					if (bundleModel.getBundle() instanceof Bundle)
+					if (bundleModel.getBundle() instanceof Bundle) {
 						formatBundle((Bundle) bundleModel.getBundle());
+					}
 				} else if (model instanceof IPluginModelBase) {
 					IPluginBase pluginModel = ((IPluginModelBase) model).getPluginBase();
-					if (pluginModel instanceof PluginBaseNode)
+					if (pluginModel instanceof PluginBaseNode) {
 						formatXML((PluginBaseNode) pluginModel);
+					}
 				}
 			}
 
@@ -82,8 +85,9 @@ public class FormatOperation implements IRunnableWithProgress {
 
 	private static void formatBundle(Bundle bundle) {
 		Iterator<IManifestHeader> headers = bundle.getHeaders().values().iterator();
-		while (headers.hasNext())
+		while (headers.hasNext()) {
 			headers.next().update(true);
+		}
 		BundleModel model = (BundleModel) bundle.getModel();
 		model.adjustOffsets(model.getDocument());
 	}

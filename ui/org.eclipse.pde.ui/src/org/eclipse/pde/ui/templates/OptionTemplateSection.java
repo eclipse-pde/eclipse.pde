@@ -82,8 +82,9 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 */
 	protected String getTemplateDirectory() {
 		String schemaVersion = model.getPluginBase().getSchemaVersion();
-		if (schemaVersion != null)
+		if (schemaVersion != null) {
 			return "templates_" + schemaVersion; //$NON-NLS-1$
+		}
 		return "templates"; //$NON-NLS-1$
 	}
 
@@ -126,8 +127,9 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 */
 	@Override
 	public WizardPage getPage(int pageIndex) {
-		if (pageIndex < 0 || pageIndex >= pages.size())
+		if (pageIndex < 0 || pageIndex >= pages.size()) {
 			return null;
+		}
 		TemplatePage tpage = pages.get(pageIndex);
 		return tpage.page;
 	}
@@ -148,8 +150,9 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 * @see BaseOptionTemplateSection#addOption
 	 */
 	public WizardPage createPage(int pageIndex) {
-		if (pageIndex < 0 || pageIndex >= pages.size())
+		if (pageIndex < 0 || pageIndex >= pages.size()) {
 			return null;
+		}
 		TemplatePage tpage = pages.get(pageIndex);
 		tpage.page = new OptionTemplateWizardPage(this, tpage.options, null);
 		return tpage.page;
@@ -175,8 +178,9 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 * @see BaseOptionTemplateSection#addOption
 	 */
 	public WizardPage createPage(int pageIndex, String helpContextId) {
-		if (pageIndex < 0 || pageIndex >= pages.size())
+		if (pageIndex < 0 || pageIndex >= pages.size()) {
 			return null;
+		}
 		TemplatePage tpage = pages.get(pageIndex);
 		tpage.page = new OptionTemplateWizardPage(this, tpage.options, helpContextId);
 		return tpage.page;
@@ -220,8 +224,9 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 */
 
 	public TemplateOption[] getOptions(int pageIndex) {
-		if (pageIndex < 0 || pageIndex >= pages.size())
+		if (pageIndex < 0 || pageIndex >= pages.size()) {
 			return new TemplateOption[0];
+		}
 		TemplatePage page = pages.get(pageIndex);
 		return page.options.toArray(new TemplateOption[page.options.size()]);
 	}
@@ -237,8 +242,9 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	public TemplateOption[] getOptions(WizardPage page) {
 		for (int i = 0; i < pages.size(); i++) {
 			TemplatePage tpage = pages.get(i);
-			if (tpage.page.equals(page))
+			if (tpage.page.equals(page)) {
 				return getOptions(i);
+			}
 		}
 		return new TemplateOption[0];
 	}
@@ -254,8 +260,9 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	public int getPageIndex(TemplateOption option) {
 		for (int i = 0; i < pages.size(); i++) {
 			TemplatePage tpage = pages.get(i);
-			if (tpage.options.contains(option))
+			if (tpage.options.contains(option)) {
 				return i;
+			}
 		}
 		return -1;
 	}
@@ -320,8 +327,9 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 * the page complete, thereby allowing users to flip to the next page.
 	 */
 	protected void resetPageState() {
-		if (pages.isEmpty())
+		if (pages.isEmpty()) {
 			return;
+		}
 		WizardPage firstPage = pages.get(0).page;
 		IWizardContainer container = firstPage.getWizard().getContainer();
 		WizardPage currentPage = (WizardPage) container.getCurrentPage();

@@ -206,10 +206,11 @@ public class SiteEditor extends MultiSourceEditor {
 	}
 
 	private void updateActionEnablement() {
-		if (((ISiteModel) getAggregateModel()).getSite().getFeatures().length > 0)
+		if (((ISiteModel) getAggregateModel()).getSite().getFeatures().length > 0) {
 			fBuildAllAction.setEnabled(true);
-		else
+		} else {
 			fBuildAllAction.setEnabled(false);
+		}
 	}
 
 	protected void handleBuild(ISiteFeature[] sFeatures) {
@@ -242,8 +243,9 @@ public class SiteEditor extends MultiSourceEditor {
 		ArrayList<IFeatureModel> list = new ArrayList<>();
 		for (ISiteFeature siteFeature : sFeatures) {
 			IFeatureModel model = PDECore.getDefault().getFeatureModelManager().findFeatureModelRelaxed(siteFeature.getId(), siteFeature.getVersion());
-			if (model != null)
+			if (model != null) {
 				list.add(model);
+			}
 		}
 		return list.toArray(new IFeatureModel[list.size()]);
 	}

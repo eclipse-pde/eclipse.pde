@@ -54,10 +54,11 @@ public class EditorBuildFeatureAction extends Action {
 		ensureContentSaved();
 		FeatureExportWizard wizard = new FeatureExportWizard();
 		IStructuredSelection selection;
-		if (featureFile != null)
+		if (featureFile != null) {
 			selection = new StructuredSelection(featureFile);
-		else
+		} else {
 			selection = new StructuredSelection();
+		}
 		wizard.init(PlatformUI.getWorkbench(), selection);
 		WizardDialog wd = new ResizableWizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 		wd.create();

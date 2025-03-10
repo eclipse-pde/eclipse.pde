@@ -318,10 +318,11 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 				name = EMPTY_STRING;
 			}
 
-			if (name.trim().length() > 0)
+			if (name.trim().length() > 0) {
 				fNameText.setText(name);
-			else
+			} else {
 				setMessage(PDEUIMessages.TargetDefinitionContentPage_8);
+			}
 
 			fLocationTree.setInput(definition);
 			fContentTree.setInput(definition);
@@ -352,11 +353,13 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 				}
 			}
 
-			if (fExecEnvsCombo.getSelectionIndex() == -1)
+			if (fExecEnvsCombo.getSelectionIndex() == -1) {
 				fExecEnvsCombo.setText(fExecEnvChoices.first().toString());
+			}
 
-			if (fNamedJREsCombo.getSelectionIndex() == -1)
+			if (fNamedJREsCombo.getSelectionIndex() == -1) {
 				fNamedJREsCombo.setText(VMUtil.getDefaultVMInstallName());
+			}
 
 			updateJREWidgets();
 
@@ -397,8 +400,9 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		fNLCombo.addModifyListener(e -> {
 			String value = fNLCombo.getText();
 			int index = value.indexOf('-');
-			if (index > 0)
+			if (index > 0) {
 				value = value.substring(0, index);
+			}
 			getTargetDefinition().setNL(getModelValue(value));
 		});
 	}
@@ -508,8 +512,9 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		fExecEnvChoices = new TreeSet<>();
 		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 		IExecutionEnvironment[] envs = manager.getExecutionEnvironments();
-		for (IExecutionEnvironment env : envs)
+		for (IExecutionEnvironment env : envs) {
 			fExecEnvChoices.add(env.getId());
+		}
 	}
 
 	protected void updateJREWidgets() {
@@ -791,8 +796,9 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 	@Override
 	public boolean isPageComplete() {
-		if (fNameText.getText().trim().length() == 0)
+		if (fNameText.getText().trim().length() == 0) {
 			return false;
+		}
 		return true;
 	}
 

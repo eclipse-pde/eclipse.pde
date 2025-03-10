@@ -45,8 +45,9 @@ public class OpenReferenceAction extends SelectionProviderAction {
 
 		if (obj instanceof FeaturePlugin) {
 			IPluginBase base = ((FeaturePlugin) obj).getPluginBase();
-			if (base != null)
+			if (base != null) {
 				ManifestEditor.openPluginEditor((IPluginModelBase) base.getModel());
+			}
 		} else if (obj instanceof IFeatureData data) {
 			String id = data.getId();
 			IResource resource = data.getModel().getUnderlyingResource();
