@@ -80,8 +80,9 @@ public abstract class PDEFormPage extends FormPage {
 		Control c = getPartControl();
 		if (c != null && !c.isDisposed()) {
 			Menu menu = c.getMenu();
-			if (menu != null)
+			if (menu != null) {
 				resetMenu(menu, c);
+			}
 		}
 		super.dispose();
 	}
@@ -159,31 +160,38 @@ public abstract class PDEFormPage extends FormPage {
 
 	protected static Control getFocusControl(IFormPage page) {
 		IManagedForm form = page.getManagedForm();
-		if (form == null)
+		if (form == null) {
 			return null;
+		}
 		Control control = form.getForm();
-		if (control == null || control.isDisposed())
+		if (control == null || control.isDisposed()) {
 			return null;
+		}
 		Display display = control.getDisplay();
 		Control focusControl = display.getFocusControl();
-		if (focusControl == null || focusControl.isDisposed())
+		if (focusControl == null || focusControl.isDisposed()) {
 			return null;
+		}
 		return focusControl;
 	}
 
 	public static boolean performGlobalAction(String actionId, IFormPage formPage) {
 		Control focusControl = getFocusControl(formPage);
-		if (focusControl == null)
+		if (focusControl == null) {
 			return false;
+		}
 
-		if (canPerformDirectly(actionId, focusControl))
+		if (canPerformDirectly(actionId, focusControl)) {
 			return true;
+		}
 		AbstractFormPart focusPart = getFocusSection(formPage);
 		if (focusPart != null) {
-			if (focusPart instanceof PDESection)
+			if (focusPart instanceof PDESection) {
 				return ((PDESection) focusPart).doGlobalAction(actionId);
-			if (focusPart instanceof PDEDetails)
+			}
+			if (focusPart instanceof PDEDetails) {
 				return ((PDEDetails) focusPart).doGlobalAction(actionId);
+			}
 		}
 		return false;
 	}
@@ -229,8 +237,9 @@ public abstract class PDEFormPage extends FormPage {
 
 	private static AbstractFormPart getFocusSection(IFormPage page) {
 		Control focusControl = getFocusControl(page);
-		if (focusControl == null)
+		if (focusControl == null) {
 			return null;
+		}
 		Composite parent = focusControl.getParent();
 		AbstractFormPart targetPart = null;
 		while (parent != null) {
@@ -286,8 +295,9 @@ public abstract class PDEFormPage extends FormPage {
 	public void cancelEdit() {
 		IFormPart[] parts = getManagedForm().getParts();
 		for (IFormPart part : parts) {
-			if (part instanceof IContextPart)
+			if (part instanceof IContextPart) {
 				((IContextPart) part).cancelEdit();
+			}
 		}
 	}
 

@@ -89,11 +89,13 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		for (int i = 0; i < id.length(); i++) {
 			char ch = id.charAt(i);
 			if (buffer.length() == 0) {
-				if (Character.isJavaIdentifierStart(ch))
+				if (Character.isJavaIdentifierStart(ch)) {
 					buffer.append(Character.toLowerCase(ch));
+				}
 			} else {
-				if (Character.isJavaIdentifierPart(ch) || ch == '.')
+				if (Character.isJavaIdentifierPart(ch) || ch == '.') {
 					buffer.append(ch);
+				}
 			}
 		}
 		return buffer.toString().toLowerCase(Locale.ENGLISH);
@@ -328,36 +330,44 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		element.setAttribute("application", fApplication); //$NON-NLS-1$
 
 		IPluginElement child = createElement(element, IProductConstants.WINDOW_IMAGES, getWindowImagesString());
-		if (child != null)
+		if (child != null) {
 			element.add(child);
+		}
 
 		child = createElement(element, IProductConstants.ABOUT_TEXT, getAboutText());
-		if (child != null)
+		if (child != null) {
 			element.add(child);
+		}
 
 		child = createElement(element, IProductConstants.ABOUT_IMAGE, getAboutImage());
-		if (child != null)
+		if (child != null) {
 			element.add(child);
+		}
 
 		child = createElement(element, IProductConstants.STARTUP_FOREGROUND_COLOR, getForegroundColor());
-		if (child != null)
+		if (child != null) {
 			element.add(child);
+		}
 
 		child = createElement(element, IProductConstants.STARTUP_PROGRESS_RECT, getProgressRect());
-		if (child != null)
+		if (child != null) {
 			element.add(child);
+		}
 
 		child = createElement(element, IProductConstants.STARTUP_MESSAGE_RECT, getMessageRect());
-		if (child != null)
+		if (child != null) {
 			element.add(child);
+		}
 
 		child = createElement(element, IProductConstants.PREFERENCE_CUSTOMIZATION, getPreferenceCustomization());
-		if (child != null)
+		if (child != null) {
 			element.add(child);
+		}
 
 		child = createElement(element, APPLICATION_CSS, getApplicationCSS());
-		if (child != null)
+		if (child != null) {
 			element.add(child);
+		}
 
 		return element;
 	}
@@ -388,19 +398,22 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 	}
 
 	private String getURL(String location) {
-		if (location == null || location.trim().length() == 0)
+		if (location == null || location.trim().length() == 0) {
 			return null;
+		}
 		IPath path = IPath.fromOSString(location);
-		if (!path.isAbsolute())
+		if (!path.isAbsolute()) {
 			return location;
+		}
 		String projectName = path.segment(0);
 		IProject project = PDEPlugin.getWorkspace().getRoot().getProject(projectName);
 		if (project.exists()) {
 			IPluginModelBase model = PluginRegistry.findModel(project);
 			if (model != null) {
 				String id = model.getPluginBase().getId();
-				if (fPluginId.equals(id))
+				if (fPluginId.equals(id)) {
 					return path.removeFirstSegments(1).toString();
+				}
 				return "platform:/plugin/" + id + "/" + path.removeFirstSegments(1); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
@@ -408,11 +421,13 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 	}
 
 	private String getFullyQualifiedURL(String location) {
-		if (location == null || location.trim().length() == 0)
+		if (location == null || location.trim().length() == 0) {
 			return null;
+		}
 		IPath path = IPath.fromOSString(location);
-		if (!path.isAbsolute())
+		if (!path.isAbsolute()) {
 			return location;
+		}
 		String projectName = path.segment(0);
 		IProject project = PDEPlugin.getWorkspace().getRoot().getProject(projectName);
 		if (project.exists()) {
@@ -432,8 +447,9 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 			for (int i = 0; i < IWindowImages.TOTAL_IMAGES; i++) {
 				String image = getURL(images.getImagePath(i));
 				if (image != null) {
-					if (buffer.length() > 0)
+					if (buffer.length() > 0) {
 						buffer.append(","); //$NON-NLS-1$
+					}
 					buffer.append(image);
 				}
 
@@ -477,19 +493,22 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 
 	private void modifyExistingFile(IFile file, IProgressMonitor monitor) throws CoreException {
 		IStatus status = PDEPlugin.getWorkspace().validateEdit(new IFile[] {file}, getShell());
-		if (!status.isOK())
+		if (!status.isOK()) {
 			throw new CoreException(Status.error(NLS.bind(PDEUIMessages.ProductDefinitionOperation_readOnly, fPluginId)));
+		}
 
 		ModelModification mod = new ModelModification(file) {
 			@Override
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
-				if (!(model instanceof IPluginModelBase))
+				if (!(model instanceof IPluginModelBase)) {
 					return;
+				}
 				IPluginExtension extension = findProductExtension((IPluginModelBase) model);
-				if (extension == null)
+				if (extension == null) {
 					insertNewExtension((IPluginModelBase) model);
-				else
+				} else {
 					modifyExistingExtension(extension);
+				}
 				// Update the splash handler.  Update plug-in model and copy files
 				updateSplashHandler((IPluginModelBase) model, monitor);
 				// Update splash progress.  Update plug-in model and copy files
@@ -559,11 +578,13 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 				}
 			}
 		}
-		if (child != null && value == null)
+		if (child != null && value == null) {
 			element.remove(child);
+		}
 
-		if (value == null)
+		if (value == null) {
 			return;
+		}
 
 		if (child == null) {
 			child = element.getModel().getFactory().createElement(element);

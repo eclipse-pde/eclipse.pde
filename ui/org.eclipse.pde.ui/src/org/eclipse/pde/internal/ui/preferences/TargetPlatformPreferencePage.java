@@ -165,8 +165,9 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		@Override
 		public String getToolTipText(Object element) {
 			ITargetDefinition targetDef = (ITargetDefinition) element;
-			if (targetDef.isResolved())
+			if (targetDef.isResolved()) {
 				return null;
+			}
 			if (!isResolved(targetDef)) {
 				String name = targetDef.getName();
 				return NLS.bind(Messages.TargetStatus_UnresolvedTarget, name);
@@ -232,8 +233,9 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 
 			cell.setText(styledString.toString());
 			cell.setStyleRanges(styledString.getStyleRanges());
-			if (fTableViewer.getChecked(targetDef) && !targetDef.isResolved())
+			if (fTableViewer.getChecked(targetDef) && !targetDef.isResolved()) {
 				performResolve(targetDef);
+			}
 			cell.setImage(getImage(targetDef));
 			super.update(cell);
 		}
@@ -284,8 +286,9 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 					flag = SharedLabelProvider.F_WARNING;
 				}
 			}
-			if (target.getTargetLocations() == null)
+			if (target.getTargetLocations() == null) {
 				flag = 0;
+			}
 			if (fRunningHost != null && fRunningHost.isContentEquivalent(target)) {
 				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PRODUCT_BRANDING, flag);
 			}
@@ -395,12 +398,14 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		if (!(element instanceof final ITargetDefinition target)) {
 			return;
 		}
-		if (target.isResolved())
+		if (target.isResolved()) {
 			return;
+		}
 
 		String name = target.getName();
-		if (name == null)
+		if (name == null) {
 			name = ""; //$NON-NLS-1$
+		}
 		Job resolveJob = new Job(NLS.bind(PDEUIMessages.TargetEditor_1, name)) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
@@ -417,10 +422,12 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			@Override
 			public void done(org.eclipse.core.runtime.jobs.IJobChangeEvent event) {
 				Display.getDefault().syncExec(() -> {
-					if (!fTableViewer.getControl().isDisposed())
+					if (!fTableViewer.getControl().isDisposed()) {
 						fTableViewer.refresh(true);
-					if (!fDetails.getControl().isDisposed())
+					}
+					if (!fDetails.getControl().isDisposed()) {
 						fDetails.refresh(true);
+					}
 				});
 			}
 		});
@@ -502,9 +509,9 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 					if (target instanceof WorkspaceFileTargetHandle) {
 						setErrorMessage(e.getMessage() + " " //$NON-NLS-1$
 								+ ((WorkspaceFileTargetHandle) target).getTargetFile().getFullPath());
-					}
-					else
+					} else {
 						setErrorMessage(e.getMessage());
+					}
 				}
 			}
 			fTableViewer.setInput(fTargets);
@@ -963,10 +970,12 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 					Display.getDefault().syncExec(() -> {
 							// once resolve finishes, update the target tree
 							// viewer as well as location
-							if (!fTableViewer.getControl().isDisposed())
+							if (!fTableViewer.getControl().isDisposed()) {
 								fTableViewer.refresh(true);
-							if (!fDetails.getControl().isDisposed())
+							}
+							if (!fDetails.getControl().isDisposed()) {
 								fDetails.refresh(true);
+							}
 					});
 
 					if (event.getResult().isOK()) {

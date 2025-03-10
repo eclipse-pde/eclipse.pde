@@ -38,8 +38,9 @@ public class ProductFromExtensionOperation extends BaseProductCreationOperation 
 
 	@Override
 	protected void initializeProduct(IProduct product) {
-		if (fId == null)
+		if (fId == null) {
 			return;
+		}
 		IProductModelFactory factory = product.getModel().getFactory();
 		initializeProductInfo(factory, product, fId);
 		addPlugins(factory, product, getPlugins());
@@ -48,8 +49,9 @@ public class ProductFromExtensionOperation extends BaseProductCreationOperation 
 
 	private String[] getPlugins() {
 		int lastDot = fId.lastIndexOf('.');
-		if (lastDot == -1)
+		if (lastDot == -1) {
 			return new String[0];
+		}
 
 		List<BundleDescription> plugins = new ArrayList<>();
 		// add plugin declaring product and its pre-reqs

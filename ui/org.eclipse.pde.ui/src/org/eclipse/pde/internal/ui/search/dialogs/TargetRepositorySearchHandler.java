@@ -55,18 +55,20 @@ public class TargetRepositorySearchHandler extends AbstractHandler {
 
 		FilteredIUSelectionDialog dialog = new FilteredIUSelectionDialog(window.getShell(), query);
 		String pattern = event.getParameter("org.eclipse.pde.ui.searchTargetRepositories.term"); //$NON-NLS-1$
-		if (pattern != null)
+		if (pattern != null) {
 			dialog.setInitialPattern(pattern);
+		}
 		int status = dialog.open();
 		if (status == Window.OK) {
 			Object[] result = dialog.getResult();
 			if (result != null) {
 				Set<Object> set = new HashSet<>();
 				for (Object resultObject : result) {
-					if (resultObject instanceof IUPackage)
+					if (resultObject instanceof IUPackage) {
 						set.add(((IUPackage) resultObject).getIU());
-					else if (resultObject instanceof IInstallableUnit)
+					} else if (resultObject instanceof IInstallableUnit) {
 						set.add(resultObject);
+					}
 				}
 				IInstallableUnit[] units = set.toArray(new IInstallableUnit[set.size()]);
 				try {

@@ -46,8 +46,9 @@ public class EclipseLauncherTabGroup extends AbstractPDELaunchConfigurationTabGr
 		super.performApply(configuration);
 		try {
 			// if the configuration has the GENERATED_CONFIG flag, we need to see if we should remove the flag
-			if (!(configuration.getAttribute(IPDEUIConstants.GENERATED_CONFIG, false)))
+			if (!(configuration.getAttribute(IPDEUIConstants.GENERATED_CONFIG, false))) {
 				return;
+			}
 			ILaunchConfiguration original = configuration.getOriginal();
 			// peformApply is called when opening the launch dialog the first time.  In this case the user has not modified the configuration so we should
 			// keep the GENERATED_CONFIG flag.  To check to see if this is the case, we need to see if an attribute used to initialize the launch config
@@ -57,8 +58,9 @@ public class EclipseLauncherTabGroup extends AbstractPDELaunchConfigurationTabGr
 			if (original != null) {
 				boolean firstQuery = original.getAttribute(IPDEConstants.DOCLEARLOG, false);
 				boolean secondQuery = original.getAttribute(IPDEConstants.DOCLEARLOG, true);
-				if (firstQuery == secondQuery)
+				if (firstQuery == secondQuery) {
 					configuration.setAttribute(IPDEUIConstants.GENERATED_CONFIG, false);
+				}
 			}
 		} catch (CoreException e) {
 		}

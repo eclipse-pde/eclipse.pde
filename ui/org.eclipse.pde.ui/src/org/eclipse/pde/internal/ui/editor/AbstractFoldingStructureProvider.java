@@ -44,8 +44,9 @@ public abstract class AbstractFoldingStructureProvider implements IFoldingStruct
 
 	public void update() {
 		ProjectionAnnotationModel annotationModel = fEditor.getAdapter(ProjectionAnnotationModel.class);
-		if (annotationModel == null)
+		if (annotationModel == null) {
 			return;
+		}
 
 		Set<Position> currentRegions = new HashSet<>();
 		try {

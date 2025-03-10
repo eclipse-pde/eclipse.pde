@@ -61,8 +61,9 @@ public class SchemaJavaAttributeDetails extends SchemaAttributeDetails {
 
 	@Override
 	public void updateFields(ISchemaObject object) {
-		if (!(object instanceof SchemaAttribute))
+		if (!(object instanceof SchemaAttribute)) {
 			return;
+		}
 		super.updateFields(object);
 
 		String basedOn = getAttribute().getBasedOn();
@@ -98,50 +99,58 @@ public class SchemaJavaAttributeDetails extends SchemaAttributeDetails {
 		fClassEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			@Override
 			public void textValueChanged(FormEntry entry) {
-				if (blockListeners())
+				if (blockListeners()) {
 					return;
+				}
 				setBasedOn();
 			}
 
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
-				if (blockListeners())
+				if (blockListeners()) {
 					return;
+				}
 				String value = fClassEntry.getValue();
 				value = handleLinkActivated(value, false);
-				if (value != null)
+				if (value != null) {
 					fClassEntry.setValue(value);
+				}
 			}
 
 			@Override
 			public void browseButtonSelected(FormEntry entry) {
-				if (blockListeners())
+				if (blockListeners()) {
 					return;
+				}
 				doOpenSelectionDialog(IJavaElementSearchConstants.CONSIDER_CLASSES, fClassEntry);
 			}
 		});
 		fInterfaceEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			@Override
 			public void textValueChanged(FormEntry entry) {
-				if (blockListeners())
+				if (blockListeners()) {
 					return;
+				}
 				setBasedOn();
 			}
 
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
-				if (blockListeners())
+				if (blockListeners()) {
 					return;
+				}
 				String value = fInterfaceEntry.getValue();
 				value = handleLinkActivated(value, true);
-				if (value != null)
+				if (value != null) {
 					fInterfaceEntry.setValue(value);
+				}
 			}
 
 			@Override
 			public void browseButtonSelected(FormEntry entry) {
-				if (blockListeners())
+				if (blockListeners()) {
 					return;
+				}
 				doOpenSelectionDialog(IJavaElementSearchConstants.CONSIDER_INTERFACES, fInterfaceEntry);
 			}
 		});
@@ -153,9 +162,9 @@ public class SchemaJavaAttributeDetails extends SchemaAttributeDetails {
 			if (project != null && project.hasNature(JavaCore.NATURE_ID)) {
 				IJavaProject javaProject = JavaCore.create(project);
 				IJavaElement element = javaProject.findType(value.replace('$', '.'));
-				if (element != null)
+				if (element != null) {
 					JavaUI.openInEditor(element);
-				else {
+				} else {
 					NewClassCreationWizard wizard = new NewClassCreationWizard(project, isInter, value);
 					WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 					dialog.create();
@@ -174,12 +183,15 @@ public class SchemaJavaAttributeDetails extends SchemaAttributeDetails {
 		String classEntry = fClassEntry.getValue().replace(":", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		String interfaceEntry = fInterfaceEntry.getValue().replace(":", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		StringBuilder sb = new StringBuilder();
-		if (classEntry.length() > 0)
+		if (classEntry.length() > 0) {
 			sb.append(classEntry);
-		if (classEntry.length() > 0 || interfaceEntry.length() > 0)
+		}
+		if (classEntry.length() > 0 || interfaceEntry.length() > 0) {
 			sb.append(":"); //$NON-NLS-1$
-		if (interfaceEntry.length() > 0)
+		}
+		if (interfaceEntry.length() > 0) {
 			sb.append(interfaceEntry);
+		}
 		getAttribute().setBasedOn(sb.length() > 0 ? sb.toString() : null);
 	}
 
@@ -209,9 +221,11 @@ public class SchemaJavaAttributeDetails extends SchemaAttributeDetails {
 	@Override
 	public void dispose() {
 		super.dispose();
-		if (fClassEntryFieldAssistDisposer != null)
+		if (fClassEntryFieldAssistDisposer != null) {
 			fClassEntryFieldAssistDisposer.dispose();
-		if (fInterfaceEntryFieldAssistDisposer != null)
+		}
+		if (fInterfaceEntryFieldAssistDisposer != null) {
 			fInterfaceEntryFieldAssistDisposer.dispose();
+		}
 	}
 }

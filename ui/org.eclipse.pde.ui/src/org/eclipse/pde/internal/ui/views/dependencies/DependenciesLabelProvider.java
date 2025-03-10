@@ -69,10 +69,11 @@ public class DependenciesLabelProvider extends LabelProvider {
 		} else if (obj instanceof VersionConstraint) {
 			// ImportPackageSpecification, BundleSpecification
 			BaseDescription desc = ((VersionConstraint) obj).getSupplier();
-			if (desc instanceof BundleDescription)
+			if (desc instanceof BundleDescription) {
 				return getObjectText((BundleDescription) desc);
-			else if (desc instanceof ExportPackageDescription)
+			} else if (desc instanceof ExportPackageDescription) {
 				return getObjectText(((ExportPackageDescription) desc).getExporter());
+			}
 			// if unresolved, just show name
 			return ((VersionConstraint) obj).getName();
 		}
@@ -94,37 +95,45 @@ public class DependenciesLabelProvider extends LabelProvider {
 		String id = null;
 		if (obj instanceof IPluginImport iobj) {
 			id = iobj.getId();
-			if (fShowReexport && iobj.isReexported())
+			if (fShowReexport && iobj.isReexported()) {
 				flags = SharedLabelProvider.F_EXPORT;
+			}
 		} else if (obj instanceof String) {
 			id = (String) obj;
 		}
 		if (id != null) {
 			IPluginModelBase model = PluginRegistry.findModel(id);
 			if (model != null) {
-				if (model.getUnderlyingResource() == null)
+				if (model.getUnderlyingResource() == null) {
 					flags |= SharedLabelProvider.F_EXTERNAL;
+				}
 			}
 
-			if (model == null)
+			if (model == null) {
 				flags = SharedLabelProvider.F_ERROR;
+			}
 
-			if (model != null && model instanceof IFragmentModel)
+			if (model != null && model instanceof IFragmentModel) {
 				return fSharedProvider.get(PDEPluginImages.DESC_FRAGMENT_OBJ, flags);
+			}
 			return fSharedProvider.get(PDEPluginImages.DESC_PLUGIN_OBJ, flags);
 		}
 		if (obj instanceof IPluginModelBase) {
-			if (((IPluginModelBase) obj).getUnderlyingResource() == null)
+			if (((IPluginModelBase) obj).getUnderlyingResource() == null) {
 				flags |= SharedLabelProvider.F_EXTERNAL;
-			if (obj instanceof IFragmentModel)
+			}
+			if (obj instanceof IFragmentModel) {
 				return fSharedProvider.get(PDEPluginImages.DESC_FRAGMENT_OBJ, flags);
+			}
 			return fSharedProvider.get(PDEPluginImages.DESC_PLUGIN_OBJ, flags);
 		}
 		if (obj instanceof IPluginBase) {
-			if (((IPluginBase) obj).getPluginModel().getUnderlyingResource() == null)
+			if (((IPluginBase) obj).getPluginModel().getUnderlyingResource() == null) {
 				flags |= SharedLabelProvider.F_EXTERNAL;
-			if (obj instanceof IFragment)
+			}
+			if (obj instanceof IFragment) {
 				return fSharedProvider.get(PDEPluginImages.DESC_FRAGMENT_OBJ, flags);
+			}
 			return fSharedProvider.get(PDEPluginImages.DESC_PLUGIN_OBJ, flags);
 		}
 		if (obj instanceof BundleDescription) {
@@ -132,8 +141,9 @@ public class DependenciesLabelProvider extends LabelProvider {
 		} else if (obj instanceof BundleSpecification) {
 			id = ((VersionConstraint) obj).getName();
 			if (fShowReexport) {
-				if (((BundleSpecification) obj).isExported())
+				if (((BundleSpecification) obj).isExported()) {
 					flags |= SharedLabelProvider.F_EXPORT;
+				}
 			}
 		} else if (obj instanceof ImportPackageSpecification) {
 			BaseDescription export = ((ImportPackageSpecification) obj).getSupplier();
@@ -142,13 +152,16 @@ public class DependenciesLabelProvider extends LabelProvider {
 		if (id != null) {
 			IPluginModelBase model = PluginRegistry.findModel(id);
 			if (model != null) {
-				if (model.getUnderlyingResource() == null)
+				if (model.getUnderlyingResource() == null) {
 					flags |= SharedLabelProvider.F_EXTERNAL;
+				}
 			}
-			if (model == null)
+			if (model == null) {
 				flags = SharedLabelProvider.F_ERROR;
-			if (model != null && model instanceof IFragmentModel)
+			}
+			if (model != null && model instanceof IFragmentModel) {
 				return fSharedProvider.get(PDEPluginImages.DESC_FRAGMENT_OBJ, flags);
+			}
 			return fSharedProvider.get(PDEPluginImages.DESC_PLUGIN_OBJ, flags);
 		}
 		return fSharedProvider.getImage(obj);

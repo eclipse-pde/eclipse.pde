@@ -89,8 +89,9 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 		}
 
 		public boolean isEditable() {
-			if (fEditor == null)
+			if (fEditor == null) {
 				return false;
+			}
 			IBaseModel model = fEditor.getAggregateModel();
 			return model instanceof IEditable ? ((IEditable) model).isEditable() : false;
 		}
@@ -156,8 +157,9 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 
 		@Override
 		public void run() {
-			if (fEditor != null)
+			if (fEditor != null) {
 				PDEPlugin.getActivePage().saveEditor(fEditor, false);
+			}
 		}
 
 		@Override
@@ -172,8 +174,9 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 
 		@Override
 		public void run() {
-			if (fEditor != null)
+			if (fEditor != null) {
 				fEditor.doRevert();
+			}
 		}
 
 		@Override
@@ -210,10 +213,12 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 	}
 
 	public void contextMenuAboutToShow(IMenuManager mng, boolean addClipboard) {
-		if (fEditor != null)
+		if (fEditor != null) {
 			updateSelectableActions(fEditor.getSelection());
-		if (addClipboard)
+		}
+		if (addClipboard) {
 			addClipboardActions(mng);
+		}
 		mng.add(fSaveAction);
 	}
 
@@ -289,8 +294,9 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 			PDEPlugin.getActivePage().activate(page.getEditor());
 			return;
 		}
-		if (!(targetEditor instanceof PDEFormEditor))
+		if (!(targetEditor instanceof PDEFormEditor)) {
 			return;
+		}
 
 		fEditor = (PDEFormEditor) targetEditor;
 		fEditor.updateUndo(getGlobalAction(ActionFactory.UNDO.getId()), getGlobalAction(ActionFactory.REDO.getId()));
@@ -300,8 +306,9 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 
 	@Override
 	public void setActivePage(IEditorPart newEditor) {
-		if (fEditor == null)
+		if (fEditor == null) {
 			return;
+		}
 		IFormPage oldPage = fPage;
 		fPage = fEditor.getActivePageInstance();
 		if (fPage != null) {
@@ -336,8 +343,9 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 	}
 
 	protected ISharedImages getSharedImages() {
-		if (fSharedImages == null)
+		if (fSharedImages == null) {
 			fSharedImages = getPage().getWorkbenchWindow().getWorkbench().getSharedImages();
+		}
 		return fSharedImages;
 	}
 }

@@ -49,8 +49,9 @@ public class ProductDefinitionWizard extends Wizard {
 			fPluginId = fMainPage.getDefiningPlugin();
 			fApplication = fMainPage.getApplication();
 			String newProductName = fMainPage.getProductName();
-			if (newProductName != null)
+			if (newProductName != null) {
 				fProduct.setName(newProductName);
+			}
 			getContainer().run(false, true, new ProductDefinitionOperation(fProduct, fPluginId, fProductId, fApplication, getContainer().getShell()));
 		} catch (InvocationTargetException e) {
 			MessageDialog.openError(getContainer().getShell(), PDEUIMessages.ProductDefinitionWizard_error, e.getTargetException().getMessage());

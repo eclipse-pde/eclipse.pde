@@ -65,8 +65,9 @@ public class NewExtensionWizard extends NewWizard {
 				collectTemplates(element.getChildren(), list);
 				collectTemplates(element.getWizards().getChildren(), list);
 			} else if (child instanceof WizardElement wizard) {
-				if (wizard.isTemplate())
+				if (wizard.isTemplate()) {
 					list.getWizards().add(wizard);
+				}
 			}
 		}
 	}
@@ -74,8 +75,9 @@ public class NewExtensionWizard extends NewWizard {
 	@Override
 	public boolean performFinish() {
 		fPointPage.checkModel();
-		if (fPointPage.canFinish())
+		if (fPointPage.canFinish()) {
 			return fPointPage.finish();
+		}
 		return true;
 	}
 

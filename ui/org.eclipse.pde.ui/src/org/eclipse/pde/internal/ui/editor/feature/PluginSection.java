@@ -191,8 +191,9 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 			IPluginModelBase[] allModels = PluginRegistry.getActiveModels();
 			ArrayList<IPluginModelBase> newModels = new ArrayList<>();
 			for (IPluginModelBase model : allModels) {
-				if (canAdd(model))
+				if (canAdd(model)) {
 					newModels.add(model);
+				}
 			}
 			IPluginModelBase[] candidateModels = newModels.toArray(new IPluginModelBase[newModels.size()]);
 			PluginSelectionDialog dialog = new PluginSelectionDialog(fPluginViewer.getTable().getShell(), candidateModels, true);
@@ -228,8 +229,9 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		IFeaturePlugin[] fplugins = model.getFeature().getPlugins();
 
 		for (IFeaturePlugin featurePlugin : fplugins) {
-			if (featurePlugin.getId().equals(plugin.getId()))
+			if (featurePlugin.getId().equals(plugin.getId())) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -237,8 +239,9 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 	private void handleDelete() {
 		IStructuredSelection ssel = fPluginViewer.getStructuredSelection();
 
-		if (ssel.isEmpty())
+		if (ssel.isEmpty()) {
 			return;
+		}
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		if (!model.isEditable()) {
 			return;
@@ -362,21 +365,24 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 			ModelEntry[] added = delta.getAddedEntries();
 			ModelEntry[] removed = delta.getRemovedEntries();
 			ModelEntry[] changed = delta.getChangedEntries();
-			if (hasPluginModels(added) || hasPluginModels(removed) || hasPluginModels(changed))
+			if (hasPluginModels(added) || hasPluginModels(removed) || hasPluginModels(changed)) {
 				markStale();
+			}
 		});
 	}
 
 	private boolean hasPluginModels(ModelEntry[] entries) {
-		if (entries == null)
+		if (entries == null) {
 			return false;
+		}
 		return true;
 	}
 
 	@Override
 	public void setFocus() {
-		if (fPluginViewer != null)
+		if (fPluginViewer != null) {
 			fPluginViewer.getTable().setFocus();
+		}
 	}
 
 	@Override
@@ -407,8 +413,9 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 	@Override
 	protected boolean canPaste(Object target, Object[] objects) {
 		for (int i = 0; i < objects.length; i++) {
-			if (!(objects[i] instanceof FeaturePlugin))
+			if (!(objects[i] instanceof FeaturePlugin)) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -420,8 +427,9 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 	protected void doPaste() {
 		Clipboard clipboard = getPage().getPDEEditor().getClipboard();
 		Object[] objects = (Object[]) clipboard.getContents(ModelDataTransfer.getInstance());
-		if (objects != null && canPaste(null, objects))
+		if (objects != null && canPaste(null, objects)) {
 			doPaste(null, objects);
+		}
 	}
 
 	/**

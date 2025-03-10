@@ -58,8 +58,9 @@ public class ProductFromConfigOperation extends BaseProductCreationOperation {
 
 	@Override
 	protected void initializeProduct(IProduct product) {
-		if (fLaunchConfiguration == null)
+		if (fLaunchConfiguration == null) {
 			return;
+		}
 		try {
 			IProductModelFactory factory = product.getModel().getFactory();
 			boolean useProduct = fLaunchConfiguration.getAttribute(IPDELauncherConstants.USE_PRODUCT, false);
@@ -110,10 +111,12 @@ public class ProductFromConfigOperation extends BaseProductCreationOperation {
 			String programArgs = fLaunchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String) null);
 			if (vmargs != null || programArgs != null) {
 				IArgumentsInfo arguments = product.getLauncherArguments();
-				if (arguments == null)
+				if (arguments == null) {
 					arguments = factory.createLauncherArguments();
-				if (vmargs != null)
+				}
+				if (vmargs != null) {
 					arguments.setVMArguments(vmargs, IArgumentsInfo.L_ARGS_ALL);
+				}
 				if (programArgs != null) {
 					String[] parsedArgs = DebugPlugin.splitArguments(programArgs);
 					StringBuilder filteredArgs = new StringBuilder();
@@ -127,8 +130,9 @@ public class ProductFromConfigOperation extends BaseProductCreationOperation {
 						filteredArgs.append(parsedArgs[i] + ' ');
 					}
 					programArgs = filteredArgs.toString().trim();
-					if (programArgs.length() > 0)
+					if (programArgs.length() > 0) {
 						arguments.setProgramArguments(programArgs, IArgumentsInfo.L_ARGS_ALL);
+					}
 				}
 				product.setLauncherArguments(arguments);
 			}

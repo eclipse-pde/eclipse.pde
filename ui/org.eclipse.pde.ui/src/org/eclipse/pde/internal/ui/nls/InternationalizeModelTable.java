@@ -39,10 +39,11 @@ public class InternationalizeModelTable<T> {
 	 * selection.
 	 */
 	public void addToModelTable(T model, boolean selected) {
-		if (selected)
+		if (selected) {
 			fPreSelected.add(model);
-		else
+		} else {
 			fModels.add(model);
+		}
 	}
 
 	/**

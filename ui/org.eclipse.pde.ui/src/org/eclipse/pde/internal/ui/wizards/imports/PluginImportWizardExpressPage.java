@@ -65,8 +65,9 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 			for (int i = 0; i < projects.length; i++) {
 				if (WorkspaceModelManager.isPluginProject(projects[i]) && !WorkspaceModelManager.isBinaryProject(projects[i])) {
 					IPluginModelBase model = PluginRegistry.findModel(projects[i]);
-					if (model != null && model.getBundleDescription() != null)
+					if (model != null && model.getBundleDescription() != null) {
 						result.add(model);
+					}
 				}
 			}
 			return result.toArray();
@@ -204,8 +205,9 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 			if (item instanceof IProject project) {
 				if (WorkspaceModelManager.isPluginProject(project) && !WorkspaceModelManager.isBinaryProject(project)) {
 					IPluginModelBase model = PluginRegistry.findModel(project);
-					if (model != null)
+					if (model != null) {
 						list.add(model);
+					}
 				}
 			}
 		}
@@ -251,12 +253,14 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 	private void addExtraPrerequisites(IPluginModelBase model, ArrayList<IPluginModelBase> result) {
 		try {
 			IBuildModel buildModel = PluginRegistry.createBuildModel(model);
-			if (buildModel == null)
+			if (buildModel == null) {
 				return;
+			}
 
 			IBuildEntry entry = buildModel.getBuild().getEntry(IBuildEntry.JARS_EXTRA_CLASSPATH);
-			if (entry == null)
+			if (entry == null) {
 				return;
+			}
 
 			String[] tokens = entry.getTokens();
 			for (String token : tokens) {

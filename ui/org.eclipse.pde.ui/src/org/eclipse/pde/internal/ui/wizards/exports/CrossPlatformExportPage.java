@@ -160,8 +160,9 @@ public class CrossPlatformExportPage extends AbstractExportWizardPage {
 		Object[] objects = fPlatformPart.getSelection();
 		StringBuilder buffer = new StringBuilder();
 		for (Object object : objects) {
-			if (buffer.length() > 0)
+			if (buffer.length() > 0) {
 				buffer.append(","); //$NON-NLS-1$
+			}
 			buffer.append(object.toString());
 		}
 		settings.put(CROSS_PLATFORM, buffer.toString());
@@ -174,8 +175,9 @@ public class CrossPlatformExportPage extends AbstractExportWizardPage {
 			if (bin.exists() && bin.isDirectory()) {
 				File[] children = bin.listFiles();
 				for (File child : children) {
-					if (child.isDirectory())
+					if (child.isDirectory()) {
 						getWS(list, child);
+					}
 				}
 			}
 		}
@@ -185,8 +187,9 @@ public class CrossPlatformExportPage extends AbstractExportWizardPage {
 	private void getWS(ArrayList<Configuration> list, File file) {
 		File[] children = file.listFiles();
 		for (File child : children) {
-			if (child.isDirectory())
+			if (child.isDirectory()) {
 				getOS(list, child, file.getName());
+			}
 		}
 	}
 

@@ -56,7 +56,7 @@ public class TargetDefinitionExportWizard extends Wizard implements IExportWizar
 
 	public TargetDefinitionExportWizard(ITargetDefinition target) {
 		fTarget = target;
-		if (fTarget == null)
+		if (fTarget == null) {
 			try {
 				ITargetPlatformService service = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 				if (service != null) {
@@ -65,6 +65,7 @@ public class TargetDefinitionExportWizard extends Wizard implements IExportWizar
 			} catch (CoreException e) {
 				PDEPlugin.log(e);
 			}
+		}
 		setNeedsProgressMonitor(true);
 		setWindowTitle(PDEUIMessages.ExportActiveTargetDefinition);
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_TARGET_WIZ);

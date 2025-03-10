@@ -71,30 +71,39 @@ public class ManifestSourcePage extends XMLSourcePage {
 
 		@Override
 		public String getText(Object obj) {
-			if (obj == fLibraries)
+			if (obj == fLibraries) {
 				return PDEUIMessages.ManifestSourcePage_libraries;
-			if (obj == fImports)
+			}
+			if (obj == fImports) {
 				return PDEUIMessages.ManifestSourcePage_dependencies;
-			if (obj == fExtensionPoints)
+			}
+			if (obj == fExtensionPoints) {
 				return PDEUIMessages.ManifestSourcePage_extensionPoints;
-			if (obj == fExtensions)
+			}
+			if (obj == fExtensions) {
 				return PDEUIMessages.ManifestSourcePage_extensions;
+			}
 			String text = fProvider.getText(obj);
-			if ((text == null || text.trim().length() == 0) && obj instanceof IDocumentElementNode)
+			if ((text == null || text.trim().length() == 0) && obj instanceof IDocumentElementNode) {
 				text = ((IDocumentElementNode) obj).getXMLTagName();
+			}
 			return text;
 		}
 
 		@Override
 		public Image getImage(Object obj) {
-			if (obj == fLibraries)
+			if (obj == fLibraries) {
 				return fProvider.get(PDEPluginImages.DESC_RUNTIME_OBJ);
-			if (obj == fImports)
+			}
+			if (obj == fImports) {
 				return fProvider.get(PDEPluginImages.DESC_REQ_PLUGINS_OBJ);
-			if (obj == fExtensionPoints)
+			}
+			if (obj == fExtensionPoints) {
 				return fProvider.get(PDEPluginImages.DESC_EXT_POINTS_OBJ);
-			if (obj == fExtensions)
+			}
+			if (obj == fExtensions) {
 				return fProvider.get(PDEPluginImages.DESC_EXTENSIONS_OBJ);
+			}
 
 			Image image = fProvider.getImage(obj);
 			int flags = ((IDocumentElementNode) obj).isErrorNode() ? SharedLabelProvider.F_ERROR : 0;
@@ -110,35 +119,44 @@ public class ManifestSourcePage extends XMLSourcePage {
 
 			ArrayList<Object> result = new ArrayList<>();
 			if (parent instanceof IPluginBase pluginBase) {
-				if (pluginBase.getLibraries().length > 0)
+				if (pluginBase.getLibraries().length > 0) {
 					result.add(fLibraries);
-				if (pluginBase.getImports().length > 0)
+				}
+				if (pluginBase.getImports().length > 0) {
 					result.add(fImports);
-				if (pluginBase.getExtensionPoints().length > 0)
+				}
+				if (pluginBase.getExtensionPoints().length > 0) {
 					result.add(fExtensionPoints);
-				if (pluginBase.getExtensions().length > 0)
+				}
+				if (pluginBase.getExtensions().length > 0) {
 					result.add(fExtensions);
+				}
 				return result.toArray();
 			}
-			if (parent == fLibraries)
+			if (parent == fLibraries) {
 				return model.getPluginBase().getLibraries();
+			}
 
-			if (parent == fImports)
+			if (parent == fImports) {
 				return model.getPluginBase().getImports();
+			}
 
-			if (parent == fExtensionPoints)
+			if (parent == fExtensionPoints) {
 				return model.getPluginBase().getExtensionPoints();
+			}
 
-			if (parent == fExtensions)
+			if (parent == fExtensions) {
 				return model.getPluginBase().getExtensions();
+			}
 
 			return new Object[0];
 		}
 
 		@Override
 		public Object getParent(Object element) {
-			if (element instanceof IDocumentElementNode)
+			if (element instanceof IDocumentElementNode) {
 				return ((IDocumentElementNode) element).getParentNode();
+			}
 			return null;
 		}
 
@@ -162,14 +180,18 @@ public class ManifestSourcePage extends XMLSourcePage {
 	class OutlineComparator extends ViewerComparator {
 		@Override
 		public int category(Object element) {
-			if (element == fLibraries)
+			if (element == fLibraries) {
 				return 0;
-			if (element == fImports)
+			}
+			if (element == fImports) {
 				return 1;
-			if (element == fExtensionPoints)
+			}
+			if (element == fExtensionPoints) {
 				return 2;
-			if (element == fExtensions)
+			}
+			if (element == fExtensions) {
 				return 3;
+			}
 			return 4;
 		}
 	}
@@ -209,18 +231,23 @@ public class ManifestSourcePage extends XMLSourcePage {
 	@Override
 	public IDocumentRange getRangeElement(int offset, boolean searchChildren) {
 		IPluginBase base = ((IPluginModelBase) getInputContext().getModel()).getPluginBase(false);
-		if (base == null)
+		if (base == null) {
 			return null;
+		}
 
 		IDocumentRange node = findNode(base.getLibraries(), offset, searchChildren);
-		if (node == null)
+		if (node == null) {
 			node = findNode(base.getImports(), offset, searchChildren);
-		if (node == null)
+		}
+		if (node == null) {
 			node = findNode(base.getExtensionPoints(), offset, searchChildren);
-		if (node == null)
+		}
+		if (node == null) {
 			node = findNode(base.getExtensions(), offset, searchChildren);
-		if (node == null)
+		}
+		if (node == null) {
 			node = findNode(new IPluginObject[] {base}, offset, searchChildren);
+		}
 
 		return node;
 	}
@@ -235,8 +262,9 @@ public class ManifestSourcePage extends XMLSourcePage {
 			setSelectedObject(selectedObject);
 		}
 
-		if (selectedObject instanceof IDocumentElementNode)
+		if (selectedObject instanceof IDocumentElementNode) {
 			return (IDocumentElementNode) selectedObject;
+		}
 
 		return null;
 	}
@@ -249,8 +277,9 @@ public class ManifestSourcePage extends XMLSourcePage {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-		if (IHyperlinkDetector.class.equals(adapter))
+		if (IHyperlinkDetector.class.equals(adapter)) {
 			return (T) new ManifestHyperlinkDetector(this);
+		}
 		return super.getAdapter(adapter);
 	}
 
@@ -268,12 +297,14 @@ public class ManifestSourcePage extends XMLSourcePage {
 		Point p = text.getSelection();
 		IDocumentRange element = getRangeElement(p.x, false);
 
-		if (!(element instanceof IPluginExtensionPoint))
+		if (!(element instanceof IPluginExtensionPoint)) {
 			return;
+		}
 
 		if (isEditable()) {
-			if (fRenameAction == null)
+			if (fRenameAction == null) {
 				fRenameAction = RefactoringActionFactory.createRefactorExtPointAction(PDEUIMessages.ManifestSourcePage_renameActionText);
+			}
 			if (fRenameAction != null) {
 				fRenameAction.setSelection(element);
 				// add rename action after Outline. This is the same order as the hyperlink actions

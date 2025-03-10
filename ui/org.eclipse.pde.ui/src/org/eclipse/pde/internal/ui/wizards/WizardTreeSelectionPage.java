@@ -107,8 +107,9 @@ public abstract class WizardTreeSelectionPage extends BaseWizardSelectionPage {
 
 	protected Object getSingleSelection(IStructuredSelection selection) {
 		Object selectedObject = selection.getFirstElement();
-		if (selection.size() > 1)
+		if (selection.size() > 1) {
 			selectedObject = null; // ie.- a multi-selection
+		}
 		return selectedObject;
 	}
 
@@ -120,10 +121,11 @@ public abstract class WizardTreeSelectionPage extends BaseWizardSelectionPage {
 		WizardCollectionElement selectedCategory = (WizardCollectionElement) getSingleSelection(
 				selectionEvent.getStructuredSelection());
 
-		if (selectedCategory == null)
+		if (selectedCategory == null) {
 			wizardSelectionViewer.setInput(null);
-		else
+		} else {
 			wizardSelectionViewer.setInput(selectedCategory.getWizards());
+		}
 	}
 
 	private void handleWizardSelection(SelectionChangedEvent selectionEvent) {
@@ -146,17 +148,19 @@ public abstract class WizardTreeSelectionPage extends BaseWizardSelectionPage {
 		categoryTreeViewer.setInput(wizardCategories);
 		wizardSelectionViewer.addSelectionChangedListener(this);
 		Object[] categories = wizardCategories.getChildren();
-		if (categories.length > 0)
+		if (categories.length > 0) {
 			categoryTreeViewer.setSelection(new StructuredSelection(categories[0]));
+		}
 		categoryTreeViewer.getTree().setFocus();
 	}
 
 	@Override
 	public void selectionChanged(SelectionChangedEvent selectionEvent) {
-		if (selectionEvent.getSelectionProvider().equals(categoryTreeViewer))
+		if (selectionEvent.getSelectionProvider().equals(categoryTreeViewer)) {
 			handleCategorySelection(selectionEvent);
-		else
+		} else {
 			handleWizardSelection(selectionEvent);
+		}
 	}
 
 	@Override

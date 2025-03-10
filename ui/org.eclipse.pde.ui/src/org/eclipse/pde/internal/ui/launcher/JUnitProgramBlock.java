@@ -38,10 +38,11 @@ public class JUnitProgramBlock extends ProgramBlock {
 
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-		if (!LauncherUtils.requiresUI(config))
+		if (!LauncherUtils.requiresUI(config)) {
 			config.setAttribute(IPDELauncherConstants.APPLICATION, IPDEConstants.CORE_TEST_APPLICATION);
-		else
+		} else {
 			super.setDefaults(config);
+		}
 	}
 
 	@Override
@@ -56,10 +57,11 @@ public class JUnitProgramBlock extends ProgramBlock {
 	@Override
 	protected void initializeApplicationSection(ILaunchConfiguration config) throws CoreException {
 		String application = config.getAttribute(IPDELauncherConstants.APPLICATION, (String) null);
-		if (IPDEConstants.CORE_TEST_APPLICATION.equals(application))
+		if (IPDEConstants.CORE_TEST_APPLICATION.equals(application)) {
 			fApplicationCombo.setText(PDEUIMessages.JUnitProgramBlock_headless);
-		else
+		} else {
 			super.initializeApplicationSection(config);
+		}
 	}
 
 	@Override

@@ -99,8 +99,9 @@ public class ConvertJarsAction implements IObjectActionDelegate {
 		boolean enabled = true;
 		if (s instanceof IStructuredSelection) {
 			selection = (IStructuredSelection) s;
-			if (selection.isEmpty())
+			if (selection.isEmpty()) {
 				return;
+			}
 			Iterator<?> i = selection.iterator();
 			while (i.hasNext()) {
 				Object obj = i.next();
@@ -109,8 +110,9 @@ public class ConvertJarsAction implements IObjectActionDelegate {
 						IPackageFragmentRoot packageFragment = (IPackageFragmentRoot) obj;
 						if (packageFragment.getKind() == IPackageFragmentRoot.K_BINARY) {
 							if (PluginProject.isPluginProject(packageFragment.getJavaProject().getProject())) {
-								if (packageFragment.getRawClasspathEntry().getEntryKind() == IClasspathEntry.CPE_LIBRARY)
+								if (packageFragment.getRawClasspathEntry().getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
 									continue;
+								}
 							}
 						}
 					} catch (JavaModelException e) {

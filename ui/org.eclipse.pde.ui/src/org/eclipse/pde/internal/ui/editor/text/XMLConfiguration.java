@@ -59,20 +59,23 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 
 	@Override
 	public ITextDoubleClickStrategy getDoubleClickStrategy(ISourceViewer sourceViewer, String contentType) {
-		if (fDoubleClickStrategy == null)
+		if (fDoubleClickStrategy == null) {
 			fDoubleClickStrategy = new XMLDoubleClickStrategy();
+		}
 		return fDoubleClickStrategy;
 	}
 
 	protected XMLScanner getPDEScanner() {
-		if (fPdeScanner == null)
+		if (fPdeScanner == null) {
 			fPdeScanner = new XMLScanner(fColorManager);
+		}
 		return fPdeScanner;
 	}
 
 	protected XMLTagScanner getPDETagScanner() {
-		if (fTagScanner == null)
+		if (fTagScanner == null) {
 			fTagScanner = new XMLTagScanner(fColorManager);
+		}
 		return fTagScanner;
 	}
 
@@ -100,8 +103,9 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 
 	@Override
 	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
-		if (fAnnotationHover == null)
+		if (fAnnotationHover == null) {
 			fAnnotationHover = new AnnotationHover();
+		}
 		return fAnnotationHover;
 	}
 
@@ -111,10 +115,12 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 	 */
 	@Override
 	public void adaptToPreferenceChange(PropertyChangeEvent event) {
-		if (fTagScanner == null)
+		if (fTagScanner == null) {
 			return; //property change before the editor is fully created
-		if (affectsColorPresentation(event))
+		}
+		if (affectsColorPresentation(event)) {
 			fColorManager.handlePropertyChangeEvent(event);
+		}
 		fTagScanner.adaptToPreferenceChange(event);
 		fPdeScanner.adaptToPreferenceChange(event);
 		String property = event.getProperty();
@@ -138,8 +144,9 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 	private TextAttribute adaptToStyleChange(PropertyChangeEvent event, int styleAttribute, TextAttribute textAttribute) {
 		boolean eventValue = false;
 		Object value = event.getNewValue();
-		if (value instanceof Boolean)
+		if (value instanceof Boolean) {
 			eventValue = ((Boolean) value).booleanValue();
+		}
 
 		boolean activeValue = (textAttribute.getStyle() & styleAttribute) == styleAttribute;
 		if (activeValue != eventValue) {
@@ -181,8 +188,9 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 				ReconcilingStrategy strategy = new ReconcilingStrategy();
 				strategy.addParticipant((IReconcilingParticipant) model);
 				ISortableContentOutlinePage outline = fSourcePage.getContentOutline();
-				if (outline instanceof IReconcilingParticipant)
+				if (outline instanceof IReconcilingParticipant) {
 					strategy.addParticipant((IReconcilingParticipant) outline);
+				}
 
 				Reconciler reconciler = new Reconciler();
 				reconciler.setReconcilingStrategy(strategy, IDocument.DEFAULT_CONTENT_TYPE);

@@ -564,10 +564,11 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 				result.append(description);
 			} else {
 				String name = selected[0].getProperty(IInstallableUnit.PROP_NAME, null);
-				if (name != null)
+				if (name != null) {
 					result.append(name);
-				else
+				} else {
 					result.append(selected[0].getId());
+				}
 				result.append(" "); //$NON-NLS-1$
 				result.append(selected[0].getVersion().toString());
 			}

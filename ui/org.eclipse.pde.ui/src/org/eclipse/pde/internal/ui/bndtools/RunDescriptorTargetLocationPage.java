@@ -76,8 +76,9 @@ public class RunDescriptorTargetLocationPage extends BndTargetLocationPage {
 		selectTargetInTree(projectTree);
 
 		if (projectTree.getTree()
-			.getItems().length == 0)
+			.getItems().length == 0) {
 			logError("No run descriptors found in workspace", null); //$NON-NLS-1$
+		}
 	}
 
 	private TreeViewer createRunDescriptorSelectionArea(Composite composite) {
@@ -144,10 +145,11 @@ public class RunDescriptorTargetLocationPage extends BndTargetLocationPage {
 
 				setPageComplete(true);
 
-				if (bundles.isEmpty())
+				if (bundles.isEmpty()) {
 					logWarning("Run descriptor is empty: " + runDescriptorFile.getFullPath(), null); //$NON-NLS-1$
-				else
+				} else {
 					resetMessage();
+				}
 			} catch (Exception e) {
 				clearTarget();
 				logError(e.getMessage(), e);
@@ -163,8 +165,9 @@ public class RunDescriptorTargetLocationPage extends BndTargetLocationPage {
 	}
 
 	private boolean selectTargetInTree(TreeViewer projectTree) {
-		if (runDescriptorFile == null)
+		if (runDescriptorFile == null) {
 			return false;
+		}
 
 		for (TreeItem item : projectTree.getTree()
 			.getItems()) {

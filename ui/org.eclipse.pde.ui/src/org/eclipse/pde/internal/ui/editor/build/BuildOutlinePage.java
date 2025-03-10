@@ -31,8 +31,9 @@ public class BuildOutlinePage extends FormOutlinePage {
 			IBuildModel model = (IBuildModel) page.getModel();
 			if (model.isValid()) {
 				IBuild build = model.getBuild();
-				if (page.getId().equals(BuildPage.PAGE_ID))
+				if (page.getId().equals(BuildPage.PAGE_ID)) {
 					return build.getBuildEntries();
+				}
 			}
 		}
 		return new Object[0];
@@ -41,10 +42,12 @@ public class BuildOutlinePage extends FormOutlinePage {
 	@Override
 	protected String getParentPageId(Object item) {
 		String pageId = null;
-		if (item instanceof IBuildEntry)
+		if (item instanceof IBuildEntry) {
 			pageId = BuildPage.PAGE_ID;
-		if (pageId != null)
+		}
+		if (pageId != null) {
 			return pageId;
+		}
 		return super.getParentPageId(item);
 	}
 }

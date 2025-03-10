@@ -30,8 +30,9 @@ public abstract class ManifestElementHyperlink extends AbstractHyperlink {
 		StringBuilder sb = new StringBuilder(len);
 		for (int i = 0; i < len; i++) {
 			char c = fElement.charAt(i);
-			if (!Character.isWhitespace(c))
+			if (!Character.isWhitespace(c)) {
 				sb.append(c);
+			}
 		}
 		fElement = sb.toString();
 		open2();

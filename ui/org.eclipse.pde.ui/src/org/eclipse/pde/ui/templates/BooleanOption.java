@@ -73,8 +73,9 @@ public class BooleanOption extends TemplateOption {
 	@Override
 	public void setValue(Object value) {
 		super.setValue(value);
-		if (button != null)
+		if (button != null) {
 			button.setSelection(isSelected());
+		}
 	}
 
 	/**
@@ -111,7 +112,8 @@ public class BooleanOption extends TemplateOption {
 	@Override
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
-		if (button != null)
+		if (button != null) {
 			button.setEnabled(enabled);
+		}
 	}
 }

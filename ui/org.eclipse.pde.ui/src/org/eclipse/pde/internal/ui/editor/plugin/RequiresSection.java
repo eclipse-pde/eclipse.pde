@@ -112,8 +112,9 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	class ImportContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object parent) {
-			if (fImports == null)
+			if (fImports == null) {
 				createImportObjects();
+			}
 			return fImports.toArray();
 		}
 	}
@@ -122,10 +123,11 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		super(page, parent, Section.DESCRIPTION, labels);
 		getSection().setText(PDEUIMessages.RequiresSection_title);
 		boolean fragment = isFragment();
-		if (fragment)
+		if (fragment) {
 			getSection().setDescription(PDEUIMessages.RequiresSection_fDesc);
-		else
+		} else {
 			getSection().setDescription(PDEUIMessages.RequiresSection_desc);
+		}
 		getTablePart().setEditable(false);
 		resetImportInsertIndex();
 	}
@@ -186,8 +188,9 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		TablePart tablePart = getTablePart();
 		tablePart.setButtonEnabled(ADD_INDEX, isEditable());
 		updateUpDownButtons();
-		if (isBundle())
+		if (isBundle()) {
 			tablePart.setButtonEnabled(PROPERTIES_INDEX, selection.length == 1);
+		}
 		tablePart.setButtonEnabled(REMOVE_INDEX, isEditable() && hasSelection);
 	}
 
@@ -360,8 +363,9 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		manager.add(new Separator());
 		getPage().contextMenuAboutToShow(manager);
 
-		if (!selection.isEmpty())
+		if (!selection.isEmpty()) {
 			manager.add(fRemoveAction);
+		}
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
 		manager.add(new Separator());
 
@@ -390,8 +394,9 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 				Object obj = ssel.getFirstElement();
 				if (obj instanceof ImportObject) {
 					IPlugin plugin = ((ImportObject) obj).getPlugin();
-					if (plugin != null)
+					if (plugin != null) {
 						ManifestEditor.open(plugin, false);
+					}
 				}
 			}
 		}
@@ -404,8 +409,9 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 			IPluginBase pluginBase = model.getPluginBase();
 			IPluginImport[] imports = new IPluginImport[ssel.size()];
 			int i = 0;
-			for (Iterator<?> iter = ssel.iterator(); iter.hasNext(); i++)
+			for (Iterator<?> iter = ssel.iterator(); iter.hasNext(); i++) {
 				imports[i] = ((ImportObject) iter.next()).getImport();
+			}
 
 			try {
 				removeImports(pluginBase, imports);
@@ -417,12 +423,13 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	}
 
 	private void removeImports(IPluginBase base, IPluginImport[] imports) throws CoreException {
-		if (base instanceof BundlePluginBase)
+		if (base instanceof BundlePluginBase) {
 			((BundlePluginBase) base).remove(imports);
-		else if (base instanceof PluginBase)
+		} else if (base instanceof PluginBase) {
 			((PluginBase) base).remove(imports);
-		else if (base instanceof PluginBaseNode)
+		} else if (base instanceof PluginBaseNode) {
 			((PluginBaseNode) base).remove(imports);
+		}
 	}
 
 	private void handleAdd() {
@@ -448,36 +455,40 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	}
 
 	private IPluginImport createImport(IPluginModelFactory factory, String id) {
-		if (factory instanceof AbstractPluginModelBase)
+		if (factory instanceof AbstractPluginModelBase) {
 			return ((AbstractPluginModelBase) factory).createImport(id);
-		else if (factory instanceof BundlePluginModelBase)
+		} else if (factory instanceof BundlePluginModelBase) {
 			return ((BundlePluginModelBase) factory).createImport(id);
-		else if (factory instanceof PluginDocumentNodeFactory)
+		} else if (factory instanceof PluginDocumentNodeFactory) {
 			return ((PluginDocumentNodeFactory) factory).createImport(id);
+		}
 		return null;
 	}
 
 	private void addImports(IPluginBase base, IPluginImport[] imports) throws CoreException {
-		if (base instanceof BundlePluginBase)
+		if (base instanceof BundlePluginBase) {
 			((BundlePluginBase) base).add(imports);
-		else if (base instanceof PluginBase)
+		} else if (base instanceof PluginBase) {
 			((PluginBase) base).add(imports);
-		else if (base instanceof PluginBaseNode)
+		} else if (base instanceof PluginBaseNode) {
 			((PluginBaseNode) base).add(imports);
+		}
 	}
 
 	private void handleUp() {
 		int index = getTablePart().getTableViewer().getTable().getSelectionIndex();
-		if (index < 1)
+		if (index < 1) {
 			return;
+		}
 		swap(index, index - 1);
 	}
 
 	private void handleDown() {
 		Table table = getTablePart().getTableViewer().getTable();
 		int index = table.getSelectionIndex();
-		if (index == table.getItemCount() - 1)
+		if (index == table.getItemCount() - 1) {
 			return;
+		}
 		swap(index, index + 1);
 	}
 
@@ -505,8 +516,9 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 			}
 		}
 
-		if (!existingImports.contains("system.bundle")) //$NON-NLS-1$
+		if (!existingImports.contains("system.bundle")) { //$NON-NLS-1$
 			addSystemBundle(result);
+		}
 		return result.toArray(new IPluginModelBase[result.size()]);
 	}
 
@@ -516,8 +528,9 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 
 			// Need Install Location to load model.  Giving it org.eclipse.osgi's install location
 			IPluginModelBase osgi = PluginRegistry.findModel("system.bundle"); //$NON-NLS-1$
-			if (osgi == null)
+			if (osgi == null) {
 				return;
+			}
 			model.setInstallLocation(osgi.getInstallLocation());
 
 			// Load model from a String representing the contents of an equivalent plugin.xml file
@@ -615,11 +628,12 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 							ImportObject iobj = findImportObject(iimport);
 							if (iobj != null) {
 								if (event.getChangeType() == IModelChangedEvent.REMOVE) {
-									if (fImports == null)
+									if (fImports == null) {
 										// createImportObjects method will not include the removed import
 										createImportObjects();
-									else
+									} else {
 										fImports.remove(iobj);
+									}
 									Table table = fImportViewer.getTable();
 									index = table.getSelectionIndex();
 									fImportViewer.remove(iobj);
@@ -662,19 +676,22 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		final Control control = fImportViewer.getControl();
 		if (!control.isDisposed()) {
 			control.getDisplay().asyncExec(() -> {
-				if (!control.isDisposed())
+				if (!control.isDisposed()) {
 					fImportViewer.refresh();
+				}
 			});
 		}
 	}
 
 	private ImportObject findImportObject(IPluginImport iimport) {
-		if (fImports == null)
+		if (fImports == null) {
 			return null;
+		}
 		for (int i = 0; i < fImports.size(); i++) {
 			ImportObject iobj = fImports.get(i);
-			if (iobj.getImport().equals(iimport))
+			if (iobj.getImport().equals(iimport)) {
 				return iobj;
+			}
 		}
 		return null;
 	}
@@ -692,8 +709,9 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 
 	@Override
 	public void setFocus() {
-		if (fImportViewer != null)
+		if (fImportViewer != null) {
 			fImportViewer.getTable().setFocus();
+		}
 	}
 
 	private boolean isBundle() {

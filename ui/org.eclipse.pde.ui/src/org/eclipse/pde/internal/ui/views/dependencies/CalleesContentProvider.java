@@ -34,8 +34,9 @@ public class CalleesContentProvider extends DependenciesViewPageContentProvider 
 
 	protected Object[] findCallees(IPluginModelBase model) {
 		BundleDescription desc = model.getBundleDescription();
-		if (desc == null)
+		if (desc == null) {
 			return new Object[0];
+		}
 		fFragmentDescription = null;
 		HostSpecification spec = desc.getHost();
 		if (spec != null) {
@@ -46,15 +47,17 @@ public class CalleesContentProvider extends DependenciesViewPageContentProvider 
 				// check to see if the host is already included as a dependency.  If so, we don't need to include the host manually.
 				for (Object fragmentDependency : fragmentDependencies) {
 					BundleDescription dependency = null;
-					if (fragmentDependency instanceof BundleSpecification)
+					if (fragmentDependency instanceof BundleSpecification) {
 						dependency = ((BundleSpecification) fragmentDependency).getBundle();
-					else if (fragmentDependency instanceof ImportPackageSpecification) {
+					} else if (fragmentDependency instanceof ImportPackageSpecification) {
 						ExportPackageDescription epd = (ExportPackageDescription) ((ImportPackageSpecification) fragmentDependency).getSupplier();
-						if (epd != null)
+						if (epd != null) {
 							dependency = epd.getSupplier();
+						}
 					}
-					if (dependency != null && dependency.equals(hostDesc))
+					if (dependency != null && dependency.equals(hostDesc)) {
 						return fragmentDependencies;
+					}
 				}
 
 				// host not included as dependency, include it manually.
@@ -69,8 +72,9 @@ public class CalleesContentProvider extends DependenciesViewPageContentProvider 
 	}
 
 	protected Object[] findCallees(BundleDescription desc) {
-		if (desc == null)
+		if (desc == null) {
 			return new Object[0];
+		}
 		return getDependencies(desc);
 	}
 
@@ -82,18 +86,20 @@ public class CalleesContentProvider extends DependenciesViewPageContentProvider 
 		BundleSpecification[] requiredBundles = desc.getRequiredBundles();
 		for (BundleSpecification requiredBundle : requiredBundles) {
 			BaseDescription bd = requiredBundle.getSupplier();
-			if (bd != null)
+			if (bd != null) {
 				dependencies.put(bd, requiredBundle);
-			else
+			} else {
 				dependencies.put(requiredBundle, requiredBundle);
+			}
 		}
 		ImportPackageSpecification[] importedPkgs = desc.getImportPackages();
 		for (int i = 0; i < importedPkgs.length; i++) {
 			BaseDescription bd = importedPkgs[i].getSupplier();
 			if (bd != null && bd instanceof ExportPackageDescription) {
 				BundleDescription exporter = ((ExportPackageDescription) bd).getExporter();
-				if (exporter == desc)
+				if (exporter == desc) {
 					continue;
+				}
 				if (exporter != null) {
 					Object obj = dependencies.get(exporter);
 					if (obj == null) {
@@ -110,8 +116,9 @@ public class CalleesContentProvider extends DependenciesViewPageContentProvider 
 		// include fragments which are "linked" to this bundle
 		BundleDescription frags[] = desc.getFragments();
 		for (int i = 0; i < frags.length; i++) {
-			if (!frags[i].equals(fFragmentDescription))
+			if (!frags[i].equals(fFragmentDescription)) {
 				dependencies.put(frags[i], frags[i]);
+			}
 		}
 		return dependencies.values().toArray();
 	}

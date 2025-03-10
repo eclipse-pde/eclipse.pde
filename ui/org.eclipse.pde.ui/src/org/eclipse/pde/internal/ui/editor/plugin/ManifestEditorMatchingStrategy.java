@@ -34,14 +34,16 @@ public class ManifestEditorMatchingStrategy implements IEditorMatchingStrategy {
 		if (input instanceof IFileEditorInput && inputFile != null) {
 			try {
 				// a positive match if there is an editor already open on the same file
-				if (input.equals(editorRef.getEditorInput()))
+				if (input.equals(editorRef.getEditorInput())) {
 					return true;
+				}
 
 				// a quick no-match if the project of the file being opened is not the
 				// same as the project of the file associated with the open editor
 				IFile editorFile = ResourceUtil.getFile(editorRef.getEditorInput());
-				if (editorFile == null || !inputFile.getProject().equals(editorFile.getProject()))
+				if (editorFile == null || !inputFile.getProject().equals(editorFile.getProject())) {
 					return false;
+				}
 
 				// If a MANIFEST.MF file is being opened, make sure we return a positive match
 				// only if it is colocated with the plugin.xml/fragment.xml file already open

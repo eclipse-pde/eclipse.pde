@@ -77,8 +77,9 @@ public class ExtensionsPage extends PDEFormPage {
 
 		@Override
 		public Object getPageKey(Object object) {
-			if (object instanceof IPluginExtension)
+			if (object instanceof IPluginExtension) {
 				return IPluginExtension.class;
+			}
 			if (object instanceof IPluginElement) {
 				ISchemaElement element = ExtensionsSection.getSchemaElement((IPluginElement) object);
 				// Extension point schema exists
@@ -113,10 +114,12 @@ public class ExtensionsPage extends PDEFormPage {
 
 		@Override
 		public IDetailsPage getPage(Object object) {
-			if (object instanceof ISchemaElement)
+			if (object instanceof ISchemaElement) {
 				return new ExtensionElementDetails(fSection, (ISchemaElement) object);
-			if (object instanceof String)
+			}
+			if (object instanceof String) {
 				return new ExtensionElementDetails(fSection, null);
+			}
 			return null;
 		}
 	}
@@ -149,20 +152,24 @@ public class ExtensionsPage extends PDEFormPage {
 		IFormPage page = getPDEEditor().findPage(PluginInputContext.CONTEXT_ID);
 		if (page instanceof ManifestSourcePage) {
 			ISourceViewer viewer = ((ManifestSourcePage) page).getViewer();
-			if (viewer == null)
+			if (viewer == null) {
 				return;
+			}
 			StyledText text = viewer.getTextWidget();
-			if (text == null)
+			if (text == null) {
 				return;
+			}
 			int offset = text.getCaretOffset();
-			if (offset < 0)
+			if (offset < 0) {
 				return;
+			}
 
 			IDocumentRange range = ((ManifestSourcePage) page).getRangeElement(offset, true);
-			if (range instanceof IDocumentAttributeNode)
+			if (range instanceof IDocumentAttributeNode) {
 				range = ((IDocumentAttributeNode) range).getEnclosingElement();
-			else if (range instanceof IDocumentTextNode)
+			} else if (range instanceof IDocumentTextNode) {
 				range = ((IDocumentTextNode) range).getEnclosingElement();
+			}
 			if ((range instanceof IPluginExtension) || (range instanceof IPluginElement)) {
 				fSection.selectExtensionElement(new StructuredSelection(range));
 			}

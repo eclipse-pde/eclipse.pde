@@ -47,8 +47,9 @@ public abstract class TreeSection extends StructuredViewerSection {
 		@Override
 		public void buttonSelected(Button button, int index) {
 			TreeSection.this.buttonSelected(index);
-			if (fHandleDefaultButton)
+			if (fHandleDefaultButton) {
 				button.getShell().setDefaultButton(null);
+			}
 		}
 
 		@Override

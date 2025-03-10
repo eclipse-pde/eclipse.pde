@@ -85,12 +85,13 @@ public class PluginDetailsSection extends PDESection implements IPartSelectionLi
 		fVersionText.setFormEntryListener(new FormEntryAdapter(this) {
 			@Override
 			public void textValueChanged(FormEntry text) {
-				if (fInput != null)
+				if (fInput != null) {
 					try {
 						fInput.setVersion(text.getValue());
 					} catch (CoreException e) {
 						PDEPlugin.logException(e);
 					}
+				}
 			}
 		});
 		limitTextWidth(fVersionText);
@@ -102,16 +103,18 @@ public class PluginDetailsSection extends PDESection implements IPartSelectionLi
 	@Override
 	public void dispose() {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
-		if (model != null)
+		if (model != null) {
 			model.removeModelChangedListener(this);
+		}
 		super.dispose();
 	}
 
 	@Override
 	public void initialize(IManagedForm form) {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
-		if (model != null)
+		if (model != null) {
 			model.addModelChangedListener(this);
+		}
 		super.initialize(form);
 	}
 

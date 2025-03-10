@@ -137,8 +137,9 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 
 	@Override
 	protected void createMainLabel(Composite parent, int span, FormToolkit toolkit) {
-		if (tableName == null)
+		if (tableName == null) {
 			return;
+		}
 		Label label = new Label(parent, SWT.NULL);
 		label.setText(tableName);
 		GridData gd = new GridData();

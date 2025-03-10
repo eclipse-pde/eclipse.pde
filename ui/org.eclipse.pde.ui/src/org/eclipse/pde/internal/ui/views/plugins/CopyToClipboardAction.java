@@ -50,25 +50,29 @@ public class CopyToClipboardAction extends Action {
 	}
 
 	private boolean canCopy(IStructuredSelection selection) {
-		if (selection.isEmpty())
+		if (selection.isEmpty()) {
 			return false;
+		}
 		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 			Object obj = iter.next();
-			if (!(obj instanceof FileAdapter))
+			if (!(obj instanceof FileAdapter)) {
 				return false;
+			}
 		}
 		return true;
 	}
 
 	@Override
 	public void run() {
-		if (selection.isEmpty())
+		if (selection.isEmpty()) {
 			return;
+		}
 		ArrayList<Object> files = new ArrayList<>();
 		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 			Object obj = iter.next();
-			if (obj instanceof FileAdapter)
+			if (obj instanceof FileAdapter) {
 				files.add(obj);
+			}
 		}
 		doCopy(files);
 	}
@@ -82,8 +86,9 @@ public class CopyToClipboardAction extends Action {
 			FileAdapter adapter = (FileAdapter) files.get(i);
 			File file = adapter.getFile();
 			fileNames[i] = file.getAbsolutePath();
-			if (i > 0)
+			if (i > 0) {
 				buf.append("\n"); //$NON-NLS-1$
+			}
 			buf.append(file.getName());
 		}
 

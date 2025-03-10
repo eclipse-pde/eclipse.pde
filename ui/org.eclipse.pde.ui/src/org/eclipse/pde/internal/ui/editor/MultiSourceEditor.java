@@ -22,12 +22,14 @@ import org.eclipse.ui.forms.editor.IFormPage;
 public abstract class MultiSourceEditor extends PDEFormEditor {
 	protected void addSourcePage(String contextId) {
 		InputContext context = fInputContextManager.findContext(contextId);
-		if (context == null)
+		if (context == null) {
 			return;
+		}
 		IEditorPart sourcePage;
 		// Don't duplicate
-		if (findPage(contextId) != null)
+		if (findPage(contextId) != null) {
 			return;
+		}
 		sourcePage = createSourcePage(this, contextId, context.getInput().getName(), context.getId());
 		if (sourcePage instanceof PDESourcePage pdeSourcePage) {
 			pdeSourcePage.setInputContext(context);
@@ -41,14 +43,16 @@ public abstract class MultiSourceEditor extends PDEFormEditor {
 
 	protected void removePage(String pageId) {
 		IFormPage page = findPage(pageId);
-		if (page == null)
+		if (page == null) {
 			return;
+		}
 		if (page.isDirty()) {
 			// need to ask the user about this
 		} else {
 			removePage(page.getIndex());
-			if (!page.isEditor())
+			if (!page.isEditor()) {
 				page.dispose();
+			}
 		}
 	}
 

@@ -41,11 +41,12 @@ public class ReplaceBuildEntryResolution extends BuildEntryMarkerResolution {
 		}
 		try {
 			BuildEntry buildEntry = (BuildEntry) build.getEntry(fEntry);
-			if (buildEntry == null)
+			if (buildEntry == null) {
 				return;
-			if (fToken == null)
+			}
+			if (fToken == null) {
 				build.remove(buildEntry);
-			else {
+			} else {
 				String[] tokens = buildEntry.getTokens();
 				for (String token : tokens) {
 					buildEntry.removeToken(token);

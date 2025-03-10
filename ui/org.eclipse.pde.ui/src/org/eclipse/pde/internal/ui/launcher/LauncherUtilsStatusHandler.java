@@ -136,8 +136,9 @@ public class LauncherUtilsStatusHandler implements IStatusHandler {
 				String ts = Long.toString(System.currentTimeMillis());
 
 				Iterator<IProject> it = projects.iterator();
-				while (it.hasNext())
+				while (it.hasNext()) {
 					table.put(it.next().getName(), ts);
+				}
 			} catch (OperationCanceledException | CoreException e2) {
 			}
 		});

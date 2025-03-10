@@ -32,11 +32,13 @@ public class RefactoringPluginInfo extends RefactoringInfo {
 	@Override
 	public String getCurrentValue() {
 		IPluginModelBase base = getBase();
-		if (base == null)
+		if (base == null) {
 			return null;
+		}
 		BundleDescription desc = base.getBundleDescription();
-		if (desc != null)
+		if (desc != null) {
 			return desc.getSymbolicName();
+		}
 		IPluginBase pb = base.getPluginBase();
 		return pb.getId();
 	}

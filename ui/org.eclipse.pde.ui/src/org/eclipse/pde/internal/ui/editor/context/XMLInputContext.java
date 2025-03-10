@@ -57,12 +57,14 @@ public abstract class XMLInputContext extends UTF8InputContext {
 			for (Object object : objects) {
 				switch (event.getChangeType()) {
 					case IModelChangedEvent.REMOVE :
-						if (object instanceof IDocumentElementNode)
+						if (object instanceof IDocumentElementNode) {
 							removeNode((IDocumentElementNode) object, ops);
+						}
 						break;
 					case IModelChangedEvent.INSERT :
-						if (object instanceof IDocumentElementNode)
+						if (object instanceof IDocumentElementNode) {
 							insertNode((IDocumentElementNode) object, ops);
+						}
 						break;
 					case IModelChangedEvent.CHANGE :
 						if (object instanceof IDocumentElementNode node) {
@@ -112,8 +114,9 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		node = getHighestNodeToBeWritten(node);
 		if (node.getParentNode() == null) {
 			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=163161
-			if (node.isRoot())
+			if (node.isRoot()) {
 				op = new InsertEdit(0, node.write(true));
+			}
 		} else {
 			if (node.getOffset() > -1) {
 				// this is an element that was of the form <element/>
@@ -130,8 +133,9 @@ public abstract class XMLInputContext extends UTF8InputContext {
 			}
 		}
 		TextEdit old = fOperationTable.get(node);
-		if (old != null)
+		if (old != null) {
 			ops.remove(old);
+		}
 		if (op != null) {
 			ops.add(op);
 			fOperationTable.put(node, op);
@@ -141,8 +145,9 @@ public abstract class XMLInputContext extends UTF8InputContext {
 	private InsertEdit insertAfterSibling(IDocumentElementNode node) {
 		IDocumentElementNode sibling = node.getPreviousSibling();
 		for (;;) {
-			if (sibling == null)
+			if (sibling == null) {
 				break;
+			}
 			if (sibling.getOffset() > -1) {
 				node.setLineIndent(sibling.getLineIndent());
 				String sep = TextUtilities.getDefaultLineDelimiter(getDocumentProvider().getDocument(getInput()));
@@ -235,12 +240,13 @@ public abstract class XMLInputContext extends UTF8InputContext {
 				op = getAttributeDeleteEditOperation(attr.getNameOffset(), length);
 			} else {
 				int oldLength;
-				if (oldOp instanceof ReplaceEdit)
+				if (oldOp instanceof ReplaceEdit) {
 					oldLength = oldOp.getLength();
-				else if (oldOp instanceof DeleteEdit)
+				} else if (oldOp instanceof DeleteEdit) {
 					oldLength = oldOp.getOffset() + oldOp.getLength() - offset - 1;
-				else
+				} else {
 					oldLength = getWritableAttributeNodeValue(((String) event.getOldValue())).length();
+				}
 				op = new ReplaceEdit(offset, oldLength, getWritableAttributeNodeValue(event.getNewValue().toString()));
 			}
 		}
@@ -259,8 +265,9 @@ public abstract class XMLInputContext extends UTF8InputContext {
 				return;
 			}
 		}
-		if (oldOp != null)
+		if (oldOp != null) {
 			ops.remove(oldOp);
+		}
 		ops.add(op);
 		fOperationTable.put(changedObject, op);
 	}
@@ -288,8 +295,9 @@ public abstract class XMLInputContext extends UTF8InputContext {
 				changedObject = parent;
 				String sep = TextUtilities.getDefaultLineDelimiter(getDocumentProvider().getDocument(getInput()));
 				StringBuilder buffer = new StringBuilder(sep);
-				for (int i = 0; i < parent.getLineIndent(); i++)
+				for (int i = 0; i < parent.getLineIndent(); i++) {
 					buffer.append(" "); //$NON-NLS-1$
+				}
 				buffer.append("   " + getWritableTextNodeString(textNode)); //$NON-NLS-1$
 				int offset = parent.getOffset();
 				int length = getNextPosition(doc, offset, '>');
@@ -300,8 +308,9 @@ public abstract class XMLInputContext extends UTF8InputContext {
 			}
 		}
 		TextEdit oldOp = fOperationTable.get(changedObject);
-		if (oldOp != null)
+		if (oldOp != null) {
 			ops.remove(oldOp);
+		}
 		ops.add(op);
 		fOperationTable.put(changedObject, op);
 	}
@@ -318,8 +327,9 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		int i = 0;
 		try {
 			for (i = 0; i + offset < doc.getLength(); i++) {
-				if (ch == doc.getChar(offset + i))
+				if (ch == doc.getChar(offset + i)) {
 					break;
+				}
 			}
 		} catch (BadLocationException e) {
 		}
@@ -375,9 +385,11 @@ public abstract class XMLInputContext extends UTF8InputContext {
 			// hunt down 1st whitespace/start of line with startOffset:
 			int startOffset;
 			// loop backwards to the beginning of the line, stop if we find non-whitespace
-			for (startOffset = offset - 1; startOffset >= startLineOffset; startOffset -= 1)
-				if (!Character.isWhitespace(doc.getChar(startOffset)))
+			for (startOffset = offset - 1; startOffset >= startLineOffset; startOffset -= 1) {
+				if (!Character.isWhitespace(doc.getChar(startOffset))) {
 					break;
+				}
+			}
 
 			// move forward one (loop stopped after reaching too far)
 			startOffset += 1;
@@ -403,8 +415,9 @@ public abstract class XMLInputContext extends UTF8InputContext {
 			}
 
 			// if we reached start of line, remove newline
-			if (startOffset == startLineOffset)
+			if (startOffset == startLineOffset) {
 				startOffset -= doc.getLineDelimiter(startLine - 1).length();
+			}
 
 			// add difference of new offset
 			length = extraLength + (offset - startOffset);
@@ -440,8 +453,9 @@ public abstract class XMLInputContext extends UTF8InputContext {
 
 	private IDocumentElementNode getHighestNodeToBeWritten(IDocumentElementNode node) {
 		IDocumentElementNode parent = node.getParentNode();
-		if (parent == null)
+		if (parent == null) {
 			return node;
+		}
 		if (parent.getOffset() > -1) {
 			IDocument doc = getDocumentProvider().getDocument(getInput());
 			try {
@@ -486,14 +500,16 @@ public abstract class XMLInputContext extends UTF8InputContext {
 					IDocumentAttributeNode[] attrs = node.getNodeAttributes();
 					for (IDocumentAttributeNode attr : attrs) {
 						Object op = fOperationTable.remove(attr);
-						if (op != null)
+						if (op != null) {
 							fEditOperations.remove(op);
+						}
 					}
 					IDocumentTextNode textNode = node.getTextNode();
 					if (textNode != null) {
 						Object op = fOperationTable.remove(textNode);
-						if (op != null)
+						if (op != null) {
 							fEditOperations.remove(op);
+						}
 					}
 				}
 			}

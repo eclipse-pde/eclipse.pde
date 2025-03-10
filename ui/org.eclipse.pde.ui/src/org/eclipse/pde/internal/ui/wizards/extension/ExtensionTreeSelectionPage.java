@@ -54,8 +54,9 @@ public class ExtensionTreeSelectionPage extends WizardTreeSelectionPage {
 			protected IExtensionWizard createWizard(WizardElement element) throws CoreException {
 				if (element.isTemplate()) {
 					IConfigurationElement template = element.getTemplateElement();
-					if (template == null)
+					if (template == null) {
 						return null;
+					}
 					ITemplateSection section = (ITemplateSection) template.createExecutableExtension("class"); //$NON-NLS-1$
 					return new NewExtensionTemplateWizard(section);
 				}

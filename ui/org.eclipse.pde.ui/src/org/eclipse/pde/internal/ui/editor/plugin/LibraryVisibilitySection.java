@@ -114,8 +114,9 @@ public class LibraryVisibilitySection extends TableSection implements IPartSelec
 		fFullExportButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fFullExportButton.addSelectionListener(widgetSelectedAdapter(e -> {
 			try {
-				if (fCurrentLibrary != null)
+				if (fCurrentLibrary != null) {
 					fCurrentLibrary.setExported(fFullExportButton.getSelection());
+				}
 				getTablePart().setButtonEnabled(0, !fFullExportButton.getSelection());
 				getTablePart().setButtonEnabled(1, false);
 			} catch (CoreException e1) {
@@ -186,10 +187,11 @@ public class LibraryVisibilitySection extends TableSection implements IPartSelec
 
 	@Override
 	protected void buttonSelected(int index) {
-		if (index == ADD_INDEX)
+		if (index == ADD_INDEX) {
 			handleAdd();
-		else if (index == REMOVE_INDEX)
+		} else if (index == REMOVE_INDEX) {
 			handleRemove();
+		}
 	}
 
 	@Override
@@ -209,8 +211,9 @@ public class LibraryVisibilitySection extends TableSection implements IPartSelec
 	@Override
 	public void dispose() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-		if (model != null)
+		if (model != null) {
 			model.removeModelChangedListener(this);
+		}
 		super.dispose();
 	}
 
@@ -268,8 +271,9 @@ public class LibraryVisibilitySection extends TableSection implements IPartSelec
 	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			if (fCurrentLibrary != null)
+			if (fCurrentLibrary != null) {
 				update(null);
+			}
 			markStale();
 			return;
 		}
@@ -284,13 +288,15 @@ public class LibraryVisibilitySection extends TableSection implements IPartSelec
 
 	@Override
 	public void selectionChanged(IFormPart source, ISelection selection) {
-		if (selection == null || selection.isEmpty())
+		if (selection == null || selection.isEmpty()) {
 			update(null);
+		}
 		IStructuredSelection ssel = (IStructuredSelection) selection;
 		boolean enable = ssel.size() == 1;
 		setEnabled(enable);
-		if (enable && ssel.getFirstElement() instanceof IPluginLibrary)
+		if (enable && ssel.getFirstElement() instanceof IPluginLibrary) {
 			update((IPluginLibrary) ssel.getFirstElement());
+		}
 	}
 
 	private void setEnabled(boolean b) {

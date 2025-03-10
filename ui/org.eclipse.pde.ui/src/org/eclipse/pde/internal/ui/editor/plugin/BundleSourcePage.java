@@ -470,18 +470,22 @@ public class BundleSourcePage extends KeyValueSourcePage {
 				char[] headerChar = headerValue.toCharArray();
 				headLoop: for (; i <= last; i++) {
 					// check 1st, middle and last chars to speed things up
-					if (headerChar[i] != sChar[0] && headerChar[i + sChar.length / 2] != sChar[sChar.length / 2] && headerChar[i + sChar.length - 1] != sChar[sChar.length - 1])
+					if (headerChar[i] != sChar[0] && headerChar[i + sChar.length / 2] != sChar[sChar.length / 2] && headerChar[i + sChar.length - 1] != sChar[sChar.length - 1]) {
 						continue headLoop;
+					}
 
-					for (int j = 1; j < sChar.length - 1; j++)
-						if (headerChar[i + j] != sChar[j])
+					for (int j = 1; j < sChar.length - 1; j++) {
+						if (headerChar[i + j] != sChar[j]) {
 							continue headLoop;
+						}
+					}
 
 					// found match
 					char c = headerChar[i - 1];
-					if (!Character.isWhitespace(c) && c != ',')
+					if (!Character.isWhitespace(c) && c != ',') {
 						// search string is contained by another
 						continue headLoop;
+					}
 
 					int index = i + sChar.length;
 					if (index >= headerChar.length) {
@@ -490,9 +494,10 @@ public class BundleSourcePage extends KeyValueSourcePage {
 						continue;
 					}
 					c = headerChar[index];
-					if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '.')
+					if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '.') {
 						// current match is longer than search
 						continue headLoop;
+					}
 
 					break;
 				}
@@ -631,8 +636,9 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		Point p = text.getSelection();
 		IDocumentRange element = getRangeElement(p.x, false);
 		// only activate rename when user is highlighting Bundle-SymbolicName header
-		if (!(element instanceof BundleSymbolicNameHeader) || !(((BundleSymbolicNameHeader) element).getModel().isEditable()))
+		if (!(element instanceof BundleSymbolicNameHeader) || !(((BundleSymbolicNameHeader) element).getModel().isEditable())) {
 			return;
+		}
 		if (fRenameAction == null) {
 			IBaseModel base = ((PDEFormEditor) getEditor()).getAggregateModel();
 			if (base instanceof IPluginModelBase) {
@@ -640,9 +646,10 @@ public class BundleSourcePage extends KeyValueSourcePage {
 				fRenameAction.setSelection(base);
 			}
 		}
-		if (fRenameAction != null)
+		if (fRenameAction != null) {
 			// add rename action after Outline. This is the same order as the hyperlink actions
 			menu.insertAfter(PDEActionConstants.COMMAND_ID_QUICK_OUTLINE, fRenameAction);
+		}
 	}
 
 	@Override

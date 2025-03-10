@@ -28,8 +28,9 @@ public class OrFilter implements IFilter {
 	@Override
 	public boolean accept(final ImageElement element) {
 		for (IFilter filter : mFilter) {
-			if (filter.accept(element))
+			if (filter.accept(element)) {
 				return true;
+			}
 		}
 
 		return false;

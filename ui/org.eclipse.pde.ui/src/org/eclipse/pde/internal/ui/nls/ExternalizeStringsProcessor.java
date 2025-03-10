@@ -34,8 +34,9 @@ public class ExternalizeStringsProcessor extends RefactoringProcessor {
 	@Override
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm, CheckConditionsContext context) throws CoreException, OperationCanceledException {
 		RefactoringStatus status = new RefactoringStatus();
-		if (fChangeFiles == null)
+		if (fChangeFiles == null) {
 			status.addFatalError(PDEUIMessages.ExternalizeStringsProcessor_errorMessage);
+		}
 		return status;
 	}
 

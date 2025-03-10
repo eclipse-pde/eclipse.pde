@@ -110,8 +110,9 @@ public abstract class DependenciesViewPage extends Page {
 			BundleDescription desc = null;
 			if (element instanceof BundleSpecification) {
 				BaseDescription supplier = ((BundleSpecification) element).getSupplier();
-				if (supplier instanceof BundleDescription)
+				if (supplier instanceof BundleDescription) {
 					desc = (BundleDescription) supplier;
+				}
 			} else if (element instanceof BundleDescription) {
 				desc = (BundleDescription) element;
 			} else if (element instanceof ImportPackageSpecification) {
@@ -168,8 +169,9 @@ public abstract class DependenciesViewPage extends Page {
 		}
 
 		fFocusOnSelectionAction.update(getSelectedObject());
-		if (fFocusOnSelectionAction.isEnabled())
+		if (fFocusOnSelectionAction.isEnabled()) {
 			manager.add(fFocusOnSelectionAction);
+		}
 		manager.add(fFocusOnAction);
 		Object selectionElement = selection.getFirstElement();
 
@@ -185,12 +187,14 @@ public abstract class DependenciesViewPage extends Page {
 			// don't include find dependency extent for unresolved imports or bundles
 			if (id != null && PluginRegistry.findModel(id) != null) {
 				Object input = fViewer.getInput();
-				if (input instanceof IPluginBase)
+				if (input instanceof IPluginBase) {
 					input = ((IPluginBase) input).getModel();
+				}
 				if (input instanceof IPluginModelBase base) {
 					IResource res = base.getUnderlyingResource();
-					if (res != null)
+					if (res != null) {
 						manager.add(new DependencyExtentAction(res.getProject(), id));
+					}
 				}
 			}
 		}
@@ -223,8 +227,9 @@ public abstract class DependenciesViewPage extends Page {
 
 	private Object getSelectedObject() {
 		IStructuredSelection selection = getSelection();
-		if (selection.isEmpty() || selection.size() != 1)
+		if (selection.isEmpty() || selection.size() != 1) {
 			return null;
+		}
 		return selection.getFirstElement();
 	}
 
@@ -233,8 +238,9 @@ public abstract class DependenciesViewPage extends Page {
 	}
 
 	protected void setSelection(IStructuredSelection selection) {
-		if (selection != null && !selection.isEmpty())
+		if (selection != null && !selection.isEmpty()) {
 			fViewer.setSelection(selection, true);
+		}
 	}
 
 	/**
@@ -259,8 +265,9 @@ public abstract class DependenciesViewPage extends Page {
 			BaseDescription export = ((ImportPackageSpecification) obj).getSupplier();
 			desc = ((ExportPackageDescription) export).getExporter();
 		}
-		if (desc != null)
+		if (desc != null) {
 			ManifestEditor.openPluginEditor(desc);
+		}
 	}
 
 	private void handleFocusOn() {
@@ -290,14 +297,16 @@ public abstract class DependenciesViewPage extends Page {
 		BundleDescription desc = null;
 		if (newFocus instanceof BundleSpecification) {
 			desc = (BundleDescription) ((BundleSpecification) newFocus).getSupplier();
-			if (desc == null)
+			if (desc == null) {
 				fView.openTo(null);
+			}
 		}
 		if (newFocus instanceof BundleDescription) {
 			desc = (BundleDescription) newFocus;
 		}
-		if (desc != null)
+		if (desc != null) {
 			fView.openTo(PluginRegistry.findModel(desc.getSymbolicName()));
+		}
 	}
 
 	private void hookContextMenu() {
@@ -340,10 +349,11 @@ public abstract class DependenciesViewPage extends Page {
 			@Override
 			public void run() {
 				boolean checked = fHideFragmentFilterAction.isChecked();
-				if (checked)
+				if (checked) {
 					fViewer.removeFilter(fHideFragmentFilter);
-				else
+				} else {
 					fViewer.addFilter(fHideFragmentFilter);
+				}
 				getSettings().put(HIDE_FRAGMENTS, !checked);
 			}
 		};
@@ -384,8 +394,9 @@ public abstract class DependenciesViewPage extends Page {
 	}
 
 	public void setInput(Object object) {
-		if (object != fViewer.getInput())
+		if (object != fViewer.getInput()) {
 			fViewer.setInput(object);
+		}
 	}
 
 	// returns true if Rename Action is valid.
@@ -400,8 +411,9 @@ public abstract class DependenciesViewPage extends Page {
 				base = (IPluginModelBase) ((IPluginObject) selectionElement).getModel();
 			} else if (selectionElement instanceof BundleSpecification) {
 				Resource desc = (BundleDescription) ((BundleSpecification) selectionElement).getSupplier();
-				if (desc != null)
+				if (desc != null) {
 					base = PluginRegistry.findModel(desc);
+				}
 			} else if (selectionElement instanceof Resource) {
 				base = PluginRegistry.findModel((Resource) selectionElement);
 			}
@@ -437,15 +449,18 @@ public abstract class DependenciesViewPage extends Page {
 					break;
 				}
 			}
-			if (showFragments != containsFragments)
-				if (showFragments)
+			if (showFragments != containsFragments) {
+				if (showFragments) {
 					fViewer.removeFilter(fHideFragmentFilter);
-				else
+				} else {
 					fViewer.addFilter(fHideFragmentFilter);
+				}
+			}
 
 			// update viewer's optional filtering
-			if (fHideOptionalFilterAction.isChecked() != isShowingOptional())
+			if (fHideOptionalFilterAction.isChecked() != isShowingOptional()) {
 				handleShowOptional(fHideOptionalFilterAction.isChecked(), false);
+			}
 		}
 
 		if (fContentProvider instanceof DependenciesViewPageContentProvider) {
@@ -453,10 +468,11 @@ public abstract class DependenciesViewPage extends Page {
 				// when a page is activated, we need to have the content provider listen for changes and refresh the view to get current data
 				((DependenciesViewPageContentProvider) fContentProvider).attachModelListener();
 				fViewer.refresh();
-			} else
+			} else {
 				// when page is deactivated, we need to remove model listener from content manager.  Otherwise model changes will be sent to all
 				// DependenciesViewPageContentProvider (including inactive ones).  This will cause problems with the content provider's logic!!
 				((DependenciesViewPageContentProvider) fContentProvider).removeModelListener();
+			}
 		}
 	}
 

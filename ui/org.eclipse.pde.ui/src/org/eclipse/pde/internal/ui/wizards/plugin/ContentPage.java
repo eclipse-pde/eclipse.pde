@@ -51,8 +51,9 @@ public abstract class ContentPage extends WizardPage {
 	protected int fChangedGroups = 0;
 
 	protected ModifyListener propertiesListener = e -> {
-		if (fInitialized)
+		if (fInitialized) {
 			fChangedGroups |= PROPERTIES_GROUP;
+		}
 		validatePage();
 	};
 
@@ -131,8 +132,9 @@ public abstract class ContentPage extends WizardPage {
 
 	private String validateId() {
 		String id = fIdText.getText().trim();
-		if (id.length() == 0)
+		if (id.length() == 0) {
 			return PDEUIMessages.ContentPage_noid;
+		}
 
 		if (!IdUtil.isValidCompositeID3_0(id)) {
 			return PDEUIMessages.ContentPage_invalidId;
@@ -165,10 +167,11 @@ public abstract class ContentPage extends WizardPage {
 				}
 				fChangedGroups = oldfChanged;
 			}
-			if (fInitialized)
+			if (fInitialized) {
 				validatePage();
-			else
+			} else {
 				fInitialized = true;
+			}
 		}
 		super.setVisible(visible);
 	}

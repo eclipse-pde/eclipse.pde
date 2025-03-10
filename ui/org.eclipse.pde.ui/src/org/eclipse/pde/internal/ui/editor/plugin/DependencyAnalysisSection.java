@@ -108,11 +108,11 @@ public class DependencyAnalysisSection extends PDESection {
 	private void doFindLoops(IPluginModelBase pluginModelBase) {
 		if (pluginModelBase instanceof IPluginModel pluginModel) {
 			DependencyLoop[] loops = DependencyLoopFinder.findLoops(pluginModel.getPlugin());
-			if (loops.length == 0)
+			if (loops.length == 0) {
 				MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(),
 						PDEUIMessages.DependencyAnalysisSection_loops,
 						PDEUIMessages.DependencyAnalysisSection_noCycles);
-			else {
+			} else {
 				LoopDialog dialog = new LoopDialog(PDEPlugin.getActiveWorkbenchShell(), loops);
 				dialog.open();
 			}

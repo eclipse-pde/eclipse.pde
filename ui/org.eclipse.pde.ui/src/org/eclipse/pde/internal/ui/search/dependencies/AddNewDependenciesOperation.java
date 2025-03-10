@@ -140,14 +140,17 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 
 	protected String[] findSecondaryBundles(IBundle bundle, Set<String> ignorePkgs) {
 		String[] secDeps = getSecondaryDependencies();
-		if (secDeps == null)
+		if (secDeps == null) {
 			return null;
+		}
 		Set<String> manifestPlugins = findManifestPlugins(bundle, ignorePkgs);
 
 		List<String> result = new LinkedList<>();
-		for (int i = 0; i < secDeps.length; i++)
-			if (!manifestPlugins.contains(secDeps[i]))
+		for (int i = 0; i < secDeps.length; i++) {
+			if (!manifestPlugins.contains(secDeps[i])) {
 				result.add(secDeps[i]);
+			}
+		}
 
 		return result.toArray(new String[result.size()]);
 	}
@@ -156,8 +159,9 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 		IBuild build = getBuild();
 		if (build != null) {
 			IBuildEntry be = build.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
-			if (be != null)
+			if (be != null) {
 				return be.getTokens();
+			}
 		}
 		return null;
 	}
@@ -173,11 +177,13 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 
 	private Set<String> findManifestPlugins(IBundle bundle, Set<String> ignorePkgs) {
 		IManifestHeader header = bundle.getManifestHeader(Constants.REQUIRE_BUNDLE);
-		if (header == null)
+		if (header == null) {
 			return new HashSet<>(0);
+		}
 		Set<String> plugins = (header instanceof RequireBundleHeader) ? findManifestPlugins((RequireBundleHeader) header, ignorePkgs) : findManifestPlugins(ignorePkgs);
-		if (plugins.contains(IPDEBuildConstants.BUNDLE_CORE_RUNTIME))
+		if (plugins.contains(IPDEBuildConstants.BUNDLE_CORE_RUNTIME)) {
 			plugins.add("system.bundle"); //$NON-NLS-1$
+		}
 		return plugins;
 	}
 
@@ -191,8 +197,9 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 			IPluginModelBase base = PluginRegistry.findModel(id);
 			if (base != null) {
 				ExportPackageDescription[] exportedPkgs = findExportedPackages(base.getBundleDescription());
-				for (ExportPackageDescription exportedPkg : exportedPkgs)
+				for (ExportPackageDescription exportedPkg : exportedPkgs) {
 					ignorePkgs.add(exportedPkg.getName());
+				}
 				plugins.add(base.getPluginBase());
 			}
 		}
@@ -209,8 +216,9 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 			IPluginModelBase base = PluginRegistry.findModel(id);
 			if (base != null) {
 				ExportPackageDescription[] exportedPkgs = findExportedPackages(base.getBundleDescription());
-				for (ExportPackageDescription exportedPkg : exportedPkgs)
+				for (ExportPackageDescription exportedPkg : exportedPkgs) {
 					ignorePkgs.add(exportedPkg.getName());
+				}
 				plugins.add(base.getPluginBase());
 			}
 		}
@@ -229,18 +237,22 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 			while (!stack.isEmpty()) {
 				BundleDescription bdesc = (BundleDescription) stack.pop();
 				ExportPackageDescription[] expkgs = bdesc.getExportPackages();
-				for (ExportPackageDescription expkg : expkgs)
-					if (addPackage(projectBundleId, expkg))
+				for (ExportPackageDescription expkg : expkgs) {
+					if (addPackage(projectBundleId, expkg)) {
 						result.add(expkg);
+					}
+				}
 
 				// Look at re-exported Require-Bundles for any other exported packages
 				BundleSpecification[] requiredBundles = bdesc.getRequiredBundles();
-				for (BundleSpecification requiredBundle : requiredBundles)
+				for (BundleSpecification requiredBundle : requiredBundles) {
 					if (requiredBundle.isExported()) {
 						BaseDescription bd = requiredBundle.getSupplier();
-						if (bd != null && bd instanceof BundleDescription)
+						if (bd != null && bd instanceof BundleDescription) {
 							stack.add(bd);
+						}
 					}
+				}
 			}
 			return result.toArray(new ExportPackageDescription[result.size()]);
 		}
@@ -248,13 +260,15 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 	}
 
 	private boolean addPackage(String symbolicName, ExportPackageDescription pkg) {
-		if (symbolicName == null)
+		if (symbolicName == null) {
 			return true;
+		}
 		String[] friends = (String[]) pkg.getDirective(ICoreConstants.FRIENDS_DIRECTIVE);
 		if (friends != null) {
 			for (String friend : friends) {
-				if (symbolicName.equals(friend))
+				if (symbolicName.equals(friend)) {
 					return true;
+				}
 			}
 			return false;
 		}
@@ -263,24 +277,28 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 
 	protected final void findImportPackages(IBundle bundle, Set<String> ignorePkgs) {
 		IManifestHeader header = bundle.getManifestHeader(Constants.IMPORT_PACKAGE);
-		if (header == null || header.getValue() == null)
+		if (header == null || header.getValue() == null) {
 			return;
+		}
 		if (header instanceof ImportPackageHeader) {
 			ImportPackageObject[] pkgs = ((ImportPackageHeader) header).getPackages();
-			for (ImportPackageObject pkg : pkgs)
+			for (ImportPackageObject pkg : pkgs) {
 				ignorePkgs.add(pkg.getName());
+			}
 		} else {
 			ImportPackageSpecification[] pkgs = fBase.getBundleDescription().getImportPackages();
-			for (ImportPackageSpecification pkg : pkgs)
+			for (ImportPackageSpecification pkg : pkgs) {
 				ignorePkgs.add(pkg.getName());
+			}
 		}
 	}
 
 	protected void findSecondaryDependencies(String[] secDeps, Set<String> ignorePkgs, Map<ExportPackageDescription, String> newDeps, IBundle bundle, boolean useRequireBundle, IProgressMonitor monitor) {
 		IJavaProject jProject = JavaCore.create(fProject);
 		SearchEngine engine = new SearchEngine();
-		if (ignorePkgs == null)
+		if (ignorePkgs == null) {
 			ignorePkgs = new HashSet<>(2);
+		}
 		SubMonitor subMonitor = SubMonitor.convert(monitor, PDEUIMessages.AddNewDependenciesOperation_searchProject,
 				secDeps.length);
 		for (String pluginId : secDeps) {
@@ -314,8 +332,9 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 								newDeps.put(exported[i], pluginId);
 								if (useRequireBundle) {
 									// since using require-bundle, rest of packages will be available when bundle is added.
-									for (; i < exported.length; i++)
+									for (; i < exported.length; i++) {
 										ignorePkgs.add(exported[i].getName());
+									}
 								}
 							}
 						}
@@ -330,13 +349,15 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 
 	protected void addProjectPackages(IBundle bundle, Set<String> ignorePkgs) {
 		IBuild build = getBuild();
-		if (build == null)
+		if (build == null) {
 			return;
+		}
 		IBuildEntry binIncludes = build.getEntry(IBuildEntry.BIN_INCLUDES);
 		if (binIncludes != null) {
 			String value = bundle.getHeader(Constants.BUNDLE_CLASSPATH);
-			if (value == null)
+			if (value == null) {
 				value = "."; //$NON-NLS-1$
+			}
 			ManifestElement elems[];
 			try {
 				elems = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, value);
@@ -352,8 +373,9 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 					IBuildEntry entry = build.getEntry(IBuildEntry.JAR_PREFIX + library);
 					if (entry != null) {
 						String[] resources = entry.getTokens();
-						for (String resource : resources)
+						for (String resource : resources) {
 							addPackagesFromResource(jProject, fProject.findMember(resource), ignorePkgs);
+						}
 					} else {
 						// if there is no source entry for the library, assume it is a binary jar and try to add it if it exists
 						addPackagesFromResource(jProject, fProject.findMember(library), ignorePkgs);
@@ -364,8 +386,9 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 					StringBuilder buffer = new StringBuilder();
 					while (tokenizer.hasMoreTokens()) {
 						buffer.append(tokenizer.nextToken()).append('/');
-						if (binIncludes.contains(buffer.toString()))
+						if (binIncludes.contains(buffer.toString())) {
 							addPackagesFromResource(jProject, fProject.findMember(library), ignorePkgs);
+						}
 					}
 				}
 			}
@@ -373,24 +396,28 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 	}
 
 	private void addPackagesFromResource(IJavaProject jProject, IResource res, Set<String> ignorePkgs) {
-		if (res == null)
+		if (res == null) {
 			return;
+		}
 		try {
 			IPackageFragmentRoot root = jProject.getPackageFragmentRoot(res);
 			IJavaElement[] children = root.getChildren();
 			for (IJavaElement child : children) {
 				String pkgName = child.getElementName();
-				if (child instanceof IParent)
-					if (pkgName.length() > 0 && ((IParent) child).hasChildren())
+				if (child instanceof IParent) {
+					if (pkgName.length() > 0 && ((IParent) child).hasChildren()) {
 						ignorePkgs.add(child.getElementName());
+					}
+				}
 			}
 		} catch (JavaModelException e) {
 		}
 	}
 
 	protected void handleNewDependencies(final Map<ExportPackageDescription, String> additionalDeps, final boolean useRequireBundle, IProgressMonitor monitor) {
-		if (!additionalDeps.isEmpty())
+		if (!additionalDeps.isEmpty()) {
 			addDependencies(additionalDeps, useRequireBundle);
+		}
 	}
 
 	protected void addDependencies(final Map<ExportPackageDescription, String> depsToAdd, boolean useRequireBundle) {
@@ -401,8 +428,9 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 			IPluginBase pbase = fBase.getPluginBase();
 			if (pbase == null) {
 				addRequireBundles(plugins, fBase.getBundleModel().getBundle(), build.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES));
-			} else
+			} else {
 				addRequireBundles(plugins, pbase, build.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES));
+			}
 			try {
 				build.write("", new PrintWriter(new FileOutputStream(PDEProject.getBuildProperties(fProject).getFullPath().toFile()))); //$NON-NLS-1$
 			} catch (FileNotFoundException e) {
@@ -436,44 +464,49 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 				// use same separator as used when writing out Manifest
 				buffer.append(value).append(ManifestUtils.MANIFEST_LIST_SEPARATOR);
 			}
-			if (buffer.length() > 0)
+			if (buffer.length() > 0) {
 				buffer.setLength(buffer.length() - ManifestUtils.MANIFEST_LIST_SEPARATOR.length());
+			}
 			bundle.setHeader(Constants.IMPORT_PACKAGE, buffer.toString());
 		}
 	}
 
 	protected final void addRequireBundles(final Collection<String> depsToAdd, final IBundle bundle, IBuildEntry entry) {
-		if (bundle == null)
+		if (bundle == null) {
 			return;
+		}
 		HashSet<String> added = new HashSet<>();
 		Iterator<String> it = depsToAdd.iterator();
 		IManifestHeader mheader = bundle.getManifestHeader(Constants.REQUIRE_BUNDLE);
 		if (mheader instanceof RequireBundleHeader header) {
 			while (it.hasNext()) {
 				String pluginId = it.next();
-				if (!added.contains(pluginId))
+				if (!added.contains(pluginId)) {
 					try {
 						header.addBundle(pluginId);
 						added.add(pluginId);
 						entry.removeToken(pluginId);
 					} catch (CoreException e) {
 					}
+				}
 			}
 		} else {
 			String currentValue = (mheader != null) ? mheader.getValue() : null;
 			StringBuilder buffer = (currentValue == null) ? new StringBuilder() : new StringBuilder(currentValue).append(", "); //$NON-NLS-1$
 			while (it.hasNext()) {
 				String pluginId = it.next();
-				if (!added.contains(pluginId))
+				if (!added.contains(pluginId)) {
 					try {
 						buffer.append(pluginId).append(ManifestUtils.MANIFEST_LIST_SEPARATOR);
 						added.add(pluginId);
 						entry.removeToken(pluginId);
 					} catch (CoreException e) {
 					}
+				}
 			}
-			if (buffer.length() > 0)
+			if (buffer.length() > 0) {
 				buffer.setLength(buffer.length() - ManifestUtils.MANIFEST_LIST_SEPARATOR.length());
+			}
 			bundle.setHeader(Constants.REQUIRE_BUNDLE, buffer.toString());
 		}
 	}
@@ -485,7 +518,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 		base.getImports();
 		while (it.hasNext()) {
 			String pluginId = it.next();
-			if (!added.contains(pluginId))
+			if (!added.contains(pluginId)) {
 				try {
 					PluginImport plugin = new PluginImport();
 					ManifestElement element = ManifestElement.parseHeader(Constants.REQUIRE_BUNDLE, pluginId)[0];
@@ -493,31 +526,36 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 					plugin.setModel(base.getModel());
 					base.add(plugin);
 					added.add(pluginId);
-					if (entry != null && entry.contains(pluginId))
+					if (entry != null && entry.contains(pluginId)) {
 						entry.removeToken(pluginId);
+					}
 				} catch (BundleException | CoreException e) {
 				}
+			}
 		}
 	}
 
 	protected final void minimizeBundles(Collection<String> pluginIds) {
 		ArrayDeque<String> stack = new ArrayDeque<>();
 		Iterator<String> it = pluginIds.iterator();
-		while (it.hasNext())
+		while (it.hasNext()) {
 			stack.push(it.next().toString());
+		}
 
 		while (!stack.isEmpty()) {
 			IPluginModelBase base = PluginRegistry.findModel(stack.pop().toString());
-			if (base == null)
+			if (base == null) {
 				continue;
+			}
 			IPluginImport[] imports = base.getPluginBase().getImports();
 
-			for (IPluginImport pluginImport : imports)
+			for (IPluginImport pluginImport : imports) {
 				if (pluginImport.isReexported()) {
 					String reExportedId = pluginImport.getId();
 					pluginIds.remove(pluginImport.getId());
 					stack.push(reExportedId);
 				}
+			}
 		}
 	}
 }

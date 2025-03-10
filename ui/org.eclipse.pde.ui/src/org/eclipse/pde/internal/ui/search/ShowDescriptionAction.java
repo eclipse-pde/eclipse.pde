@@ -118,17 +118,19 @@ public class ShowDescriptionAction extends Action {
 	private void showNoSchemaMessage() {
 		String title = PDEUIMessages.ShowDescriptionAction_title;
 		String message;
-		if (fPointID == null || fPointID.startsWith("null")) //$NON-NLS-1$
+		if (fPointID == null || fPointID.startsWith("null")) { //$NON-NLS-1$
 			message = PDEUIMessages.ShowDescriptionAction_schemaNotAvail;
-		else
+		} else {
 			message = NLS.bind(PDEUIMessages.ShowDescriptionAction_noPoint_desc, fPointID);
+		}
 		MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), title, message);
 	}
 
 	private void showSchemaDocument() {
 		fPreviewFile = getTempPreviewFile();
-		if (fPreviewFile == null)
+		if (fPreviewFile == null) {
 			return;
+		}
 
 		SchemaTransformer transformer = new SchemaTransformer();
 		try (OutputStream os = new FileOutputStream(fPreviewFile);

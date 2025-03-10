@@ -104,10 +104,12 @@ public class ArgumentsSection extends PDESection {
 		fTabFolder.setSelectionBackground(new Color[] {selectedColor, toolkit.getColors().getBackground()}, new int[] {100}, true);
 
 		fTabFolder.addSelectionListener(widgetSelectedAdapter(e -> {
-			if (fProgramArgs.isDirty())
+			if (fProgramArgs.isDirty()) {
 				fProgramArgs.commit();
-			if (fVMArgs.isDirty())
+			}
+			if (fVMArgs.isDirty()) {
 				fVMArgs.commit();
+			}
 			refresh();
 			fArchCombo.select(fLastArch[fLastTab]);
 		}));
@@ -122,21 +124,25 @@ public class ArgumentsSection extends PDESection {
 		fArchCombo.getControl().setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
 		fArchCombo.setItems(Arrays.stream(TAB_ARCHLABELS).filter(Objects::nonNull).toArray(String[]::new));
 		Control archComboControl = fArchCombo.getControl();
-		if (archComboControl instanceof Combo)
+		if (archComboControl instanceof Combo) {
 			((Combo) archComboControl).select(fLastArch[fLastTab]);
-		else
+		} else {
 			((CCombo) archComboControl).select(fLastArch[fLastTab]);
+		}
 		fArchCombo.addSelectionChangedListener(event -> {
-			if (fProgramArgs.isDirty())
+			if (fProgramArgs.isDirty()) {
 				fProgramArgs.commit();
-			if (fVMArgs.isDirty())
+			}
+			if (fVMArgs.isDirty()) {
 				fVMArgs.commit();
+			}
 			// remember the change in combo for currently selected platform
 			Control fArchComboControl = fArchCombo.getControl();
-			if (fArchComboControl instanceof Combo)
+			if (fArchComboControl instanceof Combo) {
 				fLastArch[fLastTab] = ((Combo) fArchComboControl).getSelectionIndex();
-			else
+			} else {
 				fLastArch[fLastTab] = ((CCombo) fArchComboControl).getSelectionIndex();
+			}
 
 			refresh();
 		});

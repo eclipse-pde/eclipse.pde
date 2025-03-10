@@ -103,8 +103,9 @@ public class ManifestStructureCreator extends StructureCreator {
 		while (true) {
 			lineStart = args[1]; // start of current line
 			String line = readLine(args, doc);
-			if (line == null)
+			if (line == null) {
 				return;
+			}
 
 			if (line.length() <= 0) {
 				saveNode(parent, doc, headerBuffer.toString(), headerStart); // empty
@@ -116,8 +117,9 @@ public class ManifestStructureCreator extends StructureCreator {
 				continue;
 			}
 			if (line.charAt(0) == ' ') {
-				if (headerBuffer.length() > 0)
+				if (headerBuffer.length() > 0) {
 					headerBuffer.append(line);
+				}
 				continue;
 			}
 
@@ -131,22 +133,25 @@ public class ManifestStructureCreator extends StructureCreator {
 	}
 
 	private void saveNode(DocumentRangeNode root, IDocument doc, String header, int start) {
-		if (header.length() > 0)
+		if (header.length() > 0) {
 			new ManifestNode(root, 1, extractKey(header), doc, start, header.length());
+		}
 	}
 
 	private String extractKey(String headerBuffer) {
 		int assign = headerBuffer.indexOf(':');
-		if (assign != -1)
+		if (assign != -1) {
 			return headerBuffer.substring(0, assign);
+		}
 		return headerBuffer;
 	}
 
 	private String readLine(int[] args, IDocument doc) {
 		int line = args[0]++;
 		try {
-			if (line >= doc.getNumberOfLines())
+			if (line >= doc.getNumberOfLines()) {
 				return null;
+			}
 			int start = doc.getLineOffset(line);
 			int length = doc.getLineLength(line);
 			try {
@@ -162,14 +167,16 @@ public class ManifestStructureCreator extends StructureCreator {
 	}
 
 	private static String readString(InputStream is, String encoding) {
-		if (is == null)
+		if (is == null) {
 			return null;
+		}
 		StringBuilder buffer = new StringBuilder();
 		char[] part = new char[2048];
 		int read = 0;
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, encoding))) {
-			while ((read = reader.read(part)) != -1)
+			while ((read = reader.read(part)) != -1) {
 				buffer.append(part, 0, read);
+			}
 
 			return buffer.toString();
 
@@ -189,8 +196,9 @@ public class ManifestStructureCreator extends StructureCreator {
 				} catch (Exception e) {
 				}
 			}
-			if (encoding == null)
+			if (encoding == null) {
 				encoding = ResourcesPlugin.getEncoding();
+			}
 			return readString(is, encoding);
 		}
 		return null;
@@ -210,10 +218,11 @@ public class ManifestStructureCreator extends StructureCreator {
 	protected IStructureComparator createStructureComparator(Object input, IDocument document, ISharedDocumentAdapter adapter, IProgressMonitor monitor) throws CoreException {
 
 		final boolean isEditable;
-		if (input instanceof IEditableContent)
+		if (input instanceof IEditableContent) {
 			isEditable = ((IEditableContent) input).isEditable();
-		else
+		} else {
 			isEditable = false;
+		}
 
 		DocumentRangeNode rootNode = new StructureRootNode(document, input, this, adapter) {
 			@Override

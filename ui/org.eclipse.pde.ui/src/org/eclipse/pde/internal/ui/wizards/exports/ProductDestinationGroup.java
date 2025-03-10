@@ -95,8 +95,9 @@ public class ProductDestinationGroup extends AbstractExportTab {
 	protected void initialize(IDialogSettings settings, IFile file) {
 		try {
 			String toDirectory = (file != null) ? file.getPersistentProperty(IPDEUIConstants.DEFAULT_PRODUCT_EXPORT_DIR) : null;
-			if (toDirectory == null)
+			if (toDirectory == null) {
 				toDirectory = settings.get(S_EXPORT_DIRECTORY);
+			}
 			boolean useDirectory = toDirectory == null || "true".equals(toDirectory); //$NON-NLS-1$
 			fDirectoryButton.setSelection(useDirectory);
 			fArchiveFileButton.setSelection(!useDirectory);
@@ -114,17 +115,20 @@ public class ProductDestinationGroup extends AbstractExportTab {
 	@Override
 	protected void initializeCombo(IDialogSettings settings, String key, Combo combo) {
 		super.initializeCombo(settings, key, combo);
-		if (!isValidLocation(combo.getText().trim())) // If default value is invalid, make it blank
+		if (!isValidLocation(combo.getText().trim())) { // If default value is invalid, make it blank
 			combo.setText(""); //$NON-NLS-1$
+		}
 	}
 
 	protected void updateDestination(IFile file) {
 		try {
-			if (file == null)
+			if (file == null) {
 				return;
+			}
 			String toDirectory = file.getPersistentProperty(IPDEUIConstants.DEFAULT_PRODUCT_EXPORT_DIR);
-			if (toDirectory == null)
+			if (toDirectory == null) {
 				return;
+			}
 			boolean useDirectory = "true".equals(toDirectory); //$NON-NLS-1$
 			fArchiveFileButton.setSelection(!useDirectory);
 			fDirectoryButton.setSelection(useDirectory);
@@ -133,8 +137,9 @@ public class ProductDestinationGroup extends AbstractExportTab {
 			Combo combo = useDirectory ? fDirectoryCombo : fArchiveCombo;
 			String destination = file.getPersistentProperty(IPDEUIConstants.DEFAULT_PRODUCT_EXPORT_LOCATION);
 			if (destination != null) {
-				if (combo.indexOf(destination) == -1)
+				if (combo.indexOf(destination) == -1) {
 					combo.add(destination, 0);
+				}
 				combo.setText(destination);
 			}
 		} catch (CoreException e) {
@@ -186,31 +191,35 @@ public class ProductDestinationGroup extends AbstractExportTab {
 	private void chooseDestination() {
 		DirectoryDialog dialog = new DirectoryDialog(fPage.getShell(), SWT.SAVE);
 		String path = fDirectoryCombo.getText();
-		if (path.trim().length() == 0)
+		if (path.trim().length() == 0) {
 			path = PDEPlugin.getWorkspace().getRoot().getLocation().toString();
+		}
 		dialog.setFilterPath(path);
 		dialog.setText(PDEUIMessages.ExportWizard_dialog_title);
 		dialog.setMessage(PDEUIMessages.ExportWizard_dialog_message);
 		String res = dialog.open();
 		if (res != null) {
-			if (fDirectoryCombo.indexOf(res) == -1)
+			if (fDirectoryCombo.indexOf(res) == -1) {
 				fDirectoryCombo.add(res, 0);
+			}
 			fDirectoryCombo.setText(res);
 		}
 	}
 
 	protected String validate() {
 		if (fArchiveFileButton.getSelection()) {
-			if (fArchiveCombo.getText().trim().length() == 0)
+			if (fArchiveCombo.getText().trim().length() == 0) {
 				return PDEUIMessages.ExportWizard_status_nofile;
-			else if (!isValidLocation(fArchiveCombo.getText().trim()))
+			} else if (!isValidLocation(fArchiveCombo.getText().trim())) {
 				return PDEUIMessages.ExportWizard_status_invaliddirectory;
+			}
 		}
 		if (fDirectoryButton.getSelection()) {
-			if (fDirectoryCombo.getText().trim().length() == 0)
+			if (fDirectoryCombo.getText().trim().length() == 0) {
 				return PDEUIMessages.ExportWizard_status_nodirectory;
-			else if (!isValidLocation(fDirectoryCombo.getText().trim()))
+			} else if (!isValidLocation(fDirectoryCombo.getText().trim())) {
 				return PDEUIMessages.ExportWizard_status_invaliddirectory;
+			}
 		}
 		return null;
 	}

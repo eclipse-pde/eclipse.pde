@@ -96,12 +96,13 @@ public class IncludedFeaturesDetailsSection extends PDESection implements IPartS
 		fNameText.setFormEntryListener(new FormEntryAdapter(this) {
 			@Override
 			public void textValueChanged(FormEntry text) {
-				if (fInput != null)
+				if (fInput != null) {
 					try {
 						fInput.setName(text.getValue());
 					} catch (CoreException e) {
 						PDEPlugin.logException(e);
 					}
+				}
 			}
 		});
 		fNameText.setEditable(isEditable());
@@ -110,12 +111,13 @@ public class IncludedFeaturesDetailsSection extends PDESection implements IPartS
 		fVersionText.setFormEntryListener(new FormEntryAdapter(this) {
 			@Override
 			public void textValueChanged(FormEntry text) {
-				if (fInput != null)
+				if (fInput != null) {
 					try {
 						fInput.setVersion(text.getValue());
 					} catch (CoreException e) {
 						PDEPlugin.logException(e);
 					}
+				}
 			}
 		});
 		fVersionText.setEditable(isEditable());
@@ -147,8 +149,9 @@ public class IncludedFeaturesDetailsSection extends PDESection implements IPartS
 		fSearchRootButton.addSelectionListener(widgetSelectedAdapter(e -> {
 			if (!fBlockNotification) {
 				try {
-					if (fSearchRootButton.getSelection())
+					if (fSearchRootButton.getSelection()) {
 						fInput.setSearchLocation(IFeatureChild.ROOT);
+					}
 				} catch (CoreException ce) {
 				}
 			}
@@ -163,8 +166,9 @@ public class IncludedFeaturesDetailsSection extends PDESection implements IPartS
 		fSearchSelfButton.addSelectionListener(widgetSelectedAdapter(e -> {
 			if (!fBlockNotification) {
 				try {
-					if (fSearchSelfButton.getSelection())
+					if (fSearchSelfButton.getSelection()) {
 						fInput.setSearchLocation(IFeatureChild.SELF);
+					}
 				} catch (CoreException ce) {
 				}
 			}
@@ -179,8 +183,9 @@ public class IncludedFeaturesDetailsSection extends PDESection implements IPartS
 		fSearchBothButton.addSelectionListener(widgetSelectedAdapter(e -> {
 			if (!fBlockNotification) {
 				try {
-					if (fSearchBothButton.getSelection())
+					if (fSearchBothButton.getSelection()) {
 						fInput.setSearchLocation(IFeatureChild.BOTH);
+					}
 				} catch (CoreException ce) {
 				}
 			}
@@ -193,16 +198,18 @@ public class IncludedFeaturesDetailsSection extends PDESection implements IPartS
 	@Override
 	public void dispose() {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
-		if (model != null)
+		if (model != null) {
 			model.removeModelChangedListener(this);
+		}
 		super.dispose();
 	}
 
 	@Override
 	public void initialize(IManagedForm form) {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
-		if (model != null)
+		if (model != null) {
 			model.addModelChangedListener(this);
+		}
 		super.initialize(form);
 	}
 
@@ -226,15 +233,17 @@ public class IncludedFeaturesDetailsSection extends PDESection implements IPartS
 			} else {
 				fInput = null;
 			}
-		} else
+		} else {
 			fInput = null;
+		}
 		update();
 	}
 
 	@Override
 	public void setFocus() {
-		if (fNameText != null)
+		if (fNameText != null) {
 			fNameText.getText().setFocus();
+		}
 	}
 
 	private void update() {

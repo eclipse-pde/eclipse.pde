@@ -106,8 +106,9 @@ public class ConfigurationSection extends PDESection {
 		fTabFolder.setSelectionBackground(new Color[] {selectedColor, toolkit.getColors().getBackground()}, new int[] {100}, true);
 
 		fTabFolder.addSelectionListener(widgetSelectedAdapter(e -> {
-			if (fCustomEntry.isDirty())
+			if (fCustomEntry.isDirty()) {
 				fCustomEntry.commit();
+			}
 			refresh();
 		}));
 		fTabFolder.setUnselectedImageVisible(false);
@@ -247,8 +248,9 @@ public class ConfigurationSection extends PDESection {
 	public boolean canPaste(Clipboard clipboard) {
 		Display d = getSection().getDisplay();
 		Control c = d.getFocusControl();
-		if (c instanceof Text)
+		if (c instanceof Text) {
 			return true;
+		}
 		return false;
 	}
 
@@ -261,10 +263,11 @@ public class ConfigurationSection extends PDESection {
 		}
 		IResource resource = root.findMember(path);
 		try {
-			if (resource != null && resource instanceof IFile)
+			if (resource != null && resource instanceof IFile) {
 				IDE.openEditor(PDEPlugin.getActivePage(), (IFile) resource, true);
-			else
+			} else {
 				MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.WindowImagesSection_open, PDEUIMessages.WindowImagesSection_warning); //
+			}
 		} catch (PartInitException e) {
 		}
 	}

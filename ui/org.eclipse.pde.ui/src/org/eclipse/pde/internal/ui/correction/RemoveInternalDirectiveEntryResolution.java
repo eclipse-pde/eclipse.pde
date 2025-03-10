@@ -36,8 +36,9 @@ public class RemoveInternalDirectiveEntryResolution extends AbstractManifestMark
 		IManifestHeader header = model.getBundle().getManifestHeader(Constants.EXPORT_PACKAGE);
 		if (header instanceof ExportPackageHeader) {
 			ExportPackageObject exportedPackage = ((ExportPackageHeader) header).getPackage(fPackageName);
-			if (exportedPackage != null)
+			if (exportedPackage != null) {
 				exportedPackage.removeInternalDirective();
+			}
 		}
 	}
 

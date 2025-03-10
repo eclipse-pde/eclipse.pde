@@ -95,15 +95,17 @@ public class PluginDevelopmentPage extends PropertyPage {
 	public boolean performOk() {
 		Preferences pref = getPreferences(getElement().getAdapter(IProject.class));
 		if (pref != null) {
-			if (!fExtensionButton.getSelection())
+			if (!fExtensionButton.getSelection()) {
 				pref.putBoolean(ICoreConstants.EXTENSIONS_PROPERTY, false);
-			else
+			} else {
 				pref.remove(ICoreConstants.EXTENSIONS_PROPERTY);
+			}
 
-			if (!fEquinoxButton.getSelection())
+			if (!fEquinoxButton.getSelection()) {
 				pref.putBoolean(ICoreConstants.EQUINOX_PROPERTY, false);
-			else
+			} else {
 				pref.remove(ICoreConstants.EQUINOX_PROPERTY);
+			}
 
 			try {
 				pref.flush();

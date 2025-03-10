@@ -87,20 +87,23 @@ public abstract class InputContext {
 
 		@Override
 		public void elementContentReplaced(Object element) {
-			if (element != null && element.equals(fEditorInput))
+			if (element != null && element.equals(fEditorInput)) {
 				doRevert();
+			}
 		}
 
 		@Override
 		public void elementDeleted(Object element) {
-			if (element != null && element.equals(fEditorInput))
+			if (element != null && element.equals(fEditorInput)) {
 				dispose();
+			}
 		}
 
 		@Override
 		public void elementDirtyStateChanged(Object element, boolean isDirty) {
-			if (element != null && element.equals(fEditorInput))
+			if (element != null && element.equals(fEditorInput)) {
 				fMustSynchronize = true;
+			}
 		}
 
 		@Override
@@ -163,15 +166,17 @@ public abstract class InputContext {
 			if (fModel instanceof IModelChangeProvider) {
 				fModelListener = e -> {
 					if (e.getChangeType() != IModelChangedEvent.WORLD_CHANGED) {
-						if (!fEditor.getLastDirtyState())
+						if (!fEditor.getLastDirtyState()) {
 							fEditor.fireSaveNeeded(fEditorInput, true);
+						}
 						IModelChangeProvider provider = e.getChangeProvider();
 						if (provider instanceof IEditingModel) {
 							// this is to guard against false notifications
 							// when a revert operation is performed, focus is taken away from a FormEntry
 							// and a text edit operation is falsely requested
-							if (((IEditingModel) provider).isDirty())
+							if (((IEditingModel) provider).isDirty()) {
 								addTextEditOperation(fEditOperations, e);
+							}
 						}
 					}
 				};
@@ -179,8 +184,9 @@ public abstract class InputContext {
 			}
 
 			IAnnotationModel amodel = fDocumentProvider.getAnnotationModel(fEditorInput);
-			if (amodel != null)
+			if (amodel != null) {
 				amodel.connect(fDocumentProvider.getDocument(fEditorInput));
+			}
 			fDocumentProvider.addElementStateListener(fElementListener);
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
@@ -196,8 +202,9 @@ public abstract class InputContext {
 					Shell shell = fEditor.getEditorSite().getShell();
 					IStatus validateStatus = PDEPlugin.getWorkspace().validateEdit(new IFile[] {file}, shell);
 					fValidated = true; // to prevent loops
-					if (!validateStatus.isOK())
+					if (!validateStatus.isOK()) {
 						ErrorDialog.openError(shell, fEditor.getTitle(), null, validateStatus);
+					}
 					return validateStatus.isOK();
 				}
 			}
@@ -241,13 +248,15 @@ public abstract class InputContext {
 		if (!fEditOperations.isEmpty()) {
 			try {
 				MultiTextEdit edit = new MultiTextEdit();
-				if (isNewlineNeeded(doc))
+				if (isNewlineNeeded(doc)) {
 					insert(edit, new InsertEdit(doc.getLength(), TextUtilities.getDefaultLineDelimiter(doc)));
+				}
 				for (int i = 0; i < fEditOperations.size(); i++) {
 					insert(edit, fEditOperations.get(i));
 				}
-				if (fModel instanceof IEditingModel)
+				if (fModel instanceof IEditingModel) {
 					((IEditingModel) fModel).setStale(true);
+				}
 				edit.apply(doc);
 				if (fModel instanceof IEditingModel editingModel) {
 					editingModel.reconciled(doc);
@@ -303,8 +312,9 @@ public abstract class InputContext {
 	}
 
 	protected static boolean covers(TextEdit thisEdit, TextEdit otherEdit) {
-		if (thisEdit.getLength() == 0) // an insertion point can't cover anything
+		if (thisEdit.getLength() == 0) { // an insertion point can't cover anything
 			return false;
+		}
 
 		int thisOffset = thisEdit.getOffset();
 		int thisEnd = thisEdit.getExclusiveEnd();
@@ -330,8 +340,9 @@ public abstract class InputContext {
 
 	public void dispose() {
 		IAnnotationModel amodel = fDocumentProvider.getAnnotationModel(fEditorInput);
-		if (amodel != null)
+		if (amodel != null) {
 			amodel.disconnect(fDocumentProvider.getDocument(fEditorInput));
+		}
 		fDocumentProvider.removeElementStateListener(fElementListener);
 		fDocumentProvider.disconnect(fEditorInput);
 		if (fModelListener != null && fModel instanceof IModelChangeProvider) {
@@ -339,8 +350,9 @@ public abstract class InputContext {
 			//if (undoManager != null)
 			//undoManager.disconnect((IModelChangeProvider) model);
 		}
-		if (fModel != null)
+		if (fModel != null) {
 			fModel.dispose();
+		}
 	}
 
 	/**
@@ -417,8 +429,9 @@ public abstract class InputContext {
 	public boolean matches(IResource resource) {
 		if (fEditorInput instanceof IFileEditorInput finput) {
 			IFile file = finput.getFile();
-			if (file.equals(resource))
+			if (file.equals(resource)) {
 				return true;
+			}
 		}
 		return false;
 	}

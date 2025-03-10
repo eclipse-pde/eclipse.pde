@@ -56,8 +56,9 @@ public class NewExtensionPointWizard extends NewWizard {
 
 	@Override
 	public boolean performFinish() {
-		if (editor != null)
+		if (editor != null) {
 			editor.ensurePluginContextPresence();
+		}
 		return mainPage.finish();
 	}
 }

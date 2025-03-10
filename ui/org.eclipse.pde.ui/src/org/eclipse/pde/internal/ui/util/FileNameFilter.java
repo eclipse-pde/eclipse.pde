@@ -35,15 +35,17 @@ public class FileNameFilter extends ViewerFilter {
 			return fTargetName.equals(((IFile) element).getName());
 		}
 
-		if (element instanceof IProject && !((IProject) element).isOpen())
+		if (element instanceof IProject && !((IProject) element).isOpen()) {
 			return false;
+		}
 
 		if (element instanceof IContainer) { // i.e. IProject, IFolder
 			try {
 				IResource[] resources = ((IContainer) element).members();
 				for (IResource resource : resources) {
-					if (select(viewer, parent, resource))
+					if (select(viewer, parent, resource)) {
 						return true;
+					}
 				}
 			} catch (CoreException e) {
 			}

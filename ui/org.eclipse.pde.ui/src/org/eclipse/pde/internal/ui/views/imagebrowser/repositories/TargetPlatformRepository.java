@@ -56,8 +56,9 @@ public class TargetPlatformRepository extends AbstractRepository {
 
 	@Override
 	protected boolean populateCache(final IProgressMonitor monitor) {
-		if (fBundles == null)
+		if (fBundles == null) {
 			initialize(monitor);
+		}
 
 		if ((fBundles != null) && (!fBundles.isEmpty())) {
 			TargetBundle bundle = fBundles.remove(fBundles.size() - 1);
@@ -91,8 +92,9 @@ public class TargetPlatformRepository extends AbstractRepository {
 
 				if (fDefinition != null) {
 
-					if (!fDefinition.isResolved())
+					if (!fDefinition.isResolved()) {
 						fDefinition.resolve(monitor);
+					}
 
 					TargetBundle[] allBundles = fDefinition.getAllBundles();
 
@@ -120,8 +122,9 @@ public class TargetPlatformRepository extends AbstractRepository {
 			fBundles.clear();
 			fBundles = null;
 		}
-		if (mElementsCache != null)
+		if (mElementsCache != null) {
 			mElementsCache.clear();
+		}
 		return Status.OK_STATUS;
 	}
 
@@ -136,8 +139,9 @@ public class TargetPlatformRepository extends AbstractRepository {
 			if (service != null) {
 				ITargetDefinition definition = service.getWorkspaceTargetDefinition();
 				String name = definition.getName();
-				if (name == null)
+				if (name == null) {
 					return ""; //$NON-NLS-1$
+				}
 				if (name.length() > 30) {
 					name = name.substring(0, 30);
 				}

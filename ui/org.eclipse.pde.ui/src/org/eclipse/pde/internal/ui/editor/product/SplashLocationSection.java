@@ -135,8 +135,9 @@ public class SplashLocationSection extends PDESection {
 	public boolean canPaste(Clipboard clipboard) {
 		Display d = getSection().getDisplay();
 		Control c = d.getFocusControl();
-		if (c instanceof Text)
+		if (c instanceof Text) {
 			return true;
+		}
 		return false;
 	}
 

@@ -405,10 +405,11 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 		// info is stored as 3 in org.eclipse.pde.prefs but its index is 2
 		// if info is put as 2, then all previous settings of ignore will become
 		// info.
-		if (selectionIndex == 2)
+		if (selectionIndex == 2) {
 			return 3;
-		else if (selectionIndex == 3)
+		} else if (selectionIndex == 3) {
 			return 2;
+		}
 		return selectionIndex; // nothing to do for error and warning
 	}
 
@@ -640,11 +641,13 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 		combo.addSelectionListener(selectionlistener);
 		int index = 0;
 		String value = key.getStoredValue(fLookupOrder, false, fManager);
-		if (value == null)
+		if (value == null) {
 			value = key.getStoredValue(fLookupOrder, true, fManager);
+		}
 
-		if (value != null)
+		if (value != null) {
 			index = Integer.parseInt(value);
+		}
 		index = adjustIndex(index);
 		combo.select(data.getSelection(SEVERITIES[index]));
 		Integer mapkey = Integer.valueOf(tabkind);
@@ -655,8 +658,9 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 		}
 		controls.add(combo);
 		addHighlight(parent, lbl, combo);
-		if (Util.isMac())
+		if (Util.isMac()) {
 			fComboLabelMap.put(combo, lbl);
+		}
 	}
 
 	/**
@@ -668,8 +672,9 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 		ControlData data = new ControlData(key, new String[0]);
 		text.setData(data);
 		String value = data.key.getStoredValue(fLookupOrder, false, fManager);
-		if (value != null)
+		if (value != null) {
 			text.setText(value);
+		}
 		text.addModifyListener(modifylistener);
 		Integer mapkey = Integer.valueOf(tabkind);
 		HashSet<Control> controls = fControlMap.get(mapkey);
@@ -950,13 +955,16 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 			}
 
 			private boolean hasBuilder(ICommand[] commands, String string) {
-				if(commands == null)
+				if(commands == null) {
 					return false;
-				if(commands.length == 0)
+				}
+				if(commands.length == 0) {
 					return false;
+				}
 				for (ICommand iCommand : commands) {
-					if (iCommand.getBuilderName().equals(string))
+					if (iCommand.getBuilderName().equals(string)) {
 						return true;
+					}
 				}
 				return false;
 			}
@@ -989,10 +997,12 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	}
 	private void selectOption(Key key) {
 		int tabId = findTab(key);
-		if (tabId == -1)
+		if (tabId == -1) {
 			return;
-		if (fTabFolder != null)
+		}
+		if (fTabFolder != null) {
 			fTabFolder.setSelection(tabId);
+		}
 		HashSet<Control> controls = fControlMap.get(Integer.valueOf(tabId));// 0 is tab
 		Control curr = null;
 		boolean found = false;
@@ -1012,8 +1022,9 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 				//collapse other expandable composites
 				for (Control con : controls2) {
 					ExpandableComposite expandableOthers = getParentExpandableComposite(con);
-					if (expandableOthers != null)
+					if (expandableOthers != null) {
 						expandableOthers.setExpanded(false);
+					}
 
 				}
 				expandable.setExpanded(true);
@@ -1032,8 +1043,9 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 		int tabId = -1;
 		for (int i = 0; i < 3; i++) {
 			HashSet<Control> controls = fControlMap.get(Integer.valueOf(i));
-			if (controls == null)
+			if (controls == null) {
 				continue;
+			}
 			for (Control con : controls) {
 				ControlData data = (ControlData) con.getData();
 				if (key.equals(data.getKey())) {

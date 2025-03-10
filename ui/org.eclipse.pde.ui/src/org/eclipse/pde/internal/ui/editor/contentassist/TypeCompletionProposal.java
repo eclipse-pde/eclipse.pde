@@ -89,15 +89,17 @@ public class TypeCompletionProposal extends AbstractJavaCompletionProposal imple
 
 	@Override
 	public Point getSelection(IDocument document) {
-		if (getReplacementString().equals("\"\"")) //$NON-NLS-1$
+		if (getReplacementString().equals("\"\"")) { //$NON-NLS-1$
 			return new Point(getReplacementOffset() + 1, 0);
+		}
 		return new Point(getReplacementOffset() + getReplacementString().length(), 0);
 	}
 
 	@Override
 	public Object getAdditionalProposalInfo(IProgressMonitor monitor) {
-		if (fAdditionalInfo != null)
+		if (fAdditionalInfo != null) {
 			return fAdditionalInfo;
+		}
 		return super.getAdditionalProposalInfo(monitor);
 	}
 
@@ -127,8 +129,9 @@ public class TypeCompletionProposal extends AbstractJavaCompletionProposal imple
 	}
 
 	protected ProposalInfo computeProposalInfo() {
-		if (fProject != null && fTypeName != null)
+		if (fProject != null && fTypeName != null) {
 			return new PDETypeProposalInfo(JavaCore.create(fProject), fTypeName);
+		}
 		return null;
 	}
 

@@ -169,12 +169,13 @@ public abstract class PDELauncherFormEditor extends MultiSourceEditor {
 					include = osgi == "true".equals(element.getAttribute("osgi")) && !"true".equals(projectSpecific); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 				}
 				if (include) {
-					if (mode.equals(ILaunchManager.RUN_MODE))
+					if (mode.equals(ILaunchManager.RUN_MODE)) {
 						runList.add(element);
-					else if (mode.equals(ILaunchManager.DEBUG_MODE))
+					} else if (mode.equals(ILaunchManager.DEBUG_MODE)) {
 						debugList.add(element);
-					else if (mode.equals(ILaunchManager.PROFILE_MODE))
+					} else if (mode.equals(ILaunchManager.PROFILE_MODE)) {
 						profileList.add(element);
+					}
 				}
 			}
 		}
@@ -206,14 +207,15 @@ public abstract class PDELauncherFormEditor extends MultiSourceEditor {
 		}
 
 		private ImageDescriptor getImageDescriptor(String mode) {
-			if (mode == null)
+			if (mode == null) {
 				return null;
-			else if (mode.equals(ILaunchManager.RUN_MODE))
+			} else if (mode.equals(ILaunchManager.RUN_MODE)) {
 				return PDEPluginImages.DESC_RUN_EXC;
-			else if (mode.equals(ILaunchManager.DEBUG_MODE))
+			} else if (mode.equals(ILaunchManager.DEBUG_MODE)) {
 				return PDEPluginImages.DESC_DEBUG_EXC;
-			else if (mode.equals(ILaunchManager.PROFILE_MODE))
+			} else if (mode.equals(ILaunchManager.PROFILE_MODE)) {
 				return PDEPluginImages.DESC_PROFILE_EXC;
+			}
 			return null;
 		}
 	}

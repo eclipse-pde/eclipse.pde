@@ -36,11 +36,13 @@ public class PackageHyperlink extends ManifestElementHyperlink {
 	@Override
 	protected void open2() {
 		IResource res = fHeader.getBundle().getModel().getUnderlyingResource();
-		if (res == null)
+		if (res == null) {
 			return;
+		}
 		IPackageFragment frag = PDEJavaHelper.getPackageFragment(fElement, null, res.getProject());
-		if (frag == null)
+		if (frag == null) {
 			return;
+		}
 		try {
 			IViewPart part = PDEPlugin.getActivePage().showView(JavaUI.ID_PACKAGES);
 			ShowInPackageViewAction action = new ShowInPackageViewAction(part.getSite());

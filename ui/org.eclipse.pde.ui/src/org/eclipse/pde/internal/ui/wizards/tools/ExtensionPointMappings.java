@@ -36,8 +36,9 @@ public class ExtensionPointMappings {
 	}
 
 	public static boolean isDeprecated(String id) {
-		if (fMap.isEmpty())
+		if (fMap.isEmpty()) {
 			initialize();
+		}
 		return fMap.containsKey(id);
 	}
 
@@ -52,8 +53,9 @@ public class ExtensionPointMappings {
 	}
 
 	public static String getNewId(String oldId) {
-		if (fMap.isEmpty())
+		if (fMap.isEmpty()) {
 			initialize();
+		}
 		return fMap.containsKey(oldId) ? fMap.get(oldId).toString() : null;
 	}
 

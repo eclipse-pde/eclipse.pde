@@ -35,8 +35,9 @@ public class RuntimePage extends PDEFormPage {
 	@Override
 	protected String getHelpResource() {
 		if (getPDEEditor().getAggregateModel() instanceof IPluginModelBase base) {
-			if (base.isFragmentModel())
+			if (base.isFragmentModel()) {
 				return IHelpContextIds.MANIFEST_FRAGMENT_RUNTIME;
+			}
 		}
 		return IHelpContextIds.MANIFEST_PLUGIN_RUNTIME;
 	}
@@ -51,8 +52,9 @@ public class RuntimePage extends PDEFormPage {
 
 		if (isBundle()) {
 			mform.addPart(new ExportPackageSection(this, form.getBody()));
-			if (((ManifestEditor) getEditor()).isEquinox())
+			if (((ManifestEditor) getEditor()).isEquinox()) {
 				mform.addPart(new ExportPackageVisibilitySection(this, form.getBody()));
+			}
 			mform.addPart(new LibrarySection(this, form.getBody()));
 		} else {
 			// No MANIFEST.MF (not a Bundle)
@@ -63,12 +65,13 @@ public class RuntimePage extends PDEFormPage {
 		}
 
 		if (getPDEEditor().getAggregateModel() instanceof IPluginModelBase base) {
-			if (base.isFragmentModel())
+			if (base.isFragmentModel()) {
 				PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(),
 						IHelpContextIds.MANIFEST_FRAGMENT_RUNTIME);
-			else
+			} else {
 				PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(),
 						IHelpContextIds.MANIFEST_PLUGIN_RUNTIME);
+			}
 		}
 	}
 

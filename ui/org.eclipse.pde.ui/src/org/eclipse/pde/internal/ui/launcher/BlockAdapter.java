@@ -72,8 +72,9 @@ public class BlockAdapter {
 		if (fActiveIndex == FEATURES_BLOCK) {
 			fFeatureBlock.initializeFrom(config);
 		} else {
-			if (fPluginBlock instanceof OSGiBundleBlock)
+			if (fPluginBlock instanceof OSGiBundleBlock) {
 				((OSGiBundleBlock) fPluginBlock).initializeFrom(config);
+			}
 		}
 	}
 

@@ -58,8 +58,9 @@ public class IUsPage extends PDEFormPage {
 			detailsPart.setPageProvider(new IDetailsPageProvider() {
 				@Override
 				public Object getPageKey(Object object) {
-					if (object instanceof SiteFeatureAdapter)
+					if (object instanceof SiteFeatureAdapter) {
 						return SiteFeatureAdapter.class;
+					}
 					if (object instanceof SiteBundleAdapter) {
 						return SiteBundleAdapter.class;
 					}

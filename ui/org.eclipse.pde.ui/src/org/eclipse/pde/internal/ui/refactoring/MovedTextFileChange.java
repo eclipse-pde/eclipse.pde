@@ -41,8 +41,9 @@ public class MovedTextFileChange extends TextFileChange {
 
 	@Override
 	public IDocument getCurrentDocument(IProgressMonitor pm) throws CoreException {
-		if (pm == null)
+		if (pm == null) {
 			pm = new NullProgressMonitor();
+		}
 		IDocument result = null;
 		pm.beginTask("", 2); //$NON-NLS-1$
 		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
@@ -52,8 +53,9 @@ public class MovedTextFileChange extends TextFileChange {
 			ITextFileBuffer buffer = manager.getTextFileBuffer(path, LocationKind.NORMALIZE);
 			result = buffer.getDocument();
 		} finally {
-			if (result != null)
+			if (result != null) {
 				manager.disconnect(fCurrentFile.getFullPath(), LocationKind.NORMALIZE, pm);
+			}
 		}
 		pm.done();
 		return result;

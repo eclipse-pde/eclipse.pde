@@ -265,8 +265,9 @@ public class TargetEditor extends FormEditor {
 	 */
 	@Override
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
-		if (!(input instanceof IFileEditorInput) && !(input instanceof IURIEditorInput))
+		if (!(input instanceof IFileEditorInput) && !(input instanceof IURIEditorInput)) {
 			throw new PartInitException(NLS.bind(PDEUIMessages.TargetEditor_6, input.getClass().getName()));
+		}
 		super.init(site, input);
 	}
 
@@ -561,8 +562,9 @@ public class TargetEditor extends FormEditor {
 						if (!fSaving) {
 							Display display = getSite().getShell().getDisplay();
 							display.asyncExec(() -> {
-								if (getActivePage() != -1)
+								if (getActivePage() != -1) {
 									TargetEditor.this.doRevert();
+								}
 							});
 						}
 					}
@@ -669,8 +671,9 @@ public class TargetEditor extends FormEditor {
 				Job.getJobManager().cancel(getJobFamily());
 
 				String name = getTarget().getName();
-				if (name == null)
+				if (name == null) {
 					name = ""; //$NON-NLS-1$
+				}
 				Job resolveJob = new Job(NLS.bind(PDEUIMessages.TargetEditor_1, name)) {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {

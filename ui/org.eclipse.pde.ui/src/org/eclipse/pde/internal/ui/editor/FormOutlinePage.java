@@ -78,15 +78,17 @@ public class FormOutlinePage extends PDEOutlinePage implements IModelChangedList
 
 		@Override
 		public String getText(Object obj) {
-			if (obj instanceof IFormPage)
+			if (obj instanceof IFormPage) {
 				return ((IFormPage) obj).getTitle();
+			}
 			return fWrappedLabelProvider.getText(obj);
 		}
 
 		@Override
 		public Image getImage(Object obj) {
-			if (obj instanceof IFormPage)
+			if (obj instanceof IFormPage) {
 				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PAGE_OBJ);
+			}
 			return fWrappedLabelProvider.getImage(obj);
 		}
 	}
@@ -128,16 +130,18 @@ public class FormOutlinePage extends PDEOutlinePage implements IModelChangedList
 		fTreeViewer.setContentProvider(createContentProvider());
 		fTreeViewer.setLabelProvider(createLabelProvider());
 		fViewerComparator = createOutlineSorter();
-		if (fSorted)
+		if (fSorted) {
 			fTreeViewer.setComparator(fViewerComparator);
-		else
+		} else {
 			fTreeViewer.setComparator(null);
+		}
 		fTreeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
 		fTreeViewer.setUseHashlookup(true);
 		fTreeViewer.setInput(fEditor);
 		IBaseModel model = fEditor.getAggregateModel();
-		if (model instanceof IModelChangeProvider)
+		if (model instanceof IModelChangeProvider) {
 			((IModelChangeProvider) model).addModelChangedListener(this);
+		}
 	}
 
 	public ILabelProvider createLabelProvider() {
@@ -147,8 +151,9 @@ public class FormOutlinePage extends PDEOutlinePage implements IModelChangedList
 	@Override
 	public void dispose() {
 		IBaseModel model = fEditor.getAggregateModel();
-		if (model instanceof IModelChangeProvider)
+		if (model instanceof IModelChangeProvider) {
 			((IModelChangeProvider) model).removeModelChangedListener(this);
+		}
 		super.dispose();
 	}
 
@@ -161,8 +166,9 @@ public class FormOutlinePage extends PDEOutlinePage implements IModelChangedList
 		ArrayList<IFormPage> formPages = new ArrayList<>();
 		IFormPage[] pages = fEditor.getPages();
 		for (IFormPage page : pages) {
-			if (page.isEditor() == false)
+			if (page.isEditor() == false) {
 				formPages.add(page);
+			}
 		}
 		return formPages.toArray();
 	}
@@ -171,15 +177,17 @@ public class FormOutlinePage extends PDEOutlinePage implements IModelChangedList
 	public void modelChanged(IModelChangedEvent event) {
 		IFormPage page = fEditor.getActivePageInstance();
 		fStale = true;
-		if (page.isEditor() == false)
+		if (page.isEditor() == false) {
 			refresh();
+		}
 	}
 
 	public void refresh() {
 		if (fStale) {
 			final Control control = getControl();
-			if (control == null || control.isDisposed())
+			if (control == null || control.isDisposed()) {
 				return;
+			}
 			control.getDisplay().asyncExec(() -> {
 				if (!fTreeViewer.getControl().isDisposed()) {
 					fTreeViewer.refresh();
@@ -191,8 +199,9 @@ public class FormOutlinePage extends PDEOutlinePage implements IModelChangedList
 	}
 
 	protected String getParentPageId(Object item) {
-		if (item instanceof IFormPage)
+		if (item instanceof IFormPage) {
 			return ((IFormPage) item).getId();
+		}
 		return null;
 	}
 
@@ -204,17 +213,20 @@ public class FormOutlinePage extends PDEOutlinePage implements IModelChangedList
 		IFormPage page = fEditor.getActivePageInstance();
 		String id = getParentPageId(item);
 		IFormPage newPage = null;
-		if (id != null && (page == null || !page.getId().equals(id)))
+		if (id != null && (page == null || !page.getId().equals(id))) {
 			newPage = fEditor.setActivePage(id);
+		}
 		IFormPage revealPage = newPage != null ? newPage : page;
-		if (revealPage != null && !(item instanceof IFormPage))
+		if (revealPage != null && !(item instanceof IFormPage)) {
 			revealPage.selectReveal(item);
+		}
 	}
 
 	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
-		if (fEditorSelection)
+		if (fEditorSelection) {
 			return;
+		}
 		fOutlineSelection = true;
 		try {
 			ISelection selection = event.getSelection();
@@ -230,35 +242,41 @@ public class FormOutlinePage extends PDEOutlinePage implements IModelChangedList
 
 	@Override
 	public void setFocus() {
-		if (fTreeViewer != null)
+		if (fTreeViewer != null) {
 			fTreeViewer.getTree().setFocus();
+		}
 	}
 
 	@Override
 	public ISelection getSelection() {
-		if (fTreeViewer == null)
+		if (fTreeViewer == null) {
 			return StructuredSelection.EMPTY;
+		}
 		return fTreeViewer.getSelection();
 	}
 
 	@Override
 	public void sort(boolean sorting) {
 		fSorted = sorting;
-		if (fTreeViewer != null)
-			if (sorting)
+		if (fTreeViewer != null) {
+			if (sorting) {
 				fTreeViewer.setComparator(fViewerComparator);
-			else
+			} else {
 				fTreeViewer.setComparator(null);
+			}
+		}
 	}
 
 	@Override
 	public void setSelection(ISelection selection) {
-		if (fOutlineSelection)
+		if (fOutlineSelection) {
 			return;
+		}
 		fEditorSelection = true;
 		try {
-			if (fTreeViewer == null)
+			if (fTreeViewer == null) {
 				return;
+			}
 			if (selection != null && !selection.isEmpty() && selection instanceof IStructuredSelection) {
 				Object item = ((IStructuredSelection) selection).getFirstElement();
 				if (item instanceof ImportObject) {

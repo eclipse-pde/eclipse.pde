@@ -140,22 +140,27 @@ public class ImportPackageSection extends TableSection {
 		}
 
 		public String getName() {
-			if (fUnderlying instanceof ExportPackageDescription)
+			if (fUnderlying instanceof ExportPackageDescription) {
 				return ((ExportPackageDescription) fUnderlying).getName();
-			if (fUnderlying instanceof IPackageFragment)
+			}
+			if (fUnderlying instanceof IPackageFragment) {
 				return ((IPackageFragment) fUnderlying).getElementName();
-			if (fUnderlying instanceof ExportPackageObject)
+			}
+			if (fUnderlying instanceof ExportPackageObject) {
 				return ((ExportPackageObject) fUnderlying).getName();
+			}
 			return null;
 		}
 
 		public Version getVersion() {
-			if (fUnderlying instanceof ExportPackageDescription)
+			if (fUnderlying instanceof ExportPackageDescription) {
 				return ((ExportPackageDescription) fUnderlying).getVersion();
+			}
 			if (fUnderlying instanceof ExportPackageObject) {
 				String version = ((ExportPackageObject) fUnderlying).getVersion();
-				if (version != null)
+				if (version != null) {
 					return new Version(version);
+				}
 			}
 			return null;
 		}
@@ -226,10 +231,11 @@ public class ImportPackageSection extends TableSection {
 	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(PDEUIMessages.ImportPackageSection_required);
-		if (isFragment())
+		if (isFragment()) {
 			section.setDescription(PDEUIMessages.ImportPackageSection_descFragment);
-		else
+		} else {
 			section.setDescription(PDEUIMessages.ImportPackageSection_desc);
+		}
 
 		Composite container = createClientContainer(section, 2, toolkit);
 		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
@@ -242,10 +248,12 @@ public class ImportPackageSection extends TableSection {
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				String s1 = e1.toString();
 				String s2 = e2.toString();
-				if (s1.contains(" ")) //$NON-NLS-1$
+				if (s1.contains(" ")) { //$NON-NLS-1$
 					s1 = s1.substring(0, s1.indexOf(' '));
-				if (s2.contains(" ")) //$NON-NLS-1$
+				}
+				if (s2.contains(" ")) { //$NON-NLS-1$
 					s2 = s2.substring(0, s2.indexOf(' '));
+				}
 				return super.compare(viewer, s1, s2);
 			}
 		});
@@ -317,8 +325,9 @@ public class ImportPackageSection extends TableSection {
 	@Override
 	public void dispose() {
 		IBundleModel model = getBundleModel();
-		if (model != null)
+		if (model != null) {
 			model.removeModelChangedListener(this);
+		}
 		super.dispose();
 	}
 
@@ -391,12 +400,14 @@ public class ImportPackageSection extends TableSection {
 
 	private IPackageFragment getPackageFragment(ISelection sel) {
 		if (sel instanceof IStructuredSelection selection) {
-			if (selection.size() != 1)
+			if (selection.size() != 1) {
 				return null;
+			}
 
 			IBaseModel model = getPage().getModel();
-			if (!(model instanceof IPluginModelBase))
+			if (!(model instanceof IPluginModelBase)) {
 				return null;
+			}
 
 			return PDEJavaHelper.getPackageFragment(((PackageObject) selection.getFirstElement()).getName(), ((IPluginModelBase) model).getPluginBase().getId(), getPage().getPDEEditor().getCommonProject());
 		}
@@ -405,13 +416,14 @@ public class ImportPackageSection extends TableSection {
 
 	private void handleGoToPackage(ISelection selection) {
 		IPackageFragment frag = getPackageFragment(selection);
-		if (frag != null)
+		if (frag != null) {
 			try {
 				IViewPart part = PDEPlugin.getActivePage().showView(JavaUI.ID_PACKAGES);
 				ShowInPackageViewAction action = new ShowInPackageViewAction(part.getSite());
 				action.run(frag);
 			} catch (PartInitException e) {
 			}
+		}
 	}
 
 	private void handleOpenProperties() {
@@ -421,19 +433,22 @@ public class ImportPackageSection extends TableSection {
 		dialog.create();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IHelpContextIds.IMPORTED_PACKAGE_PROPERTIES);
 		SWTUtil.setDialogSize(dialog, 400, -1);
-		if (selected.length == 1)
+		if (selected.length == 1) {
 			dialog.setTitle(((ImportPackageObject) selected[0]).getName());
-		else
+		} else {
 			dialog.setTitle(PDEUIMessages.ExportPackageSection_props);
+		}
 		if (dialog.open() == Window.OK && isEditable()) {
 			String newVersion = dialog.getVersion();
 			boolean newOptional = dialog.isOptional();
 			for (Object selectedObject : selected) {
 				ImportPackageObject object = (ImportPackageObject) selectedObject;
-				if (!newVersion.equals(object.getVersion()))
+				if (!newVersion.equals(object.getVersion())) {
 					object.setVersion(newVersion);
-				if (!newOptional == object.isOptional())
+				}
+				if (!newOptional == object.isOptional()) {
 					object.setOptional(newOptional);
+				}
 			}
 		}
 	}
@@ -464,19 +479,21 @@ public class ImportPackageSection extends TableSection {
 				Set<String> names = new HashSet<>(); // set of String names, do not allow the same package to be added twice
 				for (int i = 0; i < selected.length; i++) {
 					ImportPackageObject impObject = null;
-					if (selected[i] instanceof ImportItemWrapper)
+					if (selected[i] instanceof ImportItemWrapper) {
 						selected[i] = ((ImportItemWrapper) selected[i]).fUnderlying;
+					}
 
-					if (selected[i] instanceof ExportPackageDescription)
+					if (selected[i] instanceof ExportPackageDescription) {
 						impObject = new ImportPackageObject(fHeader, (ExportPackageDescription) selected[i], getVersionAttribute());
-					else if (selected[i] instanceof IPackageFragment fragment) {
+					} else if (selected[i] instanceof IPackageFragment fragment) {
 						// non exported package
 						impObject = new ImportPackageObject(fHeader, fragment.getElementName(), null, getVersionAttribute());
 					} else if (selected[i] instanceof ExportPackageObject epo) {
 						impObject = new ImportPackageObject(fHeader, epo.getName(), epo.getVersion(), getVersionAttribute());
 					}
-					if (impObject != null && names.add(impObject.getName()))
+					if (impObject != null && names.add(impObject.getName())) {
 						fHeader.addPackage(impObject);
+					}
 				}
 			} else {
 				getBundle().setHeader(Constants.IMPORT_PACKAGE, getValue(selected));
@@ -487,11 +504,13 @@ public class ImportPackageSection extends TableSection {
 	private String getValue(Object[] objects) {
 		StringBuilder buffer = new StringBuilder();
 		for (int i = 0; i < objects.length; i++) {
-			if (!(objects[i] instanceof ImportItemWrapper))
+			if (!(objects[i] instanceof ImportItemWrapper)) {
 				continue;
+			}
 			Version version = ((ImportItemWrapper) objects[i]).getVersion();
-			if (buffer.length() > 0)
+			if (buffer.length() > 0) {
 				buffer.append("," + getLineDelimiter() + " "); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 			buffer.append(((ImportItemWrapper) objects[i]).getName());
 			if (version != null && !version.equals(Version.emptyVersion)) {
 				buffer.append(";"); //$NON-NLS-1$
@@ -517,21 +536,25 @@ public class ImportPackageSection extends TableSection {
 			BundleDescription desc = pluginModel.getBundleDescription();
 
 			// If the current model is a fragment, it can export packages only if its parent has hasExtensibleAPI set
-			if (isFragmentThatCannotExportPackages(pluginModel))
+			if (isFragmentThatCannotExportPackages(pluginModel)) {
 				continue;
+			}
 
 			String id = desc == null ? null : desc.getSymbolicName();
-			if (id == null || forbidden.contains(id))
+			if (id == null || forbidden.contains(id)) {
 				continue;
+			}
 
 			ExportPackageDescription[] exported = desc.getExportPackages();
 			for (ExportPackageDescription exportedPackage : exported) {
 				String name = exportedPackage.getName();
 				NameVersionDescriptor nameVersion = new NameVersionDescriptor(exportedPackage.getName(), exportedPackage.getVersion().toString(), NameVersionDescriptor.TYPE_PACKAGE);
-				if (("java".equals(name) || name.startsWith("java.")) && !allowJava) //$NON-NLS-1$ //$NON-NLS-2$
+				if (("java".equals(name) || name.startsWith("java.")) && !allowJava) { //$NON-NLS-1$ //$NON-NLS-2$
 					continue;
-				if (nameVersions.add(nameVersion) && (fHeader == null || !fHeader.hasPackage(name)))
+				}
+				if (nameVersions.add(nameVersion) && (fHeader == null || !fHeader.hasPackage(name))) {
 					elements.add(new ImportItemWrapper(exportedPackage));
+				}
 			}
 			IPluginModelBase model = (IPluginModelBase) getPage().getPDEEditor().getAggregateModel();
 			if (model instanceof IBundlePluginModelBase) {
@@ -544,8 +567,9 @@ public class ImportPackageSection extends TableSection {
 							String name = pkg.getName();
 							String version = pkg.getVersion();
 							NameVersionDescriptor nameVersion = new NameVersionDescriptor(name, version, NameVersionDescriptor.TYPE_PACKAGE);
-							if (nameVersions.add(nameVersion) && (fHeader == null || !fHeader.hasPackage(name)))
+							if (nameVersions.add(nameVersion) && (fHeader == null || !fHeader.hasPackage(name))) {
 								elements.add(new ImportItemWrapper(pkg));
+							}
 						}
 					}
 				}
@@ -557,12 +581,14 @@ public class ImportPackageSection extends TableSection {
 				// add un-exported packages in workspace non-binary plug-ins
 				IResource resource = model.getUnderlyingResource();
 				IProject project = resource != null ? resource.getProject() : null;
-				if (project == null || !project.hasNature(JavaCore.NATURE_ID) || WorkspaceModelManager.isBinaryProject(project) || !PDEProject.getManifest(project).exists())
+				if (project == null || !project.hasNature(JavaCore.NATURE_ID) || WorkspaceModelManager.isBinaryProject(project) || !PDEProject.getManifest(project).exists()) {
 					continue;
+				}
 
 				// If the current model is a fragment, it can export packages only if its parent has hasExtensibleAPI set
-				if (isFragmentThatCannotExportPackages(model))
+				if (isFragmentThatCannotExportPackages(model)) {
 					continue;
+				}
 
 				IJavaProject jp = JavaCore.create(project);
 				IPackageFragmentRoot[] roots = jp.getPackageFragmentRoots();
@@ -573,10 +599,12 @@ public class ImportPackageSection extends TableSection {
 							IPackageFragment f = (IPackageFragment) child;
 							String name = f.getElementName();
 							NameVersionDescriptor nameVersion = new NameVersionDescriptor(name, null, NameVersionDescriptor.TYPE_PACKAGE);
-							if (name.equals("")) //$NON-NLS-1$
+							if (name.equals("")) { //$NON-NLS-1$
 								name = "."; //$NON-NLS-1$
-							if (nameVersions.add(nameVersion) && (f.hasChildren() || f.getNonJavaResources().length > 0))
+							}
+							if (nameVersions.add(nameVersion) && (f.hasChildren() || f.getNonJavaResources().length > 0)) {
 								conditional.add(new ImportItemWrapper(f));
+							}
 						}
 					}
 				}
@@ -613,8 +641,9 @@ public class ImportPackageSection extends TableSection {
 		BundleDescription[] hosts = hostSpec.getHosts();
 		// At least one of fragment hosts has to have extensible API
 		for (Resource host : hosts) {
-			if (ClasspathUtilCore.hasExtensibleAPI(PluginRegistry.findModel(host)))
+			if (ClasspathUtilCore.hasExtensibleAPI(PluginRegistry.findModel(host))) {
 				return false;
+			}
 		}
 		// Fragment that cannot export
 		return true;
@@ -711,11 +740,13 @@ public class ImportPackageSection extends TableSection {
 		final IStructuredSelection selection = fPackageViewer.getStructuredSelection();
 		manager.add(fAddAction);
 		boolean singleSelection = selection.size() == 1;
-		if (singleSelection)
+		if (singleSelection) {
 			manager.add(fGoToAction);
+		}
 		manager.add(new Separator());
-		if (!selection.isEmpty())
+		if (!selection.isEmpty()) {
 			manager.add(fRemoveAction);
+		}
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
 
 		if (((IModel) getPage().getModel()).getUnderlyingResource() != null) {
@@ -764,8 +795,9 @@ public class ImportPackageSection extends TableSection {
 		}
 		IPackageFragmentRoot[] roots = JavaCore.create(project).getPackageFragmentRoots();
 		for (int i = 0; i < roots.length; i++) {
-			if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE || (roots[i].isArchive() && !roots[i].isExternal()))
+			if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE || (roots[i].isArchive() && !roots[i].isExternal())) {
 				result.add(roots[i]);
+			}
 		}
 		return result.toArray(new IPackageFragmentRoot[result.size()]);
 	}
@@ -810,8 +842,9 @@ public class ImportPackageSection extends TableSection {
 			return set;
 		}
 		String id = model.getPluginBase().getId();
-		if (id != null)
+		if (id != null) {
 			set.add(id);
+		}
 		IPluginImport[] imports = model.getPluginBase().getImports();
 		State state = TargetPlatformHelper.getState();
 		for (IPluginImport pluginImport : imports) {
@@ -821,12 +854,14 @@ public class ImportPackageSection extends TableSection {
 	}
 
 	private void addDependency(State state, String bundleID, Set<String> set) {
-		if (bundleID == null || !set.add(bundleID))
+		if (bundleID == null || !set.add(bundleID)) {
 			return;
+		}
 
 		BundleDescription desc = state.getBundle(bundleID, null);
-		if (desc == null)
+		if (desc == null) {
 			return;
+		}
 
 		BundleDescription[] fragments = desc.getFragments();
 		for (BundleDescription fragment : fragments) {
@@ -847,10 +882,12 @@ public class ImportPackageSection extends TableSection {
 	}
 
 	private boolean shouldEnableProperties(Object[] selected) {
-		if (selected.length == 0)
+		if (selected.length == 0) {
 			return false;
-		if (selected.length == 1)
+		}
+		if (selected.length == 1) {
 			return true;
+		}
 
 		String version = ((ImportPackageObject) selected[0]).getVersion();
 		boolean optional = ((ImportPackageObject) selected[0]).isOptional();

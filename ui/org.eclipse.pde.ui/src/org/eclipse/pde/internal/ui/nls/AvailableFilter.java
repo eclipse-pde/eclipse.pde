@@ -38,8 +38,9 @@ public class AvailableFilter extends ViewerFilter {
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		// filter out any items that are currently selected
 		// on a full refresh, these will have been added back to the list
-		if (selected.contains(element))
+		if (selected.contains(element)) {
 			return false;
+		}
 
 		String displayName = labelProvider.getText(element);
 		return matches(element.toString()) || matches(displayName);
@@ -52,14 +53,17 @@ public class AvailableFilter extends ViewerFilter {
 	public boolean setPattern(String pattern) {
 		String newPattern = pattern.toLowerCase();
 
-		if (!newPattern.endsWith(WILDCARD))
+		if (!newPattern.endsWith(WILDCARD)) {
 			newPattern += WILDCARD;
-		if (!newPattern.startsWith(WILDCARD))
+		}
+		if (!newPattern.startsWith(WILDCARD)) {
 			newPattern = WILDCARD + newPattern;
+		}
 		if (fPattern != null) {
 			String oldPattern = fPattern.pattern();
-			if (newPattern.equals(oldPattern))
+			if (newPattern.equals(oldPattern)) {
 				return false;
+			}
 		}
 		fPattern = PatternConstructor.createPattern(newPattern, true);
 		return true;

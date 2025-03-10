@@ -83,8 +83,9 @@ public class ProductExportWizard extends BaseExportWizard {
 		info.exportMetadata = fPage.doExportMetadata();
 		info.destinationDirectory = fPage.getDestination();
 		info.zipFileName = fPage.getFileName();
-		if (fPage2 != null && fPage.doMultiPlatform())
+		if (fPage2 != null && fPage.doMultiPlatform()) {
 			info.targets = fPage2.getTargets();
+		}
 		info.items = switch (fProductModel.getProduct().getType())
 			{
 			case FEATURES -> getFeatureModels();
@@ -93,8 +94,9 @@ public class ProductExportWizard extends BaseExportWizard {
 			};
 
 		String rootDirectory = fPage.getRootDirectory();
-		if ("".equals(rootDirectory.trim())) //$NON-NLS-1$
+		if ("".equals(rootDirectory.trim())) { //$NON-NLS-1$
 			rootDirectory = "."; //$NON-NLS-1$
+		}
 		ProductExportOperation job = new ProductExportOperation(info, PDEUIMessages.ProductExportJob_name, fProductModel.getProduct(), rootDirectory);
 		job.setUser(true);
 		job.setRule(ResourcesPlugin.getWorkspace().getRoot());
@@ -108,8 +110,9 @@ public class ProductExportWizard extends BaseExportWizard {
 		IProductFeature[] features = fProductModel.getProduct().getFeatures();
 		for (IProductFeature feature : features) {
 			IFeatureModel model = manager.findFeatureModel(feature.getId(), feature.getVersion());
-			if (model != null)
+			if (model != null) {
 				list.add(model);
+			}
 		}
 		return list.toArray(new IFeatureModel[list.size()]);
 	}
@@ -125,10 +128,12 @@ public class ProductExportWizard extends BaseExportWizard {
 				bundle = state.getBundle(plugin.getId(), Version.parseVersion(v));
 			}
 			// if there's no version, just grab a bundle like before
-			if (bundle == null)
+			if (bundle == null) {
 				bundle = state.getBundle(plugin.getId(), null);
-			if (bundle != null)
+			}
+			if (bundle != null) {
 				list.add(bundle);
+			}
 		}
 		return list.toArray(new BundleDescription[list.size()]);
 	}
@@ -165,8 +170,9 @@ public class ProductExportWizard extends BaseExportWizard {
 		if (!fPage.doExportToDirectory()) {
 			File zipFile = new File(fPage.getDestination(), fPage.getFileName());
 			if (zipFile.exists()) {
-				if (!MessageDialog.openQuestion(getContainer().getShell(), PDEUIMessages.BaseExportWizard_confirmReplace_title, NLS.bind(PDEUIMessages.BaseExportWizard_confirmReplace_desc, zipFile.getAbsolutePath())))
+				if (!MessageDialog.openQuestion(getContainer().getShell(), PDEUIMessages.BaseExportWizard_confirmReplace_title, NLS.bind(PDEUIMessages.BaseExportWizard_confirmReplace_desc, zipFile.getAbsolutePath()))) {
 					return false;
+				}
 				zipFile.delete();
 			}
 		}

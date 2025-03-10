@@ -66,33 +66,37 @@ public class CommandList {
 
 		@Override
 		public String getText(Object element) {
-			if (element instanceof Category)
+			if (element instanceof Category) {
 				return CommandList.getText(element);
-			else if (element instanceof Command)
+			} else if (element instanceof Command) {
 				return CommandList.getText(element);
+			}
 			return null;
 		}
 
 		@Override
 		public Image getImage(Object element) {
 			Image img = fImgMap.get(element);
-			if (img != null)
+			if (img != null) {
 				return img;
+			}
 
-			if (element instanceof Category)
+			if (element instanceof Category) {
 				img = PDEPluginImages.DESC_COMGROUP_OBJ.createImage();
-			else if (element instanceof Command) {
+			} else if (element instanceof Command) {
 				ImageDescriptor desc = fComImgServ.getImageDescriptor(((Command) element).getId());
 				if (desc == null) {
-					if (fDefaultImage == null)
+					if (fDefaultImage == null) {
 						fDefaultImage = PDEPluginImages.DESC_BUILD_VAR_OBJ.createImage();
+					}
 					return fDefaultImage;
 				}
 				img = desc.createImage();
 			}
 
-			if (img != null)
+			if (img != null) {
 				fImgMap.put(element, img);
+			}
 
 			return img;
 		}
@@ -100,8 +104,9 @@ public class CommandList {
 		@Override
 		public void dispose() {
 			fImgMap.values().forEach(org.eclipse.swt.graphics.Resource::dispose);
-			if (fDefaultImage != null)
+			if (fDefaultImage != null) {
 				fDefaultImage.dispose();
+			}
 			super.dispose();
 		}
 	}
@@ -117,8 +122,9 @@ public class CommandList {
 		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			String filterText = fFilterText.getText();
-			if (filterText.length() == 0)
+			if (filterText.length() == 0) {
 				return true;
+			}
 			String wMatch = '*' + filterText + '*';
 			Pattern pattern = null;
 			try {
@@ -131,8 +137,9 @@ public class CommandList {
 				Command[] commands = (Command[]) prov.getChildren(element);
 				for (Command command : commands) {
 					String text = getText(command);
-					if (pattern.matcher(text.subSequence(0, text.length())).matches())
+					if (pattern.matcher(text.subSequence(0, text.length())).matches()) {
 						return true;
+					}
 				}
 				return false;
 			}
@@ -225,8 +232,9 @@ public class CommandList {
 	}
 
 	protected void addTreeSelectionListener(ISelectionChangedListener listener) {
-		if (listener != null)
+		if (listener != null) {
 			fTreeViewer.addSelectionChangedListener(listener);
+		}
 	}
 
 	private void createFilterText(Composite parent) {
@@ -236,8 +244,9 @@ public class CommandList {
 		fFilterText.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == SWT.ARROW_DOWN)
+				if (e.keyCode == SWT.ARROW_DOWN) {
 					fTreeViewer.getControl().setFocus();
+				}
 			}
 		});
 
@@ -265,8 +274,9 @@ public class CommandList {
 	}
 
 	protected void setSelection(Object object) {
-		if (fTreeViewer != null && object != null)
+		if (fTreeViewer != null && object != null) {
 			fTreeViewer.setSelection(new StructuredSelection(object));
+		}
 	}
 
 	public ISelection getSelection() {

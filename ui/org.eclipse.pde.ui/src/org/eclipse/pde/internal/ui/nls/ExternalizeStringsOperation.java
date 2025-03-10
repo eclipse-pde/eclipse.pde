@@ -81,8 +81,9 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 					fileChange.getEdit().addChild(edit);
 					fileChange.addTextEditGroup(new TextEditGroup(PDEUIMessages.ExternalizeStringsOperation_editNames_addComment, edit));
 				}
-				if (!change.localizationSet())
+				if (!change.localizationSet()) {
 					addBundleLocalization(change, monitor, pluginChange);
+				}
 
 				// Update build.properties file (if exists & not already done)
 				IFile buildProps = PDEProject.getBuildProperties(changeFile.getFile().getProject());
@@ -132,8 +133,9 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 	}
 
 	private CompositeChange getChangeForPlugin(String pluginName) {
-		if (fCompositeChanges.containsKey(pluginName))
+		if (fCompositeChanges.containsKey(pluginName)) {
 			return fCompositeChanges.get(pluginName);
+		}
 		CompositeChange result = new CompositeChange(NLS.bind(PDEUIMessages.ExternalizeStringsOperation_pluginChangeName, pluginName));
 		fCompositeChanges.put(pluginName, result);
 		fParentChange.add(result);
@@ -141,8 +143,9 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 	}
 
 	private TextFileChange getChangeForFile(IFile file, CompositeChange parentChange) {
-		if (fFileChanges.containsKey(file))
+		if (fFileChanges.containsKey(file)) {
 			return fFileChanges.get(file);
+		}
 		MultiTextEdit edit = new MultiTextEdit();
 		TextFileChange change = new TextFileChange(file.getName(), file);
 		change.setEdit(edit);
@@ -185,8 +188,9 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 		// if the edit for this manifest file is in the HashMap, then we must have added
 		// the localization already since it is checked first (this must be the second or subsequent
 		// change to the manifest for this plug-in)
-		if (fFileChanges.containsKey(manifest))
+		if (fFileChanges.containsKey(manifest)) {
 			return;
+		}
 		final String localiz = change.getBundleLocalization();
 		TextFileChange[] result = PDEModelUtility.changesForModelModication(new ModelModification(manifest) {
 			@Override
@@ -219,8 +223,9 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 		IPluginModelBase model = PluginRegistry.findModel(file.getProject());
 		if (model != null) {
 			IPluginBase pluginBase = model.getPluginBase();
-			if (pluginBase != null)
+			if (pluginBase != null) {
 				return NLS.bind("#Properties file for {0}", pluginBase.getId()); //$NON-NLS-1$
+			}
 		}
 		return NLS.bind("#{0}", file.getName()); //$NON-NLS-1$
 	}

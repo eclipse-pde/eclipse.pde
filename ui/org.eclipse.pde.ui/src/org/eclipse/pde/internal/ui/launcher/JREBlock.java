@@ -71,14 +71,16 @@ public class JREBlock {
 			// When a radio button selection changes, we get two events.  One for the deselection of the old button and another for the selection
 			// of the new button.  We only need to update the configuration once when the selection changes.  Hence, we can ignore the deselection
 			// event of the old button.
-			if (source instanceof Button && !((Button) source).getSelection())
+			if (source instanceof Button && !((Button) source).getSelection()) {
 				return;
+			}
 			fTab.updateLaunchConfigurationDialog();
 			if (source == fEeCombo || source == fEeButton || source == fJreCombo || source == fJreButton) {
 				updateBootstrapEnablement();
 			}
-			if (source == fJreButton || source == fEeButton)
+			if (source == fJreButton || source == fEeButton) {
 				updateJREEnablement();
+			}
 		}
 
 		@Override
@@ -144,10 +146,11 @@ public class JREBlock {
 				// The launch dialog may have been closed while the preference page was open
 				if (!fTab.getControl().isDisposed()) {
 					setJRECombo();
-					if (useDefault || fJreCombo.indexOf(currentVM) == -1)
+					if (useDefault || fJreCombo.indexOf(currentVM) == -1) {
 						fJreCombo.setText(VMUtil.getDefaultVMInstallName());
-					else
+					} else {
 						fJreCombo.setText(currentVM);
+					}
 					setEECombo();
 					setEEComboSelection(currentEE);
 					updateBootstrapEnablement();
@@ -285,8 +288,9 @@ public class JREBlock {
 				}
 			}
 		}
-		if (fEeCombo.getItemCount() > 0 && fEeCombo.getSelectionIndex() == -1)
+		if (fEeCombo.getItemCount() > 0 && fEeCombo.getSelectionIndex() == -1) {
 			fEeCombo.select(0);
+		}
 	}
 
 	private void setJREComboSelection(String vmInstallName) {
@@ -377,15 +381,17 @@ public class JREBlock {
 	}
 
 	public String validate() {
-		if (fEeButton.getSelection() && fEeCombo.getText().contains(PDEUIMessages.BasicLauncherTab_unbound))
+		if (fEeButton.getSelection() && fEeCombo.getText().contains(PDEUIMessages.BasicLauncherTab_unbound)) {
 			return NLS.bind(PDEUIMessages.BasicLauncherTab_noJreForEeMessage, parseEESelection(fEeCombo.getText()));
+		}
 		return null;
 	}
 
 	private String parseEESelection(String selection) {
 		int index = selection.indexOf(" ("); //$NON-NLS-1$
-		if (index == -1)
+		if (index == -1) {
 			return selection;
+		}
 		return selection.substring(0, index);
 	}
 }

@@ -32,10 +32,12 @@ public abstract class AbstractManifestMarkerResolution extends AbstractPDEMarker
 
 	@Override
 	protected void createChange(IBaseModel model) {
-		if (model instanceof IBundlePluginModelBase)
+		if (model instanceof IBundlePluginModelBase) {
 			model = ((IBundlePluginModelBase) model).getBundleModel();
-		if (model instanceof BundleModel)
+		}
+		if (model instanceof BundleModel) {
 			createChange((BundleModel) model);
+		}
 	}
 
 }

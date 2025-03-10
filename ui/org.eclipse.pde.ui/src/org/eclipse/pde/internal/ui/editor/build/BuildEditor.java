@@ -72,8 +72,9 @@ public class BuildEditor extends MultiSourceEditor {
 
 	@Override
 	public void monitoredFileAdded(IFile file) {
-		if (fInputContextManager == null)
+		if (fInputContextManager == null) {
 			return;
+		}
 		String name = file.getName();
 		if (name.equalsIgnoreCase(ICoreConstants.BUILD_FILENAME_DESCRIPTOR)) {
 			if (!fInputContextManager.hasContext(BuildInputContext.CONTEXT_ID)) {
@@ -114,8 +115,9 @@ public class BuildEditor extends MultiSourceEditor {
 	@Override
 	protected void addEditorPages() {
 		try {
-			if (getEditorInput() instanceof IFileEditorInput)
+			if (getEditorInput() instanceof IFileEditorInput) {
 				addPage(new BuildPage(this));
+			}
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
 		}
@@ -163,8 +165,9 @@ public class BuildEditor extends MultiSourceEditor {
 			Transfer[] transfers = new Transfer[] {TextTransfer.getInstance(), RTFTransfer.getInstance()};
 			for (TransferData type : types) {
 				for (Transfer transfer : transfers) {
-					if (transfer.isSupportedType(type))
+					if (transfer.isSupportedType(type)) {
 						return true;
+					}
 				}
 			}
 		} catch (SWTError e) {

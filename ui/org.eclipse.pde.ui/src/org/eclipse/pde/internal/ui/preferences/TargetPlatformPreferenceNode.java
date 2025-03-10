@@ -42,8 +42,9 @@ public class TargetPlatformPreferenceNode implements IPreferenceNode {
 	 */
 	@Override
 	public void disposeResources() {
-		if (fPage != null)
+		if (fPage != null) {
 			fPage.dispose();
+		}
 		fPage = null;
 	}
 

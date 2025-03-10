@@ -48,8 +48,9 @@ public class PluginSearchResultPage extends AbstractSearchResultPage {
 
 		@Override
 		public String getText(Object object) {
-			if (object instanceof IPluginBase)
+			if (object instanceof IPluginBase) {
 				return ((IPluginBase) object).getId();
+			}
 
 			if (object instanceof IPluginImport dep) {
 				return dep.getId() + " - " //$NON-NLS-1$

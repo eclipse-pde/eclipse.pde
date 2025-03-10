@@ -27,16 +27,18 @@ public class ModelChangeTable {
 	private final ArrayList<ModelChange> fPreSelected = new ArrayList<>();
 
 	public void addToChangeTable(IPluginModelBase model, IFile file, Object change, boolean selected) {
-		if (change == null)
+		if (change == null) {
 			return;
+		}
 		ModelChange modelChange;
-		if (fChangeTable.containsKey(model))
+		if (fChangeTable.containsKey(model)) {
 			modelChange = fChangeTable.get(model);
-		else {
+		} else {
 			modelChange = new ModelChange(model, selected);
 			fChangeTable.put(model, modelChange);
-			if (selected)
+			if (selected) {
 				fPreSelected.add(modelChange);
+			}
 		}
 		modelChange.addChange(file, new ModelChangeElement(modelChange, change));
 	}
@@ -46,8 +48,9 @@ public class ModelChangeTable {
 	}
 
 	public ModelChange getModelChange(IPluginModelBase modelKey) {
-		if (fChangeTable.containsKey(modelKey))
+		if (fChangeTable.containsKey(modelKey)) {
 			return fChangeTable.get(modelKey);
+		}
 		return null;
 	}
 

@@ -79,14 +79,16 @@ public abstract class GeneralRenameIDWizardPage extends UserInputWizardPage {
 	protected void validatePage() {
 		String text = fNewId.getText();
 		String errorMessage = null;
-		if (text.length() == 0)
+		if (text.length() == 0) {
 			errorMessage = PDEUIMessages.RenamePluginWizardPage_idNotSet;
-		else
+		} else {
 			errorMessage = validateId(text);
-		if (errorMessage == null && text.equals(fInfo.getCurrentValue()))
+		}
+		if (errorMessage == null && text.equals(fInfo.getCurrentValue())) {
 			setPageComplete(false);
-		else
+		} else {
 			setPageComplete(errorMessage == null ? new RefactoringStatus() : RefactoringStatus.createFatalErrorStatus(errorMessage));
+		}
 	}
 
 	/**

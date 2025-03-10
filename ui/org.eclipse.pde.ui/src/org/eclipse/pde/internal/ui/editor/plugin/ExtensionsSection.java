@@ -158,15 +158,16 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		@Override
 		public Object[] getChildren(Object parent) {
 			Object[] children = null;
-			if (parent instanceof IPluginBase)
+			if (parent instanceof IPluginBase) {
 				children = ((IPluginBase) parent).getExtensions();
-			else if (parent instanceof IPluginExtension) {
+			} else if (parent instanceof IPluginExtension) {
 				children = ((IPluginExtension) parent).getChildren();
 			} else if (parent instanceof IPluginElement) {
 				children = ((IPluginElement) parent).getChildren();
 			}
-			if (children == null)
+			if (children == null) {
 				children = new Object[0];
+			}
 			return children;
 		}
 
@@ -180,8 +181,9 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 			if (child instanceof IPluginExtension) {
 				return ((IPluginModelBase) getPage().getModel()).getPluginBase();
 			}
-			if (child instanceof IPluginObject)
+			if (child instanceof IPluginObject) {
 				return ((IPluginObject) child).getParent();
+			}
 			return null;
 		}
 
@@ -389,8 +391,9 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		}
 		fEditorWizards = null;
 		IPluginModelBase model = (IPluginModelBase) getPage().getPDEEditor().getAggregateModel();
-		if (model != null)
+		if (model != null) {
 			model.removeModelChangedListener(this);
+		}
 		super.dispose();
 	}
 
@@ -574,8 +577,9 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 
 	private void handleDelete() {
 		IStructuredSelection sel = fExtensionTree.getStructuredSelection();
-		if (sel.isEmpty())
+		if (sel.isEmpty()) {
 			return;
+		}
 		for (Iterator<?> iter = sel.iterator(); iter.hasNext();) {
 			IPluginObject object = (IPluginObject) iter.next();
 			try {
@@ -597,19 +601,22 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 					IPluginBase plugin = extension.getPluginBase();
 					if (!sorted) {
 						int index = getNewSelectionIndex(plugin.getIndexOf(extension), plugin.getExtensions().length);
-						if (index != -1)
+						if (index != -1) {
 							newSelection = new StructuredSelection(plugin.getExtensions()[index]);
+						}
 					} else {
 						IPluginExtension extensions[] = plugin.getExtensions().clone();
 						fExtensionTree.getComparator().sort(fExtensionTree, extensions);
 						int index = getNewSelectionIndex(getArrayIndex(extensions, extension), extensions.length);
-						if (index != -1)
+						if (index != -1) {
 							newSelection = new StructuredSelection(extensions[index]);
+						}
 					}
 					plugin.remove(extension);
 				}
-				if (newSelection != null)
+				if (newSelection != null) {
 					fExtensionTree.setSelection(newSelection);
+				}
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
 			}
@@ -694,8 +701,9 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 	private void handleEdit() {
 		final IStructuredSelection selection = fExtensionTree.getStructuredSelection();
 		List<IConfigurationElement> editorWizards = getEditorWizards(selection);
-		if (editorWizards == null)
+		if (editorWizards == null) {
 			return;
+		}
 		if (editorWizards.size() == 1) {
 			// open the wizard directly
 			handleEdit(editorWizards.get(0), selection);
@@ -719,8 +727,9 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 	}
 
 	private List<IConfigurationElement> getEditorWizards(IStructuredSelection selection) {
-		if (selection.size() != 1)
+		if (selection.size() != 1) {
 			return null;
+		}
 		Object obj = selection.getFirstElement();
 		String pointId = null;
 		if (obj instanceof IPluginExtension) {
@@ -735,10 +744,12 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 				parent = parent.getParent();
 			}
 		}
-		if (pointId == null)
+		if (pointId == null) {
 			return null;
-		if (fEditorWizards == null)
+		}
+		if (fEditorWizards == null) {
 			loadExtensionWizards();
+		}
 		return fEditorWizards.get(pointId);
 	}
 
@@ -748,8 +759,9 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		for (IConfigurationElement element : elements) {
 			if (element.getName().equals("editorWizard")) { //$NON-NLS-1$
 				String pointId = element.getAttribute("point"); //$NON-NLS-1$
-				if (pointId == null)
+				if (pointId == null) {
 					continue;
+				}
 				ArrayList<IConfigurationElement> list = fEditorWizards.get(pointId);
 				if (list == null) {
 					list = new ArrayList<>();
@@ -761,8 +773,9 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 	}
 
 	private boolean isSelectionEditable(IStructuredSelection selection) {
-		if (!getPage().getModel().isEditable())
+		if (!getPage().getModel().isEditable()) {
 			return false;
+		}
 		return getEditorWizards(selection) != null;
 	}
 
@@ -782,8 +795,9 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 	private void selectFirstExtension() {
 		Tree tree = fExtensionTree.getTree();
 		TreeItem[] items = tree.getItems();
-		if (items.length == 0)
+		if (items.length == 0) {
 			return;
+		}
 		TreeItem firstItem = items[0];
 		Object obj = firstItem.getData();
 		fExtensionTree.setSelection(new StructuredSelection(obj));
@@ -894,8 +908,9 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 				//
 				fExtensionTree.refresh(parent);
 				if (changeObject instanceof IPluginExtension ext) {
-					if (ext.getSchema() == null)
+					if (ext.getSchema() == null) {
 						reportMissingExtensionPointSchema(ext.getPoint());
+					}
 				}
 				fExtensionTree.setSelection(new StructuredSelection(changeObject), true);
 				fExtensionTree.getTree().setFocus();
@@ -911,8 +926,9 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 							break;
 						}
 					}
-					if (!found)
+					if (!found) {
 						getManagedForm().getMessageManager().removeMessage(ext.getPoint());
+					}
 				}
 				fExtensionTree.remove(pobj);
 			} else {
@@ -935,10 +951,12 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		Image elementImage = fGenericElementImage;
 		if (obj instanceof IPluginElement element) {
 			Image customImage = getCustomImage(element);
-			if (customImage == null)
+			if (customImage == null) {
 				customImage = PDEPlugin.getDefault().getLabelProvider().getImage(obj);
-			if (customImage != null)
+			}
+			if (customImage != null) {
 				elementImage = customImage;
+			}
 		}
 		return elementImage;
 	}
@@ -949,8 +967,9 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 	}
 
 	static Image getCustomImage(IPluginElement element) {
-		if (isStorageModel(element))
+		if (isStorageModel(element)) {
 			return null;
+		}
 		ISchemaElement elementInfo = getSchemaElement(element);
 		if (elementInfo != null && elementInfo.getIconProperty() != null) {
 			String iconProperty = elementInfo.getIconProperty();
@@ -963,8 +982,9 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 			if (iconPath != null) {
 				String ext = IPath.fromOSString(iconPath).getFileExtension();
 				// if the resource targets a folder, the file extension will be null
-				if (ext == null)
+				if (ext == null) {
 					return null;
+				}
 				boolean valid = false;
 				// ensure the resource is an image
 				for (String imageType : VALID_IMAGE_TYPES) {
@@ -983,12 +1003,14 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 	private static Image getImageFromPlugin(IPluginElement element, String iconPathName) {
 		// 39283 - ignore icon paths that
 		// point at plugin.properties
-		if (iconPathName.startsWith("%")) //$NON-NLS-1$
+		if (iconPathName.startsWith("%")) { //$NON-NLS-1$
 			return null;
+		}
 
 		IPluginModelBase model = element.getPluginModel();
-		if (model == null)
+		if (model == null) {
 			return null;
+		}
 
 		return PDEPlugin.getDefault().getLabelProvider().getImageFromPlugin(model, iconPathName);
 	}
@@ -998,8 +1020,9 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 	}
 
 	private SchemaRegistry getSchemaRegistry() {
-		if (fSchemaRegistry == null)
+		if (fSchemaRegistry == null) {
 			fSchemaRegistry = PDECore.getDefault().getSchemaRegistry();
+		}
 		return fSchemaRegistry;
 	}
 
@@ -1009,8 +1032,9 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 			if (!fullNames) {
 				return extension.getPoint();
 			}
-			if (extension.getName() != null)
+			if (extension.getName() != null) {
 				return extension.getTranslatedName();
+			}
 			ISchema schema = schemaRegistry.getSchema(extension.getPoint());
 			// try extension point schema definition
 			if (schema != null) {
@@ -1031,14 +1055,16 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 				// are used frequently
 				for (String labelAttribute : COMMON_LABEL_ATTRIBUTES) {
 					labelAtt = element.getAttribute(labelAttribute);
-					if (labelAtt != null && labelAtt.getValue().length() > 0)
+					if (labelAtt != null && labelAtt.getValue().length() > 0) {
 						break;
+					}
 				}
 				if (labelAtt == null) {
 					// Last try - if there is only one attribute,
 					// use that
-					if (element.getAttributeCount() == 1)
+					if (element.getAttributeCount() == 1) {
 						labelAtt = element.getAttributes()[0];
+					}
 				}
 			}
 			if (labelAtt != null && labelAtt.getValue() != null) {
@@ -1049,16 +1075,19 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 			}
 			fullName = element.getResourceString(fullName);
 
-			if (fullNames)
+			if (fullNames) {
 				return fullName != null ? fullName : baseName;
-			if (fullName == null)
+			}
+			if (fullName == null) {
 				return baseName;
+			}
 			// Bug 183417 - Bidi3.3: Elements' labels in the extensions page in the fragment manifest characters order is incorrect
 			// add RTL zero length character just before the ( and the LTR character just after to ensure:
 			// 1. The leading parenthesis takes proper orientation when running in BiDi configuration
 			// Assumption: baseName (taken from the schema definition), is only Latin characters and is therefore always displayed LTR
-			if (SWTUtil.isBidi())
+			if (SWTUtil.isBidi()) {
 				return fullName + " \u200f(\u200e" + baseName + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+			}
 			return fullName + " (" + baseName + ')'; //$NON-NLS-1$
 		}
 		if (obj != null) {
@@ -1069,8 +1098,9 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 
 	@Override
 	public void setFocus() {
-		if (fExtensionTree != null)
+		if (fExtensionTree != null) {
 			fExtensionTree.getTree().setFocus();
+		}
 	}
 
 	/**
@@ -1087,10 +1117,11 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		StringBuilder output = new StringBuilder();
 		for (int i = 0; i < input.length(); i++) {
 			char c = input.charAt(i);
-			if (c == '&')
+			if (c == '&') {
 				continue;
-			else if (c == '@')
+			} else if (c == '@') {
 				break;
+			}
 			output.append(c);
 		}
 		return output.toString();
@@ -1338,8 +1369,9 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 			fFilterRelatedAction.setEnabled(filterRelatedEnabled);
 		}
 
-		if (getPage().getModel().isEditable() == false)
+		if (getPage().getModel().isEditable() == false) {
 			return;
+		}
 		boolean sorted = fSortAction != null && fSortAction.isChecked();
 		if (sorted) {
 			getTreePart().setButtonEnabled(BUTTON_MOVE_UP, false);
@@ -1368,18 +1400,22 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 					IPluginParent parent = (IPluginParent) element.getParent();
 					// check up
 					int index = parent.getIndexOf(element);
-					if (index > 0)
+					if (index > 0) {
 						upEnabled = true;
-					if (index < parent.getChildCount() - 1)
+					}
+					if (index < parent.getChildCount() - 1) {
 						downEnabled = true;
+					}
 				} else if (selected instanceof IPluginExtension extension) {
 					IExtensions extensions = (IExtensions) extension.getParent();
 					int index = extensions.getIndexOf(extension);
 					int size = extensions.getExtensions().length;
-					if (index > 0)
+					if (index > 0) {
 						upEnabled = true;
-					if (index < size - 1)
+					}
+					if (index < size - 1) {
 						downEnabled = true;
+					}
 				}
 			}
 		}
@@ -1948,8 +1984,9 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 	private void reportMissingExtensionPointSchemas(IPluginBase pluginBase) {
 		IPluginExtension[] extensions = pluginBase.getExtensions();
 		for (IPluginExtension ext : extensions) {
-			if (ext.getSchema() == null)
+			if (ext.getSchema() == null) {
 				reportMissingExtensionPointSchema(ext.getPoint());
+			}
 		}
 	}
 

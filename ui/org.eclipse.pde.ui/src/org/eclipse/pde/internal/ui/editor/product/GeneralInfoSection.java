@@ -84,8 +84,9 @@ public class GeneralInfoSection extends PDESection {
 	@Override
 	public void dispose() {
 		IProductModel model = getModel();
-		if (model != null)
+		if (model != null) {
 			model.removeModelChangedListener(this);
+		}
 		super.dispose();
 	}
 
@@ -214,8 +215,9 @@ public class GeneralInfoSection extends PDESection {
 
 		String prop = e.getChangedProperty();
 		Object[] objects = e.getChangedObjects();
-		if (prop == null || objects == null || !(objects[0] instanceof IProduct))
+		if (prop == null || objects == null || !(objects[0] instanceof IProduct)) {
 			return;
+		}
 		if (prop.equals(IProduct.P_UID)) {
 			fIdEntry.setValue(e.getNewValue().toString(), true);
 		} else if (prop.equals(IProduct.P_NAME)) {
@@ -244,8 +246,9 @@ public class GeneralInfoSection extends PDESection {
 	public boolean canPaste(Clipboard clipboard) {
 		Display d = getSection().getDisplay();
 		Control c = d.getFocusControl();
-		if (c instanceof Text)
+		if (c instanceof Text) {
 			return true;
+		}
 		return false;
 	}
 

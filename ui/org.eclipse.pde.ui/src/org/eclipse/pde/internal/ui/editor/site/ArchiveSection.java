@@ -151,8 +151,9 @@ public class ArchiveSection extends PDESection {
 		fEditButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fEditButton.addSelectionListener(widgetSelectedAdapter(e -> {
 			IStructuredSelection ssel = fViewer.getStructuredSelection();
-			if (ssel.size() == 1)
+			if (ssel.size() == 1) {
 				showDialog((ISiteArchive) ssel.getFirstElement());
+			}
 		}));
 		fRemoveButton = toolkit.createButton(container, PDEUIMessages.SiteEditor_remove, SWT.PUSH);
 		fRemoveButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));

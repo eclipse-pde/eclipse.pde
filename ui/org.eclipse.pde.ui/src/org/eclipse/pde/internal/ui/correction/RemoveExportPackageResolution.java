@@ -35,8 +35,9 @@ public class RemoveExportPackageResolution extends AbstractManifestMarkerResolut
 		String markerPackage = marker.getAttribute("packageName", (String) null); //$NON-NLS-1$
 		Bundle bundle = (Bundle) model.getBundle();
 		ExportPackageHeader header = (ExportPackageHeader) bundle.getManifestHeader(Constants.EXPORT_PACKAGE);
-		if (header != null)
+		if (header != null) {
 			header.removePackage(markerPackage);
+		}
 	}
 
 	@Override

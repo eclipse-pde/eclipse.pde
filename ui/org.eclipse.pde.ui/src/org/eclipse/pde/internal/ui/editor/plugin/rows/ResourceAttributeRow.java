@@ -56,12 +56,14 @@ public class ResourceAttributeRow extends ButtonAttributeRow {
 	protected void openReference() {
 		IResource file = getFile();
 		boolean successful = false;
-		if (file instanceof IFile)
+		if (file instanceof IFile) {
 			successful = openFile((IFile) file);
-		else if (file instanceof IContainer)
+		} else if (file instanceof IContainer) {
 			successful = openContainer((IContainer) file);
-		if (!successful)
+		}
+		if (!successful) {
 			Display.getCurrent().beep();
+		}
 	}
 
 	private boolean openFile(IFile file) {
@@ -88,27 +90,31 @@ public class ResourceAttributeRow extends ButtonAttributeRow {
 	}
 
 	private boolean openContainer(IContainer container) {
-		if (container != null && container.exists())
+		if (container != null && container.exists()) {
 			try {
 				ISetSelectionTarget part = (ISetSelectionTarget)PDEPlugin.getActivePage().showView(IPageLayout.ID_PROJECT_EXPLORER);
 				part.selectReveal(new StructuredSelection(container));
 			} catch (PartInitException e) {
 				return false;
 			}
+		}
 		return true;
 	}
 
 	private IResource getFile() {
 		String value = text.getText();
-		if (value.length() == 0)
+		if (value.length() == 0) {
 			return null;
+		}
 		IPath path = getProject().getFullPath().append(value);
 		return getProject().getWorkspace().getRoot().findMember(path);
 	}
 
 	private IFile getNLFile() {
 		String value = text.getText();
-		if (value.length() <= 5 || !value.startsWith("$nl$/"))return null; //$NON-NLS-1$
+		if (value.length() <= 5 || !value.startsWith("$nl$/")) { //$NON-NLS-1$
+			return null;
+		}
 		IPath path = getProject().getFullPath().append(value.substring(5));
 		return getProject().getWorkspace().getRoot().getFile(path);
 	}
@@ -119,13 +125,15 @@ public class ResourceAttributeRow extends ButtonAttributeRow {
 		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
 		dialog.setInput(project.getWorkspace());
 		IResource resource = getFile();
-		if (resource != null)
+		if (resource != null) {
 			dialog.setInitialSelection(resource);
+		}
 		dialog.addFilter(new ViewerFilter() {
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				if (element instanceof IProject)
+				if (element instanceof IProject) {
 					return ((IProject) element).equals(project);
+				}
 				return true;
 			}
 		});
@@ -141,8 +149,9 @@ public class ResourceAttributeRow extends ButtonAttributeRow {
 		if (dialog.open() == Window.OK) {
 			IResource res = (IResource) dialog.getFirstResult();
 			IPath path = res.getProjectRelativePath();
-			if (res instanceof IContainer)
+			if (res instanceof IContainer) {
 				path = path.addTrailingSeparator();
+			}
 			String value = path.toString();
 			text.setText(value);
 		}

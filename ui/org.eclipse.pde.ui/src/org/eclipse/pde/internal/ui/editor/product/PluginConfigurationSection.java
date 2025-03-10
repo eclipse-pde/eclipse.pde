@@ -319,8 +319,9 @@ public class PluginConfigurationSection extends TableSection {
 		fLevelColumnEditor.horizontalAlignment = SWT.CENTER;
 		fLevelColumnEditor.minimumWidth = 40;
 		fLevelColumnEditor.grabHorizontal = true;
-		if (Util.isMac())
+		if (Util.isMac()) {
 			fLevelColumnEditor.minimumHeight = 27;
+		}
 
 		fAutoColumnEditor = new TableEditor(table);
 		fAutoColumnEditor.horizontalAlignment = SWT.CENTER;
@@ -338,8 +339,9 @@ public class PluginConfigurationSection extends TableSection {
 		// Identify the selected row
 		Table table = fConfigurationsTable.getTable();
 		IStructuredSelection selection = fConfigurationsTable.getStructuredSelection();
-		if (selection.isEmpty())
+		if (selection.isEmpty()) {
 			return;
+		}
 		final TableItem item = table.getSelection()[0];
 		if (item != null && !isEditable()) {
 			return;
@@ -405,9 +407,9 @@ public class PluginConfigurationSection extends TableSection {
 			refreshRemove = refreshRemoveAll = true;
 			boolean global = false;
 			for (Object object : e.getChangedObjects()) {
-				if (object instanceof IPluginConfiguration)
+				if (object instanceof IPluginConfiguration) {
 					fConfigurationsTable.remove(object);
-				else if (object instanceof IProductPlugin) {
+				} else if (object instanceof IProductPlugin) {
 					global = true;
 					break;
 				}
@@ -442,8 +444,9 @@ public class PluginConfigurationSection extends TableSection {
 			tablePart.setButtonEnabled(2, isEditable() && !selection.isEmpty());
 		}
 		int count = fConfigurationsTable.getTable().getItemCount();
-		if (updateRemoveAll)
+		if (updateRemoveAll) {
 			tablePart.setButtonEnabled(3, isEditable() && count > 0);
+		}
 	}
 
 }

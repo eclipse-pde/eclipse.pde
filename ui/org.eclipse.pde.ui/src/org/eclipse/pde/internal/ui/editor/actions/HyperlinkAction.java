@@ -48,8 +48,9 @@ public class HyperlinkAction extends Action implements MouseListener, KeyListene
 
 	@Override
 	public void run() {
-		if (fLink != null)
+		if (fLink != null) {
 			fLink.open();
+		}
 	}
 
 	public IHyperlink getHyperLink() {
@@ -57,29 +58,33 @@ public class HyperlinkAction extends Action implements MouseListener, KeyListene
 	}
 
 	protected void removeListeners() {
-		if (!hasDetector() || isTextDisposed())
+		if (!hasDetector() || isTextDisposed()) {
 			return;
+		}
 		fStyledText.removeMouseListener(this);
 		fStyledText.removeKeyListener(this);
 	}
 
 	protected void addListeners() {
-		if (!hasDetector() || isTextDisposed())
+		if (!hasDetector() || isTextDisposed()) {
 			return;
+		}
 		fStyledText.addMouseListener(this);
 		fStyledText.addKeyListener(this);
 	}
 
 	public boolean detectHyperlink() {
 		fLink = null;
-		if (!hasDetector() || isTextDisposed())
+		if (!hasDetector() || isTextDisposed()) {
 			return false;
+		}
 
 		Point p = fStyledText.getSelection();
 		IHyperlink[] links = fDetector.detectHyperlinks(null, new Region(p.x, p.y - p.x), false);
 
-		if (links == null || links.length == 0)
+		if (links == null || links.length == 0) {
 			return false;
+		}
 
 		fLink = links[0];
 		return true;
@@ -87,8 +92,9 @@ public class HyperlinkAction extends Action implements MouseListener, KeyListene
 
 	public void setTextEditor(ITextEditor editor) {
 		StyledText newText = editor instanceof PDESourcePage ? ((PDESourcePage) editor).getViewer().getTextWidget() : null;
-		if (fStyledText != null && fStyledText.equals(newText))
+		if (fStyledText != null && fStyledText.equals(newText)) {
 			return;
+		}
 
 		// remove the previous listeners if there were any
 		removeListeners();
@@ -111,20 +117,21 @@ public class HyperlinkAction extends Action implements MouseListener, KeyListene
 
 	public void generateActionText() {
 		String text = PDEUIMessages.HyperlinkActionNoLinksAvailable;
-		if (fLink instanceof JavaHyperlink)
+		if (fLink instanceof JavaHyperlink) {
 			text = PDEUIMessages.HyperlinkActionOpenType;
-		else if (fLink instanceof ExtensionHyperLink)
+		} else if (fLink instanceof ExtensionHyperLink) {
 			text = PDEUIMessages.HyperlinkActionOpenDescription;
-		else if (fLink instanceof BundleHyperlink)
+		} else if (fLink instanceof BundleHyperlink) {
 			text = PDEUIMessages.HyperlinkActionOpenBundle;
-		else if (fLink instanceof PackageHyperlink)
+		} else if (fLink instanceof PackageHyperlink) {
 			text = PDEUIMessages.HyperlinkActionOpenPackage;
-		else if (fLink instanceof ResourceHyperlink)
+		} else if (fLink instanceof ResourceHyperlink) {
 			text = PDEUIMessages.HyperlinkActionOpenResource;
-		else if (fLink instanceof SchemaHyperlink)
+		} else if (fLink instanceof SchemaHyperlink) {
 			text = PDEUIMessages.HyperlinkActionOpenSchema;
-		else if (fLink instanceof TranslationHyperlink)
+		} else if (fLink instanceof TranslationHyperlink) {
 			text = PDEUIMessages.HyperlinkActionOpenTranslation;
+		}
 		setText(text);
 		setToolTipText(text);
 	}

@@ -33,8 +33,9 @@ public class RemoveImportPackageResolution extends AbstractManifestMarkerResolut
 	protected void createChange(BundleModel model) {
 		Bundle bundle = (Bundle) model.getBundle();
 		ImportPackageHeader header = (ImportPackageHeader) bundle.getManifestHeader(Constants.IMPORT_PACKAGE);
-		if (header != null)
+		if (header != null) {
 			header.removePackage(marker.getAttribute("packageName", (String) null)); //$NON-NLS-1$
+		}
 	}
 
 	@Override
