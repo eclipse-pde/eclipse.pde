@@ -134,4 +134,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: org.eclipse.pde.core
 Service-Component: OSGI-INF/org.eclipse.pde.internal.core.annotations.OSGiAnnotationsClasspathContributor.xml,
- OSGI-INF/org.eclipse.pde.internal.core.bnd.PdeBndAdapter.xml
+ OSGI-INF/org.eclipse.pde.internal.core.bnd.PdeBndAdapter.xml,
+ OSGI-INF/org.eclipse.pde.internal.core.osgitest.OSGiTestClasspathContributor.xml
