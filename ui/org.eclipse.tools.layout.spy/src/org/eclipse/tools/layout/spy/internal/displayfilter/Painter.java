@@ -67,17 +67,13 @@ public final class Painter extends Object {
 		buffer.append(Painter.LINE_SEPARATOR);
 		buffer.append("  layout=");  //$NON-NLS-1$
 
-		if (layout instanceof GridLayout) {
-			GridLayout gridLayout = (GridLayout) layout;
+		if (layout instanceof GridLayout gridLayout) {
 			Painter.createGridLayoutToolTip(buffer, gridLayout);
-		} else if (layout instanceof FormLayout) {
-			FormLayout formLayout = (FormLayout) layout;
+		} else if (layout instanceof FormLayout formLayout) {
 			Painter.createFormLayoutToolTip(buffer, formLayout);
-		} else if (layout instanceof FillLayout) {
-			FillLayout fillLayout = (FillLayout) layout;
+		} else if (layout instanceof FillLayout fillLayout) {
 			Painter.createFillLayoutToolTip(buffer, fillLayout);
-		} else if (layout instanceof RowLayout) {
-			RowLayout rowLayout = (RowLayout) layout;
+		} else if (layout instanceof RowLayout rowLayout) {
 			Painter.createRowLayoutToolTip(buffer, rowLayout);
 		} else {
 			buffer.append(layout);
@@ -374,8 +370,7 @@ public final class Painter extends Object {
 		FontData[] fontData = font.getFontData();
 		buffer.append(fontData [ 0 ]);  // Always just one on Windows.
 
-		if (control instanceof Composite) {
-			Composite composite = (Composite) control;
+		if (control instanceof Composite composite) {
 			Painter.createCompositeToolTip(buffer, composite);
 		}
 
@@ -383,14 +378,11 @@ public final class Painter extends Object {
 		buffer.append(Painter.LINE_SEPARATOR);
 		buffer.append("  layout data=");  //$NON-NLS-1$
 
-		if (layoutData instanceof GridData) {
-			GridData gridData = (GridData) layoutData;
+		if (layoutData instanceof GridData gridData) {
 			Painter.createGridDataToolTip(buffer, gridData);
-		} else if (layoutData instanceof FormData) {
-			FormData formData = (FormData) layoutData;
+		} else if (layoutData instanceof FormData formData) {
 			Painter.createFormDataToolTip(buffer, formData);
-		} else if (layoutData instanceof RowData) {
-			RowData rowData = (RowData) layoutData;
+		} else if (layoutData instanceof RowData rowData) {
 			Painter.createRowDataToolTip(buffer, rowData);
 		} else {
 			buffer.append(layoutData);
@@ -442,8 +434,7 @@ public final class Painter extends Object {
 			control.setToolTipText(tip);
 		}
 
-		if (control instanceof Composite) {
-			Composite composite = (Composite) control;
+		if (control instanceof Composite composite) {
 			Painter.padComposite(composite, extraCompositeMargin);
 			Control[] children = composite.getChildren();
 			Control child;
@@ -552,20 +543,16 @@ public final class Painter extends Object {
 			return; // Early return.
 		}
 
-		if (compositeLayout instanceof GridLayout) {
-			GridLayout layout = (GridLayout) compositeLayout;
+		if (compositeLayout instanceof GridLayout layout) {
 			layout.marginWidth += extraCompositeMargin;
 			layout.marginHeight += extraCompositeMargin;
-		} else if (compositeLayout instanceof RowLayout) {
-			RowLayout layout = (RowLayout) compositeLayout;
+		} else if (compositeLayout instanceof RowLayout layout) {
 			layout.marginWidth += extraCompositeMargin;
 			layout.marginHeight += extraCompositeMargin;
-		} else if (compositeLayout instanceof FillLayout) {
-			FillLayout layout = (FillLayout) compositeLayout;
+		} else if (compositeLayout instanceof FillLayout layout) {
 			layout.marginWidth += extraCompositeMargin;
 			layout.marginHeight += extraCompositeMargin;
-		} else if (compositeLayout instanceof FormLayout) {
-			FormLayout layout = (FormLayout) compositeLayout;
+		} else if (compositeLayout instanceof FormLayout layout) {
 			layout.marginWidth += extraCompositeMargin;
 			layout.marginHeight += extraCompositeMargin;
 		}
