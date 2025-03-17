@@ -764,30 +764,25 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 		}
 
 		private int compareSimilarObjects(Object o1, Object o2) {
-			if (o1 instanceof IPluginModelBase ipmb1 && o2 instanceof IPluginModelBase) {
-				IPluginModelBase ipmb2 = (IPluginModelBase) o2;
+			if (o1 instanceof IPluginModelBase ipmb1 && o2 instanceof IPluginModelBase ipmb2) {
 				return comparePlugins(ipmb1.getPluginBase(), ipmb2.getPluginBase());
-			} else if (o1 instanceof IPluginExtensionPoint ipep1 && o2 instanceof IPluginExtensionPoint) {
-				IPluginExtensionPoint ipep2 = (IPluginExtensionPoint) o2;
+			} else if (o1 instanceof IPluginExtensionPoint ipep1 && o2 instanceof IPluginExtensionPoint ipep2) {
 				return compareExtensionPoints(ipep1, ipep2);
-			} else if (o1 instanceof IPluginExtension ipe1 && o2 instanceof IPluginExtension) {
-				IPluginExtension ipe2 = (IPluginExtension) o2;
+			} else if (o1 instanceof IPluginExtension ipe1 && o2 instanceof IPluginExtension ipe2) {
 				int comparePointsResult = ipe1.getPoint().compareTo(ipe2.getPoint());
 				if (comparePointsResult == 0) {
 					return comparePlugins(ipe1.getPluginBase(), ipe2.getPluginBase());
 				}
 				// else
 				return comparePointsResult;
-			} else if (o1 instanceof ExportPackageDescription epd1 && o2 instanceof ExportPackageDescription) {
-				ExportPackageDescription epd2 = (ExportPackageDescription) o2;
+			} else if (o1 instanceof ExportPackageDescription epd1 && o2 instanceof ExportPackageDescription epd2) {
 				int compareNamesResult = epd1.getName().compareTo(epd2.getName());
 				if (compareNamesResult == 0) {
 					return compareBundleDescriptions(epd1.getSupplier(), epd2.getSupplier());
 				}
 				// else
 				return compareNamesResult;
-			} else if (o1 instanceof IFeatureModel ifm1 && o2 instanceof IFeatureModel) {
-				IFeatureModel ifm2 = (IFeatureModel) o2;
+			} else if (o1 instanceof IFeatureModel ifm1 && o2 instanceof IFeatureModel ifm2) {
 				return compareFeatures(ifm1, ifm2);
 			}
 			return 0;

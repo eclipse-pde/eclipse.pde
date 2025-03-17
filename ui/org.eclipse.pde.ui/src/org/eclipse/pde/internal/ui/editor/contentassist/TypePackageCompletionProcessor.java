@@ -246,8 +246,7 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 			fComparator = new Comparator<>() {
 				@Override
 				public int compare(Object arg0, Object arg1) {
-					if (arg0 instanceof ICompletionProposal p1 && arg1 instanceof ICompletionProposal) {
-						ICompletionProposal p2 = (ICompletionProposal) arg1;
+					if (arg0 instanceof ICompletionProposal p1 && arg1 instanceof ICompletionProposal p2) {
 						return getSortKey(p1).compareToIgnoreCase(getSortKey(p2));
 					}
 					return 0;

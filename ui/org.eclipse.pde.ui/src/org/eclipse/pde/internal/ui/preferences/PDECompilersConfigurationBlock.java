@@ -345,8 +345,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	 * Default selection listener for combo and check controls
 	 */
 	private final SelectionListener selectionlistener = widgetSelectedAdapter(e -> {
-		if (e.widget instanceof Combo) {
-			Combo combo = (Combo) e.widget;
+		if (e.widget instanceof Combo combo) {
 			ControlData data = (ControlData) combo.getData();
 			int selectionIndex = combo.getSelectionIndex();
 			selectionIndex = adjustIndex(selectionIndex);
@@ -366,8 +365,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	 * Default modify listener for text controls
 	 */
 	private final ModifyListener modifylistener = e -> {
-		if (e.widget instanceof Text) {
-			Text text = (Text) e.widget;
+		if (e.widget instanceof Text text) {
 			ControlData data = (ControlData) text.getData();
 			data.key.setStoredValue(fLookupOrder[0], text.getText().trim(), fManager);
 			fDirty = true;
