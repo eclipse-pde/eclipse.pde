@@ -25,8 +25,7 @@ public class PreferenceEntryPatternFilter extends PatternFilter {
 	@Override
 	protected boolean isLeafMatch(Viewer viewer, Object element) {
 
-		if (element instanceof PreferenceEntry) {
-			PreferenceEntry preferenceEntry = (PreferenceEntry) element;
+		if (element instanceof PreferenceEntry preferenceEntry) {
 			if (wordMatches(preferenceEntry.getNodePath()) || wordMatches(preferenceEntry.getKey())
 					|| wordMatches(preferenceEntry.getOldValue()) || wordMatches(preferenceEntry.getNewValue())) {
 				return true;
