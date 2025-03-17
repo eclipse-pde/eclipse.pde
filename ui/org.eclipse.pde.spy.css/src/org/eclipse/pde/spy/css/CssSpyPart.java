@@ -116,8 +116,7 @@ public class CssSpyPart {
 	/** @return the CSS engine governing the argument, or null if none */
 	public static CSSEngine getCSSEngine(Object o) {
 		CSSEngine engine = null;
-		if (o instanceof CSSStylableElement) {
-			CSSStylableElement element = (CSSStylableElement) o;
+		if (o instanceof CSSStylableElement element) {
 			engine = WidgetElement.getEngine((Widget) element.getNativeWidget());
 		}
 		if (engine == null && o instanceof Widget) {
@@ -391,16 +390,13 @@ public class CssSpyPart {
 		if (widget instanceof Shell) {
 			// Shell bounds are already in display coordinates
 			return ((Shell) widget).getBounds();
-		} else if (widget instanceof Control) {
-			Control control = (Control) widget;
+		} else if (widget instanceof Control control) {
 			Rectangle bounds = control.getBounds();
 			return control.getDisplay().map(control.getParent(), null, bounds);
-		} else if (widget instanceof ToolItem) {
-			ToolItem item = (ToolItem) widget;
+		} else if (widget instanceof ToolItem item) {
 			Rectangle bounds = item.getBounds();
 			return item.getDisplay().map(item.getParent(), null, bounds);
-		} else if (widget instanceof CTabItem) {
-			CTabItem item = (CTabItem) widget;
+		} else if (widget instanceof CTabItem item) {
 			Rectangle bounds = item.getBounds();
 			return item.getDisplay().map(item.getParent(), null, bounds);
 		}
