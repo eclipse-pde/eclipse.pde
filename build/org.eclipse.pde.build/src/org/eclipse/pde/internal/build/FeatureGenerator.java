@@ -69,8 +69,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (obj instanceof Entry) {
-				Entry objEntry = (Entry) obj;
+			if (obj instanceof Entry objEntry) {
 				if (!(id.equals(((Entry) obj).id) && version.equals(objEntry.version))) {
 					return false;
 				}

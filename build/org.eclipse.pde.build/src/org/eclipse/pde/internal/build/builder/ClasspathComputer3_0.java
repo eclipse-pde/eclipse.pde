@@ -123,8 +123,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		 */
 		@Override
 		public boolean equals(Object obj) {
-			if (obj instanceof ClasspathElement) {
-				ClasspathElement element = (ClasspathElement) obj;
+			if (obj instanceof ClasspathElement element) {
 				if (!path.equals(element.getPath())) {
 					return false;
 				}

@@ -291,11 +291,10 @@ public class Version implements Comparable<Version> {
 			return true;
 		}
 
-		if (!(object instanceof Version)) {
+		if (!(object instanceof Version other)) {
 			return false;
 		}
 
-		Version other = (Version) object;
 		return (major == other.major) && (minor == other.minor) && (micro == other.micro) && qualifier.equals(other.qualifier);
 	}
 
