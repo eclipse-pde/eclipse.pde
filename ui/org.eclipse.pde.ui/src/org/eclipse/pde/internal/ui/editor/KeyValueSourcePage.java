@@ -31,8 +31,7 @@ public abstract class KeyValueSourcePage extends PDEProjectionSourcePage {
 		return new ViewerComparator() {
 			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
-				if ((e1 instanceof IDocumentKey key1) && (e2 instanceof IDocumentKey)) {
-					IDocumentKey key2 = (IDocumentKey) e2;
+				if ((e1 instanceof IDocumentKey key1) && (e2 instanceof IDocumentKey key2)) {
 					return Integer.compare(key1.getOffset(), key2.getOffset());
 				}
 				// Bundle manifest header elements
