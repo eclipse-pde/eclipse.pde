@@ -105,8 +105,7 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 		}
 
 		private int compareSimilarObjects(Object o1, Object o2) {
-			if (o1 instanceof IPluginModelBase ipmb1 && o2 instanceof IPluginModelBase) {
-				IPluginModelBase ipmb2 = (IPluginModelBase) o2;
+			if (o1 instanceof IPluginModelBase ipmb1 && o2 instanceof IPluginModelBase ipmb2) {
 				return comparePlugins(ipmb1.getPluginBase(), ipmb2.getPluginBase());
 			}
 			return 0;

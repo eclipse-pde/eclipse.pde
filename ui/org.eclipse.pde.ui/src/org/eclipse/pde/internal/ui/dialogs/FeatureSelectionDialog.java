@@ -134,8 +134,7 @@ public class FeatureSelectionDialog extends FilteredItemsSelectionDialog {
 		}
 
 		private int compareSimilarObjects(Object o1, Object o2) {
-			if (o1 instanceof IFeatureModel ipmb1 && o2 instanceof IFeatureModel) {
-				IFeatureModel ipmb2 = (IFeatureModel) o2;
+			if (o1 instanceof IFeatureModel ipmb1 && o2 instanceof IFeatureModel ipmb2) {
 				return compareFeatures(ipmb1.getFeature(), ipmb2.getFeature());
 			}
 			return 0;
