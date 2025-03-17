@@ -73,8 +73,7 @@ public class ProblemReporter {
 		int start = element.getStartPosition();
 		int length = element.getLength();
 
-		if (valueIndex >= 0 && element instanceof ArrayInitializer) {
-			ArrayInitializer ai = (ArrayInitializer) element;
+		if (valueIndex >= 0 && element instanceof ArrayInitializer ai) {
 			if (valueIndex < ai.expressions().size()) {
 				Expression expression = (Expression) ai.expressions().get(valueIndex);
 				start = expression.getStartPosition();
