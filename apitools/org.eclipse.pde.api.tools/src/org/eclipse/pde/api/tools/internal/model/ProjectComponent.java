@@ -101,10 +101,8 @@ public class ProjectComponent extends BundleComponent {
 	 * @param model the given model
 	 * @throws CoreException if unable to create the API component
 	 */
-	public ProjectComponent(IApiBaseline baseline, String location, IPluginModelBase model, long bundleid) throws CoreException {
+	public ProjectComponent(IApiBaseline baseline, String location, IProject project, IPluginModelBase model, long bundleid) throws CoreException {
 		super(baseline, location, bundleid);
-		IPath path = IPath.fromOSString(location);
-		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(path.lastSegment());
 		this.fProject = JavaCore.create(project);
 		this.fModel = model;
 	}
