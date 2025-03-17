@@ -670,13 +670,11 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 		if (testElements.length == 1) { // a test name was specified just run the single test, or a test container was
 										// specified
 			IJavaElement testElement = testElements[0];
-			if (testElement instanceof IMethod) {
-				IMethod method = (IMethod) testElement;
+			if (testElement instanceof IMethod method) {
 				programArguments.add("-test"); //$NON-NLS-1$
 				programArguments.add(method.getDeclaringType().getFullyQualifiedName() + ':' + method.getElementName());
 				collectAddOpensVmArgs(addOpensTargets, addOpensVmArgs, method, configuration);
-			} else if (testElement instanceof IType) {
-				IType type = (IType) testElement;
+			} else if (testElement instanceof IType type) {
 				programArguments.add("-classNames"); //$NON-NLS-1$
 				programArguments.add(type.getFullyQualifiedName());
 				collectAddOpensVmArgs(addOpensTargets, addOpensVmArgs, type, configuration);
@@ -863,8 +861,7 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 			try (BufferedWriter bw = new BufferedWriter(
 					new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));) {
 				for (IJavaElement testElement : testElements) {
-					if (testElement instanceof IType) {
-						IType type = (IType) testElement;
+					if (testElement instanceof IType type) {
 						String testName = type.getFullyQualifiedName();
 						bw.write(testName);
 						bw.newLine();
