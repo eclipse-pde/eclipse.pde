@@ -44,8 +44,7 @@ public class PreferenceSpyEditingSupport extends EditingSupport {
 	@Override
 	protected Object getValue(Object element) {
 		String value = null;
-		if (element instanceof PreferenceEntry) {
-			PreferenceEntry preferenceEntry = (PreferenceEntry) element;
+		if (element instanceof PreferenceEntry preferenceEntry) {
 			switch (field) {
 			case nodePath:
 				value = preferenceEntry.getNodePath();
