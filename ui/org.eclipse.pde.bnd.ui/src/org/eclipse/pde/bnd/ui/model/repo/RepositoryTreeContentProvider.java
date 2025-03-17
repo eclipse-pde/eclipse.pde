@@ -153,14 +153,11 @@ public class RepositoryTreeContentProvider implements ITreeContentProvider {
 	public Object[] getChildren(Object parentElement) {
 		Object[] result = null;
 
-		if (parentElement instanceof RepositoryPlugin) {
-			RepositoryPlugin repo = (RepositoryPlugin) parentElement;
+		if (parentElement instanceof RepositoryPlugin repo) {
 			result = getRepositoryBundles(repo);
-		} else if (parentElement instanceof RepositoryBundle) {
-			RepositoryBundle bundle = (RepositoryBundle) parentElement;
+		} else if (parentElement instanceof RepositoryBundle bundle) {
 			result = getRepositoryBundleVersions(bundle);
-		} else if (parentElement instanceof Project) {
-			Project project = (Project) parentElement;
+		} else if (parentElement instanceof Project project) {
 			result = getProjectBundles(project);
 		}
 
@@ -195,8 +192,7 @@ public class RepositoryTreeContentProvider implements ITreeContentProvider {
 			if (CACHE_REPOSITORY.equals(repoPlugin.getName())) {
 				continue;
 			}
-			if (repoPlugin instanceof IndexProvider) {
-				IndexProvider indexProvider = (IndexProvider) repoPlugin;
+			if (repoPlugin instanceof IndexProvider indexProvider) {
 				if (!supportsPhase(indexProvider)) {
 					continue;
 				}
@@ -211,8 +207,7 @@ public class RepositoryTreeContentProvider implements ITreeContentProvider {
 
 	private void addCollection(Collection<Object> result, Collection<Object> inputs) {
 		for (Object input : inputs) {
-			if (input instanceof RepositoryPlugin) {
-				RepositoryPlugin repo = (RepositoryPlugin) input;
+			if (input instanceof RepositoryPlugin repo) {
 				if (repo instanceof IndexProvider) {
 					if (!supportsPhase((IndexProvider) repo)) {
 						continue;

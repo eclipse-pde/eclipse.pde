@@ -346,15 +346,13 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 					} catch (Exception e) {
 						return false;
 					}
-				} else if (data instanceof String[]) {
-					String[] paths = (String[]) data;
+				} else if (data instanceof String[] paths) {
 					File[] files = new File[paths.length];
 					for (int i = 0; i < paths.length; i++) {
 						files[i] = new File(paths[i]);
 					}
 					copied = addFilesToRepository((RepositoryPlugin) getCurrentTarget(), files);
-				} else if (data instanceof IResource[]) {
-					IResource[] resources = (IResource[]) data;
+				} else if (data instanceof IResource[] resources) {
 					File[] files = new File[resources.length];
 					for (int i = 0; i < resources.length; i++) {
 						files[i] = resources[i].getLocation()
@@ -385,8 +383,7 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 			boolean writableRepoSelected = false;
 			IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
 			Object element = selection.getFirstElement();
-			if (element instanceof RepositoryPlugin) {
-				RepositoryPlugin repo = (RepositoryPlugin) element;
+			if (element instanceof RepositoryPlugin repo) {
 				writableRepoSelected = repo.canWrite();
 			}
 			addBundlesAction.setEnabled(writableRepoSelected);
@@ -557,11 +554,10 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 	}
 
 	private static File[] convertSelectionToFiles(ISelection selection) {
-		if (!(selection instanceof IStructuredSelection)) {
+		if (!(selection instanceof IStructuredSelection structSel)) {
 			return new File[0];
 		}
 
-		IStructuredSelection structSel = (IStructuredSelection) selection;
 		List<File> files = new ArrayList<>(structSel.size());
 
 		for (Iterator<?> iter = structSel.iterator(); iter.hasNext();) {
@@ -569,8 +565,7 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 			if (element instanceof IFile) {
 				files.add(((IFile) element).getLocation()
 					.toFile());
-			} else if (element instanceof IAdaptable) {
-				IAdaptable adaptable = (IAdaptable) element;
+			} else if (element instanceof IAdaptable adaptable) {
 				IFile ifile = adaptable.getAdapter(IFile.class);
 				if (ifile != null) {
 					files.add(ifile.getLocation()
@@ -671,8 +666,7 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 			public void run() {
 				IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
 				Object element = selection.getFirstElement();
-				if (element != null && element instanceof RepositoryPlugin) {
-					RepositoryPlugin repo = (RepositoryPlugin) element;
+				if (element != null && element instanceof RepositoryPlugin repo) {
 					if (repo.canWrite()) {
 						AddFilesToRepositoryWizard wizard = new AddFilesToRepositoryWizard(getWorkspace(), repo,
 								new File[0]);
@@ -1006,12 +1000,10 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 	}
 
 	private Object toJava(Object dropped) {
-		if (dropped instanceof IStructuredSelection) {
-			IStructuredSelection selection = (IStructuredSelection) dropped;
+		if (dropped instanceof IStructuredSelection selection) {
 			if (!selection.isEmpty()) {
 				Object firstElement = selection.getFirstElement();
-				if (firstElement instanceof IResource) {
-					IResource resource = (IResource) firstElement;
+				if (firstElement instanceof IResource resource) {
 					IPath path = resource.getRawLocation();
 					if (path != null) {
 						File file = path.toFile();
@@ -1099,8 +1091,7 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 				.getSelection();
 			if (selection instanceof IStructuredSelection) {
 				Object firstElement = ((IStructuredSelection) selection).getFirstElement();
-				if (firstElement instanceof IFile) {
-					IFile f = (IFile) firstElement;
+				if (firstElement instanceof IFile f) {
 					return f.getLocationURI();
 				}
 			}

@@ -55,19 +55,13 @@ public class GAVIPageListener implements IPartListener {
 
 		IPath file = null;
 
-		if (part instanceof EditorPart) {
-			EditorPart editorPart = (EditorPart) part;
-
+		if (part instanceof EditorPart editorPart) {
 			IEditorInput editorInput = editorPart.getEditorInput();
 
-			if (editorInput instanceof IFileEditorInput) {
-				IFileEditorInput input = (IFileEditorInput) editorInput;
-
+			if (editorInput instanceof IFileEditorInput input) {
 				file = input.getFile()
 					.getFullPath();
-			} else if (editorInput instanceof IStorageEditorInput) {
-				IStorageEditorInput input = (IStorageEditorInput) editorInput;
-
+			} else if (editorInput instanceof IStorageEditorInput input) {
 				try {
 					file = input.getStorage()
 						.getFullPath();

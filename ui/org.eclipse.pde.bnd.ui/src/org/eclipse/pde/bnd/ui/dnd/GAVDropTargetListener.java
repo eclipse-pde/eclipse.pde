@@ -113,16 +113,13 @@ public abstract class GAVDropTargetListener implements DropTargetListener {
 			Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
 			while (iterator.hasNext()) {
 				Object item = iterator.next();
-				if (item instanceof RepositoryBundle) {
-					RepositoryBundle rb = (RepositoryBundle) item;
+				if (item instanceof RepositoryBundle rb) {
 					format(new FormatEvent(rb.getResource(), rb.getRepo(), true, isAlternateSyntaxEnabled()));
 					break;
-				} else if (item instanceof RepositoryBundleVersion) {
-					RepositoryBundleVersion rbv = (RepositoryBundleVersion) item;
+				} else if (item instanceof RepositoryBundleVersion rbv) {
 					format(new FormatEvent(rbv.getResource(), rbv.getRepo(), false, isAlternateSyntaxEnabled()));
 					break;
-				} else if (item instanceof RepositoryResourceElement) {
-					RepositoryResourceElement rbe = (RepositoryResourceElement) item;
+				} else if (item instanceof RepositoryResourceElement rbe) {
 					RepositoryBundleVersion rbv = rbe.getRepositoryBundleVersion();
 					format(new FormatEvent(rbv.getResource(), rbv.getRepo(), true, isAlternateSyntaxEnabled()));
 					break;
