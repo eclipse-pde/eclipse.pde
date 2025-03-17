@@ -54,18 +54,15 @@ public class SelectionDragAdapter implements DragSourceListener {
 			Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
 			while (iterator.hasNext()) {
 				Object item = iterator.next();
-				if (item instanceof RepositoryBundle) {
-					RepositoryBundle rb = (RepositoryBundle) item;
+				if (item instanceof RepositoryBundle rb) {
 					event.data = rb.getResource()
 						.toString();
 					break;
-				} else if (item instanceof RepositoryBundleVersion) {
-					RepositoryBundleVersion rbv = (RepositoryBundleVersion) item;
+				} else if (item instanceof RepositoryBundleVersion rbv) {
 					event.data = rbv.getResource()
 						.toString();
 					break;
-				} else if (item instanceof RepositoryResourceElement) {
-					RepositoryResourceElement rbe = (RepositoryResourceElement) item;
+				} else if (item instanceof RepositoryResourceElement rbe) {
 					event.data = rbe.getResource()
 						.toString();
 					break;
