@@ -63,15 +63,11 @@ public class RegistryBrowserModelChangeListener implements ModelChangeListener {
 		case RegistryBrowser.BUNDLES:
 			if (object instanceof Bundle) {
 				return object;
-			} else if (object instanceof ExtensionPoint) {
-				ExtensionPoint ext = (ExtensionPoint) object;
+			} else if (object instanceof ExtensionPoint ext) {
 				return ext.getContributor();
-			} else if (object instanceof Extension) {
-				Extension ext = (Extension) object;
+			} else if (object instanceof Extension ext) {
 				return ext.getContributor();
-			} else if (object instanceof ServiceRegistration) {
-				ServiceRegistration reg = (ServiceRegistration) object;
-
+			} else if (object instanceof ServiceRegistration reg) {
 				Bundle[] bundles = reg.getUsingBundles();
 				if (bundles.length == 0) {
 					return reg.getBundle();
@@ -87,14 +83,12 @@ public class RegistryBrowserModelChangeListener implements ModelChangeListener {
 		case RegistryBrowser.EXTENSION_REGISTRY:
 			if (object instanceof ExtensionPoint) {
 				return object;
-			} else if (object instanceof Extension) {
-				Extension ext = (Extension) object;
+			} else if (object instanceof Extension ext) {
 				return ext.getExtensionPoint();
 			}
 			break;
 		case RegistryBrowser.SERVICES:
-			if (object instanceof ServiceRegistration) {
-				ServiceRegistration service = (ServiceRegistration) object;
+			if (object instanceof ServiceRegistration service) {
 				return service.getName();
 			} else if (object instanceof Bundle) {
 				return ((Bundle) object).getServicesInUse();

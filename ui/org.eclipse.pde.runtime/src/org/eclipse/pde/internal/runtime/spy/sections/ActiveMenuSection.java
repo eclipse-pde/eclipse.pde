@@ -67,8 +67,7 @@ public class ActiveMenuSection implements ISpySection {
 
 			StringBuilder buffer = new StringBuilder();
 			buffer.append("<form>"); //$NON-NLS-1$
-			if (object instanceof IContributionItem) {
-				IContributionItem item = (IContributionItem) object;
+			if (object instanceof IContributionItem item) {
 				String id = item.getId();
 				if (id != null) {
 					buffer.append(toolkit.createIdentifierSection(text, PDERuntimeMessages.ActiveMenuSection_0, new String[] {id}));
@@ -113,17 +112,14 @@ public class ActiveMenuSection implements ISpySection {
 	@SuppressWarnings("restriction")
 	private void scan(IContributionItem item, StringBuilder buffer, SpyFormToolkit toolkit, FormText text) {
 		// check for action set information
-		if (item instanceof org.eclipse.ui.internal.IActionSetContributionItem) {
-			org.eclipse.ui.internal.IActionSetContributionItem actionItem = (org.eclipse.ui.internal.IActionSetContributionItem) item;
+		if (item instanceof org.eclipse.ui.internal.IActionSetContributionItem actionItem) {
 			buffer.append(toolkit.createIdentifierSection(text, PDERuntimeMessages.ActiveMenuSection_1, new String[] {actionItem.getActionSetId()}));
 		}
 		if (item instanceof ActionContributionItem) {
 			createActionContributionItemText(item, buffer, toolkit, text);
-		} else if (item instanceof SubContributionItem) {
-			SubContributionItem subItem = (SubContributionItem) item;
+		} else if (item instanceof SubContributionItem subItem) {
 			scan(subItem.getInnerItem(), buffer, toolkit, text); // recurse
-		} else if (item instanceof CommandContributionItem) { // TODO... this is hard...
-			CommandContributionItem contributionItem = (CommandContributionItem) item;
+		} else if (item instanceof CommandContributionItem contributionItem) { // TODO... this is hard...
 			Command command = contributionItem.getCommand().getCommand();
 			buffer.append(toolkit.createClassSection(text, PDERuntimeMessages.ActiveMenuSection_2, command.getClass()));
 			buffer.append(toolkit.createClassSection(text, PDERuntimeMessages.ActiveMenuSection_3,
@@ -141,8 +137,7 @@ public class ActiveMenuSection implements ISpySection {
 			buffer.append(toolkit.createIdentifierSection(text, PDERuntimeMessages.ActiveMenuSection_4, new String[] {action.getActionDefinitionId()}));
 		}
 
-		if (action instanceof org.eclipse.ui.internal.PluginAction) {
-			org.eclipse.ui.internal.PluginAction pluginAction = (org.eclipse.ui.internal.PluginAction) action;
+		if (action instanceof org.eclipse.ui.internal.PluginAction pluginAction) {
 			Class<?> clazz = pluginAction.getClass();
 			createActionContributionItemText(object, buffer, toolkit, text, clazz, pluginAction);
 

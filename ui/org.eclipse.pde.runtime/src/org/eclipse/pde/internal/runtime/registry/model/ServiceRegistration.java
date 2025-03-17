@@ -104,8 +104,7 @@ public class ServiceRegistration extends ModelObject implements Comparable<Servi
 	public static String toString(Object value) {
 		if (value == null) {
 			return ""; //$NON-NLS-1$
-		} else if (value instanceof CharSequence) {
-			CharSequence charSequence = (CharSequence) value;
+		} else if (value instanceof CharSequence charSequence) {
 			return charSequence.toString();
 		} else if (value instanceof Object[]) {
 			StringBuilder buff = new StringBuilder();
@@ -120,8 +119,7 @@ public class ServiceRegistration extends ModelObject implements Comparable<Servi
 	public static void appendString(StringBuilder buff, Object value) {
 		if (value == null) {
 			// ignore
-		} else if (value instanceof Object[]) {
-			Object[] objects = (Object[]) value;
+		} else if (value instanceof Object[] objects) {
 			buff.append("["); //$NON-NLS-1$
 			for (int o = 0; o < objects.length; o++) {
 				Object object = objects[o];

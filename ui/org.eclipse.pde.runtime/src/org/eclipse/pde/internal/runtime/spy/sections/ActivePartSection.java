@@ -98,8 +98,7 @@ public class ActivePartSection implements ISpySection {
 					new Class<?>[] { part.getClass(), mPart.getObject().getClass() }));
 		}
 
-		if (part instanceof PageBookView) {
-			PageBookView outline = (PageBookView) part;
+		if (part instanceof PageBookView outline) {
 			IPage currentPage = outline.getCurrentPage();
 			if (currentPage != null) {
 				buffer.append(toolkit.createClassSection(text, PDERuntimeMessages.SpyDialog_activePageBook_title,
