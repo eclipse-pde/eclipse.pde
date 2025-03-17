@@ -62,13 +62,11 @@ public class ActiveHelpSection implements ISpySection {
 		StringBuilder helpBuffer = new StringBuilder();
 		// process help
 		// TODO we need to make this cleaner... help processing is complicated atm
-		if (object instanceof PreferenceDialog) {
-			PreferenceDialog dialog = (PreferenceDialog) object;
+		if (object instanceof PreferenceDialog dialog) {
 			IPreferencePage page = (IPreferencePage) dialog.getSelectedPage();
 			processHelp(page.getControl().getShell(), helpBuffer);
 			processChildren(page.getControl(), helpBuffer);
-		} else if (object instanceof Dialog) {
-			Dialog dialog = (Dialog) object;
+		} else if (object instanceof Dialog dialog) {
 			processChildren(dialog.getShell(), helpBuffer);
 		} else {
 			helpBuffer.append(processControlHelp(event, toolkit));
@@ -108,8 +106,7 @@ public class ActiveHelpSection implements ISpySection {
 
 	private void processChildren(Control control, StringBuilder buffer) {
 		processHelp(control, buffer);
-		if (control instanceof Composite) {
-			Composite composite = (Composite) control;
+		if (control instanceof Composite composite) {
 			Control[] controls = composite.getChildren();
 			for (Control child : controls) {
 				processChildren(child, buffer);
@@ -134,29 +131,25 @@ public class ActiveHelpSection implements ISpySection {
 		Shell shell = null;
 		Control control = null;
 
-		if (part instanceof IEditorPart) {
-			IEditorPart editorPart = (IEditorPart) part;
+		if (part instanceof IEditorPart editorPart) {
 			shell = editorPart.getSite().getShell();
 
 			for (int j = 0; j < window.getActivePage().getEditorReferences().length; j++) {
 				IEditorReference er = window.getActivePage().getEditorReferences()[j];
 				if (er.getId().equals(editorPart.getEditorSite().getId())) {
-					if (er instanceof org.eclipse.ui.internal.WorkbenchPartReference) {
-						org.eclipse.ui.internal.WorkbenchPartReference wpr = (org.eclipse.ui.internal.WorkbenchPartReference) er;
+					if (er instanceof org.eclipse.ui.internal.WorkbenchPartReference wpr) {
 						control = wpr.getPane().getControl();
 						shell = null;
 						break;
 					}
 				}
 			}
-		} else if (part instanceof ViewPart) {
-			ViewPart viewPart = (ViewPart) part;
+		} else if (part instanceof ViewPart viewPart) {
 			shell = viewPart.getSite().getShell();
 			for (int j = 0; j < window.getActivePage().getViewReferences().length; j++) {
 				IViewReference vr = window.getActivePage().getViewReferences()[j];
 				if (vr.getId().equals(viewPart.getViewSite().getId())) {
-					if (vr instanceof org.eclipse.ui.internal.WorkbenchPartReference) {
-						org.eclipse.ui.internal.WorkbenchPartReference wpr = (org.eclipse.ui.internal.WorkbenchPartReference) vr;
+					if (vr instanceof org.eclipse.ui.internal.WorkbenchPartReference wpr) {
 						control = wpr.getPane().getControl();
 						shell = null;
 						break;
@@ -182,8 +175,7 @@ public class ActiveHelpSection implements ISpySection {
 				} else {
 					buffer.append(toolkit.createHelpIdentifierSection(control));
 				}
-				if (control instanceof Composite) {
-					Composite parent = (Composite) control;
+				if (control instanceof Composite parent) {
 					for (int i = 0; i < parent.getChildren().length; i++) {
 						processChildren(parent.getChildren()[i], buffer);
 					}

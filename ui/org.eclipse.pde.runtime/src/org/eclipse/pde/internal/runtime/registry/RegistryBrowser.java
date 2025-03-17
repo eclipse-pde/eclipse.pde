@@ -285,8 +285,7 @@ public class RegistryBrowser extends ViewPart {
 			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				// let Comparables compare themselves
-				if (e1 instanceof Comparable && e2 instanceof Comparable && e1.getClass().equals(e2.getClass())) {
-					Comparable c1 = (Comparable) e1;
+				if (e1 instanceof Comparable c1 && e2 instanceof Comparable && e1.getClass().equals(e2.getClass())) {
 					Comparable c2 = (Comparable) e2;
 
 					return c1.compareTo(c2);

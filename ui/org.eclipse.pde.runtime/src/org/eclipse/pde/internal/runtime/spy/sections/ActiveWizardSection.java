@@ -44,8 +44,7 @@ public class ActiveWizardSection implements ISpySection {
 		}
 		Class<?> clazz = object.getClass();
 
-		if (object instanceof WizardDialog) {
-			WizardDialog dialog = (WizardDialog) object;
+		if (object instanceof WizardDialog dialog) {
 			IWizardPage page = dialog.getCurrentPage();
 			IWizard wizard = page.getWizard();
 			clazz = wizard.getClass();
