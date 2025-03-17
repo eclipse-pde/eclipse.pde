@@ -82,8 +82,7 @@ public class RepositoryUtils {
 				}
 
 				for (RepositoryPlugin repo : repos) {
-					if (repo instanceof RegistryPlugin) {
-						RegistryPlugin registry = (RegistryPlugin) repo;
+					if (repo instanceof RegistryPlugin registry) {
 						registry.setRegistry(localWorkspace);
 					}
 				}

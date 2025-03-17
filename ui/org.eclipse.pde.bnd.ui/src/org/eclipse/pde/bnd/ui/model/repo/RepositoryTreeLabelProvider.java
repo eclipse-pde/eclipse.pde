@@ -131,9 +131,7 @@ public class RepositoryTreeLabelProvider extends StyledCellLabelProvider
 					}
 					label.append(versionText, StyledString.COUNTER_STYLER);
 				}
-			} else if (element instanceof RepositoryResourceElement) {
-				RepositoryResourceElement resourceElem = (RepositoryResourceElement) element;
-
+			} else if (element instanceof RepositoryResourceElement resourceElem) {
 				label.append(resourceElem.getIdentity())
 					.append(" ");
 				label.append(resourceElem.getVersionString(), StyledString.COUNTER_STYLER);

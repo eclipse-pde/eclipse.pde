@@ -158,8 +158,7 @@ public abstract class RepositoryEntry implements IAdaptable, ResourceProvider {
 	public Resource getResource() {
 		RepositoryPlugin repositoryPlugin = getRepo();
 		try {
-			if (repositoryPlugin instanceof Repository) {
-				Repository repository = (Repository) repositoryPlugin;
+			if (repositoryPlugin instanceof Repository repository) {
 				ExpressionCombiner combiner = repository.getExpressionCombiner();
 
 				RequirementBuilder identBuilder = new RequirementBuilder(IdentityNamespace.IDENTITY_NAMESPACE);

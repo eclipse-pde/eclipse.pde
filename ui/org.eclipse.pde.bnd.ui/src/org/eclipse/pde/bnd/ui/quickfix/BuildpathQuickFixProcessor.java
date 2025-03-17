@@ -463,8 +463,7 @@ public class BuildpathQuickFixProcessor implements IQuickFixProcessor {
 					}
 					case IProblem.IllegalCast : {
 						ASTNode node = location.getCoveredNode(context.getASTRoot());
-						if (node instanceof CastExpression) {
-							CastExpression cast = (CastExpression) node;
+						if (node instanceof CastExpression cast) {
 							visitBindingHierarchy(cast.getType()
 								.resolveBinding());
 						}
@@ -606,8 +605,7 @@ public class BuildpathQuickFixProcessor implements IQuickFixProcessor {
 									addProposals(((Annotation) node).getTypeName());
 								}
 							}
-						} else if (node instanceof TypeLiteral) {
-							TypeLiteral tl = (TypeLiteral) node;
+						} else if (node instanceof TypeLiteral tl) {
 							addProposalsForType(tl.getType());
 							// } else {
 							// String[] arguments =
@@ -792,8 +790,7 @@ public class BuildpathQuickFixProcessor implements IQuickFixProcessor {
 		}
 		if (name instanceof SimpleName) {
 			addProposals(null, name.toString());
-		} else if (name instanceof QualifiedName) {
-			QualifiedName qualified = (QualifiedName) name;
+		} else if (name instanceof QualifiedName qualified) {
 			Name qualifier = qualified.getQualifier();
 			addProposals(qualifier.toString(), qualified.getName()
 				.toString());
