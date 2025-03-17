@@ -51,9 +51,7 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 
 	@Override
 	public Object[] getChildren(Object element) {
-		if (element instanceof RegistryModel) {
-			RegistryModel model = (RegistryModel) element;
-
+		if (element instanceof RegistryModel model) {
 			switch (fRegistryBrowser.getGroupBy()) {
 				case (RegistryBrowser.BUNDLES) :
 					return model.getBundles();
@@ -122,8 +120,7 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 
 		isInExtensionSet = false;
 
-		if (element instanceof Folder) {
-			Folder folder = (Folder) element;
+		if (element instanceof Folder folder) {
 			isInExtensionSet = folder.getId() == Folder.F_EXTENSIONS;
 			ModelObject[] objs = folder.getChildren();
 			if (folder.getId() == Folder.F_USING_BUNDLES) {
@@ -142,8 +139,7 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 			return ((ConfigurationElement) element).getElements();
 		}
 
-		if (element instanceof ExtensionPoint) {
-			ExtensionPoint extensionPoint = (ExtensionPoint) element;
+		if (element instanceof ExtensionPoint extensionPoint) {
 			Object[] objs = extensionPoint.getExtensions().toArray();
 			return objs;
 		}
@@ -152,9 +148,7 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 			return ((ServiceName) element).getChildren();
 		}
 
-		if (element instanceof ServiceRegistration) {
-			ServiceRegistration service = (ServiceRegistration) element;
-
+		if (element instanceof ServiceRegistration service) {
 			List<Folder> folders = new ArrayList<>();
 
 			if (service.getProperties().length > 0) {

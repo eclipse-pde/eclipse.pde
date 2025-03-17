@@ -44,14 +44,12 @@ public class ActiveDialogPageSection implements ISpySection {
 		}
 		Class<?> clazz = object.getClass();
 
-		if (object instanceof IPageChangeProvider) {
-			IPageChangeProvider pageChangeProvider = (IPageChangeProvider) object;
+		if (object instanceof IPageChangeProvider pageChangeProvider) {
 			Object selectedPage = pageChangeProvider.getSelectedPage();
 			if (selectedPage != null) {
 				Section section = toolkit.createSection(form.getBody(), ExpandableComposite.TITLE_BAR);
 				section.clientVerticalSpacing = 9;
-				if (selectedPage instanceof IDialogPage) {
-					IDialogPage page = (IDialogPage) selectedPage;
+				if (selectedPage instanceof IDialogPage page) {
 					clazz = page.getClass();
 					section.setText(NLS.bind(PDERuntimeMessages.SpyDialog_activeDialogPageSection_title, page.getTitle()));
 
