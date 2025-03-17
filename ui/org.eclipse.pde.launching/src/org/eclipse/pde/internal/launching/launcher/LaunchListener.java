@@ -120,8 +120,7 @@ public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (DebugEvent event : events) {
 			Object source = event.getSource();
-			if (source instanceof IProcess && event.getKind() == DebugEvent.TERMINATE) {
-				IProcess process = (IProcess) source;
+			if (source instanceof IProcess process && event.getKind() == DebugEvent.TERMINATE) {
 				ILaunch launch = process.getLaunch();
 				if (launch != null) {
 					try {
