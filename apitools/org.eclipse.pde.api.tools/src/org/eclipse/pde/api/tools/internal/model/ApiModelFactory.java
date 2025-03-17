@@ -122,7 +122,7 @@ public class ApiModelFactory {
 		IResource resource = model.getUnderlyingResource();
 		IProject project = resource != null ? resource.getProject() : null;
 		if (project != null && project.exists() && !Util.isBinaryProject(project)) {
-			component = new ProjectComponent(baseline, location, model, getBundleID());
+			component = new ProjectComponent(baseline, location, project, model, getBundleID());
 		} else {
 			component = new BundleComponent(baseline, location, getBundleID());
 		}
