@@ -49,11 +49,9 @@ public class RemoveFiltersHandler extends AbstractHandler {
 	 * @return the {@link IAdaptable} for the current selection context
 	 */
 	private IAdaptable getAdaptable(ISelection selection) {
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection ss = (IStructuredSelection) selection;
+		if (selection instanceof IStructuredSelection ss) {
 			Object o = ss.getFirstElement();
-			if (o instanceof IAdaptable) {
-				IAdaptable adapt = (IAdaptable) o;
+			if (o instanceof IAdaptable adapt) {
 				IResource resource = adapt.getAdapter(IResource.class);
 				if (resource != null) {
 					return (resource instanceof IProject ? resource : resource.getProject());

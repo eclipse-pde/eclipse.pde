@@ -33,8 +33,7 @@ public class CompareToBaselineHandler extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		ISelection selection = HandlerUtil.getCurrentSelectionChecked(event);
-		if (selection instanceof IStructuredSelection) {
-			final IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+		if (selection instanceof final IStructuredSelection structuredSelection) {
 			CompareToBaselineWizard wizard = new CompareToBaselineWizard(structuredSelection, ActionMessages.CompareDialogTitle);
 			WizardDialog wdialog = new WizardDialog(HandlerUtil.getActiveShell(event), wizard);
 			wdialog.open();

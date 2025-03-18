@@ -97,8 +97,7 @@ public class UpdateSinceTagOperation {
 				parser.setSource(compilationUnit);
 				if (intValue <= 0) {
 					// try to use the name range of the corresponding element
-					if (handleElement instanceof IMember) {
-						IMember member = (IMember) handleElement;
+					if (handleElement instanceof IMember member) {
 						ISourceRange range = member.getNameRange();
 						if (range != null) {
 							intValue = range.getOffset();

@@ -41,8 +41,7 @@ public class CompareWithAction implements IObjectActionDelegate {
 	 */
 	@Override
 	public void run(IAction action) {
-		if (this.selection instanceof IStructuredSelection) {
-			final IStructuredSelection structuredSelection = (IStructuredSelection) this.selection;
+		if (this.selection instanceof final IStructuredSelection structuredSelection) {
 			CompareToBaselineWizard wizard = new CompareToBaselineWizard(structuredSelection, ActionMessages.CompareDialogTitle);
 			WizardDialog wdialog = new WizardDialog(workbenchPartSite.getShell(), wizard);
 			wdialog.open();
