@@ -30,9 +30,7 @@ public class PreferenceEntryViewerComparator extends ViewerComparator {
 
 	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
-		if (e1 instanceof PreferenceEntry entry1 && e2 instanceof PreferenceEntry) {
-			PreferenceEntry entry2 = (PreferenceEntry) e2;
-
+		if (e1 instanceof PreferenceEntry entry1 && e2 instanceof PreferenceEntry entry2) {
 			long time = entry1.getTime();
 			long time2 = entry2.getTime();
 
