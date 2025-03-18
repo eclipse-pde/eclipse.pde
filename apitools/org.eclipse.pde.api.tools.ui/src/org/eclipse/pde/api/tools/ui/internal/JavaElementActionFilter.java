@@ -28,8 +28,7 @@ public class JavaElementActionFilter implements IActionFilter {
 	@Override
 	public boolean testAttribute(Object target, String name, String value) {
 		if (name.equals("JavaElementActionFilter")) { //$NON-NLS-1$
-			if (target instanceof IJavaElement) {
-				IJavaElement javaElement = (IJavaElement) target;
+			if (target instanceof IJavaElement javaElement) {
 				if (value.equals("isEnabled")) { //$NON-NLS-1$
 					while (javaElement != null) {
 						switch (javaElement.getElementType()) {

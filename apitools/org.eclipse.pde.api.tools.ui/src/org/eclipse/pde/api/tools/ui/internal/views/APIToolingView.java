@@ -99,8 +99,7 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 
 		@Override
 		public Object[] getElements(Object parent) {
-			if (parent instanceof ISession) {
-				ISession session = (ISession) parent;
+			if (parent instanceof ISession session) {
 				if (this.model == null) {
 					this.model = session.getModel();
 				}
@@ -139,8 +138,7 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 
 		@Override
 		public Image getImage(Object obj) {
-			if (obj instanceof ITreeNode) {
-				ITreeNode treeNode = (ITreeNode) obj;
+			if (obj instanceof ITreeNode treeNode) {
 				switch (treeNode.getId()) {
 					case ITreeNode.CLASS:
 						return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_CLASS);
@@ -156,8 +154,7 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 						break;
 				}
 				Object data = treeNode.getData();
-				if (data instanceof IDelta) {
-					IDelta delta = (IDelta) data;
+				if (data instanceof IDelta delta) {
 					Image image = getDeltaElementImage(delta);
 					if (image != null) {
 						int flags = (DeltaProcessor.isCompatible(delta) ? ApiImageDescriptor.SUCCESS : ApiImageDescriptor.ERROR);
@@ -418,8 +415,7 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 					} else {
 						APIToolingView.this.viewer.expandToLevel(item, 1);
 					}
-					if (item instanceof ITreeNode) {
-						ITreeNode node = (ITreeNode) item;
+					if (item instanceof ITreeNode node) {
 						if (node.getData() != null && !node.hasChildren()) {
 							// show the Properties view
 							ApiUIPlugin.getDefault().showPropertiesView();

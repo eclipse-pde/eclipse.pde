@@ -182,8 +182,7 @@ public class CompareToBaselineWizardPage extends WizardPage {
 	 */
 	IAdaptable getAdaptable() {
 		Object o = this.selection.getFirstElement();
-		if (o instanceof IAdaptable) {
-			IAdaptable adapt = (IAdaptable) o;
+		if (o instanceof IAdaptable adapt) {
 			IResource resource = adapt.getAdapter(IResource.class);
 			if (resource != null) {
 				return (resource instanceof IProject ? resource : resource.getProject());
