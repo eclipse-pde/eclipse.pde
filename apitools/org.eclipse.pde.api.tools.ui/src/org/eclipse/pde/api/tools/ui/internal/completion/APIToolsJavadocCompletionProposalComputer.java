@@ -293,8 +293,7 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 		while (lelement != null && lelement.getElementType() != IJavaElement.TYPE) {
 			lelement = lelement.getParent();
 		}
-		if (lelement instanceof IType) {
-			IType type = (IType) lelement;
+		if (lelement instanceof IType type) {
 			if (type.isAnnotation()) {
 				return IApiJavadocTag.TYPE_ANNOTATION;
 			} else if (type.isInterface()) {
@@ -311,8 +310,7 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 	 * activated on
 	 */
 	private void collectExistingTags(IJavaElement element, JavaContentAssistInvocationContext jcontext) throws JavaModelException {
-		if (element instanceof IMember) {
-			IMember member = (IMember) element;
+		if (element instanceof IMember member) {
 			ICompilationUnit cunit = jcontext.getCompilationUnit();
 			if (cunit != null) {
 				if (cunit.isWorkingCopy()) {

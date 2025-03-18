@@ -16,7 +16,6 @@ package org.eclipse.pde.api.tools.ui.internal.actions;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.pde.api.tools.ui.internal.actions.DeltaSession.TreeNode;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
@@ -187,8 +186,7 @@ class TreeViewerNavigator {
 
 	private boolean hasMatches(TreeItem item) {
 		Object element = item.getData();
-		if (element instanceof DeltaSession.TreeNode) {
-			TreeNode node = (TreeNode) element;
+		if (element instanceof DeltaSession.TreeNode node) {
 			return node.getData() != null && !node.hasChildren();
 		}
 		return element != null;

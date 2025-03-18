@@ -283,8 +283,7 @@ public class JavadocConversionPage extends UserInputWizardPage {
 								Object[] jps = ((IStructuredSelection) provider.getSelection()).toArray();
 								ArrayList<IProject> pjs = new ArrayList<>();
 								for (Object jp : jps) {
-									if (jp instanceof IAdaptable) {
-										IAdaptable adapt = (IAdaptable) jp;
+									if (jp instanceof IAdaptable adapt) {
 										IProject pj = adapt.getAdapter(IProject.class);
 										if (Util.isApiProject(pj)) {
 											pjs.add(pj);

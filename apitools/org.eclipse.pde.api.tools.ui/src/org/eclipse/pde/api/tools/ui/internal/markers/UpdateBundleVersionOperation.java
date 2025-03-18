@@ -63,14 +63,12 @@ public class UpdateBundleVersionOperation {
 				ModelModification mod = new ModelModification(file) {
 					@Override
 					protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
-						if (!(model instanceof IBundlePluginModelBase)) {
+						if (!(model instanceof IBundlePluginModelBase modelBase)) {
 							return;
 						}
-						IBundlePluginModelBase modelBase = (IBundlePluginModelBase) model;
 						IBundle bundle = modelBase.getBundleModel().getBundle();
 						IManifestHeader header = bundle.getManifestHeader(Constants.BUNDLE_VERSION);
-						if (header instanceof BundleVersionHeader) {
-							BundleVersionHeader versionHeader = (BundleVersionHeader) header;
+						if (header instanceof BundleVersionHeader versionHeader) {
 							versionHeader.setValue(fVersion);
 						}
 					}

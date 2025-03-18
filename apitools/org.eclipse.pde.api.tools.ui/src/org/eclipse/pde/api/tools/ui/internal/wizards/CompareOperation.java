@@ -120,8 +120,7 @@ public class CompareOperation extends Job {
 			return scope;
 		}
 		Arrays.sort(selected, (o1, o2) -> {
-			if (o1 instanceof IJavaElement && o2 instanceof IJavaElement) {
-				IJavaElement element = (IJavaElement) o1;
+			if (o1 instanceof IJavaElement element && o2 instanceof IJavaElement) {
 				IJavaElement element2 = (IJavaElement) o2;
 				return element.getElementType() - element2.getElementType();
 			}
@@ -130,8 +129,7 @@ public class CompareOperation extends Job {
 		int length = selected.length;
 		for (int i = 0; i < length; i++) {
 			Object currentSelection = selected[i];
-			if (currentSelection instanceof IJavaElement) {
-				IJavaElement element = (IJavaElement) currentSelection;
+			if (currentSelection instanceof IJavaElement element) {
 				IJavaProject javaProject = element.getJavaProject();
 				try {
 					switch (element.getElementType()) {

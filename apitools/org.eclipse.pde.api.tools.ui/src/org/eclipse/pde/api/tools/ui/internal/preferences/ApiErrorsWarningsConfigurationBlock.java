@@ -1375,8 +1375,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 	 */
 	private void enableControl(Control ctrl, boolean enabled) {
 		ctrl.setEnabled(enabled);
-		if (ctrl instanceof Composite) {
-			Composite comp = (Composite) ctrl;
+		if (ctrl instanceof Composite comp) {
 			Control[] children = comp.getChildren();
 			for (Control element : children) {
 				enableControl(element, enabled);
