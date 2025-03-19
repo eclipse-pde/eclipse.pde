@@ -162,8 +162,7 @@ public class DSEditor extends MultiSourceEditor {
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		IEditorInput input = getEditorInput();
-		if (input instanceof IFileEditorInput) {
-			IFileEditorInput fileInput = (IFileEditorInput) input;
+		if (input instanceof IFileEditorInput fileInput) {
 			addDSBuilder(fileInput.getFile());
 		}
 		super.doSave(monitor);
