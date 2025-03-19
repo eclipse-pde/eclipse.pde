@@ -78,8 +78,7 @@ public class DSPropertiesSection extends TableSection {
 	static class ContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object inputElement) {
-			if (inputElement instanceof IDSModel) {
-				IDSModel model = (IDSModel) inputElement;
+			if (inputElement instanceof IDSModel model) {
 				IDSComponent component = model.getDSComponent();
 				if (component != null) {
 					// gets all children from DS component to get properties and
