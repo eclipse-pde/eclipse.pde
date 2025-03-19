@@ -66,10 +66,9 @@ public class TracingComponent extends AbstractTracingNode {
 		if (obj == null) {
 			return false;
 		}
-		if (!(obj instanceof TracingComponent)) {
+		if (!(obj instanceof TracingComponent other)) {
 			return false;
 		}
-		TracingComponent other = (TracingComponent) obj;
 		if (getId() == null) {
 			if (other.getId() != null) {
 				return false;

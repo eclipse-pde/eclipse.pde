@@ -74,8 +74,7 @@ public class TracingComponentColumnEditingSupport extends EditingSupport {
 	@Override
 	protected CellEditor getCellEditor(final Object element) {
 
-		if (element instanceof TracingComponentDebugOption) {
-			TracingComponentDebugOption option = (TracingComponentDebugOption) element;
+		if (element instanceof TracingComponentDebugOption option) {
 			if (TracingUtils.isValueBoolean(option.getOptionPathValue())) {
 				return this.comboEditor;
 			}
@@ -112,8 +111,7 @@ public class TracingComponentColumnEditingSupport extends EditingSupport {
 
 		switch (this.columnIndex) {
 			case 1 :
-				if (element instanceof TracingComponentDebugOption) {
-					TracingComponentDebugOption option = (TracingComponentDebugOption) element;
+				if (element instanceof TracingComponentDebugOption option) {
 					String updatedValue = String.valueOf(value);
 					if (value instanceof Integer) {
 						updatedValue = String.valueOf((Integer) value == 0);

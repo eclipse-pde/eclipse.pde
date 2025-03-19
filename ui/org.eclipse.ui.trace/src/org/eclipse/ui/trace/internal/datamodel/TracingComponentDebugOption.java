@@ -90,10 +90,9 @@ public class TracingComponentDebugOption extends AbstractTracingNode {
 		if (obj == null) {
 			return false;
 		}
-		if (!(obj instanceof TracingComponentDebugOption)) {
+		if (!(obj instanceof TracingComponentDebugOption other)) {
 			return false;
 		}
-		TracingComponentDebugOption other = (TracingComponentDebugOption) obj;
 		if (fOptionPath == null) {
 			if (other.fOptionPath != null) {
 				return false;
