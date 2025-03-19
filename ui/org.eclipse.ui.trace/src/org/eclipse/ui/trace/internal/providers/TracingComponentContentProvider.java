@@ -27,8 +27,7 @@ public class TracingComponentContentProvider implements ITreeContentProvider {
 	public TracingNode[] getChildren(final Object parentElement) {
 
 		TracingNode[] children = null;
-		if (parentElement instanceof TracingNode) {
-			final TracingNode node = (TracingNode) parentElement;
+		if (parentElement instanceof final TracingNode node) {
 			children = node.getChildren();
 		}
 		return children;

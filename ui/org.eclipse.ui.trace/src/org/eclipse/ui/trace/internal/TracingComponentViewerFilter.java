@@ -64,8 +64,7 @@ public class TracingComponentViewerFilter extends PatternFilter {
 	public boolean isElementVisible(final Viewer viewer, final Object element) {
 
 		boolean isVisible = false;
-		if (element instanceof TracingComponent) {
-			TracingComponent component = (TracingComponent) element;
+		if (element instanceof TracingComponent component) {
 			boolean textMatches = super.isLeafMatch(viewer, component);
 			if (textMatches) {
 				// the text matches - make sure all children of this component are visible
