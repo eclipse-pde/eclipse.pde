@@ -55,9 +55,8 @@ public class DSBuilder extends IncrementalProjectBuilder {
 			if (resource instanceof IProject project) {
 				return PluginProject.isPluginProject(project);
 			}
-			if (resource instanceof IFile) {
+			if (resource instanceof IFile candidate) {
 				// see if this is it
-				IFile candidate = (IFile) resource;
 				if (isDSFile(candidate)) {
 					checkFile(candidate, monitor);
 					return true;
