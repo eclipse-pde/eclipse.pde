@@ -120,8 +120,7 @@ public class CompareOperation extends Job {
 			return scope;
 		}
 		Arrays.sort(selected, (o1, o2) -> {
-			if (o1 instanceof IJavaElement element && o2 instanceof IJavaElement) {
-				IJavaElement element2 = (IJavaElement) o2;
+			if (o1 instanceof IJavaElement element && o2 instanceof IJavaElement element2) {
 				return element.getElementType() - element2.getElementType();
 			}
 			return 0;
