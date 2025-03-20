@@ -308,10 +308,8 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 						findExtensionVirtualPointValue(base);
 						break;
 				}
-			} else if (fRange instanceof IDocumentElementNode && base instanceof IDocumentElementNode) {
+			} else if (fRange instanceof IDocumentElementNode node && base instanceof IDocumentElementNode newSearch) {
 				ArrayDeque<IDocumentElementNode> s = new ArrayDeque<>();
-				IDocumentElementNode node = (IDocumentElementNode) fRange;
-				IDocumentElementNode newSearch = (IDocumentElementNode) base;
 				// traverse up old model, pushing all nodes onto the stack along the way
 				while (node != null && !(node instanceof IPluginBase)) {
 					s.push(node);

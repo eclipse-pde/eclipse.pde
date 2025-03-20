@@ -62,11 +62,10 @@ public class PluginSearchActionGroup extends ActionGroup {
 			action.setInput((IPluginExtension) object);
 			action.setEnabled(true);
 			menu.add(action);
-		} else if (object instanceof IPluginExtensionPoint) {
+		} else if (object instanceof IPluginExtensionPoint point) {
 			// From PluginSearchResultPage
 			// From ExtensionPointsSection
 			OpenSchemaAction action = new OpenSchemaAction();
-			IPluginExtensionPoint point = (IPluginExtensionPoint) object;
 			String pointID = point.getFullId();
 			// Ensure the extension point ID is fully qualified
 			if (pointID.indexOf('.') == -1) {
