@@ -49,9 +49,8 @@ public class ManifestTextHover extends PDETextHover {
 		String hover = getHoverInfo2(textViewer, hoverRegion);
 		if (hover == null) {
 			IAnnotationModel annotationModel = fSourcePage.getViewer().getAnnotationModel();
-			if (annotationModel instanceof PDEMarkerAnnotationModel) {
+			if (annotationModel instanceof PDEMarkerAnnotationModel pdeAnnotationModel) {
 				int offset = hoverRegion.getOffset();
-				PDEMarkerAnnotationModel pdeAnnotationModel = (PDEMarkerAnnotationModel) annotationModel;
 				Iterator<Annotation> annotationIterator = pdeAnnotationModel.getAnnotationIterator(offset, 0, true,
 						true);
 				while (annotationIterator.hasNext()) {

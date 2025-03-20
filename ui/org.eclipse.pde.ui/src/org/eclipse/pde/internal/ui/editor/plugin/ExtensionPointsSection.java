@@ -266,9 +266,8 @@ public class ExtensionPointsSection extends TableSection {
 	private void handleDelete() {
 		Object[] selection = pointTable.getStructuredSelection().toArray();
 		for (Object selectedObject : selection) {
-			if (selectedObject != null && selectedObject instanceof IPluginExtensionPoint) {
+			if (selectedObject != null && selectedObject instanceof IPluginExtensionPoint ep) {
 				IStructuredSelection newSelection = null;
-				IPluginExtensionPoint ep = (IPluginExtensionPoint) selectedObject;
 				IPluginBase plugin = ep.getPluginBase();
 				IPluginExtensionPoint[] points = plugin.getExtensionPoints();
 				int index = getNewSelectionIndex(getArrayIndex(points, ep), points.length);

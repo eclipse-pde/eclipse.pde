@@ -252,9 +252,8 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 			return;
 		}
 		Object obj = ((IStructuredSelection) selection).getFirstElement();
-		if (obj instanceof ISchemaObject) {
+		if (obj instanceof ISchemaObject sObj) {
 			setBlockListeners(true);
-			ISchemaObject sObj = (ISchemaObject) obj;
 			fSchemaObject = sObj;
 			if (fShowDTD && fDtdSection != null) {
 				fDtdSection.updateDTDLabel(obj);
