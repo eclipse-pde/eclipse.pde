@@ -53,9 +53,8 @@ public class RepositoryTreeLabelProvider extends StyledCellLabelProvider
 		StyledString label = new StyledString();
 		Image image = null;
 		try {
-			if (element instanceof RepositoryPlugin) {
+			if (element instanceof RepositoryPlugin repo) {
 				if (index == 0) {
-					RepositoryPlugin repo = (RepositoryPlugin) element;
 					String status = repo.getStatus();
 					String name = null;
 					if (repo instanceof Actionable) {
@@ -72,10 +71,8 @@ public class RepositoryTreeLabelProvider extends StyledCellLabelProvider
 					}
 					image = Resources.getImage(repo.getIcon());
 				}
-			} else if (element instanceof Project) {
+			} else if (element instanceof Project project) {
 				if (index == 0) {
-					@SuppressWarnings("resource")
-					Project project = (Project) element;
 					boolean isOk = project.isOk();
 
 					label.append(project.getName());
@@ -93,10 +90,8 @@ public class RepositoryTreeLabelProvider extends StyledCellLabelProvider
 
 					image = projectImg;
 				}
-			} else if (element instanceof ProjectBundle) {
+			} else if (element instanceof ProjectBundle projectBundle) {
 				if (index == 0) {
-					ProjectBundle projectBundle = (ProjectBundle) element;
-
 					label.append(projectBundle.getBsn());
 					if (showRepoId) {
 						label.append(" ");
@@ -109,9 +104,8 @@ public class RepositoryTreeLabelProvider extends StyledCellLabelProvider
 					}
 					image = bundleImg;
 				}
-			} else if (element instanceof RepositoryBundle) {
+			} else if (element instanceof RepositoryBundle bundle) {
 				if (index == 0) {
-					RepositoryBundle bundle = (RepositoryBundle) element;
 					label.append(bundle.getText());
 					if (showRepoId) {
 						label.append(" ");
@@ -120,9 +114,8 @@ public class RepositoryTreeLabelProvider extends StyledCellLabelProvider
 					}
 					image = bundleImg;
 				}
-			} else if (element instanceof RepositoryBundleVersion) {
+			} else if (element instanceof RepositoryBundleVersion bundleVersion) {
 				if (index == 0) {
-					RepositoryBundleVersion bundleVersion = (RepositoryBundleVersion) element;
 					String versionText = bundleVersion.getText();
 
 					if (versionText.contains(" \u21E9")) {
