@@ -64,8 +64,7 @@ public class TracingComponentComparator extends ViewerComparator {
 				} else {
 					result = name1.compareTo(name2);
 				}
-			} else if (object1 instanceof String label1 && object2 instanceof String) {
-				String label2 = (String) object2;
+			} else if (object1 instanceof String label1 && object2 instanceof String label2) {
 				result = label1.compareTo(label2);
 			}
 		}
