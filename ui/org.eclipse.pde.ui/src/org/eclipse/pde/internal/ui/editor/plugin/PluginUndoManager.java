@@ -158,10 +158,9 @@ public class PluginUndoManager extends ModelUndoManager {
 							((ImportPackageHeader) header).addPackage((PackageObject) element);
 						}
 					}
-					if (element instanceof RequireBundleObject) {
+					if (element instanceof RequireBundleObject requireBundle) {
 						IBaseModel aggModel = getEditor().getAggregateModel();
 						if (aggModel instanceof BundlePluginModel pluginModel) {
-							RequireBundleObject requireBundle = (RequireBundleObject) element;
 							pluginBase = pluginModel.getPluginBase();
 							String elementValue = requireBundle.getValue();
 							IPluginImport importNode = null;

@@ -632,9 +632,8 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 
 	protected void doAddDependencies() {
 		IBaseModel model = getPage().getModel();
-		if (model instanceof IBundlePluginModelBase) {
+		if (model instanceof IBundlePluginModelBase bmodel) {
 			IProject proj = getPage().getPDEEditor().getCommonProject();
-			IBundlePluginModelBase bmodel = ((IBundlePluginModelBase) model);
 			AddNewDependenciesAction action = new AddNewDependenciesAction(proj, bmodel);
 			action.run();
 		}

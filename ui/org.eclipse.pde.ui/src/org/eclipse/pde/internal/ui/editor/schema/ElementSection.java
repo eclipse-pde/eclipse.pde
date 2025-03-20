@@ -604,7 +604,7 @@ public class ElementSection extends TreeSection {
 					// the new selection is handled by the handleDelete method for cuts and deletes,
 					// for moves it is handled by the subsequent insert
 				}
-			} else if (obj instanceof ISchemaComplexType) {
+			} else if (obj instanceof ISchemaComplexType type) {
 				// first compositor added/removed
 				ISchemaCompositor comp = ((ISchemaComplexType) obj).getCompositor();
 				fTreeViewer.refresh(comp);
@@ -613,7 +613,6 @@ public class ElementSection extends TreeSection {
 				}
 
 				if (e.getChangeType() == IModelChangedEvent.INSERT || e.getChangeType() == IModelChangedEvent.CHANGE) {
-					ISchemaComplexType type = (ISchemaComplexType) obj;
 					final ISchemaCompositor compositor = type.getCompositor();
 					if (compositor != null) {
 						fTreeViewer.getTree().getDisplay().asyncExec(() -> fTreeViewer.setSelection(new StructuredSelection(compositor), true));
