@@ -47,8 +47,7 @@ public class AntUtils {
 		Task[] tasks = target.getTasks();
 		for (Task task2 : tasks) {
 			if (task2.getTaskName().equals(name)) {
-				if (task2 instanceof UnknownElement) {
-					UnknownElement task = (UnknownElement) task2;
+				if (task2 instanceof UnknownElement task) {
 					task.maybeConfigure();
 					return task.getRealThing();
 				}
@@ -65,8 +64,7 @@ public class AntUtils {
 		Task[] tasks = target.getTasks();
 		for (Task task2 : tasks) {
 			if (task2.getTaskName().equals(name)) {
-				if (task2 instanceof UnknownElement) {
-					UnknownElement task = (UnknownElement) task2;
+				if (task2 instanceof UnknownElement task) {
 					task.maybeConfigure();
 					list.add(task.getRealThing());
 				} else {
