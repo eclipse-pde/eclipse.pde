@@ -396,11 +396,10 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 				final Object element = selection.getFirstElement();
 				if (element instanceof IAdaptable) {
 					final URI uri = ((IAdaptable) element).getAdapter(URI.class);
-					if (uri == null && element instanceof RepositoryEntry) {
+					if (uri == null && element instanceof final RepositoryEntry entry) {
 						boolean download = MessageDialog.openQuestion(getSite().getShell(), "Repositories",
 							"This repository entry is unable to be opened because it has not been downloaded. Download and open it now?");
 						if (download) {
-							final RepositoryEntry entry = (RepositoryEntry) element;
 							Job downloadJob = new Job("Downloading repository entry " + entry.getBsn()) {
 								@Override
 								protected IStatus run(IProgressMonitor monitor) {
@@ -833,7 +832,7 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 				IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
 				if (!selection.isEmpty()) {
 					final Object firstElement = selection.getFirstElement();
-					if (firstElement instanceof Actionable) {
+					if (firstElement instanceof final Actionable act) {
 
 						final RepositoryPlugin rp = getRepositoryPlugin(firstElement);
 
@@ -842,8 +841,6 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 						// Should extend this to allow other menu entries
 						// from the view, but currently there are none
 						//
-						final Actionable act = (Actionable) firstElement;
-
 						// use HierarchicalMenu to build up a menue with SubMenu
 						// entries
 						HierarchicalMenu hmenu = new HierarchicalMenu();
