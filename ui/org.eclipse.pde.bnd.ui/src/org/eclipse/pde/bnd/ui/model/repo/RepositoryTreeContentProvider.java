@@ -117,9 +117,8 @@ public class RepositoryTreeContentProvider implements ITreeContentProvider {
 	@SuppressWarnings("unchecked")
 	public Object[] getElements(Object inputElement) {
 		Collection<Object> result;
-		if (inputElement instanceof Workspace) {
+		if (inputElement instanceof Workspace workspace) {
 			result = new ArrayList<>();
-			Workspace workspace = (Workspace) inputElement;
 			addRepositoryPlugins(result, workspace);
 		} else if (inputElement instanceof Collection) {
 			result = new ArrayList<>();
