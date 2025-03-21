@@ -753,8 +753,7 @@ public class CtxHelpTreeSection extends TreeSection {
 		Object object = sel.getFirstElement();
 		if (object == null) {
 			return;
-		} else if (object instanceof CtxHelpObject) {
-			CtxHelpObject ctxHelpObject = (CtxHelpObject) object;
+		} else if (object instanceof CtxHelpObject ctxHelpObject) {
 			CtxHelpObject parent = ctxHelpObject.getParent();
 			if (parent != null) {
 				parent.moveChild(ctxHelpObject, positionFlag);
@@ -961,8 +960,7 @@ public class CtxHelpTreeSection extends TreeSection {
 	private void handleModelInsertType(IModelChangedEvent event) {
 		Object[] objects = event.getChangedObjects();
 		for (Object o : objects) {
-			if (o instanceof CtxHelpObject) {
-				CtxHelpObject object = (CtxHelpObject) o;
+			if (o instanceof CtxHelpObject object) {
 				if (object.getType() != ICtxHelpConstants.TYPE_ROOT) {
 					fTree.refresh(object.getParent());
 					// Select the new object in the tree, unless it is a
@@ -985,8 +983,7 @@ public class CtxHelpTreeSection extends TreeSection {
 	private void handleModelRemoveType(IModelChangedEvent event) {
 		Object[] objects = event.getChangedObjects();
 		for (Object o : objects) {
-			if (o instanceof CtxHelpObject) {
-				CtxHelpObject object = (CtxHelpObject) o;
+			if (o instanceof CtxHelpObject object) {
 				fTree.remove(object);
 				CtxHelpObject nextSelection = fRemoveObjectAction
 						.getNextSelection();

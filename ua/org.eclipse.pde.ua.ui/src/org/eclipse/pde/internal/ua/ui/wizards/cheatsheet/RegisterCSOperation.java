@@ -241,8 +241,7 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 
 		if (csElement.getChildCount() > 0) {
 			IPluginObject pluginObject = csElement.getChildren()[0];
-			if (pluginObject instanceof IPluginElement) {
-				IPluginElement element = (IPluginElement) pluginObject;
+			if (pluginObject instanceof IPluginElement element) {
 				if (element.getName().equals(RegisterCSWizardPage.F_CS_ELEMENT_DESCRIPTION)) {
 					return element;
 				}
@@ -278,8 +277,7 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 			IPluginObject[] pluginObjects = extension.getChildren();
 			// Process all children
 			for (IPluginObject pluginObject : pluginObjects) {
-				if (pluginObject instanceof IPluginElement) {
-					IPluginElement element = (IPluginElement) pluginObject;
+				if (pluginObject instanceof IPluginElement element) {
 					// Find cheat sheet elements
 					if (element.getName().equals(RegisterCSWizardPage.F_CS_ELEMENT_CHEATSHEET)) {
 						// Cheat sheet element
@@ -367,8 +365,7 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		IBundle bundle = modelBase.getBundleModel().getBundle();
 		// Get the heading specifying the singleton declaration
 		IManifestHeader header = bundle.getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
-		if (header instanceof BundleSymbolicNameHeader) {
-			BundleSymbolicNameHeader symbolic = (BundleSymbolicNameHeader) header;
+		if (header instanceof BundleSymbolicNameHeader symbolic) {
 			// If the singleton declaration is false, change it to true
 			// This is required because plug-ins that specify extensions
 			// must be singletons.
@@ -378,8 +375,7 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		}
 		// Add the cheat sheets plug-in to the list of required bundles
 		header = bundle.getManifestHeader(Constants.REQUIRE_BUNDLE);
-		if (header instanceof RequireBundleHeader) {
-			RequireBundleHeader require = (RequireBundleHeader) header;
+		if (header instanceof RequireBundleHeader require) {
 			if (require.hasElement(F_CS_EXTENSION_ID) == false) {
 				require.addBundle(F_CS_EXTENSION_ID);
 			}

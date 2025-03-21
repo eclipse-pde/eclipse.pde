@@ -60,10 +60,9 @@ public class TocDropAdapter extends ViewerDropAdapter {
 	 */
 	@Override
 	protected int determineLocation(DropTargetEvent event) {
-		if (!(event.item instanceof Item)) {
+		if (!(event.item instanceof Item item)) {
 			return LOCATION_NONE;
 		}
-		Item item = (Item) event.item;
 		Point coordinates = new Point(event.x, event.y);
 		coordinates = getViewer().getControl().toControl(coordinates);
 		if (item != null) {
