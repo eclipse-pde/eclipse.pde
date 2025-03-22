@@ -90,12 +90,12 @@ public class CapabilityBasedTemplate implements Template {
 		Map<String, Object> attrs = capability.getAttributes();
 
 		Object nameObj = attrs.get("name");
-		this.name = nameObj instanceof String ? (String) nameObj : "<<unknown>>";
+		this.name = nameObj instanceof String s ? s : "<<unknown>>";
 
 		this.description = "from " + ResourceUtils.getIdentityCapability(capability.getResource()).osgi_identity();
 
 		Object categoryObj = attrs.get("category");
-		category = categoryObj instanceof String ? (String) categoryObj : null;
+		category = categoryObj instanceof String s ? s : null;
 
 		// Get version from the capability if found, otherwise it comes from the
 		// bundle
@@ -121,16 +121,16 @@ public class CapabilityBasedTemplate implements Template {
 		}
 
 		Object iconObj = attrs.get("icon");
-		iconUri = iconObj instanceof String ? URI.create((String) iconObj) : null;
+		iconUri = iconObj instanceof String s ? URI.create(s) : null;
 
 		Object helpObj = attrs.get("help");
-		helpPath = helpObj instanceof String ? (String) helpObj : null;
+		helpPath = helpObj instanceof String s ? s : null;
 
 		Object metaTypeObj = attrs.get("metaType");
-		metaTypePath = metaTypeObj instanceof String ? (String) metaTypeObj : null;
+		metaTypePath = metaTypeObj instanceof String s ? s : null;
 
 		Object ocdObj = attrs.get("ocd");
-		ocdRef = ocdObj instanceof String ? ((String) ocdObj).trim() : null;
+		ocdRef = ocdObj instanceof String s ? s.trim() : null;
 	}
 
 	@Override
@@ -156,7 +156,7 @@ public class CapabilityBasedTemplate implements Template {
 	@Override
 	public int getRanking() {
 		Object rankingObj = capability.getAttributes().get("ranking");
-		return rankingObj instanceof Number ? ((Number) rankingObj).intValue() : 0;
+		return rankingObj instanceof Number n ? n.intValue() : 0;
 	}
 
 	@Override
