@@ -862,11 +862,9 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 	private void handleMoveStepAction(int positionFlag) {
 		ISimpleCSObject object = getCurrentSelection();
 		if (object != null) {
-			if (object instanceof ISimpleCSItem) {
-				ISimpleCSItem item = (ISimpleCSItem) object;
+			if (object instanceof ISimpleCSItem item) {
 				item.getSimpleCS().moveItem(item, positionFlag);
-			} else if (object instanceof ISimpleCSSubItem) {
-				ISimpleCSSubItem subitem = (ISimpleCSSubItem) object;
+			} else if (object instanceof ISimpleCSSubItem subitem) {
 				// Get the current index of the subitem
 				ISimpleCSObject parent = subitem.getParent();
 				if (parent.getType() == ISimpleCSConstants.TYPE_ITEM) {
@@ -1128,8 +1126,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 	private void handleDeleteAction() {
 		ISimpleCSObject object = getCurrentSelection();
 		if (object != null) {
-			if (object instanceof ISimpleCSItem) {
-				ISimpleCSItem item = (ISimpleCSItem) object;
+			if (object instanceof ISimpleCSItem item) {
 				// Preserve cheat sheet validity
 				// Semantic Rule: Cannot have a cheat sheet with no items
 				if (item.getSimpleCS().getItemCount() > 1) {

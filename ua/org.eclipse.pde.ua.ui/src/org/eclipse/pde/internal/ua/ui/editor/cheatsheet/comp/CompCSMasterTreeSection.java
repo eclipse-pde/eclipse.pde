@@ -331,8 +331,7 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 		Object object = sel.getFirstElement();
 		if (object == null) {
 			return;
-		} else if (object instanceof ICompCSTaskObject) {
-			ICompCSTaskObject taskObject = (ICompCSTaskObject) object;
+		} else if (object instanceof ICompCSTaskObject taskObject) {
 			ICompCSTaskGroup parent = null;
 			// Determine the parents type
 			if (taskObject.getParent().getType() == ICompCSConstants.TYPE_TASKGROUP) {
@@ -354,16 +353,14 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 		IEditorInput input = getPage().getEditorInput();
 		URL url = null;
 		try {
-			if (input instanceof IFileEditorInput) {
-				IFileEditorInput fileInput = (IFileEditorInput) input;
+			if (input instanceof IFileEditorInput fileInput) {
 				url = fileInput.getFile().getLocationURI().toURL();
-			} else if (input instanceof IStorageEditorInput) {
+			} else if (input instanceof IStorageEditorInput storageInput) {
 				// Note: This URL does not exist on the local file system
 				// As a result any tasks this composite cheat sheet has that
 				// specify a pathes to simple cheat sheets will not resolve
 				// Cheat sheet view will log an error loading simple cheat
 				// sheets
-				IStorageEditorInput storageInput = (IStorageEditorInput) input;
 				url = storageInput.getStorage().getFullPath().toFile().toURI()
 						.toURL();
 			} else {
@@ -586,8 +583,7 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 		IStructuredSelection sel = fTreeViewer.getStructuredSelection();
 		Object object = sel.getFirstElement();
 		if (object != null) {
-			if (object instanceof ICompCSTaskObject) {
-				ICompCSTaskObject taskObject = (ICompCSTaskObject) object;
+			if (object instanceof ICompCSTaskObject taskObject) {
 				ICompCSObject parent = taskObject.getParent();
 				if (canRemoveTaskObject(parent) == false) {
 					// Preserve cheat sheet validity

@@ -267,10 +267,9 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 			// Get the selection
 			Object result = dialog.getFirstResult();
 			// Ensure a file was selected
-			if (!(result instanceof IFile)) {
+			if (!(result instanceof IFile file)) {
 				return;
 			}
-			IFile file = (IFile) result;
 			// Get the absolute path
 			String absolutePath = file.getFullPath().toPortableString();
 			// Update the field
