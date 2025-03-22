@@ -317,7 +317,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 
 		result.setEnvironment(featureExample.getOS(), featureExample.getWS(), featureExample.getArch(), null);
 
-		int contextLength = featureExample instanceof BuildTimeFeature ? ((BuildTimeFeature) featureExample).getContextQualifierLength() : -1;
+		int contextLength = featureExample instanceof BuildTimeFeature b ? b.getContextQualifierLength() : -1;
 		result.setContextQualifierLength(contextLength);
 		return result;
 	}

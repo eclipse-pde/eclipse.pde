@@ -152,7 +152,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 			return defaultValue;
 		}
 		Object obj = immutableAntProperties.get(key);
-		return (obj instanceof String) ? (String) obj : null;
+		return (obj instanceof String s) ? s : null;
 	}
 
 	public static void setConfigInfo(String spec) throws CoreException {
