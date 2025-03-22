@@ -79,8 +79,8 @@ public class ApiDescription implements IApiDescription {
 	static class NodeComparator implements Comparator<IElementDescriptor> {
 		@Override
 		public int compare(IElementDescriptor o1, IElementDescriptor o2) {
-			String s1 = o1 instanceof IReferenceTypeDescriptor ? ((IReferenceTypeDescriptor) o1).getQualifiedName() : ((NamedElementDescriptorImpl) o1).getName();
-			String s2 = o2 instanceof IReferenceTypeDescriptor ? ((IReferenceTypeDescriptor) o2).getQualifiedName() : ((NamedElementDescriptorImpl) o2).getName();
+			String s1 = o1 instanceof IReferenceTypeDescriptor i ? i.getQualifiedName() : ((NamedElementDescriptorImpl) o1).getName();
+			String s2 = o2 instanceof IReferenceTypeDescriptor i ? i.getQualifiedName() : ((NamedElementDescriptorImpl) o2).getName();
 			if (s1 == null) {
 				return -1;
 			}
