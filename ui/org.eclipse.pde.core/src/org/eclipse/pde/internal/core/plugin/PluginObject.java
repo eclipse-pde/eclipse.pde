@@ -116,7 +116,7 @@ public abstract class PluginObject extends PlatformObject implements IPluginObje
 			return ((IBundlePluginModelProvider) fModel).getBundlePluginModel();
 		}
 
-		return fModel instanceof IPluginModelBase ? (IPluginModelBase) fModel : null;
+		return fModel instanceof IPluginModelBase i ? i : null;
 	}
 
 	@Override

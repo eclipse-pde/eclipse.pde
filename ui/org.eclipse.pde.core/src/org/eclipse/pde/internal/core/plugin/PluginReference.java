@@ -43,7 +43,7 @@ public class PluginReference extends PlatformObject {
 	public IPlugin getPlugin() {
 		if (fPlugin == null && fId != null) {
 			IPluginModelBase model = findModel();
-			fPlugin = model instanceof IPluginModel ? ((IPluginModel) model).getPlugin() : null;
+			fPlugin = model instanceof IPluginModel i ? i.getPlugin() : null;
 		}
 		return fPlugin;
 	}
