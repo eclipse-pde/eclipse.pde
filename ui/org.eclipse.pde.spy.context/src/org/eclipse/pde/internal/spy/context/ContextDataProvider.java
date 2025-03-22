@@ -97,7 +97,7 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		selectedContext = (newInput instanceof EclipseContext) ? (EclipseContext) newInput : null;
+		selectedContext = (newInput instanceof EclipseContext e) ? e : null;
 	}
 
 	@Override
