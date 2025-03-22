@@ -119,7 +119,7 @@ public abstract class TocObject extends DocumentObject implements
 	 */
 	public TocObject getParent() {
 		IDocumentElementNode parent = getParentNode();
-		return parent instanceof TocObject ? (TocObject) parent : null;
+		return parent instanceof TocObject t ? t : null;
 	}
 
 	/**
