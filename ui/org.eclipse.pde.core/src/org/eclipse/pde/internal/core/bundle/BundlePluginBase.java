@@ -77,7 +77,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 		if (root instanceof AbstractExtensions) {
 			return ((AbstractExtensions) root).getSchemaVersion();
 		}
-		return (root instanceof IPluginBase) ? ((IPluginBase) root).getSchemaVersion() : null;
+		return (root instanceof IPluginBase i) ? i.getSchemaVersion() : null;
 	}
 
 	@Override

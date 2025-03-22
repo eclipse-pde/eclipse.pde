@@ -162,7 +162,7 @@ public class ClasspathUtilCore {
 
 	public static boolean isPatchFragment(Resource desc) {
 		IPluginModelBase model = PluginRegistry.findModel(desc);
-		return model instanceof IFragmentModel ? isPatchFragment(((IFragmentModel) model).getFragment()) : false;
+		return model instanceof IFragmentModel i ? isPatchFragment(i.getFragment()) : false;
 	}
 
 	public static boolean isPatchFragment(IPluginModelBase model) {

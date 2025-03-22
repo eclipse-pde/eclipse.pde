@@ -380,7 +380,7 @@ public class FeatureExportOperation extends Job {
 		}
 
 		if (model.getUnderlyingResource() != null && !isCustomBuild(model)) {
-			String directory = (model instanceof IFeatureModel) ? ((IFeatureModel) model).getInstallLocation() : ((IPluginModelBase) model).getInstallLocation();
+			String directory = (model instanceof IFeatureModel i2) ? i2.getInstallLocation() : ((IPluginModelBase) model).getInstallLocation();
 			File dir = new File(directory);
 			File[] children = dir.listFiles();
 			if (children != null) {

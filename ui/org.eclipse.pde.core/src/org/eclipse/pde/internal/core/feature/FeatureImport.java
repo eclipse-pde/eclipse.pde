@@ -38,7 +38,7 @@ public class FeatureImport extends VersionableObject implements IFeatureImport {
 	public IPlugin getPlugin() {
 		if (id != null && fType == PLUGIN) {
 			IPluginModelBase model = PluginRegistry.findModel(id, version, VersionUtil.matchRuleFromLiteral(fMatch));
-			return model instanceof IPluginModel ? ((IPluginModel) model).getPlugin() : null;
+			return model instanceof IPluginModel i ? i.getPlugin() : null;
 		}
 		return null;
 	}
