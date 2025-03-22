@@ -153,7 +153,7 @@ public abstract class CtxHelpObject extends DocumentObject implements
 	 */
 	public CtxHelpObject getParent() {
 		IDocumentElementNode parent = getParentNode();
-		return parent instanceof CtxHelpObject ? (CtxHelpObject) parent : null;
+		return parent instanceof CtxHelpObject c ? c : null;
 	}
 
 	/**
