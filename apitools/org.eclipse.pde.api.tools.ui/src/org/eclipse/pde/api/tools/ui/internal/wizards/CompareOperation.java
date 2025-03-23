@@ -90,7 +90,7 @@ public class CompareOperation extends Job {
 					description = ActionMessages.CompareWithAction_compared_against_nothing;
 				} else if (size == 1) {
 					Object selectedElement = this.selection.getFirstElement();
-					String elementName = selectedElement instanceof IJavaElement ? ((IJavaElement) selectedElement).getElementName() : selectedElement.toString();
+					String elementName = selectedElement instanceof IJavaElement i ? i.getElementName() : selectedElement.toString();
 					description = NLS.bind(ActionMessages.CompareWithAction_compared_project_with, new Object[] {
 							elementName,
 							baselineName,
