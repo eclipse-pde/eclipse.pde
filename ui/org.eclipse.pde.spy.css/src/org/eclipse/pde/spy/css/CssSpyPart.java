@@ -234,7 +234,7 @@ public class CssSpyPart {
 		if (showAllShells.getSelection()) {
 			widgetTreeViewer.setInput(display);
 		} else {
-			widgetTreeViewer.setInput(new Object[] { shown instanceof Control ? ((Control) shown).getShell() : shown });
+			widgetTreeViewer.setInput(new Object[] { shown instanceof Control c ? c.getShell() : shown });
 		}
 		performCSSSearch(new NullProgressMonitor());
 	}
