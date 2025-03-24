@@ -37,9 +37,16 @@ pipeline {
 						**/target/artifactcomparison/**,\
 						**/target/compilelogs/**,\
 						repository/target/repository/**')
-					junit '**/target/surefire-reports/*.xml'
+					junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
 					discoverGitReferenceBuild referenceJob: 'eclipse.pde/master'
-					recordIssues publishAllIssues: true, ignoreQualityGate: true, tools: [eclipse(name: 'Compiler and API Tools', pattern: '**/target/compilelogs/*.xml'), mavenConsole(), javaDoc()], qualityGates: [[threshold: 1, type: 'NEW', unstable: true]]
+					recordIssues enabledForFailure: true, publishAllIssues: true, ignoreQualityGate: true,
+						tools: [
+							eclipse(name: 'Compiler', pattern: '**/target/compilelogs/*.xml'),
+							issues(name: 'API Tools', id: 'apitools', pattern: '**/target/apianalysis/*.xml'),
+							mavenConsole(),
+							javaDoc()
+						],
+						qualityGates: [[threshold: 1, type: 'NEW', unstable: true]]
 				}
 			}
 		}
