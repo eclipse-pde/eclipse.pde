@@ -260,8 +260,7 @@ public class CtxHelpEditor extends MultiSourceEditor {
 
 	@Override
 	public boolean canCut(ISelection selection) {
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection sel = (IStructuredSelection) selection;
+		if (selection instanceof IStructuredSelection sel) {
 			for (Iterator<?> iter = sel.iterator(); iter.hasNext();) {
 				Object obj = iter.next();
 				if (obj instanceof CtxHelpObject && ((CtxHelpObject) obj).canBeRemoved()) {

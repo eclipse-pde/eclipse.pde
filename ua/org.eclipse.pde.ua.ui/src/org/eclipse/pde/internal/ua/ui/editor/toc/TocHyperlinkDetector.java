@@ -40,11 +40,10 @@ public class TocHyperlinkDetector extends PDEHyperlinkDetector {
 		}
 
 		IDocumentElementNode node = attr.getEnclosingElement();
-		if (node == null || !(node instanceof TocObject) || !((TocObject) node).getModel().isEditable()) {
+		if (node == null || !(node instanceof TocObject tocObject) || !tocObject.getModel().isEditable()) {
 			return null;
 		}
 
-		TocObject tocObject = (TocObject) node;
 		TocModel model = tocObject.getModel();
 		IResource res = model.getUnderlyingResource();
 		IRegion linkRegion = new Region(attr.getValueOffset(), attr.getValueLength());

@@ -165,8 +165,7 @@ public class RegisterCtxHelpOperation extends WorkspaceModifyOperation {
 		// Get the heading specifying the singleton declaration
 		IManifestHeader header = bundle
 				.getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
-		if (header instanceof BundleSymbolicNameHeader) {
-			BundleSymbolicNameHeader symbolic = (BundleSymbolicNameHeader) header;
+		if (header instanceof BundleSymbolicNameHeader symbolic) {
 			// If the singleton declaration is false, change it to true
 			// This is required because plug-ins that specify extensions
 			// must be singletons.
@@ -176,8 +175,7 @@ public class RegisterCtxHelpOperation extends WorkspaceModifyOperation {
 		}
 		// Add the context help plug-in to the list of required bundles
 		header = bundle.getManifestHeader(Constants.REQUIRE_BUNDLE);
-		if (header instanceof RequireBundleHeader) {
-			RequireBundleHeader require = (RequireBundleHeader) header;
+		if (header instanceof RequireBundleHeader require) {
 			if (require.hasElement(CTX_HELP_PLUGIN_ID) == false) {
 				require.addBundle(CTX_HELP_PLUGIN_ID);
 			}
@@ -269,8 +267,7 @@ public class RegisterCtxHelpOperation extends WorkspaceModifyOperation {
 	private boolean checkExistingExtensionElement(IPluginExtension extension) {
 		IPluginObject[] pluginObjects = extension.getChildren();
 		for (IPluginObject pluginObject : pluginObjects) {
-			if (pluginObject instanceof IPluginElement) {
-				IPluginElement element = (IPluginElement) pluginObject;
+			if (pluginObject instanceof IPluginElement element) {
 				if (element.getName().equals(ICtxHelpConstants.ELEMENT_ROOT)) {
 					IPluginAttribute fileAttribute = element
 							.getAttribute(CTX_HELP_ATTR_FILE);
