@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2022 IBM Corporation and others.
+ *  Copyright (c) 2003, 2025 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -152,7 +152,11 @@ public abstract class WorkspaceModelManager<T> extends AbstractModelManager
 
 	@Override
 	protected void removeListeners() {
-		PDECore.getWorkspace().removeResourceChangeListener(this);
+		IWorkspace workspace = PDECore.getWorkspace();
+		if (bundleRootChangedListener != null) {
+			Arrays.stream(workspace.getRoot().getProjects()).forEach(this::removeBundleRootChangedListener);
+		}
+		workspace.removeResourceChangeListener(this);
 		super.removeListeners();
 	}
 
@@ -198,6 +202,9 @@ public abstract class WorkspaceModelManager<T> extends AbstractModelManager
 					if (addedOrOpened && bundleRootChangedListener != null) {
 						addBundleRootChangedListener(project);
 					}
+					if (delta.getKind() == IResourceDelta.REMOVED && bundleRootChangedListener != null) {
+						removeBundleRootChangedListener(project);
+					}
 					if (isInterestingProject(project) && addedOrOpened) {
 						createModel(project, true);
 						return false;
@@ -225,6 +232,13 @@ public abstract class WorkspaceModelManager<T> extends AbstractModelManager
 		// Always add the same listener instance to not add multiple listeners
 		// in case of repetitive project opening/closing
 		pdeNode.addPreferenceChangeListener(bundleRootChangedListener);
+	}
+
+	private void removeBundleRootChangedListener(IProject project) {
+		IEclipsePreferences pdeNode = new ProjectScope(project).getNode(PDECore.PLUGIN_ID);
+		// Remove the preference change listener when the project is removed
+		// from the workspace to make it eligible for garbage collection
+		pdeNode.removePreferenceChangeListener(bundleRootChangedListener);
 	}
 
 	protected IPreferenceChangeListener createBundleRootChangeListener() {
