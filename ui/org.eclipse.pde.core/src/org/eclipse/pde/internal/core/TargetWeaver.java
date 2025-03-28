@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -78,13 +80,10 @@ public class TargetWeaver {
 				fgDevProperties = new Properties();
 				try {
 					URL url = new URL(fgDevPropertiesURL);
-					String path = url.getFile();
-					if (path != null && path.length() > 0) {
-						File file = new File(path);
-						if (file.exists()) {
-							try (InputStream stream = new FileInputStream(file)) {
-								fgDevProperties.load(stream);
-							}
+					File file = toFile(url);
+					if (file.exists()) {
+						try (InputStream stream = new FileInputStream(file)) {
+							fgDevProperties.load(stream);
 						}
 					}
 				} catch (IOException e) {
@@ -216,5 +215,14 @@ public class TargetWeaver {
 			return null;
 		}
 		return Arrays.stream(platformBundles).filter(b -> b.getVersion().equals(version)).findAny().orElse(null);
+	}
+
+	private static File toFile(URL url) {
+		try {
+			URI uri = url.toURI();
+			return new File(uri);
+		} catch (URISyntaxException e) {
+			return new File(url.getFile());
+		}
 	}
 }
