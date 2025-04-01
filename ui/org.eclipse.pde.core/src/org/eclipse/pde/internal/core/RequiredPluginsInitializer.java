@@ -13,9 +13,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
@@ -35,6 +41,48 @@ public class RequiredPluginsInitializer extends ClasspathContainerInitializer {
 				}
 			});
 
+	private static final DeferredClasspathContainerInitializerJob deferredClasspathContainerInitializerJob = new DeferredClasspathContainerInitializerJob();
+
+	private static class DeferredClasspathContainerInitializerJob extends Job {
+
+		private final Set<IJavaProject> projects = new LinkedHashSet<>();
+
+		public DeferredClasspathContainerInitializerJob() {
+			// This name is not displayed to a user.
+			super("DeferredClasspathContainerInitializerJob"); //$NON-NLS-1$
+			setSystem(true);
+		}
+
+		public synchronized void initialize(IJavaProject project) {
+			if (projects.add(project)) {
+				schedule();
+			}
+		}
+
+		private synchronized IJavaProject[] consumeProjects() {
+			try {
+				return projects.toArray(IJavaProject[]::new);
+			} finally {
+				projects.clear();
+			}
+		}
+
+		@Override
+		protected IStatus run(IProgressMonitor monitor) {
+			try {
+				setupClasspath(consumeProjects());
+			} catch (JavaModelException e) {
+				PDECore.log(e);
+			}
+			return Status.OK_STATUS;
+		}
+
+		@Override
+		public boolean belongsTo(Object family) {
+			return family == PluginModelManager.class;
+		}
+	}
+
 	@Override
 	public void initialize(IPath containerPath, IJavaProject javaProject) throws CoreException {
 		if (Job.getJobManager().isSuspended()) {
@@ -42,19 +90,15 @@ public class RequiredPluginsInitializer extends ClasspathContainerInitializer {
 			// schedule/join pattern here, instead we must retry the requested
 			// action once jobs are enabled again, this will the possibly
 			// trigger a rebuild if required or notify other listeners.
-			Job job = Job.create(PDECoreMessages.PluginModelManager_InitializingPluginModels, m -> {
-				setupClasspath(javaProject);
-			});
-			job.setSystem(true);
-			job.schedule();
+			deferredClasspathContainerInitializerJob.initialize(javaProject);
 		} else {
 			setupClasspath(javaProject);
 		}
 	}
 
-	protected void setupClasspath(IJavaProject javaProject) throws JavaModelException {
-		IProject project = javaProject.getProject();
-		// The first project to be built may initialize the PDE models, potentially long running, so allow cancellation
+	protected static void setupClasspath(IJavaProject... javaProjects) throws JavaModelException {
+		// The first project to be built may initialize the PDE models,
+		// potentially long running, so allow cancellation
 		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		if (!manager.isInitialized()) {
 			initPDEJob.schedule();
@@ -63,11 +107,21 @@ public class RequiredPluginsInitializer extends ClasspathContainerInitializer {
 			} catch (InterruptedException e) {
 			}
 		}
-		if (project.exists() && project.isOpen()) {
-			IPluginModelBase model = manager.findModel(project);
-			JavaCore.setClasspathContainer(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH, new IJavaProject[] { javaProject },
-					new IClasspathContainer[] { new RequiredPluginsClasspathContainer(model, project) }, null);
+
+		Map<IJavaProject, RequiredPluginsClasspathContainer> classPathContainers = new LinkedHashMap<>();
+		for (IJavaProject javaProject : javaProjects) {
+			IProject project = javaProject.getProject();
+			if (project.exists() && project.isOpen()) {
+				IPluginModelBase model = manager.findModel(project);
+				RequiredPluginsClasspathContainer requiredPluginsClasspathContainer = new RequiredPluginsClasspathContainer(
+						model, project);
+				classPathContainers.put(javaProject, requiredPluginsClasspathContainer);
+			}
 		}
+
+		JavaCore.setClasspathContainer(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH,
+				classPathContainers.keySet().toArray(IJavaProject[]::new),
+				classPathContainers.values().toArray(IClasspathContainer[]::new), null);
 	}
 
 	@Override
