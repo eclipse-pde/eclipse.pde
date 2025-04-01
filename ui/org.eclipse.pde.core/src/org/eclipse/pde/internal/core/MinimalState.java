@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2024 IBM Corporation and others.
+ * Copyright (c) 2005, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -37,6 +37,7 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -64,6 +65,38 @@ import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.namespace.ExecutionEnvironmentNamespace;
 
 public class MinimalState {
+
+	private static final IPreferenceChangeListener PREF_CHANGE_LISTENER = e -> {
+		if (e.getKey().equals("org.eclipse.jdt.launching.PREF_DEFAULT_ENVIRONMENTS_XML")) { //$NON-NLS-1$
+			Object oldValue = e.getOldValue() == null ? "" : e.getOldValue(); //$NON-NLS-1$
+			Object newValue = e.getNewValue() == null ? "" : e.getNewValue(); //$NON-NLS-1$
+			if (!oldValue.equals(newValue)) {
+				triggerSystemPackagesReload();
+			}
+		}
+	};
+
+	private static final IVMInstallChangedListener VM_CHANGED_LISTENER = new IVMInstallChangedListener() {
+		@Override
+		public void vmRemoved(IVMInstall vm) {
+			triggerSystemPackagesReload();
+		}
+
+		@Override
+		public void vmChanged(PropertyChangeEvent event) {
+			triggerSystemPackagesReload();
+		}
+
+		@Override
+		public void vmAdded(IVMInstall vm) {
+			triggerSystemPackagesReload();
+		}
+
+		@Override
+		public void defaultVMInstallChanged(IVMInstall previous, IVMInstall current) {
+			triggerSystemPackagesReload();
+		}
+	};
 
 	protected State fState;
 
@@ -268,39 +301,20 @@ public class MinimalState {
 	static {
 		// Listen to changes in the available VMInstalls and
 		// ExecutionEnvironment defaults
-		@SuppressWarnings("restriction")
-		String nodeQualifier = org.eclipse.jdt.internal.launching.LaunchingPlugin.ID_PLUGIN;
-		IEclipsePreferences launchingNode = InstanceScope.INSTANCE.getNode(nodeQualifier);
-		launchingNode.addPreferenceChangeListener(e -> {
-			if (e.getKey().equals("org.eclipse.jdt.launching.PREF_DEFAULT_ENVIRONMENTS_XML")) { //$NON-NLS-1$
-				Object oldValue = e.getOldValue() == null ? "" : e.getOldValue(); //$NON-NLS-1$
-				Object newValue = e.getNewValue() == null ? "" : e.getNewValue(); //$NON-NLS-1$
-				if (!oldValue.equals(newValue)) {
-					triggerSystemPackagesReload();
-				}
-			}
-		});
-		JavaRuntime.addVMInstallChangedListener(new IVMInstallChangedListener() {
-			@Override
-			public void vmRemoved(IVMInstall vm) {
-				triggerSystemPackagesReload();
-			}
+		IEclipsePreferences launchingNode = getJdtLaunchingPreferences();
+		launchingNode.addPreferenceChangeListener(PREF_CHANGE_LISTENER);
+		JavaRuntime.addVMInstallChangedListener(VM_CHANGED_LISTENER);
+	}
 
-			@Override
-			public void vmChanged(PropertyChangeEvent event) {
-				triggerSystemPackagesReload();
-			}
+	static void shutdown() {
+		IEclipsePreferences launchingNode = getJdtLaunchingPreferences();
+		launchingNode.removePreferenceChangeListener(PREF_CHANGE_LISTENER);
+		JavaRuntime.removeVMInstallChangedListener(VM_CHANGED_LISTENER);
+	}
 
-			@Override
-			public void vmAdded(IVMInstall vm) {
-				triggerSystemPackagesReload();
-			}
-
-			@Override
-			public void defaultVMInstallChanged(IVMInstall previous, IVMInstall current) {
-				triggerSystemPackagesReload();
-			}
-		});
+	@SuppressWarnings("restriction")
+	private static IEclipsePreferences getJdtLaunchingPreferences() {
+		return InstanceScope.INSTANCE.getNode(org.eclipse.jdt.internal.launching.LaunchingPlugin.ID_PLUGIN);
 	}
 
 	public static void triggerSystemPackagesReload() {
