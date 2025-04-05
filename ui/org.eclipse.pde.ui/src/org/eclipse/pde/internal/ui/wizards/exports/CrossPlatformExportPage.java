@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -78,8 +78,8 @@ public class CrossPlatformExportPage extends AbstractExportWizardPage {
 		}
 
 		@Override
-		public void updateCounter(int count) {
-			super.updateCounter(count);
+		public void updateCounterLabel() {
+			super.updateCounterLabel();
 			pageChanged();
 		}
 
@@ -148,7 +148,7 @@ public class CrossPlatformExportPage extends AbstractExportWizardPage {
 				Configuration c = (Configuration) item.getData();
 				if (c.equals(config)) {
 					fPlatformPart.getTableViewer().setChecked(c, true);
-					fPlatformPart.updateCounter(1);
+					fPlatformPart.updateCounterLabel();
 				}
 			}
 		}
