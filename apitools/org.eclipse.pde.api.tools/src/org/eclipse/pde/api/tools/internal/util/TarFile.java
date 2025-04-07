@@ -30,12 +30,12 @@ import java.util.zip.GZIPInputStream;
  */
 public class TarFile implements Closeable {
 	private static class TarInputStream extends FilterInputStream {
-		private int nextEntry = 0;
-		private int nextEOF = 0;
-		private int filepos = 0;
-		private int bytesread = 0;
-		private TarEntry firstEntry = null;
-		private String longLinkName = null;
+		private int nextEntry;
+		private int nextEOF;
+		private int filepos;
+		private int bytesread;
+		private TarEntry firstEntry;
+		private String longLinkName;
 
 		/**
 		 * Creates a new tar input stream on the given input stream.
@@ -87,7 +87,7 @@ public class TarFile implements Closeable {
 				return false;
 			}
 			while (bytestoskip > 0) {
-				long ret = in.skip(bytestoskip);
+				int ret = (int) in.skip(bytestoskip);
 				if (ret < 0) {
 					throw new IOException("early end of stream"); //$NON-NLS-1$
 				}
@@ -162,7 +162,7 @@ public class TarFile implements Closeable {
 			}
 
 			while (nextEntry > 0) {
-				long ret = in.skip(nextEntry);
+				int ret = (int) in.skip(nextEntry);
 				if (ret < 0) {
 					throw new IOException("early end of stream"); //$NON-NLS-1$
 				}
