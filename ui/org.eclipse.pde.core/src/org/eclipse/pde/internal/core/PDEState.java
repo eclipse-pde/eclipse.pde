@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -36,6 +36,7 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.target.LoadTargetDefinitionJob;
+import org.eclipse.pde.internal.build.BundleHelper;
 import org.eclipse.pde.internal.core.plugin.ExternalFragmentModel;
 import org.eclipse.pde.internal.core.plugin.ExternalPluginModel;
 import org.eclipse.pde.internal.core.plugin.ExternalPluginModelBase;
@@ -77,7 +78,7 @@ public class PDEState extends MinimalState {
 	}
 
 	private void createNewTargetState(boolean resolve, URI[] uris, IProgressMonitor monitor) {
-		fState = stateObjectFactory.createState(resolve);
+		fState = BundleHelper.getPlatformAdmin().getFactory().createState(resolve);
 		if (resolve) {
 			final String systemBSN = getSystemBundle();
 			Comparator<BaseDescription> policy = systemBundlesFirst(systemBSN)
