@@ -49,7 +49,6 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.service.resolver.StateDelta;
-import org.eclipse.osgi.service.resolver.StateObjectFactory;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -111,16 +110,10 @@ public class MinimalState {
 
 	private boolean fNoProfile;
 
-	protected static StateObjectFactory stateObjectFactory;
-
 	protected String fSystemBundle = IPDEBuildConstants.BUNDLE_OSGI;
 
-	static {
-		stateObjectFactory = BundleHelper.getPlatformAdmin().getFactory();
-	}
-
 	protected MinimalState(MinimalState state) {
-		this.fState = stateObjectFactory.createState(state.fState);
+		this.fState = BundleHelper.getPlatformAdmin().getFactory().createState(state.fState);
 		this.fState.setPlatformProperties(state.fState.getPlatformProperties());
 		this.fState.setResolver(BundleHelper.getPlatformAdmin().createResolver());
 		this.fId = state.fId;
@@ -213,8 +206,8 @@ public class MinimalState {
 		try {
 			// OSGi requires a dictionary over any map
 			Dictionary<String, String> dictionaryManifest = FrameworkUtil.asDictionary(manifest);
-			BundleDescription descriptor = stateObjectFactory.createBundleDescription(fState, dictionaryManifest,
-					bundleLocation.getAbsolutePath(), bundleId == -1 ? getNextId() : bundleId);
+			BundleDescription descriptor = BundleHelper.getPlatformAdmin().getFactory().createBundleDescription(fState,
+					dictionaryManifest, bundleLocation.getAbsolutePath(), bundleId == -1 ? getNextId() : bundleId);
 			// new bundle
 			if (bundleId == -1 || !fState.updateBundle(descriptor)) {
 				fState.addBundle(descriptor);
