@@ -15,8 +15,6 @@ package org.eclipse.pde.internal.core.util;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class PDETextHelper {
 
@@ -283,13 +281,49 @@ public class PDETextHelper {
 		// " att1="value1" att2="value2"
 		// " att1="value1" att2="value2 /"
 		// " att1="value1"
+		while (!text.isBlank()) {
+			int idx = text.indexOf('=');
+			if (idx < 0) {
+				return text.trim().equals("/"); //$NON-NLS-1$
+			}
+			String key = text.substring(0, idx).trim();
+			if (!isValidAttributeKey(key)) {
+				return false;
+			}
+			String remaining = text.substring(idx + 1).trim();
+			if (!remaining.startsWith("\"")) { //$NON-NLS-1$
+				return false;
+			}
+			int end = remaining.indexOf('"', 1);
+			if (end < 0) {
+				return false;
+			}
+			text = remaining.substring(end + 1);
+		}
+		return true;
+	}
 
-		//			              space  attributeName      space = space  "attributeValue" space /
-		String patternString = "^([\\s]+[A-Za-z0-9_:\\-\\.]+[\\s]?=[\\s]?\".+?\")*[\\s]*[/]?$"; //$NON-NLS-1$
-		Pattern pattern = Pattern.compile(patternString);
-		Matcher matcher = pattern.matcher(text);
-		// Determine whether the given attribute list matches the pattern
-		return matcher.find();
+	private static boolean isValidAttributeKey(String key) {
+		if (key.isEmpty()) {
+			return false;
+		}
+		int length = key.length();
+		for (int i = 0; i < length; i++) {
+			char c = key.charAt(i);
+			if (!isValidAttributeKeyChar(c)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private static boolean isValidAttributeKeyChar(char c) {
+		return (c >= 'A' && c <= 'Z') || //
+				(c >= 'a' && c <= 'z') || //
+				(c >= '0' && c <= '9') || //
+				c == '_' || //
+				c == '-' || //
+				c == ':';
 	}
 
 	private static String getTagName(String buffer) {
