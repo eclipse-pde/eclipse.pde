@@ -431,7 +431,6 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		// must check the existence of plugin.xml file instead of using IPluginBase because if the bundle is not a singleton,
 		// it won't be registered with the extension registry and will always return 0 when querying extensions/extension points
 		boolean hasExtensions = base != null && PDEProject.getPluginXml(fProject).exists();
-
 		if (hasExtensions) {
 			if (TargetPlatformHelper.getTargetVersion() >= 3.1) {
 				if (!"true".equals(singletonDir)) { //$NON-NLS-1$
@@ -444,6 +443,21 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 							return;
 						}
 					} else {
+						Enumeration<String> attrKeys = element.getDirectiveKeys();
+						int length = 0;
+						String key = null;
+						while (attrKeys.hasMoreElements()) {
+							key = attrKeys.nextElement();
+							length++;
+						}
+						if (length == 1) {
+							String message = NLS.bind(PDECoreMessages.BundleErrorReporter_singletonRequired,
+									Constants.SINGLETON_DIRECTIVE);
+							VirtualMarker marker = report(message, header.getLineNumber(), CompilerFlags.ERROR,
+									PDEMarkerFactory.M_SINGLETON_DIR_CHANGE, PDEMarkerFactory.CAT_FATAL);
+							addMarkerAttribute(marker, "userDirective", key); //$NON-NLS-1$
+							return;
+						}
 						String message = NLS.bind(PDECoreMessages.BundleErrorReporter_singletonRequired, Constants.SINGLETON_DIRECTIVE);
 						report(message, header.getLineNumber(), CompilerFlags.ERROR, PDEMarkerFactory.M_SINGLETON_DIR_NOT_SET, PDEMarkerFactory.CAT_FATAL);
 						return;
