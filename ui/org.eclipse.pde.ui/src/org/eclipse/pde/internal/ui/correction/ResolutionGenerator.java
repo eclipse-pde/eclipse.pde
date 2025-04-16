@@ -65,6 +65,8 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 				return new IMarkerResolution[] {new CreateJREBundleHeaderResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker)};
 			case PDEMarkerFactory.M_SINGLETON_DIR_NOT_SET :
 				return new IMarkerResolution[] {new AddSingletonToSymbolicName(AbstractPDEMarkerResolution.RENAME_TYPE, true, marker)};
+			case PDEMarkerFactory.M_SINGLETON_DIR_CHANGE:
+				return updateSingletonProposal(marker);
 			case PDEMarkerFactory.M_SINGLETON_ATT_NOT_SET :
 				return new IMarkerResolution[] {new AddSingletonToSymbolicName(AbstractPDEMarkerResolution.RENAME_TYPE, false,marker)};
 			case PDEMarkerFactory.M_SINGLETON_DIR_NOT_SUPPORTED :
@@ -149,6 +151,13 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 					new RemoveRedundantAutomaticModuleHeader(AbstractPDEMarkerResolution.REMOVE_TYPE, marker) };
 		}
 		return NO_RESOLUTIONS;
+	}
+
+	private IMarkerResolution[] updateSingletonProposal(IMarker marker) {
+		return new IMarkerResolution[] {
+				new UpdateSingletonToSymbolicName(AbstractPDEMarkerResolution.RENAME_TYPE, true, marker),
+				new AddSingletonToSymbolicName(AbstractPDEMarkerResolution.RENAME_TYPE, true, marker) };
+
 	}
 
 	/**
