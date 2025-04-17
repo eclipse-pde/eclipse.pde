@@ -3,13 +3,13 @@
   <children xsi:type="basic:TrimmedWindow" xmi:id="_6wlLccgZEeSyMNYR5xypkQ" elementId="$pluginId$.window.main" label="$windowTitle$" width="500" height="400">
     <children xsi:type="basic:PartSashContainer" xmi:id="_6wlLksgZEeSyMNYR5xypkQ" elementId="$pluginId$.partsashcontainer.sample">
       <children xsi:type="basic:PartStack" xmi:id="_6wlLk8gZEeSyMNYR5xypkQ" elementId="$pluginId$.partstack.sample">
-        <children xsi:type="basic:Part" xmi:id="_6wlLlMgZEeSyMNYR5xypkQ" elementId="$pluginId$.part.sample" contributionURI="bundleclass://$pluginId$/$packageName$.parts.SamplePart" iconURI="platform:/plugin/$pluginId$/icons/home.png" label="Sample Part"/>
+        <children xsi:type="basic:Part" xmi:id="_6wlLlMgZEeSyMNYR5xypkQ" elementId="$pluginId$.part.sample" contributionURI="bundleclass://$pluginId$/$packageName$.parts.SamplePart" label="Sample Part" iconURI="platform:/plugin/$pluginId$/icons/home.svg"/>
       </children>
     </children>
     <mainMenu xmi:id="_6wlLicgZEeSyMNYR5xypkQ" elementId="org.eclipse.ui.main.menu">
       <children xsi:type="menu:Menu" xmi:id="_6wlLisgZEeSyMNYR5xypkQ" elementId="file" label="File">
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_6wlLi8gZEeSyMNYR5xypkQ" elementId="$pluginId$.handleditem.file.open" label="Open" iconURI="platform:/plugin/$pluginId$/icons/open_in_app.png" command="_6wlLgMgZEeSyMNYR5xypkQ"/>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_6wlLjMgZEeSyMNYR5xypkQ" elementId="$pluginId$.handleditem.save" label="Save" iconURI="platform:/plugin/$pluginId$/icons/save_edit.png" command="_6wlLg8gZEeSyMNYR5xypkQ"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_6wlLi8gZEeSyMNYR5xypkQ" elementId="$pluginId$.handleditem.file.open" label="Open" iconURI="platform:/plugin/$pluginId$/icons/open_in_app.svg" command="_6wlLgMgZEeSyMNYR5xypkQ"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_6wlLjMgZEeSyMNYR5xypkQ" elementId="$pluginId$.handleditem.save" label="Save" iconURI="platform:/plugin/$pluginId$/icons/save_edit.svg" command="_6wlLg8gZEeSyMNYR5xypkQ"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_6wlLjcgZEeSyMNYR5xypkQ" elementId="$pluginId$.handleditem.quit" label="Quit" command="_6wlLfMgZEeSyMNYR5xypkQ"/>
       </children>
       <children xsi:type="menu:Menu" xmi:id="_6wlLjsgZEeSyMNYR5xypkQ" elementId="help" label="Help">
@@ -18,8 +18,8 @@
     </mainMenu>
     <trimBars xmi:id="_6wlLlcgZEeSyMNYR5xypkQ" elementId="$pluginId$.trimbar.top">
       <children xsi:type="menu:ToolBar" xmi:id="_6wlLlsgZEeSyMNYR5xypkQ" elementId="org.eclipse.ui.main.toolbar">
-        <children xsi:type="menu:HandledToolItem" xmi:id="_6wlLmMgZEeSyMNYR5xypkQ" elementId="$pluginId$.handleditem.trimbar.top.save" iconURI="platform:/plugin/$pluginId$/icons/save_edit.png" command="_6wlLg8gZEeSyMNYR5xypkQ"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_6wlLl8gZEeSyMNYR5xypkQ" elementId="$pluginId$.handleditem.trimbar.top.open" iconURI="platform:/plugin/$pluginId$/icons/open_in_app.png" command="_6wlLgMgZEeSyMNYR5xypkQ"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_6wlLmMgZEeSyMNYR5xypkQ" elementId="$pluginId$.handleditem.trimbar.top.save" iconURI="platform:/plugin/$pluginId$/icons/save_edit.svg" command="_6wlLg8gZEeSyMNYR5xypkQ"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_6wlLl8gZEeSyMNYR5xypkQ" elementId="$pluginId$.handleditem.trimbar.top.open" iconURI="platform:/plugin/$pluginId$/icons/open_in_app.svg" command="_6wlLgMgZEeSyMNYR5xypkQ"/>
       </children>
     </trimBars>
   </children>
