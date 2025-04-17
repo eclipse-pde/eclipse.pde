@@ -110,6 +110,7 @@ public class E4ApplicationTemplate extends PDETemplateSection {
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		// There is only a product extension
 		createProductExtension();
+		setManifestHeader("Require-Capability", "eclipse.swt;filter:=\"(image.format=svg)\""); //$NON-NLS-1$ //$NON-NLS-2$
 
 		// Other files located in 'org.eclipse.pde.ui.templates/templates_3.5/E4Application' are copied automatically
 	}
