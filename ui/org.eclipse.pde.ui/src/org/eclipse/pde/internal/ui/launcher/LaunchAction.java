@@ -180,12 +180,13 @@ public class LaunchAction extends Action {
 		Set<String> wsplugins = new HashSet<>();
 		Set<String> explugins = new HashSet<>();
 		Set<IPluginModelBase> listedPlugins = getModels(fProduct);
-		allLaunchedPlugins(listedPlugins, fProduct).forEach(model -> {
+		List<IPluginModelBase> launchedPlugins = allLaunchedPlugins(listedPlugins, fProduct).toList();
+		for (IPluginModelBase model : launchedPlugins) {
 			Optional<AdditionalPluginData> configuration = getPluginConfiguration(model);
 			if (configuration.isPresent() || listedPlugins.contains(model)) {
 				appendBundle(model.getUnderlyingResource() == null ? explugins : wsplugins, model, configuration);
 			}
-		});
+		}
 		wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, wsplugins);
 		wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, explugins);
 
@@ -194,7 +195,7 @@ public class LaunchAction extends Action {
 			Set<IPluginModelBase> mixedProductPlugins = fProduct.getType() == ProductType.MIXED
 					? getModelsFromListedPlugins(fProduct)
 					: Collections.emptySet();
-			refreshFeatureLaunchPlugins(wc, listedPlugins, mixedProductPlugins);
+			refreshFeatureLaunchPlugins(wc, launchedPlugins, mixedProductPlugins);
 		} else {
 			wc.removeAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES);
 			wc.removeAttribute(IPDELauncherConstants.SELECTED_FEATURES);
@@ -212,7 +213,7 @@ public class LaunchAction extends Action {
 		return wc;
 	}
 
-	private void refreshFeatureLaunchPlugins(ILaunchConfigurationWorkingCopy wc, Set<IPluginModelBase> includedPlugins,
+	private void refreshFeatureLaunchPlugins(ILaunchConfigurationWorkingCopy wc, List<IPluginModelBase> launchedPlugins,
 			Set<IPluginModelBase> mixedProductPlugins) {
 		FeatureModelManager featureManager = PDECore.getDefault().getFeatureModelManager();
 		Set<String> selectedFeatures = Arrays.stream(fProduct.getFeatures()) //
@@ -220,7 +221,7 @@ public class LaunchAction extends Action {
 				.map(m -> formatFeatureEntry(m.getFeature().getId(), IPDELauncherConstants.LOCATION_DEFAULT))
 				.collect(Collectors.toCollection(LinkedHashSet::new));
 
-		Set<String> additionalPlugins = allLaunchedPlugins(includedPlugins, fProduct)
+		Set<String> additionalPlugins = launchedPlugins.stream()
 				.map(model -> getPluginConfiguration(model)
 						.map(c -> formatAdditionalPluginEntry(model, c.fResolution, true, c.fStartLevel, c.fAutoStart)))
 				.flatMap(Optional::stream).collect(Collectors.toCollection(LinkedHashSet::new));

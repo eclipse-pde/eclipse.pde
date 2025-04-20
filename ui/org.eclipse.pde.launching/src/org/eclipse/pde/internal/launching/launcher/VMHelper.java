@@ -36,7 +36,6 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.util.VMUtil;
 import org.eclipse.pde.internal.launching.PDEMessages;
-import org.eclipse.pde.launching.EquinoxLaunchConfiguration;
 
 public class VMHelper {
 
@@ -45,11 +44,11 @@ public class VMHelper {
 	 * BREE supplied by every bundle that will be launched in the given launch configuration or
 	 * <code>null</code> if no valid/bound execution environment could be found.
 	 *
-	 * @param configuration the launch configuration to test the bundle's BREEs of
+	 * @param plugins the set of plug-ins to test for their BREEs
 	 * @return string id of a valid execution environment with a bound JRE or <code>null</code>
 	 * @throws CoreException if there is a problem reading the bundles from the launch configuration
 	 */
-	public static String getDefaultEEName(ILaunchConfiguration configuration) throws CoreException {
+	public static String getDefaultEEName(Set<IPluginModelBase> plugins) throws CoreException {
 		// List of all valid EEs, removed if they don't match
 		List<IExecutionEnvironment> validEEs = new LinkedList<>(); // Use a list to keep order
 		validEEs.addAll(Arrays.asList(JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments()));
@@ -65,8 +64,6 @@ public class VMHelper {
 		}
 
 		// Iterate through all launch models
-		boolean isOSGiLaunch = configuration instanceof EquinoxLaunchConfiguration; // TODO Test this
-		Set<IPluginModelBase> plugins = BundleLauncherHelper.getMergedBundleMap(configuration, isOSGiLaunch).keySet();
 		for (IPluginModelBase plugin : plugins) {
 			if (validEEs.isEmpty()) {
 				break; // No valid EEs left, short circuit
@@ -161,10 +158,11 @@ public class VMHelper {
 	 * a default setting will be used (but not saved in the launch configuration).
 	 *
 	 * @param configuration the configuration to get a vm install for
+	 * @param plugins all plugins included in the launch
 	 * @return a vm install from {@link JavaRuntime}
 	 * @throws CoreException if a vm install could not be found for the settings in the configuration
 	 */
-	public static IVMInstall getVMInstall(ILaunchConfiguration configuration) throws CoreException {
+	public static IVMInstall getVMInstall(ILaunchConfiguration configuration, Set<IPluginModelBase> plugins) throws CoreException {
 		String jre = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, (String) null);
 
 		// Launch configuration has a JRE or EE set, throw exception if associated vm not found
@@ -183,7 +181,7 @@ public class VMHelper {
 		}
 
 		// Find a default EE
-		String eeId = VMHelper.getDefaultEEName(configuration);
+		String eeId = VMHelper.getDefaultEEName(plugins);
 		if (eeId != null) {
 			IExecutionEnvironment ee = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(eeId);
 			String vmName = VMUtil.getVMInstallName(ee);
@@ -207,8 +205,8 @@ public class VMHelper {
 
 	}
 
-	public static IVMInstall createLauncher(ILaunchConfiguration configuration) throws CoreException {
-		IVMInstall launcher = getVMInstall(configuration);
+	public static IVMInstall createLauncher(ILaunchConfiguration configuration, Set<IPluginModelBase> plugins) throws CoreException {
+		IVMInstall launcher = getVMInstall(configuration, plugins);
 		if (!launcher.getInstallLocation().exists()) {
 			throw new CoreException(Status.error(PDEMessages.WorkbenchLauncherConfigurationDelegate_jrePathNotFound));
 		}
@@ -226,7 +224,8 @@ public class VMHelper {
 	 * 			or if unable to retrieve the launch configuration attributes
 	 */
 	public static IRuntimeClasspathEntry getJREEntry(ILaunchConfiguration configuration) throws CoreException {
-		IVMInstall jre = createLauncher(configuration);
+		Set<IPluginModelBase> plugins = BundleLauncherHelper.getMergedBundleMap(configuration, false).keySet();
+		IVMInstall jre = createLauncher(configuration, plugins);
 		IPath containerPath = IPath.fromOSString(JavaRuntime.JRE_CONTAINER);
 		containerPath = containerPath.append(jre.getVMInstallType().getId());
 		containerPath = containerPath.append(jre.getName());

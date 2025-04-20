@@ -84,7 +84,7 @@ public class LaunchValidationOperation implements IWorkspaceRunnable {
 	}
 
 	protected IExecutionEnvironment[] getMatchingEnvironments() throws CoreException {
-		IVMInstall install = VMHelper.getVMInstall(fLaunchConfiguration);
+		IVMInstall install = VMHelper.getVMInstall(fLaunchConfiguration, fModels);
 		return install == null ? new IExecutionEnvironment[0] : getMatchingEEs(install);
 	}
 

@@ -23,13 +23,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -185,15 +185,14 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 	}
 
 	@Override
-	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
+	Set<IPluginModelBase> computeLaunchedPlugins(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
 		fModels = BundleLauncherHelper.getMergedBundleMap(configuration, true);
 
 		if (!RequirementHelper.addApplicationLaunchRequirements(List.of(IPDEBuildConstants.BUNDLE_OSGI), configuration, fModels)) {
 			throw new CoreException(Status.error(PDEMessages.EquinoxLaunchConfiguration_oldTarget));
 		}
 		fAllBundles = fModels.keySet().stream().collect(Collectors.groupingBy(m -> m.getPluginBase().getId(), HashMap::new, Collectors.toCollection(ArrayList::new)));
-
-		super.preLaunchCheck(configuration, launch, monitor);
+		return fModels.keySet();
 	}
 
 	@Override
