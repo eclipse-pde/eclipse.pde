@@ -207,7 +207,7 @@ public class LaunchArgumentsHelper {
 		return dir;
 	}
 
-	public static Map<String, Object> getVMSpecificAttributesMap(ILaunchConfiguration config) throws CoreException {
+	public static Map<String, Object> getVMSpecificAttributesMap(ILaunchConfiguration config, Set<IPluginModelBase> plugins) throws CoreException {
 		Map<String, Object> map = new HashMap<>(2);
 		String javaCommand = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, (String) null);
 		map.put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, javaCommand);
@@ -215,7 +215,7 @@ public class LaunchArgumentsHelper {
 		if (TargetPlatform.getOS().equals("macosx")) { //$NON-NLS-1$
 			ModelEntry entry = PluginRegistry.findEntry("org.eclipse.jdt.debug"); //$NON-NLS-1$
 			if (entry != null) {
-				IVMInstall vmInstall = VMHelper.getVMInstall(config);
+				IVMInstall vmInstall = VMHelper.getVMInstall(config, plugins);
 				if (vmInstall instanceof AbstractVMInstall) {
 					String javaVersion = ((AbstractVMInstall) vmInstall).getJavaVersion();
 					String[] javaVersionSegments = javaVersion.split("\\."); //$NON-NLS-1$

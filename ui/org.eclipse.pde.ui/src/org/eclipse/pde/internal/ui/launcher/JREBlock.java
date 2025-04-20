@@ -18,6 +18,7 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -29,7 +30,9 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.util.VMUtil;
+import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
 import org.eclipse.pde.internal.launching.launcher.VMHelper;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.SWTFactory;
@@ -227,7 +230,10 @@ public class JREBlock {
 			}
 			// Try to get a default EE based on the selected plug-ins in the config
 			if (eeId == null) {
-				eeId = VMHelper.getDefaultEEName(config);
+				boolean isOSGiLaunch = config.getType().getIdentifier()
+						.equals(IPDELauncherConstants.OSGI_CONFIGURATION_TYPE);
+				Set<IPluginModelBase> plugins = BundleLauncherHelper.getMergedBundleMap(config, isOSGiLaunch).keySet();
+				eeId = VMHelper.getDefaultEEName(plugins);
 			}
 			if (eeId == null) {
 				vmInstallName = VMHelper.getDefaultVMInstallName(config);

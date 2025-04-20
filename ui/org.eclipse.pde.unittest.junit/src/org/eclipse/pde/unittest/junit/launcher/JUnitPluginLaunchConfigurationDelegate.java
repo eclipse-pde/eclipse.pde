@@ -547,11 +547,10 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 
 		// Specify the output folder names
 		programArgs.add("-dev"); //$NON-NLS-1$
-		programArgs
-				.add(ClasspathHelper
-						.getDevEntriesProperties(
-								getConfigurationDirectory(configuration).toString() + "/dev.properties", fAllBundles) //$NON-NLS-1$
-						.toUri().toString());
+		programArgs.add(ClasspathHelper
+				.getDevEntriesProperties(getConfigurationDirectory(configuration).toString() + "/dev.properties", //$NON-NLS-1$
+						fAllBundles)
+				.toUri().toString());
 
 		// Create the .options file if tracing is turned on
 		if (configuration.getAttribute(IPDELauncherConstants.TRACING, false) && !IPDELauncherConstants.TRACING_NONE
@@ -589,7 +588,7 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 
 		programArgs.add("-testpluginname"); //$NON-NLS-1$
 		programArgs.add(getTestPluginId(configuration));
-		IVMInstall launcher = VMHelper.createLauncher(configuration);
+		IVMInstall launcher = VMHelper.createLauncher(configuration, fModels.keySet());
 		boolean isModular = JavaRuntime.isModularJava(launcher);
 		if (isModular) {
 			VMHelper.addNewArgument(vmArguments, "--add-modules", "ALL-SYSTEM"); //$NON-NLS-1$//$NON-NLS-2$
@@ -1024,7 +1023,7 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 
 	@Override
 	public IVMRunner getVMRunner(ILaunchConfiguration configuration, String mode) throws CoreException {
-		IVMInstall launcher = VMHelper.createLauncher(configuration);
+		IVMInstall launcher = VMHelper.createLauncher(configuration, fModels.keySet());
 		return launcher.getVMRunner(mode);
 	}
 
@@ -1157,7 +1156,7 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 
 	@Override
 	public Map<String, Object> getVMSpecificAttributesMap(ILaunchConfiguration configuration) throws CoreException {
-		return LaunchArgumentsHelper.getVMSpecificAttributesMap(configuration);
+		return LaunchArgumentsHelper.getVMSpecificAttributesMap(configuration, fModels.keySet());
 	}
 
 	@Override
