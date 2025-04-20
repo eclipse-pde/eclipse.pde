@@ -1,1 +1,2 @@
 https://github.com/eclipse-pde/eclipse.pde/pull/1665
+https://github.com/eclipse-pde/eclipse.pde/pull/1724

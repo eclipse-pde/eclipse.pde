@@ -78,6 +78,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 
 	protected File fConfigDir = null;
 	String launchMode;
+	private Set<IPluginModelBase> launchedPlugins;
 
 	/**
 	 * This field will control the addition of argument --add-modules=ALL-SYSTEM in the VM arguments
@@ -101,8 +102,9 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 		String commandLine = ""; //$NON-NLS-1$
 		launch.setAttribute(PDE_LAUNCH_SHOW_COMMAND, "true"); //$NON-NLS-1$
 		fConfigDir = null;
-		SubMonitor subMonitor = SubMonitor.convert(monitor, 4);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 5);
 		try {
+			launchedPlugins = computeLaunchedPlugins(configuration, subMonitor.split(1));
 			preLaunchCheck(configuration, launch, subMonitor.split(2));
 		} catch (CoreException e) {
 			if (e.getStatus().getSeverity() == IStatus.CANCEL) {
@@ -113,7 +115,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 		}
 
 		VMRunnerConfiguration runnerConfig = new VMRunnerConfiguration(getMainClass(), getClasspath(configuration));
-		IVMInstall launcher = VMHelper.createLauncher(configuration);
+		IVMInstall launcher = VMHelper.createLauncher(configuration, launchedPlugins);
 		runnerConfig.setVMArguments(updateVMArgumentWithAdditionalArguments(getVMArguments(configuration), launcher));
 		runnerConfig.setProgramArguments(getProgramArguments(configuration));
 		runnerConfig.setWorkingDirectory(getWorkingDirectory(configuration).getAbsolutePath());
@@ -126,7 +128,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 		manageLaunch(launch);
 		IVMRunner runner = getVMRunner(configuration, mode);
 		if (runner != null) {
-			commandLine = runner.showCommandLine(runnerConfig, launch, subMonitor);
+			commandLine = runner.showCommandLine(runnerConfig, launch, subMonitor.split(1));
 		} else {
 			subMonitor.setCanceled(true);
 		}
@@ -139,7 +141,8 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 		fConfigDir = null;
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
 		try {
-			preLaunchCheck(configuration, launch, subMonitor.split(50));
+			launchedPlugins = computeLaunchedPlugins(configuration, subMonitor.split(10));
+			preLaunchCheck(configuration, launch, subMonitor.split(40));
 		} catch (CoreException e) {
 			if (e.getStatus().getSeverity() == IStatus.CANCEL) {
 				subMonitor.setCanceled(true);
@@ -149,7 +152,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 		}
 
 		VMRunnerConfiguration runnerConfig = new VMRunnerConfiguration(getMainClass(), getClasspath(configuration));
-		IVMInstall launcher = VMHelper.createLauncher(configuration);
+		IVMInstall launcher = VMHelper.createLauncher(configuration, launchedPlugins);
 		runnerConfig.setVMArguments(updateVMArgumentWithAdditionalArguments(getVMArguments(configuration), launcher));
 		runnerConfig.setProgramArguments(getProgramArguments(configuration));
 		runnerConfig.setWorkingDirectory(getWorkingDirectory(configuration).getAbsolutePath());
@@ -166,7 +169,11 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 		} else {
 			subMonitor.setCanceled(true);
 		}
+	}
 
+	Set<IPluginModelBase> computeLaunchedPlugins(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
+		//Sub-classes should overwrite this method and pass the set of to be launched plug-ins they probably have already computed
+		return BundleLauncherHelper.getMergedBundleMap(configuration, false).keySet();
 	}
 
 	private String[] updateVMArgumentWithAdditionalArguments(String[] args, IVMInstall vmInstall) {
@@ -216,7 +223,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 * @throws CoreException if a VM runner cannot be determined
 	 */
 	public IVMRunner getVMRunner(ILaunchConfiguration configuration, String mode) throws CoreException {
-		IVMInstall launcher = VMHelper.createLauncher(configuration);
+		IVMInstall launcher = VMHelper.createLauncher(configuration, launchedPlugins);
 		return launcher.getVMRunner(mode);
 	}
 
@@ -303,7 +310,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 *                if unable to retrieve the attribute
 	 */
 	public Map<String, Object> getVMSpecificAttributesMap(ILaunchConfiguration configuration) throws CoreException {
-		return LaunchArgumentsHelper.getVMSpecificAttributesMap(configuration);
+		return LaunchArgumentsHelper.getVMSpecificAttributesMap(configuration, launchedPlugins);
 	}
 
 	/**

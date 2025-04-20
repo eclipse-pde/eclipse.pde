@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -206,8 +207,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 	}
 
 	@Override
-	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
-		fWorkspaceLocation = null;
+	Set<IPluginModelBase> computeLaunchedPlugins(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
 		if (configuration.getAttribute(IPDELauncherConstants.GENERATE_PROFILE, false)) {
 			fFeatures = new HashMap<>();
 		} else {
@@ -215,7 +215,12 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 		}
 		fModels = BundleLauncherHelper.getMergedBundleMap(configuration, false, fFeatures);
 		fAllBundles = fModels.keySet().stream().collect(Collectors.groupingBy(m -> m.getPluginBase().getId()));
+		return fModels.keySet();
+	}
 
+	@Override
+	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
+		fWorkspaceLocation = null;
 		validateConfigIni(configuration);
 		super.preLaunchCheck(configuration, launch, monitor);
 	}

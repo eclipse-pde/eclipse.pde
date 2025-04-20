@@ -128,7 +128,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 
 	@Override
 	public IVMRunner getVMRunner(ILaunchConfiguration configuration, String mode) throws CoreException {
-		IVMInstall launcher = VMHelper.createLauncher(configuration);
+		IVMInstall launcher = VMHelper.createLauncher(configuration, fModels.keySet());
 		return launcher.getVMRunner(mode);
 	}
 
@@ -279,7 +279,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		programArgs.add("-testpluginname"); //$NON-NLS-1$
 		programArgs.add(testPlugin.getId());
 
-		IVMInstall launcher = VMHelper.createLauncher(configuration);
+		IVMInstall launcher = VMHelper.createLauncher(configuration, fModels.keySet());
 		boolean isModular = JavaRuntime.isModularJava(launcher);
 		if (isModular) {
 			VMHelper.addNewArgument(vmArguments, "--add-modules", "ALL-SYSTEM"); //$NON-NLS-1$//$NON-NLS-2$
@@ -412,7 +412,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 
 	@Override
 	public Map<String, Object> getVMSpecificAttributesMap(ILaunchConfiguration configuration) throws CoreException {
-		return LaunchArgumentsHelper.getVMSpecificAttributesMap(configuration);
+		return LaunchArgumentsHelper.getVMSpecificAttributesMap(configuration, fModels.keySet());
 	}
 
 	@Override
