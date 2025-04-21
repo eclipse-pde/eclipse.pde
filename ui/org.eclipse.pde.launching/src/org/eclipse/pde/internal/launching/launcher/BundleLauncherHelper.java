@@ -50,7 +50,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.osgi.service.resolver.BaseDescription;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IMatchRules;
 import org.eclipse.pde.core.plugin.IPluginBase;
@@ -59,10 +61,12 @@ import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetPlatformService;
+import org.eclipse.pde.internal.build.BundleHelper;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.DependencyManager;
 import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
@@ -75,7 +79,6 @@ import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
 import org.eclipse.pde.internal.launching.PDEMessages;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.osgi.framework.Version;
-import org.osgi.resource.Resource;
 
 public class BundleLauncherHelper {
 
@@ -166,12 +169,7 @@ public class BundleLauncherHelper {
 		RequirementHelper.addApplicationLaunchRequirements(appRequirements, configuration, bundle2startLevel);
 
 		boolean includeOptional = configuration.getAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, true);
-		Set<BundleDescription> requiredDependencies = includeOptional //
-				? DependencyManager.getDependencies(bundle2startLevel.keySet(), DependencyManager.Options.INCLUDE_OPTIONAL_DEPENDENCIES)
-				: DependencyManager.getDependencies(bundle2startLevel.keySet());
-
-		requiredDependencies.stream().map(Resource.class::cast) //
-				.map(PluginRegistry::findModel).filter(Objects::nonNull) //
+		computeDependencies(bundle2startLevel.keySet(), includeOptional, true) //
 				.forEach(p -> addDefaultStartingBundle(bundle2startLevel, p));
 	}
 
@@ -223,16 +221,12 @@ public class BundleLauncherHelper {
 		launchPlugins.addAll(additionalPlugins.keySet());
 
 		if (addRequirements) {
-			// Add all missing  plug-ins required by the application/product set in the config
+			// Add all missing plug-ins required by the application/product set in the config
 			List<String> appRequirements = RequirementHelper.getApplicationLaunchRequirements(configuration);
 			RequirementHelper.addApplicationLaunchRequirements(appRequirements, configuration, launchPlugins, launchPlugins::add);
 
 			// Get all required plugins
-			Set<BundleDescription> additionalBundles = DependencyManager.getDependencies(launchPlugins);
-			for (BundleDescription bundle : additionalBundles) {
-				IPluginModelBase plugin = getRequiredPlugin(bundle.getSymbolicName(), bundle.getVersion().toString(), IMatchRules.PERFECT, defaultPluginResolution);
-				launchPlugins.add(Objects.requireNonNull(plugin));// should never be null
-			}
+			computeDependencies(launchPlugins, false, isWorkspace(defaultPluginResolution)).forEach(launchPlugins::add);
 		}
 
 		// Create the start levels for the selected plugins and add them to the map
@@ -545,6 +539,79 @@ public class BundleLauncherHelper {
 		}
 		map.put(bundle, startData);
 	}
+
+	// --- dependency resolution ---
+
+	private static Stream<IPluginModelBase> computeDependencies(Set<IPluginModelBase> includedPlugins, boolean includeOptional, boolean preferWorkspaceBundles) {
+		if (includedPlugins.isEmpty()) {
+			return Stream.empty();
+		}
+		// Create and resolve the new 'launch'-state where bundles explicitly included in the launch are preferred. Then compute the requirement closure on that 'launch'-state.
+		Map<BundleDescription, IPluginModelBase> launchBundlePlugins = new HashMap<>(includedPlugins.size() * 4 / 3 + 1);
+		Set<BundleDescription> launchBundles = reresolveBundlesPreferringIncludedBundles(includedPlugins, launchBundlePlugins, preferWorkspaceBundles);
+		State launchState = launchBundles.iterator().next().getContainingState();
+
+		DependencyManager.getImplicitDependencies().stream().map(descriptor -> {
+			String versionStr = descriptor.getVersion();
+			Version version = versionStr != null ? Version.parseVersion(versionStr) : null;
+			return launchState.getBundle(descriptor.getId(), version);
+		}).forEach(launchBundles::add);
+
+		DependencyManager.Options[] options = includeOptional //
+				? new DependencyManager.Options[] {DependencyManager.Options.INCLUDE_OPTIONAL_DEPENDENCIES}
+				: new DependencyManager.Options[] {};
+		Set<BundleDescription> closure = DependencyManager.findRequirementsClosure(launchBundles, options);
+		return closure.stream().map(launchBundlePlugins::get).map(Objects::requireNonNull) //
+				.filter(p -> !includedPlugins.contains(p));
+	}
+
+	private static Set<BundleDescription> reresolveBundlesPreferringIncludedBundles(Set<IPluginModelBase> includedPlugins, Map<BundleDescription, IPluginModelBase> launchBundlePlugins, boolean preferWorkspaceBundles) {
+		PluginModelManager modelManager = PDECore.getDefault().getModelManager();
+		State tpState = modelManager.getState().getState();
+
+		State launchState = BundleHelper.getPlatformAdmin().getFactory().createState(true);
+		launchState.setPlatformProperties(tpState.getPlatformProperties());
+
+		// Collect all bundles explicitly included in the launch
+		for (IPluginModelBase plugin : includedPlugins) {
+			addPluginBundle(plugin, launchState, launchBundlePlugins, tpState);
+		}
+		Set<BundleDescription> launchBundles = new HashSet<>(launchBundlePlugins.keySet());
+
+		// Iterate workspace- and TP-models separately to avoid shadowing of TP models by workspace models
+		Stream.of(modelManager.getWorkspaceModels(), modelManager.getExternalModels()).flatMap(Arrays::stream) //
+				.filter(IPluginModelBase::isEnabled).filter(p -> !includedPlugins.contains(p)) //
+				.forEach(plugin -> addPluginBundle(plugin, launchState, launchBundlePlugins, tpState));
+
+		launchState.getResolver().setSelectionPolicy(Comparator
+				// prefer bundles explicitly included in the launch 
+				.comparing((BaseDescription d) -> !launchBundles.contains(d.getSupplier())) //false<true
+				.thenComparing(d -> { // choose bundles originating from the preferred location (workspace or TP)
+					boolean isWorkspaceBundle = launchBundlePlugins.get(d.getSupplier()).getUnderlyingResource() != null;
+					return isWorkspaceBundle != preferWorkspaceBundles; //false<true
+				}).thenComparing(tpState.getResolver().getSelectionPolicy()));
+
+		launchState.resolve(false);
+		return launchBundles;
+	}
+
+	private static void addPluginBundle(IPluginModelBase plugin, State launchState, Map<BundleDescription, IPluginModelBase> launchBundlePlugin, State tpState) {
+		BundleDescription bundle = plugin.getBundleDescription();
+		if (bundle != null) {
+			if (bundle.getContainingState() != tpState) { // consistency check
+				throw new IllegalStateException("Plugins have different TP state"); //$NON-NLS-1$
+			}
+			BundleDescription launchBundle = launchState.getFactory().createBundleDescription(bundle);
+			if (!launchState.addBundle(launchBundle)) {
+				throw new IllegalStateException("Failed to add bundle to launch state: " + launchBundle); //$NON-NLS-1$
+			}
+			if (launchBundlePlugin.put(launchBundle, plugin) != null) {
+				throw new IllegalStateException("Duplicated launch bundle for plugin: " + plugin); //$NON-NLS-1$
+			}
+		}
+	}
+
+	// -- start data ---
 
 	public static String getStartData(BundleDescription desc, String defaultStartData) {
 		String runLevel = resolveSystemRunLevelText(desc);

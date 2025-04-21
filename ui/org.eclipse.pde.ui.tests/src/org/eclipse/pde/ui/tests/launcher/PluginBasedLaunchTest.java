@@ -22,6 +22,8 @@ import static org.eclipse.pde.ui.tests.util.TargetPlatformUtil.resolution;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.osgi.framework.Constants.EXPORT_PACKAGE;
+import static org.osgi.framework.Constants.IMPORT_PACKAGE;
 import static org.osgi.framework.Constants.REQUIRE_BUNDLE;
 import static org.osgi.framework.Constants.RESOLUTION_OPTIONAL;
 
@@ -870,6 +872,66 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 	}
 
 	@Test
+	public void testGetMergedBundleMap_automaticallyAddRequirements_multipleProviders() throws Exception {
+
+		var targetPlatformBundles = Map.ofEntries( //
+				bundle("plugin.a", "1.0.0", //
+						entry(IMPORT_PACKAGE, "pack.a")), //
+
+				bundle("plugin.x", "1.0.0", //
+						entry(EXPORT_PACKAGE, "pack.a")), //
+				bundle("plugin.y", "1.0.0", //
+						entry(EXPORT_PACKAGE, "pack.a")));
+
+		var workspacePlugins = ofEntries( //
+				bundle("plugin.z", "1.0.0", //
+						entry(EXPORT_PACKAGE, "pack.a")) //
+				);
+
+		Consumer<ILaunchConfigurationWorkingCopy> basicSetup = wc -> {
+			wc.setAttribute(IPDELauncherConstants.AUTOMATIC_INCLUDE_REQUIREMENTS, true);
+		};
+		{ // three providers are available and none is yet included
+			// -> the one originating from the workspace is preferred
+			Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
+				basicSetup.accept(wc);
+				wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, Set.of("plugin.a*1.0.0"));
+			};
+			Set<BundleLocationDescriptor> expectedBundles = Set.of( //
+					targetBundle("plugin.a", "1.0.0"), //
+					workspaceBundle("plugin.z", "1.0.0"));
+
+			assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
+		}
+		{ // three providers are available and one is included
+			// -> select included one
+			Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
+				basicSetup.accept(wc);
+				wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES,
+						Set.of("plugin.a*1.0.0", "plugin.x*1.0.0"));
+			};
+			Set<BundleLocationDescriptor> expectedBundles = Set.of( //
+					targetBundle("plugin.a", "1.0.0"), //
+					targetBundle("plugin.x", "1.0.0"));
+
+			assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
+		}
+		{// three providers are available and one is included
+			// -> select included one
+			Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
+				basicSetup.accept(wc);
+				wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES,
+						Set.of("plugin.a*1.0.0", "plugin.y*1.0.0"));
+			};
+			Set<BundleLocationDescriptor> expectedBundles = Set.of( //
+					targetBundle("plugin.a", "1.0.0"), //
+					targetBundle("plugin.y", "1.0.0"));
+
+			assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
+		}
+	}
+
+	@Test
 	public void testTwoVersionsOfSameBundleConfigIni() throws Exception {
 		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0"), //
@@ -1033,7 +1095,7 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 	private void setUpWorkspace(Map<NameVersionDescriptor, Map<String, String>> workspacePlugins,
 			Map<NameVersionDescriptor, Map<String, String>> targetPlugins) throws Exception {
-		ProjectUtils.createWorkspacePluginProjects(workspacePlugins.keySet());
+		ProjectUtils.createWorkspacePluginProjects(workspacePlugins);
 		TargetPlatformUtil.setDummyBundlesAsTarget(targetPlugins, List.of(), tpJarDirectory);
 	}
 
@@ -1049,8 +1111,7 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 	private static final Pattern WHITESPACE = Pattern.compile("\\s+");
 
-	private Path getConfigurationFolder(ILaunchConfigurationWorkingCopy launchConfig)
-			throws CoreException {
+	private Path getConfigurationFolder(ILaunchConfigurationWorkingCopy launchConfig) throws CoreException {
 		ILaunch launch = new Launch(launchConfig, ILaunchManager.RUN_MODE, null);
 		var config = new EclipseApplicationLaunchConfiguration();
 		String commandLine = config.showCommandLine(launchConfig, ILaunchManager.RUN_MODE, launch, null);
