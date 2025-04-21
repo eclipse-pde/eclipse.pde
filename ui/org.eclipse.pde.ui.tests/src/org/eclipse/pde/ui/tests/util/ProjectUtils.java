@@ -17,10 +17,16 @@ package org.eclipse.pde.ui.tests.util;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -37,8 +43,11 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.pde.core.project.IBundleProjectService;
+import org.eclipse.pde.core.project.IPackageExportDescription;
+import org.eclipse.pde.core.project.IPackageImportDescription;
 import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.core.PDECore;
@@ -60,8 +69,11 @@ import org.eclipse.pde.ui.templates.ITemplateSection;
 import org.eclipse.pde.ui.tests.project.ProjectCreationTests;
 import org.eclipse.pde.ui.tests.runtime.TestUtils;
 import org.junit.rules.TestRule;
+import org.osgi.framework.BundleException;
+import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 
 /**
  * Utility class for project related operations
@@ -183,18 +195,63 @@ public class ProjectUtils {
 		return project;
 	}
 
-	public static List<IProject> createWorkspacePluginProjects(Iterable<NameVersionDescriptor> workspacePlugins)
-			throws CoreException {
+	public static List<IProject> createWorkspacePluginProjects(
+			Map<NameVersionDescriptor, Map<String, String>> pluginProjects) throws CoreException {
 		List<IProject> projects = new ArrayList<>();
-		for (NameVersionDescriptor plugin : workspacePlugins) {
-			projects.add(createPluginProject(plugin.getId(), plugin.getVersion()));
+		for (Entry<NameVersionDescriptor, Map<String, String>> entry : pluginProjects.entrySet()) {
+			NameVersionDescriptor bundle = entry.getKey();
+			IProject project = createPluginProject(bundle.getId(), bundle.getVersion(), entry.getValue());
+			projects.add(project);
 		}
 		return projects;
 	}
 
+	public static IProject createPluginProject(String bundleSymbolicName, String version, Map<String, String> headers)
+			throws CoreException {
+		String projectName = bundleSymbolicName + version.replace('.', '_');
+		IProject project = createPluginProject(projectName, bundleSymbolicName, version,
+				(description, projectService) -> {
+					headers.forEach((header, value) -> {
+						switch (header) {
+						case Constants.EXPORT_PACKAGE -> setPackageExports(description, projectService, value);
+						case Constants.IMPORT_PACKAGE -> setPackageImports(description, projectService, value);
+						default -> throw new IllegalArgumentException("Unsupported header: " + header);
+						}
+					});
+				});
+		return project;
+	}
+
+	private static void setPackageExports(IBundleProjectDescription project, IBundleProjectService projectService,
+			String value) {
+		IPackageExportDescription[] exports = parseHeader(Constants.EXPORT_PACKAGE, value, h -> {
+			Version version = Version.parseVersion(h.getAttribute(Constants.VERSION_ATTRIBUTE));
+			return projectService.newPackageExport(h.getValue(), version, true, List.of());
+		}).toArray(IPackageExportDescription[]::new);
+		project.setPackageExports(exports);
+	}
+
+	private static void setPackageImports(IBundleProjectDescription project, IBundleProjectService projectService,
+			String value) {
+		var imports = parseHeader(Constants.IMPORT_PACKAGE, value, h -> {
+			VersionRange version = Optional.ofNullable(h.getAttribute(Constants.VERSION_ATTRIBUTE))
+					.map(VersionRange::valueOf).orElse(null);
+			boolean optional = Constants.RESOLUTION_OPTIONAL.equals(h.getDirective(Constants.RESOLUTION_DIRECTIVE));
+			return projectService.newPackageImport(h.getValue(), version, optional);
+		}).toArray(IPackageImportDescription[]::new);
+		project.setPackageImports(imports);
+	}
+
+	private static <T> Stream<T> parseHeader(String header, String value, Function<ManifestElement, T> parser) {
+		try {
+			return Arrays.stream(ManifestElement.parseHeader(header, value)).map(parser);
+		} catch (BundleException e) {
+			throw new IllegalArgumentException("Invalid header: " + value, e);
+		}
+	}
+
 	public static IProject createPluginProject(String bundleSymbolicName, String bundleVersion) throws CoreException {
-		return createPluginProject(bundleSymbolicName + bundleVersion.replace('.', '_'), bundleSymbolicName,
-				bundleVersion);
+		return createPluginProject(bundleSymbolicName, bundleVersion, Map.of());
 	}
 
 	public static IProject createPluginProject(String projectName, String bundleSymbolicName, String version)

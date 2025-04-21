@@ -357,8 +357,7 @@ public class ClasspathResolverTest {
 	@SafeVarargs
 	private static void createWorkspacePluginProjects(
 			Entry<NameVersionDescriptor, Map<String, String>>... workspacePlugins) throws CoreException {
-		Set<NameVersionDescriptor> descriptions = Map.ofEntries(workspacePlugins).keySet();
-		List<IProject> pluginProjects = ProjectUtils.createWorkspacePluginProjects(descriptions);
+		List<IProject> pluginProjects = ProjectUtils.createWorkspacePluginProjects(Map.ofEntries(workspacePlugins));
 		while (pluginProjects.stream().anyMatch(ClasspathResolverTest::isUpdatePending)) {
 			Thread.yield(); // await async classpath update of projects
 		}
