@@ -262,7 +262,7 @@ public class DependencyManager {
 	 *
 	 * @return a set of bundle ids
 	 */
-	private static Collection<NameVersionDescriptor> getImplicitDependencies() {
+	public static Collection<NameVersionDescriptor> getImplicitDependencies() {
 		try {
 			ITargetPlatformService service = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 			if (service != null) {

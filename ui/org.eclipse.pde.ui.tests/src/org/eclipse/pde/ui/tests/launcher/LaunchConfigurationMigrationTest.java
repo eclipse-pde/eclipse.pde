@@ -34,8 +34,8 @@ public class LaunchConfigurationMigrationTest extends AbstractLaunchTest {
 
 	@BeforeClass
 	public static void setupPluginProjects() throws Exception {
-		ProjectUtils.createPluginProject("org.eclipse.pde.plugin1", "org.eclipse.pde.plugin1", null);
-		ProjectUtils.createPluginProject("org.eclipse.pde.plugin2", "org.eclipse.pde.plugin2", null);
+		ProjectUtils.createPluginProject("org.eclipse.pde.plugin1", "org.eclipse.pde.plugin1", "0.0.0");
+		ProjectUtils.createPluginProject("org.eclipse.pde.plugin2", "org.eclipse.pde.plugin2", "0.0.0");
 	}
 
 	@Test

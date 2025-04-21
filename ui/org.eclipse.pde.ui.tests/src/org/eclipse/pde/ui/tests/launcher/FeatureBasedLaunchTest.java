@@ -29,6 +29,8 @@ import static org.eclipse.pde.ui.tests.util.ProjectUtils.createFeatureProject;
 import static org.eclipse.pde.ui.tests.util.ProjectUtils.createPluginProject;
 import static org.eclipse.pde.ui.tests.util.TargetPlatformUtil.bundle;
 import static org.eclipse.pde.ui.tests.util.TargetPlatformUtil.resolution;
+import static org.osgi.framework.Constants.EXPORT_PACKAGE;
+import static org.osgi.framework.Constants.IMPORT_PACKAGE;
 import static org.osgi.framework.Constants.REQUIRE_BUNDLE;
 import static org.osgi.framework.Constants.RESOLUTION_OPTIONAL;
 
@@ -1375,6 +1377,71 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 		assertGetMergedBundleMap(wc, Set.of( //
 				targetBundle("plugin.b", "1.0.0"), //
 				targetBundle("plugin.z", "1.0.0")));
+	}
+
+	@Test
+	public void testGetMergedBundleMap_automaticallyAddRequirements_multipleProviders() throws Throwable {
+		// Test that, in case multiple-providers of a capability exists, the one
+		// explicitly included into the launch is preferred, when adding
+		// required dependencies
+
+		var targetBundles = Map.ofEntries( //
+				bundle("plugin.a", "1.0.0", //
+						entry(IMPORT_PACKAGE, "pack.a")), //
+
+				bundle("plugin.x", "1.0.0", //
+						entry(EXPORT_PACKAGE, "pack.a")), //
+				bundle("plugin.y", "1.0.0", //
+						entry(EXPORT_PACKAGE, "pack.a")));
+
+		createPluginProject("plugin.z", "1.0.0", Map.ofEntries(//
+				entry(EXPORT_PACKAGE, "pack.a")));
+
+		List<NameVersionDescriptor> targetFeatures = List.of( //
+				targetFeature("feature.a", "1.0.0", f -> {
+					addIncludedPlugin(f, "plugin.a", "1.0.0");
+					addIncludedPlugin(f, "plugin.x", "1.0.0");
+				}), //
+				targetFeature("feature.b", "1.0.0", f -> {
+					addIncludedPlugin(f, "plugin.a", "1.0.0");
+					addIncludedPlugin(f, "plugin.y", "1.0.0");
+				}), //
+				targetFeature("feature.c", "1.0.0", f -> {
+					addIncludedPlugin(f, "plugin.a", "1.0.0");
+				}));
+
+		setTargetPlatform(targetBundles, targetFeatures);
+
+		ILaunchConfigurationWorkingCopy wc = createFeatureLaunchConfig();
+		wc.setAttribute(IPDELauncherConstants.AUTOMATIC_INCLUDE_REQUIREMENTS, true);
+		wc.setAttribute(IPDELauncherConstants.FEATURE_PLUGIN_RESOLUTION, IPDELauncherConstants.LOCATION_WORKSPACE); // default
+
+		wc.setAttribute(IPDELauncherConstants.SELECTED_FEATURES, Set.of("feature.a:external"));
+		assertGetMergedBundleMap(wc, Set.of(//
+				targetBundle("plugin.a", "1.0.0"), //
+				targetBundle("plugin.x", "1.0.0")));
+
+		// The second feature included the other provider, so it's expected that
+		// only that one is included
+		wc.setAttribute(IPDELauncherConstants.SELECTED_FEATURES, Set.of("feature.b:external"));
+		assertGetMergedBundleMap(wc, Set.of(//
+				targetBundle("plugin.a", "1.0.0"), //
+				targetBundle("plugin.y", "1.0.0")));
+
+		// If FEATURE_PLUGIN_RESOLUTION=LOCATION_WORKSPACE, bundles originating
+		// from the workspace are to prefer:
+		wc.setAttribute(IPDELauncherConstants.SELECTED_FEATURES, Set.of("feature.c:external"));
+		assertGetMergedBundleMap(wc, Set.of(//
+				targetBundle("plugin.a", "1.0.0"), //
+				workspaceBundle("plugin.z", "1.0.0")));
+
+		// If FEATURE_PLUGIN_RESOLUTION=LOCATION_EXTERNAL, bundles originating
+		// from the TP are to prefer. And without other distinction the bundle
+		// with the higher version and then 'lower' id is preferred.
+		wc.setAttribute(IPDELauncherConstants.FEATURE_PLUGIN_RESOLUTION, IPDELauncherConstants.LOCATION_EXTERNAL);
+		assertGetMergedBundleMap(wc, Set.of(//
+				targetBundle("plugin.a", "1.0.0"), //
+				targetBundle("plugin.x", "1.0.0")));
 	}
 
 	static Map<BundleLocationDescriptor, String> getEclipseAppRequirementClosureForRunningPlatform(
