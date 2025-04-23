@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2015 IBM Corporation and others.
+ *  Copyright (c) 2007, 2025 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -13,14 +13,16 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.dependencies;
 
+import org.eclipse.e4.ui.dialogs.filteredtree.FilteredTable;
+import org.eclipse.e4.ui.dialogs.filteredtree.PatternFilter;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.Control;
 
 public class DependenciesViewListPage extends DependenciesViewPage {
+	private FilteredTable fFilteredViewer;
 
 	public DependenciesViewListPage(DependenciesView view, IContentProvider contentProvider) {
 		super(view, contentProvider);
@@ -28,9 +30,9 @@ public class DependenciesViewListPage extends DependenciesViewPage {
 
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
-		Table table = new Table(parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
+		fFilteredViewer = new FilteredTable(parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL, new PatternFilter());
 
-		fViewer = new TableViewer(table);
+		fViewer = fFilteredViewer.getViewer();
 		fViewer.setContentProvider(fContentProvider);
 		final DependenciesLabelProvider labelProvider = new DependenciesLabelProvider(false);
 		fViewer.setLabelProvider(labelProvider);
@@ -55,5 +57,10 @@ public class DependenciesViewListPage extends DependenciesViewPage {
 			return ((CalleesListContentProvider) fContentProvider).getShowOptional();
 		}
 		return true;
+	}
+
+	@Override
+	public Control getControl() {
+		return fFilteredViewer;
 	}
 }
