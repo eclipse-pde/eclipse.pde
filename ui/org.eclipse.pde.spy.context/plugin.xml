@@ -4,7 +4,7 @@
          point="org.eclipse.pde.spy.core.spyPart">
       <spyPart
             description="%description"
-            icon="$nl$/icons/annotation_obj.png"
+            icon="$nl$/icons/annotation_obj.svg"
             name="%name"
             part="org.eclipse.pde.spy.context.ContextSpyPart"
             shortcut="M2+M3+F10">
