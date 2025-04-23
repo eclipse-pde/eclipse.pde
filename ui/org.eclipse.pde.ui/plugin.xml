@@ -31,7 +31,7 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             name="%perspective.name"
-            icon="$nl$/icons/eview16/plugins.png"
+            icon="$nl$/icons/eview16/plugins.svg"
             class="org.eclipse.pde.internal.ui.PDEPerspective"
             defaultShowIn="org.eclipse.ui.navigator.ProjectExplorer"
             id="org.eclipse.pde.ui.PDEPerspective">
@@ -117,7 +117,7 @@
       </category>
       <wizard
             name="%new.pluginProject.name"
-            icon="$nl$/icons/etool16/newpprj_wiz.png"
+            icon="$nl$/icons/etool16/newpprj_wiz.svg"
             category="org.eclipse.pde.PDE"
             class="org.eclipse.pde.internal.ui.wizards.plugin.NewPluginProjectWizard"
             project="true"
@@ -134,7 +134,7 @@
             category="org.eclipse.pde.PDE"
             class="org.eclipse.pde.internal.ui.wizards.plugin.NewLibraryPluginProjectWizard"
             finalPerspective="org.eclipse.pde.ui.PDEPerspective"
-            icon="$nl$/icons/etool16/jarToPlugin.png"
+            icon="$nl$/icons/etool16/jarToPlugin.svg"
             id="org.eclipse.pde.ui.NewLibraryPluginProjectWizard"
             name="%new.pluginWithJarsProject.name"
             project="true">
@@ -147,7 +147,7 @@
       </wizard>
       <wizard
             name="%new.fragmentProject.name"
-            icon="$nl$/icons/etool16/newfprj_wiz.png"
+            icon="$nl$/icons/etool16/newfprj_wiz.svg"
             category="org.eclipse.pde.PDE"
             class="org.eclipse.pde.internal.ui.wizards.plugin.NewFragmentProjectWizard"
             project="true"
@@ -159,7 +159,7 @@
       </wizard>
       <wizard
             name="%new.schemaFile.name"
-            icon="$nl$/icons/etool16/newexpfile_wiz.png"
+            icon="$nl$/icons/etool16/newexpfile_wiz.svg"
             category="org.eclipse.pde.PDE"
             class="org.eclipse.pde.internal.ui.wizards.extension.NewSchemaFileWizard"
             finalPerspective="org.eclipse.pde.ui.PDEPerspective"
@@ -170,7 +170,7 @@
       </wizard>
       <wizard
             name="%new.feature.name"
-            icon="$nl$/icons/etool16/newftrprj_wiz.png"
+            icon="$nl$/icons/etool16/newftrprj_wiz.svg"
             category="org.eclipse.pde.PDE"
             class="org.eclipse.pde.internal.ui.wizards.feature.NewFeatureProjectWizard"
             project="true"
@@ -182,7 +182,7 @@
       </wizard>
             <wizard
             name="%new.patch.name"
-            icon="$nl$/icons/etool16/newefix_wiz.png"
+            icon="$nl$/icons/etool16/newefix_wiz.svg"
             category="org.eclipse.pde.PDE"
             class="org.eclipse.pde.internal.ui.wizards.feature.NewFeaturePatchWizard"
             finalPerspective="org.eclipse.pde.ui.PDEPerspective"
@@ -194,7 +194,7 @@
       </wizard>
       <wizard
             name="%new.site.name"
-            icon="$nl$/icons/etool16/newsiteprj_wiz.png"
+            icon="$nl$/icons/etool16/newsiteprj_wiz.svg"
             category="org.eclipse.pde.PDE"
             class="org.eclipse.pde.internal.ui.wizards.site.NewSiteProjectWizard"
             project="true"
@@ -204,7 +204,7 @@
          </description>
       </wizard>
       <wizard
-            icon="$nl$/icons/etool16/prd_config_wiz.png"
+            icon="$nl$/icons/etool16/prd_config_wiz.svg"
             class="org.eclipse.pde.internal.ui.wizards.product.NewProductFileWizard"
             category="org.eclipse.pde.PDE"
             name="%new.product.config"
@@ -216,7 +216,7 @@
       <wizard
             category="org.eclipse.pde.PDE"
             class="org.eclipse.pde.internal.ui.wizards.target.NewTargetDefinitionWizard"
-            icon="$nl$/icons/etool16/new_target_wiz.png"
+            icon="$nl$/icons/etool16/new_target_wiz.svg"
             id="org.eclipse.pde.ui.NewProfileWizard"
             name="%new.profile.name">
          <description>
@@ -226,7 +226,7 @@
       <wizard
             category="org.eclipse.pde.PDE"
             class="org.eclipse.pde.internal.ui.wizards.category.NewCategoryDefinitionWizard"
-            icon="$nl$/icons/etool16/newcatdef_wiz.png"
+            icon="$nl$/icons/etool16/newcatdef_wiz.svg"
             id="org.eclipse.pde.ui.NewCategoryWizard"
             name="%new.categoryDefintion.name">
          <description>
@@ -239,7 +239,7 @@
       <wizard
             category="org.eclipse.pde.ui.PluginDevelopment"
             class="org.eclipse.pde.internal.ui.wizards.imports.PluginImportWizard"
-            icon="$nl$/icons/etool16/imp_extplug.png"
+            icon="$nl$/icons/etool16/imp_extplug.svg"
             id="org.eclipse.pde.ui.PluginImportWizard"
             name="%PluginImportWizard.label">
          <description>
@@ -252,7 +252,7 @@
       <wizard
             category="org.eclipse.pde.ui.PluginDevelopment"
             class="org.eclipse.pde.internal.ui.wizards.imports.FeatureImportWizard"
-            icon="$nl$/icons/etool16/imp_extfeat.png"
+            icon="$nl$/icons/etool16/imp_extfeat.svg"
             id="org.eclipse.pde.ui.FeatureImportWizard"
             name="%FeatureImportWizard.label">
          <description>
@@ -268,7 +268,7 @@
       <wizard
             category="org.eclipse.pde.ui.PluginDevelopment"
             class="org.eclipse.pde.internal.ui.wizards.exports.PluginExportWizard"
-            icon="$nl$/icons/etool16/exp_deployplug.png"
+            icon="$nl$/icons/etool16/exp_deployplug.svg"
             id="org.eclipse.pde.ui.pluginExportWizard"
             name="%PluginExportWizard.label">
          <description>
@@ -292,7 +292,7 @@
       <wizard
             category="org.eclipse.pde.ui.PluginDevelopment"
             class="org.eclipse.pde.internal.ui.wizards.exports.FeatureExportWizard"
-            icon="$nl$/icons/etool16/exp_deployfeat.png"
+            icon="$nl$/icons/etool16/exp_deployfeat.svg"
             id="org.eclipse.pde.ui.featureExportWizard"
             name="%FeatureExportWizard.label">
          <description>
@@ -309,7 +309,7 @@
       <wizard
             category="org.eclipse.pde.ui.PluginDevelopment"
             class="org.eclipse.pde.internal.ui.wizards.exports.ProductExportWizard"
-            icon="$nl$/icons/etool16/exp_product.png"
+            icon="$nl$/icons/etool16/exp_product.svg"
             id="org.eclipse.pde.ui.productExportWizard"
             name="%ProductExportWizard.label">
          <description>
@@ -326,7 +326,7 @@
       <wizard
             category="org.eclipse.pde.ui.PluginDevelopment"
             class="org.eclipse.pde.internal.ui.wizards.exports.TargetDefinitionExportWizard"
-            icon="icons/etool16/export_target.png"
+            icon="icons/etool16/export_target.svg"
             id="org.eclipse.pde.target.wizard"
             name="%target.export.wizard.name">
          <description>
@@ -342,7 +342,7 @@
       <editor
             default="true"
             name="%editors.pluginManifest.name"
-            icon="$nl$/icons/obj16/plugin_mf_obj.png"
+            icon="$nl$/icons/obj16/plugin_mf_obj.svg"
             class="org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.plugin.ManifestEditorContributor"
 			matchingStrategy="org.eclipse.pde.internal.ui.editor.plugin.ManifestEditorMatchingStrategy"
@@ -355,7 +355,7 @@
       <editor
             default="true"
             name="%editors.schema.name"
-            icon="$nl$/icons/obj16/schema_obj.png"
+            icon="$nl$/icons/obj16/schema_obj.svg"
             class="org.eclipse.pde.internal.ui.editor.schema.SchemaEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.schema.SchemaEditorContributor"
             id="org.eclipse.pde.ui.schemaEditor">
@@ -364,7 +364,7 @@
 	  <editor
 	        default="true"
 			name="%editors.buildProperties.name"
-			icon="$nl$/icons/obj16/build_exec.png"
+			icon="$nl$/icons/obj16/build_exec.svg"
 			contributorClass="org.eclipse.pde.internal.ui.editor.build.BuildEditorContributor"
 			class="org.eclipse.pde.internal.ui.editor.build.BuildEditor"
 			id="org.eclipse.pde.ui.buildEditor">
@@ -373,7 +373,7 @@
       <editor
             default="true"
             name="%editors.featureManifest.name"
-            icon="$nl$/icons/obj16/ftr_xml_obj.png"
+            icon="$nl$/icons/obj16/ftr_xml_obj.svg"
             class="org.eclipse.pde.internal.ui.editor.feature.FeatureEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.feature.FeatureEditorContributor"
 			matchingStrategy="org.eclipse.pde.internal.ui.editor.feature.FeatureEditorMatchingStrategy"
@@ -383,7 +383,7 @@
       <editor
             default="true"
             name="%editors.siteManifest.name"
-            icon="$nl$/icons/obj16/site_xml_obj.png"
+            icon="$nl$/icons/obj16/site_xml_obj.svg"
             class="org.eclipse.pde.internal.ui.editor.site.SiteEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.site.SiteEditorContributor"
             id="org.eclipse.pde.ui.siteEditor">
@@ -392,7 +392,7 @@
      <editor
             default="true"
             name="%product.editor"
-            icon="$nl$/icons/obj16/product_xml_obj.png"
+            icon="$nl$/icons/obj16/product_xml_obj.svg"
             class="org.eclipse.pde.internal.ui.editor.product.ProductEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.product.ProductEditorContributor"
             id="org.eclipse.pde.ui.productEditor">
@@ -401,7 +401,7 @@
       <editor
             default="true"
             name="%editor.target.name"
-            icon="$nl$/icons/obj16/target_profile_xml_obj.png"
+            icon="$nl$/icons/obj16/target_profile_xml_obj.svg"
             class="org.eclipse.pde.internal.ui.editor.targetdefinition.TargetEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.targetdefinition.TargetEditorContributor"
             id="org.eclipse.pde.ui.targetEditor">
@@ -410,14 +410,14 @@
       <editor
             name="%editors.sample.name"
             default="true"
-            icon="$nl$/icons/obj16/build_exec.png"
+            icon="$nl$/icons/obj16/build_exec.svg"
             filenames="sample.properties"
             class="org.eclipse.pde.internal.ui.samples.SampleEditor"
             id="org.eclipse.pde.ui.sampleEditor">
       </editor>
       <editor
             default="false"
-            icon="$nl$/icons/obj16/discovery.png"
+            icon="$nl$/icons/obj16/discovery.svg"
             id="org.eclipse.pde.ui.schemaPreviewLauncher"
             launcher="org.eclipse.pde.internal.ui.editor.schema.SchemaPreviewLauncher"
             name="%editors.schema.launcher.name">
@@ -429,7 +429,7 @@
             class="org.eclipse.pde.internal.ui.editor.category.CategoryEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.category.CategoryEditorContributor"
             default="true"
-            icon="$nl$/icons/obj16/category_obj.png"
+            icon="$nl$/icons/obj16/category_obj.svg"
             id="org.eclipse.pde.ui.categoryEditor"
             name="%editors.categoryManifest.name">
          <contentTypeBinding
@@ -445,21 +445,21 @@
       </category>
       <view
             name="%views.plugins.name"
-            icon="$nl$/icons/eview16/plugin_depend.png"
+            icon="$nl$/icons/eview16/plugin_depend.svg"
             category="org.eclipse.pde.ui"
             class="org.eclipse.pde.internal.ui.views.plugins.PluginsView"
             id="org.eclipse.pde.ui.PluginsView">
       </view>
       <view
             name="%views.features.name"
-            icon="$nl$/icons/obj16/feature_obj.png"
+            icon="$nl$/icons/obj16/feature_obj.svg"
             category="org.eclipse.pde.ui"
             class="org.eclipse.pde.internal.ui.views.features.FeaturesView"
             id="org.eclipse.pde.ui.FeaturesView">
       </view>
       <view
             name="%views.dependencies.name"
-            icon="$nl$/icons/obj16/req_plugins_obj.png"
+            icon="$nl$/icons/obj16/req_plugins_obj.svg"
             category="org.eclipse.pde.ui"
             class="org.eclipse.pde.internal.ui.views.dependencies.DependenciesView"
             id="org.eclipse.pde.ui.DependenciesView">
@@ -467,7 +467,7 @@
       <view
             category="org.eclipse.pde.ui"
             class="org.eclipse.pde.internal.ui.views.target.TargetStateView"
-            icon="$nl$/icons/obj16/target_profile_xml_obj.png"
+            icon="$nl$/icons/obj16/target_profile_xml_obj.svg"
             id="org.eclipse.pde.ui.TargetPlatformState"
             name="%views.tpstate.name"
             restorable="true">
@@ -475,7 +475,7 @@
        <view
             category="org.eclipse.pde.ui"
             class="org.eclipse.pde.internal.ui.views.imagebrowser.ImageBrowserView"
-            icon="$nl$/icons/obj16/psearch_obj.png"
+            icon="$nl$/icons/obj16/psearch_obj.svg"
             id="org.eclipse.pde.ui.ImageBrowserView"
             name="%view.imagebrowser.name"
             restorable="true">
@@ -672,17 +672,17 @@
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
-            icon="$nl$/icons/etool16/eclipse.png"
+            icon="$nl$/icons/etool16/eclipse.svg"
             configTypeID="org.eclipse.pde.ui.RuntimeWorkbench"
             id="org.eclipse.pde.ui.runtimeWorkbenchLaunchImage">
       </launchConfigurationTypeImage>
       <launchConfigurationTypeImage
-            icon="$nl$/icons/obj16/bundle_obj.png"
+            icon="$nl$/icons/obj16/bundle_obj.svg"
             configTypeID="org.eclipse.pde.ui.EquinoxLauncher"
             id="org.eclipse.pde.ui.equinoxFrameworkImage">
       </launchConfigurationTypeImage>
       <launchConfigurationTypeImage
-            icon="$nl$/icons/obj16/julaunchpgn.png"
+            icon="$nl$/icons/obj16/julaunchpgn.svg"
             configTypeID="org.eclipse.pde.ui.JunitLaunchConfig"
             id="org.eclipse.pde.ui.JunitLaunchImage">
       </launchConfigurationTypeImage>
@@ -740,7 +740,7 @@
       <shortcut
             class="org.eclipse.pde.ui.launcher.JUnitWorkbenchLaunchShortcut"
             helpContextId="org.eclipse.pde.doc.user.launcher_junit_plugin"
-            icon="$nl$/icons/obj16/julaunchpgn.png"
+            icon="$nl$/icons/obj16/julaunchpgn.svg"
             id="org.eclipse.pde.ui.junitWorkbenchShortcut"
             label="%launcher.junit.name"
             modes="run, debug">
@@ -773,7 +773,7 @@
       <shortcut
             class="org.eclipse.pde.ui.launcher.EclipseLaunchShortcut"
             helpContextId="org.eclipse.pde.doc.user.launcher_eclipse_application"
-            icon="$nl$/icons/etool16/eclipse.png"
+            icon="$nl$/icons/etool16/eclipse.svg"
             id="org.eclipse.pde.ui.runtimeWorkbenchShortcut"
             label="%launcher.shortcut.label"
             modes="run, debug">
@@ -811,7 +811,7 @@
       <shortcut
             class="org.eclipse.pde.ui.launcher.OSGiLaunchShortcut"
             helpContextId="org.eclipse.pde.doc.user.launcher_osgi_framework"
-            icon="$nl$/icons/obj16/bundle_obj.png"
+            icon="$nl$/icons/obj16/bundle_obj.svg"
             id="org.eclipse.pde.ui.EquinoxLaunchShortcut"
             label="%shortcut.label.0"
             modes="run, debug">
@@ -853,7 +853,7 @@
             location="TOP_LEFT"
             adaptable="true"
             label="%decorator.label"
-            icon="$nl$/icons/ovr16/binary_co.png"
+            icon="$nl$/icons/ovr16/binary_co.svg"
             state="false"
             id="org.eclipse.pde.ui.binaryProjectDecorator">
          <description>
@@ -942,7 +942,7 @@
             canSearchEnclosingProjects="true"
             label="%PluginSearchPage.label"
             enabled="true"
-            icon="$nl$/icons/obj16/psearch_obj.png"
+            icon="$nl$/icons/obj16/psearch_obj.svg"
             extensions="xml:90"
             class="org.eclipse.pde.internal.ui.search.PluginSearchPage"
             id="org.eclipse.pde.internal.ui.search.SearchPage">
@@ -1018,7 +1018,7 @@
       <workingSet
             description="%Plugin.WorkingSet.desc"
             elementAdapterClass="org.eclipse.pde.internal.ui.util.PluginAdapter"
-            icon="$nl$/icons/obj16/plugin_obj.png"
+            icon="$nl$/icons/obj16/plugin_obj.svg"
             id="org.eclipse.pde.ui.pluginWorkingSet"
             name="%Plugin.WorkingSet"
             pageClass="org.eclipse.pde.internal.ui.util.PluginWorkingSet"/>
@@ -1387,7 +1387,7 @@
    <extension
           point="org.eclipse.ui.perspectiveExtensions">
        <perspectiveExtension
-             editorOnboardingImage="$nl$/icons/onboarding_plugins.png"
+             editorOnboardingImage="$nl$/icons/onboarding_plugins.svg"
              editorOnboardingText="%perspectiveExtension.editorOnboardingText"
              targetID="org.eclipse.pde.ui.PDEPerspective">
          <actionSet
@@ -1546,7 +1546,7 @@
           point="org.eclipse.pde.ui.pluginContent">
       <wizard
             name="%pluginContent.choice.name"
-            icon="$nl$/icons/etool16/script_wiz.png"
+            icon="$nl$/icons/etool16/script_wiz.svg"
             class="org.eclipse.pde.internal.ui.wizards.templates.NewPluginTemplateChoiceWizard"
             id="org.eclipse.pde.ui.pluginContent.choice">
          <description>
@@ -1582,7 +1582,7 @@
 <!-- dialog group  -->
          <action
                label="%openPluginSearchPageAction.label"
-               icon="$nl$/icons/obj16/psearch_obj.png"
+               icon="$nl$/icons/obj16/psearch_obj.svg"
                helpContextId="java_search_action_context"
                class="org.eclipse.pde.internal.ui.search.OpenPluginSearchPageAction"
                menubarPath="org.eclipse.search.menu/dialogGroup"
@@ -1782,7 +1782,7 @@
              </separator>
              <command
                    commandId="org.eclipse.pde.ui.openPluginArtifact"
-                   icon="$nl$/icons/obj16/open_artifact_obj.png"
+                   icon="$nl$/icons/obj16/open_artifact_obj.svg"
                    label="%pluginsearch.action.menu.name">
                 <visibleWhen>
                 <or>
@@ -1813,7 +1813,7 @@
              </separator>
              <command
                    commandId="org.eclipse.pde.ui.addAllPluginsToJavaSearch"
-                   icon="$nl$/icons/obj16/plugin_javasearch.png"
+                   icon="$nl$/icons/obj16/plugin_javasearch.svg"
                    label="%addpluginstojavasearch.action.name"
                    style="push">
              </command>
@@ -1823,7 +1823,7 @@
                 locationURI="popup:org.eclipse.ui.popup.any?after=additions">
              <command
                    commandId="org.eclipse.pde.ui.importFromRepository"
-                   icon="icons/etool16/imp_extplug.png"
+                   icon="icons/etool16/imp_extplug.svg"
                    label="%importFromRepository.action.menu.name"
                    style="push"
                    tooltip="%importFromRepository.action.desc">
@@ -1869,7 +1869,7 @@
              </separator>
              <command
                    commandId="org.eclipse.pde.ui.openManifest"
-                   icon="icons/obj16/plugin_mf_obj.png"
+                   icon="icons/obj16/plugin_mf_obj.svg"
                    label="%command.openManifest.label"
                    style="push">
                 <visibleWhen
@@ -1886,7 +1886,7 @@
              <command
                    commandId="org.eclipse.pde.ui.organizeManifest"
                    helpContextId="org.eclipse.pde.doc.user.organize_manifest"
-                   icon="icons/obj16/toc_leaftopic_obj.png"
+                   icon="icons/obj16/toc_leaftopic_obj.svg"
                    label="%command.organizeManifests.label"
                    style="push">
                 <visibleWhen
@@ -1898,7 +1898,7 @@
              </command>
              <command
                    commandId="org.eclipse.pde.ui.externalizeStrings"
-                   icon="icons/elcl16/properties.png"
+                   icon="icons/elcl16/properties.svg"
                    label="%command.externalizeStrings.label"
                    style="push">
                 <visibleWhen
@@ -1910,7 +1910,7 @@
              </command>
              <command
                    commandId="org.eclipse.pde.ui.internationalize"
-                   icon="icons/obj16/discovery.png"
+                   icon="icons/obj16/discovery.svg"
                    label="%command.internationalize.label"
                    style="push">
                 <visibleWhen
@@ -1954,7 +1954,7 @@
              </command>
              <command
                    commandId="org.eclipse.pde.ui.openDependencies"
-                   icon="icons/obj16/req_plugins_obj.png"
+                   icon="icons/obj16/req_plugins_obj.svg"
                    label="%command.openDependencies.label"
                    style="push">
                 <visibleWhen
@@ -1970,7 +1970,7 @@
              </separator>
              <command
                    commandId="org.eclipse.pde.ui.convertAutomaticManifest"
-                   icon="icons/obj16/toc_leaftopic_obj.png"
+                   icon="icons/obj16/toc_leaftopic_obj.svg"
                    label="%command.convertAutomaticManifest.label"
                    style="push">
                 <visibleWhen
@@ -2000,7 +2000,7 @@
              <action
                    class="org.eclipse.pde.internal.ui.ShowErrorInStackTraceConsoleAction"
                    enablesFor="+"
-                   icon="$nl$/icons/obj16/open_console_obj.png"
+                   icon="$nl$/icons/obj16/open_console_obj.svg"
                    id="org.eclipse.jdt.debug.ui.LogViewActions.showStackTrace"
                    label="%showErrorInStackTraceConsoleAction.label"
                    toolbarPath="additions"
@@ -2081,7 +2081,7 @@
          point="org.eclipse.ui.console.consoleFactories">
       <consoleFactory
             class="org.eclipse.pde.internal.ui.util.OSGiConsoleFactory"
-            icon="$nl$/icons/eview16/osgiconsole.png"
+            icon="$nl$/icons/eview16/osgiconsole.svg"
             label="%consoleFactory.label">
       </consoleFactory>
    </extension>
@@ -2291,7 +2291,7 @@
          point="org.eclipse.pde.ui.targetLocationProvisioners">
       <locationProvider
             class="org.eclipse.pde.internal.ui.shared.target.InstallableUnitWizard"
-            icon="icons/obj16/metadata_repo_obj.png"
+            icon="icons/obj16/metadata_repo_obj.svg"
             id="org.eclipse.pde.ui.InstallableUnitProvisioner"
             name="%targetLocationProvider.IU.name">
          <description>
@@ -2300,7 +2300,7 @@
       </locationProvider>
       <locationProvider
             class="org.eclipse.pde.internal.ui.shared.target.TargetReferenceLocationWizard"
-            icon="icons/obj16/target_profile_xml_obj.png"
+            icon="icons/obj16/target_profile_xml_obj.svg"
             id="org.eclipse.pde.ui.TargetReferenceProvisioner"
             name="%locationProvider.reference.name">
             <description>
@@ -2352,7 +2352,7 @@
             locationURI="popup:org.eclipse.ui.popup.any?after=logEntryGroup">
          <command
                commandId="org.eclipse.ui.views.log.jdt.showinconsole"
-              icon="icons/obj16/open_console_obj.png"
+              icon="icons/obj16/open_console_obj.svg"
                style="push">
             <visibleWhen
                   checkEnabled="false">
