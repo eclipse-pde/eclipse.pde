@@ -5,7 +5,7 @@
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
-            icon="$nl$/icons/full/obj16/julaunchpgn.png"
+            icon="$nl$/icons/full/obj16/julaunchpgn.svg"
             configTypeID="org.eclipse.pde.unittest.junit.launchConfiguration"
             id="org.eclipse.unittest.launchimage">
       </launchConfigurationTypeImage>
@@ -52,7 +52,7 @@
       <shortcut
             class="org.eclipse.pde.unittest.junit.launcher.JUnitPluginLaunchShortcut"
             helpContextId="org.eclipse.pde.doc.user.launcher_junit_plugin"
-            icon="$nl$/icons/full/obj16/julaunchpgn.png"
+            icon="$nl$/icons/full/obj16/julaunchpgn.svg"
             id="org.eclipse.pde.ui.junitWorkbenchShortcut"
             label="%JUnitPluginTestShortcut.label"
             modes="run, debug">
