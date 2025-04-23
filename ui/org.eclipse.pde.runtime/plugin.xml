@@ -21,7 +21,7 @@
          point="org.eclipse.ui.views">
       <view
             name="%views.registry.name"
-            icon="$nl$/icons/eview16/registry.png"
+            icon="$nl$/icons/eview16/registry.svg"
             category="org.eclipse.pde.ui"
             class="org.eclipse.pde.internal.runtime.registry.RegistryBrowser"
             id="org.eclipse.pde.runtime.RegistryBrowser">
@@ -54,11 +54,11 @@
          point="org.eclipse.ui.commandImages">
       <image
             commandId="org.eclipse.pde.runtime.spy.commands.spyCommand"
-            icon="$nl$/icons/obj16/pdespy_obj.png">
+            icon="$nl$/icons/obj16/pdespy_obj.svg">
       </image>
       <image
             commandId="org.eclipse.pde.runtime.spy.commands.menuSpyCommand"
-            icon="$nl$/icons/obj16/menuspy_obj.png">
+            icon="$nl$/icons/obj16/menuspy_obj.svg">
       </image>
    </extension>
    <extension
