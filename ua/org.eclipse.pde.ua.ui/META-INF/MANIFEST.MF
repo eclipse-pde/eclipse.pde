@@ -40,3 +40,4 @@ Export-Package: org.eclipse.pde.internal.ua.ui;x-internal:=true,
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Automatic-Module-Name: org.eclipse.pde.ua.ui
+Require-Capability: eclipse.swt;filter:="(image.format=svg)"
