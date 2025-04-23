@@ -54,9 +54,9 @@ import jakarta.inject.Inject;
  */
 public class ContextSpyPart {
 
-	private static final String ICON_COLLAPSEALL = "icons/collapseall.png"; //$NON-NLS-1$
-	private static final String ICON_EXPANDALL = "icons/expandall.png"; //$NON-NLS-1$
-	private static final String ICON_REFRESH = "icons/refresh.png"; //$NON-NLS-1$
+	private static final String ICON_COLLAPSEALL = "icons/collapseall.svg"; //$NON-NLS-1$
+	private static final String ICON_EXPANDALL = "icons/expandall.svg"; //$NON-NLS-1$
+	private static final String ICON_REFRESH = "icons/refresh.svg"; //$NON-NLS-1$
 
 	// The ID for this part descriptor
 	static final String CONTEXT_SPY_VIEW_DESC = "org.eclipse.e4.tools.context.spy.view"; //$NON-NLS-1$

@@ -4,7 +4,7 @@
          point="org.eclipse.pde.spy.core.spyPart">
       <spyPart
             description="%description"
-            icon="$nl$/icons/eventspy.png"
+            icon="$nl$/icons/eventspy.svg"
             name="%name"
             part="org.eclipse.pde.spy.event.internal.ui.EventSpyPart"
             shortcut="M2+M3+F8">

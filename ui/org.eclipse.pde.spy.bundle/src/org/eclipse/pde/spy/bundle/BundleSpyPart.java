@@ -59,15 +59,15 @@ import jakarta.inject.Inject;
  */
 public class BundleSpyPart {
 
-	private static final String ICON_REFRESH = "icons/refresh.png"; //$NON-NLS-1$
-	public static final String ICON_STATE_ACTIVE = "icons/state_active.png"; //$NON-NLS-1$
-	public static final String ICON_STATE_STARTING = "icons/state_starting.png"; //$NON-NLS-1$
-	public static final String ICON_STATE_STOPPING = "icons/state_stopping.png"; //$NON-NLS-1$
-	public static final String ICON_STATE_RESOLVED = "icons/state_resolved.png"; //$NON-NLS-1$
-	public static final String ICON_STATE_INSTALLED = "icons/state_installed.png"; //$NON-NLS-1$
-	public static final String ICON_STATE_UNINSTALLED = "icons/state_uninstalled.png"; //$NON-NLS-1$
-	public static final String ICON_START = "icons/start.png"; //$NON-NLS-1$
-	public static final String ICON_STOP = "icons/stop.png"; //$NON-NLS-1$
+	private static final String ICON_REFRESH = "icons/refresh.svg"; //$NON-NLS-1$
+	public static final String ICON_STATE_ACTIVE = "icons/state_active.svg"; //$NON-NLS-1$
+	public static final String ICON_STATE_STARTING = "icons/state_starting.svg"; //$NON-NLS-1$
+	public static final String ICON_STATE_STOPPING = "icons/state_stopping.svg"; //$NON-NLS-1$
+	public static final String ICON_STATE_RESOLVED = "icons/state_resolved.svg"; //$NON-NLS-1$
+	public static final String ICON_STATE_INSTALLED = "icons/state_installed.svg"; //$NON-NLS-1$
+	public static final String ICON_STATE_UNINSTALLED = "icons/state_uninstalled.svg"; //$NON-NLS-1$
+	public static final String ICON_START = "icons/start.svg"; //$NON-NLS-1$
+	public static final String ICON_STOP = "icons/stop.svg"; //$NON-NLS-1$
 
 	private TableViewer bundlesTableViewer;
 
