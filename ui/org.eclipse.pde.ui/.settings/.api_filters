@@ -120,6 +120,14 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/pde/internal/ui/shared/CachedCheckboxTableViewer.java" type="org.eclipse.pde.internal.ui.shared.CachedCheckboxTableViewer">
+        <filter comment="Extends CheckboxTableViewer to match CachedCheckboxTreeviewer" id="571473929">
+            <message_arguments>
+                <message_argument value="CheckboxTableViewer"/>
+                <message_argument value="CachedCheckboxTableViewer"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/pde/internal/ui/shared/target/EditTargetContainerPage.java" type="org.eclipse.pde.internal.ui.shared.target.EditTargetContainerPage">
         <filter id="640712815">
             <message_arguments>

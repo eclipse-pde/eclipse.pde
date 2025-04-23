@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2019 IBM Corporation and others.
+ *  Copyright (c) 2003, 2025 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -77,11 +77,6 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 	class TablePart extends WizardCheckboxTablePart {
 		public TablePart(String mainLabel, String[] buttonLabels) {
 			super(mainLabel, buttonLabels);
-		}
-
-		@Override
-		public void updateCounter(int count) {
-			super.updateCounter(count);
 		}
 
 		@Override
