@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2025 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -70,8 +70,7 @@ public class PluginVersionPart {
 		@Override
 		protected void handleDoubleClick(IStructuredSelection selection) {
 			if (selection.size() == 1) {
-				IPluginModelBase entry = (IPluginModelBase) selection.getFirstElement();
-				String version = VersionUtil.computeInitialPluginVersion(entry.getBundleDescription().getVersion().toString());
+				String version = getVersion(selection.getFirstElement());
 				setVersion(version, ""); //$NON-NLS-1$
 			}
 		}
@@ -80,15 +79,7 @@ public class PluginVersionPart {
 		protected void buttonSelected(Button button, int index) {
 			IStructuredSelection selection = getTableViewer().getStructuredSelection();
 			if (selection.size() == 1) {
-				String version;
-				if (isPlugin) {
-					IPluginModelBase entry = (IPluginModelBase) selection.getFirstElement();
-					version = VersionUtil
-							.computeInitialPluginVersion(entry.getBundleDescription().getVersion().toString());
-				} else {
-					PackageObject po = (PackageObject) selection.getFirstElement();
-					version = po.getVersion();
-				}
+				String version = getVersion(selection.getFirstElement());
 				setVersion(version, ""); //$NON-NLS-1$
 			} else {
 				// plug-ins come back in a sorted order so we assume min/max
@@ -116,6 +107,14 @@ public class PluginVersionPart {
 			}
 		}
 
+		private String getVersion(Object firstElement) {
+			if (isPlugin) {
+				IPluginModelBase entry = (IPluginModelBase) firstElement;
+				return VersionUtil.computeInitialPluginVersion(entry.getBundleDescription().getVersion().toString());
+			}
+			PackageObject po = (PackageObject) firstElement;
+			return po.getVersion();
+		}
 	}
 
 	private static class PluginVersionContentProvider implements IStructuredContentProvider {
