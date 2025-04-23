@@ -137,7 +137,7 @@ public class LayoutSpyDialog {
 
 		resources = new LocalResourceManager(JFaceResources.getResources(), shell);
 		Bundle bundle = FrameworkUtil.getBundle(LayoutSpyDialog.class);
-		final URL fullPathString = FileLocator.find(bundle, IPath.fromOSString("icons/up_nav.png"), null);
+		final URL fullPathString = FileLocator.find(bundle, IPath.fromOSString("icons/up_nav.svg"), null);
 
 		ImageDescriptor imageDesc = ImageDescriptor.createFromURL(fullPathString);
 

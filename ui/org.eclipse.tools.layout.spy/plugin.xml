@@ -34,7 +34,7 @@
          point="org.eclipse.ui.commandImages">
       <image
             commandId="org.eclipse.tools.layout.spy.commands.layoutSpyCommand"
-            icon="$nl$/icons/obj16/layoutspy_obj.png">
+            icon="$nl$/icons/obj16/layoutspy_obj.svg">
       </image>
    </extension>
    <extension
