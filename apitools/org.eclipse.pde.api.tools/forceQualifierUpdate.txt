@@ -9,3 +9,4 @@ https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/13
 https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1781
 https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1923
 Comparator errors in I20241106-1800/ - Expected due to https://github.com/eclipse-jdt/eclipse.jdt.core/pull/3254
+https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/2995
