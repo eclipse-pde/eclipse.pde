@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -14,9 +14,11 @@
 package org.eclipse.pde.internal.ui.parts;
 
 import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.shared.CachedCheckboxTableViewer;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
@@ -33,7 +35,6 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 	private int selectIndex = -1;
 	private int deselectIndex = -1;
 	private final String tableName;
-	private int counter;
 	private Label counterLabel;
 
 	/**
@@ -92,7 +93,7 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 	public void setSelection(Object[] selected) {
 		CheckboxTableViewer viewer = getTableViewer();
 		viewer.setCheckedElements(selected);
-		updateCounter(viewer.getCheckedElements().length);
+		updateCounterLabel();
 	}
 
 	public void createControl(Composite parent) {
@@ -105,7 +106,7 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 		GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = span;
 		counterLabel.setLayoutData(gd);
-		updateCounter(0);
+		updateCounterLabel();
 	}
 
 	public void createControl(Composite parent, int span, boolean multiselect) {
@@ -118,7 +119,7 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 		GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = span;
 		counterLabel.setLayoutData(gd);
-		updateCounter(0);
+		updateCounterLabel();
 	}
 
 	@Override
@@ -147,16 +148,7 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 		label.setLayoutData(gd);
 	}
 
-	protected void updateCounter(int amount) {
-		counter = amount;
-		updateCounterLabel();
-	}
-
-	public void updateCount(int amount) {
-		updateCounter(amount);
-	}
-
-	protected void updateCounterLabel() {
+	public void updateCounterLabel() {
 		String number = "" + getSelectionCount(); //$NON-NLS-1$
 		String totalNumber = "" + getTotalCount(); //$NON-NLS-1$
 		String message = NLS.bind(PDEUIMessages.WizardCheckboxTablePart_counter, (new String[] {number, totalNumber}));
@@ -164,7 +156,11 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 	}
 
 	public int getSelectionCount() {
-		return counter;
+		CachedCheckboxTableViewer viewer = getTableViewer();
+		if (viewer == null) {
+			return 0;
+		}
+		return viewer.getUnfilteredCheckedCount();
 	}
 
 	public void selectAll(boolean select) {
@@ -173,19 +169,21 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 
 	private int getTotalCount() {
 		CheckboxTableViewer viewer = getTableViewer();
-		return viewer.getTable().getItemCount();
+		if (viewer == null) {
+			return 0;
+		}
+
+		IStructuredContentProvider contentProvider = (IStructuredContentProvider) viewer.getContentProvider();
+		if (contentProvider == null) {
+			return 0;
+		}
+		return contentProvider.getElements(viewer.getInput()).length;
 	}
 
 	protected void handleSelectAll(boolean select) {
 		CheckboxTableViewer viewer = getTableViewer();
 		viewer.setAllChecked(select);
-		int selected;
-		if (!select) {
-			selected = 0;
-		} else {
-			selected = getTotalCount();
-		}
-		updateCounter(selected);
+		updateCounterLabel();
 	}
 
 	protected void handleSelect(boolean select) {
@@ -195,14 +193,13 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 			for (TableItem selectedItem : selected) {
 				selectedItem.setChecked(select);
 			}
-			updateCounter(viewer.getCheckedElements().length);
+			updateCounterLabel();
 		}
 	}
 
 	@Override
 	protected void elementChecked(Object element, boolean checked) {
-		int count = getSelectionCount();
-		updateCounter(checked ? count + 1 : count - 1);
+		updateCounterLabel();
 	}
 
 	public Label getCounterLabel() {
