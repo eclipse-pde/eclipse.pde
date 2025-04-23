@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -28,6 +28,9 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.dialogs.FilteredTree;
+import org.eclipse.ui.dialogs.PatternFilter;
 import org.osgi.framework.Constants;
 
 public class DependenciesViewTreePage extends DependenciesViewPage {
@@ -62,6 +65,7 @@ public class DependenciesViewTreePage extends DependenciesViewPage {
 	}
 
 	TreeViewer fTreeViewer;
+	private FilteredTree fFilteredTreeViewer;
 	private final OptionalFilter fHideOptionalFilter = new OptionalFilter();
 
 	public DependenciesViewTreePage(DependenciesView view, ITreeContentProvider contentProvider) {
@@ -70,7 +74,9 @@ public class DependenciesViewTreePage extends DependenciesViewPage {
 
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
-		fTreeViewer = new TreeViewer(parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
+		fFilteredTreeViewer = new FilteredTree(parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL, new PatternFilter(),
+				true, true);
+		fTreeViewer = fFilteredTreeViewer.getViewer();
 		fTreeViewer.setContentProvider(fContentProvider);
 		final DependenciesLabelProvider labelProvider = new DependenciesLabelProvider(true);
 		fTreeViewer.setLabelProvider(labelProvider);
@@ -111,4 +117,8 @@ public class DependenciesViewTreePage extends DependenciesViewPage {
 		return true;
 	}
 
+	@Override
+	public Control getControl() {
+		return fFilteredTreeViewer;
+	}
 }
