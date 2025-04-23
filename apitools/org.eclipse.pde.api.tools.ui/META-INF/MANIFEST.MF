@@ -37,3 +37,4 @@ Export-Package: org.eclipse.pde.api.tools.ui.internal;x-friends:="org.eclipse.pd
  org.eclipse.pde.api.tools.ui.internal.views;x-internal:=true,
  org.eclipse.pde.api.tools.ui.internal.wizards;x-friends:="org.eclipse.pde.api.tools.tests"
 Automatic-Module-Name: org.eclipse.pde.api.tools.ui
+Require-Capability: eclipse.swt;filter:="(image.format=svg)"

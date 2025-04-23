@@ -34,7 +34,7 @@
          name="%ApiToolsProposalCategory.name"
          point="org.eclipse.jdt.ui.javaCompletionProposalComputer">
       <proposalCategory
-            icon="icons/full/obj16/category_menu.png">
+            icon="icons/full/obj16/category_menu.svg">
       </proposalCategory>
    </extension>
    <extension
@@ -263,7 +263,7 @@
       <view
             category="org.eclipse.pde.api.tools.ui.views.apitooling.view.category"
             class="org.eclipse.pde.api.tools.ui.internal.views.APIToolingView"
-            icon="icons/full/obj16/api_tools.png"
+            icon="icons/full/obj16/api_tools.svg"
             id="org.eclipse.pde.api.tools.ui.views.apitooling.views.apitoolingview"
             name="%Apitoolingview.name">
       </view>
@@ -435,7 +435,7 @@
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
             configTypeID="org.eclipse.pde.api.tools.usescan"
-            icon="$nl$/icons/full/obj16/category_menu.png"
+            icon="$nl$/icons/full/obj16/category_menu.svg"
             id="org.eclipse.pde.api.tools.usescan.image">
       </launchConfigurationTypeImage>
    </extension>
@@ -585,19 +585,19 @@
          point="org.eclipse.ui.commandImages">
       <image
             commandId="org.eclipse.pde.api.tools.ui.convert.javadocs"
-            icon="$nl$/icons/full/obj16/annotation_obj.png">
+            icon="$nl$/icons/full/obj16/annotation_obj.svg">
       </image>
       <image
             commandId="org.eclipse.pde.api.tools.ui.remove.filters"
-            icon="$nl$/icons/full/elcl16/filter_ps.png">
+            icon="$nl$/icons/full/elcl16/filter_ps.svg">
       </image>
       <image
             commandId="org.eclipse.pde.api.tools.ui.setup.projects"
-            icon="$nl$/icons/full/obj16/category_menu.png">
+            icon="$nl$/icons/full/obj16/category_menu.svg">
       </image>
       <image
             commandId="org.eclipse.pde.api.tools.ui.compare.to.baseline"
-            icon="$nl$/icons/full/obj16/eclipse16.png">
+            icon="$nl$/icons/full/obj16/eclipse16.svg">
       </image>
    </extension>
 </plugin>
