@@ -18,3 +18,4 @@ Export-Package: org.eclipse.tools.layout.spy.internal.dialogs;x-internal:=true,
  org.eclipse.tools.layout.spy.internal.displayfilter;x-internal:=true,
  org.eclipse.tools.layout.spy.internal.handlers;x-internal:=true
 Automatic-Module-Name: org.eclipse.tools.layout.spy
+Require-Capability: eclipse.swt;filter:="(image.format=svg)"
