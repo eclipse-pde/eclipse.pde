@@ -62,13 +62,13 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 	private static final String INJECTED_IN_METHOD = Messages.ContextDataProvider_6;
 
 	// Image keys constants
-	private static final String PUBLIC_METHOD_IMG_KEY = "icons/methpub_obj.png"; //$NON-NLS-1$
-	private static final String PUBLIC_FIELD_IMG_KEY = "icons/field_public_obj.png"; //$NON-NLS-1$
-	private static final String VALUE_IN_CONTEXT_IMG_KEY = "icons/valueincontext.png"; //$NON-NLS-1$
-	private static final String INHERITED_VARIABLE_IMG_KEY = "icons/inher_co.png"; //$NON-NLS-1$
-	private static final String LOCAL_VARIABLE_IMG_KEY = "icons/letter-l-icon.png"; //$NON-NLS-1$
-	private static final String CONTEXT_FUNCTION_IMG_KEY = "icons/contextfunction.png"; //$NON-NLS-1$
-	private static final String INJECT_IMG_KEY = "icons/annotation_obj.png"; //$NON-NLS-1$
+	private static final String PUBLIC_METHOD_IMG_KEY = "icons/methpub_obj.svg"; //$NON-NLS-1$
+	private static final String PUBLIC_FIELD_IMG_KEY = "icons/field_public_obj.svg"; //$NON-NLS-1$
+	private static final String VALUE_IN_CONTEXT_IMG_KEY = "icons/valueincontext.svg"; //$NON-NLS-1$
+	private static final String INHERITED_VARIABLE_IMG_KEY = "icons/inher_co.svg"; //$NON-NLS-1$
+	private static final String LOCAL_VARIABLE_IMG_KEY = "icons/letter-l-icon.svg"; //$NON-NLS-1$
+	private static final String CONTEXT_FUNCTION_IMG_KEY = "icons/contextfunction.svg"; //$NON-NLS-1$
+	private static final String INJECT_IMG_KEY = "icons/annotation_obj.svg"; //$NON-NLS-1$
 
 	private ImageRegistry imgReg;
 

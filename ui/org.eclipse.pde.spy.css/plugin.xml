@@ -5,14 +5,14 @@
          point="org.eclipse.pde.spy.core.spyPart">
       <spyPart
             description="%description"
-            icon="$nl$/icons/cssspy.png"
+            icon="$nl$/icons/cssspy.svg"
             name="%name"
             part="org.eclipse.pde.spy.css.CssSpyPart"
             shortcut="M2+M3+F5">
       </spyPart>
       <spyPart
             description="%css_scratchpad_description"
-            icon="$nl$/icons/css_scratchpad.png"
+            icon="$nl$/icons/css_scratchpad.svg"
             name="%css_scratchpad_name"
             part="org.eclipse.pde.spy.css.CSSScratchPadPart"
             shortcut="M2+M3+F6">

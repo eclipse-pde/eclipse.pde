@@ -28,3 +28,4 @@ Import-Package: jakarta.annotation;version="[2.1.0,3.0.0)",
 Bundle-Localization: plugin
 Export-Package: org.eclipse.pde.spy.event
 Automatic-Module-Name: org.eclipse.e4.tools.event.spy
+Require-Capability: eclipse.swt;filter:="(image.format=svg)"
