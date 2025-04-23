@@ -40,30 +40,30 @@ public class PDEUserAssistanceUIPluginImages {
 	/**
 	 * OBJ16
 	 */
-	public static final ImageDescriptor DESC_SIMPLECS_OBJ = create(PATH_OBJ, "cheatsheet_simple_obj.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_COMPCS_OBJ = create(PATH_OBJ, "cheatsheet_composite_obj.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_CSTASKGROUP_OBJ = create(PATH_OBJ, "cheatsheet_taskgroup_obj.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_CSITEM_OBJ = create(PATH_OBJ, "cheatsheet_item_obj.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_CSSUBITEM_OBJ = create(PATH_OBJ, "cheatsheet_subitem_obj.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_CSINTRO_OBJ = create(PATH_OBJ, "cheatsheet_intro_obj.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_CSCONCLUSION_OBJ = create(PATH_OBJ, "cheatsheet_conclusion_obj.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_CSUNSUPPORTED_OBJ = create(PATH_OBJ, "cheatsheet_unsupported_obj.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_CHEATSHEET_OBJ = create(PATH_OBJ, "cheatsheet_obj.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_SIMPLECS_OBJ = create(PATH_OBJ, "cheatsheet_simple_obj.svg"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_COMPCS_OBJ = create(PATH_OBJ, "cheatsheet_composite_obj.svg"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_CSTASKGROUP_OBJ = create(PATH_OBJ, "cheatsheet_taskgroup_obj.svg"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_CSITEM_OBJ = create(PATH_OBJ, "cheatsheet_item_obj.svg"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_CSSUBITEM_OBJ = create(PATH_OBJ, "cheatsheet_subitem_obj.svg"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_CSINTRO_OBJ = create(PATH_OBJ, "cheatsheet_intro_obj.svg"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_CSCONCLUSION_OBJ = create(PATH_OBJ, "cheatsheet_conclusion_obj.svg"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_CSUNSUPPORTED_OBJ = create(PATH_OBJ, "cheatsheet_unsupported_obj.svg"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_CHEATSHEET_OBJ = create(PATH_OBJ, "cheatsheet_obj.svg"); //$NON-NLS-1$
 
-	public static final ImageDescriptor DESC_TOC_OBJ = create(PATH_OBJ, "toc_obj.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_TOC_TOPIC_OBJ = create(PATH_OBJ, "toc_topic_obj.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_TOC_LEAFTOPIC_OBJ = create(PATH_OBJ, "toc_leaftopic_obj.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_TOC_LINK_OBJ = create(PATH_OBJ, "toc_link_obj.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_TOC_ANCHOR_OBJ = create(PATH_OBJ, "toc_anchor_obj.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_TOC_OBJ = create(PATH_OBJ, "toc_obj.svg"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_TOC_TOPIC_OBJ = create(PATH_OBJ, "toc_topic_obj.svg"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_TOC_LEAFTOPIC_OBJ = create(PATH_OBJ, "toc_leaftopic_obj.svg"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_TOC_LINK_OBJ = create(PATH_OBJ, "toc_link_obj.svg"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_TOC_ANCHOR_OBJ = create(PATH_OBJ, "toc_anchor_obj.svg"); //$NON-NLS-1$
 
-	public static final ImageDescriptor DESC_CTXHELP_CONTEXT_OBJ = create(PATH_OBJ, "ctxhelp_context_obj.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_CTXHELP_DESC_OBJ = create(PATH_OBJ, "ctxhelp_desc_obj.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_CTXHELP_COMMAND_OBJ = create(PATH_OBJ, "ctxhelp_command_obj.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_CTXHELP_CONTEXT_OBJ = create(PATH_OBJ, "ctxhelp_context_obj.svg"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_CTXHELP_DESC_OBJ = create(PATH_OBJ, "ctxhelp_desc_obj.svg"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_CTXHELP_COMMAND_OBJ = create(PATH_OBJ, "ctxhelp_command_obj.svg"); //$NON-NLS-1$
 
 	/**
 	 * WIZ
 	 */
-	public static final ImageDescriptor DESC_CHEATSHEET_WIZ = create(PATH_WIZBAN, "new_cheatsheet_wiz.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_CHEATSHEET_WIZ = create(PATH_WIZBAN, "new_cheatsheet_wiz.svg"); //$NON-NLS-1$
 
 	private static ImageDescriptor create(String prefix, String name) {
 		return ImageDescriptor.createFromURL(makeImageURL(prefix, name));

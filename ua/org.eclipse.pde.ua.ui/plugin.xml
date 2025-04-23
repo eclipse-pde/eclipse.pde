@@ -6,7 +6,7 @@
       <editor
             class="org.eclipse.pde.internal.ua.ui.editor.cheatsheet.simple.SimpleCSEditor"
             contributorClass="org.eclipse.pde.internal.ua.ui.editor.cheatsheet.simple.SimpleCSEditorContributor"
-            icon="$nl$/icons/obj16/cheatsheet_obj.png"
+            icon="$nl$/icons/obj16/cheatsheet_obj.svg"
             id="org.eclipse.pde.ua.ui.simpleCheatSheetEditor"
             name="%simple.cheat.sheat.editor.name">
          <contentTypeBinding
@@ -16,7 +16,7 @@
       <editor
             class="org.eclipse.pde.internal.ua.ui.editor.cheatsheet.comp.CompCSEditor"
             contributorClass="org.eclipse.pde.internal.ua.ui.editor.cheatsheet.comp.CompCSEditorContributor"
-            icon="$nl$/icons/obj16/cheatsheet_obj.png"
+            icon="$nl$/icons/obj16/cheatsheet_obj.svg"
             id="org.eclipse.pde.ua.ui.compositeCheatSheetEditor"
             name="%composite.cheat.sheat.editor.name">
          <contentTypeBinding
@@ -27,7 +27,7 @@
             class="org.eclipse.pde.internal.ua.ui.editor.toc.TocEditor"
             contributorClass="org.eclipse.pde.internal.ua.ui.editor.toc.TocEditorContributor"
             default="true"
-            icon="$nl$/icons/obj16/toc_obj.png"
+            icon="$nl$/icons/obj16/toc_obj.svg"
             id="org.eclipse.pde.ua.ui.tocEditor"
             name="%toc.editor">
          <contentTypeBinding
@@ -38,7 +38,7 @@
             class="org.eclipse.pde.internal.ua.ui.editor.ctxhelp.CtxHelpEditor"
             contributorClass="org.eclipse.pde.internal.ua.ui.editor.toc.TocEditorContributor"
             default="true"
-            icon="$nl$/icons/obj16/toc_obj.png"
+            icon="$nl$/icons/obj16/toc_obj.svg"
             id="org.eclipse.pde.ua.ui.ctxHelpEditor"
             name="%ctxhelp.editor">
          <contentTypeBinding
@@ -55,7 +55,7 @@
       <wizard
             category="org.eclipse.pde.userAssistance"
             class="org.eclipse.pde.internal.ua.ui.wizards.cheatsheet.NewCSFileWizard"
-            icon="$nl$/icons/etool16/new_cheatsheet_wiz.png"
+            icon="$nl$/icons/etool16/new_cheatsheet_wiz.svg"
             id="org.eclipse.pde.ua.ui.NewCheatSheetWizard"
             name="%new.cheat.sheet">
          <description>
@@ -65,7 +65,7 @@
       <wizard
             category="org.eclipse.pde.userAssistance"
             class="org.eclipse.pde.internal.ua.ui.wizards.toc.NewTocFileWizard"
-            icon="$nl$/icons/etool16/toc_wiz.png"
+            icon="$nl$/icons/etool16/toc_wiz.svg"
             id="org.eclipse.pde.ua.ui.NewTOCWizard"
             name="%new.toc.name">
          <description>
@@ -75,7 +75,7 @@
       <wizard
             category="org.eclipse.pde.userAssistance"
             class="org.eclipse.pde.internal.ua.ui.wizards.ctxhelp.NewCtxHelpWizard"
-            icon="$nl$/icons/etool16/ctx_help_wiz.png"
+            icon="$nl$/icons/etool16/ctx_help_wiz.svg"
             id="org.eclipse.pde.ua.ui.NewContextHelpWizard"
             name="%new.ctxhelp.name">
          <description>
