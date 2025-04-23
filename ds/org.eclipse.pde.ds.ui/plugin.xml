@@ -21,7 +21,7 @@
             class="org.eclipse.pde.internal.ds.ui.editor.DSEditor"
             contributorClass="org.eclipse.pde.internal.ds.ui.editor.DSEditorContributor"
             default="true"
-            icon="$nl$/icons/obj16/ds_obj.png"
+            icon="$nl$/icons/obj16/ds_obj.svg"
             id="org.eclipse.pde.ds.ui.editor"
             name="%editors.ds.name">
          <contentTypeBinding
@@ -43,7 +43,7 @@
       <wizard
             category="org.eclipse.pde.PDE"
             class="org.eclipse.pde.internal.ds.ui.wizards.DSNewWizard"
-            icon="$nl$/icons/obj16/ds_wizard_obj.png"
+            icon="$nl$/icons/obj16/ds_wizard_obj.svg"
             id="org.eclipse.pde.ds.ui.wizard"
             name="%wizard.name">
          <description>

@@ -30,3 +30,4 @@ Export-Package: org.eclipse.pde.internal.ds.ui;x-internal:=true,
 Bundle-Localization: plugin
 Bundle-Vendor: %providerName
 Automatic-Module-Name: org.eclipse.pde.ds.ui
+Require-Capability: eclipse.swt;filter:="(image.format=svg)"
