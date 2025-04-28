@@ -2001,7 +2001,6 @@
              <action
                    class="org.eclipse.pde.internal.ui.ShowErrorInStackTraceConsoleAction"
                    enablesFor="+"
-                   hoverIcon="$nl$/icons/obj16/open_console_obj.png"
                    icon="$nl$/icons/obj16/open_console_obj.png"
                    id="org.eclipse.jdt.debug.ui.LogViewActions.showStackTrace"
                    label="%showErrorInStackTraceConsoleAction.label"
