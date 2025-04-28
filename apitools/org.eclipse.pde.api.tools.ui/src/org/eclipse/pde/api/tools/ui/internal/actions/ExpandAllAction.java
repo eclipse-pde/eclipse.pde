@@ -31,8 +31,6 @@ public class ExpandAllAction extends Action {
 		setToolTipText(ActionMessages.ExpandAllAction_tooltip);
 		ImageDescriptor enabledImageDescriptor = ApiUIPlugin.getImageDescriptor(IApiToolsConstants.IMG_ELCL_EXPANDALL);
 		setImageDescriptor(enabledImageDescriptor);
-		ImageDescriptor disabledImageDescriptor = ApiUIPlugin.getImageDescriptor(IApiToolsConstants.IMG_DLCL_EXPANDALL);
-		setDisabledImageDescriptor(disabledImageDescriptor);
 		fViewer = viewer;
 	}
 

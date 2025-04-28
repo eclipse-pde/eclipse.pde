@@ -28,7 +28,6 @@ public class PDERuntimePluginImages {
 	public final static String ICONS_PATH = "icons/"; //$NON-NLS-1$
 
 	private static final String PATH_OBJ = ICONS_PATH + "obj16/"; //$NON-NLS-1$
-	private static final String PATH_DCL = ICONS_PATH + "dlcl16/"; //$NON-NLS-1$
 	private static final String PATH_LCL = ICONS_PATH + "elcl16/"; //$NON-NLS-1$
 	private static final String PATH_OVR = ICONS_PATH + "ovr16/"; //$NON-NLS-1$
 
@@ -57,7 +56,6 @@ public class PDERuntimePluginImages {
 	public static final ImageDescriptor COPY_QNAME = create(PATH_LCL, IMG_COPY_QNAME);
 	public static final ImageDescriptor UP_NAV = create(PATH_LCL, IMG_UP_NAV);
 
-	public static final ImageDescriptor DESC_REFRESH_DISABLED = create(PATH_DCL, "refresh.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_REFRESH = create(PATH_LCL, "refresh.svg"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_COLLAPSE_ALL = create(PATH_LCL, "collapseall.svg"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_EXT_POINT_OBJ = create(PATH_OBJ, "ext_point_obj.svg"); //$NON-NLS-1$

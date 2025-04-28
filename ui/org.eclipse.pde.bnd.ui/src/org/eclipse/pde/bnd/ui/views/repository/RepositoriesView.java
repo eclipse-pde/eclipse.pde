@@ -513,7 +513,6 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 			offlineAction.setChecked(false);
 			offlineAction.setToolTipText("Go Offline");
 			offlineAction.setImageDescriptor(Resources.getImageDescriptor("connect.png"));
-			offlineAction.setDisabledImageDescriptor(Resources.getImageDescriptor("connect_d.png"));
 			offlineAction.setEnabled(false);
 			return;
 		}
@@ -526,12 +525,10 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 			offlineAction.setChecked(true);
 			offlineAction.setToolTipText("Go Online");
 			offlineAction.setImageDescriptor(Resources.getImageDescriptor("disconnect.png"));
-			offlineAction.setDisabledImageDescriptor(Resources.getImageDescriptor("disconnect_d.png"));
 		} else {
 			offlineAction.setChecked(false);
 			offlineAction.setToolTipText("Go Offline");
 			offlineAction.setImageDescriptor(Resources.getImageDescriptor("connect.png"));
-			offlineAction.setDisabledImageDescriptor(Resources.getImageDescriptor("connect_d.png"));
 		}
 		offlineAction.setEnabled(true);
 	}
@@ -622,7 +619,6 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 		collapseAllAction.setText("Collapse All");
 		collapseAllAction.setToolTipText("Collapse All");
 		collapseAllAction.setImageDescriptor(Resources.getImageDescriptor("collapseall.png"));
-		collapseAllAction.setDisabledImageDescriptor(Resources.getImageDescriptor("collapseall_d.png"));
 
 		refreshAction = new Action() {
 			@Override
@@ -658,7 +654,6 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 		refreshAction.setText("Refresh");
 		refreshAction.setToolTipText("Refresh Repositories Tree");
 		refreshAction.setImageDescriptor(Resources.getImageDescriptor("arrow_refresh.png"));
-		refreshAction.setDisabledImageDescriptor(Resources.getImageDescriptor("arrow_refresh_d.png"));
 
 		addBundlesAction = new Action() {
 			@Override
@@ -681,7 +676,6 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 		addBundlesAction.setText("Add");
 		addBundlesAction.setToolTipText("Add Bundles to Repository");
 		addBundlesAction.setImageDescriptor(Resources.getImageDescriptor("add_obj.png"));
-		addBundlesAction.setDisabledImageDescriptor(Resources.getImageDescriptor("add_obj_d.png"));
 
 		advancedSearchAction = new Action("Advanced Search", IAction.AS_CHECK_BOX) {
 			@Override
@@ -728,7 +722,6 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 		advancedSearchAction.setText("Advanced Search");
 		advancedSearchAction.setToolTipText("Toggle Advanced Search");
 		advancedSearchAction.setImageDescriptor(Resources.getImageDescriptor("search.png"));
-		advancedSearchAction.setDisabledImageDescriptor(Resources.getImageDescriptor("search_d.png"));
 
 		downloadAction = new Action() {
 			@Override
@@ -781,7 +774,6 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 		downloadAction.setEnabled(false);
 		downloadAction.setText("Download Repository Content");
 		downloadAction.setImageDescriptor(Resources.getImageDescriptor("download.png"));
-		downloadAction.setDisabledImageDescriptor(Resources.getImageDescriptor("download_d.png"));
 
 		offlineAction = new Action("Online/Offline Mode", IAction.AS_CHECK_BOX) {
 			@Override
@@ -795,7 +787,6 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 		offlineAction.setEnabled(false);
 		offlineAction.setToolTipText("Go Offline");
 		offlineAction.setImageDescriptor(Resources.getImageDescriptor("connect.png"));
-		offlineAction.setDisabledImageDescriptor(Resources.getImageDescriptor("connect_d.png"));
 
 		viewer.addSelectionChangedListener(event -> {
 			IStructuredSelection selection = (IStructuredSelection) event.getSelection();

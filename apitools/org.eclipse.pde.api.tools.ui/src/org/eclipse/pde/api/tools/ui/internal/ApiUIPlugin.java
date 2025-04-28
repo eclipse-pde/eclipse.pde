@@ -64,8 +64,6 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 	 */
 	private static final String ICONS_PATH = "$nl$/icons/full/"; //$NON-NLS-1$
 
-	private static final String DLCL = ICONS_PATH + "dlcl16/"; //basic colors - size 16x16 disabled//$NON-NLS-1$
-
 	private static final String ELCL = ICONS_PATH + "elcl16/"; //basic colors - size 16x16 //$NON-NLS-1$
 
 	/**
@@ -300,17 +298,11 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_HELP_PAGE, ELCL + "help.png"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_COMPARE_APIS, ELCL + "compare_apis.png"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_CONFIG_SEV, ELCL + "configure_problem_severity.png"); //$NON-NLS-1$
-		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_COMPARE_APIS_DISABLED, DLCL + "compare_apis.png"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_EXPORT, ELCL + "export.png"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_NEXT_NAV, ELCL + "next_nav.png"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_PREV_NAV, ELCL + "prev_nav.png"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_EXPANDALL, ELCL + "expandall.png"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_TEXT_EDIT, ELCL + "text_edit.png"); //$NON-NLS-1$
-		// disabled images
-		declareRegistryImage(reg, IApiToolsConstants.IMG_DLCL_EXPORT, DLCL + "export.png"); //$NON-NLS-1$
-		declareRegistryImage(reg, IApiToolsConstants.IMG_DLCL_NEXT_NAV, DLCL + "next_nav.png"); //$NON-NLS-1$
-		declareRegistryImage(reg, IApiToolsConstants.IMG_DLCL_PREV_NAV, DLCL + "prev_nav.png"); //$NON-NLS-1$
-		declareRegistryImage(reg, IApiToolsConstants.IMG_DLCL_EXPANDALL, DLCL + "expandall.png"); //$NON-NLS-1$
 	}
 
 	void showAPIToolingView() {

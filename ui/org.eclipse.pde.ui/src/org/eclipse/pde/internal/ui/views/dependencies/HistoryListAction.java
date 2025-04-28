@@ -30,7 +30,6 @@ public class HistoryListAction extends Action {
 		fView = view;
 		setText(PDEUIMessages.HistoryListAction_label);
 		setImageDescriptor(PDEPluginImages.DESC_HISTORY_LIST);
-		setDisabledImageDescriptor(PDEPluginImages.DESC_HISTORY_LIST_DISABLED);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IHelpContextIds.HISTORY_LIST_ACTION);
 	}
 

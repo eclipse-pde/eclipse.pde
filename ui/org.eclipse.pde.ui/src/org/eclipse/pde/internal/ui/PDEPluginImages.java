@@ -44,7 +44,6 @@ public class PDEPluginImages {
 	private static final String PATH_VIEW = ICONS_PATH + "view16/"; //$NON-NLS-1$
 	private static final String PATH_DVIEW = ICONS_PATH + "dview16/"; //$NON-NLS-1$
 	private static final String PATH_LCL = ICONS_PATH + "elcl16/"; //$NON-NLS-1$
-	private static final String PATH_LCL_DISABLED = ICONS_PATH + "dlcl16/"; //$NON-NLS-1$
 	private static final String PATH_TOOL = ICONS_PATH + "etool16/"; //$NON-NLS-1$
 	private static final String PATH_OVR = ICONS_PATH + "ovr16/"; //$NON-NLS-1$
 	private static final String PATH_WIZBAN = ICONS_PATH + "wizban/"; //$NON-NLS-1$
@@ -251,30 +250,6 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_CLEAR = create(PATH_LCL, "clear.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_FILTER = create(PATH_LCL, "filter_ps.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_FILTER_RELATED = create(PATH_LCL, "filter_related.png"); //$NON-NLS-1$
-
-	public static final ImageDescriptor DESC_ADD_ATT_DISABLED = create(PATH_LCL_DISABLED, "add_att.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_ALPHAB_SORT_CO_DISABLED = create(PATH_LCL_DISABLED, "alphab_sort_co.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_CLONE_ATT_DISABLED = create(PATH_LCL_DISABLED, "clone_att.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_CLONE_EL_DISABLED = create(PATH_LCL_DISABLED, "clone_el.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_GENERATE_CLASS_DISABLED = create(PATH_LCL_DISABLED, "generate_class.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_GOTOOBJ_DISABLED = create(PATH_LCL_DISABLED, "goto_obj.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_PROPERTIES_DISABLED = create(PATH_LCL_DISABLED, "properties.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_REFRESH_DISABLED = create(PATH_LCL_DISABLED, "refresh.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_REMOVE_ATT_DISABLED = create(PATH_LCL_DISABLED, "remove_att.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_HORIZONTAL_DISABLED = create(PATH_LCL_DISABLED, "th_horizontal.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_VERTICAL_DISABLED = create(PATH_LCL_DISABLED, "th_vertical.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_COLLAPSE_ALL_DISABLED = create(PATH_LCL_DISABLED, "collapseall.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_TOGGLE_EXPAND_STATE_DISABLED = create(PATH_LCL_DISABLED, "toggle_expand_state.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_LINK_WITH_EDITOR_DISABLED = create(PATH_LCL_DISABLED, "synced.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_CALLEES_DISABLED = create(PATH_LCL_DISABLED, "ch_callees.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_CALLERS_DISABLED = create(PATH_LCL_DISABLED, "ch_callers.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_DEP_LOOP_DISABLED = create(PATH_LCL_DISABLED, "dep_loop.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_FLAT_LAYOUT_DISABLED = create(PATH_LCL_DISABLED, "flatLayout.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_HIERARCHICAL_LAYOUT_DISABLED = create(PATH_LCL_DISABLED, "hierarchicalLayout.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_HISTORY_LIST_DISABLED = create(PATH_LCL_DISABLED, "history_list.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_DCLEAR = create(PATH_LCL_DISABLED, "clear.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_FILTER_DISABLED = create(PATH_LCL_DISABLED, "filter_ps.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_FILTER_RELATED_DISABLED = create(PATH_LCL_DISABLED, "filter_related.png"); //$NON-NLS-1$
 
 	public static final ImageDescriptor DESC_RUN_EXC = create(PATH_OBJ, "run_exc.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_DEBUG_EXC = create(PATH_OBJ, "debug_exc.png"); //$NON-NLS-1$
