@@ -1,30 +1,8 @@
 PDE/API Tools
 ========================
 
-
-Contents
---------
-
-*	[1 User Guide](#user-guide)
-*	[2 Resources](#resources)
-*	[3 Use Cases](#use-cases)
-*	[4 Links](#links)
-
-
 User Guide
 ==========
-
-Contents
---------
-
-*   [1 Current State](#Current-State)
-*   [2 API Tooling Setup](#API-Tooling-Setup)
-    *   [2.1 Define an API Baseline](#Define-an-API-Baseline)
-    *   [2.2 Configure Bundles for API Tooling](#Configure-Bundles-for-API-Tooling)
-*   [3 API Problems](#API-Problems)
-    *   [3.1 Adjusting Problem Severities](#Adjusting-Problem-Severities)
-    *   [3.2 Filtering Known Problems](#Filtering-Known-Problems)
-*   [4 Ant Tasks](#Ant-Tasks)
 
 Current State
 -------------
@@ -47,7 +25,7 @@ For example, if you are developing bundles for Eclipse 3.4, you will use Eclipse
 API baselines are managed on the **Plug-in Development > API Baselines** preference page. Here you can create, edit, and delete API baselines. 
 You can select one baseline as the 'default' - this is the baseline that the workspace will be compared against.
 
-![Api_profiles_pref_page_2.PNG](https://raw.githubusercontent.com/eclipse-pde/eclipse.pde/master/docs/images/Api_profiles_pref_page_2.PNG)
+![Api_profiles_pref_page_2.PNG](images/Api_profiles_pref_page_2.PNG)
 
 Use the **Add Baseline...** button to open a wizard to define a baseline. 
 Any Eclipse SDK can be used as a baseline simply by giving it a name and specifying the root location of the plug-ins.
@@ -69,19 +47,19 @@ You can use content assist to insert tags with appropriate comments.
 
 Using the **PDE Tools > API Tooling Setup...** action to configure your projects.
 
-![Api_tooling_setup.PNG](https://raw.githubusercontent.com/eclipse-pde/eclipse.pde/master/docs/images/Api_tooling_setup.PNG)
+![Api_tooling_setup.PNG](images/Api_tooling_setup.PNG)
 
 
 A dialog appears allowing you to select projects you want to setup for API tooling.
 
-![Api_tooling_setup_refactoring.PNG](https://raw.githubusercontent.com/eclipse-pde/eclipse.pde/master/docs/images/Api_tooling_setup_refactoring.PNG)
+![Api_tooling_setup_refactoring.PNG](images/Api_tooling_setup_refactoring.PNG)
 
 
 **Note**: By default, **component.xml files are deleted** from your workspace after corresponding Javadoc tags are inserted into source code. 
 There is a checkbox to disable this option. 
 You can also preview the text changes that will be made, by clicking 'next'.
 
-![Api_tooling_setup_preview.PNG](https://raw.githubusercontent.com/eclipse-pde/eclipse.pde/master/docs/images/Api_tooling_setup_preview.PNG)
+![Api_tooling_setup_preview.PNG](images/Api_tooling_setup_preview.PNG)
 
 After pressing finish, Javadoc tags will be inserted and the API Tooling nature (and builder) will be added to your projects. 
 API problems will now appear in the workspace where appropriate. 
@@ -103,7 +81,7 @@ The tooling breaks down the types of problems reported into one of three categor
 Similar to the way you can set compiler problem severities (error vs. warning vs. ignore), API tooling provides an **API Errors/Warnings** preference page that allows you to configure API problem severities. 
 You can configure the problem severities on a **per project basis** as well, by using the **API Errors/Warnings** property page for a project, available from the **Properties...** action.
 
-![Api_errors_pref.PNG](https://raw.githubusercontent.com/eclipse-pde/eclipse.pde/master/docs/images/Api_errors_pref.PNG)
+![Api_errors_pref.PNG](images/Api_errors_pref.PNG)
 
 #### Filtering Known Problems
 
@@ -114,7 +92,7 @@ You can add a filter for a specific api problem using the Eclipse 'quickfix' mec
 
 Once a filter has been added you can edit / remove it from the 'Api Problem Filters' project property page.
 
-![Api_tooling_problem_filters_page.PNG](https://raw.githubusercontent.com/eclipse-pde/eclipse.pde/master/docs/images/Api_tooling_problem_filters_page.PNG)
+![Api_tooling_problem_filters_page.PNG](images/Api_tooling_problem_filters_page.PNG)
 
 Ant Tasks
 ---------
@@ -122,35 +100,8 @@ Ant Tasks
 API Tools provides a number of ant tasks to integrate the tooling into your build process. 
 
 
-
-
 Resources
 =========
-
-Contents
---------
-
-*   [1 Articles](#Articles)
-*   [2 Examples](#Examples)
-    *   [2.1 Important Notes](#Important-Notes)
-    *   [2.2 Running an API use scan (IDE)](#Running-an-API-use-scan-ide)
-        *   [2.2.1 Creating a new scan configuration](#Creating-a-new-scan-configuration)
-        *   [2.2.2 Configuring the new use scan](#Configuring-the-new-use-scan)
-    *   [2.3 Running an API use scan (commandline)](#Running-an-API-use-scan-commandline)
-        *   [2.3.1 Initial Setup](#Initial-Setup)
-        *   [2.3.2 The Build File](#The-Build-File)
-        *   [2.3.3 Use Scan Buildfile](#Use-Scan-Buildfile)
-        *   [2.3.4 Running The Buildfile](#Running-The-Buildfile)
-    *   [2.4 Generating Javadoc](#Generating-Javadoc)
-        *   [2.4.1 Using the Wizard](#Using-the-Wizard)
-        *   [2.4.2 Using the Commandline](#Using-the-Commandline)
-        *   [2.4.3 Customizing the Custom Tags](#Customizing-the-Custom-Tags)
-        *   [2.4.4 Ant Tasks](#Ant-Tasks)
-
-Articles
---------
-
-There are currently no articles.
 
 Examples
 ========
@@ -160,7 +111,7 @@ Important Notes
 
 There are a few things that should be noted prior to getting started with the examples.
 
-1.  Whenever we refer to a "pattern" we are referring to a Java regular expression as defined [here](http://java.sun.com/docs/books/tutorial/essential/regex/). Take note of escaping, etc, that is used when formulating your regular expression. If a invalid regular expression is given, the use scanner will report it back to you and abort.
+1.  Whenever we refer to a "pattern" we are referring to a Java regular expression as defined [here](https://java.sun.com/docs/books/tutorial/essential/regex/). Take note of escaping, etc, that is used when formulating your regular expression. If a invalid regular expression is given, the use scanner will report it back to you and abort.
 2.  When using the Ant tasks from the command line you should always make sure the `eclipse.install.dir` property points to the most recent Eclipse build available. This way you get all the latest and greatest versions of the tasks. The other reason to do this is that the build file (`api-tasks.xml`) uses the API tools core jar from that directory on the Ant classpath.
 3.  Any Ant tasks used from the command line must be called by their name as specified in the `ant-tasks.properties` file. This can cause some confusion for users who try out the Ant tasks in Eclipse and notice that the tasks are qualified with `apitooling` but they are not qualified in the `ant-tasks.properties` file. Consider the following example:
 
@@ -193,7 +144,7 @@ Running an API use scan (IDE)
 In the IDE API use scans can be run from the External tools dialog. 
 The benefits of providing the scanning as an external tool are many, the foremost being: 1. you can create as many different configurations as you want for scanning different distributions of your products and 2. each configuration can have its own persisted settings.
 
-![The external tools dialog showing a use scan configuration](https://raw.githubusercontent.com/eclipse-pde/eclipse.pde/master/docs/images/Usescan-ext-dialog.png)
+![The external tools dialog showing a use scan configuration](images/Usescan-ext-dialog.png)
 
 ### Creating a new scan configuration
 
@@ -361,11 +312,11 @@ It can be found by using the Generate Javadoc command located in the Project mai
 
 Once the wizard starts you will have to locate the Javadoc executable (if not already specified) and select the bundles you wish to generate Javadoc for.
 
-![The first page of the Generate Javadoc wizard](https://raw.githubusercontent.com/eclipse-pde/eclipse.pde/master/docs/images/Jdoc_wizard_p1.png)
+![The first page of the Generate Javadoc wizard](images/Jdoc_wizard_p1.png)
 
 On the next page, you can configure additional options.
 
-![The second page of the Generate Javadoc wizard](https://raw.githubusercontent.com/eclipse-pde/eclipse.pde/master/docs/images/Jdoc_wizard_p2.png)
+![The second page of the Generate Javadoc wizard](images/Jdoc_wizard_p2.png)
 
 On the last page is where we need to tell the wizard about the custom API tools tags. 
 In the `Extra Javadoc options` area you will want to enter the following tag definitions:
@@ -382,11 +333,11 @@ In the `Extra Javadoc options` area you will want to enter the following tag def
 
 The wizard will then look like the following:
 
-![The third page of the Generate Javadoc wizard](https://raw.githubusercontent.com/eclipse-pde/eclipse.pde/master/docs/images/Jdoc_wizard_p3.png)
+![The third page of the Generate Javadoc wizard](images/Jdoc_wizard_p3.png)
 
 Once you press finish and the Javadoc tool completes you should see API tools tag restrictions appearing in your documentation like the following example:
 
-![How the API tools tags look in the HTML documentation](https://raw.githubusercontent.com/eclipse-pde/eclipse.pde/master/docs/images/Doc_example.png)
+![How the API tools tags look in the HTML documentation](images/Doc_example.png)
 
 ### Using the Commandline
 
@@ -411,7 +362,7 @@ Where the `apitags` file would contain the following:
  
 
 You will also have to specify where the source is and any extra parameter for javadoc to be able to complete. 
-For a description of these and further information on using `javadoc` see [the Sun Javadoc guide](http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html)
+For a description of these and further information on using `javadoc` see [the Sun Javadoc guide](https://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/javadoc.html)
 
 ### Customizing the Custom Tags
 
@@ -449,19 +400,6 @@ API Tools provides a number of ant tasks to integrate the tooling into your buil
 Use Cases
 =========
 
-
-Contents
---------
-
-*   [1 Introduction](#Introduction)
-    *   [1.1 Binary Compatibility Reporting (Batch Mode)](#Binary-Compatibility-Reporting-Batch-Mode)
-    *   [1.2 Binary Compatibility Reporting (IDE Mode)](#Binary-Compatibility-Reporting-IDE-Mode)
-    *   [1.3 API Usage Reporting (Batch Mode)](#API-Usage-Reporting-Batch-Mode)
-    *   [1.4 API Usage Reporting (IDE Mode)](#API-Usage-Reporting-IDE-Mode)
-    *   [1.5 API Usage Searching (IDE Mode)](#API-Usage-Searching-IDE-Mode)
-    *   [1.6 Version Management](#Version-Management)
-    *   [1.7 Building API Components & Baselines](#Building-API-Components--Baselines)
-    *   [1.8 Javadoc Tags, API Visibilities & Restrictions](#Javadoc-Tags-API-Visibilities--Restrictions)
 
 Introduction
 ============
@@ -564,13 +502,15 @@ The platform provides a default set of Javadoc tags. The tags and the Java membe
 Links
 =====
 
-* [Website](http://www.eclipse.org/pde/pde-api-tools/)
-* [Download](http://download.eclipse.org/eclipse/downloads/)
+<!--
+* [Website](https://www.eclipse.org/pde/pde-api-tools/)
+-->
+* [Download](https://download.eclipse.org/eclipse/downloads/)
  
 **Community** 
 * [Mailing List](https://dev.eclipse.org/mailman/listinfo/pde-dev) 
-* [Forums](http://www.eclipse.org/forums/eclipse.platform) 
+* [Dicusssions](https://github.com/eclipse-pde/eclipse.pde/discussions) 
 
 **Contribute**
-* [Browse Source](http://dev.eclipse.org/viewcvs/index.cgi/) 
+* [Browse Source](https://github.com/eclipse-pde/) 
 

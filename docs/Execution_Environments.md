@@ -18,8 +18,8 @@ Second, an application written entirely of bundles such as A can ship on a Java 
 
 ## How can this be configured?
 
-[OSGi](https://en.wikipedia.org/wiki/OSGi) allows bundles to be marked with the minimum execution environment they require (see the [ Setting the
-Execution Environment](#setting-the-execution-environment)).
+[OSGi](https://www.osgi.org/) allows bundles to be marked with the minimum execution environment they require 
+(see the [ Setting the Execution Environment](#setting-the-execution-environment)).
 Setting this value has two effects.
 
 1.  The compiler attempts to compile your bundle against the JRE
@@ -53,8 +53,8 @@ Increasing your EE can create a lot of work with no real value, such as exposing
 
 Projects should not leave these choices to chance. 
 Dependency structures are key parts of an architecture. 
-For example, the [Eclipse Project](https://eclipse.org/eclipse) has explicitly identified EEs for all of their bundles. 
-These choices are documented in the [project plan](https://www.eclipse.org/projects/project-plan.php?projectid=eclipse#appendix).
+For example, the [Eclipse Project](https://eclipse.dev/eclipse) has explicitly identified EEs for all of their bundles. 
+These choices are documented in the [project plan](https://eclipse.dev/eclipse/development/plans.html).
 The execution environment listed in the table is based on the needs of the bundle and the expected use scenarios for the bundle.
 
 ## I have prerequisites that require version X to run, so shouldn't I require version X too?
@@ -71,7 +71,6 @@ However, with the the fast evolving Java runtime environment, you may want to up
 4.  Note the section in the lower left corner entitled **Execution
     Environments**.
 5.  Add your appropriate environment(s) noting the [special
-    cases](#special-cases) below.
 6.  Save the file.
 7.  Select the link "update the classpath and compiler compliance
     settings".
