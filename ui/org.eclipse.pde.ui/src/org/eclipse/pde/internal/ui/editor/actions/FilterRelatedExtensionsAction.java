@@ -33,7 +33,6 @@ public class FilterRelatedExtensionsAction extends Action {
 
 	public FilterRelatedExtensionsAction(TreeViewer treeViewer, FormFilteredTree filteredTree, ExtensionsSection section) {
 		setImageDescriptor(PDEPluginImages.DESC_FILTER_RELATED);
-		setDisabledImageDescriptor(PDEPluginImages.DESC_FILTER_RELATED_DISABLED);
 		// Extensions section attaches this action to the global find keybinding
 //		String filterBinding = ((IBindingService) PlatformUI.getWorkbench().getAdapter(IBindingService.class)).getBestActiveBindingFormattedFor(ActionFactory.FIND.getCommandId());
 		setText(PDEUIMessages.Actions_filter_relatedPluginElements /*+ ((filterBinding != null) ? "\t" + filterBinding : "")*/);

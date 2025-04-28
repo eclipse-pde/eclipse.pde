@@ -41,8 +41,6 @@ public class NavigateAction extends Action {
 			setToolTipText(ActionMessages.NextAction_tooltip);
 			ImageDescriptor enabledImageDescriptor = ApiUIPlugin.getImageDescriptor(IApiToolsConstants.IMG_ELCL_NEXT_NAV);
 			setImageDescriptor(enabledImageDescriptor);
-			ImageDescriptor disabledImageDescriptor = ApiUIPlugin.getImageDescriptor(IApiToolsConstants.IMG_DLCL_NEXT_NAV);
-			setDisabledImageDescriptor(disabledImageDescriptor);
 			setActionDefinitionId(ActionFactory.NEXT.getCommandId());
 			if (bars != null) {
 				bars.setGlobalActionHandler(ActionFactory.NEXT.getId(), this);
@@ -52,8 +50,6 @@ public class NavigateAction extends Action {
 			setToolTipText(ActionMessages.PreviousAction_tooltip);
 			ImageDescriptor enabledImageDescriptor = ApiUIPlugin.getImageDescriptor(IApiToolsConstants.IMG_ELCL_PREV_NAV);
 			setImageDescriptor(enabledImageDescriptor);
-			ImageDescriptor disabledImageDescriptor = ApiUIPlugin.getImageDescriptor(IApiToolsConstants.IMG_DLCL_PREV_NAV);
-			setDisabledImageDescriptor(disabledImageDescriptor);
 			setActionDefinitionId(ActionFactory.PREVIOUS.getCommandId());
 			if (bars != null) {
 				bars.setGlobalActionHandler(ActionFactory.PREVIOUS.getId(), this);

@@ -463,11 +463,6 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 				}
 
 				@Override
-				public ImageDescriptor getDisabledImageDescriptor() {
-					return PDEPluginImages.DESC_REMOVE_ATT_DISABLED;
-				}
-
-				@Override
 				public void run() {
 					handleDelete();
 				}
@@ -555,11 +550,6 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 				@Override
 				public ImageDescriptor getImageDescriptor() {
 					return PDEPluginImages.DESC_DELETE;
-				}
-
-				@Override
-				public ImageDescriptor getDisabledImageDescriptor() {
-					return PDEPluginImages.DESC_REMOVE_ATT_DISABLED;
 				}
 			};
 			deleteAction.setEnabled(page.getModel().isEditable());
