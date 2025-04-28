@@ -1,16 +1,6 @@
 PDE/Target Definitions
 ======================
 
-Contents
---------
-
-*   [1 Introduction](#Introduction)
-*   [2 The Basics](#The-Basics)
-*   [3 Examples](#Examples)
-*   [4 Known Issues](#Known-Issues)
-    *   [4.1 Redownloading of Bundles](#Redownloading-of-Bundles)
-*   [5 Links](#Links)
-
 Introduction
 ------------
 

@@ -3,69 +3,6 @@ PDE/User Guide
 
 Community members are encouraged to maintain the page, and make sure the information is accurate.
   
-Contents
---------
-
-*   [1 Getting Started](#Getting-Started)
-    *   [1.1 PDE Overview](#PDE-Overview)
-*   [2 Concepts](#Concepts)
-    *   [2.1 Extensions and Extension Points](#Extensions-and-Extension-Points)
-    *   [2.2 Feature](#Feature)
-    *   [2.3 Fragment](#Fragment)
-    *   [2.4 Plug-in](#Plug-in)
-    *   [2.5 Product](#Product)
-    *   [2.6 Target Platform](#Target-Platform)
-    *   [2.7 Update Site](#Update-Site)
-*   [3 Tasks](#Tasks)
-    *   [3.1 PDE Build](#PDE-Build)
-        *   [3.1.1 Automated building of Products](#Automated-building-of-Products)
-        *   [3.1.2 Automated building of Features](#Automated-building-of-Features)
-        *   [3.1.3 Automated building of Plug-ins](#Automated-building-of-Plug-ins)
-        *   [3.1.4 Generating Ant scripts](#Generating-Ant-scripts)
-        *   [3.1.5 Generating Ant scripts from the command line](#Generating-Ant-scripts-from-the-command-line)
-    *   [3.2 PDE Build Advanced Topics](#PDE-Build-Advanced-Topics)
-    *   [3.3 PDE Build Integration with p2](#PDE-Build-Integration-with-p2)
-    *   [3.4 PDE API Tooling](#PDE-API-Tooling)
-        *   [3.4.1 Setting up API Tooling](#Setting-up-API-Tooling)
-        *   [3.4.2 Setting up a baseline](#Setting-up-a-baseline)
-        *   [3.4.3 Creating filters](#Creating-filters)
-        *   [3.4.4 Removing filters](#Removing-filters)
-        *   [3.4.5 Changing API Tooling options](#Changing-API-Tooling-options)
-        *   [3.4.6 Comparing to an API Baseline](#Comparing-to-an-API-Baseline)
-    *   [3.5 PDE UI](#PDE-UI)
-        *   [3.5.1 Export and Install into the Running Host](#Export-and-Install-into-the-Running-Host)
-*   [4 Reference](#Reference)
-    *   [4.1 API Tools Ant Tasks](#API-Tools-Ant-Tasks)
-    *   [4.2 Build Configuration](#Build-Configuration)
-    *   [4.3 Editors](#Editors)
-    *   [4.4 Launchers](#Launchers)
-    *   [4.5 Menus and Actions](#Menus-and-Actions)
-        *   [4.5.1 API Tooling Setup](#API-Tooling-Setup)
-        *   [4.5.2 API Baseline](#API-Baseline)
-    *   [4.6 Preferences](#Preferences)
-    *   [4.7 Property Pages](#Property-Pages)
-        *   [4.7.1 API Errors and Warnings](#API-Errors-and-Warnings)
-        *   [4.7.2 API Problem Filters](#API-Problem-Filters)
-    *   [4.8 Quickfixes](#Quickfixes)
-        *   [4.8.1 Create API Problem Filter](#Create-API-Problem-Filter)
-        *   [4.8.2 Missing API Baseline](#Missing-API-Baseline)
-        *   [4.8.3 Since Tags](#Since-Tags)
-        *   [4.8.4 Version Numbering](#Version-Numbering)
-        *   [4.8.5 Remove Unused API Problem Filters](#Remove-Unused-API-Problem-Filters)
-    *   [4.9 Views](#Views)
-    *   [4.10 Wizards and Dialogs](#Wizards-and-Dialogs)
-    *   [4.11 API Reference](#API-Reference)
-    *   [4.12 Extension Points Reference](#Extension-Points-Reference)
-    *   [4.13 Other Reference Information](#Other-Reference-Information)
-    *   [4.14 Defining API Restrictions](#Defining-API-Restrictions)
-    *   [4.15 Javadoc @since Tag Management](#Javadoc-since-Tag-Management)
-*   [5 Tips and Tricks](#Tips-and-Tricks)
-    *   [5.1 Creating a Rich Client Application](#Creating-a-Rich-Client-Application)
-    *   [5.2 Creating an Eclipse Plug-in](#Creating-an-Eclipse-Plug-in)
-    *   [5.3 To clean or not to clean](#To-clean-or-not-to-clean)
-    *   [5.4 Templates](#Templates)
-    *   [5.5 Dependency Extent](#Dependency-Extent)
-    *   [5.6 Extending the Java Search Scope](#Extending-the-Java-Search-Scope)
 
 Getting Started
 ===============
@@ -373,7 +310,7 @@ Since Ant scripts use the replacement variables in build.properties, you can typ
 
 To create scripts, you can simply select **Create Ant Build File** while a suitable manifest file (plugin.xml, fragment.xml or feature.xml) is selected in the Navigator or Package Explorer views. The command will generate the build script. After selecting Run Ant... from the pop-up menu while the newly generated script file is selected, the following wizard will open:
 
-![Pde-feature-jar.png](https://raw.githubusercontent.com/eclipse-pde/eclipse.pde/master/docs/images/Pde-feature-jar.png)
+![Pde-feature-jar.png](images/Pde-feature-jar.png)
 
 The standard Ant wizard allows customization in two ways: by providing the execution arguments and by selecting one or more build targets.
 
@@ -489,7 +426,9 @@ Each attribute=value pair will be inserted into the generated xml corresponding 
 
 **Directory file format**
 
-Directory files are used to indicate where the plug-ins and features can be obtained, as well as their versions. It is a Java property file whose keys are always of the form type@id\[,version\] but where the value is open ended. When using map files to fetch your elements, the directory file is a concatenation of all the map files, for more details on map files see Fetching From Repositories.
+Directory files are used to indicate where the plug-ins and features can be obtained, as well as their versions.
+It is a Java property file whose keys are always of the form type@id\[,version\] but where the value is open ended.
+When using map files to fetch your elements, the directory file is a concatenation of all the map files, for more details on map files see Fetching From Repositories.
 
 **Using the targets**
 
@@ -531,7 +470,7 @@ This section explains how to enable a new plug-ins for API analysis.
 3.  Fill the first page as you would do for any other plug-in and click Next.
 4.  Check the option _Enable API Analysis_.
 
-![Pde plugin creation wizard.png](https://raw.githubusercontent.com/eclipse-pde/eclipse.pde/master/docs/images/Pde_plugin_creation_wizard.png)
+![Pde plugin creation wizard.png](images/Pde_plugin_creation_wizard.png)
 
 1.  Complete your Plug-in setup
 2.  Click Finish.
@@ -580,7 +519,7 @@ If you want to remove an existing API filter, do the following steps:
 *   Right-click on the project and select **Properties**.
 *   Go to Plug-in Development > API Problem Filters
 
-![Pde api filter properties.png](https://raw.githubusercontent.com/eclipse-pde/eclipse.pde/master/docs/images/Pde_api_filter_properties.png)
+![Pde api filter properties.png](images/Pde_api_filter_properties.png)
 
 *   From the list of existing filters, select the one you want to remove
 *   Select **Remove**.
@@ -603,7 +542,8 @@ The options can be changed per project or workspace.
 
 ### Comparing to an API Baseline
 
-Any API tooling enabled project in your workspace can be compared to any one of the API baselines set up in your workspace. In addition to selecting projects to compare to a baseline you can also select (or multi-select) any of the following within an API tools enabled project:
+Any API tooling enabled project in your workspace can be compared to any one of the API baselines set up in your workspace.
+In addition to selecting projects to compare to a baseline you can also select (or multi-select) any of the following within an API tools enabled project:
 
 *   source folders
 *   package fragments
@@ -622,7 +562,11 @@ PDE UI
 
 ### Export and Install into the Running Host
 
-PDE provides several tools for launching plug-ins and features in your workspace. The Eclipse Application Launcher can be used to create a second running instance of Eclipse that runs the code you have in your workspace. This is commonly referred to as self-hosting. Self-hosting is a powerful debugging and testing tool. However it is sometimes necessary for code to be tested in your host, your currently running Eclipse instance. To test code in the host, you need to export and install into the running Eclipse instance.
+PDE provides several tools for launching plug-ins and features in your workspace.
+The Eclipse Application Launcher can be used to create a second running instance of Eclipse that runs the code you have in your workspace.
+This is commonly referred to as self-hosting. Self-hosting is a powerful debugging and testing tool.
+However it is sometimes necessary for code to be tested in your host, your currently running Eclipse instance.
+To test code in the host, you need to export and install into the running Eclipse instance.
 
 To export plug-ins and features and install them into the host Eclipse do the following:
 
@@ -664,7 +608,7 @@ Menus and Actions
 ### API Tooling Setup
 
 
-Select the **API Tooling Setup** command ![Pde category menu.gif](https://raw.githubusercontent.com/eclipse-pde/eclipse.pde/master/docs/images/Pde_category_menu.gif) to start the API Setup wizard.
+Select the **API Tooling Setup** command ![Pde category menu.gif](images/Pde_category_menu.gif) to start the API Setup wizard.
 
 ### API Baseline
 
@@ -686,7 +630,7 @@ API problems are created during project builds (auto and full builds), the tooli
 2.  **Binary Incompatibilities** \- changes between versions are not binary compatible.
 3.  **Version Problems** \- plug-in versions or code versions (@since tags) not correct.
 
-![Pde-errorwarning-prop-page.png](https://raw.githubusercontent.com/eclipse-pde/eclipse.pde/master/docs/images/Pde-errorwarning-prop-page.png)
+![Pde-errorwarning-prop-page.png](images/Pde-errorwarning-prop-page.png)
 
 You can also configure the problem severities for the entire workspace as well using the **Plug-in Development > API Errors/Warnings** preference page.
 
@@ -703,7 +647,7 @@ To locate this property page:
 1.  Open the context menu for any API tooling enabled project and select **Properties**.
 2.  Navigate to **Plug-in Development > API Problem Filters**.
 
-![Pde-api-problem-filter-prop.png](https://raw.githubusercontent.com/eclipse-pde/eclipse.pde/master/docs/images/Pde-api-problem-filter-prop.png)
+![Pde-api-problem-filter-prop.png](images/Pde-api-problem-filter-prop.png)
 
 Quickfixes
 ----------
