@@ -41,7 +41,6 @@ public class ToggleExpandStateAction extends Action {
 
 	public ToggleExpandStateAction(FormFilteredTree filteredTree, TreeViewer treeViewer) {
 		setImageDescriptor(PDEPluginImages.DESC_TOGGLE_EXPAND_STATE);
-		setDisabledImageDescriptor(PDEPluginImages.DESC_TOGGLE_EXPAND_STATE_DISABLED);
 		setText(PDEUIMessages.ExtensionsPage_toggleExpandState);
 		fExtensionTree = treeViewer;
 		fFilteredTree = filteredTree;

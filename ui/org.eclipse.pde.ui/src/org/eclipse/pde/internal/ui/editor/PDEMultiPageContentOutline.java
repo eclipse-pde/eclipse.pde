@@ -201,7 +201,6 @@ public class PDEMultiPageContentOutline extends Page implements IContentOutlineP
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IHelpContextIds.OUTLINE_SORT_ACTION);
 			setText(PDEUIMessages.PDEMultiPageContentOutline_SortingAction_label);
 			setImageDescriptor(PDEPluginImages.DESC_ALPHAB_SORT_CO);
-			setDisabledImageDescriptor(PDEPluginImages.DESC_ALPHAB_SORT_CO_DISABLED);
 			setToolTipText(PDEUIMessages.PDEMultiPageContentOutline_SortingAction_tooltip);
 			setDescription(PDEUIMessages.PDEMultiPageContentOutline_SortingAction_description);
 			setChecked(sortingOn);

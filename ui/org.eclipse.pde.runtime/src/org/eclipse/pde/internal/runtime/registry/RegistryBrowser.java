@@ -412,7 +412,6 @@ public class RegistryBrowser extends ViewPart {
 		fRefreshAction.setText(PDERuntimeMessages.RegistryView_refresh_label);
 		fRefreshAction.setToolTipText(PDERuntimeMessages.RegistryView_refresh_tooltip);
 		fRefreshAction.setImageDescriptor(PDERuntimePluginImages.DESC_REFRESH);
-		fRefreshAction.setDisabledImageDescriptor(PDERuntimePluginImages.DESC_REFRESH_DISABLED);
 
 		fShowPluginsAction = new Action(PDERuntimeMessages.RegistryView_showRunning_label) {
 			@Override

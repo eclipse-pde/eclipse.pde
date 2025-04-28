@@ -120,7 +120,6 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 			setDescription(PDEUIMessages.DependenciesView_ShowLoopsAction_description);
 			setToolTipText(PDEUIMessages.DependenciesView_ShowLoopsAction_tooltip);
 			setImageDescriptor(PDEPluginImages.DESC_DEP_LOOP);
-			setDisabledImageDescriptor(PDEPluginImages.DESC_DEP_LOOP_DISABLED);
 			setEnabled(false);
 		}
 
@@ -139,7 +138,6 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 			setDescription(PDEUIMessages.DependenciesView_ShowCalleesAction_description);
 			setToolTipText(PDEUIMessages.DependenciesView_ShowCalleesAction_tooltip);
 			setImageDescriptor(PDEPluginImages.DESC_CALLEES);
-			setDisabledImageDescriptor(PDEPluginImages.DESC_CALLEES_DISABLED);
 		}
 
 		@Override
@@ -158,7 +156,6 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 			setDescription(PDEUIMessages.DependenciesView_ShowCallersAction_description);
 			setToolTipText(PDEUIMessages.DependenciesView_ShowCallersAction_tooltip);
 			setImageDescriptor(PDEPluginImages.DESC_CALLERS);
-			setDisabledImageDescriptor(PDEPluginImages.DESC_CALLERS_DISABLED);
 		}
 
 		@Override
@@ -177,7 +174,6 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 			setDescription(PDEUIMessages.DependenciesView_ShowListAction_description);
 			setToolTipText(PDEUIMessages.DependenciesView_ShowListAction_tooltip);
 			setImageDescriptor(PDEPluginImages.DESC_FLAT_LAYOUT);
-			setDisabledImageDescriptor(PDEPluginImages.DESC_FLAT_LAYOUT_DISABLED);
 		}
 
 		@Override
@@ -197,7 +193,6 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 			setDescription(PDEUIMessages.DependenciesView_ShowTreeAction_description);
 			setToolTipText(PDEUIMessages.DependenciesView_ShowTreeAction_tooltip);
 			setImageDescriptor(PDEPluginImages.DESC_HIERARCHICAL_LAYOUT);
-			setDisabledImageDescriptor(PDEPluginImages.DESC_HIERARCHICAL_LAYOUT_DISABLED);
 		}
 
 		@Override

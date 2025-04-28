@@ -37,7 +37,6 @@ public class ToggleLinkWithEditorAction extends Action {
 		setToolTipText(PDEUIMessages.ToggleLinkWithEditorAction_toolTip);
 		setDescription(PDEUIMessages.ToggleLinkWithEditorAction_description);
 		setImageDescriptor(PDEPluginImages.DESC_LINK_WITH_EDITOR);
-		setDisabledImageDescriptor(PDEPluginImages.DESC_LINK_WITH_EDITOR_DISABLED);
 	}
 
 	@Override

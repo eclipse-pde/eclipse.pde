@@ -1823,7 +1823,6 @@
                 locationURI="popup:org.eclipse.ui.popup.any?after=additions">
              <command
                    commandId="org.eclipse.pde.ui.importFromRepository"
-                   disabledIcon="icons/dtool16/imp_extplug.png"
                    icon="icons/etool16/imp_extplug.png"
                    label="%importFromRepository.action.menu.name"
                    style="push"

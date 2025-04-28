@@ -38,7 +38,6 @@ public class SelectSessionAction extends Action implements IMenuCreator {
 		setText(ActionMessages.SelectSessionAction_label);
 		setToolTipText(ActionMessages.SelectSessionAction_tooltip);
 		setImageDescriptor(ApiUIPlugin.getImageDescriptor(IApiToolsConstants.IMG_ELCL_COMPARE_APIS));
-		setDisabledImageDescriptor(ApiUIPlugin.getImageDescriptor(IApiToolsConstants.IMG_ELCL_COMPARE_APIS_DISABLED));
 		setMenuCreator(this);
 		setEnabled(false);
 	}

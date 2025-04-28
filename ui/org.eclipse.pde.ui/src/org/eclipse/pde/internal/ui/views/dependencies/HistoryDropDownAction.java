@@ -36,7 +36,6 @@ public class HistoryDropDownAction extends Action implements IMenuCreator {
 		fMenu = null;
 		setToolTipText(PDEUIMessages.HistoryDropDownAction_tooltip);
 		setImageDescriptor(PDEPluginImages.DESC_HISTORY_LIST);
-		setDisabledImageDescriptor(PDEPluginImages.DESC_HISTORY_LIST_DISABLED);
 		setMenuCreator(this);
 	}
 
