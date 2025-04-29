@@ -35,6 +35,7 @@ import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
+import org.osgi.framework.namespace.HostNamespace;
 import org.osgi.framework.wiring.BundleRequirement;
 import org.osgi.framework.wiring.BundleRevision;
 import org.osgi.framework.wiring.BundleWire;
@@ -196,6 +197,19 @@ public class DependencyManager {
 				}
 			}
 
+			if (isFragment(wiring.getRevision())) {
+				// Requirements of a fragment are hosted at the host, which
+				// therefore requires the corresponding wires: OSGi Core spec,
+				// chapter 6.4.1 - Hosted Requirements and Capabilities
+				for (BundleWire hostWire : wiring.getRequiredWires(HostNamespace.HOST_NAMESPACE)) {
+					// Temporarily remove this fragment's host from the closure
+					// to ensure it's added again below. In the subsequent
+					// processing this fragment's requirements will then also be
+					// considered (before it was discarded).
+					closure.remove(hostWire.getProvider());
+				}
+			}
+
 			List<BundleWire> requiredWires = wiring.getRequiredWires(null);
 			for (BundleWire wire : requiredWires) {
 				BundleRevision declaringBundle = wire.getRequirement().getRevision();
@@ -220,6 +234,10 @@ public class DependencyManager {
 		if (bundle != null && bundle.isResolved() && !bundle.isRemovalPending() && requiredBundles.add(bundle)) {
 			pending.add(bundle);
 		}
+	}
+
+	private static boolean isFragment(BundleRevision bundle) {
+		return (bundle.getTypes() & BundleRevision.TYPE_FRAGMENT) != 0;
 	}
 
 	private static boolean isOptional(BundleRequirement requirement) {
