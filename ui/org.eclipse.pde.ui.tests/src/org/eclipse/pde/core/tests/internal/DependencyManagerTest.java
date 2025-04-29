@@ -309,6 +309,34 @@ public class DependencyManagerTest {
 	}
 
 	@Test
+	public void testFindRequirementsClosure_requirementsOfTransitivlyRequiredFragment() throws Exception {
+		setTargetPlatform( //
+				bundle("bundle.host", "1.0.0"),
+
+				bundle("bundle.a", "1.0.0", //
+						entry(REQUIRE_BUNDLE, "bundle.host"), //
+						entry(REQUIRE_CAPABILITY, "some.test.capability")),
+
+				bundle("bundle.fragment", "1.0.0", //
+						entry(FRAGMENT_HOST, "bundle.host"), //
+						entry(REQUIRE_BUNDLE, "bundle.b"), //
+						entry(PROVIDE_CAPABILITY, "some.test.capability")),
+
+				bundle("bundle.b", "1.0.0"));
+
+		BundleDescription bundleHost = bundleDescription("bundle.host", "1.0.0");
+		BundleDescription bundleFragment = bundleDescription("bundle.fragment", "1.0.0");
+		BundleDescription bundleA = bundleDescription("bundle.a", "1.0.0");
+		BundleDescription bundleB = bundleDescription("bundle.b", "1.0.0");
+
+		List<BundleDescription> bundles = List.of(bundleHost, bundleA);
+		// It's important that the host is first
+
+		Set<BundleDescription> noFragmentsClosure = findRequirementsClosure(bundles);
+		assertThat(noFragmentsClosure).isEqualTo(Set.of(bundleHost, bundleFragment, bundleA, bundleB));
+	}
+
+	@Test
 	public void testFindRequirementsClosure_includeOptional() throws Exception {
 
 		setTargetPlatform( //
