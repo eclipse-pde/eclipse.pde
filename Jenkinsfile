@@ -37,16 +37,14 @@ pipeline {
 						**/target/artifactcomparison/**,\
 						**/target/compilelogs/**,\
 						repository/target/repository/**')
-					junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
 					discoverGitReferenceBuild referenceJob: 'eclipse.pde/master'
-					recordIssues enabledForFailure: true, publishAllIssues: true, ignoreQualityGate: true,
-						tools: [
+					junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
+					recordIssues publishAllIssues: true, ignoreQualityGate: true, enabledForFailure: true, tools: [
 							eclipse(name: 'Compiler', pattern: '**/target/compilelogs/*.xml'),
 							issues(name: 'API Tools', id: 'apitools', pattern: '**/target/apianalysis/*.xml'),
 							mavenConsole(),
 							javaDoc()
-						],
-						qualityGates: [[threshold: 1, type: 'NEW', unstable: true]]
+						], qualityGates: [[threshold: 1, type: 'NEW', unstable: true]]
 				}
 			}
 		}
@@ -54,14 +52,14 @@ pipeline {
 			when {
 				branch 'master'
 			}
-            steps {
-                sshagent ( ['projects-storage.eclipse.org-bot-ssh']) {
-                     sh '''
-                        ssh genie.pde@projects-storage.eclipse.org "rm -rf /home/data/httpd/download.eclipse.org/pde/builds/master/*"
-                        scp -r repository/target/repository/* genie.pde@projects-storage.eclipse.org:/home/data/httpd/download.eclipse.org/pde/builds/master/
-                        '''
-                }
-            }
-        }
+			steps {
+				sshagent(['projects-storage.eclipse.org-bot-ssh']) {
+					 sh '''
+						ssh genie.pde@projects-storage.eclipse.org "rm -rf /home/data/httpd/download.eclipse.org/pde/builds/master/*"
+						scp -r repository/target/repository/* genie.pde@projects-storage.eclipse.org:/home/data/httpd/download.eclipse.org/pde/builds/master/
+						'''
+				}
+			}
+		}
 	}
 }
