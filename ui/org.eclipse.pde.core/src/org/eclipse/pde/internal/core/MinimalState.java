@@ -112,17 +112,6 @@ public class MinimalState {
 
 	protected String fSystemBundle = IPDEBuildConstants.BUNDLE_OSGI;
 
-	protected MinimalState(MinimalState state) {
-		this.fState = BundleHelper.getPlatformAdmin().getFactory().createState(state.fState);
-		this.fState.setPlatformProperties(state.fState.getPlatformProperties());
-		this.fState.setResolver(BundleHelper.getPlatformAdmin().createResolver());
-		this.fId = state.fId;
-		this.fEEListChanged = state.fEEListChanged;
-		this.fExecutionEnvironments = state.fExecutionEnvironments;
-		this.fNoProfile = state.fNoProfile;
-		this.fSystemBundle = state.fSystemBundle;
-	}
-
 	protected MinimalState() {
 	}
 
