@@ -43,5 +43,6 @@
     <module>org.eclipse.pde.genericeditor.extension</module>
     <module>org.eclipse.pde.genericeditor.extension.tests</module>
     <module>org.eclipse.pde.unittest.junit</module>
+    <module>org.eclipse.swt.tools.spies</module>
   </modules>
 </project>
