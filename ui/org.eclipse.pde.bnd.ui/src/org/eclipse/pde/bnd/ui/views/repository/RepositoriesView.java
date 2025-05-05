@@ -39,6 +39,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
@@ -84,6 +85,7 @@ import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
@@ -151,6 +153,8 @@ import org.osgi.service.repository.Repository;
 import aQute.bnd.build.Workspace;
 import aQute.bnd.exceptions.Exceptions;
 import aQute.bnd.http.HttpClient;
+import aQute.bnd.osgi.resource.FilterParser.PackageExpression;
+import aQute.bnd.osgi.resource.ResourceUtils;
 import aQute.bnd.service.Actionable;
 import aQute.bnd.service.Refreshable;
 import aQute.bnd.service.Registry;
@@ -198,6 +202,9 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 	private final IObservableValue<String> workspaceName = new WritableValue<>();
 	private final IObservableValue<String> workspaceDescription = new WritableValue<>();
 
+	private Object[]                               lastExpandedElements;
+    private TreePath[]                              lastExpandedPaths;
+    
 	@Override
 	public void createPartControl(final Composite parent) {
 		// CREATE CONTROLS
@@ -601,11 +608,28 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 	}
 
 	private void updatedFilter(String filterString) {
-		contentProvider.setFilter(filterString);
-		viewer.refresh();
-		if (filterString != null) {
-			viewer.expandToLevel(2);
-		}
+	    viewer.getTree()
+        .setRedraw(false);
+
+        try {
+            if (filterString == null || filterString.isEmpty()) {
+                // Restore previous state when clearing filter
+                contentProvider.setFilter(null);
+                viewer.refresh(); // Required to clear filter
+                restoreExpansionState();
+                viewer.refresh();
+            } else {
+                // Save state before applying new filter
+                saveExpansionState();
+                contentProvider.setFilter(filterString);
+                viewer.refresh();
+                viewer.expandToLevel(2);
+            }
+    
+        } finally {
+            viewer.getTree()
+                .setRedraw(true);
+        }
 	}
 
 	void createActions() {
@@ -1209,10 +1233,78 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 
 		if ((act instanceof Repository) || (act instanceof RepositoryPlugin)) {
 			hmenu.add(createContextMenueCopyInfoRepo(act, rp, clipboard));
+			hmenu.add(createContextMenueCopyBundlesWithSelfImports(act, rp, clipboard));
 		}
 
 	}
 
+	
+	private HierarchicalLabel<Action> createContextMenueCopyBundlesWithSelfImports(Actionable act, final RepositoryPlugin rp,
+        final Clipboard clipboard) {
+        return new HierarchicalLabel<Action>("Copy to clipboard :: Bundles with substitution packages (self-imports)",
+            (label) -> createAction(label.getLeaf(),
+                "Add list of bundles containing packages which are imported and exported in their Manifest.", true,
+                false, rp, () -> {
+
+                	final StringBuilder sb = new StringBuilder(
+    						"Shows list of bundles in the repository '" + rp.getName()
+    							+ "' containing substitution packages / self-imports (i.e. same package imported and exported) in their Manifest. \n"
+    							+ "Note: a missing version range can cause wiring / resolution problems.\n"
+    							+ "See https://docs.osgi.org/specification/osgi.core/8.0.0/framework.module.html#i3238802 "
+    							+ "and https://docs.osgi.org/specification/osgi.core/8.0.0/framework.module.html#framework.module-import.export.same.package "
+    							+ "for more information."
+    							+ "\n\n");
+
+                    for (RepositoryBundleVersion rpv : contentProvider.allRepoBundleVersions(rp)) {
+                        org.osgi.resource.Resource r = rpv.getResource();
+                        Collection<PackageExpression> selfImports = ResourceUtils
+                            .getSubstitutionPackages(r);
+
+                        if (!selfImports.isEmpty()) {
+                            long numWithoutRange = selfImports.stream()
+                                .filter(pckExp -> pckExp.getRangeExpression() == null)
+                                .count();
+
+                            // Main package information
+                            sb.append(r.toString())
+                                .append("\n");
+                            sb.append("    Substitution packages: ")
+                                .append(selfImports.size());
+
+                            // Additional information about packages without
+                            // version range
+                            if (numWithoutRange > 0) {
+                                sb.append("    (")
+                                    .append(numWithoutRange)
+                                    .append(" without version range)");
+                            }
+                            sb.append("\n");
+
+                            // List of substitution packages
+                            sb.append("    [\n");
+                            for (PackageExpression pckExp : selfImports) {
+                                sb.append("        ")
+                                    .append(pckExp.toString())
+                                    .append(",\n");
+                            }
+                            // Remove the last comma and newline
+                            if (!selfImports.isEmpty()) {
+                                sb.setLength(sb.length() - 2);
+                            }
+                            sb.append("\n    ]\n\n");
+                        }
+
+                    }
+
+                    if (sb.isEmpty()) {
+                        clipboard.copy("-Empty-");
+                    } else {
+                        clipboard.copy(sb.toString());
+                    }
+
+            }));
+    }
+	
 	private HierarchicalLabel<Action> createContextMenueCopyInfoRepo(Actionable act, final RepositoryPlugin rp,
 		final Clipboard clipboard) {
 		return new HierarchicalLabel<Action>("Copy to clipboard :: Copy info", (label) -> createAction(label.getLeaf(),
@@ -1330,6 +1422,21 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 		}
 	}
 
+	private void saveExpansionState() {
+        lastExpandedElements = viewer.getExpandedElements();
+        lastExpandedPaths = viewer.getExpandedTreePaths();
+    }
+
+    private void restoreExpansionState() {
+        if (lastExpandedElements != null) {
+            viewer.setExpandedElements(lastExpandedElements);
+        }
+        if (lastExpandedPaths != null) {
+            viewer.setExpandedTreePaths(lastExpandedPaths);
+        }
+    }
+
+    
 	@Override
 	public Workspace getWorkspace() {
 		return this.workspace;
