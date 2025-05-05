@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.ui.parts;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.UnaryOperator;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -39,6 +40,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.PDELabelUtility;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -288,6 +290,54 @@ public class PluginVersionPart {
 		fMinVersionText = new Text(parent, SWT.SINGLE | SWT.BORDER);
 		fMinVersionText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fMinVersionText.setEnabled(editable);
+
+		if (!fRangeAllowed) {
+			Label incrLabel = new Label(parent, SWT.NONE);
+			incrLabel.setText(PDEUIMessages.PluginVersionPart_incrementTitle);
+			incrLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+
+			Composite btnBar = new Composite(parent, SWT.NONE);
+			btnBar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+			GridLayout btnBarLayout = new GridLayout(3, true);
+			btnBarLayout.marginWidth = 0;
+			btnBar.setLayout(btnBarLayout);
+
+			// Major Button
+			Button majorBtn = new Button(btnBar, SWT.PUSH);
+			majorBtn.setText(PDEUIMessages.PluginVersionPart_bumpMajor);
+			majorBtn.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> bumpVersion(v ->
+			new Version(v.getMajor() + 1, 0, 0)
+			)));
+			majorBtn.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+			// Minor Button
+			Button minorBtn = new Button(btnBar, SWT.PUSH);
+			minorBtn.setText(PDEUIMessages.PluginVersionPart_bumpMinor);
+			minorBtn.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> bumpVersion(v ->
+			new Version(v.getMajor(), v.getMinor() + 1, 0)
+			)));
+			minorBtn.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+			// Micro Button
+			Button microBtn = new Button(btnBar, SWT.PUSH);
+			microBtn.setText(PDEUIMessages.PluginVersionPart_bumpMicro);
+			microBtn.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> bumpVersion(v ->
+			new Version(v.getMajor(), v.getMinor(), v.getMicro() + 1)
+			)));
+			microBtn.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+			// Initially disable buttons if editable but no valid version
+			if (editable) {
+				updateIncrementButtonsEnabled(majorBtn, minorBtn, microBtn);
+				fMinVersionText.addModifyListener(e -> updateIncrementButtonsEnabled(majorBtn, minorBtn, microBtn));
+			} else {
+				majorBtn.setEnabled(false);
+				minorBtn.setEnabled(false);
+				microBtn.setEnabled(false);
+			}
+		}
+
+
 	}
 
 	public void preloadFields() {
@@ -454,4 +504,28 @@ public class PluginVersionPart {
 	protected String getGroupText() {
 		return PDEUIMessages.DependencyPropertiesDialog_groupText;
 	}
+
+	private void bumpVersion(UnaryOperator<Version> versionModifier) {
+		String originalText = getMinVersion();
+		Version originalVersion = new Version(originalText);
+		Version newVersion = versionModifier.apply(originalVersion);
+
+		String qualifier = ""; //$NON-NLS-1$
+		int qualifierIndex = originalText.indexOf(originalVersion.toString()) + originalVersion.toString().length();
+		if (qualifierIndex < originalText.length()) {
+			qualifier = originalText.substring(qualifierIndex);
+		}
+
+		String target = newVersion.toString() + qualifier;
+		setVersion(target);
+		preloadFields();
+	}
+
+	private void updateIncrementButtonsEnabled(Button majorBtn, Button minorBtn, Button microBtn) {
+		boolean valid = VersionUtil.validateVersion(getMinVersion()).isOK();
+		if (majorBtn != null && !majorBtn.isDisposed()) majorBtn.setEnabled(valid);
+		if (minorBtn != null && !minorBtn.isDisposed()) minorBtn.setEnabled(valid);
+		if (microBtn != null && !microBtn.isDisposed()) microBtn.setEnabled(valid);
+	}
+
 }
