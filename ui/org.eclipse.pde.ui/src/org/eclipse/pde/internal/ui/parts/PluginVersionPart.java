@@ -288,6 +288,38 @@ public class PluginVersionPart {
 		fMinVersionText = new Text(parent, SWT.SINGLE | SWT.BORDER);
 		fMinVersionText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fMinVersionText.setEnabled(editable);
+
+		if (!fRangeAllowed) {
+			Label incrLabel = new Label(parent, SWT.NONE);
+			incrLabel.setText(PDEUIMessages.PluginVersionPart_incrementTitle);
+			incrLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+
+			Composite btnBar = new Composite(parent, SWT.NONE);
+			btnBar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
+			GridLayout btnBarLayout = new GridLayout(3, true);
+			btnBarLayout.marginWidth = 0;
+			btnBar.setLayout(btnBarLayout);
+
+			Button majorBtn = new Button(btnBar, SWT.PUSH);
+			majorBtn.setText(PDEUIMessages.PluginVersionPart_bumpMajor);
+			majorBtn.setEnabled(editable);
+			majorBtn.addListener(SWT.Selection, e -> bumpVersion(Type.MAJOR));
+			majorBtn.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+			Button minorBtn = new Button(btnBar, SWT.PUSH);
+			minorBtn.setText(PDEUIMessages.PluginVersionPart_bumpMinor);
+			minorBtn.setEnabled(editable);
+			minorBtn.addListener(SWT.Selection, e -> bumpVersion(Type.MINOR));
+			minorBtn.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+			Button microBtn = new Button(btnBar, SWT.PUSH);
+			microBtn.setText(PDEUIMessages.PluginVersionPart_bumpMicro);
+			microBtn.setEnabled(editable);
+			microBtn.addListener(SWT.Selection, e -> bumpVersion(Type.MICRO));
+			microBtn.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		}
+
 	}
 
 	public void preloadFields() {
@@ -454,4 +486,35 @@ public class PluginVersionPart {
 	protected String getGroupText() {
 		return PDEUIMessages.DependencyPropertiesDialog_groupText;
 	}
+	
+	private enum Type {
+        MAJOR, MINOR, MICRO
+    }
+
+    private void bumpVersion(Type type) {
+        String target;
+        try {
+            Version v = new Version(fMinVersionText.getText().trim());
+            int maj = v.getMajor(), min = v.getMinor(), mic = v.getMicro();
+            switch (type) {
+                case MAJOR:
+                    maj++;
+                    min = 0;
+                    mic = 0;
+                    break;
+                case MINOR:
+                    min++;
+                    mic = 0;
+                    break;
+                case MICRO:
+                    mic++;
+                    break;
+            }
+            target = new Version(maj, min, mic).toString();
+        } catch (IllegalArgumentException e) {
+            target = "1.0.0"; //$NON-NLS-1$
+        }
+        setVersion(target);
+        preloadFields();
+    }
 }
