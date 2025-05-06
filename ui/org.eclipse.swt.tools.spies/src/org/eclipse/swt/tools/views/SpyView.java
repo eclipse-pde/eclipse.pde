@@ -16,12 +16,10 @@ package org.eclipse.swt.tools.views;
 import java.io.*;
 import java.lang.reflect.*;
 
-import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
-import org.eclipse.swt.tools.internal.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.*;
@@ -36,8 +34,8 @@ public class SpyView extends ViewPart {
 
 	static final int TIMEOUT = 100;
 
-	private static final ImageDescriptor SPY_IMAGE_DESCRIPTOR = ImageDescriptor.createFromURL(
-			FileLocator.find(Platform.getBundle(SpiesConstants.PLUGIN_ID), new Path("icons/spy.png"), null));
+	private static final ImageDescriptor SPY_IMAGE_DESCRIPTOR = ImageDescriptor.createFromFile(SpyView.class,
+			"/icons/spy.png");
 	/**
 	 * This is a callback that will allow us
 	 * to create the viewer and initialize it.
