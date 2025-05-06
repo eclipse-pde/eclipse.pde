@@ -332,7 +332,7 @@ public class LicenseReplaceTask extends Task {
 					while (licenseKeys.hasMoreElements()) {
 						String licenseKey = (String) licenseKeys.nextElement();
 						if (featureProperties.containsKey(licenseKey)) {
-							throw new BuildException(NLS.bind(TaskMessages.error_conflictingProperties, new String[] {licenseKey, licensePropertyFile.getAbsolutePath(), featurePropertyFile.getAbsolutePath()}));
+							throw new BuildException(NLS.bind(TaskMessages.error_conflictingProperties, licenseKey, licensePropertyFile.getAbsolutePath(), featurePropertyFile.getAbsolutePath()));
 						}
 					}
 				} catch (FileNotFoundException e) {
