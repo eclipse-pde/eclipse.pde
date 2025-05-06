@@ -83,18 +83,13 @@ public class CompareOperation extends Job {
 					return Status.CANCEL_STATUS;
 				}
 				int size = this.selection.size();
-				String description = NLS.bind(ActionMessages.CompareWithAction_compared_with_against, new Object[] {
-						Integer.valueOf(size), baselineName,
-						Integer.valueOf(delta.getChildren().length) });
+				String description = NLS.bind(ActionMessages.CompareWithAction_compared_with_against, Integer.valueOf(size), baselineName, Integer.valueOf(delta.getChildren().length));
 				if (size == 0) {
 					description = ActionMessages.CompareWithAction_compared_against_nothing;
 				} else if (size == 1) {
 					Object selectedElement = this.selection.getFirstElement();
 					String elementName = selectedElement instanceof IJavaElement i ? i.getElementName() : selectedElement.toString();
-					description = NLS.bind(ActionMessages.CompareWithAction_compared_project_with, new Object[] {
-							elementName,
-							baselineName,
-							Integer.valueOf(delta.getChildren().length) });
+					description = NLS.bind(ActionMessages.CompareWithAction_compared_project_with, elementName, baselineName, Integer.valueOf(delta.getChildren().length));
 				}
 				ApiPlugin.getDefault().getSessionManager().addSession(new DeltaSession(description, delta, baselineName), true);
 				return Status.OK_STATUS;
