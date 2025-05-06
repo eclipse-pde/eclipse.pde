@@ -1156,7 +1156,7 @@ public class BundleComponent extends Component {
 	protected void baselineDisposed(IApiBaseline baseline) throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ApiPlugin.REPORT_BASELINE_IS_DISPOSED,
 				NLS.bind(Messages.BundleApiComponent_baseline_disposed,
-						new Object[] { getName(), baseline.getName(), Thread.currentThread().getName() }),
+						getName(), baseline.getName(), Thread.currentThread().getName()),
 				disposeSource));
 	}
 }
