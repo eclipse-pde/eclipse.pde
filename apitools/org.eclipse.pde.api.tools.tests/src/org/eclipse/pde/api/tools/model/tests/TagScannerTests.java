@@ -89,7 +89,7 @@ public class TagScannerTests {
 		try {
 			TagScanner.newScanner().scan(getCompilationUnit(name), manifest, cfc, null, null);
 		} catch (CoreException e) {
-			fail(MessageFormat.format("Error scanning: {0}", new Object[] { name })); //$NON-NLS-1$
+			fail(MessageFormat.format("Error scanning: {0}", name)); //$NON-NLS-1$
 		}
 	}
 
@@ -101,7 +101,7 @@ public class TagScannerTests {
 		try {
 			TagScanner.newScanner().scan(getCompilationUnit(name), manifest, null, null, null);
 		} catch (CoreException e) {
-			fail(MessageFormat.format("Error scanning: {0}", new Object[] { name })); //$NON-NLS-1$
+			fail(MessageFormat.format("Error scanning: {0}", name)); //$NON-NLS-1$
 		}
 	}
 
@@ -113,7 +113,7 @@ public class TagScannerTests {
 		try {
 			TagScanner.newScanner().scan(getCompilationUnit(name), manifest, null, options, null);
 		} catch (CoreException e) {
-			fail(MessageFormat.format("Error scanning: {0}", new Object[] { name })); //$NON-NLS-1$
+			fail(MessageFormat.format("Error scanning: {0}", name)); //$NON-NLS-1$
 		}
 	}
 
