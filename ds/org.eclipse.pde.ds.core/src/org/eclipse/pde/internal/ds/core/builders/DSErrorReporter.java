@@ -344,7 +344,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 					Class[] parameterTypes = constructor.getParameterTypes();
 					if (parameterTypes.length == 1) {
 						if (parameterTypes[0].equals(Class.forName("java.lang.String"))) { //$NON-NLS-1$
-							constructor.newInstance(new Object[] { value });
+							constructor.newInstance(value);
 
 						}
 					}
