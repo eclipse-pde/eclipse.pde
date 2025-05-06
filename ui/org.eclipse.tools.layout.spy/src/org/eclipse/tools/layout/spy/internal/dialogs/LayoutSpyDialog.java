@@ -647,7 +647,7 @@ public class LayoutSpyDialog {
 			Point noOpSize = child.computeSize(widthHint, heightHint, false);
 			if (noOpSize.x != bounds.width || noOpSize.y != bounds.height) {
 				builder.append(getWarningMessage(NLS.bind(Messages.LayoutSpyDialog_warning_unexpected_compute_size,
-						new Object[] { printHint(widthHint), printHint(heightHint), printPoint(noOpSize) })));
+						printHint(widthHint), printHint(heightHint), printPoint(noOpSize))));
 			}
 
 			if (bounds.height < hWrappedSize.y) {
