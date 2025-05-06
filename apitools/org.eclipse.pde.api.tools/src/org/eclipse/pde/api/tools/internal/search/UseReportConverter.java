@@ -1687,9 +1687,7 @@ public class UseReportConverter extends HTMLConvertor {
 	protected String getTypeCountSummary(String typename, CountGroup counts, int membercount) {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append(OPEN_H4).append(SearchMessages.UseReportConverter_summary).append(CLOSE_H4);
-		buffer.append(OPEN_P).append(NLS.bind(SearchMessages.UseReportConverter___has_total_refs, new String[] {
-				typename, Integer.toString(counts.getTotalRefCount()),
-				Integer.toString(membercount) })).append(CLOSE_P);
+		buffer.append(OPEN_P).append(NLS.bind(SearchMessages.UseReportConverter___has_total_refs, typename, Integer.toString(counts.getTotalRefCount()), Integer.toString(membercount))).append(CLOSE_P);
 		return buffer.toString();
 	}
 }

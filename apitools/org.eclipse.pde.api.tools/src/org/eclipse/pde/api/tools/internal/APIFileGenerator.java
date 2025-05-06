@@ -118,9 +118,7 @@ public class APIFileGenerator {
 			StringWriter out = new StringWriter();
 			PrintWriter writer = new PrintWriter(out);
 			writer.println(NLS.bind(CoreMessages.api_generation_printArguments,
-					new String[] {
-					this.projectName, this.projectLocation,
-					this.binaryLocations, this.targetFolder }));
+					this.projectName, this.projectLocation, this.binaryLocations, this.targetFolder));
 			throw new IllegalArgumentException(String.valueOf(out.getBuffer()));
 		}
 		if (this.debug) {

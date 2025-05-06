@@ -55,9 +55,7 @@ public class CompareTask extends CommonUtilsTask {
 		if (this.referenceBaselineLocation == null || this.currentBaselineLocation == null || this.reportLocation == null) {
 			StringWriter out = new StringWriter();
 			PrintWriter writer = new PrintWriter(out);
-			writer.println(NLS.bind(Messages.printArguments, new String[] {
-					this.referenceBaselineLocation,
-					this.currentBaselineLocation, this.reportLocation, }));
+			writer.println(NLS.bind(Messages.printArguments, this.referenceBaselineLocation, this.currentBaselineLocation, this.reportLocation));
 			throw new BuildException(String.valueOf(out.getBuffer()));
 		}
 		if (this.debug) {
