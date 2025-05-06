@@ -76,9 +76,7 @@ public class MigrationReportConvertor extends UseReportConverter {
 	protected String getTypeCountSummary(String typename, CountGroup counts, int membercount) {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append(OPEN_H4).append(SearchMessages.UseReportConverter_summary).append(CLOSE_H4);
-		buffer.append(OPEN_P).append(NLS.bind(SearchMessages.MigrationReportConvertor_member_has_unresolved_refs, new String[] {
-				typename, Integer.toString(counts.getTotalRefCount()),
-				Integer.toString(membercount) })).append(CLOSE_P);
+		buffer.append(OPEN_P).append(NLS.bind(SearchMessages.MigrationReportConvertor_member_has_unresolved_refs, typename, Integer.toString(counts.getTotalRefCount()), Integer.toString(membercount))).append(CLOSE_P);
 		return buffer.toString();
 	}
 

@@ -1311,7 +1311,7 @@ public class ReferenceExtractor extends ClassVisitor {
 			IApiMethod method = owner.getMethod(name, desc);
 			if (method == null) {
 				ApiPlugin.log(Status.warning(NLS.bind(BuilderMessages.ReferenceExtractor_failed_to_lookup_method,
-						new String[] { name, desc, Signatures.getQualifiedTypeSignature(owner) })));
+						name, desc, Signatures.getQualifiedTypeSignature(owner))));
 				// if we can't find the method there is no point trying to
 				// process it
 				return null;
