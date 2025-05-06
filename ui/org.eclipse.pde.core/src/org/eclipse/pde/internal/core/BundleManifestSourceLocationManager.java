@@ -251,7 +251,7 @@ public class BundleManifestSourceLocationManager {
 									try {
 										version = new Version(versionEntry);
 									} catch (IllegalArgumentException e) {
-										PDECore.log(Status.error(NLS.bind(PDECoreMessages.SourceLocationManager_problemProcessingBundleManifestSourceHeader, new Object[] {currentPlugin.getName(), versionEntry, path.toString()}), e));
+										PDECore.log(Status.error(NLS.bind(PDECoreMessages.SourceLocationManager_problemProcessingBundleManifestSourceHeader, currentPlugin.getName(), versionEntry, path.toString()), e));
 
 									}
 									fPluginToSourceBundle.put(new SourceLocationKey(binaryPluginName, version), model);
