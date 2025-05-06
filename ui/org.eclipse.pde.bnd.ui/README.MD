@@ -26,7 +26,7 @@ transform an (Eclipse) `IProject` into a (bndlib) `Project` (from were the Works
 ```
 @Component
 @AdapterTypes(adaptableClass = IProject.class, adapterNames = Project.class)
-public class BndPluginAdapter implements IAdapterFactory {
+public class MyBndPluginAdapter implements IAdapterFactory {
 
   @Override
   public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
@@ -45,6 +45,16 @@ public class BndPluginAdapter implements IAdapterFactory {
 
 }
 ```
+
+Some relevant 'glue' classes for Bnd <-> PDE interaction, to have a look at:
+
+- `org.eclipse.pde.bnd.ui.Central`
+- `org.eclipse.pde.bnd.ui.Workspaces`
+- `org.eclipse.pde.internal.core.bnd.PdeBndAdapter`
+- `org.eclipse.pde.internal.core.bnd.BndProjectManager`
+- `org.eclipse.pde.bnd.ui.RepositoryUtils`
+- `org.eclipse.pde.internal.core.bnd.BndWorkspaceServiceFactory` (gets registered as an OSGi Service)
+
 
 ## Available components
 
