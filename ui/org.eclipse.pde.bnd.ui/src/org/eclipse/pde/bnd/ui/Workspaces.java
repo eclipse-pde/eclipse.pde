@@ -38,25 +38,45 @@ public class Workspaces {
 			if (bndProject != null) {
 				return Optional.ofNullable(bndProject.getWorkspace());
 			} else {
-				IFile bndFile = project.getFile(Project.BNDFILE);
-				if (bndFile.exists()) {
-					IPath location = bndFile.getLocation();
-					if (location != null) {
-						File file = location.toFile();
-						if (file != null) {
-							try {
-								Project nativeProject = Workspace.getProject(file.getParentFile());
-								if (nativeProject != null) {
-									return Optional.ofNullable(nativeProject.getWorkspace());
+				
+				if(isCnf(project)) {
+					
+					try {
+						File wsDir = project.getLocation().toFile().getParentFile();
+						return Optional.ofNullable(Workspace.getWorkspace(wsDir));
+					} catch (Exception e) {
+					}
+				}
+				else {
+					IFile bndFile = project.getFile(Project.BNDFILE);
+					if (bndFile.exists()) {
+						IPath location = bndFile.getLocation();
+						if (location != null) {
+							File file = location.toFile();
+							if (file != null) {
+								try {
+									Project nativeProject = Workspace.getProject(file.getParentFile());
+									if (nativeProject != null) {
+										return Optional.ofNullable(nativeProject.getWorkspace());
+									}
+								} catch (Exception e) {
 								}
-							} catch (Exception e) {
 							}
 						}
 					}
 				}
+				
 			}
 		}
 		return Optional.empty();
+	}
+	
+	private static boolean isCnf(IProject project) {
+		IPath projectPath = project.getLocation();
+		if (projectPath != null) {
+			return Project.BNDCNF.equals(projectPath.lastSegment());
+		}
+		return false;
 	}
 
 	public static synchronized Optional<Workspace> getGlobalWorkspace() {
