@@ -197,7 +197,7 @@ public class ContextSpyPart {
 		setFilter();
 
 		// Set the correct weight for SashForm
-		sashForm.setWeights(new int[] { 35, 65 });
+		sashForm.setWeights(35, 65);
 
 		// Open all the tree
 		contextTreeViewer.expandAll();
