@@ -496,7 +496,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 							String expected = defaultLibraryEncodings.remove(lib);
 							if (expected != null) {
 								if (!specified.equals(expected)) {
-									String msg = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_0, new String[] { expected, specified, lib });
+									String msg = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_0, expected, specified, lib);
 									prepareEncodingError(name, expected, msg, PDEMarkerFactory.B_REPLACE);
 								}
 							} else {
@@ -553,7 +553,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 									prepareEncodingError(name, ee.toString(), msg, PDEMarkerFactory.B_REMOVAL);
 								} else {
 									if (!specified.equals(expected)) {
-										String msg = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_7, new String[] { expected, ee.resource().getProjectRelativePath().toString(), specified });
+										String msg = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_7, expected, ee.resource().getProjectRelativePath().toString(), specified);
 										prepareEncodingError(name, ee.toString(), msg, PDEMarkerFactory.M_ONLY_CONFIG_SEV);
 									}
 								}
