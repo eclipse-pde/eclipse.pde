@@ -64,7 +64,7 @@ public class PDEConfigureProblemSeverityAction extends Action {
 
 			String message = MessageFormat.format(
 					MarkerMessages.PDEConfigureProblemSeverityAction_0,
-					new Object[] { JavaElementLabels.getElementLabel(fProject, JavaElementLabels.ALL_DEFAULT) });
+					JavaElementLabels.getElementLabel(fProject, JavaElementLabels.ALL_DEFAULT));
 
 			String[] buttons = new String[] { MarkerMessages.PDEConfigureProblemSeverityAction_1,
 					MarkerMessages.PDEConfigureProblemSeverityAction_2,
