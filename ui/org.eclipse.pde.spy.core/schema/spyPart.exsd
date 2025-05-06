@@ -144,7 +144,7 @@ It is also strongly recommended that you keep the key sequences short.  One or t
    &lt;extension point=&quot;org.eclipse.tools.spy.core.spyPart&quot;&gt;
       &lt;spyPart
             description=&quot;Context Spy to understand what is behind the scene of injection&quot;
-            icon=&quot;icons/annotation_obj.png&quot;
+            icon=&quot;icons/annotation_obj.svg&quot;
             name=&quot;Context spy&quot;
             part=&quot;org.eclipse.tools.spy.context.ContextSpyPart&quot;
             shortcut=&quot;M2+M3+F10&quot;&gt;
