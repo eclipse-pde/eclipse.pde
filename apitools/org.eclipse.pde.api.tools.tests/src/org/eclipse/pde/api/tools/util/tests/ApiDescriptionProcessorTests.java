@@ -248,7 +248,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 			TextEdit edit = null;
 			for (Entry<IFile, Set<TextEdit>> entry : map.entrySet()) {
 				file = entry.getKey();
-				change = new TextFileChange(MessageFormat.format(WizardMessages.JavadocTagRefactoring_2, new Object[] { file.getName() }), file);
+				change = new TextFileChange(MessageFormat.format(WizardMessages.JavadocTagRefactoring_2, file.getName()), file);
 				multiedit = new MultiTextEdit();
 				change.setEdit(multiedit);
 				alledits = entry.getValue();
