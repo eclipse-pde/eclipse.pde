@@ -258,7 +258,7 @@ public class BrandP2Task extends Repo2RunnableTask {
 		newIUDescription.setArtifacts(new IArtifactKey[] {key});
 
 		IInstallableUnit newIU = MetadataFactory.createInstallableUnit(newIUDescription);
-		metadataRepo.addInstallableUnits(Arrays.asList(new IInstallableUnit[] {newIU}));
+		metadataRepo.addInstallableUnits(Arrays.asList(newIU));
 
 		publishBrandedArtifact(artifactRepo, key);
 	}

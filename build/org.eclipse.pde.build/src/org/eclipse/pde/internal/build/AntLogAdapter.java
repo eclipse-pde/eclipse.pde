@@ -28,7 +28,7 @@ public class AntLogAdapter implements ILog {
 	public AntLogAdapter(Object antLog) throws NoSuchMethodException {
 		this.antLog = antLog;
 		try {
-			log = antLog.getClass().getMethod("log", new Class[] {String.class, int.class}); //$NON-NLS-1$
+			log = antLog.getClass().getMethod("log", String.class, int.class); //$NON-NLS-1$
 		} catch (SecurityException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -51,9 +51,9 @@ public class AntLogAdapter implements ILog {
 			String statusMessage = status.getMessage();
 			String exceptionMessage = status.getException() != null ? status.getException().getMessage() : null;
 
-			log.invoke(antLog, new Object[] {statusMessage, Integer.valueOf(mapLogLevels(status.getSeverity()))});
+			log.invoke(antLog, statusMessage, Integer.valueOf(mapLogLevels(status.getSeverity())));
 			if (exceptionMessage != null && !exceptionMessage.equals(statusMessage)) {
-				log.invoke(antLog, new Object[] {exceptionMessage, Integer.valueOf(mapLogLevels(status.getSeverity()))});
+				log.invoke(antLog, exceptionMessage, Integer.valueOf(mapLogLevels(status.getSeverity())));
 			}
 			IStatus[] nestedStatus = status.getChildren();
 			if (nestedStatus != null) {
