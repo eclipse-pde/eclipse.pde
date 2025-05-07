@@ -13,12 +13,12 @@
  *     Peter Kriens <peter.kriens@aqute.biz> - ongoing enhancements
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
 *******************************************************************************/
-package org.bndtools.core.ui.resource;
+package org.eclipse.pde.bnd.ui.model.resource;
 
-import org.bndtools.core.ui.icons.Icons;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.ViewerCell;
+import org.eclipse.pde.bnd.ui.Resources;
 import org.eclipse.swt.graphics.Image;
 import org.osgi.resource.Requirement;
 
@@ -45,7 +45,7 @@ public class RequirementLabelProvider extends StyledCellLabelProvider {
 			cell.setText(label.getString());
 			cell.setStyleRanges(label.getStyleRanges());
 
-			Image icon = Icons.image(R5LabelFormatter.getNamespaceImagePath(requirement.getNamespace()));
+			Image icon = Resources.getImage(R5LabelFormatter.getNamespaceImagePath(requirement.getNamespace()));
 			cell.setImage(icon);
 		}
 	}

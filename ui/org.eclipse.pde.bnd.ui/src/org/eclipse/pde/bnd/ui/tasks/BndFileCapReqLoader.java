@@ -13,20 +13,21 @@
  *     Sean Bright <sean@malleable.com> - ongoing enhancements
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
 *******************************************************************************/
-package bndtools.tasks;
+package org.eclipse.pde.bnd.ui.tasks;
 
 import java.io.File;
 import java.io.IOException;
 
-import org.bndtools.utils.workspace.FileUtils;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.pde.bnd.ui.Central;
+import org.eclipse.pde.bnd.ui.Workspaces;
+import org.eclipse.pde.bnd.ui.internal.FileUtils;
 
 import aQute.bnd.build.Project;
 import aQute.bnd.build.ProjectBuilder;
+import aQute.bnd.build.Workspace;
 import aQute.bnd.osgi.Builder;
-import bndtools.central.Central;
 
 public class BndFileCapReqLoader extends BndBuilderCapReqLoader {
 
@@ -48,8 +49,8 @@ public class BndFileCapReqLoader extends BndBuilderCapReqLoader {
 			IProject project = wsfiles[0].getProject();
 
 			// Calculate the manifest
-			Project bndProject = Central.getInstance()
-				.getModel(JavaCore.create(project));
+			Workspace ws = Workspaces.getWorkspace(project).orElse(null);
+			Project bndProject = Central.getProject(ws, project);
 			if (bndProject == null)
 				return null;
 			if (file.getName()

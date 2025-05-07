@@ -14,7 +14,7 @@
  *     Peter Kriens <peter.kriens@aqute.biz> - ongoing enhancements
  *     Christoph Rueger <chrisrueger@gmail.com> - ongoing enhancements
 *******************************************************************************/
-package bndtools.tasks;
+package org.eclipse.pde.bnd.ui.tasks;
 
 import java.io.IOException;
 import java.net.URI;
@@ -25,13 +25,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.bndtools.utils.resources.ResourceUtils;
+import org.eclipse.pde.bnd.ui.ResourceUtils;
+import org.eclipse.pde.bnd.ui.model.resolution.RequirementWrapper;
 import org.osgi.resource.Capability;
 import org.osgi.resource.Requirement;
 import org.osgi.resource.Resource;
 
 import aQute.bnd.service.resource.SupportingResource;
-import bndtools.model.resolution.RequirementWrapper;
 
 public class ResourceCapReqLoader implements CapReqLoader {
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2019 bndtools project and others.
+ * Copyright (c) 2010, 2019 bndtools project and others.
  *
 * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,24 +12,25 @@
  *     Neil Bartlett <njbartlett@gmail.com> - initial API and implementation
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
 *******************************************************************************/
-package bndtools.tasks;
+package org.eclipse.pde.bnd.ui.internal;
 
-import java.io.Closeable;
-import java.util.List;
-import java.util.Map;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IWorkbenchPart;
 
-import org.osgi.resource.Capability;
+public abstract class PartAdapter implements IPartListener {
 
-import bndtools.model.resolution.RequirementWrapper;
+	@Override
+	public void partActivated(IWorkbenchPart part) {}
 
-public interface CapReqLoader extends Closeable {
+	@Override
+	public void partBroughtToTop(IWorkbenchPart part) {}
 
-	String getShortLabel();
+	@Override
+	public void partClosed(IWorkbenchPart part) {}
 
-	String getLongLabel();
+	@Override
+	public void partDeactivated(IWorkbenchPart part) {}
 
-	Map<String, List<Capability>> loadCapabilities() throws Exception;
-
-	Map<String, List<RequirementWrapper>> loadRequirements() throws Exception;
-
+	@Override
+	public void partOpened(IWorkbenchPart part) {}
 }

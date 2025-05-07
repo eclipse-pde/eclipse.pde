@@ -14,7 +14,7 @@
  *     Peter Kriens <peter.kriens@aqute.biz> - ongoing enhancements
  *     Christoph Rueger <chrisrueger@gmail.com> - ongoing enhancements
 *******************************************************************************/
-package bndtools.model.resolution;
+package org.eclipse.pde.bnd.ui.model.resolution;
 
 import java.util.Collection;
 import java.util.Objects;

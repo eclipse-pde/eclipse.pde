@@ -15,15 +15,15 @@
  *     Peter Kriens <peter.kriens@aqute.biz> - ongoing enhancements
  *     Christoph Rueger <chrisrueger@gmail.com> - ongoing enhancements
 *******************************************************************************/
-package bndtools.model.resolution;
+package org.eclipse.pde.bnd.ui.model.resolution;
 
 import java.util.Map.Entry;
 
-import org.bndtools.core.ui.icons.Icons;
-import org.bndtools.core.ui.resource.R5LabelFormatter;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.ViewerCell;
+import org.eclipse.pde.bnd.ui.Resources;
+import org.eclipse.pde.bnd.ui.model.resource.R5LabelFormatter;
 import org.eclipse.swt.graphics.Image;
 import org.osgi.resource.Capability;
 import org.osgi.resource.Resource;
@@ -52,7 +52,7 @@ public class CapabilityLabelProvider extends StyledCellLabelProvider {
 		cell.setStyleRanges(label.getStyleRanges());
 
 		// Get the icon from the capability namespace
-		Image icon = Icons.image(R5LabelFormatter.getNamespaceImagePath(cap.getNamespace()));
+		Image icon = Resources.getImage(R5LabelFormatter.getNamespaceImagePath(cap.getNamespace()));
 		cell.setImage(icon);
 	}
 

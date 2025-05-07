@@ -12,7 +12,7 @@
  *     Neil Bartlett <njbartlett@gmail.com> - initial API and implementation
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
 *******************************************************************************/
-package bndtools.tasks;
+package org.eclipse.pde.bnd.ui.tasks;
 
 import java.io.File;
 import java.io.IOException;

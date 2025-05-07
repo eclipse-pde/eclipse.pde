@@ -14,7 +14,7 @@
  *     Peter Kriens <peter.kriens@aqute.biz> - ongoing enhancements
  *     Christoph Rueger <chrisrueger@gmail.com> - ongoing enhancements
 *******************************************************************************/
-package bndtools.views.resolution;
+package org.eclipse.pde.bnd.ui.views.resolution;
 
 import java.io.File;
 import java.text.MessageFormat;
@@ -28,14 +28,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
-import org.bndtools.core.ui.icons.Icons;
-import org.bndtools.utils.swt.FilterPanelPart;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -66,6 +65,22 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.pde.bnd.ui.FilterPanelPart;
+import org.eclipse.pde.bnd.ui.HelpButtons;
+import org.eclipse.pde.bnd.ui.Resources;
+import org.eclipse.pde.bnd.ui.internal.PartAdapter;
+import org.eclipse.pde.bnd.ui.model.repo.RepositoryResourceElement;
+import org.eclipse.pde.bnd.ui.model.resolution.CapReqMapContentProvider;
+import org.eclipse.pde.bnd.ui.model.resolution.CapabilityLabelProvider;
+import org.eclipse.pde.bnd.ui.model.resolution.RequirementWrapper;
+import org.eclipse.pde.bnd.ui.model.resolution.RequirementWrapperLabelProvider;
+import org.eclipse.pde.bnd.ui.tasks.AnalyseBundleResolutionJob;
+import org.eclipse.pde.bnd.ui.tasks.BndBuilderCapReqLoader;
+import org.eclipse.pde.bnd.ui.tasks.BndFileCapReqLoader;
+import org.eclipse.pde.bnd.ui.tasks.CapReqLoader;
+import org.eclipse.pde.bnd.ui.tasks.JarFileCapReqLoader;
+import org.eclipse.pde.bnd.ui.tasks.ResourceCapReqLoader;
+import org.eclipse.pde.bnd.ui.views.ViewEventTopics;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.dnd.Clipboard;
@@ -81,7 +96,6 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
@@ -114,25 +128,11 @@ import aQute.bnd.osgi.resource.ResourceUtils;
 import aQute.bnd.unmodifiable.Sets;
 import aQute.lib.io.IO;
 import aQute.lib.strings.Strings;
-import bndtools.Plugin;
-import bndtools.editor.common.HelpButtons;
-import bndtools.model.repo.RepositoryResourceElement;
-import bndtools.model.resolution.CapReqMapContentProvider;
-import bndtools.model.resolution.CapabilityLabelProvider;
-import bndtools.model.resolution.RequirementWrapper;
-import bndtools.model.resolution.RequirementWrapperLabelProvider;
-import bndtools.tasks.AnalyseBundleResolutionJob;
-import bndtools.tasks.BndBuilderCapReqLoader;
-import bndtools.tasks.BndFileCapReqLoader;
-import bndtools.tasks.CapReqLoader;
-import bndtools.tasks.JarFileCapReqLoader;
-import bndtools.tasks.ResourceCapReqLoader;
-import bndtools.utils.PartAdapter;
-import bndtools.utils.SelectionUtils;
-import bndtools.views.ViewEventTopics;
 
 public class ResolutionView extends ViewPart implements ISelectionListener, IResourceChangeListener {
 
+	public static final String										PLUGIN_ID			= "bndtools.core";
+	
 	private final List<EE>		ees			= Arrays.asList(EE.values());
 	private Display				display		= null;
 
@@ -158,13 +158,9 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 	private final Set<String>	filteredCapabilityNamespaces;
 	private Set<Capability>		duplicateCapabilitiesWithDifferentHashes	= new HashSet<>();
 
-	private final FilterPanelPart		reqsFilterPart								= new FilterPanelPart(
-		Plugin.getDefault()
-			.getScheduler());
+	private final FilterPanelPart reqsFilterPart = new FilterPanelPart(Resources.getScheduler());
+	private final FilterPanelPart capsFilterPart = new FilterPanelPart(Resources.getScheduler());
 
-	private final FilterPanelPart		capsFilterPart								= new FilterPanelPart(
-		Plugin.getDefault()
-			.getScheduler());
 	private static final String			SEARCHSTRING_HINT							= "Enter search string (Space to separate terms; '*' for partial matches)";
 
 	private CapReqMapContentProvider	reqsContentProvider;
@@ -253,7 +249,7 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 		reqsLayout.marginHeight = 0;
 		reqsLayout.verticalSpacing = 2;
 		reqsPanel.setLayout(reqsLayout);
-		Control reqsFilterPanel = reqsFilterPart.createControl(reqsPanel, 5, 5);
+		reqsFilterPart.createControl(reqsPanel, 5, 5);
 		reqsFilterPart.setHint(SEARCHSTRING_HINT);
 		reqsFilterPart.addPropertyChangeListener(event -> {
 			String filter = (String) event.getNewValue();
@@ -289,7 +285,7 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 		capsLayout.marginHeight = 0;
 		capsLayout.verticalSpacing = 2;
 		capsPanel.setLayout(capsLayout);
-		Control capsFilterPanel = capsFilterPart.createControl(capsPanel, 5, 5);
+		capsFilterPart.createControl(capsPanel, 5, 5);
 		capsFilterPart.setHint(SEARCHSTRING_HINT);
 		capsFilterPart.addPropertyChangeListener(event -> {
 			String filter = (String) event.getNewValue();
@@ -412,7 +408,7 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 										break;
 								} catch (JavaModelException e1) {
 									ErrorDialog.openError(getSite().getShell(), "Error", "",
-										new Status(IStatus.ERROR, Plugin.PLUGIN_ID, 0,
+										new Status(IStatus.ERROR, PLUGIN_ID, 0,
 											MessageFormat.format("Error opening Java class '{0}'.", className), e1));
 								}
 							}
@@ -424,10 +420,10 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 					if (type != null)
 						JavaUI.openInEditor(type, true, true);
 				} catch (PartInitException e2) {
-					ErrorDialog.openError(getSite().getShell(), "Error", "", new Status(IStatus.ERROR, Plugin.PLUGIN_ID,
+					ErrorDialog.openError(getSite().getShell(), "Error", "", new Status(IStatus.ERROR, PLUGIN_ID,
 						0, MessageFormat.format("Error opening Java editor for class '{0}'.", className), e2));
 				} catch (JavaModelException e3) {
-					ErrorDialog.openError(getSite().getShell(), "Error", "", new Status(IStatus.ERROR, Plugin.PLUGIN_ID,
+					ErrorDialog.openError(getSite().getShell(), "Error", "", new Status(IStatus.ERROR, PLUGIN_ID,
 						0, MessageFormat.format("Error opening Java class '{0}'.", className), e3));
 				}
 			}
@@ -478,7 +474,7 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 
 			@Override
 			public ImageDescriptor getImageDescriptor() {
-				return Icons.desc("java");
+				return Resources.getImageDescriptor("java");
 			}
 		};
 		for (int n = 0; n < ees.size(); n++) {
@@ -628,11 +624,11 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 			Object element = iter.next();
 			CapReqLoader loader = null;
 
-			File file = SelectionUtils.adaptObject(element, File.class);
+			File file = Adapters.adapt(element, File.class);
 			if (file != null) {
 				loader = getLoaderForFile(file);
 			} else {
-				IResource eresource = SelectionUtils.adaptObject(element, IResource.class);
+				IResource eresource = Adapters.adapt(element, IResource.class);
 				if (eresource != null) {
 					IPath location = eresource.getLocation();
 					if (location != null) {
@@ -917,7 +913,7 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 			}
 		};
 		toggleShowProblemCaps.setChecked(false);
-		toggleShowProblemCaps.setImageDescriptor(Icons.desc("/icons/warning_obj.gif"));
+		toggleShowProblemCaps.setImageDescriptor(Resources.getImageDescriptor("/icons/warning_obj.gif"));
 		toggleShowProblemCaps
 			.setToolTipText(tooltipTextUnlocked);
 		return toggleShowProblemCaps;
@@ -939,7 +935,7 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 			}
 		};
 		toggleLockInput.setChecked(false);
-		toggleLockInput.setImageDescriptor(Icons.desc("lock"));
+		toggleLockInput.setImageDescriptor(Resources.getImageDescriptor("lock"));
 		toggleLockInput.setToolTipText(toolTipTextUnchecked);
 		return toggleLockInput;
 	}
@@ -963,7 +959,7 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 			}
 		};
 		toggleShowSelfImports.setChecked(false);
-		toggleShowSelfImports.setImageDescriptor(Icons.desc("/icons/package_folder_impexp.gif"));
+		toggleShowSelfImports.setImageDescriptor(Resources.getImageDescriptor("/icons/package_folder_impexp.gif"));
 		toggleShowSelfImports.setToolTipText(toolTipTextShowAll);
 		return toggleShowSelfImports;
 	}
@@ -985,7 +981,7 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 			}
 		};
 		toggleShowShowUnresolvedReqsFilter.setChecked(false);
-		toggleShowShowUnresolvedReqsFilter.setImageDescriptor(Icons.desc("/icons/prohibition.png"));
+		toggleShowShowUnresolvedReqsFilter.setImageDescriptor(Resources.getImageDescriptor("/icons/prohibition.png"));
 		toggleShowShowUnresolvedReqsFilter.setToolTipText(toggleShowShowUnresolvedReqsFilterUnchecked);
 		return toggleShowShowUnresolvedReqsFilter;
 	}

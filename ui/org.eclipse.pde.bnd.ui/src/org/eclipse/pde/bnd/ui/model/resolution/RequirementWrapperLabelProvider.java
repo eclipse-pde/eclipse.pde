@@ -15,16 +15,16 @@
  *     Peter Kriens <peter.kriens@aqute.biz> - ongoing enhancements
  *     Christoph Rueger <chrisrueger@gmail.com> - ongoing enhancements
 *******************************************************************************/
-package bndtools.model.resolution;
+package org.eclipse.pde.bnd.ui.model.resolution;
 
 import java.util.Map.Entry;
 
-import org.bndtools.core.ui.icons.Icons;
-import org.bndtools.core.ui.resource.R5LabelFormatter;
-import org.bndtools.core.ui.resource.RequirementLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.StyledString.Styler;
 import org.eclipse.jface.viewers.ViewerCell;
+import org.eclipse.pde.bnd.ui.Resources;
+import org.eclipse.pde.bnd.ui.model.resource.R5LabelFormatter;
+import org.eclipse.pde.bnd.ui.model.resource.RequirementLabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.osgi.resource.Requirement;
 import org.osgi.resource.Resource;
@@ -46,7 +46,7 @@ public class RequirementWrapperLabelProvider extends RequirementLabelProvider {
 		if (element instanceof RequirementWrapper) {
 			RequirementWrapper rw = (RequirementWrapper) element;
 
-			Image icon = Icons.image(R5LabelFormatter.getNamespaceImagePath(rw.requirement.getNamespace()));
+			Image icon = Resources.getImage(R5LabelFormatter.getNamespaceImagePath(rw.requirement.getNamespace()));
 			cell.setImage(icon);
 
 			StyledString label = getLabel(rw.requirement);
@@ -56,7 +56,7 @@ public class RequirementWrapperLabelProvider extends RequirementLabelProvider {
 			cell.setText(label.getString());
 			cell.setStyleRanges(label.getStyleRanges());
 		} else if (element instanceof Clazz) {
-			cell.setImage(Icons.image("class", false));
+			cell.setImage(Resources.getImage("class"));
 
 			String pkg;
 			String className;

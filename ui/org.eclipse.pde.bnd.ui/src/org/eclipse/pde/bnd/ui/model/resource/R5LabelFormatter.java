@@ -16,20 +16,19 @@
  *     Carter Smithhart <carter.smithhart@gmail.com> - ongoing enhancements
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
 *******************************************************************************/
-package org.bndtools.core.ui.resource;
+package org.eclipse.pde.bnd.ui.model.resource;
 
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.bndtools.core.ui.icons.Icons;
-import org.bndtools.utils.jface.BoldStyler;
-import org.bndtools.utils.jface.ItalicStyler;
-import org.bndtools.utils.resources.ResourceUtils;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.pde.bnd.ui.BoldStyler;
+import org.eclipse.pde.bnd.ui.internal.ItalicStyler;
 import org.osgi.framework.Version;
 import org.osgi.framework.namespace.AbstractWiringNamespace;
 import org.osgi.framework.namespace.BundleNamespace;
@@ -53,9 +52,9 @@ import aQute.bnd.osgi.resource.FilterParser.Op;
 import aQute.bnd.osgi.resource.FilterParser.RangeExpression;
 import aQute.bnd.osgi.resource.FilterParser.SimpleExpression;
 import aQute.bnd.osgi.resource.FilterParser.WithRangeExpression;
+import aQute.bnd.osgi.resource.ResourceUtils;
 import aQute.bnd.service.resource.SupportingResource;
 import aQute.bnd.unmodifiable.Maps;
-import bndtools.Plugin;
 
 public class R5LabelFormatter {
 
@@ -64,7 +63,9 @@ public class R5LabelFormatter {
 	private static final Map<String, Pattern>	FILTER_PATTERNS	= Maps.of(
 		ExecutionEnvironmentNamespace.EXECUTION_ENVIRONMENT_NAMESPACE, EE_PATTERN, PackageNamespace.PACKAGE_NAMESPACE,
 		Pattern.compile("osgi\\.wiring\\.package=([^)]*)"));
-
+	
+	public static final String										PLUGIN_ID			= "bndtools.core";
+	
 	public static String getVersionAttributeName(String ns) {
 		String r;
 
@@ -112,27 +113,27 @@ public class R5LabelFormatter {
 	}
 
 	public static String getNamespaceImagePath(String ns) {
-		String r = "icons/bullet_green.png"; // generic green dot
+		String r = "bullet_green.png"; // generic green dot
 
 		if (BundleNamespace.BUNDLE_NAMESPACE.equals(ns) || HostNamespace.HOST_NAMESPACE.equals(ns))
-			r = Icons.path("bundle");
+			r = "bundle.png";
 		else if (ExecutionEnvironmentNamespace.EXECUTION_ENVIRONMENT_NAMESPACE.equals(ns))
-			r = "icons/java.png";
+			r = "java.png";
 		else if (PackageNamespace.PACKAGE_NAMESPACE.equals(ns))
-			r = Icons.path("package");
+			r = "package.gif";
 		else if (ServiceNamespace.SERVICE_NAMESPACE.equals(ns))
-			r = Icons.path("service");
+			r = "service.png";
 		else if (ExtenderNamespace.EXTENDER_NAMESPACE.equals(ns))
-			r = "icons/wand.png";
+			r = "wand.png";
 		else if (ContractNamespace.CONTRACT_NAMESPACE.equals(ns))
-			r = "icons/contract.png";
+			r = "contract.png";
 		else if ("osgi.whiteboard".equals(ns))
-			r = "icons/whiteboard.png";
+			r = "whiteboard.png";
 		else if ("bnd.multirelease".equals(ns))
-			r = "icons/multijar.png";
+			r = "multijar.png";
 		else if ("osgi.unresolvable".equalsIgnoreCase(ns) || "osgi.missing".equalsIgnoreCase(ns)
 			|| "donotresolve".equalsIgnoreCase(ns) || "compile-only".equalsIgnoreCase(ns))
-			r = "icons/prohibition.png";
+			r = "prohibition.png";
 
 		return r;
 	}
@@ -241,7 +242,7 @@ public class R5LabelFormatter {
 		}
 		label.append(name, BoldStyler.INSTANCE_DEFAULT);
 
-		Version version = ResourceUtils.getVersion(identity);
+		Version version = org.eclipse.pde.bnd.ui.ResourceUtils.getVersion(identity);
 		if (version != null)
 			label.append(" " + version, StyledString.COUNTER_STYLER);
 	}
@@ -250,9 +251,8 @@ public class R5LabelFormatter {
 		try {
 			requirement = CapReqBuilder.unalias(requirement);
 		} catch (Exception e) {
-			Plugin.getDefault()
-				.getLog()
-				.log(new Status(IStatus.WARNING, Plugin.PLUGIN_ID, 0,
+			ILog.get()
+				.log(new Status(IStatus.WARNING, PLUGIN_ID, 0,
 					"Error parsing aliased requirement, using original", e));
 		}
 

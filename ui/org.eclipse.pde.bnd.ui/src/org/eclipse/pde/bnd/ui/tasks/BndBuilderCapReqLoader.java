@@ -14,7 +14,7 @@
  *     Peter Kriens <peter.kriens@aqute.biz> - ongoing enhancements
  *     Christoph Rueger <chrisrueger@gmail.com> - ongoing enhancements
 *******************************************************************************/
-package bndtools.tasks;
+package org.eclipse.pde.bnd.ui.tasks;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.eclipse.pde.bnd.ui.model.resolution.RequirementWrapper;
 import org.osgi.framework.namespace.PackageNamespace;
 import org.osgi.resource.Capability;
 import org.osgi.resource.Requirement;
@@ -40,7 +41,6 @@ import aQute.bnd.osgi.Clazz;
 import aQute.bnd.osgi.Jar;
 import aQute.bnd.osgi.resource.ResourceBuilder;
 import aQute.bnd.service.resource.SupportingResource;
-import bndtools.model.resolution.RequirementWrapper;
 
 public abstract class BndBuilderCapReqLoader implements CapReqLoader {
 

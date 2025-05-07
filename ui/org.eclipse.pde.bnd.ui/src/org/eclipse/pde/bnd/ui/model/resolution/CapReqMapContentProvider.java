@@ -13,7 +13,7 @@
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
  *     Christoph Rueger <chrisrueger@gmail.com> - ongoing enhancements
 *******************************************************************************/
-package bndtools.model.resolution;
+package org.eclipse.pde.bnd.ui.model.resolution;
 
 import java.util.ArrayList;
 import java.util.Arrays;

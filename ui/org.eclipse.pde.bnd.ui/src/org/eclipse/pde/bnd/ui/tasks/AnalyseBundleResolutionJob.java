@@ -16,8 +16,7 @@
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
  *     Sean Bright <sean@malleable.com> - ongoing enhancements
 *******************************************************************************/
-
-package bndtools.tasks;
+package org.eclipse.pde.bnd.ui.tasks;
 
 import static java.util.Collections.emptyList;
 
@@ -30,23 +29,19 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import org.bndtools.api.ILogger;
-import org.bndtools.api.Logger;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.pde.bnd.ui.model.resolution.RequirementWrapper;
 import org.osgi.resource.Capability;
 import org.osgi.resource.Namespace;
 
 import aQute.bnd.build.model.EE;
 import aQute.bnd.osgi.resource.ResourceUtils;
-import aQute.lib.io.IO;
-import bndtools.model.resolution.RequirementWrapper;
 
 public class AnalyseBundleResolutionJob extends Job {
-
-	private static final ILogger					logger	= Logger.getLogger(AnalyseBundleResolutionJob.class);
 
 	private final Set<? extends CapReqLoader>		loaders;
 
@@ -87,17 +82,15 @@ public class AnalyseBundleResolutionJob extends Job {
 			Map<String, List<Capability>> allCaps = new HashMap<>();
 			Map<String, List<RequirementWrapper>> allReqs = new HashMap<>();
 			for (CapReqLoader loader : loaders) {
-				try {
+				try (loader){
 					Map<String, List<Capability>> caps = loader.loadCapabilities();
 					mergeMaps(caps, allCaps);
 
 					Map<String, List<RequirementWrapper>> reqs = loader.loadRequirements();
 					mergeMaps(reqs, allReqs);
 				} catch (Exception e) {
-					logger.logError("Error in Bnd resolution analysis.", e);
-				} finally {
-					IO.close(loader);
-				}
+					ILog.get().error("Error in Bnd resolution analysis.", e);
+				} 
 			}
 
 			// Check for resolved requirements
@@ -140,6 +133,8 @@ public class AnalyseBundleResolutionJob extends Job {
 
 			// showResults(resultFileArray, importResults, exportResults);
 			return Status.OK_STATUS;
+		} catch (RuntimeException e) {
+		     throw e;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
