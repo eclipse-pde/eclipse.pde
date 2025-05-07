@@ -35,5 +35,11 @@
 			icon="icons/database.png" id="pde.bnd.ui.repositoriesView"
 			name="Bundle Repositories" restorable="true">
 		</view>
+		
+		<view category="pde.bnd.ui.viewCategory"
+			class="org.eclipse.pde.bnd.ui.views.resolution.ResolutionView"
+			icon="icons/webresources16.svg" id="pde.bnd.ui.impExpView" name="OSGi Resolution"
+			restorable="true">
+		</view>
    </extension>
 </plugin>

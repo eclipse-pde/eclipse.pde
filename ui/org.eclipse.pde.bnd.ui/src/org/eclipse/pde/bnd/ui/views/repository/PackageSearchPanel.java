@@ -113,7 +113,7 @@ public class PackageSearchPanel extends SearchPanel {
 
 	@Override
 	public Image createImage(Device device) {
-		return Resources.getImage("package");
+		return Resources.getImage("package_obj.svg");
 	}
 
 	@Override
