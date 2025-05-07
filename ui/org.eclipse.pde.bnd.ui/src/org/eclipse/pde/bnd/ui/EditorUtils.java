@@ -74,7 +74,7 @@ public class EditorUtils {
 		};
 		btn.setEnabled(true);
 		btn.setToolTipText(tooltipText);
-		btn.setImageDescriptor(Resources.getImageDescriptor("help.gif"));
+		btn.setImageDescriptor(Resources.getImageDescriptor("help.svg"));
 
 		return btn;
 	}

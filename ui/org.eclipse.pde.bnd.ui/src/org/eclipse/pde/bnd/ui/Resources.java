@@ -65,6 +65,10 @@ public class Resources implements BundleActivator {
 		if (resource != null) {
 			return resource;
 		}
+		resource = Resources.class.getResource("/icons/" + key + ".svg");
+		if (resource != null) {
+			return resource;
+		}
 		resource = Resources.class.getResource("/icons/" + key + ".gif");
 		if (resource != null) {
 			return resource;
