@@ -129,9 +129,9 @@ public final class ResourceUtils {
 			String urlString = String.valueOf(url);
 
 			try {
-				new URL(urlString);
+				new URI(urlString).toURL();
 				return c;
-			} catch (MalformedURLException mue) {
+			} catch (MalformedURLException | URISyntaxException mue) {
 				// Oh well, just try the next one
 			}
 		}
@@ -155,9 +155,9 @@ public final class ResourceUtils {
 				return ((URL) uriObj).toURI();
 			}
 
-			if (uriObj instanceof String) {
+			if (uriObj instanceof String uriStr) {
 				try {
-					URL url = new URL((String) uriObj);
+					URL url = new URI(uriStr).toURL();
 					return url.toURI();
 				} catch (MalformedURLException mfue) {
 					// Ignore
