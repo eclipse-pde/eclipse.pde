@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * Copyright (c) 2005, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -28,16 +28,16 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.parts.WizardCheckboxTreePart;
-import org.eclipse.pde.internal.ui.shared.CachedCheckboxTreeViewer;
+import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
+import org.eclipse.pde.internal.ui.shared.CachedCheckboxTableViewer;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -47,7 +47,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
@@ -62,29 +62,14 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 	protected JARSigningTab fJARSiginingTab;
 	protected TabFolder fTabFolder;
 
-	private class ExportListProvider implements ITreeContentProvider {
+	private class ExportListProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object parent) {
 			return getListElements();
 		}
-
-		@Override
-		public Object[] getChildren(Object parentElement) {
-			return new Object[0];
-		}
-
-		@Override
-		public Object getParent(Object element) {
-			return null;
-		}
-
-		@Override
-		public boolean hasChildren(Object element) {
-			return false;
-		}
 	}
 
-	class ExportPart extends WizardCheckboxTreePart {
+	class ExportPart extends WizardCheckboxTablePart {
 		public ExportPart(String label, String[] buttonLabels) {
 			super(label, buttonLabels);
 		}
@@ -183,13 +168,13 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 		gd.widthHint = 150;
 		gd.horizontalSpan = 2;
 
-		CachedCheckboxTreeViewer viewer = fExportPart.getTreeViewer();
+		CachedCheckboxTableViewer viewer = fExportPart.getTableViewer();
 		viewer.setContentProvider(new ExportListProvider());
 		viewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		viewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
 		viewer.addDoubleClickListener(event -> {
-			TreeItem firstTI = fExportPart.getTreeViewer().getTree().getSelection()[0];
-			fExportPart.getTreeViewer().setChecked(firstTI.getData(), !firstTI.getChecked());
+			TableItem firstTI = fExportPart.getTableViewer().getTable().getSelection()[0];
+			fExportPart.getTableViewer().setChecked(firstTI.getData(), !firstTI.getChecked());
 			fExportPart.updateCounterLabel();
 		});
 		Object input = getInput();
@@ -201,7 +186,7 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 				}
 			}
 		}
-		fExportPart.getTreeViewer().setInput(getInput());
+		fExportPart.getTableViewer().setInput(getInput());
 	}
 
 	protected abstract Object getInput();
@@ -243,7 +228,7 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 		//scroll-down viewer to first one
 		fExportPart.setSelection(checked.toArray());
 		if (!checked.isEmpty()) {
-			fExportPart.getTreeViewer().reveal(checked.get(0));
+			fExportPart.getTableViewer().reveal(checked.get(0));
 		}
 	}
 
