@@ -716,6 +716,8 @@ public class PDEUIMessages extends NLS {
 	public static String Errors_CreationError;
 	public static String Errors_CreationError_NoWizard;
 
+	public static String UpdateSingleton_dir_label;
+
 	public static String UpdateSplashHandlerInModelAction_msgAddingExtension;
 
 	public static String UpdateSplashHandlerInModelAction_msgAddingExtensionPoint;
