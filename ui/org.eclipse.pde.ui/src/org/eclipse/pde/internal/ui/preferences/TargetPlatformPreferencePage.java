@@ -554,7 +554,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		updateButtons();
 
 		Composite detailsComposite = SWTFactory.createComposite(sash, 1, 1, GridData.FILL_BOTH, 0, 0);
-		sash.setWeights(new int[] { 70, 30 });
+		sash.setWeights(70, 30);
 		SWTFactory.createLabel(detailsComposite, PDEUIMessages.TargetPlatformPreferencePage2_25, 1);
 		fDetails = new TreeViewer(detailsComposite);
 		fDetails.setLabelProvider(new StyledBundleLabelProvider(true, true));

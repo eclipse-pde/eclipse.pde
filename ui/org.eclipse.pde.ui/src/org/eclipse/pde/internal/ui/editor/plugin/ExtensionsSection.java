@@ -1368,7 +1368,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 			getTreePart().setButtonEnabled(BUTTON_MOVE_DOWN, false);
 			return;
 		}
-		IStructuredSelection selection = (item instanceof IStructuredSelection) ? (IStructuredSelection) item : null;
+		IStructuredSelection selection = (item instanceof IStructuredSelection i) ? i : null;
 
 		boolean filtered = fFilteredTree.isFiltered();
 		boolean addEnabled = true;

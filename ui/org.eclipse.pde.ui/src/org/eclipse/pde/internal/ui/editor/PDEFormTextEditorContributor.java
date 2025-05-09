@@ -79,7 +79,7 @@ public class PDEFormTextEditorContributor extends PDEFormEditorContributor {
 			manager.setMessage(null);
 			manager.setErrorMessage(null);
 
-			ITextEditor textEditor = (part instanceof ITextEditor) ? (ITextEditor) part : null;
+			ITextEditor textEditor = (part instanceof ITextEditor i) ? i : null;
 			if (fCorrectionAssist != null) {
 				fCorrectionAssist.setAction(getAction(textEditor, ITextEditorActionConstants.QUICK_ASSIST));
 			}

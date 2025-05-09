@@ -135,7 +135,7 @@ public class JRESection extends PDESection {
 		fEEsCombo.addSelectionChangedListener(event -> {
 			if (!fBlockChanges) {
 				Object selection = event.getStructuredSelection().getFirstElement();
-				setEE(selection instanceof IExecutionEnvironment ? (IExecutionEnvironment) selection : null);
+				setEE(selection instanceof IExecutionEnvironment i ? i : null);
 				fEEButton.setEnabled(selection instanceof IExecutionEnvironment);
 			}
 		});

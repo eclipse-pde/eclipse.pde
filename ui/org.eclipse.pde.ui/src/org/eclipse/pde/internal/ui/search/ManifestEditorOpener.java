@@ -171,7 +171,7 @@ public class ManifestEditorOpener {
 				int offset = ((PluginObjectNode) element).getOffset();
 				offset += ((PluginObjectNode) element).getLength();
 				String name = (object instanceof IPluginExtension) ? "point" : "id"; //$NON-NLS-1$ //$NON-NLS-2$
-				String value = (object instanceof IPluginExtension) ? ((IPluginExtension) object).getPoint() : ((IPluginExtensionPoint) object).getId();
+				String value = (object instanceof IPluginExtension i) ? i.getPoint() : ((IPluginExtensionPoint) object).getId();
 				return getAttributeRegion(document, name, value, offset);
 			}
 		}

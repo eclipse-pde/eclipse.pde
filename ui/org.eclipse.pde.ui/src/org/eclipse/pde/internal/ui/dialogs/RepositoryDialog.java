@@ -73,7 +73,7 @@ public class RepositoryDialog extends StatusDialog {
 		fLocation.setLayoutData(data);
 		fName.setLayoutData(data);
 		DropTarget target = new DropTarget(fLocation, DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK);
-		target.setTransfer(new Transfer[] { URLTransfer.getInstance(), FileTransfer.getInstance() });
+		target.setTransfer(URLTransfer.getInstance(), FileTransfer.getInstance());
 		target.addDropListener(new TextURLDropAdapter(fLocation, true));
 		fLocation.addModifyListener(e -> validate());
 		fName.addModifyListener(e -> validate());
