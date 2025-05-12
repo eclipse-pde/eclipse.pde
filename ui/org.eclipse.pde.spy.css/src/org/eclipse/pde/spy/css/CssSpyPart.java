@@ -832,7 +832,7 @@ public class CssSpyPart {
 	}
 
 	private void performCSSSearch(IProgressMonitor monitor, String text, Collection<Widget> results) {
-		
+
 		if (text.trim().isEmpty()) {
 			return;
 		}
@@ -863,7 +863,7 @@ public class CssSpyPart {
 
 	private void processCSSSearch(IProgressMonitor monitor, CSSEngine engine, SelectorList selectors,
 			CSSStylableElement element, String pseudo, Collection<Widget> results) {
-		
+
 		if (monitor.isCanceled()) {
 			return;
 		}

@@ -95,7 +95,7 @@ public class SpyHandler {
 		// from the
 		// snippet.
 		MTrimmedWindow tws = (MTrimmedWindow) modelService.findSnippet(appli, E4_SPIES_WINDOW);
-		
+
 		// Fix #579332 : must copy the snippet to keep it in the snippet list if it must be re-created later.
 		EObject eObj = (EObject) tws;
 		MTrimmedWindow tw  = (MTrimmedWindow) EcoreUtil.copy(eObj);

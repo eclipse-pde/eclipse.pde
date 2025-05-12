@@ -45,11 +45,11 @@ import org.eclipse.pde.internal.genericeditor.target.extension.model.xml.Parser;
 
 /**
  * Class that computes autocompletions for tags. Example:
- * 
+ *
  * <pre>
  *  &lt;un^
  * </pre>
- * 
+ *
  * where ^ is autocomplete call.
  */
 public class TagCompletionProcessor extends DelegateProcessor {
