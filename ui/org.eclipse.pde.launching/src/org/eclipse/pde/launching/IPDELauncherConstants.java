@@ -243,10 +243,10 @@ public interface IPDELauncherConstants {
 	 * Launch configuration attribute key. The value is a boolean specifying
 	 * whether required plug-ins and/or features should be added automatically
 	 * to the list of plug-ins to launch with.
-	 * 
-	 * @since 3.10 
+	 *
+	 * @since 3.10
 	 */
-	String AUTOMATIC_INCLUDE_REQUIREMENTS = "automaticIncludeRequirements"; //$NON-NLS-1$ 
+	String AUTOMATIC_INCLUDE_REQUIREMENTS = "automaticIncludeRequirements"; //$NON-NLS-1$
 
 	/**
 	 * Launch configuration attribute key. The value is a boolean indicating

@@ -77,7 +77,7 @@ public class UpdateUnitVersions extends AbstractHandler {
 			locationNodes.stream().map(LocationNode::getRepositoryLocations).flatMap(List::stream)
 					.forEach(RepositoryCache::prefetchP2MetadataOfRepository);
 
-			for (LocationNode locationNode : locationNodes) { 
+			for (LocationNode locationNode : locationNodes) {
 				List<String> repositoryLocations = locationNode.getRepositoryLocations();
 				if (repositoryLocations.isEmpty()) {
 					continue;

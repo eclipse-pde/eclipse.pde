@@ -29,9 +29,9 @@ import org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetCons
 
 /**
  * Class that computes autocompletions for tag content. Example:
- * 
+ *
  * <pre>{@code <nl>ar^<\nl> }</pre>
- * 
+ *
  * where ^ is autocomplete call.
  */
 public class TagValueCompletionProcessor extends DelegateProcessor {

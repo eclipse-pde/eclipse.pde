@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
  * Gives access to the scope preferences
  */
 public class PreferenceSpyConfiguration {
-	
+
 	private static String bundleId = "org.eclipse.pde.spy.preferences";
 
 	private static IEclipsePreferences preferenceStore;

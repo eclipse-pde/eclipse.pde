@@ -87,11 +87,11 @@ public class BundleLauncherHelper {
 
 	public static final char VERSION_SEPARATOR = '*';
 	private static final char START_LEVEL_SEPARATOR = '@';
-	private static final String AUTO_START_SEPARATOR = ":"; //$NON-NLS-1$  
+	private static final String AUTO_START_SEPARATOR = ":"; //$NON-NLS-1$
 	private static final String DEFAULT = "default"; //$NON-NLS-1$
 	private static final String DEFAULT_START_LEVELS = DEFAULT + AUTO_START_SEPARATOR + DEFAULT;
-	private static final String FEATURE_PLUGIN_RESOLUTION_SEPARATOR = ":"; //$NON-NLS-1$  
-	private static final String FEATURES_ADDITIONAL_PLUGINS_DATA_SEPARATOR = ":"; //$NON-NLS-1$  
+	private static final String FEATURE_PLUGIN_RESOLUTION_SEPARATOR = ":"; //$NON-NLS-1$
+	private static final String FEATURES_ADDITIONAL_PLUGINS_DATA_SEPARATOR = ":"; //$NON-NLS-1$
 
 	/**
 	 * When creating a mapping of bundles to their start levels, update configurator is set
@@ -312,7 +312,7 @@ public class BundleLauncherHelper {
 	private static void addFeatureIfAbsent(IFeature feature, String resolution, Map<IFeature, String> featurePluginResolution, Queue<IFeature> pendingFeatures) {
 		if (feature != null && featurePluginResolution.putIfAbsent(feature, resolution) == null) {
 			// Don't add feature more than once to not override the resolution if already present (e.g. a child was specified explicitly)
-			pendingFeatures.add(feature); // ... and to not process it more than once 
+			pendingFeatures.add(feature); // ... and to not process it more than once
 		}
 	}
 
@@ -392,7 +392,7 @@ public class BundleLauncherHelper {
 		return getMaxElement(containers, filter, compareVersion);
 	}
 
-	/**	
+	/**
 	 * Selects and returns an {@code required} element for the specified version (may be null) and match-rule from the given containers using the following logic:
 	 * <p>
 	 * <ol>
@@ -505,7 +505,7 @@ public class BundleLauncherHelper {
 		} else {
 			List<Version> pluginVersions = idVersions.computeIfAbsent(model.getPluginBase().getId(), n -> new ArrayList<>());
 			Version version = getVersion(model);
-			if (!containsVersion.test(pluginVersions, version)) { // apply version filter    
+			if (!containsVersion.test(pluginVersions, version)) { // apply version filter
 				pluginVersions.add(version);
 				addBundleToMap(map, model, startData);
 			}
@@ -584,7 +584,7 @@ public class BundleLauncherHelper {
 				.forEach(plugin -> addPluginBundle(plugin, launchState, launchBundlePlugins, tpState));
 
 		launchState.getResolver().setSelectionPolicy(Comparator
-				// prefer bundles explicitly included in the launch 
+				// prefer bundles explicitly included in the launch
 				.comparing((BaseDescription d) -> !launchBundles.contains(d.getSupplier())) //false<true
 				.thenComparing(d -> { // choose bundles originating from the preferred location (workspace or TP)
 					boolean isWorkspaceBundle = launchBundlePlugins.get(d.getSupplier()).getUnderlyingResource() != null;
