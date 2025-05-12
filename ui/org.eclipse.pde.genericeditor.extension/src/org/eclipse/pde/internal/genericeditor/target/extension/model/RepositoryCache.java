@@ -64,7 +64,7 @@ public class RepositoryCache {
 	 * {@link IVersionedId versioned IDs} for that ID. All keys are sorted in
 	 * alphabetical order and all versions are sorted in descending order.
 	 * </p>
-	 * 
+	 *
 	 * @return all available units in the specified {@code repository} in a map
 	 *         mapping all IDs to all available versions.
 	 */

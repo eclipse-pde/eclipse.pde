@@ -158,7 +158,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	}
 
 	private IPluginBase getFragmentHostModel(String hostId, String hostVersion, int hostVersionMatchRule) {
-		// return host plug-in model with matching version from bundles selected for launch 
+		// return host plug-in model with matching version from bundles selected for launch
 		List<IPluginModelBase> hosts = fAllBundles.getOrDefault(hostId, Collections.emptyList());
 		Stream<IPluginBase> hostPlugins = hosts.stream().map(IPluginModelBase::getPluginBase);
 		return hostPlugins.filter(h -> VersionUtil.compare(h.getVersion(), hostVersion, hostVersionMatchRule)) //
@@ -173,7 +173,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	@Override
 	public String getModuleCLIOptions(ILaunchConfiguration configuration) throws CoreException {
 		// The JVM options should be specified in target platform, see getVMArguments()
-		return ""; //$NON-NLS-1$ 
+		return ""; //$NON-NLS-1$
 	}
 
 	@Override

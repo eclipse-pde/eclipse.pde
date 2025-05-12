@@ -34,11 +34,11 @@ import org.eclipse.pde.internal.genericeditor.target.extension.model.xml.Parser;
 
 /**
  * Class that computes autocompletions for attribute values. Example:
- * 
+ *
  * <pre>
  *  &lt;unit id="org.^"
  * </pre>
- * 
+ *
  * where ^ is autocomplete call.
  */
 public class AttributeValueCompletionProcessor extends DelegateProcessor {

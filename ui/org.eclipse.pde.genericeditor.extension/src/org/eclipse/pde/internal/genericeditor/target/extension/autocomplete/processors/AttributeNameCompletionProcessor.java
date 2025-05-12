@@ -30,11 +30,11 @@ import org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetCons
 
 /**
  * Class that computes autocompletions for attribute names. Example:
- * 
+ *
  * <pre>
  *  &lt;unit ver^
  * </pre>
- * 
+ *
  * where ^ is autocomplete call.
  */
 public class AttributeNameCompletionProcessor extends DelegateProcessor {
