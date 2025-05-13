@@ -143,7 +143,7 @@ The following is an example of the extension point:
          point=&quot;org.eclipse.pde.ui.targetLocationProvisioners&quot;&gt;
       &lt;locationProvider
             class=&quot;org.eclipse.example.exampleTargetWizard&quot;
-            icon=&quot;icons/obj16/exampleTargetLocation.png&quot;
+            icon=&quot;icons/obj16/exampleTargetLocation.svg&quot;
             id=&quot;org.eclipse.example.exampleTargetProvisioner&quot;
             name=&quot;%targetLocationProvider.example.name&quot;
          &lt;description&gt;

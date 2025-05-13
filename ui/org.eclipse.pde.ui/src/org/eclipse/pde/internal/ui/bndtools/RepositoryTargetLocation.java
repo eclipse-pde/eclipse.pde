@@ -52,7 +52,7 @@ public class RepositoryTargetLocation extends BndTargetLocation {
 	private RepositoryPlugin	repository;
 
 	public RepositoryTargetLocation() {
-		super(TYPE, "database.png"); //$NON-NLS-1$
+		super(TYPE, "database.svg"); //$NON-NLS-1$
 	}
 
 	public RepositoryTargetLocation setRepository(String repositoryName) {

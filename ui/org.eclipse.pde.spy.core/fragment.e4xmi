@@ -25,7 +25,7 @@
     </elements>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_D-9ugOmnEei5O53ZMcQRyw" featurename="snippets" parentElementId="xpath:/">
-    <elements xsi:type="basic:TrimmedWindow" xmi:id="_I_PxgOmnEei5O53ZMcQRyw" elementId="org.eclipse.pde.spy.core.window" selectedElement="_UUrRUOmqEei5O53ZMcQRyw" label="%E4-Spies-window" iconURI="platform:/plugin/org.eclipse.pde.spy.core/icons/spyicon.png" width="600" height="1000">
+    <elements xsi:type="basic:TrimmedWindow" xmi:id="_I_PxgOmnEei5O53ZMcQRyw" elementId="org.eclipse.pde.spy.core.window" selectedElement="_UUrRUOmqEei5O53ZMcQRyw" label="%E4-Spies-window" iconURI="platform:/plugin/org.eclipse.pde.spy.core/icons/spyicon.svg" width="600" height="1000">
       <persistedState key="persistState" value="false"/>
       <children xsi:type="basic:PartStack" xmi:id="_UUrRUOmqEei5O53ZMcQRyw" elementId="org.eclipse.pde.spy.core.partStack"/>
       <trimBars xmi:id="_MYxKsOmqEei5O53ZMcQRyw" elementId="org.eclipse.pde.spy.core.trimbar">
