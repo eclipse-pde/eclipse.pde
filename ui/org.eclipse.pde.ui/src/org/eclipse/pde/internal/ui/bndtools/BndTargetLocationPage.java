@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Tree;
 public abstract class BndTargetLocationPage extends WizardPage implements IEditBundleContainerPage {
 	private final String			message;
 	private final ITargetDefinition	targetDefinition;
-	private static final Image bundleIcon = PDEPluginImages.get("/icons/bndtools/bundle.png"); //$NON-NLS-1$
+	private static final Image bundleIcon = PDEPluginImages.get("/icons/bndtools/bundle.svg"); //$NON-NLS-1$
 
 	public BndTargetLocationPage(String pageName, String title, String message, ITargetDefinition targetDefinition) {
 		super(pageName);

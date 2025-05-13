@@ -517,7 +517,7 @@
       </wizard>
             <wizard
             class="org.eclipse.pde.internal.ui.templates.e4.E4ApplicationNewWizard"
-            icon="$nl$/icons/etool16/e4.png"
+            icon="$nl$/icons/etool16/e4.svg"
             id="org.eclipse.pde.ui.e4EmptyApplication"
             java="true"
             name="%pluginContent.e4RCP.name"
@@ -530,7 +530,7 @@
       </wizard>
             <wizard
                   class="org.eclipse.pde.internal.ui.templates.e4.E4ViewNewWizard"
-                  icon="$nl$/icons/etool16/e4.png"
+                  icon="$nl$/icons/etool16/e4.svg"
                   id="org.eclipse.pde.ui.templates.e4View"
                   java="true"
                   name="%pluginContent.e4View.name"
@@ -544,7 +544,7 @@
             </wizard>
          <wizard
                   class="org.eclipse.pde.internal.ui.templates.e4.E4HandlerNewWizard"
-                  icon="$nl$/icons/etool16/e4.png"
+                  icon="$nl$/icons/etool16/e4.svg"
                   id="org.eclipse.pde.ui.templates.e4Handler"
                   java="true"
                   name="%pluginContent.e4Handler.name"
@@ -558,7 +558,7 @@
             </wizard>
          <wizard
                class="org.eclipse.pde.internal.ui.templates.e4.E4ToolbarContributionNewWizard"
-               icon="$nl$/icons/etool16/e4.png"
+               icon="$nl$/icons/etool16/e4.svg"
                id="org.eclipse.pde.ui.templates.e4ToolbarContribution"
                java="true"
                name="%pluginContent.e4ToolbarContribution.name"

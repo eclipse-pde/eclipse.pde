@@ -55,7 +55,7 @@ public class RunDescriptorTargetLocation extends BndTargetLocation {
 	private IFile		bndrunFile;
 
 	public RunDescriptorTargetLocation() {
-		super(TYPE, "bndrun.gif"); //$NON-NLS-1$
+		super(TYPE, "bndrun.svg"); //$NON-NLS-1$
 	}
 
 	public RunDescriptorTargetLocation setRunDescriptor(IFile bndrunFile) {

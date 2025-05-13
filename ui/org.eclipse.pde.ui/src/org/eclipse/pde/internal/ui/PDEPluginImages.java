@@ -177,7 +177,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_TARGET_ENVIRONMENT = create(PATH_OBJ, "environment.svg"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PRODUCT_DEFINITION = create(PATH_OBJ, "product_xml_obj.svg"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PRODUCT_LAUNCHING = create(PATH_OBJ, "start_application.svg"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_PRODUCT_BRANDING = create(PATH_OBJ, "eclipse.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_PRODUCT_BRANDING = create(PATH_OBJ, "eclipse.svg"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PLUGINS_FRAGMENTS = create(PATH_OBJ, "plugins_and_fragments.svg"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_SITE_XML_OBJ = create(PATH_OBJ, "site_xml_obj.svg"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_IMAGE_APPLICATION = create(PATH_OBJ, "image_application.svg"); //$NON-NLS-1$
@@ -257,7 +257,7 @@ public class PDEPluginImages {
 
 	public static final ImageDescriptor DESC_CON_SEV = create(PATH_LCL, "configure_problem_severity.svg"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_ORGANIZE_MANIFESTS_ACTION = create(PATH_LCL,
-			"cleanmanifest.png"); //$NON-NLS-1$
+			"cleanmanifest.svg"); //$NON-NLS-1$
 	/**
 	 * WIZ
 	 */
