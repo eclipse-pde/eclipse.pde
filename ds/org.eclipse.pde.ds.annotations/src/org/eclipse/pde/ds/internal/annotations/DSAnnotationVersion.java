@@ -25,7 +25,7 @@ public enum DSAnnotationVersion {
 	V1_2("1.2", "http://www.osgi.org/xmlns/scr/v1.2.0"), //$NON-NLS-1$
 
 	V1_3("1.3", "http://www.osgi.org/xmlns/scr/v1.3.0"), //$NON-NLS-1$
-	
+
 	V1_4("1.4", "http://www.osgi.org/xmlns/scr/v1.4.0"), //$NON-NLS-1$
 
 	V1_5("1.5", "http://www.osgi.org/xmlns/scr/v1.5.0"); //$NON-NLS-1$
@@ -54,7 +54,7 @@ public enum DSAnnotationVersion {
 
 	/**
 	 * Compares this version with another one
-	 * 
+	 *
 	 * @param other
 	 * @return true if this version is higher or equal to this version
 	 */

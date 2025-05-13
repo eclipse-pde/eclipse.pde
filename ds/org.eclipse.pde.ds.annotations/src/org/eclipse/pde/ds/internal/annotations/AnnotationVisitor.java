@@ -998,7 +998,7 @@ public class AnnotationVisitor extends ASTVisitor {
 		String modified = null;
 		IMethodBinding modifiedMethod = null;
 		Annotation modifiedAnnotation = null;
-		
+
 
 
 		for (MethodDeclaration method : type.getMethods()) {
@@ -2215,7 +2215,7 @@ public class AnnotationVisitor extends ASTVisitor {
 
 	/**
 	 * An injectable constructor is one annotated with <code>@Activate</code>
-	 * 
+	 *
 	 * @param type
 	 * @param problemReporter2
 	 * @return
@@ -2266,7 +2266,7 @@ public class AnnotationVisitor extends ASTVisitor {
 	 * Check if the given {@link ITypeBinding} is an <a href=
 	 * "https://docs.osgi.org/specification/osgi.cmpn/7.0.0/service.component.html#service.component-activation.objects">Activation
 	 * Object</a>
-	 * 
+	 *
 	 * @param param the binding to check
 	 * @return <code>true</code> if this is an Activation Object, <code>false</code>
 	 *         otherwise
@@ -2283,7 +2283,7 @@ public class AnnotationVisitor extends ASTVisitor {
 	 * Check if the given {@link ITypeBinding} is a <a href=
 	 * "https://docs.osgi.org/specification/osgi.cmpn/7.0.0/service.component.html#service.component-component.property.types">Component
 	 * Property Type</a>
-	 * 
+	 *
 	 * @param param the binding to check
 	 * @return <code>true</code> if this is a Component Property Type
 	 *         <code>false</code> otherwise
