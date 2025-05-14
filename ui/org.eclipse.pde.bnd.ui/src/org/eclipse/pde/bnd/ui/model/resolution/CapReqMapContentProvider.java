@@ -74,8 +74,9 @@ public class CapReqMapContentProvider implements ITreeContentProvider {
 		for (Entry<String, List<Object>> entry : map.entrySet()) {
 			// Skip if namespace is a member of the namespaces we have already
 			// added.
-			if (NAMESPACES.contains(entry.getKey()))
+			if (NAMESPACES.contains(entry.getKey())) {
 				continue;
+			}
 
 			List<Object> listForNs = entry.getValue();
 			Object[] array = listForNs.toArray();
@@ -112,8 +113,7 @@ public class CapReqMapContentProvider implements ITreeContentProvider {
 	public boolean hasChildren(Object object) {
 		boolean children = false;
 
-		if (object instanceof RequirementWrapper) {
-			RequirementWrapper rw = (RequirementWrapper) object;
+		if (object instanceof RequirementWrapper rw) {
 			children = rw.requirers != null && !rw.requirers.isEmpty();
 		}
 
@@ -125,18 +125,20 @@ public class CapReqMapContentProvider implements ITreeContentProvider {
 		Object[] result = EMPTY;
 		if (parent instanceof RequirementWrapper) {
 			Collection<? extends Object> requirers = ((RequirementWrapper) parent).requirers;
-			if (requirers != null)
+			if (requirers != null) {
 				result = requirers.toArray();
+			}
 		}
 		return result;
 	}
 
 	public void setFilter(String filterString) {
 		if (filterString == null || filterString.length() == 0 || filterString.trim()
-			.equals("*"))
+			.equals("*")) {
 			wildcardFilter = null;
-		else
+		} else {
 			wildcardFilter = "*" + filterString.trim() + "*";
+		}
 
 	}
 

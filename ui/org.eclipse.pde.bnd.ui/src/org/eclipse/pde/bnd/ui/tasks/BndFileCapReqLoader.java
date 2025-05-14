@@ -43,16 +43,18 @@ public class BndFileCapReqLoader extends BndBuilderCapReqLoader {
 			Builder b;
 
 			IFile[] wsfiles = FileUtils.getWorkspaceFiles(file);
-			if (wsfiles == null || wsfiles.length == 0)
+			if (wsfiles == null || wsfiles.length == 0) {
 				throw new Exception("Unable to determine project owner for Bnd file: " + file.getAbsolutePath());
+			}
 
 			IProject project = wsfiles[0].getProject();
 
 			// Calculate the manifest
 			Workspace ws = Workspaces.getWorkspace(project).orElse(null);
 			Project bndProject = Central.getProject(ws, project);
-			if (bndProject == null)
+			if (bndProject == null) {
 				return null;
+			}
 			if (file.getName()
 				.equals(Project.BNDFILE)) {
 				ProjectBuilder pb = bndProject.getBuilder(null);
@@ -87,8 +89,9 @@ public class BndFileCapReqLoader extends BndBuilderCapReqLoader {
 
 	@Override
 	public synchronized void close() throws IOException {
-		if (builder != null)
+		if (builder != null) {
 			builder.close();
+		}
 		builder = null;
 	}
 
