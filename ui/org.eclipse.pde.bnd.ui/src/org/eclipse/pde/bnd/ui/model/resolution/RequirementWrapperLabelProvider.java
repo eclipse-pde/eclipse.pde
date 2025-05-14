@@ -43,15 +43,14 @@ public class RequirementWrapperLabelProvider extends RequirementLabelProvider {
 	@Override
 	public void update(ViewerCell cell) {
 		Object element = cell.getElement();
-		if (element instanceof RequirementWrapper) {
-			RequirementWrapper rw = (RequirementWrapper) element;
-
+		if (element instanceof RequirementWrapper rw) {
 			Image icon = Resources.getImage(R5LabelFormatter.getNamespaceImagePath(rw.requirement.getNamespace()));
 			cell.setImage(icon);
 
 			StyledString label = getLabel(rw.requirement);
-			if (rw.resolved || rw.java)
+			if (rw.resolved || rw.java) {
 				label.setStyle(0, label.length(), resolved);
+			}
 
 			cell.setText(label.getString());
 			cell.setStyleRanges(label.getStyleRanges());
@@ -93,10 +92,12 @@ public class RequirementWrapperLabelProvider extends RequirementLabelProvider {
 		Requirement req = rw.requirement;
 
 		StringBuilder buf = new StringBuilder(300);
-		if (rw.resolved)
+		if (rw.resolved) {
 			buf.append("RESOLVED:\n");
-		if (rw.java)
+		}
+		if (rw.java) {
 			buf.append("JAVA:\n");
+		}
 
 		Resource r = req.getResource();
 
@@ -117,18 +118,20 @@ public class RequirementWrapperLabelProvider extends RequirementLabelProvider {
 		buf.append(req.getNamespace());
 
 		for (Entry<String, Object> attr : req.getAttributes()
-			.entrySet())
+			.entrySet()) {
 			buf.append(";\n\t")
 				.append(attr.getKey())
 				.append(" = ")
 				.append(attr.getValue());
+		}
 
 		for (Entry<String, String> directive : req.getDirectives()
-			.entrySet())
+			.entrySet()) {
 			buf.append(";\n\t")
 				.append(directive.getKey())
 				.append(" := ")
 				.append(directive.getValue());
+		}
 
 		return buf.toString();
 	}

@@ -389,8 +389,7 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 		IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 			Object item = iter.next();
-			if (item instanceof Clazz) {
-				Clazz clazz = (Clazz) item;
+			if (item instanceof Clazz clazz) {
 				String className = clazz.getFQN();
 				IType type = null;
 				if (!loaders.isEmpty()) {
@@ -404,8 +403,9 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 								IJavaProject javaProject = JavaCore.create(wsfile.getProject());
 								try {
 									type = javaProject.findType(className);
-									if (type != null)
+									if (type != null) {
 										break;
+									}
 								} catch (JavaModelException e1) {
 									ErrorDialog.openError(getSite().getShell(), "Error", "",
 										new Status(IStatus.ERROR, PLUGIN_ID, 0,
@@ -417,8 +417,9 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 					}
 				}
 				try {
-					if (type != null)
+					if (type != null) {
 						JavaUI.openInEditor(type, true, true);
+					}
 				} catch (PartInitException e2) {
 					ErrorDialog.openError(getSite().getShell(), "Error", "", new Status(IStatus.ERROR, PLUGIN_ID,
 						0, MessageFormat.format("Error opening Java editor for class '{0}'.", className), e2));
@@ -566,8 +567,9 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 
 	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		if (selection == null || !(selection instanceof IStructuredSelection))
+		if (selection == null || !(selection instanceof IStructuredSelection)) {
 			return;
+		}
 
 		Set<CapReqLoader> loaders = getLoadersFromSelection((IStructuredSelection) selection);
 		if (setLoaders(loaders)) {
@@ -652,22 +654,25 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 				}
 			}
 
-			if (loader != null)
+			if (loader != null) {
 				result.add(loader);
+			}
 		}
 
 		return result;
 	}
 
 	void executeAnalysis() {
-		if (inputLocked)
+		if (inputLocked) {
 			return;
+		}
 
 		outOfDate = false;
 		synchronized (this) {
 			Job oldJob = analysisJob;
-			if (oldJob != null && oldJob.getState() != Job.NONE)
+			if (oldJob != null && oldJob.getState() != Job.NONE) {
 				oldJob.cancel();
+			}
 
 			if (!loaders.isEmpty()) {
 				final AnalyseBundleResolutionJob job = new AnalyseBundleResolutionJob("importExportAnalysis", loaders,
@@ -679,10 +684,11 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 					public void aboutToRun(IJobChangeEvent event) {
 						if (display != null && !display.isDisposed()) {
 							Runnable update = () -> setContentDescription("Working...");
-							if (display.getThread() == Thread.currentThread())
+							if (display.getThread() == Thread.currentThread()) {
 								update.run();
-							else
+							} else {
 								display.asyncExec(update);
+							}
 						}
 					}
 
@@ -690,9 +696,10 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 					public void done(IJobChangeEvent event) {
 						IStatus result = job.getResult();
 						if (result != null && result.isOK()) {
-							if (display != null && !display.isDisposed())
+							if (display != null && !display.isDisposed()) {
 								display
 									.asyncExec(() -> setInput(loaders, job.getCapabilities(), job.getRequirements()));
+							}
 						}
 					}
 				});
@@ -740,8 +747,9 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 		@Override
 		public void dragSetData(DragSourceEvent event) {
 			LocalSelectionTransfer transfer = LocalSelectionTransfer.getTransfer();
-			if (transfer.isSupportedType(event.dataType))
+			if (transfer.isSupportedType(event.dataType)) {
 				transfer.setSelection(viewer.getSelection());
+			}
 		}
 
 		@Override
@@ -884,8 +892,9 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 		reqsContentProvider.setFilter(filterString);
 		reqsViewer.refresh();
 		updateReqsLabel();
-		if (filterString != null)
+		if (filterString != null) {
 			reqsViewer.expandToLevel(1);
+		}
 	}
 
 	private void updateCapsFilter(String filterString) {

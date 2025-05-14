@@ -89,18 +89,20 @@ public class CapabilityLabelProvider extends StyledCellLabelProvider {
 		}
 
 		for (Entry<String, Object> attribute : cap.getAttributes()
-			.entrySet())
+			.entrySet()) {
 			buf.append(";\n\t")
 				.append(attribute.getKey())
 				.append(" = ")
 				.append(attribute.getValue());
+		}
 
 		for (Entry<String, String> directive : cap.getDirectives()
-			.entrySet())
+			.entrySet()) {
 			buf.append(";\n\t")
 				.append(directive.getKey())
 				.append(" := ")
 				.append(directive.getValue());
+		}
 
 		return buf.toString();
 	}

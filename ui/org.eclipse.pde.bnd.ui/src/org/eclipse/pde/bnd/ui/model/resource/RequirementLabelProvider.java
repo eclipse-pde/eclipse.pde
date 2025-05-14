@@ -37,9 +37,7 @@ public class RequirementLabelProvider extends StyledCellLabelProvider {
 	@Override
 	public void update(ViewerCell cell) {
 		Object element = cell.getElement();
-		if (element instanceof Requirement) {
-			Requirement requirement = (Requirement) element;
-
+		if (element instanceof Requirement requirement) {
 			StyledString label = getLabel(requirement);
 
 			cell.setText(label.getString());

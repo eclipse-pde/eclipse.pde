@@ -137,8 +137,9 @@ public abstract class BndBuilderCapReqLoader implements CapReqLoader {
 			int dot = fqn.lastIndexOf('.');
 			if (dot >= 0) {
 				String pkg = fqn.substring(0, dot);
-				if (!pkgName.equals(pkg))
+				if (!pkgName.equals(pkg)) {
 					classes.add(clazz);
+				}
 			}
 		}
 		return classes;
@@ -158,12 +159,15 @@ public abstract class BndBuilderCapReqLoader implements CapReqLoader {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		BndBuilderCapReqLoader other = (BndBuilderCapReqLoader) obj;
 		return Objects.equals(file, other.file);
 	}

@@ -43,8 +43,9 @@ public class JarFileCapReqLoader extends BndBuilderCapReqLoader {
 
 	@Override
 	public synchronized void close() throws IOException {
-		if (builder != null)
+		if (builder != null) {
 			builder.close();
+		}
 		builder = null;
 	}
 

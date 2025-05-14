@@ -47,7 +47,7 @@ public class AnalyseBundleResolutionJob extends Job {
 
 	private Map<String, List<RequirementWrapper>>	requirements;
 	private Map<String, List<Capability>>			capabilities;
-	private EE										ee;
+	private final EE										ee;
 
 	public AnalyseBundleResolutionJob(String name, Set<? extends CapReqLoader> loaders) {
 		this(name, loaders, null);
