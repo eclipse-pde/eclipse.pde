@@ -69,28 +69,29 @@ public class R5LabelFormatter {
 	public static String getVersionAttributeName(String ns) {
 		String r;
 
-		if (ns == null)
+		if (ns == null) {
 			r = null;
-		else if (ns.equals(IdentityNamespace.IDENTITY_NAMESPACE))
+		} else if (ns.equals(IdentityNamespace.IDENTITY_NAMESPACE)) {
 			r = IdentityNamespace.CAPABILITY_VERSION_ATTRIBUTE;
-		else if (ns.equals(ContentNamespace.CONTENT_NAMESPACE))
+		} else if (ns.equals(ContentNamespace.CONTENT_NAMESPACE)) {
 			r = null;
-		else if (ns.equals(BundleNamespace.BUNDLE_NAMESPACE))
+		} else if (ns.equals(BundleNamespace.BUNDLE_NAMESPACE)) {
 			r = AbstractWiringNamespace.CAPABILITY_BUNDLE_VERSION_ATTRIBUTE;
-		else if (ns.equals(HostNamespace.HOST_NAMESPACE))
+		} else if (ns.equals(HostNamespace.HOST_NAMESPACE)) {
 			r = AbstractWiringNamespace.CAPABILITY_BUNDLE_VERSION_ATTRIBUTE;
-		else if (ns.equals(ExecutionEnvironmentNamespace.EXECUTION_ENVIRONMENT_NAMESPACE))
+		} else if (ns.equals(ExecutionEnvironmentNamespace.EXECUTION_ENVIRONMENT_NAMESPACE)) {
 			r = ExecutionEnvironmentNamespace.CAPABILITY_VERSION_ATTRIBUTE;
-		else if (ns.equals(PackageNamespace.PACKAGE_NAMESPACE))
+		} else if (ns.equals(PackageNamespace.PACKAGE_NAMESPACE)) {
 			r = PackageNamespace.CAPABILITY_VERSION_ATTRIBUTE;
-		else if (ns.equals(ExtenderNamespace.EXTENDER_NAMESPACE))
+		} else if (ns.equals(ExtenderNamespace.EXTENDER_NAMESPACE)) {
 			r = ExtenderNamespace.CAPABILITY_VERSION_ATTRIBUTE;
-		else if (ns.equals(ContractNamespace.CONTRACT_NAMESPACE))
+		} else if (ns.equals(ContractNamespace.CONTRACT_NAMESPACE)) {
 			r = ContractNamespace.CAPABILITY_VERSION_ATTRIBUTE;
-		else if (ns.equals(ServiceNamespace.SERVICE_NAMESPACE))
+		} else if (ns.equals(ServiceNamespace.SERVICE_NAMESPACE)) {
 			r = null;
-		else
+		} else {
 			r = null;
+		}
 
 		return r;
 	}
@@ -106,8 +107,9 @@ public class R5LabelFormatter {
 	 * to this rule is the osgi.service namespace, which uses "objectClass".
 	 */
 	public static String getMainAttributeName(String ns) {
-		if (ServiceNamespace.SERVICE_NAMESPACE.equals(ns))
+		if (ServiceNamespace.SERVICE_NAMESPACE.equals(ns)) {
 			return ServiceNamespace.CAPABILITY_OBJECTCLASS_ATTRIBUTE;
+		}
 
 		return ns;
 	}
@@ -115,25 +117,26 @@ public class R5LabelFormatter {
 	public static String getNamespaceImagePath(String ns) {
 		String r = "brkpi_obj.svg"; // generic green dot
 
-		if (BundleNamespace.BUNDLE_NAMESPACE.equals(ns) || HostNamespace.HOST_NAMESPACE.equals(ns))
+		if (BundleNamespace.BUNDLE_NAMESPACE.equals(ns) || HostNamespace.HOST_NAMESPACE.equals(ns)) {
 			r = "bundle.png";
-		else if (ExecutionEnvironmentNamespace.EXECUTION_ENVIRONMENT_NAMESPACE.equals(ns))
+		} else if (ExecutionEnvironmentNamespace.EXECUTION_ENVIRONMENT_NAMESPACE.equals(ns)) {
 			r = "jcu_obj.svg";
-		else if (PackageNamespace.PACKAGE_NAMESPACE.equals(ns))
+		} else if (PackageNamespace.PACKAGE_NAMESPACE.equals(ns)) {
 			r = "package_obj.svg";
-		else if (ServiceNamespace.SERVICE_NAMESPACE.equals(ns))
+		} else if (ServiceNamespace.SERVICE_NAMESPACE.equals(ns)) {
 			r = "service.png";
-		else if (ExtenderNamespace.EXTENDER_NAMESPACE.equals(ns))
+		} else if (ExtenderNamespace.EXTENDER_NAMESPACE.equals(ns)) {
 			r = "tricks.svg";
-		else if (ContractNamespace.CONTRACT_NAMESPACE.equals(ns))
+		} else if (ContractNamespace.CONTRACT_NAMESPACE.equals(ns)) {
 			r = "signed_yes_tbl.svg";
-		else if ("osgi.whiteboard".equals(ns))
+		} else if ("osgi.whiteboard".equals(ns)) {
 			r = "whiteboard.png";
-		else if ("bnd.multirelease".equals(ns))
+		} else if ("bnd.multirelease".equals(ns)) {
 			r = "jar_obj.svg";
-		else if ("osgi.unresolvable".equalsIgnoreCase(ns) || "osgi.missing".equalsIgnoreCase(ns)
-			|| "donotresolve".equalsIgnoreCase(ns) || "compile-only".equalsIgnoreCase(ns))
+		} else if ("osgi.unresolvable".equalsIgnoreCase(ns) || "osgi.missing".equalsIgnoreCase(ns)
+			|| "donotresolve".equalsIgnoreCase(ns) || "compile-only".equalsIgnoreCase(ns)) {
 			r = "excludeMode_filter.svg";
+		}
 
 		return r;
 	}
@@ -141,26 +144,28 @@ public class R5LabelFormatter {
 	public static void appendNamespaceWithValue(StyledString label, String ns, String value, boolean shorten) {
 		String prefix = ns;
 		if (shorten) {
-			if (IdentityNamespace.IDENTITY_NAMESPACE.equals(ns))
+			if (IdentityNamespace.IDENTITY_NAMESPACE.equals(ns)) {
 				prefix = "id";
-			else if (BundleNamespace.BUNDLE_NAMESPACE.equals(ns))
+			} else if (BundleNamespace.BUNDLE_NAMESPACE.equals(ns)) {
 				prefix = "";
-			else if (HostNamespace.HOST_NAMESPACE.equals(ns))
+			} else if (HostNamespace.HOST_NAMESPACE.equals(ns)) {
 				prefix = "host";
-			else if (ExecutionEnvironmentNamespace.EXECUTION_ENVIRONMENT_NAMESPACE.equals(ns))
+			} else if (ExecutionEnvironmentNamespace.EXECUTION_ENVIRONMENT_NAMESPACE.equals(ns)) {
 				prefix = "";
-			else if (PackageNamespace.PACKAGE_NAMESPACE.equals(ns))
+			} else if (PackageNamespace.PACKAGE_NAMESPACE.equals(ns)) {
 				prefix = "";
-			else if (ServiceNamespace.SERVICE_NAMESPACE.equals(ns))
+			} else if (ServiceNamespace.SERVICE_NAMESPACE.equals(ns)) {
 				prefix = "";
-			else if (ContractNamespace.CONTRACT_NAMESPACE.equals(ns))
+			} else if (ContractNamespace.CONTRACT_NAMESPACE.equals(ns)) {
 				prefix = "";
-			else if ("osgi.whiteboard".equals(ns))
+			} else if ("osgi.whiteboard".equals(ns)) {
 				prefix = "";
+			}
 		}
 
-		if (prefix.length() > 0)
+		if (prefix.length() > 0) {
 			label.append(prefix + "=", StyledString.QUALIFIER_STYLER);
+		}
 		label.append(value, BoldStyler.INSTANCE_DEFAULT);
 	}
 
@@ -201,10 +206,11 @@ public class R5LabelFormatter {
 				.entrySet()) {
 				String key = entry.getKey();
 				if (!key.equals(ns) && !key.equals(versionAttributeName)) {
-					if (first)
+					if (first) {
 						label.append("[", StyledString.QUALIFIER_STYLER);
-					else
+					} else {
 						label.append(", ", StyledString.QUALIFIER_STYLER);
+					}
 
 					first = false;
 					label.append(key + "=", StyledString.QUALIFIER_STYLER);
@@ -212,8 +218,9 @@ public class R5LabelFormatter {
 						.toString() : "<null>", StyledString.QUALIFIER_STYLER);
 				}
 			}
-			if (!first)
+			if (!first) {
 				label.append("]", StyledString.QUALIFIER_STYLER);
+			}
 		}
 
 		if (!cap.getDirectives()
@@ -223,8 +230,9 @@ public class R5LabelFormatter {
 			for (Entry<String, String> directive : cap.getDirectives()
 				.entrySet()) {
 				label.append(directive.getKey() + ":=" + directive.getValue(), StyledString.QUALIFIER_STYLER);
-				if (!first)
+				if (!first) {
 					label.append(", ", StyledString.QUALIFIER_STYLER);
+				}
 			}
 		}
 
@@ -243,8 +251,9 @@ public class R5LabelFormatter {
 		label.append(name, BoldStyler.INSTANCE_DEFAULT);
 
 		Version version = org.eclipse.pde.bnd.ui.ResourceUtils.getVersion(identity);
-		if (version != null)
+		if (version != null) {
 			label.append(" " + version, StyledString.COUNTER_STYLER);
+		}
 	}
 
 	public static void appendRequirementLabel(StyledString label, Requirement requirement, boolean shorten) {
@@ -266,8 +275,9 @@ public class R5LabelFormatter {
 		Resource r = requirement.getResource();
 		if (r instanceof SupportingResource sr) {
 			int index = sr.getSupportingIndex();
-			if (index >= 0)
+			if (index >= 0) {
 				label.append("[" + index + "] ");
+			}
 		}
 
 		FilterParser fp = new FilterParser();
@@ -291,9 +301,10 @@ public class R5LabelFormatter {
 					appendNamespaceWithValue(label, namespace, ((WithRangeExpression) exp).printExcludingRange(),
 						shorten);
 					RangeExpression range = ((WithRangeExpression) exp).getRangeExpression();
-					if (range != null)
+					if (range != null) {
 						label.append(" ")
 							.append(formatRangeString(range), StyledString.COUNTER_STYLER);
+					}
 				} else if (ExecutionEnvironmentNamespace.EXECUTION_ENVIRONMENT_NAMESPACE.equals(namespace)) {
 					Matcher matcher = EE_PATTERN.matcher(filter);
 					if (matcher.find()) {
@@ -318,8 +329,9 @@ public class R5LabelFormatter {
 		for (Entry<String, String> directive : requirement.getDirectives()
 			.entrySet()) {
 			if (Namespace.REQUIREMENT_RESOLUTION_DIRECTIVE.equals(directive.getKey())
-				|| Namespace.REQUIREMENT_FILTER_DIRECTIVE.equals(directive.getKey()))
+				|| Namespace.REQUIREMENT_FILTER_DIRECTIVE.equals(directive.getKey())) {
 				continue; // deal with the filter: and resolution: directives
+			}
 							// separately
 			StringBuilder buf = new StringBuilder();
 			buf.append(first ? " " : ", ");
@@ -343,10 +355,11 @@ public class R5LabelFormatter {
 		if (low == null) {
 			sb.append("[0");
 		} else {
-			if (low.getOp() == Op.GREATER)
+			if (low.getOp() == Op.GREATER) {
 				sb.append("(");
-			else
+			} else {
 				sb.append("[");
+			}
 			sb.append(low.getValue());
 		}
 
@@ -357,10 +370,11 @@ public class R5LabelFormatter {
 			sb.append("\u221e]"); // INFINITY Unicode: U+221E, UTF-8: E2 88 9E
 		} else {
 			sb.append(high.getValue());
-			if (high.getOp() == Op.LESS)
+			if (high.getOp() == Op.LESS) {
 				sb.append(")");
-			else
+			} else {
 				sb.append("]");
+			}
 		}
 		return sb.toString();
 	}
