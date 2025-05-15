@@ -30,7 +30,7 @@ import jakarta.xml.bind.annotation.XmlRegistry;
  * binding of schema type definitions, element declarations and model groups.
  * Factory methods for each of these are provided in this class.
  * </p>
- * 
+ *
  */
 @XmlRegistry
 public class ObjectFactory {
@@ -46,14 +46,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.osgi.xmlns.metatype.v1_4
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link Tmetadata }
-     * 
+     *
      */
     public Tmetadata createTmetadata() {
         return new Tmetadata();
@@ -61,7 +61,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Tdesignate }
-     * 
+     *
      */
     public Tdesignate createTdesignate() {
         return new Tdesignate();
@@ -69,7 +69,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Tad }
-     * 
+     *
      */
     public Tad createTad() {
         return new Tad();
@@ -77,7 +77,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Tattribute }
-     * 
+     *
      */
     public Tattribute createTattribute() {
         return new Tattribute();
@@ -85,7 +85,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Tocd }
-     * 
+     *
      */
     public Tocd createTocd() {
         return new Tocd();
@@ -93,7 +93,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Toption }
-     * 
+     *
      */
     public Toption createToption() {
         return new Toption();
@@ -101,7 +101,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Ticon }
-     * 
+     *
      */
     public Ticon createTicon() {
         return new Ticon();
@@ -109,7 +109,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Tobject }
-     * 
+     *
      */
     public Tobject createTobject() {
         return new Tobject();
@@ -117,7 +117,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Tmetadata }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.osgi.org/xmlns/metatype/v1.4.0", name = "MetaData")
     public JAXBElement<Tmetadata> createMetaData(Tmetadata value) {
@@ -126,7 +126,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "", name = "Value", scope = Tattribute.class)
     public JAXBElement<String> createTattributeValue(String value) {
@@ -135,7 +135,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Tocd }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "", name = "OCD", scope = Tmetadata.class)
     public JAXBElement<Tocd> createTmetadataOCD(Tocd value) {
@@ -144,7 +144,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Tdesignate }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "", name = "Designate", scope = Tmetadata.class)
     public JAXBElement<Tdesignate> createTmetadataDesignate(Tdesignate value) {
@@ -153,7 +153,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Toption }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "", name = "Option", scope = Tad.class)
     public JAXBElement<Toption> createTadOption(Toption value) {
@@ -162,7 +162,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Tad }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "", name = "AD", scope = Tocd.class)
     public JAXBElement<Tad> createTocdAD(Tad value) {
@@ -171,7 +171,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Ticon }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "", name = "Icon", scope = Tocd.class)
     public JAXBElement<Ticon> createTocdIcon(Ticon value) {
@@ -180,7 +180,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Tattribute }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "", name = "Attribute", scope = Tobject.class)
     public JAXBElement<Tattribute> createTobjectAttribute(Tattribute value) {

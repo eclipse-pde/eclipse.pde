@@ -48,7 +48,7 @@ public class SearchableRepositoryTreeContentProvider extends RepositoryTreeConte
 
 		return result;
 	}
-	
+
 	public List<RepositoryBundleVersion> allRepoBundleVersions(final RepositoryPlugin rp) {
 		Object[] result = getChildren(rp);
 

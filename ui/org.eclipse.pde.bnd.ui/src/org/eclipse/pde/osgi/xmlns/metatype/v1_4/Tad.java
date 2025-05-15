@@ -55,8 +55,8 @@ import jakarta.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Tad", propOrder = {
@@ -90,27 +90,27 @@ public class Tad {
 
     /**
      * Gets the value of the optionOrAny property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the optionOrAny property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getOptionOrAny().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link Toption }{@code >}
      * {@link Element }
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getOptionOrAny() {
         if (optionOrAny == null) {
@@ -121,11 +121,11 @@ public class Tad {
 
     /**
      * Ruft den Wert der name-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getName() {
         return name;
@@ -133,11 +133,11 @@ public class Tad {
 
     /**
      * Legt den Wert der name-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(String value) {
         this.name = value;
@@ -145,11 +145,11 @@ public class Tad {
 
     /**
      * Ruft den Wert der description-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDescription() {
         return description;
@@ -157,11 +157,11 @@ public class Tad {
 
     /**
      * Legt den Wert der description-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDescription(String value) {
         this.description = value;
@@ -169,11 +169,11 @@ public class Tad {
 
     /**
      * Ruft den Wert der id-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getId() {
         return id;
@@ -181,11 +181,11 @@ public class Tad {
 
     /**
      * Legt den Wert der id-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setId(String value) {
         this.id = value;
@@ -193,11 +193,11 @@ public class Tad {
 
     /**
      * Ruft den Wert der type-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Tscalar }
-     *     
+     *
      */
     public Tscalar getType() {
         return type;
@@ -205,11 +205,11 @@ public class Tad {
 
     /**
      * Legt den Wert der type-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Tscalar }
-     *     
+     *
      */
     public void setType(Tscalar value) {
         this.type = value;
@@ -217,11 +217,11 @@ public class Tad {
 
     /**
      * Ruft den Wert der cardinality-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public int getCardinality() {
         if (cardinality == null) {
@@ -233,11 +233,11 @@ public class Tad {
 
     /**
      * Legt den Wert der cardinality-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setCardinality(Integer value) {
         this.cardinality = value;
@@ -245,11 +245,11 @@ public class Tad {
 
     /**
      * Ruft den Wert der min-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMin() {
         return min;
@@ -257,11 +257,11 @@ public class Tad {
 
     /**
      * Legt den Wert der min-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMin(String value) {
         this.min = value;
@@ -269,11 +269,11 @@ public class Tad {
 
     /**
      * Ruft den Wert der max-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMax() {
         return max;
@@ -281,11 +281,11 @@ public class Tad {
 
     /**
      * Legt den Wert der max-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMax(String value) {
         this.max = value;
@@ -293,11 +293,11 @@ public class Tad {
 
     /**
      * Ruft den Wert der default-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDefault() {
         return _default;
@@ -305,11 +305,11 @@ public class Tad {
 
     /**
      * Legt den Wert der default-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDefault(String value) {
         this._default = value;
@@ -317,11 +317,11 @@ public class Tad {
 
     /**
      * Ruft den Wert der required-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public boolean isRequired() {
         if (required == null) {
@@ -333,11 +333,11 @@ public class Tad {
 
     /**
      * Legt den Wert der required-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setRequired(Boolean value) {
         this.required = value;
@@ -345,15 +345,15 @@ public class Tad {
 
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
-     * 
+     *
      * <p>
-     * the map is keyed by the name of the attribute and 
+     * the map is keyed by the name of the attribute and
      * the value is the string value of the attribute.
-     * 
+     *
      * the map returned by this method is live, and you can add new attribute
      * by updating the map directly. Because of this design, there's no setter.
-     * 
-     * 
+     *
+     *
      * @return
      *     always non-null
      */

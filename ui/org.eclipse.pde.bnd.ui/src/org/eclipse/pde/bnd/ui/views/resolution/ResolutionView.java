@@ -132,7 +132,7 @@ import aQute.lib.strings.Strings;
 public class ResolutionView extends ViewPart implements ISelectionListener, IResourceChangeListener {
 
 	public static final String										PLUGIN_ID			= "bndtools.core";
-	
+
 	private final List<EE>		ees			= Arrays.asList(EE.values());
 	private Display				display		= null;
 

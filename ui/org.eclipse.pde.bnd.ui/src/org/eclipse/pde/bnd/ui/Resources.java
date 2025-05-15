@@ -92,7 +92,7 @@ public class Resources implements BundleActivator {
 		getImageDescriptor(key); // make sure the descriptor is added!
 		return registry.get(key);
 	}
-	
+
 	public synchronized static ScheduledExecutorService getScheduler() {
 		if (scheduler == null) {
 			scheduler = Executors.newScheduledThreadPool(4);

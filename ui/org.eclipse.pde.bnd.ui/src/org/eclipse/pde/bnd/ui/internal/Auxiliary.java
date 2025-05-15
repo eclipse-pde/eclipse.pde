@@ -51,7 +51,7 @@ import aQute.bnd.osgi.Verifier;
 public class Auxiliary implements WeavingHook {
 	private final BundleTracker<Bundle>				tracker;
 	private final Deque<String>						delta	= new ConcurrentLinkedDeque<>();
-	
+
 	@Activate
 	public Auxiliary(BundleContext context) {
 		this.tracker = new BundleTracker<Bundle>(context, Bundle.RESOLVED + Bundle.ACTIVE + Bundle.STARTING, null) {

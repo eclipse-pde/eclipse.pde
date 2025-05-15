@@ -78,7 +78,7 @@ import aQute.service.reporter.Reporter;
 public class Central {
 
 	public static final String BNDTOOLS_NATURE = "bndtools.core.bndnature";
-	
+
 	private final static List<ModelListener> listeners = new CopyOnWriteArrayList<>();
 
 	public static IFile getWorkspaceBuildFile() throws Exception {
