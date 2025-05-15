@@ -49,8 +49,8 @@ import jakarta.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Tmetadata", propOrder = {
@@ -71,28 +71,28 @@ public class Tmetadata {
 
     /**
      * Gets the value of the ocdOrDesignateOrAny property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the ocdOrDesignateOrAny property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getOCDOrDesignateOrAny().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link Tdesignate }{@code >}
      * {@link JAXBElement }{@code <}{@link Tocd }{@code >}
      * {@link Element }
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getOCDOrDesignateOrAny() {
         if (ocdOrDesignateOrAny == null) {
@@ -103,11 +103,11 @@ public class Tmetadata {
 
     /**
      * Ruft den Wert der localization-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLocalization() {
         return localization;
@@ -115,11 +115,11 @@ public class Tmetadata {
 
     /**
      * Legt den Wert der localization-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLocalization(String value) {
         this.localization = value;
@@ -127,15 +127,15 @@ public class Tmetadata {
 
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
-     * 
+     *
      * <p>
-     * the map is keyed by the name of the attribute and 
+     * the map is keyed by the name of the attribute and
      * the value is the string value of the attribute.
-     * 
+     *
      * the map returned by this method is live, and you can add new attribute
      * by updating the map directly. Because of this design, there's no setter.
-     * 
-     * 
+     *
+     *
      * @return
      *     always non-null
      */

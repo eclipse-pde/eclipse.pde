@@ -198,13 +198,13 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 	private BndPreferences preferences;
 
 	private Workspace workspace;
-	
+
 	private final IObservableValue<String> workspaceName = new WritableValue<>();
 	private final IObservableValue<String> workspaceDescription = new WritableValue<>();
 
 	private Object[]                               lastExpandedElements;
     private TreePath[]                              lastExpandedPaths;
-    
+
 	@Override
 	public void createPartControl(final Composite parent) {
 		// CREATE CONTROLS
@@ -625,7 +625,7 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
                 viewer.refresh();
                 viewer.expandToLevel(2);
             }
-    
+
         } finally {
             viewer.getTree()
                 .setRedraw(true);
@@ -1238,7 +1238,7 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 
 	}
 
-	
+
 	private HierarchicalLabel<Action> createContextMenueCopyBundlesWithSelfImports(Actionable act, final RepositoryPlugin rp,
         final Clipboard clipboard) {
         return new HierarchicalLabel<Action>("Copy to clipboard :: Bundles with substitution packages (self-imports)",
@@ -1304,7 +1304,7 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 
             }));
     }
-	
+
 	private HierarchicalLabel<Action> createContextMenueCopyInfoRepo(Actionable act, final RepositoryPlugin rp,
 		final Clipboard clipboard) {
 		return new HierarchicalLabel<Action>("Copy to clipboard :: Copy info", (label) -> createAction(label.getLeaf(),
@@ -1436,7 +1436,7 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
         }
     }
 
-    
+
 	@Override
 	public Workspace getWorkspace() {
 		return this.workspace;
