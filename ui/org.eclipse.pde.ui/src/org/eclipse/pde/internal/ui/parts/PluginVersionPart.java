@@ -486,7 +486,7 @@ public class PluginVersionPart {
 	protected String getGroupText() {
 		return PDEUIMessages.DependencyPropertiesDialog_groupText;
 	}
-	
+
 	private enum Type {
         MAJOR, MINOR, MICRO
     }
@@ -494,7 +494,7 @@ public class PluginVersionPart {
     private void bumpVersion(Type type) {
         String target;
         try {
-            Version v = new Version(fMinVersionText.getText().trim());
+            Version v = new Version(getMinVersion());
             int maj = v.getMajor(), min = v.getMinor(), mic = v.getMicro();
             switch (type) {
                 case MAJOR:
@@ -510,7 +510,15 @@ public class PluginVersionPart {
                     mic++;
                     break;
             }
-            target = new Version(maj, min, mic).toString();
+
+			String originalText = getMinVersion();
+			String qualifier = ""; //$NON-NLS-1$
+			int qualifierIndex = originalText.indexOf(v.toString()) + v.toString().length();
+			if (qualifierIndex < originalText.length()) {
+				qualifier = originalText.substring(qualifierIndex);
+			}
+
+			target = new Version(maj, min, mic).toString() + qualifier;
         } catch (IllegalArgumentException e) {
             target = "1.0.0"; //$NON-NLS-1$
         }
