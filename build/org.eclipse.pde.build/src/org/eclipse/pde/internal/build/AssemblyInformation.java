@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *      IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -27,15 +27,15 @@ import org.eclipse.pde.internal.build.site.BuildTimeFeature;
 import org.osgi.framework.Version;
 
 public class AssemblyInformation implements IPDEBuildConstants {
-	// List all the features and plugins to assemble sorted on a per config basis 
-	//	key: string[] representing the tuple of a config 
+	// List all the features and plugins to assemble sorted on a per config basis
+	//	key: string[] representing the tuple of a config
 	// value: (AssemblyLevelConfigInfo) representing the info for the given config
 	private final Map<Config, AssemblyLevelConfigInfo> assembleInformation = new HashMap<>(8);
 	private final Map<String, BundleDescription> bundleMap = new HashMap<>();
 	private final Map<String, BuildTimeFeature> rootMap = new HashMap<>();
 
 	public AssemblyInformation() {
-		// Initialize the content of the assembly information with the configurations 
+		// Initialize the content of the assembly information with the configurations
 		for (Config config : AbstractScriptGenerator.getConfigInfos()) {
 			assembleInformation.put(config, new AssemblyLevelConfigInfo());
 		}

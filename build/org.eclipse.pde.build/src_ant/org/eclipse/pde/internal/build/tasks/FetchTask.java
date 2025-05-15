@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM - Initial API and implementation
  *******************************************************************************/
@@ -45,7 +45,7 @@ public class FetchTask extends Task {
 	/**
 	 * Set the boolean value indicating whether or not the fetch scripts should be
 	 * generated for the children of the elements.  The default is set to <code>true</code>
-	 * 
+	 *
 	 * @param children <code>true</code> if the children scripts should be generated
 	 * and <code>false</code> otherwise
 	 * @since 3.0
@@ -77,7 +77,7 @@ public class FetchTask extends Task {
 	/**
 	 * Overrides the tags provided in directory file by the given value.
 	 * @param value the tag to be fetched.
-	 * @since 3.0 
+	 * @since 3.0
 	 */
 	public void setFetchTag(String value) {
 		generator.setFetchTagAsString(value);
@@ -132,14 +132,14 @@ public class FetchTask extends Task {
 
 	/**
 	 * Set the plug-in path to be the given value.
-	 * 
+	 *
 	 * @param pluginPath a File.pathSeparator separated list of paths
 	 */
 	public void setPluginPath(String pluginPath) {
 		generator.setPluginPath(Utils.getArrayFromString(pluginPath, File.pathSeparator));
 	}
 
-	/** 
+	/**
 	 * Set the configuration for which the script should be generated. The default is set to be configuration independent.
 	 * @param configInfo an ampersand separated list of configuration (for example {@code win32, win32, x86 & macoxs, carbon, ppc}).
 	 * @since 3.0

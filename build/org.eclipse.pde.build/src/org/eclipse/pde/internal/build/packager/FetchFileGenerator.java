@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM - Initial API and implementation
  *******************************************************************************/
@@ -40,7 +40,7 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 	private static final String DATA_SEPARATOR = "|"; //$NON-NLS-1$
 
 	// Unknown component name
-	private static final String UNKNOWN = "*"; //$NON-NLS-1$ 	
+	private static final String UNKNOWN = "*"; //$NON-NLS-1$
 
 	private String[] filters;
 	private String mapLocation;
@@ -149,7 +149,7 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 
 			if (filterByConfig(fileDescription[CONFIGS]) && filterByFilter(fileDescription[FILTERS]) && filterByComponentName(fileDescription.length > 4 ? fileDescription[COMPONENT] : UNKNOWN)) {
 				generateFetchFileFor(fileName, fileDescription[URL], userInfos);
-				collectedFiles += fileName + DATA_SEPARATOR + (fileDescription[DIRECTORY].equals("") ? "." : fileDescription[DIRECTORY]) + DATA_SEPARATOR + fileDescription[CONFIGS] + ENTRY_SEPARATOR; //$NON-NLS-1$ //$NON-NLS-2$				
+				collectedFiles += fileName + DATA_SEPARATOR + (fileDescription[DIRECTORY].equals("") ? "." : fileDescription[DIRECTORY]) + DATA_SEPARATOR + fileDescription[CONFIGS] + ENTRY_SEPARATOR; //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
 				if (BundleHelper.getDefault().isDebugging()) {
 					IStatus status = new Status(IStatus.INFO, PI_PDEBUILD, WARNING_ELEMENT_NOT_FETCHED, NLS.bind(Messages.error_fetchingFailed, fileDescription[DIRECTORY]), null);
@@ -160,7 +160,7 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 	}
 
 	//Return true if the filters specified to be packaged match the entry.
-	//When no filter is specified on the entry or there is no filtering, then the file is fetched 
+	//When no filter is specified on the entry or there is no filtering, then the file is fetched
 	private boolean filterByFilter(String filterString) {
 		if (filters.length == 0) {
 			return true;

@@ -149,7 +149,7 @@ public class JavacTask implements ITask {
 
 	/**
 	 * Set the javac task boot classpath to be the given value.
-	 * 
+	 *
 	 * @param bootclasspath the boot classpath attribute
 	 */
 	public void setBootClasspath(String bootclasspath) {
@@ -158,7 +158,7 @@ public class JavacTask implements ITask {
 
 	/**
 	 * Set the javac task destination directory to be the given value.
-	 * 
+	 *
 	 * @param destdir the destination directory
 	 */
 	public void setDestdir(String destdir) {
@@ -168,7 +168,7 @@ public class JavacTask implements ITask {
 	/**
 	 * Set the javac task failOnError attribute to be the given value. Valid values
 	 * are <code>"true"</code> and <code>"false"</code>.
-	 * 
+	 *
 	 * @param failonerror either <code>"true"</code> or <code>"false"</code>
 	 */
 	public void setFailOnError(String failonerror) {
@@ -178,7 +178,7 @@ public class JavacTask implements ITask {
 	/**
 	 * Set the javac task includeAntRuntime attribute to be the given value. Valid
 	 * values are <code>"no"</code> and <code>"yes"</code>.
-	 * 
+	 *
 	 * @param include either <code>"no"</code> or <code>"yes"</code>
 	 */
 	public void setIncludeAntRuntime(String include) {
@@ -187,7 +187,7 @@ public class JavacTask implements ITask {
 
 	/**
 	 * Set the javac task source directory attribute to be the given value.
-	 * 
+	 *
 	 * @param srcdir the source directory
 	 */
 	public void setSrcdir(String[] srcdir) {
@@ -195,7 +195,7 @@ public class JavacTask implements ITask {
 	}
 
 	/**
-	 * Set patterns to exclude from compilation 
+	 * Set patterns to exclude from compilation
 	 */
 	public void setExcludes(String[] excludes) {
 		this.excludes = excludes;
@@ -204,7 +204,7 @@ public class JavacTask implements ITask {
 	/**
 	 * Set the javac task verbose attribute to be the given value. Valid values
 	 * are <code>"true"</code> and <code>"false"</code>.
-	 * 
+	 *
 	 * @param verbose either <code>"true"</code> or <code>"false"</code>
 	 */
 	public void setVerbose(String verbose) {
@@ -214,7 +214,7 @@ public class JavacTask implements ITask {
 	/**
 	 * Set the javac task fork attribute to be the given value. Valid values
 	 * are <code>"true"</code> and <code>"false"</code>.
-	 * 
+	 *
 	 * @param fork either <code>"true"</code> or <code>"false"</code>
 	 */
 	public void setFork(String fork) {
@@ -224,7 +224,7 @@ public class JavacTask implements ITask {
 	/**
 	 * Set the javac task debug attribute to be the given value. Valid values
 	 * are <code>"on"</code> and <code>"off"</code>.
-	 * 
+	 *
 	 * @param debug either <code>"on"</code> or <code>"off"</code>
 	 */
 	public void setDebug(String debug) {
@@ -233,7 +233,7 @@ public class JavacTask implements ITask {
 
 	/**
 	 * Set the javac task source attribute to be the given value.
-	 * 
+	 *
 	 * @param source either <code>"1.3"</code> or <code>"1.4"</code>
 	 */
 	public void setSource(String source) {
@@ -241,8 +241,8 @@ public class JavacTask implements ITask {
 	}
 
 	/**
-	 * Set the javac task target attribute to be the given value. 
-	 * 
+	 * Set the javac task target attribute to be the given value.
+	 *
 	 * @param target either <code>"1.3"</code> or <code>"1.4"</code>
 	 */
 	public void setTarget(String target) {

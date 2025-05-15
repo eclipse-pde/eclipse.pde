@@ -17,10 +17,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Interface providing helper methods to produce Ant scripts. 
- * <p> 
- * It contains convenience methods for creating the XML elements 
- * required for Ant scripts. See the <a href="http://ant.apache.org">Ant</a> 
+ * Interface providing helper methods to produce Ant scripts.
+ * <p>
+ * It contains convenience methods for creating the XML elements
+ * required for Ant scripts. See the <a href="http://ant.apache.org">Ant</a>
  * website for more details on Ant scripts and the particular Ant tasks.
  * </p>
  * @noimplement This interface is not intended to be implemented by clients.
@@ -29,21 +29,21 @@ public interface IAntScript {
 
 	/**
 	 * Print the given string to the Ant script.
-	 * 
+	 *
 	 * @param string the string to print.
 	 */
 	public void print(String string);
 
 	/**
 	 * Print the given comment to the Ant script folled by a carriage-return.
-	 * 
+	 *
 	 * @param comment the comment to print.
 	 */
 	public void printComment(String comment);
 
 	/**
 	 * Print the given string followed by a carriage-return.
-	 * 
+	 *
 	 * @param string the string to print.
 	 */
 	public void println(String string);
@@ -65,8 +65,8 @@ public interface IAntScript {
 	 * Print an XML attribute. <code>name=value</code>.
 	 * @param name the name of the attribute to print. This value can not be <code>null</code>.
 	 * @param value the name of the value to print. This value can be <code>null</code>.
-	 * @param mandatory indicate whether or not the value is mandatory. 
-	 * If the <code>value</code> is <code>null</code> and the attribute is mandatory, the printed value will be "". 
+	 * @param mandatory indicate whether or not the value is mandatory.
+	 * If the <code>value</code> is <code>null</code> and the attribute is mandatory, the printed value will be "".
 	 */
 	public void printAttribute(String name, String value, boolean mandatory);
 
@@ -116,7 +116,7 @@ public interface IAntScript {
 	public void decrementIdent();
 
 	/**
-	 * Print a target declaration. See <a href="http://ant.apache.org/manual/using.html#targets">Ant's targets</a>. 
+	 * Print a target declaration. See <a href="http://ant.apache.org/manual/using.html#targets">Ant's targets</a>.
 	 * @param name the name of the target. This value can not be <code>null</code>.
 	 * @param depends a comma-separated list of names of targets on which this target depends. This value can be <code>null</code>.
 	 * @param ifClause the name of the property that must be set in order for this target to execute. This value can be <code>null</code>

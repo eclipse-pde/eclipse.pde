@@ -241,7 +241,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 
 	/**
 	 * Add a <code>zip</code> target to the given Ant script.
-	 * 
+	 *
 	 * @param zipName the name of the zip file to create
 	 * @param source the directory name to read the files from
 	 */
@@ -592,7 +592,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		script.printJarTask(jar, featureTempFolder + '/' + featureFolderName, null);
 		script.printDeleteTask(featureTempFolder, null, null);
 		if (director.getGenerateJnlp()) {
-			script.println("<eclipse.jnlpGenerator feature=\"" + AntScript.getEscaped(jar) + "\"  codebase=\"" + Utils.getPropertyFormat(IXMLConstants.PROPERTY_JNLP_CODEBASE) + "\" j2se=\"" + Utils.getPropertyFormat(IXMLConstants.PROPERTY_JNLP_J2SE) + "\" locale=\"" + Utils.getPropertyFormat(IXMLConstants.PROPERTY_JNLP_LOCALE) + "\" generateOfflineAllowed=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_GENOFFLINE) + "\" configInfo=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_CONFIGS) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ ); 
+			script.println("<eclipse.jnlpGenerator feature=\"" + AntScript.getEscaped(jar) + "\"  codebase=\"" + Utils.getPropertyFormat(IXMLConstants.PROPERTY_JNLP_CODEBASE) + "\" j2se=\"" + Utils.getPropertyFormat(IXMLConstants.PROPERTY_JNLP_J2SE) + "\" locale=\"" + Utils.getPropertyFormat(IXMLConstants.PROPERTY_JNLP_LOCALE) + "\" generateOfflineAllowed=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_GENOFFLINE) + "\" configInfo=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_CONFIGS) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ );
 		}
 		if (director.getSignJars()) {
 			if (director.getGenerateJnlp()) {
@@ -768,7 +768,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 	 * Return a properties object constructed from the build.properties file
 	 * for the given feature. If no file exists, then an empty properties
 	 * object is returned.
-	 * 
+	 *
 	 * @return Properties the feature's build.properties
 	 */
 	protected Properties getBuildProperties() throws CoreException {
@@ -782,7 +782,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 	 * Return a properties object constructed from the build.properties file
 	 * for the given feature. If no file exists, then an empty properties
 	 * object is returned.
-	 * 
+	 *
 	 * @return Properties the feature's build.properties
 	 */
 	protected Properties getBuildProperties(String featureLocation) throws CoreException {

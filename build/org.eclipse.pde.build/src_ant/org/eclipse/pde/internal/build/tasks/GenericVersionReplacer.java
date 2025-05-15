@@ -75,7 +75,7 @@ public class GenericVersionReplacer extends Task {
 
 	/**
 	 * Set the path where the file to be replaced is contained.
-	 * @param location path to the folder containing the file that needs to be replaced or the file path 
+	 * @param location path to the folder containing the file that needs to be replaced or the file path
 	 */
 	public void setPath(String location) {
 		this.rootPath = location;

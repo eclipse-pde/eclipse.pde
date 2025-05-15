@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.IPath;
  * Interface to be implemented by clients of the <code>org.eclipse.pde.build.fetchFactories</code> extension-point.
  * <p>
  * The factories are being used at various points in the execution of the PDE Build <code>eclipse.fetch</code> Ant task.
- * Based on a map file entry, they are responsible for generating segments of an ant script whose execution will fetch 
+ * Based on a map file entry, they are responsible for generating segments of an ant script whose execution will fetch
  * plug-ins, fragments, bundles and features or individual files contained in one of those elements.
  * The format of a map file entry is:
  * <code>
@@ -32,13 +32,13 @@ import org.eclipse.core.runtime.IPath;
  * </code>
  * The format of <code>elementType</code> and <code>elementName</code> is fixed.
  * The factories specify the value of <code>repositoryTag</code> and the format of the <code>repositoryDetails</code>.
- * <code>repositoryTag</code> and <code>repositoryDetails</code> becomes defacto APIs. 
+ * <code>repositoryTag</code> and <code>repositoryDetails</code> becomes defacto APIs.
  * <br>
- * <code>repositoryTag</code> should match the factory id used when declaring the factory extension. For example, for the CVS the value is "CVS". 
+ * <code>repositoryTag</code> should match the factory id used when declaring the factory extension. For example, for the CVS the value is "CVS".
  * <code>repositoryDetails</code> should contains enough details to allow the factory to generate a fetch script retrieving the element.
   * </p>
  * <p>
- * The fetch factories are being contributed through the <code>org.eclipse.pde.build.fetchFactories</code> 
+ * The fetch factories are being contributed through the <code>org.eclipse.pde.build.fetchFactories</code>
  * extension-points.
  * </p>
  * <p>
@@ -87,16 +87,16 @@ public interface IFetchFactory {
 	 * required in later processing to sucessfully generate the fetch script.
 	 * </p>
 	 * <p>
-	 * Since 3.6, factories may optionally set the {@link Constants#KEY_SOURCE_REFERENCES} property in the entry infos map to support the inclusion 
+	 * Since 3.6, factories may optionally set the {@link Constants#KEY_SOURCE_REFERENCES} property in the entry infos map to support the inclusion
 	 * of source references in the bundle manifest using the Eclipse-SourceReferences header.
 	 * </p>
 	 * @param rawEntry the arguments as specified in the map file (may not be <code>null</code>).
-	 * @param overrideTags a key / value containing all the override tags specified for all the repository (maybe <code>null</code> or empty). 
-	 * The values of this map of this are read from the fetchTag property (see file scripts/templates/headless-build/build.properties). 
-	 * @param entryInfos the map to store repository specific information derived from the rawEntry.This object is being passed as arguments to 
-	 * the other methods of the factory. The factories are also expected to set {@link #KEY_ELEMENT_TAG} to indicate the tag that will be used 
-	 * to fetch the element. This value is for example used to generate the "qualifier" value of a version number. 
-	 * Note that {@link #KEY_ELEMENT_NAME} and {@link #KEY_ELEMENT_TYPE} are reserved entries whose values respectively 
+	 * @param overrideTags a key / value containing all the override tags specified for all the repository (maybe <code>null</code> or empty).
+	 * The values of this map of this are read from the fetchTag property (see file scripts/templates/headless-build/build.properties).
+	 * @param entryInfos the map to store repository specific information derived from the rawEntry.This object is being passed as arguments to
+	 * the other methods of the factory. The factories are also expected to set {@link #KEY_ELEMENT_TAG} to indicate the tag that will be used
+	 * to fetch the element. This value is for example used to generate the "qualifier" value of a version number.
+	 * Note that {@link #KEY_ELEMENT_NAME} and {@link #KEY_ELEMENT_TYPE} are reserved entries whose values respectively
 	 * refer to the name of the element being fetched and its type.
 	 * @throws CoreException if the rawEntry is incorrect.
 	 */
@@ -108,8 +108,8 @@ public interface IFetchFactory {
 	 * @param entryInfos the map that has been built in the {@link #parseMapFileEntry(String, Properties, Map)} method.
 	 * This map contains the name and the type of the element  (resp. {@link #KEY_ELEMENT_NAME} and {@link #KEY_ELEMENT_TYPE}) to put in the destination.
 	 * @param destination the destination where the element should be fetched to. For example, for a plug-in the <code>plugin.xml</code> file is expected
-	 * to be in <code>destination/plugin.xml</code>. 
-	 * @param script the script in which to generate the segments of ant script. It is not authorized to generate target declaration during this call.  
+	 * to be in <code>destination/plugin.xml</code>.
+	 * @param script the script in which to generate the segments of ant script. It is not authorized to generate target declaration during this call.
 	 */
 	public void generateRetrieveElementCall(Map<String, Object> entryInfos, IPath destination, IAntScript script);
 
@@ -119,15 +119,15 @@ public interface IFetchFactory {
 	 * @param entryInfos the map that has been built in the {@link #parseMapFileEntry(String, Properties, Map)} method.
 	 * This map contains the name and the type of the element  (resp. {@link #KEY_ELEMENT_NAME} and {@link #KEY_ELEMENT_TYPE}) to put in the destination.
 	 * @param destination the destination where the element should be fetched to. For example, for a plug-in the <code>plugin.xml</code> file is expected
-	 * to be in <code>destination/plugin.xml</code>. 
+	 * to be in <code>destination/plugin.xml</code>.
 	 * @param files the files to obtained for the specified element.
-	 * @param script the script in which to generate the segments of ant script. It is not authorized to generate target declaration during this call.  
+	 * @param script the script in which to generate the segments of ant script. It is not authorized to generate target declaration during this call.
 	 */
 	public void generateRetrieveFilesCall(Map<String, Object> entryInfos, IPath destination, String[] files, IAntScript script);
 
 	/**
 	 * This methods give opportunities to the factory to generate target declaration or other Ant top level constructs in the script.
-	 * The generated elements can be invoked from the ant scripts segments created in {@link #generateRetrieveElementCall(Map, IPath, IAntScript)} 
+	 * The generated elements can be invoked from the ant scripts segments created in {@link #generateRetrieveElementCall(Map, IPath, IAntScript)}
 	 * and {@link #generateRetrieveFilesCall(Map, IPath, String[], IAntScript)}.
 	 */
 	public void addTargets(IAntScript script);

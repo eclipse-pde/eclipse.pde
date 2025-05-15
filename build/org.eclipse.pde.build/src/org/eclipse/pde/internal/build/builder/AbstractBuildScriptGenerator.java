@@ -32,7 +32,7 @@ import org.eclipse.pde.internal.build.BundleHelper;
 import org.eclipse.pde.internal.build.Config;
 
 /**
- * Instance of this class and subclasses are created on a plugin / feature basis. 
+ * Instance of this class and subclasses are created on a plugin / feature basis.
  */
 public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerator {
 	/** Additional dev entries for the compile classpath. */

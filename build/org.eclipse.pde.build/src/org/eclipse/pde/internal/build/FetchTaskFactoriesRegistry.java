@@ -42,7 +42,7 @@ public class FetchTaskFactoriesRegistry implements IPDEBuildConstants {
 	/**
 	 * Returns the factory instance with the specified id.
 	 * <p>
-	 * The instance is cached, subsequent calls with the same id will 
+	 * The instance is cached, subsequent calls with the same id will
 	 * return the same factory instance.
 	 * </p>
 	 * @return the factory instance (maybe <code>null</code>)
@@ -84,7 +84,7 @@ public class FetchTaskFactoriesRegistry implements IPDEBuildConstants {
 
 	/**
 	 * Returns a collection of registered factory ids.
-	 * 
+	 *
 	 * @return a collection of registered factory ids
 	 */
 	public Collection<String> getFactoryIds() {

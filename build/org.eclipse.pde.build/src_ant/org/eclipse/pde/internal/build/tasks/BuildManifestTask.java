@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM - Initial API and implementation
  *******************************************************************************/
@@ -106,7 +106,7 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 	}
 
 	/**
-	 * 
+	 *
 	 * @return String
 	 */
 	protected String getBuildId() {
@@ -117,7 +117,7 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 	}
 
 	/**
-	 * 
+	 *
 	 * @return String
 	 */
 	protected String getBuildQualifier() {
@@ -128,7 +128,7 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 	}
 
 	/**
-	 * 
+	 *
 	 * @return String
 	 */
 	protected String getBuildType() {
@@ -185,7 +185,7 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 	}
 
 	/**
-	 * 
+	 *
 	 * @return Feature
 	 */
 	protected BuildTimeFeature readFeature(String element) throws CoreException {

@@ -55,7 +55,7 @@ public class RootFileTouchpointAdvice extends RootFilesAdvice implements ITouchp
 				launcherFile = new File(root, capitalized + ".app/Contents/MacOS/" + launcherName); //$NON-NLS-1$
 			}
 		} else if (Constants.OS_WIN32.equals(os) && !launcherFile.exists()) {
-			launcherFile = new File(root, launcherName + ".exe"); //$NON-NLS-1$				
+			launcherFile = new File(root, launcherName + ".exe"); //$NON-NLS-1$
 		}
 
 		String configInstruction = null;
@@ -66,11 +66,11 @@ public class RootFileTouchpointAdvice extends RootFilesAdvice implements ITouchp
 				File appFolder = path.removeLastSegments(3).toFile();
 				configInstruction += "chmod(targetDir:${installFolder}/" + appFolder.getName() + "/Contents/MacOS/, targetFile:" + launcherFile.getName() + ", permissions:755);"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			} else if (!Constants.OS_WIN32.equals(os)) {
-				configInstruction += "chmod(targetDir:${installFolder}, targetFile:" + launcherFile.getName() + ", permissions:755);"; //$NON-NLS-1$ //$NON-NLS-2$				
+				configInstruction += "chmod(targetDir:${installFolder}, targetFile:" + launcherFile.getName() + ", permissions:755);"; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
 			Map<String, ITouchpointInstruction> newInstructions = new HashMap<>();
-			newInstructions.put("configure", MetadataFactory.createTouchpointInstruction(configInstruction, "org.eclipse.equinox.p2.touchpoint.eclipse.setLauncherName")); //$NON-NLS-1$ //$NON-NLS-2$ 
+			newInstructions.put("configure", MetadataFactory.createTouchpointInstruction(configInstruction, "org.eclipse.equinox.p2.touchpoint.eclipse.setLauncherName")); //$NON-NLS-1$ //$NON-NLS-2$
 			return MetadataFactory.mergeTouchpointData(existingData, newInstructions);
 		}
 		return existingData;

@@ -64,7 +64,7 @@ public class FeatureGeneratorTask extends Task {
 		generator.generate();
 	}
 
-	/** 
+	/**
 	 * Set the folder in which the build will occur.
 	 * @param buildDirectory the location where the build will occur.
 	 */
@@ -88,7 +88,7 @@ public class FeatureGeneratorTask extends Task {
 	}
 
 	/**
-	 * Set a location that contains plugins and features required by plugins and features 
+	 * Set a location that contains plugins and features required by plugins and features
 	 * for which the feature is being generated
 	 */
 	public void setBaseLocation(String baseLocation) {
@@ -134,7 +134,7 @@ public class FeatureGeneratorTask extends Task {
 
 	/**
 	 * Set the list of additional paths in which to look for required plugins
-	 * 
+	 *
 	 * @param pluginPath a {@link File#pathSeparator} separated list of paths
 	 */
 	public void setPluginPath(String pluginPath) {
@@ -142,13 +142,13 @@ public class FeatureGeneratorTask extends Task {
 	}
 
 	/**
-	 * Set to true if you want to verify that the plugins and features are available.  
+	 * Set to true if you want to verify that the plugins and features are available.
 	 */
 	public void setVerify(boolean verify) {
 		generator.setVerify(verify);
 	}
 
-	/** 
+	/**
 	 * Set the configuration for which the script should be generated. The default is set to be configuration independent.
 	 * @param configInfo an ampersand separated list of configuration (for example {@code win32, win32, x86 & macoxs, carbon, ppc}).
 	 */

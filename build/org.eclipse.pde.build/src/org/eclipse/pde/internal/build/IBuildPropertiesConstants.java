@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     IBM - Initial API and implementation
- *     Compuware Corporation - Sebastien Angers <sebastien.angers@compuware.com> 
+ *     Compuware Corporation - Sebastien Angers <sebastien.angers@compuware.com>
  *     		- Enabled additional mirror slicingOptions in Headless PDE Build
  *     		- Enabled 'raw' attribute for mirror step in Headless PDE Build
  *     		- https://bugs.eclipse.org/338878
@@ -35,7 +35,7 @@ public interface IBuildPropertiesConstants {
 	public static final String PROPERTY_JAR_ORDER = "jars.compile.order"; //$NON-NLS-1$
 	public static final String PROPERTY_SOURCE_PREFIX = "source."; //$NON-NLS-1$
 	public static final String PROPERTY_OUTPUT_PREFIX = "output."; //$NON-NLS-1$
-	public static final String PROPERTY_EXTRAPATH_PREFIX = "extra."; //$NON-NLS-1$	
+	public static final String PROPERTY_EXTRAPATH_PREFIX = "extra."; //$NON-NLS-1$
 	public static final String PROPERTY_EXCLUDE_PREFIX = "exclude."; //$NON-NLS-1$
 	public static final String PROPERTY_JAR_SUFFIX = ".jar"; //$NON-NLS-1$
 	public static final String PROPERTY_MANIFEST_PREFIX = "manifest."; //$NON-NLS-1$

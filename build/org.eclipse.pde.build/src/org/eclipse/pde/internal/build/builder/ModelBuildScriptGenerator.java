@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors: IBM - Initial API and implementation Prosyst - create proper
  * OSGi bundles (bug 174157)
  ******************************************************************************/
@@ -739,7 +739,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 					for (IPath path : paths) {
 						script.printTabs();
-						script.print("   <outputFolder "); //$NON-NLS-1$ 
+						script.print("   <outputFolder "); //$NON-NLS-1$
 						script.printAttribute("library", key, true); //$NON-NLS-1$
 						script.printAttribute("dir", Utils.getPropertyFormat(PROPERTY_BASEDIR), true); //$NON-NLS-1$
 						script.printAttribute("includes", path.toString() + "/**", true); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1002,7 +1002,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printJarTask(pluginUpdateJarDestination, Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER) + '/' + fullName, null, "merge"); //$NON-NLS-1$
 		script.printDeleteTask(Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER), null, null);
 		if (signJars) {
-			script.println("<eclipse.jarProcessor sign=\"" + Utils.getPropertyFormat(PROPERTY_SIGN) + "\" unsign=\"" + Utils.getPropertyFormat(PROPERTY_UNSIGN) + "\" jar=\"" + AntScript.getEscaped(pluginUpdateJarDestination) + "\" alias=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_ALIAS) + "\" keystore=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_KEYSTORE) + "\" storepass=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_STOREPASS) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ 
+			script.println("<eclipse.jarProcessor sign=\"" + Utils.getPropertyFormat(PROPERTY_SIGN) + "\" unsign=\"" + Utils.getPropertyFormat(PROPERTY_UNSIGN) + "\" jar=\"" + AntScript.getEscaped(pluginUpdateJarDestination) + "\" alias=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_ALIAS) + "\" keystore=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_KEYSTORE) + "\" storepass=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_STOREPASS) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 		}
 		script.printTargetEnd();
 	}
@@ -1028,7 +1028,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	/**
 	 * Defines, the XML declaration, Ant project and targets init and initTemplate.
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	private void generatePrologue() throws CoreException {
 		script.printProjectDeclaration(model.getSymbolicName(), TARGET_BUILD_JARS, DOT);
@@ -1097,7 +1097,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printProperty(PROPERTY_JAVAC_DEBUG_INFO, "on"); //$NON-NLS-1$
 		script.printProperty(PROPERTY_JAVAC_VERBOSE, "false"); //$NON-NLS-1$
 		script.printProperty(PROPERTY_LOG_EXTENSION, ".log"); //$NON-NLS-1$
-		script.printProperty(PROPERTY_JAVAC_COMPILERARG, ""); //$NON-NLS-1$  
+		script.printProperty(PROPERTY_JAVAC_COMPILERARG, ""); //$NON-NLS-1$
 		script.printProperty(PROPERTY_PREREQ_COMPILE_LOG, Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + "/prereqErrors.log"); //$NON-NLS-1$
 
 		if (javacSource == null) {
@@ -1107,18 +1107,18 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			script.printProperty(IXMLConstants.PROPERTY_JAVAC_TARGET, JavaCore.getAllJavaSourceVersionsSupportedByCompiler().first());
 		}
 		if (bootClasspath == null) {
-			script.println("<condition property=\"dir_bootclasspath\" value=\"${java.home}/../Classes\">");//$NON-NLS-1$  
+			script.println("<condition property=\"dir_bootclasspath\" value=\"${java.home}/../Classes\">");//$NON-NLS-1$
 			script.println("\t<and>"); //$NON-NLS-1$
 			script.println("\t\t<os family=\"mac\"/>");//$NON-NLS-1$
 			script.println("\t\t<available file=\"${java.home}/../Classes\" type=\"dir\"/>"); //$NON-NLS-1$
 			script.println("\t</and>"); //$NON-NLS-1$
-			script.println("</condition>");//$NON-NLS-1$  
-			script.println("<property name=\"dir_bootclasspath\" value=\"${java.home}/lib\"/>");//$NON-NLS-1$  
-			script.println("<path id=\"path_bootclasspath\">");//$NON-NLS-1$  
-			script.println("\t<fileset dir=\"${dir_bootclasspath}\">");//$NON-NLS-1$  
-			script.println("\t\t<include name=\"*.jar\"/>");//$NON-NLS-1$  
-			script.println("\t</fileset>");//$NON-NLS-1$  
-			script.println("</path>");//$NON-NLS-1$  
+			script.println("</condition>");//$NON-NLS-1$
+			script.println("<property name=\"dir_bootclasspath\" value=\"${java.home}/lib\"/>");//$NON-NLS-1$
+			script.println("<path id=\"path_bootclasspath\">");//$NON-NLS-1$
+			script.println("\t<fileset dir=\"${dir_bootclasspath}\">");//$NON-NLS-1$
+			script.println("\t\t<include name=\"*.jar\"/>");//$NON-NLS-1$
+			script.println("\t</fileset>");//$NON-NLS-1$
+			script.println("</path>");//$NON-NLS-1$
 			script.printPropertyRefid(PROPERTY_BOOTCLASSPATH, "path_bootclasspath"); //$NON-NLS-1$
 		}
 
@@ -1251,7 +1251,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	/**
 	 * Add the "build.jars" target to the given Ant script using the specified plug-in model.
-	 * 
+	 *
 	 * @param pluginModel the plug-in model to reference
 	 */
 	private void generateBuildJarsTarget(BundleDescription pluginModel) throws CoreException {
@@ -1531,7 +1531,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	/**
 	 * Add the "jar" target to the given Ant script using the given classpath and
 	 * jar as parameters.
-	 * 
+	 *
 	 * @param classpath the classpath for the jar command
 	 */
 	private void generateCompilationTarget(List<Object> classpath, CompiledEntry entry) {
@@ -1735,7 +1735,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return JAR[]
 	 */
 	protected CompiledEntry[] extractEntriesToCompile(Properties properties) throws CoreException {
@@ -1839,7 +1839,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	/**
 	 * Return the name of the zip file for the source for the jar with
 	 * the given name.
-	 * 
+	 *
 	 * @param jarName the name of the jar file
 	 * @return String
 	 */
@@ -1850,7 +1850,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	/**
 	 * Return the location for a temporary file for the jar file with
 	 * the given name.
-	 * 
+	 *
 	 * @param jarName the name of the jar file
 	 * @return String
 	 */
@@ -1862,7 +1862,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	/**
 	 * Return the full location of the jar file.
-	 * 
+	 *
 	 * @param jarName the name of the jar file
 	 * @return String
 	 */
@@ -1885,7 +1885,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	/**
 	 * Return the name of the zip file for the source from the given jar name.
-	 * 
+	 *
 	 * @param jarName the name of the jar file
 	 * @return String
 	 */
@@ -1922,7 +1922,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	/**
 	 * Substitute the value of an element description variable (variables that
 	 * are found in files like plugin.xml, e.g. $ws$) by an Ant property.
-	 * 
+	 *
 	 * @return String
 	 */
 	static protected String replaceVariables(String sourceString, boolean compiledElement) {
@@ -1939,7 +1939,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			result = result.substring(0, i) + "os/" + Utils.getPropertyFormat(compiledElement ? PROPERTY_OS : PROPERTY_BASE_OS) + result.substring(i + DESCRIPTION_VARIABLE_OS.length()); //$NON-NLS-1$
 		}
 		while ((i = result.indexOf(DESCRIPTION_VARIABLE_ARCH)) >= 0) {
-			result = result.substring(0, i) + "arch/" + Utils.getPropertyFormat(compiledElement ? PROPERTY_ARCH : PROPERTY_BASE_ARCH) + result.substring(i + DESCRIPTION_VARIABLE_OS.length()); //$NON-NLS-1$		
+			result = result.substring(0, i) + "arch/" + Utils.getPropertyFormat(compiledElement ? PROPERTY_ARCH : PROPERTY_BASE_ARCH) + result.substring(i + DESCRIPTION_VARIABLE_OS.length()); //$NON-NLS-1$
 		}
 		while ((i = result.indexOf(DESCRIPTION_VARIABLE_NL)) >= 0) {
 			result = result.substring(0, i) + "nl/" + Utils.getPropertyFormat(compiledElement ? PROPERTY_NL : PROPERTY_BASE_NL) + result.substring(i + DESCRIPTION_VARIABLE_NL.length()); //$NON-NLS-1$
@@ -1969,7 +1969,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	/**
 	 * Sets whether or not to sign any constructed jars.
-	 * 
+	 *
 	 * @param value whether or not to sign any constructed JARs
 	 */
 	public void setSignJars(boolean value) {
@@ -1979,7 +1979,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	/**
 	 * Returns the model object which is associated with the given identifier.
 	 * Returns <code>null</code> if the model object cannot be found.
-	 * 
+	 *
 	 * @param modelId the identifier of the model object to lookup
 	 * @return the model object or <code>null</code>
 	 */

@@ -36,7 +36,7 @@ import org.eclipse.pde.internal.build.Utils;
 
 /**
  * Temporary utilities until P2 and FrameworkAdmin are graduated into the SDK.
- * 
+ *
  * @since 3.4
  */
 public class P2Utils {
@@ -44,10 +44,10 @@ public class P2Utils {
 	/**
 	 * Returns bundles defined by the 'bundles.info' file in the
 	 * specified location, or an empty list if none. The "bundles.info" file
-	 * is assumed to be at a fixed relative location to the specified file.  This 
+	 * is assumed to be at a fixed relative location to the specified file.  This
 	 * method will also look for a "source.info".  If available, any source
 	 * bundles found will also be added to the returned list.
-	 * 
+	 *
 	 * @param platformHome absolute path in the local file system to an installation
 	 * @return URLs of all bundles in the installation or <code>null</code> if not able
 	 * 	to locate a bundles.info
@@ -79,11 +79,11 @@ public class P2Utils {
 	 * Creates a bundles.info file in the given directory containing the name,
 	 * version, location, start level and expected state of every bundle in the
 	 * given collection.  Will also create a source.info file containing
-	 * a lsit of all source bundles found in the given collection. Uses special 
-	 * defaults for the start level and auto start settings. Returns the URL 
-	 * location of the bundle.txt or <code>null</code> if there was a problem 
+	 * a lsit of all source bundles found in the given collection. Uses special
+	 * defaults for the start level and auto start settings. Returns the URL
+	 * location of the bundle.txt or <code>null</code> if there was a problem
 	 * creating it.
-	 * 
+	 *
 	 * @param bundles collection of IPluginModelBase objects to write into the bundles.info/source.info
 	 * @param directory directory to create the bundles.info and source.info files in
 	 * @return URL location of the bundles.info or <code>null</code>

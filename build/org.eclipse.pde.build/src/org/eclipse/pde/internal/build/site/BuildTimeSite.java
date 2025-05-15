@@ -360,7 +360,7 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 				//getting the feature for the first time will result in it being added to featureCache
 				feature2.getFeature();
 			} catch (CoreException e) {
-				// just log the exception, but do not re-throw it - let other features to be resolved 
+				// just log the exception, but do not re-throw it - let other features to be resolved
 				String message = NLS.bind(Messages.exception_featureParse, feature2.getPath());
 				IStatus status = new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, e);
 				BundleHelper.getDefault().getLog().log(status);

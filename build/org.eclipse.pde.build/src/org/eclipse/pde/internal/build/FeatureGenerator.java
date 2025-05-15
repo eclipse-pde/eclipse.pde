@@ -353,7 +353,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 					features.add(new Entry(FEATURE_EQUINOX_EXECUTABLE));
 				}
 			} else {
-				// We don't have the executable feature, at least try and get the launcher jar and fragments 
+				// We don't have the executable feature, at least try and get the launcher jar and fragments
 				plugins.add(new Entry(BUNDLE_EQUINOX_LAUNCHER));
 				List<Config> configs = getConfigInfos();
 				// only include the fragments for the platforms we are attempting to build, since the others
@@ -376,7 +376,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 
 	/**
 	 * Generate a feature that includes the given plug-ins, fragments and features.
-	 * Feature order matters at compile time if there is dependencies between the features' contents. 
+	 * Feature order matters at compile time if there is dependencies between the features' contents.
 	 * Make sure to pass an ordered set if this matters.
 	 * @param feature - Name of the feature to generate
 	 * @param plugins - plug-ins to include
@@ -406,7 +406,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			Dictionary<String, String> environment = new Hashtable<>(3);
 
 			parameters.put(ID, feature);
-			parameters.put(VERSION, version != null ? version : "1.0.0"); //$NON-NLS-1$ 
+			parameters.put(VERSION, version != null ? version : "1.0.0"); //$NON-NLS-1$
 			if (featureName != null) {
 				parameters.put(LABEL, featureName);
 			}

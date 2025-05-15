@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors: IBM - Initial API and implementation
  ******************************************************************************/
 package org.eclipse.pde.internal.build;
@@ -20,9 +20,9 @@ import java.util.Set;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 
 public class SourceFeatureInformation implements IPDEBuildConstants {
-	// Key : a source bundle 
+	// Key : a source bundle
 	// Value : the list of plugins that needs to get copied into the given source bundle
-	// This list will be used to build the content of the fragment that contains 
+	// This list will be used to build the content of the fragment that contains
 	// config specific code
 	private final Map<String, Set<BundleDescription>> sourceFeatureInformation = new HashMap<>(8);
 

@@ -177,7 +177,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 		entryInfos.put(IFetchFactory.KEY_ELEMENT_TAG, (overrideTag != null && overrideTag.trim().length() != 0 ? overrideTag : arguments[0]));
 		entryInfos.put(KEY_CVSROOT, arguments[1]);
 		entryInfos.put(KEY_PASSWORD, (arguments.length > 2 && !arguments[2].equals("")) ? arguments[2] : null); //$NON-NLS-1$
-		entryInfos.put(KEY_PATH, (arguments.length > 3 && !arguments[3].equals("")) ? arguments[3] : null); //$NON-NLS-1$ 
+		entryInfos.put(KEY_PATH, (arguments.length > 3 && !arguments[3].equals("")) ? arguments[3] : null); //$NON-NLS-1$
 	}
 
 	@Override
@@ -233,7 +233,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 
 	/**
 	 * Creates an SCMURL reference to the associated source.
-	 * 
+	 *
 	 * @return project reference string or <code>null</code> if none
 	 */
 	private String asReference(String repoLocation, String module, String projectName, String tagName) {
@@ -308,7 +308,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 
 	/**
 	 * Print a <code>cvs</code> task to the Ant script.
-	 * 
+	 *
 	 * @param command the CVS command to run
 	 * @param cvsRoot value for the CVSROOT variable
 	 * @param dest the destination directory for the checked out resources
@@ -324,7 +324,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 
 	/**
 	 * Print a <code>cvs</code> task to the Ant script.
-	 * 
+	 *
 	 * @param command the CVS command to run
 	 * @param cvsRoot value for the CVSROOT variable
 	 * @param dest the destination directory for the checked out resources
@@ -353,7 +353,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 
 	/**
 	 * Print a <code>cvspass</code> task to the Ant script.
-	 * 
+	 *
 	 * @param cvsRoot the name of the repository
 	 * @param password the password
 	 * @param passFile the name of the password file
@@ -370,7 +370,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 	/**
 	 * Print the <code>available</code> Ant task to this script. This task sets a property
 	 * value if the given file exists at runtime.
-	 * 
+	 *
 	 * @param property the property to set
 	 * @param file the file to look for
 	 */

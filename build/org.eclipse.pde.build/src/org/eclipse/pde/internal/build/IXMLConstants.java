@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors: IBM - Initial API and implementation
  ******************************************************************************/
 package org.eclipse.pde.internal.build;
@@ -27,7 +27,7 @@ public interface IXMLConstants {
 	public static final String DESCRIPTION_VARIABLE_NL = "$nl$"; //$NON-NLS-1$
 	public static final String DESCRIPTION_VARIABLE_OS = "$os$"; //$NON-NLS-1$
 	public static final String DESCRIPTION_VARIABLE_WS = "$ws$"; //$NON-NLS-1$
-	public static final String DESCRIPTION_VARIABLE_ARCH = "$arch$"; //$NON-NLS-1$ 
+	public static final String DESCRIPTION_VARIABLE_ARCH = "$arch$"; //$NON-NLS-1$
 
 	// targets
 	public static final String TARGET_ALL_CHILDREN = "all.children"; //$NON-NLS-1$
@@ -118,7 +118,7 @@ public interface IXMLConstants {
 	public static final String PROPERTY_LOG_EXTENSION_PARAM = "logExtension.param"; //$NON-NLS-1$
 
 	public static final String PROPERTY_NL = "nl"; //$NON-NLS-1$
-	public static final String PROPERTY_BASE_NL = "basenl"; //$NON-NLS-1$ 
+	public static final String PROPERTY_BASE_NL = "basenl"; //$NON-NLS-1$
 	public static final String PROPERTY_OS = "os"; //$NON-NLS-1$
 	public static final String PROPERTY_BUNDLE_VERSION = "bundleVersion"; //$NON-NLS-1$
 	public static final String PROPERTY_BUNDLE_ID = "bundleId"; //$NON-NLS-1$
@@ -132,7 +132,7 @@ public interface IXMLConstants {
 	public static final String PROPERTY_BASE_WS = "basews"; //$NON-NLS-1$
 	public static final String PROPERTY_ARCHIVE_NAME = "archiveName"; //$NON-NLS-1$
 	public static final String PROPERTY_BUILD_LABEL = "buildLabel"; //$NON-NLS-1$
-	public static final String PROPERTY_JAVAC_FAIL_ON_ERROR = "javacFailOnError"; //$NON-NLS-1$ 
+	public static final String PROPERTY_JAVAC_FAIL_ON_ERROR = "javacFailOnError"; //$NON-NLS-1$
 	public static final String PROPERTY_JAVAC_DEBUG_INFO = "javacDebugInfo"; //$NON-NLS-1$
 	public static final String PROPERTY_JAVAC_VERBOSE = "javacVerbose"; //$NON-NLS-1$
 	public static final String PROPERTY_JAVAC_SOURCE = "javacSource"; //$NON-NLS-1$

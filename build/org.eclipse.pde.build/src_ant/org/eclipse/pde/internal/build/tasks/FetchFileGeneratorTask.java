@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM - Initial API and implementation
  *******************************************************************************/
@@ -36,8 +36,8 @@ public class FetchFileGeneratorTask extends Task {
 		fileFetcher.setWorkingDirectory(workingDirectory);
 	}
 
-	/** 
-	 * Set the configuration for which the script should be generated. The default is set to be configuration independent. 
+	/**
+	 * Set the configuration for which the script should be generated. The default is set to be configuration independent.
 	 * @param config an ampersand separated list of configuration (for example {@code win32, win32, x86 & macoxs, carbon, ppc}).
 	 */
 	public void setConfigInfo(String config) throws CoreException {
@@ -61,7 +61,7 @@ public class FetchFileGeneratorTask extends Task {
 	}
 
 	/**
-	 * Set the path the a packager map file. 
+	 * Set the path the a packager map file.
 	 * @param mapLocation path the a packager map file.
 	 */
 	public void setMap(String mapLocation) {

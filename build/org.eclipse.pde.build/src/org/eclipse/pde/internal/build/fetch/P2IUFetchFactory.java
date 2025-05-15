@@ -36,7 +36,7 @@ import org.eclipse.pde.internal.build.Utils;
 
 /**
  * Factory which interprets a p2IU entry in a map file for a build contribution.
- * 
+ *
  * @since 1.0
  */
 public class P2IUFetchFactory implements IFetchFactory {

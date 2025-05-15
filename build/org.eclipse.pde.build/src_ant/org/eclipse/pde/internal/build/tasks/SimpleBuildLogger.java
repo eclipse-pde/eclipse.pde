@@ -31,12 +31,12 @@ public class SimpleBuildLogger implements BuildLogger, IPDEBuildConstants {
 
 	/**
 	 * Overwrite the DefaultLogger implementation to log
-	 * an exception only if one occured. 
+	 * an exception only if one occured.
 	 */
 	@Override
 	public void buildFinished(BuildEvent event) {
 		Throwable exception = event.getException();
-		
+
 		if(exception != null) {
 			String message = NLS.bind(TaskMessages.error_runningRetrieve, exception.getMessage());
 			BundleHelper.getDefault().getLog().log(new Status(IStatus.ERROR, PI_PDEBUILD, message));
@@ -45,51 +45,51 @@ public class SimpleBuildLogger implements BuildLogger, IPDEBuildConstants {
 
 	@Override
 	public void setEmacsMode(boolean emacsMode) {
-		// Do nothing	
+		// Do nothing
 	}
 
 	@Override
 	public void setErrorPrintStream(PrintStream err) {
-		// Do nothing	
+		// Do nothing
 	}
 
 	@Override
 	public void setMessageOutputLevel(int level) {
-		// Do nothing	
+		// Do nothing
 	}
 
 	@Override
 	public void setOutputPrintStream(PrintStream output) {
-		// Do nothing	
+		// Do nothing
 	}
 
 	@Override
 	public void buildStarted(BuildEvent event) {
-		// Do nothing	
+		// Do nothing
 	}
 
 	@Override
 	public void messageLogged(BuildEvent event) {
-		// Do nothing	
+		// Do nothing
 	}
 
 	@Override
 	public void targetFinished(BuildEvent event) {
-		// Do nothing	
+		// Do nothing
 	}
 
 	@Override
 	public void targetStarted(BuildEvent event) {
-		// Do nothing	
+		// Do nothing
 	}
 
 	@Override
 	public void taskFinished(BuildEvent event) {
-		// Do nothing	
+		// Do nothing
 	}
 
 	@Override
 	public void taskStarted(BuildEvent event) {
-		// Do nothing	
+		// Do nothing
 	}
 }

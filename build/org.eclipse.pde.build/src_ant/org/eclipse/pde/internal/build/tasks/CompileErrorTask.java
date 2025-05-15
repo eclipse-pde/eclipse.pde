@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -53,7 +53,7 @@ public class CompileErrorTask extends Task {
 					problems.add(line);
 				}
 			} catch (IOException e) {
-				// 
+				//
 			}
 		}
 
@@ -71,7 +71,7 @@ public class CompileErrorTask extends Task {
 						writer.write(NEW_LINE);
 					}
 				} catch (IOException e) {
-					// 
+					//
 				}
 
 			}

@@ -260,8 +260,8 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 	/*
 	 * Select from the given files those that match the passed in group of OR'ed FilenameSelectors
 	 * We can't just use the selectors directly on the fileset because the files may be going to different
-	 * folders.  They will end up under the given folder, which is either the root, or the folder corresponding 
-	 * to "root.folder" properties. 
+	 * folders.  They will end up under the given folder, which is either the root, or the folder corresponding
+	 * to "root.folder" properties.
 	 */
 	private String[] selectFiles(OrSelector selector, String folder, String[] files) {
 		String prefix = (folder.length() > 0) ? folder + '/' : ""; //$NON-NLS-1$

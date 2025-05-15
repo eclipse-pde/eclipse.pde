@@ -31,7 +31,7 @@ public class PluginPathFinder {
 	private static final String ECLIPSE = "eclipse"; //$NON-NLS-1$
 
 	/**
-	 * 
+	 *
 	 * @param features false for plugins, true for features
 	 * @return path of plugins or features directory of an extension site
 	 */
@@ -62,7 +62,7 @@ public class PluginPathFinder {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param features false for plugin sites, true for feature sites
 	 * @return array of ".../plugins" or ".../features" Files
 	 */
@@ -77,7 +77,7 @@ public class PluginPathFinder {
 			sites.add(file);
 		}
 
-		File[] linkFiles = new File(platformHome + IPath.SEPARATOR + "links").listFiles(); //$NON-NLS-1$	
+		File[] linkFiles = new File(platformHome + IPath.SEPARATOR + "links").listFiles(); //$NON-NLS-1$
 		if (linkFiles != null) {
 			for (File linkFile : linkFiles) {
 				String path = getSitePath(platformHome, linkFile, features);
