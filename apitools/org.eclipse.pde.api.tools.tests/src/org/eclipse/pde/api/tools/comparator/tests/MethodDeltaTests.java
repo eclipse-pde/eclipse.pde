@@ -2707,7 +2707,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Changed Map to Map&lt;String, String&gt;
 	 */
@@ -2730,7 +2730,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Add type parameters (constructor)
 	 */
@@ -2753,7 +2753,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Add checked exception (constructor)
 	 */
@@ -2777,7 +2777,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Add unchecked exception (constructor)
 	 */
@@ -2801,7 +2801,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Change last parameter from array to varargs (constructor)
 	 */
@@ -2824,7 +2824,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Removed unchecked exception (constructor)
 	 */
@@ -2848,7 +2848,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Removed checked exception (constructor)
 	 */
@@ -2872,7 +2872,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Increased access (constructor)
 	 */
@@ -2896,7 +2896,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Non-final to final for @nooverride method
 	 */
@@ -2953,7 +2953,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.API_COMPONENT_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Added deprecation
 	 */
@@ -2976,7 +2976,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Removed deprecation
 	 */
@@ -2999,7 +2999,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Added public method into protected member interface inside a class tagged
 	 * as noextend
@@ -3016,7 +3016,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
 		assertTrue("Not no delta", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Added public method into protected member interface inside a class tagged
 	 * as noextend
