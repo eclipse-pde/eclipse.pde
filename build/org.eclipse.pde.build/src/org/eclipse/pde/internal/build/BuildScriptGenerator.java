@@ -110,14 +110,14 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	// what kind of source bundles to auto output.  See #generateSourceBundles()
 	private String sourceBundleMode = null;
 
-	// the default id is a generic feature name as uber source features have no inherent 
+	// the default id is a generic feature name as uber source features have no inherent
 	// semantics or scope.
 	private String sourceBundleTemplateFeature = "org.eclipse.pde.build.uber.feature"; //$NON-NLS-1$
 	private String sourceBundleFeatureId = null; //default is sourceBundleTemplateFeature + ".source"
 
-	// the default version is simply time-based as uber source features have no inherent 
+	// the default version is simply time-based as uber source features have no inherent
 	// semantics or scope.
-	// XXX need a better way to version this feature.  Ideally the feature would not even 
+	// XXX need a better way to version this feature.  Ideally the feature would not even
 	// be persisted in the p2 metadata so this would not matter.
 	private String sourceBundleFeatureVersion = "1.0.0." + System.currentTimeMillis(); //$NON-NLS-1$
 
@@ -302,13 +302,13 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	/**
-	 * Generate source bundles for this build.  The exact set of source bundles generated depends on 
+	 * Generate source bundles for this build.  The exact set of source bundles generated depends on
 	 * the source output mode ((see {@link #setSourceBundleMode(String)}), the set of features
-	 * and bundles being built and the pre-existence of related source bundles. 
-	 * 
+	 * and bundles being built and the pre-existence of related source bundles.
+	 *
 	 * This step may result in the creation of an "uber source feature" that captures
-	 * a list of the generated source bundles.  
-	 * 
+	 * a list of the generated source bundles.
+	 *
 	 * @param generator the build director to use when generating the source bundles
 	 */
 	private void generateSourceBundles(BuildDirector generator) throws CoreException {
@@ -349,7 +349,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		Set<BundleDescription> plugins = new HashSet<>();
 		Properties versions = new Properties();
 
-		//For each configuration, save the version of all the features in a file 
+		//For each configuration, save the version of all the features in a file
 		//and save the version of all the plug-ins in another file
 		for (Config config : configs) {
 			String configString = config.toStringReplacingAny("_", ANY_STRING); //$NON-NLS-1$
@@ -377,7 +377,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			saveVersions(versions, pluginFile);
 		}
 
-		//Create a file containing all the feature versions  
+		//Create a file containing all the feature versions
 		versions.clear();
 		String featureFile = DEFAULT_FEATURE_VERSION_FILENAME_PREFIX + PROPERTIES_FILE_SUFFIX;
 		readVersions(versions, featureFile);
@@ -496,7 +496,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 
 	/**
 	 * Sets the recursiveGeneration.
-	 * 
+	 *
 	 * @param recursiveGeneration
 	 *            The recursiveGeneration to set
 	 */
@@ -520,11 +520,11 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	/**
-	 * Whether or not to automatically output source bundles corresponding to the bundles involved in 
+	 * Whether or not to automatically output source bundles corresponding to the bundles involved in
 	 * the build.  If set to null, no special source bundle generation is done.  If set to "built", only the
-	 * source bundles corresponding to bundles actually compiled are output.  If set to "all" then all 
+	 * source bundles corresponding to bundles actually compiled are output.  If set to "all" then all
 	 * available source related to bundles in the build are output.
-	 * 
+	 *
 	 * @param value the source bundle output mode.
 	 */
 	public void setSourceBundleMode(String value) {

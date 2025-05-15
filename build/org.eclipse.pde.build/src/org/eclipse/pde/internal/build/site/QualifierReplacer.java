@@ -26,7 +26,7 @@ public class QualifierReplacer implements IBuildPropertiesConstants {
 
 	/**
 	 * Replaces the 'qualifier' in the given version with the qualifier replacement.
-	 * 
+	 *
 	 * @param version version to replace qualifier in
 	 * @param id id used when building a replacement using newVersions properties
 	 * @param replaceTag replace qualifier with this tag instead of global qualifier, may be <code>null</code>
@@ -101,7 +101,7 @@ public class QualifierReplacer implements IBuildPropertiesConstants {
 	 * Returns the current date/time as a string to be used as a qualifier
 	 * replacement.  This is the default qualifier replacement.  Will
 	 * be of the form YYYYMMDDHHMM.
-	 * @return current date/time as a qualifier replacement 
+	 * @return current date/time as a qualifier replacement
 	 */
 	public static String getDateQualifier() {
 		final String empty = ""; //$NON-NLS-1$

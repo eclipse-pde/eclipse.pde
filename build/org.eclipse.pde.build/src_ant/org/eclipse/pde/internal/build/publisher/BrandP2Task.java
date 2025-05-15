@@ -7,8 +7,8 @@
 t https://www.eclipse.org/legal/epl-2.0/
 t
 t SPDX-License-Identifier: EPL-2.0
- * 
- * Contributors: 
+ *
+ * Contributors:
  * 		IBM Corporation - initial API and implementation
  * 		Pascal Rapicault - Support for bundled macosx application - http://bugs.eclipse.org/431116
  ******************************************************************************/

@@ -308,8 +308,8 @@ public class ProductGenerator extends AbstractScriptGenerator {
 					P2InfUtils.printBundleCU(buffer, index++, fragment.getSymbolicName(), fragment.getVersion(), fragment.getPlatformFilter(), instructions);
 
 					if (executableFeature != null) {
-						//include the branded executable 
-						String brandedIU = productFile.getId() + "_root." + config.getWs() + '.' + config.getOs() + '.' + config.getArch(); //$NON-NLS-1$ 
+						//include the branded executable
+						String brandedIU = productFile.getId() + "_root." + config.getWs() + '.' + config.getOs() + '.' + config.getArch(); //$NON-NLS-1$
 						P2InfUtils.printRequires(buffer, null, index++, P2InfUtils.NAMESPACE_IU, brandedIU, brandedRange, config.getPlatformFilter(), true);
 
 						//include a CU for the branded exe
@@ -465,7 +465,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		} else {
 			if ((style & CONFIG_STYLE_REFACTORED) > 0) {
 				//start levels for eclipse 3.2
-				//org.eclipse.equinox.common@2:start,  
+				//org.eclipse.equinox.common@2:start,
 				buffer.append(BUNDLE_EQUINOX_COMMON);
 				buffer.append(START_LEVEL_2);
 				buffer.append(',');

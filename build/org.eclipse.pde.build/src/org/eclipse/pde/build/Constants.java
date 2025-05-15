@@ -33,8 +33,8 @@ public interface Constants {
 	public final static String BUNDLE_FILENAME_DESCRIPTOR = "META-INF/MANIFEST.MF"; //$NON-NLS-1$
 
 	/**
-	 * Key used to store the value of a project reference in the Eclipse-SourceReferences manifest header.  
-	 * 
+	 * Key used to store the value of a project reference in the Eclipse-SourceReferences manifest header.
+	 *
 	 * @since 3.6
 	 * @see IFetchFactory
 	 */

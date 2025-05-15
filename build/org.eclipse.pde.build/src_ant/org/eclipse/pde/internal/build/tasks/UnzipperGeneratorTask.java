@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM - Initial API and implementation
  *******************************************************************************/
@@ -53,7 +53,7 @@ public class UnzipperGeneratorTask extends Task {
 		generator.setWorkingDirectory(installLocation);
 	}
 
-	/** 
+	/**
 	 * Set the configuration for which the script should be generated. The default is set to be configuration independent.
 	 * @param configInfo an ampersand separated list of configuration (for example {@code win32, win32, x86 & macoxs, carbon, ppc}).
 	 */

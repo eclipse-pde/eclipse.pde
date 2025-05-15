@@ -34,9 +34,9 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
 /**
- * Internal task. 
+ * Internal task.
  * Add, change or remove the keys from a manifest.mf.
- * @since 3.0 
+ * @since 3.0
  */
 public class ManifestModifier extends Task {
 	private String manifestLocation;
@@ -47,7 +47,7 @@ public class ManifestModifier extends Task {
 
 	/**
 	 * Indicate new values to add to the manifest. The format of the parameter is key|value#key|value#...
-	 * If a value is specified to null, the key will be removed from the manifest. 
+	 * If a value is specified to null, the key will be removed from the manifest.
 	 */
 	public void setKeyValue(String values) {
 		StringTokenizer tokenizer = new StringTokenizer(values, DELIM, false);
@@ -104,7 +104,7 @@ public class ManifestModifier extends Task {
 
 	private void loadManifest() {
 		try (InputStream is = new SequenceInputStream(new BufferedInputStream(new FileInputStream(manifestLocation)), new ByteArrayInputStream(new byte[] {'\n'}))) {
-			//work around for bug 256787 
+			//work around for bug 256787
 			manifest = new Manifest(is);
 		} catch (IOException e) {
 			throw new BuildException("Problem reading the content of the manifest : " + manifestLocation); //$NON-NLS-1$

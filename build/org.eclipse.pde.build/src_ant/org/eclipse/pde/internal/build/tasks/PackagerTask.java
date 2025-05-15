@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM - Initial API and implementation
  *******************************************************************************/
@@ -26,7 +26,7 @@ import org.eclipse.pde.internal.build.packager.PackagerGenerator;
 import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
 import org.eclipse.pde.internal.build.site.ProfileManager;
 
-/** 
+/**
  * Internal task.
  * Generate assemble scripts to repackage binary distributions.
  * @since 3.0
@@ -53,7 +53,7 @@ public class PackagerTask extends Task {
 
 	/**
 	 * Set the features to assemble
-	 * @param featureList a comma separated list of features to package 
+	 * @param featureList a comma separated list of features to package
 	 */
 	public void setFeatureList(String featureList) throws BuildException {
 		generator.setFeatureList(featureList);
@@ -67,7 +67,7 @@ public class PackagerTask extends Task {
 		AbstractScriptGenerator.setConfigInfo(configInfo);
 	}
 
-	/** 
+	/**
 	 * Set on a configuration basis, the format of the archive being produced. The default is set to be configuration independent.
 	 * @param archivesFormat an ampersand separated list of configuration (for example {@code win32, win32 - zip, x86 & macoxs, carbon, ppc - tar}).
 	 * @since 3.0

@@ -40,12 +40,12 @@ import org.eclipse.pde.internal.build.Messages;
  * 	GET = mandatory constant (to call this fetch factory)
  * 	url = url to retrieve the data from (suitable to be used in the Ant Get task)
  * 	args = optional comma-separated list of key/value pairs, specify unpack=true to indicate the element should be unzipped
- * 
+ *
  * e.g.
  * 	plugin@com.example.foobar=GET,http://downloads.example.com/com.example.foobar_1.0.jar
  * 	plugin@com.example.foobar=GET,http://downloads.example.com/com.example.foobar_1.0.jar,unpack=true
  * 	plugin@com.example.foobar=GET,http://downloads.example.com/com.example.foobar_1.0.zip,unpack=true, username=foo, password=bar
- * 
+ *
  * @since 3.2.100
  */
 public class GETFetchFactory implements IFetchFactory {

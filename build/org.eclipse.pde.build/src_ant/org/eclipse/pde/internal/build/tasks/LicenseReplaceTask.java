@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM - Initial API and implementation
  *     Marc-Andre Laperle (Ericsson) - Fix NPE (Bug 419759)
@@ -35,9 +35,9 @@ import org.apache.tools.ant.types.PatternSet.NameEntry;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.build.Constants;
 
-/** 
+/**
  * Internal task.
- * This task aims at replacing the generic ids used into a feature.xml by another value, and also replace the feature version number if necessary.  
+ * This task aims at replacing the generic ids used into a feature.xml by another value, and also replace the feature version number if necessary.
  * @since 3.0
  */
 public class LicenseReplaceTask extends Task {
@@ -282,7 +282,7 @@ public class LicenseReplaceTask extends Task {
 	}
 
 	/**
-	 * The directory containing the feature 
+	 * The directory containing the feature
 	 */
 	public void setFeatureFilePath(String path) {
 		filePath = path;

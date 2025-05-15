@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Compuware Corporation - Sebastien Angers <sebastien.angers@compuware.com> 
+ *     Compuware Corporation - Sebastien Angers <sebastien.angers@compuware.com>
  *     		- Enabled additional mirror slicingOptions in Headless PDE Build
  *     		- Enabled 'raw' attribute for mirror step in Headless PDE Build
  *     		- https://bugs.eclipse.org/338878
@@ -248,7 +248,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 			script.printTab();
 			script.print("<p2.publish.product"); //$NON-NLS-1$
 			script.printAttribute("flavor", Utils.getPropertyFormat(PROPERTY_P2_FLAVOR), true); //$NON-NLS-1$
-			script.printAttribute("repository", Utils.getPropertyFormat(PROPERTY_P2_BUILD_REPO), true); //$NON-NLS-1$ 
+			script.printAttribute("repository", Utils.getPropertyFormat(PROPERTY_P2_BUILD_REPO), true); //$NON-NLS-1$
 			script.printAttribute("productFile", newProduct, true); //$NON-NLS-1$
 			script.println(">"); //$NON-NLS-1$
 
@@ -354,7 +354,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		script.printAttribute("includeFeatures", Utils.getPropertyFormat(PROPERTY_P2_MIRROR_SLICING_INCLUDE_FEATURES), true); //$NON-NLS-1$
 		script.printAttribute("includeOptional", Utils.getPropertyFormat(PROPERTY_P2_MIRROR_SLICING_INCLUDE_OPTIONAL), true); //$NON-NLS-1$
 		script.printAttribute("latestVersionOnly", Utils.getPropertyFormat(PROPERTY_P2_MIRROR_SLICING_LATEST_VERSION_ONLY), true); //$NON-NLS-1$
-		script.printAttribute("platformFilter", Utils.getPropertyFormat(PROPERTY_P2_MIRROR_SLICING_PLATFORM_FILTER), true); //$NON-NLS-1$			
+		script.printAttribute("platformFilter", Utils.getPropertyFormat(PROPERTY_P2_MIRROR_SLICING_PLATFORM_FILTER), true); //$NON-NLS-1$
 		script.println("/>"); //$NON-NLS-1$
 
 		script.printTab();
@@ -383,11 +383,11 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 
 		script.printTab();
 		script.print("\t<destination "); //$NON-NLS-1$
-		script.printAttribute("location", Utils.getPropertyFormat(PROPERTY_P2_BUILD_REPO), true); //$NON-NLS-1$ 
+		script.printAttribute("location", Utils.getPropertyFormat(PROPERTY_P2_BUILD_REPO), true); //$NON-NLS-1$
 		script.printAttribute("kind", "metadata", true); //$NON-NLS-1$ //$NON-NLS-2$
 		script.println("/>"); //$NON-NLS-1$
 		script.print("\t<destination "); //$NON-NLS-1$
-		script.printAttribute("location", Utils.getPropertyFormat(PROPERTY_P2_BUILD_REPO), true); //$NON-NLS-1$ 
+		script.printAttribute("location", Utils.getPropertyFormat(PROPERTY_P2_BUILD_REPO), true); //$NON-NLS-1$
 		script.printAttribute("kind", "artifact", true); //$NON-NLS-1$ //$NON-NLS-2$
 		script.println("/>"); //$NON-NLS-1$
 		script.printTab();

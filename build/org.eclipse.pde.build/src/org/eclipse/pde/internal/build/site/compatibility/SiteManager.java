@@ -7,7 +7,7 @@
 t https://www.eclipse.org/legal/epl-2.0/
 t
 t SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors: IBM Corporation - initial API and implementation
  ******************************************************************************/
 
@@ -102,7 +102,7 @@ public class SiteManager {
 			return true;
 		}
 		StringTokenizer siteTokens = new StringTokenizer(siteValues, ","); //$NON-NLS-1$
-		//$NON-NLS-1$	
+		//$NON-NLS-1$
 		while (siteTokens.hasMoreTokens()) {
 			StringTokenizer candidateTokens = new StringTokenizer(candidateValues, ","); //$NON-NLS-1$
 			String siteValue = siteTokens.nextToken();

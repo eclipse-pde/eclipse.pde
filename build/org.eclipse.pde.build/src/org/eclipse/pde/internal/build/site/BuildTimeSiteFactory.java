@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors: IBM - Initial API and implementation
  ******************************************************************************/
 package org.eclipse.pde.internal.build.site;
@@ -53,10 +53,10 @@ public class BuildTimeSiteFactory /*extends BaseSiteFactory*/ implements IPDEBui
 	private boolean filterState;
 	private boolean filterP2Base = false;
 
-	/** 
+	/**
 	 * Create a build time site, using the sitePaths, and the installedBaseLocation.
 	 * Note that the site object is not recomputed if no change has been done.
-	 * 
+	 *
 	 * @return ISite
 	 */
 	public BuildTimeSite createSite() throws CoreException {
@@ -133,7 +133,7 @@ public class BuildTimeSiteFactory /*extends BaseSiteFactory*/ implements IPDEBui
 			return;
 		}
 
-		//Check if urls are not the same than sitePaths.  
+		//Check if urls are not the same than sitePaths.
 		if (!new HashSet<>(this.sitePaths).equals(new HashSet<>(paths))) {
 			sitePaths = paths;
 			urlsChanged = true;

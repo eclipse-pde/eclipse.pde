@@ -196,7 +196,7 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 		}
 
 		if (packagingProperties.size() > 0) {
-			//This is need so that the call in assemble config script generator gather the root files 
+			//This is need so that the call in assemble config script generator gather the root files
 			if (rootFileProviders == null) {
 				rootFileProviders = new ArrayList<>(1);
 			}

@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     G&H Softwareentwicklung GmbH - internationalization implementation (bug 150933)
@@ -507,7 +507,7 @@ public class JNLPGenerator extends DefaultHandler {
 			return true;
 		}
 		StringTokenizer siteTokens = new StringTokenizer(siteValues, ","); //$NON-NLS-1$
-		//$NON-NLS-1$	
+		//$NON-NLS-1$
 		while (siteTokens.hasMoreTokens()) {
 			StringTokenizer candidateTokens = new StringTokenizer(candidateValues, ","); //$NON-NLS-1$
 			String siteValue = siteTokens.nextToken();

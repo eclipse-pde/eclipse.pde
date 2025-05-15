@@ -47,7 +47,7 @@ import org.eclipse.pde.internal.build.Utils;
  * the element from if it is not within the root. If this is not provided the
  * default path will be used which simply maps to the element name.</dd>
  * </dl>
- * 
+ *
  */
 public class COPYFetchTasksFactory implements IFetchFactory, IPDEBuildConstants {
 	public static final String ID = "COPY"; //$NON-NLS-1$
@@ -111,13 +111,13 @@ public class COPYFetchTasksFactory implements IFetchFactory, IPDEBuildConstants 
 	}
 
 	/**
-	 * Print a <code>copy</code> task to the script. The source file is specified 
-	 * by the <code>file</code> OR the <code>dirs</code> parameter. 
-	 * The destination directory is specified by the <code>todir</code> parameter. 
+	 * Print a <code>copy</code> task to the script. The source file is specified
+	 * by the <code>file</code> OR the <code>dirs</code> parameter.
+	 * The destination directory is specified by the <code>todir</code> parameter.
 	 * @param file the source file
 	 * @param todir the destination directory
 	 * @param dirs the directories to copy
-	 * @param overwrite indicates if existing files should be overwritten 
+	 * @param overwrite indicates if existing files should be overwritten
 	 * @param script the script to print to
 	 */
 	private void printCopyTask(String file, String todir, String[] dirs, boolean failOnError, boolean overwrite, IAntScript script) {

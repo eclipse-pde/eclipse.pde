@@ -83,7 +83,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	private ProfileManager profileManager;
 	private Map<Long, String> patchBundles;
 	private List<BundleDescription> addedBundle;
-	private List<BundleDescription> unqualifiedBundles; //All the bundle description objects that have .qualifier in them 
+	private List<BundleDescription> unqualifiedBundles; //All the bundle description objects that have .qualifier in them
 	private Properties platformProperties;
 	private List<BundleDescription> sortedBundles = null;
 	private final Set<Dictionary<String, String>> convertedManifests;
@@ -130,7 +130,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		return state.addBundle(toAdd);
 	}
 
-	//Add a bundle to the state, updating the version number 
+	//Add a bundle to the state, updating the version number
 	public boolean addBundle(Dictionary<String, String> enhancedManifest, File bundleLocation) {
 		String oldVersion = updateVersionNumber(enhancedManifest);
 		try {
@@ -331,7 +331,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		return qualifierInfo;
 	}
 
-	//Return a dictionary representing a manifest. The data may result from plugin.xml conversion  
+	//Return a dictionary representing a manifest. The data may result from plugin.xml conversion
 	private Dictionary<String, String> basicLoadManifest(File bundleLocation) {
 		try {
 			if ("jar".equalsIgnoreCase(IPath.fromOSString(bundleLocation.getName()).getFileExtension()) && bundleLocation.isFile()) { //$NON-NLS-1$
@@ -450,7 +450,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 
 		boolean added = false;
 		String eeJava9 = null;
-		//javaProfiles are sorted, go in reverse order, and if when we hit 0 we haven't added any yet, 
+		//javaProfiles are sorted, go in reverse order, and if when we hit 0 we haven't added any yet,
 		//then add that last profile so we have something.
 		for (int j = javaProfiles.length - 1; j >= 0; j--) {
 			// add a property set for each EE that is defined in the build.
@@ -462,7 +462,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 					String systemPackages = getSystemPackages(env, profileProps);
 					String ee = profileProps.getProperty(FRAMEWORK_EXECUTIONENVIRONMENT);
 					Dictionary<String, Object> prop = new Hashtable<>();
-					if (systemPackages != null) { 
+					if (systemPackages != null) {
 						prop.put(ProfileManager.SYSTEM_PACKAGES, systemPackages);
 					}
 					if (profileName.equals("JavaSE-9")) { //$NON-NLS-1$
@@ -474,10 +474,10 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 				}
 			}
 		}
-		// from java 10 and beyond 
+		// from java 10 and beyond
 		List<String> eeJava10AndBeyond = new ArrayList<>();
 		for (int i = 10; i <= LAST_SUPPORTED_JDK; i++) {
-			eeJava10AndBeyond.add("JavaSE-" + i);//$NON-NLS-1$		
+			eeJava10AndBeyond.add("JavaSE-" + i);//$NON-NLS-1$
 		}
 		Dictionary<String, Object> prop = new Hashtable<>();
 		String previousEE = eeJava9;
@@ -514,7 +514,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		}
 		if (systemPackages == null || systemPackages.isBlank()) {
 			if (compatibleVMsFor(environment, s -> s).findAny().isPresent()) {
-				LOGGER.warn("No JVM system-packages available for environment " + environment); //$NON-NLS-1$  
+				LOGGER.warn("No JVM system-packages available for environment " + environment); //$NON-NLS-1$
 			}
 			return null;
 		}
@@ -867,7 +867,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 
 	//Replace the version numbers that ends with .qualifier
 	private void forceQualifiers() {
-		BundleDescription[] resolvedBundles = state.getResolvedBundles(); //We only get the resolved bundles since, changing the qualifier should not change the resolution state 
+		BundleDescription[] resolvedBundles = state.getResolvedBundles(); //We only get the resolved bundles since, changing the qualifier should not change the resolution state
 		for (BundleDescription b : resolvedBundles) {
 			if (b.getVersion().getQualifier().endsWith(PROPERTY_QUALIFIER)) {
 				unqualifiedBundles.add(state.removeBundle(b.getBundleId())); //We keep the removed bundle so we can reinsert it in the state when we are done

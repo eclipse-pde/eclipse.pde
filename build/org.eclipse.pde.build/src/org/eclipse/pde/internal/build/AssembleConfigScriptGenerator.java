@@ -13,7 +13,7 @@
  *    G&H Softwareentwicklung GmbH - internationalization implementation (bug 150933)
  *    Prosyst - create proper OSGi bundles (bug 174157)
  *    Felix Riegger (SAP AG) - consolidation of publishers for PDE formats (bug 331974)
- *    Rapicorp, Inc - Specify download stats URL and type of artifacts to monitor in category.xml (bug 436872)  
+ *    Rapicorp, Inc - Specify download stats URL and type of artifacts to monitor in category.xml (bug 436872)
  *******************************************************************************/
 package org.eclipse.pde.internal.build;
 
@@ -141,7 +141,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	public void generate() {
 		try {
 			// Note that we must pass the OS information in to load product
-			// so that any icon files can be calculated for the 
+			// so that any icon files can be calculated for the
 			// generateBrandingCalls.
 			productFile = loadProduct(product, configInfo.getOs());
 		} catch (CoreException e) {
@@ -209,7 +209,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			script.println(">"); //$NON-NLS-1$
 			script.printTab();
 			script.print("\t<destination "); //$NON-NLS-1$
-			script.printAttribute("location", Utils.getPropertyFormat(PROPERTY_P2_MIRROR_METADATA_DEST), true); //$NON-NLS-1$ 
+			script.printAttribute("location", Utils.getPropertyFormat(PROPERTY_P2_MIRROR_METADATA_DEST), true); //$NON-NLS-1$
 			script.printAttribute("name", Utils.getPropertyFormat(PROPERTY_P2_METADATA_REPO_NAME), true); //$NON-NLS-1$
 			script.printAttribute("compressed", Utils.getPropertyFormat(PROPERTY_P2_COMPRESS), true); //$NON-NLS-1$
 			script.printAttribute("append", assembling ? Utils.getPropertyFormat(PROPERTY_P2_APPEND) : TRUE, true); //$NON-NLS-1$
@@ -217,7 +217,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			script.println("/>"); //$NON-NLS-1$
 			script.printTab();
 			script.print("\t<destination "); //$NON-NLS-1$
-			script.printAttribute("location", Utils.getPropertyFormat(PROPERTY_P2_MIRROR_ARTIFACT_DEST), true); //$NON-NLS-1$ 
+			script.printAttribute("location", Utils.getPropertyFormat(PROPERTY_P2_MIRROR_ARTIFACT_DEST), true); //$NON-NLS-1$
 			script.printAttribute("name", Utils.getPropertyFormat(PROPERTY_P2_ARTIFACT_REPO_NAME), true); //$NON-NLS-1$
 			script.printAttribute("compressed", Utils.getPropertyFormat(PROPERTY_P2_COMPRESS), true); //$NON-NLS-1$
 			script.printAttribute("append", assembling ? Utils.getPropertyFormat(PROPERTY_P2_APPEND) : TRUE, true); //$NON-NLS-1$
@@ -469,7 +469,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 				String targetLocation = Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS) + '/' + ModelBuildScriptGenerator.getNormalizedName(plugin);
 				String targetLocationSrc = targetLocation + "/src"; //$NON-NLS-1$
 
-				//Find the source zip where it has been gathered and extract it in a folder  
+				//Find the source zip where it has been gathered and extract it in a folder
 				script.println("<unzip dest=\"" + AntScript.getEscaped(targetLocationSrc) + "\">"); //$NON-NLS-1$//$NON-NLS-2$
 				script.println("\t<fileset dir=\"" + AntScript.getEscaped(targetLocation) + "\" includes=\"**/*src.zip\" casesensitive=\"false\"/>"); //$NON-NLS-1$//$NON-NLS-2$
 				script.println("</unzip>"); //$NON-NLS-1$
@@ -525,7 +525,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		if (generateJnlp) {
 			script.printProperty(PROPERTY_UNSIGN, "true"); //$NON-NLS-1$
 		}
-		script.println("<eclipse.jarProcessor sign=\"" + Utils.getPropertyFormat(PROPERTY_SIGN) + "\" unsign=\"" + Utils.getPropertyFormat(PROPERTY_UNSIGN) + "\" jar=\"" + fileName + ".jar" + "\" alias=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_ALIAS) + "\" keystore=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_KEYSTORE) + "\" storepass=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_STOREPASS) + "\" keypass=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_KEYPASS) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ 
+		script.println("<eclipse.jarProcessor sign=\"" + Utils.getPropertyFormat(PROPERTY_SIGN) + "\" unsign=\"" + Utils.getPropertyFormat(PROPERTY_UNSIGN) + "\" jar=\"" + fileName + ".jar" + "\" alias=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_ALIAS) + "\" keystore=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_KEYSTORE) + "\" storepass=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_STOREPASS) + "\" keypass=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_KEYPASS) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
 		script.printTargetEnd();
 		script.printComment("End of the jarUp task"); //$NON-NLS-1$
 		script.println();
@@ -537,13 +537,13 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.println("<move file=\"" //$NON-NLS-1$
 				+ Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH) + "\" tofile=\"" //$NON-NLS-1$
 				+ Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER) + "/tmp.tar\"/>"); //$NON-NLS-1$
-		script.printGZip(Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER) + "/tmp.tar", //$NON-NLS-1$ 
+		script.printGZip(Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER) + "/tmp.tar", //$NON-NLS-1$
 				Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH));
 		script.printTargetEnd();
 	}
 
 	protected void generatePrologue() {
-		script.printProjectDeclaration("Assemble " + featureId, TARGET_MAIN, null); //$NON-NLS-1$  
+		script.printProjectDeclaration("Assemble " + featureId, TARGET_MAIN, null); //$NON-NLS-1$
 		script.printProperty(PROPERTY_ARCHIVE_NAME, computeArchiveName());
 		script.printProperty(PROPERTY_OS, configInfo.getOs());
 		script.printProperty(PROPERTY_WS, configInfo.getWs());
@@ -616,13 +616,13 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		}
 
 		script.println("<condition property=\"" + PROPERTY_PLUGIN_ARCHIVE_PREFIX + "\" value=\"" + DEFAULT_PLUGIN_LOCATION + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		script.println("\t<equals arg1=\"" + Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + "\"  arg2=\"\" trim=\"true\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ 
+		script.println("\t<equals arg1=\"" + Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + "\"  arg2=\"\" trim=\"true\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
 		script.println("</condition>"); //$NON-NLS-1$
 		script.printProperty(PROPERTY_PLUGIN_ARCHIVE_PREFIX, Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_PLUGIN_LOCATION);
 
 		script.println();
 		script.println("<condition property=\"" + PROPERTY_FEATURE_ARCHIVE_PREFIX + "\" value=\"" + DEFAULT_FEATURE_LOCATION + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		script.println("\t<equals arg1=\"" + Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + "\"  arg2=\"\" trim=\"true\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ 
+		script.println("\t<equals arg1=\"" + Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + "\"  arg2=\"\" trim=\"true\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
 		script.println("</condition>"); //$NON-NLS-1$
 		script.printProperty(PROPERTY_FEATURE_ARCHIVE_PREFIX, Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_FEATURE_LOCATION);
 
@@ -789,9 +789,9 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 				script.printAttribute("source", Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), true); //$NON-NLS-1$
 				script.printAttribute("append", Utils.getPropertyFormat(PROPERTY_P2_APPEND), true); //$NON-NLS-1$
 				script.printAttribute("flavor", Utils.getPropertyFormat(PROPERTY_P2_FLAVOR), true); //$NON-NLS-1$
-				script.printAttribute("compress", Utils.getPropertyFormat(PROPERTY_P2_COMPRESS), true); //$NON-NLS-1$ 
-				script.printAttribute("metadataRepository", Utils.getPropertyFormat(PROPERTY_P2_METADATA_REPO), true); //$NON-NLS-1$ 
-				script.printAttribute("artifactRepository", Utils.getPropertyFormat(PROPERTY_P2_ARTIFACT_REPO), true); //$NON-NLS-1$ 
+				script.printAttribute("compress", Utils.getPropertyFormat(PROPERTY_P2_COMPRESS), true); //$NON-NLS-1$
+				script.printAttribute("metadataRepository", Utils.getPropertyFormat(PROPERTY_P2_METADATA_REPO), true); //$NON-NLS-1$
+				script.printAttribute("artifactRepository", Utils.getPropertyFormat(PROPERTY_P2_ARTIFACT_REPO), true); //$NON-NLS-1$
 				script.printAttribute("metadataRepositoryName", Utils.getPropertyFormat(PROPERTY_P2_METADATA_REPO_NAME), true); //$NON-NLS-1$
 				script.printAttribute("artifactRepositoryName", Utils.getPropertyFormat(PROPERTY_P2_ARTIFACT_REPO_NAME), true); //$NON-NLS-1$
 				script.printAttribute("publishArtifacts", Utils.getPropertyFormat(PROPERTY_P2_PUBLISH_ARTIFACTS), true); //$NON-NLS-1$
@@ -816,16 +816,16 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 				script.printTab();
 				script.print("<p2.generator "); //$NON-NLS-1$
 				script.printAttribute("config", rootFolder, true); //$NON-NLS-1$
-				script.printAttribute("append", Utils.getPropertyFormat(PROPERTY_P2_APPEND), true); //$NON-NLS-1$ 
+				script.printAttribute("append", Utils.getPropertyFormat(PROPERTY_P2_APPEND), true); //$NON-NLS-1$
 				script.printAttribute("flavor", Utils.getPropertyFormat(PROPERTY_P2_FLAVOR), true); //$NON-NLS-1$
-				script.printAttribute("compress", Utils.getPropertyFormat(PROPERTY_P2_COMPRESS), true); //$NON-NLS-1$ 
-				script.printAttribute("metadataRepository", Utils.getPropertyFormat(PROPERTY_P2_METADATA_REPO), true); //$NON-NLS-1$ 
-				script.printAttribute("artifactRepository", Utils.getPropertyFormat(PROPERTY_P2_ARTIFACT_REPO), true); //$NON-NLS-1$ 
+				script.printAttribute("compress", Utils.getPropertyFormat(PROPERTY_P2_COMPRESS), true); //$NON-NLS-1$
+				script.printAttribute("metadataRepository", Utils.getPropertyFormat(PROPERTY_P2_METADATA_REPO), true); //$NON-NLS-1$
+				script.printAttribute("artifactRepository", Utils.getPropertyFormat(PROPERTY_P2_ARTIFACT_REPO), true); //$NON-NLS-1$
 				script.printAttribute("metadataRepositoryName", Utils.getPropertyFormat(PROPERTY_P2_METADATA_REPO_NAME), true); //$NON-NLS-1$
 				script.printAttribute("artifactRepositoryName", Utils.getPropertyFormat(PROPERTY_P2_ARTIFACT_REPO_NAME), true); //$NON-NLS-1$
 				script.printAttribute("launcherConfig", configInfo.toString(), true); //$NON-NLS-1$
 				script.printAttribute("p2OS", configInfo.getOs(), true); //$NON-NLS-1$
-				script.printAttribute("publishArtifacts", Utils.getPropertyFormat(PROPERTY_P2_PUBLISH_ARTIFACTS), true); //$NON-NLS-1$ 
+				script.printAttribute("publishArtifacts", Utils.getPropertyFormat(PROPERTY_P2_PUBLISH_ARTIFACTS), true); //$NON-NLS-1$
 				if (!havePDEUIState()) {
 					script.printAttribute("mode", "incremental", true); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
@@ -923,12 +923,12 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 		List<String> parameters = new ArrayList<>(1);
 		parameters.add("-r -q ${zipargs} '" + Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH) + "' . "); //$NON-NLS-1$ //$NON-NLS-2$
-		script.printExecTask("zip", Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING), parameters, null); //$NON-NLS-1$ //$NON-NLS-2$ 
+		script.printExecTask("zip", Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING), parameters, null); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private void createZipExecCommand(List<String> parameters) {
 		parameters.add(0, "-r -q " + Utils.getPropertyFormat(PROPERTY_ZIP_ARGS) + " '" + Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH) + '\''); //$NON-NLS-1$ //$NON-NLS-2$
-		script.printExecTask("zip", Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP), parameters, null); //$NON-NLS-1$ 
+		script.printExecTask("zip", Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP), parameters, null); //$NON-NLS-1$
 	}
 
 	protected String computeArchiveName() {
@@ -937,11 +937,11 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	public void generateTarGZTasks(boolean assembling) {
-		//This task only supports creation of archive with eclipse at the root 
+		//This task only supports creation of archive with eclipse at the root
 		//Need to do the copy using cp because of the link
 		List<String> parameters = new ArrayList<>(2);
 		if (rootFileProviders.size() > 0) {
-			parameters.add("-r '" + Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER) + "' '" + Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '\''); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$  
+			parameters.add("-r '" + Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER) + "' '" + Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '\''); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			script.printExecTask("cp", Utils.getPropertyFormat(PROPERTY_BASEDIR), parameters, null); //$NON-NLS-1$
 
 			parameters.clear();
@@ -952,7 +952,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		String tarArgs = assembling ? "-cvf '" : "-rvf '"; //$NON-NLS-1$//$NON-NLS-2$
 		parameters.add(Utils.getPropertyFormat(PROPERTY_TAR_ARGS) + tarArgs + Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH) + "' " + ((BuildDirector.p2Gathering && productFile == null) ? "." : Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX)) + ' '); //$NON-NLS-1$ //$NON-NLS-2$
 		String folder = (BuildDirector.p2Gathering && productFile == null) ? Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) : Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP);
-		script.printExecTask("tar", folder, parameters, null); //$NON-NLS-1$ 
+		script.printExecTask("tar", folder, parameters, null); //$NON-NLS-1$
 
 		script.printAntCallTask(TARGET_GZIP_RESULTS, true, null);
 
@@ -1102,7 +1102,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		if (productFile == null && product != null) {
 			try {
 				// Note that we must pass the OS information in to load product
-				// so that any icon files can be calculated for the 
+				// so that any icon files can be calculated for the
 				// generateBrandingCalls.
 				productFile = loadProduct(product, configInfo != null ? configInfo.getOs() : null);
 			} catch (CoreException e) {
