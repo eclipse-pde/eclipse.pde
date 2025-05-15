@@ -399,8 +399,8 @@ public class RepositoryTreeContentProvider implements ITreeContentProvider {
 		result = resultSet.toArray();
 		return result;
 	}
-	
-	
+
+
 	// Define a LRU-like inner map (max n entries)
 		private static Map<String, Object[]> createLRUMap(int n) {
 			return new LinkedHashMap<String, Object[]>(n + 1, 1.0f, true) {

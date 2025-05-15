@@ -95,13 +95,13 @@ public class CapReqComparator implements Comparator<Object> {
 		if (versionAttribName == null) {
 			return 0;
 		}
-		
+
 		Version v1 = highestVersion(c1.getAttributes().get(versionAttribName));
 	    Version v2 = highestVersion(c2.getAttributes().get(versionAttribName));
-	    
+
 		return v1.compareTo(v2);
 	}
-	
+
 	private static Version highestVersion(Object attr) {
 	    if (attr instanceof Version v) {
 	        return v;

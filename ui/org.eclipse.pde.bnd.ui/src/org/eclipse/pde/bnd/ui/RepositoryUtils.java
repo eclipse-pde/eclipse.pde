@@ -54,7 +54,7 @@ public class RepositoryUtils {
 			return tracker.orElse(null);
 		}, Objects::nonNull);
 	}
-	
+
 
 	public static List<RepositoryPlugin> listRepositories(final Workspace localWorkspace, final boolean hideCache) {
 		if (localWorkspace == null) {
@@ -72,14 +72,14 @@ public class RepositoryUtils {
 //				Workspace bndWorkspace = Central.getWorkspaceIfPresent();
 //				if ((bndWorkspace == localWorkspace) && !bndWorkspace.isDefaultWorkspace())
 //					repos.add(Central.getWorkspaceRepository());
-				
+
 				// TODO this is not perfect, because it is only working
 				// if you are selecting a bnd project. Would be better if bnd WorkspaceRepository is added always
 				// e.g. if there is at least one bnd project
 				if (WorkspaceLayout.BND == localWorkspace.getLayout() && !localWorkspace.isDefaultWorkspace()) {
 					repos.add(localWorkspace.getWorkspaceRepository());
 				}
-					
+
 
 				// Add the repos from the provided workspace
 				for (RepositoryPlugin plugin : plugins) {

@@ -26,7 +26,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 
 public class FileUtils {
 
-	
+
 	public static IFile[] getWorkspaceFiles(File javaFile) {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace()
 			.getRoot();

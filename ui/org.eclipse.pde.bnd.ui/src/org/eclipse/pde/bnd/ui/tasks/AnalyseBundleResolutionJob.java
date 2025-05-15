@@ -90,7 +90,7 @@ public class AnalyseBundleResolutionJob extends Job {
 					mergeMaps(reqs, allReqs);
 				} catch (Exception e) {
 					ILog.get().error("Error in Bnd resolution analysis.", e);
-				} 
+				}
 			}
 
 			// Check for resolved requirements

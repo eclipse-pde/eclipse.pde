@@ -38,9 +38,9 @@ public class Workspaces {
 			if (bndProject != null) {
 				return Optional.ofNullable(bndProject.getWorkspace());
 			} else {
-				
+
 				if(isCnf(project)) {
-					
+
 					try {
 						File wsDir = project.getLocation().toFile().getParentFile();
 						return Optional.ofNullable(Workspace.getWorkspace(wsDir));
@@ -65,12 +65,12 @@ public class Workspaces {
 						}
 					}
 				}
-				
+
 			}
 		}
 		return Optional.empty();
 	}
-	
+
 	private static boolean isCnf(IProject project) {
 		IPath projectPath = project.getLocation();
 		if (projectPath != null) {

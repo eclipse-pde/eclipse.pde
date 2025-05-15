@@ -50,8 +50,8 @@ import jakarta.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Tdesignate", propOrder = {
@@ -79,11 +79,11 @@ public class Tdesignate {
 
     /**
      * Ruft den Wert der object-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Tobject }
-     *     
+     *
      */
     public Tobject getObject() {
         return object;
@@ -91,11 +91,11 @@ public class Tdesignate {
 
     /**
      * Legt den Wert der object-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Tobject }
-     *     
+     *
      */
     public void setObject(Tobject value) {
         this.object = value;
@@ -103,26 +103,26 @@ public class Tdesignate {
 
     /**
      * Gets the value of the any property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the any property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAny().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Element }
      * {@link Object }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getAny() {
         if (any == null) {
@@ -133,11 +133,11 @@ public class Tdesignate {
 
     /**
      * Ruft den Wert der pid-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getPid() {
         return pid;
@@ -145,11 +145,11 @@ public class Tdesignate {
 
     /**
      * Legt den Wert der pid-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setPid(String value) {
         this.pid = value;
@@ -157,11 +157,11 @@ public class Tdesignate {
 
     /**
      * Ruft den Wert der factoryPid-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFactoryPid() {
         return factoryPid;
@@ -169,11 +169,11 @@ public class Tdesignate {
 
     /**
      * Legt den Wert der factoryPid-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFactoryPid(String value) {
         this.factoryPid = value;
@@ -181,11 +181,11 @@ public class Tdesignate {
 
     /**
      * Ruft den Wert der bundle-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getBundle() {
         return bundle;
@@ -193,11 +193,11 @@ public class Tdesignate {
 
     /**
      * Legt den Wert der bundle-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setBundle(String value) {
         this.bundle = value;
@@ -205,11 +205,11 @@ public class Tdesignate {
 
     /**
      * Ruft den Wert der optional-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public boolean isOptional() {
         if (optional == null) {
@@ -221,11 +221,11 @@ public class Tdesignate {
 
     /**
      * Legt den Wert der optional-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setOptional(Boolean value) {
         this.optional = value;
@@ -233,11 +233,11 @@ public class Tdesignate {
 
     /**
      * Ruft den Wert der merge-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public boolean isMerge() {
         if (merge == null) {
@@ -249,11 +249,11 @@ public class Tdesignate {
 
     /**
      * Legt den Wert der merge-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setMerge(Boolean value) {
         this.merge = value;
@@ -261,15 +261,15 @@ public class Tdesignate {
 
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
-     * 
+     *
      * <p>
-     * the map is keyed by the name of the attribute and 
+     * the map is keyed by the name of the attribute and
      * the value is the string value of the attribute.
-     * 
+     *
      * the map returned by this method is live, and you can add new attribute
      * by updating the map directly. Because of this design, there's no setter.
-     * 
-     * 
+     *
+     *
      * @return
      *     always non-null
      */

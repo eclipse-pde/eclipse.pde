@@ -24,9 +24,9 @@ import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 
 class JaxbMetatype {
-	
+
 	private static JAXBContext jaxbContext;
-	
+
 	private static boolean loaded;
 
 
