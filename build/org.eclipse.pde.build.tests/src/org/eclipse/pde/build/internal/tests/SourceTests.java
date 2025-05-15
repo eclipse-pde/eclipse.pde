@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors: IBM Corporation - initial API and implementation
  *******************************************************************************/
 
@@ -525,7 +525,7 @@ public class SourceTests extends PDETestCase {
 
 		// TODO here the rcp.source_1.0.0.123.jar should be extracted to rcp.source_1.0.0.123 as it was before
 		// but I'm too lazy to do that and Java doesn't provide one liner to do that
-		
+
 		String oldBuild = buildFolder.getLocation().toOSString();
 		Utils.generateAllElements(build2, "sdk");
 		buildProperties = BuildConfiguration.getBuilderProperties(build2);
