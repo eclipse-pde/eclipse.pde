@@ -301,7 +301,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.ENUM_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Removed @noreference to a new enum constant
 	 */
@@ -325,7 +325,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.ENUM_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Decrease access for an enum type
 	 */
@@ -349,7 +349,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.ENUM_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Added deprecation
 	 */
@@ -372,7 +372,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.ENUM_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Removed deprecation
 	 */

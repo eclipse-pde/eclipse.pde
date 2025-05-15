@@ -1731,7 +1731,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=230189
 	 */
@@ -1761,7 +1761,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=230189
 	 */
@@ -1791,7 +1791,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=244994
 	 */
@@ -1815,7 +1815,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=244994
 	 */
@@ -1846,7 +1846,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=244994
 	 */
@@ -1871,7 +1871,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=277925
 	 */
@@ -1894,7 +1894,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=277925
 	 */
@@ -1917,7 +1917,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Check decrease field visibility - public to private
 	 */
@@ -1940,7 +1940,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Check increase field visibility - protected to public
 	 */
