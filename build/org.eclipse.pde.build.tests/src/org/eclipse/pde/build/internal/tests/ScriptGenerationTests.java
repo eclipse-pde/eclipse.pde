@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors: Andrew Eisenberg - bug 303960 tests
  *******************************************************************************/
 
@@ -571,7 +571,7 @@ public class ScriptGenerationTests extends PDETestCase {
 	/*
 	 * Test disabled and resources removed 23 July 2013 as Equinox framework no
 	 * longer supports pre-osgi plug-ins (Bug 411907)
-	 * 
+	 *
 	 * Tests that 196754 works without a manifest (pre-osgi plug-in) Bug 196754:
 	 * Unpacked fragments have their manifest entries reordered during feature
 	 * export
