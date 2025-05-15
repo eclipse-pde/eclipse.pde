@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM - Initial API and implementation
  *******************************************************************************/
@@ -25,7 +25,7 @@ import java.nio.file.Files;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
-/** 
+/**
  * Internal task.
  * This task aims at replacing the generic ids used into a plugin.xml by another value.
  * @since 3.0
@@ -44,7 +44,7 @@ public class PluginVersionReplaceTask extends Task {
 	private String newVersion;
 
 	/**
-	 * The location of a fragment.xml or plugin.xml file 
+	 * The location of a fragment.xml or plugin.xml file
 	 */
 	public void setPluginFilePath(String path) {
 		pluginFilePath = path;
@@ -60,7 +60,7 @@ public class PluginVersionReplaceTask extends Task {
 
 	/**
 	 * Set the type of the file.
-	 * @param input 
+	 * @param input
 	 */
 	public void setInput(String input) {
 		if (input.equalsIgnoreCase("fragment.xml")) { //$NON-NLS-1$
@@ -110,7 +110,7 @@ public class PluginVersionReplaceTask extends Task {
 			while (Character.isWhitespace(buffer.charAt(endVersionWord)) && endVersionWord < endPlugin) {
 				endVersionWord++;
 			}
-			if (endVersionWord > endPlugin) { //version has not been found 
+			if (endVersionWord > endPlugin) { //version has not been found
 				return;
 			}
 

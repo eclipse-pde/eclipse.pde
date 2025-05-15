@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM - Initial API and implementation
  *******************************************************************************/
@@ -114,7 +114,7 @@ public class ReachablePlugin implements Comparable<Object> {
 		return obj instanceof ReachablePlugin toCompare //
 				&& Objects.equals(id, toCompare.id) //
 				&& range.getLeftType() == toCompare.range.getLeftType() //
-				&& range.getRightType() == toCompare.range.getRightType() // 
+				&& range.getRightType() == toCompare.range.getRightType() //
 				&& Objects.equals(range.getLeft(), toCompare.range.getLeft())//
 				&& Objects.equals(range.getRight(), toCompare.range.getRight());
 	}

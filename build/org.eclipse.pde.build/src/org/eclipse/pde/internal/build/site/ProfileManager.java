@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors: IBM - Initial API and implementation
  ******************************************************************************/
 package org.eclipse.pde.internal.build.site;
@@ -210,7 +210,7 @@ public class ProfileManager {
 	 * Return an Enumeration containing all the profile entries in the container
 	 * If profiles is null then:
 	 *   A ZipFile container returns all ZipEntries from the jar
-	 *   All other containers return the *.profile entries from the root  
+	 *   All other containers return the *.profile entries from the root
 	 */
 	@SuppressWarnings("rawtypes")
 	private Enumeration getProfilesEnum(Object container, String[] profiles) {
@@ -270,7 +270,7 @@ public class ProfileManager {
 	 *     File - a directory shaped bundle on disk
 	 *     ZipFile - a jar shaped bundle on disk
 	 *     Bundle - a Bundle object from the current runtime.
-	 * @param container : The container to load java profiles from. 
+	 * @param container : The container to load java profiles from.
 	 */
 	private void loadJavaProfiles(Object container) {
 		InputStream is = getProfileListInputStream(container);

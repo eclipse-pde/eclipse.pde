@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM - Initial API and implementation
  *******************************************************************************/
@@ -38,7 +38,7 @@ public class ElementCollector extends BuildDirector {
 			try {
 				generate(nestedFeature, false);
 			} catch (CoreException exception) {
-				//If the referenced feature is not optional, there is a real problem and the exception is re-thrown. 
+				//If the referenced feature is not optional, there is a real problem and the exception is re-thrown.
 				if (exception.getStatus().getCode() != EXCEPTION_FEATURE_MISSING || (exception.getStatus().getCode() == EXCEPTION_FEATURE_MISSING && !referencedFeature.isOptional())) {
 					throw exception;
 				}

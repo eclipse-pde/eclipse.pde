@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM - Initial API and implementation
  *******************************************************************************/
@@ -43,7 +43,7 @@ public class FileSet {
 
 	/**
 	 * Print this fileset to the given Ant script.
-	 * 
+	 *
 	 * @param script the script to output to
 	 */
 	protected void print(AntScript script) {

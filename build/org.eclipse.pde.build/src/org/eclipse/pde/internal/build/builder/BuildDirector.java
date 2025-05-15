@@ -125,8 +125,8 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 	}
 
 	/**
-	 * Returns a list of BundleDescription objects representing the elements delivered by the feature. 
-	 *  
+	 * Returns a list of BundleDescription objects representing the elements delivered by the feature.
+	 *
 	 * @return List of BundleDescription
 	 */
 	protected Set<BundleDescription> computeElements(BuildTimeFeature feature) throws CoreException {
@@ -141,7 +141,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 
 			String versionRequested = entry.getVersion();
 			model = getSite(false).getRegistry().getResolvedBundle(entry.getId(), versionRequested);
-			//we prefer a newly generated source plugin over a preexisting binary one. 
+			//we prefer a newly generated source plugin over a preexisting binary one.
 			if ((model == null || Utils.isBinary(model)) && featureProperties.containsKey(GENERATION_SOURCE_PLUGIN_PREFIX + entry.getId())) {
 				boolean individual = useIndividualSource(featureProperties);
 				String[] extraEntries = Utils.getArrayFromString(featureProperties.getProperty(GENERATION_SOURCE_PLUGIN_PREFIX + entry.getId()));
@@ -215,7 +215,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 
 	/**
 	 * Set the boolean for whether or not children scripts should be generated.
-	 * 
+	 *
 	 * @param generate
 	 *                   <code>true</code> if the children scripts should be
 	 *                   generated, <code>false</code> otherwise
@@ -575,7 +575,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 
 	/**
 	 * Set this object's feature id to be the given value.
-	 * 
+	 *
 	 * @param featureID the feature id
 	 * @throws CoreException if the given feature id is <code>null</code>
 	 */
@@ -590,7 +590,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 	 * Return a properties object constructed from the build.properties file
 	 * for the given feature. If no file exists, then an empty properties
 	 * object is returned.
-	 * 
+	 *
 	 * @return Properties the feature's build.properties
 	 * @see Feature
 	 */
@@ -621,7 +621,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 		}
 
 		//at this point, we have a non-binary feature with empty bin includes
-		//when building p2, containers (features without bin.includes) need to be collected, 
+		//when building p2, containers (features without bin.includes) need to be collected,
 		//with the exception of the pde generated containers.
 		if (!BuildDirector.p2Gathering) {
 			return;
@@ -655,7 +655,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 
 	/**
 	 * Sets the binaryFeatureGeneration.
-	 * 
+	 *
 	 * @param binaryFeatureGeneration
 	 *                   The binaryFeatureGeneration to set
 	 */
@@ -665,7 +665,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 
 	/**
 	 * Sets the scriptGeneration.
-	 * 
+	 *
 	 * @param scriptGeneration
 	 *                   The scriptGeneration to set
 	 */
@@ -675,7 +675,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 
 	/**
 	 * Sets whether or not to generate JNLP manifests
-	 * 
+	 *
 	 * @param value whether or not to generate JNLP manifests
 	 */
 	public void setGenerateJnlp(boolean value) {
@@ -684,7 +684,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 
 	/**
 	 * Sets whether or not to sign any constructed jars.
-	 * 
+	 *
 	 * @param value whether or not to sign any constructed JARs
 	 */
 	public void setSignJars(boolean value) {
@@ -697,7 +697,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 
 	/**
 	 * Sets whether or not to generate the feature version suffix
-	 * 
+	 *
 	 * @param value whether or not to generate the feature version suffix
 	 */
 	public void setGenerateVersionSuffix(boolean value) {

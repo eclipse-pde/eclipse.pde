@@ -59,7 +59,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	private static final String FETCH_TASK_FACTORY_ID = "internal.factory.id"; //$NON-NLS-1$
 	private static final String MATCHED_VERSION = "internal.matchedVersion"; //$NON-NLS-1$
 
-	// flag saying if we want to recursively generate the scripts	
+	// flag saying if we want to recursively generate the scripts
 	protected boolean recursiveGeneration = true;
 
 	// Points to the map files containing references to repository
@@ -77,7 +77,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	protected Properties fetchTags = null;
 	protected Map<String, Properties> fetchOverrides = null;
 
-	// The element (an entry of the map file) for which we create the script 
+	// The element (an entry of the map file) for which we create the script
 	protected String element;
 	protected Version elementVersion;
 
@@ -89,7 +89,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	protected Properties featureProperties;
 	// Variables to control is a mkdir to a specific folder was already.
 	protected List<String> mkdirLocations = new ArrayList<>(5);
-	// A property table containing the association between the plugins and the version from the map  
+	// A property table containing the association between the plugins and the version from the map
 	protected Properties repositoryPluginTags = new Properties();
 	protected Properties repositoryFeatureTags = new Properties();
 	protected Properties sourceReferences = new Properties();
@@ -486,7 +486,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	 * Return the feature object for the feature with the given info. Generate an Ant script
 	 * which will retrieve the "feature.xml" file from CVS, and then call the feature object
 	 * constructor from Update.
-	 * 
+	 *
 	 * @param elementName the feature to retrieve
 	 * @param elementType the element type
 	 * @param elementInfos the element information
@@ -557,7 +557,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 				AntRunner runner = new AntRunner();
 				runner.setBuildFileLocation(target.getAbsolutePath());
 				runner.addUserProperties(retrieveProp);
-				//This has to be hardcoded here because of the way AntRunner stipulates that 
+				//This has to be hardcoded here because of the way AntRunner stipulates that
 				//loggers are passed in. Otherwise this would be a Foo.class.getName()
 				runner.addBuildLogger("org.eclipse.pde.internal.build.tasks.SimpleBuildLogger"); //$NON-NLS-1$
 
@@ -571,7 +571,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			File featureFolder = destination.toFile();
 			feature = factory.createFeature(featureFolder.toPath(), null);
 
-			//We only delete here, so if an exception is thrown the user can still see the retrieve.xml 
+			//We only delete here, so if an exception is thrown the user can still see the retrieve.xml
 			target.delete();
 
 			featureProperties = new Properties();
@@ -594,14 +594,14 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	 * Returns false if we could not delete some file or an exception occurred
 	 * at any point in the deletion.
 	 * Even if an exception occurs, a best effort is made to continue deleting.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public static boolean clear(File root) {
 		boolean result = true;
 		if (root.isDirectory()) {
 			String[] list = root.list();
-			// for some unknown reason, list() can return null.  
+			// for some unknown reason, list() can return null.
 			// Just skip the children If it does.
 			if (list != null) {
 				for (String element2 : list) {
@@ -632,7 +632,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 
 	/**
 	 * Get information stored in the directory file.
-	 * 
+	 *
 	 * @return String
 	 */
 	//There are 3 cases described by the following "table"
@@ -760,7 +760,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		script.println();
 		script.printComment("Fetch script for " + element); //$NON-NLS-1$
 		script.println();
-		script.printProjectDeclaration("FetchScript", TARGET_FETCH, null); //$NON-NLS-1$ 
+		script.printProjectDeclaration("FetchScript", TARGET_FETCH, null); //$NON-NLS-1$
 		script.printProperty(PROPERTY_QUIET, "true"); //$NON-NLS-1$
 	}
 
@@ -796,10 +796,10 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	/**
-	 * Sets the CVS tag to use when fetching.  This overrides whatever is 
+	 * Sets the CVS tag to use when fetching.  This overrides whatever is
 	 * in the directory database.  This is typically used when doing a nightly
 	 * build by setting the tag to HEAD.
-	 * 
+	 *
 	 * @param value a string CVS tag
 	 */
 	public void setFetchTag(Properties value) {
@@ -815,10 +815,10 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	/**
-	 * Sets the CVS tag to use when fetching.  This overrides whatever is 
+	 * Sets the CVS tag to use when fetching.  This overrides whatever is
 	 * in the directory database.  This is typically used when doing a nightly
 	 * build by setting the tag to HEAD.
-	 * 
+	 *
 	 * @param value a string CVS tag
 	 */
 	public void setFetchTagAsString(String value) {
@@ -866,7 +866,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 
 	/**
 	 * Sets the CVS password file location to be the given value.
-	 * 
+	 *
 	 * @param cvsPassFileLocation the CVS password file location
 	 */
 	public void setCvsPassFileLocation(String cvsPassFileLocation) {

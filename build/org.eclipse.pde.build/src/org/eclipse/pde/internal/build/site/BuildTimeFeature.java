@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *      IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -168,7 +168,7 @@ public class BuildTimeFeature extends Feature {
 	}
 
 	/**
-	 * @return the local filesystem location of the directory containing the feature.xml file. 
+	 * @return the local filesystem location of the directory containing the feature.xml file.
 	 */
 	public String getRootLocation() {
 		if (rootLocation == null) {

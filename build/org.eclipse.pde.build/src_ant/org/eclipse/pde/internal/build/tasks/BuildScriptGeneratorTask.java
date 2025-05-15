@@ -46,7 +46,7 @@ public class BuildScriptGeneratorTask extends Task {
 	/**
 	 * Set the boolean value indicating whether or not children scripts should
 	 * be generated.
-	 * 
+	 *
 	 * @param children <code>true</code> if child scripts should be generated
 	 * and <code>false</code> otherwise
 	 * @since 3.0
@@ -57,7 +57,7 @@ public class BuildScriptGeneratorTask extends Task {
 
 	/**
 	 * Set the development entries for the compile classpath to be the given	value.
-	 *  
+	 *
 	 * @param devEntries the classpath dev entries
 	 */
 	public void setDevEntries(Path devEntries) {
@@ -74,7 +74,7 @@ public class BuildScriptGeneratorTask extends Task {
 
 	/**
 	 * Set the plug-in path to be the given value.
-	 * 
+	 *
 	 * @param pluginPath a File.pathSeparator separated list of paths
 	 */
 	public void setPluginPath(String pluginPath) {
@@ -83,7 +83,7 @@ public class BuildScriptGeneratorTask extends Task {
 
 	/**
 	 * Set the source elements for the script to be the given value.
-	 * 
+	 *
 	 * @param elements the source elements for the script
 	 */
 	public void setElements(String elements) {
@@ -138,12 +138,12 @@ public class BuildScriptGeneratorTask extends Task {
 
 		value = getProject().getProperty(IBuildPropertiesConstants.PROPERTY_P2_GATHERING);
 		if (Boolean.valueOf(value).booleanValue()) {
-			properties.put(IBuildPropertiesConstants.PROPERTY_P2_GATHERING, "true"); //$NON-NLS-1$ 
+			properties.put(IBuildPropertiesConstants.PROPERTY_P2_GATHERING, "true"); //$NON-NLS-1$
 		}
 
 		value = getProject().getProperty(IBuildPropertiesConstants.PROPERTY_SUPPRESS_RESOLUTION_ERRORS);
 		if (Boolean.valueOf(value).booleanValue()) {
-			properties.put(IBuildPropertiesConstants.PROPERTY_SUPPRESS_RESOLUTION_ERRORS, "true"); //$NON-NLS-1$ 
+			properties.put(IBuildPropertiesConstants.PROPERTY_SUPPRESS_RESOLUTION_ERRORS, "true"); //$NON-NLS-1$
 		}
 
 		value = getProject().getProperty(IBuildPropertiesConstants.PROPERTY_ANT_VERSION);
@@ -157,7 +157,7 @@ public class BuildScriptGeneratorTask extends Task {
 		manager.copyEEProfileProperties(getProject().getProperties(), antProperties);
 	}
 
-	/** 
+	/**
 	 * Set the folder in which the build will occur.
 	 * @param buildDirectory the location where the build will occur.
 	 * @since 3.0
@@ -166,7 +166,7 @@ public class BuildScriptGeneratorTask extends Task {
 		generator.setWorkingDirectory(buildDirectory);
 	}
 
-	/** 
+	/**
 	 * Set the folder in which the build will occur.
 	 * @param installLocation the location where the build will occur.
 	 * @deprecated see {@link #setBuildDirectory(String)}
@@ -187,7 +187,7 @@ public class BuildScriptGeneratorTask extends Task {
 		generator.setRecursiveGeneration(recursiveGeneration);
 	}
 
-	/** 
+	/**
 	 * Set the configuration for which the script should be generated. The default is set to be configuration independent.
 	 * @param configInfo an ampersand separated list of configuration (for example {@code win32, win32, x86 & macoxs, carbon, ppc}).
 	 * @since 3.0
@@ -196,7 +196,7 @@ public class BuildScriptGeneratorTask extends Task {
 		AbstractScriptGenerator.setConfigInfo(configInfo);
 	}
 
-	/** 
+	/**
 	 * Set on a configuration basis, the format of the archive being produced. The default is set to be configuration independent.
 	 * @param archivesFormat an ampersand separated list of configuration (for example {@code win32, win32 - zip, x86 & macoxs, carbon, ppc - tar}).
 	 * @since 3.0
@@ -231,7 +231,7 @@ public class BuildScriptGeneratorTask extends Task {
 	 * <p>
 	 * Note: This API is experimental.
 	 * </p>
-	 * 
+	 *
 	 * @param installLocation the location where the build will occur
 	 */
 	public void setWorkingDirectory(String installLocation) {
@@ -262,7 +262,7 @@ public class BuildScriptGeneratorTask extends Task {
 	}
 
 	/**
-	 * Set the boolean value indicating whether or not to generate JNLP files for 
+	 * Set the boolean value indicating whether or not to generate JNLP files for
 	 * built features.
 	 * @param value <code>true</code> if JNLP manifests should be generated.
 	 */

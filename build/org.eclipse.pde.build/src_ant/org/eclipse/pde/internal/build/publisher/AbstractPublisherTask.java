@@ -37,7 +37,7 @@ public abstract class AbstractPublisherTask extends Task {
 	 *    <repo location="file:/foo" metadata="true" artifact="true" />
 	 * Both metadata and artifact are optional:
 	 *  1) if neither are set, the repo is used for both metadata and artifacts
-	 *  2) if only one is true, the repo is that type and not the other 
+	 *  2) if only one is true, the repo is that type and not the other
 	 */
 	static public class RepoEntry {
 		private URI repoLocation;
@@ -45,7 +45,7 @@ public abstract class AbstractPublisherTask extends Task {
 		private Boolean artifact = null;
 
 		/**
-		 * If not set, default is true if we aren't set as an artifact repo 
+		 * If not set, default is true if we aren't set as an artifact repo
 		 */
 		public boolean isMetadataRepository() {
 			if (metadata != null) {
@@ -55,7 +55,7 @@ public abstract class AbstractPublisherTask extends Task {
 		}
 
 		/**
-		 * If not set, default is true if we aren't set as an metadata repo 
+		 * If not set, default is true if we aren't set as an metadata repo
 		 */
 		public boolean isArtifactRepository() {
 			if (artifact != null) {

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM - Initial API and implementation
  *******************************************************************************/
@@ -21,7 +21,7 @@ public interface ITask {
 	/**
 	 * Print the information for this task to the given script. Use the given
 	 * tab index for indenting.
-	 * 
+	 *
 	 * @param script the script to print to
 	 */
 	public void print(AntScript script);

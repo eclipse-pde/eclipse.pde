@@ -62,8 +62,8 @@ import org.eclipse.pde.internal.build.site.compatibility.SiteManager;
 import org.osgi.framework.Version;
 
 /**
- * Generic super-class for all script generator classes. 
- * It contains basic informations like the script, the configurations, and a location 
+ * Generic super-class for all script generator classes.
+ * It contains basic informations like the script, the configurations, and a location
  */
 public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuildConstants, IBuildPropertiesConstants {
 	private static final FilenameFilter METADATA_REPO_FILTER = (dir, name) -> name.startsWith("content.") || name.startsWith("compositeContent.") || //$NON-NLS-1$ //$NON-NLS-2$
@@ -125,7 +125,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		if (getImmutableAntProperty(IBuildPropertiesConstants.PROPERTY_PACKAGER_MODE) == null) {
 			immutableAntProperties.setProperty(IBuildPropertiesConstants.PROPERTY_PACKAGER_MODE, "false"); //$NON-NLS-1$
 		}
-		//When we are generating build scripts, the normalization needs to be set, and when doing packaging the default is to set normalization to true for backward compatibility 
+		//When we are generating build scripts, the normalization needs to be set, and when doing packaging the default is to set normalization to true for backward compatibility
 		if (!getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_MODE) || getImmutableAntProperty(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER) == null) {
 			immutableAntProperties.setProperty(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER, "true"); //$NON-NLS-1$
 		}
@@ -191,7 +191,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 
 	/**
 	 * Return the file system location for the given plug-in model object.
-	 * 
+	 *
 	 * @param model the plug-in
 	 * @return String
 	 */
@@ -310,8 +310,8 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	}
 
 	/**
-	 * Return a build time site referencing things to be built.   
-	 * @param refresh : indicate if a refresh must be performed. Although this flag is set to true, a new site is not rebuild if the urls of the site did not changed 
+	 * Return a build time site referencing things to be built.
+	 * @param refresh : indicate if a refresh must be performed. Although this flag is set to true, a new site is not rebuild if the urls of the site did not changed
 	 * @return BuildTimeSite
 	 */
 	public BuildTimeSite getSite(boolean refresh) throws CoreException {
@@ -829,7 +829,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		if (product.useFeatures()) {
 			script.println("                    featureIds=\"" + mappings + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
-			script.println("                    pluginIds=\"" + mappings + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ 
+			script.println("                    pluginIds=\"" + mappings + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		return;

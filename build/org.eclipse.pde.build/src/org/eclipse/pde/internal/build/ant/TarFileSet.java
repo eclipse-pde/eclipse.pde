@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM - Initial API and implementation
  *******************************************************************************/
@@ -39,13 +39,13 @@ public class TarFileSet extends ZipFileSet {
 		} else {
 			script.printAttribute("prefix", prefix, false); //$NON-NLS-1$
 		}
-		
+
 		if (file) {
 			script.printAttribute("filemode", permission, false); //$NON-NLS-1$
 		} else {
 			script.printAttribute("dirmode", permission, false); //$NON-NLS-1$
 		}
-		
+
 		script.println("/>"); //$NON-NLS-1$
 	}
 }

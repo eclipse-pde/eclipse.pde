@@ -56,7 +56,7 @@ public interface IPDEBuildConstants {
 	public final static String DEFAULT_ASSEMBLE_FILENAME = "assemble.xml"; //$NON-NLS-1$
 	public final static String DEFAULT_PLUGIN_LOCATION = "plugins"; //$NON-NLS-1$
 	public final static String DEFAULT_TEMPLATE_SCRIPT_FILENAME = "template.xml"; //$NON-NLS-1$
-	public final static String GENERIC_VERSION_NUMBER = "0.0.0"; //$NON-NLS-1$ 
+	public final static String GENERIC_VERSION_NUMBER = "0.0.0"; //$NON-NLS-1$
 	public final static String ANY_STRING = "ANY"; //$NON-NLS-1$
 	public final static String DEFAULT_ASSEMBLE_NAME = "assemble"; //$NON-NLS-1$
 	public final static String DEFAULT_ASSEMBLE_ALL = "all.xml"; //$NON-NLS-1$
@@ -85,11 +85,11 @@ public interface IPDEBuildConstants {
 	// Tag replaced in files
 	public final static String REPLACED_PLUGIN_ID = "PLUGIN_ID"; //$NON-NLS-1$
 	public final static String REPLACED_PLUGIN_VERSION = "PLUGIN_VERSION"; //$NON-NLS-1$
-	public final static String REPLACED_FRAGMENT_VERSION = "FRAGMENT_VERSION"; //$NON-NLS-1$ 
+	public final static String REPLACED_FRAGMENT_VERSION = "FRAGMENT_VERSION"; //$NON-NLS-1$
 	public final static String REPLACED_FRAGMENT_ID = "FRAGMENT_ID"; //$NON-NLS-1$
 	public final static String REPLACED_PLATFORM_FILTER = "PLATFORM_FILTER"; //$NON-NLS-1$
 
-	// status constants	
+	// status constants
 	public final static int EXCEPTION_FEATURE_MISSING = 1;
 	public final static int EXCEPTION_BUILDDIRECTORY_LOCATION_MISSING = 2;
 	public final static int EXCEPTION_MALFORMED_URL = 3;

@@ -148,14 +148,14 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 	private static void generateP2FinalCall(AntScript script, String productFileLocation, String versionAdvice) {
 		script.printTab();
 		script.print("<p2.generator "); //$NON-NLS-1$
-		script.printAttribute("append", Utils.getPropertyFormat(PROPERTY_P2_APPEND), true); //$NON-NLS-1$ 
+		script.printAttribute("append", Utils.getPropertyFormat(PROPERTY_P2_APPEND), true); //$NON-NLS-1$
 		script.printAttribute("flavor", Utils.getPropertyFormat(PROPERTY_P2_FLAVOR), true); //$NON-NLS-1$
 		script.printAttribute("compress", Utils.getPropertyFormat(PROPERTY_P2_COMPRESS), true); //$NON-NLS-1$
-		script.printAttribute("metadataRepository", Utils.getPropertyFormat(PROPERTY_P2_METADATA_REPO), true); //$NON-NLS-1$ 
-		script.printAttribute("artifactRepository", Utils.getPropertyFormat(PROPERTY_P2_ARTIFACT_REPO), true); //$NON-NLS-1$ 
+		script.printAttribute("metadataRepository", Utils.getPropertyFormat(PROPERTY_P2_METADATA_REPO), true); //$NON-NLS-1$
+		script.printAttribute("artifactRepository", Utils.getPropertyFormat(PROPERTY_P2_ARTIFACT_REPO), true); //$NON-NLS-1$
 		script.printAttribute("metadataRepositoryName", Utils.getPropertyFormat(PROPERTY_P2_METADATA_REPO_NAME), true); //$NON-NLS-1$
 		script.printAttribute("artifactRepositoryName", Utils.getPropertyFormat(PROPERTY_P2_ARTIFACT_REPO_NAME), true); //$NON-NLS-1$
-		script.printAttribute("publishArtifacts", Utils.getPropertyFormat(PROPERTY_P2_PUBLISH_ARTIFACTS), true); //$NON-NLS-1$ 
+		script.printAttribute("publishArtifacts", Utils.getPropertyFormat(PROPERTY_P2_PUBLISH_ARTIFACTS), true); //$NON-NLS-1$
 		script.printAttribute("mode", "final", true); //$NON-NLS-1$ //$NON-NLS-2$
 
 		if (productFileLocation != null) {
@@ -174,12 +174,12 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 	/**
 	 * Generate an ant script that can be run to generate final p2 metadata for a product.
 	 * Returns null if p2 bundles aren't available.
-	 * 
-	 * If no product file is given, the generated p2 call generates final metadata for a 
+	 *
+	 * If no product file is given, the generated p2 call generates final metadata for a
 	 * ${p2.root.name}_${p2.root.version} IU.
-	 * 
+	 *
 	 * versionAdvice is a properties file with bsn=3.2.1.xyz entries
-	 * 
+	 *
 	 * @param workingDir			- the directory in which to generate the script
 	 * @param productFileLocation   - the location of a .product file (can be null)
 	 * @param versionAdvice			- version advice (can be null)

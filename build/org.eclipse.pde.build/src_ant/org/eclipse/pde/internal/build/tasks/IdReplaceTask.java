@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM - Initial API and implementation
  *******************************************************************************/
@@ -28,9 +28,9 @@ import java.util.StringTokenizer;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
-/** 
+/**
  * Internal task.
- * This task aims at replacing the generic ids used into a feature.xml by another value, and also replace the feature version number if necessary.  
+ * This task aims at replacing the generic ids used into a feature.xml by another value, and also replace the feature version number if necessary.
  * @since 3.0
  */
 public class IdReplaceTask extends Task {
@@ -57,7 +57,7 @@ public class IdReplaceTask extends Task {
 	private Map<String, String> pluginIds = new HashMap<>(10);
 	//Map of the feature ids and version (key) and their version number (value)
 	//  the key is id:version  and the value is the actual version of the element
-	// the keys are such that a regular lookup will always return the appropriate value if available    
+	// the keys are such that a regular lookup will always return the appropriate value if available
 	private Map<String, String> featureIds = new HashMap<>(4);
 	//The new version number for this feature
 	private String selfVersion;
@@ -68,7 +68,7 @@ public class IdReplaceTask extends Task {
 	private final static String QUALIFIER = "qualifier"; //$NON-NLS-1$
 
 	/**
-	 * The location of a feature.xml file 
+	 * The location of a feature.xml file
 	 */
 	public void setFeatureFilePath(String path) {
 		filePath = path;
@@ -79,8 +79,8 @@ public class IdReplaceTask extends Task {
 		isProduct = true;
 	}
 
-	/** 
-	 * The value with which the current version of the feature will be replaced. 
+	/**
+	 * The value with which the current version of the feature will be replaced.
 	 */
 	public void setSelfVersion(String version) {
 		selfVersion = version;
@@ -223,7 +223,7 @@ public class IdReplaceTask extends Task {
 			int foundElement = -1;
 			boolean isPlugin = false;
 
-			//Find which of a plugin or a feature is referenced first 
+			//Find which of a plugin or a feature is referenced first
 			if (startPlugin == -1 || startInclude == -1) {
 				foundElement = startPlugin != -1 ? startPlugin : startInclude;
 				isPlugin = (startPlugin != -1 ? true : false);

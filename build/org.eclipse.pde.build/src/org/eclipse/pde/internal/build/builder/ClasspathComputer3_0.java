@@ -166,8 +166,8 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 
 	/**
 	 * Compute the classpath for the given jar.
-	 * The path returned conforms to Parent / Prerequisite / Self  
-	 * 
+	 * The path returned conforms to Parent / Prerequisite / Self
+	 *
 	 * @param model the plugin containing the jar compiled
 	 * @param jar the jar for which the classpath is being compiled
 	 * @return String the classpath
@@ -247,7 +247,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	}
 
 	/**
-	 * Add the specified plugin (including its jars) and its fragments 
+	 * Add the specified plugin (including its jars) and its fragments
 	 */
 	private void addPlugin(BundleDescription plugin, List<Object> classpath, String location) throws CoreException {
 		boolean allFragments = true;
@@ -264,7 +264,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	}
 
 	/**
-	 * Add the runtime libraries for the specified plugin. 
+	 * Add the runtime libraries for the specified plugin.
 	 */
 	private void addRuntimeLibraries(BundleDescription model, List<Object> classpath, String baseLocation) throws CoreException {
 		String[] libraries = getClasspathEntries(model);
@@ -324,7 +324,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	 */
 	private void addPluginLibrariesToFragmentLocations(BundleDescription plugin, BundleDescription fragment, List<Object> classpath, String baseLocation) throws CoreException {
 		//TODO This methods causes the addition of a lot of useless entries. See bug #35544
-		//If we reintroduce the test below, we reintroduce the problem 35544	
+		//If we reintroduce the test below, we reintroduce the problem 35544
 		//	if (fragment.getRuntime() != null)
 		//		return;
 		String[] libraries = getClasspathEntries(plugin);
@@ -361,8 +361,8 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 
 	// Add a path into the classpath for a given model
 	// pluginId the plugin we are adding to the classpath
-	// basePath : the relative path between the plugin from which we are adding the classpath and the plugin that is requiring this entry 
-	// classpath : The classpath in which we want to add this path 
+	// basePath : the relative path between the plugin from which we are adding the classpath and the plugin that is requiring this entry
+	// classpath : The classpath in which we want to add this path
 	private void addPathAndCheck(BundleDescription model, IPath basePath, String libraryName, Properties modelProperties, List<Object> classpath) {
 		String pluginKey = model != null ? model.getSymbolicName() + "_" + model.getVersion() : null; //$NON-NLS-1$
 		String rules = ""; //$NON-NLS-1$
@@ -487,7 +487,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 
 			for (String element : extra) {
 				//Potential pb: if the path refers to something that is being compiled (which is supposetly not the case, but who knows...)
-				//the user will get $basexx instead of $ws 
+				//the user will get $basexx instead of $ws
 				String[] toAdd = computeExtraPath(element, classpath, location);
 				if (toAdd != null && toAdd.length == 2) {
 					addPathAndCheck(null, IPath.fromOSString(toAdd[0]), toAdd[1], modelProperties, classpath);
@@ -499,7 +499,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		String[] jarSpecificExtraClasspath = jar.getExtraClasspath();
 		for (String element : jarSpecificExtraClasspath) {
 			//Potential pb: if the path refers to something that is being compiled (which is supposetly not the case, but who knows...)
-			//the user will get $basexx instead of $ws 
+			//the user will get $basexx instead of $ws
 			String[] toAdd = computeExtraPath(element, classpath, location);
 			if (toAdd != null && toAdd.length == 2) {
 				addPathAndCheck(null, IPath.fromOSString(toAdd[0]), toAdd[1], modelProperties, classpath);
@@ -507,11 +507,11 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		}
 	}
 
-	/** 
-	 * Convenience method that compute the relative classpath of extra.classpath entries  
+	/**
+	 * Convenience method that compute the relative classpath of extra.classpath entries
 	 * @param url a url
-	 * @param location location used as a base location to compute the relative path 
-	 * @return String the relative path 
+	 * @param location location used as a base location to compute the relative path
+	 * @return String the relative path
 	 */
 	private String[] computeExtraPath(String url, List<Object> classpath, String location) throws CoreException {
 		String relativePath = null;
@@ -584,7 +584,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			String message = NLS.bind(Messages.error_pluginCycle, cycleString);
 			throw new CoreException(new Status(IStatus.ERROR, IPDEBuildConstants.PI_PDEBUILD, EXCEPTION_CLASSPATH_CYCLE, message, null));
 		}
-		if (addedPlugins.contains(target)) { //the plugin we are considering has already been added	
+		if (addedPlugins.contains(target)) { //the plugin we are considering has already been added
 			return;
 		}
 
@@ -622,9 +622,9 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	/**
 	 * The pluginChain parameter is used to keep track of possible cycles. If prerequisite is already
 	 * present in the chain it is not included in the classpath.
-	 * 
+	 *
 	 * @param target : the plugin for which we are going to introduce
-	 * @param classpath 
+	 * @param classpath
 	 */
 	private void addPluginAndPrerequisites(BundleDescription target, List<Object> classpath, String baseLocation, List<BundleDescription> pluginChain, Set<BundleDescription> addedPlugins) throws CoreException {
 		if (matchFilter(target) == false) {
@@ -637,7 +637,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 
 	private boolean matchFilter(BundleDescription target) {
 		Filter filter = BundleHelper.getDefault().getFilter(target);
-		if (filter == null) { //Target is platform independent, add it 
+		if (filter == null) { //Target is platform independent, add it
 			return true;
 		}
 
@@ -692,7 +692,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		}
 
 		String[] entries;
-		// if jarSpecificEntries is given, then it overrides devEntries 
+		// if jarSpecificEntries is given, then it overrides devEntries
 		if (jarSpecificEntries != null && jarSpecificEntries.length > 0) {
 			entries = jarSpecificEntries;
 		} else {
@@ -705,7 +705,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		}
 	}
 
-	//Return the jar name from the classpath 
+	//Return the jar name from the classpath
 	private String[] getClasspathEntries(BundleDescription bundle) throws CoreException {
 		return generator.getClasspathEntries(bundle);
 	}

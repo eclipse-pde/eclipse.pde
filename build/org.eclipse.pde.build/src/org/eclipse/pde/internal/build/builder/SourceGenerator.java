@@ -169,7 +169,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 
 	/**
 	 * Method generateSourceFeature.
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	public BuildTimeFeature generateSourceFeature(BuildTimeFeature feature, String sourceFeatureName) throws CoreException {
 		initialize(feature, sourceFeatureName);
@@ -824,7 +824,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 	private void replaceManifestValue(String location, String attribute, String newVersion) {
 		Manifest manifest = null;
 		try (InputStream is = new SequenceInputStream(new BufferedInputStream(new FileInputStream(location)), new ByteArrayInputStream(new byte[] {'\n'}))) {
-			//work around for bug 256787 
+			//work around for bug 256787
 			manifest = new Manifest(is);
 		} catch (IOException e) {
 			return;

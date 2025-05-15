@@ -88,8 +88,8 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	public static final String ROOT_LINK = "!!ROOT.LINK!!"; //$NON-NLS-1$
 	public static final String ROOT_COMMON = "!!COMMON!!"; //$NON-NLS-1$
 
-	/** 
-	 * returns a value 1 - 64 for valid qualifier characters.  Returns 0 for non-valid characters 
+	/**
+	 * returns a value 1 - 64 for valid qualifier characters.  Returns 0 for non-valid characters
 	 */
 	public static int qualifierCharValue(char c) {
 		int index = BASE_64_ENCODING.indexOf(c);
@@ -254,7 +254,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	/**
 	 * Return a string array constructed from the given list of comma-separated
 	 * tokens.
-	 * 
+	 *
 	 * @param list
 	 *            the list to convert
 	 * @return the array of strings
@@ -266,7 +266,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	/**
 	 * Return a string which is a concatination of each member of the given
 	 * collection, separated by the given separator.
-	 * 
+	 *
 	 * @param collection
 	 *            the collection to concatinate
 	 * @param separator
@@ -290,7 +290,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	/**
 	 * Return a string which is a concatination of each member of the given
 	 * array, separated by the given separator.
-	 * 
+	 *
 	 * @param values
 	 *            the array to concatinate
 	 * @param separator
@@ -313,7 +313,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	/**
 	 * Return a path which is equivalent to the given location relative to the
 	 * specified base path.
-	 * 
+	 *
 	 * @param location
 	 *            the location to convert
 	 * @param base
@@ -484,15 +484,15 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	}
 
 	/**
-	 * Process root file properties.  
+	 * Process root file properties.
 	 * Resulting map is from config string to a property map.  The format of the property map is:
 	 * 1) folder -> fileset to copy.  folder can be "" (the root) or an actual folder
 	 * 2) ROOT_PERMISSIONS + rights -> fileset to set rights for
 	 * 3) ROOT_LINK -> comma separated list: (target, link)*
-	 * 
+	 *
 	 * Properties that are common across all configs are available under the ROOT_COMMON key.
 	 * They are also optionally merged into each individual config.
-	
+
 	 * @param properties - build.properties for a feature
 	 * @param mergeCommon - whether or not to merge the common properties into each config
 	 * @return Map
@@ -623,7 +623,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	/**
 	 * Return a string with the given property name in the format:
 	 * <pre>${propertyName}</pre>.
-	 * 
+	 *
 	 * @param propertyName the name of the property
 	 * @return String
 	 */

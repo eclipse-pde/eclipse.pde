@@ -44,7 +44,7 @@ public class BuildTimeSiteContentProvider implements IPDEBuildConstants {
 	}
 
 	/**
-	 * Returns the URL where an eclipse install can be provided. Can be null. 
+	 * Returns the URL where an eclipse install can be provided. Can be null.
 	 * @return URL
 	 */
 	public String getInstalledBaseURL() {
@@ -63,7 +63,7 @@ public class BuildTimeSiteContentProvider implements IPDEBuildConstants {
 		throw new RuntimeException();
 	}
 
-	//For every entry, return all the children of this entry is it is named plugins, otherwise return the entry itself  
+	//For every entry, return all the children of this entry is it is named plugins, otherwise return the entry itself
 	private Collection<File> findPluginXML(List<File> location) {
 		Collection<File> collectedElements = new ArrayList<>(10);
 		for (File element : location) {

@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *      IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -57,7 +57,7 @@ public class BuildTimeFeatureFactory /*extends BaseFeatureFactory */ implements 
 			String qualifier = AbstractScriptGenerator.readProperties(featurePath.getParent().toString(), PROPERTIES_FILE, IStatus.OK).getProperty(PROPERTY_QUALIFIER);
 			String newVersion = QualifierReplacer.replaceQualifierInVersion(feature.getVersion(), feature.getId(), qualifier, site != null ? site.getFeatureVersions() : null);
 			if (newVersion != null) {
-				//a feature version ending in qualifier using context will be further modified based on its included plugins				
+				//a feature version ending in qualifier using context will be further modified based on its included plugins
 				if (feature.getVersion().endsWith(PROPERTY_QUALIFIER) && (qualifier == null || !qualifier.equalsIgnoreCase(PROPERTY_NONE))) {
 					int idx = feature.getVersion().lastIndexOf("."); //$NON-NLS-1$
 					feature.setContextQualifierLength(newVersion.length() - idx - 1);
@@ -104,7 +104,7 @@ public class BuildTimeFeatureFactory /*extends BaseFeatureFactory */ implements 
 	}
 
 	/*
-	 * Creates an empty feature on the site 
+	 * Creates an empty feature on the site
 	 */
 	private BuildTimeFeature createFeature(BuildTimeSite site) {
 		BuildTimeSiteContentProvider contentProvider = new BuildTimeSiteContentProvider(null, null, null);
