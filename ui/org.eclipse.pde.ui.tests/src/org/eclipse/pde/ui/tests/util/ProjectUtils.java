@@ -48,6 +48,7 @@ import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.pde.core.project.IPackageExportDescription;
 import org.eclipse.pde.core.project.IPackageImportDescription;
+import org.eclipse.pde.core.project.IRequiredBundleDescription;
 import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.core.PDECore;
@@ -215,6 +216,7 @@ public class ProjectUtils {
 						switch (header) {
 						case Constants.EXPORT_PACKAGE -> setPackageExports(description, projectService, value);
 						case Constants.IMPORT_PACKAGE -> setPackageImports(description, projectService, value);
+						case Constants.REQUIRE_BUNDLE -> setRequiredBundles(description, projectService, value);
 						default -> throw new IllegalArgumentException("Unsupported header: " + header);
 						}
 					});
@@ -240,6 +242,18 @@ public class ProjectUtils {
 			return projectService.newPackageImport(h.getValue(), version, optional);
 		}).toArray(IPackageImportDescription[]::new);
 		project.setPackageImports(imports);
+	}
+
+	private static void setRequiredBundles(IBundleProjectDescription project, IBundleProjectService projectService,
+			String value) {
+		var imports = parseHeader(Constants.REQUIRE_BUNDLE, value, h -> {
+			VersionRange bundleVersion = Optional.ofNullable(h.getAttribute(Constants.BUNDLE_VERSION))
+					.map(VersionRange::valueOf).orElse(null);
+			boolean optional = Constants.RESOLUTION_OPTIONAL.equals(h.getDirective(Constants.RESOLUTION_DIRECTIVE));
+			boolean reexport = Constants.VISIBILITY_REEXPORT.equals(h.getDirective(Constants.VISIBILITY_DIRECTIVE));
+			return projectService.newRequiredBundle(h.getValue(), bundleVersion, optional, reexport);
+		}).toArray(IRequiredBundleDescription[]::new);
+		project.setRequiredBundles(imports);
 	}
 
 	private static <T> Stream<T> parseHeader(String header, String value, Function<ManifestElement, T> parser) {
