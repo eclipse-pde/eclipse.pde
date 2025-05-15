@@ -65,7 +65,7 @@ public class Utils {
 	/**
 	 * Transfer the contents of resource into the destination IFile. During the
 	 * transfer, replace all instances of "@replaceTag@" with "replaceString"
-	 * 
+	 *
 	 * @param resource
 	 *            - input URL
 	 * @param destination
