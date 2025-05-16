@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 438509
+ *     Tue Ton - support for FreeBSD
  *******************************************************************************/
 package org.eclipse.pde.internal.core.product;
 
@@ -31,11 +32,13 @@ public class ConfigurationFileInfo extends ProductObject implements IConfigurati
 	private String fUse;
 	private String fPath;
 
+	private static final String FBSD = Constants.OS_FREEBSD;
 	private static final String LIN = Constants.OS_LINUX;
 	private static final String MAC = Constants.OS_MACOSX;
 	private static final String SOL = Constants.OS_SOLARIS;
 	private static final String WIN = Constants.OS_WIN32;
 
+	private String fFbsdPath, fFbsdUse;
 	private String fLinPath, fLinUse;
 	private String fMacPath, fMacUse;
 	private String fSolPath, fSolUse;
@@ -70,6 +73,9 @@ public class ConfigurationFileInfo extends ProductObject implements IConfigurati
 					if (child.getNodeName().equals(LIN)) {
 						fLinPath = getText(child);
 						fLinUse = fLinPath == null ? "default" : "custom"; //$NON-NLS-1$ //$NON-NLS-2$
+					} else if (child.getNodeName().equals(FBSD)) {
+						fFbsdPath = getText(child);
+						fFbsdUse = fFbsdPath == null ? "default" : "custom"; //$NON-NLS-1$ //$NON-NLS-2$
 					} else if (child.getNodeName().equals(MAC)) {
 						fMacPath = getText(child);
 						fMacUse = fMacPath == null ? "default" : "custom"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -85,6 +91,10 @@ public class ConfigurationFileInfo extends ProductObject implements IConfigurati
 			// for backwards compatibility
 			// if we have an old path, we convert it to a platform specific path if it wasn't set
 			if (fPath != null && fUse.equals("custom")) { //$NON-NLS-1$
+				if (fFbsdUse == null) {
+					fFbsdPath = fFbsdPath == null ? fPath : null;
+					fFbsdUse = "custom"; //$NON-NLS-1$
+				}
 				if (fLinUse == null) {
 					fLinPath = fLinPath == null ? fPath : null;
 					fLinUse = "custom"; //$NON-NLS-1$
@@ -132,6 +142,13 @@ public class ConfigurationFileInfo extends ProductObject implements IConfigurati
 		writer.println(">"); //$NON-NLS-1$
 
 		// write out the platform specific config.ini entries
+		if (fFbsdPath != null) {
+			writer.print(indent);
+			writer.print("   <" + FBSD + ">"); //$NON-NLS-1$ //$NON-NLS-2$
+			writer.print(getWritableString(fFbsdPath.trim()));
+			writer.println("</" + FBSD + ">"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+
 		if (fLinPath != null) {
 			writer.print(indent);
 			writer.print("   <" + LIN + ">"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -180,6 +197,12 @@ public class ConfigurationFileInfo extends ProductObject implements IConfigurati
 			if (isEditable()) {
 				firePropertyChanged(WIN, old, fWinUse);
 			}
+		} else if (Platform.OS_FREEBSD.equals(os)) {
+			String old = fFbsdUse;
+			fFbsdUse = use;
+			if (isEditable()) {
+				firePropertyChanged(FBSD, old, fFbsdUse);
+			}
 		} else if (Platform.OS_LINUX.equals(os)) {
 			String old = fLinUse;
 			fLinUse = use;
@@ -203,6 +226,8 @@ public class ConfigurationFileInfo extends ProductObject implements IConfigurati
 
 		if (Platform.OS_WIN32.equals(os)) {
 			return fWinUse;
+		} else if (Platform.OS_FREEBSD.equals(os)) {
+			return fFbsdUse;
 		} else if (Platform.OS_LINUX.equals(os)) {
 			return fLinUse;
 		} else if (Platform.OS_MACOSX.equals(os)) {
@@ -227,6 +252,12 @@ public class ConfigurationFileInfo extends ProductObject implements IConfigurati
 			if (isEditable()) {
 				firePropertyChanged(WIN, old, fWinPath);
 			}
+		} else if (Platform.OS_FREEBSD.equals(os)) {
+			String old = fFbsdPath;
+			fFbsdPath = path;
+			if (isEditable()) {
+				firePropertyChanged(FBSD, old, fFbsdPath);
+			}
 		} else if (Platform.OS_LINUX.equals(os)) {
 			String old = fLinPath;
 			fLinPath = path;
@@ -250,6 +281,8 @@ public class ConfigurationFileInfo extends ProductObject implements IConfigurati
 
 		if (Platform.OS_WIN32.equals(os)) {
 			return fWinPath;
+		} else if (Platform.OS_FREEBSD.equals(os)) {
+			return fFbsdPath;
 		} else if (Platform.OS_LINUX.equals(os)) {
 			return fLinPath;
 		} else if (Platform.OS_MACOSX.equals(os)) {
