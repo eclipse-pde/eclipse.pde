@@ -20,6 +20,10 @@
   <artifactId>org.eclipse.pde</artifactId>
   <version>3.13.3100-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
+  
+  <properties>
+    <tycho.source.skip>true</tycho.source.skip>
+  </properties>
 
   <build>
     <plugins>
