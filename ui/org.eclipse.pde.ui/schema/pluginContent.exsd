@@ -212,7 +212,7 @@ interface and is expected to extend &lt;code&gt;org.eclipse.jface.wizard.Wizard&
    &lt;extension point=&quot;org.eclipse.pde.ui.pluginContent&quot;&gt;
       &lt;wizard
          name=&quot;Example Plug-in Content Generator&quot;
-         icon=&quot;icons/content_wizard.png&quot;
+         icon=&quot;icons/content_wizard.svg&quot;
          class=&quot;com.example.xyz.ContentGeneratorWizard&quot;
          id=&quot;com.example.xyz.ExampleContentGenerator&quot;&gt;
          &lt;description&gt;

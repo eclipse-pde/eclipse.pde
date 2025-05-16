@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -151,7 +152,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 			"commandId", "property", "activityId", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			"attribute", "value"}; //$NON-NLS-1$ //$NON-NLS-2$
 
-	private static final String[] VALID_IMAGE_TYPES = {"png", "bmp", "ico", "gif", "jpg", "tiff"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+	private static final Set<String> VALID_IMAGE_TYPES = Set.of("svg", "png", "bmp", "ico", "gif", "jpg", "tiff"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 	private static final String MENU_NEW_ID = "NewMenu"; //$NON-NLS-1$
 
 	class ExtensionContentProvider implements ITreeContentProvider {
@@ -975,15 +976,8 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 				if (ext == null) {
 					return null;
 				}
-				boolean valid = false;
-				// ensure the resource is an image
-				for (String imageType : VALID_IMAGE_TYPES) {
-					if (ext.equalsIgnoreCase(imageType)) {
-						valid = true;
-						break;
-					}
-				}
 				// if the resource is an image, get the image, otherwise return null
+				boolean valid = VALID_IMAGE_TYPES.contains(ext.toLowerCase(Locale.ROOT));
 				return valid ? getImageFromPlugin(element, iconPath) : null;
 			}
 		}
