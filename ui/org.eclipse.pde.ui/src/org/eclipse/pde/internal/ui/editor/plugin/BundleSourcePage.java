@@ -17,8 +17,11 @@
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.ITextSelection;
@@ -33,6 +36,7 @@ import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
@@ -74,6 +78,7 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.osgi.framework.Constants;
+import org.osgi.framework.namespace.ExecutionEnvironmentNamespace;
 
 public class BundleSourcePage extends KeyValueSourcePage {
 
@@ -108,13 +113,22 @@ public class BundleSourcePage extends KeyValueSourcePage {
 			} else if (parent instanceof ExportPackageHeader exportHeader) {
 				return exportHeader.getPackages();
 			} else if (parent instanceof RequiredExecutionEnvironmentHeader breeHeader) {
-				return breeHeader.getElements();
+				return toEEArray(breeHeader.getEnvironments().stream());
+			} else if (parent instanceof IManifestHeader header
+					&& Constants.REQUIRE_CAPABILITY.equals(header.getName())) {
+				Stream.Builder<String> eeRequirements = Stream.builder();
+				ExecutionEnvironmentSection.addRequiredEEs(header, eeRequirements);
+				return toEEArray(eeRequirements.build());
 			} else if (parent instanceof RequireBundleHeader requireBundleHeader) {
 				return requireBundleHeader.getRequiredBundles();
 			} else if (parent instanceof BundleClasspathHeader) {
 				return getBundleClasspathLibraries();
 			}
 			return new Object[0];
+		}
+
+		private Object[] toEEArray(Stream<String> stream) {
+			return stream.map(JavaRuntime.getExecutionEnvironmentsManager()::getEnvironment).toArray();
 		}
 
 		@Override
@@ -158,8 +172,8 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		public String getText(Object obj) {
 			if (obj instanceof PackageObject packageObject) {
 				return packageObject.getName();
-			} else if (obj instanceof ExecutionEnvironment ee) {
-				return ee.getName();
+			} else if (obj instanceof IExecutionEnvironment ee) {
+				return ee.getId();
 			} else if (obj instanceof RequireBundleObject requireBundle) {
 				return getTextRequireBundle(requireBundle);
 			} else if (obj instanceof ManifestHeader header) {
@@ -205,7 +219,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 			PDELabelProvider labelProvider = PDEPlugin.getDefault().getLabelProvider();
 			if (obj instanceof PackageObject) {
 				return labelProvider.get(PDEPluginImages.DESC_PACKAGE_OBJ);
-			} else if (obj instanceof ExecutionEnvironment) {
+			} else if (obj instanceof IExecutionEnvironment) {
 				return labelProvider.get(PDEPluginImages.DESC_JAVA_LIB_OBJ);
 			} else if (obj instanceof RequireBundleObject requireBundle) {
 				int flags = SharedLabelProvider.F_EXTERNAL;
@@ -405,7 +419,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 			return Constants.EXPORT_PACKAGE;
 		} else if (element instanceof ImportPackageObject) {
 			return Constants.IMPORT_PACKAGE;
-		} else if (element instanceof ExecutionEnvironment) {
+		} else if (element instanceof ExecutionEnvironment || element instanceof IExecutionEnvironment) {
 			return Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT;
 		} else if (element instanceof RequireBundleObject) {
 			return Constants.REQUIRE_BUNDLE;
@@ -445,10 +459,56 @@ public class BundleSourcePage extends KeyValueSourcePage {
 			if (library.getPluginModel() instanceof IBundlePluginModelBase pluginModel) {
 				return getSpecificRange(pluginModel.getBundleModel(), Constants.BUNDLE_CLASSPATH, library.getName());
 			}
-		} else if (selection instanceof ExecutionEnvironment ee) {
-			return getSpecificRange(ee.getModel(), Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, ee.getName());
+		} else if (selection instanceof IExecutionEnvironment ee) {
+			if (getPluginModel() instanceof IBundlePluginModel bundlePlugin) {
+				return getEEsSpecificRange(ee, bundlePlugin.getBundleModel());
+			}
 		} else if (selection instanceof RequireBundleObject requiredBundle) {
 			return getSpecificRange(requiredBundle.getModel(), Constants.REQUIRE_BUNDLE, requiredBundle.getId());
+		}
+		return null;
+	}
+
+	private IDocumentRange getEEsSpecificRange(IExecutionEnvironment ee, IBundleModel bundleModel) {
+		IManifestHeader breeHeader = bundleModel.getBundle().getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
+		IDocumentRange range = getSpecificRange(bundleModel, breeHeader, ee.getId());
+		if (range != null && range.getOffset() != breeHeader.getOffset()
+				&& range.getLength() != breeHeader.getName().length()) {
+			return range;
+		}
+		IManifestHeader requireCapaHeader = bundleModel.getBundle().getManifestHeader(Constants.REQUIRE_CAPABILITY);
+
+		String attribute = ExecutionEnvironmentNamespace.EXECUTION_ENVIRONMENT_NAMESPACE;
+		IDocumentRange attributeRange = findAttributeRange(bundleModel, requireCapaHeader, attribute);
+		if (attributeRange != null) {
+			return attributeRange;
+		}
+		// Not found, just mark the (probably) originating header
+		IManifestHeader header = breeHeader != null ? breeHeader : requireCapaHeader;
+		return newDocumentRange(header.getOffset(), header.getName().length());
+	}
+
+	private IDocumentRange findAttributeRange(IBundleModel bundleModel, IManifestHeader header, String attribute) {
+		try {
+			int start = header.getOffset() + header.getName().length();
+			int length = header.getLength() - header.getName().length();
+			String headerValue = ((IEditingModel) bundleModel).getDocument().get(start, length);
+			int attributeStart = headerValue.indexOf(attribute);
+			if (attributeStart > -1) {
+				boolean inQotes = false;
+				int i = attributeStart + attribute.length();
+				for (; i < headerValue.length(); i++) {
+					char charAt = headerValue.charAt(i);
+					if (!inQotes && charAt == ',') {
+						break;
+					}
+					if (charAt == '"') {
+						inQotes = !inQotes;
+					}
+				}
+				return newDocumentRange(start + attributeStart, i - attributeStart - 1);
+			}
+		} catch (BadLocationException e) {
 		}
 		return null;
 	}
@@ -514,20 +574,24 @@ public class BundleSourcePage extends KeyValueSourcePage {
 			// header value will be included in the selection
 			range[1] = header.getName().length();
 		}
+		return newDocumentRange(range[0], range[1]);
+	}
+
+	private static IDocumentRange newDocumentRange(int offset, int length) {
 		return new IDocumentRange() {
 			@Override
 			public int getOffset() {
-				return range[0];
+				return offset;
 			}
 
 			@Override
 			public int getLength() {
-				return range[1];
+				return length;
 			}
 		};
 	}
 
-	public static IDocumentRange getSpecificRange(IBundleModel model, String headerName, String search) {
+	private static IDocumentRange getSpecificRange(IBundleModel model, String headerName, String search) {
 		IManifestHeader header = model.getBundle().getManifestHeader(headerName);
 		return getSpecificRange(model, header, search);
 	}
