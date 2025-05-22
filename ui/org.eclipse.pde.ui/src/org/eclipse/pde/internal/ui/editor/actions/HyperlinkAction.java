@@ -91,7 +91,7 @@ public class HyperlinkAction extends Action implements MouseListener, KeyListene
 	}
 
 	public void setTextEditor(ITextEditor editor) {
-		StyledText newText = editor instanceof PDESourcePage ? ((PDESourcePage) editor).getViewer().getTextWidget() : null;
+		StyledText newText = editor instanceof PDESourcePage p ? p.getViewer().getTextWidget() : null;
 		if (fStyledText != null && fStyledText.equals(newText)) {
 			return;
 		}
@@ -99,7 +99,7 @@ public class HyperlinkAction extends Action implements MouseListener, KeyListene
 		// remove the previous listeners if there were any
 		removeListeners();
 		fStyledText = newText;
-		fDetector = editor instanceof PDESourcePage ? (IHyperlinkDetector) ((PDESourcePage) editor).getAdapter(IHyperlinkDetector.class) : null;
+		fDetector = editor instanceof PDESourcePage p ? (IHyperlinkDetector) p.getAdapter(IHyperlinkDetector.class) : null;
 		// Add new listeners, if hyperlinks are present
 		addListeners();
 
