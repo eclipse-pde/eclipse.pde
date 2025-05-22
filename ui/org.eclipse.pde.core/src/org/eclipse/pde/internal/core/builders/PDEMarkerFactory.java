@@ -77,6 +77,8 @@ public class PDEMarkerFactory {
 	public static final int M_CONFLICTING_AUTOMATIC_MODULE = 0x1030; // other problem
 	public static final int M_HEADER_INCORRECT = 0x1031; // other problem
 	public static final int M_SINGLETON_DIR_CHANGE = 0x1033; // other problem
+	public static final int M_MISSINGVERSION_REQ_BUNDLE = 0x1034; // other
+																	// problem
 
 	// build properties fixes
 	public static final int B_APPEND_SLASH_FOLDER_ENTRY = 0x2001;

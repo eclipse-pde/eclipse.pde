@@ -152,6 +152,9 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 		case PDEMarkerFactory.M_HEADER_INCORRECT:
 			return new IMarkerResolution[] {
 					new UpdateCorrectHeaderName(AbstractPDEMarkerResolution.RENAME_TYPE, marker) };
+		case PDEMarkerFactory.M_MISSINGVERSION_REQ_BUNDLE:
+			return new IMarkerResolution[] {
+					new VersionMatchResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker) };
 		}
 		return NO_RESOLUTIONS;
 	}
