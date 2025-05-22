@@ -95,7 +95,7 @@ public class ActivePartSection implements ISpySection {
 		} else {
 			buffer.append(toolkit.createClassSection(text,
 					NLS.bind(PDERuntimeMessages.SpyDialog_activePart_desc, partType),
-					new Class<?>[] { part.getClass(), mPart.getObject().getClass() }));
+					part.getClass(), mPart.getObject().getClass()));
 		}
 
 		if (part instanceof PageBookView outline) {
