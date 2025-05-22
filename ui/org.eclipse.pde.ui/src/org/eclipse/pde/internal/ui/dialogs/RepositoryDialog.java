@@ -29,7 +29,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.FileTransfer;
-import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.URLTransfer;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -73,7 +72,7 @@ public class RepositoryDialog extends StatusDialog {
 		fLocation.setLayoutData(data);
 		fName.setLayoutData(data);
 		DropTarget target = new DropTarget(fLocation, DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK);
-		target.setTransfer(new Transfer[] { URLTransfer.getInstance(), FileTransfer.getInstance() });
+		target.setTransfer(URLTransfer.getInstance(), FileTransfer.getInstance());
 		target.addDropListener(new TextURLDropAdapter(fLocation, true));
 		fLocation.addModifyListener(e -> validate());
 		fName.addModifyListener(e -> validate());
