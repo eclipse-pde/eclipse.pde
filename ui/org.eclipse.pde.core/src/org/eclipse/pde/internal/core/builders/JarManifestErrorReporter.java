@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.text.BadLocationException;
@@ -59,6 +60,15 @@ public class JarManifestErrorReporter extends ErrorReporter {
 			}
 		}
 		return null;
+	}
+
+	private boolean isInvalidHeader(String line) {
+		int colonInd = line.indexOf(':');
+		if (colonInd > 0) {
+			String headerPart = line.substring(0, colonInd);
+			return headerPart != null && headerPart.matches(".*[^a-zA-Z0-9-_].*"); //$NON-NLS-1$
+		}
+		return false;
 	}
 
 	protected int getPackageLine(IHeader header, ManifestElement element) {
@@ -172,9 +182,18 @@ public class JarManifestErrorReporter extends ErrorReporter {
 					report(PDECoreMessages.BundleErrorReporter_noColon, lineNumber, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 					return;
 				}
+
 				String headerName = getHeaderName(line);
 				if (headerName == null) {
-					report(PDECoreMessages.BundleErrorReporter_invalidHeaderName, lineNumber, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
+					boolean hasInvalidChars = isInvalidHeader(line);
+					if (hasInvalidChars) {
+						VirtualMarker marker = report(PDECoreMessages.BundleErrorReporter_invalidHeaderName, lineNumber,
+								CompilerFlags.ERROR, PDEMarkerFactory.M_HEADER_INCORRECT, PDEMarkerFactory.CAT_FATAL);
+						marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
+						return;
+					}
+					report(PDECoreMessages.BundleErrorReporter_invalidHeaderName, lineNumber, CompilerFlags.ERROR,
+							PDEMarkerFactory.CAT_FATAL);
 					return;
 				}
 				if (line.length() < colon + 2 || line.charAt(colon + 1) != ' ') {
