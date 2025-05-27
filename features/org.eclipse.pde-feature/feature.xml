@@ -28,6 +28,7 @@
       <import plugin="org.bndtools.templates.template"/>
       <import plugin="biz.aQute.repository"/>
       <import plugin="bndtools.jareditor"/>
+      <import feature="org.eclipse.pde.osgitest.dependencies.feature" version="1.0.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
