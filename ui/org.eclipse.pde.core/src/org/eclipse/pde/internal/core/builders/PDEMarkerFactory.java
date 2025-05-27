@@ -76,7 +76,8 @@ public class PDEMarkerFactory {
 	public static final int M_EXEC_ENV_TOO_LOW = 0x1029; // other problem
 	public static final int M_CONFLICTING_AUTOMATIC_MODULE = 0x1030; // other
 																		// problem
-
+	public static final int M_NO_MANDATORY_ATTR_IMPORT_PACKAGE = 0x1031; // fatal
+																			// problem
 	// build properties fixes
 	public static final int B_APPEND_SLASH_FOLDER_ENTRY = 0x2001;
 	public static final int B_REMOVE_SLASH_FILE_ENTRY = 0x2002;
