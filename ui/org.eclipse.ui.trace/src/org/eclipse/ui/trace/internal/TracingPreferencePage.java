@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2018 IBM Corporation and others.
+ * Copyright (c) 2011, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     SAP - ongoing enhancements
+ *     Tue Ton - support for FreeBSD
  *******************************************************************************/
 package org.eclipse.ui.trace.internal;
 
@@ -92,7 +93,7 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 	 * On Linux, however, space is used as default key on ComboBoxes, leading to the editor being deactivated.
 	 * We use F2 instead.
 	 */
-	private static final int VALUE_EDITOR_ACTIVATION_KEY = Util.isLinux() ? SWT.F2 : SWT.SPACE;
+	private static final int VALUE_EDITOR_ACTIVATION_KEY = (Util.isLinux() || Util.isFreeBSD()) ? SWT.F2 : SWT.SPACE;
 
 	/** A list of {@link TracingComponent} objects to display in the UI */
 	private Map<String, TracingComponent> displayableTracingComponents = null;
