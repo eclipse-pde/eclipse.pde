@@ -133,7 +133,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 		int units = fData.doFindDependencies() ? 4 : 2;
 		units += fData.isUpdateReferences() ? 1 : 0;
 		SubMonitor subMonitor = SubMonitor.convert(monitor, units);
-		IBundle bundle = (base instanceof BundlePluginBase) ? ((BundlePluginBase) base).getBundle() : null;
+		IBundle bundle = (base instanceof BundlePluginBase b) ? b.getBundle() : null;
 		if (bundle != null) {
 			adjustExportRoot(project, bundle);
 			subMonitor.worked(1);

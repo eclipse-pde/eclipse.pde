@@ -158,7 +158,7 @@ public class ExportOptionsTab extends AbstractExportTab {
 	@Override
 	protected void initialize(IDialogSettings settings) {
 		fIncludeSourceButton.setSelection(settings.getBoolean(S_EXPORT_SOURCE));
-		fIncludeSourceCombo.setItems(new String[] {PDEUIMessages.ExportWizard_generateAssociatedSourceBundles, PDEUIMessages.ExportWizard_includeSourceInBinaryBundles});
+		fIncludeSourceCombo.setItems(PDEUIMessages.ExportWizard_generateAssociatedSourceBundles, PDEUIMessages.ExportWizard_includeSourceInBinaryBundles);
 		String sourceComboValue = settings.get(S_EXPORT_SOURCE_FORMAT) != null ? settings.get(S_EXPORT_SOURCE_FORMAT) : PDEUIMessages.ExportWizard_generateAssociatedSourceBundles;
 		fIncludeSourceCombo.setText(sourceComboValue);
 		fIncludeSourceCombo.setEnabled(fIncludeSourceButton.getSelection());
