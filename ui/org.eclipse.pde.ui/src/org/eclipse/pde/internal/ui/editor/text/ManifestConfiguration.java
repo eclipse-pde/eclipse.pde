@@ -96,7 +96,7 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 			rule.addWord(Constants.BUNDLE_ACTIVATIONPOLICY, fToken);
 			rule.addWord("Automatic-Module-Name", fToken); //$NON-NLS-1$
 			rule.addWord("Manifest-Version", fToken); //$NON-NLS-1$
-			setRules(new IRule[] {rule});
+			setRules(rule);
 			setDefaultReturnToken(new Token(createTextAttribute(IPDEColorConstants.P_HEADER_KEY)));
 		}
 	}
