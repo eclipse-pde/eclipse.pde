@@ -58,6 +58,7 @@ public class Feature extends VersionableObject implements IFeature {
 	private String fCopyright;
 	private String fLicenseFeatureID;
 	private String fLicenseFeatureVersion;
+	private boolean fSources;
 
 	@Override
 	public void addPlugins(IFeaturePlugin[] newPlugins) throws CoreException {
@@ -213,6 +214,7 @@ public class Feature extends VersionableObject implements IFeature {
 		fApplication = getNodeAttribute(node, "application"); //$NON-NLS-1$
 		fPrimary = getBooleanAttribute(node, "primary"); //$NON-NLS-1$
 		fExclusive = getBooleanAttribute(node, "exclusive"); //$NON-NLS-1$
+		fSources = getBooleanAttribute(node, "add-sources"); //$NON-NLS-1$
 		NodeList children = node.getChildNodes();
 		fValid = true;
 
@@ -570,6 +572,9 @@ public class Feature extends VersionableObject implements IFeature {
 		case P_IMAGE:
 			setImageName((String) newValue);
 			break;
+		case P_SOURCES:
+			setfSources(newValue != null ? ((Boolean) newValue).booleanValue() : false);
+			break;
 		default:
 			super.restoreProperty(name, oldValue, newValue);
 			break;
@@ -581,6 +586,7 @@ public class Feature extends VersionableObject implements IFeature {
 		super.reset();
 		fData.clear();
 		fPlugins.clear();
+		fSources = false;
 		fImports.clear();
 		fChildren.clear();
 		fUrl = null;
@@ -654,6 +660,7 @@ public class Feature extends VersionableObject implements IFeature {
 		writeIfDefined(indenta, writer, "id", getId()); //$NON-NLS-1$
 		writeIfDefined(indenta, writer, "label", getWritableString(getLabel())); //$NON-NLS-1$
 		writeIfDefined(indenta, writer, "version", getVersion()); //$NON-NLS-1$
+		writeIfDefined(indenta, writer, "add-sources", String.valueOf(isfSources())); //$NON-NLS-1$ )
 		writeIfDefined(indenta, writer, "provider-name", //$NON-NLS-1$
 				getWritableString(fProviderName));
 		writeIfDefined(indenta, writer, "plugin", //$NON-NLS-1$
@@ -770,6 +777,18 @@ public class Feature extends VersionableObject implements IFeature {
 	@Override
 	public String toString() {
 		return getId() + " (" + getVersion() + ")"; //$NON-NLS-1$//$NON-NLS-2$
+	}
+
+	@Override
+	public boolean isfSources() {
+		return fSources;
+	}
+
+	@Override
+	public void setfSources(boolean b) {
+		Object oldValue = fSources;
+		this.fSources = b;
+		firePropertyChanged(this, "add-sources", oldValue, b); //$NON-NLS-1$
 	}
 
 }
