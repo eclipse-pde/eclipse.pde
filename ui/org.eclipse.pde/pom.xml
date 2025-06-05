@@ -14,11 +14,11 @@
   <parent>
     <groupId>org.eclipse.pde</groupId>
     <artifactId>eclipse.pde</artifactId>
-    <version>4.36.0-SNAPSHOT</version>
+    <version>4.37.0-SNAPSHOT</version>
     <relativePath>../../</relativePath>
   </parent>
   <artifactId>org.eclipse.pde</artifactId>
-  <version>3.13.3100-SNAPSHOT</version>
+  <version>3.13.3200-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
   
   <properties>
