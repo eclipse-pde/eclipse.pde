@@ -425,14 +425,20 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		PDETestCase.assumeRunningInStandaloneEclipseSDK();
 
 		ITargetDefinition definition = getNewTarget();
+		String defaultLocation = TargetPlatform.getDefaultLocation();
 
-		ITargetLocation directoryContainer = getTargetService().newDirectoryLocation(TargetPlatform.getDefaultLocation() + "/plugins");
+		ITargetLocation directoryContainer = getTargetService().newDirectoryLocation(defaultLocation + "/plugins");
 
-		ITargetLocation profileContainer = getTargetService().newProfileLocation(TargetPlatform.getDefaultLocation(), null);
+		ITargetLocation profileContainer = getTargetService().newProfileLocation(defaultLocation, null);
 
-		ITargetLocation featureContainer = getTargetService().newFeatureLocation(TargetPlatform.getDefaultLocation(), "org.eclipse.jdt", null);
+		String featureWithCorrespondingSourceFeature = "org.eclipse.equinox.p2.core.feature";
 
-		ITargetLocation featureContainer2 = getTargetService().newFeatureLocation(TargetPlatform.getDefaultLocation(), "org.eclipse.jdt.source", null);
+		ITargetLocation featureContainer = getTargetService().newFeatureLocation(defaultLocation,
+				featureWithCorrespondingSourceFeature,
+				null);
+
+		ITargetLocation featureContainer2 = getTargetService().newFeatureLocation(defaultLocation,
+				featureWithCorrespondingSourceFeature + ".source", null);
 
 		definition.setTargetLocations(new ITargetLocation[]{directoryContainer, profileContainer, featureContainer, featureContainer2});
 		definition.resolve(null);
@@ -463,5 +469,6 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 			}
 		}
 	}
+
 
 }
