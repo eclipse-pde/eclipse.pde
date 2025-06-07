@@ -340,10 +340,8 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implem
 				return new StyledString(text);
 			}
 		}
-		if (element instanceof Extension) {
+		if (element instanceof Extension extension) {
 			if (((RegistryBrowserContentProvider) fRegistryBrowser.getAdapter(IContentProvider.class)).isInExtensionSet) {
-				Extension extension = ((Extension) element);
-
 				StyledString ss = new StyledString(extension.getExtensionPointUniqueIdentifier());
 				String name = extension.getLabel();
 				if (name != null && name.length() > 0) {
