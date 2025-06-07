@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2023 IBM Corporation and others.
+ * Copyright (c) 2005, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -30,6 +30,7 @@ import org.eclipse.pde.ui.tests.nls.AllNLSTests;
 import org.eclipse.pde.ui.tests.preferences.AllPreferenceTests;
 import org.eclipse.pde.ui.tests.project.BundleRootTests;
 import org.eclipse.pde.ui.tests.project.DynamicPluginProjectReferencesTest;
+import org.eclipse.pde.ui.tests.project.PluginDependencyTests;
 import org.eclipse.pde.ui.tests.project.PluginRegistryTests;
 import org.eclipse.pde.ui.tests.project.ProjectCreationTests;
 import org.eclipse.pde.ui.tests.runtime.AllPDERuntimeTests;
@@ -67,6 +68,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	BundleErrorReporterTest.class, //
 	AllPDECoreTests.class, //
 	ProjectSmartImportTest.class, //
+	PluginDependencyTests.class, //
 })
 public class AllPDETests {
 
