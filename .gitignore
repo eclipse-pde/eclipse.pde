@@ -19,3 +19,5 @@ Snap.*
 .DS_Store
 .polyglot.*
 pom.tycho
+
+.mvn/.develocity/develocity-workspace-id
