@@ -88,7 +88,9 @@ public static void main (String [] args) {
 //	shell2.open();
 
 	while (!shell.isDisposed ()) {
-		if (!display.readAndDispatch ()) display.sleep ();
+		if (!display.readAndDispatch ()) {
+			display.sleep ();
+		}
 	}
 	display.dispose ();
 }
@@ -107,7 +109,7 @@ public void create (Composite parent) {
 	Composite right = new Composite(sash, 0);
 	right.setLayout(new GridLayout());
 
-	sash.setWeights(new int[] {40,60});
+	sash.setWeights(40, 60);
 
 	// Right side
 	canvas = new Canvas (right, SWT.BORDER);
@@ -243,7 +245,7 @@ void refreshDifference () {
 			}
 		}
 	}
-	
+
 	objects.clear();
 	objects.addAll(created);
 
@@ -393,7 +395,9 @@ void toggleStackTrace () {
 void paintCanvas (Event event) {
 	canvas.setCursor (null);
 	int index = list.getSelectionIndex ();
-	if (index == -1) return;
+	if (index == -1) {
+		return;
+	}
 	GC gc = event.gc;
 	Object object = objects.get(index).object;
 	draw(gc, object);
@@ -401,12 +405,16 @@ void paintCanvas (Event event) {
 
 void draw(GC gc, Object object) {
 	if (object instanceof Cursor) {
-		if (((Cursor)object).isDisposed ()) return;
+		if (((Cursor)object).isDisposed ()) {
+			return;
+		}
 		canvas.setCursor ((Cursor) object);
 		return;
 	}
 	if (object instanceof Font) {
-		if (((Font)object).isDisposed ()) return;
+		if (((Font)object).isDisposed ()) {
+			return;
+		}
 		gc.setFont ((Font) object);
 		String string = "";
 		String lf = text.getLineDelimiter ();
@@ -414,8 +422,12 @@ void draw(GC gc, Object object) {
 			String style = "NORMAL";
 			int bits = data.getStyle ();
 			if (bits != 0) {
-				if ((bits & SWT.BOLD) != 0) style = "BOLD ";
-				if ((bits & SWT.ITALIC) != 0) style += "ITALIC";
+				if ((bits & SWT.BOLD) != 0) {
+					style = "BOLD ";
+				}
+				if ((bits & SWT.ITALIC) != 0) {
+					style += "ITALIC";
+				}
 			}
 			string += data.getName () + " " + data.getHeight () + " " + style + lf;
 		}
@@ -427,35 +439,47 @@ void draw(GC gc, Object object) {
 //		return;
 //	}
 	if (object instanceof Image) {
-		if (((Image)object).isDisposed ()) return;
+		if (((Image)object).isDisposed ()) {
+			return;
+		}
 		gc.drawImage ((Image) object, 0, 0);
 		return;
 	}
 	if (object instanceof Path) {
-		if (((Path)object).isDisposed ()) return;
+		if (((Path)object).isDisposed ()) {
+			return;
+		}
 		gc.drawPath ((Path) object);
 		return;
 	}
 	if (object instanceof Pattern) {
-		if (((Pattern)object).isDisposed ()) return;
+		if (((Pattern)object).isDisposed ()) {
+			return;
+		}
 		gc.setBackgroundPattern ((Pattern)object);
 		gc.fillRectangle (canvas.getClientArea ());
 		gc.setBackgroundPattern (null);
 		return;
 	}
 	if (object instanceof Region) {
-		if (((Region)object).isDisposed ()) return;
+		if (((Region)object).isDisposed ()) {
+			return;
+		}
 		String string = ((Region)object).getBounds().toString();
 		gc.drawString (string, 0, 0);
 		return;
 	}
 	if (object instanceof TextLayout) {
-		if (((TextLayout)object).isDisposed ()) return;
+		if (((TextLayout)object).isDisposed ()) {
+			return;
+		}
 		((TextLayout)object).draw (gc, 0, 0);
 		return;
 	}
 	if (object instanceof Transform) {
-		if (((Transform)object).isDisposed ()) return;
+		if (((Transform)object).isDisposed ()) {
+			return;
+		}
 		String string = ((Transform)object).toString();
 		gc.drawString (string, 0, 0);
 		return;
@@ -464,7 +488,9 @@ void draw(GC gc, Object object) {
 
 void refreshObject () {
 	int index = list.getSelectionIndex ();
-	if (index == -1) return;
+	if (index == -1) {
+		return;
+	}
 	if (stackTrace.getSelection ()) {
 		text.setText (objects.get(index).getStack());
 		setVisible(text, true);
@@ -484,7 +510,7 @@ private void setVisible(Control control, boolean visible) {
 
 private void filterNonDisposedWidgetTypes() {
 	java.util.List<Class<? extends Widget>> trackedTypes = Arrays.asList(
-//		Composite.class, 
+//		Composite.class,
 //		Menu.class
 	);
 	nonDisposedWidgetTracker.setTrackedTypes(trackedTypes);
