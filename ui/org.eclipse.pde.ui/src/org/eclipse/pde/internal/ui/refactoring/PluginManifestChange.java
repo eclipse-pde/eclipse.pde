@@ -157,7 +157,7 @@ public class PluginManifestChange {
 			return null;
 		}
 
-		String oldName = (element instanceof IType) ? ((IType) element).getFullyQualifiedName('$') : element.getElementName();
+		String oldName = (element instanceof IType i) ? i.getFullyQualifiedName('$') : element.getElementName();
 		String value = attr.getAttributeValue();
 		if (oldName.equals(value) || isGoodMatch(value, oldName, element instanceof IPackageFragment)) {
 			int offset = attr.getValueOffset();
