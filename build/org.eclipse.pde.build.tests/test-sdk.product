@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Eclipse SDK" uid="org.eclipse.sdk.test.ide" id="org.eclipse.sdk.ide" application="org.eclipse.ui.ide.workbench" version="4.37.0.qualifier" type="features" includeLaunchers="true" autoIncludeRequirements="true">
+<product name="Eclipse SDK" uid="org.eclipse.sdk.test.ide" id="org.eclipse.sdk.ide" application="org.eclipse.ui.ide.workbench" version="4.37.0.qualifier" type="mixed" includeLaunchers="true" autoIncludeRequirements="true">
 
    <configIni use="default">
    </configIni>
@@ -21,27 +21,25 @@
       </win>
    </launcher>
 
+   <plugins>
+      <!-- Needed by org.eclipse.pde.build.internal.tests.p2.PublishingTests.testBug329162() -->
+      <plugin id="org.eclipse.osgi.source"/>
+      <!-- Needed by org.eclipse.pde.build.internal.tests.SourceTests.testBug290828() -->
+      <plugin id="org.eclipse.team.core.source"/>
+   </plugins>
+
    <features>
       <feature id="org.eclipse.platform"/>
-      <feature id="org.eclipse.platform.source"/>
       <feature id="org.eclipse.jdt"/>
-      <feature id="org.eclipse.jdt.source"/>
-      <!-- PDE must be installed as a root so it can be updated -->
       <feature id="org.eclipse.pde" installMode="root"/>
-      <feature id="org.eclipse.pde.source"/>
       <feature id="org.eclipse.pde.spies"/>
-      <feature id="org.eclipse.pde.spies.source"/>
       <feature id="org.eclipse.help"/>
-      <feature id="org.eclipse.help.source"/>
       <feature id="org.eclipse.jdt.astview.feature"/>
       <feature id="org.eclipse.jdt.jeview.feature"/>
       <feature id="org.eclipse.jdt.bcoview.feature"/>
       <feature id="org.eclipse.equinox.p2.user.ui"/>
-      <feature id="org.eclipse.equinox.p2.user.ui.source"/>
       <feature id="org.eclipse.e4.core.tools.feature"/>
-      <feature id="org.eclipse.e4.core.tools.feature.source"/>
       <feature id="org.eclipse.tips.feature"/>
-      <feature id="org.eclipse.tips.feature.source"/>
       <feature id="org.eclipse.test"/>
    </features>
 
