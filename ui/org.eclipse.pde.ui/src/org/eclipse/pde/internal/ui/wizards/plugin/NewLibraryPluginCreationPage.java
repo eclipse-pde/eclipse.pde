@@ -148,7 +148,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		fOSGIButton.setSelection(fData.getOSGiFramework() != null);
 
 		fOSGiCombo = new Combo(group, SWT.READ_ONLY | SWT.SINGLE);
-		fOSGiCombo.setItems(new String[] {ICoreConstants.EQUINOX, PDEUIMessages.NewProjectCreationPage_standard});
+		fOSGiCombo.setItems(ICoreConstants.EQUINOX, PDEUIMessages.NewProjectCreationPage_standard);
 		fOSGiCombo.setText(ICoreConstants.EQUINOX);
 
 		fJarredCheck = new Button(group, SWT.CHECK);

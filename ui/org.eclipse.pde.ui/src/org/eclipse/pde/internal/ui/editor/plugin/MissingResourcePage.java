@@ -41,7 +41,7 @@ public class MissingResourcePage extends PDEFormPage {
 		String text;
 		if (persistable instanceof IFileEditorInput) {
 			IFile file = ((IFileEditorInput) persistable).getFile();
-			text = NLS.bind(PDEUIMessages.MissingResourcePage_unableToOpenFull, new String[] {PDEUIMessages.MissingResourcePage_unableToOpen, file.getProjectRelativePath().toString(), file.getProject().getName()});
+			text = NLS.bind(PDEUIMessages.MissingResourcePage_unableToOpenFull, PDEUIMessages.MissingResourcePage_unableToOpen, file.getProjectRelativePath().toString(), file.getProject().getName());
 		} else {
 			text = PDEUIMessages.MissingResourcePage_unableToOpen;
 		}

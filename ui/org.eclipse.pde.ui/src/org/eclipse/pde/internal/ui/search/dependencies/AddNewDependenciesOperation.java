@@ -180,7 +180,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 		if (header == null) {
 			return new HashSet<>(0);
 		}
-		Set<String> plugins = (header instanceof RequireBundleHeader) ? findManifestPlugins((RequireBundleHeader) header, ignorePkgs) : findManifestPlugins(ignorePkgs);
+		Set<String> plugins = (header instanceof RequireBundleHeader r) ? findManifestPlugins(r, ignorePkgs) : findManifestPlugins(ignorePkgs);
 		if (plugins.contains(IPDEBuildConstants.BUNDLE_CORE_RUNTIME)) {
 			plugins.add("system.bundle"); //$NON-NLS-1$
 		}

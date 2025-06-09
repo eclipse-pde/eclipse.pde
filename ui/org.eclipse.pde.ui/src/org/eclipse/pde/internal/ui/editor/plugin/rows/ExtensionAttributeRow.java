@@ -57,7 +57,7 @@ public abstract class ExtensionAttributeRow implements IControlHoverContentProvi
 	}
 
 	public ISchemaAttribute getAttribute() {
-		return (att instanceof ISchemaAttribute) ? (ISchemaAttribute) att : null;
+		return (att instanceof ISchemaAttribute i) ? i : null;
 	}
 
 	public String getName() {

@@ -45,7 +45,7 @@ public class RefactoringPluginInfo extends RefactoringInfo {
 
 	@Override
 	public IPluginModelBase getBase() {
-		return (fSelection instanceof IPluginModelBase) ? (IPluginModelBase) fSelection : null;
+		return (fSelection instanceof IPluginModelBase i) ? i : null;
 	}
 
 }

@@ -150,7 +150,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		fOSGIButton.setSelection(osgiProject);
 
 		fOSGiCombo = new Combo(group, SWT.READ_ONLY | SWT.SINGLE);
-		fOSGiCombo.setItems(new String[] {ICoreConstants.EQUINOX, PDEUIMessages.NewProjectCreationPage_standard});
+		fOSGiCombo.setItems(ICoreConstants.EQUINOX, PDEUIMessages.NewProjectCreationPage_standard);
 
 		fOSGiCombo.setText(fwType);
 		useAutomaticMetadata = new Button(group, SWT.CHECK);

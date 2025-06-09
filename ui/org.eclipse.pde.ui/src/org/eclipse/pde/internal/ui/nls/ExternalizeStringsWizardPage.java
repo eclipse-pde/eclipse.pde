@@ -244,7 +244,7 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 
 		setPageComplete(hasCheckedElements());
 
-		superSash.setWeights(new int[] {4, 7});
+		superSash.setWeights(4, 7);
 		setControl(superSash);
 		Dialog.applyDialogFont(superSash);
 

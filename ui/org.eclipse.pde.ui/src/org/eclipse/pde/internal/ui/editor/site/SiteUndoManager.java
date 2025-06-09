@@ -79,7 +79,7 @@ public class SiteUndoManager extends ModelUndoManager {
 	}
 
 	private void executeAdd(IModelChangeProvider model, Object[] elements) {
-		ISiteModel siteModel = (model instanceof ISiteModel) ? (ISiteModel) model : null;
+		ISiteModel siteModel = (model instanceof ISiteModel i) ? i : null;
 		ISite site = siteModel != null ? siteModel.getSite() : null;
 
 		try {
@@ -101,7 +101,7 @@ public class SiteUndoManager extends ModelUndoManager {
 	}
 
 	private void executeRemove(IModelChangeProvider model, Object[] elements) {
-		ISiteModel siteModel = (model instanceof ISiteModel) ? (ISiteModel) model : null;
+		ISiteModel siteModel = (model instanceof ISiteModel i) ? i : null;
 		ISite site = siteModel != null ? siteModel.getSite() : null;
 
 		try {

@@ -40,7 +40,7 @@ public abstract class AbstractPluginElementDetails extends PDEDetails {
 		if (actionId.equals(ActionFactory.FIND.getId())) {
 			if (fMasterSection != null && fMasterSection instanceof ExtensionsSection) {
 				final Control focusControl = Display.getCurrent().getFocusControl(); // getPage().getLastFocusControl();
-				String filterText = (focusControl instanceof Text) ? ((Text) focusControl).getText() : (focusControl instanceof CCombo) ? ((CCombo) focusControl).getText() : null;
+				String filterText = (focusControl instanceof Text t) ? t.getText() : (focusControl instanceof CCombo c) ? c.getText() : null;
 				if (filterText != null) {
 					// add value of the currently focused attribute text to the filter
 					((ExtensionsSection) fMasterSection).addAttributeToFilter(filterText, true);
