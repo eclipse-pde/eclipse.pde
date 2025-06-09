@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.NotEnabledException;
@@ -91,6 +92,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 
 	private static final String COMMAND_SAVE_TO_WORKSPACE = "org.eclipse.pde.ui.imagebrowser.saveToWorkspace"; //$NON-NLS-1$
 	protected final static String VIEW_ID = "org.eclipse.pde.ui.ImageBrowserView"; //$NON-NLS-1$
+	private static final Pattern FILE_EXTENSION = Pattern.compile("\\.[^.]+$"); //$NON-NLS-1$
 
 	private final UpdateUI mUIJob = new UpdateUI();
 
@@ -118,6 +120,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 
 	private Text txtFilter;
 	private IFilter textPatternFilter;
+	private IFilter svgFilter = null;
 	private PageNavigationControl pageNavigationControl;
 
 	private ImageElement imageElement;
@@ -144,6 +147,20 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		mFilters.add(enabledIcons);
 		textPatternFilter = new StringFilter("*"); //$NON-NLS-1$
 		mFilters.add(textPatternFilter);
+		svgFilter = element -> {
+			String fileName = element.getPath();
+			if (!fileName.endsWith(".svg")) { //$NON-NLS-1$
+				String replacementSVGName = FILE_EXTENSION.matcher(fileName).replaceAll(".svg"); //$NON-NLS-1$
+				ImageElement replacementSVG = repository.getImageElement(replacementSVGName);
+				if (replacementSVG != null) {
+					return new ArrayList<>(mFilters).stream()
+							.anyMatch(filter -> filter != svgFilter && !filter.accept(replacementSVG));
+				}
+				return true;
+			}
+			return true;
+		};
+		mFilters.add(svgFilter);
 	}
 
 	@Override
@@ -191,10 +208,14 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 			mFilters.clear();
 			mFilters.add(textPatternFilter);
 			Combo source = (Combo) e.getSource();
-			switch (source.getSelectionIndex()) {
+			int selectionIndex = source.getSelectionIndex();
+			switch (selectionIndex) {
 				case 0 -> mFilters.add(enabledIcons);
 				case 1 -> mFilters.add(disabledIcons);
 				case 2 -> mFilters.add(wizard);
+			}
+			if (selectionIndex != source.getItemCount() - 1) {
+				mFilters.add(svgFilter);
 			}
 			page = 0; // reset to 1st page
 			scanImages();
