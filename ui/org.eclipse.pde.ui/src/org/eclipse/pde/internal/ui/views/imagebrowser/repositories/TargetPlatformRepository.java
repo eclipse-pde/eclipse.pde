@@ -122,9 +122,7 @@ public class TargetPlatformRepository extends AbstractRepository {
 			fBundles.clear();
 			fBundles = null;
 		}
-		if (mElementsCache != null) {
-			mElementsCache.clear();
-		}
+		clearCache();
 		return Status.OK_STATUS;
 	}
 
