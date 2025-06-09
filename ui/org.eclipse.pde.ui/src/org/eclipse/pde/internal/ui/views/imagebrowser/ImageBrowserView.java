@@ -118,6 +118,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 
 	private Text txtFilter;
 	private IFilter textPatternFilter;
+	private final IFilter svgFilter;
 	private PageNavigationControl pageNavigationControl;
 
 	private ImageElement imageElement;
@@ -144,6 +145,31 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		mFilters.add(enabledIcons);
 		textPatternFilter = new StringFilter("*"); //$NON-NLS-1$
 		mFilters.add(textPatternFilter);
+		svgFilter = new IFilter() {
+			@Override
+			public boolean accept(final ImageElement element) {
+				String fileName = element.getPath();
+				if (!fileName.endsWith(".svg")) { //$NON-NLS-1$
+					return shouldIncludeRasterizedImage(element);
+				}
+				return true;
+			}
+
+			private boolean shouldIncludeRasterizedImage(ImageElement element) {
+				String replacementSVGName = element.getPath().replaceAll("\\.[^.]+$", ".svg"); //$NON-NLS-1$ //$NON-NLS-2$
+				ImageElement replacementSVG = repository.getImageElement(replacementSVGName);
+				if (replacementSVG != null) {
+					return isSVGRejectedByFilter(replacementSVG);
+				}
+				return true;
+			}
+
+			private boolean isSVGRejectedByFilter(ImageElement cachedSvg) {
+				return new ArrayList<>(mFilters).stream()
+						.anyMatch(filter -> filter != svgFilter && !filter.accept(cachedSvg));
+			}
+		};
+		mFilters.add(svgFilter);
 	}
 
 	@Override
@@ -190,11 +216,15 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		typeCombo.addSelectionListener(widgetSelectedAdapter(e -> {
 			mFilters.clear();
 			mFilters.add(textPatternFilter);
-			Combo source = (Combo) e.getSource();
-			switch (source.getSelectionIndex()) {
-				case 0 -> mFilters.add(enabledIcons);
-				case 1 -> mFilters.add(disabledIcons);
-				case 2 -> mFilters.add(wizard);
+			List<String> options = List.of("Enabled", "Disabled", "Wizard", "AllIcons"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			int selection = ((Combo) e.getSource()).getSelectionIndex();
+			switch (options.get(selection)) {
+				case "Enabled" -> mFilters.add(enabledIcons); //$NON-NLS-1$
+				case "Disabled" -> mFilters.add(disabledIcons); //$NON-NLS-1$
+				case "Wizard" -> mFilters.add(wizard); //$NON-NLS-1$
+			}
+			if (selection != options.size() - 1) {
+				mFilters.add(svgFilter);
 			}
 			page = 0; // reset to 1st page
 			scanImages();

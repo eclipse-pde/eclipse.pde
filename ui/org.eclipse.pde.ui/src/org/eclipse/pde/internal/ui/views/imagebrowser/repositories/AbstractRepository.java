@@ -22,8 +22,8 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
@@ -45,7 +45,7 @@ import org.eclipse.swt.graphics.ImageData;
 
 public abstract class AbstractRepository extends Job {
 
-	protected List<ImageElement> mElementsCache = new LinkedList<>();
+	private Map<String, ImageElement> mElementsCache = new LinkedHashMap<>();
 
 	private final IImageTarget mTarget;
 
@@ -55,7 +55,7 @@ public abstract class AbstractRepository extends Job {
 		mTarget = target;
 	}
 
-	private static final String[] KNOWN_EXTENSIONS = new String[] {".gif", ".png"}; //$NON-NLS-1$ //$NON-NLS-2$
+	private static final String[] KNOWN_EXTENSIONS = new String[] { ".gif", ".png", ".svg" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 	@Override
 	protected synchronized IStatus run(IProgressMonitor monitor) {
@@ -69,7 +69,8 @@ public abstract class AbstractRepository extends Job {
 				}
 			} else {
 				// return 1 image from cache
-				mTarget.notifyImage(mElementsCache.remove(0));
+				mTarget.notifyImage(
+						((LinkedHashMap<String, ImageElement>) mElementsCache).sequencedValues().removeFirst());
 			}
 		}
 
@@ -77,7 +78,13 @@ public abstract class AbstractRepository extends Job {
 	}
 
 	public synchronized void clearCache() {
-		mElementsCache.clear();
+		if (mElementsCache != null) {
+			mElementsCache.clear();
+		}
+	}
+
+	public ImageElement getImageElement(String key) {
+		return mElementsCache.get(key);
 	}
 
 	protected abstract boolean populateCache(IProgressMonitor monitor);
@@ -142,7 +149,9 @@ public abstract class AbstractRepository extends Job {
 			while ((entries.hasMoreElements()) && (!monitor.isCanceled())) {
 				ZipEntry entry = entries.nextElement();
 				if (isImageName(entry.getName())) {
-					addImageElement(new ImageElement(() -> createImageData(jarFile, entry), jarFile.getName(), entry.getName()));
+					ImageElement imageElement = new ImageElement(() -> createImageData(jarFile, entry),
+							jarFile.getName(), entry.getName());
+					mElementsCache.put(imageElement.getPath(), imageElement);
 				}
 			}
 		} catch (IOException e) {
@@ -177,7 +186,10 @@ public abstract class AbstractRepository extends Job {
 
 						} else {
 							if (isImage(resource)) {
-								addImageElement(new ImageElement(() -> createImageData(resource), pluginName, resource.getAbsolutePath().substring(directoryPathLength)));
+								ImageElement imageElement = new ImageElement(() -> createImageData(resource),
+										pluginName, resource.getAbsolutePath().substring(directoryPathLength));
+								mElementsCache.put(imageElement.getPath(), imageElement);
+								addImageElement(imageElement);
 							}
 						}
 					}
@@ -211,6 +223,6 @@ public abstract class AbstractRepository extends Job {
 	}
 
 	protected void addImageElement(ImageElement element) {
-		mElementsCache.add(element);
+		mElementsCache.put(element.getPath(), element);
 	}
 }
