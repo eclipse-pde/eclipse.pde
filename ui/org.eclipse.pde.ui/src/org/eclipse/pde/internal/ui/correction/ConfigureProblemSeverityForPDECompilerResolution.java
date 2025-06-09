@@ -93,7 +93,7 @@ public class ConfigureProblemSeverityForPDECompilerResolution extends AbstractMa
 		if (!hasProjectOptions) {
 			String message = MessageFormat.format(
 					PDEUIMessages.ConfigureProblemSeverityForPDECompiler_1,
-					new Object[] { JavaElementLabels.getElementLabel(project, JavaElementLabels.ALL_DEFAULT) });
+					JavaElementLabels.getElementLabel(project, JavaElementLabels.ALL_DEFAULT));
 
 			String[] buttons = new String[] { PDEUIMessages.ConfigureProblemSeverityForPDECompiler_2, PDEUIMessages.ConfigureProblemSeverityForPDECompiler_3,
 					IDialogConstants.CANCEL_LABEL };

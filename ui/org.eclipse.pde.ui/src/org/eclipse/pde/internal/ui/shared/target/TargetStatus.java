@@ -175,7 +175,7 @@ public class TargetStatus {
 	// see https://bugs.eclipse.org/378395
 	private static IStatusLineManager getStatusLineManager(IWorkbenchWindow window) {
 		// We are not in a view or editor so this is the only practical way of getting the status line manager at this time -  see https://bugs.eclipse.org/378395
-		return (window instanceof org.eclipse.ui.internal.WorkbenchWindow) ? ((org.eclipse.ui.internal.WorkbenchWindow) window).getStatusLineManager() : null;
+		return (window instanceof org.eclipse.ui.internal.WorkbenchWindow w) ? w.getStatusLineManager() : null;
 	}
 
 	/**
