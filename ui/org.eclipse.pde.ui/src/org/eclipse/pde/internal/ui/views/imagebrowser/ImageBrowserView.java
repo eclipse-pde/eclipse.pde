@@ -118,6 +118,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 
 	private Text txtFilter;
 	private IFilter textPatternFilter;
+	private IFilter pngReplacementFilter;
 	private PageNavigationControl pageNavigationControl;
 
 	private ImageElement imageElement;
@@ -144,6 +145,8 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		mFilters.add(enabledIcons);
 		textPatternFilter = new StringFilter("*"); //$NON-NLS-1$
 		mFilters.add(textPatternFilter);
+		pngReplacementFilter = new PNGReplacementFilter(mFilters);
+		mFilters.add(pngReplacementFilter);
 	}
 
 	@Override
@@ -192,9 +195,18 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 			mFilters.add(textPatternFilter);
 			Combo source = (Combo) e.getSource();
 			switch (source.getSelectionIndex()) {
-				case 0 -> mFilters.add(enabledIcons);
-				case 1 -> mFilters.add(disabledIcons);
-				case 2 -> mFilters.add(wizard);
+				case 0 -> {
+					mFilters.add(enabledIcons);
+					mFilters.add(new PNGReplacementFilter(mFilters));
+				}
+				case 1 -> {
+					mFilters.add(disabledIcons);
+					mFilters.add(new PNGReplacementFilter(mFilters));
+				}
+				case 2 -> {
+					mFilters.add(wizard);
+					mFilters.add(new PNGReplacementFilter(mFilters));
+				}
 			}
 			page = 0; // reset to 1st page
 			scanImages();
@@ -238,8 +250,11 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 				pattern += STAR;
 			}
 			mFilters.remove(textPatternFilter);
+			mFilters.remove(pngReplacementFilter);
 			textPatternFilter = new StringFilter(pattern);
 			mFilters.add(textPatternFilter);
+			pngReplacementFilter = new PNGReplacementFilter(mFilters);
+			mFilters.add(pngReplacementFilter);
 			page = 0; // reset to 1st page
 			scanImages();
 		});
@@ -406,6 +421,51 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 			mUIJob.addImage(element);
 		}
 		imageIndex++;
+	}
+
+	private class PNGReplacementFilter implements IFilter {
+
+		private final List<IFilter> filters;
+
+		public PNGReplacementFilter(final List<IFilter> filters) {
+			removeSelfFromFilters(filters);
+			this.filters = filters;
+		}
+
+		private void removeSelfFromFilters(final List<IFilter> filters) {
+			for (IFilter filter : filters) {
+				if (filter instanceof PNGReplacementFilter) {
+					filters.remove(filter);
+				}
+			}
+		}
+
+		@Override
+		public boolean accept(final ImageElement element) {
+			String fileName = element.getFileName();
+			if (fileName.endsWith(".png") || fileName.endsWith(".gif")) { //$NON-NLS-1$ //$NON-NLS-2$
+				return shouldIncludePNG(element);
+			}
+			return true;
+		}
+
+		private boolean shouldIncludePNG(ImageElement element) {
+			String correspondingSVGName = element.getFileName().replaceAll("\\.[^.]+$", ".svg"); //$NON-NLS-1$ //$NON-NLS-2$
+			ImageElement svgElement = repository.getAllImageElements().get(correspondingSVGName);
+			if (svgElement != null) {
+				return checkSVGRejectedByFilters(svgElement);
+			}
+			return true;
+		}
+
+		private boolean checkSVGRejectedByFilters(ImageElement cachedSvg) {
+			for (final IFilter filter : filters) {
+				if (!filter.accept(cachedSvg)) {
+					return true;
+				}
+			}
+			return false;
+		}
 	}
 
 	@Override
