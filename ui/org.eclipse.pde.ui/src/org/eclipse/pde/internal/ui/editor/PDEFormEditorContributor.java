@@ -93,7 +93,7 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 				return false;
 			}
 			IBaseModel model = fEditor.getAggregateModel();
-			return model instanceof IEditable ? ((IEditable) model).isEditable() : false;
+			return model instanceof IEditable i ? i.isEditable() : false;
 		}
 	}
 

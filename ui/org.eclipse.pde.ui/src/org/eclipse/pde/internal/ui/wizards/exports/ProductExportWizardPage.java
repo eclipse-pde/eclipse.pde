@@ -155,7 +155,7 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 		fExportGroup.initialize(settings, fConfigurationGroup.getProductFile());
 
 		fExportSourceButton.setSelection(settings.getBoolean(S_EXPORT_SOURCE));
-		fExportSourceCombo.setItems(new String[] {PDEUIMessages.ExportWizard_generateAssociatedSourceBundles, PDEUIMessages.ExportWizard_includeSourceInBinaryBundles});
+		fExportSourceCombo.setItems(PDEUIMessages.ExportWizard_generateAssociatedSourceBundles, PDEUIMessages.ExportWizard_includeSourceInBinaryBundles);
 		String sourceComboValue = settings.get(S_EXPORT_SOURCE_FORMAT) != null ? settings.get(S_EXPORT_SOURCE_FORMAT) : PDEUIMessages.ExportWizard_generateAssociatedSourceBundles;
 		fExportSourceCombo.setText(sourceComboValue);
 		fExportSourceCombo.setEnabled(fExportSourceButton.getSelection());

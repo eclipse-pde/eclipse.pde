@@ -204,7 +204,7 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 	public static class FolderContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object parent) {
-			return (parent instanceof IBuildEntry) ? ((IBuildEntry) parent).getTokens() : new Object[0];
+			return (parent instanceof IBuildEntry i) ? i.getTokens() : new Object[0];
 		}
 	}
 
@@ -681,7 +681,7 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 	protected void handleNew() {
 		final String[] libNames = getLibraryNames();
 		IBaseModel pmodel = getPage().getModel();
-		final IPluginModelBase pluginModelBase = (pmodel instanceof IPluginModelBase) ? (IPluginModelBase) pmodel : null;
+		final IPluginModelBase pluginModelBase = (pmodel instanceof IPluginModelBase i) ? i : null;
 
 		BusyIndicator.showWhile(fLibraryViewer.getTable().getDisplay(), () -> {
 			IBuildModel buildModel = getBuildModel();
