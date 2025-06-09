@@ -118,9 +118,7 @@ public class WorkspaceRepository extends AbstractRepository {
 			fProjects.clear();
 			fProjects = null;
 		}
-		if (mElementsCache != null) {
-			mElementsCache.clear();
-		}
+		clearCache();
 		return Status.OK_STATUS;
 	}
 

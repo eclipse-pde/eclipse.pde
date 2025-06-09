@@ -118,6 +118,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 
 	private Text txtFilter;
 	private IFilter textPatternFilter;
+	private IFilter svgFilter = null;
 	private PageNavigationControl pageNavigationControl;
 
 	private ImageElement imageElement;
@@ -144,6 +145,20 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		mFilters.add(enabledIcons);
 		textPatternFilter = new StringFilter("*"); //$NON-NLS-1$
 		mFilters.add(textPatternFilter);
+		svgFilter = (ImageElement element) -> {
+			String fileName = element.getPath();
+			if (!fileName.endsWith(".svg")) { //$NON-NLS-1$
+				String replacementSVGName = fileName.replaceAll("\\.[^.]+$", ".svg"); //$NON-NLS-1$ //$NON-NLS-2$
+				ImageElement replacementSVG = repository.getImageElement(replacementSVGName);
+				if (replacementSVG != null) {
+					return new ArrayList<>(mFilters).stream()
+							.anyMatch(filter -> filter != svgFilter && !filter.accept(replacementSVG));
+				}
+				return true;
+			}
+			return true;
+		};
+		mFilters.add(svgFilter);
 	}
 
 	@Override
@@ -191,10 +206,14 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 			mFilters.clear();
 			mFilters.add(textPatternFilter);
 			Combo source = (Combo) e.getSource();
-			switch (source.getSelectionIndex()) {
+			int selectionIndex = source.getSelectionIndex();
+			switch (selectionIndex) {
 				case 0 -> mFilters.add(enabledIcons);
 				case 1 -> mFilters.add(disabledIcons);
 				case 2 -> mFilters.add(wizard);
+			}
+			if (selectionIndex != source.getItemCount() - 1) {
+				mFilters.add(svgFilter);
 			}
 			page = 0; // reset to 1st page
 			scanImages();

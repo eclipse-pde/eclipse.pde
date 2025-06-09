@@ -22,10 +22,10 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.SequencedMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -45,7 +45,7 @@ import org.eclipse.swt.graphics.ImageData;
 
 public abstract class AbstractRepository extends Job {
 
-	protected List<ImageElement> mElementsCache = new LinkedList<>();
+	private SequencedMap<String, ImageElement> mElementsCache = new LinkedHashMap<>();
 
 	private final IImageTarget mTarget;
 
@@ -55,7 +55,7 @@ public abstract class AbstractRepository extends Job {
 		mTarget = target;
 	}
 
-	private static final String[] KNOWN_EXTENSIONS = new String[] {".gif", ".png"}; //$NON-NLS-1$ //$NON-NLS-2$
+	private static final String[] KNOWN_EXTENSIONS = new String[] { ".gif", ".png", ".svg" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 	@Override
 	protected synchronized IStatus run(IProgressMonitor monitor) {
@@ -69,7 +69,7 @@ public abstract class AbstractRepository extends Job {
 				}
 			} else {
 				// return 1 image from cache
-				mTarget.notifyImage(mElementsCache.remove(0));
+				mTarget.notifyImage(mElementsCache.sequencedValues().removeFirst());
 			}
 		}
 
@@ -77,7 +77,13 @@ public abstract class AbstractRepository extends Job {
 	}
 
 	public synchronized void clearCache() {
-		mElementsCache.clear();
+		if (mElementsCache != null) {
+			mElementsCache.clear();
+		}
+	}
+
+	public ImageElement getImageElement(String key) {
+		return mElementsCache.get(key);
 	}
 
 	protected abstract boolean populateCache(IProgressMonitor monitor);
@@ -211,6 +217,6 @@ public abstract class AbstractRepository extends Job {
 	}
 
 	protected void addImageElement(ImageElement element) {
-		mElementsCache.add(element);
+		mElementsCache.put(element.getPath(), element);
 	}
 }
