@@ -183,8 +183,8 @@ public class FragmentContentPage extends ContentPage {
 
 		fMatchCombo = new Combo(comp, SWT.READ_ONLY | SWT.BORDER);
 		fMatchCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fMatchCombo.setItems(new String[] {"", //$NON-NLS-1$
-				PDEUIMessages.ManifestEditor_MatchSection_equivalent, PDEUIMessages.ManifestEditor_MatchSection_compatible, PDEUIMessages.ManifestEditor_MatchSection_perfect, PDEUIMessages.ManifestEditor_MatchSection_greater});
+		fMatchCombo.setItems("", //$NON-NLS-1$
+						PDEUIMessages.ManifestEditor_MatchSection_equivalent, PDEUIMessages.ManifestEditor_MatchSection_compatible, PDEUIMessages.ManifestEditor_MatchSection_perfect, PDEUIMessages.ManifestEditor_MatchSection_greater);
 		fMatchCombo.setText(fMatchCombo.getItem(0));
 		return comp;
 	}
