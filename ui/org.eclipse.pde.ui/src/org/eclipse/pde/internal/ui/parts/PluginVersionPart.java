@@ -172,7 +172,6 @@ public class PluginVersionPart {
 
 	}
 
-
 	private Text fMinVersionText;
 	private Text fMaxVersionText;
 	private Combo fMinVersionBound;
