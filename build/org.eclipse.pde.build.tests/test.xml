@@ -144,29 +144,16 @@
         id="org.eclipse.platform.feature.group"
         version="" />
       <iu
-        id="org.eclipse.platform.source.feature.group"
-        version="" />
-      <iu
         id="org.eclipse.rcp.feature.group"
-        version="" />
-      <iu
-        id="org.eclipse.rcp.source.feature.group"
         version="" />
       <iu
         id="org.eclipse.jdt.feature.group"
         version="" />
       <iu
-        id="org.eclipse.jdt.source.feature.group"
-        version="" />
-
-      <iu
         id="org.eclipse.equinox.executable"
         version="" />
       <iu
         id="org.eclipse.e4.rcp.feature.group"
-        version="" />
-      <iu
-        id="org.eclipse.e4.rcp.source.feature.group"
         version="" />
       <slicingOptions
         includeOptional="false"
@@ -178,13 +165,9 @@
     <p2.remove.iu>
       <repository location="file://${featureTemp}" />
       <iu id="org.eclipse.jdt.feature.jar" />
-      <iu id="org.eclipse.jdt.source.feature.jar" />
       <iu id="org.eclipse.platform.feature.jar" />
-      <iu id="org.eclipse.platform.source.feature.jar" />
       <iu id="org.eclipse.rcp.feature.jar" />
-      <iu id="org.eclipse.rcp.source.feature.jar" />
       <iu id="org.eclipse.e4.rcp.feature.jar" />
-      <iu id="org.eclipse.e4.rcp.source.feature.jar" />
     </p2.remove.iu>
     <p2.repo2runnable
       destination="file://${installDeltapack}/eclipse"
