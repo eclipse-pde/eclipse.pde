@@ -1,3 +1,10 @@
+def secrets = [
+  [path: 'cbi/eclipse.pde/develocity.eclipse.org', secretValues: [
+    [envVar: 'DEVELOCITY_ACCESS_KEY', vaultKey: 'api-token']
+    ]
+  ]
+]
+
 pipeline {
 	options {
 		timeout(time: 60, unit: 'MINUTES')
@@ -16,17 +23,19 @@ pipeline {
 		stage('Build') {
 			steps {
 				xvnc(useXauthority: true) {
-					sh """
-					mvn clean verify -Dmaven.repo.local=$WORKSPACE/.m2/repository \
-						--fail-at-end --update-snapshots --batch-mode --no-transfer-progress --show-version --errors \
-						-Pbree-libs -Papi-check -Pjavadoc -Ptck \
-						${env.BRANCH_NAME=='master' ? '-Peclipse-sign': ''} \
-						-Dcompare-version-with-baselines.skip=false \
-						-Dmaven.test.failure.ignore=true \
-						-Dtycho.debug.artifactcomparator \
-						-Dpde.docs.baselinemode=fail
-					"""
-				}
+                    withVault([vaultSecrets: secrets]) {
+                        sh """
+                        mvn clean verify -Dmaven.repo.local=$WORKSPACE/.m2/repository \
+                            --fail-at-end --update-snapshots --batch-mode --no-transfer-progress --show-version --errors \
+                            -Pbree-libs -Papi-check -Pjavadoc -Ptck \
+                            ${env.BRANCH_NAME=='master' ? '-Peclipse-sign': ''} \
+                            -Dcompare-version-with-baselines.skip=false \
+                            -Dmaven.test.failure.ignore=false \
+                            -Dtycho.debug.artifactcomparator \
+                            -Dpde.docs.baselinemode=fail
+                        """
+                    }
+                }
 			}
 			post {
 				always {
