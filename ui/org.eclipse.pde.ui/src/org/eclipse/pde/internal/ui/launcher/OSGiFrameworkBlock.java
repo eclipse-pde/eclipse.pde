@@ -122,7 +122,7 @@ public class OSGiFrameworkBlock {
 		label.setText(PDEUIMessages.EquinoxPluginsTab_defaultAuto);
 
 		fDefaultAutoStart = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
-		fDefaultAutoStart.setItems(new String[] {Boolean.toString(true), Boolean.toString(false)});
+		fDefaultAutoStart.setItems(Boolean.toString(true), Boolean.toString(false));
 		fDefaultAutoStart.select(0);
 		fDefaultAutoStart.addSelectionListener(fListener);
 		fDefaultAutoStart.setLayoutData(new GridData());

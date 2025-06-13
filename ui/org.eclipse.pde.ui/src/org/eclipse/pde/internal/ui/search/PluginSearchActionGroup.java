@@ -121,7 +121,7 @@ public class PluginSearchActionGroup extends ActionGroup {
 			object = ((ImportObject) object).getImport();
 		}
 		if (object instanceof IPluginExtensionPoint || object instanceof IPluginImport || (object instanceof IPlugin) || (object instanceof IPluginExtension)) {
-			String basePointID = fModel instanceof IPluginModelBase ? ((IPluginModelBase) fModel).getPluginBase().getId() : null;
+			String basePointID = fModel instanceof IPluginModelBase i ? i.getPluginBase().getId() : null;
 			menu.add(new FindReferencesAction(object, basePointID));
 		}
 	}

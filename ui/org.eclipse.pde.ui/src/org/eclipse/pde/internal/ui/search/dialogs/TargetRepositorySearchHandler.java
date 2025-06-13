@@ -50,7 +50,7 @@ public class TargetRepositorySearchHandler extends AbstractHandler {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 
 		// create the query for packages, features and bundles
-		IQuery<IInstallableUnit> query = QueryUtil.createMatchQuery("properties[$0] == true || providedCapabilities.exists(p | p.namespace == 'osgi.bundle')", new Object[] {MetadataFactory.InstallableUnitDescription.PROP_TYPE_GROUP}); //$NON-NLS-1$
+		IQuery<IInstallableUnit> query = QueryUtil.createMatchQuery("properties[$0] == true || providedCapabilities.exists(p | p.namespace == 'osgi.bundle')", MetadataFactory.InstallableUnitDescription.PROP_TYPE_GROUP); //$NON-NLS-1$
 		//IQuery query = QueryUtil.createIUAnyQuery();
 
 		FilteredIUSelectionDialog dialog = new FilteredIUSelectionDialog(window.getShell(), query);

@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Tree;
  */
 public class CachedCheckboxTableViewer extends CheckboxTableViewer {
 
-	private Set<Object> checkState = new HashSet<>();
+	private final Set<Object> checkState = new HashSet<>();
 	private static final Object[] NO_ELEMENTS = new Object[0];
 
 	/**

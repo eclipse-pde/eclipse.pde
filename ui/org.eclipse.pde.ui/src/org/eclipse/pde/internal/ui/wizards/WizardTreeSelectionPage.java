@@ -101,7 +101,7 @@ public abstract class WizardTreeSelectionPage extends BaseWizardSelectionPage {
 		createDescriptionIn(descriptionComposite);
 
 		initializeViewers();
-		rootSash.setWeights(new int[] {70, 30});
+		rootSash.setWeights(70, 30);
 		setControl(container);
 	}
 
