@@ -13,11 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ds.annotations;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.eclipse.pde.ds.internal.annotations.DSAnnotationVersion;
 import org.eclipse.pde.ds.internal.annotations.NameGenerator;
-import org.junit.jupiter.api.Test;
 
 class NameGeneratorTest {
 
