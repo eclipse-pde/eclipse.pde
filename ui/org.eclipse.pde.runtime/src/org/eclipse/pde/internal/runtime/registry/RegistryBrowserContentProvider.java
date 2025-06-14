@@ -77,12 +77,10 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 			return ((ConfigurationElement) element).getElements();
 		}
 
-		if (element instanceof Bundle) {
+		if (element instanceof Bundle bundle) {
 			if (fRegistryBrowser.getGroupBy() != RegistryBrowser.BUNDLES) { // expands only in Bundles mode
 				return null;
 			}
-
-			Bundle bundle = (Bundle) element;
 
 			List<Object> folders = new ArrayList<>(9);
 
