@@ -26,6 +26,7 @@ pipeline {
                     withVault([vaultSecrets: secrets]) {
                         sh """
                         mvn clean verify -Dmaven.repo.local=$WORKSPACE/.m2/repository \
+                            -Ddevelocity.storage.directory=$WORKSPACE/.m2/.develocity \
                             --fail-at-end --update-snapshots --batch-mode --no-transfer-progress --show-version --errors \
                             -Pbree-libs -Papi-check -Pjavadoc -Ptck \
                             ${env.BRANCH_NAME=='master' ? '-Peclipse-sign': ''} \
