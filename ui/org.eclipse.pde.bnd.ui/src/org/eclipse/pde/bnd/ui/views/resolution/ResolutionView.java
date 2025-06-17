@@ -79,6 +79,7 @@ import org.eclipse.pde.bnd.ui.tasks.BndBuilderCapReqLoader;
 import org.eclipse.pde.bnd.ui.tasks.BndFileCapReqLoader;
 import org.eclipse.pde.bnd.ui.tasks.CapReqLoader;
 import org.eclipse.pde.bnd.ui.tasks.JarFileCapReqLoader;
+import org.eclipse.pde.bnd.ui.tasks.ManifestCapReqLoader;
 import org.eclipse.pde.bnd.ui.tasks.ResourceCapReqLoader;
 import org.eclipse.pde.bnd.ui.views.ViewEventTopics;
 import org.eclipse.swt.SWT;
@@ -223,15 +224,14 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 	}
 
 	private CapReqLoader getLoaderForFile(File file) {
-		CapReqLoader loader;
 		if (Strings.endsWithIgnoreCase(file.getName(), ".bnd")) {
-			loader = new BndFileCapReqLoader(file);
+			return new BndFileCapReqLoader(file);
 		} else if (Strings.endsWithIgnoreCase(file.getName(), ".jar")) {
-			loader = new JarFileCapReqLoader(file);
-		} else {
-			loader = null;
+			return new JarFileCapReqLoader(file);
+		} else if (Strings.endsWithIgnoreCase(file.getName(), ".mf")) {
+			return new ManifestCapReqLoader(file);
 		}
-		return loader;
+		return null;
 	}
 
 	@Override
@@ -258,8 +258,7 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 
 		reqsLabel = new Label(reqsPanel, SWT.NONE);
 		reqsLabel.setText("Requirements:");
-		setContentDescription(
-			"Click on one or multiple resources (bnd.bnd file, .jar file, repository bundle or repository) to see their requirements and capabilities.");
+		setContentDescription("Select on one or more resources to see their requirements and capabilities.");
 		reqsTree = new Tree(reqsPanel, SWT.FULL_SELECTION | SWT.MULTI | SWT.BORDER);
 		reqsTree.setHeaderVisible(false);
 		reqsTree.setLinesVisible(false);
@@ -624,42 +623,46 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 		while (iter.hasNext()) {
 
 			Object element = iter.next();
-			CapReqLoader loader = null;
-
-			File file = Adapters.adapt(element, File.class);
-			if (file != null) {
-				loader = getLoaderForFile(file);
-			} else {
-				IResource eresource = Adapters.adapt(element, IResource.class);
-				if (eresource != null) {
-					IPath location = eresource.getLocation();
-					if (location != null) {
-						loader = getLoaderForFile(location.toFile());
+			if (element instanceof Repository repo) {
+				ResourceUtils.getAllResources(repo).stream().filter(r -> {
+					try {
+						return ResourceUtils.getContentCapabilities(r) != null;
+					} catch (Exception e) {
+						return false;
 					}
-				} else if (element instanceof Repository repo) {
-					ResourceUtils.getAllResources(repo)
-						.stream()
-						.filter(r -> {
-							try {
-								return ResourceUtils.getContentCapabilities(r) != null;
-							} catch (Exception e) {
-								return false;
-							}
-						})
-						.map(ResourceCapReqLoader::new)
-						.forEach(result::add);
-				} else if (element instanceof RepositoryResourceElement) {
-					Resource resource = ((RepositoryResourceElement) element).getResource();
-					loader = new ResourceCapReqLoader(resource);
+				}).map(ResourceCapReqLoader::new).forEach(result::add);
+			} else {
+				CapReqLoader loader = findLoaderForElement(element);
+				if (loader != null) {
+					result.add(loader);
 				}
-			}
-
-			if (loader != null) {
-				result.add(loader);
 			}
 		}
 
 		return result;
+	}
+
+	protected CapReqLoader findLoaderForElement(Object element) {
+		CapReqLoader loader = Adapters.adapt(element, CapReqLoader.class);
+		if (loader != null) {
+			return loader;
+		}
+		if (element instanceof RepositoryResourceElement) {
+			Resource resource = ((RepositoryResourceElement) element).getResource();
+			return new ResourceCapReqLoader(resource);
+		}
+		File file = Adapters.adapt(element, File.class);
+		if (file != null) {
+			return getLoaderForFile(file);
+		}
+		IResource resource = Adapters.adapt(element, IResource.class);
+		if (resource != null) {
+			IPath location = resource.getLocation();
+			if (location != null) {
+				return getLoaderForFile(location.toFile());
+			}
+		}
+		return null;
 	}
 
 	void executeAnalysis() {
