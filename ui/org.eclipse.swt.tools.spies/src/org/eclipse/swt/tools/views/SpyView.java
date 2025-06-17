@@ -61,7 +61,9 @@ public class SpyView extends ViewPart {
 		timer = new Runnable() {
 			@Override
 			public void run() {
-				if (output == null || output.isDisposed() || !spyAction.isChecked()) return;
+				if (output == null || output.isDisposed() || !spyAction.isChecked()) {
+					return;
+				}
 				Display display = output.getDisplay();
 				Control control = display.getCursorControl();
 				if (control != lastControl) {
@@ -86,7 +88,9 @@ public class SpyView extends ViewPart {
 							text.append("\nPeers:\n");
 							for (Control peer : parent.getChildren()) {
 								text.append("\t");
-								if (peer == control) text.append("*");
+								if (peer == control) {
+									text.append("*");
+								}
 								text.append(getName(peer)+"@"+getOSHandle(peer));
 								text.append(" Layout Data: "+getName(peer.getLayoutData()));
 								text.append(" Bounds: "+peer.getBounds());
@@ -134,7 +138,9 @@ public class SpyView extends ViewPart {
 	}
 
 	String getName(Object object) {
-		if (object == null) return "null";
+		if (object == null) {
+			return "null";
+		}
 		String name = object.toString ();
 		if (fullyQualifiedAction.isChecked()) {
 			int index = name.indexOf(' ');
@@ -150,7 +156,9 @@ public class SpyView extends ViewPart {
 	 */
 	@Override
 	public void setFocus() {
-		if (output != null & !output.isDisposed()) output.setFocus();
+		if (output != null & !output.isDisposed()) {
+			output.setFocus();
+		}
 	}
 
 	private String getOSHandle(Control control) {
@@ -158,7 +166,9 @@ public class SpyView extends ViewPart {
 			for (String fieldName : new String[]{"handle", "view"}) {
 				try {
 					field = control.getClass().getField(fieldName);
-					if (field != null) break;
+					if (field != null) {
+						break;
+					}
 				} catch (Throwable e) {}
 			}
 		}
@@ -509,7 +519,9 @@ public class SpyView extends ViewPart {
 			result += "DOUBLE_BUFFERED | ";
 		}
 		int lastOr = result.lastIndexOf("|");
-		if (lastOr == result.length() - 2 ) result = result.substring(0, result.length() - 2);
+		if (lastOr == result.length() - 2 ) {
+			result = result.substring(0, result.length() - 2);
+		}
 		return result;
 	}
 }
