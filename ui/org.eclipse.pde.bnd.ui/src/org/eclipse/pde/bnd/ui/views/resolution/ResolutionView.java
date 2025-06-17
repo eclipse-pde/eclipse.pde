@@ -69,7 +69,7 @@ import org.eclipse.pde.bnd.ui.FilterPanelPart;
 import org.eclipse.pde.bnd.ui.HelpButtons;
 import org.eclipse.pde.bnd.ui.Resources;
 import org.eclipse.pde.bnd.ui.internal.PartAdapter;
-import org.eclipse.pde.bnd.ui.model.repo.RepositoryResourceElement;
+import org.eclipse.pde.bnd.ui.model.repo.ResourceProvider;
 import org.eclipse.pde.bnd.ui.model.resolution.CapReqMapContentProvider;
 import org.eclipse.pde.bnd.ui.model.resolution.CapabilityLabelProvider;
 import org.eclipse.pde.bnd.ui.model.resolution.RequirementWrapper;
@@ -647,17 +647,21 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 		if (loader != null) {
 			return loader;
 		}
-		if (element instanceof RepositoryResourceElement) {
-			Resource resource = ((RepositoryResourceElement) element).getResource();
+		ResourceProvider resourceProvider = Adapters.adapt(element, ResourceProvider.class);
+		if (resourceProvider != null) {
+			return new ResourceCapReqLoader(resourceProvider.getResource());
+		}
+		Resource resource = Adapters.adapt(element, Resource.class);
+		if (resource != null) {
 			return new ResourceCapReqLoader(resource);
 		}
 		File file = Adapters.adapt(element, File.class);
 		if (file != null) {
 			return getLoaderForFile(file);
 		}
-		IResource resource = Adapters.adapt(element, IResource.class);
-		if (resource != null) {
-			IPath location = resource.getLocation();
+		IResource eclipseResource = Adapters.adapt(element, IResource.class);
+		if (eclipseResource != null) {
+			IPath location = eclipseResource.getLocation();
 			if (location != null) {
 				return getLoaderForFile(location.toFile());
 			}

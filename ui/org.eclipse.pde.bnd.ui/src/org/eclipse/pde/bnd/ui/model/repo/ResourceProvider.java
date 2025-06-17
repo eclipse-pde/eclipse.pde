@@ -15,6 +15,13 @@ package org.eclipse.pde.bnd.ui.model.repo;
 
 import org.osgi.resource.Resource;
 
+/**
+ * Interface implemented by objects that can provide a resource
+ */
 public interface ResourceProvider {
+
+	/**
+	 * @return the resource associated with this object
+	 */
 	Resource getResource();
 }
