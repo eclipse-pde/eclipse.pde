@@ -13,19 +13,28 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.bnd;
 
+import java.io.InputStream;
+import java.util.jar.Manifest;
+
 import org.bndtools.versioncontrol.ignores.manager.api.VersionControlIgnoresManager;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.AdapterTypes;
 import org.eclipse.core.runtime.IAdapterFactory;
+import org.eclipse.pde.internal.core.natures.PluginProject;
+import org.eclipse.pde.internal.core.project.PDEProject;
+import org.osgi.resource.Resource;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 import aQute.bnd.build.Project;
+import aQute.bnd.osgi.resource.ResourceBuilder;
 
 @Component(service = IAdapterFactory.class)
-@AdapterTypes(adaptableClass = IProject.class, adapterNames = { Project.class, VersionControlIgnoresManager.class })
+@AdapterTypes(adaptableClass = IProject.class, adapterNames = { Project.class, VersionControlIgnoresManager.class,
+		Resource.class })
 public class PdeBndAdapter implements IAdapterFactory {
 
 	@Reference(cardinality = ReferenceCardinality.OPTIONAL, policy = ReferencePolicy.DYNAMIC)
@@ -45,6 +54,24 @@ public class PdeBndAdapter implements IAdapterFactory {
 		}
 		if (adapterType == VersionControlIgnoresManager.class) {
 			return adapterType.cast(versionControlIgnoresManager);
+		}
+		if (adapterType == Resource.class) {
+			if (adaptableObject instanceof IProject project) {
+				if (PluginProject.isPluginProject(project)) {
+					IFile manifestFile = PDEProject.getManifest(project);
+					if (manifestFile != null && manifestFile.exists()) {
+						Manifest manifest;
+						try (InputStream stream = manifestFile.getContents()) {
+							manifest = new Manifest(stream);
+						} catch (Exception e) {
+							return null;
+						}
+						ResourceBuilder builder = new ResourceBuilder();
+						builder.addManifest(manifest);
+						return adapterType.cast(builder.build());
+					}
+				}
+			}
 		}
 		return null;
 	}

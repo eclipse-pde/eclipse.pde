@@ -18,7 +18,7 @@ One problem for such a reusable component is that it usually needs to get holds 
 To mitigate we use the [Eclipse Adapter Pattern](https://www.eclipse.org/articles/Article-Adapters/) as it is widely used in Eclipse, flexible and allows
 the use of [OSGi services / Dependency Injection](https://eclipse.dev/eclipse/news/4.18/platform_isv.php#dialog-adapterfactory-as-service) already.
 
-### The IProject adapter
+### The `IProject` adapter
 
 Components need to learn the project and workspace of a bndlib backed project, for this the very first step for an integration is to provide an adapter that can
 transform an (Eclipse) `IProject` into a (bndlib) `Project` (from were the Workspace then can be derived), an example might look like this:
@@ -46,6 +46,18 @@ public class MyBndPluginAdapter implements IAdapterFactory {
 }
 ```
 
+## The `Resource` Adapter
+
+Some components might want to learn about an (OSGi) `Resource` (e.g. a Bundle) for a particular object. 
+To support such use-case one should provide an Adapter from tooling specific objects to (OSGi) `Resource`.
+
+For example the previous Adapter might be enhanced to support an adaption from an (Eclipse) `IProject` to an
+(OSGi) `Resource` if it represents a bundle and the tolling knows how to transform the specific project metadata into an universal
+`Resource` representation. That way it is possible to select the project and show its requirements and
+capabilities in the OSGi Resolution View without specific knowledge on how this process works.
+
+### Further Information
+
 Some relevant 'glue' classes for Bnd <-> PDE interaction, to have a look at:
 
 - `org.eclipse.pde.bnd.ui.Central`
@@ -63,6 +75,7 @@ it currently offers these components:
 
 - [bnd templates](https://eclipse.dev/eclipse/news/4.31/pde.php#bndtemplates)
 - [osgi repositories view](https://eclipse.dev/eclipse/news/4.32/pde.php#osgirepositories)
+- [OSGi Resolution View](https://eclipse.dev/eclipse/markdown/?f=news/4.36/pde.md#new-osgi-resolution-view)
 - Formating of bnd files, quick fixes, completion proposals
 - ... more to come ...
 
