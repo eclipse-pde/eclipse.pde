@@ -30,7 +30,7 @@ import aQute.bnd.osgi.resource.ResourceBuilder;
  */
 public class ManifestCapReqLoader implements CapReqLoader {
 
-	private File manifestFile;
+	private final File manifestFile;
 	private ResourceCapReqLoader resourceCapReqLoader;
 
 	public ManifestCapReqLoader(File manifestFile) {
