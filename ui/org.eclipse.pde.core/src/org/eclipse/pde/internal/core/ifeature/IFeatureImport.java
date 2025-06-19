@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.core.ifeature;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.IPluginReference;
+import org.eclipse.pde.core.target.ITargetDefinition;
 
 public interface IFeatureImport extends IFeatureObject, IPluginReference {
 	String P_TYPE = "type"; //$NON-NLS-1$
@@ -36,4 +37,6 @@ public interface IFeatureImport extends IFeatureObject, IPluginReference {
 	String getFilter();
 
 	void setFilter(String filter) throws CoreException;
+
+	boolean matchesEnvironment(ITargetDefinition target);
 }

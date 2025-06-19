@@ -207,7 +207,7 @@ public class BundleLauncherHelper {
 			if (addRequirements) {
 				IFeatureImport[] featureImports = feature.getImports();
 				for (IFeatureImport featureImport : featureImports) {
-					if (featureImport.getType() == IFeatureImport.PLUGIN) {
+					if (featureImport.getType() == IFeatureImport.PLUGIN && featureImport.matchesEnvironment(target)) {
 						IPluginModelBase plugin = getRequiredPlugin(featureImport.getId(), featureImport.getVersion(), featureImport.getMatch(), pluginResolution);
 						if (plugin != null) {
 							launchPlugins.add(plugin);
