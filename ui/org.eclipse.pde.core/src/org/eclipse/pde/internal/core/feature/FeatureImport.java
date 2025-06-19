@@ -14,13 +14,21 @@
 package org.eclipse.pde.internal.core.feature;
 
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.equinox.internal.p2.metadata.InstallableUnit;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.metadata.expression.IMatchExpression;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.target.ITargetDefinition;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
@@ -208,5 +216,29 @@ public class FeatureImport extends VersionableObject implements IFeatureImport {
 	public void setFilter(String filter) throws CoreException {
 		this.fFilter = filter;
 
+	}
+
+	@SuppressWarnings("restriction")
+	@Override
+	public boolean matchesEnvironment(ITargetDefinition target) {
+		String filter = getFilter();
+		if (filter == null || filter.isBlank()) {
+			return true;
+		}
+		IMatchExpression<IInstallableUnit> expression = InstallableUnit.parseFilter(filter);
+		Map<String, String> context = new HashMap<>();
+		addProperty(ICoreConstants.OSGI_OS, target.getOS(), Platform.getOS(), context);
+		addProperty(ICoreConstants.OSGI_WS, target.getWS(), Platform.getWS(), context);
+		addProperty(ICoreConstants.OSGI_ARCH, target.getArch(), Platform.getOSArch(), context);
+		addProperty(ICoreConstants.OSGI_NL, target.getNL(), Platform.getNL(), context);
+		return expression.isMatch(InstallableUnit.contextIU(context));
+	}
+
+	private static void addProperty(String key, String property, String defaultValue, Map<String, String> context) {
+		if (property == null || property.isBlank()) {
+			context.put(key, defaultValue);
+			return;
+		}
+		context.put(key, property);
 	}
 }
