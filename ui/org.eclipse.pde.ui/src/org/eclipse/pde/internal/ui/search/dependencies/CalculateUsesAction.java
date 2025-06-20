@@ -14,8 +14,8 @@
 package org.eclipse.pde.internal.ui.search.dependencies;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.WorkspaceJob;
@@ -70,7 +70,7 @@ public class CalculateUsesAction extends Action {
 		return new CalculateUsesOperation(fProject, fModel) {
 
 			@Override
-			protected void handleSetUsesDirectives(final Map<String, HashSet<String>> pkgsAndUses) {
+			protected void handleSetUsesDirectives(final Map<String, Set<String>> pkgsAndUses) {
 				Display.getDefault().asyncExec(() -> {
 					if (pkgsAndUses.isEmpty()) {
 						return;
