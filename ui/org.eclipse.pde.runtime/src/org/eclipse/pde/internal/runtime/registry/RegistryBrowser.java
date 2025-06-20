@@ -281,13 +281,11 @@ public class RegistryBrowser extends ViewPart {
 		fTreeViewer.setLabelProvider(fLabelProvider);
 		fTreeViewer.setUseHashlookup(true);
 		fTreeViewer.setComparator(new ViewerComparator() {
-			@SuppressWarnings({ "rawtypes", "unchecked" })
+			@SuppressWarnings({ "unchecked" })
 			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				// let Comparables compare themselves
-				if (e1 instanceof Comparable c1 && e2 instanceof Comparable && e1.getClass().equals(e2.getClass())) {
-					Comparable c2 = (Comparable) e2;
-
+				if (e1 instanceof Comparable c1 && e2 instanceof Comparable c2 && e1.getClass().equals(e2.getClass())) {
 					return c1.compareTo(c2);
 				}
 
