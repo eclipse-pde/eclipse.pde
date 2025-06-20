@@ -19,10 +19,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -66,7 +66,7 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 			if (packages.isEmpty()) {
 				return;
 			}
-			Map<String, HashSet<String>> pkgsAndUses = findPackageReferences(packages, monitor);
+			Map<String, Set<String>> pkgsAndUses = findPackageReferences(packages, monitor);
 			if (monitor.isCanceled()) {
 				return;
 			}
@@ -94,9 +94,9 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 		return list;
 	}
 
-	protected Map<String, HashSet<String>> findPackageReferences(Collection<String> packages, IProgressMonitor monitor) {
+	protected Map<String, Set<String>> findPackageReferences(Collection<String> packages, IProgressMonitor monitor) {
 		IJavaProject jp = JavaCore.create(fProject);
-		HashMap<String, HashSet<String>> pkgsAndUses = new HashMap<>();
+		Map<String, Set<String>> pkgsAndUses = new HashMap<>();
 		IPackageFragment[] frags = PDEJavaHelper.getPackageFragments(jp, Collections.emptySet(), false);
 		SubMonitor subMonitor = SubMonitor.convert(monitor, frags.length * 2);
 		for (IPackageFragment fragment : frags) {
@@ -107,11 +107,11 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 			iterationMonitor.subTask(
 					NLS.bind(PDEUIMessages.CalculateUsesOperation_calculatingDirective, fragment.getElementName()));
 			if (packages.contains(fragment.getElementName())) {
-				HashSet<String> pkgs = new HashSet<>();
+				Set<String> pkgs = new TreeSet<>();
 				pkgsAndUses.put(fragment.getElementName(), pkgs);
 				try {
 					findReferences(fragment.getCompilationUnits(), pkgs, iterationMonitor.split(1), false);
-					findReferences(fragment.getClassFiles(), pkgs, iterationMonitor.split(1), true);
+					findReferences(fragment.getOrdinaryClassFiles(), pkgs, iterationMonitor.split(1), true);
 				} catch (JavaModelException e) {
 				}
 			}
@@ -205,14 +205,14 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 		}
 	}
 
-	protected void handleSetUsesDirectives(Map<String, HashSet<String>> pkgsAndUses) {
+	protected void handleSetUsesDirectives(Map<String, Set<String>> pkgsAndUses) {
 		if (pkgsAndUses.isEmpty()) {
 			return;
 		}
 		setUsesDirectives(pkgsAndUses);
 	}
 
-	protected void setUsesDirectives(Map<String, HashSet<String>> pkgsAndUses) {
+	protected void setUsesDirectives(Map<String, Set<String>> pkgsAndUses) {
 		IBundle bundle = fModel.getBundleModel().getBundle();
 		IManifestHeader header = bundle.getManifestHeader(Constants.EXPORT_PACKAGE);
 		// header will not equal null b/c we would not get this far (ie. no exported packages so we would have returned earlier
@@ -226,7 +226,7 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 		}
 	}
 
-	protected String getDirectiveValue(String pkgName, Map<String, HashSet<String>> pkgsAndUses) {
+	protected String getDirectiveValue(String pkgName, Map<String, Set<String>> pkgsAndUses) {
 		Set<String> usesPkgs = pkgsAndUses.get(pkgName);
 		usesPkgs.remove(pkgName);
 		StringBuilder buffer = null;
