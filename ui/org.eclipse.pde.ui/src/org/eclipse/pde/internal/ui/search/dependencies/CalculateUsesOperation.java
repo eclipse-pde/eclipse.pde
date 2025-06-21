@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
@@ -131,8 +132,8 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 		if (type == null) {
 			return;
 		}
-		// ignore private classes
-		if (Flags.isPrivate(type.getFlags())) {
+		// ignore (package) private classes
+		if (isBundlePrivateMember(type)) {
 			return;
 		}
 
@@ -142,7 +143,7 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, methods.length * 3 + fields.length + 2 + subTypes.length);
 
 		for (int i = 0; i < methods.length; i++) {
-			if (!Flags.isPrivate(methods[i].getFlags())) {
+			if (!isBundlePrivateMember(methods[i])) {
 				String methodSignature = methods[i].getSignature();
 				addPackages(Signature.getThrownExceptionTypes(methodSignature), pkgs, type, binary,
 						subMonitor.split(1));
@@ -151,7 +152,7 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 			}
 		}
 		for (int i = 0; i < fields.length; i++) {
-			if (!Flags.isPrivate(fields[i].getFlags())) {
+			if (!isBundlePrivateMember(fields[i])) {
 				addPackage(fields[i].getTypeSignature(), pkgs, type, binary, subMonitor.split(1));
 			}
 		}
@@ -162,6 +163,11 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 		for (IType subType : subTypes) {
 			findReferences(subType, pkgs, binary, subMonitor.split(1));
 		}
+	}
+
+	private static boolean isBundlePrivateMember(IMember type) throws JavaModelException {
+		int flags = type.getFlags();
+		return Flags.isPrivate(flags) || Flags.isPackageDefault(type.getFlags());
 	}
 
 	protected final void addPackage(String typeSignature, Set<String> pkgs, IType type, boolean binary,
