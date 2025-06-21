@@ -118,6 +118,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 
 	private Text txtFilter;
 	private IFilter textPatternFilter;
+	private IFilter svgFilter;
 	private PageNavigationControl pageNavigationControl;
 
 	private ImageElement imageElement;
@@ -144,6 +145,8 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		mFilters.add(enabledIcons);
 		textPatternFilter = new StringFilter("*"); //$NON-NLS-1$
 		mFilters.add(textPatternFilter);
+		svgFilter = new SvgFilter(mFilters);
+		mFilters.add(svgFilter);
 	}
 
 	@Override
@@ -192,9 +195,18 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 			mFilters.add(textPatternFilter);
 			Combo source = (Combo) e.getSource();
 			switch (source.getSelectionIndex()) {
-				case 0 -> mFilters.add(enabledIcons);
-				case 1 -> mFilters.add(disabledIcons);
-				case 2 -> mFilters.add(wizard);
+				case 0 -> {
+					mFilters.add(enabledIcons);
+					mFilters.add(svgFilter);
+				}
+				case 1 -> {
+					mFilters.add(disabledIcons);
+					mFilters.add(svgFilter);
+				}
+				case 2 -> {
+					mFilters.add(wizard);
+					mFilters.add(svgFilter);
+				}
 			}
 			page = 0; // reset to 1st page
 			scanImages();
@@ -406,6 +418,38 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 			mUIJob.addImage(element);
 		}
 		imageIndex++;
+	}
+
+	private class SvgFilter implements IFilter {
+
+		private final List<IFilter> filters;
+
+		public SvgFilter(final List<IFilter> filters) {
+			this.filters = filters;
+		}
+
+		@Override
+		public boolean accept(final ImageElement element) {
+			String fileName = element.getPath();
+			if (!fileName.endsWith(".svg")) { //$NON-NLS-1$
+				return shouldIncludeRasterizedImage(element);
+			}
+			return true;
+		}
+
+		private boolean shouldIncludeRasterizedImage(ImageElement element) {
+			String correspondingSVGName = element.getPath().replaceAll("\\.[^.]+$", ".svg"); //$NON-NLS-1$ //$NON-NLS-2$
+			ImageElement svgElement = repository.getImageElement(correspondingSVGName);
+			if (svgElement != null) {
+				return checkSVGRejectedByFilters(svgElement);
+			}
+			return true;
+		}
+
+		private boolean checkSVGRejectedByFilters(ImageElement cachedSvg) {
+			return new ArrayList<>(filters).stream()
+					.anyMatch(filter -> !(filter instanceof SvgFilter || filter.accept(cachedSvg)));
+		}
 	}
 
 	@Override

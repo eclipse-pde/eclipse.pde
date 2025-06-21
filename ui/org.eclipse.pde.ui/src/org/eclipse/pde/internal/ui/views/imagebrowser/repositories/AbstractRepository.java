@@ -21,9 +21,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
@@ -48,6 +50,7 @@ public abstract class AbstractRepository extends Job {
 	protected List<ImageElement> mElementsCache = new LinkedList<>();
 
 	private final IImageTarget mTarget;
+	protected Map<String, ImageElement> allImageElements = new HashMap<>();
 
 	public AbstractRepository(IImageTarget target) {
 		super(PDEUIMessages.AbstractRepository_ScanForUI);
@@ -55,7 +58,7 @@ public abstract class AbstractRepository extends Job {
 		mTarget = target;
 	}
 
-	private static final String[] KNOWN_EXTENSIONS = new String[] {".gif", ".png"}; //$NON-NLS-1$ //$NON-NLS-2$
+	private static final String[] KNOWN_EXTENSIONS = new String[] { ".gif", ".png", ".svg" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 	@Override
 	protected synchronized IStatus run(IProgressMonitor monitor) {
@@ -78,6 +81,10 @@ public abstract class AbstractRepository extends Job {
 
 	public synchronized void clearCache() {
 		mElementsCache.clear();
+	}
+
+	public ImageElement getImageElement(String key) {
+		return allImageElements.get(key);
 	}
 
 	protected abstract boolean populateCache(IProgressMonitor monitor);
@@ -142,7 +149,10 @@ public abstract class AbstractRepository extends Job {
 			while ((entries.hasMoreElements()) && (!monitor.isCanceled())) {
 				ZipEntry entry = entries.nextElement();
 				if (isImageName(entry.getName())) {
-					addImageElement(new ImageElement(() -> createImageData(jarFile, entry), jarFile.getName(), entry.getName()));
+					ImageElement imageElement = new ImageElement(() -> createImageData(jarFile, entry),
+							jarFile.getName(), entry.getName());
+					allImageElements.put(imageElement.getPath(), imageElement);
+					addImageElement(imageElement);
 				}
 			}
 		} catch (IOException e) {
@@ -177,7 +187,10 @@ public abstract class AbstractRepository extends Job {
 
 						} else {
 							if (isImage(resource)) {
-								addImageElement(new ImageElement(() -> createImageData(resource), pluginName, resource.getAbsolutePath().substring(directoryPathLength)));
+								ImageElement imageElement = new ImageElement(() -> createImageData(resource),
+										pluginName, resource.getAbsolutePath().substring(directoryPathLength));
+								allImageElements.put(imageElement.getPath(), imageElement);
+								addImageElement(imageElement);
 							}
 						}
 					}

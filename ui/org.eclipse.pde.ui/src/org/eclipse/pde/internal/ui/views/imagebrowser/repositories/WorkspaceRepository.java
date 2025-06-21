@@ -80,7 +80,10 @@ public class WorkspaceRepository extends AbstractRepository {
 								// look for image files
 								if (isImageName(proxy.getName())) {
 									IFile resource = (IFile) proxy.requestResource();
-									addImageElement(new ImageElement(() -> createImageData(resource), pluginName, resource.getProjectRelativePath().toPortableString()));
+									ImageElement imageElement = new ImageElement(() -> createImageData(resource),
+											pluginName, resource.getProjectRelativePath().toPortableString());
+									allImageElements.put(imageElement.getFileName(), imageElement);
+									addImageElement(imageElement);
 
 									if (monitor.isCanceled()) {
 										throw new OperationCanceledException();
