@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.pde.osgitest.dependencies.feature"
+      label="%featureName"
+      version="1.0.0.qualifier"
+      license-feature="org.eclipse.license"
+      license-feature-version="0.0.0">
+
+   <description url="https://github.com/eclipse-osgi-technology/osgi-test">
+      %description
+   </description>
+
+   <copyright>
+      %copyright
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <requires>
+      <import plugin="org.osgi.test.common"/>
+      <import plugin="org.osgi.test.junit5"/>
+      <import plugin="org.osgi.test.junit5.cm"/>
+      <import plugin="org.osgi.test.junit4"/>
+      <import plugin="org.osgi.test.assertj.framework"/>
+      <import plugin="org.osgi.test.assertj.log"/>
+      <import plugin="org.osgi.test.assertj.promise"/>
+   </requires>
+
+</feature>
