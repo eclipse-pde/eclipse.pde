@@ -25,3 +25,4 @@ Export-Package: org.eclipse.pde.internal.launching;x-friends:="org.eclipse.pde.u
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin
 Automatic-Module-Name: org.eclipse.pde.launching
+Import-Package: aQute.bnd.osgi;version="[7.2.0,8.0.0)"

@@ -17,7 +17,10 @@
  *******************************************************************************/
 package org.eclipse.pde.launching;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,11 +34,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.jar.JarOutputStream;
+import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -47,11 +53,13 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMRunner;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IFragmentModel;
@@ -64,6 +72,7 @@ import org.eclipse.pde.internal.core.DependencyManager;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.core.bnd.PdeProjectAnalyzer;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.launching.IPDEConstants;
@@ -77,6 +86,7 @@ import org.eclipse.pde.internal.launching.launcher.LaunchPluginValidator;
 import org.eclipse.pde.internal.launching.launcher.LauncherUtils;
 import org.eclipse.pde.internal.launching.launcher.RequirementHelper;
 import org.eclipse.pde.internal.launching.launcher.VMHelper;
+import org.osgi.framework.Constants;
 
 /**
  * A launch delegate for launching JUnit Plug-in tests.
@@ -220,6 +230,33 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		// Create the platform configuration for the runtime workbench
 		String productID = LaunchConfigurationHelper.getProductID(configuration);
 		IPluginBase testPlugin = getTestPlugin(configuration);
+		IJavaProject javaProject = getJavaProject(configuration);
+		if (isJUnitContainerProject(javaProject)) {
+			//if this is a junit container project it means a user can use additional classes (from the junit container and possible other) that
+			//are not required to be imported, we compute a fragment manifest here to add additional imports ...
+			try (PdeProjectAnalyzer analyzer = new PdeProjectAnalyzer(javaProject.getProject(), true)) {
+				analyzer.setImportPackage("*;resolution:=optional"); //$NON-NLS-1$
+				String bsn = testPlugin.getId() + "-additional-test-probe-imports"; //$NON-NLS-1$
+				analyzer.setBundleSymbolicName(bsn);
+				analyzer.set(Constants.FRAGMENT_HOST, testPlugin.getId());
+				analyzer.set(Constants.BUNDLE_ACTIVATIONPOLICY, Constants.ACTIVATION_LAZY);
+				Manifest calcManifest = analyzer.calcManifest();
+				ByteArrayOutputStream out = new ByteArrayOutputStream();
+				calcManifest.write(out);
+				Path tmpPath = Path.of(fWorkspaceLocation, testPlugin.getId() + "-fragment.jar"); //$NON-NLS-1$
+				Files.createDirectories(tmpPath.getParent());
+				try (JarOutputStream stream = new JarOutputStream(Files.newOutputStream(tmpPath), calcManifest)) {
+					//TODO Equinox since a while contains the 'data:' URL handler can we use that instead of a real file on disk? 
+				}
+				tmpPath.toFile().deleteOnExit();
+				Map<String, String> manifest = ManifestElement.parseBundleManifest(new ByteArrayInputStream(out.toByteArray()), null);
+				ExtraBundleModel extraBundleModel = new ExtraBundleModel(tmpPath, manifest);
+				fAllBundles.put(bsn, List.of(extraBundleModel));
+				BundleLauncherHelper.addDefaultStartingBundle(fModels, extraBundleModel);
+			} catch (Exception e) {
+				ILog.get().error("Can't compute additional imports for test project!", e); //$NON-NLS-1$
+			}
+		}
 		LaunchConfigurationHelper.createConfigIniFile(configuration, productID, fAllBundles, null, fModels, getConfigurationDirectory(configuration));
 		TargetPlatformHelper.checkPluginPropertiesConsistency(fAllBundles, getConfigurationDirectory(configuration));
 
@@ -229,7 +266,6 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		// Specify the output folder names
 		programArgs.add("-dev"); //$NON-NLS-1$
 
-		IJavaProject javaProject = getJavaProject(configuration);
 		Properties devProperties = ClasspathHelper.getDevEntriesProperties(fAllBundles, true);
 		if (javaProject != null) {
 			// source-folders of type "test" are omitted in the previous search so the need to be added here as they are part of the test but not part of the build.properties
@@ -290,6 +326,27 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		if (configuration.getAttribute(attrRunWithJunitPlatformAnnotation, false)) {
 			programArgs.add("-runasjunit5"); //$NON-NLS-1$
 		}
+	}
+
+	private boolean isJUnitContainerProject(IJavaProject javaProject) {
+		if (javaProject != null) {
+			try {
+				IClasspathEntry[] classpath = javaProject.getRawClasspath();
+				for (IClasspathEntry cp : classpath) {
+					if (cp.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
+						if (ICoreConstants.JUNIT5_CONTAINER_PATH.equals(cp.getPath())) {
+							return true;
+						}
+						if (ICoreConstants.JUNIT4_CONTAINER_PATH.equals(cp.getPath())) {
+							return true;
+						}
+					}
+				}
+			} catch (JavaModelException e) {
+				// can't check, fall through and assume not enabled...
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -505,7 +562,6 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 			requiredPlugins.add("junit-platform-launcher"); //$NON-NLS-1$
 			requiredPlugins.add("junit-jupiter-engine"); //$NON-NLS-1$
 		}
-
 		Set<BundleDescription> addedRequirements = new HashSet<>();
 		addAbsentRequirements(requiredPlugins, addedRequirements);
 
