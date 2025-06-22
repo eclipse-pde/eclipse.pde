@@ -374,4 +374,7 @@ public interface ICoreConstants {
 	// default value for
 	String TEST_PLUGIN_PATTERN_DEFAULTVALUE = "[.]test[s]?$|[.]tests[.]"; //$NON-NLS-1$
 
+	IPath JUNIT_CONTAINER_PATH = new org.eclipse.core.runtime.Path("org.eclipse.jdt.junit.JUNIT_CONTAINER"); //$NON-NLS-1$
+	IPath JUNIT5_CONTAINER_PATH = JUNIT_CONTAINER_PATH.append("5"); //$NON-NLS-1$
+	IPath JUNIT4_CONTAINER_PATH = JUNIT_CONTAINER_PATH.append("4"); //$NON-NLS-1$
 }
