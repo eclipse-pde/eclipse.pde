@@ -13,8 +13,12 @@
  *******************************************************************************/
 package org.eclipse.pde.core.plugin;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.IModelChangeProvider;
@@ -64,7 +68,13 @@ public interface IPluginModelBase extends ISharedExtensionsModel, IModelChangePr
 	 *   Since 3.7, use {@link PluginRegistry#createBuildModel(IPluginModelBase)} instead.
 	 */
 	@Deprecated
-	IBuildModel getBuildModel();
+	default IBuildModel getBuildModel() {
+		try {
+			return PluginRegistry.createBuildModel(this);
+		} catch (CoreException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	/**
 	 * Returns a top-level model object. Equivalent to
@@ -129,7 +139,16 @@ public interface IPluginModelBase extends ISharedExtensionsModel, IModelChangePr
 	 * 4.3.
 	 */
 	@Deprecated
-	URL getNLLookupLocation();
+	default URL getNLLookupLocation() {
+		try {
+			URI fromString = URIUtil.fromString(getInstallLocation());
+			return URIUtil.toURL(fromString);
+		} catch (URISyntaxException e) {
+			throw new UnsupportedOperationException(e);
+		} catch (MalformedURLException e) {
+			throw new UnsupportedOperationException(e);
+		}
+	}
 
 	/**
 	 * Returns the bundle description of the plug-in

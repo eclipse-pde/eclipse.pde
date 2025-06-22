@@ -126,4 +126,18 @@ public interface IBuildEntry extends IWritable {
 	 * @throws CoreException if the model is not editable
 	 */
 	void setName(String name) throws CoreException;
+
+	/**
+	 * Returns the first token for this entry
+	 *
+	 * @return the first token of this entry
+	 * @since 3.21
+	 */
+	default String getFirstToken() {
+		String[] tokens = getTokens();
+		if (tokens == null || tokens.length == 0) {
+			return null;
+		}
+		return tokens[0];
+	}
 }
