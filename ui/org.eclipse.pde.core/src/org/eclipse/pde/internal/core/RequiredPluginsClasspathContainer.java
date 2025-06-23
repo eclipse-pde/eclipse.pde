@@ -21,6 +21,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -41,6 +42,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
@@ -137,8 +139,23 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 					System.out.println("\t" + entry); //$NON-NLS-1$
 				}
 			}
+			// see for example
+			// https://github.com/eclipse-jdt/eclipse.jdt.core/issues/4133
+			// we need to make sure that regular entries are before test
+			// entries, this is also the "natural" order of items in regular
+			// classpath
+			Arrays.sort(fEntries, Comparator.comparingInt(cpe -> isTestEntry(cpe) ? 1 : 0));
 		}
 		return fEntries;
+	}
+
+	private boolean isTestEntry(IClasspathEntry cpe) {
+		for (IClasspathAttribute attr : cpe.getExtraAttributes()) {
+			if (IClasspathAttribute.TEST.equals(attr.getName())) {
+				return Boolean.parseBoolean(attr.getValue());
+			}
+		}
+		return false;
 	}
 
 	private IClasspathEntry[] computePluginEntriesByProject() {
