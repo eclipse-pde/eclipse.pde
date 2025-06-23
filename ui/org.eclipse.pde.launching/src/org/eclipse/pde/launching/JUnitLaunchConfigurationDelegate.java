@@ -246,7 +246,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 				Path tmpPath = Path.of(fWorkspaceLocation, testPlugin.getId() + "-fragment.jar"); //$NON-NLS-1$
 				Files.createDirectories(tmpPath.getParent());
 				try (JarOutputStream stream = new JarOutputStream(Files.newOutputStream(tmpPath), calcManifest)) {
-					//TODO Equinox since a while contains the 'data:' URL handler can we use that instead of a real file on disk? 
+					//TODO Equinox since a while contains the 'data:' URL handler can we use that instead of a real file on disk?
 				}
 				tmpPath.toFile().deleteOnExit();
 				Map<String, String> manifest = ManifestElement.parseBundleManifest(new ByteArrayInputStream(out.toByteArray()), null);

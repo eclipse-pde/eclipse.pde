@@ -34,7 +34,7 @@ import org.osgi.framework.BundleException;
 class ExtraBundleModel extends AbstractPluginModelBase {
 
 	private static final long serialVersionUID = 1L;
-	private Path path;
+	private final Path path;
 
 	public ExtraBundleModel(Path path, Map<String, String> manifest) throws BundleException {
 		this.path = path;
