@@ -235,7 +235,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 			//if this is a junit container project it means a user can use additional classes (from the junit container and possible other) that
 			//are not required to be imported, we compute a fragment manifest here to add additional imports ...
 			try (PdeProjectAnalyzer analyzer = new PdeProjectAnalyzer(javaProject.getProject(), true)) {
-				analyzer.setImportPackage("*;resolution:=optional"); //$NON-NLS-1$
+				analyzer.setImportPackage("*"); //$NON-NLS-1$
 				String bsn = testPlugin.getId() + "-additional-test-probe-imports"; //$NON-NLS-1$
 				analyzer.setBundleSymbolicName(bsn);
 				analyzer.set(Constants.FRAGMENT_HOST, testPlugin.getId());

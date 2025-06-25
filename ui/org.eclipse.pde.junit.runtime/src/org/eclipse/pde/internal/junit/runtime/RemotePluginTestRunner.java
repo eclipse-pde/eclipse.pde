@@ -72,6 +72,34 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 	 * @see RemoteTestRunner
 	 */
 	public static void main(String[] args) {
+		BundleContext bundleContext = FrameworkUtil.getBundle(RemotePluginTestRunner.class).getBundleContext();
+		if (bundleContext != null) {
+			Bundle[] bundles = bundleContext.getBundles();
+			int failures = 0;
+			for (Bundle bundle : bundles) {
+				int state = bundle.getState();
+				if (state != Bundle.ACTIVE && state != Bundle.RESOLVED && state != Bundle.STARTING) {
+					if (failures == 0) {
+						System.err.println("##################################################"); //$NON-NLS-1$
+						System.out.println();
+						System.err.println("WARNING: There are failing bundles:"); //$NON-NLS-1$
+					}
+					System.err.println(String.format(" %s %s can't be resolved!", bundle.getSymbolicName(), bundle.getVersion())); //$NON-NLS-1$
+					failures++;
+				}
+			}
+			if (failures > 0) {
+				System.err.println();
+				System.err.println("Current Framework state is:"); //$NON-NLS-1$
+				for (Bundle bundle : bundles) {
+					System.err.println(String.format(" [%s][%d] %s %s", getState(bundle.getState()), bundle.getBundleId(), bundle.getSymbolicName(), bundle.getVersion())); //$NON-NLS-1$
+				}
+				System.err.println();
+				System.err.println(String.format("%d bundle(s) fail to resolve!", failures)); //$NON-NLS-1$
+				System.out.println();
+				System.err.println("##################################################"); //$NON-NLS-1$
+			}
+		}
 		RemotePluginTestRunner testRunner = new RemotePluginTestRunner();
 		testRunner.init(args);
 		ClassLoader currentTCCL = Thread.currentThread().getContextClassLoader();
@@ -84,6 +112,24 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 		if (isJUnit5(args)) {
 			Thread.currentThread().setContextClassLoader(currentTCCL);
 		}
+	}
+
+	private static String getState(int state) {
+		switch (state) {
+			case Bundle.ACTIVE :
+				return "ACTIVE     "; //$NON-NLS-1$
+			case Bundle.INSTALLED :
+				return "INSTALLED  "; //$NON-NLS-1$
+			case Bundle.RESOLVED :
+				return "RESOLVED   "; //$NON-NLS-1$
+			case Bundle.STARTING :
+				return "STARTING   "; //$NON-NLS-1$
+			case Bundle.STOPPING :
+				return "STOPPING   "; //$NON-NLS-1$
+			case Bundle.UNINSTALLED :
+				return "UNINSTALLED"; //$NON-NLS-1$
+		}
+		return Integer.toString(state);
 	}
 
 	private static ClassLoader createJUnit5PluginClassLoader(String testPluginName) {
