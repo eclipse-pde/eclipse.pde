@@ -133,6 +133,10 @@
 									<feature>true</feature>
 								</iu>
 								<iu>
+									<id>org.eclipse.equinox.executable</id>
+									<feature>true</feature>
+								</iu>
+								<iu>
 									<id>org.eclipse.test</id>
 									<feature>true</feature>
 								</iu>

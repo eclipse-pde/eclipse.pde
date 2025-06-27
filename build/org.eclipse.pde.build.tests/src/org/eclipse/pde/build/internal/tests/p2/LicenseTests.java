@@ -99,7 +99,7 @@ public class LicenseTests extends P2TestCase {
 				"eclipse/features/F1_1.0.0/feature.properties", actualPropertiesFile);
 		Properties actualProperties = Utils.loadProperties(actualPropertiesFile);
 
-		assertEquals("Result feature.properties has incorrect number of properties", originalProperties.size() + 2,
+		assertEquals("Result feature.properties has incorrect number of properties", originalProperties.size() + 3,
 				actualProperties.size());
 
 		Enumeration<Object> keys = originalProperties.keys();

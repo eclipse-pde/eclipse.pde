@@ -81,7 +81,7 @@ public class AssembleTests extends PDETestCase {
 
 		runBuild(buildFolder);
 
-		assertResourceFile(buildFolder, "I.TestBuild/sdk-TestBuild.zip");
+		assertResourceFile(buildFolder, "I.TestBuild/sdk-TestBuild.zip2");
 		assertResourceFile(buildFolder, "I.TestBuild/sdk-TestBuild-linux.gtk.x86_64.zip");
 		assertResourceFile(buildFolder, "I.TestBuild/sdk-TestBuild-win32.win32.x86_64.zip");
 	}
