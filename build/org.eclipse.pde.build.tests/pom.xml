@@ -100,20 +100,6 @@
 					</plugin>
 					<plugin>
 						<groupId>org.eclipse.tycho</groupId>
-						<artifactId>tycho-p2-publisher-plugin</artifactId>
-						<version>${tycho.version}</version>
-						<executions>
-							<execution>
-								<id>publish-products</id>
-								<goals>
-									<goal>publish-products</goal>
-								</goals>
-								<phase>pre-integration-test</phase>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.eclipse.tycho</groupId>
 						<artifactId>tycho-surefire-plugin</artifactId>
 						<configuration>
 							<product>org.eclipse.sdk.ide</product>
@@ -127,7 +113,27 @@
 							</repositories>
 							<install>
 								<iu>
-									<id>org.eclipse.sdk.test.ide</id>
+									<id>org.eclipse.platform.ide</id>
+								</iu>
+								<iu>
+									<id>org.eclipse.pde</id>
+									<feature>true</feature>
+								</iu>
+								<iu>
+									<id>org.eclipse.tips.feature</id>
+									<feature>true</feature>
+								</iu>
+								<iu>
+									<id>org.eclipse.test</id>
+									<feature>true</feature>
+								</iu>
+								<!-- Needed by org.eclipse.pde.build.internal.tests.p2.PublishingTests.testBug329162() -->
+								<iu>
+									<id>org.eclipse.osgi.source</id>
+								</iu>
+								<!-- Needed by org.eclipse.pde.build.internal.tests.SourceTests.testBug290828() -->
+								<iu>
+									<id>org.eclipse.team.core.source</id>
 								</iu>
 							</install>
 						</configuration>
