@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2023 IBM Corporation and others.
+ * Copyright (c) 2009, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -22,6 +22,8 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
@@ -437,13 +439,12 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 				featureWithCorrespondingSourceFeature,
 				null);
 
-		ITargetLocation featureContainer2 = getTargetService().newFeatureLocation(defaultLocation,
-				featureWithCorrespondingSourceFeature + ".source", null);
-
-		definition.setTargetLocations(new ITargetLocation[]{directoryContainer, profileContainer, featureContainer, featureContainer2});
+		definition.setTargetLocations(
+				new ITargetLocation[] { directoryContainer, profileContainer, featureContainer });
 		definition.resolve(null);
 
 		TargetBundle[] bundles = definition.getBundles();
+		List<String> bundleNames = Stream.of(bundles).map(bundle -> bundle.getBundleInfo().getSymbolicName()).toList();
 
 		assertNotNull("Target didn't resolve",bundles);
 
@@ -460,12 +461,17 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 			}
 		}
 
-		// Everything in the JDT feature has an equivalent named source bundle
-		bundles = featureContainer2.getBundles();
-		for (TargetBundle bundle : bundles) {
-			if (bundle.getBundleInfo().getSymbolicName().indexOf("doc") == -1){
-				assertTrue("Non-source bundle in source feature", bundle.isSourceBundle());
-				assertEquals("Incorrect source target", bundle.getBundleInfo().getSymbolicName(),bundle.getSourceTarget().getSymbolicName()+".source");
+		// Everything in the feature has an equivalent named source bundle
+		for (TargetBundle bundle : featureContainer.getBundles()) {
+			if (bundle.getBundleInfo().getSymbolicName().indexOf("doc") != -1) {
+				return;
+			}
+			if (bundle.isSourceBundle()) {
+				assertEquals("Incorrect source target", bundle.getBundleInfo().getSymbolicName(),
+						bundle.getSourceTarget().getSymbolicName() + ".source");
+			} else {
+				assertTrue("Missing source for bundle " + bundle.getBundleInfo().getSymbolicName(),
+						bundleNames.contains(bundle.getBundleInfo().getSymbolicName() + ".source"));
 			}
 		}
 	}
