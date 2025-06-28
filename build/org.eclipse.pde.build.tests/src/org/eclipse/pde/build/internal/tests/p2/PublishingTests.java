@@ -482,7 +482,6 @@ public class PublishingTests extends P2TestCase {
 
 		IFolder buildFolder = newTest("PublishFeature_Executable");
 		File executableLocation = Utils.findExecutable();
-		assertNotNull(executableLocation);
 
 		File originalExecutable = findExecutableFeature(executableLocation);
 
@@ -681,7 +680,6 @@ public class PublishingTests extends P2TestCase {
 		IFolder rcp = Utils.createFolder(buildFolder, "rcp");
 
 		File executableLocation = Utils.findExecutable();
-		assertNotNull(executableLocation);
 
 		File executable = findExecutableFeature(executableLocation);
 		String executableVersion = executable.getName().substring(executable.getName().indexOf('_') + 1);
@@ -858,7 +856,6 @@ public class PublishingTests extends P2TestCase {
 		IFolder buildFolder = newTest("PublishAndRunSimpleProduct");
 
 		File executable = Utils.findExecutable();
-		assertNotNull(executable);
 
 		// headless rcp hello world
 		IFolder headless = Utils.createFolder(buildFolder, "plugins/headless");
@@ -1206,7 +1203,6 @@ public class PublishingTests extends P2TestCase {
 	public void testBug267461_2() throws Exception {
 		IFolder buildFolder = newTest("267461_2");
 		File executable = Utils.findExecutable();
-		assertNotNull(executable);
 
 		IFile productFile = buildFolder.getFile("rcp.product");
 		Utils.generateProduct(productFile, "uid.product", "rcp.product", "1.0.0.qualifier", "my.app", null,
@@ -1253,7 +1249,6 @@ public class PublishingTests extends P2TestCase {
 	public void testBug267972() throws Exception {
 		IFolder buildFolder = newTest("267972");
 		File executable = Utils.findExecutable();
-		assertNotNull(executable);
 
 		IFile productFile = buildFolder.getFile("rcp.product");
 		Utils.generateProduct(productFile, "rcp.product", "1.0.0.qualifier", new String[] { OSGI, EQUINOX_COMMON,
@@ -1573,7 +1568,6 @@ public class PublishingTests extends P2TestCase {
 		IFolder finalRepo = Utils.createFolder(buildFolder, "final");
 
 		File executable = Utils.findExecutable();
-		assertNotNull(executable);
 
 		Utils.generateFeature(buildFolder, "f", null, new String[] { OSGI, EQUINOX_COMMON });
 		Utils.writeBuffer(buildFolder.getFile("features/f/important.txt"), new StringBuffer("boo-urns"));
@@ -1640,7 +1634,6 @@ public class PublishingTests extends P2TestCase {
 	public void testDirectorLogging() throws Exception {
 		IFolder buildFolder = newTest("directorLogging");
 		File executable = Utils.findExecutable();
-		assertNotNull(executable);
 
 		IFile productFile = buildFolder.getFile("rcp.product");
 		Utils.generateProduct(productFile, "uid.product", "rcp.product", "1.0.0.qualifier", "my.app", null,
@@ -1738,7 +1731,6 @@ public class PublishingTests extends P2TestCase {
 		IFolder rcp = Utils.createFolder(buildFolder, "rcp");
 
 		File executable = Utils.findExecutable();
-		assertNotNull(executable);
 
 		IFile product = rcp.getFile("rcp.product");
 		StringBuffer extra = new StringBuffer();
@@ -1824,8 +1816,7 @@ public class PublishingTests extends P2TestCase {
 		IFolder buildFolder = newTest("infConfig");
 		IFolder rcp = Utils.createFolder(buildFolder, "rcp");
 
-		File executable = Utils.findExecutable();
-		assertNotNull(executable);
+		Utils.findExecutable();
 
 		IFile product = rcp.getFile("rcp.product");
 		Utils.generateProduct(product, "org.example.rcp", "1.0.0", null, new String[] { OSGI }, false, null);
