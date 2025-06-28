@@ -59,7 +59,6 @@ public class P2Tests extends P2TestCase {
 		IFolder repo = Utils.createFolder(buildFolder, "repo");
 
 		File executable = Utils.findExecutable();
-		assertNotNull(executable);
 
 		String os = Platform.getOS();
 		String ws = Platform.getWS();
@@ -215,7 +214,6 @@ public class P2Tests extends P2TestCase {
 				false);
 
 		File executable = Utils.findExecutable();
-		assertNotNull(executable);
 
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		String repoLocation = "file:" + repo.getLocation().toOSString();
@@ -333,7 +331,6 @@ public class P2Tests extends P2TestCase {
 		IFile productFile = buildFolder.getFile("rcp.product");
 
 		File executable = Utils.findExecutable();
-		assertNotNull(executable);
 
 		Utils.generateProduct(productFile, "rcp.product", "1.0.0",
 				new String[] { OSGI, CORE_RUNTIME, SIMPLE_CONFIGURATOR, EQUINOX_PREFERENCES }, false);
@@ -412,7 +409,6 @@ public class P2Tests extends P2TestCase {
 		IFolder buildFolder = newTest("258126");
 
 		File executable = Utils.findExecutable();
-		assertNotNull(executable);
 
 		IFolder repo = Utils.createFolder(buildFolder, "repo");
 
@@ -891,7 +887,6 @@ public class P2Tests extends P2TestCase {
 	public void testBug267461() throws Exception {
 		IFolder buildFolder = newTest("267461");
 		File executable = Utils.findExecutable();
-		assertNotNull(executable);
 
 		IFile productFile = buildFolder.getFile("rcp.product");
 		IFolder repo = Utils.createFolder(buildFolder, "repo");

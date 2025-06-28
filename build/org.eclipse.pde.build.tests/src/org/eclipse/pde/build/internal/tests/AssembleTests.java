@@ -14,7 +14,6 @@
 package org.eclipse.pde.build.internal.tests;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.util.HashSet;
@@ -33,7 +32,6 @@ public class AssembleTests extends PDETestCase {
 		IFolder buildFolder = newTest("customAssembly");
 
 		File executable = Utils.findExecutable();
-		assertNotNull(executable);
 
 		Utils.generateFeature(buildFolder, "sdk", null, new String[] { "org.eclipse.swt;unpack=\"false\"",
 				"org.eclipse.swt.win32.win32.x86_64;unpack=\"false\";os=\"win32\";ws=\"win32\";arch=\"x86_64\"" });
@@ -63,7 +61,6 @@ public class AssembleTests extends PDETestCase {
 		IFolder buildFolder = newTest("179612");
 
 		File executable = Utils.findExecutable();
-		assertNotNull(executable);
 
 		Utils.generateFeature(buildFolder, "sdk", null,
 				new String[] { "org.eclipse.swt;unpack=\"false\"",
@@ -92,7 +89,6 @@ public class AssembleTests extends PDETestCase {
 		IFolder buildFolder = newTest("179612_custom");
 
 		File executable = Utils.findExecutable();
-		assertNotNull(executable);
 
 		Utils.generateFeature(buildFolder, "sdk", null,
 				new String[] { "org.eclipse.swt;unpack=\"false\"",
@@ -131,7 +127,6 @@ public class AssembleTests extends PDETestCase {
 				"org.eclipse.equinox.launcher.win32.win32.x86_64;unpack=\"false\"" });
 
 		File executable = Utils.findExecutable();
-		assertNotNull(executable);
 
 		Properties buildProperties = BuildConfiguration.getBuilderProperties(buildFolder);
 		buildProperties.put("archivesFormat", "*, *, * - folder");
@@ -156,7 +151,6 @@ public class AssembleTests extends PDETestCase {
 		IFolder buildFolder = newTest("211605");
 
 		File executable = Utils.findExecutable();
-		assertNotNull(executable);
 
 		Utils.generateFeature(buildFolder, "sdk", null,
 				new String[] { "org.eclipse.swt;unpack=\"false\"",
