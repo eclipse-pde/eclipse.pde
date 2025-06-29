@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2024 IBM Corporation and others.
+ *  Copyright (c) 2005, 2025 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -31,9 +31,7 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
-import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.actions.FindReferencesAction;
-import org.eclipse.jdt.ui.actions.ShowInPackageViewAction;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
@@ -63,6 +61,7 @@ import org.eclipse.pde.internal.core.util.PDEJavaHelper;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.EditorUtilities;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
@@ -79,8 +78,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -357,16 +354,8 @@ public class ExportPackageSection extends TableSection {
 		return null;
 	}
 
-	private void handleGoToPackage(ISelection selection) {
-		IPackageFragment frag = getPackageFragment(selection);
-		if (frag != null) {
-			try {
-				IViewPart part = PDEPlugin.getActivePage().showView(JavaUI.ID_PACKAGES);
-				ShowInPackageViewAction action = new ShowInPackageViewAction(part.getSite());
-				action.run(frag);
-			} catch (PartInitException e) {
-			}
-		}
+	private void handleGoToPackage(IStructuredSelection selection) {
+		Optional.ofNullable(getPackageFragment(selection)).ifPresent(EditorUtilities::showInPackageExplorer);
 	}
 
 	@Override
