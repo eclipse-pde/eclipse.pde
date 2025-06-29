@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2024 IBM Corporation and others.
+ * Copyright (c) 2005, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 438509
  *     SAP SE - support macOS bundle URL types
+ *     Tue Ton - support for FreeBSD
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
@@ -115,6 +116,7 @@ public class LauncherSection extends PDESection {
 	private CTabFolder fTabFolder;
 	private Composite fNotebook;
 	private StackLayout fNotebookLayout;
+	private Composite fFreeBSDSection;
 	private Composite fLinuxSection;
 	private Composite fMacSection;
 	private Composite fWin32Section;
@@ -209,6 +211,7 @@ public class LauncherSection extends PDESection {
 		fNotebookLayout = new StackLayout();
 		fNotebook.setLayout(fNotebookLayout);
 
+		fFreeBSDSection = addFreeBSDSection(fNotebook, toolkit);
 		fLinuxSection = addLinuxSection(fNotebook, toolkit);
 		fMacSection = addMacSection(fNotebook, toolkit);
 		fWin32Section = addWin32Section(fNotebook, toolkit);
@@ -234,6 +237,7 @@ public class LauncherSection extends PDESection {
 		addTab("linux"); //$NON-NLS-1$
 		addTab("macosx"); //$NON-NLS-1$
 		addTab("win32"); //$NON-NLS-1$
+		addTab("freebsd"); //$NON-NLS-1$
 
 		String currentTarget = TargetPlatform.getOS();
 		if (currentTarget == null) {
@@ -248,6 +252,10 @@ public class LauncherSection extends PDESection {
 		case "macosx": //$NON-NLS-1$
 			fTabFolder.setSelection(1);
 			fNotebookLayout.topControl = fMacSection;
+			break;
+		case "freebsd": //$NON-NLS-1$
+			fTabFolder.setSelection(0);
+			fNotebookLayout.topControl = fFreeBSDSection;
 			break;
 		default:
 			fTabFolder.setSelection(0);
@@ -339,6 +347,14 @@ public class LauncherSection extends PDESection {
 			td.colspan = span;
 			label.setLayoutData(td);
 		}
+	}
+
+	private Composite addFreeBSDSection(Composite parent, FormToolkit toolkit) {
+		Composite comp = createComposite(parent, toolkit);
+		createLabel(comp, toolkit, PDEUIMessages.LauncherSection_freebsdLabel, 3);
+		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_icon, ILauncherInfo.FREEBSD_ICON));
+		toolkit.paintBordersFor(comp);
+		return comp;
 	}
 
 	private Composite addLinuxSection(Composite parent, FormToolkit toolkit) {
@@ -712,6 +728,9 @@ public class LauncherSection extends PDESection {
 	}
 
 	private String getExtension(String iconId) {
+		if (iconId.equals(ILauncherInfo.FREEBSD_ICON)) {
+			return "xpm"; //$NON-NLS-1$
+		}
 		if (iconId.equals(ILauncherInfo.LINUX_ICON)) {
 			return "xpm"; //$NON-NLS-1$
 		}
@@ -742,6 +761,9 @@ public class LauncherSection extends PDESection {
 				break;
 			case 2 :
 				fNotebookLayout.topControl = fWin32Section;
+				break;
+			case 3 :
+				fNotebookLayout.topControl = fFreeBSDSection;
 				break;
 		}
 		if (oldPage != fNotebookLayout.topControl) {
