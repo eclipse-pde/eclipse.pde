@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -51,7 +51,7 @@ public class LocaleUtil {
 			variant = tokenizer.nextToken();
 		}
 
-		Locale locale = new Locale(language, country, variant);
+		Locale locale = Locale.of(language, country, variant);
 		return locale.toString() + " - " + locale.getDisplayName(); //$NON-NLS-1$
 	}
 
