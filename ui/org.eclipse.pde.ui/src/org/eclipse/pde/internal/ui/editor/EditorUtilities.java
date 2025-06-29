@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2025 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
+import java.util.Optional;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -27,8 +28,11 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.URIUtil;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
@@ -42,8 +46,11 @@ import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.part.IShowInTarget;
+import org.eclipse.ui.part.ShowInContext;
 
 public class EditorUtilities {
 
@@ -284,4 +291,17 @@ public class EditorUtilities {
 		}
 	}
 
+	public static void showInPackageExplorer(IPackageFragment fragment) {
+		showPackageExplorer().map(p -> p.getAdapter(IShowInTarget.class))
+				.ifPresent(show -> show.show(new ShowInContext(null, new StructuredSelection(fragment))));
+	}
+
+
+	private static Optional<IViewPart> showPackageExplorer() {
+		try {
+			return Optional.of(PDEPlugin.getActivePage().showView(JavaUI.ID_PACKAGES));
+		} catch (PartInitException e) {
+			return Optional.empty();
+		}
+	}
 }
