@@ -30,9 +30,13 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.pde.core.build.IBuild;
+import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.build.ExternalBuildModel;
 import org.osgi.resource.Resource;
 
 public class PDEClasspathContainer {
@@ -78,7 +82,8 @@ public class PDEClasspathContainer {
 	}
 
 	protected static void addExternalPlugin(IPluginModelBase model, List<Rule> rules, List<IClasspathEntry> entries) {
-		boolean isJarShape = new File(model.getInstallLocation()).isFile();
+		File file = new File(model.getInstallLocation());
+		boolean isJarShape = file.isFile();
 		if (isJarShape) {
 			IPath srcPath = ClasspathUtilCore.getSourceAnnotation(model, ".", isJarShape); //$NON-NLS-1$
 			if (srcPath == null) {
@@ -93,14 +98,19 @@ public class PDEClasspathContainer {
 				addLibraryEntry(path, path, rules, getClasspathAttributes(model), entries);
 			}
 		} else {
-			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
+			IPluginBase pluginBase = model.getPluginBase();
+			IPluginLibrary[] libraries = pluginBase.getLibraries();
 			if (libraries.length == 0) {
-				// If there are no libraries, assume the root of the plug-in is the library '.'
-				IPath srcPath = ClasspathUtilCore.getSourceAnnotation(model, ".", isJarShape); //$NON-NLS-1$
-				if (srcPath == null) {
-					srcPath = IPath.fromOSString(model.getInstallLocation());
+				if (!addEntriesFromHostEclipse(model, rules, entries, file)) {
+					// If there are no libraries, assume the root of the plug-in
+					// is the library '.'
+					IPath srcPath = ClasspathUtilCore.getSourceAnnotation(model, ".", isJarShape); //$NON-NLS-1$
+					if (srcPath == null) {
+						srcPath = IPath.fromOSString(model.getInstallLocation());
+					}
+					addLibraryEntry(IPath.fromOSString(model.getInstallLocation()), srcPath, rules,
+							getClasspathAttributes(model), entries);
 				}
-				addLibraryEntry(IPath.fromOSString(model.getInstallLocation()), srcPath, rules, getClasspathAttributes(model), entries);
 			} else {
 				for (IPluginLibrary library : libraries) {
 					if (IPluginLibrary.RESOURCE.equals(library.getType())) {
@@ -123,6 +133,41 @@ public class PDEClasspathContainer {
 				}
 			}
 		}
+	}
+
+	protected static boolean addEntriesFromHostEclipse(IPluginModelBase model, List<Rule> rules,
+			List<IClasspathEntry> entries, File file) {
+		boolean hasBuildEntries = false;
+		// if build properties exits in folder than this is a local
+		// project from an Eclipse started from a workspace
+		if (new File(file, ICoreConstants.BUILD_FILENAME_DESCRIPTOR).isFile()) {
+			IBuild build = new ExternalBuildModel(model.getInstallLocation()).getBuild();
+			IBuildEntry[] buildEntries = build.getBuildEntries();
+			for (IBuildEntry entry : buildEntries) {
+				String name = entry.getName();
+				if (name.startsWith(IBuildEntry.OUTPUT_PREFIX)) {
+					String folder = entry.getFirstToken();
+					if (folder != null) {
+						File outputFolder = new File(file, folder);
+						if (outputFolder.isDirectory()) {
+							hasBuildEntries = true;
+							IBuildEntry sourceEntry = build.getEntry(IBuildEntry.JAR_PREFIX
+									+ name.substring(IBuildEntry.OUTPUT_PREFIX.length()));
+							IPath srcPath = null;
+							if (sourceEntry != null) {
+								String firstToken = sourceEntry.getFirstToken();
+								if (firstToken != null) {
+									srcPath = IPath.fromOSString(new File(file, firstToken).getAbsolutePath());
+								}
+							}
+							addLibraryEntry(IPath.fromOSString(outputFolder.getAbsolutePath()), srcPath, rules,
+									getClasspathAttributes(model), entries);
+						}
+					}
+				}
+			}
+		}
+		return hasBuildEntries;
 	}
 
 	protected static void addLibraryEntry(IPath path, IPath srcPath, List<Rule> rules, IClasspathAttribute[] attributes,
