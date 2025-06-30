@@ -68,4 +68,23 @@ public interface IClasspathContributor {
 	 * @return additional classpath entries to add to the project, possibly empty, must not be <code>null</code>
 	 */
 	List<IClasspathEntry> getEntriesForDependency(BundleDescription project, BundleDescription addedDependency);
+
+	/**
+	 * Get any additional classpath entries to add to a project when its
+	 * classpath is first computed. The provided {@link BundleDescription}
+	 * describes the plug-in project that the classpath is being computed for.
+	 * The entries are added at the end of the calculation process. Additional
+	 * PDE model information can be obtained using
+	 * {@link PluginRegistry#findModel(Resource)}.
+	 *
+	 * @param project
+	 *            the bundle descriptor for the plug-in project having its
+	 *            classpath computed
+	 * @return additional classpath entries to add to the project at the end of
+	 *         the classpath calculation, possibly empty, must not be
+	 *         <code>null</code>
+	 */
+	default List<IClasspathEntry> getAdditionalEntries(BundleDescription project) {
+		return List.of();
+	}
 }
