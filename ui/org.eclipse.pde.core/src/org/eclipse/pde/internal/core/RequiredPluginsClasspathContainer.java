@@ -53,6 +53,7 @@ import org.eclipse.osgi.service.resolver.HostSpecification;
 import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
 import org.eclipse.osgi.service.resolver.StateHelper;
 import org.eclipse.pde.core.IClasspathContributor;
+import org.eclipse.pde.core.IClasspathContributor2;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
@@ -284,6 +285,11 @@ class RequiredPluginsClasspathContainer implements IClasspathContainer {
 
 			addJunit5RuntimeDependencies(added, entries);
 			addImplicitDependencies(desc, added, entries);
+
+			// Add any additional library entries contributed via classpath
+			// contributor
+			entries.addAll(getClasspathContributors().filter(IClasspathContributor2.class::isInstance)
+					.map(IClasspathContributor2.class::cast).flatMap(cc -> cc.getAdditionalEntries(desc)).toList());
 
 		return entries;
 	}
