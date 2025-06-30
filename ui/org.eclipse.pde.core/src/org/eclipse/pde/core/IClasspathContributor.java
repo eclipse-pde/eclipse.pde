@@ -16,6 +16,7 @@
 package org.eclipse.pde.core;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -68,4 +69,24 @@ public interface IClasspathContributor {
 	 * @return additional classpath entries to add to the project, possibly empty, must not be <code>null</code>
 	 */
 	List<IClasspathEntry> getEntriesForDependency(BundleDescription project, BundleDescription addedDependency);
+
+	/**
+	 * Get any additional classpath entries to add to a project when its
+	 * classpath is first computed. The provided {@link BundleDescription}
+	 * describes the plug-in project that the classpath is being computed for.
+	 * The entries are added at the end of the calculation process. Additional
+	 * PDE model information can be obtained using
+	 * {@link PluginRegistry#findModel(Resource)}.
+	 *
+	 * @param project
+	 *            the bundle descriptor for the plug-in project having its
+	 *            classpath computed
+	 * @return additional classpath entries to add to the project at the end of
+	 *         the classpath calculation, possibly empty, must not be
+	 *         <code>null</code>
+	 * @since 3.21
+	 */
+	default Stream<IClasspathEntry> getAdditionalEntries(BundleDescription project) {
+		return Stream.of();
+	}
 }
