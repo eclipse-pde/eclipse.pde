@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,9 +15,11 @@ package org.eclipse.pde.internal.core.builders;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
+import java.util.StringJoiner;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -118,6 +120,9 @@ public class JarManifestErrorReporter extends ErrorReporter {
 			fHeaders = new HashMap<>();
 			JarManifestHeader header = null;
 			int l = 0;
+			ArrayList<Integer> emptyLineCandidates = new ArrayList<>();
+			ArrayList<Integer> emptyLines = new ArrayList<>();
+			int numLines = document.getNumberOfLines();
 			for (; l < document.getNumberOfLines(); l++) {
 				if (l % 100 == 0) {
 					checkCanceled(monitor);
@@ -137,10 +142,19 @@ public class JarManifestErrorReporter extends ErrorReporter {
 				}
 				// parse
 				if (line.length() == 0) {
-					// Empty Line
+					// Empty Line in the beginning
 					if (l == 0) {
 						report(PDECoreMessages.BundleErrorReporter_noMainSection, 1, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 						return;
+
+						// empty line elsewhere
+					} else if (l != numLines - 1) {
+						IRegion nextLineInfo = document.getLineInformation(l + 1);
+						String nextLine = document.get(nextLineInfo.getOffset(), nextLineInfo.getLength());
+						if (!nextLine.startsWith("Name:")) { //$NON-NLS-1$
+							emptyLineCandidates.add(Integer.valueOf(l));
+							continue;
+						}
 					}
 					/* flush last line */
 					if (header != null) {
@@ -149,6 +163,10 @@ public class JarManifestErrorReporter extends ErrorReporter {
 					}
 					break; /* done processing main attributes */
 				}
+
+				emptyLines.addAll(emptyLineCandidates);
+				emptyLineCandidates.clear();
+
 				if (line.charAt(0) == ' ') {
 					// Continuation Line
 					if (l == 0) { /* if no previous line */
@@ -191,6 +209,27 @@ public class JarManifestErrorReporter extends ErrorReporter {
 				}
 
 			}
+			if (emptyLines.size() > 0) {
+				// reverse the list to aid the quick-fix resolver
+				// to remove the line starting from the fag end,
+				// saving additional calculations to adjust the
+				// line numbers after each removal in-line.
+				Collections.reverse(emptyLines);
+
+				// build a marker with all the line info aggregated into it,
+				// with the first empty line as the anchor line.
+				StringJoiner str = new StringJoiner(","); //$NON-NLS-1$
+				int start = emptyLines.get(emptyLines.size() - 1);
+				for (Integer i : emptyLines) {
+					str.add(i.toString());
+				}
+				VirtualMarker marker = report(PDECoreMessages.BundleErrorReporter_noNameHeader, start + 1,
+						CompilerFlags.ERROR, PDEMarkerFactory.M_EXTRANEOUS_EMPTY_LINES, PDEMarkerFactory.CAT_FATAL);
+				if (marker != null) {
+					marker.setAttribute(PDEMarkerFactory.EMPTY_LINE, str.toString());
+				}
+			}
+
 			if (header != null) {
 				// lingering header, line not terminated
 				VirtualMarker marker = report(PDECoreMessages.BundleErrorReporter_noLineTermination, l, CompilerFlags.ERROR, PDEMarkerFactory.M_NO_LINE_TERMINATION, PDEMarkerFactory.CAT_FATAL);
