@@ -172,8 +172,8 @@ public class OSGiTestClasspathContributor
 	}
 
 	private static final class JunitBundles {
-		private Supplier<Stream<String>> bundleName;
-		private String name;
+		private final Supplier<Stream<String>> bundleName;
+		private final String name;
 
 		JunitBundles(String name, Supplier<Stream<String>> bundleName) {
 			this.name = name;
@@ -192,7 +192,7 @@ public class OSGiTestClasspathContributor
 
 	private static final class JunitProjectBundles {
 
-		private IProject eclipseProject;
+		private final IProject eclipseProject;
 		private JunitBundles bundles;
 
 		JunitProjectBundles(IProject project) {
