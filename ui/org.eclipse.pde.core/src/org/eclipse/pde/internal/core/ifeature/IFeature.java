@@ -59,12 +59,12 @@ public interface IFeature extends IFeatureObject, IVersionable, IEnvironment {
 
 	public static final String P_COLLOCATION_AFFINITY = "colocation-affinity"; //$NON-NLS-1$
 	public static final String P_APPLICATION = "application"; //$NON-NLS-1$
+	public static final String P_SOURCES = "include-sources"; //$NON-NLS-1$
 
 	public static final int INFO_DESCRIPTION = 0;
 	public static final int INFO_COPYRIGHT = 1;
 	public static final int INFO_LICENSE = 2;
-	
-	public static final String P_SOURCES = "false"; //$NON-NLS-1$
+
 
 	static final String[] INFO_TAGS = {"description", "copyright", "license"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 

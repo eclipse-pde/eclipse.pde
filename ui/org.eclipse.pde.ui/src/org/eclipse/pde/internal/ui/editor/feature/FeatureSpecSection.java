@@ -48,8 +48,7 @@ import org.eclipse.swt.dnd.RTFTransfer;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -79,7 +78,7 @@ public class FeatureSpecSection extends PDESection {
 
 	private boolean fPatch = false;
 
-	private Button fSourcesCheckbox;
+	private Button fIncludesSourcesCheckbox;
 
 	public FeatureSpecSection(FeatureFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION);
@@ -386,17 +385,14 @@ public class FeatureSpecSection extends PDESection {
 			}
 		});
 
-		fSourcesCheckbox = toolkit.createButton(container, PDEUIMessages.FeatureSpecSection_addSources0, SWT.CHECK);
-		fSourcesCheckbox.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fSourcesCheckbox.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				boolean isSelected = fSourcesCheckbox.getSelection();
-				IFeatureModel model = (IFeatureModel) getPage().getModel();
-				IFeature feature = model.getFeature();
-				feature.setIncludingSources(isSelected);
-			}
-		});
+		fIncludesSourcesCheckbox = toolkit.createButton(container, PDEUIMessages.FeatureSpecSection_addSources0,
+				SWT.CHECK);
+		fIncludesSourcesCheckbox.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		fIncludesSourcesCheckbox.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			boolean isSelected = fIncludesSourcesCheckbox.getSelection();
+			feature.setIncludingSources(isSelected);
+		}));
 
 		GridData gd = (GridData) fIdText.getText().getLayoutData();
 		gd.widthHint = 150;
@@ -513,7 +509,6 @@ public class FeatureSpecSection extends PDESection {
 		}
 	}
 
-
 	@Override
 	public void refresh() {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
@@ -522,7 +517,7 @@ public class FeatureSpecSection extends PDESection {
 		setIfDefined(fTitleText, feature.getLabel());
 		getPage().getManagedForm().getForm().setText(model.getResourceString(feature.getLabel()));
 		setIfDefined(fVersionText, feature.getVersion());
-		fSourcesCheckbox.setSelection(feature.isIncludingSources());
+		fIncludesSourcesCheckbox.setSelection(feature.isIncludingSources());
 		setIfDefined(fProviderText, feature.getProviderName());
 		setIfDefined(fPluginText, feature.getPlugin());
 		if (isPatch()) {
