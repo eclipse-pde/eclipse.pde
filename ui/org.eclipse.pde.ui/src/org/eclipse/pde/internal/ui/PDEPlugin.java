@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.pde.core.target.LoadTargetDefinitionJob;
 import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.ui.launcher.PDELogFileProvider;
 import org.eclipse.pde.internal.ui.shared.target.RepositoryBundleContainerAdapterFactory;
@@ -42,6 +43,7 @@ import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.internal.views.log.ILogFileProvider;
 import org.eclipse.ui.internal.views.log.LogFilesManager;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.osgi.framework.BundleContext;
 
@@ -215,6 +217,18 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 		LogFilesManager.addLogFileProvider(fLogFileProvider);
 
 		TargetStatus.initializeTargetStatus();
+		registerProgressIcon();
+	}
+
+	protected void registerProgressIcon() {
+		if (!PlatformUI.isWorkbenchRunning()) {
+			return;
+		}
+		IProgressService service = PlatformUI.getWorkbench().getProgressService();
+		if (service == null) {
+			return;
+		}
+		service.registerIconForFamily(PDEPluginImages.DESC_TARGET_DEFINITION, LoadTargetDefinitionJob.getFamily());
 	}
 
 	@Override
