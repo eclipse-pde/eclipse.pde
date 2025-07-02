@@ -3353,6 +3353,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String PluginVersionPart_groupTitle;
 	public static String PluginVersionPart_buttonTitle;
+	public static String PluginVersionPart_incrementTitle;
+    public static String PluginVersionPart_bumpMajor;
+    public static String PluginVersionPart_bumpMinor;
+    public static String PluginVersionPart_bumpMicro;
 
 	public static String FilteredPluginArtifactsSelectionDialog_title;
 	public static String FilteredPluginArtifactsSelectionDialog_message;
