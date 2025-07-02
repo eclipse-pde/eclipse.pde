@@ -32,10 +32,11 @@ public class UpdateSingletonToSymbolicName extends AbstractManifestMarkerResolut
 		if (bundle instanceof Bundle bun) {
 			IManifestHeader header = bun.getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
 			if (header instanceof BundleSymbolicNameHeader) {
-				if (fisDirective && TargetPlatformHelper.getTargetVersion() >= 3.1)
+				if (fisDirective && TargetPlatformHelper.getTargetVersion() >= 3.1) {
 					bundle.setHeader(Constants.BUNDLE_MANIFESTVERSION, "2"); //$NON-NLS-1$
-				else if (!fisDirective && TargetPlatformHelper.getTargetVersion() < 3.1)
+				} else if (!fisDirective && TargetPlatformHelper.getTargetVersion() < 3.1) {
 					bundle.setHeader(Constants.BUNDLE_MANIFESTVERSION, null);
+				}
 				String entry = ((BundleSymbolicNameHeader) header).getValue();
 				int ind1 = entry.indexOf(';');
 				int ind2 = entry.indexOf(':');
