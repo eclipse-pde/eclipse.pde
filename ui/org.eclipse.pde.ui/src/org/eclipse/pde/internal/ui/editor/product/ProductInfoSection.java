@@ -231,7 +231,10 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		fProductCombo.add(""); //$NON-NLS-1$
 		fProductCombo.addSelectionListener(
 				widgetSelectedAdapter(e -> getProduct().setProductId(fProductCombo.getSelection())));
-
+		fProductCombo.getControl().addListener(SWT.MouseWheel, event -> {
+			// Cancel the event to prevent default scrolling
+			event.doit = false;
+		});
 		Button button = toolkit.createButton(client, PDEUIMessages.ProductInfoSection_new, SWT.PUSH);
 		button.setEnabled(isEditable());
 		button.addSelectionListener(widgetSelectedAdapter(e -> handleNewDefinition()));
@@ -264,7 +267,10 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		fAppCombo.add(""); //$NON-NLS-1$
 		fAppCombo.addSelectionListener(
 				widgetSelectedAdapter(e -> getProduct().setApplication(fAppCombo.getSelection())));
-
+		fProductCombo.getControl().addListener(SWT.MouseWheel, event -> {
+			// Cancel the event to prevent default scrolling
+			event.doit = false;
+		});
 		fAppCombo.getControl().setEnabled(isEditable());
 	}
 
