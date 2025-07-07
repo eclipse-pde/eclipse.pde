@@ -30,6 +30,12 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		prefs.putBoolean(ILaunchingPreferenceConstants.PROP_RUNTIME_WORKSPACE_LOCATION_IS_CONTAINER, true);
 		prefs.put(ILaunchingPreferenceConstants.PROP_JUNIT_WORKSPACE_LOCATION, "${workspace_loc}/../junit-workspace"); //$NON-NLS-1$
 		prefs.putBoolean(ILaunchingPreferenceConstants.PROP_JUNIT_WORKSPACE_LOCATION_IS_CONTAINER, false);
+		prefs.put(ILaunchingPreferenceConstants.PROP_JUNIT_LAUNCH_WITH, ILaunchingPreferenceConstants.VALUE_JUNIT_LAUNCH_WITH_TESTPLUGIN);
+		prefs.putBoolean(ILaunchingPreferenceConstants.PROP_JUNIT_AUTO_INCLUDE, true);
+		prefs.putBoolean(ILaunchingPreferenceConstants.PROP_JUNIT_INCLUDE_OPTIONAL, true);
+		prefs.putBoolean(ILaunchingPreferenceConstants.PROP_JUNIT_ADD_NEW_WORKSPACE_PLUGINS, false);
+		prefs.putBoolean(ILaunchingPreferenceConstants.PROP_JUNIT_VALIDATE_LAUNCH, true);
+		prefs.putBoolean(ILaunchingPreferenceConstants.ADD_SWT_NON_DISPOSAL_REPORTING, true);
 
 		// copy over instance scope prefs from UI plugin
 		IEclipsePreferences oldInstancePrefs = InstanceScope.INSTANCE.getNode(IPDEConstants.UI_PLUGIN_ID);

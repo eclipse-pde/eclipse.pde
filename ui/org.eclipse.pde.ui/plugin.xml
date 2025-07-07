@@ -90,6 +90,12 @@
             class="org.eclipse.pde.bnd.ui.preferences.ReposPreferencePage"
             id="org.eclipse.pde.bnd.ui.preferences.ReposPreferencePage">
       </page>
+      <page
+            category="org.eclipse.pde.ui.MainPreferencePage"
+            class="org.eclipse.pde.internal.ui.preferences.LaunchingPreferencePage"
+            id="org.eclipse.pde.ui.LaunchingPreferencePage"
+            name="Launching">
+      </page>
    </extension>
    <extension
    		point="org.eclipse.ui.keywords">
