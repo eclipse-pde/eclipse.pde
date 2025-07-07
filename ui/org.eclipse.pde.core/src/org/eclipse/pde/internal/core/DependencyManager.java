@@ -33,6 +33,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.core.target.NameVersionDescriptor;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 import org.osgi.framework.namespace.HostNamespace;
@@ -187,8 +188,7 @@ public class DependencyManager {
 			if (wiring == null || !wiring.isInUse()) {
 				continue;
 			}
-
-			if (includeAllFragments || includeNonTestFragments) {
+			if (includeAllFragments || includeNonTestFragments || isExtensibleApi(bundle)) {
 				// A fragment's host is already required by a wire
 				for (BundleDescription fragment : bundle.getFragments()) {
 					if (includeAllFragments || !isTestWorkspaceProject(fragment)) {
@@ -227,6 +227,25 @@ public class DependencyManager {
 			}
 		}
 		return closure;
+	}
+
+	private static boolean isExtensibleApi(BundleDescription bundleDescription) {
+		if (bundleDescription.getFragments().length == 0) {
+			return false;
+		}
+		Object userObject = bundleDescription.getUserObject();
+		if (userObject instanceof IPluginModelBase model) {
+			return ClasspathUtilCore.hasExtensibleAPI(model);
+		}
+		IPluginModelBase model = PluginRegistry.findModel((Resource) bundleDescription);
+		if (model != null) {
+			return ClasspathUtilCore.hasExtensibleAPI(model);
+		}
+		Bundle bundle = bundleDescription.getBundle();
+		if (bundle != null) {
+			return Boolean.parseBoolean(bundle.getHeaders().get(ICoreConstants.EXTENSIBLE_API));
+		}
+		return false;
 	}
 
 	private static void addNewRequiredBundle(BundleDescription bundle, Set<BundleDescription> requiredBundles,
