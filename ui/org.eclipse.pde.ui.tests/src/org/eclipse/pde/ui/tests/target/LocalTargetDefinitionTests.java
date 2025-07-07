@@ -43,12 +43,12 @@ import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.eclipse.pde.core.target.TargetBundle;
-import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.P2Utils;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
+import org.eclipse.pde.internal.launching.ILaunchingPreferenceConstants;
+import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
 import org.eclipse.pde.internal.launching.launcher.LaunchArgumentsHelper;
 import org.eclipse.pde.ui.tests.PDETestCase;
 import org.junit.Test;
@@ -549,7 +549,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		definition.setVMArguments(vmArgs);
 		assertEquals(vmArgs, definition.getVMArguments());
 
-		PDEPreferencesManager prefs = PDECore.getDefault().getPreferencesManager();
+		PDEPreferencesManager prefs = PDELaunchingPlugin.getDefault().getPreferenceManager();
 		try {
 			getTargetService().saveTargetDefinition(definition);
 			setTargetPlatform(definition);
@@ -563,24 +563,24 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 
 			// Check that new launch configs will be prepopulated from target
 			// along with ADD_SWT_NON_DISPOSAL_REPORTING == false
-			prefs.setValue(ICoreConstants.ADD_SWT_NON_DISPOSAL_REPORTING, false);
+			prefs.setValue(ILaunchingPreferenceConstants.ADD_SWT_NON_DISPOSAL_REPORTING, false);
 			assertEquals(vmArgs, LaunchArgumentsHelper.getInitialVMArguments());
 
 			// Check that new launch configs will be prepopulated from target
 			// along with ADD_SWT_NON_DISPOSAL_REPORTING == true
-			prefs.setValue(ICoreConstants.ADD_SWT_NON_DISPOSAL_REPORTING, true);
+			prefs.setValue(ILaunchingPreferenceConstants.ADD_SWT_NON_DISPOSAL_REPORTING, true);
 			assertEquals(vmArgs + " -Dorg.eclipse.swt.graphics.Resource.reportNonDisposed=true",
 					LaunchArgumentsHelper.getInitialVMArguments());
 
 			// Check that new launch configs will be prepopulated from target
 			// along with ADD_SWT_NON_DISPOSAL_REPORTING == true but the define
 			// is already set in the target platform to false
-			prefs.setValue(ICoreConstants.ADD_SWT_NON_DISPOSAL_REPORTING, true);
+			prefs.setValue(ILaunchingPreferenceConstants.ADD_SWT_NON_DISPOSAL_REPORTING, true);
 			vmArgs = "-testVMArgument -Dorg.eclipse.swt.graphics.Resource.reportNonDisposed=false -testVMArgument2";
 			definition.setVMArguments(vmArgs);
 			assertEquals(vmArgs, LaunchArgumentsHelper.getInitialVMArguments());
 		} finally {
-			prefs.setToDefault(ICoreConstants.ADD_SWT_NON_DISPOSAL_REPORTING);
+			prefs.setToDefault(ILaunchingPreferenceConstants.ADD_SWT_NON_DISPOSAL_REPORTING);
 			getTargetService().deleteTarget(definition.getHandle());
 			resetTargetPlatform();
 		}

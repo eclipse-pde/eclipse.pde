@@ -13,14 +13,24 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.launcher;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.junit.launcher.JUnitLaunchShortcut;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.launching.ILaunchingPreferenceConstants;
 import org.eclipse.pde.internal.launching.IPDEConstants;
+import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
+import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
 import org.eclipse.pde.internal.launching.launcher.LaunchArgumentsHelper;
 import org.eclipse.pde.internal.launching.launcher.LauncherUtils;
 import org.eclipse.pde.launching.IPDELauncherConstants;
@@ -68,13 +78,31 @@ public class JUnitWorkbenchLaunchShortcut extends JUnitLaunchShortcut {
 		} else {
 			configuration.setAttribute(IPDELauncherConstants.APPLICATION, IPDEConstants.CORE_TEST_APPLICATION);
 		}
-
-		// Plug-ins to launch
-		configuration.setAttribute(IPDELauncherConstants.USE_DEFAULT, true);
-		configuration.setAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false);
-		configuration.setAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, false); // ignored
-		configuration.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true); // ignored
-		configuration.setAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, true); // ignored
+		PDEPreferencesManager launchingStore = PDELaunchingPlugin.getDefault().getPreferenceManager();
+		if (ILaunchingPreferenceConstants.VALUE_JUNIT_LAUNCH_WITH_TESTPLUGIN
+				.equals(launchingStore.getString(ILaunchingPreferenceConstants.PROP_JUNIT_LAUNCH_WITH))) {
+			configuration.setAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, false);
+			IProject project = element.getJavaProject().getProject();
+			IPluginModelBase model = PDECore.getDefault().getModelManager()
+					.findModel(project);
+			configuration.setAttribute(IPDELauncherConstants.USE_DEFAULT, model == null);
+			if (model != null) {
+				Set<String> wsplugins = new HashSet<>();
+				appendPlugin(wsplugins, model);
+				configuration.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, wsplugins);
+			}
+		} else {
+			configuration.setAttribute(IPDELauncherConstants.USE_DEFAULT, true);
+			configuration.setAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, false); // ignored
+		}
+		configuration.setAttribute(IPDELauncherConstants.AUTOMATIC_INCLUDE_REQUIREMENTS,
+				launchingStore.getBoolean(ILaunchingPreferenceConstants.PROP_JUNIT_AUTO_INCLUDE));
+		configuration.setAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL,
+				launchingStore.getBoolean(ILaunchingPreferenceConstants.PROP_JUNIT_INCLUDE_OPTIONAL));
+		configuration.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD,
+				launchingStore.getBoolean(ILaunchingPreferenceConstants.PROP_JUNIT_ADD_NEW_WORKSPACE_PLUGINS));
+		configuration.setAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE,
+				launchingStore.getBoolean(ILaunchingPreferenceConstants.PROP_JUNIT_VALIDATE_LAUNCH));
 
 		// Program arguments
 		String programArgs = LaunchArgumentsHelper.getInitialProgramArguments();
@@ -106,6 +134,14 @@ public class JUnitWorkbenchLaunchShortcut extends JUnitLaunchShortcut {
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, PDESourcePathProvider.ID);
 
 		return configuration;
+	}
+
+	private void appendPlugin(Set<String> plugins, IPluginModelBase model) {
+		final StringBuilder builder = new StringBuilder();
+		builder.append(model.getPluginBase().getId());
+		builder.append(BundleLauncherHelper.VERSION_SEPARATOR);
+		builder.append(model.getPluginBase().getVersion());
+		plugins.add(builder.toString());
 	}
 
 }
