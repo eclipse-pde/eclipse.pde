@@ -383,18 +383,29 @@ public class Utils {
 				}
 			}
 		}
-
+		if (Platform.OS_MACOSX.equals(Platform.getOS())) {
+			// After https://bugs.eclipse.org/431116 and related changes, the install
+			// location on the Mac
+			// moved down two directories (from <folder-containing-Eclipse.app> to
+			// Eclipse.app/Contents/Eclipse).
+			baseLocation = baseLocation.getParentFile().getParentFile();
+		}
+		File fallback1 = new File(baseLocation.getParentFile(), "deltapack/eclipse");
+		executableLocation = findExecutable(fallback1);
+		if (executableLocation != null) {
+			return executableLocation;
+		}
 		if (Platform.OS.isMac()) {
 			// After https://bugs.eclipse.org/431116 and related changes, the install
 			// location on the Mac
 			// moved down two directories (from <folder-containing-Eclipse.app> to
 			// Eclipse.app/Contents/Eclipse).
-			baseLocation = baseLocation.getParentFile().getParentFile().getParentFile();
+			baseLocation = baseLocation.getParentFile();
 		}
-		File fallback = new File(baseLocation.getParentFile().getParentFile(), "deltapack/eclipse");
-		executableLocation = findExecutable(fallback);
-		assertNotNull("All attempts to find the executable failed including fallback to " + fallback.getAbsolutePath(),
-				executableLocation);
+		File fallback2 = new File(baseLocation.getParentFile().getParentFile(), "deltapack/eclipse");
+		executableLocation = findExecutable(fallback2);
+		assertNotNull("All attempts to find the executable failed including fallback to " + fallback1.getAbsolutePath()
+				+ " or to " + fallback2.getAbsolutePath(), executableLocation);
 		return executableLocation;
 	}
 
