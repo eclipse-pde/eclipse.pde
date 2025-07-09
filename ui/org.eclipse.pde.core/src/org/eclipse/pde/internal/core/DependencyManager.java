@@ -206,7 +206,9 @@ public class DependencyManager {
 					// to ensure it's added again below. In the subsequent
 					// processing this fragment's requirements will then also be
 					// considered (before it was discarded).
-					closure.remove(hostWire.getProvider());
+					if (hostWire.getProviderWiring() != null) {
+						closure.remove(hostWire.getProvider());
+					}
 				}
 			}
 
