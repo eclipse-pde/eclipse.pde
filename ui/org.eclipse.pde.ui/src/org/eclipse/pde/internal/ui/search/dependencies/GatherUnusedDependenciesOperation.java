@@ -146,28 +146,42 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 
 		}
 		if (ClasspathUtilCore.hasBundleStructure(fModel)) {
-			IBundle bundle = ((IBundlePluginModelBase) fModel).getBundleModel().getBundle();
-			IManifestHeader header = bundle.getManifestHeader(EquinoxModuleDataNamespace.REGISTERED_BUDDY_HEADER);
-			if (header != null) {
-				String values = header.getValue();
-				String[] registerBud = values.split("\\s*,\\s*"); //$NON-NLS-1$
-				List<Object> found = new ArrayList<>();
-				for (String string : registerBud) {
-					for (Object obj : fList) {
-						if (obj instanceof PluginImport) {
-							String id = ((PluginImport) obj).getId();
-							if (string.equals(id)) {
-								found.add(obj);
-							}
+			removeBuddies();
+			removeReexported();
+		}
+	}
+
+	protected void removeBuddies() {
+		IBundle bundle = ((IBundlePluginModelBase) fModel).getBundleModel().getBundle();
+		IManifestHeader header = bundle.getManifestHeader(EquinoxModuleDataNamespace.REGISTERED_BUDDY_HEADER);
+		if (header != null) {
+			String values = header.getValue();
+			String[] registerBud = values.split("\\s*,\\s*"); //$NON-NLS-1$
+			List<Object> found = new ArrayList<>();
+			for (String string : registerBud) {
+				for (Object obj : fList) {
+					if (obj instanceof PluginImport) {
+						String id = ((PluginImport) obj).getId();
+						if (string.equals(id)) {
+							found.add(obj);
 						}
 					}
 				}
-				if (found.size() > 0) {
-					fList.removeAll(found);
+			}
+			fList.removeAll(found);
+		}
+	}
+
+	private void removeReexported() {
+		List<Object> found = new ArrayList<>();
+		for (Object obj : fList) {
+			if (obj instanceof PluginImport plugin) {
+				if (plugin.isReexported()) {
+					found.add(plugin);
 				}
 			}
-
 		}
+		fList.removeAll(found);
 	}
 
 	private void updateMonitor(IProgressMonitor monitor, int size) {
