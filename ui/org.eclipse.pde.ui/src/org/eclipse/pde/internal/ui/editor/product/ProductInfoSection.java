@@ -267,7 +267,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		fAppCombo.add(""); //$NON-NLS-1$
 		fAppCombo.addSelectionListener(
 				widgetSelectedAdapter(e -> getProduct().setApplication(fAppCombo.getSelection())));
-		fProductCombo.getControl().addListener(SWT.MouseWheel, event -> {
+		fAppCombo.getControl().addListener(SWT.MouseWheel, event -> {
 			// Cancel the event to prevent default scrolling
 			event.doit = false;
 		});
