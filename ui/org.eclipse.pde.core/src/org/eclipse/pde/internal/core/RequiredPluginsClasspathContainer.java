@@ -276,6 +276,10 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 
 			addJunit5RuntimeDependencies(added, entries);
 
+			// Add any additional library entries contributed via classpath
+			// contributor
+			entries.addAll(getClasspathContributors().flatMap(cc -> cc.getAdditionalEntries(desc)).toList());
+
 		} catch (CoreException e) {
 		}
 		return entries;
