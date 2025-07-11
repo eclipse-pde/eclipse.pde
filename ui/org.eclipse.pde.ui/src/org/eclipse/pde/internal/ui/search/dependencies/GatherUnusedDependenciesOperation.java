@@ -86,7 +86,7 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 			return;
 		}
 		Set<String> computedPackages;
-		try (PdeProjectAnalyzer analyzer = new PdeProjectAnalyzer(fModel.getUnderlyingResource().getProject(), false)) {
+		try (PdeProjectAnalyzer analyzer = new PdeProjectAnalyzer(fModel.getUnderlyingResource().getProject(), true)) {
 			analyzer.setImportPackage("*"); //$NON-NLS-1$
 			analyzer.calcManifest();
 			Packages imports = analyzer.getImports();
