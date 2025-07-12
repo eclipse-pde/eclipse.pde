@@ -695,6 +695,7 @@ public class PDEUIMessages extends NLS {
 
 	public static String UpdateClasspathResolution_label;
 	public static String UpdateExecutionEnvironment_label;
+	public static String RemoveInvalidCharacters;
 
 	//
 	// PDE resource strings
