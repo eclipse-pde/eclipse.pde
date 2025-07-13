@@ -38,7 +38,10 @@ public class PdeTestProjectJar extends PdeProjectJar {
 			for (IClasspathEntry cp : classpath) {
 				if (cp.getEntryKind() == IClasspathEntry.CPE_SOURCE && cp.isTest()) {
 					IPath location = cp.getOutputLocation();
-					if (location != null) {
+					if (location == null) {
+						IPath defaultOutputLocation = javaProject.getOutputLocation();
+						FileResource.addResources(this, workspaceRoot.getFolder(defaultOutputLocation), null);
+					} else {
 						IFolder otherOutputFolder = workspaceRoot.getFolder(location);
 						FileResource.addResources(this, otherOutputFolder, null);
 					}
