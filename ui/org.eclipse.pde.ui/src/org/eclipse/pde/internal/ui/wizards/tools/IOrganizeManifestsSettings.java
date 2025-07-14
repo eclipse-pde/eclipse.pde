@@ -28,6 +28,9 @@ public interface IOrganizeManifestsSettings {
 	public static final String PROP_COMPUTE_IMPORTS = "OrganizeManifests.ComputeImports"; //$NON-NLS-1$
 	public static final String PROP_REMOVE_LAZY = "OrganizeManifests.General.cleanup"; //$NON-NLS-1$
 	public static final String PROP_REMOVE_USELESSFILES = "OrganizeManifests.General.cleanup.removeUselessFiles"; //$NON-NLS-1$
+	// Jason has made this change below, not sure if I made the constant
+	// correctly. This is the first change.
+	public static final String PROP_UPDATE_BREE = "OrganizeManifests.General.cleanup.updateBREE"; //$NON-NLS-1$
 	public static final String PROP_NLS_PATH = "OrganizeManifests.Translation.nls"; //$NON-NLS-1$
 	public static final String PROP_UNUSED_KEYS = "OrganizeManifests.Translation.unusedKeys"; //$NON-NLS-1$
 }
