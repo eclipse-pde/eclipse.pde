@@ -58,6 +58,7 @@ import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.eclipse.pde.internal.build.BundleHelper;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.core.bnd.BndProjectManager;
@@ -275,6 +276,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			}
 
 			addJunit5RuntimeDependencies(added, entries);
+			addImplicitDependencies(desc, added, entries);
 
 		} catch (CoreException e) {
 		}
@@ -638,6 +640,16 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			}
 		} catch (CoreException e) {
 			return;
+		}
+	}
+
+	private void addImplicitDependencies(BundleDescription desc, Set<BundleDescription> added,
+			List<IClasspathEntry> entries) throws CoreException {
+		for (NameVersionDescriptor entry : DependencyManager.getImplicitDependencies()) {
+			String id = entry.getId();
+			if (id != null) {
+				addExtraModel(desc, added, entries, id);
+			}
 		}
 	}
 
