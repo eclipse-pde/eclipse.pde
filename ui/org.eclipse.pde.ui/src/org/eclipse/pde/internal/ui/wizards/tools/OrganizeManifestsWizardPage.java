@@ -61,6 +61,7 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 	private Button fRemovedUnusedKeys;
 	private Button fRemoveLazy;
 	private Button fRemoveUselessFiles;
+	private Button fUpdateBree; // belongs to general section
 
 	private Button[] fTopLevelButtons; // used for setting page complete state
 
@@ -203,6 +204,13 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 		fRemoveUselessFiles = new Button(group, SWT.CHECK);
 		fRemoveUselessFiles.setText(PDEUIMessages.OrganizeManifestsWizardPage_uselessPluginFile);
 
+		fUpdateBree = new Button(group, SWT.CHECK);
+		fUpdateBree.setText(PDEUIMessages.OrganizeManifestsWizardPage_uselessPluginFile); // PLACEHOLDER
+																							// BY
+																							// JASON.
+		// AGAIN PLACEHOLDER ABOVE PDEUIMESSAGES. LOOK INTO CREATING SOMETHING
+		// LIKE 'lazyStart' OR 'uselessPluginFile'
+		// WITHIN THE CLASS 'PDEUIMessages'.
 	}
 
 	private void createNLSGroup(Composite container) {
@@ -270,6 +278,17 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 		fRemoveUselessFiles.setSelection(selection);
 		fProcessor.setRemoveUselessFiles(selection);
 
+		// remove bree feature, not sure if it is supposed to include a '!'
+		// operator,
+		// so I am just following the general group's syntax
+		selection = !settings.getBoolean(PROP_UPDATE_BREE);
+		fUpdateBree.setSelection(selection);
+		fProcessor.setRemoveUselessFiles(selection);
+		// Line 282, ANOTHER PLACEHOLDER METHOD. Look into
+		// OrganizeManifestsProcessor.java
+		// and create a method similar to '.setRemoveUselessFiles' &
+		// 'setRemoveLazy'.
+
 		selection = settings.getBoolean(PROP_NLS_PATH);
 		fFixIconNLSPaths.setSelection(selection);
 		fProcessor.setPrefixIconNL(selection);
@@ -299,6 +318,17 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 
 		settings.put(PROP_REMOVE_LAZY, !fRemoveLazy.getSelection());
 		settings.put(PROP_REMOVE_USELESSFILES, !fRemoveUselessFiles.getSelection());
+		settings.put(PROP_UPDATE_BREE, !fUpdateBree.getSelection()); // Not
+																		// entirely
+																		// sure,
+																		// see
+																		// below.
+		// I followed the structure of this method, and crossed reference w/
+		// presetOptions() to see if button's that use a '!' there are also used
+		// here in performOk(). I evaluated this as true. Though, since my
+		// button fUpdateBree
+		// didn't exist in the first place, I am not sure if I should also use a
+		// '!' on it.
 
 		settings.put(PROP_NLS_PATH, fFixIconNLSPaths.getSelection());
 		settings.put(PROP_UNUSED_KEYS, fRemovedUnusedKeys.getSelection());
@@ -318,7 +348,8 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 	private void setButtonArrays() {
 		fTopLevelButtons = new Button[] { fRemoveUnresolved, fAddMissing, fModifyDependencies, fMarkInternal,
 				fUnusedDependencies, fAdditonalDependencies, fComputeImportPackages, fFixIconNLSPaths,
-				fRemovedUnusedKeys, fRemoveLazy, fRemoveUselessFiles, fCalculateUses };
+				fRemovedUnusedKeys, fRemoveLazy, fRemoveUselessFiles, fUpdateBree, fCalculateUses };
+		// added 'fUpdateBree' right after our existing general group
 	}
 
 	private void setPageComplete() {
@@ -376,6 +407,11 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 			fProcessor.setRemoveLazy(fRemoveLazy.getSelection());
 		} else if (fRemoveUselessFiles.equals(source)) {
 			fProcessor.setRemoveUselessFiles(fRemoveUselessFiles.getSelection());
+		} else if (fUpdateBree.equals(source)) {
+			fProcessor.setRemoveUselessFiles(fUpdateBree.getSelection());
+			// ABOVE IS A PLACEHOLDER, KEEP IN MIND.
+			// We will have to look into OrganizeManifestsProcessor.java
+			// in order to create our own setter for the update BREE feature.
 		} else if (fFixIconNLSPaths.equals(source)) {
 			fProcessor.setPrefixIconNL(fFixIconNLSPaths.getSelection());
 		} else if (fRemovedUnusedKeys.equals(source)) {
