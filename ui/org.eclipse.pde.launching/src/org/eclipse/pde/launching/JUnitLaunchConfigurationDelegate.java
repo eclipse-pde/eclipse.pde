@@ -67,6 +67,7 @@ import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.core.DependencyManager;
 import org.eclipse.pde.internal.core.ICoreConstants;
@@ -109,9 +110,12 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 				application = TargetPlatform.getDefaultApplication();
 			}
 			if (!IPDEConstants.CORE_TEST_APPLICATION.equals(application)) {
-				return RequirementHelper.getApplicationRequirements(application);
+				List<String> applicationRequirements = RequirementHelper.getApplicationRequirements(application);
+				List<String> list = new ArrayList<>(applicationRequirements);
+				list.add(IPDEBuildConstants.BUNDLE_OSGI);
+				return list;
 			}
-			return Collections.emptyList();
+			return List.of(IPDEBuildConstants.BUNDLE_OSGI);
 		});
 	}
 
