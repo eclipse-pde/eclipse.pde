@@ -391,7 +391,8 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 	// retrieve manifestheader, constants.BREE
 
 	public static void updateBree(IBundle bundle, IProject project) {
-
+		ImportPackageHeader bree = (ImportPackageHeader) ((Bundle) bundle)
+				.getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
 	}
 
 	public static TextFileChange[] removeUnusedKeys(final IProject project, final IBundle bundle, final IPluginModelBase modelBase) {
