@@ -205,12 +205,15 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 		fRemoveUselessFiles.setText(PDEUIMessages.OrganizeManifestsWizardPage_uselessPluginFile);
 
 		fUpdateBree = new Button(group, SWT.CHECK);
-		fUpdateBree.setText(PDEUIMessages.OrganizeManifestsWizardPage_uselessPluginFile); // PLACEHOLDER
+		fUpdateBree.setText(PDEUIMessages.OrganizeManifestsWizardPage_updateBREE); // PLACEHOLDER
 																							// BY
 																							// JASON.
 		// AGAIN PLACEHOLDER ABOVE PDEUIMESSAGES. LOOK INTO CREATING SOMETHING
 		// LIKE 'lazyStart' OR 'uselessPluginFile'
 		// WITHIN THE CLASS 'PDEUIMessages'.
+
+		// Update, I believe I have fixed the placeholder, will keep notes here
+		// just in case.
 	}
 
 	private void createNLSGroup(Composite container) {
@@ -284,7 +287,7 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 		selection = !settings.getBoolean(PROP_UPDATE_BREE);
 		fUpdateBree.setSelection(selection);
 		fProcessor.setRemoveUselessFiles(selection);
-		// Line 282, ANOTHER PLACEHOLDER METHOD. Look into
+		// ANOTHER PLACEHOLDER METHOD. Look into
 		// OrganizeManifestsProcessor.java
 		// and create a method similar to '.setRemoveUselessFiles' &
 		// 'setRemoveLazy'.

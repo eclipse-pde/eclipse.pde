@@ -3028,6 +3028,9 @@ public class PDEUIMessages extends NLS {
 
 	public static String OrganizeManifestsWizardPage_uselessPluginFile;
 
+	// adding in a string for the createGeneralGroup() function.
+	public static String OrganizeManifestsWizardPage_updateBREE;
+
 	public static String OrganizeManifestsWizardPage_internationalizationGroup;
 
 	public static String OrganizeManifestsWizardPage_prefixNL;
