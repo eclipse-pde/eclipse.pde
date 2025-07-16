@@ -377,6 +377,23 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 		return new DeleteResourceChange(pluginFile.getFullPath(), true);
 	}
 
+	// Here we will be implementing the logic for updating BREE.
+	// The 2 methods above are the 2 check box options that belong
+	// to the 'general' group.
+
+	// Things to consider when building this function:
+	// 1. Return type
+	// could potentially be void, as we are changing something in MANIFEST.MF.
+	// 2. Parameters used
+	// - IBundle bundle
+
+	// 3. Overall structure/implementation
+	// retrieve manifestheader, constants.BREE
+
+	public static void updateBree(IBundle bundle, IProject project) {
+
+	}
+
 	public static TextFileChange[] removeUnusedKeys(final IProject project, final IBundle bundle, final IPluginModelBase modelBase) {
 		String localization = bundle.getLocalization();
 		if (localization == null) {
