@@ -350,7 +350,7 @@ public final class PDEPreferencesManager {
 	 * @see #setToDefault(String)
 	 */
 	public void setValueOrRemove(String key, String value) {
-		if (value.equals(getDefaultString(key))) {
+		if (value == null || value.equals(getDefaultString(key))) {
 			fInstanceScopePrefs.remove(key);
 		} else {
 			fInstanceScopePrefs.put(key, value);

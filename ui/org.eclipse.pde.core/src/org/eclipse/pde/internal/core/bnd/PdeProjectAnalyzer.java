@@ -37,7 +37,7 @@ public class PdeProjectAnalyzer extends Analyzer {
 			IJavaProject javaProject = JavaCore.create(project);
 			IClasspathEntry[] classpath = javaProject.getResolvedClasspath(true);
 			for (IClasspathEntry cp : classpath) {
-				if (cp.getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
+				if (cp.getEntryKind() == IClasspathEntry.CPE_LIBRARY && (includeTest || !cp.isTest())) {
 					IPath path = cp.getPath();
 					File file = path.toFile();
 					if (file != null && file.getName().endsWith(".jar") && !file.getName().equals("jrt-fs.jar") //$NON-NLS-1$ //$NON-NLS-2$
