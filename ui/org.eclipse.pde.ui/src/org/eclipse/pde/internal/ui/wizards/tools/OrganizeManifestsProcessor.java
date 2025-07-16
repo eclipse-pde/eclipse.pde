@@ -250,6 +250,24 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 		// right here is where we will be implementing the if statement
 		// structure for fUpdateBree
 
+		if (fUpdateBree) {
+			// PDEUI message is placeholder from fRemoveUselessFiles
+			subMonitor.subTask(
+					NLS.bind(PDEUIMessages.OrganizeManifestsOperation_uselessPluginFile, fCurrentProject.getName()));
+
+			if (!subMonitor.isCanceled()) {
+				OrganizeManifest.removeUnneededLazyStart(currentBundle); // placeholder
+																			// from
+																			// fRemoveLazy
+			}
+			subMonitor.worked(1);
+		}
+		// wanted to get main structure down which is:
+		// 1. get sub task
+		// 2. check if process is not canceled and update curr proj w/ method
+		// from OrganizeManifest
+		// 3. tell submonitor object that process was completed
+
 		if (fPrefixIconNL) {
 			subMonitor.subTask(NLS.bind(PDEUIMessages.OrganizeManifestsOperation_nlIconPath, projectName));
 			if (!subMonitor.isCanceled()) {
