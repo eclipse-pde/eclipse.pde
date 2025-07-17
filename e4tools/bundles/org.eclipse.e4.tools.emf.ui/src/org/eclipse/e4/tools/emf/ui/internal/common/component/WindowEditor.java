@@ -366,7 +366,7 @@ public class WindowEditor extends AbstractComponentEditor<MWindow> {
 		}
 
 		E4Properties.mainMenu().observe(window).addValueChangeListener(event -> {
-			if (createRemoveMainMenu.isDisposed() || getMaster().isDisposed()) {
+			if (createRemoveMainMenu == null ||  createRemoveMainMenu.isDisposed() || getMaster().isDisposed()) {
 				return;
 			}
 
