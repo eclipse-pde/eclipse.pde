@@ -2233,6 +2233,8 @@ public class PDEUIMessages extends NLS {
 	public static String FeatureSection_addRequired;
 	public static String FeatureSection_toggleRoot;
 
+	public static String FeatureSpecSection_addSources0;
+
 	public static String ImportPackageSection_desc;
 	public static String ImportPackageSection_descFragment;
 	public static String ExportPackageSection_desc;
