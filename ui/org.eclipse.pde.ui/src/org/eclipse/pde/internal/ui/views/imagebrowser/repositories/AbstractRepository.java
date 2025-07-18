@@ -45,7 +45,7 @@ import org.eclipse.swt.graphics.ImageData;
 
 public abstract class AbstractRepository extends Job {
 
-	private SequencedMap<String, ImageElement> mElementsCache = new LinkedHashMap<>();
+	private final SequencedMap<String, ImageElement> mElementsCache = new LinkedHashMap<>();
 
 	private final IImageTarget mTarget;
 
