@@ -258,9 +258,9 @@ public interface IFeature extends IFeatureObject, IVersionable, IEnvironment {
 	void setApplication(String value) throws CoreException;
 
 	boolean isValid();
-	
+
 	public boolean isIncludingSources();
-	
+
 	void setIncludingSources(boolean b);
 
 	public void swap(IFeatureChild feature1, IFeatureChild feature2);
