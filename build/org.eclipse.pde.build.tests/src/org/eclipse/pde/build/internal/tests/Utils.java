@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.build.internal.tests;
 
-import static org.junit.Assume.assumeTrue;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -383,7 +383,6 @@ public class Utils {
 				}
 			}
 		}
-
 		if (Platform.OS_MACOSX.equals(Platform.getOS())) {
 			// After https://bugs.eclipse.org/431116 and related changes, the install
 			// location on the Mac
@@ -391,10 +390,22 @@ public class Utils {
 			// Eclipse.app/Contents/Eclipse).
 			baseLocation = baseLocation.getParentFile().getParentFile();
 		}
-		File fallback = new File(baseLocation.getParent(), "deltapack/eclipse");
-		executableLocation = findExecutable(fallback);
-		assumeTrue("All attempts to find the executable failed including fallback to " + fallback.getAbsolutePath(),
-				executableLocation != null);
+		File fallback1 = new File(baseLocation.getParentFile(), "deltapack/eclipse");
+		executableLocation = findExecutable(fallback1);
+		if (executableLocation != null) {
+			return executableLocation;
+		}
+		if (Platform.OS.isMac()) {
+			// After https://bugs.eclipse.org/431116 and related changes, the install
+			// location on the Mac
+			// moved down two directories (from <folder-containing-Eclipse.app> to
+			// Eclipse.app/Contents/Eclipse).
+			baseLocation = baseLocation.getParentFile();
+		}
+		File fallback2 = new File(baseLocation.getParentFile().getParentFile(), "deltapack/eclipse");
+		executableLocation = findExecutable(fallback2);
+		assertNotNull("All attempts to find the executable failed including fallback to " + fallback1.getAbsolutePath()
+				+ " or to " + fallback2.getAbsolutePath(), executableLocation);
 		return executableLocation;
 	}
 

@@ -44,13 +44,6 @@ public interface IPreferenceConstants extends ILaunchingPreferenceConstants {
 	 * Boolean preference whether API analysis has been disabled
 	 */
 	public static final String DISABLE_API_ANALYSIS_BUILDER = "Preferences.MainPage.disableAPIAnalysisBuilder";//$NON-NLS-1$
-	/**
-	 * Boolean preference whether add
-	 * '-Dorg.eclipse.swt.graphics.Resource.reportNonDisposed=true' to VM
-	 * arguments when creating a new launch configuration
-	 */
-	public static final String ADD_SWT_NON_DISPOSAL_REPORTING = "Preferences.MainPage.addSwtNonDisposalReporting ";//$NON-NLS-1$
-
 
 	// Editor Outline
 	public static final String PROP_OUTLINE_SORTING = "PDEMultiPageContentOutline.SortingAction.isChecked"; //$NON-NLS-1$

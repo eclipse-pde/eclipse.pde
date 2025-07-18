@@ -7,9 +7,7 @@ Project description:
 --------------------
 
 The PDE project the Eclipse tooling to develop plug-ins and OSGI bundles.  
-Website: https://www.eclipse.org/pde/
-
-- https://projects.eclipse.org/projects/eclipse.pde
+Website: https://projects.eclipse.org/projects/eclipse.pde
 
 How to contribute:
 --------------------

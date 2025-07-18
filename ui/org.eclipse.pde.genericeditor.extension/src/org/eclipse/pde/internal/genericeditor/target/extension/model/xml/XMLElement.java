@@ -19,6 +19,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class XMLElement {
+	private static final Pattern START_ELEMENT_NAME_PATTERN = Pattern.compile("<\\s*(?<name>\\w*).*", Pattern.DOTALL); //$NON-NLS-1$
+	private static final Pattern END_ELEMENT_NAME_PATTERN = Pattern.compile("</\\s*(?<name>\\w*).*", Pattern.DOTALL); //$NON-NLS-1$
+	private static final Pattern ATTRIBUTE_PATTERN = Pattern.compile("((?<key>\\w*)\\s*=\\s*\"(?<value>.*?)\")", //$NON-NLS-1$
+			Pattern.DOTALL);
+	private static final Pattern START_ELEMENT_PATTERN = Pattern.compile("<[^/].*", Pattern.DOTALL); //$NON-NLS-1$
+	private static final Pattern END_ELEMENT_PATTERN = Pattern.compile("</.*|.*/>.*", Pattern.DOTALL); //$NON-NLS-1$
+
 	private final String element;
 	private final int offset;
 	private final String name;
@@ -26,27 +33,23 @@ public class XMLElement {
 	private final boolean isEndElement;
 	private final boolean isStartElement;
 
-	private final Pattern startElementNamePattern = Pattern.compile("<\\s*(?<name>\\w*).*", Pattern.DOTALL); //$NON-NLS-1$
-	private final Pattern endElementNamePattern = Pattern.compile("</\\s*(?<name>\\w*).*", Pattern.DOTALL); //$NON-NLS-1$
-	private final Pattern attributePattern = Pattern.compile("((?<key>\\w*)\\s*=\\s*\"(?<value>.*?)\")", Pattern.DOTALL);//$NON-NLS-1$
-
 	public XMLElement(String element, int offset) {
 		this.element = element;
 		this.offset = offset;
-		this.isEndElement = element.matches("</(.|\n)*|(.|\n)*/>(.|\n)*"); //$NON-NLS-1$
-		this.isStartElement = element.matches("<[^/](.|\n)*"); //$NON-NLS-1$
+		this.isEndElement = END_ELEMENT_PATTERN.matcher(element).matches();
+		this.isStartElement = START_ELEMENT_PATTERN.matcher(element).matches();
 
 		Pattern namePattern;
 		if (isStartElement()) {
-			namePattern = startElementNamePattern;
+			namePattern = START_ELEMENT_NAME_PATTERN;
 		} else {
-			namePattern = endElementNamePattern;
+			namePattern = END_ELEMENT_NAME_PATTERN;
 		}
 		Matcher nameMatcher = namePattern.matcher(element);
 		nameMatcher.matches();
 		name = nameMatcher.group("name"); //$NON-NLS-1$
 
-		Matcher attrMatcher = attributePattern.matcher(element);
+		Matcher attrMatcher = ATTRIBUTE_PATTERN.matcher(element);
 		while (attrMatcher.find()) {
 			String key = attrMatcher.group("key"); //$NON-NLS-1$
 			String value = attrMatcher.group("value"); //$NON-NLS-1$

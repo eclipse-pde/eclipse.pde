@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IField;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
@@ -167,7 +168,17 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 
 	private static boolean isBundlePrivateMember(IMember type) throws JavaModelException {
 		int flags = type.getFlags();
-		return Flags.isPrivate(flags) || Flags.isPackageDefault(type.getFlags());
+		if (Flags.isPrivate(flags)) {
+			return true;
+		}
+		if (Flags.isPackageDefault(type.getFlags())) {
+			IJavaElement parent = type.getParent();
+			if (parent instanceof IType t) {
+				return !t.isInterface();
+			}
+			return true;
+		}
+		return false;
 	}
 
 	protected final void addPackage(String typeSignature, Set<String> pkgs, IType type, boolean binary,

@@ -20,6 +20,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -657,13 +659,52 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 			String basedOn = attInfo.getBasedOn();
 			// only validate if we have a valid value and basedOn value
 			if (value != null && basedOn != null && value.length() > 0 && basedOn.length() > 0) {
-				Map<String, IConfigurationElement> attributes = PDESchemaHelper.getValidAttributes(attInfo);
-				if (!attributes.containsKey(value)) { // report error if we are missing something
+				// report error if we are missing something
+				if (!isPresent(attInfo, value)) {
 					VirtualMarker marker = report(NLS.bind(PDECoreMessages.ExtensionsErrorReporter_unknownIdentifier, (new String[] {attr.getValue(), attr.getName()})), getLine(element, attr.getName()), severity, PDEMarkerFactory.CAT_OTHER);
 					addMarkerAttribute(marker, PDEMarkerFactory.compilerKey,  CompilerFlags.P_UNKNOWN_IDENTIFIER);
 				}
 			}
 		}
+	}
+
+	private boolean isPresent(ISchemaAttribute attInfo, String value) {
+		// This is the normal case.
+		Map<String, IConfigurationElement> attributes = PDESchemaHelper.getValidAttributes(attInfo);
+		if (attributes.containsKey(value)) {
+			return true;
+		}
+		// Determine if this is a special case.
+		// https://github.com/eclipse-platform/eclipse.platform/blob/master/ua/org.eclipse.ui.intro.quicklinks/schema/quicklinks.exsd
+		String qualifiedName = attInfo.getSchema().getPointId() + '.' + attInfo.getParent().getName() + '.'
+				+ attInfo.getName();
+		// The command may include simple '*' wildcards to match any substring.
+		boolean allowsWildcard = "org.eclipse.ui.intro.quicklinks.override.command".equals(qualifiedName); //$NON-NLS-1$
+		// These both allow not just an ID but also a command spec as consumed
+		// by org.eclipse.ui.commands.ICommandService.deserialize(String)
+		boolean allowsCommandSpec = allowsWildcard
+				|| "org.eclipse.ui.intro.quicklinks.command.id".equals(qualifiedName); //$NON-NLS-1$
+		if (allowsCommandSpec || allowsWildcard) {
+			String baseValue = value;
+			// Validate just the command ID part of the command spec if present.
+			int index = value.indexOf("("); //$NON-NLS-1$
+			if (index != -1) {
+				baseValue = value.substring(0, index);
+			}
+			// If a simple wildcard is permitted and is present...
+			if (allowsWildcard && baseValue.contains("*")) { //$NON-NLS-1$
+				try {
+					// Convert it to a pattern and match against all keys.
+					Pattern pattern = Pattern.compile(baseValue.replace(".", "\\.").replace("*", ".*")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					return attributes.keySet().stream().anyMatch(pattern.asMatchPredicate());
+				} catch (PatternSyntaxException ex) {
+					//$FALL-THROUGH$
+				}
+			}
+			// If we extracted a base value, test it like we did the value.
+			return value != baseValue && attributes.containsKey(baseValue);
+		}
+		return false;
 	}
 
 	protected void reportUnusedAttribute(Element element, String attName, int severity) {

@@ -594,6 +594,8 @@ public class PDEUIMessages extends NLS {
 	public static String MainPreferencePage_WorkspacePluginsOverrideTarget;
 	public static String MainPreferencePage_WorkspacePluginsOverrideTargetTooltip;
 	public static String MainPreferencePage_DisableAPIAnalysisBuilder;
+
+	public static String MainPreferencePage_optionTestPlugin;
 	public static String MainPreferencePage_RunAPIAnalysisBuilderAsJob;
 
 	public static String MainPreferencePage_test_plugin_pattern_group;
@@ -2231,6 +2233,8 @@ public class PDEUIMessages extends NLS {
 	public static String FeatureSection_addRequired;
 	public static String FeatureSection_toggleRoot;
 
+	public static String FeatureSpecSection_addSources0;
+
 	public static String ImportPackageSection_desc;
 	public static String ImportPackageSection_descFragment;
 	public static String ExportPackageSection_desc;
@@ -2703,6 +2707,8 @@ public class PDEUIMessages extends NLS {
 	public static String PluginImportWizardFirstPage_3;
 
 	public static String LauncherUtils_title;
+
+	public static String LaunchingPreferencePage_description;
 
 	public static String RemoveLazyLoadingDirectiveResolution_remove;
 

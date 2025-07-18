@@ -49,7 +49,6 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
-import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
@@ -440,8 +439,8 @@ public class LaunchArgumentsHelper {
 	 * '-Dorg.eclipse.swt.graphics.Resource.reportNonDisposed=true'
 	 */
 	public static boolean getAddSwtNonDisposalReportingPreference() {
-		PDEPreferencesManager prefs = PDECore.getDefault().getPreferencesManager();
-		return prefs.getBoolean(ICoreConstants.ADD_SWT_NON_DISPOSAL_REPORTING);
+		PDEPreferencesManager launchingStore = PDELaunchingPlugin.getDefault().getPreferenceManager();
+		return launchingStore.getBoolean(ILaunchingPreferenceConstants.ADD_SWT_NON_DISPOSAL_REPORTING);
 	}
 
 }

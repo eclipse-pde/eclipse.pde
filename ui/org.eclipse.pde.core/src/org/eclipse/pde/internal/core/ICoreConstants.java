@@ -352,12 +352,6 @@ public interface ICoreConstants {
 	 * build as background job
 	 */
 	String RUN_API_ANALYSIS_AS_JOB = "Preferences.MainPage.runAPIAnalysisAsJob";//$NON-NLS-1$
-	/**
-	 * Boolean preference whether add
-	 * '-Dorg.eclipse.swt.graphics.Resource.reportNonDisposed=true' to VM
-	 * arguments when creating a new launch configuration
-	 */
-	String ADD_SWT_NON_DISPOSAL_REPORTING = "Preferences.MainPage.addSwtNonDisposalReporting ";//$NON-NLS-1$
 
 	/**
 	 * Explicit preference value for {@link #WORKSPACE_TARGET_HANDLE} when the user chooses no

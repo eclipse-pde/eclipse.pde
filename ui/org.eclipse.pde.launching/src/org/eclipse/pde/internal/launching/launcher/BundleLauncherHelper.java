@@ -602,6 +602,7 @@ public class BundleLauncherHelper {
 				throw new IllegalStateException("Plugins have different TP state"); //$NON-NLS-1$
 			}
 			BundleDescription launchBundle = launchState.getFactory().createBundleDescription(bundle);
+			launchBundle.setUserObject(plugin);
 			if (!launchState.addBundle(launchBundle)) {
 				throw new IllegalStateException("Failed to add bundle to launch state: " + launchBundle); //$NON-NLS-1$
 			}
