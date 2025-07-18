@@ -58,6 +58,7 @@ public class Feature extends VersionableObject implements IFeature {
 	private String fCopyright;
 	private String fLicenseFeatureID;
 	private String fLicenseFeatureVersion;
+	private boolean fIncludeSources;
 
 	@Override
 	public void addPlugins(IFeaturePlugin[] newPlugins) throws CoreException {
@@ -213,6 +214,7 @@ public class Feature extends VersionableObject implements IFeature {
 		fApplication = getNodeAttribute(node, "application"); //$NON-NLS-1$
 		fPrimary = getBooleanAttribute(node, "primary"); //$NON-NLS-1$
 		fExclusive = getBooleanAttribute(node, "exclusive"); //$NON-NLS-1$
+		fIncludeSources = getBooleanAttribute(node, "include-sources"); //$NON-NLS-1$
 		NodeList children = node.getChildNodes();
 		fValid = true;
 
@@ -373,6 +375,11 @@ public class Feature extends VersionableObject implements IFeature {
 	}
 
 	@Override
+	public boolean isIncludingSources() {
+		return fIncludeSources;
+	}
+
+	@Override
 	public void setOS(String os) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.fOs;
@@ -440,6 +447,13 @@ public class Feature extends VersionableObject implements IFeature {
 		Object oldValue = this.fApplication;
 		this.fApplication = newValue;
 		firePropertyChanged(P_APPLICATION, oldValue, newValue);
+	}
+
+	@Override
+	public void setIncludingSources(boolean includesSources) {
+		Object oldValue = fIncludeSources;
+		this.fIncludeSources = includesSources;
+		firePropertyChanged(this, P_SOURCES, oldValue, includesSources);
 	}
 
 	@Override
@@ -570,6 +584,9 @@ public class Feature extends VersionableObject implements IFeature {
 		case P_IMAGE:
 			setImageName((String) newValue);
 			break;
+		case P_SOURCES:
+			setIncludingSources(newValue != null ? ((Boolean) newValue).booleanValue() : false);
+			break;
 		default:
 			super.restoreProperty(name, oldValue, newValue);
 			break;
@@ -581,6 +598,7 @@ public class Feature extends VersionableObject implements IFeature {
 		super.reset();
 		fData.clear();
 		fPlugins.clear();
+		fIncludeSources = false;
 		fImports.clear();
 		fChildren.clear();
 		fUrl = null;
@@ -654,6 +672,8 @@ public class Feature extends VersionableObject implements IFeature {
 		writeIfDefined(indenta, writer, "id", getId()); //$NON-NLS-1$
 		writeIfDefined(indenta, writer, "label", getWritableString(getLabel())); //$NON-NLS-1$
 		writeIfDefined(indenta, writer, "version", getVersion()); //$NON-NLS-1$
+		writeIfDefined(indenta, writer, "include-sources", //$NON-NLS-1$
+				isIncludingSources() ? String.valueOf(isIncludingSources()) : null);
 		writeIfDefined(indenta, writer, "provider-name", //$NON-NLS-1$
 				getWritableString(fProviderName));
 		writeIfDefined(indenta, writer, "plugin", //$NON-NLS-1$
