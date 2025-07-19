@@ -185,4 +185,11 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 		PDECore.getDefault().getFeatureModelManager().targetReloaded();
 	}
 
+	/**
+	 * @since 3.17
+	 */
+	public static Object getFamily() {
+		return JOB_FAMILY_ID;
+	}
+
 }
