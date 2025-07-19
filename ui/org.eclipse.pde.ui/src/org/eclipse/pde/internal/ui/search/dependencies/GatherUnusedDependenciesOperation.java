@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.ProgressMonitorWrapper;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -187,8 +188,27 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 			SearchPattern pattern = SearchPattern.createPattern(packageName, IJavaSearchConstants.PACKAGE,
 					IJavaSearchConstants.REFERENCES, SearchPattern.R_EXACT_MATCH);
 			if (pattern != null) {
-				engine.search(pattern, new SearchParticipant[] { SearchEngine.getDefaultSearchParticipant() },
-						searchScope, requestor, monitor);
+				ProgressMonitorWrapper wrapper = new ProgressMonitorWrapper(monitor) {
+
+					@Override
+					public boolean isCanceled() {
+						return monitor.isCanceled() || requestor.used;
+					}
+
+					@Override
+					public void setCanceled(boolean b) {
+					}
+				};
+				try {
+					engine.search(pattern, new SearchParticipant[] { SearchEngine.getDefaultSearchParticipant() },
+							searchScope, requestor, wrapper);
+				} catch (org.eclipse.core.runtime.OperationCanceledException e) {
+					if (monitor.isCanceled()) {
+						// the the user really canceled, rethrow it here,
+						// otherwise we just found a match!
+						throw e;
+					}
+				}
 				return requestor.used;
 			}
 		} catch (CoreException e) {
@@ -352,10 +372,10 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 	}
 
 	private static class Requestor extends SearchRequestor {
-		boolean used;
+		volatile boolean used;
 
 		@Override
-		public void acceptSearchMatch(SearchMatch match) throws CoreException {
+		public void acceptSearchMatch(SearchMatch match) {
 			used = true;
 		}
 	}
