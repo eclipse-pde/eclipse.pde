@@ -28,10 +28,18 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.search.IJavaSearchConstants;
+import org.eclipse.jdt.core.search.IJavaSearchScope;
+import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.core.search.SearchMatch;
+import org.eclipse.jdt.core.search.SearchParticipant;
+import org.eclipse.jdt.core.search.SearchPattern;
 import org.eclipse.jdt.core.search.SearchRequestor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.osgi.container.namespaces.EquinoxModuleDataNamespace;
@@ -46,6 +54,7 @@ import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.core.plugin.PluginImport;
 import org.eclipse.pde.internal.core.search.PluginJavaSearchUtil;
 import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
@@ -59,19 +68,6 @@ import aQute.bnd.osgi.Descriptors.PackageRef;
 import aQute.bnd.osgi.Packages;
 
 public class GatherUnusedDependenciesOperation implements IRunnableWithProgress {
-
-	static class Requestor extends SearchRequestor {
-		boolean fFound = false;
-
-		@Override
-		public void acceptSearchMatch(SearchMatch match) throws CoreException {
-			fFound = true;
-		}
-
-		public boolean foundMatches() {
-			return fFound;
-		}
-	}
 
 	private final IPluginModelBase fModel;
 	private List<Object> fList;
@@ -113,7 +109,7 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 		Collection<String> exportedPackages = getExportedPackages(fModel);
 		IPluginImport[] imports = fModel.getPluginBase().getImports();
 
-		int totalWork = imports.length * 3 + (packages != null ? packages.length : 0) + 1;
+		int totalWork = imports.length * 3 + (packages != null ? packages.length : 0) + 11;
 		SubMonitor subMonitor = SubMonitor.convert(monitor, totalWork);
 
 		HashMap<String, IPluginImport> usedPlugins = new HashMap<>();
@@ -150,6 +146,55 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 		minimizeDependencies(usedPlugins, usedPackages, subMonitor);
 		removeBuddies();
 		removeReexported();
+		removeSourceReferences(subMonitor.split(10));
+	}
+
+	/**
+	 * Sometimes there are references that are only visible in the sources, the
+	 * most usual one is when using a reference to a static final field then the
+	 * compiler will inline the value. While that then works without it at
+	 * runtime it will fail at compilation and in the IDE or give restriction
+	 * warnings. To prevent the user from getting a confusing project
+	 * error/warnings we retain them here even if not strictly required at
+	 * runtime.
+	 */
+	private void removeSourceReferences(IProgressMonitor monitor) {
+		if (fList.isEmpty()) {
+			return;
+		}
+		IProject project = fModel.getUnderlyingResource().getProject();
+		if (PluginProject.isJavaProject(project)) {
+			IJavaProject javaProject = JavaCore.create(project);
+			SubMonitor convert = SubMonitor.convert(monitor, "Search Source References for unused requirements", //$NON-NLS-1$
+					fList.size());
+			for (Iterator<Object> iterator = fList.iterator(); iterator.hasNext();) {
+				Object item = iterator.next();
+				if (item instanceof ImportPackageObject pkg) {
+					if (isPackageReferenced(pkg, javaProject, convert.split(1))) {
+						iterator.remove();
+					}
+				}
+			}
+		}
+	}
+
+	private boolean isPackageReferenced(ImportPackageObject pkg, IJavaProject javaProject, IProgressMonitor monitor) {
+		try {
+			SearchEngine engine = new SearchEngine();
+			IJavaSearchScope searchScope = PluginJavaSearchUtil.createSeachScope(javaProject);
+			Requestor requestor = new Requestor();
+			String packageName = pkg.getName();
+			SearchPattern pattern = SearchPattern.createPattern(packageName, IJavaSearchConstants.PACKAGE,
+					IJavaSearchConstants.REFERENCES, SearchPattern.R_EXACT_MATCH);
+			if (pattern != null) {
+				engine.search(pattern, new SearchParticipant[] { SearchEngine.getDefaultSearchParticipant() },
+						searchScope, requestor, monitor);
+				return requestor.used;
+			}
+		} catch (CoreException e) {
+		}
+		// can't tell, so better be safe and assume it is used...
+		return true;
 	}
 
 	private static Collection<String> getExportedPackages(IPluginModelBase model) {
@@ -303,6 +348,15 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 				}
 				iterationMonitor.worked(1);
 			}
+		}
+	}
+
+	private static class Requestor extends SearchRequestor {
+		boolean used;
+
+		@Override
+		public void acceptSearchMatch(SearchMatch match) throws CoreException {
+			used = true;
 		}
 	}
 }
