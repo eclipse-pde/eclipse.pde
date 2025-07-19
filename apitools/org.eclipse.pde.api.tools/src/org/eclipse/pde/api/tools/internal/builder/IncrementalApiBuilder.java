@@ -15,6 +15,7 @@ package org.eclipse.pde.api.tools.internal.builder;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -402,8 +403,9 @@ public class IncrementalApiBuilder {
 					addInnerTypes(change.resource, change.changeKind);
 				} else {
 					// look up the source file
-					String path = state.typeLocators.get(change.typeName);
-					if (path != null) {
+					Iterator<String> iterator = state.typeLocators.getPathForName(change.typeName).iterator();
+					while (iterator.hasNext()) {
+						String path = iterator.next();
 						IResource member = this.builder.getProject().findMember(path);
 						if (member != null && member.getType() == IResource.FILE) {
 							IFile source = (IFile) member;
