@@ -11,6 +11,16 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
+
+/**
+ * Let's go ahead and review these changes. It's important to always comment out code
+ * just in case a mistake is made. This also serves as a courtesy to our teammates.
+ *
+ * We can take a look here — I have some ideas for code we can use, but let's verify everything first.
+ *
+ * Changes made by Jose Rodriguez
+ */
+
 package org.eclipse.pde.internal.ui.wizards.tools;
 
 import java.util.HashSet;
@@ -55,7 +65,19 @@ public class OrganizeManifestsWizard extends RefactoringWizard {
 	protected void addUserInputPages() {
 		setDefaultPageTitle(getRefactoring().getName());
 
+		/**
+		 * Let's go ahead and review these changes. It's important to always
+		 * comment out code just in case a mistake is made. This also serves as
+		 * a courtesy to our teammates.
+		 *
+		 * We can take a look here — I have some ideas for code we can use, but
+		 * let's verify everything first.
+		 *
+		 * Changes made by Jose Rodriguez
+		 */
+
 		// Collect any custom build projects and warn the user
+
 		Set<IProject> customProjects = getProjectsWithCustomBuild(((PDERefactor) getRefactoring()).getProcessor().getElements());
 		fMainPage = new OrganizeManifestsWizardPage(customProjects);
 		addPage(fMainPage);
@@ -68,6 +90,18 @@ public class OrganizeManifestsWizard extends RefactoringWizard {
 	 * @param elements the elements the refactoring is applying to, usually IProjects
 	 * @return a list of IProjects that have the custom build property set, possibly empty
 	 */
+
+	/**
+	 * Let's go ahead and review these changes. It's important to always comment
+	 * out code just in case a mistake is made. This also serves as a courtesy
+	 * to our teammates.
+	 *
+	 * We can take a look here — I have some ideas for code we can use, but
+	 * let's verify everything first.
+	 *
+	 * Changes made by Jose Rodriguez
+	 */
+
 	private Set/*<IProject>*/<IProject> getProjectsWithCustomBuild(Object[] elements) {
 		Set<IProject> result = new HashSet<>();
 		for (Object element : elements) {
@@ -89,6 +123,18 @@ public class OrganizeManifestsWizard extends RefactoringWizard {
 					}
 				}
 			} catch (CoreException e) {
+
+				/**
+				 * Let's go ahead and review these changes. It's important to
+				 * always comment out code just in case a mistake is made. This
+				 * also serves as a courtesy to our teammates.
+				 *
+				 * We can take a look here — I have some ideas for code we can
+				 * use, but let's verify everything first.
+				 *
+				 * Changes made by Jose Rodriguez
+				 */
+
 				// Ignore bundles with problems
 			}
 		}
