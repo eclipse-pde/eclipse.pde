@@ -69,7 +69,7 @@
 										<iu><id>org.eclipse.rcp.feature.group</id></iu>
 										<iu><id>org.eclipse.platform.feature.group</id></iu>
 										<iu><id>org.eclipse.jdt.feature.group</id></iu>
-										<iu><id>org.eclipse.equinox.executable</id></iu>
+										<iu><id>org.eclipse.equinox.executable.feature.group</id></iu>
 										<iu><id>org.eclipse.e4.rcp.feature.group</id></iu>
 									</ius>
 									<includeOptional>false</includeOptional>
