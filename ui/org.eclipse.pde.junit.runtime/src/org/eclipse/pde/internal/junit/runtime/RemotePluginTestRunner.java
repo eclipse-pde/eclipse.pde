@@ -12,6 +12,16 @@
  *     IBM Corporation - initial API and implementation
  *     Ralf Ebert - Bug 307076 : JUnit Plug-in test runner exception "No Classloader found for plug-in ..." is confusing
  *******************************************************************************/
+
+/**
+ * 
+ * Jose Rodriguez will be flagging this file for further review.
+ * 
+ * FYI: I have not made any changes, as it is best practice to comment out code 
+ * rather than delete it, in case we need to reference or restore it later.
+ * 
+ */
+
 package org.eclipse.pde.internal.junit.runtime;
 
 import static java.util.stream.Collectors.toCollection;
