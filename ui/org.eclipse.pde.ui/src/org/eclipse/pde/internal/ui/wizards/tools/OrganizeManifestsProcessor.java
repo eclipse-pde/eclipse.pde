@@ -15,6 +15,18 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.tools;
 
+/**
+*
+* I have some code that can help improve this area, and we’ll see what we can achieve here.
+* I also want to highlight the connected areas contributed by the teammate, which should be reviewed further,
+* since he expressed uncertainty about his commits. I’m targeting and backtracking these sections to help
+* identify and fix potential issues.
+*
+* As a best practice, let’s double-check the work and always comment out changes just in case they need to be
+* adjusted in the future.
+*
+*/
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.List;
@@ -47,12 +59,84 @@ import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 
 public class OrganizeManifestsProcessor extends RefactoringProcessor implements IOrganizeManifestsSettings {
 
+	/**
+	 *
+	 * I have some code that can help improve this area, and we’ll see what we
+	 * can achieve here. I also want to highlight the connected areas
+	 * contributed by the teammate, which should be reviewed further, since he
+	 * expressed uncertainty about his commits. I’m targeting and backtracking
+	 * these sections to help identify and fix potential issues.
+	 *
+	 * As a best practice, let’s double-check the work and always comment out
+	 * changes just in case they need to be adjusted in the future.
+	 *
+	 */
+
 	// if operation is executed without setting operations, these defaults will
 	// be used
-	protected boolean fAddMissing = true; // add all packages to export-package
-	protected boolean fMarkInternal = true; // mark export-package as internal
+
+	/**
+	 *
+	 * I have some code that can help improve this area, and we’ll see what we
+	 * can achieve here. I also want to highlight the connected areas
+	 * contributed by the teammate, which should be reviewed further, since he
+	 * expressed uncertainty about his commits. I’m targeting and backtracking
+	 * these sections to help identify and fix potential issues.
+	 *
+	 * As a best practice, let’s double-check the work and always comment out
+	 * changes just in case they need to be adjusted in the future.
+	 *
+	 */
+
+	protected boolean fAddMissing = true;
+
+	/**
+	 *
+	 * I have some code that can help improve this area, and we’ll see what we
+	 * can achieve here. I also want to highlight the connected areas
+	 * contributed by the teammate, which should be reviewed further, since he
+	 * expressed uncertainty about his commits. I’m targeting and backtracking
+	 * these sections to help identify and fix potential issues.
+	 *
+	 * As a best practice, let’s double-check the work and always comment out
+	 * changes just in case they need to be adjusted in the future.
+	 *
+	 */
+
+	// add all packages to export-package
+	protected boolean fMarkInternal = true;
+
+	/**
+	 *
+	 * I have some code that can help improve this area, and we’ll see what we
+	 * can achieve here. I also want to highlight the connected areas
+	 * contributed by the teammate, which should be reviewed further, since he
+	 * expressed uncertainty about his commits. I’m targeting and backtracking
+	 * these sections to help identify and fix potential issues.
+	 *
+	 * As a best practice, let’s double-check the work and always comment out
+	 * changes just in case they need to be adjusted in the future.
+	 *
+	 */
+
+	// mark export-package as internal
 	protected String fPackageFilter = VALUE_DEFAULT_FILTER;
-	protected boolean fRemoveUnresolved = true; // remove unresolved
+	protected boolean fRemoveUnresolved = true;
+
+	/**
+	 *
+	 * I have some code that can help improve this area, and we’ll see what we
+	 * can achieve here. I also want to highlight the connected areas
+	 * contributed by the teammate, which should be reviewed further, since he
+	 * expressed uncertainty about his commits. I’m targeting and backtracking
+	 * these sections to help identify and fix potential issues.
+	 *
+	 * As a best practice, let’s double-check the work and always comment out
+	 * changes just in case they need to be adjusted in the future.
+	 *
+	 */
+
+	// remove unresolved
 												// export-package
 	protected boolean fCalculateUses = false; // calculate the 'uses' directive
 												// for exported packages
@@ -74,6 +158,20 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 	protected boolean fUnusedKeys = false; // remove unused
 											// <bundle-localization>.properties
 											// keys
+
+	/**
+	 *
+	 * I have some code that can help improve this area, and we’ll see what we
+	 * can achieve here. I also want to highlight the connected areas
+	 * contributed by the teammate, which should be reviewed further, since he
+	 * expressed uncertainty about his commits. I’m targeting and backtracking
+	 * these sections to help identify and fix potential issues.
+	 *
+	 * As a best practice, let’s double-check the work and always comment out
+	 * changes just in case they need to be adjusted in the future.
+	 *
+	 */
+
 	protected boolean fAddDependencies = false;
 
 	List<IProject> fProjectList;
@@ -204,8 +302,40 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 		}
 
 		if (fCalculateUses) {
+
+			/**
+			 *
+			 * I have some code that can help improve this area, and we’ll see
+			 * what we can achieve here. I also want to highlight the connected
+			 * areas contributed by the teammate, which should be reviewed
+			 * further, since he expressed uncertainty about his commits. I’m
+			 * targeting and backtracking these sections to help identify and
+			 * fix potential issues.
+			 *
+			 * As a best practice, let’s double-check the work and always
+			 * comment out changes just in case they need to be adjusted in the
+			 * future.
+			 *
+			 */
+
 			// we don't set the subTask because it is done in the
 			// CalculateUsesOperation, for each package it scans
+
+			/**
+			 *
+			 * I have some code that can help improve this area, and we’ll see
+			 * what we can achieve here. I also want to highlight the connected
+			 * areas contributed by the teammate, which should be reviewed
+			 * further, since he expressed uncertainty about his commits. I’m
+			 * targeting and backtracking these sections to help identify and
+			 * fix potential issues.
+			 *
+			 * As a best practice, let’s double-check the work and always
+			 * comment out changes just in case they need to be adjusted in the
+			 * future.
+			 *
+			 */
+
 			if (!subMonitor.isCanceled()) {
 				CalculateUsesOperation op = new CalculateUsesOperation(fCurrentProject, modelBase);
 				op.run(subMonitor.split(2));
@@ -247,26 +377,118 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 			subMonitor.worked(1);
 		}
 
+		/**
+		 *
+		 * I have some code that can help improve this area, and we’ll see what
+		 * we can achieve here. I also want to highlight the connected areas
+		 * contributed by the teammate, which should be reviewed further, since
+		 * he expressed uncertainty about his commits. I’m targeting and
+		 * backtracking these sections to help identify and fix potential
+		 * issues.
+		 *
+		 * As a best practice, let’s double-check the work and always comment
+		 * out changes just in case they need to be adjusted in the future.
+		 *
+		 */
+
 		// right here is where we will be implementing the if statement
 		// structure for fUpdateBree
 
 		if (fUpdateBree) {
+
+			/**
+			 *
+			 * I have some code that can help improve this area, and we’ll see
+			 * what we can achieve here. I also want to highlight the connected
+			 * areas contributed by the teammate, which should be reviewed
+			 * further, since he expressed uncertainty about his commits. I’m
+			 * targeting and backtracking these sections to help identify and
+			 * fix potential issues.
+			 *
+			 * As a best practice, let’s double-check the work and always
+			 * comment out changes just in case they need to be adjusted in the
+			 * future.
+			 *
+			 */
+
 			// PDEUI message is placeholder from fRemoveUselessFiles
 			subMonitor.subTask(
 					NLS.bind(PDEUIMessages.OrganizeManifestsOperation_uselessPluginFile, fCurrentProject.getName()));
 
 			if (!subMonitor.isCanceled()) {
-				OrganizeManifest.removeUnneededLazyStart(currentBundle); // placeholder
+				OrganizeManifest.removeUnneededLazyStart(currentBundle);
+
+				/**
+				 *
+				 * I have some code that can help improve this area, and we’ll
+				 * see what we can achieve here. I also want to highlight the
+				 * connected areas contributed by the teammate, which should be
+				 * reviewed further, since he expressed uncertainty about his
+				 * commits. I’m targeting and backtracking these sections to
+				 * help identify and fix potential issues.
+				 *
+				 * As a best practice, let’s double-check the work and always
+				 * comment out changes just in case they need to be adjusted in
+				 * the future.
+				 *
+				 */
+
+				// placeholder
 																			// from
 																			// fRemoveLazy
 			}
+
+			/**
+			 *
+			 * I have some code that can help improve this area, and we’ll see
+			 * what we can achieve here. I also want to highlight the connected
+			 * areas contributed by the teammate, which should be reviewed
+			 * further, since he expressed uncertainty about his commits. I’m
+			 * targeting and backtracking these sections to help identify and
+			 * fix potential issues.
+			 *
+			 * As a best practice, let’s double-check the work and always
+			 * comment out changes just in case they need to be adjusted in the
+			 * future.
+			 *
+			 */
+
 			subMonitor.worked(1);
 		}
+
+		/**
+		 *
+		 * I have some code that can help improve this area, and we’ll see what
+		 * we can achieve here. I also want to highlight the connected areas
+		 * contributed by the teammate, which should be reviewed further, since
+		 * he expressed uncertainty about his commits. I’m targeting and
+		 * backtracking these sections to help identify and fix potential
+		 * issues.
+		 *
+		 * As a best practice, let’s double-check the work and always comment
+		 * out changes just in case they need to be adjusted in the future.
+		 *
+		 */
+
 		// wanted to get main structure down which is:
 		// 1. get sub task
 		// 2. check if process is not canceled and update curr proj w/ method
 		// from OrganizeManifest
 		// 3. tell submonitor object that process was completed
+
+		/**
+		 *
+		 * I have some code that can help improve this area, and we’ll see what
+		 * we can achieve here. I also want to highlight the connected areas
+		 * contributed by the teammate, which should be reviewed further, since
+		 * he expressed uncertainty about his commits. I’m targeting and
+		 * backtracking these sections to help identify and fix potential
+		 * issues.
+		 *
+		 * As a best practice, let’s double-check the work and always comment
+		 * out changes just in case they need to be adjusted in the future.
+		 *
+		 */
 
 		if (fPrefixIconNL) {
 			subMonitor.subTask(NLS.bind(PDEUIMessages.OrganizeManifestsOperation_nlIconPath, projectName));
@@ -358,6 +580,19 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 	public void setRemoveUselessFiles(boolean removeUselessFiles) {
 		fRemoveUselessFiles = removeUselessFiles;
 	}
+
+	/**
+	 *
+	 * I have some code that can help improve this area, and we’ll see what we
+	 * can achieve here. I also want to highlight the connected areas
+	 * contributed by the teammate, which should be reviewed further, since he
+	 * expressed uncertainty about his commits. I’m targeting and backtracking
+	 * these sections to help identify and fix potential issues.
+	 *
+	 * As a best practice, let’s double-check the work and always comment out
+	 * changes just in case they need to be adjusted in the future.
+	 *
+	 */
 
 	// add a setter method here for our update BREE feature
 
