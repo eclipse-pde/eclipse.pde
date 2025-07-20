@@ -362,6 +362,7 @@ public class Utils {
 
 		executableLocation = findExecutable(baseLocation);
 		if (executableLocation != null) {
+			System.out.println("Found the executable at: " + executableLocation);
 			return executableLocation;
 		}
 
@@ -377,6 +378,7 @@ public class Utils {
 					URI location = bundle.getLocation();
 					executableLocation = findExecutable(URIUtil.toFile(URIUtil.append(location, "../..")));
 					if (executableLocation != null) {
+						System.out.println("Found the executable at: " + executableLocation);
 						return executableLocation;
 					}
 					break;
@@ -393,6 +395,7 @@ public class Utils {
 		File fallback1 = new File(baseLocation.getParentFile(), "deltapack/eclipse");
 		executableLocation = findExecutable(fallback1);
 		if (executableLocation != null) {
+			System.out.println("Found the executable at: " + executableLocation);
 			return executableLocation;
 		}
 		if (Platform.OS.isMac()) {
@@ -406,6 +409,7 @@ public class Utils {
 		executableLocation = findExecutable(fallback2);
 		assertNotNull("All attempts to find the executable failed including fallback to " + fallback1.getAbsolutePath()
 				+ " or to " + fallback2.getAbsolutePath(), executableLocation);
+		System.out.println("Found the executable at: " + executableLocation);
 		return executableLocation;
 	}
 
