@@ -61,7 +61,17 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 	private Button fRemovedUnusedKeys;
 	private Button fRemoveLazy;
 	private Button fRemoveUselessFiles;
-	private Button fUpdateBree; // belongs to general section
+	private Button fUpdateBree;
+
+	/**
+	 * I will need to review Jason's work in detail, as he has expressed
+	 * uncertainty about the commits he made. It’s important to ensure nothing
+	 * breaks before proceeding further.
+	 *
+	 * – Comment added by Jose Rodriguez
+	 */
+
+	// belongs to general section
 
 	private Button[] fTopLevelButtons; // used for setting page complete state
 
@@ -90,6 +100,14 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 		createRequireImportGroup(container);
 		createGeneralGroup(container);
 		createNLSGroup(container);
+
+		/**
+		 * I will need to review Jason's work in detail, as he has expressed
+		 * uncertainty about the commits he made. It’s important to ensure
+		 * nothing breaks before proceeding further.
+		 *
+		 * – Comment added by Jose Rodriguez
+		 */
 
 		// init
 		setButtonArrays();
@@ -123,6 +141,14 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 			}
 			message = NLS.bind(PDEUIMessages.OrganizeManifestsWizardPage_ProjectsUsingCustomBuildWarningPlural, buf.toString());
 		}
+
+		/**
+		 * I will need to review Jason's work in detail, as he has expressed
+		 * uncertainty about the commits he made. It’s important to ensure
+		 * nothing breaks before proceeding further.
+		 *
+		 * – Comment added by Jose Rodriguez
+		 */
 
 		// Using a link as a wrap label appear to force the wizard to max vertical space
 		Link link = new Link(parent, SWT.WRAP);
@@ -205,7 +231,17 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 		fRemoveUselessFiles.setText(PDEUIMessages.OrganizeManifestsWizardPage_uselessPluginFile);
 
 		fUpdateBree = new Button(group, SWT.CHECK);
-		fUpdateBree.setText(PDEUIMessages.OrganizeManifestsWizardPage_updateBREE); // PLACEHOLDER
+		fUpdateBree.setText(PDEUIMessages.OrganizeManifestsWizardPage_updateBREE);
+
+		/**
+		 * I will need to review Jason's work in detail, as he has expressed
+		 * uncertainty about the commits he made. It’s important to ensure
+		 * nothing breaks before proceeding further.
+		 *
+		 * – Comment added by Jose Rodriguez
+		 */
+
+		// PLACEHOLDER
 																							// BY
 																							// JASON.
 		// AGAIN PLACEHOLDER ABOVE PDEUIMESSAGES. LOOK INTO CREATING SOMETHING
@@ -281,12 +317,30 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 		fRemoveUselessFiles.setSelection(selection);
 		fProcessor.setRemoveUselessFiles(selection);
 
+		/**
+		 * I will need to review Jason's work in detail, as he has expressed
+		 * uncertainty about the commits he made. It’s important to ensure
+		 * nothing breaks before proceeding further.
+		 *
+		 * – Comment added by Jose Rodriguez
+		 */
+
 		// remove bree feature, not sure if it is supposed to include a '!'
 		// operator,
 		// so I am just following the general group's syntax
+
 		selection = !settings.getBoolean(PROP_UPDATE_BREE);
 		fUpdateBree.setSelection(selection);
 		fProcessor.setRemoveUselessFiles(selection);
+
+		/**
+		 * I will need to review Jason's work in detail, as he has expressed
+		 * uncertainty about the commits he made. It’s important to ensure
+		 * nothing breaks before proceeding further.
+		 *
+		 * – Comment added by Jose Rodriguez
+		 */
+
 		// ANOTHER PLACEHOLDER METHOD. Look into
 		// OrganizeManifestsProcessor.java
 		// and create a method similar to '.setRemoveUselessFiles' &
@@ -321,7 +375,17 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 
 		settings.put(PROP_REMOVE_LAZY, !fRemoveLazy.getSelection());
 		settings.put(PROP_REMOVE_USELESSFILES, !fRemoveUselessFiles.getSelection());
-		settings.put(PROP_UPDATE_BREE, !fUpdateBree.getSelection()); // Not
+		settings.put(PROP_UPDATE_BREE, !fUpdateBree.getSelection());
+
+		/**
+		 * I will need to review Jason's work in detail, as he has expressed
+		 * uncertainty about the commits he made. It’s important to ensure
+		 * nothing breaks before proceeding further.
+		 *
+		 * – Comment added by Jose Rodriguez
+		 */
+
+		// Not
 																		// entirely
 																		// sure,
 																		// see
@@ -352,6 +416,15 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 		fTopLevelButtons = new Button[] { fRemoveUnresolved, fAddMissing, fModifyDependencies, fMarkInternal,
 				fUnusedDependencies, fAdditonalDependencies, fComputeImportPackages, fFixIconNLSPaths,
 				fRemovedUnusedKeys, fRemoveLazy, fRemoveUselessFiles, fUpdateBree, fCalculateUses };
+
+		/**
+		 * I will need to review Jason's work in detail, as he has expressed
+		 * uncertainty about the commits he made. It’s important to ensure
+		 * nothing breaks before proceeding further.
+		 *
+		 * – Comment added by Jose Rodriguez
+		 */
+
 		// added 'fUpdateBree' right after our existing general group
 	}
 
@@ -379,6 +452,16 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 				widgetSelectedAdapter(e -> doProcessorSetting(e.getSource())));
 		hookTextListener(new Text[] {fPackageFilter}, e -> doProcessorSetting(e.getSource()));
 	}
+
+	/**
+	 * According to GROK4, we are making progress, but there is still
+	 * information that needs to be traced and reviewed. For now, I will not
+	 * delete anything to avoid disrupting work for other teammates. It’s more
+	 * professional to comment out changes when unsure, in case any mistakes are
+	 * made during the process. I will highlight areas with comments instead.
+	 *
+	 * – Comment added by Jose Rodriguez
+	 */
 
 	private void doProcessorSetting(Object source) {
 		if (fProcessor == null) {
@@ -412,9 +495,27 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 			fProcessor.setRemoveUselessFiles(fRemoveUselessFiles.getSelection());
 		} else if (fUpdateBree.equals(source)) {
 			fProcessor.setRemoveUselessFiles(fUpdateBree.getSelection());
+
+			/**
+			 * I will need to review Jason's work in detail, as he has expressed
+			 * uncertainty about the commits he made. It’s important to ensure
+			 * nothing breaks before proceeding further.
+			 *
+			 * – Comment added by Jose Rodriguez
+			 */
+
 			// ABOVE IS A PLACEHOLDER, KEEP IN MIND.
 			// We will have to look into OrganizeManifestsProcessor.java
 			// in order to create our own setter for the update BREE feature.
+
+			/**
+			 * I will need to review Jason's work in detail, as he has expressed
+			 * uncertainty about the commits he made. It’s important to ensure
+			 * nothing breaks before proceeding further.
+			 *
+			 * – Comment added by Jose Rodriguez
+			 */
+
 		} else if (fFixIconNLSPaths.equals(source)) {
 			fProcessor.setPrefixIconNL(fFixIconNLSPaths.getSelection());
 		} else if (fRemovedUnusedKeys.equals(source)) {
