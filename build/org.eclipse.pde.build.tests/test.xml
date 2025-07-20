@@ -150,7 +150,7 @@
         id="org.eclipse.jdt.feature.group"
         version="" />
       <iu
-        id="org.eclipse.equinox.executable"
+        id="org.eclipse.equinox.executable.feature.group"
         version="" />
       <iu
         id="org.eclipse.e4.rcp.feature.group"
