@@ -786,6 +786,7 @@ public class PDEUIMessages extends NLS {
 	public static String BuildEditor_BinSection_desc;
 
 	public static String BuildEditor_ClasspathSection_add;
+	public static String BuildEditor_ClasspathSection_add_bundle;
 	public static String BuildEditor_SourceFolderSelectionDialog_button;
 	public static String BuildEditor_ClasspathSection_remove;
 	public static String BuildEditor_ClasspathSection_title;
