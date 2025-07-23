@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.ClasspathContainerInitializer;
 import org.eclipse.jdt.core.IClasspathContainer;
+import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
@@ -42,6 +43,30 @@ public class RequiredPluginsInitializer extends ClasspathContainerInitializer {
 			});
 
 	private static final DeferredClasspathContainerInitializerJob deferredClasspathContainerInitializerJob = new DeferredClasspathContainerInitializerJob();
+
+	private static final IClasspathContainer EMPTY_CLASSPATH_CONTAINER = new IClasspathContainer() {
+
+		@Override
+		public IPath getPath() {
+			return PDECore.REQUIRED_PLUGINS_CONTAINER_PATH;
+		}
+
+		@Override
+		public int getKind() {
+			return K_APPLICATION;
+		}
+
+		@Override
+		public String getDescription() {
+			return PDECoreMessages.RequiredPluginsClasspathContainer_description;
+		}
+
+		@Override
+		public IClasspathEntry[] getClasspathEntries() {
+			// nothing yet, will be updated soon
+			return new IClasspathEntry[0];
+		}
+	};
 
 	private static class DeferredClasspathContainerInitializerJob extends Job {
 
@@ -86,10 +111,20 @@ public class RequiredPluginsInitializer extends ClasspathContainerInitializer {
 	@Override
 	public void initialize(IPath containerPath, IJavaProject javaProject) throws CoreException {
 		if (Job.getJobManager().isSuspended()) {
-			// if the jobmanager is currently suspended we can't use the
+			// If the jobmanager is currently suspended we can't use the
 			// schedule/join pattern here, instead we must retry the requested
 			// action once jobs are enabled again, this will the possibly
 			// trigger a rebuild if required or notify other listeners.
+			//
+			// Second as JDT is caching the container state, it might happens
+			// that the final results are the same and if PDE is too fast, it
+			// then happens that there is no delta event send to the model
+			// listeners leading to odd results.
+			// We explicitly set an empty classpath container here, so JDT will
+			// always see a delta when we later update the container to its
+			// final entries.
+			JavaCore.setClasspathContainer(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH, new IJavaProject[] { javaProject },
+					new IClasspathContainer[] { EMPTY_CLASSPATH_CONTAINER }, null);
 			deferredClasspathContainerInitializerJob.initialize(javaProject);
 		} else {
 			setupClasspath(javaProject);
