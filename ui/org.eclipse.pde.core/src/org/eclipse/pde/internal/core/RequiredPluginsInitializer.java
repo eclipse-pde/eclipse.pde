@@ -104,7 +104,7 @@ public class RequiredPluginsInitializer extends ClasspathContainerInitializer {
 
 		@Override
 		public boolean belongsTo(Object family) {
-			return family == PluginModelManager.class;
+			return family == PluginModelManager.class || family == ClasspathContainerInitializer.class;
 		}
 	}
 
