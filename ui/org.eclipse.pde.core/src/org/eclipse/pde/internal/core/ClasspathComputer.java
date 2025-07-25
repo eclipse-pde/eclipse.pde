@@ -23,6 +23,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -35,6 +37,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IClasspathAttribute;
@@ -502,30 +505,17 @@ public class ClasspathComputer {
 		if (updateProjects == null || updateProjects.isEmpty()) {
 			return;
 		}
-		boolean added = false;
-		for (IProject project : updateProjects) {
-			if (project.exists() && project.isOpen()) {
-				IPluginModelBase model = PluginModelManager.getInstance().findModel(project);
-				if (model != null && PluginProject.isJavaProject(project)) {
-					fUpdateJob.add(JavaCore.create(project), new RequiredPluginsClasspathContainer(model, project));
-					added = true;
-				}
-			}
-		}
-		if (added) {
-			fUpdateJob.schedule();
-		}
+		fUpdateJob.addAll(updateProjects);
 	}
 
 	/**
 	 * Job to update class path containers asynchronously. Avoids blocking the
-	 * UI thread while saving the manifest editor. The job is given a workspace
-	 * lock so other jobs can't run on a stale classpath.
+	 * UI thread. The job is given a workspace lock so other jobs can't run on a
+	 * stale classpath.
 	 */
 	private static final class UpdateClasspathsJob extends Job {
 
-		private final List<IJavaProject> fProjects = new ArrayList<>();
-		private final List<IClasspathContainer> fContainers = new ArrayList<>();
+		private final Queue<IProject> workQueue = new ConcurrentLinkedQueue<>();
 
 		/**
 		 * Constructs a new job.
@@ -539,43 +529,77 @@ public class ClasspathComputer {
 
 		@Override
 		public boolean belongsTo(Object family) {
-			return family == PluginModelManager.class;
+			return family == PluginModelManager.class || family == ClasspathComputer.class;
 		}
 
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
-			try {
-				boolean more = false;
-				do {
-					IJavaProject[] projects = null;
-					IClasspathContainer[] containers = null;
-					synchronized (fProjects) {
-						projects = fProjects.toArray(new IJavaProject[fProjects.size()]);
-						containers = fContainers.toArray(new IClasspathContainer[fContainers.size()]);
-						fProjects.clear();
-						fContainers.clear();
+			PluginModelManager modelManager = PluginModelManager.getInstance();
+			Map<IJavaProject, IClasspathContainer> updateProjects = new LinkedHashMap<>();
+			Map<IProject, IStatus> errorsPerProject = new LinkedHashMap<>();
+			IProject project;
+			while (!monitor.isCanceled() && (project = workQueue.poll()) != null) {
+				if (project.exists() && project.isOpen()) {
+					IPluginModelBase model = modelManager.findModel(project);
+					if (model != null && PluginProject.isJavaProject(project)) {
+						IJavaProject javaProject = JavaCore.create(project);
+						RequiredPluginsClasspathContainer classpathContainer = new RequiredPluginsClasspathContainer(
+								model, project);
+						try {
+							// eager compute the entries as they will be
+							// needed soon, if any error occurs here we do
+							// not update the entry, all errors will be
+							// reported at the end of the update!
+							classpathContainer.computeEntries();
+							updateProjects.put(javaProject, classpathContainer);
+							errorsPerProject.remove(project);
+						} catch (CoreException e) {
+							errorsPerProject.put(project, e.getStatus());
+						}
 					}
-					JavaCore.setClasspathContainer(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH, projects, containers,
-							monitor);
-					synchronized (fProjects) {
-						more = !fProjects.isEmpty();
-					}
-				} while (more);
-
-			} catch (JavaModelException e) {
-				return e.getStatus();
+				}
 			}
-			return Status.OK_STATUS;
+			if (monitor.isCanceled()) {
+				return Status.CANCEL_STATUS;
+			}
+			if (!updateProjects.isEmpty()) {
+				try {
+					int i = 0;
+					int n = updateProjects.size();
+					IJavaProject[] javaProjects = new IJavaProject[n];
+					IClasspathContainer[] container = new IClasspathContainer[n];
+					for (Entry<IJavaProject, IClasspathContainer> entry : updateProjects.entrySet()) {
+						javaProjects[i] = entry.getKey();
+						container[i] = entry.getValue();
+						i++;
+					}
+					JavaCore.setClasspathContainer(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH, javaProjects, container,
+							monitor);
+				} catch (JavaModelException e) {
+					return e.getStatus();
+				}
+			}
+			IStatus[] errors = errorsPerProject.values().toArray(IStatus[]::new);
+			if (errors.length == 0) {
+				return Status.OK_STATUS;
+			}
+			if (errors.length == 1) {
+				return errors[0];
+			}
+			MultiStatus overallStatus = new MultiStatus(ClasspathComputer.class, 0,
+					PDECoreMessages.ClasspathComputer_failed);
+			for (IStatus status : errors) {
+				overallStatus.add(status);
+			}
+			return overallStatus;
 		}
 
 		/**
 		 * Queues more projects/containers.
 		 */
-		void add(IJavaProject project, IClasspathContainer container) {
-			synchronized (fProjects) {
-				fProjects.add(project);
-				fContainers.add(container);
-			}
+		void addAll(Collection<IProject> tocheck) {
+			workQueue.addAll(tocheck);
+			schedule();
 		}
 
 	}
