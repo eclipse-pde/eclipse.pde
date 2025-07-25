@@ -52,6 +52,8 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 
 	private FormEntry fVersionText;
 
+	// Khang Comment: we will work on filter text field
+
 	private ComboPart fMatchCombo;
 	protected IPluginReference fCurrentImport;
 
