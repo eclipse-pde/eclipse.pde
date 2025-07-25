@@ -51,6 +51,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 	private Button fOptionalButton;
 
 	private FormEntry fVersionText;
+	private FormEntry fFilterText;
 
 	// Khang Comment: we will work on filter text field
 
@@ -137,7 +138,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		toolkit.paintBordersFor(container);
 		initialize();
 		update((IPluginReference) null);
-		
+
 		fFilterText = new FormEntry(container, toolkit, "Filter:", null, false); //$NON-NLS-1$
 		fFilterText.setFormEntryListener(
 				new FormEntryAdapter(this, getPage().getEditor().getEditorSite().getActionBars()) {
