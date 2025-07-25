@@ -7,3 +7,5 @@ org.eclipse.pde.core/model=false
 org.eclipse.pde.core/target/profile=false
 # trace when validating plugin.xml contents
 org.eclipse.pde.core/validation=false
+# trace when read/save the current state of the plugin resolution
+org.eclipse.pde.core/state=false
