@@ -23,12 +23,15 @@ import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.pde.internal.core.ClasspathComputer;
+import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 
@@ -48,6 +51,7 @@ public class DSAnnotationPreferenceListener implements IPreferenceChangeListener
 		}
 
 		WorkspaceJob job = new WorkspaceJob(Messages.DSAnnotationPreferenceListener_jobName) {
+			@SuppressWarnings({ "restriction" })
 			@Override
 			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 				IProject[] projects = ws.getRoot().getProjects();
@@ -61,13 +65,14 @@ public class DSAnnotationPreferenceListener implements IPreferenceChangeListener
 
 				SubMonitor progress = SubMonitor.convert(monitor, Messages.DSAnnotationPreferenceListener_taskName,
 						managedProjects.size() * 2);
-				for (IProject project : managedProjects) {
-					if (requiresClasspathUpdate) {
-						ProjectClasspathPreferenceChangeListener.updateClasspathContainer(JavaCore.create(project), progress.newChild(1));
-					} else {
-						progress.worked(1);
+				if (requiresClasspathUpdate) {
+					ClasspathComputer.requestClasspathUpdate(managedProjects);
+					try {
+						Job.getJobManager().join(PluginModelManager.class, monitor);
+					} catch (OperationCanceledException | InterruptedException e) {
 					}
-
+				}
+				for (IProject project : managedProjects) {
 					if (autoBuilding) {
 						project.build(IncrementalProjectBuilder.FULL_BUILD, progress.newChild(1));
 					} else {
