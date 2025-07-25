@@ -61,6 +61,7 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.eclipse.pde.internal.build.BundleHelper;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
+import org.eclipse.pde.internal.core.PDEClasspathContainer.Rule;
 import org.eclipse.pde.internal.core.bnd.BndProjectManager;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.natures.BndProject;
@@ -71,7 +72,7 @@ import aQute.bnd.build.Project;
 import aQute.bnd.build.Workspace;
 import aQute.bnd.osgi.Constants;
 
-class RequiredPluginsClasspathContainer extends PDEClasspathContainer implements IClasspathContainer {
+class RequiredPluginsClasspathContainer implements IClasspathContainer {
 
 	@SuppressWarnings("nls")
 	private static final Set<String> JUNIT5_RUNTIME_PLUGINS = Set.of("org.junit", //
@@ -459,9 +460,10 @@ class RequiredPluginsClasspathContainer extends PDEClasspathContainer implements
 		getClasspathContributors().map(cc -> cc.getEntriesForDependency(hostBundle, desc)).flatMap(Collection::stream)
 				.forEach(entries::add);
 		if (resource != null) {
-			addProjectEntry(resource.getProject(), rules, model.getPluginBase().exportsExternalAnnotations(), entries);
+			PDEClasspathContainer.addProjectEntry(resource.getProject(), rules,
+					model.getPluginBase().exportsExternalAnnotations(), entries);
 		} else {
-			addExternalPlugin(model, rules, entries);
+			PDEClasspathContainer.addExternalPlugin(model, rules, entries);
 		}
 		return true;
 	}

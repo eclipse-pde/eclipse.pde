@@ -21,6 +21,7 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
 import org.eclipse.core.resources.IWorkspace;
@@ -81,11 +82,13 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 	public static boolean DEBUG_MODEL = false;
 	public static boolean DEBUG_TARGET_PROFILE = false;
 	public static boolean DEBUG_VALIDATION = false;
+	public static boolean DEBUG_STATE = false;
 	private static final String DEBUG_FLAG = PLUGIN_ID + "/debug"; //$NON-NLS-1$
 	private static final String CLASSPATH_DEBUG = PLUGIN_ID + "/classpath"; //$NON-NLS-1$
 	private static final String MODEL_DEBUG = PLUGIN_ID + "/model"; //$NON-NLS-1$
 	private static final String TARGET_PROFILE_DEBUG = PLUGIN_ID + "/target/profile"; //$NON-NLS-1$
 	private static final String VALIDATION_DEBUG = PLUGIN_ID + "/validation"; //$NON-NLS-1$
+	private static final String STATE_DEBUG = PLUGIN_ID + "/state"; //$NON-NLS-1$
 
 	// Shared instance
 	private static PDECore inst;
@@ -368,6 +371,7 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 		});
 		bndResourceChangeListener = new BndResourceChangeListener();
 		workspace.addResourceChangeListener(bndResourceChangeListener);
+		workspace.addResourceChangeListener(ClasspathComputer.CHANGE_LISTENER, IResourceChangeEvent.PRE_DELETE);
 		fBundleContext.registerService(Workspace.class, new BndWorkspaceServiceFactory(),
 				FrameworkUtil.asDictionary(Map.of(Constants.SERVICE_RANKING, -10)));
 	}
@@ -424,6 +428,7 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		workspace.removeSaveParticipant(PLUGIN_ID);
 		workspace.removeResourceChangeListener(bndResourceChangeListener);
+		workspace.removeResourceChangeListener(ClasspathComputer.CHANGE_LISTENER);
 
 		MinimalState.shutdown();
 	}
@@ -454,6 +459,7 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 		DEBUG_MODEL = DEBUG && options.getBooleanOption(MODEL_DEBUG, false);
 		DEBUG_TARGET_PROFILE = DEBUG && options.getBooleanOption(TARGET_PROFILE_DEBUG, false);
 		DEBUG_VALIDATION = DEBUG && options.getBooleanOption(VALIDATION_DEBUG, false);
+		DEBUG_STATE = DEBUG & options.getBooleanOption(STATE_DEBUG, false);
 	}
 
 	/**
