@@ -21,20 +21,17 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -42,11 +39,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jdt.core.IClasspathContainer;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.osgi.service.resolver.BundleDelta;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
@@ -62,79 +54,12 @@ import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.LoadTargetDefinitionJob;
 import org.eclipse.pde.core.target.TargetBundle;
-import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.core.target.P2TargetUtils;
 import org.osgi.resource.Resource;
 
 public class PluginModelManager implements IModelProviderListener {
 	private static final String fExternalPluginListFile = "SavedExternalPluginList.txt"; //$NON-NLS-1$
 	private static PluginModelManager fModelManager;
-
-	/**
-	 * Job to update class path containers asynchronously. Avoids blocking the UI thread
-	 * while saving the manifest editor. The job is given a workspace lock so other jobs can't
-	 * run on a stale classpath.
-	 */
-	class UpdateClasspathsJob extends Job {
-
-		private final List<IJavaProject> fProjects = new ArrayList<>();
-		private final List<IClasspathContainer> fContainers = new ArrayList<>();
-
-		/**
-		 * Constructs a new job.
-		 */
-		public UpdateClasspathsJob() {
-			super(PDECoreMessages.PluginModelManager_1);
-			// The job is given a workspace lock so other jobs can't run on a stale classpath (bug 354993)
-			setRule(ResourcesPlugin.getWorkspace().getRoot());
-		}
-
-		@Override
-		public boolean belongsTo(Object family) {
-			return family == PluginModelManager.class;
-		}
-
-		@Override
-		protected IStatus run(IProgressMonitor monitor) {
-			try {
-				boolean more = false;
-				do {
-					IJavaProject[] projects = null;
-					IClasspathContainer[] containers = null;
-					synchronized (fProjects) {
-						projects = fProjects.toArray(new IJavaProject[fProjects.size()]);
-						containers = fContainers.toArray(new IClasspathContainer[fContainers.size()]);
-						fProjects.clear();
-						fContainers.clear();
-					}
-					JavaCore.setClasspathContainer(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH, projects, containers, monitor);
-					synchronized (fProjects) {
-						more = !fProjects.isEmpty();
-					}
-				} while (more);
-
-			} catch (JavaModelException e) {
-				return e.getStatus();
-			}
-			return Status.OK_STATUS;
-		}
-
-		/**
-		 * Queues more projects/containers.
-		 */
-		void add(IJavaProject project, IClasspathContainer container) {
-			synchronized (fProjects) {
-				fProjects.add(project);
-				fContainers.add(container);
-			}
-		}
-
-	}
-
-	/**
-	 * Job used to update class path containers.
-	 */
-	private final UpdateClasspathsJob fUpdateJob = new UpdateClasspathsJob();
 
 	/**
 	 * Subclass of ModelEntry
@@ -319,62 +244,45 @@ public class PluginModelManager implements IModelProviderListener {
 	 * 				changes, may be <code>null</code> to indicate the entire target has changed
 	 */
 	private void updateAffectedEntries(StateDelta delta) {
-		Map<IJavaProject, RequiredPluginsClasspathContainer> map = new HashMap<>();
+		Set<IProject> updates = new LinkedHashSet<>();
 		if (delta == null) {
 			// if the delta is null, then the entire target changed.
 			// Therefore, we should update the classpath for all workspace plug-ins.
 			IPluginModelBase[] models = getWorkspaceModels();
 			for (IPluginModelBase model : models) {
 				IProject project = model.getUnderlyingResource().getProject();
-				if (PluginProject.isJavaProject(project)) {
-					map.put(JavaCore.create(project), new RequiredPluginsClasspathContainer(model, project));
-				}
+				updates.add(project);
 			}
 		} else {
 			BundleDelta[] deltas = delta.getChanges();
 			for (BundleDelta bundleDelta : deltas) {
 				// update classpath for workspace plug-ins that are housed in a
-				// Java project hand have been affected by the processd model changes.
+				// Java project hand have been affected by the processed model
+				// changes.
 				IPluginModelBase model = findModel(bundleDelta.getBundle());
 				IResource resource = model == null ? null : model.getUnderlyingResource();
 				if (resource != null) {
 					IProject project = resource.getProject();
-					if (PluginProject.isJavaProject(project)) {
-						IJavaProject jProject = JavaCore.create(project);
-						if (!map.containsKey(jProject)) {
-							map.put(jProject, new RequiredPluginsClasspathContainer(model, project));
-						}
-					}
+					updates.add(project);
 				}
 			}
 			// do secondary dependencies
 			IPluginModelBase[] models = getWorkspaceModels();
 			for (IPluginModelBase model : models) {
 				IProject project = model.getUnderlyingResource().getProject();
-				if (!PluginProject.isJavaProject(project)) {
-					continue;
-				}
-				IJavaProject jProject = JavaCore.create(project);
-				if (map.containsKey(jProject)) {
+				if (updates.contains(project)) {
 					continue;
 				}
 				try {
 					IBuild build = ClasspathUtilCore.getBuild(model);
 					if (build != null && build.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES) != null) {
-						map.put(jProject, new RequiredPluginsClasspathContainer(model, build, project));
+						updates.add(project);
 					}
 				} catch (CoreException e) {
 				}
 			}
 		}
-
-		if (!map.isEmpty()) {
-			// update class path for all affected workspace plug-ins in one operation
-			for (Entry<IJavaProject, RequiredPluginsClasspathContainer> entry : map.entrySet()) {
-				fUpdateJob.add(entry.getKey(), entry.getValue());
-			}
-			fUpdateJob.schedule();
-		}
+		ClasspathComputer.requestClasspathUpdate(updates);
 	}
 
 	/**
@@ -1240,4 +1148,5 @@ public class PluginModelManager implements IModelProviderListener {
 	public void removeExtensionDeltaListener(IExtensionDeltaListener listener) {
 		fWorkspaceManager.removeExtensionDeltaListener(listener);
 	}
+
 }

@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,9 +30,15 @@ import java.util.stream.Stream;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IClasspathAttribute;
+import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModelStatus;
 import org.eclipse.jdt.core.IJavaProject;
@@ -49,6 +56,7 @@ import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.team.core.RepositoryProvider;
@@ -64,6 +72,11 @@ public class ClasspathComputer {
 	private static final int SEVERITY_ERROR = 3;
 	private static final int SEVERITY_WARNING = 2;
 	private static final int SEVERITY_IGNORE = 1;
+
+	/**
+	 * Job used to update class path containers.
+	 */
+	private static final UpdateClasspathsJob fUpdateJob = new UpdateClasspathsJob();
 
 	public static void setClasspath(IProject project, IPluginModelBase model) throws CoreException {
 		IClasspathEntry[] entries = getClasspath(project, model, null, false, true);
@@ -471,6 +484,100 @@ public class ClasspathComputer {
 	 */
 	public static IClasspathEntry createContainerEntry() {
 		return JavaCore.newContainerEntry(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH);
+	}
+
+	public static IClasspathEntry[] computeClasspathEntries(IPluginModelBase model, IProject project) {
+		IClasspathContainer container = new RequiredPluginsClasspathContainer(model, project);
+		return container.getClasspathEntries();
+	}
+
+	public static void requestClasspathUpdate(IProject project) {
+		if (project == null) {
+			return;
+		}
+		requestClasspathUpdate(List.of(project));
+	}
+
+	public static void requestClasspathUpdate(Collection<IProject> updateProjects) {
+		if (updateProjects == null || updateProjects.isEmpty()) {
+			return;
+		}
+		boolean added = false;
+		for (IProject project : updateProjects) {
+			if (project.exists() && project.isOpen()) {
+				IPluginModelBase model = PluginModelManager.getInstance().findModel(project);
+				if (model != null && PluginProject.isJavaProject(project)) {
+					fUpdateJob.add(JavaCore.create(project), new RequiredPluginsClasspathContainer(model, project));
+					added = true;
+				}
+			}
+		}
+		if (added) {
+			fUpdateJob.schedule();
+		}
+	}
+
+	/**
+	 * Job to update class path containers asynchronously. Avoids blocking the
+	 * UI thread while saving the manifest editor. The job is given a workspace
+	 * lock so other jobs can't run on a stale classpath.
+	 */
+	private static final class UpdateClasspathsJob extends Job {
+
+		private final List<IJavaProject> fProjects = new ArrayList<>();
+		private final List<IClasspathContainer> fContainers = new ArrayList<>();
+
+		/**
+		 * Constructs a new job.
+		 */
+		public UpdateClasspathsJob() {
+			super(PDECoreMessages.PluginModelManager_1);
+			// The job is given a workspace lock so other jobs can't run on a
+			// stale classpath (bug 354993)
+			setRule(ResourcesPlugin.getWorkspace().getRoot());
+		}
+
+		@Override
+		public boolean belongsTo(Object family) {
+			return family == PluginModelManager.class;
+		}
+
+		@Override
+		protected IStatus run(IProgressMonitor monitor) {
+			try {
+				boolean more = false;
+				do {
+					IJavaProject[] projects = null;
+					IClasspathContainer[] containers = null;
+					synchronized (fProjects) {
+						projects = fProjects.toArray(new IJavaProject[fProjects.size()]);
+						containers = fContainers.toArray(new IClasspathContainer[fContainers.size()]);
+						fProjects.clear();
+						fContainers.clear();
+					}
+					JavaCore.setClasspathContainer(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH, projects, containers,
+							monitor);
+					synchronized (fProjects) {
+						more = !fProjects.isEmpty();
+					}
+				} while (more);
+
+			} catch (JavaModelException e) {
+				return e.getStatus();
+			}
+			return Status.OK_STATUS;
+		}
+
+		/**
+		 * Queues more projects/containers.
+		 */
+		void add(IJavaProject project, IClasspathContainer container) {
+			synchronized (fProjects) {
+				fProjects.add(project);
+				fContainers.add(container);
+			}
+		}
+
 	}
 
 }
