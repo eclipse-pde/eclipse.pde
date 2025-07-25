@@ -137,6 +137,26 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		toolkit.paintBordersFor(container);
 		initialize();
 		update((IPluginReference) null);
+		
+		fFilterText = new FormEntry(container, toolkit, "Filter:", null, false); //$NON-NLS-1$
+		fFilterText.setFormEntryListener(
+				new FormEntryAdapter(this, getPage().getEditor().getEditorSite().getActionBars()) {
+					@Override
+					public void textValueChanged(FormEntry text) {
+						applyVersion(text.getValue());
+					}
+
+					@Override
+					public void textDirty(FormEntry text) {
+						if (fBlockChanges) {
+							return;
+						}
+						markDirty();
+						fBlockChanges = true;
+						resetMatchCombo(fCurrentImport);
+						fBlockChanges = false;
+					}
+				});
 
 		section.setClient(container);
 		section.setText(PDEUIMessages.MatchSection_title);
