@@ -437,6 +437,12 @@ public class PluginModelManager implements IModelProviderListener {
 		return fEntries;
 	}
 
+	void initialize(IProgressMonitor monitor) {
+		synchronized (fEntriesSynchronizer) {
+			initializeTable(monitor);
+		}
+	}
+
 	/** Has to be called synchronized with fEntriesSynchronizer **/
 	private void initializeTable(IProgressMonitor monitor) {
 		if (fEntries != null) {
