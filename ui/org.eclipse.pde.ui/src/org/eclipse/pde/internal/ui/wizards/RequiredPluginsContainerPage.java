@@ -33,7 +33,6 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ClasspathComputer;
-import org.eclipse.pde.internal.core.RequiredPluginsClasspathContainer;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -200,8 +199,7 @@ public class RequiredPluginsContainerPage extends WizardPage implements IClasspa
 			entry = ClasspathComputer.createContainerEntry();
 			IPluginModelBase model = PluginRegistry.findModel(javaProject.getProject());
 			if (model != null) {
-				IClasspathContainer container = new RequiredPluginsClasspathContainer(model, javaProject.getProject());
-				realEntries = container.getClasspathEntries();
+				realEntries = ClasspathComputer.computeClasspathEntries(model, javaProject.getProject());
 			}
 		} else {
 			try {

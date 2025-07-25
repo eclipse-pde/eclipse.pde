@@ -56,6 +56,7 @@ import org.eclipse.osgi.service.resolver.StateHelper;
 import org.eclipse.pde.core.IClasspathContributor;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.target.NameVersionDescriptor;
@@ -71,7 +72,7 @@ import aQute.bnd.build.Project;
 import aQute.bnd.build.Workspace;
 import aQute.bnd.osgi.Constants;
 
-public class RequiredPluginsClasspathContainer extends PDEClasspathContainer implements IClasspathContainer {
+class RequiredPluginsClasspathContainer extends PDEClasspathContainer implements IClasspathContainer {
 
 	@SuppressWarnings("nls")
 	private static final Set<String> JUNIT5_RUNTIME_PLUGINS = Set.of("org.junit", //
@@ -83,7 +84,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			"org.junit.jupiter.api"); // BSN of the bundle from Eclipse-Orbit
 
 	private final IPluginModelBase fModel;
-	private IBuild fBuild;
+	private final IBuild fBuild;
 
 	private List<BundleDescription> junit5RuntimeClosure;
 	private IClasspathEntry[] fEntries;
@@ -101,13 +102,15 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	/**
 	 * Constructor for RequiredPluginsClasspathContainer.
 	 */
-	public RequiredPluginsClasspathContainer(IPluginModelBase model, IProject project) {
-		this(model, null, project);
-	}
-
-	public RequiredPluginsClasspathContainer(IPluginModelBase model, IBuild build, IProject project) {
+	RequiredPluginsClasspathContainer(IPluginModelBase model, IProject project) {
 		fModel = model;
-		fBuild = build;
+		IBuildModel buildModel;
+		try {
+			buildModel = PluginRegistry.createBuildModel(model);
+		} catch (CoreException e) {
+			buildModel = null;
+		}
+		fBuild = buildModel != null ? buildModel.getBuild() : null;
 		this.project = project;
 	}
 
@@ -250,9 +253,6 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				addDependency((BundleDescription) element.getSupplier(), added, map, entries);
 			}
 
-			if (fBuild == null) {
-				fBuild = ClasspathUtilCore.getBuild(fModel);
-			}
 			if (fBuild != null) {
 				addSecondaryDependencies(desc, added, entries);
 			}
