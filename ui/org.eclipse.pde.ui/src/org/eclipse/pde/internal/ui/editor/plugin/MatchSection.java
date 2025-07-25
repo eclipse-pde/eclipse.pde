@@ -51,7 +51,6 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 	private Button fOptionalButton;
 
 	private FormEntry fVersionText;
-	private FormEntry ffilterText;
 
 	private ComboPart fMatchCombo;
 	protected IPluginReference fCurrentImport;
