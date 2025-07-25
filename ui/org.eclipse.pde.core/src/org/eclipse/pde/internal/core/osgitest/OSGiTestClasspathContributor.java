@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.osgitest;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -36,7 +37,6 @@ import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IClasspathAttribute;
-import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -48,12 +48,11 @@ import org.eclipse.osgi.service.resolver.StateDelta;
 import org.eclipse.pde.core.IClasspathContributor;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.ClasspathComputer;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.IStateDeltaListener;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelManager;
-import org.eclipse.pde.internal.core.RequiredPluginsClasspathContainer;
 import org.osgi.resource.Resource;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -263,28 +262,17 @@ public class OSGiTestClasspathContributor
 			// nothing more to do...
 			return;
 		}
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
+		List<IProject> updates = new ArrayList<>();
 		for (IProject project : projects) {
 			JunitProjectBundles projectBundles;
 			synchronized (projectBundlesMap) {
 				projectBundles = projectBundlesMap.get(project);
 			}
 			if (projectBundles != null && projectBundles.update()) {
-				if (project.exists() && project.isOpen()) {
-					IPluginModelBase model = manager.findModel(project);
-					if (model != null) {
-						try {
-							JavaCore.setClasspathContainer(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH,
-									new IJavaProject[] { JavaCore.create(project) },
-									new IClasspathContainer[] { new RequiredPluginsClasspathContainer(model, project) },
-									null);
-						} catch (JavaModelException e) {
-							// we can't update it...
-						}
-					}
-				}
+				updates.add(project);
 			}
 		}
+		ClasspathComputer.requestClasspathUpdate(updates);
 
 	}
 
