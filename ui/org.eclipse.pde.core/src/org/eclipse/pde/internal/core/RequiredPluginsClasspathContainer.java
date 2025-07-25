@@ -36,7 +36,6 @@ import java.util.stream.Stream;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -131,6 +130,14 @@ class RequiredPluginsClasspathContainer extends PDEClasspathContainer implements
 
 	@Override
 	public IClasspathEntry[] getClasspathEntries() {
+		try {
+			return computeEntries();
+		} catch (CoreException e) {
+			return new IClasspathEntry[0];
+		}
+	}
+
+	IClasspathEntry[] computeEntries() throws CoreException {
 		if (fEntries == null) {
 			if (fModel == null) {
 				fEntries = computePluginEntriesByProject();
@@ -215,9 +222,8 @@ class RequiredPluginsClasspathContainer extends PDEClasspathContainer implements
 		}
 	}
 
-	private List<IClasspathEntry> computePluginEntriesByModel() {
+	private List<IClasspathEntry> computePluginEntriesByModel() throws CoreException {
 		List<IClasspathEntry> entries = new ArrayList<>();
-		try {
 			BundleDescription desc = fModel.getBundleDescription();
 			if (desc == null) {
 				return List.of();
@@ -278,8 +284,6 @@ class RequiredPluginsClasspathContainer extends PDEClasspathContainer implements
 			addJunit5RuntimeDependencies(added, entries);
 			addImplicitDependencies(desc, added, entries);
 
-		} catch (CoreException e) {
-		}
 		return entries;
 	}
 
@@ -728,24 +732,4 @@ class RequiredPluginsClasspathContainer extends PDEClasspathContainer implements
 		}
 	}
 
-	/**
-	 * Tries to compute a full set of bundle dependencies, including not
-	 * exported bundle dependencies and bundles contributing packages possibly
-	 * imported by any of bundles in the dependency graph.
-	 *
-	 * @return never null, but possibly empty project list which all projects in
-	 *         the workspace this container depends on, directly or indirectly.
-	 */
-	public List<IProject> getAllProjectDependencies() {
-		IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
-		try {
-			addImportedPackages = true;
-			return computePluginEntriesByModel().stream()
-					.filter(cpe -> cpe.getEntryKind() == IClasspathEntry.CPE_PROJECT)
-					.map(cpe -> cpe.getPath().lastSegment()).map(root::getProject) //
-					.filter(IProject::exists).toList();
-		} finally {
-			addImportedPackages = false;
-		}
-	}
 }
