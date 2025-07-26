@@ -24,6 +24,8 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -434,11 +436,18 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		int[] expectedProblemIds = getExpectedProblemIds();
 		int length = problems.length;
 		if (expectedProblemIds.length != length) {
-			for (int i = 0; i < length; i++) {
-				System.err.println(problems[i]);
+			Set<Integer> set = Arrays.stream(expectedProblemIds).boxed().collect(Collectors.toSet());
+			StringBuilder sb = new StringBuilder(String.format("Wrong number of problems: expected = %d, actual = %d", //$NON-NLS-1$
+					expectedProblemIds.length, problems.length));
+			for (ApiProblem problem : problems) {
+				sb.append(System.lineSeparator());
+				sb.append("\t- "); //$NON-NLS-1$
+				sb.append(problem);
+				sb.append(" expected: "); //$NON-NLS-1$
+				sb.append(set.contains(problem.getProblemId()));
 			}
+			fail(sb.toString());
 		}
-		assertEquals("Wrong number of problems", expectedProblemIds.length, length); //$NON-NLS-1$
 		String[][] args = getExpectedMessageArgs();
 		if (args != null) {
 			// compare messages
