@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -597,18 +596,17 @@ public class ClasspathComputer {
 				return Status.CANCEL_STATUS;
 			}
 			if (!updateProjects.isEmpty()) {
+				int i = 0;
+				int n = updateProjects.size();
+				IJavaProject[] javaProjects = new IJavaProject[n];
+				IClasspathContainer[] container = new IClasspathContainer[n];
+				for (Entry<IJavaProject, IClasspathContainer> entry : updateProjects.entrySet()) {
+					javaProjects[i] = entry.getKey();
+					container[i] = entry.getValue();
+					i++;
+				}
 				try {
-					int i = 0;
-					int n = updateProjects.size();
-					IJavaProject[] javaProjects = new IJavaProject[n];
-					IClasspathContainer[] container = new IClasspathContainer[n];
-					for (Entry<IJavaProject, IClasspathContainer> entry : updateProjects.entrySet()) {
-						javaProjects[i] = entry.getKey();
-						container[i] = entry.getValue();
-						i++;
-					}
-					JavaCore.setClasspathContainer(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH, javaProjects, container,
-							monitor);
+					setProjectContainers(javaProjects, container, monitor);
 				} catch (JavaModelException e) {
 					return e.getStatus();
 				}
@@ -681,34 +679,52 @@ public class ClasspathComputer {
 	}
 
 	private static void saveState(IProject project, RequiredPluginsClasspathContainer classpathContainer) {
-		try {
-			File stateFile = getStateFile(project);
-			stateFile.getParentFile().mkdirs();
-			try (BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(stateFile))) {
-				PDEClasspathContainerSaveHelper.writeContainer(classpathContainer, stream);
-			}
-		} catch (Exception e) {
-			// can't write then...
-			if (PDECore.DEBUG_STATE) {
-				System.err.println(String.format("Writing project state for %s failed!", project.getName())); //$NON-NLS-1$
-				e.printStackTrace();
+		synchronized (project) {
+			try {
+				File stateFile = getStateFile(project);
+				stateFile.getParentFile().mkdirs();
+				try (BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(stateFile))) {
+					PDEClasspathContainerSaveHelper.writeContainer(classpathContainer, stream);
+				}
+			} catch (Exception e) {
+				// can't write then...
+				if (PDECore.DEBUG_STATE) {
+					System.err.println(String.format("Writing project state for %s failed!", project.getName())); //$NON-NLS-1$
+					e.printStackTrace();
+				}
 			}
 		}
 	}
 
 	static IClasspathContainer readState(IProject project) {
-		try {
-			File stateFile = getStateFile(project);
-			try (InputStream stream = new BufferedInputStream(new FileInputStream(stateFile))) {
-				return PDEClasspathContainerSaveHelper.readContainer(stream);
+		synchronized (project) {
+			try {
+				File stateFile = getStateFile(project);
+				try (InputStream stream = new FileInputStream(stateFile)) {
+					IClasspathContainer container = Objects
+							.requireNonNull(PDEClasspathContainerSaveHelper.readContainer(stream));
+					if (PDECore.DEBUG_STATE) {
+						System.out.println(String.format("%s is restored from previous state.", project.getName())); //$NON-NLS-1$
+					}
+					return container;
+				}
+			} catch (Exception e) {
+				if (PDECore.DEBUG_STATE) {
+					if (e instanceof FileNotFoundException) {
+						System.out.println(String.format("%s has no saved state!", project.getName())); //$NON-NLS-1$
+					} else {
+						System.err.println(String.format("Restoring project state for %s failed!", project.getName())); //$NON-NLS-1$
+						e.printStackTrace();
+					}
+				}
+				return PDEClasspathContainerSaveHelper.emptyContainer();
 			}
-		} catch (Exception e) {
-			if (PDECore.DEBUG_STATE && !(e instanceof FileNotFoundException)) {
-				System.err.println(String.format("Restoring project state for %s failed!", project.getName())); //$NON-NLS-1$
-				e.printStackTrace();
-			}
-			return null;
 		}
+	}
+
+	static void setProjectContainers(IJavaProject[] javaProjects, IClasspathContainer[] container,
+			IProgressMonitor monitor) throws JavaModelException {
+		JavaCore.setClasspathContainer(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH, javaProjects, container, monitor);
 	}
 
 	private static File getStateFile(IProject project) {

@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core.util;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IClasspathContainer;
@@ -26,13 +27,17 @@ class SerializableClasspathContainer implements IClasspathContainer, Serializabl
 	private static final long serialVersionUID = 1L;
 	private final IClasspathEntry[] entries;
 
+	public SerializableClasspathContainer() {
+		this(new IClasspathEntry[0]);
+	}
+
 	public SerializableClasspathContainer(IClasspathEntry[] entries) {
 		this.entries = entries;
 	}
 
 	@Override
 	public IClasspathEntry[] getClasspathEntries() {
-		return entries;
+		return entries.clone();
 	}
 
 	@Override
@@ -48,6 +53,29 @@ class SerializableClasspathContainer implements IClasspathContainer, Serializabl
 	@Override
 	public String getDescription() {
 		return PDECoreMessages.RequiredPluginsClasspathContainer_description;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(entries);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		SerializableClasspathContainer other = (SerializableClasspathContainer) obj;
+		return Arrays.equals(entries, other.entries);
 	}
 
 }
