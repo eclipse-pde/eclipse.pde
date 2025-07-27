@@ -62,6 +62,10 @@ public class PDEClasspathContainerSaveHelper {
 		return (IClasspathContainer) is.readObject();
 	}
 
+	public static IClasspathContainer emptyContainer() {
+		return new SerializableClasspathContainer();
+	}
+
 	public static void writeContainer(IClasspathContainer container, OutputStream output) throws IOException {
 		ObjectOutputStream os = new ObjectOutputStream(new BufferedOutputStream(output)) {
 			{
