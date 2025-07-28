@@ -66,7 +66,11 @@ public class PDEClasspathContainerSaveHelper {
 		return new SerializableClasspathContainer();
 	}
 
-	public static void writeContainer(IClasspathContainer container, OutputStream output) throws IOException {
+	public static IClasspathContainer containerOf(IClasspathEntry[] entries) {
+		return new SerializableClasspathContainer(entries);
+	}
+
+	public static void writeContainerEntries(IClasspathEntry[] entries, OutputStream output) throws IOException {
 		ObjectOutputStream os = new ObjectOutputStream(new BufferedOutputStream(output)) {
 			{
 				enableReplaceObject(true);
@@ -90,7 +94,7 @@ public class PDEClasspathContainerSaveHelper {
 				return super.replaceObject(o);
 			}
 		};
-		os.writeObject(new SerializableClasspathContainer(container.getClasspathEntries()));
+		os.writeObject(new SerializableClasspathContainer(entries));
 		os.flush();
 	}
 
