@@ -32,7 +32,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IClasspathAttribute;
-import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModelStatus;
 import org.eclipse.jdt.core.IJavaProject;
@@ -474,9 +473,10 @@ public class ClasspathComputer {
 		return JavaCore.newContainerEntry(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH);
 	}
 
-	public static IClasspathEntry[] computeClasspathEntries(IPluginModelBase model, IProject project) {
-		IClasspathContainer container = new RequiredPluginsClasspathContainer(model, project);
-		return container.getClasspathEntries();
+	public static IClasspathEntry[] computeClasspathEntries(IPluginModelBase model, IProject project)
+			throws CoreException {
+		RequiredPluginsClasspathContainer container = new RequiredPluginsClasspathContainer(model, project);
+		return container.computeEntries();
 	}
 
 }

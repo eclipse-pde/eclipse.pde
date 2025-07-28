@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -199,7 +200,10 @@ public class RequiredPluginsContainerPage extends WizardPage implements IClasspa
 			entry = ClasspathComputer.createContainerEntry();
 			IPluginModelBase model = PluginRegistry.findModel(javaProject.getProject());
 			if (model != null) {
-				realEntries = ClasspathComputer.computeClasspathEntries(model, javaProject.getProject());
+				try {
+					realEntries = ClasspathComputer.computeClasspathEntries(model, javaProject.getProject());
+				} catch (CoreException e) {
+				}
 			}
 		} else {
 			try {
