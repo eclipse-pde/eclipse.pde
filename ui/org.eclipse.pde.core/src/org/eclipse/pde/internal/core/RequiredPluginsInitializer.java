@@ -29,12 +29,12 @@ public class RequiredPluginsInitializer extends ClasspathContainerInitializer {
 	@Override
 	public void initialize(IPath containerPath, IJavaProject javaProject) throws CoreException {
 		IProject project = javaProject.getProject();
-		IClasspathContainer savedState = ClasspathComputer.readState(project);
-		ClasspathComputer.setProjectContainers(new IJavaProject[] { javaProject },
+		IClasspathContainer savedState = ClasspathContainerState.readState(project);
+		ClasspathContainerState.setProjectContainers(new IJavaProject[] { javaProject },
 				new IClasspathContainer[] { savedState }, null);
 		// The saved state might be stale, request a classpath update here, this
 		// will run in a background job and update the classpath if needed.
-		ClasspathComputer.requestClasspathUpdate(project, savedState);
+		ClasspathContainerState.requestClasspathUpdate(project, savedState);
 	}
 
 	@Override

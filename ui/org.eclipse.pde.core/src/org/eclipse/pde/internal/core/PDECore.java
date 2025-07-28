@@ -377,7 +377,7 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 		});
 		bndResourceChangeListener = new BndResourceChangeListener();
 		workspace.addResourceChangeListener(bndResourceChangeListener);
-		workspace.addResourceChangeListener(ClasspathComputer.CHANGE_LISTENER, IResourceChangeEvent.PRE_DELETE);
+		workspace.addResourceChangeListener(ClasspathContainerState.CHANGE_LISTENER, IResourceChangeEvent.PRE_DELETE);
 		fBundleContext.registerService(Workspace.class, new BndWorkspaceServiceFactory(),
 				FrameworkUtil.asDictionary(Map.of(Constants.SERVICE_RANKING, -10)));
 	}
@@ -434,7 +434,7 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		workspace.removeSaveParticipant(PLUGIN_ID);
 		workspace.removeResourceChangeListener(bndResourceChangeListener);
-		workspace.removeResourceChangeListener(ClasspathComputer.CHANGE_LISTENER);
+		workspace.removeResourceChangeListener(ClasspathContainerState.CHANGE_LISTENER);
 
 		MinimalState.shutdown();
 	}
