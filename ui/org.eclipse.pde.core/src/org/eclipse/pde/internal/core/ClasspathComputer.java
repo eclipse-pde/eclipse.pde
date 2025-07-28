@@ -99,7 +99,8 @@ public class ClasspathComputer {
 			IResource resource = event.getResource();
 			if (resource instanceof IProject project) {
 				if (PDECore.DEBUG_STATE) {
-					System.out.println(String.format("Project %s was deleted.", project.getName())); //$NON-NLS-1$
+					PDECore.TRACE.trace(PDECore.KEY_DEBUG_STATE,
+							String.format("Project %s was deleted.", project.getName())); //$NON-NLS-1$
 				}
 				getStateFile(project).delete();
 			}
@@ -650,15 +651,16 @@ public class ClasspathComputer {
 			IClasspathContainer previousClasspathContainer) {
 		if (previousClasspathContainer == null) {
 			if (PDECore.DEBUG_STATE) {
-				System.out
-						.println(String.format("%s need update because it has no state to compare", project.getName())); //$NON-NLS-1$
+				PDECore.TRACE.trace(PDECore.KEY_DEBUG_STATE,
+						String.format("%s need update because it has no state to compare", project.getName())); //$NON-NLS-1$
 			}
 			return false;
 		}
 		IClasspathEntry[] previousEntries = previousClasspathContainer.getClasspathEntries();
 		if (previousEntries == null || previousEntries.length != currentEntries.length) {
 			if (PDECore.DEBUG_STATE) {
-				System.out.println(String.format("%s need update because entries do not match in size!", //$NON-NLS-1$
+				PDECore.TRACE.trace(PDECore.KEY_DEBUG_STATE,
+						String.format("%s need update because entries do not match in size!", //$NON-NLS-1$
 						project.getName()));
 			}
 			return false;
@@ -668,7 +670,7 @@ public class ClasspathComputer {
 			IClasspathEntry current = currentEntries[i];
 			if (!Objects.equals(current, previous)) {
 				if (PDECore.DEBUG_STATE) {
-					System.out.println(
+					PDECore.TRACE.trace(PDECore.KEY_DEBUG_STATE,
 							String.format("%s need update because entry at position %d is different:\n\t%s\n\t%s", //$NON-NLS-1$
 									project.getName(), i, current, previous));
 				}
@@ -689,8 +691,9 @@ public class ClasspathComputer {
 			} catch (Exception e) {
 				// can't write then...
 				if (PDECore.DEBUG_STATE) {
-					System.err.println(String.format("Writing project state for %s failed!", project.getName())); //$NON-NLS-1$
-					e.printStackTrace();
+					PDECore.TRACE.trace(PDECore.KEY_DEBUG_STATE,
+							String.format("Writing project state for %s failed!", project.getName()), //$NON-NLS-1$
+							e);
 				}
 			}
 		}
@@ -704,17 +707,19 @@ public class ClasspathComputer {
 					IClasspathContainer container = Objects
 							.requireNonNull(PDEClasspathContainerSaveHelper.readContainer(stream));
 					if (PDECore.DEBUG_STATE) {
-						System.out.println(String.format("%s is restored from previous state.", project.getName())); //$NON-NLS-1$
+						PDECore.TRACE.trace(PDECore.KEY_DEBUG_STATE,
+								String.format("%s is restored from previous state.", project.getName())); //$NON-NLS-1$
 					}
 					return container;
 				}
 			} catch (Exception e) {
 				if (PDECore.DEBUG_STATE) {
 					if (e instanceof FileNotFoundException) {
-						System.out.println(String.format("%s has no saved state!", project.getName())); //$NON-NLS-1$
+						PDECore.TRACE.trace(PDECore.KEY_DEBUG_STATE,
+								String.format("%s has no saved state!", project.getName())); //$NON-NLS-1$
 					} else {
-						System.err.println(String.format("Restoring project state for %s failed!", project.getName())); //$NON-NLS-1$
-						e.printStackTrace();
+						PDECore.TRACE.trace(PDECore.KEY_DEBUG_STATE,
+								String.format("Restoring project state for %s failed!", project.getName()), e); //$NON-NLS-1$
 					}
 				}
 				return PDEClasspathContainerSaveHelper.emptyContainer();
