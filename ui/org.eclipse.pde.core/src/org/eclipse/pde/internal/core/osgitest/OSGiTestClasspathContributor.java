@@ -48,7 +48,7 @@ import org.eclipse.osgi.service.resolver.StateDelta;
 import org.eclipse.pde.core.IClasspathContributor;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.ClasspathComputer;
+import org.eclipse.pde.internal.core.ClasspathContainerState;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.IStateDeltaListener;
@@ -272,7 +272,7 @@ public class OSGiTestClasspathContributor
 				updates.add(project);
 			}
 		}
-		ClasspathComputer.requestClasspathUpdate(updates);
+		ClasspathContainerState.requestClasspathUpdate(updates);
 
 	}
 
