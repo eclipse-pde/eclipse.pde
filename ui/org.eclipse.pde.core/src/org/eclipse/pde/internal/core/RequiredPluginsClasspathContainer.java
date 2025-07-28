@@ -629,7 +629,8 @@ class RequiredPluginsClasspathContainer implements IClasspathContainer {
 		Set<BundleDescription> closure = DependencyManager.findRequirementsClosure(roots,
 				INCLUDE_OPTIONAL_DEPENDENCIES);
 		String systemBundleBSN = TargetPlatformHelper.getPDEState().getSystemBundle();
-		return closure.stream().filter(b -> !b.getSymbolicName().equals(systemBundleBSN)).toList();
+		return closure.stream().filter(b -> !b.getSymbolicName().equals(systemBundleBSN))
+				.sorted(Comparator.comparing(BundleDescription::getSymbolicName)).toList();
 	}
 
 	private void addSecondaryDependencies(BundleDescription desc, Set<BundleDescription> added,
