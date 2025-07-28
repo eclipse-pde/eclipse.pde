@@ -21,6 +21,7 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
 import org.eclipse.core.resources.IWorkspace;
@@ -35,6 +36,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.debug.DebugOptionsListener;
+import org.eclipse.osgi.service.debug.DebugTrace;
 import org.eclipse.pde.core.IBundleClasspathResolver;
 import org.eclipse.pde.core.IClasspathContributor;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -61,6 +63,7 @@ import aQute.bnd.service.RepositoryListenerPlugin;
 import aQute.bnd.service.clipboard.Clipboard;
 
 public class PDECore extends Plugin implements DebugOptionsListener {
+
 	public static final String PLUGIN_ID = "org.eclipse.pde.core"; //$NON-NLS-1$
 
 	public static final IPath REQUIRED_PLUGINS_CONTAINER_PATH = IPath.fromOSString(PLUGIN_ID + ".requiredPlugins"); //$NON-NLS-1$
@@ -81,11 +84,17 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 	public static boolean DEBUG_MODEL = false;
 	public static boolean DEBUG_TARGET_PROFILE = false;
 	public static boolean DEBUG_VALIDATION = false;
-	private static final String DEBUG_FLAG = PLUGIN_ID + "/debug"; //$NON-NLS-1$
+	public static boolean DEBUG_STATE = false;
+	public static DebugTrace TRACE;
+	private static final String DEBUG = "/debug"; //$NON-NLS-1$
+
+	public static final String KEY_DEBUG_STATE = DEBUG + "/state"; //$NON-NLS-1$
+	private static final String DEBUG_FLAG = PLUGIN_ID + DEBUG;
 	private static final String CLASSPATH_DEBUG = PLUGIN_ID + "/classpath"; //$NON-NLS-1$
 	private static final String MODEL_DEBUG = PLUGIN_ID + "/model"; //$NON-NLS-1$
 	private static final String TARGET_PROFILE_DEBUG = PLUGIN_ID + "/target/profile"; //$NON-NLS-1$
 	private static final String VALIDATION_DEBUG = PLUGIN_ID + "/validation"; //$NON-NLS-1$
+	private static final String STATE_DEBUG = PLUGIN_ID + KEY_DEBUG_STATE;
 
 	// Shared instance
 	private static PDECore inst;
@@ -368,6 +377,7 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 		});
 		bndResourceChangeListener = new BndResourceChangeListener();
 		workspace.addResourceChangeListener(bndResourceChangeListener);
+		workspace.addResourceChangeListener(ClasspathContainerState.CHANGE_LISTENER, IResourceChangeEvent.PRE_DELETE);
 		fBundleContext.registerService(Workspace.class, new BndWorkspaceServiceFactory(),
 				FrameworkUtil.asDictionary(Map.of(Constants.SERVICE_RANKING, -10)));
 	}
@@ -424,6 +434,7 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		workspace.removeSaveParticipant(PLUGIN_ID);
 		workspace.removeResourceChangeListener(bndResourceChangeListener);
+		workspace.removeResourceChangeListener(ClasspathContainerState.CHANGE_LISTENER);
 
 		MinimalState.shutdown();
 	}
@@ -450,10 +461,14 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 	@Override
 	public void optionsChanged(DebugOptions options) {
 		boolean DEBUG = options.getBooleanOption(DEBUG_FLAG, false);
+		if (DEBUG) {
+			TRACE = options.newDebugTrace(PLUGIN_ID);
+		}
 		DEBUG_CLASSPATH = DEBUG && options.getBooleanOption(CLASSPATH_DEBUG, false);
 		DEBUG_MODEL = DEBUG && options.getBooleanOption(MODEL_DEBUG, false);
 		DEBUG_TARGET_PROFILE = DEBUG && options.getBooleanOption(TARGET_PROFILE_DEBUG, false);
 		DEBUG_VALIDATION = DEBUG && options.getBooleanOption(VALIDATION_DEBUG, false);
+		DEBUG_STATE = DEBUG & options.getBooleanOption(STATE_DEBUG, false);
 	}
 
 	/**

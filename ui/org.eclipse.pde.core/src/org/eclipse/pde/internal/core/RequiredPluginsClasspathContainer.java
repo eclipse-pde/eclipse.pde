@@ -36,7 +36,6 @@ import java.util.stream.Stream;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -56,11 +55,13 @@ import org.eclipse.osgi.service.resolver.StateHelper;
 import org.eclipse.pde.core.IClasspathContributor;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.eclipse.pde.internal.build.BundleHelper;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
+import org.eclipse.pde.internal.core.PDEClasspathContainer.Rule;
 import org.eclipse.pde.internal.core.bnd.BndProjectManager;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.natures.BndProject;
@@ -71,7 +72,7 @@ import aQute.bnd.build.Project;
 import aQute.bnd.build.Workspace;
 import aQute.bnd.osgi.Constants;
 
-public class RequiredPluginsClasspathContainer extends PDEClasspathContainer implements IClasspathContainer {
+class RequiredPluginsClasspathContainer implements IClasspathContainer {
 
 	@SuppressWarnings("nls")
 	private static final Set<String> JUNIT5_RUNTIME_PLUGINS = Set.of("org.junit", //
@@ -83,7 +84,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			"org.junit.jupiter.api"); // BSN of the bundle from Eclipse-Orbit
 
 	private final IPluginModelBase fModel;
-	private IBuild fBuild;
+	private final IBuild fBuild;
 
 	private List<BundleDescription> junit5RuntimeClosure;
 	private IClasspathEntry[] fEntries;
@@ -101,13 +102,15 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	/**
 	 * Constructor for RequiredPluginsClasspathContainer.
 	 */
-	public RequiredPluginsClasspathContainer(IPluginModelBase model, IProject project) {
-		this(model, null, project);
-	}
-
-	public RequiredPluginsClasspathContainer(IPluginModelBase model, IBuild build, IProject project) {
+	RequiredPluginsClasspathContainer(IPluginModelBase model, IProject project) {
 		fModel = model;
-		fBuild = build;
+		IBuildModel buildModel;
+		try {
+			buildModel = PluginRegistry.createBuildModel(model);
+		} catch (CoreException e) {
+			buildModel = null;
+		}
+		fBuild = buildModel != null ? buildModel.getBuild() : null;
 		this.project = project;
 	}
 
@@ -128,6 +131,14 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 
 	@Override
 	public IClasspathEntry[] getClasspathEntries() {
+		try {
+			return computeEntries();
+		} catch (CoreException e) {
+			return new IClasspathEntry[0];
+		}
+	}
+
+	IClasspathEntry[] computeEntries() throws CoreException {
 		if (fEntries == null) {
 			if (fModel == null) {
 				fEntries = computePluginEntriesByProject();
@@ -212,9 +223,8 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		}
 	}
 
-	private List<IClasspathEntry> computePluginEntriesByModel() {
+	private List<IClasspathEntry> computePluginEntriesByModel() throws CoreException {
 		List<IClasspathEntry> entries = new ArrayList<>();
-		try {
 			BundleDescription desc = fModel.getBundleDescription();
 			if (desc == null) {
 				return List.of();
@@ -250,9 +260,6 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				addDependency((BundleDescription) element.getSupplier(), added, map, entries);
 			}
 
-			if (fBuild == null) {
-				fBuild = ClasspathUtilCore.getBuild(fModel);
-			}
 			if (fBuild != null) {
 				addSecondaryDependencies(desc, added, entries);
 			}
@@ -278,8 +285,6 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			addJunit5RuntimeDependencies(added, entries);
 			addImplicitDependencies(desc, added, entries);
 
-		} catch (CoreException e) {
-		}
 		return entries;
 	}
 
@@ -455,9 +460,10 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		getClasspathContributors().map(cc -> cc.getEntriesForDependency(hostBundle, desc)).flatMap(Collection::stream)
 				.forEach(entries::add);
 		if (resource != null) {
-			addProjectEntry(resource.getProject(), rules, model.getPluginBase().exportsExternalAnnotations(), entries);
+			PDEClasspathContainer.addProjectEntry(resource.getProject(), rules,
+					model.getPluginBase().exportsExternalAnnotations(), entries);
 		} else {
-			addExternalPlugin(model, rules, entries);
+			PDEClasspathContainer.addExternalPlugin(model, rules, entries);
 		}
 		return true;
 	}
@@ -623,7 +629,8 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		Set<BundleDescription> closure = DependencyManager.findRequirementsClosure(roots,
 				INCLUDE_OPTIONAL_DEPENDENCIES);
 		String systemBundleBSN = TargetPlatformHelper.getPDEState().getSystemBundle();
-		return closure.stream().filter(b -> !b.getSymbolicName().equals(systemBundleBSN)).toList();
+		return closure.stream().filter(b -> !b.getSymbolicName().equals(systemBundleBSN))
+				.sorted(Comparator.comparing(BundleDescription::getSymbolicName)).toList();
 	}
 
 	private void addSecondaryDependencies(BundleDescription desc, Set<BundleDescription> added,
@@ -728,24 +735,4 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		}
 	}
 
-	/**
-	 * Tries to compute a full set of bundle dependencies, including not
-	 * exported bundle dependencies and bundles contributing packages possibly
-	 * imported by any of bundles in the dependency graph.
-	 *
-	 * @return never null, but possibly empty project list which all projects in
-	 *         the workspace this container depends on, directly or indirectly.
-	 */
-	public List<IProject> getAllProjectDependencies() {
-		IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
-		try {
-			addImportedPackages = true;
-			return computePluginEntriesByModel().stream()
-					.filter(cpe -> cpe.getEntryKind() == IClasspathEntry.CPE_PROJECT)
-					.map(cpe -> cpe.getPath().lastSegment()).map(root::getProject) //
-					.filter(IProject::exists).toList();
-		} finally {
-			addImportedPackages = false;
-		}
-	}
 }

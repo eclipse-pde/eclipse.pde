@@ -30,16 +30,15 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ClasspathComputer;
 import org.eclipse.pde.internal.core.MinimalState;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.RequiredPluginsClasspathContainer;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
 import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
@@ -76,9 +75,9 @@ public class ClasspathResolutionTest {
 		IProject project = ProjectUtils.importTestProject("tests/projects/demoMissedSystemModulePackage");
 		project.build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
 		IJavaProject javaProject = JavaCore.create(project);
-		RequiredPluginsClasspathContainer container = new RequiredPluginsClasspathContainer(
-				PDECore.getDefault().getModelManager().findModel(project), project);
-		for (IClasspathEntry entry : container.getClasspathEntries()) {
+		IClasspathEntry[] classpathEntries = ClasspathComputer
+				.computeClasspathEntries(PDECore.getDefault().getModelManager().findModel(project), project);
+		for (IClasspathEntry entry : classpathEntries) {
 			if (entry.getPath().lastSegment().contains("org.w3c.dom.events")) {
 				fail(entry.getPath() + " erronesously present in container");
 			}
@@ -152,8 +151,7 @@ public class ClasspathResolutionTest {
 	private List<String> getRequiredPluginContainerEntries(IProject project) throws CoreException {
 		project.build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
 		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(project);
-		IClasspathContainer requiredPluginsClasspathContainer = new RequiredPluginsClasspathContainer(model, project);
-		return Arrays.stream(requiredPluginsClasspathContainer.getClasspathEntries()).map(IClasspathEntry::getPath)
+		return Arrays.stream(ClasspathComputer.computeClasspathEntries(model, project)).map(IClasspathEntry::getPath)
 				.map(IPath::lastSegment).toList();
 	}
 
