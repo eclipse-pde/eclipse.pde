@@ -34,7 +34,7 @@ public class RequiredPluginsInitializer extends ClasspathContainerInitializer {
 				new IClasspathContainer[] { savedState }, null);
 		// The saved state might be stale, request a classpath update here, this
 		// will run in a background job and update the classpath if needed.
-		ClasspathComputer.requestClasspathUpdate(project);
+		ClasspathComputer.requestClasspathUpdate(project, savedState);
 	}
 
 	@Override
