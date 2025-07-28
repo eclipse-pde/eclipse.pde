@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ClasspathComputer;
+import org.eclipse.pde.internal.core.ClasspathContainerState;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -51,7 +52,7 @@ public class UpdateClasspathJob {
 						toUpdate.add(project);
 					}
 				}
-				ClasspathComputer.requestClasspathUpdate(toUpdate);
+				ClasspathContainerState.requestClasspathUpdate(toUpdate);
 				return Status.OK_STATUS;
 			}
 		};

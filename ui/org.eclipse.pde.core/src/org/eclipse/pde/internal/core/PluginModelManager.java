@@ -282,7 +282,7 @@ public class PluginModelManager implements IModelProviderListener {
 				}
 			}
 		}
-		ClasspathComputer.requestClasspathUpdate(updates);
+		ClasspathContainerState.requestClasspathUpdate(updates);
 	}
 
 	/**

@@ -24,7 +24,7 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.core.ClasspathComputer;
+import org.eclipse.pde.internal.core.ClasspathContainerState;
 import org.eclipse.pde.internal.core.PDECore;
 
 public class BndResourceChangeListener implements IResourceChangeListener {
@@ -54,7 +54,7 @@ public class BndResourceChangeListener implements IResourceChangeListener {
 						return true;
 					}
 				});
-				ClasspathComputer.requestClasspathUpdate(updateProjects);
+				ClasspathContainerState.requestClasspathUpdate(updateProjects);
 			} catch (CoreException e) {
 				// can't do anything then...
 			}
