@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.pde.internal.core.ClasspathComputer;
+import org.eclipse.pde.internal.core.ClasspathContainerState;
 import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
@@ -66,7 +66,7 @@ public class DSAnnotationPreferenceListener implements IPreferenceChangeListener
 				SubMonitor progress = SubMonitor.convert(monitor, Messages.DSAnnotationPreferenceListener_taskName,
 						managedProjects.size() * 2);
 				if (requiresClasspathUpdate) {
-					ClasspathComputer.requestClasspathUpdate(managedProjects);
+					ClasspathContainerState.requestClasspathUpdate(managedProjects);
 					try {
 						Job.getJobManager().join(PluginModelManager.class, monitor);
 					} catch (OperationCanceledException | InterruptedException e) {

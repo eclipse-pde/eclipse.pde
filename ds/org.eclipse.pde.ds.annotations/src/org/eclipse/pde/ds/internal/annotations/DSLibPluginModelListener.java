@@ -21,7 +21,7 @@ import java.util.Map;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.pde.core.plugin.ModelEntry;
-import org.eclipse.pde.internal.core.ClasspathComputer;
+import org.eclipse.pde.internal.core.ClasspathContainerState;
 import org.eclipse.pde.internal.core.IPluginModelListener;
 import org.eclipse.pde.internal.core.PluginModelDelta;
 import org.eclipse.pde.internal.core.PluginModelManager;
@@ -116,7 +116,7 @@ public class DSLibPluginModelListener implements IPluginModelListener {
 					}
 				}
 			}
-			ClasspathComputer.requestClasspathUpdate(toUpdate);
+			ClasspathContainerState.requestClasspathUpdate(toUpdate);
 		}
 	}
 
