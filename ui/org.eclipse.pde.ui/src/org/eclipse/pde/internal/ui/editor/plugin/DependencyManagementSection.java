@@ -79,6 +79,7 @@ import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.editor.actions.SortAction;
 import org.eclipse.pde.internal.ui.editor.build.BuildInputContext;
+import org.eclipse.pde.internal.ui.editor.build.BuildPage;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.search.dependencies.AddNewDependenciesAction;
@@ -202,7 +203,16 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		FormText text = toolkit.createFormText(section, true);
-		text.setText(PDEUIMessages.SecondaryBundlesSection_desc, false, false);
+		text.setText(PDEUIMessages.SecondaryBundlesSection_desc, true, true);
+		text.addHyperlinkListener(new HyperlinkAdapter() {
+			@Override
+			public void linkActivated(HyperlinkEvent e) {
+				if ("build".equals(e.getHref())) { //$NON-NLS-1$
+					// Navigate to Build page
+					getPage().getEditor().setActivePage(BuildPage.PAGE_ID);
+				}
+			}
+		});
 		section.setDescriptionControl(text);
 
 		Composite container = createClientContainer(section, 2, toolkit);
