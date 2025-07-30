@@ -203,7 +203,7 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		FormText text = toolkit.createFormText(section, true);
-		text.setText(PDEUIMessages.SecondaryBundlesSection_desc, true, true);
+		text.setText(PDEUIMessages.SecondaryBundlesSection_desc, true, false);
 		text.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
