@@ -14,25 +14,17 @@
 package org.eclipse.pde.ds.internal.annotations;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import org.eclipse.core.resources.WorkspaceJob;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.jobs.MultiRule;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.pde.core.plugin.ModelEntry;
+import org.eclipse.pde.internal.core.ClasspathContainerState;
 import org.eclipse.pde.internal.core.IPluginModelListener;
 import org.eclipse.pde.internal.core.PluginModelDelta;
 import org.eclipse.pde.internal.core.PluginModelManager;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.PlatformUI;
 
 @SuppressWarnings("restriction")
 public class DSLibPluginModelListener implements IPluginModelListener {
@@ -114,50 +106,20 @@ public class DSLibPluginModelListener implements IPluginModelListener {
 			}
 		}
 
-			ArrayList<IJavaProject> toUpdate = new ArrayList<>(projects.size());
+		ArrayList<IProject> toUpdate = new ArrayList<>(projects.size());
 			if (!modelIds.isEmpty()) {
 				for (Map.Entry<IJavaProject, String> entry : projects.entrySet()) {
 					IJavaProject project = entry.getKey();
 					String modelId = entry.getValue();
 					if (modelIds.contains(modelId)) {
-						toUpdate.add(project);
+						toUpdate.add(project.getProject());
 					}
 				}
 			}
-
-			if (!toUpdate.isEmpty()) {
-				requestClasspathUpdate(toUpdate);
-			}
+			ClasspathContainerState.requestClasspathUpdate(toUpdate);
 		}
 	}
 
-	private void requestClasspathUpdate(final Collection<IJavaProject> changedProjects) {
-		WorkspaceJob job = new WorkspaceJob(Messages.ProjectClasspathPreferenceChangeListener_jobName) {
-			@Override
-			public IStatus runInWorkspace(IProgressMonitor monitor) {
-				SubMonitor progress = SubMonitor.convert(monitor, Messages.DSAnnotationPreferenceListener_taskName,
-						changedProjects.size());
-				for (IJavaProject project : changedProjects) {
-					ProjectClasspathPreferenceChangeListener.updateClasspathContainer(project, progress.newChild(1));
-				}
-
-				return Status.OK_STATUS;
-			}
-		};
-
-		job.setSystem(true);
-
-		ISchedulingRule[] rules = changedProjects.stream().map(IJavaProject::getProject)
-				.toArray(size -> new ISchedulingRule[size]);
-		job.setRule(new MultiRule(rules));
-
-		Display display = Display.getCurrent();
-		if (display != null) {
-			PlatformUI.getWorkbench().getProgressService().showInDialog(display.getActiveShell(), job);
-		}
-
-		job.schedule();
-	}
 
 	public static void dispose() {
 		DSLibPluginModelListener instance = getInstance(false);

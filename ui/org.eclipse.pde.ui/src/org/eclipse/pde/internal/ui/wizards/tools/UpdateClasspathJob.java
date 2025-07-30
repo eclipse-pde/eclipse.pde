@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.tools;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -30,6 +31,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ClasspathComputer;
+import org.eclipse.pde.internal.core.ClasspathContainerState;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -42,10 +44,15 @@ public class UpdateClasspathJob {
 		WorkspaceJob job = new WorkspaceJob(PDEUIMessages.UpdateClasspathJob_title) {
 			@Override
 			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+				List<IProject> toUpdate = new ArrayList<>();
 				SubMonitor mon = SubMonitor.convert(monitor, PDEUIMessages.UpdateClasspathJob_task, models.size());
 				for (IPluginModelBase model : models) {
-					updateClasspath(model, mon.split(1));
+					IProject project = updateClasspath(model, mon.split(1));
+					if (project != null) {
+						toUpdate.add(project);
+					}
 				}
+				ClasspathContainerState.requestClasspathUpdate(toUpdate);
 				return Status.OK_STATUS;
 			}
 		};
@@ -55,7 +62,7 @@ public class UpdateClasspathJob {
 		return job;
 	}
 
-	private static void updateClasspath(IPluginModelBase model, SubMonitor monitor) throws CoreException {
+	private static IProject updateClasspath(IPluginModelBase model, SubMonitor monitor) throws CoreException {
 		try {
 			monitor.subTask(model.getPluginBase().getId());
 			// no reason to compile classpath for a non-Java model
@@ -70,6 +77,7 @@ public class UpdateClasspathJob {
 						file.deleteMarkers(PDEMarkerFactory.MARKER_ID, true, IResource.DEPTH_ZERO);
 					}
 					ClasspathComputer.setClasspath(project, model);
+					return project;
 				}
 			}
 		} catch (CoreException e) {
@@ -77,6 +85,7 @@ public class UpdateClasspathJob {
 			PDEPlugin.logException(e, PDEUIMessages.UpdateClasspathJob_error_title, message);
 			throw new CoreException(Status.error(message, e));
 		}
+		return null;
 	}
 
 }
