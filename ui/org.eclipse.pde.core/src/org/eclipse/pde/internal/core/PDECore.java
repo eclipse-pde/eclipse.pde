@@ -89,11 +89,12 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 	private static final String DEBUG = "/debug"; //$NON-NLS-1$
 
 	public static final String KEY_DEBUG_STATE = DEBUG + "/state"; //$NON-NLS-1$
+	public static final String KEY_DEBUG_VALIDATION = DEBUG + "/validation"; //$NON-NLS-1$
 	private static final String DEBUG_FLAG = PLUGIN_ID + DEBUG;
 	private static final String CLASSPATH_DEBUG = PLUGIN_ID + "/classpath"; //$NON-NLS-1$
 	private static final String MODEL_DEBUG = PLUGIN_ID + "/model"; //$NON-NLS-1$
 	private static final String TARGET_PROFILE_DEBUG = PLUGIN_ID + "/target/profile"; //$NON-NLS-1$
-	private static final String VALIDATION_DEBUG = PLUGIN_ID + "/validation"; //$NON-NLS-1$
+	private static final String VALIDATION_DEBUG = PLUGIN_ID + KEY_DEBUG_VALIDATION;
 	private static final String STATE_DEBUG = PLUGIN_ID + KEY_DEBUG_STATE;
 
 	// Shared instance

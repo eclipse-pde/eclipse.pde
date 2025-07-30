@@ -118,10 +118,14 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 				if (kind == IResourceDelta.ADDED || kind == IResourceDelta.REMOVED) {
 					type = MANIFEST | EXTENSIONS | BUILD | STRUCTURE;
 					if (PDECore.DEBUG_VALIDATION) {
-						System.out.print("Needs to rebuild project [" + getProject().getName() + "]: "); //$NON-NLS-1$ //$NON-NLS-2$
-						System.out.print(delta.getResource().getProjectRelativePath().toString());
-						System.out.print(" - "); //$NON-NLS-1$
-						System.out.println(kind == IResourceDelta.ADDED ? "added" : "removed"); //$NON-NLS-1$ //$NON-NLS-2$
+						StringBuilder sb = new StringBuilder();
+						sb.append("Needs to rebuild project ["); //$NON-NLS-1$
+						sb.append(getProject().getName());
+						sb.append("]: "); //$NON-NLS-1$
+						sb.append(delta.getResource().getProjectRelativePath().toString());
+						sb.append(" - "); //$NON-NLS-1$
+						sb.append(kind == IResourceDelta.ADDED ? "added" : "removed"); //$NON-NLS-1$ //$NON-NLS-2$
+						PDECore.TRACE.trace(PDECore.KEY_DEBUG_VALIDATION, sb.toString());
 					}
 					return false;
 				}
@@ -137,30 +141,46 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 					if (isLocalizationFile(resource)) {
 						type |= MANIFEST | EXTENSIONS;
 						if (PDECore.DEBUG_VALIDATION) {
-							System.out.print("Needs to rebuild manifest and extensions in project [" + getProject().getName() + "]: "); //$NON-NLS-1$ //$NON-NLS-2$
-							System.out.print(delta.getResource().getProjectRelativePath().toString());
-							System.out.println(" - changed"); //$NON-NLS-1$
+							StringBuilder sb = new StringBuilder();
+							sb.append("Needs to rebuild manifest and extensions in project ["); //$NON-NLS-1$
+							sb.append(getProject().getName());
+							sb.append("]: "); //$NON-NLS-1$
+							sb.append(delta.getResource().getProjectRelativePath().toString());
+							sb.append(" - changed"); //$NON-NLS-1$
+							PDECore.TRACE.trace(PDECore.KEY_DEBUG_VALIDATION, sb.toString());
 						}
 					} else if (file.equals(PDEProject.getManifest(project))) {
 						type |= MANIFEST | EXTENSIONS | BUILD;
 						if (PDECore.DEBUG_VALIDATION) {
-							System.out.print("Needs to rebuild project [" + getProject().getName() + "]: "); //$NON-NLS-1$ //$NON-NLS-2$
-							System.out.print(delta.getResource().getProjectRelativePath().toString());
-							System.out.println(" - changed"); //$NON-NLS-1$
+							StringBuilder sb = new StringBuilder();
+							sb.append("Needs to rebuild project ["); //$NON-NLS-1$
+							sb.append(getProject().getName());
+							sb.append("]: "); //$NON-NLS-1$
+							sb.append(delta.getResource().getProjectRelativePath().toString());
+							sb.append(" - changed"); //$NON-NLS-1$
+							PDECore.TRACE.trace(PDECore.KEY_DEBUG_VALIDATION, sb.toString());
 						}
 					} else if (name.endsWith(".exsd") || file.equals(PDEProject.getPluginXml(project)) || file.equals(PDEProject.getFragmentXml(project))) { //$NON-NLS-1$
 						type |= EXTENSIONS | BUILD;
 						if (PDECore.DEBUG_VALIDATION) {
-							System.out.print("Needs to rebuild project [" + getProject().getName() + "]: "); //$NON-NLS-1$ //$NON-NLS-2$
-							System.out.print(delta.getResource().getProjectRelativePath().toString());
-							System.out.println(" - changed"); //$NON-NLS-1$
+							StringBuilder sb = new StringBuilder();
+							sb.append("Needs to rebuild project ["); //$NON-NLS-1$
+							sb.append(getProject().getName());
+							sb.append("]: "); //$NON-NLS-1$
+							sb.append(delta.getResource().getProjectRelativePath().toString());
+							sb.append(" - changed"); //$NON-NLS-1$
+							PDECore.TRACE.trace(PDECore.KEY_DEBUG_VALIDATION, sb.toString());
 						}
 					} else if (file.equals(PDEProject.getBuildProperties(project))) {
 						type |= BUILD;
 						if (PDECore.DEBUG_VALIDATION) {
-							System.out.print("Needs to rebuild build.properties in project [" + getProject().getName() + "]: "); //$NON-NLS-1$ //$NON-NLS-2$
-							System.out.print(delta.getResource().getProjectRelativePath().toString());
-							System.out.println(" - changed"); //$NON-NLS-1$
+							StringBuilder sb = new StringBuilder();
+							sb.append("Needs to rebuild build.properties in project ["); //$NON-NLS-1$
+							sb.append(getProject().getName());
+							sb.append("]: "); //$NON-NLS-1$
+							sb.append(delta.getResource().getProjectRelativePath().toString());
+							sb.append(" - changed"); //$NON-NLS-1$
+							PDECore.TRACE.trace(PDECore.KEY_DEBUG_VALIDATION, sb.toString());
 						}
 					}
 				}
@@ -203,7 +223,8 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		// always do a build of the project if a full build or an unspecified change has occurred
 		if (delta == null) {
 			if (PDECore.DEBUG_VALIDATION) {
-				System.out.println("Project [" + getProject().getName() + "] - full build"); //$NON-NLS-1$ //$NON-NLS-2$
+				PDECore.TRACE.trace(PDECore.KEY_DEBUG_VALIDATION,
+						"Project [" + getProject().getName() + "] - full build"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			return MANIFEST | EXTENSIONS | BUILD | STRUCTURE;
 		}
@@ -214,7 +235,8 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		if (Boolean.TRUE.equals(project.getSessionProperty(PDECore.TOUCH_PROJECT))) {
 			project.setSessionProperty(PDECore.TOUCH_PROJECT, null);
 			if (PDECore.DEBUG_VALIDATION) {
-				System.out.println("Dependencies Changed: Project [" + getProject().getName() + "] - full build"); //$NON-NLS-1$ //$NON-NLS-2$
+				PDECore.TRACE.trace(PDECore.KEY_DEBUG_VALIDATION,
+						"Dependencies Changed: Project [" + getProject().getName() + "] - full build"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			return MANIFEST | EXTENSIONS | BUILD;
 		}
@@ -238,7 +260,9 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			if (fClassFileVisitor.hasChanged()) {
 				type |= MANIFEST | EXTENSIONS | BUILD;
 				if (PDECore.DEBUG_VALIDATION) {
-					System.out.println("Class files changed due to dependency changes: Project [" + getProject().getName() + "] - rebuild manifest and properties files"); //$NON-NLS-1$ //$NON-NLS-2$
+					PDECore.TRACE.trace(PDECore.KEY_DEBUG_VALIDATION,
+							"Class files changed due to dependency changes: Project [" + getProject().getName() //$NON-NLS-1$
+									+ "] - rebuild manifest and properties files"); //$NON-NLS-1$
 				}
 			}
 		}
