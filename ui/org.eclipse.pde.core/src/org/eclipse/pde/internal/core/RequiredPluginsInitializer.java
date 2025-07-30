@@ -30,6 +30,15 @@ public class RequiredPluginsInitializer extends ClasspathContainerInitializer {
 	public void initialize(IPath containerPath, IJavaProject javaProject) throws CoreException {
 		IProject project = javaProject.getProject();
 		IClasspathContainer savedState = ClasspathContainerState.readState(project);
+		if (PDECore.DEBUG_STATE) {
+			// This should at best only ever be called from the "Initializing
+			// Java Tooling" job, if that is not the case something might be
+			// wrong and we add a stackdump to give more information about the
+			// source
+			if (!Thread.currentThread().getName().contains("Initializing Java Tooling")) { //$NON-NLS-1$
+				PDECore.TRACE.traceDumpStack(PDECore.KEY_DEBUG_STATE);
+			}
+		}
 		ClasspathContainerState.setProjectContainers(new IJavaProject[] { javaProject },
 				new IClasspathContainer[] { savedState }, null);
 		// The saved state might be stale, request a classpath update here, this
