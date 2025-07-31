@@ -111,13 +111,13 @@ public class ClasspathContainerState {
 					IPluginModelBase model = modelManager.findModel(project);
 					if (model != null && PluginProject.isJavaProject(project)) {
 						IJavaProject javaProject = JavaCore.create(project);
-						RequiredPluginsClasspathContainer classpathContainer = new RequiredPluginsClasspathContainer(
-								model, project);
 						try {
-							if (!isUpToDate(project, classpathContainer.computeEntries(), request.container())) {
-								updateProjects.put(javaProject, classpathContainer);
+							IClasspathEntry[] entries = ClasspathComputer.computeClasspathEntries(model,
+									javaProject.getProject());
+							if (!isUpToDate(project, entries, request.container())) {
+								updateProjects.put(javaProject, PDEClasspathContainerSaveHelper.containerOf(entries));
 								errorsPerProject.remove(project);
-								saveState(project, classpathContainer);
+								saveState(project, entries);
 							}
 						} catch (CoreException e) {
 							errorsPerProject.put(project, e.getStatus());
@@ -129,9 +129,19 @@ public class ClasspathContainerState {
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
-			if (!updateProjects.isEmpty()) {
+			if (updateProjects.isEmpty()) {
+				if (PDECore.DEBUG_STATE) {
+					PDECore.TRACE.trace(PDECore.KEY_DEBUG_STATE,
+							"UpdateClasspathsJob finished, but no project needs an update!"); //$NON-NLS-1$
+				}
+			} else {
 				int i = 0;
 				int n = updateProjects.size();
+				if (PDECore.DEBUG_STATE) {
+					PDECore.TRACE.trace(PDECore.KEY_DEBUG_STATE, String
+							.format("UpdateClasspathsJob finished, there are %d project that need a classpath container update.", //$NON-NLS-1$
+									n));
+				}
 				IJavaProject[] javaProjects = new IJavaProject[n];
 				IClasspathContainer[] container = new IClasspathContainer[n];
 				for (Entry<IJavaProject, IClasspathContainer> entry : updateProjects.entrySet()) {
@@ -213,13 +223,13 @@ public class ClasspathContainerState {
 		return true;
 	}
 
-	private static void saveState(IProject project, RequiredPluginsClasspathContainer classpathContainer) {
+	private static void saveState(IProject project, IClasspathEntry[] entries) {
 		synchronized (project) {
 			try {
 				File stateFile = getStateFile(project);
 				stateFile.getParentFile().mkdirs();
 				try (BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(stateFile))) {
-					PDEClasspathContainerSaveHelper.writeContainer(classpathContainer, stream);
+					PDEClasspathContainerSaveHelper.writeContainerEntries(entries, stream);
 				}
 			} catch (Exception e) {
 				// can't write then...

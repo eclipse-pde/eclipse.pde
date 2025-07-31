@@ -6,6 +6,6 @@ org.eclipse.pde.core/model=false
 # trace for creating targets using a p2 profile
 org.eclipse.pde.core/target/profile=false
 # trace when validating plugin.xml contents
-org.eclipse.pde.core/validation=false
+org.eclipse.pde.core/debug/validation=false
 # trace when read/save the current state of the plugin resolution
 org.eclipse.pde.core/debug/state=false

@@ -42,7 +42,6 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.IClasspathAttribute;
-import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.service.resolver.BaseDescription;
@@ -53,6 +52,7 @@ import org.eclipse.osgi.service.resolver.HostSpecification;
 import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
 import org.eclipse.osgi.service.resolver.StateHelper;
 import org.eclipse.pde.core.IClasspathContributor;
+import org.eclipse.pde.core.IClasspathContributor2;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
@@ -72,7 +72,7 @@ import aQute.bnd.build.Project;
 import aQute.bnd.build.Workspace;
 import aQute.bnd.osgi.Constants;
 
-class RequiredPluginsClasspathContainer implements IClasspathContainer {
+class RequiredPluginsClasspathContainer {
 
 	@SuppressWarnings("nls")
 	private static final Set<String> JUNIT5_RUNTIME_PLUGINS = Set.of("org.junit", //
@@ -112,30 +112,6 @@ class RequiredPluginsClasspathContainer implements IClasspathContainer {
 		}
 		fBuild = buildModel != null ? buildModel.getBuild() : null;
 		this.project = project;
-	}
-
-	@Override
-	public int getKind() {
-		return K_APPLICATION;
-	}
-
-	@Override
-	public IPath getPath() {
-		return PDECore.REQUIRED_PLUGINS_CONTAINER_PATH;
-	}
-
-	@Override
-	public String getDescription() {
-		return PDECoreMessages.RequiredPluginsClasspathContainer_description;
-	}
-
-	@Override
-	public IClasspathEntry[] getClasspathEntries() {
-		try {
-			return computeEntries();
-		} catch (CoreException e) {
-			return new IClasspathEntry[0];
-		}
 	}
 
 	IClasspathEntry[] computeEntries() throws CoreException {
@@ -284,6 +260,11 @@ class RequiredPluginsClasspathContainer implements IClasspathContainer {
 
 			addJunit5RuntimeDependencies(added, entries);
 			addImplicitDependencies(desc, added, entries);
+
+			// Add any additional library entries contributed via classpath
+			// contributor
+			entries.addAll(getClasspathContributors().filter(IClasspathContributor2.class::isInstance)
+					.map(IClasspathContributor2.class::cast).flatMap(cc -> cc.getAdditionalEntries(desc)).toList());
 
 		return entries;
 	}
