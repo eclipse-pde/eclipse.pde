@@ -44,6 +44,8 @@ import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IPartSelectionListener;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.InvalidSyntaxException;
 
 public class MatchSection extends PDESection implements IPartSelectionListener {
 
@@ -144,7 +146,15 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 				new FormEntryAdapter(this, getPage().getEditor().getEditorSite().getActionBars()) {
 					@Override
 					public void textValueChanged(FormEntry text) {
-						applyVersion(text.getValue());
+						String input = text.getValue().trim();
+
+						try {
+							FrameworkUtil.createFilter(input);
+							System.out.println("Valid OSGi filter: " + input);//$NON-NLS-1$
+						} catch (InvalidSyntaxException e) {
+							System.out.println("❌ Invalid OSGi filter: " + input);//$NON-NLS-1$
+							System.out.println("Reason: " + e.getMessage());//$NON-NLS-1$
+						}
 					}
 
 					@Override
