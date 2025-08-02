@@ -2234,6 +2234,8 @@ public class PDEUIMessages extends NLS {
 	public static String FeatureSection_addRequired;
 	public static String FeatureSection_toggleRoot;
 
+	public static String FeatureSpecSection_addSources0;
+
 	public static String ImportPackageSection_desc;
 	public static String ImportPackageSection_descFragment;
 	public static String ExportPackageSection_desc;
@@ -3358,6 +3360,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String PluginVersionPart_groupTitle;
 	public static String PluginVersionPart_buttonTitle;
+	public static String PluginVersionPart_incrementTitle;
+	public static String PluginVersionPart_incrementMajor;
+	public static String PluginVersionPart_incrementMinor;
+	public static String PluginVersionPart_incrementMicro;
 
 	public static String FilteredPluginArtifactsSelectionDialog_title;
 	public static String FilteredPluginArtifactsSelectionDialog_message;

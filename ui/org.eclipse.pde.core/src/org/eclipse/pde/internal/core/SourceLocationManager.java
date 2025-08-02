@@ -323,7 +323,7 @@ public class SourceLocationManager implements ICoreConstants {
 		return getExtensions().locators.stream().map(locator -> {
 			try {
 				return locator.locator.locateSource(plugin);
-			} catch (RuntimeException e) {
+			} catch (RuntimeException | NoClassDefFoundError e) {
 				return null;
 			}
 		}).filter(Objects::nonNull).findFirst().orElse(null);

@@ -473,4 +473,10 @@ public class ClasspathComputer {
 		return JavaCore.newContainerEntry(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH);
 	}
 
+	public static IClasspathEntry[] computeClasspathEntries(IPluginModelBase model, IProject project)
+			throws CoreException {
+		RequiredPluginsClasspathContainer container = new RequiredPluginsClasspathContainer(model, project);
+		return container.computeEntries();
+	}
+
 }
