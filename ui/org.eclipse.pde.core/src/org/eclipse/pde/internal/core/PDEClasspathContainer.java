@@ -49,7 +49,7 @@ public class PDEClasspathContainer {
 
 	private static final IAccessRule EXCLUDE_ALL_RULE = JavaCore.newAccessRule(IPath.fromOSString("**/*"), IAccessRule.K_NON_ACCESSIBLE | IAccessRule.IGNORE_IF_BETTER); //$NON-NLS-1$
 
-	protected void addProjectEntry(IProject project, List<Rule> rules, boolean exportsExternalAnnotations,
+	protected static void addProjectEntry(IProject project, List<Rule> rules, boolean exportsExternalAnnotations,
 			List<IClasspathEntry> entries) throws CoreException {
 		if (project.hasNature(JavaCore.NATURE_ID)) {
 			IAccessRule[] accessRules = rules != null ? getAccessRules(rules) : null;
@@ -61,7 +61,8 @@ public class PDEClasspathContainer {
 		}
 	}
 
-	private IClasspathAttribute[] getClasspathAttributesForProject(IProject project, boolean exportsExternalAnnotations)
+	private static IClasspathAttribute[] getClasspathAttributesForProject(IProject project,
+			boolean exportsExternalAnnotations)
 			throws JavaModelException {
 		if (exportsExternalAnnotations) {
 			String annotationPath = JavaCore.create(project).getOutputLocation().toString();

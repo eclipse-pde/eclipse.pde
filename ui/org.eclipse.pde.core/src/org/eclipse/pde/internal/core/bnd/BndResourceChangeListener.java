@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.bnd;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,15 +24,8 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.ICoreRunnable;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jdt.core.ClasspathContainerInitializer;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.pde.internal.core.ClasspathContainerState;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PDECoreMessages;
-import org.eclipse.pde.internal.core.RequiredPluginsClasspathContainer;
 
 public class BndResourceChangeListener implements IResourceChangeListener {
 
@@ -62,35 +54,11 @@ public class BndResourceChangeListener implements IResourceChangeListener {
 						return true;
 					}
 				});
-				if (updateProjects.size() > 0) {
-					performClasspathUpdate(updateProjects);
-				}
+				ClasspathContainerState.requestClasspathUpdate(updateProjects);
 			} catch (CoreException e) {
 				// can't do anything then...
 			}
 		}
-	}
-
-	private static void performClasspathUpdate(Collection<IProject> updateProjects) {
-		Job.create(PDECoreMessages.PluginModelManager_1, new ICoreRunnable() {
-
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				ClasspathContainerInitializer initializer = JavaCore
-						.getClasspathContainerInitializer(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH.segment(0));
-				if (initializer == null) {
-					return;
-				}
-				for (IProject project : updateProjects) {
-					IJavaProject javaProject = JavaCore.create(project);
-					if (initializer.canUpdateClasspathContainer(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH, javaProject)) {
-							initializer.requestClasspathContainerUpdate(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH,
-								javaProject, new RequiredPluginsClasspathContainer(null, null, project));
-					}
-				}
-
-			}
-		}).schedule();
 	}
 
 }
