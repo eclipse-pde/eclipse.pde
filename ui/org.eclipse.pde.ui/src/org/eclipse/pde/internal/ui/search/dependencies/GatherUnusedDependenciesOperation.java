@@ -397,8 +397,8 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 
 	private static class Requestor extends SearchRequestor {
 		private volatile boolean used;
-		private SearchEngine engine;
-		private IJavaSearchScope searchScope;
+		private final SearchEngine engine;
+		private final IJavaSearchScope searchScope;
 
 		public Requestor(SearchEngine engine, IJavaSearchScope searchScope) {
 			this.engine = engine;
