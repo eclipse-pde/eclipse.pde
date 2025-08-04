@@ -165,12 +165,9 @@ public class BuildClasspathSection extends TableSection {
 
 	public BuildClasspathSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION | ExpandableComposite.TWISTIE,
-				new String[] {
-					PDEUIMessages.BuildEditor_ClasspathSection_add,
-					PDEUIMessages.BuildEditor_ClasspathSection_remove,
-					PDEUIMessages.BuildEditor_ClasspathSection_add_bundle,
-					null
-				});
+				new String[] { PDEUIMessages.BuildEditor_ClasspathSection_add,
+						PDEUIMessages.BuildEditor_ClasspathSection_add_bundle,
+						PDEUIMessages.BuildEditor_ClasspathSection_remove, null });
 		getSection().setText(PDEUIMessages.BuildEditor_ClasspathSection_title);
 		getSection().setDescription(PDEUIMessages.BuildEditor_ClasspathSection_desc);
 		initialize();
@@ -198,13 +195,6 @@ public class BuildClasspathSection extends TableSection {
 		EditableTablePart tablePart = getTablePart();
 		tablePart.setEditable(true);
 
-		// -- New Button for Target Platform Browsing DRAFT ---
-//		Button browseTargetButton = toolkit.createButton(container, "Browse Target Platform Bundles", SWT.PUSH);
-//		browseTargetButton.setLayoutData(new GridData(SWT.RIGHT, SWT.RIGHT, false, false));
-//		browseTargetButton.addListener(SWT.Selection, e -> {
-//			openTargetPlatformDialog();
-//		});
-
 		fTableViewer = tablePart.getTableViewer();
 
 		fTableViewer.setContentProvider(new TableContentProvider());
@@ -218,11 +208,7 @@ public class BuildClasspathSection extends TableSection {
 		section.setLayoutData(data);
 		data.horizontalSpan = 2;
 		section.setClient(container);
-
 	}
-
-
-
 
 	@Override
 	protected void fillContextMenu(IMenuManager manager) {
@@ -240,23 +226,23 @@ public class BuildClasspathSection extends TableSection {
 
 		manager.add(new Separator());
 
+		// add new bundle action
+		action = new Action(PDEUIMessages.BuildEditor_ClasspathSection_add_bundle) {
+			@Override
+			public void run() {
+				handleNewBundle();
+			}
+		};
+		action.setEnabled(fEnabled);
+		manager.add(action);
+
+		manager.add(new Separator());
+
 		// add DELETE action
 		action = new Action(PDEUIMessages.BuildEditor_ClasspathSection_remove) {
 			@Override
 			public void run() {
 				handleDelete();
-			}
-		};
-		action.setEnabled(!selection.isEmpty() && fEnabled);
-		manager.add(action);
-
-		manager.add(new Separator());
-
-		// add new bundle action
-		action = new Action(PDEUIMessages.BuildEditor_ClasspathSection_add_bundle) {
-			@Override
-			public void run() {
-				handleDelete(); // TODO: change to handleNewBundle
 			}
 		};
 		action.setEnabled(!selection.isEmpty() && fEnabled);
@@ -293,14 +279,15 @@ public class BuildClasspathSection extends TableSection {
 	public void enableSection(boolean enable) {
 		fEnabled = enable;
 		EditableTablePart tablePart = getTablePart();
-		tablePart.setButtonEnabled(1, enable && !fTableViewer.getStructuredSelection().isEmpty());
+		tablePart.setButtonEnabled(2, enable && !fTableViewer.getStructuredSelection().isEmpty());
+		tablePart.setButtonEnabled(1, enable);
 		tablePart.setButtonEnabled(0, enable);
 	}
 
 	@Override
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
-		getTablePart().setButtonEnabled(1, selection != null && !selection.isEmpty() && fEnabled);
+		getTablePart().setButtonEnabled(2, selection != null && !selection.isEmpty() && fEnabled);
 	}
 
 	private void handleDelete() {
@@ -401,9 +388,6 @@ public class BuildClasspathSection extends TableSection {
 	}
 
 	private void handleNewBundle() {
-
-		// TODO: implement a custom dialog to browse external plug-ins
-
 		PluginSelectionDialog dialog = new PluginSelectionDialog(PDEPlugin.getActiveWorkbenchShell(),
 				getAvailablePlugins(), true);
 		dialog.create();
@@ -420,7 +404,7 @@ public class BuildClasspathSection extends TableSection {
 				Object[] models = dialog.getResult();
 				for (Object m : models) {
 					IPluginModel pmodel = (IPluginModel) m;
-					String tokenName = "platform:/plugin/" + pmodel.getPlugin().getId() + "/"; // 7
+					String tokenName = "platform:/plugin/" + pmodel.getPlugin().getId() + "/"; // 7 //$NON-NLS-1$ //$NON-NLS-2$
 					entry.addToken(tokenName);
 				}
 				markDirty();
@@ -458,8 +442,8 @@ public class BuildClasspathSection extends TableSection {
 	protected void buttonSelected(int index) {
 		switch (index) {
 			case 0 -> handleNew();
-			case 1 -> handleDelete();
-			case 2 -> handleNewBundle();
+			case 1 -> handleNewBundle();
+			case 2 -> handleDelete();
 		}
 	}
 
