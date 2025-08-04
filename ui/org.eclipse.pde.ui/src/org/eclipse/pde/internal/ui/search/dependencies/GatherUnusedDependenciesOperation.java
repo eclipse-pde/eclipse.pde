@@ -32,9 +32,12 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ProgressMonitorWrapper;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
@@ -144,10 +147,10 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 		if (subMonitor.isCanceled()) {
 			return;
 		}
+		removeSourceReferences(usedPlugins, usedPackages, subMonitor.split(10));
 		minimizeDependencies(usedPlugins, usedPackages, subMonitor);
 		removeBuddies();
 		removeReexported();
-		removeSourceReferences(subMonitor.split(10));
 	}
 
 	/**
@@ -158,8 +161,12 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 	 * warnings. To prevent the user from getting a confusing project
 	 * error/warnings we retain them here even if not strictly required at
 	 * runtime.
+	 *
+	 * @param usedPackages
+	 * @param usedPlugins
 	 */
-	private void removeSourceReferences(IProgressMonitor monitor) {
+	private void removeSourceReferences(Map<String, IPluginImport> usedPlugins, List<ImportPackageObject> usedPackages,
+			IProgressMonitor monitor) {
 		if (fList.isEmpty()) {
 			return;
 		}
@@ -168,10 +175,34 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 			IJavaProject javaProject = JavaCore.create(project);
 			SubMonitor convert = SubMonitor.convert(monitor, "Search Source References for unused requirements", //$NON-NLS-1$
 					fList.size());
+			SearchEngine engine = new SearchEngine();
+			IJavaSearchScope searchScope;
+			try {
+				searchScope = PluginJavaSearchUtil.createSeachScope(javaProject);
+			} catch (JavaModelException e) {
+				return;
+			}
+			Requestor requestor = new Requestor(engine, searchScope);
 			for (Iterator<Object> iterator = fList.iterator(); iterator.hasNext();) {
 				Object item = iterator.next();
 				if (item instanceof ImportPackageObject pkg) {
-					if (isPackageReferenced(pkg, javaProject, convert.split(1))) {
+					if (isPackageReferenced(pkg, requestor, convert.split(1))) {
+						usedPackages.add(pkg);
+						iterator.remove();
+					}
+				} else if (item instanceof IPluginImport bundle) {
+					IPluginModelBase[] models = PluginJavaSearchUtil.getPluginImports(bundle);
+					IPackageFragment[] packageFragments;
+					try {
+						packageFragments = PluginJavaSearchUtil.collectPackageFragments(models, javaProject, true);
+					} catch (JavaModelException e) {
+						// something is broken, so better assume it is used
+						// here.
+						iterator.remove();
+						continue;
+					}
+					if (isBundleReferenced(packageFragments, requestor, convert.split(1))) {
+						usedPlugins.put(bundle.getId(), bundle);
 						iterator.remove();
 					}
 				}
@@ -179,38 +210,31 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 		}
 	}
 
-	private boolean isPackageReferenced(ImportPackageObject pkg, IJavaProject javaProject, IProgressMonitor monitor) {
+	private boolean isBundleReferenced(IPackageFragment[] packageFragments, Requestor requestor,
+			IProgressMonitor monitor) {
 		try {
-			SearchEngine engine = new SearchEngine();
-			IJavaSearchScope searchScope = PluginJavaSearchUtil.createSeachScope(javaProject);
-			Requestor requestor = new Requestor();
+			SubMonitor subMonitor = SubMonitor.convert(monitor, packageFragments.length);
+			for (IPackageFragment fragment : packageFragments) {
+				if (fragment.hasChildren() && !fragment.isDefaultPackage()) {
+					SearchPattern pattern = SearchPattern.createPattern(fragment, IJavaSearchConstants.REFERENCES);
+					if (requestor.search(pattern, subMonitor.split(1))) {
+						return true;
+					}
+				}
+			}
+			return false;
+		} catch (CoreException e) {
+		}
+		// If we can't be sure better assume it is used!
+		return true;
+	}
+
+	private boolean isPackageReferenced(ImportPackageObject pkg, Requestor requestor, IProgressMonitor monitor) {
+		try {
 			String packageName = pkg.getName();
 			SearchPattern pattern = SearchPattern.createPattern(packageName, IJavaSearchConstants.PACKAGE,
 					IJavaSearchConstants.REFERENCES, SearchPattern.R_EXACT_MATCH);
-			if (pattern != null) {
-				ProgressMonitorWrapper wrapper = new ProgressMonitorWrapper(monitor) {
-
-					@Override
-					public boolean isCanceled() {
-						return monitor.isCanceled() || requestor.used;
-					}
-
-					@Override
-					public void setCanceled(boolean b) {
-					}
-				};
-				try {
-					engine.search(pattern, new SearchParticipant[] { SearchEngine.getDefaultSearchParticipant() },
-							searchScope, requestor, wrapper);
-				} catch (org.eclipse.core.runtime.OperationCanceledException e) {
-					if (monitor.isCanceled()) {
-						// the the user really canceled, rethrow it here,
-						// otherwise we just found a match!
-						throw e;
-					}
-				}
-				return requestor.used;
-			}
+			return requestor.search(pattern, monitor);
 		} catch (CoreException e) {
 		}
 		// can't tell, so better be safe and assume it is used...
@@ -372,11 +396,50 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 	}
 
 	private static class Requestor extends SearchRequestor {
-		volatile boolean used;
+		private volatile boolean used;
+		private final SearchEngine engine;
+		private final IJavaSearchScope searchScope;
+
+		public Requestor(SearchEngine engine, IJavaSearchScope searchScope) {
+			this.engine = engine;
+			this.searchScope = searchScope;
+		}
+
+		public boolean search(SearchPattern pattern, IProgressMonitor monitor) throws CoreException {
+			used = false;
+			if (pattern == null) {
+				throw new CoreException(Status.error("pattern is null", new NullPointerException())); //$NON-NLS-1$
+			}
+			try {
+				engine.search(pattern, new SearchParticipant[] { SearchEngine.getDefaultSearchParticipant() },
+						searchScope, this, getMonitor(monitor));
+			} catch (org.eclipse.core.runtime.OperationCanceledException e) {
+				if (monitor.isCanceled()) {
+					// the the user really canceled, rethrow it here,
+					// otherwise we just found a match and canceled the search!
+					throw e;
+				}
+			}
+			return used;
+		}
 
 		@Override
 		public void acceptSearchMatch(SearchMatch match) {
 			used = true;
+		}
+
+		public IProgressMonitor getMonitor(IProgressMonitor parent) {
+			return new ProgressMonitorWrapper(parent) {
+
+				@Override
+				public boolean isCanceled() {
+					return parent.isCanceled() || used;
+				}
+
+				@Override
+				public void setCanceled(boolean b) {
+				}
+			};
 		}
 	}
 }
