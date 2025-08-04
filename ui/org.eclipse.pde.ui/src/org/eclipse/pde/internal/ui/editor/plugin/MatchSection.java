@@ -49,6 +49,7 @@ import org.osgi.framework.InvalidSyntaxException;
 
 public class MatchSection extends PDESection implements IPartSelectionListener {
 
+
 	private Button fReexportButton;
 	private Button fOptionalButton;
 
@@ -151,9 +152,12 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 						try {
 							FrameworkUtil.createFilter(input);
 							System.out.println("Valid OSGi filter: " + input);//$NON-NLS-1$
+							fCurrentImport.setFilter(input);
 						} catch (InvalidSyntaxException e) {
 							System.out.println("❌ Invalid OSGi filter: " + input);//$NON-NLS-1$
 							System.out.println("Reason: " + e.getMessage());//$NON-NLS-1$
+						} catch (CoreException e) {
+							PDEPlugin.logException(e);
 						}
 					}
 

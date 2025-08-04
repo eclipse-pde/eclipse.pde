@@ -20,6 +20,18 @@ import org.eclipse.pde.core.plugin.IPluginImport;
 public class PluginImportNode extends PluginObjectNode implements IPluginImport {
 
 	private static final long serialVersionUID = 1L;
+	private String fFilter;
+
+	@Override
+	public void setFilter(String filter) {
+		this.fFilter = filter;
+
+	}
+
+	@Override
+	public String getFilter() {
+		return fFilter;
+	}
 
 	public PluginImportNode(String id) {
 		super();

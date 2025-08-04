@@ -114,4 +114,16 @@ public class PluginReference implements IPluginReference {
 		this.id = id;
 	}
 
+	@Override
+	public void setFilter(String filter) throws CoreException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public String getFilter() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -312,4 +312,16 @@ public class PluginImport extends IdentifiablePluginObject implements IPluginImp
 		writer.print(' ');
 	}
 
+	@Override
+	public void setFilter(String filter) throws CoreException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public String getFilter() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

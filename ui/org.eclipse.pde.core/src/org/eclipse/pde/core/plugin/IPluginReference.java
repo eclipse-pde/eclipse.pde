@@ -70,4 +70,15 @@ public interface IPluginReference extends IIdentifiable, IMatchRules {
 	 * @throws CoreException if the model is not editable
 	 */
 	void setVersion(String version) throws CoreException;
+
+	void setFilter(String filter) throws CoreException;
+
+	/**
+	 * Returns the filter string for this plugin reference.
+	 *
+	 * @return the filter string, or null if not set
+	 * @since 3.21
+	 */
+	String getFilter();
+
 }
