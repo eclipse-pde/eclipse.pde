@@ -473,7 +473,8 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * @param artifacts the underlying artifact repo against which the bundles are validated
 	 * @return map of BundleInfo to IResolvedBundle
 	 */
-	private Map<BundleInfo, TargetBundle> generateResolvedBundles(IQueryable<IInstallableUnit> source, IQueryable<IInstallableUnit> metadata, IFileArtifactRepository artifacts) throws CoreException {
+	private Map<BundleInfo, TargetBundle> generateResolvedBundles(IQueryable<IInstallableUnit> source,
+			IQueryable<IInstallableUnit> metadata, IFileArtifactRepository artifacts) {
 		OSGiBundleQuery query = new OSGiBundleQuery();
 		IQueryResult<IInstallableUnit> queryResult = source.query(query, null);
 		Map<BundleInfo, TargetBundle> bundles = new LinkedHashMap<>();
@@ -492,7 +493,8 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		return bundles;
 	}
 
-	private void generateBundle(IInstallableUnit unit, IFileArtifactRepository repo, Map<BundleInfo, TargetBundle> bundles) throws CoreException {
+	private void generateBundle(IInstallableUnit unit, IFileArtifactRepository repo,
+			Map<BundleInfo, TargetBundle> bundles) {
 		Collection<IArtifactKey> artifacts = unit.getArtifacts();
 		for (IArtifactKey artifactKey : artifacts) {
 			File file = null;
@@ -511,8 +513,16 @@ public class IUBundleContainer extends AbstractBundleContainer {
 				}
 			}
 			if (file != null) {
-				TargetBundle bundle = new TargetBundle(file);
-				bundles.put(bundle.getBundleInfo(), bundle);
+				try {
+					TargetBundle bundle = new TargetBundle(file);
+					bundles.put(bundle.getBundleInfo(), bundle);
+				} catch (CoreException e) {
+					BundleInfo info = new BundleInfo(file.toURI());
+					info.setSymbolicName(artifactKey.getId());
+					info.setVersion(artifactKey.getVersion().toString());
+					InvalidTargetBundle invalidTargetBundle = new InvalidTargetBundle(info, e.getStatus());
+					bundles.put(info, invalidTargetBundle);
+				}
 			}
 		}
 	}
