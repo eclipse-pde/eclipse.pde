@@ -131,11 +131,16 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 			appendBundleInfo(styledString,
 					new BundleInfo(descriptor.getId(), descriptor.getVersion(), null, BundleInfo.NO_LEVEL, false));
 		} else if (element instanceof TargetBundle bundle) {
-			if (bundle.getStatus().isOK()) {
+			IStatus status = bundle.getStatus();
+			if (status.isOK()) {
 				appendBundleInfo(styledString, bundle.getBundleInfo());
 			} else {
-				// TODO Better error message for missing bundles
-				styledString.append(bundle.getStatus().getMessage());
+				BundleInfo bundleInfo = bundle.getBundleInfo();
+				if (bundleInfo != null && bundleInfo.getSymbolicName() != null) {
+					appendBundleInfo(styledString, bundleInfo);
+					styledString.append(' ');
+				}
+				styledString.append(status.getMessage());
 			}
 		} else if (element instanceof IStatus status) {
 			styledString.append(status.getMessage());
