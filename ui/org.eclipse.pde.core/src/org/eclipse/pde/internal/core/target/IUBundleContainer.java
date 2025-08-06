@@ -507,9 +507,8 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			if( file == null){
 				file = repo.getArtifactFile(artifactKey);
 				if (file != null) {
-					Map<IFileArtifactRepository, File> repoFile = new ConcurrentHashMap<>();
-					repoFile.put(repo, file);
-					P2TargetUtils.fgArtifactKeyRepoFile.putIfAbsent(artifactKey, repoFile);
+					P2TargetUtils.fgArtifactKeyRepoFile.computeIfAbsent(artifactKey, nil -> new ConcurrentHashMap<>())
+							.put(repo, file);
 				}
 			}
 			if (file != null) {
@@ -522,6 +521,17 @@ public class IUBundleContainer extends AbstractBundleContainer {
 					info.setVersion(artifactKey.getVersion().toString());
 					InvalidTargetBundle invalidTargetBundle = new InvalidTargetBundle(info, e.getStatus());
 					bundles.put(info, invalidTargetBundle);
+					if (mapRepoFile != null) {
+						// remove invalid file from the cache...
+						mapRepoFile.remove(repo);
+					}
+					if (repo.isModifiable() && P2TargetUtils.isBundlePool(repo)) {
+						try {
+							repo.removeDescriptor(artifactKey, new NullProgressMonitor());
+						} catch (RuntimeException ignored) {
+							// better safe than sorry!
+						}
+					}
 				}
 			}
 		}
