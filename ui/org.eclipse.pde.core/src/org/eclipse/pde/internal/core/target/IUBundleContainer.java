@@ -473,7 +473,8 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * @param artifacts the underlying artifact repo against which the bundles are validated
 	 * @return map of BundleInfo to IResolvedBundle
 	 */
-	private Map<BundleInfo, TargetBundle> generateResolvedBundles(IQueryable<IInstallableUnit> source, IQueryable<IInstallableUnit> metadata, IFileArtifactRepository artifacts) throws CoreException {
+	private Map<BundleInfo, TargetBundle> generateResolvedBundles(IQueryable<IInstallableUnit> source,
+			IQueryable<IInstallableUnit> metadata, IFileArtifactRepository artifacts) {
 		OSGiBundleQuery query = new OSGiBundleQuery();
 		IQueryResult<IInstallableUnit> queryResult = source.query(query, null);
 		Map<BundleInfo, TargetBundle> bundles = new LinkedHashMap<>();
@@ -492,7 +493,8 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		return bundles;
 	}
 
-	private void generateBundle(IInstallableUnit unit, IFileArtifactRepository repo, Map<BundleInfo, TargetBundle> bundles) throws CoreException {
+	private void generateBundle(IInstallableUnit unit, IFileArtifactRepository repo,
+			Map<BundleInfo, TargetBundle> bundles) {
 		Collection<IArtifactKey> artifacts = unit.getArtifacts();
 		for (IArtifactKey artifactKey : artifacts) {
 			File file = null;
@@ -505,14 +507,32 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			if( file == null){
 				file = repo.getArtifactFile(artifactKey);
 				if (file != null) {
-					Map<IFileArtifactRepository, File> repoFile = new ConcurrentHashMap<>();
-					repoFile.put(repo, file);
-					P2TargetUtils.fgArtifactKeyRepoFile.putIfAbsent(artifactKey, repoFile);
+					P2TargetUtils.fgArtifactKeyRepoFile.computeIfAbsent(artifactKey, nil -> new ConcurrentHashMap<>())
+							.put(repo, file);
 				}
 			}
 			if (file != null) {
-				TargetBundle bundle = new TargetBundle(file);
-				bundles.put(bundle.getBundleInfo(), bundle);
+				try {
+					TargetBundle bundle = new TargetBundle(file);
+					bundles.put(bundle.getBundleInfo(), bundle);
+				} catch (CoreException e) {
+					BundleInfo info = new BundleInfo(file.toURI());
+					info.setSymbolicName(artifactKey.getId());
+					info.setVersion(artifactKey.getVersion().toString());
+					InvalidTargetBundle invalidTargetBundle = new InvalidTargetBundle(info, e.getStatus());
+					bundles.put(info, invalidTargetBundle);
+					if (mapRepoFile != null) {
+						// remove invalid file from the cache...
+						mapRepoFile.remove(repo);
+					}
+					if (repo.isModifiable() && P2TargetUtils.isBundlePool(repo)) {
+						try {
+							repo.removeDescriptor(artifactKey, new NullProgressMonitor());
+						} catch (RuntimeException ignored) {
+							// better safe than sorry!
+						}
+					}
+				}
 			}
 		}
 	}
