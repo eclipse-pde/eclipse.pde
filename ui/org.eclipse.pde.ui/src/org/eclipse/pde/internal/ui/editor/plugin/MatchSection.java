@@ -140,25 +140,15 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		}));
 		toolkit.paintBordersFor(container);
 		initialize();
-		update((IPluginReference) null);
 
 		fFilterText = new FormEntry(container, toolkit, "Filter:", null, false); //$NON-NLS-1$
 		fFilterText.setFormEntryListener(
 				new FormEntryAdapter(this, getPage().getEditor().getEditorSite().getActionBars()) {
 					@Override
 					public void textValueChanged(FormEntry text) {
-						String input = text.getValue().trim();
+						applyFilter(text.getValue());
 
-						try {
-							FrameworkUtil.createFilter(input);
-							System.out.println("Valid OSGi filter: " + input);//$NON-NLS-1$
-							fCurrentImport.setFilter(input);
-						} catch (InvalidSyntaxException e) {
-							System.out.println("❌ Invalid OSGi filter: " + input);//$NON-NLS-1$
-							System.out.println("Reason: " + e.getMessage());//$NON-NLS-1$
-						} catch (CoreException e) {
-							PDEPlugin.logException(e);
-						}
+
 					}
 
 					@Override
@@ -172,6 +162,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 						fBlockChanges = false;
 					}
 				});
+		update((IPluginReference) null);
 
 		section.setClient(container);
 		section.setText(PDEUIMessages.MatchSection_title);
@@ -234,6 +225,21 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 			}
 		} catch (CoreException ex) {
 			PDEPlugin.logException(ex);
+		}
+	}
+
+	private void applyFilter(String filter) {
+		try {
+			FrameworkUtil.createFilter(filter);
+			// System.out.println("Valid OSGi filter: " + filter);//$NON-NLS-1$
+			fCurrentImport.setFilter(filter);
+		} catch (InvalidSyntaxException e) {
+			// System.out.println("❌ Invalid OSGi filter: " +
+			// filter);//$NON-NLS-1$
+			// System.out.println("Reason: " + e.getMessage());//$NON-NLS-1$
+			PDEPlugin.logException(e);
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);// ex?
 		}
 	}
 
@@ -309,8 +315,11 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 			}
 			fVersionText.setValue(null, true);
 			fVersionText.setEditable(false);
+
 			fMatchCombo.getControl().setEnabled(false);
 			fMatchCombo.setText(""); //$NON-NLS-1$
+			fFilterText.setValue(null, false); // added
+			fFilterText.setEditable(false); // added
 			fCurrentImport = null;
 			fBlockChanges = false;
 			return;
@@ -329,7 +338,10 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		}
 		fVersionText.setEditable(isEditable());
 		fVersionText.setValue(fCurrentImport.getVersion());
+
 		resetMatchCombo(fCurrentImport);
+		fFilterText.setEditable(isEditable());
+		fFilterText.setValue(fCurrentImport.getFilter());
 		fBlockChanges = false;
 	}
 }
