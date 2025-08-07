@@ -77,7 +77,7 @@ public class BundlesTab extends AbstractLauncherTab {
 		composite.setLayout(new GridLayout(2, false));
 
 		fFrameworkBlock.createControl(composite);
-		fBlock.createControl(composite, 2, 5);
+		fBlock.createControl(composite, 3, 5);
 
 		setControl(composite);
 		Dialog.applyDialogFont(composite);

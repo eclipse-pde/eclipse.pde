@@ -929,8 +929,14 @@ public class FeatureBlock {
 		}
 
 		fAutoValidate.addSelectionListener(fListener);
-		Composite rightAlignComp = SWTFactory.createComposite(validatecomp, 1, 1, SWT.NONE, 0, 0);
+		Composite rightAlignComp = SWTFactory.createComposite(validatecomp, 2, 1, SWT.NONE, 0, 0);
 		rightAlignComp.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, true, true));
+
+		Button fShowPlugin = SWTFactory.createPushButton(rightAlignComp,
+				PDEUIMessages.PluginsTabToolBar_show_launch_bundles, null);
+		fShowPlugin.setLayoutData(new GridData(GridData.END, GridData.CENTER, false, false));
+		fShowPlugin.addSelectionListener(SelectionListener
+				.widgetSelectedAdapter(e -> AbstractPluginBlock.handleShowPluginsPressed(fLaunchConfig)));
 
 		if (fTab instanceof PluginsTab) {
 			fValidateButton = SWTFactory.createPushButton(rightAlignComp, PDEUIMessages.PluginsTabToolBar_validate_plugins, null);

@@ -457,6 +457,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String StateViewPage_suppliedByJRE;
 
+	public static String ShowBundlesDialog_Copy;
+	public static String ShowBundlesDialog_Close;
+	public static String ShowBundlesDialog_LaunchBundles;
+
 	public static String TargetCreationPage_0;
 
 	public static String TargetCreationPage_1;
@@ -2479,6 +2483,8 @@ public class PDEUIMessages extends NLS {
 	public static String PluginConfigurationSection_tablePluginTitle;
 
 	public static String AbstractPluginBlock_counter;
+
+	public static String PluginsTabToolBar_show_launch_bundles;
 
 	public static String AbstractRepository_ErrorLoadingImageFromJar;
 
