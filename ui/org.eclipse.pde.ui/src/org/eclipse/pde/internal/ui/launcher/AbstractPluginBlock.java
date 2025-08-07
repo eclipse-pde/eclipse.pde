@@ -435,14 +435,21 @@ public abstract class AbstractPluginBlock {
 		label.setLayoutData(gd);
 
 		if (fTab instanceof PluginsTab) {
-			fAutoValidate = createButton(parent, span - 1, indent, PDEUIMessages.PluginsTabToolBar_auto_validate_plugins);
+			fAutoValidate = createButton(parent, span - 2, indent,
+					PDEUIMessages.PluginsTabToolBar_auto_validate_plugins);
 		} else if (fTab instanceof BundlesTab) {
-			fAutoValidate = createButton(parent, span - 1, indent, PDEUIMessages.PluginsTabToolBar_auto_validate_bundles);
+			fAutoValidate = createButton(parent, span - 2, indent,
+					PDEUIMessages.PluginsTabToolBar_auto_validate_bundles);
 		} else{
-			fAutoValidate = createButton(parent, span - 1, indent,
+			fAutoValidate = createButton(parent, span - 2, indent,
 					NLS.bind(PDEUIMessages.PluginsTabToolBar_auto_validate,
 							fTab.getName().replace("&", "").toLowerCase(Locale.ENGLISH))); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+		Button listPlugins = new Button(parent, SWT.PUSH);
+		listPlugins.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
+		listPlugins.setText(PDEUIMessages.PluginsTabToolBar_show_launch_bundles);
+		listPlugins.addSelectionListener(
+				SelectionListener.widgetSelectedAdapter(e -> handleShowPluginsPressed(fLaunchConfig)));
 
 		fValidateButton = new Button(parent, SWT.PUSH);
 		fValidateButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
@@ -458,6 +465,17 @@ public abstract class AbstractPluginBlock {
 
 		SWTUtil.setButtonDimensionHint(fValidateButton);
 		fValidateButton.addSelectionListener(fListener);
+	}
+
+	// Dialog to Show the launch bundles
+	static void handleShowPluginsPressed(ILaunchConfiguration launchConfig) {
+		try {
+			Map<IPluginModelBase, String> models = BundleLauncherHelper.getMergedBundleMap(launchConfig, false);
+			ShowBundlesDialog dialog = new ShowBundlesDialog(PDEPlugin.getActiveWorkbenchShell(), models);
+			dialog.open();
+		} catch (CoreException e) {
+			PDEPlugin.log(e);
+		}
 	}
 
 	private Button createButton(Composite parent, int span, int indent, String text) {
