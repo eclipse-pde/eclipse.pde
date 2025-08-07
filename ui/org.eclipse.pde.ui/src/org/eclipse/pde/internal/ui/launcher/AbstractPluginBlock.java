@@ -42,6 +42,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -67,6 +68,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.SWTFactory;
+import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
 import org.eclipse.pde.internal.ui.shared.CachedCheckboxTreeViewer;
 import org.eclipse.pde.internal.ui.shared.FilteredCheckboxTree;
@@ -142,6 +144,7 @@ public abstract class AbstractPluginBlock {
 	private Label fCounter;
 
 	private Button fValidateButton;
+	private Button fShowPlugin;
 
 	private HashMap<Object, String> levelColumnCache = new HashMap<>();
 	private HashMap<Object, String> autoColumnCache = new HashMap<>();
@@ -435,14 +438,26 @@ public abstract class AbstractPluginBlock {
 		label.setLayoutData(gd);
 
 		if (fTab instanceof PluginsTab) {
-			fAutoValidate = createButton(parent, span - 1, indent, PDEUIMessages.PluginsTabToolBar_auto_validate_plugins);
+			fAutoValidate = createButton(parent, span - 2, indent,
+					PDEUIMessages.PluginsTabToolBar_auto_validate_plugins);
 		} else if (fTab instanceof BundlesTab) {
-			fAutoValidate = createButton(parent, span - 1, indent, PDEUIMessages.PluginsTabToolBar_auto_validate_bundles);
+			fAutoValidate = createButton(parent, span - 2, indent,
+					PDEUIMessages.PluginsTabToolBar_auto_validate_bundles);
 		} else{
-			fAutoValidate = createButton(parent, span - 1, indent,
+			fAutoValidate = createButton(parent, span - 2, indent,
 					NLS.bind(PDEUIMessages.PluginsTabToolBar_auto_validate,
 							fTab.getName().replace("&", "").toLowerCase(Locale.ENGLISH))); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+
+		fShowPlugin = new Button(parent, SWT.PUSH);
+		fShowPlugin.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		fShowPlugin.setText(PDEUIMessages.PluginsTabToolBar_show_launch_bundles);
+		fShowPlugin.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent evt) {
+				handleShowPluginsPressed();
+			}
+		});
 
 		fValidateButton = new Button(parent, SWT.PUSH);
 		fValidateButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
@@ -458,6 +473,29 @@ public abstract class AbstractPluginBlock {
 
 		SWTUtil.setButtonDimensionHint(fValidateButton);
 		fValidateButton.addSelectionListener(fListener);
+	}
+
+	// Dialog to Show the launch bundles
+	protected void handleShowPluginsPressed() {
+		Set<IPluginModelBase> models;
+		try {
+			models = BundleLauncherHelper.getMergedBundleMap(fLaunchConfig, false).keySet();
+			PluginSelectionDialog dialog = new PluginSelectionDialog(PDEPlugin.getActiveWorkbenchShell(),
+					models.toArray(new IPluginModelBase[0]), true) {
+				@Override
+				protected void createButtonsForButtonBar(Composite parent) {
+					createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+				}
+
+				@Override
+				protected void handleDoubleClick() {
+				}
+			};
+			dialog.create();
+			dialog.open();
+		} catch (CoreException e) {
+			PDEPlugin.log(e);
+		}
 	}
 
 	private Button createButton(Composite parent, int span, int indent, String text) {

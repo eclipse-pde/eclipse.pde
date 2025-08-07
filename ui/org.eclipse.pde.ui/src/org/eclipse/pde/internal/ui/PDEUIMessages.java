@@ -2475,6 +2475,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String AbstractPluginBlock_counter;
 
+	public static String PluginsTabToolBar_show_launch_bundles;
+
 	public static String AbstractRepository_ErrorLoadingImageFromJar;
 
 	public static String AbstractRepository_ScanForUI;
