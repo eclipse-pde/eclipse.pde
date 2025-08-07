@@ -329,9 +329,11 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 		// operator,
 		// so I am just following the general group's syntax
 
-		selection = !settings.getBoolean(PROP_UPDATE_BREE);
+		// sab comment: seeing what happens if ! is removed from settings
+
+		selection = settings.getBoolean(PROP_UPDATE_BREE);
 		fUpdateBree.setSelection(selection);
-		fProcessor.setRemoveUselessFiles(selection);
+		fProcessor.setUpdateBree(selection);
 
 		/**
 		 * I will need to review Jason's work in detail, as he has expressed
@@ -494,7 +496,10 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 		} else if (fRemoveUselessFiles.equals(source)) {
 			fProcessor.setRemoveUselessFiles(fRemoveUselessFiles.getSelection());
 		} else if (fUpdateBree.equals(source)) {
-			fProcessor.setRemoveUselessFiles(fUpdateBree.getSelection());
+
+			// sab change: switched it to correct setter for update bree
+
+			fProcessor.setUpdateBree(fUpdateBree.getSelection());
 
 			/**
 			 * I will need to review Jason's work in detail, as he has expressed

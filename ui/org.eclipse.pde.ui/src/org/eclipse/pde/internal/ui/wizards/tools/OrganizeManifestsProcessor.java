@@ -303,38 +303,8 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 
 		if (fCalculateUses) {
 
-			/**
-			 *
-			 * I have some code that can help improve this area, and we’ll see
-			 * what we can achieve here. I also want to highlight the connected
-			 * areas contributed by the teammate, which should be reviewed
-			 * further, since he expressed uncertainty about his commits. I’m
-			 * targeting and backtracking these sections to help identify and
-			 * fix potential issues.
-			 *
-			 * As a best practice, let’s double-check the work and always
-			 * comment out changes just in case they need to be adjusted in the
-			 * future.
-			 *
-			 */
-
 			// we don't set the subTask because it is done in the
 			// CalculateUsesOperation, for each package it scans
-
-			/**
-			 *
-			 * I have some code that can help improve this area, and we’ll see
-			 * what we can achieve here. I also want to highlight the connected
-			 * areas contributed by the teammate, which should be reviewed
-			 * further, since he expressed uncertainty about his commits. I’m
-			 * targeting and backtracking these sections to help identify and
-			 * fix potential issues.
-			 *
-			 * As a best practice, let’s double-check the work and always
-			 * comment out changes just in case they need to be adjusted in the
-			 * future.
-			 *
-			 */
 
 			if (!subMonitor.isCanceled()) {
 				CalculateUsesOperation op = new CalculateUsesOperation(fCurrentProject, modelBase);
@@ -377,118 +347,58 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 			subMonitor.worked(1);
 		}
 
-		/**
-		 *
-		 * I have some code that can help improve this area, and we’ll see what
-		 * we can achieve here. I also want to highlight the connected areas
-		 * contributed by the teammate, which should be reviewed further, since
-		 * he expressed uncertainty about his commits. I’m targeting and
-		 * backtracking these sections to help identify and fix potential
-		 * issues.
-		 *
-		 * As a best practice, let’s double-check the work and always comment
-		 * out changes just in case they need to be adjusted in the future.
-		 *
-		 */
-
 		// right here is where we will be implementing the if statement
 		// structure for fUpdateBree
 
-		if (fUpdateBree) {
-
-			/**
-			 *
-			 * I have some code that can help improve this area, and we’ll see
-			 * what we can achieve here. I also want to highlight the connected
-			 * areas contributed by the teammate, which should be reviewed
-			 * further, since he expressed uncertainty about his commits. I’m
-			 * targeting and backtracking these sections to help identify and
-			 * fix potential issues.
-			 *
-			 * As a best practice, let’s double-check the work and always
-			 * comment out changes just in case they need to be adjusted in the
-			 * future.
-			 *
-			 */
+		// if (fUpdateBree) {
 
 			// PDEUI message is placeholder from fRemoveUselessFiles
-			subMonitor.subTask(
-					NLS.bind(PDEUIMessages.OrganizeManifestsOperation_uselessPluginFile, fCurrentProject.getName()));
+		// subMonitor.subTask(
+		// NLS.bind(PDEUIMessages.OrganizeManifestsOperation_updateBree,
+		// projectName));
+		// if (!subMonitor.isCanceled()) {
+		// Change results[] = OrganizeManifest.updateBree(fCurrentProject,
+		// currentBundle, currentExtensionsModel);
+		// if (results.length > 0) {
+		// result[0] = results[0];
+		// }
+		// }
 
+		// subMonitor.worked(1);
+		// }
+
+		if (fUpdateBree) {
+			subMonitor.subTask(NLS.bind(PDEUIMessages.OrganizeManifestsOperation_updateBree, projectName));
 			if (!subMonitor.isCanceled()) {
-				OrganizeManifest.removeUnneededLazyStart(currentBundle);
+				Change results[] = OrganizeManifest.updateBree(fCurrentProject, currentBundle);
 
-				/**
-				 *
-				 * I have some code that can help improve this area, and we’ll
-				 * see what we can achieve here. I also want to highlight the
-				 * connected areas contributed by the teammate, which should be
-				 * reviewed further, since he expressed uncertainty about his
-				 * commits. I’m targeting and backtracking these sections to
-				 * help identify and fix potential issues.
-				 *
-				 * As a best practice, let’s double-check the work and always
-				 * comment out changes just in case they need to be adjusted in
-				 * the future.
-				 *
-				 */
-
-				// placeholder
-																			// from
-																			// fRemoveLazy
+				// Add all changes to the result
+				for (int i = 0; i < results.length && i < result.length; i++) {
+					if (results[i] != null) {
+						if (result[i] == null) {
+							result[i] = results[i];
+						} else {
+							// If there's already a change, create a composite
+							if (!(result[i] instanceof CompositeChange)) {
+								CompositeChange composite = new CompositeChange("Organize Manifests");
+								composite.add(result[i]);
+								result[i] = composite;
+							}
+							((CompositeChange) result[i]).add(results[i]);
+						}
+					}
+				}
 			}
-
-			/**
-			 *
-			 * I have some code that can help improve this area, and we’ll see
-			 * what we can achieve here. I also want to highlight the connected
-			 * areas contributed by the teammate, which should be reviewed
-			 * further, since he expressed uncertainty about his commits. I’m
-			 * targeting and backtracking these sections to help identify and
-			 * fix potential issues.
-			 *
-			 * As a best practice, let’s double-check the work and always
-			 * comment out changes just in case they need to be adjusted in the
-			 * future.
-			 *
-			 */
-
 			subMonitor.worked(1);
 		}
 
-		/**
-		 *
-		 * I have some code that can help improve this area, and we’ll see what
-		 * we can achieve here. I also want to highlight the connected areas
-		 * contributed by the teammate, which should be reviewed further, since
-		 * he expressed uncertainty about his commits. I’m targeting and
-		 * backtracking these sections to help identify and fix potential
-		 * issues.
-		 *
-		 * As a best practice, let’s double-check the work and always comment
-		 * out changes just in case they need to be adjusted in the future.
-		 *
-		 */
+
 
 		// wanted to get main structure down which is:
 		// 1. get sub task
 		// 2. check if process is not canceled and update curr proj w/ method
 		// from OrganizeManifest
 		// 3. tell submonitor object that process was completed
-
-		/**
-		 *
-		 * I have some code that can help improve this area, and we’ll see what
-		 * we can achieve here. I also want to highlight the connected areas
-		 * contributed by the teammate, which should be reviewed further, since
-		 * he expressed uncertainty about his commits. I’m targeting and
-		 * backtracking these sections to help identify and fix potential
-		 * issues.
-		 *
-		 * As a best practice, let’s double-check the work and always comment
-		 * out changes just in case they need to be adjusted in the future.
-		 *
-		 */
 
 		if (fPrefixIconNL) {
 			subMonitor.subTask(NLS.bind(PDEUIMessages.OrganizeManifestsOperation_nlIconPath, projectName));
@@ -580,19 +490,6 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 	public void setRemoveUselessFiles(boolean removeUselessFiles) {
 		fRemoveUselessFiles = removeUselessFiles;
 	}
-
-	/**
-	 *
-	 * I have some code that can help improve this area, and we’ll see what we
-	 * can achieve here. I also want to highlight the connected areas
-	 * contributed by the teammate, which should be reviewed further, since he
-	 * expressed uncertainty about his commits. I’m targeting and backtracking
-	 * these sections to help identify and fix potential issues.
-	 *
-	 * As a best practice, let’s double-check the work and always comment out
-	 * changes just in case they need to be adjusted in the future.
-	 *
-	 */
 
 	// add a setter method here for our update BREE feature
 
