@@ -404,9 +404,7 @@ class RequiredPluginsClasspathContainer {
 
 		BundleSpecification[] required = desc.getRequiredBundles();
 		for (BundleSpecification element : required) {
-			if (element.isExported()) {
-				addDependency((BundleDescription) element.getSupplier(), added, map, entries, useInclusion);
-			}
+			addDependency((BundleDescription) element.getSupplier(), added, map, entries, useInclusion);
 		}
 
 		if (addImportedPackages) {
