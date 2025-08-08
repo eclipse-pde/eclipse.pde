@@ -107,7 +107,11 @@ import org.osgi.framework.ServiceReference;
 
 public class P2TargetUtils {
 
+	private static final String BUNDLE_POOL_SUFFIX = ".bundle_pool"; //$NON-NLS-1$
+
 	private static final String SOURCE_IU_ID = "org.eclipse.pde.core.target.source.bundles"; //$NON-NLS-1$
+
+	private static final String BUNDLE_POOL_REPO_NAME = "PDE Target Bundle Pool"; //$NON-NLS-1$
 
 	/**
 	 * URI to the local directory where the p2 agent keeps its information.
@@ -125,7 +129,7 @@ public class P2TargetUtils {
 	 * Path to the local directory where the local bundle pool is stored for p2 profile
 	 * based targets.
 	 */
-	public static final IPath BUNDLE_POOL = PDECore.getDefault().getStateLocation().append(".bundle_pool"); //$NON-NLS-1$
+	public static final IPath BUNDLE_POOL = PDECore.getDefault().getStateLocation().append(BUNDLE_POOL_SUFFIX);
 
 	/**
 	 * Path to the local directory where install folders are created for p2 profile
@@ -451,9 +455,27 @@ public class P2TargetUtils {
 		} catch (CoreException e) {
 			// could not load or there wasn't one, fall through to create
 		}
-		String repoName = "PDE Target Bundle Pool"; //$NON-NLS-1$
-		IArtifactRepository result = manager.createRepository(uri, repoName, IArtifactRepositoryManager.TYPE_SIMPLE_REPOSITORY, null);
+		IArtifactRepository result = manager.createRepository(uri, BUNDLE_POOL_REPO_NAME,
+				IArtifactRepositoryManager.TYPE_SIMPLE_REPOSITORY, null);
 		return (IFileArtifactRepository) result;
+	}
+
+	public static boolean isBundlePool(IFileArtifactRepository repository) {
+		if (repository == null) {
+			return false;
+		}
+		URI location = repository.getLocation();
+		if (location == null) {
+			return false;
+		}
+		if (!"file".equals(location.getScheme())) { //$NON-NLS-1$
+			return false;
+		}
+		String path = location.getPath();
+		if (path.endsWith("/")) { //$NON-NLS-1$
+			path = path.substring(0, path.length() - 1);
+		}
+		return path.endsWith(BUNDLE_POOL_SUFFIX);
 	}
 
 	/**
