@@ -19,9 +19,9 @@ import org.eclipse.pde.internal.core.builders.JarManifestErrorReporter;
 /**
  * @since 3.21
  */
-public class ExecEnvironmentBuild extends JarManifestErrorReporter {
+public class ExecEnvironmentUtils extends JarManifestErrorReporter {
 
-	public ExecEnvironmentBuild(IFile file) {
+	public ExecEnvironmentUtils(IFile file) {
 		super(file);
 		// TODO Auto-generated constructor stub
 	}

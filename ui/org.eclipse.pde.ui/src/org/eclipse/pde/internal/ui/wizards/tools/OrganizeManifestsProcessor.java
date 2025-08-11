@@ -14,19 +14,6 @@
  *     Johannes Ahlers <Johannes.Ahlers@gmx.de> - bug 477677
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.tools;
-
-/**
-*
-* I have some code that can help improve this area, and we’ll see what we can achieve here.
-* I also want to highlight the connected areas contributed by the teammate, which should be reviewed further,
-* since he expressed uncertainty about his commits. I’m targeting and backtracking these sections to help
-* identify and fix potential issues.
-*
-* As a best practice, let’s double-check the work and always comment out changes just in case they need to be
-* adjusted in the future.
-*
-*/
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.List;
@@ -59,82 +46,18 @@ import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 
 public class OrganizeManifestsProcessor extends RefactoringProcessor implements IOrganizeManifestsSettings {
 
-	/**
-	 *
-	 * I have some code that can help improve this area, and we’ll see what we
-	 * can achieve here. I also want to highlight the connected areas
-	 * contributed by the teammate, which should be reviewed further, since he
-	 * expressed uncertainty about his commits. I’m targeting and backtracking
-	 * these sections to help identify and fix potential issues.
-	 *
-	 * As a best practice, let’s double-check the work and always comment out
-	 * changes just in case they need to be adjusted in the future.
-	 *
-	 */
 
 	// if operation is executed without setting operations, these defaults will
 	// be used
 
-	/**
-	 *
-	 * I have some code that can help improve this area, and we’ll see what we
-	 * can achieve here. I also want to highlight the connected areas
-	 * contributed by the teammate, which should be reviewed further, since he
-	 * expressed uncertainty about his commits. I’m targeting and backtracking
-	 * these sections to help identify and fix potential issues.
-	 *
-	 * As a best practice, let’s double-check the work and always comment out
-	 * changes just in case they need to be adjusted in the future.
-	 *
-	 */
-
 	protected boolean fAddMissing = true;
-
-	/**
-	 *
-	 * I have some code that can help improve this area, and we’ll see what we
-	 * can achieve here. I also want to highlight the connected areas
-	 * contributed by the teammate, which should be reviewed further, since he
-	 * expressed uncertainty about his commits. I’m targeting and backtracking
-	 * these sections to help identify and fix potential issues.
-	 *
-	 * As a best practice, let’s double-check the work and always comment out
-	 * changes just in case they need to be adjusted in the future.
-	 *
-	 */
 
 	// add all packages to export-package
 	protected boolean fMarkInternal = true;
 
-	/**
-	 *
-	 * I have some code that can help improve this area, and we’ll see what we
-	 * can achieve here. I also want to highlight the connected areas
-	 * contributed by the teammate, which should be reviewed further, since he
-	 * expressed uncertainty about his commits. I’m targeting and backtracking
-	 * these sections to help identify and fix potential issues.
-	 *
-	 * As a best practice, let’s double-check the work and always comment out
-	 * changes just in case they need to be adjusted in the future.
-	 *
-	 */
-
 	// mark export-package as internal
 	protected String fPackageFilter = VALUE_DEFAULT_FILTER;
 	protected boolean fRemoveUnresolved = true;
-
-	/**
-	 *
-	 * I have some code that can help improve this area, and we’ll see what we
-	 * can achieve here. I also want to highlight the connected areas
-	 * contributed by the teammate, which should be reviewed further, since he
-	 * expressed uncertainty about his commits. I’m targeting and backtracking
-	 * these sections to help identify and fix potential issues.
-	 *
-	 * As a best practice, let’s double-check the work and always comment out
-	 * changes just in case they need to be adjusted in the future.
-	 *
-	 */
 
 	// remove unresolved
 												// export-package
@@ -158,19 +81,6 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 	protected boolean fUnusedKeys = false; // remove unused
 											// <bundle-localization>.properties
 											// keys
-
-	/**
-	 *
-	 * I have some code that can help improve this area, and we’ll see what we
-	 * can achieve here. I also want to highlight the connected areas
-	 * contributed by the teammate, which should be reviewed further, since he
-	 * expressed uncertainty about his commits. I’m targeting and backtracking
-	 * these sections to help identify and fix potential issues.
-	 *
-	 * As a best practice, let’s double-check the work and always comment out
-	 * changes just in case they need to be adjusted in the future.
-	 *
-	 */
 
 	protected boolean fAddDependencies = false;
 
@@ -347,58 +257,16 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 			subMonitor.worked(1);
 		}
 
-		// right here is where we will be implementing the if statement
-		// structure for fUpdateBree
-
-		// if (fUpdateBree) {
-
-			// PDEUI message is placeholder from fRemoveUselessFiles
-		// subMonitor.subTask(
-		// NLS.bind(PDEUIMessages.OrganizeManifestsOperation_updateBree,
-		// projectName));
-		// if (!subMonitor.isCanceled()) {
-		// Change results[] = OrganizeManifest.updateBree(fCurrentProject,
-		// currentBundle, currentExtensionsModel);
-		// if (results.length > 0) {
-		// result[0] = results[0];
-		// }
-		// }
-
-		// subMonitor.worked(1);
-		// }
-
 		if (fUpdateBree) {
 			subMonitor.subTask(NLS.bind(PDEUIMessages.OrganizeManifestsOperation_updateBree, projectName));
 			if (!subMonitor.isCanceled()) {
-				Change results[] = OrganizeManifest.updateBree(fCurrentProject, currentBundle);
-
-				// Add all changes to the result
-				for (int i = 0; i < results.length && i < result.length; i++) {
-					if (results[i] != null) {
-						if (result[i] == null) {
-							result[i] = results[i];
-						} else {
-							// If there's already a change, create a composite
-							if (!(result[i] instanceof CompositeChange)) {
-								CompositeChange composite = new CompositeChange("Organize Manifests");
-								composite.add(result[i]);
-								result[i] = composite;
-							}
-							((CompositeChange) result[i]).add(results[i]);
-						}
-					}
+				Change[] results = OrganizeManifest.updateBree(fCurrentProject, currentBundle);
+				if (results.length > 0) {
+					result[0] = results[0];
 				}
 			}
 			subMonitor.worked(1);
 		}
-
-
-
-		// wanted to get main structure down which is:
-		// 1. get sub task
-		// 2. check if process is not canceled and update curr proj w/ method
-		// from OrganizeManifest
-		// 3. tell submonitor object that process was completed
 
 		if (fPrefixIconNL) {
 			subMonitor.subTask(NLS.bind(PDEUIMessages.OrganizeManifestsOperation_nlIconPath, projectName));
@@ -490,8 +358,6 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 	public void setRemoveUselessFiles(boolean removeUselessFiles) {
 		fRemoveUselessFiles = removeUselessFiles;
 	}
-
-	// add a setter method here for our update BREE feature
 
 	public void setUpdateBree(boolean updateBree) {
 		fUpdateBree = updateBree;

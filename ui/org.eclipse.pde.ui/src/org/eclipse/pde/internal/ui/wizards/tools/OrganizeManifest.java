@@ -71,7 +71,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEManager;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.bnd.FileResource;
-import org.eclipse.pde.internal.core.builders.execenv.ExecEnvironmentBuild;
+import org.eclipse.pde.internal.core.builders.execenv.ExecEnvironmentUtils;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleFragmentModel;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
@@ -378,49 +378,17 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 		return new DeleteResourceChange(pluginFile.getFullPath(), true);
 	}
 
-	// Here we will be implementing the logic for updating BREE.
-	// The 2 methods above are the 2 check box options that belong
-	// to the 'general' group.
-
-	// Things to consider when building this function:
-	// 1. Return type
-	// could potentially be void, as we are changing something in MANIFEST.MF.
-	// 2. Parameters used
-	// - IBundle bundle
-
-	// 3. Overall structure/implementation
-	// retrieve manifestheader, constants.BREE
-
-	/*
-	 * public static void updateBree(IBundle bundle, IProject project) {
-	 * ImportPackageHeader bree = (ImportPackageHeader) ((Bundle) bundle)
-	 * .getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT); }
-	 */
-
-	// *** make sure to change back ExecutionEnvironmentUtils from
-	// ExecEnvironmentBuild ***
-
-	// sab change: testing out function
-
 	public static TextFileChange[] updateBree(final IProject project, final IBundle bundle) {
-
-		System.out.println("updateBree called for project: " + project.getName()); //$NON-NLS-1$
 
 		// Get the MANIFEST.MF file
 		IFile manifestFile = PDEProject.getManifest(project);
 		if (!manifestFile.exists()) {
-			System.out.println("Manifest file does not exist!"); //$NON-NLS-1$
 			return new TextFileChange[0];
 		}
-
-		System.out.println("Manifest file exists, calling changesForModelModification"); //$NON-NLS-1$
 
 		return PDEModelUtility.changesForModelModication(new ModelModification(manifestFile) {
 			@Override
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
-				System.out.println("modifyModel called!"); //$NON-NLS-1$
-				System.out.println("Model class: " + model.getClass().getName()); //$NON-NLS-1$
-			    System.out.println("Project name: " + project.getName()); //$NON-NLS-1$
 
 				IBundleModel bundleModel = null;
 				BundleDescription desc = null;
@@ -429,47 +397,36 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 				// includes BundlePluginModel)
 				if (model instanceof IBundleModel) {
 					bundleModel = (IBundleModel) model;
-					System.out.println("Using direct IBundleModel"); //$NON-NLS-1$
 
-
-					// *** multiple approaches to get BundleDescription for pure bundle models
 					// For pure bundle models, try to get bundle description via project lookup
 					// Use the project parameter that was passed to the function
 					// Approach 2: try finding by project name
 					IPluginModelBase projectModel = PluginRegistry.findModel(project);
 					if (projectModel != null) {
 						desc = projectModel.getBundleDescription();
-						System.out.println("SUCCESS: Got BundleDescription from PluginRegistry.findModel(project)"); //$NON-NLS-1$
 					} else {
-			            System.out.println("FAILED: PluginRegistry.findModel(project) returned null");
-
 			            // Approach 3: Try workspace models
 		                IPluginModelBase[] workspaceModels = PluginRegistry.getWorkspaceModels();
-		                System.out.println("Searching through " + workspaceModels.length + " workspace models...");
 		                for (IPluginModelBase workspaceModel : workspaceModels) {
 		                    if (workspaceModel.getUnderlyingResource() != null &&
 		                        workspaceModel.getUnderlyingResource().getProject().equals(project)) {
 		                        desc = workspaceModel.getBundleDescription();
-		                        System.out.println("SUCCESS: Found matching workspace model");
 		                        break;
 		                    }
 		                }
 		                if (desc == null) {
-		                    System.out.println("FAILED: No matching workspace model found");
+							return;
 
 					}
 					}
 				} else if (model instanceof IBundlePluginModelBase) {
 					IBundlePluginModelBase bundlePluginModelBase = (IBundlePluginModelBase) model;
 					bundleModel = bundlePluginModelBase.getBundleModel();
-					System.out.println("Extracted IBundleModel from IBundlePluginModelBase"); //$NON-NLS-1$
-
 					// Get bundle description directly from the bundle plugin
 					// model
 					desc = bundlePluginModelBase.getBundleDescription();
-					System.out.println("Got BundleDescription from IBundlePluginModelBase");
+
 				} else {
-					System.out.println("Unsupported model type: " + model.getClass().getName()); //$NON-NLS-1$
 					return;
 				}
 
@@ -479,103 +436,50 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 				IPluginModelBase projectModel = PluginRegistry.findModel(project);
 				if (projectModel != null) {
 					desc = projectModel.getBundleDescription();
-					System.out.println("SUCCESS: Got BundleDescription from PluginRegistry.findModel(project)");
+
 				} else {
-					System.out.println("FAILED: PluginRegistry.findModel(project) returned null");
+
 
 					// Fallback: Try workspace models
 					IPluginModelBase[] workspaceModels = PluginRegistry.getWorkspaceModels();
-					System.out.println("Searching through " + workspaceModels.length + " workspace models...");
 					for (IPluginModelBase workspaceModel : workspaceModels) {
 						if (workspaceModel.getUnderlyingResource() != null
 								&& workspaceModel.getUnderlyingResource().getProject().equals(project)) {
 							desc = workspaceModel.getBundleDescription();
-							System.out.println("SUCCESS: Found matching workspace model");
 							break;
 						}
 					}
 					if (desc == null) {
-						System.out.println("FAILED: No matching workspace model found");
+						return;
 					}
 				}
-				// if (bundleModel == null) {
-				// System.out.println("Could not extract bundle model!");
-				// //$NON-NLS-1$
-				// return;
-				// }
-
-				// if (desc == null) {
-				// System.out.println("BundleDescription is null! Cannot proceed
-				// with BREE calculation."); // stopped
-																											// here
-																											// in
-																											// debugging
-				// return;
-				// }
-
-				System.out.println("Successfully got bundle model and description");
-
-				// *** original logic
 
 				IBundle modelBundle = bundleModel.getBundle();
 				if (modelBundle == null) {
-					System.out.println("Bundle from model is null!"); //$NON-NLS-1$
 					return;
 				}
 
-				System.out.println("Got bundle from model successfully");
-				// Get current BREE from the model's bundle
-				// IManifestHeader header =
-				// modelBundle.getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
-				// System.out.println("value of header: " + header);
-				// //$NON-NLS-1$
-
 				// Get current BREE from the model's bundle
 				IManifestHeader header = modelBundle.getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
-				System.out.println("Current BREE header: " + (header != null ? header.getValue() : "null"));
-
-				System.out.println("Got BundleDescription successfully");
-
-				// -------------------
-				// modelBase removed from param
-				// BundleDescription desc = modelBase.getBundleDescription();
-				// System.out.println("value of desc: " + desc); //$NON-NLS-1$
-				// if (desc == null)
-				// return;
 
 				String[] bundleEnvs = desc.getExecutionEnvironments();
-				System.out.println(" value of bundleEnvs" + bundleEnvs); //$NON-NLS-1$
-				ArrayList<Object> checkBREE = ExecEnvironmentBuild.checkBREE(desc);
-				System.out.println("value of checkBREE" + checkBREE); //$NON-NLS-1$
+				ArrayList<Object> checkBREE = ExecEnvironmentUtils.checkBREE(desc);
 				String dependencyEE = !checkBREE.isEmpty() ? (String) checkBREE.get(0) : ""; //$NON-NLS-1$
-				System.out.println("value of dependencyEE" + dependencyEE); //$NON-NLS-1$
-				String bundleEE = bundleEnvs != null ? ExecEnvironmentBuild.getHighestBREE(bundleEnvs) : ""; //$NON-NLS-1$
-				System.out.println("value of bundleEE" + bundleEE); //$NON-NLS-1$
-				String correctEE = ExecEnvironmentBuild.getHighestEE(dependencyEE, bundleEE);
-				System.out.println("value of correctEE" + correctEE); //$NON-NLS-1$
+				String bundleEE = bundleEnvs != null ? ExecEnvironmentUtils.getHighestBREE(bundleEnvs) : ""; //$NON-NLS-1$
+				String correctEE = ExecEnvironmentUtils.getHighestEE(dependencyEE, bundleEE);
 
 				// only update if we found a higher BREE
 				if (!bundleEE.equals(correctEE)) {
-					// IManifestHeader header =
-					// modelBundle.getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
 					if (header != null) {
 						header.setValue(correctEE);
-						System.out.println("new value of header if there exists higher BREE" + header); //$NON-NLS-1$
 					} else {
 						bundle.setHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, correctEE);
 
 					}
-					System.out.println("Updated BREE to: " + correctEE); //$NON-NLS-1$
 				}
-
 			}
-
-			// use passed in bundle parameters for following parts
-
 		}, null);
-
 	}
-
 
 	public static TextFileChange[] removeUnusedKeys(final IProject project, final IBundle bundle, final IPluginModelBase modelBase) {
 		String localization = bundle.getLocalization();

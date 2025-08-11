@@ -78,7 +78,7 @@ import org.eclipse.pde.internal.core.PDEState;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.TargetWeaver;
 import org.eclipse.pde.internal.core.builders.IncrementalErrorReporter.VirtualMarker;
-import org.eclipse.pde.internal.core.builders.execenv.ExecEnvironmentBuild;
+import org.eclipse.pde.internal.core.builders.execenv.ExecEnvironmentUtils;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
@@ -735,13 +735,13 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		// Check for highest BREE of bundle dependencies
 		int compilerFlag = CompilerFlags.getFlag(fProject, CompilerFlags.P_EXEC_ENV_TOO_LOW);
 		if (compilerFlag != CompilerFlags.IGNORE) {
-			ArrayList<Object> checkBREE = ExecEnvironmentBuild.checkBREE(desc);
+			ArrayList<Object> checkBREE = ExecEnvironmentUtils.checkBREE(desc);
 
 			System.out.println("validateRequiredExecutionEnvironment(), line740"); //$NON-NLS-1$
 			System.out.println("value of ArrayList checkBREE: " + checkBREE); //$NON-NLS-1$
 
 			String highestDependencyEE = checkBREE.size() > 0 ? (String) checkBREE.get(0) : ""; //$NON-NLS-1$
-			String highestBundleEE = ExecEnvironmentBuild.getHighestBREE(bundleEnvs);
+			String highestBundleEE = ExecEnvironmentUtils.getHighestBREE(bundleEnvs);
 
 			System.out.println("validateRequiredExecutionEnvironment(), line 746"); //$NON-NLS-1$
 			System.out.println("highestBundleEE (bundleEE) value: " + highestBundleEE); //$NON-NLS-1$
@@ -750,9 +750,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 				System.out.println("validateRequiredExecutionEnvironment(), line 751"); //$NON-NLS-1$
 				System.out.println(
-						"correctEE value: " + ExecEnvironmentBuild.getHighestEE(highestDependencyEE, highestBundleEE)); //$NON-NLS-1$
+						"correctEE value: " + ExecEnvironmentUtils.getHighestEE(highestDependencyEE, highestBundleEE)); //$NON-NLS-1$
 
-				if (highestBundleEE != ExecEnvironmentBuild.getHighestEE(highestDependencyEE, highestBundleEE)) {
+				if (highestBundleEE != ExecEnvironmentUtils.getHighestEE(highestDependencyEE, highestBundleEE)) {
 					BundleDescription object = null;
 					if (checkBREE.size() == 2) {
 						object = (BundleDescription) checkBREE.get(1);
