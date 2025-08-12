@@ -153,7 +153,7 @@ public class ExecEnvironmentUtils extends JarManifestErrorReporter {
 	 * @param desc
 	 *            The bundle description of the bundle which we wish to check
 	 *            for it's highest required Execution Environment
-	 * @return List containing the highest Execution Environment &
+	 * @return List containing the highest Execution Environment and
 	 *         BundleDescription with the highest BREE required by the bundle or
 	 *         any of it's dependencies
 	 */
