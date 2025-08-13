@@ -140,7 +140,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		toolkit.paintBordersFor(container);
 		initialize();
 
-		fFilterText = new FormEntry(container, toolkit, "Filter:", null, false); //$NON-NLS-1$
+		fFilterText = new FormEntry(container, toolkit, PDEUIMessages.ManifestEditor_MatchSection_filter, null, false);
 		fFilterText.setFormEntryListener(
 				new FormEntryAdapter(this, getPage().getEditor().getEditorSite().getActionBars()) {
 					@Override
@@ -234,7 +234,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		} catch (InvalidSyntaxException e) {
 			PDEPlugin.logException(e);
 		} catch (CoreException e) {
-			PDEPlugin.logException(e);// ex?
+			PDEPlugin.logException(e);
 		}
 	}
 
@@ -313,8 +313,8 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 
 			fMatchCombo.getControl().setEnabled(false);
 			fMatchCombo.setText(""); //$NON-NLS-1$
-			fFilterText.setValue(null, false); // added
-			fFilterText.setEditable(false); // added
+			fFilterText.setValue(null, false);
+			fFilterText.setEditable(false);
 			fCurrentImport = null;
 			fBlockChanges = false;
 			return;
