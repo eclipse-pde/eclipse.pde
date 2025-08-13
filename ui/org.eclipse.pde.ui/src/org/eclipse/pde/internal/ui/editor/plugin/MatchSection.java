@@ -313,7 +313,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 
 			fMatchCombo.getControl().setEnabled(false);
 			fMatchCombo.setText(""); //$NON-NLS-1$
-			fFilterText.setValue(null, false);
+			fFilterText.setValue(null, true);
 			fFilterText.setEditable(false);
 			fCurrentImport = null;
 			fBlockChanges = false;
