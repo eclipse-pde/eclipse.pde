@@ -56,7 +56,6 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 	private FormEntry fVersionText;
 	private FormEntry fFilterText;
 
-	// Khang Comment: we will work on filter text field
 
 	private ComboPart fMatchCombo;
 	protected IPluginReference fCurrentImport;
@@ -231,12 +230,8 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 	private void applyFilter(String filter) {
 		try {
 			FrameworkUtil.createFilter(filter);
-			// System.out.println("Valid OSGi filter: " + filter);//$NON-NLS-1$
 			fCurrentImport.setFilter(filter);
 		} catch (InvalidSyntaxException e) {
-			// System.out.println("❌ Invalid OSGi filter: " +
-			// filter);//$NON-NLS-1$
-			// System.out.println("Reason: " + e.getMessage());//$NON-NLS-1$
 			PDEPlugin.logException(e);
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);// ex?
