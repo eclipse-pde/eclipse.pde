@@ -133,14 +133,17 @@
 
    <!-- Item -->
 
-   <item title="Alternative: Add a splash screen via VM arguments (no .product file)"
+   <item title="Alternative: Add a splash screen via VM arguments to a plugin(no .product file)"
       href=""
       dialog="true"
       skip="false">
    <description>
-      <br/><br/>
+      To add a splash screen using vm arguments:
    </description>
-   <subitem label=/>
+   <subitem label="Right click the Plug-in Project you made, and import the image you wanted. Right click the image you put in, go to properties and copy a location of the image."
+            skip="false"/>
+   <subitem label="Select the &quot;arguments&quot; tab within the configuration editor to display the &quot;arguments&quot; page"
+            skip="false"/>
 
 </item>
 
