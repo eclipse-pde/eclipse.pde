@@ -76,6 +76,7 @@ public class PDEMarkerFactory {
 	public static final int M_EXEC_ENV_TOO_LOW = 0x1029; // other problem
 	public static final int M_CONFLICTING_AUTOMATIC_MODULE = 0x1030; // other problem
 	public static final int M_HEADER_INCORRECT = 0x1031; // other problem
+	public static final int M_NO_SPACE_AFTER_COLON = 0x1032; // other problem
 	public static final int M_SINGLETON_DIR_CHANGE = 0x1033; // other problem
 	public static final int M_MISSINGVERSION_REQ_BUNDLE = 0x1034; // other
 																	// problem
