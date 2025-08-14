@@ -133,6 +133,19 @@
 
    <!-- Item -->
 
+   <item title="Alternative: Add a splash screen via VM arguments (no .product file)"
+      href=""
+      dialog="true"
+      skip="false">
+   <description>
+      <br/><br/>
+   </description>
+   <subitem label=/>
+
+</item>
+
+   <!-- Item -->
+
    <item title="Test the RCP product"
          dialog="false"
          href="/org.eclipse.pde.doc.user/guide/tools/editors/product_editor/overview.htm"
