@@ -133,25 +133,56 @@
 
    <!-- Item -->
 
-   <item title="Alternative: Add a splash screen via VM arguments to a plugin(no .product file)"
-      href=""
-      dialog="true"
-      skip="false">
-   <description>
-      To add a splash screen using vm arguments:
-   </description>
-   <subitem label="Import the image by right-clicking the plug-in and clicking on &quot;Import...&quot; and selecting the image from wherever it is stored."
-            skip="false"/>
-   <subitem label="Open the properties page of your plug-in by right-clicking the plug-in and clicking on &quot;properties&quot; and copy the Location of the image."
-            skip="false"/>
-   <subitem label="Select the &quot;arguments&quot; tab within the configuration editor to display the &quot;arguments&quot; page"
-            skip="false"/>
-   <subitem label="Input &quot;-Dosgi.splashLocation=&quot; with the location of the image into the &quot;VM arguments&quot; text box and click &quot;Apply&quot; and click &quot;Run&quot;" 
-            skip="false"/>
+   <!-- Item -->
 
-        
-
-</item>
+   <item title="Alternative: Add a splash screen via VM arguments to a plugin (no .product file)"
+         href=""
+         dialog="true"
+         skip="false">
+      <description>
+         You can show a custom splash screen without editing a <b>.product</b> file by passing one of the following
+         <b>system properties</b> as a <b>VM argument</b> (not a Program argument):
+         <br/><br/>
+      
+         - <b>-Dosgi.splashLocation=&lt;absolute path to splash.bmp&gt;</b><br/>
+         &nbsp;&nbsp;Points directly to the splash image file. This is an <b>absolute</b> path to the image named exactly <code>splash.bmp</code>. It overrides any value set in <code>osgi.splashPath</code>.<br/>
+         &nbsp;&nbsp;Example (Linux/macOS):<br/>
+         &nbsp;&nbsp;<code>-Dosgi.splashLocation="/absolute/path/to/splash.bmp"</code><br/>
+         &nbsp;&nbsp;Example (Windows):<br/>
+         &nbsp;&nbsp;<code>-Dosgi.splashLocation="C:\absolute\path\to\splash.bmp"</code><br/><br/>
+         
+         - <b>-Dosgi.splashPath=file:/&lt;base path to directory&gt;</b><br/>
+         &nbsp;&nbsp;Points to one or more base directories or plug-ins. Eclipse will search each base location for a file named exactly <code>splash.bmp</code> in its root.<br/>
+         &nbsp;&nbsp;Example (Linux/macOS):<br/>
+         &nbsp;&nbsp;<code>-Dosgi.splashPath=file:/base/path/to/directory/</code><br/>
+         &nbsp;&nbsp;Example (Windows):<br/>
+         &nbsp;&nbsp;<code>-Dosgi.splashPath=file:/C:/base/path/to/directory/</code><br/><br/>
+         
+         <b>Important:</b><br/>
+         - Always place these in the <b>VM arguments</b> field, not Program arguments.<br/>
+         - <b>The splash image file must be named <code>splash.bmp</code> for both arguments</b> — other filenames will not be recognized.<br/>
+         - <code>osgi.splashLocation</code> accepts only a single absolute path to <code>splash.bmp</code>.<br/>
+         - <code>osgi.splashPath</code> accepts one or more base paths (comma-separated) and searches each for <code>splash.bmp</code>.<br/>
+         - If both are specified, <code>osgi.splashLocation</code> takes precedence.
+      </description>
+      
+      <subitem label="Create a new plug-in project: In the Plug-in Development perspective, select File -> New -> Project -> Plug-in Project."
+               skip="false"/>
+      <subitem label="Enter a project name (e.g., com.example.splashdemo) and click Finish."
+               skip="false"/>
+      <subitem label="Import your splash image: Right-click the new plug-in project, select Import… -> General -> File System, browse to your splash.bmp file, and select it."
+               skip="false"/>
+      <subitem label="Ensure the image is named splash.bmp and placed at the correct location for your chosen argument type."
+               skip="false"/>
+      <subitem label="Right-click splash.bmp and select Properties -> Resource to note its location or relative path, then copy the full path."
+               skip="false"/>
+      <subitem label="Open Run Configurations, select your launch configuration, and go to the Arguments tab."
+               skip="false"/>
+      <subitem label="In the VM arguments section, enter either -Dosgi.splashPath or -Dosgi.splashLocation with the appropriate path to splash.bmp."
+               skip="false"/>
+      <subitem label="Click Apply, then Run to launch with your custom splash screen."
+               skip="false"/>
+   </item>
 
    <!-- Item -->
 
