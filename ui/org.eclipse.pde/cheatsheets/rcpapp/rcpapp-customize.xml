@@ -158,7 +158,7 @@
          
          <b>Important:</b><br/>
          - Always place these in the <b>VM arguments</b> field, not Program arguments.<br/>
-         - <b>The splash image file must be named <code>splash.bmp</code> for both arguments</b> — other filenames will not be recognized.<br/>
+         - <b>The splash image file must be named <code>splash.bmp</code> for (-dosgi.splashPath)</b> — other filenames will not be recognized.<br/>
          - <code>osgi.splashLocation</code> accepts only a single absolute path to <code>splash.bmp</code>.<br/>
          - <code>osgi.splashPath</code> accepts one or more base paths (comma-separated) and searches each for <code>splash.bmp</code>.<br/>
          - If both are specified, <code>osgi.splashLocation</code> takes precedence.
@@ -168,15 +168,15 @@
                skip="false"/>
       <subitem label="Enter a project name (e.g., com.example.splashdemo) and click Finish."
                skip="false"/>
-      <subitem label="Import your splash image: Right-click the new plug-in project, select Import… -> General -> File System, browse to your splash.bmp file, and select it."
+      <subitem label="Import your splash image: Right-click the new plug-in project, select Import… -> General -> File System, browse to your file, and select it."
                skip="false"/>
-      <subitem label="Ensure the image is named splash.bmp and placed at the correct location for your chosen argument type."
-               skip="false"/>
-      <subitem label="Right-click splash.bmp and select Properties -> Resource to note its location or relative path, then copy the full path."
+      <subitem label="Right-click the custom splash image and select Properties -> Resource to note its location or relative path, then copy the full path."
                skip="false"/>
       <subitem label="Open Run Configurations, select your launch configuration, and go to the Arguments tab."
                skip="false"/>
       <subitem label="In the VM arguments section, enter either -Dosgi.splashPath or -Dosgi.splashLocation with the appropriate path to splash.bmp."
+               skip="false"/>
+      <subitem label="If using -Dosgi.splashPath ensure the image is named splash.bmp and placed at the correct location for your chosen argument type."
                skip="false"/>
       <subitem label="Click Apply, then Run to launch with your custom splash screen."
                skip="false"/>
