@@ -133,8 +133,6 @@
 
    <!-- Item -->
 
-   <!-- Item -->
-
    <item title="Alternative: Add a splash screen via VM arguments to a plugin (no .product file)"
          href=""
          dialog="true"
