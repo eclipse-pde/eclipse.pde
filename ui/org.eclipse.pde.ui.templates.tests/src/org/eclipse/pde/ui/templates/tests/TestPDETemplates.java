@@ -21,6 +21,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -34,6 +35,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.ds.internal.annotations.Messages;
 import org.eclipse.pde.internal.core.ICoreConstants;
@@ -117,7 +121,15 @@ public class TestPDETemplates {
 		data.setHasBundleStructure(true);
 		data.setSourceFolderName("src");
 		data.setOutputFolderName("bin");
-		data.setExecutionEnvironment("JavaSE-" + Runtime.version().feature());
+		IExecutionEnvironmentsManager executionEnvironmentsManager = JavaRuntime.getExecutionEnvironmentsManager();
+		IExecutionEnvironment environment = executionEnvironmentsManager
+				.getEnvironment("JavaSE-" + Runtime.version().feature());
+		SortedSet<IExecutionEnvironment> supportedExecutionEnvironments = executionEnvironmentsManager
+				.getSupportedExecutionEnvironments();
+		if (!supportedExecutionEnvironments.contains(environment)) {
+			environment = supportedExecutionEnvironments.last();
+		}
+		data.setExecutionEnvironment(environment.getId());
 		data.setTargetVersion(ICoreConstants.TARGET_VERSION_LATEST);
 		data.setDoGenerateClass(true);
 		String pureOSGi = template.getConfigurationElement().getAttribute("pureOSGi");
