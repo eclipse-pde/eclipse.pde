@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -296,27 +297,40 @@ public class TargetPlatformHelper {
 	}
 
 	public static Set<String> getApplicationNameSet() {
+		return getApplicationNameSet((Set<String>) null);
+	}
+
+	public static Set<String> getApplicationNameSet(Set<String> productBundleNames) {
 		TreeSet<String> result = new TreeSet<>();
 		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry()
 				.findExtensions("org.eclipse.core.runtime.applications", true); //$NON-NLS-1$
+
 		for (IExtension extension : extensions) {
 			String id = extension.getUniqueIdentifier();
 			IConfigurationElement[] elements = extension.getConfigurationElements();
 			if (elements.length != 1) {
 				continue;
 			}
+			String contributorId = elements[0].getContributor().getName();
+
+			if (!productBundleNames.contains(contributorId)) {
+				continue;
+			}
+
 			String visiblity = elements[0].getAttribute("visible"); //$NON-NLS-1$
 			boolean visible = visiblity == null || Boolean.parseBoolean(visiblity);
 			if (id != null && visible) {
 				result.add(id);
 			}
+
 		}
 		result.add("org.eclipse.ui.ide.workbench"); //$NON-NLS-1$
 		return result;
 	}
 
 	public static String[] getApplicationNames() {
-		Set<String> result = getApplicationNameSet();
+		Set<String> productBundleNames = new HashSet<>();
+		Set<String> result = getApplicationNameSet(productBundleNames);
 		return result.toArray(new String[result.size()]);
 	}
 
