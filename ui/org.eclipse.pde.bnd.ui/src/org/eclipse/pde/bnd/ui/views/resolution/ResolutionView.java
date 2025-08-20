@@ -109,7 +109,6 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.ISelectionListener;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -132,43 +131,42 @@ import aQute.lib.strings.Strings;
 
 public class ResolutionView extends ViewPart implements ISelectionListener, IResourceChangeListener {
 
-	public static final String										PLUGIN_ID			= "bndtools.core";
+	public static final String PLUGIN_ID = "bndtools.core";
 
-	private final List<EE>		ees			= Arrays.asList(EE.values());
-	private Display				display		= null;
+	private final List<EE> ees = Arrays.asList(EE.values());
+	private Display display = null;
 
-	private Tree				reqsTree	= null;
-	private Table				capsTable	= null;
+	private Tree reqsTree = null;
+	private Table capsTable = null;
 
-	private TreeViewer			reqsViewer;
-	private TableViewer			capsViewer;
+	private TreeViewer reqsViewer;
+	private TableViewer capsViewer;
 
-	private Label				reqsLabel;
-	private Label				capsLabel;
+	private Label reqsLabel;
+	private Label capsLabel;
 
-	private ViewerFilter				hideSelfImportsFilter;
-	private ViewerFilter				hideOptionalRequirements;
-	private ViewerFilter				filterShowCapsProblems;
+	private ViewerFilter hideSelfImportsFilter;
+	private ViewerFilter hideOptionalRequirements;
+	private ViewerFilter filterShowCapsProblems;
 
-	private boolean				inputLocked	= false;
-	private boolean				outOfDate	= false;
-	Set<CapReqLoader>			loaders;
-	private Job					analysisJob;
-	private int					currentEE	= 4;
+	private boolean inputLocked = false;
+	private boolean outOfDate = false;
+	Set<CapReqLoader> loaders;
+	private Job analysisJob;
+	private int currentEE = 4;
 
-	private final Set<String>	filteredCapabilityNamespaces;
-	private Set<Capability>		duplicateCapabilitiesWithDifferentHashes	= new HashSet<>();
+	private final Set<String> filteredCapabilityNamespaces;
+	private Set<Capability> duplicateCapabilitiesWithDifferentHashes = new HashSet<>();
 
 	private final FilterPanelPart reqsFilterPart = new FilterPanelPart(Resources.getScheduler());
 	private final FilterPanelPart capsFilterPart = new FilterPanelPart(Resources.getScheduler());
 
-	private static final String			SEARCHSTRING_HINT							= "Enter search string (Space to separate terms; '*' for partial matches)";
+	private static final String SEARCHSTRING_HINT = "Enter search string (Space to separate terms; '*' for partial matches)";
 
-	private CapReqMapContentProvider	reqsContentProvider;
-	private CapReqMapContentProvider	capsContentProvider;
+	private CapReqMapContentProvider reqsContentProvider;
+	private CapReqMapContentProvider capsContentProvider;
 
-	private final IEventBroker	eventBroker	= PlatformUI.getWorkbench()
-		.getService(IEventBroker.class);
+	private final IEventBroker eventBroker = PlatformUI.getWorkbench().getService(IEventBroker.class);
 
 	public ResolutionView() {
 		filteredCapabilityNamespaces = Sets.of(IdentityNamespace.IDENTITY_NAMESPACE, HostNamespace.HOST_NAMESPACE);
@@ -182,8 +180,16 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 				if (outOfDate) {
 					executeAnalysis();
 				}
-			} else if (part instanceof IEditorPart) {
-				IEditorInput editorInput = ((IEditorPart) part).getEditorInput();
+			} else if (part instanceof IEditorPart editor) {
+				CapReqLoader editorLoader = Adapters.adapt(editor, CapReqLoader.class);
+				if (editorLoader != null) {
+					System.out.println("Got loader from editor!");
+					setLoaders(Collections.singleton(editorLoader));
+					return;
+				}
+				System.out.println("Editor is: " + editor);
+				IEditorInput editorInput = editor.getEditorInput();
+				System.out.println("Editor input is: " + editorInput);
 				IFile file = ResourceUtil.getFile(editorInput);
 
 				if (file != null) {
@@ -194,24 +200,17 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 
 						if (loader != null) {
 							setLoaders(Collections.singleton(loader));
-
-							if (getSite().getPage()
-								.isPartVisible(ResolutionView.this)) {
-								executeAnalysis();
-							} else {
-								outOfDate = true;
-							}
 						}
 					}
 				}
+			} else {
+				System.out.println("Activated: " + part);
 			}
 		}
 	};
 
-
-
-
 	private boolean setLoaders(Set<CapReqLoader> newLoaders) {
+		System.out.println("Set loaders: " + newLoaders);
 		Set<CapReqLoader> oldLoaders = loaders;
 		boolean swap = !oldLoaders.equals(newLoaders);
 		if (swap) {
@@ -219,6 +218,13 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 		}
 		for (CapReqLoader l : swap ? oldLoaders : newLoaders) {
 			IO.close(l);
+		}
+		if (swap) {
+			if (getSite().getPage().isPartVisible(ResolutionView.this)) {
+				executeAnalysis();
+			} else {
+				outOfDate = true;
+			}
 		}
 		return swap;
 	}
@@ -272,9 +278,10 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 		reqsViewer.addDoubleClickListener(event -> handleReqsViewerDoubleClickEvent(event));
 
 		reqsViewer.getControl()
-			.addKeyListener(createCopyToClipboardAdapter(reqsViewer,
-				(IStructuredSelection selection, StringBuilder clipboardContent) -> reqsCopyToClipboard(selection,
-					(RequirementWrapperLabelProvider) reqsViewer.getLabelProvider(), clipboardContent)));
+				.addKeyListener(createCopyToClipboardAdapter(reqsViewer,
+						(IStructuredSelection selection, StringBuilder clipboardContent) -> reqsCopyToClipboard(
+								selection, (RequirementWrapperLabelProvider) reqsViewer.getLabelProvider(),
+								clipboardContent)));
 
 		Composite capsPanel = new Composite(splitPanel, SWT.NONE);
 		capsPanel.setBackground(parent.getBackground());
@@ -323,9 +330,10 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 		capsViewer.addDoubleClickListener(event -> handleCapsViewerDoubleClickEvent(event));
 
 		capsViewer.getTable()
-			.addKeyListener(createCopyToClipboardAdapter(capsViewer,
-			(IStructuredSelection selection1, StringBuilder clipboardContent1) -> capsCopyToClipboard(selection1,
-				(CapabilityLabelProvider) capsViewer.getLabelProvider(), clipboardContent1)));
+				.addKeyListener(createCopyToClipboardAdapter(capsViewer,
+						(IStructuredSelection selection1, StringBuilder clipboardContent1) -> capsCopyToClipboard(
+								selection1, (CapabilityLabelProvider) capsViewer.getLabelProvider(),
+								clipboardContent1)));
 
 		hideSelfImportsFilter = new ViewerFilter() {
 
@@ -350,39 +358,25 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 			}
 		};
 
+		reqsViewer.addDragSupport(DND.DROP_MOVE | DND.DROP_COPY,
+				new Transfer[] { LocalSelectionTransfer.getTransfer() }, new LocalTransferDragListener(reqsViewer));
 
-		reqsViewer.addDragSupport(DND.DROP_MOVE | DND.DROP_COPY, new Transfer[] {
-			LocalSelectionTransfer.getTransfer()
-		}, new LocalTransferDragListener(reqsViewer));
-
-		capsViewer.addDragSupport(DND.DROP_MOVE | DND.DROP_COPY, new Transfer[] {
-			LocalSelectionTransfer.getTransfer()
-		}, new LocalTransferDragListener(capsViewer));
+		capsViewer.addDragSupport(DND.DROP_MOVE | DND.DROP_COPY,
+				new Transfer[] { LocalSelectionTransfer.getTransfer() }, new LocalTransferDragListener(capsViewer));
 
 		reqsViewer.addOpenListener(this::openEditor);
 
 		fillActionBars();
 
-		getSite().getPage()
-			.addPostSelectionListener(this);
-		getSite().getPage()
-			.addPartListener(partAdapter);
-		ResourcesPlugin.getWorkspace()
-			.addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
+		getSite().getPage().addPostSelectionListener(this);
+		getSite().getPage().addPartListener(partAdapter);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 
 		// Current selection & part
-		IWorkbenchPart activePart = getSite().getPage()
-			.getActivePart();
-		ISelection activeSelection = getSite().getWorkbenchWindow()
-			.getSelectionService()
-			.getSelection();
+		IWorkbenchPart activePart = getSite().getPage().getActivePart();
+		ISelection activeSelection = getSite().getWorkbenchWindow().getSelectionService().getSelection();
 		selectionChanged(activePart, activeSelection);
 	}
-
-
-
-
-
 
 	private void openEditor(OpenEvent event) {
 		IStructuredSelection selection = (IStructuredSelection) event.getSelection();
@@ -392,8 +386,7 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 				String className = clazz.getFQN();
 				IType type = null;
 				if (!loaders.isEmpty()) {
-					IWorkspaceRoot wsroot = ResourcesPlugin.getWorkspace()
-						.getRoot();
+					IWorkspaceRoot wsroot = ResourcesPlugin.getWorkspace().getRoot();
 					for (CapReqLoader loader : loaders) {
 						if (loader instanceof BndBuilderCapReqLoader) {
 							File loaderFile = ((BndBuilderCapReqLoader) loader).getFile();
@@ -407,8 +400,9 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 									}
 								} catch (JavaModelException e1) {
 									ErrorDialog.openError(getSite().getShell(), "Error", "",
-										new Status(IStatus.ERROR, PLUGIN_ID, 0,
-											MessageFormat.format("Error opening Java class '{0}'.", className), e1));
+											new Status(IStatus.ERROR, PLUGIN_ID, 0,
+													MessageFormat.format("Error opening Java class '{0}'.", className),
+													e1));
 								}
 							}
 						}
@@ -420,19 +414,18 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 						JavaUI.openInEditor(type, true, true);
 					}
 				} catch (PartInitException e2) {
-					ErrorDialog.openError(getSite().getShell(), "Error", "", new Status(IStatus.ERROR, PLUGIN_ID,
-						0, MessageFormat.format("Error opening Java editor for class '{0}'.", className), e2));
+					ErrorDialog.openError(getSite().getShell(), "Error", "", new Status(IStatus.ERROR, PLUGIN_ID, 0,
+							MessageFormat.format("Error opening Java editor for class '{0}'.", className), e2));
 				} catch (JavaModelException e3) {
-					ErrorDialog.openError(getSite().getShell(), "Error", "", new Status(IStatus.ERROR, PLUGIN_ID,
-						0, MessageFormat.format("Error opening Java class '{0}'.", className), e3));
+					ErrorDialog.openError(getSite().getShell(), "Error", "", new Status(IStatus.ERROR, PLUGIN_ID, 0,
+							MessageFormat.format("Error opening Java class '{0}'.", className), e3));
 				}
 			}
 		}
 	}
 
 	void fillActionBars() {
-		IToolBarManager toolBarManager = getViewSite().getActionBars()
-			.getToolBarManager();
+		IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
 
 		// Reqs Buttons
 		toolBarManager.add(createToggleHideSelfImportsButton());
@@ -450,10 +443,6 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 
 	}
 
-
-
-
-
 	private void doEEActionMenu(IToolBarManager toolBarManager) {
 		MenuManager menuManager = new MenuManager("Java", "resolutionview.java.menu");
 
@@ -465,9 +454,7 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 				if (items != null && items.length == ees.size()) {
 					menu.setDefaultItem(items[currentEE]);
 				}
-				Point location = getViewSite().getShell()
-					.getDisplay()
-					.getCursorLocation();
+				Point location = getViewSite().getShell().getDisplay().getCursorLocation();
 				menu.setLocation(location.x, location.y);
 				menu.setVisible(true);
 			}
@@ -510,23 +497,21 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 	}
 
 	@Override
-	public void setFocus() {}
+	public void setFocus() {
+	}
 
 	@Override
 	public void dispose() {
-		getSite().getPage()
-			.removeSelectionListener(this);
-		ResourcesPlugin.getWorkspace()
-			.removeResourceChangeListener(this);
-		getSite().getPage()
-			.removePartListener(partAdapter);
-		setLoaders(Collections.<CapReqLoader> emptySet());
+		getSite().getPage().removeSelectionListener(this);
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+		getSite().getPage().removePartListener(partAdapter);
+		setLoaders(Collections.<CapReqLoader>emptySet());
 		duplicateCapabilitiesWithDifferentHashes.clear();
 		super.dispose();
 	}
 
-	public void setInput(Set<CapReqLoader> sourceLoaders, Map<String, List<Capability>> capabilities,
-		Map<String, List<RequirementWrapper>> requirements) {
+	private void setInput(Set<CapReqLoader> sourceLoaders, Map<String, List<Capability>> capabilities,
+			Map<String, List<RequirementWrapper>> requirements) {
 		setLoaders(sourceLoaders);
 		sourceLoaders = loaders;
 		if (reqsTree != null && !reqsTree.isDisposed() && capsTable != null && !capsTable.isDisposed()) {
@@ -551,13 +536,10 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 
 			updateReqsLabel();
 
-			List<Capability> caps = capabilities.values()
-				.stream()
-				.flatMap(List::stream)
-				.toList();
+			List<Capability> caps = capabilities.values().stream().flatMap(List::stream).toList();
 
 			duplicateCapabilitiesWithDifferentHashes = new HashSet<Capability>(
-				ResourceUtils.detectDuplicateCapabilitiesWithDifferentHashes("osgi.wiring.package", caps));
+					ResourceUtils.detectDuplicateCapabilitiesWithDifferentHashes("osgi.wiring.package", caps));
 
 			updateCapsLabel();
 
@@ -566,27 +548,15 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 
 	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		if (selection == null || !(selection instanceof IStructuredSelection)) {
+		if (selection == null || !(selection instanceof IStructuredSelection) || selection.isEmpty()) {
 			return;
 		}
-
-		Set<CapReqLoader> loaders = getLoadersFromSelection((IStructuredSelection) selection);
-		if (setLoaders(loaders)) {
-			IWorkbenchPage page = getSite().getPage();
-			if (page != null && page.isPartVisible(this)) {
-				executeAnalysis();
-			} else {
-				outOfDate = true;
-			}
-		}
-
+		setLoaders(getLoadersFromSelection((IStructuredSelection) selection));
 	}
 
 	private void updateReqsLabel() {
-		reqsLabel.setText("Requirements: " + reqsViewer.getTree()
-			.getItemCount());
-		reqsLabel.getParent()
-			.layout();
+		reqsLabel.setText("Requirements: " + reqsViewer.getTree().getItemCount());
+		reqsLabel.getParent().layout();
 	}
 
 	private void updateCapsLabel() {
@@ -594,8 +564,7 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 		if (!duplicateCapabilitiesWithDifferentHashes.isEmpty()) {
 
 			int problemCount = 0;
-			TableItem[] items = capsViewer.getTable()
-				.getItems();
+			TableItem[] items = capsViewer.getTable().getItems();
 			for (int i = 0; i < items.length; i++) {
 				TableItem tableItem = items[i];
 				Object data = tableItem.getData();
@@ -610,11 +579,9 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 				problemAddition = " Problems: " + problemCount;
 			}
 		}
-		capsLabel.setText("Capabilities: " + capsViewer.getTable()
-			.getItemCount() + problemAddition);
+		capsLabel.setText("Capabilities: " + capsViewer.getTable().getItemCount() + problemAddition);
 
-		capsLabel.getParent()
-			.layout();
+		capsLabel.getParent().layout();
 	}
 
 	private Set<CapReqLoader> getLoadersFromSelection(IStructuredSelection structSel) {
@@ -683,7 +650,7 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 
 			if (!loaders.isEmpty()) {
 				final AnalyseBundleResolutionJob job = new AnalyseBundleResolutionJob("importExportAnalysis", loaders,
-					ees.get(currentEE));
+						ees.get(currentEE));
 				job.setSystem(true);
 
 				job.addJobChangeListener(new JobChangeAdapter() {
@@ -704,8 +671,8 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 						IStatus result = job.getResult();
 						if (result != null && result.isOK()) {
 							if (display != null && !display.isDisposed()) {
-								display
-									.asyncExec(() -> setInput(loaders, job.getCapabilities(), job.getRequirements()));
+								display.asyncExec(
+										() -> setInput(loaders, job.getCapabilities(), job.getRequirements()));
 							}
 						}
 					}
@@ -722,15 +689,13 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		if (!loaders.isEmpty()) {
-			IWorkspaceRoot wsroot = ResourcesPlugin.getWorkspace()
-				.getRoot();
+			IWorkspaceRoot wsroot = ResourcesPlugin.getWorkspace().getRoot();
 			for (CapReqLoader loader : loaders) {
 				if (loader instanceof BndBuilderCapReqLoader) {
 					File file = ((BndBuilderCapReqLoader) loader).getFile();
 					IFile[] wsfiles = wsroot.findFilesForLocationURI(file.toURI());
 					for (IFile wsfile : wsfiles) {
-						if (event.getDelta()
-							.findMember(wsfile.getFullPath()) != null) {
+						if (event.getDelta().findMember(wsfile.getFullPath()) != null) {
 							executeAnalysis();
 							break;
 						}
@@ -749,7 +714,8 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 		}
 
 		@Override
-		public void dragStart(DragSourceEvent event) {}
+		public void dragStart(DragSourceEvent event) {
+		}
 
 		@Override
 		public void dragSetData(DragSourceEvent event) {
@@ -760,12 +726,12 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 		}
 
 		@Override
-		public void dragFinished(DragSourceEvent event) {}
+		public void dragFinished(DragSourceEvent event) {
+		}
 	}
 
 	private void handleReqsViewerDoubleClickEvent(DoubleClickEvent event) {
-		if (!event.getSelection()
-			.isEmpty()) {
+		if (!event.getSelection().isEmpty()) {
 			IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 			final Object element = selection.getFirstElement();
 
@@ -780,8 +746,7 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 	}
 
 	private void handleCapsViewerDoubleClickEvent(DoubleClickEvent event) {
-		if (!event.getSelection()
-			.isEmpty()) {
+		if (!event.getSelection().isEmpty()) {
 			IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 			final Object element = selection.getFirstElement();
 
@@ -793,13 +758,12 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 				// (&(osgi.wiring.package=my.package.foo)(version>=1.7.23))
 				Requirement req = CapReqBuilder.createRequirementFromCapability(cap, (name) -> {
 					if (name.equals("bundle-symbolic-name") || name.equals("bundle-version")
-						|| name.equals("bnd.hashes")) {
+							|| name.equals("bnd.hashes")) {
 						return false;
 					}
 
 					return true;
-				})
-					.buildSyntheticRequirement();
+				}).buildSyntheticRequirement();
 				// Open AdvanvedSearch of RepositoriesView
 				eventBroker.post(ViewEventTopics.REPOSITORIESVIEW_OPEN_ADVANCED_SEARCH.topic(), req);
 			}
@@ -810,13 +774,13 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 	/**
 	 * Generic copy to clipboard handling via Ctrl+C or MacOS: Cmd+C
 	 *
-	 * @param viewer the viewer
-	 * @param clipboardContentExtractor handler to extract content from the
-	 *            selected items.
+	 * @param viewer                    the viewer
+	 * @param clipboardContentExtractor handler to extract content from the selected
+	 *                                  items.
 	 * @return a KeyAdapter copying content of the selected items to clipboard
 	 */
 	private KeyAdapter createCopyToClipboardAdapter(StructuredViewer viewer,
-		BiConsumer<IStructuredSelection, StringBuilder> clipboardContentExtractor) {
+			BiConsumer<IStructuredSelection, StringBuilder> clipboardContentExtractor) {
 		return new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -830,11 +794,8 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 					if (clipboardString.length() > 0) {
 						Clipboard clipboard = new Clipboard(Display.getCurrent());
 						TextTransfer textTransfer = TextTransfer.getInstance();
-						clipboard.setContents(new Object[] {
-							clipboardString.toString()
-						}, new Transfer[] {
-							textTransfer
-						});
+						clipboard.setContents(new Object[] { clipboardString.toString() },
+								new Transfer[] { textTransfer });
 						clipboard.dispose();
 					}
 				}
@@ -843,9 +804,8 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 		};
 	}
 
-
 	private void reqsCopyToClipboard(IStructuredSelection selection, RequirementWrapperLabelProvider lp,
-		StringBuilder clipboardContent) {
+			StringBuilder clipboardContent) {
 
 		for (Iterator<?> iterator = selection.iterator(); iterator.hasNext();) {
 			Object element = iterator.next();
@@ -869,10 +829,8 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 		}
 	}
 
-
-
 	private void capsCopyToClipboard(IStructuredSelection selection, CapabilityLabelProvider lp,
-		StringBuilder clipboardContent) {
+			StringBuilder clipboardContent) {
 
 		for (Iterator<?> iterator = selection.iterator(); iterator.hasNext();) {
 			Object element = iterator.next();
@@ -919,7 +877,7 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 				if (isChecked()) {
 					capsViewer.addFilter(filterShowCapsProblems);
 					this.setToolTipText(
-						"Showing capabilities containing packages that have the same name but differ in the contained classes.");
+							"Showing capabilities containing packages that have the same name but differ in the contained classes.");
 				} else {
 					capsViewer.removeFilter(filterShowCapsProblems);
 					this.setToolTipText(tooltipTextUnlocked);
@@ -930,8 +888,7 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 		};
 		toggleShowProblemCaps.setChecked(false);
 		toggleShowProblemCaps.setImageDescriptor(Resources.getImageDescriptor("/icons/warning_obj.svg"));
-		toggleShowProblemCaps
-			.setToolTipText(tooltipTextUnlocked);
+		toggleShowProblemCaps.setToolTipText(tooltipTextUnlocked);
 		return toggleShowProblemCaps;
 	}
 
@@ -959,7 +916,7 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 	private IAction createToggleHideSelfImportsButton() {
 		String toolTipTextShowAll = "Showing all requirements.";
 		String toolTipTextHideSelfImports = "Hiding resolved (including self-imported) requirements.\n\n"
-			+ "Requirements that are resolved (exported and imported) within the set of selected bundles are hidden. Click to show all requirements.";
+				+ "Requirements that are resolved (exported and imported) within the set of selected bundles are hidden. Click to show all requirements.";
 
 		IAction toggleShowSelfImports = new Action("showSelfImports", IAction.AS_CHECK_BOX) {
 			@Override
@@ -997,7 +954,8 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 			}
 		};
 		toggleShowShowUnresolvedReqsFilter.setChecked(false);
-		toggleShowShowUnresolvedReqsFilter.setImageDescriptor(Resources.getImageDescriptor("/icons/excludeMode_filter.svg"));
+		toggleShowShowUnresolvedReqsFilter
+				.setImageDescriptor(Resources.getImageDescriptor("/icons/excludeMode_filter.svg"));
 		toggleShowShowUnresolvedReqsFilter.setToolTipText(toggleShowShowUnresolvedReqsFilterUnchecked);
 		return toggleShowShowUnresolvedReqsFilter;
 	}

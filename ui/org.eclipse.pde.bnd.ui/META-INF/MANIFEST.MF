@@ -6,9 +6,11 @@ Bundle-Vendor: Eclipse.org
 Bundle-Version: 1.2.300.qualifier
 Bundle-Localization: plugin
 Export-Package: org.eclipse.pde.bnd.ui.autocomplete;version="1.0.0";x-friends:="org.eclipse.pde.ui",
+ org.eclipse.pde.bnd.ui.model.resolution,
  org.eclipse.pde.bnd.ui.plugins;x-internal:=true,
  org.eclipse.pde.bnd.ui.preferences;version="1.0.0";x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.bnd.ui.quickfix;version="1.0.0";x-friends:="org.eclipse.pde.ui",
+ org.eclipse.pde.bnd.ui.tasks,
  org.eclipse.pde.bnd.ui.templating;version="1.0.0";x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.bnd.ui.wizards;version="1.0.0";x-friends:="org.eclipse.pde.ui"
 Import-Package: aQute.bnd.build;version="4.5.0",
