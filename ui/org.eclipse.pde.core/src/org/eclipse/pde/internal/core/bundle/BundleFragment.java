@@ -122,4 +122,8 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 		return "true".equals(getValue(ICoreConstants.PATCH_FRAGMENT, false)); //$NON-NLS-1$
 	}
 
+	public String getPlatformFilter() {
+		return getValue(ICoreConstants.PLATFORM_FILTER, false);
+	}
+
 }

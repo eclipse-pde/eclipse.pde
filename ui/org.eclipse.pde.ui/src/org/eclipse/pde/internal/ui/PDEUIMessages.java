@@ -2474,6 +2474,14 @@ public class PDEUIMessages extends NLS {
 	public static String ConfigurationPageMock_sectionDesc;
 	public static String PluginConfigurationSection_tablePluginTitle;
 
+	public static String AbstractPluginBlock_addRequiredDialogIncludeAllFragments;
+
+	public static String AbstractPluginBlock_addRequiredDialogIncludeFragmentsWithoutTests;
+
+	public static String AbstractPluginBlock_addRequiredDialogIncludeOptional;
+
+	public static String AbstractPluginBlock_addRequiredDialogTitle;
+
 	public static String AbstractPluginBlock_counter;
 
 	public static String AbstractRepository_ErrorLoadingImageFromJar;
@@ -2710,6 +2718,12 @@ public class PDEUIMessages extends NLS {
 	public static String LauncherUtils_title;
 
 	public static String LaunchingPreferencePage_description;
+
+	public static String LaunchingPreferencePage_GroupComputingOptions;
+
+	public static String LaunchingPreferencePage_IncludeExtensibleFragments;
+
+	public static String LaunchingPreferencePage_IncludePlatformFragments;
 
 	public static String RemoveLazyLoadingDirectiveResolution_remove;
 
