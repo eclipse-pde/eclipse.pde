@@ -297,17 +297,15 @@ public class CssSpyPart {
 		if (element.getAttribute("style") != null) { //$NON-NLS-1$
 			sb.append(MessageFormat.format("\n\n{0}\n  ", Messages.CssSpyPart_SWT_Style_Bits)); //$NON-NLS-1$
 			
-			if (selected instanceof Button) {
-				List<String> styles = ((Button) selected).getStyles();
-				for (String s : styles) {
-					sb.append("SWT.").append(s).append("\n  ");
-				}
-			} else if (selected instanceof Text) {
-				List<String> styles = ((Text) selected).getStyles();
-				for (String s : styles) {
-					sb.append("SWT.").append(s).append("\n  ");
-				}
-			} else {
+			try {
+			    @SuppressWarnings("unchecked")
+			    List<String> styles = (List<String>) selected.getClass().getMethod("getStyles").invoke(selected);
+			    if (styles != null && !styles.isEmpty()) {
+				    for (String s : styles) {
+				        sb.append("SWT.").append(s).append('\n').append("  ");
+				    }
+			    }
+			} catch (ReflectiveOperationException e) {
 				Util.join(sb, element.getAttribute("style").split(" +"), "\n  "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 		}
