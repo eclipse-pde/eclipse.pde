@@ -70,17 +70,12 @@ import org.eclipse.pde.bnd.ui.HelpButtons;
 import org.eclipse.pde.bnd.ui.Resources;
 import org.eclipse.pde.bnd.ui.internal.PartAdapter;
 import org.eclipse.pde.bnd.ui.model.repo.ResourceProvider;
-import org.eclipse.pde.bnd.ui.model.resolution.CapReqMapContentProvider;
-import org.eclipse.pde.bnd.ui.model.resolution.CapabilityLabelProvider;
-import org.eclipse.pde.bnd.ui.model.resolution.RequirementWrapper;
-import org.eclipse.pde.bnd.ui.model.resolution.RequirementWrapperLabelProvider;
-import org.eclipse.pde.bnd.ui.tasks.AnalyseBundleResolutionJob;
-import org.eclipse.pde.bnd.ui.tasks.BndBuilderCapReqLoader;
-import org.eclipse.pde.bnd.ui.tasks.BndFileCapReqLoader;
-import org.eclipse.pde.bnd.ui.tasks.CapReqLoader;
-import org.eclipse.pde.bnd.ui.tasks.JarFileCapReqLoader;
-import org.eclipse.pde.bnd.ui.tasks.ManifestCapReqLoader;
-import org.eclipse.pde.bnd.ui.tasks.ResourceCapReqLoader;
+import org.eclipse.pde.bnd.ui.model.resolution.BndBuilderCapReqLoader;
+import org.eclipse.pde.bnd.ui.model.resolution.BndFileCapReqLoader;
+import org.eclipse.pde.bnd.ui.model.resolution.CapReqLoader;
+import org.eclipse.pde.bnd.ui.model.resolution.JarFileCapReqLoader;
+import org.eclipse.pde.bnd.ui.model.resolution.ManifestCapReqLoader;
+import org.eclipse.pde.bnd.ui.model.resolution.ResourceCapReqLoader;
 import org.eclipse.pde.bnd.ui.views.ViewEventTopics;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -114,6 +109,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.part.ViewPart;
+import org.osgi.framework.Constants;
 import org.osgi.framework.namespace.HostNamespace;
 import org.osgi.framework.namespace.IdentityNamespace;
 import org.osgi.resource.Capability;
@@ -351,8 +347,10 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				if (element instanceof RequirementWrapper rw) {
-					return !rw.isOptional();
+				Requirement requirement = Adapters.adapt(element, Requirement.class);
+				if (requirement != null) {
+					String resolution = requirement.getDirectives().get(Constants.RESOLUTION_DIRECTIVE);
+					return Constants.RESOLUTION_OPTIONAL.equals(resolution);
 				}
 				return true;
 			}

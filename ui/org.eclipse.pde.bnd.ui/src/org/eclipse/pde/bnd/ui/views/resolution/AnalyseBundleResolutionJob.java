@@ -16,7 +16,7 @@
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
  *     Sean Bright <sean@malleable.com> - ongoing enhancements
 *******************************************************************************/
-package org.eclipse.pde.bnd.ui.tasks;
+package org.eclipse.pde.bnd.ui.views.resolution;
 
 import static java.util.Collections.emptyList;
 
@@ -34,14 +34,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.pde.bnd.ui.model.resolution.RequirementWrapper;
+import org.eclipse.pde.bnd.ui.model.resolution.CapReqLoader;
 import org.osgi.resource.Capability;
 import org.osgi.resource.Namespace;
 
 import aQute.bnd.build.model.EE;
 import aQute.bnd.osgi.resource.ResourceUtils;
 
-public class AnalyseBundleResolutionJob extends Job {
+class AnalyseBundleResolutionJob extends Job {
 
 	private final Set<? extends CapReqLoader>		loaders;
 
@@ -76,8 +76,6 @@ public class AnalyseBundleResolutionJob extends Job {
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		try {
-
-
 			// Load all the capabilities and requirements
 			Map<String, List<Capability>> allCaps = new HashMap<>();
 			Map<String, List<RequirementWrapper>> allReqs = new HashMap<>();
@@ -125,13 +123,8 @@ public class AnalyseBundleResolutionJob extends Job {
 			}
 
 			// Generate the final results
-			// Set<File> resultFiles = builderMap.keySet();
-			// resultFileArray = resultFiles.toArray(new File[0]);
-
 			this.requirements = allReqs;
 			this.capabilities = allCaps;
-
-			// showResults(resultFileArray, importResults, exportResults);
 			return Status.OK_STATUS;
 		} catch (RuntimeException e) {
 		     throw e;

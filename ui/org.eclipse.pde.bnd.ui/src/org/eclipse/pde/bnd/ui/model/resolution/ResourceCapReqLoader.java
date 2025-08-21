@@ -14,7 +14,7 @@
  *     Peter Kriens <peter.kriens@aqute.biz> - ongoing enhancements
  *     Christoph Rueger <chrisrueger@gmail.com> - ongoing enhancements
 *******************************************************************************/
-package org.eclipse.pde.bnd.ui.tasks;
+package org.eclipse.pde.bnd.ui.model.resolution;
 
 import java.io.IOException;
 import java.net.URI;
@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.eclipse.pde.bnd.ui.ResourceUtils;
-import org.eclipse.pde.bnd.ui.model.resolution.RequirementWrapper;
+import org.eclipse.pde.bnd.ui.views.resolution.RequirementWrapper;
 import org.osgi.resource.Capability;
 import org.osgi.resource.Requirement;
 import org.osgi.resource.Resource;

@@ -14,16 +14,15 @@
  *     Peter Kriens <peter.kriens@aqute.biz> - ongoing enhancements
  *     Christoph Rueger <chrisrueger@gmail.com> - ongoing enhancements
 *******************************************************************************/
-package org.eclipse.pde.bnd.ui.model.resolution;
+package org.eclipse.pde.bnd.ui.views.resolution;
 
 import java.util.Collection;
 import java.util.Objects;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.osgi.resource.Requirement;
 
-import aQute.bnd.osgi.Constants;
-
-public class RequirementWrapper {
+public class RequirementWrapper implements IAdaptable {
 
 	public final Requirement			requirement;
 	public boolean						resolved;
@@ -32,18 +31,6 @@ public class RequirementWrapper {
 
 	public RequirementWrapper(Requirement requirement) {
 		this.requirement = requirement;
-	}
-
-	public boolean isOptional() {
-
-		String resolution = requirement.getDirectives()
-			.get(Constants.RESOLUTION);
-
-		if (resolution == null) {
-			return false;
-		}
-
-		return Constants.OPTIONAL.equals(resolution);
 	}
 
 	@Override
@@ -70,6 +57,14 @@ public class RequirementWrapper {
 	@Override
 	public String toString() {
 		return "RequirementWrapper [resolved=" + resolved + ", java=" + java + ", requirement=" + requirement + "]";
+	}
+
+	@Override
+	public <T> T getAdapter(Class<T> adapter) {
+		if (adapter == Requirement.class) {
+			return adapter.cast(requirement);
+		}
+		return null;
 	}
 
 }

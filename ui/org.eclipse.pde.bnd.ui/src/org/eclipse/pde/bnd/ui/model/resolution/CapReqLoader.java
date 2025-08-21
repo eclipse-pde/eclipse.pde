@@ -12,13 +12,13 @@
  *     Neil Bartlett <njbartlett@gmail.com> - initial API and implementation
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
 *******************************************************************************/
-package org.eclipse.pde.bnd.ui.tasks;
+package org.eclipse.pde.bnd.ui.model.resolution;
 
 import java.io.Closeable;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.pde.bnd.ui.model.resolution.RequirementWrapper;
+import org.eclipse.pde.bnd.ui.views.resolution.RequirementWrapper;
 import org.osgi.resource.Capability;
 
 public interface CapReqLoader extends Closeable {

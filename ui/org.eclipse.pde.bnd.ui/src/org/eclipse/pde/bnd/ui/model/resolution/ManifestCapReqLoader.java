@@ -11,7 +11,7 @@
  * Contributors:
  *     Christoph Läubrich - initial API and implementation
 *******************************************************************************/
-package org.eclipse.pde.bnd.ui.tasks;
+package org.eclipse.pde.bnd.ui.model.resolution;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.jar.Manifest;
 
-import org.eclipse.pde.bnd.ui.model.resolution.RequirementWrapper;
+import org.eclipse.pde.bnd.ui.views.resolution.RequirementWrapper;
 import org.osgi.resource.Capability;
 
 import aQute.bnd.osgi.resource.ResourceBuilder;

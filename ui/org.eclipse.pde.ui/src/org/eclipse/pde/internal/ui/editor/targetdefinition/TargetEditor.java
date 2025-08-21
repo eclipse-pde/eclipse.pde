@@ -55,7 +55,7 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.source.ISourceViewerExtension5;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.bnd.ui.tasks.CapReqLoader;
+import org.eclipse.pde.bnd.ui.model.resolution.CapReqLoader;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetHandle;
 import org.eclipse.pde.core.target.ITargetPlatformService;
