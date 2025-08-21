@@ -72,6 +72,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.tools.views.SpyView;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -297,15 +298,26 @@ public class CssSpyPart {
 		if (element.getAttribute("style") != null) { //$NON-NLS-1$
 			sb.append(MessageFormat.format("\n\n{0}\n  ", Messages.CssSpyPart_SWT_Style_Bits)); //$NON-NLS-1$
 			String[] styles = element.getAttribute("style").split(" +");
+//			String[] set = selected.getStyle()
 			for (String s : styles) {
 				sb.append(s);
-				if ((selected.getStyle() & SWT.ERROR_MENU_NOT_DROP_DOWN) != 0) {
+				if (s.startsWith("SWT.")) {
+	                s = s.substring(4);
+	            }
+				
+				SpyView spy = new SpyView();
+
+
+				if (spy.getStyle(selected).contains(s)) {
 					System.out.println("yes");
 				} else {
 					System.out.println("no");
 				}
 				sb.append("\n  ");
 			}
+			System.out.println(sb);
+			System.out.println(selected.getStyle());
+
 		}
 
 		sb.append(MessageFormat.format("\n\n{0}\n  ", Messages.CssSpyPart_CSS_Class_Element)).append(element.getClass().getName()); //$NON-NLS-1$
