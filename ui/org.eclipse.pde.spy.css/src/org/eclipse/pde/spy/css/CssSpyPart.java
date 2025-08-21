@@ -297,16 +297,12 @@ public class CssSpyPart {
 		if (element.getAttribute("style") != null) { //$NON-NLS-1$
 			sb.append(MessageFormat.format("\n\n{0}\n  ", Messages.CssSpyPart_SWT_Style_Bits)); //$NON-NLS-1$
 			
-			System.out.println(selected.getClass());
-			
 			if (selected instanceof Button) {
-				
 				List<String> styles = ((Button) selected).getStyles();
 				for (String s : styles) {
 					sb.append("SWT.").append(s).append("\n  ");
 				}
 			} else if (selected instanceof Text) {
-				
 				List<String> styles = ((Text) selected).getStyles();
 				for (String s : styles) {
 					sb.append("SWT.").append(s).append("\n  ");
