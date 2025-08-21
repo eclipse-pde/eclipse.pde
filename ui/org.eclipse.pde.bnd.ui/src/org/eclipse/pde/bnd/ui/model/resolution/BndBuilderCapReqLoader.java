@@ -17,8 +17,6 @@
 package org.eclipse.pde.bnd.ui.model.resolution;
 
 import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.mapping;
-import static java.util.stream.Collectors.toList;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -28,8 +26,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
-import org.eclipse.pde.bnd.ui.views.resolution.RequirementWrapper;
 import org.osgi.framework.namespace.PackageNamespace;
 import org.osgi.resource.Capability;
 import org.osgi.resource.Requirement;
@@ -45,8 +43,8 @@ import aQute.bnd.service.resource.SupportingResource;
 public abstract class BndBuilderCapReqLoader implements CapReqLoader {
 
 	protected final File							file;
-	private Map<String, List<Capability>>			loadCapabilities;
-	private Map<String, List<RequirementWrapper>>	loadRequirements;
+	private Map<String, Collection<Capability>> loadCapabilities;
+	private Map<String, Collection<Requirement>> loadRequirements;
 
 	public BndBuilderCapReqLoader(File file) {
 		this.file = file;
@@ -94,37 +92,33 @@ public abstract class BndBuilderCapReqLoader implements CapReqLoader {
 			capabilities.addAll(resource.getCapabilities(null));
 			requirements.addAll(resource.getRequirements(null));
 		}
-		loadRequirements = requirements.stream()
-			.collect(groupingBy(Requirement::getNamespace, mapping(this::toRequirementWrapper, toList())));
+		loadRequirements = requirements.stream().map(r -> toRequirementWrapper(r))
+				.collect(groupingBy(Requirement::getNamespace, Collectors.toCollection(ArrayList::new)));
 		loadCapabilities = capabilities.stream()
-			.collect(groupingBy(Capability::getNamespace, toList()));
+				.collect(groupingBy(Capability::getNamespace, Collectors.toCollection(ArrayList::new)));
 	}
 
 	@Override
-	public Map<String, List<Capability>> loadCapabilities() throws Exception {
+	public CapReq loadCapReq() throws Exception {
 		load();
-		return loadCapabilities;
+		return new CapReq(loadCapabilities, loadRequirements);
 	}
 
-	@Override
-	public Map<String, List<RequirementWrapper>> loadRequirements() throws Exception {
-		load();
-		return loadRequirements;
-	}
-
-	private RequirementWrapper toRequirementWrapper(Requirement req) {
-		RequirementWrapper rw = new RequirementWrapper(req);
+	private Requirement toRequirementWrapper(Requirement req) {
 		if (req.getNamespace()
 			.equals(PackageNamespace.PACKAGE_NAMESPACE)) {
 			String pkgName = (String) req.getAttributes()
 				.get(PackageNamespace.PACKAGE_NAMESPACE);
 			try {
-				rw.requirers = findImportingClasses(pkgName);
+				List<Clazz> importingClasses = findImportingClasses(pkgName);
+				if (!importingClasses.isEmpty()) {
+					return new RequirementWithChildren(req, importingClasses);
+				}
 			} catch (Exception e) {
 				throw Exceptions.duck(e);
 			}
 		}
-		return rw;
+		return req;
 	}
 
 	private List<Clazz> findImportingClasses(String pkgName) throws Exception {
@@ -171,5 +165,7 @@ public abstract class BndBuilderCapReqLoader implements CapReqLoader {
 		BndBuilderCapReqLoader other = (BndBuilderCapReqLoader) obj;
 		return Objects.equals(file, other.file);
 	}
+
+
 
 }

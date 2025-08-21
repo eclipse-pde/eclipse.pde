@@ -19,6 +19,7 @@ package org.eclipse.pde.bnd.ui.views.resolution;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -350,7 +351,7 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 				Requirement requirement = Adapters.adapt(element, Requirement.class);
 				if (requirement != null) {
 					String resolution = requirement.getDirectives().get(Constants.RESOLUTION_DIRECTIVE);
-					return Constants.RESOLUTION_OPTIONAL.equals(resolution);
+					return !Constants.RESOLUTION_OPTIONAL.equals(resolution);
 				}
 				return true;
 			}
@@ -508,8 +509,8 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 		super.dispose();
 	}
 
-	private void setInput(Set<CapReqLoader> sourceLoaders, Map<String, List<Capability>> capabilities,
-			Map<String, List<RequirementWrapper>> requirements) {
+	private void setInput(Set<CapReqLoader> sourceLoaders, Map<String, Collection<Capability>> capabilities,
+			Map<String, Collection<RequirementWrapper>> requirements) {
 		setLoaders(sourceLoaders);
 		sourceLoaders = loaders;
 		if (reqsTree != null && !reqsTree.isDisposed() && capsTable != null && !capsTable.isDisposed()) {
@@ -534,7 +535,7 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 
 			updateReqsLabel();
 
-			List<Capability> caps = capabilities.values().stream().flatMap(List::stream).toList();
+			List<Capability> caps = capabilities.values().stream().flatMap(Collection::stream).toList();
 
 			duplicateCapabilitiesWithDifferentHashes = new HashSet<Capability>(
 					ResourceUtils.detectDuplicateCapabilitiesWithDifferentHashes("osgi.wiring.package", caps));

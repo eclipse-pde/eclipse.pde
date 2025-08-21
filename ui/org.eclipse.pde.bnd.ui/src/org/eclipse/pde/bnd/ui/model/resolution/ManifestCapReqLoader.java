@@ -16,12 +16,7 @@ package org.eclipse.pde.bnd.ui.model.resolution;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 import java.util.jar.Manifest;
-
-import org.eclipse.pde.bnd.ui.views.resolution.RequirementWrapper;
-import org.osgi.resource.Capability;
 
 import aQute.bnd.osgi.resource.ResourceBuilder;
 
@@ -56,14 +51,8 @@ public class ManifestCapReqLoader implements CapReqLoader {
 	}
 
 	@Override
-	public Map<String, List<Capability>> loadCapabilities() throws Exception {
-		loadManifest();
-		return loadManifest().loadCapabilities();
-	}
-
-	@Override
-	public Map<String, List<RequirementWrapper>> loadRequirements() throws Exception {
-		return loadManifest().loadRequirements();
+	public CapReq loadCapReq() throws Exception {
+		return loadManifest().loadCapReq();
 	}
 
 	private synchronized ResourceCapReqLoader loadManifest() throws IOException {

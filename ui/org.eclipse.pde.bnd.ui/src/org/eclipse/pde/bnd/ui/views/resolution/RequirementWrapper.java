@@ -16,7 +16,6 @@
 *******************************************************************************/
 package org.eclipse.pde.bnd.ui.views.resolution;
 
-import java.util.Collection;
 import java.util.Objects;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -27,7 +26,6 @@ public class RequirementWrapper implements IAdaptable {
 	public final Requirement			requirement;
 	public boolean						resolved;
 	public boolean						java;
-	public Collection<? extends Object>	requirers;
 
 	public RequirementWrapper(Requirement requirement) {
 		this.requirement = requirement;
@@ -35,7 +33,7 @@ public class RequirementWrapper implements IAdaptable {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(java, requirement, requirers, resolved);
+		return Objects.hash(java, requirement, resolved);
 	}
 
 	@Override
@@ -51,7 +49,7 @@ public class RequirementWrapper implements IAdaptable {
 		}
 		RequirementWrapper other = (RequirementWrapper) obj;
 		return java == other.java && Objects.equals(requirement, other.requirement)
-			&& Objects.equals(requirers, other.requirers) && resolved == other.resolved;
+				&& resolved == other.resolved;
 	}
 
 	@Override

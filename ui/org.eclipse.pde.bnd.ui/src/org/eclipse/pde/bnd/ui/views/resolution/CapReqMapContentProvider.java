@@ -17,7 +17,6 @@ package org.eclipse.pde.bnd.ui.views.resolution;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,6 +26,7 @@ import java.util.Set;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.pde.bnd.ui.model.resolution.RequirementWithChildren;
 import org.osgi.framework.namespace.BundleNamespace;
 import org.osgi.framework.namespace.HostNamespace;
 import org.osgi.framework.namespace.IdentityNamespace;
@@ -111,25 +111,18 @@ public class CapReqMapContentProvider implements ITreeContentProvider {
 
 	@Override
 	public boolean hasChildren(Object object) {
-		boolean children = false;
-
-		if (object instanceof RequirementWrapper rw) {
-			children = rw.requirers != null && !rw.requirers.isEmpty();
+		if (object instanceof RequirementWithChildren rw) {
+			return !rw.getChildren().isEmpty();
 		}
-
-		return children;
+		return false;
 	}
 
 	@Override
 	public Object[] getChildren(Object parent) {
-		Object[] result = EMPTY;
-		if (parent instanceof RequirementWrapper) {
-			Collection<? extends Object> requirers = ((RequirementWrapper) parent).requirers;
-			if (requirers != null) {
-				result = requirers.toArray();
-			}
+		if (parent instanceof RequirementWithChildren rw) {
+			return rw.getChildren().toArray();
 		}
-		return result;
+		return EMPTY;
 	}
 
 	public void setFilter(String filterString) {

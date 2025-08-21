@@ -20,20 +20,23 @@ package org.eclipse.pde.bnd.ui.views.resolution;
 
 import static java.util.Collections.emptyList;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.pde.bnd.ui.model.resolution.CapReq;
 import org.eclipse.pde.bnd.ui.model.resolution.CapReqLoader;
 import org.osgi.resource.Capability;
 import org.osgi.resource.Namespace;
@@ -45,8 +48,8 @@ class AnalyseBundleResolutionJob extends Job {
 
 	private final Set<? extends CapReqLoader>		loaders;
 
-	private Map<String, List<RequirementWrapper>>	requirements;
-	private Map<String, List<Capability>>			capabilities;
+	private Map<String, Collection<RequirementWrapper>> requirements;
+	private Map<String, Collection<Capability>> capabilities;
 	private final EE										ee;
 
 	public AnalyseBundleResolutionJob(String name, Set<? extends CapReqLoader> loaders) {
@@ -59,17 +62,19 @@ class AnalyseBundleResolutionJob extends Job {
 		this.ee = ee;
 	}
 
-	private static <K, V> void mergeMaps(Map<K, List<V>> from, Map<K, List<V>> into) {
-		for (Entry<K, List<V>> entry : from.entrySet()) {
+	private static <K, V> void mergeMaps(Map<K, Collection<V>> from, Map<K, Collection<V>> into) {
+		for (Entry<K, Collection<V>> entry : from.entrySet()) {
 			K key = entry.getKey();
+			into.merge(key, entry.getValue(), (a, b) -> Stream.concat(a.stream(), b.stream()).distinct().toList());
+		}
+	}
 
-			List<V> list = into.get(key);
-			if (list == null) {
-				list = new ArrayList<>();
-				into.put(key, list);
-			}
-
-			list.addAll(entry.getValue());
+	private static <K, V, M> void mergeMapsWithMapping(Map<K, Collection<V>> from, Map<K, Collection<M>> into,
+			Function<V, M> mapper) {
+		for (Entry<K, Collection<V>> entry : from.entrySet()) {
+			K key = entry.getKey();
+			into.merge(key, entry.getValue().stream().map(mapper).toList(),
+					(a, b) -> Stream.concat(a.stream(), b.stream()).distinct().toList());
 		}
 	}
 
@@ -77,15 +82,13 @@ class AnalyseBundleResolutionJob extends Job {
 	protected IStatus run(IProgressMonitor monitor) {
 		try {
 			// Load all the capabilities and requirements
-			Map<String, List<Capability>> allCaps = new HashMap<>();
-			Map<String, List<RequirementWrapper>> allReqs = new HashMap<>();
+			Map<String, Collection<Capability>> allCaps = new HashMap<>();
+			Map<String, Collection<RequirementWrapper>> allReqs = new HashMap<>();
 			for (CapReqLoader loader : loaders) {
 				try (loader){
-					Map<String, List<Capability>> caps = loader.loadCapabilities();
-					mergeMaps(caps, allCaps);
-
-					Map<String, List<RequirementWrapper>> reqs = loader.loadRequirements();
-					mergeMaps(reqs, allReqs);
+					CapReq loaded = loader.loadCapReq();
+					mergeMaps(loaded.capabilities(), allCaps);
+					mergeMapsWithMapping(loaded.requirements(), allReqs, req -> new RequirementWrapper(req));
 				} catch (Exception e) {
 					ILog.get().error("Error in Bnd resolution analysis.", e);
 				}
@@ -93,8 +96,8 @@ class AnalyseBundleResolutionJob extends Job {
 
 			// Check for resolved requirements
 			for (String namespace : allReqs.keySet()) {
-				List<RequirementWrapper> rws = allReqs.getOrDefault(namespace, emptyList());
-				List<Capability> candidates = allCaps.getOrDefault(namespace, emptyList());
+				Collection<RequirementWrapper> rws = allReqs.getOrDefault(namespace, emptyList());
+				Collection<Capability> candidates = allCaps.getOrDefault(namespace, emptyList());
 
 				List<Capability> javaCandidates = ee == null ? emptyList()
 					: ee.getResource()
@@ -133,11 +136,11 @@ class AnalyseBundleResolutionJob extends Job {
 		}
 	}
 
-	public Map<String, List<RequirementWrapper>> getRequirements() {
+	public Map<String, Collection<RequirementWrapper>> getRequirements() {
 		return Collections.unmodifiableMap(requirements);
 	}
 
-	public Map<String, List<Capability>> getCapabilities() {
+	public Map<String, Collection<Capability>> getCapabilities() {
 		return Collections.unmodifiableMap(capabilities);
 	}
 }

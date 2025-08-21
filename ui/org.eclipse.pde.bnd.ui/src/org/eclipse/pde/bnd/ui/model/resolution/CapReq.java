@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2019 bndtools project and others.
+ * Copyright (c) 2025 Christoph Läubrich project and others.
  *
 * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -9,18 +9,17 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     Neil Bartlett <njbartlett@gmail.com> - initial API and implementation
- *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
+ *     Christoph Läubrich - initial API and implementation
 *******************************************************************************/
 package org.eclipse.pde.bnd.ui.model.resolution;
 
-import java.io.Closeable;
+import java.util.Collection;
+import java.util.Map;
 
-public interface CapReqLoader extends Closeable {
+import org.osgi.resource.Capability;
+import org.osgi.resource.Requirement;
 
-	String getShortLabel();
-
-	String getLongLabel();
-	CapReq loadCapReq() throws Exception;
+public record CapReq(Map<String, Collection<Capability>> capabilities,
+		Map<String, Collection<Requirement>> requirements) {
 
 }
