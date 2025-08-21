@@ -649,20 +649,16 @@ public class ResolutionView extends ViewPart implements ISelectionListener, IRes
 
 			if (!loaders.isEmpty()) {
 				final AnalyseBundleResolutionJob job = new AnalyseBundleResolutionJob("importExportAnalysis", loaders,
-						ees.get(currentEE));
+						ees.get(currentEE), msg -> {
+							if (display != null && !display.isDisposed()) {
+								display.execute(() -> setContentDescription(msg));
+							}
+						});
 				job.setSystem(true);
 
 				job.addJobChangeListener(new JobChangeAdapter() {
 					@Override
 					public void aboutToRun(IJobChangeEvent event) {
-						if (display != null && !display.isDisposed()) {
-							Runnable update = () -> setContentDescription("Working...");
-							if (display.getThread() == Thread.currentThread()) {
-								update.run();
-							} else {
-								display.asyncExec(update);
-							}
-						}
 					}
 
 					@Override

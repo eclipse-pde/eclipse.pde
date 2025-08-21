@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.bnd.ui.ResourceUtils;
 import org.osgi.resource.Capability;
 import org.osgi.resource.Requirement;
@@ -62,7 +63,7 @@ public class ResourceCapReqLoader implements CapReqLoader {
 	}
 
 	@Override
-	public CapReq loadCapReq() throws Exception {
+	public CapReq loadCapReq(IProgressMonitor monitor) throws Exception {
 		return new CapReq(loadCapabilities(), loadRequirements());
 	}
 

@@ -18,6 +18,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.jar.Manifest;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+
 import aQute.bnd.osgi.resource.ResourceBuilder;
 
 /**
@@ -51,8 +53,8 @@ public class ManifestCapReqLoader implements CapReqLoader {
 	}
 
 	@Override
-	public CapReq loadCapReq() throws Exception {
-		return loadManifest().loadCapReq();
+	public CapReq loadCapReq(IProgressMonitor monitor) throws Exception {
+		return loadManifest().loadCapReq(null);
 	}
 
 	private synchronized ResourceCapReqLoader loadManifest() throws IOException {

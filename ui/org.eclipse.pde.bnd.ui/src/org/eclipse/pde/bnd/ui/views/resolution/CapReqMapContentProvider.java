@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.pde.bnd.ui.model.resolution.RequirementWithChildren;
@@ -111,7 +112,8 @@ public class CapReqMapContentProvider implements ITreeContentProvider {
 
 	@Override
 	public boolean hasChildren(Object object) {
-		if (object instanceof RequirementWithChildren rw) {
+		RequirementWithChildren rw = Adapters.adapt(object, RequirementWithChildren.class);
+		if (rw != null) {
 			return !rw.getChildren().isEmpty();
 		}
 		return false;
@@ -119,7 +121,8 @@ public class CapReqMapContentProvider implements ITreeContentProvider {
 
 	@Override
 	public Object[] getChildren(Object parent) {
-		if (parent instanceof RequirementWithChildren rw) {
+		RequirementWithChildren rw = Adapters.adapt(parent, RequirementWithChildren.class);
+		if (rw != null) {
 			return rw.getChildren().toArray();
 		}
 		return EMPTY;

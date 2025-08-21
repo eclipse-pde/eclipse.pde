@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.osgi.framework.namespace.PackageNamespace;
 import org.osgi.resource.Capability;
 import org.osgi.resource.Requirement;
@@ -99,7 +100,7 @@ public abstract class BndBuilderCapReqLoader implements CapReqLoader {
 	}
 
 	@Override
-	public CapReq loadCapReq() throws Exception {
+	public CapReq loadCapReq(IProgressMonitor monitor) throws Exception {
 		load();
 		return new CapReq(loadCapabilities, loadRequirements);
 	}

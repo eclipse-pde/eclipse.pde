@@ -302,7 +302,7 @@ public class TargetEditor extends FormEditor {
 			}
 		}
 		if (adapter == CapReqLoader.class) {
-			return adapter.cast(new TargetCapReqLoader(getTarget()));
+			return adapter.cast(new TargetCapReqLoader(getTarget(), getEditorInput()));
 		}
 		return super.getAdapter(adapter);
 	}

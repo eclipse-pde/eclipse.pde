@@ -16,11 +16,13 @@ package org.eclipse.pde.bnd.ui.model.resolution;
 
 import java.io.Closeable;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+
 public interface CapReqLoader extends Closeable {
 
 	String getShortLabel();
 
 	String getLongLabel();
-	CapReq loadCapReq() throws Exception;
+	CapReq loadCapReq(IProgressMonitor monitor) throws Exception;
 
 }

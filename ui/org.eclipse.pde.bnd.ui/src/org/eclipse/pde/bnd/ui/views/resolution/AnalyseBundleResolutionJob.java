@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -34,7 +35,9 @@ import java.util.stream.Stream;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ProgressMonitorWrapper;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.pde.bnd.ui.model.resolution.CapReq;
 import org.eclipse.pde.bnd.ui.model.resolution.CapReqLoader;
@@ -46,20 +49,25 @@ import aQute.bnd.osgi.resource.ResourceUtils;
 
 class AnalyseBundleResolutionJob extends Job {
 
-	private final Set<? extends CapReqLoader>		loaders;
+	private final Set<? extends CapReqLoader> loaders;
 
 	private Map<String, Collection<RequirementWrapper>> requirements;
 	private Map<String, Collection<Capability>> capabilities;
 	private final EE										ee;
 
-	public AnalyseBundleResolutionJob(String name, Set<? extends CapReqLoader> loaders) {
-		this(name, loaders, null);
+	private Consumer<String> messageConsumer;
+
+	public AnalyseBundleResolutionJob(String name, Set<? extends CapReqLoader> loaders,
+			Consumer<String> messageConsumer) {
+		this(name, loaders, null, messageConsumer);
 	}
 
-	public AnalyseBundleResolutionJob(String name, Set<? extends CapReqLoader> loaders, EE ee) {
+	public AnalyseBundleResolutionJob(String name, Set<? extends CapReqLoader> loaders, EE ee,
+			Consumer<String> messageConsumer) {
 		super(name);
 		this.loaders = loaders;
 		this.ee = ee;
+		this.messageConsumer = messageConsumer;
 	}
 
 	private static <K, V> void mergeMaps(Map<K, Collection<V>> from, Map<K, Collection<V>> into) {
@@ -80,20 +88,48 @@ class AnalyseBundleResolutionJob extends Job {
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
+		messageConsumer.accept("Working...");
 		try {
 			// Load all the capabilities and requirements
 			Map<String, Collection<Capability>> allCaps = new HashMap<>();
 			Map<String, Collection<RequirementWrapper>> allReqs = new HashMap<>();
+			SubMonitor convert = SubMonitor.convert(monitor, loaders.size());
 			for (CapReqLoader loader : loaders) {
 				try (loader){
-					CapReq loaded = loader.loadCapReq();
+					String baseLabel = "Loading " + loader.getShortLabel() ;
+					messageConsumer.accept(baseLabel + "...");
+					CapReq loaded = loader.loadCapReq(new ProgressMonitorWrapper(convert.split(1)) {
+						String task;
+						@Override
+						public void beginTask(String name, int totalWork) {
+							task = baseLabel + " - " + name;
+							messageConsumer.accept(task);
+							super.beginTask(name, totalWork);
+						}
+
+						@Override
+						public void setTaskName(String name) {
+							task = baseLabel + " - " + name;
+							super.setTaskName(name);
+						}
+
+						@Override
+						public void subTask(String name) {
+							if (task == null || task.isBlank()) {
+								messageConsumer.accept(baseLabel + " - " + name);
+							} else {
+								messageConsumer.accept(task + " (" + name + ")");
+							}
+							super.subTask(name);
+						}
+					});
 					mergeMaps(loaded.capabilities(), allCaps);
 					mergeMapsWithMapping(loaded.requirements(), allReqs, req -> new RequirementWrapper(req));
 				} catch (Exception e) {
 					ILog.get().error("Error in Bnd resolution analysis.", e);
 				}
 			}
-
+			messageConsumer.accept("Calculating...");
 			// Check for resolved requirements
 			for (String namespace : allReqs.keySet()) {
 				Collection<RequirementWrapper> rws = allReqs.getOrDefault(namespace, emptyList());
