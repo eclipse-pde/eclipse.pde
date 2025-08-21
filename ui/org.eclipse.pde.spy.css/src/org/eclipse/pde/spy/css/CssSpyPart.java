@@ -72,7 +72,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.tools.views.SpyView;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -297,27 +296,24 @@ public class CssSpyPart {
 
 		if (element.getAttribute("style") != null) { //$NON-NLS-1$
 			sb.append(MessageFormat.format("\n\n{0}\n  ", Messages.CssSpyPart_SWT_Style_Bits)); //$NON-NLS-1$
-			String[] styles = element.getAttribute("style").split(" +");
-//			String[] set = selected.getStyle()
-			for (String s : styles) {
-				sb.append(s);
-				if (s.startsWith("SWT.")) {
-	                s = s.substring(4);
-	            }
+			
+			System.out.println(selected.getClass());
+			
+			if (selected instanceof Button) {
 				
-				SpyView spy = new SpyView();
-
-
-				if (spy.getStyle(selected).contains(s)) {
-					System.out.println("yes");
-				} else {
-					System.out.println("no");
+				List<String> styles = ((Button) selected).getStyles();
+				for (String s : styles) {
+					sb.append("SWT.").append(s).append("\n  ");
 				}
-				sb.append("\n  ");
+			} else if (selected instanceof Text) {
+				
+				List<String> styles = ((Text) selected).getStyles();
+				for (String s : styles) {
+					sb.append("SWT.").append(s).append("\n  ");
+				}
+			} else {
+				Util.join(sb, element.getAttribute("style").split(" +"), "\n  "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
-			System.out.println(sb);
-			System.out.println(selected.getStyle());
-
 		}
 
 		sb.append(MessageFormat.format("\n\n{0}\n  ", Messages.CssSpyPart_CSS_Class_Element)).append(element.getClass().getName()); //$NON-NLS-1$

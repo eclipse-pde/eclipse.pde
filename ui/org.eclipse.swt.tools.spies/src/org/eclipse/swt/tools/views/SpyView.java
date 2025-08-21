@@ -218,7 +218,7 @@ public class SpyView extends ViewPart {
 		};
 	}
 
-	public String getStyle(Widget w) {
+	private String getStyle(Widget w) {
 		//MODELESS = 0;
 		//BAR = 1 << 1;
 		//SEPARATOR = 1 << 1;
