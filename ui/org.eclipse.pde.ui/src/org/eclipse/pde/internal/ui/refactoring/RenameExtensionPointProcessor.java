@@ -104,7 +104,8 @@ public class RenameExtensionPointProcessor extends RefactoringProcessor {
 	protected void changeExtensionPoint(CompositeChange compositeChange, IProgressMonitor monitor) {
 		IFile file = getModificationFile(fInfo.getBase());
 		if (file != null) {
-			compositeChange.addAll(PDEModelUtility.changesForModelModication(getExtensionPointModification(file), monitor));
+			compositeChange
+					.addAll(PDEModelUtility.changesForModelModification(getExtensionPointModification(file), monitor));
 		}
 	}
 
@@ -115,7 +116,8 @@ public class RenameExtensionPointProcessor extends RefactoringProcessor {
 		for (int i = 0; i < bases.length; i++) {
 			IFile file = getModificationFile(bases[i]);
 			if (file != null) {
-				compositeChange.addAll(PDEModelUtility.changesForModelModication(getExtensionModification(file), subMonitor.split(1)));
+				compositeChange.addAll(PDEModelUtility.changesForModelModification(getExtensionModification(file),
+						subMonitor.split(1)));
 			}
 			subMonitor.setWorkRemaining(bases.length - i);
 		}
