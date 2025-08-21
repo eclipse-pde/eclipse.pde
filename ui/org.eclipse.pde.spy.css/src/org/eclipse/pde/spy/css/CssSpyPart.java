@@ -296,7 +296,16 @@ public class CssSpyPart {
 
 		if (element.getAttribute("style") != null) { //$NON-NLS-1$
 			sb.append(MessageFormat.format("\n\n{0}\n  ", Messages.CssSpyPart_SWT_Style_Bits)); //$NON-NLS-1$
-			Util.join(sb, element.getAttribute("style").split(" +"), "\n  "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			String[] styles = element.getAttribute("style").split(" +");
+			for (String s : styles) {
+				sb.append(s);
+				if ((selected.getStyle() & SWT.ERROR_MENU_NOT_DROP_DOWN) != 0) {
+					System.out.println("yes");
+				} else {
+					System.out.println("no");
+				}
+				sb.append("\n  ");
+			}
 		}
 
 		sb.append(MessageFormat.format("\n\n{0}\n  ", Messages.CssSpyPart_CSS_Class_Element)).append(element.getClass().getName()); //$NON-NLS-1$
