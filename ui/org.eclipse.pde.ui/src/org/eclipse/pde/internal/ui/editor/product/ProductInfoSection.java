@@ -273,10 +273,15 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+		if (models == null) {
+			models = java.util.Collections.emptySet(); // <-- tiny null guard
+		}
+
 		Set<String> productBundleSymbolicNames = new HashSet<>();
 		for (IPluginModelBase model : models) {
 			BundleDescription desc = model.getBundleDescription();
-			if (desc != null) {
+			if (desc != null && desc.getSymbolicName() != null) {
 				String symbolicName = desc.getSymbolicName();
 				productBundleSymbolicNames.add(symbolicName);
 			}

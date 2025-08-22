@@ -297,13 +297,15 @@ public class TargetPlatformHelper {
 	}
 
 	public static Set<String> getApplicationNameSet() {
-		return getApplicationNameSet((Set<String>) null);
+		return getApplicationNameSet(java.util.Collections.emptySet());
 	}
 
 	public static Set<String> getApplicationNameSet(Set<String> productBundleNames) {
 		TreeSet<String> result = new TreeSet<>();
 		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry()
 				.findExtensions("org.eclipse.core.runtime.applications", true); //$NON-NLS-1$
+
+		final boolean toFilter = !productBundleNames.isEmpty();
 
 		for (IExtension extension : extensions) {
 			String id = extension.getUniqueIdentifier();
@@ -313,8 +315,10 @@ public class TargetPlatformHelper {
 			}
 			String contributorId = elements[0].getContributor().getName();
 
-			if (!productBundleNames.contains(contributorId)) {
-				continue;
+			if (toFilter) {
+				if (!productBundleNames.contains(contributorId)) {
+					continue;
+				}
 			}
 
 			String visiblity = elements[0].getAttribute("visible"); //$NON-NLS-1$
