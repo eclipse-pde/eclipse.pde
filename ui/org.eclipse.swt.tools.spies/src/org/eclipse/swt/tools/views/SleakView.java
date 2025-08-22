@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2019 IBM Corporation and others.
+ * Copyright (c) 2004, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,7 +15,7 @@
 package org.eclipse.swt.tools.views;
 
 import org.eclipse.e4.ui.di.*;
-import org.eclipse.swt.tools.internal.*;
+import org.eclipse.swt.internal.tools.views.*;
 import org.eclipse.swt.widgets.*;
 
 import jakarta.annotation.*;
