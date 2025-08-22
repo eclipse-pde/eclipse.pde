@@ -4,7 +4,7 @@ Bundle-Vendor: %providerName
 Bundle-SymbolicName: org.eclipse.swt.tools.spies;singleton:=true
 Bundle-Version: 3.109.700.qualifier
 Bundle-ManifestVersion: 2
-Export-Package: org.eclipse.swt.tools.internal,
+Export-Package: org.eclipse.swt.internal.tools.views;x-internal:=true,
  org.eclipse.swt.tools.views
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin
