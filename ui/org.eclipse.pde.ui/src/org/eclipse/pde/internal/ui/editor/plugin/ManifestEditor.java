@@ -16,6 +16,8 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Locale;
 import java.util.zip.ZipFile;
 
@@ -173,6 +175,14 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 			for (IPluginModelBase model : models) {
 				if (version.equals(model.getPluginBase().getVersion())) {
 					return open(model.getPluginBase(), true);
+				}
+			}
+			String location = desc.getLocation();
+			if (location != null && location.toLowerCase().startsWith("file:")) { //$NON-NLS-1$
+				try {
+					File file = new File(new URI(location));
+					return openExternalPlugin(file, ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
+				} catch (URISyntaxException e) {
 				}
 			}
 		}

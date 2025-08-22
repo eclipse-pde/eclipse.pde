@@ -132,6 +132,7 @@ public class TargetEditor extends FormEditor {
 	private ImageHyperlink fLoadHyperlink;
 
 	private final EventHandler fEventHandler = this::handleBrokerEvent;
+	private StatePage statePage;
 
 	@Override
 	protected FormToolkit createToolkit(Display display) {
@@ -145,6 +146,8 @@ public class TargetEditor extends FormEditor {
 			addPage(new DefinitionPage(this));
 			addPage(new ContentPage(this));
 			addPage(new EnvironmentPage(this));
+			statePage = new StatePage(this);
+			addPage(statePage);
 			addTextualEditorPage();
 		} catch (CoreException e) {
 			PDEPlugin.log(e);
@@ -650,6 +653,7 @@ public class TargetEditor extends FormEditor {
 					// Check to see if we are resolved, resolving, or cancelled
 					if (target != null && target.isResolved()) {
 						fContentTree.setInput(getTarget());
+						statePage.updateTarget(getTarget());
 					} else if (Job.getJobManager().find(getJobFamily()).length > 0) {
 						fContentTree.setInput(null);
 					} else {
@@ -674,6 +678,7 @@ public class TargetEditor extends FormEditor {
 				if (name == null) {
 					name = ""; //$NON-NLS-1$
 				}
+				statePage.reset();
 				Job resolveJob = new Job(NLS.bind(PDEUIMessages.TargetEditor_1, name)) {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
@@ -688,6 +693,7 @@ public class TargetEditor extends FormEditor {
 						if (monitor.isCanceled()) {
 							return Status.CANCEL_STATUS;
 						}
+						statePage.updateTarget(getTarget());
 						// Don't return any problems because we don't want an error dialog
 						return Status.OK_STATUS;
 					}
