@@ -162,6 +162,10 @@ public class LaunchingPreferencePage extends PreferencePage implements IWorkbenc
 	private Button fJunitAddWorkspaceButton;
 	private Button fJunitAutoValidate;
 
+	private Button fFragmentsPlatformButton;
+
+	private Button fFragmentsExtensibleApiButton;
+
 	public LaunchingPreferencePage() {
 		setPreferenceStore(PDEPlugin.getDefault().getPreferenceStore());
 		setDescription(PDEUIMessages.LaunchingPreferencePage_description);
@@ -197,6 +201,17 @@ public class LaunchingPreferencePage extends PreferencePage implements IWorkbenc
 		fRuntimeWorkspacesContainerRadio.setSelection(runtimeLocationIsContainer);
 
 		new DefaultJUnitWorkspaceBlock().createControl(composite);
+		Group group = SWTFactory.createGroup(composite, PDEUIMessages.LaunchingPreferencePage_GroupComputingOptions, 1,
+				1,
+				GridData.FILL_HORIZONTAL);
+		fFragmentsPlatformButton = SWTFactory.createCheckButton(group, PDEUIMessages.LaunchingPreferencePage_IncludePlatformFragments, null, false,
+				1);
+		fFragmentsExtensibleApiButton = SWTFactory.createCheckButton(group,
+				PDEUIMessages.LaunchingPreferencePage_IncludeExtensibleFragments, null, false, 1);
+		fFragmentsPlatformButton.setSelection(
+				launchingStore.getBoolean(ILaunchingPreferenceConstants.PROP_AUTO_MANAGE_PLATFORM_FRAGMENTS));
+		fFragmentsExtensibleApiButton.setSelection(
+				launchingStore.getBoolean(ILaunchingPreferenceConstants.PROP_AUTO_MANAGE_EXTENSIBLE_FRAGMENTS));
 		fJUnitWorkspaceLocation
 				.setText(launchingStore.getString(ILaunchingPreferenceConstants.PROP_JUNIT_WORKSPACE_LOCATION));
 		boolean jUnitLocationIsContainer = launchingStore
@@ -250,6 +265,10 @@ public class LaunchingPreferencePage extends PreferencePage implements IWorkbenc
 				fJunitAutoValidate.getSelection());
 		launchingStore.setValueOrRemove(ILaunchingPreferenceConstants.ADD_SWT_NON_DISPOSAL_REPORTING,
 				fAddSwtNonDisposalReporting.getSelection());
+		launchingStore.setValueOrRemove(ILaunchingPreferenceConstants.PROP_AUTO_MANAGE_EXTENSIBLE_FRAGMENTS,
+				fFragmentsExtensibleApiButton.getSelection());
+		launchingStore.setValueOrRemove(ILaunchingPreferenceConstants.PROP_AUTO_MANAGE_PLATFORM_FRAGMENTS,
+				fFragmentsPlatformButton.getSelection());
 		try {
 			launchingStore.flush();
 		} catch (BackingStoreException e) {
@@ -287,6 +306,10 @@ public class LaunchingPreferencePage extends PreferencePage implements IWorkbenc
 				launchingStore.getDefaultBoolean(ILaunchingPreferenceConstants.PROP_JUNIT_ADD_NEW_WORKSPACE_PLUGINS));
 		fJunitAutoValidate.setSelection(
 				launchingStore.getDefaultBoolean(ILaunchingPreferenceConstants.PROP_JUNIT_VALIDATE_LAUNCH));
+		fFragmentsExtensibleApiButton.setSelection(
+				launchingStore.getBoolean(ILaunchingPreferenceConstants.PROP_AUTO_MANAGE_EXTENSIBLE_FRAGMENTS));
+		fFragmentsPlatformButton.setSelection(
+				launchingStore.getBoolean(ILaunchingPreferenceConstants.PROP_AUTO_MANAGE_PLATFORM_FRAGMENTS));
 	}
 
 	@Override

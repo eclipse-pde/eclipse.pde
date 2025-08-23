@@ -57,4 +57,8 @@ public class BundlePlugin extends BundlePluginBase implements IBundlePlugin {
 		return "true".equals(getValue(ICoreConstants.ECLIPSE_EXPORT_EXTERNAL_ANNOTATIONS, false)); //$NON-NLS-1$
 	}
 
+	public String getPlatformFilter() {
+		return getValue(ICoreConstants.PLATFORM_FILTER, false);
+	}
+
 }

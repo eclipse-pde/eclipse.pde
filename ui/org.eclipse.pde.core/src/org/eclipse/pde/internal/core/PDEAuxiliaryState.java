@@ -97,6 +97,7 @@ public class PDEAuxiliaryState {
 		String localization;
 		String bundleSourceEntry;
 		boolean exportsExternalAnnotations;
+		String platformFilter;
 	}
 
 	/**
@@ -379,6 +380,7 @@ public class PDEAuxiliaryState {
 		info.libraries = getClasspath(manifest);
 		info.hasExtensibleAPI = "true".equals(manifest.get(ICoreConstants.EXTENSIBLE_API)); //$NON-NLS-1$
 		info.isPatchFragment = "true".equals(manifest.get(ICoreConstants.PATCH_FRAGMENT)); //$NON-NLS-1$
+		info.platformFilter = manifest.get(ICoreConstants.PLATFORM_FILTER);
 		info.localization = manifest.get(Constants.BUNDLE_LOCALIZATION);
 		info.hasBundleStructure = hasBundleStructure;
 		info.bundleSourceEntry = manifest.get(ICoreConstants.ECLIPSE_SOURCE_BUNDLE);
