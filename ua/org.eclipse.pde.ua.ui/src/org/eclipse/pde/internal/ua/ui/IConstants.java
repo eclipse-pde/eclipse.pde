@@ -19,7 +19,7 @@ public interface IConstants {
 	public static final String COMPOSITE_CHEAT_SHEET_EDITOR_ID = PDEUserAssistanceUIPlugin.PLUGIN_ID
 			+ ".compositeCheatSheetEditor"; //$NON-NLS-1$
 	public static final String SIMPLE_CHEAT_SHEET_EDITOR_ID = PDEUserAssistanceUIPlugin.PLUGIN_ID
-			+ "simpleCheatSheetEditor"; //$NON-NLS-1$
+			+ ".simpleCheatSheetEditor"; //$NON-NLS-1$
 	public static final String CONTEXT_HELP_EDITOR_ID = PDEUserAssistanceUIPlugin.PLUGIN_ID
 			+ ".ctxHelpEditor"; //$NON-NLS-1$
 	public static final String TABLE_OF_CONTENTS_EDITOR_ID = PDEUserAssistanceUIPlugin.PLUGIN_ID
