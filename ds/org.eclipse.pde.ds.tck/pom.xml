@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.eclipse.pde</groupId>
 		<artifactId>eclipse.pde</artifactId>
-		<version>4.37.0-SNAPSHOT</version>
+		<version>4.38.0-SNAPSHOT</version>
 		<relativePath>../../</relativePath>
 	</parent>
 	<artifactId>org.eclipse.pde.ds.tck</artifactId>
