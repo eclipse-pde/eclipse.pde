@@ -1,2 +1,0 @@
-Added new method to IBuildEntry
-https://github.com/eclipse-pde/eclipse.pde/issues/1846
