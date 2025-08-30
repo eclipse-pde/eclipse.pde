@@ -25,6 +25,7 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IMatchRules;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginReference;
+import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -44,13 +45,17 @@ import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IPartSelectionListener;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.InvalidSyntaxException;
 
 public class MatchSection extends PDESection implements IPartSelectionListener {
+
 
 	private Button fReexportButton;
 	private Button fOptionalButton;
 
 	private FormEntry fVersionText;
+	private FormEntry fFilterText;
 
 	private ComboPart fMatchCombo;
 	protected IPluginReference fCurrentImport;
@@ -134,6 +139,26 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		}));
 		toolkit.paintBordersFor(container);
 		initialize();
+
+		fFilterText = new FormEntry(container, toolkit, PDEUIMessages.ManifestEditor_MatchSection_filter, null, false);
+		fFilterText.setFormEntryListener(
+				new FormEntryAdapter(this, getPage().getEditor().getEditorSite().getActionBars()) {
+					@Override
+					public void textValueChanged(FormEntry text) {
+						applyFilter(text.getValue());
+					}
+
+					@Override
+					public void textDirty(FormEntry text) {
+						if (fBlockChanges) {
+							return;
+						}
+						markDirty();
+						fBlockChanges = true;
+						resetMatchCombo(fCurrentImport);
+						fBlockChanges = false;
+					}
+				});
 		update((IPluginReference) null);
 
 		section.setClient(container);
@@ -197,6 +222,23 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 			}
 		} catch (CoreException ex) {
 			PDEPlugin.logException(ex);
+		}
+	}
+
+	private void applyFilter(String filter) {
+		try {
+			if (fCurrentImport == null)
+				return;
+			if (filter == null || filter.isEmpty())
+				((IFeatureImport) fCurrentImport).setFilter(null);
+			else {
+				FrameworkUtil.createFilter(filter);
+				((IFeatureImport) fCurrentImport).setFilter(filter);
+			}
+		} catch (InvalidSyntaxException e) {
+			PDEPlugin.logException(e);
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
 		}
 	}
 
@@ -272,8 +314,11 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 			}
 			fVersionText.setValue(null, true);
 			fVersionText.setEditable(false);
+
 			fMatchCombo.getControl().setEnabled(false);
 			fMatchCombo.setText(""); //$NON-NLS-1$
+			fFilterText.setValue(null, false);
+			fFilterText.setEditable(false);
 			fCurrentImport = null;
 			fBlockChanges = false;
 			return;
@@ -292,7 +337,10 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		}
 		fVersionText.setEditable(isEditable());
 		fVersionText.setValue(fCurrentImport.getVersion());
+
 		resetMatchCombo(fCurrentImport);
+		fFilterText.setEditable(isEditable());
+		fFilterText.setValue(((IFeatureImport) fCurrentImport).getFilter());
 		fBlockChanges = false;
 	}
 }
