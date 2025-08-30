@@ -25,6 +25,8 @@ public interface ILaunchingPreferenceConstants {
 
 	// Main preference page
 	public static final String PROP_AUTO_MANAGE = "Preferences.Launching.automanageDependencies"; //$NON-NLS-1$
+	public static final String PROP_AUTO_MANAGE_EXTENSIBLE_FRAGMENTS = "Preferences.Launching.automanageDependencies.includeExtensibleFragments"; //$NON-NLS-1$
+	public static final String PROP_AUTO_MANAGE_PLATFORM_FRAGMENTS = "Preferences.Launching.automanageDependencies.includePlatformFragments"; //$NON-NLS-1$
 	public static final String PROP_RUNTIME_WORKSPACE_LOCATION = "Preferences.Launching.runtimeWorkspaceLocation"; //$NON-NLS-1$
 	public static final String PROP_RUNTIME_WORKSPACE_LOCATION_IS_CONTAINER = "Preferences.Launching.runtimeWorkspaceLocationIsContainer"; //$NON-NLS-1$
 	public static final String PROP_JUNIT_WORKSPACE_LOCATION = "Preferences.Launching.junitWorkspaceLocation"; //$NON-NLS-1$
