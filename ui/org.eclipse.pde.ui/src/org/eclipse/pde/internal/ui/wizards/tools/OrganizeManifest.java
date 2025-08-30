@@ -387,7 +387,7 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 			return new TextFileChange[0];
 		}
 
-		return PDEModelUtility.changesForModelModication(new ModelModification(propertiesFile) {
+		return PDEModelUtility.changesForModelModification(new ModelModification(propertiesFile) {
 			@Override
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 				if (!(model instanceof IBuildModel)) {
