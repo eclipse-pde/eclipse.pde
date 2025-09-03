@@ -128,7 +128,7 @@ public class ClasspathUtilCore {
 		}
 
 		List<BundleWire> wires = wiring.getRequiredWires(PackageNamespace.PACKAGE_NAMESPACE);
-		return wires.stream().map(wire -> {
+		return wires.stream().filter(wire -> wire.getProviderWiring() != null).map(wire -> {
 			return wire.getProvider();
 		}).distinct().flatMap(provider -> {
 			IPluginModelBase model = PluginRegistry.findModel(provider);
