@@ -33,6 +33,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.w3c.dom.Node;
 
@@ -188,8 +189,9 @@ public class FeatureImport extends VersionableObject implements IFeatureImport {
 		if (fPatch) {
 			writer.print(" patch=\"true\""); //$NON-NLS-1$
 		}
-		if (fFilter != null) {
-			writer.print(" filter=\"" + fFilter + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		String writableString = PDEXMLHelper.getWritableAttributeString(fFilter);
+		if (!writableString.isBlank()) {
+			writer.print(" filter=\"" + writableString + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		writer.println("/>"); //$NON-NLS-1$
 	}
