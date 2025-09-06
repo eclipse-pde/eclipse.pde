@@ -821,11 +821,13 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 				bundle("plugin.c", "1.0.0"));
 
 		Map<BundleLocationDescriptor, String> requiredRPBundlesWithoutOptional = FeatureBasedLaunchTest
-				.getEclipseAppRequirementClosureForRunningPlatform();
+				.getEclipseAppRequirementClosureForRunningPlatform(
+						DependencyManager.Options.INCLUDE_EXTENSIBLE_FRAGMENTS);
 
 		Map<BundleLocationDescriptor, String> requiredRPBundlesWithOptional = FeatureBasedLaunchTest
 				.getEclipseAppRequirementClosureForRunningPlatform(
-						DependencyManager.Options.INCLUDE_OPTIONAL_DEPENDENCIES);
+						DependencyManager.Options.INCLUDE_OPTIONAL_DEPENDENCIES,
+						DependencyManager.Options.INCLUDE_EXTENSIBLE_FRAGMENTS);
 
 		TargetPlatformUtil.setRunningPlatformWithDummyBundlesAsTarget(null, targetPlatformBundles, List.of(),
 				tpJarDirectory);

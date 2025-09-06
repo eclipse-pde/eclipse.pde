@@ -68,7 +68,19 @@ public class DependencyManager {
 		 * Specifies to include all non-test fragments into the closure (must
 		 * not be combined with {@link #INCLUDE_ALL_FRAGMENTS}).
 		 */
-		INCLUDE_NON_TEST_FRAGMENTS;
+		INCLUDE_NON_TEST_FRAGMENTS,
+		/**
+		 * Option that can be set to include native fragments, that are ones
+		 * that define an {@link ICoreConstants#PLATFORM_FILTER} in their
+		 * manifest.
+		 */
+		INCLUDE_PLATFORM_FRAGMENTS,
+		/**
+		 * Option that can be set to include native fragments, that are ones
+		 * that define an {@link ICoreConstants#PLATFORM_FILTER} in their
+		 * manifest.
+		 */
+		INCLUDE_EXTENSIBLE_FRAGMENTS;
 	}
 
 	/**
@@ -168,6 +180,8 @@ public class DependencyManager {
 		boolean includeOptional = optionSet.contains(Options.INCLUDE_OPTIONAL_DEPENDENCIES);
 		boolean includeAllFragments = optionSet.contains(Options.INCLUDE_ALL_FRAGMENTS);
 		boolean includeNonTestFragments = optionSet.contains(Options.INCLUDE_NON_TEST_FRAGMENTS);
+		boolean includeNativeFragments = optionSet.contains(Options.INCLUDE_PLATFORM_FRAGMENTS);
+		boolean includeExtensibleFragments = optionSet.contains(Options.INCLUDE_EXTENSIBLE_FRAGMENTS);
 		if (includeAllFragments && includeNonTestFragments) {
 			throw new AssertionError("Cannot combine INCLUDE_ALL_FRAGMENTS and INCLUDE_NON_TEST_FRAGMENTS"); //$NON-NLS-1$
 		}
@@ -188,10 +202,18 @@ public class DependencyManager {
 			if (wiring == null || !wiring.isInUse()) {
 				continue;
 			}
-			if (includeAllFragments || includeNonTestFragments || isExtensibleApi(bundle)) {
+			if (includeAllFragments || includeNonTestFragments
+					|| (includeExtensibleFragments && isExtensibleApi(bundle))) {
 				// A fragment's host is already required by a wire
 				for (BundleDescription fragment : bundle.getFragments()) {
 					if (includeAllFragments || !isTestWorkspaceProject(fragment)) {
+						addNewRequiredBundle(fragment, closure, pending);
+					}
+				}
+			}
+			if (includeNativeFragments) {
+				for (BundleDescription fragment : bundle.getFragments()) {
+					if (isNativeFragment(fragment) && !isTestWorkspaceProject(fragment)) {
 						addNewRequiredBundle(fragment, closure, pending);
 					}
 				}
@@ -229,6 +251,14 @@ public class DependencyManager {
 			}
 		}
 		return closure;
+	}
+
+	private static boolean isNativeFragment(BundleDescription fragment) {
+		Object userObject = fragment.getUserObject();
+		if (userObject instanceof IPluginModelBase model) {
+			return ClasspathUtilCore.getPlatformFilter(model) != null;
+		}
+		return false;
 	}
 
 	private static boolean isExtensibleApi(BundleDescription bundleDescription) {
