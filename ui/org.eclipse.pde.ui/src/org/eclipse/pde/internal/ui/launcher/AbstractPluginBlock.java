@@ -42,6 +42,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -415,11 +416,14 @@ public abstract class AbstractPluginBlock {
 				SelectionListener.widgetSelectedAdapter(e -> this.fAutoIncludeRequirementsButtonChanged = true));
 
 		if (fTab instanceof PluginsTab) {
-			fIncludeOptionalButton = createButton(parent, span, indent,PDEUIMessages.AdvancedLauncherTab_includeOptional_plugins);
+			fIncludeOptionalButton = createButton(parent, span, indent + 15,
+					PDEUIMessages.AdvancedLauncherTab_includeOptional_plugins);
 		}else if (fTab instanceof BundlesTab) {
-			fIncludeOptionalButton = createButton(parent, span, indent, PDEUIMessages.AdvancedLauncherTab_includeOptional_bundles);
+			fIncludeOptionalButton = createButton(parent, span, indent + 15,
+					PDEUIMessages.AdvancedLauncherTab_includeOptional_bundles);
 		}else{
-			fIncludeOptionalButton = createButton(parent, span, indent, NLS.bind(PDEUIMessages.AdvancedLauncherTab_includeOptional, fTab.getName().toLowerCase(Locale.ENGLISH)));
+			fIncludeOptionalButton = createButton(parent, span, indent + 15, NLS.bind(
+					PDEUIMessages.AdvancedLauncherTab_includeOptional, fTab.getName().toLowerCase(Locale.ENGLISH)));
 		}
 		if (fTab instanceof PluginsTab) {
 			fAddWorkspaceButton = createButton(parent, span, indent, PDEUIMessages.AdvancedLauncherTab_addNew_plugins);
@@ -868,22 +872,79 @@ public abstract class AbstractPluginBlock {
 	 * then also checked in the tree
 	 */
 	protected void addRequiredPlugins() {
-		Object[] checked = fPluginTreeViewer.getCheckedLeafElements();
-		List<IPluginModelBase> toCheck = Arrays.stream(checked).filter(IPluginModelBase.class::isInstance)
-				.map(IPluginModelBase.class::cast).collect(Collectors.toList());
+		Set<DependencyManager.Options> options = new HashSet<>();
+		options.add(Options.INCLUDE_NON_TEST_FRAGMENTS);
+		options.add(Options.INCLUDE_OPTIONAL_DEPENDENCIES);
+		Dialog dialog = new Dialog(fPluginTreeViewer.getControl().getShell()) {
 
-		DependencyManager.Options[] options = fIncludeOptionalButton.getSelection()
-				? new Options[] { Options.INCLUDE_NON_TEST_FRAGMENTS, Options.INCLUDE_OPTIONAL_DEPENDENCIES }
-				: new Options[] { Options.INCLUDE_NON_TEST_FRAGMENTS };
-		Set<BundleDescription> additionalBundles = DependencyManager.getDependencies(toCheck, options);
+			@Override
+			protected Control createDialogArea(Composite parent) {
+				Composite composite = (Composite) super.createDialogArea(parent);
+				Button buttonFragmentsAll = new Button(composite, SWT.RADIO);
+				Button buttonFragmentNonTest = new Button(composite, SWT.RADIO);
+				Button buttonOptional = new Button(composite, SWT.CHECK);
+				buttonFragmentNonTest.setText(PDEUIMessages.AbstractPluginBlock_addRequiredDialogIncludeFragmentsWithoutTests);
+				buttonFragmentNonTest.setSelection(true);
+				SelectionListener radioListener = new SelectionListener() {
 
-		additionalBundles.stream().map(Resource.class::cast).map(PluginRegistry::findModel).filter(Objects::nonNull)
-				.forEach(toCheck::add);
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						if (buttonFragmentNonTest.getSelection()) {
+							options.add(Options.INCLUDE_NON_TEST_FRAGMENTS);
+							options.remove(Options.INCLUDE_ALL_FRAGMENTS);
+						} else {
+							options.remove(Options.INCLUDE_NON_TEST_FRAGMENTS);
+							options.add(Options.INCLUDE_ALL_FRAGMENTS);
+						}
+					}
 
-		checked = toCheck.toArray();
-		setCheckedElements(checked);
+					@Override
+					public void widgetDefaultSelected(SelectionEvent e) {
 
-		countSelectedModels();
+					}
+				};
+				buttonFragmentNonTest.addSelectionListener(radioListener);
+				buttonFragmentsAll.setText(PDEUIMessages.AbstractPluginBlock_addRequiredDialogIncludeAllFragments);
+				buttonFragmentsAll.addSelectionListener(radioListener);
+				buttonOptional.setSelection(true);
+				buttonOptional.setText(PDEUIMessages.AbstractPluginBlock_addRequiredDialogIncludeOptional);
+				buttonOptional.addSelectionListener(new SelectionListener() {
+
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						if (buttonOptional.getSelection()) {
+							options.add(Options.INCLUDE_OPTIONAL_DEPENDENCIES);
+						} else {
+							options.remove(Options.INCLUDE_OPTIONAL_DEPENDENCIES);
+						}
+					}
+
+					@Override
+					public void widgetDefaultSelected(SelectionEvent e) {
+
+					}
+				});
+				return composite;
+			}
+
+			@Override
+			protected void configureShell(Shell newShell) {
+				super.configureShell(newShell);
+				newShell.setText(PDEUIMessages.AbstractPluginBlock_addRequiredDialogTitle);
+			}
+		};
+		if (dialog.open() == Window.OK) {
+			Object[] checked = fPluginTreeViewer.getCheckedLeafElements();
+			List<IPluginModelBase> toCheck = Arrays.stream(checked).filter(IPluginModelBase.class::isInstance)
+					.map(IPluginModelBase.class::cast).collect(Collectors.toList());
+			Set<BundleDescription> additionalBundles = DependencyManager.getDependencies(toCheck,
+					options.toArray(DependencyManager.Options[]::new));
+			additionalBundles.stream().map(Resource.class::cast).map(PluginRegistry::findModel).filter(Objects::nonNull)
+					.forEach(toCheck::add);
+			checked = toCheck.toArray();
+			setCheckedElements(checked);
+			countSelectedModels();
+		}
 	}
 
 	protected IPluginModelBase findPlugin(String id) {
