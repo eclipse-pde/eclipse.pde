@@ -12,7 +12,7 @@
 		 point="org.eclipse.pde.spy.core.spyPart">
       <spyPart
             description="%description"
-            icon="$nl$/icons/preference_spy.png"
+            icon="$nl$/icons/preference_spy.svg"
             name="%name"
             part="org.eclipse.pde.spy.preferences.parts.PreferenceSpyPart"
             shortcut="M2+M3+F11">
