@@ -168,9 +168,19 @@ public class BundleLauncherHelper {
 		List<String> appRequirements = RequirementHelper.getApplicationLaunchRequirements(configuration);
 		RequirementHelper.addApplicationLaunchRequirements(appRequirements, configuration, bundle2startLevel);
 
-		boolean includeOptional = configuration.getAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, true);
-		computeDependencies(bundle2startLevel.keySet(), includeOptional, true) //
+		Set<DependencyManager.Options> options = configurationToOptions(configuration, true);
+		computeDependencies(bundle2startLevel.keySet(), options, true) //
 				.forEach(p -> addDefaultStartingBundle(bundle2startLevel, p));
+	}
+
+	protected static Set<DependencyManager.Options> configurationToOptions(ILaunchConfiguration configuration, boolean optionalDefault) throws CoreException {
+		boolean includeOptional = configuration.getAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, optionalDefault);
+		Set<DependencyManager.Options> options = new HashSet<>();
+		options.add(DependencyManager.Options.INCLUDE_EXTENSIBLE_FRAGMENTS);
+		if (includeOptional) {
+			options.add(DependencyManager.Options.INCLUDE_OPTIONAL_DEPENDENCIES);
+		}
+		return options;
 	}
 
 	// --- feature based launches ---
@@ -221,12 +231,13 @@ public class BundleLauncherHelper {
 		launchPlugins.addAll(additionalPlugins.keySet());
 
 		if (addRequirements) {
+			Set<DependencyManager.Options> options = configurationToOptions(configuration, false);
 			// Add all missing plug-ins required by the application/product set in the config
 			List<String> appRequirements = RequirementHelper.getApplicationLaunchRequirements(configuration);
 			RequirementHelper.addApplicationLaunchRequirements(appRequirements, configuration, launchPlugins, launchPlugins::add);
 
 			// Get all required plugins
-			computeDependencies(launchPlugins, false, isWorkspace(defaultPluginResolution)).forEach(launchPlugins::add);
+			computeDependencies(launchPlugins, options, isWorkspace(defaultPluginResolution)).forEach(launchPlugins::add);
 		}
 
 		// Create the start levels for the selected plugins and add them to the map
@@ -542,7 +553,7 @@ public class BundleLauncherHelper {
 
 	// --- dependency resolution ---
 
-	private static Stream<IPluginModelBase> computeDependencies(Set<IPluginModelBase> includedPlugins, boolean includeOptional, boolean preferWorkspaceBundles) {
+	private static Stream<IPluginModelBase> computeDependencies(Set<IPluginModelBase> includedPlugins, Set<DependencyManager.Options> options, boolean preferWorkspaceBundles) {
 		if (includedPlugins.isEmpty()) {
 			return Stream.empty();
 		}
@@ -556,11 +567,7 @@ public class BundleLauncherHelper {
 			Version version = versionStr != null ? Version.parseVersion(versionStr) : null;
 			return launchState.getBundle(descriptor.getId(), version);
 		}).forEach(launchBundles::add);
-
-		DependencyManager.Options[] options = includeOptional //
-				? new DependencyManager.Options[] {DependencyManager.Options.INCLUDE_OPTIONAL_DEPENDENCIES}
-				: new DependencyManager.Options[] {};
-		Set<BundleDescription> closure = DependencyManager.findRequirementsClosure(launchBundles, options);
+		Set<BundleDescription> closure = DependencyManager.findRequirementsClosure(launchBundles, options.toArray(DependencyManager.Options[]::new));
 		return closure.stream().map(launchBundlePlugins::get).map(Objects::requireNonNull) //
 				.filter(p -> !includedPlugins.contains(p));
 	}

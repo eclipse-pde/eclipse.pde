@@ -1351,7 +1351,8 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 				}));
 
 		// Gather requirements of the product used below
-		Map<BundleLocationDescriptor, String> requiredRPBundles = getEclipseAppRequirementClosureForRunningPlatform();
+		Map<BundleLocationDescriptor, String> requiredRPBundles = getEclipseAppRequirementClosureForRunningPlatform(
+				DependencyManager.Options.INCLUDE_EXTENSIBLE_FRAGMENTS);
 
 		TargetPlatformUtil.setRunningPlatformWithDummyBundlesAsTarget(null, targetBundles, targetFeatures,
 				tpJarDirectory);
