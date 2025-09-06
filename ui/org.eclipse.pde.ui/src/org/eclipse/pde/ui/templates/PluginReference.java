@@ -113,5 +113,4 @@ public class PluginReference implements IPluginReference {
 	public void setId(String id) throws CoreException {
 		this.id = id;
 	}
-
 }
