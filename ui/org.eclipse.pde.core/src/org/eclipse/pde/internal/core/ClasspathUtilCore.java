@@ -224,6 +224,17 @@ public class ClasspathUtilCore {
 		return false;
 	}
 
+	public static String getPlatformFilter(IPluginModelBase model) {
+		IPluginBase pluginBase = model.getPluginBase();
+		if (pluginBase instanceof BundlePlugin plugin) {
+			return plugin.getPlatformFilter();
+		}
+		if (pluginBase instanceof BundleFragment fragment) {
+			return fragment.getPlatformFilter();
+		}
+		return null;
+	}
+
 	public static boolean isPatchFragment(Resource desc) {
 		IPluginModelBase model = PluginRegistry.findModel(desc);
 		return model instanceof IFragmentModel i ? isPatchFragment(i.getFragment()) : false;
