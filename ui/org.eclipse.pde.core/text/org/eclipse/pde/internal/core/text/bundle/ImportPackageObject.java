@@ -24,7 +24,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEState;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
-import org.eclipse.pde.internal.core.util.ManifestUtils;
+import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.osgi.framework.Constants;
 import org.osgi.framework.VersionRange;
 
@@ -33,7 +33,7 @@ public class ImportPackageObject extends PackageObject {
 	private static final long serialVersionUID = 1L;
 
 	private static String getVersion(ExportPackageDescription desc) {
-		return ManifestUtils.createConsumerRequirementRange(desc.getVersion()).map(VersionRange::toString).orElse(null);
+		return VersionUtil.createConsumerRequirementRange(desc.getVersion()).map(VersionRange::toString).orElse(null);
 	}
 
 	public ImportPackageObject(ManifestHeader header, ManifestElement element, String versionAttribute) {
