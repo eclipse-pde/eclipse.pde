@@ -1517,7 +1517,11 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		String version = element.getAttribute(Constants.VERSION_ATTRIBUTE);
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_MISSING_VERSION_IMP_PKG);
 		if (severity != CompilerFlags.IGNORE && version == null) {
-			VirtualMarker marker = report(NLS.bind(PDECoreMessages.BundleErrorReporter_MissingVersion, element.getValue()), getPackageLine(header, element), severity, PDEMarkerFactory.CAT_OTHER);
+			VirtualMarker marker = report(
+					NLS.bind(PDECoreMessages.BundleErrorReporter_MissingVersion, element.getValue()),
+					getPackageLine(header, element), severity, PDEMarkerFactory.M_MISSINGVERSION_IMPORT_PACKAGE,
+					PDEMarkerFactory.CAT_OTHER);
+			marker.setAttribute("bundleId", element.getValue()); //$NON-NLS-1$
 			addMarkerAttribute(marker,PDEMarkerFactory.compilerKey,  CompilerFlags.P_MISSING_VERSION_IMP_PKG);
 		}
 		validateVersionAttribute(header, element, true);

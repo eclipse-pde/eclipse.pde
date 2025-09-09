@@ -3450,6 +3450,6 @@ public class PDEUIMessages extends NLS {
 	public static String ProjectUpdateChange_convert_build_to_bnd;
 	public static String ProjectUpdateChange_set_pde_preference;
 
-	public static String AddMatchingVersion_RequireBundle;
+	public static String AddMatchingVersion;
 
 }

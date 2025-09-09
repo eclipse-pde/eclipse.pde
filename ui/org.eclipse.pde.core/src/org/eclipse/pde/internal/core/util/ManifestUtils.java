@@ -28,7 +28,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
@@ -67,8 +66,6 @@ import org.osgi.framework.Constants;
 import org.osgi.framework.Filter;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.Version;
-import org.osgi.framework.VersionRange;
 import org.osgi.framework.namespace.ExecutionEnvironmentNamespace;
 import org.osgi.resource.Namespace;
 import org.osgi.resource.Requirement;
@@ -397,16 +394,6 @@ public class ManifestUtils {
 				throw new IllegalArgumentException("Invalid execution environment filter", e); //$NON-NLS-1$
 			}
 		}
-	}
-
-	public static Optional<VersionRange> createConsumerRequirementRange(Version version) {
-		if (version != null && !Version.emptyVersion.equals(version)) {
-			return Optional.ofNullable(new VersionRange(VersionRange.LEFT_CLOSED, //
-					new Version(version.getMajor(), version.getMinor(), 0), //
-					new Version(version.getMajor() + 1, 0, 0), //
-					VersionRange.RIGHT_OPEN));
-		}
-		return Optional.empty();
 	}
 
 	/**
