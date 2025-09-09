@@ -15,6 +15,7 @@
 package org.eclipse.pde.internal.ui.correction;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -26,12 +27,14 @@ import org.eclipse.pde.internal.core.text.bundle.RequireBundleObject;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.osgi.framework.Constants;
+import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 
 /**
  * Resolution to add available matching version for Required bundles in MANIFEST
  */
-public class VersionMatchResolution extends AbstractManifestMarkerResolution {
-	public VersionMatchResolution(int type, IMarker marker) {
+public class VersionMatchRequireBundleResolution extends AbstractManifestMarkerResolution {
+	public VersionMatchRequireBundleResolution(int type, IMarker marker) {
 		super(type, marker);
 	}
 
@@ -47,8 +50,9 @@ public class VersionMatchResolution extends AbstractManifestMarkerResolution {
 					if (modelBase != null) {
 						String version = modelBase.getPluginBase().getVersion();
 						// Sanitize version: Remove a potential qualifier
-						version = VersionUtil.computeInitialPluginVersion(version);
-						requiredBundle.setVersion(version);
+						Optional<VersionRange> versionRange = VersionUtil
+								.createConsumerRequirementRange(new Version(version));
+						requiredBundle.setVersion(versionRange.map(VersionRange::toString).orElse(null));
 					}
 				}
 			}
@@ -57,7 +61,12 @@ public class VersionMatchResolution extends AbstractManifestMarkerResolution {
 
 	@Override
 	public String getLabel() {
-		return PDEUIMessages.AddMatchingVersion_RequireBundle;
+		return PDEUIMessages.AddMatchingVersion;
+	}
+
+	@Override
+	public String getDescription() {
+		return PDEUIMessages.AddMatchingVersionDescription;
 	}
 
 }
