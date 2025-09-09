@@ -47,7 +47,7 @@ public class VersionMatchResolution extends AbstractManifestMarkerResolution {
 					if (modelBase != null) {
 						String version = modelBase.getPluginBase().getVersion();
 						// Sanitize version: Remove a potential qualifier
-						version = VersionUtil.computeInitialPluginVersion(version);
+						version = VersionUtil.computeInitialRequirementVersionRange(version);
 						requiredBundle.setVersion(version);
 					}
 				}
@@ -57,7 +57,7 @@ public class VersionMatchResolution extends AbstractManifestMarkerResolution {
 
 	@Override
 	public String getLabel() {
-		return PDEUIMessages.AddMatchingVersion_RequireBundle;
+		return PDEUIMessages.AddMatchingVersion;
 	}
 
 }
