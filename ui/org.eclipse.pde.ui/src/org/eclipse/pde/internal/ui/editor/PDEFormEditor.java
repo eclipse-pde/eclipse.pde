@@ -593,9 +593,9 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 			clipboard.dispose();
 			clipboard = null;
 		}
-		super.dispose();
 		fInputContextManager.dispose();
 		fInputContextManager = null;
+		super.dispose();
 	}
 
 	@Override
