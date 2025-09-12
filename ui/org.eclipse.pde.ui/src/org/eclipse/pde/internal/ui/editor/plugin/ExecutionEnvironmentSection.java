@@ -184,6 +184,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 		if (model != null) {
 			fEETable.setInput(model);
 			model.addModelChangedListener(this);
+			section.addDisposeListener(e -> model.removeModelChangedListener(ExecutionEnvironmentSection.this));
 		}
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
@@ -200,13 +201,6 @@ public class ExecutionEnvironmentSection extends TableSection {
 				}
 			}
 		} catch (CoreException e1) {
-		}
-	}
-	@Override
-	public void dispose() {
-		IBundleModel model = getBundleModel();
-		if (model != null) {
-			model.removeModelChangedListener(this);
 		}
 	}
 

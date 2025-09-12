@@ -390,23 +390,18 @@ public abstract class GeneralInfoSection extends PDESection {
 		super.cancelEdit();
 	}
 
-	@Override
-	public void dispose() {
-		removeListeners();
-		super.dispose();
-	}
-
 	protected void removeListeners() {
 		IBaseModel model = getPage().getModel();
 		if (model instanceof IModelChangeProvider) {
 			((IModelChangeProvider) model).removeModelChangedListener(this);
 		}
 	}
-
+	
 	protected void addListeners() {
 		IBaseModel model = getPage().getModel();
-		if (model instanceof IModelChangeProvider) {
-			((IModelChangeProvider) model).addModelChangedListener(this);
+		if (model instanceof IModelChangeProvider mod) {
+			mod.addModelChangedListener(this);
+			getSection().addDisposeListener(e -> mod.removeModelChangedListener(GeneralInfoSection.this));
 		}
 	}
 

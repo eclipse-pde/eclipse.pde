@@ -157,17 +157,10 @@ public class DSPropertiesSection extends TableSection {
 		if (model != null) {
 			fPropertiesTable.setInput(model);
 			model.addModelChangedListener(this);
+			section.addDisposeListener(e -> model.removeModelChangedListener(DSPropertiesSection.this));
 		}
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
-	}
-
-	@Override
-	public void dispose() {
-		IDSModel model = getDSModel();
-		if (model != null) {
-			model.removeModelChangedListener(this);
-		}
 	}
 
 	@Override

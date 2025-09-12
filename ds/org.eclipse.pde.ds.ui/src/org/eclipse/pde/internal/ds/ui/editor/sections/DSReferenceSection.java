@@ -172,18 +172,11 @@ public class DSReferenceSection extends TableSection implements
 		if (model != null) {
 			fReferencesTable.setInput(model);
 			model.addModelChangedListener(this);
+			section.addDisposeListener(e -> model.removeModelChangedListener(DSReferenceSection.this));
 		}
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
 		updateTitle();
-	}
-
-	@Override
-	public void dispose() {
-		IDSModel model = getDSModel();
-		if (model != null) {
-			model.removeModelChangedListener(this);
-		}
 	}
 
 	@Override

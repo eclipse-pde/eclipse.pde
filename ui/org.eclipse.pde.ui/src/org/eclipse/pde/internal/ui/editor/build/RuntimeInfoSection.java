@@ -225,7 +225,9 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 		super(page, parent, Section.DESCRIPTION);
 		getSection().setText(PDEUIMessages.BuildEditor_RuntimeInfoSection_title);
 		getSection().setDescription(PDEUIMessages.BuildEditor_RuntimeInfoSection_desc);
-		getBuildModel().addModelChangedListener(this);
+		IBuildModel model = getBuildModel();
+		model.addModelChangedListener(this);
+		getSection().addDisposeListener(e -> model.removeModelChangedListener(RuntimeInfoSection.this));
 		createClient(getSection(), page.getManagedForm().getToolkit());
 	}
 
@@ -573,15 +575,6 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 				entryModified(entry, dialog.getNewName());
 			}
 		}
-	}
-
-	@Override
-	public void dispose() {
-		IBuildModel buildModel = getBuildModel();
-		if (buildModel != null) {
-			buildModel.removeModelChangedListener(this);
-		}
-		super.dispose();
 	}
 
 	private void refreshOutputKeys() {
