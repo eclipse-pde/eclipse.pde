@@ -410,6 +410,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 			IBundleModel model = getBundle().getModel();
 			if (model != null) {
 				model.addModelChangedListener(this);
+				getSection().addDisposeListener(e -> model.removeModelChangedListener(FragmentGeneralInfoSection.this));
 			}
 		}
 		super.addListeners();

@@ -83,6 +83,7 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 			IBundleModel model = getBundle().getModel();
 			if (model != null) {
 				model.addModelChangedListener(this);
+				getSection().addDisposeListener(e -> model.removeModelChangedListener(PluginGeneralInfoSection.this));
 			}
 		}
 		super.addListeners();

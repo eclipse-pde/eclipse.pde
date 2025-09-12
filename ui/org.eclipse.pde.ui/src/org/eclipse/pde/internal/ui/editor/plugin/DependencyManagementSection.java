@@ -306,6 +306,8 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 			IBuildModel build = getBuildModel(false);
 			if (build != null) {
 				build.addModelChangedListener(this);
+				getSection()
+						.addDisposeListener(e -> build.removeModelChangedListener(DependencyManagementSection.this));
 			}
 
 			IResource resource = model.getUnderlyingResource();
@@ -641,10 +643,6 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 
 	@Override
 	public void dispose() {
-		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-		if (model != null) {
-			model.removeModelChangedListener(this);
-		}
 		PDECore.getDefault().getModelManager().removePluginModelListener(this);
 		super.dispose();
 	}

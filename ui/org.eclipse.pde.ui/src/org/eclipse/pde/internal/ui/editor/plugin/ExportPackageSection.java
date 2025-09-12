@@ -164,6 +164,7 @@ public class ExportPackageSection extends TableSection {
 		IBundleModel model = getBundleModel();
 		fPackageViewer.setInput(model);
 		model.addModelChangedListener(this);
+		section.addDisposeListener(e -> model.removeModelChangedListener(ExportPackageSection.this));
 		updateButtons();
 	}
 
@@ -189,15 +190,6 @@ public class ExportPackageSection extends TableSection {
 			return true;
 		}
 		return super.doGlobalAction(actionId);
-	}
-
-	@Override
-	public void dispose() {
-		IBundleModel model = getBundleModel();
-		if (model != null) {
-			model.removeModelChangedListener(this);
-		}
-		super.dispose();
 	}
 
 	@Override

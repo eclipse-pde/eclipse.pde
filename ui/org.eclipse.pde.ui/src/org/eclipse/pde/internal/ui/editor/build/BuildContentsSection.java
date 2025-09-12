@@ -440,11 +440,11 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 			fTreeViewer.setInput(fBundleRoot);
 		}
 		fBuildModel.addModelChangedListener(this);
+		getSection().addDisposeListener(e -> fBuildModel.removeModelChangedListener(BuildContentsSection.this));
 	}
 
 	@Override
 	public void dispose() {
-		fBuildModel.removeModelChangedListener(this);
 		PDEPlugin.getWorkspace().removeResourceChangeListener(this);
 		super.dispose();
 	}

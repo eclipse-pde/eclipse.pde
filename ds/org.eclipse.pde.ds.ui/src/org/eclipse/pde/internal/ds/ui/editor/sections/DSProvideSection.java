@@ -127,18 +127,11 @@ public class DSProvideSection extends TableSection implements
 		if (model != null) {
 			fProvidesTable.setInput(model);
 			model.addModelChangedListener(this);
+			section.addDisposeListener(e -> model.removeModelChangedListener(DSProvideSection.this));
 		}
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
 		updateTitle();
-	}
-
-	@Override
-	public void dispose() {
-		IDSModel model = getDSModel();
-		if (model != null) {
-			model.removeModelChangedListener(this);
-		}
 	}
 
 	@Override

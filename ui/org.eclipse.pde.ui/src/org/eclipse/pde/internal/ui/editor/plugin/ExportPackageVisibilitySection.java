@@ -145,6 +145,8 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 		fImage = PDEPluginImages.DESC_PLUGIN_OBJ.createImage();
 		update(null);
 		getBundleModel().addModelChangedListener(this);
+		section.addDisposeListener(
+				e -> getBundleModel().removeModelChangedListener(ExportPackageVisibilitySection.this));
 
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		section.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -257,10 +259,6 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 
 	@Override
 	public void dispose() {
-		IBundleModel model = getBundleModel();
-		if (model != null) {
-			model.removeModelChangedListener(this);
-		}
 		if (fImage != null) {
 			fImage.dispose();
 		}

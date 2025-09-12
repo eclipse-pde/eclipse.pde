@@ -171,7 +171,9 @@ public class BuildClasspathSection extends TableSection {
 	}
 
 	public void initialize() {
-		getBuildModel().addModelChangedListener(this);
+		IBuildModel model = getBuildModel();
+		model.addModelChangedListener(this);
+		getSection().addDisposeListener(e -> model.removeModelChangedListener(BuildClasspathSection.this));
 		getSection().setExpanded(true);
 	}
 
@@ -224,15 +226,6 @@ public class BuildClasspathSection extends TableSection {
 		manager.add(action);
 
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager, false);
-	}
-
-	@Override
-	public void dispose() {
-		IBuildModel model = getBuildModel();
-		if (model != null) {
-			model.removeModelChangedListener(this);
-		}
-		super.dispose();
 	}
 
 	@Override
