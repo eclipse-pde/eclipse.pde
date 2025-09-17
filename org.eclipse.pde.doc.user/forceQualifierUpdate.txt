@@ -1,0 +1,1 @@
+Javadoc generation options have changed for 4.38
