@@ -35,6 +35,7 @@ import org.eclipse.jdt.launching.environments.ExecutionEnvironmentDescription;
 import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.model.ApiType;
+import org.eclipse.pde.api.tools.internal.model.BundleComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription;
@@ -51,6 +52,8 @@ import org.eclipse.pde.api.tools.internal.search.UseScanReferences;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.junit.Assert;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.wiring.BundleCapability;
+import org.osgi.framework.wiring.BundleRequirement;
 
 /**
  * Helper methods to set up baselines, etc.
@@ -411,6 +414,7 @@ public class TestSuiteHelper {
 	 * @param collection collection to add prerequisites to.
 	 */
 	public static void addAllRequired(IApiBaseline baseline, Set<String> done, IApiComponent component, List<IApiComponent> collection) throws CoreException {
+		addScrBundlesIfNecessary(baseline, done, component, collection);
 		IRequiredComponentDescription[] descriptions = component.getRequiredComponents();
 		boolean error = false;
 		StringBuilder buffer = null;
@@ -435,6 +439,55 @@ public class TestSuiteHelper {
 		}
 		if (error) {
 			throw new CoreException(Status.error("Check the property : -DrequiredBundles=...\nMissing required bundle(s): " + String.valueOf(buffer))); //$NON-NLS-1$
+		}
+	}
+
+	/**
+	 * If one of the components depend on declarative services, we also need to
+	 * add an implementation for that (if available).
+	 */
+	private static void addScrBundlesIfNecessary(IApiBaseline baseline, Set<String> done, IApiComponent component,
+			List<IApiComponent> collection) throws CoreException {
+		if (!done.contains("org.apache.felix.scr")) { //$NON-NLS-1$
+			if (component instanceof BundleComponent bc) {
+				for (BundleRequirement extenderRequirements : bc.getBundleDescription()
+						.getDeclaredRequirements("osgi.extender")) { //$NON-NLS-1$
+
+					// Parsing the filter by hand is fragile, so just check
+					// whether this a requirement that felix.scr can provide...
+					File felixScrBundle = getBundle("org.apache.felix.scr"); //$NON-NLS-1$
+					if (felixScrBundle != null) {
+						IApiComponent felixScrComponent = ApiModelFactory.newApiComponent(baseline,
+								felixScrBundle.getAbsolutePath());
+						if (felixScrComponent instanceof BundleComponent felixBundleComponent) {
+							for (BundleCapability capability : felixBundleComponent.getBundleDescription()
+									.getDeclaredCapabilities("osgi.extender")) { //$NON-NLS-1$
+								if (extenderRequirements.matches(capability)) {
+
+									// ... and if so, add felix.scr itself ...
+									collection.add(felixScrComponent);
+									done.add(felixScrComponent.getSymbolicName());
+
+									// ... and its depdencies.
+									for (String bundleId : List.of("org.osgi.service.event", //$NON-NLS-1$
+											"org.osgi.service.component", "org.osgi.util.promise", //$NON-NLS-1$ //$NON-NLS-2$
+											"org.osgi.util.function")) { //$NON-NLS-1$
+										File bundle = getBundle(bundleId);
+										if (bundle != null) {
+											IApiComponent scrComponent = ApiModelFactory.newApiComponent(baseline,
+													bundle.getAbsolutePath());
+											if (done.add(scrComponent.getSymbolicName())) {
+												collection.add(scrComponent);
+											}
+										}
+									}
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 
