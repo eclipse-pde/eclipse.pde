@@ -898,7 +898,8 @@ public class PublishingTests extends P2TestCase {
 		IFile productFile = buildFolder.getFile("headless.product");
 		String[] bundles = new String[] { "headless", "org.eclipse.core.contenttype", "org.eclipse.core.jobs",
 				"org.eclipse.core.runtime", "org.osgi.service.prefs", EQUINOX_APP, EQUINOX_COMMON, EQUINOX_PREFERENCES,
-				EQUINOX_REGISTRY, OSGI };
+				EQUINOX_REGISTRY, OSGI, "org.apache.felix.scr", "org.osgi.service.event", "org.osgi.service.component",
+				"org.osgi.util.promise", "org.osgi.util.function" };
 		Utils.generateProduct(productFile, "headless.product", "1.0.0.qualifier", "headless.application", "headless",
 				bundles, false, null);
 		Properties p2Inf = new Properties(); // bug 268223
