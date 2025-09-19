@@ -1166,14 +1166,7 @@ public class TargetContentsGroup {
 				if (fMissing == null || fMissing.isEmpty()) {
 					fMissing = new HashSet<>(); // A set is used to remove copies of problem bundles
 					TargetBundle[] bundles = fTargetDefinition.getBundles();
-					for (int i = 0; i < bundles.length; i++) {
-						if (!bundles[i].getStatus().isOK()) {
-							// We only display error bundles that have symbolic names
-							if (bundles[i].getBundleInfo().getSymbolicName() != null) {
-								fMissing.add(bundles[i]);
-							}
-						}
-					}
+					addMissing(bundles);
 					result.addAll(fMissing);
 				} else {
 					// As missing bundles are unchecked, we want to keep them in the table, only if locations change does fMissing become null
@@ -1206,6 +1199,20 @@ public class TargetContentsGroup {
 				return result.toArray();
 			}
 			return new Object[] {inputElement};
+		}
+
+		private void addMissing(TargetBundle[] bundles) {
+			if (bundles == null)
+				return;
+
+			for (TargetBundle bundle : bundles) {
+				if (!bundle.getStatus().isOK()) {
+					// We only display error bundles that have symbolic names
+					if (bundle.getBundleInfo().getSymbolicName() != null) {
+						fMissing.add(bundle);
+					}
+				}
+			}
 		}
 
 	}
