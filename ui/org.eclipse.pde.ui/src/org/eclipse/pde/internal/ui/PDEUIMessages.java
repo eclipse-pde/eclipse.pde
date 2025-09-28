@@ -293,6 +293,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String OrganizeManifestsWizardPage_calculateUses;
 
+	public static String OrganizeManifestsWizardPage_updateHeader;
+
+	public static String OrganizeManifestsOperation_updateHeader;
+
 	public static String OverviewPage_contentDescription;
 
 	public static String OverviewPage_contentTitle;
