@@ -612,7 +612,11 @@ public final class Signatures {
 			case ASTNode.QUALIFIED_TYPE -> Signature.createTypeSignature(((QualifiedType) type).getName().getFullyQualifiedName(), false);
 			case ASTNode.ARRAY_TYPE -> {
 				ArrayType a = (ArrayType) type;
-				yield Signature.createArraySignature(getTypeSignature(a.getElementType(), erased), a.getDimensions());
+				String typeSignature = getTypeSignature(a.getElementType(), erased);
+				if (typeSignature == null) {
+					yield null;
+				}
+				yield Signature.createArraySignature(typeSignature, a.getDimensions());
 			}
 			// we don't need to care about the other scoping types only the base type
 			case ASTNode.PARAMETERIZED_TYPE -> getTypeSignature(((ParameterizedType) type).getType(), erased);
