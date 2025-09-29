@@ -380,8 +380,7 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 			clonedExt.setPoint(ext.getPoint());
 			final IPluginObject[] _children = ext.getChildren();
 			for (final IPluginObject elt : _children) {
-				if (elt instanceof IPluginElement) {
-					final IPluginElement ipe = (IPluginElement) elt;
+				if (elt instanceof final IPluginElement ipe) {
 					final IPluginElement clonedElt = copyExtensionElement(factory, ipe, ext);
 					clonedExt.add(clonedElt);
 				}
@@ -420,8 +419,7 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 				clonedElt.setAttribute(a.getName(), a.getValue());
 			}
 			for (final IPluginObject e : elt.getChildren()) {
-				if (e instanceof IPluginElement) {
-					final IPluginElement ipe = (IPluginElement) e;
+				if (e instanceof final IPluginElement ipe) {
 					final IPluginElement copyExtensionElement = copyExtensionElement(factory, ipe, clonedElt);
 					clonedElt.add(copyExtensionElement);
 				}

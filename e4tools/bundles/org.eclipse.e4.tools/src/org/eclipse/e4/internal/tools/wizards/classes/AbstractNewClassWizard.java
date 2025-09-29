@@ -95,9 +95,7 @@ public abstract class AbstractNewClassWizard extends Wizard implements INewWizar
 		IJavaElement jelem = null;
 		if (selection != null && !selection.isEmpty()) {
 			final Object selectedElement = selection.getFirstElement();
-			if (selectedElement instanceof IAdaptable) {
-				final IAdaptable adaptable = (IAdaptable) selectedElement;
-
+			if (selectedElement instanceof final IAdaptable adaptable) {
 				jelem = adaptable.getAdapter(IJavaElement.class);
 				if (jelem == null || !jelem.exists()) {
 					jelem = null;

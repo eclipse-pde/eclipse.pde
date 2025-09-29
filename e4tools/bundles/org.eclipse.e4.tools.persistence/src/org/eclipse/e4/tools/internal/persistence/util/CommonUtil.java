@@ -26,7 +26,6 @@ import org.eclipse.e4.tools.internal.persistence.IWorkbenchState;
 import org.eclipse.e4.tools.internal.persistence.impl.WorkbenchState;
 import org.eclipse.e4.tools.persistence.PerspectivePersister;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.ui.MSnippetContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
@@ -36,7 +35,6 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.workbench.Selector;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.ui.IEditorPart;
@@ -213,13 +211,7 @@ public final class CommonUtil {
 	public static MPerspective getMainPerspectiveFromWindow(final MWindow window, final String perspectiveId) {
 
 		final List<MPerspective> findElements = CommonUtil.getEModelService().findElements(window, MPerspective.class,
-				EModelService.ANYWHERE, new Selector() {
-
-					@Override
-					public boolean select(final MApplicationElement element) {
-						return Objects.equals(element.getElementId(), perspectiveId);
-					}
-				});
+				EModelService.ANYWHERE, element -> Objects.equals(element.getElementId(), perspectiveId));
 
 		if (findElements == null || findElements.isEmpty()) {
 			throw new IllegalStateException("No perspective found with id " + perspectiveId); //$NON-NLS-1$
@@ -244,9 +236,7 @@ public final class CommonUtil {
 		IWorkbenchState workbenchState = PerspectivePersister.convertPerspective(perspective);
 
 		// Add left and right trimbars that might contain MinMax controls
-		if (window instanceof MTrimmedWindow) {
-			MTrimmedWindow tw = (MTrimmedWindow) window;
-
+		if (window instanceof MTrimmedWindow tw) {
 			// Get side trim bars, clone them, and add them to the workbench state
 			tw.getTrimBars().stream().filter(CommonUtil::isSideBar)
 					.map(t -> (MTrimBar) CommonUtil.getEModelService().cloneElement(t, null))

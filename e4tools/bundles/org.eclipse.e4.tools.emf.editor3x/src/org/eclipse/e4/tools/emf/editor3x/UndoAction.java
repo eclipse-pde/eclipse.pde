@@ -75,19 +75,22 @@ public class UndoAction extends Action {
 	 */
 	public static String getCommandLabel(Command cmd) {
 
-		if (cmd instanceof SetCommand) {
-			SetCommand sc = (SetCommand) cmd;
+		switch (cmd) {
+		case SetCommand sc -> {
 			return sc.getLabel() + " " + sc.getFeature().getName() + " on " + sc.getOwner().eClass().getName(); //$NON-NLS-1$ //$NON-NLS-2$
-		} else if (cmd instanceof AddCommand) {
-			AddCommand ac = (AddCommand) cmd;
+		}
+		case AddCommand ac -> {
 			return ac.getLabel() + " " + getFirstClassName(ac.getCollection()); //$NON-NLS-1$
-		} else if (cmd instanceof DeleteCommand) {
-			DeleteCommand dc = (DeleteCommand) cmd;
+		}
+		case DeleteCommand dc -> {
 			Collection<?> deleted = dc.getCollection();
 			if (deleted.size() == 1) {
 				return dc.getLabel() + " " + getFirstClassName(deleted); //$NON-NLS-1$
 			}
 			return dc.getLabel() + " " + dc.getCollection().size() + " Objects"; //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		case null, default -> {
+		}
 		}
 		return cmd.getLabel();
 	}
@@ -100,8 +103,8 @@ public class UndoAction extends Action {
 	private static String getFirstClassName(Collection<?> c)
 	{
 		Object o = c.iterator().next();
-		String clname = (o instanceof EObject) ? ((EObject) o).eClass().getName() : ""; //$NON-NLS-1$
-		String dname = (o instanceof MUILabel) ? ((MUILabel) o).getLabel() : ""; //$NON-NLS-1$
+		String clname = (o instanceof EObject e) ? e.eClass().getName() : ""; //$NON-NLS-1$
+		String dname = (o instanceof MUILabel m) ? m.getLabel() : ""; //$NON-NLS-1$
 		return clname + " " + (dname == null ? "" : dname); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
