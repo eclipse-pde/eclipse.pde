@@ -608,6 +608,11 @@
             id="org.eclipse.pde.ui.imagebrowser.saveToWorkspace"
             name="%command.saveImageToWorkspace.name">
       </command>
+      <command
+            defaultHandler="org.eclipse.pde.ui.RemoveUnusedDependenciesHandler"
+            id="org.eclipse.pde.ui.removeUnusedDependencies"
+            name="Remove Unused Dependencies">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
@@ -1777,6 +1782,9 @@
              </with>
              </enabledWhen>
           </handler>
+          <handler
+                commandId="org.eclipse.pde.ui.removeUnusedDependencies">
+          </handler>
        </extension>
        <extension
              point="org.eclipse.ui.menus">
@@ -1986,6 +1994,21 @@
                    </reference>
                 </visibleWhen>
              </command>
+          </menuContribution>
+          <menuContribution
+                allPopups="false"
+                locationURI="toolbar:org.eclipse.ui.main.toolbar">
+             <toolbar
+                   id="org.eclipse.pde.ui.main.toolbar"
+                   label="Remove Unused Dependencies">
+                <command
+                      commandId="org.eclipse.pde.ui.removeUnusedDependencies"
+                      icon="icons/obj16/eclipse.png"
+                      label="Remove Unused Dependencies"
+                      style="push"
+                      tooltip="Removes unused dependencies">
+                </command>
+             </toolbar>
           </menuContribution>
        </extension>
        <extension
