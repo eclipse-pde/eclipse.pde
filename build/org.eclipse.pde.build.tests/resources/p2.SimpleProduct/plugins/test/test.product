@@ -14,7 +14,6 @@
    <windowImages/>
 
    <launcher name="test">
-      <solaris/>
       <win useIco="false">
          <bmp/>
       </win>
@@ -24,16 +23,24 @@
    </vm>
 
    <plugins>
+      <plugin id="org.apache.felix.scr"/>
       <plugin id="org.eclipse.core.contenttype"/>
       <plugin id="org.eclipse.core.jobs"/>
       <plugin id="org.eclipse.core.runtime"/>
-      <plugin id="org.eclipse.core.runtime.compatibility.registry" fragment="true"/>
       <plugin id="org.eclipse.equinox.app"/>
       <plugin id="org.eclipse.equinox.common"/>
       <plugin id="org.eclipse.equinox.preferences"/>
+      <plugin id="org.eclipse.equinox.region"/>
       <plugin id="org.eclipse.equinox.registry"/>
+      <plugin id="org.eclipse.equinox.transforms.hook"/>
+      <plugin id="org.eclipse.equinox.weaving.hook"/>
       <plugin id="org.eclipse.osgi"/>
-      <plugin id="test" fragment=""/>
+      <plugin id="org.eclipse.osgi.compatibility.state"/>
+      <plugin id="org.osgi.service.component"/>
+      <plugin id="org.osgi.service.prefs"/>
+      <plugin id="org.osgi.util.function"/>
+      <plugin id="org.osgi.util.promise"/>
+      <plugin id="test"/>
    </plugins>
 
 
