@@ -17,6 +17,11 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.equinox.p2.publisher.eclipse;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Import-Package: org.eclipse.equinox.frameworkadmin;version="2.0.0",
+ org.apache.felix.scr.info,
+ org.osgi.service.event,
+ org.osgi.service.component,
+ org.osgi.util.promise,
+ org.osgi.util.function,
  org.eclipse.equinox.internal.p2.artifact.repository,
  org.eclipse.equinox.internal.p2.core.helpers,
  org.eclipse.equinox.internal.p2.metadata,
