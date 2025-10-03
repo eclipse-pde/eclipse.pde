@@ -244,9 +244,7 @@ public final class CommonUtil {
 		IWorkbenchState workbenchState = PerspectivePersister.convertPerspective(perspective);
 
 		// Add left and right trimbars that might contain MinMax controls
-		if (window instanceof MTrimmedWindow) {
-			MTrimmedWindow tw = (MTrimmedWindow) window;
-
+		if (window instanceof MTrimmedWindow tw) {
 			// Get side trim bars, clone them, and add them to the workbench state
 			tw.getTrimBars().stream().filter(CommonUtil::isSideBar)
 					.map(t -> (MTrimBar) CommonUtil.getEModelService().cloneElement(t, null))
