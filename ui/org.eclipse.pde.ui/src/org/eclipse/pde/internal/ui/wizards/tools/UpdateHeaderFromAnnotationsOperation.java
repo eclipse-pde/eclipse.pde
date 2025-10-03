@@ -54,7 +54,6 @@ public class UpdateHeaderFromAnnotationsOperation {
 	public static void updateHeadersFromAnnotations(IProject project, IBundle bundle) {
 		IJavaProject javaProject = JavaCore.create(project);
 		if (javaProject == null || !javaProject.exists()) {
-			System.out.println("Not a Java project: " + project.getName());
 			return;
 		}
 
@@ -62,9 +61,7 @@ public class UpdateHeaderFromAnnotationsOperation {
 			IPath outputLocation = javaProject.getOutputLocation();
 			IPath fullPath = project.getWorkspace().getRoot().getFolder(outputLocation).getLocation();
 			File outputDir = fullPath.toFile();
-			System.out.println("Resolved outputDir: " + outputDir.getAbsolutePath());
 			if (!outputDir.exists()) {
-				System.out.println("Output dir does not exist.");
 				return;
 			}
 
@@ -74,7 +71,6 @@ public class UpdateHeaderFromAnnotationsOperation {
 			if (manifestFile.exists()) {
 				try (var is = new java.io.FileInputStream(manifestFile)) {
 					manifest = new Manifest(is);
-					System.out.println("Loaded existing MANIFEST.MF");
 				}
 			}
 
@@ -92,22 +88,18 @@ public class UpdateHeaderFromAnnotationsOperation {
 				// Add project classpath
 				for (IClasspathEntry entry : javaProject.getResolvedClasspath(true)) {
 					File f = entry.getPath().toFile();
-					System.out.println("Classpath entry: " + f.getAbsolutePath());
 					if (f.exists() && f.length() > 0) {
 						try {
 							analyzer.addClasspath(f);
 						} catch (IOException e) {
 							// ignore bad entries
-							System.out.println("Failed to add classpath: " + f);
 						}
 					}
 				}
 
 				Manifest calcManifest = analyzer.calcManifest();
 				String reqCap = calcManifest.getMainAttributes().getValue(Constants.REQUIRE_CAPABILITY);
-				System.out.println("Bnd computed Require-Capability: " + reqCap);
 				mergeRequireCapability(manifest.getMainAttributes(), calcManifest.getMainAttributes());
-				System.out.println("Merged capabilities into bundle headers.");
 			}
 			IFile manifestIFile = project.getFile("META-INF/MANFIEST.MF");
 			try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
@@ -121,7 +113,6 @@ public class UpdateHeaderFromAnnotationsOperation {
 				manifestIFile.refreshLocal(IResource.DEPTH_ZERO, null); // sync
 																		// Eclipse
 																		// workspace
-				System.out.println("Updated MANIFEST.MF with merged headers");
 			}
 
 			// Update only the headers we touched in PDE's IBundle model
