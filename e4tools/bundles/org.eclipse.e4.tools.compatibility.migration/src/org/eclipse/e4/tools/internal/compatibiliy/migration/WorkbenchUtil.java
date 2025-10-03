@@ -23,7 +23,7 @@ import org.eclipse.ui.internal.Workbench;
 
 @SuppressWarnings("restriction")
 public final class WorkbenchUtil {
-	
+
 	private WorkbenchUtil() {}
 
 	/**
@@ -43,7 +43,7 @@ public final class WorkbenchUtil {
 	public static EModelService getEModelService() {
 		return getEclipseContext().get(EModelService.class);
 	}
-	
+
 	/**
 	 * Retrieve the first MWindow from the MApplication from the EclipseContext.
 	 *
