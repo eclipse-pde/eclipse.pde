@@ -65,8 +65,6 @@ public class FindContributionDialog extends TitleAreaDialog {
 	private TableViewer viewer;
 	private final Messages Messages;
 	private String bundleclassUri;
-	@SuppressWarnings("unused")
-	private final IEclipseContext context;
 	private final String packageFilter;
 	private final String bundleFilter;
 	private final Bundle bundle;
@@ -76,7 +74,6 @@ public class FindContributionDialog extends TitleAreaDialog {
 
 	public FindContributionDialog(IEclipseContext context) {
 		super(context.get(Shell.class));
-		this.context = context;
 		this.project = context.get(IProject.class);
 		this.Messages = context.get(Messages.class);
 		packageFilter = (String) context.get("package"); //$NON-NLS-1$

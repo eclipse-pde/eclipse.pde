@@ -187,8 +187,7 @@ public class SharedElementsDialog extends SaveDialogBoundsSettingsDialog {
 			final EObject o = (EObject) element;
 			final MApplicationElement el = (MApplicationElement) o;
 
-			if (el instanceof MUILabel) {
-				final MUILabel label = (MUILabel) el;
+			if (el instanceof final MUILabel label) {
 				return getTypename(o) + " - " + el.getElementId() + " - " + label.getLabel(); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			return getTypename(o) + " - " + el.getElementId() + " - "; //$NON-NLS-1$ //$NON-NLS-2$

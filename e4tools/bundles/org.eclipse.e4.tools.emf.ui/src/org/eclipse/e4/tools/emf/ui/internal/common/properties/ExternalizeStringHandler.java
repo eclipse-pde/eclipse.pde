@@ -263,8 +263,7 @@ public class ExternalizeStringHandler {
 
 				createParent(container.getParent());
 
-				if (container instanceof IFolder) {
-					IFolder f = (IFolder) container;
+				if (container instanceof IFolder f) {
 					f.create(true, true, new NullProgressMonitor());
 				}
 			}

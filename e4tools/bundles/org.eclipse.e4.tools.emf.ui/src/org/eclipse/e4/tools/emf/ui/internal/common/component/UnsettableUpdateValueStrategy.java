@@ -53,8 +53,7 @@ public class UnsettableUpdateValueStrategy extends EMFUpdateValueStrategy {
 	@Override
 	protected IConverter createConverter(Object fromType, Object toType) {
 		if (fromType == String.class) {
-			if (toType instanceof EAttribute) {
-				final EAttribute eAttribute = (EAttribute) toType;
+			if (toType instanceof final EAttribute eAttribute) {
 				final EDataType eDataType = eAttribute.getEAttributeType();
 				final EFactory eFactory = eDataType.getEPackage().getEFactoryInstance();
 				return new Converter(fromType, toType) {
@@ -78,8 +77,7 @@ public class UnsettableUpdateValueStrategy extends EMFUpdateValueStrategy {
 				};
 			}
 		} else if (toType == String.class) {
-			if (fromType instanceof EAttribute) {
-				final EAttribute eAttribute = (EAttribute) fromType;
+			if (fromType instanceof final EAttribute eAttribute) {
 				final EDataType eDataType = eAttribute.getEAttributeType();
 				final EFactory eFactory = eDataType.getEPackage().getEFactoryInstance();
 				return new Converter(fromType, toType) {

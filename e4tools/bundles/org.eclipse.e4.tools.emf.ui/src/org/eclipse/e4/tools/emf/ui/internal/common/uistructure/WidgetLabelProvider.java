@@ -41,8 +41,7 @@ public class WidgetLabelProvider extends StyledCellLabelProvider {
 	@Override
 	public void update(ViewerCell cell) {
 		Object element = cell.getElement();
-		if (element instanceof Menu) {
-			Menu m = (Menu) element;
+		if (element instanceof Menu m) {
 			if ((m.getStyle() & SWT.BAR) == SWT.BAR) {
 				cell.setText("MenuBar"); //$NON-NLS-1$
 				cell.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Widgets_menubar_obj));
@@ -50,8 +49,7 @@ public class WidgetLabelProvider extends StyledCellLabelProvider {
 				cell.setText("Menu"); //$NON-NLS-1$
 				cell.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Widgets_menu_obj));
 			}
-		} else if (element instanceof MenuItem) {
-			MenuItem item = (MenuItem) element;
+		} else if (element instanceof MenuItem item) {
 			if ((item.getStyle() & SWT.SEPARATOR) == SWT.SEPARATOR) {
 				cell.setText("Separator"); //$NON-NLS-1$
 				cell.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Widgets_menuseparator_obj));
@@ -72,9 +70,8 @@ public class WidgetLabelProvider extends StyledCellLabelProvider {
 		} else if (element instanceof ToolBar) {
 			cell.setText("Toolbar"); //$NON-NLS-1$
 			cell.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Widgets_toolbar_obj));
-		} else if (element instanceof ToolItem) {
+		} else if (element instanceof ToolItem item) {
 			cell.setText("ToolItem"); //$NON-NLS-1$
-			ToolItem item = (ToolItem) element;
 			if ((item.getStyle() & SWT.PUSH) == SWT.PUSH) {
 				cell.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Widgets_toolitempush_obj));
 			} else if ((item.getStyle() & SWT.DROP_DOWN) == SWT.DROP_DOWN) {
@@ -86,9 +83,8 @@ public class WidgetLabelProvider extends StyledCellLabelProvider {
 			} else if ((item.getStyle() & SWT.SEPARATOR) == SWT.SEPARATOR) {
 				cell.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Widgets_toolitemseparator_obj));
 			}
-		} else if (element instanceof CoolItem) {
+		} else if (element instanceof CoolItem item) {
 			cell.setText("CoolItem"); //$NON-NLS-1$
-			CoolItem item = (CoolItem) element;
 			if ((item.getStyle() & SWT.PUSH) == SWT.PUSH) {
 				cell.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Widgets_toolitempush_obj));
 			} else if ((item.getStyle() & SWT.DROP_DOWN) == SWT.DROP_DOWN) {
@@ -145,8 +141,7 @@ public class WidgetLabelProvider extends StyledCellLabelProvider {
 		} else if (element instanceof SashForm) {
 			cell.setText("Sash Form"); //$NON-NLS-1$
 			cell.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Widgets_sashform_obj));
-		} else if (element instanceof Label) {
-			Label l = (Label) element;
+		} else if (element instanceof Label l) {
 			if ((l.getStyle() & SWT.SEPARATOR) == SWT.SEPARATOR) {
 				cell.setText("Separator"); //$NON-NLS-1$
 				cell.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Widgets_separator_obj));
@@ -169,8 +164,7 @@ public class WidgetLabelProvider extends StyledCellLabelProvider {
 			cell.setStyleRanges(s.getStyleRanges());
 			cell.setText(s.getString());
 			// cell.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Widgets_clabel_obj));
-		} else if (element instanceof Button) {
-			Button b = (Button) element;
+		} else if (element instanceof Button b) {
 			if ((b.getStyle() & SWT.PUSH) == SWT.PUSH) {
 				cell.setText("Button"); //$NON-NLS-1$
 				cell.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Widgets_button_obj));
