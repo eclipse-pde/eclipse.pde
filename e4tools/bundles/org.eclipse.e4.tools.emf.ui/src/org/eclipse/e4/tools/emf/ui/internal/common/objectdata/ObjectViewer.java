@@ -169,11 +169,8 @@ public class ObjectViewer {
 	class ViewerComparatorImpl extends ViewerComparator {
 		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
-			if (e1 instanceof JavaAttribute) {
-				if (e2 instanceof JavaAttribute) {
-					final JavaAttribute a1 = (JavaAttribute) e1;
-					final JavaAttribute a2 = (JavaAttribute) e2;
-
+			if (e1 instanceof final JavaAttribute a1) {
+				if (e2 instanceof final JavaAttribute a2) {
 					if (a1.isStatic() && !a2.isStatic()) {
 						return -1;
 					} else if (!a1.isStatic() && a2.isStatic()) {

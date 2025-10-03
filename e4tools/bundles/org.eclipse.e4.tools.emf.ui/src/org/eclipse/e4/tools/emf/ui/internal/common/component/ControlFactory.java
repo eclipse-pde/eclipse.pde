@@ -438,8 +438,7 @@ public class ControlFactory {
 					controlDecoration.show();
 					return ValidationStatus.warning(decorationText);
 				}
-				if (value instanceof String) {
-					final String text = (String) value;
+				if (value instanceof final String text) {
 					if (text.trim().length() == 0) {
 						controlDecoration.show();
 						return getValidationStatus(decorationType, decorationText);
@@ -580,16 +579,14 @@ public class ControlFactory {
 				final EObject o = (EObject) element;
 				final String rv = o.eClass().getName();
 
-				if (element instanceof MUILabel) {
-					final MUILabel label = (MUILabel) element;
+				if (element instanceof final MUILabel label) {
 					if (!Util.isNullOrEmpty(label.getLabel())) {
 						return rv + " - " + label.getLabel().trim(); //$NON-NLS-1$
 					}
 
 				}
 
-				if (element instanceof MApplicationElement) {
-					final MApplicationElement appEl = (MApplicationElement) element;
+				if (element instanceof final MApplicationElement appEl) {
 					if (!Util.isNullOrEmpty(appEl.getElementId())) {
 						return rv + " - " + appEl.getElementId(); //$NON-NLS-1$
 					}
@@ -701,38 +698,6 @@ public class ControlFactory {
 				editor.getEditingDomain().getCommandStack().execute(cmd);
 			}
 			tagText.setText(""); //$NON-NLS-1$
-		}
-	}
-
-	// This method is left in for reference purposes
-	@SuppressWarnings("unused")
-	private static void handleReplaceText(AbstractComponentEditor<? extends MApplicationElement> editor,
-			EStructuralFeature feature, Text tagText, TableViewer viewer) {
-		if (tagText.getText().trim().length() > 0) {
-			if (!viewer.getSelection().isEmpty()) {
-				final String[] tags = tagText.getText().split(";"); //$NON-NLS-1$
-				for (int i = 0; i < tags.length; i++) {
-					tags[i] = tags[i].trim();
-				}
-
-				final MApplicationElement appEl = editor.getMaster().getValue();
-				final EObject el = (EObject) editor.getMaster().getValue();
-				final List<?> ids = ((IStructuredSelection) viewer.getSelection()).toList();
-				final Object curVal = ((IStructuredSelection) viewer.getSelection()).getFirstElement();
-				final EObject container = (EObject) editor.getMaster().getValue();
-				final List<?> l = (List<?>) container.eGet(feature);
-				final int idx = l.indexOf(curVal);
-				if (idx >= 0) {
-					final Command cmdRemove = RemoveCommand.create(editor.getEditingDomain(), el, feature, ids);
-					final Command cmdInsert = AddCommand.create(editor.getEditingDomain(), appEl, feature,
-							Arrays.asList(tags), idx);
-					if (cmdRemove.canExecute() && cmdInsert.canExecute()) {
-						editor.getEditingDomain().getCommandStack().execute(cmdRemove);
-						editor.getEditingDomain().getCommandStack().execute(cmdInsert);
-					}
-					tagText.setText(""); //$NON-NLS-1$
-				}
-			}
 		}
 	}
 

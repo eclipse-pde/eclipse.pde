@@ -104,10 +104,6 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 		String pakage;
 	}
 
-	@SuppressWarnings("unused")
-	private TargetPlatformContributionCollector() {
-	}
-
 	protected TargetPlatformContributionCollector(String cacheName) {
 
 		this.cacheName = cacheName;

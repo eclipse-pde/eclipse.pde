@@ -213,8 +213,7 @@ public class ModelFragmentsEditor extends AbstractComponentEditor<MModelFragment
 
 	public void addClasses(EPackage ePackage, List<FeatureClass> list) {
 		for (final EClassifier c : ePackage.getEClassifiers()) {
-			if (c instanceof EClass) {
-				final EClass eclass = (EClass) c;
+			if (c instanceof final EClass eclass) {
 				if (eclass != ApplicationPackageImpl.Literals.APPLICATION && !eclass.isAbstract()
 						&& !eclass.isInterface()
 						&& eclass.getEAllSuperTypes().contains(ApplicationPackageImpl.Literals.APPLICATION_ELEMENT)) {

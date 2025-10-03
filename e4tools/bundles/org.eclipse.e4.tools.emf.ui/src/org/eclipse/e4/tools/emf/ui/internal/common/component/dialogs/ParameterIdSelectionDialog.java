@@ -212,8 +212,9 @@ public class ParameterIdSelectionDialog extends AbstractIdDialog<MParameter, MCo
 
 		if (command != null && command instanceof MCommand) {
 			List<MCommandParameter> parameters = ((MCommand) command).getParameters();
-			if (parameters != null)
+			if (parameters != null) {
 				return parameters;
+			}
 			return Collections.emptyList();
 		}
 		throw new IllegalArgumentException("The parameter contains no MCommand"); //$NON-NLS-1$

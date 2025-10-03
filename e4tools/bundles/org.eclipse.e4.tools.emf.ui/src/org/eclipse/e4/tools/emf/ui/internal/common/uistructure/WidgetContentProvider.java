@@ -38,39 +38,33 @@ public class WidgetContentProvider implements ITreeContentProvider {
 
 	@Override
 	public Object[] getChildren(Object parentElement) {
-		if (parentElement instanceof Menu) {
-			Menu m = (Menu) parentElement;
+		if (parentElement instanceof Menu m) {
 			MenuItem[] items = m.getItems();
 			Object[] rv = new Object[items.length];
 			System.arraycopy(items, 0, rv, 0, rv.length);
 			return rv;
-		} else if (parentElement instanceof MenuItem) {
-			MenuItem item = (MenuItem) parentElement;
+		} else if (parentElement instanceof MenuItem item) {
 			if (item.getMenu() != null) {
 				MenuItem[] items = item.getMenu().getItems();
 				Object[] rv = new Object[items.length];
 				System.arraycopy(items, 0, rv, 0, rv.length);
 				return rv;
 			}
-		} else if (parentElement instanceof ToolBar) {
-			ToolBar toolbar = (ToolBar) parentElement;
+		} else if (parentElement instanceof ToolBar toolbar) {
 			ToolItem[] items = toolbar.getItems();
 			Object[] rv = new Object[items.length];
 			System.arraycopy(items, 0, rv, 0, rv.length);
 			return rv;
-		} else if (parentElement instanceof CoolBar) {
-			CoolBar coolbar = (CoolBar) parentElement;
+		} else if (parentElement instanceof CoolBar coolbar) {
 			CoolItem[] items = coolbar.getItems();
 			Object[] rv = new Object[items.length];
 			System.arraycopy(items, 0, rv, 0, rv.length);
 			return rv;
-		} else if (parentElement instanceof TabItem) {
-			TabItem item = (TabItem) parentElement;
+		} else if (parentElement instanceof TabItem item) {
 			if (item.getControl() != null) {
 				return new Object[] { item.getControl() };
 			}
-		} else if (parentElement instanceof CTabItem) {
-			CTabItem item = (CTabItem) parentElement;
+		} else if (parentElement instanceof CTabItem item) {
 			if (item.getControl() != null) {
 				return new Object[] { item.getControl() };
 			}
@@ -83,20 +77,17 @@ public class WidgetContentProvider implements ITreeContentProvider {
 		} else if (parentElement instanceof Combo) {
 			// No children
 
-		} else if (parentElement instanceof CTabFolder) {
-			CTabFolder tabFolder = (CTabFolder) parentElement;
+		} else if (parentElement instanceof CTabFolder tabFolder) {
 			CTabItem[] items = tabFolder.getItems();
 			Object[] rv = new Object[items.length];
 			System.arraycopy(items, 0, rv, 0, rv.length);
 			return rv;
-		} else if (parentElement instanceof TabFolder) {
-			TabFolder tabFolder = (TabFolder) parentElement;
+		} else if (parentElement instanceof TabFolder tabFolder) {
 			TabItem[] items = tabFolder.getItems();
 			Object[] rv = new Object[items.length];
 			System.arraycopy(items, 0, rv, 0, rv.length);
 			return rv;
-		} else if (parentElement instanceof Composite) {
-			Composite comp = (Composite) parentElement;
+		} else if (parentElement instanceof Composite comp) {
 			Control controls[] = comp.getChildren();
 			Object[] rv = new Object[controls.length];
 			System.arraycopy(controls, 0, rv, 0, rv.length);
