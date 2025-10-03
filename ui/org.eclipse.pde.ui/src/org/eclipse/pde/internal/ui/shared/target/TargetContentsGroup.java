@@ -1202,8 +1202,9 @@ public class TargetContentsGroup {
 		}
 
 		private void addMissing(TargetBundle[] bundles) {
-			if (bundles == null)
+			if (bundles == null) {
 				return;
+			}
 
 			for (TargetBundle bundle : bundles) {
 				if (!bundle.getStatus().isOK()) {
