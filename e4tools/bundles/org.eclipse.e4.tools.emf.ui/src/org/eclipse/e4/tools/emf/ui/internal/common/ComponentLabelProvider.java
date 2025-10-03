@@ -87,9 +87,8 @@ public class ComponentLabelProvider extends BaseLabelProvider implements IStyled
 
 	@Override
 	public StyledString getStyledText(Object element) {
-		if (element instanceof EObject) {
+		if (element instanceof final EObject o) {
 
-			final EObject o = (EObject) element;
 			final AbstractComponentEditor<?> elementEditor = editor.getEditor(o.eClass());
 			if (elementEditor != null) {
 				String label = elementEditor.getLabel(o);
@@ -124,8 +123,7 @@ public class ComponentLabelProvider extends BaseLabelProvider implements IStyled
 
 	@Override
 	public Image getImage(Object element) {
-		if (element instanceof EObject) {
-			final EObject o = (EObject) element;
+		if (element instanceof final EObject o) {
 			final AbstractComponentEditor<?> elementEditor = editor.getEditor(o.eClass());
 			if (elementEditor != null) {
 				return elementEditor.getImage(element);

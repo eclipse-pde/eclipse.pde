@@ -211,8 +211,7 @@ public class PlaceholderEditor extends AbstractComponentEditor<MPlaceholder> {
 				public String convert(MUIElement fromObject) {
 					if (fromObject != null) {
 						final EObject o = (EObject) fromObject;
-						if (o instanceof MUILabel) {
-							final MUILabel label = (MUILabel) o;
+						if (o instanceof final MUILabel label) {
 							final String l = getLocalizedLabel(label);
 							if (!Util.isNullOrEmpty(l)) {
 								return o.eClass().getName() + " - " + l; //$NON-NLS-1$

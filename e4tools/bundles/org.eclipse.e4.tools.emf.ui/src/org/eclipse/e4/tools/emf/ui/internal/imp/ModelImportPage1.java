@@ -49,8 +49,7 @@ public class ModelImportPage1 extends WizardPage {
 
 		@Override
 		public String getColumnText(Object element, int columnIndex) {
-			if (element instanceof IConfigurationElement) {
-				IConfigurationElement config = (IConfigurationElement) element;
+			if (element instanceof IConfigurationElement config) {
 				return config.getAttribute(wizard.getMappingName());
 			}
 			return element.toString();
@@ -65,11 +64,9 @@ public class ModelImportPage1 extends WizardPage {
 		@Override
 		public Object[] getElements(Object inputElement) {
 
-			if (!(inputElement instanceof RegistryStruct)) {
+			if (!(inputElement instanceof RegistryStruct input)) {
 				return new String[] { Messages.ModelImportPage1_WrongInput };
 			}
-
-			RegistryStruct input = (RegistryStruct) inputElement;
 
 			return RegistryUtil.getExtensions(registry, input, wizard.isLiveModel());
 		}

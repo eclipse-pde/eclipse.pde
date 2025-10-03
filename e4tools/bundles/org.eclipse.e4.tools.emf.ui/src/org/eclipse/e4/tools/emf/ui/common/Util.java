@@ -74,8 +74,7 @@ public class Util {
 
 	public static final void addClasses(EPackage ePackage, List<FeatureClass> list) {
 		for (final EClassifier c : ePackage.getEClassifiers()) {
-			if (c instanceof EClass) {
-				final EClass eclass = (EClass) c;
+			if (c instanceof final EClass eclass) {
 				if (eclass != ApplicationPackageImpl.Literals.APPLICATION && !eclass.isAbstract()
 						&& !eclass.isInterface()
 						&& eclass.getEAllSuperTypes().contains(ApplicationPackageImpl.Literals.APPLICATION_ELEMENT)) {
@@ -144,8 +143,7 @@ public class Util {
 				final InternalPackage iePackage = new InternalPackage(ePackage);
 				boolean found = false;
 				for (final EClassifier cl : ePackage.getEClassifiers()) {
-					if (cl instanceof EClass) {
-						final EClass eClass = (EClass) cl;
+					if (cl instanceof final EClass eClass) {
 						if (eClass.getEAllSuperTypes().contains(ApplicationPackageImpl.Literals.APPLICATION_ELEMENT)) {
 							if (!eClass.isInterface() && !eClass.isAbstract()) {
 								found = true;

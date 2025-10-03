@@ -14,6 +14,6 @@ jobs:
       author: Eclipse PDE Bot <pde-bot@eclipse.org>
       do-quickfix: false
       do-cleanups: true
-      bundle-folders: ui/*/ ua/*/ ds/*/ build/*/ apitools/*/ e4tools/*/
+      bundle-folders: ui/*/ ua/*/ ds/*/ build/*/ apitools/*/ e4tools/bundles/*/
     secrets:
       token: ${{ secrets.PDE_BOT_PAT }}

@@ -85,8 +85,7 @@ public class NonReferencedActionPage extends WizardPage {
 		if (bundle == null && installLocation != null) {
 			this.bundle = FilteredContributionDialog.getBundle(installLocation);
 		}
-		if (file instanceof ContributionDataFile) {
-			final ContributionDataFile cdf = (ContributionDataFile) file;
+		if (file instanceof final ContributionDataFile cdf) {
 			className = cdf.getContributionData().className;
 		}
 
@@ -284,8 +283,7 @@ public class NonReferencedActionPage extends WizardPage {
 			});
 
 		} else {
-			if (file instanceof ContributionDataFile) {
-				final ContributionDataFile cdf = (ContributionDataFile) file;
+			if (file instanceof final ContributionDataFile cdf) {
 				final Button btnConvertToBundle = new Button(group, SWT.RADIO);
 				defaultButton = btnConvertToBundle;
 				btnConvertToBundle.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));

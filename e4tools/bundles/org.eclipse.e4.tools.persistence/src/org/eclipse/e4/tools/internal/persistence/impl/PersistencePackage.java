@@ -92,8 +92,8 @@ public class PersistencePackage extends EPackageImpl implements IPersistencePack
 
 		// Obtain or create and register package
 		Object registeredPersistencePackage = EPackage.Registry.INSTANCE.get(eNS_URI);
-		PersistencePackage thePersistencePackage = registeredPersistencePackage instanceof PersistencePackage
-				? (PersistencePackage) registeredPersistencePackage
+		PersistencePackage thePersistencePackage = registeredPersistencePackage instanceof PersistencePackage p
+				? p
 				: new PersistencePackage();
 
 		isInited = true;

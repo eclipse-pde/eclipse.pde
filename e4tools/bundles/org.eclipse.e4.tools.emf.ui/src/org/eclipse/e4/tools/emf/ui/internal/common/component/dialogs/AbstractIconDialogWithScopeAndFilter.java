@@ -285,8 +285,7 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 		IFile file = getSelectedIfile();
 		if (file != null) {
 			String installLocation = null;
-			if (file instanceof ContributionDataFile) {
-				final ContributionDataFile cdf = (ContributionDataFile) file;
+			if (file instanceof final ContributionDataFile cdf) {
 				installLocation = cdf.getContributionData().installLocation;
 
 			}

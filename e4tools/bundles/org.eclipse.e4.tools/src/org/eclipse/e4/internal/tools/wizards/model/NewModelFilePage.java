@@ -116,8 +116,7 @@ public class NewModelFilePage extends WizardPage {
 
 	private void initialize() {
 		if (selection != null && selection.isEmpty() == false
-				&& selection instanceof IStructuredSelection) {
-			final IStructuredSelection ssel = (IStructuredSelection) selection;
+				&& selection instanceof final IStructuredSelection ssel) {
 			if (ssel.size() > 1) {
 				return;
 			}
@@ -131,8 +130,7 @@ public class NewModelFilePage extends WizardPage {
 					container = ((IResource) obj).getParent();
 				}
 				containerText.setText(container.getFullPath().toString());
-			} else if (obj instanceof IJavaProject) {
-				final IJavaProject container = (IJavaProject) obj;
+			} else if (obj instanceof final IJavaProject container) {
 				try {
 					containerText.setText(container.getCorrespondingResource().getFullPath().toString());
 				} catch (final JavaModelException e) {

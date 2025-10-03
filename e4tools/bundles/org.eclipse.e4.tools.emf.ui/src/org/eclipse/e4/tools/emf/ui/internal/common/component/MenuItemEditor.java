@@ -298,8 +298,7 @@ public abstract class MenuItemEditor<M extends MMenuItem> extends AbstractCompon
 			combo.setLabelProvider(new LabelProvider() {
 				@Override
 				public String getText(Object element) {
-					if (element instanceof EClass) {
-						final EClass eClass = (EClass) element;
+					if (element instanceof final EClass eClass) {
 						return eClass.getName();
 					}
 

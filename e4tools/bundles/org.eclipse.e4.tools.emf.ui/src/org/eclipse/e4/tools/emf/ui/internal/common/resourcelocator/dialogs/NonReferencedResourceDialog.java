@@ -78,8 +78,7 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 		if (bundle == null && installLocation != null) {
 			this.bundle = FilteredContributionDialog.getBundle(installLocation);
 		}
-		if (file instanceof ContributionDataFile) {
-			final ContributionDataFile cdf = (ContributionDataFile) file;
+		if (file instanceof final ContributionDataFile cdf) {
 			className = cdf.getContributionData().className;
 		}
 	}
@@ -282,8 +281,7 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 			});
 
 		} else {
-			if (file instanceof ContributionDataFile) {
-				final ContributionDataFile cdf = (ContributionDataFile) file;
+			if (file instanceof final ContributionDataFile cdf) {
 				final Button btnConvertToBundle = new Button(group, SWT.RADIO);
 				btnConvertToBundle.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 				btnConvertToBundle.setText(Messages.NonReferencedResourceDialog_convertAndRequire);

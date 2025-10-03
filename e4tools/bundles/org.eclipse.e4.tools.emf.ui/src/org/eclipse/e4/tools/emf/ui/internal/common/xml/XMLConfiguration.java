@@ -42,8 +42,9 @@ public class XMLConfiguration extends SourceViewerConfiguration {
 
 	@Override
 	public ITextDoubleClickStrategy getDoubleClickStrategy(ISourceViewer sourceViewer, String contentType) {
-		if (doubleClickStrategy == null)
+		if (doubleClickStrategy == null) {
 			doubleClickStrategy = new XMLDoubleClickStrategy();
+		}
 		return doubleClickStrategy;
 	}
 

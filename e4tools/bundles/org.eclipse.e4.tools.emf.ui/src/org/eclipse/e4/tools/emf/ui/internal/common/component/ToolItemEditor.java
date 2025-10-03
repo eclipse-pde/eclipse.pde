@@ -318,8 +318,7 @@ public abstract class ToolItemEditor<M extends MToolItem> extends AbstractCompon
 			combo.setLabelProvider(new LabelProvider() {
 				@Override
 				public String getText(Object element) {
-					if (element instanceof EClass) {
-						final EClass eClass = (EClass) element;
+					if (element instanceof final EClass eClass) {
 						return eClass.getName();
 					}
 

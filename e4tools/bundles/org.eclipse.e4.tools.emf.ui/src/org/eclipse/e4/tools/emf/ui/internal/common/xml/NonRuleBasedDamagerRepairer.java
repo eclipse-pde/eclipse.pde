@@ -67,8 +67,9 @@ public class NonRuleBasedDamagerRepairer implements IPresentationDamager, IPrese
 	protected int endOfLineOf(int offset) throws BadLocationException {
 
 		IRegion info = fDocument.getLineInformationOfOffset(offset);
-		if (offset <= info.getOffset() + info.getLength())
+		if (offset <= info.getOffset() + info.getLength()) {
 			return info.getOffset() + info.getLength();
+		}
 
 		int line = fDocument.getLineOfOffset(offset);
 		try {
@@ -96,8 +97,9 @@ public class NonRuleBasedDamagerRepairer implements IPresentationDamager, IPrese
 				if (info.getOffset() <= end && end <= info.getOffset() + info.getLength()) {
 					// optimize the case of the same line
 					end = info.getOffset() + info.getLength();
-				} else
+				} else {
 					end = endOfLineOf(end);
+				}
 
 				end = Math.min(partition.getOffset() + partition.getLength(), end);
 				return new Region(start, end - start);
@@ -131,7 +133,8 @@ public class NonRuleBasedDamagerRepairer implements IPresentationDamager, IPrese
 	 *            the attribute describing the style of the range to be styled
 	 */
 	protected void addRange(TextPresentation presentation, int offset, int length, TextAttribute attr) {
-		if (attr != null)
+		if (attr != null) {
 			presentation.addStyleRange(new StyleRange(offset, length, attr.getForeground(), attr.getBackground(), attr.getStyle()));
+		}
 	}
 }

@@ -377,8 +377,7 @@ public abstract class AbstractNewClassPage extends WizardPage {
 			@Override
 			public boolean isSelectedValid(Object element) {
 				try {
-					if (element instanceof IJavaProject) {
-						final IJavaProject jproject = (IJavaProject) element;
+					if (element instanceof final IJavaProject jproject) {
 						final IPath path = jproject.getProject().getFullPath();
 						return jproject.findPackageFragmentRoot(path) != null;
 					} else if (element instanceof IPackageFragmentRoot) {
@@ -422,8 +421,7 @@ public abstract class AbstractNewClassPage extends WizardPage {
 
 		if (dialog.open() == Window.OK) {
 			final Object element = dialog.getFirstResult();
-			if (element instanceof IJavaProject) {
-				final IJavaProject jproject = (IJavaProject) element;
+			if (element instanceof final IJavaProject jproject) {
 				return jproject.getPackageFragmentRoot(jproject.getProject());
 			} else if (element instanceof IPackageFragmentRoot) {
 				return (IPackageFragmentRoot) element;

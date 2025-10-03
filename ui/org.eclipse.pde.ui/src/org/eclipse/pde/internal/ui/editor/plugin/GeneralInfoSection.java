@@ -396,7 +396,7 @@ public abstract class GeneralInfoSection extends PDESection {
 			((IModelChangeProvider) model).removeModelChangedListener(this);
 		}
 	}
-	
+
 	protected void addListeners() {
 		IBaseModel model = getPage().getModel();
 		if (model instanceof IModelChangeProvider mod) {

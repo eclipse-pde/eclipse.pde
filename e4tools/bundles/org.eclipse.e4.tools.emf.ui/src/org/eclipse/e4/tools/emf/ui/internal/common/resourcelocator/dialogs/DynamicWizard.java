@@ -76,8 +76,7 @@ public class DynamicWizard extends Wizard {
 		if (E.notEmpty(message) && pages.size() > 0) {
 			// TODO file bug: IWizardPage is missing the setMessage method!
 			final IWizardPage page = pages.get(0);
-			if (page instanceof WizardPage) {
-				final WizardPage wizPage = (WizardPage) page;
+			if (page instanceof final WizardPage wizPage) {
 				wizPage.setMessage(message);
 			}
 		}

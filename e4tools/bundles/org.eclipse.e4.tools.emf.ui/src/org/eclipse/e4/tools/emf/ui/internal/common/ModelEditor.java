@@ -1212,8 +1212,7 @@ public class ModelEditor implements IGotoObject {
 
 			try {
 				final Object o = el.createExecutableExtension("contribution"); //$NON-NLS-1$
-				if (o instanceof AbstractElementEditorContribution) {
-					final AbstractElementEditorContribution contribution = (AbstractElementEditorContribution) o;
+				if (o instanceof final AbstractElementEditorContribution contribution) {
 					ContextInjectionFactory.inject(contribution, context);
 					final Class<?> contribElem = contribution.getContributableTo();
 					if (contribElem == null) {
@@ -1620,8 +1619,7 @@ public class ModelEditor implements IGotoObject {
 
 			List<EClass> targetChildrenClasses = new ArrayList<>();
 
-			if (container instanceof MStringModelFragment) {
-				MStringModelFragment stringModelFragment = (MStringModelFragment) container;
+			if (container instanceof MStringModelFragment stringModelFragment) {
 				EClass targetType = StringModelFragment.findContainerType(stringModelFragment);
 				if (targetType != null) {
 					EStructuralFeature targetFeature = targetType
@@ -1831,10 +1829,9 @@ public class ModelEditor implements IGotoObject {
 
 		@Override
 		public boolean performDrop(Object data) {
-			if (!(data instanceof Object[])) {
+			if (!(data instanceof final Object[] dropDataArray)) {
 				return false;
 			}
-			final Object[] dropDataArray = (Object[]) data;
 			for (final Object object : dropDataArray) {
 				final boolean result = performSingleDrop(object);
 				if (!result) {
@@ -2052,8 +2049,7 @@ public class ModelEditor implements IGotoObject {
 				}
 
 			}
-		} else if (target instanceof EObject) {
-			final EObject eObj = (EObject) target;
+		} else if (target instanceof final EObject eObj) {
 			for (final EStructuralFeature f : eObj.eClass().getEAllStructuralFeatures()) {
 				final EClassifier cl = ModelUtils.getTypeArgument(eObj.eClass(), f.getEGenericType());
 				if (cl.isInstance(instance)) {
@@ -2072,9 +2068,9 @@ public class ModelEditor implements IGotoObject {
 	 * @return a representative string for the object or 'Object' if nothing found
 	 */
 	private String getObjectNameForCommand(Object data) {
-		String clname = (data instanceof ApplicationElementImpl) ? ((ApplicationElementImpl) data).eClass().getName()
+		String clname = (data instanceof ApplicationElementImpl a) ? a.eClass().getName()
 				: "Object"; //$NON-NLS-1$
-		String dname = (data instanceof MUILabel) ? ((MUILabel) data).getLabel() : ""; //$NON-NLS-1$
+		String dname = (data instanceof MUILabel m) ? m.getLabel() : ""; //$NON-NLS-1$
 		return clname + " " + dname; //$NON-NLS-1$
 	}
 
