@@ -124,8 +124,7 @@ public class ContextServiceFactory extends AbstractServiceFactory {
 			windowContext.declareModifiable(IServiceConstants.ACTIVE_SELECTION);
 			window.getSelectionService().addSelectionListener((part, selection) -> {
 				if (!selection.isEmpty()) {
-					if (selection instanceof IStructuredSelection) {
-						final IStructuredSelection s = (IStructuredSelection) selection;
+					if (selection instanceof final IStructuredSelection s) {
 						if (s.size() == 1) {
 							windowContext.set(IServiceConstants.ACTIVE_SELECTION, s.getFirstElement());
 						} else {
