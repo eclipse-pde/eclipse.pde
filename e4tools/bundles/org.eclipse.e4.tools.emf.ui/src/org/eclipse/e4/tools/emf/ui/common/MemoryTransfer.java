@@ -57,8 +57,9 @@ public class MemoryTransfer extends ByteArrayTransfer {
 	@Override
 	public Object nativeToJava(TransferData transferData) {
 		byte[] bytes = (byte[]) super.nativeToJava(transferData);
-		if (bytes == null)
+		if (bytes == null) {
 			return null;
+		}
 
 		if (new String(bytes).equals(uid)) {
 			return object;

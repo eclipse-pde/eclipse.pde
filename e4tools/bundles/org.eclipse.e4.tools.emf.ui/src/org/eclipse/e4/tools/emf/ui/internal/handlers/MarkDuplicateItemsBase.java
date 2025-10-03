@@ -57,8 +57,7 @@ public class MarkDuplicateItemsBase extends AbstractHandler {
 		ConcurrentHashMap<String, List<EObject>> map = new ConcurrentHashMap<>();
 		for (Iterator<?> it = selected.iterator(); it.hasNext();) {
 			Object object = it.next();
-			if (object instanceof EObject) {
-				EObject item = (EObject) object;
+			if (object instanceof EObject item) {
 				EAttribute att = EmfUtil.getAttribute(item, attName);
 				if (att != null) {
 					String attValue;

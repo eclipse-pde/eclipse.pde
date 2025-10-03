@@ -26,7 +26,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 
 /**
- * The PerspectiveMigrator utility allows to convert 
+ * The PerspectiveMigrator utility allows to convert
  * and apply 3.x and e4 perspectives.
  *
  * @since 1.0
@@ -35,7 +35,7 @@ import org.eclipse.ui.internal.IWorkbenchConstants;
 public final class PerspectiveMigrator{
 
 	private PerspectiveMigrator() {}
-	
+
 	/**
 	 * Apply a 3.x workbench state to the running 4.x application.
 	 *

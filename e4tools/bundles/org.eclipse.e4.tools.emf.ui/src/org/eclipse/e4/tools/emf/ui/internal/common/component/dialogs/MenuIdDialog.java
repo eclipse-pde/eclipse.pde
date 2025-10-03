@@ -68,8 +68,9 @@ public class MenuIdDialog extends AbstractIdDialog<MMenuContribution, MMenu> {
 			// include Window main-menu instances
 			MApplication ma = ((MApplication) resource.getRoot().get(0));
 			for (MWindow m : ma.getChildren()) {
-				if (m.getMainMenu() != null)
+				if (m.getMainMenu() != null) {
 					result.add(m.getMainMenu());
+				}
 			}
 			// include menu elements located within parts
 			List<MPart> mp = modelService.findElements(ma, null, MPart.class, null);
@@ -79,8 +80,9 @@ public class MenuIdDialog extends AbstractIdDialog<MMenuContribution, MMenu> {
 			// include menu elements carried by tool items
 			List<MToolItem> mt = modelService.findElements(ma, null, MToolItem.class, null);
 			for (MToolItem mToolItem : mt) {
-				if (mToolItem.getMenu() != null)
+				if (mToolItem.getMenu() != null) {
 					result.add(mToolItem.getMenu());
+				}
 			}
 
 			for (MMenu mMenuEntry : result.toArray(new MMenu[] {})) {
@@ -108,8 +110,7 @@ public class MenuIdDialog extends AbstractIdDialog<MMenuContribution, MMenu> {
 	private void performRecursiveCheck(MMenu mMenu, List<MMenu> list) {
 		List<MMenuElement> children = mMenu.getChildren();
 		for (MMenuElement child : children) {
-			if (child instanceof MMenu) {
-				MMenu mMenuChild = (MMenu) child;
+			if (child instanceof MMenu mMenuChild) {
 				list.add(mMenuChild);
 				performRecursiveCheck(mMenuChild, list);
 			}

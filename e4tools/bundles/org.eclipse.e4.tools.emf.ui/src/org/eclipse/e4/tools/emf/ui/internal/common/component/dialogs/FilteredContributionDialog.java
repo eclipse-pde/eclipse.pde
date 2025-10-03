@@ -873,13 +873,11 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 		final IStructuredSelection s = (IStructuredSelection) getViewer().getSelection();
 		if (!s.isEmpty()) {
 			final Object selected = s.getFirstElement();
-			if (selected instanceof ContributionData) {
-				final ContributionData contributionData = (ContributionData) selected;
+			if (selected instanceof final ContributionData contributionData) {
 				return new ContributionDataFile(contributionData);
 			} else if (selected instanceof IFile) {
 				return (IFile) selected;
-			} else if (selected instanceof Entry) {
-				final Entry entry = (Entry) selected;
+			} else if (selected instanceof final Entry entry) {
 				final ContributionData cd = new ContributionData(null, null, Messages.FilteredContributionDialog_Java,
 						entry.file.getFullPath().toOSString());
 				cd.installLocation = entry.installLocation;
@@ -942,8 +940,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 				}
 				// search the current project's manifest for import-package
 				if (!found) {
-					if (file instanceof ContributionDataFile) {
-						final ContributionDataFile cdFile = (ContributionDataFile) file;
+					if (file instanceof final ContributionDataFile cdFile) {
 						final String className = cdFile.getContributionData().className;
 						if (className != null) {
 							final String pakage = NonReferencedResourceDialog.getPackageFromClassName(className);
@@ -1015,8 +1012,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 
 	static public String getBundle(IFile file) {
 
-		if (file instanceof ContributionDataFile) {
-			final ContributionDataFile cdFile = (ContributionDataFile) file;
+		if (file instanceof final ContributionDataFile cdFile) {
 			final String ret = cdFile.getBundle();
 			if (ret != null) {
 				return ret;

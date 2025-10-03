@@ -128,9 +128,9 @@ import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.e4.compatibility.ModeledPageLayoutUtils;
 
 /**
- * This utility class allows to migrate existing 3.x perspectives to 
+ * This utility class allows to migrate existing 3.x perspectives to
  * an e4 application models.
- *  
+ *
  *
  * @since 1.0
  */
@@ -526,8 +526,7 @@ public final class E4MigrationTool {
 
 					for (Iterator<EObject> i = ((EObject) perspectivePartSashContainer).eAllContents(); i.hasNext();) {
 						EObject eObject = i.next();
-						if (eObject instanceof MPartStack) {
-							MPartStack partStack = (MPartStack) eObject;
+						if (eObject instanceof MPartStack partStack) {
 							boolean toBeRendered = false;
 							boolean minimized = false;
 							// If non of the stack's children are rendered, do not render the stack either
@@ -564,8 +563,7 @@ public final class E4MigrationTool {
 
 					for (Iterator<EObject> i = ((EObject) perspectivePartSashContainer).eAllContents(); i.hasNext();) {
 						EObject eObject = i.next();
-						if (eObject instanceof MPartSashContainer) {
-							MPartSashContainer otherPartSashContainer = (MPartSashContainer) eObject;
+						if (eObject instanceof MPartSashContainer otherPartSashContainer) {
 							boolean toBeRendered = false;
 							boolean visible = false;
 							for (MPartSashContainerElement sashContainerElement : otherPartSashContainer

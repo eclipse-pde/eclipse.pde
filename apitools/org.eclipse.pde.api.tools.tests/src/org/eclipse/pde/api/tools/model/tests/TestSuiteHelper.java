@@ -433,6 +433,27 @@ public class TestSuiteHelper {
 				}
 			}
 		}
+		// The org.eclipse.core.contenttype bundle has new requirement for 4.38.
+		// Require-Capability: osgi.extender;
+		// filter:="(&(osgi.extender=osgi.component)(version>=1.2)(!(version>=2.0)))"
+		// We need to manually add non-bundle requirements as a result.
+		if (component.getSymbolicName().equals("org.eclipse.core.contenttype")) { //$NON-NLS-1$
+			@SuppressWarnings("nls")
+			String[] others = new String[] { "org.apache.felix.scr", "org.osgi.service.component",
+					"org.osgi.util.promise", "org.osgi.util.function" };
+			for (String implicit : others) {
+				if (!done.contains(implicit)) {
+					File bundle = getBundle(implicit);
+					if (bundle != null) {
+						IApiComponent apiComponent = ApiModelFactory.newApiComponent(baseline,
+								bundle.getAbsolutePath());
+						collection.add(apiComponent);
+						done.add(apiComponent.getSymbolicName());
+						addAllRequired(baseline, done, apiComponent, collection);
+					}
+				}
+			}
+		}
 		if (error) {
 			throw new CoreException(Status.error("Check the property : -DrequiredBundles=...\nMissing required bundle(s): " + String.valueOf(buffer))); //$NON-NLS-1$
 		}

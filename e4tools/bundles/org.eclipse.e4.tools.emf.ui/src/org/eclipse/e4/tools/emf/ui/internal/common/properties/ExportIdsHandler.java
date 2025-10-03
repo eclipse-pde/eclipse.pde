@@ -221,8 +221,7 @@ public class ExportIdsHandler {
 
 			while (it.hasNext()) {
 				Object next = it.next();
-				if (next instanceof MApplicationElement) {
-					MApplicationElement o = (MApplicationElement) next;
+				if (next instanceof MApplicationElement o) {
 					if (o.getElementId() != null && o.getElementId().length() > 1) {
 						String idFieldKey = findIdFieldKey(o);
 						entries.add(new Entry(o, idFieldKey, o.getElementId()));
@@ -301,8 +300,7 @@ public class ExportIdsHandler {
 
 				createParent(container.getParent());
 
-				if (container instanceof IFolder) {
-					IFolder f = (IFolder) container;
+				if (container instanceof IFolder f) {
 					f.create(true, true, new NullProgressMonitor());
 				}
 			}
