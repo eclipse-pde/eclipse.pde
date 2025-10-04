@@ -1525,6 +1525,7 @@ public class PDEUIMessages extends NLS {
 	public static String TemplateSelectionPage_column_point;
 
 	public static String PluginSelectionDialog_title;
+	public static String LaunchPluginDialog_title;
 	public static String PluginSelectionDialog_message;
 
 	public static String PluginImportOperation_could_not_delete_project;
@@ -2477,6 +2478,8 @@ public class PDEUIMessages extends NLS {
 	public static String PluginConfigurationSection_tablePluginTitle;
 
 	public static String AbstractPluginBlock_counter;
+
+	public static String PluginsTabToolBar_show_launch_bundles;
 
 	public static String AbstractRepository_ErrorLoadingImageFromJar;
 
