@@ -158,6 +158,9 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 		case PDEMarkerFactory.M_NO_SPACE_AFTER_COLON:
 			return new IMarkerResolution[] {
 					new AddSpaceBeforeValue(AbstractPDEMarkerResolution.CREATE_TYPE, marker) };
+		case PDEMarkerFactory.M_MISSINGVERSION_IMPORT_PACKAGE:
+			return new IMarkerResolution[] {
+					new VersionMatchImportPackageResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker) };
 		}
 		return NO_RESOLUTIONS;
 	}
