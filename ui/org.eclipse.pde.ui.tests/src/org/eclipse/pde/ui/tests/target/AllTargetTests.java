@@ -13,12 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
-@RunWith(Suite.class)
-@SuiteClasses({ TargetEnvironmentTestCase.class, //
+@Suite
+@SelectClasses({ TargetEnvironmentTestCase.class, //
 		TargetPlatformHelperTests.class, //
 		LocalTargetDefinitionTests.class, //
 		WorkspaceTargetDefinitionTests.class, //

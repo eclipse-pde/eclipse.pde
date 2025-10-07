@@ -1,11 +1,10 @@
 package org.eclipse.pde.core.tests.internal;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
-@RunWith(Suite.class)
-@SuiteClasses({ //
+@Suite
+@SelectClasses({ //
 	DependencyManagerTest.class, //
 	WorkspaceModelManagerTest.class, //
 	WorkspaceProductModelManagerTest.class, //

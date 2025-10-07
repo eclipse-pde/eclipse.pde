@@ -13,13 +13,12 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.bundle;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 
-@RunWith(Suite.class)
-@SuiteClasses({ ImportPackageTestCase.class, ExportPackageTestCase.class, BundleClasspathTestCase.class,
+@Suite
+@SelectClasses({ ImportPackageTestCase.class, ExportPackageTestCase.class, BundleClasspathTestCase.class,
 	BundleActivatorTestCase.class, BundleNameTestCase.class, BundleLocalizationTestCase.class,
 	LazyStartTestCase.class, RequireBundleTestCase.class, ExecutionEnvironmentTestCase.class,
 	BundleSymbolicNameTestCase.class, BundleVendorTestCase.class, BundleVersionTestCase.class,

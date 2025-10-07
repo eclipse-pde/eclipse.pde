@@ -14,12 +14,11 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.views.log;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
-@RunWith(Suite.class)
-@SuiteClasses({ LogEntryTest.class })
+@Suite
+@SelectClasses({ LogEntryTest.class })
 public class AllLogViewTests {
 
 }

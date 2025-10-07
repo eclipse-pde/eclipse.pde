@@ -13,15 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.preferences;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
-/**
- * @since 3.5
- */
-@RunWith(Suite.class)
-@SuiteClasses({
+@Suite
+@SelectClasses({
 	PDEPreferencesTestCase.class
 })
 public class AllPreferenceTests {

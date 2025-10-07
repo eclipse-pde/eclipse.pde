@@ -13,13 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.runtime;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
-
-@RunWith(Suite.class)
-@SuiteClasses({ LocalModelTest.class })
+@Suite
+@SelectClasses({ LocalModelTest.class })
 public class AllPDERuntimeTests {
 
 }
