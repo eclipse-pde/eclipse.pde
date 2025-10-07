@@ -14,11 +14,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.tests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({ DSComponentTestCase.class, DSServiceTestCase.class, DSReferenceTestCase.class,
+@Suite
+@SelectClasses({ DSComponentTestCase.class, DSServiceTestCase.class, DSReferenceTestCase.class,
 		DSProvideTestCase.class, DSPropertyTestCase.class, DSPropertiesTestCase.class, DSImplementationTestCase.class,
 		DSObjectTestCase.class, DSv10tov11TestCase.class })
 public class AllDSModelTests {
