@@ -253,6 +253,7 @@ public abstract class AbstractNewClassPage extends WizardPage {
 					WidgetProperties.text().observe(t),
 					BeanProperties.value(FRAGMENT_ROOT, IPackageFragmentRoot.class).observe(clazz),
 					new UpdateValueStrategy<String, IPackageFragmentRoot>()
+					.setConverter(new StringToPackageFragmentRootConverter(fWorkspaceRoot))
 					.setBeforeSetValidator(new PFRootValidator()),
 					UpdateValueStrategy.create(new PackageFragmentRootToStringConverter()));
 
@@ -583,6 +584,39 @@ public abstract class AbstractNewClassPage extends WizardPage {
 
 			return clazz.getFragmentRoot().getPackageFragment(fromObject);
 
+		}
+	}
+
+	static class StringToPackageFragmentRootConverter extends Converter<String, IPackageFragmentRoot> {
+
+		private final IWorkspaceRoot workspaceRoot;
+
+		public StringToPackageFragmentRootConverter(IWorkspaceRoot workspaceRoot) {
+			super(String.class, IPackageFragmentRoot.class);
+			this.workspaceRoot = workspaceRoot;
+		}
+
+		@Override
+		public IPackageFragmentRoot convert(String fromObject) {
+			if (fromObject == null || fromObject.isEmpty()) {
+				return null;
+			}
+
+			try {
+				IJavaModel javaModel = JavaCore.create(workspaceRoot);
+				// Try to find the package fragment root by its path
+				for (IJavaProject javaProject : javaModel.getJavaProjects()) {
+					for (IPackageFragmentRoot root : javaProject.getPackageFragmentRoots()) {
+						if (root.getPath().makeRelative().toString().equals(fromObject)) {
+							return root;
+						}
+					}
+				}
+			} catch (JavaModelException e) {
+				// Return null if conversion fails
+			}
+
+			return null;
 		}
 	}
 }
