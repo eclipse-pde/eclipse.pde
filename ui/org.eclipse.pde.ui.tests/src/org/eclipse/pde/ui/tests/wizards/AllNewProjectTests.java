@@ -14,12 +14,11 @@
 package org.eclipse.pde.ui.tests.wizards;
 
 import org.eclipse.pde.ui.tests.ee.ExecutionEnvironmentTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
-@RunWith(Suite.class)
-@SuiteClasses({ NewFeatureProjectTestCase.class, NewSiteProjectTestCase.class, ConvertProjectToPluginTestCase.class,
+@Suite
+@SelectClasses({ NewFeatureProjectTestCase.class, NewSiteProjectTestCase.class, ConvertProjectToPluginTestCase.class,
 	ExecutionEnvironmentTests.class })
 public class AllNewProjectTests {
 }

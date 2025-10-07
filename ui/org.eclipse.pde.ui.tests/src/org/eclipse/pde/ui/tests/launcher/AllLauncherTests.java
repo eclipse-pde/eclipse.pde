@@ -14,15 +14,11 @@
 package org.eclipse.pde.ui.tests.launcher;
 
 import org.eclipse.pde.ui.tests.launcher.product.ProductEditorLaunchingTest;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
-/**
- * @since 3.5
- */
-@RunWith(Suite.class)
-@SuiteClasses({ //
+@Suite
+@SelectClasses({ //
 	FeatureBasedLaunchTest.class, //
 	PluginBasedLaunchTest.class, //
 	LaunchConfigurationHelperTestCase.class, //

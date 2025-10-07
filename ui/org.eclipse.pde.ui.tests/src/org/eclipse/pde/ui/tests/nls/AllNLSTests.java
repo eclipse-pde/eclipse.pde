@@ -14,15 +14,11 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.nls;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
-/**
- * @since 3.4
- */
-@RunWith(Suite.class)
-@SuiteClasses({ StringHelperTestCase.class })
+@Suite
+@SelectClasses({ StringHelperTestCase.class })
 public class AllNLSTests {
 
 }
