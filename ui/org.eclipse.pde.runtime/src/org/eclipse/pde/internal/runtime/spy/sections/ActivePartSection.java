@@ -114,7 +114,8 @@ public class ActivePartSection implements ISpySection {
 			bundle = FrameworkUtil.getBundle(mPart.getObject().getClass());
 		}
 
-		toolkit.generatePluginDetailsText(bundle, part.getSite().getId(), partType, buffer, text);
+		 toolkit.generatePluginDetailsText(bundle, part, partType, buffer,
+		 text);
 
 		// get menu information using reflection
 		try {

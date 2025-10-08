@@ -22,6 +22,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -29,7 +31,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
+import java.util.jar.Attributes;
 import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
@@ -58,6 +62,7 @@ import org.eclipse.pde.internal.core.TargetWeaver;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.project.PDEProject;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Filter;
@@ -393,4 +398,89 @@ public class ManifestUtils {
 		}
 	}
 
+	/**
+	 * Return the value of "Eclipse-SourceReferences" in MANIFEST.MF from the
+	 * given class.
+	 *
+	 * @param clazz
+	 *            The class to get the source repository
+	 * @return
+	 */
+	public static String getSourceReferences(Class<?> clazz) {
+		String srcRef = null;
+
+		Bundle bundle = FrameworkUtil.getBundle(clazz);
+		srcRef = getSourceReferences(bundle);
+
+		return srcRef;
+	}
+
+	/**
+	 * Return the value of "Eclipse-SourceReferences" in MANIFEST.MF from the
+	 * given bundle.
+	 *
+	 * @param bundle
+	 *            The bundle to get the source repository
+	 * @return
+	 */
+	public static String getSourceReferences(Bundle bundle) {
+		String srcRef = null;
+
+		srcRef = findScmGit(bundle);
+
+		if (srcRef != null) {
+			srcRef = extractGitUrl(srcRef);
+		}
+
+		return srcRef;
+	}
+
+	public static String findScmGit(Bundle bundle) {
+		String strReturn = null;
+		if (bundle != null) {
+			try (InputStream is = bundle.getEntry("META-INF/MANIFEST.MF").openStream()) {
+				Manifest mf = new Manifest(is);
+				Attributes attrs = mf.getMainAttributes();
+				strReturn = attrs.getValue("Eclipse-SourceReferences");
+			} catch (IOException e) {
+				throw new IllegalArgumentException("Eclipse-SourceReferences not found for bundle : " + bundle);
+			}
+		}
+		return strReturn;
+	}
+
+	/**
+	 * Return the git url from the git scm string
+	 *
+	 * @param scmUrl
+	 * @return
+	 */
+	public static String extractGitUrl(String scmUrl) {
+		if (scmUrl == null || scmUrl.trim().isEmpty()) {
+			throw new IllegalArgumentException("The string SCM cannot be empty.");
+		}
+
+		int start = scmUrl.indexOf("scm:git:");
+		if (start == -1) {
+			throw new IllegalArgumentException("The string SCM does not contain the prefix 'scm:git:'.");
+		}
+		start += 8;
+
+		int end = scmUrl.indexOf(';', start);
+
+		String url;
+		if (end == -1) {
+			url = scmUrl.substring(start);
+		} else {
+			url = scmUrl.substring(start, end);
+		}
+
+		try {
+			new URI(url);
+		} catch (URISyntaxException e) {
+			throw new IllegalArgumentException("Extracted URL not valid : " + url);
+		}
+
+		return url;
+	}
 }

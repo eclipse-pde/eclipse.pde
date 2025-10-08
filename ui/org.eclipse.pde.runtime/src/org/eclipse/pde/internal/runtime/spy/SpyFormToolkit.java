@@ -17,6 +17,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.spy;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +27,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.core.util.ManifestUtils;
 import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
 import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
 import org.eclipse.pde.internal.runtime.PDERuntimePluginImages;
@@ -48,6 +51,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormText;
@@ -61,6 +65,10 @@ public class SpyFormToolkit extends FormToolkit {
 	private static final String CLASS_PROTOCOL_PREFIX = "class://"; //$NON-NLS-1$
 
 	private static final String BUNDLE_PROTOCOL_PREFIX = "bundle://"; //$NON-NLS-1$
+
+	private static final String HTTP_PROTOCOL_PREFIX = "http://"; //$NON-NLS-1$
+
+	private static final String HTTPS_PROTOCOL_PREFIX = "https://"; //$NON-NLS-1$
 
 	private class SpyHyperlinkAdapter extends HyperlinkAdapter {
 
@@ -82,6 +90,13 @@ public class SpyFormToolkit extends FormToolkit {
 				String bundle = href.substring(BUNDLE_PROTOCOL_PREFIX.length());
 				SpyIDEUtil.openBundleManifest(bundle);
 				fDialog.close();
+			} else if (href.startsWith(HTTP_PROTOCOL_PREFIX) || href.startsWith(HTTPS_PROTOCOL_PREFIX)) {
+				try {
+					java.awt.Desktop.getDesktop().browse(new java.net.URI(href));
+				} catch (IOException e1) {
+				} catch (URISyntaxException e1) {
+					throw new IllegalArgumentException("URL not valid : " + href); //$NON-NLS-1$
+				}
 			}
 		}
 	}
@@ -269,8 +284,17 @@ public class SpyFormToolkit extends FormToolkit {
 	}
 
 	// TODO refactor me, I'm ugly
-	public void generatePluginDetailsText(Bundle bundle, String objectId, String objectType, StringBuilder buffer, FormText text) {
+	public void generatePluginDetailsText(Bundle bundle, IWorkbenchPart part, String objectType, StringBuilder buffer,
+			FormText text) {
 		if (bundle != null) {
+			String objectId = null;
+			String srcRef = null;
+			if (part != null) {
+				objectId = part.getSite().getId();
+				srcRef = ManifestUtils.getSourceReferences(part.getClass());
+			} else {
+				srcRef = ManifestUtils.getSourceReferences(bundle);
+			}
 			String version = (bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION));
 
 			buffer.append("<p>"); //$NON-NLS-1$
@@ -291,6 +315,23 @@ public class SpyFormToolkit extends FormToolkit {
 				buffer.append("</a>"); //$NON-NLS-1$
 			}
 			buffer.append("</li>"); //$NON-NLS-1$
+
+			if (srcRef != null) {
+				buffer.append("<p>"); //$NON-NLS-1$
+				buffer.append(PDERuntimeMessages.SpyDialog_sourceRepository);
+				buffer.append("</p>"); //$NON-NLS-1$
+				buffer.append("<li bindent=\"20\" style=\"image\" value=\"menu\">"); //$NON-NLS-1$
+				if (PDERuntimePlugin.HAS_IDE_BUNDLES) {
+					buffer.append("<a href=\""); //$NON-NLS-1$
+					buffer.append(srcRef);
+					buffer.append("\">"); //$NON-NLS-1$
+				}
+				buffer.append(srcRef);
+				if (PDERuntimePlugin.HAS_IDE_BUNDLES) {
+					buffer.append("</a>"); //$NON-NLS-1$
+				}
+				buffer.append("</li>"); //$NON-NLS-1$
+			}
 
 			Image pluginImage = PDERuntimePluginImages.get(PDERuntimePluginImages.IMG_PLUGIN_OBJ);
 			text.setImage("plugin", pluginImage); //$NON-NLS-1$
