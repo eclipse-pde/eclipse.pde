@@ -17,10 +17,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.spy;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.eclipse.help.IContext;
 import org.eclipse.jface.action.Action;
@@ -44,6 +43,7 @@ import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
@@ -66,10 +66,6 @@ public class SpyFormToolkit extends FormToolkit {
 
 	private static final String BUNDLE_PROTOCOL_PREFIX = "bundle://"; //$NON-NLS-1$
 
-	private static final String HTTP_PROTOCOL_PREFIX = "http://"; //$NON-NLS-1$
-
-	private static final String HTTPS_PROTOCOL_PREFIX = "https://"; //$NON-NLS-1$
-
 	private class SpyHyperlinkAdapter extends HyperlinkAdapter {
 
 		private final PopupDialog fDialog;
@@ -81,6 +77,7 @@ public class SpyFormToolkit extends FormToolkit {
 		@Override
 		public void linkActivated(HyperlinkEvent e) {
 			String href = (String) e.getHref();
+			Pattern pattern = Pattern.compile("https?://\\S+");
 			if (href.startsWith(CLASS_PROTOCOL_PREFIX)) {
 				String clazz = href.substring(CLASS_PROTOCOL_PREFIX.length());
 				Bundle bundle = bundleClassByName.get(clazz);
@@ -90,13 +87,8 @@ public class SpyFormToolkit extends FormToolkit {
 				String bundle = href.substring(BUNDLE_PROTOCOL_PREFIX.length());
 				SpyIDEUtil.openBundleManifest(bundle);
 				fDialog.close();
-			} else if (href.startsWith(HTTP_PROTOCOL_PREFIX) || href.startsWith(HTTPS_PROTOCOL_PREFIX)) {
-				try {
-					java.awt.Desktop.getDesktop().browse(new java.net.URI(href));
-				} catch (IOException e1) {
-				} catch (URISyntaxException e1) {
-					throw new IllegalArgumentException("URL not valid : " + href); //$NON-NLS-1$
-				}
+			} else if (pattern.matcher(href).find()) {
+				Program.launch(href);
 			}
 		}
 	}
@@ -291,7 +283,7 @@ public class SpyFormToolkit extends FormToolkit {
 			String srcRef = null;
 			if (part != null) {
 				objectId = part.getSite().getId();
-				srcRef = ManifestUtils.getSourceReferences(part.getClass());
+				srcRef = ManifestUtils.getSourceReferences(FrameworkUtil.getBundle(part.getClass()));
 			} else {
 				srcRef = ManifestUtils.getSourceReferences(bundle);
 			}

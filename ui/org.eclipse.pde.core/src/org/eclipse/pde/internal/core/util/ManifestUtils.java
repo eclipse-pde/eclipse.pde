@@ -22,8 +22,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -400,76 +398,38 @@ public class ManifestUtils {
 
 	/**
 	 * Return the value of "Eclipse-SourceReferences" in MANIFEST.MF from the
-	 * given class.
-	 *
-	 * @param clazz
-	 *            The class to get the source repository
-	 * @return
-	 */
-	public static String getSourceReferences(Class<?> clazz) {
-		Bundle bundle = FrameworkUtil.getBundle(clazz);
-		return  getSourceReferences(bundle);
-	}
-
-	/**
-	 * Return the value of "Eclipse-SourceReferences" in MANIFEST.MF from the
 	 * given bundle.
 	 *
 	 * @param bundle
 	 *            The bundle to get the source repository
 	 */
 	public static String getSourceReferences(Bundle bundle) {
-		String srcRef = findScmGit(bundle);
+		String srcRef = null;
+		srcRef = findScmGit(bundle);
 		if (srcRef != null) {
-			srcRef = extractGitUrl(srcRef);
+			try {
+				ManifestElement element = ManifestElement.parseHeader(ICoreConstants.ECLIPSE_SOURCE_REFERENCES,
+						srcRef)[0];
+				srcRef = element.getValue().trim().replaceFirst("^scm:git:", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			} catch (BundleException e) {
+			}
 		}
 		return srcRef;
 	}
 
 	public static String findScmGit(Bundle bundle) {
+		String strReturn = null;
 		if (bundle != null) {
 			try (InputStream is = bundle.getEntry(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR).openStream()) {
-				Map<String, String> mainAttributes = ManifestElement.parseBundleManifest(is);
-				return mainAttributes.getValue(ICoreConstants.ECLIPSE_SOURCE_REFERENCES);
+				Manifest mf = new Manifest(is);
+				Attributes attrs = mf.getMainAttributes();
+				strReturn = attrs.getValue(ICoreConstants.ECLIPSE_SOURCE_REFERENCES);
 			} catch (IOException e) {
-				throw new IllegalArgumentException("Eclipse-SourceReferences not found for bundle : " + bundle);
+				throw new IllegalArgumentException(
+						ICoreConstants.ECLIPSE_SOURCE_REFERENCES + " not found for bundle : " + bundle);
 			}
 		}
-		return null;
+		return strReturn;
 	}
 
-	/**
-	 * Return the git url from the git scm string
-	 *
-	 * @param scmUrl
-	 * @return
-	 */
-	public static String extractGitUrl(String scmUrl) {
-		if (scmUrl == null || scmUrl.trim().isEmpty()) {
-			throw new IllegalArgumentException("The string SCM cannot be empty.");
-		}
-
-		int start = scmUrl.indexOf("scm:git:");
-		if (start == -1) {
-			throw new IllegalArgumentException("The string SCM does not contain the prefix 'scm:git:'.");
-		}
-		start += 8;
-
-		int end = scmUrl.indexOf(';', start);
-
-		String url;
-		if (end == -1) {
-			url = scmUrl.substring(start);
-		} else {
-			url = scmUrl.substring(start, end);
-		}
-
-		try {
-			new URI(url);
-		} catch (URISyntaxException e) {
-			throw new IllegalArgumentException("Extracted URL not valid : " + url);
-		}
-
-		return url;
-	}
 }
