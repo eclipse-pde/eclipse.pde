@@ -130,7 +130,7 @@
 								<properties>
 									<org.osgi.test.cases.component.annotations.bundle.symbolic.name>org.eclipse.pde.ds.tck</org.osgi.test.cases.component.annotations.bundle.symbolic.name>
 								</properties>
-								<skipTests>true</skipTests>
+								<skipTests>${skipTests}</skipTests>
 							</configuration>
 						</execution>
 					</executions>
