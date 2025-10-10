@@ -427,17 +427,15 @@ public class ManifestUtils {
 	}
 
 	public static String findScmGit(Bundle bundle) {
-		String strReturn = null;
 		if (bundle != null) {
-			try (InputStream is = bundle.getEntry("META-INF/MANIFEST.MF").openStream()) {
-				Manifest mf = new Manifest(is);
-				Attributes attrs = mf.getMainAttributes();
-				strReturn = attrs.getValue("Eclipse-SourceReferences");
+			try (InputStream is = bundle.getEntry(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR).openStream()) {
+				Map<String, String> mainAttributes = ManifestElement.parseBundleManifest(is);
+				return mainAttributes.getValue(ICoreConstants.ECLIPSE_SOURCE_REFERENCES);
 			} catch (IOException e) {
 				throw new IllegalArgumentException("Eclipse-SourceReferences not found for bundle : " + bundle);
 			}
 		}
-		return strReturn;
+		return null;
 	}
 
 	/**
