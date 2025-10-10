@@ -446,9 +446,11 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 						Enumeration<String> attrKeys = element.getDirectiveKeys();
 						int length = 0;
 						String key = null;
-						while (attrKeys.hasMoreElements()) {
-							key = attrKeys.nextElement();
-							length++;
+						if (attrKeys != null) {
+							while (attrKeys.hasMoreElements()) {
+								key = attrKeys.nextElement();
+								length++;
+							}
 						}
 						if (length == 1) {
 							String message = NLS.bind(PDECoreMessages.BundleErrorReporter_singletonRequired,

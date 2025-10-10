@@ -79,6 +79,42 @@ public class BundleErrorReporterTest {
 		assertThat(findUnresolvedImportsMarkers()).isEmpty();
 	}
 
+	@Test
+	public void testNoNPEWhenCreatingExtensionPoint() throws Exception {
+		// Test for bug fix: NPE when creating extension point without directives
+		IProject project = ProjectUtils.createPluginProject(manifest.getProject().getName()).getProject();
+
+		// Create a plugin.xml to make it have extensions
+		IFile pluginXml = project.getFile("plugin.xml");
+		String pluginXmlContent = """
+				<?xml version="1.0" encoding="UTF-8"?>
+				<?eclipse version="3.4"?>
+				<plugin>
+				   <extension-point id="testpoint" name="Test Point" schema="schema/testpoint.exsd"/>
+				</plugin>
+				""";
+		pluginXml.create(new java.io.ByteArrayInputStream(pluginXmlContent.getBytes()), true, null);
+
+		IFile manifest = project.getFile("META-INF/MANIFEST.MF");
+		PDEModelUtility.modifyModel(new ModelModification(manifest) {
+			@Override
+			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
+				IBundlePluginModelBase modelBase = (IBundlePluginModelBase) model;
+				IBundle bundle = modelBase.getBundleModel().getBundle();
+				// Set a bundle symbolic name without singleton directive or attribute
+				// This triggers the code path where getDirectiveKeys() could return null
+				bundle.setHeader(Constants.BUNDLE_SYMBOLICNAME, project.getName());
+			}
+		}, null);
+
+		// This should not throw NPE
+		project.build(IncrementalProjectBuilder.FULL_BUILD, null);
+
+		// Verify no unexpected errors (there should be an error about missing singleton)
+		IMarker[] markers = manifest.findMarkers(PDEMarkerFactory.MARKER_ID, false, 0);
+		assertThat(markers).isNotEmpty(); // There should be a singleton error
+	}
+
 	private List<IMarker> findUnresolvedImportsMarkers() throws CoreException {
 		manifest.getProject().build(IncrementalProjectBuilder.FULL_BUILD, null);
 		return Arrays.stream(manifest.findMarkers(PDEMarkerFactory.MARKER_ID, false, 0))
