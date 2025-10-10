@@ -65,6 +65,8 @@ import org.eclipse.pde.internal.core.PDEClasspathContainer.Rule;
 import org.eclipse.pde.internal.core.bnd.BndProjectManager;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.natures.BndProject;
+import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 import org.osgi.resource.Resource;
 
 import aQute.bnd.build.Container;
@@ -74,19 +76,26 @@ import aQute.bnd.osgi.Constants;
 
 class RequiredPluginsClasspathContainer {
 
+	private static final Version JUNIT_5_9 = new Version(5, 9, 0);
+	private static final VersionRange BELOW_JUNIT_5_9 = new VersionRange("[1.0,5.9)"); //$NON-NLS-1$
+
 	@SuppressWarnings("nls")
 	private static final Set<String> JUNIT5_RUNTIME_PLUGINS = Set.of("org.junit", //
+			"junit-platform-launcher",
+			"org.junit.platform.launcher",
 			"junit-jupiter-engine", // BSN of the bundle from Maven-Central
 			"org.junit.jupiter.engine"); // BSN of the bundle from Eclipse-Orbit
 	@SuppressWarnings("nls")
-	private static final Set<String> JUNIT5_API_PLUGINS = Set.of( //
+	private static final Set<String> JUNIT_JUPITER_API_BUNDLES = Set.of( //
 			"junit-jupiter-api", // BSN of the bundle from Maven-Central
 			"org.junit.jupiter.api"); // BSN of the bundle from Eclipse-Orbit
+
+	private static final Comparator<BundleDescription> BUNDLE_VERSION = Comparator
+			.comparing(BundleDescription::getVersion);
 
 	private final IPluginModelBase fModel;
 	private final IBuild fBuild;
 
-	private List<BundleDescription> junit5RuntimeClosure;
 	private IClasspathEntry[] fEntries;
 	private boolean addImportedPackages;
 
@@ -575,20 +584,28 @@ class RequiredPluginsClasspathContainer {
 	 */
 	private void addJunit5RuntimeDependencies(Set<BundleDescription> added, List<IClasspathEntry> entries)
 			throws CoreException {
-		if (!containsJunit5Dependency(added)) {
+		Optional<BundleDescription> highestJunitBundle = getHighestJunitBundle(added);
+		if (highestJunitBundle.isEmpty()) {
+			return;
+		}
+		BundleDescription junitBundle = highestJunitBundle.get();
+		Collection<BundleDescription> junitRequirements;
+		if (junitBundle.getVersion().compareTo(JUNIT_5_9) < 0) {
+			// JUnit 5.8 and below bundles don't have specific version requirements that we can use
+			junitRequirements = collectRuntimeRequirementsBelowJunit5_9();
+		} else {
+			junitRequirements = DependencyManager.findRequirementsClosure(List.of(junitBundle));
+		}
+		if (junitRequirements.isEmpty()) {
 			return;
 		}
 
-		if (junit5RuntimeClosure == null) {
-			junit5RuntimeClosure = collectJunit5RuntimeRequirements();
-		}
-
 		String id = fModel.getPluginBase().getId();
-		if (id != null && junit5RuntimeClosure.stream().map(BundleDescription::getSymbolicName).anyMatch(id::equals)) {
+		if (id != null && junitRequirements.stream().map(BundleDescription::getSymbolicName).anyMatch(id::equals)) {
 			return; // never extend the classpath of a junit bundle
 		}
 
-		for (BundleDescription desc : junit5RuntimeClosure) {
+		for (BundleDescription desc : junitRequirements) {
 			if (added.contains(desc)) {
 				continue; // bundle has explicit dependency
 			}
@@ -599,14 +616,10 @@ class RequiredPluginsClasspathContainer {
 		}
 	}
 
-	private boolean containsJunit5Dependency(Collection<BundleDescription> dependencies) {
-		return dependencies.stream().map(BundleDescription::getSymbolicName).anyMatch(JUNIT5_API_PLUGINS::contains);
-	}
-
-	private static List<BundleDescription> collectJunit5RuntimeRequirements() {
-		List<BundleDescription> roots = JUNIT5_RUNTIME_PLUGINS.stream().map(PluginRegistry::findModel)
-				.filter(Objects::nonNull).filter(IPluginModelBase::isEnabled)
-				.map(IPluginModelBase::getBundleDescription).toList();
+	private static List<BundleDescription> collectRuntimeRequirementsBelowJunit5_9() {
+		List<BundleDescription> roots = JUNIT5_RUNTIME_PLUGINS.stream()
+				.map(id -> PluginRegistry.findModel(id, BELOW_JUNIT_5_9)).filter(Objects::nonNull)
+				.filter(IPluginModelBase::isEnabled).map(IPluginModelBase::getBundleDescription).toList();
 		Set<BundleDescription> closure = DependencyManager.findRequirementsClosure(roots,
 				INCLUDE_OPTIONAL_DEPENDENCIES);
 		String systemBundleBSN = TargetPlatformHelper.getPDEState().getSystemBundle();
@@ -716,4 +729,7 @@ class RequiredPluginsClasspathContainer {
 		}
 	}
 
+	private static Optional<BundleDescription> getHighestJunitBundle(Collection<BundleDescription> bundles) {
+		return bundles.stream().filter(b -> JUNIT_JUPITER_API_BUNDLES.contains(b.getSymbolicName())).max(BUNDLE_VERSION);
+	}
 }
