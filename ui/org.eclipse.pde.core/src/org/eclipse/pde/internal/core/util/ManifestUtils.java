@@ -420,14 +420,10 @@ public class ManifestUtils {
 	 * @return
 	 */
 	public static String getSourceReferences(Bundle bundle) {
-		String srcRef = null;
-
-		srcRef = findScmGit(bundle);
-
+		String srcRef = findScmGit(bundle);
 		if (srcRef != null) {
 			srcRef = extractGitUrl(srcRef);
 		}
-
 		return srcRef;
 	}
 
