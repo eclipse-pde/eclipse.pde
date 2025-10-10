@@ -27,13 +27,13 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.launching.JUnitLaunchRequirements;
 import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
 import org.eclipse.pde.internal.launching.launcher.EclipsePluginValidationOperation;
 import org.eclipse.pde.internal.launching.launcher.LaunchValidationOperation;
 import org.eclipse.pde.internal.launching.launcher.RequirementHelper;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.launching.IPDELauncherConstants;
-import org.eclipse.pde.launching.JUnitLaunchConfigurationDelegate;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
 
 public class PluginBlock extends AbstractPluginBlock {
@@ -165,7 +165,7 @@ public class PluginBlock extends AbstractPluginBlock {
 		// Check that the application or product we are launching has its requirements included
 		try {
 			List<String> requiredIds = RequirementHelper.getApplicationLaunchRequirements(fLaunchConfig);
-			Collection<String> requiredPlugins = JUnitLaunchConfigurationDelegate.getRequiredJunitRuntimePlugins(fLaunchConfig);
+			Collection<String> requiredPlugins = JUnitLaunchRequirements.getRequiredJunitRuntimePlugins(fLaunchConfig);
 			Stream.concat(requiredPlugins.stream(), requiredIds.stream()).forEach(requiredId -> {
 				// see if launcher plugin is already included
 				IPluginModelBase base = findPlugin(requiredId);
