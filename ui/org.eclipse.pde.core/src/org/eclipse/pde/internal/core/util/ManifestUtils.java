@@ -417,7 +417,6 @@ public class ManifestUtils {
 	 *
 	 * @param bundle
 	 *            The bundle to get the source repository
-	 * @return
 	 */
 	public static String getSourceReferences(Bundle bundle) {
 		String srcRef = findScmGit(bundle);
