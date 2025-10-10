@@ -407,12 +407,8 @@ public class ManifestUtils {
 	 * @return
 	 */
 	public static String getSourceReferences(Class<?> clazz) {
-		String srcRef = null;
-
 		Bundle bundle = FrameworkUtil.getBundle(clazz);
-		srcRef = getSourceReferences(bundle);
-
-		return srcRef;
+		return  getSourceReferences(bundle);
 	}
 
 	/**
