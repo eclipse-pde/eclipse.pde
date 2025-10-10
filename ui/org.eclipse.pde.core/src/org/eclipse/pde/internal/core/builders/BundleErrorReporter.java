@@ -444,19 +444,21 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 						}
 					} else {
 						Enumeration<String> attrKeys = element.getDirectiveKeys();
-						int length = 0;
-						String key = null;
-						while (attrKeys.hasMoreElements()) {
-							key = attrKeys.nextElement();
-							length++;
-						}
-						if (length == 1) {
-							String message = NLS.bind(PDECoreMessages.BundleErrorReporter_singletonRequired,
-									Constants.SINGLETON_DIRECTIVE);
-							VirtualMarker marker = report(message, header.getLineNumber(), CompilerFlags.ERROR,
-									PDEMarkerFactory.M_SINGLETON_DIR_CHANGE, PDEMarkerFactory.CAT_FATAL);
-							addMarkerAttribute(marker, "userDirective", key); //$NON-NLS-1$
-							return;
+						if (attrKeys != null) {
+							int length = 0;
+							String key = null;
+							while (attrKeys.hasMoreElements()) {
+								key = attrKeys.nextElement();
+								length++;
+							}
+							if (length == 1) {
+								String message = NLS.bind(PDECoreMessages.BundleErrorReporter_singletonRequired,
+										Constants.SINGLETON_DIRECTIVE);
+								VirtualMarker marker = report(message, header.getLineNumber(), CompilerFlags.ERROR,
+										PDEMarkerFactory.M_SINGLETON_DIR_CHANGE, PDEMarkerFactory.CAT_FATAL);
+								addMarkerAttribute(marker, "userDirective", key); //$NON-NLS-1$
+								return;
+							}
 						}
 						String message = NLS.bind(PDECoreMessages.BundleErrorReporter_singletonRequired, Constants.SINGLETON_DIRECTIVE);
 						report(message, header.getLineNumber(), CompilerFlags.ERROR, PDEMarkerFactory.M_SINGLETON_DIR_NOT_SET, PDEMarkerFactory.CAT_FATAL);
