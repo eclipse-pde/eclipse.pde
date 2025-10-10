@@ -86,13 +86,11 @@ public class BundleErrorReporterTest {
 
 		// Create a plugin.xml to make it have extensions
 		IFile pluginXml = project.getFile("plugin.xml");
-		String pluginXmlContent = """
-				<?xml version="1.0" encoding="UTF-8"?>
-				<?eclipse version="3.4"?>
-				<plugin>
-				   <extension-point id="testpoint" name="Test Point" schema="schema/testpoint.exsd"/>
-				</plugin>
-				""";
+		String pluginXmlContent = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+				"<?eclipse version=\"3.4\"?>\n" +
+				"<plugin>\n" +
+				"   <extension-point id=\"testpoint\" name=\"Test Point\" schema=\"schema/testpoint.exsd\"/>\n" +
+				"</plugin>\n";
 		pluginXml.create(new java.io.ByteArrayInputStream(pluginXmlContent.getBytes()), true, null);
 
 		IFile manifest = project.getFile("META-INF/MANIFEST.MF");
