@@ -68,6 +68,10 @@ public class BundleInputContext extends UTF8InputContext {
 	protected IBaseModel createModel(IEditorInput input) throws CoreException {
 		boolean isReconciling = input instanceof IFileEditorInput;
 		IDocument document = getDocumentProvider().getDocument(input);
+		if (document == null) {
+			// Document not available yet - this can happen during editor initialization
+			return null;
+		}
 		BundleModel model = new BundleModel(document, isReconciling);
 		if (input instanceof IFileEditorInput) {
 			IFile file = ((IFileEditorInput) input).getFile();
