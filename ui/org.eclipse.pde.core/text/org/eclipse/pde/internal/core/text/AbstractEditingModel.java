@@ -159,10 +159,6 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	public abstract void adjustOffsets(IDocument document) throws CoreException;
 
 	protected InputStream getInputStream(IDocument document) {
-		if (document == null) {
-			// Return empty stream if document is not available
-			return new ByteArrayInputStream(new byte[0]);
-		}
 		return new ByteArrayInputStream(document.get().getBytes(getCharset()));
 	}
 
