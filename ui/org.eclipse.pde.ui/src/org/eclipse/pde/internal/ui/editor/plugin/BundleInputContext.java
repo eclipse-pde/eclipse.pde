@@ -70,7 +70,8 @@ public class BundleInputContext extends UTF8InputContext {
 		IDocument document = getDocumentProvider().getDocument(input);
 		if (document == null) {
 			// Document not available yet - this can happen during editor initialization
-			return null;
+			// The defensive null check in AbstractEditingModel.getInputStream() will handle this gracefully
+			// by returning an empty stream, and the model will be marked as not loaded
 		}
 		BundleModel model = new BundleModel(document, isReconciling);
 		if (input instanceof IFileEditorInput) {
