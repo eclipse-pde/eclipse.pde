@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -79,6 +80,9 @@ class RequiredPluginsClasspathContainer {
 	private static final Version JUNIT_5_9 = new Version(5, 9, 0);
 	private static final VersionRange BELOW_JUNIT_5_9 = new VersionRange("[1.0,5.9)"); //$NON-NLS-1$
 
+	@SuppressWarnings("nls")
+	private static final String JUNIT4_PLUGIN = "org.junit";
+	private static final VersionRange JUNIT_4_VERSION = new VersionRange("[4.0,5)"); //$NON-NLS-1$
 	@SuppressWarnings("nls")
 	private static final Set<String> JUNIT5_RUNTIME_PLUGINS = Set.of("org.junit", //
 			"junit-platform-launcher",
@@ -592,9 +596,15 @@ class RequiredPluginsClasspathContainer {
 		Collection<BundleDescription> junitRequirements;
 		if (junitBundle.getVersion().compareTo(JUNIT_5_9) < 0) {
 			// JUnit 5.8 and below bundles don't have specific version requirements that we can use
-			junitRequirements = collectRuntimeRequirementsBelowJunit5_9();
+			junitRequirements = collectRequirements(
+					JUNIT5_RUNTIME_PLUGINS.stream().map(id -> PluginRegistry.findModel(id, BELOW_JUNIT_5_9)));
 		} else {
-			junitRequirements = DependencyManager.findRequirementsClosure(List.of(junitBundle));
+			junitRequirements = new LinkedHashSet<>();
+			List<BundleDescription> junitJupiterRequirements = collectRequirements(List.of(junitBundle));
+			junitRequirements.addAll(junitJupiterRequirements);
+			List<BundleDescription> junit4Requirements = collectRequirements(
+					Stream.of(PluginRegistry.findModel(JUNIT4_PLUGIN, JUNIT_4_VERSION)));
+			junitRequirements.addAll(junit4Requirements);
 		}
 		if (junitRequirements.isEmpty()) {
 			return;
@@ -616,12 +626,14 @@ class RequiredPluginsClasspathContainer {
 		}
 	}
 
-	private static List<BundleDescription> collectRuntimeRequirementsBelowJunit5_9() {
-		List<BundleDescription> roots = JUNIT5_RUNTIME_PLUGINS.stream()
-				.map(id -> PluginRegistry.findModel(id, BELOW_JUNIT_5_9)).filter(Objects::nonNull)
-				.filter(IPluginModelBase::isEnabled).map(IPluginModelBase::getBundleDescription).toList();
-		Set<BundleDescription> closure = DependencyManager.findRequirementsClosure(roots,
-				INCLUDE_OPTIONAL_DEPENDENCIES);
+	private static List<BundleDescription> collectRequirements(Stream<IPluginModelBase> models) {
+		List<BundleDescription> roots = models.filter(Objects::nonNull).filter(IPluginModelBase::isEnabled)
+				.map(IPluginModelBase::getBundleDescription).toList();
+		return collectRequirements(roots);
+	}
+
+	private static List<BundleDescription> collectRequirements(List<BundleDescription> roots) {
+		var closure = DependencyManager.findRequirementsClosure(roots, INCLUDE_OPTIONAL_DEPENDENCIES);
 		String systemBundleBSN = TargetPlatformHelper.getPDEState().getSystemBundle();
 		return closure.stream().filter(b -> !b.getSymbolicName().equals(systemBundleBSN))
 				.sorted(Comparator.comparing(BundleDescription::getSymbolicName)).toList();
