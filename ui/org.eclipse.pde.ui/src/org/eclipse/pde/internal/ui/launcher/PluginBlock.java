@@ -165,7 +165,7 @@ public class PluginBlock extends AbstractPluginBlock {
 		// Check that the application or product we are launching has its requirements included
 		try {
 			List<String> requiredIds = RequirementHelper.getApplicationLaunchRequirements(fLaunchConfig);
-			Collection<String> requiredPlugins = JUnitLaunchRequirements.getRequiredJunitRuntimePlugins(fLaunchConfig);
+			Collection<String> requiredPlugins = JUnitLaunchRequirements.getRequiredJunitRuntimeEclipsePlugins(fLaunchConfig);
 			Stream.concat(requiredPlugins.stream(), requiredIds.stream()).forEach(requiredId -> {
 				// see if launcher plugin is already included
 				IPluginModelBase base = findPlugin(requiredId);

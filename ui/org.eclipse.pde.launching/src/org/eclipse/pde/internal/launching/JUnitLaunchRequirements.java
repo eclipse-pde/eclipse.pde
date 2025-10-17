@@ -16,14 +16,15 @@ package org.eclipse.pde.internal.launching;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -33,86 +34,88 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.DependencyManager;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
+import org.osgi.framework.Version;
 import org.osgi.framework.VersionRange;
 import org.osgi.framework.wiring.BundleRevision;
 
 public class JUnitLaunchRequirements {
 
-	public static final String JUNIT4_RUNTIME_PLUGIN = "org.eclipse.jdt.junit4.runtime"; //$NON-NLS-1$
-	public static final String JUNIT5_RUNTIME_PLUGIN = "org.eclipse.jdt.junit5.runtime"; //$NON-NLS-1$
+	public static final String JUNIT4_JDT_RUNTIME_PLUGIN = "org.eclipse.jdt.junit4.runtime"; //$NON-NLS-1$
+	public static final String JUNIT5_JDT_RUNTIME_PLUGIN = "org.eclipse.jdt.junit5.runtime"; //$NON-NLS-1$
 
 	private static final VersionRange JUNIT5_VERSIONS = new VersionRange("[1, 5)"); //$NON-NLS-1$
 
 	// we add launcher and jupiter.engine to support @RunWith(JUnitPlatform.class)
-	private static final String[] JUNIT5_RUN_WITH_PLUGINS = {"junit-platform-launcher", //$NON-NLS-1$
-			"junit-jupiter-engine", //$NON-NLS-1$
-	};
+	private static final Map<String, List<String>> JUNIT5_RUN_WITH_BUNDLES = new LinkedHashMap<>();
+	static { // consider  JUnit bundle names from old Eclipse-Orbit times. Assume either only new or only old names are used.
+		JUNIT5_RUN_WITH_BUNDLES.put("junit-platform-runner", List.of("junit-platform-launcher", "junit-jupiter-engine")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		JUNIT5_RUN_WITH_BUNDLES.put("org.junit.platform.runner", List.of("org.junit.platform.launcher", "org.junit.jupiter.engine")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
 
 	public static void addRequiredJunitRuntimePlugins(ILaunchConfiguration configuration, Map<String, List<IPluginModelBase>> allBundles, Map<IPluginModelBase, String> allModels) throws CoreException {
-		Collection<String> plugins = getRequiredJunitRuntimePlugins(configuration);
-		addPlugins(plugins, allBundles, allModels);
-		if (plugins.contains(JUNIT5_RUNTIME_PLUGIN) && (allBundles.containsKey("junit-platform-runner") || allBundles.containsKey("org.junit.platform.runner"))) { //$NON-NLS-1$ //$NON-NLS-2$
-			Set<BundleDescription> descriptions = JUnitLaunchRequirements.junit5PlatformRequirements();
-			Set<BundleDescription> junitRequirements = DependencyManager.findRequirementsClosure(descriptions);
-			addAbsentRequirements(junitRequirements, allBundles, allModels);
-		}
-	}
+		Collection<String> runtimePlugins = getRequiredJunitRuntimeEclipsePlugins(configuration);
 
-	@SuppressWarnings("restriction")
-	public static Collection<String> getRequiredJunitRuntimePlugins(ILaunchConfiguration configuration) {
-		org.eclipse.jdt.internal.junit.launcher.ITestKind testKind = org.eclipse.jdt.internal.junit.launcher.JUnitLaunchConfigurationConstants.getTestRunnerKind(configuration);
-		if (testKind.isNull()) {
-			return Collections.emptyList();
-		}
-		List<String> plugins = new ArrayList<>();
-		plugins.add("org.eclipse.pde.junit.runtime"); //$NON-NLS-1$
+		Set<BundleDescription> addedRuntimeBundles = addAbsentRequirements(runtimePlugins, allBundles, allModels);
+		Set<BundleDescription> runtimeRequirements = DependencyManager.findRequirementsClosure(addedRuntimeBundles);
+		addAbsentRequirements(runtimeRequirements, allBundles, allModels);
 
-		if (org.eclipse.jdt.internal.junit.launcher.TestKindRegistry.JUNIT4_TEST_KIND_ID.equals(testKind.getId())) {
-			plugins.add(JUNIT4_RUNTIME_PLUGIN);
-		} else if (org.eclipse.jdt.internal.junit.launcher.TestKindRegistry.JUNIT5_TEST_KIND_ID.equals(testKind.getId())) {
-			plugins.add(JUNIT5_RUNTIME_PLUGIN);
-		}
-		return plugins;
-	}
-
-	private static void addPlugins(Collection<String> plugins, Map<String, List<IPluginModelBase>> allBundles, Map<IPluginModelBase, String> allModels) throws CoreException {
-		Set<String> requiredPlugins = new LinkedHashSet<>(plugins);
-
-		Set<BundleDescription> addedRequirements = new LinkedHashSet<>();
-		addAbsentRequirements(requiredPlugins, addedRequirements, allBundles, allModels);
-
-		Set<BundleDescription> requirementsOfRequirements = DependencyManager.findRequirementsClosure(addedRequirements);
-		addAbsentRequirements(requirementsOfRequirements, allBundles, allModels);
-	}
-
-	private static void addAbsentRequirements(Collection<String> requirements, Set<BundleDescription> addedRequirements, Map<String, List<IPluginModelBase>> allBundles, Map<IPluginModelBase, String> allModels) throws CoreException {
-		for (String id : requirements) {
-			List<IPluginModelBase> models = allBundles.computeIfAbsent(id, k -> new ArrayList<>());
-			if (models.stream().noneMatch(m -> m.getBundleDescription().isResolved())) {
-				IPluginModelBase model = JUnitLaunchRequirements.findRequiredPluginInTargetOrHost(id);
-				models.add(model);
-				BundleLauncherHelper.addDefaultStartingBundle(allModels, model);
-				if (addedRequirements != null) {
-					addedRequirements.add(model.getBundleDescription());
-				}
+		if (runtimePlugins.contains(JUNIT5_JDT_RUNTIME_PLUGIN)) {
+			Optional<List<String>> runWithBundles = JUNIT5_RUN_WITH_BUNDLES.entrySet().stream().filter(e -> allBundles.containsKey(e.getKey())).findFirst().map(Entry::getValue);
+			if (runWithBundles.isPresent()) {
+				Set<BundleDescription> descriptions = findBundlesInTargetOrHost(runWithBundles.get(), JUNIT5_VERSIONS);
+				Set<BundleDescription> junitRquirements = DependencyManager.findRequirementsClosure(descriptions);
+				addAbsentRequirements(junitRquirements, allBundles, allModels);
 			}
 		}
 	}
 
-	private static void addAbsentRequirements(Set<BundleDescription> toAdd, Map<String, List<IPluginModelBase>> allBundles, Map<IPluginModelBase, String> allModels) throws CoreException {
-		for (BundleDescription requirement : toAdd) {
-			String id = requirement.getSymbolicName();
+	@SuppressWarnings("restriction")
+	public static Collection<String> getRequiredJunitRuntimeEclipsePlugins(ILaunchConfiguration configuration) {
+		org.eclipse.jdt.internal.junit.launcher.ITestKind testKind = org.eclipse.jdt.internal.junit.launcher.JUnitLaunchConfigurationConstants.getTestRunnerKind(configuration);
+		if (testKind.isNull()) {
+			return List.of();
+		}
+		List<String> plugins = new ArrayList<>();
+		plugins.add("org.eclipse.pde.junit.runtime"); //$NON-NLS-1$
+		switch (testKind.getId()) {
+			case org.eclipse.jdt.internal.junit.launcher.TestKindRegistry.JUNIT3_TEST_KIND_ID -> {
+			} // Nothing to add for JUnit-3
+			case org.eclipse.jdt.internal.junit.launcher.TestKindRegistry.JUNIT4_TEST_KIND_ID -> plugins.add(JUNIT4_JDT_RUNTIME_PLUGIN);
+			case org.eclipse.jdt.internal.junit.launcher.TestKindRegistry.JUNIT5_TEST_KIND_ID -> plugins.add(JUNIT4_JDT_RUNTIME_PLUGIN);
+			default -> throw new IllegalArgumentException("Unsupported junit test kind: " + testKind.getId()); //$NON-NLS-1$
+		}
+		return plugins;
+	}
+
+	private static Set<BundleDescription> addAbsentRequirements(Collection<String> requirements, Map<String, List<IPluginModelBase>> allBundles, Map<IPluginModelBase, String> allModels) throws CoreException {
+		Set<BundleDescription> addedRequirements = new LinkedHashSet<>();
+		for (String id : requirements) {
 			List<IPluginModelBase> models = allBundles.computeIfAbsent(id, k -> new ArrayList<>());
-			boolean replace = !models.isEmpty() && models.stream().anyMatch(m -> !m.getBundleDescription().getVersion().equals(requirement.getVersion()));
+			if (models.stream().noneMatch(p -> p.getBundleDescription().isResolved())) {
+				IPluginModelBase model = findRequiredPluginInTargetOrHost(id, null);
+				models.add(model);
+				BundleLauncherHelper.addDefaultStartingBundle(allModels, model);
+				addedRequirements.add(model.getBundleDescription());
+			}
+		}
+		return addedRequirements;
+	}
+
+	private static void addAbsentRequirements(Set<BundleDescription> requirements, Map<String, List<IPluginModelBase>> allBundles, Map<IPluginModelBase, String> allModels) throws CoreException {
+		for (BundleRevision requirement : requirements) {
+			String id = requirement.getSymbolicName();
+			Version version = requirement.getVersion();
+			List<IPluginModelBase> models = allBundles.computeIfAbsent(id, k -> new ArrayList<>());
+			boolean replace = !models.isEmpty() && models.stream().anyMatch(m -> !m.getBundleDescription().getVersion().equals(version));
 			if (replace || models.stream().noneMatch(m -> m.getBundleDescription().isResolved())) {
-				IPluginModelBase model = JUnitLaunchRequirements.findRequiredPluginInTargetOrHost(requirement);
+				IPluginModelBase model = findRequiredPluginInTargetOrHost(requirement.getSymbolicName(), new VersionRange(VersionRange.LEFT_OPEN, version, version, VersionRange.RIGHT_OPEN));
 				if (replace) {
 					String startLevel = null;
 					for (IPluginModelBase m : models) {
 						startLevel = allModels.remove(m);
 					}
 					models.clear();
-					allModels.put(model, startLevel);
+					allModels.put(model, startLevel); //TODO: isn't this overwritten? Should it be retained or just ignored? 
 				}
 				models.add(model);
 				BundleLauncherHelper.addDefaultStartingBundle(allModels, model);
@@ -120,40 +123,25 @@ public class JUnitLaunchRequirements {
 		}
 	}
 
-	public static Set<BundleDescription> junit5PlatformRequirements() throws CoreException {
+	private static Set<BundleDescription> findBundlesInTargetOrHost(List<String> bundleIDs, VersionRange version) throws CoreException {
 		Set<BundleDescription> descriptions = new LinkedHashSet<>();
-		for (String id : JUNIT5_RUN_WITH_PLUGINS) {
-			IPluginModelBase model = findRequiredPluginInTargetOrHost(id, JUNIT5_VERSIONS);
+		for (String id : bundleIDs) {
+			IPluginModelBase model = findRequiredPluginInTargetOrHost(id, version);
 			if (model != null) {
-				BundleDescription description = model.getBundleDescription();
-				descriptions.add(description);
+				descriptions.add(model.getBundleDescription());
 			}
 		}
 		return descriptions;
 	}
 
-	public static IPluginModelBase findRequiredPluginInTargetOrHost(String id) throws CoreException {
-		return findRequiredPluginInTargetOrHost(id, PluginRegistry.findModel(id));
-	}
-
-	private static IPluginModelBase findRequiredPluginInTargetOrHost(String id, VersionRange versionRange) throws CoreException {
-		return findRequiredPluginInTargetOrHost(id, PluginRegistry.findModel(id, versionRange));
-	}
-
-	public static IPluginModelBase findRequiredPluginInTargetOrHost(BundleRevision bundleRevision) throws CoreException {
-		String id = bundleRevision.getSymbolicName();
-		return findRequiredPluginInTargetOrHost(id, PluginRegistry.findModel(bundleRevision));
-	}
-
-	private static IPluginModelBase findRequiredPluginInTargetOrHost(String id, IPluginModelBase model) throws CoreException {
+	private static IPluginModelBase findRequiredPluginInTargetOrHost(String id, VersionRange version) throws CoreException {
+		IPluginModelBase model = version != null ? PluginRegistry.findModel(id, version) : PluginRegistry.findModel(id);
 		if (model == null || !model.getBundleDescription().isResolved()) {
 			// prefer bundle from host over unresolved bundle from target
-			model = PDECore.getDefault().findPluginInHost(id);
+			model = PDECore.getDefault().findPluginInHost(id, version);
 		}
 		if (model == null) {
-			String message = NLS.bind(PDEMessages.JUnitLaunchConfiguration_error_missingPlugin, id);
-			Status error = new Status(IStatus.ERROR, IPDEConstants.PLUGIN_ID, IStatus.OK, message, null);
-			throw new CoreException(error);
+			throw new CoreException(Status.error(NLS.bind(PDEMessages.JUnitLaunchConfiguration_error_missingPlugin, id)));
 		}
 		return model;
 	}

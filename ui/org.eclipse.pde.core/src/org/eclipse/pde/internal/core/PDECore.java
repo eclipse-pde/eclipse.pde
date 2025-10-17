@@ -16,9 +16,12 @@ package org.eclipse.pde.internal.core;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -56,6 +59,8 @@ import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
+import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 import org.osgi.util.tracker.ServiceTracker;
 
 import aQute.bnd.build.Workspace;
@@ -109,7 +114,7 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 	 */
 	private static PDEPreferencesManager fPreferenceManager;
 
-	private Map<String, IPluginModelBase> fHostPlugins;
+	private Map<String, List<IPluginModelBase>> fHostPlugins;
 
 	public static PDECore getDefault() {
 		return inst;
@@ -221,7 +226,28 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 		inst = this;
 	}
 
-	public synchronized IPluginModelBase findPluginInHost(String id) {
+	public synchronized IPluginModelBase findPluginInHost(String id, VersionRange version) {
+		Map<String, List<IPluginModelBase>> hostPlugins = getHostPlugins();
+		if (hostPlugins == null) {
+			return null;
+		}
+		Stream<IPluginModelBase> plugins = hostPlugins.getOrDefault(id, List.of()).stream();
+		if (version != null) {
+			plugins = plugins.filter(p -> version.includes(getVersion(p)));
+		}
+		return plugins.max(VERSION).orElse(null);
+	}
+
+	private static final Comparator<IPluginModelBase> VERSION = Comparator.comparing(PDECore::getVersion);
+
+	private static Version getVersion(IPluginModelBase p) {
+		// TODO: Check the following also works for plugins from host. If yes,
+		// use it.
+		Version version2 = p.getBundleDescription().getVersion();
+		return Version.parseVersion(p.getPluginBase().getVersion());
+	}
+
+	private synchronized Map<String, List<IPluginModelBase>> getHostPlugins() {
 		if (fHostPlugins == null) {
 			fHostPlugins = new HashMap<>();
 
@@ -239,12 +265,10 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 			PDEState state = new PDEState(pluginPaths, true, false, new NullProgressMonitor());
 			state.resolveState(false);
 
-			for (IPluginModelBase plugin : state.getTargetModels()) {
-				fHostPlugins.put(plugin.getPluginBase().getId(), plugin);
-			}
+			fHostPlugins = Arrays.stream(state.getTargetModels())
+					.collect(Collectors.groupingBy(p -> p.getPluginBase().getId()));
 		}
-
-		return fHostPlugins.get(id);
+		return fHostPlugins;
 	}
 
 	public PluginModelManager getModelManager() {
