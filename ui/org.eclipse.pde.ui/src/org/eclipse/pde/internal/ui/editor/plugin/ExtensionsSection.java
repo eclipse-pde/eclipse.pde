@@ -16,6 +16,7 @@
  *     Brian de Alwis (MTI) - bug 429420
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487943
  *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 351356
+ *     Daniel Kruegler - #2025 - SVG icons not supported by extension point editor
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
@@ -151,7 +152,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 			"commandId", "property", "activityId", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			"attribute", "value"}; //$NON-NLS-1$ //$NON-NLS-2$
 
-	private static final String[] VALID_IMAGE_TYPES = {"png", "bmp", "ico", "gif", "jpg", "tiff"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+	private static final String[] VALID_IMAGE_TYPES = {"png", "bmp", "ico", "gif", "jpg", "tiff", "svg"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 	private static final String MENU_NEW_ID = "NewMenu"; //$NON-NLS-1$
 
 	class ExtensionContentProvider implements ITreeContentProvider {
