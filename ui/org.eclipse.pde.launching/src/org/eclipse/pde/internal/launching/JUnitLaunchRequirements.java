@@ -43,7 +43,7 @@ public class JUnitLaunchRequirements {
 	public static final String JUNIT4_JDT_RUNTIME_PLUGIN = "org.eclipse.jdt.junit4.runtime"; //$NON-NLS-1$
 	public static final String JUNIT5_JDT_RUNTIME_PLUGIN = "org.eclipse.jdt.junit5.runtime"; //$NON-NLS-1$
 
-	private static final VersionRange JUNIT5_VERSIONS = new VersionRange("[1, 5)"); //$NON-NLS-1$
+	private static final VersionRange JUNIT5_VERSIONS = new VersionRange("[1, 6)"); //$NON-NLS-1$
 
 	// we add launcher and jupiter.engine to support @RunWith(JUnitPlatform.class)
 	private static final Map<String, List<String>> JUNIT5_RUN_WITH_BUNDLES = new LinkedHashMap<>();
@@ -81,7 +81,7 @@ public class JUnitLaunchRequirements {
 			case org.eclipse.jdt.internal.junit.launcher.TestKindRegistry.JUNIT3_TEST_KIND_ID -> {
 			} // Nothing to add for JUnit-3
 			case org.eclipse.jdt.internal.junit.launcher.TestKindRegistry.JUNIT4_TEST_KIND_ID -> plugins.add(JUNIT4_JDT_RUNTIME_PLUGIN);
-			case org.eclipse.jdt.internal.junit.launcher.TestKindRegistry.JUNIT5_TEST_KIND_ID -> plugins.add(JUNIT4_JDT_RUNTIME_PLUGIN);
+			case org.eclipse.jdt.internal.junit.launcher.TestKindRegistry.JUNIT5_TEST_KIND_ID -> plugins.add(JUNIT5_JDT_RUNTIME_PLUGIN);
 			default -> throw new IllegalArgumentException("Unsupported junit test kind: " + testKind.getId()); //$NON-NLS-1$
 		}
 		return plugins;
@@ -108,7 +108,7 @@ public class JUnitLaunchRequirements {
 			List<IPluginModelBase> models = allBundles.computeIfAbsent(id, k -> new ArrayList<>());
 			boolean replace = !models.isEmpty() && models.stream().anyMatch(m -> !m.getBundleDescription().getVersion().equals(version));
 			if (replace || models.stream().noneMatch(m -> m.getBundleDescription().isResolved())) {
-				IPluginModelBase model = findRequiredPluginInTargetOrHost(requirement.getSymbolicName(), new VersionRange(VersionRange.LEFT_OPEN, version, version, VersionRange.RIGHT_OPEN));
+				IPluginModelBase model = findRequiredPluginInTargetOrHost(requirement.getSymbolicName(), new VersionRange(VersionRange.LEFT_CLOSED, version, version, VersionRange.RIGHT_CLOSED));
 				if (replace) {
 					String startLevel = null;
 					for (IPluginModelBase m : models) {
