@@ -16,10 +16,14 @@ package org.eclipse.pde.internal.launching;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Status;
@@ -31,14 +35,13 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.DependencyManager;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
-import org.osgi.framework.Version;
-import org.osgi.framework.VersionRange;
 import org.osgi.framework.wiring.BundleRevision;
 
 public class JUnitLaunchRequirements {
 
 	public static final String JUNIT4_JDT_RUNTIME_PLUGIN = "org.eclipse.jdt.junit4.runtime"; //$NON-NLS-1$
 	public static final String JUNIT5_JDT_RUNTIME_PLUGIN = "org.eclipse.jdt.junit5.runtime"; //$NON-NLS-1$
+	private static final Comparator<IPluginModelBase> VERSION = Comparator.comparing(p -> p.getBundleDescription().getVersion());
 
 	public static void addRequiredJunitRuntimePlugins(ILaunchConfiguration configuration, Map<String, List<IPluginModelBase>> allBundles, Map<IPluginModelBase, String> allModels) throws CoreException {
 		Collection<String> runtimePlugins = getRequiredJunitRuntimeEclipsePlugins(configuration);
@@ -70,7 +73,7 @@ public class JUnitLaunchRequirements {
 		for (String id : requirements) {
 			List<IPluginModelBase> models = allBundles.computeIfAbsent(id, k -> new ArrayList<>());
 			if (models.stream().noneMatch(p -> p.getBundleDescription().isResolved())) {
-				IPluginModelBase model = findRequiredPluginInTargetOrHost(id, null);
+				IPluginModelBase model = findRequiredPluginInTargetOrHost(PluginRegistry.findModel(id), plugins -> plugins.max(VERSION), id);
 				models.add(model);
 				BundleLauncherHelper.addDefaultStartingBundle(allModels, model);
 				addedRequirements.add(model.getBundleDescription());
@@ -80,35 +83,22 @@ public class JUnitLaunchRequirements {
 	}
 
 	private static void addAbsentRequirements(Set<BundleDescription> requirements, Map<String, List<IPluginModelBase>> allBundles, Map<IPluginModelBase, String> allModels) throws CoreException {
-		for (BundleRevision requirement : requirements) {
-			String id = requirement.getSymbolicName();
-			Version version = requirement.getVersion();
+		for (BundleRevision bundle : requirements) {
+			String id = bundle.getSymbolicName();
 			List<IPluginModelBase> models = allBundles.computeIfAbsent(id, k -> new ArrayList<>());
-			boolean replace = !models.isEmpty() && models.stream().anyMatch(m -> !m.getBundleDescription().getVersion().equals(version));
-			if (replace || models.stream().noneMatch(m -> m.getBundleDescription().isResolved())) {
-				IPluginModelBase model = findRequiredPluginInTargetOrHost(requirement.getSymbolicName(), new VersionRange(VersionRange.LEFT_CLOSED, version, version, VersionRange.RIGHT_CLOSED));
-				if (replace) {
-					String startLevel = null;
-					for (IPluginModelBase m : models) {
-						startLevel = allModels.remove(m);
-					}
-					models.clear();
-					allModels.put(model, startLevel); //TODO: isn't this overwritten? Should it be retained or just ignored? 
-				}
+			if (models.stream().map(IPluginModelBase::getBundleDescription).noneMatch(b -> b.isResolved() && b.getVersion().equals(bundle.getVersion()))) {
+				IPluginModelBase model = findRequiredPluginInTargetOrHost(PluginRegistry.findModel(bundle), plgs -> plgs.filter(p -> p.getBundleDescription() == bundle).findFirst(), id);
 				models.add(model);
 				BundleLauncherHelper.addDefaultStartingBundle(allModels, model);
 			}
 		}
 	}
 
-	private static IPluginModelBase findRequiredPluginInTargetOrHost(String id, VersionRange version) throws CoreException {
-		IPluginModelBase model = version != null ? PluginRegistry.findModel(id, version) : PluginRegistry.findModel(id);
+	private static IPluginModelBase findRequiredPluginInTargetOrHost(IPluginModelBase model, Function<Stream<IPluginModelBase>, Optional<IPluginModelBase>> pluginSelector, String id) throws CoreException {
 		if (model == null || !model.getBundleDescription().isResolved()) {
 			// prefer bundle from host over unresolved bundle from target
-			model = PDECore.getDefault().findPluginInHost(id, version);
-		}
-		if (model == null) {
-			throw new CoreException(Status.error(NLS.bind(PDEMessages.JUnitLaunchConfiguration_error_missingPlugin, id)));
+			model = pluginSelector.apply(PDECore.getDefault().findPluginInHost(id)) //
+					.orElseThrow(() -> new CoreException(Status.error(NLS.bind(PDEMessages.JUnitLaunchConfiguration_error_missingPlugin, id))));
 		}
 		return model;
 	}

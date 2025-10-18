@@ -16,7 +16,6 @@ package org.eclipse.pde.internal.core;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -59,8 +58,6 @@ import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
-import org.osgi.framework.Version;
-import org.osgi.framework.VersionRange;
 import org.osgi.util.tracker.ServiceTracker;
 
 import aQute.bnd.build.Workspace;
@@ -226,22 +223,12 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 		inst = this;
 	}
 
-	public synchronized IPluginModelBase findPluginInHost(String id, VersionRange version) {
+	public Stream<IPluginModelBase> findPluginInHost(String id) {
 		Map<String, List<IPluginModelBase>> hostPlugins = getHostPlugins();
 		if (hostPlugins == null) {
 			return null;
 		}
-		Stream<IPluginModelBase> plugins = hostPlugins.getOrDefault(id, List.of()).stream();
-		if (version != null) {
-			plugins = plugins.filter(p -> version.includes(getVersion(p)));
-		}
-		return plugins.max(VERSION).orElse(null);
-	}
-
-	private static final Comparator<IPluginModelBase> VERSION = Comparator.comparing(PDECore::getVersion);
-
-	private static Version getVersion(IPluginModelBase p) {
-		return p.getBundleDescription().getVersion();
+		return hostPlugins.getOrDefault(id, List.of()).stream();
 	}
 
 	private synchronized Map<String, List<IPluginModelBase>> getHostPlugins() {
