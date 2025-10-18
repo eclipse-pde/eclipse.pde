@@ -241,10 +241,7 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 	private static final Comparator<IPluginModelBase> VERSION = Comparator.comparing(PDECore::getVersion);
 
 	private static Version getVersion(IPluginModelBase p) {
-		// TODO: Check the following also works for plugins from host. If yes,
-		// use it.
-		Version version2 = p.getBundleDescription().getVersion();
-		return Version.parseVersion(p.getPluginBase().getVersion());
+		return p.getBundleDescription().getVersion();
 	}
 
 	private synchronized Map<String, List<IPluginModelBase>> getHostPlugins() {

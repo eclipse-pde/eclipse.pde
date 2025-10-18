@@ -16,12 +16,9 @@ package org.eclipse.pde.internal.launching;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -43,30 +40,11 @@ public class JUnitLaunchRequirements {
 	public static final String JUNIT4_JDT_RUNTIME_PLUGIN = "org.eclipse.jdt.junit4.runtime"; //$NON-NLS-1$
 	public static final String JUNIT5_JDT_RUNTIME_PLUGIN = "org.eclipse.jdt.junit5.runtime"; //$NON-NLS-1$
 
-	private static final VersionRange JUNIT5_VERSIONS = new VersionRange("[1, 6)"); //$NON-NLS-1$
-
-	// we add launcher and jupiter.engine to support @RunWith(JUnitPlatform.class)
-	private static final Map<String, List<String>> JUNIT5_RUN_WITH_BUNDLES = new LinkedHashMap<>();
-	static { // consider  JUnit bundle names from old Eclipse-Orbit times. Assume either only new or only old names are used.
-		JUNIT5_RUN_WITH_BUNDLES.put("junit-platform-runner", List.of("junit-platform-launcher", "junit-jupiter-engine")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		JUNIT5_RUN_WITH_BUNDLES.put("org.junit.platform.runner", List.of("org.junit.platform.launcher", "org.junit.jupiter.engine")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	}
-
 	public static void addRequiredJunitRuntimePlugins(ILaunchConfiguration configuration, Map<String, List<IPluginModelBase>> allBundles, Map<IPluginModelBase, String> allModels) throws CoreException {
 		Collection<String> runtimePlugins = getRequiredJunitRuntimeEclipsePlugins(configuration);
-
 		Set<BundleDescription> addedRuntimeBundles = addAbsentRequirements(runtimePlugins, allBundles, allModels);
 		Set<BundleDescription> runtimeRequirements = DependencyManager.findRequirementsClosure(addedRuntimeBundles);
 		addAbsentRequirements(runtimeRequirements, allBundles, allModels);
-
-		if (runtimePlugins.contains(JUNIT5_JDT_RUNTIME_PLUGIN)) {
-			Optional<List<String>> runWithBundles = JUNIT5_RUN_WITH_BUNDLES.entrySet().stream().filter(e -> allBundles.containsKey(e.getKey())).findFirst().map(Entry::getValue);
-			if (runWithBundles.isPresent()) {
-				Set<BundleDescription> descriptions = findBundlesInTargetOrHost(runWithBundles.get(), JUNIT5_VERSIONS);
-				Set<BundleDescription> junitRquirements = DependencyManager.findRequirementsClosure(descriptions);
-				addAbsentRequirements(junitRquirements, allBundles, allModels);
-			}
-		}
 	}
 
 	@SuppressWarnings("restriction")
@@ -121,17 +99,6 @@ public class JUnitLaunchRequirements {
 				BundleLauncherHelper.addDefaultStartingBundle(allModels, model);
 			}
 		}
-	}
-
-	private static Set<BundleDescription> findBundlesInTargetOrHost(List<String> bundleIDs, VersionRange version) throws CoreException {
-		Set<BundleDescription> descriptions = new LinkedHashSet<>();
-		for (String id : bundleIDs) {
-			IPluginModelBase model = findRequiredPluginInTargetOrHost(id, version);
-			if (model != null) {
-				descriptions.add(model.getBundleDescription());
-			}
-		}
-		return descriptions;
 	}
 
 	private static IPluginModelBase findRequiredPluginInTargetOrHost(String id, VersionRange version) throws CoreException {
