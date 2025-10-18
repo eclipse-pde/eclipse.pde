@@ -76,6 +76,8 @@ import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.osgi.service.resolver.VersionConstraint;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
+import org.eclipse.pde.api.tools.internal.ApiConfigParser;
+import org.eclipse.pde.api.tools.internal.ApiConfigSettings;
 import org.eclipse.pde.api.tools.internal.ApiFilterStore;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.comparator.Delta;
@@ -181,6 +183,12 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	private boolean fContinueOnResolutionError = false;
 
 	/**
+	 * The API configuration settings loaded from .apiconfig file
+	 * @since 1.2
+	 */
+	private ApiConfigSettings fApiConfigSettings = null;
+
+	/**
 	 * Constructs an API analyzer
 	 */
 	public BaseApiAnalyzer() {
@@ -193,6 +201,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			this.fJavaProject = getJavaProject(component);
 			this.fFilterStore = filterStore;
 			this.fPreferences = preferences;
+			this.fApiConfigSettings = loadApiConfigSettings();
 			if (!ignoreUnusedProblemFilterCheck()) {
 				((ApiFilterStore) component.getFilterStore()).recordFilterUsage();
 			}
@@ -1118,6 +1127,78 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	}
 
 	/**
+	 * Loads API configuration settings from .apiconfig file if it exists in the project.
+	 * Falls back to default settings if no config file is found.
+	 * 
+	 * @return API configuration settings, never null
+	 * @since 1.2
+	 */
+	private ApiConfigSettings loadApiConfigSettings() {
+		if (fJavaProject != null) {
+			IProject project = fJavaProject.getProject();
+			try {
+				ApiConfigSettings settings = ApiConfigParser.parseFromProject(project);
+				if (settings != null) {
+					return settings;
+				}
+			} catch (CoreException e) {
+				// Log warning but continue with defaults
+				ApiPlugin.log("Error loading .apiconfig file from project " + project.getName(), e); //$NON-NLS-1$
+			}
+		}
+		// Return default settings if no config file found or on error
+		return new ApiConfigSettings();
+	}
+
+	/**
+	 * Calculates the new version based on semantic change requirement and API configuration
+	 * 
+	 * @param currentVersion the current version
+	 * @param requiredChange the semantic change level required (MAJOR, MINOR, or MICRO)
+	 * @return the new version to suggest
+	 * @since 1.2
+	 */
+	private Version calculateNewVersion(Version currentVersion, ApiConfigSettings.VersionSegment requiredChange) {
+		ApiConfigSettings.VersionIncrementRule rule;
+		
+		switch (requiredChange) {
+			case MAJOR:
+				rule = fApiConfigSettings.getMajorVersionIncrement();
+				break;
+			case MINOR:
+				rule = fApiConfigSettings.getMinorVersionIncrement();
+				break;
+			case MICRO:
+				rule = fApiConfigSettings.getMicroVersionIncrement();
+				break;
+			default:
+				// Default to standard increment
+				return new Version(currentVersion.getMajor() + 1, 0, 0, currentVersion.getQualifier() != null ? QUALIFIER : null);
+		}
+		
+		int major = currentVersion.getMajor();
+		int minor = currentVersion.getMinor();
+		int micro = currentVersion.getMicro();
+		
+		switch (rule.getTargetSegment()) {
+			case MAJOR:
+				major += rule.getIncrementAmount();
+				minor = 0;
+				micro = 0;
+				break;
+			case MINOR:
+				minor += rule.getIncrementAmount();
+				micro = 0;
+				break;
+			case MICRO:
+				micro += rule.getIncrementAmount();
+				break;
+		}
+		
+		return new Version(major, minor, micro, currentVersion.getQualifier() != null ? QUALIFIER : null);
+	}
+
+	/**
 	 * Checks the validation of tags for the given {@link IApiComponent}
 	 */
 	private void checkTagValidation(final IBuildContext context, IProgressMonitor monitor) {
@@ -2027,7 +2108,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		if (ignoreComponentVersionCheck()) {
 			if (ignoreExecutionEnvChanges() == false) {
 				if (shouldVersionChangeForExecutionEnvChanges(reference, component)) {
-					newversion = new Version(compversion.getMajor(), compversion.getMinor() + 1, 0, compversion.getQualifier() != null ? QUALIFIER : null);
+					newversion = calculateNewVersion(compversion, ApiConfigSettings.VersionSegment.MINOR);
 					problem = createVersionProblem(IApiProblem.MINOR_VERSION_CHANGE_EXECUTION_ENV_CHANGED, new String[] {
 							compversionval,
 							refversionval }, String.valueOf(newversion), Util.EMPTY_STRING);
@@ -2056,7 +2137,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		if (breakingChanges.length != 0) {
 			// make sure that the major version has been incremented
 			if (compversion.getMajor() <= refversion.getMajor()) {
-				newversion = new Version(compversion.getMajor() + 1, 0, 0, compversion.getQualifier() != null ? QUALIFIER : null);
+				newversion = calculateNewVersion(compversion, ApiConfigSettings.VersionSegment.MAJOR);
 				problem = createVersionProblem(IApiProblem.MAJOR_VERSION_CHANGE, new String[] {
 						compversionval, refversionval }, String.valueOf(newversion), collectDetails(breakingChanges));
 			}
@@ -2065,14 +2146,14 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				// only new API have been added
 				if (compversion.getMajor() != refversion.getMajor()) {
 					if (reportMajorVersionCheckWithoutBreakingChange()) {
-						// major version should be identical
-						newversion = new Version(refversion.getMajor(), refversion.getMinor() + 1, 0, compversion.getQualifier() != null ? QUALIFIER : null);
+						// major version should be identical - suggest minor increment instead
+						newversion = calculateNewVersion(refversion, ApiConfigSettings.VersionSegment.MINOR);
 						problem = createVersionProblem(IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE, new String[] {
 								compversionval, refversionval }, String.valueOf(newversion), collectDetails(compatibleChanges));
 					}
 				} else if (compversion.getMinor() <= refversion.getMinor()) {
 					// the minor version should be incremented
-					newversion = new Version(compversion.getMajor(), compversion.getMinor() + 1, 0, compversion.getQualifier() != null ? QUALIFIER : null);
+					newversion = calculateNewVersion(compversion, ApiConfigSettings.VersionSegment.MINOR);
 					problem = createVersionProblem(IApiProblem.MINOR_VERSION_CHANGE, new String[] {
 							compversionval, refversionval }, String.valueOf(newversion), collectDetails(compatibleChanges));
 				}
@@ -2091,7 +2172,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							compversionval, refversionval }, String.valueOf(newversion), Util.EMPTY_STRING);
 				}
 			} else if (shouldVersionChangeForExecutionEnvChanges(reference, component)) {
-				newversion = new Version(compversion.getMajor(), compversion.getMinor() + 1, 0, compversion.getQualifier() != null ? QUALIFIER : null);
+				newversion = calculateNewVersion(compversion, ApiConfigSettings.VersionSegment.MINOR);
 				problem = createVersionProblem(IApiProblem.MINOR_VERSION_CHANGE_EXECUTION_ENV_CHANGED, new String[] {
 						compversionval,
 						refversionval }, String.valueOf(newversion), Util.EMPTY_STRING);
@@ -2100,17 +2181,14 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			if (reportUnnecessaryMinorMicroVersionCheck()) {
 				boolean multipleMicroIncrease = reportMultipleIncreaseMicroVersion(compversion,refversion);
 				if(multipleMicroIncrease) {
-					newversion = new Version(compversion.getMajor(), compversion.getMinor(),
-							refversion.getMicro() + 100,
-							compversion.getQualifier() != null ? QUALIFIER : null);
+					newversion = calculateNewVersion(refversion, ApiConfigSettings.VersionSegment.MICRO);
 					problem = createVersionProblem(IApiProblem.MICRO_VERSION_CHANGE_UNNECESSARILY,
 							new String[] { compversionval, refversionval }, String.valueOf(newversion),
 							Util.EMPTY_STRING);
 				}
 				boolean multipleMinorIncrease = reportMultipleIncreaseMinorVersion(compversion, refversion);
 				if (multipleMinorIncrease) {
-					newversion = new Version(compversion.getMajor(), refversion.getMinor() + 1, 0,
-							compversion.getQualifier() != null ? QUALIFIER : null);
+					newversion = calculateNewVersion(refversion, ApiConfigSettings.VersionSegment.MINOR);
 					problem = createVersionProblem(IApiProblem.MINOR_VERSION_CHANGE_UNNECESSARILY,
 							new String[] { compversionval, refversionval }, String.valueOf(newversion),
 							Util.EMPTY_STRING);
