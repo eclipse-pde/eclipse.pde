@@ -45,7 +45,16 @@ public class StubApiComponent extends SystemLibraryApiComponent {
 	private static final String STUB_PATH = "/org/eclipse/pde/api/tools/internal/api_stubs/"; //$NON-NLS-1$
 	private static Map<String, IApiComponent> AllSystemLibraryApiComponents;
 
-	public static IApiComponent getStubApiComponent(int eeValue) {
+	/**
+	 * Returns the stub API component for the given execution environment value,
+	 * using the provided baseline if available, otherwise getting it from the manager.
+	 *
+	 * @param eeValue the execution environment value
+	 * @param baseline the baseline to use, or null to get from manager
+	 * @return the stub API component or null
+	 * @since 1.1
+	 */
+	public static IApiComponent getStubApiComponent(int eeValue, IApiBaseline baseline) {
 		if (AllSystemLibraryApiComponents == null) {
 			AllSystemLibraryApiComponents = new LinkedHashMap<>();
 		}
@@ -57,10 +66,26 @@ public class StubApiComponent extends SystemLibraryApiComponent {
 			if (stubFile == null) {
 				return null;
 			}
-			component = new StubApiComponent(ApiBaselineManager.getManager().getWorkspaceBaseline(), stubFile.getAbsolutePath(), name);
+			// Use provided baseline or fall back to getting from manager
+			IApiBaseline baselineToUse = baseline;
+			if (baselineToUse == null) {
+				baselineToUse = ApiBaselineManager.getManager().getWorkspaceBaseline();
+			}
+			component = new StubApiComponent(baselineToUse, stubFile.getAbsolutePath(), name);
 			AllSystemLibraryApiComponents.put(name, component);
 		}
 		return component;
+	}
+
+	/**
+	 * Returns the stub API component for the given execution environment value,
+	 * getting the workspace baseline from the manager.
+	 *
+	 * @param eeValue the execution environment value
+	 * @return the stub API component or null
+	 */
+	public static IApiComponent getStubApiComponent(int eeValue) {
+		return getStubApiComponent(eeValue, null);
 	}
 
 	private static File getFileFor(int eeValue, String name) {
