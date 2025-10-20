@@ -170,6 +170,12 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * The current preferences to use when the platform is not running.
 	 */
 	private Properties fPreferences = null;
+	/**
+	 * The workspace baseline to use for filtering problems. This is set during
+	 * {@link #analyzeComponent(BuildState, IApiFilterStore, Properties, IApiBaseline, IApiComponent, IBuildContext, IProgressMonitor)}
+	 * to avoid repeated calls to the singleton {@link IApiBaselineManager#getWorkspaceBaseline()}.
+	 */
+	private IApiBaseline fWorkspaceBaseline = null;
 
 	/**
 	 * Boolean setting to continue analyzing a component even if it has
@@ -193,6 +199,15 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			this.fJavaProject = getJavaProject(component);
 			this.fFilterStore = filterStore;
 			this.fPreferences = preferences;
+			// Set workspace baseline from component's baseline if available, otherwise get from manager
+			if (component != null) {
+				IApiBaseline componentBaseline = component.getBaseline();
+				if (componentBaseline instanceof WorkspaceBaseline) {
+					this.fWorkspaceBaseline = componentBaseline;
+				} else if (ApiPlugin.isRunningInFramework()) {
+					this.fWorkspaceBaseline = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline();
+				}
+			}
 			if (!ignoreUnusedProblemFilterCheck()) {
 				((ApiFilterStore) component.getFilterStore()).recordFilterUsage();
 			}
@@ -981,6 +996,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		if (fBuildState != null) {
 			fBuildState = null;
 		}
+		fWorkspaceBaseline = null;
 	}
 
 	/**
@@ -2717,8 +2733,11 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			return true;
 		}
 
-		IApiBaselineManager manager = ApiBaselineManager.getManager();
-		IApiBaseline baseline = manager.getWorkspaceBaseline();
+		// Use workspace baseline from field if available, otherwise fall back to singleton
+		IApiBaseline baseline = this.fWorkspaceBaseline;
+		if (baseline == null && ApiPlugin.isRunningInFramework()) {
+			baseline = ApiBaselineManager.getManager().getWorkspaceBaseline();
+		}
 		if (baseline == null) {
 			return false;
 		}
