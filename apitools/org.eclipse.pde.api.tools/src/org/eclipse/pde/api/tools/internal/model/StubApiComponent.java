@@ -48,9 +48,16 @@ public class StubApiComponent extends SystemLibraryApiComponent {
 	/**
 	 * Returns the stub API component for the given execution environment value,
 	 * using the provided baseline if available, otherwise getting it from the manager.
+	 * <p>
+	 * Note: Stub components are cached globally per execution environment. The baseline
+	 * parameter is only used when creating a new component. If a component for the given
+	 * execution environment already exists, it is returned regardless of the baseline parameter.
+	 * This is acceptable since stub components represent system libraries that are independent
+	 * of the workspace baseline.
+	 * </p>
 	 *
 	 * @param eeValue the execution environment value
-	 * @param baseline the baseline to use, or null to get from manager
+	 * @param baseline the baseline to use when creating a new component, or null to get from manager
 	 * @return the stub API component or null
 	 * @since 1.1
 	 */
