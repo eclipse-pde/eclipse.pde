@@ -17,6 +17,7 @@ package org.eclipse.pde.internal.launching;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.BundleSpecification;
+import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
@@ -48,6 +51,29 @@ public class JUnitLaunchRequirements {
 		Set<BundleDescription> addedRuntimeBundles = addAbsentRequirements(runtimePlugins, allBundles, allModels);
 		Set<BundleDescription> runtimeRequirements = DependencyManager.findRequirementsClosure(addedRuntimeBundles);
 		addAbsentRequirements(runtimeRequirements, allBundles, allModels);
+
+		for (String runtimePlugin : runtimePlugins) {
+			List<IPluginModelBase> bundles = allBundles.get(runtimePlugin);
+			if (bundles.size() == 1) {
+				for (BundleSpecification bundleSpecification : bundles.get(0).getBundleDescription().getRequiredBundles()) {
+					List<IPluginModelBase> list = allBundles.get(bundleSpecification.getName());
+					if (list != null && list.size() > 1) {
+						VersionRange versionRange = bundleSpecification.getVersionRange();
+						if (versionRange != null) {
+							for (Iterator<IPluginModelBase> it = list.iterator(); it.hasNext();) {
+								IPluginModelBase other = it.next();
+								BundleDescription bundleDescription = other.getBundleDescription();
+								if (!versionRange.includes(bundleDescription.getVersion())) {
+									System.err.println("> " + bundleDescription);
+									allModels.remove(other);
+									it.remove();
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 	@SuppressWarnings("restriction")
