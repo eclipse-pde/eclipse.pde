@@ -28,10 +28,12 @@ import static java.util.stream.Collectors.groupingBy;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -78,7 +80,11 @@ import org.eclipse.pde.internal.launching.IPDEConstants;
 import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
 import org.eclipse.pde.internal.launching.PDEMessages;
 import org.eclipse.pde.launching.IPDELauncherConstants;
+import org.eclipse.pde.launching.JUnitLaunchConfigurationDelegate;
 import org.osgi.framework.Version;
+import org.osgi.framework.wiring.BundleCapability;
+import org.osgi.framework.wiring.BundleRequirement;
+import org.osgi.resource.Resource;
 
 public class BundleLauncherHelper {
 
@@ -829,6 +835,117 @@ public class BundleLauncherHelper {
 			}
 		}
 		return resolvedAdditionalPlugins;
+	}
+
+	public static void addRequiredJunitRuntimePlugins(ILaunchConfiguration configuration, Map<String, List<IPluginModelBase>> collectedModels, Map<IPluginModelBase, String> startLevelMap) throws CoreException {
+		// First we collect all required plugins we need to launch the junit
+		// framework...
+		Collection<String> requiredJunitRuntimePlugins = JUnitLaunchConfigurationDelegate.getRequiredJunitRuntimePlugins(configuration);
+		List<IPluginModelBase> collected = new ArrayList<>(requiredJunitRuntimePlugins.size());
+		for (String id : requiredJunitRuntimePlugins) {
+			// we need to add them all to make sure the collection is complete for adding
+			// compatible ones...
+			addIfAbsent(id, collectedModels, startLevelMap).or(() -> collectedModels.getOrDefault(id, List.of()).stream().filter(m -> m.getBundleDescription().isResolved()).findFirst()).ifPresent(collected::add);
+		}
+		// Now collect the dependencies of the collected...
+		Set<BundleDescription> closure = DependencyManager.findRequirementsClosure(collected.stream().map(IPluginModelBase::getBundleDescription).toList());
+		for (BundleDescription description : closure) {
+			collected.add(addIfAbsent(description, collectedModels, startLevelMap));
+		}
+		// Now add any indirectly required items
+		if (collectedModels.containsKey("junit-platform-runner")) { //$NON-NLS-1$
+			Set<BundleDescription> additional = new HashSet<>();
+			addCompatible("junit-platform-launcher", collected, "org.junit.platform.launcher", collectedModels, startLevelMap).ifPresent(m -> additional.add(m.getBundleDescription())); //$NON-NLS-1$ //$NON-NLS-2$
+			addCompatible("junit-jupiter-engine", collected, "org.junit.platform.engine", collectedModels, startLevelMap).ifPresent(m -> additional.add(m.getBundleDescription())); //$NON-NLS-1$ //$NON-NLS-2$
+			if (!additional.isEmpty()) {
+				//final collection...
+				Iterator<BundleDescription> iterator = DependencyManager.findRequirementsClosure(additional).iterator();
+				while (iterator.hasNext()) {
+					addIfAbsent(iterator.next(), collectedModels, startLevelMap);
+				}
+			}
+		}
+	}
+
+	private static IPluginModelBase addIfAbsent(BundleDescription description, Map<String, List<IPluginModelBase>> fAllBundles, Map<IPluginModelBase, String> fModels) throws CoreException {
+		IPluginModelBase model = PluginRegistry.findModel((Resource) description);
+		if (model == null) {
+			Version version = description.getVersion();
+			model = PDECore.getDefault().findPluginsInHost(description.getSymbolicName()).filter(m -> version.equals(PDECore.getOSGiVersion(m))).findFirst().orElseThrow(() -> new CoreException(Status.error("Resolved bundle description " + description + " not found in target or host!"))); //$NON-NLS-1$//$NON-NLS-2$
+		}
+		List<IPluginModelBase> models = fAllBundles.computeIfAbsent(description.getSymbolicName(), k -> new ArrayList<>());
+		if (!models.contains(model)) {
+			models.add(model);
+			BundleLauncherHelper.addDefaultStartingBundle(fModels, model);
+		}
+		return model;
+	}
+
+	private static Optional<IPluginModelBase> addIfAbsent(String id, Map<String, List<IPluginModelBase>> fAllBundles, Map<IPluginModelBase, String> fModels) throws CoreException {
+		List<IPluginModelBase> models = fAllBundles.computeIfAbsent(id, k -> new ArrayList<>());
+		if (models.stream().noneMatch(m -> m.getBundleDescription().isResolved())) {
+			IPluginModelBase model = findRequiredPluginInTargetOrHost(id);
+			models.add(model);
+			BundleLauncherHelper.addDefaultStartingBundle(fModels, model);
+			return Optional.of(model);
+		}
+		return Optional.empty();
+	}
+
+	private static IPluginModelBase findRequiredPluginInTargetOrHost(String id) throws CoreException {
+		IPluginModelBase model = PluginRegistry.findModel(id);
+		if (model == null || !model.getBundleDescription().isResolved()) {
+			// prefer bundle from host over unresolved bundle from target
+			model = PDECore.getDefault().findPluginInHost(id);
+		}
+		if (model == null) {
+			throw new CoreException(Status.error(NLS.bind(PDEMessages.JUnitLaunchConfiguration_error_missingPlugin, id)));
+		}
+		return model;
+	}
+
+	private static Optional<IPluginModelBase> addCompatible(String id, List<IPluginModelBase> collected, String namespace, Map<String, List<IPluginModelBase>> fAllBundles, Map<IPluginModelBase, String> fModels) {
+		//First collect all requirements from namespace
+		Set<BundleRequirement> requirements = new HashSet<>();
+		for (IPluginModelBase model : collected) {
+			BundleDescription description = model.getBundleDescription();
+			if (description == null) {
+				continue;
+			}
+			requirements.addAll(description.getDeclaredRequirements(namespace));
+		}
+		//now compute all candidates and sort them by version
+		List<IPluginModelBase> candidates = Stream.concat(PluginRegistry.findModels(id, null), PDECore.getDefault().findPluginsInHost(id)).filter(model -> {
+			BundleDescription description = model.getBundleDescription();
+			if (description == null) {
+				return false;
+			}
+			List<BundleCapability> capabilities = description.getDeclaredCapabilities(namespace);
+			for (BundleCapability capability : capabilities) {
+				for (BundleRequirement requirement : requirements) {
+					if (requirement.matches(capability)) {
+						return true;
+					}
+				}
+			}
+			return false;
+
+		}).sorted(PDECore.COMPARE_BY_VERSION.reversed()).toList();
+		if (candidates.isEmpty()) {
+			return Optional.empty();
+		}
+		//now check if not already one is used!
+		for (IPluginModelBase model : candidates) {
+			List<IPluginModelBase> list = fAllBundles.get(model.getBundleDescription().getSymbolicName());
+			if (list != null && list.contains(model)) {
+				//already selected...
+				return Optional.empty();
+			}
+		}
+		IPluginModelBase model = candidates.get(0);
+		fAllBundles.get(model.getBundleDescription().getSymbolicName()).add(model);
+		BundleLauncherHelper.addDefaultStartingBundle(fModels, model);
+		return Optional.of(model);
 	}
 
 	public static String formatAdditionalPluginEntry(IPluginModelBase pluginModel, String pluginResolution, boolean isChecked, String fStartLevel, String fAutoStart) {

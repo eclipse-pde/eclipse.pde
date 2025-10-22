@@ -15,9 +15,12 @@ package org.eclipse.pde.internal.core;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -37,6 +40,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.debug.DebugOptionsListener;
 import org.eclipse.osgi.service.debug.DebugTrace;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.IBundleClasspathResolver;
 import org.eclipse.pde.core.IClasspathContributor;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -56,6 +60,7 @@ import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
+import org.osgi.framework.Version;
 import org.osgi.util.tracker.ServiceTracker;
 
 import aQute.bnd.build.Workspace;
@@ -80,6 +85,9 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 
 	public static final QualifiedName SCHEMA_PREVIEW_FILE = new QualifiedName(PLUGIN_ID, "SCHEMA_PREVIEW_FILE"); //$NON-NLS-1$
 
+	public static final Comparator<IPluginModelBase> COMPARE_BY_VERSION = Comparator
+			.comparing(model -> PDECore.getOSGiVersion(model));
+
 	public static boolean DEBUG_CLASSPATH = false;
 	public static boolean DEBUG_MODEL = false;
 	public static boolean DEBUG_TARGET_PROFILE = false;
@@ -97,6 +105,7 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 	private static final String VALIDATION_DEBUG = PLUGIN_ID + KEY_DEBUG_VALIDATION;
 	private static final String STATE_DEBUG = PLUGIN_ID + KEY_DEBUG_STATE;
 
+
 	// Shared instance
 	private static PDECore inst;
 
@@ -109,7 +118,7 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 	 */
 	private static PDEPreferencesManager fPreferenceManager;
 
-	private Map<String, IPluginModelBase> fHostPlugins;
+	private Map<String, List<IPluginModelBase>> fHostPlugins;
 
 	public static PDECore getDefault() {
 		return inst;
@@ -221,15 +230,20 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 		inst = this;
 	}
 
-	public synchronized IPluginModelBase findPluginInHost(String id) {
+	public IPluginModelBase findPluginInHost(String id) {
+		return findPluginsInHost(id).max(Comparator.comparing(plugin -> {
+			return getOSGiVersion(plugin);
+		})).orElse(null);
+	}
+
+	public synchronized Stream<IPluginModelBase> findPluginsInHost(String id) {
 		if (fHostPlugins == null) {
 			fHostPlugins = new HashMap<>();
-
 			ITargetDefinition defaultTarget = TargetPlatformService.getDefault().newDefaultTarget();
 			IStatus status = defaultTarget.resolve(new NullProgressMonitor());
 			if (!status.isOK()) {
 				log(status);
-				return null;
+				return Stream.empty();
 			}
 
 			URI[] pluginPaths = Arrays.stream(defaultTarget.getBundles()) //
@@ -240,11 +254,22 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 			state.resolveState(false);
 
 			for (IPluginModelBase plugin : state.getTargetModels()) {
-				fHostPlugins.put(plugin.getPluginBase().getId(), plugin);
+				fHostPlugins.computeIfAbsent(plugin.getPluginBase().getId(), nil -> new ArrayList<>(1)).add(plugin);
 			}
 		}
+		List<IPluginModelBase> list = fHostPlugins.get(id);
+		if (list == null) {
+			return Stream.empty();
+		}
+		return list.stream();
+	}
 
-		return fHostPlugins.get(id);
+	public static Version getOSGiVersion(IPluginModelBase plugin) {
+		BundleDescription description = plugin.getBundleDescription();
+		if (description == null) {
+			return Version.emptyVersion;
+		}
+		return description.getVersion();
 	}
 
 	public PluginModelManager getModelManager() {
