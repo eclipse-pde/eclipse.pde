@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Dictionary;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -57,10 +59,20 @@ public class BundleValidationOperation implements IWorkspaceRunnable {
 		}
 		SubMonitor subMonitor = SubMonitor.convert(monitor, fModels.size() + 1);
 		fState = FACTORY.createState(true);
+		int id = 0;
 		for (IPluginModelBase fModel : fModels) {
 			BundleDescription bundle = fModel.getBundleDescription();
 			if (bundle != null) {
-				fState.addBundle(FACTORY.createBundleDescription(bundle));
+				BundleDescription bundleDescription = FACTORY.createBundleDescription(bundle);
+				try {
+					Method declaredMethod = bundleDescription.getClass().getDeclaredMethod("setBundleId", long.class); //$NON-NLS-1$
+					declaredMethod.setAccessible(true);
+					declaredMethod.invoke(bundleDescription, id++);
+				} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+						| InvocationTargetException e) {
+					e.printStackTrace();
+				}
+				fState.addBundle(bundleDescription);
 			}
 			subMonitor.split(1);
 		}
