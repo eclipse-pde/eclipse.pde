@@ -57,10 +57,11 @@ public class BundleValidationOperation implements IWorkspaceRunnable {
 		}
 		SubMonitor subMonitor = SubMonitor.convert(monitor, fModels.size() + 1);
 		fState = FACTORY.createState(true);
+		long id = 1;
 		for (IPluginModelBase fModel : fModels) {
 			BundleDescription bundle = fModel.getBundleDescription();
 			if (bundle != null) {
-				fState.addBundle(FACTORY.createBundleDescription(bundle));
+				fState.addBundle(FACTORY.createBundleDescription(id++, bundle));
 			}
 			subMonitor.split(1);
 		}

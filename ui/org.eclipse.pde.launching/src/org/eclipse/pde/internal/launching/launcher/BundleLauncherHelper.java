@@ -40,6 +40,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -580,15 +581,16 @@ public class BundleLauncherHelper {
 		launchState.setPlatformProperties(tpState.getPlatformProperties());
 
 		// Collect all bundles explicitly included in the launch
+		AtomicLong id = new AtomicLong(1);
 		for (IPluginModelBase plugin : includedPlugins) {
-			addPluginBundle(plugin, launchState, launchBundlePlugins, tpState);
+			addPluginBundle(plugin, launchState, launchBundlePlugins, tpState, id);
 		}
 		Set<BundleDescription> launchBundles = new HashSet<>(launchBundlePlugins.keySet());
 
 		// Iterate workspace- and TP-models separately to avoid shadowing of TP models by workspace models
 		Stream.of(modelManager.getWorkspaceModels(), modelManager.getExternalModels()).flatMap(Arrays::stream) //
 				.filter(IPluginModelBase::isEnabled).filter(p -> !includedPlugins.contains(p)) //
-				.forEach(plugin -> addPluginBundle(plugin, launchState, launchBundlePlugins, tpState));
+				.forEach(plugin -> addPluginBundle(plugin, launchState, launchBundlePlugins, tpState, id));
 
 		launchState.getResolver().setSelectionPolicy(Comparator
 				// prefer bundles explicitly included in the launch
@@ -602,13 +604,13 @@ public class BundleLauncherHelper {
 		return launchBundles;
 	}
 
-	private static void addPluginBundle(IPluginModelBase plugin, State launchState, Map<BundleDescription, IPluginModelBase> launchBundlePlugin, State tpState) {
+	private static void addPluginBundle(IPluginModelBase plugin, State launchState, Map<BundleDescription, IPluginModelBase> launchBundlePlugin, State tpState, AtomicLong id) {
 		BundleDescription bundle = plugin.getBundleDescription();
 		if (bundle != null) {
 			if (bundle.getContainingState() != tpState) { // consistency check
 				throw new IllegalStateException("Plugins have different TP state"); //$NON-NLS-1$
 			}
-			BundleDescription launchBundle = launchState.getFactory().createBundleDescription(bundle);
+			BundleDescription launchBundle = launchState.getFactory().createBundleDescription(id.getAndIncrement(), bundle);
 			launchBundle.setUserObject(plugin);
 			if (!launchState.addBundle(launchBundle)) {
 				throw new IllegalStateException("Failed to add bundle to launch state: " + launchBundle); //$NON-NLS-1$
