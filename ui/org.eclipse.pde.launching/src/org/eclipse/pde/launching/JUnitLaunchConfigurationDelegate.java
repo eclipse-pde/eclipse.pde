@@ -397,7 +397,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		IPluginModelBase model = PluginRegistry.findModel(id);
 		if (model == null || !model.getBundleDescription().isResolved()) {
 			// prefer bundle from host over unresolved bundle from target
-			model = PDECore.getDefault().findPluginInHost(id);
+			model = PDECore.getDefault().findPluginInHost(id).max(Comparator.comparing(p -> p.getBundleDescription().getVersion())).orElse(null);
 		}
 		if (model == null) {
 			abort(NLS.bind(PDEMessages.JUnitLaunchConfiguration_error_missingPlugin, id), null, IStatus.OK);
