@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.tests;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
@@ -24,7 +24,7 @@ import org.eclipse.pde.internal.ds.core.text.DSModel;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 public abstract class AbstractDSModelTestCase {
 
@@ -38,7 +38,7 @@ public abstract class AbstractDSModelTestCase {
 	protected DSModel fModel;
 	protected IModelTextChangeListener fListener;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		fDocument = new Document();
 	}

@@ -14,11 +14,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.eclipse.pde.internal.ds.core.IDSComponent;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class DSv10tov11TestCase extends AbstractDSModelTestCase {
 	@Test
