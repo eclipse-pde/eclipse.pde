@@ -15,7 +15,6 @@ package org.eclipse.pde.internal.launching;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -40,8 +39,6 @@ public class JUnitLaunchRequirements {
 
 	public static final String JUNIT4_JDT_RUNTIME_PLUGIN = "org.eclipse.jdt.junit4.runtime"; //$NON-NLS-1$
 	public static final String JUNIT5_JDT_RUNTIME_PLUGIN = "org.eclipse.jdt.junit5.runtime"; //$NON-NLS-1$
-	private static final Comparator<IPluginModelBase> VERSION = Comparator.comparing(p -> p.getBundleDescription().getVersion());
-
 	public static void addRequiredJunitRuntimePlugins(ILaunchConfiguration configuration, Map<String, List<IPluginModelBase>> allBundles, Map<IPluginModelBase, String> allModels) throws CoreException {
 		Collection<String> runtimePlugins = getRequiredJunitRuntimeEclipsePlugins(configuration);
 		Set<BundleDescription> addedRuntimeBundles = addAbsentRequirements(runtimePlugins, allBundles, allModels);
@@ -72,7 +69,7 @@ public class JUnitLaunchRequirements {
 		for (String id : requirements) {
 			List<IPluginModelBase> models = allBundles.computeIfAbsent(id, k -> new ArrayList<>());
 			if (models.stream().noneMatch(p -> p.getBundleDescription().isResolved())) {
-				IPluginModelBase model = findRequiredPluginInTargetOrHost(PluginRegistry.findModel(id), plugins -> plugins.max(VERSION), id);
+				IPluginModelBase model = findRequiredPluginInTargetOrHost(PluginRegistry.findModel(id), plugins -> plugins.max(PDECore.VERSION), id);
 				models.add(model);
 				BundleLauncherHelper.addDefaultStartingBundle(allModels, model);
 				addedRequirements.add(model.getBundleDescription());
@@ -96,7 +93,7 @@ public class JUnitLaunchRequirements {
 	private static IPluginModelBase findRequiredPluginInTargetOrHost(IPluginModelBase model, Function<Stream<IPluginModelBase>, Optional<IPluginModelBase>> pluginSelector, String id) throws CoreException {
 		if (model == null || !model.getBundleDescription().isResolved()) {
 			// prefer bundle from host over unresolved bundle from target
-			model = pluginSelector.apply(PDECore.getDefault().findPluginInHost(id)) //
+			model = pluginSelector.apply(PDECore.getDefault().findPluginsInHost(id)) //
 					.orElseThrow(() -> new CoreException(Status.error(NLS.bind(PDEMessages.JUnitLaunchConfiguration_error_missingPlugin, id))));
 		}
 		return model;
