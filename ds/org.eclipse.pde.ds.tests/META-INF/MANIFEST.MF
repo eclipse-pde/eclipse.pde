@@ -13,10 +13,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-Localization: plugin
 Bundle-Vendor: %providerName
 Export-Package: org.eclipse.pde.internal.ds.tests;x-internal:=true
-Import-Package: org.junit,
- org.junit.jupiter.api;version="[5.13.0,6.0.0)",
- org.junit.platform.suite.api;version="[1.13.0,2.0.0)",
- org.junit.runner,
- org.junit.runners
+Import-Package: org.junit.jupiter.api;version="[5.13.0,6.0.0)",
+ org.junit.platform.suite.api;version="[1.13.0,2.0.0)"
 Eclipse-BundleShape: dir
 Automatic-Module-Name: org.eclipse.pde.ds.tests
