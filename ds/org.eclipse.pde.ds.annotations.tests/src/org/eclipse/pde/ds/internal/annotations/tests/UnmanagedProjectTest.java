@@ -1,12 +1,12 @@
 package org.eclipse.pde.ds.internal.annotations.tests;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.Assume.assumeTrue;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.pde.ds.internal.annotations.DSAnnotationCompilationParticipant;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("restriction")
 public class UnmanagedProjectTest extends CompilationParticipantTest {
