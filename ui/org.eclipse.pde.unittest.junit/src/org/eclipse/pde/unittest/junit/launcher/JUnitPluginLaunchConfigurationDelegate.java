@@ -27,6 +27,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -1089,7 +1090,8 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 		IPluginModelBase model = PluginRegistry.findModel(id);
 		if (model == null || !model.getBundleDescription().isResolved()) {
 			// prefer bundle from host over unresolved bundle from target
-			model = PDECore.getDefault().findPluginInHost(id);
+			model = PDECore.getDefault().findPluginInHost(id)
+					.max(Comparator.comparing(p -> p.getBundleDescription().getVersion())).orElse(null);
 		}
 		if (model == null) {
 			abort(NLS.bind(Messages.JUnitPluginLaunchConfigurationDelegate_error_missingPlugin, id), null, IStatus.OK);

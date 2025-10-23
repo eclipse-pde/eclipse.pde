@@ -18,7 +18,9 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -109,7 +111,7 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 	 */
 	private static PDEPreferencesManager fPreferenceManager;
 
-	private Map<String, IPluginModelBase> fHostPlugins;
+	private Map<String, List<IPluginModelBase>> fHostPlugins;
 
 	public static PDECore getDefault() {
 		return inst;
@@ -221,7 +223,15 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 		inst = this;
 	}
 
-	public synchronized IPluginModelBase findPluginInHost(String id) {
+	public Stream<IPluginModelBase> findPluginInHost(String id) {
+		Map<String, List<IPluginModelBase>> hostPlugins = getHostPlugins();
+		if (hostPlugins == null) {
+			return null;
+		}
+		return hostPlugins.getOrDefault(id, List.of()).stream();
+	}
+
+	private synchronized Map<String, List<IPluginModelBase>> getHostPlugins() {
 		if (fHostPlugins == null) {
 			fHostPlugins = new HashMap<>();
 
@@ -239,12 +249,10 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 			PDEState state = new PDEState(pluginPaths, true, false, new NullProgressMonitor());
 			state.resolveState(false);
 
-			for (IPluginModelBase plugin : state.getTargetModels()) {
-				fHostPlugins.put(plugin.getPluginBase().getId(), plugin);
-			}
+			fHostPlugins = Arrays.stream(state.getTargetModels())
+					.collect(Collectors.groupingBy(p -> p.getPluginBase().getId()));
 		}
-
-		return fHostPlugins.get(id);
+		return fHostPlugins;
 	}
 
 	public PluginModelManager getModelManager() {
