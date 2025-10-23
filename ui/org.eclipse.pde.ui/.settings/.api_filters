@@ -95,15 +95,6 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/pde/internal/ui/launcher/PluginBlock.java" type="org.eclipse.pde.internal.ui.launcher.PluginBlock">
-        <filter id="640712815">
-            <message_arguments>
-                <message_argument value="JUnitLaunchConfigurationDelegate"/>
-                <message_argument value="PluginBlock"/>
-                <message_argument value="getRequiredJunitRuntimePlugins(ILaunchConfiguration)"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/pde/internal/ui/refactoring/RenamePluginProcessor.java" type="org.eclipse.pde.internal.ui.refactoring.RenamePluginProcessor">
         <filter id="572522506">
             <message_arguments>
