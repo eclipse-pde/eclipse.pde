@@ -49,26 +49,6 @@
 								<id>org.eclipse.osgi.compatibility.state</id>
 								<versionRange>0.0.0</versionRange>
 							</requirement>
-							<requirement>
-								<type>eclipse-plugin</type>
-								<id>junit-jupiter-api</id>
-								<versionRange>0.0.0</versionRange>
-							</requirement>
-							<requirement>
-								<type>eclipse-plugin</type>
-								<id>org.eclipse.jdt.junit4.runtime</id>
-								<versionRange>0.0.0</versionRange>
-							</requirement>
-							<requirement>
-								<type>eclipse-plugin</type>
-								<id>org.eclipse.jdt.junit5.runtime</id>
-								<versionRange>0.0.0</versionRange>
-							</requirement>
-							<requirement>
-								<type>eclipse-plugin</type>
-								<id>org.eclipse.pde.junit.runtime</id>
-								<versionRange>0.0.0</versionRange>
-							</requirement>
 						</extraRequirements>
 					</dependency-resolution>
 				</configuration>

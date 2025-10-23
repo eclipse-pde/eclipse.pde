@@ -5,6 +5,6 @@ Bundle-SymbolicName: verification.tests.junit5.suite
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: verification.tests
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: junit-platform-suite-api;bundle-version="1.8.1",
+Require-Bundle: junit-platform-suite-api;bundle-version="[1.8.1,2.0.0)",
  verification.tests.junit5
 Export-Package: verification.tests.junit5.suite
