@@ -21,15 +21,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 import org.osgi.framework.Bundle;
 
-@RunWith(Suite.class)
-@SuiteClasses({
+@Suite
+@SelectClasses({
 	ManagedProjectTest.class,
 	UnmanagedProjectTest.class,
 	ErrorProjectTest.class,
@@ -48,7 +47,7 @@ public class AllDSAnnotationsTests {
 
 	static Job wsJob;
 
-	@BeforeClass
+	@BeforeAll
 	public static void setUpBeforeClass() throws Exception {
 		final IWorkspace ws = ResourcesPlugin.getWorkspace();
 		final Bundle bundle = Activator.getContext().getBundle();
@@ -84,7 +83,7 @@ public class AllDSAnnotationsTests {
 		wsJob.schedule();
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void tearDownAfterClass() throws Exception {
 		wsJob.cancel();
 		final IWorkspaceRoot wsRoot = ResourcesPlugin.getWorkspace().getRoot();

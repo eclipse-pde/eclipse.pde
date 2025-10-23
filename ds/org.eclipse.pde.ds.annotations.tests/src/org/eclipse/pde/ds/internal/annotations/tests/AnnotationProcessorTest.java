@@ -1,8 +1,8 @@
 package org.eclipse.pde.ds.internal.annotations.tests;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -34,7 +34,7 @@ public abstract class AnnotationProcessorTest extends TestBase {
 		assumeTrue("Test project does not exist!", testProject.exists());
 
 		IFile dsFile = testProject.getFile(IPath.fromOSString(getComponentDescriptorPath()));
-		assertTrue("Missing component descriptor!", dsFile.exists());
+		assertTrue(dsFile.exists(),"Missing component descriptor!");
 
 		ByteArrayOutputStream buf = new ByteArrayOutputStream();
 		try (InputStream src = dsFile.getContents()) {

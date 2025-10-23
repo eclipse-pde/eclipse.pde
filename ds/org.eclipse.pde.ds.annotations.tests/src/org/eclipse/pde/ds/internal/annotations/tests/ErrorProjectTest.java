@@ -1,13 +1,13 @@
 package org.eclipse.pde.ds.internal.annotations.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ErrorProjectTest extends CompilationParticipantTest {
 

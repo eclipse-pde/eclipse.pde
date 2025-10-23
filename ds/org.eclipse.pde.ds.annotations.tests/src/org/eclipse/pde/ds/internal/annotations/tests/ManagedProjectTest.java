@@ -1,10 +1,10 @@
 package org.eclipse.pde.ds.internal.annotations.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeNotNull;
 import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,7 +17,7 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.ds.internal.annotations.DSAnnotationCompilationParticipant;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("restriction")
 public class ManagedProjectTest extends CompilationParticipantTest {
@@ -36,12 +36,12 @@ public class ManagedProjectTest extends CompilationParticipantTest {
 	public void dsBuilderConfigured() throws Exception {
 		ICommand[] commands = testProject.getDescription().getBuildSpec();
 		boolean hasDSBuilder = Arrays.stream(commands).anyMatch(command -> "org.eclipse.pde.ds.core.builder".equals(command.getBuilderName()));
-		assertTrue("DS builder not configured!", hasDSBuilder);
+		assertTrue(hasDSBuilder, "DS builder not configured!");
 	}
 
 	@Test
 	public void folderOSGIInfCreated() throws Exception {
-		assertTrue("Folder OSGI-INF does not exist!", testProject.getFolder("OSGI-INF").exists());
+		assertTrue(testProject.getFolder("OSGI-INF").exists(), "Folder OSGI-INF does not exist!");
 	}
 
 	@Test
@@ -55,9 +55,12 @@ public class ManagedProjectTest extends CompilationParticipantTest {
 		String[] entries = serviceComponentHeader.split("\\s*,\\s*");
 		List<String> entryList = Arrays.asList(entries);
 		assertEquals(5, entryList.size());
-		assertTrue("Missing Service-Component entry for DefaultComponent!", entryList.contains("OSGI-INF/ds.annotations.test1.DefaultComponent.xml"));
-		assertTrue("Missing Service-Component entry for FullComponentV1_2!", entryList.contains("OSGI-INF/test.fullComponent-v1_2.xml"));
-		assertTrue("Missing Service-Component entry for FullComponent!", entryList.contains("OSGI-INF/test.fullComponent.xml"));
+		assertTrue(entryList.contains("OSGI-INF/ds.annotations.test1.DefaultComponent.xml"),
+				"Missing Service-Component entry for DefaultComponent!");
+		assertTrue(entryList.contains("OSGI-INF/test.fullComponent-v1_2.xml"),
+				"Missing Service-Component entry for FullComponentV1_2!");
+		assertTrue(entryList.contains("OSGI-INF/test.fullComponent.xml"),
+				"Missing Service-Component entry for FullComponent!");
 	}
 
 	@Test
