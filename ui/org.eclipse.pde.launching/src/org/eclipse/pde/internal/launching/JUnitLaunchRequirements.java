@@ -37,13 +37,15 @@ import org.osgi.framework.wiring.BundleRevision;
 
 public class JUnitLaunchRequirements {
 
-	public static final String JUNIT4_JDT_RUNTIME_PLUGIN = "org.eclipse.jdt.junit4.runtime"; //$NON-NLS-1$
-	public static final String JUNIT5_JDT_RUNTIME_PLUGIN = "org.eclipse.jdt.junit5.runtime"; //$NON-NLS-1$
-	public static void addRequiredJunitRuntimePlugins(ILaunchConfiguration configuration, Map<String, List<IPluginModelBase>> allBundles, Map<IPluginModelBase, String> allModels) throws CoreException {
+	private static final String PDE_JUNIT_RUNTIME = "org.eclipse.pde.junit.runtime"; //$NON-NLS-1$
+	private static final String JUNIT4_JDT_RUNTIME_PLUGIN = "org.eclipse.jdt.junit4.runtime"; //$NON-NLS-1$
+	private static final String JUNIT5_JDT_RUNTIME_PLUGIN = "org.eclipse.jdt.junit5.runtime"; //$NON-NLS-1$
+
+	public static void addRequiredJunitRuntimePlugins(ILaunchConfiguration configuration, Map<String, List<IPluginModelBase>> collectedModels, Map<IPluginModelBase, String> startLevelMap) throws CoreException {
 		Collection<String> runtimePlugins = getRequiredJunitRuntimeEclipsePlugins(configuration);
-		Set<BundleDescription> addedRuntimeBundles = addAbsentRequirements(runtimePlugins, allBundles, allModels);
+		Set<BundleDescription> addedRuntimeBundles = addAbsentRequirements(runtimePlugins, collectedModels, startLevelMap);
 		Set<BundleDescription> runtimeRequirements = DependencyManager.findRequirementsClosure(addedRuntimeBundles);
-		addAbsentRequirements(runtimeRequirements, allBundles, allModels);
+		addAbsentRequirements(runtimeRequirements, collectedModels, startLevelMap);
 	}
 
 	@SuppressWarnings("restriction")
@@ -52,40 +54,42 @@ public class JUnitLaunchRequirements {
 		if (testKind.isNull()) {
 			return List.of();
 		}
-		List<String> plugins = new ArrayList<>();
-		plugins.add("org.eclipse.pde.junit.runtime"); //$NON-NLS-1$
 		switch (testKind.getId()) {
 			case org.eclipse.jdt.internal.junit.launcher.TestKindRegistry.JUNIT3_TEST_KIND_ID -> {
+				return List.of(PDE_JUNIT_RUNTIME);
 			} // Nothing to add for JUnit-3
-			case org.eclipse.jdt.internal.junit.launcher.TestKindRegistry.JUNIT4_TEST_KIND_ID -> plugins.add(JUNIT4_JDT_RUNTIME_PLUGIN);
-			case org.eclipse.jdt.internal.junit.launcher.TestKindRegistry.JUNIT5_TEST_KIND_ID -> plugins.add(JUNIT5_JDT_RUNTIME_PLUGIN);
+			case org.eclipse.jdt.internal.junit.launcher.TestKindRegistry.JUNIT4_TEST_KIND_ID -> {
+				return List.of(PDE_JUNIT_RUNTIME,JUNIT4_JDT_RUNTIME_PLUGIN);
+			}
+			case org.eclipse.jdt.internal.junit.launcher.TestKindRegistry.JUNIT5_TEST_KIND_ID -> {
+				return List.of(PDE_JUNIT_RUNTIME, JUNIT5_JDT_RUNTIME_PLUGIN);
+			}
 			default -> throw new IllegalArgumentException("Unsupported junit test kind: " + testKind.getId()); //$NON-NLS-1$
 		}
-		return plugins;
 	}
 
-	private static Set<BundleDescription> addAbsentRequirements(Collection<String> requirements, Map<String, List<IPluginModelBase>> allBundles, Map<IPluginModelBase, String> allModels) throws CoreException {
+	private static Set<BundleDescription> addAbsentRequirements(Collection<String> requirements, Map<String, List<IPluginModelBase>> collectedModels, Map<IPluginModelBase, String> startLevelMap) throws CoreException {
 		Set<BundleDescription> addedRequirements = new LinkedHashSet<>();
 		for (String id : requirements) {
-			List<IPluginModelBase> models = allBundles.computeIfAbsent(id, k -> new ArrayList<>());
+			List<IPluginModelBase> models = collectedModels.computeIfAbsent(id, k -> new ArrayList<>());
 			if (models.stream().noneMatch(p -> p.getBundleDescription().isResolved())) {
 				IPluginModelBase model = findRequiredPluginInTargetOrHost(PluginRegistry.findModel(id), plugins -> plugins.max(PDECore.VERSION), id);
 				models.add(model);
-				BundleLauncherHelper.addDefaultStartingBundle(allModels, model);
+				BundleLauncherHelper.addDefaultStartingBundle(startLevelMap, model);
 				addedRequirements.add(model.getBundleDescription());
 			}
 		}
 		return addedRequirements;
 	}
 
-	private static void addAbsentRequirements(Set<BundleDescription> requirements, Map<String, List<IPluginModelBase>> allBundles, Map<IPluginModelBase, String> allModels) throws CoreException {
+	private static void addAbsentRequirements(Set<BundleDescription> requirements, Map<String, List<IPluginModelBase>> collectedModels, Map<IPluginModelBase, String> startLevelMap) throws CoreException {
 		for (BundleRevision bundle : requirements) {
 			String id = bundle.getSymbolicName();
-			List<IPluginModelBase> models = allBundles.computeIfAbsent(id, k -> new ArrayList<>());
+			List<IPluginModelBase> models = collectedModels.computeIfAbsent(id, k -> new ArrayList<>());
 			if (models.stream().map(IPluginModelBase::getBundleDescription).noneMatch(b -> b.isResolved() && b.getVersion().equals(bundle.getVersion()))) {
 				IPluginModelBase model = findRequiredPluginInTargetOrHost(PluginRegistry.findModel(bundle), plgs -> plgs.filter(p -> p.getBundleDescription() == bundle).findFirst(), id);
 				models.add(model);
-				BundleLauncherHelper.addDefaultStartingBundle(allModels, model);
+				BundleLauncherHelper.addDefaultStartingBundle(startLevelMap, model);
 			}
 		}
 	}
