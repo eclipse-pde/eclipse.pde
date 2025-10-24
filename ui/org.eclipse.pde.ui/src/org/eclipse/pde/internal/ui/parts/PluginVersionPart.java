@@ -82,7 +82,10 @@ public class PluginVersionPart {
 			IStructuredSelection selection = getTableViewer().getStructuredSelection();
 			if (selection.size() == 1) {
 				String version = getVersion(selection.getFirstElement());
-				setVersion(version, ""); //$NON-NLS-1$
+				// Compute upper bound following OSGi semantic versioning
+				// Preserve existing upper bound if present and major version hasn't changed
+				String upperBound = computeUpperBound(version, getCurrentUpperBound());
+				setVersion(version, upperBound);
 			} else {
 				// plug-ins come back in a sorted order so we assume min/max
 				String minVersion;
@@ -105,7 +108,9 @@ public class PluginVersionPart {
 					maxVersion = poMax.getVersion();
 
 				}
-				setVersion(minVersion, maxVersion);
+				// Compute upper bound based on max version following OSGi semantic versioning
+				String upperBound = computeUpperBound(maxVersion, getCurrentUpperBound());
+				setVersion(minVersion, upperBound);
 			}
 		}
 
@@ -116,6 +121,53 @@ public class PluginVersionPart {
 			}
 			PackageObject po = (PackageObject) firstElement;
 			return po.getVersion();
+		}
+
+		/**
+		 * Gets the current upper bound from the existing version range, if any.
+		 * 
+		 * @return the current upper bound version, or null if none exists
+		 */
+		private Version getCurrentUpperBound() {
+			if (fVersionRange != null) {
+				return fVersionRange.getRight();
+			}
+			return null;
+		}
+
+		/**
+		 * Computes the upper bound for a version range following OSGi semantic versioning.
+		 * If an existing upper bound is present, it will be adjusted based on the new lower bound's major version.
+		 * Otherwise, a new upper bound excluding the next major version is created.
+		 * 
+		 * @param newLowerBound the new lower bound version
+		 * @param existingUpperBound the existing upper bound (may be null)
+		 * @return the upper bound version (next major version as a string)
+		 */
+		private String computeUpperBound(String newLowerBound, Version existingUpperBound) {
+			try {
+				Version lowerVersion = Version.parseVersion(newLowerBound);
+				int newMajor = lowerVersion.getMajor();
+				
+				if (existingUpperBound != null) {
+					// Existing upper bound present - adjust it if major version changed
+					int existingUpperMajor = existingUpperBound.getMajor();
+					
+					// If the new lower bound has the same major version as the existing upper bound,
+					// keep the existing upper bound
+					if (newMajor < existingUpperMajor) {
+						return existingUpperBound.toString();
+					}
+					// If the new lower bound's major version changed, update to next major
+				}
+				
+				// No existing upper bound or major version changed - compute next major version
+				Version nextMajor = new Version(newMajor + 1, 0, 0);
+				return nextMajor.toString();
+			} catch (IllegalArgumentException e) {
+				// If version parsing fails, return empty string to maintain backward compatibility
+				return ""; //$NON-NLS-1$
+			}
 		}
 	}
 

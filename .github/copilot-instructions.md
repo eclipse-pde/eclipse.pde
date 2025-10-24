@@ -82,6 +82,28 @@ mvn clean verify -Dmaven.repo.local=$WORKSPACE/.m2/repository \
 
 **Docs:** `docs/API_Tools.md` for comprehensive API Tools documentation.
 
+## OSGi Semantic Versioning
+
+**PDE follows OSGi semantic versioning principles** (https://docs.osgi.org/whitepaper/semantic-versioning/):
+
+**Version Format:** `major.minor.micro.qualifier`
+- **Major:** Breaking changes (incompatible API changes)
+- **Minor:** Backward-compatible API additions
+- **Micro:** Backward-compatible bug fixes
+- **Qualifier:** Build metadata (e.g., timestamps, commit hashes)
+
+**Version Ranges for Dependencies:**
+- Use version ranges to specify compatible dependency versions
+- **Inclusive lower bound:** `[1.2.3,2.0.0)` includes 1.2.3
+- **Exclusive upper bound:** `[1.2.3,2.0.0)` excludes 2.0.0
+- **Best practice:** Lower bound inclusive, upper bound at next major (exclusive)
+  - Example: For version `1.2.3`, use `[1.2.3,2.0.0)` to accept any 1.x version
+  - Example: For version `2.5.0`, use `[2.5.0,3.0.0)` to accept any 2.x version
+
+**Why exclude next major?** Major version changes indicate breaking changes, so dependencies should not automatically upgrade across major versions.
+
+**PDE Support:** PDE manifest editor and dialogs should help users create proper version ranges following these principles when adding or updating bundle/package dependencies.
+
 ## Key Notes
 
 **Tycho:** Eclipse-specific Maven extension managing OSGi dependencies, P2 repos, Eclipse metadata (MANIFEST.MF, plugin.xml, feature.xml).
