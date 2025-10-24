@@ -71,6 +71,7 @@ import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.launching.IPDEConstants;
 import org.eclipse.pde.internal.launching.JUnitLaunchRequirements;
+import org.eclipse.pde.internal.launching.JUnitLaunchValidationOperation;
 import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
 import org.eclipse.pde.internal.launching.PDEMessages;
 import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
@@ -517,6 +518,9 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		fModels = BundleLauncherHelper.getMergedBundleMap(configuration, false);
 		fAllBundles = fModels.keySet().stream().collect(Collectors.groupingBy(m -> m.getPluginBase().getId(), LinkedHashMap::new, Collectors.toCollection(ArrayList::new)));
 		launchMode = launch.getLaunchMode();
+
+		JUnitLaunchValidationOperation junitValidation = new JUnitLaunchValidationOperation(configuration, fModels.keySet());
+		LaunchPluginValidator.runValidationOperation(junitValidation, monitor);
 
 		// implicitly add the plug-ins required for JUnit testing if necessary
 		JUnitLaunchRequirements.addRequiredJunitRuntimePlugins(configuration, fAllBundles, fModels);
