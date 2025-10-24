@@ -222,13 +222,7 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 
 	private ServiceTracker<RepositoryListenerPlugin, RepositoryListenerPlugin> repositoryListenerServiceTracker;
 
-	public static final Comparator<IPluginModelBase> VERSION = Comparator.comparing(p -> {
-		BundleDescription description = p.getBundleDescription();
-		if (description == null) {
-			return Version.emptyVersion;
-		}
-		return description.getVersion();
-	});
+	public static final Comparator<IPluginModelBase> VERSION = Comparator.comparing(p -> getOSGiVersion(p));
 
 	public PDECore() {
 		inst = this;
@@ -538,5 +532,16 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 		}
 		return repositoryListenerServiceTracker.getTracked().values().stream();
 
+	}
+
+	public static Version getOSGiVersion(IPluginModelBase model) {
+		if (model == null) {
+			return Version.emptyVersion;
+		}
+		BundleDescription description = model.getBundleDescription();
+		if (description == null) {
+			return Version.emptyVersion;
+		}
+		return description.getVersion();
 	}
 }
