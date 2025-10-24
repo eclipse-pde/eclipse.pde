@@ -29,7 +29,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
+import java.util.jar.Attributes;
 import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
@@ -58,6 +60,7 @@ import org.eclipse.pde.internal.core.TargetWeaver;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.project.PDEProject;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Filter;
@@ -391,6 +394,38 @@ public class ManifestUtils {
 				throw new IllegalArgumentException("Invalid execution environment filter", e); //$NON-NLS-1$
 			}
 		}
+	}
+
+	/**
+	 * Return the value of "Eclipse-SourceReferences" in MANIFEST.MF from the
+	 * given bundle.
+	 *
+	 * @param bundle
+	 *            The bundle to get the source repository
+	 */
+	public static String getSourceReferences(Bundle bundle) {
+		String srcRef = findScmGit(bundle);
+		if (srcRef != null) {
+			try {
+				var element = ManifestElement.parseHeader(ICoreConstants.ECLIPSE_SOURCE_REFERENCES, srcRef)[0];
+				srcRef = element.getValue().trim().replaceFirst("^scm:git:", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			} catch (BundleException e) {
+			}
+		}
+		return srcRef;
+	}
+
+	private static String findScmGit(Bundle bundle) {
+		if (bundle != null) {
+			try (InputStream is = bundle.getEntry(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR).openStream()) {
+				Attributes attributes = new Manifest(is).getMainAttributes();
+				return attributes.getValue(ICoreConstants.ECLIPSE_SOURCE_REFERENCES);
+			} catch (IOException e) {
+				throw new IllegalArgumentException(
+						ICoreConstants.ECLIPSE_SOURCE_REFERENCES + " not found for bundle : " + bundle); //$NON-NLS-1$
+			}
+		}
+		return null;
 	}
 
 }
