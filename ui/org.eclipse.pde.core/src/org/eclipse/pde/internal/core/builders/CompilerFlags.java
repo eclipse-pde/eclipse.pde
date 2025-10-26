@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Code 9 Corporation - on going enhancements and maintenance
+ *     Daniel Kruegler - #2031 - PDE should not warn if resource URI of unknown scheme cannot be found
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
@@ -55,6 +56,7 @@ public class CompilerFlags {
 	public static final String P_UNKNOWN_ATTRIBUTE = "compilers.p.unknown-attribute"; //$NON-NLS-1$
 	public static final String P_UNKNOWN_CLASS = "compilers.p.unknown-class"; //$NON-NLS-1$
 	public static final String P_UNKNOWN_RESOURCE = "compilers.p.unknown-resource"; //$NON-NLS-1$
+	public static final String P_IGNORED_RESOURCE_PROTOCOLS = "compilers.p.ignored-resource-protocols"; //$NON-NLS-1$
 	public static final String P_UNKNOWN_IDENTIFIER = "compilers.p.unknown-identifier"; //$NON-NLS-1$
 	public static final String P_DISCOURAGED_CLASS = "compilers.p.discouraged-class"; //$NON-NLS-1$
 	public static final String P_NO_REQUIRED_ATT = "compilers.p.no-required-att"; //$NON-NLS-1$

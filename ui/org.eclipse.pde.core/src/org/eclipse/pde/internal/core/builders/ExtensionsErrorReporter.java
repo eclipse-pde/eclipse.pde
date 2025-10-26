@@ -11,11 +11,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 526283
+ *     Daniel Kruegler - #2031 - PDE should not warn if resource URI of unknown scheme cannot be found
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -597,7 +599,13 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 			}
 		}
 
-		return false;
+		return isIgnoredResourceUri(location);
+	}
+
+	private boolean isIgnoredResourceUri(String location) {
+		final var ignoredProtocols = CompilerFlags.getString(fProject, CompilerFlags.P_IGNORED_RESOURCE_PROTOCOLS);
+		return Arrays.stream(ignoredProtocols.split(",")).map(p -> p.trim() + ":"). //$NON-NLS-1$ //$NON-NLS-2$
+				anyMatch(s -> location.regionMatches(true, 0, s, 0, s.length()));
 	}
 
 	protected void validateJavaAttribute(Element element, Attr attr) {

@@ -1890,6 +1890,8 @@ public class PDEUIMessages extends NLS {
 	public static String compilers_s_doc_folder;
 	public static String compilers_s_open_tags;
 	public static String compilers_p_exec_env_too_low;
+	public static String compilers_p_ignored_uri_protocols;
+	public static String compilers_p_ignored_uri_protocols_details;
 
 	public static String compilers_p_exported_pkgs;
 
