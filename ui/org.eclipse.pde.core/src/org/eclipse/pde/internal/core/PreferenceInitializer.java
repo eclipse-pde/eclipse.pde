@@ -36,6 +36,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		prefs.putInt(CompilerFlags.P_UNKNOWN_CLASS, CompilerFlags.WARNING);
 		prefs.putInt(CompilerFlags.P_DISCOURAGED_CLASS, CompilerFlags.WARNING);
 		prefs.putInt(CompilerFlags.P_UNKNOWN_RESOURCE, CompilerFlags.WARNING);
+		prefs.put(CompilerFlags.P_IGNORED_RESOURCE_PROTOCOLS, ""); //$NON-NLS-1$
 		prefs.putInt(CompilerFlags.P_UNKNOWN_IDENTIFIER, CompilerFlags.WARNING);
 		prefs.putInt(CompilerFlags.P_NOT_EXTERNALIZED, CompilerFlags.IGNORE);
 		prefs.putInt(CompilerFlags.P_SERVICE_COMP_WITHOUT_LAZY_ACT, CompilerFlags.WARNING);
