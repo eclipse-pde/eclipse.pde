@@ -800,4 +800,38 @@ public class ApiDescriptionTests {
 		IApiComponent componentA = profile.getApiComponent("component.a"); //$NON-NLS-1$
 		assertTrue("Should have an .api_description file", componentA.hasApiDescription()); //$NON-NLS-1$
 	}
+
+	/**
+	 * Tests that nested types with restrictions are persisted in XML.
+	 * This is a regression test for issue #1949 where nested classes marked
+	 * with @noreference were not being included in the .api_description file.
+	 */
+	@Test
+	public void testNestedTypesWithRestrictionsPersisted() throws CoreException {
+		// Create an API description with an outer class and a nested class with restrictions
+		IApiDescription description = newDescription();
+
+		// Set package visibility to API
+		description.setVisibility(Factory.packageDescriptor("test.pkg"), VisibilityModifiers.API); //$NON-NLS-1$
+
+		// Nested class with @noreference restriction
+		IReferenceTypeDescriptor nestedType = Factory.typeDescriptor("test.pkg.OuterClass$NestedClass"); //$NON-NLS-1$
+		description.setRestrictions(nestedType, RestrictionModifiers.NO_REFERENCE);
+
+		// Create component and generate XML
+		IApiComponent component = TestSuiteHelper.createTestingApiComponent("test", "test", description); //$NON-NLS-1$ //$NON-NLS-2$
+		Document xml = getApiDescriptionXML(component);
+		String xmlString = Util.serializeDocument(xml);
+
+		// Verify the XML contains the nested type
+		assertTrue("XML should contain nested type", xmlString.contains("OuterClass$NestedClass")); //$NON-NLS-1$ //$NON-NLS-2$
+
+		// Restore from XML and verify the restriction is preserved
+		IApiDescription restored = new ApiDescription(null);
+		ApiDescriptionProcessor.annotateApiSettings(null, restored, xmlString);
+
+		IApiAnnotations annotations = restored.resolveAnnotations(nestedType);
+		assertEquals("Nested type should have NO_REFERENCE restriction", //$NON-NLS-1$
+				RestrictionModifiers.NO_REFERENCE, annotations.getRestrictions());
+	}
 }
