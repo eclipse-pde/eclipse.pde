@@ -121,7 +121,7 @@ public class ProjectApiDescription extends ApiDescription {
 
 		@Override
 		void persistXML(Document document, Element parentElement) {
-			if (hasApiVisibility(this)) {
+			if (shouldPersist()) {
 				Element pkg = document.createElement(IApiXmlConstants.ELEMENT_PACKAGE);
 				for (IPackageFragment fFragment : fFragments) {
 					Element fragment = document.createElement(IApiXmlConstants.ELEMENT_PACKAGE_FRAGMENT);
@@ -302,7 +302,7 @@ public class ProjectApiDescription extends ApiDescription {
 
 		@Override
 		void persistXML(Document document, Element parentElement) {
-			if (hasApiVisibility(this)) {
+			if (shouldPersist()) {
 				Element type = document.createElement(IApiXmlConstants.ELEMENT_TYPE);
 				type.setAttribute(IApiXmlConstants.ATTR_HANDLE, fType.getHandleIdentifier());
 				persistAnnotations(type);

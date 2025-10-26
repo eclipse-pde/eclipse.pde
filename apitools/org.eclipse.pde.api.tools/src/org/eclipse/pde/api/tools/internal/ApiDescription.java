@@ -180,6 +180,31 @@ public class ApiDescription implements IApiDescription {
 		}
 
 		/**
+		 * Returns whether this node or any of its descendants should be persisted
+		 * in the API description. A node should be persisted if it has API visibility
+		 * or if it (or any descendant) has restrictions.
+		 *
+		 * @return true if this node or any descendant should be persisted, false otherwise
+		 */
+		protected boolean shouldPersist() {
+			// Persist if the node has API visibility
+			if (hasApiVisibility(this)) {
+				return true;
+			}
+			// Persist if the node has restrictions
+			if (!RestrictionModifiers.isUnrestricted(this.restrictions)) {
+				return true;
+			}
+			// Persist if any descendant has restrictions
+			for (ManifestNode child : children.values()) {
+				if (child.shouldPersist()) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		/**
 		 * Ensure this node is up to date. Default implementation does nothing.
 		 * Subclasses should override as required.
 		 *
