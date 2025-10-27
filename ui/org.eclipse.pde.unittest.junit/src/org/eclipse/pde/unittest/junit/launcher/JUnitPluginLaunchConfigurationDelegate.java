@@ -62,6 +62,7 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.internal.junit.buildpath.BuildPathSupport;
 import org.eclipse.jdt.internal.junit.launcher.ITestKind;
 import org.eclipse.jdt.internal.junit.launcher.JUnitLaunchConfigurationConstants;
 import org.eclipse.jdt.internal.junit.launcher.JUnitRuntimeClasspathEntry;
@@ -156,6 +157,7 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 		}
 	}
 
+	@SuppressWarnings("restriction")
 	private VMRunnerConfiguration getVMRunnerConfiguration(ILaunchConfiguration configuration, ILaunch launch,
 			String mode, IProgressMonitor monitor) throws CoreException {
 		VMRunnerConfiguration runConfig = null;
@@ -238,10 +240,10 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 				if (!configuration.getAttribute(
 						JUnitLaunchConfigurationConstants.ATTR_DONT_ADD_MISSING_JUNIT5_DEPENDENCY, false)) {
 					if (!Arrays.stream(classpath).anyMatch(
-							s -> s.contains("junit-platform-launcher") || s.contains("org.junit.platform.launcher"))) { //$NON-NLS-1$ //$NON-NLS-2$
+							s -> s.contains(BuildPathSupport.JUNIT_PLATFORM_LAUNCHER) || s.contains("org.junit.platform.launcher"))) { //$NON-NLS-1$
 						try {
-							JUnitRuntimeClasspathEntry x = new JUnitRuntimeClasspathEntry("junit-platform-launcher", //$NON-NLS-1$
-									null);
+							JUnitRuntimeClasspathEntry x = new JUnitRuntimeClasspathEntry(BuildPathSupport.JUNIT_PLATFORM_LAUNCHER,
+									null, BuildPathSupport.JUNIT_PLATFORM_VERSION);
 							String entryString = new ClasspathLocalizer(Platform.inDevelopmentMode()).entryString(x);
 							int length = classpath.length;
 							System.arraycopy(classpath, 0, classpath = new String[length + 1], 0, length);
