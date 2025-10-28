@@ -186,7 +186,6 @@ public class EventSpyPart implements EventMonitor.NewEventListener {
 		capturedEventTree.addEvent(event);
 	}
 
-	@SuppressWarnings("restriction")
 	private void openResource(String text) {
 		try {
 			JDTUtils.openClass(text);
