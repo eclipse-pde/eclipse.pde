@@ -36,6 +36,8 @@ import org.osgi.framework.wiring.BundleWiring;
  * Runs JUnit tests contained inside a plugin.
  */
 public class RemotePluginTestRunner extends RemoteTestRunner {
+	
+	private static final String TEST_ENGINE_CLASS = "org.junit.platform.engine.TestEngine"; //$NON-NLS-1$
 
 	private String fTestPluginName;
 	private ClassLoader fLoaderClassLoader;
@@ -138,7 +140,19 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 			throw new IllegalArgumentException("Bundle \"" + testPluginName + "\" not found. Possible causes include missing dependencies, too restrictive version ranges, or a non-matching required execution environment."); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		Bundle junit5RuntimeBundle = Platform.getBundle("org.eclipse.jdt.junit5.runtime"); //$NON-NLS-1$
-		List<Bundle> platformEngineBundles = findTestEngineBundles();
+		List<Bundle> platformEngineBundles = findTestEngineBundles(engine -> {
+			try {
+				if (junit5RuntimeBundle == null) {
+					//Fallback ...
+					Class<?> thisTestEngine = Class.forName(TEST_ENGINE_CLASS);
+					Class<?> bundleTestEngine = engine.loadClass(TEST_ENGINE_CLASS);
+					return thisTestEngine == bundleTestEngine;
+				}
+				return engine.loadClass(TEST_ENGINE_CLASS).equals(junit5RuntimeBundle.loadClass(TEST_ENGINE_CLASS));
+			} catch (ClassNotFoundException e) {
+				throw new RuntimeException("Not found?", e); //$NON-NLS-1$
+			}
+		});
 		platformEngineBundles.add(testBundle);
 		if (junit5RuntimeBundle != null) {
 			platformEngineBundles.add(junit5RuntimeBundle);
@@ -146,9 +160,10 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 		return new MultiBundleClassLoader(platformEngineBundles);
 	}
 
-	private static List<Bundle> findTestEngineBundles() {
-		BundleContext bundleContext = FrameworkUtil.getBundle(RemotePluginTestRunner.class).getBundleContext();
-		return Arrays.stream(bundleContext.getBundles()).filter(RemotePluginTestRunner::providesCompatibleTestEngine).collect(toCollection(ArrayList::new));
+	private static List<Bundle> findTestEngineBundles(Predicate<Bundle> engineFilter) {
+		Bundle bundle = FrameworkUtil.getBundle(RemotePluginTestRunner.class);
+		BundleContext bundleContext = bundle.getBundleContext();
+		return Arrays.stream(bundleContext.getBundles()).filter(b -> providesCompatibleTestEngine(b, engineFilter)).collect(toCollection(ArrayList::new));
 	}
 
 	/**
@@ -161,16 +176,14 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 	 * the org.eclipse.tycho.surefire.osgibooter bundle is found
 	 * that may provide a different JUnit platform version than the
 	 * one available via the Eclipse target platform.
+	 * @param engineFilter 
 	 */
-	private static boolean providesCompatibleTestEngine(Bundle bundle) {
+	private static boolean providesCompatibleTestEngine(Bundle bundle, Predicate<Bundle> engineFilter) {
 		try {
 			BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
-			String testEngineClass = "org.junit.platform.engine.TestEngine"; //$NON-NLS-1$
-			Collection<String> engineProviders = bundleWiring.listResources("META-INF/services", testEngineClass, BundleWiring.LISTRESOURCES_LOCAL); //$NON-NLS-1$
+			Collection<String> engineProviders = bundleWiring.listResources("META-INF/services", TEST_ENGINE_CLASS, BundleWiring.LISTRESOURCES_LOCAL); //$NON-NLS-1$
 			if (!engineProviders.isEmpty()) {
-				Class<?> thisTestEngine = Class.forName(testEngineClass);
-				Class<?> bundleTestEngine = bundle.loadClass(testEngineClass);
-				return thisTestEngine == bundleTestEngine;
+				return engineFilter.test(bundle);
 			}
 		} catch (Exception e) {
 			// skip this bundle
@@ -204,7 +217,7 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 			// during initialization - see bug 520811
 			ClassLoader currentTCCL = Thread.currentThread().getContextClassLoader();
 			try {
-				Thread.currentThread().setContextClassLoader(new MultiBundleClassLoader(findTestEngineBundles()));
+				Thread.currentThread().setContextClassLoader(new MultiBundleClassLoader(findTestEngineBundles(bundle -> bundle.getVersion().getMajor() < 6)));
 				defaultInit(args);
 			} finally {
 				Thread.currentThread().setContextClassLoader(currentTCCL);
