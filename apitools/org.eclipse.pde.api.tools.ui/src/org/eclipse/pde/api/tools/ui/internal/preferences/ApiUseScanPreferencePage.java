@@ -221,8 +221,8 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 	 */
 	String getArchive(File file) {
 		FileDialog dialog = new FileDialog(getShell(), SWT.OPEN);
-		dialog.setFilterNames(new String[] { PreferenceMessages.archives__zip });
-		dialog.setFilterExtensions(new String[] { "*.zip;*.jar" }); //$NON-NLS-1$
+		dialog.setFilterNames(PreferenceMessages.archives__zip);
+		dialog.setFilterExtensions("*.zip;*.jar"); //$NON-NLS-1$
 		if (file != null) {
 			dialog.setFilterPath(file.getParent());
 			dialog.setFileName(file.getName());
