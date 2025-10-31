@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2021 IBM Corporation and others.
+ * Copyright (c) 2008, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.ui.correction.java;
 
 import java.text.MessageFormat;
+import java.util.Arrays;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -34,6 +35,7 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IBaseModel;
@@ -78,26 +80,21 @@ public class JavaResolutionFactory {
 	 * This class represents a Change which will be applied to a Manifest file.  This change is meant to be
 	 * used to create an IJavaCompletionProposal or ClasspathFixProposal.
 	 */
-	private static abstract class AbstractManifestChange extends Change {
+	static abstract class AbstractManifestChange<T> extends Change {
 
-		private final Object fChangeObject;
+		private final T fChangeObject;
 		private final IProject fProject;
 		private CompilationUnit fCompilationUnit;
 		private String fQualifiedTypeToImport;
 
-		private AbstractManifestChange(IProject project, Object obj) {
+		public AbstractManifestChange(IProject project, T changeObj, CompilationUnit cu, String qualifiedTypeToImport) {
 			fProject = project;
-			fChangeObject = obj;
-		}
-
-		public AbstractManifestChange(IProject project, Object changeObj, CompilationUnit cu,
-				String qualifiedTypeToImport) {
-			this(project, changeObj);
+			fChangeObject = changeObj;
 			fCompilationUnit = cu;
 			fQualifiedTypeToImport = qualifiedTypeToImport;
 		}
 
-		protected Object getChangeObject() {
+		protected T getChangeObject() {
 			return fChangeObject;
 		}
 
@@ -178,9 +175,9 @@ public class JavaResolutionFactory {
 	 * dependency or add multiple Require-Bundle entries to resolve the dependency
 	 * based on description name
 	 */
-	private static class RequireBundleManifestChange extends AbstractManifestChange {
+	private static class RequireBundleManifestChange extends AbstractManifestChange<BundleDescription> {
 
-		private RequireBundleManifestChange(IProject project, ExportPackageDescription desc, CompilationUnit cu,
+		RequireBundleManifestChange(IProject project, BundleDescription desc, CompilationUnit cu,
 				String qualifiedTypeToImport) {
 			super(project, desc, cu, qualifiedTypeToImport);
 		}
@@ -193,24 +190,17 @@ public class JavaResolutionFactory {
 					if (!(model instanceof IPluginModelBase base)) {
 						return;
 					}
-					String pluginId = ((ExportPackageDescription) getChangeObject()).getSupplier().getSymbolicName();
+					BundleDescription requiredBundle = getChangeObject();
+					String pluginId = requiredBundle.getSymbolicName();
+					IPluginImport[] imports = base.getPluginBase().getImports();
 					if (!isUndo()) {
-						IPluginImport[] imports = base.getPluginBase().getImports();
-						boolean duplicate = false;
-						for (IPluginImport iPluginImport : imports) {
-							if (iPluginImport.getId().equals(pluginId)) {
-								duplicate = true;
-								break;
-							}
-						}
-						if (duplicate) {
+						if (Arrays.stream(imports).map(IPluginImport::getId).anyMatch(pluginId::equals)) {
 							return;
 						}
 						IPluginImport impt = base.getPluginFactory().createImport();
 						impt.setId(pluginId);
 						base.getPluginBase().add(impt);
 					} else {
-						IPluginImport[] imports = base.getPluginBase().getImports();
 						for (IPluginImport pluginImport : imports) {
 							if (pluginImport.getId().equals(pluginId)) {
 								base.getPluginBase().remove(pluginImport);
@@ -223,8 +213,8 @@ public class JavaResolutionFactory {
 			insertImport(getCompilationUnit(), getQualifiedTypeToImport(), pm);
 
 			if (!isUndo()) {
-				return new RequireBundleManifestChange(getProject(), (ExportPackageDescription) getChangeObject(),
-						getCompilationUnit(), getQualifiedTypeToImport()) {
+				return new RequireBundleManifestChange(getProject(), getChangeObject(), getCompilationUnit(),
+						getQualifiedTypeToImport()) {
 					@Override
 					public boolean isUndo() {
 						return true;
@@ -247,14 +237,9 @@ public class JavaResolutionFactory {
 
 		@Override
 		public String getName() {
-			if (!isUndo()) {
-				if(getChangeObject() instanceof String) {
-					return MessageFormat.format(PDEUIMessages.UnresolvedImportFixProcessor_0,
-							(getChangeObject().toString()));
-				}
-				return MessageFormat.format(PDEUIMessages.UnresolvedImportFixProcessor_0, ((ExportPackageDescription) getChangeObject()).getExporter().getName());
-			}
-			return MessageFormat.format(PDEUIMessages.UnresolvedImportFixProcessor_1, ((ExportPackageDescription) getChangeObject()).getExporter().getName());
+			BundleDescription requiredBundle = getChangeObject();
+			return MessageFormat.format(!isUndo() ? PDEUIMessages.UnresolvedImportFixProcessor_0
+					: PDEUIMessages.UnresolvedImportFixProcessor_1, requiredBundle.getName());
 		}
 
 		@Override
@@ -267,19 +252,14 @@ public class JavaResolutionFactory {
 			}
 			return super.getModifiedElement();
 		}
-
 	}
 
 	/*
 	 * A Change which will add an Import-Package entry to resolve the given dependency
 	 */
-	private static class ImportPackageManifestChange extends AbstractManifestChange {
+	private static class ImportPackageManifestChange extends AbstractManifestChange<ExportPackageDescription> {
 
-		private ImportPackageManifestChange(IProject project, ExportPackageDescription desc) {
-			super(project, desc);
-		}
-
-		private ImportPackageManifestChange(IProject project, ExportPackageDescription desc, CompilationUnit cu,
+		ImportPackageManifestChange(IProject project, ExportPackageDescription desc, CompilationUnit cu,
 				String qualifiedTypeToImport) {
 			super(project, desc, cu, qualifiedTypeToImport);
 		}
@@ -293,7 +273,7 @@ public class JavaResolutionFactory {
 						return;
 					}
 					IBundle bundle = base.getBundleModel().getBundle();
-					ExportPackageDescription desc = (ExportPackageDescription) getChangeObject();
+					ExportPackageDescription desc = getChangeObject();
 					String pkgId = desc.getName();
 					IManifestHeader header = bundle.getManifestHeader(Constants.IMPORT_PACKAGE);
 					if (header == null) {
@@ -316,7 +296,8 @@ public class JavaResolutionFactory {
 			insertImport(getCompilationUnit(), getQualifiedTypeToImport(), pm);
 
 			if (!isUndo()) {
-				return new ImportPackageManifestChange(getProject(), (ExportPackageDescription) getChangeObject()) {
+				return new ImportPackageManifestChange(getProject(), getChangeObject(), getCompilationUnit(),
+						getQualifiedTypeToImport()) {
 					@Override
 					public boolean isUndo() {
 						return true;
@@ -338,10 +319,9 @@ public class JavaResolutionFactory {
 
 		@Override
 		public String getName() {
-			if (!isUndo()) {
-				return MessageFormat.format(PDEUIMessages.UnresolvedImportFixProcessor_3, ((ExportPackageDescription) getChangeObject()).getName());
-			}
-			return MessageFormat.format(PDEUIMessages.UnresolvedImportFixProcessor_4, ((ExportPackageDescription) getChangeObject()).getName());
+			ExportPackageDescription importedPackage = getChangeObject();
+			return MessageFormat.format(!isUndo() ? PDEUIMessages.UnresolvedImportFixProcessor_3
+					: PDEUIMessages.UnresolvedImportFixProcessor_4, importedPackage.getName());
 		}
 
 		@Override
@@ -355,10 +335,10 @@ public class JavaResolutionFactory {
 
 	}
 
-	private static class ExportPackageChange extends AbstractManifestChange {
+	private static class ExportPackageChange extends AbstractManifestChange<IPackageFragment> {
 
-		public ExportPackageChange(IProject project, IPackageFragment fragment) {
-			super(project, fragment);
+		ExportPackageChange(IProject project, IPackageFragment fragment) {
+			super(project, fragment, null, null);
 		}
 
 		@Override
@@ -366,26 +346,30 @@ public class JavaResolutionFactory {
 			ModelModification mod = new ModelModification(getProject()) {
 				@Override
 				protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
-					if (model instanceof IBundlePluginModelBase) {
-						IBundle bundle = ((IBundlePluginModelBase) model).getBundleModel().getBundle();
+					if (model instanceof IBundlePluginModelBase base) {
+						IBundle bundle = base.getBundleModel().getBundle();
 
-						ExportPackageHeader header = (ExportPackageHeader) bundle.getManifestHeader(Constants.EXPORT_PACKAGE);
+						ExportPackageHeader header = (ExportPackageHeader) bundle
+								.getManifestHeader(Constants.EXPORT_PACKAGE);
 						if (header == null) {
 							bundle.setHeader(Constants.EXPORT_PACKAGE, ""); //$NON-NLS-1$
 							header = (ExportPackageHeader) bundle.getManifestHeader(Constants.EXPORT_PACKAGE);
 						}
-						header.addPackage(new ExportPackageObject(header, (IPackageFragment) getChangeObject(), Constants.VERSION_ATTRIBUTE));
+						header.addPackage(
+								new ExportPackageObject(header, getChangeObject(), Constants.VERSION_ATTRIBUTE));
 					}
 				}
 			};
 			PDEModelUtility.modifyModel(mod, new NullProgressMonitor());
-			// No plans to use as ClasspathFixProposal, therefore we don't have to worry about an undo
+			// No plans to use as ClasspathFixProposal, therefore we don't have
+			// to worry about an undo
 			return null;
 		}
 
 		@Override
 		public String getName() {
-			return NLS.bind(PDEUIMessages.ForbiddenAccessProposal_quickfixMessage, new String[] {((IPackageFragment) getChangeObject()).getElementName(), getProject().getName()});
+			return NLS.bind(PDEUIMessages.ForbiddenAccessProposal_quickfixMessage,
+					new String[] { getChangeObject().getElementName(), getProject().getName() });
 		}
 
 		@Override
@@ -404,7 +388,8 @@ public class JavaResolutionFactory {
 
 		@Override
 		public String getDescription() {
-			// No plans to use as ClasspathFixProposal, therefore we don't have to implement a description
+			// No plans to use as ClasspathFixProposal, therefore we don't have
+			// to implement a description
 			return null;
 		}
 	}
@@ -419,10 +404,6 @@ public class JavaResolutionFactory {
 	 * @param desc
 	 *            an ExportPackageDescription from the bundle that is to be
 	 *            added as a Require-Bundle dependency
-	 * @param type
-	 *            the type of the proposal to be returned
-	 * @param relevance
-	 *            the relevance of the new proposal
 	 * @param qualifiedTypeToImport
 	 *            the qualified type name of the type that requires this
 	 *            proposal. If this argument and cu are supplied the proposal
@@ -431,16 +412,10 @@ public class JavaResolutionFactory {
 	 * @param cu
 	 *            the AST root of the java source file in which this fix was
 	 *            invoked
-	 * @see JavaResolutionFactory#TYPE_JAVA_COMPLETION
-	 * @see JavaResolutionFactory#TYPE_CLASSPATH_FIX
 	 */
-	public static final Object createRequireBundleProposal(IProject project, ExportPackageDescription desc, int type,
-			int relevance, CompilationUnit cu, String qualifiedTypeToImport) {
-		if (desc.getSupplier() == null) {
-			return null;
-		}
-		AbstractManifestChange change = new RequireBundleManifestChange(project, desc, cu, qualifiedTypeToImport);
-		return createWrapper(change, type, relevance);
+	public static AbstractManifestChange<BundleDescription> createRequireBundleChange(IProject project,
+			BundleDescription desc, CompilationUnit cu, String qualifiedTypeToImport) {
+		return new RequireBundleManifestChange(project, desc, cu, qualifiedTypeToImport);
 	}
 
 	/**
@@ -453,10 +428,6 @@ public class JavaResolutionFactory {
 	 * @param desc
 	 *            an ExportPackageDescription which represents the package to be
 	 *            added
-	 * @param type
-	 *            the type of the proposal to be returned
-	 * @param relevance
-	 *            the relevance of the new proposal
 	 * @param qualifiedTypeToImport
 	 *            the qualified type name of the type that requires this
 	 *            proposal. If this argument and cu are supplied the proposal
@@ -465,13 +436,10 @@ public class JavaResolutionFactory {
 	 * @param cu
 	 *            the AST root of the java source file in which this fix was
 	 *            invoked
-	 * @see JavaResolutionFactory#TYPE_JAVA_COMPLETION
-	 * @see JavaResolutionFactory#TYPE_CLASSPATH_FIX
 	 */
-	public static final Object createImportPackageProposal(IProject project, ExportPackageDescription desc, int type,
-			int relevance, CompilationUnit cu, String qualifiedTypeToImport) {
-		AbstractManifestChange change = new ImportPackageManifestChange(project, desc, cu, qualifiedTypeToImport);
-		return createWrapper(change, type, relevance);
+	public static AbstractManifestChange<ExportPackageDescription> createImportPackageChange(IProject project,
+			ExportPackageDescription desc, CompilationUnit cu, String qualifiedTypeToImport) {
+		return new ImportPackageManifestChange(project, desc, cu, qualifiedTypeToImport);
 	}
 
 	public static final IJavaCompletionProposal createSearchRepositoriesProposal(String packageName) {
@@ -483,22 +451,10 @@ public class JavaResolutionFactory {
 	 * pkg.  The object will be of the type specified by the type argument.
 	 * @param project the project to be updated
 	 * @param pkg an IPackageFragment which represents the package to be added
-	 * @param type the type of the proposal to be returned
-	 * @param relevance the relevance of the new proposal
-	 * @see JavaResolutionFactory#TYPE_JAVA_COMPLETION
-	 * @see JavaResolutionFactory#TYPE_CLASSPATH_FIX
 	 */
-	public static final Object createExportPackageProposal(IProject project, IPackageFragment pkg, int type, int relevance) {
-		AbstractManifestChange change = new ExportPackageChange(project, pkg);
-		return createWrapper(change, type, relevance);
-	}
-
-	private static final Object createWrapper(AbstractManifestChange change, int type, int relevance) {
-		return switch (type) {
-			case TYPE_JAVA_COMPLETION -> createJavaCompletionProposal(change, relevance);
-			case TYPE_CLASSPATH_FIX -> createClasspathFixProposal(change, relevance);
-			default -> null;
-		};
+	public static AbstractManifestChange<IPackageFragment> createExportPackageChange(IProject project,
+			IPackageFragment pkg) {
+		return new ExportPackageChange(project, pkg);
 	}
 
 	// Methods to wrap a AbstractMethodChange into a consumable format
@@ -509,7 +465,8 @@ public class JavaResolutionFactory {
 	 * @since 3.4
 	 * @see AbstractManifestChange
 	 */
-	public final static ClasspathFixProposal createClasspathFixProposal(final AbstractManifestChange change, final int relevance) {
+	public final static ClasspathFixProposal createClasspathFixProposal(AbstractManifestChange<?> change,
+			int relevance) {
 		return new ClasspathFixProposal() {
 
 			@Override
@@ -547,7 +504,8 @@ public class JavaResolutionFactory {
 	 * @since 3.4
 	 * @see AbstractManifestChange
 	 */
-	public final static IJavaCompletionProposal createJavaCompletionProposal(final AbstractManifestChange change, final int relevance) {
+	public final static IJavaCompletionProposal createJavaCompletionProposal(AbstractManifestChange<?> change,
+			int relevance) {
 		return new IJavaCompletionProposal() {
 
 			@Override

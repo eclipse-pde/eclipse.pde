@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2024 IBM Corporation and others.
+ * Copyright (c) 2007, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,10 +14,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction.java;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -46,7 +46,6 @@ import org.eclipse.jdt.ui.text.java.IInvocationContext;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.eclipse.jdt.ui.text.java.IProblemLocation;
 import org.eclipse.jdt.ui.text.java.IQuickFixProcessor;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
@@ -68,22 +67,15 @@ import aQute.bnd.osgi.Constants;
 public class QuickFixProcessor implements IQuickFixProcessor {
 
 	@Override
-	public IJavaCompletionProposal[] getCorrections(IInvocationContext context, IProblemLocation[] locations) throws CoreException {
-		ArrayList<Object> results = new ArrayList<>();
-
+	public IJavaCompletionProposal[] getCorrections(IInvocationContext context, IProblemLocation[] locations)
+			throws CoreException {
+		List<Object> results = new ArrayList<>();
 		AbstractClassResolutionCollector collector = createCollector(results, context);
-
 		for (IProblemLocation location : locations) {
-			int id = location.getProblemId();
-			switch (id) {
-				case IProblem.ForbiddenReference :
+			switch (location.getProblemId()) {
+				case IProblem.ForbiddenReference:
 					handleAccessRestrictionProblem(context, location, collector);
-				case IProblem.ImportNotFound : // fall through
-				case IProblem.UndefinedName : // fall through
-				case IProblem.UndefinedType : // fall through
-				case IProblem.UnresolvedVariable : // fall through
-				case IProblem.MissingTypeInMethod : // fall through
-				case IProblem.MissingTypeInConstructor :
+				case IProblem.ImportNotFound, IProblem.UndefinedName, IProblem.UndefinedType, IProblem.UnresolvedVariable, IProblem.MissingTypeInMethod, IProblem.MissingTypeInConstructor:
 					handleImportNotFound(context, location, collector);
 
 			}
@@ -97,17 +89,17 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 	private void handleAccessRestrictionProblem(IInvocationContext context, IProblemLocation location, AbstractClassResolutionCollector collector) {
 		IBinding referencedElement = null;
 		ASTNode node = location.getCoveredNode(context.getASTRoot());
-		if (node instanceof Type) {
-			referencedElement = ((Type) node).resolveBinding();
-		} else if (node instanceof Name) {
-			referencedElement = ((Name) node).resolveBinding();
-		} else if (node instanceof MethodInvocation) {
-			IMethodBinding tempMethod = ((MethodInvocation) node).resolveMethodBinding();
+		if (node instanceof Type type) {
+			referencedElement = type.resolveBinding();
+		} else if (node instanceof Name name) {
+			referencedElement = name.resolveBinding();
+		} else if (node instanceof MethodInvocation methodInvocation) {
+			IMethodBinding tempMethod = methodInvocation.resolveMethodBinding();
 			if (tempMethod != null) {
 				referencedElement = tempMethod.getDeclaringClass();
 			}
-		} else if (node instanceof FieldAccess) {
-			IVariableBinding tempVariable = ((FieldAccess) node).resolveFieldBinding();
+		} else if (node instanceof FieldAccess fieldAccess) {
+			IVariableBinding tempVariable = fieldAccess.resolveFieldBinding();
 			if (tempVariable != null) {
 				referencedElement = tempVariable.getDeclaringClass();
 			}
@@ -154,7 +146,7 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 	 * Adds IJavaCompletionProposals for a Require-Bundle if user is using an Import-Package from the bundle
 	 */
 	private void handleAccessRestrictionByImportPackage(IPackageFragment fragment, AbstractClassResolutionCollector collector) {
-		HashSet<String> set = new HashSet<>();
+		Set<String> set = new HashSet<>();
 		IProject project = fragment.getJavaProject().getProject();
 		String pkgName = fragment.getElementName();
 		IPluginModelBase base = PluginRegistry.findModel(project);
@@ -227,19 +219,20 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 			ASTNode node = getParent(selectedNode);
 			String className = null;
 			if (node == null) {
-				if (selectedNode instanceof Name) {
-					ITypeBinding typeBinding = ((Name) selectedNode).resolveTypeBinding();
+				if (selectedNode instanceof Name name) {
+					ITypeBinding typeBinding = name.resolveTypeBinding();
 					if (typeBinding != null) {
 						className = typeBinding.getBinaryName();
 					}
-					if (className == null && selectedNode instanceof SimpleName) { // fallback if the type cannot be resolved
-						className = ((SimpleName) selectedNode).getIdentifier();
+					if (className == null && selectedNode instanceof SimpleName simpleName) {
+						// fallback if the type cannot be resolved
+						className = simpleName.getIdentifier();
 					}
 				}
-			} else if (node instanceof ImportDeclaration) {
+			} else if (node instanceof ImportDeclaration importDeclaration) {
 				// Find the full package name, strip off the class name or on demand qualifier '.*';
-				String packageName = ((ImportDeclaration) node).getName().getFullyQualifiedName();
-				if (!((ImportDeclaration) node).isOnDemand()) {
+				String packageName = importDeclaration.getName().getFullyQualifiedName();
+				if (!importDeclaration.isOnDemand()) {
 					int lastPeriod = packageName.lastIndexOf('.'); // if there is no period assume we are importing a single name package
 					packageName = packageName.substring(0, lastPeriod >= 0 ? lastPeriod : packageName.length());
 				}
@@ -253,13 +246,7 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 				if (!WorkspaceModelManager.isPluginProject(project)) {
 					return;
 				}
-
-				IRunnableWithProgress findOperation = new FindClassResolutionsOperation(project, cu, className,
-						collector);
-				try {
-					findOperation.run(new NullProgressMonitor());
-				} catch (InvocationTargetException | InterruptedException e) {
-				}
+				new FindClassResolutionsOperation(project, cu, className, collector).run(new NullProgressMonitor());
 			}
 		}
 	}
@@ -267,8 +254,7 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 	/*
 	 * Custom AbstractClassResolutionCollector which will only add one IJavaCompletionProposal for adding an Import-Package or Export-Package entry
 	 */
-	private AbstractClassResolutionCollector createCollector(final Collection<Object> result,
-			IInvocationContext context) {
+	private AbstractClassResolutionCollector createCollector(Collection<Object> result, IInvocationContext context) {
 		return new AbstractClassResolutionCollector() {
 
 			// the list of package names for which an import package resolution has been created
@@ -277,34 +263,25 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 			boolean isDone = false;
 
 			@Override
-			public void addResolutionModification(IProject project, ExportPackageDescription desc) {
-				addResolutionModification(project, desc, null, ""); //$NON-NLS-1$
-			}
-
-			@Override
 			public void addResolutionModification(IProject project, ExportPackageDescription desc, CompilationUnit cu,
-					String qualifiedTypeToImport) {
+					String typeToImport) {
 				if (BndProject.isBndProject(project)) {
 					// for bnd projects the proposal to import a package is not
 					// really useful as import package is computed automatically
 					return;
 				}
-				// guard against multiple import package resolutions for the same package
-				if (addedImportPackageResolutions.contains(desc.getName())) {
-					return;
-				}
-				Object proposal = JavaResolutionFactory.createImportPackageProposal(project, desc,
-						JavaResolutionFactory.TYPE_JAVA_COMPLETION, 4, cu, qualifiedTypeToImport);
-				if (proposal != null) {
-					addedImportPackageResolutions.add(desc.getName());
-					result.add(proposal);
+				// guard against multiple import package resolutions for the
+				// same package
+				if (addedImportPackageResolutions.add(desc.getName())) {
+					var change = JavaResolutionFactory.createImportPackageChange(project, desc, cu, typeToImport);
+					result.add(JavaResolutionFactory.createJavaCompletionProposal(change, 4));
 					isDone = true;
 				}
 			}
 
 			@Override
-			public Object addExportPackageResolutionModification(IPackageFragment aPackage) {
-				Object proposal = super.addExportPackageResolutionModification(aPackage);
+			public IJavaCompletionProposal addExportPackageResolutionModification(IPackageFragment aPackage) {
+				IJavaCompletionProposal proposal = super.addExportPackageResolutionModification(aPackage);
 				if (proposal != null) {
 					result.add(proposal);
 				}
@@ -317,14 +294,13 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 			}
 
 			@Override
-			public Object addRequireBundleModification(IProject project, ExportPackageDescription desc, int relevance,
-					CompilationUnit cu, String qualifiedTypeToImport) {
-				Object proposal;
+			public IJavaCompletionProposal addRequireBundleModification(IProject project, ExportPackageDescription desc,
+					int relevance, CompilationUnit cu, String qualifiedTypeToImport) {
+				IJavaCompletionProposal proposal;
 				if (BndProject.isBndProject(project)) {
 					proposal = createAddBundleCompletionProposal(project, desc, relevance, cu, qualifiedTypeToImport);
 				} else {
-					proposal = super.addRequireBundleModification(project, desc, relevance, cu,
-						qualifiedTypeToImport);
+					proposal = super.addRequireBundleModification(project, desc, relevance, cu, qualifiedTypeToImport);
 				}
 				if (proposal != null) {
 					result.add(proposal);
