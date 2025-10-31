@@ -186,7 +186,7 @@ public class ConfigurationTemplateBlock extends BaseBlock {
 	@Override
 	protected void handleBrowseFileSystem() {
 		FileDialog dialog = new FileDialog(fTab.getControl().getShell());
-		dialog.setFilterExtensions(new String[] {"*.ini"}); //$NON-NLS-1$
+		dialog.setFilterExtensions("*.ini"); //$NON-NLS-1$
 		dialog.setFilterPath(getLocation());
 		dialog.setText(PDEUIMessages.ConfigurationTab_configLocMessage);
 		String res = dialog.open();
