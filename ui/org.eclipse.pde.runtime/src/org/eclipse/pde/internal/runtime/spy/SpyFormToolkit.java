@@ -106,8 +106,8 @@ public class SpyFormToolkit extends FormToolkit {
 		public void run() {
 			FileDialog fileChooser = new FileDialog(PDERuntimePlugin.getActiveWorkbenchShell(), SWT.SAVE);
 			fileChooser.setFileName("image"); //$NON-NLS-1$
-			fileChooser.setFilterExtensions(new String[] {"*.png"}); //$NON-NLS-1$
-			fileChooser.setFilterNames(new String[] {"PNG (*.png)"}); //$NON-NLS-1$
+			fileChooser.setFilterExtensions("*.png"); //$NON-NLS-1$
+			fileChooser.setFilterNames("PNG (*.png)"); //$NON-NLS-1$
 			String filename = fileChooser.open();
 			if (filename == null) {
 				return;
