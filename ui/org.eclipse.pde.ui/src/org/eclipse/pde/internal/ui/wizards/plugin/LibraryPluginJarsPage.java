@@ -77,7 +77,7 @@ public class LibraryPluginJarsPage extends WizardPage {
 
 	private void chooseFile() {
 		FileDialog dialog = new FileDialog(getShell(), SWT.OPEN | SWT.MULTI);
-		dialog.setFilterExtensions(new String[] {"*.jar"}); //$NON-NLS-1$
+		dialog.setFilterExtensions("*.jar"); //$NON-NLS-1$
 		String res = dialog.open();
 		if (res != null) {
 			String path = new File(res).getParent();
