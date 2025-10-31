@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2019 IBM Corporation and others.
+ * Copyright (c) 2008, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,14 +13,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction.java;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -41,11 +42,13 @@ import org.eclipse.jdt.core.search.SearchMatch;
 import org.eclipse.jdt.core.search.SearchParticipant;
 import org.eclipse.jdt.core.search.SearchPattern;
 import org.eclipse.jdt.core.search.SearchRequestor;
+import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
+import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.service.resolver.StateHelper;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
@@ -59,9 +62,9 @@ import org.eclipse.pde.internal.core.PDECore;
  */
 public class FindClassResolutionsOperation implements IRunnableWithProgress {
 
-	String fClassName = null;
-	IProject fProject = null;
-	AbstractClassResolutionCollector fCollector = null;
+	private String fClassName = null;
+	private IProject fProject = null;
+	private AbstractClassResolutionCollector fCollector = null;
 	private CompilationUnit fCompilationUnit;
 
 	/**
@@ -78,7 +81,9 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 		 * Import-Package. The proposals can be created with the help of the
 		 * JavaResolutionFactory
 		 */
-		abstract public void addResolutionModification(IProject project, ExportPackageDescription desc);
+		public void addResolutionModification(IProject project, ExportPackageDescription desc) {
+			addResolutionModification(project, desc, null, ""); //$NON-NLS-1$
+		}
 
 		/**
 		 * This method is meant to be sub-classed. The subclass should decide if
@@ -93,11 +98,13 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 		 * Adds an export package proposal. Subclasses should implement the
 		 * actual adding to the collection.
 		 */
-		public Object addExportPackageResolutionModification(IPackageFragment aPackage) {
+		public IJavaCompletionProposal addExportPackageResolutionModification(IPackageFragment aPackage) {
 			if (aPackage.exists()) {
 				IResource packageResource = aPackage.getResource();
 				if (packageResource != null) {
-					return JavaResolutionFactory.createExportPackageProposal(packageResource.getProject(), aPackage, JavaResolutionFactory.TYPE_JAVA_COMPLETION, 100);
+					IProject project = packageResource.getProject();
+					var change = JavaResolutionFactory.createExportPackageChange(project, aPackage);
+					return JavaResolutionFactory.createJavaCompletionProposal(change, 100);
 				}
 			}
 			return null;
@@ -114,12 +121,15 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 		 * Adds a require bundle proposal. Subclasses should implement the
 		 * actual adding to the collection.
 		 */
-		public Object addRequireBundleModification(IProject project, ExportPackageDescription desc, int relevance,
-				CompilationUnit cu, String qualifiedTypeToImport) {
-			return JavaResolutionFactory.createRequireBundleProposal(project, desc,
-					JavaResolutionFactory.TYPE_JAVA_COMPLETION, relevance, cu, qualifiedTypeToImport);
+		public IJavaCompletionProposal addRequireBundleModification(IProject project, ExportPackageDescription desc,
+				int relevance, CompilationUnit cu, String qualifiedTypeToImport) {
+			BundleDescription exporter = desc.getExporter();
+			if (exporter == null) {
+				return null;
+			}
+			var change = JavaResolutionFactory.createRequireBundleChange(project, exporter, cu, qualifiedTypeToImport);
+			return JavaResolutionFactory.createJavaCompletionProposal(change, relevance);
 		}
-
 
 		/**
 		 * Adds a search repositories proposal. Subclasses should implement the actual adding to the collection.
@@ -134,9 +144,6 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 		public boolean isDone() {
 			return false;
 		}
-
-
-
 	}
 
 	/**
@@ -201,38 +208,31 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 				}
 				return;
 			}
-
-			Iterator<Entry<String, ExportPackageDescription>> validPackagesIter = validPackages.entrySet().iterator();
-			Set<ExportPackageDescription> visiblePkgs = null;
+			// getting visible packages is not very efficient -> do it only once
+			Set<ExportPackageDescription> visiblePackages = !validPackages.isEmpty() ? getVisiblePackages() : null;
 			boolean allowMultipleFixes = packageName == null;
-			while (validPackagesIter.hasNext() && (allowMultipleFixes || !fCollector.isDone())) {
-				// since getting visible packages is not very efficient, only do it once and cache result
-				if (visiblePkgs == null) {
-					visiblePkgs = getVisiblePackages();
-				}
-				Entry<String, ExportPackageDescription> currentEntry = validPackagesIter.next();
-				ExportPackageDescription currentPackage = currentEntry.getValue();
+			for (var validPackagesIter = validPackages.entrySet().iterator(); validPackagesIter.hasNext()
+					&& (allowMultipleFixes || !fCollector.isDone());) {
+				var entry = validPackagesIter.next();
+				String qualifiedType = entry.getKey();
+				ExportPackageDescription currentPackage = entry.getValue();
 				// if package is already visible, skip over
-				if (visiblePkgs.contains(currentPackage)) {
+				if (visiblePackages.contains(currentPackage)) {
 					continue;
 				}
 				// if currentPackage will resolve class and is valid, pass it to collector
-				fCollector.addResolutionModification(fProject, currentPackage, fCompilationUnit, currentEntry.getKey());
+				fCollector.addResolutionModification(fProject, currentPackage, fCompilationUnit, qualifiedType);
 			}
-
 			// additionally add require bundle proposals
 			Set<String> bundleNames = getCurrentBundleNames();
-			for (validPackagesIter = validPackages.entrySet().iterator(); validPackagesIter.hasNext();) {
-				Entry<String, ExportPackageDescription> currentEntry = validPackagesIter.next();
-				ExportPackageDescription currentPackage = currentEntry.getValue();
+			validPackages.forEach((key, currentPackage) -> {
 				BundleDescription desc = currentPackage.getExporter();
 				// Ignore already required bundles and duplicate proposals (currently we do not consider version constraints)
 				if (desc != null && !bundleNames.contains(desc.getName())) {
-					fCollector.addRequireBundleModification(fProject, currentPackage, 3, fCompilationUnit,
-							currentEntry.getKey());
+					fCollector.addRequireBundleModification(fProject, currentPackage, 3, fCompilationUnit, key);
 					bundleNames.add(desc.getName());
 				}
-			}
+			});
 		}
 	}
 
@@ -251,7 +251,8 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 		if (importPkgs != null) {
 			if (packageName != null) {
 				if (!isImportedPackage(packageName, importPkgs)) {
-					validPackages = getValidPackages(packageName, qualifiedTypeToImport);
+					List<ExportPackageDescription> packages = getValidPackages(packageName);
+					validPackages = !packages.isEmpty() ? Map.of(qualifiedTypeToImport, packages.getLast()) : Map.of();
 				}
 				subMonitor.split(1);
 			} else {
@@ -279,18 +280,10 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 			ImportPackageSpecification[] importPkgs, Set<IPackageFragment> packagesToExport, IProgressMonitor monitor) {
 		SubMonitor subMonitor = SubMonitor.convert(monitor);
 
-		IPluginModelBase[] activeModels = PluginRegistry.getActiveModels();
-		Set<IJavaProject> javaProjects = new LinkedHashSet<>(activeModels.length * 2);
+		Set<IJavaProject> javaProjects = Arrays.stream(PluginRegistry.getWorkspaceModels())
+				.map(IPluginModelBase::getUnderlyingResource).map(IResource::getProject).map(JavaCore::create)
+				.filter(IJavaProject::exists).collect(Collectors.toCollection(LinkedHashSet::new));
 
-		for (IPluginModelBase model : activeModels) {
-			IResource resource = model.getUnderlyingResource();
-			if (resource != null && resource.isAccessible()) {
-				IJavaProject javaProject = JavaCore.create(resource.getProject());
-				if (javaProject.exists()) {
-					javaProjects.add(javaProject);
-				}
-			}
-		}
 		final IJavaProject currentJavaProject = JavaCore.create(fProject);
 		javaProjects.remove(currentJavaProject); // no need to search in current project itself
 
@@ -328,10 +321,10 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 
 			if (!packages.isEmpty()) {
 				// transform to ExportPackageDescriptions
-				Map<String, ExportPackageDescription> exportDescriptions = new HashMap<>(packages.size());
+				State state = PDECore.getDefault().getModelManager().getState().getState();
 
 				// remove system packages if they happen to be included. Adding a system package won't resolve anything, since package package already comes from JRE
-				ExportPackageDescription[] systemPackages = PDECore.getDefault().getModelManager().getState().getState().getSystemPackages();
+				ExportPackageDescription[] systemPackages = state.getSystemPackages();
 				for (ExportPackageDescription systemPackage : systemPackages) {
 					packages.remove(systemPackage.getName());
 				}
@@ -341,7 +334,8 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 				}
 
 				// finally create the list of ExportPackageDescriptions
-				ExportPackageDescription[] knownPackages = PDECore.getDefault().getModelManager().getState().getState().getExportedPackages();
+				Map<String, ExportPackageDescription> exportDescriptions = new HashMap<>(packages.size());
+				ExportPackageDescription[] knownPackages = state.getExportedPackages();
 				for (ExportPackageDescription knownPackage : knownPackages) {
 					if (packages.containsKey(knownPackage.getName())) {
 						exportDescriptions.put(qualifiedTypeNames.get(knownPackage.getName()), knownPackage);
@@ -371,39 +365,26 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 		return false;
 	}
 
-	private static Map<String, ExportPackageDescription> getValidPackages(String pkgName, String qualifiedTypeToImport) {
-		ExportPackageDescription[] knownPackages = PDECore.getDefault().getModelManager().getState().getState().getExportedPackages();
-		Map<String, ExportPackageDescription> validPackages = new HashMap<>();
-		for (ExportPackageDescription knownPackage : knownPackages) {
-			if (knownPackage.getName().equals(pkgName)) {
-				validPackages.put(knownPackage.getName(), knownPackage);
-			}
-		}
+	private static List<ExportPackageDescription> getValidPackages(String packageName) {
+		State state = PDECore.getDefault().getModelManager().getState().getState();
+		List<ExportPackageDescription> validPackages = Arrays.stream(state.getExportedPackages())
+				.filter(p -> packageName.equals(p.getName())).toList();
 		// remove system packages if they happen to be included. Adding a system package won't resolve anything, since package package already comes from JRE
 		if (!validPackages.isEmpty()) {
-			knownPackages = PDECore.getDefault().getModelManager().getState().getState().getSystemPackages();
-			for (ExportPackageDescription knownPackage : knownPackages) {
-				validPackages.remove(knownPackage.getName());
+			ExportPackageDescription[] systemPackages = state.getSystemPackages();
+			if (Arrays.stream(systemPackages).map(ExportPackageDescription::getName).anyMatch(packageName::equals)) {
+				return List.of();
 			}
 		}
-		Map<String, ExportPackageDescription> packages = new HashMap<>();
-		for (ExportPackageDescription exportPackageDescription : validPackages.values()) {
-			packages.put(qualifiedTypeToImport, exportPackageDescription);
-		}
-		return packages;
+		return validPackages;
 	}
 
 	private Set<ExportPackageDescription> getVisiblePackages() {
 		IPluginModelBase base = PluginRegistry.findModel(fProject);
 		if (base != null) {
 			BundleDescription desc = base.getBundleDescription();
-
 			StateHelper helper = BundleHelper.getPlatformAdmin().getStateHelper();
-			ExportPackageDescription[] visiblePkgs = helper.getVisiblePackages(desc);
-
-			HashSet<ExportPackageDescription> set = new HashSet<>();
-			Collections.addAll(set, visiblePkgs);
-			return set;
+			return Set.of(helper.getVisiblePackages(desc));
 		}
 		return Collections.emptySet();
 	}

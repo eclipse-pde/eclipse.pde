@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction.java;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.ui.text.java.ClasspathFixProcessor;
-import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.ui.correction.java.FindClassResolutionsOperation.AbstractClassResolutionCollector;
@@ -39,34 +39,19 @@ public class UnresolvedImportFixProcessor extends ClasspathFixProcessor {
 
 	private static class ClasspathFixCollector extends AbstractClassResolutionCollector {
 
-		private final ArrayList<Object> fList = new ArrayList<>();
-
-		@Override
-		public void addResolutionModification(IProject project, ExportPackageDescription desc) {
-			addResolutionModification(project, desc, null, ""); //$NON-NLS-1$
-		}
+		private final List<ClasspathFixProposal> proposals = new ArrayList<>();
 
 		@Override
 		public void addResolutionModification(IProject project, ExportPackageDescription desc, CompilationUnit cu,
-				String qualifiedTypeToImport) {
-			if (desc.getSupplier() == null) {
+				String typeToImport) {
+			BundleDescription exporter = desc.getExporter();
+			if (exporter == null) {
 				return;
 			}
-			Object proposal = JavaResolutionFactory.createRequireBundleProposal(project, desc,
-					JavaResolutionFactory.TYPE_CLASSPATH_FIX, 16, cu, qualifiedTypeToImport);
-			if (proposal != null) {
-				fList.add(proposal);
-			}
+			var change = JavaResolutionFactory.createRequireBundleChange(project, exporter, cu, typeToImport);
+			ClasspathFixProposal proposal = JavaResolutionFactory.createClasspathFixProposal(change, 16);
+			proposals.add(proposal);
 		}
-
-		/*
-		 * Returns all the ClasspathFixProposals which were found
-		 */
-		public ClasspathFixProposal[] getProposals() {
-			return fList.toArray(new ClasspathFixProposal[fList.size()]);
-		}
-
-
 	}
 
 	@Override
@@ -80,12 +65,9 @@ public class UnresolvedImportFixProcessor extends ClasspathFixProcessor {
 			return new ClasspathFixProposal[0];
 		}
 		ClasspathFixCollector collector = new ClasspathFixCollector();
-		IRunnableWithProgress findOperation = new FindClassResolutionsOperation(project.getProject(), name, collector);
-		try {
-			findOperation.run(new NullProgressMonitor());
-		} catch (InvocationTargetException | InterruptedException e) {
-		}
-		return collector.getProposals();
+		var findOperation = new FindClassResolutionsOperation(project.getProject(), name, collector);
+		findOperation.run(new NullProgressMonitor());
+		return collector.proposals.toArray(ClasspathFixProposal[]::new);
 	}
 
 }
