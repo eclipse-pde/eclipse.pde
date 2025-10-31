@@ -60,22 +60,6 @@ public class UnresolvedImportFixProcessor extends ClasspathFixProcessor {
 		}
 
 		/*
-		 * Creates proposal for adding require bundles in manifest file based on the
-		 * description name given
-		 */
-		public void addResolutionModification(IProject project, String desc, CompilationUnit cu,
-				String qualifiedTypeToImport) {
-			if (desc == null) {
-				return;
-			}
-			Object proposal = JavaResolutionFactory.createRequireBundleProposal(project, desc,
-					JavaResolutionFactory.TYPE_CLASSPATH_FIX, 16, cu, qualifiedTypeToImport);
-			if (proposal != null) {
-				fList.add(proposal);
-			}
-		}
-
-		/*
 		 * Returns all the ClasspathFixProposals which were found
 		 */
 		public ClasspathFixProposal[] getProposals() {
@@ -96,12 +80,6 @@ public class UnresolvedImportFixProcessor extends ClasspathFixProcessor {
 			return new ClasspathFixProposal[0];
 		}
 		ClasspathFixCollector collector = new ClasspathFixCollector();
-		// Add require bundles for junit5
-		if (name.startsWith("junit-jupiter") || name.startsWith("junit-platform") || name.startsWith("org.junit.jupiter") || name.startsWith("org.junit.platform")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			collector.addResolutionModification(project.getProject(), "JUnit 5 bundles", null, null);////$NON-NLS-1$
-			return collector.getProposals();
-		}
-
 		IRunnableWithProgress findOperation = new FindClassResolutionsOperation(project.getProject(), name, collector);
 		try {
 			findOperation.run(new NullProgressMonitor());

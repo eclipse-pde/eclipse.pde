@@ -185,11 +185,6 @@ public class JavaResolutionFactory {
 			super(project, desc, cu, qualifiedTypeToImport);
 		}
 
-		private RequireBundleManifestChange(IProject project, String desc, CompilationUnit cu,
-				String qualifiedTypeToImport) {
-			super(project, desc, cu, qualifiedTypeToImport);
-		}
-
 		@Override
 		public Change perform(IProgressMonitor pm) throws CoreException {
 			PDEModelUtility.modifyModel(new ModelModification(getProject()) {
@@ -198,69 +193,43 @@ public class JavaResolutionFactory {
 					if (!(model instanceof IPluginModelBase base)) {
 						return;
 					}
-					String[] pluginIdStrings = null;
-					if ("JUnit 5 bundles".equals(getChangeObject())) { //$NON-NLS-1$
-						pluginIdStrings = getJUnit5Bundles();
-					}
-					if (getChangeObject() instanceof ExportPackageDescription) {
-						pluginIdStrings = new String[1];
-						pluginIdStrings[0] = ((ExportPackageDescription) getChangeObject()).getSupplier()
-								.getSymbolicName();
-					}
-					for (int i = 0; i < pluginIdStrings.length; i++) {
-						String pluginId = pluginIdStrings[i];
-						if (!isUndo()) {
-							IPluginImport[] imports = base.getPluginBase().getImports();
-							boolean duplicate = false;
-							for (IPluginImport iPluginImport : imports) {
-								if (iPluginImport.getId().equals(pluginId)) {
-									duplicate = true;
-									break;
-								}
+					String pluginId = ((ExportPackageDescription) getChangeObject()).getSupplier().getSymbolicName();
+					if (!isUndo()) {
+						IPluginImport[] imports = base.getPluginBase().getImports();
+						boolean duplicate = false;
+						for (IPluginImport iPluginImport : imports) {
+							if (iPluginImport.getId().equals(pluginId)) {
+								duplicate = true;
+								break;
 							}
-							if (duplicate) {
-								continue;
-							}
-							IPluginImport impt = base.getPluginFactory().createImport();
-							impt.setId(pluginId);
-							base.getPluginBase().add(impt);
-						} else {
-							IPluginImport[] imports = base.getPluginBase().getImports();
-							for (IPluginImport pluginImport : imports) {
-								if (pluginImport.getId().equals(pluginId)) {
-									base.getPluginBase().remove(pluginImport);
-								}
+						}
+						if (duplicate) {
+							return;
+						}
+						IPluginImport impt = base.getPluginFactory().createImport();
+						impt.setId(pluginId);
+						base.getPluginBase().add(impt);
+					} else {
+						IPluginImport[] imports = base.getPluginBase().getImports();
+						for (IPluginImport pluginImport : imports) {
+							if (pluginImport.getId().equals(pluginId)) {
+								base.getPluginBase().remove(pluginImport);
 							}
 						}
 					}
-				}
-
-				private String[] getJUnit5Bundles() {
-					return new String[] { "org.junit", "junit-jupiter-api" }; //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}, new NullProgressMonitor());
 
 			insertImport(getCompilationUnit(), getQualifiedTypeToImport(), pm);
 
 			if (!isUndo()) {
-				if (getChangeObject() instanceof ExportPackageDescription) {
-					return new RequireBundleManifestChange(getProject(), (ExportPackageDescription) getChangeObject(),
-							getCompilationUnit(), getQualifiedTypeToImport()) {
-						@Override
-						public boolean isUndo() {
-							return true;
-						}
-					};
-				}
-				if (getChangeObject() instanceof String) {
-					return new RequireBundleManifestChange(getProject(),(String) getChangeObject(),
-							getCompilationUnit(), getQualifiedTypeToImport()) {
-						@Override
-						public boolean isUndo() {
-							return true;
-						}
-					};
-				}
+				return new RequireBundleManifestChange(getProject(), (ExportPackageDescription) getChangeObject(),
+						getCompilationUnit(), getQualifiedTypeToImport()) {
+					@Override
+					public boolean isUndo() {
+						return true;
+					}
+				};
 			}
 			return null;
 		}
@@ -468,39 +437,6 @@ public class JavaResolutionFactory {
 	public static final Object createRequireBundleProposal(IProject project, ExportPackageDescription desc, int type,
 			int relevance, CompilationUnit cu, String qualifiedTypeToImport) {
 		if (desc.getSupplier() == null) {
-			return null;
-		}
-		AbstractManifestChange change = new RequireBundleManifestChange(project, desc, cu, qualifiedTypeToImport);
-		return createWrapper(change, type, relevance);
-	}
-
-	/**
-	 * Creates and returns a proposal which create multiple Require-Bundle entry in the
-	 * MANIFEST.MF (or corresponding plugin.xml) for desc name.
-	 *
-	 * @param project
-	 *            the project to be updated
-	 * @param desc
-	 *            multiple bundles that is to be  added as a Require-Bundle dependency
-	 *            based on description name
-	 * @param type
-	 *            the type of the proposal to be returned
-	 * @param relevance
-	 *            the relevance of the new proposal
-	 * @param qualifiedTypeToImport
-	 *            the qualified type name of the type that requires this
-	 *            proposal. If this argument and cu are supplied the proposal
-	 *            will add an import statement for this type to the source file
-	 *            in which the proposal was invoked.
-	 * @param cu
-	 *            the AST root of the java source file in which this fix was
-	 *            invoked
-	 * @see JavaResolutionFactory#TYPE_JAVA_COMPLETION
-	 * @see JavaResolutionFactory#TYPE_CLASSPATH_FIX
-	 */
-	public static final Object createRequireBundleProposal(IProject project, String desc, int type, int relevance,
-			CompilationUnit cu, String qualifiedTypeToImport) {
-		if (desc == null) {
 			return null;
 		}
 		AbstractManifestChange change = new RequireBundleManifestChange(project, desc, cu, qualifiedTypeToImport);
