@@ -75,7 +75,7 @@ public class JUnitLaunchValidationOperation extends LaunchValidationOperation {
 	}
 
 	private void addError(String message) {
-		fErrors.put(message.replaceAll("\\R", " "), null); //$NON-NLS-1$//$NON-NLS-2$
+		fErrors.put(message, null);
 	}
 
 	@Override

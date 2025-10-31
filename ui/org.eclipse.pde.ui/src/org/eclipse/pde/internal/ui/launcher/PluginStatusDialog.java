@@ -16,6 +16,7 @@
 package org.eclipse.pde.internal.ui.launcher;
 
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -44,6 +45,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -185,14 +187,23 @@ public class PluginStatusDialog extends TrayDialog {
 
 		Label label = new Label(container, SWT.NONE);
 		label.setText(PDEUIMessages.PluginStatusDialog_label);
+		GridData gridData = new GridData(GridData.FILL_BOTH);
 
-		treeViewer = new TreeViewer(container);
-		treeViewer.setContentProvider(new ContentProvider());
-		treeViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
-		treeViewer.setComparator(new ViewerComparator());
-		treeViewer.setInput(fInput);
-		treeViewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
-
+		Entry<?, ?> onlyEntry = fInput.size() == 1 ? fInput.entrySet().iterator().next() : null;
+		if (onlyEntry != null && onlyEntry.getKey() instanceof String errorMessage && errorMessage.contains("\n") //$NON-NLS-1$
+				&& onlyEntry.getValue() == null) {
+			Text message = new Text(container, SWT.MULTI | SWT.READ_ONLY | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
+			message.setBackground(container.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+			message.setText(errorMessage);
+			message.setLayoutData(gridData);
+		} else {
+			treeViewer = new TreeViewer(container);
+			treeViewer.setContentProvider(new ContentProvider());
+			treeViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+			treeViewer.setComparator(new ViewerComparator());
+			treeViewer.setInput(fInput);
+			treeViewer.getControl().setLayoutData(gridData);
+		}
 		getShell().setText(PDEUIMessages.PluginStatusDialog_pluginValidation);
 		Dialog.applyDialogFont(container);
 		return container;
