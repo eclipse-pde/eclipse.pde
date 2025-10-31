@@ -5,5 +5,5 @@ Bundle-SymbolicName: verification.tests.junit5
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: verification.tests
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: junit-jupiter-api;bundle-version="5.4.0"
+Require-Bundle: junit-jupiter-api;bundle-version="[5.4.0,6.0.0)"
 Export-Package: verification.tests.junit5

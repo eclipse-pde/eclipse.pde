@@ -8,15 +8,6 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/pde/unittest/junit/launcher/JUnitPluginLaunchConfigurationDelegate.java" type="org.eclipse.pde.unittest.junit.launcher.JUnitPluginLaunchConfigurationDelegate">
-        <filter id="640712815">
-            <message_arguments>
-                <message_argument value="JUnitLaunchConfigurationDelegate"/>
-                <message_argument value="JUnitPluginLaunchConfigurationDelegate"/>
-                <message_argument value="getRequiredJunitRuntimePlugins(ILaunchConfiguration)"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/pde/unittest/junit/launcher/JUnitPluginTestTab.java" type="org.eclipse.pde.unittest.junit.launcher.JUnitPluginTestTab">
         <filter id="571473929">
             <message_arguments>

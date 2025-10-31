@@ -14,12 +14,11 @@
 package org.eclipse.pde.ui.tests.model.xml;
 
 import org.eclipse.pde.core.tests.internal.feature.FeatureDataTestCase;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
-@RunWith(Suite.class)
-@SuiteClasses({ BasicXMLTestCase.class,
+@Suite
+@SelectClasses({ BasicXMLTestCase.class,
 	/*
 	 * Commented out till XMLTextChangeListener#getTextOperations() gets fixed /
 	 * updated (see what InputContext does)

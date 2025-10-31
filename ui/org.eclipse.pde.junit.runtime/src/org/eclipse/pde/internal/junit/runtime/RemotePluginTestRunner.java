@@ -14,8 +14,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.junit.runtime;
 
-import static java.util.stream.Collectors.toCollection;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -24,6 +22,7 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.internal.junit.runner.RemoteTestRunner;
@@ -143,35 +142,23 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 		if (junit5RuntimeBundle != null) {
 			platformEngineBundles.add(junit5RuntimeBundle);
 		}
-		return new MultiBundleClassLoader(platformEngineBundles);
+		return new SPIBundleClassLoader(platformEngineBundles);
 	}
 
 	private static List<Bundle> findTestEngineBundles() {
 		BundleContext bundleContext = FrameworkUtil.getBundle(RemotePluginTestRunner.class).getBundleContext();
-		return Arrays.stream(bundleContext.getBundles()).filter(RemotePluginTestRunner::providesCompatibleTestEngine).collect(toCollection(ArrayList::new));
+		return Arrays.stream(bundleContext.getBundles()).filter(RemotePluginTestRunner::providesTestEngine).collect(Collectors.toCollection(ArrayList::new));
 	}
 
 	/**
 	 * Checks whether the bundle provides test engines.
-	 * Ensures that test engines that can be loaded from the bundle
-	 * are compatible with the TestEngine version in current scope.
-	 * Otherwise, the JUnit platform's call to the ServiceLoader for
-	 * retrieving available engines will fail.
-	 * Incompatibilities can happen, e.g., in Tycho builds, where
-	 * the org.eclipse.tycho.surefire.osgibooter bundle is found
-	 * that may provide a different JUnit platform version than the
-	 * one available via the Eclipse target platform.
 	 */
-	private static boolean providesCompatibleTestEngine(Bundle bundle) {
+	private static boolean providesTestEngine(Bundle bundle) {
 		try {
 			BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
 			String testEngineClass = "org.junit.platform.engine.TestEngine"; //$NON-NLS-1$
 			Collection<String> engineProviders = bundleWiring.listResources("META-INF/services", testEngineClass, BundleWiring.LISTRESOURCES_LOCAL); //$NON-NLS-1$
-			if (!engineProviders.isEmpty()) {
-				Class<?> thisTestEngine = Class.forName(testEngineClass);
-				Class<?> bundleTestEngine = bundle.loadClass(testEngineClass);
-				return thisTestEngine == bundleTestEngine;
-			}
+			return !engineProviders.isEmpty();
 		} catch (Exception e) {
 			// skip this bundle
 		}
@@ -204,7 +191,7 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 			// during initialization - see bug 520811
 			ClassLoader currentTCCL = Thread.currentThread().getContextClassLoader();
 			try {
-				Thread.currentThread().setContextClassLoader(new MultiBundleClassLoader(findTestEngineBundles()));
+				Thread.currentThread().setContextClassLoader(new SPIBundleClassLoader(findTestEngineBundles()));
 				defaultInit(args);
 			} finally {
 				Thread.currentThread().setContextClassLoader(currentTCCL);

@@ -153,7 +153,7 @@ public class E4ApplicationTemplate extends PDETemplateSection {
 	protected boolean isOkToCreateFolder(File sourceFolder) {
 		// We copy the files in 'org.eclipse.pde.ui.templates/templates_3.5/E4Application/*/handlers' or 'parts' if content required
 		String fname = sourceFolder.getName();
-		if (fname.endsWith("handlers") || fname.endsWith("parts")) { //$NON-NLS-1$//$NON-NLS-2$
+		if (fname.endsWith("handlers") || fname.endsWith("parts") || fname.equals("icons")) { //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 			return getBooleanOption(KEY_CREATE_SAMPLE_CONTENT);
 		}
 		return super.isOkToCreateFolder(sourceFolder);
@@ -228,6 +228,9 @@ public class E4ApplicationTemplate extends PDETemplateSection {
 
 	@Override
 	public String[] getNewFiles() {
-		return new String[] { "icons/", "css/default.css", "Application.e4xmi" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (getBooleanOption(KEY_CREATE_SAMPLE_CONTENT)) {
+			return new String[] { "icons/", "css/default.css", "Application.e4xmi" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
+		return new String[] { "css/default.css", "Application.e4xmi" }; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

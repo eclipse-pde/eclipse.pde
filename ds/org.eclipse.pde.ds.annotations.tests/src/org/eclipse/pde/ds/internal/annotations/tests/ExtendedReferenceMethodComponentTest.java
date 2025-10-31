@@ -1,12 +1,12 @@
 package org.eclipse.pde.ds.internal.annotations.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.concurrent.Executor;
 
 import org.eclipse.pde.internal.ds.core.IDSReference;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("restriction")
 public class ExtendedReferenceMethodComponentTest extends AnnotationProcessorTest {

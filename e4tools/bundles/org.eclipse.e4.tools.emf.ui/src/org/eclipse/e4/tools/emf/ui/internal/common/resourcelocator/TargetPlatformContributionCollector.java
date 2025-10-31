@@ -91,7 +91,7 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 	HashSet<String> cacheBundleId = new HashSet<>();
 	HashSet<String> cachePackage = new HashSet<>();
 	HashSet<String> cacheLocation = new HashSet<>();
-	private Pattern patternFile;
+	private final Pattern patternFile;
 	protected String cacheName;
 	protected boolean stopFiltering;
 

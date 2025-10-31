@@ -196,7 +196,7 @@ public class ConvertPreferencesWizardPage extends WizardPage {
 	private void handleBrowsePreferences() {
 		FileDialog dialog = new FileDialog(getShell());
 		dialog.setText(PDEUIMessages.ConvertPreferencesWizardPage_fileTitle);
-		dialog.setFilterExtensions(new String[] {"*.epf"}); //$NON-NLS-1$
+		dialog.setFilterExtensions("*.epf"); //$NON-NLS-1$
 		dialog.setText(PDEUIMessages.ConvertPreferencesWizardPage_fileMessage);
 		dialog.setFileName(fPreferencesFilePath);
 		String path = dialog.open();

@@ -19,12 +19,14 @@ package org.eclipse.pde.internal.runtime.spy;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.eclipse.help.IContext;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.core.util.ManifestUtils;
 import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
 import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
 import org.eclipse.pde.internal.runtime.PDERuntimePluginImages;
@@ -41,6 +43,7 @@ import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
@@ -48,6 +51,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormText;
@@ -61,6 +65,8 @@ public class SpyFormToolkit extends FormToolkit {
 	private static final String CLASS_PROTOCOL_PREFIX = "class://"; //$NON-NLS-1$
 
 	private static final String BUNDLE_PROTOCOL_PREFIX = "bundle://"; //$NON-NLS-1$
+
+	private static final Pattern URL_PATTERN = Pattern.compile("https?://\\S+"); //$NON-NLS-1$
 
 	private class SpyHyperlinkAdapter extends HyperlinkAdapter {
 
@@ -82,6 +88,8 @@ public class SpyFormToolkit extends FormToolkit {
 				String bundle = href.substring(BUNDLE_PROTOCOL_PREFIX.length());
 				SpyIDEUtil.openBundleManifest(bundle);
 				fDialog.close();
+			} else if (URL_PATTERN.matcher(href).matches()) {
+				Program.launch(href);
 			}
 		}
 	}
@@ -98,8 +106,8 @@ public class SpyFormToolkit extends FormToolkit {
 		public void run() {
 			FileDialog fileChooser = new FileDialog(PDERuntimePlugin.getActiveWorkbenchShell(), SWT.SAVE);
 			fileChooser.setFileName("image"); //$NON-NLS-1$
-			fileChooser.setFilterExtensions(new String[] {"*.png"}); //$NON-NLS-1$
-			fileChooser.setFilterNames(new String[] {"PNG (*.png)"}); //$NON-NLS-1$
+			fileChooser.setFilterExtensions("*.png"); //$NON-NLS-1$
+			fileChooser.setFilterNames("PNG (*.png)"); //$NON-NLS-1$
 			String filename = fileChooser.open();
 			if (filename == null) {
 				return;
@@ -269,8 +277,18 @@ public class SpyFormToolkit extends FormToolkit {
 	}
 
 	// TODO refactor me, I'm ugly
-	public void generatePluginDetailsText(Bundle bundle, String objectId, String objectType, StringBuilder buffer, FormText text) {
+	@SuppressWarnings("restriction")
+	public void generatePluginDetailsText(Bundle bundle, IWorkbenchPart part, String objectType, StringBuilder buffer,
+			FormText text) {
 		if (bundle != null) {
+			String objectId = null;
+			String srcRef;
+			if (part != null) {
+				objectId = part.getSite().getId();
+				srcRef = ManifestUtils.getSourceReferences(FrameworkUtil.getBundle(part.getClass()));
+			} else {
+				srcRef = ManifestUtils.getSourceReferences(bundle);
+			}
 			String version = (bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION));
 
 			buffer.append("<p>"); //$NON-NLS-1$
@@ -291,6 +309,23 @@ public class SpyFormToolkit extends FormToolkit {
 				buffer.append("</a>"); //$NON-NLS-1$
 			}
 			buffer.append("</li>"); //$NON-NLS-1$
+
+			if (srcRef != null) {
+				buffer.append("<p>"); //$NON-NLS-1$
+				buffer.append(PDERuntimeMessages.SpyDialog_sourceRepository);
+				buffer.append("</p>"); //$NON-NLS-1$
+				buffer.append("<li bindent=\"20\" style=\"image\" value=\"menu\">"); //$NON-NLS-1$
+				if (PDERuntimePlugin.HAS_IDE_BUNDLES) {
+					buffer.append("<a href=\""); //$NON-NLS-1$
+					buffer.append(srcRef);
+					buffer.append("\">"); //$NON-NLS-1$
+				}
+				buffer.append(srcRef);
+				if (PDERuntimePlugin.HAS_IDE_BUNDLES) {
+					buffer.append("</a>"); //$NON-NLS-1$
+				}
+				buffer.append("</li>"); //$NON-NLS-1$
+			}
 
 			Image pluginImage = PDERuntimePluginImages.get(PDERuntimePluginImages.IMG_PLUGIN_OBJ);
 			text.setImage("plugin", pluginImage); //$NON-NLS-1$

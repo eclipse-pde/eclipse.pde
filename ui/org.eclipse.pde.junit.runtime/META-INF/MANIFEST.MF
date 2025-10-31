@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.pde.junit.runtime; singleton:=true
-Bundle-Version: 3.8.200.qualifier
+Bundle-Version: 3.8.300.qualifier
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.jdt.junit.runtime;bundle-version="[3.4.0,4.0.0)",
@@ -12,5 +12,5 @@ Export-Package: org.eclipse.pde.internal.junit.runtime;x-internal:=true
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.ui.testing;resolution:=optional
-DynamicImport-Package: org.junit.platform.engine
+DynamicImport-Package: org.junit.platform.engine;version="[1.14.0,2.0.0)"
 Automatic-Module-Name: org.eclipse.pde.junit.runtime

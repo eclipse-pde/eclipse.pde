@@ -66,6 +66,7 @@ public class PDERuntimeMessages extends NLS {
 	public static String SpyDialog_activeWizard_desc;
 	public static String SpyDialog_activeMenuIds;
 	public static String SpyDialog_contributingPluginId_title;
+	public static String SpyDialog_sourceRepository;
 	public static String SpyDialog_contributingPluginId_desc;
 	public static String SpyDialog_activeSelection_title;
 	public static String SpyDialog_activeSelection_desc;
