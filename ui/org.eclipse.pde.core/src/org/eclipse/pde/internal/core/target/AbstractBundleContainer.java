@@ -17,7 +17,6 @@ package org.eclipse.pde.internal.core.target;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -66,7 +65,10 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 	 */
 	private String[] fVMArgs;
 
-	static private HashMap<AbstractBundleContainer, String[]> hash = new HashMap<>();
+	/**
+	 * Cache for VM arguments to avoid repeated expensive resolution
+	 */
+	private static final HashMap<AbstractBundleContainer, String[]> fVMArgsCache = new HashMap<>();
 
 	/**
 	 * Resolves any string substitution variables in the given text returning
@@ -223,11 +225,12 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 
 	@Override
 	public String[] getVMArguments() {
-		for (Entry<AbstractBundleContainer, String[]> entry : hash.entrySet()) {
-			if (entry.getKey().equals(this)) {
-				return entry.getValue();
-			}
+		// Check cache first for faster lookup
+		String[] cachedArgs = fVMArgsCache.get(this);
+		if (cachedArgs != null) {
+			return cachedArgs;
 		}
+
 		String FWK_ADMIN_EQ = "org.eclipse.equinox.frameworkadmin.equinox"; //$NON-NLS-1$
 		if (fVMArgs == null) {
 			try {
@@ -261,10 +264,10 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 
 		}
 		if (fVMArgs == null || fVMArgs.length == 0) {
-			hash.put(this, null);
+			fVMArgsCache.put(this, null);
 			return null;
 		}
-		hash.put(this, fVMArgs);
+		fVMArgsCache.put(this, fVMArgs);
 		return fVMArgs;
 	}
 
