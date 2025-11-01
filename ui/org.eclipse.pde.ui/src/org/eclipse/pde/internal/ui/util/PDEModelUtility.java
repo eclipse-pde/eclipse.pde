@@ -263,11 +263,6 @@ public class PDEModelUtility {
 					}
 				}
 
-//				IBuildModel bModel = model.getBuildModel();
-//				if (bModel instanceof IEditingModel &&
-//						doc == ((IEditingModel)bModel).getDocument())
-//					return (IEditingModel)bModel;
-
 				if (model instanceof IEditingModel && doc == ((IEditingModel) model).getDocument()) {
 					return (IEditingModel) model;
 				}
