@@ -1,6 +1,6 @@
 package org.eclipse.pde.ds.internal.annotations.tests;
 
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -15,6 +15,6 @@ public abstract class CompilationParticipantTest extends TestBase {
 	@BeforeEach
 	public void setUp() {
 		testProject = ResourcesPlugin.getWorkspace().getRoot().getProject(getTestProjectName());
-		assumeTrue(testProject.exists(), "Test project does not exist!");
+		assertTrue(testProject.exists(), "Test project does not exist!");
 	}
 }
