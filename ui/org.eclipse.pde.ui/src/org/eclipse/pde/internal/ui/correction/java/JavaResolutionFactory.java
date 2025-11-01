@@ -180,6 +180,9 @@ public class JavaResolutionFactory {
 	 */
 	private static class RequireBundleManifestChange extends AbstractManifestChange {
 
+		private static final String ADD_JUNIT5_BUNDLES_DESCRIPTION = "JUnit 5 bundles"; //$NON-NLS-1$
+		private static final String JUNIT_JUPITER_API = "junit-jupiter-api"; //$NON-NLS-1$
+
 		private RequireBundleManifestChange(IProject project, ExportPackageDescription desc, CompilationUnit cu,
 				String qualifiedTypeToImport) {
 			super(project, desc, cu, qualifiedTypeToImport);
@@ -198,13 +201,20 @@ public class JavaResolutionFactory {
 					if (!(model instanceof IPluginModelBase base)) {
 						return;
 					}
-					String[] pluginIdStrings = null;
-					if ("JUnit 5 bundles".equals(getChangeObject())) { //$NON-NLS-1$
-						pluginIdStrings = getJUnit5Bundles();
+					Object changeObject = getChangeObject();
+					String[] pluginIdStrings = {};
+					String version = null;
+					if (changeObject instanceof String changeString) {
+						switch (changeString) {
+							case ADD_JUNIT5_BUNDLES_DESCRIPTION -> {
+								pluginIdStrings = getJUnit5Bundles();
+								version = "[5.0.0,6.0.0)"; //$NON-NLS-1$
+							}
+						}
 					}
-					if (getChangeObject() instanceof ExportPackageDescription) {
+					if (changeObject instanceof ExportPackageDescription) {
 						pluginIdStrings = new String[1];
-						pluginIdStrings[0] = ((ExportPackageDescription) getChangeObject()).getSupplier()
+						pluginIdStrings[0] = ((ExportPackageDescription) changeObject).getSupplier()
 								.getSymbolicName();
 					}
 					for (int i = 0; i < pluginIdStrings.length; i++) {
@@ -222,6 +232,9 @@ public class JavaResolutionFactory {
 								continue;
 							}
 							IPluginImport impt = base.getPluginFactory().createImport();
+							if (version != null && JUNIT_JUPITER_API.equals(pluginId)) {
+								impt.setVersion(version);
+							}
 							impt.setId(pluginId);
 							base.getPluginBase().add(impt);
 						} else {
@@ -236,7 +249,7 @@ public class JavaResolutionFactory {
 				}
 
 				private String[] getJUnit5Bundles() {
-					return new String[] { "org.junit", "junit-jupiter-api" }; //$NON-NLS-1$ //$NON-NLS-2$
+					return new String[] { "org.junit", JUNIT_JUPITER_API }; //$NON-NLS-1$
 				}
 			}, new NullProgressMonitor());
 
