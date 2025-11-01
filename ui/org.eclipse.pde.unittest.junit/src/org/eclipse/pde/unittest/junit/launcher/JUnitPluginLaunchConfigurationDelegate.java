@@ -86,6 +86,7 @@ import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.launching.IPDEConstants;
 import org.eclipse.pde.internal.launching.JUnitLaunchRequirements;
+import org.eclipse.pde.internal.launching.JUnitLaunchValidationOperation;
 import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
 import org.eclipse.pde.internal.launching.launcher.EclipsePluginValidationOperation;
 import org.eclipse.pde.internal.launching.launcher.LaunchArgumentsHelper;
@@ -358,6 +359,9 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 		fModels = BundleLauncherHelper.getMergedBundleMap(configuration, false);
 		fAllBundles = fModels.keySet().stream().collect(Collectors.groupingBy(m -> m.getPluginBase().getId(),
 				LinkedHashMap::new, Collectors.toCollection(ArrayList::new)));
+
+		JUnitLaunchValidationOperation junitValidation = new JUnitLaunchValidationOperation(configuration, fModels.keySet());
+		LaunchPluginValidator.runValidationOperation(junitValidation, monitor);
 
 		// implicitly add the plug-ins required for JUnit testing if necessary
 		JUnitLaunchRequirements.addRequiredJunitRuntimePlugins(configuration, fAllBundles, fModels);
