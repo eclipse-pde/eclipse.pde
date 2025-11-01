@@ -1,7 +1,7 @@
 package org.eclipse.pde.ds.internal.annotations.tests;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -19,7 +19,7 @@ public class UnmanagedProjectTest extends CompilationParticipantTest {
 	@Test
 	public void managedProject() throws Exception {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject("ds.annotations.test0");
-		assumeTrue(project.exists());
+		assertTrue(project.exists());
 		assertFalse(DSAnnotationCompilationParticipant.isManaged(project));
 	}
 }
