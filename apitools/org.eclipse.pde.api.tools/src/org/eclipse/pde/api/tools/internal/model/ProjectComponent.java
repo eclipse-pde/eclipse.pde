@@ -395,7 +395,7 @@ public class ProjectComponent extends BundleComponent {
 						IPath location2 = res.getLocation();
 						IApiTypeContainer cfc = outputLocationToContainer.get(location2);
 						if (cfc == null) {
-							cfc = new ProjectTypeContainer(component, (IContainer) res);
+							cfc = new ProjectTypeContainer(component, (IContainer) res, root);
 							outputLocationToContainer.put(location2, cfc);
 						}
 						return cfc;
@@ -416,7 +416,7 @@ public class ProjectComponent extends BundleComponent {
 						} else {
 							container = project.getProject().getWorkspace().getRoot().getFolder(outputLocation);
 						}
-						cfc = new ProjectTypeContainer(component, container);
+						cfc = new ProjectTypeContainer(component, container, root);
 						outputLocationToContainer.put(outputLocation, cfc);
 					}
 					return cfc;
