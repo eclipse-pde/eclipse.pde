@@ -1,6 +1,6 @@
 package org.eclipse.e4.tools.persistence.tests;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Paths;
 import java.util.concurrent.CompletableFuture;
