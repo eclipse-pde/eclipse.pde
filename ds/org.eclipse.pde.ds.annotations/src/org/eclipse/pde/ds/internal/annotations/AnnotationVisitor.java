@@ -54,7 +54,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
@@ -328,8 +327,9 @@ public class AnnotationVisitor extends ASTVisitor {
 
 				continue;
 			}
-
-			if (COMPONENT_ANNOTATION.equals(annotationBinding.getAnnotationType().getQualifiedName())) {
+			ITypeBinding annotationType = annotationBinding.getAnnotationType();
+			String qualifiedName = annotationType.getQualifiedName();
+			if (COMPONENT_ANNOTATION.equals(qualifiedName)) {
 				return annotation;
 			}
 		}
@@ -1629,7 +1629,7 @@ public class AnnotationVisitor extends ASTVisitor {
 
 			propertyFiles = list.toArray(new String[list.size()]);
 			validateComponentPropertyFiles(key, annotation,
-					((IType) typeBinding.getJavaElement()).getJavaProject().getProject(), propertyFiles);
+					typeBinding.getJavaElement().getJavaProject().getProject(), propertyFiles);
 		} else {
 			propertyFiles = new String[0];
 		}

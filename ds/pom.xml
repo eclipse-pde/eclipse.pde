@@ -24,6 +24,7 @@
     <module>org.eclipse.pde.ds.tests</module>
     <module>org.eclipse.pde.ds.ui</module>
     <module>org.eclipse.pde.ds.annotations</module>
+    <module>org.eclipse.pde.ds.annotations.tests</module>
   </modules>
   
   <profiles>
