@@ -12,6 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     Code 9 Corporation - on going enhancements and maintenance
  *     Johannes Ahlers <Johannes.Ahlers@gmx.de> - bug 477677
+ *     Daniel Kruegler - #2031 - PDE should not warn if resource URI of unknown scheme cannot be found
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
@@ -227,6 +228,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	private static final Key KEY_P_UNKNOWN_CLASS = getPDEPrefKey(CompilerFlags.P_UNKNOWN_CLASS);
 	private static final Key KEY_P_UNKNOWN_RESOURCE = getPDEPrefKey(CompilerFlags.P_UNKNOWN_RESOURCE);
 	private static final Key KEY_P_UNKNOWN_IDENTIFIER = getPDEPrefKey(CompilerFlags.P_UNKNOWN_IDENTIFIER);
+	private static final Key KEY_P_IGNORED_RESOURCE_PROTOCOLS = getPDEPrefKey(CompilerFlags.P_IGNORED_RESOURCE_PROTOCOLS);
 
 	//general
 	private static final Key KEY_P_DISCOURAGED_CLASS = getPDEPrefKey(CompilerFlags.P_DISCOURAGED_CLASS);
@@ -265,7 +267,16 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 			PDEUIMessages.PDECompilersConfigurationBlock_ignore
 			};
 
-	private static Key[] fgAllKeys = {KEY_F_UNRESOLVED_FEATURES, KEY_F_UNRESOLVED_PLUGINS, KEY_P_BUILD, KEY_P_BUILD_MISSING_OUTPUT, KEY_P_BUILD_SOURCE_LIBRARY, KEY_P_BUILD_OUTPUT_LIBRARY, KEY_P_BUILD_SRC_INCLUDES, KEY_P_BUILD_BIN_INCLUDES, KEY_P_BUILD_JAVA_COMPLIANCE, KEY_P_BUILD_JAVA_COMPILER, KEY_P_BUILD_ENCODINGS, KEY_P_INTERNAL, KEY_P_SERVICE_COMP_WITHOUT_LAZY, KEY_P_NO_AUTOMATIC_MODULE_NAME, KEY_P_DEPRECATED, KEY_P_DISCOURAGED_CLASS, KEY_P_INCOMPATIBLE_ENV, KEY_P_MISSING_EXPORT_PKGS, KEY_P_NO_REQUIRED_ATT, KEY_P_NOT_EXTERNALIZED, KEY_P_UNKNOWN_ATTRIBUTE, KEY_P_UNKNOWN_CLASS, KEY_P_UNKNOWN_ELEMENT, KEY_P_UNKNOWN_IDENTIFIER, KEY_P_UNKNOWN_RESOURCE, KEY_P_UNRESOLVED_EX_POINTS, KEY_P_UNRESOLVED_IMPORTS, KEY_P_VERSION_EXP_PKG, KEY_P_VERSION_IMP_PKG, KEY_P_VERSION_REQ_BUNDLE, KEY_P_VERSION_EXEC_ENV_TOO_LOW, KEY_S_CREATE_DOCS, KEY_S_DOC_FOLDER, KEY_S_OPEN_TAGS };
+			private static Key[] fgAllKeys = { KEY_F_UNRESOLVED_FEATURES, KEY_F_UNRESOLVED_PLUGINS, KEY_P_BUILD,
+					KEY_P_BUILD_MISSING_OUTPUT, KEY_P_BUILD_SOURCE_LIBRARY, KEY_P_BUILD_OUTPUT_LIBRARY,
+					KEY_P_BUILD_SRC_INCLUDES, KEY_P_BUILD_BIN_INCLUDES, KEY_P_BUILD_JAVA_COMPLIANCE,
+					KEY_P_BUILD_JAVA_COMPILER, KEY_P_BUILD_ENCODINGS, KEY_P_INTERNAL, KEY_P_SERVICE_COMP_WITHOUT_LAZY,
+					KEY_P_NO_AUTOMATIC_MODULE_NAME, KEY_P_DEPRECATED, KEY_P_DISCOURAGED_CLASS, KEY_P_INCOMPATIBLE_ENV,
+					KEY_P_MISSING_EXPORT_PKGS, KEY_P_NO_REQUIRED_ATT, KEY_P_NOT_EXTERNALIZED, KEY_P_UNKNOWN_ATTRIBUTE,
+					KEY_P_UNKNOWN_CLASS, KEY_P_UNKNOWN_ELEMENT, KEY_P_UNKNOWN_IDENTIFIER, KEY_P_UNKNOWN_RESOURCE,
+					KEY_P_IGNORED_RESOURCE_PROTOCOLS, KEY_P_UNRESOLVED_EX_POINTS, KEY_P_UNRESOLVED_IMPORTS,
+					KEY_P_VERSION_EXP_PKG, KEY_P_VERSION_IMP_PKG, KEY_P_VERSION_REQ_BUNDLE,
+					KEY_P_VERSION_EXEC_ENV_TOO_LOW, KEY_S_CREATE_DOCS, KEY_S_DOC_FOLDER, KEY_S_OPEN_TAGS };
 
 	/**
 	 * Constant representing the {@link IDialogSettings} section for this block
@@ -564,6 +575,10 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 				// References
 				client = createExpansibleComposite(sbody, PDEUIMessages.PDECompilersConfigurationBlock_references);
 				initializeComboControls(client, new String[] {PDEUIMessages.compilers_p_unknown_element, PDEUIMessages.compilers_p_unknown_attribute, PDEUIMessages.compilers_p_unknown_class, PDEUIMessages.compilers_p_discouraged_class, PDEUIMessages.compilers_p_unknown_resource, PDEUIMessages.compilers_p_unknown_identifier}, new Key[] {KEY_P_UNKNOWN_ELEMENT, KEY_P_UNKNOWN_ATTRIBUTE, KEY_P_UNKNOWN_CLASS, KEY_P_DISCOURAGED_CLASS, KEY_P_UNKNOWN_RESOURCE, KEY_P_UNKNOWN_IDENTIFIER,}, CompilerFlags.PLUGIN_FLAGS);
+				Composite comp = SWTFactory.createComposite(client, 2, 2, GridData.FILL_HORIZONTAL, 0, 0);
+				createTextControl(comp, PDEUIMessages.compilers_p_ignored_uri_protocols,
+						KEY_P_IGNORED_RESOURCE_PROTOCOLS, CompilerFlags.PLUGIN_FLAGS);
+				SWTFactory.createLabel(comp, PDEUIMessages.compilers_p_ignored_uri_protocols_details, 2);
 
 				break;
 			}

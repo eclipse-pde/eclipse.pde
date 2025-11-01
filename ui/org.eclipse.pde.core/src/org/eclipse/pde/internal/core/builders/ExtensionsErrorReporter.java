@@ -11,10 +11,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 526283
+ *     Daniel Kruegler - #2031 - PDE should not warn if resource URI of unknown scheme cannot be found
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -597,6 +600,37 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 			}
 		}
 
+		return isIgnoredResourceUri(location);
+	}
+
+	private boolean isIgnoredResourceUri(String location) {
+		final var ignoredProtocols = CompilerFlags.getString(fProject, CompilerFlags.P_IGNORED_RESOURCE_PROTOCOLS);
+		final var st = new StringTokenizer(ignoredProtocols, ","); //$NON-NLS-1$
+		if (!st.hasMoreTokens()) {
+			return false;
+		}
+		try {
+			final var uri = new URI(location);
+			if (uri.isAbsolute()) {
+				// Exclude syntactically valid file paths that are also
+				// syntactically valid URIs, such as "C:/somePath" where
+				// "C" would be interpreted as URI protocol:
+				try {
+					java.nio.file.Path.of(location);
+				} catch (java.nio.file.InvalidPathException e) {
+					// OK, location does not match a file path
+					final var scheme = uri.getScheme();
+					while (st.hasMoreElements()) {
+						String protocol = st.nextToken().trim();
+						if (scheme.equalsIgnoreCase(protocol)) {
+							return true;
+						}
+					}
+				}
+			}
+		} catch (URISyntaxException e) {
+			// location is not a valid URI
+		}
 		return false;
 	}
 
