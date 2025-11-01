@@ -524,7 +524,7 @@ public class TargetDefinition implements ITargetDefinition {
 					}
 				}
 
-				TargetBundle[] allResolvedBundles = all.toArray(new TargetBundle[all.size()]);
+				TargetBundle[] allResolvedBundles = all.toArray(TargetBundle[]::new);
 				if (allBundles) {
 					return allResolvedBundles;
 				}
@@ -595,7 +595,7 @@ public class TargetDefinition implements ITargetDefinition {
 		}
 
 		// Return matching bundles, if we are organizing by feature, do not create invalid target bundles for missing bundle includes
-		List<TargetBundle> result = getMatchingBundles(bundles, included.toArray(new NameVersionDescriptor[included.size()]), !containsFeatures);
+		List<TargetBundle> result = getMatchingBundles(bundles, included.toArray(NameVersionDescriptor[]::new), !containsFeatures);
 
 		// Add in missing features as resolved bundles with error statuses
 		if (containsFeatures && !missingFeatures.isEmpty()) {
@@ -607,7 +607,7 @@ public class TargetDefinition implements ITargetDefinition {
 			}
 		}
 
-		return result.toArray(new TargetBundle[result.size()]);
+		return result.toArray(TargetBundle[]::new);
 	}
 
 	/**
@@ -627,9 +627,7 @@ public class TargetDefinition implements ITargetDefinition {
 	 */
 	static List<TargetBundle> getMatchingBundles(TargetBundle[] collection, NameVersionDescriptor[] included, boolean handleMissingBundles) {
 		if (included == null) {
-			ArrayList<TargetBundle> result = new ArrayList<>();
-			result.addAll(Arrays.asList(collection));
-			return result;
+			return new ArrayList<>(Arrays.asList(collection));
 		}
 		// map bundles names to available versions
 		Map<String, List<TargetBundle>> bundleMap = new HashMap<>(collection.length);
@@ -995,7 +993,7 @@ public class TargetDefinition implements ITargetDefinition {
 			}
 		}
 
-		fFeatures = result.values().toArray(new TargetFeature[result.size()]);
+		fFeatures = result.values().toArray(TargetFeature[]::new);
 		return fFeatures;
 	}
 
