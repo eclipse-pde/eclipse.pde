@@ -1,9 +1,9 @@
 package org.eclipse.pde.ds.internal.annotations.tests;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -16,10 +16,8 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.ds.internal.annotations.DSAnnotationCompilationParticipant;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-@Disabled("Simply doesn't work in the new build environment yet")
 @SuppressWarnings("restriction")
 public class ManagedProjectTest extends CompilationParticipantTest {
 
@@ -48,9 +46,9 @@ public class ManagedProjectTest extends CompilationParticipantTest {
 	@Test
 	public void manifestHeaderServiceComponentAdded() throws Exception {
 		IPluginModelBase pluginModel = PluginRegistry.findModel(testProject);
-		assumeTrue(pluginModel instanceof IBundlePluginModelBase, "Test project not a bundle project!");
+		assertThat(pluginModel).isInstanceOf(IBundlePluginModelBase.class);
 		IBundleModel bundleModel = ((IBundlePluginModelBase) pluginModel).getBundleModel();
-		assumeTrue(bundleModel != null, "Missing bundle manifest!");
+		assertNotNull(bundleModel, "Missing bundle manifest!");
 		String serviceComponentHeader = bundleModel.getBundle().getHeader("Service-Component");
 		assertNotNull(serviceComponentHeader, "Missing Service-Component header!");
 		String[] entries = serviceComponentHeader.split("\\s*,\\s*");

@@ -3,10 +3,8 @@ package org.eclipse.pde.ds.internal.annotations.tests;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-@Disabled("Simply doesn't work in the new build environment yet")
 @SuppressWarnings("restriction")
 public class ExtendedLifeCycleMethodComponentTest extends AnnotationProcessorTest {
 

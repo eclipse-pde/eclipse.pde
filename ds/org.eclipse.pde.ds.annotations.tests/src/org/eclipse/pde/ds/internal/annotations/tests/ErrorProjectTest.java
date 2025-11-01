@@ -7,10 +7,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-@Disabled("Simply doesn't work in the new build environment yet")
 public class ErrorProjectTest extends CompilationParticipantTest {
 
 	private static final IPath PATH_PREFIX = IPath.fromOSString("src/ds/annotations/test2/");
