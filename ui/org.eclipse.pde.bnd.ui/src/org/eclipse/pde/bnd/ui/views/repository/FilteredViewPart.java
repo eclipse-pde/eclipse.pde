@@ -120,7 +120,7 @@ public abstract class FilteredViewPart extends ViewPart {
 	private class FilterAction extends Action {
 		public FilterAction() {
 			super("Filter", IAction.AS_CHECK_BOX);
-			setImageDescriptor(Resources.getImageDescriptor("/icons/filter.gif"));
+			setImageDescriptor(Resources.getImageDescriptor("/icons/filter.svg"));
 		}
 
 		@Override
