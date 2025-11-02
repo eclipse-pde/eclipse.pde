@@ -9,7 +9,7 @@
  *
  * Contributors:
  *    Christoph Läubrich - initial API and implementation
- *    
+ *
  */
 package org.eclipse.pde.internal.junit.runtime;
 
