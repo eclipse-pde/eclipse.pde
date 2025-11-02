@@ -9,7 +9,7 @@
  *
  * Contributors:
  *    Christoph Läubrich - initial API and implementation
- *    
+ *
  */
 package org.eclipse.pde.internal.junit.runtime;
 
@@ -34,8 +34,8 @@ import org.osgi.framework.Bundle;
 class SPIBundleClassLoader extends ClassLoader {
 
 	private static final String META_INF_SERVICES = "META-INF/services/"; //$NON-NLS-1$
-	private List<Bundle> bundles;
-	private Map<String, List<SPIMapping>> mappings = new ConcurrentHashMap<>();
+	private final List<Bundle> bundles;
+	private final Map<String, List<SPIMapping>> mappings = new ConcurrentHashMap<>();
 
 	SPIBundleClassLoader(List<Bundle> bundles) {
 		super(null);
