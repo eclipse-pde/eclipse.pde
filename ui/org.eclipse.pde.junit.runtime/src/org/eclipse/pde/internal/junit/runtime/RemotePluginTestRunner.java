@@ -134,7 +134,7 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 	private static ClassLoader createJUnit5PluginClassLoader(String testPluginName) {
 		Bundle testBundle = Platform.getBundle(testPluginName);
 		if (testBundle == null) {
-			throw new IllegalArgumentException("Bundle \"" + testPluginName + "\" not found. Possible causes include missing dependencies, too restrictive version ranges, or a non-matching required execution environment."); //$NON-NLS-1$ //$NON-NLS-2$
+			throw new IllegalArgumentException("Bundle \"" + testPluginName + "\" not found. Possible causes include missing dependencies, too restrictive version ranges, mixed JUnit versions, or a non-matching required execution environment."); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		Bundle junit5RuntimeBundle = Platform.getBundle("org.eclipse.jdt.junit5.runtime"); //$NON-NLS-1$
 		List<Bundle> platformEngineBundles = findTestEngineBundles();
