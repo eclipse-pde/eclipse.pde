@@ -79,7 +79,8 @@ public class DependenciesPage extends PDEFormPage {
 			} else {
 				gd.horizontalSpan = 2;
 			}
-			section = new DependencyAnalysisSection(this, right, ExpandableComposite.COMPACT);
+			// Expand by default
+			section = new DependencyAnalysisSection(this, right, ExpandableComposite.EXPANDED);
 		} else {
 			// No MANIFEST.MF (not a Bundle), 3.0 timeframe
 			MatchSection matchSection = new MatchSection(this, right, true);
