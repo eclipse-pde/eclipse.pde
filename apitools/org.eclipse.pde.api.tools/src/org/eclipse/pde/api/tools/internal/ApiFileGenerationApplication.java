@@ -24,6 +24,7 @@ import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 public class ApiFileGenerationApplication implements IApplication {
 
 	private static String DEPRECATION_WARNING = "DEPRECATED, PLEASE MOVE TO THE tycho-apitools-plugin TO GENERATE THE API DESCRIPTION FILE"; //$NON-NLS-1$
+	@Deprecated
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
 		ApiPlugin.logErrorMessage(DEPRECATION_WARNING);
@@ -62,6 +63,7 @@ public class ApiFileGenerationApplication implements IApplication {
 		return null;
 	}
 
+	@Deprecated
 	@Override
 	public void stop() {
 		// Nothing to do
