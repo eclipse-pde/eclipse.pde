@@ -255,9 +255,9 @@ public class AddFilesToRepositoryWizardPage extends WizardPage {
 
 	void doAddExternal() {
 		FileDialog dialog = new FileDialog(getShell(), SWT.OPEN | SWT.MULTI);
-		dialog.setFilterExtensions(new String[] {
-			"*.jar" //$NON-NLS-1$
-		});
+		dialog.setFilterExtensions(
+				"*.jar" //$NON-NLS-1$
+		);
 		String res = dialog.open();
 		if (res != null) {
 			IPath filterPath = new Path(dialog.getFilterPath());
