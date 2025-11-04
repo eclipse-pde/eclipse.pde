@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2012, 2018 Christian Pontesegger and others.
+ *  Copyright (c) 2012, 2025 Christian Pontesegger and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -167,7 +167,6 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 	public void createPartControl(final Composite parent) {
 		final Composite composite = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.IMAGE_BROWSER_VIEW);
-		composite.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 		Composite topComp = new Composite(composite, SWT.NONE);
 		RowLayout layout = new RowLayout();
 		// need to center vertically, otherwise its looks misaligned
@@ -231,12 +230,9 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		spinMaxImages.setSelection(250);
 		spinMaxImages.setLayoutData(GridDataFactory.fillDefaults().create());
 		spinMaxImages.addModifyListener(e -> {
-			Display.getCurrent().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					page = 0; // reset to 1st page
-					scanImages();
-				}
+			Display.getCurrent().asyncExec(() -> {
+				page = 0; // reset to 1st page
+				scanImages();
 			});
 		});
 
