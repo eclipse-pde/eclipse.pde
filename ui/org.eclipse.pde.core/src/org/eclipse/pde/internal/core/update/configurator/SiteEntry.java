@@ -46,10 +46,12 @@ public class SiteEntry implements IConfigurationConstants {
 	private static FeatureParser featureParser = new FeatureParser();
 	private static boolean isMacOS = Utils.getOS().equals(Constants.OS_MACOSX);
 
+	@Deprecated
 	public SiteEntry(URL url) {
 		this(url, null);
 	}
 
+	@Deprecated
 	public SiteEntry(URL url, SitePolicy policy) {
 		if (url == null) {
 			try {
@@ -82,6 +84,7 @@ public class SiteEntry implements IConfigurationConstants {
 		this.resolvedURL = this.url;
 	}
 
+	@Deprecated
 	public void setConfig(Configuration config) {
 		this.config = config;
 		if (url.getProtocol().equals("platform")) { //$NON-NLS-1$
@@ -101,18 +104,22 @@ public class SiteEntry implements IConfigurationConstants {
 		}
 	}
 
+	@Deprecated
 	public Configuration getConfig() {
 		return config;
 	}
 
+	@Deprecated
 	public URL getURL() {
 		return url;
 	}
 
+	@Deprecated
 	public SitePolicy getSitePolicy() {
 		return policy;
 	}
 
+	@Deprecated
 	public synchronized void setSitePolicy(SitePolicy policy) {
 		if (policy == null) {
 			throw new IllegalArgumentException();
@@ -120,10 +127,12 @@ public class SiteEntry implements IConfigurationConstants {
 		this.policy = policy;
 	}
 
+	@Deprecated
 	public String[] getFeatures() {
 		return getDetectedFeatures();
 	}
 
+	@Deprecated
 	public long getChangeStamp() {
 		if (changeStamp == 0) {
 			computeChangeStamp();
@@ -131,6 +140,7 @@ public class SiteEntry implements IConfigurationConstants {
 		return changeStamp;
 	}
 
+	@Deprecated
 	public long getFeaturesChangeStamp() {
 		if (featuresChangeStamp == 0) {
 			computeFeaturesChangeStamp();
@@ -138,6 +148,7 @@ public class SiteEntry implements IConfigurationConstants {
 		return featuresChangeStamp;
 	}
 
+	@Deprecated
 	public long getPluginsChangeStamp() {
 		if (pluginsChangeStamp == 0) {
 			computePluginsChangeStamp();
@@ -145,18 +156,22 @@ public class SiteEntry implements IConfigurationConstants {
 		return pluginsChangeStamp;
 	}
 
+	@Deprecated
 	public boolean isUpdateable() {
 		return updateable;
 	}
 
+	@Deprecated
 	public void setUpdateable(boolean updateable) {
 		this.updateable = updateable;
 	}
 
+	@Deprecated
 	public boolean isNativelyLinked() {
 		return isExternallyLinkedSite();
 	}
 
+	@Deprecated
 	public URL getResolvedURL() {
 		return resolvedURL;
 	}
@@ -306,18 +321,22 @@ public class SiteEntry implements IConfigurationConstants {
 		return result;
 	}
 
+	@Deprecated
 	public void setLinkFileName(String linkFileName) {
 		this.linkFileName = linkFileName;
 	}
 
+	@Deprecated
 	public String getLinkFileName() {
 		return linkFileName;
 	}
 
+	@Deprecated
 	public boolean isExternallyLinkedSite() {
 		return (linkFileName != null && !linkFileName.trim().isEmpty());
 	}
 
+	@Deprecated
 	public void addFeatureEntry(FeatureEntry feature) {
 		if (featureEntries == null) {
 			featureEntries = new HashMap<>();
@@ -346,6 +365,7 @@ public class SiteEntry implements IConfigurationConstants {
 		feature.setSite(this);
 	}
 
+	@Deprecated
 	public FeatureEntry[] getFeatureEntries() {
 		if (featureEntries == null) {
 			detectFeatures();
@@ -375,14 +395,17 @@ public class SiteEntry implements IConfigurationConstants {
 		}
 	}
 
+	@Deprecated
 	public boolean isEnabled() {
 		return enabled;
 	}
 
+	@Deprecated
 	public void setEnabled(boolean enable) {
 		this.enabled = enable;
 	}
 
+	@Deprecated
 	public FeatureEntry getFeatureEntry(String id) {
 		for (FeatureEntry feature : getFeatureEntries()) {
 			if (feature.getFeatureIdentifier().equals(id)) {
@@ -392,6 +415,7 @@ public class SiteEntry implements IConfigurationConstants {
 		return null;
 	}
 
+	@Deprecated
 	public boolean unconfigureFeatureEntry(FeatureEntry feature) {
 		FeatureEntry existingFeature = getFeatureEntry(feature.getFeatureIdentifier());
 		if (existingFeature != null) {
@@ -405,6 +429,7 @@ public class SiteEntry implements IConfigurationConstants {
 	 * site is initialized from platform.xml we need to set the feature set to
 	 * empty, so we don't try to detect them.
 	 */
+	@Deprecated
 	public void initialized() {
 		if (featureEntries == null) {
 			featureEntries = new HashMap<>();
