@@ -73,6 +73,7 @@ public class PluginRegistry {
 		 * @param model plug-in model
 		 * @return whether accepted by this filter
 		 */
+		@Deprecated
 		public boolean accept(IPluginModelBase model) {
 			return true;
 		}

@@ -47,6 +47,7 @@ public class PlatformConfiguration implements IConfigurationConstants {
 
 	private static URL installURL;
 
+	@Deprecated
 	public PlatformConfiguration(URL url) throws Exception {
 		URL installLocation = Utils.getInstallURL();
 		// Retrieve install location with respect to given url if possible
@@ -61,10 +62,12 @@ public class PlatformConfiguration implements IConfigurationConstants {
 		initialize(url, installLocation);
 	}
 
+	@Deprecated
 	public static int getDefaultPolicy() {
 		return defaultPolicy;
 	}
 
+	@Deprecated
 	public SiteEntry[] getConfiguredSites() {
 		if (config == null) {
 			return new SiteEntry[0];
@@ -146,6 +149,7 @@ public class PlatformConfiguration implements IConfigurationConstants {
 		return config;
 	}
 
+	@Deprecated
 	public static boolean supportsDetection(URL url, URL installLocation) {
 		String protocol = url.getProtocol();
 		if (protocol.equals("file")) { //$NON-NLS-1$
@@ -163,6 +167,7 @@ public class PlatformConfiguration implements IConfigurationConstants {
 		}
 	}
 
+	@Deprecated
 	public static URL resolvePlatformURL(URL url, URL base_path_Location) throws IOException {
 		if (url.getProtocol().equals("platform")) { //$NON-NLS-1$
 			if (base_path_Location == null) {
@@ -185,10 +190,12 @@ public class PlatformConfiguration implements IConfigurationConstants {
 		return url;
 	}
 
+	@Deprecated
 	public static URL getInstallURL() {
 		return installURL;
 	}
 
+	@Deprecated
 	public Configuration getConfiguration() {
 		return config;
 	}
