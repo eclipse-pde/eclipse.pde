@@ -58,8 +58,12 @@ public class LaunchValidationOperation implements IWorkspaceRunnable {
 
 	@Override
 	public void run(IProgressMonitor monitor) throws CoreException {
-		fOperation = new BundleValidationOperation(fModels, getPlatformProperties());
+		fOperation = createOperation(getPlatformProperties());
 		fOperation.run(monitor);
+	}
+
+	protected BundleValidationOperation createOperation(Dictionary<String, String>[] properties) {
+		return new BundleValidationOperation(fModels, properties);
 	}
 
 	@SuppressWarnings("unchecked")

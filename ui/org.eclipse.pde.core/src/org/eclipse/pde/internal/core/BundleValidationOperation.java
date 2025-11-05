@@ -31,6 +31,7 @@ import org.eclipse.osgi.service.resolver.StateObjectFactory;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.BundleHelper;
+import org.osgi.framework.hooks.resolver.ResolverHook;
 
 public class BundleValidationOperation implements IWorkspaceRunnable {
 
@@ -38,6 +39,7 @@ public class BundleValidationOperation implements IWorkspaceRunnable {
 
 	private final Set<IPluginModelBase> fModels;
 	private final Dictionary<String, String>[] fProperties;
+	private final ResolverHook fResolverHook;
 	private State fState;
 
 	@SuppressWarnings("unchecked")
@@ -46,8 +48,13 @@ public class BundleValidationOperation implements IWorkspaceRunnable {
 	}
 
 	public BundleValidationOperation(Set<IPluginModelBase> models, Dictionary<String, String>[] properties) {
+		this(models, properties, null);
+	}
+
+	public BundleValidationOperation(Set<IPluginModelBase> models, Dictionary<String, String>[] properties, ResolverHook resolverHook) {
 		fModels = models;
 		fProperties = properties;
+		fResolverHook = resolverHook;
 	}
 
 	@Override
@@ -57,6 +64,9 @@ public class BundleValidationOperation implements IWorkspaceRunnable {
 		}
 		SubMonitor subMonitor = SubMonitor.convert(monitor, fModels.size() + 1);
 		fState = FACTORY.createState(true);
+		if (fResolverHook != null) {
+			fState.setResolverHookFactory(c -> fResolverHook);
+		}
 		long id = 1;
 		for (IPluginModelBase fModel : fModels) {
 			BundleDescription bundle = fModel.getBundleDescription();
