@@ -40,6 +40,11 @@ public class CompositeApiTypeContainer extends AbstractApiTypeContainer {
 	}
 
 	@Override
+	public int getContainerType() {
+		return COMPOSITE;
+	}
+
+	@Override
 	protected List<IApiTypeContainer> createApiTypeContainers() throws CoreException {
 		return fContainers;
 	}
