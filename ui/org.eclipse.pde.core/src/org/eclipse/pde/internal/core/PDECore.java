@@ -47,7 +47,6 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetPlatformService;
-import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.bnd.BndResourceChangeListener;
 import org.eclipse.pde.internal.core.bnd.BndWorkspaceServiceFactory;
 import org.eclipse.pde.internal.core.builders.FeatureRebuilder;
@@ -245,11 +244,6 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 	 *         {@link #VERSION} comparator.
 	 */
 	public Stream<IPluginModelBase> findPluginsInHost(String id) {
-		if (IPDEBuildConstants.BUNDLE_OSGI.equals(id)) {
-			// Do not expose the OSGi framework from the host see
-			// https://github.com/eclipse-pde/eclipse.pde/issues/2082
-			return Stream.empty();
-		}
 		Map<String, List<IPluginModelBase>> hostPlugins = getHostPlugins();
 		if (hostPlugins == null) {
 			return null;
