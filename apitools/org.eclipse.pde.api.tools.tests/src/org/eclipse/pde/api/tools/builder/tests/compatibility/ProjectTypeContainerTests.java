@@ -250,4 +250,36 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 		assertThat(pkgNames).containsAll(getAllPackageNames());
 	}
 
+	/**
+	 * Tests that packages are correctly discovered in projects with multiple
+	 * source folders that share the same output folder. This is a regression
+	 * test for issue #2096 where packages were missing when multiple source
+	 * folders output to the same location.
+	 */
+	public void testMultipleSourceFoldersWithSharedOutput() throws CoreException {
+		IApiComponent component = getComponent("bundle.multisource"); //$NON-NLS-1$
+		IApiTypeContainer[] containers = component.getApiTypeContainers();
+		assertEquals("Wrong number of API type containers", 1, containers.length); //$NON-NLS-1$
+		IApiTypeContainer container = containers[0];
+		assertEquals("Should be a composite type container", IApiTypeContainer.COMPOSITE, //$NON-NLS-1$
+				container.getContainerType());
+
+		String[] packageNames = container.getPackageNames();
+		Set<String> pkgSet = new HashSet<>();
+		for (String pkg : packageNames) {
+			pkgSet.add(pkg);
+		}
+
+		// Both packages from different source folders should be found
+		assertTrue("Missing package test.pkg1 from src1 folder", pkgSet.contains("test.pkg1")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue("Missing package test.pkg2 from src2 folder", pkgSet.contains("test.pkg2")); //$NON-NLS-1$ //$NON-NLS-2$
+
+		// Verify we can find types from both source folders
+		IApiTypeRoot type1 = container.findTypeRoot("test.pkg1.TestClass1"); //$NON-NLS-1$
+		assertNotNull("Should find TestClass1 from src1", type1); //$NON-NLS-1$
+
+		IApiTypeRoot type2 = container.findTypeRoot("test.pkg2.TestClass2"); //$NON-NLS-1$
+		assertNotNull("Should find TestClass2 from src2", type2); //$NON-NLS-1$
+	}
+
 }

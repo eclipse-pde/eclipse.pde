@@ -38,6 +38,10 @@ public interface IApiTypeContainer extends IApiElement {
 	 * Container type that is an {@link IApiComponent}
 	 */
 	public static final int COMPONENT = 4;
+	/**
+	 * Container type that is a composite of multiple source folders
+	 */
+	public static final int COMPOSITE = 5;
 
 	/**
 	 * Returns the names of all packages in this container in dot separated format.

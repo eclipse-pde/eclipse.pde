@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Multi Source Test Bundle
+Bundle-SymbolicName: bundle.multisource
+Bundle-Version: 1.0.0
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Export-Package: test.pkg1,
+ test.pkg2
