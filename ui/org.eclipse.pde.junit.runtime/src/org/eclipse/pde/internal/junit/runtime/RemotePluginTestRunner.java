@@ -29,6 +29,7 @@ import org.eclipse.jdt.internal.junit.runner.RemoteTestRunner;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.VersionRange;
 import org.osgi.framework.wiring.BundleWiring;
 
 /**
@@ -36,6 +37,10 @@ import org.osgi.framework.wiring.BundleWiring;
  */
 public class RemotePluginTestRunner extends RemoteTestRunner {
 
+	private static final String ORG_ECLIPSE_JDT_JUNIT5_RUNTIME = "org.eclipse.jdt.junit5.runtime"; //$NON-NLS-1$
+	private static final String ORG_ECLIPSE_JDT_JUNIT6_RUNTIME = "org.eclipse.jdt.junit6.runtime"; //$NON-NLS-1$
+	private static final VersionRange JUNIT5_VERSION_RANGE = new VersionRange("[1.0.0,6.0.0)"); //$NON-NLS-1$
+	private static final VersionRange JUNIT6_VERSION_RANGE = new VersionRange("[6.0.0,7.0.0)"); //$NON-NLS-1$
 	private String fTestPluginName;
 	private ClassLoader fLoaderClassLoader;
 
@@ -102,13 +107,24 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 		RemotePluginTestRunner testRunner = new RemotePluginTestRunner();
 		testRunner.init(args);
 		ClassLoader currentTCCL = Thread.currentThread().getContextClassLoader();
-		if (isJUnit5(args)) {
+		boolean isJUnit5 = isJUnit5(args);
+		boolean isJUnit6 = !isJUnit5 && isJUnit6(args);
+		String junitRuntimeBundle = ORG_ECLIPSE_JDT_JUNIT6_RUNTIME;
+		VersionRange junitVersionRange = JUNIT6_VERSION_RANGE;
+		int junitVersion = 6;
+		if (isJUnit5) {
+			junitRuntimeBundle = ORG_ECLIPSE_JDT_JUNIT5_RUNTIME;
+			junitVersionRange = JUNIT5_VERSION_RANGE;
+			junitVersion = 5;
+		}
+		boolean isJUnitJupiter = isJUnit5 || isJUnit6;
+		if (isJUnitJupiter) {
 			//change the classloader so that the test classes in testplugin are discoverable
 			//by junit5 framework  see bug 520811
-			Thread.currentThread().setContextClassLoader(createJUnit5PluginClassLoader(testRunner.getTestPluginName()));
+			Thread.currentThread().setContextClassLoader(createJUnitJupiterPluginClassLoader(testRunner.getTestPluginName(), junitRuntimeBundle, junitVersionRange, junitVersion));
 		}
 		testRunner.run();
-		if (isJUnit5(args)) {
+		if (isJUnitJupiter) {
 			Thread.currentThread().setContextClassLoader(currentTCCL);
 		}
 	}
@@ -131,23 +147,25 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 		return Integer.toString(state);
 	}
 
-	private static ClassLoader createJUnit5PluginClassLoader(String testPluginName) {
+	private static ClassLoader createJUnitJupiterPluginClassLoader(String testPluginName, String junitRuntimeBundle, VersionRange versionRange, int junitVersion) {
 		Bundle testBundle = Platform.getBundle(testPluginName);
 		if (testBundle == null) {
 			throw new IllegalArgumentException("Bundle \"" + testPluginName + "\" not found. Possible causes include missing dependencies, too restrictive version ranges, mixed JUnit versions, or a non-matching required execution environment."); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		Bundle junit5RuntimeBundle = Platform.getBundle("org.eclipse.jdt.junit5.runtime"); //$NON-NLS-1$
-		List<Bundle> platformEngineBundles = findTestEngineBundles();
+		Bundle junit5RuntimeBundle = Platform.getBundle(junitRuntimeBundle);
+		List<Bundle> platformEngineBundles = findTestEngineBundles(versionRange);
 		platformEngineBundles.add(testBundle);
 		if (junit5RuntimeBundle != null) {
 			platformEngineBundles.add(junit5RuntimeBundle);
 		}
-		return new SPIBundleClassLoader(platformEngineBundles);
+		return new SPIBundleClassLoader(platformEngineBundles, junitVersion);
 	}
 
-	private static List<Bundle> findTestEngineBundles() {
+	private static List<Bundle> findTestEngineBundles(VersionRange versionRange) {
 		BundleContext bundleContext = FrameworkUtil.getBundle(RemotePluginTestRunner.class).getBundleContext();
-		return Arrays.stream(bundleContext.getBundles()).filter(RemotePluginTestRunner::providesTestEngine).collect(Collectors.toCollection(ArrayList::new));
+		return Arrays.stream(bundleContext.getBundles()).filter(RemotePluginTestRunner::providesTestEngine) //
+				.filter(b -> versionRange.includes(b.getVersion())) //
+				.collect(Collectors.toCollection(ArrayList::new));
 	}
 
 	/**
@@ -186,12 +204,20 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 	@Override
 	public void init(String[] args) {
 		readPluginArgs(args);
-		if (isJUnit5(args)) {
-			// changing the classloader to get the testengines for junit5
+		boolean isJUnit5 = isJUnit5(args);
+		boolean isJUnit6 = !isJUnit5 && isJUnit6(args);
+		VersionRange versionRange = JUNIT6_VERSION_RANGE;
+		int junitVersion = 6;
+		if (isJUnit5) {
+			versionRange = JUNIT5_VERSION_RANGE;
+			junitVersion = 5;
+		}
+		if (isJUnit5 || isJUnit6) {
+			// changing the classloader to get the testengines for junit5/junit6
 			// during initialization - see bug 520811
 			ClassLoader currentTCCL = Thread.currentThread().getContextClassLoader();
 			try {
-				Thread.currentThread().setContextClassLoader(new SPIBundleClassLoader(findTestEngineBundles()));
+				Thread.currentThread().setContextClassLoader(new SPIBundleClassLoader(findTestEngineBundles(versionRange), junitVersion));
 				defaultInit(args);
 			} finally {
 				Thread.currentThread().setContextClassLoader(currentTCCL);
@@ -204,6 +230,11 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 	@SuppressWarnings("nls")
 	private static boolean isJUnit5(String[] args) {
 		return indexOf(args, "-runasjunit5"::equalsIgnoreCase) > -1 || indexOf(args, "org.eclipse.jdt.internal.junit5.runner.JUnit5TestLoader"::equals) > -1;
+	}
+
+	@SuppressWarnings("nls")
+	private static boolean isJUnit6(String[] args) {
+		return indexOf(args, "-runasjunit6"::equalsIgnoreCase) > -1 || indexOf(args, "org.eclipse.jdt.internal.junit6.runner.JUnit6TestLoader"::equals) > -1;
 	}
 
 	public void readPluginArgs(String[] args) {

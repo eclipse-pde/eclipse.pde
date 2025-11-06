@@ -35,18 +35,20 @@ class SPIBundleClassLoader extends ClassLoader {
 
 	private static final String META_INF_SERVICES = "META-INF/services/"; //$NON-NLS-1$
 	private final List<Bundle> bundles;
+	private final int junitVersion;
 	private final Map<String, List<SPIMapping>> mappings = new ConcurrentHashMap<>();
 
-	SPIBundleClassLoader(List<Bundle> bundles) {
+	SPIBundleClassLoader(List<Bundle> bundles, int junitVersion) {
 		super(null);
 		this.bundles = bundles;
+		this.junitVersion = junitVersion;
 	}
 
 	@Override
 	protected Class<?> findClass(String name) throws ClassNotFoundException {
 		Iterator<SPIMapping> spi = mappings.values().stream().flatMap(Collection::stream).filter(mapping -> mapping.hasService(name)).iterator();
 		if (spi.hasNext()) {
-			Bundle caller = Caller.getBundle();
+			Bundle caller = Caller.getBundle(junitVersion);
 			while (spi.hasNext()) {
 				SPIMapping mapping = spi.next();
 				if (mapping.isCompatible(caller)) {
@@ -98,7 +100,7 @@ class SPIBundleClassLoader extends ClassLoader {
 				}
 				return list;
 			});
-			Bundle caller = Caller.getBundle();
+			Bundle caller = Caller.getBundle(junitVersion);
 			for (SPIMapping mapping : spis) {
 				if (mapping.isCompatible(caller)) {
 					result.add(mapping.getUrl());

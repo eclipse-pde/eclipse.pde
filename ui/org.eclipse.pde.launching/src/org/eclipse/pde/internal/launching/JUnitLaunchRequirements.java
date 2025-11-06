@@ -55,6 +55,7 @@ public class JUnitLaunchRequirements {
 	private static final String PDE_JUNIT_RUNTIME = "org.eclipse.pde.junit.runtime"; //$NON-NLS-1$
 	private static final String JUNIT4_JDT_RUNTIME_PLUGIN = "org.eclipse.jdt.junit4.runtime"; //$NON-NLS-1$
 	private static final String JUNIT5_JDT_RUNTIME_PLUGIN = "org.eclipse.jdt.junit5.runtime"; //$NON-NLS-1$
+	private static final String JUNIT6_JDT_RUNTIME_PLUGIN = "org.eclipse.jdt.junit6.runtime"; //$NON-NLS-1$
 
 	public static void addRequiredJunitRuntimePlugins(ILaunchConfiguration configuration, Map<String, List<IPluginModelBase>> collectedModels, Map<IPluginModelBase, String> startLevelMap) throws CoreException {
 		Collection<IPluginModelBase> runtimeBundles = getEclipseJunitRuntimePlugins(configuration, collectedModels, startLevelMap);
@@ -157,6 +158,9 @@ public class JUnitLaunchRequirements {
 			}
 			case org.eclipse.jdt.internal.junit.launcher.TestKindRegistry.JUNIT5_TEST_KIND_ID -> {
 				return List.of(PDE_JUNIT_RUNTIME, JUNIT5_JDT_RUNTIME_PLUGIN);
+			}
+			case org.eclipse.jdt.internal.junit.launcher.TestKindRegistry.JUNIT6_TEST_KIND_ID -> {
+				return List.of(PDE_JUNIT_RUNTIME, JUNIT6_JDT_RUNTIME_PLUGIN);
 			}
 			default -> throw new IllegalArgumentException("Unsupported junit test kind: " + testKind.getId()); //$NON-NLS-1$
 		}

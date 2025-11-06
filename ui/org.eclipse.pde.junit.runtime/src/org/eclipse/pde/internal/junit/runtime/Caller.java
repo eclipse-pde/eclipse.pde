@@ -18,6 +18,7 @@ import java.util.List;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.VersionRange;
 import org.osgi.framework.wiring.BundleCapability;
 import org.osgi.framework.wiring.BundleWiring;
 
@@ -26,28 +27,32 @@ import org.osgi.framework.wiring.BundleWiring;
  * TODO provide MR variant using stack walker, currently blocked by JDT bug ...
  */
 public class Caller {
+
+	private static final VersionRange JUNIT5_VERSION_RANGE = new VersionRange("[1.0.0,6.0.0)"); //$NON-NLS-1$
+	private static final VersionRange JUNIT6_VERSION_RANGE = new VersionRange("[6.0.0,7.0.0)"); //$NON-NLS-1$
+
 	private static final String JUNIT_PLATFORM_LAUNCHER = "org.junit.platform.launcher"; //$NON-NLS-1$
 	private static final Bundle BUNDLE = FrameworkUtil.getBundle(Caller.class);
-	private static final Bundle loaderBundle;
+	private static final Bundle LOADER_BUNDLE_JUNIT_5 = findJUnitBundle("org.eclipse.jdt.junit5.runtime", JUNIT5_VERSION_RANGE); //$NON-NLS-1$
+	private static final Bundle LOADER_BUNDLE_JUNIT_6 = findJUnitBundle("org.eclipse.jdt.junit6.runtime", JUNIT6_VERSION_RANGE); //$NON-NLS-1$
 
-	static {
-		Bundle junit5RuntimeBundle = Platform.getBundle("org.eclipse.jdt.junit5.runtime"); //$NON-NLS-1$
-		if (junit5RuntimeBundle == null) {
+	private static Bundle findJUnitBundle(String bundleId, VersionRange versionRange) {
+		Bundle junitRuntimeBundle = Platform.getBundle(bundleId);
+		if (junitRuntimeBundle == null) {
 			Bundle junit4RuntimeBundle = Platform.getBundle("org.eclipse.jdt.junit4.runtime"); //$NON-NLS-1$
-			loaderBundle = findJUnit5LauncherByRuntime(junit4RuntimeBundle);
-		} else {
-			loaderBundle = junit5RuntimeBundle;
+			return findJUnitLauncherByRuntime(junit4RuntimeBundle, versionRange);
 		}
+		return junitRuntimeBundle;
 	}
 
-	protected static Bundle findJUnit5LauncherByRuntime(Bundle junit4RuntimeBundle) {
+	protected static Bundle findJUnitLauncherByRuntime(Bundle junit4RuntimeBundle, VersionRange junitPlatformVersionRange) {
 		if (junit4RuntimeBundle == null) {
 			return BUNDLE;
 		}
 		for (Bundle bundle : BUNDLE.getBundleContext().getBundles()) {
 			BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
 			List<BundleCapability> capabilities = bundleWiring.getCapabilities(JUNIT_PLATFORM_LAUNCHER);
-			if (!capabilities.isEmpty() && bundle.getVersion().getMajor() < 6) {
+			if (!capabilities.isEmpty() && junitPlatformVersionRange.includes(bundle.getVersion())) {
 				return bundle;
 			}
 		}
@@ -55,11 +60,19 @@ public class Caller {
 		return BUNDLE;
 	}
 
-	static Bundle getBundle() {
+	static Bundle getBundle(int junitVersion) {
 		StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
 		for (StackTraceElement element : stackTraceElements) {
 			try {
 				String className = element.getClassName();
+				Bundle loaderBundle;
+				if (junitVersion == 5) {
+					loaderBundle = LOADER_BUNDLE_JUNIT_5;
+				} else if (junitVersion == 6) {
+					loaderBundle = LOADER_BUNDLE_JUNIT_6;
+				} else {
+					throw new IllegalArgumentException("Unsupported junit version: " + junitVersion); //$NON-NLS-1$
+				}
 				Class<?> clz = loaderBundle.loadClass(className);
 				Bundle bundle = FrameworkUtil.getBundle(clz);
 				if (bundle == BUNDLE) {
