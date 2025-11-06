@@ -46,6 +46,8 @@ import org.osgi.framework.hooks.resolver.ResolverHookFactory;
 import org.osgi.framework.wiring.BundleCapability;
 import org.osgi.framework.wiring.BundleRequirement;
 import org.osgi.framework.wiring.BundleRevision;
+import org.osgi.resource.Namespace;
+import org.osgi.resource.Requirement;
 
 public class JUnitLaunchRequirements {
 
@@ -56,16 +58,16 @@ public class JUnitLaunchRequirements {
 
 	public static void addRequiredJunitRuntimePlugins(ILaunchConfiguration configuration, Map<String, List<IPluginModelBase>> collectedModels, Map<IPluginModelBase, String> startLevelMap) throws CoreException {
 		Collection<IPluginModelBase> runtimeBundles = getEclipseJunitRuntimePlugins(configuration, collectedModels, startLevelMap);
-		List<BundleDescription> roots = runtimeBundles.stream().map(p -> p.getBundleDescription()).filter(Objects::nonNull).toList();
-		Set<BundleDescription> closure = DependencyManager.findRequirementsClosure(roots);
-		Collection<BundleDescription> runtimeRequirements = filterRequirementsByState(closure, runtimeBundles, configuration);
+		List<BundleDescription> roots = modelsAsDescriptions(runtimeBundles).toList();
+		List<BundleDescription> bundles = Stream.concat(DependencyManager.findRequirementsClosure(roots).stream(), collectedModels.values().stream().flatMap(pl -> modelsAsDescriptions(pl))).distinct().toList();
+		Collection<BundleDescription> runtimeRequirements = filterRequirementsByState(bundles, runtimeBundles, configuration);
 		addAbsentRequirements(runtimeRequirements, collectedModels, startLevelMap);
 	}
 
 	private static Collection<BundleDescription> filterRequirementsByState(Collection<BundleDescription> bundles, Collection<IPluginModelBase> rootBundles, ILaunchConfiguration configuration) throws CoreException {
 		//lookup that maps a copy to the original description from the bundles parameter
 		Map<BundleRevision, BundleDescription> descriptionnMap = new IdentityHashMap<>();
-		Set<BundleRevision> rootSet = rootBundles.stream().map(p -> p.getBundleDescription()).filter(Objects::nonNull).collect(Collectors.toSet());
+		Set<BundleRevision> rootSet = modelsAsDescriptions(rootBundles).collect(Collectors.toSet());
 		State state = FACTORY.createState(true);
 		State targetState = PDECore.getDefault().getModelManager().getState().getState();
 		List<BundleDescription> resolveRoots = new ArrayList<>();
@@ -95,13 +97,18 @@ public class JUnitLaunchRequirements {
 
 					@Override
 					public void filterMatches(BundleRequirement requirement, Collection<BundleCapability> candidates) {
+						boolean optional = isOptional(requirement);
+						if (candidates.size() == 1 && !optional) {
+							//We only have one candidate and requirement is not optional, so keep it or we get an error!
+							return;
+						}
 						List<BundleCapability> list = candidates.stream().filter(cp -> isFromDifferentState(cp)).toList();
 						if (list.isEmpty()) {
 							//nothing to do here...
 							return;
 						}
 						//iterate in reverse order so we remove lower ranked candidates first ...
-						for (int i = list.size() - 1; i >= 0 && candidates.size() > 1; i--) {
+						for (int i = list.size() - 1; i >= 0 && (optional || candidates.size() > 1); i--) {
 							BundleCapability capability = list.get(i);
 							candidates.remove(capability);
 						}
@@ -129,6 +136,7 @@ public class JUnitLaunchRequirements {
 				throw new CoreException(Status.error(String.format("%s can not be resolved: %s", rootBundle, Arrays.toString(errors)))); //$NON-NLS-1$
 			}
 		}
+
 		Collection<BundleDescription> closure = DependencyManager.findRequirementsClosure(resolveRoots);
 		// map back to the originals!
 		return closure.stream().map(bd -> descriptionnMap.get(bd)).filter(Objects::nonNull).toList();
@@ -193,6 +201,15 @@ public class JUnitLaunchRequirements {
 					.orElseThrow(() -> new CoreException(Status.error(NLS.bind(PDEMessages.JUnitLaunchConfiguration_error_missingPlugin, id))));
 		}
 		return model;
+	}
+
+	private static Stream<BundleDescription> modelsAsDescriptions(Collection<IPluginModelBase> runtimeBundles) {
+		return runtimeBundles.stream().map(p -> p.getBundleDescription()).filter(Objects::nonNull);
+	}
+
+	private static boolean isOptional(Requirement req) {
+		String resolution = req.getDirectives().get(Namespace.REQUIREMENT_RESOLUTION_DIRECTIVE);
+		return Namespace.RESOLUTION_OPTIONAL.equalsIgnoreCase(resolution);
 	}
 
 }
