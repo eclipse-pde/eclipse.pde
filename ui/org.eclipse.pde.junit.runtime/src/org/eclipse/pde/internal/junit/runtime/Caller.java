@@ -28,26 +28,31 @@ import org.osgi.framework.wiring.BundleWiring;
 public class Caller {
 	private static final String JUNIT_PLATFORM_LAUNCHER = "org.junit.platform.launcher"; //$NON-NLS-1$
 	private static final Bundle BUNDLE = FrameworkUtil.getBundle(Caller.class);
-	private static final Bundle loaderBundle;
+	static final Bundle loaderBundle5;
+	static final Bundle loaderBundle6;
 
 	static {
-		Bundle junit5RuntimeBundle = Platform.getBundle("org.eclipse.jdt.junit5.runtime"); //$NON-NLS-1$
-		if (junit5RuntimeBundle == null) {
-			Bundle junit4RuntimeBundle = Platform.getBundle("org.eclipse.jdt.junit4.runtime"); //$NON-NLS-1$
-			loaderBundle = findJUnit5LauncherByRuntime(junit4RuntimeBundle);
-		} else {
-			loaderBundle = junit5RuntimeBundle;
-		}
+		loaderBundle5 = findJUnitBundle("org.eclipse.jdt.junit5.runtime", 5); //$NON-NLS-1$
+		loaderBundle6 = findJUnitBundle("org.eclipse.jdt.junit6.runtime", 6); //$NON-NLS-1$
 	}
 
-	protected static Bundle findJUnit5LauncherByRuntime(Bundle junit4RuntimeBundle) {
+	private static Bundle findJUnitBundle(String bundleId, int junitVersion) {
+		Bundle junitRuntimeBundle = Platform.getBundle(bundleId);
+		if (junitRuntimeBundle == null) {
+			Bundle junit4RuntimeBundle = Platform.getBundle("org.eclipse.jdt.junit4.runtime"); //$NON-NLS-1$
+			return findJUnitLauncherByRuntime(junit4RuntimeBundle, junitVersion);
+		}
+		return junitRuntimeBundle;
+	}
+
+	protected static Bundle findJUnitLauncherByRuntime(Bundle junit4RuntimeBundle, int majorVersion) {
 		if (junit4RuntimeBundle == null) {
 			return BUNDLE;
 		}
 		for (Bundle bundle : BUNDLE.getBundleContext().getBundles()) {
 			BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
 			List<BundleCapability> capabilities = bundleWiring.getCapabilities(JUNIT_PLATFORM_LAUNCHER);
-			if (!capabilities.isEmpty() && bundle.getVersion().getMajor() < 6) {
+			if (!capabilities.isEmpty() && bundle.getVersion().getMajor() == majorVersion) {
 				return bundle;
 			}
 		}
@@ -55,7 +60,7 @@ public class Caller {
 		return BUNDLE;
 	}
 
-	static Bundle getBundle() {
+	static Bundle getBundle(Bundle loaderBundle) {
 		StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
 		for (StackTraceElement element : stackTraceElements) {
 			try {

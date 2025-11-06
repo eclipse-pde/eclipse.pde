@@ -234,7 +234,7 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 			String[] classpath = classpathAndModulepath[0];
 			String[] modulepath = classpathAndModulepath[1];
 
-			if (junitVersion == JUnitVersion.JUNIT5) {
+			if (junitVersion == JUnitVersion.JUNIT5 || junitVersion == JUnitVersion.JUNIT6) {
 				if (!configuration.getAttribute(
 						JUnitLaunchConfigurationConstants.ATTR_DONT_ADD_MISSING_JUNIT5_DEPENDENCY, false)) {
 					if (!Arrays.stream(classpath).anyMatch(
@@ -574,7 +574,8 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 		boolean isModularProject = JavaRuntime.isModularProject(getJavaProject(configuration));
 		String addOpensTargets;
 		if (isModularProject) {
-			if (getJUnitVersion(configuration) == JUnitVersion.JUNIT5) {
+			JUnitVersion jUnitVersion = getJUnitVersion(configuration);
+			if (jUnitVersion == JUnitVersion.JUNIT5 || jUnitVersion == JUnitVersion.JUNIT6) {
 				if (isOnModulePath(getJavaProject(configuration), "org.junit.jupiter.api.Test")) { //$NON-NLS-1$
 					addOpensTargets = "junit-platform-commons,ALL-UNNAMED"; //$NON-NLS-1$
 				} else {
