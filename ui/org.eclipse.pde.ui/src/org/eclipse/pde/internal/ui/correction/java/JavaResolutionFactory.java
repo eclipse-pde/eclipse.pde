@@ -62,6 +62,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.text.edits.TextEdit;
 import org.osgi.framework.Constants;
+import org.osgi.framework.Version;
 import org.osgi.framework.VersionRange;
 
 /**
@@ -248,8 +249,10 @@ public class JavaResolutionFactory {
 		@Override
 		public String getName() {
 			BundleDescription requiredBundle = getChangeObject();
-			return MessageFormat.format(!isUndo() ? PDEUIMessages.UnresolvedImportFixProcessor_0
-					: PDEUIMessages.UnresolvedImportFixProcessor_1, requiredBundle.getName());
+			return MessageFormat.format(
+					!isUndo() ? PDEUIMessages.UnresolvedImportFixProcessor_0
+							: PDEUIMessages.UnresolvedImportFixProcessor_1,
+					requiredBundle.getName(), getRequirementVersion(requiredBundle.getVersion()));
 		}
 
 		@Override
@@ -330,8 +333,10 @@ public class JavaResolutionFactory {
 		@Override
 		public String getName() {
 			ExportPackageDescription importedPackage = getChangeObject();
-			return MessageFormat.format(!isUndo() ? PDEUIMessages.UnresolvedImportFixProcessor_3
-					: PDEUIMessages.UnresolvedImportFixProcessor_4, importedPackage.getName());
+			return MessageFormat.format(
+					!isUndo() ? PDEUIMessages.UnresolvedImportFixProcessor_3
+							: PDEUIMessages.UnresolvedImportFixProcessor_4,
+					importedPackage.getName(), getRequirementVersion(importedPackage.getVersion()));
 		}
 
 		@Override
@@ -342,7 +347,10 @@ public class JavaResolutionFactory {
 			}
 			return super.getModifiedElement();
 		}
+	}
 
+	private static Version getRequirementVersion(Version bundleVersion) {
+		return new Version(bundleVersion.getMajor(), bundleVersion.getMinor(), 0);
 	}
 
 	private static class ExportPackageChange extends AbstractManifestChange<IPackageFragment> {
