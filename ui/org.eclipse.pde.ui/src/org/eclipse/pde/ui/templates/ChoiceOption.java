@@ -52,11 +52,13 @@ public class ChoiceOption extends TemplateOption {
 	 *            will be interpeted as the choice unique name, and position 1
 	 *            as the choice presentable label.
 	 */
+	@Deprecated
 	public ChoiceOption(BaseOptionTemplateSection section, String name, String label, String[][] choices) {
 		super(section, name, label);
 		this.choices = choices;
 	}
 
+	@Deprecated
 	@Override
 	public void createControl(Composite parent, int span) {
 		Composite container = createComposite(parent, span);
@@ -98,6 +100,7 @@ public class ChoiceOption extends TemplateOption {
 	 *
 	 * @return the current choice or <samp>null </samp> if not initialized.
 	 */
+	@Deprecated
 	public String getChoice() {
 		return getValue() != null ? getValue().toString() : null;
 	}
@@ -109,6 +112,7 @@ public class ChoiceOption extends TemplateOption {
 	 * @param value
 	 *            the new value.
 	 */
+	@Deprecated
 	@Override
 	public void setValue(Object value) {
 		super.setValue(value);
@@ -117,6 +121,7 @@ public class ChoiceOption extends TemplateOption {
 		}
 	}
 
+	@Deprecated
 	@Override
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);

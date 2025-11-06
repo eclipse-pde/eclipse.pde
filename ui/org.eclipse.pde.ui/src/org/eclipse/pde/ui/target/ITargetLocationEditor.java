@@ -36,6 +36,7 @@ public interface ITargetLocationEditor {
 	 * @param targetLocation the target location to edit
 	 * @return whether this editor can edit the target location
 	 */
+	@Deprecated
 	public boolean canEdit(ITargetDefinition target, ITargetLocation targetLocation);
 
 	/**
@@ -47,6 +48,7 @@ public interface ITargetLocationEditor {
 	 * @param targetLocation the target location to edit
 	 * @return wizard to open for editing the target location
 	 */
+	@Deprecated
 	public IWizard getEditWizard(ITargetDefinition target, ITargetLocation targetLocation);
 
 }

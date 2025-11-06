@@ -36,6 +36,7 @@ public interface ITargetLocationUpdater {
 	 * If this status code is set, the target will not resolve the target after the update completes.
 	 * </p>
 	 */
+	@Deprecated
 	public static final int STATUS_CODE_NO_CHANGE = ITargetLocationHandler.STATUS_CODE_NO_CHANGE;
 
 	/**
@@ -46,6 +47,7 @@ public interface ITargetLocationUpdater {
 	 * @param targetLocation the target location to update
 	 * @return whether this update can update the given target location
 	 */
+	@Deprecated
 	public boolean canUpdate(ITargetDefinition target, ITargetLocation targetLocation);
 
 	/**
@@ -61,6 +63,7 @@ public interface ITargetLocationUpdater {
 	 * @param monitor progress monitor
 	 * @return result of the update, use an OK status with {@link #STATUS_CODE_NO_CHANGE} to indicate everything is up to date
 	 */
+	@Deprecated
 	public IStatus update(ITargetDefinition target, ITargetLocation targetLocation, IProgressMonitor monitor);
 
 }
