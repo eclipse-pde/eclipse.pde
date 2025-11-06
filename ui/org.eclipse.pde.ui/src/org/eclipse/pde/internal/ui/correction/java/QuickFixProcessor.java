@@ -274,7 +274,7 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 				// same package
 				if (addedImportPackageResolutions.add(desc.getName())) {
 					var change = JavaResolutionFactory.createImportPackageChange(project, desc, cu, typeToImport);
-					result.add(JavaResolutionFactory.createJavaCompletionProposal(change, 4));
+					result.add(JavaResolutionFactory.createJavaCompletionProposal(change, 20));
 					isDone = true;
 				}
 			}
