@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.ui.correction.java;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -44,6 +45,7 @@ import org.eclipse.jdt.core.search.SearchPattern;
 import org.eclipse.jdt.core.search.SearchRequestor;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.osgi.service.resolver.BaseDescription;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
@@ -188,6 +190,9 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 		fCollector = collector;
 	}
 
+	private static final Comparator<BaseDescription> BY_DESCENDING_VERSION = Comparator
+			.comparing(BaseDescription::getVersion).reversed();
+
 	@Override
 	public void run(IProgressMonitor monitor) {
 		int idx = fClassName.lastIndexOf('.');
@@ -198,7 +203,7 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 		}
 
 		Set<IPackageFragment> packagesToExport = new HashSet<>();
-		Map<String, ExportPackageDescription> validPackages = getValidPackages(typeName, fClassName, packageName,
+		Map<String, List<ExportPackageDescription>> validPackages = getValidPackages(typeName, fClassName, packageName,
 				packagesToExport, monitor);
 		if (validPackages != null) {
 
@@ -215,32 +220,35 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 					&& (allowMultipleFixes || !fCollector.isDone());) {
 				var entry = validPackagesIter.next();
 				String qualifiedType = entry.getKey();
-				ExportPackageDescription currentPackage = entry.getValue();
+				List<ExportPackageDescription> currentPackages = entry.getValue();
 				// if package is already visible, skip over
-				if (visiblePackages.contains(currentPackage)) {
-					continue;
-				}
-				// if currentPackage will resolve class and is valid, pass it to collector
-				fCollector.addResolutionModification(fProject, currentPackage, fCompilationUnit, qualifiedType);
+				currentPackages.stream().sorted(BY_DESCENDING_VERSION).filter(p -> !visiblePackages.contains(p))
+						.forEach(p -> {
+					// If package will resolve class and is valid, pass it
+					fCollector.addResolutionModification(fProject, p, fCompilationUnit, qualifiedType);
+				});
 			}
 			// additionally add require bundle proposals
 			Set<String> bundleNames = getCurrentBundleNames();
-			validPackages.forEach((key, currentPackage) -> {
-				BundleDescription desc = currentPackage.getExporter();
-				// Ignore already required bundles and duplicate proposals (currently we do not consider version constraints)
-				if (desc != null && !bundleNames.contains(desc.getName())) {
-					fCollector.addRequireBundleModification(fProject, currentPackage, 3, fCompilationUnit, key);
-					bundleNames.add(desc.getName());
-				}
+			validPackages.forEach((key, currentPackages) -> {
+				currentPackages.stream().sorted(BY_DESCENDING_VERSION).forEach(currentPackage -> {
+					BundleDescription desc = currentPackage.getExporter();
+					// Ignore already required bundles and duplicate proposals
+					// (currently we do not consider version constraints)
+					if (desc != null && !bundleNames.contains(desc.getName())) {
+						fCollector.addRequireBundleModification(fProject, currentPackage, 3, fCompilationUnit, key);
+						bundleNames.add(desc.getName());
+					}
+				});
 			});
 		}
 	}
 
-	private Map<String, ExportPackageDescription> getValidPackages(String typeName, String qualifiedTypeToImport,
+	private Map<String, List<ExportPackageDescription>> getValidPackages(String typeName, String qualifiedTypeToImport,
 			String packageName, Set<IPackageFragment> packagesToExport, IProgressMonitor monitor) {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 3);
 
-		Map<String, ExportPackageDescription> validPackages = null;
+		Map<String, List<ExportPackageDescription>> validPackages = null;
 		ImportPackageSpecification[] importPkgs = null;
 		IPluginModelBase model = PluginRegistry.findModel(fProject);
 		if (model != null && model.getBundleDescription() != null) {
@@ -252,7 +260,7 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 			if (packageName != null) {
 				if (!isImportedPackage(packageName, importPkgs)) {
 					List<ExportPackageDescription> packages = getValidPackages(packageName);
-					validPackages = !packages.isEmpty() ? Map.of(qualifiedTypeToImport, packages.getLast()) : Map.of();
+					validPackages = !packages.isEmpty() ? Map.of(qualifiedTypeToImport, packages) : Map.of();
 				}
 				subMonitor.split(1);
 			} else {
@@ -276,7 +284,7 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 	 * 		 if no valid package to import was found
 	 * @return the set of packages to import
 	 */
-	private Map<String, ExportPackageDescription> findValidPackagesContainingSimpleType(String aTypeName,
+	private Map<String, List<ExportPackageDescription>> findValidPackagesContainingSimpleType(String aTypeName,
 			ImportPackageSpecification[] importPkgs, Set<IPackageFragment> packagesToExport, IProgressMonitor monitor) {
 		SubMonitor subMonitor = SubMonitor.convert(monitor);
 
@@ -334,13 +342,10 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 				}
 
 				// finally create the list of ExportPackageDescriptions
-				Map<String, ExportPackageDescription> exportDescriptions = new HashMap<>(packages.size());
-				ExportPackageDescription[] knownPackages = state.getExportedPackages();
-				for (ExportPackageDescription knownPackage : knownPackages) {
-					if (packages.containsKey(knownPackage.getName())) {
-						exportDescriptions.put(qualifiedTypeNames.get(knownPackage.getName()), knownPackage);
-					}
-				}
+				Map<String, List<ExportPackageDescription>> exportDescriptions = Arrays
+						.stream(state.getExportedPackages()).filter(p -> packages.containsKey(p.getName()))
+						.collect(Collectors.groupingBy(p -> qualifiedTypeNames.get(p.getName())));
+
 				if (exportDescriptions.isEmpty()) {
 					// no packages to import found, maybe there are packages to export
 					packagesToExport.addAll(packages.values());

@@ -270,13 +270,11 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 					// really useful as import package is computed automatically
 					return;
 				}
+				var change = JavaResolutionFactory.createImportPackageChange(project, desc, cu, typeToImport);
+				result.add(JavaResolutionFactory.createJavaCompletionProposal(change, 20));
 				// guard against multiple import package resolutions for the
 				// same package
-				if (addedImportPackageResolutions.add(desc.getName())) {
-					var change = JavaResolutionFactory.createImportPackageChange(project, desc, cu, typeToImport);
-					result.add(JavaResolutionFactory.createJavaCompletionProposal(change, 20));
-					isDone = true;
-				}
+				isDone |= addedImportPackageResolutions.add(desc.getName());
 			}
 
 			@Override
