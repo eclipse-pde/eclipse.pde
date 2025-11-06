@@ -111,6 +111,7 @@ public class TargetPlatformUtil {
 		if (!result.isOK()) {
 			throw new AssertionError(result.getMessage(), result.getException());
 		}
+		TestUtils.waitForJobs("loadAndSetTarget", 100, 10000);
 	}
 
 	private static List<NameVersionDescriptor> addRunningPlatformBundles(Collection<ITargetLocation> bundleContainers,
