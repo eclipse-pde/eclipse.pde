@@ -1,3 +1,4 @@
 Javadoc generation options have changed for 4.38
 Removed non reference method from public API class
 Regen javadoc to fix verification build
+New deprecations
