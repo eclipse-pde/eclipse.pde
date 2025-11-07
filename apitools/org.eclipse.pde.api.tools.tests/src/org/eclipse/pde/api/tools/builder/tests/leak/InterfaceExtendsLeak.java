@@ -371,4 +371,28 @@ public class InterfaceExtendsLeak extends LeakTest {
 		String typename = "Etest14"; //$NON-NLS-1$
 		deployLeakTest(typename + ".java", inc);//$NON-NLS-1$
 	}
+
+	/**
+	 * Tests that a static inner class implementing its parent interface does NOT produce
+	 * a leak warning (inner class referencing enclosing type should be excluded)
+	 * using a full build
+	 */
+	public void testStaticInnerClassImplementsParent15F() {
+		x15(false);
+	}
+
+	/**
+	 * Tests that a static inner class implementing its parent interface does NOT produce
+	 * a leak warning (inner class referencing enclosing type should be excluded)
+	 * using an incremental build
+	 */
+	public void testStaticInnerClassImplementsParent15I() {
+		x15(true);
+	}
+
+	private void x15(boolean inc) {
+		expectingNoProblems();
+		String typename = "Etest15"; //$NON-NLS-1$
+		deployLeakTest(typename + ".java", inc);//$NON-NLS-1$
+	}
 }
