@@ -1010,6 +1010,15 @@ public class ReferenceExtractor extends ClassVisitor {
 			}
 			return false;
 		}
+		// Also check the reverse: if this type is a member of the referenced type
+		// (e.g., inner class referencing its enclosing type)
+		if (fType.getName().startsWith(referencedTypeName)) {
+			int refLength = referencedTypeName.length();
+			if (fType.getName().length() > refLength && fType.getName().charAt(refLength) == '$') {
+				// This is a member type referencing its enclosing type - exclude it
+				return false;
+			}
+		}
 		return true;
 	}
 
