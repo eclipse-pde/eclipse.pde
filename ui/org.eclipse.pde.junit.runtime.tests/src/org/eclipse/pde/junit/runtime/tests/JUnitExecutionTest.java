@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2019 Julian Honnen
+ *  Copyright (c) 2019, 2025 Julian Honnen
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -77,7 +77,10 @@ public class JUnitExecutionTest {
 
 	@Parameters(name = "{0}")
 	public static Object[][] parameters() {
-		return new Object[][] { { "JUnit5", getJProject("verification.tests.junit5") },
+		return new Object[][] {
+				{ "JUnit6", getJProject("verification.tests.junit6") },
+				{ "JUnit6 Fragment", getJProject("verification.tests.junit6.fragment") },
+				{ "JUnit5", getJProject("verification.tests.junit5") },
 				{ "JUnit5 Fragment", getJProject("verification.tests.junit5.fragment") },
 				{ "JUnit4", getJProject("verification.tests.junit4") },
 				{ "JUnit4 Fragment", getJProject("verification.tests.junit4.fragment") },
@@ -101,8 +104,8 @@ public class JUnitExecutionTest {
 		IType testClass = findType(project, "Test1");
 		ITestRunSession session = TestExecutionUtil.runTest(testClass);
 
-		assertThat(session.getChildren()).hasSize(1);
 		assertSuccessful(session);
+		assertThat(session.getChildren()).hasSize(1);
 	}
 
 	@Test
@@ -110,16 +113,16 @@ public class JUnitExecutionTest {
 		IPackageFragment testPackage = findType(project, "Test1").getPackageFragment();
 		ITestRunSession session = TestExecutionUtil.runTest(testPackage);
 
-		assertThat(session.getChildren()).hasSize(2);
 		assertSuccessful(session);
+		assertThat(session.getChildren()).hasSize(2);
 	}
 
 	@Test
 	public void executeProject() throws Exception {
 		ITestRunSession session = TestExecutionUtil.runTest(project);
 
-		assertThat(session.getChildren()).hasSize(2);
 		assertSuccessful(session);
+		assertThat(session.getChildren()).hasSize(2);
 	}
 
 	@Test
@@ -128,8 +131,8 @@ public class JUnitExecutionTest {
 		Assume.assumeTrue(testMethod.exists());
 		ITestRunSession session = TestExecutionUtil.runTest(testMethod);
 
-		assertThat(session.getChildren()).hasSize(1);
 		assertSuccessful(session);
+		assertThat(session.getChildren()).hasSize(1);
 	}
 
 	static void assertSuccessful(ITestRunSession session) {

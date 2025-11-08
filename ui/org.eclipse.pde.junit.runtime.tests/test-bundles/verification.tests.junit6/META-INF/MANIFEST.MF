@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Tests
+Bundle-SymbolicName: verification.tests.junit6
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: verification.tests
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Require-Bundle: junit-jupiter-api;bundle-version="[6.0.0,7.0.0)"
+Export-Package: verification.tests.junit6
