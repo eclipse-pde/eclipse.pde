@@ -79,11 +79,14 @@ class TestExecutionUtil {
 
 		try {
 			launchAndWaitForTermination(launchConfiguration);
-			ITestRunSession result = testResult.poll();
+			ITestRunSession result = testResult.poll(30, TimeUnit.SECONDS);
 			if (result == null) {
 				fail("test was not executed");
 			}
 			return result;
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new RuntimeException("test interrupted", e);
 		} finally {
 			JUnitCore.removeTestRunListener(testRunListener);
 		}
