@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Fragment
+Bundle-SymbolicName: verification.tests.junit6.fragment
+Bundle-Version: 1.0.0.qualifier
+Fragment-Host: verification.tests.junit5;bundle-version="1.0.0.qualifier"
+Automatic-Module-Name: verification.tests.junit6.fragment
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Export-Package: verification.tests.junit6.fragment

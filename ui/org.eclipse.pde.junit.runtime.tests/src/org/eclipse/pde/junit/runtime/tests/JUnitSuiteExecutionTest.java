@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2021, 2022 Julian Honnen
+ *  Copyright (c) 2021, 2022, 2025 Julian Honnen
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -15,6 +15,7 @@ package org.eclipse.pde.junit.runtime.tests;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.eclipse.pde.junit.runtime.tests.JUnitExecutionTest.findType;
+import static org.eclipse.pde.junit.runtime.tests.JUnitExecutionTest.getJProject;
 
 import java.util.StringJoiner;
 
@@ -30,36 +31,55 @@ import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameter;
+import org.junit.runners.Parameterized.Parameters;
 
-public class JUnit5SuiteExecutionTest {
+@RunWith(Parameterized.class)
+public class JUnitSuiteExecutionTest {
 
 	@ClassRule
 	public static final TestRule CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
-
-	private static IJavaProject project;
 
 	@BeforeClass
 	public static void setupProjects() throws Exception {
 		Assert.assertNotNull("junit-platform-suite-engine bundle missing", Platform.getBundle("junit-platform-suite-engine"));
 		Assert.assertNotNull("org.eclipse.jdt.junit5.runtime bundle missing", Platform.getBundle("org.eclipse.jdt.junit5.runtime"));
+		Assert.assertNotNull("org.eclipse.jdt.junit6.runtime bundle missing", Platform.getBundle("org.eclipse.jdt.junit6.runtime"));
 
 		JUnitExecutionTest.setupProjects();
-		project = JUnitExecutionTest.getJProject("verification.tests.junit5.suite");
 	}
+
+	@Parameters(name = "{0}")
+	public static Object[][] parameters() {
+		return new Object[][] {
+				{ "JUnit6", getJProject("verification.tests.junit6.suite"), "verification.tests.junit6" },
+				{ "JUnit5", getJProject("verification.tests.junit5.suite"), "verification.tests.junit5" },
+		};
+	}
+
+	@Parameter(0)
+	public String testCaseName; // Just for display
+	@Parameter(1)
+	public IJavaProject project;
+	@Parameter(2)
+	public String packageName;
 
 	@Test
 	public void executeSuite() throws Exception {
 		ITestRunSession session = TestExecutionUtil.runTest(findType(project, "TestSuite"));
 		JUnitExecutionTest.assertSuccessful(session);
-		Assert.assertEquals("""
-				verification.tests.junit5.suite.TestSuite
+		String expected = String.format("""
+				%1$s.suite.TestSuite
 				  JUnit Jupiter
-				    verification.tests.junit5.Test1
-				      test1(verification.tests.junit5.Test1)
-				      test2(verification.tests.junit5.Test1)
-				    verification.tests.junit5.Test2
-				      test(verification.tests.junit5.Test2)
-				""".strip(), toString(session).strip());
+				    %1$s.Test1
+				      test1(%1$s.Test1)
+				      test2(%1$s.Test1)
+				    %1$s.Test2
+				      test(%1$s.Test2)
+				""", packageName);
+		Assert.assertEquals(expected.strip(), toString(session).strip());
 	}
 
 	@Test
