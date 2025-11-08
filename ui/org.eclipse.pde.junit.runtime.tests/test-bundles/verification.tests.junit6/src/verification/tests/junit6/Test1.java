@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2019, 2025 Julian Honnen
+ *  Copyright (c) 2025 Julian Honnen
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -11,14 +11,26 @@
  *  Contributors:
  *     Julian Honnen <julian.honnen@vector.com> - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.junit.runtime.tests;
+package verification.tests.junit6;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-@RunWith(Suite.class)
-@SuiteClasses({ JUnitExecutionTest.class, JUnit5SuiteExecutionTest.class, JUnit6SuiteExecutionTest.class })
-public class JUnitRuntimeTests {
+public class Test1 {
+
+	@Test
+	void test1() {
+		try {
+			Thread.currentThread().getContextClassLoader().loadClass("doesnt.exist");
+			Assertions.fail("ClassNotFoundException expected");
+		} catch (ClassNotFoundException e) {
+			// expected
+		}
+	}
+
+	@Test
+	void test2() {
+
+	}
 
 }
