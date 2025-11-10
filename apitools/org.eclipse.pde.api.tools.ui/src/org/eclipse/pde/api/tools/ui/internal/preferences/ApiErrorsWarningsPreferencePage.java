@@ -31,15 +31,21 @@ import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 /**
@@ -98,9 +104,36 @@ public class ApiErrorsWarningsPreferencePage extends PreferencePage implements I
 		super(PreferenceMessages.ApiErrorsWarningsPreferencePage_0);
 	}
 
+	private void expandCollapseItems(Composite parent, boolean expandPage) {
+		for (Control control : parent.getChildren()) {
+			if (control instanceof ExpandableComposite page) {
+				page.setExpanded(expandPage);
+				Control child = page.getClient();
+				if (child != null && !child.isDisposed()) {
+					child.setVisible(expandPage);
+				}
+			} else if (control instanceof Composite comp) {
+				expandCollapseItems(comp, expandPage);
+			}
+		}
+		ScrolledComposite composite = getScrolledComposite(parent);
+		if (composite != null) {
+			composite.setMinSize(parent.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		}
+	}
+
+	private ScrolledComposite getScrolledComposite(Composite comp) {
+		Composite currentComposite = comp;
+		while (currentComposite != null && !(currentComposite instanceof ScrolledComposite)) {
+			currentComposite = currentComposite.getParent();
+		}
+		return (ScrolledComposite) currentComposite;
+	}
+
 	@Override
 	protected Control createContents(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);
+		((GridLayout) comp.getLayout()).verticalSpacing = 0;
 		link = new Link(comp, SWT.NONE);
 		link.setLayoutData(new GridData(GridData.END, GridData.CENTER, true, false));
 		link.setFont(comp.getFont());
@@ -127,8 +160,26 @@ public class ApiErrorsWarningsPreferencePage extends PreferencePage implements I
 						new String[] { IApiToolsConstants.ID_ERRORS_WARNINGS_PROP_PAGE }, data).open();
 			}
 		}));
+
 		block = new ApiErrorsWarningsConfigurationBlock(null, (IWorkbenchPreferenceContainer) getContainer());
-		block.createControl(comp);
+		Composite blockComposite = (Composite) block.createControl(comp);
+		((GridLayout) blockComposite.getLayout()).verticalSpacing = 0;
+
+		ToolBar buttonbar = new ToolBar(blockComposite, SWT.FLAT | SWT.RIGHT);
+		buttonbar.setLayoutData(new GridData(SWT.END, SWT.CENTER, true, false));
+		buttonbar.moveAbove(null);
+
+		ToolItem expandItems = new ToolItem(buttonbar, SWT.PUSH);
+		expandItems.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_ELCL_EXPANDALL));
+		expandItems.setToolTipText(PreferenceMessages.PREFERENCE_EXPAND_ALL);
+
+		ToolItem collapseItems = new ToolItem(buttonbar, SWT.PUSH);
+		collapseItems.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_ELCL_COLLAPSEALL));
+		collapseItems.setToolTipText(PreferenceMessages.PREFERENCE_COLLAPSE_ALL);
+
+		expandItems.addListener(SWT.Selection, e -> expandCollapseItems(comp, true));
+		collapseItems.addListener(SWT.Selection, e -> expandCollapseItems(comp, false));
+		blockComposite.layout(true);
 
 		// Initialize with data map in case applyData was called before
 		// createContents
