@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2024 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -31,14 +31,20 @@ import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 /**
@@ -78,9 +84,36 @@ public class CompilersPreferencePage extends PreferencePage implements IWorkbenc
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.COMPILERS_PREFERENCE_PAGE);
 	}
 
+	private void expandCollapseItems(Composite parent, boolean expandPage) {
+		for (Control control : parent.getChildren()) {
+			if (control instanceof ExpandableComposite page) {
+				page.setExpanded(expandPage);
+				Control child = page.getClient();
+				if (child != null && !child.isDisposed()) {
+					child.setVisible(expandPage);
+				}
+			} else if (control instanceof Composite comp) {
+				expandCollapseItems(comp, expandPage);
+			}
+		}
+		ScrolledComposite composite = getScrolledComposite(parent);
+		if (composite != null) {
+			composite.setMinSize(parent.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		}
+	}
+
+	private ScrolledComposite getScrolledComposite(Composite comp) {
+		Composite currentComposite = comp;
+		while (currentComposite != null && !(currentComposite instanceof ScrolledComposite)) {
+			currentComposite = currentComposite.getParent();
+		}
+		return (ScrolledComposite) currentComposite;
+	}
+
 	@Override
 	protected Control createContents(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);
+		((GridLayout) comp.getLayout()).verticalSpacing = 0;
 		link = new Link(comp, SWT.NONE);
 		link.setLayoutData(new GridData(GridData.END, GridData.CENTER, true, false));
 		link.setFont(comp.getFont());
@@ -106,8 +139,27 @@ public class CompilersPreferencePage extends PreferencePage implements IWorkbenc
 						new String[] {"org.eclipse.pde.internal.ui.properties.compilersPropertyPage"}, data).open(); //$NON-NLS-1$
 			}
 		}));
+
 		fBlock = new PDECompilersConfigurationBlock(null, (IWorkbenchPreferenceContainer) getContainer());
-		fBlock.createControl(comp);
+		Composite blockComposite = (Composite) fBlock.createControl(comp);
+		((GridLayout) blockComposite.getLayout()).verticalSpacing = 0;
+
+		ToolBar buttonbar = new ToolBar(blockComposite, SWT.FLAT | SWT.RIGHT);
+		buttonbar.setLayoutData(new GridData(SWT.END, SWT.CENTER, true, false));
+		buttonbar.moveAbove(null);
+
+		ToolItem expandItems = new ToolItem(buttonbar, SWT.PUSH);
+		expandItems.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_ELCL_EXPANDALL));
+		expandItems.setToolTipText(PDEUIMessages.Preference_expand_all);
+
+		ToolItem collapseItems = new ToolItem(buttonbar, SWT.PUSH);
+		collapseItems
+				.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_ELCL_COLLAPSEALL));
+		collapseItems.setToolTipText(PDEUIMessages.Preference_collapse_all);
+
+		expandItems.addListener(SWT.Selection, e -> expandCollapseItems(comp, true));
+		collapseItems.addListener(SWT.Selection, e -> expandCollapseItems(comp, false));
+		blockComposite.layout(true);
 
 		// Initialize with data map in case applyData was called before createContents
 		applyData(fPageData);

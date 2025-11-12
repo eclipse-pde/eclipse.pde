@@ -518,8 +518,8 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	 */
 	public Control createControl(Composite parent) {
 		fParent = parent;
-		fMainComp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);
 		SWTFactory.createVerticalSpacer(parent, 1);
+		fMainComp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
 		fTabFolder = new TabFolder(fMainComp, SWT.NONE);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 375;
