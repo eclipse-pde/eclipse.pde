@@ -39,7 +39,7 @@ public class ImportPackageObject extends PackageObject {
 					"[" + version.getMajor() + "." + version.getMinor() + "," + (version.getMajor() + 1) + ")") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$//$NON-NLS-4$
 							.toString();
 		}
-		return null;
+		return "[1.0.0)";
 	}
 
 	public ImportPackageObject(ManifestHeader header, ManifestElement element, String versionAttribute) {
