@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2025 IBM Corporation and others.
+ * Copyright (c) 2014, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -3169,6 +3169,8 @@ public class PDEUIMessages extends NLS {
 	public static String PreferencesSection_generate_merge2;
 	public static String PreferencesSection_generate_merge3;
 	public static String PreferencesSection_generate_merge4;
+	public static String Preference_expand_all;
+	public static String Preference_collapse_all;
 
 	public static String ConvertPreferencesWizardPage_title;
 	public static String ConvertPreferencesWizardPage_description;
