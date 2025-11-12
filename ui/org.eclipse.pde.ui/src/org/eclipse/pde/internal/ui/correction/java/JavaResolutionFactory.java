@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.ui.correction.java;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.Optional;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -51,6 +52,7 @@ import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
 import org.eclipse.pde.internal.core.text.bundle.ExportPackageObject;
 import org.eclipse.pde.internal.core.text.bundle.ImportPackageHeader;
 import org.eclipse.pde.internal.core.text.bundle.ImportPackageObject;
+import org.eclipse.pde.internal.core.util.ManifestUtils;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -60,6 +62,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.text.edits.TextEdit;
 import org.osgi.framework.Constants;
+import org.osgi.framework.VersionRange;
 
 /**
  * A factory class used to create resolutions for JDT problem markers which involve modifying a project's MANIFEST.MF (or possibly plugin.xml)
@@ -199,11 +202,18 @@ public class JavaResolutionFactory {
 						}
 						IPluginImport impt = base.getPluginFactory().createImport();
 						impt.setId(pluginId);
+						Optional<String> versionRange = ManifestUtils
+								.createConsumerRequirementRange(requiredBundle.getVersion())
+								.map(VersionRange::toString);
+						if (versionRange.isPresent()) {
+							impt.setVersion(versionRange.get());
+						}
 						base.getPluginBase().add(impt);
 					} else {
 						for (IPluginImport pluginImport : imports) {
 							if (pluginImport.getId().equals(pluginId)) {
 								base.getPluginBase().remove(pluginImport);
+								// TODO: Consider version too!
 							}
 						}
 					}
