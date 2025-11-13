@@ -31,14 +31,14 @@ import org.osgi.framework.Bundle;
  * The classloader wraps the OSGi provided one but gives access for the JUnit
  * runer to any SPI declared services.
  */
-class SPIBundleClassLoader extends ClassLoader {
+public class SPIBundleClassLoader extends ClassLoader {
 
 	private static final String META_INF_SERVICES = "META-INF/services/"; //$NON-NLS-1$
 	private final List<Bundle> bundles;
 	private final int junitVersion;
 	private final Map<String, List<SPIMapping>> mappings = new ConcurrentHashMap<>();
 
-	SPIBundleClassLoader(List<Bundle> bundles, int junitVersion) {
+	public SPIBundleClassLoader(List<Bundle> bundles, int junitVersion) {
 		super(null);
 		this.bundles = bundles;
 		this.junitVersion = junitVersion;
