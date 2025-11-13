@@ -87,8 +87,8 @@ public class JavaResolutionFactory {
 
 		private final T fChangeObject;
 		private final IProject fProject;
-		private CompilationUnit fCompilationUnit;
-		private String fQualifiedTypeToImport;
+		private final CompilationUnit fCompilationUnit;
+		private final String fQualifiedTypeToImport;
 
 		public AbstractManifestChange(IProject project, T changeObj, CompilationUnit cu, String qualifiedTypeToImport) {
 			fProject = project;
