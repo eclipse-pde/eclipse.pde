@@ -35,6 +35,7 @@ import org.eclipse.jdt.junit.model.ITestElement.FailureTrace;
 import org.eclipse.jdt.junit.model.ITestElement.Result;
 import org.eclipse.jdt.junit.model.ITestElementContainer;
 import org.eclipse.jdt.junit.model.ITestRunSession;
+import org.eclipse.pde.ui.tests.runtime.TestUtils;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
 import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
 import org.junit.Assert;
@@ -72,7 +73,10 @@ public class JUnitExecutionTest {
 		for (URL resource : Collections.list(bundle.findEntries("test-bundles", "verification.tests.*", false))) {
 			ProjectUtils.importTestProject(FileLocator.toFileURL(resource));
 		}
+		TestUtils.waitForJobs(JUnitExecutionTest.class + ".setupProjects() before build", 100, 10_000);
 		workspaceRoot.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, null);
+		TestExecutionUtil.waitForAutoBuild();
+		TestUtils.waitForJobs(JUnitExecutionTest.class + ".setupProjects() after build", 100, 10_000);
 	}
 
 	@Parameters(name = "{0}")
