@@ -41,6 +41,8 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.TargetDefinitionContentAssist;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.junit.After;
@@ -87,6 +89,14 @@ public abstract class AbstractTargetEditorTest {
 
 	@After
 	public void tearDown() throws Exception {
+		// Close any editors we opened
+		IWorkbenchWindow[] workbenchPages = PlatformUI.getWorkbench().getWorkbenchWindows();
+		for (IWorkbenchWindow workbenchPage : workbenchPages) {
+			IWorkbenchPage page = workbenchPage.getActivePage();
+			if (page != null) {
+				page.closeAllEditors(false);
+			}
+		}
 		if (tempFile != null) {
 			tempFile.delete();
 		}
