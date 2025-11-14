@@ -1,21 +1,18 @@
 package org.eclipse.pde.ds.internal.annotations.tests;
 
-import static org.junit.Assume.assumeTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.text.Document;
 import org.eclipse.pde.internal.ds.core.IDSModel;
 import org.eclipse.pde.internal.ds.core.text.DSModel;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 @SuppressWarnings("restriction")
 public abstract class AnnotationProcessorTest extends TestBase {
@@ -28,31 +25,23 @@ public abstract class AnnotationProcessorTest extends TestBase {
 
 	protected abstract String getComponentDescriptorPath();
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		testProject = ResourcesPlugin.getWorkspace().getRoot().getProject(getTestProjectName());
-		assumeTrue("Test project does not exist!", testProject.exists());
+		assertTrue(testProject.exists(), "Test project does not exist!");
 
 		IFile dsFile = testProject.getFile(IPath.fromOSString(getComponentDescriptorPath()));
-		assertTrue(dsFile.exists(),"Missing component descriptor!");
-
-		ByteArrayOutputStream buf = new ByteArrayOutputStream();
-		try (InputStream src = dsFile.getContents()) {
-			byte[] bytes = new byte[4096];
-			int c;
-			while ((c = src.read(bytes)) != -1) {
-				buf.write(bytes, 0, c);
-			}
-		}
-
-		dsModel = new DSModel(new Document(buf.toString(dsFile.getCharset())), false);
+		dsFile.refreshLocal(IResource.DEPTH_ZERO, null);
+		assertTrue(dsFile.exists(), "Missing component descriptor:" + dsFile);
+		String dsFileContent = dsFile.readString();
+		dsModel = new DSModel(new Document(dsFileContent), false);
 		dsModel.setUnderlyingResource(dsFile);
 		dsModel.load();
 
 		assertNotNull(dsModel.getDSComponent());
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		if (dsModel != null) {
 			dsModel.dispose();
