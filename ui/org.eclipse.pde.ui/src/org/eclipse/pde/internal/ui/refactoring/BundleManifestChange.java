@@ -69,6 +69,38 @@ public class BundleManifestChange {
 		return null;
 	}
 
+	public static Change createEmptyPackageChange(IFile file, String packageName, IProgressMonitor monitor)
+			throws CoreException {
+		try {
+			Bundle bundle = getBundle(file, monitor);
+			if (bundle == null) {
+				return null;
+			}
+
+			BundleModel model = (BundleModel) bundle.getModel();
+			BundleTextChangeListener listener = new BundleTextChangeListener(model.getDocument());
+			bundle.getModel().addModelChangedListener(listener);
+
+			BasePackageHeader header = (BasePackageHeader) bundle.getManifestHeader(Constants.EXPORT_PACKAGE);
+			if (header != null && header.hasPackage(packageName)) {
+				removePackage(header, packageName);
+			}
+			TextEdit[] operations = listener.getTextOperations();
+			if (operations.length > 0) {
+				TextFileChange change = new TextFileChange("", file); //$NON-NLS-1$
+				MultiTextEdit multi = new MultiTextEdit();
+				multi.addChildren(operations);
+				change.setEdit(multi);
+				PDEModelUtility.setChangeTextType(change, file);
+				return change;
+			}
+		} catch (CoreException | MalformedTreeException e) {
+		} finally {
+			FileBuffers.getTextFileBufferManager().disconnect(file.getFullPath(), LocationKind.NORMALIZE, monitor);
+		}
+		return null;
+	}
+
 	public static MoveFromChange createMovePackageChange(IFile file, Object[] elements, IProgressMonitor monitor) throws CoreException {
 		try {
 			Bundle bundle = getBundle(file, monitor);
