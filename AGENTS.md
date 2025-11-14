@@ -1,4 +1,4 @@
-# Eclipse PDE - Copilot Coding Agent Instructions
+# Eclipse PDE - AI Coding Agent Instructions
 
 ## Repository Overview
 
@@ -38,7 +38,7 @@ mvn clean verify -Dmaven.repo.local=$WORKSPACE/.m2/repository \
 - `ui/` - Main PDE UI (26 bundles: core, editors, launching, tests, spy tools)
 - `build/` - PDE Build (legacy, maintenance mode - use Tycho instead)
 - `ds/` - Declarative Services tooling
-- `e4tools/` - Eclipse 4 tools  
+- `e4tools/` - Eclipse 4 tools
 - `ua/` - User Assistance
 - `features/` - 6 feature definitions
 - `org.eclipse.pde.doc.user/` - Documentation
