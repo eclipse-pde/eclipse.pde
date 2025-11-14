@@ -73,4 +73,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-21
 Eclipse-BundleShape: dir
 Automatic-Module-Name: org.eclipse.pde.ui.tests
 Bundle-ActivationPolicy: lazy
-Export-Package: org.eclipse.pde.ui.tests.util
+Export-Package: org.eclipse.pde.ui.tests.runtime,
+ org.eclipse.pde.ui.tests.util
