@@ -90,8 +90,14 @@ public class TargetPlatformHelper {
 			"(_\\d+(?<!x86_64|ia64_32)(\\.\\d+(\\.\\d+(\\.[a-zA-Z0-9_-]+)?)?)?(\\.\\w+)?$)|(\\.(?:jar|war|zip)$)", //$NON-NLS-1$
 			Pattern.CASE_INSENSITIVE);
 
+	/**
+	 * Pattern for matching escaped colons and forward slash+colon combinations
+	 * in bundle paths.
+	 */
+	private static final Pattern PATTERN_PATH_COLON = Pattern.compile("\\\\:|/:");//$NON-NLS-1$
+
 	private static Map<String, String> fgCachedLocations;
-	private static Map<ITargetHandle, List<TargetDefinition>> fgCachedTargetDefinitionMap = new HashMap<>();
+	private static final Map<ITargetHandle, List<TargetDefinition>> fgCachedTargetDefinitionMap = new HashMap<>();
 
 	public static Properties getConfigIniProperties() {
 		File iniFile = new File(TargetPlatform.getLocation(), "configuration/config.ini"); //$NON-NLS-1$
@@ -161,7 +167,7 @@ public class TargetPlatformHelper {
 		StringTokenizer tokenizer = new StringTokenizer(osgiBundles, ","); //$NON-NLS-1$
 		while (tokenizer.hasMoreElements()) {
 			String token = tokenizer.nextToken();
-			token = token.replaceAll("\\\\:|/:", ":"); //$NON-NLS-1$ //$NON-NLS-2$
+			token = PATTERN_PATH_COLON.matcher(token).replaceAll(":"); //$NON-NLS-1$
 
 			// read up until the first @, if there
 			int atIndex = token.indexOf('@');
@@ -317,7 +323,7 @@ public class TargetPlatformHelper {
 
 	public static String[] getApplicationNames() {
 		Set<String> result = getApplicationNameSet();
-		return result.toArray(new String[result.size()]);
+		return result.toArray(String[]::new);
 	}
 
 	public static Set<String> getProductNameSet() {
@@ -424,32 +430,19 @@ public class TargetPlatformHelper {
 			Version vid = new Version(version);
 			int major = vid.getMajor();
 			int minor = vid.getMinor();
-			if (major == 3 && minor == 0) {
-				return ICoreConstants.TARGET30;
-			}
-			if (major == 3 && minor == 1) {
-				return ICoreConstants.TARGET31;
-			}
-			if (major == 3 && minor == 2) {
-				return ICoreConstants.TARGET32;
-			}
-			if (major == 3 && minor == 3) {
-				return ICoreConstants.TARGET33;
-			}
-			if (major == 3 && minor == 4) {
-				return ICoreConstants.TARGET34;
-			}
-			if (major == 3 && minor == 5) {
-				return ICoreConstants.TARGET35;
-			}
-			if (major == 3 && minor == 6) {
-				return ICoreConstants.TARGET36;
-			}
-			if (major == 3 && minor == 7) {
-				return ICoreConstants.TARGET37;
-			}
-			if (major == 3 && minor == 8) {
-				return ICoreConstants.TARGET38;
+			if (major == 3) {
+				return switch (minor) {
+					case 0 -> ICoreConstants.TARGET30;
+					case 1 -> ICoreConstants.TARGET31;
+					case 2 -> ICoreConstants.TARGET32;
+					case 3 -> ICoreConstants.TARGET33;
+					case 4 -> ICoreConstants.TARGET34;
+					case 5 -> ICoreConstants.TARGET35;
+					case 6 -> ICoreConstants.TARGET36;
+					case 7 -> ICoreConstants.TARGET37;
+					case 8 -> ICoreConstants.TARGET38;
+					default -> ICoreConstants.TARGET_VERSION_LATEST;
+				};
 			}
 		}
 		return ICoreConstants.TARGET_VERSION_LATEST;
@@ -693,17 +686,11 @@ public class TargetPlatformHelper {
 	 * in target platform preference page, target location and target status
 	 * bar.
 	 */
-	public static void addTargetDefinitionMap(TargetDefinition targetDefinition) {
-		if (fgCachedTargetDefinitionMap.containsKey(targetDefinition.getHandle())) {
-			List<TargetDefinition> targets = fgCachedTargetDefinitionMap.get(targetDefinition.getHandle());
-			if (!targets.contains(targetDefinition)) {
-				targets.add(0, targetDefinition);
-			}
-
-		} else {
-			List<TargetDefinition> target = new ArrayList<>();
-			target.add(targetDefinition);
-			fgCachedTargetDefinitionMap.put(targetDefinition.getHandle(), target);
+	public static synchronized void addTargetDefinitionMap(TargetDefinition targetDefinition) {
+		ITargetHandle handle = targetDefinition.getHandle();
+		List<TargetDefinition> targets = fgCachedTargetDefinitionMap.computeIfAbsent(handle, k -> new ArrayList<>());
+		if (!targets.contains(targetDefinition)) {
+			targets.add(0, targetDefinition);
 		}
 	}
 }
