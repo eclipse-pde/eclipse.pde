@@ -41,6 +41,8 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 public class UpdateUnitVersions extends AbstractHandler {
 
+	private static Parser parser;
+
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IDocument document = getDocument();
@@ -52,7 +54,7 @@ public class UpdateUnitVersions extends AbstractHandler {
 				return null;
 			}
 
-			Parser parser = Parser.getDefault();
+			Parser parser = parser();
 			try {
 				parser.parse(document);
 			} catch (XMLStreamException e) {
@@ -143,5 +145,12 @@ public class UpdateUnitVersions extends AbstractHandler {
 		}
 		IEditorInput input = editor.getEditorInput();
 		return provider.getDocument(input);
+	}
+
+	private static synchronized Parser parser() {
+		if (parser == null) {
+			parser = new Parser();
+		}
+		return parser;
 	}
 }
