@@ -406,7 +406,7 @@ public class ManifestUtils {
 					new Version(version.getMajor() + 1, 0, 0), //
 					VersionRange.RIGHT_OPEN));
 		}
-		return null;
+		return Optional.empty();
 	}
 
 	/**
