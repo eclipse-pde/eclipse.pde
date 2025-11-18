@@ -24,7 +24,6 @@ import org.osgi.framework.wiring.BundleWiring;
 
 /**
  * Default implementation used with Java 1.8
- * TODO provide MR variant using stack walker, currently blocked by JDT bug ...
  */
 public class Caller {
 
