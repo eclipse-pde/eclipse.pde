@@ -89,13 +89,15 @@ public class SPIBundleClassLoader extends ClassLoader {
 			List<SPIMapping> spis = mappings.computeIfAbsent(name, spi -> {
 				List<SPIMapping> list = new ArrayList<>();
 				for (Bundle other : bundles) {
-					URL entry = other.getEntry(name);
-					if (entry != null) {
-						try {
-							list.add(new SPIMapping(other.loadClass(serviceName), other, entry));
-						} catch (ClassNotFoundException e) {
-							// should not happen
+					try {
+						Enumeration<URL> resources = other.getResources(name);
+						if (resources != null) {
+							list.add(new SPIMapping(other.loadClass(serviceName), other, Collections.list(resources)));
 						}
+					} catch (ClassNotFoundException e) {
+						// should not happen
+					} catch (IOException e) {
+						//can't be used then
 					}
 				}
 				return list;
@@ -103,7 +105,7 @@ public class SPIBundleClassLoader extends ClassLoader {
 			Bundle caller = Caller.getBundle(junitVersion);
 			for (SPIMapping mapping : spis) {
 				if (mapping.isCompatible(caller)) {
-					result.add(mapping.getUrl());
+					result.addAll(mapping.getUrls());
 				}
 			}
 			return Collections.enumeration(result);
