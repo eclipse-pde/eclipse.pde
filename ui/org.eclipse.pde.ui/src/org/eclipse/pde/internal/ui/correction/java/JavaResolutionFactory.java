@@ -15,7 +15,6 @@ package org.eclipse.pde.internal.ui.correction.java;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
-import java.util.Optional;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -196,6 +195,8 @@ public class JavaResolutionFactory {
 					}
 					BundleDescription requiredBundle = getChangeObject();
 					String pluginId = requiredBundle.getSymbolicName();
+					VersionRange versionRange = ManifestUtils
+							.createConsumerRequirementRange(requiredBundle.getVersion()).orElse(null);
 					IPluginImport[] imports = base.getPluginBase().getImports();
 					if (!isUndo()) {
 						if (Arrays.stream(imports).map(IPluginImport::getId).anyMatch(pluginId::equals)) {
@@ -203,18 +204,15 @@ public class JavaResolutionFactory {
 						}
 						IPluginImport impt = base.getPluginFactory().createImport();
 						impt.setId(pluginId);
-						Optional<String> versionRange = ManifestUtils
-								.createConsumerRequirementRange(requiredBundle.getVersion())
-								.map(VersionRange::toString);
-						if (versionRange.isPresent()) {
-							impt.setVersion(versionRange.get());
+						if (versionRange != null) {
+							impt.setVersion(versionRange.toString());
 						}
 						base.getPluginBase().add(impt);
 					} else {
 						for (IPluginImport pluginImport : imports) {
-							if (pluginImport.getId().equals(pluginId)) {
+							if (pluginImport.getId().equals(pluginId) && (versionRange == null
+									|| versionRange.includes(Version.parseVersion(pluginImport.getVersion())))) {
 								base.getPluginBase().remove(pluginImport);
-								// TODO: Consider version too!
 							}
 						}
 					}
