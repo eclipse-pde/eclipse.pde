@@ -50,8 +50,9 @@ public class Parser {
 		inputFactory = XMLInputFactory.newInstance();
 	}
 
-	public void parse(IDocument document) throws XMLStreamException {
+	public Node parse(IDocument document) throws XMLStreamException {
 		target = null;
+		Node parsedTarget = null;
 		Node currentParent = null;
 		Node currentNode = null;
 		Iterator<XMLElement> tagReaderIterator = createXMLTagItterator(document.get());
@@ -81,8 +82,9 @@ public class Parser {
 						containerLocation.addRepositoryLocation(locationValue);
 					}
 				} else if (ITargetConstants.TARGET_TAG.equalsIgnoreCase(name)) {
-					target = new Node();
-					currentNode = target;
+					parsedTarget = new Node();
+					target = parsedTarget;
+					currentNode = parsedTarget;
 				} else {
 					currentNode = new Node();
 				}
@@ -107,6 +109,7 @@ public class Parser {
 		while (eventReader.hasNext()) {
 			eventReader.nextEvent();
 		}
+		return parsedTarget;
 	}
 
 	private Iterator<XMLElement> createXMLTagItterator(String document) {
