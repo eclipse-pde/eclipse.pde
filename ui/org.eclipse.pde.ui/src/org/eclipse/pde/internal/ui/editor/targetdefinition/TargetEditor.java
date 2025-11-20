@@ -40,6 +40,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
@@ -702,12 +703,10 @@ public class TargetEditor extends FormEditor {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						// delete profile
-						try {
+						SafeRunner.run(() -> {
 							P2TargetUtils.forceCheckTarget(getTarget());
 							P2TargetUtils.deleteProfile(getTarget().getHandle());
-						} catch (CoreException e) {
-							PDEPlugin.log(e);
-						}
+						});
 						getTarget().resolve(monitor);
 						if (monitor.isCanceled()) {
 							return Status.CANCEL_STATUS;
