@@ -86,9 +86,9 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.launching.IPDEConstants;
+import org.eclipse.pde.internal.launching.JUnitEclipsePluginValidationOperation;
 import org.eclipse.pde.internal.launching.JUnitLaunchRequirements;
 import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
-import org.eclipse.pde.internal.launching.launcher.EclipsePluginValidationOperation;
 import org.eclipse.pde.internal.launching.launcher.LaunchArgumentsHelper;
 import org.eclipse.pde.internal.launching.launcher.LaunchConfigurationHelper;
 import org.eclipse.pde.internal.launching.launcher.LaunchPluginValidator;
@@ -1233,8 +1233,8 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 	 */
 	protected void validatePluginDependencies(ILaunchConfiguration configuration, IProgressMonitor monitor)
 			throws CoreException {
-		EclipsePluginValidationOperation op = new EclipsePluginValidationOperation(configuration, fModels.keySet(),
-				launchMode);
+		JUnitEclipsePluginValidationOperation op = new JUnitEclipsePluginValidationOperation(configuration,
+				fModels.keySet(), launchMode);
 		LaunchPluginValidator.runValidationOperation(op, monitor);
 	}
 }
