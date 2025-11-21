@@ -120,4 +120,14 @@ public class VersionUtil {
 		return version;
 	}
 
+	public static String computeInitialRequirementVersionRange(String version) {
+		if (version != null && VersionUtil.validateVersion(version).isOK()) {
+			Version pvi = Version.parseVersion(version);
+			return new VersionRange(
+					"[" + pvi.getMajor() + "." + pvi.getMinor() + "," + (pvi.getMajor() + 1) + ")") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$//$NON-NLS-4$
+							.toString();
+		}
+		return ""; //$NON-NLS-1$
+	}
+
 }
