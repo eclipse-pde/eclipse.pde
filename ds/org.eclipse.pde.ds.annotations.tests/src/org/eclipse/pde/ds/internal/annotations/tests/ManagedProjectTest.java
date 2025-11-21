@@ -1,7 +1,6 @@
 package org.eclipse.pde.ds.internal.annotations.tests;
 
-import static org.junit.Assume.assumeNotNull;
-import static org.junit.Assume.assumeTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -47,9 +46,9 @@ public class ManagedProjectTest extends CompilationParticipantTest {
 	@Test
 	public void manifestHeaderServiceComponentAdded() throws Exception {
 		IPluginModelBase pluginModel = PluginRegistry.findModel(testProject);
-		assumeTrue("Test project not a bundle project!", pluginModel instanceof IBundlePluginModelBase);
+		assertThat(pluginModel).isExactlyInstanceOf(IBundlePluginModelBase.class);
 		IBundleModel bundleModel = ((IBundlePluginModelBase) pluginModel).getBundleModel();
-		assumeNotNull("Missing bundle manifest!", bundleModel);
+		assertNotNull(bundleModel, "Missing bundle manifest!");
 		String serviceComponentHeader = bundleModel.getBundle().getHeader("Service-Component");
 		assertNotNull("Missing Service-Component header!", serviceComponentHeader);
 		String[] entries = serviceComponentHeader.split("\\s*,\\s*");

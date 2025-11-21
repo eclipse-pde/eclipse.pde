@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Enumeration;
 import java.util.Map;
@@ -56,7 +55,7 @@ public class AllDSAnnotationsTests {
 			@Override
 			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 				// import test projects
-				Path wsRoot = Paths.get(ws.getRoot().getLocationURI());
+				Path wsRoot = ws.getRoot().getLocation().toPath();
 				for (Map.Entry<String, String> entry : projects.entrySet()) {
 					IProject project = ws.getRoot().getProject(entry.getKey());
 					try {
