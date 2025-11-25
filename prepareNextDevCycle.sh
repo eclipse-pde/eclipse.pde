@@ -18,7 +18,9 @@
 # and applies the changes required individually for SWT.
 # The calling pipeline also defines environment variables usable in this script.
 
-echo "Qualifier update for ${NEXT_RELEASE_VERSION}" > 'org.eclipse.pde.doc.user/forceQualifierUpdate.txt'
+# Update the link to N&N entries, which also implies the otherwise explicitly required qualifier update
+whatsNewFile='org.eclipse.pde.doc.user/whatsNew/pde_whatsnew.html'
+sed --expression "s|Eclipse ${PREVIOUS_RELEASE_VERSION}|Eclipse ${NEXT_RELEASE_VERSION}|" -i "${whatsNewFile}"
+sed --expression "s|news/${PREVIOUS_RELEASE_VERSION}/pde.html|news/${NEXT_RELEASE_VERSION}/pde.html|" -i "${whatsNewFile}"
 
-
-git commit --all --message "Qualifier update of doc bundles for ${NEXT_RELEASE_VERSION}"
+git commit --all --message "Reference New and Noteworthy for ${NEXT_RELEASE_VERSION} in PDE documentation"
