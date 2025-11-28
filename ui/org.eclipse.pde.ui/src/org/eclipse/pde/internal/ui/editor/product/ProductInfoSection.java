@@ -20,8 +20,11 @@ import static org.eclipse.pde.internal.core.iproduct.IProduct.ProductType.FEATUR
 import static org.eclipse.pde.internal.core.iproduct.IProduct.ProductType.MIXED;
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
@@ -29,13 +32,16 @@ import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.service.resolver.StateDelta;
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.IStateDeltaListener;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProduct.ProductType;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
@@ -44,6 +50,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.launcher.LaunchAction;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.pde.internal.ui.wizards.product.ProductDefinitionWizard;
 import org.eclipse.swt.SWT;
@@ -258,12 +265,34 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		label.setToolTipText(PDEUIMessages.ProductInfoSection_appTooltip);
 		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 
+		IProduct products = getProduct();
+		Set<IPluginModelBase> models = null;
+		try {
+			models = LaunchAction.getLaunchedBundlesForProduct(products);
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		if (models == null) {
+			models = java.util.Collections.emptySet(); // <-- tiny null guard
+		}
+
+		Set<String> productBundleSymbolicNames = new HashSet<>();
+		for (IPluginModelBase model : models) {
+			BundleDescription desc = model.getBundleDescription();
+			if (desc != null && desc.getSymbolicName() != null) {
+				String symbolicName = desc.getSymbolicName();
+				productBundleSymbolicNames.add(symbolicName);
+			}
+		}
 		fAppCombo = new ExtensionIdComboPart();
 		fAppCombo.createControl(client, toolkit, SWT.READ_ONLY);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = NUM_COLUMNS - 1;
 		fAppCombo.getControl().setLayoutData(gd);
-		fAppCombo.setItems(TargetPlatform.getApplications());
+		Set<String> filteredApps = TargetPlatformHelper.getApplicationNameSet(productBundleSymbolicNames);
+		fAppCombo.setItems(filteredApps.toArray(new String[0]));
 		fAppCombo.add(""); //$NON-NLS-1$
 		fAppCombo.addSelectionListener(
 				widgetSelectedAdapter(e -> getProduct().setApplication(fAppCombo.getSelection())));
