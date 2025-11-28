@@ -135,6 +135,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISelectionService;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -642,7 +643,7 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 		collapseAllAction.setEnabled(false);
 		collapseAllAction.setText("Collapse All");
 		collapseAllAction.setToolTipText("Collapse All");
-		collapseAllAction.setImageDescriptor(Resources.getImageDescriptor("collapseall.png"));
+		collapseAllAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_COLLAPSEALL));
 
 		refreshAction = new Action() {
 			@Override
@@ -699,7 +700,7 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 		addBundlesAction.setEnabled(false);
 		addBundlesAction.setText("Add");
 		addBundlesAction.setToolTipText("Add Bundles to Repository");
-		addBundlesAction.setImageDescriptor(Resources.getImageDescriptor("add_obj.png"));
+		addBundlesAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ADD));
 
 		advancedSearchAction = new Action("Advanced Search", IAction.AS_CHECK_BOX) {
 			@Override
@@ -745,7 +746,7 @@ public class RepositoriesView extends ViewPart implements RepositoriesViewRefres
 		advancedSearchAction.setEnabled(false);
 		advancedSearchAction.setText("Advanced Search");
 		advancedSearchAction.setToolTipText("Toggle Advanced Search");
-		advancedSearchAction.setImageDescriptor(Resources.getImageDescriptor("search.png"));
+		advancedSearchAction.setImageDescriptor(Resources.getImageDescriptor("search.svg"));
 
 		downloadAction = new Action() {
 			@Override
