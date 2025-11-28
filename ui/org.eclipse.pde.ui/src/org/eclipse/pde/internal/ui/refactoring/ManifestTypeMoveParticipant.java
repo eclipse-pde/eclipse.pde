@@ -13,7 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.refactoring;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -93,6 +96,34 @@ public class ManifestTypeMoveParticipant extends PDEMoveParticipant {
 				result.add(change);
 			}
 		}
+
+		Map<IPackageFragment, List<IType>> movedByPackage = new HashMap<>();
+		fElements.forEach((element, newName) -> {
+			IType type = (IType) element;
+			IPackageFragment pkg = type.getPackageFragment();
+
+			movedByPackage.computeIfAbsent(pkg, k -> new ArrayList<>()).add(type);
+		});
+
+		for (Map.Entry<IPackageFragment, List<IType>> entry : movedByPackage.entrySet()) {
+			IPackageFragment pkg = entry.getKey();
+			List<IType> movingTypes = entry.getValue();
+
+			try {
+				IJavaElement[] children = pkg.getChildren();
+				int totalFiles = children.length;
+				int movingCount = movingTypes.size();
+				if (totalFiles == movingCount) {
+					Change change = BundleManifestChange.createEmptyPackageChange(file, pkg.getElementName(), pm);
+					if (change != null) {
+						result.add(change);
+					}
+				}
+			} catch (CoreException e) {
+				e.printStackTrace();
+			}
+		}
+
 	}
 
 }
