@@ -49,8 +49,7 @@ public class TargetDefinitionCodeMiningProvider extends AbstractCodeMiningProvid
 		int line = 0;
 		try {
 			Parser parser = Parser.getDefault();
-			parser.parse(document);
-			Node target = parser.getRootNode();
+			Node target = parser.parse(document);
 			if (target != null) {
 				line = document.getLineOfOffset(target.getOffsetStart());
 				minings.add(new TargetDefinitionActivationCodeMining(line, document, this, null));
