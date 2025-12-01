@@ -51,8 +51,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 
 import jakarta.annotation.PostConstruct;
@@ -74,8 +72,12 @@ public class AdapterSpyPart {
 
 	private static final String NAMED_UPDATE_TREE_SOURCE_TO_DESTINATION = "updateTreeSourceToDestination";
 	private static final String NAMED_UPDATE_TREE_DESTINATION_TO_SOURCE = "updateTreeDestinationToSource";
-	private static final String SWITCH_TO_SOURCE = "switch to Source Type first";
-	private static final String SWITCH_TO_DESTINATION = "switch to Destination Type first";
+	private static final String SOURCE_TYPE = "Source Type";
+	private static final String DESTINATION_TYPE = "Destination Type";
+	private static final String DISPLAY_SOURCE_TYPE = "Display " + SOURCE_TYPE;
+	private static final String DISPLAY_DESTINATION_TYPE = "Display " + DESTINATION_TYPE;
+	private static final String TOOLTIP_SOURCE_TYPE = "Display the source type first, and list\nall destination types derived from that source as child elements.";
+	private static final String TOOLTIP_DESTINATION_TYPE = "Display the destination type first, and list\nall source types that can adapt to it as child elements.";	
 	
 	@Inject
 	UISynchronize uisync;
@@ -288,7 +290,8 @@ public class AdapterSpyPart {
 		comp.setLayout(new GridLayout(4, false));
 
 		Text filterText = new Text(comp, SWT.SEARCH | SWT.ICON_SEARCH | SWT.ICON_CANCEL);
-		GridDataFactory.fillDefaults().hint(250, SWT.DEFAULT).applyTo(filterText);
+		GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.CENTER).hint(250, SWT.DEFAULT).applyTo(filterText);
+
 		filterText.setMessage("Search data");
 		filterText.setToolTipText("Find any element in tree");
 
@@ -320,41 +323,58 @@ public class AdapterSpyPart {
 			}
 		});
 
+		// --- Vertical radio buttons to choose display direction ---
+		Composite radioGroup = new Composite(comp, SWT.NONE);
+		radioGroup.setLayout(new GridLayout(1, false));
 
-		ToolBar toolBar = new ToolBar(comp, SWT.NONE);
-		ToolItem switchButton = new ToolItem(toolBar, SWT.CHECK);
-		switchButton.setImage(imgr.get(AdapterHelper.DESTINATION_TYPE_IMG_KEY));
-		switchButton.setToolTipText(SWITCH_TO_DESTINATION);
-		
-		// sourceToType event
-		switchButton.addSelectionListener(new SelectionAdapter() {
+		Button rbSource = new Button(radioGroup, SWT.RADIO);
+		rbSource.setText(DISPLAY_SOURCE_TYPE);
+		rbSource.setToolTipText(TOOLTIP_SOURCE_TYPE);
 
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				Object source = event.getSource();
-				if (source instanceof ToolItem) {
-					FilterData fdata = getFilterData();
-					sourceToDestination = !sourceToDestination;
-					String tooltiptext = sourceToDestination ? SWITCH_TO_DESTINATION :SWITCH_TO_SOURCE;
-					String imageKey = sourceToDestination ? AdapterHelper.DESTINATION_TYPE_IMG_KEY
-							: AdapterHelper.SOURCE_TYPE_IMG_KEY;
-					switchButton.setToolTipText(tooltiptext);
-					switchButton.setImage(imgr.get(imageKey));
+		Button rbDestination = new Button(radioGroup, SWT.RADIO);
+		rbDestination.setText(DISPLAY_DESTINATION_TYPE);
+		rbDestination.setToolTipText(TOOLTIP_DESTINATION_TYPE);
 
-					if (sourceToDestination) {
-						sourceOrDestinationTvc.getColumn().setText("Source Type");
-						context.set(NAMED_UPDATE_TREE_SOURCE_TO_DESTINATION, adapterRepo.getAdapters());
-					} else {
-						sourceOrDestinationTvc.getColumn().setText("Destination Type");
-						context.set(NAMED_UPDATE_TREE_DESTINATION_TO_SOURCE, adapterRepo.revertSourceToType());
-					}
-					fdata.setSourceToDestination(sourceToDestination);
-					context.set(AdapterFilter.UPDATE_CTX_FILTER, fdata);
-					adapterTreeViewer.refresh(true);
-				}
+		rbSource.setSelection(sourceToDestination);
+		rbDestination.setSelection(!sourceToDestination);
 
-			}
+		// Factorized refresh logic
+		Runnable refreshView = () -> {
+		    FilterData fdata = getFilterData();
+		    fdata.setSourceToDestination(sourceToDestination);
+		    context.set(AdapterFilter.UPDATE_CTX_FILTER, fdata);
+
+		    if (sourceToDestination) {
+		        sourceOrDestinationTvc.getColumn().setText(SOURCE_TYPE);
+		        context.set(NAMED_UPDATE_TREE_SOURCE_TO_DESTINATION, adapterRepo.getAdapters());
+		    } else {
+		        sourceOrDestinationTvc.getColumn().setText(DESTINATION_TYPE);
+		        context.set(NAMED_UPDATE_TREE_DESTINATION_TO_SOURCE, adapterRepo.revertSourceToType());
+		    }
+		    adapterTreeViewer.refresh(true);
+		};
+
+		// Listeners
+		rbSource.addSelectionListener(new SelectionAdapter() {
+		    @Override
+		    public void widgetSelected(SelectionEvent e) {
+		        if (rbSource.getSelection()) {
+		            sourceToDestination = true;
+		            refreshView.run();
+		        }
+		    }
 		});
+
+		rbDestination.addSelectionListener(new SelectionAdapter() {
+		    @Override
+		    public void widgetSelected(SelectionEvent e) {
+		        if (rbDestination.getSelection()) {
+		            sourceToDestination = false;
+		            refreshView.run();
+		        }
+		    }
+		});
+		
 		uisync.asyncExec(() -> comp.pack());
 
 	}
