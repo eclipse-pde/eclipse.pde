@@ -108,6 +108,7 @@ public class ClasspathContainerState {
 				monitor.setWorkRemaining(WORK);
 				IProject project = request.project();
 				if (project.exists() && project.isOpen()) {
+					monitor.subTask(project.getName());
 					IPluginModelBase model = modelManager.findModel(project);
 					if (model != null && PluginProject.isJavaProject(project)) {
 						IJavaProject javaProject = JavaCore.create(project);
