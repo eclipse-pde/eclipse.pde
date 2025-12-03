@@ -57,6 +57,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetHandle;
+import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.core.target.LoadTargetDefinitionJob;
 import org.eclipse.pde.core.target.TargetEvents;
@@ -64,6 +65,7 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.core.target.P2TargetUtils;
+import org.eclipse.pde.internal.core.target.TargetDefinition;
 import org.eclipse.pde.internal.core.target.TargetDefinitionPersistenceHelper;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.pde.internal.core.target.WorkspaceFileTargetHandle;
@@ -161,10 +163,27 @@ public class TargetEditor extends FormEditor {
 	protected void pageChange(int newPageIndex) {
 		try {
 			if (newPageIndex != fSourceTabIndex && getCurrentPage() == fSourceTabIndex) {
-				InputStream stream = new ByteArrayInputStream(fTargetDocument.get().getBytes(StandardCharsets.UTF_8));
-				TargetDefinitionPersistenceHelper.initFromXML(getTarget(), stream);
-				if (!getTarget().isResolved()) {
-					getTargetChangedListener().contentsChanged(getTarget(), this, true, false);
+				String text = fTargetDocument.get();
+				byte[] bytes = text.getBytes(StandardCharsets.UTF_8);
+				InputStream stream = new ByteArrayInputStream(bytes);
+				ITargetDefinition currentTarget = getTarget();
+				ITargetPlatformService service = PDECore.getDefault().acquireService(ITargetPlatformService.class);
+				ITargetDefinition newTarget = service.newTarget();
+				TargetDefinitionPersistenceHelper.initFromXML(newTarget, stream);
+				if (currentTarget instanceof TargetDefinition && ((TargetDefinition) currentTarget).isContentEqual(newTarget)) {
+					ITargetLocation[] oldLocations = currentTarget.getTargetLocations();
+					boolean wasResolved = currentTarget.isResolved();
+					stream.reset();
+					TargetDefinitionPersistenceHelper.initFromXML(currentTarget, stream);
+					if (wasResolved) {
+						currentTarget.setTargetLocations(oldLocations);
+					}
+				} else {
+					stream.reset();
+					TargetDefinitionPersistenceHelper.initFromXML(currentTarget, stream);
+					if (!getTarget().isResolved()) {
+						getTargetChangedListener().contentsChanged(getTarget(), this, true, false);
+					}
 				}
 			}
 			super.pageChange(newPageIndex);
