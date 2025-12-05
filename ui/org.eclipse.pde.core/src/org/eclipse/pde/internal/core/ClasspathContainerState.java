@@ -78,7 +78,6 @@ public class ClasspathContainerState {
 	 */
 	private static final class UpdateClasspathsJob extends Job {
 
-		private static final int WORK = 10_000;
 		private final Queue<UpdateRequest> workQueue = new ConcurrentLinkedQueue<>();
 
 		/**
@@ -98,15 +97,25 @@ public class ClasspathContainerState {
 
 		@Override
 		protected IStatus run(IProgressMonitor jobMonitor) {
-			SubMonitor monitor = SubMonitor.convert(jobMonitor, PDECoreMessages.PluginModelManager_1, WORK);
-			PluginModelManager.getInstance().initialize(monitor.split(10));
+			SubMonitor monitor = SubMonitor.convert(jobMonitor, PDECoreMessages.PluginModelManager_1, 100);
+			PluginModelManager.getInstance().initialize(monitor.split(1));
 			PluginModelManager modelManager = PluginModelManager.getInstance();
 			Map<IJavaProject, IClasspathContainer> updateProjects = new LinkedHashMap<>();
 			Map<IProject, IStatus> errorsPerProject = new LinkedHashMap<>();
+
+			java.util.List<UpdateRequest> requests = new java.util.ArrayList<>();
 			UpdateRequest request;
-			while (!monitor.isCanceled() && (request = workQueue.poll()) != null) {
-				monitor.setWorkRemaining(WORK);
-				IProject project = request.project();
+			while ((request = workQueue.poll()) != null) {
+				requests.add(request);
+			}
+			int count = requests.size();
+			monitor.setWorkRemaining(count * 2);
+
+			for (UpdateRequest req : requests) {
+				if (monitor.isCanceled()) {
+					break;
+				}
+				IProject project = req.project();
 				if (project.exists() && project.isOpen()) {
 					monitor.subTask(project.getName());
 					IPluginModelBase model = modelManager.findModel(project);
@@ -115,7 +124,7 @@ public class ClasspathContainerState {
 						try {
 							IClasspathEntry[] entries = ClasspathComputer.computeClasspathEntries(model,
 									javaProject.getProject());
-							if (!isUpToDate(project, entries, request.container())) {
+							if (!isUpToDate(project, entries, req.container())) {
 								updateProjects.put(javaProject, PDEClasspathContainerSaveHelper.containerOf(entries));
 								errorsPerProject.remove(project);
 								saveState(project, entries);
@@ -123,9 +132,9 @@ public class ClasspathContainerState {
 						} catch (CoreException e) {
 							errorsPerProject.put(project, e.getStatus());
 						}
-						monitor.worked(1);
 					}
 				}
+				monitor.worked(1);
 			}
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
@@ -151,7 +160,8 @@ public class ClasspathContainerState {
 					i++;
 				}
 				try {
-					setProjectContainers(javaProjects, container, monitor);
+					monitor.setWorkRemaining(n);
+					setProjectContainers(javaProjects, container, monitor.split(n));
 				} catch (JavaModelException e) {
 					return e.getStatus();
 				}
