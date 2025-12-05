@@ -40,6 +40,7 @@ import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.pde.internal.genericeditor.target.extension.autocomplete.TargetDefinitionContentAssist;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
@@ -76,6 +77,19 @@ public abstract class AbstractTargetEditorTest {
 			targetFile.create(normalizedStream, true, new NullProgressMonitor());
 			IEditorPart editor = IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(),
 					targetFile, "org.eclipse.ui.genericeditor.GenericEditor");
+			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().activate(editor);
+			// Process UI events to ensure editor activation is complete
+			Display display = PlatformUI.getWorkbench().getDisplay();
+			for (int i = 0; i < 20; i++) {
+				while (display.readAndDispatch()) {
+					// Drain the event queue
+				}
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					// Ignore
+				}
+			}
 			return (ITextViewer) editor.getAdapter(ITextOperationTarget.class);
 		}
 	}
