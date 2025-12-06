@@ -34,6 +34,7 @@ import org.eclipse.pde.api.tools.reference.tests.SearchScopeTests;
 import org.eclipse.pde.api.tools.search.tests.SearchEngineTests;
 import org.eclipse.pde.api.tools.search.tests.SkippedComponentTests;
 import org.eclipse.pde.api.tools.search.tests.UseSearchTests;
+import org.eclipse.pde.api.tools.util.tests.ApiConfigParserTests;
 import org.eclipse.pde.api.tools.util.tests.HeadlessApiBaselineManagerTests;
 import org.eclipse.pde.api.tools.util.tests.SignaturesTests;
 import org.eclipse.pde.api.tools.util.tests.TarEntryTests;
@@ -64,7 +65,8 @@ import org.junit.runners.Suite;
 		ApiProblemFactoryTests.class, ApiFilterTests.class, TarEntryTests.class, TarExceptionTests.class,
 		OSGiLessAnalysisTests.class, ApiModelCacheTests.class, BadClassfileTests.class,
 	CRCTests.class,
-	AllDeltaTests.class
+	AllDeltaTests.class,
+	ApiConfigParserTests.class
 })
 public class ApiToolsTestSuite {
 

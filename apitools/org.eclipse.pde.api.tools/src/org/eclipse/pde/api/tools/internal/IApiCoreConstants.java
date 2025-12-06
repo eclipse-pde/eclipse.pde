@@ -58,6 +58,11 @@ public interface IApiCoreConstants {
 	 */
 	public static final String API_FILTERS_XML_NAME = ".api_filters"; //$NON-NLS-1$
 	/**
+	 * Constant representing the name of the API configuration file. Value is
+	 * <code>.apiconfig</code>
+	 */
+	public static final String API_CONFIG_FILE_NAME = ".apiconfig"; //$NON-NLS-1$
+	/**
 	 * Constant representing the name of the source bundle manifest header.
 	 * Value is: <code>Eclipse-SourceBundle</code>
 	 */
