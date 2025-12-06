@@ -82,6 +82,7 @@ public class UpdateUnitVersionsCommandTests extends AbstractTargetEditorTest {
 		@SuppressWarnings("unchecked")
 		String updatedText = ((CompletableFuture<String>) response).get();
 		assertNotNull(updatedText);
+		TestUtils.processUIEvents();
 
 		Map<String, String> actual = getVersionsForIdsFromTargetFile(updatedText);
 
