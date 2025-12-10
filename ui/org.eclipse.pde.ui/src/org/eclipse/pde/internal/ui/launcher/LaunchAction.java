@@ -247,6 +247,9 @@ public class LaunchAction extends Action {
 	}
 
 	private Optional<AdditionalPluginData> getPluginConfiguration(IPluginModelBase model) {
+		if (model == null || model.getPluginBase() == null) {
+			return Optional.empty();
+		}
 		IPluginConfiguration config = fPluginConfigurations.get(model.getPluginBase().getId());
 		if (config == null) {
 			return Optional.empty();
