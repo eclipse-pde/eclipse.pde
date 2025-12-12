@@ -385,7 +385,7 @@ public class CapturedEventFilters {
 	}
 
 	private String getFieldName(Object notSelectedName) {
-		String fieldName = notSelectedName.toString().replaceAll("-", "").trim(); //$NON-NLS-1$ //$NON-NLS-2$
+		String fieldName = notSelectedName.toString().replace("-", "").trim(); //$NON-NLS-1$ //$NON-NLS-2$
 		return Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
 	}
 
