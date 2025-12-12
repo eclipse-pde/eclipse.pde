@@ -575,7 +575,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 			if (language != null) {
 				paths.add(location.replaceAll("\\$nl\\$", "nl" + IPath.SEPARATOR + language)); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			paths.add(location.replaceAll("\\$nl\\$", "")); //$NON-NLS-1$ //$NON-NLS-2$
+			paths.add(location.replace("$nl$", "")); //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
 			paths.add(location);
 		}

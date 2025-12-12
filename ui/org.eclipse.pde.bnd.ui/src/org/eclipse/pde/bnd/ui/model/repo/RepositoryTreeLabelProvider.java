@@ -119,7 +119,7 @@ public class RepositoryTreeLabelProvider extends StyledCellLabelProvider
 					String versionText = bundleVersion.getText();
 
 					if (versionText.contains(" \u21E9")) {
-						versionText = versionText.replaceAll(" \u21E9", "");
+						versionText = versionText.replace(" \u21E9", "");
 						image = arrowImg;
 					}
 					label.append(versionText, StyledString.COUNTER_STYLER);
