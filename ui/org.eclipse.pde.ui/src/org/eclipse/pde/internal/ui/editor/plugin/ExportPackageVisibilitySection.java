@@ -24,9 +24,9 @@ import java.util.List;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -74,9 +74,9 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 	private Image fImage;
 	private Button fVisibleButton;
 
-	static class TableContentProvider implements IStructuredContentProvider {
+	static class TreeContentProvider implements ITreeContentProvider {
 		@Override
-		public Object[] getElements(Object parent) {
+		public Object[] getChildren(Object parent) {
 			ExportPackageObject object = (ExportPackageObject) parent;
 			if (object == null || !object.isInternal()) {
 				return new Object[0];
