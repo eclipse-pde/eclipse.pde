@@ -46,6 +46,7 @@ public class PluginImport extends IdentifiablePluginObject implements IPluginImp
 	private boolean reexported = false;
 	private boolean optional = false;
 	private String version;
+	private String filter;
 
 	public PluginImport() {
 	}
@@ -72,6 +73,11 @@ public class PluginImport extends IdentifiablePluginObject implements IPluginImp
 	@Override
 	public String getVersion() {
 		return version;
+	}
+
+	@Override
+	public String getFilter() {
+		return filter;
 	}
 
 	@Override
@@ -204,6 +210,15 @@ public class PluginImport extends IdentifiablePluginObject implements IPluginImp
 	}
 
 	@Override
+	public void setFilter(String filter) throws CoreException {
+		ensureModelEditable();
+		String oldValue = this.filter;
+		this.filter = filter;
+		firePropertyChanged(P_FILTER, oldValue, filter);
+
+	}
+
+	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_MATCH)) {
 			setMatch(((Integer) newValue).intValue());
@@ -311,5 +326,7 @@ public class PluginImport extends IdentifiablePluginObject implements IPluginImp
 		writer.println(',');
 		writer.print(' ');
 	}
+
+
 
 }
