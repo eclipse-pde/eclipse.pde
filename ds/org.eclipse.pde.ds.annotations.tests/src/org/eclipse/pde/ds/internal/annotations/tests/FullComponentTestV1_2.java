@@ -4,8 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.Assume.assumeNotNull;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 import java.util.Set;
@@ -110,9 +109,9 @@ public class FullComponentTestV1_2 extends AnnotationProcessorTest {
 	@Test
 	public void componentPropertyImplicitString() throws Exception {
 		IDSProperty[] properties = dsModel.getDSComponent().getPropertyElements();
-		assumeNotNull((Object) properties);
+		assertNotNull(properties);
 		final int PROPERTY_INDEX = 0;
-		assumeTrue(properties.length > PROPERTY_INDEX);
+		assertTrue(properties.length > PROPERTY_INDEX);
 		assertEquals("implicitStringProperty", properties[PROPERTY_INDEX].getPropertyName());
 		assertEquals("implicitStringValue", properties[PROPERTY_INDEX].getPropertyValue());
 		assertNull(properties[PROPERTY_INDEX].getPropertyType());
@@ -122,9 +121,9 @@ public class FullComponentTestV1_2 extends AnnotationProcessorTest {
 	@Test
 	public void componentPropertyExplicitString() throws Exception {
 		IDSProperty[] properties = dsModel.getDSComponent().getPropertyElements();
-		assumeNotNull((Object) properties);
+		assertNotNull(properties);
 		final int PROPERTY_INDEX = 1;
-		assumeTrue(properties.length > PROPERTY_INDEX);
+		assertTrue(properties.length > PROPERTY_INDEX);
 		assertEquals("explicitStringProperty", properties[PROPERTY_INDEX].getPropertyName());
 		assertEquals("explicitStringValue", properties[PROPERTY_INDEX].getPropertyValue());
 		assertEquals("String", properties[PROPERTY_INDEX].getPropertyType());
@@ -134,9 +133,9 @@ public class FullComponentTestV1_2 extends AnnotationProcessorTest {
 	@Test
 	public void componentPropertyInteger() throws Exception {
 		IDSProperty[] properties = dsModel.getDSComponent().getPropertyElements();
-		assumeNotNull((Object) properties);
+		assertNotNull(properties);
 		final int PROPERTY_INDEX = 2;
-		assumeTrue(properties.length > PROPERTY_INDEX);
+		assertTrue(properties.length > PROPERTY_INDEX);
 		assertEquals("integerProperty", properties[PROPERTY_INDEX].getPropertyName());
 		assertEquals("1", properties[PROPERTY_INDEX].getPropertyValue());
 		assertEquals("Integer", properties[PROPERTY_INDEX].getPropertyType());
@@ -146,9 +145,9 @@ public class FullComponentTestV1_2 extends AnnotationProcessorTest {
 	@Test
 	public void componentPropertyLong() throws Exception {
 		IDSProperty[] properties = dsModel.getDSComponent().getPropertyElements();
-		assumeNotNull((Object) properties);
+		assertNotNull(properties);
 		final int PROPERTY_INDEX = 3;
-		assumeTrue(properties.length > PROPERTY_INDEX);
+		assertTrue(properties.length > PROPERTY_INDEX);
 		assertEquals("longProperty", properties[PROPERTY_INDEX].getPropertyName());
 		assertEquals("2", properties[PROPERTY_INDEX].getPropertyValue());
 		assertEquals("Long", properties[PROPERTY_INDEX].getPropertyType());
@@ -158,9 +157,9 @@ public class FullComponentTestV1_2 extends AnnotationProcessorTest {
 	@Test
 	public void componentPropertyShort() throws Exception {
 		IDSProperty[] properties = dsModel.getDSComponent().getPropertyElements();
-		assumeNotNull((Object) properties);
+		assertNotNull(properties);
 		final int PROPERTY_INDEX = 4;
-		assumeTrue(properties.length > PROPERTY_INDEX);
+		assertTrue(properties.length > PROPERTY_INDEX);
 		assertEquals("shortProperty", properties[PROPERTY_INDEX].getPropertyName());
 		assertEquals("3", properties[PROPERTY_INDEX].getPropertyValue());
 		assertEquals("Short", properties[PROPERTY_INDEX].getPropertyType());
@@ -170,9 +169,9 @@ public class FullComponentTestV1_2 extends AnnotationProcessorTest {
 	@Test
 	public void componentPropertyByte() throws Exception {
 		IDSProperty[] properties = dsModel.getDSComponent().getPropertyElements();
-		assumeNotNull((Object) properties);
+		assertNotNull(properties);
 		final int PROPERTY_INDEX = 5;
-		assumeTrue(properties.length > PROPERTY_INDEX);
+		assertTrue(properties.length > PROPERTY_INDEX);
 		assertEquals("byteProperty", properties[PROPERTY_INDEX].getPropertyName());
 		assertEquals("4", properties[PROPERTY_INDEX].getPropertyValue());
 		assertEquals("Byte", properties[PROPERTY_INDEX].getPropertyType());
@@ -182,9 +181,9 @@ public class FullComponentTestV1_2 extends AnnotationProcessorTest {
 	@Test
 	public void componentPropertyCharacter() throws Exception {
 		IDSProperty[] properties = dsModel.getDSComponent().getPropertyElements();
-		assumeNotNull((Object) properties);
+		assertNotNull(properties);
 		final int PROPERTY_INDEX = 6;
-		assumeTrue(properties.length > PROPERTY_INDEX);
+		assertTrue(properties.length > PROPERTY_INDEX);
 		assertEquals("characterProperty", properties[PROPERTY_INDEX].getPropertyName());
 		assertEquals("5", properties[PROPERTY_INDEX].getPropertyValue());
 		assertEquals("Character", properties[PROPERTY_INDEX].getPropertyType());
@@ -194,9 +193,9 @@ public class FullComponentTestV1_2 extends AnnotationProcessorTest {
 	@Test
 	public void componentPropertyFloat() throws Exception {
 		IDSProperty[] properties = dsModel.getDSComponent().getPropertyElements();
-		assumeNotNull((Object) properties);
+		assertNotNull(properties);
 		final int PROPERTY_INDEX = 7;
-		assumeTrue(properties.length > PROPERTY_INDEX);
+		assertTrue(properties.length > PROPERTY_INDEX);
 		assertEquals("floatProperty", properties[PROPERTY_INDEX].getPropertyName());
 		assertEquals("6.7", properties[PROPERTY_INDEX].getPropertyValue());
 		assertEquals("Float", properties[PROPERTY_INDEX].getPropertyType());
@@ -206,9 +205,9 @@ public class FullComponentTestV1_2 extends AnnotationProcessorTest {
 	@Test
 	public void componentPropertyDouble() throws Exception {
 		IDSProperty[] properties = dsModel.getDSComponent().getPropertyElements();
-		assumeNotNull((Object) properties);
+		assertNotNull(properties);
 		final int PROPERTY_INDEX = 8;
-		assumeTrue(properties.length > PROPERTY_INDEX);
+		assertTrue(properties.length > PROPERTY_INDEX);
 		assertEquals("doubleProperty", properties[PROPERTY_INDEX].getPropertyName());
 		assertEquals("8.9", properties[PROPERTY_INDEX].getPropertyValue());
 		assertEquals("Double", properties[PROPERTY_INDEX].getPropertyType());
@@ -218,9 +217,9 @@ public class FullComponentTestV1_2 extends AnnotationProcessorTest {
 	@Test
 	public void componentPropertyImplicitStringArray() throws Exception {
 		IDSProperty[] properties = dsModel.getDSComponent().getPropertyElements();
-		assumeNotNull((Object) properties);
+		assertNotNull(properties);
 		final int PROPERTY_INDEX = 9;
-		assumeTrue(properties.length > PROPERTY_INDEX);
+		assertTrue(properties.length > PROPERTY_INDEX);
 		assertEquals("implicitStringArrayProperty", properties[PROPERTY_INDEX].getPropertyName());
 		assertNull(properties[PROPERTY_INDEX].getPropertyValue());
 		assertNull(properties[PROPERTY_INDEX].getPropertyType());
@@ -230,9 +229,9 @@ public class FullComponentTestV1_2 extends AnnotationProcessorTest {
 	@Test
 	public void componentPropertyExplicitStringArray() throws Exception {
 		IDSProperty[] properties = dsModel.getDSComponent().getPropertyElements();
-		assumeNotNull((Object) properties);
+		assertNotNull(properties);
 		final int PROPERTY_INDEX = 10;
-		assumeTrue(properties.length > PROPERTY_INDEX);
+		assertTrue(properties.length > PROPERTY_INDEX);
 		assertEquals("explicitStringArrayProperty", properties[PROPERTY_INDEX].getPropertyName());
 		assertNull(properties[PROPERTY_INDEX].getPropertyValue());
 		assertEquals("String", properties[PROPERTY_INDEX].getPropertyType());
