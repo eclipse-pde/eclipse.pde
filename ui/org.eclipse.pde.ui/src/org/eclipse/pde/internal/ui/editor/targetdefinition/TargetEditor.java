@@ -195,6 +195,10 @@ public class TargetEditor extends FormEditor {
 			setActivePage(fSourceTabIndex);
 			CoreException ce = new CoreException(Status.error(e.getMessage(), e));
 			showError(PDEUIMessages.TargetEditor_5, ce);
+		} catch (IllegalArgumentException e) {
+			setActivePage(fSourceTabIndex);
+			CoreException ce = new CoreException(Status.error(e.getMessage(), e));
+			showError(PDEUIMessages.TargetEditor_7, ce);
 		}
 	}
 
@@ -557,7 +561,7 @@ public class TargetEditor extends FormEditor {
 					ITargetHandle externalTarget = service.getTarget(((IURIEditorInput) fInput).getURI());
 					fTarget = externalTarget.getTargetDefinition();
 				}
-			} catch (CoreException e) {
+			} catch (CoreException | IllegalArgumentException e) {
 				fTarget = service.newTarget();
 				throw e;
 			}
