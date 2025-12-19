@@ -195,6 +195,10 @@ public class TargetEditor extends FormEditor {
 			setActivePage(fSourceTabIndex);
 			CoreException ce = new CoreException(Status.error(e.getMessage(), e));
 			showError(PDEUIMessages.TargetEditor_5, ce);
+		} catch (IllegalArgumentException e) {
+			setActivePage(fSourceTabIndex);
+			CoreException ce = new CoreException(Status.error(e.getMessage(), e));
+			showError(PDEUIMessages.TargetEditor_7, ce);
 		}
 	}
 
@@ -560,6 +564,9 @@ public class TargetEditor extends FormEditor {
 			} catch (CoreException e) {
 				fTarget = service.newTarget();
 				throw e;
+			} catch (IllegalArgumentException e) {
+				fTarget = service.newTarget();
+				throw new CoreException(Status.error(e.getMessage(), e));
 			}
 			PlatformUI.getWorkbench().getDisplay().asyncExec(
 					() -> TargetEditor.this.getTargetChangedListener().contentsChanged(fTarget, this, true, false));
