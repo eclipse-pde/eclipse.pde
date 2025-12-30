@@ -3212,6 +3212,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String TargetEditor_6;
 
+	public static String TargetEditor_7;
+
 	public static String FeatureImportWizardPage_importHasInvalid;
 
 	public static String ProductInfoSection_plugins;
