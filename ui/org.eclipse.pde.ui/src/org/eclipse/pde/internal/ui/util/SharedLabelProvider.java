@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2019 IBM Corporation and others.
+ *  Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -26,6 +26,7 @@ import java.util.zip.ZipFile;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ResourceLocator;
+import org.eclipse.jface.viewers.DecorationOverlayIcon;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -121,11 +122,12 @@ public class SharedLabelProvider extends LabelProvider implements ITableLabelPro
 		if (flags == 0) {
 			return baseDesc.createImage();
 		}
-		ImageDescriptor[] lowerLeft = getLowerLeftOverlays(flags);
-		ImageDescriptor[] upperRight = getUpperRightOverlays(flags);
-		ImageDescriptor[] lowerRight = getLowerRightOverlays(flags);
-		ImageDescriptor[] upperLeft = getUpperLeftOverlays(flags);
-		OverlayIcon compDesc = new OverlayIcon(baseDesc, new ImageDescriptor[][] {upperRight, lowerRight, lowerLeft, upperLeft});
+		ImageDescriptor lowerLeft = getLowerLeftOverlays(flags);
+		ImageDescriptor upperRight = getUpperRightOverlays(flags);
+		ImageDescriptor lowerRight = getLowerRightOverlays(flags);
+		ImageDescriptor upperLeft = getUpperLeftOverlays(flags);
+		DecorationOverlayIcon compDesc = new DecorationOverlayIcon(baseDesc.createImage(),
+				new ImageDescriptor[] { upperRight, lowerRight, lowerLeft, upperLeft });
 		return compDesc.createImage();
 	}
 
@@ -133,62 +135,63 @@ public class SharedLabelProvider extends LabelProvider implements ITableLabelPro
 		if (flags == 0) {
 			return baseImage;
 		}
-		ImageDescriptor[] lowerLeft = getLowerLeftOverlays(flags);
-		ImageDescriptor[] upperRight = getUpperRightOverlays(flags);
-		ImageDescriptor[] lowerRight = getLowerRightOverlays(flags);
-		ImageDescriptor[] upperLeft = getUpperLeftOverlays(flags);
-		ImageOverlayIcon compDesc = new ImageOverlayIcon(baseImage, new ImageDescriptor[][] {upperRight, lowerRight, lowerLeft, upperLeft});
+		ImageDescriptor lowerLeft = getLowerLeftOverlays(flags);
+		ImageDescriptor upperRight = getUpperRightOverlays(flags);
+		ImageDescriptor lowerRight = getLowerRightOverlays(flags);
+		ImageDescriptor upperLeft = getUpperLeftOverlays(flags);
+		DecorationOverlayIcon compDesc = new DecorationOverlayIcon(baseImage,
+				new ImageDescriptor[] { upperRight, lowerRight, lowerLeft, upperLeft });
 		return compDesc.createImage();
 	}
 
-	private ImageDescriptor[] getLowerLeftOverlays(int flags) {
+	private ImageDescriptor getLowerLeftOverlays(int flags) {
 		if ((flags & F_ERROR) != 0) {
-			return new ImageDescriptor[] {PDEPluginImages.DESC_ERROR_CO};
+			return PDEPluginImages.DESC_ERROR_CO;
 		}
 		if ((flags & F_WARNING) != 0) {
-			return new ImageDescriptor[] {PDEPluginImages.DESC_WARNING_CO};
+			return PDEPluginImages.DESC_WARNING_CO;
 		}
 		return null;
 	}
 
-	private ImageDescriptor[] getUpperRightOverlays(int flags) {
+	private ImageDescriptor getUpperRightOverlays(int flags) {
 		if ((flags & F_EXPORT) != 0) {
-			return new ImageDescriptor[] {PDEPluginImages.DESC_EXPORT_CO};
+			return PDEPluginImages.DESC_EXPORT_CO;
 		}
 		if ((flags & F_EDIT) != 0) {
-			return new ImageDescriptor[] {PDEPluginImages.DESC_DOC_CO};
+			return PDEPluginImages.DESC_DOC_CO;
 		}
 		if ((flags & F_JAVA) != 0) {
-			return new ImageDescriptor[] {PDEPluginImages.DESC_JAVA_CO};
+			return PDEPluginImages.DESC_JAVA_CO;
 		}
 		return null;
 	}
 
-	private ImageDescriptor[] getLowerRightOverlays(int flags) {
+	private ImageDescriptor getLowerRightOverlays(int flags) {
 		if ((flags & F_JAR) != 0) {
-			return new ImageDescriptor[] {PDEPluginImages.DESC_JAR_CO};
+			return PDEPluginImages.DESC_JAR_CO;
 		}
 		if ((flags & F_PROJECT) != 0) {
-			return new ImageDescriptor[] {PDEPluginImages.DESC_PROJECT_CO};
+			return PDEPluginImages.DESC_PROJECT_CO;
 		}
 		if ((flags & F_OPTIONAL) != 0) {
-			return new ImageDescriptor[] {PDEPluginImages.DESC_OPTIONAL_CO};
+			return PDEPluginImages.DESC_OPTIONAL_CO;
 		}
 		if ((flags & F_INTERNAL) != 0) {
-			return new ImageDescriptor[] {PDEPluginImages.DESC_INTERNAL_CO};
+			return PDEPluginImages.DESC_INTERNAL_CO;
 		}
 		if ((flags & F_FRIEND) != 0) {
-			return new ImageDescriptor[] {PDEPluginImages.DESC_FRIEND_CO};
+			return PDEPluginImages.DESC_FRIEND_CO;
 		}
 		return null;
 	}
 
-	private ImageDescriptor[] getUpperLeftOverlays(int flags) {
+	private ImageDescriptor getUpperLeftOverlays(int flags) {
 		if ((flags & F_EXTERNAL) != 0) {
-			return new ImageDescriptor[] {PDEPluginImages.DESC_EXTERNAL_CO};
+			return PDEPluginImages.DESC_EXTERNAL_CO;
 		}
 		if ((flags & F_BINARY) != 0) {
-			return new ImageDescriptor[] {PDEPluginImages.DESC_BINARY_CO};
+			return PDEPluginImages.DESC_BINARY_CO;
 		}
 		return null;
 	}
