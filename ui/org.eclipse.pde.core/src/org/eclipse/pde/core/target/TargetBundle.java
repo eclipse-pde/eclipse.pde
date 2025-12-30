@@ -91,23 +91,7 @@ public class TargetBundle {
 	 *             if there is a problem opening the bundle or its manifest
 	 */
 	public TargetBundle(File bundleLocation) throws CoreException {
-		this(bundleLocation, false);
-	}
-
-	/**
-	 * Constructs a target bundle for a local bundle. The bundle may be a
-	 * directory or an archive file. The manifest of the bundle will be read to
-	 * collect the additional information.
-	 *
-	 * @param bundleLocation
-	 *            the location of the bundle (directory or archive) to open
-	 * @param rewriteManifest
-	 *            if true, the manifest file is forced to be rewritten
-	 * @throws CoreException
-	 *             if there is a problem opening the bundle or its manifest
-	 */
-	public TargetBundle(File bundleLocation, boolean rewriteManifest) throws CoreException {
-		initialize(bundleLocation, rewriteManifest);
+		initialize(bundleLocation);
 	}
 
 	/**
@@ -187,14 +171,12 @@ public class TargetBundle {
 	 *
 	 * @param file
 	 *            the bundle to initialize from
-	 * @param rewriteManifest
-	 *            if true, the manifest file is forced to be rewritten
 	 */
-	private void initialize(File file, boolean rewriteManifest) throws CoreException {
+	private void initialize(File file) throws CoreException {
 		if (file == null || !file.exists()) {
 			throw new CoreException(Status.error(NLS.bind(Messages.TargetFeature_FileDoesNotExist, file)));
 		}
-		Map<String, String> manifest = ManifestUtils.loadManifest(file, rewriteManifest);
+		Map<String, String> manifest = ManifestUtils.loadManifest(file);
 		try {
 			fInfo = new BundleInfo(file.toURI()) {
 				private String manifestString;

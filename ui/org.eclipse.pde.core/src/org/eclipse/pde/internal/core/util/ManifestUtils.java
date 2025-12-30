@@ -123,45 +123,9 @@ public class ManifestUtils {
 	 *             problem converting as old style plug-in
 	 */
 	public static Map<String, String> loadManifest(File bundleLocation) throws CoreException {
-		return loadManifest(bundleLocation, false);
-	}
-
-	/**
-	 * Utility method to parse a bundle's manifest into a dictionary. The bundle
-	 * may be in a directory or an archive at the specified location. If the
-	 * manifest does not contain the necessary entries, the plugin.xml and
-	 * fragment.xml will be checked for an old style plug-in.
-	 * <p>
-	 * If this method is being called from a dev mode workspace, the returned
-	 * map should be passed to {@link TargetWeaver#weaveManifest(Map, File)} so
-	 * that the bundle classpath can be corrected.
-	 * </p>
-	 * <p>
-	 * This method is called by
-	 * org.eclipse.pde.api.tools.internal.model.BundleComponent.getManifest()
-	 * when OSGi is not running to load manifest information for a bundle.
-	 * </p>
-	 * <p>
-	 * TODO This method may be removed in favour of one that caches manifest
-	 * contents. Currently caching is not worthwhile as calling
-	 * <code>ManifestElement.parseManifest()</code> takes trivial time (under
-	 * 1ms) on repeat calls to the same file.
-	 * </p>
-	 *
-	 * @param bundleLocation
-	 *            root location of the bundle, may be a archive file or
-	 *            directory
-	 * @param rewriteManifest
-	 *            if true, manifest files are handled as invalid or missing
-	 * @return map of bundle manifest properties
-	 * @throws CoreException
-	 *             if manifest has invalid syntax, is missing or there is a
-	 *             problem converting as old style plug-in
-	 */
-	public static Map<String, String> loadManifest(File bundleLocation, boolean rewriteManifest) throws CoreException {
 		// Check if the file is a archive or a directory
 		try {
-			if (bundleLocation.isFile() && !rewriteManifest) {
+			if (bundleLocation.isFile()) {
 				ZipFile jarFile = null;
 				InputStream stream = null;
 				try {
@@ -184,7 +148,7 @@ public class ManifestUtils {
 			} else {
 				// Check the manifest.MF
 				File file = new File(bundleLocation, JarFile.MANIFEST_NAME);
-				if (file.exists() && !rewriteManifest) {
+				if (file.exists()) {
 					try (InputStream stream = new FileInputStream(file);) {
 						Map<String, String> map = ManifestElement.parseBundleManifest(stream, new HashMap<>(10));
 						if (map != null && map.containsKey(Constants.BUNDLE_SYMBOLICNAME)) {
