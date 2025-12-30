@@ -71,6 +71,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEManager;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.bnd.FileResource;
+import org.eclipse.pde.internal.core.builders.execenv.ExecEnvironmentUtils;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleFragmentModel;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
@@ -375,6 +376,109 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 		}
 		IFile pluginFile = (modelBase instanceof IBundleFragmentModel) ? PDEProject.getFragmentXml(project) : PDEProject.getPluginXml(project);
 		return new DeleteResourceChange(pluginFile.getFullPath(), true);
+	}
+
+	public static TextFileChange[] updateBree(final IProject project, final IBundle bundle) {
+
+		// Get the MANIFEST.MF file
+		IFile manifestFile = PDEProject.getManifest(project);
+		if (!manifestFile.exists()) {
+			return new TextFileChange[0];
+		}
+
+		return PDEModelUtility.changesForModelModication(new ModelModification(manifestFile) {
+			@Override
+			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
+
+				IBundleModel bundleModel = null;
+				BundleDescription desc = null;
+
+				// Handle both IBundleModel and IBundlePluginModelBase (which
+				// includes BundlePluginModel)
+				if (model instanceof IBundleModel) {
+					bundleModel = (IBundleModel) model;
+
+					// For pure bundle models, try to get bundle description via project lookup
+					// Use the project parameter that was passed to the function
+					// Approach 2: try finding by project name
+					IPluginModelBase projectModel = PluginRegistry.findModel(project);
+					if (projectModel != null) {
+						desc = projectModel.getBundleDescription();
+					} else {
+			            // Approach 3: Try workspace models
+		                IPluginModelBase[] workspaceModels = PluginRegistry.getWorkspaceModels();
+		                for (IPluginModelBase workspaceModel : workspaceModels) {
+		                    if (workspaceModel.getUnderlyingResource() != null &&
+		                        workspaceModel.getUnderlyingResource().getProject().equals(project)) {
+		                        desc = workspaceModel.getBundleDescription();
+		                        break;
+		                    }
+		                }
+		                if (desc == null) {
+							return;
+
+					}
+					}
+				} else if (model instanceof IBundlePluginModelBase) {
+					IBundlePluginModelBase bundlePluginModelBase = (IBundlePluginModelBase) model;
+					bundleModel = bundlePluginModelBase.getBundleModel();
+					// Get bundle description directly from the bundle plugin
+					// model
+					desc = bundlePluginModelBase.getBundleDescription();
+
+				} else {
+					return;
+				}
+
+
+				// Use unified approach for getting BundleDescription for both
+				// cases
+				IPluginModelBase projectModel = PluginRegistry.findModel(project);
+				if (projectModel != null) {
+					desc = projectModel.getBundleDescription();
+
+				} else {
+
+
+					// Fallback: Try workspace models
+					IPluginModelBase[] workspaceModels = PluginRegistry.getWorkspaceModels();
+					for (IPluginModelBase workspaceModel : workspaceModels) {
+						if (workspaceModel.getUnderlyingResource() != null
+								&& workspaceModel.getUnderlyingResource().getProject().equals(project)) {
+							desc = workspaceModel.getBundleDescription();
+							break;
+						}
+					}
+					if (desc == null) {
+						return;
+					}
+				}
+
+				IBundle modelBundle = bundleModel.getBundle();
+				if (modelBundle == null) {
+					return;
+				}
+
+				// Get current BREE from the model's bundle
+				IManifestHeader header = modelBundle.getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
+
+				String[] bundleEnvs = desc.getExecutionEnvironments();
+				ArrayList<Object> checkBREE = ExecEnvironmentUtils.checkBREE(desc);
+				String dependencyEE = !checkBREE.isEmpty() ? (String) checkBREE.get(0) : ""; //$NON-NLS-1$
+				String bundleEE = bundleEnvs != null ? ExecEnvironmentUtils.getHighestBREE(bundleEnvs) : ""; //$NON-NLS-1$
+				String correctEE = ExecEnvironmentUtils.getHighestEE(dependencyEE, bundleEE);
+
+				// only update if we found a higher BREE
+				if (!bundleEE.equals(correctEE)) {
+					if (header != null) {
+						header.setValue(correctEE);
+					} else {
+						bundle.setHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, correctEE);
+
+					}
+				}
+			}
+		}, null);
 	}
 
 	public static TextFileChange[] removeUnusedKeys(final IProject project, final IBundle bundle, final IPluginModelBase modelBase) {
