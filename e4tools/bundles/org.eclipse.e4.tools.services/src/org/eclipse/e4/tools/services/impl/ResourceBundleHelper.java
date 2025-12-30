@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2017 Dirk Fauth and others.
+ * Copyright (c) 2012, 2025 Dirk Fauth and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -347,7 +347,7 @@ public class ResourceBundleHelper {
 			variant = localeParts[2];
 		}
 
-		return new Locale(language, country, variant);
+		return Locale.of(language, country, variant);
 	}
 
 	/**
