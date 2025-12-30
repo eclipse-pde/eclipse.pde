@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2021 IBM Corporation and others.
+ * Copyright (c) 2006, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -34,7 +34,6 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -42,6 +41,8 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ContentAssistEvent;
 import org.eclipse.jface.text.contentassist.ICompletionListener;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.jface.viewers.DecorationOverlayIcon;
+import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.util.ManifestElement;
@@ -54,7 +55,6 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
-import org.eclipse.pde.internal.ui.util.ImageOverlayIcon;
 import org.eclipse.pde.internal.ui.util.PDEJavaHelperUI;
 import org.eclipse.swt.graphics.Image;
 import org.osgi.framework.BundleException;
@@ -885,7 +885,8 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 						return fImages[type] = PDEPluginImages.DESC_ATT_URI_OBJ.createImage();
 					case F_TYPE_DIRECTIVE :
 						fImages[F_TYPE_ATTRIBUTE] = PDEPluginImages.DESC_ATT_URI_OBJ.createImage();
-						ImageOverlayIcon icon = new ImageOverlayIcon(fImages[F_TYPE_ATTRIBUTE], new ImageDescriptor[][] {new ImageDescriptor[] {PDEPluginImages.DESC_DOC_CO}, null, null, null});
+						DecorationOverlayIcon icon = new DecorationOverlayIcon(fImages[F_TYPE_ATTRIBUTE],
+								PDEPluginImages.DESC_DOC_CO, IDecoration.TOP_RIGHT);
 						return fImages[type] = icon.createImage();
 					case F_TYPE_EXEC_ENV :
 						return fImages[type] = PDEPluginImages.DESC_JAVA_LIB_OBJ.createImage();
