@@ -81,15 +81,33 @@ public class TargetBundle {
 	protected String fSourcePath = null;
 
 	/**
-	 * Constructs a target bundle for a local bundle.  The bundle may be a directory or
-	 * an archive file. The manifest of the bundle will be read to collect the additional
-	 * information.
+	 * Constructs a target bundle for a local bundle. The bundle may be a
+	 * directory or an archive file. The manifest of the bundle will be read to
+	 * collect the additional information.
 	 *
-	 * @param bundleLocation the location of the bundle (directory or archive) to open
-	 * @throws CoreException if there is a problem opening the bundle or its manifest
+	 * @param bundleLocation
+	 *            the location of the bundle (directory or archive) to open
+	 * @throws CoreException
+	 *             if there is a problem opening the bundle or its manifest
 	 */
 	public TargetBundle(File bundleLocation) throws CoreException {
-		initialize(bundleLocation);
+		this(bundleLocation, false);
+	}
+
+	/**
+	 * Constructs a target bundle for a local bundle. The bundle may be a
+	 * directory or an archive file. The manifest of the bundle will be read to
+	 * collect the additional information.
+	 *
+	 * @param bundleLocation
+	 *            the location of the bundle (directory or archive) to open
+	 * @param rewriteManifest
+	 *            if true, the manifest file is forced to be rewritten
+	 * @throws CoreException
+	 *             if there is a problem opening the bundle or its manifest
+	 */
+	public TargetBundle(File bundleLocation, boolean rewriteManifest) throws CoreException {
+		initialize(bundleLocation, rewriteManifest);
 	}
 
 	/**
@@ -164,15 +182,19 @@ public class TargetBundle {
 	}
 
 	/**
-	 * Initializes the contents of this target bundle from the provided local bundle
+	 * Initializes the contents of this target bundle from the provided local
+	 * bundle
 	 *
-	 * @param file the bundle to initialize from
+	 * @param file
+	 *            the bundle to initialize from
+	 * @param rewriteManifest
+	 *            if true, the manifest file is forced to be rewritten
 	 */
-	private void initialize(File file) throws CoreException {
+	private void initialize(File file, boolean rewriteManifest) throws CoreException {
 		if (file == null || !file.exists()) {
 			throw new CoreException(Status.error(NLS.bind(Messages.TargetFeature_FileDoesNotExist, file)));
 		}
-		Map<String, String> manifest = ManifestUtils.loadManifest(file);
+		Map<String, String> manifest = ManifestUtils.loadManifest(file, rewriteManifest);
 		try {
 			fInfo = new BundleInfo(file.toURI()) {
 				private String manifestString;
