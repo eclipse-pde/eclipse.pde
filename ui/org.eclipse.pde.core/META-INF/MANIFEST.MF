@@ -130,7 +130,7 @@ Require-Bundle:
  org.eclipse.equinox.p2.touchpoint.eclipse;bundle-version="[2.4.100,3.0.0)",
  org.eclipse.core.expressions;bundle-version="[3.9.200,4.0.0)",
  org.eclipse.core.filesystem;bundle-version="[1.10.200,2.0.0)",
- org.eclipse.equinox.p2.publisher
+ org.eclipse.equinox.p2.publisher;bundle-version="[1.9.600,2.0.0)"
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: org.eclipse.pde.core
