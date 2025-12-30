@@ -52,13 +52,12 @@ public class UpdateUnitVersions extends AbstractHandler {
 				return null;
 			}
 
+			Node rootNode = null;
 			Parser parser = Parser.getDefault();
 			try {
-				parser.parse(document);
+				rootNode = parser.parse(document);
 			} catch (XMLStreamException e) {
-				return null;
 			}
-			Node rootNode = parser.getRootNode();
 			if (rootNode == null) {
 				return null;
 			}
