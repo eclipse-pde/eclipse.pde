@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2017 TwelveTone LLC and others.
+ * Copyright (c) 2014, 2025 TwelveTone LLC and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -90,12 +90,13 @@ public class ComboViewerAutoComplete {
 				// text will be unselected after we set the selection, so we
 				// need to delay the call
 				// THIS IS A WORKAROUND
-				final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
-				executor.schedule(
-						() -> dropDown.getCombo().getDisplay()
-						.syncExec(() -> dropDown.getCombo()
-								.setSelection(new Point(0, dropDown.getCombo().getText().length()))),
-						200, TimeUnit.MILLISECONDS);
+				try (ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1)) {
+					executor.schedule(
+							() -> dropDown.getCombo().getDisplay()
+									.syncExec(() -> dropDown.getCombo()
+											.setSelection(new Point(0, dropDown.getCombo().getText().length()))),
+							200, TimeUnit.MILLISECONDS);
+				}
 			}
 		});
 	}
