@@ -81,12 +81,14 @@ public class TargetBundle {
 	protected String fSourcePath = null;
 
 	/**
-	 * Constructs a target bundle for a local bundle.  The bundle may be a directory or
-	 * an archive file. The manifest of the bundle will be read to collect the additional
-	 * information.
+	 * Constructs a target bundle for a local bundle. The bundle may be a
+	 * directory or an archive file. The manifest of the bundle will be read to
+	 * collect the additional information.
 	 *
-	 * @param bundleLocation the location of the bundle (directory or archive) to open
-	 * @throws CoreException if there is a problem opening the bundle or its manifest
+	 * @param bundleLocation
+	 *            the location of the bundle (directory or archive) to open
+	 * @throws CoreException
+	 *             if there is a problem opening the bundle or its manifest
 	 */
 	public TargetBundle(File bundleLocation) throws CoreException {
 		initialize(bundleLocation);
@@ -164,9 +166,11 @@ public class TargetBundle {
 	}
 
 	/**
-	 * Initializes the contents of this target bundle from the provided local bundle
+	 * Initializes the contents of this target bundle from the provided local
+	 * bundle
 	 *
-	 * @param file the bundle to initialize from
+	 * @param file
+	 *            the bundle to initialize from
 	 */
 	private void initialize(File file) throws CoreException {
 		if (file == null || !file.exists()) {

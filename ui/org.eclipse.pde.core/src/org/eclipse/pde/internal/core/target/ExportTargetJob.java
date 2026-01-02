@@ -15,7 +15,9 @@
 package org.eclipse.pde.internal.core.target;
 
 import java.net.URI;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -220,8 +222,8 @@ public class ExportTargetJob extends Job {
 		IPath srcPath = IPath.fromOSString(src);
 
 		IFileStore source = fileSystem.getStore(srcPath);
-		String elementName = srcPath.segment(srcPath.segmentCount() - 1);
-		IFileStore destination = destinationParent.getChild(elementName);
+		String timestampedElementName = calculateTimestampedElementName(srcPath);
+		IFileStore destination = destinationParent.getChild(timestampedElementName);
 
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 1);
 
@@ -233,6 +235,16 @@ public class ExportTargetJob extends Job {
 		}
 		source.copy(destination, EFS.OVERWRITE, subMonitor.split(1));
 		return Status.OK_STATUS;
+	}
+
+	private String calculateTimestampedElementName(IPath srcPath) {
+		String elementName = srcPath.segment(srcPath.segmentCount() - 1);
+		int dotIndex = elementName.lastIndexOf('.');
+		String baseName = (dotIndex == -1) ? elementName : elementName.substring(0, dotIndex);
+		String extension = (dotIndex == -1) ? "" : elementName.substring(dotIndex); //$NON-NLS-1$
+
+		String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()); //$NON-NLS-1$
+		return baseName + "-" + timestamp + extension; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("restriction")
