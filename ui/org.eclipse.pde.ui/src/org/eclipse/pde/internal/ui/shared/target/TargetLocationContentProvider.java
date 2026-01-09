@@ -121,8 +121,12 @@ public class TargetLocationContentProvider implements ITreeContentProvider {
 			ITargetLocation[] containers = ((ITargetDefinition) inputElement).getTargetLocations();
 			if (containers != null) {
 				for (int i = 0; i < containers.length; i++) {
+					if (containers[i] == null) {
+						continue; // skip null values entirely
+					}
 					result.add(containers[i]);
-					if (containers[i].getStatus() != null && !containers[i].getStatus().isOK()) {
+					IStatus status = containers[i].getStatus();
+					if (status != null && status.isOK()) {
 						hasContainerStatus = true;
 					}
 				}
