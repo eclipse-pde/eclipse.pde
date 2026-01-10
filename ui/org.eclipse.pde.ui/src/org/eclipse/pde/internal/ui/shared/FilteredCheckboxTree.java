@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2010, 2018 IBM Corporation and others.
+ *  Copyright (c) 2010, 2026 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -68,7 +68,7 @@ public class FilteredCheckboxTree extends FilteredTree {
 	 * @param filter pattern filter to use in the filter control
 	 */
 	public FilteredCheckboxTree(Composite parent, FormToolkit toolkit, int treeStyle, PatternFilter filter) {
-		super(parent, true);
+		super(parent, true, true);
 		fToolkit = toolkit;
 		init(treeStyle, filter);
 	}
