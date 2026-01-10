@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Ed Scadding.
+ * Copyright (c) 2019, 2026 Ed Scadding and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -26,7 +26,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
 public class RootElementsFilteredTree extends FilteredTree {
 
 	public RootElementsFilteredTree(Composite parent, int treeStyle) {
-		super(parent, treeStyle, new RootElementsPatternFilter(), true);
+		super(parent, treeStyle, new RootElementsPatternFilter(), true, true);
 	}
 
 	/**

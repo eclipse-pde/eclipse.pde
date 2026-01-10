@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2015 IBM Corporation and others.
+ *  Copyright (c) 2006, 2026 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -35,7 +35,7 @@ public class FormFilteredTree extends FilteredTree {
 	private FormEntry fEntryFilter;
 
 	public FormFilteredTree(Composite parent, int treeStyle, PatternFilter filter) {
-		super(parent, treeStyle, filter, true);
+		super(parent, treeStyle, filter, true, true);
 	}
 
 	@Override
