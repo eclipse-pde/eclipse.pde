@@ -942,6 +942,10 @@ public class ApiComparator {
 										String typeName = typeRoot.getTypeName();
 										try {
 											IApiType typeDescriptor = typeRoot.getStructure();
+											if (typeDescriptor == null) {
+												// Added null check to prevent NPE observed in #1122
+												return;
+											}
 											IApiAnnotations elementDescription = reexportedApiDescription.resolveAnnotations(typeDescriptor.getHandle());
 											if (typeDescriptor.isMemberType() || typeDescriptor.isAnonymous() || typeDescriptor.isLocal()) {
 												// we skip nested types (member,
