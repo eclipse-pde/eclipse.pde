@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.framework.console.ConsoleSession;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IOConsoleOutputStream;
@@ -38,7 +39,8 @@ public class OSGiConsole extends IOConsole {
 	private final ConsoleSession session;
 
 	public OSGiConsole(final OSGiConsoleFactory factory) {
-		super(NLS.bind(PDEUIMessages.OSGiConsole_name, Platform.getInstallLocation().getURL().getPath()), TYPE, null, true);
+		super(NLS.bind(PDEUIMessages.OSGiConsole_name, Platform.getInstallLocation().getURL().getPath()), TYPE,
+				PDEPluginImages.DESC_OSGI_CONSOLE, true);
 		session = new ConsoleSession() {
 
 			@Override
