@@ -1,7 +1,7 @@
 package org.eclipse.pde.ds.internal.annotations.tests;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;

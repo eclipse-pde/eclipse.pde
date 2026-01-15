@@ -1,10 +1,10 @@
 package org.eclipse.pde.ds.internal.annotations.tests;
 
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 public abstract class CompilationParticipantTest extends TestBase {
 
@@ -12,9 +12,9 @@ public abstract class CompilationParticipantTest extends TestBase {
 
 	protected abstract String getTestProjectName();
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		testProject = ResourcesPlugin.getWorkspace().getRoot().getProject(getTestProjectName());
-		assumeTrue("Test project does not exist!", testProject.exists());
+		assumeTrue(testProject.exists(), "Test project does not exist!");
 	}
 }

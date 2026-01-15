@@ -1,13 +1,15 @@
 package org.eclipse.pde.ds.internal.annotations.tests;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+@ExtendWith(WorkspaceSetupExtension.class)
 public abstract class TestBase {
 
 	protected static final String DS_PROBLEM_MARKER = "org.eclipse.pde.ds.annotations.problem";
 
-	@Before
+	@BeforeEach
 	public void ensureWorkspaceReady() throws Exception {
-		AllDSAnnotationsTests.wsJob.join();
+		WorkspaceSetupExtension.getWorkspaceJob().join();
 	}
 }
