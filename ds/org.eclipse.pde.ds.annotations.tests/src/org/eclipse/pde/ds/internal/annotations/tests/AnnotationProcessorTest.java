@@ -1,8 +1,8 @@
 package org.eclipse.pde.ds.internal.annotations.tests;
 
-import static org.junit.Assume.assumeTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -14,8 +14,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.text.Document;
 import org.eclipse.pde.internal.ds.core.IDSModel;
 import org.eclipse.pde.internal.ds.core.text.DSModel;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 @SuppressWarnings("restriction")
 public abstract class AnnotationProcessorTest extends TestBase {
@@ -28,10 +28,10 @@ public abstract class AnnotationProcessorTest extends TestBase {
 
 	protected abstract String getComponentDescriptorPath();
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		testProject = ResourcesPlugin.getWorkspace().getRoot().getProject(getTestProjectName());
-		assumeTrue("Test project does not exist!", testProject.exists());
+		assumeTrue(testProject.exists(), "Test project does not exist!");
 
 		IFile dsFile = testProject.getFile(IPath.fromOSString(getComponentDescriptorPath()));
 		assertTrue(dsFile.exists(),"Missing component descriptor!");
@@ -52,7 +52,7 @@ public abstract class AnnotationProcessorTest extends TestBase {
 		assertNotNull(dsModel.getDSComponent());
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		if (dsModel != null) {
 			dsModel.dispose();
