@@ -55,7 +55,7 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
  */
 public class ApiErrorsWarningsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
-	public static final String DATA_SELECT_OPTION_KEY = "select_option_key"; //$NON-NLS-1$
+	public static final String DATA_SELECT_OPTION_KEY = "select_option_key"; //$NON-NLS-1$ /pp
 	public static final String DATA_SELECT_OPTION_QUALIFIER = "select_option_qualifier"; //$NON-NLS-1$
 
 	/**
