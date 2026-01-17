@@ -305,7 +305,8 @@ public class PDEModelUtility {
 		}
 	}
 
-	public static TextFileChange[] changesForModelModication(final ModelModification modification, final IProgressMonitor monitor) {
+	public static TextFileChange[] changesForModelModification(final ModelModification modification,
+			final IProgressMonitor monitor) {
 		final PDEFormEditor editor = getOpenEditor(modification);
 		if (editor != null) {
 			Display.getDefault().syncExec(() -> {

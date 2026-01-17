@@ -110,7 +110,7 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 
 	private void getChangeForBuild(IFile buildPropsFile, IProgressMonitor monitor, CompositeChange parent, final String localization) {
 		// Create change
-		TextFileChange[] changes = PDEModelUtility.changesForModelModication(new ModelModification(buildPropsFile) {
+		TextFileChange[] changes = PDEModelUtility.changesForModelModification(new ModelModification(buildPropsFile) {
 			@Override
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 
@@ -192,7 +192,7 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 			return;
 		}
 		final String localiz = change.getBundleLocalization();
-		TextFileChange[] result = PDEModelUtility.changesForModelModication(new ModelModification(manifest) {
+		TextFileChange[] result = PDEModelUtility.changesForModelModification(new ModelModification(manifest) {
 			@Override
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 				if (model instanceof IBundlePluginModelBase bundleModel) {

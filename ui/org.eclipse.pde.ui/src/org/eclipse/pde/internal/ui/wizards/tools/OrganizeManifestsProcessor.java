@@ -136,7 +136,7 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 				}
 			}
 		};
-		Change[] changes = PDEModelUtility.changesForModelModication(modification, subMonitor);
+		Change[] changes = PDEModelUtility.changesForModelModification(modification, subMonitor);
 		for (Change changeItem : changes) {
 			change.add(changeItem);
 		}
