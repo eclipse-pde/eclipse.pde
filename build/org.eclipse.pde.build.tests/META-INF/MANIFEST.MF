@@ -7,7 +7,7 @@ Bundle-Activator: org.eclipse.pde.build.tests.Activator
 Export-Package: org.eclipse.pde.build.internal.tests;x-internal:=true,
  org.eclipse.pde.build.internal.tests.ant;x-internal:=true,
  org.eclipse.pde.build.internal.tests.p2;x-internal:=true,
- org.eclipse.pde.build.tests
+ org.eclipse.pde.build.tests;uses:="org.apache.tools.ant,org.eclipse.core.resources,org.osgi.framework"
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.pde.build;bundle-version="[3.12.300,4.0.0)",
  org.eclipse.ant.core,
@@ -25,7 +25,6 @@ Import-Package: org.eclipse.equinox.frameworkadmin;version="2.0.0",
  org.eclipse.equinox.p2.core;version="[2.0.0,3.0.0)",
  org.eclipse.equinox.p2.metadata;version="[2.0.0,3.0.0)",
  org.eclipse.equinox.p2.query;version="[2.0.0,3.0.0)",
- org.eclipse.equinox.p2.repository;version="[2.0.0,3.0.0)",
  org.eclipse.equinox.p2.repository.artifact;version="[2.0.0,3.0.0)",
  org.eclipse.equinox.p2.repository.metadata;version="[2.0.0,3.0.0)",
  org.eclipse.equinox.simpleconfigurator.manipulator;version="2.0.0",
