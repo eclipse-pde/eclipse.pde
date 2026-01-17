@@ -94,7 +94,7 @@ public class WorkspaceSetupExtension implements BeforeAllCallback, AfterAllCallb
 		if (wsJob != null) {
 			wsJob.cancel();
 		}
-		
+
 		final IWorkspaceRoot wsRoot = ResourcesPlugin.getWorkspace().getRoot();
 		wsJob = new WorkspaceJob("Test Workspace Cleanup") {
 			@Override
