@@ -27,6 +27,7 @@ Export-Package:
  org.eclipse.pde.internal.core.bnd;x-friends:="org.eclipse.pde.ui,org.eclipse.pde.launching",
  org.eclipse.pde.internal.core.build;x-friends:="org.eclipse.pde.ui,org.eclipse.pde.ds.ui,org.eclipse.pde.ua.ui",
  org.eclipse.pde.internal.core.builders;x-friends:="org.eclipse.pde.ui,org.eclipse.pde.launching,org.eclipse.pde.ds.core",
+ org.eclipse.pde.internal.core.builders.execenv,
  org.eclipse.pde.internal.core.bundle;x-friends:="org.eclipse.pde.ui,org.eclipse.pde.ds.ui",
  org.eclipse.pde.internal.core.content;x-internal:=true,
  org.eclipse.pde.internal.core.exports;x-friends:="org.eclipse.pde.ui",
