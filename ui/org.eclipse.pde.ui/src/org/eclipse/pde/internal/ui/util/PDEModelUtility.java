@@ -24,6 +24,7 @@ import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
@@ -66,7 +67,10 @@ import org.eclipse.text.edits.TextEdit;
 import org.eclipse.text.edits.TextEditGroup;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.part.FileEditorInput;
 import org.osgi.framework.Constants;
@@ -290,7 +294,8 @@ public class PDEModelUtility {
 	public static void modifyModel(final ModelModification modification, final IProgressMonitor monitor) {
 		// ModelModification was not supplied with the right files
 		// TODO should we just fail silently?
-		if (modification.getFile() == null) {
+		IFile file = modification.getFile();
+		if (file == null) {
 			return;
 		}
 
@@ -301,8 +306,44 @@ public class PDEModelUtility {
 			// open editor found, should have underlying text listeners -> apply modification
 			modifyEditorModel(modification, editor, model, monitor);
 		} else {
-			generateModelEdits(modification, monitor, true);
+			boolean needUIthread = isEditorOpenedOn(file);
+			if (needUIthread) {
+				// Code below requires UI thread to perform text edits on
+				// AbstractDocument if an open editor exists for the file
+				Display.getDefault().execute(() -> {
+					// Run asynchronously to avoid potential deadlocks between
+					// UI / non UI code while changing SynchronizableDocument
+					generateModelEdits(modification, monitor, true);
+				});
+			} else {
+				generateModelEdits(modification, monitor, true);
+			}
 		}
+	}
+
+	/**
+	 * Checks to see if any open editor is opened on the given file.
+	 *
+	 * @param file
+	 *            the file to check against, non null
+	 * @return true if an open editor is found on given file
+	 */
+	private static boolean isEditorOpenedOn(IFile file) {
+		if (!PlatformUI.isWorkbenchRunning()) {
+			return false;
+		}
+		for (IWorkbenchWindow window : PlatformUI.getWorkbench().getWorkbenchWindows()) {
+			for (IEditorReference editorReference : window.getActivePage().getEditorReferences()) {
+				IEditorPart part = editorReference.getEditor(false);
+				if (part != null) {
+					IFile ifile = Adapters.adapt(part.getEditorInput(), IFile.class);
+					if (file.equals(ifile)) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	public static TextFileChange[] changesForModelModication(final ModelModification modification, final IProgressMonitor monitor) {
