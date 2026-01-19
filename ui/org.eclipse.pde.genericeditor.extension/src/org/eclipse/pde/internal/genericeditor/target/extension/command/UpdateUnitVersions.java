@@ -52,7 +52,7 @@ public class UpdateUnitVersions extends AbstractHandler {
 				return null;
 			}
 
-			Parser parser = Parser.getDefault();
+			Parser parser = new Parser();
 			try {
 				parser.parse(document);
 			} catch (XMLStreamException e) {
