@@ -15,10 +15,10 @@ package org.eclipse.pde.api.tools.internal.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -50,9 +50,10 @@ public class ProjectTypeContainer extends ApiElement implements IApiTypeContaine
 	private String[] fPackageNames;
 
 	/**
-	 * Optional package fragment root for JDT-based package discovery
+	 * Package fragment roots for JDT-based package discovery. Multiple roots
+	 * may exist when several source folders share the same output location.
 	 */
-	private final IPackageFragmentRoot fPackageFragmentRoot;
+	private final List<IPackageFragmentRoot> fPackageFragmentRoots = new CopyOnWriteArrayList<>();
 
 	/**
 	 * Constructs an {@link IApiTypeContainer} rooted at the location with an
@@ -67,7 +68,24 @@ public class ProjectTypeContainer extends ApiElement implements IApiTypeContaine
 	public ProjectTypeContainer(IApiElement parent, IContainer container, IPackageFragmentRoot packageFragmentRoot) {
 		super(parent, IApiElement.API_TYPE_CONTAINER, container.getName());
 		this.fRoot = container;
-		this.fPackageFragmentRoot = Objects.requireNonNull(packageFragmentRoot);
+		if (packageFragmentRoot != null) {
+			this.fPackageFragmentRoots.add(packageFragmentRoot);
+		}
+	}
+
+	/**
+	 * Adds an additional package fragment root to this container. This is used
+	 * when multiple source folders share the same output location.
+	 *
+	 * @param root the package fragment root to add
+	 * @since 1.3.400
+	 */
+	public void addPackageFragmentRoot(IPackageFragmentRoot root) {
+		if (root != null && !fPackageFragmentRoots.contains(root)) {
+			fPackageFragmentRoots.add(root);
+			// Clear cached package names so they will be recomputed
+			fPackageNames = null;
+		}
 	}
 
 	@Override
@@ -159,8 +177,10 @@ public class ProjectTypeContainer extends ApiElement implements IApiTypeContaine
 	public String[] getPackageNames() throws CoreException {
 		if (fPackageNames == null) {
 			SortedSet<String> names = new TreeSet<>();
-			if (fPackageFragmentRoot.exists()) {
-				collectPackageNames(names, fPackageFragmentRoot);
+			for (IPackageFragmentRoot root : fPackageFragmentRoots) {
+				if (root.exists()) {
+					collectPackageNames(names, root);
+				}
 			}
 			fPackageNames = names.toArray(String[]::new);
 		}
