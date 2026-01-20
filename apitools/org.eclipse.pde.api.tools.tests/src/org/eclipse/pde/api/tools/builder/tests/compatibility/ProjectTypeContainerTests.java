@@ -261,7 +261,9 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 		IApiTypeContainer[] containers = component.getApiTypeContainers();
 		assertEquals("Wrong number of API type containers", 1, containers.length); //$NON-NLS-1$
 		IApiTypeContainer container = containers[0];
-		assertEquals("Should be a composite type container", IApiTypeContainer.COMPOSITE, //$NON-NLS-1$
+		// A single ProjectTypeContainer handles multiple source roots sharing
+		// the same output location by tracking all package fragment roots
+		assertEquals("Should be a folder type container", IApiTypeContainer.FOLDER, //$NON-NLS-1$
 				container.getContainerType());
 
 		String[] packageNames = container.getPackageNames();

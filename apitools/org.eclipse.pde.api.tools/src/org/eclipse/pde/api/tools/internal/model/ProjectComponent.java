@@ -14,7 +14,6 @@
 package org.eclipse.pde.api.tools.internal.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -419,30 +418,11 @@ public class ProjectComponent extends BundleComponent {
 						}
 						cfc = new ProjectTypeContainer(component, container, root);
 						outputLocationToContainer.put(outputLocation, cfc);
-					} else {
+					} else if (cfc instanceof ProjectTypeContainer) {
 						// Multiple source folders share the same output location
-						// Create a composite container to include packages from all source roots
-						List<IApiTypeContainer> containers = new ArrayList<>();
-						if (cfc instanceof CompositeApiTypeContainer) {
-							// Already a composite, add to it
-							IApiTypeContainer[] typeContainers = ((CompositeApiTypeContainer) cfc)
-									.getApiTypeContainers();
-							containers.addAll(Arrays.asList(typeContainers));
-						} else {
-							// Convert single container to composite
-							containers.add(cfc);
-						}
-						// Add new container for this source root
-						IPath projectFullPath = project.getProject().getFullPath();
-						IContainer container = null;
-						if (projectFullPath.equals(outputLocation)) {
-							container = project.getProject();
-						} else {
-							container = project.getProject().getWorkspace().getRoot().getFolder(outputLocation);
-						}
-						containers.add(new ProjectTypeContainer(component, container, root));
-						cfc = new CompositeApiTypeContainer(component, containers);
-						outputLocationToContainer.put(outputLocation, cfc);
+						// Add the new package fragment root to the existing container
+						// so it can discover packages from all source roots
+						((ProjectTypeContainer) cfc).addPackageFragmentRoot(root);
 					}
 					return cfc;
 				}
