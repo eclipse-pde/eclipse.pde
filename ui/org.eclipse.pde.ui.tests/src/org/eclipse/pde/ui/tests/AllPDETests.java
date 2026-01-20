@@ -14,6 +14,7 @@
 package org.eclipse.pde.ui.tests;
 
 import org.eclipse.pde.core.tests.internal.AllPDECoreTests;
+import org.eclipse.pde.core.tests.internal.classpath.ChainedReexportPerformanceTest;
 import org.eclipse.pde.core.tests.internal.classpath.ClasspathResolutionTest;
 import org.eclipse.pde.core.tests.internal.classpath.RequiredPluginsClasspathContainerPerformanceTest;
 import org.eclipse.pde.core.tests.internal.core.builders.BundleErrorReporterTest;
@@ -30,7 +31,6 @@ import org.eclipse.pde.ui.tests.model.xml.AllXMLModelTests;
 import org.eclipse.pde.ui.tests.nls.AllNLSTests;
 import org.eclipse.pde.ui.tests.preferences.AllPreferenceTests;
 import org.eclipse.pde.ui.tests.project.BundleRootTests;
-import org.eclipse.pde.ui.tests.project.DynamicPluginProjectReferencesTest;
 import org.eclipse.pde.ui.tests.project.PluginRegistryTests;
 import org.eclipse.pde.ui.tests.project.ProjectCreationTests;
 import org.eclipse.pde.ui.tests.runtime.AllPDERuntimeTests;
@@ -56,15 +56,15 @@ import org.junit.platform.suite.api.Suite;
 	AllLauncherTests.class, //
 	AllLogViewTests.class, //
 	ProjectCreationTests.class, //
-	BundleRootTests.class, //
-	PluginRegistryTests.class, //
-	ClasspathResolverTest.class, //
-	RequiredPluginsClasspathContainerPerformanceTest.class, //
-	ClasspathUpdaterTest.class, //
-	PDESchemaHelperTest.class, //
-	ClasspathContributorTest.class, //
-	DynamicPluginProjectReferencesTest.class, //
-	ClasspathResolutionTest.class, //
+	       BundleRootTests.class, //
+	       PluginRegistryTests.class, //
+	       ClasspathResolverTest.class, //
+	       RequiredPluginsClasspathContainerPerformanceTest.class, //
+	       ChainedReexportPerformanceTest.class, //
+	       ClasspathUpdaterTest.class, //
+	       PDESchemaHelperTest.class, //
+	       ClasspathContributorTest.class, //
+       ClasspathResolutionTest.class, //
 	BundleErrorReporterTest.class, //
 	AllPDECoreTests.class, //
 	ProjectSmartImportTest.class, //

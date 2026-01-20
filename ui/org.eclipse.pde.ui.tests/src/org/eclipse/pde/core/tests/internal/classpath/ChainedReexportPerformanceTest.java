@@ -1,5 +1,7 @@
 package org.eclipse.pde.core.tests.internal.classpath;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -10,7 +12,6 @@ import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -19,22 +20,20 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.pde.core.build.IBuild;
-import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.pde.core.project.IBundleProjectService;
+import org.eclipse.pde.core.project.IRequiredBundleDescription;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
-import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.ui.wizards.tools.UpdateClasspathJob;
 import org.eclipse.pde.ui.tests.runtime.TestUtils;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
 import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
+import org.eclipse.swt.widgets.Display;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -42,9 +41,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.osgi.framework.Version;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-public class RequiredPluginsClasspathContainerPerformanceTest {
+public class ChainedReexportPerformanceTest {
 
 	@BeforeAll
 	public static void beforeAll() throws Exception {
@@ -56,7 +53,10 @@ public class RequiredPluginsClasspathContainerPerformanceTest {
 		// ProjectUtils.deleteAllWorkspaceProjects();
 	}
 
-	private static final String CYCLE_BUNDLE_PREFIX = "Cycle_";
+	private static final String CHAIN_PREFIX = "Chain_";
+	private static final int PACKAGE_COUNT = 1000;
+	private static final int BUNDLE_CHAIN_DEPTH = 5;
+	private static final boolean DEBUG = false;
 	private File targetDir;
 
 	@BeforeEach
@@ -66,9 +66,9 @@ public class RequiredPluginsClasspathContainerPerformanceTest {
 		desc.setAutoBuilding(false);
 		ResourcesPlugin.getWorkspace().setDescription(desc);
 
-		targetDir = Files.createTempDirectory("pde_perf_target").toFile();
+		targetDir = Files.createTempDirectory("pde_chain_perf_target").toFile();
 		System.out.println("Target Platform Location: " + targetDir.getAbsolutePath());
-		createCyclicTargetPlatform();
+		createChainedTargetPlatform();
 	}
 
 	@AfterEach
@@ -77,30 +77,33 @@ public class RequiredPluginsClasspathContainerPerformanceTest {
 		IWorkspaceDescription desc = ResourcesPlugin.getWorkspace().getDescription();
 		desc.setAutoBuilding(true);
 		ResourcesPlugin.getWorkspace().setDescription(desc);
-
-//		if (targetDir != null && targetDir.exists()) {
-//			deleteDir(targetDir);
-//		}
-		
-		// Reset target platform
-//		ITargetPlatformService tps = PDECore.getDefault().acquireService(ITargetPlatformService.class);
-//		ITargetDefinition defaultTarget = tps.newDefaultTarget();
-//		TargetPlatformUtil.loadAndSetTarget(defaultTarget);
 	}
 
-	private void createCyclicTargetPlatform() throws Exception {
-		// Cycle_A -> reexports Cycle_B
-		// Cycle_B -> reexports Cycle_C
-		// Cycle_C -> reexports Cycle_A
-		createBundle(targetDir, CYCLE_BUNDLE_PREFIX + "A", null, CYCLE_BUNDLE_PREFIX + "B;visibility:=reexport");
-		createBundle(targetDir, CYCLE_BUNDLE_PREFIX + "B", null, CYCLE_BUNDLE_PREFIX + "C;visibility:=reexport");
-		createBundle(targetDir, CYCLE_BUNDLE_PREFIX + "C", null, CYCLE_BUNDLE_PREFIX + "A;visibility:=reexport");
+	private void createChainedTargetPlatform() throws Exception {
+		// Create a chain of bundles: B_0 -> B_1 -> ... -> B_N (all re-exporting)
+		for (int i = 0; i < BUNDLE_CHAIN_DEPTH; i++) {
+			String name = CHAIN_PREFIX + i;
+			String exports = createPackageExports(name);
+			String requires = (i > 0) ? (CHAIN_PREFIX + (i - 1) + ";visibility:=reexport") : null;
+			createBundle(targetDir, name, exports, requires);
+		}
 
 		// Set Target Platform
 		ITargetPlatformService tps = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 		ITargetDefinition target = tps.newTarget();
 		target.setTargetLocations(new ITargetLocation[] { tps.newDirectoryLocation(targetDir.getAbsolutePath()) });
 		TargetPlatformUtil.loadAndSetTarget(target);
+	}
+
+	private String createPackageExports(String bundleName) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < PACKAGE_COUNT; i++) {
+			if (sb.length() > 0) {
+				sb.append(",");
+			}
+			sb.append(bundleName).append(".pkg.").append(i);
+		}
+		return sb.toString();
 	}
 
 	private void createBundle(File dir, String name, String exports, String requires) throws IOException {
@@ -127,10 +130,9 @@ public class RequiredPluginsClasspathContainerPerformanceTest {
 	}
 
 	@Test
-	public void testCyclicReexportInSecondaryDependencies() throws Exception {
+	public void testChainedReexportPerformance() throws Exception {
 		IBundleProjectService service = PDECore.getDefault().acquireService(IBundleProjectService.class);
 
-		// Create Consumer project
 		String consumerName = "ConsumerBundle";
 		IProject consumerProj = ResourcesPlugin.getWorkspace().getRoot().getProject(consumerName);
 		consumerProj.create(null);
@@ -139,22 +141,13 @@ public class RequiredPluginsClasspathContainerPerformanceTest {
 		IBundleProjectDescription consumerDesc = service.getDescription(consumerProj);
 		consumerDesc.setSymbolicName(consumerName);
 		consumerDesc.setBundleVersion(new Version("1.0.0"));
-		// No direct requirements, we use secondaryDependencies
+
+		// Require the last bundle in the chain with re-export
+		IRequiredBundleDescription mainReq = service.newRequiredBundle(CHAIN_PREFIX + (BUNDLE_CHAIN_DEPTH - 1), null, false, true);
+		consumerDesc.setRequiredBundles(new IRequiredBundleDescription[] { mainReq });
+
 		consumerDesc.setNatureIds(new String[] { JavaCore.NATURE_ID, IBundleProjectDescription.PLUGIN_NATURE });
 		consumerDesc.apply(null);
-		
-		// Add Secondary Dependency to build.properties
-		IFile buildProps = PDEProject.getBuildProperties(consumerProj);
-		WorkspaceBuildModel buildModel = new WorkspaceBuildModel(buildProps);
-		buildModel.load();
-		IBuild build = buildModel.getBuild();
-		IBuildEntry entry = build.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
-		if (entry == null) {
-			entry = buildModel.getFactory().createEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
-			build.add(entry);
-		}
-		entry.addToken(CYCLE_BUNDLE_PREFIX + "A");
-		buildModel.save();
 
 		// Build to ensure models are ready
 		ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
@@ -166,19 +159,57 @@ public class RequiredPluginsClasspathContainerPerformanceTest {
 		}
 
 		long start = System.currentTimeMillis();
-		
-		// This triggers the computation via Job
-		Job job = UpdateClasspathJob.scheduleFor(List.of(consumerModel), false);
-		job.join();
-		
+
+		// This triggers the computation
+		UpdateClasspathJob.scheduleFor(List.of(consumerModel), false);
+		waitForJobsAndUI(60000);
+
 		long elapsed = System.currentTimeMillis() - start;
-		System.out.println("Classpath computation took: " + elapsed + "ms for cyclic re-exported bundles.");
-		
-		if (elapsed > 5000) {
-			throw new AssertionError("Performance regression or Infinite Loop: Classpath computation took too long (" + elapsed + "ms)");
+		System.out.println("Classpath computation took: " + elapsed + "ms for chained re-exports.");
+
+		if (elapsed > 10000) {
+			throw new AssertionError("Performance regression: Classpath computation took too long (" + elapsed + "ms)");
 		}
-		
+
 		IClasspathEntry[] resolvedClasspath = JavaCore.create(consumerProj).getRawClasspath();
 		assertTrue(resolvedClasspath.length > 0, "Classpath should not be empty");
+
+		if (DEBUG) {
+			long endTime = System.currentTimeMillis() + 6000000;
+			while (System.currentTimeMillis() < endTime) {
+				if (!Display.getDefault().readAndDispatch()) {
+					Display.getDefault().sleep();
+				}
+			}
+		}
+	}
+
+	private void waitForJobsAndUI(long timeoutMillis) {
+		long start = System.currentTimeMillis();
+
+		while (System.currentTimeMillis() - start < timeoutMillis) {
+			// Process UI events
+			while (Display.getDefault().readAndDispatch()) {
+				// Keep processing
+			}
+
+			// Check if all jobs are done
+			if (Job.getJobManager().isIdle()) {
+				// Process any final UI events
+				while (Display.getDefault().readAndDispatch()) {
+					// Keep processing
+				}
+				return;
+			}
+
+			try {
+				Thread.sleep(50);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				return;
+			}
+		}
+
+		throw new AssertionError("Timeout waiting for jobs to complete");
 	}
 }
