@@ -219,7 +219,7 @@ class RequiredPluginsClasspathContainer {
 				return List.of();
 			}
 
-			Map<BundleDescription, List<Rule>> map = retrieveVisiblePackagesFromState(desc);
+			Map<BundleDescription, Set<Rule>> map = retrieveVisiblePackagesFromState(desc);
 
 			// Add any library entries contributed via classpath contributor
 			// extension (Bug 363733)
@@ -331,8 +331,8 @@ class RequiredPluginsClasspathContainer {
 		return Stream.concat(fClasspathContributors.stream(), PDECore.getDefault().getClasspathContributors());
 	}
 
-	private Map<BundleDescription, List<Rule>> retrieveVisiblePackagesFromState(BundleDescription desc) {
-		Map<BundleDescription, List<Rule>> visiblePackages = new HashMap<>();
+	private Map<BundleDescription, Set<Rule>> retrieveVisiblePackagesFromState(BundleDescription desc) {
+		Map<BundleDescription, Set<Rule>> visiblePackages = new HashMap<>();
 		StateHelper helper = BundleHelper.getPlatformAdmin().getStateHelper();
 		addVisiblePackagesFromState(helper, desc, visiblePackages);
 		if (desc.getHost() != null) {
@@ -342,7 +342,7 @@ class RequiredPluginsClasspathContainer {
 	}
 
 	private void addVisiblePackagesFromState(StateHelper helper, BundleDescription desc,
-			Map<BundleDescription, List<Rule>> visiblePackages) {
+			Map<BundleDescription, Set<Rule>> visiblePackages) {
 		if (desc == null) {
 			return;
 		}
@@ -352,11 +352,9 @@ class RequiredPluginsClasspathContainer {
 			if (exporter == null) {
 				continue;
 			}
-			List<Rule> list = visiblePackages.computeIfAbsent(exporter, e -> new ArrayList<>());
+			Set<Rule> list = visiblePackages.computeIfAbsent(exporter, e -> new LinkedHashSet<>());
 			Rule rule = getRule(helper, desc, export);
-			if (!list.contains(rule)) {
-				list.add(rule);
-			}
+			list.add(rule);
 		}
 	}
 
@@ -368,7 +366,7 @@ class RequiredPluginsClasspathContainer {
 	}
 
 	protected void addDependencyViaImportPackage(BundleDescription desc, Set<BundleDescription> added,
-			Map<BundleDescription, List<Rule>> map, List<IClasspathEntry> entries) throws CoreException {
+			Map<BundleDescription, Set<Rule>> map, List<IClasspathEntry> entries) throws CoreException {
 		if (desc == null || !added.add(desc)) {
 			return;
 		}
@@ -386,12 +384,12 @@ class RequiredPluginsClasspathContainer {
 	}
 
 	private void addDependency(BundleDescription desc, Set<BundleDescription> added,
-			Map<BundleDescription, List<Rule>> map, List<IClasspathEntry> entries) throws CoreException {
+			Map<BundleDescription, Set<Rule>> map, List<IClasspathEntry> entries) throws CoreException {
 		addDependency(desc, added, map, entries, true);
 	}
 
 	private void addDependency(BundleDescription desc, Set<BundleDescription> added,
-			Map<BundleDescription, List<Rule>> map, List<IClasspathEntry> entries, boolean useInclusion)
+			Map<BundleDescription, Set<Rule>> map, List<IClasspathEntry> entries, boolean useInclusion)
 			throws CoreException {
 		if (desc == null || !added.add(desc)) {
 			return;
@@ -434,7 +432,7 @@ class RequiredPluginsClasspathContainer {
 		}
 	}
 
-	private boolean addPlugin(BundleDescription desc, boolean useInclusions, Map<BundleDescription, List<Rule>> map,
+	private boolean addPlugin(BundleDescription desc, boolean useInclusions, Map<BundleDescription, Set<Rule>> map,
 			List<IClasspathEntry> entries) throws CoreException {
 		IPluginModelBase model = PluginRegistry.findModel((Resource) desc);
 		if (model == null || !model.isEnabled()) {
@@ -462,7 +460,7 @@ class RequiredPluginsClasspathContainer {
 		return true;
 	}
 
-	private List<Rule> getInclusions(Map<BundleDescription, List<Rule>> map, IPluginModelBase model) {
+	private List<Rule> getInclusions(Map<BundleDescription, Set<Rule>> map, IPluginModelBase model) {
 		BundleDescription desc = model.getBundleDescription();
 		if (desc == null || "false".equals(System.getProperty("pde.restriction")) //$NON-NLS-1$ //$NON-NLS-2$
 				|| !(fModel instanceof IBundlePluginModelBase) || TargetPlatformHelper.getTargetVersion() < 3.1) {
@@ -472,12 +470,12 @@ class RequiredPluginsClasspathContainer {
 		if (desc.getHost() != null) {
 			desc = (BundleDescription) desc.getHost().getSupplier();
 		}
-		List<Rule> rules = map.getOrDefault(desc, List.of());
-		return (rules.isEmpty() && !ClasspathUtilCore.hasBundleStructure(model)) ? null : rules;
+		Set<Rule> rules = map.getOrDefault(desc, Set.of());
+		return (rules.isEmpty() && !ClasspathUtilCore.hasBundleStructure(model)) ? null : new ArrayList<>(rules);
 	}
 
 	private void addHostPlugin(HostSpecification hostSpec, Set<BundleDescription> added,
-			Map<BundleDescription, List<Rule>> map, List<IClasspathEntry> entries) throws CoreException {
+			Map<BundleDescription, Set<Rule>> map, List<IClasspathEntry> entries) throws CoreException {
 		BaseDescription desc = hostSpec.getSupplier();
 
 		if (desc instanceof BundleDescription host) {
@@ -621,7 +619,7 @@ class RequiredPluginsClasspathContainer {
 			}
 
 			// add dependency with exclude all rule
-			Map<BundleDescription, List<Rule>> rules = Map.of(desc, List.of());
+			Map<BundleDescription, Set<Rule>> rules = Map.of(desc, Set.of());
 			addPlugin(desc, true, rules, entries);
 		}
 	}
@@ -674,21 +672,24 @@ class RequiredPluginsClasspathContainer {
 			if (added.contains(bundleDesc)) {
 				return;
 			}
-			Map<BundleDescription, List<Rule>> rules = new HashMap<>();
+			Map<BundleDescription, Set<Rule>> rules = new HashMap<>();
 			findExportedPackages(bundleDesc, desc, rules);
 			addDependency(bundleDesc, added, rules, entries, true);
 		}
 	}
 
 	protected final void findExportedPackages(BundleDescription desc, BundleDescription projectDesc,
-			Map<BundleDescription, List<Rule>> map) {
+			Map<BundleDescription, Set<Rule>> map) {
 		if (desc != null) {
 			Queue<BundleDescription> queue = new ArrayDeque<>();
 			queue.add(desc);
 			while (!queue.isEmpty()) {
 				BundleDescription bdesc = queue.remove();
+				if (map.containsKey(bdesc)) {
+					continue;
+				}
 				ExportPackageDescription[] expkgs = bdesc.getExportPackages();
-				List<Rule> rules = new ArrayList<>();
+				Set<Rule> rules = new LinkedHashSet<>();
 				for (ExportPackageDescription expkg : expkgs) {
 					boolean discouraged = restrictPackage(projectDesc, expkg);
 					IPath path = IPath.fromOSString(expkg.getName().replace('.', '/') + "/*"); //$NON-NLS-1$
