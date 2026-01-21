@@ -105,7 +105,7 @@ public class RuntimeInstallJob extends Job {
 
 			IMetadataRepository metaRepo = ui.loadMetadataRepository(destination, false, subMonitor.split(1));
 
-			IProfileRegistry profileRegistry = (IProfileRegistry) session.getProvisioningAgent().getService(IProfileRegistry.SERVICE_NAME);
+			IProfileRegistry profileRegistry = session.getProvisioningAgent().getService(IProfileRegistry.class);
 			if (profileRegistry == null) {
 				return Status.error(PDEUIMessages.RuntimeInstallJob_ErrorCouldntOpenProfile);
 			}
