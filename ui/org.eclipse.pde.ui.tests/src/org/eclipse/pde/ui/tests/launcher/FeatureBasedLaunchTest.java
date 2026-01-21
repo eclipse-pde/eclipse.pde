@@ -59,6 +59,7 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.eclipse.pde.internal.core.DependencyManager;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
+import org.eclipse.pde.internal.launching.IPDEConstants;
 import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
 import org.eclipse.pde.launching.EclipseApplicationLaunchConfiguration;
 import org.eclipse.pde.launching.IPDELauncherConstants;
@@ -1488,6 +1489,7 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 		wc.setAttribute(IPDELauncherConstants.USE_DEFAULT, false);
 		wc.setAttribute(IPDELauncherConstants.FEATURE_DEFAULT_LOCATION, IPDELauncherConstants.LOCATION_WORKSPACE);
 		wc.setAttribute(IPDELauncherConstants.FEATURE_PLUGIN_RESOLUTION, IPDELauncherConstants.LOCATION_WORKSPACE);
+		wc.setAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, "3.3"); //$NON-NLS-1$
 		return wc;
 	}
 
