@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which accompanies this distribution,
@@ -73,14 +73,13 @@ public abstract class P2TestCase extends PDETestCase {
 		ServiceReference<IMetadataRepositoryManager> reference = context
 				.getServiceReference(IMetadataRepositoryManager.class);
 		if (reference == null) {
-			IProvisioningAgent agent = (IProvisioningAgent) ServiceHelper.getService(context,
-					IProvisioningAgent.SERVICE_NAME);
+			IProvisioningAgent agent = ServiceHelper.getService(context, IProvisioningAgent.class);
 			if (agent == null) {
 				throw new IllegalStateException();
 			}
 
-			metadataManager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
-			artifactManager = (IArtifactRepositoryManager) agent.getService(IArtifactRepositoryManager.SERVICE_NAME);
+			metadataManager = agent.getService(IMetadataRepositoryManager.class);
+			artifactManager = agent.getService(IArtifactRepositoryManager.class);
 			return;
 		}
 

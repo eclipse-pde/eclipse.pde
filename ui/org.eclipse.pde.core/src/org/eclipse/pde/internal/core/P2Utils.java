@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2021 IBM Corporation and others.
+ * Copyright (c) 2007, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -334,7 +334,7 @@ public class P2Utils {
 			throw new CoreException(Status.error(PDECoreMessages.P2Utils_UnableToAcquireP2Service));
 		}
 
-		IProfileRegistry registry = (IProfileRegistry) agent.getService(IProfileRegistry.SERVICE_NAME);
+		IProfileRegistry registry = agent.getService(IProfileRegistry.class);
 		if (registry == null) {
 			throw new CoreException(Status.error(PDECoreMessages.P2Utils_UnableToAcquireP2Service));
 		}
@@ -404,12 +404,12 @@ public class P2Utils {
 			throw new CoreException(Status.error(PDECoreMessages.P2Utils_UnableToAcquireP2Service));
 		}
 
-		IProfileRegistry registry = (IProfileRegistry) agent.getService(IProfileRegistry.SERVICE_NAME);
+		IProfileRegistry registry = agent.getService(IProfileRegistry.class);
 		if (registry == null) {
 			throw new CoreException(Status.error(PDECoreMessages.P2Utils_UnableToAcquireP2Service));
 		}
 
-		IEngine engine = (IEngine) agent.getService(IEngine.SERVICE_NAME);
+		IEngine engine = agent.getService(IEngine.class);
 		if (engine == null) {
 			throw new CoreException(Status.error(PDECoreMessages.P2Utils_UnableToAcquireP2Service));
 		}

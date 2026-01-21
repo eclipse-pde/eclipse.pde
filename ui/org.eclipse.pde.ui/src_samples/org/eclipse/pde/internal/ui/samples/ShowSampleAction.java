@@ -172,7 +172,7 @@ public class ShowSampleAction extends Action implements IIntroAction {
 		if (agent == null) {
 			return null;
 		}
-		IProfileRegistry registry = (IProfileRegistry) agent.getService(IProfileRegistry.SERVICE_NAME);
+		IProfileRegistry registry = agent.getService(IProfileRegistry.class);
 		if (registry == null) {
 			return null;
 		}

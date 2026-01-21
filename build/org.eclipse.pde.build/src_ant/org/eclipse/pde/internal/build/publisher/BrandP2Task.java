@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2021 IBM Corporation and others.
+ * Copyright (c) 2009, 2026 IBM Corporation and others.
  *
  * This
  * program and the accompanying materials are made available under the terms of
@@ -108,11 +108,11 @@ public class BrandP2Task extends Repo2RunnableTask {
 		if (agent == null) {
 			throw new BuildException(TaskMessages.error_agentService);
 		}
-		IMetadataRepositoryManager metadataManager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
+		IMetadataRepositoryManager metadataManager = agent.getService(IMetadataRepositoryManager.class);
 		if (metadataManager == null) {
 			throw new BuildException(TaskMessages.error_metadataRepoManagerService);
 		}
-		IArtifactRepositoryManager artifactManager = (IArtifactRepositoryManager) agent.getService(IArtifactRepositoryManager.SERVICE_NAME);
+		IArtifactRepositoryManager artifactManager = agent.getService(IArtifactRepositoryManager.class);
 		if (artifactManager == null) {
 			throw new BuildException(TaskMessages.error_artifactRepoManagerService);
 		}
