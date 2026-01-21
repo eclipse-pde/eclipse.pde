@@ -15,6 +15,7 @@ package org.eclipse.pde.api.tools.internal.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -61,16 +62,14 @@ public class ProjectTypeContainer extends ApiElement implements IApiTypeContaine
 	 *
 	 * @param parent the {@link IApiElement} parent for this container
 	 * @param container folder in the workspace
-	 * @param packageFragmentRoot optional package fragment root for JDT-based
-	 *            package discovery, may be <code>null</code>
+	 * @param packageFragmentRoot package fragment root for JDT-based
+	 *            package discovery
 	 * @since 1.3.300
 	 */
 	public ProjectTypeContainer(IApiElement parent, IContainer container, IPackageFragmentRoot packageFragmentRoot) {
 		super(parent, IApiElement.API_TYPE_CONTAINER, container.getName());
 		this.fRoot = container;
-		if (packageFragmentRoot != null) {
-			this.fPackageFragmentRoots.add(packageFragmentRoot);
-		}
+		this.fPackageFragmentRoots.add(Objects.requireNonNull(packageFragmentRoot));
 	}
 
 	/**
@@ -81,7 +80,8 @@ public class ProjectTypeContainer extends ApiElement implements IApiTypeContaine
 	 * @since 1.3.400
 	 */
 	public void addPackageFragmentRoot(IPackageFragmentRoot root) {
-		if (root != null && !fPackageFragmentRoots.contains(root)) {
+		Objects.requireNonNull(root);
+		if (!fPackageFragmentRoots.contains(root)) {
 			fPackageFragmentRoots.add(root);
 			// Clear cached package names so they will be recomputed
 			fPackageNames = null;
