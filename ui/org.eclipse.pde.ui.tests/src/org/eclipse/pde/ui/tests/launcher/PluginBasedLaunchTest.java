@@ -1108,6 +1108,7 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 		wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, false);
 		wc.setAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, false);
 		wc.setAttribute(IPDELauncherConstants.USE_DEFAULT, false);
+		wc.setAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, "3.3"); //$NON-NLS-1$
 		return wc;
 	}
 
