@@ -34,6 +34,7 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaModelStatusConstants;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
@@ -199,7 +200,15 @@ public class BaseImportTestCase extends PDETestCase {
 
 	private void assertSourceAttached(IJavaProject jProject) throws CoreException {
 		for (IPackageFragmentRoot root : jProject.getPackageFragmentRoots()) {
-			IClasspathEntry entry = root.getRawClasspathEntry();
+			IClasspathEntry entry;
+			try {
+				entry = root.getRawClasspathEntry();
+			} catch (JavaModelException e) {
+				if (e.getStatus().getCode() == IJavaModelStatusConstants.ELEMENT_NOT_ON_CLASSPATH) {
+					continue;
+				}
+				throw e;
+			}
 			if (entry.getEntryKind() == IClasspathEntry.CPE_LIBRARY
 					|| (entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER)
 					&& !entry.getPath().equals(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH)) {
