@@ -32,6 +32,7 @@ import java.util.stream.Stream;
 
 import org.assertj.core.api.Assertions;
 import org.assertj.core.presentation.StandardRepresentation;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -42,6 +43,7 @@ import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
 import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
+import org.eclipse.swt.widgets.Display;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -82,6 +84,8 @@ public abstract class AbstractLaunchTest {
 	private static IPluginModelBase getModel(String id, String versionStr,
 			Function<ModelEntry, IPluginModelBase[]> modelsGetter, String type) {
 
+		waitForJobsAndUI(10000);
+
 		ModelEntry entry = PluginRegistry.findEntry(id);
 		assertNotNull("entry '" + id + "' should be present in PluginRegistry", entry);
 		IPluginModelBase[] models = modelsGetter.apply(entry);
@@ -96,6 +100,35 @@ public abstract class AbstractLaunchTest {
 				.findFirst() // always take first like BundleLaunchHelper
 				.orElseThrow(
 						() -> new NoSuchElementException("No " + type + " model " + id + "-" + version + " found"));
+	}
+
+	private static void waitForJobsAndUI(long timeoutMillis) {
+		long start = System.currentTimeMillis();
+
+		while (System.currentTimeMillis() - start < timeoutMillis) {
+			// Process UI events
+			while (Display.getDefault().readAndDispatch()) {
+				// Keep processing
+			}
+
+			// Check if all jobs are done
+			if (Job.getJobManager().isIdle()) {
+				// Process any final UI events
+				while (Display.getDefault().readAndDispatch()) {
+					// Keep processing
+				}
+				return;
+			}
+
+			try {
+				Thread.sleep(50);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				return;
+			}
+		}
+
+		// throw new AssertionError("Timeout waiting for jobs to complete");
 	}
 
 	static BundleLocationDescriptor workspaceBundle(String id, String version) {
