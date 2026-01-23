@@ -15,6 +15,7 @@
 package org.eclipse.pde.internal.core.util;
 
 import java.util.Comparator;
+import java.util.Optional;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -118,6 +119,16 @@ public class VersionUtil {
 			return pvi.getMajor() + "." + pvi.getMinor() + "." + pvi.getMicro(); //$NON-NLS-1$//$NON-NLS-2$
 		}
 		return version;
+	}
+
+	public static Optional<VersionRange> createConsumerRequirementRange(Version version) {
+		if (version != null && !Version.emptyVersion.equals(version)) {
+			return Optional.ofNullable(new VersionRange(VersionRange.LEFT_CLOSED, //
+					new Version(version.getMajor(), version.getMinor(), 0), //
+					new Version(version.getMajor() + 1, 0, 0), //
+					VersionRange.RIGHT_OPEN));
+		}
+		return Optional.empty();
 	}
 
 }
