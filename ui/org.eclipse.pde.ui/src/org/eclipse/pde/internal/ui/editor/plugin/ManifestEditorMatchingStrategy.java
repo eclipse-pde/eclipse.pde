@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015, 2026 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -70,6 +70,12 @@ public class ManifestEditorMatchingStrategy implements IEditorMatchingStrategy {
 					}
 					IFile file = parent.getFile(ICoreConstants.MANIFEST_PATH);
 					return file.exists() && editorFile.equals(file);
+				}
+				if (inputFile.getName().equals(ICoreConstants.P2_INF_FILENAME)) {
+					IContainer parent = inputFile.getParent().getParent();
+					IFile file = parent.getFile(ICoreConstants.MANIFEST_PATH);
+					return file.exists() && editorFile.equals(file);
+
 				}
 			} catch (PartInitException e) {
 				return false;

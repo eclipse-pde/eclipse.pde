@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2021 IBM Corporation and others.
+ * Copyright (c) 2000, 2021, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -312,6 +312,9 @@ public interface ICoreConstants {
 	String OSGI_INF_FOLDER_NAME = "OSGI-INF/"; //$NON-NLS-1$
 	String FEATURE_FOLDER_NAME = "features"; //$NON-NLS-1$
 
+	String P2_INF_FILENAME = "p2.inf"; //$NON-NLS-1$
+	String P2_INF_BUNDLE_DESCRIPTOR = "META-INF/p2.inf"; //$NON-NLS-1$
+
 	// Common paths
 	IPath MANIFEST_PATH = IPath.fromOSString(BUNDLE_FILENAME_DESCRIPTOR);
 	IPath PLUGIN_PATH = IPath.fromOSString(PLUGIN_FILENAME_DESCRIPTOR);
@@ -319,6 +322,8 @@ public interface ICoreConstants {
 	IPath FEATURE_PATH = IPath.fromOSString(FEATURE_FILENAME_DESCRIPTOR);
 	IPath BUILD_PROPERTIES_PATH = IPath.fromOSString(BUILD_FILENAME_DESCRIPTOR);
 	IPath OSGI_INF_PATH = IPath.fromOSString(OSGI_INF_FOLDER_NAME);
+	IPath P2_INF_BUNDLE_PATH = IPath.fromOSString(P2_INF_BUNDLE_DESCRIPTOR);
+	IPath P2_INF_FEATURE_PATH = IPath.fromOSString(P2_INF_FILENAME);
 
 	// Extension point identifiers
 	String EXTENSION_POINT_SOURCE = PDECore.PLUGIN_ID + ".source"; //$NON-NLS-1$
