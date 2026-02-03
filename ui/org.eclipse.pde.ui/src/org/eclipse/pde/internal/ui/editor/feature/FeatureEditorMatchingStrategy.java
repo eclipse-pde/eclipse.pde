@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015, 2026 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -45,11 +45,18 @@ public class FeatureEditorMatchingStrategy implements IEditorMatchingStrategy {
 			// build.properties matches with editors that have a feature.xml file
 			// as their input and that feature.xml is at the root
 			if (inputFile.getName().equals(ICoreConstants.FEATURE_FILENAME_DESCRIPTOR)) {
-				if (currInputFile.getName().equals(ICoreConstants.BUILD_FILENAME_DESCRIPTOR)) {
+				if (currInputFile.getName().equals(ICoreConstants.BUILD_FILENAME_DESCRIPTOR)
+						|| currInputFile.getName().equals(ICoreConstants.P2_INF_FILENAME)) {
 					return inputFile.getProjectRelativePath().toString().equals(ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
 				}
 				return inputFile.equals(currInputFile);
 			} else if (inputFile.getName().equals(ICoreConstants.BUILD_FILENAME_DESCRIPTOR)) {
+				if (currInputFile.getName().equals(ICoreConstants.FEATURE_FILENAME_DESCRIPTOR))
+					return currInputFile.getProjectRelativePath().toString().equals(ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
+				return inputFile.equals(currInputFile);
+			} else if (inputFile.getName().equals(ICoreConstants.P2_INF_FILENAME)) {
+				// p2.inf should match the feature editor when the current editor
+				// input is the feature.xml at the project root
 				if (currInputFile.getName().equals(ICoreConstants.FEATURE_FILENAME_DESCRIPTOR)) {
 					return currInputFile.getProjectRelativePath().toString().equals(ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
 				}
@@ -60,5 +67,4 @@ public class FeatureEditorMatchingStrategy implements IEditorMatchingStrategy {
 			return false;
 		}
 	}
-
 }
