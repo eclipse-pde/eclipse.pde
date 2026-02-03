@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -36,6 +36,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.contentassist.BuildPropertiesContentAssistProcessor;
+import org.eclipse.pde.internal.ui.editor.contentassist.TypePackageCompletionProcessor;
 import org.eclipse.pde.internal.ui.editor.text.ArgumentRule;
 import org.eclipse.pde.internal.ui.editor.text.BasePDEScanner;
 import org.eclipse.pde.internal.ui.editor.text.ChangeAwareSourceViewerConfiguration;
@@ -259,6 +260,16 @@ public class BuildSourceViewerConfiguration extends ChangeAwareSourceViewerConfi
 		return property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_VALUE) || property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_ARGUMENT) || property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_ASSIGNMENT) || property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_KEY) || property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_COMMENT);
 	}
 
+	/**
+	 * Creates the content-assist processor for this viewer configuration.
+	 * Subclasses may override to supply a different processor.
+	 *
+	 * @return a new content-assist processor for {@link #fSourcePage}
+	 */
+	protected TypePackageCompletionProcessor createContentAssistProcessor() {
+		return new BuildPropertiesContentAssistProcessor(fSourcePage);
+	}
+
 	@Override
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 		if (fSourcePage != null && fSourcePage.isEditable()) {
@@ -267,9 +278,9 @@ public class BuildSourceViewerConfiguration extends ChangeAwareSourceViewerConfi
 				PDEPluginImages.get(null);
 				fContentAssistant = new ContentAssistant(true);
 				fContentAssistant.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
-				var fContentAssistantProcessor = new BuildPropertiesContentAssistProcessor(fSourcePage);
-				fContentAssistant.setContentAssistProcessor(fContentAssistantProcessor, IDocument.DEFAULT_CONTENT_TYPE);
-				fContentAssistant.setContentAssistProcessor(fContentAssistantProcessor, PROPERTY_VALUE);
+				var processor = createContentAssistProcessor();
+				fContentAssistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
+				fContentAssistant.setContentAssistProcessor(processor, PROPERTY_VALUE);
 				fContentAssistant.enableAutoInsert(true);
 				fContentAssistant.setInformationControlCreator(parent -> new DefaultInformationControl(parent, false));
 				fContentAssistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
