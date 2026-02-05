@@ -193,10 +193,14 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 		} else if (element instanceof IInstallableUnit iu) {
 			@SuppressWarnings("restriction")
 			String name = fTranslations.getIUProperty(iu, IInstallableUnit.PROP_NAME);
-			if (name == null) {
-				name = iu.getId();
+			if (name != null && !name.equals(iu.getId())) {
+				styledString.append(name);
+				styledString.append(" [", StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
+				styledString.append(iu.getId(), StyledString.DECORATIONS_STYLER);
+				styledString.append("]", StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
+			} else {
+				styledString.append(iu.getId());
 			}
-			styledString.append(name);
 			styledString.append(' ');
 			styledString.append(iu.getVersion().toString(), StyledString.QUALIFIER_STYLER);
 		} else {
