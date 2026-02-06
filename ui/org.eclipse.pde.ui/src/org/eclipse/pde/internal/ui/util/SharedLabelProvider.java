@@ -53,7 +53,7 @@ public class SharedLabelProvider extends LabelProvider implements ITableLabelPro
 	private Image fBlankImage;
 
 	public SharedLabelProvider() {
-
+		super();
 	}
 
 	public void connect(Object consumer) {
@@ -95,8 +95,7 @@ public class SharedLabelProvider extends LabelProvider implements ITableLabelPro
 		}
 		Image image = images.get(key);
 		if (image == null) {
-			image = createImage(desc, flags);
-			images.put(key, image);
+			image = createImage(desc, flags, key);
 		}
 		return image;
 	}
@@ -108,8 +107,7 @@ public class SharedLabelProvider extends LabelProvider implements ITableLabelPro
 		String key = getKey(image.hashCode(), flags);
 		Image resultImage = images.get(key);
 		if (resultImage == null) {
-			resultImage = createImage(image, flags);
-			images.put(key, resultImage);
+			resultImage = createImage(image, flags, key);
 		}
 		return resultImage;
 	}
@@ -118,20 +116,32 @@ public class SharedLabelProvider extends LabelProvider implements ITableLabelPro
 		return ("" + hashCode) + ":" + flags; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	private Image createImage(ImageDescriptor baseDesc, int flags) {
+	private Image createImage(ImageDescriptor baseDesc, int flags, Object key) {
 		if (flags == 0) {
-			return baseDesc.createImage();
+			Image baseImage = baseDesc.createImage();
+			remember(baseImage, key);
+			return baseImage;
 		}
+		// Remember base image, so it can be disposed if SharedLabelProvider is
+		// disposed
+		Image baseImage = images.get(baseDesc);
+		if (baseImage == null) {
+			baseImage = baseDesc.createImage();
+			remember(baseImage, baseDesc);
+		}
+
 		ImageDescriptor lowerLeft = getLowerLeftOverlays(flags);
 		ImageDescriptor upperRight = getUpperRightOverlays(flags);
 		ImageDescriptor lowerRight = getLowerRightOverlays(flags);
 		ImageDescriptor upperLeft = getUpperLeftOverlays(flags);
-		DecorationOverlayIcon compDesc = new DecorationOverlayIcon(baseDesc.createImage(),
+		DecorationOverlayIcon compDesc = new DecorationOverlayIcon(baseImage,
 				new ImageDescriptor[] { upperRight, lowerRight, lowerLeft, upperLeft });
-		return compDesc.createImage();
+		Image image = compDesc.createImage();
+		remember(image, key);
+		return image;
 	}
 
-	private Image createImage(Image baseImage, int flags) {
+	private Image createImage(Image baseImage, int flags, Object key) {
 		if (flags == 0) {
 			return baseImage;
 		}
@@ -141,7 +151,18 @@ public class SharedLabelProvider extends LabelProvider implements ITableLabelPro
 		ImageDescriptor upperLeft = getUpperLeftOverlays(flags);
 		DecorationOverlayIcon compDesc = new DecorationOverlayIcon(baseImage,
 				new ImageDescriptor[] { upperRight, lowerRight, lowerLeft, upperLeft });
-		return compDesc.createImage();
+		Image image = compDesc.createImage();
+		remember(image, key);
+		return image;
+	}
+
+	private void remember(Image image, Object key) {
+		Image old = images.put(key, image);
+		if (old != null) {
+			// Should not happen, but if it does, dispose old image to prevent
+			// leaks
+			old.dispose();
+		}
 	}
 
 	private ImageDescriptor getLowerLeftOverlays(int flags) {
