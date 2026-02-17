@@ -94,7 +94,7 @@
             category="org.eclipse.pde.ui.MainPreferencePage"
             class="org.eclipse.pde.internal.ui.preferences.LaunchingPreferencePage"
             id="org.eclipse.pde.ui.LaunchingPreferencePage"
-            name="Launching">
+            name="%preferences.pde.Launching.name">
       </page>
    </extension>
    <extension
