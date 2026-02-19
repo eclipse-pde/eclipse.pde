@@ -51,7 +51,7 @@ import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
 import org.eclipse.pde.internal.core.text.bundle.ExportPackageObject;
 import org.eclipse.pde.internal.core.text.bundle.ImportPackageHeader;
 import org.eclipse.pde.internal.core.text.bundle.ImportPackageObject;
-import org.eclipse.pde.internal.core.util.ManifestUtils;
+import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -195,7 +195,7 @@ public class JavaResolutionFactory {
 					}
 					BundleDescription requiredBundle = getChangeObject();
 					String pluginId = requiredBundle.getSymbolicName();
-					VersionRange versionRange = ManifestUtils
+					VersionRange versionRange = VersionUtil
 							.createConsumerRequirementRange(requiredBundle.getVersion()).orElse(null);
 					IPluginImport[] imports = base.getPluginBase().getImports();
 					if (!isUndo()) {
