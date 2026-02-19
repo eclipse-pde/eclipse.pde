@@ -61,6 +61,7 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 	private Button fRemovedUnusedKeys;
 	private Button fRemoveLazy;
 	private Button fRemoveUselessFiles;
+	private Button fUpdateBree; // belongs to general section
 
 	private Button[] fTopLevelButtons; // used for setting page complete state
 
@@ -203,6 +204,8 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 		fRemoveUselessFiles = new Button(group, SWT.CHECK);
 		fRemoveUselessFiles.setText(PDEUIMessages.OrganizeManifestsWizardPage_uselessPluginFile);
 
+		fUpdateBree = new Button(group, SWT.CHECK);
+		fUpdateBree.setText(PDEUIMessages.OrganizeManifestsWizardPage_updateBREE);
 	}
 
 	private void createNLSGroup(Composite container) {
@@ -270,6 +273,10 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 		fRemoveUselessFiles.setSelection(selection);
 		fProcessor.setRemoveUselessFiles(selection);
 
+		selection = settings.getBoolean(PROP_UPDATE_BREE);
+		fUpdateBree.setSelection(selection);
+		fProcessor.setUpdateBree(selection);
+
 		selection = settings.getBoolean(PROP_NLS_PATH);
 		fFixIconNLSPaths.setSelection(selection);
 		fProcessor.setPrefixIconNL(selection);
@@ -299,7 +306,7 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 
 		settings.put(PROP_REMOVE_LAZY, !fRemoveLazy.getSelection());
 		settings.put(PROP_REMOVE_USELESSFILES, !fRemoveUselessFiles.getSelection());
-
+		settings.put(PROP_UPDATE_BREE, !fUpdateBree.getSelection());
 		settings.put(PROP_NLS_PATH, fFixIconNLSPaths.getSelection());
 		settings.put(PROP_UNUSED_KEYS, fRemovedUnusedKeys.getSelection());
 	}
@@ -318,7 +325,7 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 	private void setButtonArrays() {
 		fTopLevelButtons = new Button[] { fRemoveUnresolved, fAddMissing, fModifyDependencies, fMarkInternal,
 				fUnusedDependencies, fAdditonalDependencies, fComputeImportPackages, fFixIconNLSPaths,
-				fRemovedUnusedKeys, fRemoveLazy, fRemoveUselessFiles, fCalculateUses };
+				fRemovedUnusedKeys, fRemoveLazy, fRemoveUselessFiles, fUpdateBree, fCalculateUses };
 	}
 
 	private void setPageComplete() {
@@ -376,6 +383,8 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 			fProcessor.setRemoveLazy(fRemoveLazy.getSelection());
 		} else if (fRemoveUselessFiles.equals(source)) {
 			fProcessor.setRemoveUselessFiles(fRemoveUselessFiles.getSelection());
+		} else if (fUpdateBree.equals(source)) {
+			fProcessor.setUpdateBree(fUpdateBree.getSelection());
 		} else if (fFixIconNLSPaths.equals(source)) {
 			fProcessor.setPrefixIconNL(fFixIconNLSPaths.getSelection());
 		} else if (fRemovedUnusedKeys.equals(source)) {
