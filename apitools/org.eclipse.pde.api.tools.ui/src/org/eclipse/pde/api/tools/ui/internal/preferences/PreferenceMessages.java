@@ -165,6 +165,9 @@ public class PreferenceMessages extends NLS {
 	public static String CONSTRUCTOR_CHANGED_DECREASE_ACCESS;
 	public static String CONSTRUCTOR_REMOVED_TYPE_PARAMETER;
 
+	public static String PREFERENCE_COLLAPSE_ALL;
+	public static String PREFERENCE_EXPAND_ALL;
+
 	public static String TYPE_PARAMETER_ADDED_CLASS_BOUND;
 	public static String TYPE_PARAMETER_ADDED_INTERFACE_BOUND;
 	public static String TYPE_PARAMETER_CHANGED_CLASS_BOUND;

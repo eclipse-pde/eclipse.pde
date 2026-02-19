@@ -31,15 +31,21 @@ import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 /**
@@ -49,7 +55,7 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
  */
 public class ApiErrorsWarningsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
-	public static final String DATA_SELECT_OPTION_KEY = "select_option_key"; //$NON-NLS-1$
+	public static final String DATA_SELECT_OPTION_KEY = "select_option_key"; //$NON-NLS-1$ /pp
 	public static final String DATA_SELECT_OPTION_QUALIFIER = "select_option_qualifier"; //$NON-NLS-1$
 
 	/**
@@ -85,6 +91,9 @@ public class ApiErrorsWarningsPreferencePage extends PreferencePage implements I
 	ApiErrorsWarningsConfigurationBlock block = null;
 	private Link link = null;
 
+	private Image expandImage;
+	private Image collapseImage;
+
 	/**
 	 * Since {@link #applyData(Object)} can be called before createContents,
 	 * store the data
@@ -96,6 +105,33 @@ public class ApiErrorsWarningsPreferencePage extends PreferencePage implements I
 	 */
 	public ApiErrorsWarningsPreferencePage() {
 		super(PreferenceMessages.ApiErrorsWarningsPreferencePage_0);
+	}
+
+	private void expandCollapseItems(Composite parent, boolean expandPage) {
+		for (Control control : parent.getChildren()) {
+			if (control instanceof ExpandableComposite page) {
+				page.setExpanded(expandPage);
+				Control child = page.getClient();
+				if (child != null && !child.isDisposed()) {
+					child.setVisible(expandPage);
+				}
+			} else if (control instanceof Composite) {
+				expandCollapseItems((Composite) control, expandPage);
+			}
+		}
+		parent.layout(true, true);
+		ScrolledComposite composite = getScrolledComposite(parent);
+		if (composite != null) {
+			composite.setMinSize(parent.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		}
+	}
+
+	private ScrolledComposite getScrolledComposite(Composite comp) {
+		Composite currentComposite = comp;
+		while (currentComposite != null && !(currentComposite instanceof ScrolledComposite)) {
+			currentComposite = currentComposite.getParent();
+		}
+		return (ScrolledComposite) currentComposite;
 	}
 
 	@Override
@@ -127,8 +163,37 @@ public class ApiErrorsWarningsPreferencePage extends PreferencePage implements I
 						new String[] { IApiToolsConstants.ID_ERRORS_WARNINGS_PROP_PAGE }, data).open();
 			}
 		}));
+
+		ToolBar buttonbar = new ToolBar(comp, SWT.FLAT | SWT.RIGHT);
+		buttonbar.setLayoutData(new GridData(SWT.END, SWT.CENTER, true,
+		 false));
+		ToolItem expandItems = new ToolItem(buttonbar, SWT.PUSH);
+		expandImage = AbstractUIPlugin
+				.imageDescriptorFromPlugin("org.eclipse.pde.api.tools.ui", "icons/full/elcl16/expandall.svg") //$NON-NLS-1$ //$NON-NLS-2$
+			.createImage();
+		expandItems.setImage(expandImage);
+		expandItems.setToolTipText(PreferenceMessages.PREFERENCE_EXPAND_ALL);
+
+		ToolItem collapseItems = new ToolItem(buttonbar, SWT.PUSH);
+		collapseImage = AbstractUIPlugin
+				.imageDescriptorFromPlugin("org.eclipse.pde.api.tools.ui", "icons/full/elcl16/collapseall.svg") //$NON-NLS-1$ //$NON-NLS-2$
+				.createImage();
+		collapseItems.setImage(collapseImage);
+		collapseItems.setToolTipText(PreferenceMessages.PREFERENCE_COLLAPSE_ALL);
+
 		block = new ApiErrorsWarningsConfigurationBlock(null, (IWorkbenchPreferenceContainer) getContainer());
 		block.createControl(comp);
+
+		expandItems.addListener(SWT.Selection, e -> expandCollapseItems(comp, true));
+		collapseItems.addListener(SWT.Selection, e -> expandCollapseItems(comp, false));
+		comp.addDisposeListener(e -> {
+			if (!expandImage.isDisposed() && expandImage != null) {
+				expandImage.dispose();
+			}
+			if (!collapseImage.isDisposed() && collapseImage != null) {
+				collapseImage.dispose();
+			}
+		});
 
 		// Initialize with data map in case applyData was called before
 		// createContents
