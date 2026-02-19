@@ -46,6 +46,8 @@ import org.eclipse.pde.launching.PDESourcePathProvider;
  */
 public class JUnitWorkbenchLaunchShortcut extends JUnitLaunchShortcut {
 
+	private static final String DETECT_VM_INSTALLATIONS_DISABLED = "-DDetectVMInstallationsJob.disabled"; //$NON-NLS-1$
+
 	@Override
 	protected String getLaunchConfigurationTypeId() {
 		return "org.eclipse.pde.ui.JunitLaunchConfig"; //$NON-NLS-1$
@@ -112,9 +114,13 @@ public class JUnitWorkbenchLaunchShortcut extends JUnitLaunchShortcut {
 
 		// VM arguments
 		String vmArgs = LaunchArgumentsHelper.getInitialVMArguments();
-		if (vmArgs.length() > 0) {
-			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs);
+		if (!vmArgs.contains(DETECT_VM_INSTALLATIONS_DISABLED)) {
+			if (!vmArgs.isEmpty()) {
+				vmArgs += " "; //$NON-NLS-1$
+			}
+			vmArgs += DETECT_VM_INSTALLATIONS_DISABLED + "=true"; //$NON-NLS-1$
 		}
+		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs);
 		configuration.setAttribute(IPDELauncherConstants.BOOTSTRAP_ENTRIES, ""); //$NON-NLS-1$
 
 		// configuration attributes
