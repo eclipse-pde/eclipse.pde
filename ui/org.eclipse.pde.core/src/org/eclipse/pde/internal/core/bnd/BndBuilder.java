@@ -14,6 +14,9 @@
 package org.eclipse.pde.internal.core.bnd;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -28,19 +31,30 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ICoreRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.BundleSpecification;
+import org.eclipse.osgi.service.resolver.ExportPackageDescription;
+import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
+import org.eclipse.osgi.service.resolver.StateObjectFactory;
+import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
+import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.core.natures.BndProject;
 import org.eclipse.pde.internal.core.project.PDEProject;
+import org.osgi.framework.BundleException;
+import org.osgi.framework.FrameworkUtil;
 
 import aQute.bnd.build.Project;
 import aQute.bnd.build.ProjectBuilder;
@@ -51,10 +65,6 @@ public class BndBuilder extends IncrementalProjectBuilder {
 
 	private static final String CLASS_EXTENSION = ".class"; //$NON-NLS-1$
 
-	// This is currently disabled as it sometimes lead to jar not generated as
-	// JDT is clearing the outputfolder while the build is running, need to
-	// investigate if we can avoid this and it actually has benefits to build
-	// everything async.
 	private static final boolean USE_JOB = false;
 
 	private static final Predicate<IResource> CLASS_FILTER = resource -> {
@@ -76,6 +86,9 @@ public class BndBuilder extends IncrementalProjectBuilder {
 				Job buildJob = buildJobMap.compute(project, (p, oldJob) -> {
 					Job job = Job.create(NLS.bind(PDECoreMessages.BundleBuilder_building, project.getName()),
 							new BndBuild(p, oldJob));
+					// The job is given a workspace lock to prevent other
+					// buildjobs to run concurrently
+					job.setRule(ResourcesPlugin.getWorkspace().getRoot());
 					job.addJobChangeListener(new JobChangeAdapter() {
 						@Override
 						public void done(IJobChangeEvent event) {
@@ -86,7 +99,8 @@ public class BndBuilder extends IncrementalProjectBuilder {
 				});
 				buildJob.schedule();
 			} else {
-				buildProjectJar(project, monitor);
+				List<IProject> affected = buildProjectJar(project, monitor);
+				requestProjectsRebuild(affected);
 			}
 		}
 		return new IProject[] { project };
@@ -127,14 +141,14 @@ public class BndBuilder extends IncrementalProjectBuilder {
 
 	}
 
-	private static void buildProjectJar(IProject project, IProgressMonitor monitor) {
+	private static List<IProject> buildProjectJar(IProject project, IProgressMonitor monitor) {
 		try {
 			Optional<Project> bndProject = BndProjectManager.getBndProject(project);
 			if (bndProject.isEmpty()) {
-				return;
+				return List.of();
 			}
 			if (monitor.isCanceled()) {
-				return;
+				return List.of();
 			}
 			try (Project bnd = bndProject.get(); ProjectBuilder builder = new ProjectBuilder(bnd) {
 				@Override
@@ -160,6 +174,7 @@ public class BndBuilder extends IncrementalProjectBuilder {
 				builder.addBasicPlugin(new MakeJar());
 				builder.setBase(bnd.getBase());
 				ProjectJar jar = new ProjectJar(project, CLASS_FILTER);
+				BundleDescription previousBundleDescription = loadBundleDescription(jar.getManifestFile());
 				builder.setJar(jar);
 				// build the main jar
 				builder.build();
@@ -188,12 +203,65 @@ public class BndBuilder extends IncrementalProjectBuilder {
 						}
 					}
 				}
-			}
-			if (monitor.isCanceled()) {
-				return;
+				jar.getManifestFile().touch(null);
+				BundleDescription bundleDescription = loadBundleDescription(jar.getManifestFile());
+				if (bundleDescription != null) {
+					// TODO compare with previous description and also consider
+					// BND project dependencies!
+					PluginModelManager modelManager = PDECore.getDefault().getModelManager();
+					IPluginModelBase[] models = modelManager.getWorkspaceModels();
+					List<IProject> affectedProjects = new ArrayList<>();
+					for (IPluginModelBase base : models) {
+						IResource resource = base.getUnderlyingResource();
+						if (resource == null) {
+							continue;
+						}
+						IProject modelProject = resource.getProject();
+						if (modelProject.equals(project)) {
+							continue;
+						}
+						if (isModelAffected(base, bundleDescription)) {
+							affectedProjects.add(modelProject);
+						}
+						if (monitor.isCanceled()) {
+							return List.of();
+						}
+					}
+					return affectedProjects;
+				}
 			}
 		} catch (Exception e) {
 			PDECore.log(e);
+		}
+		return List.of();
+	}
+
+	private static boolean isModelAffected(IPluginModelBase base, BundleDescription bundleDescription) {
+		BundleDescription description = base.getBundleDescription();
+		ImportPackageSpecification[] importPackages = description.getImportPackages();
+		for (ImportPackageSpecification imp : importPackages) {
+			for (ExportPackageDescription exp : bundleDescription.getExportPackages()) {
+				if (imp.isSatisfiedBy(exp)) {
+					return true;
+
+				}
+			}
+		}
+		for (BundleSpecification req : description.getRequiredBundles()) {
+			if (req.isSatisfiedBy(bundleDescription)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static BundleDescription loadBundleDescription(IFile file) {
+		try (InputStream manifest = file.getContents()) {
+			Map<String, String> bundleManifest = ManifestElement.parseBundleManifest(manifest);
+			return StateObjectFactory.defaultFactory.createBundleDescription(null,
+					FrameworkUtil.asDictionary(bundleManifest), null, System.currentTimeMillis());
+		} catch (IOException | CoreException | BundleException e) {
+			return null;
 		}
 	}
 
