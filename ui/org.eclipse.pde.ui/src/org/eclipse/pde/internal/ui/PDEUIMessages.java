@@ -3029,6 +3029,12 @@ public class PDEUIMessages extends NLS {
 
 	public static String OrganizeManifestsWizardPage_unresolvedDependencies;
 
+	public static String OrganizeManifestsWizardPage_addMissingVersions;
+
+	public static String OrganizeManifestsWizardPage_addFixedVersions;
+
+	public static String OrganizeManifestsWizardPage_addBundledVersions;
+
 	public static String OrganizeManifestsWizardPage_remove;
 
 	public static String OrganizeManifestsWizardPage_markOptional;
