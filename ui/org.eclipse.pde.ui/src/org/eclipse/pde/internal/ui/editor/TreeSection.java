@@ -114,6 +114,7 @@ public abstract class TreeSection extends StructuredViewerSection {
 		if (tree == null) {
 			return;
 		}
+
 		tree.selectAll();
 		selectionChanged(viewer.getStructuredSelection());
 	}
