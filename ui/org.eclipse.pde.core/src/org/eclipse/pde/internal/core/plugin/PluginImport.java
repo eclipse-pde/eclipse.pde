@@ -46,6 +46,7 @@ public class PluginImport extends IdentifiablePluginObject implements IPluginImp
 	private boolean reexported = false;
 	private boolean optional = false;
 	private String version;
+	private String filter;
 
 	public PluginImport() {
 	}
@@ -72,6 +73,11 @@ public class PluginImport extends IdentifiablePluginObject implements IPluginImp
 	@Override
 	public String getVersion() {
 		return version;
+	}
+
+	@Override
+	public String getFilter() {
+		return filter;
 	}
 
 	@Override
@@ -201,6 +207,15 @@ public class PluginImport extends IdentifiablePluginObject implements IPluginImp
 		String oldValue = this.version;
 		this.version = version;
 		firePropertyChanged(P_VERSION, oldValue, version);
+	}
+
+	@Override
+	public void setFilter(String filter) throws CoreException {
+		ensureModelEditable();
+		String oldValue = this.filter;
+		this.filter = filter;
+		firePropertyChanged(P_FILTER, oldValue, filter);
+
 	}
 
 	@Override

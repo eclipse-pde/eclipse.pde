@@ -21,6 +21,17 @@ public class PluginImportNode extends PluginObjectNode implements IPluginImport 
 
 	private static final long serialVersionUID = 1L;
 
+	@Override
+	public void setFilter(String filter) {
+		setXMLAttribute(P_FILTER, filter);
+
+	}
+
+	@Override
+	public String getFilter() {
+		return getXMLAttributeValue(P_FILTER);
+	}
+
 	public PluginImportNode(String id) {
 		super();
 		String name = "plugin"; //$NON-NLS-1$
