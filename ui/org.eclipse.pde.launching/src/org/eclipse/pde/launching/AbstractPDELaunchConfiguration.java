@@ -87,7 +87,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 * @since 3.8
 	 * @noreference This field is not intended to be referenced by clients.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2026-01")
 	public static boolean shouldVMAddModuleSystem = false;
 
 	private static final String PDE_LAUNCH_SHOW_COMMAND = "pde.launch.showcommandline"; //$NON-NLS-1$
@@ -539,7 +539,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 * @deprecated This method was wrongly added and is no longer used. It is a no-op now.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2026-01")
 	public static void updatePDELaunchConfigModuleSystem(boolean java9) {
 	}
 

@@ -110,7 +110,7 @@ public interface IPDELauncherConstants {
 	 *
 	 * @deprecated use IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2026-01")
 	String VMINSTALL = "vminstall"; //$NON-NLS-1$
 
 	/**
@@ -136,7 +136,7 @@ public interface IPDELauncherConstants {
 	 *
 	 * @deprecated As of 3.6 the feature-based self-hosting option is not supported
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2026-01")
 	String USEFEATURES = "usefeatures"; //$NON-NLS-1$
 
 	/**
@@ -267,7 +267,7 @@ public interface IPDELauncherConstants {
 	 * @deprecated This option is no longer supported in the launch config.  A recent selection is stored
 	 * in dialog settings.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2026-01")
 	String TRACING_SELECTED_PLUGIN = "selectedPlugin"; //$NON-NLS-1$
 
 	/**
