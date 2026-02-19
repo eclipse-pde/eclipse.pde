@@ -38,7 +38,7 @@ public class RepositoryTreeLabelProvider extends StyledCellLabelProvider
 	final Image bundleImg = Resources.getImage("bundle.png");
 	final Image matchImg = Resources.getImage("star-small.png");
 	final Image projectImg = Resources.getImage("$IMG_OBJ_PROJECT");
-	final Image loadingImg = Resources.getImage("loading_16x16.gif");
+	final Image loadingImg = Resources.getImage("loading_16x16.svg");
 
 	private final boolean	showRepoId;
 

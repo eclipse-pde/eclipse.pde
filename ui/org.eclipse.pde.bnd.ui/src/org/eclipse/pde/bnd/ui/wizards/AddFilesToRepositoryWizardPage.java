@@ -68,7 +68,7 @@ public class AddFilesToRepositoryWizardPage extends WizardPage {
 
 	private final static Image jarImg = Resources.getImage("jar.gif");
 	private final static Image warnImg = Resources.getImage("warning_obj.gif");
-	private final static Image errorImg = Resources.getImage("error.gif");
+	private final static Image errorImg = Resources.getImage("error.svg");
 	private final static Image okayImg = Resources.getImage("tick.png");
 
 	private final Map<File, Entry<String, String>> bsnMap = new HashMap<>();
