@@ -14,7 +14,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.jface,
  org.eclipse.equinox.common,
  org.eclipse.e4.ui.services
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Automatic-Module-Name: org.eclipse.pde.spy.adapter
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %provider-name

@@ -5,7 +5,7 @@
          point="org.eclipse.pde.spy.core.spyPart">
       <spyPart
             description="registered adapters "
-            icon="icons/ext_point_obj.png"
+            icon="platform:/plugin/org.eclipse.pde.ui/icons/obj16/ext_point_obj.svg"
             name="Adapter Spy"
             part="org.eclipse.pde.spy.adapter.AdapterSpyPart"
             shortcut="M2+M3+F7">
