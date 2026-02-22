@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
@@ -86,6 +87,11 @@ public class ClasspathContributorTest {
 	}
 
 	private boolean isPdeDependency(IClasspathEntry element) {
+		// Skip transitive dependencies added with forbidden access rules
+		IAccessRule[] rules = element.getAccessRules();
+		if (rules.length == 1 && rules[0].getKind() == IAccessRule.K_NON_ACCESSIBLE) {
+			return true;
+		}
 		String portableString = element.getPath().toPortableString();
 		if (portableString.indexOf("org.eclipse.pde.core") > -1) {
 			// The PDE Core bundle dependency
