@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -273,6 +274,7 @@ class RequiredPluginsClasspathContainer {
 
 			addJunit5RuntimeDependencies(added, entries);
 			addImplicitDependencies(desc, added, entries);
+			addTransitiveDependenciesWithForbiddenAccess(added, entries);
 
 			// Add any additional library entries contributed via classpath
 			// contributor
@@ -662,6 +664,31 @@ class RequiredPluginsClasspathContainer {
 			String id = entry.getId();
 			if (id != null) {
 				addExtraModel(desc, added, entries, id);
+			}
+		}
+	}
+
+	/**
+	 * Adds all transitive dependencies of already collected bundles with
+	 * forbidden access rules. The Java compiler may need to resolve types from
+	 * transitive dependencies (e.g. when an exception type comes from a bundle
+	 * not directly required by the current project). Adding these with
+	 * forbidden access ensures compilation succeeds while still preventing
+	 * direct use of types from not imported bundles.
+	 */
+	private void addTransitiveDependenciesWithForbiddenAccess(Set<BundleDescription> added,
+			List<IClasspathEntry> entries) throws CoreException {
+		Set<BundleDescription> closure = DependencyManager.findRequirementsClosure(added,
+				INCLUDE_OPTIONAL_DEPENDENCIES);
+		String systemBundleBSN = TargetPlatformHelper.getPDEState().getSystemBundle();
+		Iterator<BundleDescription> transitiveDeps = closure.stream()
+				.filter(desc -> !desc.getSymbolicName().equals(systemBundleBSN))
+				.sorted(Comparator.comparing(BundleDescription::getSymbolicName)).iterator();
+		while (transitiveDeps.hasNext()) {
+			BundleDescription desc = transitiveDeps.next();
+			if (added.add(desc)) {
+				Map<BundleDescription, List<Rule>> rules = Map.of(desc, List.of());
+				addPlugin(desc, true, rules, entries);
 			}
 		}
 	}
