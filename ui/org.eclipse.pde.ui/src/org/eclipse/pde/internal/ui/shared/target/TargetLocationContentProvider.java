@@ -126,7 +126,7 @@ public class TargetLocationContentProvider implements ITreeContentProvider {
 					}
 					result.add(containers[i]);
 					IStatus status = containers[i].getStatus();
-					if (status != null && status.isOK()) {
+					if (status != null && !status.isOK()) {
 						hasContainerStatus = true;
 					}
 				}
