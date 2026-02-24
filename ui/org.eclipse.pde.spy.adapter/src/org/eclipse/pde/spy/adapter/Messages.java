@@ -36,6 +36,6 @@ public class Messages extends NLS {
 	}
 
 	public static void reloadMessages() {
-		NLS.initializeMessages(AdapterHelper.BUNDLE_ID+ ".messages.Messages", Messages.class);
+		NLS.initializeMessages(AdapterHelper.BUNDLE_ID+ ".Messages", Messages.class);
 	}
 }
