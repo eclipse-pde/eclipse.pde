@@ -20,3 +20,6 @@ Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %provider-name
 Import-Package: jakarta.annotation;version="[2.1.0,3.0.0)",
  jakarta.inject;version="[2.0.0,3.0.0)"
+Bundle-Localization: plugin
+Export-Package: org.eclipse.pde.spy.adapter
+Require-Capability: eclipse.swt;filter:="(image.format=svg)"
