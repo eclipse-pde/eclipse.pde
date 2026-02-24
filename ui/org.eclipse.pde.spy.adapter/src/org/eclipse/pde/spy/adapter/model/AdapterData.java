@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Display;
 import org.osgi.framework.Bundle;
 
 /**
- * Adapter data model Object This class is used to store ConfigarationElement
+ * Adapter data model Object This class is used to store ConfigurationElement
  * elements which use an adapter
  * 
  * @author pascal
