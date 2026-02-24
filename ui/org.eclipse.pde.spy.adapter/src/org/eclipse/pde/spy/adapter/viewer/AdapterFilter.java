@@ -63,28 +63,28 @@ public class AdapterFilter extends ViewerFilter {
 		{
 			return;
 		}
-		this.txtSeachFilter = filterData.getTxtSeachFilter();
+		this.txtSeachFilter = filterData.getTxtSearchFilter();
 		this.showPackageFilter= filterData.getShowPackage();
 		this.sourceToDestination = filterData.getSourceToDestination();
 	}
 
 	
-	private void doFilter(AdapterData AdapterData2)
+	private void doFilter(AdapterData adapterData)
 	{
-		if( Boolean.TRUE.equals(sourceToDestination) && AdapterData2.getAdapterElementType().equals(AdapterElementType.SOURCE_TYPE))
+		if( Boolean.TRUE.equals(sourceToDestination) && adapterData.getAdapterElementType().equals(AdapterElementType.SOURCE_TYPE))
 		{
-			doVisibility(AdapterData2);
+			doVisibility(adapterData);
 		}
-		if( Boolean.FALSE.equals(sourceToDestination) && AdapterData2.getAdapterElementType().equals(AdapterElementType.DESTINATION_TYPE))
+		if( Boolean.FALSE.equals(sourceToDestination) && adapterData.getAdapterElementType().equals(AdapterElementType.DESTINATION_TYPE))
 		{
-			doVisibility(AdapterData2);
+			doVisibility(adapterData);
 		}
 	}
 	
-	private void doVisibility(AdapterData AdapterData2) {
+	private void doVisibility(AdapterData adapterData) {
 		AtomicBoolean bfound = new AtomicBoolean(false);
-		AdapterData2.textSearch(txtSeachFilter, bfound);
-		AdapterData2.setVisibilityFilter(bfound.get());
-		AdapterData2.propagateVisibility();
+		adapterData.textSearch(txtSeachFilter, bfound);
+		adapterData.setVisibilityFilter(bfound.get());
+		adapterData.propagateVisibility();
 	}
 }

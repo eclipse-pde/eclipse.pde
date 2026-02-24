@@ -63,7 +63,7 @@ public final class AdapterHelper {
 	private static List<Bundle> bundlesList =  new ArrayList<>();
 	private static final BundleContext bc = FrameworkUtil.getBundle(AdapterRepository.class).getBundleContext();
 
-	private static EclipseAdapter originalEclipseAdpater;
+	private static EclipseAdapter originalEclipseAdapter;
 
 	private static BundleContext bcontext;
 	
@@ -78,12 +78,12 @@ public final class AdapterHelper {
 	public static void wrapperEclipseAdapter() {
 		IEclipseContext serviceContext = E4Workbench.getServiceContext();
 		if (serviceContext == null) {
-			System.err.println("service contextr is null, unable to wrap eclipse adapter");
+			System.err.println("service context is null, unable to wrap eclipse adapter");
 			return;
 		}
 		EclipseAdapter eclipseAdapter = (EclipseAdapter) serviceContext.get(Adapter.class);
-		if (originalEclipseAdpater == null) {
-			originalEclipseAdpater = (EclipseAdapter) serviceContext.get(Adapter.class);
+		if (originalEclipseAdapter == null) {
+			originalEclipseAdapter = (EclipseAdapter) serviceContext.get(Adapter.class);
 		}
 		if (!(eclipseAdapter instanceof EclipseAdapterHook)) {
 			serviceContext.set(Adapter.class, ContextInjectionFactory.make(EclipseAdapterHook.class, serviceContext));
@@ -92,8 +92,8 @@ public final class AdapterHelper {
 
 	public static void restoreOriginalEclipseAdapter() {
 		IEclipseContext serviceContext = E4Workbench.getServiceContext();
-		if (serviceContext != null && originalEclipseAdpater != null) {
-			serviceContext.set(Adapter.class, originalEclipseAdpater);
+		if (serviceContext != null && originalEclipseAdapter != null) {
+			serviceContext.set(Adapter.class, originalEclipseAdapter);
 		}
 	}
 
@@ -118,12 +118,11 @@ public final class AdapterHelper {
 			Class<?> clazz = bundle.loadClass(className);
 			return  clazz.isInterface();
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
 		}
 		return false;
 	}
 	
-	public static Bundle getBundleForClassName(String className) {
+	public static synchronized Bundle getBundleForClassName(String className) {
 		if (bundlesList.isEmpty())
 		{
 			bundlesList = Arrays.asList(bc.getBundles());

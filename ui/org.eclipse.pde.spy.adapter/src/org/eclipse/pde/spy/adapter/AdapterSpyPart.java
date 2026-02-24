@@ -229,7 +229,7 @@ public class AdapterSpyPart {
 
 	@Inject
 	@Optional
-	private void udpateAdapterTreeViewTypeToSource(
+	private void updateAdapterTreeViewTypeToSource(
 			@Named(NAMED_UPDATE_TREE_DESTINATION_TO_SOURCE) Collection<AdapterData> adapaters) {
 		if (adapaters == null) {
 			return;
@@ -298,9 +298,9 @@ public class AdapterSpyPart {
 		filterText.addModifyListener(e -> {
 			FilterData fdata = getFilterData();
 			if (filterText.getText().isEmpty()) {
-				fdata.setTxtSeachFilter("");
+				fdata.setTxtSearchFilter("");
 			} else {
-				fdata.setTxtSeachFilter(filterText.getText());
+				fdata.setTxtSearchFilter(filterText.getText());
 			}
 			context.set(AdapterFilter.UPDATE_CTX_FILTER, fdata);
 			adapterTreeViewer.refresh(true);

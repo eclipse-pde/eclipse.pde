@@ -20,9 +20,9 @@ package org.eclipse.pde.spy.adapter.viewer;
  */
 public class FilterData {
 
-	String txtSeachFilter;
-	Boolean showPackage;
-	Boolean sourceToDestination;
+	String txtSearchFilter;
+	boolean showPackage;
+	boolean sourceToDestination;
 	/**
 	 * Ctor
 	 */
@@ -37,22 +37,22 @@ public class FilterData {
 	 */
 	public FilterData(FilterData fdata)
 	{
-		this.txtSeachFilter = fdata.txtSeachFilter;
+		this.txtSearchFilter = fdata.txtSearchFilter;
 		this.showPackage = fdata.showPackage;
 		this.sourceToDestination = fdata.sourceToDestination;
 	}
 	/**
-	 * @return the txtSeachFilter
+	 * @return the txtSearchFilter
 	 */
-	public String getTxtSeachFilter() {
-		return txtSeachFilter;
+	public String getTxtSearchFilter() {
+		return txtSearchFilter;
 	}
 
 	/**
-	 * @param txtSeachFilter the txtSeachFilter to set
+	 * @param txtSearchFilter the txtSearchFilter to set
 	 */
-	public void setTxtSeachFilter(String txtSeachFilter) {
-		this.txtSeachFilter = txtSeachFilter;
+	public void setTxtSearchFilter(String txtSearchFilter) {
+		this.txtSearchFilter = txtSearchFilter;
 
 	}
 
