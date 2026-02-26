@@ -46,8 +46,11 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.natures.BndProject;
 import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.core.util.PDEClasspathContainerSaveHelper;
+
+import aQute.bnd.build.Project;
 
 public class ClasspathContainerState {
 
@@ -119,7 +122,7 @@ public class ClasspathContainerState {
 				if (project.exists() && project.isOpen()) {
 					monitor.subTask(project.getName());
 					IPluginModelBase model = modelManager.findModel(project);
-					if (model != null && PluginProject.isJavaProject(project)) {
+					if (isPdeContainerProject(project, model) && PluginProject.isJavaProject(project)) {
 						IJavaProject javaProject = JavaCore.create(project);
 						try {
 							IClasspathEntry[] entries = ClasspathComputer.computeClasspathEntries(model,
@@ -199,6 +202,16 @@ public class ClasspathContainerState {
 			schedule();
 		}
 
+	}
+
+	private static boolean isPdeContainerProject(IProject project, IPluginModelBase model) {
+		if (model != null) {
+			return true;
+		}
+		if (BndProject.isBndProject(project)) {
+			return true;
+		}
+		return project.getFile(Project.BNDFILE).exists();
 	}
 
 	private static boolean isUpToDate(IProject project, IClasspathEntry[] currentEntries,
