@@ -238,6 +238,9 @@ public class ProjectComponent extends BundleComponent {
 				List<IApiTypeContainer> containers = new ArrayList<>();
 				for (IClasspathEntry classpathEntrie : classpathEntries) {
 					IClasspathEntry classpathEntry = classpathEntrie;
+					if (classpathEntry.isTest()) {
+						continue;
+					}
 					switch (classpathEntry.getEntryKind())
 						{
 						case IClasspathEntry.CPE_SOURCE:
