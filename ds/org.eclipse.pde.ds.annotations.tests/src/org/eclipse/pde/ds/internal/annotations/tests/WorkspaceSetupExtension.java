@@ -1,6 +1,5 @@
 package org.eclipse.pde.ds.internal.annotations.tests;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -64,9 +63,10 @@ public class WorkspaceSetupExtension implements BeforeAllCallback, AfterAllCallb
 						Path projectLocation = Files.createDirectories(wsRoot.resolve(project.getName()));
 						copyResources(bundle, entry.getValue(), projectLocation);
 						Files.createDirectories(projectLocation.resolve("OSGI-INF"));
-						File projectFile = projectLocation.resolve("test.project").toFile();
-						if (projectFile.isFile()) {
-							projectFile.renameTo(projectLocation.resolve(".project").toFile());
+						Path projectFile = projectLocation.resolve("test.project");
+						if (Files.isRegularFile(projectFile)) {
+							Files.move(projectFile, projectLocation.resolve(".project"),
+									StandardCopyOption.REPLACE_EXISTING);
 						}
 					} catch (IOException e) {
 						throw new CoreException(Status.error("Error copying test project content.", e));
@@ -96,8 +96,8 @@ public class WorkspaceSetupExtension implements BeforeAllCallback, AfterAllCallb
 		Job wsJob = new WorkspaceJob("Test Workspace Cleanup") {
 			@Override
 			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-				for (String projectId : PROJECTS.keySet()) {
-					IProject project = wsRoot.getProject("ds.annotations." + projectId);
+				for (String projectName : PROJECTS.keySet()) {
+					IProject project = wsRoot.getProject(projectName);
 					if (project.exists()) {
 						project.delete(true, true, monitor);
 					}
