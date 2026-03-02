@@ -22,6 +22,8 @@ public class Messages extends NLS {
 	public static String CssSpyPart_actual_values;
 	public static String CssSpyPart_All_shells;
 	public static String CssSpyPart_Bounds;
+	public static String CssSpyPart_Copy_widget_info;
+	public static String CssSpyPart_Copy_widget_hierarchy_tooltip;
 	public static String CssSpyPart_Classes;
 	public static String CssSpyPart_CSS;
 	public static String CssSpyPart_CSS_Class;

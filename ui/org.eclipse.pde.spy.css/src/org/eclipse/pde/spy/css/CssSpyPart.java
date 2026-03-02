@@ -19,9 +19,14 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -60,7 +65,11 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
@@ -68,24 +77,38 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.Widget;
 import org.w3c.css.sac.CSSParseException;
 import org.w3c.css.sac.SelectorList;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.css.CSSRule;
+import org.w3c.dom.css.CSSRuleList;
 import org.w3c.dom.css.CSSStyleDeclaration;
+import org.w3c.dom.css.CSSStyleRule;
+import org.w3c.dom.css.CSSStyleSheet;
 import org.w3c.dom.css.CSSValue;
+import org.w3c.dom.css.DocumentCSS;
+import org.w3c.dom.stylesheets.StyleSheet;
+import org.w3c.dom.stylesheets.StyleSheetList;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
@@ -93,6 +116,77 @@ import jakarta.inject.Named;
 
 @SuppressWarnings("restriction")
 public class CssSpyPart {
+
+	// Per-widget-type sets of meaningful SWT style bit names for CSS debugging.
+	// Each set includes the universal bits (BORDER, LEFT_TO_RIGHT, RIGHT_TO_LEFT).
+	private static final Set<String> STYLE_BITS_SHELL = Set.of(
+			"SWT.BORDER", "SWT.LEFT_TO_RIGHT", "SWT.RIGHT_TO_LEFT", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			"SWT.NO_TRIM", "SWT.RESIZE", "SWT.TITLE", "SWT.CLOSE", "SWT.MIN", "SWT.MAX", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+			"SWT.ON_TOP", "SWT.TOOL", "SWT.SHEET", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			"SWT.MODELESS", "SWT.PRIMARY_MODAL", "SWT.APPLICATION_MODAL", "SWT.SYSTEM_MODAL"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+
+	private static final Set<String> STYLE_BITS_TOOLBAR = Set.of(
+			"SWT.BORDER", "SWT.LEFT_TO_RIGHT", "SWT.RIGHT_TO_LEFT", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			"SWT.FLAT", "SWT.WRAP", "SWT.RIGHT", "SWT.HORIZONTAL", "SWT.VERTICAL", "SWT.SHADOW_OUT"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+
+	private static final Set<String> STYLE_BITS_BUTTON = Set.of(
+			"SWT.BORDER", "SWT.LEFT_TO_RIGHT", "SWT.RIGHT_TO_LEFT", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			"SWT.PUSH", "SWT.CHECK", "SWT.RADIO", "SWT.TOGGLE", "SWT.ARROW", "SWT.FLAT", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+			"SWT.LEFT", "SWT.RIGHT", "SWT.CENTER", "SWT.UP", "SWT.DOWN"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+
+	private static final Set<String> STYLE_BITS_TEXT = Set.of(
+			"SWT.BORDER", "SWT.LEFT_TO_RIGHT", "SWT.RIGHT_TO_LEFT", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			"SWT.SINGLE", "SWT.MULTI", "SWT.READ_ONLY", "SWT.WRAP", "SWT.PASSWORD", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			"SWT.SEARCH", "SWT.ICON_SEARCH", "SWT.ICON_CANCEL"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
+	private static final Set<String> STYLE_BITS_CTABFOLDER = Set.of(
+			"SWT.BORDER", "SWT.LEFT_TO_RIGHT", "SWT.RIGHT_TO_LEFT", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			"SWT.TOP", "SWT.BOTTOM", "SWT.FLAT", "SWT.SINGLE", "SWT.MULTI", "SWT.CLOSE"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+
+	private static final Set<String> STYLE_BITS_COMBO = Set.of(
+			"SWT.BORDER", "SWT.LEFT_TO_RIGHT", "SWT.RIGHT_TO_LEFT", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			"SWT.SIMPLE", "SWT.DROP_DOWN", "SWT.READ_ONLY"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
+	private static final Set<String> STYLE_BITS_LABEL = Set.of(
+			"SWT.BORDER", "SWT.LEFT_TO_RIGHT", "SWT.RIGHT_TO_LEFT", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			"SWT.LEFT", "SWT.RIGHT", "SWT.CENTER", "SWT.WRAP", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			"SWT.SEPARATOR", "SWT.HORIZONTAL", "SWT.VERTICAL", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			"SWT.SHADOW_IN", "SWT.SHADOW_OUT", "SWT.SHADOW_NONE"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
+	private static final Set<String> STYLE_BITS_TABLE_TREE = Set.of(
+			"SWT.BORDER", "SWT.LEFT_TO_RIGHT", "SWT.RIGHT_TO_LEFT", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			"SWT.SINGLE", "SWT.MULTI", "SWT.CHECK", "SWT.FULL_SELECTION", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			"SWT.VIRTUAL", "SWT.HIDE_SELECTION", "SWT.H_SCROLL", "SWT.V_SCROLL"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+
+	/** Fallback for Composite subclasses not matched above. */
+	private static final Set<String> STYLE_BITS_COMPOSITE = Set.of(
+			"SWT.BORDER", "SWT.LEFT_TO_RIGHT", "SWT.RIGHT_TO_LEFT", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			"SWT.H_SCROLL", "SWT.V_SCROLL", "SWT.NO_SCROLL", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			"SWT.NO_FOCUS", "SWT.NO_BACKGROUND", "SWT.DOUBLE_BUFFERED"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
+	/** Fallback for non-Composite widgets (ToolItem, CTabItem, etc.). */
+	private static final Set<String> STYLE_BITS_GENERIC = Set.of(
+			"SWT.BORDER", "SWT.LEFT_TO_RIGHT", "SWT.RIGHT_TO_LEFT"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
+	private static Set<String> getRelevantStyleBits(Widget widget) {
+		// Order matters: more specific types before their supertypes
+		if (widget instanceof Shell) return STYLE_BITS_SHELL;
+		if (widget instanceof ToolBar) return STYLE_BITS_TOOLBAR;
+		if (widget instanceof Button) return STYLE_BITS_BUTTON;
+		if (widget instanceof Text) return STYLE_BITS_TEXT;
+		if (widget instanceof CTabFolder) return STYLE_BITS_CTABFOLDER;
+		if (widget instanceof Combo) return STYLE_BITS_COMBO;
+		if (widget instanceof Label) return STYLE_BITS_LABEL;
+		if (widget instanceof Tree || widget instanceof Table) return STYLE_BITS_TABLE_TREE;
+		if (widget instanceof Composite) return STYLE_BITS_COMPOSITE;
+		return STYLE_BITS_GENERIC;
+	}
+
+	private static final Pattern RGB_PATTERN = Pattern
+			.compile("rgb\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\)"); //$NON-NLS-1$
+
+	private static final Pattern HEX_COLOR_PATTERN = Pattern
+			.compile("^#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})$"); //$NON-NLS-1$
 
 	@Inject
 	@Named(IServiceConstants.ACTIVE_SHELL)
@@ -153,6 +247,7 @@ public class CssSpyPart {
 	private Text cssSearchBox;
 	private Button showUnsetProperties;
 	private Button showCssFragment;
+	private Button copyHierarchyToClipboard;
 
 	protected ViewerFilter unsetPropertyFilter = new ViewerFilter() {
 
@@ -615,8 +710,10 @@ public class CssSpyPart {
 		showCssFragment.setText(Messages.CssSpyPart_Show_CSS_fragment);
 		showCssFragment.setToolTipText(Messages.CssSpyPart_Generates_CSS_rule_block_for_the_selected_widget);
 
-		// and for balance
-		new Label(container, SWT.NONE);
+		copyHierarchyToClipboard = new Button(container, SWT.PUSH);
+		copyHierarchyToClipboard.setText(Messages.CssSpyPart_Copy_widget_info);
+		copyHierarchyToClipboard.setToolTipText(Messages.CssSpyPart_Copy_widget_hierarchy_tooltip);
+		copyHierarchyToClipboard.setEnabled(false);
 
 		// / The listeners
 
@@ -648,6 +745,7 @@ public class CssSpyPart {
 		widgetTreeViewer.addSelectionChangedListener(event -> {
 			updateForWidgetSelection(event.getSelection());
 			showCssFragment.setEnabled(!event.getSelection().isEmpty());
+			copyHierarchyToClipboard.setEnabled(!event.getSelection().isEmpty());
 		});
 		if (isLive()) {
 			container.addMouseMoveListener(e -> {
@@ -681,6 +779,9 @@ public class CssSpyPart {
 				widgetSelected(e);
 			}
 		});
+
+		copyHierarchyToClipboard.addSelectionListener(
+				SelectionListener.widgetSelectedAdapter(e -> copyWidgetHierarchyToClipboard()));
 
 		sashForm.setWeights(50, 50);
 		widgetTreeViewer.getControl().setFocus();
@@ -883,6 +984,275 @@ public class CssSpyPart {
 			processCSSSearch(subMonitor.split(5), engine, selectors,
 					(CSSStylableElement) children.item(i), pseudo, results);
 		}
+	}
+
+	protected void copyWidgetHierarchyToClipboard() {
+		if (!(widgetTreeViewer.getSelection() instanceof IStructuredSelection sel) || sel.isEmpty()) {
+			return;
+		}
+		Object first = sel.getFirstElement();
+		if (!(first instanceof Widget selected)) {
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("Widget Hierarchy\n================\n\n"); //$NON-NLS-1$
+		appendWidgetSubtree(selected, sb, 0);
+
+		Clipboard clipboard = new Clipboard(display);
+		try {
+			clipboard.setContents(new Object[] { sb.toString() }, new Transfer[] { TextTransfer.getInstance() });
+		} finally {
+			clipboard.dispose();
+		}
+	}
+
+	private void appendWidgetSubtree(Widget widget, StringBuilder sb, int depth) {
+		String indent = "  ".repeat(depth); //$NON-NLS-1$
+
+		CSSStylableElement element = getCSSElement(widget);
+		if (element == null) {
+			sb.append(indent).append(widget.getClass().getSimpleName()).append("\n"); //$NON-NLS-1$
+		} else {
+			// CSS selector line: type#id.class1.class2
+			sb.append(indent).append(element.getLocalName());
+			if (element.getCSSId() != null) {
+				sb.append("#").append(element.getCSSId()); //$NON-NLS-1$
+			}
+			if (element.getCSSClass() != null) {
+				for (String cls : element.getCSSClass().split(" +")) { //$NON-NLS-1$
+					sb.append(".").append(cls); //$NON-NLS-1$
+				}
+			}
+			sb.append("\n"); //$NON-NLS-1$
+
+			// Warn when CSS tree parent differs from SWT parent — selector matching uses SWT
+			Node cssParentNode = element.getParentNode();
+			if (cssParentNode instanceof CSSStylableElement cssParent
+					&& widget instanceof Control c && !c.isDisposed()) {
+				Object cssParentNative = cssParent.getNativeWidget();
+				if (cssParentNative != c.getParent()) {
+					sb.append(indent)
+							.append("  ! CSS tree parent (").append(cssParent.getLocalName()).append(")") //$NON-NLS-1$ //$NON-NLS-2$
+							.append(" differs from SWT parent (") //$NON-NLS-1$
+							.append(c.getParent().getClass().getSimpleName())
+							.append(") — CSS selectors use SWT parent\n"); //$NON-NLS-1$
+				}
+			}
+
+			if (element.getCSSClass() != null) {
+				sb.append(indent).append("  Classes: ").append(element.getCSSClass()).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+
+			// Filtered SWT style bits — only those meaningful for this widget type
+			if (element.getAttribute("style") != null) { //$NON-NLS-1$
+				Set<String> relevant = getRelevantStyleBits(widget);
+				List<String> filtered = new ArrayList<>();
+				for (String bit : element.getAttribute("style").split(" +")) { //$NON-NLS-1$ //$NON-NLS-2$
+					if (relevant.contains(bit)) {
+						filtered.add(bit);
+					}
+				}
+				if (!filtered.isEmpty()) {
+					sb.append(indent).append("  SWT Style: ").append(String.join(" ", filtered)).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				}
+			}
+
+			if (element.getCSSStyle() != null) {
+				sb.append(indent).append("  Inline CSS: ").append(element.getCSSStyle()).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+
+			// CSS properties: computed value, declared token where different, and matched rule source
+			CSSEngine engine = getCSSEngine(element);
+			CSSStyleDeclaration decl = engine.getViewCSS().getComputedStyle(element, null);
+			Map<String, String> ruleSources = getCSSRuleSources(engine, element);
+			List<String> propertyNames = new ArrayList<>(engine.getCSSProperties(element));
+			Collections.sort(propertyNames);
+			boolean hasProperties = false;
+			String cssBgValue = null;
+			for (String propertyName : propertyNames) {
+				String computedValue = trim(engine.retrieveCSSProperty(element, propertyName, "")); //$NON-NLS-1$
+				if (computedValue == null) {
+					continue;
+				}
+				if (!hasProperties) {
+					sb.append(indent).append("  CSS Properties:\n"); //$NON-NLS-1$
+					hasProperties = true;
+				}
+				if ("background-color".equals(propertyName)) { //$NON-NLS-1$
+					cssBgValue = computedValue;
+				}
+				sb.append(indent).append("    ").append(propertyName).append(": ").append(computedValue); //$NON-NLS-1$ //$NON-NLS-2$
+				// Build annotation: declared token (with inherit resolution) and/or matched rule source
+				String declaredValue = null;
+				if (decl != null) {
+					CSSValue cssValue = decl.getPropertyCSSValue(propertyName);
+					if (cssValue != null) {
+						String dv = trim(cssValue.getCssText());
+						if (dv != null && !dv.equals(computedValue)) {
+							if ("inherit".equalsIgnoreCase(dv)) { //$NON-NLS-1$
+								String inheritSource = findInheritSource(engine, element, propertyName);
+								declaredValue = inheritSource != null
+										? "inherit \u2192 from " + inheritSource //$NON-NLS-1$ (→)
+										: "inherit"; //$NON-NLS-1$
+							} else {
+								declaredValue = dv;
+							}
+						}
+					}
+				}
+				String ruleSource = ruleSources.get(propertyName);
+				if (declaredValue != null || ruleSource != null) {
+					sb.append("  /* "); //$NON-NLS-1$
+					if (declaredValue != null) {
+						sb.append("declared: ").append(declaredValue); //$NON-NLS-1$
+						if (ruleSource != null) {
+							sb.append(" \u2014 "); //$NON-NLS-1$ (—)
+						}
+					}
+					if (ruleSource != null) {
+						sb.append(ruleSource);
+					}
+					sb.append(" */"); //$NON-NLS-1$
+				}
+				sb.append("\n"); //$NON-NLS-1$
+			}
+
+			// Actual SWT background — ⚠ if it differs from the CSS computed background-color
+			if (widget instanceof Control c && !c.isDisposed()) {
+				Color bg = c.getBackground();
+				if (bg != null && !bg.isDisposed()) {
+					RGB rgb = bg.getRGB();
+					sb.append(indent).append("  SWT background: rgb(") //$NON-NLS-1$
+							.append(rgb.red).append(",") //$NON-NLS-1$
+							.append(rgb.green).append(",") //$NON-NLS-1$
+							.append(rgb.blue).append(")"); //$NON-NLS-1$
+					if (cssBgValue != null && !swtRGBMatchesCSSColor(rgb, cssBgValue)) {
+						sb.append("  \u26a0 differs from CSS background-color"); //$NON-NLS-1$ (⚠)
+					}
+					sb.append("\n"); //$NON-NLS-1$
+				}
+			}
+
+			Rectangle bounds = getBounds(widget);
+			if (bounds != null) {
+				sb.append(indent).append("  Bounds: x=").append(bounds.x) //$NON-NLS-1$
+						.append(" y=").append(bounds.y) //$NON-NLS-1$
+						.append(" w=").append(bounds.width) //$NON-NLS-1$
+						.append(" h=").append(bounds.height).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+
+		// Recurse into children as shown in the tree
+		for (Object child : widgetTreeProvider.getChildren(widget)) {
+			if (child instanceof Widget childWidget) {
+				appendWidgetSubtree(childWidget, sb, depth + 1);
+			}
+		}
+	}
+
+	/**
+	 * Returns a map from CSS property name to "selector @ filename" for the last
+	 * matching CSS rule that declares each property for the given element. Iterates
+	 * stylesheets in source order so the last match (highest cascade precedence by
+	 * source position) wins.
+	 */
+	private Map<String, String> getCSSRuleSources(CSSEngine engine, CSSStylableElement element) {
+		Map<String, String> sources = new HashMap<>();
+		if (!(engine instanceof DocumentCSS docCSS)) {
+			return sources;
+		}
+		StyleSheetList sheets = docCSS.getStyleSheets();
+		for (int i = 0; i < sheets.getLength(); i++) {
+			StyleSheet sheet = sheets.item(i);
+			if (!(sheet instanceof CSSStyleSheet cssSheet)) {
+				continue;
+			}
+			String href = cssSheet.getHref();
+			String filename = href != null ? href.substring(href.lastIndexOf('/') + 1) : null;
+			CSSRuleList rules = cssSheet.getCssRules();
+			for (int j = 0; j < rules.getLength(); j++) {
+				CSSRule rule = rules.item(j);
+				if (!(rule instanceof CSSStyleRule styleRule)) {
+					continue;
+				}
+				try {
+					SelectorList selectors = engine.parseSelectors(styleRule.getSelectorText());
+					boolean matched = false;
+					for (int k = 0; k < selectors.getLength(); k++) {
+						if (engine.matches(selectors.item(k), element, null)) {
+							matched = true;
+							break;
+						}
+					}
+					if (!matched) {
+						continue;
+					}
+					String source = styleRule.getSelectorText()
+							+ (filename != null ? " @ " + filename : ""); //$NON-NLS-1$
+					CSSStyleDeclaration ruleDecl = styleRule.getStyle();
+					for (int p = 0; p < ruleDecl.getLength(); p++) {
+						sources.put(ruleDecl.item(p), source); // last match in source order wins
+					}
+				} catch (Exception ignored) {
+					// skip unparseable selectors
+				}
+			}
+		}
+		return sources;
+	}
+
+	/**
+	 * Walks up the CSS DOM from {@code element} to find the first ancestor that
+	 * has an explicit (non-inherit) declared value for {@code propertyName}, and
+	 * returns its CSS element name. Returns null if no such ancestor is found.
+	 */
+	private String findInheritSource(CSSEngine engine, CSSStylableElement element, String propertyName) {
+		Node parentNode = element.getParentNode();
+		while (parentNode instanceof CSSStylableElement parentEl) {
+			CSSStyleDeclaration parentDecl = engine.getViewCSS().getComputedStyle(parentEl, null);
+			if (parentDecl != null) {
+				CSSValue parentValue = parentDecl.getPropertyCSSValue(propertyName);
+				if (parentValue != null) {
+					String parentDeclText = trim(parentValue.getCssText());
+					if (parentDeclText != null && !"inherit".equalsIgnoreCase(parentDeclText)) { //$NON-NLS-1$
+						return cssElementName(parentEl);
+					}
+				}
+			}
+			parentNode = parentNode.getParentNode();
+		}
+		return null;
+	}
+
+	private static String cssElementName(CSSStylableElement el) {
+		StringBuilder name = new StringBuilder(el.getLocalName());
+		if (el.getCSSId() != null) {
+			name.append("#").append(el.getCSSId()); //$NON-NLS-1$
+		} else if (el.getCSSClass() != null) {
+			name.append(".").append(el.getCSSClass().split(" +")[0]); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		return name.toString();
+	}
+
+	/**
+	 * Returns true if the SWT RGB matches the CSS color string (rgb() or #rrggbb
+	 * format). Returns true (no warning) when the format is unrecognised.
+	 */
+	private static boolean swtRGBMatchesCSSColor(RGB swtRGB, String cssColor) {
+		Matcher m = RGB_PATTERN.matcher(cssColor);
+		if (m.find()) {
+			return swtRGB.red == Integer.parseInt(m.group(1))
+					&& swtRGB.green == Integer.parseInt(m.group(2))
+					&& swtRGB.blue == Integer.parseInt(m.group(3));
+		}
+		m = HEX_COLOR_PATTERN.matcher(cssColor.trim());
+		if (m.find()) {
+			return swtRGB.red == Integer.parseInt(m.group(1), 16)
+					&& swtRGB.green == Integer.parseInt(m.group(2), 16)
+					&& swtRGB.blue == Integer.parseInt(m.group(3), 16);
+		}
+		return true; // unrecognised format — assume match, no spurious warning
 	}
 
 	protected void dispose() {
