@@ -14,7 +14,9 @@
 package org.eclipse.pde.ui.tests;
 
 import org.eclipse.pde.core.tests.internal.AllPDECoreTests;
+import org.eclipse.pde.core.tests.internal.classpath.ChainedReexportPerformanceTest;
 import org.eclipse.pde.core.tests.internal.classpath.ClasspathResolutionTest;
+import org.eclipse.pde.core.tests.internal.classpath.RequiredPluginsClasspathContainerPerformanceTest;
 import org.eclipse.pde.core.tests.internal.core.builders.BundleErrorReporterTest;
 import org.eclipse.pde.core.tests.internal.util.PDESchemaHelperTest;
 import org.eclipse.pde.ui.tests.build.properties.AllValidatorTests;
@@ -58,6 +60,8 @@ import org.junit.platform.suite.api.Suite;
 	BundleRootTests.class, //
 	PluginRegistryTests.class, //
 	ClasspathResolverTest.class, //
+	RequiredPluginsClasspathContainerPerformanceTest.class, //
+	ChainedReexportPerformanceTest.class, //
 	ClasspathUpdaterTest.class, //
 	PDESchemaHelperTest.class, //
 	ClasspathContributorTest.class, //
