@@ -85,7 +85,7 @@ class RequiredPluginsClasspathContainer {
 	private static final String JUNIT4_PLUGIN = "org.junit";
 	private static final VersionRange JUNIT_4_VERSION = new VersionRange("[4.0,5)"); //$NON-NLS-1$
 	@SuppressWarnings("nls")
-	private static final Set<String> JUNIT5_RUNTIME_PLUGINS = Set.of("org.junit", //
+	private static final List<String> JUNIT5_RUNTIME_PLUGINS = List.of("org.junit", //
 			"junit-platform-launcher",
 			"org.junit.platform.launcher",
 			"junit-jupiter-engine", // BSN of the bundle from Maven-Central
@@ -223,7 +223,7 @@ class RequiredPluginsClasspathContainer {
 				return List.of();
 			}
 
-			Map<BundleDescription, List<Rule>> map = retrieveVisiblePackagesFromState(desc);
+			Map<BundleDescription, LinkedHashSet<Rule>> map = retrieveVisiblePackagesFromState(desc);
 
 			// Add any library entries contributed via classpath contributor
 			// extension (Bug 363733)
@@ -338,8 +338,8 @@ class RequiredPluginsClasspathContainer {
 		return Stream.concat(fClasspathContributors.stream(), PDECore.getDefault().getClasspathContributors());
 	}
 
-	private Map<BundleDescription, List<Rule>> retrieveVisiblePackagesFromState(BundleDescription desc) {
-		Map<BundleDescription, List<Rule>> visiblePackages = new HashMap<>();
+	private Map<BundleDescription, LinkedHashSet<Rule>> retrieveVisiblePackagesFromState(BundleDescription desc) {
+		Map<BundleDescription, LinkedHashSet<Rule>> visiblePackages = new HashMap<>();
 		StateHelper helper = BundleHelper.getPlatformAdmin().getStateHelper();
 		addVisiblePackagesFromState(helper, desc, visiblePackages);
 		if (desc.getHost() != null) {
@@ -349,7 +349,7 @@ class RequiredPluginsClasspathContainer {
 	}
 
 	private void addVisiblePackagesFromState(StateHelper helper, BundleDescription desc,
-			Map<BundleDescription, List<Rule>> visiblePackages) {
+			Map<BundleDescription, LinkedHashSet<Rule>> visiblePackages) {
 		if (desc == null) {
 			return;
 		}
@@ -359,11 +359,9 @@ class RequiredPluginsClasspathContainer {
 			if (exporter == null) {
 				continue;
 			}
-			List<Rule> list = visiblePackages.computeIfAbsent(exporter, e -> new ArrayList<>());
+			LinkedHashSet<Rule> list = visiblePackages.computeIfAbsent(exporter, e -> new LinkedHashSet<>());
 			Rule rule = getRule(helper, desc, export);
-			if (!list.contains(rule)) {
-				list.add(rule);
-			}
+			list.add(rule);
 		}
 	}
 
@@ -375,7 +373,7 @@ class RequiredPluginsClasspathContainer {
 	}
 
 	protected void addDependencyViaImportPackage(BundleDescription desc, Set<BundleDescription> added,
-			Map<BundleDescription, List<Rule>> map, List<IClasspathEntry> entries) throws CoreException {
+			Map<BundleDescription, LinkedHashSet<Rule>> map, List<IClasspathEntry> entries) throws CoreException {
 		if (desc == null || !added.add(desc)) {
 			return;
 		}
@@ -393,12 +391,12 @@ class RequiredPluginsClasspathContainer {
 	}
 
 	private void addDependency(BundleDescription desc, Set<BundleDescription> added,
-			Map<BundleDescription, List<Rule>> map, List<IClasspathEntry> entries) throws CoreException {
+			Map<BundleDescription, LinkedHashSet<Rule>> map, List<IClasspathEntry> entries) throws CoreException {
 		addDependency(desc, added, map, entries, true);
 	}
 
 	private void addDependency(BundleDescription desc, Set<BundleDescription> added,
-			Map<BundleDescription, List<Rule>> map, List<IClasspathEntry> entries, boolean useInclusion)
+			Map<BundleDescription, LinkedHashSet<Rule>> map, List<IClasspathEntry> entries, boolean useInclusion)
 			throws CoreException {
 		if (desc == null || !added.add(desc)) {
 			return;
@@ -441,7 +439,7 @@ class RequiredPluginsClasspathContainer {
 		}
 	}
 
-	private boolean addPlugin(BundleDescription desc, boolean useInclusions, Map<BundleDescription, List<Rule>> map,
+	private boolean addPlugin(BundleDescription desc, boolean useInclusions, Map<BundleDescription, LinkedHashSet<Rule>> map,
 			List<IClasspathEntry> entries) throws CoreException {
 		IPluginModelBase model = PluginRegistry.findModel((Resource) desc);
 		if (model == null || !model.isEnabled()) {
@@ -469,7 +467,7 @@ class RequiredPluginsClasspathContainer {
 		return true;
 	}
 
-	private List<Rule> getInclusions(Map<BundleDescription, List<Rule>> map, IPluginModelBase model) {
+	private List<Rule> getInclusions(Map<BundleDescription, LinkedHashSet<Rule>> map, IPluginModelBase model) {
 		BundleDescription desc = model.getBundleDescription();
 		if (desc == null || "false".equals(System.getProperty("pde.restriction")) //$NON-NLS-1$ //$NON-NLS-2$
 				|| !(fModel instanceof IBundlePluginModelBase) || TargetPlatformHelper.getTargetVersion() < 3.1) {
@@ -479,12 +477,12 @@ class RequiredPluginsClasspathContainer {
 		if (desc.getHost() != null) {
 			desc = (BundleDescription) desc.getHost().getSupplier();
 		}
-		List<Rule> rules = map.getOrDefault(desc, List.of());
-		return (rules.isEmpty() && !ClasspathUtilCore.hasBundleStructure(model)) ? null : rules;
+		LinkedHashSet<Rule> rules = map.getOrDefault(desc, new LinkedHashSet<>());
+		return (rules.isEmpty() && !ClasspathUtilCore.hasBundleStructure(model)) ? null : new ArrayList<>(rules);
 	}
 
 	private void addHostPlugin(HostSpecification hostSpec, Set<BundleDescription> added,
-			Map<BundleDescription, List<Rule>> map, List<IClasspathEntry> entries) throws CoreException {
+			Map<BundleDescription, LinkedHashSet<Rule>> map, List<IClasspathEntry> entries) throws CoreException {
 		BaseDescription desc = hostSpec.getSupplier();
 
 		if (desc instanceof BundleDescription host) {
@@ -628,7 +626,7 @@ class RequiredPluginsClasspathContainer {
 			}
 
 			// add dependency with exclude all rule
-			Map<BundleDescription, List<Rule>> rules = Map.of(desc, List.of());
+			Map<BundleDescription, LinkedHashSet<Rule>> rules = Map.of(desc, new LinkedHashSet<>());
 			addPlugin(desc, true, rules, entries);
 		}
 	}
@@ -691,7 +689,7 @@ class RequiredPluginsClasspathContainer {
 		while (transitiveDeps.hasNext()) {
 			BundleDescription desc = transitiveDeps.next();
 			if (added.add(desc)) {
-				Map<BundleDescription, List<Rule>> rules = Map.of(desc, List.of());
+				Map<BundleDescription, LinkedHashSet<Rule>> rules = Map.of(desc, new LinkedHashSet<>());
 				addPlugin(desc, true, rules, entries);
 			}
 		}
@@ -705,21 +703,24 @@ class RequiredPluginsClasspathContainer {
 			if (added.contains(bundleDesc)) {
 				return;
 			}
-			Map<BundleDescription, List<Rule>> rules = new HashMap<>();
+			Map<BundleDescription, LinkedHashSet<Rule>> rules = new HashMap<>();
 			findExportedPackages(bundleDesc, desc, rules);
 			addDependency(bundleDesc, added, rules, entries, true);
 		}
 	}
 
 	protected final void findExportedPackages(BundleDescription desc, BundleDescription projectDesc,
-			Map<BundleDescription, List<Rule>> map) {
+			Map<BundleDescription, LinkedHashSet<Rule>> map) {
 		if (desc != null) {
 			Queue<BundleDescription> queue = new ArrayDeque<>();
 			queue.add(desc);
 			while (!queue.isEmpty()) {
 				BundleDescription bdesc = queue.remove();
+				if (map.containsKey(bdesc)) {
+					continue;
+				}
 				ExportPackageDescription[] expkgs = bdesc.getExportPackages();
-				List<Rule> rules = new ArrayList<>();
+				LinkedHashSet<Rule> rules = new LinkedHashSet<>();
 				for (ExportPackageDescription expkg : expkgs) {
 					boolean discouraged = restrictPackage(projectDesc, expkg);
 					IPath path = IPath.fromOSString(expkg.getName().replace('.', '/') + "/*"); //$NON-NLS-1$
