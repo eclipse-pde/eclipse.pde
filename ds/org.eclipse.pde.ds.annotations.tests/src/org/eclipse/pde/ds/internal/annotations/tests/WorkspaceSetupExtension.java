@@ -1,6 +1,5 @@
 package org.eclipse.pde.ds.internal.annotations.tests;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -55,7 +54,8 @@ public class WorkspaceSetupExtension implements BeforeAllCallback, AfterAllCallb
 		Job wsJob = new WorkspaceJob("Test Workspace Setup") {
 			@Override
 			public IStatus runInWorkspace(IProgressMonitor m) throws CoreException {
-				SubMonitor monitor = SubMonitor.convert(m, PROJECTS.size() * 8);
+				// Per project: create(1) + open(1) + 3*(build(2) + refresh(1)) = 11
+				SubMonitor monitor = SubMonitor.convert(m, PROJECTS.size() * 11);
 				// import test projects
 				Path wsRoot = ws.getRoot().getLocation().toPath();
 				for (Map.Entry<String, String> entry : PROJECTS.entrySet()) {
@@ -64,16 +64,17 @@ public class WorkspaceSetupExtension implements BeforeAllCallback, AfterAllCallb
 						Path projectLocation = Files.createDirectories(wsRoot.resolve(project.getName()));
 						copyResources(bundle, entry.getValue(), projectLocation);
 						Files.createDirectories(projectLocation.resolve("OSGI-INF"));
-						File projectFile = projectLocation.resolve("test.project").toFile();
-						if (projectFile.isFile()) {
-							projectFile.renameTo(projectLocation.resolve(".project").toFile());
+						Path projectFile = projectLocation.resolve("test.project");
+						if (Files.isRegularFile(projectFile)) {
+							Files.move(projectFile, projectLocation.resolve(".project"),
+									StandardCopyOption.REPLACE_EXISTING);
 						}
 					} catch (IOException e) {
 						throw new CoreException(Status.error("Error copying test project content.", e));
 					}
 					project.create(monitor.split(1));
 					project.open(monitor.split(1));
-					for (int i = 0; i < 2; i++) { // Build twice. Sometimes the setup is unstable
+					for (int i = 0; i < 3; i++) { // Annotation processor may need multiple builds to generate all outputs
 						project.build(IncrementalProjectBuilder.FULL_BUILD, monitor.split(2));
 						project.refreshLocal(IResource.DEPTH_INFINITE, monitor.split(1));
 					}
@@ -84,6 +85,10 @@ public class WorkspaceSetupExtension implements BeforeAllCallback, AfterAllCallb
 
 		wsJob.schedule();
 		wsJob.join();
+		IStatus result = wsJob.getResult();
+		if (result != null && !result.isOK()) {
+			throw new CoreException(result);
+		}
 	}
 
 	@Override
@@ -97,7 +102,7 @@ public class WorkspaceSetupExtension implements BeforeAllCallback, AfterAllCallb
 			@Override
 			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 				for (String projectId : PROJECTS.keySet()) {
-					IProject project = wsRoot.getProject("ds.annotations." + projectId);
+					IProject project = wsRoot.getProject(projectId);
 					if (project.exists()) {
 						project.delete(true, true, monitor);
 					}
