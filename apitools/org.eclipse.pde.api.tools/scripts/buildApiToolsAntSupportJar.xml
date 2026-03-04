@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 	Copyright (c) IBM Corporation and others 2008, 2013 This page is made available under license. For full details see the LEGAL in the documentation book that contains this page.
-	
+
 	All Platform Debug contexts, those for org.eclipse.debug.ui, are located in this file
 	All contexts are grouped by their relation, with all relations grouped alphabetically.
 -->
 <project name="Build API Tools Ant Support Jar" default="build" basedir="..">
 
-	<target name="build" description="Cleans, builds and refreshes" depends="clean, lib/apitooling-ant.jar"/>
+	<target name="build" description="Builds if needed" depends="lib/apitooling-ant.jar"/>
 
 	<target name="init" depends="properties">
 		<property name="temp.folder" value="${basedir}/temp.folder"/>
@@ -17,15 +17,30 @@
 	<target name="properties" if="eclipse.running">
 		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
 	</target>
-			
-	<target name="lib/apitooling-ant.jar" description= "Creates the lib/apitooling-ant.jar" depends="init">
+
+	<target name="check.uptodate" depends="init">
+		<!-- Check if the jar is up-to-date with respect to all source inputs -->
+		<uptodate property="lib/apitooling-ant.jar.uptodate"
+				targetfile="${build.result.folder}/lib/apitooling-ant.jar">
+			<srcresources>
+				<fileset dir="${basedir}/src_ant/"/>
+				<fileset dir="xml/">
+					<exclude name="**/*.xsd"/>
+					<exclude name="**/*.xml"/>
+				</fileset>
+			</srcresources>
+		</uptodate>
+	</target>
+
+	<target name="lib/apitooling-ant.jar" description="Creates the lib/apitooling-ant.jar"
+			depends="check.uptodate" unless="lib/apitooling-ant.jar.uptodate">
 		<property name="destdir" value="${temp.folder}/lib/apitooling-ant.bin"/>
 		<delete dir="${destdir}"/>
 		<mkdir dir="${destdir}"/>
 		<!-- copy necessary resources -->
-        <copy todir="${destdir}">
-            <fileset dir="${basedir}/bin_ant/"/>
-        </copy>
+		<copy todir="${destdir}">
+			<fileset dir="${basedir}/bin_ant/"/>
+		</copy>
 		<!-- copy default XSLT files to the jar location -->
 		<copy todir="${destdir}" failonerror="true" overwrite="false">
 			<fileset dir="xml/">

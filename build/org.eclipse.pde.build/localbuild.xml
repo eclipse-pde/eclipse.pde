@@ -8,7 +8,7 @@
      https://www.eclipse.org/legal/epl-2.0/
 
      SPDX-License-Identifier: EPL-2.0
-    
+
      Contributors:
          IBM Corporation - initial API and implementation
  -->
@@ -19,25 +19,31 @@
     	 gathering up the results of a workspace build from bin_ant.
     </description>
 
-	<!-- ================================= 
-          target: default              
+	<!-- =================================
+          target: default
          ================================= -->
-	<target name="default" description="--> description">
+	<target name="default" depends="checkSourceUpToDate" unless="pdebuild-ant.jar.uptodate"
+		description="Build pdebuild-ant.jar from source if needed">
 		<tstamp/>
-		<eclipse.buildScript elements="plugin@org.eclipse.pde.build" 
-			buildDirectory="${buildDirectory}" 
-			configInfo="*,*,*" 
-			baseLocation="${baseLocation}" 
+		<eclipse.buildScript elements="plugin@org.eclipse.pde.build"
+			buildDirectory="${buildDirectory}"
+			configInfo="*,*,*"
+			baseLocation="${baseLocation}"
 			outputUpdateJars="false"
 			pluginpath="${thisPlugin}"
 			forceContextQualifier="z${DSTAMP}${TSTAMP}"
 			/>
-		<delete file="lib/pdebuild-ant.jar" failonerror="false"/>
 		<ant antfile="build.xml" target="lib/pdebuild-ant.jar"/>
 	</target>
-	<target name="workspaceBinaries" description="Jar up the binaries that were compiled by the jdt builder" >
+	<target name="checkSourceUpToDate">
+		<uptodate property="pdebuild-ant.jar.uptodate" targetfile="lib/pdebuild-ant.jar">
+			<srcfiles dir="src_ant" includes="**/*"/>
+		</uptodate>
+	</target>
+
+	<target name="workspaceBinaries" depends="checkSourceUpToDate" unless="pdebuild-ant.jar.uptodate"
+		description="Jar up the binaries that were compiled by the jdt builder">
 		<mkdir dir="lib" />
-		<delete file="lib/pdebuild-ant.jar" failonerror="false"/>
 		<jar destfile="lib/pdebuild-ant.jar" basedir="bin_ant"/>
 	</target>
 </project>
