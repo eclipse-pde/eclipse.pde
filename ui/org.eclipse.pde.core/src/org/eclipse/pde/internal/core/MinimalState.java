@@ -162,6 +162,11 @@ public class MinimalState {
 			return manifest;
 		}
 		IVMInstall projectVmInstall = JavaRuntime.getVMInstall(javaProject);
+		if (projectVmInstall == null) {
+			PDECore.log(Status.warning("Could not determine VM install for project " //$NON-NLS-1$
+					+ resource.getProject().getName() + ", skipping BREE injection")); //$NON-NLS-1$
+			return manifest;
+		}
 
 		IExecutionEnvironment executionEnvironment = Arrays
 				.stream(JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments())
