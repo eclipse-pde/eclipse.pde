@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: E
+Bundle-SymbolicName: E
+Bundle-Version: 1.0.0.qualifier
+Export-Package: e.api;version="1.0.0"
+Automatic-Module-Name: E
+Bundle-RequiredExecutionEnvironment: JavaSE-21
