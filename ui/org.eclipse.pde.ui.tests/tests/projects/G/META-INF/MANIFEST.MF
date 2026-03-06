@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: G
+Bundle-SymbolicName: G
+Bundle-Version: 1.0.0.qualifier
+Export-Package: g.api;version="1.0.0",
+ g.internal;x-friends:="A"
+Import-Package: h.api;version="1.0.0";resolution:=optional
+Automatic-Module-Name: G
+Bundle-RequiredExecutionEnvironment: JavaSE-21
