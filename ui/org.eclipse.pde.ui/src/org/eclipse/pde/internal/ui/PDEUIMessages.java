@@ -40,6 +40,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String AbstractTargetPage_setTarget;
 
+	public static String ProgramBlock_runWithConsoleOption;
+
 	public static String AbstractTargetPage_reloadTarget;
 
 	public static String AbstractTargetPage_openPreferences;
