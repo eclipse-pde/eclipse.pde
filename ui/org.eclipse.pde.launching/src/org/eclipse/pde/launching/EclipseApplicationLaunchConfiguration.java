@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2024 IBM Corporation and others.
+ * Copyright (c) 2005, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -157,6 +157,9 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 				programArgs.add(0, "-showsplash"); //$NON-NLS-1$
 				programArgs.add(1, computeShowsplashArgument());
 			}
+		}
+		if (configuration.getAttribute(IPDELauncherConstants.ADD_CONSOLE, false)) {
+			programArgs.add("-console"); //$NON-NLS-1$
 		}
 		return programArgs.toArray(new String[programArgs.size()]);
 	}
