@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: B
+Bundle-SymbolicName: B
+Bundle-Version: 1.0.0.qualifier
+Export-Package: b.api;version="1.0.0"
+Import-Package: d.api;version="1.0.0",
+ f.api;version="1.0.0";resolution:=optional
+Require-Bundle: C;bundle-version="1.0.0",
+ E;bundle-version="1.0.0";resolution:=optional,
+ G;bundle-version="1.0.0";visibility:=reexport
+Automatic-Module-Name: B
+Bundle-RequiredExecutionEnvironment: JavaSE-21
