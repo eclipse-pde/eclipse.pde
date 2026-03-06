@@ -36,7 +36,7 @@
       <setupTask
           xsi:type="setup:PreferenceTask"
           key="/instance/org.eclipse.jdt.core/org.eclipse.jdt.core.compiler.problem.forbiddenReference"
-          value="warning"/>
+          value="error"/>
     </setupTask>
   </setupTask>
   <setupTask
