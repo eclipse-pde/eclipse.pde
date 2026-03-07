@@ -65,6 +65,8 @@ import org.eclipse.pde.launching.EclipseApplicationLaunchConfiguration;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.tests.util.ProjectUtils.CoreConsumer;
 import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
+import org.eclipse.platform.internal.LaunchUpdateIntroAction;
+import org.eclipse.ui.internal.ide.application.IDEApplication;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -1451,9 +1453,9 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 		// ensure app requirements are registered (done at class initialization)
 		new EclipseApplicationLaunchConfiguration();
 		@SuppressWarnings("unused") // prevent bundle removal
-		org.eclipse.platform.internal.LaunchUpdateIntroAction a;
+		LaunchUpdateIntroAction a;
 		@SuppressWarnings("unused") // prevent bundle removal
-		org.eclipse.ui.internal.ide.application.IDEApplication app;
+		IDEApplication app;
 
 		TargetPlatformUtil.setRunningPlatformAsTarget();
 
