@@ -138,7 +138,9 @@ public class ClasspathResolutionTest2 {
 
 	private static IProject projectA;
 	private static IProject projectAe;
+	private static IProject projectAd;
 	private static IClasspathEntry[] classpathEntriesA;
+	private static IClasspathEntry[] classpathEntriesAd;
 
 	/**
 	 * Bundles providing packages directly imported by A via Import-Package.
@@ -193,6 +195,19 @@ public class ClasspathResolutionTest2 {
 		projectAe.open(new NullProgressMonitor());
 		projectAe.build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
 
+		// Import and build project X (Export-Package: x.api,
+		// x.internal;x-internal:=true) before Ad, since Ad imports from X
+		IProject projectX = ProjectUtils.importTestProject("tests/projects/X");
+		projectX.open(new NullProgressMonitor());
+		projectX.build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
+		TestUtils.processUIEvents(100);
+
+		// Import and build project Ad (Import-Package: b.api, g.api, x.api,
+		// x.internal). Only references exported API + x-internal types.
+		projectAd = ProjectUtils.importTestProject("tests/projects/Ad");
+		projectAd.open(new NullProgressMonitor());
+		projectAd.build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
+
 		// Compute PDE classpath entries (only plugin dependencies, no
 		// JRE/source)
 		// See ClasspathComputer.computeClasspathEntries() which delegates to
@@ -200,6 +215,10 @@ public class ClasspathResolutionTest2 {
 		IPluginModelBase modelA = PDECore.getDefault().getModelManager().findModel(projectA);
 		assertNotNull("PDE model for project A must be available", modelA);
 		classpathEntriesA = ClasspathComputer.computeClasspathEntries(modelA, projectA);
+
+		IPluginModelBase modelAd = PDECore.getDefault().getModelManager().findModel(projectAd);
+		assertNotNull("PDE model for project Ad must be available", modelAd);
+		classpathEntriesAd = ClasspathComputer.computeClasspathEntries(modelAd, projectAd);
 
 		TestUtils.processUIEvents(100);
 	}
@@ -566,6 +585,112 @@ public class ClasspathResolutionTest2 {
 	}
 
 	// =========================================================================
+	// Section 5b: Project Ad — discouraged access via x-internal:=true
+	// =========================================================================
+
+	/**
+	 * Project Ad directly imports x.internal from bundle X. X exports
+	 * x.internal with {@code x-internal:=true}, which causes Equinox's
+	 * {@code StateHelperImpl.getAccessCode()} to return
+	 * {@code ACCESS_DISCOURAGED}. PDE maps this to
+	 * {@code IAccessRule.K_DISCOURAGED} in the classpath entry for X.
+	 * <p>
+	 * Expected access rules for X on Ad's classpath:
+	 * <ol>
+	 * <li>{@code x/api/* K_ACCESSIBLE} — normal public API export</li>
+	 * <li>{@code x/internal/* K_DISCOURAGED} — exported but marked
+	 * x-internal:=true</li>
+	 * <li>{@code **&#47;* K_NON_ACCESSIBLE} — catch-all EXCLUDE_ALL_RULE</li>
+	 * </ol>
+	 */
+	@Test
+	public void testDiscouragedAccessRulesForXInternal() throws Exception {
+		IClasspathEntry entryX = findEntryIn(classpathEntriesAd, "X");
+		assertNotNull("X must be on Ad's classpath " + "(directly imported via Import-Package)", entryX);
+
+		IAccessRule[] rules = entryX.getAccessRules();
+		assertThat(rules).as("X entry must have 3 rules: " + "x/api/* K_ACCESSIBLE, x/internal/* K_DISCOURAGED, "
+				+ "**/* K_NON_ACCESSIBLE").hasSize(3);
+
+		// Rule 1: x.api is a normal public export → K_ACCESSIBLE
+		assertThat(rules[0].getPattern().toString()).as("First rule must match x/api/* package").isEqualTo("x/api/*");
+		assertThat(rules[0].getKind()).as("x.api is a normal Export-Package → K_ACCESSIBLE")
+		.isEqualTo(IAccessRule.K_ACCESSIBLE);
+
+		// Rule 2: x.internal exported with x-internal:=true →
+		// K_DISCOURAGED (StateHelperImpl.getAccessCode() returns
+		// ACCESS_DISCOURAGED for x-internal directive)
+		assertThat(rules[1].getPattern().toString()).as("Second rule must match x/internal/* package")
+		.isEqualTo("x/internal/*");
+		assertThat(rules[1].getKind()).as("x.internal has x-internal:=true → K_DISCOURAGED " + "(not K_NON_ACCESSIBLE)")
+		.isEqualTo(IAccessRule.K_DISCOURAGED);
+
+		// Rule 3: catch-all EXCLUDE_ALL_RULE
+		assertThat(rules[2].getPattern().toString()).as("Last rule must be the **/* catch-all").isEqualTo("**/*");
+		assertThat(rules[2].getKind()).as("Catch-all must be K_NON_ACCESSIBLE").isEqualTo(IAccessRule.K_NON_ACCESSIBLE);
+	}
+
+	/**
+	 * Project Ad only references exported API from B, G, and X. The only
+	 * non-API reference is to x.internal.MyObject which is exported with
+	 * {@code x-internal:=true} — this produces {@code K_DISCOURAGED} access,
+	 * not {@code K_NON_ACCESSIBLE}.
+	 * <p>
+	 * JDT generates {@link IProblem#DiscouragedReference} markers for
+	 * K_DISCOURAGED types, with severity controlled by the project's
+	 * {@code discouragedReference} compiler setting. Project Ad has
+	 * {@code discouragedReference=warning}.
+	 * <p>
+	 * Expected markers on Ad/src/a/api/AClass.java:
+	 * <ul>
+	 * <li>Lines 30, 33, 36: no markers (K_ACCESSIBLE API)</li>
+	 * <li>Line 40: exactly 2 markers — discouraged type + constructor for
+	 * x.internal.MyObject</li>
+	 * </ul>
+	 */
+	@Test
+	public void testDiscouragedMarkersOnProjectAd() throws Exception {
+		IMarker[] allMarkers = projectAd.findMarkers(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER, true,
+				IResource.DEPTH_INFINITE);
+
+		// Ad only has 1 discouraged reference (x.internal.MyObject on line
+		// 38) producing 2 markers (type + constructor). Zero markers for
+		// exported API (b.api, g.api, x.api).
+		assertThat(allMarkers).as("Project Ad must have exactly 2 markers: " + "discouraged type + constructor for "
+				+ "x.internal.MyObject. Zero errors, zero " + "markers on accessible types.").hasSize(2);
+
+		for (IMarker m : allMarkers) {
+			assertThat(m.getAttribute(IMarker.LINE_NUMBER, -1))
+			.as("Discouraged marker must be on line 40 " + "(x.internal.MyObject)").isEqualTo(40);
+
+			assertThat(m.getAttribute(IMarker.SEVERITY, -1))
+					.as("Discouraged access must be WARNING " + "(discouragedReference=warning in "
+							+ "project settings)")
+			.isEqualTo(IMarker.SEVERITY_WARNING);
+
+			// DiscouragedReference vs ForbiddenReference: K_DISCOURAGED
+			// produces DiscouragedReference markers, not
+			// ForbiddenReference
+			assertThat(m.getAttribute(IJavaModelMarker.ID, -1))
+			.as("Must be IProblem.DiscouragedReference " + "(K_DISCOURAGED access, not " + "K_NON_ACCESSIBLE)")
+			.isEqualTo(IProblem.DiscouragedReference);
+
+			String msg = m.getAttribute(IMarker.MESSAGE, "");
+			assertThat(msg).as("Message must be 'Discouraged access' (not " + "'Access restriction')")
+			.startsWith("Discouraged access:");
+			assertThat(msg).as("Message must reference restricting project X")
+			.contains("restriction on required project 'X'");
+		}
+
+		// Verify one marker is for type, one for constructor
+		List<String> messages = Arrays.stream(allMarkers).map(m -> m.getAttribute(IMarker.MESSAGE, "")).toList();
+		assertThat(messages).as("Must have discouraged type access marker")
+		.anyMatch(msg -> msg.contains("The type 'MyObject'"));
+		assertThat(messages).as("Must have discouraged constructor access marker")
+		.anyMatch(msg -> msg.contains("The constructor 'MyObject()'"));
+	}
+
+	// =========================================================================
 	// Section 6: Cross-validation
 	// =========================================================================
 
@@ -627,7 +752,11 @@ public class ClasspathResolutionTest2 {
 	}
 
 	private static IClasspathEntry findEntry(String bundleName) {
-		for (IClasspathEntry entry : classpathEntriesA) {
+		return findEntryIn(classpathEntriesA, bundleName);
+	}
+
+	private static IClasspathEntry findEntryIn(IClasspathEntry[] entries, String bundleName) {
+		for (IClasspathEntry entry : entries) {
 			if (entry.getPath().lastSegment().equals(bundleName)) {
 				return entry;
 			}

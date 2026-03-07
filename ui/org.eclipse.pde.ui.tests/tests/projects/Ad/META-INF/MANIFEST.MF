@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Ad
+Bundle-SymbolicName: Ad
+Bundle-Version: 1.0.0.qualifier
+Export-Package: a.api
+Import-Package: b.api;version="1.0.0",
+ g.api;version="1.0.0",
+ x.api;version="1.0.0",
+ x.internal;version="1.0.0"
+Automatic-Module-Name: Ad
+Bundle-RequiredExecutionEnvironment: JavaSE-21
