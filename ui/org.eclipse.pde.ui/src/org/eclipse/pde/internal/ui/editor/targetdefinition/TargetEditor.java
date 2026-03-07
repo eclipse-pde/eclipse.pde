@@ -56,6 +56,7 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.source.ISourceViewerExtension5;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.bnd.ui.model.resolution.CapReqLoader;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetHandle;
 import org.eclipse.pde.core.target.ITargetLocation;
@@ -322,6 +323,9 @@ public class TargetEditor extends FormEditor {
 			if (target != null) {
 				return adapter.cast(target.getHandle());
 			}
+		}
+		if (adapter == CapReqLoader.class) {
+			return adapter.cast(new TargetCapReqLoader(getTarget(), getEditorInput()));
 		}
 		return super.getAdapter(adapter);
 	}
