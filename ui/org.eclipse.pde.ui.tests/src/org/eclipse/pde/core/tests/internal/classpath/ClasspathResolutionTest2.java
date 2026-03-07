@@ -137,6 +137,7 @@ public class ClasspathResolutionTest2 {
 	public final TestRule deleteCreatedTestProjectsAfter = ProjectUtils.DELETE_CREATED_WORKSPACE_PROJECTS_AFTER;
 
 	private static IProject projectA;
+	private static IProject projectAe;
 	private static IClasspathEntry[] classpathEntriesA;
 
 	/**
@@ -179,9 +180,18 @@ public class ClasspathResolutionTest2 {
 		TestUtils.processUIEvents(100);
 
 		// Import and build project A last (Import-Package: b.api, g.api)
+		// Project A has forbiddenReference=warning → forbidden refs are
+		// warnings
 		projectA = ProjectUtils.importTestProject("tests/projects/A");
 		projectA.open(new NullProgressMonitor());
 		projectA.build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
+
+		// Import and build project Ae (same deps as A, but
+		// forbiddenReference=error)
+		// Project Ae uses the JDT default → forbidden refs are errors
+		projectAe = ProjectUtils.importTestProject("tests/projects/Ae");
+		projectAe.open(new NullProgressMonitor());
+		projectAe.build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
 
 		// Compute PDE classpath entries (only plugin dependencies, no
 		// JRE/source)
@@ -404,116 +414,154 @@ public class ClasspathResolutionTest2 {
 	// =========================================================================
 
 	/**
-	 * Validates ALL compilation markers on project A against exact expected
-	 * values. This single test replaces multiple weaker assertions and verifies
-	 * three things simultaneously:
+	 * Validates all compilation markers on project A (which has
+	 * {@code forbiddenReference=warning} in its JDT compiler settings). All
+	 * forbidden reference markers must be at {@code WARNING} severity.
+	 *
+	 * @see #assertExpectedCompilationMarkers(IProject, int)
+	 */
+	@Test
+	public void testExpectedCompilationMarkers_forbiddenIsWarning() throws Exception {
+		assertExpectedCompilationMarkers(projectA, IMarker.SEVERITY_WARNING);
+	}
+
+	/**
+	 * Validates all compilation markers on project Ae (which has
+	 * {@code forbiddenReference=error} in its JDT compiler settings — the JDT
+	 * default).
+	 * <p>
+	 * All forbidden reference markers must be at {@code ERROR} severity. This
+	 * validates the JDT default behavior: forbidden references are compilation
+	 * errors unless explicitly downgraded to warnings.
+	 *
+	 * @see #assertExpectedCompilationMarkers(IProject, int)
+	 */
+	@Test
+	public void testExpectedCompilationMarkers_forbiddenIsError() throws Exception {
+		assertExpectedCompilationMarkers(projectAe, IMarker.SEVERITY_ERROR);
+	}
+
+	/**
+	 * Validates ALL compilation markers on the given project against exact
+	 * expected values. This verifies three things simultaneously:
 	 * <ol>
-	 * <li><b>No compilation errors:</b> All types are resolvable because
-	 * transitive dependencies are on the classpath (PR #2218). Before PR #2218,
-	 * transitive types caused "The type X cannot be resolved. It is indirectly
-	 * referenced from required type Y" errors.</li>
+	 * <li><b>No "cannot be resolved" errors:</b> All types are resolvable
+	 * because transitive dependencies are on the classpath (PR #2218). Before
+	 * PR #2218, transitive types caused "The type X cannot be resolved. It is
+	 * indirectly referenced from required type Y" errors.</li>
 	 * <li><b>No markers on accessible types:</b> b.api.MyObject (line 29) and
 	 * g.api.MyObject (line 34) produce zero markers because they match
 	 * {@code K_ACCESSIBLE} access rules for exported packages (§3.6.5).</li>
-	 * <li><b>Forbidden reference warnings on all non-accessible types:</b>
-	 * Every type from non-exported packages of direct deps (b.internal,
-	 * g.internal) and from transitive-only bundles (C, D, E, F, H) produces
-	 * exactly 2 forbidden reference markers (type + constructor). These are
-	 * {@link IMarker#SEVERITY_WARNING} because project A configures
-	 * {@code forbiddenReference=warning} in its JDT compiler settings.</li>
+	 * <li><b>Forbidden reference markers on all non-accessible types:</b> Every
+	 * type from non-exported packages of direct deps (b.internal, g.internal)
+	 * and from transitive-only bundles (C, D, E, F, H) produces exactly 2
+	 * forbidden reference markers (type + constructor). The severity depends on
+	 * the project's {@code forbiddenReference} compiler setting.</li>
 	 * </ol>
 	 * <p>
-	 * Each marker is verified for: line number, severity ({@code WARNING}),
+	 * Each marker is verified for: line number, severity (parameterized),
 	 * problem ID ({@link IProblem#ForbiddenReference}), marker type
 	 * ({@link IJavaModelMarker#JAVA_MODEL_PROBLEM_MARKER}), and message pattern
 	 * including the restricting project name.
+	 *
+	 * @param project
+	 *            the project to verify (A with warning or Ae with error)
+	 * @param expectedSeverity
+	 *            {@link IMarker#SEVERITY_WARNING} or
+	 *            {@link IMarker#SEVERITY_ERROR}
 	 */
-	@Test
-	public void testExpectedCompilationMarkers() throws Exception {
+	private void assertExpectedCompilationMarkers(IProject project, int expectedSeverity) throws Exception {
+		String severityLabel = expectedSeverity == IMarker.SEVERITY_WARNING ? "WARNING" : "ERROR";
+
 		// All expected forbidden references in AClass.java. Each reference
 		// produces exactly TWO JDT markers: one for the type access
-		// ("The type 'MyObject' is not API") and one for the constructor call
-		// ("The constructor 'MyObject()' is not API").
+		// ("The type 'MyObject' is not API") and one for the constructor
+		// call ("The constructor 'MyObject()' is not API").
 		//
-		// Lines 29 (b.api.MyObject) and 34 (g.api.MyObject) are K_ACCESSIBLE
-		// and must have NO markers. The total count assertion below implicitly
-		// validates this — any extra markers would increase the count.
+		// Lines 29 (b.api.MyObject) and 34 (g.api.MyObject) are
+		// K_ACCESSIBLE and must have NO markers. The total count assertion
+		// below implicitly validates this — any extra markers would
+		// increase the count.
 		record ForbiddenRef(int line, String qualifiedType, String project) {
 		}
 		List<ForbiddenRef> expected = List.of(
 				// Non-exported packages of directly imported bundles:
-				// Caught by EXCLUDE_ALL_RULE (**/* K_NON_ACCESSIBLE) on B/G
-				// entries. Non-exported packages are not returned by
+				// Caught by EXCLUDE_ALL_RULE (**/* K_NON_ACCESSIBLE) on
+				// B/G entries. Non-exported packages are not returned by
 				// StateHelper.getVisiblePackages() — they have no explicit
 				// rule, so the catch-all EXCLUDE_ALL fires (§3.6.5).
 				new ForbiddenRef(31, "b.internal.MyObject", "B"), new ForbiddenRef(36, "g.internal.MyObject", "G"),
-				// Transitive forbidden: ALL packages forbidden via the single
-				// **/* K_NON_ACCESSIBLE rule added by
+				// Transitive forbidden: ALL packages forbidden via the
+				// single **/* K_NON_ACCESSIBLE rule added by
 				// addTransitiveDependenciesWithForbiddenAccess().
-				// At OSGi runtime, A's classloader cannot load these (§3.9.4).
+				// At OSGi runtime, A's classloader cannot load these
+				// (§3.9.4).
 				//
-				// C: Required by B (Require-Bundle: C, visibility:=private
-				// §3.13.1)
+				// C: Required by B (Require-Bundle: C,
+				// visibility:=private §3.13.1)
 				new ForbiddenRef(45, "c.api.MyObject", "C"), new ForbiddenRef(46, "c.internal.MyObject", "C"),
-				// D: Package imported by B (Import-Package: d.api §3.6.4 —
-				// never re-exports)
+				// D: Package imported by B (Import-Package: d.api §3.6.4
+				// — never re-exports)
 				new ForbiddenRef(49, "d.api.MyObject", "D"), new ForbiddenRef(50, "d.internal.MyObject", "D"),
 				// E: Optionally required by B (Require-Bundle: E;optional
 				// §3.7.5 + §3.13.1)
 				new ForbiddenRef(53, "e.api.MyObject", "E"), new ForbiddenRef(54, "e.internal.MyObject", "E"),
-				// F: Optionally imported by B (Import-Package: f.api;optional
-				// §3.7.5 + §3.6.4)
+				// F: Optionally imported by B (Import-Package:
+				// f.api;optional §3.7.5 + §3.6.4)
 				new ForbiddenRef(57, "f.api.MyObject", "F"), new ForbiddenRef(58, "f.internal.MyObject", "F"),
-				// H: Optionally imported by G (Import-Package: h.api;optional
-				// §3.7.5)
+				// H: Optionally imported by G (Import-Package:
+				// h.api;optional §3.7.5)
 				new ForbiddenRef(61, "h.api.MyObject", "H"), new ForbiddenRef(62, "h.internal.MyObject", "H"));
 
-		IMarker[] allMarkers = projectA.findMarkers(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER, true,
+		IMarker[] allMarkers = project.findMarkers(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER, true,
 				IResource.DEPTH_INFINITE);
 
 		// Each forbidden reference produces exactly 2 markers (type +
 		// constructor). The total count also implicitly asserts that NO
 		// markers exist for K_ACCESSIBLE references on lines 29 and 34.
-		assertThat(allMarkers)
-		.as("Project A must have exactly %d JDT markers: "
-				+ "%d forbidden references × 2 (type + constructor). "
-				+ "Zero errors, zero markers on accessible types.", expected.size() * 2, expected.size())
-		.hasSize(expected.size() * 2);
+		assertThat(allMarkers).as(
+				"Project %s must have exactly %d JDT markers: " + "%d forbidden references × 2 (type + "
+						+ "constructor). Zero 'cannot be resolved' " + "errors, zero markers on accessible types.",
+						project.getName(), expected.size() * 2, expected.size()).hasSize(expected.size() * 2);
 
 		for (ForbiddenRef ref : expected) {
 			List<IMarker> atLine = Arrays.stream(allMarkers)
 					.filter(m -> m.getAttribute(IMarker.LINE_NUMBER, -1) == ref.line).toList();
 
-			assertThat(atLine).as("Line %d (%s on project '%s'): expected exactly 2 markers " + "(type + constructor)",
+			assertThat(atLine).as("Line %d (%s on project '%s'): expected exactly" + " 2 markers (type + constructor)",
 					ref.line, ref.qualifiedType, ref.project).hasSize(2);
 
 			for (IMarker m : atLine) {
-				// All markers must be WARNING (not ERROR) because project A
-				// has forbiddenReference=warning in
-				// .settings/org.eclipse.jdt.core.prefs
-				assertThat(m.getAttribute(IMarker.SEVERITY, -1)).as(
-						"Line %d: must be WARNING severity " + "(forbiddenReference=warning in project " + "settings)",
-						ref.line).isEqualTo(IMarker.SEVERITY_WARNING);
+				// Severity depends on project's forbiddenReference
+				// setting:
+				// A has forbiddenReference=warning → WARNING
+				// Ae has forbiddenReference=error → ERROR
+				assertThat(m.getAttribute(IMarker.SEVERITY, -1))
+						.as("Line %d in project %s: must be %s " + "severity (forbiddenReference=%s in "
+								+ "project settings)",
+								ref.line, project.getName(), severityLabel, severityLabel.toLowerCase())
+				.isEqualTo(expectedSeverity);
 
 				// Problem ID must be ForbiddenReference because all
 				// restrictions use K_NON_ACCESSIBLE (not K_DISCOURAGED)
-				assertThat(m.getAttribute(IJavaModelMarker.ID, -1)).as("Line %d: must be IProblem.ForbiddenReference "
-						+ "(K_NON_ACCESSIBLE access rule, not " + "K_DISCOURAGED)", ref.line)
+				assertThat(m.getAttribute(IJavaModelMarker.ID, -1))
+				.as("Line %d: must be " + "IProblem.ForbiddenReference " + "(K_NON_ACCESSIBLE access rule)",
+						ref.line)
 				.isEqualTo(IProblem.ForbiddenReference);
 
 				// Message must reference the restricting project
 				String msg = m.getAttribute(IMarker.MESSAGE, "");
 				assertThat(msg)
-				.as("Line %d: message must reference restricting " + "project '%s'", ref.line, ref.project)
+				.as("Line %d: message must reference " + "restricting project '%s'", ref.line, ref.project)
 				.contains("restriction on required project '" + ref.project + "'");
 			}
 
-			// One marker for the type access, one for the constructor call
+			// One marker for the type access, one for the constructor
 			List<String> messages = atLine.stream().map(m -> m.getAttribute(IMarker.MESSAGE, "")).toList();
-			assertThat(messages).as("Line %d: must have type access marker for %s", ref.line, ref.qualifiedType)
+			assertThat(messages).as("Line %d: must have type access marker for " + "%s", ref.line, ref.qualifiedType)
 			.anyMatch(msg -> msg.contains("The type 'MyObject' is not API"));
-			assertThat(messages).as("Line %d: must have constructor access marker", ref.line)
-			.anyMatch(msg -> msg.contains("The constructor 'MyObject()' is not API"));
+			assertThat(messages).as("Line %d: must have constructor access " + "marker", ref.line)
+			.anyMatch(msg -> msg.contains("The constructor 'MyObject()' is not " + "API"));
 		}
 	}
 
