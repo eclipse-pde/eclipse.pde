@@ -5,5 +5,4 @@ Bundle-SymbolicName: refprojectjava8
 Bundle-Version: 1.0.0
 Export-Package: c,i,m
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: org.eclipse.pde.api.tools;bundle-version="1.0.600",
- org.eclipse.pde.api.tools.annotations;bundle-version="1.0.0"
+Require-Bundle: org.eclipse.pde.api.tools;bundle-version="1.0.600"

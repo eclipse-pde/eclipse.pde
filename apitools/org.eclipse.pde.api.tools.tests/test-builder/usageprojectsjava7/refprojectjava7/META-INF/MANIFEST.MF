@@ -11,5 +11,4 @@ Export-Package: a,
  m,
  pack.multi.part
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: org.eclipse.pde.api.tools;bundle-version="1.0.600",
- org.eclipse.pde.api.tools.annotations;bundle-version="1.0.0"
+Require-Bundle: org.eclipse.pde.api.tools;bundle-version="1.0.600"
