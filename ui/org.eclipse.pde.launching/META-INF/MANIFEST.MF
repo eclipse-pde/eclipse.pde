@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %name
 Bundle-SymbolicName: org.eclipse.pde.launching;singleton:=true
-Bundle-Version: 3.13.600.qualifier
+Bundle-Version: 3.13.700.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-Vendor: %provider-name
 Require-Bundle: org.eclipse.jdt.junit.core;bundle-version="[3.6.0,4.0.0)",
@@ -16,13 +16,16 @@ Require-Bundle: org.eclipse.jdt.junit.core;bundle-version="[3.6.0,4.0.0)",
  org.eclipse.jdt.debug;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.core.filesystem;bundle-version="[1.0.0,2.0.0)"
 Bundle-Activator: org.eclipse.pde.internal.launching.PDELaunchingPlugin
-Export-Package: org.eclipse.pde.internal.launching;x-friends:="org.eclipse.pde.ui,
- org.eclipse.pde.unittest.junit",
- org.eclipse.pde.internal.launching.launcher;x-friends:="org.eclipse.pde.ui,
- org.eclipse.pde.unittest.junit",
+Export-Package: org.eclipse.pde.internal.launching;x-friends:="org.eclipse.pde.ui,org.eclipse.pde.unittest.junit",
+ org.eclipse.pde.internal.launching.launcher;x-friends:="org.eclipse.pde.ui,org.eclipse.pde.unittest.junit",
  org.eclipse.pde.internal.launching.sourcelookup;x-internal:=true,
- org.eclipse.pde.launching
+ org.eclipse.pde.launching;
+  uses:="org.eclipse.core.resources,
+   org.eclipse.core.runtime,
+   org.eclipse.debug.core,
+   org.eclipse.debug.core.model,
+   org.eclipse.jdt.junit.launcher,
+   org.eclipse.jdt.launching"
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin
 Automatic-Module-Name: org.eclipse.pde.launching
-Import-Package: aQute.bnd.osgi;version="[7.2.0,8.0.0)"
