@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
@@ -1031,6 +1032,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		this.debugRequestor.clearResult();
 		super.tearDown();
 		FreezeMonitor.done();
+		cleanWorkspaceRootMarkers();
 	}
 
 	/**
@@ -1226,5 +1228,16 @@ public abstract class ApiBuilderTest extends BuilderTests {
 
 			exportComponent(manager, baselineLocation, currentProject, retry - 1);
 		}
+	}
+
+	private static void cleanWorkspaceRootMarkers() throws CoreException {
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IMarker[] markers = root.findMarkers(null, false, IResource.DEPTH_ZERO);
+		List<String> markerMessages = new ArrayList<>();
+		for (IMarker marker : markers) {
+			markerMessages.add(marker.getAttribute(IMarker.MESSAGE, "")); //$NON-NLS-1$
+			marker.delete();
+		}
+		assertEquals("Expected no workspace root markers at test start", Collections.EMPTY_LIST, markerMessages); //$NON-NLS-1$
 	}
 }
