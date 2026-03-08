@@ -14,6 +14,11 @@
 package org.eclipse.pde.internal.core.bnd;
 
 import java.io.File;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.Set;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
@@ -23,6 +28,8 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.internal.core.natures.PluginProject;
 
 import aQute.bnd.osgi.Analyzer;
+import aQute.bnd.osgi.Jar;
+import aQute.bnd.osgi.Resource;
 
 /**
  * An analyzer that is initialized by a {@link PdeProjectJar} and with the
@@ -30,7 +37,14 @@ import aQute.bnd.osgi.Analyzer;
  */
 public class PdeProjectAnalyzer extends Analyzer {
 
+	public static final Set<String> DEFAULT_COPY_HEADER = Set.of(BUNDLE_CLASSPATH, BUNDLE_SYMBOLICNAME, BUNDLE_VERSION,
+			BUNDLE_NAME, BUNDLE_LOCALIZATION, BUNDLE_VENDOR, BUNDLE_ACTIVATOR);
+
 	public PdeProjectAnalyzer(IProject project, boolean includeTest) throws Exception {
+		this(project, includeTest, DEFAULT_COPY_HEADER);
+	}
+
+	public PdeProjectAnalyzer(IProject project, boolean includeTest, Collection<String> copyHeader) throws Exception {
 		super(includeTest ? new PdeTestProjectJar(project) : new PdeProjectJar(project));
 		set(NOEXTRAHEADERS, "true"); //$NON-NLS-1$
 		if (PluginProject.isJavaProject(project)) {
@@ -46,6 +60,26 @@ public class PdeProjectAnalyzer extends Analyzer {
 					}
 				}
 			}
+		}
+		Jar jar = getJar();
+		Resource manifestResource = jar.getResource(JarFile.MANIFEST_NAME);
+		if (manifestResource != null) {
+			if (copyHeader.isEmpty()) {
+				jar.remove(JarFile.MANIFEST_NAME);
+			} else {
+				Manifest mf;
+				try (InputStream in = manifestResource.openInputStream()) {
+					mf = new Manifest(in);
+				}
+				jar.remove(JarFile.MANIFEST_NAME);
+				for (String header : copyHeader) {
+					String value = mf.getMainAttributes().getValue(header);
+					if (value != null) {
+						set(header, value);
+					}
+				}
+			}
+
 		}
 	}
 
