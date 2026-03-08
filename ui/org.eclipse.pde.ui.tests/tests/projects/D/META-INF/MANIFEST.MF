@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: D
+Bundle-SymbolicName: D
+Bundle-Version: 1.0.0.qualifier
+Export-Package: d.api;version="1.0.0"
+Automatic-Module-Name: D
+Bundle-RequiredExecutionEnvironment: JavaSE-21

@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: A
+Bundle-SymbolicName: A
+Bundle-Version: 1.0.0.qualifier
+Export-Package: a.api
+Import-Package: b.api;version="1.0.0",
+ g.api;version="1.0.0"
+Automatic-Module-Name: A
+Bundle-RequiredExecutionEnvironment: JavaSE-21
