@@ -30,6 +30,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 import java.util.stream.Collectors;
@@ -232,7 +233,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		if (isJUnitContainerProject(javaProject)) {
 			//if this is a junit container project it means a user can use additional classes (from the junit container and possible other) that
 			//are not required to be imported, we compute a fragment manifest here to add additional imports ...
-			try (PdeProjectAnalyzer analyzer = new PdeProjectAnalyzer(javaProject.getProject(), true)) {
+			try (PdeProjectAnalyzer analyzer = new PdeProjectAnalyzer(javaProject.getProject(), true, Set.of())) {
 				analyzer.setImportPackage("*"); //$NON-NLS-1$
 				String bsn = testPlugin.getId() + "-additional-test-probe-imports"; //$NON-NLS-1$
 				analyzer.setBundleSymbolicName(bsn);
