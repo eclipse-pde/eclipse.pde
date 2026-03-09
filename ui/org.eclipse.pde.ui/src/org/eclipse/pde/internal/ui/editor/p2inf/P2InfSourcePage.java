@@ -13,10 +13,16 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.p2inf;
 
+import org.eclipse.jdt.ui.PreferenceConstants;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.pde.internal.ui.editor.KeyValueSourcePage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
+import org.eclipse.pde.internal.ui.editor.text.ChangeAwareSourceViewerConfiguration;
+import org.eclipse.pde.internal.ui.editor.text.IColorManager;
+import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 
 public class P2InfSourcePage extends KeyValueSourcePage {
 
@@ -36,6 +42,15 @@ public class P2InfSourcePage extends KeyValueSourcePage {
 
 	@Override
 	public void updateSelection(Object object) {
+	}
+
+	@Override
+	protected ChangeAwareSourceViewerConfiguration createSourceViewerConfiguration(IColorManager colorManager) {
+		IPreferenceStore store = PreferenceConstants.getPreferenceStore();
+		IPreferenceStore generalTextStore = EditorsUI.getPreferenceStore();
+		IPreferenceStore combinedStore = new ChainedPreferenceStore(new IPreferenceStore[] { store, generalTextStore });
+		this.setPreferenceStore(combinedStore);
+		return new P2infViewerConfiguration(colorManager, combinedStore, this);
 	}
 
 }

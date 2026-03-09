@@ -71,6 +71,9 @@ public class ManifestEditorMatchingStrategy implements IEditorMatchingStrategy {
 					IFile file = parent.getFile(ICoreConstants.MANIFEST_PATH);
 					return file.exists() && editorFile.equals(file);
 				}
+				// if a p2.inf is being opened, only return a positive match
+				// if an editor is already open on a sibling
+				// plugin.xml/fragment.xml or a META-INF/MANIFEST.MF
 				if (inputFile.getName().equals(ICoreConstants.P2_INF_FILENAME)) {
 					IContainer parent = inputFile.getParent().getParent();
 					IFile file = parent.getFile(ICoreConstants.MANIFEST_PATH);
