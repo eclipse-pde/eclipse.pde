@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2022 IBM Corporation and others.
+ * Copyright (c) 2008, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -217,6 +217,9 @@ public class ProjectUtils {
 						case Constants.EXPORT_PACKAGE -> setPackageExports(description, projectService, value);
 						case Constants.IMPORT_PACKAGE -> setPackageImports(description, projectService, value);
 						case Constants.REQUIRE_BUNDLE -> setRequiredBundles(description, projectService, value);
+						case Constants.FRAGMENT_HOST -> setFragmentHost(description, projectService, value);
+						case Constants.REQUIRE_CAPABILITY -> setRequiredCapability(description, projectService, value);
+						case Constants.PROVIDE_CAPABILITY -> setProvidedCapability(description, projectService, value);
 						default -> throw new IllegalArgumentException("Unsupported header: " + header);
 						}
 					});
@@ -254,6 +257,26 @@ public class ProjectUtils {
 			return projectService.newRequiredBundle(h.getValue(), bundleVersion, optional, reexport);
 		}).toArray(IRequiredBundleDescription[]::new);
 		project.setRequiredBundles(imports);
+	}
+
+	private static void setFragmentHost(IBundleProjectDescription project, IBundleProjectService projectService,
+			String value) {
+		var host = parseHeader(Constants.REQUIRE_BUNDLE, value, h -> {
+			VersionRange bundleVersion = Optional.ofNullable(h.getAttribute(Constants.BUNDLE_VERSION))
+					.map(VersionRange::valueOf).orElse(null);
+			return projectService.newHost(h.getValue(), bundleVersion);
+		}).findFirst().orElse(null);
+		project.setHost(host);
+	}
+
+	private static void setRequiredCapability(IBundleProjectDescription project, IBundleProjectService projectService,
+			String value) {
+		project.setHeader(Constants.REQUIRE_CAPABILITY, value);
+	}
+
+	private static void setProvidedCapability(IBundleProjectDescription project, IBundleProjectService projectService,
+			String value) {
+		project.setHeader(Constants.PROVIDE_CAPABILITY, value);
 	}
 
 	private static <T> Stream<T> parseHeader(String header, String value, Function<ManifestElement, T> parser) {
