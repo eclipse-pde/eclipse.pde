@@ -104,6 +104,9 @@ class RequiredPluginsClasspathContainer {
 	private IClasspathEntry[] fEntries;
 	private boolean addImportedPackages;
 
+	private static final boolean ADD_TRANSITIVE_DEPENDENCIES_WITH_FORBIDDEN_ACCESS = Boolean
+			.parseBoolean(System.getProperty("pde.addTransitiveDependenciesWithForbiddenAccess", "true")); //$NON-NLS-1$ //$NON-NLS-2$
+
 	/**
 	 * Cached list of {@link IClasspathContributor} from plug-in extensions
 	 *
@@ -274,7 +277,9 @@ class RequiredPluginsClasspathContainer {
 
 			addJunit5RuntimeDependencies(added, entries);
 			addImplicitDependencies(desc, added, entries);
-			addTransitiveDependenciesWithForbiddenAccess(added, entries);
+			if (ADD_TRANSITIVE_DEPENDENCIES_WITH_FORBIDDEN_ACCESS) {
+				addTransitiveDependenciesWithForbiddenAccess(added, entries);
+			}
 
 			// Add any additional library entries contributed via classpath
 			// contributor
