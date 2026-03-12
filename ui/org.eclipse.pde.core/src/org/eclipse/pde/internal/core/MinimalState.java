@@ -271,7 +271,7 @@ public class MinimalState {
 		// now we need to check all bundles if there is any fragment. If a
 		// fragment should be resolved its host and all already attached
 		// fragments must be re-resolved again
-		for (BundleDescription bundleDescription : bundles) {
+		for (BundleDescription bundleDescription : bundles.toArray(BundleDescription[]::new)) {
 			HostSpecification host = bundleDescription.getHost();
 			if (host != null) {
 				BundleRequirement requirement = host.getRequirement();
