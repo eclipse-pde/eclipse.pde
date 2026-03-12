@@ -59,13 +59,33 @@ import org.junit.rules.TestRule;
  * Bundle B:  Export-Package: b.api
  *            Import-Package: d.api, f.api(optional)
  *            Require-Bundle: C, E(optional), G(reexport)
+ *            b.api.MyObject extends c.api.MyObject implements d.api.Processor
+ *            b.internal.MyObject uses e.api + f.api (optional, internal only)
  * Bundle C:  Export-Package: c.api     (leaf)
+ *            c.api.Configurable interface, c.api.MyObject implements it
  * Bundle D:  Export-Package: d.api     (leaf)
- * Bundle E:  Export-Package: e.api     (leaf)
- * Bundle F:  Export-Package: f.api     (leaf)
+ *            d.api.Processor interface, d.api.MyObject with getData()
+ * Bundle E:  Export-Package: e.api     (leaf, e.api.MyObject with activate())
+ * Bundle F:  Export-Package: f.api     (leaf, f.api.MyObject with isAvailable())
  * Bundle G:  Export-Package: g.api; Import-Package: h.api(optional)
- * Bundle H:  Export-Package: h.api     (leaf)
+ *            g.api.MyObject.describe() uses h.api internally (optional)
+ * Bundle H:  Export-Package: h.api     (leaf, h.api.MyObject with getIdentifier())
  * </pre>
+ *
+ * <b>Type hierarchy chain exercised by A:</b>
+ * <pre>
+ * c.api.Configurable (interface)
+ *   ↑ implements
+ * c.api.MyObject (class with getValue(), getConfig())
+ *   ↑ extends
+ * b.api.MyObject (class) ← also implements d.api.Processor
+ * </pre>
+ * When A uses b.api.MyObject and calls inherited methods, the compiler
+ * needs c.api.MyObject, c.api.Configurable, d.api.Processor, and
+ * d.api.MyObject on the classpath — modelling the real-world scenario from
+ * <a href="https://github.com/eclipse-pde/eclipse.pde/issues/2195">issue
+ * #2195</a> where IWidgetValueProperty's type hierarchy required the
+ * databinding bundle on the classpath.
  *
  * Each bundle also has an internal package (e.g. {@code b.internal}) that is
  * <b>not</b> listed in Export-Package.
@@ -452,9 +472,12 @@ public class ClasspathResolutionTest2 {
 	 * because transitive dependencies are on the classpath (PR #2218). Before
 	 * PR #2218, transitive types caused "The type X cannot be resolved. It is
 	 * indirectly referenced from required type Y" errors.</li>
-	 * <li><b>No markers on accessible types:</b> b.api.MyObject (line 29) and
-	 * g.api.MyObject (line 34) produce zero markers because they match
-	 * {@code K_ACCESSIBLE} access rules for exported packages (§3.6.5).</li>
+	 * <li><b>No markers on accessible types:</b> b.api.MyObject (line 28) and
+	 * g.api.MyObject (line 64) produce zero markers because they match
+	 * {@code K_ACCESSIBLE} access rules for exported packages (§3.6.5).
+	 * Additionally, inherited method calls (e.g. {@code service.configure()},
+	 * {@code service.process()}) accessed through b.api.MyObject produce no
+	 * markers even though they involve transitive types (c.api, d.api).</li>
 	 * <li><b>Forbidden reference markers on all non-accessible types:</b> Every
 	 * type from non-exported packages of direct deps (b.internal, g.internal)
 	 * and from transitive-only bundles (C, D, E, F, H) produces exactly 2
@@ -481,10 +504,12 @@ public class ClasspathResolutionTest2 {
 		// ("The type 'MyObject' is not API") and one for the constructor
 		// call ("The constructor 'MyObject()' is not API").
 		//
-		// Lines 29 (b.api.MyObject) and 34 (g.api.MyObject) are
-		// K_ACCESSIBLE and must have NO markers. The total count assertion
-		// below implicitly validates this — any extra markers would
-		// increase the count.
+		// Lines 28 (b.api.MyObject) and 64 (g.api.MyObject) are
+		// K_ACCESSIBLE and must have NO markers. Lines 32-56 contain
+		// method calls through b.api.MyObject (inherited methods from
+		// c.api/d.api) and g.api.MyObject — also no markers. The total
+		// count assertion below implicitly validates this — any extra
+		// markers would increase the count.
 		record ForbiddenRef(int line, String qualifiedType, String project) {
 		}
 		List<ForbiddenRef> expected = List.of(
@@ -493,7 +518,7 @@ public class ClasspathResolutionTest2 {
 				// B/G entries. Non-exported packages are not returned by
 				// StateHelper.getVisiblePackages() — they have no explicit
 				// rule, so the catch-all EXCLUDE_ALL fires (§3.6.5).
-				new ForbiddenRef(31, "b.internal.MyObject", "B"), new ForbiddenRef(36, "g.internal.MyObject", "G"),
+				new ForbiddenRef(62, "b.internal.MyObject", "B"), new ForbiddenRef(70, "g.internal.MyObject", "G"),
 				// Transitive forbidden: ALL packages forbidden via the
 				// single **/* K_NON_ACCESSIBLE rule added by
 				// addTransitiveDependenciesWithForbiddenAccess().
@@ -502,26 +527,27 @@ public class ClasspathResolutionTest2 {
 				//
 				// C: Required by B (Require-Bundle: C,
 				// visibility:=private §3.13.1)
-				new ForbiddenRef(45, "c.api.MyObject", "C"), new ForbiddenRef(46, "c.internal.MyObject", "C"),
+				new ForbiddenRef(77, "c.api.MyObject", "C"), new ForbiddenRef(78, "c.internal.MyObject", "C"),
 				// D: Package imported by B (Import-Package: d.api §3.6.4
 				// — never re-exports)
-				new ForbiddenRef(49, "d.api.MyObject", "D"), new ForbiddenRef(50, "d.internal.MyObject", "D"),
+				new ForbiddenRef(81, "d.api.MyObject", "D"), new ForbiddenRef(82, "d.internal.MyObject", "D"),
 				// E: Optionally required by B (Require-Bundle: E;optional
 				// §3.7.5 + §3.13.1)
-				new ForbiddenRef(53, "e.api.MyObject", "E"), new ForbiddenRef(54, "e.internal.MyObject", "E"),
+				new ForbiddenRef(85, "e.api.MyObject", "E"), new ForbiddenRef(86, "e.internal.MyObject", "E"),
 				// F: Optionally imported by B (Import-Package:
 				// f.api;optional §3.7.5 + §3.6.4)
-				new ForbiddenRef(57, "f.api.MyObject", "F"), new ForbiddenRef(58, "f.internal.MyObject", "F"),
+				new ForbiddenRef(89, "f.api.MyObject", "F"), new ForbiddenRef(90, "f.internal.MyObject", "F"),
 				// H: Optionally imported by G (Import-Package:
 				// h.api;optional §3.7.5)
-				new ForbiddenRef(61, "h.api.MyObject", "H"), new ForbiddenRef(62, "h.internal.MyObject", "H"));
+				new ForbiddenRef(93, "h.api.MyObject", "H"), new ForbiddenRef(94, "h.internal.MyObject", "H"));
 
 		IMarker[] allMarkers = project.findMarkers(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER, true,
 				IResource.DEPTH_INFINITE);
 
 		// Each forbidden reference produces exactly 2 markers (type +
 		// constructor). The total count also implicitly asserts that NO
-		// markers exist for K_ACCESSIBLE references on lines 29 and 34.
+		// markers exist for K_ACCESSIBLE references (line 28 b.api,
+		// line 64 g.api) or inherited method calls (lines 32-56).
 		assertThat(allMarkers).as(
 				"Project %s must have exactly %d JDT markers: " + "%d forbidden references × 2 (type + "
 						+ "constructor). Zero 'cannot be resolved' " + "errors, zero markers on accessible types.",
@@ -627,8 +653,9 @@ public class ClasspathResolutionTest2 {
 	 * <p>
 	 * Expected markers on Ad/src/a/api/AClass.java:
 	 * <ul>
-	 * <li>Lines 30, 33, 36: no markers (K_ACCESSIBLE API)</li>
-	 * <li>Line 40: exactly 2 markers — discouraged type + constructor for
+	 * <li>Lines 26-36: no markers (K_ACCESSIBLE API and inherited method
+	 * calls through b.api.MyObject, g.api.MyObject, x.api.MyObject)</li>
+	 * <li>Line 44: exactly 2 markers — discouraged type + constructor for
 	 * x.internal.MyObject</li>
 	 * </ul>
 	 */
@@ -638,14 +665,14 @@ public class ClasspathResolutionTest2 {
 				IResource.DEPTH_INFINITE);
 
 		// Ad only has 1 discouraged reference (x.internal.MyObject on line
-		// 38) producing 2 markers (type + constructor). Zero markers for
-		// exported API (b.api, g.api, x.api).
+		// 44) producing 2 markers (type + constructor). Zero markers for
+		// exported API (b.api, g.api, x.api) and inherited method calls.
 		assertThat(allMarkers).as("Project Ad must have exactly 2 markers: " + "discouraged type + constructor for "
 				+ "x.internal.MyObject. Zero errors, zero " + "markers on accessible types.").hasSize(2);
 
 		for (IMarker m : allMarkers) {
 			assertThat(m.getAttribute(IMarker.LINE_NUMBER, -1))
-			.as("Discouraged marker must be on line 40 " + "(x.internal.MyObject)").isEqualTo(40);
+			.as("Discouraged marker must be on line 44 " + "(x.internal.MyObject)").isEqualTo(44);
 
 			assertThat(m.getAttribute(IMarker.SEVERITY, -1))
 					.as("Discouraged access must be WARNING " + "(discouragedReference=warning in "
@@ -680,9 +707,10 @@ public class ClasspathResolutionTest2 {
 
 	/**
 	 * All dependency bundles (B-H) must build without any compilation problems
-	 * — no errors AND no warnings. Each bundle's own dependencies are properly
-	 * declared in its manifest, and their source code does not reference any
-	 * forbidden types.
+	 * — no errors AND no warnings. Each bundle actively uses its declared
+	 * dependencies (e.g. B extends c.api.MyObject, implements d.api.Processor,
+	 * uses e.api/f.api internally; G uses h.api internally) but only through
+	 * properly declared imports, so no access rule violations occur.
 	 */
 	@Test
 	public void testDependencyBundlesBuildClean() throws Exception {
