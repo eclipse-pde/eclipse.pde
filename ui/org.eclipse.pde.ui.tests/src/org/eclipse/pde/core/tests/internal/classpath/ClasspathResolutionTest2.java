@@ -29,6 +29,8 @@ import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModelMarker;
 import org.eclipse.jdt.core.compiler.IProblem;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ClasspathComputer;
 import org.eclipse.pde.internal.core.PDECore;
@@ -180,8 +182,12 @@ public class ClasspathResolutionTest2 {
 	 */
 	static final List<String> TRANSITIVE_FORBIDDEN_BUNDLES = List.of("C", "D", "E", "F", "H");
 
-	/** All test bundles other than A. */
-	static final List<String> ALL_TEST_BUNDLES = List.of("B", "C", "D", "E", "F", "G", "H");
+	static final List<String> ALL_TEST_BUNDLES = List.of("B", "C", "D", "E", "F", "G", "H", "cyclic-capabilities/Af",
+			"cyclic-capabilities/cyclic.capabilities.provider");
+
+	private static IProject projectConsumer;
+
+	private static IClasspathEntry[] consumerClasspathEntries;
 
 	@BeforeClass
 	public static void setupBeforeClass() throws Exception {
@@ -195,6 +201,8 @@ public class ClasspathResolutionTest2 {
 		projectA = ProjectUtils.importTestProject("tests/projects/A");
 		projectAe = ProjectUtils.importTestProject("tests/projects/Ae");
 		projectAd = ProjectUtils.importTestProject("tests/projects/Ad");
+		projectConsumer = ProjectUtils
+				.importTestProject("tests/projects/cyclic-capabilities/cyclic.capabilities.consumer");
 
 		// Trigger a full workspace build. The workspace builder respects
 		// project build order, so dependency bundles (B-H, X) are built
@@ -214,6 +222,7 @@ public class ClasspathResolutionTest2 {
 		projectA.build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
 		projectAe.build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
 		projectAd.build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
+		projectConsumer.build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
 		TestUtils.waitForJobs("ClasspathResolutionTest2.rebuild", 200, 30_000);
 
 		// Compute PDE classpath entries (only plugin dependencies, no
@@ -225,6 +234,10 @@ public class ClasspathResolutionTest2 {
 		IPluginModelBase modelAd = PDECore.getDefault().getModelManager().findModel(projectAd);
 		assertNotNull("PDE model for project Ad must be available", modelAd);
 		classpathEntriesAd = ClasspathComputer.computeClasspathEntries(modelAd, projectAd);
+
+		IPluginModelBase consumerModel = PDECore.getDefault().getModelManager().findModel(projectConsumer);
+		consumerClasspathEntries = ClasspathComputer.computeClasspathEntries(consumerModel,
+				projectConsumer);
 	}
 
 	// =========================================================================
@@ -566,9 +579,9 @@ public class ClasspathResolutionTest2 {
 				// A has forbiddenReference=warning → WARNING
 				// Ae has forbiddenReference=error → ERROR
 				assertThat(m.getAttribute(IMarker.SEVERITY, -1))
-						.as("Line %d in project %s: must be %s " + "severity (forbiddenReference=%s in "
-								+ "project settings)",
-								ref.line, project.getName(), severityLabel, severityLabel.toLowerCase())
+				.as("Line %d in project %s: must be %s " + "severity (forbiddenReference=%s in "
+						+ "project settings)",
+						ref.line, project.getName(), severityLabel, severityLabel.toLowerCase())
 				.isEqualTo(expectedSeverity);
 
 				// Problem ID must be ForbiddenReference because all
@@ -675,8 +688,8 @@ public class ClasspathResolutionTest2 {
 			.as("Discouraged marker must be on line 44 " + "(x.internal.MyObject)").isEqualTo(44);
 
 			assertThat(m.getAttribute(IMarker.SEVERITY, -1))
-					.as("Discouraged access must be WARNING " + "(discouragedReference=warning in "
-							+ "project settings)")
+			.as("Discouraged access must be WARNING " + "(discouragedReference=warning in "
+					+ "project settings)")
 			.isEqualTo(IMarker.SEVERITY_WARNING);
 
 			// DiscouragedReference vs ForbiddenReference: K_DISCOURAGED
@@ -714,7 +727,13 @@ public class ClasspathResolutionTest2 {
 	 */
 	@Test
 	public void testDependencyBundlesBuildClean() throws Exception {
-		for (String bundleName : ALL_TEST_BUNDLES) {
+		for (String projectPath : ALL_TEST_BUNDLES) {
+			String bundleName;
+			if (projectPath.contains("/")) {
+				bundleName = projectPath.split("/")[1];
+			} else {
+				bundleName = projectPath;
+			}
 			IProject project = getProject(bundleName);
 			IMarker[] markers = project.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
 
@@ -744,6 +763,40 @@ public class ClasspathResolutionTest2 {
 
 		assertThat(freshNames).as("ClasspathComputer must produce deterministic results")
 		.containsExactlyInAnyOrderElementsOf(originalNames);
+	}
+
+	// =========================================================================
+	// Section 7: Cyclic capability resolution for fragments
+	// =========================================================================
+
+	/**
+	 * A fragment that uses {@code Require-Capability} to depend on a bundle
+	 * that itself {@code Require-Bundle}s the fragment's host must not end up
+	 * with the capability provider on its classpath — that would create a
+	 * cyclic dependency. Only the host bundle ({@code Af}) should appear.
+	 * <p>
+	 * <b>Test bundle dependency graph:</b>
+	 * <pre>
+	 * Af:                          simple host bundle
+	 * cyclic.capabilities.provider: Provide-Capability: some.test.capability
+	 *                               Require-Bundle: Af
+	 * cyclic.capabilities.consumer: Require-Capability: some.test.capability
+	 *                               Fragment-Host: Af
+	 * </pre>
+	 */
+	@Test
+	public void testRequiredPluginsViaCapabilityForFragment() throws Exception {
+		List<String> entryNames = Arrays.stream(consumerClasspathEntries)
+				.map(e -> e.getPath().lastSegment()).toList();
+		IPluginModelBase consumerModel = PDECore.getDefault().getModelManager().findModel(projectConsumer);
+		assertThat(consumerModel).isNotNull();
+		BundleDescription bundleDescription = consumerModel.getBundleDescription();
+		ResolverError[] resolverErrors = bundleDescription.getContainingState().getResolverErrors(bundleDescription);
+		assertThat(resolverErrors).isEmpty();
+		assertThat(entryNames).as("Fragment host Af must be on the consumer's classpath").contains("Af");
+		assertThat(entryNames)
+		.as("cyclic.capabilities.provider must NOT be on the classpath (would create cycle)")
+		.noneMatch(name -> name.contains("cyclic.capabilities.provider"));
 	}
 
 	// =========================================================================

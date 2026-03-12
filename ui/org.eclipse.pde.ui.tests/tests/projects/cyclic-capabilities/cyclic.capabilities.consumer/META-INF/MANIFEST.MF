@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Consumer
+Bundle-SymbolicName: cyclic.capabilities.consumer
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: cyclic.capabilities.consumer
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Require-Capability: some.test.capability
+Fragment-Host: Af

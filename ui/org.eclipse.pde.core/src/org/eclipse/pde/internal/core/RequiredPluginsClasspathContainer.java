@@ -683,8 +683,7 @@ class RequiredPluginsClasspathContainer {
 	 */
 	private void addTransitiveDependenciesWithForbiddenAccess(Set<BundleDescription> added,
 			List<IClasspathEntry> entries) throws CoreException {
-		Set<BundleDescription> closure = DependencyManager.findRequirementsClosure(added,
-				INCLUDE_OPTIONAL_DEPENDENCIES);
+		Collection<BundleDescription> closure = ClasspathComputer.collectBuildRelevantDependencies(added);
 		String systemBundleBSN = TargetPlatformHelper.getPDEState().getSystemBundle();
 		Iterator<BundleDescription> transitiveDeps = closure.stream()
 				.filter(desc -> !desc.getSymbolicName().equals(systemBundleBSN))
