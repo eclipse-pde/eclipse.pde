@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2020, 2023 Red Hat Inc. and others.
+ * Copyright (c) 2020, 2026 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,6 +19,7 @@ import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -40,6 +41,7 @@ import org.eclipse.pde.internal.core.ClasspathComputer;
 import org.eclipse.pde.internal.core.MinimalState;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.ui.tests.runtime.TestUtils;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
 import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
 import org.junit.BeforeClass;
@@ -49,6 +51,7 @@ import org.junit.Test;
 import org.junit.rules.TestRule;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkUtil;
 
 public class ClasspathResolutionTest {
@@ -144,6 +147,21 @@ public class ClasspathResolutionTest {
 			List<String> classpathEntries = getRequiredPluginContainerEntries(project);
 			assertThat(classpathEntries).noneMatch(filename -> filename.contains(jakartaAnnotationProviderBSN));
 		}
+	}
+
+	@Test
+	public void testRequiredPluginsViaCapabilityForFragment() throws CoreException {
+		ProjectUtils.createPluginProject("A", "1.0.0");
+		ProjectUtils.createPluginProject("capabilities.provider", "1.0.0",
+				Map.of(Constants.PROVIDE_CAPABILITY, "some.test.capability", Constants.REQUIRE_BUNDLE, "A"));
+		IProject projectConsumer = ProjectUtils.createPluginProject("capabilities.consumer", "1.0.0",
+				Map.of(Constants.REQUIRE_CAPABILITY, "some.test.capability", Constants.FRAGMENT_HOST, "A"));
+
+		TestUtils.waitForJobs("ClasspathResolutionTest.testRequiredPluginsViaCapabilityForFragment", 200, 30_000);
+
+		List<String> requiredPluginContainers = getRequiredPluginContainerEntries(projectConsumer);
+		assertThat(requiredPluginContainers).contains("A1_0_0");
+		assertThat(requiredPluginContainers).noneMatch(containerName -> containerName.contains("capabilities.provider"));
 	}
 
 	// --- utilitiy methods ---
