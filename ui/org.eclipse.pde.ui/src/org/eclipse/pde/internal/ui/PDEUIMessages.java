@@ -1537,6 +1537,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String PluginContentPage_enable_api_analysis;
 
+	public static String PluginContentPage_enable_ds_processing;
+
 	public static String ImportWizard_title;
 	public static String ImportWizard_FirstPage_title;
 	public static String ImportWizard_FirstPage_desc;
