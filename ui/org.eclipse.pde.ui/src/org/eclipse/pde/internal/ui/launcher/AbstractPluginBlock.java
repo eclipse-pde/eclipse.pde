@@ -448,6 +448,7 @@ public abstract class AbstractPluginBlock {
 		Button listPlugins = new Button(parent, SWT.PUSH);
 		listPlugins.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
 		listPlugins.setText(PDEUIMessages.PluginsTabToolBar_show_launch_bundles);
+		SWTUtil.setButtonDimensionHint(listPlugins);
 		listPlugins.addSelectionListener(
 				SelectionListener.widgetSelectedAdapter(e -> handleShowPluginsPressed(fLaunchConfig)));
 

@@ -16,8 +16,8 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Dictionary;
 import java.util.LinkedHashSet;
@@ -47,6 +47,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.PropertyChangeEvent;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.HostSpecification;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.service.resolver.StateDelta;
 import org.eclipse.osgi.util.ManifestElement;
@@ -62,6 +63,9 @@ import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.namespace.ExecutionEnvironmentNamespace;
+import org.osgi.framework.namespace.HostNamespace;
+import org.osgi.framework.wiring.BundleCapability;
+import org.osgi.framework.wiring.BundleRequirement;
 
 public class MinimalState {
 
@@ -259,10 +263,32 @@ public class MinimalState {
 		if (initializePlatformProperties()) {
 			return fState.resolve(false);
 		}
-		List<BundleDescription> bundles = new ArrayList<>();
+		Collection<BundleDescription> bundles = new LinkedHashSet<>();
 		for (String symbolicName : symbolicNames) {
 			BundleDescription[] descriptions = fState.getBundles(symbolicName);
 			Collections.addAll(bundles, descriptions);
+		}
+		// now we need to check all bundles if there is any fragment. If a
+		// fragment should be resolved its host and all already attached
+		// fragments must be re-resolved again
+		for (BundleDescription bundleDescription : bundles) {
+			HostSpecification host = bundleDescription.getHost();
+			if (host != null) {
+				BundleRequirement requirement = host.getRequirement();
+				BundleDescription[] others = fState.getBundles();
+				for (BundleDescription other : others) {
+					List<BundleCapability> capabilities = other.getDeclaredCapabilities(HostNamespace.HOST_NAMESPACE);
+					for (BundleCapability cap : capabilities) {
+						if (requirement.matches(cap)) {
+							bundles.add(other);
+							BundleDescription[] fragments = other.getFragments();
+							for (BundleDescription f : fragments) {
+								bundles.add(f);
+							}
+						}
+					}
+				}
+			}
 		}
 		return fState.resolve(bundles.toArray(new BundleDescription[bundles.size()]));
 	}
