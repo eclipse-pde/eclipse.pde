@@ -54,6 +54,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 
 public class ChainedReexportPerformanceTest {
 
@@ -163,8 +164,8 @@ public class ChainedReexportPerformanceTest {
 		consumerDesc.setBundleVersion(new Version("1.0.0"));
 
 		// Require the last bundle in the chain with re-export
-		IRequiredBundleDescription mainReq = service.newRequiredBundle(CHAIN_PREFIX + (BUNDLE_CHAIN_DEPTH - 1), null,
-				false, true);
+		IRequiredBundleDescription mainReq = service.newRequiredBundle(CHAIN_PREFIX + (BUNDLE_CHAIN_DEPTH - 1),
+				(VersionRange) null, false, true);
 		consumerDesc.setRequiredBundles(new IRequiredBundleDescription[] { mainReq });
 
 		consumerDesc.setNatureIds(new String[] { JavaCore.NATURE_ID, IBundleProjectDescription.PLUGIN_NATURE });
