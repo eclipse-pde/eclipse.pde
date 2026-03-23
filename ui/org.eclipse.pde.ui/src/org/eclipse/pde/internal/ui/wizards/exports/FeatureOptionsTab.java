@@ -189,7 +189,7 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 		}
 
 		String selected = settings.get(S_EXPORT_METADATA);
-		fExportMetadata.setSelection(selected == null ? true : Boolean.TRUE.toString().equals(selected));
+		fExportMetadata.setSelection(selected == null || Boolean.parseBoolean(selected));
 
 		// This enablement depends on both the jar button being selected and the destination setting being something other than install (bug 276989)
 		fExportMetadata.setEnabled(fJarButton.getSelection());
@@ -207,7 +207,7 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 		selected = settings.get(S_CREATE_CATEGORIES);
 
 		fCategoryButton.setEnabled(fExportMetadata.getSelection() && fJarButton.getSelection());
-		fCategoryButton.setSelection(selected == null ? true : Boolean.TRUE.toString().equals(selected));
+		fCategoryButton.setSelection(selected == null || Boolean.parseBoolean(selected));
 		if (settings.get(S_CATEGORY_FILE) != null) {
 			fCategoryCombo.setText(settings.get(S_CATEGORY_FILE));
 		}
