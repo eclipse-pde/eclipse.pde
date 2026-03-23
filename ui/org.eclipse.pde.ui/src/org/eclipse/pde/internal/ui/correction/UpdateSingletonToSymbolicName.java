@@ -42,7 +42,7 @@ public class UpdateSingletonToSymbolicName extends AbstractManifestMarkerResolut
 				int ind2 = entry.indexOf(':');
 				String invalidDir = entry.substring(ind1 + 1, ind2);
 				((BundleSymbolicNameHeader) header).setDirective(invalidDir, null);
-				((BundleSymbolicNameHeader) header).setDirective(Constants.SINGLETON_DIRECTIVE, String.valueOf(true));
+				((BundleSymbolicNameHeader) header).setDirective(Constants.SINGLETON_DIRECTIVE, "true"); //$NON-NLS-1$
 			}
 		}
 	}
