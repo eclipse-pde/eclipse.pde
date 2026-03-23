@@ -38,11 +38,14 @@ import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.layout.TreeColumnLayout;
+import org.eclipse.jface.notifications.NotificationPopup;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewerEditor;
@@ -89,6 +92,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
@@ -598,6 +602,21 @@ public class CssSpyPart {
 		widgetsTableLayout.setColumnData(widgetClassColumn.getColumn(), new ColumnWeightData(40));
 		widgetsComposite.setLayout(widgetsTableLayout);
 
+		MenuManager menuManager = new MenuManager();
+		menuManager.setRemoveAllWhenShown(true);
+		menuManager.addMenuListener(manager -> {
+			Action copyAction = new Action(Messages.CssSpyPart_Copy_widget_info) {
+				@Override
+				public void run() {
+					copyWidgetHierarchyToClipboard();
+				}
+			};
+			copyAction.setEnabled(!widgetTreeViewer.getSelection().isEmpty());
+			manager.add(copyAction);
+		});
+		Menu menu = menuManager.createContextMenu(widgetTreeViewer.getControl());
+		widgetTreeViewer.getControl().setMenu(menu);
+
 		// / HEADERS
 		Composite container = new Composite(sashForm, SWT.NONE);
 		container.setLayout(new GridLayout(2, true));
@@ -1002,6 +1021,8 @@ public class CssSpyPart {
 		Clipboard clipboard = new Clipboard(display);
 		try {
 			clipboard.setContents(new Object[] { sb.toString() }, new Transfer[] { TextTransfer.getInstance() });
+			NotificationPopup.forDisplay(display).text(Messages.CssSpyPart_Widget_hierarchy_copied_to_clipboard)
+					.title(Messages.CssSpyPart_Copy_widget_info, true).open();
 		} finally {
 			clipboard.dispose();
 		}
