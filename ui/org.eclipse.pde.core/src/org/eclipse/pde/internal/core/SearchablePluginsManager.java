@@ -183,10 +183,16 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 		for (String id : plugins) {
 			ModelEntry entry = PluginRegistry.findEntry(id);
 			if (entry != null) {
-				boolean addModel = Arrays.stream(entry.getWorkspaceModels())
+				List<IProject> javaProjects = Arrays.stream(entry.getWorkspaceModels())
 						.map(IPluginModelBase::getUnderlyingResource).map(IResource::getProject)
-						.noneMatch(PluginProject::isJavaProject);
+						.filter(PluginProject::isJavaProject).collect(Collectors.toList());
+				boolean addModel = javaProjects.isEmpty();
 				if (!addModel) {
+					for (IProject project : javaProjects) {
+						IPath path = project.getFullPath();
+						IClasspathEntry projectEntry = JavaCore.newProjectEntry(path);
+						result.add(projectEntry);
+					}
 					continue;
 				}
 				IPluginModelBase[] models = entry.getExternalModels();
