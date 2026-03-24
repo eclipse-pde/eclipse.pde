@@ -187,7 +187,7 @@ public class BundleHelper {
 			if (supplierFilters.size() == 1) {
 				nativeFilter = supplierFilters.get(0).toString();
 			} else if (supplierFilters.size() > 1) {
-				StringBuffer buffer = new StringBuffer("(|"); //$NON-NLS-1$
+				StringBuilder buffer = new StringBuilder("(|"); //$NON-NLS-1$
 				for (Filter filter : supplierFilters) {
 					buffer.append(filter.toString());
 				}
