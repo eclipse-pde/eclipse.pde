@@ -27,8 +27,8 @@ public class testLambdaExpression {
 	void m1() {
 		FieldUsageClass noRef = new FieldUsageClass();
 		String[] array = {"one"};
-		Arrays.sort(array, (String s1, String s2) -> noRef.f1);
-		Arrays.sort(array, (String s1, String s2) -> FieldUsageClass.f2);
+		Arrays.<String>sort(array, (String s1, String s2) -> noRef.f1);
+		Arrays.<String>sort(array, (String s1, String s2) -> FieldUsageClass.f2);
 	}
 
 }
