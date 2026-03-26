@@ -2,20 +2,16 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="16"
    height="16"
    id="svg2"
    version="1.1"
-   inkscape:version="0.91 r13725"
-   sodipodi:docname="stop.svg">
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs4">
     <linearGradient
@@ -45,7 +41,6 @@
          id="stop6646" />
     </linearGradient>
     <linearGradient
-       inkscape:collect="always"
        xlink:href="#linearGradient6642"
        id="linearGradient6648"
        x1="8.2203207"
@@ -55,7 +50,6 @@
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(1.005663,0,0,1.0056668,0.58040404,-5.5217527)" />
     <linearGradient
-       inkscape:collect="always"
        xlink:href="#linearGradient4729"
        id="linearGradient4735"
        x1="7.5007138"
@@ -65,30 +59,6 @@
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(1.0453671,0,0,1.0453894,0.30030882,-47.005053)" />
   </defs>
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="49.76264"
-     inkscape:cx="10.713081"
-     inkscape:cy="8.588225"
-     inkscape:document-units="px"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:window-width="2560"
-     inkscape:window-height="1391"
-     inkscape:window-x="0"
-     inkscape:window-y="1"
-     inkscape:window-maximized="1"
-     inkscape:snap-bbox="true"
-     inkscape:bbox-nodes="true">
-    <inkscape:grid
-       type="xygrid"
-       id="grid4227" />
-  </sodipodi:namedview>
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -97,13 +67,11 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
      id="layer1"
      style="display:inline"
      transform="translate(0,-1036.3622)">
@@ -111,12 +79,7 @@
        y="1036.3622"
        x="16"
        id="image4288"
-       xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAMtJREFU
-OI3Fk6EOwjAQhr8RxORJZB1IHoFHmETiNonkUcAhJ5FIJBKLq6w8eW4IQmjZCgIS/qTicvd//du0
-Rdd1fKPRV+5fAMZxcd3tOj0dPppkUTGt66IH0GPLfNV8BFz2W6jrfgIADLRt87svl0mdAtTwqojl
-d/eqoM+BfgIAe0N4UXoHBjPvMdWsYeI9cbefQC2JONSP2wlAFJDyvnKS8j43BLAQCM4hZR4QnMNC
-GAYAOBFY59+CACGq0yNUFedmkzXHcw8Vf/+NN+VVQ/03dcEqAAAAAElFTkSuQmCC
-"
+       xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAMtJREFU OI3Fk6EOwjAQhr8RxORJZB1IHoFHmETiNonkUcAhJ5FIJBKLq6w8eW4IQmjZCgIS/qTicvd//du0 Rdd1fKPRV+5fAMZxcd3tOj0dPppkUTGt66IH0GPLfNV8BFz2W6jrfgIADLRt87svl0mdAtTwqojl d/eqoM+BfgIAe0N4UXoHBjPvMdWsYeI9cbefQC2JONSP2wlAFJDyvnKS8j43BLAQCM4hZR4QnMNC GAYAOBFY59+CACGq0yNUFedmkzXHcw8Vf/+NN+VVQ/03dcEqAAAAAElFTkSuQmCC "
        style="image-rendering:optimizeSpeed"
        preserveAspectRatio="none"
        height="16"
