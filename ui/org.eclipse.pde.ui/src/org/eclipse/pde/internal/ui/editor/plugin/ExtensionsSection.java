@@ -86,6 +86,7 @@ import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TreeSection;
 import org.eclipse.pde.internal.ui.editor.actions.CollapseAction;
+import org.eclipse.pde.internal.ui.editor.actions.ExpandAllAction;
 import org.eclipse.pde.internal.ui.editor.actions.FilterRelatedExtensionsAction;
 import org.eclipse.pde.internal.ui.editor.actions.SortAction;
 import org.eclipse.pde.internal.ui.editor.actions.ToggleExpandStateAction;
@@ -136,6 +137,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 	private Hashtable<String, ArrayList<IConfigurationElement>> fEditorWizards;
 	private SortAction fSortAction;
 	private CollapseAction fCollapseAction;
+	private ExpandAllAction fExpandAllAction;
 	private ToggleExpandStateAction fExpandAction;
 	private FilterRelatedExtensionsAction fFilterRelatedAction;
 	private boolean fBypassFilterDelay = false;
@@ -354,10 +356,12 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		// Add expand selected leafs action to the toolbar
 		fExpandAction = new ToggleExpandStateAction(fFilteredTree, fExtensionTree);
 		toolBarManager.add(fExpandAction);
+		// Add expand action to the tool bar
+		fExpandAllAction = new ExpandAllAction(fExtensionTree, PDEUIMessages.ExtensionsPage_expandAll);
+		toolBarManager.add(fExpandAllAction);
 		// Add collapse action to the tool bar
 		fCollapseAction = new CollapseAction(fExtensionTree, PDEUIMessages.ExtensionsPage_collapseAll);
 		toolBarManager.add(fCollapseAction);
-
 		// Create filter action for context menu and global find keybinding
 		fFilterRelatedAction = new FilterRelatedExtensionsAction(fExtensionTree, fFilteredTree, this);
 

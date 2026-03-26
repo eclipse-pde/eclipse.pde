@@ -238,6 +238,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_HORIZONTAL = create(PATH_LCL, "th_horizontal.svg"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_VERTICAL = create(PATH_LCL, "th_vertical.svg"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_COLLAPSE_ALL = create(PATH_LCL, "collapseall.svg"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_EXPAND_ALL = create(PATH_LCL, "expandall.svg"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_COLLAPSE_ALL_MINI = create(PATH_LCL, "collapse_all_mini.svg"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_TOGGLE_EXPAND_STATE = create(PATH_LCL, "toggle_expand_state.svg"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_HELP = create(PATH_LCL, "help.svg"); //$NON-NLS-1$

@@ -1398,6 +1398,7 @@ public class PDEUIMessages extends NLS {
 	public static String JavaAttributeWizard_wtitle;
 
 	public static String ExtensionsPage_collapseAll;
+	public static String ExtensionsPage_expandAll;
 	public static String ExtensionPointDetails_title;
 	public static String ExtensionPointDetails_desc;
 	public static String ExtensionPointDetails_id;
