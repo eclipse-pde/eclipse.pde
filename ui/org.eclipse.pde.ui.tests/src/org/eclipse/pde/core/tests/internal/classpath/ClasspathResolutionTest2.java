@@ -601,9 +601,9 @@ public class ClasspathResolutionTest2 {
 			// One marker for the type access, one for the constructor
 			List<String> messages = atLine.stream().map(m -> m.getAttribute(IMarker.MESSAGE, "")).toList();
 			assertThat(messages).as("Line %d: must have type access marker for " + "%s", ref.line, ref.qualifiedType)
-			.anyMatch(msg -> msg.contains("The type 'MyObject' is not API"));
+			.anyMatch(msg -> msg.contains("The type 'MyObject' is not accessible"));
 			assertThat(messages).as("Line %d: must have constructor access " + "marker", ref.line)
-			.anyMatch(msg -> msg.contains("The constructor 'MyObject()' is not " + "API"));
+			.anyMatch(msg -> msg.contains("The constructor 'MyObject()' is not " + "accessible"));
 		}
 	}
 
