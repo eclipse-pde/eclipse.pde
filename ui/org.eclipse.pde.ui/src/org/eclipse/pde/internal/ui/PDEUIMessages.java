@@ -3168,7 +3168,9 @@ public class PDEUIMessages extends NLS {
 	public static String PreferencesSection_generate_merge2;
 	public static String PreferencesSection_generate_merge3;
 	public static String PreferencesSection_generate_merge4;
-
+	public static String Preference_expand_all;
+	public static String Preference_collapse_all;
+	
 	public static String ConvertPreferencesWizardPage_title;
 	public static String ConvertPreferencesWizardPage_description;
 	public static String ConvertPreferencesWizardPage_source_file;
