@@ -19,7 +19,8 @@ import org.junit.platform.suite.api.Suite;
 @Suite
 @SelectClasses({ AttributeNameCompletionTests.class, AttributeValueCompletionTests.class, TagNameCompletionTests.class,
 	TagValueCompletionTests.class, Bug527084CompletionWithCommentsTest.class,
-	Bug528706CompletionWithMultilineTagsTest.class, UpdateUnitVersionsCommandTests.class, Bug531602FormattingTests.class })
+	Bug528706CompletionWithMultilineTagsTest.class, UpdateUnitVersionsCommandTests.class, Bug531602FormattingTests.class,
+	TargetPlatformPresentationReconcilerTest.class })
 public class AllTargetEditorTests {
 
 }
