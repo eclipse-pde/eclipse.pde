@@ -121,7 +121,7 @@ public class TargetPlatformPresentationReconciler extends PresentationReconciler
 		IPresentationRepairer repairer = this.getRepairer(IDocument.DEFAULT_CONTENT_TYPE);
 		if (repairer != null) {
 			try {
-				int scanEnd = damage.getOffset() + damage.getLength();
+				int scanEnd = Math.min(damage.getOffset() + damage.getLength(), document.getLength());
 				ITypedRegion[] regions = TextUtilities.computePartitioning(document, getDocumentPartitioning(), 0,
 						scanEnd, false);
 				if (regions.length > 0) {
