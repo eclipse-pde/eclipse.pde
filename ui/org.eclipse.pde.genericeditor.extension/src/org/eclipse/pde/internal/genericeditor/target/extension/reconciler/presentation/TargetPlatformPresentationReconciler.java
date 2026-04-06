@@ -109,8 +109,11 @@ public class TargetPlatformPresentationReconciler extends PresentationReconciler
 	}
 
 	/**
-	 * Performs the repair on the full document to ensure MultiLineRules are
-	 * enforced
+	 * Performs the repair from the start of the document up to and including the
+	 * damaged region to ensure MultiLineRules (e.g. XML comments) are correctly
+	 * recognised. Scanning stops at the damage end rather than the document end
+	 * because the returned {@link TextPresentation} is bounded by {@code damage}
+	 * anyway, so any style ranges beyond that point would be discarded.
 	 */
 	@Override
 	protected TextPresentation createPresentation(IRegion damage, IDocument document) {
@@ -118,8 +121,9 @@ public class TargetPlatformPresentationReconciler extends PresentationReconciler
 		IPresentationRepairer repairer = this.getRepairer(IDocument.DEFAULT_CONTENT_TYPE);
 		if (repairer != null) {
 			try {
+				int scanEnd = damage.getOffset() + damage.getLength();
 				ITypedRegion[] regions = TextUtilities.computePartitioning(document, getDocumentPartitioning(), 0,
-						document.getLength(), false);
+						scanEnd, false);
 				if (regions.length > 0) {
 					repairer.createPresentation(presentation, regions[0]);
 					return presentation;
