@@ -152,7 +152,7 @@ public class CapturedEventTree extends TreeViewer {
 
 		treeItemCursor = new TreeItemCursor(getTree().getCursor(), display.getSystemCursor(SWT.CURSOR_HAND));
 
-		treeItemForeground = new TreeItemForeground(new Color(display, new RGB(0, 0, 120)),
+		treeItemForeground = new TreeItemForeground(new Color(new RGB(0, 0, 120)),
 				display.getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT), display.getSystemColor(SWT.COLOR_BLACK));
 
 		treeItemBackground = new TreeItemBackground(display.getSystemColor(SWT.COLOR_LIST_SELECTION),

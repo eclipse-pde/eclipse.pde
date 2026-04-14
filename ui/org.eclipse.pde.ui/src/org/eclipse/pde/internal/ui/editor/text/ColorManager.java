@@ -123,7 +123,7 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 				return;
 			}
 		}
-		fColorTable.put(property, new Color(Display.getCurrent(), setting));
+		fColorTable.put(property, new Color(setting));
 	}
 
 	@Override
