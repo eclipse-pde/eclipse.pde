@@ -2,7 +2,6 @@ package $packageName$;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextAttribute;
@@ -15,8 +14,8 @@ import org.eclipse.jface.text.rules.Token;
 
 public class $javaClassPrefix$PresentationReconciler extends PresentationReconciler {
 
-    private final TextAttribute tagAttribute = new TextAttribute(new Color(Display.getCurrent(), new RGB(0,0, 255)));
-    private final TextAttribute headerAttribute = new TextAttribute(new Color(Display.getCurrent(), new RGB(128,128,128)));
+    private final TextAttribute tagAttribute = new TextAttribute(new Color(new RGB(0,0, 255)));
+    private final TextAttribute headerAttribute = new TextAttribute(new Color(new RGB(128,128,128)));
 
     public $javaClassPrefix$PresentationReconciler() {
         // TODO this is logic for .project file to color tags in blue. Replace with your language logic!

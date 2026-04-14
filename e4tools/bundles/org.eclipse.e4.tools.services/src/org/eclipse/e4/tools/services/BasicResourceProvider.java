@@ -9,7 +9,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.framework.BundleContext;
 
@@ -53,7 +52,7 @@ public abstract class BasicResourceProvider implements IResourceProviderService 
 			final int r = Integer.parseInt(cols[0].trim());
 			final int g = Integer.parseInt(cols[1].trim());
 			final int b = Integer.parseInt(cols[2].trim());
-			return new Color(display, new RGB(r, g, b));
+			return new Color(r, g, b);
 		}
 		return null;
 	}
