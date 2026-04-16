@@ -115,7 +115,7 @@ public class ManifestTypeMoveParticipant extends PDEMoveParticipant {
 				int totalFiles = children.length;
 				int movingCount = movingTypes.size();
 				if (totalFiles == movingCount) {
-					Change change = BundleManifestChange.createEmptyPackageChange(file, pkg.getElementName(), pm);
+					Change change = BundleManifestChange.createDeletePackagesChange(file, List.of(pkg), pm);
 					if (change != null) {
 						result.add(change);
 					}

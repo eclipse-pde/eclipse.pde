@@ -15,6 +15,8 @@
 package org.eclipse.pde.internal.ui.refactoring;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
@@ -69,8 +71,12 @@ public class BundleManifestChange {
 		return null;
 	}
 
-	public static Change createEmptyPackageChange(IFile file, String packageName, IProgressMonitor monitor)
-			throws CoreException {
+	public static Change createDeletePackagesChange(IFile file, Collection<IPackageFragment> packages,
+			IProgressMonitor monitor) throws CoreException {
+		List<String> packageNames = packages.stream().map(IPackageFragment::getElementName).toList();
+		if (packageNames.isEmpty()) {
+			return null;
+		}
 		try {
 			Bundle bundle = getBundle(file, monitor);
 			if (bundle == null) {
@@ -82,8 +88,8 @@ public class BundleManifestChange {
 			bundle.getModel().addModelChangedListener(listener);
 
 			BasePackageHeader header = (BasePackageHeader) bundle.getManifestHeader(Constants.EXPORT_PACKAGE);
-			if (header != null && header.hasPackage(packageName)) {
-				removePackage(header, packageName);
+			if (header != null) {
+				packageNames.stream().filter(header::hasPackage).forEach(name -> removePackage(header, name));
 			}
 			TextEdit[] operations = listener.getTextOperations();
 			if (operations.length > 0) {
