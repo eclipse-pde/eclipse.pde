@@ -41,8 +41,7 @@ import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.VerticalRuler;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -88,14 +87,15 @@ public class XmiTab extends Composite {
 		text = new Text(this, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
 		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		text.setMessage(Messages.XmiTab_TypeTextToSearch);
-		text.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.keyCode != SWT.CR) {
-					offsetStart = 0;
-				}
+		text.addKeyListener(KeyListener.keyPressedAdapter(e -> {
+			if (e.keyCode != SWT.CR) {
+				offsetStart = 0;
+			} else { // search next occurrence
 				offsetStart = searchAndHighlight(text.getText(), offsetStart);
 			}
+		}));
+		text.addModifyListener(e -> {
+			offsetStart = searchAndHighlight(text.getText(), offsetStart);
 		});
 
 		final AnnotationModel model = new AnnotationModel();
