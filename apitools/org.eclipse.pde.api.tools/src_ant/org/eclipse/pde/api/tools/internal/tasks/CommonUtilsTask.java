@@ -97,7 +97,9 @@ public abstract class CommonUtilsTask extends Task {
 	 */
 	protected void deleteBaseline(String referenceLocation, File folder) {
 		if (Util.isArchive(referenceLocation)) {
-			Util.delete(folder.getParentFile());
+			boolean isEclipseInstallation = ECLIPSE_FOLDER_NAME.equals(folder.getName())
+					&& folder.getParentFile().list().length == 1;
+			Util.delete(isEclipseInstallation ? folder.getParentFile() : folder);
 		}
 	}
 
@@ -138,7 +140,8 @@ public abstract class CommonUtilsTask extends Task {
 			} catch (CoreException e) {
 				throw new BuildException(e.getMessage());
 			}
-			return new File(installDir, ECLIPSE_FOLDER_NAME);
+			File eclipseFolder = new File(installDir, ECLIPSE_FOLDER_NAME);
+			return eclipseFolder.exists() ? eclipseFolder : installDir;
 		} else {
 			return locationFile;
 		}
