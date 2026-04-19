@@ -117,6 +117,7 @@ public class TargetContentsGroup {
 
 	private ViewerFilter fSourceFilter;
 	private ViewerFilter fPluginFilter;
+	private StyledBundleLabelProvider fLabelProvider;
 
 	private TargetDefinition fTargetDefinition;
 	/**
@@ -266,7 +267,8 @@ public class TargetContentsGroup {
 		fTree.getControl().setFont(parent.getFont());
 		fTree.setUseHashlookup(true);
 		fTree.setContentProvider(new TreeContentProvider());
-		fTree.setLabelProvider(new StyledBundleLabelProvider(true, false));
+		fLabelProvider = new StyledBundleLabelProvider(true, false);
+		fTree.setLabelProvider(fLabelProvider);
 		fTree.addDoubleClickListener(event -> {
 			IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 			Object first = selection.getFirstElement();
@@ -912,6 +914,10 @@ public class TargetContentsGroup {
 			return;
 		}
 
+		if (fLabelProvider != null) {
+			fLabelProvider.setTargetContext(fTargetDefinition);
+		}
+
 		if (!input.isResolved()) {
 			fTree.setInput(Messages.TargetContentsGroup_10);
 			setEnabled(false);
@@ -974,6 +980,9 @@ public class TargetContentsGroup {
 	 */
 	public void setCancelled() {
 		fTargetDefinition = null;
+		if (fLabelProvider != null) {
+			fLabelProvider.setTargetContext(null);
+		}
 		fTree.setInput(Messages.TargetContentsGroup_resolveCancelled);
 		setEnabled(false);
 	}

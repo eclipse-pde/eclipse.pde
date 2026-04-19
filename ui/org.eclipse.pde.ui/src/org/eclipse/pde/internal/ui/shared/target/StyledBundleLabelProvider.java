@@ -32,6 +32,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.ViewerCell;
+import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.eclipse.pde.core.target.TargetBundle;
@@ -60,6 +61,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 
 	private boolean fShowVersion = true;
 	private boolean fAppendResolvedVariables = false;
+	private ITargetDefinition fTargetContext;
 	@SuppressWarnings("restriction")
 	private final org.eclipse.equinox.internal.p2.metadata.TranslationSupport fTranslations = org.eclipse.equinox.internal.p2.metadata.TranslationSupport
 			.getInstance();
@@ -77,6 +79,20 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		fShowVersion = showVersion;
 		fAppendResolvedVariables = appendResolvedVariables;
+	}
+
+	/**
+	 * Sets the target definition used to resolve the originating
+	 * {@link ITargetLocation} for a {@link TargetBundle}. When set, bundle
+	 * labels are suffixed with a short description of the source location so
+	 * that duplicates from different sources can be distinguished.
+	 *
+	 * @param context
+	 *            target definition providing the locations to search, or
+	 *            <code>null</code> to disable the source suffix
+	 */
+	public void setTargetContext(ITargetDefinition context) {
+		fTargetContext = context;
 	}
 
 	@Override
@@ -134,10 +150,12 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 			IStatus status = bundle.getStatus();
 			if (status.isOK()) {
 				appendBundleInfo(styledString, bundle.getBundleInfo());
+				appendSourceLocation(styledString, bundle);
 			} else {
 				BundleInfo bundleInfo = bundle.getBundleInfo();
 				if (bundleInfo != null && bundleInfo.getSymbolicName() != null) {
 					appendBundleInfo(styledString, bundleInfo);
+					appendSourceLocation(styledString, bundle);
 					styledString.append(' ');
 				}
 				styledString.append(status.getMessage());
@@ -257,6 +275,68 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 			styledString.append(location, StyledString.DECORATIONS_STYLER);
 		} catch (CoreException e) {
 		}
+	}
+
+	/**
+	 * Appends a short description of the {@link ITargetLocation} the given
+	 * bundle was resolved from, if a target context has been set via
+	 * {@link #setTargetContext(ITargetDefinition)} and the bundle's originating
+	 * location can be found.
+	 */
+	private void appendSourceLocation(StyledString styledString, TargetBundle bundle) {
+		ITargetLocation source = findSourceLocation(bundle);
+		if (source == null) {
+			return;
+		}
+		String label = getSourceLocationLabel(source);
+		if (label == null || label.isEmpty()) {
+			return;
+		}
+		styledString.append(" - ", StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
+		styledString.append(label, StyledString.DECORATIONS_STYLER);
+	}
+
+	private ITargetLocation findSourceLocation(TargetBundle bundle) {
+		if (fTargetContext == null) {
+			return null;
+		}
+		ITargetLocation[] locations = fTargetContext.getTargetLocations();
+		if (locations == null) {
+			return null;
+		}
+		for (ITargetLocation location : locations) {
+			TargetBundle[] bundles = location.getBundles();
+			if (bundles == null) {
+				continue;
+			}
+			for (TargetBundle b : bundles) {
+				if (b == bundle) {
+					return location;
+				}
+			}
+		}
+		return null;
+	}
+
+	private String getSourceLocationLabel(ITargetLocation container) {
+		try {
+			if (container instanceof FeatureBundleContainer feature) {
+				String id = feature.getFeatureId();
+				String version = feature.getFeatureVersion();
+				return version != null ? id + " [" + version + "]" : id; //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			if (container instanceof IUBundleContainer iu) {
+				List<URI> repos = iu.getRepositories();
+				return repos.isEmpty() ? Messages.BundleContainerTable_8 : repos.get(0).toString();
+			}
+			String location = container.getLocation(false);
+			if (location != null) {
+				return location;
+			}
+		} catch (CoreException e) {
+			// fall through to type
+		}
+		return container.getType();
 	}
 
 	/**
