@@ -62,6 +62,9 @@ class RefactorParticipantDelegate {
 			@Override
 			public boolean acceptPatternMatch(TextSearchMatchAccess matchAccess) throws CoreException {
 				final IFile file = matchAccess.getFile();
+				if (isFileAlreadyIncluded(file)) {
+					return false;
+				}
 				TextFileChange change = changes.get(file);
 
 				if (change == null) {
@@ -104,6 +107,25 @@ class RefactorParticipantDelegate {
 				change.addTextEditGroup(new TextEditGroup(E4_MODEL_CHANGES,
 						edit));
 				return true;
+			}
+
+			/**
+			 * Exclude files with their sub project paths that are already
+			 * included with their full workspace path or the other way around.
+			 *
+			 * @param file
+			 *            a file to be tested
+			 * @return true if the file is already included in the
+			 *         {@code changes} list
+			 */
+			private boolean isFileAlreadyIncluded(IFile file) {
+				boolean match = changes.entrySet().stream() //
+						.anyMatch(e -> e.getKey().getFullPath().toOSString().endsWith(file.getFullPath().toOSString()) //
+								|| file.getFullPath().toOSString().endsWith(e.getKey().getFullPath().toOSString()));
+				if (match) {
+					return true;
+				}
+				return false;
 			}
 		};
 
