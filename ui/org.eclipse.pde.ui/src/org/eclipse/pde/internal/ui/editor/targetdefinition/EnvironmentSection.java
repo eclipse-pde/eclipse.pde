@@ -25,14 +25,12 @@ import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.pde.internal.ui.util.LocaleUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IFormColors;
@@ -254,14 +252,7 @@ public class EnvironmentSection extends SectionPart {
 	 * @return text of the widget or <code>null</code>
 	 */
 	private String getText(ComboPart combo) {
-		String text;
-		Control control = combo.getControl();
-		if (control instanceof Combo) {
-			text = ((Combo) control).getText();
-		} else {
-			text = ((CCombo) control).getText();
-		}
-		text = text.trim();
+		String text = ((Combo) combo.getControl()).getText().trim();
 		if (text.length() == 0) {
 			return null;
 		}

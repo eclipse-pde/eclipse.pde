@@ -34,7 +34,6 @@ import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.parts.ComboViewerPart;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.dnd.Clipboard;
@@ -42,7 +41,6 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IActionBars;
@@ -123,12 +121,8 @@ public class ArgumentsSection extends PDESection {
 		fArchCombo.createControl(archParent, toolkit, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
 		fArchCombo.getControl().setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
 		fArchCombo.setItems(Arrays.stream(TAB_ARCHLABELS).filter(Objects::nonNull).toArray(String[]::new));
-		Control archComboControl = fArchCombo.getControl();
-		if (archComboControl instanceof Combo) {
-			((Combo) archComboControl).select(fLastArch[fLastTab]);
-		} else {
-			((CCombo) archComboControl).select(fLastArch[fLastTab]);
-		}
+		Combo archComboControl = (Combo) fArchCombo.getControl();
+		archComboControl.select(fLastArch[fLastTab]);
 		fArchCombo.addSelectionChangedListener(event -> {
 			if (fProgramArgs.isDirty()) {
 				fProgramArgs.commit();
@@ -136,14 +130,7 @@ public class ArgumentsSection extends PDESection {
 			if (fVMArgs.isDirty()) {
 				fVMArgs.commit();
 			}
-			// remember the change in combo for currently selected platform
-			Control fArchComboControl = fArchCombo.getControl();
-			if (fArchComboControl instanceof Combo) {
-				fLastArch[fLastTab] = ((Combo) fArchComboControl).getSelectionIndex();
-			} else {
-				fLastArch[fLastTab] = ((CCombo) fArchComboControl).getSelectionIndex();
-			}
-
+			fLastArch[fLastTab] = ((Combo) fArchCombo.getControl()).getSelectionIndex();
 			refresh();
 		});
 
