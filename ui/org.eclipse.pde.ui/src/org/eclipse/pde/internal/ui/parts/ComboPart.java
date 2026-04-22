@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2009 IBM Corporation and others.
+ *  Copyright (c) 2003, 2026 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.parts;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Combo;
@@ -24,41 +22,25 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public class ComboPart {
 
-	protected Control combo;
+	protected Combo combo;
 
 	public ComboPart() {
 	}
 
 	public void addSelectionListener(SelectionListener listener) {
-		if (combo instanceof Combo) {
-			((Combo) combo).addSelectionListener(listener);
-		} else {
-			((CCombo) combo).addSelectionListener(listener);
-		}
+		combo.addSelectionListener(listener);
 	}
 
 	public int indexOf(String item) {
-		if (combo instanceof Combo) {
-			return ((Combo) combo).indexOf(item);
-		}
-
-		return ((CCombo) combo).indexOf(item);
+		return combo.indexOf(item);
 	}
 
 	public void addModifyListener(ModifyListener listener) {
-		if (combo instanceof Combo) {
-			((Combo) combo).addModifyListener(listener);
-		} else {
-			((CCombo) combo).addModifyListener(listener);
-		}
+		combo.addModifyListener(listener);
 	}
 
 	public void createControl(Composite parent, FormToolkit toolkit, int style) {
-		if (toolkit.getBorderStyle() == SWT.BORDER) {
-			combo = new Combo(parent, style | SWT.BORDER);
-		} else {
-			combo = new CCombo(parent, style | SWT.FLAT);
-		}
+		combo = new Combo(parent, style | toolkit.getBorderStyle());
 		toolkit.adapt(combo, true, false);
 	}
 
@@ -67,99 +49,53 @@ public class ComboPart {
 	}
 
 	public int getSelectionIndex() {
-		if (combo instanceof Combo) {
-			return ((Combo) combo).getSelectionIndex();
-		}
-		return ((CCombo) combo).getSelectionIndex();
+		return combo.getSelectionIndex();
 	}
 
 	public void add(String item, int index) {
-		if (combo instanceof Combo) {
-			((Combo) combo).add(item, index);
-		} else {
-			((CCombo) combo).add(item, index);
-		}
+		combo.add(item, index);
 	}
 
 	public void add(String item) {
-		if (combo instanceof Combo) {
-			((Combo) combo).add(item);
-		} else {
-			((CCombo) combo).add(item);
-		}
+		combo.add(item);
 	}
 
 	public void remove(int index) {
-		// Ensure the index is valid
 		if ((index < 0) || (index >= getItemCount())) {
 			return;
 		}
-		// Remove the item from the specified index
-		if (combo instanceof Combo) {
-			((Combo) combo).remove(index);
-		} else {
-			((CCombo) combo).remove(index);
-		}
+		combo.remove(index);
 	}
 
 	public void select(int index) {
-		if (combo instanceof Combo) {
-			((Combo) combo).select(index);
-		} else {
-			((CCombo) combo).select(index);
-		}
+		combo.select(index);
 	}
 
 	public String getSelection() {
-		if (combo instanceof Combo) {
-			return ((Combo) combo).getText().trim();
-		}
-		return ((CCombo) combo).getText().trim();
+		return combo.getText().trim();
 	}
 
 	public void setText(String text) {
-		if (combo instanceof Combo) {
-			((Combo) combo).setText(text);
-		} else {
-			((CCombo) combo).setText(text);
-		}
+		combo.setText(text);
 	}
 
 	public void setItems(String[] items) {
-		if (combo instanceof Combo) {
-			((Combo) combo).setItems(items);
-		} else {
-			((CCombo) combo).setItems(items);
-		}
+		combo.setItems(items);
 	}
 
 	public void setEnabled(boolean enabled) {
-		if (combo instanceof Combo) {
-			combo.setEnabled(enabled);
-		} else {
-			((CCombo) combo).setEnabled(enabled);
-		}
+		combo.setEnabled(enabled);
 	}
 
 	public int getItemCount() {
-		if (combo instanceof Combo) {
-			return ((Combo) combo).getItemCount();
-		}
-		return ((CCombo) combo).getItemCount();
+		return combo.getItemCount();
 	}
 
 	public String[] getItems() {
-		if (combo instanceof Combo) {
-			return ((Combo) combo).getItems();
-		}
-		return ((CCombo) combo).getItems();
+		return combo.getItems();
 	}
 
 	public void setVisibleItemCount(int count) {
-		if (combo instanceof Combo) {
-			((Combo) combo).setVisibleItemCount(count);
-		} else {
-			((CCombo) combo).setVisibleItemCount(count);
-		}
+		combo.setVisibleItemCount(count);
 	}
 }

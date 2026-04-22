@@ -26,15 +26,13 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.ViewerComparator;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public class ComboViewerPart {
-	private Control fCombo;
+	private Combo fCombo;
 	private ComboViewer fComboViewer;
 	private List<Object> fObjects;
 
@@ -47,13 +45,8 @@ public class ComboViewerPart {
 	}
 
 	public void createControl(Composite parent, FormToolkit toolkit, int style) {
-		if (toolkit.getBorderStyle() == SWT.BORDER) {
-			fCombo = new Combo(parent, style | SWT.BORDER);
-			fComboViewer = new ComboViewer((Combo) fCombo);
-		} else {
-			fCombo = new CCombo(parent, style | SWT.FLAT);
-			fComboViewer = new ComboViewer((CCombo) fCombo);
-		}
+		fCombo = new Combo(parent, style | toolkit.getBorderStyle());
+		fComboViewer = new ComboViewer(fCombo);
 
 		fObjects = new ArrayList<>();
 		fComboViewer.setLabelProvider(new LabelProvider());
