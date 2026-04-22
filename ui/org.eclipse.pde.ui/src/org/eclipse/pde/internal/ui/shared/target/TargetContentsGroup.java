@@ -209,7 +209,7 @@ public class TargetContentsGroup {
 	 * @param toolkit toolkit to create controls with
 	 */
 	protected void createFormContents(Composite parent, FormToolkit toolkit) {
-		fGrouping = GROUP_BY_NONE;
+		fGrouping = GROUP_BY_CONTAINER;
 
 		Composite comp = toolkit.createComposite(parent);
 		GridLayout layout = new GridLayout(2, false);
@@ -236,7 +236,7 @@ public class TargetContentsGroup {
 	 * @param parent parent composite
 	 */
 	protected void createDialogContents(Composite parent) {
-		fGrouping = GROUP_BY_NONE;
+		fGrouping = GROUP_BY_CONTAINER;
 
 		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH, 0, 0);
 
@@ -411,7 +411,7 @@ public class TargetContentsGroup {
 			fGroupComboPart.setItems(new String[] {Messages.TargetContentsGroup_1, Messages.TargetContentsGroup_2, Messages.TargetContentsGroup_3});
 			fGroupComboPart.setVisibleItemCount(30);
 			fGroupComboPart.addSelectionListener(widgetSelectedAdapter(e -> handleGroupChange()));
-			fGroupComboPart.select(0);
+			fGroupComboPart.select(GROUP_BY_CONTAINER);
 
 		} else {
 			Composite buttonComp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_VERTICAL, 0, 0);
@@ -462,7 +462,7 @@ public class TargetContentsGroup {
 			gd.horizontalIndent = 10;
 			fGroupCombo.setLayoutData(gd);
 			fGroupCombo.addSelectionListener(widgetSelectedAdapter(e -> handleGroupChange()));
-			fGroupCombo.select(0);
+			fGroupCombo.select(GROUP_BY_CONTAINER);
 		}
 
 		fSelectButton.addSelectionListener(widgetSelectedAdapter(e -> {
