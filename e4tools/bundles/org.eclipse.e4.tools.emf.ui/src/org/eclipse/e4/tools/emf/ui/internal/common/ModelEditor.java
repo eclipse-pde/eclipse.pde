@@ -239,7 +239,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -371,8 +370,6 @@ public class ModelEditor implements IGotoObject {
 
 	private AbstractComponentEditor<?> currentEditor;
 
-	private Listener keyListener;
-
 	private CTabFolder editorTabFolder;
 
 	private boolean mod1Down = false;
@@ -437,15 +434,6 @@ public class ModelEditor implements IGotoObject {
 
 	@PostConstruct
 	void postCreate(Composite composite) {
-		if (project == null) {
-			keyListener = event -> {
-				if ((event.stateMask & SWT.ALT) == SWT.ALT) {
-					findAndHighlight(context.get(Display.class).getFocusControl());
-				}
-			};
-			context.get(Display.class).addFilter(SWT.MouseUp, keyListener);
-		}
-
 		context.set(ModelEditor.class, this);
 		context.set(IResourcePool.class, resourcePool);
 		context.set(EditingDomain.class, modelProvider.getEditingDomain());
@@ -512,39 +500,6 @@ public class ModelEditor implements IGotoObject {
 	 */
 	public static int getTabIndex(CTabItem tabItem) {
 		return Arrays.asList(tabItem.getParent().getItems()).indexOf(tabItem);
-	}
-
-	private void findAndHighlight(Control control) {
-		if (control != null) {
-			MApplicationElement m = findModelElement(control);
-			final MApplicationElement o = m;
-			if (m != null) {
-				final List<MApplicationElement> l = new ArrayList<>();
-				do {
-					l.add(m);
-					m = (MApplicationElement) ((EObject) m).eContainer();
-				} while (m != null);
-
-				if (o instanceof MPart) {
-					System.err.println(getClass().getName() + ".findAndHighLight: " + o); //$NON-NLS-1$
-					System.err
-					.println(getClass().getName() + ".findAndHighLight: " + ((EObject) o).eContainingFeature()); //$NON-NLS-1$
-				}
-
-				viewer.setSelection(new StructuredSelection(o));
-			}
-		}
-	}
-
-	private MApplicationElement findModelElement(Control control) {
-		do {
-			if (control.getData("modelElement") != null) { //$NON-NLS-1$
-				return (MApplicationElement) control.getData("modelElement"); //$NON-NLS-1$
-			}
-			control = control.getParent();
-		} while (control != null);
-
-		return null;
 	}
 
 	private XmiTab createXMITab(Composite composite) {
@@ -1531,9 +1486,6 @@ public class ModelEditor implements IGotoObject {
 			e.printStackTrace();
 		}
 
-		if (project == null) {
-			context.get(Display.class).removeFilter(SWT.MouseUp, keyListener);
-		}
 		if (xmiTab != null) {
 			ContextInjectionFactory.uninject(xmiTab, xmiTab.getContext());
 		}
