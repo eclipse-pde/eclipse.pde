@@ -73,6 +73,8 @@ import org.eclipse.pde.internal.ui.shared.CachedCheckboxTreeViewer;
 import org.eclipse.pde.internal.ui.shared.FilteredCheckboxTree;
 import org.eclipse.pde.internal.ui.wizards.target.TargetDefinitionContentPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -309,6 +311,16 @@ public class TargetContentsGroup {
 
 		});
 
+		CopyTreeSelectionAction copySelectionAction = new CopyTreeSelectionAction(fTree.getTree());
+		fTree.getTree().addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.keyCode == 'c' && (e.stateMask & SWT.CTRL) != 0) {
+					copySelectionAction.run();
+				}
+			}
+		});
+
 		fMenuManager = new MenuManager();
 		fMenuManager.add(new Action(Messages.TargetContentsGroup_collapseAll, PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_COLLAPSEALL)) {
 			@Override
@@ -316,6 +328,7 @@ public class TargetContentsGroup {
 				fTree.collapseAll();
 			}
 		});
+		fMenuManager.add(copySelectionAction);
 		fMenuManager.add(new CopyLocationAction(fTree));
 		Menu contextMenu = fMenuManager.createContextMenu(tree);
 		fTree.getTree().setMenu(contextMenu);
