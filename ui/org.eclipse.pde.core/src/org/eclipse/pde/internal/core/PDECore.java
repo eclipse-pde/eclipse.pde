@@ -30,12 +30,12 @@ import org.eclipse.core.resources.ISaveParticipant;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.debug.DebugOptionsListener;
@@ -141,7 +141,7 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 
 	public static void log(IStatus status) {
 		if (status != null) {
-			ResourcesPlugin.getPlugin().getLog().log(status);
+			ILog.get().log(status);
 		}
 	}
 
@@ -149,15 +149,13 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 		if (e instanceof InvocationTargetException) {
 			e = ((InvocationTargetException) e).getTargetException();
 		}
-		IStatus status = null;
 		if (e instanceof CoreException || e.getMessage() != null) {
-			status = Status.error(e.getMessage(), e);
+			ILog.get().error(e.getMessage(), e);
 		}
-		log(status);
 	}
 
 	public static void logErrorMessage(String message) {
-		log(Status.error(message));
+		ILog.get().error(message);
 	}
 
 	public static void logException(Throwable e) {
@@ -168,19 +166,15 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 		if (e instanceof InvocationTargetException) {
 			e = ((InvocationTargetException) e).getTargetException();
 		}
-		IStatus status = null;
-		if (e instanceof CoreException) {
-			status = Status.error(message, e);
-		} else {
+		if (!(e instanceof CoreException)) {
 			if (message == null) {
 				message = e.getMessage();
 			}
 			if (message == null) {
 				message = e.toString();
 			}
-			status = Status.error(message, e);
 		}
-		log(status);
+		ILog.get().error(message, e);
 	}
 
 	private FeatureModelManager fFeatureModelManager;
