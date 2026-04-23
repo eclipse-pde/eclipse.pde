@@ -26,6 +26,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -42,6 +44,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -646,6 +649,37 @@ public class TargetEditor extends FormEditor {
 	}
 
 	/**
+	 * Per-target-handle scheduling rules. Reloading the same target while a
+	 * previous resolve is still draining caused races on the p2 profile
+	 * lock/unlock pair (see issue #310) and left a pile of cancelled jobs in
+	 * the Progress view because cancellation only sets a flag and the
+	 * in-flight resolve continues until the next monitor check. Serializing
+	 * resolves for the same handle removes both symptoms; resolves for
+	 * different targets remain independent.
+	 */
+	private static final ConcurrentMap<String, ISchedulingRule> RESOLVE_RULES = new ConcurrentHashMap<>();
+
+	static ISchedulingRule getResolveSchedulingRule(ITargetHandle handle) {
+		String key;
+		try {
+			key = handle.getMemento();
+		} catch (CoreException e) {
+			key = String.valueOf(System.identityHashCode(handle));
+		}
+		return RESOLVE_RULES.computeIfAbsent(key, k -> new ISchedulingRule() {
+			@Override
+			public boolean contains(ISchedulingRule rule) {
+				return rule == this;
+			}
+
+			@Override
+			public boolean isConflicting(ISchedulingRule rule) {
+				return rule == this;
+			}
+		});
+	}
+
+	/**
 	 * When changes are noticed in the target, this listener will resolve the
 	 * target and update the necessary pages in the editor.
 	 */
@@ -725,6 +759,7 @@ public class TargetEditor extends FormEditor {
 						return family.equals(getJobFamily());
 					}
 				};
+				resolveJob.setRule(getResolveSchedulingRule(getTarget().getHandle()));
 				resolveJob.addJobChangeListener(new JobChangeAdapter() {
 					@Override
 					public void done(org.eclipse.core.runtime.jobs.IJobChangeEvent event) {
