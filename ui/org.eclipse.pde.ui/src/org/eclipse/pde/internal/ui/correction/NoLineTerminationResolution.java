@@ -18,6 +18,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 /**
@@ -68,7 +69,7 @@ public class NoLineTerminationResolution extends AbstractManifestMarkerResolutio
 				}
 				doc.replace(doc.getLength(), 0, lineDelimiter);
 			} catch (BadLocationException e) {
-				e.printStackTrace();
+				PDEPlugin.log(e);
 			}
 		}
 	}

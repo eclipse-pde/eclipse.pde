@@ -21,6 +21,7 @@ import java.util.Hashtable;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -141,7 +142,7 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 	 * @param status status to add to the error log
 	 */
 	public static void log(IStatus status) {
-		getDefault().getLog().log(status);
+		ILog.get().log(status);
 	}
 
 	/**
@@ -149,7 +150,7 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 	 * @param message message to add to the error log
 	 */
 	public static void log(String message) {
-		log(Status.error(message));
+		ILog.get().error(message);
 	}
 
 	public static void logException(Throwable e, final String title, String message) {
@@ -173,7 +174,7 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 			}
 			status = Status.error(message, e);
 		}
-		getDefault().getLog().log(status);
+		ILog.get().log(status);
 		Display display = SWTUtil.getStandardDisplay();
 		final IStatus fstatus = status;
 		display.asyncExec(() -> ErrorDialog.openError(null, title, null, fstatus));
@@ -187,17 +188,11 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 		if (e instanceof InvocationTargetException) {
 			e = ((InvocationTargetException) e).getTargetException();
 		}
-		IStatus status = null;
-		if (e instanceof CoreException ce) {
-			// Re-use status only if it has attached exception with the stack trace
-			if (ce.getStatus().getException() != null) {
-				status = ce.getStatus();
-			}
+		if (e instanceof CoreException ce && ce.getStatus().getException() != null) {
+			ILog.get().log(ce.getStatus());
+		} else {
+			ILog.get().error(e.getMessage(), e);
 		}
-		if (status == null) {
-			status = Status.error(e.getMessage(), e);
-		}
-		log(status);
 	}
 
 	public FormColors getFormColors(Display display) {
