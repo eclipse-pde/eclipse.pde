@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -38,6 +38,7 @@ import org.eclipse.pde.internal.core.iproduct.IArgumentsInfo;
 import org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo;
 import org.eclipse.pde.internal.core.iproduct.IPluginConfiguration;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
+import org.eclipse.pde.internal.core.iproduct.IProduct.ProductType;
 import org.eclipse.pde.internal.core.iproduct.IProductModelFactory;
 import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
 import org.eclipse.pde.internal.core.iproduct.ISplashInfo;
@@ -87,6 +88,7 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 		IConfigurationFileInfo info = factory.createConfigFileInfo();
 		info.setUse(null, "default"); //$NON-NLS-1$
 		product.setConfigurationFileInfo(info);
+		product.setType(ProductType.MIXED);
 		product.setVersion("1.0.0.qualifier"); //$NON-NLS-1$
 		// preset some common VM args for macosx (bug 174232 comment #4)
 		IArgumentsInfo args = factory.createLauncherArguments();
