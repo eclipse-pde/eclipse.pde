@@ -38,6 +38,7 @@ import org.eclipse.jface.wizard.IWizardNode;
 import org.eclipse.pde.bnd.ui.templating.RepoTemplateLabelProvider;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.ElementList;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
@@ -200,7 +201,7 @@ public class TemplateListSelectionPage extends WizardListSelectionPage {
 						try (InputStream stream = helpContent.toURL().openStream()) {
 							return new String(stream.readAllBytes(), StandardCharsets.UTF_8);
 						} catch (IOException e) {
-							e.printStackTrace();
+							PDEPlugin.log(e);
 							return PDEUIMessages.BaseWizardSelectionPage_noDesc;
 						}
 					});

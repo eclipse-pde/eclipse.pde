@@ -30,6 +30,7 @@ import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.project.PDEProject;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class ManifestTypeMoveParticipant extends PDEMoveParticipant {
@@ -120,7 +121,7 @@ public class ManifestTypeMoveParticipant extends PDEMoveParticipant {
 					}
 				}
 			} catch (CoreException e) {
-				e.printStackTrace();
+				PDEPlugin.log(e);
 			}
 		}
 
