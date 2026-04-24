@@ -22,7 +22,6 @@ import org.eclipse.pde.internal.ua.ui.editor.cheatsheet.simple.SimpleCSCommandMa
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
@@ -39,11 +38,7 @@ public class SimpleCSCommandComboPart extends ComboPart implements ISimpleCSComm
 	}
 
 	public void addDisposeListener(DisposeListener listener) {
-		if (combo == null) {
-			return;
-		} else if (combo instanceof Combo) {
-			combo.addDisposeListener(listener);
-		} else {
+		if (combo != null) {
 			combo.addDisposeListener(listener);
 		}
 	}
