@@ -15,14 +15,14 @@ package org.eclipse.pde.genericeditor.extension.tests;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.text.ITextViewer;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class Bug528706CompletionWithMultilineTagsTest extends AbstractTargetEditorTest {
 	private ITextViewer textViewer;
 
 	@Override
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		super.setUp();
 		textViewer = getTextViewerForTarget("MultilineTagTestCaseTarget");

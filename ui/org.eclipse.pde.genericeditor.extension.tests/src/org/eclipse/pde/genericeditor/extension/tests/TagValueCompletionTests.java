@@ -18,16 +18,16 @@ import java.util.List;
 
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TagValueCompletionTests extends AbstractTargetEditorTest {
 
 	private List<Integer> expectedCompletionOffsets;
 
 	@Override
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		super.setUp();
 
@@ -60,7 +60,7 @@ public class TagValueCompletionTests extends AbstractTargetEditorTest {
 
 			ICompletionProposal[] completionProposals = contentAssist.computeCompletionProposals(textViewer, offset);
 			if (completionProposals.length > 0 && !expectedCompletionOffsets.contains(offset)) {
-				Assert.fail("There should not be any proposals at index " + offset + ". Following proposals found: "
+				Assertions.fail("There should not be any proposals at index " + offset + ". Following proposals found: "
 						+ proposalListToString(completionProposals));
 			}
 			offset++;

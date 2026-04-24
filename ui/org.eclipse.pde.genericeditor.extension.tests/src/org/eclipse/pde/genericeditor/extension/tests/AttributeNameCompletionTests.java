@@ -13,15 +13,15 @@
  *******************************************************************************/
 package org.eclipse.pde.genericeditor.extension.tests;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class AttributeNameCompletionTests extends AbstractTargetEditorTest {
 	@Test
@@ -61,8 +61,8 @@ public class AttributeNameCompletionTests extends AbstractTargetEditorTest {
 			if (expectedProposalsByOffset.containsKey(offset)) {
 				checkProposals(expectedProposalsByOffset.get(offset), completionProposals, offset);
 			} else {
-				assertTrue("There should not be any proposals at index " + offset + ". Following proposals found: "
-						+ proposalListToString(completionProposals), completionProposals.length == 0);
+				assertTrue(completionProposals.length == 0, "There should not be any proposals at index " + offset + ". Following proposals found: "
+						+ proposalListToString(completionProposals));
 			}
 			offset++;
 		}
@@ -89,7 +89,7 @@ public class AttributeNameCompletionTests extends AbstractTargetEditorTest {
 
 			ICompletionProposal[] completionProposals = contentAssist.computeCompletionProposals(textViewer, offset);
 			if (completionProposals.length != 0) {
-				Assert.fail("There should not be any proposals at index " + offset + ". Following proposals found: "
+				Assertions.fail("There should not be any proposals at index " + offset + ". Following proposals found: "
 						+ proposalListToString(completionProposals));
 			}
 			offset++;

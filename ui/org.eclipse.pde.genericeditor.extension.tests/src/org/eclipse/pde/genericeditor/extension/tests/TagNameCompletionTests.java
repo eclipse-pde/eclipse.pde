@@ -19,8 +19,8 @@ import java.util.Map;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class TagNameCompletionTests extends AbstractTargetEditorTest {
 	@Test
@@ -52,7 +52,7 @@ public class TagNameCompletionTests extends AbstractTargetEditorTest {
 			if (expectedProposalsByOffset.containsKey(offset)) {
 				checkProposals(entry.getValue(), completionProposals, offset);
 			} else if (completionProposals.length != 0) {
-				Assert.fail("There should not be any proposals at index " + offset + ". Following proposals found: "
+				Assertions.fail("There should not be any proposals at index " + offset + ". Following proposals found: "
 						+ proposalListToString(completionProposals));
 			}
 		}
@@ -72,7 +72,7 @@ public class TagNameCompletionTests extends AbstractTargetEditorTest {
 			}
 			ICompletionProposal[] completionProposals = contentAssist.computeCompletionProposals(textViewer, offset);
 			if (completionProposals.length != 0) {
-				Assert.fail("There should not be any proposals at index " + offset + ". Following proposals found: "
+				Assertions.fail("There should not be any proposals at index " + offset + ". Following proposals found: "
 						+ proposalListToString(completionProposals));
 			}
 			offset++;

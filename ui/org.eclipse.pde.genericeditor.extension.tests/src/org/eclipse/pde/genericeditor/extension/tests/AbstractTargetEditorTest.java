@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.genericeditor.extension.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -44,8 +44,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.osgi.framework.FrameworkUtil;
 
 public abstract class AbstractTargetEditorTest {
@@ -58,7 +58,7 @@ public abstract class AbstractTargetEditorTest {
 		assertEquals(Arrays.asList(expectedProposals), toProposalStrings(actualProposals));
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		project = ResourcesPlugin.getWorkspace().getRoot()
 				.getProject(getClass().getName() + "_" + System.currentTimeMillis());
@@ -99,7 +99,7 @@ public abstract class AbstractTargetEditorTest {
 				.toString();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		if (tempFile != null) {
 			tempFile.delete();

@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.genericeditor.extension.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +28,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class UpdateUnitVersionsCommandTests extends AbstractTargetEditorTest {
 
@@ -88,10 +88,8 @@ public class UpdateUnitVersionsCommandTests extends AbstractTargetEditorTest {
 		for (Entry<String, String> unit : expected.entrySet()) {
 			String expectedID = unit.getKey();
 			String expectedVersion = unit.getValue();
-			assertTrue("ID: " + expectedID + " not found in actual. updatedText=" + updatedText,
-					actual.containsKey(expectedID));
-			assertEquals("ID: " + expectedID + " has the incorrect version. updatedText=" + updatedText,
-					expectedVersion, actual.get(expectedID));
+			assertTrue(actual.containsKey(expectedID), "ID: " + expectedID + " not found in actual. updatedText=" + updatedText);
+			assertEquals(expectedVersion, actual.get(expectedID), "ID: " + expectedID + " has the incorrect version. updatedText=" + updatedText);
 		}
 	}
 
