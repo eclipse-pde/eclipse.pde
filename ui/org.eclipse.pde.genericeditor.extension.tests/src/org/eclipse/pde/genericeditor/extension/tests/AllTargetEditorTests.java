@@ -13,12 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.genericeditor.extension.tests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
-@RunWith(Suite.class)
-@SuiteClasses({ AttributeNameCompletionTests.class, AttributeValueCompletionTests.class, TagNameCompletionTests.class,
+@Suite
+@SelectClasses({ AttributeNameCompletionTests.class, AttributeValueCompletionTests.class, TagNameCompletionTests.class,
 	TagValueCompletionTests.class, Bug527084CompletionWithCommentsTest.class,
 	Bug528706CompletionWithMultilineTagsTest.class, UpdateUnitVersionsCommandTests.class, Bug531602FormattingTests.class })
 public class AllTargetEditorTests {

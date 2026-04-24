@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.genericeditor.extension.tests;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -34,7 +34,7 @@ import org.eclipse.pde.genericeditor.extension.tests.resources.TestTargetLocatio
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.IUBundleContainer;
 import org.eclipse.pde.internal.core.target.TargetDefinitionPersistenceHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.FrameworkUtil;
 
 public class Bug531602FormattingTests extends AbstractTargetEditorTest {

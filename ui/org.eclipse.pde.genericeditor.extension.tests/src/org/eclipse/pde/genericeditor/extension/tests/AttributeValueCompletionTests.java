@@ -13,11 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.genericeditor.extension.tests;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AttributeValueCompletionTests extends AbstractTargetEditorTest {
 	@Test
