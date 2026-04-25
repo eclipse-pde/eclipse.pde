@@ -11,6 +11,7 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Christoph Läubrich - add bnd support
+ *     Lars Vogel <Lars.Vogel@vogella.com> - deterministic classpath order for duplicate bundle symbolic names
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
@@ -97,6 +98,11 @@ class RequiredPluginsClasspathContainer {
 
 	private static final Comparator<BundleDescription> BUNDLE_VERSION = Comparator
 			.comparing(BundleDescription::getVersion);
+
+	private static final Comparator<BundleDescription> SYMBOLIC_NAME_THEN_HIGHER_VERSION = Comparator
+			.comparing(BundleDescription::getSymbolicName)
+			.thenComparing(Comparator.comparing(BundleDescription::getVersion).reversed())
+			.thenComparingLong(BundleDescription::getBundleId);
 
 	private final IPluginModelBase fModel;
 	private final IBuild fBuild;
@@ -640,8 +646,11 @@ class RequiredPluginsClasspathContainer {
 	private static List<BundleDescription> collectRequirements(List<BundleDescription> roots) {
 		var closure = DependencyManager.findRequirementsClosure(roots, INCLUDE_OPTIONAL_DEPENDENCIES);
 		String systemBundleBSN = TargetPlatformHelper.getPDEState().getSystemBundle();
+		// Tie-break by higher version, then bundle id, so the classpath stays stable
+		// across IDE restarts when multiple bundles share a symbolic name
 		return closure.stream().filter(b -> !b.getSymbolicName().equals(systemBundleBSN))
-				.sorted(Comparator.comparing(BundleDescription::getSymbolicName)).toList();
+				.sorted(SYMBOLIC_NAME_THEN_HIGHER_VERSION)
+				.toList();
 	}
 
 	private void addSecondaryDependencies(BundleDescription desc, Set<BundleDescription> added,
@@ -685,7 +694,7 @@ class RequiredPluginsClasspathContainer {
 		String systemBundleBSN = TargetPlatformHelper.getPDEState().getSystemBundle();
 		Iterator<BundleDescription> transitiveDeps = closure.stream()
 				.filter(desc -> !desc.getSymbolicName().equals(systemBundleBSN))
-				.sorted(Comparator.comparing(BundleDescription::getSymbolicName)).iterator();
+				.sorted(SYMBOLIC_NAME_THEN_HIGHER_VERSION).iterator();
 		while (transitiveDeps.hasNext()) {
 			BundleDescription desc = transitiveDeps.next();
 			if (added.add(desc)) {
