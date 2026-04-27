@@ -15,8 +15,11 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.editor3x.refactorparticipants;
 
+import java.net.URI;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -57,11 +60,22 @@ class RefactorParticipantDelegate {
 		final FileTextSearchScope scope = FileTextSearchScope.newWorkspaceScope(filenames, false);
 
 		final Map<IFile, TextFileChange> changes = new HashMap<>();
+		final Set<ChangeAttributes> uniqueChangeAttributes = new HashSet<>();
 		final TextSearchRequestor searchRequestor = new TextSearchRequestor() {
 
 			@Override
 			public boolean acceptPatternMatch(TextSearchMatchAccess matchAccess) throws CoreException {
 				final IFile file = matchAccess.getFile();
+
+				final ChangeAttributes changeAttributes = new ChangeAttributes(
+						file.getLocationURI(),
+						pModel.getNewTextCurrentIndex(),
+						matchAccess.getMatchOffset(),
+						matchAccess.getMatchLength());
+				if (!uniqueChangeAttributes.add(changeAttributes)) {
+					return false;
+				}
+
 				TextFileChange change = changes.get(file);
 
 				if (change == null) {
@@ -97,12 +111,13 @@ class RefactorParticipantDelegate {
 				}
 
 				final ReplaceEdit edit = new ReplaceEdit(
-						matchAccess.getMatchOffset(),
-						matchAccess.getMatchLength(),
-						pModel.getNewTextCurrentIndex());
+						changeAttributes.offset(),
+						changeAttributes.length(),
+						changeAttributes.text());
 				change.addEdit(edit);
 				change.addTextEditGroup(new TextEditGroup(E4_MODEL_CHANGES,
 						edit));
+
 				return true;
 			}
 		};
@@ -130,5 +145,18 @@ class RefactorParticipantDelegate {
 			result.add(c);
 		}
 		return result;
+	}
+
+	/**
+	 * This record contains attributes for a single change. A change has to be
+	 * unique.
+	 * <p>
+	 * The {@code location} is an {@link IFile#getLocationURI()}, which may be
+	 * {@code null} for files without a local file-system location. A
+	 * {@code null} location is treated like any other value: two records with
+	 * {@code null} locations and otherwise equal fields are considered
+	 * duplicates. For e4xmi files on disk this case does not arise in practice.
+	 */
+	private static record ChangeAttributes(URI location, String text, int offset, int length) {
 	}
 }
