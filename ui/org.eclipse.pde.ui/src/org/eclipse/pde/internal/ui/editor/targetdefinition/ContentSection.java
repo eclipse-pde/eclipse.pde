@@ -67,6 +67,7 @@ public class ContentSection extends SectionPart {
 		client.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL));
 
 		fContentGroup = TargetContentsGroup.createInForm(client, toolkit);
+		fContentGroup.hookGlobalActions(fEditor.getEditorSite().getActionBars());
 		fEditor.getTargetChangedListener().setContentTree(fContentGroup);
 		fContentGroup.addTargetChangedListener(fEditor.getTargetChangedListener());
 		fContentGroup.addTargetChangedListener((definition, source, resolve, forceResolve) -> {
