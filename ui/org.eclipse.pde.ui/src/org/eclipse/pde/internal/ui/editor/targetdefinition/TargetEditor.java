@@ -26,8 +26,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -649,34 +647,34 @@ public class TargetEditor extends FormEditor {
 	}
 
 	/**
-	 * Per-target-handle scheduling rules. Reloading the same target while a
-	 * previous resolve is still draining caused races on the p2 profile
-	 * lock/unlock pair (see issue #310) and left a pile of cancelled jobs in
-	 * the Progress view because cancellation only sets a flag and the
-	 * in-flight resolve continues until the next monitor check. Serializing
-	 * resolves for the same handle removes both symptoms; resolves for
-	 * different targets remain independent.
+	 * A scheduling rule keyed by a target handle's memento string. Two
+	 * instances with the same key conflict, which serializes resolve jobs for
+	 * the same target handle while leaving resolves of different targets
+	 * independent. This avoids races on the p2 profile lock/unlock pair (see
+	 * issue #310) and the pile-up of cancelled resolve jobs in the Progress
+	 * view. Because the rule carries only a lightweight String key and is not
+	 * cached in a static map, there is no risk of unbounded retention.
 	 */
-	private static final ConcurrentMap<String, ISchedulingRule> RESOLVE_RULES = new ConcurrentHashMap<>();
+	private record TargetResolveRule(String key) implements ISchedulingRule {
+		@Override
+		public boolean contains(ISchedulingRule rule) {
+			return isConflicting(rule);
+		}
 
-	static ISchedulingRule getResolveSchedulingRule(ITargetHandle handle) {
+		@Override
+		public boolean isConflicting(ISchedulingRule rule) {
+			return rule instanceof TargetResolveRule other && key.equals(other.key);
+		}
+	}
+
+	private static ISchedulingRule getResolveSchedulingRule(ITargetHandle handle) {
 		String key;
 		try {
 			key = handle.getMemento();
 		} catch (CoreException e) {
 			key = String.valueOf(System.identityHashCode(handle));
 		}
-		return RESOLVE_RULES.computeIfAbsent(key, k -> new ISchedulingRule() {
-			@Override
-			public boolean contains(ISchedulingRule rule) {
-				return rule == this;
-			}
-
-			@Override
-			public boolean isConflicting(ISchedulingRule rule) {
-				return rule == this;
-			}
-		});
+		return new TargetResolveRule(key);
 	}
 
 	/**
