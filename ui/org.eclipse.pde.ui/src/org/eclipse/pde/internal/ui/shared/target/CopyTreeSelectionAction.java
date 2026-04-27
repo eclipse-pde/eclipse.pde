@@ -21,8 +21,11 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
@@ -40,6 +43,28 @@ class CopyTreeSelectionAction extends Action {
 		setDisabledImageDescriptor(workbenchImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
 
 		setActionDefinitionId(ActionFactory.COPY.getCommandId());
+	}
+
+	/**
+	 * Installs {@code copyAction} as the {@link ActionFactory#COPY global copy
+	 * handler} on {@code bars} while {@code tree} has focus, so that the
+	 * platform binding service delivers the platform-correct Copy keystroke
+	 * (Ctrl+C / Cmd+C / user-remapped binding).
+	 */
+	static void hookAsGlobalCopyHandler(Tree tree, Action copyAction, IActionBars bars) {
+		tree.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				bars.setGlobalActionHandler(ActionFactory.COPY.getId(), copyAction);
+				bars.updateActionBars();
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				bars.setGlobalActionHandler(ActionFactory.COPY.getId(), null);
+				bars.updateActionBars();
+			}
+		});
 	}
 
 	@Override

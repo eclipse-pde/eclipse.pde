@@ -67,6 +67,7 @@ public class LocationsSection extends SectionPart {
 		client.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL));
 
 		fContainerGroup = TargetLocationsGroup.createInForm(client, toolkit);
+		fContainerGroup.hookGlobalActions(fEditor.getEditorSite().getActionBars());
 		fEditor.getTargetChangedListener().setLocationTree(fContainerGroup);
 		fContainerGroup.addTargetChangedListener(fEditor.getTargetChangedListener());
 		fContainerGroup.addTargetReloadListener(fEditor.getTargetChangedListener());

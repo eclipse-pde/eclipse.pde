@@ -64,6 +64,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.progress.UIJob;
 
@@ -269,11 +271,19 @@ public class TargetLocationsGroup {
 			public void keyPressed(KeyEvent e) {
 				if (e.keyCode == SWT.DEL && fRemoveButton.getEnabled()) {
 					handleRemove();
-				} else if (e.keyCode == 'c' && (e.stateMask & SWT.CTRL) != 0) {
-					fCopySelectionAction.run();
 				}
 			}
 		});
+	}
+
+	/**
+	 * Installs the copy action as the {@link ActionFactory#COPY global copy
+	 * handler} for the hosting editor while the tree has focus, so that the
+	 * platform binding service delivers the platform-correct Copy keystroke
+	 * (Ctrl+C / Cmd+C / user-remapped binding).
+	 */
+	public void hookGlobalActions(IActionBars bars) {
+		CopyTreeSelectionAction.hookAsGlobalCopyHandler(fTreeViewer.getTree(), fCopySelectionAction, bars);
 	}
 
 	/**

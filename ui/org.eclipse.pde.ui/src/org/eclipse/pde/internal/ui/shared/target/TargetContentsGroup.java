@@ -73,8 +73,6 @@ import org.eclipse.pde.internal.ui.shared.CachedCheckboxTreeViewer;
 import org.eclipse.pde.internal.ui.shared.FilteredCheckboxTree;
 import org.eclipse.pde.internal.ui.wizards.target.TargetDefinitionContentPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -82,8 +80,10 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.osgi.framework.BundleException;
 
@@ -116,6 +116,7 @@ public class TargetContentsGroup {
 	private Label fGroupLabel;
 	private Combo fGroupCombo;
 	private ComboPart fGroupComboPart;
+	private CopyTreeSelectionAction fCopySelectionAction;
 
 	private ViewerFilter fSourceFilter;
 	private ViewerFilter fPluginFilter;
@@ -183,6 +184,16 @@ public class TargetContentsGroup {
 	 */
 	public void addTargetChangedListener(ITargetChangedListener listener) {
 		fChangeListeners.add(listener);
+	}
+
+	/**
+	 * Installs the copy action as the {@link ActionFactory#COPY global copy
+	 * handler} for the hosting editor while the tree has focus, so that the
+	 * platform binding service delivers the platform-correct Copy keystroke
+	 * (Ctrl+C / Cmd+C / user-remapped binding).
+	 */
+	public void hookGlobalActions(IActionBars bars) {
+		CopyTreeSelectionAction.hookAsGlobalCopyHandler(fTree.getTree(), fCopySelectionAction, bars);
 	}
 
 	/**
@@ -311,15 +322,7 @@ public class TargetContentsGroup {
 
 		});
 
-		CopyTreeSelectionAction copySelectionAction = new CopyTreeSelectionAction(fTree.getTree());
-		fTree.getTree().addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == 'c' && (e.stateMask & SWT.CTRL) != 0) {
-					copySelectionAction.run();
-				}
-			}
-		});
+		fCopySelectionAction = new CopyTreeSelectionAction(fTree.getTree());
 
 		fMenuManager = new MenuManager();
 		fMenuManager.add(new Action(Messages.TargetContentsGroup_collapseAll, PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_COLLAPSEALL)) {
@@ -328,7 +331,7 @@ public class TargetContentsGroup {
 				fTree.collapseAll();
 			}
 		});
-		fMenuManager.add(copySelectionAction);
+		fMenuManager.add(fCopySelectionAction);
 		fMenuManager.add(new CopyLocationAction(fTree));
 		Menu contextMenu = fMenuManager.createContextMenu(tree);
 		fTree.getTree().setMenu(contextMenu);
