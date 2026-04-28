@@ -19,3 +19,26 @@ jobs:
     with:
       botName: Eclipse PDE Bot
       botMail: pde-bot@eclipse.org
+  check-commit-count:
+    name: Check commit count
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify PR has at most one functional commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          subjects=$(gh api --paginate "repos/$REPO/pulls/$PR/commits" \
+            --jq '.[].commit.message | split("\n")[0]')
+          total=$(printf '%s\n' "$subjects" | sed '/^$/d' | wc -l)
+          bumps=$(printf '%s\n' "$subjects" | grep -cE '^Version bump' || true)
+          functional=$((total - bumps))
+          echo "Commits in PR:"
+          printf '%s\n' "$subjects" | sed 's/^/  - /'
+          echo "Total: $total | Version-bump: $bumps | Functional: $functional"
+          if [ "$functional" -gt 1 ] || [ "$bumps" -gt 1 ] || [ "$total" -gt 2 ]; then
+            echo "::error::PRs must contain at most one functional commit, optionally followed by a single 'Version bump...' commit. Please squash with 'git rebase -i' or amend with 'git commit --amend' and force-push."
+            exit 1
+          fi
