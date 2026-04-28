@@ -42,7 +42,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -647,37 +646,6 @@ public class TargetEditor extends FormEditor {
 	}
 
 	/**
-	 * A scheduling rule keyed by a target handle's memento string. Two
-	 * instances with the same key conflict, which serializes resolve jobs for
-	 * the same target handle while leaving resolves of different targets
-	 * independent. This avoids races on the p2 profile lock/unlock pair (see
-	 * issue #310) and the pile-up of cancelled resolve jobs in the Progress
-	 * view. Because the rule carries only a lightweight String key and is not
-	 * cached in a static map, there is no risk of unbounded retention.
-	 */
-	private record TargetResolveRule(String key) implements ISchedulingRule {
-		@Override
-		public boolean contains(ISchedulingRule rule) {
-			return isConflicting(rule);
-		}
-
-		@Override
-		public boolean isConflicting(ISchedulingRule rule) {
-			return rule instanceof TargetResolveRule other && key.equals(other.key);
-		}
-	}
-
-	private static ISchedulingRule getResolveSchedulingRule(ITargetHandle handle) {
-		String key;
-		try {
-			key = handle.getMemento();
-		} catch (CoreException e) {
-			key = String.valueOf(System.identityHashCode(handle));
-		}
-		return new TargetResolveRule(key);
-	}
-
-	/**
 	 * When changes are noticed in the target, this listener will resolve the
 	 * target and update the necessary pages in the editor.
 	 */
@@ -757,7 +725,7 @@ public class TargetEditor extends FormEditor {
 						return family.equals(getJobFamily());
 					}
 				};
-				resolveJob.setRule(getResolveSchedulingRule(getTarget().getHandle()));
+				resolveJob.setRule(TargetResolveRule.forHandle(getTarget().getHandle()));
 				resolveJob.addJobChangeListener(new JobChangeAdapter() {
 					@Override
 					public void done(org.eclipse.core.runtime.jobs.IJobChangeEvent event) {

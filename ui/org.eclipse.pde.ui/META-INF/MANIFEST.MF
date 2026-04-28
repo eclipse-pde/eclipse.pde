@@ -28,7 +28,7 @@ Export-Package:
  org.eclipse.pde.internal.ui.editor.product;x-internal:=true,
  org.eclipse.pde.internal.ui.editor.schema;x-friends:="org.eclipse.pde.ds.ui",
  org.eclipse.pde.internal.ui.editor.site;x-internal:=true,
- org.eclipse.pde.internal.ui.editor.targetdefinition;x-internal:=true,
+ org.eclipse.pde.internal.ui.editor.targetdefinition;x-friends:="org.eclipse.pde.ui.tests",
  org.eclipse.pde.internal.ui.editor.text;x-friends:="org.eclipse.pde.ds.ui,org.eclipse.pde.ua.ui",
  org.eclipse.pde.internal.ui.editor.validation;x-internal:=true,
  org.eclipse.pde.internal.ui.elements;x-friends:="org.eclipse.pde.ds.ui,org.eclipse.pde.ua.ui",
