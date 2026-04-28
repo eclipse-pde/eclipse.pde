@@ -1097,6 +1097,7 @@ public class PDEUIMessages extends NLS {
 	public static String AdvancedLauncherTab_subset;
 	public static String AdvancedLauncherTab_subset_plugins;
 	public static String AdvancedLauncherTab_subset_bundles;
+	public static String AdvancedLauncherTab_removeUnresolved;
 	public static String AdvancedLauncherTab_autoIncludeRequirements_bundles;
 	public static String AdvancedLauncherTab_autoIncludeRequirements_plugins;
 	public static String AdvancedLauncherTab_autoIncludeRequirements_features_withBundles;

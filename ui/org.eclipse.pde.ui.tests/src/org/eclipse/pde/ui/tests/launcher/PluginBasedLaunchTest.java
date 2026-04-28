@@ -34,6 +34,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +45,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -51,6 +53,7 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.Launch;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
@@ -58,6 +61,7 @@ import org.eclipse.pde.internal.core.DependencyManager;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.launching.IPDEConstants;
 import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
+import org.eclipse.pde.internal.launching.launcher.LaunchValidationOperation;
 import org.eclipse.pde.launching.EclipseApplicationLaunchConfiguration;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
@@ -1056,6 +1060,106 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 		assertEquals("plugin.a*1.0.0@4:true", BundleLauncherHelper.formatBundleEntry(plugin, "4", "true"));
 		assertEquals("plugin.a*1.0.0@4:", BundleLauncherHelper.formatBundleEntry(plugin, "4", ""));
 		assertEquals("plugin.a*1.0.0@:false", BundleLauncherHelper.formatBundleEntry(plugin, null, "false"));
+	}
+
+	// --- test cases for identifying unresolved plug-ins (Remove Unresolved) ---
+
+	@Test
+	public void testUnresolvedPlugins_onlyUnresolvableBundleIsIdentified() throws Exception {
+		var workspacePlugins = ofEntries( //
+				// requires a bundle that is present nowhere -> cannot resolve
+				bundle("plugin.a", "1.0.0", entry(REQUIRE_BUNDLE, "plugin.absent")), //
+				bundle("plugin.b", "1.0.0"));
+		setUpWorkspace(workspacePlugins, Map.of());
+
+		IPluginModelBase unresolvable = workspaceBundle("plugin.a", "1.0.0").findModel();
+		IPluginModelBase resolvable = workspaceBundle("plugin.b", "1.0.0").findModel();
+
+		Set<IPluginModelBase> unresolved = unresolvedModels(Set.of(unresolvable, resolvable));
+
+		assertEquals(Set.of(unresolvable), unresolved);
+	}
+
+	@Test
+	public void testUnresolvedPlugins_transitivelyUnresolvableBundlesAreIdentified() throws Exception {
+		var workspacePlugins = ofEntries( //
+				bundle("plugin.a", "1.0.0", entry(REQUIRE_BUNDLE, "plugin.absent")), //
+				// depends on the unresolvable plugin.a -> also cannot resolve
+				bundle("plugin.b", "1.0.0", entry(REQUIRE_BUNDLE, "plugin.a")), //
+				bundle("plugin.c", "1.0.0"));
+		setUpWorkspace(workspacePlugins, Map.of());
+
+		IPluginModelBase a = workspaceBundle("plugin.a", "1.0.0").findModel();
+		IPluginModelBase b = workspaceBundle("plugin.b", "1.0.0").findModel();
+		IPluginModelBase c = workspaceBundle("plugin.c", "1.0.0").findModel();
+
+		Set<IPluginModelBase> unresolved = unresolvedModels(Set.of(a, b, c));
+
+		assertEquals(Set.of(a, b), unresolved);
+	}
+
+	@Test
+	public void testUnresolvedPlugins_resolvedDuplicateAtSameVersionIsKept() throws Exception {
+		// A workspace and a target bundle share symbolic name and version, but
+		// only the workspace one is broken. The resolved target duplicate must
+		// not be dropped along with it.
+		var workspacePlugins = ofEntries( //
+				bundle("plugin.a", "1.0.0", entry(REQUIRE_BUNDLE, "plugin.absent")));
+		var targetPlugins = ofEntries( //
+				bundle("plugin.a", "1.0.0"));
+		setUpWorkspace(workspacePlugins, targetPlugins);
+
+		IPluginModelBase workspaceA = workspaceBundle("plugin.a", "1.0.0").findModel();
+		IPluginModelBase targetA = targetBundle("plugin.a", "1.0.0").findModel();
+
+		Set<IPluginModelBase> unresolved = unresolvedModels(Set.of(workspaceA, targetA));
+
+		assertEquals(Set.of(workspaceA), unresolved);
+	}
+
+	/**
+	 * Mirrors the selection logic of
+	 * {@code AbstractPluginBlock.removeUnresolvedPlugins()}: repeatedly validates
+	 * the current set of models, drops those whose bundle did not resolve, and
+	 * re-validates the remaining set. A bundle that only becomes unresolvable
+	 * once one of its dependencies has been dropped is therefore picked up in a
+	 * later pass, just like the production loop. Returns every model that was
+	 * dropped, matched by symbolic name, version and location.
+	 */
+	private static Set<IPluginModelBase> unresolvedModels(Set<IPluginModelBase> checkedModels) throws CoreException {
+		Set<IPluginModelBase> remaining = new HashSet<>(checkedModels);
+		Set<IPluginModelBase> unresolved = new HashSet<>();
+		// Bound the loop just like the production code so a pathological
+		// resolver state can't spin forever.
+		int safetyBound = 32;
+		while (safetyBound-- > 0 && !remaining.isEmpty()) {
+			LaunchValidationOperation operation = new LaunchValidationOperation(
+					createPluginLaunchConfig("remove-unresolved-test"), remaining);
+			operation.run(new NullProgressMonitor());
+
+			Set<String> unresolvedKeys = new HashSet<>();
+			for (Object key : operation.getInput().keySet()) {
+				if (key instanceof BundleDescription bd && !bd.isResolved()) {
+					unresolvedKeys.add(bundleKey(bd));
+				}
+			}
+
+			Set<IPluginModelBase> removed = remaining.stream().filter(model -> {
+				BundleDescription bd = model.getBundleDescription();
+				return bd != null && unresolvedKeys.contains(bundleKey(bd));
+			}).collect(Collectors.toSet());
+
+			if (removed.isEmpty()) {
+				break;
+			}
+			unresolved.addAll(removed);
+			remaining.removeAll(removed);
+		}
+		return unresolved;
+	}
+
+	private static String bundleKey(BundleDescription bd) {
+		return bd.getSymbolicName() + '/' + bd.getVersion() + '/' + bd.getLocation();
 	}
 
 	// --- utilities ---
