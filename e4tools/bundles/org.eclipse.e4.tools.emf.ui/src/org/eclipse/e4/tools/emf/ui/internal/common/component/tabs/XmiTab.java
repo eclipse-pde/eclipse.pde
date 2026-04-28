@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.nls.Translation;
+import org.eclipse.e4.tools.emf.ui.common.ModelEditorPreferences;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.xml.AnnotationAccess;
 import org.eclipse.e4.tools.emf.ui.internal.common.xml.EMFDocumentResourceMediator;
@@ -134,9 +135,8 @@ public class XmiTab extends Composite {
 
 		final String property = System
 				.getProperty(ORG_ECLIPSE_E4_TOOLS_MODELEDITOR_FILTEREDTREE_ENABLED_XMITAB_DISABLED);
-		if (property != null || preferences.getBoolean("tab-form-search-show", true)) { //$NON-NLS-1$
+		if (property != null || preferences.getBoolean(ModelEditorPreferences.TAB_FORM_SEARCH_SHOW, true)) {
 			sourceViewer.setEditable(false);
-			sourceViewer.getTextWidget().setEnabled(false);
 		}
 	}
 
