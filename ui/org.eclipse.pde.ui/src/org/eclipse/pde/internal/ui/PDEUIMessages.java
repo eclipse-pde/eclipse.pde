@@ -2389,6 +2389,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String ManifestTypeRenameParticipant_composite;
 
+	public static String ManifestTypeDeleteParticipant_composite;
+
+	public static String ManifestPackageDeleteParticipant_packageDelete;
+
 	public static String LauncherPage_title;
 
 	public static String WindowImagesSection_16;

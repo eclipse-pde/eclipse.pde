@@ -1226,6 +1226,38 @@
       </renameParticipant>
    </extension>
    <extension
+         point="org.eclipse.ltk.core.refactoring.deleteParticipants">
+      <deleteParticipant
+            class="org.eclipse.pde.internal.ui.refactoring.ManifestTypeDeleteParticipant"
+            id="org.eclipse.pde.ui.manifestTypeDeleteParticipant"
+            name="%delete.type.participant">
+         <enablement>
+            <with
+                  variable="element">
+               <instanceof
+                     value="org.eclipse.jdt.core.IType">
+               </instanceof>
+            </with>
+         </enablement>
+      </deleteParticipant>
+   </extension>
+   <extension
+		point="org.eclipse.ltk.core.refactoring.deleteParticipants">
+		<deleteParticipant
+			class="org.eclipse.pde.internal.ui.refactoring.ManifestPackageDeleteParticipant"
+			id="org.eclipse.pde.ui.manifestPackageDeleteParticipant"
+			name="%delete.package.participant">
+		<enablement>
+			<with
+				variable="element">
+			<instanceof
+				value="org.eclipse.jdt.core.IPackageFragment">
+			</instanceof>
+			</with>
+		</enablement>
+		</deleteParticipant>
+	</extension>
+   <extension
          point="org.eclipse.ltk.core.refactoring.moveParticipants">
       <moveParticipant
             class="org.eclipse.pde.internal.ui.refactoring.ManifestTypeMoveParticipant"
