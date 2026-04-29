@@ -45,6 +45,7 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.natures.BndProject;
 import org.eclipse.pde.internal.core.natures.PluginProject;
@@ -114,13 +115,14 @@ public class ClasspathContainerState {
 			int count = requests.size();
 			monitor.setWorkRemaining(count * 2);
 
-			for (UpdateRequest req : requests) {
+			for (int i = 0; i < requests.size(); i++) {
+				UpdateRequest req = requests.get(i);
 				if (monitor.isCanceled()) {
 					break;
 				}
 				IProject project = req.project();
 				if (project.exists() && project.isOpen()) {
-					monitor.subTask(project.getName());
+					monitor.subTask(NLS.bind("({0}/{1}): {2}", i + 1, count, project.getName())); //$NON-NLS-1$
 					IPluginModelBase model = modelManager.findModel(project);
 					if (isPdeContainerProject(project, model) && PluginProject.isJavaProject(project)) {
 						IJavaProject javaProject = JavaCore.create(project);
