@@ -202,7 +202,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			bundleProperties = new Properties();
 			model.setUserObject(bundleProperties);
 		}
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		for (Long requiredId : requiredIds) {
 			buffer.append(requiredId.toString());
 			buffer.append(':');
