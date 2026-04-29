@@ -417,7 +417,6 @@ public class TargetDefinition implements ITargetDefinition {
 		} finally {
 			// keep a list of resolved targets with key as handle
 			TargetPlatformHelper.addTargetDefinitionMap(this);
-			subMonitor.done();
 		}
 	}
 

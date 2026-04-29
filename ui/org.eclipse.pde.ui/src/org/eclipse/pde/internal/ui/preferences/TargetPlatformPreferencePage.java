@@ -33,7 +33,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
@@ -318,14 +317,9 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		public TargetDefinition defaultTarget;
 		@Override
 		public IStatus run(IProgressMonitor monitor) {
-			SubMonitor subMon = SubMonitor.convert(monitor);
 			ITargetPlatformService service = getTargetService();
 			if (service != null) {
 				defaultTarget = (TargetDefinition) service.newDefaultTarget();
-			}
-			subMon.done();
-			if (monitor != null) {
-				monitor.done();
 			}
 			return Status.OK_STATUS;
 		}

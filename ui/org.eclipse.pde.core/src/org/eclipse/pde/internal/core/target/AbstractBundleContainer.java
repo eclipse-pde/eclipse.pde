@@ -104,11 +104,6 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 			fFeatures = new TargetFeature[0];
 			fResolutionStatus = e.getStatus();
 			PDECore.log(e.getStatus());
-		} finally {
-			subMonitor.done();
-			if (monitor != null) {
-				monitor.done();
-			}
 		}
 		return fResolutionStatus;
 	}

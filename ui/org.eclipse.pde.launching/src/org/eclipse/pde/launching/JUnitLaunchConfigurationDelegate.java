@@ -584,8 +584,6 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		if (configuration.getAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, false)) {
 			CoreUtility.deleteContent(getConfigurationDirectory(configuration), subMon.split(25));
 		}
-
-		subMon.done();
 	}
 
 	/**

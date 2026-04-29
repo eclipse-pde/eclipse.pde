@@ -142,8 +142,6 @@ public class CoreUtility {
 				}
 			}
 			fileToDelete.delete();
-
-			subMon.done();
 		}
 	}
 
