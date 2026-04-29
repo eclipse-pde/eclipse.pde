@@ -123,7 +123,6 @@ public class AddFilesToRepositoryWizard extends Wizard {
 				if (refreshJob.needsToSchedule()) {
 					refreshJob.schedule();
 				}
-				progress.done();
 				return status;
 			}
 		};

@@ -251,74 +251,18 @@ public class ApiModelFactory {
 	public static IApiComponent[] addComponents(IApiBaseline baseline, String installLocation, IProgressMonitor monitor) throws CoreException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.configuring_baseline, 50);
 		IApiComponent[] result = null;
-		try {
-			// Acquire the service
-			ITargetPlatformService service = null;
-			ApiPlugin plugin = ApiPlugin.getDefault();
-			if (plugin != null) {
-				service = ApiPlugin.getDefault().acquireService(ITargetPlatformService.class);
-				subMonitor.split(1);
-				ITargetLocation container = service.newProfileLocation(installLocation, null);
-				ITargetDefinition definition = service.newTarget();
-				subMonitor.subTask(Messages.resolving_target_definition);
-				container.resolve(definition, subMonitor.split(30));
-				subMonitor.split(1);
-				TargetBundle[] bundles = container.getBundles();
-				List<IApiComponent> components = new ArrayList<>();
-				if (bundles.length > 0) {
-					subMonitor.setWorkRemaining(bundles.length);
-					for (TargetBundle bundle : bundles) {
-						subMonitor.split(1);
-						if (!bundle.isSourceBundle()) {
-							IApiComponent component = ApiModelFactory.newApiComponent(baseline, URIUtil.toFile(bundle.getBundleInfo().getLocation()).getAbsolutePath());
-							if (component != null) {
-								subMonitor.subTask(NLS.bind(Messages.adding_component__0, component.getSymbolicName()));
-								components.add(component);
-							}
-						}
-					}
-				}
-				result = components.toArray(new IApiComponent[components.size()]);
-			} else {
-				// The target platform service is unavailable (OSGi isn't
-				// running), add components by searching the plug-ins directory
-				File dir = new File(installLocation);
-				if (dir.exists()) {
-					File[] files = dir.listFiles();
-					if (files == null) {
-						return NO_COMPONENTS;
-					}
-					List<IApiComponent> components = new ArrayList<>();
-					for (File bundle : files) {
-						IApiComponent component = ApiModelFactory.newApiComponent(baseline, bundle.getAbsolutePath());
-						if (component != null) {
-							components.add(component);
-						}
-					}
-					result = components.toArray(new IApiComponent[components.size()]);
-				}
-			}
-			if (result != null) {
-				baseline.addApiComponents(result);
-				return result;
-			}
-			return NO_COMPONENTS;
-		} finally {
-			subMonitor.done();
-		}
-	}
-
-	public static IApiBaseline newApiBaselineFromTarget(String name, ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
-		IApiBaseline baseline = new ApiBaseline(name);
-
-		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.configuring_baseline, 50);
-		try {
-			IStatus result = definition.resolve(subMonitor.split(30));
-			if (!result.isOK()) {
-				throw new CoreException(result);
-			}
+		// Acquire the service
+		ITargetPlatformService service = null;
+		ApiPlugin plugin = ApiPlugin.getDefault();
+		if (plugin != null) {
+			service = ApiPlugin.getDefault().acquireService(ITargetPlatformService.class);
 			subMonitor.split(1);
-			TargetBundle[] bundles = definition.getBundles();
+			ITargetLocation container = service.newProfileLocation(installLocation, null);
+			ITargetDefinition definition = service.newTarget();
+			subMonitor.subTask(Messages.resolving_target_definition);
+			container.resolve(definition, subMonitor.split(30));
+			subMonitor.split(1);
+			TargetBundle[] bundles = container.getBundles();
 			List<IApiComponent> components = new ArrayList<>();
 			if (bundles.length > 0) {
 				subMonitor.setWorkRemaining(bundles.length);
@@ -333,12 +277,60 @@ public class ApiModelFactory {
 					}
 				}
 			}
-			baseline.addApiComponents(components.toArray(new IApiComponent[components.size()]));
-			baseline.setLocation(generateTargetLocation(definition));
-			return baseline;
-		} finally {
-			subMonitor.done();
+			result = components.toArray(new IApiComponent[components.size()]);
+		} else {
+			// The target platform service is unavailable (OSGi isn't
+			// running), add components by searching the plug-ins directory
+			File dir = new File(installLocation);
+			if (dir.exists()) {
+				File[] files = dir.listFiles();
+				if (files == null) {
+					return NO_COMPONENTS;
+				}
+				List<IApiComponent> components = new ArrayList<>();
+				for (File bundle : files) {
+					IApiComponent component = ApiModelFactory.newApiComponent(baseline, bundle.getAbsolutePath());
+					if (component != null) {
+						components.add(component);
+					}
+				}
+				result = components.toArray(new IApiComponent[components.size()]);
+			}
 		}
+		if (result != null) {
+			baseline.addApiComponents(result);
+			return result;
+		}
+		return NO_COMPONENTS;
+	}
+
+	public static IApiBaseline newApiBaselineFromTarget(String name, ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
+		IApiBaseline baseline = new ApiBaseline(name);
+
+		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.configuring_baseline, 50);
+		IStatus result = definition.resolve(subMonitor.split(30));
+		if (!result.isOK()) {
+			throw new CoreException(result);
+		}
+		subMonitor.split(1);
+		TargetBundle[] bundles = definition.getBundles();
+		List<IApiComponent> components = new ArrayList<>();
+		if (bundles.length > 0) {
+			subMonitor.setWorkRemaining(bundles.length);
+			for (TargetBundle bundle : bundles) {
+				subMonitor.split(1);
+				if (!bundle.isSourceBundle()) {
+					IApiComponent component = ApiModelFactory.newApiComponent(baseline, URIUtil.toFile(bundle.getBundleInfo().getLocation()).getAbsolutePath());
+					if (component != null) {
+						subMonitor.subTask(NLS.bind(Messages.adding_component__0, component.getSymbolicName()));
+						components.add(component);
+					}
+				}
+			}
+		}
+		baseline.addApiComponents(components.toArray(new IApiComponent[components.size()]));
+		baseline.setLocation(generateTargetLocation(definition));
+		return baseline;
 	}
 
 	/**
