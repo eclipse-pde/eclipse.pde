@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2022 IBM Corporation and others.
+ * Copyright (c) 2005, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -580,4 +580,14 @@ public interface IPDELauncherConstants {
 	 * @since 3.6
 	 */
 	String ADDITIONAL_PLUGINS = "additional_plugins"; //$NON-NLS-1$
+	/**
+	 * Launch configuration attribute key. The value is a boolean specifying whether
+	 * the <code>-console</code> argument should be added when launching.
+	 * When set to <code>true</code>, the application will be started with
+	 * console support enabled.
+	 * @since 3.14
+	 *
+	 * 
+	 */
+	String ADD_CONSOLE = "add_console"; //$NON-NLS-1$
 }

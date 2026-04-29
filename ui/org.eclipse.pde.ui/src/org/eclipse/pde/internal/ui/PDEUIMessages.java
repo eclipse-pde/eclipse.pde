@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2025 IBM Corporation and others.
+ * Copyright (c) 2014, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -39,6 +39,8 @@ public class PDEUIMessages extends NLS {
 	public static String AbstractSchemaDetails_descriptionLabel;
 
 	public static String AbstractTargetPage_setTarget;
+
+	public static String ProgramBlock_runWithConsoleOption;
 
 	public static String AbstractTargetPage_reloadTarget;
 

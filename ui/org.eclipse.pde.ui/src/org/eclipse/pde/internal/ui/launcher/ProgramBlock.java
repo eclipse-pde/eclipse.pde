@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2026 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -46,6 +46,7 @@ public class ProgramBlock {
 	private Button fProductButton;
 	private Combo fProductCombo;
 	private Button fApplicationButton;
+	private Button fRunAsConsoleSectionButton;
 	private final AbstractLauncherTab fTab;
 	private final Listener fListener = new Listener();
 	private ControlDecoration fProductComboDecoration;
@@ -109,6 +110,7 @@ public class ProgramBlock {
 
 		createProductSection(group);
 		createApplicationSection(group);
+		createRunWithConsoleOption(group);
 	}
 
 	protected void createProductSection(Composite parent) {
@@ -135,16 +137,24 @@ public class ProgramBlock {
 		fApplicationCombo.addSelectionListener(fListener);
 	}
 
+	protected void createRunWithConsoleOption(Composite parent) {
+		fRunAsConsoleSectionButton = new Button(parent, SWT.CHECK);
+		fRunAsConsoleSectionButton.setText(PDEUIMessages.ProgramBlock_runWithConsoleOption);
+		fRunAsConsoleSectionButton.addSelectionListener(fListener);
+	}
+
 	public void initializeFrom(ILaunchConfiguration config) throws CoreException {
 		initializeProductSection(config);
 		initializeApplicationSection(config);
 
 		boolean useProduct = config.getAttribute(IPDELauncherConstants.USE_PRODUCT, false) && fProductCombo.getItemCount() > 0;
+		boolean addConsole = config.getAttribute(IPDELauncherConstants.ADD_CONSOLE, false);
 		fApplicationButton.setSelection(!useProduct);
 		fApplicationCombo.setEnabled(!useProduct);
 		fProductButton.setSelection(useProduct);
 		fProductButton.setEnabled(fProductCombo.getItemCount() > 0);
 		fProductCombo.setEnabled(useProduct);
+		fRunAsConsoleSectionButton.setSelection(addConsole);
 	}
 
 	protected void initializeProductSection(ILaunchConfiguration config) throws CoreException {
@@ -196,6 +206,8 @@ public class ProgramBlock {
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		saveApplicationSection(config);
 		saveProductSection(config);
+		saveConsoleSection(config);
+
 	}
 
 	protected void saveProductSection(ILaunchConfigurationWorkingCopy config) {
@@ -210,6 +222,18 @@ public class ProgramBlock {
 			config.setAttribute(attribute, (String) null);
 		} else {
 			config.setAttribute(attribute, text);
+		}
+	}
+
+	protected void saveConsoleSection(ILaunchConfigurationWorkingCopy config) {
+		try {
+			boolean updatePreferences = false;
+			if (fRunAsConsoleSectionButton.getSelection()) {
+				updatePreferences = true;
+			}
+			config.setAttribute(IPDELauncherConstants.ADD_CONSOLE, updatePreferences);
+			config.doSave();
+		} catch (CoreException e) {
 		}
 	}
 
