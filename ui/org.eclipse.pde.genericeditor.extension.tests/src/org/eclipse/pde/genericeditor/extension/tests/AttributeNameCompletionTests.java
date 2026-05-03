@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.genericeditor.extension.tests;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -61,8 +61,8 @@ public class AttributeNameCompletionTests extends AbstractTargetEditorTest {
 			if (expectedProposalsByOffset.containsKey(offset)) {
 				checkProposals(expectedProposalsByOffset.get(offset), completionProposals, offset);
 			} else {
-				assertTrue(completionProposals.length == 0, "There should not be any proposals at index " + offset + ". Following proposals found: "
-						+ proposalListToString(completionProposals));
+				assertEquals(0, completionProposals.length, "There should not be any proposals at index " + offset
+						+ ". Following proposals found: " + proposalListToString(completionProposals));
 			}
 			offset++;
 		}

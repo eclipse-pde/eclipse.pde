@@ -13,13 +13,14 @@
  *******************************************************************************/
 package org.eclipse.pde.genericeditor.extension.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class TagNameCompletionTests extends AbstractTargetEditorTest {
@@ -47,13 +48,12 @@ public class TagNameCompletionTests extends AbstractTargetEditorTest {
 
 		for (Map.Entry<Integer, String[]> entry : expectedProposalsByOffset.entrySet()) {
 			int offset = entry.getKey();
-			ICompletionProposal[] completionProposals = contentAssist.computeCompletionProposals(textViewer,
-					offset);
+			ICompletionProposal[] completionProposals = contentAssist.computeCompletionProposals(textViewer, offset);
 			if (expectedProposalsByOffset.containsKey(offset)) {
 				checkProposals(entry.getValue(), completionProposals, offset);
-			} else if (completionProposals.length != 0) {
-				Assertions.fail("There should not be any proposals at index " + offset + ". Following proposals found: "
-						+ proposalListToString(completionProposals));
+			} else {
+				assertEquals(0, completionProposals.length, "There should not be any proposals at index " + offset
+						+ ". Following proposals found: " + proposalListToString(completionProposals));
 			}
 		}
 	}
@@ -71,10 +71,8 @@ public class TagNameCompletionTests extends AbstractTargetEditorTest {
 				break;
 			}
 			ICompletionProposal[] completionProposals = contentAssist.computeCompletionProposals(textViewer, offset);
-			if (completionProposals.length != 0) {
-				Assertions.fail("There should not be any proposals at index " + offset + ". Following proposals found: "
-						+ proposalListToString(completionProposals));
-			}
+			assertEquals(0, completionProposals.length, "There should not be any proposals at index " + offset
+					+ ". Following proposals found: " + proposalListToString(completionProposals));
 			offset++;
 		}
 	}

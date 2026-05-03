@@ -123,7 +123,7 @@ public class Bug531602FormattingTests extends AbstractTargetEditorTest {
 			ByteArrayOutputStream actualOutput = new ByteArrayOutputStream();
 			TargetDefinitionPersistenceHelper.persistXML(targetDefinition, actualOutput);
 
-			assertEqualStringIgnoreDelim(result, actualOutput.toString(StandardCharsets.UTF_8.toString()));
+			assertEqualStringIgnoreDelim(result, actualOutput.toString(StandardCharsets.UTF_8));
 		} catch (IOException e) {
 		}
 	}

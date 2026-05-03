@@ -1,7 +1,5 @@
-package org.eclipse.pde.genericeditor.extension.tests;
-
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,68 +12,18 @@ package org.eclipse.pde.genericeditor.extension.tests;
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
+package org.eclipse.pde.genericeditor.extension.tests;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 import org.junit.jupiter.api.Assertions;
 
 /*
  * Copied from org.eclipse.jdt.ui.tests/test plugin/org/eclipse/jdt/testplugin/StringAsserts.javas
  */
-
 public class StringAsserts {
-	public StringAsserts() {
-		super();
-	}
-
-	private static int getDiffPos(String str1, String str2) {
-		int len1 = Math.min(str1.length(), str2.length());
-
-		int diffPos = -1;
-		for (int i = 0; i < len1; i++) {
-			if (str1.charAt(i) != str2.charAt(i)) {
-				diffPos = i;
-				break;
-			}
-		}
-		if (diffPos == -1 && str1.length() != str2.length()) {
-			diffPos = len1;
-		}
-		return diffPos;
-	}
-
-	private static final int printRange = 6;
-
-	public static void assertEqualString(String actual, String expected) {
-		if (actual == null || expected == null) {
-			if (actual == expected) {
-				return;
-			}
-			if (actual == null) {
-				Assertions.assertTrue(false, "Content not as expected: is 'null' expected: " + expected);
-			} else {
-				Assertions.assertTrue(false, "Content not as expected: expected 'null' is: " + actual);
-			}
-		}
-
-		int diffPos = getDiffPos(actual, expected);
-		if (diffPos != -1) {
-			int diffAhead = Math.max(0, diffPos - printRange);
-			int diffAfter = Math.min(actual.length(), diffPos + printRange);
-
-			String diffStr = actual.substring(diffAhead, diffPos) + '^' + actual.substring(diffPos, diffAfter);
-
-			// use detailed message
-			String message = "Content not as expected: is\n" + actual + "\nDiffers at pos " + diffPos + ": " + diffStr //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-					+ "\nexpected:\n" + expected; //$NON-NLS-1$
-
-			Assertions.assertEquals(expected, actual, message);
-		}
-	}
 
 	public static void assertEqualStringIgnoreDelim(String actual, String expected) throws IOException {
 		if (actual == null || expected == null) {
@@ -83,9 +31,9 @@ public class StringAsserts {
 				return;
 			}
 			if (actual == null) {
-				Assertions.assertTrue(false, "Content not as expected: is 'null' expected: " + expected);
+				Assertions.fail("Content not as expected: is 'null' expected: " + expected);
 			} else {
-				Assertions.assertTrue(false, "Content not as expected: expected 'null' is: " + actual);
+				Assertions.fail("Content not as expected: expected 'null' is: " + actual);
 			}
 		}
 
@@ -110,91 +58,4 @@ public class StringAsserts {
 			line++;
 		} while (true);
 	}
-
-	public static void assertEqualStringsIgnoreOrder(String[] actuals, String[] expecteds) {
-		ArrayList<String> list1 = new ArrayList<>(Arrays.asList(actuals));
-		ArrayList<String> list2 = new ArrayList<>(Arrays.asList(expecteds));
-
-		for (int i = list1.size() - 1; i >= 0; i--) {
-			if (list2.remove(list1.get(i))) {
-				list1.remove(i);
-			}
-		}
-
-		int n1 = list1.size();
-		int n2 = list2.size();
-
-		if (n1 + n2 > 0) {
-			if (n1 == 1 && n2 == 1) {
-				assertEqualString(list1.get(0), list2.get(0));
-			}
-
-			StringBuilder buf = new StringBuilder();
-			for (int i = 0; i < n1; i++) {
-				String s1 = list1.get(i);
-				if (s1 != null) {
-					buf.append(s1);
-					buf.append("\n");
-				}
-			}
-			String actual = buf.toString();
-
-			buf = new StringBuilder();
-			for (int i = 0; i < n2; i++) {
-				String s2 = list2.get(i);
-				if (s2 != null) {
-					buf.append(s2);
-					buf.append("\n");
-				}
-			}
-			String expected = buf.toString();
-
-			String message = "Content not as expected: Content is: \n" + actual + "\nExpected contents: \n" + expected;
-			Assertions.assertEquals(expected, actual, message);
-		}
-	}
-
-	public static void assertExpectedExistInProposals(String[] actuals, String[] expecteds) {
-		ArrayList<String> list1 = new ArrayList<>(Arrays.asList(actuals));
-		ArrayList<String> list2 = new ArrayList<>(Arrays.asList(expecteds));
-
-		for (int i = list1.size() - 1; i >= 0; i--) {
-			if (list2.remove(list1.get(i))) {
-				list1.remove(i);
-			}
-		}
-
-		int n1 = list1.size();
-		int n2 = list2.size();
-
-		if (n2 > 0) {
-			if (n1 == 1 && n2 == 1) {
-				assertEqualString(list1.get(0), list2.get(0));
-			}
-
-			StringBuilder buf = new StringBuilder();
-			for (int i = 0; i < n1; i++) {
-				String s1 = list1.get(i);
-				if (s1 != null) {
-					buf.append(s1);
-					buf.append("\n");
-				}
-			}
-			String actual = buf.toString();
-
-			buf = new StringBuilder();
-			for (int i = 0; i < n2; i++) {
-				String s2 = list2.get(i);
-				if (s2 != null) {
-					buf.append(s2);
-					buf.append("\n");
-				}
-			}
-			String expected = buf.toString();
-
-			String message = "Content not as expected: Content is: \n" + actual + "\nExpected contents: \n" + expected;
-			Assertions.assertEquals(expected, actual, message);
-		}
-	}
-
 }
