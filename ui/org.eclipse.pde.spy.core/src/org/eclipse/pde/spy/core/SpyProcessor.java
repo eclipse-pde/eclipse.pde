@@ -81,7 +81,9 @@ public class SpyProcessor {
 				// Bind the command with the binding, and add the view ID as
 				// parameter.
 				// The part class name will be the ID of the part descriptor
-				bindSpyKeyBinding(bindingTable, shortCut, command, partID);
+				if (shortCut != null && !shortCut.isBlank()) {
+					bindSpyKeyBinding(bindingTable, shortCut, command, partID);
+				}
 
 				// Add the descriptor in application
 				addSpyPartDescriptor(partID, partName, iconPath, partClass, desc);
