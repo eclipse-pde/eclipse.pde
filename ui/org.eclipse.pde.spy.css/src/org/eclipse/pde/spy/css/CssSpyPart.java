@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.pde.spy.css;
 
-import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -100,7 +99,6 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.Widget;
-import org.w3c.css.sac.CSSParseException;
 import org.w3c.css.sac.SelectorList;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -974,7 +972,7 @@ public class CssSpyPart {
 				SelectorList selectors = engine.parseSelectors(text);
 				subMonitor.split(2);
 				processCSSSearch(subMonitor.split(8), engine, selectors, element, null, results);
-			} catch (CSSParseException | IOException e) {
+			} catch (Exception e) {
 				System.out.println(e.toString());
 			}
 		}
