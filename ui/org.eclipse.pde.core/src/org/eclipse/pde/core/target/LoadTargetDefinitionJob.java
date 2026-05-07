@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.pde.core.target;
 
+import java.io.File;
+
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -145,7 +147,7 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 				preferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, ""); //$NON-NLS-1$
 			}
 			preferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, memento);
-
+			storeActiveTargetFileStamp(preferences);
 
 			loadJRE(subMon.split(3));
 
@@ -179,6 +181,19 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 			}
 		}
 		monitor.done();
+	}
+
+	/**
+	 * Records the backing file's modification time so the next session can detect
+	 * external changes (e.g. {@code git pull}); cleared for non-file targets.
+	 */
+	private void storeActiveTargetFileStamp(PDEPreferencesManager preferences) {
+		File file = TargetPlatformService.backingFile(fTarget.getHandle());
+		if (file != null) {
+			preferences.setValue(ICoreConstants.WORKSPACE_TARGET_FILE_STAMP, Long.toString(file.lastModified()));
+		} else {
+			preferences.setToDefault(ICoreConstants.WORKSPACE_TARGET_FILE_STAMP);
+		}
 	}
 
 	/**
