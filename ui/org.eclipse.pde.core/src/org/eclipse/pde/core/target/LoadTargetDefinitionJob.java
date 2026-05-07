@@ -32,6 +32,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.core.target.Messages;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
+import org.eclipse.pde.internal.core.target.TargetResolveSchedulingRule;
 
 /**
  * Sets the current target platform based on a target definition.
@@ -80,6 +81,10 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 		Job.getJobManager().cancel(JOB_FAMILY_ID);
 		Job job = new LoadTargetDefinitionJob(target);
 		job.setUser(true);
+		// Serialize loads/resolves of the same target so a new load waits for a
+		// cancelled one to drain, avoiding p2 profile lock races and
+		// Progress-view pile-up.
+		job.setRule(TargetResolveSchedulingRule.forHandle(target.getHandle()));
 		if (listener != null) {
 			job.addJobChangeListener(listener);
 		}
