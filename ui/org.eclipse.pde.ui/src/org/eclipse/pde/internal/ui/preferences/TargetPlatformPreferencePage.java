@@ -69,6 +69,7 @@ import org.eclipse.pde.core.target.ITargetHandle;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.core.target.LoadTargetDefinitionJob;
 import org.eclipse.pde.core.target.TargetBundle;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.core.PluginModelManager;
@@ -341,6 +342,8 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	private Button fRemoveButton;
 	private Button fMoveButton;
 
+	private Button fAutoReloadButton;
+
 	// Text displaying additional information
 	private TreeViewer fDetails;
 
@@ -380,6 +383,9 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	public Control createContents(Composite parent) {
 		Composite container = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);
 		createTargetProfilesGroup(container);
+		fAutoReloadButton = SWTFactory.createCheckButton(container, PDEUIMessages.TargetPlatformPreferencePage_AutoReload,
+				null, isAutoReloadEnabled(), 1);
+		fAutoReloadButton.setToolTipText(PDEUIMessages.TargetPlatformPreferencePage_AutoReloadTooltip);
 		Dialog.applyDialogFont(container);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.TARGET_PLATFORM_PREFERENCE_PAGE);
 		return container;
@@ -852,6 +858,8 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			fTableViewer.refresh(true);
 			handleActivate();
 		}
+		fAutoReloadButton.setSelection(PDECore.getDefault().getPreferencesManager()
+				.getDefaultBoolean(ICoreConstants.AUTO_RELOAD_TARGET_ON_CHANGE));
 		super.performDefaults();
 	}
 
@@ -860,6 +868,13 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		ITargetPlatformService service = getTargetService();
 		if (service == null) {
 			return false;
+		}
+
+		boolean autoReload = fAutoReloadButton.getSelection();
+		if (autoReload != isAutoReloadEnabled()) {
+			PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
+			preferences.setValue(ICoreConstants.AUTO_RELOAD_TARGET_ON_CHANGE, autoReload);
+			preferences.savePluginPreferences();
 		}
 
 		// determine if default target has changed
@@ -1026,6 +1041,10 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		}
 		updateButtons();
 		return super.performOk();
+	}
+
+	private static boolean isAutoReloadEnabled() {
+		return PDECore.getDefault().getPreferencesManager().getBoolean(ICoreConstants.AUTO_RELOAD_TARGET_ON_CHANGE);
 	}
 
 	private void runGC() {

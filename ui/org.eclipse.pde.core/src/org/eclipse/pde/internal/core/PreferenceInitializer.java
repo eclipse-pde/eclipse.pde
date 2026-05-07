@@ -79,5 +79,6 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		corePrefs.setDefault(ICoreConstants.RUN_API_ANALYSIS_AS_JOB, false);
 		corePrefs.setDefault(ICoreConstants.UPDATE_CLASSPATH_IN_PARALLEL, true);
 		corePrefs.setDefault(ICoreConstants.TEST_PLUGIN_PATTERN, ICoreConstants.TEST_PLUGIN_PATTERN_DEFAULTVALUE);
+		corePrefs.setDefault(ICoreConstants.AUTO_RELOAD_TARGET_ON_CHANGE, false);
 	}
 }
