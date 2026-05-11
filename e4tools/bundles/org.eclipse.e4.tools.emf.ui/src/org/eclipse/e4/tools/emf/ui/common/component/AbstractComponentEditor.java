@@ -24,7 +24,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import org.eclipse.core.databinding.UpdateValueStrategy;
+import org.eclipse.core.databinding.conversion.Converter;
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.resources.IProject;
@@ -42,6 +45,7 @@ import org.eclipse.e4.tools.services.IClipboardService.Handler;
 import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.e4.tools.services.impl.ResourceBundleTranslationProvider;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
@@ -51,6 +55,8 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.databinding.swt.ISWTObservableValue;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.SWT;
@@ -59,12 +65,14 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Link;
 
 import jakarta.annotation.PreDestroy;
 import jakarta.inject.Inject;
@@ -497,6 +505,41 @@ public abstract class AbstractComponentEditor<M> {
 			IValueProperty<M, String> attIdProp = EMFEditProperties.value(getEditingDomain(), attId);
 			generator.bind(getMaster(), addSourceProp, attIdProp, control);
 		}
+	}
+
+	/**
+	 * Creates a {@link Link} linking to the {@link MCommand} observed by the given
+	 * observable. If a command is present, the given text is displayed as a
+	 * hyperlink.
+	 *
+	 * @param parent            the parent composite
+	 * @param text              the text to display
+	 * @param commandObservable the command observable
+	 * @param context           the data binding context
+	 * @return the created link widget
+	 */
+	protected Link createCommandLink(Composite parent, String text, IObservableValue<MCommand> commandObservable,
+			EMFDataBindingContext context) {
+		Link link = new Link(parent, SWT.NONE);
+		link.setText(text);
+		ISWTObservableValue<String> textObservable = WidgetProperties.text().observeDelayed(200, link);
+		context.bindValue(textObservable, commandObservable, new UpdateValueStrategy<>(),
+				UpdateValueStrategy.create(new Converter<>(MCommand.class, String.class) {
+					@Override
+					public String convert(MCommand command) {
+						if (command != null) {
+							return "<A>" + text + "</A>"; //$NON-NLS-1$ //$NON-NLS-2$
+						}
+						return text;
+					}
+				}));
+		link.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			MCommand command = commandObservable.getValue();
+			if (command != null) {
+				getEditor().gotoEObject(ModelEditor.TAB_FORM, (EObject) command);
+			}
+		}));
+		return link;
 	}
 
 	@PreDestroy

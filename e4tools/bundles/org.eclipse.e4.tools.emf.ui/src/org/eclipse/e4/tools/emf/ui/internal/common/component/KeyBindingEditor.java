@@ -66,6 +66,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 
 import jakarta.annotation.PostConstruct;
@@ -188,8 +189,8 @@ public class KeyBindingEditor extends AbstractComponentEditor<MKeyBinding> {
 
 		// ------------------------------------------------------------
 		{
-			final Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.KeyBindingEditor_Command);
+			final Link l = createCommandLink(parent, Messages.KeyBindingEditor_Command,
+					E4Properties.keyBindingCommand(getEditingDomain()).observeDetail(master), context);
 			l.setLayoutData(new GridData());
 
 			final Text t = new Text(parent, SWT.BORDER);

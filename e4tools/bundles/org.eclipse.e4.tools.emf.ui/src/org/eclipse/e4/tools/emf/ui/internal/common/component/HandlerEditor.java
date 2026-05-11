@@ -54,7 +54,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 
 import jakarta.inject.Inject;
@@ -154,8 +154,8 @@ public class HandlerEditor extends AbstractComponentEditor<MHandler> {
 
 		// ------------------------------------------------------------
 		{
-			final Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.HandlerEditor_Command);
+			final Link l = createCommandLink(parent, Messages.HandlerEditor_Command,
+					E4Properties.command(getEditingDomain()).observeDetail(master), context);
 			l.setLayoutData(new GridData());
 
 			final Text t = new Text(parent, SWT.BORDER);
