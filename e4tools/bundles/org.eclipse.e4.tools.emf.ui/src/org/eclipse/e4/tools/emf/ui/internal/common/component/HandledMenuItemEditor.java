@@ -36,7 +36,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 
 import jakarta.inject.Inject;
@@ -72,8 +72,8 @@ public class HandledMenuItemEditor extends MenuItemEditor<MHandledMenuItem> {
 
 		// ------------------------------------------------------------
 		{
-			final Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.HandledMenuItemEditor_Command);
+			final Link l = createCommandLink(parent, Messages.HandledMenuItemEditor_Command,
+					E4Properties.itemCommand(getEditingDomain()).observeDetail(master), context);
 			l.setLayoutData(new GridData());
 
 			final Text t = new Text(parent, SWT.BORDER);
