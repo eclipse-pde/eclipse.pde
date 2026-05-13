@@ -21,6 +21,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -554,7 +555,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 		root.appendChild(apiProblems);
 		Element element = null;
 		// sort the problem by type name
-		Collections.sort(problems, (p1, p2) -> p1.getTypeName().compareTo(p2.getTypeName()));
+		problems.sort(Comparator.comparing(IApiProblem::getTypeName, Comparator.nullsFirst(Comparator.naturalOrder())));
 		for (IApiProblem problem : problems) {
 			int severity = getSeverity(problem);
 			counter.addProblem(severity);
