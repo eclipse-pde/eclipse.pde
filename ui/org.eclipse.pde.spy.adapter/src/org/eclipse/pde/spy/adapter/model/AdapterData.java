@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c)  Lacherp.
+ * Copyright (c) 2021  Lacherp.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,6 +16,7 @@ package org.eclipse.pde.spy.adapter.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -155,25 +156,26 @@ public class AdapterData implements Comparable<AdapterData> {
 	}
 
 	public List<AdapterData> getChildrenList() {
-		return this.children;
+		return Collections.unmodifiableList(children);
 	}
 
 	public Object getChildren(boolean sourceToDestination) {
-		if (!children.isEmpty()) {
-			Collections.sort(children);
-			if( sourceToDestination) {
-				Map<String, List<AdapterData>> childs = children.stream().collect(Collectors.groupingBy(AdapterData::getDestinationType));
-				children.clear();
-				childs.values().forEach(ls-> children.add(ls.get(0)));
-				return  children.toArray();
-			}else {
-				Map<String, List<AdapterData>> childs = children.stream().collect(Collectors.groupingBy(AdapterData::getSourceType));
-				children.clear();
-				childs.values().forEach(ls-> children.add(ls.get(0)));
-				return  children.toArray();
-			}
-		}
-		return new AdapterData[0];
+	    if (children.isEmpty()) {
+	        return children.toArray();
+	    }
+
+	    List<AdapterData> sortedChildren = new ArrayList<>(children);
+	    Collections.sort(sortedChildren);
+
+	    Map<String, AdapterData> distinctChildren = new LinkedHashMap<>();
+	    String key = sourceToDestination ? "destinationType" : "sourceType";
+
+	    for (AdapterData child : sortedChildren) {
+	        String groupKey = sourceToDestination ? child.getDestinationType() : child.getSourceType();
+	        distinctChildren.putIfAbsent(groupKey, child);
+	    }
+
+	    return distinctChildren.values().toArray();
 	}
 
 	public Object getParent() {
@@ -279,12 +281,11 @@ public class AdapterData implements Comparable<AdapterData> {
 	public Stream<AdapterData> convertSourceToType() {
 		final ArrayList<AdapterData> result = new ArrayList<>();
 		this.getChildrenList().forEach(child -> {
-			AdapterData newAdapterData = new AdapterData(child);
-			AdapterData soon = new AdapterData(this);
-			soon.setParent(child);
-			newAdapterData.getChildrenList().add(soon);
-
-			result.add(newAdapterData);
+		    AdapterData newAdapterData = new AdapterData(child);
+		    AdapterData soon = new AdapterData(this);
+		    soon.setParent(newAdapterData);
+		    newAdapterData.addChild(soon);
+		    result.add(newAdapterData);
 		});
 		return result.stream();
 	}
@@ -459,6 +460,17 @@ public class AdapterData implements Comparable<AdapterData> {
 					.collect(Collectors.joining(", "));
 		else
 			return "";
+	}
+	
+	public void addChild(AdapterData child) {
+	    this.children.add(child);
+	    child.setParent(this);
+	}
+	
+	public void addAllChildren(List<AdapterData> childrenToAdd) {
+	    for (AdapterData child : childrenToAdd) {
+	        this.addChild(child); // Utilise la méthode addChild existante
+	    }
 	}
 
 }

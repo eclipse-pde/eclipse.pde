@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c)  Lacherp.
+ * Copyright (c) 2021  Lacherp.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.spy.adapter.model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -44,7 +45,7 @@ public class AdapterRepository {
 	IExtensionRegistry extensionRegistry;
 	
 	Map<String, AdapterData> sourceTypeToAdapterDataMap = new HashMap<>();
-	Map<String, AdapterData> destinationTypeToAdapterDataMap = new HashMap<>();
+	Map<String, List<AdapterData>> destinationTypeToAdapterDataMap = new HashMap<>();
 	List<IConfigurationElement> configEleme;
 
 	public Collection<AdapterData> getAdapters() {
@@ -74,7 +75,9 @@ public class AdapterRepository {
 						AdapterData adapData = new AdapterData(AdapterElementType.DESTINATION_TYPE);
 						adapData.setParent(refAdapterData.get());
 						adapData.setDestinationType(targetType);
-						destinationTypeToAdapterDataMap.put(targetType, adapData);
+						destinationTypeToAdapterDataMap
+						    .computeIfAbsent(targetType, key -> new ArrayList<AdapterData>())
+						    .add(adapData);
 						refClassName.set("");
 						configsForSourceType.forEach( config -> {
 							for ( IConfigurationElement child :config.getChildren()) {
@@ -86,25 +89,30 @@ public class AdapterRepository {
 							}
 						});
 						adapData.setAdapterClassName(refClassName.get());
-						refAdapterData.get().getChildrenList().add(adapData);
+						refAdapterData.get().addChild(adapData);
 					}
 				}
 			});
 			
 		});
-		destinationTypeToAdapterDataMap.values().forEach( ad -> {
-			String destType = ad.getDestinationType();
-			Optional<AdapterData> found = sourceTypeToAdapterDataMap.values().stream().filter( ads -> ads.getSourceType().equals(destType)).findAny();
-			if(found.isPresent()) {
-				found.get().getChildrenList().forEach( adchild -> {
-					if (((AdapterData)ad.getParent()).getSourceType().equals(adchild.getDestinationType())) {
-						AdapterData adpd=new AdapterData(adchild);
-						ad.getChildrenList().add(adpd);
-						return;
-					}
-					ad.getChildrenList().add(adchild);	
-				});
-			}
+		destinationTypeToAdapterDataMap.values().forEach( adapterDataList -> {
+		    adapterDataList.forEach( ad -> {
+		        String destType = ad.getDestinationType();
+		        Optional<AdapterData> found = sourceTypeToAdapterDataMap.values().stream().filter( ads -> ads.getSourceType().equals(destType)).findAny();
+		        if(found.isPresent()) {
+		        	new ArrayList<>(found.get().getChildrenList()).forEach(adchild -> {
+		        	    if (((AdapterData)ad.getParent()).getSourceType().equals(adchild.getDestinationType())) {
+		        	        AdapterData adpd = new AdapterData(adchild);
+		        	        adpd.setParent(ad);
+		        	        ad.addChild(adpd);
+		        	        return;
+		        	    }
+		        	    AdapterData newChild = new AdapterData(adchild);
+		        	    newChild.setParent(ad);
+		        	    ad.addChild(newChild);
+		        	});
+		        }
+		    });
 		});
 		return sourceTypeToAdapterDataMap.values();
 	}

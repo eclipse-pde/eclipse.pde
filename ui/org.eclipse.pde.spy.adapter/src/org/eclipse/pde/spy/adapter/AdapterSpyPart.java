@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c)  Lacherp.
+ * Copyright (c) 2021  Lacherp.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -99,6 +99,8 @@ public class AdapterSpyPart {
 	private TreeViewerColumn sourceOrDestinationTvc;
 
 	private AdapterDataComparator comparator;
+	
+	private Clipboard clipboard;
 
 	@Inject
 	public AdapterSpyPart(IEclipseContext context) {
@@ -215,6 +217,7 @@ public class AdapterSpyPart {
 		ColumnViewerToolTipSupportCustom.enableFor(adapterTreeViewer);
 		context.set(NAMED_UPDATE_TREE_SOURCE_TO_DESTINATION, adapterDatalist);
 
+		clipboard = new Clipboard(adapterTreeViewer.getControl().getDisplay());
 	}
 
 	@Inject
@@ -236,7 +239,7 @@ public class AdapterSpyPart {
 		}
 		// reduce source Type
 		Collection<AdapterData> reduceresult = reduceType(adapaters);
-		refreshAdapterTree(NAMED_UPDATE_TREE_SOURCE_TO_DESTINATION, reduceresult);
+		refreshAdapterTree(NAMED_UPDATE_TREE_DESTINATION_TO_SOURCE, reduceresult);
 	}
 	
 	@PreDestroy
@@ -251,6 +254,10 @@ public class AdapterSpyPart {
 		AdapterHelper.restoreOriginalEclipseAdapter();
 		context.set(AdapterFilter.UPDATE_CTX_FILTER, null);
 		adapterRepo.clear();
+		
+	    if (clipboard != null && !clipboard.isDisposed()) {
+	        clipboard.dispose();
+	    }
 		
 	}
 
@@ -273,15 +280,11 @@ public class AdapterSpyPart {
 			else
 				toCopy = adapterDataSelected.getAdapterClassName();
 		}
-		Clipboard clipboard = new Clipboard(null);
-		try {
-			TextTransfer textTransfer = TextTransfer.getInstance();
-			Transfer[] transfers = new Transfer[] { textTransfer };
-			Object[] data = new Object[] { toCopy };
-			clipboard.setContents(data, transfers);
-		} finally {
-			clipboard.dispose();
-		}
+
+		TextTransfer textTransfer = TextTransfer.getInstance();
+		Transfer[] transfers = new Transfer[] { textTransfer };
+		Object[] data = new Object[] { toCopy };
+		clipboard.setContents(data, transfers);
 
 	}
 	
@@ -397,7 +400,7 @@ public class AdapterSpyPart {
 				AdapterData firstElem = v.get(0);
 				reduceresult.add(firstElem);
 				for (int idx = 1; idx < v.size(); idx++) {
-					firstElem.getChildrenList().addAll(v.get(idx).getChildrenList());
+					firstElem.addAllChildren(v.get(idx).getChildrenList());
 				}
 			});
 
@@ -410,6 +413,12 @@ public class AdapterSpyPart {
 
 	
 	private void refreshAdapterTree(String namedContext, Collection<AdapterData> result) {
+	    if (namedContext.equals(NAMED_UPDATE_TREE_SOURCE_TO_DESTINATION)) {
+	        context.remove(NAMED_UPDATE_TREE_DESTINATION_TO_SOURCE);
+	    } else if (namedContext.equals(NAMED_UPDATE_TREE_DESTINATION_TO_SOURCE)) {
+	        context.remove(NAMED_UPDATE_TREE_SOURCE_TO_DESTINATION);
+	    }
+	    
 		uisync.syncExec(() -> {
 			if (adapterTreeViewer != null) {
 				adapterTreeViewer.setInput(result);
