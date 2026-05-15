@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.refactoring;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,7 +42,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 public class ManifestTypeDeleteParticipant extends PDEDeleteParticipant {
 
 	private IProject fProject;
-	private Set<IType> fTypes = new LinkedHashSet<>();
+	private final Set<IType> fTypes = new HashSet<>();
 
 	@Override
 	protected boolean initialize(Object element) {
@@ -99,7 +99,6 @@ public class ManifestTypeDeleteParticipant extends PDEDeleteParticipant {
 		if (change != null) {
 			result.add(change);
 		}
-
 	}
 
 	/**
@@ -118,14 +117,7 @@ public class ManifestTypeDeleteParticipant extends PDEDeleteParticipant {
 		}
 		// Check if any compilation unit in the package is NOT being deleted
 		ICompilationUnit[] compilationUnits = pkg.getCompilationUnits();
-		for (ICompilationUnit cu : compilationUnits) {
-			if (!deletedCUs.contains(cu)) {
-				// This compilation unit is not being deleted, so package is not
-				// empty
-				return false;
-			}
-		}
-		return true;
+		return deletedCUs.containsAll(Arrays.asList(compilationUnits));
 	}
 
 }

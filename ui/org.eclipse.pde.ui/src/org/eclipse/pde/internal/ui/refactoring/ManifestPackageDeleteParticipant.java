@@ -37,7 +37,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 public class ManifestPackageDeleteParticipant extends PDEDeleteParticipant {
 
 	private IProject fProject;
-	private Set<IPackageFragment> fPackages = new HashSet<>();
+	private final Set<IPackageFragment> fPackages = new HashSet<>();
 
 	@Override
 	protected boolean initialize(Object element) {

@@ -17,6 +17,8 @@ package org.eclipse.pde.internal.ui.refactoring;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
@@ -53,22 +55,9 @@ import org.osgi.framework.Constants;
 public class BundleManifestChange {
 
 	public static Change createMoveToPackageChange(IFile file, MoveFromChange change, IProgressMonitor monitor) throws CoreException {
-		try {
-			Bundle bundle = getBundle(file, monitor);
-			if (bundle == null) {
-				return null;
-			}
-
-			BundleModel model = (BundleModel) bundle.getModel();
-			BundleTextChangeListener listener = new BundleTextChangeListener(model.getDocument());
-			bundle.getModel().addModelChangedListener(listener);
+		return recordBundleChanges(file, monitor, f -> new TextFileChange("", f), bundle -> { //$NON-NLS-1$
 			addPackage(bundle, change);
-			return createChange(listener, file);
-		} catch (CoreException | MalformedTreeException e) {
-		} finally {
-			FileBuffers.getTextFileBufferManager().disconnect(file.getFullPath(), LocationKind.NORMALIZE, monitor);
-		}
-		return null;
+		});
 	}
 
 	public static Change createDeletePackagesChange(IFile file, Collection<IPackageFragment> packages,
@@ -77,87 +66,39 @@ public class BundleManifestChange {
 		if (packageNames.isEmpty()) {
 			return null;
 		}
-		try {
-			Bundle bundle = getBundle(file, monitor);
-			if (bundle == null) {
-				return null;
-			}
-
-			BundleModel model = (BundleModel) bundle.getModel();
-			BundleTextChangeListener listener = new BundleTextChangeListener(model.getDocument());
-			bundle.getModel().addModelChangedListener(listener);
+		return recordBundleChanges(file, monitor, f -> new TextFileChange("", f), bundle -> { //$NON-NLS-1$
 
 			BasePackageHeader header = (BasePackageHeader) bundle.getManifestHeader(Constants.EXPORT_PACKAGE);
 			if (header != null) {
 				packageNames.stream().filter(header::hasPackage).forEach(name -> removePackage(header, name));
 			}
-			TextEdit[] operations = listener.getTextOperations();
-			if (operations.length > 0) {
-				TextFileChange change = new TextFileChange("", file); //$NON-NLS-1$
-				MultiTextEdit multi = new MultiTextEdit();
-				multi.addChildren(operations);
-				change.setEdit(multi);
-				PDEModelUtility.setChangeTextType(change, file);
-				return change;
-			}
-		} catch (CoreException | MalformedTreeException e) {
-		} finally {
-			FileBuffers.getTextFileBufferManager().disconnect(file.getFullPath(), LocationKind.NORMALIZE, monitor);
-		}
-		return null;
+		});
 	}
 
 	public static MoveFromChange createMovePackageChange(IFile file, Object[] elements, IProgressMonitor monitor) throws CoreException {
-		try {
-			Bundle bundle = getBundle(file, monitor);
-			if (bundle == null) {
-				return null;
-			}
+		List<PDEManifestElement> list = new ArrayList<>();
+		MoveFromChange change = recordBundleChanges(file, monitor, f -> new MoveFromChange("", f), bundle -> { //$NON-NLS-1$
 
-			BundleModel model = (BundleModel) bundle.getModel();
-			BundleTextChangeListener listener = new BundleTextChangeListener(model.getDocument());
-			bundle.getModel().addModelChangedListener(listener);
-
-			ArrayList<PDEManifestElement> list = new ArrayList<>();
 			for (Object element : elements) {
 				if (element instanceof IJavaElement) {
 					String packageName = ((IJavaElement) element).getElementName();
-					PDEManifestElement export = removePackage(bundle.getManifestHeader(Constants.EXPORT_PACKAGE), packageName);
+					PDEManifestElement export = removePackage(bundle.getManifestHeader(Constants.EXPORT_PACKAGE),
+							packageName);
 					if (export != null) {
 						list.add(export);
 					}
 				}
 			}
-
-			TextEdit[] operations = listener.getTextOperations();
-			if (operations.length > 0) {
-				MoveFromChange change = new MoveFromChange("", file); //$NON-NLS-1$
-				MultiTextEdit edit = new MultiTextEdit();
-				edit.addChildren(operations);
-				change.setEdit(edit);
-				PDEModelUtility.setChangeTextType(change, file);
-				if (!list.isEmpty()) {
-					change.setMovedElements(list.toArray(new PDEManifestElement[list.size()]));
-				}
-				return change;
-			}
-		} catch (CoreException | MalformedTreeException e) {
-		} finally {
-			FileBuffers.getTextFileBufferManager().disconnect(file.getFullPath(), LocationKind.NORMALIZE, monitor);
+		});
+		if (change != null && !list.isEmpty()) {
+			change.setMovedElements(list.toArray(PDEManifestElement[]::new));
 		}
-		return null;
+		return change;
 	}
 
 	public static Change createRenameChange(IFile file, Object[] elements, String[] newTexts, IProgressMonitor monitor) throws CoreException {
-		try {
-			Bundle bundle = getBundle(file, monitor);
-			if (bundle == null) {
-				return null;
-			}
+		return recordBundleChanges(file, monitor, f -> new TextFileChange("", f), bundle -> { //$NON-NLS-1$
 
-			BundleModel model = (BundleModel) bundle.getModel();
-			BundleTextChangeListener listener = new BundleTextChangeListener(model.getDocument());
-			bundle.getModel().addModelChangedListener(listener);
 			boolean localizationRenamed = false;
 			for (int i = 0; i < elements.length; i++) {
 				Object element = elements[i];
@@ -185,23 +126,35 @@ public class BundleManifestChange {
 					renamePackage(bundle.getManifestHeader(Constants.IMPORT_PACKAGE), oldText, newText);
 				}
 			}
-			return createChange(listener, file);
+		});
+	}
+
+	private static <C extends TextFileChange> C recordBundleChanges(IFile file, IProgressMonitor monitor,
+			Function<IFile, C> changeFactory, Consumer<Bundle> bundleChanger) throws CoreException {
+		try {
+			Bundle bundle = getBundle(file, monitor);
+			if (bundle == null) {
+				return null;
+			}
+			BundleModel model = (BundleModel) bundle.getModel();
+			BundleTextChangeListener listener = new BundleTextChangeListener(model.getDocument());
+			bundle.getModel().addModelChangedListener(listener);
+
+			bundleChanger.accept(bundle);
+
+			TextEdit[] operations = listener.getTextOperations();
+			if (operations.length > 0) {
+				C change = changeFactory.apply(file);
+				MultiTextEdit edit = new MultiTextEdit();
+				edit.addChildren(operations);
+				change.setEdit(edit);
+				PDEModelUtility.setChangeTextType(change, file);
+				return change;
+			}
+			return null;
 		} catch (CoreException | MalformedTreeException e) {
 		} finally {
 			FileBuffers.getTextFileBufferManager().disconnect(file.getFullPath(), LocationKind.NORMALIZE, monitor);
-		}
-		return null;
-	}
-
-	private static Change createChange(BundleTextChangeListener listener, IFile file) {
-		TextEdit[] operations = listener.getTextOperations();
-		if (operations.length > 0) {
-			TextFileChange change = new TextFileChange("", file); //$NON-NLS-1$
-			MultiTextEdit edit = new MultiTextEdit();
-			edit.addChildren(operations);
-			change.setEdit(edit);
-			PDEModelUtility.setChangeTextType(change, file);
-			return change;
 		}
 		return null;
 	}
