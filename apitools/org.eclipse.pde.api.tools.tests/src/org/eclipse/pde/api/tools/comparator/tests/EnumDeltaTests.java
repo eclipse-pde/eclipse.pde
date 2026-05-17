@@ -419,4 +419,28 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.ENUM_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
+
+	/**
+	 * Add a member type to an enum - compatible change
+	 */
+	@Test
+	public void test17() {
+		deployBundles("test17"); //$NON-NLS-1$
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after,
+				VisibilityModifiers.ALL_VISIBILITIES, null);
+		assertNotNull("No delta", delta); //$NON-NLS-1$
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
+		assertEquals("Wrong flag", IDelta.TYPE_MEMBER, child.getFlags()); //$NON-NLS-1$
+		assertEquals("Wrong element type", IDelta.ENUM_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+	}
 }

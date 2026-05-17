@@ -1110,4 +1110,61 @@ public class InterfaceDeltaTests extends DeltaTestSetup {
 		child = allLeavesDeltas[1];
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
+
+	/**
+	 * Add a default method to a @noimplement interface - compatible change
+	 */
+	@Test
+	public void test42() {
+		deployBundles("test42"); //$NON-NLS-1$
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
+		assertNotNull("No delta", delta); //$NON-NLS-1$
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
+		assertEquals("Wrong flag", IDelta.DEFAULT_METHOD, child.getFlags()); //$NON-NLS-1$
+		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+	}
+
+	/**
+	 * Add default method from new superinterface to a @noimplement interface - compatible change
+	 */
+	@Test
+	public void test43() {
+		deployBundles("test43"); //$NON-NLS-1$
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after,
+				VisibilityModifiers.ALL_VISIBILITIES, null);
+		assertNotNull("No delta", delta); //$NON-NLS-1$
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 3, allLeavesDeltas.length); //$NON-NLS-1$
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
+		assertEquals("Wrong flag", IDelta.OVERRIDEN_METHOD, child.getFlags()); //$NON-NLS-1$
+		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		child = allLeavesDeltas[1];
+		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
+		assertEquals("Wrong flag", IDelta.SUPER_INTERFACE_DEFAULT_METHOD, child.getFlags()); //$NON-NLS-1$
+		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		child = allLeavesDeltas[2];
+		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
+		assertEquals("Wrong flag", IDelta.EXPANDED_SUPERINTERFACES_SET, child.getFlags()); //$NON-NLS-1$
+		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+	}
 }

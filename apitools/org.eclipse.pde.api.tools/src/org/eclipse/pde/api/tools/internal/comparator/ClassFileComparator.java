@@ -498,7 +498,7 @@ public class ClassFileComparator {
 												key = getKeyForMethod(this.type2.getMethod(method.getName(), method.getSignature()), this.type2);
 											}
 										}
-										this.addDelta(getElementType(this.type1), IDelta.ADDED, isDefaultMethod ? IDelta.DEFAULT_METHOD : IDelta.SUPER_INTERFACE_WITH_METHODS, this.currentDescriptorRestrictions, this.initialDescriptorRestrictions, this.type1.getModifiers(), this.type2.getModifiers(), this.type1, key, new String[] {
+										this.addDelta(getElementType(this.type1), IDelta.ADDED, isDefaultMethod ? IDelta.SUPER_INTERFACE_DEFAULT_METHOD : IDelta.SUPER_INTERFACE_WITH_METHODS, this.currentDescriptorRestrictions, this.initialDescriptorRestrictions, this.type1.getModifiers(), this.type2.getModifiers(), this.type1, key, new String[] {
 												Util.getDescriptorName(type1),
 												type.getName(),
 												getMethodDisplayName(method, type) });
