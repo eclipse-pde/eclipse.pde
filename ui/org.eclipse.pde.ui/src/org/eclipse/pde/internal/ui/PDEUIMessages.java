@@ -3461,5 +3461,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String AddMatchingVersion;
 	public static String AddMatchingVersionDescription;
+	public static String EnableStrictClasspathAccessRules_label;
 
 }

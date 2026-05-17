@@ -162,6 +162,10 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	protected int fSrcLibSeverity;
 	protected int fOutputLibSeverity;
 	protected int fEncodingSeverity;
+	protected int fJDCTClasspathMissconfigurationSeverity = Boolean
+			.getBoolean("pde.acceptDiscardedForbiddenAccessRules") //$NON-NLS-1$
+					? CompilerFlags.WARNING
+					: CompilerFlags.ERROR;
 
 	public BuildErrorReporter(IFile buildFile) {
 		super(buildFile);
@@ -1107,6 +1111,13 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			} else if (useJavaProjectSettings != null) {
 				String message = NLS.bind(PDECoreMessages.BuildErrorReporter_buildEntryInvalidWhenNoProjectSettings, PROPERTY_PROJECT_SETTINGS);
 				prepareCompilerError(PROPERTY_PROJECT_SETTINGS, null, message, PDEMarkerFactory.B_REMOVAL);
+			}
+
+			String forbiddenReferenceSeverity = options.get(JavaCore.COMPILER_PB_FORBIDDEN_REFERENCE);
+			if (forbiddenReferenceSeverity != null && !forbiddenReferenceSeverity.equals(JavaCore.ERROR)) {
+				String message = NLS.bind(PDECoreMessages.BuildErrorReporter_classpathAccessRulesDiscarded);
+				prepareError(null, null, message, PDEMarkerFactory.B_CLASSPATH_ACCESS_RULES,
+						fJDCTClasspathMissconfigurationSeverity, null, PDEMarkerFactory.CAT_OTHER);
 			}
 		}
 	}

@@ -91,6 +91,7 @@ public class PDEMarkerFactory {
 	public static final int B_REMOVAL = 0x2005;
 	public static final int B_REPLACE = 0x2006;
 	public static final int B_JAVA_ADDDITION = 0x2007;
+	public static final int B_CLASSPATH_ACCESS_RULES = 0x2008;
 
 	// plugin.xml fixes
 	public static final int P_ILLEGAL_XML_NODE = 0x3001;
