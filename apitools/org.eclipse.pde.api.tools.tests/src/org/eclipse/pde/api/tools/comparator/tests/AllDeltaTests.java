@@ -26,7 +26,8 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
 		FieldDeltaTests.class, InterfaceDeltaTests.class, ClassDeltaTests.class, AnnotationDeltaTests.class,
 		EnumDeltaTests.class, MethodDeltaTests.class, MixedTypesDeltaTests.class, BundlesDeltaTests.class,
-		RestrictionsDeltaTests.class, ApiScopeDeltaTests.class, Java8DeltaTests.class
+		RestrictionsDeltaTests.class, ApiScopeDeltaTests.class, Java8DeltaTests.class,
+		WildcardCompatibilityTests.class
 })
 public class AllDeltaTests {
 }

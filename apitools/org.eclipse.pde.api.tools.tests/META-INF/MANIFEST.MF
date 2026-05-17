@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.pde.api.tools.tests
-Bundle-Version: 1.4.500.qualifier
+Bundle-Version: 1.4.600.qualifier
 Bundle-Vendor: %Bundle-Vendor
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.pde.api.tools;bundle-version="1.0.600",
@@ -90,5 +90,6 @@ Import-Package: junit.framework,
  org.eclipse.equinox.frameworkadmin,
  org.junit,
  org.junit.runner,
- org.junit.runners
+ org.junit.runners,
+ org.objectweb.asm;version="[9.5.0,10.0.0)"
 Automatic-Module-Name: org.eclipse.pde.api.tools.tests
