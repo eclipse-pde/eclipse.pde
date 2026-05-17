@@ -2070,9 +2070,32 @@ public class ClassFileComparator {
 
 	private SignatureDescriptor getSignatureDescriptor(String signature) {
 		SignatureDescriptor signatureDescriptor = new SignatureDescriptor();
-		SignatureReader signatureReader = new SignatureReader(signature);
+		SignatureReader signatureReader = new SignatureReader(normalizeWildcardExtendsObject(signature));
 		signatureReader.accept(new SignatureDecoder(signatureDescriptor));
 		return signatureDescriptor;
+	}
+
+	/**
+	 * Normalizes {@code ? extends java.lang.Object} to the unbounded wildcard
+	 * {@code ?} in a bytecode generic signature string.
+	 *
+	 * <p>
+	 * The two forms are semantically identical in Java generics. Old ECJ
+	 * emitted {@code +Ljava/lang/Object;} for {@code ? extends Object}, while
+	 * newer ECJ (since JDT PR #5054) normalizes it to {@code *}. Without this
+	 * normalization, API tools would falsely report a delta when comparing
+	 * class files compiled with different ECJ versions.
+	 *
+	 * <p>
+	 * The pattern {@code +Ljava/lang/Object;} is unambiguous: it specifically
+	 * matches the direct {@code ? extends Object} bound and cannot be confused
+	 * with array types ({@code +[Ljava/lang/Object;}) or other class names.
+	 */
+	private static String normalizeWildcardExtendsObject(String signature) {
+		if (signature == null || signature.indexOf('+') < 0) {
+			return signature;
+		}
+		return signature.replace("+Ljava/lang/Object;", "*"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private List<IApiType> getSuperclassList(IApiType type) {
