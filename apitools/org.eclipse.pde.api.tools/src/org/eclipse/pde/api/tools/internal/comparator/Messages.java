@@ -106,6 +106,8 @@ public class Messages extends NLS {
 								return 1;
 							case IDelta.DEPRECATION:
 								return 110;
+							case IDelta.TYPE_MEMBER:
+								return 16;
 							default:
 								break;
 						}
@@ -292,6 +294,8 @@ public class Messages extends NLS {
 								return 37;
 							case IDelta.DEPRECATION:
 								return 110;
+							case IDelta.TYPE_MEMBER:
+								return 16;
 							default:
 								break;
 						}
@@ -405,6 +409,10 @@ public class Messages extends NLS {
 								return 54;
 							case IDelta.METHOD:
 								return 55;
+							case IDelta.DEFAULT_METHOD:
+								return 113;
+							case IDelta.SUPER_INTERFACE_DEFAULT_METHOD:
+								return 115;
 							case IDelta.TYPE_MEMBER:
 								return 56;
 							case IDelta.OVERRIDEN_METHOD:
@@ -425,6 +433,8 @@ public class Messages extends NLS {
 								return 79;
 							case IDelta.DECREASE_ACCESS:
 								return 101;
+							case IDelta.INCREASE_ACCESS:
+								return 114;
 							default:
 								break;
 						}
