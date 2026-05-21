@@ -27,10 +27,6 @@ public class PreferenceEntryManager extends PreferenceNodeEntry {
 		return recentPreferenceEntries.get(nodePath);
 	}
 
-	public PreferenceNodeEntry removeRecentPreferenceNodeEntry(String nodePath) {
-		return recentPreferenceEntries.remove(nodePath);
-	}
-
 	public void clearRecentPreferenceNodeEntry() {
 		recentPreferenceEntries.clear();
 	}

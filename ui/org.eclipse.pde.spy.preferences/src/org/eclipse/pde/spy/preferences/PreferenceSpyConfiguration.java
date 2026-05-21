@@ -21,14 +21,13 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
  */
 public class PreferenceSpyConfiguration {
 
-	private static String bundleId = "org.eclipse.pde.spy.preferences";
+	private static final String BUNDLE_ID = "org.eclipse.pde.spy.preferences";
 
 	private static IEclipsePreferences preferenceStore;
 
 	public static IEclipsePreferences getPreferenceStore() {
-		// Create the preference store lazily.
 		if (preferenceStore == null) {
-			preferenceStore = 	InstanceScope.INSTANCE.getNode(bundleId);;
+			preferenceStore = InstanceScope.INSTANCE.getNode(BUNDLE_ID);
 		}
 		return preferenceStore;
 	}

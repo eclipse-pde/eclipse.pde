@@ -21,9 +21,8 @@ public class ExpandAllHandler {
 
 	@Execute
 	public void execute(MPart part) {
-		Object partImpl = part.getObject();
-		if (partImpl instanceof PreferenceSpyPart) {
-			((PreferenceSpyPart) partImpl).getViewer().expandAll();
+		if (part.getObject() instanceof PreferenceSpyPart spy) {
+			spy.getViewer().expandAll();
 		}
 	}
 

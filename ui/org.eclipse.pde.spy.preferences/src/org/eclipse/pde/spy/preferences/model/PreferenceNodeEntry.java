@@ -21,7 +21,7 @@ import org.eclipse.core.databinding.observable.set.WritableSet;
 
 public class PreferenceNodeEntry extends PreferenceEntry {
 
-	private IObservableSet<Object> preferenceEntries = new WritableSet<>();
+	private final IObservableSet<PreferenceEntry> preferenceEntries = new WritableSet<>();
 
 	public PreferenceNodeEntry() {
 		super();
@@ -32,27 +32,23 @@ public class PreferenceNodeEntry extends PreferenceEntry {
 	}
 
 	public void addChildren(Collection<PreferenceEntry> entries) {
-		getPreferenceEntries().addAll(entries);
+		preferenceEntries.addAll(entries);
 	}
 
 	public boolean addChildren(PreferenceEntry... entry) {
-		return getPreferenceEntries().addAll(Arrays.asList(entry));
+		return preferenceEntries.addAll(Arrays.asList(entry));
 	}
 
 	public void removeChildren(Collection<PreferenceEntry> entries) {
-		getPreferenceEntries().removeAll(entries);
+		preferenceEntries.removeAll(entries);
 	}
 
 	public void removeChildren(PreferenceEntry... entry) {
-		getPreferenceEntries().removeAll(Arrays.asList(entry));
+		preferenceEntries.removeAll(Arrays.asList(entry));
 	}
 
-	public IObservableSet<Object> getPreferenceEntries() {
+	public IObservableSet<PreferenceEntry> getPreferenceEntries() {
 		return preferenceEntries;
-	}
-
-	public void setPreferenceEntries(IObservableSet<Object> preferenceEntries) {
-		this.preferenceEntries = preferenceEntries;
 	}
 
 }
