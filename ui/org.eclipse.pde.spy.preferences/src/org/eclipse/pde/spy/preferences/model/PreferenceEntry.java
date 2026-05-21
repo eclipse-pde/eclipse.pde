@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.spy.preferences.model;
 
+import java.util.Objects;
+
 public class PreferenceEntry extends AbstractModelObject {
 
 	public enum Fields {
@@ -42,13 +44,6 @@ public class PreferenceEntry extends AbstractModelObject {
 	}
 
 	public PreferenceEntry(String nodePath, String key, String oldValue, String newValue) {
-		this.nodePath = nodePath;
-		this.key = key;
-		this.oldValue = oldValue;
-		this.newValue = newValue;
-	}
-
-	public PreferenceEntry(PreferenceEntry parent, String nodePath, String key, String oldValue, String newValue) {
 		this.nodePath = nodePath;
 		this.key = key;
 		this.oldValue = oldValue;
@@ -103,17 +98,11 @@ public class PreferenceEntry extends AbstractModelObject {
 		firePropertyChange("recentlyChanged", this.recentlyChanged, this.recentlyChanged = recentlyChanged);
 	}
 
+	// Identity is the (nodePath, key) pair. Mutable fields like oldValue/newValue/recentlyChanged
+	// must not participate, because instances are stored in a WritableSet and mutated in place.
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((key == null) ? 0 : key.hashCode());
-		result = prime * result + ((newValue == null) ? 0 : newValue.hashCode());
-		result = prime * result + ((nodePath == null) ? 0 : nodePath.hashCode());
-		result = prime * result + ((oldValue == null) ? 0 : oldValue.hashCode());
-		result = prime * result + ((parent == null) ? 0 : parent.hashCode());
-		result = prime * result + (recentlyChanged ? 1231 : 1237);
-		return result;
+		return Objects.hash(nodePath, key);
 	}
 
 	@Override
@@ -121,52 +110,11 @@ public class PreferenceEntry extends AbstractModelObject {
 		if (this == obj) {
 			return true;
 		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
+		if (obj == null || getClass() != obj.getClass()) {
 			return false;
 		}
 		PreferenceEntry other = (PreferenceEntry) obj;
-		if (key == null) {
-			if (other.key != null) {
-				return false;
-			}
-		} else if (!key.equals(other.key)) {
-			return false;
-		}
-		if (newValue == null) {
-			if (other.newValue != null) {
-				return false;
-			}
-		} else if (!newValue.equals(other.newValue)) {
-			return false;
-		}
-		if (nodePath == null) {
-			if (other.nodePath != null) {
-				return false;
-			}
-		} else if (!nodePath.equals(other.nodePath)) {
-			return false;
-		}
-		if (oldValue == null) {
-			if (other.oldValue != null) {
-				return false;
-			}
-		} else if (!oldValue.equals(other.oldValue)) {
-			return false;
-		}
-		if (parent == null) {
-			if (other.parent != null) {
-				return false;
-			}
-		} else if (!parent.equals(other.parent)) {
-			return false;
-		}
-		if (recentlyChanged != other.recentlyChanged) {
-			return false;
-		}
-		return true;
+		return Objects.equals(nodePath, other.nodePath) && Objects.equals(key, other.key);
 	}
 
 	public long getTime() {
