@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2021 IBM Corporation and others.
+ * Copyright (c) 2000, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -33,8 +33,13 @@ import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.e4.ui.dialogs.filteredtree.BasicUIJob;
+import org.eclipse.e4.ui.dialogs.filteredtree.FilteredTree;
+import org.eclipse.e4.ui.dialogs.filteredtree.PatternFilter;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IJarEntryResource;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -49,6 +54,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -92,8 +98,10 @@ import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
@@ -121,10 +129,29 @@ import org.osgi.resource.Resource;
 
 public class PluginsView extends ViewPart implements IPluginModelListener {
 
+	private static class PluginsPatternFilter extends PatternFilter {
+
+		@Override
+		public boolean isElementVisible(Viewer viewer, Object element) {
+			// Apply filter only to top-level plugin nodes; show all child elements (files, packages, etc.)
+			if (!(element instanceof IPluginModelBase)) {
+				return true;
+			}
+			return isLeafMatch(viewer, element);
+		}
+
+		@Override
+		protected boolean isLeafMatch(Viewer viewer, Object element) {
+			return viewer instanceof TreeViewer treeViewer
+					&& wordMatches(((ILabelProvider) treeViewer.getLabelProvider()).getText(element));
+		}
+	}
+
 	private static final String DEFAULT_EDITOR_ID = "org.eclipse.ui.DefaultTextEditor"; //$NON-NLS-1$
 	private static final String HIDE_WRKSPC = "hideWorkspace"; //$NON-NLS-1$
 	private static final String HIDE_EXENABLED = "hideEnabledExternal"; //$NON-NLS-1$
 	private static final String SHOW_EXDISABLED = "showDisabledExternal"; //$NON-NLS-1$
+	private FilteredTree fFilteredTree;
 	private TreeViewer fTreeViewer;
 	private DrillDownAdapter fDrillDownAdapter;
 	private final IPropertyChangeListener fPropertyListener;
@@ -228,7 +255,22 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 
 	@Override
 	public void createPartControl(Composite parent) {
-		fTreeViewer = new TreeViewer(parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
+		fFilteredTree = new FilteredTree(parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL, new PluginsPatternFilter()) {
+			// Prevent auto-expansion of matched plugins by passing a cancelled monitor to the refresh job
+			@Override
+			protected BasicUIJob doCreateRefreshJob() {
+				BasicUIJob job = super.doCreateRefreshJob();
+				return new BasicUIJob(job.getName(), parent.getDisplay()) {
+					@Override
+					public IStatus runInUIThread(IProgressMonitor monitor) {
+						monitor = new NullProgressMonitor();
+						monitor.setCanceled(true);
+						return job.runInUIThread(monitor);
+					}
+				};
+			}
+		};
+		fTreeViewer = fFilteredTree.getViewer();
 		fTreeViewer.setUseHashlookup(true);
 		fDrillDownAdapter = new DrillDownAdapter(fTreeViewer);
 		fTreeViewer.setContentProvider(new PluginsContentProvider(this));
@@ -413,6 +455,11 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		fSelectAllAction = new Action() {
 			@Override
 			public void run() {
+				Text filterControl = fFilteredTree.getFilterControl();
+				if (filterControl != null && !filterControl.isDisposed() && filterControl.isFocusControl()) {
+					filterControl.selectAll();
+					return;
+				}
 				super.run();
 				fTreeViewer.getTree().selectAll();
 			}
@@ -834,6 +881,13 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 
 	@Override
 	public void setFocus() {
+		if (fFilteredTree != null) {
+			Control c = fFilteredTree.getFilterControl();
+			if (c != null && !c.isFocusControl()) {
+				c.setFocus();
+				return;
+			}
+		}
 		fTreeViewer.getTree().setFocus();
 	}
 
