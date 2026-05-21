@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.preferences.UserScope;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -53,6 +54,7 @@ public class PreferenceSpyAddon {
 	private final IEclipsePreferences configurationScopePreferences = ConfigurationScope.INSTANCE.getNode("");
 	private final IEclipsePreferences defaultScopePreferences = DefaultScope.INSTANCE.getNode("");
 	private final IEclipsePreferences instanceScopePreferences = InstanceScope.INSTANCE.getNode("");
+	private final IEclipsePreferences userScopePreferences = UserScope.INSTANCE.getNode("");
 
 	private final ChangedPreferenceListener preferenceChangedListener = new ChangedPreferenceListener();
 
@@ -72,6 +74,7 @@ public class PreferenceSpyAddon {
 		addPreferenceListener(configurationScopePreferences);
 		addPreferenceListener(defaultScopePreferences);
 		addPreferenceListener(instanceScopePreferences);
+		addPreferenceListener(userScopePreferences);
 	}
 
 	private void addPreferenceListener(IEclipsePreferences rootPreference) {
@@ -90,6 +93,7 @@ public class PreferenceSpyAddon {
 		removePreferenceListener(configurationScopePreferences);
 		removePreferenceListener(defaultScopePreferences);
 		removePreferenceListener(instanceScopePreferences);
+		removePreferenceListener(userScopePreferences);
 	}
 
 	private void removePreferenceListener(IEclipsePreferences rootPreference) {

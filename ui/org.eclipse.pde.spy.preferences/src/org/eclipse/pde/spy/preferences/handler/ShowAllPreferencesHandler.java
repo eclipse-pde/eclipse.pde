@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IPreferenceNodeVisitor;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.preferences.UserScope;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -54,6 +55,7 @@ public class ShowAllPreferencesHandler {
 			ConfigurationScope.INSTANCE.getNode("").accept(gatherer);
 			DefaultScope.INSTANCE.getNode("").accept(gatherer);
 			InstanceScope.INSTANCE.getNode("").accept(gatherer);
+			UserScope.INSTANCE.getNode("").accept(gatherer);
 		} catch (BackingStoreException e) {
 			ErrorDialog.openError(shell, "BackingStoreException", e.getLocalizedMessage(),
 					Status.error(e.getMessage()));
