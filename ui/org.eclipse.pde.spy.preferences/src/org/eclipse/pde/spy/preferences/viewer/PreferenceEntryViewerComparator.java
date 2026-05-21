@@ -35,7 +35,7 @@ public class PreferenceEntryViewerComparator extends ViewerComparator {
 			long time2 = entry2.getTime();
 
 			if (time != 0 && time2 != 0) {
-				return (int) (time2 - time);
+				return Long.compare(time2, time);
 			}
 		}
 

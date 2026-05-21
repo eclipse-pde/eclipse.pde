@@ -196,9 +196,13 @@ public class PreferenceSpyPart {
 			@UIEventTopic(PreferenceSpyEventTopics.PREFERENCESPY_PREFERENCE_ENTRIES_DELETE) List<PreferenceEntry> preferenceEntries) {
 		if (preferenceEntries != null && !preferenceEntries.isEmpty()) {
 			for (PreferenceEntry preferenceEntry : preferenceEntries) {
-				preferenceEntryManager.removeChildren(preferenceEntry);
+				PreferenceEntry parent = preferenceEntry.getParent();
+				if (parent instanceof PreferenceNodeEntry parentNode) {
+					parentNode.removeChildren(preferenceEntry);
+				} else {
+					preferenceEntryManager.removeChildren(preferenceEntry);
+				}
 			}
-			preferenceEntryManager.removeChildren(preferenceEntries);
 			filteredTree.getViewer().refresh();
 		}
 	}
