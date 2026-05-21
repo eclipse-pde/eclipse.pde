@@ -17,18 +17,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
-import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.jface.databinding.viewers.ObservableSetTreeContentProvider;
 import org.eclipse.jface.databinding.viewers.TreeStructureAdvisor;
 import org.eclipse.pde.spy.preferences.model.PreferenceEntry;
 import org.eclipse.pde.spy.preferences.model.PreferenceNodeEntry;
 
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class PreferenceEntriesContentProvider extends ObservableSetTreeContentProvider {
 
 	private boolean hierarchicalLayout;
 
-	@SuppressWarnings("unchecked")
 	public PreferenceEntriesContentProvider(IObservableFactory setFactory, TreeStructureAdvisor structureAdvisor) {
 		super(setFactory, structureAdvisor);
 	}
@@ -43,20 +41,19 @@ public class PreferenceEntriesContentProvider extends ObservableSetTreeContentPr
 		List<PreferenceEntry> childList = new ArrayList<>();
 
 		for (Object object : children) {
-			getChildren(object, childList);
+			collectLeaves(object, childList);
 		}
 
 		return childList.toArray();
 	}
 
-	private void getChildren(Object element, List<PreferenceEntry> childList) {
-		if (element instanceof PreferenceNodeEntry) {
-			IObservableSet preferenceEntries = ((PreferenceNodeEntry) element).getPreferenceEntries();
-			for (Object object : preferenceEntries) {
-				getChildren(object, childList);
+	private void collectLeaves(Object element, List<PreferenceEntry> childList) {
+		if (element instanceof PreferenceNodeEntry nodeEntry) {
+			for (PreferenceEntry child : nodeEntry.getPreferenceEntries()) {
+				collectLeaves(child, childList);
 			}
-		} else if (element instanceof PreferenceEntry) {
-			childList.add((PreferenceEntry) element);
+		} else if (element instanceof PreferenceEntry preferenceEntry) {
+			childList.add(preferenceEntry);
 		}
 	}
 

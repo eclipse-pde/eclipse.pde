@@ -21,9 +21,8 @@ public class CollapseAllHandler {
 
 	@Execute
 	public void execute(MPart part) {
-		Object partImpl = part.getObject();
-		if (partImpl instanceof PreferenceSpyPart) {
-			((PreferenceSpyPart) partImpl).getViewer().collapseAll();
+		if (part.getObject() instanceof PreferenceSpyPart spy) {
+			spy.getViewer().collapseAll();
 		}
 	}
 

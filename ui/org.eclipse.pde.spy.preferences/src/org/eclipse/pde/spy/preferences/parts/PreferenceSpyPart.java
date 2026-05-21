@@ -19,7 +19,6 @@ import java.util.List;
 
 import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.property.Properties;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -32,7 +31,6 @@ import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
@@ -77,10 +75,8 @@ public class PreferenceSpyPart {
 		table.setLinesVisible(true);
 
 		filteredTree.getViewer().addSelectionChangedListener(event -> {
-			ISelection selection = event.getSelection();
-			if (selection instanceof IStructuredSelection) {
-				ArrayList<PreferenceEntry> preferenceEntries = new ArrayList<>(
-						((IStructuredSelection) selection).toList());
+			if (event.getSelection() instanceof IStructuredSelection structured) {
+				ArrayList<PreferenceEntry> preferenceEntries = new ArrayList<>(structured.toList());
 				selectionService.setSelection(preferenceEntries);
 			}
 		});
@@ -146,7 +142,6 @@ public class PreferenceSpyPart {
 			preferenceNodeEntry.addChildren(preferenceEntry);
 			preferenceEntry.setParent(preferenceNodeEntry);
 			preferenceEntryManager.addChildren(preferenceNodeEntry);
-			filteredTree.getViewer().setInput(preferenceEntryManager);
 			preferenceEntryManager.putRecentPreferenceEntry(event.getNode().absolutePath(), preferenceNodeEntry);
 		} else {
 			preferenceEntry.setParent(preferenceNodeEntry);
@@ -168,14 +163,10 @@ public class PreferenceSpyPart {
 	}
 
 	private PreferenceEntry findPreferenceEntry(PreferenceEntry preferenceEntry) {
-		PreferenceEntry parent = preferenceEntry.getParent();
-		if (parent instanceof PreferenceNodeEntry) {
-			IObservableSet<Object> preferenceEntries = ((PreferenceNodeEntry) parent).getPreferenceEntries();
-			for (Object object : preferenceEntries) {
-				if (object instanceof PreferenceEntry existingPreferenceEntry) {
-					if (existingPreferenceEntry.getKey().equals(preferenceEntry.getKey())) {
-						return existingPreferenceEntry;
-					}
+		if (preferenceEntry.getParent() instanceof PreferenceNodeEntry parentNode) {
+			for (PreferenceEntry existing : parentNode.getPreferenceEntries()) {
+				if (existing.equals(preferenceEntry)) {
+					return existing;
 				}
 			}
 		}
@@ -192,7 +183,7 @@ public class PreferenceSpyPart {
 
 	@Inject
 	@Optional
-	public void DeletePreferenceEntries(
+	public void deletePreferenceEntries(
 			@UIEventTopic(PreferenceSpyEventTopics.PREFERENCESPY_PREFERENCE_ENTRIES_DELETE) List<PreferenceEntry> preferenceEntries) {
 		if (preferenceEntries != null && !preferenceEntries.isEmpty()) {
 			for (PreferenceEntry preferenceEntry : preferenceEntries) {
@@ -209,7 +200,7 @@ public class PreferenceSpyPart {
 
 	@Inject
 	@Optional
-	public void DeleteAllPreferenceEntries(
+	public void deleteAllPreferenceEntries(
 			@UIEventTopic(PreferenceSpyEventTopics.PREFERENCESPY_PREFERENCE_ENTRIES_DELETE_ALL) List<PreferenceEntry> preferenceEntries) {
 		if (preferenceEntryManager != null) {
 			preferenceEntryManager.clearRecentPreferenceNodeEntry();
