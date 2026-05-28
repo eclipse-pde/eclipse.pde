@@ -92,11 +92,11 @@ public abstract class AbstractFeatureSpecPage extends WizardNewProjectCreationPa
 	@Override
 	protected boolean validatePage() {
 		boolean valid = super.validatePage();
-		if (!valid) {
-			return valid;
-		}
 		if (fUpdateName) {
 			updateNameRelativeFields();
+		}
+		if (!valid) {
+			return valid;
 		}
 		return validateBaseContent(false);
 	}
