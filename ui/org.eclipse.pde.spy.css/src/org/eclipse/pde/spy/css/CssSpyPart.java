@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -99,7 +100,6 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.Widget;
-import org.w3c.css.sac.SelectorList;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.css.CSSRule;
@@ -969,9 +969,17 @@ public class CssSpyPart {
 
 			CSSEngine engine = getCSSEngine(root);
 			try {
-				SelectorList selectors = engine.parseSelectors(text);
+				var selectors = engine.parseSelectors(text);
+				Predicate<CSSStylableElement> matcher = el -> {
+					for (int i = 0; i < selectors.getLength(); i++) {
+						if (engine.matches(selectors.item(i), el, null)) {
+							return true;
+						}
+					}
+					return false;
+				};
 				subMonitor.split(2);
-				processCSSSearch(subMonitor.split(8), engine, selectors, element, null, results);
+				processCSSSearch(subMonitor.split(8), matcher, element, results);
 			} catch (Exception e) {
 				System.out.println(e.toString());
 			}
@@ -979,27 +987,21 @@ public class CssSpyPart {
 		monitor.done();
 	}
 
-	private void processCSSSearch(IProgressMonitor monitor, CSSEngine engine, SelectorList selectors,
-			CSSStylableElement element, String pseudo, Collection<Widget> results) {
+	private void processCSSSearch(IProgressMonitor monitor, Predicate<CSSStylableElement> matcher,
+			CSSStylableElement element, Collection<Widget> results) {
 
 		if (monitor.isCanceled()) {
 			return;
 		}
 		NodeList children = element.getChildNodes();
 		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.CssSpyPart_Searching, 5 + 5 * children.getLength());
-		boolean matched = false;
-		for (int i = 0; i < selectors.getLength(); i++) {
-			if (matched = engine.matches(selectors.item(i), element, pseudo)) {
-				break;
-			}
-		}
-		if (matched) {
+		if (matcher.test(element)) {
 			results.add((Widget) element.getNativeWidget());
 		}
 		subMonitor.split(5);
 		for (int i = 0; i < children.getLength(); i++) {
-			processCSSSearch(subMonitor.split(5), engine, selectors,
-					(CSSStylableElement) children.item(i), pseudo, results);
+			processCSSSearch(subMonitor.split(5), matcher,
+					(CSSStylableElement) children.item(i), results);
 		}
 	}
 
@@ -1196,7 +1198,7 @@ public class CssSpyPart {
 					continue;
 				}
 				try {
-					SelectorList selectors = engine.parseSelectors(styleRule.getSelectorText());
+					var selectors = engine.parseSelectors(styleRule.getSelectorText());
 					boolean matched = false;
 					for (int k = 0; k < selectors.getLength(); k++) {
 						if (engine.matches(selectors.item(k), element, null)) {
