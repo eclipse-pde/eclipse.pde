@@ -83,8 +83,11 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 		job.setUser(true);
 		// Serialize loads/resolves of the same target so a new load waits for a
 		// cancelled one to drain, avoiding p2 profile lock races and
-		// Progress-view pile-up.
-		job.setRule(TargetResolveSchedulingRule.forHandle(target.getHandle()));
+		// Progress-view pile-up. A null target represents the empty target
+		// platform, which has no handle to serialize on.
+		if (target != null) {
+			job.setRule(TargetResolveSchedulingRule.forHandle(target.getHandle()));
+		}
 		if (listener != null) {
 			job.addJobChangeListener(listener);
 		}
