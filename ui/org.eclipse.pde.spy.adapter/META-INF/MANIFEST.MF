@@ -11,8 +11,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.e4.ui.di,
  org.eclipse.e4.ui.workbench,
  org.eclipse.jface,
- org.eclipse.e4.ui.services,
- org.junit;bundle-version="4.13.2"
+ org.eclipse.e4.ui.services
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Automatic-Module-Name: org.eclipse.pde.spy.adapter
 Bundle-ActivationPolicy: lazy
