@@ -107,11 +107,7 @@ public class ClasspathContainerState {
 			Map<IJavaProject, IClasspathContainer> updateProjects = new LinkedHashMap<>();
 			Map<IProject, IStatus> errorsPerProject = new LinkedHashMap<>();
 
-			java.util.List<UpdateRequest> requests = new java.util.ArrayList<>();
-			UpdateRequest request;
-			while ((request = workQueue.poll()) != null) {
-				requests.add(request);
-			}
+			List<UpdateRequest> requests = drainRequests(workQueue);
 			int count = requests.size();
 			monitor.setWorkRemaining(count * 2);
 
@@ -205,6 +201,24 @@ public class ClasspathContainerState {
 			schedule();
 		}
 
+	}
+
+	/**
+	 * Drains the given queue and deduplicates requests for the same project.
+	 * Multiple requests for one project are queued e.g. when a target platform
+	 * reload triggers classpath updates from several listeners. A request
+	 * without a saved container state forces a container update and therefore
+	 * wins over requests whose update may be skipped when the computed entries
+	 * match the saved state.
+	 */
+	public static List<UpdateRequest> drainRequests(Queue<UpdateRequest> queue) {
+		Map<IProject, UpdateRequest> requests = new LinkedHashMap<>();
+		UpdateRequest request;
+		while ((request = queue.poll()) != null) {
+			requests.merge(request.project(), request,
+					(existing, latest) -> existing.container() == null ? existing : latest);
+		}
+		return List.copyOf(requests.values());
 	}
 
 	private static boolean isPdeContainerProject(IProject project, IPluginModelBase model) {
@@ -325,7 +339,7 @@ public class ClasspathContainerState {
 		fUpdateJob.add(project, savedState);
 	}
 
-	private static record UpdateRequest(IProject project, IClasspathContainer container) {
+	public static record UpdateRequest(IProject project, IClasspathContainer container) {
 
 	}
 }
