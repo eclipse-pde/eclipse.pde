@@ -122,10 +122,16 @@ class RequiredPluginsClasspathContainer {
 
 	private final IProject project;
 
+	private final DependencyClosureCache fClosureCache;
+
 	/**
 	 * Constructor for RequiredPluginsClasspathContainer.
 	 */
 	RequiredPluginsClasspathContainer(IPluginModelBase model, IProject project) {
+		this(model, project, null);
+	}
+
+	RequiredPluginsClasspathContainer(IPluginModelBase model, IProject project, DependencyClosureCache closureCache) {
 		fModel = model;
 		IBuildModel buildModel;
 		try {
@@ -135,6 +141,7 @@ class RequiredPluginsClasspathContainer {
 		}
 		fBuild = buildModel != null ? buildModel.getBuild() : null;
 		this.project = project;
+		fClosureCache = closureCache;
 	}
 
 	IClasspathEntry[] computeEntries() throws CoreException {
@@ -690,7 +697,8 @@ class RequiredPluginsClasspathContainer {
 	 */
 	private void addTransitiveDependenciesWithForbiddenAccess(Set<BundleDescription> added,
 			List<IClasspathEntry> entries) throws CoreException {
-		Collection<BundleDescription> closure = ClasspathComputer.collectBuildRelevantDependencies(added);
+		Collection<BundleDescription> closure = ClasspathComputer.collectBuildRelevantDependencies(added,
+				fClosureCache);
 		String systemBundleBSN = TargetPlatformHelper.getPDEState().getSystemBundle();
 		Iterator<BundleDescription> transitiveDeps = closure.stream()
 				.filter(desc -> !desc.getSymbolicName().equals(systemBundleBSN))

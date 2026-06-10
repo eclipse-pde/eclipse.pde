@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -177,6 +178,29 @@ public class ClasspathComputer {
 	 * {@code roots}, including {@code roots} themselves.
 	 */
 	public static Collection<BundleDescription> collectBuildRelevantDependencies(Collection<BundleDescription> roots) {
+		return collectBuildRelevantDependencies(roots, null);
+	}
+
+	/**
+	 * Returns all transitive dependencies that are relevant for building
+	 * {@code roots}, including {@code roots} themselves. If a cache is given,
+	 * per-bundle closures are looked up and stored there, so the traversal of
+	 * the dependency graph is shared between computations against the same
+	 * resolved state.
+	 */
+	public static Collection<BundleDescription> collectBuildRelevantDependencies(Collection<BundleDescription> roots,
+			DependencyClosureCache cache) {
+		if (cache == null) {
+			return findBuildRelevantClosure(roots);
+		}
+		Set<BundleDescription> closure = new HashSet<>();
+		for (BundleDescription root : roots) {
+			closure.addAll(cache.closureOf(root, r -> Set.copyOf(findBuildRelevantClosure(List.of(r)))));
+		}
+		return closure;
+	}
+
+	private static Set<BundleDescription> findBuildRelevantClosure(Collection<BundleDescription> roots) {
 		return DependencyManager.findRequirementsClosure(roots, BUILD_RELEVANT_NAMESPACES,
 				DependencyManager.Options.INCLUDE_OPTIONAL_DEPENDENCIES);
 	}
@@ -495,7 +519,13 @@ public class ClasspathComputer {
 
 	public static IClasspathEntry[] computeClasspathEntries(IPluginModelBase model, IProject project)
 			throws CoreException {
-		RequiredPluginsClasspathContainer container = new RequiredPluginsClasspathContainer(model, project);
+		return computeClasspathEntries(model, project, null);
+	}
+
+	public static IClasspathEntry[] computeClasspathEntries(IPluginModelBase model, IProject project,
+			DependencyClosureCache closureCache) throws CoreException {
+		RequiredPluginsClasspathContainer container = new RequiredPluginsClasspathContainer(model, project,
+				closureCache);
 		return container.computeEntries();
 	}
 

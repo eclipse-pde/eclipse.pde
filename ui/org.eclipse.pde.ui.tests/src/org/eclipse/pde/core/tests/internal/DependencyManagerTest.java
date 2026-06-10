@@ -35,6 +35,7 @@ import static org.osgi.framework.Constants.REQUIRE_CAPABILITY;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -49,6 +50,7 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.eclipse.pde.internal.build.Utils;
 import org.eclipse.pde.internal.core.ClasspathComputer;
+import org.eclipse.pde.internal.core.DependencyClosureCache;
 import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.ui.tests.launcher.AbstractLaunchTest;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
@@ -366,6 +368,64 @@ public class DependencyManagerTest {
 
 		Set<BundleDescription> optionalClosure = findRequirementsClosure(bundles, INCLUDE_OPTIONAL_DEPENDENCIES);
 		assertThat(optionalClosure).isEqualTo(Set.of(bundleOptional, bundleA1, bundleA2, bundleProvider));
+	}
+
+	@Test
+	public void testCollectBuildRelevantDependencies_sharedClosureCache() throws Exception {
+
+		setTargetPlatform( //
+				bundle("common", "1.0.0", //
+						entry(EXPORT_PACKAGE, "common.pack" + version("1.0.0"))),
+
+				bundle("host", "1.0.0", //
+						entry(EXPORT_PACKAGE, "host.pack" + version("1.0.0"))),
+
+				bundle("host.fragment", "1.0.0", //
+						entry(FRAGMENT_HOST, "host"), //
+						entry(EXPORT_PACKAGE, "fragment.pack" + version("1.0.0")), //
+						entry(IMPORT_PACKAGE, "common.pack")),
+
+				bundle("fragment.user", "1.0.0", //
+						entry(IMPORT_PACKAGE, "fragment.pack")),
+
+				bundle("lib.a", "1.0.0", //
+						entry(REQUIRE_BUNDLE, "common")),
+
+				bundle("lib.b", "1.0.0", //
+						entry(REQUIRE_BUNDLE, "common"), //
+						entry(IMPORT_PACKAGE, "host.pack")),
+
+				bundle("app", "1.0.0", //
+						entry(REQUIRE_BUNDLE, "lib.a,lib.b")));
+
+		BundleDescription app = bundleDescription("app", "1.0.0");
+		BundleDescription libA = bundleDescription("lib.a", "1.0.0");
+		BundleDescription libB = bundleDescription("lib.b", "1.0.0");
+		BundleDescription common = bundleDescription("common", "1.0.0");
+		BundleDescription host = bundleDescription("host", "1.0.0");
+		BundleDescription fragmentUser = bundleDescription("fragment.user", "1.0.0");
+
+		// overlapping root sets as they occur when the classpaths of multiple
+		// projects are computed in one classpath container update job run
+		List<Set<BundleDescription>> projectRoots = List.of( //
+				Set.of(app), //
+				Set.of(libA, fragmentUser), //
+				Set.of(libB), //
+				Set.of(app, fragmentUser));
+
+		DependencyClosureCache cache = new DependencyClosureCache();
+		for (Set<BundleDescription> roots : projectRoots) {
+			Collection<BundleDescription> direct = ClasspathComputer.collectBuildRelevantDependencies(roots);
+			Collection<BundleDescription> cached = ClasspathComputer.collectBuildRelevantDependencies(roots, cache);
+			assertThat(Set.copyOf(cached)).as("closure of %s", roots).isEqualTo(Set.copyOf(direct));
+		}
+
+		Collection<BundleDescription> appClosure = ClasspathComputer.collectBuildRelevantDependencies(Set.of(app),
+				cache);
+		assertThat(appClosure).contains(app, libA, libB, common, host);
+		Collection<BundleDescription> fragmentUserClosure = ClasspathComputer
+				.collectBuildRelevantDependencies(Set.of(fragmentUser), cache);
+		assertThat(fragmentUserClosure).contains(fragmentUser, host);
 	}
 
 	// --- utility methods ---

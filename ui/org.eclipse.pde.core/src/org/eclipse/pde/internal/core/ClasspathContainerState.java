@@ -114,6 +114,11 @@ public class ClasspathContainerState {
 			int count = requests.size();
 			monitor.setWorkRemaining(count * 2);
 
+			// Share per-bundle dependency closures between the projects
+			// updated in this run. The cache must not outlive this run because
+			// the resolved state can change between runs.
+			DependencyClosureCache closureCache = new DependencyClosureCache();
+
 			String messageTemplate = PDECoreMessages.PluginModelManager_1 + " ({0}/{1}): {2}"; //$NON-NLS-1$
 			for (int i = 0; i < requests.size(); i++) {
 				UpdateRequest req = requests.get(i);
@@ -128,7 +133,7 @@ public class ClasspathContainerState {
 						IJavaProject javaProject = JavaCore.create(project);
 						try {
 							IClasspathEntry[] entries = ClasspathComputer.computeClasspathEntries(model,
-									javaProject.getProject());
+									javaProject.getProject(), closureCache);
 							if (!isUpToDate(project, entries, req.container())) {
 								updateProjects.put(javaProject, PDEClasspathContainerSaveHelper.containerOf(entries));
 								errorsPerProject.remove(project);
