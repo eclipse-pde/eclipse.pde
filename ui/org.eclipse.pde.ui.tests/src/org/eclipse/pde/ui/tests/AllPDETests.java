@@ -23,6 +23,7 @@ import org.eclipse.pde.core.tests.internal.util.PDESchemaHelperTest;
 import org.eclipse.pde.ui.tests.build.properties.AllValidatorTests;
 import org.eclipse.pde.ui.tests.classpathcontributor.ClasspathContributorTest;
 import org.eclipse.pde.ui.tests.classpathresolver.ClasspathResolverTest;
+import org.eclipse.pde.ui.tests.classpathupdater.ClasspathContainerStateTest;
 import org.eclipse.pde.ui.tests.classpathupdater.ClasspathUpdaterTest;
 import org.eclipse.pde.ui.tests.ee.ExportBundleTests;
 import org.eclipse.pde.ui.tests.imports.AllImportTests;
@@ -64,6 +65,7 @@ import org.junit.platform.suite.api.Suite;
 	RequiredPluginsClasspathContainerPerformanceTest.class, //
 	ChainedReexportPerformanceTest.class, //
 	ClasspathUpdaterTest.class, //
+	ClasspathContainerStateTest.class, //
 	PDESchemaHelperTest.class, //
 	ClasspathContributorTest.class, //
 	DynamicPluginProjectReferencesTest.class, //
