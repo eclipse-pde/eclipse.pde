@@ -707,11 +707,15 @@ public class TargetEditor extends FormEditor {
 				Job resolveJob = new Job(NLS.bind(PDEUIMessages.TargetEditor_1, name)) {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
-						// delete profile
-						SafeRunner.run(() -> {
-							P2TargetUtils.forceCheckTarget(getTarget());
-							P2TargetUtils.deleteProfile(getTarget().getHandle());
-						});
+						if (forceResolve) {
+							// delete the profile so the target is provisioned from
+							// scratch; a plain resolve reuses the profile while it
+							// is still in sync with the definition
+							SafeRunner.run(() -> {
+								P2TargetUtils.forceCheckTarget(getTarget());
+								P2TargetUtils.deleteProfile(getTarget().getHandle());
+							});
+						}
 						getTarget().resolve(monitor);
 						if (monitor.isCanceled()) {
 							return Status.CANCEL_STATUS;
