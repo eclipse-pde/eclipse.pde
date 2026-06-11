@@ -27,8 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 import java.util.stream.Stream;
@@ -88,7 +86,12 @@ public class ClasspathContainerState {
 	 */
 	private static final class UpdateClasspathsJob extends Job {
 
-		private final Queue<UpdateRequest> workQueue = new ConcurrentLinkedQueue<>();
+		/**
+		 * Pending requests, at most one per project. Multiple requests for one
+		 * project arrive e.g. when a target platform reload triggers classpath
+		 * updates from several listeners.
+		 */
+		private final Map<IProject, UpdateRequest> workQueue = new LinkedHashMap<>();
 
 		/**
 		 * Constructs a new job.
@@ -114,7 +117,7 @@ public class ClasspathContainerState {
 			Map<IJavaProject, IClasspathContainer> updateProjects = Collections.synchronizedMap(new LinkedHashMap<>());
 			Map<IProject, IStatus> errorsPerProject = Collections.synchronizedMap(new LinkedHashMap<>());
 
-			List<UpdateRequest> requests = drainRequests(workQueue);
+			List<UpdateRequest> requests = drainRequests();
 			int count = requests.size();
 			monitor.setWorkRemaining(count * 2);
 
@@ -253,8 +256,10 @@ public class ClasspathContainerState {
 		 * Queues more projects/containers.
 		 */
 		void addAll(Collection<IProject> tocheck) {
-			for (IProject project : tocheck) {
-				workQueue.add(new UpdateRequest(project, null));
+			synchronized (workQueue) {
+				for (IProject project : tocheck) {
+					enqueue(new UpdateRequest(project, null));
+				}
 			}
 			schedule();
 		}
@@ -263,7 +268,9 @@ public class ClasspathContainerState {
 			if (project == null) {
 				return;
 			}
-			workQueue.add(new UpdateRequest(project, classpathContainer));
+			synchronized (workQueue) {
+				enqueue(new UpdateRequest(project, classpathContainer));
+			}
 			schedule();
 		}
 
@@ -275,24 +282,25 @@ public class ClasspathContainerState {
 			}
 		}
 
-	}
-
-	/**
-	 * Drains the given queue and deduplicates requests for the same project.
-	 * Multiple requests for one project are queued e.g. when a target platform
-	 * reload triggers classpath updates from several listeners. A request
-	 * without a saved container state forces a container update and therefore
-	 * wins over requests whose update may be skipped when the computed entries
-	 * match the saved state.
-	 */
-	public static List<UpdateRequest> drainRequests(Queue<UpdateRequest> queue) {
-		Map<IProject, UpdateRequest> requests = new LinkedHashMap<>();
-		UpdateRequest request;
-		while ((request = queue.poll()) != null) {
-			requests.merge(request.project(), request,
+		/**
+		 * Merges the request with a pending request for the same project, if
+		 * any. A request without a saved container state forces a container
+		 * update and therefore wins over requests whose update may be skipped
+		 * when the computed entries match the saved state.
+		 */
+		private void enqueue(UpdateRequest request) {
+			workQueue.merge(request.project(), request,
 					(existing, latest) -> existing.container() == null ? existing : latest);
 		}
-		return List.copyOf(requests.values());
+
+		private List<UpdateRequest> drainRequests() {
+			synchronized (workQueue) {
+				List<UpdateRequest> requests = List.copyOf(workQueue.values());
+				workQueue.clear();
+				return requests;
+			}
+		}
+
 	}
 
 	private static boolean isPdeContainerProject(IProject project, IPluginModelBase model) {
@@ -413,6 +421,7 @@ public class ClasspathContainerState {
 		fUpdateJob.add(project, savedState);
 	}
 
-	public static record UpdateRequest(IProject project, IClasspathContainer container) {
+	private static record UpdateRequest(IProject project, IClasspathContainer container) {
+
 	}
 }
