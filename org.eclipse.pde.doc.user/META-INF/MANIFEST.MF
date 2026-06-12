@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.pde.doc.user; singleton:=true
 Bundle-Version: 3.17.600.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.help;bundle-version="[3.2.0,4.0.0)"
