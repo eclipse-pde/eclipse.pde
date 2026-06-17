@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.stream.Stream;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -101,6 +102,7 @@ public class ClasspathContainerState {
 
 		@Override
 		protected IStatus run(IProgressMonitor jobMonitor) {
+			long startNanos = PDECore.DEBUG_CLASSPATH ? System.nanoTime() : 0;
 			SubMonitor monitor = SubMonitor.convert(jobMonitor, PDECoreMessages.PluginModelManager_1, 100);
 			PluginModelManager.getInstance().initialize(monitor.split(1));
 			PluginModelManager modelManager = PluginModelManager.getInstance();
@@ -111,6 +113,7 @@ public class ClasspathContainerState {
 			int count = requests.size();
 			monitor.setWorkRemaining(count * 2);
 
+			long computeNanos = PDECore.DEBUG_CLASSPATH ? System.nanoTime() : 0;
 			String messageTemplate = PDECoreMessages.PluginModelManager_1 + " ({0}/{1}): {2}"; //$NON-NLS-1$
 			for (int i = 0; i < requests.size(); i++) {
 				UpdateRequest req = requests.get(i);
@@ -138,6 +141,7 @@ public class ClasspathContainerState {
 				}
 				monitor.worked(1);
 			}
+			traceRuntime("Computed classpath of %2$d project(s) in %1$d ms.", computeNanos, count); //$NON-NLS-1$
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
@@ -163,11 +167,15 @@ public class ClasspathContainerState {
 				}
 				try {
 					monitor.setWorkRemaining(n);
+					long applyNanos = PDECore.DEBUG_CLASSPATH ? System.nanoTime() : 0;
 					setProjectContainers(javaProjects, container, monitor.split(n));
+					traceRuntime("Applied classpath container of %2$d project(s) in %1$d ms.", applyNanos, n); //$NON-NLS-1$
 				} catch (JavaModelException e) {
 					return e.getStatus();
 				}
 			}
+			traceRuntime("UpdateClasspathsJob finished in %d ms: %d request(s), %d updated, %d error(s).", startNanos, //$NON-NLS-1$
+					count, updateProjects.size(), errorsPerProject.size());
 			IStatus[] errors = errorsPerProject.values().toArray(IStatus[]::new);
 			if (errors.length == 0) {
 				return Status.OK_STATUS;
@@ -199,6 +207,14 @@ public class ClasspathContainerState {
 			}
 			workQueue.add(new UpdateRequest(project, classpathContainer));
 			schedule();
+		}
+
+		private void traceRuntime(String msg, long start, Object... args) {
+			if (PDECore.DEBUG_CLASSPATH) {
+				long elapsedMillis = (System.nanoTime() - start) / 1_000_000L;
+				Object[] allArgs = Stream.concat(Stream.of(elapsedMillis), Stream.of(args)).toArray();
+				PDECore.TRACE.trace(PDECore.KEY_DEBUG_CLASSPATH, String.format(msg, allArgs));
+			}
 		}
 
 	}
