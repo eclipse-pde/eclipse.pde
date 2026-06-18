@@ -330,6 +330,7 @@ public class Messages {
 	public String PlaceholderEditor_Label;
 	public String PlaceholderEditor_Descriptor;
 	public String PlaceholderEditor_Reference;
+	public String PlaceholderEditor_ReferenceIdMismatch;
 	public String PlaceholderEditor_Closeable;
 	public String PlaceholderEditor_ContainerData;
 
