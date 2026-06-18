@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Tests
+Bundle-SymbolicName: org.eclipse.e4.tools.emf.ui.tests
+Bundle-Vendor: Eclipse.org
+Bundle-Version: 1.0.0.qualifier
+Fragment-Host: org.eclipse.e4.tools.emf.ui;bundle-version="4.9.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-21
+Require-Bundle: org.junit;bundle-version="4.0.0"
+Automatic-Module-Name: org.eclipse.e4.tools.emf.ui.tests

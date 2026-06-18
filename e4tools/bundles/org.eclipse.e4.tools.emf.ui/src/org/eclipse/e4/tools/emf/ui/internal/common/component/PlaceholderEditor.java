@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 BestSolution.at and others.
+ * Copyright (c) 2010, 2026 BestSolution.at and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,9 +14,13 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import java.text.MessageFormat;
+import java.util.Objects;
+
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.conversion.Converter;
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -42,6 +46,9 @@ import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
+import org.eclipse.jface.fieldassist.ControlDecoration;
+import org.eclipse.jface.fieldassist.FieldDecoration;
+import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -227,6 +234,22 @@ public class PlaceholderEditor extends AbstractComponentEditor<MPlaceholder> {
 			context.bindValue(textProp.observe(t), E4Properties.ref(getEditingDomain()).observeDetail(getMaster()),
 					t2m, m2t);
 
+			final ControlDecoration refIdMismatchDecoration = new ControlDecoration(t, SWT.LEFT | SWT.TOP);
+			final FieldDecoration warningDecoration = FieldDecorationRegistry.getDefault()
+					.getFieldDecoration(FieldDecorationRegistry.DEC_WARNING);
+			refIdMismatchDecoration.setImage(warningDecoration.getImage());
+			refIdMismatchDecoration.hide();
+
+			final Runnable refIdMismatchUpdater = () -> updateReferenceIdMismatch(refIdMismatchDecoration);
+			final IObservableValue<String> elementIdObservable = E4Properties.elementId(getEditingDomain())
+					.observeDetail(getMaster());
+			elementIdObservable.addValueChangeListener(event -> refIdMismatchUpdater.run());
+			final IObservableValue<MUIElement> refObservable = E4Properties.ref(getEditingDomain())
+					.observeDetail(getMaster());
+			refObservable.addValueChangeListener(event -> refIdMismatchUpdater.run());
+			getMaster().addValueChangeListener(event -> refIdMismatchUpdater.run());
+			refIdMismatchUpdater.run();
+
 			Button b = ControlFactory.createFindButton(parent, resourcePool);
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -263,6 +286,38 @@ public class PlaceholderEditor extends AbstractComponentEditor<MPlaceholder> {
 		folder.setSelection(0);
 
 		return folder;
+	}
+
+	private void updateReferenceIdMismatch(ControlDecoration decoration) {
+		if (decoration.getControl() == null || decoration.getControl().isDisposed()) {
+			return;
+		}
+		final MPlaceholder placeholder = getMaster().getValue();
+		if (!hasReferenceIdMismatch(placeholder)) {
+			decoration.hide();
+			return;
+		}
+		final String referencedId = placeholder.getRef().getElementId();
+		decoration.setDescriptionText(
+				MessageFormat.format(Messages.PlaceholderEditor_ReferenceIdMismatch,
+						referencedId == null ? "" : referencedId)); //$NON-NLS-1$
+		decoration.show();
+	}
+
+	/**
+	 * Returns whether the given placeholder references a shared element whose
+	 * {@code elementId} differs from the placeholder's own {@code elementId}.
+	 *
+	 * @param placeholder
+	 *            the placeholder to check, may be {@code null}
+	 * @return {@code true} if the placeholder has a reference whose elementId does
+	 *         not equal the placeholder's elementId
+	 */
+	public static boolean hasReferenceIdMismatch(MPlaceholder placeholder) {
+		if (placeholder == null || placeholder.getRef() == null) {
+			return false;
+		}
+		return !Objects.equals(placeholder.getElementId(), placeholder.getRef().getElementId());
 	}
 
 	private void createUITreeInspection(CTabFolder folder) {
