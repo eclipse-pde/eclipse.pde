@@ -905,78 +905,6 @@ public abstract class AbstractPluginBlock {
 		countSelectedModels();
 	}
 
-	private Set<IPluginModelBase> getCheckedPluginModels() {
-		return Arrays.stream(fPluginTreeViewer.getCheckedLeafElements()).filter(IPluginModelBase.class::isInstance)
-				.map(IPluginModelBase.class::cast).collect(Collectors.toSet());
-	}
-
-	/**
-	 * Validates the tree's currently-checked plug-ins and unchecks any whose
-	 * bundle could not be resolved. Validation is repeated against the new
-	 * checked set after each pass, so plug-ins that only become unresolved once
-	 * a dependency has been removed are picked up in the same invocation. The
-	 * change is only made in the tree, not persisted; callers are responsible
-	 * for notifying the tab so the change can be applied.
-	 */
-	protected void removeUnresolvedPlugins() {
-		// Bound the loop so a pathological resolver state can't spin
-		// forever; in practice one or two passes is enough.
-		int safetyBound = 32;
-		while (safetyBound-- > 0) {
-			Set<IPluginModelBase> checkedModels = getCheckedPluginModels();
-			if (checkedModels.isEmpty()) {
-				break;
-			}
-			Set<String> unresolvedKeys;
-			try {
-				LaunchValidationOperation operation = createValidationOperation(checkedModels);
-				operation.run(new NullProgressMonitor());
-				unresolvedKeys = collectUnresolvedKeys(operation);
-			} catch (CoreException e) {
-				PDEPlugin.log(e);
-				return;
-			}
-
-			List<Object> remaining = new ArrayList<>(checkedModels.size());
-			List<IPluginModelBase> removed = new ArrayList<>();
-			for (IPluginModelBase model : checkedModels) {
-				BundleDescription bd = model.getBundleDescription();
-				if (bd != null && unresolvedKeys.contains(bundleKey(bd))) {
-					removed.add(model);
-				} else {
-					remaining.add(model);
-				}
-			}
-
-			if (removed.isEmpty()) {
-				break;
-			}
-			setCheckedElements(remaining.toArray());
-			for (IPluginModelBase model : removed) {
-				resetText(model);
-			}
-		}
-		countSelectedModels();
-	}
-
-	private static Set<String> collectUnresolvedKeys(LaunchValidationOperation operation) {
-		Set<String> keys = new HashSet<>();
-		for (Object key : operation.getInput().keySet()) {
-			if (key instanceof BundleDescription bd && !bd.isResolved()) {
-				keys.add(bundleKey(bd));
-			}
-		}
-		return keys;
-	}
-
-	/**
-	 * Identifies a bundle by symbolic name, version and location, so duplicates
-	 * that share a name and version but differ in location are not conflated.
-	 */
-	private static String bundleKey(BundleDescription bd) {
-		return bd.getSymbolicName() + '/' + bd.getVersion() + '/' + bd.getLocation();
-	}
-
 	protected IPluginModelBase findPlugin(String id) {
 		ModelEntry entry = PluginRegistry.findEntry(id);
 		if (entry != null) {
@@ -1130,7 +1058,6 @@ public abstract class AbstractPluginBlock {
 				if (fOperation.hasErrors()) {
 					fDialog = new PluginStatusDialog(getShell(), SWT.MODELESS | SWT.CLOSE | SWT.BORDER | SWT.TITLE | SWT.RESIZE);
 					fDialog.setInput(fOperation);
-					fDialog.setActions(createDialogActions());
 					fDialog.open();
 					fDialog = null;
 				} else if (fOperation.isEmpty()) {
@@ -1159,54 +1086,6 @@ public abstract class AbstractPluginBlock {
 		}
 	}
 
-	private PluginStatusDialog.PluginStatusDialogActions createDialogActions() {
-		return new PluginStatusDialog.PluginStatusDialogActions() {
-			@Override
-			public void selectRequired() {
-				addRequiredPlugins();
-				notifyTabChanged();
-			}
-
-			@Override
-			public void removeUnresolved() {
-				removeUnresolvedPlugins();
-				notifyTabChanged();
-			}
-
-			@Override
-			public boolean supportsRemoveUnresolved() {
-				return true;
-			}
-
-			@Override
-			public String getSelectRequiredLabel() {
-				return NLS.bind(PDEUIMessages.AdvancedLauncherTab_subset, fTab.getName());
-			}
-
-			@Override
-			public LaunchValidationOperation validate() {
-				try {
-					// Validate the tree's current (unsaved) checked state, not
-					// the persisted launch configuration, so the dialog
-					// reflects the change just made by the action.
-					LaunchValidationOperation operation = createValidationOperation(getCheckedPluginModels());
-					operation.run(new NullProgressMonitor());
-					return operation;
-				} catch (CoreException e) {
-					PDEPlugin.log(e);
-					return null;
-				}
-			}
-		};
-	}
-
-	private void notifyTabChanged() {
-		if (!fIsDisposed) {
-			// Flush the tree change to the working copy and enable Apply.
-			fTab.updateLaunchConfigurationDialog();
-		}
-	}
-
 	protected void setVisible(boolean visible) {
 		if (!visible) {
 			if (fDialog != null) {
@@ -1217,16 +1096,6 @@ public abstract class AbstractPluginBlock {
 	}
 
 	protected abstract LaunchValidationOperation createValidationOperation() throws CoreException;
-
-	/**
-	 * Creates a validation operation against an explicit model set rather than
-	 * the launch configuration's persisted state. Used by
-	 * {@link #removeUnresolvedPlugins()} so iterative validation reflects the
-	 * tree's current (unsaved) checked state.
-	 */
-	protected LaunchValidationOperation createValidationOperation(Set<IPluginModelBase> models) {
-		return new LaunchValidationOperation(fLaunchConfig, models);
-	}
 
 	/**
 	 * Disposing the editor in tree viewer

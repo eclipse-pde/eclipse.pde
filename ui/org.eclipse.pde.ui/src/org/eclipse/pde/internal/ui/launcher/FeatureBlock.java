@@ -396,7 +396,6 @@ public class FeatureBlock {
 					if (fOperation.hasErrors()) {
 						fDialog = new PluginStatusDialog(getShell(), SWT.MODELESS | SWT.CLOSE | SWT.BORDER | SWT.TITLE | SWT.RESIZE);
 						fDialog.setInput(fOperation);
-						fDialog.setActions(createDialogActions());
 						fDialog.open();
 						fDialog = null;
 					} else if (fOperation.isEmpty()) {
@@ -422,50 +421,6 @@ public class FeatureBlock {
 			} catch (CoreException e) {
 				PDEPlugin.log(e);
 			}
-		}
-
-		private PluginStatusDialog.PluginStatusDialogActions createDialogActions() {
-			return new PluginStatusDialog.PluginStatusDialogActions() {
-				@Override
-				public void selectRequired() {
-					handleAddRequired();
-					if (!fIsDisposed) {
-						fTab.updateLaunchConfigurationDialog();
-					}
-				}
-
-				@Override
-				public void removeUnresolved() {
-					// Not supported for feature-based launches.
-				}
-
-				@Override
-				public boolean supportsRemoveUnresolved() {
-					return false;
-				}
-
-				@Override
-				public String getSelectRequiredLabel() {
-					return PDEUIMessages.FeatureBlock_addRequiredFeatues;
-				}
-
-				@Override
-				public LaunchValidationOperation validate() {
-					try {
-						// selectRequired() has flushed the tree to the working
-						// copy, so the merged bundle map now reflects it.
-						boolean isOSGi = fTab.getId().equals(IPDELauncherConstants.TAB_BUNDLES_ID);
-						Set<IPluginModelBase> models = BundleLauncherHelper.getMergedBundleMap(fLaunchConfig, isOSGi)
-								.keySet();
-						LaunchValidationOperation operation = new LaunchValidationOperation(fLaunchConfig, models);
-						operation.run(new NullProgressMonitor());
-						return operation;
-					} catch (CoreException e) {
-						PDEPlugin.log(e);
-						return null;
-					}
-				}
-			};
 		}
 
 		private Shell getShell() {

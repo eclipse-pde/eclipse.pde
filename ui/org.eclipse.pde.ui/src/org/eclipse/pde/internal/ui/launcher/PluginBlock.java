@@ -189,9 +189,4 @@ public class PluginBlock extends AbstractPluginBlock {
 		return new EclipsePluginValidationOperation(fLaunchConfig, models);
 	}
 
-	@Override
-	protected LaunchValidationOperation createValidationOperation(Set<IPluginModelBase> models) {
-		return new EclipsePluginValidationOperation(fLaunchConfig, models);
-	}
-
 }

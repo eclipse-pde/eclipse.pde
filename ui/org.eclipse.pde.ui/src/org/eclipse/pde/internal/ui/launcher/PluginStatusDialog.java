@@ -15,13 +15,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
 
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -62,10 +58,7 @@ public class PluginStatusDialog extends TrayDialog {
 		@Override
 		public Object[] getChildren(Object parentElement) {
 			if (fInput.containsKey(parentElement)) {
-				Object value = fInput.get(parentElement);
-				if (value instanceof Object[] children) {
-					return children;
-				}
+				return (Object[]) fInput.get(parentElement);
 			}
 			if (parentElement instanceof MultiStatus) {
 				return ((MultiStatus) parentElement).getChildren();
@@ -102,39 +95,6 @@ public class PluginStatusDialog extends TrayDialog {
 	private TreeViewer treeViewer;
 	private ILaunchConfiguration fLaunchConfiguration;
 	private String launchMode;
-	private PluginStatusDialogActions fActions;
-
-	/**
-	 * Callbacks supplied by the owner of the dialog (a launch-configuration
-	 * block) so the dialog can offer in-place fixes for the reported problems.
-	 * The dialog is also shown in contexts without a plug-in tree to modify
-	 * (e.g. at launch time); those simply do not set any actions, so the
-	 * buttons are not created.
-	 */
-	public interface PluginStatusDialogActions {
-		/** Adds the required plug-ins/features to the owning block's selection. */
-		void selectRequired();
-
-		/** Removes the unresolved plug-ins from the owning block's selection. */
-		void removeUnresolved();
-
-		/** Whether the {@link #removeUnresolved()} action is offered. */
-		boolean supportsRemoveUnresolved();
-
-		/** Label for the "select required" button (plug-ins vs. features). */
-		String getSelectRequiredLabel();
-
-		/**
-		 * Re-validates the owning block's current selection and returns the
-		 * operation, or {@code null} if validation failed. Used to refresh the
-		 * dialog after an action.
-		 */
-		LaunchValidationOperation validate();
-	}
-
-	public void setActions(PluginStatusDialogActions actions) {
-		fActions = actions;
-	}
 
 	public PluginStatusDialog(Shell parentShell, int style) {
 		super(parentShell);
@@ -177,45 +137,14 @@ public class PluginStatusDialog extends TrayDialog {
 		return DIALOG_PERSISTSIZE;
 	}
 
-	private static final int SELECT_REQUIRED_ID = IDialogConstants.CLIENT_ID + 1;
-	private static final int REMOVE_UNRESOLVED_ID = IDialogConstants.CLIENT_ID + 2;
-
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		if (fShowLink) {
 			createLink(parent);
 		}
-		if (fActions != null) {
-			createButton(parent, SELECT_REQUIRED_ID, fActions.getSelectRequiredLabel(), false);
-			if (fActions.supportsRemoveUnresolved()) {
-				createButton(parent, REMOVE_UNRESOLVED_ID, PDEUIMessages.AdvancedLauncherTab_removeUnresolved, false);
-			}
-		}
 		createButton(parent, IDialogConstants.OK_ID, PDEUIMessages.PluginStatusDialog_continueButtonLabel, true);
 		if (fShowCancelButton) {
 			createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
-		}
-	}
-
-	@Override
-	protected void buttonPressed(int buttonId) {
-		if (buttonId == SELECT_REQUIRED_ID) {
-			runAction(PluginStatusDialogActions::selectRequired);
-		} else if (buttonId == REMOVE_UNRESOLVED_ID) {
-			runAction(PluginStatusDialogActions::removeUnresolved);
-		} else {
-			super.buttonPressed(buttonId);
-		}
-	}
-
-	private void runAction(Consumer<PluginStatusDialogActions> action) {
-		if (fActions == null) {
-			return;
-		}
-		action.accept(fActions);
-		LaunchValidationOperation operation = fActions.validate();
-		if (operation != null) {
-			refresh(operation.getInput());
 		}
 	}
 
@@ -280,13 +209,6 @@ public class PluginStatusDialog extends TrayDialog {
 	}
 
 	public void refresh(Map<?, ?> input) {
-		if (input.isEmpty()) {
-			// Keep the field and the viewer input consistent: show a single
-			// "no problems" node once all reported issues have been fixed.
-			Map<String, IStatus> noProblems = new HashMap<>(1);
-			noProblems.put(PDEUIMessages.AbstractLauncherToolbar_noProblems, Status.OK_STATUS);
-			input = noProblems;
-		}
 		fInput = input;
 		treeViewer.setInput(input);
 		treeViewer.refresh();
