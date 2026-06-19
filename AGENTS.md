@@ -25,6 +25,32 @@ mvn clean verify -Dmaven.repo.local=$WORKSPACE/.m2/repository \
 
 **Maven Config (`.mvn/`):** Tycho 4.0.13 extension, `-Pbuild-individual-bundles`, `-DtrimStackTrace=false`
 
+### Running Specific Tests Locally
+
+Always use `mvn verify` (NOT `mvn test`): Tycho binds tests to the `integration-test` phase, so `mvn test` runs nothing.
+
+**One test bundle** via `-pl` (artifact selector):
+```bash
+mvn verify -pl :org.eclipse.pde.ui.tests -Pbuild-individual-bundles
+```
+
+**A single test class** via `-Dtest=<ClassName>`, which overrides the bundle's default suite (e.g. `AllPDETests`):
+```bash
+mvn verify -pl :org.eclipse.pde.ui.tests -Pbuild-individual-bundles -Dtest=DependencyLoopFinderTest
+```
+
+**Changed production code too?** Build the source bundle alongside its test bundle:
+```bash
+mvn verify -pl :org.eclipse.pde.core,:org.eclipse.pde.ui.tests -Pbuild-individual-bundles
+```
+
+**Headless (Wayland-safe):** pin the GTK backend to X11 so the UI test harness renders on Xvfb instead of the real compositor:
+```bash
+GDK_BACKEND=x11 xvfb-run -a mvn verify -pl :org.eclipse.pde.ui.tests -Pbuild-individual-bundles -Dtest=DependencyLoopFinderTest
+```
+
+The first run downloads the target platform from p2, so it needs network access; running offline (`-o`) only works once those artifacts are cached.
+
 **Tests:** ~1,045 test files. Results: `**/target/surefire-reports/*.xml`. UI tests need display server.
 
 **Artifacts:** `repository/target/repository/` (P2 site), `**/target/compilelogs/` (compile), `**/target/apianalysis/*.xml` (API)
