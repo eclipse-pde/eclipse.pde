@@ -98,6 +98,9 @@
       <themeElementCategory
             id="org.eclipse.pde.genericeditor.target.extension.presentation"
             label="%themeElementCategory.label">
+            <description>
+            %themeElementCategory.description
+            </description>
       </themeElementCategory>
       <colorDefinition
             categoryId="org.eclipse.pde.genericeditor.target.extension.presentation"
