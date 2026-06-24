@@ -53,5 +53,14 @@
             commandId="org.eclipse.tools.layout.spy.commands.layoutSpyCommand">
       </handler>
    </extension>
+   <extension
+         point="org.eclipse.pde.spy.core.spyPart">
+      <spyPart
+            description="%spy-layout-command.description"
+            icon="$nl$/icons/obj16/layoutspy_obj.svg"
+            name="%spy-layout-command.name"
+            part="org.eclipse.tools.layout.spy.internal.parts.LayoutSpyPart">
+      </spyPart>
+   </extension>
 
 </plugin>

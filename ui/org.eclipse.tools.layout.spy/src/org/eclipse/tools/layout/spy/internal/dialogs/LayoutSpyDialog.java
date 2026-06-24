@@ -79,7 +79,10 @@ public class LayoutSpyDialog {
 	 * Value used to indicate an unknown hint value
 	 */
 	private static final int UNKNOWN = -2;
+	/** The shell owned by the standalone dialog, or {@code null} when hosted in a part. */
 	private Shell shell;
+	/** The composite the spy contents are built into (the owned shell or a hosting part). */
+	private Composite container;
 
 	// Controls
 	private TableViewer childList;
@@ -118,12 +121,35 @@ public class LayoutSpyDialog {
 
 	}
 	/**
-	 * Creates the dialog but does not make it visible.
+	 * Creates the layout spy in its own shell but does not make it visible. Used
+	 * by the standalone command so the spy can still be opened on top of blocking
+	 * dialogs.
 	 *
 	 * @param parentShell
 	 *            the parent shell
 	 */
 	public LayoutSpyDialog(Shell parentShell) {
+		shell = new Shell(parentShell, SWT.SHELL_TRIM);
+		shell.setText(Messages.LayoutSpyDialog_shell_text);
+		createContents(shell);
+		openComposite(parentShell);
+	}
+
+	/**
+	 * Creates the layout spy inside the given composite, for example a part
+	 * hosted in the PDE spy window. The spy does not own the surrounding shell in
+	 * this case.
+	 *
+	 * @param parent
+	 *            the composite the spy contents are built into
+	 */
+	public LayoutSpyDialog(Composite parent) {
+		createContents(parent);
+	}
+
+	private void createContents(Composite container) {
+		this.container = container;
+
 		overlay = new Shell(SWT.ON_TOP | SWT.NO_TRIM);
 		{
 			overlay.addPaintListener(this::paintOverlay);
@@ -132,10 +158,7 @@ public class LayoutSpyDialog {
 			overlay.setRegion(region);
 		}
 
-		shell = new Shell(parentShell, SWT.SHELL_TRIM);
-		shell.setText(Messages.LayoutSpyDialog_shell_text);
-
-		resources = new LocalResourceManager(JFaceResources.getResources(), shell);
+		resources = new LocalResourceManager(JFaceResources.getResources(), container);
 		Bundle bundle = FrameworkUtil.getBundle(LayoutSpyDialog.class);
 		final URL fullPathString = FileLocator.find(bundle, IPath.fromOSString("icons/up_nav.svg"), null);
 
@@ -143,7 +166,7 @@ public class LayoutSpyDialog {
 
 		upImage = resources.create(imageDesc);
 
-		Composite infoRegion = new Composite(shell, SWT.NONE);
+		Composite infoRegion = new Composite(container, SWT.NONE);
 		{
 			Composite headerRegion = new Composite(infoRegion, SWT.NONE);
 			{
@@ -167,20 +190,20 @@ public class LayoutSpyDialog {
 			GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(true).generateLayout(infoRegion);
 		}
 
-		diagnostics = new Text(shell, SWT.READ_ONLY | SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+		diagnostics = new Text(container, SWT.READ_ONLY | SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		GridDataFactory.fillDefaults().hint(300, 300).grab(true, true).applyTo(diagnostics);
 
-		Button showOverlayButton = new Button(shell, SWT.CHECK);
+		Button showOverlayButton = new Button(container, SWT.CHECK);
 		showOverlayButton.setText(Messages.LayoutSpyDialog_button_show_overlay);
 
-		showColoringButton = new Button(shell, SWT.CHECK);
+		showColoringButton = new Button(container, SWT.CHECK);
 		showColoringButton.setText(Messages.LayoutSpyDialog_button_show_coloring);
 		showColoringButton.addSelectionListener(widgetSelectedAdapter(e-> {
 			LayoutIssuesDebugFilter.activate(showColoringButton.getSelection(), true, 0);
 		}));
 		showColoringButton.addDisposeListener((e -> LayoutIssuesDebugFilter.activate(false, true, 0)));
 
-		Composite buttonBar = new Composite(shell, SWT.NONE);
+		Composite buttonBar = new Composite(container, SWT.NONE);
 		{
 			selectWidgetButton = new Button(buttonBar, SWT.PUSH);
 			selectWidgetButton.setText(Messages.LayoutSpyDialog_button_select_control);
@@ -193,10 +216,10 @@ public class LayoutSpyDialog {
 		}
 		GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.CENTER).applyTo(buttonBar);
 
-		GridLayoutFactory.fillDefaults().margins(LayoutConstants.getMargins()).generateLayout(shell);
+		GridLayoutFactory.fillDefaults().margins(LayoutConstants.getMargins()).generateLayout(container);
 
 		// Attach listeners
-		shell.addDisposeListener(event -> disposed());
+		container.addDisposeListener(event -> disposed());
 		selectWidgetButton.addListener(SWT.Selection, event -> selectControl());
 		goUpButton.addListener(SWT.Selection, event -> goUp());
 		goDownButton.addListener(SWT.Selection, event -> goDown());
@@ -220,17 +243,15 @@ public class LayoutSpyDialog {
 			}
 		};
 		childList.setInput(listContents);
-		ISideEffectFactory sideEffectFactory = WidgetSideEffects.createFactory(shell);
+		ISideEffectFactory sideEffectFactory = WidgetSideEffects.createFactory(container);
 		sideEffectFactory.create(this::computeParentInfo, details::setText);
 		sideEffectFactory.create(this::computeChildInfo, diagnostics::setText);
 		sideEffectFactory.create(this::updateOverlay);
 
 
 		// ignore controls to the layout spy from coloring
-		shell.setData(LayoutIssuesDebugFilter.IGNORE_BY_LAYOUT_ISSUES_DEBUG_FILTER);
-		setChildrenColoring(shell);
-
-		openComposite(parentShell);
+		container.setData(LayoutIssuesDebugFilter.IGNORE_BY_LAYOUT_ISSUES_DEBUG_FILTER);
+		setChildrenColoring(container);
 	}
 
 	private void setChildrenColoring(Control control) {
@@ -394,13 +415,13 @@ public class LayoutSpyDialog {
 	 */
 	private void selectControl() {
 		this.controlSelectorOpen.setValue(true);
-		this.shell.setVisible(false);
+		this.container.getShell().setVisible(false);
 		new ControlSelector((@Nullable Control control) -> {
 			if (control != null) {
 				openControl(control);
 			}
 			this.controlSelectorOpen.setValue(false);
-			this.shell.setVisible(true);
+			this.container.getShell().setVisible(true);
 		});
 	}
 
