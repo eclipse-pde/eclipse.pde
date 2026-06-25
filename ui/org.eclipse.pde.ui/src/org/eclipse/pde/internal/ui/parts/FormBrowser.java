@@ -15,6 +15,7 @@
 package org.eclipse.pde.internal.ui.parts;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -29,6 +30,7 @@ public class FormBrowser {
 	FormText ftext;
 	String text;
 	int style;
+	Color enabledForeground;
 
 	public FormBrowser(int style) {
 		this.style = style;
@@ -51,8 +53,11 @@ public class FormBrowser {
 		formText.setFormText(ftext);
 		formText.setExpandHorizontal(true);
 		formText.setExpandVertical(true);
-		formText.setBackground(toolkit.getColors().getBackground());
-		formText.setForeground(toolkit.getColors().getForeground());
+		// Use the CSS-themed parent colors; FormToolkit's are OS-based and stay
+		// white in the dark theme. ScrolledFormText forwards both to the FormText.
+		enabledForeground = parent.getForeground();
+		formText.setBackground(parent.getBackground());
+		formText.setForeground(enabledForeground);
 		ftext.marginWidth = 2;
 		ftext.marginHeight = 2;
 		ftext.setHyperlinkSettings(toolkit.getHyperlinkGroup());
@@ -79,11 +84,14 @@ public class FormBrowser {
 	}
 
 	public void setEnabled(boolean enabled) {
-		if (formText != null) {
-			formText.setEnabled(enabled);
+		if (formText == null || formText.isDisposed()) {
+			return;
 		}
-		if (ftext != null) {
-			ftext.setEnabled(enabled);
-		}
+		// A disabled FormText paints itself with the non-theme-aware
+		// SWT.COLOR_WIDGET_BACKGROUND, which is white in the dark theme. Keep the
+		// widgets enabled to preserve the themed background and only grey the text
+		// to signal the disabled state; input is blocked via the disabled parent.
+		formText.setForeground(enabled ? enabledForeground
+				: formText.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
 	}
 }
