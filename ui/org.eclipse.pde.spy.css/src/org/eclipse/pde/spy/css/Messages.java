@@ -16,7 +16,6 @@ public class Messages extends NLS {
 	public static String CSSScratchPadPart_Close;
 	public static String CSSScratchPadPart_Engine;
 	public static String CSSScratchPadPart_Error;
-	public static String CSSScratchPadPart_Error_line_col;
 	public static String CSSScratchPadPart_No_theme_engine_available;
 	public static String CSSScratchPadPart_Time_ms;
 	public static String CssSpyPart_actual_values;

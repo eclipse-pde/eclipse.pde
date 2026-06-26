@@ -36,7 +36,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.w3c.css.sac.CSSParseException;
 import org.w3c.dom.stylesheets.StyleSheet;
 import org.w3c.dom.stylesheets.StyleSheetList;
 
@@ -153,9 +152,8 @@ public class CSSScratchPadPart {
 
 				long nanoDiff = System.nanoTime() - start;
 				sb.append(MessageFormat.format("\n{0}", MessageFormat.format(Messages.CSSScratchPadPart_Time_ms, nanoDiff / 1000000))); //$NON-NLS-1$
-			} catch (CSSParseException e) {
-				sb.append(MessageFormat.format("\n{0}", MessageFormat.format(Messages.CSSScratchPadPart_Error_line_col, e.getLineNumber(), e.getColumnNumber(), e.getLocalizedMessage()))); //$NON-NLS-1$
-			} catch (IOException e) {
+			} catch (IOException | RuntimeException e) {
+				// e4's parser throws an unchecked CssParseException whose message already carries line and column.
 				sb.append(MessageFormat.format("\n{0}", MessageFormat.format(Messages.CSSScratchPadPart_Error, e.getLocalizedMessage()))); //$NON-NLS-1$
 			}
 		}

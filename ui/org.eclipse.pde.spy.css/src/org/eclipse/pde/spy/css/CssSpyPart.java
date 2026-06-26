@@ -1180,7 +1180,8 @@ public class CssSpyPart {
 	 */
 	private Map<String, String> getCSSRuleSources(CSSEngine engine, CSSStylableElement element) {
 		Map<String, String> sources = new HashMap<>();
-		if (!(engine instanceof DocumentCSS docCSS)) {
+		DocumentCSS docCSS = engine.getDocumentCSS();
+		if (docCSS == null) {
 			return sources;
 		}
 		StyleSheetList sheets = docCSS.getStyleSheets();
