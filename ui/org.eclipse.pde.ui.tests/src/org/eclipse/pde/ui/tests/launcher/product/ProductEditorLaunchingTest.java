@@ -30,8 +30,10 @@ import java.util.stream.Collectors;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.product.WorkspaceProductModel;
 import org.eclipse.pde.internal.ui.launcher.LaunchAction;
@@ -147,6 +149,36 @@ public class ProductEditorLaunchingTest {
 		Set<String> additionalBundles = Set.of();
 		Set<String> bundles = Set.of("plugin.in.f.a", "plugin.in.f.b", "plugin.in.f.in.f.b", "plugin.in.f.c");
 		assertProductLaunchConfig("featuresWithVersion", USE_FEATURES_LAUNCH, features, additionalBundles, bundles);
+	}
+
+	@Test
+	public void testProductLaunch_programArgumentsWithRepeatedValues() throws Exception {
+		IFile file = project.getFile("programArgs.product");
+		assertTrue(file.exists());
+		WorkspaceProductModel model = new WorkspaceProductModel(file, false);
+		model.load();
+		IProduct product = model.getProduct();
+
+		ILaunchConfiguration config = new LaunchAction(product, file.getFullPath(), ILaunchManager.RUN_MODE)
+				.findLaunchConfiguration();
+
+		String programArgs = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, "");
+		List<String> arguments = List.of(DebugPlugin.splitArguments(programArgs));
+
+		// A repeated value must be preserved. It was wrongly dropped when it
+		// matched a value contributed by an earlier user argument, turning
+		// "-target testarg -helper testarg" into "-target testarg -helper".
+		assertEquals("-target testarg expected", "testarg", argumentValue(arguments, "-target"));
+		assertEquals("-helper testarg expected", "testarg", argumentValue(arguments, "-helper"));
+		assertEquals("both repeated values must be kept", 2, Collections.frequency(arguments, "testarg"));
+		// A user argument already provided by the initial arguments is not duplicated.
+		assertEquals("-consoleLog must not be duplicated", 1, Collections.frequency(arguments, "-consoleLog"));
+	}
+
+	private static String argumentValue(List<String> arguments, String flag) {
+		int index = arguments.indexOf(flag);
+		assertTrue(flag + " is missing", index >= 0 && index + 1 < arguments.size());
+		return arguments.get(index + 1);
 	}
 
 	private void assertProductLaunchConfig(String productId, boolean useFeatures, Set<String> expectedFeatures,
