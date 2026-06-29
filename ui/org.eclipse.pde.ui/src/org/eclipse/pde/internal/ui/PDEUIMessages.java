@@ -605,6 +605,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String MainPreferencePage_optionTestPlugin;
 	public static String MainPreferencePage_RunAPIAnalysisBuilderAsJob;
+	public static String MainPreferencePage_UpdateClasspathInParallel;
+	public static String MainPreferencePage_UpdateClasspathInParallelTooltip;
 
 	public static String MainPreferencePage_test_plugin_pattern_group;
 	public static String MainPreferencePage_test_plugin_pattern_label;

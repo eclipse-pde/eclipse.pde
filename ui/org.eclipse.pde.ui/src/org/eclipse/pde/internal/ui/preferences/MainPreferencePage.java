@@ -82,6 +82,7 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 	private Button fAlwaysPreferWorkspace;
 	private Button fDisableAPIAnalysisBuilder;
 	private Button fRunAPIAnalysisBuilderAsJob;
+	private Button fUpdateClasspathInParallel;
 	private Text fTestPluginPatternText;
 
 
@@ -134,6 +135,12 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		fRunAPIAnalysisBuilderAsJob.setText(PDEUIMessages.MainPreferencePage_RunAPIAnalysisBuilderAsJob);
 		fRunAPIAnalysisBuilderAsJob.setSelection(
 				PDECore.getDefault().getPreferencesManager().getBoolean(ICoreConstants.RUN_API_ANALYSIS_AS_JOB));
+
+		fUpdateClasspathInParallel = new Button(optionComp, SWT.CHECK);
+		fUpdateClasspathInParallel.setText(PDEUIMessages.MainPreferencePage_UpdateClasspathInParallel);
+		fUpdateClasspathInParallel.setToolTipText(PDEUIMessages.MainPreferencePage_UpdateClasspathInParallelTooltip);
+		fUpdateClasspathInParallel.setSelection(
+				PDECore.getDefault().getPreferencesManager().getBoolean(ICoreConstants.UPDATE_CLASSPATH_IN_PARALLEL));
 
 		fDisableAPIAnalysisBuilder.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
 			fRunAPIAnalysisBuilderAsJob.setEnabled(!fDisableAPIAnalysisBuilder.getSelection());
@@ -340,6 +347,12 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 			PDEPreferencesManager prefs = PDECore.getDefault().getPreferencesManager();
 			prefs.setValue(ICoreConstants.RUN_API_ANALYSIS_AS_JOB, runAPIAnalysisAsJob);
 		}
+		boolean updateClasspathInParallel = fUpdateClasspathInParallel.getSelection();
+		if (PDECore.getDefault().getPreferencesManager()
+				.getBoolean(ICoreConstants.UPDATE_CLASSPATH_IN_PARALLEL) != updateClasspathInParallel) {
+			PDEPreferencesManager prefs = PDECore.getDefault().getPreferencesManager();
+			prefs.setValue(ICoreConstants.UPDATE_CLASSPATH_IN_PARALLEL, updateClasspathInParallel);
+		}
 		PDECore.getDefault().getPreferencesManager().savePluginPreferences();
 		PDEPlugin.getDefault().getPreferenceManager().savePluginPreferences();
 		return super.performOk();
@@ -366,6 +379,8 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		fRunAPIAnalysisBuilderAsJob.setEnabled(true);
 		fRunAPIAnalysisBuilderAsJob.setSelection(
 				PDECore.getDefault().getPreferencesManager().getDefaultBoolean(ICoreConstants.RUN_API_ANALYSIS_AS_JOB));
+		fUpdateClasspathInParallel.setSelection(PDECore.getDefault().getPreferencesManager()
+				.getDefaultBoolean(ICoreConstants.UPDATE_CLASSPATH_IN_PARALLEL));
 		fDisableAPIAnalysisBuilder
 				.setSelection(store.getDefaultBoolean(IPreferenceConstants.DISABLE_API_ANALYSIS_BUILDER));
 		fTestPluginPatternText.setText(store.getDefaultString(IPreferenceConstants.TEST_PLUGIN_PATTERN));

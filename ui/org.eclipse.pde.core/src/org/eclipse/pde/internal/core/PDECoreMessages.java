@@ -286,6 +286,10 @@ public class PDECoreMessages extends NLS {
 
 	public static String ClasspathComputer_failed;
 
+	public static String ClasspathContainerState_computing;
+
+	public static String ClasspathContainerState_applying;
+
 	public static String ClasspathHelper_BadFileLocation;
 
 	public static String ConvertSchemaToHTML_CannotFindIncludedSchema;

@@ -354,6 +354,13 @@ public interface ICoreConstants {
 	String RUN_API_ANALYSIS_AS_JOB = "Preferences.MainPage.runAPIAnalysisAsJob";//$NON-NLS-1$
 
 	/**
+	 * Boolean preference whether the classpath containers of several projects
+	 * may be computed in parallel when a single update run touches many
+	 * projects, for example after a target platform reload.
+	 */
+	String UPDATE_CLASSPATH_IN_PARALLEL = "Preferences.MainPage.updateClasspathInParallel";//$NON-NLS-1$
+
+	/**
 	 * Explicit preference value for {@link #WORKSPACE_TARGET_HANDLE} when the user chooses no
 	 * target for the workspace (no external bundles).
 	 */
