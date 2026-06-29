@@ -276,13 +276,16 @@ public class LaunchAction extends Action {
 			'-' + IEnvironment.P_OS, '-' + IEnvironment.P_WS, '-' + IEnvironment.P_ARCH, '-' + IEnvironment.P_NL);
 
 	private String concatArgs(String initialArgs, String userArgs) {
-		List<String> arguments = new ArrayList<>(Arrays.asList(DebugPlugin.splitArguments(initialArgs)));
+		List<String> initialArgsList = Arrays.asList(DebugPlugin.splitArguments(initialArgs));
+		List<String> arguments = new ArrayList<>(initialArgsList);
 		if (userArgs != null && userArgs.length() > 0) {
 			List<String> userArgsList = Arrays.asList(DebugPlugin.splitArguments(userArgs));
 			boolean previousHasSubArgument = false;
 			for (String userArg : userArgsList) {
 				boolean hasSubArgument = PROGRAM_ARGUMENTS.contains(userArg);
-				if (!arguments.contains(userArg) || hasSubArgument || previousHasSubArgument) {
+				// Compare against the initial arguments, not the growing list,
+				// so repeated user values like "-target testarg -helper testarg" are kept.
+				if (!initialArgsList.contains(userArg) || hasSubArgument || previousHasSubArgument) {
 					arguments.add(userArg);
 				}
 				previousHasSubArgument = hasSubArgument;
