@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="ASCII"?>
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmi:id="_layoutSpyFragmentRoot">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_layoutSpyCommandsFragment" featurename="commands" parentElementId="xpath:/">
+    <elements xsi:type="commands:Command" xmi:id="_layoutSpyCommand" elementId="org.eclipse.tools.layout.spy.commands.layoutSpyCommand" commandName="%spy-layout-command.name" description="%spy-layout-command.description">
+      <persistedState key="persistState" value="false"/>
+    </elements>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_layoutSpyHandlersFragment" featurename="handlers" parentElementId="xpath:/">
+    <elements xsi:type="commands:Handler" xmi:id="_layoutSpyHandler" elementId="org.eclipse.tools.layout.spy.handler.layoutSpy" contributionURI="bundleclass://org.eclipse.tools.layout.spy/org.eclipse.tools.layout.spy.internal.handlers.LayoutSpyHandler" command="_layoutSpyCommand">
+      <persistedState key="persistState" value="false"/>
+    </elements>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_layoutSpyBindingsFragment" featurename="bindingTables" parentElementId="xpath:/">
+    <elements xsi:type="commands:BindingTable" xmi:id="_layoutSpyBindingTable" elementId="org.eclipse.tools.layout.spy.bindingtable" bindingContext="_layoutSpyDialogAndWindowContext">
+      <persistedState key="persistState" value="false"/>
+      <bindings xmi:id="_layoutSpyKeyBinding" elementId="org.eclipse.tools.layout.spy.keybinding.layoutSpy" keySequence="M1+M2+M3+F9" command="_layoutSpyCommand">
+        <persistedState key="persistState" value="false"/>
+      </bindings>
+    </elements>
+  </fragments>
+  <imports xsi:type="commands:BindingContext" xmi:id="_layoutSpyDialogAndWindowContext" elementId="org.eclipse.ui.contexts.dialogAndWindow"/>
+</fragment:ModelFragments>

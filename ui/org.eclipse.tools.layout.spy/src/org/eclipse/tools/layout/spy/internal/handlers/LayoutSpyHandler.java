@@ -14,38 +14,25 @@
  *******************************************************************************/
 package org.eclipse.tools.layout.spy.internal.handlers;
 
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.e4.core.di.annotations.Execute;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.tools.layout.spy.internal.dialogs.LayoutSpyDialog;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.handlers.HandlerUtil;
 
-public class LayoutSpyHandler extends AbstractHandler {
+import jakarta.inject.Named;
+
+public class LayoutSpyHandler {
 	private LayoutSpyDialog popupDialog;
 
-	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
+	@Execute
+	public void execute(@Named(IServiceConstants.ACTIVE_SHELL) Shell shell) {
 		if (popupDialog != null) {
 			popupDialog.close();
-		}
-
-		Shell shell = HandlerUtil.getActiveShell(event);
-		if (shell == null || shell.isDisposed()) {
-			// The active shell may have been disposed since the user initiated the command,
-			// such as when it was started via Find Actions dialog whose shell is disposed
-			// as a side effect of launching this handler
-			IWorkbenchWindow activeWorkbenchWindow = HandlerUtil.getActiveWorkbenchWindow(event);
-			if (activeWorkbenchWindow != null) {
-				shell = activeWorkbenchWindow.getShell();
-			}
 		}
 		if (shell != null && !shell.isDisposed()) {
 			popupDialog = new LayoutSpyDialog(shell);
 			popupDialog.open();
 		}
-		return null;
 	}
 
 }
