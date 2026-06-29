@@ -39,14 +39,16 @@ mvn verify -pl :org.eclipse.pde.ui.tests -Pbuild-individual-bundles
 mvn verify -pl :org.eclipse.pde.ui.tests -Pbuild-individual-bundles -Dtest=DependencyLoopFinderTest
 ```
 
-**Changed production code too?** Build the source bundle alongside its test bundle:
+**Changed production code too?** Build the source bundle alongside its test bundle, and add the `javac` profile:
 ```bash
-mvn verify -pl :org.eclipse.pde.core,:org.eclipse.pde.ui.tests -Pbuild-individual-bundles
+mvn clean verify -pl :org.eclipse.pde.core,:org.eclipse.pde.ui.tests -Pbuild-individual-bundles,javac
 ```
 
-**Headless (Wayland-safe):** pin the GTK backend to X11 so the UI test harness renders on Xvfb instead of the real compositor:
+`,javac` is required, otherwise the baseline step replaces your freshly built classes with the released bundle and the test runs the old code.
+
+**Headless:** UI tests need a display; on a machine without one, run them under a virtual framebuffer (e.g. `xvfb-run`):
 ```bash
-GDK_BACKEND=x11 xvfb-run -a mvn verify -pl :org.eclipse.pde.ui.tests -Pbuild-individual-bundles -Dtest=DependencyLoopFinderTest
+mvn verify -pl :org.eclipse.pde.ui.tests -Pbuild-individual-bundles -Dtest=DependencyLoopFinderTest
 ```
 
 The first run downloads the target platform from p2, so it needs network access; running offline (`-o`) only works once those artifacts are cached.
