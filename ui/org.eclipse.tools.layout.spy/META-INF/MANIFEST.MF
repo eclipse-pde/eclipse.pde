@@ -10,7 +10,9 @@ Require-Bundle: org.eclipse.jface.databinding;bundle-version="1.9.0",
  org.eclipse.jdt.annotation;resolution:=optional,
  org.eclipse.core.databinding.property;bundle-version="1.6.0",
  org.eclipse.swt;bundle-version="3.135.0",
- org.eclipse.jface;bundle-version="3.40.0"
+ org.eclipse.jface;bundle-version="3.40.0",
+ org.eclipse.e4.ui.model.workbench;bundle-version="[2.4.0,3.0.0)",
+ org.eclipse.e4.ui.workbench;bundle-version="[1.16.0,2.0.0)"
 Import-Package: jakarta.annotation;version="[2.0.0,4.0.0)",
  jakarta.inject;version="[2.0.0,3.0.0)",
  org.eclipse.core.runtime;common=split;version="[3.8.0,4.0.0)",
