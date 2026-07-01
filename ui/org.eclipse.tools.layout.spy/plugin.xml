@@ -24,6 +24,10 @@
             apply="always"
             uri="fragment.e4xmi">
       </fragment>
+      <processor
+            beforefragment="false"
+            class="org.eclipse.tools.layout.spy.internal.processors.LayoutSpyBindingProcessor">
+      </processor>
    </extension>
    <extension
          point="org.eclipse.pde.spy.core.spyPart">
