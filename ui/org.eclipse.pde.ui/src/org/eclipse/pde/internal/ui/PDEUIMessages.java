@@ -462,6 +462,8 @@ public class PDEUIMessages extends NLS {
 	public static String ShowBundlesDialog_Copy;
 	public static String ShowBundlesDialog_Close;
 	public static String ShowBundlesDialog_LaunchBundles;
+	public static String ShowBundlesDialog_Explanation;
+	public static String ShowBundlesDialog_FilterMessage;
 
 	public static String TargetCreationPage_0;
 

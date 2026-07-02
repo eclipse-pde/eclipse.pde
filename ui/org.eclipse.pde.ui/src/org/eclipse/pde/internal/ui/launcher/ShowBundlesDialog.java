@@ -14,8 +14,13 @@
 package org.eclipse.pde.internal.ui.launcher;
 
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import java.util.StringJoiner;
+import java.util.Set;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -23,11 +28,14 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -36,8 +44,10 @@ import org.eclipse.swt.widgets.Text;
 
 
 public class ShowBundlesDialog extends Dialog {
-	private Text fModuleArgumentsText;
+	private Text fFilterText;
+	private StyledText fModuleArgumentsText;
 	private final Map<IPluginModelBase, String> fModelsWithStartLevels;
+	private List<BundleLine> fAllLines;
 
 
 	protected ShowBundlesDialog(Shell parentShell, Map<IPluginModelBase, String> modelsWithLevels) {
@@ -83,23 +93,72 @@ public class ShowBundlesDialog extends Dialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite comp = (Composite) super.createDialogArea(parent);
-		Label explanation = new Label(comp, SWT.NONE);
-		explanation.setText("List of all bundles contained in this launch using the schema:\n" //$NON-NLS-1$
-				+ "<Symbolic Name>, <Version>, <Start level>, <File Path>"); //$NON-NLS-1$
+		comp.setLayout(new GridLayout());
+
+		Label explanation = new Label(comp, SWT.WRAP);
+		explanation.setText(PDEUIMessages.ShowBundlesDialog_Explanation);
 		explanation.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		fModuleArgumentsText = new Text(comp, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+
+		fFilterText = new Text(comp, SWT.SEARCH | SWT.ICON_SEARCH | SWT.ICON_CANCEL | SWT.BORDER);
+		fFilterText.setMessage(PDEUIMessages.ShowBundlesDialog_FilterMessage);
+		fFilterText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
+		fModuleArgumentsText = new StyledText(comp, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		fModuleArgumentsText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		StringJoiner lines = new StringJoiner("\n"); //$NON-NLS-1$
-		fModelsWithStartLevels.forEach((model, value) -> {
-			BundleDescription bundle = model.getBundleDescription();
-			String startLevel = value.substring(0, value.indexOf(':'));
-			lines.add(bundle.getSymbolicName() + ", " + bundle.getVersion() + ", " + startLevel + ", " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					+ model.getInstallLocation());
-		});
-		fModuleArgumentsText.setText(lines.toString());
 		fModuleArgumentsText.setEditable(false);
 
+		fAllLines = createBundleLines();
+		fFilterText.addModifyListener(e -> updateBundleText());
+		updateBundleText();
+
 		return comp;
+	}
+
+	private List<BundleLine> createBundleLines() {
+		Set<String> duplicateBundles = new HashSet<>();
+		Set<String> seenBundles = new HashSet<>();
+		for (IPluginModelBase model : fModelsWithStartLevels.keySet()) {
+			BundleDescription bundle = model.getBundleDescription();
+			String symbolicName = bundle.getSymbolicName();
+			if (!seenBundles.add(symbolicName)) {
+				duplicateBundles.add(symbolicName);
+			}
+		}
+
+		List<BundleLine> lines = fModelsWithStartLevels.entrySet().stream().map(entry -> {
+			IPluginModelBase model = entry.getKey();
+			BundleDescription bundle = model.getBundleDescription();
+			String symbolicName = bundle.getSymbolicName();
+			String startLevel = entry.getValue().substring(0, entry.getValue().indexOf(':'));
+			String line = symbolicName + ", " + bundle.getVersion() + ", " + startLevel + ", " + model.getInstallLocation(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			return new BundleLine(line, duplicateBundles.contains(symbolicName));
+		}).toList();
+		lines = new ArrayList<>(lines);
+		Collections.sort(lines, (left, right) -> String.CASE_INSENSITIVE_ORDER.compare(left.text(), right.text()));
+		return lines;
+	}
+
+	private void updateBundleText() {
+		String filter = fFilterText.getText().trim().toLowerCase(Locale.ROOT);
+		StringBuilder text = new StringBuilder();
+		List<StyleRange> styleRanges = new ArrayList<>();
+		for (BundleLine line : fAllLines) {
+			if (filter.isEmpty() || line.text.toLowerCase(Locale.ROOT).contains(filter)) {
+				if (text.length() > 0) {
+					text.append('\n');
+				}
+				int offset = text.length();
+				text.append(line.text);
+				if (line.duplicate) {
+					styleRanges.add(new StyleRange(offset, line.text.length(), null, null, SWT.BOLD));
+				}
+			}
+		}
+		fModuleArgumentsText.setText(text.toString());
+		fModuleArgumentsText.setStyleRanges(styleRanges.toArray(StyleRange[]::new));
+	}
+
+	private record BundleLine(String text, boolean duplicate) {
 	}
 
 	@Override
