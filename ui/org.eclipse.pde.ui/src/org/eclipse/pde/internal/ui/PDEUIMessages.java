@@ -251,6 +251,7 @@ public class PDEUIMessages extends NLS {
 	public static String ContainerRenameParticipant_renameBundleId;
 
 	public static String ControlValidationUtility_errorMsgFilterInvalidSyntax;
+	public static String ControlValidationUtility_errorMsgFeatureFilterInvalidSyntax;
 	public static String ControlValidationUtility_errorMsgKeyNotFound;
 	public static String ControlValidationUtility_errorMsgNotOnClasspath;
 	public static String ControlValidationUtility_errorMsgPluginUnresolved;
@@ -987,6 +988,7 @@ public class PDEUIMessages extends NLS {
 	public static String ManifestEditor_MatchSection_equivalent;
 	public static String ManifestEditor_MatchSection_compatible;
 	public static String ManifestEditor_MatchSection_greater;
+	public static String ManifestEditor_MatchSection_filter;
 
 	public static String ManifestEditor_PluginSpecSection_title;
 	public static String ManifestEditor_PluginSpecSection_desc;
