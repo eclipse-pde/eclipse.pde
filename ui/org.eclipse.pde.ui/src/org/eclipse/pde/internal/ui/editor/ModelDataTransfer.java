@@ -18,7 +18,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
+import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
+import org.eclipse.pde.internal.core.util.VMUtil;
 import org.eclipse.swt.dnd.ByteArrayTransfer;
 import org.eclipse.swt.dnd.TransferData;
 
@@ -50,12 +53,12 @@ public class ModelDataTransfer extends ByteArrayTransfer {
 
 	@Override
 	protected int[] getTypeIds() {
-		return new int[] {TYPEID};
+		return new int[] { TYPEID };
 	}
 
 	@Override
 	protected String[] getTypeNames() {
-		return new String[] {TYPE_NAME};
+		return new String[] { TYPE_NAME };
 	}
 
 	@Override
@@ -72,6 +75,9 @@ public class ModelDataTransfer extends ByteArrayTransfer {
 
 			//write each object
 			for (Object object : objects) {
+				if (object instanceof IExecutionEnvironment ee) {
+					object = new EESerializationSurogate(ee.getId());
+				}
 				objectOut.writeObject(object);
 			}
 
@@ -94,11 +100,21 @@ public class ModelDataTransfer extends ByteArrayTransfer {
 			int count = in.readInt();
 			Object[] objects = new Object[count];
 			for (int i = 0; i < count; i++) {
-				objects[i] = in.readObject();
+				Object object = in.readObject();
+				if (object instanceof EESerializationSurogate ee) {
+					object = VMUtil.getExecutionEnvironment(ee.eeId());
+				}
+				objects[i] = object;
 			}
 			return objects;
 		} catch (ClassNotFoundException | IOException e) {
 			return null;
 		}
+	}
+
+	private record EESerializationSurogate(String eeId) implements Serializable {
+		// JDT doesn't want to make IExecutionEnvironment serializable, so we
+		// need special handling in PDE:
+		// https://github.com/eclipse-jdt/eclipse.jdt.debug/pull/456
 	}
 }
