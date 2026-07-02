@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2024 IBM Corporation and others.
+ * Copyright (c) 2010, 2024, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -258,6 +258,30 @@ public class PDEProject {
 	 */
 	public static IFolder getMetaInf(IProject project) {
 		return getBundleRelativeFolder(project, IPath.fromOSString(ICoreConstants.MANIFEST_FOLDER_NAME));
+	}
+
+	/**
+	 * Returns the resource in the specified project corresponding to its
+	 * <code>META-INF/p2.inf</code> file (for bundle/plugin projects).
+	 *
+     * @param project project
+	 * @return <code>META-INF/p2.inf</code> file that may or may not exist
+	 */
+	public static IFile getBundleP2Inf(IProject project) {
+		return getBundleRelativeFile(project, ICoreConstants.P2_INF_BUNDLE_PATH);
+	}
+
+	/**
+	 * Returns the resource in the specified project corresponding to its
+	 * <code>p2.inf</code> file (for feature projects). Feature projects have
+	 * the p2.inf file in the project root, not in META-INF.
+	 *
+	 * @param project
+	 *            project
+	 * @return <code>p2.inf</code> file that may or may not exist
+	 */
+	public static IFile getFeatureP2Inf(IProject project) {
+		return getBundleRelativeFile(project, ICoreConstants.P2_INF_FEATURE_PATH);
 	}
 
 	/**
