@@ -3,10 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Component XML TCK
 Bundle-SymbolicName: org.eclipse.pde.ds.tck
 Bundle-Version: 1.0.0.qualifier
-Import-Package: org.osgi.framework,
- org.osgi.service.component,
- org.osgi.service.component.propertytypes,
- org.osgi.service.log
 Service-Component: OSGI-INF/org.osgi.impl.bundle.component.annotations.HelloWorld10.xml,
  OSGI-INF/testActivationFields.xml,
  OSGI-INF/testComponentPropertyTypes.xml,
