@@ -162,6 +162,16 @@ public abstract class InputContext {
 		fDocumentProvider = createDocumentProvider(fEditorInput);
 		try {
 			fDocumentProvider.connect(fEditorInput);
+			// Verify that the document is available after connect()
+			// This can fail if the file was deleted/moved during editor initialization
+			// or if there's a race condition with workspace events
+			IDocument document = fDocumentProvider.getDocument(fEditorInput);
+			if (document == null) {
+				throw new CoreException(new org.eclipse.core.runtime.Status(
+					org.eclipse.core.runtime.IStatus.ERROR,
+					"org.eclipse.pde.ui", //$NON-NLS-1$
+					"Document not available after connecting to document provider for input: " + fEditorInput.getName())); //$NON-NLS-1$
+			}
 			fModel = createModel(fEditorInput);
 			if (fModel instanceof IModelChangeProvider) {
 				fModelListener = e -> {
