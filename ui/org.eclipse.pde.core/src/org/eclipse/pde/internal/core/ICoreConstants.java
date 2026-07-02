@@ -339,6 +339,13 @@ public interface ICoreConstants {
 	String WORKSPACE_TARGET_HANDLE = "workspace_target_handle"; //$NON-NLS-1$
 
 	/**
+	 * Preference key holding the modification timestamp of the active workspace
+	 * target file at its last load, used on startup to detect external edits
+	 * (e.g. a {@code git pull}) and reload automatically.
+	 */
+	String WORKSPACE_TARGET_FILE_STAMP = "workspace_target_file_stamp"; //$NON-NLS-1$
+
+	/**
 	 * Preference key for the workspace bundle overriding target bundle for the
 	 * same id
 	 */
