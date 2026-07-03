@@ -102,15 +102,8 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.Widget;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.css.CSSRule;
-import org.w3c.dom.css.CSSRuleList;
 import org.w3c.dom.css.CSSStyleDeclaration;
-import org.w3c.dom.css.CSSStyleRule;
-import org.w3c.dom.css.CSSStyleSheet;
 import org.w3c.dom.css.CSSValue;
-import org.w3c.dom.css.DocumentCSS;
-import org.w3c.dom.stylesheets.StyleSheet;
-import org.w3c.dom.stylesheets.StyleSheetList;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
@@ -1180,47 +1173,27 @@ public class CssSpyPart {
 	 */
 	private Map<String, String> getCSSRuleSources(CSSEngine engine, CSSStylableElement element) {
 		Map<String, String> sources = new HashMap<>();
-		DocumentCSS docCSS = engine.getDocumentCSS();
-		if (docCSS == null) {
-			return sources;
-		}
-		StyleSheetList sheets = docCSS.getStyleSheets();
-		for (int i = 0; i < sheets.getLength(); i++) {
-			StyleSheet sheet = sheets.item(i);
-			if (!(sheet instanceof CSSStyleSheet cssSheet)) {
-				continue;
-			}
-			String href = cssSheet.getHref();
-			String filename = href != null ? href.substring(href.lastIndexOf('/') + 1) : null;
-			CSSRuleList rules = cssSheet.getCssRules();
-			for (int j = 0; j < rules.getLength(); j++) {
-				CSSRule rule = rules.item(j);
-				if (!(rule instanceof CSSStyleRule styleRule)) {
-					continue;
+		CssEngineCompat.forEachStyleRule(engine, (selectorText, ruleDecl, sourceName) -> {
+			try {
+				var selectors = engine.parseSelectors(selectorText);
+				boolean matched = false;
+				for (int k = 0; k < selectors.getLength(); k++) {
+					if (engine.matches(selectors.item(k), element, null)) {
+						matched = true;
+						break;
+					}
 				}
-				try {
-					var selectors = engine.parseSelectors(styleRule.getSelectorText());
-					boolean matched = false;
-					for (int k = 0; k < selectors.getLength(); k++) {
-						if (engine.matches(selectors.item(k), element, null)) {
-							matched = true;
-							break;
-						}
-					}
-					if (!matched) {
-						continue;
-					}
-					String source = styleRule.getSelectorText()
-							+ (filename != null ? " @ " + filename : ""); //$NON-NLS-1$
-					CSSStyleDeclaration ruleDecl = styleRule.getStyle();
-					for (int p = 0; p < ruleDecl.getLength(); p++) {
-						sources.put(ruleDecl.item(p), source); // last match in source order wins
-					}
-				} catch (Exception ignored) {
-					// skip unparseable selectors
+				if (!matched) {
+					return;
 				}
+				String source = selectorText + (sourceName != null ? " @ " + sourceName : ""); //$NON-NLS-1$
+				for (int p = 0; p < ruleDecl.getLength(); p++) {
+					sources.put(ruleDecl.item(p), source); // last match in source order wins
+				}
+			} catch (Exception ignored) {
+				// skip unparseable selectors
 			}
-		}
+		});
 		return sources;
 	}
 
