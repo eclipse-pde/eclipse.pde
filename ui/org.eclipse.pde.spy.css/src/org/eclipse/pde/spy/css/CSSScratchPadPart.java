@@ -14,12 +14,9 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.e4.ui.css.core.dom.ExtendedDocumentCSS;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.internal.theme.ThemeEngine;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
@@ -36,8 +33,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.w3c.dom.stylesheets.StyleSheet;
-import org.w3c.dom.stylesheets.StyleSheetList;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
@@ -134,20 +129,10 @@ public class CSSScratchPadPart {
 				sb.append("\n\n"); //$NON-NLS-1$
 			}
 			sb.append(MessageFormat.format(Messages.CSSScratchPadPart_Engine, engine.getClass().getSimpleName()));
-			ExtendedDocumentCSS doc = (ExtendedDocumentCSS) engine.getDocumentCSS();
-			List<StyleSheet> sheets = new ArrayList<>();
-			StyleSheetList list = doc.getStyleSheets();
-			for (int i = 0; i < list.getLength(); i++) {
-				sheets.add(list.item(i));
-			}
 
 			try {
 				Reader reader = new StringReader(cssText.getText());
-				sheets.add(0, engine.parseStyleSheet(reader));
-				doc.removeAllStyleSheets();
-				for (StyleSheet sheet : sheets) {
-					doc.addStyleSheet(sheet);
-				}
+				CssEngineCompat.applyScratchStyleSheet(engine, reader);
 				engine.reapply();
 
 				long nanoDiff = System.nanoTime() - start;
