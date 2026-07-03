@@ -11,6 +11,7 @@ import java.util.Map;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -20,7 +21,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.pde.internal.core.PluginModelManager;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -29,6 +33,7 @@ import org.osgi.framework.Bundle;
 /**
  * JUnit 5 Extension for setting up the test workspace.
  */
+@SuppressWarnings("restriction")
 public class WorkspaceSetupExtension implements BeforeAllCallback, AfterAllCallback {
 
 	private static final Map<String, String> PROJECTS = Map.of( //
@@ -51,10 +56,17 @@ public class WorkspaceSetupExtension implements BeforeAllCallback, AfterAllCallb
 		final IWorkspace ws = ResourcesPlugin.getWorkspace();
 		final Bundle bundle = Activator.getContext().getBundle();
 
+		// Auto-building would transiently clear the DS problem markers while tests read them
+		IWorkspaceDescription description = ws.getDescription();
+		if (description.isAutoBuilding()) {
+			description.setAutoBuilding(false);
+			ws.setDescription(description);
+		}
+
 		Job wsJob = new WorkspaceJob("Test Workspace Setup") {
 			@Override
 			public IStatus runInWorkspace(IProgressMonitor m) throws CoreException {
-				SubMonitor monitor = SubMonitor.convert(m, PROJECTS.size() * 8);
+				SubMonitor monitor = SubMonitor.convert(m, PROJECTS.size() * 2);
 				// import test projects
 				Path wsRoot = ws.getRoot().getLocation().toPath();
 				for (Map.Entry<String, String> entry : PROJECTS.entrySet()) {
@@ -73,10 +85,6 @@ public class WorkspaceSetupExtension implements BeforeAllCallback, AfterAllCallb
 					}
 					project.create(monitor.split(1));
 					project.open(monitor.split(1));
-					for (int i = 0; i < 2; i++) { // Build twice. Sometimes the setup is unstable
-						project.build(IncrementalProjectBuilder.FULL_BUILD, monitor.split(2));
-						project.refreshLocal(IResource.DEPTH_INFINITE, monitor.split(1));
-					}
 				}
 				return Status.OK_STATUS;
 			}
@@ -84,6 +92,21 @@ public class WorkspaceSetupExtension implements BeforeAllCallback, AfterAllCallb
 
 		wsJob.schedule();
 		wsJob.join();
+
+		// The requiredPlugins container is filled by an async job; without waiting for
+		// it the build compiles against an empty classpath and creates no markers
+		for (String projectName : PROJECTS.keySet()) {
+			JavaCore.create(ws.getRoot().getProject(projectName)).getResolvedClasspath(true);
+		}
+		Job.getJobManager().join(PluginModelManager.class, null);
+
+		for (String projectName : PROJECTS.keySet()) {
+			IProject project = ws.getRoot().getProject(projectName);
+			project.build(IncrementalProjectBuilder.FULL_BUILD, null);
+			project.refreshLocal(IResource.DEPTH_INFINITE, null);
+		}
+
+		waitForBuild();
 	}
 
 	@Override
@@ -107,6 +130,12 @@ public class WorkspaceSetupExtension implements BeforeAllCallback, AfterAllCallb
 		};
 		wsJob.schedule();
 		wsJob.join();
+	}
+
+	private static void waitForBuild() throws InterruptedException {
+		IJobManager jobManager = Job.getJobManager();
+		jobManager.join(ResourcesPlugin.FAMILY_MANUAL_BUILD, null);
+		jobManager.join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
 	}
 
 	private static void copyResources(Bundle bundle, String srcPath, Path targetPath) throws IOException {
