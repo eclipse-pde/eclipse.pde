@@ -11,7 +11,6 @@
 package org.eclipse.pde.spy.css;
 
 import java.io.IOException;
-import java.io.Reader;
 import java.io.StringReader;
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -131,8 +130,8 @@ public class CSSScratchPadPart {
 			sb.append(MessageFormat.format(Messages.CSSScratchPadPart_Engine, engine.getClass().getSimpleName()));
 
 			try {
-				Reader reader = new StringReader(cssText.getText());
-				CssEngineCompat.applyScratchStyleSheet(engine, reader);
+				// Appended last, so the scratch sheet wins cascade ties.
+				engine.parseStyleSheet(new StringReader(cssText.getText()));
 				engine.reapply();
 
 				long nanoDiff = System.nanoTime() - start;

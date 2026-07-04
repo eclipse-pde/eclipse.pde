@@ -34,6 +34,10 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
+import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleRuleImpl;
+import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleSheetImpl;
+import org.eclipse.e4.ui.css.core.impl.dom.CssRule;
+import org.eclipse.e4.ui.css.core.impl.engine.CSSEngineImpl;
 import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -352,7 +356,7 @@ public class CssSpyPart {
 
 		StringBuilder sb = new StringBuilder();
 		CSSEngine engine = getCSSEngine(element);
-		CSSStyleDeclaration decl = engine.getViewCSS().getComputedStyle(element, null);
+		CSSStyleDeclaration decl = engine.computeStyle(element, null);
 
 		if (element.getCSSStyle() != null) {
 			sb.append(MessageFormat.format("\n{0}\n  ", Messages.CssSpyPart_CSS_Inline_Styles)); //$NON-NLS-1$
@@ -867,7 +871,7 @@ public class CssSpyPart {
 
 		CSSEngine engine = getCSSEngine(element);
 		// we first check the viewCSS and then the property values
-		CSSStyleDeclaration decl = engine.getViewCSS().getComputedStyle(element, null);
+		CSSStyleDeclaration decl = engine.computeStyle(element, null);
 
 		List<String> propertyNames = new ArrayList<>(engine.getCSSProperties(element));
 		Collections.sort(propertyNames);
@@ -1078,7 +1082,7 @@ public class CssSpyPart {
 
 			// CSS properties: computed value, declared token where different, and matched rule source
 			CSSEngine engine = getCSSEngine(element);
-			CSSStyleDeclaration decl = engine.getViewCSS().getComputedStyle(element, null);
+			CSSStyleDeclaration decl = engine.computeStyle(element, null);
 			Map<String, String> ruleSources = getCSSRuleSources(engine, element);
 			List<String> propertyNames = new ArrayList<>(engine.getCSSProperties(element));
 			Collections.sort(propertyNames);
@@ -1166,34 +1170,38 @@ public class CssSpyPart {
 	}
 
 	/**
-	 * Returns a map from CSS property name to "selector @ filename" for the last
-	 * matching CSS rule that declares each property for the given element. Iterates
-	 * stylesheets in source order so the last match (highest cascade precedence by
-	 * source position) wins.
+	 * Maps each CSS property to the selector of the last matching rule that declares
+	 * it, in stylesheet source order so the last match wins.
 	 */
 	private Map<String, String> getCSSRuleSources(CSSEngine engine, CSSStylableElement element) {
 		Map<String, String> sources = new HashMap<>();
-		CssEngineCompat.forEachStyleRule(engine, (selectorText, ruleDecl, sourceName) -> {
-			try {
-				var selectors = engine.parseSelectors(selectorText);
-				boolean matched = false;
-				for (int k = 0; k < selectors.getLength(); k++) {
-					if (engine.matches(selectors.item(k), element, null)) {
-						matched = true;
-						break;
+		for (CSSStyleSheetImpl sheet : ((CSSEngineImpl) engine).getStyleSheets()) {
+			for (CssRule rule : sheet.getRules()) {
+				if (!(rule instanceof CSSStyleRuleImpl styleRule)) {
+					continue; // @import rule, no selector
+				}
+				String selectorText = styleRule.getSelectorText();
+				try {
+					var selectors = engine.parseSelectors(selectorText);
+					boolean matched = false;
+					for (int k = 0; k < selectors.getLength(); k++) {
+						if (engine.matches(selectors.item(k), element, null)) {
+							matched = true;
+							break;
+						}
 					}
+					if (!matched) {
+						continue;
+					}
+					CSSStyleDeclaration ruleDecl = styleRule.getStyle();
+					for (int p = 0; p < ruleDecl.getLength(); p++) {
+						sources.put(ruleDecl.item(p), selectorText); // last match in source order wins
+					}
+				} catch (Exception ignored) {
+					// skip unparseable selectors
 				}
-				if (!matched) {
-					return;
-				}
-				String source = selectorText + (sourceName != null ? " @ " + sourceName : ""); //$NON-NLS-1$
-				for (int p = 0; p < ruleDecl.getLength(); p++) {
-					sources.put(ruleDecl.item(p), source); // last match in source order wins
-				}
-			} catch (Exception ignored) {
-				// skip unparseable selectors
 			}
-		});
+		}
 		return sources;
 	}
 
@@ -1205,7 +1213,7 @@ public class CssSpyPart {
 	private String findInheritSource(CSSEngine engine, CSSStylableElement element, String propertyName) {
 		Node parentNode = element.getParentNode();
 		while (parentNode instanceof CSSStylableElement parentEl) {
-			CSSStyleDeclaration parentDecl = engine.getViewCSS().getComputedStyle(parentEl, null);
+			CSSStyleDeclaration parentDecl = engine.computeStyle(parentEl, null);
 			if (parentDecl != null) {
 				CSSValue parentValue = parentDecl.getPropertyCSSValue(propertyName);
 				if (parentValue != null) {
