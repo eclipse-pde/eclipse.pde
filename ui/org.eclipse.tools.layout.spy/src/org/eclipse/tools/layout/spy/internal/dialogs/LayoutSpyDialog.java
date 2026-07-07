@@ -83,6 +83,8 @@ public class LayoutSpyDialog {
 	private TreeViewer widgetTree;
 	private Text details;
 	private Button selectWidgetButton;
+	private Button findClassButton;
+	private Text modelInfo;
 	private Shell overlay;
 
 	// Model
@@ -225,19 +227,29 @@ public class LayoutSpyDialog {
 		{
 			selectWidgetButton = new Button(buttonBar, SWT.PUSH);
 			selectWidgetButton.setText(Messages.LayoutSpyDialog_button_select_control);
+			findClassButton = new Button(buttonBar, SWT.PUSH);
+			findClassButton.setText(Messages.LayoutSpyDialog_button_find_class);
 			Button refreshButton = new Button(buttonBar, SWT.PUSH);
 			refreshButton.setText(Messages.LayoutSpyDialog_button_refresh);
 			refreshButton.addListener(SWT.Selection, event -> refreshTree());
 
-			GridLayoutFactory.fillDefaults().numColumns(2).generateLayout(buttonBar);
+			GridLayoutFactory.fillDefaults().numColumns(3).generateLayout(buttonBar);
 		}
 		GridDataFactory.fillDefaults().align(SWT.CENTER, SWT.CENTER).applyTo(buttonBar);
+
+		// Result of "Find Class": model element and implementing class of a clicked control.
+		Label modelLabel = new Label(container, SWT.NONE);
+		modelLabel.setText(Messages.LayoutSpyDialog_label_model_element);
+		modelInfo = new Text(container, SWT.READ_ONLY | SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+		modelInfo.setText(Messages.LayoutSpyDialog_model_prompt);
+		GridDataFactory.fillDefaults().hint(300, 90).grab(true, false).applyTo(modelInfo);
 
 		GridLayoutFactory.fillDefaults().margins(LayoutConstants.getMargins()).generateLayout(container);
 
 		// Attach listeners
 		container.addDisposeListener(event -> disposed());
 		selectWidgetButton.addListener(SWT.Selection, event -> selectControl());
+		findClassButton.addListener(SWT.Selection, event -> findClass());
 
 		// Set up the model
 		widgetTree.setContentProvider(new WidgetTreeContentProvider());
@@ -486,6 +498,28 @@ public class LayoutSpyDialog {
 		new ControlSelector((@Nullable Control control) -> {
 			if (control != null) {
 				openControl(control);
+			}
+			this.controlSelectorOpen.setValue(false);
+			if (ownsShell) {
+				shell.setVisible(true);
+			}
+		});
+	}
+
+	/**
+	 * Hides the spy, lets the user click a control and then shows the owning
+	 * application-model element and its implementing class.
+	 */
+	private void findClass() {
+		this.controlSelectorOpen.setValue(true);
+		// Only hide our own dialog; as a part this shell is the workbench window.
+		boolean ownsShell = shell != null;
+		if (ownsShell) {
+			shell.setVisible(false);
+		}
+		new ControlSelector((@Nullable Control control) -> {
+			if (control != null && !modelInfo.isDisposed()) {
+				modelInfo.setText(ModelElementResolver.describe(control));
 			}
 			this.controlSelectorOpen.setValue(false);
 			if (ownsShell) {

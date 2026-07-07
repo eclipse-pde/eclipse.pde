@@ -21,10 +21,13 @@ public class Messages extends NLS {
 	public static String LayoutSpyDialog_shell_text;
 	public static String LayoutSpyDialog_button_refresh;
 	public static String LayoutSpyDialog_button_select_control;
+	public static String LayoutSpyDialog_button_find_class;
 	public static String LayoutSpyDialog_button_show_overlay;
 	public static String LayoutSpyDialog_button_show_coloring;
 	public static String LayoutSpyDialog_label_widget_tree;
 	public static String LayoutSpyDialog_label_layout;
+	public static String LayoutSpyDialog_label_model_element;
+	public static String LayoutSpyDialog_model_prompt;
 	public static String LayoutSpyDialog_menu_copy_widget_info;
 	public static String LayoutSpyDialog_label_no_parent_control_selected;
 	public static String LayoutSpyDialog_label_not_a_composite;
