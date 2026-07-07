@@ -81,8 +81,6 @@ public class LayoutSpyDialog {
 	private static final int UNKNOWN = -2;
 	/** The shell owned by the standalone dialog, or {@code null} when hosted in a part. */
 	private Shell shell;
-	/** The composite the spy contents are built into (the owned shell or a hosting part). */
-	private Composite container;
 
 	// Controls
 	private TableViewer childList;
@@ -148,8 +146,6 @@ public class LayoutSpyDialog {
 	}
 
 	private void createContents(Composite container) {
-		this.container = container;
-
 		overlay = new Shell(SWT.ON_TOP | SWT.NO_TRIM);
 		{
 			overlay.addPaintListener(this::paintOverlay);
@@ -415,13 +411,19 @@ public class LayoutSpyDialog {
 	 */
 	private void selectControl() {
 		this.controlSelectorOpen.setValue(true);
-		this.container.getShell().setVisible(false);
+		// Only hide our own dialog; as a part this shell is the workbench window.
+		boolean ownsShell = shell != null;
+		if (ownsShell) {
+			shell.setVisible(false);
+		}
 		new ControlSelector((@Nullable Control control) -> {
 			if (control != null) {
 				openControl(control);
 			}
 			this.controlSelectorOpen.setValue(false);
-			this.container.getShell().setVisible(true);
+			if (ownsShell) {
+				shell.setVisible(true);
+			}
 		});
 	}
 
