@@ -3015,6 +3015,11 @@ public class PDEUIMessages extends NLS {
 
 	public static String OrganizeManifestsOperation_uselessPluginFile;
 
+	// adding as apart of OrganizeManifestsProcessor.java process within
+	// runCleanup()
+
+	public static String OrganizeManifestsOperation_updateBree;
+
 	public static String OrganizeManifestsOperation_nlIconPath;
 
 	public static String OrganizeManifestsOperation_unusedKeys;
@@ -3052,6 +3057,9 @@ public class PDEUIMessages extends NLS {
 	public static String OrganizeManifestsWizardPage_lazyStart;
 
 	public static String OrganizeManifestsWizardPage_uselessPluginFile;
+
+	// adding in a string for the createGeneralGroup() function.
+	public static String OrganizeManifestsWizardPage_updateBREE;
 
 	public static String OrganizeManifestsWizardPage_internationalizationGroup;
 

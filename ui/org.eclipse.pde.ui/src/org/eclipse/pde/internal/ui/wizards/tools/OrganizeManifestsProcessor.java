@@ -68,6 +68,8 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 	protected boolean fRemoveUselessFiles = false; // remove fragment/plugin.xml
 													// if no extension/extension
 													// point defined
+	protected boolean fUpdateBree = false; // updates BREE if current is lower
+											// than required
 	protected boolean fPrefixIconNL = false; // prefix icon paths with $nl$
 	protected boolean fUnusedKeys = false; // remove unused
 											// <bundle-localization>.properties
@@ -245,6 +247,17 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 			subMonitor.worked(1);
 		}
 
+		if (fUpdateBree) {
+			subMonitor.subTask(NLS.bind(PDEUIMessages.OrganizeManifestsOperation_updateBree, projectName));
+			if (!subMonitor.isCanceled()) {
+				Change[] results = OrganizeManifest.updateBree(fCurrentProject, currentBundle);
+				if (results.length > 0) {
+					result[0] = results[0];
+				}
+			}
+			subMonitor.worked(1);
+		}
+
 		if (fPrefixIconNL) {
 			subMonitor.subTask(NLS.bind(PDEUIMessages.OrganizeManifestsOperation_nlIconPath, projectName));
 			if (!subMonitor.isCanceled()) {
@@ -334,6 +347,10 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 
 	public void setRemoveUselessFiles(boolean removeUselessFiles) {
 		fRemoveUselessFiles = removeUselessFiles;
+	}
+
+	public void setUpdateBree(boolean updateBree) {
+		fUpdateBree = updateBree;
 	}
 
 	public void setPrefixIconNL(boolean prefixIconNL) {
