@@ -69,12 +69,19 @@ public class PluginContentPage extends ContentPage {
 	private Button fApiAnalysisButton;
 
 	/**
+	 * Button to enable Declarative Services processing for the project during
+	 * project creation
+	 */
+	private Button fDsProcessingButton;
+
+	/**
 	 * Dialog settings constants
 	 */
 	private final static String S_GENERATE_ACTIVATOR = "generatePluginActivator"; //$NON-NLS-1$
 	private final static String S_UI_PLUGIN = "uiPlugin"; //$NON-NLS-1$
 	private final static String S_RCP_PLUGIN = "rcpPlugin"; //$NON-NLS-1$
 	private final static String S_API_ANALYSIS = "apiAnalysis"; //$NON-NLS-1$
+	private final static String S_DS_PROCESSING = "dsProcessing"; //$NON-NLS-1$
 
 	protected final static int P_CLASS_GROUP = 2;
 	private final static String NO_EXECUTION_ENVIRONMENT = PDEUIMessages.PluginContentPage_noEE;
@@ -235,6 +242,13 @@ public class PluginContentPage extends ContentPage {
 			updateData();
 			validatePage();
 		}));
+
+		fDsProcessingButton = SWTFactory.createCheckButton(classGroup, PDEUIMessages.PluginContentPage_enable_ds_processing, null, false, 2);
+		fDsProcessingButton.setSelection((settings != null) ? settings.getBoolean(S_DS_PROCESSING) : false);
+		fDsProcessingButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			updateData();
+			validatePage();
+		}));
 	}
 
 	@Override
@@ -247,6 +261,8 @@ public class PluginContentPage extends ContentPage {
 		data.setRCPApplicationPlugin(!fData.isSimple() && !isPureOSGi() && fYesButton.getSelection());
 		// Don't turn on API analysis if disabled (no java project available)
 		data.setEnableAPITooling(fApiAnalysisButton.isEnabled() && fApiAnalysisButton.getSelection());
+		// Don't turn on DS processing if disabled
+		data.setEnableDSProcessing(fDsProcessingButton.isEnabled() && fDsProcessingButton.getSelection());
 		if (fEEChoice.isEnabled() && !fEEChoice.getText().equals(NO_EXECUTION_ENVIRONMENT)) {
 			fData.setExecutionEnvironment(fEEChoice.getText().trim());
 		} else {
@@ -335,6 +351,7 @@ public class PluginContentPage extends ContentPage {
 			fExeEnvButton.setEnabled(allowEESelection);
 			// API Tools only works for osgi bundles with java natures
 			fApiAnalysisButton.setEnabled(allowEESelection);
+			fDsProcessingButton.setEnabled(allowEESelection);
 
 			fRCPGroup.setVisible(!fData.isSimple() && !isPureOSGi());
 		}
@@ -387,6 +404,9 @@ public class PluginContentPage extends ContentPage {
 		}
 		if (fApiAnalysisButton.isEnabled()) {
 			settings.put(S_API_ANALYSIS, fApiAnalysisButton.getSelection());
+		}
+		if (fDsProcessingButton.isEnabled()) {
+			settings.put(S_DS_PROCESSING, fDsProcessingButton.getSelection());
 		}
 		settings.put(S_RCP_PLUGIN, fYesButton.getSelection());
 	}
