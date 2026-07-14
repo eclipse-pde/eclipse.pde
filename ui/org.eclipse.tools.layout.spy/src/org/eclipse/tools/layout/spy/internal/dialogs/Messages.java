@@ -19,15 +19,21 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.tools.layout.spy.internal.dialogs.messages"; //$NON-NLS-1$
 	public static String LayoutSpyDialog_shell_text;
-	public static String LayoutSpyDialog_button_open_child;
-	public static String LayoutSpyDialog_button_open_parent;
+	public static String LayoutSpyDialog_button_refresh;
 	public static String LayoutSpyDialog_button_select_control;
+	public static String LayoutSpyDialog_button_find_class;
 	public static String LayoutSpyDialog_button_show_overlay;
 	public static String LayoutSpyDialog_button_show_coloring;
-	public static String LayoutSpyDialog_label_children;
+	public static String LayoutSpyDialog_label_widget_tree;
 	public static String LayoutSpyDialog_label_layout;
+	public static String LayoutSpyDialog_label_model_element;
+	public static String LayoutSpyDialog_model_prompt;
+	public static String LayoutSpyDialog_menu_copy_widget_info;
 	public static String LayoutSpyDialog_label_no_parent_control_selected;
+	public static String LayoutSpyDialog_label_not_a_composite;
 	public static String LayoutSpyDialog_warning_bounds_outside_parent;
+	public static String LayoutSpyDialog_warning_monitor_zoom_mismatch;
+	public static String LayoutSpyDialog_warning_non_integer_device_pixels;
 	public static String LayoutSpyDialog_warning_control_overlaps_siblings;
 	public static String LayoutSpyDialog_warning_control_partially_clipped;
 	public static String LayoutSpyDialog_warning_grab_horizontally_scrolling;
