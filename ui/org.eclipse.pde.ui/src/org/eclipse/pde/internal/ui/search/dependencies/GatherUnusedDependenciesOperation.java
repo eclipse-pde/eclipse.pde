@@ -371,7 +371,11 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 		while (!(plugins.isEmpty())) {
 			String pluginId = plugins.pop();
 			IPluginModelBase base = PluginRegistry.findModel(pluginId);
-			if (base == null) {
+			// Do not remove a transitive dependency via an optional dependency,
+			// as it allows to just have the transitive dependency present
+			// without this one
+			boolean isPluginOptional = usedPlugins.containsKey(pluginId) && usedPlugins.get(pluginId).isOptional();
+			if (base == null || isPluginOptional) {
 				continue;
 			}
 			IPluginImport[] imports = base.getPluginBase().getImports();
