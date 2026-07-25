@@ -16,7 +16,6 @@
 package org.eclipse.pde.internal.ui.search.dependencies;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -51,7 +50,6 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.bnd.PdeProjectAnalyzer;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
@@ -362,37 +360,7 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 			}
 		}
 
-		Iterator<String> it = usedPlugins.keySet().iterator();
-		ArrayDeque<String> plugins = new ArrayDeque<>();
-		while (it.hasNext()) {
-			plugins.push(it.next().toString());
-		}
-		SubMonitor subMonitor = SubMonitor.convert(monitor);
-		while (!(plugins.isEmpty())) {
-			String pluginId = plugins.pop();
-			IPluginModelBase base = PluginRegistry.findModel(pluginId);
-			if (base == null) {
-				continue;
-			}
-			IPluginImport[] imports = base.getPluginBase().getImports();
-			SubMonitor iterationMonitor = subMonitor.setWorkRemaining(Math.max(plugins.size() + 1, 5)).split(1)
-					.setWorkRemaining(imports.length);
-			for (IPluginImport imp : imports) {
-				if (imp.isReexported()) {
-					String reExportedId = imp.getId();
-					if (reExportedId != null && reExportedId.equals(pluginId)) {
-						continue;
-					}
-					Object pluginImport = usedPlugins.remove(imp.getId());
-					if (pluginImport != null) {
-						fList.add(pluginImport);
-						updateMonitor(iterationMonitor, fList.size());
-					}
-					plugins.push(reExportedId);
-				}
-				iterationMonitor.worked(1);
-			}
-		}
+		monitor.done();
 	}
 
 	private static class Requestor extends SearchRequestor {
