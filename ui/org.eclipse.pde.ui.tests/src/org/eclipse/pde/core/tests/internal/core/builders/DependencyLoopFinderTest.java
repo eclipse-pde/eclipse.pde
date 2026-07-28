@@ -116,6 +116,34 @@ public class DependencyLoopFinderTest {
 	}
 
 	/**
+	 * A cycle that is only reachable through a second dependency of the root
+	 * must be reported too.
+	 *
+	 * <pre>
+	 *   r -> a, r -> d
+	 *   a -> b, a -> r
+	 *   b -> a
+	 *   d -> b
+	 * </pre>
+	 *
+	 * Two cycles pass through {@code r}: {@code r -> a -> r} and
+	 * {@code r -> d -> b -> a -> r}. Reaching {@code b} from {@code a} ends in
+	 * a cycle that does not touch {@code r}, which must not stop the search
+	 * from reaching {@code b} again through {@code d}.
+	 */
+	@Test
+	public void testCycleReachableOnlyViaSecondImportPathIsFound() throws Exception {
+		setTargetPlatform( //
+				bundle("loop.r", "1.0.0", entry(REQUIRE_BUNDLE, "loop.a,loop.d")), //
+				bundle("loop.a", "1.0.0", entry(REQUIRE_BUNDLE, "loop.b,loop.r")), //
+				bundle("loop.b", "1.0.0", entry(REQUIRE_BUNDLE, "loop.a")), //
+				bundle("loop.d", "1.0.0", entry(REQUIRE_BUNDLE, "loop.b")));
+
+		assertEquals(List.of("loop.r -> loop.a", "loop.r -> loop.d -> loop.b -> loop.a"),
+				loopSignatures("loop.r"));
+	}
+
+	/**
 	 * The reported cycles must not depend on the order in which the root
 	 * declares its dependencies.
 	 *
