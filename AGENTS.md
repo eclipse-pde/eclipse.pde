@@ -44,6 +44,17 @@ mvn verify -pl :org.eclipse.pde.ui.tests -Pbuild-individual-bundles -Dtest=Depen
 mvn verify -pl :org.eclipse.pde.core,:org.eclipse.pde.ui.tests -Pbuild-individual-bundles
 ```
 
+Every bundle not listed in `-pl` is taken from the target platform as a released bundle, so a changed bundle that the test bundle only reaches indirectly is not covered.
+`-am` (`--also-make`) builds the whole upstream closure of the test bundle from source instead:
+```bash
+mvn verify -pl :org.eclipse.pde.ui.tests -am -Pbuild-individual-bundles -Dtest=DependencyLoopFinderTest
+```
+
+**Confirm the test runtime really uses your build.**
+A test that passes or fails against a released bundle says nothing about the change.
+After a run, `ui/org.eclipse.pde.ui.tests/target/work/configuration/config.ini` lists the bundles the harness installed: an entry under the local `target/` directory is your build, one under `~/.m2/repository/p2/` is the released bundle.
+Only the test bundle itself is additionally mapped to its class folders, through `target/work/dev.properties`.
+
 **Headless (Wayland-safe):** pin the GTK backend to X11 so the UI test harness renders on Xvfb instead of the real compositor:
 ```bash
 GDK_BACKEND=x11 xvfb-run -a mvn verify -pl :org.eclipse.pde.ui.tests -Pbuild-individual-bundles -Dtest=DependencyLoopFinderTest
