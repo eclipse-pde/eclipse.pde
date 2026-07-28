@@ -21,11 +21,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
+import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IMatchRules;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.PDEState;
@@ -48,6 +50,9 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 	private boolean fHasBundleStructure;
 	private String fBundleSourceEntry;
 	private boolean fExportsExternalAnnotations;
+	private boolean fImportsFromState;
+	private boolean fImportsLoaded;
+	private boolean fImportsResolved;
 
 	public PluginBase(boolean readOnly) {
 		super(readOnly);
@@ -90,7 +95,36 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 
 	@Override
 	public IPluginImport[] getImports() {
+		ensureImportsLoaded();
 		return fImports.toArray(new IPluginImport[fImports.size()]);
+	}
+
+	/**
+	 * Computes the imports of a plug-in read from a {@link BundleDescription}
+	 * on demand. The bundles behind the Import-Package header are only known
+	 * once the state is resolved, which happens after the models have been
+	 * created, so reading them while loading the model would silently drop
+	 * them. Until the state is resolved the imports are recomputed on every
+	 * access, afterwards they are kept.
+	 */
+	private synchronized void ensureImportsLoaded() {
+		if (!fImportsFromState || fImportsResolved) {
+			return;
+		}
+		IPluginModelBase model = getPluginModel();
+		BundleDescription description = model != null ? model.getBundleDescription() : null;
+		if (description == null) {
+			return;
+		}
+		State state = description.getContainingState();
+		boolean resolved = state == null || state.isResolved();
+		if (fImportsLoaded && !resolved) {
+			return;
+		}
+		fImports = new ArrayList<>();
+		loadImports(description);
+		fImportsLoaded = true;
+		fImportsResolved = resolved;
 	}
 
 	@Override
@@ -122,7 +156,7 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		fBundleSourceEntry = state.getBundleSourceEntry(bundleDesc.getBundleId());
 		fExportsExternalAnnotations = state.exportsExternalAnnotations(bundleDesc.getBundleId());
 		loadRuntime(bundleDesc, state);
-		loadImports(bundleDesc);
+		fImportsFromState = true;
 	}
 
 	@Override
@@ -296,6 +330,9 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 	public void reset() {
 		fLibraries = new ArrayList<>();
 		fImports = new ArrayList<>();
+		fImportsFromState = false;
+		fImportsLoaded = false;
+		fImportsResolved = false;
 		fProviderName = null;
 		fSchemaVersion = null;
 		fVersion = ""; //$NON-NLS-1$
