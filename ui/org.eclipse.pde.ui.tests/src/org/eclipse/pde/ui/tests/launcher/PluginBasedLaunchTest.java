@@ -938,6 +938,50 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 	}
 
 	@Test
+	public void testGetMergedBundleMap_automaticallyAddRequirements_requirementSharedWithEarlierSortingSiblingFragment()
+			throws Exception {
+		// Both fragments are attached to 'plugin.host' and both require
+		// 'plugin.shared'. Per OSGi Core spec chapter 3.14 those become hosted
+		// requirements of the host, and ResolverBundle.attachFragment() merges
+		// them by symbolic name only, so the fragment attaching first owns the
+		// single resulting constraint and is named as the wire's requirement
+		// revision (spec chapter 6.4.1).
+		//
+		// PDE resolves with osgi.resolverMode=development, which sorts bundles
+		// by symbolic name before attaching fragments, so
+		// 'fragment.a.sibling' attaches before 'fragment.b.selected' and owns
+		// the 'plugin.shared' constraint. Since only 'fragment.b.selected' is
+		// launched, the sibling is not in the requirement closure, but
+		// 'plugin.shared' must still be added because 'fragment.b.selected'
+		// declares the very same requirement.
+		var workspacePlugins = ofEntries( //
+				bundle("plugin.host", "1.0.0"), //
+				bundle("fragment.b.selected", "1.0.0", //
+						entry(Constants.FRAGMENT_HOST, "plugin.host"), //
+						entry(REQUIRE_BUNDLE, "plugin.only.selected,plugin.shared")), //
+				bundle("fragment.a.sibling", "1.0.0", //
+						entry(Constants.FRAGMENT_HOST, "plugin.host"), //
+						entry(REQUIRE_BUNDLE, "plugin.shared")), //
+				bundle("plugin.only.selected", "1.0.0"), //
+				bundle("plugin.shared", "1.0.0"));
+		var targetPlatformBundles = ofEntries( //
+				bundle("plugin.unrelated", "1.0.0"));
+
+		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
+			wc.setAttribute(IPDELauncherConstants.AUTOMATIC_INCLUDE_REQUIREMENTS, true);
+			wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, Set.of("fragment.b.selected*1.0.0"));
+		};
+
+		Set<BundleLocationDescriptor> expectedBundles = Set.of( //
+				workspaceBundle("fragment.b.selected", "1.0.0"), //
+				workspaceBundle("plugin.host", "1.0.0"), //
+				workspaceBundle("plugin.only.selected", "1.0.0"), //
+				workspaceBundle("plugin.shared", "1.0.0"));
+
+		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
+	}
+
+	@Test
 	public void testTwoVersionsOfSameBundleConfigIni() throws Exception {
 		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0"), //
