@@ -37,6 +37,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 import org.osgi.framework.namespace.HostNamespace;
+import org.osgi.framework.wiring.BundleCapability;
 import org.osgi.framework.wiring.BundleRequirement;
 import org.osgi.framework.wiring.BundleRevision;
 import org.osgi.framework.wiring.BundleWire;
@@ -265,7 +266,8 @@ public class DependencyManager {
 					: namespaces.stream().map(wiring::getRequiredWires).flatMap(List::stream)::iterator;
 			for (BundleWire wire : requiredWires) {
 				BundleRevision declaringBundle = wire.getRequirement().getRevision();
-				if (declaringBundle != bundle && !closure.contains(declaringBundle)) {
+				if (declaringBundle != bundle && !closure.contains(declaringBundle)
+						&& !isAlsoDeclaredByIncludedFragment(bundle, wire, closure)) {
 					// Requirement is declared by an attached fragment, which is
 					// not included into the closure.
 					continue;
@@ -279,6 +281,38 @@ public class DependencyManager {
 			}
 		}
 		return closure;
+	}
+
+	/**
+	 * Returns whether the given wire satisfies a requirement that is declared
+	 * by a fragment of the given host that is part of the closure, although the
+	 * wire's requirement is declared by another revision.
+	 * <p>
+	 * If a host and its attached fragments declare equal requirements, only the
+	 * first one encountered while attaching the fragments becomes a constraint
+	 * of the host, all others are discarded. Consequently the single resulting
+	 * wire only names one of the declaring revisions, which is not necessarily
+	 * one included into the closure.
+	 * </p>
+	 */
+	private static boolean isAlsoDeclaredByIncludedFragment(BundleDescription host, BundleWire wire,
+			Set<BundleDescription> closure) {
+		BundleDescription[] fragments = host.getFragments();
+		if (fragments.length == 0) {
+			return false;
+		}
+		BundleCapability capability = wire.getCapability();
+		String namespace = capability.getNamespace();
+		for (BundleDescription fragment : fragments) {
+			if (closure.contains(fragment)) {
+				for (BundleRequirement requirement : fragment.getDeclaredRequirements(namespace)) {
+					if (requirement.matches(capability)) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	private static boolean isNativeFragment(BundleDescription fragment) {
