@@ -19,9 +19,11 @@
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.eclipse.core.resources.IProject;
@@ -30,17 +32,20 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.actions.FindReferencesAction;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
@@ -64,34 +69,74 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.EditorUtilities;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.TableSection;
+import org.eclipse.pde.internal.ui.editor.TreeSection;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.pde.internal.ui.parts.ConditionalListSelectionDialog;
-import org.eclipse.pde.internal.ui.parts.TablePart;
+import org.eclipse.pde.internal.ui.parts.TreePart;
 import org.eclipse.pde.internal.ui.search.dependencies.CalculateUsesAction;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.util.TextUtil;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.osgi.framework.Constants;
 
-public class ExportPackageSection extends TableSection {
+public class ExportPackageSection extends TreeSection {
 
 	private static final int ADD_INDEX = 0;
 	private static final int REMOVE_INDEX = 1;
 	private static final int PROPERTIES_INDEX = 2;
 	private static final int CALCULATE_USE_INDEX = 3;
 
-	class ExportPackageContentProvider implements IStructuredContentProvider {
+	static class usesNode {
+		final ExportPackageObject parent;
+		final String packageName;
+
+		usesNode(ExportPackageObject parent, String packageName) {
+			this.parent = parent;
+			this.packageName = packageName.trim();
+		}
+
+		@Override
+		public String toString() {
+			return packageName;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			return obj instanceof usesNode other && parent.equals(other.parent)
+					&& packageName.equals(other.packageName);
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(parent, packageName);
+		}
+	}
+
+	static String[] getUsesPackageNames(ExportPackageObject pkg) {
+		String[] raw = pkg.getDirectives(Constants.USES_DIRECTIVE);
+		if (raw == null || raw.length == 0) {
+			return new String[0];
+		}
+		return Arrays.stream(raw)
+				.flatMap(s -> Arrays.stream(s.split(","))) //$NON-NLS-1$
+				.map(String::trim)
+				.filter(s -> !s.isEmpty())
+				.toArray(String[]::new);
+	}
+
+	class ExportPackageContentProvider implements ITreeContentProvider {
 		@Override
 		public Object[] getElements(Object parent) {
 			if (fHeader == null) {
@@ -100,9 +145,67 @@ public class ExportPackageSection extends TableSection {
 			}
 			return fHeader == null ? new Object[0] : fHeader.getPackages();
 		}
+
+		@Override
+		public Object[] getChildren(Object parentElement) {
+			if (parentElement instanceof ExportPackageObject pkg) {
+				String[] names = getUsesPackageNames(pkg);
+				if (names.length > 0) {
+					return Arrays.stream(names)
+							.map(name -> new usesNode(pkg, name))
+							.toArray();
+				}
+			}
+			return new Object[0];
+		}
+
+		@Override
+		public boolean hasChildren(Object element) {
+			if (element instanceof ExportPackageObject pkg) {
+				return getUsesPackageNames(pkg).length > 0;
+			}
+			return false;
+		}
+
+		@Override
+		public Object getParent(Object element) {
+			if (element instanceof usesNode node) {
+				return node.parent;
+			}
+			return null;
+		}
 	}
 
-	private TableViewer fPackageViewer;
+	private static class ExportPackageLabelProvider extends LabelProvider {
+		private final ILabelProvider fDelegate;
+
+		ExportPackageLabelProvider(ILabelProvider delegate) {
+			fDelegate = delegate;
+		}
+
+		@Override
+		public String getText(Object element) {
+			if (element instanceof usesNode node) {
+				return node.packageName;
+			}
+			return fDelegate.getText(element);
+		}
+
+		@Override
+		public Image getImage(Object element) {
+			if (element instanceof usesNode) {
+				return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PACKAGE);
+			}
+			return fDelegate.getImage(element);
+		}
+
+		@Override
+		public void dispose() {
+			super.dispose();
+		}
+	}
+
+	private TreeViewer fPackageViewer;
 
 	private Action fAddAction;
 	private Action fGoToAction;
@@ -132,10 +235,10 @@ public class ExportPackageSection extends TableSection {
 
 		Composite container = createClientContainer(section, 2, toolkit);
 		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
-		TablePart tablePart = getTablePart();
-		fPackageViewer = tablePart.getTableViewer();
+		TreePart treePart = getTreePart();
+		fPackageViewer = treePart.getTreeViewer();
 		fPackageViewer.setContentProvider(new ExportPackageContentProvider());
-		fPackageViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		fPackageViewer.setLabelProvider(new ExportPackageLabelProvider(PDEPlugin.getDefault().getLabelProvider()));
 		fPackageViewer.setComparator(new ViewerComparator() {
 			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
@@ -295,11 +398,13 @@ public class ExportPackageSection extends TableSection {
 	private void updateButtons() {
 		Object[] selected = fPackageViewer.getStructuredSelection().toArray();
 
-		TablePart tablePart = getTablePart();
-		tablePart.setButtonEnabled(ADD_INDEX, canAddExportedPackages());
-		tablePart.setButtonEnabled(REMOVE_INDEX, isEditable() && selected.length > 0);
-		tablePart.setButtonEnabled(PROPERTIES_INDEX, shouldEnableProperties(selected));
-		tablePart.setButtonEnabled(CALCULATE_USE_INDEX, isEditable() && fPackageViewer.getTable().getItemCount() > 0);
+		TreePart treePart = getTreePart();
+		treePart.setButtonEnabled(ADD_INDEX, canAddExportedPackages());
+		treePart.setButtonEnabled(REMOVE_INDEX, isEditable() && selected.length > 0);
+		Object[] pkgSelected = Arrays.stream(selected)
+				.filter(o -> o instanceof ExportPackageObject).toArray();
+		treePart.setButtonEnabled(PROPERTIES_INDEX, shouldEnableProperties(pkgSelected));
+		treePart.setButtonEnabled(CALCULATE_USE_INDEX, isEditable() && fPackageViewer.getTree().getItemCount() > 0);
 
 	}
 
@@ -327,12 +432,18 @@ public class ExportPackageSection extends TableSection {
 
 	@Override
 	protected void handleDoubleClick(IStructuredSelection selection) {
+		if (!(selection.getFirstElement() instanceof PackageObject)) {
+			return;
+		}
 		handleGoToPackage(selection);
 	}
 
 	private IPackageFragment getPackageFragment(ISelection sel) {
 		if (sel instanceof IStructuredSelection selection) {
 			if (selection.size() != 1) {
+				return null;
+			}
+			if (!(selection.getFirstElement() instanceof PackageObject)) {
 				return null;
 			}
 
@@ -361,7 +472,11 @@ public class ExportPackageSection extends TableSection {
 	}
 
 	private void handleOpenProperties() {
-		Object[] selected = fPackageViewer.getStructuredSelection().toArray();
+		Object[] selected = Arrays.stream(fPackageViewer.getStructuredSelection().toArray())
+				.filter(o -> o instanceof ExportPackageObject).toArray();
+		if (selected.length == 0) {
+			return;
+		}
 		ExportPackageObject first = (ExportPackageObject) selected[0];
 		DependencyPropertiesDialog dialog = new DependencyPropertiesDialog(isEditable(), first);
 		dialog.create();
@@ -386,8 +501,21 @@ public class ExportPackageSection extends TableSection {
 	private void handleRemove() {
 		Object[] removed = fPackageViewer.getStructuredSelection().toArray();
 		for (Object removedObject : removed) {
-			fHeader.removePackage((PackageObject) removedObject);
+			if (removedObject instanceof usesNode node) {
+				removeUsesEntry(node);
+			} else if (removedObject instanceof PackageObject pkg) {
+				fHeader.removePackage(pkg);
+			}
 		}
+	}
+
+	private void removeUsesEntry(usesNode node) {
+		ExportPackageObject pkg = node.parent;
+		String[] current = getUsesPackageNames(pkg);
+		String remaining = Arrays.stream(current)
+				.filter(name -> !name.equals(node.packageName))
+				.collect(java.util.stream.Collectors.joining(",")); //$NON-NLS-1$
+		pkg.setUsesDirective(remaining.isEmpty() ? null : remaining);
 	}
 
 	private void handleAdd() {
@@ -435,7 +563,7 @@ public class ExportPackageSection extends TableSection {
 					getBundle().setHeader(getExportedPackageHeader(), getValue(selected));
 					// the way events get triggered, updateButtons isn't called
 					if (selected.length > 0) {
-						getTablePart().setButtonEnabled(CALCULATE_USE_INDEX, true);
+						getTreePart().setButtonEnabled(CALCULATE_USE_INDEX, true);
 					}
 				}
 			}
@@ -467,11 +595,15 @@ public class ExportPackageSection extends TableSection {
 			refresh();
 			// Bug 171896
 			// Since the model sends a CHANGE event instead of
-			// an INSERT event on the very first addition to the empty table
+			// an INSERT event on the very first addition to the empty tree
 			// Selection should fire here to take this first insertion into account
-			Object lastElement = fPackageViewer.getElementAt(fPackageViewer.getTable().getItemCount() - 1);
-			if (lastElement != null) {
-				fPackageViewer.setSelection(new StructuredSelection(lastElement));
+			Tree fTree = fPackageViewer.getTree();
+			int lastIndex = fTree.getItemCount() - 1;
+			if (lastIndex >= 0) {
+				Object lastElement = fTree.getItem(lastIndex).getData();
+				if (lastElement != null) {
+					fPackageViewer.setSelection(new StructuredSelection(lastElement));
+				}
 			}
 
 			return;
@@ -484,16 +616,23 @@ public class ExportPackageSection extends TableSection {
 					case IModelChangedEvent.INSERT :
 						fPackageViewer.add(object);
 						fPackageViewer.setSelection(new StructuredSelection(object), false);
-						fPackageViewer.getTable().setFocus();
+						fPackageViewer.getTree().setFocus();
 						break;
 					case IModelChangedEvent.REMOVE :
-						Table table = fPackageViewer.getTable();
-						int index = table.getSelectionIndex();
-						fPackageViewer.remove(object);
-						table.setSelection(index < table.getItemCount() ? index : table.getItemCount() - 1);
+							Tree tree = fPackageViewer.getTree();
+							TreeItem[] sel = tree.getSelection();
+							int index = sel.length > 0 ? tree.indexOf(sel[0]) : 0;
+							fPackageViewer.remove(object);
+							int count = tree.getItemCount();
+							if (count > 0) {
+								tree.setSelection(tree.getItem(index < count ? index : count - 1));
+							}
 						break;
 					default :
-						fPackageViewer.refresh(object);
+							fPackageViewer.refresh(object);
+							if (getUsesPackageNames(object).length > 0) {
+								fPackageViewer.expandToLevel(object, 1);
+							}
 				}
 			}
 		}
@@ -539,7 +678,8 @@ public class ExportPackageSection extends TableSection {
 	protected void fillContextMenu(IMenuManager manager) {
 		IStructuredSelection selection = fPackageViewer.getStructuredSelection();
 		manager.add(fAddAction);
-		boolean singleSelection = selection.size() == 1;
+		boolean singleSelection = selection.size() == 1
+				&& selection.getFirstElement() instanceof ExportPackageObject;
 		if (singleSelection) {
 			manager.add(fGoToAction);
 		}
@@ -556,7 +696,9 @@ public class ExportPackageSection extends TableSection {
 				}
 			});
 		}
-		if (shouldEnableProperties(fPackageViewer.getStructuredSelection().toArray())) {
+		Object[] pkgSelected = Arrays.stream(fPackageViewer.getStructuredSelection().toArray())
+				.filter(o -> o instanceof ExportPackageObject).toArray();
+		if (shouldEnableProperties(pkgSelected)) {
 			manager.add(new Separator());
 			manager.add(fPropertiesAction);
 		}
@@ -567,8 +709,8 @@ public class ExportPackageSection extends TableSection {
 		if (frag != null) {
 			FindReferencesAction action = new FindReferencesAction(getPage().getEditorSite());
 			action.run(frag);
-		} else if (sel instanceof IStructuredSelection selection) {
-			PackageObject exportObject = (PackageObject) selection.getFirstElement();
+		} else if (sel instanceof IStructuredSelection selection
+				&& selection.getFirstElement() instanceof PackageObject exportObject) {
 			NewSearchUI.runQueryInBackground(new BlankQuery(exportObject));
 		}
 	}
@@ -605,11 +747,6 @@ public class ExportPackageSection extends TableSection {
 	public String getExportedPackageHeader() {
 		int manifestVersion = BundlePluginBase.getBundleManifestVersion(getBundle());
 		return (manifestVersion < 2) ? ICoreConstants.PROVIDE_PACKAGE : Constants.EXPORT_PACKAGE;
-	}
-
-	@Override
-	protected boolean createCount() {
-		return true;
 	}
 
 	private void calculateUses() {
