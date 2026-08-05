@@ -138,6 +138,13 @@
                         <goal>schema-to-html</goal>
                     </goals>
                     <configuration>
+                        <!-- Without this Tycho provisions the schema converter from its
+                             hardcoded TychoConstants.ECLIPSE_LATEST simrel repository, which
+                             is mirrored and therefore prone to transient download failures. -->
+                        <pdeToolsRepository>
+                            <id>eclipse</id>
+                            <url>${eclipse-sdk-repo}</url>
+                        </pdeToolsRepository>
                         <manifests>
                             <manifest>${eclipse.pde.ui.ui}/org.eclipse.ui.trace/plugin.xml</manifest>
                             <manifest>${eclipse.pde.ui.ui}/org.eclipse.pde.core/plugin.xml</manifest>
