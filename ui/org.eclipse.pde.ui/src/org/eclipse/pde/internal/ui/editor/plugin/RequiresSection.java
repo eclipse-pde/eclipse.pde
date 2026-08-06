@@ -41,6 +41,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.service.resolver.State;
+import org.eclipse.osgi.service.resolver.StateDelta;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPlugin;
@@ -51,6 +53,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginModelFactory;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.IPluginModelListener;
+import org.eclipse.pde.internal.core.IStateDeltaListener;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelDelta;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
@@ -91,7 +94,8 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.progress.UIJob;
 
-public class RequiresSection extends TableSection implements IPluginModelListener, IPropertyChangeListener {
+public class RequiresSection extends TableSection
+		implements IPluginModelListener, IStateDeltaListener, IPropertyChangeListener {
 
 	private static final int ADD_INDEX = 0;
 	private static final int REMOVE_INDEX = 1;
@@ -262,6 +266,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 			model.removeModelChangedListener(this);
 		}
 		PDECore.getDefault().getModelManager().removePluginModelListener(this);
+		PDECore.getDefault().getModelManager().removeStateDeltaListener(this);
 		super.dispose();
 	}
 
@@ -546,6 +551,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 
 	public void initialize() {
 		PDECore.getDefault().getModelManager().addPluginModelListener(this);
+		PDECore.getDefault().getModelManager().addStateDeltaListener(this);
 		if (getPage().getModel() instanceof IPluginModelBase model) {
 			fImportViewer.setInput(model.getPluginBase());
 			updateButtons();
@@ -672,6 +678,21 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 
 	@Override
 	public void modelsChanged(PluginModelDelta delta) {
+		refreshImports();
+	}
+
+	@Override
+	public void stateResolved(StateDelta delta) {
+		// already covered by modelsChanged, which is fired for the same batch
+	}
+
+	@Override
+	public void stateChanged(State newState) {
+		// a target reload replaces the state without firing a PluginModelDelta
+		refreshImports();
+	}
+
+	private void refreshImports() {
 		fImports = null;
 		final Control control = fImportViewer.getControl();
 		if (!control.isDisposed()) {

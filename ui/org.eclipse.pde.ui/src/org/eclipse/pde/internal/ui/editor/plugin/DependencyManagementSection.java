@@ -47,6 +47,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.service.resolver.State;
+import org.eclipse.osgi.service.resolver.StateDelta;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.build.IBuild;
@@ -58,6 +60,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.IPluginModelListener;
+import org.eclipse.pde.internal.core.IStateDeltaListener;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.core.PluginModelDelta;
@@ -105,7 +108,8 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.progress.UIJob;
 import org.osgi.service.prefs.BackingStoreException;
 
-public class DependencyManagementSection extends TableSection implements IPluginModelListener, IPropertyChangeListener {
+public class DependencyManagementSection extends TableSection
+		implements IPluginModelListener, IStateDeltaListener, IPropertyChangeListener {
 
 	private TableViewer fAdditionalTable;
 	private Vector<String> fAdditionalBundles;
@@ -322,6 +326,7 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 				fImportPackageButton.setSelection(!useRequireBundle);
 			}
 			PDECore.getDefault().getModelManager().addPluginModelListener(this);
+			PDECore.getDefault().getModelManager().addStateDeltaListener(this);
 		} catch (Exception e) {
 			PDEPlugin.logException(e);
 		}
@@ -644,11 +649,27 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 	@Override
 	public void dispose() {
 		PDECore.getDefault().getModelManager().removePluginModelListener(this);
+		PDECore.getDefault().getModelManager().removeStateDeltaListener(this);
 		super.dispose();
 	}
 
 	@Override
 	public void modelsChanged(PluginModelDelta delta) {
+		refreshBundles();
+	}
+
+	@Override
+	public void stateResolved(StateDelta delta) {
+		// already covered by modelsChanged, which is fired for the same batch
+	}
+
+	@Override
+	public void stateChanged(State newState) {
+		// a target reload replaces the state without firing a PluginModelDelta
+		refreshBundles();
+	}
+
+	private void refreshBundles() {
 		fAdditionalBundles = null;
 		final Control control = fAdditionalTable.getControl();
 		if (!control.isDisposed()) {
