@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -49,6 +50,7 @@ import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
 import org.eclipse.osgi.service.resolver.State;
+import org.eclipse.osgi.service.resolver.StateDelta;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangedEvent;
@@ -58,6 +60,11 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.IPluginModelListener;
+import org.eclipse.pde.internal.core.IStateDeltaListener;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PluginModelDelta;
+import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
@@ -92,6 +99,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.IWorkingSet;
@@ -105,7 +113,9 @@ import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 import org.osgi.resource.Resource;
 
-public class ImportPackageSection extends TableSection {
+public class ImportPackageSection extends TableSection implements IPluginModelListener, IStateDeltaListener {
+
+	private final AtomicBoolean fRefreshPending = new AtomicBoolean();
 
 	private static final int ADD_INDEX = 0;
 	private static final int REMOVE_INDEX = 1;
@@ -265,8 +275,53 @@ public class ImportPackageSection extends TableSection {
 		IBundleModel model = getBundleModel();
 		fPackageViewer.setInput(model);
 		model.addModelChangedListener(this);
-		section.addDisposeListener(e -> model.removeModelChangedListener(ImportPackageSection.this));
+		PluginModelManager modelManager = PDECore.getDefault().getModelManager();
+		modelManager.addPluginModelListener(this);
+		modelManager.addStateDeltaListener(this);
+		section.addDisposeListener(e -> {
+			model.removeModelChangedListener(ImportPackageSection.this);
+			modelManager.removePluginModelListener(ImportPackageSection.this);
+			modelManager.removeStateDeltaListener(ImportPackageSection.this);
+		});
 		updateButtons();
+	}
+
+	@Override
+	public void modelsChanged(PluginModelDelta delta) {
+		if (delta.getKind() != 0) {
+			refreshPackages();
+		}
+	}
+
+	@Override
+	public void stateResolved(StateDelta delta) {
+		// already covered by modelsChanged, which is fired for the same batch
+	}
+
+	@Override
+	public void stateChanged(State newState) {
+		// a target reload replaces the state without firing a PluginModelDelta
+		refreshPackages();
+	}
+
+	/**
+	 * Repaints the table so the resolution decorations match the current target
+	 * platform. The imported packages themselves are unchanged, only their
+	 * resolution status is recomputed. Resolving one package scans the exported
+	 * packages of the whole state, so a burst of notifications is collapsed
+	 * into a single repaint.
+	 */
+	private void refreshPackages() {
+		Control control = fPackageViewer.getControl();
+		if (control.isDisposed() || !fRefreshPending.compareAndSet(false, true)) {
+			return;
+		}
+		control.getDisplay().asyncExec(() -> {
+			fRefreshPending.set(false);
+			if (!control.isDisposed()) {
+				fPackageViewer.refresh();
+			}
+		});
 	}
 
 	@Override
