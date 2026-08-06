@@ -41,11 +41,14 @@ public class PluginReference extends PlatformObject {
 	}
 
 	public IPlugin getPlugin() {
-		if (fPlugin == null && fId != null) {
-			IPluginModelBase model = findModel();
-			fPlugin = model instanceof IPluginModel i ? i.getPlugin() : null;
+		// Only an explicitly assigned plug-in is cached. Looking the id up on
+		// every call keeps isResolved() in sync with the current target
+		// platform, which the error decorations in the editor rely on.
+		if (fPlugin != null || fId == null) {
+			return fPlugin;
 		}
-		return fPlugin;
+		IPluginModelBase model = findModel();
+		return model instanceof IPluginModel i ? i.getPlugin() : null;
 	}
 
 	protected IPluginModelBase findModel() {
