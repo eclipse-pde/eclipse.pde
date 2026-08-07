@@ -586,15 +586,15 @@ public class TargetEditor extends FormEditor {
 				if (delta != null) {
 					if (delta.getKind() == IResourceDelta.REMOVED) {
 						TargetEditor.this.close(false);
-					} else if (delta.getKind() == IResourceDelta.CHANGED || delta.getKind() == IResourceDelta.REPLACED) {
-						if (!fSaving) {
-							Display display = getSite().getShell().getDisplay();
-							display.asyncExec(() -> {
-								if (getActivePage() != -1) {
-									TargetEditor.this.doRevert();
-								}
-							});
-						}
+					} else if (delta.getKind() == IResourceDelta.CHANGED
+						&& (delta.getFlags() & (IResourceDelta.CONTENT | IResourceDelta.REPLACED)) != 0
+						&& !fSaving) {
+						Display display = getSite().getShell().getDisplay();
+						display.asyncExec(() -> {
+							if (getActivePage() != -1) {
+								TargetEditor.this.doRevert();
+							}
+						});
 					}
 				}
 			}
