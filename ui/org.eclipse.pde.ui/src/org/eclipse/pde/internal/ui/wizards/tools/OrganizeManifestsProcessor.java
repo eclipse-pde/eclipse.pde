@@ -53,7 +53,12 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 	protected boolean fMarkInternal = true; // mark export-package as internal
 	protected String fPackageFilter = VALUE_DEFAULT_FILTER;
 	protected boolean fRemoveUnresolved = true; // remove unresolved
-												// export-package
+	protected boolean fAddMissingVersions = true; // add missing versions to
+													// export packages
+	protected boolean fMissingVersionOptions = true; // options for fixed or
+														// bundled versions to
+														// packages
+	// export-package
 	protected boolean fCalculateUses = false; // calculate the 'uses' directive
 												// for exported packages
 	protected boolean fModifyDep = true; // modify import-package /
@@ -77,6 +82,7 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 	List<IProject> fProjectList;
 	private IProject fCurrentProject;
 	private boolean fComputeImports;
+
 
 	public OrganizeManifestsProcessor(List<IProject> projects) {
 		fProjectList = projects;
@@ -350,5 +356,13 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 
 	public void setComputeImports(boolean computeImports) {
 		this.fComputeImports = computeImports;
+	}
+
+	public void setAddMissingVersions(boolean addMissingVersions) {
+		this.fAddMissingVersions = addMissingVersions;
+	}
+
+	public void setMissingVersionOptions(boolean missingVersionOptions) {
+		this.fMissingVersionOptions = missingVersionOptions;
 	}
 }
