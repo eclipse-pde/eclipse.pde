@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Mickael Istria (Red Hat Inc.) - 482905 Project Explorer
+ *     Dinesh Palanisamy (ETAS GmbH) - Issue 802
  *******************************************************************************/
 package org.eclipse.pde.internal.ui;
 
@@ -19,6 +20,7 @@ import org.eclipse.pde.internal.ui.views.target.TargetStateView;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
+import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.navigator.resources.ProjectExplorer;
 
 public class PDEPerspective implements IPerspectiveFactory {
@@ -47,6 +49,9 @@ public class PDEPerspective implements IPerspectiveFactory {
 				IPageLayout.BOTTOM, 0.75f, factory.getEditorArea());
 		bottom.addView(IPageLayout.ID_PROBLEM_VIEW);
 		bottom.addView(TargetStateView.VIEW_ID);
+		bottom.addPlaceholder(IConsoleConstants.ID_CONSOLE_VIEW);
+		bottom.addPlaceholder("org.eclipse.egit.ui.RepositoriesView");//$NON-NLS-1$
+		bottom.addPlaceholder("org.eclipse.egit.ui.StagingView");//$NON-NLS-1$
 
 		factory.addView(IPageLayout.ID_OUTLINE, IPageLayout.RIGHT, 0.75f, factory.getEditorArea());
 
