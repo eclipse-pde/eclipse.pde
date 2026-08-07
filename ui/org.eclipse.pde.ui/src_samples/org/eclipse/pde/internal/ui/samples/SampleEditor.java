@@ -85,7 +85,9 @@ public class SampleEditor extends EditorPart {
 			IResource resource = delta.getResource();
 			if (resource instanceof IFile file) {
 				if (file.equals(((IFileEditorInput) getEditorInput()).getFile())) {
-					if (delta.getKind() == IResourceDelta.REMOVED || delta.getKind() == IResourceDelta.REPLACED) {
+					if (delta.getKind() == IResourceDelta.REMOVED
+							|| (delta.getKind() == IResourceDelta.CHANGED
+									&& (delta.getFlags() & IResourceDelta.REPLACED) != 0)) {
 						close();
 					}
 					return false;
