@@ -40,6 +40,9 @@ import java.util.stream.Stream;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -64,6 +67,7 @@ import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetHandle;
 import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.core.target.ITargetPlatformService;
+import org.eclipse.pde.core.target.LoadTargetDefinitionJob;
 import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.eclipse.pde.core.target.TargetBundle;
 import org.eclipse.pde.core.target.TargetEvents;
@@ -102,6 +106,29 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 * vm arguments for default target
 	 */
 	private StringBuilder fVMArguments;
+
+	/** Path of the active target's backing workspace file, or {@code null}; watched for changes. */
+	private volatile IPath fActiveTargetFilePath;
+
+	private IResourceChangeListener fActiveTargetFileListener;
+
+	/** Delay used to coalesce reloads triggered by changes to the active target's file. */
+	private static final long RELOAD_COALESCE_DELAY_MS = 500;
+
+	/**
+	 * Debounced reload job: rescheduling on each change coalesces a burst of file
+	 * events into a single {@link LoadTargetDefinitionJob}.
+	 */
+	private final Job fReloadJob = Job.create(Messages.TargetPlatformService_8, monitor -> {
+		try {
+			ITargetHandle handle = getWorkspaceTargetHandle();
+			if (handle != null && handle.exists()) {
+				LoadTargetDefinitionJob.load(handle.getTargetDefinition());
+			}
+		} catch (CoreException e) {
+			PDECore.log(e);
+		}
+	});
 
 	private TargetPlatformService() {
 	}
@@ -330,9 +357,108 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 */
 	public void setWorkspaceTargetDefinition(ITargetDefinition target, boolean asyncEvents) {
 		ITargetDefinition oldTarget = fWorkspaceTarget.getAndSet(target);
+		refreshActiveTargetFilePath(target);
 		if (!Objects.equals(oldTarget, target)) {
 			notifyEvent(TargetEvents.TOPIC_WORKSPACE_TARGET_CHANGED, target, asyncEvents);
 		}
+	}
+
+	private void refreshActiveTargetFilePath(ITargetDefinition target) {
+		if (target != null && target.getHandle() instanceof WorkspaceFileTargetHandle wsHandle) {
+			fActiveTargetFilePath = wsHandle.getTargetFile().getFullPath();
+		} else {
+			fActiveTargetFilePath = null;
+		}
+	}
+
+	/**
+	 * Starts watching the active target's backing file and reloads if it changed
+	 * since the last session.
+	 */
+	public void start() {
+		if (fActiveTargetFileListener != null) {
+			return;
+		}
+		fActiveTargetFileListener = this::onResourceChanged;
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(fActiveTargetFileListener,
+				IResourceChangeEvent.POST_CHANGE);
+		reloadIfActiveTargetFileChangedSinceLastSession();
+	}
+
+	/**
+	 * Reloads if the active target's backing file changed since its last load
+	 * (e.g. a {@code git pull} while the IDE was closed), which resource deltas
+	 * cannot detect.
+	 */
+	private void reloadIfActiveTargetFileChangedSinceLastSession() {
+		try {
+			ITargetHandle handle = getWorkspaceTargetHandle();
+			File file = backingFile(handle);
+			if (file == null || !file.isFile()) {
+				return;
+			}
+			PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
+			String storedStamp = preferences.getString(ICoreConstants.WORKSPACE_TARGET_FILE_STAMP);
+			if (storedStamp == null || storedStamp.isEmpty()) {
+				// No baseline yet (first run, or older workspace). Don't trigger a
+				// reload here; the next explicit load will record the stamp.
+				return;
+			}
+			long previousStamp;
+			try {
+				previousStamp = Long.parseLong(storedStamp);
+			} catch (NumberFormatException e) {
+				return;
+			}
+			long currentStamp = file.lastModified();
+			if (currentStamp != 0 && currentStamp != previousStamp) {
+				scheduleReload();
+			}
+		} catch (CoreException e) {
+			PDECore.log(e);
+		}
+	}
+
+	/** Schedules a reload, coalescing calls within {@link #RELOAD_COALESCE_DELAY_MS}. */
+	private void scheduleReload() {
+		fReloadJob.cancel();
+		fReloadJob.schedule(RELOAD_COALESCE_DELAY_MS);
+	}
+
+	/**
+	 * Returns the on-disk file backing the handle, or {@code null} for handles
+	 * that are not file-backed.
+	 */
+	public static File backingFile(ITargetHandle handle) {
+		if (handle instanceof WorkspaceFileTargetHandle wsHandle) {
+			IPath location = wsHandle.getTargetFile().getLocation();
+			return location == null ? null : location.toFile();
+		}
+		if (handle instanceof ExternalFileTargetHandle extHandle) {
+			return URIUtil.toFile(extHandle.getLocation());
+		}
+		return null;
+	}
+
+	public void stop() {
+		if (fActiveTargetFileListener != null) {
+			ResourcesPlugin.getWorkspace().removeResourceChangeListener(fActiveTargetFileListener);
+			fActiveTargetFileListener = null;
+		}
+		fReloadJob.cancel();
+	}
+
+	private void onResourceChanged(IResourceChangeEvent event) {
+		IPath path = fActiveTargetFilePath;
+		if (path == null || event.getDelta() == null) {
+			return;
+		}
+		IResourceDelta delta = event.getDelta().findMember(path);
+		if (delta == null || delta.getKind() != IResourceDelta.CHANGED
+				|| (delta.getFlags() & IResourceDelta.CONTENT) == 0) {
+			return;
+		}
+		scheduleReload();
 	}
 
 	public static void scheduleEvent(String topic, Object data) {
