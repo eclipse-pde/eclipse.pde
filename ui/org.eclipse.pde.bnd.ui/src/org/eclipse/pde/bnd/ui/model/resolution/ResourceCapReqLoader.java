@@ -14,19 +14,20 @@
  *     Peter Kriens <peter.kriens@aqute.biz> - ongoing enhancements
  *     Christoph Rueger <chrisrueger@gmail.com> - ongoing enhancements
 *******************************************************************************/
-package org.eclipse.pde.bnd.ui.tasks;
+package org.eclipse.pde.bnd.ui.model.resolution;
 
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.bnd.ui.ResourceUtils;
-import org.eclipse.pde.bnd.ui.model.resolution.RequirementWrapper;
 import org.osgi.resource.Capability;
 import org.osgi.resource.Requirement;
 import org.osgi.resource.Resource;
@@ -62,8 +63,12 @@ public class ResourceCapReqLoader implements CapReqLoader {
 	}
 
 	@Override
-	public Map<String, List<Capability>> loadCapabilities() throws Exception {
-		Map<String, List<Capability>> result = new HashMap<>();
+	public CapReq loadCapReq(IProgressMonitor monitor) throws Exception {
+		return new CapReq(loadCapabilities(), loadRequirements());
+	}
+
+	private Map<String, Collection<Capability>> loadCapabilities() throws Exception {
+		Map<String, Collection<Capability>> result = new HashMap<>();
 
 		List<Capability> caps = new ArrayList<>(resource.getCapabilities(null));
 		if (resource instanceof SupportingResource sr) {
@@ -73,7 +78,7 @@ public class ResourceCapReqLoader implements CapReqLoader {
 		}
 		for (Capability cap : caps) {
 			String ns = cap.getNamespace();
-			List<Capability> listForNamespace = result.get(ns);
+			Collection<Capability> listForNamespace = result.get(ns);
 			if (listForNamespace == null) {
 				listForNamespace = new LinkedList<>();
 				result.put(ns, listForNamespace);
@@ -84,9 +89,8 @@ public class ResourceCapReqLoader implements CapReqLoader {
 		return result;
 	}
 
-	@Override
-	public Map<String, List<RequirementWrapper>> loadRequirements() throws Exception {
-		Map<String, List<RequirementWrapper>> result = new HashMap<>();
+	private Map<String, Collection<Requirement>> loadRequirements() throws Exception {
+		Map<String, Collection<Requirement>> result = new HashMap<>();
 
 		List<Requirement> reqs = new ArrayList<>(resource.getRequirements(null));
 		if (resource instanceof SupportingResource sr) {
@@ -96,13 +100,12 @@ public class ResourceCapReqLoader implements CapReqLoader {
 		}
 		for (Requirement req : reqs) {
 			String ns = req.getNamespace();
-			List<RequirementWrapper> listForNamespace = result.get(ns);
+			Collection<Requirement> listForNamespace = result.get(ns);
 			if (listForNamespace == null) {
 				listForNamespace = new LinkedList<>();
 				result.put(ns, listForNamespace);
 			}
-			RequirementWrapper wrapper = new RequirementWrapper(req);
-			listForNamespace.add(wrapper);
+			listForNamespace.add(req);
 		}
 
 		return result;

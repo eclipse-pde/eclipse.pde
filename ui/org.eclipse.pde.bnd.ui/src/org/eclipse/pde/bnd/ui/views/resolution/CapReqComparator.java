@@ -13,11 +13,12 @@
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
  *     Peter Kriens <peter.kriens@aqute.biz> - ongoing enhancements
 *******************************************************************************/
-package org.eclipse.pde.bnd.ui.model.resolution;
+package org.eclipse.pde.bnd.ui.views.resolution;
 
 import java.util.Collection;
 import java.util.Comparator;
 
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.pde.bnd.ui.model.resource.R5LabelFormatter;
 import org.osgi.framework.Version;
 import org.osgi.resource.Capability;
@@ -29,14 +30,10 @@ public class CapReqComparator implements Comparator<Object> {
 
 	@Override
 	public int compare(Object o1, Object o2) {
-		if (o1 instanceof Requirement) {
-			return compareReqToObj((Requirement) o1, o2);
+		Requirement requirement = Adapters.adapt(o1, Requirement.class);
+		if (requirement != null) {
+			return compareReqToObj(requirement, o2);
 		}
-
-		if (o1 instanceof RequirementWrapper) {
-			return compareReqToObj(((RequirementWrapper) o1).requirement, o2);
-		}
-
 		if (o1 instanceof Capability) {
 			return compareCapToObj((Capability) o1, o2);
 		}
@@ -45,14 +42,10 @@ public class CapReqComparator implements Comparator<Object> {
 	}
 
 	private int compareReqToObj(Requirement r1, Object o2) {
-		if (o2 instanceof Requirement) {
-			return compareReqToReq(r1, (Requirement) o2);
+		Requirement requirement = Adapters.adapt(o2, Requirement.class);
+		if (requirement != null) {
+			return compareReqToReq(r1, requirement);
 		}
-
-		if (o2 instanceof RequirementWrapper) {
-			return compareReqToReq(r1, ((RequirementWrapper) o2).requirement);
-		}
-
 		// requirements sort before other things
 		return -1;
 	}
