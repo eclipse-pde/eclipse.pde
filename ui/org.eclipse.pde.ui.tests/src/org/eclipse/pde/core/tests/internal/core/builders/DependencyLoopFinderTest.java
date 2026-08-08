@@ -17,6 +17,8 @@ import static java.util.Map.entry;
 import static org.eclipse.pde.ui.tests.util.TargetPlatformUtil.bundle;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.osgi.framework.Constants.EXPORT_PACKAGE;
+import static org.osgi.framework.Constants.IMPORT_PACKAGE;
 import static org.osgi.framework.Constants.REQUIRE_BUNDLE;
 
 import java.io.IOException;
@@ -113,6 +115,56 @@ public class DependencyLoopFinderTest {
 				bundle("loop.b", "1.0.0", entry(REQUIRE_BUNDLE, "loop.r")));
 
 		assertEquals(List.of("loop.r -> loop.a", "loop.r -> loop.b"), loopSignatures("loop.r"));
+	}
+
+	/**
+	 * Bundles wired to each other through Export-Package/Import-Package form a
+	 * cycle just like bundles wired through Require-Bundle.
+	 */
+	@Test
+	public void testImportPackageCycle() throws Exception {
+		// a and b depend on each other only via package wiring (no Require-Bundle)
+		setTargetPlatform( //
+				bundle("loop.a", "1.0.0", //
+						entry(EXPORT_PACKAGE, "loop.a.pack"), //
+						entry(IMPORT_PACKAGE, "loop.b.pack")), //
+				bundle("loop.b", "1.0.0", //
+						entry(EXPORT_PACKAGE, "loop.b.pack"), //
+						entry(IMPORT_PACKAGE, "loop.a.pack")));
+
+		assertEquals(List.of("loop.a -> loop.b"), loopSignatures("loop.a"));
+	}
+
+	/**
+	 * A cycle that closes through a mix of both dependency kinds is reported
+	 * too: {@code a} requires {@code b}, and {@code b} imports a package that
+	 * {@code a} exports.
+	 */
+	@Test
+	public void testCycleMixingRequireBundleAndImportPackage() throws Exception {
+		setTargetPlatform( //
+				bundle("loop.a", "1.0.0", //
+						entry(REQUIRE_BUNDLE, "loop.b"), //
+						entry(EXPORT_PACKAGE, "loop.a.pack")), //
+				bundle("loop.b", "1.0.0", entry(IMPORT_PACKAGE, "loop.a.pack")));
+
+		assertEquals(List.of("loop.a -> loop.b"), loopSignatures("loop.a"));
+	}
+
+	/**
+	 * A package import that is wired to a third bundle does not create a cycle
+	 * between the importer and any other exporter of the same package.
+	 */
+	@Test
+	public void testImportPackageWiredElsewhereIsNoCycle() throws Exception {
+		setTargetPlatform( //
+				bundle("loop.a", "1.0.0", entry(IMPORT_PACKAGE, "loop.shared.pack")), //
+				bundle("loop.b", "1.0.0", //
+						entry(EXPORT_PACKAGE, "loop.shared.pack"), //
+						entry(IMPORT_PACKAGE, "loop.c.pack")), //
+				bundle("loop.c", "1.0.0", entry(EXPORT_PACKAGE, "loop.c.pack")));
+
+		assertEquals(List.of(), loopSignatures("loop.a"));
 	}
 
 	/**
