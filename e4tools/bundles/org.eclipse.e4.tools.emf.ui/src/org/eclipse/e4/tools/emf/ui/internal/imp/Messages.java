@@ -8,7 +8,6 @@ public class Messages extends NLS {
 	public static String ModelImportPage1_Description;
 	public static String ModelImportPage1_Go;
 	public static String ModelImportPage1_Import;
-	public static String ModelImportPage1_Import1;
 	public static String ModelImportPage1_SelectPlugInAndElementsToImport;
 	public static String ModelImportPage1_ToImport;
 	public static String ModelImportPage1_WizardPage;
