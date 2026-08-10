@@ -16,7 +16,9 @@
  ******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.category;
 
+import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.plugin.VersionMatchRule;
 import org.eclipse.pde.internal.core.PDECore;
@@ -32,6 +34,8 @@ import org.eclipse.ui.forms.editor.IFormPage;
 class CategoryLabelProvider extends LabelProvider {
 
 	private final PDELabelProvider fSharedProvider;
+
+	private final ILabelProviderListener fSharedProviderListener;
 
 	private Image fSiteFeatureImage;
 	private Image fMissingSiteFeatureImage;
@@ -49,6 +53,9 @@ class CategoryLabelProvider extends LabelProvider {
 		fPageImage = PDEPluginImages.DESC_PAGE_OBJ.createImage();
 		fSharedProvider = PDEPlugin.getDefault().getLabelProvider();
 		fSharedProvider.connect(this);
+		// the shared provider repaints once the models are there, this viewer must follow
+		fSharedProviderListener = event -> fireLabelProviderChanged(new LabelProviderChangedEvent(this));
+		fSharedProvider.addListener(fSharedProviderListener);
 	}
 
 	@Override
@@ -60,14 +67,19 @@ class CategoryLabelProvider extends LabelProvider {
 			return getImage(((SiteCategoryDefinitionAdapter) element).category);
 		}
 		if (element instanceof SiteFeatureAdapter) {
-			if (PDECore.getDefault().getFeatureModelManager().findFeatureModelRelaxed(((SiteFeatureAdapter) element).feature.getId(), ((SiteFeatureAdapter) element).feature.getVersion()) == null) {
+			// the lookup resolves the target platform, so it has to wait for the models
+			if (fSharedProvider.areFeatureModelsAvailable()
+					&& PDECore.getDefault().getFeatureModelManager().findFeatureModelRelaxed(
+							((SiteFeatureAdapter) element).feature.getId(),
+							((SiteFeatureAdapter) element).feature.getVersion()) == null) {
 				return fMissingSiteFeatureImage;
 			}
 			return fSiteFeatureImage;
 		}
 		if (element instanceof SiteBundleAdapter) {
 			ISiteBundle bundle = ((SiteBundleAdapter) element).bundle;
-			if (PluginRegistry.findModel(bundle.getId(), bundle.getVersion(), VersionMatchRule.COMPATIBLE) == null) {
+			if (fSharedProvider.arePluginModelsAvailable() && PluginRegistry.findModel(bundle.getId(),
+					bundle.getVersion(), VersionMatchRule.COMPATIBLE) == null) {
 				return this.fMissingSiteBundleImage;
 			}
 			return this.fSiteBundleImage;
@@ -102,6 +114,7 @@ class CategoryLabelProvider extends LabelProvider {
 
 	@Override
 	public void dispose() {
+		fSharedProvider.removeListener(fSharedProviderListener);
 		fSharedProvider.disconnect(this);
 		// Dispose of images
 		if ((fCatDefImage != null) && (fCatDefImage.isDisposed() == false)) {

@@ -17,6 +17,7 @@
 package org.eclipse.pde.internal.ui;
 
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -25,6 +26,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.osgi.util.NLS;
@@ -44,8 +46,10 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.plugin.VersionMatchRule;
+import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
@@ -90,6 +94,7 @@ import org.eclipse.pde.internal.ui.elements.NamedElement;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Version;
 import org.osgi.resource.Resource;
@@ -97,7 +102,90 @@ import org.osgi.resource.Resource;
 public class PDELabelProvider extends SharedLabelProvider {
 	private static final String SYSTEM_BUNDLE = "system.bundle"; //$NON-NLS-1$
 
+	private final AtomicBoolean fPluginInitializationScheduled = new AtomicBoolean();
+	private final AtomicBoolean fFeatureInitializationScheduled = new AtomicBoolean();
+
+	/**
+	 * Cached because the accessors are synchronized on PDECore, whose monitor is
+	 * held across a target resolution in getHostPlugins(); the guards below run
+	 * for every label.
+	 */
+	private volatile PluginModelManager fPluginModelManager;
+
+	private volatile FeatureModelManager fFeatureModelManager;
+
 	public PDELabelProvider() {
+	}
+
+	/**
+	 * Returns whether the plug-in models can be queried without resolving the
+	 * target platform, and schedules a background initialization if they cannot.
+	 * Every lookup in the plug-in registry must be guarded by this check, and
+	 * labels are refreshed once the initialization has finished.
+	 */
+	public boolean arePluginModelsAvailable() {
+		PluginModelManager manager = getPluginModelManager();
+		if (manager.isInitialized()) {
+			return true;
+		}
+		if (fPluginInitializationScheduled.compareAndSet(false, true)) {
+			manager.initializeInBackground(() -> {
+				// on failure the flag stays set, so a failing job is not rescheduled forever
+				if (manager.isInitialized()) {
+					fPluginInitializationScheduled.set(false);
+				}
+				refreshLabels();
+			});
+		}
+		return false;
+	}
+
+	/**
+	 * Same contract as {@link #arePluginModelsAvailable()}, for the feature
+	 * models.
+	 */
+	public boolean areFeatureModelsAvailable() {
+		FeatureModelManager manager = getFeatureModelManager();
+		if (manager.isInitialized()) {
+			return true;
+		}
+		if (fFeatureInitializationScheduled.compareAndSet(false, true)) {
+			manager.initializeInBackground(() -> {
+				if (manager.isInitialized()) {
+					fFeatureInitializationScheduled.set(false);
+				}
+				refreshLabels();
+			});
+		}
+		return false;
+	}
+
+	private PluginModelManager getPluginModelManager() {
+		PluginModelManager manager = fPluginModelManager;
+		if (manager == null) {
+			manager = PDECore.getDefault().getModelManager();
+			fPluginModelManager = manager;
+		}
+		return manager;
+	}
+
+	private FeatureModelManager getFeatureModelManager() {
+		FeatureModelManager manager = fFeatureModelManager;
+		if (manager == null) {
+			manager = PDECore.getDefault().getFeatureModelManager();
+			fFeatureModelManager = manager;
+		}
+		return manager;
+	}
+
+	private void refreshLabels() {
+		if (!PlatformUI.isWorkbenchRunning()) {
+			return;
+		}
+		Display display = PlatformUI.getWorkbench().getDisplay();
+		if (!display.isDisposed()) {
+			display.asyncExec(() -> fireLabelProviderChanged(new LabelProviderChangedEvent(this)));
+		}
 	}
 
 	@Override
@@ -209,8 +297,14 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	private String getSystemBundleInfo() {
-		IPluginBase systemBundle = PluginRegistry.findModel(SYSTEM_BUNDLE).getPluginBase();
-		return NLS.bind(" [{0}]", systemBundle.getId()); //$NON-NLS-1$
+		if (!arePluginModelsAvailable()) {
+			return ""; //$NON-NLS-1$
+		}
+		IPluginModelBase model = PluginRegistry.findModel(SYSTEM_BUNDLE);
+		if (model == null) {
+			return ""; //$NON-NLS-1$
+		}
+		return NLS.bind(" [{0}]", model.getPluginBase().getId()); //$NON-NLS-1$
 	}
 
 	private String preventNull(String text) {
@@ -253,7 +347,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 
 	public String getObjectText(BundleDescription bundle) {
 		String id = bundle.getSymbolicName();
-		if (isFullNameModeEnabled()) {
+		if (isFullNameModeEnabled() && arePluginModelsAvailable()) {
 			IPluginModelBase model = PluginRegistry.findModel((Resource) bundle);
 			if (model != null) {
 				return model.getPluginBase().getTranslatedName();
@@ -264,7 +358,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	public String getObjectText(IPluginImport obj) {
-		if (isFullNameModeEnabled()) {
+		if (isFullNameModeEnabled() && arePluginModelsAvailable()) {
 			String id = obj.getId();
 			IPluginModelBase model = PluginRegistry.findModel(obj.getId());
 			if (model != null) {
@@ -314,7 +408,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	public String getObjectText(FeaturePlugin obj) {
-		String name = isFullNameModeEnabled() ? obj.getLabel() : obj.getId();
+		String name = isFullNameModeEnabled() && arePluginModelsAvailable() ? obj.getLabel() : obj.getId();
 		String version = obj.getVersion();
 
 		String text;
@@ -330,12 +424,12 @@ public class PDELabelProvider extends SharedLabelProvider {
 	public String getObjectText(FeatureImport obj) {
 		int type = obj.getType();
 		if (type == IFeatureImport.PLUGIN) {
-			IPlugin plugin = obj.getPlugin();
+			IPlugin plugin = arePluginModelsAvailable() ? obj.getPlugin() : null;
 			if (plugin != null && isFullNameModeEnabled()) {
 				return preventNull(plugin.getTranslatedName());
 			}
 		} else if (type == IFeatureImport.FEATURE) {
-			IFeature feature = obj.getFeature();
+			IFeature feature = areFeatureModelsAvailable() ? obj.getFeature() : null;
 			if (feature != null && isFullNameModeEnabled()) {
 				return preventNull(feature.getTranslatableLabel());
 			}
@@ -385,9 +479,12 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	public String getObjectText(ISiteFeature obj) {
-		IFeatureModel model = PDECore.getDefault().getFeatureModelManager().findFeatureModel(obj.getId(), obj.getVersion() != null ? obj.getVersion() : ICoreConstants.DEFAULT_VERSION);
-		if (model != null) {
-			return getObjectText(model);
+		if (areFeatureModelsAvailable()) {
+			IFeatureModel model = PDECore.getDefault().getFeatureModelManager().findFeatureModel(obj.getId(),
+					obj.getVersion() != null ? obj.getVersion() : ICoreConstants.DEFAULT_VERSION);
+			if (model != null) {
+				return getObjectText(model);
+			}
 		}
 		String url = obj.getURL();
 		if (url != null) {
@@ -397,10 +494,12 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	public String getObjectText(ISiteBundle obj) {
-		IPluginModelBase modelBase = PluginRegistry.findModel(obj.getId(), obj.getVersion(),
-				VersionMatchRule.COMPATIBLE);
-		if (modelBase != null) {
-			return getObjectText(modelBase.getPluginBase());
+		if (arePluginModelsAvailable()) {
+			IPluginModelBase modelBase = PluginRegistry.findModel(obj.getId(), obj.getVersion(),
+					VersionMatchRule.COMPATIBLE);
+			if (modelBase != null) {
+				return getObjectText(modelBase.getPluginBase());
+			}
 		}
 		return preventNull(obj.getId());
 	}
@@ -484,6 +583,10 @@ public class PDELabelProvider extends SharedLabelProvider {
 			return getObjectImage((ISchemaAttribute) obj);
 		}
 		if (obj instanceof ISchemaInclude) {
+			// a schema:// include is looked up in the plug-in registry
+			if (!arePluginModelsAvailable()) {
+				return get(PDEPluginImages.DESC_PAGE_OBJ);
+			}
 			ISchema schema = ((ISchemaInclude) obj).getIncludedSchema();
 			return get(PDEPluginImages.DESC_PAGE_OBJ, schema == null || !schema.isValid() ? F_ERROR : 0);
 		}
@@ -644,7 +747,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 	private Image getObjectImage(ImportObject iobj) {
 		int flags = 0;
 		IPluginImport iimport = iobj.getImport();
-		if (!iobj.isResolved()) {
+		// The resolved state is only known once the target platform is available
+		boolean modelsAvailable = arePluginModelsAvailable();
+		if (modelsAvailable && !iobj.isResolved()) {
 			flags = iimport.isOptional() ? F_WARNING : F_ERROR;
 		} else if (iimport.isReexported()) {
 			flags = F_EXPORT;
@@ -652,7 +757,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 		if (iimport.isOptional()) {
 			flags |= F_OPTIONAL;
 		}
-		IPlugin plugin = iobj.getPlugin();
+		IPlugin plugin = modelsAvailable ? iobj.getPlugin() : null;
 		if (plugin != null) {
 			IPluginModelBase model = plugin.getPluginModel();
 			flags |= getModelFlags(model);
@@ -670,7 +775,8 @@ public class PDELabelProvider extends SharedLabelProvider {
 		while (parent != null && !(parent instanceof IPluginExtension)) {
 			parent = parent.getParent();
 		}
-		if (parent != null) {
+		// the schema lookup builds the extension registry, which resolves
+		if (parent != null && arePluginModelsAvailable()) {
 			String point = ((IPluginExtension) parent).getPoint();
 			SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
 			ISchema schema = registry.getSchema(point);
@@ -712,6 +818,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	private Image getObjectImage(IProductPlugin obj) {
+		if (!arePluginModelsAvailable()) {
+			return get(PDEPluginImages.DESC_PLUGIN_OBJ);
+		}
 		Version version = (obj.getVersion() != null && obj.getVersion().length() > 0 && !obj.getVersion().equals(ICoreConstants.DEFAULT_VERSION)) ? Version.parseVersion(obj.getVersion()) : null;
 		BundleDescription desc = TargetPlatformHelper.getState().getBundle(obj.getId(), version);
 		if (desc != null) {
@@ -781,7 +890,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 
 	private Image getObjectImage(IFeaturePlugin plugin) {
 		int flags = 0;
-		if (((FeaturePlugin) plugin).getPluginBase() == null) {
+		// isFragment() resolves the plug-in as well, so it needs the same guard
+		boolean modelsAvailable = arePluginModelsAvailable();
+		if (modelsAvailable && ((FeaturePlugin) plugin).getPluginBase() == null) {
 			int cflag = CompilerFlags.getFlag(null, CompilerFlags.F_UNRESOLVED_PLUGINS);
 			if (cflag == CompilerFlags.ERROR) {
 				flags = F_ERROR;
@@ -789,7 +900,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 				flags = F_WARNING;
 			}
 		}
-		if (plugin.isFragment()) {
+		if (modelsAvailable && plugin.isFragment()) {
 			return get(PDEPluginImages.DESC_FRAGMENT_OBJ, flags);
 		}
 		return get(PDEPluginImages.DESC_PLUGIN_OBJ, flags);
@@ -797,7 +908,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 
 	private Image getObjectImage(IFeatureChild feature) {
 		int flags = 0;
-		if (((FeatureChild) feature).getReferencedFeature() == null) {
+		if (areFeatureModelsAvailable() && ((FeatureChild) feature).getReferencedFeature() == null) {
 			int cflag = CompilerFlags.getFlag(null, CompilerFlags.F_UNRESOLVED_FEATURES);
 			if (cflag == CompilerFlags.ERROR) {
 				flags = F_ERROR;
@@ -811,8 +922,8 @@ public class PDELabelProvider extends SharedLabelProvider {
 	private Image getObjectImage(IProductFeature feature) {
 		int flags = 0;
 		String version = feature.getVersion().length() > 0 ? feature.getVersion() : ICoreConstants.DEFAULT_VERSION;
-		IFeatureModel model = PDECore.getDefault().getFeatureModelManager().findFeatureModel(feature.getId(), version);
-		if (model == null) {
+		if (areFeatureModelsAvailable()
+				&& PDECore.getDefault().getFeatureModelManager().findFeatureModel(feature.getId(), version) == null) {
 			flags = F_ERROR;
 		}
 		return get(PDEPluginImages.DESC_FEATURE_OBJ, flags);
@@ -835,14 +946,12 @@ public class PDELabelProvider extends SharedLabelProvider {
 
 		if (type == IFeatureImport.FEATURE) {
 			base = PDEPluginImages.DESC_FEATURE_OBJ;
-			IFeature feature = iimport.getFeature();
-			if (feature == null) {
+			if (areFeatureModelsAvailable() && iimport.getFeature() == null) {
 				flags = F_ERROR;
 			}
 		} else {
 			base = PDEPluginImages.DESC_REQ_PLUGIN_OBJ;
-			IPlugin plugin = iimport.getPlugin();
-			if (plugin == null) {
+			if (arePluginModelsAvailable() && iimport.getPlugin() == null) {
 				flags = F_ERROR;
 			}
 		}
@@ -907,7 +1016,8 @@ public class PDELabelProvider extends SharedLabelProvider {
 			if (importPackageObject.isOptional()) {
 				flags |= F_OPTIONAL;
 			}
-			if (!importPackageObject.isResolved()) {
+			// The resolved state is only known once the target platform is available
+			if (arePluginModelsAvailable() && !importPackageObject.isResolved()) {
 				flags |= importPackageObject.isOptional() ? F_WARNING : F_ERROR;
 			}
 		}

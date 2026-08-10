@@ -23,9 +23,11 @@ import java.util.Set;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ICoreRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.core.IModelProviderListener;
@@ -58,11 +60,25 @@ public class FeatureModelManager {
 
 	private ExternalFeatureModelManager fExternalManager;
 
-	private boolean fReloadExternalNeeded = false;
+	private volatile boolean fReloadExternalNeeded = false;
+
+	/**
+	 * Set once {@link #init()} has completed; {@link #fActiveModels} is assigned
+	 * much earlier.
+	 */
+	private volatile boolean fModelsAvailable = false;
 
 	private final WorkspaceFeatureModelManager fWorkspaceManager;
 
 	private IModelProviderListener fProviderListener;
+
+	/**
+	 * only access synchronized with fInitializationJobLock, which must never be
+	 * held while the target platform is resolved
+	 **/
+	private Job fInitializationJob;
+
+	private final Object fInitializationJobLock = new Object();
 
 	/**
 	 * List of IFeatureModelListener
@@ -83,56 +99,99 @@ public class FeatureModelManager {
 		}
 	}
 
+	/**
+	 * Returns whether the feature models can be queried without reading the
+	 * external features, which resolves the target platform.
+	 */
 	public boolean isInitialized() {
-		return (fActiveModels != null && !fReloadExternalNeeded);
+		// not synchronized: init() holds the instance monitor while it resolves
+		return fModelsAvailable && !fReloadExternalNeeded;
+	}
+
+	/**
+	 * Initializes the feature models in a background job unless they are
+	 * available already, and runs the given callback as soon as they are.
+	 */
+	public void initializeInBackground(Runnable whenInitialized) {
+		Job job;
+		// not the instance monitor: init() holds it while it resolves, and this
+		// method is called from the UI thread
+		synchronized (fInitializationJobLock) {
+			if (fInitializationJob == null) {
+				fInitializationJob = Job.create(PDECoreMessages.FeatureModelManager_initializingFeatureTargetPlatform,
+						(ICoreRunnable) monitor -> init());
+				fInitializationJob.setPriority(Job.LONG);
+			}
+			job = fInitializationJob;
+		}
+		BackgroundInitialization.whenInitialized(job, this::isInitialized, whenInitialized);
 	}
 
 	private synchronized void init() {
 		if (fActiveModels != null) {
 			if (fReloadExternalNeeded) {
+				fModelsAvailable = false;
 				fReloadExternalNeeded = false;
-				fExternalManager.initialize();
+				readExternalFeatures();
 			}
 			return;
 		}
 
 		fActiveModels = new FeatureTable();
-		fInactiveModels = new FeatureTable();
-
-		fProviderListener = this::handleModelsChanged;
-		fWorkspaceManager.addModelProviderListener(fProviderListener);
-
-		IFeatureModel[] models = fWorkspaceManager.getFeatureModels();
-		for (IFeatureModel model : models) {
-			// add all workspace models, including invalid or duplicate (save
-			// id, ver)
-			fActiveModels.add(model);
-		}
-
-		fExternalManager = new ExternalFeatureModelManager();
-		fExternalManager.addModelProviderListener(fProviderListener);
-		fReloadExternalNeeded = false;
-
-		ITargetDefinition unresolvedRepoBasedtarget = null;
 		try {
-			unresolvedRepoBasedtarget = TargetPlatformHelper.getUnresolvedRepositoryBasedWorkspaceTarget();
-		} catch (CoreException e) {
-			PDECore.log(e);
-		}
-		if (unresolvedRepoBasedtarget != null && !P2TargetUtils.isProfileValid(unresolvedRepoBasedtarget)) {
+			fInactiveModels = new FeatureTable();
 
-			WorkspaceJob initializeExternalManager = new WorkspaceJob(PDECoreMessages.FeatureModelManager_initializingFeatureTargetPlatform) {
-				@Override
-				public IStatus runInWorkspace(IProgressMonitor monitor) {
-					fExternalManager.initialize();
-					return Status.OK_STATUS;
-				}
-			};
-			initializeExternalManager.schedule();
-		} else {
+			fProviderListener = this::handleModelsChanged;
+			fWorkspaceManager.addModelProviderListener(fProviderListener);
+
+			IFeatureModel[] models = fWorkspaceManager.getFeatureModels();
+			for (IFeatureModel model : models) {
+				// add all workspace models, including invalid or duplicate (save
+				// id, ver)
+				fActiveModels.add(model);
+			}
+
+			fExternalManager = new ExternalFeatureModelManager();
+			fExternalManager.addModelProviderListener(fProviderListener);
+			fReloadExternalNeeded = false;
+
+			ITargetDefinition unresolvedRepoBasedtarget = null;
+			try {
+				unresolvedRepoBasedtarget = TargetPlatformHelper.getUnresolvedRepositoryBasedWorkspaceTarget();
+			} catch (CoreException e) {
+				PDECore.log(e);
+			}
+			if (unresolvedRepoBasedtarget != null && !P2TargetUtils.isProfileValid(unresolvedRepoBasedtarget)) {
+
+				WorkspaceJob initializeExternalManager = new WorkspaceJob(PDECoreMessages.FeatureModelManager_initializingFeatureTargetPlatform) {
+					@Override
+					public IStatus runInWorkspace(IProgressMonitor monitor) {
+						fExternalManager.initialize();
+						return Status.OK_STATUS;
+					}
+				};
+				initializeExternalManager.schedule();
+			} else {
+				readExternalFeatures();
+			}
+		} finally {
+			// init() fast-returns once fActiveModels is set, so a failure on the way
+			// out must not leave isInitialized() false for good
+			fModelsAvailable = true;
+		}
+	}
+
+	/**
+	 * Reads the external features. Even if that fails the models count as
+	 * available, otherwise {@link #init()} would fast-return forever and leave
+	 * {@link #isInitialized()} false for good.
+	 */
+	private void readExternalFeatures() {
+		try {
 			fExternalManager.initialize();
+		} finally {
+			fModelsAvailable = true;
 		}
-
 	}
 
 	/*

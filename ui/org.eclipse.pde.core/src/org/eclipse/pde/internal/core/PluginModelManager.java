@@ -39,6 +39,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.osgi.service.resolver.BundleDelta;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
@@ -117,9 +118,11 @@ public class PluginModelManager implements IModelProviderListener {
 	private PDEState fState; // keeps the combined view of the target and workspace
 
 	/**
-	 * only access synchronized with fEntriesSynchronizer
+	 * Only modify synchronized with fEntriesSynchronizer, and only assign a fully
+	 * populated table. Volatile so that {@link #isInitialized()} can read it
+	 * without that lock.
 	 **/
-	private Map<String, LocalModelEntry> fEntries; // a master table keyed by plugin ID and the value is a ModelEntry
+	private volatile Map<String, LocalModelEntry> fEntries; // a master table keyed by plugin ID and the value is a ModelEntry
 	/**
 	 * used to synchronize all public methods which (indirectly) use fEntries
 	 **/
@@ -128,6 +131,14 @@ public class PluginModelManager implements IModelProviderListener {
 	private ArrayList<IPluginModelListener> fListeners; // a list of listeners interested in changes to the plug-in models
 	private ArrayList<IStateDeltaListener> fStateListeners; // a list of listeners interested in changes to the PDE/resolver State
 	private boolean fCancelled = false;
+
+	/**
+	 * only access synchronized with fInitializationJobLock, which must never be
+	 * held while the target platform is resolved
+	 **/
+	private Job fInitializationJob;
+
+	private final Object fInitializationJobLock = new Object();
 
 	/**
 	 * Initialize the workspace and external (target) model manager
@@ -397,9 +408,28 @@ public class PluginModelManager implements IModelProviderListener {
 	 * 		<code>false</code> otherwise.
 	 */
 	public boolean isInitialized() {
-		synchronized (fEntriesSynchronizer) {
-			return fEntries != null;
+		// not synchronized: fEntriesSynchronizer is held while the target
+		// platform is resolved
+		return fEntries != null;
+	}
+
+	/**
+	 * Initializes the master table in a background job unless it is initialized
+	 * already, and runs the given callback as soon as the table is available.
+	 */
+	public void initializeInBackground(Runnable whenInitialized) {
+		Job job;
+		// not fEntriesSynchronizer: that lock is held while the target platform
+		// is resolved, and this method is called from the UI thread
+		synchronized (fInitializationJobLock) {
+			if (fInitializationJob == null) {
+				fInitializationJob = Job.create(PDECoreMessages.PluginModelManager_InitializingPluginModels,
+						this::initialize);
+				fInitializationJob.setPriority(Job.LONG);
+			}
+			job = fInitializationJob;
 		}
+		BackgroundInitialization.whenInitialized(job, this::isInitialized, whenInitialized);
 	}
 
 	/**
