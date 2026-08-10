@@ -166,11 +166,19 @@ public abstract class DeltaTestSetup {
 				TestSuiteHelper.getPluginDirectoryPath().append(TESTS_DELTAS_NAME).append(getTestRoot()).append(testName).append(name).toOSString()
 		};
 		IPath destinationPath = WORKSPACE_ROOT.append(name).append(bundleName);
-		String[] compilerOptions = TestSuiteHelper.getCompilerOptions();
+		String[] compilerOptions = getCompilerOptions();
 		assertTrue(TestSuiteHelper.compile(sourceFilePaths, destinationPath.toOSString(), compilerOptions));
 
 		// copy the MANIFEST in the workspace folder
 		copyResources(testName, name, destinationPath.toOSString());
+	}
+
+	/**
+	 * Returns the compiler options to use when compiling test bundles.
+	 * Subclasses may override to use a different Java compliance level.
+	 */
+	protected String[] getCompilerOptions() {
+		return TestSuiteHelper.getCompilerOptions();
 	}
 
 	protected void deployBundles(String testName) {
