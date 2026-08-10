@@ -13,7 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.site;
 
+import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition;
 import org.eclipse.pde.internal.core.isite.ISiteFeature;
@@ -26,6 +28,8 @@ import org.eclipse.ui.forms.editor.IFormPage;
 class SiteLabelProvider extends LabelProvider {
 
 	private final PDELabelProvider fSharedProvider;
+
+	private final ILabelProviderListener fSharedProviderListener;
 
 	/**
 	 * Comment for <code>fLabelProvider</code>
@@ -45,6 +49,9 @@ class SiteLabelProvider extends LabelProvider {
 		fPageImage = PDEPluginImages.DESC_PAGE_OBJ.createImage();
 		fSharedProvider = PDEPlugin.getDefault().getLabelProvider();
 		fSharedProvider.connect(this);
+		// the shared provider repaints once the models are there, this viewer must follow
+		fSharedProviderListener = event -> fireLabelProviderChanged(new LabelProviderChangedEvent(this));
+		fSharedProvider.addListener(fSharedProviderListener);
 	}
 
 	@Override
@@ -53,7 +60,11 @@ class SiteLabelProvider extends LabelProvider {
 			return fCatDefImage;
 		}
 		if (element instanceof SiteFeatureAdapter) {
-			if (PDECore.getDefault().getFeatureModelManager().findFeatureModelRelaxed(((SiteFeatureAdapter) element).feature.getId(), ((SiteFeatureAdapter) element).feature.getVersion()) == null) {
+			// the lookup resolves the target platform, so it has to wait for the models
+			if (fSharedProvider.areFeatureModelsAvailable()
+					&& PDECore.getDefault().getFeatureModelManager().findFeatureModelRelaxed(
+							((SiteFeatureAdapter) element).feature.getId(),
+							((SiteFeatureAdapter) element).feature.getVersion()) == null) {
 				return fMissingSiteFeatureImage;
 			}
 			return fSiteFeatureImage;
@@ -81,6 +92,7 @@ class SiteLabelProvider extends LabelProvider {
 
 	@Override
 	public void dispose() {
+		fSharedProvider.removeListener(fSharedProviderListener);
 		fSharedProvider.disconnect(this);
 		// Dispose of images
 		if ((fCatDefImage != null) && (fCatDefImage.isDisposed() == false)) {

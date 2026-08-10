@@ -11,6 +11,7 @@ import org.junit.platform.suite.api.Suite;
 	StaleDependencyResolutionTest.class, //
 	WorkspaceModelManagerTest.class, //
 	WorkspaceProductModelManagerTest.class, //
+	ModelManagerBackgroundInitializationTest.class, //
 })
 public class AllPDECoreTests {
 }
