@@ -31,6 +31,7 @@ public class Messages extends NLS {
 	public static String LayoutSpyDialog_menu_copy_widget_info;
 	public static String LayoutSpyDialog_label_no_control_selected;
 	public static String LayoutSpyDialog_label_not_a_composite;
+	public static String LayoutSpyDialog_label_no_layout;
 	public static String LayoutSpyDialog_label_control_disposed;
 	public static String LayoutSpyDialog_warning_bounds_outside_parent;
 	public static String LayoutSpyDialog_warning_control_overlaps_siblings;
