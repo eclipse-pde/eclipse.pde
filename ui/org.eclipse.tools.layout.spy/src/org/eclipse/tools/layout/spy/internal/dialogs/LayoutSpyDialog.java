@@ -553,8 +553,11 @@ public class LayoutSpyDialog {
 
 		StringBuilder node = new StringBuilder();
 		describeControlGeometry(node, control);
-		node.append("Layout:\n"); //$NON-NLS-1$
-		describeControlLayout(node, control);
+		// Only composites can carry a layout, so the section stays out of the tree for leaf controls
+		if (control instanceof Composite) {
+			node.append("Layout:\n"); //$NON-NLS-1$
+			describeControlLayout(node, control);
+		}
 		for (String line : node.toString().split("\n")) { //$NON-NLS-1$
 			if (line.isEmpty()) {
 				builder.append("\n"); //$NON-NLS-1$
@@ -913,52 +916,53 @@ public class LayoutSpyDialog {
 			return;
 		}
 
-		Rectangle parentBounds = GeometryUtil.getDisplayBounds(parent);
 		Layout layout = parent.getLayout();
+		if (layout == null) {
+			builder.append(Messages.LayoutSpyDialog_label_no_layout);
+			return;
+		}
 
-		if (layout != null) {
-			if (layout instanceof GridLayout grid) {
-				builder.append(GridLayoutFactory.createFrom(grid));
+		if (!(layout instanceof GridLayout grid)) {
+			describeObject(builder, "layout", layout); //$NON-NLS-1$
+			return;
+		}
 
-				boolean hasVerticallyTruncadeControls = false;
-				boolean hasHorizontallyTruncadeControls = false;
+		builder.append(GridLayoutFactory.createFrom(grid));
 
-				boolean hasHorizontalGrab = false;
-				boolean hasVerticalGrab = false;
-				for (Control next : parent.getChildren()) {
-					@Nullable
-					GridData data = (GridData) next.getLayoutData();
-					if (data == null) {
-						continue;
-					}
+		Rectangle parentBounds = GeometryUtil.getDisplayBounds(parent);
+		boolean hasVerticallyTruncadeControls = false;
+		boolean hasHorizontallyTruncadeControls = false;
 
-					Rectangle childBounds = GeometryUtil.getDisplayBounds(parent);
-					Rectangle intersection = childBounds.intersection(parentBounds);
-
-					if (intersection.width < childBounds.width) {
-						hasHorizontallyTruncadeControls = true;
-					}
-
-					if (intersection.height < childBounds.height) {
-						hasVerticallyTruncadeControls = true;
-					}
-
-					hasHorizontalGrab = hasHorizontalGrab || data.grabExcessHorizontalSpace;
-					hasVerticalGrab = hasVerticalGrab || data.grabExcessVerticalSpace;
-				}
-
-				if (hasHorizontallyTruncadeControls && !hasHorizontalGrab) {
-					builder.append(getWarningMessage(
-							Messages.LayoutSpyDialog_warning_not_grabbing_horizontally));
-				}
-
-				if (hasVerticallyTruncadeControls && !hasVerticalGrab) {
-					builder.append(getWarningMessage(
-							Messages.LayoutSpyDialog_warning_not_grabbing_vertically));
-				}
-			} else {
-				describeObject(builder, "layout", layout); //$NON-NLS-1$
+		boolean hasHorizontalGrab = false;
+		boolean hasVerticalGrab = false;
+		for (Control next : parent.getChildren()) {
+			@Nullable
+			GridData data = (GridData) next.getLayoutData();
+			if (data == null) {
+				continue;
 			}
+
+			Rectangle childBounds = GeometryUtil.getDisplayBounds(next);
+			Rectangle intersection = childBounds.intersection(parentBounds);
+
+			if (intersection.width < childBounds.width) {
+				hasHorizontallyTruncadeControls = true;
+			}
+
+			if (intersection.height < childBounds.height) {
+				hasVerticallyTruncadeControls = true;
+			}
+
+			hasHorizontalGrab = hasHorizontalGrab || data.grabExcessHorizontalSpace;
+			hasVerticalGrab = hasVerticalGrab || data.grabExcessVerticalSpace;
+		}
+
+		if (hasHorizontallyTruncadeControls && !hasHorizontalGrab) {
+			builder.append(getWarningMessage(Messages.LayoutSpyDialog_warning_not_grabbing_horizontally));
+		}
+
+		if (hasVerticallyTruncadeControls && !hasVerticalGrab) {
+			builder.append(getWarningMessage(Messages.LayoutSpyDialog_warning_not_grabbing_vertically));
 		}
 	}
 
