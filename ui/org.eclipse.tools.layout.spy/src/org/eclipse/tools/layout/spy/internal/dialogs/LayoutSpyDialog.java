@@ -18,6 +18,12 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.databinding.observable.sideeffect.ISideEffectFactory;
 import org.eclipse.core.databinding.observable.value.WritableValue;
@@ -39,6 +45,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
@@ -49,6 +56,7 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -75,6 +83,33 @@ public class LayoutSpyDialog {
 	 * Value used to indicate an unknown hint value
 	 */
 	private static final int UNKNOWN = -2;
+	/** Address of the node the report starts at. Children append their index. */
+	private static final String ROOT_ADDRESS = "@"; //$NON-NLS-1$
+	/** Matches the alignment arguments in the factory code JFace renders. */
+	private static final Pattern ALIGN_CALL = Pattern.compile("\\.align\\(([^,]+), ([^)]+)\\)"); //$NON-NLS-1$
+
+	/**
+	 * A remark about one control. A warning states a problem, a note states that
+	 * something that looks like a problem is intended and is not counted.
+	 */
+	private record Finding(String key, String message, String evidence, boolean warning) {
+		String text() {
+			return evidence.isEmpty() ? message : message + " (" + evidence + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+		}
+
+		String render() {
+			return NLS.bind(
+					warning ? Messages.LayoutSpyDialog_warning_prefix : Messages.LayoutSpyDialog_note_prefix, text());
+		}
+	}
+
+	/** Accumulates the widget tree and its findings while the report is built. */
+	private static final class Report {
+		final StringBuilder tree = new StringBuilder();
+		final Map<String, List<Finding>> findingsByAddress = new LinkedHashMap<>();
+		int controlCount;
+		int maxDepth;
+	}
 	/** The shell owned by the standalone dialog, or {@code null} when hosted in a part. */
 	private Shell shell;
 
@@ -530,8 +565,16 @@ public class LayoutSpyDialog {
 		if (selected == null || selected.isDisposed()) {
 			return;
 		}
+		Report report = new Report();
+		appendControlSubtree(selected, report, 0, ROOT_ADDRESS);
+
 		StringBuilder builder = new StringBuilder();
-		appendControlSubtree(selected, builder, 0);
+		builder.append("Layout Spy report\n=================\n"); //$NON-NLS-1$
+		EnvironmentReport.append(builder, selected.getDisplay());
+		builder.append("\n"); //$NON-NLS-1$
+		appendSummary(builder, selected, report);
+		builder.append("\nWidget tree\n===========\n"); //$NON-NLS-1$
+		builder.append(report.tree);
 
 		Clipboard clipboard = new Clipboard(widgetTree.getControl().getDisplay());
 		try {
@@ -542,22 +585,80 @@ public class LayoutSpyDialog {
 	}
 
 	/**
-	 * Appends the description of the given control, and recursively of its
-	 * children, to the builder, indented by tree depth.
+	 * Appends the counts and the list of warnings, so that a reader does not have
+	 * to search a report of several hundred lines for them.
 	 */
-	private void appendControlSubtree(Control control, StringBuilder builder, int depth) {
+	private static void appendSummary(StringBuilder builder, Control root, Report report) {
+		builder.append("Root: ").append(root.getClass().getName()).append(WidgetIdentity.text(root)); //$NON-NLS-1$
+		builder.append(" ").append(ROOT_ADDRESS).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		builder.append("Controls: ").append(report.controlCount); //$NON-NLS-1$
+		builder.append(", maximum depth: ").append(report.maxDepth).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+
+		Map<String, Integer> counts = new LinkedHashMap<>();
+		Map<String, String> labels = new HashMap<>();
+		int total = 0;
+		for (List<Finding> findings : report.findingsByAddress.values()) {
+			for (Finding finding : findings) {
+				if (!finding.warning()) {
+					continue;
+				}
+				total++;
+				counts.merge(finding.key(), 1, Integer::sum);
+				labels.putIfAbsent(finding.key(), finding.message());
+			}
+		}
+
+		builder.append("Warnings: ").append(total).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		counts.entrySet().stream().sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+				.forEach(entry -> builder.append("  ").append(entry.getValue()).append("x ") //$NON-NLS-1$ //$NON-NLS-2$
+						.append(labels.get(entry.getKey())).append("\n")); //$NON-NLS-1$
+
+		if (total == 0) {
+			return;
+		}
+		builder.append("Warnings by node:\n"); //$NON-NLS-1$
+		report.findingsByAddress.forEach((address, findings) -> {
+			for (Finding finding : findings) {
+				if (finding.warning()) {
+					builder.append("  ").append(address).append("  ").append(finding.text()).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				}
+			}
+		});
+	}
+
+	/**
+	 * Appends the description of the given control, and recursively of its
+	 * children, to the report. Every node carries its address so that the warnings
+	 * in the summary can point at it.
+	 */
+	private void appendControlSubtree(Control control, Report report, int depth, String address) {
+		StringBuilder builder = report.tree;
+		report.controlCount++;
+		report.maxDepth = Math.max(report.maxDepth, depth);
+
 		String indent = "  ".repeat(depth); //$NON-NLS-1$
-		builder.append(indent).append(control.getClass().getName());
+		builder.append(indent).append(address).append("  ").append(control.getClass().getName()); //$NON-NLS-1$
+		builder.append(WidgetIdentity.text(control));
 		builder.append(NLS.bind(" {0}", control.getBounds())); //$NON-NLS-1$
+		builder.append(WidgetIdentity.context(control));
 		builder.append("\n"); //$NON-NLS-1$
 
+		List<Finding> findings = new ArrayList<>();
 		StringBuilder node = new StringBuilder();
-		describeControlGeometry(node, control);
+		describeControlGeometry(node, control, findings);
 		// Only composites can carry a layout, so the section stays out of the tree for leaf controls
 		if (control instanceof Composite) {
 			node.append("Layout:\n"); //$NON-NLS-1$
-			describeControlLayout(node, control);
+			describeControlLayout(node, control, findings);
 		}
+		ensureNewline(node);
+		for (Finding finding : findings) {
+			node.append(finding.render());
+		}
+		if (!findings.isEmpty()) {
+			report.findingsByAddress.put(address, findings);
+		}
+
 		for (String line : node.toString().split("\n")) { //$NON-NLS-1$
 			if (line.isEmpty()) {
 				builder.append("\n"); //$NON-NLS-1$
@@ -568,8 +669,9 @@ public class LayoutSpyDialog {
 		builder.append("\n"); //$NON-NLS-1$
 
 		if (control instanceof Composite composite && !composite.isDisposed()) {
-			for (Control child : composite.getChildren()) {
-				appendControlSubtree(child, builder, depth + 1);
+			Control[] children = composite.getChildren();
+			for (int i = 0; i < children.length; i++) {
+				appendControlSubtree(children[i], report, depth + 1, address + "." + i); //$NON-NLS-1$
 			}
 		}
 	}
@@ -587,8 +689,10 @@ public class LayoutSpyDialog {
 		region.subtract(rect);
 	}
 
-	private String getWarningMessage(String string) {
-		return NLS.bind(Messages.LayoutSpyDialog_warning_prefix, string);
+	private static void ensureNewline(StringBuilder builder) {
+		if (builder.length() > 0 && builder.charAt(builder.length() - 1) != '\n') {
+			builder.append("\n"); //$NON-NLS-1$
+		}
 	}
 
 	private static String printHint(int hint) {
@@ -666,10 +770,10 @@ public class LayoutSpyDialog {
 	}
 
 	/**
-	 * Returns true iff another visible widget in the same shell overlaps the
-	 * given control.
+	 * Returns another visible widget in the same shell that overlaps the given
+	 * control, or null if there is none.
 	 */
-	private static boolean overlapsSibling(Control toFind) {
+	private static @Nullable Control findOverlappingSibling(Control toFind) {
 		Composite parent = toFind.getParent();
 		Control current = toFind;
 		Rectangle displayBounds = GeometryUtil.getDisplayBounds(toFind);
@@ -684,33 +788,56 @@ public class LayoutSpyDialog {
 				}
 				Rectangle nextSiblingBounds = GeometryUtil.getDisplayBounds(nextSibling);
 				if (nextSiblingBounds.intersects(displayBounds)) {
-					return true;
+					return nextSibling;
 				}
 			}
 			current = parent;
 			parent = parent.getParent();
 		}
-		return false;
+		return null;
 	}
 
 	/**
-	 * Appends the font and style of the given control.
+	 * Appends the font and style of the given control. The font is inherited from
+	 * the parent in almost every case, so only a deviation is worth a line.
 	 */
 	private static void appendWidgetInfo(StringBuilder builder, Control control) {
-		Font font = control.getFont();
-		if (font != null && !font.isDisposed()) {
-			FontData[] fontData = font.getFontData();
-			if (fontData.length > 0) {
-				FontData first = fontData[0];
-				builder.append(NLS.bind("font = {0}, height {1}, style {2}", //$NON-NLS-1$
-						new Object[] { first.getName(), first.getHeight(), first.getStyle() }));
-				builder.append("\n"); //$NON-NLS-1$
-			}
+		FontData font = firstFontData(control);
+		Composite parent = control.getParent();
+		FontData parentFont = parent == null ? null : firstFontData(parent);
+		if (font != null && !font.equals(parentFont)) {
+			builder.append(NLS.bind("font = {0}, height {1}, style {2}", //$NON-NLS-1$
+					new Object[] { font.getName(), font.getHeight(), fontStyleName(font.getStyle()) }));
+			builder.append("\n"); //$NON-NLS-1$
 		}
 
-		builder.append(NLS.bind("style = 0x{0}, enabled = {1}", //$NON-NLS-1$
-				new Object[] { Integer.toHexString(control.getStyle()), control.isEnabled() }));
-		builder.append("\n"); //$NON-NLS-1$
+		builder.append("style = ").append(SwtStyles.describe(control)).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (!control.isEnabled()) {
+			builder.append("enabled = false\n"); //$NON-NLS-1$
+		}
+	}
+
+	private static @Nullable FontData firstFontData(Control control) {
+		Font font = control.getFont();
+		if (font == null || font.isDisposed()) {
+			return null;
+		}
+		FontData[] fontData = font.getFontData();
+		return fontData.length > 0 ? fontData[0] : null;
+	}
+
+	private static String fontStyleName(int style) {
+		if (style == SWT.NORMAL) {
+			return "NORMAL"; //$NON-NLS-1$
+		}
+		StringBuilder builder = new StringBuilder();
+		if ((style & SWT.BOLD) != 0) {
+			builder.append("BOLD"); //$NON-NLS-1$
+		}
+		if ((style & SWT.ITALIC) != 0) {
+			builder.append(builder.length() == 0 ? "ITALIC" : "|ITALIC"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		return builder.length() == 0 ? Integer.toString(style) : builder.toString();
 	}
 
 	/**
@@ -731,8 +858,15 @@ public class LayoutSpyDialog {
 		}
 		StringBuilder builder = new StringBuilder();
 		builder.append(child.getClass().getName());
+		builder.append(WidgetIdentity.text(child));
+		builder.append(WidgetIdentity.context(child));
 		builder.append("\n\n"); //$NON-NLS-1$
-		describeControlGeometry(builder, child);
+		List<Finding> findings = new ArrayList<>();
+		describeControlGeometry(builder, child, findings);
+		ensureNewline(builder);
+		for (Finding finding : findings) {
+			builder.append(finding.render());
+		}
 		return builder.toString();
 	}
 
@@ -741,51 +875,50 @@ public class LayoutSpyDialog {
 	 * without the leading class name, so it can be reused both for the
 	 * diagnostics panel and for the clipboard export.
 	 */
-	private void describeControlGeometry(StringBuilder builder, Control child) {
+	private static void describeControlGeometry(StringBuilder builder, Control child, List<Finding> findings) {
 		Object data = child.getData();
 		if (data != null) {
-			builder.append("getData() == " + data + "\n\n"); //$NON-NLS-1$//$NON-NLS-2$
+			builder.append("getData() == ") //$NON-NLS-1$
+					.append(WidgetIdentity.withoutIdentityHashes(String.valueOf(data))).append("\n\n"); //$NON-NLS-1$
 		}
 
 		int widthHintFromLayoutData = UNKNOWN;
 		int heightHintFromLayoutData = UNKNOWN;
 		Object layoutData = child.getLayoutData();
 		if (layoutData == null) {
-			builder.append("getLayoutData() == null\n"); //$NON-NLS-1$
+			// Only worth stating when the layout of the parent would actually read it
+			if (parentLayoutUsesLayoutData(child)) {
+				builder.append("getLayoutData() == null\n"); //$NON-NLS-1$
+			}
 		} else if (layoutData instanceof GridData grid) {
-			builder.append(GridDataFactory.createFrom(grid));
+			appendGridData(builder, grid);
 			widthHintFromLayoutData = grid.widthHint;
 			heightHintFromLayoutData = grid.heightHint;
 
-			if (!grid.grabExcessHorizontalSpace) {
-				if (isHorizontallyScrollable(child) || isGrowableLayout(child, true)) {
-					builder.append(getWarningMessage(
-							Messages.LayoutSpyDialog_warning_grab_horizontally_scrolling));
-				}
+			if (!grid.grabExcessHorizontalSpace
+					&& (isHorizontallyScrollable(child) || isGrowableLayout(child, true))) {
+				findings.add(warning("grab-horizontal", //$NON-NLS-1$
+						Messages.LayoutSpyDialog_warning_grab_horizontally_scrolling));
 			}
-			if (!grid.grabExcessVerticalSpace) {
-				if (isVerticallyScrollable(child) || isGrowableLayout(child, false)) {
-					builder.append(getWarningMessage(
-							Messages.LayoutSpyDialog_warning_grab_vertical_scrolling));
-				}
+			if (!grid.grabExcessVerticalSpace && (isVerticallyScrollable(child) || isGrowableLayout(child, false))) {
+				findings.add(
+						warning("grab-vertical", Messages.LayoutSpyDialog_warning_grab_vertical_scrolling)); //$NON-NLS-1$
 			}
 		} else if (layoutData instanceof FormData formData) {
 			widthHintFromLayoutData = formData.width;
 			heightHintFromLayoutData = formData.height;
+			describeObject(builder, "data", formData, null); //$NON-NLS-1$
 		} else {
-			describeObject(builder, "data", layoutData); //$NON-NLS-1$
+			describeObject(builder, "data", layoutData, null); //$NON-NLS-1$
 		}
 
-		if (isHorizontallyScrollable(child)) {
-			if (widthHintFromLayoutData == SWT.DEFAULT) {
-				builder.append(getWarningMessage(Messages.LayoutSpyDialog_warning_hint_for_horizontally_scrollable));
-			}
+		if (isHorizontallyScrollable(child) && widthHintFromLayoutData == SWT.DEFAULT) {
+			findings.add(warning("hint-horizontal", //$NON-NLS-1$
+					Messages.LayoutSpyDialog_warning_hint_for_horizontally_scrollable));
 		}
-
-		if (isVerticallyScrollable(child)) {
-			if (heightHintFromLayoutData == SWT.DEFAULT) {
-				builder.append(getWarningMessage(Messages.LayoutSpyDialog_warning_hint_for_vertically_scrollable));
-			}
+		if (isVerticallyScrollable(child) && heightHintFromLayoutData == SWT.DEFAULT) {
+			findings.add(
+					warning("hint-vertical", Messages.LayoutSpyDialog_warning_hint_for_vertically_scrollable)); //$NON-NLS-1$
 		}
 
 		builder.append("\n"); //$NON-NLS-1$
@@ -796,87 +929,184 @@ public class LayoutSpyDialog {
 		builder.append("\n"); //$NON-NLS-1$
 
 		appendWidgetInfo(builder, child);
+		builder.append(WidgetIdentity.itemCount(child));
+		WidgetIdentity.appendItems(builder, child);
 
 		Point adjustment = computeHintAdjustment(child);
 
 		int widthHint = Math.max(0, bounds.width - adjustment.x);
 		int heightHint = Math.max(0, bounds.height - adjustment.y);
 
-		builder.append(NLS.bind("widthAdjustment = {0}, heightAdjustment = {1}", //$NON-NLS-1$
-				new Object[] { adjustment.x, adjustment.y }));
-		builder.append("\n\n"); //$NON-NLS-1$
+		if (adjustment.x != 0 || adjustment.y != 0) {
+			builder.append(NLS.bind("widthAdjustment = {0}, heightAdjustment = {1}", //$NON-NLS-1$
+					new Object[] { adjustment.x, adjustment.y }));
+			builder.append("\n"); //$NON-NLS-1$
+		}
+		builder.append("\n"); //$NON-NLS-1$
 
-		// Print the default size
 		Point defaultSize = child.computeSize(SWT.DEFAULT, SWT.DEFAULT, false);
-		builder.append(NLS.bind("computeSize(SWT.DEFAULT, SWT.DEFAULT, false) = {0}", printPoint(defaultSize))); //$NON-NLS-1$
-		builder.append("\n"); //$NON-NLS-1$
-
-		// Print the preferred horizontally-wrapped size:
 		Point hWrappedSize = child.computeSize(widthHint, SWT.DEFAULT, false);
-		builder.append(NLS.bind("computeSize({0} - widthAdjustment, SWT.DEFAULT, false) = {1}", //$NON-NLS-1$
-				new Object[] { bounds.width, printPoint(hWrappedSize) }));
-		builder.append("\n"); //$NON-NLS-1$
-
-		// Print the preferred vertically-wrapped size:
 		Point vWrappedSize = child.computeSize(SWT.DEFAULT, heightHint, false);
-		builder.append(NLS.bind("computeSize(SWT.DEFAULT, {0} - heightAdjustment, false) = {1}", //$NON-NLS-1$
-				new Object[] { bounds.height, printPoint(vWrappedSize) }));
-		builder.append("\n"); //$NON-NLS-1$
 
-		// Check for warnings
+		// The comparison of the preferred size against the assigned size is the point of
+		// the whole report, so it only collapses when all three agree with the bounds
+		if (matchesBounds(defaultSize, bounds) && matchesBounds(hWrappedSize, bounds)
+				&& matchesBounds(vWrappedSize, bounds)) {
+			builder.append("computeSize == getBounds()\n"); //$NON-NLS-1$
+		} else {
+			builder.append(NLS.bind("computeSize(SWT.DEFAULT, SWT.DEFAULT, false) = {0}", printPoint(defaultSize))); //$NON-NLS-1$
+			builder.append("\n"); //$NON-NLS-1$
+			builder.append(NLS.bind("computeSize({0} - widthAdjustment, SWT.DEFAULT, false) = {1}", //$NON-NLS-1$
+					new Object[] { bounds.width, printPoint(hWrappedSize) }));
+			builder.append("\n"); //$NON-NLS-1$
+			builder.append(NLS.bind("computeSize(SWT.DEFAULT, {0} - heightAdjustment, false) = {1}", //$NON-NLS-1$
+					new Object[] { bounds.height, printPoint(vWrappedSize) }));
+			builder.append("\n"); //$NON-NLS-1$
+		}
+
+		// A control the layout deliberately gives no size to fails every size check
+		boolean sized = explainHidden(child) == null;
+
 		Point noOpSize = child.computeSize(widthHint, heightHint, false);
-		if (noOpSize.x != bounds.width || noOpSize.y != bounds.height) {
-			builder.append(getWarningMessage(NLS.bind(Messages.LayoutSpyDialog_warning_unexpected_compute_size,
-					printHint(widthHint), printHint(heightHint), printPoint(noOpSize))));
+		if (sized && (noOpSize.x != bounds.width || noOpSize.y != bounds.height)) {
+			findings.add(warning("compute-size", Messages.LayoutSpyDialog_warning_compute_size_not_idempotent, //$NON-NLS-1$
+					NLS.bind(Messages.LayoutSpyDialog_warning_unexpected_compute_size, printHint(widthHint),
+							printHint(heightHint), printPoint(noOpSize))));
 		}
 
-		if (bounds.height < hWrappedSize.y) {
-			builder.append(
-					getWarningMessage(Messages.LayoutSpyDialog_warning_shorter_than_preferred_size));
+		// A scrollable control is smaller than its content by definition
+		if (sized && bounds.height < hWrappedSize.y && !isVerticallyScrollable(child)) {
+			findings.add(warning("shorter-than-preferred", //$NON-NLS-1$
+					Messages.LayoutSpyDialog_warning_shorter_than_preferred_size));
 		}
 
-		printReasonControlIsInvisible(builder, child);
+		collectVisibilityFindings(child, findings);
+	}
+
+	private static boolean matchesBounds(Point size, Rectangle bounds) {
+		return size.x == bounds.width && size.y == bounds.height;
 	}
 
 	/**
-	 * If the control cannot be seen by the user, this method adds a warning
-	 * message to the given builder explaining the reason why the control cannot
-	 * be seen.
+	 * Returns whether the layout of the parent reads the layout data of its
+	 * children. A {@link FillLayout} or {@link StackLayout} ignores it, so a null
+	 * layout data says nothing there.
 	 */
-	private void printReasonControlIsInvisible(StringBuilder builder, Control control) {
+	private static boolean parentLayoutUsesLayoutData(Control control) {
+		Composite parent = control.getParent();
+		if (parent == null) {
+			return false;
+		}
+		Layout layout = parent.getLayout();
+		return layout != null && !(layout instanceof FillLayout) && !(layout instanceof StackLayout);
+	}
+
+	/**
+	 * Appends the grid data as JFace factory code, with the alignments that JFace
+	 * cannot name printed as constants and a minimum size of zero, which is no
+	 * minimum at all, left out.
+	 */
+	private static void appendGridData(StringBuilder builder, GridData grid) {
+		String rendered = GridDataFactory.createFrom(grid).toString();
+		rendered = ALIGN_CALL.matcher(rendered)
+				.replaceAll(match -> ".align(" + alignmentName(match.group(1)) + ", " //$NON-NLS-1$ //$NON-NLS-2$
+						+ alignmentName(match.group(2)) + ")"); //$NON-NLS-1$
+		rendered = rendered.replace("    .minSize(0, 0)\n", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		builder.append(rendered);
+	}
+
+	private static String alignmentName(String rendered) {
+		try {
+			return SwtStyles.describeAlignment(Integer.parseInt(rendered.trim()));
+		} catch (NumberFormatException e) {
+			// JFace already named it
+			return rendered;
+		}
+	}
+
+	/**
+	 * Collects the reasons why the control cannot be seen by the user. All
+	 * applicable reasons are reported, a control can be both clipped and
+	 * overlapped.
+	 */
+	private static void collectVisibilityFindings(Control control, List<Finding> findings) {
+		Composite parent = control.getParent();
 		if (!control.isVisible()) {
-			builder.append(getWarningMessage("isVisible() == false")); //$NON-NLS-1$
+			// isVisible() is transitive, so a single hidden ancestor would otherwise
+			// stamp this warning onto every one of its descendants
+			if (parent != null && !parent.isVisible()) {
+				return;
+			}
+			String intended = explainHidden(control);
+			if (intended == null) {
+				findings.add(warning("not-visible", "isVisible() == false")); //$NON-NLS-1$ //$NON-NLS-2$
+			} else {
+				findings.add(note("hidden-by-design", Messages.LayoutSpyDialog_note_hidden_by_design, intended)); //$NON-NLS-1$
+			}
 			return;
 		}
 
 		Rectangle bounds = control.getBounds();
 		if (bounds.isEmpty()) {
-			builder.append(getWarningMessage(Messages.LayoutSpyDialog_warning_zero_size));
+			String intended = explainHidden(control);
+			if (intended == null) {
+				findings.add(warning("zero-size", Messages.LayoutSpyDialog_warning_zero_size)); //$NON-NLS-1$
+			} else {
+				findings.add(note("zero-size-by-design", Messages.LayoutSpyDialog_note_zero_size_by_design, intended)); //$NON-NLS-1$
+			}
 			return;
 		}
 
-		Rectangle displayBounds = GeometryUtil.getDisplayBounds(control);
-
-		Composite parent = control.getParent();
-		if (parent != null) {
-			Rectangle parentDisplayBounds = GeometryUtil.getDisplayBounds(parent);
-
-			Rectangle intersection = displayBounds.intersection(parentDisplayBounds);
-			if (intersection.isEmpty()) {
-				builder.append(getWarningMessage(Messages.LayoutSpyDialog_warning_bounds_outside_parent));
-				return;
-			}
-
-			if (intersection.width < bounds.width || intersection.height < bounds.height) {
-				builder.append(getWarningMessage(Messages.LayoutSpyDialog_warning_control_partially_clipped));
-				return;
-			}
-
-			if (overlapsSibling(control)) {
-				builder.append(getWarningMessage(Messages.LayoutSpyDialog_warning_control_overlaps_siblings));
-				return;
-			}
+		if (parent == null) {
+			return;
 		}
+		Rectangle displayBounds = GeometryUtil.getDisplayBounds(control);
+		Rectangle parentDisplayBounds = GeometryUtil.getDisplayBounds(parent);
+		Rectangle intersection = displayBounds.intersection(parentDisplayBounds);
+		if (intersection.isEmpty()) {
+			findings.add(warning("outside-parent", Messages.LayoutSpyDialog_warning_bounds_outside_parent, //$NON-NLS-1$
+					NLS.bind("control at {0}, parent at {1}", displayBounds, parentDisplayBounds))); //$NON-NLS-1$
+		} else if (intersection.width < bounds.width || intersection.height < bounds.height) {
+			findings.add(warning("clipped", Messages.LayoutSpyDialog_warning_control_partially_clipped, //$NON-NLS-1$
+					NLS.bind("{0} of {1}x{2} visible", //$NON-NLS-1$
+							new Object[] { intersection.width + "x" + intersection.height, bounds.width, //$NON-NLS-1$
+									bounds.height })));
+		}
+
+		Control sibling = findOverlappingSibling(control);
+		if (sibling != null) {
+			Rectangle overlap = displayBounds.intersection(GeometryUtil.getDisplayBounds(sibling));
+			findings.add(warning("overlaps-sibling", Messages.LayoutSpyDialog_warning_control_overlaps_siblings, //$NON-NLS-1$
+					NLS.bind("{0}{1} at {2}", new Object[] { sibling.getClass().getSimpleName(), //$NON-NLS-1$
+							WidgetIdentity.text(sibling), overlap })));
+		}
+	}
+
+	/**
+	 * Returns why the control is hidden or has no size on purpose, or null when
+	 * nothing explains it.
+	 */
+	private static @Nullable String explainHidden(Control control) {
+		if (control.getLayoutData() instanceof GridData data && data.exclude) {
+			return "GridData.exclude == true"; //$NON-NLS-1$
+		}
+		Composite parent = control.getParent();
+		if (parent != null && parent.getLayout() instanceof StackLayout stack && stack.topControl != control) {
+			return "not the topControl of the parent StackLayout"; //$NON-NLS-1$
+		}
+		return null;
+	}
+
+	private static Finding warning(String key, String message) {
+		return new Finding(key, message, "", true); //$NON-NLS-1$
+	}
+
+	private static Finding warning(String key, String message, String evidence) {
+		return new Finding(key, message, evidence, true);
+	}
+
+	private static Finding note(String key, String message, String evidence) {
+		return new Finding(key, message, evidence, false);
 	}
 
 	/**
@@ -901,7 +1131,12 @@ public class LayoutSpyDialog {
 		StringBuilder builder = new StringBuilder();
 		builder.append(selected.getClass().getName());
 		builder.append("\n\n"); //$NON-NLS-1$
-		describeControlLayout(builder, selected);
+		List<Finding> findings = new ArrayList<>();
+		describeControlLayout(builder, selected, findings);
+		ensureNewline(builder);
+		for (Finding finding : findings) {
+			builder.append(finding.render());
+		}
 		return builder.toString();
 	}
 
@@ -910,7 +1145,7 @@ public class LayoutSpyDialog {
 	 * class name, so it can be reused both for the layout panel and for the
 	 * clipboard export.
 	 */
-	private void describeControlLayout(StringBuilder builder, Control selected) {
+	private static void describeControlLayout(StringBuilder builder, Control selected, List<Finding> findings) {
 		if (!(selected instanceof Composite parent)) {
 			builder.append(Messages.LayoutSpyDialog_label_not_a_composite);
 			return;
@@ -919,14 +1154,72 @@ public class LayoutSpyDialog {
 		Layout layout = parent.getLayout();
 		if (layout == null) {
 			builder.append(Messages.LayoutSpyDialog_label_no_layout);
+		} else if (layout instanceof GridLayout grid) {
+			describeGridLayout(builder, parent, grid, findings);
+		} else {
+			describeObject(builder, "layout", layout, parent); //$NON-NLS-1$
+		}
+		ensureNewline(builder);
+		appendContentFit(builder, parent, findings);
+	}
+
+	/**
+	 * Compares the room the children ask for with the room they are given. A layout
+	 * error shows up here before it shows up on any single control, and it says
+	 * which composite to look at rather than which widget came out wrong.
+	 */
+	private static void appendContentFit(StringBuilder builder, Composite parent, List<Finding> findings) {
+		Rectangle content = null;
+		int narrowChildren = 0;
+		int shortChildren = 0;
+		int widthDeficit = 0;
+		int heightDeficit = 0;
+
+		for (Control child : parent.getChildren()) {
+			// A child the layout deliberately leaves out does not compete for the space
+			if (!child.isVisible() || explainHidden(child) != null) {
+				continue;
+			}
+			Rectangle bounds = child.getBounds();
+			content = content == null ? bounds : content.union(bounds);
+			Point preferred = child.computeSize(SWT.DEFAULT, SWT.DEFAULT, false);
+			if (preferred.x > bounds.width) {
+				narrowChildren++;
+				widthDeficit += preferred.x - bounds.width;
+			}
+			if (preferred.y > bounds.height) {
+				shortChildren++;
+				heightDeficit += preferred.y - bounds.height;
+			}
+		}
+		if (content == null) {
 			return;
 		}
 
-		if (!(layout instanceof GridLayout grid)) {
-			describeObject(builder, "layout", layout); //$NON-NLS-1$
+		Rectangle client = parent.getClientArea();
+		Rectangle visible = content.intersection(client);
+		boolean overflows = visible.width < content.width || visible.height < content.height;
+		if (!overflows && narrowChildren == 0 && shortChildren == 0) {
 			return;
 		}
 
+		builder.append(NLS.bind("content = {0} in client area {1}", content, client)); //$NON-NLS-1$
+		builder.append("\n"); //$NON-NLS-1$
+		if (narrowChildren > 0 || shortChildren > 0) {
+			builder.append(NLS.bind("children below their preferred size: {0} narrower by {1}, {2} shorter by {3}", //$NON-NLS-1$
+					new Object[] { narrowChildren, widthDeficit, shortChildren, heightDeficit }));
+			builder.append("\n"); //$NON-NLS-1$
+		}
+
+		// Content larger than the client area is what a scrollable composite is for
+		if (overflows && !isHorizontallyScrollable(parent) && !isVerticallyScrollable(parent)) {
+			findings.add(warning("content-overflow", Messages.LayoutSpyDialog_warning_content_does_not_fit, //$NON-NLS-1$
+					NLS.bind("content {0}, client area {1}", content, client))); //$NON-NLS-1$
+		}
+	}
+
+	private static void describeGridLayout(StringBuilder builder, Composite parent, GridLayout grid,
+			List<Finding> findings) {
 		builder.append(GridLayoutFactory.createFrom(grid));
 
 		Rectangle parentBounds = GeometryUtil.getDisplayBounds(parent);
@@ -958,38 +1251,69 @@ public class LayoutSpyDialog {
 		}
 
 		if (hasHorizontallyTruncadeControls && !hasHorizontalGrab) {
-			builder.append(getWarningMessage(Messages.LayoutSpyDialog_warning_not_grabbing_horizontally));
+			findings.add(warning("no-horizontal-grab", //$NON-NLS-1$
+					Messages.LayoutSpyDialog_warning_not_grabbing_horizontally));
 		}
 
 		if (hasVerticallyTruncadeControls && !hasVerticalGrab) {
-			builder.append(getWarningMessage(Messages.LayoutSpyDialog_warning_not_grabbing_vertically));
+			findings.add(warning("no-vertical-grab", Messages.LayoutSpyDialog_warning_not_grabbing_vertically)); //$NON-NLS-1$
 		}
 	}
 
 	/**
-	 * Uses reflection to print the values of the given object's public fields.
+	 * Uses reflection to print the values of the given object's public instance
+	 * fields. The owner, when given, is the composite whose layout is described and
+	 * lets references to its children be printed as a child index.
 	 */
-	void describeObject(StringBuilder result, String variableName, Object toDescribe) {
-		@SuppressWarnings("rawtypes")
-		Class clazz = toDescribe.getClass();
+	static void describeObject(StringBuilder result, String variableName, Object toDescribe, @Nullable Composite owner) {
+		Class<?> clazz = toDescribe.getClass();
 		result.append(clazz.getName());
 		result.append(" "); //$NON-NLS-1$
 		result.append(variableName);
 		result.append(";\n"); //$NON-NLS-1$
-		Field[] fields = clazz.getFields();
 
-		for (Field nextField : fields) {
+		for (Field nextField : clazz.getFields()) {
 			int modifiers = nextField.getModifiers();
-			if (!Modifier.isPublic(modifiers)) {
+			// Static fields are the constants of the class, not the state of this instance
+			if (!Modifier.isPublic(modifiers) || Modifier.isStatic(modifiers)) {
 				continue;
 			}
 			try {
-				String next = variableName + "." + nextField.getName() + " = " + nextField.get(toDescribe) + ";"; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-				result.append(next);
-				result.append("\n"); //$NON-NLS-1$
+				result.append(variableName).append(".").append(nextField.getName()).append(" = "); //$NON-NLS-1$ //$NON-NLS-2$
+				result.append(describeFieldValue(nextField.getName(), nextField.get(toDescribe), owner));
+				result.append(";\n"); //$NON-NLS-1$
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				// Don't care
 			}
 		}
+	}
+
+	private static String describeFieldValue(String fieldName, @Nullable Object value, @Nullable Composite owner) {
+		if (value instanceof Control control) {
+			return describeControlReference(control, owner);
+		}
+		if (value instanceof Integer orientation && "type".equals(fieldName)) { //$NON-NLS-1$
+			return SwtStyles.describeOrientation(orientation);
+		}
+		return WidgetIdentity.withoutIdentityHashes(String.valueOf(value));
+	}
+
+	/**
+	 * Describes a reference to another control. A bare class name is ambiguous when
+	 * a composite has several children of the same type, so the child index is used
+	 * where it is known.
+	 */
+	private static String describeControlReference(Control control, @Nullable Composite owner) {
+		String name = control.getClass().getSimpleName() + WidgetIdentity.text(control);
+		if (owner == null) {
+			return name;
+		}
+		Control[] children = owner.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			if (children[i] == control) {
+				return "child[" + i + "] " + name; //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+		return name;
 	}
 }

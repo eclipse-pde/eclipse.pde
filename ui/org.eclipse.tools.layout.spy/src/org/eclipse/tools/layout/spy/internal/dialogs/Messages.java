@@ -43,6 +43,11 @@ public class Messages extends NLS {
 	public static String LayoutSpyDialog_warning_not_grabbing_horizontally;
 	public static String LayoutSpyDialog_warning_not_grabbing_vertically;
 	public static String LayoutSpyDialog_warning_prefix;
+	public static String LayoutSpyDialog_warning_compute_size_not_idempotent;
+	public static String LayoutSpyDialog_warning_content_does_not_fit;
+	public static String LayoutSpyDialog_note_prefix;
+	public static String LayoutSpyDialog_note_hidden_by_design;
+	public static String LayoutSpyDialog_note_zero_size_by_design;
 	public static String LayoutSpyDialog_warning_shorter_than_preferred_size;
 	public static String LayoutSpyDialog_warning_unexpected_compute_size;
 	public static String LayoutSpyDialog_warning_zero_size;
