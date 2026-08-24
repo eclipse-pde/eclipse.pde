@@ -247,7 +247,7 @@ public class APIFileGenerator {
 		TagScanner tagScanner = TagScanner.newScanner();
 		if (allFiles != null && allFiles.length != 0) {
 			Map<String, String> options = JavaCore.getOptions();
-			options.put(JavaCore.COMPILER_COMPLIANCE, resolveCompliance(manifestMap));
+			options.put(JavaCore.COMPILER_COMPLIANCE, ExecutionEnvironmentResolver.resolveCompliance(manifestMap));
 			CompilationUnit unit = null;
 			for (int i = 0, max = allFiles.length; i < max; i++) {
 				unit = new CompilationUnit(allFiles[i].getAbsolutePath(), this.encoding);
@@ -347,39 +347,6 @@ public class APIFileGenerator {
 		} else {
 			return new DirectoryApiTypeContainer(null, location);
 		}
-	}
-
-	/**
-	 * Resolves the compiler compliance based on the BREE entry in the
-	 * MANIFEST.MF file
-	 *
-	 * @return The derived {@link JavaCore#COMPILER_COMPLIANCE} from the BREE in
-	 *         the manifest map, or {@link JavaCore#VERSION_1_3} if there is no
-	 *         BREE entry in the map or if the BREE entry does not directly map
-	 *         to one of {"1.3", "1.4", "1.5", "1.6", "1.7","1.8"}.
-	 */
-	private String resolveCompliance(Map<String, String> manifestmap) {
-		if (manifestmap != null) {
-			String eename = manifestmap.get(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
-			if (eename != null) {
-				if ("J2SE-1.4".equals(eename)) { //$NON-NLS-1$
-					return JavaCore.VERSION_1_4;
-				}
-				if ("J2SE-1.5".equals(eename)) { //$NON-NLS-1$
-					return JavaCore.VERSION_1_5;
-				}
-				if ("JavaSE-1.6".equals(eename)) { //$NON-NLS-1$
-					return JavaCore.VERSION_1_6;
-				}
-				if ("JavaSE-1.7".equals(eename)) { //$NON-NLS-1$
-					return JavaCore.VERSION_1_7;
-				}
-				if ("JavaSE-1.8".equals(eename)) { //$NON-NLS-1$
-					return JavaCore.VERSION_1_8;
-				}
-			}
-		}
-		return JavaCore.VERSION_1_3;
 	}
 
 	/**
