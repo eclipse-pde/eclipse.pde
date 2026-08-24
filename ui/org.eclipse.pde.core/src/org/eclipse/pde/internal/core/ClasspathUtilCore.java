@@ -128,6 +128,9 @@ public class ClasspathUtilCore {
 		}
 
 		List<BundleWire> wires = wiring.getRequiredWires(PackageNamespace.PACKAGE_NAMESPACE);
+		if (wires == null) {
+			return Stream.empty(); // wiring became stale
+		}
 		return wires.stream().filter(wire -> wire.getProviderWiring() != null).map(wire -> {
 			return wire.getProvider();
 		}).distinct().flatMap(provider -> {
@@ -169,6 +172,9 @@ public class ClasspathUtilCore {
 			return Stream.empty();
 		}
 		List<BundleWire> wires = wiring.getRequiredWires(PackageNamespace.PACKAGE_NAMESPACE);
+		if (wires == null) {
+			return Stream.empty(); // wiring became stale
+		}
 		return wires.stream().map(wire -> wire.getProviderWiring().getBundle()).distinct()
 				.filter(b -> b.getBundleId() != 0)
 				.flatMap(b -> classpathEntriesForRuntimeBundle(b, extra).stream());

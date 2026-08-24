@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 
@@ -251,7 +252,11 @@ public class DependencyManager {
 				// Requirements of a fragment are hosted at the host, which
 				// therefore requires the corresponding wires: OSGi Core spec,
 				// chapter 6.4.1 - Hosted Requirements and Capabilities
-				for (BundleWire hostWire : wiring.getRequiredWires(HostNamespace.HOST_NAMESPACE)) {
+				List<BundleWire> hostWires = wiring.getRequiredWires(HostNamespace.HOST_NAMESPACE);
+				if (hostWires == null) {
+					continue; // wiring became stale
+				}
+				for (BundleWire hostWire : hostWires) {
 					// Temporarily remove this fragment's host from the closure
 					// to ensure it's added again below. In the subsequent
 					// processing this fragment's requirements will then also be
@@ -262,8 +267,17 @@ public class DependencyManager {
 				}
 			}
 
-			Iterable<BundleWire> requiredWires = namespaces.isEmpty() ? wiring.getRequiredWires(null)
-					: namespaces.stream().map(wiring::getRequiredWires).flatMap(List::stream)::iterator;
+			Iterable<BundleWire> requiredWires;
+			if (namespaces.isEmpty()) {
+				List<BundleWire> allWires = wiring.getRequiredWires(null);
+				if (allWires == null) {
+					continue; // wiring became stale
+				}
+				requiredWires = allWires;
+			} else {
+				requiredWires = namespaces.stream().map(wiring::getRequiredWires).filter(Objects::nonNull)
+						.flatMap(List::stream)::iterator;
+			}
 			for (BundleWire wire : requiredWires) {
 				BundleRevision declaringBundle = wire.getRequirement().getRevision();
 				if (declaringBundle != bundle && !closure.contains(declaringBundle)
