@@ -13,8 +13,6 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.xml;
 
-import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
-import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextDoubleClickStrategy;
 import org.eclipse.jface.text.TextAttribute;
@@ -29,10 +27,7 @@ public class XMLConfiguration extends SourceViewerConfiguration {
 	private XMLDoubleClickStrategy doubleClickStrategy;
 	private XMLTagScanner tagScanner;
 	private XMLScanner scanner;
-	private final IResourcePool pool;
-
-	public XMLConfiguration(IResourcePool pool) {
-		this.pool = pool;
+	public XMLConfiguration() {
 	}
 
 	@Override
@@ -50,16 +45,17 @@ public class XMLConfiguration extends SourceViewerConfiguration {
 
 	protected XMLScanner getXMLScanner() {
 		if (scanner == null) {
-			scanner = new XMLScanner(pool);
-			scanner.setDefaultReturnToken(new Token(new TextAttribute(pool.getColorUnchecked(ResourceProvider.COLOR_DEFAULT))));
+			scanner = new XMLScanner();
+			// no foreground: the widget's own colour applies, which XmiTab takes from the editor preferences
+			scanner.setDefaultReturnToken(new Token(new TextAttribute(null)));
 		}
 		return scanner;
 	}
 
 	protected XMLTagScanner getXMLTagScanner() {
 		if (tagScanner == null) {
-			tagScanner = new XMLTagScanner(pool);
-			tagScanner.setDefaultReturnToken(new Token(new TextAttribute(pool.getColorUnchecked(ResourceProvider.COLOR_TAG))));
+			tagScanner = new XMLTagScanner();
+			tagScanner.setDefaultReturnToken(new Token(new TextAttribute(XMLColors.get(XMLColors.TAG))));
 		}
 		return tagScanner;
 	}
@@ -76,7 +72,7 @@ public class XMLConfiguration extends SourceViewerConfiguration {
 		reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
 		reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
 
-		NonRuleBasedDamagerRepairer ndr = new NonRuleBasedDamagerRepairer(new TextAttribute(pool.getColorUnchecked(ResourceProvider.COLOR_XML_COMMENT)));
+		NonRuleBasedDamagerRepairer ndr = new NonRuleBasedDamagerRepairer(new TextAttribute(XMLColors.get(XMLColors.COMMENT)));
 		reconciler.setDamager(ndr, XMLPartitionScanner.XML_COMMENT);
 		reconciler.setRepairer(ndr, XMLPartitionScanner.XML_COMMENT);
 

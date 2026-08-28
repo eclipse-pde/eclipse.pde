@@ -29,6 +29,8 @@ import org.eclipse.e4.tools.emf.ui.internal.common.xml.XMLPartitionScanner;
 import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -45,8 +47,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
@@ -105,9 +111,10 @@ public class XmiTab extends Composite {
 		sourceViewer = new SourceViewer(this, verticalRuler, styles);
 		sourceViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-		sourceViewer.configure(new XMLConfiguration(resourcePool));
+		sourceViewer.configure(new XMLConfiguration());
 		sourceViewer.setEditable(project != null);
 		sourceViewer.getTextWidget().setFont(JFaceResources.getTextFont());
+		applyTextEditorColors(sourceViewer.getTextWidget());
 
 		final IDocument document = emfDocumentProvider.getDocument();
 		final IDocumentPartitioner partitioner = new FastPartitioner(new XMLPartitionScanner(), new String[] {
@@ -138,6 +145,31 @@ public class XmiTab extends Composite {
 		if (property != null || preferences.getBoolean(ModelEditorPreferences.TAB_FORM_SEARCH_SHOW, true)) {
 			sourceViewer.setEditable(false);
 		}
+	}
+
+	/**
+	 * Takes foreground and background from the Text Editors preferences, so that the
+	 * tab follows the active theme instead of the widget defaults.
+	 */
+	private static void applyTextEditorColors(StyledText widget) {
+		final IPreferenceStore store = EditorsUI.getPreferenceStore();
+		final Color foreground = editorColor(store, AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND,
+				AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT);
+		if (foreground != null) {
+			widget.setForeground(foreground);
+		}
+		final Color background = editorColor(store, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND,
+				AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT);
+		if (background != null) {
+			widget.setBackground(background);
+		}
+	}
+
+	private static Color editorColor(IPreferenceStore store, String key, String systemDefaultKey) {
+		if (store.getBoolean(systemDefaultKey)) {
+			return null;
+		}
+		return new Color(PreferenceConverter.getColor(store, key));
 	}
 
 	/**

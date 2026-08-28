@@ -13,8 +13,6 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.xml;
 
-import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
-import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
@@ -25,8 +23,8 @@ import org.eclipse.jface.text.rules.WhitespaceRule;
 
 public class XMLScanner extends RuleBasedScanner {
 
-	public XMLScanner(IResourcePool pool) {
-		IToken procInstr = new Token(new TextAttribute(pool.getColorUnchecked(ResourceProvider.COLOR_PROC_INSTR)));
+	public XMLScanner() {
+		IToken procInstr = new Token(new TextAttribute(XMLColors.get(XMLColors.PROC_INSTR)));
 
 		IRule[] rules = new IRule[2];
 		// Add rule for processing instructions

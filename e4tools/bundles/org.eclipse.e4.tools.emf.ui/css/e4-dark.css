@@ -1,0 +1,18 @@
+/*******************************************************************************
+ * Copyright (c) 2026 Vogella GmbH and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *******************************************************************************/
+
+IEclipsePreferences#org-eclipse-ui-workbench:org-eclipse-e4-tools-emf-ui {
+	preferences:
+		'org.eclipse.e4.tools.emf.ui.color.tag=86,156,214'
+		'org.eclipse.e4.tools.emf.ui.color.string=206,145,120'
+		'org.eclipse.e4.tools.emf.ui.color.comment=96,139,78'
+		'org.eclipse.e4.tools.emf.ui.color.procInstr=128,128,128'
+}

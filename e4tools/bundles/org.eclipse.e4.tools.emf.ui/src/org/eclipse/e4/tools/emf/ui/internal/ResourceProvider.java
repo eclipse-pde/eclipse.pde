@@ -117,9 +117,4 @@ public class ResourceProvider extends BasicResourceProvider {
 	public static final String IMG_Widgets_menuitem_obj = "IMG_org.eclipse.e4.tools.emf.ui.widgets.menuitem_obj"; //$NON-NLS-1$
 	public static final String IMG_Widgets_menuseparator_obj = "IMG_org.eclipse.e4.tools.emf.ui.widgets.menuseparator_obj"; //$NON-NLS-1$
 
-	public static final String COLOR_XML_COMMENT = "COLOR_org.eclipse.e4.tools.emf.ui.XML_COMMENT"; //$NON-NLS-1$
-	public static final String COLOR_PROC_INSTR = "COLOR_org.eclipse.e4.tools.emf.ui.PROC_INSTR"; //$NON-NLS-1$
-	public static final String COLOR_STRING = "COLOR_org.eclipse.e4.tools.emf.ui.STRING"; //$NON-NLS-1$
-	public static final String COLOR_DEFAULT = "COLOR_org.eclipse.e4.tools.emf.ui.DEFAULT"; //$NON-NLS-1$
-	public static final String COLOR_TAG = "COLOR_org.eclipse.e4.tools.emf.ui.TAG"; //$NON-NLS-1$
 }
