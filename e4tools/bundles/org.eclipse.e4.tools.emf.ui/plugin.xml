@@ -8,6 +8,12 @@
       <stylesheet
             uri="css/default.css">
       </stylesheet>
+      <stylesheet
+            uri="css/e4-dark.css">
+         <themeid
+               refid="org.eclipse.e4.ui.css.theme.e4_dark">
+         </themeid>
+      </stylesheet>
    </extension>
    <extension
          point="org.eclipse.equinox.preferences.preferences">
@@ -22,6 +28,37 @@
             apply="notexists"
             uri="fragment.e4xmi">
       </fragment>
+   </extension>
+   <extension
+         point="org.eclipse.ui.themes">
+      <themeElementCategory
+            id="org.eclipse.e4.tools.emf.ui.presentation"
+            label="%themeElementCategory.label">
+      </themeElementCategory>
+      <colorDefinition
+            categoryId="org.eclipse.e4.tools.emf.ui.presentation"
+            id="org.eclipse.e4.tools.emf.ui.color.tag"
+            label="%colorDefinition.tag"
+            value="0,0,128">
+      </colorDefinition>
+      <colorDefinition
+            categoryId="org.eclipse.e4.tools.emf.ui.presentation"
+            id="org.eclipse.e4.tools.emf.ui.color.string"
+            label="%colorDefinition.string"
+            value="0,128,0">
+      </colorDefinition>
+      <colorDefinition
+            categoryId="org.eclipse.e4.tools.emf.ui.presentation"
+            id="org.eclipse.e4.tools.emf.ui.color.comment"
+            label="%colorDefinition.comment"
+            value="128,0,0">
+      </colorDefinition>
+      <colorDefinition
+            categoryId="org.eclipse.e4.tools.emf.ui.presentation"
+            id="org.eclipse.e4.tools.emf.ui.color.procInstr"
+            label="%colorDefinition.procInstr"
+            value="128,128,128">
+      </colorDefinition>
    </extension>
 
 </plugin>
