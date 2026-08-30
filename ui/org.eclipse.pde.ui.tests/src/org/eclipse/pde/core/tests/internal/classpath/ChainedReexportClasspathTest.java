@@ -13,44 +13,39 @@
  *******************************************************************************/
 package org.eclipse.pde.core.tests.internal.classpath;
 
-import static org.junit.jupiter.api.Assertions.assertTimeout;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Duration;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
+import java.util.stream.IntStream;
 import java.util.zip.ZipEntry;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.pde.core.build.IBuild;
-import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.pde.core.project.IBundleProjectService;
+import org.eclipse.pde.core.project.IRequiredBundleDescription;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.core.target.ITargetPlatformService;
+import org.eclipse.pde.internal.core.ClasspathComputer;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
-import org.eclipse.pde.internal.core.project.PDEProject;
-import org.eclipse.pde.internal.ui.wizards.tools.UpdateClasspathJob;
 import org.eclipse.pde.ui.tests.runtime.TestUtils;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
 import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
@@ -60,10 +55,14 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 
-public class RequiredPluginsClasspathContainerPerformanceTest {
+/** Classpath of a chain of re-exporting bundles. */
+public class ChainedReexportClasspathTest {
 
-	private static final String CYCLE_BUNDLE_PREFIX = "Cycle_";
+	private static final String CHAIN_PREFIX = "Chain_";
+	private static final int PACKAGE_COUNT = 1000;
+	private static final int BUNDLE_CHAIN_DEPTH = 5;
 	private File targetDir;
 	private ITargetDefinition savedTarget;
 
@@ -85,8 +84,8 @@ public class RequiredPluginsClasspathContainerPerformanceTest {
 		desc.setAutoBuilding(false);
 		ResourcesPlugin.getWorkspace().setDescription(desc);
 
-		targetDir = Files.createTempDirectory("pde_perf_target").toFile();
-		createCyclicTargetPlatform();
+		targetDir = Files.createTempDirectory("pde_chain_perf_target").toFile();
+		createChainedTargetPlatform();
 	}
 
 	@AfterEach
@@ -104,18 +103,30 @@ public class RequiredPluginsClasspathContainerPerformanceTest {
 		}
 	}
 
-	private void createCyclicTargetPlatform() throws Exception {
-		// Cycle_A -> reexports Cycle_B
-		// Cycle_B -> reexports Cycle_C
-		// Cycle_C -> reexports Cycle_A
-		createBundle(targetDir, CYCLE_BUNDLE_PREFIX + "A", null, CYCLE_BUNDLE_PREFIX + "B;visibility:=reexport");
-		createBundle(targetDir, CYCLE_BUNDLE_PREFIX + "B", null, CYCLE_BUNDLE_PREFIX + "C;visibility:=reexport");
-		createBundle(targetDir, CYCLE_BUNDLE_PREFIX + "C", null, CYCLE_BUNDLE_PREFIX + "A;visibility:=reexport");
+	private void createChainedTargetPlatform() throws Exception {
+		// Create a chain of bundles: B_0 -> B_1 -> ... -> B_N (all re-exporting)
+		for (int i = 0; i < BUNDLE_CHAIN_DEPTH; i++) {
+			String name = CHAIN_PREFIX + i;
+			String exports = createPackageExports(name);
+			String requires = (i > 0) ? (CHAIN_PREFIX + (i - 1) + ";visibility:=reexport") : null;
+			createBundle(targetDir, name, exports, requires);
+		}
 
 		ITargetPlatformService tps = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 		ITargetDefinition target = tps.newTarget();
 		target.setTargetLocations(new ITargetLocation[] { tps.newDirectoryLocation(targetDir.getAbsolutePath()) });
 		TargetPlatformUtil.loadAndSetTarget(target);
+	}
+
+	private String createPackageExports(String bundleName) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < PACKAGE_COUNT; i++) {
+			if (sb.length() > 0) {
+				sb.append(",");
+			}
+			sb.append(bundleName).append(".pkg.").append(i);
+		}
+		return sb.toString();
 	}
 
 	private void createBundle(File dir, String name, String exports, String requires) throws IOException {
@@ -142,7 +153,7 @@ public class RequiredPluginsClasspathContainerPerformanceTest {
 	}
 
 	@Test
-	public void testCyclicReexportInSecondaryDependencies() throws Exception {
+	public void testChainedReexportAddsEachBundleOnceWithUniqueAccessRules() throws Exception {
 		IBundleProjectService service = PDECore.getDefault().acquireService(IBundleProjectService.class);
 
 		String consumerName = "ConsumerBundle";
@@ -153,21 +164,14 @@ public class RequiredPluginsClasspathContainerPerformanceTest {
 		IBundleProjectDescription consumerDesc = service.getDescription(consumerProj);
 		consumerDesc.setSymbolicName(consumerName);
 		consumerDesc.setBundleVersion(new Version("1.0.0"));
+
+		// Require the last bundle in the chain with re-export
+		IRequiredBundleDescription mainReq = service.newRequiredBundle(CHAIN_PREFIX + (BUNDLE_CHAIN_DEPTH - 1),
+				(VersionRange) null, false, true);
+		consumerDesc.setRequiredBundles(new IRequiredBundleDescription[] { mainReq });
+
 		consumerDesc.setNatureIds(new String[] { JavaCore.NATURE_ID, IBundleProjectDescription.PLUGIN_NATURE });
 		consumerDesc.apply(null);
-
-		// Add secondary dependency to build.properties
-		IFile buildProps = PDEProject.getBuildProperties(consumerProj);
-		WorkspaceBuildModel buildModel = new WorkspaceBuildModel(buildProps);
-		buildModel.load();
-		IBuild build = buildModel.getBuild();
-		IBuildEntry entry = build.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
-		if (entry == null) {
-			entry = buildModel.getFactory().createEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
-			build.add(entry);
-		}
-		entry.addToken(CYCLE_BUNDLE_PREFIX + "A");
-		buildModel.save();
 
 		ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
 		TestUtils.waitForJobs("Init", 500, 5000);
@@ -177,11 +181,20 @@ public class RequiredPluginsClasspathContainerPerformanceTest {
 			throw new IllegalStateException("Consumer model not found");
 		}
 
-		Job job = UpdateClasspathJob.scheduleFor(List.of(consumerModel), false);
-		assertTimeout(Duration.ofSeconds(5), () -> job.join(),
-				"Performance regression or infinite loop: classpath computation timed out for cyclic re-exports");
+		IClasspathEntry[] entries = ClasspathComputer.computeClasspathEntries(consumerModel, consumerProj);
 
-		IClasspathEntry[] resolvedClasspath = JavaCore.create(consumerProj).getRawClasspath();
-		assertTrue(resolvedClasspath.length > 0, "Classpath should not be empty");
+		List<String> chainBundles = IntStream.range(0, BUNDLE_CHAIN_DEPTH).mapToObj(i -> CHAIN_PREFIX + i + ".jar")
+				.sorted().toList();
+		assertEquals(chainBundles, ClasspathTestUtils.entryNames(entries, CHAIN_PREFIX),
+				"Every re-exported bundle of the chain must be on the classpath exactly once");
+
+		for (String bundle : chainBundles) {
+			List<String> patterns = ClasspathTestUtils.accessRulePatterns(entries, bundle);
+			// one rule per exported package plus the trailing exclude-all rule
+			assertEquals(PACKAGE_COUNT + 1, patterns.size(),
+					bundle + " must carry exactly one access rule per exported package");
+			assertEquals(patterns.size(), Set.copyOf(patterns).size(),
+					bundle + " must not carry duplicate access rules");
+		}
 	}
 }
