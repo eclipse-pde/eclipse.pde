@@ -317,11 +317,11 @@ public class TargetPlatformService implements ITargetPlatformService {
 	}
 
 	/**
-	 * Updates the current stored target. Provided to allow the LoadTargetDefinitionJob
-	 * to pass along a possibly resolved target rather than force it to be resolved again.
-	 * This method will not update the stored {@link ICoreConstants#WORKSPACE_TARGET_HANDLE},
-	 * as it should only be called from LoadTargetDefinitionJob which does additional
-	 * steps to reset the target.
+	 * Updates the current stored target. Provided to pass along a possibly resolved
+	 * target rather than force it to be resolved again. This method will not update
+	 * the stored {@link ICoreConstants#WORKSPACE_TARGET_HANDLE}, use
+	 * {@link #setWorkspaceTargetDefinition(ITargetDefinition, String, boolean)} to
+	 * activate a target together with its handle.
 	 *
 	 * @param target
 	 *            the new workspace target definition
@@ -333,6 +333,58 @@ public class TargetPlatformService implements ITargetPlatformService {
 		if (!Objects.equals(oldTarget, target)) {
 			notifyEvent(TargetEvents.TOPIC_WORKSPACE_TARGET_CHANGED, target, asyncEvents);
 		}
+	}
+
+	/**
+	 * Sets the workspace target and stores its handle memento under the lock that
+	 * guards {@link #getWorkspaceTargetDefinition()}, so that method never observes
+	 * a target and a memento that disagree.
+	 *
+	 * @return <code>true</code> if a different target was replaced
+	 */
+	public boolean setWorkspaceTargetDefinition(ITargetDefinition target, String memento, boolean asyncEvents) {
+		ITargetDefinition oldTarget;
+		synchronized (this) {
+			// Must be set before the preference so listeners can react
+			oldTarget = fWorkspaceTarget.getAndSet(target);
+			storeWorkspaceTargetHandle(memento);
+		}
+		boolean changed = !Objects.equals(oldTarget, target);
+		if (changed) {
+			notifyEvent(TargetEvents.TOPIC_WORKSPACE_TARGET_CHANGED, target, asyncEvents);
+		}
+		return changed;
+	}
+
+	/**
+	 * Re-stores the memento of the given target if it still is the workspace
+	 * target, so that preference listeners react to it being re-resolved. Leaves
+	 * the stored target alone and fires no target-changed event.
+	 *
+	 * @return <code>true</code> if the memento was re-stored
+	 */
+	public synchronized boolean refreshWorkspaceTargetHandle(ITargetDefinition target) throws CoreException {
+		if (fWorkspaceTarget.get() != target) {
+			return false;
+		}
+		String memento = target.getHandle().getMemento();
+		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
+		if (!Objects.equals(memento, preferences.getString(ICoreConstants.WORKSPACE_TARGET_HANDLE))) {
+			return false;
+		}
+		storeWorkspaceTargetHandle(memento);
+		return true;
+	}
+
+	/** Must be called while synchronized on this service. */
+	private void storeWorkspaceTargetHandle(String memento) {
+		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
+		// Clear first so that listeners still see a change when the same target was
+		// modified or re-resolved - see TargetStatus
+		if (memento.equals(preferences.getString(ICoreConstants.WORKSPACE_TARGET_HANDLE))) {
+			preferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, ""); //$NON-NLS-1$
+		}
+		preferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, memento);
 	}
 
 	public static void scheduleEvent(String topic, Object data) {
