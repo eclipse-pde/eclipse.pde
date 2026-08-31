@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2023 IBM Corporation and others.
+ * Copyright (c) 2008, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -29,21 +29,27 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.eclipse.pde.core.target.TargetBundle;
+import org.eclipse.pde.core.target.TargetEvents;
 import org.eclipse.pde.internal.core.P2Utils;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
@@ -52,6 +58,7 @@ import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
 import org.eclipse.pde.internal.launching.launcher.LaunchArgumentsHelper;
 import org.eclipse.pde.ui.tests.PDETestCase;
 import org.junit.Test;
+import org.osgi.service.event.EventHandler;
 
 /**
  * Tests for target definitions. The tested targets will be created in the
@@ -480,6 +487,50 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 
 			assertEquals("Wrong number of bundles in empty target", 0, models.length);
 
+		} finally {
+			resetTargetPlatform();
+		}
+	}
+
+	/**
+	 * Tests that setting the target platform is not disturbed by queries of
+	 * the workspace target while it is switched, as background jobs commonly
+	 * perform them. The new target is not persisted, so it cannot be restored
+	 * from its handle once it has been replaced.
+	 */
+	@Test
+	public void testQueryWorkspaceTargetWhileSettingTargetPlatform() throws Exception {
+		IEventBroker eventBroker = EclipseContextFactory.getServiceContext(PDECore.getDefault().getBundleContext())
+				.get(IEventBroker.class);
+		AtomicInteger queries = new AtomicInteger();
+		// Delivered synchronously by the thread switching the target, so the
+		// query sees whatever intermediate state the switch exposes
+		EventHandler handler = e -> {
+			try {
+				getTargetService().getWorkspaceTargetDefinition();
+				queries.incrementAndGet();
+			} catch (CoreException ex) {
+				throw new IllegalStateException(ex);
+			}
+		};
+		try {
+			ITargetDefinition target = getNewTarget();
+			Path plugins = extractAbcdePlugins().resolve("plugins");
+			target.setTargetLocations(
+					new ITargetLocation[] { getTargetService().newDirectoryLocation(plugins.toString()) });
+
+			eventBroker.subscribe(TargetEvents.TOPIC_WORKSPACE_TARGET_CHANGED, null, handler, true);
+			try {
+				setTargetPlatform(target);
+			} finally {
+				eventBroker.unsubscribe(handler);
+			}
+
+			assertTrue("Workspace target should have been queried while switching", queries.get() > 0);
+			ModelEntry entry = PluginRegistry.findEntry("bundle.a");
+			assertNotNull("Bundle of the new target platform should be present", entry);
+			assertEquals("Bundle of the new target platform should be a target model", 1,
+					entry.getExternalModels().length);
 		} finally {
 			resetTargetPlatform();
 		}
