@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.junit.runtime.tests;
 
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.api.extension.Extension;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.eclipse.pde.junit.runtime.tests.JUnitExecutionTest.findType;
 import static org.eclipse.pde.junit.runtime.tests.JUnitExecutionTest.getJProject;
@@ -26,48 +30,34 @@ import org.eclipse.jdt.junit.model.ITestElement;
 import org.eclipse.jdt.junit.model.ITestElementContainer;
 import org.eclipse.jdt.junit.model.ITestRunSession;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.TestRule;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-@RunWith(Parameterized.class)
 public class JUnitSuiteExecutionTest {
 
-	@ClassRule
-	public static final TestRule CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
+	@RegisterExtension
+	public static final Extension CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
 
-	@BeforeClass
+	@BeforeAll
 	public static void setupProjects() throws Exception {
-		Assert.assertNotNull("junit-platform-suite-engine bundle missing", Platform.getBundle("junit-platform-suite-engine"));
-		Assert.assertNotNull("org.eclipse.jdt.junit5.runtime bundle missing", Platform.getBundle("org.eclipse.jdt.junit5.runtime"));
-		Assert.assertNotNull("org.eclipse.jdt.junit6.runtime bundle missing", Platform.getBundle("org.eclipse.jdt.junit6.runtime"));
+		Assertions.assertNotNull(Platform.getBundle("junit-platform-suite-engine"), "junit-platform-suite-engine bundle missing"); //$NON-NLS-1$ //$NON-NLS-2$
+		Assertions.assertNotNull(Platform.getBundle("org.eclipse.jdt.junit5.runtime"), "org.eclipse.jdt.junit5.runtime bundle missing"); //$NON-NLS-1$ //$NON-NLS-2$
+		Assertions.assertNotNull(Platform.getBundle("org.eclipse.jdt.junit6.runtime"), "org.eclipse.jdt.junit6.runtime bundle missing"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		JUnitExecutionTest.setupProjects();
 	}
-
-	@Parameters(name = "{0}")
 	public static Object[][] parameters() {
 		return new Object[][] {
 				{ "JUnit6", getJProject("verification.tests.junit6.suite"), "verification.tests.junit6" },
 				{ "JUnit5", getJProject("verification.tests.junit5.suite"), "verification.tests.junit5" },
 		};
 	}
+// Just for display
 
-	@Parameter(0)
-	public String testCaseName; // Just for display
-	@Parameter(1)
-	public IJavaProject project;
-	@Parameter(2)
-	public String packageName;
-
-	@Test
-	public void executeSuite() throws Exception {
+@ParameterizedTest(name = "{0}")
+	@MethodSource("parameters")
+	public void executeSuite(String testCaseName, IJavaProject project, String packageName) throws Exception {
 		ITestRunSession session = TestExecutionUtil.runTest(findType(project, "TestSuite"));
 		JUnitExecutionTest.assertSuccessful(session);
 		String expected = String.format("""
@@ -79,18 +69,20 @@ public class JUnitSuiteExecutionTest {
 				    %1$s.Test2
 				      test(%1$s.Test2)
 				""", packageName);
-		Assert.assertEquals(expected.strip(), toString(session).strip());
+		Assertions.assertEquals(expected.strip(), toString(session).strip());
 	}
 
-	@Test
-	public void executePackage() throws Exception {
+	@ParameterizedTest(name = "{0}")
+	@MethodSource("parameters")
+	public void executePackage(String testCaseName, IJavaProject project, String packageName) throws Exception {
 		ITestRunSession session = TestExecutionUtil.runTest(findType(project, "TestSuite").getPackageFragment());
 		JUnitExecutionTest.assertSuccessful(session);
 		assertThat(session.getChildren()).isNotEmpty();
 	}
 
-	@Test
-	public void executeProject() throws Exception {
+	@ParameterizedTest(name = "{0}")
+	@MethodSource("parameters")
+	public void executeProject(String testCaseName, IJavaProject project, String packageName) throws Exception {
 		ITestRunSession session = TestExecutionUtil.runTest(project);
 		JUnitExecutionTest.assertSuccessful(session);
 		assertThat(session.getChildren()).isNotEmpty();

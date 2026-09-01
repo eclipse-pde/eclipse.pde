@@ -13,12 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.junit.runtime.tests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
-@RunWith(Suite.class)
-@SuiteClasses({ JUnitExecutionTest.class, JUnitSuiteExecutionTest.class })
+@Suite
+@SelectClasses({ JUnitExecutionTest.class, JUnitSuiteExecutionTest.class })
 public class JUnitRuntimeTests {
 
 }

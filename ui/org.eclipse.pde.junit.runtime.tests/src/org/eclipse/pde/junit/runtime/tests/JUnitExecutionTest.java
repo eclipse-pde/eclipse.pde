@@ -13,8 +13,12 @@
  *******************************************************************************/
 package org.eclipse.pde.junit.runtime.tests;
 
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.api.extension.Extension;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.net.URL;
 import java.util.Collections;
@@ -38,26 +42,19 @@ import org.eclipse.jdt.junit.model.ITestRunSession;
 import org.eclipse.pde.ui.tests.runtime.TestUtils;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
 import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
-import org.junit.Assert;
-import org.junit.Assume;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.TestRule;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
-@RunWith(Parameterized.class)
 public class JUnitExecutionTest {
 
-	@ClassRule
-	public static final TestRule CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
+	@RegisterExtension
+	public static final Extension CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
 
-	@BeforeClass
+	@BeforeAll
 	public static void setupProjects() throws Exception {
 		Pattern junitRuntimeIDs = Pattern
 				.compile("\\.junit\\d*\\.runtime|junit\\..+\\.engine$|org\\.junit\\.platform\\.launcher");
@@ -78,8 +75,6 @@ public class JUnitExecutionTest {
 		TestExecutionUtil.waitForAutoBuild();
 		TestUtils.waitForJobs(JUnitExecutionTest.class + ".setupProjects() after build", 100, 10_000);
 	}
-
-	@Parameters(name = "{0}")
 	public static Object[][] parameters() {
 		return new Object[][] {
 				{ "JUnit6", getJProject("verification.tests.junit6") },
@@ -97,14 +92,10 @@ public class JUnitExecutionTest {
 	static IJavaProject getJProject(String projectName) {
 		return JavaCore.create(ResourcesPlugin.getWorkspace().getRoot().getProject(projectName));
 	}
-
-	@Parameter(0)
-	public String testCaseName; // Just for display
-	@Parameter(1)
-	public IJavaProject project;
-
-	@Test
-	public void executeType() throws Exception {
+// Just for display
+@ParameterizedTest(name = "{0}")
+	@MethodSource("parameters")
+	public void executeType(String testCaseName, IJavaProject project) throws Exception {
 		IType testClass = findType(project, "Test1");
 		ITestRunSession session = TestExecutionUtil.runTest(testClass);
 
@@ -112,8 +103,9 @@ public class JUnitExecutionTest {
 		assertThat(session.getChildren()).hasSize(1);
 	}
 
-	@Test
-	public void executePackage() throws Exception {
+	@ParameterizedTest(name = "{0}")
+	@MethodSource("parameters")
+	public void executePackage(String testCaseName, IJavaProject project) throws Exception {
 		IPackageFragment testPackage = findType(project, "Test1").getPackageFragment();
 		ITestRunSession session = TestExecutionUtil.runTest(testPackage);
 
@@ -121,18 +113,20 @@ public class JUnitExecutionTest {
 		assertThat(session.getChildren()).hasSize(2);
 	}
 
-	@Test
-	public void executeProject() throws Exception {
+	@ParameterizedTest(name = "{0}")
+	@MethodSource("parameters")
+	public void executeProject(String testCaseName, IJavaProject project) throws Exception {
 		ITestRunSession session = TestExecutionUtil.runTest(project);
 
 		assertSuccessful(session);
 		assertThat(session.getChildren()).hasSize(2);
 	}
 
-	@Test
-	public void executeMethod() throws Exception {
+	@ParameterizedTest(name = "{0}")
+	@MethodSource("parameters")
+	public void executeMethod(String testCaseName, IJavaProject project) throws Exception {
 		IMethod testMethod = findType(project, "Test1").getMethod("test1", new String[0]);
-		Assume.assumeTrue(testMethod.exists());
+		Assumptions.assumeTrue(testMethod.exists());
 		ITestRunSession session = TestExecutionUtil.runTest(testMethod);
 
 		assertSuccessful(session);
@@ -168,7 +162,7 @@ public class JUnitExecutionTest {
 	static IType findType(IJavaProject project, String name) throws JavaModelException {
 		IType type = project.findType(project.getElementName(), name);
 		assertNotNull(type);
-		Assert.assertTrue(type.exists());
+		Assertions.assertTrue(type.exists());
 		return type;
 	}
 }

@@ -15,7 +15,7 @@ package org.eclipse.pde.junit.runtime.tests;
 
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -98,7 +98,7 @@ class TestExecutionUtil {
 			launchAndWaitForTermination(launchConfiguration);
 			ITestRunSession result = testResult.poll(30, TimeUnit.SECONDS);
 			if (result == null) {
-				fail("test was not executed");
+				fail("test was not executed"); //$NON-NLS-1$
 			}
 			return result;
 		} catch (InterruptedException e) {
@@ -157,7 +157,7 @@ class TestExecutionUtil {
 			while (true) {
 				ILaunch terminatedLaunch = terminatedLaunches.poll(5, TimeUnit.MINUTES);
 				if (terminatedLaunch == null) {
-					fail("test launch didn't terminate");
+					fail("test launch didn't terminate"); //$NON-NLS-1$
 				}
 
 				if (launch.equals(terminatedLaunch)) {
@@ -181,7 +181,7 @@ class TestExecutionUtil {
 		int exitValue = process.getExitValue();
 		String logFile = readLogFile(launch.getLaunchConfiguration());
 		if (exitValue == 13) {
-			fail("test application could not start:\n\n" + logFile);
+			fail("test application could not start:\n\n" + logFile); //$NON-NLS-1$
 		} else {
 			System.out.println(MessageFormat.format(
 					"test process terminated with exit value {0}\ncommand line: {1}\nlog file: \n\n{2}", exitValue,
