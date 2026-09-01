@@ -13,9 +13,9 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,8 +45,8 @@ import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Jonas
@@ -69,7 +69,7 @@ public class FragmentExtractHelperTest {
 	private MPlaceholder placeholder;
 	private MPart referencedPart;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		application = MApplicationFactory.INSTANCE.createApplication();
 		application.setElementId(APPLICATIONID);

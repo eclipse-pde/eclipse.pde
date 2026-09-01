@@ -14,9 +14,9 @@
 
 package org.eclipse.e4.tools.test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.e4.internal.tools.wizards.model.FragmentMergeHelper;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
@@ -26,8 +26,8 @@ import org.eclipse.e4.ui.model.application.commands.MHandler;
 import org.eclipse.e4.ui.model.fragment.MFragmentFactory;
 import org.eclipse.e4.ui.model.fragment.MModelFragments;
 import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class FragmentMergeHelperTest {
 
@@ -36,7 +36,7 @@ public class FragmentMergeHelperTest {
 	private MModelFragments sourceFragments;
 	private MModelFragments targetFragments;
 
-	@Before
+	@BeforeEach
 	public void setUpFragments() {
 		sourceFragments = MFragmentFactory.INSTANCE.createModelFragments();
 		targetFragments = MFragmentFactory.INSTANCE.createModelFragments();
