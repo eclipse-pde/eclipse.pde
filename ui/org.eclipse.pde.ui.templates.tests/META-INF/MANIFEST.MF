@@ -19,6 +19,6 @@ Eclipse-BundleShape: dir
 Import-Package: org.eclipse.jdt.launching,
  org.eclipse.jdt.launching.environments,
  org.hamcrest,
- org.junit,
- org.junit.runner,
- org.junit.runners
+ org.junit.jupiter.api;version="[5.13.0,6.0.0)",
+ org.junit.jupiter.params;version="[5.13.0,6.0.0)",
+ org.junit.jupiter.params.provider;version="[5.13.0,6.0.0)"
