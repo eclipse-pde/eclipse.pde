@@ -13,18 +13,18 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ua.tests.cheatsheet;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSConstants;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSDescription;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSIntro;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSItem;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Basic tests.
@@ -49,7 +49,7 @@ public class SimpleCSIntroTestCase extends AbstractCheatSheetModelTestCase {
 
 		ISimpleCS model = fModel.getSimpleCS();
 		String title = model.getTitle();
-		assertEquals("Incorrect title", "sample cheatsheet", title);
+		assertEquals("sample cheatsheet", title, "Incorrect title"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertEquals(title, model.getName());
 		assertEquals(ISimpleCSConstants.TYPE_CHEAT_SHEET, model.getType());
 		assertTrue(model.isRoot());
@@ -75,10 +75,10 @@ public class SimpleCSIntroTestCase extends AbstractCheatSheetModelTestCase {
 
 		ISimpleCS model = fModel.getSimpleCS();
 		model.setTitle("Some Title");
-		assertEquals("Some Title", model.getTitle());
+		assertEquals(model.getTitle(), "Some Title"); //$NON-NLS-1$
 
 		model.setTitle(null);
-		assertEquals("", model.getTitle());
+		assertEquals(model.getTitle(), ""); //$NON-NLS-1$
 
 		ISimpleCSIntro intro = fModel.getFactory().createSimpleCSIntro(model);
 		model.setIntro(intro);
@@ -99,7 +99,7 @@ public class SimpleCSIntroTestCase extends AbstractCheatSheetModelTestCase {
 		description.setContent("description content");
 		intro.setDescription(description);
 
-		assertEquals("description content", model.getIntro().getDescription().getContent());
+		assertEquals(model.getIntro().getDescription().getContent(), "description content"); //$NON-NLS-1$
 	}
 
 	@Test
@@ -129,7 +129,7 @@ public class SimpleCSIntroTestCase extends AbstractCheatSheetModelTestCase {
 
 		item = model.getItems()[0];
 
-		assertEquals("some title", item.getTitle());
+		assertEquals(item.getTitle(), "some title"); //$NON-NLS-1$
 		assertTrue(model.isFirstItem(item));
 		assertTrue(model.isLastItem(item));
 		assertEquals(0, model.indexOfItem(item));
@@ -183,13 +183,13 @@ public class SimpleCSIntroTestCase extends AbstractCheatSheetModelTestCase {
 
 		assertEquals(2, model.getItemCount());
 		ISimpleCSItem item = model.getItems()[0];
-		assertEquals("item1", item.getTitle());
+		assertEquals(item.getTitle(), "item1"); //$NON-NLS-1$
 		model.removeItem(item);
 
 		assertEquals(1, model.getItemCount());
 		item = model.getItems()[0];
 		assertNotNull(item);
-		assertEquals("item2", item.getTitle());
+		assertEquals(item.getTitle(), "item2"); //$NON-NLS-1$
 		assertEquals(1, model.indexOfItem(model.getItems()[0]));
 	}
 
@@ -256,6 +256,6 @@ public class SimpleCSIntroTestCase extends AbstractCheatSheetModelTestCase {
 
 		ISimpleCS model = fModel.getSimpleCS();
 		ISimpleCSItem item = model.getItems()[0];
-		assertEquals(item.getTitle(), "Item");
+		assertEquals(item.getTitle(), "Item"); //$NON-NLS-1$
 	}
 }

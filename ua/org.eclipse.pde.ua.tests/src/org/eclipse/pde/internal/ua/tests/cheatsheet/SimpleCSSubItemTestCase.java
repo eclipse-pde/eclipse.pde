@@ -17,7 +17,7 @@ import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSItem;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSSubItemObject;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.text.SimpleCSSubItem;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Cheatsheet subitems tests for XML-generated models.

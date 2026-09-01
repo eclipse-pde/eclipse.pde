@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ua.tests.cheatsheet;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSAction;
@@ -200,41 +200,41 @@ public abstract class CheatSheetModelTestCase extends AbstractCheatSheetModelTes
 	protected void validateComplexCSItem(ISimpleCSItem item) {
 		assertTrue(item.getDialog());
 		assertTrue(item.getSkip());
-		assertEquals("Title", item.getTitle());
+		assertEquals(item.getTitle(), "Title"); //$NON-NLS-1$
 
 		ISimpleCSDescription description = item.getDescription();
 		assertNotNull(description);
 		assertEquals(ISimpleCSConstants.TYPE_DESCRIPTION, description.getType());
 		assertEquals(description.getContent(), description.getName());
-		assertEquals("Description1", description.getContent());
+		assertEquals(description.getContent(), "Description1"); //$NON-NLS-1$
 
 		ISimpleCSOnCompletion onCompletion = item.getOnCompletion();
 		assertNotNull(onCompletion);
 		assertEquals(ISimpleCSConstants.TYPE_ON_COMPLETION, onCompletion.getType());
 		assertEquals(ISimpleCSConstants.ELEMENT_ONCOMPLETION, onCompletion.getName());
-		assertEquals("On.Completion.Contents", onCompletion.getContent());
+		assertEquals(onCompletion.getContent(), "On.Completion.Contents"); //$NON-NLS-1$
 	}
 
 	protected void validateSubItem(ISimpleCSSubItemObject subitem) {
 		assertTrue(subitem instanceof ISimpleCSSubItem);
 		assertEquals(ISimpleCSConstants.TYPE_SUBITEM, subitem.getType());
 		ISimpleCSSubItem simpleSubitem = (ISimpleCSSubItem) subitem;
-		assertEquals("label1", simpleSubitem.getLabel());
-		assertEquals("label1", simpleSubitem.getName());
+		assertEquals(simpleSubitem.getLabel(), "label1"); //$NON-NLS-1$
+		assertEquals(simpleSubitem.getName(), "label1"); //$NON-NLS-1$
 		assertTrue(simpleSubitem.getSkip());
-		assertEquals("always", simpleSubitem.getWhen());
+		assertEquals(simpleSubitem.getWhen(), "always"); //$NON-NLS-1$
 	}
 
 	protected void validateRepeatedSubItem(ISimpleCSSubItemObject subitem) {
 		assertTrue(subitem instanceof ISimpleCSRepeatedSubItem);
 		assertEquals(ISimpleCSConstants.TYPE_REPEATED_SUBITEM, subitem.getType());
-		assertEquals("repeat.value", ((ISimpleCSRepeatedSubItem) subitem).getValues());
+		assertEquals(((ISimpleCSRepeatedSubItem) subitem).getValues(), "repeat.value"); //$NON-NLS-1$
 	}
 
 	protected void validateConditionalSubItem(ISimpleCSSubItemObject subitem) {
 		assertTrue(subitem instanceof ISimpleCSConditionalSubItem);
 		assertEquals(ISimpleCSConstants.TYPE_CONDITIONAL_SUBITEM, subitem.getType());
-		assertEquals("please.do", ((ISimpleCSConditionalSubItem) subitem).getCondition());
+		assertEquals(((ISimpleCSConditionalSubItem) subitem).getCondition(), "please.do"); //$NON-NLS-1$
 	}
 
 	protected void validateSubItemsCount(int expected, ISimpleCSItem item) {
@@ -260,14 +260,14 @@ public abstract class CheatSheetModelTestCase extends AbstractCheatSheetModelTes
 		String[] params = action.getParams();
 		assertNotNull(params);
 		assertEquals(2, params.length);
-		assertEquals("param1.value", params[0]);
-		assertEquals("20", params[1]);
+		assertEquals(params[0], "param1.value"); //$NON-NLS-1$
+		assertEquals(params[1], "20"); //$NON-NLS-1$
 
-		assertEquals("org.eclipse.some.Clazz", action.getClazz());
-		assertEquals("org.eclipse.pde.plugin.xyz", action.getPluginId());
+		assertEquals(action.getClazz(), "org.eclipse.some.Clazz"); //$NON-NLS-1$
+		assertEquals(action.getPluginId(), "org.eclipse.pde.plugin.xyz"); //$NON-NLS-1$
 		assertEquals(null, action.getParam(0)); // params are indexed starting with 1
-		assertEquals("param1.value", action.getParam(1));
-		assertEquals("20", action.getParam(2));
+		assertEquals(action.getParam(1), "param1.value"); //$NON-NLS-1$
+		assertEquals(action.getParam(2), "20"); //$NON-NLS-1$
 		assertEquals(null, action.getParam(3));
 	}
 
@@ -277,7 +277,7 @@ public abstract class CheatSheetModelTestCase extends AbstractCheatSheetModelTes
 		ISimpleCSCommand command = (ISimpleCSCommand) executable;
 
 		assertTrue(command.getRequired());
-		assertEquals("org.eclipse.my.command", command.getSerialization());
+		assertEquals(command.getSerialization(), "org.eclipse.my.command"); //$NON-NLS-1$
 	}
 
 	protected void validatePerformWhen(ISimpleCSRunContainerObject executable) {
@@ -285,7 +285,7 @@ public abstract class CheatSheetModelTestCase extends AbstractCheatSheetModelTes
 		assertTrue(executable instanceof ISimpleCSPerformWhen);
 		ISimpleCSPerformWhen performWhen = (ISimpleCSPerformWhen) executable;
 
-		assertEquals("some.example.condition", performWhen.getCondition());
+		assertEquals(performWhen.getCondition(), "some.example.condition"); //$NON-NLS-1$
 	}
 
 }

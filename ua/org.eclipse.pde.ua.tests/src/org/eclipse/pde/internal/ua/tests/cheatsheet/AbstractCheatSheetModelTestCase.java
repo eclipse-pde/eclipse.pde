@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ua.tests.cheatsheet;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
@@ -25,7 +25,7 @@ import org.eclipse.pde.internal.ua.core.cheatsheet.simple.text.SimpleCSModel;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 public abstract class AbstractCheatSheetModelTestCase {
 
@@ -37,7 +37,7 @@ public abstract class AbstractCheatSheetModelTestCase {
 	protected SimpleCSModel fModel;
 	protected IModelTextChangeListener fListener;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		fDocument = new Document();
 	}
@@ -51,14 +51,14 @@ public abstract class AbstractCheatSheetModelTestCase {
 			fModel = new SimpleCSModel(fDocument, false);
 			fModel.load();
 			if (!fModel.isLoaded() || !fModel.isValid()) {
-				fail("model cannot be loaded");
+				fail("model cannot be loaded"); //$NON-NLS-1$
 			}
 			if (addListener) {
 				fListener = new XMLTextChangeListener(fModel.getDocument());
 				fModel.addModelChangedListener(fListener);
 			}
 		} catch (CoreException e) {
-			fail("model cannot be loaded");
+			fail("model cannot be loaded"); //$NON-NLS-1$
 		}
 	}
 

@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ua.tests.cheatsheet;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -44,7 +44,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.spelling.SpellingAnnotation;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * Tests the spelling annotations in a Simple Cheat sheet editor.
@@ -55,7 +55,7 @@ public class SimpleCSSSpellCheckTestCase extends AbstractCheatSheetModelTestCase
 	private IProject fProject;
 	private static final String EDITOR_ID = "org.eclipse.pde.ua.ui.simpleCheatSheetEditor";
 
-	@Before
+	@BeforeEach
 	public void setUpLocal() throws Exception {
 
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();

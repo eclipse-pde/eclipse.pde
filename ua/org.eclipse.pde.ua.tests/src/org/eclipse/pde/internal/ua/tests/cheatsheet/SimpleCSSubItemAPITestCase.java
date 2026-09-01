@@ -18,8 +18,8 @@ import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSItem;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSSubItem;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSSubItemObject;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.text.SimpleCSSubItem;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Cheatsheet subitems tests for API-generated models.
@@ -28,7 +28,7 @@ import org.junit.Test;
 public class SimpleCSSubItemAPITestCase extends CheatSheetModelTestCase {
 
 	@Override
-	@Before
+	@BeforeEach
 	public void setUp() {
 		super.setUp();
 		setXMLContents(new StringBuilder(), LF);
