@@ -16,8 +16,7 @@ package org.eclipse.pde.api.tools.builder.tests.usage;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test class usage for Java 7 code snippets
@@ -25,17 +24,6 @@ import junit.framework.Test;
  * @since 1.0.100
  */
 public class Java7ClassUsageTests extends Java7UsageTest {
-
-	public Java7ClassUsageTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * @return the test class for this suite
-	 */
-	public static Test suite() {
-		return buildTestSuite(Java7ClassUsageTests.class);
-	}
 
 	/**
 	 * Returns the problem id with the given kind
@@ -49,6 +37,8 @@ public class Java7ClassUsageTests extends Java7UsageTest {
 	/**
 	 * Tests illegal use of classes inside a string switch block (full)
 	 */
+	@Test
+
 	public void testStringSwitchF() {
 		x1(false);
 	}
@@ -57,6 +47,8 @@ public class Java7ClassUsageTests extends Java7UsageTest {
 	 * Tests illegal use of classes inside a string switch block
 	 * (incremental)
 	 */
+	@Test
+
 	public void testStringSwitchI() {
 		x1(true);
 	}
@@ -80,6 +72,8 @@ public class Java7ClassUsageTests extends Java7UsageTest {
 	 * Tests illegal use of classes inside a multi catch block
 	 * (full)
 	 */
+	@Test
+
 	public void testMultiCatchF() {
 		x2(false);
 	}
@@ -88,6 +82,8 @@ public class Java7ClassUsageTests extends Java7UsageTest {
 	 * Tests illegal use of classes inside a multi catch block
 	 * (incremental)
 	 */
+	@Test
+
 	public void testMultiCatchI() {
 		x2(true);
 	}
@@ -110,6 +106,8 @@ public class Java7ClassUsageTests extends Java7UsageTest {
 	 * Tests illegal use of classes inside a try with resources block
 	 * (full)
 	 */
+	@Test
+
 	public void testTryWithF() {
 		x3(false);
 	}
@@ -118,6 +116,8 @@ public class Java7ClassUsageTests extends Java7UsageTest {
 	 * Tests illegal use of classes inside a try with resources block
 	 * (incremental)
 	 */
+	@Test
+
 	public void testTryWithI() {
 		x3(true);
 	}
@@ -140,6 +140,8 @@ public class Java7ClassUsageTests extends Java7UsageTest {
 	 * Tests illegal use of classes instantiated with the diamond operator
 	 * (full)
 	 */
+	@Test
+
 	public void testDiamondF() {
 		x4(false);
 	}
@@ -148,6 +150,8 @@ public class Java7ClassUsageTests extends Java7UsageTest {
 	 * Tests illegal use of classes instantiated with the diamond operator
 	 * (incremental)
 	 */
+	@Test
+
 	public void testDiamondI() {
 		x4(true);
 	}

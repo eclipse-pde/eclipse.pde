@@ -17,8 +17,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that an API method leaking an internal type via a parameter
@@ -29,10 +28,6 @@ import junit.framework.Test;
 public class MethodParameterLeak extends LeakTest {
 
 	private int pid = -1;
-
-	public MethodParameterLeak(String name) {
-		super(name);
-	}
 
 	@Override
 	protected int getDefaultProblemId() {
@@ -46,13 +41,6 @@ public class MethodParameterLeak extends LeakTest {
 		return pid;
 	}
 
-	/**
-	 * Builds the test suite for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(MethodParameterLeak.class);
-	}
-
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("method"); //$NON-NLS-1$
@@ -62,6 +50,8 @@ public class MethodParameterLeak extends LeakTest {
 	 * Tests that a variety of methods leaking internal parameters are detected properly
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodParameterLeak1F() {
 		x1(false);
 	}
@@ -70,6 +60,8 @@ public class MethodParameterLeak extends LeakTest {
 	 * Tests that a variety of methods leaking internal parameters are detected properly
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testMethodParameterLeak1I() {
 		x1(true);
 	}
@@ -88,6 +80,8 @@ public class MethodParameterLeak extends LeakTest {
 	 * Tests that a variety of private methods leaking internal parameters are ignored properly
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodParameterLeak2F() {
 		x2(false);
 	}
@@ -96,6 +90,8 @@ public class MethodParameterLeak extends LeakTest {
 	 * Tests that a variety of private methods leaking internal parameters are ignored properly
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testMethodParameterLeak2I() {
 		x2(true);
 	}
@@ -110,6 +106,8 @@ public class MethodParameterLeak extends LeakTest {
 	 * Tests that a variety of methods leaking internal parameters are detected properly
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodParameterLeak3F() {
 		x3(false);
 	}
@@ -118,6 +116,8 @@ public class MethodParameterLeak extends LeakTest {
 	 * Tests that a variety of methods leaking internal parameters are detected properly
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testMethodParameterLeak3I() {
 		x3(true);
 	}
@@ -135,6 +135,8 @@ public class MethodParameterLeak extends LeakTest {
 	 * Tests that a variety of methods leaking internal parameters are detected properly
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodParameterLeak4F() {
 		x4(false);
 	}
@@ -143,6 +145,8 @@ public class MethodParameterLeak extends LeakTest {
 	 * Tests that a variety of methods leaking internal parameters are detected properly
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testMethodParameterLeak4I() {
 		x4(true);
 	}
@@ -157,6 +161,8 @@ public class MethodParameterLeak extends LeakTest {
 	 * Tests that a variety of methods leaking internal parameters are detected properly
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodParameterLeak5F() {
 		x5(false);
 	}
@@ -165,6 +171,8 @@ public class MethodParameterLeak extends LeakTest {
 	 * Tests that a variety of methods leaking internal parameters are detected properly
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testMethodParameterLeak5I() {
 		x5(true);
 	}
@@ -185,6 +193,8 @@ public class MethodParameterLeak extends LeakTest {
 	 * Tests that a variety of methods leaking internal parameters are detected properly
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodParameterLeak6F() {
 		x6(false);
 	}
@@ -193,6 +203,8 @@ public class MethodParameterLeak extends LeakTest {
 	 * Tests that a variety of methods leaking internal parameters are detected properly
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testMethodParameterLeak6I() {
 		x6(true);
 	}
@@ -207,6 +219,8 @@ public class MethodParameterLeak extends LeakTest {
 	 * Tests that a variety of methods leaking internal parameters are detected properly
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodParameterLeak7F() {
 		x7(false);
 	}
@@ -215,6 +229,8 @@ public class MethodParameterLeak extends LeakTest {
 	 * Tests that a variety of methods leaking internal parameters are detected properly
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testMethodParameterLeak7I() {
 		x7(true);
 	}
@@ -235,6 +251,8 @@ public class MethodParameterLeak extends LeakTest {
 	 * Tests that a variety of methods leaking internal parameters are detected properly
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodParameterLeak8F() {
 		x8(false);
 	}
@@ -243,6 +261,8 @@ public class MethodParameterLeak extends LeakTest {
 	 * Tests that a variety of methods leaking internal parameters are detected properly
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testMethodParameterLeak8I() {
 		x8(true);
 	}
@@ -257,6 +277,8 @@ public class MethodParameterLeak extends LeakTest {
 	 * Tests that a variety of methods leaking internal parameters are detected properly
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodParameterLeak9F() {
 		x9(false);
 	}
@@ -265,6 +287,8 @@ public class MethodParameterLeak extends LeakTest {
 	 * Tests that a variety of methods leaking internal parameters are detected properly
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testMethodParameterLeak9I() {
 		x9(true);
 	}
@@ -285,6 +309,8 @@ public class MethodParameterLeak extends LeakTest {
 	 * Tests that a variety of methods leaking internal parameters are detected properly
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodParameterLeak10F() {
 		x10(false);
 	}
@@ -293,6 +319,8 @@ public class MethodParameterLeak extends LeakTest {
 	 * Tests that a variety of methods leaking internal parameters are detected properly
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testMethodParameterLeak10I() {
 		x10(true);
 	}
@@ -307,6 +335,8 @@ public class MethodParameterLeak extends LeakTest {
 	 * Tests that problems for leaking parameters are still properly reported with an @nooverride tag on methods
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodParameterLeak11F() {
 		x11(false);
 	}
@@ -315,6 +345,8 @@ public class MethodParameterLeak extends LeakTest {
 	 * Tests that problems for leaking parameters are still properly reported with an @nooverride tag on methods
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testMethodParameterLeak11I() {
 		x11(true);
 	}
@@ -336,6 +368,8 @@ public class MethodParameterLeak extends LeakTest {
 	 * Tests that problems for leaking parameters are still properly reported with an @noreference tag on methods
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodParameterLeak12F() {
 		x12(false);
 	}
@@ -344,6 +378,8 @@ public class MethodParameterLeak extends LeakTest {
 	 * Tests that problems for leaking parameters are still properly reported with an @noreference tag on methods
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testMethodParameterLeak12I() {
 		x12(true);
 	}
@@ -365,6 +401,8 @@ public class MethodParameterLeak extends LeakTest {
 	 * Tests that a variety of methods leaking internal parameters are ignored when @noreference AND @nooverride tags are present
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodParameterLeak13F() {
 		x13(false);
 	}
@@ -373,6 +411,8 @@ public class MethodParameterLeak extends LeakTest {
 	 * Tests that a variety of methods leaking internal parameters are ignored when @noreference AND @nooverride tags are present
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testMethodParameterLeak13I() {
 		x13(true);
 	}
@@ -387,6 +427,8 @@ public class MethodParameterLeak extends LeakTest {
 	 * Tests that a method in a final class leaking internal parameters is ignored when a @noreference tag is present
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodParameterLeak14F() {
 		x14(false);
 	}
@@ -395,6 +437,8 @@ public class MethodParameterLeak extends LeakTest {
 	 * Tests that a method in a final class leaking internal parameters is ignored when a @noreference tag is present
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testMethodParameterLeak14I() {
 		x14(true);
 	}
@@ -409,6 +453,8 @@ public class MethodParameterLeak extends LeakTest {
 	 * Tests that a method in an extend restricted class leaking internal parameters is ignored when a @noreference tag is present
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodParameterLeak15F() {
 		x15(false);
 	}
@@ -417,6 +463,8 @@ public class MethodParameterLeak extends LeakTest {
 	 * Tests that a method in an extend restricted class leaking internal parameters is ignored when a @noreference tag is present
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testMethodParameterLeak15I() {
 		x15(true);
 	}
@@ -431,6 +479,8 @@ public class MethodParameterLeak extends LeakTest {
 	 * Tests that a static method leaking internal parameters is ignored when a @noreference tag is present
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodParameterLeak16F() {
 		x16(false);
 	}
@@ -439,6 +489,8 @@ public class MethodParameterLeak extends LeakTest {
 	 * Tests that a static method leaking internal parameters is ignored when a @noreference tag is present
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testMethodParameterLeak16I() {
 		x16(true);
 	}
@@ -461,6 +513,8 @@ public class MethodParameterLeak extends LeakTest {
 	/**
 	 * Tests that a method parameter on a top-level non public type is properly ignored (incremental).
 	 */
+	@Test
+
 	public void testMethodParameterLeak17I() {
 		x17(true);
 	}
@@ -468,6 +522,8 @@ public class MethodParameterLeak extends LeakTest {
 	/**
 	 * Tests that a method parameter on a top-level non public type is properly ignored (full).
 	 */
+	@Test
+
 	public void testMethodParameterLeak17F() {
 		x17(false);
 	}
@@ -476,6 +532,8 @@ public class MethodParameterLeak extends LeakTest {
 	 * Tests that problems for leaking parameters are still properly reported with an @noreference tag on methods
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodParameterLeak18F() {
 		x18(false);
 	}
@@ -484,6 +542,8 @@ public class MethodParameterLeak extends LeakTest {
 	 * Tests that problems for leaking parameters are still properly reported with an @noreference tag on methods
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testMethodParameterLeak18I() {
 		x18(true);
 	}
@@ -498,6 +558,8 @@ public class MethodParameterLeak extends LeakTest {
 	public void tesMethodParameterLeak19F() {
 		x19(false);
 	}
+
+	@Test
 
 	public void testMethodParameterLeak19I() {
 		x19(true);
@@ -516,6 +578,8 @@ public class MethodParameterLeak extends LeakTest {
 	public void tesMethodParameterLeak20F() {
 		x20(false);
 	}
+
+	@Test
 
 	public void testMethodParameterLeak20I() {
 		x20(true);

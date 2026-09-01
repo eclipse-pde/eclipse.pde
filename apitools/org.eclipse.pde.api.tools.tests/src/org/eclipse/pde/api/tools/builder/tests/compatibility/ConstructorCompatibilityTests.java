@@ -17,8 +17,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that the builder correctly finds and reports constructor
@@ -38,20 +37,9 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 	 */
 	protected static String PACKAGE_PREFIX = "a.constructors."; //$NON-NLS-1$
 
-	public ConstructorCompatibilityTests(String name) {
-		super(name);
-	}
-
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("constructors"); //$NON-NLS-1$
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(ConstructorCompatibilityTests.class);
 	}
 
 	@Override
@@ -93,9 +81,13 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testProtectedToPackageI() throws Exception {
 		xProtectedToPackage(true);
 	}
+
+	@Test
 
 	public void testProtectedToPackageF() throws Exception {
 		xProtectedToPackage(false);
@@ -110,9 +102,13 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testProtectedToPackageNoReferenceI() throws Exception {
 		xProtectedToPackageNoReference(true);
 	}
+
+	@Test
 
 	public void testProtectedToPackageNoReferenceF() throws Exception {
 		xProtectedToPackageNoReference(false);
@@ -133,9 +129,13 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testProtectedToPrivateI() throws Exception {
 		xProtectedToPrivate(true);
 	}
+
+	@Test
 
 	public void testProtectedToPrivateF() throws Exception {
 		xProtectedToPrivate(false);
@@ -150,9 +150,13 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testProtectedToPrivateNoExtendI() throws Exception {
 		xProtectedToPrivateNoExtend(true);
 	}
+
+	@Test
 
 	public void testProtectedToPrivateNoExtendF() throws Exception {
 		xProtectedToPrivateNoExtend(false);
@@ -173,9 +177,13 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testPublicToPackageI() throws Exception {
 		xPublicToPackage(true);
 	}
+
+	@Test
 
 	public void testPublicToPackageF() throws Exception {
 		xPublicToPackage(false);
@@ -196,9 +204,13 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testPublicToPrivateI() throws Exception {
 		xPublicToPrivate(true);
 	}
+
+	@Test
 
 	public void testPublicToPrivateF() throws Exception {
 		xPublicToPrivate(false);
@@ -213,9 +225,13 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testPublicToPrivateNoReferenceI() throws Exception {
 		xPublicToPrivateNoReference(true);
 	}
+
+	@Test
 
 	public void testPublicToPrivateNoReferenceF() throws Exception {
 		xPublicToPrivateNoReference(false);
@@ -236,9 +252,13 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testPublicToProtectedI() throws Exception {
 		xPublicToProtected(true);
 	}
+
+	@Test
 
 	public void testPublicToProtectedF() throws Exception {
 		xPublicToProtected(false);
@@ -263,9 +283,13 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddTypeParameterI() throws Exception {
 		xAddTypeParameter(true);
 	}
+
+	@Test
 
 	public void testAddTypeParameterF() throws Exception {
 		xAddTypeParameter(false);
@@ -290,9 +314,13 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemoveTypeParameterI() throws Exception {
 		xRemoveTypeParameter(true);
 	}
+
+	@Test
 
 	public void testRemoveTypeParameterF() throws Exception {
 		xRemoveTypeParameter(false);
@@ -317,9 +345,13 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testVarArgsToArrayI() throws Exception {
 		xVarArgsToArray(true);
 	}
+
+	@Test
 
 	public void testVarArgsToArrayF() throws Exception {
 		xVarArgsToArray(false);
@@ -334,9 +366,13 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testArrayToVarArgsI() throws Exception {
 		xArrayToVarArgs(true);
 	}
+
+	@Test
 
 	public void testArrayToVarArgsF() throws Exception {
 		xArrayToVarArgs(false);
@@ -355,9 +391,13 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testPublicToProtected2I() throws Exception {
 		xPublicToProtected2(true);
 	}
+
+	@Test
 
 	public void testPublicToProtected2F() throws Exception {
 		xPublicToProtected2(false);
@@ -376,9 +416,13 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testPublicToPackage2I() throws Exception {
 		xPublicToPackage2(true);
 	}
+
+	@Test
 
 	public void testPublicToPackage2F() throws Exception {
 		xPublicToPackage2(false);
@@ -397,9 +441,13 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testPublicToPrivate2I() throws Exception {
 		xPublicToPrivate2(true);
 	}
+
+	@Test
 
 	public void testPublicToPrivate2F() throws Exception {
 		xPublicToPrivate2(false);

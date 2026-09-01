@@ -14,6 +14,8 @@
 package org.eclipse.pde.api.tools.builder.tests.compatibility;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -37,23 +39,10 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 
-import junit.framework.Test;
-
 /**
  * Tests project type container
  */
 public class ProjectTypeContainerTests extends CompatibilityTest {
-
-	public ProjectTypeContainerTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(ProjectTypeContainerTests.class);
-	}
 
 	@Override
 	protected String getTestingProjectName() {
@@ -72,9 +61,9 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 	 */
 	private IApiComponent getComponent(String projectName) {
 		IApiBaseline baseline = ApiBaselineManager.getManager().getWorkspaceBaseline();
-		assertNotNull("Missing workspace baseline", baseline); //$NON-NLS-1$
+		Assertions.assertNotNull(baseline, "Missing workspace baseline"); //$NON-NLS-1$
 		IApiComponent component = baseline.getApiComponent(getEnv().getProject(projectName));
-		assertNotNull("Missing API component", component); //$NON-NLS-1$
+		Assertions.assertNotNull(component, "Missing API component"); //$NON-NLS-1$
 		return component;
 	}
 
@@ -85,7 +74,7 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 	private IApiTypeContainer getTypeContainer(String projectName) throws CoreException {
 		IApiComponent component = getComponent(projectName);
 		IApiTypeContainer[] containers = component.getApiTypeContainers();
-		assertEquals("Wrong number of API type containers", 1, containers.length); //$NON-NLS-1$
+		Assertions.assertEquals(1, containers.length, "Wrong number of API type containers"); //$NON-NLS-1$
 		return containers[0];
 	}
 
@@ -168,36 +157,42 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 	 * {@code Bundle-RequiredExecutionEnvironment} and the
 	 * {@code Require-Capability} header.
 	 */
+	@Test
+
 	public void testExecutionEnvironment() throws CoreException {
 		IApiComponent bundleA = getComponent("bundle.a"); //$NON-NLS-1$
-		assertEquals("Unable to find BREE for bundle using 'Bundle-RequiredExecutionEvironment'", //$NON-NLS-1$
-				List.of("JavaSE-1.8"), bundleA.getExecutionEnvironments()); //$NON-NLS-1$
+		Assertions.assertEquals(List.of("JavaSE-1.8"), //$NON-NLS-1$
+				bundleA.getExecutionEnvironments(), "Unable to find BREE for bundle using 'Bundle-RequiredExecutionEvironment'"); //$NON-NLS-1$
 
 		IApiComponent bundleB = getComponent("bundle.b"); //$NON-NLS-1$
-		assertEquals("Unable to find BREE for bundle using 'Require-Capability'", //$NON-NLS-1$
-				List.of("JavaSE-17"), bundleB.getExecutionEnvironments()); //$NON-NLS-1$
+		Assertions.assertEquals(List.of("JavaSE-17"), //$NON-NLS-1$
+				bundleB.getExecutionEnvironments(), "Unable to find BREE for bundle using 'Require-Capability'"); //$NON-NLS-1$
 	}
 
 	/**
 	 * Tests whether missing execution environments in the manifest are detected
 	 * correctly.
 	 */
+	@Test
+
 	public void testNoExecutionEnvironment() throws CoreException {
 		// Verify that the test-project is an existing java project in order to
 		// ensure it gets the EE of the bound JDK injected (because it does not
 		// declare an EE in its Manifest).
-		assertTrue(JavaCore.create(ResourcesPlugin.getWorkspace().getRoot().getProject("bundle.c")).exists()); //$NON-NLS-1$
+		Assertions.assertTrue(JavaCore.create(ResourcesPlugin.getWorkspace().getRoot().getProject("bundle.c")).exists()); //$NON-NLS-1$
 		IApiComponent bundleC = getComponent("bundle.c"); //$NON-NLS-1$
-		assertEquals("Expected no EE because none is specified in the Manifest", //$NON-NLS-1$
-				List.of(), bundleC.getExecutionEnvironments());
+		Assertions.assertEquals(List.of(), bundleC.getExecutionEnvironments(),
+				"Expected no EE because none is specified in the Manifest"); //$NON-NLS-1$
 	}
 
 	/**
 	 * Tests all packages are returned.
 	 */
+	@Test
+
 	public void testPackageNames() throws CoreException {
 		IApiTypeContainer container = getTypeContainer("bundle.a"); //$NON-NLS-1$
-		assertEquals("Should be a project type container", IApiTypeContainer.FOLDER, container.getContainerType()); //$NON-NLS-1$
+		Assertions.assertEquals(IApiTypeContainer.FOLDER, container.getContainerType(), "Should be a project type container"); //$NON-NLS-1$
 
 		assertThat(container.getPackageNames()).withFailMessage("Missing/wrong packages in type container") //$NON-NLS-1$
 				.containsAll(getAllPackageNames());
@@ -206,26 +201,32 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 	/**
 	 * Test type lookup.
 	 */
+	@Test
+
 	public void testFindType() throws CoreException {
 		IApiTypeContainer container = getTypeContainer("bundle.a"); //$NON-NLS-1$
 		IApiTypeRoot root = container.findTypeRoot("a.classes.fields.AddPrivateField"); //$NON-NLS-1$
-		assertNotNull("Unable to find type 'a.classes.fields.AddPrivateField'", root); //$NON-NLS-1$
+		Assertions.assertNotNull(root, "Unable to find type 'a.classes.fields.AddPrivateField'"); //$NON-NLS-1$
 		IApiType structure = root.getStructure();
-		assertEquals("Wrong type", "a.classes.fields.AddPrivateField", structure.getName()); //$NON-NLS-1$ //$NON-NLS-2$
+		Assertions.assertEquals("a.classes.fields.AddPrivateField", structure.getName(), "Wrong type"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
 	 * Test that type lookup fails for a type that is not in the project.
 	 */
+	@Test
+
 	public void testMissingType() throws CoreException {
 		IApiTypeContainer container = getTypeContainer("bundle.a"); //$NON-NLS-1$
 		IApiTypeRoot root = container.findTypeRoot("some.bogus.Type"); //$NON-NLS-1$
-		assertNull("Should not be able to find type 'some.bogus.Type'", root); //$NON-NLS-1$
+		Assertions.assertNull(root, "Should not be able to find type 'some.bogus.Type'"); //$NON-NLS-1$
 	}
 
 	/**
 	 * Visits the container - all packages and types.
 	 */
+	@Test
+
 	public void testVisitor() throws CoreException {
 		final Set<String> pkgNames = new HashSet<>();
 		final Set<String> typeNames = new HashSet<>();
@@ -256,15 +257,17 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 	 * test for issue #2096 where packages were missing when multiple source
 	 * folders output to the same location.
 	 */
+	@Test
+
 	public void testMultipleSourceFoldersWithSharedOutput() throws CoreException {
 		IApiComponent component = getComponent("bundle.multisource"); //$NON-NLS-1$
 		IApiTypeContainer[] containers = component.getApiTypeContainers();
-		assertEquals("Wrong number of API type containers", 1, containers.length); //$NON-NLS-1$
+		Assertions.assertEquals(1, containers.length, "Wrong number of API type containers"); //$NON-NLS-1$
 		IApiTypeContainer container = containers[0];
 		// A single ProjectTypeContainer handles multiple source roots sharing
 		// the same output location by tracking all package fragment roots
-		assertEquals("Should be a folder type container", IApiTypeContainer.FOLDER, //$NON-NLS-1$
-				container.getContainerType());
+		Assertions.assertEquals(IApiTypeContainer.FOLDER, container.getContainerType(),
+				"Should be a folder type container"); //$NON-NLS-1$
 
 		String[] packageNames = container.getPackageNames();
 		Set<String> pkgSet = new HashSet<>();
@@ -273,15 +276,15 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 		}
 
 		// Both packages from different source folders should be found
-		assertTrue("Missing package test.pkg1 from src1 folder", pkgSet.contains("test.pkg1")); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("Missing package test.pkg2 from src2 folder", pkgSet.contains("test.pkg2")); //$NON-NLS-1$ //$NON-NLS-2$
+		Assertions.assertTrue(pkgSet.contains("test.pkg1"), "Missing package test.pkg1 from src1 folder"); //$NON-NLS-1$ //$NON-NLS-2$
+		Assertions.assertTrue(pkgSet.contains("test.pkg2"), "Missing package test.pkg2 from src2 folder"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		// Verify we can find types from both source folders
 		IApiTypeRoot type1 = container.findTypeRoot("test.pkg1.TestClass1"); //$NON-NLS-1$
-		assertNotNull("Should find TestClass1 from src1", type1); //$NON-NLS-1$
+		Assertions.assertNotNull(type1, "Should find TestClass1 from src1"); //$NON-NLS-1$
 
 		IApiTypeRoot type2 = container.findTypeRoot("test.pkg2.TestClass2"); //$NON-NLS-1$
-		assertNotNull("Should find TestClass2 from src2", type2); //$NON-NLS-1$
+		Assertions.assertNotNull(type2, "Should find TestClass2 from src2"); //$NON-NLS-1$
 	}
 
 }

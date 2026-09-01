@@ -18,8 +18,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that an API method leaking an internal type as a return type
@@ -30,10 +29,6 @@ import junit.framework.Test;
 public class MethodReturnTypeLeak extends LeakTest {
 
 	private int pid = -1;
-
-	public MethodReturnTypeLeak(String name) {
-		super(name);
-	}
 
 	@Override
 	protected String getTestCompliance() {
@@ -52,13 +47,6 @@ public class MethodReturnTypeLeak extends LeakTest {
 		return pid;
 	}
 
-	/**
-	 * Currently empty.
-	 */
-	public static Test suite() {
-		return buildTestSuite(MethodReturnTypeLeak.class);
-	}
-
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("method"); //$NON-NLS-1$
@@ -68,6 +56,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	 * Tests that method with internal return types are properly detected
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodReturnTypeLeak1F() {
 		x1(false);
 	}
@@ -76,6 +66,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	 * Tests that methods with internal return types are properly detected
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testMethodReturnTypeLeak1I() {
 		x1(true);
 	}
@@ -94,6 +86,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	 * Tests that private methods with internal return types are properly ignored
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodReturnTypeLeak2F() {
 		x2(false);
 	}
@@ -102,6 +96,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	 * Tests that private methods with internal return types are properly ignored
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testMethodReturnTypeLeak2I() {
 		x2(true);
 	}
@@ -116,6 +112,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	 * Tests that methods in public static internal types with internal return types are properly detected
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodReturnTypeLeak3F() {
 		x3(false);
 	}
@@ -124,6 +122,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	 * Tests that methods in public static internal types with internal return types are properly detected
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testMethodReturnTypeLeak3I() {
 		x3(true);
 	}
@@ -143,6 +143,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	 * Tests that methods in public static internal types with internal return types are properly ignored
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodReturnTypeLeak4F() {
 		x4(false);
 	}
@@ -151,6 +153,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	 * Tests that methods in public static internal types with internal return types are properly ignored
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testMethodReturnTypeLeak4I() {
 		x4(true);
 	}
@@ -165,6 +169,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	 * Tests that methods in public static internal types with internal return types are properly detected
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodReturnTypeLeak5F() {
 		x5(false);
 	}
@@ -173,6 +179,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	 * Tests that methods in public static internal types with internal return types are properly detected
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testMethodReturnTypeLeak5I() {
 		x5(true);
 	}
@@ -192,6 +200,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	 * Tests that methods in public static internal types with internal return types are properly ignored
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodReturnTypeLeak6F() {
 		x6(false);
 	}
@@ -200,6 +210,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	 * Tests that methods in public static internal types with internal return types are properly ignored
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testMethodReturnTypeLeak6I() {
 		x6(true);
 	}
@@ -214,6 +226,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	 * Tests that methods in public static internal types with internal return types are properly detected
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodReturnTypeLeak7F() {
 		x7(false);
 	}
@@ -222,6 +236,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	 * Tests that methods in public static internal types with internal return types are properly detected
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testMethodReturnTypeLeak7I() {
 		x7(true);
 	}
@@ -242,6 +258,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	 * Tests that methods in an abstract type with internal return types are properly detected
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodReturnTypeLeak8F() {
 		x8(false);
 	}
@@ -250,6 +268,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	 * Tests that methods in an abstract type with internal return types are properly detected
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testMethodReturnTypeLeak8I() {
 		x8(true);
 	}
@@ -269,6 +289,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	 * Tests that methods in a final type with internal return types are properly detected
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodReturnTypeLeak9F() {
 		x9(false);
 	}
@@ -277,6 +299,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	 * Tests that methods in a final type with internal return types are properly detected
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testMethodReturnTypeLeak9I() {
 		x9(true);
 	}
@@ -294,6 +318,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	 * Tests that private methods in a final type with internal return types are properly ignored
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodReturnTypeLeak10F() {
 		x10(false);
 	}
@@ -302,6 +328,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	 * Tests that private methods in a final type with internal return types are properly ignored
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testMethodReturnTypeLeak10I() {
 		x10(true);
 	}
@@ -316,6 +344,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	 * Tests that methods leaking return types are properly reported even with an @nooverride tag present
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodReturnTypeLeak11F() {
 		x11(false);
 	}
@@ -324,6 +354,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	 * Tests that methods leaking return types are properly reported even with an @nooverride tag present
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testMethodReturnTypeLeak11I() {
 		x11(true);
 	}
@@ -346,6 +378,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	 * Tests that methods leaking return types are properly reported even with an @noreference tag present
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodReturnLeak12F() {
 		x12(false);
 	}
@@ -354,6 +388,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	 * Tests that methods leaking return types are properly reported even with an @noreference tag present
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testMethodReturnType12I() {
 		x12(true);
 	}
@@ -377,6 +413,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	 * Tests that a variety of methods leaking return types are ignored when @noreference AND @nooverride tags are present
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodReturnTypeLeak13F() {
 		x13(false);
 	}
@@ -385,6 +423,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	 * Tests that a variety of methods leaking return types are ignored when @noreference AND @nooverride tags are present
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testMethodReturnTypeLeak13I() {
 		x13(true);
 	}
@@ -399,6 +439,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	 * Tests that a method in a final class leaking internal parameters is ignored when a @noreference tag is present
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodParameterLeak14F() {
 		x14(false);
 	}
@@ -407,6 +449,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	 * Tests that a method in a final class leaking internal parameters is ignored when a @noreference tag is present
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testMethodParameterLeak14I() {
 		x14(true);
 	}
@@ -421,6 +465,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	 * Tests that a method in an extend restricted class leaking internal parameters is ignored when a @noreference tag is present
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodParameterLeak15F() {
 		x15(false);
 	}
@@ -429,6 +475,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	 * Tests that a method in an extend restricted class leaking internal parameters is ignored when a @noreference tag is present
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testMethodParameterLeak15I() {
 		x15(true);
 	}
@@ -443,6 +491,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	 * Tests that a static method leaking internal parameters is ignored when a @noreference tag is present
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodParameterLeak16F() {
 		x16(false);
 	}
@@ -451,6 +501,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	 * Tests that a static method leaking internal parameters is ignored when a @noreference tag is present
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testMethodParameterLeak16I() {
 		x16(true);
 	}
@@ -464,6 +516,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	/**
 	 * Tests a method leaking a non public top level type as a return type
 	 */
+	@Test
+
 	public void testMethodReturnLeak17F() {
 		x17(false);
 	}
@@ -471,6 +525,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	/**
 	 * Tests a method leaking a non public top level type as a return type
 	 */
+	@Test
+
 	public void testMethodReturnType17I() {
 		x17(true);
 	}
@@ -482,9 +538,13 @@ public class MethodReturnTypeLeak extends LeakTest {
 		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testMethodReturnType18F() {
 		x18(false);
 	}
+
+	@Test
 
 	public void testMethodReturnType18I() {
 		x18(true);
@@ -500,9 +560,13 @@ public class MethodReturnTypeLeak extends LeakTest {
 		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testMethodReturnType19F() {
 		x19(false);
 	}
+
+	@Test
 
 	public void testMethodReturnType19I() {
 		x19(true);
@@ -518,9 +582,13 @@ public class MethodReturnTypeLeak extends LeakTest {
 		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testMethodReturnType21F() {
 		x21(false);
 	}
+
+	@Test
 
 	public void testMethodReturnType21I() {
 		x21(true);
@@ -536,14 +604,17 @@ public class MethodReturnTypeLeak extends LeakTest {
 		deployLeakTest(typename + ".java", inc); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testMethodReturnType22F() {
 		x22(false);
 	}
 
+	@Test
+
 	public void testMethodReturnType22I() {
 		x22(true);
 	}
-
 
 	private void x22(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(1));
@@ -554,9 +625,13 @@ public class MethodReturnTypeLeak extends LeakTest {
 		deployLeakTest(typename + ".java", inc); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testMethodReturnType23F() {
 		x23(false);
 	}
+
+	@Test
 
 	public void testMethodReturnType23I() {
 		x23(true);

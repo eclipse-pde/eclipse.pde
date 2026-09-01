@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.util.tests;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.text.MessageFormat;
@@ -56,9 +56,9 @@ import org.eclipse.pde.api.tools.ui.internal.wizards.ApiToolingSetupRefactoring;
 import org.eclipse.pde.api.tools.ui.internal.wizards.WizardMessages;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * This class tests the {@link ApiDescriptionProcessor}
@@ -107,8 +107,8 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 				fragment = iter.next();
 				if (fragment.getName().getFullyQualifiedName().equals(membername)) {
 					Javadoc docnode = node.getJavadoc();
-					assertNotNull("the field: " + membername + " must have a javadoc node", docnode); //$NON-NLS-1$ //$NON-NLS-2$
-					assertTrue("the field: " + membername + " should contain all of the tags: " + getStringValue(expectedtags), containsAllTags(docnode)); //$NON-NLS-1$ //$NON-NLS-2$
+					assertNotNull(docnode, "the field: " + membername + " must have a javadoc node"); //$NON-NLS-1$ //$NON-NLS-2$
+					assertTrue(containsAllTags(docnode), "the field: " + membername + " should contain all of the tags: " + getStringValue(expectedtags)); //$NON-NLS-1$ //$NON-NLS-2$
 					processed = true;
 				}
 			}
@@ -121,8 +121,8 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 				String sig = Signatures.getMethodSignatureFromNode(node, true);
 				if (signature.equals(sig)) {
 					Javadoc docnode = node.getJavadoc();
-					assertNotNull("the method: " + membername + " [" + signature + "] must have a javadoc node", docnode); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					assertTrue("the method: " + membername + " [" + signature + "] should contain all of the tags: " + getStringValue(expectedtags), containsAllTags(docnode)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					assertNotNull(docnode, "the method: " + membername + " [" + signature + "] must have a javadoc node"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					assertTrue(containsAllTags(docnode), "the method: " + membername + " [" + signature + "] should contain all of the tags: " + getStringValue(expectedtags)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					processed = true;
 				}
 			}
@@ -135,8 +135,8 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 				String name = node.getName().getFullyQualifiedName();
 				if ((innertypename == null && name.equals(type)) || name.equals(innertypename)) {
 					Javadoc docnode = node.getJavadoc();
-					assertNotNull("the type: " + name + " must have a javadoc node", docnode); //$NON-NLS-1$ //$NON-NLS-2$
-					assertTrue("the type: " + name + " should contain all of the tags: " + getStringValue(expectedtags), containsAllTags(docnode)); //$NON-NLS-1$ //$NON-NLS-2$
+					assertNotNull(docnode, "the type: " + name + " must have a javadoc node"); //$NON-NLS-1$ //$NON-NLS-2$
+					assertTrue(containsAllTags(docnode), "the type: " + name + " should contain all of the tags: " + getStringValue(expectedtags)); //$NON-NLS-1$ //$NON-NLS-2$
 					processed = true;
 				}
 			}
@@ -184,19 +184,19 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	private static File componentxml = new File(ROOT_PATH.append("component.xml").toOSString()); //$NON-NLS-1$
 
 	@Override
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		super.setUp();
 		createProject(TESTING_PROJECT_NAME, null);
 		IJavaProject project = getTestingJavaProject(TESTING_PROJECT_NAME);
-		assertNotNull("The java project must have been created", project); //$NON-NLS-1$
+		assertNotNull(project, "The java project must have been created"); //$NON-NLS-1$
 		IPackageFragmentRoot srcroot = ProjectUtils.addSourceContainer(project, ProjectUtils.SRC_FOLDER);
-		assertNotNull("the src root must have been created", srcroot); //$NON-NLS-1$
+		assertNotNull(srcroot, "the src root must have been created"); //$NON-NLS-1$
 
 		File src = new File(JAVADOC_SRC_DIR);
-		assertTrue("the source dir must exist", src.exists()); //$NON-NLS-1$
-		assertTrue("the source dir must be a directory", src.isDirectory()); //$NON-NLS-1$
-		assertNotNull("the srcroot for the test java project must not be null", srcroot); //$NON-NLS-1$
+		assertTrue(src.exists(), "the source dir must exist"); //$NON-NLS-1$
+		assertTrue(src.isDirectory(), "the source dir must be a directory"); //$NON-NLS-1$
+		assertNotNull(srcroot, "the srcroot for the test java project must not be null"); //$NON-NLS-1$
 		FileUtils.importFilesFromDirectory(src, srcroot.getPath().append("javadoc")); //$NON-NLS-1$
 
 		ApiToolingSetupRefactoring refactoring = new ApiToolingSetupRefactoring();
@@ -207,7 +207,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	}
 
 	@Override
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		deleteProject(TESTING_PROJECT_NAME);
 		super.tearDown();
@@ -225,11 +225,11 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	@Test
 	public void testSerializeComponentXml() {
 		String xml = ApiDescriptionProcessor.serializeComponentXml(new File(ROOT_PATH.toOSString()));
-		assertNotNull("The component xml file must exist and be parsable from a root directory", xml); //$NON-NLS-1$
+		assertNotNull(xml, "The component xml file must exist and be parsable from a root directory"); //$NON-NLS-1$
 		xml = ApiDescriptionProcessor.serializeComponentXml(componentxml);
-		assertNotNull("The component xml file must exist and be parsable from a component.xml file", xml); //$NON-NLS-1$
+		assertNotNull(xml, "The component xml file must exist and be parsable from a component.xml file"); //$NON-NLS-1$
 		xml = ApiDescriptionProcessor.serializeComponentXml(new File(ROOT_PATH.append("component.jar").toOSString())); //$NON-NLS-1$
-		assertNotNull("The component xml file must exist and be parsable from a jar file", xml); //$NON-NLS-1$
+		assertNotNull(xml, "The component xml file must exist and be parsable from a jar file"); //$NON-NLS-1$
 	}
 
 	/**
@@ -283,13 +283,13 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 		try {
 			IJavaProject project = getTestingJavaProject(TESTING_PROJECT_NAME);
 			IType type = project.findType("javadoc", typename); //$NON-NLS-1$
-			assertNotNull("the type for javadoc." + typename + " must exist", type); //$NON-NLS-1$ //$NON-NLS-2$
+			assertNotNull(type, "the type for javadoc." + typename + " must exist"); //$NON-NLS-1$ //$NON-NLS-2$
 			ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
 			parser.setSource(type.getCompilationUnit());
 			CompilationUnit cunit = (CompilationUnit) parser.createAST(new NullProgressMonitor());
 			ChangeVisitor visitor = new ChangeVisitor(typename, innertypename, membername, signature, expectedtags);
 			cunit.accept(visitor);
-			assertTrue("the specified node should have been processed", visitor.processed); //$NON-NLS-1$
+			assertTrue(visitor.processed, "the specified node should have been processed"); //$NON-NLS-1$
 		} catch (JavaModelException jme) {
 			fail("the test class javadoc." + typename + " had problems loading"); //$NON-NLS-1$ //$NON-NLS-2$
 		}

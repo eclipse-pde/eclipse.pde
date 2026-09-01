@@ -17,8 +17,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that an API type that implements an internal type
@@ -29,13 +28,6 @@ import junit.framework.Test;
 public class ClassImplementsLeak extends LeakTest {
 
 	private int pid = -1;
-
-	/**
-	 * Constructor
-	 */
-	public ClassImplementsLeak(String name) {
-		super(name);
-	}
 
 	@Override
 	protected int getDefaultProblemId() {
@@ -55,16 +47,11 @@ public class ClassImplementsLeak extends LeakTest {
 	}
 
 	/**
-	 * @return the test for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(ClassImplementsLeak.class);
-	}
-
-	/**
 	 * Tests that a class that implements an internal interface is properly flagged
 	 * using a full build
 	 */
+	@Test
+
 	public void testClassImplementsLeak1F() {
 		x1(false);
 	}
@@ -73,6 +60,8 @@ public class ClassImplementsLeak extends LeakTest {
 	 * Tests that a class that implements an internal interface is properly flagged
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testClassImplementsLeak1I() {
 		x1(true);
 	}
@@ -88,6 +77,8 @@ public class ClassImplementsLeak extends LeakTest {
 	 * Tests that an outer class that implements an internal interface is not flagged
 	 * using a full build
 	 */
+	@Test
+
 	public void testClassImplementsLeak2F() {
 		x2(false);
 	}
@@ -96,6 +87,8 @@ public class ClassImplementsLeak extends LeakTest {
 	 * Tests that an outer class that implements an internal interface is not flagged
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testClassImplementsLeak2I() {
 		x2(true);
 	}
@@ -110,6 +103,8 @@ public class ClassImplementsLeak extends LeakTest {
 	 * Tests that an inner class that implements an internal interface is not flagged
 	 * using a full build
 	 */
+	@Test
+
 	public void testClassImplementsLeak3F() {
 		x3(false);
 	}
@@ -118,6 +113,8 @@ public class ClassImplementsLeak extends LeakTest {
 	 * Tests that an inner class that implements an internal interface is not flagged
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testClassImplementsLeak3I() {
 		x3(true);
 	}
@@ -132,6 +129,8 @@ public class ClassImplementsLeak extends LeakTest {
 	 * Tests that a static inner class that implements an internal interface is not flagged
 	 * using a full build
 	 */
+	@Test
+
 	public void testClassImplementsLeak4F() {
 		x4(false);
 	}
@@ -140,6 +139,8 @@ public class ClassImplementsLeak extends LeakTest {
 	 * Tests that a static inner class that implements an internal interface is not flagged
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testClassImplementsLeak4I() {
 		x4(true);
 	}
@@ -154,6 +155,8 @@ public class ClassImplementsLeak extends LeakTest {
 	 * Tests that a class that implements an internal interface is properly flagged
 	 * using a full build even with an @noextend tag
 	 */
+	@Test
+
 	public void testClassImplementsLeak5F() {
 		x5(false);
 	}
@@ -162,6 +165,8 @@ public class ClassImplementsLeak extends LeakTest {
 	 * Tests that a class that implements an internal interface is properly flagged
 	 * using an incremental build even with an @noextend tag
 	 */
+	@Test
+
 	public void testClassImplementsLeak5I() {
 		x5(true);
 	}
@@ -177,6 +182,8 @@ public class ClassImplementsLeak extends LeakTest {
 	 * Tests that a class that implements an internal interface is properly flagged
 	 * using a full build even with an @noinstantiate tag
 	 */
+	@Test
+
 	public void testClassImplementsLeak6F() {
 		x6(false);
 	}
@@ -185,6 +192,8 @@ public class ClassImplementsLeak extends LeakTest {
 	 * Tests that a class that implements an internal interface is properly flagged
 	 * using an incremental build even with an @noinstantiate tag
 	 */
+	@Test
+
 	public void testClassImplementsLeak6I() {
 		x6(true);
 	}
@@ -200,6 +209,8 @@ public class ClassImplementsLeak extends LeakTest {
 	 * Tests that a class that implements an internal interface is properly flagged
 	 * using a full build even with an @noinstantiate and an @noextend tag
 	 */
+	@Test
+
 	public void testClassImplementsLeak7F() {
 		x7(false);
 	}
@@ -208,6 +219,8 @@ public class ClassImplementsLeak extends LeakTest {
 	 * Tests that a class that implements an internal interface is properly flagged
 	 * using an incremental build even with an @noinstantiate and an @noextend tag
 	 */
+	@Test
+
 	public void testClassImplementsLeak7I() {
 		x7(true);
 	}
@@ -223,6 +236,8 @@ public class ClassImplementsLeak extends LeakTest {
 	 * Tests that an @noextend tag(s) does not prevent an implement leak problem from being reported
 	 * using a full build
 	 */
+	@Test
+
 	public void testClassImplementsLeak8F() {
 		x8(false);
 	}
@@ -231,6 +246,8 @@ public class ClassImplementsLeak extends LeakTest {
 	 * Tests that an @noextend tag(s) does not prevent an implement leak problem from being reported
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testClassImplementsLeak8I() {
 		x8(true);
 	}
@@ -250,6 +267,8 @@ public class ClassImplementsLeak extends LeakTest {
 	 * Tests that an @noinstantiate tag(s) does not prevent an implement leak problem from being reported
 	 * using a full build
 	 */
+	@Test
+
 	public void testClassImplementsLeak9F() {
 		x9(false);
 	}
@@ -258,6 +277,8 @@ public class ClassImplementsLeak extends LeakTest {
 	 * Tests that an @noinstantiate tag(s) does not prevent an implement leak problem from being reported
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testClassImplementsLeak9I() {
 		x9(true);
 	}
@@ -277,6 +298,8 @@ public class ClassImplementsLeak extends LeakTest {
 	 * Tests that an @noinstantiate and @noextend tag(s) does not prevent an implement leak problem from being reported
 	 * using a full build
 	 */
+	@Test
+
 	public void testClassImplementsLeak10F() {
 		x10(false);
 	}
@@ -285,6 +308,8 @@ public class ClassImplementsLeak extends LeakTest {
 	 * Tests that an @noinstantiate and @noextend tag(s) does not prevent an implement leak problem from being reported
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testClassImplementsLeak10I() {
 		x10(true);
 	}
@@ -303,6 +328,8 @@ public class ClassImplementsLeak extends LeakTest {
 	/**
 	 * Tests that an API class that implements a top level non public type is a leak.
 	 */
+	@Test
+
 	public void testClassImplementsLeak11F() {
 		x11(false);
 	}
@@ -310,6 +337,8 @@ public class ClassImplementsLeak extends LeakTest {
 	/**
 	 * Tests that an API class that implements a top level non public type is a leak.
 	 */
+	@Test
+
 	public void testClassImplementsLeak11I() {
 		x11(true);
 	}
@@ -324,10 +353,13 @@ public class ClassImplementsLeak extends LeakTest {
 	/**
 	 * Tests that an API class that implements noimplement interface is a leak
 	 */
+	@Test
+
 	public void testClassImplementsNoImplementInterface12F() {
 		x12(false);
 	}
 
+	@Test
 
 	public void testClassImplementsNoImplementInterface12I() {
 		x12(true);
@@ -344,9 +376,13 @@ public class ClassImplementsLeak extends LeakTest {
 	 * Tests that an noextend API class that implements noimplement interface
 	 * is not a leak
 	 */
+	@Test
+
 	public void testNoExtendClassImplementsNoImplementInterface13F() {
 		x13(false);
 	}
+
+	@Test
 
 	public void testNoExtendClassImplementsNoImplementInterface13I() {
 		x13(true);

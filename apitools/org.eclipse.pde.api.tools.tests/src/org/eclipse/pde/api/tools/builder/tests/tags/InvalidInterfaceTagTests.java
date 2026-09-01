@@ -18,8 +18,7 @@ import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that unsupported Javadoc tags on interfaces are reported properly
@@ -27,17 +26,6 @@ import junit.framework.Test;
  * @since 1.0
  */
 public class InvalidInterfaceTagTests extends TagTest {
-
-	public InvalidInterfaceTagTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(InvalidInterfaceTagTests.class);
-	}
 
 	@Override
 	protected IPath getTestSourcePath() {
@@ -53,9 +41,13 @@ public class InvalidInterfaceTagTests extends TagTest {
 				IApiProblem.NO_FLAGS);
 	}
 
+	@Test
+
 	public void testInvalidInterfaceTag1I() {
 		x1(true);
 	}
+
+	@Test
 
 	public void testInvalidInterfaceTag1F() {
 		x1(false);
@@ -72,9 +64,13 @@ public class InvalidInterfaceTagTests extends TagTest {
 		deployTagTest("test1.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidInterfaceTag2I() {
 		x2(true);
 	}
+
+	@Test
 
 	public void testInvalidInterfaceTag2F() {
 		x2(false);
@@ -91,9 +87,13 @@ public class InvalidInterfaceTagTests extends TagTest {
 		deployTagTest("test2.java", inc, true); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidInterfaceTag3I() {
 		x3(true);
 	}
+
+	@Test
 
 	public void testInvalidInterfaceTag3F() {
 		x3(false);
@@ -113,9 +113,13 @@ public class InvalidInterfaceTagTests extends TagTest {
 		deployTagTest("test3.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidInterfaceTag4I() {
 		x4(true);
 	}
+
+	@Test
 
 	public void testInvalidInterfaceTag4F() {
 		x4(false);
@@ -132,9 +136,13 @@ public class InvalidInterfaceTagTests extends TagTest {
 		deployTagTest("test4.java", inc, true); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidInterfaceTag5I() {
 		x5(true);
 	}
+
+	@Test
 
 	public void testInvalidInterfaceTag5F() {
 		x5(false);
@@ -154,9 +162,13 @@ public class InvalidInterfaceTagTests extends TagTest {
 		deployTagTest("test5.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidInterfaceTag6I() {
 		x6(true);
 	}
+
+	@Test
 
 	public void testInvalidInterfaceTag6F() {
 		x6(false);

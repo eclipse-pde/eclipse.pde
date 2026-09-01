@@ -16,8 +16,6 @@ package org.eclipse.pde.api.tools.builder.tests;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,6 +24,10 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInfo;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -50,14 +52,6 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.tests.builder.BuilderTests;
-import org.eclipse.jdt.core.tests.junit.extension.TestCase;
-import org.eclipse.pde.api.tools.builder.tests.annotations.AnnotationTest;
-import org.eclipse.pde.api.tools.builder.tests.compatibility.CompatibilityTest;
-import org.eclipse.pde.api.tools.builder.tests.leak.LeakTest;
-import org.eclipse.pde.api.tools.builder.tests.tags.TagTest;
-import org.eclipse.pde.api.tools.builder.tests.usage.Java7UsageTest;
-import org.eclipse.pde.api.tools.builder.tests.usage.Java8UsageTest;
-import org.eclipse.pde.api.tools.builder.tests.usage.UsageTest;
 import org.eclipse.pde.api.tools.internal.ApiDescriptionXmlCreator;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -78,15 +72,27 @@ import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 import org.osgi.service.prefs.BackingStoreException;
 import org.w3c.dom.Document;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 /**
  * Base class for API builder tests
  *
  * @since 1.0
  */
 public abstract class ApiBuilderTest extends BuilderTests {
+
+	protected ApiBuilderTest() {
+		super(""); //$NON-NLS-1$
+	}
+
+	@BeforeEach
+	final void beforeEach(TestInfo testInfo) throws Exception {
+		setName(testInfo.getTestMethod().orElseThrow().getName());
+		setUp();
+	}
+
+	@AfterEach
+	final void afterEach() throws Exception {
+		tearDown();
+	}
 	/**
 	 * Debug flag
 	 */
@@ -153,13 +159,6 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	private LineMapping[] fLineMappings = null;
 
 	/**
-	 * Constructor
-	 */
-	public ApiBuilderTest(String name) {
-		super(name);
-	}
-
-	/**
 	 * @return the testing environment cast the the one we want
 	 */
 	protected ApiTestingEnvironment getEnv() {
@@ -211,9 +210,9 @@ public abstract class ApiBuilderTest extends BuilderTests {
 				 * We are about to fail, log some extra information for easier
 				 * debugging of the fail.
 				 */
-				logProjectInfos(getName() + " is about to fail, logging extra infos for resource " + resource); //$NON-NLS-1$
+				logProjectInfos(getClass().getSimpleName() + " is about to fail, logging extra infos for resource " + resource); //$NON-NLS-1$
 			}
-			assertFalse("Should not be a JDT error: " + cause, condition); //$NON-NLS-1$
+			Assertions.assertFalse(condition, "Should not be a JDT error: " + cause); //$NON-NLS-1$
 		}
 	}
 
@@ -275,7 +274,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 
 		for (IPath element : expected) {
 			if (!actual.containsKey(element)) {
-				assertTrue("missing expected problem with " + element.toString(), false); //$NON-NLS-1$
+				Assertions.assertTrue(false, "missing expected problem with " + element.toString()); //$NON-NLS-1$
 			}
 		}
 
@@ -290,7 +289,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 					}
 				}
 				if (!found) {
-					assertTrue("unexpected problem(s) with " + path.toString(), false); //$NON-NLS-1$
+					Assertions.assertTrue(false, "unexpected problem(s) with " + path.toString()); //$NON-NLS-1$
 				}
 			}
 		}
@@ -311,7 +310,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	protected void createExistingProjects(String projectsdir, boolean buildimmediately, boolean importfiles, boolean usetestcompliance) throws Exception {
 		IPath path = TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append(projectsdir);
 		File dir = path.toFile();
-		assertTrue("Test data directory does not exist: " + path.toOSString(), dir.exists()); //$NON-NLS-1$
+		Assertions.assertTrue(dir.exists(), "Test data directory does not exist: " + path.toOSString()); //$NON-NLS-1$
 		File[] files = dir.listFiles();
 		for (File file : files) {
 			if (file.isDirectory()) {
@@ -387,7 +386,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		URI locationURI = description.getLocationURI();
 		// if location is null, project already exists in this location or
 		// some error condition occurred.
-		assertNotNull("project description location is null", locationURI); //$NON-NLS-1$
+		Assertions.assertNotNull(locationURI, "project description location is null"); //$NON-NLS-1$
 
 		IProjectDescription desc = workspace.newProjectDescription(projectName);
 		desc.setBuildSpec(description.getBuildSpec());
@@ -446,7 +445,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 				sb.append(" expected: "); //$NON-NLS-1$
 				sb.append(set.contains(problem.getProblemId()));
 			}
-			fail(sb.toString());
+			Assertions.fail(sb.toString());
 		}
 		String[][] args = getExpectedMessageArgs();
 		if (args != null) {
@@ -471,7 +470,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 						System.err.println(p);
 					}
 				}
-				assertTrue("Missing expected problem: " + message, match); //$NON-NLS-1$
+				Assertions.assertTrue(match, "Missing expected problem: " + message); //$NON-NLS-1$
 			}
 			if (messages.size() > 0) {
 				StringBuilder buffer = new StringBuilder();
@@ -480,7 +479,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 					buffer.append(problem).append(',');
 				}
 				buffer.append(']');
-				fail("There was no problems that matched the arguments: " + buffer.toString()); //$NON-NLS-1$
+				Assertions.fail("There was no problems that matched the arguments: " + buffer.toString()); //$NON-NLS-1$
 			}
 		} else {
 			// compare id's
@@ -489,13 +488,13 @@ public abstract class ApiBuilderTest extends BuilderTests {
 				messages.add(Integer.valueOf(problems[i].getProblemId()));
 			}
 			for (int expectedProblemId : expectedProblemIds) {
-				assertTrue("Missing expected problem: " + expectedProblemId, messages.remove(Integer.valueOf(expectedProblemId))); //$NON-NLS-1$
+				Assertions.assertTrue(messages.remove(Integer.valueOf(expectedProblemId)), "Missing expected problem: " + expectedProblemId); //$NON-NLS-1$
 			}
 		}
 		if (fLineMappings != null) {
 			ArrayList<LineMapping> mappings = new ArrayList<>(Arrays.asList(fLineMappings));
 			for (ApiProblem problem : problems) {
-				assertTrue("Missing expected problem line mapping: " + problem, mappings.remove(new LineMapping(problem))); //$NON-NLS-1$
+				Assertions.assertTrue(mappings.remove(new LineMapping(problem)), "Missing expected problem line mapping: " + problem); //$NON-NLS-1$
 			}
 			if (mappings.size() > 0) {
 				StringBuilder buffer = new StringBuilder();
@@ -504,7 +503,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 					buffer.append(mapping).append(',');
 				}
 				buffer.append(']');
-				fail("There was no problems that matched the line mappings: " + buffer.toString()); //$NON-NLS-1$
+				Assertions.fail("There was no problems that matched the line mappings: " + buffer.toString()); //$NON-NLS-1$
 			}
 		}
 	}
@@ -615,12 +614,12 @@ public abstract class ApiBuilderTest extends BuilderTests {
 			if (!found) {
 				printProblemsFor(root);
 			}
-			assertTrue("problem not found: " + problemid, found); //$NON-NLS-1$
+			Assertions.assertTrue(found, "problem not found: " + problemid); //$NON-NLS-1$
 		}
 		for (IMarker marker : markers) {
 			if (marker != null) {
 				printProblemsFor(root);
-				assertTrue("unexpected problem: " + marker.toString(), false); //$NON-NLS-1$
+				Assertions.assertTrue(false, "unexpected problem: " + marker.toString()); //$NON-NLS-1$
 			}
 		}
 	}
@@ -830,7 +829,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 */
 	protected void deleteWorkspaceFile(IPath workspaceLocation, boolean recorddeletion) throws Exception {
 		IFile file = getEnv().getWorkspace().getRoot().getFile(workspaceLocation);
-		assertTrue("Workspace file does not exist: " + workspaceLocation.toString(), file.exists()); //$NON-NLS-1$
+		Assertions.assertTrue(file.exists(), "Workspace file does not exist: " + workspaceLocation.toString()); //$NON-NLS-1$
 		file.delete(true, null);
 		if (recorddeletion) {
 			getEnv().removed(workspaceLocation);
@@ -855,9 +854,9 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 */
 	protected void createWorkspaceFile(IPath workspaceLocation, IPath replacementLocation) throws Exception {
 		IFile file = getEnv().getWorkspace().getRoot().getFile(workspaceLocation);
-		assertFalse("Workspace file should not exist: " + workspaceLocation.toString(), file.exists()); //$NON-NLS-1$
+		Assertions.assertFalse(file.exists(), "Workspace file should not exist: " + workspaceLocation.toString()); //$NON-NLS-1$
 		File replacement = replacementLocation.toFile();
-		assertTrue("Replacement file does not exist: " + replacementLocation.toOSString(), replacement.exists()); //$NON-NLS-1$
+		Assertions.assertTrue(replacement.exists(), "Replacement file does not exist: " + replacementLocation.toOSString()); //$NON-NLS-1$
 		try (FileInputStream stream = new FileInputStream(replacement)) {
 			file.create(stream, true, null);
 		}
@@ -871,9 +870,9 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 */
 	protected void updateWorkspaceFile(IPath workspaceLocation, IPath replacementLocation) throws Exception {
 		IFile file = getEnv().getWorkspace().getRoot().getFile(workspaceLocation);
-		assertTrue("Workspace file does not exist: " + workspaceLocation.toString(), file.exists()); //$NON-NLS-1$
+		Assertions.assertTrue(file.exists(), "Workspace file does not exist: " + workspaceLocation.toString()); //$NON-NLS-1$
 		File replacement = replacementLocation.toFile();
-		assertTrue("Replacement file does not exist: " + replacementLocation.toOSString(), replacement.exists()); //$NON-NLS-1$
+		Assertions.assertTrue(replacement.exists(), "Replacement file does not exist: " + replacementLocation.toOSString()); //$NON-NLS-1$
 		try (FileInputStream stream = new FileInputStream(replacement)) {
 			file.setContents(stream, true, false, null);
 		}
@@ -1033,69 +1032,6 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		FreezeMonitor.done();
 	}
 
-	/**
-	 * @return all of the child test classes of this class
-	 */
-	private static Class<?>[] getAllTestClasses() {
-		ArrayList<Class<?>> classes = new ArrayList<>();
-		classes.add(CompatibilityTest.class);
-		classes.add(UsageTest.class);
-		classes.add(LeakTest.class);
-		classes.add(TagTest.class);
-		classes.add(AnnotationTest.class);
-		classes.add(Java7UsageTest.class);
-		classes.add(Java8UsageTest.class);
-		return classes.toArray(new Class[classes.size()]);
-	}
-
-	/**
-	 * Collects tests from the getAllTestClasses() method into the given suite
-	 */
-	private static void collectTests(TestSuite suite) {
-		// Hack to load all classes before computing their suite of test cases
-		// this allow to reset test cases subsets while running all Builder
-		// tests...
-		Class<?>[] classes = getAllTestClasses();
-
-		// Reset forgotten subsets of tests
-		TestCase.TESTS_PREFIX = null;
-		TestCase.TESTS_NAMES = null;
-		TestCase.TESTS_NUMBERS = null;
-		TestCase.TESTS_RANGE = null;
-		TestCase.RUN_ONLY_ID = null;
-
-		/* tests */
-		for (Class<?> clazz : classes) {
-			Method suiteMethod;
-			try {
-				suiteMethod = clazz.getDeclaredMethod("suite"); //$NON-NLS-1$
-			} catch (NoSuchMethodException e) {
-				e.printStackTrace();
-				continue;
-			}
-			Object test;
-			try {
-				test = suiteMethod.invoke(clazz);
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-				continue;
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
-				continue;
-			}
-			suite.addTest((Test) test);
-		}
-	}
-
-	/**
-	 * loads builder tests
-	 */
-	public static Test suite() {
-		TestSuite suite = new TestSuite(ApiBuilderTest.class.getName());
-		collectTests(suite);
-		return suite;
-	}
-
 	private static void logProjectInfos(String message) {
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		logProjectInfos(message, IStatus.ERROR, Arrays.asList(projects));
@@ -1208,8 +1144,8 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	private static void exportComponent(IApiBaselineManager manager, IPath baselineLocation, IProject currentProject,
 			int retry) throws Exception {
 		IApiComponent component = manager.getWorkspaceComponent(currentProject.getName());
-		assertNotNull("The project was not found in the workspace baseline: " + currentProject.getName(), //$NON-NLS-1$
-				component);
+		Assertions.assertNotNull(component,
+				"The project was not found in the workspace baseline: " + currentProject.getName()); //$NON-NLS-1$
 		try {
 			exportApiComponent(currentProject, component, baselineLocation);
 		} catch (Exception e) {

@@ -14,8 +14,7 @@
 package org.eclipse.pde.api.tools.builder.tests.tags;
 
 import org.eclipse.core.runtime.IPath;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests valid uses of @noreference on interface fields
@@ -24,26 +23,17 @@ import junit.framework.Test;
  */
 public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 
-	public ValidInterfaceFieldTagTests(String name) {
-		super(name);
-	}
-
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("interface"); //$NON-NLS-1$
 	}
 
 	/**
-	 * @return the test for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(ValidInterfaceFieldTagTests.class);
-	}
-
-	/**
 	 * Tests the valid use of an @noreference tag on a field in an interface
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testValidInterfaceFieldTag1I() {
 		x1(true);
 	}
@@ -52,6 +42,8 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	 * Tests the valid use of an @noreference tag on a field in an interface
 	 * using a full build
 	 */
+	@Test
+
 	public void testValidInterfaceFieldTag1F() {
 		x1(false);
 	}
@@ -64,6 +56,8 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	 * Tests the valid use of an @noreference tag on a field in an inner interface
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testValidInterfaceFieldTag3I() {
 		x3(true);
 	}
@@ -72,6 +66,8 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	 * Tests the valid use of an @noreference tag on a field in an inner interface
 	 * using a full build
 	 */
+	@Test
+
 	public void testValidInterfaceFieldTag3F() {
 		x3(false);
 	}
@@ -84,6 +80,8 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	 * Tests the valid use of an @noreference tag on fields in inner / outer interfaces
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testValidInterfaceFieldTag4I() {
 		x4(true);
 	}
@@ -92,6 +90,8 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	 * Tests the valid use of an @noreference tag on fields in inner / outer interfaces
 	 * using a full build
 	 */
+	@Test
+
 	public void testValidInterfaceFieldTag4F() {
 		x4(false);
 	}
@@ -104,6 +104,8 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	 * Tests the valid use of an @noreference tag on fields in interfaces
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testValidInterfaceFieldTag5I() {
 		x5(true);
 	}
@@ -112,6 +114,8 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	 * Tests the valid use of an @noreference tag on fields in interfaces
 	 * using a full build
 	 */
+	@Test
+
 	public void testValidInterfaceFieldTag5F() {
 		x5(false);
 	}

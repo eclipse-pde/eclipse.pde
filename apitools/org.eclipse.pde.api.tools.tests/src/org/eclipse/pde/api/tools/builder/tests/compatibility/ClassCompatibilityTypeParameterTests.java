@@ -17,8 +17,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that the builder correctly reports compatibility problems
@@ -38,20 +37,9 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 	 */
 	protected static String PACKAGE_PREFIX = "a.classes.typeparameters."; //$NON-NLS-1$
 
-	public ClassCompatibilityTypeParameterTests(String name) {
-		super(name);
-	}
-
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("typeparameters"); //$NON-NLS-1$
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(ClassCompatibilityTypeParameterTests.class);
 	}
 
 	@Override
@@ -81,9 +69,13 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddFirstTypeParameterI() throws Exception {
 		xAddFirstTypeParameter(true);
 	}
+
+	@Test
 
 	public void testAddFirstTypeParameterF() throws Exception {
 		xAddFirstTypeParameter(false);
@@ -104,9 +96,13 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddSecondaryTypeParameterI() throws Exception {
 		xAddSecondaryTypeParameter(true);
 	}
+
+	@Test
 
 	public void testAddSecondaryTypeParameterF() throws Exception {
 		xAddSecondaryTypeParameter(false);
@@ -127,9 +123,13 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemoveTypeParameterI() throws Exception {
 		xRemoveTypeParameter(true);
 	}
+
+	@Test
 
 	public void testRemoveTypeParameterF() throws Exception {
 		xRemoveTypeParameter(false);
@@ -150,9 +150,13 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddClassBoundI() throws Exception {
 		xAddClassBound(true);
 	}
+
+	@Test
 
 	public void testAddClassBoundF() throws Exception {
 		xAddClassBound(false);
@@ -173,9 +177,13 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemoveClassBoundI() throws Exception {
 		xRemoveClassBound(true);
 	}
+
+	@Test
 
 	public void testRemoveClassBoundF() throws Exception {
 		xRemoveClassBound(false);
@@ -196,9 +204,13 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddInterfaceBoundI() throws Exception {
 		xAddInterfaceBound(true);
 	}
+
+	@Test
 
 	public void testAddInterfaceBoundF() throws Exception {
 		xAddInterfaceBound(false);
@@ -219,9 +231,13 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemoveOnlyInterfaceBoundI() throws Exception {
 		xRemoveInterfaceBound(true);
 	}
+
+	@Test
 
 	public void testRemoveOnlyInterfaceBoundF() throws Exception {
 		xRemoveInterfaceBound(false);
@@ -242,9 +258,13 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemoveSecondaryInterfaceBoundI() throws Exception {
 		xRemoveSecondaryInterfaceBound(true);
 	}
+
+	@Test
 
 	public void testRemoveSecondaryInterfaceBoundF() throws Exception {
 		xRemoveSecondaryInterfaceBound(false);
@@ -265,9 +285,13 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testChangeClassBoundI() throws Exception {
 		xChangeClassBound(true);
 	}
+
+	@Test
 
 	public void testChangeClassBoundF() throws Exception {
 		xChangeClassBound(false);
@@ -288,9 +312,13 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testChangeInterfaceBoundI() throws Exception {
 		xChangeInterfaceBound(true);
 	}
+
+	@Test
 
 	public void testChangeInterfaceBoundF() throws Exception {
 		xChangeClassBound(false);
@@ -313,9 +341,13 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testConvertToAnnotationI() throws Exception {
 		xConvertToAnnotation(true);
 	}
+
+	@Test
 
 	public void testConvertToAnnotationF() throws Exception {
 		xConvertToAnnotation(false);
@@ -338,9 +370,13 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testConvertToEnumI() throws Exception {
 		xConvertToEnum(true);
 	}
+
+	@Test
 
 	public void testConvertToEnumF() throws Exception {
 		xConvertToEnum(false);
@@ -363,9 +399,13 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testConvertToInterfaceI() throws Exception {
 		xConvertToInterface(true);
 	}
+
+	@Test
 
 	public void testConvertToInterfaceF() throws Exception {
 		xConvertToInterface(false);

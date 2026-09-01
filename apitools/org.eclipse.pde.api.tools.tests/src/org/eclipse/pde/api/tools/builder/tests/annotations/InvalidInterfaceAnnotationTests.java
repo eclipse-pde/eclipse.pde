@@ -18,21 +18,9 @@ import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 public class InvalidInterfaceAnnotationTests extends AnnotationTest {
-
-	public InvalidInterfaceAnnotationTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(InvalidInterfaceAnnotationTests.class);
-	}
 
 	@Override
 	protected IPath getTestSourcePath() {
@@ -47,6 +35,8 @@ public class InvalidInterfaceAnnotationTests extends AnnotationTest {
 	/**
 	 * Tests @NoInstantiate on an interface
 	 */
+	@Test
+
 	public void testNoInstantiateF() throws Exception {
 		x1(false);
 	}
@@ -54,6 +44,8 @@ public class InvalidInterfaceAnnotationTests extends AnnotationTest {
 	/**
 	 * Tests @NoInstantiate on an interface
 	 */
+	@Test
+
 	public void testNoInstantiateI() throws Exception {
 		x1(true);
 	}
@@ -69,6 +61,8 @@ public class InvalidInterfaceAnnotationTests extends AnnotationTest {
 	/**
 	 * Tests @NoOverride on an interface
 	 */
+	@Test
+
 	public void testNoOverrideF() throws Exception {
 		x2(false);
 	}
@@ -76,6 +70,8 @@ public class InvalidInterfaceAnnotationTests extends AnnotationTest {
 	/**
 	 * Tests @NoOvveride on an interface
 	 */
+	@Test
+
 	public void testNoOverrideI() throws Exception {
 		x2(true);
 	}

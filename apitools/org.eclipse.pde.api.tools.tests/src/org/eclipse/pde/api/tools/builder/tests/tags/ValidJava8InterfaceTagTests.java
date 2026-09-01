@@ -15,18 +15,13 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.JavaCore;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests valid tags on Java 8 interface methods
  */
 public class ValidJava8InterfaceTagTests extends
 		ValidInterfaceMethodTagTests {
-
-	public ValidJava8InterfaceTagTests(String name) {
-		super(name);
-	}
 
 	@Override
 	protected String getTestCompliance() {
@@ -43,16 +38,13 @@ public class ValidJava8InterfaceTagTests extends
 		return "java8tags"; //$NON-NLS-1$
 	}
 
-	/**
-	 * @return the test for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(ValidJava8InterfaceTagTests.class);
-	}
+	@Test
 
 	public void testNoOverrideOnDefaultI() {
 		x1(true);
 	}
+
+	@Test
 
 	public void testNoOverrideOnDefaultF() {
 		x1(false);
@@ -65,9 +57,13 @@ public class ValidJava8InterfaceTagTests extends
 		deployTagTest("test1.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testValidTagsOnFunctionalInterfaceI() {
 		x2(true);
 	}
+
+	@Test
 
 	public void testValidTagsOnFunctionalInterfaceF() {
 		x2(false);

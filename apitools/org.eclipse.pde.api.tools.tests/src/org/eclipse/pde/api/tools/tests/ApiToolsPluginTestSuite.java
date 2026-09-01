@@ -14,9 +14,11 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.tests;
 
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 import org.eclipse.pde.api.tools.anttasks.tests.ApiToolsAntTasksTestSuite;
 import org.eclipse.pde.api.tools.applications.BundleJarFilesTest;
-import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
+import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTestSuite;
 import org.eclipse.pde.api.tools.builder.tests.ApiTestingEnvironment;
 import org.eclipse.pde.api.tools.model.tests.ApiFilterStoreTests;
 import org.eclipse.pde.api.tools.model.tests.FilterStoreTests;
@@ -26,9 +28,7 @@ import org.eclipse.pde.api.tools.util.tests.ApiDescriptionProcessorTests;
 import org.eclipse.pde.api.tools.util.tests.PreferencesTests;
 import org.eclipse.pde.api.tools.util.tests.ProjectCreationTests;
 import org.eclipse.pde.api.tools.util.tests.TargetAsBaselineTests;
-import org.junit.BeforeClass;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.BeforeSuite;
 
 
 /**
@@ -36,16 +36,16 @@ import org.junit.runners.Suite;
  *
  * @since 1.0.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@Suite
+@SelectClasses({
 		ProjectCreationTests.class, ApiDescriptionProcessorTests.class, PreferencesTests.class,
 		ApiBaselineManagerTests.class, ApiFilterStoreTests.class, FilterStoreTests.class, ApiProblemTests.class,
-		TargetAsBaselineTests.class, ApiBuilderTest.class, ApiToolsAntTasksTestSuite.class,
+		TargetAsBaselineTests.class, ApiBuilderTestSuite.class, ApiToolsAntTasksTestSuite.class,
 		BundleJarFilesTest.class
 })
 public class ApiToolsPluginTestSuite {
 
-	@BeforeClass
+	@BeforeSuite
 	@SuppressWarnings("restriction")
 	public static void setUpBeforeClass() throws Exception {
 		org.eclipse.jdt.internal.core.search.processing.JobManager.VERBOSE = true;

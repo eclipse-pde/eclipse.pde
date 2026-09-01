@@ -17,8 +17,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that the builder correctly reports compatibility problems
@@ -38,25 +37,10 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 	 */
 	protected static String PACKAGE_PREFIX = "a.classes.modifiers."; //$NON-NLS-1$
 
-	/**
-	 * Constructor
-	 */
-	public ClassCompatibilityModifierTests(String name) {
-		super(name);
-	}
-
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("modifiers"); //$NON-NLS-1$
 	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(ClassCompatibilityModifierTests.class);
-	}
-
 
 	/**
 	 * Returns a problem id for a compatibility change to a class based on the
@@ -92,9 +76,13 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddFinalI() throws Exception {
 		xAddFinal(true);
 	}
+
+	@Test
 
 	public void testAddFinalF() throws Exception {
 		xAddFinal(false);
@@ -109,9 +97,13 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddFinalNoExtendI() throws Exception {
 		xAddFinalNoExtend(true);
 	}
+
+	@Test
 
 	public void testAddFinalNoExtendF() throws Exception {
 		xAddFinalNoExtend(false);
@@ -126,9 +118,13 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddFinalRemoveNoExtendI() throws Exception {
 		xAddFinalRemoveNoExtend(true);
 	}
+
+	@Test
 
 	public void testAddFinalRemoveNoExtendF() throws Exception {
 		xAddFinalRemoveNoExtend(false);
@@ -149,9 +145,13 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddFinalNoInstantiateI() throws Exception {
 		xAddFinalNoInstantiate(true);
 	}
+
+	@Test
 
 	public void testAddFinalNoInstantiateF() throws Exception {
 		xAddFinalNoInstantiate(false);
@@ -167,9 +167,13 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddFinalNoExtendNoInstantiateI() throws Exception {
 		xAddFinalNoExtendNoInstantiate(true);
 	}
+
+	@Test
 
 	public void testAddFinalNoExtendNoInstantiateF() throws Exception {
 		xAddFinalNoExtendNoInstantiate(false);
@@ -184,9 +188,13 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemoveFinalI() throws Exception {
 		xRemoveFinal(true);
 	}
+
+	@Test
 
 	public void testRemoveFinalF() throws Exception {
 		xRemoveFinal(false);
@@ -201,9 +209,13 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemoveFinalAddNoExtendI() throws Exception {
 		xRemoveFinalAddNoExtend(true);
 	}
+
+	@Test
 
 	public void testRemoveFinalAddNoExtendF() throws Exception {
 		xRemoveFinalAddNoExtend(false);
@@ -224,9 +236,13 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddAbstractI() throws Exception {
 		xAddAbstract(true);
 	}
+
+	@Test
 
 	public void testAddAbstractF() throws Exception {
 		xAddAbstract(false);
@@ -247,9 +263,13 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddAbstractNoExtendI() throws Exception {
 		xAddAbstractNoExtend(true);
 	}
+
+	@Test
 
 	public void testAddAbstractNoExtendF() throws Exception {
 		xAddAbstractNoExtend(false);
@@ -264,9 +284,13 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddAbstractNoInstantiateI() throws Exception {
 		xAddAbstractNoInstantiate(true);
 	}
+
+	@Test
 
 	public void testAddAbstractNoInstantiateF() throws Exception {
 		xAddAbstractNoInstantiate(false);
@@ -282,9 +306,13 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddAbstractNoExtendNoInstantiateI() throws Exception {
 		xAddAbstractNoExtendNoInstantiate(true);
 	}
+
+	@Test
 
 	public void testAddAbstractNoExtendNoInstantiateF() throws Exception {
 		xAddAbstractNoExtendNoInstantiate(false);
@@ -309,9 +337,13 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testPublicToPackageVisibilityI() throws Exception {
 		xPublicToPackageVisibility(true);
 	}
+
+	@Test
 
 	public void testPublicToPackageVisibilityF() throws Exception {
 		xPublicToPackageVisibility(false);
@@ -332,9 +364,13 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testPublicToPackageInnerClassI() throws Exception {
 		xPublicToPackageInnerClass(true);
 	}
+
+	@Test
 
 	public void testPublicToPackageInnerClassF() throws Exception {
 		xPublicToPackageInnerClass(false);
@@ -355,9 +391,13 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testPublicToProtectedInnerClassI() throws Exception {
 		xPublicToProtectedInnerClass(true);
 	}
+
+	@Test
 
 	public void testPublicToProtectedInnerClassF() throws Exception {
 		xPublicToProtectedInnerClass(false);
@@ -378,9 +418,13 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testPublicToPrivateInnerClassI() throws Exception {
 		xPublicToPrivateInnerClass(true);
 	}
+
+	@Test
 
 	public void testPublicToPrivateInnerClassF() throws Exception {
 		xPublicToPrivateInnerClass(false);

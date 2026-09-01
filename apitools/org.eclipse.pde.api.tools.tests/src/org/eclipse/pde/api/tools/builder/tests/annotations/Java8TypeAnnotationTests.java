@@ -15,8 +15,7 @@ package org.eclipse.pde.api.tools.builder.tests.annotations;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.JavaCore;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests classes with type annotations in them do not cause any problems.
@@ -24,17 +23,6 @@ import junit.framework.Test;
  * This test class reuses the Java 8 project used for tag checking
  */
 public class Java8TypeAnnotationTests extends AnnotationTest {
-
-	public Java8TypeAnnotationTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * @return the test class for this suite
-	 */
-	public static Test suite() {
-		return buildTestSuite(Java8TypeAnnotationTests.class);
-	}
 
 	@Override
 	protected String getTestCompliance() {
@@ -56,9 +44,13 @@ public class Java8TypeAnnotationTests extends AnnotationTest {
 		return "java8tags"; //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void test1I() throws Exception {
 		x1(true);
 	}
+
+	@Test
 
 	public void test1F() throws Exception {
 		x1(false);
@@ -70,9 +62,13 @@ public class Java8TypeAnnotationTests extends AnnotationTest {
 		deployAnnotationTest("test1.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void test2I() throws Exception {
 		x2(true);
 	}
+
+	@Test
 
 	public void test2F() throws Exception {
 		x2(false);
@@ -84,9 +80,13 @@ public class Java8TypeAnnotationTests extends AnnotationTest {
 		deployAnnotationTest("test2.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void test3I() throws Exception {
 		x3(true);
 	}
+
+	@Test
 
 	public void test3F() throws Exception {
 		x3(false);
@@ -98,9 +98,13 @@ public class Java8TypeAnnotationTests extends AnnotationTest {
 		deployAnnotationTest("test3.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void test4I() throws Exception {
 		x4(true);
 	}
+
+	@Test
 
 	public void test4F() throws Exception {
 		x4(false);
@@ -112,9 +116,13 @@ public class Java8TypeAnnotationTests extends AnnotationTest {
 		deployAnnotationTestWithErrors("test4.java", inc, true); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void test5I() throws Exception {
 		x5(true);
 	}
+
+	@Test
 
 	public void test5F() throws Exception {
 		x5(false);
@@ -126,9 +134,13 @@ public class Java8TypeAnnotationTests extends AnnotationTest {
 		deployAnnotationTestWithErrors("test5.java", inc, true); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void test6I() throws Exception {
 		x6(true);
 	}
+
+	@Test
 
 	public void test6F() throws Exception {
 		x6(false);
@@ -140,9 +152,13 @@ public class Java8TypeAnnotationTests extends AnnotationTest {
 		deployAnnotationTestWithErrors("test6.java", inc, true); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void test7I() throws Exception {
 		x7(true);
 	}
+
+	@Test
 
 	public void test7F() throws Exception {
 		x7(false);
@@ -156,9 +172,13 @@ public class Java8TypeAnnotationTests extends AnnotationTest {
 		deployAnnotationTest("test7.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void test8I() throws Exception {
 		x8(true);
 	}
+
+	@Test
 
 	public void test8F() throws Exception {
 		x8(false);
@@ -172,9 +192,13 @@ public class Java8TypeAnnotationTests extends AnnotationTest {
 		deployAnnotationTestWithErrors("test8.java", inc, true); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void test9I() throws Exception {
 		x9(true);
 	}
+
+	@Test
 
 	public void test9F() throws Exception {
 		x9(false);
@@ -188,9 +212,13 @@ public class Java8TypeAnnotationTests extends AnnotationTest {
 		deployAnnotationTestWithErrors("test9.java", inc, true); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void test10I() throws Exception {
 		x10(true);
 	}
+
+	@Test
 
 	public void test10F() throws Exception {
 		x10(false);
@@ -202,7 +230,5 @@ public class Java8TypeAnnotationTests extends AnnotationTest {
 	void x10(boolean inc) throws Exception {
 		deployAnnotationTest("test10.java", inc, false); //$NON-NLS-1$
 	}
-
-
 
 }

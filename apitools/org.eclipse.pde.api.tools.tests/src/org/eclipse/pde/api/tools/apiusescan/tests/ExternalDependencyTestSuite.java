@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.apiusescan.tests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 
 /**
@@ -22,8 +22,8 @@ import org.junit.runners.Suite;
  *
  * @since 1.0.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@Suite
+@SelectClasses({
 		ReferenceCountTests.class, ExternalDependencyProblemMarkerTests.class
 })
 public class ExternalDependencyTestSuite {

@@ -13,10 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.anttasks.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -28,7 +28,7 @@ import org.eclipse.core.internal.runtime.XmlProcessorFactory;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -59,9 +59,9 @@ public class ApiToolingApiFreezeAntTaskTests extends AntRunnerTestCase {
 		properties.put("report_location", buildFolder.getLocation().append("report").toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
 		properties.put("filter_location", buildFolder.getLocation().toOSString()); //$NON-NLS-1$
 		runAntScript(buildXMLPath, new String[] { "run" }, buildFolder.getLocation().toOSString(), properties); //$NON-NLS-1$
-		assertFalse("allNonApiBundles must not exist", buildFolder.getFolder("allNonApiBundles").exists()); //$NON-NLS-1$ //$NON-NLS-2$
+		assertFalse(buildFolder.getFolder("allNonApiBundles").exists(), "allNonApiBundles must not exist"); //$NON-NLS-1$ //$NON-NLS-2$
 		IFile reportFile = buildFolder.getFile("report.xml"); //$NON-NLS-1$
-		assertTrue("report.xml must exist", reportFile.exists()); //$NON-NLS-1$
+		assertTrue(reportFile.exists(), "report.xml must exist"); //$NON-NLS-1$
 		InputSource is = new InputSource(reportFile.getContents());
 		DocumentBuilder db = XmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
 		Document doc = db.parse(is);
@@ -69,12 +69,12 @@ public class ApiToolingApiFreezeAntTaskTests extends AntRunnerTestCase {
 		boolean found = false;
 		for (int i = 0; i < elems.getLength(); i++) {
 			Node node = elems.item(i).getAttributes().getNamedItem("componentId"); //$NON-NLS-1$
-			assertFalse("org.example.rcpintro should have been filtered out.", node.getNodeValue().startsWith("org.example.rcpintro")); //$NON-NLS-1$ //$NON-NLS-2$
+			assertFalse(node.getNodeValue().startsWith("org.example.rcpintro"), "org.example.rcpintro should have been filtered out."); //$NON-NLS-1$ //$NON-NLS-2$
 			if (node.getNodeValue().startsWith("org.example.rcpmail")) { //$NON-NLS-1$
 				found = true;
 			}
 		}
-		assertTrue("org.example.rcpmail", found); //$NON-NLS-1$
+		assertTrue(found, "org.example.rcpmail"); //$NON-NLS-1$
 	}
 
 	@Test
@@ -93,7 +93,7 @@ public class ApiToolingApiFreezeAntTaskTests extends AntRunnerTestCase {
 			runTaskAndVerify("test4"); //$NON-NLS-1$
 			fail("Should not be there"); //$NON-NLS-1$
 		} catch (Exception e) {
-			assertEquals("Wrong exception", "org.apache.tools.ant.BuildException", e.getClass().getCanonicalName()); //$NON-NLS-1$ //$NON-NLS-2$
+			assertEquals("org.apache.tools.ant.BuildException", e.getClass().getCanonicalName(), "Wrong exception"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 }

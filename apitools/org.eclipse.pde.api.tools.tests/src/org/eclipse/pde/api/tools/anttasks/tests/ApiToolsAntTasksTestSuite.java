@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.anttasks.tests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 
 /**
@@ -22,8 +22,8 @@ import org.junit.runners.Suite;
  *
  * @since 1.0.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@Suite
+@SelectClasses({
 		ApiToolingAnalysisAntTaskTests.class, ApiToolingCompareAntTaskTests.class, ApiToolingApiuseAntTaskTests.class,
 		ApiToolingApiFreezeAntTaskTests.class
 })

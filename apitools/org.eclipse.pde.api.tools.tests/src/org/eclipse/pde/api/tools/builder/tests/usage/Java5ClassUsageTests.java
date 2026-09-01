@@ -15,8 +15,7 @@ package org.eclipse.pde.api.tools.builder.tests.usage;
 
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test class usage using generics
@@ -27,20 +26,9 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 
 	protected static final String GENERIC_CLASS_NAME = "GenericClassUsageClass"; //$NON-NLS-1$
 
-	public Java5ClassUsageTests(String name) {
-		super(name);
-	}
-
 	@Override
 	protected String getTestCompliance() {
 		return JavaCore.VERSION_1_8;
-	}
-
-	/**
-	 * @return the test class for this suite
-	 */
-	public static Test suite() {
-		return buildTestSuite(Java5ClassUsageTests.class);
 	}
 
 	/**
@@ -58,9 +46,13 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		deployUsageTest(typename, inc);
 	}
 
+	@Test
+
 	public void testAnonymousTypeGenericMethod1F() {
 		x1(false);
 	}
+
+	@Test
 
 	public void testAnonymousTypeGenericMethod1I() {
 		x1(true);
@@ -82,9 +74,13 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		deployUsageTest(typename, inc);
 	}
 
+	@Test
+
 	public void testAnonymousTypeGenericMethod2F() {
 		x2(false);
 	}
+
+	@Test
 
 	public void testAnonymousTypeGenericMethod2I() {
 		x2(true);
@@ -106,9 +102,13 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		deployUsageTest(typename, inc);
 	}
 
+	@Test
+
 	public void testAnonymousTypeGenericMethod3F() {
 		x3(false);
 	}
+
+	@Test
 
 	public void testAnonymousTypeGenericMethod3I() {
 		x3(true);
@@ -129,9 +129,13 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		deployUsageTest(typename, inc);
 	}
 
+	@Test
+
 	public void testAnonymousTypeGenericField1F() {
 		x4(false);
 	}
+
+	@Test
 
 	public void testAnonymousTypeGenericField1I() {
 		x4(true);
@@ -152,9 +156,13 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		deployUsageTest(typename, inc);
 	}
 
+	@Test
+
 	public void testLocalTypeGeneicMethod1F() {
 		x5(false);
 	}
+
+	@Test
 
 	public void testLocalTypeGeneircMethod1I() {
 		x5(true);
@@ -175,17 +183,25 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		deployUsageTest(typename, inc);
 	}
 
+	@Test
+
 	public void testLocalTypeGeneicMethod2F() {
 		x6(false);
 	}
+
+	@Test
 
 	public void testLocalTypeGeneircMethod2I() {
 		x6(true);
 	}
 
+	@Test
+
 	public void testGenericInstantiate1F() {
 		x7(false);
 	}
+
+	@Test
 
 	public void testGenericInstantiate1I() {
 		x7(true);
@@ -212,11 +228,15 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	}
 
 	@Override
+	@Test
+
 	public void testLocalClassExtends1F() {
 		x8(false);
 	}
 
 	@Override
+	@Test
+
 	public void testLocalClassExtends1I() {
 		x8(true);
 	}
@@ -253,6 +273,8 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
 	@Override
+	@Test
+
 	public void testAnonymousClassExtends2F() {
 		x9(false);
 	}
@@ -264,6 +286,8 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
 	@Override
+	@Test
+
 	public void testAnonymousClassExtends2I() {
 		x9(true);
 	}
@@ -286,6 +310,8 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
 	@Override
+	@Test
+
 	public void testAnonymousClassExtends3F() {
 		x10(false);
 	}
@@ -297,6 +323,8 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
 	@Override
+	@Test
+
 	public void testAnonymousClassExtends3I() {
 		x10(true);
 	}
@@ -318,6 +346,8 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	 *
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
+	@Test
+
 	public void testAnonymousClassExtends5F() {
 		x11(false);
 	}
@@ -328,6 +358,8 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	 *
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
+	@Test
+
 	public void testAnonymousClassExtends5I() {
 		x11(true);
 	}
@@ -350,6 +382,8 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
 	@Override
+	@Test
+
 	public void testAnonymousClassExtends6F() {
 		x12(false);
 	}
@@ -361,6 +395,8 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
 	@Override
+	@Test
+
 	public void testAnonymousClassExtends6I() {
 		x12(true);
 	}
@@ -383,6 +419,8 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
 	@Override
+	@Test
+
 	public void testAnonymousClassExtends7F() {
 		x17(false);
 	}
@@ -394,6 +432,8 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
 	@Override
+	@Test
+
 	public void testAnonymousClassExtends7I() {
 		x17(true);
 	}
@@ -408,9 +448,13 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		});
 		deployUsageTest(typename, inc);
 	}
+	@Test
+
 	public void testAnonymousClassExtendsGenericReturnF() {
 		x16(false);
 	}
+
+	@Test
 
 	public void testAnonymousClassExtendsGenericReturnI() {
 		x16(true);
@@ -438,6 +482,8 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
 	@Override
+	@Test
+
 	public void testLocalClassExtends3F() {
 		x13(false);
 	}
@@ -449,6 +495,8 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
 	@Override
+	@Test
+
 	public void testLocalClassExtends3I() {
 		x13(true);
 	}
@@ -471,6 +519,8 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
 	@Override
+	@Test
+
 	public void testLocalClassExtends2F() {
 		x14(false);
 	}
@@ -482,6 +532,8 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
 	@Override
+	@Test
+
 	public void testLocalClassExtends2I() {
 		x14(true);
 	}
@@ -497,9 +549,13 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		deployUsageTest(typename, inc);
 	}
 
+	@Test
+
 	public void testLocalClassExtendsGenericReturnF() {
 		x15(false);
 	}
+
+	@Test
 
 	public void testLocalClassExtendsGenericReturnI() {
 		x15(true);
@@ -528,6 +584,8 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	 * @since 1.0.300
 	 */
 	@Override
+	@Test
+
 	public void testLocalClassIllegalImplements1I() throws Exception {
 		x18(true);
 	}
@@ -540,6 +598,8 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	 * @since 1.0.300
 	 */
 	@Override
+	@Test
+
 	public void testLocalClassIllegalImplements1F() throws Exception {
 		x18(false);
 	}
@@ -575,6 +635,8 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	 * @since 1.0.300
 	 */
 	@Override
+	@Test
+
 	public void testLocalClassIllegaImplements2I() throws Exception {
 		x19(true);
 	}
@@ -588,6 +650,8 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	 * @since 1.0.300
 	 */
 	@Override
+	@Test
+
 	public void testLocalClassIllegalImplements2F() throws Exception {
 		x19(false);
 	}
@@ -617,6 +681,8 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	 * @since 1.0.300
 	 */
 	@Override
+	@Test
+
 	public void testAnonymousClassIllegaImplements1I() throws Exception {
 		x20(true);
 	}
@@ -630,6 +696,8 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 	 * @since 1.0.300
 	 */
 	@Override
+	@Test
+
 	public void testAnonymousClassIllegalImplements1F() throws Exception {
 		x20(false);
 	}

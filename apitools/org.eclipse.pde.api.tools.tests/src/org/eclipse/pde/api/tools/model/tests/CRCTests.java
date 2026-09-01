@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.model.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.eclipse.pde.api.tools.internal.ApiDescription;
 import org.eclipse.pde.api.tools.internal.CRCVisitor;
@@ -24,7 +24,7 @@ import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests CRC codes for API descriptions
@@ -64,7 +64,7 @@ public class CRCTests {
 		description2.accept(visitor2, type2, null);
 		long crc2 = visitor2.getValue();
 
-		assertEquals("CRC codes should be the same", crc1, crc2); //$NON-NLS-1$
+		assertEquals(crc1, crc2, "CRC codes should be the same"); //$NON-NLS-1$
 	}
 
 	/**
@@ -92,7 +92,7 @@ public class CRCTests {
 		description.accept(visitor2, type, null);
 		long crc2 = visitor2.getValue();
 
-		assertFalse("CRC codes should be different", crc1 == crc2); //$NON-NLS-1$
+		assertFalse(crc1 == crc2, "CRC codes should be different"); //$NON-NLS-1$
 	}
 
 }

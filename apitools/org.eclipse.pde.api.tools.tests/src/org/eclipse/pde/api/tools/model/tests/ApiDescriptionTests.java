@@ -13,10 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.model.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -47,7 +47,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.Util;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 
 /**
@@ -247,7 +247,7 @@ public class ApiDescriptionTests {
 		IPath path = TestSuiteHelper.getPluginDirectoryPath();
 		path = path.append("test-xml"); //$NON-NLS-1$
 		File file = path.toFile();
-		assertTrue("Missing xml directory", file.exists()); //$NON-NLS-1$
+		assertTrue(file.exists(), "Missing xml directory"); //$NON-NLS-1$
 		IApiBaseline baseline = ApiModelFactory.newApiBaseline("test", TestSuiteHelper.getEEDescription(), null); //$NON-NLS-1$
 		IApiComponent component = ApiModelFactory.newApiComponent(baseline, file.getAbsolutePath());
 		baseline.addApiComponents(new IApiComponent[] { component });
@@ -320,24 +320,24 @@ public class ApiDescriptionTests {
 			@Override
 			public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
 				ElementDescription expected = visitOrder.remove(0);
-				assertEquals("Wrong begin visit element", expected.fElement, element); //$NON-NLS-1$
-				assertEquals("Wrong begin visit visibility", expected.fVis, description.getVisibility()); //$NON-NLS-1$
-				assertEquals("Wrong begin visit restrictions for ", expected.fRes, description.getRestrictions()); //$NON-NLS-1$
+				assertEquals(expected.fElement, element, "Wrong begin visit element"); //$NON-NLS-1$
+				assertEquals(expected.fVis, description.getVisibility(), "Wrong begin visit visibility"); //$NON-NLS-1$
+				assertEquals(expected.fRes, description.getRestrictions(), "Wrong begin visit restrictions for "); //$NON-NLS-1$
 				return true;
 			}
 
 			@Override
 			public void endVisitElement(IElementDescriptor element, IApiAnnotations description) {
 				ElementDescription expected = visitOrder.remove(0);
-				assertEquals("Wrong end visit element", expected.fElement, element); //$NON-NLS-1$
-				assertEquals("Wrong end visit visibility", expected.fVis, description.getVisibility()); //$NON-NLS-1$
-				assertEquals("Wrong end visit restrictions", expected.fRes, description.getRestrictions()); //$NON-NLS-1$
+				assertEquals(expected.fElement, element, "Wrong end visit element"); //$NON-NLS-1$
+				assertEquals(expected.fVis, description.getVisibility(), "Wrong end visit visibility"); //$NON-NLS-1$
+				assertEquals(expected.fRes, description.getRestrictions(), "Wrong end visit restrictions"); //$NON-NLS-1$
 			}
 		};
 
 		component.getApiDescription().accept(visitor, null);
 
-		assertTrue("Visit incomplete", visitOrder.isEmpty()); //$NON-NLS-1$
+		assertTrue(visitOrder.isEmpty(), "Visit incomplete"); //$NON-NLS-1$
 		ApiTestingEnvironment.dispose(baseline);
 	}
 
@@ -364,7 +364,7 @@ public class ApiDescriptionTests {
 		IPath path = TestSuiteHelper.getPluginDirectoryPath();
 		path = path.append("test-xml"); //$NON-NLS-1$
 		File file = path.toFile();
-		assertTrue("Missing xml directory", file.exists()); //$NON-NLS-1$
+		assertTrue(file.exists(), "Missing xml directory"); //$NON-NLS-1$
 		File descfile = new File(file, IApiCoreConstants.API_DESCRIPTION_XML_NAME);
 		String readXML = null;
 		if (descfile.exists()) {
@@ -406,26 +406,26 @@ public class ApiDescriptionTests {
 			@Override
 			public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
 				ElementDescription expected = visitOrder.remove(0);
-				assertEquals("Wrong begin visit element", expected.fElement, element); //$NON-NLS-1$
-				assertEquals("Wrong begin visit component", expected.fComponent, null); //$NON-NLS-1$
-				assertEquals("Wrong begin visit visibility", expected.fVis, description.getVisibility()); //$NON-NLS-1$
-				assertEquals("Wrong begin visit restrictions", expected.fRes, description.getRestrictions()); //$NON-NLS-1$
+				assertEquals(expected.fElement, element, "Wrong begin visit element"); //$NON-NLS-1$
+				assertEquals(expected.fComponent, null, "Wrong begin visit component"); //$NON-NLS-1$
+				assertEquals(expected.fVis, description.getVisibility(), "Wrong begin visit visibility"); //$NON-NLS-1$
+				assertEquals(expected.fRes, description.getRestrictions(), "Wrong begin visit restrictions"); //$NON-NLS-1$
 				return true;
 			}
 
 			@Override
 			public void endVisitElement(IElementDescriptor element, IApiAnnotations description) {
 				ElementDescription expected = visitOrder.remove(0);
-				assertEquals("Wrong end visit element", expected.fElement, element); //$NON-NLS-1$
-				assertEquals("Wrong end visit component", expected.fComponent, null); //$NON-NLS-1$
-				assertEquals("Wrong end visit visibility", expected.fVis, description.getVisibility()); //$NON-NLS-1$
-				assertEquals("Wrong end visit restrictions", expected.fRes, description.getRestrictions()); //$NON-NLS-1$
+				assertEquals(expected.fElement, element, "Wrong end visit element"); //$NON-NLS-1$
+				assertEquals(expected.fComponent, null, "Wrong end visit component"); //$NON-NLS-1$
+				assertEquals(expected.fVis, description.getVisibility(), "Wrong end visit visibility"); //$NON-NLS-1$
+				assertEquals(expected.fRes, description.getRestrictions(), "Wrong end visit restrictions"); //$NON-NLS-1$
 			}
 		};
 
 		restored.accept(visitor, null);
 
-		assertTrue("Visit incomplete", visitOrder.isEmpty()); //$NON-NLS-1$
+		assertTrue(visitOrder.isEmpty(), "Visit incomplete"); //$NON-NLS-1$
 	}
 
 	/**
@@ -504,24 +504,24 @@ public class ApiDescriptionTests {
 			@Override
 			public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
 				ElementDescription expected = visitOrder.remove(0);
-				assertEquals("Wrong begin visit element", expected.fElement, element); //$NON-NLS-1$
-				assertEquals("Wrong begin visit visibility", expected.fVis, description.getVisibility()); //$NON-NLS-1$
-				assertEquals("Wrong begin visit restrictions", expected.fRes, description.getRestrictions()); //$NON-NLS-1$
+				assertEquals(expected.fElement, element, "Wrong begin visit element"); //$NON-NLS-1$
+				assertEquals(expected.fVis, description.getVisibility(), "Wrong begin visit visibility"); //$NON-NLS-1$
+				assertEquals(expected.fRes, description.getRestrictions(), "Wrong begin visit restrictions"); //$NON-NLS-1$
 				return true;
 			}
 
 			@Override
 			public void endVisitElement(IElementDescriptor element, IApiAnnotations description) {
 				ElementDescription expected = visitOrder.remove(0);
-				assertEquals("Wrong end visit element", expected.fElement, element); //$NON-NLS-1$
-				assertEquals("Wrong end visit visibility", expected.fVis, description.getVisibility()); //$NON-NLS-1$
-				assertEquals("Wrong end visit restrictions", expected.fRes, description.getRestrictions()); //$NON-NLS-1$
+				assertEquals(expected.fElement, element, "Wrong end visit element"); //$NON-NLS-1$
+				assertEquals(expected.fVis, description.getVisibility(), "Wrong end visit visibility"); //$NON-NLS-1$
+				assertEquals(expected.fRes, description.getRestrictions(), "Wrong end visit restrictions"); //$NON-NLS-1$
 			}
 		};
 
 		manifest.accept(visitor, null);
 
-		assertTrue("Visit incomplete", visitOrder.isEmpty()); //$NON-NLS-1$
+		assertTrue(visitOrder.isEmpty(), "Visit incomplete"); //$NON-NLS-1$
 	}
 
 	/**
@@ -550,25 +550,25 @@ public class ApiDescriptionTests {
 			@Override
 			public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
 				ElementDescription expected = visitOrder.remove(0);
-				assertEquals("Wrong begin visit element", expected.fElement, element); //$NON-NLS-1$
-				assertEquals("Wrong begin visit visibility", expected.fVis, description.getVisibility()); //$NON-NLS-1$
-				assertEquals("Wrong begin visit restrictions", expected.fRes, description.getRestrictions()); //$NON-NLS-1$
+				assertEquals(expected.fElement, element, "Wrong begin visit element"); //$NON-NLS-1$
+				assertEquals(expected.fVis, description.getVisibility(), "Wrong begin visit visibility"); //$NON-NLS-1$
+				assertEquals(expected.fRes, description.getRestrictions(), "Wrong begin visit restrictions"); //$NON-NLS-1$
 				return false;
 			}
 
 			@Override
 			public void endVisitElement(IElementDescriptor element, IApiAnnotations description) {
 				ElementDescription expected = visitOrder.remove(0);
-				assertEquals("Wrong end visit element", expected.fElement, element); //$NON-NLS-1$
-				assertEquals("Wrong end visit visibility", expected.fVis, description.getVisibility()); //$NON-NLS-1$
-				assertEquals("Wrong end visit restrictions", expected.fRes, description.getRestrictions()); //$NON-NLS-1$
+				assertEquals(expected.fElement, element, "Wrong end visit element"); //$NON-NLS-1$
+				assertEquals(expected.fVis, description.getVisibility(), "Wrong end visit visibility"); //$NON-NLS-1$
+				assertEquals(expected.fRes, description.getRestrictions(), "Wrong end visit restrictions"); //$NON-NLS-1$
 			}
 		};
 
 		IApiDescription manifest = buildManifest();
 		manifest.accept(visitor, null);
 
-		assertTrue("Visit incomplete", visitOrder.isEmpty()); //$NON-NLS-1$
+		assertTrue(visitOrder.isEmpty(), "Visit incomplete"); //$NON-NLS-1$
 	}
 
 	/**
@@ -583,7 +583,7 @@ public class ApiDescriptionTests {
 		String tName = Signatures.getTypeName(typename);
 		IReferenceTypeDescriptor type = Factory.packageDescriptor(packageName).getType(tName);
 		IApiAnnotations description = fManifest.resolveAnnotations(type);
-		assertNull("The description must be null", description); //$NON-NLS-1$
+		assertNull(description, "The description must be null"); //$NON-NLS-1$
 	}
 
 	/**
@@ -598,8 +598,8 @@ public class ApiDescriptionTests {
 		String tName = Signatures.getTypeName(typeName);
 		IReferenceTypeDescriptor type = Factory.packageDescriptor(packageName).getType(tName);
 		IApiAnnotations description = fManifest.resolveAnnotations(type);
-		assertEquals("Wrong visibility", expectedVisibility, description.getVisibility()); //$NON-NLS-1$
-		assertEquals("Wrong restrictions", expectedRestrictions, description.getRestrictions()); //$NON-NLS-1$
+		assertEquals(expectedVisibility, description.getVisibility(), "Wrong visibility"); //$NON-NLS-1$
+		assertEquals(expectedRestrictions, description.getRestrictions(), "Wrong restrictions"); //$NON-NLS-1$
 	}
 
 	/**
@@ -787,7 +787,7 @@ public class ApiDescriptionTests {
 	public void testBinaryHasNoApiDescription() throws CoreException {
 		IApiBaseline profile = TestSuiteHelper.createTestingBaseline("test-plugins"); //$NON-NLS-1$
 		IApiComponent componentA = profile.getApiComponent("component.a"); //$NON-NLS-1$
-		assertFalse("Should have no .api_description file", componentA.hasApiDescription()); //$NON-NLS-1$
+		assertFalse(componentA.hasApiDescription(), "Should have no .api_description file"); //$NON-NLS-1$
 	}
 
 	/**
@@ -798,7 +798,7 @@ public class ApiDescriptionTests {
 	public void testBinaryHasApiDescription() throws CoreException {
 		IApiBaseline profile = TestSuiteHelper.createTestingBaseline("test-plugins-with-desc"); //$NON-NLS-1$
 		IApiComponent componentA = profile.getApiComponent("component.a"); //$NON-NLS-1$
-		assertTrue("Should have an .api_description file", componentA.hasApiDescription()); //$NON-NLS-1$
+		assertTrue(componentA.hasApiDescription(), "Should have an .api_description file"); //$NON-NLS-1$
 	}
 
 	/**
@@ -824,14 +824,13 @@ public class ApiDescriptionTests {
 		String xmlString = Util.serializeDocument(xml);
 
 		// Verify the XML contains the nested type
-		assertTrue("XML should contain nested type", xmlString.contains("OuterClass$NestedClass")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(xmlString.contains("OuterClass$NestedClass"), "XML should contain nested type"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		// Restore from XML and verify the restriction is preserved
 		IApiDescription restored = new ApiDescription(null);
 		ApiDescriptionProcessor.annotateApiSettings(null, restored, xmlString);
 
 		IApiAnnotations annotations = restored.resolveAnnotations(nestedType);
-		assertEquals("Nested type should have NO_REFERENCE restriction", //$NON-NLS-1$
-				RestrictionModifiers.NO_REFERENCE, annotations.getRestrictions());
+		assertEquals(RestrictionModifiers.NO_REFERENCE, annotations.getRestrictions(), "Nested type should have NO_REFERENCE restriction"); //$NON-NLS-1$
 	}
 }

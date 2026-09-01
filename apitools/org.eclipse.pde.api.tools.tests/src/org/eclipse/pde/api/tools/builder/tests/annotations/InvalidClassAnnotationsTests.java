@@ -18,8 +18,7 @@ import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests a variety of invalid annotation use on classes
@@ -27,20 +26,6 @@ import junit.framework.Test;
  * @since 1.0.400
  */
 public class InvalidClassAnnotationsTests extends AnnotationTest {
-
-	/**
-	 * Constructor
-	 */
-	public InvalidClassAnnotationsTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(InvalidClassAnnotationsTests.class);
-	}
 
 	@Override
 	protected IPath getTestSourcePath() {
@@ -55,6 +40,8 @@ public class InvalidClassAnnotationsTests extends AnnotationTest {
 	/**
 	 * Tests annotations on members that are not visible
 	 */
+	@Test
+
 	public void testNotVisibleAnnotations1I() throws Exception {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		setExpectedMessageArgs(new String[][] {
@@ -70,6 +57,8 @@ public class InvalidClassAnnotationsTests extends AnnotationTest {
 	/**
 	 * Tests annotations on members that are not visible
 	 */
+	@Test
+
 	public void testNotVisibleAnnotations1F() throws Exception {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		setExpectedMessageArgs(new String[][] {
@@ -82,9 +71,13 @@ public class InvalidClassAnnotationsTests extends AnnotationTest {
 		deployAnnotationTest("test1.java", false, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidClassAnnotation3I() {
 		x3(true);
 	}
+
+	@Test
 
 	public void testInvalidClassAnnotation3F() {
 		x3(false);
@@ -105,9 +98,13 @@ public class InvalidClassAnnotationsTests extends AnnotationTest {
 		deployAnnotationTest("test3.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidClassAnnotation7I() {
 		x7(true);
 	}
+
+	@Test
 
 	public void testInvalidClassAnnotation7F() {
 		x7(false);
@@ -133,6 +130,8 @@ public class InvalidClassAnnotationsTests extends AnnotationTest {
 	 * Tests all annotations are invalid when parent class is private or package
 	 * default (incremental build)
 	 */
+	@Test
+
 	public void testInvalidClassAnnotation12I() {
 		x12(true);
 	}
@@ -141,6 +140,8 @@ public class InvalidClassAnnotationsTests extends AnnotationTest {
 	 * Tests all annotations are invalid when parent class is private or package
 	 * default (full build)
 	 */
+	@Test
+
 	public void testInvalidClassAnnotation12F() {
 		x12(false);
 	}

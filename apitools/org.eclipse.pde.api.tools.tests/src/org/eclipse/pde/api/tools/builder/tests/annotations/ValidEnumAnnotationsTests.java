@@ -14,8 +14,7 @@
 package org.eclipse.pde.api.tools.builder.tests.annotations;
 
 import org.eclipse.core.runtime.IPath;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests valid use of annotations on enums
@@ -24,30 +23,20 @@ import junit.framework.Test;
  */
 public class ValidEnumAnnotationsTests extends InvalidEnumAnnotationsTests {
 
-	/**
-	 * Constructor
-	 */
-	public ValidEnumAnnotationsTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(ValidEnumAnnotationsTests.class);
-	}
-
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("valid"); //$NON-NLS-1$
 	}
+
+	@Test
 
 	public void testValidEnumTag1I() {
 		x1(true);
 	}
 
 	@Override
+	@Test
+
 	public void testInvalidEnumTag1F() {
 		x1(false);
 	}

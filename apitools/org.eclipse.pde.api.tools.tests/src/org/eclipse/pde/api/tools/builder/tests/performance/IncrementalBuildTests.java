@@ -13,23 +13,17 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.performance;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.test.performance.Dimension;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test the performance of an incremental build of the Debug Core plug-in when a
@@ -42,59 +36,6 @@ public class IncrementalBuildTests extends PerformanceTest {
 	protected static final String DEBUG_CORE = "org.eclipse.debug.core"; //$NON-NLS-1$
 	protected static final String CHANGED = "changed"; //$NON-NLS-1$
 	protected static final String REVERT = "revert"; //$NON-NLS-1$
-
-	public IncrementalBuildTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * @return all of the child test classes of this class
-	 */
-	private static Class<?>[] getAllTestClasses() {
-		Class<?>[] classes = new Class[] {
-				EnumIncrementalBuildTests.class,
-				AnnotationIncrementalBuildTests.class };
-		return classes;
-	}
-
-	/**
-	 * Collects tests from the getAllTestClasses() method into the given suite
-	 */
-	private static void collectTests(TestSuite suite) {
-		// Hack to load all classes before computing their suite of test cases
-		// this allow to reset test cases subsets while running all Builder
-		// tests...
-		Class<?>[] classes = getAllTestClasses();
-
-		// Reset forgotten subsets of tests
-		TestCase.TESTS_PREFIX = null;
-		TestCase.TESTS_NAMES = null;
-		TestCase.TESTS_NUMBERS = null;
-		TestCase.TESTS_RANGE = null;
-		TestCase.RUN_ONLY_ID = null;
-
-		/* tests */
-		for (Class<?> clazz : classes) {
-			Method suiteMethod;
-			try {
-				suiteMethod = clazz.getDeclaredMethod("suite"); //$NON-NLS-1$
-			} catch (NoSuchMethodException e) {
-				e.printStackTrace();
-				continue;
-			}
-			Object test;
-			try {
-				test = suiteMethod.invoke(null);
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-				continue;
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
-				continue;
-			}
-			suite.addTest((Test) test);
-		}
-	}
 
 	@Override
 	protected String getBaselineLocation() {
@@ -121,15 +62,6 @@ public class IncrementalBuildTests extends PerformanceTest {
 	}
 
 	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		TestSuite suite = (TestSuite) buildTestSuite(IncrementalBuildTests.class);
-		collectTests(suite);
-		return suite;
-	}
-
-	/**
 	 * Tests the incremental build performance for a variety of problems in a
 	 * class that has many dependents - kind of a worst-case build scenario <br>
 	 * This test uses <code>org.eclipse.debug.core.Launch</code>
@@ -137,6 +69,8 @@ public class IncrementalBuildTests extends PerformanceTest {
 	 * @throws Exception if something bad happens, or if unexpected problems are
 	 *             found after a build
 	 */
+	@Test
+
 	public void testIncrementalBuildAll() throws Exception {
 		int[] problems = new int[] {
 				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.TYPE, IApiProblem.UNSUPPORTED_TAG_USE, IApiProblem.NO_FLAGS),

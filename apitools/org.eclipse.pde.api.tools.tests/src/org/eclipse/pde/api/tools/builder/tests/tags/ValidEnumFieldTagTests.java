@@ -15,8 +15,7 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.JavaCore;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests valid use of @noreference tags in an enum
@@ -25,20 +24,9 @@ import junit.framework.Test;
  */
 public class ValidEnumFieldTagTests extends ValidFieldTagTests {
 
-	public ValidEnumFieldTagTests(String name) {
-		super(name);
-	}
-
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("enum"); //$NON-NLS-1$
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(ValidEnumFieldTagTests.class);
 	}
 
 	@Override
@@ -50,6 +38,8 @@ public class ValidEnumFieldTagTests extends ValidFieldTagTests {
 	 * Tests that @noreference is valid for non-final, non-static-final enum fields
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testValidEnumFieldTag1I() {
 		x1(true);
 	}
@@ -58,6 +48,8 @@ public class ValidEnumFieldTagTests extends ValidFieldTagTests {
 	 * Tests that @noreference is valid for non-final, non-static-final enum fields
 	 * using a full build
 	 */
+	@Test
+
 	public void testValidEnumFieldTag1F() {
 		x1(false);
 	}
@@ -70,6 +62,8 @@ public class ValidEnumFieldTagTests extends ValidFieldTagTests {
 	 * Tests that @noreference is valid for non-final, non-static-final fields
 	 * in an inner enum using an incremental build
 	 */
+	@Test
+
 	public void testValidEnumFieldTag4I() {
 		x4(true);
 	}
@@ -78,6 +72,8 @@ public class ValidEnumFieldTagTests extends ValidFieldTagTests {
 	 * Tests that @noreference is valid for non-final, non-static-final fields
 	 * in an inner enum using a full build
 	 */
+	@Test
+
 	public void testValidEnumFieldTag4F() {
 		x4(false);
 	}
@@ -90,6 +86,8 @@ public class ValidEnumFieldTagTests extends ValidFieldTagTests {
 	 * Tests that @noreference is valid for non-final, non-static-final fields
 	 * in an enum in the default package using an incremental build
 	 */
+	@Test
+
 	public void testValidEnumFieldTag3I() {
 		x3(true);
 	}
@@ -98,6 +96,8 @@ public class ValidEnumFieldTagTests extends ValidFieldTagTests {
 	 * Tests that @noreference is valid for non-final, non-static-final fields
 	 * in an enum in the default package using a full build
 	 */
+	@Test
+
 	public void testValidEnumFieldTag3F() {
 		x3(false);
 	}
@@ -110,6 +110,8 @@ public class ValidEnumFieldTagTests extends ValidFieldTagTests {
 	 * Tests that @noreference is valid for non-final, non-static-final fields
 	 * in a variety of inner / outer enums using an incremental build
 	 */
+	@Test
+
 	public void testValidEnumFieldTag5I() {
 		x5(true);
 	}
@@ -118,6 +120,8 @@ public class ValidEnumFieldTagTests extends ValidFieldTagTests {
 	 * Tests that @noreference is valid for non-final, non-static-final fields
 	 * in a variety of inner / outer enums using a full build
 	 */
+	@Test
+
 	public void testValidEnumFieldTag5F() {
 		x5(false);
 	}

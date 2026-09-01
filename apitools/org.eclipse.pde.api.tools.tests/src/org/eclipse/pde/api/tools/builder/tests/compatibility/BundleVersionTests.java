@@ -30,8 +30,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.tests.ApiTestsPlugin;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for splitting plug-ins across releases
@@ -52,13 +51,6 @@ public class BundleVersionTests extends ApiBuilderTest {
 
 	IApiBaseline baseline;
 
-	/**
-	 * Constructor
-	 */
-	public BundleVersionTests(String name) {
-		super(name);
-	}
-
 	@Override
 	protected void setBuilderOptions() {
 		enableUnsupportedTagOptions(false);
@@ -69,13 +61,6 @@ public class BundleVersionTests extends ApiBuilderTest {
 		enableSinceTagOptions(false);
 		enableUsageOptions(false);
 		enableVersionNumberOptions(true);
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(BundleVersionTests.class);
 	}
 
 	/*
@@ -177,6 +162,8 @@ public class BundleVersionTests extends ApiBuilderTest {
 	 * the version of the current bundle as long as the version is within the
 	 * range and the range has not changed.
 	 */
+	@Test
+
 	public void test001() throws Exception {
 		// setup the environment
 		setupTest("test1"); //$NON-NLS-1$
@@ -188,6 +175,8 @@ public class BundleVersionTests extends ApiBuilderTest {
 	 * Tests that decreasing the minor version of the lower bound of the
 	 * re-exported bundle range triggers a major version change.
 	 */
+	@Test
+
 	public void test002() throws Exception {
 		// setup the environment
 		setupTest("test2"); //$NON-NLS-1$
@@ -204,6 +193,8 @@ public class BundleVersionTests extends ApiBuilderTest {
 	 * Tests that decreasing the major version of the lower bound of the
 	 * re-exported bundle range triggers a major version change.
 	 */
+	@Test
+
 	public void test003() throws Exception {
 		// setup the environment
 		setupTest("test3"); //$NON-NLS-1$
@@ -220,6 +211,8 @@ public class BundleVersionTests extends ApiBuilderTest {
 	 * Tests that increasing the major version of the lower bound of the
 	 * re-exported bundle range triggers a major version change.
 	 */
+	@Test
+
 	public void test004() throws Exception {
 		// setup the environment
 		setupTest("test4"); //$NON-NLS-1$
@@ -236,6 +229,8 @@ public class BundleVersionTests extends ApiBuilderTest {
 	 * Tests that increasing the minor version of the lower bound of the
 	 * re-exported bundle range triggers a minor version change.
 	 */
+	@Test
+
 	public void test005() throws Exception {
 		// setup the environment
 		setupTest("test5"); //$NON-NLS-1$

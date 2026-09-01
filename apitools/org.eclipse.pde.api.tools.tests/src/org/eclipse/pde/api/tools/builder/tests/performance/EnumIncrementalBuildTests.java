@@ -18,8 +18,7 @@ import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * This class extends the incremental performance tests for Java 5 constructs.
@@ -35,20 +34,9 @@ public class EnumIncrementalBuildTests extends IncrementalBuildTests {
 	 */
 	protected static final String JAVA_5_PERF = "java5.performance"; //$NON-NLS-1$
 
-	public EnumIncrementalBuildTests(String name) {
-		super(name);
-	}
-
 	@Override
 	protected String getTestCompliance() {
 		return JavaCore.VERSION_1_8;
-	}
-
-	/**
-	 * @return the test to run in this class.
-	 */
-	public static Test suite() {
-		return buildTestSuite(EnumIncrementalBuildTests.class);
 	}
 
 	/**
@@ -59,6 +47,8 @@ public class EnumIncrementalBuildTests extends IncrementalBuildTests {
 	 * @throws Exception if something bad happens or unexpected problems are
 	 *             detected
 	 */
+	@Test
+
 	public void testIncremantalEnum() throws Exception {
 		int[] problemids = new int[] {
 				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY, IDelta.ENUM_ELEMENT_TYPE, IDelta.REMOVED, IDelta.ENUM_CONSTANT),

@@ -17,21 +17,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 public class Java8DefaultMethodUsageTests extends Java8UsageTest {
-
-	public Java8DefaultMethodUsageTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * @return the test class for this suite
-	 */
-	public static Test suite() {
-		return buildTestSuite(Java8DefaultMethodUsageTests.class);
-	}
 
 	@Override
 	protected IPath getTestSourcePath() {
@@ -48,11 +36,12 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 		return ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.METHOD, kind, flags);
 	}
 
-
 	/**
 	 * Tests implementing an interface with no ref anno with a default method and calling
 	 * it(full)
 	 */
+	@Test
+
 	public void testNoRefAnnotationOnInterfaceWithDefaultMethodF() {
 		x1(false);
 	}
@@ -61,6 +50,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 * Tests implementing an interface with no ref anno with a default method and calling it
 	 * (incremental)
 	 */
+	@Test
+
 	public void testNoRefAnnotationOnInterfaceWithDefaultMethodI() {
 		x1(true);
 	}
@@ -87,6 +78,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	/**
 	 * Tests an interface with no ref anno for a restricted default method - 2 (full)
 	 */
+	@Test
+
 	public void testNoRefAnnotationOnInterfaceWithDefaultMethod2F() {
 		x2(false);
 	}
@@ -94,6 +87,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	/**
 	 * Tests an interface with no ref anno for a restricted default method - 2(incremental)
 	 */
+	@Test
+
 	public void testNoRefAnnotationOnInterfaceWithDefaultMethod2I() {
 		x2(true);
 	}
@@ -120,6 +115,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	/**
 	 * Tests an impl and direct ref to a restricted default method (full)
 	 */
+	@Test
+
 	public void testNoRefAnnotationDefaultMethodF() {
 		x3(false);
 	}
@@ -127,6 +124,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	/**
 	 * Tests an impl and direct ref to a restricted default method ( with no ref) (incremental)
 	 */
+	@Test
+
 	public void testNoRefAnnotationDefaultMethodI() {
 		x3(true);
 	}
@@ -153,6 +152,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	/**
 	 * Tests an impl and interface ref to a restricted default method (with no ref) (full)
 	 */
+	@Test
+
 	public void testNoRefAnnotationDefaultMethod2F() {
 		x4(false);
 	}
@@ -161,6 +162,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 * Tests an impl and interface ref to a restricted default method
 	 * (incremental)
 	 */
+	@Test
+
 	public void testNoRefAnnotationDefaultMethod2I() {
 		x4(true);
 	}
@@ -187,6 +190,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	/**
 	 * Tests no overriding restricted default methods  (full)
 	 */
+	@Test
+
 	public void testOverrideDefaultMethodF() {
 		x5(false);
 	}
@@ -194,6 +199,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	/**
 	 * Test no overriding restricted default methods  (incremental)
 	 */
+	@Test
+
 	public void testOverrideDefaultMethodI() {
 		x5(true);
 	}
@@ -217,6 +224,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 * Tests no overriding restricted default methods via inherited interface
 	 * (full)
 	 */
+	@Test
+
 	public void testOverrideDefaultMethodInheritedF() {
 		x6(false);
 	}
@@ -225,6 +234,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 * Test no overriding restricted default methods via inherited
 	 * interface(incremental)
 	 */
+	@Test
+
 	public void testOverrideDefaultMethodInheritedI() {
 		x6(true);
 	}
@@ -248,6 +259,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 * Tests no overriding restricted default methods via multiple inherited
 	 * interface (full)
 	 */
+	@Test
+
 	public void testOverrideDefaultMethodMultipleInheritedF() {
 		x7(false);
 	}
@@ -256,6 +269,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 * Test no overriding restricted default methods via multiple inherited
 	 * interface(incremental)
 	 */
+	@Test
+
 	public void testOverrideDefaultMethodMultipleInheritedI() {
 		x7(true);
 	}
@@ -279,6 +294,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 * Tests implementing an interface with noreference javadoc tag with a default method and calling
 	 * it(full)
 	 */
+	@Test
+
 	public void testNoRefJavadocTagOnInterfaceWithDefaultMethodF() {
 		x8(false);
 	}
@@ -287,6 +304,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 * Tests implementing an interface  with noreference javadoc tag with a default method and calling it
 	 * (incremental)
 	 */
+	@Test
+
 	public void testNoRefJavadocTagOnInterfaceWithDefaultMethodI() {
 		x8(true);
 	}
@@ -313,6 +332,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	/**
 	 * Tests an interface ref (( javadoc tag) for a restricted default method - 2 (full)
 	 */
+	@Test
+
 	public void testNoRefJavadocOnInterfaceWithDefaultMethod2F() {
 		x9(false);
 	}
@@ -320,6 +341,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	/**
 	 * Tests an interface ref (( javadoc tag) for a restricted default method - 2 (incremental)
 	 */
+	@Test
+
 	public void testNoRefJavadocOnInterfaceWithDefaultMethod2I() {
 		x9(true);
 	}
@@ -346,6 +369,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	/**
 	 * Tests an impl and direct ref to a restricted default method (no ref javadoc tag on method)(full)
 	 */
+	@Test
+
 	public void testNoRefJavadocDefaultMethodF() {
 		x10(false);
 	}
@@ -353,6 +378,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	/**
 	 * Tests an impl and direct ref to a restricted default method  (no ref javadoc tag on method)(incremental)
 	 */
+	@Test
+
 	public void testNoRefJavadocDefaultMethodI() {
 		x10(true);
 	}
@@ -379,6 +406,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	/**
 	 * Tests an impl and interface ref to a restricted default method  (no ref javadoc tag on method)(full)
 	 */
+	@Test
+
 	public void testNoRefJavadocDefaultMethod2F() {
 		x11(false);
 	}
@@ -387,6 +416,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 * Tests an impl and interface ref to a restricted default method (no ref javadoc tag on method)s
 	 * (incremental)
 	 */
+	@Test
+
 	public void testNoRefjavadocDefaultMethod2I() {
 		x11(true);
 	}
@@ -413,6 +444,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	/**
 	 * Tests no overriding (javadoc tag) restricted default methods (full)
 	 */
+	@Test
+
 	public void testOverrideJavadocDefaultMethodF() {
 		x12(false);
 	}
@@ -420,6 +453,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	/**
 	 * Test no overriding  (javadoc tag) restricted default methods (incremental)
 	 */
+	@Test
+
 	public void testOverrideJavadocDefaultMethodI() {
 		x12(true);
 	}
@@ -443,6 +478,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 * Tests no overriding  (javadoc tag) restricted default methods via inherited interface
 	 * (full)
 	 */
+	@Test
+
 	public void testOverrideJavadocDefaultMethodInheritedF() {
 		x13(false);
 	}
@@ -451,6 +488,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 * Test no overriding  (javadoc tag) restricted default methods via inherited
 	 * interface(incremental)
 	 */
+	@Test
+
 	public void testOverrideJavadocDefaultMethodInheritedI() {
 		x13(true);
 	}
@@ -474,6 +513,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 * Tests no overriding  (javadoc tag) restricted default methods via multiple inherited
 	 * interface (full)
 	 */
+	@Test
+
 	public void testOverrideJavadocDefaultMethodMultipleInheritedF() {
 		x14(false);
 	}
@@ -482,6 +523,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 * Test no overriding restricted default methods via multiple inherited
 	 * interface(incremental)
 	 */
+	@Test
+
 	public void testOverrideJavadocDefaultMethodMultipleInheritedI() {
 		x14(true);
 	}
@@ -507,6 +550,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 *
 	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432"
 	 */
+	@Test
+
 	public void testSystemComponentNoDefaultMethodsReportedF() throws Exception {
 		x15(false);
 	}
@@ -517,6 +562,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 *
 	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432"
 	 */
+	@Test
+
 	public void testSystemComponentNoDefaultMethodsReportedI() throws Exception {
 		x15(true);
 	}
@@ -535,6 +582,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 *
 	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432"
 	 */
+	@Test
+
 	public void testOtherBundleDefaultMethodCallF() throws Exception {
 		x16(false);
 	}
@@ -545,6 +594,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 *
 	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432"
 	 */
+	@Test
+
 	public void testOtherBundleDefaultMethodCallI() throws Exception {
 		x16(true);
 	}
@@ -570,6 +621,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 *
 	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432"
 	 */
+	@Test
+
 	public void testOtherBundleDefaultMethodCall2F() throws Exception {
 		x17(false);
 	}
@@ -580,6 +633,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 *
 	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432"
 	 */
+	@Test
+
 	public void testOtherBundleDefaultMethodCall2I() throws Exception {
 		x17(true);
 	}
@@ -605,6 +660,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 *
 	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432"
 	 */
+	@Test
+
 	public void testOtherBundleDefaultMethodCall3F() throws Exception {
 		x18(false);
 	}
@@ -615,6 +672,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 *
 	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432"
 	 */
+	@Test
+
 	public void testOtherBundleDefaultMethodCall3I() throws Exception {
 		x18(true);
 	}
@@ -640,6 +699,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 *
 	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432"
 	 */
+	@Test
+
 	public void testOtherBundleDefaultMethodCall4F() throws Exception {
 		x19(false);
 	}
@@ -650,6 +711,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	 *
 	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432"
 	 */
+	@Test
+
 	public void testOtherBundleDefaultMethodCall4I() throws Exception {
 		x19(true);
 	}

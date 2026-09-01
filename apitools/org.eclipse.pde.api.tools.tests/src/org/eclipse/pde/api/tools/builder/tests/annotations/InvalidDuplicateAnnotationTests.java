@@ -17,8 +17,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests detection of duplicate annotations being used
@@ -28,20 +27,6 @@ import junit.framework.Test;
 public class InvalidDuplicateAnnotationTests extends AnnotationTest {
 
 	private int fPid = 0;
-
-	/**
-	 * Constructor
-	 */
-	public InvalidDuplicateAnnotationTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(InvalidDuplicateAnnotationTests.class);
-	}
 
 	@Override
 	protected IPath getTestSourcePath() {
@@ -64,6 +49,8 @@ public class InvalidDuplicateAnnotationTests extends AnnotationTest {
 	 * Tests a class that has duplicate annotations is properly detected using
 	 * an incremental build
 	 */
+	@Test
+
 	public void testClassWithDuplicateAnnotationsI() {
 		x1(true);
 	}
@@ -72,6 +59,8 @@ public class InvalidDuplicateAnnotationTests extends AnnotationTest {
 	 * Tests a class that has duplicate annotations is properly detected using a
 	 * full build
 	 */
+	@Test
+
 	public void testClassWithDuplicateAnnotationsF() {
 		x1(false);
 	}
@@ -90,6 +79,8 @@ public class InvalidDuplicateAnnotationTests extends AnnotationTest {
 	 * Tests that an interface with duplicate annotations is properly using an
 	 * incremental build
 	 */
+	@Test
+
 	public void testInterfaceWithDuplicateAnnotationsI() {
 		x2(true);
 	}
@@ -98,6 +89,8 @@ public class InvalidDuplicateAnnotationTests extends AnnotationTest {
 	 * Tests that an interface with duplicate annotations is properly detected
 	 * using a full build
 	 */
+	@Test
+
 	public void testInterfaceWithDuplicateAnnotationsF() {
 		x2(false);
 	}
@@ -116,6 +109,8 @@ public class InvalidDuplicateAnnotationTests extends AnnotationTest {
 	 * Tests that a class field with duplicate annotations is properly detected
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testClassFieldWithDuplicateAnnotationsI() {
 		x3(true);
 	}
@@ -124,6 +119,8 @@ public class InvalidDuplicateAnnotationTests extends AnnotationTest {
 	 * Tests that a class field with duplicate annotations is properly detected
 	 * using a full build
 	 */
+	@Test
+
 	public void testClassFieldWithDuplicateAnnotationsF() {
 		x3(false);
 	}
@@ -142,6 +139,8 @@ public class InvalidDuplicateAnnotationTests extends AnnotationTest {
 	 * Tests that an interface field with duplicate annotations is properly
 	 * detected using an incremental build
 	 */
+	@Test
+
 	public void testInterfaceFieldWithDuplicateAnnotationsI() {
 		x4(true);
 	}
@@ -150,6 +149,8 @@ public class InvalidDuplicateAnnotationTests extends AnnotationTest {
 	 * Tests that an interface field with duplicate annotations is properly
 	 * detected using a full build
 	 */
+	@Test
+
 	public void testInterfaceFieldWithDuplicateAnnotationsF() {
 		x4(false);
 	}
@@ -168,6 +169,8 @@ public class InvalidDuplicateAnnotationTests extends AnnotationTest {
 	 * Tests that an enum field with duplicate annotations is properly detected
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testEnumFieldWithDuplicateAnnotationsI() {
 		x5(true);
 	}
@@ -176,6 +179,8 @@ public class InvalidDuplicateAnnotationTests extends AnnotationTest {
 	 * Tests that an enum field with duplicate annotations is properly detected
 	 * using a full build
 	 */
+	@Test
+
 	public void testEnumFieldWithDuplicateAnnotationsF() {
 		x5(false);
 	}

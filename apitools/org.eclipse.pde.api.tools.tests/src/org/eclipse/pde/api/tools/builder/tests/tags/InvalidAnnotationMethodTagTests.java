@@ -16,8 +16,7 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests invalid tags on annotation methods.
@@ -25,10 +24,6 @@ import junit.framework.Test;
  * @since 1.0
  */
 public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
-
-	public InvalidAnnotationMethodTagTests(String name) {
-		super(name);
-	}
 
 	@Override
 	protected String getTestCompliance() {
@@ -40,16 +35,13 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 		return super.getTestSourcePath().append("annotation"); //$NON-NLS-1$
 	}
 
-	/**
-	 * @return the test for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(InvalidAnnotationMethodTagTests.class);
-	}
+	@Test
 
 	public void testInvalidAnnotationMethodTag1I() {
 		x1(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationMethodTag1F() {
 		x1(false);
@@ -66,9 +58,13 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 		deployTagTest(typename, inc, false);
 	}
 
+	@Test
+
 	public void testInvalidAnnotationMethodTag2I() {
 		x2(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationMethodTag2F() {
 		x2(false);
@@ -85,9 +81,13 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 		deployTagTest(typename, inc, true);
 	}
 
+	@Test
+
 	public void testInvalidAnnotationMethodTag3I() {
 		x3(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationMethodTag3F() {
 		x3(false);
@@ -104,9 +104,13 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 		deployTagTest(typename, inc, false);
 	}
 
+	@Test
+
 	public void testInvalidAnnotationMethodTag4I() {
 		x4(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationMethodTag4F() {
 		x4(false);
@@ -123,9 +127,13 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 		deployTagTest(typename, inc, true);
 	}
 
+	@Test
+
 	public void testInvalidAnnotationMethodTag5I() {
 		x5(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationMethodTag5F() {
 		x5(false);
@@ -142,9 +150,13 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 		deployTagTest(typename, inc, false);
 	}
 
+	@Test
+
 	public void testInvalidAnnotationMethodTag6I() {
 		x6(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationMethodTag6F() {
 		x6(false);
@@ -161,9 +173,13 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 		deployTagTest(typename, inc, true);
 	}
 
+	@Test
+
 	public void testInvalidAnnotationMethodTag7I() {
 		x7(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationMethodTag7F() {
 		x7(false);
@@ -180,9 +196,13 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 		deployTagTest(typename, inc, false);
 	}
 
+	@Test
+
 	public void testInvalidAnnotationMethodTag8I() {
 		x8(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationMethodTag8F() {
 		x8(false);
@@ -199,9 +219,13 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 		deployTagTest(typename, inc, true);
 	}
 
+	@Test
+
 	public void testInvalidAnnotationMethodTag9I() {
 		x9(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationMethodTag9F() {
 		x9(false);
@@ -278,9 +302,13 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 		deployTagTest(typename, inc, false);
 	}
 
+	@Test
+
 	public void testInvalidAnnotationMethodTag10I() {
 		x10(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationMethodTag10F() {
 		x10(false);
@@ -297,9 +325,13 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 		deployTagTest(typename, inc, false);
 	}
 
+	@Test
+
 	public void testInvalidAnnotationMethodTag11I() {
 		x11(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationMethodTag11F() {
 		x11(false);
@@ -316,9 +348,13 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 		deployTagTest(typename, inc, true);
 	}
 
+	@Test
+
 	public void testInvalidAnnotationMethodTag12I() {
 		x12(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationMethodTag12F() {
 		x12(false);

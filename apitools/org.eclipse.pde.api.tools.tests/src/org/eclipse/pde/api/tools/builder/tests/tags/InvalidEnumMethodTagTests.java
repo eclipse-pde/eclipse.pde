@@ -16,8 +16,7 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests invalid javadoc tags on enum methods
@@ -25,10 +24,6 @@ import junit.framework.Test;
  * @since 1.0
  */
 public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
-
-	public InvalidEnumMethodTagTests(String name) {
-		super(name);
-	}
 
 	@Override
 	protected String getTestCompliance() {
@@ -40,16 +35,13 @@ public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
 		return super.getTestSourcePath().append("enum"); //$NON-NLS-1$
 	}
 
-	/**
-	 * @return the test for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(InvalidEnumMethodTagTests.class);
-	}
+	@Test
 
 	public void testInvalidEnumMethodTag1I() {
 		x1(true);
 	}
+
+	@Test
 
 	public void testInvalidEnumMethodTag1F() {
 		x1(false);
@@ -71,9 +63,13 @@ public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
 		deployTagTest("test1.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidEnumMethodTag2I() {
 		x2(true);
 	}
+
+	@Test
 
 	public void testInvalidEnumMethodTag2F() {
 		x2(false);
@@ -91,9 +87,13 @@ public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
 		deployTagTest("test2.java", inc, true); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidEnumMethodTag3I() {
 		x3(true);
 	}
+
+	@Test
 
 	public void testInvalidEnumMethodTag3F() {
 		x3(false);
@@ -115,9 +115,13 @@ public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
 		deployTagTest("test3.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidEnumMethodTag4I() {
 		x4(true);
 	}
+
+	@Test
 
 	public void testInvalidEnumMethodTag4F() {
 		x4(false);
@@ -135,9 +139,13 @@ public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
 		deployTagTest("test4.java", inc, true); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidEnumMethodTag5I() {
 		x5(true);
 	}
+
+	@Test
 
 	public void testInvalidEnumMethodTag5F() {
 		x5(false);
@@ -159,9 +167,13 @@ public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
 		deployTagTest("test5.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidEnumMethodTag6I() {
 		x6(true);
 	}
+
+	@Test
 
 	public void testInvalidEnumMethodTag6F() {
 		x6(false);
@@ -179,9 +191,13 @@ public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
 		deployTagTest("test6.java", inc, true); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidEnumMethodTag7I() {
 		x7(true);
 	}
+
+	@Test
 
 	public void testInvalidEnumMethodTag7F() {
 		x7(false);
@@ -203,9 +219,13 @@ public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
 		deployTagTest("test7.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidEnumMethodTag8I() {
 		x8(true);
 	}
+
+	@Test
 
 	public void testInvalidEnumMethodTag8F() {
 		x8(false);
@@ -223,9 +243,13 @@ public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
 		deployTagTest("test8.java", inc, true); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidEnumMethodTag9I() {
 		x9(true);
 	}
+
+	@Test
 
 	public void testInvalidEnumMethodTag9F() {
 		x9(false);

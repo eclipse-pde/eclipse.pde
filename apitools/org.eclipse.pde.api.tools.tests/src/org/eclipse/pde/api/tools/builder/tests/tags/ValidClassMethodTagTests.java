@@ -14,8 +14,7 @@
 package org.eclipse.pde.api.tools.builder.tests.tags;
 
 import org.eclipse.core.runtime.IPath;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests valid javadoc tags for class methods
@@ -24,26 +23,17 @@ import junit.framework.Test;
  */
 public class ValidClassMethodTagTests extends ValidMethodTagTests {
 
-	public ValidClassMethodTagTests(String name) {
-		super(name);
-	}
-
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("class"); //$NON-NLS-1$
 	}
 
 	/**
-	 * @return the test for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(ValidClassMethodTagTests.class);
-	}
-
-	/**
 	 * Tests valid javadoc tags on methods in a class
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testValidClassMethodTag1I() {
 		x1(true);
 	}
@@ -52,6 +42,8 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	 * Tests valid javadoc tags on methods in a class
 	 * using a full build
 	 */
+	@Test
+
 	public void testValidClassMethodTag1F() {
 		x1(false);
 	}
@@ -64,6 +56,8 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	 * Tests valid javadoc tags on methods in an inner class
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testValidClassMethodTag3I() {
 		x3(true);
 	}
@@ -72,6 +66,8 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	 * Tests valid javadoc tags on methods in an inner class
 	 * using a full build
 	 */
+	@Test
+
 	public void testValidClassMethodTag3F() {
 		x3(false);
 	}
@@ -84,6 +80,8 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	 * Tests valid javadoc tags on methods in inner / outer classes
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testValidClassMethodTag4I() {
 		x4(true);
 	}
@@ -92,6 +90,8 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	 * Tests valid javadoc tags on methods in inner /outer classes
 	 * using a full build
 	 */
+	@Test
+
 	public void testValidClassMethodTag4F() {
 		x4(false);
 	}
@@ -104,6 +104,8 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	 * Tests valid javadoc tags on methods in a class in the default package
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testValidClassMethodTag5I() {
 		x5(true);
 	}
@@ -112,6 +114,8 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	 * Tests valid javadoc tags on methods in a class in the default package
 	 * using a full build
 	 */
+	@Test
+
 	public void testValidClassMethodTag5F() {
 		x5(false);
 	}
@@ -124,6 +128,8 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	 * Tests valid javadoc tags on constructors in a class
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testValidClassMethodTag6I() {
 		x6(true);
 	}
@@ -132,6 +138,8 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	 * Tests valid javadoc tags on constructors in a class
 	 * using a full build
 	 */
+	@Test
+
 	public void testValidClassMethodTag6F() {
 		x6(false);
 	}
@@ -144,6 +152,8 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	 * Tests valid javadoc tags on constructors in an inner class
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testValidClassMethodTag8I() {
 		x8(true);
 	}
@@ -152,6 +162,8 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	 * Tests valid javadoc tags on constructors in an inner class
 	 * using a full build
 	 */
+	@Test
+
 	public void testValidClassMethodTag8F() {
 		x8(false);
 	}
@@ -164,6 +176,8 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	 * Tests valid javadoc tags on constructors in inner / outer classes
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testValidClassMethodTag9I() {
 		x9(true);
 	}
@@ -172,6 +186,8 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	 * Tests valid javadoc tags on constructors in inner /outer classes
 	 * using a full build
 	 */
+	@Test
+
 	public void testValidClassMethodTag9F() {
 		x9(false);
 	}
@@ -184,6 +200,8 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	 * Tests valid javadoc tags on constructors in a class in the default package
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testValidClassMethodTag10I() {
 		x10(true);
 	}
@@ -192,6 +210,8 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	 * Tests valid javadoc tags on constructors in a class in the default package
 	 * using a full build
 	 */
+	@Test
+
 	public void testValidClassMethodTag10F() {
 		x10(false);
 	}

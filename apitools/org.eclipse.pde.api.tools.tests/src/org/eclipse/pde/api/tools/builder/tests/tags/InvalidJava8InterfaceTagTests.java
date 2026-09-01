@@ -16,17 +16,12 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests invalid tags in Java 8 interfaces
  */
 public class InvalidJava8InterfaceTagTests extends InvalidInterfaceMethodTagTests {
-
-	public InvalidJava8InterfaceTagTests(String name) {
-		super(name);
-	}
 
 	@Override
 	protected String getTestCompliance() {
@@ -43,16 +38,13 @@ public class InvalidJava8InterfaceTagTests extends InvalidInterfaceMethodTagTest
 		return "java8tags"; //$NON-NLS-1$
 	}
 
-	/**
-	 * @return the test for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(InvalidJava8InterfaceTagTests.class);
-	}
+	@Test
 
 	public void testInvalidTagOnNonDefaultInterfaceMethodI() {
 		x1(true);
 	}
+
+	@Test
 
 	public void testInvalidTagOnNonDefaultInterfaceMethodF() {
 		x1(false);
@@ -70,9 +62,13 @@ public class InvalidJava8InterfaceTagTests extends InvalidInterfaceMethodTagTest
 		deployTagTest("test1.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidTagsOnFunctionalInterfaceI() {
 		x2(true);
 	}
+
+	@Test
 
 	public void testInvalidTagsOnFunctionalInterfaceF() {
 		x2(false);

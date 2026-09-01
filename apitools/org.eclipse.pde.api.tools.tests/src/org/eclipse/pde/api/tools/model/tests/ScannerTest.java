@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.model.tests;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.util.Iterator;
@@ -28,7 +28,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * Root class for testing scanning classfiles
@@ -67,7 +67,7 @@ public abstract class ScannerTest {
 	 */
 	protected abstract boolean doCompile();
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		IPath root = getWorkspaceRoot();
 		File file = root.toFile();
@@ -76,7 +76,7 @@ public abstract class ScannerTest {
 		}
 
 		if (container == null) {
-			assertTrue("The test workspace failed to compile", doCompile()); //$NON-NLS-1$
+			assertTrue(doCompile(), "The test workspace failed to compile"); //$NON-NLS-1$
 			container = new DirectoryApiTypeContainer(null, root.append(getPackageName()).toOSString());
 		}
 	}

@@ -17,8 +17,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests a variety of restricted constructor usages, where the callee has noreference restrictions
@@ -30,10 +29,6 @@ public class ConstructorUsageTests extends UsageTest {
 	protected static final String CONST_CLASS_NAME = "ConstructorUsageClass"; //$NON-NLS-1$
 
 	private static int pid = -1;
-
-	public ConstructorUsageTests(String name) {
-		super(name);
-	}
 
 	@Override
 	protected int getDefaultProblemId() {
@@ -47,10 +42,6 @@ public class ConstructorUsageTests extends UsageTest {
 		return pid;
 	}
 
-	public static Test suite() {
-		return buildTestSuite(ConstructorUsageTests.class);
-	}
-
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("method"); //$NON-NLS-1$
@@ -60,6 +51,8 @@ public class ConstructorUsageTests extends UsageTest {
 	 * Tests that calls the a variety of restricted constructors are properly reported as problems
 	 * using a full build
 	 */
+	@Test
+
 	public void testConstructorUsageTests1F() {
 		x1(false);
 	}
@@ -68,6 +61,8 @@ public class ConstructorUsageTests extends UsageTest {
 	 * Tests that calls the a variety of restricted constructors are properly reported as problems
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testConstructorUsageTests1I() {
 		x1(true);
 	}

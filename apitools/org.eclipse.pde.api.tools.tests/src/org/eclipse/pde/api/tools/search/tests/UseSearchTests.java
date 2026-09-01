@@ -13,11 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.search.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -31,8 +31,8 @@ import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor;
 import org.eclipse.pde.api.tools.internal.search.XmlSearchReporter;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the API use specific implementations of {@link IApiSearchReporter}
@@ -48,7 +48,7 @@ public class UseSearchTests extends SearchTest {
 	final HashMap<String, HashSet<String>> usedprojects = new HashMap<>();
 
 	@Override
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		scrubReportLocation(TMP_PATH.toFile());
 		super.tearDown();
@@ -59,20 +59,20 @@ public class UseSearchTests extends SearchTest {
 	 */
 	private void assertXMLReport(IPath reportroot){
 		File root = reportroot.toFile();
-		assertTrue("the report root must exist", root.exists()); //$NON-NLS-1$
+		assertTrue(root.exists(), "the report root must exist"); //$NON-NLS-1$
 		File[] files = root.listFiles((FileFilter) pathname -> pathname.isDirectory());
 		int flength = files.length;
 		int epsize = this.usedprojects.size();
-		assertEquals("the used project roots must be the same as we are expecting", flength, epsize); //$NON-NLS-1$
-		assertFalse("The files list should be not be greater than the expected used projects", flength > epsize); //$NON-NLS-1$
-		assertFalse("The files list should be not be less than the expected used projects", flength < epsize); //$NON-NLS-1$
+		assertEquals(flength, epsize, "the used project roots must be the same as we are expecting"); //$NON-NLS-1$
+		assertFalse(flength > epsize, "The files list should be not be greater than the expected used projects"); //$NON-NLS-1$
+		assertFalse(flength < epsize, "The files list should be not be less than the expected used projects"); //$NON-NLS-1$
 		HashSet<String> names = null;
 		File[] projects = null;
 		for (File file : files) {
 			names = this.usedprojects.get(file.getName());
-			assertNotNull("the expeced set of using project names should exist", names); //$NON-NLS-1$
+			assertNotNull(names, "the expeced set of using project names should exist"); //$NON-NLS-1$
 			projects = file.listFiles();
-			assertTrue("the only files should be the folders for the projects using ["+file.getName()+"]", projects.length == names.size()); //$NON-NLS-1$ //$NON-NLS-2$
+			assertTrue(projects.length == names.size(), "the only files should be the folders for the projects using ["+file.getName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 			for (File project : projects) {
 				if (!project.isDirectory()) {
 					reportFailure("Unexpected non-folder entry found: [" + project.getName() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -81,7 +81,7 @@ public class UseSearchTests extends SearchTest {
 					reportFailure("Unexpected folder entry in the report location: [" + project.getName() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
-			assertTrue("All of the using projects should have been detected", names.isEmpty()); //$NON-NLS-1$
+			assertTrue(names.isEmpty(), "All of the using projects should have been detected"); //$NON-NLS-1$
 		}
 	}
 

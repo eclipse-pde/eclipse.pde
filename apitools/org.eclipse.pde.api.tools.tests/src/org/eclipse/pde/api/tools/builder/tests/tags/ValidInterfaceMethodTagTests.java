@@ -14,8 +14,7 @@
 package org.eclipse.pde.api.tools.builder.tests.tags;
 
 import org.eclipse.core.runtime.IPath;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests valid javadoc tags on interface methods
@@ -24,25 +23,18 @@ import junit.framework.Test;
  */
 public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 
-	public ValidInterfaceMethodTagTests(String name) {
-		super(name);
-	}
-
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("interface"); //$NON-NLS-1$
 	}
 
-	/**
-	 * @return the test for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(ValidInterfaceMethodTagTests.class);
-	}
+	@Test
 
 	public void testValidInterfaceMethodTag1I() {
 		x1(true);
 	}
+
+	@Test
 
 	public void testValidInterfaceMethodTag1F() {
 		x1(false);
@@ -55,9 +47,13 @@ public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 		deployTagTest("test1.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testValidInterfaceMethodTag4I() {
 		x4(true);
 	}
+
+	@Test
 
 	public void testValidInterfaceMethodTag4F() {
 		x4(false);
@@ -70,9 +66,13 @@ public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 		deployTagTest("test4.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testValidInterfaceMethodTag5I() {
 		x5(true);
 	}
+
+	@Test
 
 	public void testValidInterfaceMethodTag5F() {
 		x5(false);

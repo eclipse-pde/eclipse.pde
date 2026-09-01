@@ -17,8 +17,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that an API constructor that leaks an internal type is properly
@@ -29,10 +28,6 @@ import junit.framework.Test;
 public class ConstructorParameterLeak extends LeakTest {
 
 	private int pid = -1;
-
-	public ConstructorParameterLeak(String name) {
-		super(name);
-	}
 
 	@Override
 	protected int getDefaultProblemId() {
@@ -46,13 +41,6 @@ public class ConstructorParameterLeak extends LeakTest {
 		return pid;
 	}
 
-	/**
-	 * The suite for the tests
-	 */
-	public static Test suite() {
-		return buildTestSuite(ConstructorParameterLeak.class);
-	}
-
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("method"); //$NON-NLS-1$
@@ -62,6 +50,8 @@ public class ConstructorParameterLeak extends LeakTest {
 	 * Tests that constructors leaking internal types via one or more of their parameters is properly detected
 	 * using a full build
 	 */
+	@Test
+
 	public void testConstructorParameterLeak1F() {
 		x1(false);
 	}
@@ -70,6 +60,8 @@ public class ConstructorParameterLeak extends LeakTest {
 	 * Tests that constructors leaking internal types via one or more of their parameters is properly detected
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testConstructorParameterLeak1I() {
 		x1(true);
 	}
@@ -86,6 +78,8 @@ public class ConstructorParameterLeak extends LeakTest {
 	 * Tests that private constructors leaking internal types via one or more of their parameters ignored
 	 * using a full build
 	 */
+	@Test
+
 	public void testConstructorParameterLeak2F() {
 		x2(false);
 	}
@@ -94,6 +88,8 @@ public class ConstructorParameterLeak extends LeakTest {
 	 * Tests that private constructors leaking internal types via one or more of their parameters ignored
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testConstructorParameterLeak2I() {
 		x2(true);
 	}
@@ -108,6 +104,8 @@ public class ConstructorParameterLeak extends LeakTest {
 	 * Tests that constructors leaking internal types via one or more of their parameters is properly detected
 	 * using a full build
 	 */
+	@Test
+
 	public void testConstructorParameterLeak3F() {
 		x3(false);
 	}
@@ -116,6 +114,8 @@ public class ConstructorParameterLeak extends LeakTest {
 	 * Tests that constructors leaking internal types via one or more of their parameters is properly detected
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testConstructorParameterLeak3I() {
 		x3(true);
 	}
@@ -132,6 +132,8 @@ public class ConstructorParameterLeak extends LeakTest {
 	 * Tests that private constructors leaking internal types via one or more of their parameters ignored
 	 * using a full build
 	 */
+	@Test
+
 	public void testConstructorParameterLeak4F() {
 		x4(false);
 	}
@@ -140,6 +142,8 @@ public class ConstructorParameterLeak extends LeakTest {
 	 * Tests that private constructors leaking internal types via one or more of their parameters ignored
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testConstructorParameterLeak4I() {
 		x4(true);
 	}
@@ -154,6 +158,8 @@ public class ConstructorParameterLeak extends LeakTest {
 	 * Tests that constructors leaking internal types via one or more of their parameters is properly detected
 	 * using a full build
 	 */
+	@Test
+
 	public void testConstructorParameterLeak5F() {
 		x5(false);
 	}
@@ -162,6 +168,8 @@ public class ConstructorParameterLeak extends LeakTest {
 	 * Tests that constructors leaking internal types via one or more of their parameters is properly detected
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testConstructorParameterLeak5I() {
 		x5(true);
 	}
@@ -179,6 +187,8 @@ public class ConstructorParameterLeak extends LeakTest {
 	 * Tests that private constructors leaking internal types via one or more of their parameters ignored
 	 * using a full build
 	 */
+	@Test
+
 	public void testConstructorParameterLeak6F() {
 		x6(false);
 	}
@@ -187,6 +197,8 @@ public class ConstructorParameterLeak extends LeakTest {
 	 * Tests that private constructors leaking internal types via one or more of their parameters ignored
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testConstructorParameterLeak6I() {
 		x6(true);
 	}
@@ -201,6 +213,8 @@ public class ConstructorParameterLeak extends LeakTest {
 	 * Tests that constructors in public static inner types leaking internal types via one or more of their parameters is properly detected
 	 * using a full build
 	 */
+	@Test
+
 	public void testConstructorParameterLeak7F() {
 		x7(false);
 	}
@@ -209,6 +223,8 @@ public class ConstructorParameterLeak extends LeakTest {
 	 * Tests that constructors in public static inner types leaking internal types via one or more of their parameters is properly detected
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testConstructorParameterLeak7I() {
 		x7(true);
 	}
@@ -228,6 +244,8 @@ public class ConstructorParameterLeak extends LeakTest {
 	 * Tests that private constructors in public static inner types leaking internal types via one or more of their parameters ignored
 	 * using a full build
 	 */
+	@Test
+
 	public void testConstructorParameterLeak8F() {
 		x8(false);
 	}
@@ -236,6 +254,8 @@ public class ConstructorParameterLeak extends LeakTest {
 	 * Tests that private constructors in public static inner types leaking internal types via one or more of their parameters ignored
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testConstructorParameterLeak8I() {
 		x8(true);
 	}
@@ -250,6 +270,8 @@ public class ConstructorParameterLeak extends LeakTest {
 	 * Tests that constructors in public static inner types leaking internal types via one or more of their parameters is properly detected
 	 * using a full build
 	 */
+	@Test
+
 	public void testConstructorParameterLeak9F() {
 		x9(false);
 	}
@@ -258,6 +280,8 @@ public class ConstructorParameterLeak extends LeakTest {
 	 * Tests that constructors in public static inner types leaking internal types via one or more of their parameters is properly detected
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testConstructorParameterLeak9I() {
 		x9(true);
 	}
@@ -278,6 +302,8 @@ public class ConstructorParameterLeak extends LeakTest {
 	 * Tests that private constructors in public static inner types leaking internal types via one or more of their parameters ignored
 	 * using a full build
 	 */
+	@Test
+
 	public void testConstructorParameterLeak10F() {
 		x10(false);
 	}
@@ -286,6 +312,8 @@ public class ConstructorParameterLeak extends LeakTest {
 	 * Tests that private constructors in public static inner types leaking internal types via one or more of their parameters ignored
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testConstructorParameterLeak10I() {
 		x10(true);
 	}
@@ -300,6 +328,8 @@ public class ConstructorParameterLeak extends LeakTest {
 	 * Tests that an @noreference tag on a constructor removes a leak problem
 	 * from a certain inner constructor using a full build
 	 */
+	@Test
+
 	public void testConstructorParameterLeak11F() {
 		x11(false);
 	}
@@ -308,6 +338,8 @@ public class ConstructorParameterLeak extends LeakTest {
 	 * Tests that an @noreference tag on a constructor removes a leak problem
 	 * from a certain constructor using an incremental build
 	 */
+	@Test
+
 	public void testConstructorParameterLeak11I() {
 		x11(true);
 	}
@@ -331,6 +363,8 @@ public class ConstructorParameterLeak extends LeakTest {
 	 * Tests that an @noreference tag on a constructor removes a leak problem
 	 * from a certain inner constructor using a full build
 	 */
+	@Test
+
 	public void testConstructorParameterLeak12F() {
 		x12(false);
 	}
@@ -339,6 +373,8 @@ public class ConstructorParameterLeak extends LeakTest {
 	 * Tests that an @noreference tag on a constructor removes a leak problem
 	 * from a certain constructor using an incremental build
 	 */
+	@Test
+
 	public void testConstructorParameterLeak12I() {
 		x12(true);
 	}
@@ -360,6 +396,8 @@ public class ConstructorParameterLeak extends LeakTest {
 	 * Tests that @noreference tags on constructors removes all leak problems
 	 * using a full build
 	 */
+	@Test
+
 	public void testConstructorParameterLeak13F() {
 		x13(false);
 	}
@@ -368,6 +406,8 @@ public class ConstructorParameterLeak extends LeakTest {
 	 * Tests that @noreference tags on constructors removes all leak problems
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testConstructorParameterLeak13I() {
 		x13(true);
 	}
@@ -378,10 +418,11 @@ public class ConstructorParameterLeak extends LeakTest {
 		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 
-
 	/**
 	 * Tests that a non public top level type parameter is a leak on a constructor
 	 */
+	@Test
+
 	public void testConstructorParameterLeak14F() {
 		x14(false);
 	}
@@ -389,6 +430,8 @@ public class ConstructorParameterLeak extends LeakTest {
 	/**
 	 * Tests that a non public top level type parameter is a leak on a constructor
 	 */
+	@Test
+
 	public void testConstructorParameterLeak14I() {
 		x14(true);
 	}

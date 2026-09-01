@@ -15,8 +15,7 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests invalid Javadoc tags on interface methods
@@ -25,25 +24,18 @@ import junit.framework.Test;
  */
 public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 
-	public InvalidInterfaceMethodTagTests(String name) {
-		super(name);
-	}
-
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("interface"); //$NON-NLS-1$
 	}
 
-	/**
-	 * @return the test for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(InvalidInterfaceMethodTagTests.class);
-	}
+	@Test
 
 	public void testInvalidInterfaceMethodTag1I() {
 		x1(true);
 	}
+
+	@Test
 
 	public void testInvalidInterfaceMethodTag1F() {
 		x1(false);
@@ -65,9 +57,13 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 		deployTagTest("test1.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidInterfaceMethodTag2I() {
 		x2(true);
 	}
+
+	@Test
 
 	public void testInvalidInterfaceMethodTag2F() {
 		x2(false);
@@ -85,9 +81,13 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 		deployTagTest("test2.java", inc, true); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidInterfaceMethodTag3I() {
 		x3(true);
 	}
+
+	@Test
 
 	public void testInvalidInterfaceMethodTag3F() {
 		x3(false);
@@ -109,9 +109,13 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 		deployTagTest("test3.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidInterfaceMethodTag4I() {
 		x4(true);
 	}
+
+	@Test
 
 	public void testInvalidInterfaceMethodTag4F() {
 		x4(false);
@@ -129,9 +133,13 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 		deployTagTest("test4.java", inc, true); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidInterfaceMethodTag5I() {
 		x5(true);
 	}
+
+	@Test
 
 	public void testInvalidInterfaceMethodTag5F() {
 		x5(false);
@@ -153,9 +161,13 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 		deployTagTest("test5.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidInterfaceMethodTag6I() {
 		x6(true);
 	}
+
+	@Test
 
 	public void testInvalidInterfaceMethodTag6F() {
 		x6(false);
@@ -173,10 +185,13 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 		deployTagTest("test6.java", inc, true); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidInterfaceMethodTag7I() {
 		x7(true);
 	}
 
+	@Test
 
 	public void testInvalidInterfaceMethodTag7F() {
 		x7(false);
@@ -198,9 +213,13 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 		deployTagTest("test7.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidInterfaceMethodTag8I() {
 		x8(true);
 	}
+
+	@Test
 
 	public void testInvalidInterfaceMethodTag8F() {
 		x8(false);

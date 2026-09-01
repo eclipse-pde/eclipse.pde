@@ -17,9 +17,7 @@ import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
-
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the performance of incrementally building Java annotations
@@ -29,25 +27,13 @@ import junit.framework.Test;
 public class AnnotationIncrementalBuildTests extends EnumIncrementalBuildTests {
 
 	/**
-	 * Constructor
-	 */
-	public AnnotationIncrementalBuildTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(AnnotationIncrementalBuildTests.class);
-	}
-
-	/**
 	 * Tests the performance of API problems on a Java annotation.
 	 * <br>
 	 * This test uses <code>java5.performance.api.TestAnnot</code>
 	 * @throws Exception if something bad happens or unexpected problems are detected
 	 */
+	@Test
+
 	public void testIncrementalAnnot() throws Exception {
 		int[] problemids = new int[] {
 				ApiProblemFactory.createProblemId(

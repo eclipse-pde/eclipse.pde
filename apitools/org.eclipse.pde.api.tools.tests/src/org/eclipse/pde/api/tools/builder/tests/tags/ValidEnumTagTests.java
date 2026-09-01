@@ -14,35 +14,27 @@
 package org.eclipse.pde.api.tools.builder.tests.tags;
 
 import org.eclipse.core.runtime.IPath;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that the builder accepts valid tags on enums
  */
 public class ValidEnumTagTests extends InvalidEnumTagTests {
 
-	public ValidEnumTagTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(ValidEnumTagTests.class);
-	}
-
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("valid"); //$NON-NLS-1$
 	}
+
+	@Test
 
 	public void testValidEnumTag1I() {
 		x1(true);
 	}
 
 	@Override
+	@Test
+
 	public void testInvalidEnumTag1F() {
 		x1(false);
 	}

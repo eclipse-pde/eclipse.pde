@@ -13,12 +13,13 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.util.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -48,7 +49,7 @@ import org.eclipse.pde.api.tools.internal.util.FilteredElements;
 import org.eclipse.pde.api.tools.internal.util.SinceTagVersion;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the methods in our utility class: {@link Util}
@@ -66,18 +67,18 @@ public class UtilTests {
 	 */
 	public void getAllFilesNullFilter() {
 		File root = new File(SRC_LOC.toOSString());
-		assertTrue("The test source  directory must exist", root.exists()); //$NON-NLS-1$
-		assertTrue("The source location should be a directory", root.isDirectory()); //$NON-NLS-1$
+		assertTrue(root.exists(), "The test source  directory must exist"); //$NON-NLS-1$
+		assertTrue(root.isDirectory(), "The source location should be a directory"); //$NON-NLS-1$
 		File[] files = Util.getAllFiles(root, null);
-		assertTrue("There should be more than one file in the test source directory", files.length > 1); //$NON-NLS-1$
+		assertTrue(files.length > 1, "There should be more than one file in the test source directory"); //$NON-NLS-1$
 	}
 
 	/**
 	 * Tests that passing an illegal argument when creating a new {@link SinceTagVersion} throws an exception
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testIllegalArgSinceTagVersion() {
-		new SinceTagVersion(null);
+		assertThrows(IllegalArgumentException.class, () -> new SinceTagVersion(null));
 	}
 
 	/**
@@ -87,11 +88,11 @@ public class UtilTests {
 	 */
 	public void getAllFilesSpecificFilter() {
 		File root = new File(SRC_LOC.toOSString());
-		assertTrue("The test source  directory must exist", root.exists()); //$NON-NLS-1$
-		assertTrue("The source location should be a directory", root.isDirectory()); //$NON-NLS-1$
+		assertTrue(root.exists(), "The test source  directory must exist"); //$NON-NLS-1$
+		assertTrue(root.isDirectory(), "The source location should be a directory"); //$NON-NLS-1$
 		File[] files = Util.getAllFiles(root, pathname -> pathname.getAbsolutePath().endsWith("TestClass1.java")); //$NON-NLS-1$
-		assertEquals("There should be only one file in the test source directory named 'TestClass1.java'", files.length, //$NON-NLS-1$
-				1);
+		assertEquals(files.length,
+				1, "There should be only one file in the test source directory named 'TestClass1.java'"); //$NON-NLS-1$
 	}
 
 	/**
@@ -99,7 +100,7 @@ public class UtilTests {
 	 */
 	@Test
 	public void testIsClassfile() {
-		assertTrue("Test.class is a class file", Util.isClassFile("Test.class")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(Util.isClassFile("Test.class"), "Test.class is a class file"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -107,7 +108,7 @@ public class UtilTests {
 	 */
 	@Test
 	public void testIsNotClassfile() {
-		assertFalse("Test.notclass is not a classfile", Util.isClassFile("Test.notclass")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertFalse(Util.isClassFile("Test.notclass"), "Test.notclass is not a classfile"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -116,10 +117,10 @@ public class UtilTests {
 	 */
 	@Test
 	public void testIsArchive() {
-		assertTrue("Test.zip is an archive", Util.isArchive("Test.zip")); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("Test.jar is an archive", Util.isArchive("Test.jar")); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("Test.tar.gz is an archive", Util.isTGZFile("Test.tar.gz")); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("Test.tgz is an archive", Util.isTGZFile("Test.tgz")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(Util.isArchive("Test.zip"), "Test.zip is an archive"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(Util.isArchive("Test.jar"), "Test.jar is an archive"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(Util.isTGZFile("Test.tar.gz"), "Test.tar.gz is an archive"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(Util.isTGZFile("Test.tgz"), "Test.tgz is an archive"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -127,14 +128,14 @@ public class UtilTests {
 	 */
 	@Test
 	public void testIsTar() {
-		assertTrue("Test.tar.gz is an archive", Util.isTGZFile("Test.tar.gz")); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("Test.tar.gz is an archive", Util.isTGZFile("Test.TAR.GZ")); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("Test.tar.gz is an archive", Util.isTGZFile("Test.Tar.Gz")); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("Test.tar.gz is an archive", Util.isTGZFile("Test.tar.GZ")); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("Test.tar.gz is an archive", Util.isTGZFile("Test.TAR.gz")); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("Test.tgz is an archive", Util.isTGZFile("Test.tgz")); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("Test.tgz is an archive", Util.isTGZFile("Test.TGZ")); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("Test.tgz is an archive", Util.isTGZFile("Test.Tgz")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(Util.isTGZFile("Test.tar.gz"), "Test.tar.gz is an archive"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(Util.isTGZFile("Test.TAR.GZ"), "Test.tar.gz is an archive"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(Util.isTGZFile("Test.Tar.Gz"), "Test.tar.gz is an archive"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(Util.isTGZFile("Test.tar.GZ"), "Test.tar.gz is an archive"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(Util.isTGZFile("Test.TAR.gz"), "Test.tar.gz is an archive"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(Util.isTGZFile("Test.tgz"), "Test.tgz is an archive"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(Util.isTGZFile("Test.TGZ"), "Test.tgz is an archive"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(Util.isTGZFile("Test.Tgz"), "Test.tgz is an archive"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -142,12 +143,12 @@ public class UtilTests {
 	 */
 	@Test
 	public void testIsJar() {
-		assertTrue("Test.tar.gz is an archive", Util.isZipJarFile("Test.zip")); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("Test.tar.gz is an archive", Util.isZipJarFile("Test.ZIP")); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("Test.tar.gz is an archive", Util.isZipJarFile("Test.Zip")); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("Test.tgz is an archive", Util.isZipJarFile("Test.jar")); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("Test.tgz is an archive", Util.isZipJarFile("Test.JAR")); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("Test.tgz is an archive", Util.isZipJarFile("Test.Jar")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(Util.isZipJarFile("Test.zip"), "Test.tar.gz is an archive"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(Util.isZipJarFile("Test.ZIP"), "Test.tar.gz is an archive"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(Util.isZipJarFile("Test.Zip"), "Test.tar.gz is an archive"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(Util.isZipJarFile("Test.jar"), "Test.tgz is an archive"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(Util.isZipJarFile("Test.JAR"), "Test.tgz is an archive"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(Util.isZipJarFile("Test.Jar"), "Test.tgz is an archive"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -156,7 +157,7 @@ public class UtilTests {
 	 */
 	@Test
 	public void testisNotArchive() {
-		assertFalse("Test.notzip is not an archive", Util.isArchive("Test.notzip")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertFalse(Util.isArchive("Test.notzip"), "Test.notzip is not an archive"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/*
@@ -165,19 +166,19 @@ public class UtilTests {
 	 */
 	@Test
 	public void testGetFragmentNumber() {
-		assertEquals("wrong value", 2, Util.getFragmentNumber("org.eclipse.core.filesystem 1.0")); //$NON-NLS-1$ //$NON-NLS-2$
-		assertEquals("wrong value", 2, Util.getFragmentNumber("1.0")); //$NON-NLS-1$ //$NON-NLS-2$
-		assertEquals("wrong value", 3, Util.getFragmentNumber("1.0.0")); //$NON-NLS-1$ //$NON-NLS-2$
-		assertEquals("wrong value", 1, Util.getFragmentNumber("1")); //$NON-NLS-1$ //$NON-NLS-2$
-		assertEquals("wrong value", 4, Util.getFragmentNumber("org.test 1.0.0.0")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(2, Util.getFragmentNumber("org.eclipse.core.filesystem 1.0"), "wrong value"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(2, Util.getFragmentNumber("1.0"), "wrong value"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(3, Util.getFragmentNumber("1.0.0"), "wrong value"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(1, Util.getFragmentNumber("1"), "wrong value"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(4, Util.getFragmentNumber("org.test 1.0.0.0"), "wrong value"); //$NON-NLS-1$ //$NON-NLS-2$
 		try {
 			Util.getFragmentNumber((String) null);
 			fail();
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
-		assertEquals("wrong value", -1, Util.getFragmentNumber("org.test ")); //$NON-NLS-1$ //$NON-NLS-2$
-		assertEquals("wrong value", -1, Util.getFragmentNumber("org.test")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(-1, Util.getFragmentNumber("org.test "), "wrong value"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(-1, Util.getFragmentNumber("org.test"), "wrong value"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/*
@@ -185,7 +186,7 @@ public class UtilTests {
 	 */
 	@Test
 	public void testIsGreatherVersion() {
-		assertEquals("wrong value", 1, 1); //$NON-NLS-1$
+		assertEquals(1, 1, "wrong value"); //$NON-NLS-1$
 	}
 
 	@Test
@@ -198,124 +199,124 @@ public class UtilTests {
 		}
 
 		SinceTagVersion sinceTagVersion = new SinceTagVersion(" org.eclipse.jdt.core 3.4. test plugin"); //$NON-NLS-1$
-		assertEquals("wrong version string", "3.4.", sinceTagVersion.getVersionString()); //$NON-NLS-1$ //$NON-NLS-2$
-		assertEquals("wrong prefix string", " org.eclipse.jdt.core ", sinceTagVersion.prefixString()); //$NON-NLS-1$ //$NON-NLS-2$
-		assertEquals("wrong postfix string", " test plugin", sinceTagVersion.postfixString()); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("3.4.", sinceTagVersion.getVersionString(), "wrong version string"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(" org.eclipse.jdt.core ", sinceTagVersion.prefixString(), "wrong prefix string"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(" test plugin", sinceTagVersion.postfixString(), "wrong postfix string"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		sinceTagVersion = new SinceTagVersion("3.4"); //$NON-NLS-1$
-		assertEquals("wrong version string", "3.4", sinceTagVersion.getVersionString()); //$NON-NLS-1$ //$NON-NLS-2$
-		assertNull("wrong prefix string", sinceTagVersion.prefixString()); //$NON-NLS-1$
-		assertNull("wrong postfix string", sinceTagVersion.postfixString()); //$NON-NLS-1$
+		assertEquals("3.4", sinceTagVersion.getVersionString(), "wrong version string"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNull(sinceTagVersion.prefixString(), "wrong prefix string"); //$NON-NLS-1$
+		assertNull(sinceTagVersion.postfixString(), "wrong postfix string"); //$NON-NLS-1$
 
 		sinceTagVersion = new SinceTagVersion("org.eclipse.jdt.core 3.4.0."); //$NON-NLS-1$
-		assertEquals("wrong version string", "3.4.0.", sinceTagVersion.getVersionString()); //$NON-NLS-1$ //$NON-NLS-2$
-		assertEquals("wrong prefix string", "org.eclipse.jdt.core ", sinceTagVersion.prefixString()); //$NON-NLS-1$ //$NON-NLS-2$
-		assertNull("wrong postfix string", sinceTagVersion.postfixString()); //$NON-NLS-1$
+		assertEquals("3.4.0.", sinceTagVersion.getVersionString(), "wrong version string"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("org.eclipse.jdt.core ", sinceTagVersion.prefixString(), "wrong prefix string"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNull(sinceTagVersion.postfixString(), "wrong postfix string"); //$NON-NLS-1$
 
 		sinceTagVersion = new SinceTagVersion("org.eclipse.jdt.core 3.4.0.qualifier"); //$NON-NLS-1$
-		assertEquals("wrong version string", "3.4.0.qualifier", sinceTagVersion.getVersionString()); //$NON-NLS-1$ //$NON-NLS-2$
-		assertEquals("wrong prefix string", "org.eclipse.jdt.core ", sinceTagVersion.prefixString()); //$NON-NLS-1$ //$NON-NLS-2$
-		assertNull("wrong postfix string", sinceTagVersion.postfixString()); //$NON-NLS-1$
+		assertEquals("3.4.0.qualifier", sinceTagVersion.getVersionString(), "wrong version string"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("org.eclipse.jdt.core ", sinceTagVersion.prefixString(), "wrong prefix string"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNull(sinceTagVersion.postfixString(), "wrong postfix string"); //$NON-NLS-1$
 
 		sinceTagVersion = new SinceTagVersion("org.eclipse.jdt.core 3.4.0.qualifier postfix"); //$NON-NLS-1$
-		assertEquals("wrong version string", "3.4.0.qualifier", sinceTagVersion.getVersionString()); //$NON-NLS-1$ //$NON-NLS-2$
-		assertEquals("wrong prefix string", "org.eclipse.jdt.core ", sinceTagVersion.prefixString()); //$NON-NLS-1$ //$NON-NLS-2$
-		assertEquals("wrong postfix string", " postfix", sinceTagVersion.postfixString()); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("3.4.0.qualifier", sinceTagVersion.getVersionString(), "wrong version string"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("org.eclipse.jdt.core ", sinceTagVersion.prefixString(), "wrong prefix string"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(" postfix", sinceTagVersion.postfixString(), "wrong postfix string"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		sinceTagVersion = new SinceTagVersion("3.4.0"); //$NON-NLS-1$
-		assertEquals("wrong version string", "3.4.0", sinceTagVersion.getVersionString()); //$NON-NLS-1$ //$NON-NLS-2$
-		assertNull("wrong prefix string", sinceTagVersion.prefixString()); //$NON-NLS-1$
-		assertNull("wrong postfix string", sinceTagVersion.postfixString()); //$NON-NLS-1$
+		assertEquals("3.4.0", sinceTagVersion.getVersionString(), "wrong version string"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNull(sinceTagVersion.prefixString(), "wrong prefix string"); //$NON-NLS-1$
+		assertNull(sinceTagVersion.postfixString(), "wrong postfix string"); //$NON-NLS-1$
 
 		sinceTagVersion = new SinceTagVersion("3.4.0."); //$NON-NLS-1$
-		assertEquals("wrong version string", "3.4.0.", sinceTagVersion.getVersionString()); //$NON-NLS-1$ //$NON-NLS-2$
-		assertNull("wrong prefix string", sinceTagVersion.prefixString()); //$NON-NLS-1$
-		assertNull("wrong postfix string", sinceTagVersion.postfixString()); //$NON-NLS-1$
+		assertEquals("3.4.0.", sinceTagVersion.getVersionString(), "wrong version string"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNull(sinceTagVersion.prefixString(), "wrong prefix string"); //$NON-NLS-1$
+		assertNull(sinceTagVersion.postfixString(), "wrong postfix string"); //$NON-NLS-1$
 
 		sinceTagVersion = new SinceTagVersion("3.4."); //$NON-NLS-1$
-		assertEquals("wrong version string", "3.4.", sinceTagVersion.getVersionString()); //$NON-NLS-1$ //$NON-NLS-2$
-		assertNull("wrong prefix string", sinceTagVersion.prefixString()); //$NON-NLS-1$
-		assertNull("wrong postfix string", sinceTagVersion.postfixString()); //$NON-NLS-1$
+		assertEquals("3.4.", sinceTagVersion.getVersionString(), "wrong version string"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNull(sinceTagVersion.prefixString(), "wrong prefix string"); //$NON-NLS-1$
+		assertNull(sinceTagVersion.postfixString(), "wrong postfix string"); //$NON-NLS-1$
 
 		sinceTagVersion = new SinceTagVersion("3."); //$NON-NLS-1$
-		assertEquals("wrong version string", "3.", sinceTagVersion.getVersionString()); //$NON-NLS-1$ //$NON-NLS-2$
-		assertNull("wrong prefix string", sinceTagVersion.prefixString()); //$NON-NLS-1$
-		assertNull("wrong postfix string", sinceTagVersion.postfixString()); //$NON-NLS-1$
+		assertEquals("3.", sinceTagVersion.getVersionString(), "wrong version string"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNull(sinceTagVersion.prefixString(), "wrong prefix string"); //$NON-NLS-1$
+		assertNull(sinceTagVersion.postfixString(), "wrong postfix string"); //$NON-NLS-1$
 
 		sinceTagVersion = new SinceTagVersion("3"); //$NON-NLS-1$
-		assertEquals("wrong version string", "3", sinceTagVersion.getVersionString()); //$NON-NLS-1$ //$NON-NLS-2$
-		assertNull("wrong prefix string", sinceTagVersion.prefixString()); //$NON-NLS-1$
-		assertNull("wrong postfix string", sinceTagVersion.postfixString()); //$NON-NLS-1$
+		assertEquals("3", sinceTagVersion.getVersionString(), "wrong version string"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNull(sinceTagVersion.prefixString(), "wrong prefix string"); //$NON-NLS-1$
+		assertNull(sinceTagVersion.postfixString(), "wrong postfix string"); //$NON-NLS-1$
 
 		sinceTagVersion = new SinceTagVersion("3.4.0.qualifier"); //$NON-NLS-1$
-		assertEquals("wrong version string", "3.4.0.qualifier", sinceTagVersion.getVersionString()); //$NON-NLS-1$ //$NON-NLS-2$
-		assertNull("wrong prefix string", sinceTagVersion.prefixString()); //$NON-NLS-1$
-		assertNull("wrong postfix string", sinceTagVersion.postfixString()); //$NON-NLS-1$
+		assertEquals("3.4.0.qualifier", sinceTagVersion.getVersionString(), "wrong version string"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNull(sinceTagVersion.prefixString(), "wrong prefix string"); //$NON-NLS-1$
+		assertNull(sinceTagVersion.postfixString(), "wrong postfix string"); //$NON-NLS-1$
 
 		sinceTagVersion = new SinceTagVersion("3.4.0.qualifier postfix"); //$NON-NLS-1$
-		assertEquals("wrong version string", "3.4.0.qualifier", sinceTagVersion.getVersionString()); //$NON-NLS-1$ //$NON-NLS-2$
-		assertNull("wrong prefix string", sinceTagVersion.prefixString()); //$NON-NLS-1$
-		assertEquals("wrong postfix string", " postfix", sinceTagVersion.postfixString()); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("3.4.0.qualifier", sinceTagVersion.getVersionString(), "wrong version string"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNull(sinceTagVersion.prefixString(), "wrong prefix string"); //$NON-NLS-1$
+		assertEquals(" postfix", sinceTagVersion.postfixString(), "wrong postfix string"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		sinceTagVersion = new SinceTagVersion("3.4.0. postfix"); //$NON-NLS-1$
-		assertEquals("wrong version string", "3.4.0.", sinceTagVersion.getVersionString()); //$NON-NLS-1$ //$NON-NLS-2$
-		assertNull("wrong prefix string", sinceTagVersion.prefixString()); //$NON-NLS-1$
-		assertEquals("wrong postfix string", " postfix", sinceTagVersion.postfixString()); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("3.4.0.", sinceTagVersion.getVersionString(), "wrong version string"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNull(sinceTagVersion.prefixString(), "wrong prefix string"); //$NON-NLS-1$
+		assertEquals(" postfix", sinceTagVersion.postfixString(), "wrong postfix string"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		sinceTagVersion = new SinceTagVersion("3.4.0 postfix"); //$NON-NLS-1$
-		assertEquals("wrong version string", "3.4.0", sinceTagVersion.getVersionString()); //$NON-NLS-1$ //$NON-NLS-2$
-		assertNull("wrong prefix string", sinceTagVersion.prefixString()); //$NON-NLS-1$
-		assertEquals("wrong postfix string", " postfix", sinceTagVersion.postfixString()); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("3.4.0", sinceTagVersion.getVersionString(), "wrong version string"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNull(sinceTagVersion.prefixString(), "wrong prefix string"); //$NON-NLS-1$
+		assertEquals(" postfix", sinceTagVersion.postfixString(), "wrong postfix string"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		sinceTagVersion = new SinceTagVersion("3.4. postfix"); //$NON-NLS-1$
-		assertEquals("wrong version string", "3.4.", sinceTagVersion.getVersionString()); //$NON-NLS-1$ //$NON-NLS-2$
-		assertNull("wrong prefix string", sinceTagVersion.prefixString()); //$NON-NLS-1$
-		assertEquals("wrong postfix string", " postfix", sinceTagVersion.postfixString()); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("3.4.", sinceTagVersion.getVersionString(), "wrong version string"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNull(sinceTagVersion.prefixString(), "wrong prefix string"); //$NON-NLS-1$
+		assertEquals(" postfix", sinceTagVersion.postfixString(), "wrong postfix string"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		sinceTagVersion = new SinceTagVersion("3.4 postfix"); //$NON-NLS-1$
-		assertEquals("wrong version string", "3.4", sinceTagVersion.getVersionString()); //$NON-NLS-1$ //$NON-NLS-2$
-		assertNull("wrong prefix string", sinceTagVersion.prefixString()); //$NON-NLS-1$
-		assertEquals("wrong postfix string", " postfix", sinceTagVersion.postfixString()); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("3.4", sinceTagVersion.getVersionString(), "wrong version string"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNull(sinceTagVersion.prefixString(), "wrong prefix string"); //$NON-NLS-1$
+		assertEquals(" postfix", sinceTagVersion.postfixString(), "wrong postfix string"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		sinceTagVersion = new SinceTagVersion("3. postfix"); //$NON-NLS-1$
-		assertEquals("wrong version string", "3.", sinceTagVersion.getVersionString()); //$NON-NLS-1$ //$NON-NLS-2$
-		assertNull("wrong prefix string", sinceTagVersion.prefixString()); //$NON-NLS-1$
-		assertEquals("wrong postfix string", " postfix", sinceTagVersion.postfixString()); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("3.", sinceTagVersion.getVersionString(), "wrong version string"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNull(sinceTagVersion.prefixString(), "wrong prefix string"); //$NON-NLS-1$
+		assertEquals(" postfix", sinceTagVersion.postfixString(), "wrong postfix string"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		sinceTagVersion = new SinceTagVersion("3 postfix"); //$NON-NLS-1$
-		assertEquals("wrong version string", "3", sinceTagVersion.getVersionString()); //$NON-NLS-1$ //$NON-NLS-2$
-		assertNull("wrong prefix string", sinceTagVersion.prefixString()); //$NON-NLS-1$
-		assertEquals("wrong postfix string", " postfix", sinceTagVersion.postfixString()); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("3", sinceTagVersion.getVersionString(), "wrong version string"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNull(sinceTagVersion.prefixString(), "wrong prefix string"); //$NON-NLS-1$
+		assertEquals(" postfix", sinceTagVersion.postfixString(), "wrong postfix string"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		sinceTagVersion = new SinceTagVersion("prefix"); //$NON-NLS-1$
-		assertNull("wrong version string", sinceTagVersion.getVersionString()); //$NON-NLS-1$
-		assertNull("wrong prefix string", sinceTagVersion.prefixString()); //$NON-NLS-1$
-		assertEquals("wrong postfix string", "prefix", sinceTagVersion.postfixString()); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNull(sinceTagVersion.getVersionString(), "wrong version string"); //$NON-NLS-1$
+		assertNull(sinceTagVersion.prefixString(), "wrong prefix string"); //$NON-NLS-1$
+		assertEquals("prefix", sinceTagVersion.postfixString(), "wrong postfix string"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		sinceTagVersion = new SinceTagVersion("test 3.4 protected (was added in 2.1 as private class)"); //$NON-NLS-1$
-		assertEquals("wrong version string", "3.4", sinceTagVersion.getVersionString()); //$NON-NLS-1$ //$NON-NLS-2$
-		assertEquals("wrong prefix string", "test ", sinceTagVersion.prefixString()); //$NON-NLS-1$ //$NON-NLS-2$
-		assertEquals("wrong postfix string", " protected (was added in 2.1 as private class)", sinceTagVersion.postfixString()); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("3.4", sinceTagVersion.getVersionString(), "wrong version string"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("test ", sinceTagVersion.prefixString(), "wrong prefix string"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(" protected (was added in 2.1 as private class)", sinceTagVersion.postfixString(), "wrong postfix string"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		sinceTagVersion = new SinceTagVersion("3.4 protected (was added in 2.1 as private class)"); //$NON-NLS-1$
-		assertEquals("wrong version string", "3.4", sinceTagVersion.getVersionString()); //$NON-NLS-1$ //$NON-NLS-2$
-		assertNull("wrong prefix string", sinceTagVersion.prefixString()); //$NON-NLS-1$
-		assertEquals("wrong postfix string", " protected (was added in 2.1 as private class)", sinceTagVersion.postfixString()); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("3.4", sinceTagVersion.getVersionString(), "wrong version string"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNull(sinceTagVersion.prefixString(), "wrong prefix string"); //$NON-NLS-1$
+		assertEquals(" protected (was added in 2.1 as private class)", sinceTagVersion.postfixString(), "wrong postfix string"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		sinceTagVersion = new SinceTagVersion("abc1.0"); //$NON-NLS-1$
-		assertNull("Wrong version string", sinceTagVersion.getVersionString()); //$NON-NLS-1$
-		assertNull("Wrong prefix string", sinceTagVersion.prefixString()); //$NON-NLS-1$
-		assertEquals("Wrong postfix string", "abc1.0", sinceTagVersion.postfixString()); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNull(sinceTagVersion.getVersionString(), "Wrong version string"); //$NON-NLS-1$
+		assertNull(sinceTagVersion.prefixString(), "Wrong prefix string"); //$NON-NLS-1$
+		assertEquals("abc1.0", sinceTagVersion.postfixString(), "Wrong postfix string"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		sinceTagVersion = new SinceTagVersion("3.4, was added in 3.1 as private method"); //$NON-NLS-1$
-		assertEquals("wrong version string", "3.4", sinceTagVersion.getVersionString()); //$NON-NLS-1$ //$NON-NLS-2$
-		assertNull("wrong prefix string", sinceTagVersion.prefixString()); //$NON-NLS-1$
-		assertEquals("wrong postfix string", ", was added in 3.1 as private method", sinceTagVersion.postfixString()); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("3.4", sinceTagVersion.getVersionString(), "wrong version string"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNull(sinceTagVersion.prefixString(), "wrong prefix string"); //$NON-NLS-1$
+		assertEquals(", was added in 3.1 as private method", sinceTagVersion.postfixString(), "wrong postfix string"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		sinceTagVersion = new SinceTagVersion("abc1.0, was added in 3.1 as private method"); //$NON-NLS-1$
-		assertEquals("wrong version string", "3.1", sinceTagVersion.getVersionString()); //$NON-NLS-1$ //$NON-NLS-2$
-		assertEquals("wrong prefix string", "abc1.0, was added in ", sinceTagVersion.prefixString()); //$NON-NLS-1$ //$NON-NLS-2$
-		assertEquals("wrong postfix string", " as private method", sinceTagVersion.postfixString()); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("3.1", sinceTagVersion.getVersionString(), "wrong version string"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("abc1.0, was added in ", sinceTagVersion.prefixString(), "wrong prefix string"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(" as private method", sinceTagVersion.postfixString(), "wrong postfix string"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Test
@@ -650,18 +651,18 @@ public class UtilTests {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		assertEquals("Wrong size", 2, excludedElements.getPartialMatches().size()); //$NON-NLS-1$
-		assertFalse("Wrong result", excludedElements.containsPartialMatch("org.eclipse.jdt.core")); //$NON-NLS-1$ //$NON-NLS-2$
-		assertFalse("Wrong result", excludedElements.containsExactMatch("org.eclipse.jdt.core")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(2, excludedElements.getPartialMatches().size(), "Wrong size"); //$NON-NLS-1$
+		assertFalse(excludedElements.containsPartialMatch("org.eclipse.jdt.core"), "Wrong result"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertFalse(excludedElements.containsExactMatch("org.eclipse.jdt.core"), "Wrong result"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Test
 	public void testRegexExcludeList2() {
 		FilteredElements excludedElements = new FilteredElements();
-		assertTrue("Wrong size", excludedElements.getPartialMatches().isEmpty()); //$NON-NLS-1$
-		assertTrue("Wrong size", excludedElements.getExactMatches().isEmpty()); //$NON-NLS-1$
-		assertFalse("Wrong result", excludedElements.containsPartialMatch("org.eclipse.jdt.core")); //$NON-NLS-1$ //$NON-NLS-2$
-		assertFalse("Wrong result", excludedElements.containsExactMatch("org.eclipse.jdt.core")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(excludedElements.getPartialMatches().isEmpty(), "Wrong size"); //$NON-NLS-1$
+		assertTrue(excludedElements.getExactMatches().isEmpty(), "Wrong size"); //$NON-NLS-1$
+		assertFalse(excludedElements.containsPartialMatch("org.eclipse.jdt.core"), "Wrong result"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertFalse(excludedElements.containsExactMatch("org.eclipse.jdt.core"), "Wrong result"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Test
@@ -680,7 +681,7 @@ public class UtilTests {
 		} catch (IOException e) {
 			// ignore
 		}
-		assertNotNull("Should not be null", s); //$NON-NLS-1$
+		assertNotNull(s, "Should not be null"); //$NON-NLS-1$
 		try {
 			Util.parseDocument(s);
 		} catch(CoreException ce) {
@@ -695,9 +696,9 @@ public class UtilTests {
 	 * The regex parsing is tested more extensively in
 	 * {@link org.eclipse.pde.api.tools.search.tests.SearchEngineTests}
 	 */
-	@Test(expected = CoreException.class)
+	@Test
 	public void testInitializeRegexFilterList() throws CoreException {
 		File bogus = new File(SRC_LOC.toFile(), "DOES_NOT_EXIST"); //$NON-NLS-1$
-		Util.initializeRegexFilterList(bogus.getAbsolutePath(), null, false);
+		assertThrows(CoreException.class, () -> Util.initializeRegexFilterList(bogus.getAbsolutePath(), null, false));
 	}
 }

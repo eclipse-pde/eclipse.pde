@@ -14,8 +14,7 @@
 package org.eclipse.pde.api.tools.builder.tests.annotations;
 
 import org.eclipse.core.runtime.IPath;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests valid annotations on interfaces
@@ -23,17 +22,6 @@ import junit.framework.Test;
  * @since 1.0.600
  */
 public class ValidInterfaceAnnotationTests extends InvalidInterfaceAnnotationTests {
-
-	public ValidInterfaceAnnotationTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(ValidInterfaceAnnotationTests.class);
-	}
 
 	@Override
 	protected IPath getTestSourcePath() {
@@ -43,6 +31,8 @@ public class ValidInterfaceAnnotationTests extends InvalidInterfaceAnnotationTes
 	/**
 	 * Tests @NoImplement annotation on interfaces
 	 */
+	@Test
+
 	public void testNoImplementF() throws Exception {
 		x1(false);
 	}
@@ -50,6 +40,8 @@ public class ValidInterfaceAnnotationTests extends InvalidInterfaceAnnotationTes
 	/**
 	 * Tests @NoImplement annotation on interfaces
 	 */
+	@Test
+
 	public void testNoImplementI() throws Exception {
 		x1(true);
 	}
@@ -61,6 +53,8 @@ public class ValidInterfaceAnnotationTests extends InvalidInterfaceAnnotationTes
 	/**
 	 * Tests @NoExtend annotation on interfaces
 	 */
+	@Test
+
 	public void testNoExtendF() throws Exception {
 		x2(false);
 	}
@@ -68,6 +62,8 @@ public class ValidInterfaceAnnotationTests extends InvalidInterfaceAnnotationTes
 	/**
 	 * Tests @NoExtend annotation on interfaces
 	 */
+	@Test
+
 	public void testNoExtendI() throws Exception {
 		x2(true);
 	}
@@ -79,6 +75,8 @@ public class ValidInterfaceAnnotationTests extends InvalidInterfaceAnnotationTes
 	/**
 	 * Tests @NoReference annotation on interfaces
 	 */
+	@Test
+
 	public void testNoReferenceF() throws Exception {
 		x3(false);
 	}
@@ -86,6 +84,8 @@ public class ValidInterfaceAnnotationTests extends InvalidInterfaceAnnotationTes
 	/**
 	 * Tests @NoReference annotation on interfaces
 	 */
+	@Test
+
 	public void testNoReferenceI() throws Exception {
 		x3(true);
 	}

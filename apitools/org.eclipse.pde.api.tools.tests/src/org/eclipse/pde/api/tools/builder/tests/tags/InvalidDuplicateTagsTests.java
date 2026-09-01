@@ -18,8 +18,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests invalid duplicate tags placed on members
@@ -29,10 +28,6 @@ import junit.framework.Test;
 public class InvalidDuplicateTagsTests extends TagTest {
 
 	private int fPid = -1;
-
-	public InvalidDuplicateTagsTests(String name) {
-		super(name);
-	}
 
 	@Override
 	protected int getDefaultProblemId() {
@@ -44,13 +39,6 @@ public class InvalidDuplicateTagsTests extends TagTest {
 	 */
 	private void setProblemId(int element, int kind) {
 		fPid = ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, element, kind, IApiProblem.NO_FLAGS);
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(InvalidDuplicateTagsTests.class);
 	}
 
 	@Override
@@ -67,6 +55,8 @@ public class InvalidDuplicateTagsTests extends TagTest {
 	 * Tests a class that has duplicate tags is properly detected using an
 	 * incremental build
 	 */
+	@Test
+
 	public void testClassWithDuplicateTagsI() {
 		x1(true);
 	}
@@ -75,6 +65,8 @@ public class InvalidDuplicateTagsTests extends TagTest {
 	 * Tests a class that has duplicate tags is properly detected using a full
 	 * build
 	 */
+	@Test
+
 	public void testClassWithDuplicateTagsF() {
 		x1(false);
 	}
@@ -92,6 +84,8 @@ public class InvalidDuplicateTagsTests extends TagTest {
 	 * Tests that an interface with duplicate tags is properly using an
 	 * incremental build
 	 */
+	@Test
+
 	public void testInterfaceWithDuplicateTagsI() {
 		x2(true);
 	}
@@ -100,6 +94,8 @@ public class InvalidDuplicateTagsTests extends TagTest {
 	 * Tests that an interface with duplicate tags is properly detected using a
 	 * full build
 	 */
+	@Test
+
 	public void testInterfaceWithDuplicateTagsF() {
 		x2(false);
 	}
@@ -117,6 +113,8 @@ public class InvalidDuplicateTagsTests extends TagTest {
 	 * Tests that a class field with duplicate tags is properly detected using
 	 * an incremental build
 	 */
+	@Test
+
 	public void testClassFieldWithDuplicateTagsI() {
 		x3(true);
 	}
@@ -125,6 +123,8 @@ public class InvalidDuplicateTagsTests extends TagTest {
 	 * Tests that a class field with duplicate tags is properly detected using a
 	 * full build
 	 */
+	@Test
+
 	public void testClassFieldWithDuplicateTagsF() {
 		x3(false);
 	}
@@ -142,6 +142,8 @@ public class InvalidDuplicateTagsTests extends TagTest {
 	 * Tests that an interface field with duplicate tags is properly detected
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testInterfaceFieldWithDuplicateTagsI() {
 		x4(true);
 	}
@@ -150,6 +152,8 @@ public class InvalidDuplicateTagsTests extends TagTest {
 	 * Tests that an interface field with duplicate tags is properly detected
 	 * using a full build
 	 */
+	@Test
+
 	public void testInterfaceFieldWithDuplicateTagsF() {
 		x4(false);
 	}
@@ -167,6 +171,8 @@ public class InvalidDuplicateTagsTests extends TagTest {
 	 * Tests that an enum field with duplicate tags is properly detected using
 	 * an incremental build
 	 */
+	@Test
+
 	public void testEnumFieldWithDuplicateTagsI() {
 		x5(true);
 	}
@@ -175,6 +181,8 @@ public class InvalidDuplicateTagsTests extends TagTest {
 	 * Tests that an enum field with duplicate tags is properly detected using a
 	 * full build
 	 */
+	@Test
+
 	public void testEnumFieldWithDuplicateTagsF() {
 		x5(false);
 	}
@@ -193,6 +201,8 @@ public class InvalidDuplicateTagsTests extends TagTest {
 	 * Tests that a class method with duplicate tags is properly detected using
 	 * an incremental build
 	 */
+	@Test
+
 	public void testClassMethodWithDuplicateTagsI() {
 		x6(true);
 	}
@@ -201,6 +211,8 @@ public class InvalidDuplicateTagsTests extends TagTest {
 	 * Tests that a class method with duplicate tags is properly detected using
 	 * a full build
 	 */
+	@Test
+
 	public void testClassMethodWithDuplicateTagsF() {
 		x6(false);
 	}
@@ -220,6 +232,8 @@ public class InvalidDuplicateTagsTests extends TagTest {
 	 * Tests that an interface method with duplicate tags is properly detected
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testInterfaceMethodWithDuplicateTagsI() {
 		x7(true);
 	}
@@ -228,6 +242,8 @@ public class InvalidDuplicateTagsTests extends TagTest {
 	 * Tests that an interface method with duplicate tags is properly detected
 	 * using a full build
 	 */
+	@Test
+
 	public void testInterfaceMethodWithDuplicateTagsF() {
 		x7(false);
 	}
@@ -247,6 +263,8 @@ public class InvalidDuplicateTagsTests extends TagTest {
 	 * Tests that an enum method with duplicate tags is properly detected using
 	 * an incremental build
 	 */
+	@Test
+
 	public void testEnumMethodWithDuplicateTagsI() {
 		x8(true);
 	}
@@ -255,6 +273,8 @@ public class InvalidDuplicateTagsTests extends TagTest {
 	 * Tests that an interface method with duplicate tags is properly detected
 	 * using a full build
 	 */
+	@Test
+
 	public void testEnumMethodWithDuplicateTagsF() {
 		x8(false);
 	}

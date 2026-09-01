@@ -15,8 +15,7 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.JavaCore;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the valid @noreference tags on enum methods
@@ -24,10 +23,6 @@ import junit.framework.Test;
  * @since 1.0
  */
 public class ValidEnumMethodTagTests extends ValidMethodTagTests {
-
-	public ValidEnumMethodTagTests(String name) {
-		super(name);
-	}
 
 	@Override
 	protected String getTestCompliance() {
@@ -40,16 +35,11 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	}
 
 	/**
-	 * @return test for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(ValidEnumMethodTagTests.class);
-	}
-
-	/**
 	 * Tests the supported @noreference tag on enum methods
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testValidEnumMethodTag1I() {
 		x1(true);
 	}
@@ -58,6 +48,8 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	 * Tests the supported @noreference tag on enum methods
 	 * using a full build
 	 */
+	@Test
+
 	public void testValidEnumMethodTag1F() {
 		x1(false);
 	}
@@ -70,6 +62,8 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	 * Tests the supported @noreference tag on inner enum methods
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testValidEnumMethodTag3I() {
 		x3(true);
 	}
@@ -78,6 +72,8 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	 * Tests the supported @noreference tag on inner enum methods
 	 * using a full build
 	 */
+	@Test
+
 	public void testValidEnumMethodTag3F() {
 		x3(false);
 	}
@@ -90,6 +86,8 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	 * Tests the supported @noreference tag on a variety of inner / outer enum methods
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testValidEnumMethodTag4I() {
 		x4(true);
 	}
@@ -98,6 +96,8 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	 * Tests the supported @noreference tag on a variety of inner / outer enum methods
 	 * using a full build
 	 */
+	@Test
+
 	public void testValidEnumMethodTag4F() {
 		x4(false);
 	}
@@ -110,6 +110,8 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	 * Tests the supported @noreference tag on enum methods in the default package
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testValidEnumMethodTag5I() {
 		x5(true);
 	}
@@ -118,6 +120,8 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	 * Tests the supported @noreference tag on enum methods in the default package
 	 * using a full build
 	 */
+	@Test
+
 	public void testValidEnumMethodTag5F() {
 		x5(false);
 	}

@@ -17,8 +17,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that the builder correctly finds and reports problems with
@@ -39,23 +38,9 @@ public class BundleCompatibilityTests extends CompatibilityTest {
 	 */
 	protected static String PACKAGE_PREFIX = "a.bundles.";	 //$NON-NLS-1$
 
-	/**
-	 * Constructor
-	 */
-	public BundleCompatibilityTests(String name) {
-		super(name);
-	}
-
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("bundles"); //$NON-NLS-1$
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(BundleCompatibilityTests.class);
 	}
 
 	@Override
@@ -87,9 +72,13 @@ public class BundleCompatibilityTests extends CompatibilityTest {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testPublicToPackageI() throws Exception {
 		xPublicToPackage(true);
 	}
+
+	@Test
 
 	public void testPublicToPackageF() throws Exception {
 		xPublicToPackage(false);
@@ -114,9 +103,13 @@ public class BundleCompatibilityTests extends CompatibilityTest {
 		performDeletionCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemovePublicClassI() throws Exception {
 		xRemovePublicClass(true);
 	}
+
+	@Test
 
 	public void testRemovePublicClassF() throws Exception {
 		xRemovePublicClass(false);
@@ -131,18 +124,25 @@ public class BundleCompatibilityTests extends CompatibilityTest {
 		performDeletionCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemovePrivateClassI() throws Exception {
 		xRemovePrivateClass(true);
 	}
+
+	@Test
 
 	public void testRemovePrivateClassF() throws Exception {
 		xRemovePrivateClass(false);
 	}
 
+	@Test
 
 	public void testDeleteAndReplaceI() throws Exception {
 		xDeleteAndReplace(true);
 	}
+
+	@Test
 
 	public void testDeleteAndReplaceF() throws Exception {
 		xDeleteAndReplace(false);

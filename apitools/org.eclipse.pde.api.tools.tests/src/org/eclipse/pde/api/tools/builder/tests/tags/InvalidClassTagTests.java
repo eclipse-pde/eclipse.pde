@@ -18,8 +18,7 @@ import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for the builder to ensure it find and reports unsupported Javadoc tags
@@ -28,17 +27,6 @@ import junit.framework.Test;
  * @since 1.0
  */
 public class InvalidClassTagTests extends TagTest {
-
-	public InvalidClassTagTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(InvalidClassTagTests.class);
-	}
 
 	@Override
 	protected IPath getTestSourcePath() {
@@ -50,9 +38,13 @@ public class InvalidClassTagTests extends TagTest {
 		return ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.TYPE, IApiProblem.UNSUPPORTED_TAG_USE, IApiProblem.NO_FLAGS);
 	}
 
+	@Test
+
 	public void testInvalidClassTag1I() {
 		x1(true);
 	}
+
+	@Test
 
 	public void testInvalidClassTag1F() {
 		x1(false);
@@ -74,9 +66,13 @@ public class InvalidClassTagTests extends TagTest {
 		deployTagTest("test1.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidClassTag2I() {
 		x2(true);
 	}
+
+	@Test
 
 	public void testInvalidClassTag2F() {
 		x2(false);
@@ -95,9 +91,13 @@ public class InvalidClassTagTests extends TagTest {
 		deployTagTest("test2.java", inc, true); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidClassTag3I() {
 		x3(true);
 	}
+
+	@Test
 
 	public void testInvalidClassTag3F() {
 		x3(false);
@@ -118,9 +118,13 @@ public class InvalidClassTagTests extends TagTest {
 		deployTagTest("test3.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidClassTag4I() {
 		x4(true);
 	}
+
+	@Test
 
 	public void testInvalidClassTag4F() {
 		x4(false);
@@ -138,9 +142,13 @@ public class InvalidClassTagTests extends TagTest {
 		deployTagTest("test4.java", inc, true); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidClassTag5I() {
 		x5(true);
 	}
+
+	@Test
 
 	public void testInvalidClassTag5F() {
 		x5(false);
@@ -161,9 +169,13 @@ public class InvalidClassTagTests extends TagTest {
 		deployTagTest("test5.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidClassTag6I() {
 		x6(true);
 	}
+
+	@Test
 
 	public void testInvalidClassTag6F() {
 		x6(false);
@@ -181,9 +193,13 @@ public class InvalidClassTagTests extends TagTest {
 		deployTagTest("test6.java", inc, true); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidClassTag7I() {
 		x7(true);
 	}
+
+	@Test
 
 	public void testInvalidClassTag7F() {
 		x7(false);
@@ -205,9 +221,13 @@ public class InvalidClassTagTests extends TagTest {
 		deployTagTest("test7.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidClassTag8I() {
 		x8(true);
 	}
+
+	@Test
 
 	public void testInvalidClassTag8F() {
 		x8(false);
@@ -228,6 +248,8 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests that @noextend and @noinstantiate are invalid tags on an outer
 	 * class in the the testing package a.b.c using an incremental build
 	 */
+	@Test
+
 	public void testInvalidClassTag9I() {
 		x9(true);
 	}
@@ -236,6 +258,8 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests that @noextend and @noinstantiate are invalid tags on an outer
 	 * class in the the testing package a.b.c using a full build
 	 */
+	@Test
+
 	public void testInvalidClassTag9F() {
 		x9(false);
 	}
@@ -255,6 +279,8 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests that @noextend and @noinstantiate are invalid tags on an inner
 	 * class in the the testing package a.b.c using an incremental build
 	 */
+	@Test
+
 	public void testInvalidClassTag10I() {
 		x10(true);
 	}
@@ -263,6 +289,8 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests that @noextend and @noinstantiate are invalid tags on an inner
 	 * class in the the testing package a.b.c using a full build
 	 */
+	@Test
+
 	public void testInvalidClassTag10F() {
 		x10(false);
 	}
@@ -286,6 +314,8 @@ public class InvalidClassTagTests extends TagTest {
 	 * inner / outer / top-level classes in the the testing package a.b.c using
 	 * an incremental build
 	 */
+	@Test
+
 	public void testInvalidClassTag11I() {
 		x11(true);
 	}
@@ -295,6 +325,8 @@ public class InvalidClassTagTests extends TagTest {
 	 * inner / outer / top-level classes in the the testing package a.b.c using
 	 * a full build
 	 */
+	@Test
+
 	public void testInvalidClassTag11F() {
 		x11(false);
 	}
@@ -331,6 +363,8 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests all tags are invalid when parent class is private or package
 	 * default (incremental build)
 	 */
+	@Test
+
 	public void testInvalidClassTag12I() {
 		x12(true);
 	}
@@ -339,6 +373,8 @@ public class InvalidClassTagTests extends TagTest {
 	 * Tests all tags are invalid when parent class is private or package
 	 * default (full build)
 	 */
+	@Test
+
 	public void testInvalidClassTag12F() {
 		x12(false);
 	}

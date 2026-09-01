@@ -13,17 +13,22 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.tests;
 
-import org.eclipse.pde.api.tools.builder.tests.performance.PerformanceTest;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
+import org.eclipse.pde.api.tools.builder.tests.performance.ApiDescriptionTests;
+import org.eclipse.pde.api.tools.builder.tests.performance.ExternalDependencyPerfTests;
+import org.eclipse.pde.api.tools.builder.tests.performance.FullSourceBuildTests;
+import org.eclipse.pde.api.tools.builder.tests.performance.IncrementalBuildTests;
+import org.eclipse.pde.api.tools.builder.tests.performance.UseScanTests;
 
 
 /**
  * Performance test suite that is run as a JUnit plug-in test
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-		PerformanceTest.class
+@Suite
+@SelectClasses({
+		FullSourceBuildTests.class, ApiDescriptionTests.class, IncrementalBuildTests.class,
+		ExternalDependencyPerfTests.class, UseScanTests.class
 })
 public class ApiToolsPerformanceTestSuite {
 

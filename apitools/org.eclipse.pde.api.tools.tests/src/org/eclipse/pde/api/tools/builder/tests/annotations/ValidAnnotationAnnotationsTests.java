@@ -14,8 +14,7 @@
 package org.eclipse.pde.api.tools.builder.tests.annotations;
 
 import org.eclipse.core.runtime.IPath;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests tags that are valid on an annotation
@@ -23,20 +22,6 @@ import junit.framework.Test;
  * @since 1.0.400
  */
 public class ValidAnnotationAnnotationsTests extends InvalidAnnotationAnnotationsTests {
-
-	/**
-	 * Constructor
-	 */
-	public ValidAnnotationAnnotationsTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(ValidAnnotationAnnotationsTests.class);
-	}
 
 	@Override
 	protected IPath getTestSourcePath() {
@@ -46,6 +31,8 @@ public class ValidAnnotationAnnotationsTests extends InvalidAnnotationAnnotation
 	/**
 	 * Tests the @NoReference annotation on annotations
 	 */
+	@Test
+
 	public void testNoReference1I() throws Exception {
 		String typename = "test1.java"; //$NON-NLS-1$
 		deployAnnotationTest(typename, true, false);
@@ -54,6 +41,8 @@ public class ValidAnnotationAnnotationsTests extends InvalidAnnotationAnnotation
 	/**
 	 * Tests the @NoReference annotation on annotations
 	 */
+	@Test
+
 	public void testNoReference1F() throws Exception {
 		String typename = "test1.java"; //$NON-NLS-1$
 		deployAnnotationTest(typename, false, false);
@@ -62,6 +51,8 @@ public class ValidAnnotationAnnotationsTests extends InvalidAnnotationAnnotation
 	/**
 	 * Tests the @NoReference annotation on annotations in the default package
 	 */
+	@Test
+
 	public void testNoReference2I() throws Exception {
 		String typename = "test2.java"; //$NON-NLS-1$
 		deployAnnotationTest(typename, true, true);
@@ -70,6 +61,8 @@ public class ValidAnnotationAnnotationsTests extends InvalidAnnotationAnnotation
 	/**
 	 * Tests the @NoReference annotation on annotations in the default package
 	 */
+	@Test
+
 	public void testNoReference2F() throws Exception {
 		String typename = "test2.java"; //$NON-NLS-1$
 		deployAnnotationTest(typename, false, true);
@@ -78,6 +71,8 @@ public class ValidAnnotationAnnotationsTests extends InvalidAnnotationAnnotation
 	/**
 	 * Tests the @NoReference annotation on annotations and member types
 	 */
+	@Test
+
 	public void testNoReference3I() throws Exception {
 		String typename = "test3.java"; //$NON-NLS-1$
 		deployAnnotationTest(typename, true, true);
@@ -86,6 +81,8 @@ public class ValidAnnotationAnnotationsTests extends InvalidAnnotationAnnotation
 	/**
 	 * Tests the @NoReference annotation on annotations and member types
 	 */
+	@Test
+
 	public void testNoReference3F() throws Exception {
 		String typename = "test3.java"; //$NON-NLS-1$
 		deployAnnotationTest(typename, false, true);

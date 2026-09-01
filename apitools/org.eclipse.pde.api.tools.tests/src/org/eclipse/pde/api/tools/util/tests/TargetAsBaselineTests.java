@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.util.tests;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -28,14 +28,14 @@ import org.eclipse.pde.api.tools.tests.AbstractApiTest;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.core.target.ITargetPlatformService;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TargetAsBaselineTests extends AbstractApiTest {
 	ITargetDefinition definition;
 
 	@Override
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		super.setUp();
 		IPath path = TestSuiteHelper.getPluginDirectoryPath();
@@ -56,8 +56,8 @@ public class TargetAsBaselineTests extends AbstractApiTest {
 	@Test
 	public void testLoadTarget() throws CoreException {
 		IApiBaseline baseline = ApiModelFactory.newApiBaselineFromTarget(getClass().getName(), definition, null);
-		assertTrue("This baseline should appear to be from a target definition", ApiModelFactory.isDerivedFromTarget(baseline)); //$NON-NLS-1$
-		assertTrue("This baseline should be from this particular target definition", ApiModelFactory.isDerivedFromTarget(baseline, definition)); //$NON-NLS-1$
+		assertTrue(ApiModelFactory.isDerivedFromTarget(baseline), "This baseline should appear to be from a target definition"); //$NON-NLS-1$
+		assertTrue(ApiModelFactory.isDerivedFromTarget(baseline, definition), "This baseline should be from this particular target definition"); //$NON-NLS-1$
 		assertTrue(baseline.getApiComponents().length >= 3); // includes EEs
 	}
 
@@ -74,6 +74,6 @@ public class TargetAsBaselineTests extends AbstractApiTest {
 		assertTrue(ApiModelFactory.isUpToDateWithTarget(baseline, definition));
 		definition.setOS("next"); //$NON-NLS-1$
 		assertFalse(ApiModelFactory.isUpToDateWithTarget(baseline, definition));
-		assertTrue("This baseline should still be from this particular target definition", ApiModelFactory.isDerivedFromTarget(baseline, definition)); //$NON-NLS-1$
+		assertTrue(ApiModelFactory.isDerivedFromTarget(baseline, definition), "This baseline should still be from this particular target definition"); //$NON-NLS-1$
 	}
 }

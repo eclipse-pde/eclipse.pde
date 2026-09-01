@@ -18,21 +18,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 public class Java8MethodConstRefUsageTests extends Java8UsageTest {
-
-	public Java8MethodConstRefUsageTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * @return the test class for this suite
-	 */
-	public static Test suite() {
-		return buildTestSuite(Java8MethodConstRefUsageTests.class);
-	}
 
 	@Override
 	protected IPath getTestSourcePath() {
@@ -52,6 +40,8 @@ public class Java8MethodConstRefUsageTests extends Java8UsageTest {
 	 * Tests illegal references to method reference and constructor reference
 	 * (full)
 	 */
+	@Test
+
 	public void testMethodConstructorRefF() {
 		x1(false);
 	}
@@ -60,6 +50,8 @@ public class Java8MethodConstRefUsageTests extends Java8UsageTest {
 	 * Tests illegal references to method reference and constructor reference
 	 * (incremental)
 	 */
+	@Test
+
 	public void testMethodConstructorRefI() {
 		x1(true);
 	}
@@ -97,6 +89,8 @@ public class Java8MethodConstRefUsageTests extends Java8UsageTest {
 	/**
 	 * Tests illegal references to method reference (full)
 	 */
+	@Test
+
 	public void testMethodConstructorRef2F() {
 		x2(false);
 	}
@@ -104,6 +98,8 @@ public class Java8MethodConstRefUsageTests extends Java8UsageTest {
 	/**
 	 * Tests illegal references to method reference (incremental)
 	 */
+	@Test
+
 	public void testMethodConstructorRef2I() {
 		x2(true);
 	}
@@ -122,12 +118,10 @@ public class Java8MethodConstRefUsageTests extends Java8UsageTest {
 				{ "MR", typename, "mrCompare2(String, String)" }, //$NON-NLS-1$ //$NON-NLS-2$
 				{ "MR", typename, "con(Supplier<T>)" } }; //$NON-NLS-1$ //$NON-NLS-2$
 
-
 		setExpectedMessageArgs(args);
 		setExpectedLineMappings(new LineMapping[] {
 				new LineMapping(30, pids[0], args[0]), new LineMapping(32, pids[1], args[1]),
 				new LineMapping(34, pids[2], args[2]),
-
 
 		});
 
@@ -138,6 +132,8 @@ public class Java8MethodConstRefUsageTests extends Java8UsageTest {
 	 * Tests illegal annotation references to method reference and constructor
 	 * reference (full)
 	 */
+	@Test
+
 	public void testMethodConstructorRefAnnoF() {
 		x3(false);
 	}
@@ -146,6 +142,8 @@ public class Java8MethodConstRefUsageTests extends Java8UsageTest {
 	 * Tests illegal annotation references to method reference and constructor
 	 * reference (incremental)
 	 */
+	@Test
+
 	public void testMethodConstructorRefAnnoI() {
 		x3(true);
 	}
@@ -184,6 +182,8 @@ public class Java8MethodConstRefUsageTests extends Java8UsageTest {
 	/**
 	 * Tests illegal annotation references to method reference (full)
 	 */
+	@Test
+
 	public void testMethodConstructorRefAnno2F() {
 		x4(false);
 	}
@@ -191,6 +191,8 @@ public class Java8MethodConstRefUsageTests extends Java8UsageTest {
 	/**
 	 * Tests illegal annotation references to method reference (incremental)
 	 */
+	@Test
+
 	public void testMethodConstructorRefAnno2I() {
 		x4(true);
 	}

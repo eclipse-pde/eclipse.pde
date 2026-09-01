@@ -17,8 +17,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests a variety of method usage where the callee is restricted in some way (API javadoc tagging)
@@ -29,10 +28,6 @@ public class MethodUsageTests extends UsageTest {
 
 	public static final String METHOD_CLASS_NAME = "MethodUsageClass"; //$NON-NLS-1$
 	public static final String METHOD_INTERFACE_NAME = "MethodUsageInterface"; //$NON-NLS-1$
-
-	public MethodUsageTests(String name) {
-		super(name);
-	}
 
 	@Override
 	protected int getDefaultProblemId() {
@@ -55,14 +50,12 @@ public class MethodUsageTests extends UsageTest {
 		return super.getTestSourcePath().append("method"); //$NON-NLS-1$
 	}
 
-	public static Test suite() {
-		return buildTestSuite(MethodUsageTests.class);
-	}
-
 	/**
 	 * Tests that restricted methods called from a class instance are properly reported
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodUsageTests1F() {
 		x1(false);
 	}
@@ -71,6 +64,8 @@ public class MethodUsageTests extends UsageTest {
 	 * Tests that restricted methods called from a class instance are properly reported
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testMethodUsageTests1I() {
 		x1(true);
 	}
@@ -107,6 +102,8 @@ public class MethodUsageTests extends UsageTest {
 	 * Tests that restricted methods extended from a class are properly reported
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodUsageTests2F() {
 		x2(false);
 	}
@@ -115,6 +112,8 @@ public class MethodUsageTests extends UsageTest {
 	 * Tests that restricted methods called from a class are properly reported
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testMethodUsageTests2I() {
 		x2(true);
 	}
@@ -146,6 +145,8 @@ public class MethodUsageTests extends UsageTest {
 	 * Tests that accessing restricted static methods from a class are properly reported
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodUsageTests3F() {
 		x3(false);
 	}
@@ -154,6 +155,8 @@ public class MethodUsageTests extends UsageTest {
 	 * Tests that accessing restricted static methods from a class are properly reported
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testMethodUsageTests3I() {
 		x3(true);
 	}
@@ -195,6 +198,8 @@ public class MethodUsageTests extends UsageTest {
 	 * Tests that accessing restricted static methods from an implementing class are properly reported
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodUsageTests4F() {
 		x4(false);
 	}
@@ -203,6 +208,8 @@ public class MethodUsageTests extends UsageTest {
 	 * Tests that accessing restricted interface methods from an implementing class are properly reported
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testMethodUsageTests4I() {
 		x4(true);
 	}
@@ -239,6 +246,8 @@ public class MethodUsageTests extends UsageTest {
 	 * Tests that accessing restricted method from an anonymous class is properly reported
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodUsageTests5F() {
 		x5(false);
 	}
@@ -247,6 +256,8 @@ public class MethodUsageTests extends UsageTest {
 	 * Tests that accessing restricted method from an anonymous class is properly reported
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodUsageTests5I() {
 		x5(true);
 	}
@@ -270,6 +281,8 @@ public class MethodUsageTests extends UsageTest {
 	 * Tests that accessing restricted method from a local class is properly reported
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodUsageTests6F() {
 		x6(false);
 	}
@@ -278,6 +291,8 @@ public class MethodUsageTests extends UsageTest {
 	 * Tests that accessing restricted method from a local class is properly reported
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodUsageTests6I() {
 		x6(true);
 	}
@@ -301,6 +316,8 @@ public class MethodUsageTests extends UsageTest {
 	 * Tests that accessing restricted method from a local class is properly reported
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodUsageTests7F() {
 		x7(false);
 	}
@@ -309,6 +326,8 @@ public class MethodUsageTests extends UsageTest {
 	 * Tests that accessing restricted method from a local class is properly reported
 	 * using a full build
 	 */
+	@Test
+
 	public void testMethodUsageTests7I() {
 		x7(true);
 	}

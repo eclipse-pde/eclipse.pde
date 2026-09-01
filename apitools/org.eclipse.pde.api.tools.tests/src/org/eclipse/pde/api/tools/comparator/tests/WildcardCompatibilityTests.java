@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.comparator.tests;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,9 +29,9 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.ui.tests.util.FreezeMonitor;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -88,14 +88,14 @@ public class WildcardCompatibilityTests {
 	private IApiBaseline beforeBaseline;
 	private IApiBaseline afterBaseline;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		FreezeMonitor.expectCompletionInAMinute();
 		beforeRoot = Files.createTempDirectory("api-delta-before").toFile(); //$NON-NLS-1$
 		afterRoot = Files.createTempDirectory("api-delta-after").toFile(); //$NON-NLS-1$
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		ApiTestingEnvironment.dispose(beforeBaseline);
 		ApiTestingEnvironment.dispose(afterBaseline);
@@ -118,7 +118,7 @@ public class WildcardCompatibilityTests {
 		writeBundleDir(afterRoot, afterClass);
 
 		IDelta delta = compare();
-		assertTrue("List<? extends Object> → List<?> method must be NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertTrue(delta == ApiComparator.NO_DELTA, "List<? extends Object> → List<?> method must be NO_DELTA"); //$NON-NLS-1$
 	}
 
 	/**
@@ -134,7 +134,7 @@ public class WildcardCompatibilityTests {
 		writeBundleDir(afterRoot, afterClass);
 
 		IDelta delta = compare();
-		assertTrue("List<?> → List<? extends Object> method must be NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertTrue(delta == ApiComparator.NO_DELTA, "List<?> → List<? extends Object> method must be NO_DELTA"); //$NON-NLS-1$
 	}
 
 	/**
@@ -151,7 +151,7 @@ public class WildcardCompatibilityTests {
 		writeBundleDir(afterRoot, afterClass);
 
 		IDelta delta = compare();
-		assertTrue("List<? extends Object> → List<?> field must be NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertTrue(delta == ApiComparator.NO_DELTA, "List<? extends Object> → List<?> field must be NO_DELTA"); //$NON-NLS-1$
 	}
 
 	/**
@@ -167,7 +167,7 @@ public class WildcardCompatibilityTests {
 		writeBundleDir(afterRoot, afterClass);
 
 		IDelta delta = compare();
-		assertTrue("List<?> → List<? extends Object> field must be NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertTrue(delta == ApiComparator.NO_DELTA, "List<?> → List<? extends Object> field must be NO_DELTA"); //$NON-NLS-1$
 	}
 
 	// ── Helpers ──────────────────────────────────────────────────────────────
@@ -177,13 +177,13 @@ public class WildcardCompatibilityTests {
 		afterBaseline = TestSuiteHelper.createBaseline("after", afterRoot); //$NON-NLS-1$
 
 		IApiComponent beforeComp = beforeBaseline.getApiComponent(BUNDLE_NAME);
-		assertNotNull("before API component not found", beforeComp); //$NON-NLS-1$
+		assertNotNull(beforeComp, "before API component not found"); //$NON-NLS-1$
 		IApiComponent afterComp = afterBaseline.getApiComponent(BUNDLE_NAME);
-		assertNotNull("after API component not found", afterComp); //$NON-NLS-1$
+		assertNotNull(afterComp, "after API component not found"); //$NON-NLS-1$
 
 		IDelta delta = ApiComparator.compare(beforeComp, afterComp, beforeBaseline, afterBaseline,
 				VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("compare returned null", delta); //$NON-NLS-1$
+		assertNotNull(delta, "compare returned null"); //$NON-NLS-1$
 		return delta;
 	}
 

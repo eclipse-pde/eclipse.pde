@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.model.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ import org.eclipse.pde.api.tools.internal.model.DirectoryApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.model.ApiTypeContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the class file containers
@@ -50,7 +50,7 @@ public class ApiTypeContainerTests {
 		IPath path = TestSuiteHelper.getPluginDirectoryPath();
 		path = path.append("test-jars").append("sample.jar"); //$NON-NLS-1$ //$NON-NLS-2$
 		File file = path.toFile();
-		assertTrue("Missing jar file", file.exists()); //$NON-NLS-1$
+		assertTrue(file.exists(), "Missing jar file"); //$NON-NLS-1$
 		return new ArchiveApiTypeContainer(null, path.toOSString());
 	}
 
@@ -63,7 +63,7 @@ public class ApiTypeContainerTests {
 		IPath path = TestSuiteHelper.getPluginDirectoryPath();
 		path = path.append("test-bin-dir"); //$NON-NLS-1$
 		File file = path.toFile();
-		assertTrue("Missing bin directory", file.exists()); //$NON-NLS-1$
+		assertTrue(file.exists(), "Missing bin directory"); //$NON-NLS-1$
 		return new DirectoryApiTypeContainer(null, path.toOSString());
 	}
 
@@ -94,11 +94,11 @@ public class ApiTypeContainerTests {
 		knownNames.add(""); //$NON-NLS-1$
 		knownNames.add("a"); //$NON-NLS-1$
 		knownNames.add("a.b.c"); //$NON-NLS-1$
-		assertEquals("Wrong number of packages", 3, packageNames.length); //$NON-NLS-1$
+		assertEquals(3, packageNames.length, "Wrong number of packages"); //$NON-NLS-1$
 		for (String packageName : packageNames) {
-			assertTrue("Missing package " + packageName, knownNames.remove(packageName)); //$NON-NLS-1$
+			assertTrue(knownNames.remove(packageName), "Missing package " + packageName); //$NON-NLS-1$
 		}
-		assertTrue("Should be no left over packages", knownNames.isEmpty()); //$NON-NLS-1$
+		assertTrue(knownNames.isEmpty(), "Should be no left over packages"); //$NON-NLS-1$
 	}
 
 	/**
@@ -140,7 +140,7 @@ public class ApiTypeContainerTests {
 			}
 			@Override
 			public void endVisitPackage(String packageName) {
-				assertTrue("Wrong end visit order", visit.get(visit.size() - 1).equals(packageName)); //$NON-NLS-1$
+				assertTrue(visit.get(visit.size() - 1).equals(packageName), "Wrong end visit order"); //$NON-NLS-1$
 			}
 			@Override
 			public void end(String packageName, IApiTypeRoot classFile) {
@@ -148,8 +148,8 @@ public class ApiTypeContainerTests {
 			}
 		};
 		container.accept(visitor);
-		assertEquals("Visited wrong number of packages", expectedPkgOrder.size(), visit.size()); //$NON-NLS-1$
-		assertEquals("Visit order incorrect", expectedPkgOrder, visit); //$NON-NLS-1$
+		assertEquals(expectedPkgOrder.size(), visit.size(), "Visited wrong number of packages"); //$NON-NLS-1$
+		assertEquals(expectedPkgOrder, visit, "Visit order incorrect"); //$NON-NLS-1$
 	}
 
 	/**
@@ -203,7 +203,7 @@ public class ApiTypeContainerTests {
 			}
 			@Override
 			public void visit(String packageName, IApiTypeRoot classFile) {
-				assertTrue("Should not visit types", visit.get(visit.size() - 1).equals(packageName)); //$NON-NLS-1$
+				assertTrue(visit.get(visit.size() - 1).equals(packageName), "Should not visit types"); //$NON-NLS-1$
 				List<String> types = visitTypes.get(packageName);
 				if (types == null) {
 					types = new ArrayList<>();
@@ -214,17 +214,17 @@ public class ApiTypeContainerTests {
 
 			@Override
 			public void endVisitPackage(String packageName) {
-				assertTrue("Wrong end visit order", visit.get(visit.size() - 1).equals(packageName)); //$NON-NLS-1$
-				assertEquals("Visited wrong types", expectedTypes.get(packageName), visitTypes.get(packageName)); //$NON-NLS-1$
+				assertTrue(visit.get(visit.size() - 1).equals(packageName), "Wrong end visit order"); //$NON-NLS-1$
+				assertEquals(expectedTypes.get(packageName), visitTypes.get(packageName), "Visited wrong types"); //$NON-NLS-1$
 			}
 			@Override
 			public void end(String packageName, IApiTypeRoot classFile) {
 				List<String> types = visitTypes.get(packageName);
-				assertTrue("Should not visit types", types.get(types.size() - 1).equals(classFile.getTypeName())); //$NON-NLS-1$
+				assertTrue(types.get(types.size() - 1).equals(classFile.getTypeName()), "Should not visit types"); //$NON-NLS-1$
 			}
 		};
 		container.accept(visitor);
-		assertEquals("Visited wrong number of packages", expectedPkgOrder.size(), visit.size()); //$NON-NLS-1$
-		assertEquals("Visit order incorrect", expectedPkgOrder, visit);		 //$NON-NLS-1$
+		assertEquals(expectedPkgOrder.size(), visit.size(), "Visited wrong number of packages"); //$NON-NLS-1$
+		assertEquals(expectedPkgOrder, visit, "Visit order incorrect"); //$NON-NLS-1$
 	}
 }

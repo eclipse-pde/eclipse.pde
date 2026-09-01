@@ -14,35 +14,27 @@
 package org.eclipse.pde.api.tools.builder.tests.tags;
 
 import org.eclipse.core.runtime.IPath;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that the builder accepts valid tags on records
  */
 public class ValidRecordTagTests extends InvalidRecordTagTests {
 
-	public ValidRecordTagTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(ValidRecordTagTests.class);
-	}
-
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("valid"); //$NON-NLS-1$
 	}
+
+	@Test
 
 	public void testValidRecordTag1I() {
 		x1(true);
 	}
 
 	@Override
+	@Test
+
 	public void testInvalidRecordTag1F() {
 		x1(false);
 	}

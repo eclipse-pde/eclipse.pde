@@ -21,8 +21,8 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test class usage for Java 7 code snippets
@@ -30,20 +30,6 @@ import junit.framework.Test;
  * @since 1.0.100
  */
 public class Java7MethodUsageTests extends Java7UsageTest {
-
-	/**
-	 * Constructor
-	 */
-	public Java7MethodUsageTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * @return the test class for this suite
-	 */
-	public static Test suite() {
-		return buildTestSuite(Java7MethodUsageTests.class);
-	}
 
 	/**
 	 * Returns the problem id with the given kind
@@ -58,14 +44,16 @@ public class Java7MethodUsageTests extends Java7UsageTest {
 	 * Tests illegal use of methods inside a string switch block
 	 * (full)
 	 */
+	@Test
+
 	public void testStringSwitchF() throws Exception {
 		IWorkspaceRoot root = getEnv().getWorkspace().getRoot();
-		assertEquals("unexpected test project name", "usageprojectjava7", getTestingProjectName()); //$NON-NLS-1$//$NON-NLS-2$
+		Assertions.assertEquals("usageprojectjava7", getTestingProjectName(), "unexpected test project name"); //$NON-NLS-1$//$NON-NLS-2$
 		String[] projectNames = { "refprojectjava7", "usageprojectjava7" }; //$NON-NLS-1$ //$NON-NLS-2$
 		logProjectInfos(getClass() + "." + getName() + " logging extra infos before refresh", projectNames); //$NON-NLS-1$ //$NON-NLS-2$
 		for (String projectName : projectNames) {
 			IProject project = root.getProject(projectName);
-			assertTrue("project must exist but does not: " + projectName, project.exists()); //$NON-NLS-1$
+			Assertions.assertTrue(project.exists(), "project must exist but does not: " + projectName); //$NON-NLS-1$
 			project.open(null);
 			project.refreshLocal(IResource.DEPTH_INFINITE, null);
 		}
@@ -80,10 +68,11 @@ public class Java7MethodUsageTests extends Java7UsageTest {
 	 * Tests illegal use of methods inside a string switch block
 	 * (incremental)
 	 */
+	@Test
+
 	public void testStringSwitchI() {
 		x1(true);
 	}
-
 
 	private void x1(boolean inc) {
 		int[] pids = new int[] {
@@ -117,6 +106,8 @@ public class Java7MethodUsageTests extends Java7UsageTest {
 	 * Tests illegal use of methods inside a multi catch block
 	 * (full)
 	 */
+	@Test
+
 	public void testMultiCatchF() {
 		x2(false);
 	}
@@ -125,10 +116,11 @@ public class Java7MethodUsageTests extends Java7UsageTest {
 	 * Tests illegal use of methods inside a multi catch block
 	 * (incremental)
 	 */
+	@Test
+
 	public void testMultiCatchI() {
 		x2(true);
 	}
-
 
 	private void x2(boolean inc) {
 		int[] pids = new int[] {

@@ -15,8 +15,7 @@ package org.eclipse.pde.api.tools.builder.tests.usage;
 
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests Java 5 method accesses
@@ -29,28 +28,21 @@ public class Java5MethodUsageTests extends MethodUsageTests {
 	protected static final String GENERIC_METHOD_CLASS_NAME2 = "GenericMethodUsageClass2"; //$NON-NLS-1$
 	protected static final String METHOD_ENUM_NAME = "MethodUsageEnum"; //$NON-NLS-1$
 
-	public Java5MethodUsageTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * @return the test class for this suite
-	 */
-	public static Test suite() {
-		return buildTestSuite(Java5MethodUsageTests.class);
-	}
-
 	@Override
 	protected String getTestCompliance() {
 		return JavaCore.VERSION_1_8;
 	}
 
 	@Override
+	@Test
+
 	public void testMethodUsageTests1F() {
 		x1(false);
 	}
 
 	@Override
+	@Test
+
 	public void testMethodUsageTests1I() {
 		x1(true);
 	}
@@ -95,11 +87,15 @@ public class Java5MethodUsageTests extends MethodUsageTests {
 	}
 
 	@Override
+	@Test
+
 	public void testMethodUsageTests2F() {
 		x2(false);
 	}
 
 	@Override
+	@Test
+
 	public void testMethodUsageTests2I() {
 		x2(true);
 	}
@@ -136,11 +132,15 @@ public class Java5MethodUsageTests extends MethodUsageTests {
 	}
 
 	@Override
+	@Test
+
 	public void testMethodUsageTests3F() {
 		x3(false);
 	}
 
 	@Override
+	@Test
+
 	public void testMethodUsageTests3I() {
 		x3(true);
 	}

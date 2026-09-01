@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.tests;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
@@ -48,9 +48,9 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.ui.tests.util.FreezeMonitor;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 
 /**
  * Abstract class with commonly used methods for API Tools tests
@@ -71,12 +71,12 @@ public class AbstractApiTest {
 	 */
 	protected static final String TESTING_PLUGIN_PROJECT_NAME = "APIPluginTests"; //$NON-NLS-1$
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		FreezeMonitor.expectCompletionInAMinute();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		FreezeMonitor.done();
 	}
@@ -108,9 +108,9 @@ public class AbstractApiTest {
 	 */
 	protected IApiComponent getProjectApiComponent(String projectname) {
 		IJavaProject project = getTestingJavaProject(projectname);
-		assertNotNull("the project " + projectname + " must exist", project); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNotNull(project, "the project " + projectname + " must exist"); //$NON-NLS-1$ //$NON-NLS-2$
 		IApiBaseline profile = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline();
-		assertNotNull("the workspace profile must exist", profile); //$NON-NLS-1$
+		assertNotNull(profile, "the workspace profile must exist"); //$NON-NLS-1$
 		return profile.getApiComponent(project.getElementName());
 	}
 
@@ -159,22 +159,22 @@ public class AbstractApiTest {
 		// create project and import source
 		IJavaProject jproject = ProjectUtils.createPluginProject(name,
 				new String[] { PluginProject.NATURE, ApiPlugin.NATURE_ID });
-		assertNotNull("The java project must have been created", jproject); //$NON-NLS-1$
+		assertNotNull(jproject, "The java project must have been created"); //$NON-NLS-1$
 
 		IPackageFragmentRoot root = jproject.getPackageFragmentRoot(jproject.getProject().getFolder(ProjectUtils.SRC_FOLDER));
-		assertTrue("the src root must have been created", root.exists()); //$NON-NLS-1$
+		assertTrue(root.exists(), "the src root must have been created"); //$NON-NLS-1$
 		if (packages != null) {
 			IPackageFragment fragment = null;
 			for (String package1 : packages) {
 				fragment = root.createPackageFragment(package1, true, new NullProgressMonitor());
-				assertNotNull("the package fragment " + package1 + " cannot be null", fragment); //$NON-NLS-1$ //$NON-NLS-2$
+				assertNotNull(fragment, "the package fragment " + package1 + " cannot be null"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 
 		PluginRegistry.getWorkspaceModels();
 
 		IApiBaseline baseline = getWorkspaceBaseline();
-		assertNotNull("the workspace baseline cannot be null", baseline); //$NON-NLS-1$
+		assertNotNull(baseline, "the workspace baseline cannot be null"); //$NON-NLS-1$
 
 		// This assertion caused intermittant failures, skipping it hasn't
 		// caused any problems in the tests (Bug 368458)
@@ -208,7 +208,7 @@ public class AbstractApiTest {
 				pro.delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
 			}
 			Object obj = waiter.waitForEvent();
-			assertNotNull("the project delete event did not arrive", obj); //$NON-NLS-1$
+			assertNotNull(obj, "the project delete event did not arrive"); //$NON-NLS-1$
 		}
 	}
 
@@ -231,7 +231,7 @@ public class AbstractApiTest {
 		return ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline();
 	}
 
-	@BeforeClass
+	@BeforeAll
 	public static void beforeClass() throws CoreException {
 		PDECore.getDefault().getPreferencesManager().setValue(ICoreConstants.RUN_API_ANALYSIS_AS_JOB, false);
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();

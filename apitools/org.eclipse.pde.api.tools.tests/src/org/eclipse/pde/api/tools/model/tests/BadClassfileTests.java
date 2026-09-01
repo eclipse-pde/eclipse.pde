@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.model.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,8 +50,8 @@ import org.eclipse.pde.api.tools.internal.provisional.search.ApiSearchEngine;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor;
 import org.eclipse.pde.api.tools.internal.provisional.search.IMetadata;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that our framework properly handles bad class files. I.e. class files
@@ -63,7 +63,7 @@ public class BadClassfileTests {
 	DirectoryApiTypeContainer container = null;
 	String CLASSFILE = "nobytecodes"; //$NON-NLS-1$
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		if (source == null) {
 			source = TestSuiteHelper.getPluginDirectoryPath().append("test-classes").append("bad"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -90,7 +90,7 @@ public class BadClassfileTests {
 		writePreamble("testClassfileScanner()"); //$NON-NLS-1$
 		IApiTypeRoot root = container.findTypeRoot(CLASSFILE);
 		IApiType type = root.getStructure();
-		assertNull("The type must be null", type); //$NON-NLS-1$
+		assertNull(type, "The type must be null"); //$NON-NLS-1$
 	}
 
 	/**
@@ -272,10 +272,10 @@ public class BadClassfileTests {
 		try {
 			scanner.scan(unit, new ApiDescription("test"), this.container, null, null); //$NON-NLS-1$
 		} catch (CoreException ce) {
-			assertTrue("The tag scanner should return a multi status exception", ce.getStatus() instanceof MultiStatus); //$NON-NLS-1$
+			assertTrue(ce.getStatus() instanceof MultiStatus, "The tag scanner should return a multi status exception"); //$NON-NLS-1$
 			IStatus[] children = ((MultiStatus) ce.getStatus()).getChildren();
-			assertEquals("There should only be one problem", 1, children.length); //$NON-NLS-1$
-			assertTrue("the message should be about nobytecodes#method() not resolving", children[0].getMessage().equals("Unable to resolve method signature: nobytecodes#void method()")); //$NON-NLS-1$ //$NON-NLS-2$
+			assertEquals(1, children.length, "There should only be one problem"); //$NON-NLS-1$
+			assertTrue(children[0].getMessage().equals("Unable to resolve method signature: nobytecodes#void method()"), "the message should be about nobytecodes#method() not resolving"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 }

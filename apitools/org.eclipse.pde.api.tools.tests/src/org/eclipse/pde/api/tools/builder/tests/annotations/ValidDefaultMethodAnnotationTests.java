@@ -15,8 +15,7 @@ package org.eclipse.pde.api.tools.builder.tests.annotations;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.JavaCore;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests valid annotations on interface default methods
@@ -24,10 +23,6 @@ import junit.framework.Test;
  * @since 1.0.600
  */
 public class ValidDefaultMethodAnnotationTests extends MethodAnnotationTest {
-
-	public ValidDefaultMethodAnnotationTests(String name) {
-		super(name);
-	}
 
 	@Override
 	protected String getTestCompliance() {
@@ -44,16 +39,13 @@ public class ValidDefaultMethodAnnotationTests extends MethodAnnotationTest {
 		return "java8tags"; //$NON-NLS-1$
 	}
 
-	/**
-	 * @return the test for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(ValidDefaultMethodAnnotationTests.class);
-	}
+	@Test
 
 	public void testNoOverrideAnnotOnDefaultI() {
 		x1(true);
 	}
+
+	@Test
 
 	public void testNoOverrideAnnotOnDefaultF() {
 		x1(false);

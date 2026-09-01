@@ -17,21 +17,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 public class Java8ConsRefInstantiateUsageTests extends Java8UsageTest {
-
-	public Java8ConsRefInstantiateUsageTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * @return the test class for this suite
-	 */
-	public static Test suite() {
-		return buildTestSuite(Java8ConsRefInstantiateUsageTests.class);
-	}
 
 	@Override
 	protected IPath getTestSourcePath() {
@@ -47,10 +35,11 @@ public class Java8ConsRefInstantiateUsageTests extends Java8UsageTest {
 		return ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.TYPE, kind, flags);
 	}
 
-
 	/**
 	 * Tests illegal reference to class with no instantiate (full)
 	 */
+	@Test
+
 	public void testConsRefInstantiateF() {
 		x1(false);
 	}
@@ -58,6 +47,8 @@ public class Java8ConsRefInstantiateUsageTests extends Java8UsageTest {
 	/**
 	 * Tests illegal reference to class with no instantiate (incremental)
 	 */
+	@Test
+
 	public void testConsRefInstantiateI() {
 		x1(true);
 	}
@@ -87,10 +78,11 @@ public class Java8ConsRefInstantiateUsageTests extends Java8UsageTest {
 		deployUsageTest(typename, inc);
 	}
 
-
 	/**
 	 * Tests illegal reference to class with no annotation instantiate (full)
 	 */
+	@Test
+
 	public void testConsRefInstantiateAnnoF() {
 		x2(false);
 	}
@@ -99,6 +91,8 @@ public class Java8ConsRefInstantiateUsageTests extends Java8UsageTest {
 	 * Tests illegal reference to class with no annotation instantiate
 	 * (incremental)
 	 */
+	@Test
+
 	public void testConsRefInstantiateAnnoI() {
 		x2(true);
 	}
@@ -127,6 +121,5 @@ public class Java8ConsRefInstantiateUsageTests extends Java8UsageTest {
 
 		deployUsageTest(typename, inc);
 	}
-
 
 }

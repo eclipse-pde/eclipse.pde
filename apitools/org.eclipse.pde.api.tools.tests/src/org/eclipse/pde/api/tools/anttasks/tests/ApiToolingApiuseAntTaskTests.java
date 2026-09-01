@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.anttasks.tests;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +28,7 @@ import org.eclipse.core.internal.runtime.XmlProcessorFactory;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -52,12 +52,12 @@ public class ApiToolingApiuseAntTaskTests extends AntRunnerTestCase {
 		properties.put("report_location", buildFolder.getLocation().append("report").toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
 		properties.put("filter_location", buildFolder.getLocation().toOSString()); //$NON-NLS-1$
 		runAntScript(buildXMLPath, new String[] { "run" }, buildFolder.getLocation().toOSString(), properties); //$NON-NLS-1$
-		assertFalse("allNonApiBundles must not exist", buildFolder.getFolder("allNonApiBundles").exists()); //$NON-NLS-1$ //$NON-NLS-2$
+		assertFalse(buildFolder.getFolder("allNonApiBundles").exists(), "allNonApiBundles must not exist"); //$NON-NLS-1$ //$NON-NLS-2$
 		IFolder reportFolder = buildFolder.getFolder("report"); //$NON-NLS-1$
-		assertTrue("report folder must exist", reportFolder.exists()); //$NON-NLS-1$
-		assertTrue("xml folder must exist", reportFolder.exists()); //$NON-NLS-1$
-		assertTrue("meta.xml must exist", reportFolder.getFile("meta.xml").exists()); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("not_searched.xml must exist", reportFolder.getFile("not_searched.xml").exists()); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(reportFolder.exists(), "report folder must exist"); //$NON-NLS-1$
+		assertTrue(reportFolder.exists(), "xml folder must exist"); //$NON-NLS-1$
+		assertTrue(reportFolder.getFile("meta.xml").exists(), "meta.xml must exist"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(reportFolder.getFile("not_searched.xml").exists(), "not_searched.xml must exist"); //$NON-NLS-1$ //$NON-NLS-2$
 		return reportFolder;
 
 	}
@@ -76,7 +76,7 @@ public class ApiToolingApiuseAntTaskTests extends AntRunnerTestCase {
 			if (value.startsWith("org.eclipse.osgi") || value.contains("illegaluse") || value.contains("oldstyle")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				pass = true;
 			}
-			assertTrue(value + " should have been filtered out.", pass); //$NON-NLS-1$
+			assertTrue(pass, value + " should have been filtered out."); //$NON-NLS-1$
 		}
 	}
 
@@ -91,15 +91,15 @@ public class ApiToolingApiuseAntTaskTests extends AntRunnerTestCase {
 				continue;
 			}
 			valid = member.getName().startsWith("org.example"); //$NON-NLS-1$
-			assertTrue(member.getName() + " should have been filtered out", valid); //$NON-NLS-1$
+			assertTrue(valid, member.getName() + " should have been filtered out"); //$NON-NLS-1$
 			File[] dirs = member.getLocation().toFile().listFiles();
 			for (File dir : dirs) {
 				validDir = dir.getName().startsWith("org.example"); //$NON-NLS-1$
-				assertTrue(dir.getName() + " should have been filtered out", validDir); //$NON-NLS-1$
+				assertTrue(validDir, dir.getName() + " should have been filtered out"); //$NON-NLS-1$
 			}
 		}
-		assertTrue("None of the example plug-ins were scanned", valid); //$NON-NLS-1$
-		assertTrue("None of the example plug-ins were scanned", validDir); //$NON-NLS-1$
+		assertTrue(valid, "None of the example plug-ins were scanned"); //$NON-NLS-1$
+		assertTrue(validDir, "None of the example plug-ins were scanned"); //$NON-NLS-1$
 	}
 
 	@Test
@@ -113,15 +113,15 @@ public class ApiToolingApiuseAntTaskTests extends AntRunnerTestCase {
 				continue;
 			}
 			valid = member.getName().startsWith("org.example"); //$NON-NLS-1$
-			assertTrue(member.getName() + " should have been filtered out", valid); //$NON-NLS-1$
+			assertTrue(valid, member.getName() + " should have been filtered out"); //$NON-NLS-1$
 			File[] dirs = member.getLocation().toFile().listFiles();
 			for (File dir : dirs) {
 				validDir = dir.getName().startsWith("org.example"); //$NON-NLS-1$
-				assertTrue(dir.getName() + " should have been filtered out", validDir); //$NON-NLS-1$
+				assertTrue(validDir, dir.getName() + " should have been filtered out"); //$NON-NLS-1$
 			}
 		}
-		assertTrue("None of the example plug-ins were scanned", valid); //$NON-NLS-1$
-		assertTrue("None of the example plug-ins were scanned", validDir); //$NON-NLS-1$
+		assertTrue(valid, "None of the example plug-ins were scanned"); //$NON-NLS-1$
+		assertTrue(validDir, "None of the example plug-ins were scanned"); //$NON-NLS-1$
 	}
 
 	/**
@@ -138,11 +138,11 @@ public class ApiToolingApiuseAntTaskTests extends AntRunnerTestCase {
 				continue;
 			}
 			valid = member.getName().startsWith("org.eclipse.osgi"); //$NON-NLS-1$
-			assertTrue(member.getName() + " should have been filtered out", valid); //$NON-NLS-1$
+			assertTrue(valid, member.getName() + " should have been filtered out"); //$NON-NLS-1$
 			File[] dirs = member.getLocation().toFile().listFiles();
 			for (File dir : dirs) {
 				validDir = dir.getName().startsWith("org.example.test.illegaluse"); //$NON-NLS-1$
-				assertTrue(dir.getName() + " should have been filtered out", validDir); //$NON-NLS-1$
+				assertTrue(validDir, dir.getName() + " should have been filtered out"); //$NON-NLS-1$
 			}
 		}
 		// This test is not working properly, see Bug 405302

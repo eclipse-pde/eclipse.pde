@@ -17,8 +17,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that the builder correctly reports compatibility problems
@@ -38,25 +37,10 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 	 */
 	protected static String PACKAGE_PREFIX = "a.classes.hierarchy."; //$NON-NLS-1$
 
-	/**
-	 * Constructor
-	 */
-	public ClassCompatibilityHierarchyTests(String name) {
-		super(name);
-	}
-
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("hierarchy"); //$NON-NLS-1$
 	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(ClassCompatibilityHierarchyTests.class);
-	}
-
 
 	/**
 	 * Returns a problem id for a compatibility change to a class based on the
@@ -106,9 +90,13 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testReduceHierarchyCtoAI() throws Exception {
 		xReduceHierarchyCtoA(true);
 	}
+
+	@Test
 
 	public void testReduceHierarchyCtoAF() throws Exception {
 		xReduceHierarchyCtoA(false);
@@ -129,9 +117,13 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testReduceHierarchyCtoBI() throws Exception {
 		xReduceHierarchyCtoB(true);
 	}
+
+	@Test
 
 	public void testReduceHierarchyCtoBF() throws Exception {
 		xReduceHierarchyCtoB(false);
@@ -152,9 +144,13 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testReduceHierarchyCtoObjectI() throws Exception {
 		xReduceHierarchyCtoObject(true);
 	}
+
+	@Test
 
 	public void testReduceHierarchyCtoObjectF() throws Exception {
 		xReduceHierarchyCtoObject(false);
@@ -175,9 +171,13 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testChangeHierarchyAtoDI() throws Exception {
 		xChangeHierarchyAtoD(true);
 	}
+
+	@Test
 
 	public void testChangeHierarchyAtoDF() throws Exception {
 		xChangeHierarchyAtoD(false);
@@ -198,9 +198,13 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testReduceInterfaceABtoAI() throws Exception {
 		xReduceInterfaceABtoA(true);
 	}
+
+	@Test
 
 	public void testReduceInterfaceABtoAF() throws Exception {
 		xReduceInterfaceABtoA(false);
@@ -222,9 +226,13 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testReduceInterfaceABtoEmptyI() throws Exception {
 		xReduceInterfaceABtoEmpty(true);
 	}
+
+	@Test
 
 	public void testReduceInterfaceABtoEmptyF() throws Exception {
 		xReduceInterfaceABtoEmpty(false);
@@ -245,9 +253,13 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testChangeInterfaceAtoBI() throws Exception {
 		xChangeInterfaceAtoB(true);
 	}
+
+	@Test
 
 	public void testChangeInterfaceAtoBF() throws Exception {
 		xChangeInterfaceAtoB(false);
@@ -262,9 +274,13 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddInterfaceAI() throws Exception {
 		xAddInterfaceA(true);
 	}
+
+	@Test
 
 	public void testAddInterfaceAF() throws Exception {
 		xAddInterfaceA(false);
@@ -284,9 +300,13 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testPushMethodUpI() throws Exception {
 		xPushMethodUp(true);
 	}
+
+	@Test
 
 	public void testPushMethodUpF() throws Exception {
 		xPushMethodUp(false);
@@ -301,9 +321,13 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemoveInternalSuperClassI() throws Exception {
 		xRemoveInternalSuperClass(true);
 	}
+
+	@Test
 
 	public void testRemoveInternalSuperClassF() throws Exception {
 		xRemoveInternalSuperClass(false);
@@ -324,9 +348,13 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemoveInternalSuperClassWithConstructorI() throws Exception {
 		xRemoveInternalSuperClassWithConstructor(true);
 	}
+
+	@Test
 
 	public void testRemoveInternalSuperClassWithConstructorF() throws Exception {
 		xRemoveInternalSuperClassWithConstructor(false);

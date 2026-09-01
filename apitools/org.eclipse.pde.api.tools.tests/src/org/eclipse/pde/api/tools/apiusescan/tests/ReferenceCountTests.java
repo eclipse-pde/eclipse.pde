@@ -13,10 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.apiusescan.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -29,15 +29,15 @@ import org.eclipse.pde.api.tools.internal.search.IReferenceCollection;
 import org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor;
 import org.eclipse.pde.api.tools.internal.search.UseScanManager;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ReferenceCountTests {
 
 	private IApiBaseline fBaseline;
 	private UseScanManager fUseScanManager;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		IProject setupProject = ExternalDependencyTestUtils.setupProject();
 		if (setupProject == null) {
@@ -70,7 +70,7 @@ public class ReferenceCountTests {
 		String errorMessage = "Incorrect number of references for the set {0}"; //$NON-NLS-1$
 		for (int i = 0; i < apiUseTpes.length; i++) {
 			IReferenceDescriptor[] dependencies = UseScanManager.getInstance().getExternalDependenciesFor(apiComponent, apiUseTpes[i], new NullProgressMonitor());
-			assertEquals(NLS.bind(errorMessage, i + 1), expectedResult[i], dependencies.length);
+			assertEquals(expectedResult[i], dependencies.length, NLS.bind(errorMessage, i + 1));
 		}
 		fUseScanManager.clearCache();
 	}
@@ -122,21 +122,18 @@ public class ReferenceCountTests {
 		IApiComponent apiComponent = TestSuiteHelper.createTestingApiComponent("org.eclipse.equinox.app", "org.eclipse.equinox.app", new ApiDescription(null)); //$NON-NLS-1$ //$NON-NLS-2$
 
 		IReferenceDescriptor[] dependencies = fUseScanManager.getExternalDependenciesFor(apiComponent, null, null);
-		assertEquals("Incorrect number of references for org.eclipse.equinox.app", 13, dependencies.length); //$NON-NLS-1$
+		assertEquals(13, dependencies.length, "Incorrect number of references for org.eclipse.equinox.app"); //$NON-NLS-1$
 
 		IReferenceCollection useScanRefs =  apiComponent.getExternalDependencies();
-		assertTrue("References for org.eclipse.equinox.app.IApplication not found in cache",  //$NON-NLS-1$
-				useScanRefs.hasReferencesTo("org.eclipse.equinox.app.IApplication")); //$NON-NLS-1$
+		assertTrue(useScanRefs.hasReferencesTo("org.eclipse.equinox.app.IApplication"), "References for org.eclipse.equinox.app.IApplication not found in cache"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		apiComponent = TestSuiteHelper.createTestingApiComponent("org.eclipse.equinox.p2.operations", "org.eclipse.equinox.p2.operations", new ApiDescription(null)); //$NON-NLS-1$ //$NON-NLS-2$
 		dependencies = fUseScanManager.getExternalDependenciesFor(apiComponent, null, null);
-		assertEquals("Incorrect number of references for org.eclipse.equinox.p2.operations", 17, dependencies.length); //$NON-NLS-1$
+		assertEquals(17, dependencies.length, "Incorrect number of references for org.eclipse.equinox.p2.operations"); //$NON-NLS-1$
 
 		useScanRefs =  apiComponent.getExternalDependencies();
-		assertTrue("References for org.eclipse.equinox.p2.operations.InstallOperation not found in cache", //$NON-NLS-1$
-				useScanRefs.hasReferencesTo("org.eclipse.equinox.p2.operations.InstallOperation")); //$NON-NLS-1$
+		assertTrue(useScanRefs.hasReferencesTo("org.eclipse.equinox.p2.operations.InstallOperation"), "References for org.eclipse.equinox.p2.operations.InstallOperation not found in cache"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		assertFalse("References for org.eclipse.equinox.app.IApplication should have been purged from the cache", //$NON-NLS-1$
-				useScanRefs.hasReferencesTo("org.eclipse.equinox.app.IApplication")); //$NON-NLS-1$
+		assertFalse(useScanRefs.hasReferencesTo("org.eclipse.equinox.app.IApplication"), "References for org.eclipse.equinox.app.IApplication should have been purged from the cache"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

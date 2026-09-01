@@ -17,8 +17,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that the builder correctly reports compatibility problems
@@ -38,23 +38,9 @@ public class InterfaceCompatibilityRestrictionTests extends InterfaceCompatibili
 	 */
 	protected static String PACKAGE_PREFIX = "a.interfaces.restrictions."; //$NON-NLS-1$
 
-	/**
-	 * Constructor
-	 */
-	public InterfaceCompatibilityRestrictionTests(String name) {
-		super(name);
-	}
-
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("restrictions"); //$NON-NLS-1$
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(InterfaceCompatibilityRestrictionTests.class);
 	}
 
 	@Override
@@ -71,9 +57,13 @@ public class InterfaceCompatibilityRestrictionTests extends InterfaceCompatibili
 		return "intercompat"; //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testRemoveNoImplementI() throws Exception {
 		xRemoveNoImplement(true);
 	}
+
+	@Test
 
 	public void testRemoveNoImplementF() throws Exception {
 		xRemoveNoImplement(false);
@@ -87,9 +77,13 @@ public class InterfaceCompatibilityRestrictionTests extends InterfaceCompatibili
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddNoImplementI() throws Exception {
 		xAddNoImplement(true);
 	}
+
+	@Test
 
 	public void testAddNoImplementF() throws Exception {
 		xAddNoImplement(false);
@@ -112,6 +106,8 @@ public class InterfaceCompatibilityRestrictionTests extends InterfaceCompatibili
 	/**
 	 * Tests removing a noextend annotation using an incremental build
 	 */
+	@Test
+
 	public void testRemoveNoExtendI() {
 		xRemoveNoExtend(true);
 	}
@@ -119,6 +115,8 @@ public class InterfaceCompatibilityRestrictionTests extends InterfaceCompatibili
 	/**
 	 * Tests removing a noextend annotation using a full build
 	 */
+	@Test
+
 	public void testRemoveNoExtendF() {
 		xRemoveNoExtend(false);
 	}
@@ -130,13 +128,15 @@ public class InterfaceCompatibilityRestrictionTests extends InterfaceCompatibili
 			performCompatibilityTest(filePath, inc);
 		}
 		catch(Exception e) {
-			fail(e.getMessage());
+			Assertions.fail(e.getMessage());
 		}
 	}
 
 	/**
 	 * Tests adding a noextend annotation using an incremental build
 	 */
+	@Test
+
 	public void testAddNoExtendI() {
 		xAddNoExtend(true);
 	}
@@ -144,6 +144,8 @@ public class InterfaceCompatibilityRestrictionTests extends InterfaceCompatibili
 	/**
 	 * Tests adding a noextend annotation using a full build
 	 */
+	@Test
+
 	public void testAddNoExtendF() {
 		xAddNoExtend(false);
 	}
@@ -161,13 +163,15 @@ public class InterfaceCompatibilityRestrictionTests extends InterfaceCompatibili
 			performCompatibilityTest(filePath, inc);
 		}
 		catch(Exception e) {
-			fail(e.getMessage());
+			Assertions.fail(e.getMessage());
 		}
 	}
 
 	/**
 	 * Tests adding both noextend and noimplement annotations using an incremental build
 	 */
+	@Test
+
 	public void testAddNoExtendNoImplementI() {
 		xAddNoExtendNoImplement(true);
 	}
@@ -175,6 +179,8 @@ public class InterfaceCompatibilityRestrictionTests extends InterfaceCompatibili
 	/**
 	 * Tests adding both noextend and noimplement annotations using a full build
 	 */
+	@Test
+
 	public void testAddNoExtendNoImplementF() {
 		xAddNoExtendNoImplement(false);
 	}
@@ -192,13 +198,15 @@ public class InterfaceCompatibilityRestrictionTests extends InterfaceCompatibili
 			performCompatibilityTest(filePath, inc);
 		}
 		catch(Exception e) {
-			fail(e.getMessage());
+			Assertions.fail(e.getMessage());
 		}
 	}
 
 	/**
 	 * Tests removing both noextend and noimplement annotations using an incremental build
 	 */
+	@Test
+
 	public void testRemoveNoExtendNoImplementI() {
 		xRemoveNoExtendNoImplement(true);
 	}
@@ -206,6 +214,8 @@ public class InterfaceCompatibilityRestrictionTests extends InterfaceCompatibili
 	/**
 	 * Tests removing both noextend and noimplement annotations using a full build
 	 */
+	@Test
+
 	public void testRemoveNoExtendNoImplementF() {
 		xRemoveNoExtendNoImplement(false);
 	}
@@ -217,7 +227,7 @@ public class InterfaceCompatibilityRestrictionTests extends InterfaceCompatibili
 			performCompatibilityTest(filePath, inc);
 		}
 		catch(Exception e) {
-			fail(e.getMessage());
+			Assertions.fail(e.getMessage());
 		}
 	}
 }

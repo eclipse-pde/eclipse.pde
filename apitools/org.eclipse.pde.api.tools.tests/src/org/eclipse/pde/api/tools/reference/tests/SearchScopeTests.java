@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.reference.tests;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -28,7 +28,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests search scopes.
@@ -55,8 +55,8 @@ public class SearchScopeTests {
 		Collection<String> actualPackages = new HashSet<>();
 		Collection<String> actualTypes = new HashSet<>();
 		visit(scope, actualPackages, actualTypes);
-		assertEquals("Different packages", expectedPackages, actualPackages); //$NON-NLS-1$
-		assertEquals("Different types", expectedTypes, actualTypes); //$NON-NLS-1$
+		assertEquals(expectedPackages, actualPackages, "Different packages"); //$NON-NLS-1$
+		assertEquals(expectedTypes, actualTypes, "Different types"); //$NON-NLS-1$
 	}
 
 	/**
@@ -97,8 +97,8 @@ public class SearchScopeTests {
 		Collection<String> actualPackages = new HashSet<>();
 		Collection<String> actualTypes = new HashSet<>();
 		visit(scope, actualPackages, actualTypes);
-		assertEquals("Different packages", expectedPackages, actualPackages); //$NON-NLS-1$
-		assertEquals("Different types", expectedTypes, actualTypes); //$NON-NLS-1$
+		assertEquals(expectedPackages, actualPackages, "Different packages"); //$NON-NLS-1$
+		assertEquals(expectedTypes, actualTypes, "Different types"); //$NON-NLS-1$
 	}
 
 	/**
@@ -120,8 +120,8 @@ public class SearchScopeTests {
 		Collection<String> actualPackages = new HashSet<>();
 		Collection<String> actualTypes = new HashSet<>();
 		visit(scope, actualPackages, actualTypes);
-		assertEquals("Different packages", expectedPackages, actualPackages); //$NON-NLS-1$
-		assertEquals("Different types", expectedTypes, actualTypes); //$NON-NLS-1$
+		assertEquals(expectedPackages, actualPackages, "Different packages"); //$NON-NLS-1$
+		assertEquals(expectedTypes, actualTypes, "Different types"); //$NON-NLS-1$
 	}
 
 }

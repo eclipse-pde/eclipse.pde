@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.tests;
 
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 import org.eclipse.pde.api.tools.builder.tests.OSGiLessAnalysisTests;
 import org.eclipse.pde.api.tools.comparator.tests.AllDeltaTests;
@@ -39,9 +41,7 @@ import org.eclipse.pde.api.tools.util.tests.SignaturesTests;
 import org.eclipse.pde.api.tools.util.tests.TarEntryTests;
 import org.eclipse.pde.api.tools.util.tests.TarExceptionTests;
 import org.eclipse.pde.api.tools.util.tests.UtilTests;
-import org.junit.BeforeClass;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.BeforeSuite;
 
 /**
  * Test suite for all of the API tools test
@@ -55,8 +55,8 @@ import org.junit.runners.Suite;
  *
  * @since 1.0.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@Suite
+@SelectClasses({
 		ApiDescriptionTests.class, SearchEngineTests.class, SkippedComponentTests.class, UseSearchTests.class,
 		HeadlessApiBaselineManagerTests.class, TagScannerTests.class, ComponentManifestTests.class, UtilTests.class,
 		SignaturesTests.class, ApiBaselineTests.class, ApiTypeContainerTests.class, ClassFileScannerTests.class,
@@ -68,7 +68,7 @@ import org.junit.runners.Suite;
 })
 public class ApiToolsTestSuite {
 
-	@BeforeClass
+	@BeforeSuite
 	@SuppressWarnings("restriction")
 	public static void setupJVM() {
 		org.eclipse.jdt.internal.core.search.processing.JobManager.VERBOSE = true;

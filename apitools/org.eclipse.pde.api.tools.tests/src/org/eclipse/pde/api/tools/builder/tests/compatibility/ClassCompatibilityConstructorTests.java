@@ -17,8 +17,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that the builder correctly reports compatibility problems
@@ -38,20 +37,9 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 	 */
 	protected static String PACKAGE_PREFIX = "a.classes.constructors."; //$NON-NLS-1$
 
-	public ClassCompatibilityConstructorTests(String name) {
-		super(name);
-	}
-
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("constructors"); //$NON-NLS-1$
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(ClassCompatibilityConstructorTests.class);
 	}
 
 	@Override
@@ -83,17 +71,25 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemovePublicAPIConstructorI() throws Exception {
 		xRemovePublicAPIConstructor(true);
 	}
+
+	@Test
 
 	public void testRemovePublicAPIConstructorF() throws Exception {
 		xRemovePublicAPIConstructor(false);
 	}
 
+	@Test
+
 	public void testRemoveTwoPublicAPIConstructorsI() throws Exception {
 		xRemoveTwoPublicAPIConstructors(true);
 	}
+
+	@Test
 
 	public void testRemoveTwoPublicAPIConstructorsF() throws Exception {
 		xRemoveTwoPublicAPIConstructors(false);
@@ -131,9 +127,13 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemoveProtectedAPIConstructorI() throws Exception {
 		xRemoveProtectedAPIConstructor(true);
 	}
+
+	@Test
 
 	public void testRemoveProtectedAPIConstructorF() throws Exception {
 		xRemoveProtectedAPIConstructor(false);
@@ -148,9 +148,13 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemovePrivateAPIConstructorI() throws Exception {
 		xRemovePrivateAPIConstructor(true);
 	}
+
+	@Test
 
 	public void testRemovePrivateAPIConstructorF() throws Exception {
 		xRemovePrivateAPIConstructor(false);
@@ -165,9 +169,13 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemovePackageConstructorI() throws Exception {
 		xRemovePackageConstructor(true);
 	}
+
+	@Test
 
 	public void testRemovePackageConstructorF() throws Exception {
 		xRemovePackageConstructor(false);
@@ -188,9 +196,13 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemovePublicAPIConstructorNoExtendI() throws Exception {
 		xRemovePublicAPIConstructorNoExtend(true);
 	}
+
+	@Test
 
 	public void testRemovePublicAPIConstructorNoExtendF() throws Exception {
 		xRemovePublicAPIConstructorNoExtend(false);
@@ -205,9 +217,13 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemoveProtectedAPIConstructorNoExtendI() throws Exception {
 		xRemoveProtectedAPIConstructorNoExtend(true);
 	}
+
+	@Test
 
 	public void testRemoveProtectedAPIConstructorNoExtendF() throws Exception {
 		xRemoveProtectedAPIConstructorNoExtend(false);
@@ -228,9 +244,13 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemovePublicAPIConstructorNoInstantiateI() throws Exception {
 		xRemovePublicAPIConstructorNoInstantiate(true);
 	}
+
+	@Test
 
 	public void testRemovePublicAPIConstructorNoInstantiateF() throws Exception {
 		xRemovePublicAPIConstructorNoInstantiate(false);
@@ -251,9 +271,13 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemoveProtectedAPIConstructorNoInstantiateI() throws Exception {
 		xRemoveProtectedAPIConstructorNoInstantiate(true);
 	}
+
+	@Test
 
 	public void testRemoveProtectedAPIConstructorNoInstantiateF() throws Exception {
 		xRemoveProtectedAPIConstructorNoInstantiate(false);
@@ -269,9 +293,13 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemovePublicAPIConstructorNoExtendNoInstantiateI() throws Exception {
 		xRemovePublicAPIConstructorNoExtendNoInstatiate(true);
 	}
+
+	@Test
 
 	public void testRemovePublicAPIConstructorNoExtendNoInstantiateF() throws Exception {
 		xRemovePublicAPIConstructorNoExtendNoInstatiate(false);
@@ -287,9 +315,13 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemoveProtectedAPIConstructorNoExtendNoInstantiateI() throws Exception {
 		xRemoveProtectedAPIConstructorNoExtendNoInstatiate(true);
 	}
+
+	@Test
 
 	public void testRemoveProtectedAPIConstructorNoExtendNoInstantiateF() throws Exception {
 		xRemoveProtectedAPIConstructorNoExtendNoInstatiate(false);
@@ -304,9 +336,13 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemovePublicAPIConstructorNoReferenceI() throws Exception {
 		xRemovePublicAPIConstructorNoReference(true);
 	}
+
+	@Test
 
 	public void testRemovePublicAPIConstructorNoReferenceF() throws Exception {
 		xRemovePublicAPIConstructorNoReference(false);
@@ -321,9 +357,13 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemoveProtectedAPIConstructorNoReferenceI() throws Exception {
 		xRemoveProtectedAPIConstructorNoReference(true);
 	}
+
+	@Test
 
 	public void testRemoveProtectedAPIConstructorNoReferencF() throws Exception {
 		xRemoveProtectedAPIConstructorNoReference(false);
@@ -344,9 +384,13 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemovePublicAPIConstructorNoOverrideI() throws Exception {
 		xRemovePublicAPIConstructorNoOverride(true);
 	}
+
+	@Test
 
 	public void testRemovePublicAPIConstructorNoOverrideF() throws Exception {
 		xRemovePublicAPIConstructorNoOverride(false);
@@ -367,9 +411,13 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemoveProtectedAPIConstructorNoOverrideI() throws Exception {
 		xRemoveProtectedAPIConstructorNoOverride(true);
 	}
+
+	@Test
 
 	public void testRemoveProtectedAPIConstructorNoOverrideF() throws Exception {
 		xRemoveProtectedAPIConstructorNoOverride(false);
@@ -384,9 +432,13 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddPrivateAPIConstructorI() throws Exception {
 		xAddPrivateAPIConstructor(true);
 	}
+
+	@Test
 
 	public void testAddPrivateAPIConstructorF() throws Exception {
 		xAddPrivateAPIConstructor(false);
@@ -401,9 +453,13 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddProtectedAPIConstructorI() throws Exception {
 		xAddProtectedAPIConstructor(true);
 	}
+
+	@Test
 
 	public void testAddProtectedAPIConstructorF() throws Exception {
 		xAddProtectedAPIConstructor(false);
@@ -418,9 +474,13 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddPublicAPIConstructorI() throws Exception {
 		xAddPublicAPIConstructor(true);
 	}
+
+	@Test
 
 	public void testAddPublicAPIConstructorF() throws Exception {
 		xAddPublicAPIConstructor(false);
@@ -441,9 +501,13 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddSingletonPrivateAPIConstructorI() throws Exception {
 		xAddSingletonPrivateAPIConstructor(true);
 	}
+
+	@Test
 
 	public void testAddSingletonPrivateAPIConstructorF() throws Exception {
 		xAddSingletonPrivateAPIConstructor(false);
@@ -464,9 +528,13 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddSingletonProtectedAPIConstructorI() throws Exception {
 		xAddSingletonProtectedAPIConstructor(true);
 	}
+
+	@Test
 
 	public void testAddSingletonProtectedAPIConstructorF() throws Exception {
 		xAddSingletonProtectedAPIConstructor(false);
@@ -487,9 +555,13 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddSingletonPublicAPIConstructorI() throws Exception {
 		xAddSingletonPublicAPIConstructor(true);
 	}
+
+	@Test
 
 	public void testAddSingletonPublicAPIConstructorF() throws Exception {
 		xAddSingletonPublicAPIConstructor(false);

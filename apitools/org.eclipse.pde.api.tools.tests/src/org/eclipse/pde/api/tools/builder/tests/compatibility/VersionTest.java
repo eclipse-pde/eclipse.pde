@@ -14,6 +14,8 @@
 package org.eclipse.pde.api.tools.builder.tests.compatibility;
 
 import java.util.jar.JarFile;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
@@ -27,8 +29,6 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescri
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.util.Util;
-
-import junit.framework.Test;
 
 /**
  * Tests that the builder correctly finds manifest version problems
@@ -49,17 +49,6 @@ public class VersionTest extends CompatibilityTest {
 	 * Package prefix for test classes
 	 */
 	protected static String PACKAGE_PREFIX = "a.version."; //$NON-NLS-1$
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(VersionTest.class);
-	}
-
-	public VersionTest(String name) {
-		super(name);
-	}
 
 	@Override
 	protected void setBuilderOptions() {
@@ -101,9 +90,13 @@ public class VersionTest extends CompatibilityTest {
 		performVersionTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddApiI() throws Exception {
 		xAddApi(true);
 	}
+
+	@Test
 
 	public void testAddApiF() throws Exception {
 		xAddApi(false);
@@ -122,9 +115,13 @@ public class VersionTest extends CompatibilityTest {
 		performVersionTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testBreakApiI() throws Exception {
 		xBreakApi(true);
 	}
+
+	@Test
 
 	public void testBreakApiF() throws Exception {
 		xBreakApi(false);
@@ -139,9 +136,13 @@ public class VersionTest extends CompatibilityTest {
 		performVersionTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testStableApiI() throws Exception {
 		xStableApi(true);
 	}
+
+	@Test
 
 	public void testStableApiF() throws Exception {
 		xStableApi(false);
@@ -152,7 +153,7 @@ public class VersionTest extends CompatibilityTest {
 	 */
 	private void xFalseMinorInc(boolean incremental) throws Exception {
 		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
-		assertNotNull("the instance pref node must exist", inode); //$NON-NLS-1$
+		Assertions.assertNotNull(inode, "the instance pref node must exist"); //$NON-NLS-1$
 		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_REPORT_MINOR_WITHOUT_API_CHANGE,
 				ApiPlugin.VALUE_ERROR);
 		inode.flush();
@@ -165,7 +166,7 @@ public class VersionTest extends CompatibilityTest {
 
 		// update manifest minor version
 		IFile file = getEnv().getWorkspace().getRoot().getFile(MANIFEST_PATH);
-		assertTrue("Missing manifest", file.exists()); //$NON-NLS-1$
+		Assertions.assertTrue(file.exists(), "Missing manifest"); //$NON-NLS-1$
 		String content = Util.getFileContentAsString(file.getLocation().toFile());
 		content = content.replace("1.0.0", "1.1.0"); //$NON-NLS-1$ //$NON-NLS-2$
 		getEnv().addFile(MANIFEST_PATH.removeLastSegments(1), MANIFEST_PATH.lastSegment(), content);
@@ -179,9 +180,13 @@ public class VersionTest extends CompatibilityTest {
 		assertProblems(problems);
 	}
 
+	@Test
+
 	public void testFalseMinorIncI() throws Exception {
 		xFalseMinorInc(true);
 	}
+
+	@Test
 
 	public void testFalseMinorIncF() throws Exception {
 		xFalseMinorInc(false);
@@ -192,7 +197,7 @@ public class VersionTest extends CompatibilityTest {
 	 */
 	private void xFalseMajorInc(boolean incremental) throws Exception {
 		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
-		assertNotNull("The instance pref node must exist", inode); //$NON-NLS-1$
+		Assertions.assertNotNull(inode, "The instance pref node must exist"); //$NON-NLS-1$
 		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_REPORT_MAJOR_WITHOUT_BREAKING_CHANGE,
 				ApiPlugin.VALUE_ERROR);
 		inode.flush();
@@ -205,7 +210,7 @@ public class VersionTest extends CompatibilityTest {
 
 		// update manifest minor version
 		IFile file = getEnv().getWorkspace().getRoot().getFile(MANIFEST_PATH);
-		assertTrue("Missing manifest", file.exists()); //$NON-NLS-1$
+		Assertions.assertTrue(file.exists(), "Missing manifest"); //$NON-NLS-1$
 		String content = Util.getFileContentAsString(file.getLocation().toFile());
 		content = content.replace("1.0.0", "2.0.0"); //$NON-NLS-1$ //$NON-NLS-2$
 		getEnv().addFile(MANIFEST_PATH.removeLastSegments(1), MANIFEST_PATH.lastSegment(), content);
@@ -219,9 +224,13 @@ public class VersionTest extends CompatibilityTest {
 		assertProblems(problems);
 	}
 
+	@Test
+
 	public void testFalseMajorIncI() throws Exception {
 		xFalseMajorInc(true);
 	}
+
+	@Test
 
 	public void testFalseMajorIncF() throws Exception {
 		xFalseMajorInc(false);
@@ -232,15 +241,14 @@ public class VersionTest extends CompatibilityTest {
 	 */
 	private void xIgnoreFalseMinorInc(boolean incremental) throws Exception {
 		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
-		assertNotNull("the instance pref node must exist", inode); //$NON-NLS-1$
+		Assertions.assertNotNull(inode, "the instance pref node must exist"); //$NON-NLS-1$
 		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_REPORT_MINOR_WITHOUT_API_CHANGE,
 				ApiPlugin.VALUE_ENABLED);
 		inode.flush();
 
-
 		// update manifest minor version
 		IFile file = getEnv().getWorkspace().getRoot().getFile(MANIFEST_PATH);
-		assertTrue("Missing manifest", file.exists()); //$NON-NLS-1$
+		Assertions.assertTrue(file.exists(), "Missing manifest"); //$NON-NLS-1$
 		String content = Util.getFileContentAsString(file.getLocation().toFile());
 		content = content.replace("1.0.0", "1.1.0"); //$NON-NLS-1$ //$NON-NLS-2$
 		getEnv().addFile(MANIFEST_PATH.removeLastSegments(1), MANIFEST_PATH.lastSegment(), content);
@@ -251,12 +259,16 @@ public class VersionTest extends CompatibilityTest {
 			fullBuild();
 		}
 		ApiProblem[] problems = getEnv().getProblemsFor(MANIFEST_PATH, null);
-		assertEquals("No problem expected", 0, problems.length); //$NON-NLS-1$
+		Assertions.assertEquals(0, problems.length, "No problem expected"); //$NON-NLS-1$
 	}
+
+	@Test
 
 	public void testIgnoreFalseMinorIncI() throws Exception {
 		xIgnoreFalseMinorInc(true);
 	}
+
+	@Test
 
 	public void testIgnoreFalseMinorIncF() throws Exception {
 		xIgnoreFalseMinorInc(false);
@@ -267,14 +279,14 @@ public class VersionTest extends CompatibilityTest {
 	 */
 	private void xIgnoreFalseMajorInc(boolean incremental) throws Exception {
 		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
-		assertNotNull("The instance pref node must exist", inode); //$NON-NLS-1$
+		Assertions.assertNotNull(inode, "The instance pref node must exist"); //$NON-NLS-1$
 		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_REPORT_MAJOR_WITHOUT_BREAKING_CHANGE,
 				ApiPlugin.VALUE_ENABLED);
 		inode.flush();
 
 		// update manifest minor version
 		IFile file = getEnv().getWorkspace().getRoot().getFile(MANIFEST_PATH);
-		assertTrue("Missing manifest", file.exists()); //$NON-NLS-1$
+		Assertions.assertTrue(file.exists(), "Missing manifest"); //$NON-NLS-1$
 		String content = Util.getFileContentAsString(file.getLocation().toFile());
 		content = content.replace("1.0.0", "2.0.0"); //$NON-NLS-1$ //$NON-NLS-2$
 		getEnv().addFile(MANIFEST_PATH.removeLastSegments(1), MANIFEST_PATH.lastSegment(), content);
@@ -285,12 +297,16 @@ public class VersionTest extends CompatibilityTest {
 			fullBuild();
 		}
 		ApiProblem[] problems = getEnv().getProblemsFor(MANIFEST_PATH, null);
-		assertEquals("No problem expected", 0, problems.length); //$NON-NLS-1$
+		Assertions.assertEquals(0, problems.length, "No problem expected"); //$NON-NLS-1$
 	}
+
+	@Test
 
 	public void testIgnoreFalseMajorIncI() throws Exception {
 		xIgnoreFalseMajorInc(true);
 	}
+
+	@Test
 
 	public void testIgnoreFalseMajorIncF() throws Exception {
 		xIgnoreFalseMajorInc(false);
@@ -305,17 +321,25 @@ public class VersionTest extends CompatibilityTest {
 		performDeletionCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemoveInternalClassI() throws Exception {
 		xRemoveInternalClass(true);
 	}
+
+	@Test
 
 	public void testRemoveInternalClassF() throws Exception {
 		xRemoveInternalClass(false);
 	}
 
+	@Test
+
 	public void testBreakApiRegardlessOfMajorVersionI() throws Exception {
 		xRegardlessMajorInc(true);
 	}
+
+	@Test
 
 	public void testBreakApiRegardlessOfMajorVersionF() throws Exception {
 		xRegardlessMajorInc(false);
@@ -328,7 +352,7 @@ public class VersionTest extends CompatibilityTest {
 	 */
 	private void xRegardlessMajorInc(boolean incremental) throws Exception {
 		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
-		assertNotNull("The instance pref node must exist", inode); //$NON-NLS-1$
+		Assertions.assertNotNull(inode, "The instance pref node must exist"); //$NON-NLS-1$
 		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_REPORT_MAJOR_WITHOUT_BREAKING_CHANGE,
 				ApiPlugin.VALUE_ENABLED);
 		inode.put(IApiProblemTypes.REPORT_API_BREAKAGE_WHEN_MAJOR_VERSION_INCREMENTED, ApiPlugin.VALUE_ENABLED);
@@ -346,7 +370,7 @@ public class VersionTest extends CompatibilityTest {
 
 		// update manifest major version
 		IFile file = getEnv().getWorkspace().getRoot().getFile(MANIFEST_PATH);
-		assertTrue("Missing manifest", file.exists()); //$NON-NLS-1$
+		Assertions.assertTrue(file.exists(), "Missing manifest"); //$NON-NLS-1$
 		String content = Util.getFileContentAsString(file.getLocation().toFile());
 		content = content.replace("1.0.0", "2.0.0"); //$NON-NLS-1$ //$NON-NLS-2$
 		getEnv().addFile(MANIFEST_PATH.removeLastSegments(1), MANIFEST_PATH.lastSegment(), content);

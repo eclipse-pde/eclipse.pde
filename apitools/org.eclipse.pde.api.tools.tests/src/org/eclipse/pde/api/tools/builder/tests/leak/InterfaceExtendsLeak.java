@@ -17,8 +17,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that an API interface leaking an internal type via extends is
@@ -29,10 +28,6 @@ import junit.framework.Test;
 public class InterfaceExtendsLeak extends LeakTest {
 
 	private int pid = -1;
-
-	public InterfaceExtendsLeak(String name) {
-		super(name);
-	}
 
 	@Override
 	protected int getDefaultProblemId() {
@@ -52,16 +47,11 @@ public class InterfaceExtendsLeak extends LeakTest {
 	}
 
 	/**
-	 * @return the test for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(InterfaceExtendsLeak.class);
-	}
-
-	/**
 	 * Tests that an API interface that extends an internal interface is properly flagged
 	 * using a full build
 	 */
+	@Test
+
 	public void testInterfaceExtendsLeak1F() {
 		x1(false);
 	}
@@ -70,6 +60,8 @@ public class InterfaceExtendsLeak extends LeakTest {
 	 * Tests that an API interface that extends an internal interface is properly flagged
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testInterfaceExtendsLeak1I() {
 		x1(true);
 	}
@@ -85,6 +77,8 @@ public class InterfaceExtendsLeak extends LeakTest {
 	 * Tests that an outer API interface that extends an internal interface is properly flagged
 	 * using a full build
 	 */
+	@Test
+
 	public void testInterfaceExtendsLeak2F() {
 		x2(false);
 	}
@@ -93,6 +87,8 @@ public class InterfaceExtendsLeak extends LeakTest {
 	 * Tests that an outer API interface that extends an internal interface is properly flagged
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testInterfaceExtendsLeak2I() {
 		x2(true);
 	}
@@ -107,6 +103,8 @@ public class InterfaceExtendsLeak extends LeakTest {
 	 * Tests that an inner API interface that extends an internal interface is properly flagged
 	 * using a full build
 	 */
+	@Test
+
 	public void testInterfaceExtendsLeak3F() {
 		x3(false);
 	}
@@ -115,6 +113,8 @@ public class InterfaceExtendsLeak extends LeakTest {
 	 * Tests that an inner API interface that extends an internal interface is properly flagged
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testInterfaceExtendsLeak3I() {
 		x3(true);
 	}
@@ -131,6 +131,8 @@ public class InterfaceExtendsLeak extends LeakTest {
 	 * Tests that a static inner API interface that extends an internal interface is properly flagged
 	 * using a full build
 	 */
+	@Test
+
 	public void testInterfaceExtendsLeak4F() {
 		x4(false);
 	}
@@ -139,6 +141,8 @@ public class InterfaceExtendsLeak extends LeakTest {
 	 * Tests that a static inner API interface that extends an internal interface is properly flagged
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testInterfaceExtendsLeak4I() {
 		x4(true);
 	}
@@ -155,6 +159,8 @@ public class InterfaceExtendsLeak extends LeakTest {
 	 * Tests that an inner interface in an outer interface in an API interface that extends an internal interface is properly flagged
 	 * using a full build
 	 */
+	@Test
+
 	public void testInterfaceExtendsLeak5F() {
 		x5(false);
 	}
@@ -163,6 +169,8 @@ public class InterfaceExtendsLeak extends LeakTest {
 	 * Tests that an inner interface in an outer interface in an API interface that extends an internal interface is properly flagged
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testInterfaceExtendsLeak5I() {
 		x5(true);
 	}
@@ -177,6 +185,8 @@ public class InterfaceExtendsLeak extends LeakTest {
 	 * Tests that an API interface that extends an internal interface is properly flagged
 	 * using a full build even with an @noimplement tag on it
 	 */
+	@Test
+
 	public void testInterfaceExtendsLeak6F() {
 		x6(false);
 	}
@@ -185,6 +195,8 @@ public class InterfaceExtendsLeak extends LeakTest {
 	 * Tests that an API interface that extends an internal interface is properly flagged
 	 * using an incremental build even with an @noimplement tag on it
 	 */
+	@Test
+
 	public void testInterfaceExtendsLeak6I() {
 		x6(true);
 	}
@@ -200,6 +212,8 @@ public class InterfaceExtendsLeak extends LeakTest {
 	 * Tests that an N-nested internal interface in an API interface is properly flagged
 	 * using a full build
 	 */
+	@Test
+
 	public void testInterfaceExtendsLeak7F() {
 		x7(false);
 	}
@@ -208,6 +222,8 @@ public class InterfaceExtendsLeak extends LeakTest {
 	 * Tests that an N-nested internal interface in an API interface is properly flagged
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testInterfaceExtendsLeak7I() {
 		x7(true);
 	}
@@ -224,6 +240,8 @@ public class InterfaceExtendsLeak extends LeakTest {
 	 * Tests that a variety of N-nested internal / outer interfaces in an API interface are properly flagged
 	 * using a full build
 	 */
+	@Test
+
 	public void testInterfaceExtendsLeak8F() {
 		x8(false);
 	}
@@ -232,6 +250,8 @@ public class InterfaceExtendsLeak extends LeakTest {
 	 * Tests that a variety of N-nested internal / outer interfaces in an API interface are properly flagged
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testInterfaceExtendsLeak8I() {
 		x8(true);
 	}
@@ -251,6 +271,8 @@ public class InterfaceExtendsLeak extends LeakTest {
 	 * Tests that having an @noimplement tag on interfaces does not affect problems being detected for extends leaks
 	 * using a full build
 	 */
+	@Test
+
 	public void testInterfaceExtendsLeak9F() {
 		x9(false);
 	}
@@ -259,6 +281,8 @@ public class InterfaceExtendsLeak extends LeakTest {
 	 * Tests that having an @noimplement tag on interfaces does not affect problems being detected for extends leaks
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testInterfaceExtendsLeak9I() {
 		x9(true);
 	}
@@ -277,6 +301,8 @@ public class InterfaceExtendsLeak extends LeakTest {
 	/**
 	 * Tests extending a non public top level interface is a leak of a non-API type.
 	 */
+	@Test
+
 	public void testInterfaceExtendsLeak10F() {
 		x10(false);
 	}
@@ -284,6 +310,8 @@ public class InterfaceExtendsLeak extends LeakTest {
 	/**
 	 * Tests extending a non public top level interface is a leak of a non-API type.
 	 */
+	@Test
+
 	public void testInterfaceExtendsLeak10I() {
 		x10(true);
 	}
@@ -298,9 +326,13 @@ public class InterfaceExtendsLeak extends LeakTest {
 	/**
 	 * Tests extending a noimplement interface is a leak of a non-API type.
 	 */
+	@Test
+
 	public void testInterfaceExtendsNoImplementInterface11F() {
 		x11(false);
 	}
+
+	@Test
 
 	public void testInterfaceExtendsNoImplementInterface11I() {
 		x11(true);
@@ -317,10 +349,13 @@ public class InterfaceExtendsLeak extends LeakTest {
 	 * Tests extending a noimplement interface is a leak of a non-API type
 	 * unless it itself is noimplement
 	 */
+	@Test
+
 	public void testInterfaceExtendsNoImplementInterface12F() {
 		x12(false);
 	}
 
+	@Test
 
 	public void testInterfaceExtendsNoImplementInterface12I() {
 		x12(true);
@@ -336,9 +371,13 @@ public class InterfaceExtendsLeak extends LeakTest {
 	/**
 	 * Tests extending a noextend interface is am indirect leak.
 	 */
+	@Test
+
 	public void testInterfaceExtendsNoExtendInterface13F() {
 		x13(false);
 	}
+
+	@Test
 
 	public void testInterfaceExtendsNoExtendInterface13I() {
 		x13(true);
@@ -357,10 +396,13 @@ public class InterfaceExtendsLeak extends LeakTest {
 	 * Tests extending a noextend interface is a leak of a non-API type
 	 * unless it itself is noextend
 	 */
+	@Test
+
 	public void testInterfaceExtendsNoExtendInterface14F() {
 		x14(false);
 	}
 
+	@Test
 
 	public void testInterfaceExtendsNoExtendInterface14I() {
 		x14(true);
@@ -377,6 +419,8 @@ public class InterfaceExtendsLeak extends LeakTest {
 	 * a leak warning (inner class referencing enclosing type should be excluded)
 	 * using a full build
 	 */
+	@Test
+
 	public void testStaticInnerClassImplementsParent15F() {
 		x15(false);
 	}
@@ -386,6 +430,8 @@ public class InterfaceExtendsLeak extends LeakTest {
 	 * a leak warning (inner class referencing enclosing type should be excluded)
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testStaticInnerClassImplementsParent15I() {
 		x15(true);
 	}

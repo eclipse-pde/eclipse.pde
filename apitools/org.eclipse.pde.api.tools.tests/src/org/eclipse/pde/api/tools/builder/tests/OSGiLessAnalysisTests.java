@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -33,7 +33,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the base analyzer without OSGi present
@@ -48,7 +48,7 @@ public class OSGiLessAnalysisTests {
 		IApiBaseline current = TestSuiteHelper.createTestingBaseline("current", IPath.fromOSString("test-analyzer-2")); //$NON-NLS-1$ //$NON-NLS-2$
 		BaseApiAnalyzer analyzer = new BaseApiAnalyzer();
 		IApiComponent component = current.getApiComponent("test.bundle.a"); //$NON-NLS-1$
-		assertNotNull("Missing API component test.bundle.a", component); //$NON-NLS-1$
+		assertNotNull(component, "Missing API component test.bundle.a"); //$NON-NLS-1$
 		analyzer.analyzeComponent(null, null, null, baseline, component, new BuildContext(), new NullProgressMonitor());
 		IApiProblem[] problems = analyzer.getProblems();
 		Set<Integer> expectedIds = new HashSet<>();
@@ -69,9 +69,7 @@ public class OSGiLessAnalysisTests {
 																		IApiProblem.MAJOR_VERSION_CHANGE,
 																		IApiProblem.NO_FLAGS));
 
-		assertEquals(
-				"Mismatch in problems reported by analyzer.getProblems, returned values:" + Arrays.toString(problems), //$NON-NLS-1$
-				expectedIds, Arrays.stream(problems).map(IApiProblem::getId).collect(Collectors.toSet()));
+		assertEquals(expectedIds, Arrays.stream(problems).map(IApiProblem::getId).collect(Collectors.toSet()), "Mismatch in problems reported by analyzer.getProblems, returned values:" + Arrays.toString(problems)); //$NON-NLS-1$
 		ApiTestingEnvironment.dispose(baseline);
 		ApiTestingEnvironment.dispose(current);
 	}

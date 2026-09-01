@@ -15,8 +15,7 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests invalid tags on fields in classes
@@ -25,25 +24,18 @@ import junit.framework.Test;
  */
 public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 
-	public InvalidClassFieldTagTests(String name) {
-		super(name);
-	}
-
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("class"); //$NON-NLS-1$
 	}
 
-	/**
-	 * @return the test suite for class fields
-	 */
-	public static Test suite() {
-		return buildTestSuite(InvalidClassFieldTagTests.class);
-	}
+	@Test
 
 	public void testInvalidClassFieldTag1I() {
 		x1(true);
 	}
+
+	@Test
 
 	public void testInvalidClassFieldTag1F() {
 		x1(false);
@@ -74,9 +66,13 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 		deployTagTest("test1.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidClassFieldTag2I() {
 		x2(true);
 	}
+
+	@Test
 
 	public void testInvalidClassFieldTag2F() {
 		x2(false);
@@ -95,9 +91,13 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 		deployTagTest("test2.java", inc, true); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidClassFieldTag3I() {
 		x3(true);
 	}
+
+	@Test
 
 	public void testInvalidClassFieldTag3F() {
 		x3(false);
@@ -128,9 +128,13 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 		deployTagTest("test3.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidClassFieldTag4I() {
 		x4(true);
 	}
+
+	@Test
 
 	public void testInvalidClassFieldTag4F() {
 		x4(false);
@@ -149,9 +153,13 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 		deployTagTest("test4.java", inc, true); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidClassFieldTag5I() {
 		x5(true);
 	}
+
+	@Test
 
 	public void testInvalidClassFieldTag5F() {
 		x5(false);
@@ -184,9 +192,13 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 		deployTagTest("test5.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidClassFieldTag6I() {
 		x6(true);
 	}
+
+	@Test
 
 	public void testInvalidClassFieldTag6F() {
 		x6(false);
@@ -207,9 +219,13 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 		deployTagTest("test6.java", inc, true); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidClassFieldTag7I() {
 		x7(true);
 	}
+
+	@Test
 
 	public void testInvalidClassFieldTag7F() {
 		x7(false);
@@ -242,9 +258,13 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 		deployTagTest("test7.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidClassFieldTag8I() {
 		x8(true);
 	}
+
+	@Test
 
 	public void testInvalidClassFieldTag8F() {
 		x8(false);
@@ -265,9 +285,13 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 		deployTagTest("test8.java", inc, true); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidClassFieldTag9I() {
 		x9(true);
 	}
+
+	@Test
 
 	public void testInvalidClassFieldTag9F() {
 		x9(false);
@@ -300,9 +324,13 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 		deployTagTest("test9.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidClassFieldTag10I() {
 		x10(true);
 	}
+
+	@Test
 
 	public void testInvalidClassFieldTag10F() {
 		x10(false);
@@ -323,9 +351,13 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 		deployTagTest("test10.java", inc, true); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidClassFieldTag11I() {
 		x11(true);
 	}
+
+	@Test
 
 	public void testInvalidClassFieldTag11F() {
 		x11(false);
@@ -358,9 +390,13 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 		deployTagTest("test11.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidClassFieldTag12I() {
 		x12(true);
 	}
+
+	@Test
 
 	public void testInvalidClassFieldTag12F() {
 		x12(false);

@@ -19,8 +19,7 @@ import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that the builder finds and properly reports invalid tags on enum fields
@@ -28,17 +27,6 @@ import junit.framework.Test;
  * @since 1.0
  */
 public class InvalidEnumTagTests extends TagTest {
-
-	public InvalidEnumTagTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(InvalidEnumTagTests.class);
-	}
 
 	@Override
 	protected IPath getTestSourcePath() {
@@ -55,9 +43,13 @@ public class InvalidEnumTagTests extends TagTest {
 		return JavaCore.VERSION_1_8;
 	}
 
+	@Test
+
 	public void testInvalidEnumTag1I() {
 		x1(true);
 	}
+
+	@Test
 
 	public void testInvalidEnumTag1F() {
 		x1(false);
@@ -77,9 +69,13 @@ public class InvalidEnumTagTests extends TagTest {
 		deployTagTest("test1.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidEnumTag3I() {
 		x3(true);
 	}
+
+	@Test
 
 	public void testInvalidEnumTag3F() {
 		x3(false);
@@ -100,9 +96,13 @@ public class InvalidEnumTagTests extends TagTest {
 		deployTagTest("test3.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidEnumTag4I() {
 		x4(true);
 	}
+
+	@Test
 
 	public void testInvalidEnumTag4F() {
 		x4(false);
@@ -119,9 +119,13 @@ public class InvalidEnumTagTests extends TagTest {
 		deployTagTest("test4.java", inc, true); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidEnumTag5I() {
 		x5(true);
 	}
+
+	@Test
 
 	public void testInvalidEnumTag5F() {
 		x5(false);
@@ -142,9 +146,13 @@ public class InvalidEnumTagTests extends TagTest {
 		deployTagTest("test5.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidEnumTag6I() {
 		x6(true);
 	}
+
+	@Test
 
 	public void testInvalidEnumTag6F() {
 		x6(false);
@@ -161,9 +169,13 @@ public class InvalidEnumTagTests extends TagTest {
 		deployTagTest("test6.java", inc, true); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidEnumTag7I() {
 		x7(true);
 	}
+
+	@Test
 
 	public void testInvalidEnumTag7F() {
 		x7(false);
@@ -184,9 +196,13 @@ public class InvalidEnumTagTests extends TagTest {
 		deployTagTest("test7.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidEnumTag8I() {
 		x8(true);
 	}
+
+	@Test
 
 	public void testInvalidEnumTag8F() {
 		x8(false);
@@ -203,9 +219,13 @@ public class InvalidEnumTagTests extends TagTest {
 		deployTagTest("test8.java", inc, true); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidEnumTag9I() {
 		x9(true);
 	}
+
+	@Test
 
 	public void testInvalidEnumTag9F() {
 		x9(false);
@@ -226,9 +246,13 @@ public class InvalidEnumTagTests extends TagTest {
 		deployTagTest("test9.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidEnumTag10I() {
 		x10(true);
 	}
+
+	@Test
 
 	public void testInvalidEnumTag10F() {
 		x10(false);
@@ -245,9 +269,13 @@ public class InvalidEnumTagTests extends TagTest {
 		deployTagTest("test10.java", inc, true); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidEnumTag11I() {
 		x11(true);
 	}
+
+	@Test
 
 	public void testInvalidEnumTag11F() {
 		x11(false);

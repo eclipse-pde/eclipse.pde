@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.anttasks.tests;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -25,7 +25,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.eclipse.core.internal.runtime.XmlProcessorFactory;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -55,10 +55,10 @@ public class ApiToolingCompareAntTaskTests extends AntRunnerTestCase {
 		properties.put("report_location", buildFolder.getLocation().append("report").toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
 		properties.put("filter_location", buildFolder.getLocation().toOSString()); //$NON-NLS-1$
 		runAntScript(buildXMLPath, new String[] { "run" }, buildFolder.getLocation().toOSString(), properties); //$NON-NLS-1$
-		assertFalse("allNonApiBundles must not exist", buildFolder.getFolder("allNonApiBundles").exists()); //$NON-NLS-1$ //$NON-NLS-2$
+		assertFalse(buildFolder.getFolder("allNonApiBundles").exists(), "allNonApiBundles must not exist"); //$NON-NLS-1$ //$NON-NLS-2$
 		IFolder folder = buildFolder.getFolder("report"); //$NON-NLS-1$
-		assertTrue("report folder must exist", folder.exists()); //$NON-NLS-1$
-		assertTrue("report xml must exist", folder.getFile("compare.xml").exists()); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(folder.exists(), "report folder must exist"); //$NON-NLS-1$
+		assertTrue(folder.getFile("compare.xml").exists(), "report xml must exist"); //$NON-NLS-1$ //$NON-NLS-2$
 		InputSource is = new InputSource(folder.getFile("compare.xml").getContents()); //$NON-NLS-1$
 		DocumentBuilder db = XmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
 		Document doc = db.parse(is);
@@ -66,12 +66,12 @@ public class ApiToolingCompareAntTaskTests extends AntRunnerTestCase {
 		boolean found = false;
 		for (int i = 0; i < elems.getLength(); i++) {
 			String value = elems.item(i).getAttributes().getNamedItem("componentId").getNodeValue(); //$NON-NLS-1$
-			assertFalse("org.example.rcpintro should have been filtered out.", value.startsWith("org.example.rcpintro")); //$NON-NLS-1$ //$NON-NLS-2$
+			assertFalse(value.startsWith("org.example.rcpintro"), "org.example.rcpintro should have been filtered out."); //$NON-NLS-1$ //$NON-NLS-2$
 			if (value.startsWith("org.example.rcpmail")) { //$NON-NLS-1$
 				found = true;
 			}
 		}
-		assertTrue("org.example.rcpmail should be present", found); //$NON-NLS-1$
+		assertTrue(found, "org.example.rcpmail should be present"); //$NON-NLS-1$
 	}
 
 	@Test

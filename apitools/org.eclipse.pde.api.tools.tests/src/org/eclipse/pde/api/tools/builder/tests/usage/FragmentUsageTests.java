@@ -15,8 +15,7 @@ package org.eclipse.pde.api.tools.builder.tests.usage;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.JavaCore;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that usage from fragment -&gt; host is not reported as a problem
@@ -24,10 +23,6 @@ import junit.framework.Test;
  * @since 1.0.1
  */
 public class FragmentUsageTests extends UsageTest {
-
-	public FragmentUsageTests(String name) {
-		super(name);
-	}
 
 	@Override
 	protected int getDefaultProblemId() {
@@ -37,13 +32,6 @@ public class FragmentUsageTests extends UsageTest {
 	@Override
 	protected String getTestCompliance() {
 		return JavaCore.VERSION_1_8;
-	}
-
-	/**
-	 * @return the test suite for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(FragmentUsageTests.class);
 	}
 
 	@Override
@@ -56,9 +44,13 @@ public class FragmentUsageTests extends UsageTest {
 		return "fragmenttests"; //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testClassExtendsI() {
 		x1(true);
 	}
+
+	@Test
 
 	public void testClassExtendsF() {
 		x1(false);
@@ -73,9 +65,13 @@ public class FragmentUsageTests extends UsageTest {
 		deployUsageTest("test1", inc); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testImplementsI() {
 		x2(true);
 	}
+
+	@Test
 
 	public void testImplementsF() {
 		x2(false);
@@ -90,9 +86,13 @@ public class FragmentUsageTests extends UsageTest {
 		deployUsageTest("test2", inc); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInstantiateI() {
 		x3(true);
 	}
+
+	@Test
 
 	public void testInstantiateF() {
 		x3(false);
@@ -107,9 +107,13 @@ public class FragmentUsageTests extends UsageTest {
 		deployUsageTest("test3", inc); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testConstNoRefI() {
 		x4(true);
 	}
+
+	@Test
 
 	public void testConstNoRefF() {
 		x4(false);
@@ -124,9 +128,13 @@ public class FragmentUsageTests extends UsageTest {
 		deployUsageTest("test4", inc); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testFieldNoRefI() {
 		x5(true);
 	}
+
+	@Test
 
 	public void testFieldNoRefF() {
 		x5(false);
@@ -141,9 +149,13 @@ public class FragmentUsageTests extends UsageTest {
 		deployUsageTest("test5", inc); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testOverrideI() {
 		x6(true);
 	}
+
+	@Test
 
 	public void testOverrideF() {
 		x6(false);
@@ -157,9 +169,13 @@ public class FragmentUsageTests extends UsageTest {
 		deployUsageTest("test6", inc); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testIExtendsI() {
 		x7(true);
 	}
+
+	@Test
 
 	public void testIExtendsF() {
 		x7(false);

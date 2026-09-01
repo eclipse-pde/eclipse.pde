@@ -17,8 +17,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that the builder correctly reports compatibility problems
@@ -38,24 +37,9 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 	 */
 	protected static String PACKAGE_PREFIX = "a.classes.methods."; //$NON-NLS-1$
 
-	public ClassCompatibilityMethodTests(String name) {
-		super(name);
-	}
-
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("methods"); //$NON-NLS-1$
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(ClassCompatibilityMethodTests.class);
-//		junit.framework.TestSuite suite = new junit.framework.TestSuite();
-//		suite.addTest(new ClassCompatibilityMethodTests("testAddNooverrideRemoveNoextendI"));
-//		suite.addTest(new ClassCompatibilityMethodTests("testAddNooverrideRemoveNoextendF"));
-//		return suite;
 	}
 
 	@Override
@@ -87,25 +71,37 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemovePublicAPIMethodI() throws Exception {
 		xRemovePublicAPIMethod(true);
 	}
+
+	@Test
 
 	public void testRemovePublicAPIMethodF() throws Exception {
 		xRemovePublicAPIMethod(false);
 	}
 
+	@Test
+
 	public void testRemoveTwoPublicAPIMethodsI() throws Exception {
 		xRemoveTwoPublicAPIMethods(true);
 	}
+
+	@Test
 
 	public void testRemoveTwoPublicAPIMethodsF() throws Exception {
 		xRemoveTwoPublicAPIMethods(false);
 	}
 
+	@Test
+
 	public void testAddNooverrideRemoveNoextendI() throws Exception {
 		xAddNooverrideRemoveNoextendI(true);
 	}
+
+	@Test
 
 	public void testAddNooverrideRemoveNoextendF() throws Exception {
 		xAddNooverrideRemoveNoextendI(false);
@@ -150,9 +146,13 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemoveProtectedAPIMethodI() throws Exception {
 		xRemoveProtectedAPIMethod(true);
 	}
+
+	@Test
 
 	public void testRemoveProtectedAPIMethodF() throws Exception {
 		xRemoveProtectedAPIMethod(false);
@@ -167,9 +167,13 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemovePrivateAPIMethodI() throws Exception {
 		xRemovePrivateAPIMethod(true);
 	}
+
+	@Test
 
 	public void testRemovePrivateAPIMethodF() throws Exception {
 		xRemovePrivateAPIMethod(false);
@@ -184,9 +188,13 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemovePackageMethodI() throws Exception {
 		xRemovePackageMethod(true);
 	}
+
+	@Test
 
 	public void testRemovePackageMethodF() throws Exception {
 		xRemovePackageMethod(false);
@@ -207,9 +215,13 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemovePublicAPIMethodNoExtendI() throws Exception {
 		xRemovePublicAPIMethodNoExtend(true);
 	}
+
+	@Test
 
 	public void testRemovePublicAPIMethodNoExtendF() throws Exception {
 		xRemovePublicAPIMethodNoExtend(false);
@@ -224,14 +236,17 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemoveProtectedAPIMethodNoExtendI() throws Exception {
 		xRemoveProtectedAPIMethodNoExtend(true);
 	}
 
+	@Test
+
 	public void testRemoveProtectedAPIMethodNoExtendF() throws Exception {
 		xRemoveProtectedAPIMethodNoExtend(false);
 	}
-
 
 	/**
 	 * Tests the removal of a protected method from an API class annotated as noextend.
@@ -243,9 +258,13 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemoveProtectedAPIMethodNoExtend2I() throws Exception {
 		xRemoveProtectedAPIMethodNoExtend2(true);
 	}
+
+	@Test
 
 	public void testRemoveProtectedAPIMethodNoExtend2F() throws Exception {
 		xRemoveProtectedAPIMethodNoExtend2(false);
@@ -266,9 +285,13 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemovePublicAPIMethodNoInstantiateI() throws Exception {
 		xRemovePublicAPIMethodNoInstantiate(true);
 	}
+
+	@Test
 
 	public void testRemovePublicAPIMethodNoInstantiateF() throws Exception {
 		xRemovePublicAPIMethodNoInstantiate(false);
@@ -289,9 +312,13 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemoveProtectedAPIMethodNoInstantiateI() throws Exception {
 		xRemoveProtectedAPIMethodNoInstantiate(true);
 	}
+
+	@Test
 
 	public void testRemoveProtectedAPIMethodNoInstantiateF() throws Exception {
 		xRemoveProtectedAPIMethodNoInstantiate(false);
@@ -313,9 +340,13 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemovePublicAPIMethodNoExtendNoInstantiateI() throws Exception {
 		xRemovePublicAPIMethodNoExtendNoInstatiate(true);
 	}
+
+	@Test
 
 	public void testRemovePublicAPIMethodNoExtendNoInstantiateF() throws Exception {
 		xRemovePublicAPIMethodNoExtendNoInstatiate(false);
@@ -331,9 +362,13 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemoveProtectedAPIMethodNoExtendNoInstantiateI() throws Exception {
 		xRemoveProtectedAPIMethodNoExtendNoInstatiate(true);
 	}
+
+	@Test
 
 	public void testRemoveProtectedAPIMethodNoExtendNoInstantiateF() throws Exception {
 		xRemoveProtectedAPIMethodNoExtendNoInstatiate(false);
@@ -348,9 +383,13 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemovePublicAPIMethodNoReferenceI() throws Exception {
 		xRemovePublicAPIMethodNoReference(true);
 	}
+
+	@Test
 
 	public void testRemovePublicAPIMethodNoReferencF() throws Exception {
 		xRemovePublicAPIMethodNoReference(false);
@@ -365,9 +404,13 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemoveProtectedAPIMethodNoReferenceI() throws Exception {
 		xRemoveProtectedAPIMethodNoReference(true);
 	}
+
+	@Test
 
 	public void testRemoveProtectedAPIMethodNoReferencF() throws Exception {
 		xRemoveProtectedAPIMethodNoReference(false);
@@ -388,9 +431,13 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemovePublicAPIMethodNoOverrideI() throws Exception {
 		xRemovePublicAPIMethodNoOverride(true);
 	}
+
+	@Test
 
 	public void testRemovePublicAPIMethodNoOverrideF() throws Exception {
 		xRemovePublicAPIMethodNoOverride(false);
@@ -411,9 +458,13 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemoveProtectedAPIMethodNoOverrideI() throws Exception {
 		xRemoveProtectedAPIMethodNoOverride(true);
 	}
+
+	@Test
 
 	public void testRemoveProtectedAPIMethodNoOverrideF() throws Exception {
 		xRemoveProtectedAPIMethodNoOverride(false);
@@ -428,9 +479,13 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddPrivateAPIMethodI() throws Exception {
 		xAddPrivateAPIMethod(true);
 	}
+
+	@Test
 
 	public void testAddPrivateAPIMethodF() throws Exception {
 		xAddPrivateAPIMethod(false);
@@ -445,9 +500,13 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddProtectedAPIMethodI() throws Exception {
 		xAddProtectedAPIMethod(true);
 	}
+
+	@Test
 
 	public void testAddProtectedAPIMethodF() throws Exception {
 		xAddProtectedAPIMethod(false);
@@ -462,9 +521,13 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddPublicAPIMethodI() throws Exception {
 		xAddPublicAPIMethod(true);
 	}
+
+	@Test
 
 	public void testAddPublicAPIMethodF() throws Exception {
 		xAddPublicAPIMethod(false);
@@ -489,9 +552,13 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddAbstractMethodI() throws Exception {
 		xAddAbstractMethod(true);
 	}
+
+	@Test
 
 	public void testAddAbstractMethodF() throws Exception {
 		xAddAbstractMethod(false);
@@ -506,9 +573,13 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddAbstractMethodNoExtendI() throws Exception {
 		xAddAbstractMethodNoExtend(true);
 	}
+
+	@Test
 
 	public void testAddAbstractMethodNoExtendF() throws Exception {
 		xAddAbstractMethodNoExtend(false);

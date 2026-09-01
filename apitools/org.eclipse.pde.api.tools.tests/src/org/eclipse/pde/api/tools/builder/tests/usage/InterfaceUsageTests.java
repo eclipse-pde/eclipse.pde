@@ -17,8 +17,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests a variety of interface uses, where the callee has API restrictions
@@ -28,10 +27,6 @@ import junit.framework.Test;
 public class InterfaceUsageTests extends UsageTest {
 
 	protected static final String INTERFACE_NAME = "InterfaceUsageInterface"; //$NON-NLS-1$
-
-	public InterfaceUsageTests(String name) {
-		super(name);
-	}
 
 	@Override
 	protected int getDefaultProblemId() {
@@ -47,14 +42,12 @@ public class InterfaceUsageTests extends UsageTest {
 		return super.getTestSourcePath().append("interface"); //$NON-NLS-1$
 	}
 
-	public static Test suite() {
-		return buildTestSuite(InterfaceUsageTests.class);
-	}
-
 	/**
 	 * Tests that extending an @noimplement interface properly reports no usage
 	 * problems using a full build
 	 */
+	@Test
+
 	public void testInterfaceUsageTests1F() {
 		x1(false);
 	}
@@ -63,6 +56,8 @@ public class InterfaceUsageTests extends UsageTest {
 	 * Tests that extending an @noimplement interface properly reports no usage
 	 * problems using an incremental build
 	 */
+	@Test
+
 	public void testInterfaceUsageTests1I() {
 		x1(true);
 	}
@@ -76,6 +71,8 @@ public class InterfaceUsageTests extends UsageTest {
 	 * Tests that implementing an @noimplement interface properly reports the
 	 * usage problems using a full build
 	 */
+	@Test
+
 	public void testInterfaceUsageTests2F() {
 		x2(false);
 	}
@@ -84,6 +81,8 @@ public class InterfaceUsageTests extends UsageTest {
 	 * Tests that implementing an @noimplement interface properly reports the
 	 * usage problems using an incremental build
 	 */
+	@Test
+
 	public void testInterfaceUsageTests2I() {
 		x2(true);
 	}
@@ -102,6 +101,8 @@ public class InterfaceUsageTests extends UsageTest {
 	 * Tests that extending an @noextend interface properly reports the usage
 	 * problems using a full build
 	 */
+	@Test
+
 	public void testIllegalExtendInterfaceF() {
 		x3(false);
 	}
@@ -110,6 +111,8 @@ public class InterfaceUsageTests extends UsageTest {
 	 * Tests that extending an @noextend interface properly reports the usage
 	 * problems using an incremental build
 	 */
+	@Test
+
 	public void testIllegalExtendInterfaceI() {
 		x3(true);
 	}
@@ -134,6 +137,8 @@ public class InterfaceUsageTests extends UsageTest {
 	 *
 	 * @since 1.0.300
 	 */
+	@Test
+
 	public void testNoRefInterface1I() throws Exception {
 		x4(true);
 	}
@@ -144,6 +149,8 @@ public class InterfaceUsageTests extends UsageTest {
 	 *
 	 * @since 1.0.300
 	 */
+	@Test
+
 	public void testNoRefInterface1F() throws Exception {
 		x4(false);
 	}
@@ -163,6 +170,8 @@ public class InterfaceUsageTests extends UsageTest {
 	 *
 	 * @since 1.0.300
 	 */
+	@Test
+
 	public void testNoRefInterface2I() throws Exception {
 		x5(true);
 	}
@@ -173,6 +182,8 @@ public class InterfaceUsageTests extends UsageTest {
 	 *
 	 * @since 1.0.300
 	 */
+	@Test
+
 	public void testNoRefInterface2F() throws Exception {
 		x5(false);
 	}

@@ -17,8 +17,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that API fields leaking an internal type as their type
@@ -29,10 +28,6 @@ import junit.framework.Test;
 public class FieldTypeLeak extends LeakTest {
 
 	private int pid = -1;
-
-	public FieldTypeLeak(String name) {
-		super(name);
-	}
 
 	@Override
 	protected int getDefaultProblemId() {
@@ -46,13 +41,6 @@ public class FieldTypeLeak extends LeakTest {
 		return pid;
 	}
 
-	/**
-	 * Currently empty.
-	 */
-	public static Test suite() {
-		return buildTestSuite(FieldTypeLeak.class);
-	}
-
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("field"); //$NON-NLS-1$
@@ -62,6 +50,8 @@ public class FieldTypeLeak extends LeakTest {
 	 * Tests that fields leaking API types as the field type are properly detected
 	 * using a full build
 	 */
+	@Test
+
 	public void testFieldTypeLeak1F() {
 		x1(false);
 	}
@@ -70,6 +60,8 @@ public class FieldTypeLeak extends LeakTest {
 	 * Tests that fields leaking API types as the field type are properly detected
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testFieldTypeLeak1I() {
 		x1(true);
 	}
@@ -90,6 +82,8 @@ public class FieldTypeLeak extends LeakTest {
 	 * Tests that fields leaking API types as the field type are properly detected in inner classes
 	 * using a full build
 	 */
+	@Test
+
 	public void testFieldTypeLeak2F() {
 		x2(false);
 	}
@@ -98,6 +92,8 @@ public class FieldTypeLeak extends LeakTest {
 	 * Tests that fields leaking API types as the field type are properly detected in inner classes
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testFieldTypeLeak2I() {
 		x2(true);
 	}
@@ -123,6 +119,8 @@ public class FieldTypeLeak extends LeakTest {
 	 * Tests that API type leak problems are suppressed on fields with an @noreference tag
 	 * using a full build
 	 */
+	@Test
+
 	public void testFieldTypeLeak3F() {
 		x3(false);
 	}
@@ -131,6 +129,8 @@ public class FieldTypeLeak extends LeakTest {
 	 * Tests that API type leak problems are suppressed on field with an @noreference tag
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testFieldTypeLeak3I() {
 		x3(true);
 	}
@@ -145,6 +145,8 @@ public class FieldTypeLeak extends LeakTest {
 	 * Tests that API type leaks are properly reported on static and final fields
 	 * using a full build
 	 */
+	@Test
+
 	public void testFieldTypeLeak4F() {
 		x4(false);
 	}
@@ -153,6 +155,8 @@ public class FieldTypeLeak extends LeakTest {
 	 * Tests that API type leaks are properly reported on static and final fields
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testFieldTypeLeak4I() {
 		x4(true);
 	}
@@ -178,6 +182,8 @@ public class FieldTypeLeak extends LeakTest {
 	 * Tests that having an @noreference tag on final fields does not removed API leak problems with the field
 	 * using a full build
 	 */
+	@Test
+
 	public void testFieldTypeLeak5F() {
 		x5(false);
 	}
@@ -186,6 +192,8 @@ public class FieldTypeLeak extends LeakTest {
 	 * Tests that having an @noreference tag on final fields does not removed API leak problems with the field
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testFieldTypeLeak5I() {
 		x5(true);
 	}
@@ -211,6 +219,8 @@ public class FieldTypeLeak extends LeakTest {
 	 * Tests a field of an internal type does not create a leak when the type
 	 * is not visible - a private inner type.
 	 */
+	@Test
+
 	public void testFieldTypeLeak6F() {
 		x6(false);
 	}
@@ -219,6 +229,8 @@ public class FieldTypeLeak extends LeakTest {
 	 * Tests a field of an internal type does not create a leak when the type
 	 * is not visible - a private inner type.
 	 */
+	@Test
+
 	public void testFieldTypeLeak6I() {
 		x6(true);
 	}
@@ -234,6 +246,8 @@ public class FieldTypeLeak extends LeakTest {
 	 * Tests a field of an internal type does not create a leak when the type
 	 * is not visible - a top level non public type.
 	 */
+	@Test
+
 	public void testFieldTypeLeak7F() {
 		x7(false);
 	}
@@ -242,6 +256,8 @@ public class FieldTypeLeak extends LeakTest {
 	 * Tests a field of an internal type does not create a leak when the type
 	 * is not visible - a top level non public type.
 	 */
+	@Test
+
 	public void testFieldTypeLeak7I() {
 		x7(true);
 	}
@@ -257,6 +273,8 @@ public class FieldTypeLeak extends LeakTest {
 	 * Tests that API type leaks are properly reported on fields
 	 * with a top level non-public type
 	 */
+	@Test
+
 	public void testFieldTypeLeak8F() {
 		x8(false);
 	}
@@ -265,6 +283,8 @@ public class FieldTypeLeak extends LeakTest {
 	 *  Tests that API type leaks are properly reported on fields
 	 * with a top level non-public type
 	 */
+	@Test
+
 	public void testFieldTypeLeak8I() {
 		x8(true);
 	}

@@ -13,10 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.comparator.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
@@ -27,7 +27,7 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.util.Util;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Delta tests for method
@@ -48,13 +48,13 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
-		assertTrue("Not empty", delta.isEmpty()); //$NON-NLS-1$
-		assertTrue("Different from NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
+		assertTrue(delta.isEmpty(), "Not empty"); //$NON-NLS-1$
+		assertTrue(delta == ApiComparator.NO_DELTA, "Different from NO_DELTA"); //$NON-NLS-1$
 	}
 
 	/**
@@ -66,13 +66,13 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
-		assertTrue("Not empty", delta.isEmpty()); //$NON-NLS-1$
-		assertTrue("Different from NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
+		assertTrue(delta.isEmpty(), "Not empty"); //$NON-NLS-1$
+		assertTrue(delta == ApiComparator.NO_DELTA, "Different from NO_DELTA"); //$NON-NLS-1$
 	}
 
 	/**
@@ -84,24 +84,24 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 2, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(2, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertFalse("Extend restrictions", RestrictionModifiers.isExtendRestriction(child.getCurrentRestrictions())); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertFalse(RestrictionModifiers.isExtendRestriction(child.getCurrentRestrictions()), "Extend restrictions"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 		child = allLeavesDeltas[1];
-		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.REMOVED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -113,24 +113,24 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 2, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(2, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertFalse("Extend restrictions", RestrictionModifiers.isExtendRestriction(child.getCurrentRestrictions())); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertFalse(RestrictionModifiers.isExtendRestriction(child.getCurrentRestrictions()), "Extend restrictions"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 		child = allLeavesDeltas[1];
-		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.REMOVED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -142,24 +142,24 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 2, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(2, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertFalse("Extend restrictions", RestrictionModifiers.isExtendRestriction(child.getCurrentRestrictions())); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertFalse(RestrictionModifiers.isExtendRestriction(child.getCurrentRestrictions()), "Extend restrictions"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 		child = allLeavesDeltas[1];
-		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.REMOVED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -171,24 +171,24 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 2, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(2, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertFalse("Extend restrictions", RestrictionModifiers.isExtendRestriction(child.getCurrentRestrictions())); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertFalse(RestrictionModifiers.isExtendRestriction(child.getCurrentRestrictions()), "Extend restrictions"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 		child = allLeavesDeltas[1];
-		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.REMOVED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -200,24 +200,24 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 2, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(2, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertFalse("Extend restrictions", RestrictionModifiers.isExtendRestriction(child.getCurrentRestrictions())); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertFalse(RestrictionModifiers.isExtendRestriction(child.getCurrentRestrictions()), "Extend restrictions"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 		child = allLeavesDeltas[1];
-		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.REMOVED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -229,18 +229,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.CHECKED_EXCEPTION, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.CHECKED_EXCEPTION, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -252,18 +252,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.UNCHECKED_EXCEPTION, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.UNCHECKED_EXCEPTION, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -275,18 +275,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.CHECKED_EXCEPTION, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.REMOVED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.CHECKED_EXCEPTION, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -298,18 +298,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.UNCHECKED_EXCEPTION, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.REMOVED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.UNCHECKED_EXCEPTION, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -321,13 +321,13 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
-		assertTrue("Not empty", delta.isEmpty()); //$NON-NLS-1$
-		assertTrue("Different from NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
+		assertTrue(delta.isEmpty(), "Not empty"); //$NON-NLS-1$
+		assertTrue(delta == ApiComparator.NO_DELTA, "Different from NO_DELTA"); //$NON-NLS-1$
 	}
 
 	/**
@@ -339,18 +339,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.DECREASE_ACCESS, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -362,18 +362,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.DECREASE_ACCESS, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -385,18 +385,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.DECREASE_ACCESS, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -408,18 +408,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.DECREASE_ACCESS, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -431,18 +431,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.DECREASE_ACCESS, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -454,19 +454,19 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertTrue("Not visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.INCREASE_ACCESS, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getNewModifiers()), "Not visible"); //$NON-NLS-1$
+		assertEquals(IDelta.INCREASE_ACCESS, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -478,18 +478,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.INCREASE_ACCESS, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.INCREASE_ACCESS, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -501,19 +501,19 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertTrue("Not visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.INCREASE_ACCESS, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getNewModifiers()), "Not visible"); //$NON-NLS-1$
+		assertEquals(IDelta.INCREASE_ACCESS, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -525,18 +525,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.ABSTRACT_TO_NON_ABSTRACT, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.ABSTRACT_TO_NON_ABSTRACT, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -548,18 +548,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.NON_ABSTRACT_TO_ABSTRACT, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.NON_ABSTRACT_TO_ABSTRACT, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -571,18 +571,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.FINAL_TO_NON_FINAL, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.FINAL_TO_NON_FINAL, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -594,19 +594,19 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertFalse("Extend restrictions", RestrictionModifiers.isExtendRestriction(child.getCurrentRestrictions())); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.NON_FINAL_TO_FINAL, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertFalse(RestrictionModifiers.isExtendRestriction(child.getCurrentRestrictions()), "Extend restrictions"); //$NON-NLS-1$
+		assertEquals(IDelta.NON_FINAL_TO_FINAL, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -618,18 +618,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.STATIC_TO_NON_STATIC, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.STATIC_TO_NON_STATIC, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -641,20 +641,20 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertTrue("Is visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertTrue("Was visible", Util.isVisible(child.getOldModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.NON_STATIC_TO_STATIC, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getNewModifiers()), "Is visible"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getOldModifiers()), "Was visible"); //$NON-NLS-1$
+		assertEquals(IDelta.NON_STATIC_TO_STATIC, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -666,18 +666,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.NATIVE_TO_NON_NATIVE, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.NATIVE_TO_NON_NATIVE, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -689,18 +689,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.NON_NATIVE_TO_NATIVE, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.NON_NATIVE_TO_NATIVE, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -712,18 +712,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.SYNCHRONIZED_TO_NON_SYNCHRONIZED, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.SYNCHRONIZED_TO_NON_SYNCHRONIZED, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -735,18 +735,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.NON_SYNCHRONIZED_TO_SYNCHRONIZED, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.NON_SYNCHRONIZED_TO_SYNCHRONIZED, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -758,18 +758,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.TYPE_PARAMETERS, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.TYPE_PARAMETERS, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -782,19 +782,19 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.TYPE_PARAMETERS, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
-		assertEquals("foo<U:Ljava/lang/Number;>(TU;Ljava/util/List<TU;>;)V", child.getKey()); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.TYPE_PARAMETERS, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
+		assertEquals(child.getKey(), "foo<U:Ljava/lang/Number;>(TU;Ljava/util/List<TU;>;)V"); //$NON-NLS-1$
 	}
 
 	/**
@@ -806,19 +806,19 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.TYPE_PARAMETER, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
-		assertEquals("foo<U:Ljava/lang/Object;V:Ljava/lang/Object;>(TU;)V", child.getKey()); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.TYPE_PARAMETER, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
+		assertEquals(child.getKey(), "foo<U:Ljava/lang/Object;V:Ljava/lang/Object;>(TU;)V"); //$NON-NLS-1$
 	}
 
 	/**
@@ -830,18 +830,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.TYPE_PARAMETER, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.REMOVED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.TYPE_PARAMETER, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -853,18 +853,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.TYPE_PARAMETER, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.REMOVED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.TYPE_PARAMETER, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -876,18 +876,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.TYPE_PARAMETER_NAME, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.TYPE_PARAMETER_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.TYPE_PARAMETER_NAME, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.TYPE_PARAMETER_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -899,43 +899,43 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 6, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(6, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.CLASS_BOUND, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.TYPE_PARAMETER_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_BOUND, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.TYPE_PARAMETER_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 		child = allLeavesDeltas[1];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.INTERFACE_BOUND, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.TYPE_PARAMETER_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.INTERFACE_BOUND, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.TYPE_PARAMETER_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 		child = allLeavesDeltas[2];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.TYPE_PARAMETER_NAME, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.TYPE_PARAMETER_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.TYPE_PARAMETER_NAME, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.TYPE_PARAMETER_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 		child = allLeavesDeltas[3];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.TYPE_PARAMETER_NAME, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.TYPE_PARAMETER_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.TYPE_PARAMETER_NAME, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.TYPE_PARAMETER_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 		child = allLeavesDeltas[4];
-		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.CLASS_BOUND, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.TYPE_PARAMETER_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.REMOVED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_BOUND, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.TYPE_PARAMETER_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 		child = allLeavesDeltas[5];
-		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.INTERFACE_BOUND, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.TYPE_PARAMETER_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.REMOVED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.INTERFACE_BOUND, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.TYPE_PARAMETER_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -947,18 +947,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.ARRAY_TO_VARARGS, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.ARRAY_TO_VARARGS, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -970,18 +970,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.VARARGS_TO_ARRAY, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.VARARGS_TO_ARRAY, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -993,18 +993,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.UNCHECKED_EXCEPTION, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.REMOVED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.UNCHECKED_EXCEPTION, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1016,18 +1016,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.CHECKED_EXCEPTION, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.REMOVED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.CHECKED_EXCEPTION, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1039,18 +1039,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.CHECKED_EXCEPTION, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.CHECKED_EXCEPTION, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1062,18 +1062,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.UNCHECKED_EXCEPTION, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.UNCHECKED_EXCEPTION, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1085,18 +1085,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.ANNOTATION_DEFAULT_VALUE, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.ANNOTATION_DEFAULT_VALUE, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1108,18 +1108,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.ANNOTATION_DEFAULT_VALUE, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.REMOVED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.ANNOTATION_DEFAULT_VALUE, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1131,18 +1131,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.ANNOTATION_DEFAULT_VALUE, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.ANNOTATION_DEFAULT_VALUE, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1154,18 +1154,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.NON_FINAL_TO_FINAL, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.NON_FINAL_TO_FINAL, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1177,25 +1177,25 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 2, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(2, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertFalse("Is visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertFalse(Util.isVisible(child.getNewModifiers()), "Is visible"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 		child = allLeavesDeltas[1];
-		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
-		assertFalse("Is visible", Util.isVisible(child.getOldModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.REMOVED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertFalse(Util.isVisible(child.getOldModifiers()), "Is visible"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1207,19 +1207,19 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertFalse("Is visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.CHECKED_EXCEPTION, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertFalse(Util.isVisible(child.getNewModifiers()), "Is visible"); //$NON-NLS-1$
+		assertEquals(IDelta.CHECKED_EXCEPTION, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1231,19 +1231,19 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertTrue("Not visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getNewModifiers()), "Not visible"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1256,12 +1256,12 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
-		assertTrue("No NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
+		assertTrue(delta == ApiComparator.NO_DELTA, "No NO_DELTA"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1273,19 +1273,19 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertFalse("Extend restrictions", RestrictionModifiers.isExtendRestriction(child.getCurrentRestrictions())); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertFalse(RestrictionModifiers.isExtendRestriction(child.getCurrentRestrictions()), "Extend restrictions"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1298,19 +1298,19 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertTrue("No extend restrictions", RestrictionModifiers.isExtendRestriction(child.getCurrentRestrictions())); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertTrue(RestrictionModifiers.isExtendRestriction(child.getCurrentRestrictions()), "No extend restrictions"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1322,20 +1322,20 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
-		assertFalse("Should not be NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
+		assertFalse(delta == ApiComparator.NO_DELTA, "Should not be NO_DELTA"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertFalse("Extend restrictions", RestrictionModifiers.isExtendRestriction(child.getCurrentRestrictions())); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertFalse(RestrictionModifiers.isExtendRestriction(child.getCurrentRestrictions()), "Extend restrictions"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1347,20 +1347,20 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
-		assertFalse("Should not be NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
+		assertFalse(delta == ApiComparator.NO_DELTA, "Should not be NO_DELTA"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertFalse("Is visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.NON_STATIC_TO_STATIC, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertFalse(Util.isVisible(child.getNewModifiers()), "Is visible"); //$NON-NLS-1$
+		assertEquals(IDelta.NON_STATIC_TO_STATIC, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1372,20 +1372,20 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
-		assertFalse("Should not be NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
+		assertFalse(delta == ApiComparator.NO_DELTA, "Should not be NO_DELTA"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.OVERRIDEN_METHOD, child.getFlags()); //$NON-NLS-1$
-		assertTrue("Not visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.OVERRIDEN_METHOD, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getNewModifiers()), "Not visible"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1397,20 +1397,20 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
-		assertFalse("Should not be NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
+		assertFalse(delta == ApiComparator.NO_DELTA, "Should not be NO_DELTA"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
-		assertTrue("Not private", Flags.isPrivate(child.getNewModifiers())); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
+		assertTrue(Flags.isPrivate(child.getNewModifiers()), "Not private"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1422,20 +1422,20 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
-		assertFalse("Should not be NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
+		assertFalse(delta == ApiComparator.NO_DELTA, "Should not be NO_DELTA"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.OVERRIDEN_METHOD, child.getFlags()); //$NON-NLS-1$
-		assertTrue("Not visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.OVERRIDEN_METHOD, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getNewModifiers()), "Not visible"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1447,20 +1447,20 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
-		assertFalse("Should not be NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
+		assertFalse(delta == ApiComparator.NO_DELTA, "Should not be NO_DELTA"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.OVERRIDEN_METHOD, child.getFlags()); //$NON-NLS-1$
-		assertTrue("Not visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.OVERRIDEN_METHOD, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getNewModifiers()), "Not visible"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1472,18 +1472,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.NON_FINAL_TO_FINAL, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.NON_FINAL_TO_FINAL, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1495,18 +1495,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.NON_FINAL_TO_FINAL, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.NON_FINAL_TO_FINAL, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1518,20 +1518,20 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
-		assertFalse("Should not be NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
+		assertFalse(delta == ApiComparator.NO_DELTA, "Should not be NO_DELTA"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.OVERRIDEN_METHOD, child.getFlags()); //$NON-NLS-1$
-		assertTrue("Not visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.OVERRIDEN_METHOD, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getNewModifiers()), "Not visible"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1543,20 +1543,20 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
-		assertFalse("Should not be NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
+		assertFalse(delta == ApiComparator.NO_DELTA, "Should not be NO_DELTA"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.OVERRIDEN_METHOD, child.getFlags()); //$NON-NLS-1$
-		assertTrue("Not visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.OVERRIDEN_METHOD, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getNewModifiers()), "Not visible"); //$NON-NLS-1$
+		assertEquals(IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1568,19 +1568,19 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
-		assertTrue("Not visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getNewModifiers()), "Not visible"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1592,19 +1592,19 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.API_METHOD, child.getFlags()); //$NON-NLS-1$
-		assertTrue("Not visible", Util.isVisible(child.getOldModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.REMOVED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.API_METHOD, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getOldModifiers()), "Not visible"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1616,12 +1616,12 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
-		assertTrue("Should be NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
+		assertTrue(delta == ApiComparator.NO_DELTA, "Should be NO_DELTA"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1633,19 +1633,19 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
-		assertTrue("Not visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getNewModifiers()), "Not visible"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1657,19 +1657,19 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.CONSTRUCTOR, child.getFlags()); //$NON-NLS-1$
-		assertTrue("Not visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.CONSTRUCTOR, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getNewModifiers()), "Not visible"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1681,19 +1681,19 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.API_CONSTRUCTOR, child.getFlags()); //$NON-NLS-1$
-		assertTrue("Not visible", Util.isVisible(child.getOldModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.REMOVED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.API_CONSTRUCTOR, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getOldModifiers()), "Not visible"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1705,12 +1705,12 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
-		assertTrue("Should be NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
+		assertTrue(delta == ApiComparator.NO_DELTA, "Should be NO_DELTA"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1722,19 +1722,19 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.CONSTRUCTOR, child.getFlags()); //$NON-NLS-1$
-		assertTrue("Not visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.CONSTRUCTOR, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getNewModifiers()), "Not visible"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1746,19 +1746,19 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.METHOD_WITH_DEFAULT_VALUE, child.getFlags()); //$NON-NLS-1$
-		assertTrue("Not visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.ANNOTATION_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_WITH_DEFAULT_VALUE, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getNewModifiers()), "Not visible"); //$NON-NLS-1$
+		assertEquals(IDelta.ANNOTATION_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1770,19 +1770,19 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.API_METHOD_WITH_DEFAULT_VALUE, child.getFlags()); //$NON-NLS-1$
-		assertTrue("Not visible", Util.isVisible(child.getOldModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.ANNOTATION_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.REMOVED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.API_METHOD_WITH_DEFAULT_VALUE, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getOldModifiers()), "Not visible"); //$NON-NLS-1$
+		assertEquals(IDelta.ANNOTATION_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1794,12 +1794,12 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
-		assertTrue("Should be NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
+		assertTrue(delta == ApiComparator.NO_DELTA, "Should be NO_DELTA"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1811,19 +1811,19 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.METHOD_WITH_DEFAULT_VALUE, child.getFlags()); //$NON-NLS-1$
-		assertTrue("Not visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.ANNOTATION_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_WITH_DEFAULT_VALUE, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getNewModifiers()), "Not visible"); //$NON-NLS-1$
+		assertEquals(IDelta.ANNOTATION_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1835,19 +1835,19 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.METHOD_WITHOUT_DEFAULT_VALUE, child.getFlags()); //$NON-NLS-1$
-		assertTrue("Not visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.ANNOTATION_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_WITHOUT_DEFAULT_VALUE, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getNewModifiers()), "Not visible"); //$NON-NLS-1$
+		assertEquals(IDelta.ANNOTATION_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1859,19 +1859,19 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.API_METHOD_WITHOUT_DEFAULT_VALUE, child.getFlags()); //$NON-NLS-1$
-		assertTrue("Not visible", Util.isVisible(child.getOldModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.ANNOTATION_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.REMOVED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.API_METHOD_WITHOUT_DEFAULT_VALUE, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getOldModifiers()), "Not visible"); //$NON-NLS-1$
+		assertEquals(IDelta.ANNOTATION_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1883,12 +1883,12 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
-		assertTrue("Should be NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
+		assertTrue(delta == ApiComparator.NO_DELTA, "Should be NO_DELTA"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1900,19 +1900,19 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.METHOD_WITHOUT_DEFAULT_VALUE, child.getFlags()); //$NON-NLS-1$
-		assertTrue("Not visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.ANNOTATION_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_WITHOUT_DEFAULT_VALUE, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getNewModifiers()), "Not visible"); //$NON-NLS-1$
+		assertEquals(IDelta.ANNOTATION_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1924,31 +1924,31 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 3, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(3, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[1];
-		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.SUPERCLASS, child.getFlags()); //$NON-NLS-1$
-		assertTrue("Not visible", Util.isVisible(child.getOldModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.REMOVED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.SUPERCLASS, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getOldModifiers()), "Not visible"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 		child = allLeavesDeltas[2];
-		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.TYPE, child.getFlags()); //$NON-NLS-1$
-		assertTrue("Not visible", Util.isVisible(child.getOldModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.API_COMPONENT_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.REMOVED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.TYPE, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getOldModifiers()), "Not visible"); //$NON-NLS-1$
+		assertEquals(IDelta.API_COMPONENT_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 		child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.METHOD_MOVED_DOWN, child.getFlags()); //$NON-NLS-1$
-		assertTrue("Not visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_MOVED_DOWN, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getNewModifiers()), "Not visible"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1960,12 +1960,12 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
-		assertTrue("Different from NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
+		assertTrue(delta == ApiComparator.NO_DELTA, "Different from NO_DELTA"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1977,20 +1977,20 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.INCREASE_ACCESS, child.getFlags()); //$NON-NLS-1$
-		assertTrue("Not visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertTrue("Not @noreferece restriction", RestrictionModifiers.isReferenceRestriction(child.getCurrentRestrictions())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.INCREASE_ACCESS, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getNewModifiers()), "Not visible"); //$NON-NLS-1$
+		assertTrue(RestrictionModifiers.isReferenceRestriction(child.getCurrentRestrictions()), "Not @noreferece restriction"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2002,21 +2002,21 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
-		assertTrue("Not visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertTrue("Not protected", Flags.isProtected(child.getNewModifiers())); //$NON-NLS-1$
-		assertTrue("Not @extend restriction", RestrictionModifiers.isExtendRestriction(child.getCurrentRestrictions())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getNewModifiers()), "Not visible"); //$NON-NLS-1$
+		assertTrue(Flags.isProtected(child.getNewModifiers()), "Not protected"); //$NON-NLS-1$
+		assertTrue(RestrictionModifiers.isExtendRestriction(child.getCurrentRestrictions()), "Not @extend restriction"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2028,19 +2028,19 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags()); //$NON-NLS-1$
-		assertFalse("Is visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.DECREASE_ACCESS, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertFalse(Util.isVisible(child.getNewModifiers()), "Is visible"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2052,19 +2052,19 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags()); //$NON-NLS-1$
-		assertFalse("Is visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.DECREASE_ACCESS, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertFalse(Util.isVisible(child.getNewModifiers()), "Is visible"); //$NON-NLS-1$
+		assertEquals(IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2076,20 +2076,20 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags()); //$NON-NLS-1$
-		assertFalse("Is visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getCurrentRestrictions())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.DECREASE_ACCESS, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertFalse(Util.isVisible(child.getNewModifiers()), "Is visible"); //$NON-NLS-1$
+		assertTrue(RestrictionModifiers.isReferenceRestriction(child.getCurrentRestrictions()), "Not @reference restriction"); //$NON-NLS-1$
+		assertEquals(IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2101,20 +2101,20 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags()); //$NON-NLS-1$
-		assertFalse("Is visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getCurrentRestrictions())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.DECREASE_ACCESS, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertFalse(Util.isVisible(child.getNewModifiers()), "Is visible"); //$NON-NLS-1$
+		assertTrue(RestrictionModifiers.isReferenceRestriction(child.getCurrentRestrictions()), "Not @reference restriction"); //$NON-NLS-1$
+		assertEquals(IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2126,20 +2126,20 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags()); //$NON-NLS-1$
-		assertFalse("Is visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getCurrentRestrictions())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.DECREASE_ACCESS, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertFalse(Util.isVisible(child.getNewModifiers()), "Is visible"); //$NON-NLS-1$
+		assertTrue(RestrictionModifiers.isReferenceRestriction(child.getCurrentRestrictions()), "Not @reference restriction"); //$NON-NLS-1$
+		assertEquals(IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2151,20 +2151,20 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags()); //$NON-NLS-1$
-		assertFalse("Is visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getCurrentRestrictions())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.DECREASE_ACCESS, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertFalse(Util.isVisible(child.getNewModifiers()), "Is visible"); //$NON-NLS-1$
+		assertTrue(RestrictionModifiers.isReferenceRestriction(child.getCurrentRestrictions()), "Not @reference restriction"); //$NON-NLS-1$
+		assertEquals(IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2176,20 +2176,20 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.NON_STATIC_TO_STATIC, child.getFlags()); //$NON-NLS-1$
-		assertTrue("Not visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getCurrentRestrictions())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.NON_STATIC_TO_STATIC, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getNewModifiers()), "Not visible"); //$NON-NLS-1$
+		assertTrue(RestrictionModifiers.isReferenceRestriction(child.getCurrentRestrictions()), "Not @reference restriction"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2201,20 +2201,20 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.STATIC_TO_NON_STATIC, child.getFlags()); //$NON-NLS-1$
-		assertTrue("Not visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getCurrentRestrictions())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.STATIC_TO_NON_STATIC, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getNewModifiers()), "Not visible"); //$NON-NLS-1$
+		assertTrue(RestrictionModifiers.isReferenceRestriction(child.getCurrentRestrictions()), "Not @reference restriction"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2226,20 +2226,20 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags()); //$NON-NLS-1$
-		assertFalse("Is visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getCurrentRestrictions())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.DECREASE_ACCESS, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertFalse(Util.isVisible(child.getNewModifiers()), "Is visible"); //$NON-NLS-1$
+		assertTrue(RestrictionModifiers.isReferenceRestriction(child.getCurrentRestrictions()), "Not @reference restriction"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2251,20 +2251,20 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags()); //$NON-NLS-1$
-		assertFalse("Is visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getCurrentRestrictions())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.DECREASE_ACCESS, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertFalse(Util.isVisible(child.getNewModifiers()), "Is visible"); //$NON-NLS-1$
+		assertTrue(RestrictionModifiers.isReferenceRestriction(child.getCurrentRestrictions()), "Not @reference restriction"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2276,20 +2276,20 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags()); //$NON-NLS-1$
-		assertFalse("Is visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getCurrentRestrictions())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.DECREASE_ACCESS, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertFalse(Util.isVisible(child.getNewModifiers()), "Is visible"); //$NON-NLS-1$
+		assertTrue(RestrictionModifiers.isReferenceRestriction(child.getCurrentRestrictions()), "Not @reference restriction"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2301,19 +2301,19 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
-		assertTrue("Not visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getNewModifiers()), "Not visible"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2325,19 +2325,19 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
-		assertTrue("Not visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getNewModifiers()), "Not visible"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2349,19 +2349,19 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
-		assertTrue("Not visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getNewModifiers()), "Not visible"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2373,11 +2373,11 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
-		assertTrue("Not no delta", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertTrue(delta == ApiComparator.NO_DELTA, "Not no delta"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2389,19 +2389,19 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
-		assertTrue("Not visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getNewModifiers()), "Not visible"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2413,20 +2413,20 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.RESTRICTIONS, child.getFlags()); //$NON-NLS-1$
-		assertTrue("Not visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertTrue("Not @override restriction", RestrictionModifiers.isOverrideRestriction(child.getCurrentRestrictions())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.RESTRICTIONS, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getNewModifiers()), "Not visible"); //$NON-NLS-1$
+		assertTrue(RestrictionModifiers.isOverrideRestriction(child.getCurrentRestrictions()), "Not @override restriction"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2438,12 +2438,12 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
-		assertTrue("Should be NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
+		assertTrue(delta == ApiComparator.NO_DELTA, "Should be NO_DELTA"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2455,12 +2455,12 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
-		assertTrue("Should be NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
+		assertTrue(delta == ApiComparator.NO_DELTA, "Should be NO_DELTA"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2472,12 +2472,12 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
-		assertTrue("Should be NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
+		assertTrue(delta == ApiComparator.NO_DELTA, "Should be NO_DELTA"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2489,12 +2489,12 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
-		assertTrue("Should be NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
+		assertTrue(delta == ApiComparator.NO_DELTA, "Should be NO_DELTA"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2506,20 +2506,20 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.RESTRICTIONS, child.getFlags()); //$NON-NLS-1$
-		assertFalse("Is visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertTrue("Not @override restriction", RestrictionModifiers.isOverrideRestriction(child.getCurrentRestrictions())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.RESTRICTIONS, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertFalse(Util.isVisible(child.getNewModifiers()), "Is visible"); //$NON-NLS-1$
+		assertTrue(RestrictionModifiers.isOverrideRestriction(child.getCurrentRestrictions()), "Not @override restriction"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2531,20 +2531,20 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
-		assertFalse("Should not be NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
+		assertFalse(delta == ApiComparator.NO_DELTA, "Should not be NO_DELTA"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.OVERRIDEN_METHOD, child.getFlags()); //$NON-NLS-1$
-		assertTrue("Not visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.OVERRIDEN_METHOD, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getNewModifiers()), "Not visible"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2556,20 +2556,20 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
-		assertFalse("Should not be NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
+		assertFalse(delta == ApiComparator.NO_DELTA, "Should not be NO_DELTA"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.NON_FINAL_TO_FINAL, child.getFlags()); //$NON-NLS-1$
-		assertTrue("Not visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.NON_FINAL_TO_FINAL, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getNewModifiers()), "Not visible"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2581,12 +2581,12 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
-		assertTrue("Should be NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
+		assertTrue(delta == ApiComparator.NO_DELTA, "Should be NO_DELTA"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2598,18 +2598,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.NON_FINAL_TO_FINAL, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.NON_FINAL_TO_FINAL, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2621,12 +2621,12 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
-		assertTrue("Different from NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
+		assertTrue(delta == ApiComparator.NO_DELTA, "Different from NO_DELTA"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2638,23 +2638,23 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 2, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(2, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 		child = allLeavesDeltas[1];
-		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.REMOVED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.CLASS_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2666,23 +2666,23 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(before, after, VisibilityModifiers.API, true, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 2, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(2, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.INCREASE_ACCESS, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.INCREASE_ACCESS, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 		child = allLeavesDeltas[1];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.NON_FINAL_TO_FINAL, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.NON_FINAL_TO_FINAL, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2694,18 +2694,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.TYPE_ARGUMENTS, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.TYPE_ARGUMENTS, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2717,18 +2717,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.TYPE_ARGUMENTS, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.TYPE_ARGUMENTS, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2740,18 +2740,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.TYPE_PARAMETERS, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.TYPE_PARAMETERS, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2763,19 +2763,19 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertTrue("Is visible", !Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.CHECKED_EXCEPTION, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertTrue(!Util.isVisible(child.getNewModifiers()), "Is visible"); //$NON-NLS-1$
+		assertEquals(IDelta.CHECKED_EXCEPTION, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2787,19 +2787,19 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertTrue("Is visible", !Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.UNCHECKED_EXCEPTION, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertTrue(!Util.isVisible(child.getNewModifiers()), "Is visible"); //$NON-NLS-1$
+		assertEquals(IDelta.UNCHECKED_EXCEPTION, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2811,18 +2811,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.ARRAY_TO_VARARGS, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.ARRAY_TO_VARARGS, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2834,19 +2834,19 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
-		assertTrue("Is visible", !Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.UNCHECKED_EXCEPTION, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.REMOVED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertTrue(!Util.isVisible(child.getNewModifiers()), "Is visible"); //$NON-NLS-1$
+		assertEquals(IDelta.UNCHECKED_EXCEPTION, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2858,19 +2858,19 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
-		assertTrue("Is visible", !Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.CHECKED_EXCEPTION, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.REMOVED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertTrue(!Util.isVisible(child.getNewModifiers()), "Is visible"); //$NON-NLS-1$
+		assertEquals(IDelta.CHECKED_EXCEPTION, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2882,19 +2882,19 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertTrue("Is visible", !Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.INCREASE_ACCESS, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertTrue(!Util.isVisible(child.getNewModifiers()), "Is visible"); //$NON-NLS-1$
+		assertEquals(IDelta.INCREASE_ACCESS, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2906,19 +2906,19 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertTrue("Is visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.NON_FINAL_TO_FINAL, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getNewModifiers()), "Is visible"); //$NON-NLS-1$
+		assertEquals(IDelta.NON_FINAL_TO_FINAL, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	@Test
@@ -2927,31 +2927,31 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 3, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(3, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.METHOD_MOVED_DOWN, child.getFlags()); //$NON-NLS-1$
-		assertTrue("Not visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_MOVED_DOWN, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getNewModifiers()), "Not visible"); //$NON-NLS-1$
+		assertEquals(IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 		child = allLeavesDeltas[1];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.CONTRACTED_SUPERINTERFACES_SET, child.getFlags()); //$NON-NLS-1$
-		assertTrue("Not visible", Util.isVisible(child.getOldModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.CHANGED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.CONTRACTED_SUPERINTERFACES_SET, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getOldModifiers()), "Not visible"); //$NON-NLS-1$
+		assertEquals(IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 		child = allLeavesDeltas[2];
-		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.TYPE, child.getFlags()); //$NON-NLS-1$
-		assertTrue("Not visible", Util.isVisible(child.getOldModifiers())); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.API_COMPONENT_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.REMOVED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.TYPE, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertTrue(Util.isVisible(child.getOldModifiers()), "Not visible"); //$NON-NLS-1$
+		assertEquals(IDelta.API_COMPONENT_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertFalse(DeltaProcessor.isCompatible(child), "Is compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2963,18 +2963,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.DEPRECATION, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.DEPRECATION, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -2986,18 +2986,18 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.DEPRECATION, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertEquals(IDelta.REMOVED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.DEPRECATION, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
 	}
 
 	/**
@@ -3010,11 +3010,11 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
-		assertTrue("Not no delta", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertTrue(delta == ApiComparator.NO_DELTA, "Not no delta"); //$NON-NLS-1$
 	}
 
 	/**
@@ -3027,19 +3027,19 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		assertNotNull(beforeApiComponent, "no api component"); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		assertNotNull(afterApiComponent, "no api component"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
-		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertNotNull(delta, "No delta"); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals(1, allLeavesDeltas.length, "Wrong size"); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
-		assertTrue("Not noextend", RestrictionModifiers.isExtendRestriction(child.getCurrentRestrictions())); //$NON-NLS-1$
+		assertEquals(IDelta.ADDED, child.getKind(), "Wrong kind"); //$NON-NLS-1$
+		assertEquals(IDelta.METHOD, child.getFlags(), "Wrong flag"); //$NON-NLS-1$
+		assertEquals(IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType(), "Wrong element type"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
+		assertTrue(DeltaProcessor.isCompatible(child), "Not compatible"); //$NON-NLS-1$
+		assertTrue(RestrictionModifiers.isExtendRestriction(child.getCurrentRestrictions()), "Not noextend"); //$NON-NLS-1$
 	}
 }

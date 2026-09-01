@@ -18,8 +18,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests a variety of class usages where the callee has API restrictions
@@ -29,10 +28,6 @@ import junit.framework.Test;
 public class ClassUsageTests extends UsageTest {
 
 	public static final String CLASS_NAME = "ClassUsageClass"; //$NON-NLS-1$
-
-	public ClassUsageTests(String name) {
-		super(name);
-	}
 
 	@Override
 	protected int getDefaultProblemId() {
@@ -51,10 +46,6 @@ public class ClassUsageTests extends UsageTest {
 				flags);
 	}
 
-	public static Test suite() {
-		return buildTestSuite(ClassUsageTests.class);
-	}
-
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("class"); //$NON-NLS-1$
@@ -64,6 +55,8 @@ public class ClassUsageTests extends UsageTest {
 	 * Tests that classes the extend a restricted class are properly flagged
 	 * using a full build
 	 */
+	@Test
+
 	public void testClassUsageTests1F() {
 		x1(false);
 	}
@@ -72,6 +65,8 @@ public class ClassUsageTests extends UsageTest {
 	 * Tests the classes the extend a restricted class are properly flagged
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testClassUsageTests1I() {
 		x1(true);
 	}
@@ -97,6 +92,8 @@ public class ClassUsageTests extends UsageTest {
 	 * Tests that classes the instantiate a restricted class are properly flagged
 	 * using a full build
 	 */
+	@Test
+
 	public void testClassUsageTests2F() {
 		x2(false);
 	}
@@ -105,6 +102,8 @@ public class ClassUsageTests extends UsageTest {
 	 * Tests the classes the instantiate a restricted class are properly flagged
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testClassUsageTests2I() {
 		x2(true);
 	}
@@ -131,6 +130,8 @@ public class ClassUsageTests extends UsageTest {
 	 * detected for one class and an extension interface using a full build
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=230189
 	 */
+	@Test
+
 	public void testClassIndirectImplements1F() {
 		x3(false);
 	}
@@ -140,6 +141,8 @@ public class ClassUsageTests extends UsageTest {
 	 * detected for one class and an extension interface using an incremental build
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=230189
 	 */
+	@Test
+
 	public void testClassIndirectImplements1I() {
 		x3(true);
 	}
@@ -161,6 +164,8 @@ public class ClassUsageTests extends UsageTest {
 	 * a full build
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=230189
 	 */
+	@Test
+
 	public void testClassIndirectImplements2F() {
 		x4(false);
 	}
@@ -171,6 +176,8 @@ public class ClassUsageTests extends UsageTest {
 	 * an incremental build
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=230189
 	 */
+	@Test
+
 	public void testClassIndirectImplements2I() {
 		x4(true);
 	}
@@ -186,6 +193,8 @@ public class ClassUsageTests extends UsageTest {
 	 * a full build
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=230189
 	 */
+	@Test
+
 	public void testClassIndirectImplements3F() {
 		x5(false);
 	}
@@ -196,6 +205,8 @@ public class ClassUsageTests extends UsageTest {
 	 * an incremental build
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=230189
 	 */
+	@Test
+
 	public void testClassIndirectImplements3I() {
 		x5(true);
 	}
@@ -223,6 +234,8 @@ public class ClassUsageTests extends UsageTest {
 	 * a full build
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=230189
 	 */
+	@Test
+
 	public void testClassIndirectImplements4F() {
 		x6(false);
 	}
@@ -233,6 +246,8 @@ public class ClassUsageTests extends UsageTest {
 	 * an incremental build
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=230189
 	 */
+	@Test
+
 	public void testClassIndirectImplements4I() {
 		x6(true);
 	}
@@ -248,6 +263,8 @@ public class ClassUsageTests extends UsageTest {
 	 * a full build
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=230189
 	 */
+	@Test
+
 	public void testClassIndirectImplements5F() {
 		x7(false);
 	}
@@ -258,6 +275,8 @@ public class ClassUsageTests extends UsageTest {
 	 * an incremental build
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=230189
 	 */
+	@Test
+
 	public void testClassIndirectImplements5I() {
 		x7(true);
 	}
@@ -270,6 +289,8 @@ public class ClassUsageTests extends UsageTest {
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=255804
 	 */
+	@Test
+
 	public void testClassIndirectImplements6F() {
 		x8(false);
 	}
@@ -277,6 +298,8 @@ public class ClassUsageTests extends UsageTest {
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=255804
 	 */
+	@Test
+
 	public void testClassIndirectImplements6I() {
 		x8(true);
 	}
@@ -289,6 +312,8 @@ public class ClassUsageTests extends UsageTest {
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=255804
 	 */
+	@Test
+
 	public void testClassIndirectImplements7F() {
 		x9(false);
 	}
@@ -296,6 +321,8 @@ public class ClassUsageTests extends UsageTest {
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=255804
 	 */
+	@Test
+
 	public void testClassIndirectImplements7I() {
 		x9(true);
 	}
@@ -318,6 +345,8 @@ public class ClassUsageTests extends UsageTest {
 	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258"
 	 * @since 1.0.300
 	 */
+	@Test
+
 	public void testLocalClassIllegalImplements1I() throws Exception {
 		x19(true);
 	}
@@ -329,6 +358,8 @@ public class ClassUsageTests extends UsageTest {
 	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258"
 	 * @since 1.0.300
 	 */
+	@Test
+
 	public void testLocalClassIllegalImplements1F() throws Exception {
 		x19(false);
 	}
@@ -361,6 +392,8 @@ public class ClassUsageTests extends UsageTest {
 	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258"
 	 * @since 1.0.300
 	 */
+	@Test
+
 	public void testLocalClassIllegaImplements2I() throws Exception {
 		x20(true);
 	}
@@ -373,6 +406,8 @@ public class ClassUsageTests extends UsageTest {
 	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258"
 	 * @since 1.0.300
 	 */
+	@Test
+
 	public void testLocalClassIllegalImplements2F() throws Exception {
 		x20(false);
 	}
@@ -401,6 +436,8 @@ public class ClassUsageTests extends UsageTest {
 	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258"
 	 * @since 1.0.300
 	 */
+	@Test
+
 	public void testAnonymousClassIllegaImplements1I() throws Exception {
 		x21(true);
 	}
@@ -413,6 +450,8 @@ public class ClassUsageTests extends UsageTest {
 	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258"
 	 * @since 1.0.300
 	 */
+	@Test
+
 	public void testAnonymousClassIllegalImplements1F() throws Exception {
 		x21(false);
 	}
@@ -438,6 +477,8 @@ public class ClassUsageTests extends UsageTest {
 	 *
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
+	@Test
+
 	public void testAnonymousClassExtends2F() {
 		x11(false);
 	}
@@ -448,6 +489,8 @@ public class ClassUsageTests extends UsageTest {
 	 *
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
+	@Test
+
 	public void testAnonymousClassExtends2I() {
 		x11(true);
 	}
@@ -469,6 +512,8 @@ public class ClassUsageTests extends UsageTest {
 	 *
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
+	@Test
+
 	public void testAnonymousClassExtends3F() {
 		x12(false);
 	}
@@ -479,6 +524,8 @@ public class ClassUsageTests extends UsageTest {
 	 *
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
+	@Test
+
 	public void testAnonymousClassExtends3I() {
 		x12(true);
 	}
@@ -500,6 +547,8 @@ public class ClassUsageTests extends UsageTest {
 	 *
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
+	@Test
+
 	public void testAnonymousClassExtends4F() {
 		x13(false);
 	}
@@ -510,6 +559,8 @@ public class ClassUsageTests extends UsageTest {
 	 *
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
+	@Test
+
 	public void testAnonymousClassExtends4I() {
 		x13(true);
 	}
@@ -531,6 +582,8 @@ public class ClassUsageTests extends UsageTest {
 	 *
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
+	@Test
+
 	public void testAnonymousClassExtends6F() {
 		x15(false);
 	}
@@ -541,6 +594,8 @@ public class ClassUsageTests extends UsageTest {
 	 *
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
+	@Test
+
 	public void testAnonymousClassExtends6I() {
 		x15(true);
 	}
@@ -562,6 +617,8 @@ public class ClassUsageTests extends UsageTest {
 	 *
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
+	@Test
+
 	public void testAnonymousClassExtends7F() {
 		x18(false);
 	}
@@ -572,6 +629,8 @@ public class ClassUsageTests extends UsageTest {
 	 *
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
+	@Test
+
 	public void testAnonymousClassExtends7I() {
 		x18(true);
 	}
@@ -587,9 +646,13 @@ public class ClassUsageTests extends UsageTest {
 		deployUsageTest(typename, inc);
 	}
 
+	@Test
+
 	public void testLocalClassExtends1F() {
 		x16(false);
 	}
+
+	@Test
 
 	public void testLocalClassExtends1I() {
 		x16(true);
@@ -626,6 +689,8 @@ public class ClassUsageTests extends UsageTest {
 	 *
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
+	@Test
+
 	public void testLocalClassExtends2F() {
 		x14(false);
 	}
@@ -636,6 +701,8 @@ public class ClassUsageTests extends UsageTest {
 	 *
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
+	@Test
+
 	public void testLocalClassExtends2I() {
 		x14(true);
 	}
@@ -657,6 +724,8 @@ public class ClassUsageTests extends UsageTest {
 	 *
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
+	@Test
+
 	public void testLocalClassExtends3F() {
 		x17(false);
 	}
@@ -667,6 +736,8 @@ public class ClassUsageTests extends UsageTest {
 	 *
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
+	@Test
+
 	public void testLocalClassExtends3I() {
 		x17(true);
 	}
@@ -688,6 +759,8 @@ public class ClassUsageTests extends UsageTest {
 	 *
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
+	@Test
+
 	public void testLocalClassExtends4F() {
 		x10(false);
 	}
@@ -698,6 +771,8 @@ public class ClassUsageTests extends UsageTest {
 	 *
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
 	 */
+	@Test
+
 	public void testLocalClassExtends4I() {
 		x10(true);
 	}
@@ -719,6 +794,8 @@ public class ClassUsageTests extends UsageTest {
 	 *
 	 * @since 1.0.300
 	 */
+	@Test
+
 	public void testIllegalReferenceClass1I() throws Exception {
 		x22(true);
 	}
@@ -729,6 +806,8 @@ public class ClassUsageTests extends UsageTest {
 	 *
 	 * @since 1.0.300
 	 */
+	@Test
+
 	public void testIllegalReferenceClass1F() throws Exception {
 		x22(false);
 	}
@@ -760,6 +839,8 @@ public class ClassUsageTests extends UsageTest {
 	 *
 	 * @since 1.0.300
 	 */
+	@Test
+
 	public void testIllegalReferenceClass2I() throws Exception {
 		x23(true);
 	}
@@ -770,6 +851,8 @@ public class ClassUsageTests extends UsageTest {
 	 *
 	 * @since 1.0.300
 	 */
+	@Test
+
 	public void testIllegalReferenceClass2F() throws Exception {
 		x23(false);
 	}
@@ -799,6 +882,8 @@ public class ClassUsageTests extends UsageTest {
 	 *
 	 * @since 1.0.300
 	 */
+	@Test
+
 	public void testIllegalReferenceClass3F() throws Exception {
 		x24(false);
 	}
@@ -809,6 +894,8 @@ public class ClassUsageTests extends UsageTest {
 	 *
 	 * @since 1.0.300
 	 */
+	@Test
+
 	public void testIllegalReferenceClass3I() throws Exception {
 		x24(false);
 	}

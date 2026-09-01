@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.model.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
@@ -25,7 +25,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescript
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for element descriptors.
@@ -41,8 +41,8 @@ public class ElementDescriptorTests {
 	public void testDefaultPackageEq() {
 		IPackageDescriptor pkg1 = Factory.packageDescriptor(""); //$NON-NLS-1$
 		IPackageDescriptor pkg2 = Factory.packageDescriptor(""); //$NON-NLS-1$
-		assertEquals("Default packages should be equal", pkg1, pkg2); //$NON-NLS-1$
-		assertEquals("wrong value", "<default package>", String.valueOf(pkg1)); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(pkg1, pkg2, "Default packages should be equal"); //$NON-NLS-1$
+		assertEquals("<default package>", String.valueOf(pkg1), "wrong value"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -52,7 +52,7 @@ public class ElementDescriptorTests {
 	public void testPackageNonEq() {
 		IPackageDescriptor pkg1 = Factory.packageDescriptor("a.b.c"); //$NON-NLS-1$
 		IPackageDescriptor pkg2 = Factory.packageDescriptor("d.e.f"); //$NON-NLS-1$
-		assertFalse("packages should be equal", pkg1.equals(pkg2)); //$NON-NLS-1$
+		assertFalse(pkg1.equals(pkg2), "packages should be equal"); //$NON-NLS-1$
 	}
 
 	/**
@@ -62,8 +62,8 @@ public class ElementDescriptorTests {
 	public void testNonDefaultPackageEq() {
 		IPackageDescriptor pkg1 = Factory.packageDescriptor("a.b.c"); //$NON-NLS-1$
 		IPackageDescriptor pkg2 = Factory.packageDescriptor("a.b.c"); //$NON-NLS-1$
-		assertEquals("a.b.c packages should be equal", pkg1, pkg2); //$NON-NLS-1$
-		assertEquals("wrong value", "a.b.c", String.valueOf(pkg1)); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(pkg1, pkg2, "a.b.c packages should be equal"); //$NON-NLS-1$
+		assertEquals("a.b.c", String.valueOf(pkg1), "wrong value"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -75,7 +75,7 @@ public class ElementDescriptorTests {
 		IPackageDescriptor pkg2 = Factory.packageDescriptor(""); //$NON-NLS-1$
 		IReferenceTypeDescriptor type1 = pkg1.getType("A"); //$NON-NLS-1$
 		IReferenceTypeDescriptor type2 = pkg2.getType("A"); //$NON-NLS-1$
-		assertEquals("Types in default package should be equal", type1, type2); //$NON-NLS-1$
+		assertEquals(type1, type2, "Types in default package should be equal"); //$NON-NLS-1$
 	}
 
 	/**
@@ -89,7 +89,7 @@ public class ElementDescriptorTests {
 		IReferenceTypeDescriptor type2 = pkg2.getType("A"); //$NON-NLS-1$
 		IReferenceTypeDescriptor inner1 = type1.getType("B"); //$NON-NLS-1$
 		IReferenceTypeDescriptor inner2 = type2.getType("B"); //$NON-NLS-1$
-		assertEquals("Types in default package should be equal", inner1, inner2); //$NON-NLS-1$
+		assertEquals(inner1, inner2, "Types in default package should be equal"); //$NON-NLS-1$
 	}
 
 
@@ -104,7 +104,7 @@ public class ElementDescriptorTests {
 		IReferenceTypeDescriptor type2 = pkg2.getType("A"); //$NON-NLS-1$
 		IReferenceTypeDescriptor inner1 = type1.getType("B"); //$NON-NLS-1$
 		IReferenceTypeDescriptor inner2 = type2.getType("B"); //$NON-NLS-1$
-		assertEquals("Types in default package should be equal", inner1, inner2); //$NON-NLS-1$
+		assertEquals(inner1, inner2, "Types in default package should be equal"); //$NON-NLS-1$
 	}
 
 	/**
@@ -115,7 +115,7 @@ public class ElementDescriptorTests {
 		IPackageDescriptor pkg1 = Factory.packageDescriptor("a.b.c"); //$NON-NLS-1$
 		IReferenceTypeDescriptor type1 = pkg1.getType("A"); //$NON-NLS-1$
 		IReferenceTypeDescriptor inner1 = type1.getType("B"); //$NON-NLS-1$
-		assertEquals("Wrong package", pkg1, inner1.getPackage()); //$NON-NLS-1$
+		assertEquals(pkg1, inner1.getPackage(), "Wrong package"); //$NON-NLS-1$
 	}
 
 	/**
@@ -129,7 +129,7 @@ public class ElementDescriptorTests {
 		IReferenceTypeDescriptor type2 = pkg2.getType("A"); //$NON-NLS-1$
 		IReferenceTypeDescriptor inner1 = type1.getType("B"); //$NON-NLS-1$
 		IReferenceTypeDescriptor inner2 = type2.getType("B"); //$NON-NLS-1$
-		assertFalse("Types in different package should not be equal", inner1.equals(inner2)); //$NON-NLS-1$
+		assertFalse(inner1.equals(inner2), "Types in different package should not be equal"); //$NON-NLS-1$
 	}
 
 	/**
@@ -145,7 +145,7 @@ public class ElementDescriptorTests {
 		IReferenceTypeDescriptor i2 = type2.getType("B"); //$NON-NLS-1$
 		IReferenceTypeDescriptor inner1 = i1.getType("C"); //$NON-NLS-1$
 		IReferenceTypeDescriptor inner2 = i2.getType("C"); //$NON-NLS-1$
-		assertEquals("Types in default package should be equal", inner1, inner2); //$NON-NLS-1$
+		assertEquals(inner1, inner2, "Types in default package should be equal"); //$NON-NLS-1$
 	}
 
 	/**
@@ -157,7 +157,7 @@ public class ElementDescriptorTests {
 		IPackageDescriptor pkg2 = Factory.packageDescriptor("d.e.f"); //$NON-NLS-1$
 		IReferenceTypeDescriptor type1 = pkg1.getType("A"); //$NON-NLS-1$
 		IReferenceTypeDescriptor type2 = pkg2.getType("A"); //$NON-NLS-1$
-		assertFalse("Types in different package should not be equal", type1.equals(type2)); //$NON-NLS-1$
+		assertFalse(type1.equals(type2), "Types in different package should not be equal"); //$NON-NLS-1$
 	}
 
 	/**
@@ -169,7 +169,7 @@ public class ElementDescriptorTests {
 		IPackageDescriptor pkg2 = Factory.packageDescriptor("a.b.c"); //$NON-NLS-1$
 		IReferenceTypeDescriptor type1 = pkg1.getType("A"); //$NON-NLS-1$
 		IReferenceTypeDescriptor type2 = pkg2.getType("A"); //$NON-NLS-1$
-		assertEquals("Types in default package should be equal", type1, type2); //$NON-NLS-1$
+		assertEquals(type1, type2, "Types in default package should be equal"); //$NON-NLS-1$
 	}
 
 	/**
@@ -179,7 +179,7 @@ public class ElementDescriptorTests {
 	public void testTypePackage() {
 		IPackageDescriptor pkg1 = Factory.packageDescriptor("a.b.c"); //$NON-NLS-1$
 		IReferenceTypeDescriptor type1 = pkg1.getType("A"); //$NON-NLS-1$
-		assertEquals("Wrong package", pkg1, type1.getPackage()); //$NON-NLS-1$
+		assertEquals(pkg1, type1.getPackage(), "Wrong package"); //$NON-NLS-1$
 	}
 
 	/**
@@ -193,7 +193,7 @@ public class ElementDescriptorTests {
 		IReferenceTypeDescriptor type2 = pkg2.getType("A"); //$NON-NLS-1$
 		IFieldDescriptor field1 = type1.getField("name"); //$NON-NLS-1$
 		IFieldDescriptor field2 = type2.getField("name"); //$NON-NLS-1$
-		assertEquals("Fields should be equal", field1, field2); //$NON-NLS-1$
+		assertEquals(field1, field2, "Fields should be equal"); //$NON-NLS-1$
 	}
 
 	/**
@@ -204,7 +204,7 @@ public class ElementDescriptorTests {
 		IPackageDescriptor pkg1 = Factory.packageDescriptor("a.b.c"); //$NON-NLS-1$
 		IReferenceTypeDescriptor type1 = pkg1.getType("A"); //$NON-NLS-1$
 		IFieldDescriptor field1 = type1.getField("name"); //$NON-NLS-1$
-		assertEquals("Wrong package", pkg1, field1.getPackage()); //$NON-NLS-1$
+		assertEquals(pkg1, field1.getPackage(), "Wrong package"); //$NON-NLS-1$
 	}
 
 	/**
@@ -218,7 +218,7 @@ public class ElementDescriptorTests {
 		IReferenceTypeDescriptor type2 = pkg2.getType("A"); //$NON-NLS-1$
 		IFieldDescriptor field1 = type1.getField("name"); //$NON-NLS-1$
 		IFieldDescriptor field2 = type2.getField("age"); //$NON-NLS-1$
-		assertFalse("Fields should not be equal", field1.equals(field2)); //$NON-NLS-1$
+		assertFalse(field1.equals(field2), "Fields should not be equal"); //$NON-NLS-1$
 	}
 
 	/**
@@ -232,7 +232,7 @@ public class ElementDescriptorTests {
 		IReferenceTypeDescriptor type2 = pkg2.getType("A"); //$NON-NLS-1$
 		IMethodDescriptor m1 = type1.getMethod("foo", "()V"); //$NON-NLS-1$ //$NON-NLS-2$
 		IMethodDescriptor m2 = type2.getMethod("foo", "()V"); //$NON-NLS-1$ //$NON-NLS-2$
-		assertEquals("Methods should be equal", m1, m2); //$NON-NLS-1$
+		assertEquals(m1, m2, "Methods should be equal"); //$NON-NLS-1$
 	}
 
 	/**
@@ -248,7 +248,7 @@ public class ElementDescriptorTests {
 				new String[]{Signature.SIG_INT, type1.getSignature()}, "V")); //$NON-NLS-1$
 		IMethodDescriptor m2 = type2.getMethod("foo", Signature.createMethodSignature( //$NON-NLS-1$
 				new String[]{Signature.SIG_INT, type2.getSignature()}, "V")); //$NON-NLS-1$
-		assertEquals("Methods should be equal", m1, m2); //$NON-NLS-1$
+		assertEquals(m1, m2, "Methods should be equal"); //$NON-NLS-1$
 	}
 
 	/**
@@ -264,7 +264,7 @@ public class ElementDescriptorTests {
 				new String[]{Signature.SIG_INT, type1.getSignature()}, "V")); //$NON-NLS-1$
 		IMethodDescriptor m2 = type2.getMethod("foo", Signature.createMethodSignature( //$NON-NLS-1$
 				new String[]{Signature.SIG_INT, Signature.SIG_BOOLEAN}, "V")); //$NON-NLS-1$
-		assertFalse("Methods should not be equal", m1.equals(m2)); //$NON-NLS-1$
+		assertFalse(m1.equals(m2), "Methods should not be equal"); //$NON-NLS-1$
 	}
 
 	/**
@@ -280,7 +280,7 @@ public class ElementDescriptorTests {
 				new String[]{Signature.SIG_INT}, "V")); //$NON-NLS-1$
 		IMethodDescriptor m2 = type2.getMethod("foo", Signature.createMethodSignature( //$NON-NLS-1$
 				new String[]{Signature.SIG_INT, Signature.SIG_BOOLEAN}, "V")); //$NON-NLS-1$
-		assertFalse("Methods should not be equal", m1.equals(m2)); //$NON-NLS-1$
+		assertFalse(m1.equals(m2), "Methods should not be equal"); //$NON-NLS-1$
 	}
 
 	/**
@@ -292,7 +292,7 @@ public class ElementDescriptorTests {
 		IReferenceTypeDescriptor type1 = pkg1.getType("A"); //$NON-NLS-1$
 		IMethodDescriptor m1 = type1.getMethod("foo", Signature.createMethodSignature( //$NON-NLS-1$
 				new String[]{Signature.SIG_INT}, "V")); //$NON-NLS-1$
-		assertEquals("Wrong package", pkg1, m1.getPackage()); //$NON-NLS-1$
+		assertEquals(pkg1, m1.getPackage(), "Wrong package"); //$NON-NLS-1$
 	}
 
 	/**
@@ -302,22 +302,22 @@ public class ElementDescriptorTests {
 	public void testTypeSignature() {
 		IPackageDescriptor pkg1 = Factory.packageDescriptor("java.lang"); //$NON-NLS-1$
 		IReferenceTypeDescriptor type1 = pkg1.getType("Object"); //$NON-NLS-1$
-		assertEquals("Wrong signature", "Ljava.lang.Object;", type1.getSignature()); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("Ljava.lang.Object;", type1.getSignature(), "Wrong signature"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Test
 	public void testComponent() {
 		IComponentDescriptor descriptor = Factory.componentDescriptor("com.mycomponent"); //$NON-NLS-1$
-		assertEquals("Wrong id", "com.mycomponent", descriptor.getId()); //$NON-NLS-1$ //$NON-NLS-2$
-		assertNull("Wrong value", descriptor.getPath()); //$NON-NLS-1$
-		assertEquals("Wrong id", "com.mycomponent", descriptor.toString()); //$NON-NLS-1$ //$NON-NLS-2$
-		assertEquals("Wrong element type", IElementDescriptor.COMPONENT, descriptor.getElementType()); //$NON-NLS-1$
+		assertEquals("com.mycomponent", descriptor.getId(), "Wrong id"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNull(descriptor.getPath(), "Wrong value"); //$NON-NLS-1$
+		assertEquals("com.mycomponent", descriptor.toString(), "Wrong id"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(IElementDescriptor.COMPONENT, descriptor.getElementType(), "Wrong element type"); //$NON-NLS-1$
 	}
 
 	@Test
 	public void testComponentVersion() {
 		IComponentDescriptor descriptor = Factory.componentDescriptor("com.mycomponent", "1.2.3"); //$NON-NLS-1$ //$NON-NLS-2$
-		assertEquals("Wrong version", "1.2.3", descriptor.getVersion()); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("1.2.3", descriptor.getVersion(), "Wrong version"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public void testComponentsEqual() {

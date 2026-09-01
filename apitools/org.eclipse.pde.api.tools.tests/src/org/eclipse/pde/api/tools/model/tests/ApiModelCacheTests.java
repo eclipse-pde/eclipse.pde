@@ -13,16 +13,16 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.model.tests;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.pde.api.tools.internal.model.ApiModelCache;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the {@link ApiModelCache}
@@ -34,7 +34,7 @@ public class ApiModelCacheTests {
 	static final String TEST_COMP_ID = "testcomp-id"; //$NON-NLS-1$
 	static final String TEST_BASELINE_ID = "testbaseline-id"; //$NON-NLS-1$
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		ApiModelCache.getCache().flushCaches();
 	}
@@ -63,11 +63,11 @@ public class ApiModelCacheTests {
 		String typename = "testtype1"; //$NON-NLS-1$
 		cacheType(typename);
 		IApiElement element = ApiModelCache.getCache().getElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, typename, IApiElement.TYPE);
-		assertNotNull("The type "+typename+" should have been retrieved", element); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("The test element "+typename+" should have been removed", ApiModelCache.getCache().removeElementInfo(element)); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNotNull(element, "The type "+typename+" should have been retrieved"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(ApiModelCache.getCache().removeElementInfo(element), "The test element "+typename+" should have been removed"); //$NON-NLS-1$ //$NON-NLS-2$
 		element = ApiModelCache.getCache().getElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, typename, IApiElement.COMPONENT);
-		assertNull("the test API component "+TEST_COMP_ID+" should not have been retrieved", element); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("The cache should be empty", ApiModelCache.getCache().isEmpty()); //$NON-NLS-1$
+		assertNull(element, "the test API component "+TEST_COMP_ID+" should not have been retrieved"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(ApiModelCache.getCache().isEmpty(), "The cache should be empty"); //$NON-NLS-1$
 	}
 
 	/**
@@ -79,11 +79,11 @@ public class ApiModelCacheTests {
 		String typename = "testtype2"; //$NON-NLS-1$
 		cacheType(typename);
 		IApiElement element = ApiModelCache.getCache().getElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, typename, IApiElement.TYPE);
-		assertNotNull("The type "+typename+" should have been retrieved", element); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("The test element "+typename+" should have been removed", ApiModelCache.getCache().removeElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, element.getName(), element.getType())); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNotNull(element, "The type "+typename+" should have been retrieved"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(ApiModelCache.getCache().removeElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, element.getName(), element.getType()), "The test element "+typename+" should have been removed"); //$NON-NLS-1$ //$NON-NLS-2$
 		element = ApiModelCache.getCache().getElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, typename, IApiElement.COMPONENT);
-		assertNull("the test API component "+TEST_COMP_ID+" should not have been retrieved", element); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("The cache should be empty", ApiModelCache.getCache().isEmpty()); //$NON-NLS-1$
+		assertNull(element, "the test API component "+TEST_COMP_ID+" should not have been retrieved"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(ApiModelCache.getCache().isEmpty(), "The cache should be empty"); //$NON-NLS-1$
 	}
 
 	/**
@@ -96,8 +96,8 @@ public class ApiModelCacheTests {
 		cacheType("testtype1"); //$NON-NLS-1$
 		String typename = "testtype3"; //$NON-NLS-1$
 		IApiElement element = ApiModelCache.getCache().getElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, typename, IApiElement.TYPE);
-		assertNull("The element 'testtype3' should not exist in the cache", element); //$NON-NLS-1$
-		assertFalse("The element 'testtype3' should not have been removed from the cache", ApiModelCache.getCache().removeElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, "testtype3", IApiElement.TYPE)); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNull(element, "The element 'testtype3' should not exist in the cache"); //$NON-NLS-1$
+		assertFalse(ApiModelCache.getCache().removeElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, "testtype3", IApiElement.TYPE), "The element 'testtype3' should not have been removed from the cache"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -108,8 +108,8 @@ public class ApiModelCacheTests {
 	public void testRemoveNonExistentTypeEmptyCache() throws Exception {
 		String typename = "testtype3"; //$NON-NLS-1$
 		IApiElement element = ApiModelCache.getCache().getElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, typename, IApiElement.TYPE);
-		assertNull("The element 'testtype3' should not exist in the cache", element); //$NON-NLS-1$
-		assertFalse("The element 'testtype3' should not have been removed from the cache", ApiModelCache.getCache().removeElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, "testtype3", IApiElement.TYPE)); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNull(element, "The element 'testtype3' should not exist in the cache"); //$NON-NLS-1$
+		assertFalse(ApiModelCache.getCache().removeElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, "testtype3", IApiElement.TYPE), "The element 'testtype3' should not have been removed from the cache"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -124,16 +124,13 @@ public class ApiModelCacheTests {
 		cacheType("a.b.c.testee1$inner1"); //$NON-NLS-1$
 		cacheType("a.b.c.testee1$inner2"); //$NON-NLS-1$
 		IApiElement element = ApiModelCache.getCache().getElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, roottypename, IApiElement.TYPE);
-		assertNotNull("The element 'a.b.c.testee1' should exist in the cache", element); //$NON-NLS-1$
-		assertNotNull("The element 'a.b.c.testee1$inner' should exist in the cache",  //$NON-NLS-1$
-				ApiModelCache.getCache().getElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, "a.b.c.testee1$inner", IApiElement.TYPE)); //$NON-NLS-1$
-		assertNotNull("The element 'a.b.c.testee1$inner1' should exist in the cache",  //$NON-NLS-1$
-				ApiModelCache.getCache().getElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, "a.b.c.testee1$inner1", IApiElement.TYPE)); //$NON-NLS-1$
-		assertNotNull("The element 'a.b.c.testee1$inner2' should exist in the cache",  //$NON-NLS-1$
-				ApiModelCache.getCache().getElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, "a.b.c.testee1$inner2", IApiElement.TYPE)); //$NON-NLS-1$
-		assertTrue("the type 'a.b.c.testee1$inner1' should have been removed from the cache", ApiModelCache.getCache().removeElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, "a.b.c.testee1$inner1", IApiElement.TYPE)); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("The type 'a.b.c.testee1' should have been removed from the cache", ApiModelCache.getCache().removeElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, roottypename, IApiElement.TYPE)); //$NON-NLS-1$
-		assertTrue("The cache should be empty", ApiModelCache.getCache().isEmpty()); //$NON-NLS-1$
+		assertNotNull(element, "The element 'a.b.c.testee1' should exist in the cache"); //$NON-NLS-1$
+		assertNotNull(ApiModelCache.getCache().getElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, "a.b.c.testee1$inner", IApiElement.TYPE), "The element 'a.b.c.testee1$inner' should exist in the cache"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNotNull(ApiModelCache.getCache().getElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, "a.b.c.testee1$inner1", IApiElement.TYPE), "The element 'a.b.c.testee1$inner1' should exist in the cache"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNotNull(ApiModelCache.getCache().getElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, "a.b.c.testee1$inner2", IApiElement.TYPE), "The element 'a.b.c.testee1$inner2' should exist in the cache"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(ApiModelCache.getCache().removeElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, "a.b.c.testee1$inner1", IApiElement.TYPE), "the type 'a.b.c.testee1$inner1' should have been removed from the cache"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(ApiModelCache.getCache().removeElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, roottypename, IApiElement.TYPE), "The type 'a.b.c.testee1' should have been removed from the cache"); //$NON-NLS-1$
+		assertTrue(ApiModelCache.getCache().isEmpty(), "The cache should be empty"); //$NON-NLS-1$
 	}
 
 	/**
@@ -148,16 +145,14 @@ public class ApiModelCacheTests {
 		cacheType("a.b.c.testee1$inner1"); //$NON-NLS-1$
 		cacheType("a.b.c.testee1$inner2"); //$NON-NLS-1$
 		IApiElement element = ApiModelCache.getCache().getElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, "a.b.c.testee1$inner1", IApiElement.TYPE); //$NON-NLS-1$
-		assertNotNull("The element 'a.b.c.testee1$inner1' should exist in the cache", element); //$NON-NLS-1$
-		assertTrue("the type 'a.b.c.testee1$inner1' should have been removed from the cache", ApiModelCache.getCache().removeElementInfo(element)); //$NON-NLS-1$
+		assertNotNull(element, "The element 'a.b.c.testee1$inner1' should exist in the cache"); //$NON-NLS-1$
+		assertTrue(ApiModelCache.getCache().removeElementInfo(element), "the type 'a.b.c.testee1$inner1' should have been removed from the cache"); //$NON-NLS-1$
 
-		assertNotNull("The element 'a.b.c.testee1$inner' should exist in the cache",  //$NON-NLS-1$
-				ApiModelCache.getCache().getElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, "a.b.c.testee1$inner", IApiElement.TYPE)); //$NON-NLS-1$
-		assertNotNull("The element 'a.b.c.testee1$inner2' should exist in the cache",  //$NON-NLS-1$
-				ApiModelCache.getCache().getElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, "a.b.c.testee1$inner2", IApiElement.TYPE)); //$NON-NLS-1$
+		assertNotNull(ApiModelCache.getCache().getElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, "a.b.c.testee1$inner", IApiElement.TYPE), "The element 'a.b.c.testee1$inner' should exist in the cache"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNotNull(ApiModelCache.getCache().getElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, "a.b.c.testee1$inner2", IApiElement.TYPE), "The element 'a.b.c.testee1$inner2' should exist in the cache"); //$NON-NLS-1$ //$NON-NLS-2$
 		element = ApiModelCache.getCache().getElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, roottypename, IApiElement.TYPE);
-		assertNotNull("The element 'a.b.c.testee1' should exist in the cache", element); //$NON-NLS-1$
-		assertTrue("The type 'a.b.c.testee1' should have been removed from the cache", ApiModelCache.getCache().removeElementInfo(element)); //$NON-NLS-1$
-		assertTrue("The cache should be empty", ApiModelCache.getCache().isEmpty()); //$NON-NLS-1$
+		assertNotNull(element, "The element 'a.b.c.testee1' should exist in the cache"); //$NON-NLS-1$
+		assertTrue(ApiModelCache.getCache().removeElementInfo(element), "The type 'a.b.c.testee1' should have been removed from the cache"); //$NON-NLS-1$
+		assertTrue(ApiModelCache.getCache().isEmpty(), "The cache should be empty"); //$NON-NLS-1$
 	}
 }

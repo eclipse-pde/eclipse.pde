@@ -16,17 +16,12 @@ package org.eclipse.pde.api.tools.builder.tests.annotations;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests invalid annotations on default interface methods
  */
 public class InvalidDefaultMethodAnnotationTests extends MethodAnnotationTest {
-
-	public InvalidDefaultMethodAnnotationTests(String name) {
-		super(name);
-	}
 
 	@Override
 	protected String getTestCompliance() {
@@ -43,16 +38,13 @@ public class InvalidDefaultMethodAnnotationTests extends MethodAnnotationTest {
 		return "java8tags"; //$NON-NLS-1$
 	}
 
-	/**
-	 * @return the test for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(InvalidDefaultMethodAnnotationTests.class);
-	}
+	@Test
 
 	public void testInvalidJava8InterfaceMethodTag2I() {
 		x1(true);
 	}
+
+	@Test
 
 	public void testInvalidJava8InterfaceMethodTag2F() {
 		x1(false);

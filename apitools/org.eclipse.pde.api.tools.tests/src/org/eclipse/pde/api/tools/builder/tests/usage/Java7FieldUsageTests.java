@@ -16,8 +16,7 @@ package org.eclipse.pde.api.tools.builder.tests.usage;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test class usage for Java 7 code snippets
@@ -27,17 +26,6 @@ import junit.framework.Test;
 public class Java7FieldUsageTests extends Java7UsageTest {
 
 	private int pid = -1;
-
-	public Java7FieldUsageTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * @return the test class for this suite
-	 */
-	public static Test suite() {
-		return buildTestSuite(Java7FieldUsageTests.class);
-	}
 
 	@Override
 	protected int getDefaultProblemId() {
@@ -51,6 +39,8 @@ public class Java7FieldUsageTests extends Java7UsageTest {
 	 * Tests illegal use of classes inside a string switch block
 	 * (full)
 	 */
+	@Test
+
 	public void testStringSwitchF() {
 		x1(false);
 	}
@@ -59,10 +49,11 @@ public class Java7FieldUsageTests extends Java7UsageTest {
 	 * Tests illegal use of classes inside a string switch block
 	 * (incremental)
 	 */
+	@Test
+
 	public void testStringSwitchI() {
 		x1(true);
 	}
-
 
 	private void x1(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(3));
@@ -81,6 +72,8 @@ public class Java7FieldUsageTests extends Java7UsageTest {
 	 * Tests illegal use of classes inside a multi catch block
 	 * (full)
 	 */
+	@Test
+
 	public void testMultiCatchF() {
 		x2(false);
 	}
@@ -89,10 +82,11 @@ public class Java7FieldUsageTests extends Java7UsageTest {
 	 * Tests illegal use of classes inside a multi catch block
 	 * (incremental)
 	 */
+	@Test
+
 	public void testMultiCatchI() {
 		x2(true);
 	}
-
 
 	private void x2(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(2));

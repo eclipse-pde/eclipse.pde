@@ -16,8 +16,7 @@ package org.eclipse.pde.api.tools.builder.tests.annotations;
 import java.io.File;
 
 import org.eclipse.core.runtime.IPath;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests valid annotations on class fields
@@ -25,20 +24,6 @@ import junit.framework.Test;
  * @since 1.0.400
  */
 public class ValidClassFieldAnnotationTests extends FieldAnnotationTest {
-
-	/**
-	 * Constructor
-	 */
-	public ValidClassFieldAnnotationTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(ValidClassFieldAnnotationTests.class);
-	}
 
 	@Override
 	protected IPath getTestSourcePath() {
@@ -49,6 +34,8 @@ public class ValidClassFieldAnnotationTests extends FieldAnnotationTest {
 	 * Tests a valid @NoReference annotation on three fields in a class using an
 	 * incremental build
 	 */
+	@Test
+
 	public void testValidClassFieldTag1I() {
 		x1(true);
 	}
@@ -57,6 +44,8 @@ public class ValidClassFieldAnnotationTests extends FieldAnnotationTest {
 	 * Tests a valid @NoReference annotation on three fields in a class using a
 	 * full build
 	 */
+	@Test
+
 	public void testValidClassFieldTag1F() {
 		x1(false);
 	}
@@ -69,6 +58,8 @@ public class ValidClassFieldAnnotationTests extends FieldAnnotationTest {
 	 * Tests a valid @NoReference annotation on three static fields in a class
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testValidClassFieldTag2I() {
 		x2(true);
 	}
@@ -77,6 +68,8 @@ public class ValidClassFieldAnnotationTests extends FieldAnnotationTest {
 	 * Tests a valid @NoReference annotation on three static fields in a class
 	 * using a full build
 	 */
+	@Test
+
 	public void testValidClassFieldTag2F() {
 		x2(false);
 	}
@@ -89,6 +82,8 @@ public class ValidClassFieldAnnotationTests extends FieldAnnotationTest {
 	 * Tests a valid @NoReference annotation on three fields in an inner class
 	 * using an incremental build
 	 */
+	@Test
+
 	public void testValidClassFieldTag5I() {
 		x5(true);
 	}
@@ -97,6 +92,8 @@ public class ValidClassFieldAnnotationTests extends FieldAnnotationTest {
 	 * Tests a valid @NoReference annotation on three fields in an inner class
 	 * using a full build
 	 */
+	@Test
+
 	public void testValidClassFieldTag5F() {
 		x5(false);
 	}
@@ -109,6 +106,8 @@ public class ValidClassFieldAnnotationTests extends FieldAnnotationTest {
 	 * Tests a valid @NoReference annotation on three static fields in an inner
 	 * class using an incremental build
 	 */
+	@Test
+
 	public void testValidClassFieldTag6I() {
 		x6(true);
 	}
@@ -117,6 +116,8 @@ public class ValidClassFieldAnnotationTests extends FieldAnnotationTest {
 	 * Tests a valid @NoReference annotation on three static fields in an inner
 	 * class using a full build
 	 */
+	@Test
+
 	public void testValidClassFieldTag6F() {
 		x6(false);
 	}
@@ -129,6 +130,8 @@ public class ValidClassFieldAnnotationTests extends FieldAnnotationTest {
 	 * Tests a valid @NoReference annotation on a variety of fields in inner and
 	 * outer classes using an incremental build
 	 */
+	@Test
+
 	public void testValidClassFieldTag7I() {
 		x7(true);
 	}
@@ -137,6 +140,8 @@ public class ValidClassFieldAnnotationTests extends FieldAnnotationTest {
 	 * Tests a valid @NoReference annotation on a variety of fields in inner and
 	 * outer classes using a full build
 	 */
+	@Test
+
 	public void testValidClassFieldTag7F() {
 		x7(false);
 	}
@@ -149,6 +154,8 @@ public class ValidClassFieldAnnotationTests extends FieldAnnotationTest {
 	 * Tests a valid @NoReference annotation on three fields in a class in the
 	 * default package using an incremental build
 	 */
+	@Test
+
 	public void testValidClassFieldTag8I() {
 		x8(true);
 	}
@@ -157,6 +164,8 @@ public class ValidClassFieldAnnotationTests extends FieldAnnotationTest {
 	 * Tests a valid @NoReference annotation on three fields in a class in the
 	 * default package using a full build
 	 */
+	@Test
+
 	public void testValidClassFieldTag8F() {
 		x8(false);
 	}

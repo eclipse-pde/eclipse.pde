@@ -14,8 +14,7 @@
 package org.eclipse.pde.api.tools.builder.tests.usage;
 
 import org.eclipse.jdt.core.JavaCore;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests field usage to Java 5 fields elements
@@ -26,29 +25,21 @@ public class Java5FieldUsageTests extends FieldUsageTests {
 
 	protected static final String FIELD_ENUM_NAME = "FieldUsageEnum"; //$NON-NLS-1$
 
-	public Java5FieldUsageTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * @return the test class for this suite
-	 */
-	public static Test suite() {
-		return buildTestSuite(Java5FieldUsageTests.class);
-	}
-
 	@Override
 	protected String getTestCompliance() {
 		return JavaCore.VERSION_1_8;
 	}
 
 	@Override
+	@Test
+
 	public void testFieldUsage1F() {
 		x1(false);
 	}
 
-
 	@Override
+	@Test
+
 	public void testFieldUsage1I() {
 		x1(true);
 	}
@@ -74,12 +65,15 @@ public class Java5FieldUsageTests extends FieldUsageTests {
 	}
 
 	@Override
+	@Test
+
 	public void testFieldUsage2F() {
 		x2(false);
 	}
 
-
 	@Override
+	@Test
+
 	public void testFieldUsage2I() {
 		x2(true);
 	}

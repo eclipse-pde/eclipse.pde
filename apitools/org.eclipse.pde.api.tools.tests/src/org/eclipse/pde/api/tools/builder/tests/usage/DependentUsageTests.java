@@ -18,8 +18,7 @@ import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * These tests are incremental builder tests that add / remove / change
@@ -38,14 +37,6 @@ public class DependentUsageTests extends UsageTest {
 	static final IPath M_PATH = IPath.fromOSString("/refproject/src/m/"); //$NON-NLS-1$
 	static final IPath XYZ_PATH = IPath.fromOSString("/usagetests/src/x/y/z/"); //$NON-NLS-1$
 	static final IPath MPPATH = IPath.fromOSString("/refproject/src/pack/multi/part"); //$NON-NLS-1$
-
-	public DependentUsageTests(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		return buildTestSuite(DependentUsageTests.class);
-	}
 
 	@Override
 	protected int getDefaultProblemId() {
@@ -128,6 +119,8 @@ public class DependentUsageTests extends UsageTest {
 	 *
 	 * Uses test1.java and classref.java
 	 */
+	@Test
+
 	public void testAddExtendRestriction() throws Exception {
 		test1(true);
 	}
@@ -138,6 +131,8 @@ public class DependentUsageTests extends UsageTest {
 	 *
 	 * Uses test1.java and classref.java
 	 */
+	@Test
+
 	public void testRemoveExtendRestriction() throws Exception {
 		test1(false);
 	}
@@ -156,6 +151,8 @@ public class DependentUsageTests extends UsageTest {
 	 *
 	 * Uses test2.java and interref.java
 	 */
+	@Test
+
 	public void testAddImplementsRestriction() throws Exception {
 		test2(true);
 	}
@@ -166,6 +163,8 @@ public class DependentUsageTests extends UsageTest {
 	 *
 	 * Uses test2.java and interref.java
 	 */
+	@Test
+
 	public void testRemoveImplementRestriction() throws Exception {
 		test2(false);
 	}
@@ -184,6 +183,8 @@ public class DependentUsageTests extends UsageTest {
 	 *
 	 * Uses test3.java and classref.java
 	 */
+	@Test
+
 	public void testAddInstantiateRestriction() throws Exception {
 		test3(true);
 	}
@@ -194,6 +195,8 @@ public class DependentUsageTests extends UsageTest {
 	 *
 	 * Uses test3.java and classref.java
 	 */
+	@Test
+
 	public void testRemoveInstantiateRestriction() throws Exception {
 		test3(false);
 	}
@@ -212,6 +215,8 @@ public class DependentUsageTests extends UsageTest {
 	 *
 	 * Uses test4.java and constref.java
 	 */
+	@Test
+
 	public void testAddReferenceConstructorRestriction() throws Exception {
 		test4(true);
 	}
@@ -222,6 +227,8 @@ public class DependentUsageTests extends UsageTest {
 	 *
 	 * Uses test4.java and constref.java
 	 */
+	@Test
+
 	public void testRemoveReferenceConstructorRestriction() throws Exception {
 		test4(false);
 	}
@@ -240,6 +247,8 @@ public class DependentUsageTests extends UsageTest {
 	 *
 	 * Uses test5.java and fieldref.java
 	 */
+	@Test
+
 	public void testAddReferenceFieldRestriction() throws Exception {
 		test5(true);
 	}
@@ -250,6 +259,8 @@ public class DependentUsageTests extends UsageTest {
 	 *
 	 * Uses test5.java and fieldref.java
 	 */
+	@Test
+
 	public void testRemoveReferenceFieldRestriction() throws Exception {
 		test5(false);
 	}
@@ -268,6 +279,8 @@ public class DependentUsageTests extends UsageTest {
 	 *
 	 * Uses test6.java and methodref.java
 	 */
+	@Test
+
 	public void testAddReferenceMethodRestriction() throws Exception {
 		test6(true);
 	}
@@ -278,6 +291,8 @@ public class DependentUsageTests extends UsageTest {
 	 *
 	 * Uses test6.java and methodref.java
 	 */
+	@Test
+
 	public void testRemoveReferenceMethodRestriction() throws Exception {
 		test6(false);
 	}
@@ -296,6 +311,8 @@ public class DependentUsageTests extends UsageTest {
 	 *
 	 * Uses test7.java and methodref.java
 	 */
+	@Test
+
 	public void testAddOverrideRestriction() throws Exception {
 		test7(true);
 	}
@@ -306,6 +323,8 @@ public class DependentUsageTests extends UsageTest {
 	 *
 	 * Uses test7.java and methodref.java
 	 */
+	@Test
+
 	public void testRemoveOverrideRestriction() throws Exception {
 		test7(false);
 	}
@@ -324,6 +343,8 @@ public class DependentUsageTests extends UsageTest {
 	 *
 	 * Uses test8.java and interref.java
 	 */
+	@Test
+
 	public void testAddExtendInterfaceRestriction() throws Exception {
 		test8(true);
 	}
@@ -334,6 +355,8 @@ public class DependentUsageTests extends UsageTest {
 	 *
 	 * Uses test8.java and interref.java
 	 */
+	@Test
+
 	public void testRemoveExtendInterfaceRestriction() throws Exception {
 		test8(false);
 	}
@@ -352,6 +375,8 @@ public class DependentUsageTests extends UsageTest {
 	 *
 	 *  Uses test9.java and classref.java
 	 */
+	@Test
+
 	public void testAddExtendInstantiateRestriction() throws Exception {
 		test9(true);
 	}
@@ -362,6 +387,8 @@ public class DependentUsageTests extends UsageTest {
 	 *
 	 * Uses test9.java and classref.java
 	 */
+	@Test
+
 	public void testRemoveExtendInstantiateRestriction() throws Exception {
 		test9(false);
 	}
@@ -384,6 +411,8 @@ public class DependentUsageTests extends UsageTest {
 	 *
 	 *  Uses test10.java and interref.java
 	 */
+	@Test
+
 	public void testAddExtendImplementRestriction() throws Exception {
 		test10(true);
 	}
@@ -394,6 +423,8 @@ public class DependentUsageTests extends UsageTest {
 	 *
 	 * Uses test10.java and interref.java
 	 */
+	@Test
+
 	public void testRemoveExtendImplementRestriction() throws Exception {
 		test10(false);
 	}
@@ -414,6 +445,8 @@ public class DependentUsageTests extends UsageTest {
 	 * tests adding an @noextend restriction to a type in a multi-part package name
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=296375
 	 */
+	@Test
+
 	public void testAddExtendRestrictionMultiPartPackageName() throws Exception {
 		test11(true);
 	}
@@ -422,6 +455,8 @@ public class DependentUsageTests extends UsageTest {
 	 * tests removing an @noextend restriction to a type in a multi-part package name
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=296375
 	 */
+	@Test
+
 	public void testRemoveExtendRestrictionMultiPartPackageName() throws Exception {
 		test11(false);
 	}
@@ -440,6 +475,8 @@ public class DependentUsageTests extends UsageTest {
 	 * tests adding an @noinstantiate restriction to a type in a multi-part package name
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=296375
 	 */
+	@Test
+
 	public void testAddInstantiateRestrictionMultiPartPackageName() throws Exception {
 		test12(true);
 	}
@@ -448,6 +485,8 @@ public class DependentUsageTests extends UsageTest {
 	 * tests removing an @noinstantiate restriction to a type in a multi-part package name
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=296375
 	 */
+	@Test
+
 	public void testRemoveInstantiateRestrictionMultiPartPackageName() throws Exception {
 		test12(false);
 	}

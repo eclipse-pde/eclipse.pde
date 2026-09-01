@@ -13,18 +13,18 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.search.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.search.SkippedComponent;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 
 /**
@@ -51,12 +51,12 @@ public class SkippedComponentTests extends SearchTest {
 	@Test
 	public void testEquals() throws CoreException {
 		IApiComponent tcomp = getTestingComponent();
-		assertNotNull("The testing component should not be null", tcomp); //$NON-NLS-1$
+		assertNotNull(tcomp, "The testing component should not be null"); //$NON-NLS-1$
 		SkippedComponent scomp1 = new SkippedComponent(tcomp.getSymbolicName(), tcomp.getVersion(), tcomp.getErrors());
 		SkippedComponent scomp2 = new SkippedComponent(tcomp.getSymbolicName(), tcomp.getVersion(), tcomp.getErrors());
-		assertEquals("The components should be equal", scomp1, scomp2); //$NON-NLS-1$
-		Assert.assertNotEquals("The components should not be equal", scomp1, tcomp); //$NON-NLS-1$
-		Assert.assertNotEquals("The components should not be equal", scomp2, tcomp); //$NON-NLS-1$
+		assertEquals(scomp1, scomp2, "The components should be equal"); //$NON-NLS-1$
+		Assertions.assertNotEquals(scomp1, tcomp, "The components should not be equal"); //$NON-NLS-1$
+		Assertions.assertNotEquals(scomp2, tcomp, "The components should not be equal"); //$NON-NLS-1$
 	}
 
 	/**
@@ -65,10 +65,10 @@ public class SkippedComponentTests extends SearchTest {
 	@Test
 	public void testHashCode() throws CoreException {
 		IApiComponent tcomp = getTestingComponent();
-		assertNotNull("The testing component should not be null", tcomp); //$NON-NLS-1$
+		assertNotNull(tcomp, "The testing component should not be null"); //$NON-NLS-1$
 		SkippedComponent scomp1 = new SkippedComponent(tcomp.getSymbolicName(), tcomp.getVersion(), tcomp.getErrors());
 		SkippedComponent scomp2 = new SkippedComponent(tcomp.getSymbolicName(), tcomp.getVersion(), tcomp.getErrors());
-		assertEquals("The component hashcodes should be equal", scomp1.hashCode(), scomp2.hashCode()); //$NON-NLS-1$
+		assertEquals(scomp1.hashCode(), scomp2.hashCode(), "The component hashcodes should be equal"); //$NON-NLS-1$
 	}
 
 	/**
@@ -77,12 +77,12 @@ public class SkippedComponentTests extends SearchTest {
 	@Test
 	public void testGetComponentId() throws CoreException {
 		IApiComponent tcomp = getTestingComponent();
-		assertNotNull("The testing component should not be null", tcomp); //$NON-NLS-1$
+		assertNotNull(tcomp, "The testing component should not be null"); //$NON-NLS-1$
 		SkippedComponent scomp1 = new SkippedComponent(tcomp.getSymbolicName(), tcomp.getVersion(), tcomp.getErrors());
 		SkippedComponent scomp2 = new SkippedComponent(tcomp.getSymbolicName(), tcomp.getVersion(), tcomp.getErrors());
-		assertEquals("The component ids should be equal", scomp1.getComponentId(), scomp2.getComponentId()); //$NON-NLS-1$
-		assertEquals("The component ids should be equal", scomp1.getComponentId(), tcomp.getSymbolicName()); //$NON-NLS-1$
-		assertEquals("The component ids should be equal", scomp2.getComponentId(), tcomp.getSymbolicName()); //$NON-NLS-1$
+		assertEquals(scomp1.getComponentId(), scomp2.getComponentId(), "The component ids should be equal"); //$NON-NLS-1$
+		assertEquals(scomp1.getComponentId(), tcomp.getSymbolicName(), "The component ids should be equal"); //$NON-NLS-1$
+		assertEquals(scomp2.getComponentId(), tcomp.getSymbolicName(), "The component ids should be equal"); //$NON-NLS-1$
 	}
 
 	/**
@@ -91,11 +91,11 @@ public class SkippedComponentTests extends SearchTest {
 	@Test
 	public void testWasExcluded() throws CoreException {
 		IApiComponent tcomp = getTestingComponent();
-		assertNotNull("The testing component should not be null", tcomp); //$NON-NLS-1$
+		assertNotNull(tcomp, "The testing component should not be null"); //$NON-NLS-1$
 		SkippedComponent scomp1 = new SkippedComponent(tcomp.getSymbolicName(), tcomp.getVersion(), tcomp.getErrors());
-		assertFalse("The testing component was not excluded", scomp1.wasExcluded()); //$NON-NLS-1$
+		assertFalse(scomp1.wasExcluded(), "The testing component was not excluded"); //$NON-NLS-1$
 		scomp1 = new SkippedComponent(tcomp.getSymbolicName(), tcomp.getVersion(), null);
-		assertTrue("The testing component was excluded", scomp1.wasExcluded()); //$NON-NLS-1$
+		assertTrue(scomp1.wasExcluded(), "The testing component was excluded"); //$NON-NLS-1$
 	}
 
 	/**
@@ -104,11 +104,11 @@ public class SkippedComponentTests extends SearchTest {
 	@Test
 	public void testHasResolutionErrors() throws CoreException {
 			IApiComponent tcomp = getTestingComponent();
-			assertNotNull("The testing component should not be null", tcomp); //$NON-NLS-1$
+			assertNotNull(tcomp, "The testing component should not be null"); //$NON-NLS-1$
 			SkippedComponent scomp1 = new SkippedComponent(tcomp.getSymbolicName(), tcomp.getVersion(), null);
-			assertFalse("The testing component did have resolution errors", scomp1.hasResolutionErrors()); //$NON-NLS-1$
+			assertFalse(scomp1.hasResolutionErrors(), "The testing component did have resolution errors"); //$NON-NLS-1$
 			scomp1 = new SkippedComponent(tcomp.getSymbolicName(), tcomp.getVersion(), tcomp.getErrors());
-			assertTrue("The testing component did not have resolution errors", scomp1.hasResolutionErrors()); //$NON-NLS-1$
+			assertTrue(scomp1.hasResolutionErrors(), "The testing component did not have resolution errors"); //$NON-NLS-1$
 	}
 
 	/**
@@ -117,9 +117,9 @@ public class SkippedComponentTests extends SearchTest {
 	@Test
 	public void testGetAncestor() throws CoreException {
 		IApiComponent tcomp = getTestingComponent();
-		assertNotNull("The testing component should not be null", tcomp); //$NON-NLS-1$
+		assertNotNull(tcomp, "The testing component should not be null"); //$NON-NLS-1$
 		SkippedComponent scomp1 = new SkippedComponent(tcomp.getSymbolicName(), tcomp.getVersion(), tcomp.getErrors());
-		assertNull("there should be no ancestors for SkippedComponents", scomp1.getAncestor(IApiElement.COMPONENT)); //$NON-NLS-1$
+		assertNull(scomp1.getAncestor(IApiElement.COMPONENT), "there should be no ancestors for SkippedComponents"); //$NON-NLS-1$
 	}
 
 	/**
@@ -128,9 +128,9 @@ public class SkippedComponentTests extends SearchTest {
 	@Test
 	public void testGetApiComponent() throws CoreException {
 		IApiComponent tcomp = getTestingComponent();
-		assertNotNull("The testing component should not be null", tcomp); //$NON-NLS-1$
+		assertNotNull(tcomp, "The testing component should not be null"); //$NON-NLS-1$
 		SkippedComponent scomp1 = new SkippedComponent(tcomp.getSymbolicName(), tcomp.getVersion(), tcomp.getErrors());
-		assertNull("there should be no IApiComponent object for SkippedComponents", scomp1.getApiComponent()); //$NON-NLS-1$
+		assertNull(scomp1.getApiComponent(), "there should be no IApiComponent object for SkippedComponents"); //$NON-NLS-1$
 	}
 
 	/**
@@ -139,9 +139,9 @@ public class SkippedComponentTests extends SearchTest {
 	@Test
 	public void testGetName() throws CoreException {
 		IApiComponent tcomp = getTestingComponent();
-		assertNotNull("The testing component should not be null", tcomp); //$NON-NLS-1$
+		assertNotNull(tcomp, "The testing component should not be null"); //$NON-NLS-1$
 		SkippedComponent scomp1 = new SkippedComponent(tcomp.getSymbolicName(), tcomp.getVersion(), tcomp.getErrors());
-		assertEquals("The names should be equal", tcomp.getSymbolicName(), scomp1.getName()); //$NON-NLS-1$
+		assertEquals(tcomp.getSymbolicName(), scomp1.getName(), "The names should be equal"); //$NON-NLS-1$
 	}
 
 	/**
@@ -150,9 +150,9 @@ public class SkippedComponentTests extends SearchTest {
 	@Test
 	public void testGetParent() throws CoreException {
 		IApiComponent tcomp = getTestingComponent();
-		assertNotNull("The testing component should not be null", tcomp); //$NON-NLS-1$
+		assertNotNull(tcomp, "The testing component should not be null"); //$NON-NLS-1$
 		SkippedComponent scomp1 = new SkippedComponent(tcomp.getSymbolicName(), tcomp.getVersion(), tcomp.getErrors());
-		assertNull("there should be no parentt object for SkippedComponents", scomp1.getParent()); //$NON-NLS-1$
+		assertNull(scomp1.getParent(), "there should be no parentt object for SkippedComponents"); //$NON-NLS-1$
 	}
 
 	/**
@@ -161,9 +161,9 @@ public class SkippedComponentTests extends SearchTest {
 	@Test
 	public void testGetType() throws CoreException {
 		IApiComponent tcomp = getTestingComponent();
-		assertNotNull("The testing component should not be null", tcomp); //$NON-NLS-1$
+		assertNotNull(tcomp, "The testing component should not be null"); //$NON-NLS-1$
 		SkippedComponent scomp1 = new SkippedComponent(tcomp.getSymbolicName(), tcomp.getVersion(), tcomp.getErrors());
-		assertEquals("The type should be IApiElement.COMPONENT", IApiElement.COMPONENT, scomp1.getType()); //$NON-NLS-1$
+		assertEquals(IApiElement.COMPONENT, scomp1.getType(), "The type should be IApiElement.COMPONENT"); //$NON-NLS-1$
 	}
 
 	/**
@@ -172,9 +172,9 @@ public class SkippedComponentTests extends SearchTest {
 	@Test
 	public void testGetVersion() throws CoreException {
 		IApiComponent tcomp = getTestingComponent();
-		assertNotNull("The testing component should not be null", tcomp); //$NON-NLS-1$
+		assertNotNull(tcomp, "The testing component should not be null"); //$NON-NLS-1$
 		SkippedComponent scomp1 = new SkippedComponent(tcomp.getSymbolicName(), tcomp.getVersion(), tcomp.getErrors());
-		assertEquals("The version should be 1.0.0", scomp1.getVersion(), DEFAULT_VERSION); //$NON-NLS-1$
+		assertEquals(scomp1.getVersion(), DEFAULT_VERSION, "The version should be 1.0.0"); //$NON-NLS-1$
 	}
 
 	/**
@@ -183,9 +183,9 @@ public class SkippedComponentTests extends SearchTest {
 	@Test
 	public void testGetErrors() throws CoreException {
 		IApiComponent tcomp = getTestingComponent();
-		assertNotNull("The testing component should not be null", tcomp); //$NON-NLS-1$
+		assertNotNull(tcomp, "The testing component should not be null"); //$NON-NLS-1$
 		SkippedComponent scomp1 = new SkippedComponent(tcomp.getSymbolicName(), tcomp.getVersion(), tcomp.getErrors());
-		assertNotNull("There should be resolution errors for the testing component", scomp1.getErrors()); //$NON-NLS-1$
+		assertNotNull(scomp1.getErrors(), "There should be resolution errors for the testing component"); //$NON-NLS-1$
 	}
 
 	/**
@@ -194,15 +194,14 @@ public class SkippedComponentTests extends SearchTest {
 	@Test
 	public void testGetErrorDetails() throws CoreException {
 		IApiComponent tcomp = getTestingComponent();
-		assertNotNull("The testing component should not be null", tcomp); //$NON-NLS-1$
+		assertNotNull(tcomp, "The testing component should not be null"); //$NON-NLS-1$
 		SkippedComponent scomp1 = new SkippedComponent(tcomp.getSymbolicName(), tcomp.getVersion(), tcomp.getErrors());
-		assertNotNull("There should be resolution errors for the testing component", scomp1.getErrors()); //$NON-NLS-1$
+		assertNotNull(scomp1.getErrors(), "There should be resolution errors for the testing component"); //$NON-NLS-1$
 		String reason = scomp1.getErrorDetails();
-		assertTrue("The reason should be because of a unresolved constraint", reason.startsWith("Require-Bundle:")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(reason.startsWith("Require-Bundle:"), "The reason should be because of a unresolved constraint"); //$NON-NLS-1$ //$NON-NLS-2$
 		scomp1 = new SkippedComponent(tcomp.getSymbolicName(), tcomp.getVersion(), null);
-		assertNull("There should be no errors for the testing component", scomp1.getErrors()); //$NON-NLS-1$
+		assertNull(scomp1.getErrors(), "There should be no errors for the testing component"); //$NON-NLS-1$
 		reason = scomp1.getErrorDetails();
-		assertTrue("The reason should be because it was exclude", //$NON-NLS-1$
-				reason.startsWith("This component was excluded from the search by the search parameters.")); //$NON-NLS-1$
+		assertTrue(reason.startsWith("This component was excluded from the search by the search parameters."), "The reason should be because it was exclude"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

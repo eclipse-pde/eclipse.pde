@@ -34,8 +34,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.api.tools.tests.ApiTestsPlugin;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for splitting plug-ins across releases
@@ -56,10 +55,6 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 
 	IApiBaseline baseline;
 
-	public BundleMergeSplitTests(String name) {
-		super(name);
-	}
-
 	@Override
 	protected void setBuilderOptions() {
 		enableUnsupportedTagOptions(false);
@@ -70,13 +65,6 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		enableSinceTagOptions(true);
 		enableUsageOptions(false);
 		enableVersionNumberOptions(true);
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(BundleMergeSplitTests.class);
 	}
 
 	/*
@@ -114,6 +102,8 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	/**
 	 * Tests that merging a plug-in is compatible with previous release.
 	 */
+	@Test
+
 	public void test001() throws Exception {
 		// setup the environment
 		setupTest("test1"); //$NON-NLS-1$
@@ -124,6 +114,8 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	 * Tests that splitting a plug-in and re-exporting the base is compatible
 	 * with previous release.
 	 */
+	@Test
+
 	public void test002() throws Exception {
 		// setup the environment
 		setupTest("test2"); //$NON-NLS-1$
@@ -134,6 +126,8 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	 * Tests that splitting a plug-in and re-exporting the base is compatible
 	 * with previous release. Remove a re-exported type
 	 */
+	@Test
+
 	public void test003() throws Exception {
 		// setup the environment
 		setupTest("test3"); //$NON-NLS-1$
@@ -153,6 +147,8 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	 * Tests that splitting a plug-in and re-exporting the base is compatible
 	 * with previous release. Adding a re-exported type
 	 */
+	@Test
+
 	public void test004() throws Exception {
 		// setup the environment
 		setupTest("test4"); //$NON-NLS-1$
@@ -164,6 +160,8 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	 * Tests that splitting a plug-in and re-exporting the base is compatible
 	 * with previous release. Remove a re-exported type
 	 */
+	@Test
+
 	public void test005() throws Exception {
 		// setup the environment
 		setupTest("test5"); //$NON-NLS-1$
@@ -183,6 +181,8 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	 * Tests that splitting a plug-in and re-exporting the base is compatible
 	 * with previous release. Remove a re-exported type
 	 */
+	@Test
+
 	public void test006() throws Exception {
 		// setup the environment
 		setupTest("test6"); //$NON-NLS-1$
@@ -202,6 +202,8 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	 * Tests that splitting a plug-in and re-exporting the base is compatible
 	 * with previous release. Adding a type
 	 */
+	@Test
+
 	public void test007() throws Exception {
 		// setup the environment
 		setupTest("test7"); //$NON-NLS-1$
@@ -213,6 +215,8 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	 * Tests that splitting a plug-in and re-exporting the base is compatible
 	 * with previous release. Remove a re-exported type
 	 */
+	@Test
+
 	public void test008() throws Exception {
 		// setup the environment
 		setupTest("test8"); //$NON-NLS-1$
@@ -232,6 +236,8 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	 * Tests that splitting a plug-in and re-exporting the base is compatible
 	 * with previous release. Remove a re-exported type
 	 */
+	@Test
+
 	public void test009() throws Exception {
 		// setup the environment
 		setupTest("test9"); //$NON-NLS-1$
@@ -261,6 +267,8 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	 * corresponding to the new bundle. Since the new bundle is not in the
 	 * baseline, the tags cannot be validated.
 	 */
+	@Test
+
 	public void test010() throws Exception {
 		// setup the environment
 		setupTest("test10"); //$NON-NLS-1$

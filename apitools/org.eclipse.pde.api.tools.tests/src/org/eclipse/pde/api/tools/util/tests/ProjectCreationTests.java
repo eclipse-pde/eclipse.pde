@@ -14,10 +14,10 @@
 package org.eclipse.pde.api.tools.util.tests;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.List;
@@ -40,9 +40,9 @@ import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 import org.eclipse.pde.core.project.IPackageExportDescription;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.natures.PluginProject;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Creates the {@link IJavaProject} used for testing in the target workspace
@@ -66,16 +66,16 @@ public class ProjectCreationTests extends AbstractApiTest {
 	}
 
 	@Override
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		super.setUp();
 		createProject(TESTING_PROJECT_NAME, null);
 		IJavaProject project = getTestingJavaProject(TESTING_PROJECT_NAME);
-		assertNotNull("The java project must have been created", project); //$NON-NLS-1$
+		assertNotNull(project, "The java project must have been created"); //$NON-NLS-1$
 	}
 
 	@Override
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		deleteProject(TESTING_PROJECT_NAME);
 		super.tearDown();
@@ -87,15 +87,15 @@ public class ProjectCreationTests extends AbstractApiTest {
 	@Test
 	public void testImportJavadocTestSource() throws JavaModelException {
 		File dest = new File(JAVADOC_SRC_DIR);
-		assertTrue("the source dir must exist", dest.exists()); //$NON-NLS-1$
-		assertTrue("the source dir must be a directory", dest.isDirectory()); //$NON-NLS-1$
+		assertTrue(dest.exists(), "the source dir must exist"); //$NON-NLS-1$
+		assertTrue(dest.isDirectory(), "the source dir must be a directory"); //$NON-NLS-1$
 		IJavaProject project = getTestingJavaProject(TESTING_PROJECT_NAME);
 		IPackageFragmentRoot srcroot = project.getPackageFragmentRoot(ProjectUtils.SRC_FOLDER);
-		assertNotNull("the srcroot for the test java project must not be null", srcroot); //$NON-NLS-1$
+		assertNotNull(srcroot, "the srcroot for the test java project must not be null"); //$NON-NLS-1$
 		FileUtils.importFilesFromDirectory(dest, project.getPath().append(srcroot.getPath()).append("javadoc")); //$NON-NLS-1$
 		// try to look up a file to test if it worked
 		IType type = project.findType("javadoc.JavadocTestClass1", new NullProgressMonitor()); //$NON-NLS-1$
-		assertNotNull("the JavadocTestClass1 type should exist in the javadoc package", type); //$NON-NLS-1$
+		assertNotNull(type, "the JavadocTestClass1 type should exist in the javadoc package"); //$NON-NLS-1$
 	}
 
 	/**
@@ -104,11 +104,11 @@ public class ProjectCreationTests extends AbstractApiTest {
 	@Test
 	public void testImportClassesTestSource() {
 		File dest = new File(JAVADOC_READ_SRC_DIR);
-		assertTrue("the source dir must exist", dest.exists()); //$NON-NLS-1$
-		assertTrue("the source dir must be a directory", dest.isDirectory()); //$NON-NLS-1$
+		assertTrue(dest.exists(), "the source dir must exist"); //$NON-NLS-1$
+		assertTrue(dest.isDirectory(), "the source dir must be a directory"); //$NON-NLS-1$
 		IJavaProject project = getTestingJavaProject(TESTING_PROJECT_NAME);
 		IPackageFragmentRoot srcroot = project.getPackageFragmentRoot(ProjectUtils.SRC_FOLDER);
-		assertNotNull("the srcroot for the test java project must not be null", srcroot); //$NON-NLS-1$
+		assertNotNull(srcroot, "the srcroot for the test java project must not be null"); //$NON-NLS-1$
 		FileUtils.importFilesFromDirectory(dest,
 				project.getPath().append(srcroot.getPath()).append("a").append("b").append("c")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
@@ -120,13 +120,13 @@ public class ProjectCreationTests extends AbstractApiTest {
 	public void testCreatePluginProject() throws CoreException {
 		IJavaProject jproject = getTestingJavaProject(TESTING_PROJECT_NAME);
 		IProject project = jproject.getProject();
-		assertTrue("project must have the PDE nature", project.hasNature(PluginProject.NATURE)); //$NON-NLS-1$
-		assertTrue("project must have the java nature", project.hasNature(JavaCore.NATURE_ID)); //$NON-NLS-1$
-		assertTrue("project must have additional nature for API Tools", project.hasNature(ApiPlugin.NATURE_ID)); //$NON-NLS-1$
+		assertTrue(project.hasNature(PluginProject.NATURE), "project must have the PDE nature"); //$NON-NLS-1$
+		assertTrue(project.hasNature(JavaCore.NATURE_ID), "project must have the java nature"); //$NON-NLS-1$
+		assertTrue(project.hasNature(ApiPlugin.NATURE_ID), "project must have additional nature for API Tools"); //$NON-NLS-1$
 		IFile file = project.getFile("build.properties"); //$NON-NLS-1$
-		assertTrue("the build.properties file must exist", file.exists()); //$NON-NLS-1$
+		assertTrue(file.exists(), "the build.properties file must exist"); //$NON-NLS-1$
 		file = project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
-		assertTrue("the MANIFEST.MF file must exist", file.exists()); //$NON-NLS-1$
+		assertTrue(file.exists(), "the MANIFEST.MF file must exist"); //$NON-NLS-1$
 	}
 
 	/**
@@ -156,11 +156,11 @@ public class ProjectCreationTests extends AbstractApiTest {
 	 */
 	private void assertExportedPackage(IPackageExportDescription export, boolean internalstate, int friendcount) {
 		String packagename = export.name();
-		assertTrue("the package " + packagename + " must not be internal", export.isApi() == !internalstate); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(export.isApi() == !internalstate, "the package " + packagename + " must not be internal"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (friendcount == 0) {
 			assertThat(export.friends()).isEmpty();
 		} else {
-			assertEquals("the package " + packagename + " must not have friends", friendcount, export.friends().size()); //$NON-NLS-1$ //$NON-NLS-2$
+			assertEquals(friendcount, export.friends().size(), "the package " + packagename + " must not have friends"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -232,7 +232,7 @@ public class ProjectCreationTests extends AbstractApiTest {
 		assertExportedPackage(getExport(exports, "org.eclipse.apitools.test.remove2"), true, 0); //$NON-NLS-1$
 		ProjectUtils.removeExportedPackage(project, "org.eclipse.apitools.test.remove1"); //$NON-NLS-1$
 		exports = ProjectUtils.getExportedPackages(project);
-		assertNull("the package should have been removed from the header", getExport(exports, "org.eclipse.apitools.test.remove1")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNull(getExport(exports, "org.eclipse.apitools.test.remove1"), "the package should have been removed from the header"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertExportedPackage(getExport(exports, "org.eclipse.apitools.test.remove2"), true, 0); //$NON-NLS-1$
 	}
 

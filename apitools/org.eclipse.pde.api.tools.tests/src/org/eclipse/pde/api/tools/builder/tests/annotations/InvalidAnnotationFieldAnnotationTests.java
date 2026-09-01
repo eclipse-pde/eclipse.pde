@@ -15,8 +15,7 @@ package org.eclipse.pde.api.tools.builder.tests.annotations;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests invalid annotations used on annotation fields
@@ -25,28 +24,18 @@ import junit.framework.Test;
  */
 public class InvalidAnnotationFieldAnnotationTests extends FieldAnnotationTest {
 
-	/**
-	 * Constructor
-	 */
-	public InvalidAnnotationFieldAnnotationTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(InvalidAnnotationFieldAnnotationTests.class);
-	}
-
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("annotation"); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidAnnotationFieldAnnotation1I() {
 		x1(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationFieldAnnotation1F() {
 		x1(false);
@@ -63,9 +52,13 @@ public class InvalidAnnotationFieldAnnotationTests extends FieldAnnotationTest {
 		deployAnnotationTestWithErrors(typename, inc, false);
 	}
 
+	@Test
+
 	public void testInvalidAnnotationFieldAnnotation2I() {
 		x2(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationFieldAnnotation2F() {
 		x2(false);
@@ -82,9 +75,13 @@ public class InvalidAnnotationFieldAnnotationTests extends FieldAnnotationTest {
 		deployAnnotationTestWithErrors(typename, inc, true);
 	}
 
+	@Test
+
 	public void testInvalidAnnotationFieldAnnotation3I() {
 		x3(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationFieldAnnotation3F() {
 		x3(false);
@@ -101,9 +98,13 @@ public class InvalidAnnotationFieldAnnotationTests extends FieldAnnotationTest {
 		deployAnnotationTestWithErrors(typename, inc, false);
 	}
 
+	@Test
+
 	public void testInvalidAnnotationFieldAnnotation4I() {
 		x4(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationFieldAnnotation4F() {
 		x4(false);
@@ -120,9 +121,13 @@ public class InvalidAnnotationFieldAnnotationTests extends FieldAnnotationTest {
 		deployAnnotationTestWithErrors(typename, inc, true);
 	}
 
+	@Test
+
 	public void testInvalidAnnotationFieldAnnotation5I() {
 		x5(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationFieldAnnotation5F() {
 		x5(false);
@@ -139,9 +144,13 @@ public class InvalidAnnotationFieldAnnotationTests extends FieldAnnotationTest {
 		deployAnnotationTestWithErrors(typename, inc, false);
 	}
 
+	@Test
+
 	public void testInvalidAnnotationFieldAnnotation6I() {
 		x6(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationFieldAnnotation6F() {
 		x6(false);
@@ -158,9 +167,13 @@ public class InvalidAnnotationFieldAnnotationTests extends FieldAnnotationTest {
 		deployAnnotationTestWithErrors(typename, inc, true);
 	}
 
+	@Test
+
 	public void testInvalidAnnotationFieldAnnotation7I() {
 		x7(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationFieldAnnotation7F() {
 		x7(false);
@@ -177,9 +190,13 @@ public class InvalidAnnotationFieldAnnotationTests extends FieldAnnotationTest {
 		deployAnnotationTestWithErrors(typename, inc, false);
 	}
 
+	@Test
+
 	public void testInvalidAnnotationFieldAnnotation8I() {
 		x8(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationFieldAnnotation8F() {
 		x8(false);
@@ -196,9 +213,13 @@ public class InvalidAnnotationFieldAnnotationTests extends FieldAnnotationTest {
 		deployAnnotationTestWithErrors(typename, inc, true);
 	}
 
+	@Test
+
 	public void testInvalidAnnotationFieldAnnotation9I() {
 		x9(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationFieldAnnotation9F() {
 		x9(false);
@@ -233,9 +254,13 @@ public class InvalidAnnotationFieldAnnotationTests extends FieldAnnotationTest {
 		deployAnnotationTestWithErrors(typename, inc, false);
 	}
 
+	@Test
+
 	public void testInvalidAnnotationFieldAnnotation10I() {
 		x10(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationFieldAnnotation10F() {
 		x10(false);
@@ -252,9 +277,13 @@ public class InvalidAnnotationFieldAnnotationTests extends FieldAnnotationTest {
 		deployAnnotationTest(typename, inc, false);
 	}
 
+	@Test
+
 	public void testInvalidAnnotationFieldAnnotation11I() {
 		x11(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationFieldAnnotation11F() {
 		x11(false);

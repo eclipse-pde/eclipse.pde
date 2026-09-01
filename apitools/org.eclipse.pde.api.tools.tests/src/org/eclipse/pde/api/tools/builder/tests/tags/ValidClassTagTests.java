@@ -14,8 +14,7 @@
 package org.eclipse.pde.api.tools.builder.tests.tags;
 
 import org.eclipse.core.runtime.IPath;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the tags that are valid on a class
@@ -24,26 +23,17 @@ import junit.framework.Test;
  */
 public class ValidClassTagTests extends InvalidClassTagTests {
 
-	public ValidClassTagTests(String name) {
-		super(name);
-	}
-
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("valid"); //$NON-NLS-1$
 	}
 
 	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(ValidClassTagTests.class);
-	}
-
-	/**
 	 * Tests that @noextend and @noinstantiate are valid tags on a class in the
 	 * the testing package a.b.c using an incremental build
 	 */
+	@Test
+
 	public void testValidClassTag1I() {
 		x1(true);
 	}
@@ -52,6 +42,8 @@ public class ValidClassTagTests extends InvalidClassTagTests {
 	 * Tests that @noextend and @noinstantiate are valid tags on a class in the
 	 * the testing package a.b.c using a full build
 	 */
+	@Test
+
 	public void testValidClassTag1F() {
 		x1(false);
 	}
@@ -60,12 +52,12 @@ public class ValidClassTagTests extends InvalidClassTagTests {
 		deployTagTest("test1.java", inc, false); //$NON-NLS-1$
 	}
 
-
-
 	/**
 	 * Tests that @noextend and @noinstantiate are valid tags on an inner class in the
 	 * the testing package a.b.c using an incremental build
 	 */
+	@Test
+
 	public void testValidClassTag5I() {
 		x5(true);
 	}
@@ -74,6 +66,8 @@ public class ValidClassTagTests extends InvalidClassTagTests {
 	 * Tests that @noextend and @noinstantiate are valid tags on an inner class in the
 	 * the testing package a.b.c using a full build
 	 */
+	@Test
+
 	public void testValidClassTag5F() {
 		x5(false);
 	}

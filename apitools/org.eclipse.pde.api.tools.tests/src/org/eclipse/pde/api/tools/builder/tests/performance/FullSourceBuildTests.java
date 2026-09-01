@@ -17,8 +17,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.test.performance.Dimension;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Performance tests for full source workspace build
@@ -26,17 +25,6 @@ import junit.framework.Test;
  * @since 1.0
  */
 public class FullSourceBuildTests extends PerformanceTest {
-
-	public FullSourceBuildTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(FullSourceBuildTests.class);
-	}
 
 	@Override
 	protected String getBaselineLocation() {
@@ -52,6 +40,8 @@ public class FullSourceBuildTests extends PerformanceTest {
 	 * Tests a full build of a 3.4 workspace with source from debug.core and pre-reqs
 	 * against a baseline of 3.3 binary plug-ins.
 	 */
+	@Test
+
 	public void testFullBuild() throws Exception {
 		tagAsSummary("Full Build", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
 
@@ -84,6 +74,8 @@ public class FullSourceBuildTests extends PerformanceTest {
 	 * Tests a clean and full build of a 3.4 workspace with source from debug.core and pre-reqs
 	 * against a baseline of 3.3 binary plug-ins.
 	 */
+	@Test
+
 	public void testCleanFullBuild() throws Exception {
 		tagAsSummary("Clean & Full Build", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
 
@@ -112,6 +104,5 @@ public class FullSourceBuildTests extends PerformanceTest {
 		commitMeasurements();
 		assertPerformance();
 	}
-
 
 }

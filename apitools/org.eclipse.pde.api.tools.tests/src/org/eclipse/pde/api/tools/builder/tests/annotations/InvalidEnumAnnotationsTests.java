@@ -18,8 +18,7 @@ import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests illegal use of annotations on enums
@@ -27,20 +26,6 @@ import junit.framework.Test;
  * @since 1.0.400
  */
 public class InvalidEnumAnnotationsTests extends AnnotationTest {
-
-	/**
-	 * Constructor
-	 */
-	public InvalidEnumAnnotationsTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(InvalidEnumAnnotationsTests.class);
-	}
 
 	@Override
 	protected IPath getTestSourcePath() {
@@ -52,9 +37,13 @@ public class InvalidEnumAnnotationsTests extends AnnotationTest {
 		return ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.TYPE, IApiProblem.UNSUPPORTED_ANNOTATION_USE, IApiProblem.NO_FLAGS);
 	}
 
+	@Test
+
 	public void testInvalidEnumTag1I() {
 		x1(true);
 	}
+
+	@Test
 
 	public void testInvalidEnumTag1F() {
 		x1(false);
@@ -74,9 +63,13 @@ public class InvalidEnumAnnotationsTests extends AnnotationTest {
 		deployAnnotationTest("test1.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidEnumTag2I() {
 		x3(true);
 	}
+
+	@Test
 
 	public void testInvalidEnumTag2F() {
 		x3(false);
@@ -97,9 +90,13 @@ public class InvalidEnumAnnotationsTests extends AnnotationTest {
 		deployAnnotationTest("test3.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidEnumTag3I() {
 		x5(true);
 	}
+
+	@Test
 
 	public void testInvalidEnumTag3F() {
 		x5(false);
@@ -120,9 +117,13 @@ public class InvalidEnumAnnotationsTests extends AnnotationTest {
 		deployAnnotationTestWithErrors("test5.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidEnumTag4I() {
 		x7(true);
 	}
+
+	@Test
 
 	public void testInvalidEnumTag4F() {
 		x7(false);
@@ -143,9 +144,13 @@ public class InvalidEnumAnnotationsTests extends AnnotationTest {
 		deployAnnotationTest("test7.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidEnumTag5I() {
 		x9(true);
 	}
+
+	@Test
 
 	public void testInvalidEnumTag5F() {
 		x9(false);
@@ -166,9 +171,13 @@ public class InvalidEnumAnnotationsTests extends AnnotationTest {
 		deployAnnotationTest("test9.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidEnumTag6I() {
 		x11(true);
 	}
+
+	@Test
 
 	public void testInvalidEnumTag6F() {
 		x11(false);

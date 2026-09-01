@@ -15,24 +15,12 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.JavaCore;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that the builder accepts valid tags on annotations
  */
 public class ValidAnnotationTagTests extends InvalidAnnotationTagTests {
-
-	public ValidAnnotationTagTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(ValidAnnotationTagTests.class);
-	}
 
 	@Override
 	protected IPath getTestSourcePath() {
@@ -44,10 +32,13 @@ public class ValidAnnotationTagTests extends InvalidAnnotationTagTests {
 		return JavaCore.VERSION_1_8;
 	}
 
+	@Test
 
 	public void testInvalidAnnotationTag1I() {
 		x1(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationTag1F() {
 		x1(false);
@@ -61,10 +52,13 @@ public class ValidAnnotationTagTests extends InvalidAnnotationTagTests {
 		deployTagTest(typename, inc, false);
 	}
 
+	@Test
 
 	public void testInvalidAnnotationTag2I() {
 		x2(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationTag2F() {
 		x2(false);
@@ -79,11 +73,15 @@ public class ValidAnnotationTagTests extends InvalidAnnotationTagTests {
 	}
 
 	@Override
+	@Test
+
 	public void testInvalidAnnotationTag3I() {
 		x3(true);
 	}
 
 	@Override
+	@Test
+
 	public void testInvalidAnnotationTag3F() {
 		x3(false);
 	}

@@ -13,17 +13,17 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.comparator.tests;
 
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 
 /**
  * Test suite for all of the API tools test
  *
  * @since 1.0.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@Suite
+@SelectClasses({
 		FieldDeltaTests.class, InterfaceDeltaTests.class, ClassDeltaTests.class, AnnotationDeltaTests.class,
 		EnumDeltaTests.class, MethodDeltaTests.class, MixedTypesDeltaTests.class, BundlesDeltaTests.class,
 		RestrictionsDeltaTests.class, ApiScopeDeltaTests.class, Java8DeltaTests.class,

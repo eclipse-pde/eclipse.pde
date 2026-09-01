@@ -14,8 +14,7 @@
 package org.eclipse.pde.api.tools.builder.tests.annotations;
 
 import org.eclipse.core.runtime.IPath;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests a variety of valid annotation use on classes
@@ -23,20 +22,6 @@ import junit.framework.Test;
  * @since 1.0.400
  */
 public class ValidClassAnnotationsTests extends InvalidClassAnnotationsTests {
-
-	/**
-	 * Constructor
-	 */
-	public ValidClassAnnotationsTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(ValidClassAnnotationsTests.class);
-	}
 
 	@Override
 	protected IPath getTestSourcePath() {
@@ -46,6 +31,8 @@ public class ValidClassAnnotationsTests extends InvalidClassAnnotationsTests {
 	/**
 	 * Tests all the valid annotations on a class
 	 */
+	@Test
+
 	public void testValidClassAnnotations1I() throws Exception {
 		deployAnnotationTest("test1.java", true, false); //$NON-NLS-1$
 	}
@@ -53,6 +40,8 @@ public class ValidClassAnnotationsTests extends InvalidClassAnnotationsTests {
 	/**
 	 * Tests all the valid annotations on a class
 	 */
+	@Test
+
 	public void testValidClassAnnotations1F() throws Exception {
 		deployAnnotationTest("test1.java", false, false); //$NON-NLS-1$
 	}
@@ -60,6 +49,8 @@ public class ValidClassAnnotationsTests extends InvalidClassAnnotationsTests {
 	/**
 	 * Tests all the valid annotations on a class in the default package
 	 */
+	@Test
+
 	public void testValidClassAnnotations2I() throws Exception {
 		deployAnnotationTest("test5.java", true, true); //$NON-NLS-1$
 	}
@@ -67,6 +58,8 @@ public class ValidClassAnnotationsTests extends InvalidClassAnnotationsTests {
 	/**
 	 * Tests all the valid annotations on a class in the default package
 	 */
+	@Test
+
 	public void testValidClassAnnotations2F() throws Exception {
 		deployAnnotationTest("test5.java", false, true); //$NON-NLS-1$
 	}

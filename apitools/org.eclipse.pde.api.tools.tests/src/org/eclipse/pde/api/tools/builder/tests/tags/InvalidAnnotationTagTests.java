@@ -19,8 +19,7 @@ import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests unsupported javadoc tags for annotations
@@ -28,17 +27,6 @@ import junit.framework.Test;
  * @since 1.0
  */
 public class InvalidAnnotationTagTests extends TagTest {
-
-	public InvalidAnnotationTagTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(InvalidAnnotationTagTests.class);
-	}
 
 	@Override
 	protected IPath getTestSourcePath() {
@@ -55,9 +43,13 @@ public class InvalidAnnotationTagTests extends TagTest {
 		return JavaCore.VERSION_1_8;
 	}
 
+	@Test
+
 	public void testInvalidAnnotationTag3I() {
 		x3(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationTag3F() {
 		x3(false);
@@ -74,9 +66,13 @@ public class InvalidAnnotationTagTests extends TagTest {
 		deployTagTest(typename, inc, false);
 	}
 
+	@Test
+
 	public void testInvalidAnnotationTag4I() {
 		x4(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationTag4F() {
 		x4(false);
@@ -92,9 +88,13 @@ public class InvalidAnnotationTagTests extends TagTest {
 		deployTagTest(typename, inc, true);
 	}
 
+	@Test
+
 	public void testInvalidAnnotationTag5I() {
 		x5(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationTag5F() {
 		x5(false);
@@ -111,9 +111,13 @@ public class InvalidAnnotationTagTests extends TagTest {
 		deployTagTest(typename, inc, false);
 	}
 
+	@Test
+
 	public void testInvalidAnnotationTag6I() {
 		x6(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationTag6F() {
 		x6(false);
@@ -129,9 +133,13 @@ public class InvalidAnnotationTagTests extends TagTest {
 		deployTagTest(typename, inc, true);
 	}
 
+	@Test
+
 	public void testInvalidAnnotationTag7I() {
 		x7(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationTag7F() {
 		x7(false);
@@ -165,9 +173,13 @@ public class InvalidAnnotationTagTests extends TagTest {
 		deployTagTest(typename, inc, false);
 	}
 
+	@Test
+
 	public void testInvalidAnnotationTag8I() {
 		x8(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationTag8F() {
 		x8(false);
@@ -189,9 +201,13 @@ public class InvalidAnnotationTagTests extends TagTest {
 		deployTagTest(typename, inc, true);
 	}
 
+	@Test
+
 	public void testInvalidAnnotationTag9I() {
 		x9(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationTag9F() {
 		x9(false);
@@ -208,9 +224,13 @@ public class InvalidAnnotationTagTests extends TagTest {
 		deployTagTest(typename, inc, false);
 	}
 
+	@Test
+
 	public void testInvalidAnnotationTag10I() {
 		x10(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationTag10F() {
 		x10(false);
@@ -227,9 +247,13 @@ public class InvalidAnnotationTagTests extends TagTest {
 		deployTagTest(typename, inc, true);
 	}
 
+	@Test
+
 	public void testInvalidAnnotationTag11I() {
 		x11(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationTag11F() {
 		x11(false);
@@ -246,9 +270,13 @@ public class InvalidAnnotationTagTests extends TagTest {
 		deployTagTest(typename, inc, false);
 	}
 
+	@Test
+
 	public void testInvalidAnnotationTag12I() {
 		x12(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationTag12F() {
 		x12(false);
@@ -264,9 +292,13 @@ public class InvalidAnnotationTagTests extends TagTest {
 		deployTagTest(typename, inc, true);
 	}
 
+	@Test
+
 	public void testInvalidAnnotationTag13I() {
 		x13(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationTag13F() {
 		x13(false);
@@ -286,9 +318,13 @@ public class InvalidAnnotationTagTests extends TagTest {
 		deployTagTest(typename, inc, true);
 	}
 
+	@Test
+
 	public void testInvalidAnnotationTag14I() {
 		x14(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationTag14F() {
 		x14(false);
@@ -308,9 +344,13 @@ public class InvalidAnnotationTagTests extends TagTest {
 		deployTagTest(typename, inc, true);
 	}
 
+	@Test
+
 	public void testInvalidAnnotationTag15I() {
 		x15(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationTag15F() {
 		x15(false);
@@ -331,9 +371,13 @@ public class InvalidAnnotationTagTests extends TagTest {
 		deployTagTest(typename, inc, true);
 	}
 
+	@Test
+
 	public void testInvalidAnnotationTag16I() {
 		x16(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationTag16F() {
 		x16(false);
@@ -351,9 +395,13 @@ public class InvalidAnnotationTagTests extends TagTest {
 		deployTagTest(typename, inc, true);
 	}
 
+	@Test
+
 	public void testInvalidAnnotationTag17I() {
 		x17(true);
 	}
+
+	@Test
 
 	public void testInvalidAnnotationTag17F() {
 		x17(false);

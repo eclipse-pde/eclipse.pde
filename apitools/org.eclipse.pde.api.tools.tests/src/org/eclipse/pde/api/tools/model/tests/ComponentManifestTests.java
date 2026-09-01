@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.model.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @since 1.0.0
@@ -41,19 +41,19 @@ public class ComponentManifestTests {
 		IPath path = TestSuiteHelper.getPluginDirectoryPath();
 		path = path.append("test-manifests"); //$NON-NLS-1$
 		File file = path.toFile();
-		assertTrue("Missing manifest directory", file.exists()); //$NON-NLS-1$
+		assertTrue(file.exists(), "Missing manifest directory"); //$NON-NLS-1$
 		IApiBaseline baseline = ApiModelFactory.newApiBaseline("test", TestSuiteHelper.getEEDescription(), null); //$NON-NLS-1$
 		try {
 			IApiComponent component = ApiModelFactory.newApiComponent(baseline, file.getAbsolutePath());
 			baseline.addApiComponents(new IApiComponent[] { component });
-			assertEquals("Id: ", "org.eclipse.debug.ui", component.getSymbolicName()); //$NON-NLS-1$ //$NON-NLS-2$
-			assertEquals("Name: ", "Debug Platform UI", component.getName()); //$NON-NLS-1$ //$NON-NLS-2$
-			assertEquals("Version: ", "3.3.100", component.getVersion()); //$NON-NLS-1$ //$NON-NLS-2$
+			assertEquals("org.eclipse.debug.ui", component.getSymbolicName(), "Id: "); //$NON-NLS-1$ //$NON-NLS-2$
+			assertEquals("Debug Platform UI", component.getName(), "Name: "); //$NON-NLS-1$ //$NON-NLS-2$
+			assertEquals("3.3.100", component.getVersion(), "Version: "); //$NON-NLS-1$ //$NON-NLS-2$
 			List<String> envs = component.getExecutionEnvironments();
-			assertEquals("Wrong execution environments", List.of("J2SE-1.4"), envs); //$NON-NLS-1$ //$NON-NLS-2$
+			assertEquals(List.of("J2SE-1.4"), envs, "Wrong execution environments"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			IRequiredComponentDescription[] requiredComponents = component.getRequiredComponents();
-			assertEquals("Wrong number of required components", 11, requiredComponents.length); //$NON-NLS-1$
+			assertEquals(11, requiredComponents.length, "Wrong number of required components"); //$NON-NLS-1$
 
 			List<RequiredComponentDescription> reqs = new ArrayList<>();
 			reqs.add(new RequiredComponentDescription("org.eclipse.core.expressions", new BundleVersionRange("(3.3.0,4.0.0)"))); //$NON-NLS-1$ //$NON-NLS-2$
@@ -70,7 +70,7 @@ public class ComponentManifestTests {
 					new BundleVersionRange("[3.29.0,4.0.0)"))); //$NON-NLS-1$
 
 			for (int i = 0; i < reqs.size(); i++) {
-				assertEquals("Wrong required component", reqs.get(i), requiredComponents[i]); //$NON-NLS-1$
+				assertEquals(reqs.get(i), requiredComponents[i], "Wrong required component"); //$NON-NLS-1$
 			}
 		} finally {
 			ApiTestingEnvironment.dispose(baseline);
@@ -82,7 +82,7 @@ public class ComponentManifestTests {
 		IPath path = TestSuiteHelper.getPluginDirectoryPath();
 		path = path.append("test-manifests"); //$NON-NLS-1$
 		File file = path.toFile();
-		assertTrue("Missing manifest directory", file.exists()); //$NON-NLS-1$
+		assertTrue(file.exists(), "Missing manifest directory"); //$NON-NLS-1$
 		IApiBaseline baseline = ApiModelFactory.newApiBaseline("test", TestSuiteHelper.getEEDescription(), null); //$NON-NLS-1$
 		try {
 			IApiComponent component = ApiModelFactory.newApiComponent(baseline, file.getAbsolutePath());
@@ -98,8 +98,8 @@ public class ComponentManifestTests {
 					others = others || description.isExported();
 				}
 			}
-			assertTrue("org.eclipse.debug.core should be re-exported", debugCoreExport); //$NON-NLS-1$
-			assertFalse("Other components should not be re-exported", others); //$NON-NLS-1$
+			assertTrue(debugCoreExport, "org.eclipse.debug.core should be re-exported"); //$NON-NLS-1$
+			assertFalse(others, "Other components should not be re-exported"); //$NON-NLS-1$
 		} finally {
 			ApiTestingEnvironment.dispose(baseline);
 		}

@@ -17,8 +17,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that the builder correctly reports compatibility problems
@@ -38,20 +37,9 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 	 */
 	protected static String PACKAGE_PREFIX = "a.classes.fields."; //$NON-NLS-1$
 
-	public ClassCompatibilityFieldTests(String name) {
-		super(name);
-	}
-
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("fields"); //$NON-NLS-1$
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(ClassCompatibilityFieldTests.class);
 	}
 
 	@Override
@@ -83,9 +71,13 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemovePublicFieldI() throws Exception {
 		xRemovePublicField(true);
 	}
+
+	@Test
 
 	public void testRemovePublicFieldF() throws Exception {
 		xRemovePublicField(false);
@@ -94,6 +86,8 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 	/**
 	 * Tests the removal of 2 public fields from an API class - incremental.
 	 */
+	@Test
+
 	public void testRemoveTwoPublicFieldsI() throws Exception {
 		xRemoveTwoPublicFields(true);
 	}
@@ -101,6 +95,8 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 	/**
 	 * Tests the removal of 2 public methods from an API class - full.
 	 */
+	@Test
+
 	public void testRemoveTwoPublicFieldsF() throws Exception {
 		xRemoveTwoPublicFields(false);
 	}
@@ -137,9 +133,13 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemoveProtectedFieldI() throws Exception {
 		xRemoveProtectedField(true);
 	}
+
+	@Test
 
 	public void testRemoveProtectedFieldF() throws Exception {
 		xRemoveProtectedField(false);
@@ -154,9 +154,13 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemovePrivateFieldI() throws Exception {
 		xRemovePrivateField(true);
 	}
+
+	@Test
 
 	public void testRemovePrivateFieldF() throws Exception {
 		xRemovePrivateField(false);
@@ -171,9 +175,13 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemovePackageFieldI() throws Exception {
 		xRemovePackageField(true);
 	}
+
+	@Test
 
 	public void testRemovePackageFieldF() throws Exception {
 		xRemovePackageField(false);
@@ -194,9 +202,13 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemovePublicFieldNoExtendI() throws Exception {
 		xRemovePublicFieldNoExtend(true);
 	}
+
+	@Test
 
 	public void testRemovePublicFieldNoExtendF() throws Exception {
 		xRemovePublicFieldNoExtend(false);
@@ -211,9 +223,13 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemoveProtectedFieldNoExtendI() throws Exception {
 		xRemoveProtectedFieldNoExtend(true);
 	}
+
+	@Test
 
 	public void testRemoveProtectedFieldNoExtendF() throws Exception {
 		xRemoveProtectedFieldNoExtend(false);
@@ -234,9 +250,13 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemovePublicFieldNoInstantiateI() throws Exception {
 		xRemovePublicFieldNoInstantiate(true);
 	}
+
+	@Test
 
 	public void testRemovePublicFieldNoInstantiateF() throws Exception {
 		xRemovePublicFieldNoInstantiate(false);
@@ -257,9 +277,13 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemoveProtectedFieldNoInstantiateI() throws Exception {
 		xRemoveProtectedFieldNoInstantiate(true);
 	}
+
+	@Test
 
 	public void testRemoveProtectedFieldNoInstantiateF() throws Exception {
 		xRemoveProtectedFieldNoInstantiate(false);
@@ -281,9 +305,13 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemovePublicFieldNoExtendNoInstantiateI() throws Exception {
 		xRemovePublicFieldNoExtendNoInstatiate(true);
 	}
+
+	@Test
 
 	public void testRemovePublicFieldNoExtendNoInstantiateF() throws Exception {
 		xRemovePublicFieldNoExtendNoInstatiate(false);
@@ -299,9 +327,13 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemoveProtectedFieldNoExtendNoInstantiateI() throws Exception {
 		xRemoveProtectedFieldNoExtendNoInstatiate(true);
 	}
+
+	@Test
 
 	public void testRemoveProtectedFieldNoExtendNoInstantiateF() throws Exception {
 		xRemoveProtectedFieldNoExtendNoInstatiate(false);
@@ -316,9 +348,13 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemovePublicFieldNoReferenceI() throws Exception {
 		xRemovePublicFieldNoReference(true);
 	}
+
+	@Test
 
 	public void testRemovePublicFieldNoReferencF() throws Exception {
 		xRemovePublicFieldNoReference(false);
@@ -333,9 +369,13 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemoveProtectedFieldNoReferenceI() throws Exception {
 		xRemoveProtectedFieldNoReference(true);
 	}
+
+	@Test
 
 	public void testRemoveProtectedFieldNoReferencF() throws Exception {
 		xRemoveProtectedFieldNoReference(false);
@@ -350,9 +390,13 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddPrivateFieldI() throws Exception {
 		xAddPrivateField(true);
 	}
+
+	@Test
 
 	public void testAddPrivateFieldF() throws Exception {
 		xAddPrivateField(false);
@@ -370,9 +414,13 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddProtectedFieldI() throws Exception {
 		xAddProtectedField(true);
 	}
+
+	@Test
 
 	public void testAddProtectedFieldF() throws Exception {
 		xAddProtectedField(false);
@@ -390,9 +438,13 @@ public class ClassCompatibilityFieldTests extends ClassCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddPublicFieldI() throws Exception {
 		xAddPublicField(true);
 	}
+
+	@Test
 
 	public void testAddPublicFieldF() throws Exception {
 		xAddPublicField(false);

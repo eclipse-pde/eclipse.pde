@@ -13,21 +13,14 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.annotations;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
 import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 import org.eclipse.pde.api.tools.builder.tests.ApiTestingEnvironment;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Assertions;
 
 /**
  * Root test for annotation tests
@@ -41,13 +34,6 @@ public abstract class AnnotationTest extends ApiBuilderTest {
 	protected static IPath WORKSPACE_PATH_DEFAULT = IPath.fromOSString("src"); //$NON-NLS-1$
 
 	/**
-	 * Constructor
-	 */
-	public AnnotationTest(String name) {
-		super(name);
-	}
-
-	/**
 	 * Sets the message arguments we are expecting for the given test, the
 	 * number of times denoted by count
 	 */
@@ -57,76 +43,6 @@ public abstract class AnnotationTest extends ApiBuilderTest {
 			args[i] = new String[] { tagname, context };
 		}
 		setExpectedMessageArgs(args);
-	}
-
-	/**
-	 * @return all of the child test classes of this class
-	 */
-	private static Class<?>[] getAllTestClasses() {
-		ArrayList<Class<?>> classes = new ArrayList<>();
-		classes.add(InvalidAnnotationAnnotationsTests.class);
-		classes.add(ValidAnnotationAnnotationsTests.class);
-		classes.add(InvalidClassAnnotationsTests.class);
-		classes.add(ValidClassAnnotationsTests.class);
-		classes.add(InvalidInterfaceAnnotationTests.class);
-		classes.add(ValidInterfaceAnnotationTests.class);
-		classes.add(InvalidDuplicateAnnotationTests.class);
-		classes.add(InvalidEnumAnnotationsTests.class);
-		classes.add(ValidEnumAnnotationsTests.class);
-		classes.add(FieldAnnotationTest.class);
-		classes.add(MethodAnnotationTest.class);
-		classes.add(InvalidJava8InterfaceAnnotationTests.class);
-		classes.add(ValidJava8InterfaceAnnotationTests.class);
-		classes.add(Java8TypeAnnotationTests.class);
-
-		return classes.toArray(new Class<?>[classes.size()]);
-	}
-
-	/**
-	 * Collects tests from the getAllTestClasses() method into the given suite
-	 */
-	private static void collectTests(TestSuite suite) {
-		// Reset forgotten subsets of tests
-		TestCase.TESTS_PREFIX = null;
-		TestCase.TESTS_NAMES = null;
-		TestCase.TESTS_NUMBERS = null;
-		TestCase.TESTS_RANGE = null;
-		TestCase.RUN_ONLY_ID = null;
-
-		// Hack to load all classes before computing their suite of test cases
-		// this allow to reset test cases subsets while running all Builder
-		// tests...
-
-		/* tests */
-		for (Class<?> clazz : getAllTestClasses()) {
-			Method suiteMethod;
-			try {
-				suiteMethod = clazz.getDeclaredMethod("suite"); //$NON-NLS-1$
-			} catch (NoSuchMethodException e) {
-				e.printStackTrace();
-				continue;
-			}
-			Object test;
-			try {
-				test = suiteMethod.invoke(null);
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-				continue;
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
-				continue;
-			}
-			suite.addTest((Test) test);
-		}
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		TestSuite suite = new TestSuite(AnnotationTest.class.getName());
-		collectTests(suite);
-		return suite;
 	}
 
 	@Override
@@ -201,7 +117,7 @@ public abstract class AnnotationTest extends ApiBuilderTest {
 			ApiProblem[] problems = getEnv().getProblemsFor(path, null);
 			assertProblems(problems);
 		} catch (Exception e) {
-			fail(e.getMessage());
+			Assertions.fail(e.getMessage());
 		}
 	}
 
@@ -224,7 +140,7 @@ public abstract class AnnotationTest extends ApiBuilderTest {
 			ApiProblem[] problems = getEnv().getProblemsFor(path, null);
 			assertProblems(problems);
 		} catch (Exception e) {
-			fail(e.getMessage());
+			Assertions.fail(e.getMessage());
 		}
 	}
 

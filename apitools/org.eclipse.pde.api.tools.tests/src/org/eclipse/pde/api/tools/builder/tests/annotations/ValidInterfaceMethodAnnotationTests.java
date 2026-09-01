@@ -14,8 +14,7 @@
 package org.eclipse.pde.api.tools.builder.tests.annotations;
 
 import org.eclipse.core.runtime.IPath;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests valid annotations on interface methods
@@ -24,25 +23,16 @@ import junit.framework.Test;
  */
 public class ValidInterfaceMethodAnnotationTests extends InvalidInterfaceMethodAnnotationTests {
 
-	public ValidInterfaceMethodAnnotationTests(String name) {
-		super(name);
-	}
-
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("valid"); //$NON-NLS-1$
 	}
 
 	/**
-	 * @return the test for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(ValidInterfaceMethodAnnotationTests.class);
-	}
-
-	/**
 	 * Tests the valid @NoReferrence annotation on interface methods
 	 */
+	@Test
+
 	public void testNoReferenceF() throws Exception {
 		x1(false);
 	}
@@ -50,6 +40,8 @@ public class ValidInterfaceMethodAnnotationTests extends InvalidInterfaceMethodA
 	/**
 	 * Tests the valid @NoReferrence annotation on interface methods
 	 */
+	@Test
+
 	public void testNoReferenceI() throws Exception {
 		x1(true);
 	}

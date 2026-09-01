@@ -17,8 +17,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that the builder correctly reports compatibility problems
@@ -38,23 +37,9 @@ public class ClassCompatibilityRestrictionTests extends ClassCompatibilityTests 
 	 */
 	protected static String PACKAGE_PREFIX = "a.classes.restrictions."; //$NON-NLS-1$
 
-	/**
-	 * Constructor
-	 */
-	public ClassCompatibilityRestrictionTests(String name) {
-		super(name);
-	}
-
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("restrictions"); //$NON-NLS-1$
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(ClassCompatibilityRestrictionTests.class);
 	}
 
 	@Override
@@ -86,9 +71,13 @@ public class ClassCompatibilityRestrictionTests extends ClassCompatibilityTests 
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddNoExtendI() throws Exception {
 		xAddNoExtend(true);
 	}
+
+	@Test
 
 	public void testAddNoExtendF() throws Exception {
 		xAddNoExtend(false);
@@ -109,9 +98,13 @@ public class ClassCompatibilityRestrictionTests extends ClassCompatibilityTests 
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddNoInstantiateI() throws Exception {
 		xAddNoInstantiate(true);
 	}
+
+	@Test
 
 	public void testAddNoInstantiateF() throws Exception {
 		xAddNoInstantiate(false);
@@ -126,9 +119,13 @@ public class ClassCompatibilityRestrictionTests extends ClassCompatibilityTests 
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testFinalAddNoExtendI() throws Exception {
 		xFinalAddNoExtend(true);
 	}
+
+	@Test
 
 	public void testFinalAddNoExtendF() throws Exception {
 		xFinalAddNoExtend(false);
@@ -143,9 +140,13 @@ public class ClassCompatibilityRestrictionTests extends ClassCompatibilityTests 
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testFinalRemoveNoExtendI() throws Exception {
 		xFinalRemoveNoExtend(true);
 	}
+
+	@Test
 
 	public void testFinalRemoveNoExtendF() throws Exception {
 		xFinalRemoveNoExtend(false);
@@ -160,9 +161,13 @@ public class ClassCompatibilityRestrictionTests extends ClassCompatibilityTests 
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAbstractRemoveNoInstantiateI() throws Exception {
 		xAbstractRemoveNoInstantiate(true);
 	}
+
+	@Test
 
 	public void testAbstractRemoveNoInstantiateF() throws Exception {
 		xAbstractRemoveNoInstantiate(false);
@@ -177,9 +182,13 @@ public class ClassCompatibilityRestrictionTests extends ClassCompatibilityTests 
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAbstractAddNoInstantiateI() throws Exception {
 		xAbstractAddNoInstantiate(true);
 	}
+
+	@Test
 
 	public void testAbstractAddNoInstantiateF() throws Exception {
 		xAbstractAddNoInstantiate(false);
@@ -194,17 +203,25 @@ public class ClassCompatibilityRestrictionTests extends ClassCompatibilityTests 
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testNoInstantiateAddAbstractI() throws Exception {
 		xNoInstantiateAddAbstract(true);
 	}
+
+	@Test
 
 	public void testNoInstantiateAddAbstractF() throws Exception {
 		xNoInstantiateAddAbstract(false);
 	}
 
+	@Test
+
 	public void testRemoveNoExtendI() throws Exception {
 		xRemoveNoExtend(true);
 	}
+
+	@Test
 
 	public void testRemoveNoExtendF() throws Exception {
 		xRemoveNoExtend(false);

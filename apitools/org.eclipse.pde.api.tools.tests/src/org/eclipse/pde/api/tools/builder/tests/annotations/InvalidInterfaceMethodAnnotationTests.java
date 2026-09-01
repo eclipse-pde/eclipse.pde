@@ -15,8 +15,7 @@ package org.eclipse.pde.api.tools.builder.tests.annotations;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests invalid annotations on interface methods
@@ -25,25 +24,18 @@ import junit.framework.Test;
  */
 public class InvalidInterfaceMethodAnnotationTests extends MethodAnnotationTest {
 
-	public InvalidInterfaceMethodAnnotationTests(String name) {
-		super(name);
-	}
-
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("interface"); //$NON-NLS-1$
 	}
 
-	/**
-	 * @return the test for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(InvalidInterfaceMethodAnnotationTests.class);
-	}
+	@Test
 
 	public void testNoInstantiateF() throws Exception {
 		x1(false);
 	}
+
+	@Test
 
 	public void testNoInstantiateI() throws Exception {
 		x1(true);
@@ -57,9 +49,13 @@ public class InvalidInterfaceMethodAnnotationTests extends MethodAnnotationTest 
 		deployAnnotationTestWithErrors("test2.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testNoImplementF() throws Exception {
 		x2(false);
 	}
+
+	@Test
 
 	public void testNoImplementI() throws Exception {
 		x2(true);
@@ -73,9 +69,13 @@ public class InvalidInterfaceMethodAnnotationTests extends MethodAnnotationTest 
 		deployAnnotationTestWithErrors("test3.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testNoExtendF() throws Exception {
 		x3(false);
 	}
+
+	@Test
 
 	public void testNoExtendI() throws Exception {
 		x3(true);
@@ -89,9 +89,13 @@ public class InvalidInterfaceMethodAnnotationTests extends MethodAnnotationTest 
 		deployAnnotationTestWithErrors("test4.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testNoOverrideF() throws Exception {
 		x4(false);
 	}
+
+	@Test
 
 	public void testNoOverrideI() throws Exception {
 		x4(true);

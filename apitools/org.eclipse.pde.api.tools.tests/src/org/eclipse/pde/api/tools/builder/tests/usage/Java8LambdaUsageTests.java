@@ -17,8 +17,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests labmda expression usage for Java 8 code snippets
@@ -26,17 +25,6 @@ import junit.framework.Test;
 public class Java8LambdaUsageTests extends Java8UsageTest {
 
 	int pid = -1;
-
-	public Java8LambdaUsageTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * @return the test class for this suite
-	 */
-	public static Test suite() {
-		return buildTestSuite(Java8LambdaUsageTests.class);
-	}
 
 	@Override
 	protected IPath getTestSourcePath() {
@@ -63,6 +51,8 @@ public class Java8LambdaUsageTests extends Java8UsageTest {
 	/**
 	 * Tests illegal use of fields inside a lambda expression (full)
 	 */
+	@Test
+
 	public void testLambdaExpressionF() {
 		x1(false);
 	}
@@ -70,6 +60,8 @@ public class Java8LambdaUsageTests extends Java8UsageTest {
 	/**
 	 * Tests illegal use of fields inside a lambda expression (incremental)
 	 */
+	@Test
+
 	public void testLambdaExpressionI() {
 		x1(true);
 	}
@@ -87,6 +79,8 @@ public class Java8LambdaUsageTests extends Java8UsageTest {
 	/**
 	 * Tests illegal use of fields inside a lambda statement (full)
 	 */
+	@Test
+
 	public void testLambdaStatementF() {
 		x2(false);
 	}
@@ -94,6 +88,8 @@ public class Java8LambdaUsageTests extends Java8UsageTest {
 	/**
 	 * Tests illegal use of fields inside a lambda statement (incremental)
 	 */
+	@Test
+
 	public void testLambdaStatementI() {
 		x2(true);
 	}
@@ -111,6 +107,8 @@ public class Java8LambdaUsageTests extends Java8UsageTest {
 	/**
 	 * Tests illegal use of fields inside a lambda block statement (full)
 	 */
+	@Test
+
 	public void testLambdaBlockStatementF() {
 		x3(false);
 	}
@@ -118,10 +116,11 @@ public class Java8LambdaUsageTests extends Java8UsageTest {
 	/**
 	 * Tests illegal use of fields inside a lambda block statement (incremental)
 	 */
+	@Test
+
 	public void testLambdaBlockStatementI() {
 		x3(true);
 	}
-
 
 	private void x3(boolean inc) {
 		int[] pids = new int[] {
@@ -146,6 +145,8 @@ public class Java8LambdaUsageTests extends Java8UsageTest {
 	 * restriction is marked as illegal use (full) Currently this is not
 	 * supported (Bug 431749)
 	 */
+	@Test
+
 	public void testLambdaRestrictedFunctionalInterfaceF() {
 		x4(false);
 	}
@@ -155,6 +156,8 @@ public class Java8LambdaUsageTests extends Java8UsageTest {
 	 * restriction is marked as illegal use (incremental) Currently this is not
 	 * supported (Bug 431749)
 	 */
+	@Test
+
 	public void testLambdaRestrictedFunctionalInterfaceI() {
 		x4(true);
 	}

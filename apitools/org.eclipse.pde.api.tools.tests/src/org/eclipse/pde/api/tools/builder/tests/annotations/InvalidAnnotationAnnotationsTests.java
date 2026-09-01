@@ -18,8 +18,7 @@ import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests invalid annotations added to an annotation
@@ -27,20 +26,6 @@ import junit.framework.Test;
  * @since 1.0.400
  */
 public class InvalidAnnotationAnnotationsTests extends AnnotationTest {
-
-	/**
-	 * Constructor
-	 */
-	public InvalidAnnotationAnnotationsTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(InvalidAnnotationAnnotationsTests.class);
-	}
 
 	@Override
 	protected IPath getTestSourcePath() {
@@ -55,6 +40,8 @@ public class InvalidAnnotationAnnotationsTests extends AnnotationTest {
 	/**
 	 * Tests an invalid @NoExtend annotation being used
 	 */
+	@Test
+
 	public void testInvalidNoExtendAnnotation1I() throws Exception {
 		String typename = "test3.java"; //$NON-NLS-1$
 		setExpectedProblemIds(getDefaultProblemSet(4));
@@ -65,6 +52,8 @@ public class InvalidAnnotationAnnotationsTests extends AnnotationTest {
 	/**
 	 * Tests an invalid @NoExtend annotation being used
 	 */
+	@Test
+
 	public void testInvalidNoExtendAnnotation1F() throws Exception {
 		String typename = "test3.java"; //$NON-NLS-1$
 		setExpectedProblemIds(getDefaultProblemSet(4));
@@ -75,6 +64,8 @@ public class InvalidAnnotationAnnotationsTests extends AnnotationTest {
 	/**
 	 * Tests a variety of invalid annotations being used
 	 */
+	@Test
+
 	public void testInvalidAnnotations1I() throws Exception {
 		setExpectedProblemIds(getDefaultProblemSet(8));
 		setExpectedMessageArgs(new String[][] {
@@ -94,6 +85,8 @@ public class InvalidAnnotationAnnotationsTests extends AnnotationTest {
 	/**
 	 * Tests a variety of invalid annotations being used
 	 */
+	@Test
+
 	public void testInvalidAnnotations1F() throws Exception {
 		setExpectedProblemIds(getDefaultProblemSet(8));
 		setExpectedMessageArgs(new String[][] {
@@ -113,6 +106,8 @@ public class InvalidAnnotationAnnotationsTests extends AnnotationTest {
 	/**
 	 * Tests an invalid @NoInstantiate annotation is being used
 	 */
+	@Test
+
 	public void testInvalidNoInstantiateAnnotation1I() throws Exception {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		setExpectedMessageArgs("@NoInstantiate", BuilderMessages.TagValidator_an_annotation, 4); //$NON-NLS-1$
@@ -123,6 +118,8 @@ public class InvalidAnnotationAnnotationsTests extends AnnotationTest {
 	/**
 	 * Tests an invalid @NoInstantiate annotation is being used
 	 */
+	@Test
+
 	public void testInvalidNoInstantiateAnnotation1F() throws Exception {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		setExpectedMessageArgs("@NoInstantiate", BuilderMessages.TagValidator_an_annotation, 4); //$NON-NLS-1$
@@ -133,6 +130,8 @@ public class InvalidAnnotationAnnotationsTests extends AnnotationTest {
 	/**
 	 * Tests an invalid @NoImplement annotation is being used
 	 */
+	@Test
+
 	public void testInvalidNoImplementAnnotation1I() throws Exception {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		setExpectedMessageArgs("@NoImplement", BuilderMessages.TagValidator_an_annotation, 4); //$NON-NLS-1$
@@ -143,6 +142,8 @@ public class InvalidAnnotationAnnotationsTests extends AnnotationTest {
 	/**
 	 * Tests an invalid @NoImplement annotation is being used
 	 */
+	@Test
+
 	public void testInvalidNoImplementAnnotation1F() throws Exception {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		setExpectedMessageArgs("@NoImplement", BuilderMessages.TagValidator_an_annotation, 4); //$NON-NLS-1$
@@ -153,6 +154,8 @@ public class InvalidAnnotationAnnotationsTests extends AnnotationTest {
 	/**
 	 * Tests that all annotations are invalid when the parent is not visible
 	 */
+	@Test
+
 	public void testPrivateParentAnnotations1I() throws Exception {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		setExpectedMessageArgs(new String[][] {
@@ -167,6 +170,8 @@ public class InvalidAnnotationAnnotationsTests extends AnnotationTest {
 	/**
 	 * Tests that all annotations are invalid when the parent is not visible
 	 */
+	@Test
+
 	public void testPrivateParentAnnotations1F() throws Exception {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		setExpectedMessageArgs(new String[][] {

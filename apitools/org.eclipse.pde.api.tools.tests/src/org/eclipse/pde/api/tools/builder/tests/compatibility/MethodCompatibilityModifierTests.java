@@ -17,8 +17,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that the builder correctly reports compatibility problems
@@ -38,20 +37,9 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	 */
 	protected static String PACKAGE_PREFIX = "a.methods.modifiers."; //$NON-NLS-1$
 
-	public MethodCompatibilityModifierTests(String name) {
-		super(name);
-	}
-
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("modifiers"); //$NON-NLS-1$
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(MethodCompatibilityModifierTests.class);
 	}
 
 	@Override
@@ -102,25 +90,37 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddNoOverrideI() throws Exception {
 		xAddNoOverride(true);
 	}
+
+	@Test
 
 	public void testAddNoOverrideF() throws Exception {
 		xAddNoOverride(false);
 	}
 
+	@Test
+
 	public void testAddNoOverrideToFinalI() throws Exception {
 		xAddNoOverrideToFinal(true);
 	}
+
+	@Test
 
 	public void testAddNoOverrideToFinalF() throws Exception {
 		xAddNoOverrideToFinal(false);
 	}
 
+	@Test
+
 	public void testAddFinalI() throws Exception {
 		xAddFinal(true);
 	}
+
+	@Test
 
 	public void testAddFinalF() throws Exception {
 		xAddFinal(false);
@@ -141,9 +141,13 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddAbstractI() throws Exception {
 		xAddAbstract(true);
 	}
+
+	@Test
 
 	public void testAddAbstractF() throws Exception {
 		xAddAbstract(false);
@@ -158,9 +162,13 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddFinalNoOverrideI() throws Exception {
 		xAddFinalNoOverride(true);
 	}
+
+	@Test
 
 	public void testAddFinalNoOverrideF() throws Exception {
 		xAddFinalNoOverride(false);
@@ -175,9 +183,13 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddFinalRemoveNoOverrideI() throws Exception {
 		xAddFinalRemoveNoOverride(true);
 	}
+
+	@Test
 
 	public void testAddFinalRemoveNoOverrideF() throws Exception {
 		xAddFinalRemoveNoOverride(false);
@@ -192,9 +204,13 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddFinalNoExtendI() throws Exception {
 		xAddFinalNoExtend(true);
 	}
+
+	@Test
 
 	public void testAddFinalNoExtendF() throws Exception {
 		xAddFinalNoExtend(false);
@@ -215,9 +231,13 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddStaticI() throws Exception {
 		xAddStatic(true);
 	}
+
+	@Test
 
 	public void testAddStaticF() throws Exception {
 		xAddStatic(false);
@@ -232,9 +252,13 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddStaticNoReferenceI() throws Exception {
 		xAddStaticNoReference(true);
 	}
+
+	@Test
 
 	public void testAddStaticNoReferenceF() throws Exception {
 		xAddStaticNoReference(false);
@@ -255,9 +279,13 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemoveStaticI() throws Exception {
 		xRemoveStatic(true);
 	}
+
+	@Test
 
 	public void testRemoveStaticF() throws Exception {
 		xRemoveStatic(false);
@@ -272,9 +300,13 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemoveStaticNoReferenceI() throws Exception {
 		xRemoveStaticNoReference(true);
 	}
+
+	@Test
 
 	public void testRemoveStaticNoReferenceF() throws Exception {
 		xRemoveStaticNoReference(false);
@@ -295,9 +327,13 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testProtectedToPackageI() throws Exception {
 		xProtectedToPackage(true);
 	}
+
+	@Test
 
 	public void testProtectedToPackageF() throws Exception {
 		xProtectedToPackage(false);
@@ -312,9 +348,13 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testProtectedToPackageNoReferenceI() throws Exception {
 		xProtectedToPackageNoReference(true);
 	}
+
+	@Test
 
 	public void testProtectedToPackageNoReferenceF() throws Exception {
 		xProtectedToPackageNoReference(false);
@@ -335,9 +375,13 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testProtectedToPrivateI() throws Exception {
 		xProtectedToPrivate(true);
 	}
+
+	@Test
 
 	public void testProtectedToPrivateF() throws Exception {
 		xProtectedToPrivate(false);
@@ -352,9 +396,13 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testProtectedToPrivateNoExtendI() throws Exception {
 		xProtectedToPrivateNoExtend(true);
 	}
+
+	@Test
 
 	public void testProtectedToPrivateNoExtendF() throws Exception {
 		xProtectedToPrivateNoExtend(false);
@@ -375,9 +423,13 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testProtectedToPrivateNoOverrideI() throws Exception {
 		xProtectedToPrivateNoOverride(true);
 	}
+
+	@Test
 
 	public void testProtectedToPrivateNoOverrideF() throws Exception {
 		xProtectedToPrivateNoOverride(false);
@@ -398,9 +450,13 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testPublicToPackageI() throws Exception {
 		xPublicToPackage(true);
 	}
+
+	@Test
 
 	public void testPublicToPackageF() throws Exception {
 		xPublicToPackage(false);
@@ -421,9 +477,13 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testPublicToPrivateI() throws Exception {
 		xPublicToPrivate(true);
 	}
+
+	@Test
 
 	public void testPublicToPrivateF() throws Exception {
 		xPublicToPrivate(false);
@@ -438,9 +498,13 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testPrivateToPublicI() throws Exception {
 		xPrivateToPublic(true);
 	}
+
+	@Test
 
 	public void testPrivateToPublicF() throws Exception {
 		xPrivateToPublic(false);
@@ -455,9 +519,13 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testPublicToPrivateNoReferenceI() throws Exception {
 		xPublicToPrivateNoReference(true);
 	}
+
+	@Test
 
 	public void testPublicToPrivateNoReferenceF() throws Exception {
 		xPublicToPrivateNoReference(false);
@@ -478,9 +546,13 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testPublicToProtectedI() throws Exception {
 		xPublicToProtected(true);
 	}
+
+	@Test
 
 	public void testPublicToProtectedF() throws Exception {
 		xPublicToProtected(false);
@@ -529,17 +601,25 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddNoReferenceI() throws Exception {
 		xAddNoReference(true);
 	}
+
+	@Test
 
 	public void testAddNoReferenceF() throws Exception {
 		xAddNoReference(false);
 	}
 
+	@Test
+
 	public void testRemoveNoOverrideToFinalI() throws Exception {
 		xRemoveNoOverrideToFinal(true);
 	}
+
+	@Test
 
 	public void testRemoveNoOverrideToFinalF() throws Exception {
 		xRemoveNoOverrideToFinal(false);
@@ -553,9 +633,13 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemoveNoOverrideI() throws Exception {
 		xRemoveNoOverride(true);
 	}
+
+	@Test
 
 	public void testRemoveNoOverrideF() throws Exception {
 		xRemoveNoOverride(false);
@@ -581,9 +665,13 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testPublicToPackage2I() throws Exception {
 		xPublicToPackage2(true);
 	}
+
+	@Test
 
 	public void testPublicToPackage2F() throws Exception {
 		xPublicToPackage2(false);
@@ -602,9 +690,13 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testPublicToPrivate2I() throws Exception {
 		xPublicToPrivate2(true);
 	}
+
+	@Test
 
 	public void testPublicToPrivate2F() throws Exception {
 		xPublicToPrivate2(false);
@@ -623,9 +715,13 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testPublicToProtected2I() throws Exception {
 		xPublicToProtected2(true);
 	}
+
+	@Test
 
 	public void testPublicToProtected2F() throws Exception {
 		xPublicToProtected2(false);

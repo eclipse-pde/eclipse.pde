@@ -21,8 +21,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.test.performance.Dimension;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Performance tests for API descriptions
@@ -31,26 +30,17 @@ import junit.framework.Test;
  */
 public class ApiDescriptionTests extends PerformanceTest {
 
-	public ApiDescriptionTests(String name) {
-		super(name);
-	}
-
 	@Override
 	protected String getWorkspaceLocation() {
 		return TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append("perf").append("jdtui-source.zip").toOSString(); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(ApiDescriptionTests.class);
-	}
-
-	/**
 	 * Tests a clean and visit jdt-ui source project. Populates the entire API
 	 * description.
 	 */
+	@Test
+
 	public void testCleanVisit() throws Exception {
 		tagAsSummary("Build API description from source tags", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
 

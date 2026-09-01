@@ -28,8 +28,8 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.util.tests.ResourceEventWaiter;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that unused
@@ -43,10 +43,6 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 
 	private final IPath fRootPath = super.getTestSourcePath().append("filters"); //$NON-NLS-1$
 	private final IPath fFiltersPath = IPath.fromOSString("/usagetests/.settings/.api_filters"); //$NON-NLS-1$
-
-	public UnusedApiProblemFilterTests(String name) {
-		super(name);
-	}
 
 	/**
 	 * Asserts a stub {@link IApiBaseline} that contains all of the workspace
@@ -83,8 +79,8 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 		IApiBaselineManager manager = ApiPlugin.getDefault().getApiBaselineManager();
 		IApiBaseline baseline = manager.getDefaultApiBaseline();
 		if (baseline != null) {
-			assertEquals("The given name should be the default baseline name", baseline.getName(), name); //$NON-NLS-1$
-			assertTrue("The baseline [" + name + "] should have been removed", manager.removeApiBaseline(name)); //$NON-NLS-1$ //$NON-NLS-2$
+			Assertions.assertEquals(baseline.getName(), name, "The given name should be the default baseline name"); //$NON-NLS-1$
+			Assertions.assertTrue(manager.removeApiBaseline(name), "The baseline [" + name + "] should have been removed"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -115,13 +111,6 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 		return IPath.fromOSString("/usagetests/src/x/y/z/").append(path); //$NON-NLS-1$
 	}
 
-	/**
-	 * @return the test suite for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(UnusedApiProblemFilterTests.class);
-	}
-
 	@Override
 	protected int getDefaultProblemId() {
 		return ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.METHOD, IApiProblem.UNUSED_PROBLEM_FILTERS, IApiProblem.NO_FLAGS);
@@ -134,18 +123,18 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 		// touch the filter store to ensure it is listening...
 		IApiBaselineManager mgr = ApiPlugin.getDefault().getApiBaselineManager();
 		IApiBaseline baseline = mgr.getWorkspaceBaseline();
-		assertNotNull("The workspace baseline should not be null", baseline); //$NON-NLS-1$
+		Assertions.assertNotNull(baseline, "The workspace baseline should not be null"); //$NON-NLS-1$
 		IProject project = getEnv().getProject("usagetests"); //$NON-NLS-1$
-		assertNotNull("the testing project 'usagetests' must exist in the testing workspace", project); //$NON-NLS-1$
+		Assertions.assertNotNull(project, "the testing project 'usagetests' must exist in the testing workspace"); //$NON-NLS-1$
 		IApiComponent component = baseline.getApiComponent(project);
-		assertNotNull("The API component for project 'usagetests' must exist", component); //$NON-NLS-1$
+		Assertions.assertNotNull(component, "The API component for project 'usagetests' must exist"); //$NON-NLS-1$
 		IApiFilterStore store = component.getFilterStore();
-		assertNotNull("The filterstore for 'usagetests' must not be null", store); //$NON-NLS-1$
+		Assertions.assertNotNull(store, "The filterstore for 'usagetests' must not be null"); //$NON-NLS-1$
 		// wait for the event
 		ResourceEventWaiter waiter = new ResourceEventWaiter(fFiltersPath, IResourceChangeEvent.POST_CHANGE, IResourceDelta.CHANGED, 0);
 		createWorkspaceFile(fFiltersPath, filterpath);
 		Object event = waiter.waitForEvent();
-		assertNotNull("the resource changed event for the filter file was not recieved", event); //$NON-NLS-1$
+		Assertions.assertNotNull(event, "the resource changed event for the filter file was not recieved"); //$NON-NLS-1$
 
 		expectingNoJDTProblems();
 		// update the source
@@ -168,9 +157,13 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 		}
 	}
 
+	@Test
+
 	public void testUnusedFilter1F() throws Exception {
 		x1(false);
 	}
+
+	@Test
 
 	public void testUnusedFilter1I() throws Exception {
 		x1(true);
@@ -189,11 +182,15 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 		deployTest(getBeforePath(testname, sourcename), getAfterPath(testname, sourcename), getFilterFilePath(testname), getUpdatePath(sourcename), inc);
 	}
 
+	@Test
+
 	public void testUnusedFilter2F() throws Exception {
 		// TODO straighten out what happens when a type with filters is deleted
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=416937
 		// x2(false);
 	}
+
+	@Test
 
 	public void testUnusedFilter2I() throws Exception {
 		// TODO straighten out what happens when a type with filters is deleted
@@ -213,9 +210,13 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 		deployTest(getBeforePath(testname, sourcename), null, getFilterFilePath(testname), getUpdatePath(sourcename), inc);
 	}
 
+	@Test
+
 	public void testUnusedFilter3F() throws Exception {
 		x3(false);
 	}
+
+	@Test
 
 	public void testUnusedFilter3I() throws Exception {
 		x3(true);
@@ -237,9 +238,13 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 		deployTest(getBeforePath(testname, sourcename), getAfterPath(testname, sourcename), getFilterFilePath(testname), getUpdatePath(sourcename), inc);
 	}
 
+	@Test
+
 	public void testUnusedFilter4F() throws Exception {
 		x4(false);
 	}
+
+	@Test
 
 	public void testUnusedFilter4I() throws Exception {
 		x4(true);

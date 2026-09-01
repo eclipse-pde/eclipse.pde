@@ -16,18 +16,12 @@ package org.eclipse.pde.api.tools.builder.tests.usage;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.JavaCore;
 
-import junit.framework.Test;
-
 /**
  * Tests using restricted enums
  *
  * @since 1.0.400
  */
 public class EnumUsageTests extends UsageTest {
-
-	public EnumUsageTests(String name) {
-		super(name);
-	}
 
 	@Override
 	protected int getDefaultProblemId() {
@@ -44,7 +38,4 @@ public class EnumUsageTests extends UsageTest {
 		return JavaCore.VERSION_1_8;
 	}
 
-	public static Test suite() {
-		return buildTestSuite(EnumUsageTests.class);
 	}
-}

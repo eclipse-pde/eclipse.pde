@@ -13,11 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.model.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,8 +37,8 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test creation of states and components.
@@ -63,11 +63,11 @@ public class ApiBaselineTests {
 
 	IApiBaseline fBaseline = null;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		if (fBaseline == null) {
 			fBaseline = TestSuiteHelper.createTestingBaseline(TEST_PLUGINS);
-			assertNotNull("the testing baseline should exist", fBaseline); //$NON-NLS-1$
+			assertNotNull(fBaseline, "the testing baseline should exist"); //$NON-NLS-1$
 			List<IRequiredComponentDescription> reqs = new ArrayList<>();
 			reqs.add(new RequiredComponentDescription("org.eclipse.core.runtime", new BundleVersionRange("0.0.0"))); //$NON-NLS-1$ //$NON-NLS-2$
 			validateComponent(fBaseline, COMPONENT_A, "A Plug-in", _1_0_0, "J2SE-1.5", reqs); //$NON-NLS-1$ //$NON-NLS-2$
@@ -84,11 +84,11 @@ public class ApiBaselineTests {
 	 */
 	@Test
 	public void testResolvePackage() throws CoreException {
-		assertNotNull("the testing baseline should exist", fBaseline); //$NON-NLS-1$
+		assertNotNull(fBaseline, "the testing baseline should exist"); //$NON-NLS-1$
 		IApiComponent[] components = fBaseline.resolvePackage(fBaseline.getApiComponent(COMPONENT_B), COMPONENT_A);
-		assertNotNull("No component", components); //$NON-NLS-1$
-		assertEquals("Wrong size", 1, components.length); //$NON-NLS-1$
-		assertEquals("Wrong provider for package", fBaseline.getApiComponent(COMPONENT_A), components[0]); //$NON-NLS-1$
+		assertNotNull(components, "No component"); //$NON-NLS-1$
+		assertEquals(1, components.length, "Wrong size"); //$NON-NLS-1$
+		assertEquals(fBaseline.getApiComponent(COMPONENT_A), components[0], "Wrong provider for package"); //$NON-NLS-1$
 	}
 
 	/**
@@ -96,11 +96,11 @@ public class ApiBaselineTests {
 	 */
 	@Test
 	public void testResolvePackageWithinComponent() throws CoreException {
-		assertNotNull("the testing baseline should exist", fBaseline); //$NON-NLS-1$
+		assertNotNull(fBaseline, "the testing baseline should exist"); //$NON-NLS-1$
 		IApiComponent[] components = fBaseline.resolvePackage(fBaseline.getApiComponent(COMPONENT_A), "a.b.c"); //$NON-NLS-1$
-		assertNotNull("No component", components); //$NON-NLS-1$
-		assertEquals("Wrong size", 1, components.length); //$NON-NLS-1$
-		assertEquals("Wrong provider for package", fBaseline.getApiComponent(COMPONENT_A), components[0]); //$NON-NLS-1$
+		assertNotNull(components, "No component"); //$NON-NLS-1$
+		assertEquals(1, components.length, "Wrong size"); //$NON-NLS-1$
+		assertEquals(fBaseline.getApiComponent(COMPONENT_A), components[0], "Wrong provider for package"); //$NON-NLS-1$
 	}
 
 	/**
@@ -108,11 +108,11 @@ public class ApiBaselineTests {
 	 */
 	@Test
 	public void testResolveJavaLangPackage() throws CoreException {
-		assertNotNull("the testing baseline should exist", fBaseline); //$NON-NLS-1$
+		assertNotNull(fBaseline, "the testing baseline should exist"); //$NON-NLS-1$
 		IApiComponent[] components = fBaseline.resolvePackage(fBaseline.getApiComponent(COMPONENT_B), "java.lang"); //$NON-NLS-1$
-		assertNotNull("No component", components); //$NON-NLS-1$
-		assertEquals("Wrong size", 1, components.length); //$NON-NLS-1$
-		assertEquals("Wrong provider for package", fBaseline.getApiComponent(fBaseline.getExecutionEnvironment()), components[0]); //$NON-NLS-1$
+		assertNotNull(components, "No component"); //$NON-NLS-1$
+		assertEquals(1, components.length, "Wrong size"); //$NON-NLS-1$
+		assertEquals(fBaseline.getApiComponent(fBaseline.getExecutionEnvironment()), components[0], "Wrong provider for package"); //$NON-NLS-1$
 	}
 
 	/**
@@ -120,11 +120,11 @@ public class ApiBaselineTests {
 	 */
 	@Test
 	public void testResolveSystemPackage() throws CoreException {
-		assertNotNull("the testing baseline should exist", fBaseline); //$NON-NLS-1$
+		assertNotNull(fBaseline, "the testing baseline should exist"); //$NON-NLS-1$
 		IApiComponent[] components = fBaseline.resolvePackage(fBaseline.getApiComponent(COMPONENT_B), "org.w3c.dom"); //$NON-NLS-1$
-		assertNotNull("No component", components); //$NON-NLS-1$
-		assertEquals("Wrong size", 1, components.length); //$NON-NLS-1$
-		assertEquals("Wrong provider for package", fBaseline.getApiComponent(fBaseline.getExecutionEnvironment()), components[0]); //$NON-NLS-1$
+		assertNotNull(components, "No component"); //$NON-NLS-1$
+		assertEquals(1, components.length, "Wrong size"); //$NON-NLS-1$
+		assertEquals(fBaseline.getApiComponent(fBaseline.getExecutionEnvironment()), components[0], "Wrong provider for package"); //$NON-NLS-1$
 	}
 
 	/**
@@ -132,15 +132,15 @@ public class ApiBaselineTests {
 	 */
 	@Test
 	public void testFindJavaLangObject() throws CoreException {
-		assertNotNull("the testing baseline should exist", fBaseline); //$NON-NLS-1$
+		assertNotNull(fBaseline, "the testing baseline should exist"); //$NON-NLS-1$
 		IApiComponent[] components = fBaseline.resolvePackage(fBaseline.getApiComponent(COMPONENT_B), "java.lang"); //$NON-NLS-1$
-		assertNotNull("No component", components); //$NON-NLS-1$
-		assertEquals("Wrong size", 1, components.length); //$NON-NLS-1$
-		assertEquals("Wrong provider for package", fBaseline.getApiComponent(fBaseline.getExecutionEnvironment()), components[0]); //$NON-NLS-1$
+		assertNotNull(components, "No component"); //$NON-NLS-1$
+		assertEquals(1, components.length, "Wrong size"); //$NON-NLS-1$
+		assertEquals(fBaseline.getApiComponent(fBaseline.getExecutionEnvironment()), components[0], "Wrong provider for package"); //$NON-NLS-1$
 		IApiTypeRoot classFile = components[0].findTypeRoot("java.lang.Object"); //$NON-NLS-1$
-		assertNotNull("Missing java.lang.Object", classFile); //$NON-NLS-1$
+		assertNotNull(classFile, "Missing java.lang.Object"); //$NON-NLS-1$
 		String objectTypeName = "java.lang.Object"; //$NON-NLS-1$
-		assertEquals("Wrong type name", objectTypeName, classFile.getTypeName()); //$NON-NLS-1$
+		assertEquals(objectTypeName, classFile.getTypeName(), "Wrong type name"); //$NON-NLS-1$
 	}
 
 	/**
@@ -156,17 +156,17 @@ public class ApiBaselineTests {
 	private void validateComponent(IApiBaseline baseline, String id, String name, String version, String environment, List<IRequiredComponentDescription> requiredComponents) throws CoreException {
 		IApiComponent component = baseline.getApiComponent(id);
 
-		assertEquals("Id: ", id, component.getSymbolicName()); //$NON-NLS-1$
-		assertEquals("Name: ", name, component.getName()); //$NON-NLS-1$
-		assertEquals("Version: ", version, component.getVersion()); //$NON-NLS-1$
+		assertEquals(id, component.getSymbolicName(), "Id: "); //$NON-NLS-1$
+		assertEquals(name, component.getName(), "Name: "); //$NON-NLS-1$
+		assertEquals(version, component.getVersion(), "Version: "); //$NON-NLS-1$
 		List<String> envs = component.getExecutionEnvironments();
-		assertEquals("Wrong execution environments: ", List.of(environment), envs); //$NON-NLS-1$
+		assertEquals(List.of(environment), envs, "Wrong execution environments: "); //$NON-NLS-1$
 
 		IRequiredComponentDescription[] actual = component.getRequiredComponents();
-		assertEquals("Wrong number of required components", requiredComponents.size(), actual.length); //$NON-NLS-1$
+		assertEquals(requiredComponents.size(), actual.length, "Wrong number of required components"); //$NON-NLS-1$
 
 		for (int i = 0; i < requiredComponents.size(); i++) {
-			assertEquals("Wrong required component", requiredComponents.get(i), actual[i]); //$NON-NLS-1$
+			assertEquals(requiredComponents.get(i), actual[i], "Wrong required component"); //$NON-NLS-1$
 		}
 	}
 
@@ -178,9 +178,9 @@ public class ApiBaselineTests {
 	public void testNestedJarComponent() throws CoreException {
 		IApiBaseline baseline = TestSuiteHelper.createTestingBaseline("test-nested-jars"); //$NON-NLS-1$
 		IApiComponent component = baseline.getApiComponent(COMPONENT_A);
-		assertNotNull("missing component.a", component); //$NON-NLS-1$
+		assertNotNull(component, "missing component.a"); //$NON-NLS-1$
 		IApiTypeContainer[] containers = component.getApiTypeContainers();
-		assertTrue("Missing containers:", containers.length > 0); //$NON-NLS-1$
+		assertTrue(containers.length > 0, "Missing containers:"); //$NON-NLS-1$
 		IApiTypeRoot file = null;
 		for (IApiTypeContainer container : containers) {
 			for (String name : container.getPackageNames()) {
@@ -193,8 +193,8 @@ public class ApiBaselineTests {
 				break;
 			}
 		}
-		assertNotNull("Missing class file", file); //$NON-NLS-1$
-		assertEquals("Wrong type name", "component.a.A", file.getTypeName()); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNotNull(file, "Missing class file"); //$NON-NLS-1$
+		assertEquals("component.a.A", file.getTypeName(), "Wrong type name"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -209,8 +209,8 @@ public class ApiBaselineTests {
 		IApiBaseline baseline2 = TestSuiteHelper.createTestingBaseline("test-nested-jars-2"); //$NON-NLS-1$
 		IApiComponent componentA1 = baseline1.getApiComponent(COMPONENT_A);
 		IApiComponent componentA2 = baseline2.getApiComponent(COMPONENT_A);
-		assertNotNull("missing component.a", componentA1); //$NON-NLS-1$
-		assertNotNull("missing component.a", componentA2); //$NON-NLS-1$
+		assertNotNull(componentA1, "missing component.a"); //$NON-NLS-1$
+		assertNotNull(componentA2, "missing component.a"); //$NON-NLS-1$
 		Set<String> packages1 = Arrays.stream(componentA1.getApiTypeContainers()).map(ApiBaselineTests::getPackageNames)
 				.flatMap(Arrays::stream).collect(Collectors.toSet());
 		Set<String> packages2 = Arrays.stream(componentA2.getApiTypeContainers()).map(ApiBaselineTests::getPackageNames)
@@ -235,12 +235,12 @@ public class ApiBaselineTests {
 	@Test
 	public void testXFriendsDirective() throws CoreException {
 		IApiComponent component = fBaseline.getApiComponent(COMPONENT_A);
-		assertNotNull("Missing component.a", component); //$NON-NLS-1$
+		assertNotNull(component, "Missing component.a"); //$NON-NLS-1$
 		IApiDescription description = component.getApiDescription();
 		IApiAnnotations result = description.resolveAnnotations(Factory.typeDescriptor("component.a.friend.of.b.FriendOfB")); //$NON-NLS-1$
-		assertNotNull("Missing API description", result); //$NON-NLS-1$
+		assertNotNull(result, "Missing API description"); //$NON-NLS-1$
 		int visibility = result.getVisibility();
-		assertTrue("Should be PRIVATE", VisibilityModifiers.isPrivate(visibility)); //$NON-NLS-1$
+		assertTrue(VisibilityModifiers.isPrivate(visibility), "Should be PRIVATE"); //$NON-NLS-1$
 	}
 
 	/**
@@ -250,12 +250,12 @@ public class ApiBaselineTests {
 	@Test
 	public void testXInternalDirective() throws CoreException {
 		IApiComponent component = fBaseline.getApiComponent(COMPONENT_A);
-		assertNotNull("Missing component.a", component); //$NON-NLS-1$
+		assertNotNull(component, "Missing component.a"); //$NON-NLS-1$
 		IApiDescription description = component.getApiDescription();
 		IApiAnnotations result = description.resolveAnnotations(Factory.typeDescriptor("component.a.internal.InternalClass")); //$NON-NLS-1$
-		assertNotNull("Missing API description", result); //$NON-NLS-1$
+		assertNotNull(result, "Missing API description"); //$NON-NLS-1$
 		int visibility = result.getVisibility();
-		assertTrue("Should be private", VisibilityModifiers.isPrivate(visibility)); //$NON-NLS-1$
+		assertTrue(VisibilityModifiers.isPrivate(visibility), "Should be private"); //$NON-NLS-1$
 	}
 
 	/**
@@ -265,12 +265,12 @@ public class ApiBaselineTests {
 	@Test
 	public void testUsesDirective() throws CoreException {
 		IApiComponent component = fBaseline.getApiComponent(COMPONENT_A);
-		assertNotNull("Missing component.a", component); //$NON-NLS-1$
+		assertNotNull(component, "Missing component.a"); //$NON-NLS-1$
 		IApiDescription description = component.getApiDescription();
 		IApiAnnotations result = description.resolveAnnotations(Factory.typeDescriptor("component.a.A")); //$NON-NLS-1$
-		assertNotNull("Missing API description", result); //$NON-NLS-1$
+		assertNotNull(result, "Missing API description"); //$NON-NLS-1$
 		int visibility = result.getVisibility();
-		assertTrue("Should be API", VisibilityModifiers.isAPI(visibility)); //$NON-NLS-1$
+		assertTrue(VisibilityModifiers.isAPI(visibility), "Should be API"); //$NON-NLS-1$
 	}
 
 	/**
@@ -280,12 +280,12 @@ public class ApiBaselineTests {
 	@Test
 	public void testNotExported() throws CoreException {
 		IApiComponent component = fBaseline.getApiComponent(COMPONENT_A);
-		assertNotNull("Missing component.a", component); //$NON-NLS-1$
+		assertNotNull(component, "Missing component.a"); //$NON-NLS-1$
 		IApiDescription description = component.getApiDescription();
 		IApiAnnotations result = description.resolveAnnotations(Factory.typeDescriptor("component.a.not.exported.NotExported")); //$NON-NLS-1$
-		assertNotNull("Missing API description", result); //$NON-NLS-1$
+		assertNotNull(result, "Missing API description"); //$NON-NLS-1$
 		int visibility = result.getVisibility();
-		assertTrue("Should be private", VisibilityModifiers.isPrivate(visibility)); //$NON-NLS-1$
+		assertTrue(VisibilityModifiers.isPrivate(visibility), "Should be private"); //$NON-NLS-1$
 	}
 
 	/**
@@ -309,8 +309,8 @@ public class ApiBaselineTests {
 	 */
 	@Test
 	public void testGetLocation() throws Exception {
-		assertNull("The location must be null", fBaseline.getLocation()); //$NON-NLS-1$
+		assertNull(fBaseline.getLocation(), "The location must be null"); //$NON-NLS-1$
 		fBaseline.setLocation("new_loc"); //$NON-NLS-1$
-		assertNotNull("The location must not be null", fBaseline.getLocation()); //$NON-NLS-1$
+		assertNotNull(fBaseline.getLocation(), "The location must not be null"); //$NON-NLS-1$
 	}
 }

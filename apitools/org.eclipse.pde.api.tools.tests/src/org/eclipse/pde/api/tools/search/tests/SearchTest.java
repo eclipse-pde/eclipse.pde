@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.search.tests;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -31,8 +31,8 @@ import org.eclipse.pde.api.tools.internal.util.FilteredElements;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.ui.tests.util.FreezeMonitor;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * General Search test, which contains utility methods, etc for search tests
@@ -158,14 +158,14 @@ public abstract class SearchTest {
 		fail(message);
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		TEST_REQUESTOR = new TestRequestor(this);
 		TEST_REPORTER = new TestReporter(this);
 		FreezeMonitor.expectCompletionInAMinute();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		ApiTestingEnvironment.dispose(this.baseline);
 		ApiTestingEnvironment.dispose(this.scope);

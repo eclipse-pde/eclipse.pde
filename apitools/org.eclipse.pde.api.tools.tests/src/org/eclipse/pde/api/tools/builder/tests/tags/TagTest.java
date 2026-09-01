@@ -14,20 +14,13 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.tags;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
 import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 import org.eclipse.pde.api.tools.builder.tests.ApiTestingEnvironment;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Assertions;
 
 /**
  * Tests the builder to make sure it correctly finds and reports unsupported tag
@@ -40,10 +33,6 @@ public abstract class TagTest extends ApiBuilderTest {
 	protected static IPath WORKSPACE_PATH = IPath.fromOSString("src/a/b/c"); //$NON-NLS-1$
 	protected static IPath WORKSPACE_PATH_DEFAULT = IPath.fromOSString("src"); //$NON-NLS-1$
 
-	public TagTest(String name) {
-		super(name);
-	}
-
 	/**
 	 * Sets the message arguments we are expecting for the given test, the
 	 * number of times denoted by count
@@ -54,80 +43,6 @@ public abstract class TagTest extends ApiBuilderTest {
 			args[i] = new String[] { tagname, context };
 		}
 		setExpectedMessageArgs(args);
-	}
-
-	/**
-	 * @return all of the child test classes of this class
-	 */
-	private static Class<?>[] getAllTestClasses() {
-		ArrayList<Class<?>> classes = new ArrayList<>();
-		classes.add(InvalidClassTagTests.class);
-		classes.add(ValidClassTagTests.class);
-		classes.add(InvalidInterfaceTagTests.class);
-		classes.add(ValidInterfaceTagTests.class);
-		classes.add(InvalidFieldTagTests.class);
-		classes.add(ValidFieldTagTests.class);
-		classes.add(InvalidMethodTagTests.class);
-		classes.add(ValidMethodTagTests.class);
-		classes.add(ValidEnumTagTests.class);
-		classes.add(InvalidEnumTagTests.class);
-		classes.add(InvalidRecordTagTests.class);
-		classes.add(ValidRecordTagTests.class);
-		classes.add(ValidAnnotationTagTests.class);
-		classes.add(InvalidAnnotationTagTests.class);
-		classes.add(InvalidDuplicateTagsTests.class);
-		classes.add(ValidJava8InterfaceTagTests.class);
-		classes.add(InvalidJava8InterfaceTagTests.class);
-
-		return classes.toArray(new Class<?>[classes.size()]);
-	}
-
-	/**
-	 * Collects tests from the getAllTestClasses() method into the given suite
-	 */
-	private static void collectTests(TestSuite suite) {
-		// Hack to load all classes before computing their suite of test cases
-		// this allow to reset test cases subsets while running all Builder
-		// tests...
-		Class<?>[] classes = getAllTestClasses();
-
-		// Reset forgotten subsets of tests
-		TestCase.TESTS_PREFIX = null;
-		TestCase.TESTS_NAMES = null;
-		TestCase.TESTS_NUMBERS = null;
-		TestCase.TESTS_RANGE = null;
-		TestCase.RUN_ONLY_ID = null;
-
-		/* tests */
-		for (Class<?> clazz : classes) {
-			Method suiteMethod;
-			try {
-				suiteMethod = clazz.getDeclaredMethod("suite"); //$NON-NLS-1$
-			} catch (NoSuchMethodException e) {
-				e.printStackTrace();
-				continue;
-			}
-			Object test;
-			try {
-				test = suiteMethod.invoke(null);
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-				continue;
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
-				continue;
-			}
-			suite.addTest((Test) test);
-		}
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		TestSuite suite = new TestSuite(TagTest.class.getName());
-		collectTests(suite);
-		return suite;
 	}
 
 	@Override
@@ -196,7 +111,7 @@ public abstract class TagTest extends ApiBuilderTest {
 			ApiProblem[] problems = getEnv().getProblemsFor(path, null);
 			assertProblems(problems);
 		} catch (Exception e) {
-			fail(e.getMessage());
+			Assertions.fail(e.getMessage());
 		}
 	}
 

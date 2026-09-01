@@ -39,16 +39,21 @@ import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.core.target.TargetBundle;
 import org.eclipse.test.performance.PerformanceTestCase;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class UseScanTests extends PerformanceTestCase {
 	static IPath TMP_PATH = TestSuiteHelper.getUserDirectoryPath().append("use-scan-tests-perf"); //$NON-NLS-1$
 
-	public UseScanTests(String name) {
-		super(name);
+	@BeforeEach
+	void beforeEach() throws Exception {
+		setUp();
+	}
 
+	@AfterEach
+	void afterEach() throws Exception {
+		tearDown();
 	}
 
 	@Override
@@ -77,10 +82,7 @@ public class UseScanTests extends PerformanceTestCase {
 		}
 	}
 
-
-	public static Test suite() {
-		return new TestSuite(UseScanTests.class);
-	}
+	@Test
 
 	public void testUseScan() throws Exception {
 
@@ -145,7 +147,4 @@ public class UseScanTests extends PerformanceTestCase {
 		return profile;
 	}
 
-
 }
-
-

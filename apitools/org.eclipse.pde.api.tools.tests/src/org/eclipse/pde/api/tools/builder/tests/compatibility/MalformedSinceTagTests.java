@@ -17,8 +17,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that the builder correctly finds and reports malformed since tags
@@ -26,21 +25,6 @@ import junit.framework.Test;
  * @since 1.0
  */
 public class MalformedSinceTagTests extends SinceTagTest {
-
-
-	/**
-	 * Constructor
-	 */
-	public MalformedSinceTagTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(MalformedSinceTagTests.class);
-	}
 
 	protected void configureExpectedProblems(int elementType, String[] messageArgs) {
 		int[] ids = new int[] {
@@ -65,9 +49,13 @@ public class MalformedSinceTagTests extends SinceTagTest {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testMalformedFieldI() throws Exception {
 		xMalformedField(true);
 	}
+
+	@Test
 
 	public void testMalformedFieldF() throws Exception {
 		xMalformedField(false);
@@ -82,9 +70,13 @@ public class MalformedSinceTagTests extends SinceTagTest {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testMalformedMethodI() throws Exception {
 		xMalformedMethod(true);
 	}
+
+	@Test
 
 	public void testMalformedMethodF() throws Exception {
 		xMalformedMethod(false);
@@ -99,9 +91,13 @@ public class MalformedSinceTagTests extends SinceTagTest {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testMalformedMemberTypeI() throws Exception {
 		xMalformedMemberType(true);
 	}
+
+	@Test
 
 	public void testMalformedMemberTypeF() throws Exception {
 		xMalformedMemberType(false);
@@ -116,9 +112,13 @@ public class MalformedSinceTagTests extends SinceTagTest {
 		performCreationCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testMalformedTypeI() throws Exception {
 		xMalformedType(true);
 	}
+
+	@Test
 
 	public void testMalformedTypeF() throws Exception {
 		xMalformedType(false);
@@ -133,9 +133,13 @@ public class MalformedSinceTagTests extends SinceTagTest {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testMalformedTagI() throws Exception {
 		xMalformedTag(true);
 	}
+
+	@Test
 
 	public void testMalformedTagF() throws Exception {
 		xMalformedTag(false);
@@ -150,9 +154,13 @@ public class MalformedSinceTagTests extends SinceTagTest {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testValidSinceTagsI() throws Exception {
 		xValidSinceTags(true);
 	}
+
+	@Test
 
 	public void testValidSinceTagsF() throws Exception {
 		xValidSinceTags(false);

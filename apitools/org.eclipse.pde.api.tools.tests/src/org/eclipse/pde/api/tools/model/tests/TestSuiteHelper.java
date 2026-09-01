@@ -49,7 +49,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.search.IReferenceCollection;
 import org.eclipse.pde.api.tools.internal.search.UseScanReferences;
 import org.eclipse.pde.api.tools.internal.util.Util;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.osgi.framework.Bundle;
 
 /**
@@ -366,7 +366,7 @@ public class TestSuiteHelper {
 					ExecutionEnvironmentDescription.CLASS_LIB_LEVEL, "JavaSE-17")); //$NON-NLS-1$
 		}
 		File eeFile = new File(eePath);
-		Assert.assertTrue("EE file does not exist: " + eePath, eeFile.exists()); //$NON-NLS-1$
+		Assertions.assertTrue(eeFile.exists(), "EE file does not exist: " + eePath); //$NON-NLS-1$
 		return new ExecutionEnvironmentDescription(eeFile);
 	}
 

@@ -17,8 +17,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that the builder correctly finds and reports missing since tags
@@ -26,21 +25,6 @@ import junit.framework.Test;
  * @since 1.0
  */
 public class MissingSinceTagTests extends SinceTagTest {
-
-
-	/**
-	 * Constructor
-	 */
-	public MissingSinceTagTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(MissingSinceTagTests.class);
-	}
 
 	protected void configureExpectedProblems(int elementType, String messageArg) {
 		int[] ids = new int[] {
@@ -64,9 +48,13 @@ public class MissingSinceTagTests extends SinceTagTest {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddMethod2I() throws Exception {
 		xAddMethod2(true);
 	}
+
+	@Test
 
 	public void testAddMethod2F() throws Exception {
 		xAddMethod2(false);
@@ -80,9 +68,13 @@ public class MissingSinceTagTests extends SinceTagTest {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddNonVisibleMethod2I() throws Exception {
 		xAddNonVisibleMethod2(true);
 	}
+
+	@Test
 
 	public void testAddNonVisibleMethod2F() throws Exception {
 		xAddNonVisibleMethod2(false);
@@ -97,9 +89,13 @@ public class MissingSinceTagTests extends SinceTagTest {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddFieldI() throws Exception {
 		xAddField(true);
 	}
+
+	@Test
 
 	public void testAddFieldF() throws Exception {
 		xAddField(false);
@@ -114,9 +110,13 @@ public class MissingSinceTagTests extends SinceTagTest {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testPrivateAddFieldI() throws Exception {
 		xAddPrivateField(true);
 	}
+
+	@Test
 
 	public void testPrivateAddFieldF() throws Exception {
 		xAddPrivateField(false);
@@ -131,9 +131,13 @@ public class MissingSinceTagTests extends SinceTagTest {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddMemberTypeI() throws Exception {
 		xAddMemberType(true);
 	}
+
+	@Test
 
 	public void testAddMemberTypeF() throws Exception {
 		xAddMemberType(false);
@@ -148,9 +152,13 @@ public class MissingSinceTagTests extends SinceTagTest {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddMethodI() throws Exception {
 		xAddMethod(true);
 	}
+
+	@Test
 
 	public void testAddMethodF() throws Exception {
 		xAddMethod(false);
@@ -166,9 +174,13 @@ public class MissingSinceTagTests extends SinceTagTest {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddNewInterfaceMethodI() throws Exception {
 		xAddNewInterfaceMethod(true);
 	}
+
+	@Test
 
 	public void testAddNewInterfaceMethodF() throws Exception {
 		xAddNewInterfaceMethod(false);
@@ -184,9 +196,13 @@ public class MissingSinceTagTests extends SinceTagTest {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddInheritedMethodI() throws Exception {
 		xAddInheritedMethod(true);
 	}
+
+	@Test
 
 	public void testAddInheritedMethodF() throws Exception {
 		xAddInheritedMethod(false);
@@ -203,9 +219,13 @@ public class MissingSinceTagTests extends SinceTagTest {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddInheritedMethodI2() throws Exception {
 		xAddInheritedMethod2(true);
 	}
+
+	@Test
 
 	public void testAddInheritedMethodF2() throws Exception {
 		xAddInheritedMethod2(false);
@@ -220,9 +240,13 @@ public class MissingSinceTagTests extends SinceTagTest {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddNonVisibleMethodI() throws Exception {
 		xAddNonVisibleMethod(true);
 	}
+
+	@Test
 
 	public void testAddNonVisibleMethodF() throws Exception {
 		xAddNonVisibleMethod(false);
@@ -237,9 +261,13 @@ public class MissingSinceTagTests extends SinceTagTest {
 		performCreationCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddTypeI() throws Exception {
 		xAddType(true);
 	}
+
+	@Test
 
 	public void testAddTypeF() throws Exception {
 		xAddType(false);

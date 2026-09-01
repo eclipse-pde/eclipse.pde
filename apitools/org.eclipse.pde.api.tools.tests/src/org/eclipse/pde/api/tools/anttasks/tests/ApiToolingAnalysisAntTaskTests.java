@@ -13,14 +13,14 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.anttasks.tests;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Properties;
 
 import org.eclipse.core.resources.IFolder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ApiToolingAnalysisAntTaskTests extends AntRunnerTestCase {
 	@Override
@@ -42,10 +42,10 @@ public class ApiToolingAnalysisAntTaskTests extends AntRunnerTestCase {
 		properties.put("current_location", buildFolder.getFile("after").getLocation().toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
 		properties.put("report_location", buildFolder.getLocation().toOSString()); //$NON-NLS-1$
 		runAntScript(buildXMLPath, new String[] { "run" }, buildFolder.getLocation().toOSString(), properties); //$NON-NLS-1$
-		assertFalse("allNonApiBundles must not exist", buildFolder.getFolder("allNonApiBundles").exists()); //$NON-NLS-1$ //$NON-NLS-2$
+		assertFalse(buildFolder.getFolder("allNonApiBundles").exists(), "allNonApiBundles must not exist"); //$NON-NLS-1$ //$NON-NLS-2$
 		IFolder folder = buildFolder.getFolder("deltatest"); //$NON-NLS-1$
-		assertTrue("deltatest folder must exist", folder.exists()); //$NON-NLS-1$
-		assertTrue("report.xml file must be there", folder.getFile("report.xml").exists()); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(folder.exists(), "deltatest folder must exist"); //$NON-NLS-1$
+		assertTrue(folder.getFile("report.xml").exists(), "report.xml file must be there"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Test
@@ -105,12 +105,12 @@ public class ApiToolingAnalysisAntTaskTests extends AntRunnerTestCase {
 		properties.put("current_location", buildFolder.getFile("after").getLocation().toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
 		properties.put("report_location", buildFolder.getLocation().toOSString()); //$NON-NLS-1$
 		runAntScript(buildXMLPath, new String[] { "run" }, buildFolder.getLocation().toOSString(), properties); //$NON-NLS-1$
-		assertFalse("allNonApiBundles must not exist", buildFolder.getFolder("allNonApiBundles").exists()); //$NON-NLS-1$ //$NON-NLS-2$
+		assertFalse(buildFolder.getFolder("allNonApiBundles").exists(), "allNonApiBundles must not exist"); //$NON-NLS-1$ //$NON-NLS-2$
 		IFolder folder = buildFolder.getFolder("deltatest"); //$NON-NLS-1$
-		assertTrue("deltatest folder must exist", folder.exists()); //$NON-NLS-1$
+		assertTrue(folder.exists(), "deltatest folder must exist"); //$NON-NLS-1$
 		folder = buildFolder.getFolder("deltatest1"); //$NON-NLS-1$
-		assertTrue("deltatest1 folder must exist", folder.exists()); //$NON-NLS-1$
-		assertTrue("report.xml file must be there", folder.getFile("report.xml").exists()); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(folder.exists(), "deltatest1 folder must exist"); //$NON-NLS-1$
+		assertTrue(folder.getFile("report.xml").exists(), "report.xml file must be there"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -125,10 +125,10 @@ public class ApiToolingAnalysisAntTaskTests extends AntRunnerTestCase {
 		properties.put("current_location", buildFolder.getFile("after").getLocation().toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
 		properties.put("report_location", buildFolder.getLocation().toOSString()); //$NON-NLS-1$
 		runAntScript(buildXMLPath, new String[] { "run" }, buildFolder.getLocation().toOSString(), properties); //$NON-NLS-1$
-		assertFalse("allNonApiBundles must not exist", buildFolder.getFolder("allNonApiBundles").exists()); //$NON-NLS-1$ //$NON-NLS-2$
+		assertFalse(buildFolder.getFolder("allNonApiBundles").exists(), "allNonApiBundles must not exist"); //$NON-NLS-1$ //$NON-NLS-2$
 		IFolder folder = buildFolder.getFolder("deltatest2"); //$NON-NLS-1$
-		assertTrue("deltatest2 folder must exist", folder.exists()); //$NON-NLS-1$
-		assertTrue("report.xml file must be there", folder.getFile("report.xml").exists()); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(folder.exists(), "deltatest2 folder must exist"); //$NON-NLS-1$
+		assertTrue(folder.getFile("report.xml").exists(), "report.xml file must be there"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -143,9 +143,9 @@ public class ApiToolingAnalysisAntTaskTests extends AntRunnerTestCase {
 		properties.put("current_location", buildFolder.getFile("after").getLocation().toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
 		properties.put("report_location", buildFolder.getLocation().toOSString()); //$NON-NLS-1$
 		runAntScript(buildXMLPath, new String[] { "run" }, buildFolder.getLocation().toOSString(), properties); //$NON-NLS-1$
-		assertFalse("allNonApiBundles must not exist", buildFolder.getFolder("allNonApiBundles").exists()); //$NON-NLS-1$ //$NON-NLS-2$
+		assertFalse(buildFolder.getFolder("allNonApiBundles").exists(), "allNonApiBundles must not exist"); //$NON-NLS-1$ //$NON-NLS-2$
 		IFolder folder = buildFolder.getFolder("deltatest"); //$NON-NLS-1$
-		assertTrue("deltatest folder must exist", folder.exists()); //$NON-NLS-1$
-		assertTrue("report.xml file must be there", folder.getFile("report.xml").exists()); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(folder.exists(), "deltatest folder must exist"); //$NON-NLS-1$
+		assertTrue(folder.getFile("report.xml").exists(), "report.xml file must be there"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

@@ -16,8 +16,7 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the use of invalid tags on enum constants
@@ -26,20 +25,9 @@ import junit.framework.Test;
  */
 public class InvalidEnumConstantTagTests extends InvalidFieldTagTests {
 
-	public InvalidEnumConstantTagTests(String name) {
-		super(name);
-	}
-
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("enum"); //$NON-NLS-1$
-	}
-
-	/**
-	 * @return the test for this enum
-	 */
-	public static Test suite() {
-		return buildTestSuite(InvalidEnumConstantTagTests.class);
 	}
 
 	@Override
@@ -47,9 +35,13 @@ public class InvalidEnumConstantTagTests extends InvalidFieldTagTests {
 		return JavaCore.VERSION_1_8;
 	}
 
+	@Test
+
 	public void testInvalidEnumConstantTag1I() {
 		x1(true);
 	}
+
+	@Test
 
 	public void testInvalidEnumConstantTag1F() {
 		x1(false);
@@ -73,6 +65,8 @@ public class InvalidEnumConstantTagTests extends InvalidFieldTagTests {
 	 * Tests a valid @noreference tag on an enum constant in an enum in the
 	 * default package using an incremental build
 	 */
+	@Test
+
 	public void testInvalidEnumConstantTag2I() {
 		x2(true);
 	}
@@ -81,6 +75,8 @@ public class InvalidEnumConstantTagTests extends InvalidFieldTagTests {
 	 * Tests a valid @noreference tag on an enum constant in an enum in the
 	 * default package using a full build
 	 */
+	@Test
+
 	public void testInvalidEnumConstantTag2F() {
 		x2(false);
 	}
@@ -93,9 +89,13 @@ public class InvalidEnumConstantTagTests extends InvalidFieldTagTests {
 		deployTagTest("test14.java", inc, true); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidEnumConstantTag3I() {
 		x3(true);
 	}
+
+	@Test
 
 	public void testInvalidEnumConstantTag3F() {
 		x3(false);
@@ -116,9 +116,13 @@ public class InvalidEnumConstantTagTests extends InvalidFieldTagTests {
 		deployTagTest("test15.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidEnumConstantTag4I() {
 		x4(false);
 	}
+
+	@Test
 
 	public void testInvalidEnumConstantTag4F() {
 		x4(false);
@@ -136,9 +140,13 @@ public class InvalidEnumConstantTagTests extends InvalidFieldTagTests {
 		deployTagTest("test16.java", inc, true); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidEnumConstantTag5I() {
 		x5(true);
 	}
+
+	@Test
 
 	public void testInvalidEnumConstantTag5F() {
 		x5(false);
@@ -163,9 +171,13 @@ public class InvalidEnumConstantTagTests extends InvalidFieldTagTests {
 	 * Tests a valid @noimplement tag on an enum constant in an enum in the
 	 * default package using an incremental build
 	 */
+	@Test
+
 	public void testInvalidEnumConstantTag6I() {
 		x6(true);
 	}
+
+	@Test
 
 	public void testInvalidEnumConstantTag6F() {
 		x6(false);
@@ -183,9 +195,13 @@ public class InvalidEnumConstantTagTests extends InvalidFieldTagTests {
 		deployTagTest("test18.java", inc, true); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidEnumConstantTag7I() {
 		x7(true);
 	}
+
+	@Test
 
 	public void testInvalidEnumConstantTag7F() {
 		x7(false);
@@ -206,9 +222,13 @@ public class InvalidEnumConstantTagTests extends InvalidFieldTagTests {
 		deployTagTest("test19.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidEnumConstantTag8I() {
 		x8(true);
 	}
+
+	@Test
 
 	public void testInvalidEnumConstantTag8F() {
 		x8(false);
@@ -226,9 +246,13 @@ public class InvalidEnumConstantTagTests extends InvalidFieldTagTests {
 		deployTagTest("test20.java", inc, true); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidEnumConstantTag9I() {
 		x9(true);
 	}
+
+	@Test
 
 	public void testInvalidEnumConstantTag9F() {
 		x9(false);
@@ -253,9 +277,13 @@ public class InvalidEnumConstantTagTests extends InvalidFieldTagTests {
 		deployTagTest("test21.java", inc, false); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testInvalidEnumConstantTag10I() {
 		x10(true);
 	}
+
+	@Test
 
 	public void testInvalidEnumConstantTag10F() {
 		x10(false);

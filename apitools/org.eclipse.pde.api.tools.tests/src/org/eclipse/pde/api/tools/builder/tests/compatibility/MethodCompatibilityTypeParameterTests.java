@@ -17,8 +17,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that the builder correctly reports compatibility problems related to
@@ -38,20 +37,9 @@ public class MethodCompatibilityTypeParameterTests extends MethodCompatibilityTe
 	 */
 	protected static String PACKAGE_PREFIX = "a.methods.typeparameters."; //$NON-NLS-1$
 
-	public MethodCompatibilityTypeParameterTests(String name) {
-		super(name);
-	}
-
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("typeparameters"); //$NON-NLS-1$
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(MethodCompatibilityTypeParameterTests.class);
 	}
 
 	@Override
@@ -67,9 +55,13 @@ public class MethodCompatibilityTypeParameterTests extends MethodCompatibilityTe
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddFirstTypeParameterI() throws Exception {
 		xAddFirstTypeParameter(true);
 	}
+
+	@Test
 
 	public void testAddFirstTypeParameterF() throws Exception {
 		xAddFirstTypeParameter(false);
@@ -94,9 +86,13 @@ public class MethodCompatibilityTypeParameterTests extends MethodCompatibilityTe
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testAddTypeParameterI() throws Exception {
 		xAddTypeParameter(true);
 	}
+
+	@Test
 
 	public void testAddTypeParameterF() throws Exception {
 		xAddTypeParameter(false);
@@ -121,9 +117,13 @@ public class MethodCompatibilityTypeParameterTests extends MethodCompatibilityTe
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testRemoveTypeParameterI() throws Exception {
 		xRemoveTypeParameter(true);
 	}
+
+	@Test
 
 	public void testRemoveTypeParameterF() throws Exception {
 		xRemoveTypeParameter(false);
@@ -148,9 +148,13 @@ public class MethodCompatibilityTypeParameterTests extends MethodCompatibilityTe
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testVarArgsToArrayI() throws Exception {
 		xVarArgsToArray(true);
 	}
+
+	@Test
 
 	public void testVarArgsToArrayF() throws Exception {
 		xVarArgsToArray(false);
@@ -165,9 +169,13 @@ public class MethodCompatibilityTypeParameterTests extends MethodCompatibilityTe
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testArrayToVarArgsI() throws Exception {
 		xArrayToVarArgs(true);
 	}
+
+	@Test
 
 	public void testArrayToVarArgsF() throws Exception {
 		xArrayToVarArgs(false);

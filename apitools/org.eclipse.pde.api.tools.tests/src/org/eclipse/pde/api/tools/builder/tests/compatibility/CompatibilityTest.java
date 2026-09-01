@@ -13,13 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.compatibility;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.jar.JarFile;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
 import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 import org.eclipse.pde.api.tools.builder.tests.ApiTestingEnvironment;
@@ -30,19 +27,12 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.tests.ApiTestsPlugin;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 /**
  * Base class for binary compatibility tests
  *
  * @since 1.0
  */
 public abstract class CompatibilityTest extends ApiBuilderTest {
-
-	public CompatibilityTest(String name) {
-		super(name);
-	}
 
 	@Override
 	protected IPath getTestSourcePath() {
@@ -59,69 +49,6 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 		enableSinceTagOptions(false);
 		enableUsageOptions(false);
 		enableVersionNumberOptions(false);
-	}
-
-	/**
-	 * @return all of the child test classes of this class
-	 */
-	private static Class<?>[] getAllTestClasses() {
-		Class<?>[] classes = new Class[] {
-				ProjectTypeContainerTests.class,
-				BundleCompatibilityTests.class,
-				AnnotationCompatibilityTests.class,
-				InterfaceCompatibilityTests.class,
-				EnumCompatibilityTests.class, ClassCompatibilityTests.class,
-				FieldCompatibilityTests.class, MethodCompatibilityTests.class,
-				ConstructorCompatibilityTests.class, SinceTagTest.class,
-				VersionTest.class, BundleMergeSplitTests.class,
-				BundleVersionTests.class, };
-		return classes;
-	}
-
-	/**
-	 * Collects tests from the getAllTestClasses() method into the given suite
-	 */
-	private static void collectTests(TestSuite suite) {
-		// Reset forgotten subsets of tests
-		TestCase.TESTS_PREFIX = null;
-		TestCase.TESTS_NAMES = null;
-		TestCase.TESTS_NUMBERS = null;
-		TestCase.TESTS_RANGE = null;
-		TestCase.RUN_ONLY_ID = null;
-
-		// Hack to load all classes before computing their suite of test cases
-		// this allow to reset test cases subsets while running all Builder
-		// tests...
-		/* tests */
-		for (Class<?> clazz : getAllTestClasses()) {
-			Method suiteMethod;
-			try {
-				suiteMethod = clazz.getDeclaredMethod("suite"); //$NON-NLS-1$
-			} catch (NoSuchMethodException e) {
-				e.printStackTrace();
-				continue;
-			}
-			Object test;
-			try {
-				test = suiteMethod.invoke(null);
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-				continue;
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
-				continue;
-			}
-			suite.addTest((Test) test);
-		}
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		TestSuite suite = new TestSuite(CompatibilityTest.class.getName());
-		collectTests(suite);
-		return suite;
 	}
 
 	/*

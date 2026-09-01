@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.anttasks.tests;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -179,6 +179,6 @@ public abstract class AntRunnerTestCase {
 	}
 
 	public void checkBuildException(Exception e) {
-		assertEquals("Not BuildException", BUILD_EXCEPTION_CLASS_NAME, e.getClass().getCanonicalName()); //$NON-NLS-1$
+		assertEquals(BUILD_EXCEPTION_CLASS_NAME, e.getClass().getCanonicalName(), "Not BuildException"); //$NON-NLS-1$
 	}
 }

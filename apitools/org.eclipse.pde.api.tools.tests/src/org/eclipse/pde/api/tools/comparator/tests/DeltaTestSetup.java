@@ -13,10 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.comparator.tests;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -32,8 +32,8 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.ui.tests.util.FreezeMonitor;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 public abstract class DeltaTestSetup {
 	protected static final String AFTER = "after"; //$NON-NLS-1$
@@ -76,7 +76,7 @@ public abstract class DeltaTestSetup {
 	 * @return the sorted list of children if any, an empty array otherwise
 	 */
 	protected IDelta[] collectLeaves(IDelta delta) {
-		assertTrue("Should not be NO_DELTA", delta != ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertTrue(delta != ApiComparator.NO_DELTA, "Should not be NO_DELTA"); //$NON-NLS-1$
 		List<IDelta> leaves = new ArrayList<>();
 		collect0(delta, leaves);
 		int size = leaves.size();
@@ -103,11 +103,11 @@ public abstract class DeltaTestSetup {
 		unknownMessageStart = unknownMessageStart.substring(0, unknownMessageStart.lastIndexOf('{'));
 		for (IDelta leafDelta : result) {
 			String message = leafDelta.getMessage();
-			assertNotNull("No message", message); //$NON-NLS-1$
+			assertNotNull(message, "No message"); //$NON-NLS-1$
 			if (DEBUG) {
 				System.out.println("message : " + message); //$NON-NLS-1$
 			}
-			assertFalse("Should not be an unknown message : " + leafDelta, message.startsWith(unknownMessageStart)); //$NON-NLS-1$
+			assertFalse(message.startsWith(unknownMessageStart), "Should not be an unknown message : " + leafDelta); //$NON-NLS-1$
 		}
 		return result;
 	}
@@ -204,14 +204,14 @@ public abstract class DeltaTestSetup {
 
 	public abstract String getTestRoot();
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		FreezeMonitor.expectCompletionInAMinute();
 		// create workspace root
 		new File(WORKSPACE_ROOT.toOSString()).mkdirs();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		//clean up
 		ApiTestingEnvironment.dispose(this.after);

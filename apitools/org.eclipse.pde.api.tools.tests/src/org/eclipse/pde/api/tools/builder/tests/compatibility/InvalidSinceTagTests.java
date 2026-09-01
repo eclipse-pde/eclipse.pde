@@ -17,8 +17,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that the builder correctly finds and reports missing since tags
@@ -26,21 +25,6 @@ import junit.framework.Test;
  * @since 1.0
  */
 public class InvalidSinceTagTests extends SinceTagTest {
-
-
-	/**
-	 * Constructor
-	 */
-	public InvalidSinceTagTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * @return the tests for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(InvalidSinceTagTests.class);
-	}
 
 	protected void configureExpectedProblems(int elementType, String[] messageArgs) {
 		int[] ids = new int[] {
@@ -65,9 +49,13 @@ public class InvalidSinceTagTests extends SinceTagTest {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testInvalidFieldI() throws Exception {
 		xInvalidField(true);
 	}
+
+	@Test
 
 	public void testInvalidFieldF() throws Exception {
 		xInvalidField(false);
@@ -82,9 +70,13 @@ public class InvalidSinceTagTests extends SinceTagTest {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testInvalidMethodI() throws Exception {
 		xInvalidMethod(true);
 	}
+
+	@Test
 
 	public void testInvalidMethodF() throws Exception {
 		xInvalidMethod(false);
@@ -99,9 +91,13 @@ public class InvalidSinceTagTests extends SinceTagTest {
 		performCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testInvalidMemberTypeI() throws Exception {
 		xInvalidMemberType(true);
 	}
+
+	@Test
 
 	public void testInvalidMemberTypeF() throws Exception {
 		xInvalidMemberType(false);
@@ -116,9 +112,13 @@ public class InvalidSinceTagTests extends SinceTagTest {
 		performCreationCompatibilityTest(filePath, incremental);
 	}
 
+	@Test
+
 	public void testInvalidTypeI() throws Exception {
 		xInvalidType(true);
 	}
+
+	@Test
 
 	public void testInvalidTypeF() throws Exception {
 		xInvalidType(false);

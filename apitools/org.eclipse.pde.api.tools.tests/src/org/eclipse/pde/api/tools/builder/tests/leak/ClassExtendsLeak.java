@@ -18,8 +18,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that leaked members via extends for classes is properly detected
@@ -32,10 +31,6 @@ public class ClassExtendsLeak extends LeakTest {
 	protected final String TESTING_INTERNAL_PUBLIC_FIELD_CLASS_NAME = "internalpublicfield"; //$NON-NLS-1$
 	protected final String TESTING_INTERNAL_PROTECTED_FIELD_CLASS_NAME = "internalprotectedfield"; //$NON-NLS-1$
 	private int pid = -1;
-
-	public ClassExtendsLeak(String name) {
-		super(name);
-	}
 
 	@Override
 	protected int getDefaultProblemId() {
@@ -50,13 +45,6 @@ public class ClassExtendsLeak extends LeakTest {
 		return super.getTestSourcePath().append("class"); //$NON-NLS-1$
 	}
 
-	/**
-	 * @return the test for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(ClassExtendsLeak.class);
-	}
-
 	@Override
 	protected String getTestCompliance() {
 		return JavaCore.VERSION_1_8;
@@ -66,6 +54,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * Tests that an API class that extends an internal type is properly flagged
 	 * as leaking using a full build
 	 */
+	@Test
+
 	public void testClassExtendsLeak1F() {
 		x1(false);
 	}
@@ -74,6 +64,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * Tests that an API class that extends an internal type is properly flagged
 	 * as leaking using an incremental build
 	 */
+	@Test
+
 	public void testClassExtendsLeak1I() {
 		x1(true);
 	}
@@ -90,6 +82,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * Tests that an outer type in an API class that extends an internal type is
 	 * not flagged as a leak using a full build
 	 */
+	@Test
+
 	public void testClassExtendsLeak2F() {
 		x2(false);
 	}
@@ -98,6 +92,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * Tests that an outer type in an API class that extends an internal type is
 	 * not flagged as a leak using an incremental build
 	 */
+	@Test
+
 	public void testClassExtendsLeak2I() {
 		x2(true);
 	}
@@ -112,6 +108,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * Tests that an inner type in an API class that extends an internal type is
 	 * not flagged as a leak using a full build
 	 */
+	@Test
+
 	public void testClassExtendsLeak3F() {
 		x3(false);
 	}
@@ -120,6 +118,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * Tests that an inner type in an API class that extends an internal type is
 	 * not flagged as a leak using an incremental build
 	 */
+	@Test
+
 	public void testClassExtendsLeak3I() {
 		x3(true);
 	}
@@ -134,6 +134,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * Tests that a static inner type in an API class that extends an internal
 	 * type is not flagged as a leak using a full build
 	 */
+	@Test
+
 	public void testClassExtendsLeak4F() {
 		x4(false);
 	}
@@ -142,6 +144,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * Tests that a static inner type in an API class that extends an internal
 	 * type is not flagged as a leak using an incremental build
 	 */
+	@Test
+
 	public void testClassExtendsLeak4I() {
 		x4(true);
 	}
@@ -156,6 +160,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * Tests that an API class that extends an internal type is flagged as a
 	 * leak even with an @noextend tag being used using a full build
 	 */
+	@Test
+
 	public void testClassExtendsLeak5F() {
 		x5(false);
 	}
@@ -164,6 +170,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * Tests that an API class that extends an internal type is flagged as a
 	 * leak even with an @noextend tag being used using an incremental build
 	 */
+	@Test
+
 	public void testClassExtendsLeak5I() {
 		x5(true);
 	}
@@ -180,6 +188,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * Tests that an API class that extends an internal type is flagged as a
 	 * leak even with an @noinstantiate tag being used using a full build
 	 */
+	@Test
+
 	public void testClassExtendsLeak6F() {
 		x6(false);
 	}
@@ -189,6 +199,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * leak even with an @noinstantiate tag being used using an incremental
 	 * build
 	 */
+	@Test
+
 	public void testClassExtendsLeak6I() {
 		x6(true);
 	}
@@ -206,6 +218,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * leak even with @noextend and @noinstantiate tags being used using a full
 	 * build
 	 */
+	@Test
+
 	public void testClassExtendsLeak7F() {
 		x7(false);
 	}
@@ -215,6 +229,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * leak even with @noextend and @noinstantiate tags being used using an
 	 * incremental build
 	 */
+	@Test
+
 	public void testClassExtendsLeak7I() {
 		x7(true);
 	}
@@ -232,6 +248,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * in an API class is flagged as a leak even with @noextend and @noinstantiate
 	 * tags being used using a full build
 	 */
+	@Test
+
 	public void testClassExtendsLeak8F() {
 		x8(false);
 	}
@@ -241,6 +259,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * in an API class is flagged as a leak even with @noextend and @noinstantiate
 	 * tags being used using an incremental build
 	 */
+	@Test
+
 	public void testClassExtendsLeak8I() {
 		x8(true);
 	}
@@ -259,6 +279,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * internal type in an API class is flagged as a leak even with @noextend
 	 * and @noinstantiate tags being used using a full build
 	 */
+	@Test
+
 	public void testClassExtendsLeak9F() {
 		x9(false);
 	}
@@ -268,6 +290,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * internal type in an API class is flagged as a leak even with @noextend
 	 * and @noinstantiate tags being used using an incremental build
 	 */
+	@Test
+
 	public void testClassExtendsLeak9I() {
 		x9(true);
 	}
@@ -288,6 +312,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * Tests that having an @noextend tag(s) on classes does not remove leak
 	 * problems using a full build
 	 */
+	@Test
+
 	public void testClassExtendsLeak10F() {
 		x10(false);
 	}
@@ -296,6 +322,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * Tests that having an @noextend tag(s) on classes does not remove leak
 	 * problems using an incremental build
 	 */
+	@Test
+
 	public void testClassExtendsLeak10I() {
 		x10(true);
 	}
@@ -316,6 +344,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * Tests that having an @noinstantiate tag(s) on classes does not remove
 	 * leak problems using a full build
 	 */
+	@Test
+
 	public void testClassExtendsLeak11F() {
 		x11(false);
 	}
@@ -324,6 +354,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * Tests that having an @noinstantiate tag(s) on classes does not remove
 	 * leak problems using an incremental build
 	 */
+	@Test
+
 	public void testClassExtendsLeak11I() {
 		x11(true);
 	}
@@ -344,6 +376,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * Tests that having an @noinstantiate and @noextend tag(s) on classes does
 	 * not remove leak problems using a full build
 	 */
+	@Test
+
 	public void testClassExtendsLeak12F() {
 		x12(false);
 	}
@@ -352,6 +386,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * Tests that having an @noinstantiate and @noextend tag(s) on classes does
 	 * not remove leak problems using an incremental build
 	 */
+	@Test
+
 	public void testClassExtendsLeak12I() {
 		x12(true);
 	}
@@ -373,6 +409,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * a leak when a @noextend tag being used using a full build, since only
 	 * protected methods are exposed by the internal class.
 	 */
+	@Test
+
 	public void testClassExtendsLeak23F() {
 		x23(false);
 	}
@@ -382,6 +420,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * a leak when a @noextend tag being used using an incremental build, since
 	 * only protected methods are exposed by the internal class.
 	 */
+	@Test
+
 	public void testClassExtendsLeak23I() {
 		x23(true);
 	}
@@ -397,6 +437,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * protected methods are exposed by the internal class, and extending is
 	 * allowed).
 	 */
+	@Test
+
 	public void testClassExtendsLeak24F() {
 		x24(false);
 	}
@@ -407,6 +449,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * (since protected methods are exposed by the internal class, and extending
 	 * is allowed).
 	 */
+	@Test
+
 	public void testClassExtendsLeak24I() {
 		x24(true);
 	}
@@ -423,6 +467,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * Tests that an API class that extends an internal type with a public field
 	 * is a leak.
 	 */
+	@Test
+
 	public void testClassExtendsLeak25F() {
 		x25(false);
 	}
@@ -431,6 +477,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * Tests that an API class that extends an internal type with a public field
 	 * is a leak.
 	 */
+	@Test
+
 	public void testClassExtendsLeak25I() {
 		x25(true);
 	}
@@ -447,6 +495,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * Tests that an API class that extends an internal type with a public field
 	 * is a leak, even with a @noextend tag.
 	 */
+	@Test
+
 	public void testClassExtendsLeak26F() {
 		x26(false);
 	}
@@ -455,6 +505,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * Tests that an API class that extends an internal type with a public field
 	 * is a leak, even with a @noextend tag.
 	 */
+	@Test
+
 	public void testClassExtendsLeak26I() {
 		x26(true);
 	}
@@ -471,6 +523,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * Tests that an API class that extends an internal type with a protected
 	 * field is a leak (since it allows extending).
 	 */
+	@Test
+
 	public void testClassExtendsLeak27F() {
 		x27(false);
 	}
@@ -479,6 +533,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * Tests that an API class that extends an internal type with a protected
 	 * field is a leak (since it allows extending)
 	 */
+	@Test
+
 	public void testClassExtendsLeak27I() {
 		x27(true);
 	}
@@ -495,6 +551,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * Tests that an API class that extends an internal type with a protected
 	 * field is *not* a leak (since it *disallows* extending).
 	 */
+	@Test
+
 	public void testClassExtendsLeak28F() {
 		x28(false);
 	}
@@ -503,6 +561,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * Tests that an API class that extends an internal type with a protected
 	 * field is *not* a leak (since it *disallows* extending)
 	 */
+	@Test
+
 	public void testClassExtendsLeak28I() {
 		x28(true);
 	}
@@ -517,6 +577,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * Tests that an API class that extends an internal type with a private
 	 * field is *not* a leak.
 	 */
+	@Test
+
 	public void testClassExtendsLeak29F() {
 		x29(false);
 	}
@@ -525,6 +587,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * Tests that an API class that extends an internal type with a private
 	 * field is *not* a leak.
 	 */
+	@Test
+
 	public void testClassExtendsLeak29I() {
 		x29(true);
 	}
@@ -539,6 +603,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * Tests that an API class that extends an top level non public type is a
 	 * leak.
 	 */
+	@Test
+
 	public void testClassExtendsLeak30F() {
 		x30(false);
 	}
@@ -547,6 +613,8 @@ public class ClassExtendsLeak extends LeakTest {
 	 * Tests that an API class that extends an top level non public type is a
 	 * leak.
 	 */
+	@Test
+
 	public void testClassExtendsLeak30I() {
 		x30(true);
 	}
@@ -558,9 +626,13 @@ public class ClassExtendsLeak extends LeakTest {
 		deployLeakTest(typename + ".java", inc); //$NON-NLS-1$
 	}
 
+	@Test
+
 	public void testClassExtendsAndOverridesLeak31F() {
 		x32(false);
 	}
+
+	@Test
 
 	public void testClassExtendsAndOverridesLeak31I() {
 		x32(true);
@@ -579,10 +651,13 @@ public class ClassExtendsLeak extends LeakTest {
 	/**
 	 * Tests that an API class that extends a  noextend class is a leak
 	 */
+	@Test
+
 	public void testClassExtendsNoExtendClass33F() {
 		x34(false);
 	}
 
+	@Test
 
 	public void testClassExtendsNoExtendClass13I() {
 		x34(true);
@@ -601,10 +676,13 @@ public class ClassExtendsLeak extends LeakTest {
 	 * Test that an API class that extends a  noextend class is not a  leak
 	 * if it is noextend
 	 */
+	@Test
+
 	public void testNoExtendClassExtendsNoExtendClass14F() {
 		x35(false);
 	}
 
+	@Test
 
 	public void testNoExtendClassExtendsNoExtendClass14I() {
 		x35(true);
@@ -621,9 +699,13 @@ public class ClassExtendsLeak extends LeakTest {
 	 * Test that an API class that extends a noextend class is not a leak if it is
 	 * final
 	 */
+	@Test
+
 	public void testFinalClassExtendsNoExtendClass14F() {
 		x36(false);
 	}
+
+	@Test
 
 	public void testFinalClassExtendsNoExtendClass14I() {
 		x36(true);

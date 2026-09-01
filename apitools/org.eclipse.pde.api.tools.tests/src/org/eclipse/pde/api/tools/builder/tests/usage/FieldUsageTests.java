@@ -17,8 +17,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that problems with API usage are correctly reported
@@ -30,10 +29,6 @@ public class FieldUsageTests extends UsageTest {
 	public static final String FIELD_CLASS_NAME = "FieldUsageClass"; //$NON-NLS-1$
 
 	private int pid = -1;
-
-	public FieldUsageTests(String name) {
-		super(name);
-	}
 
 	@Override
 	protected int getDefaultProblemId() {
@@ -53,16 +48,11 @@ public class FieldUsageTests extends UsageTest {
 	}
 
 	/**
-	 * @return the test suite for this class
-	 */
-	public static Test suite() {
-		return buildTestSuite(FieldUsageTests.class);
-	}
-
-	/**
 	 * Tests that field tagged with a noreference tag that is being accessed from a dependent plug-in
 	 * is properly flagged as a problem using a full build
 	 */
+	@Test
+
 	public void testFieldUsage1F() {
 		x1(false);
 	}
@@ -71,6 +61,8 @@ public class FieldUsageTests extends UsageTest {
 	 * Tests that a field tagged with a noreference tag that is being accessed from a dependent plug-in
 	 * is properly flagged as a problem using an incremental build
 	 */
+	@Test
+
 	public void testFieldUsage1I() {
 		x1(true);
 	}
@@ -95,6 +87,8 @@ public class FieldUsageTests extends UsageTest {
 	 * Tests that a field in a static inner class tagged with a noreference tag that is being accessed from a dependent plug-in
 	 * is properly flagged as a problem using a full build
 	 */
+	@Test
+
 	public void testFieldUsage2F() {
 		x2(false);
 	}
@@ -103,6 +97,8 @@ public class FieldUsageTests extends UsageTest {
 	 * Tests that a field in a static inner class tagged with a noreference tag that is being accessed from a dependent plug-in
 	 * is properly flagged as a problem using an incremental build
 	 */
+	@Test
+
 	public void testFieldUsage2I() {
 		x2(true);
 	}
@@ -127,6 +123,8 @@ public class FieldUsageTests extends UsageTest {
 	 * Tests that a final field tagged with a noreference tag that is being accessed from a dependent plug-in
 	 * is not flagged as a problem using a full build
 	 */
+	@Test
+
 	public void testFieldUsage3F() {
 		x3(false);
 	}
@@ -135,6 +133,8 @@ public class FieldUsageTests extends UsageTest {
 	 * Tests that a final field tagged with a noreference tag that is being accessed from a dependent plug-in
 	 * is properly flagged as a problem using an incremental build
 	 */
+	@Test
+
 	public void testFieldUsage3I() {
 		x3(true);
 	}
@@ -149,6 +149,8 @@ public class FieldUsageTests extends UsageTest {
 	 * Tests that a static final field tagged with a noreference tag that is being accessed from a dependent plug-in
 	 * is not flagged as a problem using a full build
 	 */
+	@Test
+
 	public void testFieldUsage4F() {
 		x4(false);
 	}
@@ -157,6 +159,8 @@ public class FieldUsageTests extends UsageTest {
 	 * Tests that a static final field tagged with a noreference tag that is being accessed from a dependent plug-in
 	 * is not flagged as a problem using an incremental build
 	 */
+	@Test
+
 	public void testFieldUsage4I() {
 		x4(true);
 	}
@@ -171,6 +175,8 @@ public class FieldUsageTests extends UsageTest {
 	 * Tests that an interface field tagged with a noreference tag that is being accessed from a dependent plug-in
 	 * is not flagged as a problem using a full build
 	 */
+	@Test
+
 	public void testFieldUsage5F() {
 		x5(false);
 	}
@@ -179,6 +185,8 @@ public class FieldUsageTests extends UsageTest {
 	 * Tests that an interface field tagged with a noreference tag that is being accessed from a dependent plug-in
 	 * is not flagged as a problem using an incremental build
 	 */
+	@Test
+
 	public void testFieldUsage5I() {
 		x5(true);
 	}
@@ -192,6 +200,8 @@ public class FieldUsageTests extends UsageTest {
 	 * Tests that field tagged with a noreference tag that is being accessed from a dependent plug-in
 	 * is properly flagged as a problem using a full build
 	 */
+	@Test
+
 	public void testFieldUsage6F() {
 		x6(false);
 	}
@@ -200,6 +210,8 @@ public class FieldUsageTests extends UsageTest {
 	 * Tests that a field tagged with a noreference tag that is being accessed from a dependent plug-in
 	 * is properly flagged as a problem using an incremental build
 	 */
+	@Test
+
 	public void testFieldUsage6I() {
 		x6(true);
 	}
