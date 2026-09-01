@@ -23,35 +23,34 @@ class NameGeneratorTest {
 
 	@Test
 	void test13() {
-		assertEquals("myProperty143", NameGenerator.createPropertyName("myProperty143", null, DSAnnotationVersion.V1_3));
-		assertEquals("new", NameGenerator.createPropertyName("$new", null, DSAnnotationVersion.V1_3));
-		assertEquals("my$prop", NameGenerator.createPropertyName("my$$prop", null, DSAnnotationVersion.V1_3));
-		assertEquals("dot.prop", NameGenerator.createPropertyName("dot_prop", null, DSAnnotationVersion.V1_3));
-		assertEquals(".secret", NameGenerator.createPropertyName("_secret", null, DSAnnotationVersion.V1_3));
-		assertEquals("another_prop", NameGenerator.createPropertyName("another__prop", null, DSAnnotationVersion.V1_3));
-		assertEquals("three_.prop", NameGenerator.createPropertyName("three___prop", null, DSAnnotationVersion.V1_3));
-		assertEquals("four._prop", NameGenerator.createPropertyName("four_$__prop", null, DSAnnotationVersion.V1_3));
-		assertEquals("five..prop", NameGenerator.createPropertyName("five_$_prop", null, DSAnnotationVersion.V1_3));
+		assertEquals(NameGenerator.createPropertyName("myProperty143", null, DSAnnotationVersion.V1_3), "myProperty143");
+		assertEquals(NameGenerator.createPropertyName("$new", null, DSAnnotationVersion.V1_3), "new");
+		assertEquals(NameGenerator.createPropertyName("my$$prop", null, DSAnnotationVersion.V1_3), "my$prop");
+		assertEquals(NameGenerator.createPropertyName("dot_prop", null, DSAnnotationVersion.V1_3), "dot.prop");
+		assertEquals(NameGenerator.createPropertyName("_secret", null, DSAnnotationVersion.V1_3), ".secret");
+		assertEquals(NameGenerator.createPropertyName("another__prop", null, DSAnnotationVersion.V1_3), "another_prop");
+		assertEquals(NameGenerator.createPropertyName("three___prop", null, DSAnnotationVersion.V1_3), "three_.prop");
+		assertEquals(NameGenerator.createPropertyName("four_$__prop", null, DSAnnotationVersion.V1_3), "four._prop");
+		assertEquals(NameGenerator.createPropertyName("five_$_prop", null, DSAnnotationVersion.V1_3), "five..prop");
 	}
 
 	@Test
 	void test14() {
-		assertEquals("myProperty143", NameGenerator.createPropertyName("myProperty143", null, DSAnnotationVersion.V1_4));
-		assertEquals("new", NameGenerator.createPropertyName("$new", null, DSAnnotationVersion.V1_4));
-		assertEquals("my$prop", NameGenerator.createPropertyName("my$$prop", null, DSAnnotationVersion.V1_4));
-		assertEquals("dot.prop", NameGenerator.createPropertyName("dot_prop", null, DSAnnotationVersion.V1_4));
-		assertEquals(".secret", NameGenerator.createPropertyName("_secret", null, DSAnnotationVersion.V1_4));
-		assertEquals("another_prop", NameGenerator.createPropertyName("another__prop", null, DSAnnotationVersion.V1_4));
-		assertEquals("three_.prop", NameGenerator.createPropertyName("three___prop", null, DSAnnotationVersion.V1_4));
-		assertEquals("four._prop", NameGenerator.createPropertyName("four_$__prop", null, DSAnnotationVersion.V1_4));
-		assertEquals("five..prop", NameGenerator.createPropertyName("five_$_prop", null, DSAnnotationVersion.V1_4));
-		assertEquals("six-prop", NameGenerator.createPropertyName("six$_$prop", null, DSAnnotationVersion.V1_4));
-		assertEquals("seven$.prop", NameGenerator.createPropertyName("seven$$_$prop", null, DSAnnotationVersion.V1_4));
-		assertEquals("pre.myProperty143",
-				NameGenerator.createPropertyName("myProperty143", "pre.", DSAnnotationVersion.V1_4));
-		assertEquals("service.ranking", NameGenerator.createClassPropertyName("ServiceRanking", null));
-		assertEquals("some_name", NameGenerator.createClassPropertyName("Some_Name", null));
-		assertEquals("osgi.property", NameGenerator.createClassPropertyName("OSGiProperty", null));
+		assertEquals(NameGenerator.createPropertyName("myProperty143", null, DSAnnotationVersion.V1_4), "myProperty143");
+		assertEquals(NameGenerator.createPropertyName("$new", null, DSAnnotationVersion.V1_4), "new");
+		assertEquals(NameGenerator.createPropertyName("my$$prop", null, DSAnnotationVersion.V1_4), "my$prop");
+		assertEquals(NameGenerator.createPropertyName("dot_prop", null, DSAnnotationVersion.V1_4), "dot.prop");
+		assertEquals(NameGenerator.createPropertyName("_secret", null, DSAnnotationVersion.V1_4), ".secret");
+		assertEquals(NameGenerator.createPropertyName("another__prop", null, DSAnnotationVersion.V1_4), "another_prop");
+		assertEquals(NameGenerator.createPropertyName("three___prop", null, DSAnnotationVersion.V1_4), "three_.prop");
+		assertEquals(NameGenerator.createPropertyName("four_$__prop", null, DSAnnotationVersion.V1_4), "four._prop");
+		assertEquals(NameGenerator.createPropertyName("five_$_prop", null, DSAnnotationVersion.V1_4), "five..prop");
+		assertEquals(NameGenerator.createPropertyName("six$_$prop", null, DSAnnotationVersion.V1_4), "six-prop");
+		assertEquals(NameGenerator.createPropertyName("seven$$_$prop", null, DSAnnotationVersion.V1_4), "seven$.prop");
+		assertEquals(NameGenerator.createPropertyName("myProperty143", "pre.", DSAnnotationVersion.V1_4), "pre.myProperty143");
+		assertEquals(NameGenerator.createClassPropertyName("ServiceRanking", null), "service.ranking");
+		assertEquals(NameGenerator.createClassPropertyName("Some_Name", null), "some_name");
+		assertEquals(NameGenerator.createClassPropertyName("OSGiProperty", null), "osgi.property");
 	}
 
 }
