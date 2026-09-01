@@ -13,10 +13,10 @@
 
 package org.eclipse.pde.build.internal.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -47,13 +47,10 @@ import org.eclipse.pde.build.tests.BuildConfiguration;
 import org.eclipse.pde.build.tests.PDETestCase;
 import org.eclipse.pde.internal.build.site.BuildTimeFeature;
 import org.eclipse.pde.internal.build.site.BuildTimeFeatureFactory;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.BlockJUnit4ClassRunner;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.FrameworkUtil;
 
-@RunWith(BlockJUnit4ClassRunner.class)
 public class SourceTests extends PDETestCase {
 	@Test
 	public void testBug206679_247198() throws Exception {
@@ -305,9 +302,9 @@ public class SourceTests extends PDETestCase {
 		BuildTimeFeature feature = factory.parseBuildFeature(featureFile.getLocation().toPath());
 		FeatureEntry[] entries = feature.getRawIncludedFeatureReferences();
 		assertTrue(entries.length == 1);
-		assertEquals(entries[0].getId(), "org.eclipse.rcp");
+		assertEquals(entries[0].getId(), "org.eclipse.rcp"); //$NON-NLS-1$
 		assertTrue(entries[0].isOptional());
-		assertEquals(entries[0].getOS(), "win32");
+		assertEquals(entries[0].getOS(), "win32"); //$NON-NLS-1$
 	}
 
 	@Test
@@ -378,9 +375,9 @@ public class SourceTests extends PDETestCase {
 
 		FeatureEntry[] included = model.getPluginEntries();
 		assertEquals(included.length, 2);
-		assertEquals(included[0].getId(), "bundleA.source");
+		assertEquals(included[0].getId(), "bundleA.source"); //$NON-NLS-1$
 		assertFalse(included[0].isUnpack());
-		assertEquals(included[1].getId(), "bundleB.source");
+		assertEquals(included[1].getId(), "bundleB.source"); //$NON-NLS-1$
 		assertFalse(included[1].isUnpack());
 	}
 
@@ -472,9 +469,9 @@ public class SourceTests extends PDETestCase {
 		try (InputStream contents = new StringInputStream(manifestFile)) {
 			Manifest manifest = new Manifest(contents);
 			Attributes attr = manifest.getMainAttributes();
-			assertEquals(attr.getValue("Bundle-Version"), "1.0.0");
-			assertEquals(attr.getValue("Bundle-SymbolicName"), "bundleA.source");
-			assertTrue(attr.getValue("Eclipse-SourceBundle").startsWith("bundleA;version=\"1.0.0\""));
+			assertEquals(attr.getValue("Bundle-Version"), "1.0.0"); //$NON-NLS-1$ //$NON-NLS-2$
+			assertEquals(attr.getValue("Bundle-SymbolicName"), "bundleA.source"); //$NON-NLS-1$ //$NON-NLS-2$
+			assertTrue(attr.getValue("Eclipse-SourceBundle").startsWith("bundleA;version=\"1.0.0\"")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -542,7 +539,7 @@ public class SourceTests extends PDETestCase {
 		// assertResourceFile(build2, "tmp/eclipse/plugins/rcp.source_1.0.0.124.jar:src/a.bundle_1.0.0/src.zip");
 	}
 
-	@Ignore
+	@Disabled
 	@Test
 	public void testBug247007_247027() throws Exception {
 		IFolder buildFolder = newTest("247007");

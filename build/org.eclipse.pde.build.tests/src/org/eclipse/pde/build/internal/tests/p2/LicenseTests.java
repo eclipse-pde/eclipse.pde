@@ -12,10 +12,10 @@
  *******************************************************************************/
 package org.eclipse.pde.build.internal.tests.p2;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.Enumeration;
@@ -37,7 +37,7 @@ import org.eclipse.pde.build.internal.tests.Utils;
 import org.eclipse.pde.build.tests.BuildConfiguration;
 import org.eclipse.pde.internal.build.site.BuildTimeFeature;
 import org.eclipse.pde.internal.build.site.BuildTimeFeatureFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class LicenseTests extends P2TestCase {
 	private static final int URL_EMPTY = 1;
@@ -99,19 +99,18 @@ public class LicenseTests extends P2TestCase {
 				"eclipse/features/F1_1.0.0/feature.properties", actualPropertiesFile);
 		Properties actualProperties = Utils.loadProperties(actualPropertiesFile);
 
-		assertEquals("Result feature.properties has incorrect number of properties", originalProperties.size() + 2,
-				actualProperties.size());
+		assertEquals(originalProperties.size() + 2, actualProperties.size(), "Result feature.properties has incorrect number of properties"); //$NON-NLS-1$
 
 		Enumeration<Object> keys = originalProperties.keys();
 		while (keys.hasMoreElements()) {
 			String key = (String) keys.nextElement();
-			assertEquals(originalProperties.getProperty(key, "originalMissing"), actualProperties.getProperty(key));
+			assertEquals(originalProperties.getProperty(key, "originalMissing"), actualProperties.getProperty(key)); //$NON-NLS-1$
 		}
 
 		keys = licenseProperties.keys();
 		while (keys.hasMoreElements()) {
 			String key = (String) keys.nextElement();
-			assertEquals(licenseProperties.getProperty(key, "originalMissing"), actualProperties.getProperty(key));
+			assertEquals(licenseProperties.getProperty(key, "originalMissing"), actualProperties.getProperty(key)); //$NON-NLS-1$
 		}
 
 		// Check that license from L1 ends up int he meta data for the feature
@@ -188,12 +187,12 @@ public class LicenseTests extends P2TestCase {
 		try {
 			runBuild(buildFolder);
 		} catch (Exception e) {
-			assertTrue("Build throws wrong exception", e.getMessage()
-					.indexOf("uses 'license:' root keyword but does not reference a license feature") != -1);
+			assertTrue(e.getMessage()
+					.indexOf("uses 'license:' root keyword but does not reference a license feature") != -1, "Build throws wrong exception"); //$NON-NLS-1$ //$NON-NLS-2$
 			expectedExceptionCaught = true;
 		}
 
-		assertTrue("Build should have failed", expectedExceptionCaught);
+		assertTrue(expectedExceptionCaught, "Build should have failed"); //$NON-NLS-1$
 	}
 
 	@Test
@@ -228,19 +227,18 @@ public class LicenseTests extends P2TestCase {
 				"eclipse/features/F1_1.0.0/feature.properties", actualPropertiesFile);
 		Properties actualProperties = Utils.loadProperties(actualPropertiesFile);
 
-		assertEquals("Result feature.properties has incorrect number of properties", originalProperties.size() + 2,
-				actualProperties.size());
+		assertEquals(originalProperties.size() + 2, actualProperties.size(), "Result feature.properties has incorrect number of properties"); //$NON-NLS-1$
 
 		Enumeration<Object> keys = originalProperties.keys();
 		while (keys.hasMoreElements()) {
 			String key = (String) keys.nextElement();
-			assertEquals(originalProperties.getProperty(key, "originalMissing"), actualProperties.getProperty(key));
+			assertEquals(originalProperties.getProperty(key, "originalMissing"), actualProperties.getProperty(key)); //$NON-NLS-1$
 		}
 
 		keys = licenseProperties.keys();
 		while (keys.hasMoreElements()) {
 			String key = (String) keys.nextElement();
-			assertEquals(licenseProperties.getProperty(key, "originalMissing"), actualProperties.getProperty(key));
+			assertEquals(licenseProperties.getProperty(key, "originalMissing"), actualProperties.getProperty(key)); //$NON-NLS-1$
 		}
 
 		checkBuiltFeature(buildFolder, "");
@@ -378,7 +376,7 @@ public class LicenseTests extends P2TestCase {
 		runBuild(build2);
 
 		assertResourceFile(build2, "tmp/eclipse/features/F1_1.0.0/sub/license.html");
-		assertFalse(build2.getFolder("tmp/eclipse/features/F1_1.0.0/META-INF").exists());
+		assertFalse(build2.getFolder("tmp/eclipse/features/F1_1.0.0/META-INF").exists()); //$NON-NLS-1$
 
 		IFolder build3 = Utils.createFolder(buildFolder, "build3");
 		Utils.copy(buildFolder.getFolder("features/F1").getLocation().toFile(),
@@ -396,10 +394,10 @@ public class LicenseTests extends P2TestCase {
 		entries.add("sub/license.html");
 		assertZipContents(build3, "buildRepo/features/F1_1.0.0.jar", entries);
 		assertResourceFile(build2, "tmp/eclipse/features/F1_1.0.0/sub/license.html");
-		assertFalse(build2.getFolder("tmp/eclipse/features/F1_1.0.0/META-INF").exists());
+		assertFalse(build2.getFolder("tmp/eclipse/features/F1_1.0.0/META-INF").exists()); //$NON-NLS-1$
 		assertResourceFile(build3, "buildRepo/features/F1_1.0.0.jar");
-		assertFalse(Utils.extractFromZip(build3, "buildRepo/features/F1_1.0.0.jar", "META-INF/ECLIPSEF.RSA",
-				build3.getFile("rsa.txt")));
+		assertFalse(Utils.extractFromZip(build3, "buildRepo/features/F1_1.0.0.jar", "META-INF/ECLIPSEF.RSA", //$NON-NLS-1$ //$NON-NLS-2$
+				build3.getFile("rsa.txt"))); //$NON-NLS-1$
 	}
 
 	private String getStateMessage(int state) {
@@ -433,8 +431,8 @@ public class LicenseTests extends P2TestCase {
 		// IFile actualFeatureFile =
 		// buildFolder.getFile("tmp/eclipse/features/F1_1.0.0/feature.xml");//buildFolder.getFile("checkFeature.xml");
 		IFile actualFeatureFile = buildFolder.getFile("checkFeature.xml");
-		assertTrue(Utils.extractFromZip(buildFolder, "I.TestBuild/F1-TestBuild.zip",
-				"eclipse/features/F1_1.0.0/feature.xml", actualFeatureFile));
+		assertTrue(Utils.extractFromZip(buildFolder, "I.TestBuild/F1-TestBuild.zip", //$NON-NLS-1$
+				"eclipse/features/F1_1.0.0/feature.xml", actualFeatureFile)); //$NON-NLS-1$
 		BuildTimeFeature actualFeature = factory.parseBuildFeature(actualFeatureFile.getLocation().toPath());
 
 		IFile licenseFeatureFile = buildFolder.getFile("features/L1/feature.xml");
@@ -443,18 +441,20 @@ public class LicenseTests extends P2TestCase {
 		IFile originalFeatureFile = buildFolder.getFile("features/F1/feature.xml");
 		BuildTimeFeature originalFeature = factory.parseBuildFeature(originalFeatureFile.getLocation().toPath());
 
-		assertNotNull(errorMessage + "license was null", actualFeature.getLicense());
-		assertEquals(errorMessage + "license text not equal", licenseFeature.getLicense(), actualFeature.getLicense());
+		assertNotNull(actualFeature.getLicense(), errorMessage + "license was null"); //$NON-NLS-1$
+		assertEquals(licenseFeature.getLicense(), actualFeature.getLicense(), errorMessage + "license text not equal"); //$NON-NLS-1$
 
-		assertNotNull(errorMessage + "license url was null", actualFeature.getLicenseURL());
-		assertEquals(errorMessage + "license url not equal", licenseFeature.getLicenseURL(),
-				actualFeature.getLicenseURL());
+		assertNotNull(actualFeature.getLicenseURL(), errorMessage + "license url was null"); //$NON-NLS-1$
+		assertEquals(licenseFeature.getLicenseURL(), actualFeature.getLicenseURL(), //$NON-NLS-1$
+				errorMessage + "license url not equal");
 
-		assertEquals(errorMessage + "feature ID corrupted", originalFeature.getId(), actualFeature.getId());
-		assertEquals(errorMessage + "feature description corrupted", originalFeature.getDescription(),
-				actualFeature.getDescription());
-		assertEquals(errorMessage + "feature copyright corrupted", originalFeature.getCopyright(),
-				actualFeature.getCopyright());
+		assertEquals(originalFeature.getId(), actualFeature.getId(), errorMessage + "feature ID corrupted"); //$NON-NLS-1$
+		assertEquals(originalFeature.getDescription(),
+				//$NON-NLS-1$
+				actualFeature.getDescription(),
+				errorMessage + "feature description corrupted");
+		assertEquals(originalFeature.getCopyright(), actualFeature.getCopyright(), //$NON-NLS-1$
+				errorMessage + "feature copyright corrupted");
 	}
 
 	private void copyFeature(IFolder buildFolder, String featureID, int state) throws CoreException {
@@ -531,6 +531,6 @@ public class LicenseTests extends P2TestCase {
 		BuildTimeFeature feature = new BuildTimeFeatureFactory()
 				.parseBuildFeature(featureFolder.getFile("feature.xml").getLocation().toPath());
 
-		assertEquals(feature.getLicense().trim(), "This is legal stuff");
+		assertEquals(feature.getLicense().trim(), "This is legal stuff"); //$NON-NLS-1$
 	}
 }

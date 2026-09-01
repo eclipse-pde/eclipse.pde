@@ -12,11 +12,11 @@
  *******************************************************************************/
 package org.eclipse.pde.build.internal.tests.p2;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.net.URI;
@@ -155,13 +155,13 @@ public abstract class P2TestCase extends PDETestCase {
 		URI baseURI = repository.getLocationURI();
 
 		File base = new File(Platform.getInstallLocation().getURL().getPath());
-		assertTrue("Install location " + base.getAbsolutePath() + " does not exists", base.exists());
+		assertTrue(base.exists(), "Install location " + base.getAbsolutePath() + " does not exists"); //$NON-NLS-1$ //$NON-NLS-2$
 		base = new File(base, "p2/org.eclipse.equinox.p2.engine/profileRegistry/SDKProfile.profile");
-		assertTrue("SDKProfile " + base.getAbsolutePath() + " does not exists", base.exists());
+		assertTrue(base.exists(), "SDKProfile " + base.getAbsolutePath() + " does not exists"); //$NON-NLS-1$ //$NON-NLS-2$
 		File[] profiles = base.listFiles();
-		assertNotNull("can't read folder " + base.getAbsolutePath(), profiles);
+		assertNotNull(profiles, "can't read folder " + base.getAbsolutePath()); //$NON-NLS-1$
 		Arrays.sort(profiles);
-		assertTrue("No profiles found in " + base.getAbsolutePath(), profiles.length > 0);
+		assertTrue(profiles.length > 0, "No profiles found in " + base.getAbsolutePath()); //$NON-NLS-1$
 		File profile = profiles[profiles.length - 1];
 
 		CompositeMetadataRepository repo = (CompositeMetadataRepository) metadataManager.createRepository(baseURI,
@@ -226,7 +226,7 @@ public abstract class P2TestCase extends PDETestCase {
 				return;
 			}
 		}
-		fail("Action not found:" + action);
+		fail("Action not found:" + action); //$NON-NLS-1$
 	}
 
 	public void assertProvides(IInstallableUnit iu, String namespace, String name) {

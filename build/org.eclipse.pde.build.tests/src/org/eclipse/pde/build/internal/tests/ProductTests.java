@@ -13,10 +13,10 @@
 
 package org.eclipse.pde.build.internal.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -59,7 +59,7 @@ import org.eclipse.pde.internal.build.BundleHelper;
 import org.eclipse.pde.internal.build.Config;
 import org.eclipse.pde.internal.build.ProductGenerator;
 import org.eclipse.pde.internal.swt.tools.IconExe;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.Version;
 
 public class ProductTests extends PDETestCase {
@@ -102,7 +102,7 @@ public class ProductTests extends PDETestCase {
 
 		// bug 206788 names the archive .zip
 		assertZipContents(buildFolder, "I.TestBuild/eclipse-macosx.cocoa.x86_64.zip", entries, false);
-		assertTrue(entries.contains("eclipse/Eclipse.app/"));
+		assertTrue(entries.contains("eclipse/Eclipse.app/")); //$NON-NLS-1$
 		assertTrue(entries.size() == 1);
 	}
 
@@ -134,13 +134,13 @@ public class ProductTests extends PDETestCase {
 		Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-win32.win32.x86.zip", "eclipse/configuration/config.ini",
 				win32Config);
 		Properties props = Utils.loadProperties(win32Config);
-		assertEquals("win32", props.getProperty("os"));
+		assertEquals(props.getProperty("os"), "win32"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		IFile linuxConfig = buildFolder.getFile("linux.config.ini");
 		Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-linux.gtk.x86.zip", "eclipse/configuration/config.ini",
 				linuxConfig);
 		props = Utils.loadProperties(linuxConfig);
-		assertEquals("linux", props.getProperty("os"));
+		assertEquals(props.getProperty("os"), "linux"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Test
@@ -200,7 +200,7 @@ public class ProductTests extends PDETestCase {
 		TestBrandTask brand = (TestBrandTask) AntUtils.getFirstChildByName(main, "eclipse.brand");
 		assertNotNull(brand);
 
-		assertTrue(brand.icons.indexOf("mail.ico") > 0);
+		assertTrue(brand.icons.indexOf("mail.ico") > 0); //$NON-NLS-1$
 
 		// bug 178928
 		Target gather = antProject.getTargets().get("gather.bin.parts");
@@ -303,7 +303,7 @@ public class ProductTests extends PDETestCase {
 			System.setErr(oldErr);
 		}
 
-		assertEquals(0, new File(buildFolder.getLocation().toOSString(), "out.out").length());
+		assertEquals(0, new File(buildFolder.getLocation().toOSString(), "out.out").length()); //$NON-NLS-1$
 	}
 
 	@Test
@@ -500,12 +500,12 @@ public class ProductTests extends PDETestCase {
 				buildFolder.getLocation().toOSString(), null);
 
 		ProductFile productFile = new ProductFile(product.getLocation().toOSString(), null);
-		assertEquals(productFile.getVersion(), "1.2.3.va");
+		assertEquals(productFile.getVersion(), "1.2.3.va"); //$NON-NLS-1$
 
 		Iterator<FeatureEntry> i = productFile.getProductEntries().iterator();
-		assertEquals(i.next().getVersion(), "1.2.3");
-		assertEquals(i.next().getVersion(), "2.3.4");
-		assertEquals(i.next().getVersion(), "1.2.1");
+		assertEquals(i.next().getVersion(), "1.2.3"); //$NON-NLS-1$
+		assertEquals(i.next().getVersion(), "2.3.4"); //$NON-NLS-1$
+		assertEquals(i.next().getVersion(), "1.2.1"); //$NON-NLS-1$
 	}
 
 	@Test
