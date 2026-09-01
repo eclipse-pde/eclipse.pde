@@ -15,15 +15,15 @@ package org.eclipse.pde.internal.ua.tests.cheatsheet;
 
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSItem;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Cheatsheet items tests for API-generated models.
  */
 public class SimpleCSItemAPITestCase extends CheatSheetModelTestCase {
 
-	@Before
+	@BeforeEach
 	public void setUpLocal() {
 		setXMLContents(new StringBuilder(), LF);
 		load();

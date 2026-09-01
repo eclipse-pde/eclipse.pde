@@ -15,7 +15,7 @@ package org.eclipse.pde.internal.ua.tests.cheatsheet;
 
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSItem;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Cheatsheet items tests for XML-generated models.

@@ -13,11 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ua.tests;
 
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 import org.eclipse.pde.internal.ua.tests.cheatsheet.AllCheatSheetModelTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({ AllCheatSheetModelTests.class })
+@Suite
+@SelectClasses({ AllCheatSheetModelTests.class })
 public class AllUATests {
 }
