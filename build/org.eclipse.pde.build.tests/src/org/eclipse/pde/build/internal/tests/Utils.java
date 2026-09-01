@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.build.internal.tests;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -407,8 +407,8 @@ public class Utils {
 		}
 		File fallback2 = new File(baseLocation.getParentFile().getParentFile(), "deltapack/eclipse");
 		executableLocation = findExecutable(fallback2);
-		assertNotNull("All attempts to find the executable failed including fallback to " + fallback1.getAbsolutePath()
-				+ " or to " + fallback2.getAbsolutePath(), executableLocation);
+		assertNotNull(executableLocation, "All attempts to find the executable failed including fallback to " + fallback1.getAbsolutePath() //$NON-NLS-1$
+				+ " or to " + fallback2.getAbsolutePath()); //$NON-NLS-1$
 		System.out.println("Found the executable at: " + executableLocation);
 		return executableLocation;
 	}
