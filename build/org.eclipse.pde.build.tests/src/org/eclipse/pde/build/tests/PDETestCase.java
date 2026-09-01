@@ -13,9 +13,9 @@
 
 package org.eclipse.pde.build.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -66,7 +66,7 @@ import org.eclipse.pde.internal.build.Utils;
 import org.eclipse.pde.internal.build.builder.BuildDirector;
 import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
 import org.eclipse.pde.internal.build.site.QualifierReplacer;
-import org.junit.After;
+import org.junit.jupiter.api.AfterEach;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
@@ -93,7 +93,7 @@ public abstract class PDETestCase {
 		BuildDirector.p2Gathering = false;
 	}
 
-	@After
+	@AfterEach
 	public void cleanup() {
 		// clean up after success
 		if (buildFolder != null && buildFolder.exists() && !Boolean.getBoolean("pde.build.noCleanup")) {
@@ -315,8 +315,8 @@ public abstract class PDETestCase {
 			}
 		}
 		if (assertEmpty) {
-			assertTrue("Missing entry in archive: " + entries, entries.isEmpty());
-			assertTrue("Missing entry in archive: " + jarInZip, jarInZip.isEmpty());
+			assertTrue(entries.isEmpty(), "Missing entry in archive: " + entries); //$NON-NLS-1$
+			assertTrue(jarInZip.isEmpty(), "Missing entry in archive: " + jarInZip); //$NON-NLS-1$
 		}
 	}
 
@@ -392,7 +392,7 @@ public abstract class PDETestCase {
 		// Will always fail here (expected)
 		String expected = Stream.of(lines).map(x -> x.trim()).collect(Collectors.joining("\n"));
 		String actual = logContent.stream().map(x -> x.trim()).collect(Collectors.joining("\n"));
-		assertEquals("Not found given lines in given order", expected, actual);
+		assertEquals(expected, actual, "Not found given lines in given order"); //$NON-NLS-1$
 	}
 
 	/**

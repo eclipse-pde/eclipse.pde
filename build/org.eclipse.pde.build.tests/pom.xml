@@ -146,9 +146,6 @@
 								<configuration>
 									<work>${sdkWorkDir}/pde</work>
 									<testClass>org.eclipse.pde.build.tests.PDEBuildTestSuite</testClass>
-									<systemProperties>
-										<pde.build.includeP2>false</pde.build.includeP2>
-									</systemProperties>
 									<osgiDataDirectory>${project.build.directory}/ws-pde</osgiDataDirectory>
 									<skipTests>${skipTests}</skipTests>
 								</configuration>
@@ -161,9 +158,6 @@
 								<configuration>
 									<work>${sdkWorkDir}/p2</work>
 									<testClass>org.eclipse.pde.build.tests.P2TestSuite</testClass>
-									<systemProperties>
-										<pde.build.includeP2>true</pde.build.includeP2>
-									</systemProperties>
 									<osgiDataDirectory>${project.build.directory}/ws-p2</osgiDataDirectory>
 									<skipTests>${skipTests}</skipTests>
 								</configuration>
