@@ -13,10 +13,10 @@
 
 package org.eclipse.pde.build.internal.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.File;
 import java.net.URL;
@@ -35,20 +35,17 @@ import org.eclipse.pde.build.tests.BuildConfiguration;
 import org.eclipse.pde.build.tests.PDETestCase;
 import org.eclipse.pde.internal.build.FetchScriptGenerator;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.BlockJUnit4ClassRunner;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * These tests are not included in the main test suite unless the
  * "pde.build.includeFetch" system property is defined. This is because the test
  * machines have firewalls which cause some of the tests to fail.
  */
-@RunWith(BlockJUnit4ClassRunner.class)
 public class FetchTests extends PDETestCase {
 
-	@BeforeClass
+	@BeforeAll
 	public static void enable() {
 		assumeTrue(System.getProperty("pde.build.includeFetch") != null);
 	}
@@ -63,7 +60,7 @@ public class FetchTests extends PDETestCase {
 					buildFolder.getLocation().toOSString(), new Properties());
 		} catch (Exception e) {
 			assertTrue(e.getMessage()
-					.endsWith("Could not retrieve feature.xml or build.properties for feature org.eclipse.rcp."));
+					.endsWith("Could not retrieve feature.xml or build.properties for feature org.eclipse.rcp.")); //$NON-NLS-1$
 		}
 
 		assertResourceFile(buildFolder, "log.log");
@@ -135,12 +132,12 @@ public class FetchTests extends PDETestCase {
 		IFile sourceRefsFile = buildFolder.getFile(IPDEBuildConstants.DEFAULT_SOURCE_REFERENCES_FILENAME_DESCRIPTOR);
 		assertResourceFile(sourceRefsFile);
 		Properties sourceRefs = Utils.loadProperties(sourceRefsFile);
-		assertEquals(sourceRefs.get("org.eclipse.cvs,0.0.0"),
-				"scm:cvs:pserver:dev.eclipse.org:/cvsroot/eclipse:org.eclipse.sdk-feature/plugins/org.eclipse.cvs;tag=v20090520");
-		assertEquals(sourceRefs.get("org.eclipse.team.cvs.core,0.0.0"),
-				"scm:cvs:pserver:dev.eclipse.org:/cvsroot/eclipse:org.eclipse.team.cvs.core;tag=I20090430-0408");
-		assertEquals(sourceRefs.get("org.eclipse.team.cvs.ssh2,0.0.0"),
-				"scm:cvs:pserver:dev.eclipse.org:/cvsroot/eclipse:org.eclipse.team.cvs.ssh2;tag=I20090508-2000");
+		assertEquals("scm:cvs:pserver:dev.eclipse.org:/cvsroot/eclipse:org.eclipse.sdk-feature/plugins/org.eclipse.cvs;tag=v20090520", //$NON-NLS-1$
+				sourceRefs.get("org.eclipse.cvs,0.0.0")); //$NON-NLS-1$
+		assertEquals("scm:cvs:pserver:dev.eclipse.org:/cvsroot/eclipse:org.eclipse.team.cvs.core;tag=I20090430-0408", //$NON-NLS-1$
+				sourceRefs.get("org.eclipse.team.cvs.core,0.0.0"));
+		assertEquals("scm:cvs:pserver:dev.eclipse.org:/cvsroot/eclipse:org.eclipse.team.cvs.ssh2;tag=I20090508-2000", //$NON-NLS-1$
+				sourceRefs.get("org.eclipse.team.cvs.ssh2,0.0.0"));
 	}
 
 	@Test
@@ -185,10 +182,10 @@ public class FetchTests extends PDETestCase {
 		IFile sourceRefsFile = buildFolder.getFile(IPDEBuildConstants.DEFAULT_SOURCE_REFERENCES_FILENAME_DESCRIPTOR);
 		assertResourceFile(sourceRefsFile);
 		Properties sourceRefs = Utils.loadProperties(sourceRefsFile);
-		assertEquals(sourceRefs.get("org.eclipse.cvs,0.0.0"),
-				"scm:cvs:pserver:dev.eclipse.org:/cvsroot/eclipse:org.eclipse.sdk-feature/plugins/org.eclipse.cvs;tag=v20100407");
-		assertEquals(sourceRefs.get("org.eclipse.team.cvs.core,0.0.0"),
-				"scm:cvs:pserver:dev.eclipse.org:/cvsroot/eclipse:org.eclipse.team.cvs.core;tag=I20100310-0800");
+		assertEquals("scm:cvs:pserver:dev.eclipse.org:/cvsroot/eclipse:org.eclipse.sdk-feature/plugins/org.eclipse.cvs;tag=v20100407", //$NON-NLS-1$
+				sourceRefs.get("org.eclipse.cvs,0.0.0"));
+		assertEquals("scm:cvs:pserver:dev.eclipse.org:/cvsroot/eclipse:org.eclipse.team.cvs.core;tag=I20100310-0800", //$NON-NLS-1$
+				sourceRefs.get("org.eclipse.team.cvs.core,0.0.0"));
 
 	}
 
@@ -223,8 +220,8 @@ public class FetchTests extends PDETestCase {
 
 		File features = new File(buildFolder.getLocation().toFile(), "features");
 		File plugins = new File(buildFolder.getLocation().toFile(), "plugins");
-		assertEquals(features.list().length, 1);
-		assertEquals(plugins.list().length, 4);
+		assertEquals(1, features.list().length);
+		assertEquals(4, plugins.list().length);
 	}
 
 	@Test
@@ -386,7 +383,7 @@ public class FetchTests extends PDETestCase {
 
 		Manifest m = Utils.loadManifest(buildFolder
 				.getFile("tmp/eclipse/plugins/org.eclipse.osgi.util_3.2.100.vR_v20100108/META-INF/MANIFEST.MF"));
-		assertEquals(m.getMainAttributes().getValue("Bundle-Version"), "3.2.100.vR_v20100108");
+		assertEquals("3.2.100.vR_v20100108", m.getMainAttributes().getValue("Bundle-Version")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Test
@@ -397,26 +394,26 @@ public class FetchTests extends PDETestCase {
 		generator.setFetchTagAsString("CVS=HEAD,GIT=master;platform.ui=development,SVN=trunk;platform.ui=maintenance");
 
 		Properties tags = generator.getOverrideTags("CVS");
-		assertEquals(tags.getProperty("CVS"), "HEAD");
-		assertEquals(tags.getProperty("GIT"), "master");
-		assertEquals(tags.getProperty("SVN"), "trunk");
-		assertFalse(tags.containsKey("platform.ui"));
+		assertEquals("HEAD", tags.getProperty("CVS")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("master", tags.getProperty("GIT")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("trunk", tags.getProperty("SVN")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertFalse(tags.containsKey("platform.ui")); //$NON-NLS-1$
 
 		tags = generator.getOverrideTags("GIT");
-		assertEquals(tags.getProperty("GIT"), "master");
-		assertEquals(tags.getProperty("platform.ui"), "development");
+		assertEquals("master", tags.getProperty("GIT")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("development", tags.getProperty("platform.ui")); //$NON-NLS-1$ //$NON-NLS-2$
 
 		tags = generator.getOverrideTags("SVN");
-		assertEquals(tags.getProperty("platform.ui"), "maintenance");
+		assertEquals("maintenance", tags.getProperty("platform.ui")); //$NON-NLS-1$ //$NON-NLS-2$
 
 		generator.setFetchTagAsString("GIT=master,HEAD;foo=bar");
 		tags = generator.getOverrideTags("GIT");
-		assertEquals(tags.getProperty("GIT"), "master");
-		assertEquals(tags.getProperty("CVS"), "HEAD");
-		assertEquals(tags.size(), 2);
+		assertEquals("master", tags.getProperty("GIT")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("HEAD", tags.getProperty("CVS")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(2, tags.size());
 
 		tags = generator.getOverrideTags("CVS");
-		assertEquals(tags.getProperty("foo"), "bar");
-		assertEquals(tags.size(), 3);
+		assertEquals("bar", tags.getProperty("foo")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(3, tags.size());
 	}
 }

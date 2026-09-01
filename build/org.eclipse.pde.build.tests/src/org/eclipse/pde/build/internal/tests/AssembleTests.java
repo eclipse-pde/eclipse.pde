@@ -13,7 +13,7 @@
 
 package org.eclipse.pde.build.internal.tests;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.util.HashSet;
@@ -24,7 +24,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.pde.build.tests.BuildConfiguration;
 import org.eclipse.pde.build.tests.PDETestCase;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AssembleTests extends PDETestCase {
 	@Test
@@ -171,7 +171,7 @@ public class AssembleTests extends PDETestCase {
 		runBuild(buildFolder);
 
 		File resultFolder = new File(buildFolder.getLocation().toFile(), "tmp/eclipse/plugins");
-		assertEquals(resultFolder.list().length, 3);
+		assertEquals(3, resultFolder.list().length);
 	}
 
 	@Test
