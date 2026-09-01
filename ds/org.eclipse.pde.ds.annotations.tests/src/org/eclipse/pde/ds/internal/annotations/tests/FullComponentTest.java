@@ -33,17 +33,17 @@ public class FullComponentTest extends AnnotationProcessorTest {
 
 	@Test
 	public void componentNamespace() throws Exception {
-		assertEquals("http://www.osgi.org/xmlns/scr/v1.3.0", dsModel.getDSComponent().getXMLAttributeValue("xmlns:" + dsModel.getDSComponent().getNamespacePrefix()));
+		assertEquals(dsModel.getDSComponent().getXMLAttributeValue("xmlns:" + dsModel.getDSComponent().getNamespacePrefix()), "http://www.osgi.org/xmlns/scr/v1.3.0");
 	}
 
 	@Test
 	public void componentName() throws Exception {
-		assertEquals("test.fullComponent", dsModel.getDSComponent().getName());
+		assertEquals(dsModel.getDSComponent().getName(), "test.fullComponent");
 	}
 
 	@Test
 	public void componentConfigurationPid() throws Exception {
-		assertEquals("test.configurationPid test.fullComponent", dsModel.getDSComponent().getXMLAttributeValue("configuration-pid"));
+		assertEquals(dsModel.getDSComponent().getXMLAttributeValue("configuration-pid"), "test.configurationPid test.fullComponent");
 	}
 
 	@Test
@@ -63,36 +63,36 @@ public class FullComponentTest extends AnnotationProcessorTest {
 
 	@Test
 	public void componentFactory() throws Exception {
-		assertEquals("test.componentFactory", dsModel.getDSComponent().getFactory());
+		assertEquals(dsModel.getDSComponent().getFactory(), "test.componentFactory");
 	}
 
 	@Test
 	public void componentActivateMethod() throws Exception {
-		assertEquals("putAll", dsModel.getDSComponent().getActivateMethod());
+		assertEquals(dsModel.getDSComponent().getActivateMethod(), "putAll");
 	}
 
 	@Test
 	public void componentModifiedMethod() throws Exception {
-		assertEquals("putAll", dsModel.getDSComponent().getModifiedMethod());
+		assertEquals(dsModel.getDSComponent().getModifiedMethod(), "putAll");
 	}
 
 	@Test
 	public void componentDeactivateMethod() throws Exception {
-		assertEquals("clear", dsModel.getDSComponent().getDeactivateMethod());
+		assertEquals(dsModel.getDSComponent().getDeactivateMethod(), "clear");
 	}
 
 	@Test
 	public void componentImplementationClass() throws Exception {
 		IDSImplementation impl = dsModel.getDSComponent().getImplementation();
 		assertNotNull(impl);
-		assertEquals("ds.annotations.test1.FullComponent", impl.getClassName());
+		assertEquals(impl.getClassName(), "ds.annotations.test1.FullComponent");
 	}
 
 	@Test
 	public void componentServiceProviderInterface() throws Exception {
 		IDSService service = dsModel.getDSComponent().getService();
 		assertNotNull(service);
-		assertEquals("singleton", service.getXMLAttributeValue("scope"));
+		assertEquals(service.getXMLAttributeValue("scope"), "singleton");
 		IDSProvide[] provides = service.getProvidedServices();
 		assertNotNull(provides);
 		assertEquals(1, provides.length);
@@ -112,9 +112,9 @@ public class FullComponentTest extends AnnotationProcessorTest {
 		assertNotNull(properties);
 		final int PROPERTY_INDEX = 0;
 		assertTrue(properties.length > PROPERTY_INDEX);
-		assertEquals("stringProperty", properties[PROPERTY_INDEX].getPropertyName());
-		assertEquals("stringValue", properties[PROPERTY_INDEX].getPropertyValue());
-		assertEquals("String", properties[PROPERTY_INDEX].getPropertyType());
+		assertEquals(properties[PROPERTY_INDEX].getPropertyName(), "stringProperty");
+		assertEquals(properties[PROPERTY_INDEX].getPropertyValue(), "stringValue");
+		assertEquals(properties[PROPERTY_INDEX].getPropertyType(), "String");
 		assertNull(properties[PROPERTY_INDEX].getPropertyElemBody());
 	}
 
@@ -124,8 +124,8 @@ public class FullComponentTest extends AnnotationProcessorTest {
 		assertNotNull(properties);
 		final int PROPERTY_INDEX = 1;
 		assertTrue(properties.length > PROPERTY_INDEX);
-		assertEquals("implicitStringProperty", properties[PROPERTY_INDEX].getPropertyName());
-		assertEquals("implicitStringValue", properties[PROPERTY_INDEX].getPropertyValue());
+		assertEquals(properties[PROPERTY_INDEX].getPropertyName(), "implicitStringProperty");
+		assertEquals(properties[PROPERTY_INDEX].getPropertyValue(), "implicitStringValue");
 		assertNull(properties[PROPERTY_INDEX].getPropertyType());
 		assertNull(properties[PROPERTY_INDEX].getPropertyElemBody());
 	}
@@ -136,9 +136,9 @@ public class FullComponentTest extends AnnotationProcessorTest {
 		assertNotNull(properties);
 		final int PROPERTY_INDEX = 2;
 		assertTrue(properties.length > PROPERTY_INDEX);
-		assertEquals("explicitStringProperty", properties[PROPERTY_INDEX].getPropertyName());
-		assertEquals("explicitStringValue", properties[PROPERTY_INDEX].getPropertyValue());
-		assertEquals("String", properties[PROPERTY_INDEX].getPropertyType());
+		assertEquals(properties[PROPERTY_INDEX].getPropertyName(), "explicitStringProperty");
+		assertEquals(properties[PROPERTY_INDEX].getPropertyValue(), "explicitStringValue");
+		assertEquals(properties[PROPERTY_INDEX].getPropertyType(), "String");
 		assertNull(properties[PROPERTY_INDEX].getPropertyElemBody());
 	}
 
@@ -148,9 +148,9 @@ public class FullComponentTest extends AnnotationProcessorTest {
 		assertNotNull(properties);
 		final int PROPERTY_INDEX = 3;
 		assertTrue(properties.length > PROPERTY_INDEX);
-		assertEquals("integerProperty", properties[PROPERTY_INDEX].getPropertyName());
-		assertEquals("1", properties[PROPERTY_INDEX].getPropertyValue());
-		assertEquals("Integer", properties[PROPERTY_INDEX].getPropertyType());
+		assertEquals(properties[PROPERTY_INDEX].getPropertyName(), "integerProperty");
+		assertEquals(properties[PROPERTY_INDEX].getPropertyValue(), "1");
+		assertEquals(properties[PROPERTY_INDEX].getPropertyType(), "Integer");
 		assertNull(properties[PROPERTY_INDEX].getPropertyElemBody());
 	}
 
@@ -160,9 +160,9 @@ public class FullComponentTest extends AnnotationProcessorTest {
 		assertNotNull(properties);
 		final int PROPERTY_INDEX = 4;
 		assertTrue(properties.length > PROPERTY_INDEX);
-		assertEquals("longProperty", properties[PROPERTY_INDEX].getPropertyName());
-		assertEquals("2", properties[PROPERTY_INDEX].getPropertyValue());
-		assertEquals("Long", properties[PROPERTY_INDEX].getPropertyType());
+		assertEquals(properties[PROPERTY_INDEX].getPropertyName(), "longProperty");
+		assertEquals(properties[PROPERTY_INDEX].getPropertyValue(), "2");
+		assertEquals(properties[PROPERTY_INDEX].getPropertyType(), "Long");
 		assertNull(properties[PROPERTY_INDEX].getPropertyElemBody());
 	}
 
@@ -172,9 +172,9 @@ public class FullComponentTest extends AnnotationProcessorTest {
 		assertNotNull(properties);
 		final int PROPERTY_INDEX = 5;
 		assertTrue(properties.length > PROPERTY_INDEX);
-		assertEquals("shortProperty", properties[PROPERTY_INDEX].getPropertyName());
-		assertEquals("3", properties[PROPERTY_INDEX].getPropertyValue());
-		assertEquals("Short", properties[PROPERTY_INDEX].getPropertyType());
+		assertEquals(properties[PROPERTY_INDEX].getPropertyName(), "shortProperty");
+		assertEquals(properties[PROPERTY_INDEX].getPropertyValue(), "3");
+		assertEquals(properties[PROPERTY_INDEX].getPropertyType(), "Short");
 		assertNull(properties[PROPERTY_INDEX].getPropertyElemBody());
 	}
 
@@ -184,9 +184,9 @@ public class FullComponentTest extends AnnotationProcessorTest {
 		assertNotNull(properties);
 		final int PROPERTY_INDEX = 6;
 		assertTrue(properties.length > PROPERTY_INDEX);
-		assertEquals("byteProperty", properties[PROPERTY_INDEX].getPropertyName());
-		assertEquals("4", properties[PROPERTY_INDEX].getPropertyValue());
-		assertEquals("Byte", properties[PROPERTY_INDEX].getPropertyType());
+		assertEquals(properties[PROPERTY_INDEX].getPropertyName(), "byteProperty");
+		assertEquals(properties[PROPERTY_INDEX].getPropertyValue(), "4");
+		assertEquals(properties[PROPERTY_INDEX].getPropertyType(), "Byte");
 		assertNull(properties[PROPERTY_INDEX].getPropertyElemBody());
 	}
 
@@ -196,9 +196,9 @@ public class FullComponentTest extends AnnotationProcessorTest {
 		assertNotNull(properties);
 		final int PROPERTY_INDEX = 7;
 		assertTrue(properties.length > PROPERTY_INDEX);
-		assertEquals("characterProperty", properties[PROPERTY_INDEX].getPropertyName());
-		assertEquals("53", properties[PROPERTY_INDEX].getPropertyValue());
-		assertEquals("Character", properties[PROPERTY_INDEX].getPropertyType());
+		assertEquals(properties[PROPERTY_INDEX].getPropertyName(), "characterProperty");
+		assertEquals(properties[PROPERTY_INDEX].getPropertyValue(), "53");
+		assertEquals(properties[PROPERTY_INDEX].getPropertyType(), "Character");
 		assertNull(properties[PROPERTY_INDEX].getPropertyElemBody());
 	}
 
@@ -208,9 +208,9 @@ public class FullComponentTest extends AnnotationProcessorTest {
 		assertNotNull(properties);
 		final int PROPERTY_INDEX = 8;
 		assertTrue(properties.length > PROPERTY_INDEX);
-		assertEquals("floatProperty", properties[PROPERTY_INDEX].getPropertyName());
-		assertEquals("6.7", properties[PROPERTY_INDEX].getPropertyValue());
-		assertEquals("Float", properties[PROPERTY_INDEX].getPropertyType());
+		assertEquals(properties[PROPERTY_INDEX].getPropertyName(), "floatProperty");
+		assertEquals(properties[PROPERTY_INDEX].getPropertyValue(), "6.7");
+		assertEquals(properties[PROPERTY_INDEX].getPropertyType(), "Float");
 		assertNull(properties[PROPERTY_INDEX].getPropertyElemBody());
 	}
 
@@ -220,9 +220,9 @@ public class FullComponentTest extends AnnotationProcessorTest {
 		assertNotNull(properties);
 		final int PROPERTY_INDEX = 9;
 		assertTrue(properties.length > PROPERTY_INDEX);
-		assertEquals("doubleProperty", properties[PROPERTY_INDEX].getPropertyName());
-		assertEquals("8.9", properties[PROPERTY_INDEX].getPropertyValue());
-		assertEquals("Double", properties[PROPERTY_INDEX].getPropertyType());
+		assertEquals(properties[PROPERTY_INDEX].getPropertyName(), "doubleProperty");
+		assertEquals(properties[PROPERTY_INDEX].getPropertyValue(), "8.9");
+		assertEquals(properties[PROPERTY_INDEX].getPropertyType(), "Double");
 		assertNull(properties[PROPERTY_INDEX].getPropertyElemBody());
 	}
 
@@ -232,10 +232,10 @@ public class FullComponentTest extends AnnotationProcessorTest {
 		assertNotNull(properties);
 		final int PROPERTY_INDEX = 10;
 		assertTrue(properties.length > PROPERTY_INDEX);
-		assertEquals("implicitStringArrayProperty", properties[PROPERTY_INDEX].getPropertyName());
+		assertEquals(properties[PROPERTY_INDEX].getPropertyName(), "implicitStringArrayProperty");
 		assertNull(properties[PROPERTY_INDEX].getPropertyValue());
 		assertNull(properties[PROPERTY_INDEX].getPropertyType());
-		assertEquals("implicitStringArrayValue1\nimplicitStringArrayValue2", properties[PROPERTY_INDEX].getPropertyElemBody());
+		assertEquals(properties[PROPERTY_INDEX].getPropertyElemBody(), "implicitStringArrayValue1\nimplicitStringArrayValue2");
 	}
 
 	@Test
@@ -244,10 +244,10 @@ public class FullComponentTest extends AnnotationProcessorTest {
 		assertNotNull(properties);
 		final int PROPERTY_INDEX = 11;
 		assertTrue(properties.length > PROPERTY_INDEX);
-		assertEquals("explicitStringArrayProperty", properties[PROPERTY_INDEX].getPropertyName());
+		assertEquals(properties[PROPERTY_INDEX].getPropertyName(), "explicitStringArrayProperty");
 		assertNull(properties[PROPERTY_INDEX].getPropertyValue());
-		assertEquals("String", properties[PROPERTY_INDEX].getPropertyType());
-		assertEquals("explicitStringArrayValue1\nexplicitStringArrayValue2\nexplicitStringArrayValue3", properties[PROPERTY_INDEX].getPropertyElemBody());
+		assertEquals(properties[PROPERTY_INDEX].getPropertyType(), "String");
+		assertEquals(properties[PROPERTY_INDEX].getPropertyElemBody(), "explicitStringArrayValue1\nexplicitStringArrayValue2\nexplicitStringArrayValue3");
 	}
 
 	@Test
@@ -255,8 +255,8 @@ public class FullComponentTest extends AnnotationProcessorTest {
 		IDSProperties[] properties = dsModel.getDSComponent().getPropertiesElements();
 		assertNotNull(properties);
 		assertEquals(2, properties.length);
-		assertEquals("/fullComponent1.properties", properties[0].getEntry());
-		assertEquals("/fullComponent2.properties", properties[1].getEntry());
+		assertEquals(properties[0].getEntry(), "/fullComponent1.properties");
+		assertEquals(properties[1].getEntry(), "/fullComponent2.properties");
 	}
 
 	@Test
@@ -266,14 +266,14 @@ public class FullComponentTest extends AnnotationProcessorTest {
 		assertEquals(4, references.length);
 		IDSReference reference = references[0];
 		assertEquals(Set.class.getName(), reference.getReferenceInterface());
-		assertEquals("Entries", reference.getReferenceName());
+		assertEquals(reference.getReferenceName(), "Entries");
 		assertEquals(IDSConstants.VALUE_REFERENCE_POLICY_DYNAMIC, reference.getReferencePolicy());
-		assertEquals("greedy", reference.getXMLAttributeValue("policy-option"));
+		assertEquals(reference.getXMLAttributeValue("policy-option"), "greedy");
 		assertEquals(IDSConstants.VALUE_REFERENCE_CARDINALITY_ZERO_ONE, reference.getReferenceCardinality());
-		assertEquals("assignEntrySet", reference.getReferenceBind());
-		assertEquals("unassignEntrySet", reference.getReferenceUnbind());
-		assertEquals("(!(component.name=test.fullComponent))", reference.getReferenceTarget());
-		assertEquals("updateEntrySet", reference.getXMLAttributeValue("updated"));
+		assertEquals(reference.getReferenceBind(), "assignEntrySet");
+		assertEquals(reference.getReferenceUnbind(), "unassignEntrySet");
+		assertEquals(reference.getReferenceTarget(), "(!(component.name=test.fullComponent))");
+		assertEquals(reference.getXMLAttributeValue("updated"), "updateEntrySet");
 		assertNull(reference.getXMLAttributeValue("field"));
 	}
 
@@ -283,13 +283,13 @@ public class FullComponentTest extends AnnotationProcessorTest {
 		assertNotNull(references);
 		assertEquals(4, references.length);
 		IDSReference reference = references[1];
-		assertEquals("java.util.Map$Entry", reference.getReferenceInterface());
-		assertEquals("Entry", reference.getReferenceName());
+		assertEquals(reference.getReferenceInterface(), "java.util.Map$Entry");
+		assertEquals(reference.getReferenceName(), "Entry");
 		assertEquals(IDSConstants.VALUE_REFERENCE_POLICY_DYNAMIC, reference.getReferencePolicy());
 		assertNull(reference.getXMLAttributeValue("policy-option"));
 		assertEquals(IDSConstants.VALUE_REFERENCE_CARDINALITY_ZERO_N, reference.getReferenceCardinality());
-		assertEquals("addEntry", reference.getReferenceBind());
-		assertEquals("removeEntry", reference.getReferenceUnbind());
+		assertEquals(reference.getReferenceBind(), "addEntry");
+		assertEquals(reference.getReferenceUnbind(), "removeEntry");
 		assertNull(reference.getReferenceTarget());
 		assertNull(reference.getXMLAttributeValue("updated"));
 		assertNull(reference.getXMLAttributeValue("field"));
@@ -301,12 +301,12 @@ public class FullComponentTest extends AnnotationProcessorTest {
 		assertNotNull(references);
 		assertEquals(4, references.length);
 		IDSReference reference = references[2];
-		assertEquals("java.util.Comparator", reference.getReferenceInterface());
-		assertEquals("comparator", reference.getReferenceName());
+		assertEquals(reference.getReferenceInterface(), "java.util.Comparator");
+		assertEquals(reference.getReferenceName(), "comparator");
 		assertEquals(IDSConstants.VALUE_REFERENCE_POLICY_DYNAMIC, reference.getReferencePolicy());
 		assertNull(reference.getXMLAttributeValue("policy-option"));
 		assertEquals(IDSConstants.VALUE_REFERENCE_CARDINALITY_ZERO_ONE, reference.getReferenceCardinality());
-		assertEquals("comparator", reference.getXMLAttributeValue("field"));
+		assertEquals(reference.getXMLAttributeValue("field"), "comparator");
 		assertNull(reference.getReferenceTarget());
 		assertNull(reference.getReferenceBind());
 		assertNull(reference.getXMLAttributeValue("updated"));
@@ -319,12 +319,12 @@ public class FullComponentTest extends AnnotationProcessorTest {
 		assertNotNull(references);
 		assertEquals(4, references.length);
 		IDSReference reference = references[3];
-		assertEquals("java.util.EventListener", reference.getReferenceInterface());
-		assertEquals("listeners", reference.getReferenceName());
+		assertEquals(reference.getReferenceInterface(), "java.util.EventListener");
+		assertEquals(reference.getReferenceName(), "listeners");
 		assertEquals(IDSConstants.VALUE_REFERENCE_POLICY_DYNAMIC, reference.getReferencePolicy());
 		assertNull(reference.getXMLAttributeValue("policy-option"));
 		assertEquals(IDSConstants.VALUE_REFERENCE_CARDINALITY_ZERO_N, reference.getReferenceCardinality());
-		assertEquals("listeners", reference.getXMLAttributeValue("field"));
+		assertEquals(reference.getXMLAttributeValue("field"), "listeners");
 		assertNull(reference.getReferenceTarget());
 		assertNull(reference.getReferenceBind());
 		assertNull(reference.getXMLAttributeValue("updated"));

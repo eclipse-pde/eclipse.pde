@@ -29,7 +29,7 @@ public class ErrorProjectTest extends CompilationParticipantTest {
 		IResource cu = getFixture("MissingDynamicReferenceUnbindMethodComponent");
 		IMarker[] markers = cu.findMarkers(DS_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
 		assertEquals(1, markers.length);
-		assertEquals("No implicit unbind method named 'unsetDynamicReference' found in implementation class.", markers[0].getAttribute(IMarker.MESSAGE));
+		assertEquals(markers[0].getAttribute(IMarker.MESSAGE), "No implicit unbind method named 'unsetDynamicReference' found in implementation class.");
 	}
 
 	@Test
@@ -38,7 +38,7 @@ public class ErrorProjectTest extends CompilationParticipantTest {
 		IMarker[] markers = cu.findMarkers(DS_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
 		assertEquals(2, markers.length);
 		for (IMarker marker : markers) {
-			assertEquals("Duplicate configuration PID.", marker.getAttribute(IMarker.MESSAGE));
+			assertEquals(marker.getAttribute(IMarker.MESSAGE), "Duplicate configuration PID.");
 		}
 	}
 
@@ -47,7 +47,7 @@ public class ErrorProjectTest extends CompilationParticipantTest {
 		IResource cu = getFixture("FactoryImmediateComponent");
 		IMarker[] markers = cu.findMarkers(DS_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
 		assertEquals(1, markers.length);
-		assertEquals("Factory component cannot be immediate.", markers[0].getAttribute(IMarker.MESSAGE));
+		assertEquals(markers[0].getAttribute(IMarker.MESSAGE), "Factory component cannot be immediate.");
 	}
 
 	@Test
@@ -55,7 +55,7 @@ public class ErrorProjectTest extends CompilationParticipantTest {
 		IResource cu = getFixture("DelayedWithNoServicesComponent");
 		IMarker[] markers = cu.findMarkers(DS_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
 		assertEquals(1, markers.length);
-		assertEquals("Component that does not register services must be immediate.", markers[0].getAttribute(IMarker.MESSAGE));
+		assertEquals(markers[0].getAttribute(IMarker.MESSAGE), "Component that does not register services must be immediate.");
 	}
 
 	@Test
@@ -64,7 +64,7 @@ public class ErrorProjectTest extends CompilationParticipantTest {
 		IMarker[] markers = cu.findMarkers(DS_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
 		assertEquals(2, markers.length);
 		for (IMarker marker : markers) {
-			assertEquals("Factory or immediate component must have singleton scope.", marker.getAttribute(IMarker.MESSAGE));
+			assertEquals(marker.getAttribute(IMarker.MESSAGE), "Factory or immediate component must have singleton scope.");
 		}
 	}
 
@@ -73,7 +73,7 @@ public class ErrorProjectTest extends CompilationParticipantTest {
 		IResource cu = getFixture("ScopeWithNoServicesComponent");
 		IMarker[] markers = cu.findMarkers(DS_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
 		assertEquals(1, markers.length);
-		assertEquals("Scope is not applicable to component with no registered services.", markers[0].getAttribute(IMarker.MESSAGE));
+		assertEquals(markers[0].getAttribute(IMarker.MESSAGE), "Scope is not applicable to component with no registered services.");
 	}
 
 
@@ -83,7 +83,7 @@ public class ErrorProjectTest extends CompilationParticipantTest {
 		IMarker[] markers = cu.findMarkers(DS_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
 		assertEquals(2, markers.length);
 		for (IMarker marker : markers) {
-			assertEquals("Factory or immediate component cannot be a service factory.", marker.getAttribute(IMarker.MESSAGE));
+			assertEquals(marker.getAttribute(IMarker.MESSAGE), "Factory or immediate component cannot be a service factory.");
 		}
 	}
 
@@ -92,7 +92,7 @@ public class ErrorProjectTest extends CompilationParticipantTest {
 		IResource cu = getFixture("ServiceFactoryWithScopeComponent");
 		IMarker[] markers = cu.findMarkers(DS_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
 		assertEquals(1, markers.length);
-		assertEquals("Property 'servicefactory' is ignored when non-default scope is specified.", markers[0].getAttribute(IMarker.MESSAGE));
+		assertEquals(markers[0].getAttribute(IMarker.MESSAGE), "Property 'servicefactory' is ignored when non-default scope is specified.");
 	}
 
 	@Test
@@ -100,6 +100,6 @@ public class ErrorProjectTest extends CompilationParticipantTest {
 		IResource cu = getFixture("ServiceFactoryWithNoServicesComponent");
 		IMarker[] markers = cu.findMarkers(DS_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
 		assertEquals(1, markers.length);
-		assertEquals("Component that does not register services cannot be a service factory.", markers[0].getAttribute(IMarker.MESSAGE));
+		assertEquals(markers[0].getAttribute(IMarker.MESSAGE), "Component that does not register services cannot be a service factory.");
 	}
 }

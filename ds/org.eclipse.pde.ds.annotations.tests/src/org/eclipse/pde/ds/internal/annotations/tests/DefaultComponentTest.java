@@ -68,8 +68,8 @@ public class DefaultComponentTest extends AnnotationProcessorTest {
 		assertNull(reference.getReferencePolicy());
 		assertNull(reference.getXMLAttributeValue("policy-option"));
 		assertNull(reference.getReferenceCardinality());
-		assertEquals("setExecutor", reference.getReferenceBind());
-		assertEquals("unsetExecutor", reference.getReferenceUnbind());
+		assertEquals(reference.getReferenceBind(), "setExecutor");
+		assertEquals(reference.getReferenceUnbind(), "unsetExecutor");
 		assertNull(reference.getReferenceTarget());
 		assertNull(reference.getXMLAttributeValue("updated"));
 	}

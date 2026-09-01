@@ -23,7 +23,7 @@ public class ExtendedReferenceMethodComponentTest extends AnnotationProcessorTes
 
 	@Test
 	public void componentNamespace() throws Exception {
-		assertEquals("http://www.osgi.org/xmlns/scr/v1.3.0", dsModel.getDSComponent().getXMLAttributeValue("xmlns:" + dsModel.getDSComponent().getNamespacePrefix()));
+		assertEquals(dsModel.getDSComponent().getXMLAttributeValue("xmlns:" + dsModel.getDSComponent().getNamespacePrefix()), "http://www.osgi.org/xmlns/scr/v1.3.0");
 	}
 
 	@Test
