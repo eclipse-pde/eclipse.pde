@@ -13,15 +13,15 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.bundle;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.BundleSymbolicNameHeader;
 import org.eclipse.text.edits.TextEdit;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.Constants;
 
 public class BundleSymbolicNameTestCase extends BundleModelTestCase {
@@ -124,7 +124,7 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 
 		IManifestHeader header = fModel.getBundle().getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
 		assertNotNull(header);
-		assertEquals("Bundle-SymbolicName: com.example.abc\n", header.write());
+		assertEquals(header.write(), "Bundle-SymbolicName: com.example.abc\n"); //$NON-NLS-1$
 
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
@@ -176,7 +176,7 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 		int pos = fDocument.getLineOffset(2);
 		int length = fDocument.getLineLength(2);
 
-		assertEquals("Bundle-SymbolicName: com.example.core\n", fDocument.get(pos, length));
+		assertEquals(fDocument.get(pos, length), "Bundle-SymbolicName: com.example.core\n"); //$NON-NLS-1$
 	}
 
 	@Test
@@ -216,7 +216,7 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 
 		int pos = fDocument.getLineOffset(2);
 		int length = fDocument.getLineLength(2);
-		assertEquals("Bundle-SymbolicName: com.example.xyz;singleton:=true\n", fDocument.get(pos, length));
+		assertEquals(fDocument.get(pos, length), "Bundle-SymbolicName: com.example.xyz;singleton:=true\n"); //$NON-NLS-1$
 	}
 
 	@Test
@@ -241,7 +241,7 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 
 		int pos = fDocument.getLineOffset(2);
 		int length = fDocument.getLineLength(2);
-		assertEquals("Bundle-SymbolicName: com.example.xyz\n", fDocument.get(pos, length));
+		assertEquals(fDocument.get(pos, length), "Bundle-SymbolicName: com.example.xyz\n"); //$NON-NLS-1$
 	}
 
 }

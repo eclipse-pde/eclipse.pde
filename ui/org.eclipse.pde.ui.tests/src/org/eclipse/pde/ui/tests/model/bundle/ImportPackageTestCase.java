@@ -13,16 +13,16 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.bundle;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.ImportPackageHeader;
 import org.eclipse.pde.internal.core.text.bundle.ImportPackageObject;
 import org.eclipse.pde.internal.core.text.bundle.PackageObject;
 import org.eclipse.text.edits.TextEdit;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.Constants;
 
 public class ImportPackageTestCase extends PackageHeaderTestCase {
@@ -74,7 +74,7 @@ public class ImportPackageTestCase extends PackageHeaderTestCase {
 
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineLength(3);
-		assertEquals(fHeaderName + ": org.osgi.framework;resolution:=optional\n", fDocument.get(pos, length));
+		assertEquals(fHeaderName + ": org.osgi.framework;resolution:=optional\n", fDocument.get(pos, length)); //$NON-NLS-1$
 	}
 
 	@Test
@@ -102,7 +102,7 @@ public class ImportPackageTestCase extends PackageHeaderTestCase {
 
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineLength(3);
-		assertEquals(fHeaderName + ": org.osgi.framework\n", fDocument.get(pos, length));
+		assertEquals(fHeaderName + ": org.osgi.framework\n", fDocument.get(pos, length)); //$NON-NLS-1$
 	}
 
 	@Override

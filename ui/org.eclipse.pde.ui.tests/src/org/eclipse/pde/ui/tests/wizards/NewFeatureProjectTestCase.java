@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.wizards;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -33,7 +33,7 @@ import org.eclipse.pde.internal.ui.wizards.feature.CreateFeatureProjectOperation
 import org.eclipse.pde.internal.ui.wizards.feature.FeatureData;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class NewFeatureProjectTestCase extends NewProjectTestCase {
 
@@ -66,7 +66,7 @@ public class NewFeatureProjectTestCase extends NewProjectTestCase {
 		IPath path = Platform.getLocation();
 		IRunnableWithProgress op;
 		if ((patch && !(modelObject instanceof IFeatureModel)) || (!patch && modelObject != null && !(modelObject instanceof IPluginBase[]))) {
-			fail("Unaccepted model object passed..." + modelObject);
+			fail("Unaccepted model object passed..." + modelObject); //$NON-NLS-1$
 		}
 
 		if (patch) {
@@ -79,7 +79,7 @@ public class NewFeatureProjectTestCase extends NewProjectTestCase {
 	}
 
 	private void verifyFeatureNature() {
-		assertTrue("Verifying feature nature...", hasNature(FeatureProject.NATURE));
+		assertTrue(hasNature(FeatureProject.NATURE), "Verifying feature nature..."); //$NON-NLS-1$
 	}
 
 	@Test
@@ -120,7 +120,7 @@ public class NewFeatureProjectTestCase extends NewProjectTestCase {
 	public void testSimpleFeature() throws Exception {
 		createFeature(DEFAULT_FEATURE_DATA, false, null);
 		verifyProjectExistence();
-		assertFalse("Testing simple project for no java nature...", hasNature(JavaCore.NATURE_ID));
+		assertFalse(hasNature(JavaCore.NATURE_ID), "Testing simple project for no java nature..."); //$NON-NLS-1$
 	}
 
 	@Test
@@ -130,7 +130,7 @@ public class NewFeatureProjectTestCase extends NewProjectTestCase {
 		fd.library = library;
 		createFeature(fd, false, null);
 		verifyProjectExistence();
-		assertTrue("Testing for existing java nature...", hasNature(JavaCore.NATURE_ID));
+		assertTrue(hasNature(JavaCore.NATURE_ID), "Testing for existing java nature..."); //$NON-NLS-1$
 	}
 
 	/*public void testPluginFeature() {

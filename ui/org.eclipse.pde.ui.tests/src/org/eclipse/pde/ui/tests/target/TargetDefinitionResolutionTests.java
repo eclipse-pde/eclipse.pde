@@ -13,11 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -37,7 +37,7 @@ import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.eclipse.pde.core.target.TargetBundle;
 import org.eclipse.pde.internal.core.target.IUBundleContainer;
 import org.eclipse.pde.ui.tests.PDETestCase;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 
@@ -47,24 +47,24 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 
 		ITargetLocation directoryContainer = getTargetService().newDirectoryLocation("***SHOULD NOT EXIST***");
 		IStatus status = directoryContainer.resolve(definition, null);
-		assertEquals("Incorrect severity", IStatus.ERROR, status.getSeverity());
+		assertEquals(IStatus.ERROR, status.getSeverity(), "Incorrect severity"); //$NON-NLS-1$
 
 		ITargetLocation profileContainer = getTargetService().newProfileLocation("***SHOULD NOT EXIST***", null);
 		status = directoryContainer.resolve(definition, null);
-		assertEquals("Incorrect severity", IStatus.ERROR, status.getSeverity());
+		assertEquals(IStatus.ERROR, status.getSeverity(), "Incorrect severity"); //$NON-NLS-1$
 
 		ITargetLocation featureContainer = getTargetService().newFeatureLocation("***SHOULD NOT EXIST***",
 				"org.eclipse.jdt", "");
 		status = directoryContainer.resolve(definition, null);
-		assertEquals("Incorrect severity", IStatus.ERROR, status.getSeverity());
+		assertEquals(IStatus.ERROR, status.getSeverity(), "Incorrect severity"); //$NON-NLS-1$
 
 		definition.setTargetLocations(new ITargetLocation[] { directoryContainer, profileContainer, featureContainer });
 		status = definition.resolve(null);
 		IStatus[] children = status.getChildren();
-		assertEquals("Wrong number of children", 3, children.length);
+		assertEquals(3, children.length, "Wrong number of children"); //$NON-NLS-1$
 		for (IStatus element : children) {
-			assertEquals("Incorrect severity", IStatus.ERROR, element.getSeverity());
-			assertFalse("Failed resolution should be single status", element.isMultiStatus());
+			assertEquals(IStatus.ERROR, element.getSeverity(), "Incorrect severity"); //$NON-NLS-1$
+			assertFalse(element.isMultiStatus(), "Failed resolution should be single status"); //$NON-NLS-1$
 		}
 	}
 
@@ -83,58 +83,58 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 	public void testResolutionCaching() throws Exception {
 		ITargetDefinition definition = getNewTarget();
 		assertTrue(definition.isResolved());
-		assertNotNull("Bundles not available when resolved", definition.getBundles());
-		assertEquals("Wrong number of bundles", 0, definition.getBundles().length);
+		assertNotNull(definition.getBundles(), "Bundles not available when resolved"); //$NON-NLS-1$
+		assertEquals(0, definition.getBundles().length, "Wrong number of bundles"); //$NON-NLS-1$
 
 		// Resolving with errors should stay resolved, solving a definition
 		// should resolve all targets
 		ITargetLocation brokenContainer = getTargetService().newDirectoryLocation("***SHOULD NOT EXIST***");
 		assertFalse(brokenContainer.isResolved());
-		assertNull("Bundles available when unresolved", brokenContainer.getBundles());
+		assertNull(brokenContainer.getBundles(), "Bundles available when unresolved"); //$NON-NLS-1$
 		definition.setTargetLocations(new ITargetLocation[] { brokenContainer });
 		assertFalse(definition.isResolved());
-		assertNull("Bundles available when unresolved", definition.getBundles());
+		assertNull(definition.getBundles(), "Bundles available when unresolved"); //$NON-NLS-1$
 		IStatus status = definition.resolve(null);
-		assertEquals("Incorrect Severity", IStatus.ERROR, status.getSeverity());
+		assertEquals(IStatus.ERROR, status.getSeverity(), "Incorrect Severity"); //$NON-NLS-1$
 		assertTrue(brokenContainer.isResolved());
-		assertNotNull("Bundles not available when resolved", brokenContainer.getBundles());
+		assertNotNull(brokenContainer.getBundles(), "Bundles not available when resolved"); //$NON-NLS-1$
 		assertTrue(definition.isResolved());
-		assertNotNull("Bundles not available when resolved", definition.getBundles());
+		assertNotNull(definition.getBundles(), "Bundles not available when resolved"); //$NON-NLS-1$
 
 		// Adding an unresolved container should make the target unresolved,
 		// resolving the container should resolve the target
 		ITargetLocation profileContainer = getTargetService().newProfileLocation(TargetPlatform.getDefaultLocation(),
 				null);
 		assertFalse(profileContainer.isResolved());
-		assertNull("Bundles available when unresolved", profileContainer.getBundles());
+		assertNull(profileContainer.getBundles(), "Bundles available when unresolved"); //$NON-NLS-1$
 		definition.setTargetLocations(new ITargetLocation[] { brokenContainer, profileContainer });
 		assertFalse(definition.isResolved());
-		assertNull("Bundles available when unresolved", definition.getBundles());
+		assertNull(definition.getBundles(), "Bundles available when unresolved"); //$NON-NLS-1$
 		status = profileContainer.resolve(definition, null);
-		assertEquals("Incorrect Severity", IStatus.OK, status.getSeverity());
-		assertEquals("Incorrect Severity", IStatus.ERROR, definition.getStatus().getSeverity());
+		assertEquals(IStatus.OK, status.getSeverity(), "Incorrect Severity"); //$NON-NLS-1$
+		assertEquals(IStatus.ERROR, definition.getStatus().getSeverity(), "Incorrect Severity"); //$NON-NLS-1$
 		assertTrue(profileContainer.isResolved());
-		assertNotNull("Bundles not available when resolved", profileContainer.getBundles());
+		assertNotNull(profileContainer.getBundles(), "Bundles not available when resolved"); //$NON-NLS-1$
 		assertTrue(definition.isResolved());
-		assertNotNull("Bundles not available when resolved", definition.getBundles());
+		assertNotNull(definition.getBundles(), "Bundles not available when resolved"); //$NON-NLS-1$
 
 		// Having a bundle status does not prevent the resolution, adding a
 		// resolved container should leave the target resolved
 		ITargetLocation includesContainer = getTargetService().newProfileLocation(TargetPlatform.getDefaultLocation(),
 				null);
 		assertFalse(includesContainer.isResolved());
-		assertNull("Bundles available when unresolved", includesContainer.getBundles());
+		assertNull(includesContainer.getBundles(), "Bundles available when unresolved"); //$NON-NLS-1$
 		status = includesContainer.resolve(definition, null);
 		assertTrue(includesContainer.isResolved());
-		assertNotNull("Bundles not available when resolved", includesContainer.getBundles());
-		assertEquals("Incorrect Severity", IStatus.OK, status.getSeverity());
-		assertEquals("Incorrect Severity", IStatus.OK, includesContainer.getStatus().getSeverity());
+		assertNotNull(includesContainer.getBundles(), "Bundles not available when resolved"); //$NON-NLS-1$
+		assertEquals(IStatus.OK, status.getSeverity(), "Incorrect Severity"); //$NON-NLS-1$
+		assertEquals(IStatus.OK, includesContainer.getStatus().getSeverity(), "Incorrect Severity"); //$NON-NLS-1$
 		definition.setTargetLocations(new ITargetLocation[] { brokenContainer, profileContainer });
 		definition.setIncluded(new NameVersionDescriptor[] { new NameVersionDescriptor("bogus", null),
 				new NameVersionDescriptor("org.eclipse.platform", "666.666.666") });
 		assertTrue(definition.isResolved());
-		assertEquals("Incorrect Severity", IStatus.ERROR, definition.getStatus().getSeverity());
-		assertNotNull("Bundles not available when resolved", definition.getBundles());
+		assertEquals(IStatus.ERROR, definition.getStatus().getSeverity(), "Incorrect Severity"); //$NON-NLS-1$
+		assertNotNull(definition.getBundles(), "Bundles not available when resolved"); //$NON-NLS-1$
 
 		// Setting includes, etc. should not unresolve the target
 		definition.setIncluded(null);
@@ -168,7 +168,7 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 
 		definition.setTargetLocations(null);
 		assertTrue(definition.isResolved());
-		assertNotNull("Bundles not available when resolved", definition.getBundles());
+		assertNotNull(definition.getBundles(), "Bundles not available when resolved"); //$NON-NLS-1$
 
 	}
 
@@ -247,7 +247,7 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 			IStatus[] children = status.getChildren();
 			assertEquals(1, children.length);
 			assertEquals(ITargetPlatformService.STATUS_MISSING_FROM_TARGET_DEFINITION, children[0].getCode());
-			assertEquals("bundle.a", children[0].getMessage());
+			assertEquals(children[0].getMessage(), "bundle.a"); //$NON-NLS-1$
 		} finally {
 			resetTargetPlatform();
 		}
@@ -288,7 +288,7 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 			IStatus[] children = status.getChildren();
 			assertEquals(1, children.length);
 			assertEquals(ITargetPlatformService.STATUS_MISSING_FROM_TARGET_PLATFORM, children[0].getCode());
-			assertEquals("bundle.a", children[0].getMessage());
+			assertEquals(children[0].getMessage(), "bundle.a"); //$NON-NLS-1$
 		} finally {
 			resetTargetPlatform();
 		}
@@ -397,17 +397,17 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		definition.setIncluded(new NameVersionDescriptor[]{new NameVersionDescriptor("bogus",null),new NameVersionDescriptor("org.eclipse.platform","666.666.666")});
 		definition.resolve(null);
 
-		assertNotNull("Target didn't resolve",definition.getBundles());
-		assertEquals("Wrong number of included bundles", 2, definition.getBundles().length);
+		assertNotNull(definition.getBundles(), "Target didn't resolve"); //$NON-NLS-1$
+		assertEquals(2, definition.getBundles().length, "Wrong number of included bundles"); //$NON-NLS-1$
 
 		IStatus definitionStatus = definition.getStatus();
-		assertEquals("Wrong severity", IStatus.ERROR, definitionStatus.getSeverity());
+		assertEquals(IStatus.ERROR, definitionStatus.getSeverity(), "Wrong severity"); //$NON-NLS-1$
 
 		IStatus[] children = definitionStatus.getChildren();
-		assertEquals("Wrong number of statuses", 2, children.length);
-		assertEquals("Wrong severity", IStatus.ERROR, children[0].getSeverity());
+		assertEquals(2, children.length, "Wrong number of statuses"); //$NON-NLS-1$
+		assertEquals(IStatus.ERROR, children[0].getSeverity(), "Wrong severity"); //$NON-NLS-1$
 		assertEquals(TargetBundle.STATUS_PLUGIN_DOES_NOT_EXIST, children[0].getCode());
-		assertEquals("Wrong severity", IStatus.ERROR, children[1].getSeverity());
+		assertEquals(IStatus.ERROR, children[1].getSeverity(), "Wrong severity"); //$NON-NLS-1$
 		assertEquals(TargetBundle.STATUS_VERSION_DOES_NOT_EXIST, children[1].getCode());
 
 		// Check that removing the included bundles and resolving removes the errors.
@@ -446,16 +446,16 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		TargetBundle[] bundles = definition.getBundles();
 		List<String> bundleNames = Stream.of(bundles).map(bundle -> bundle.getBundleInfo().getSymbolicName()).toList();
 
-		assertNotNull("Target didn't resolve",bundles);
+		assertNotNull(bundles, "Target didn't resolve"); //$NON-NLS-1$
 
 		IStatus definitionStatus = definition.getStatus();
-		assertEquals("Wrong severity", IStatus.OK, definitionStatus.getSeverity());
+		assertEquals(IStatus.OK, definitionStatus.getSeverity(), "Wrong severity"); //$NON-NLS-1$
 
 		// Ensure that all source bundles know what they provide source for.
 		for (TargetBundle bundle : bundles) {
 			if (bundle.isSourceBundle()){
 				BundleInfo info = bundle.getSourceTarget();
-				assertNotNull("Missing source target for " + bundle,info);
+				assertNotNull(info, "Missing source target for " + bundle); //$NON-NLS-1$
 			} else {
 				assertNull(bundle.getSourceTarget());
 			}
@@ -467,11 +467,9 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 				return;
 			}
 			if (bundle.isSourceBundle()) {
-				assertEquals("Incorrect source target", bundle.getBundleInfo().getSymbolicName(),
-						bundle.getSourceTarget().getSymbolicName() + ".source");
+				assertEquals(bundle.getBundleInfo().getSymbolicName(), bundle.getSourceTarget().getSymbolicName() + ".source", "Incorrect source target"); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
-				assertTrue("Missing source for bundle " + bundle.getBundleInfo().getSymbolicName(),
-						bundleNames.contains(bundle.getBundleInfo().getSymbolicName() + ".source"));
+				assertTrue(bundleNames.contains(bundle.getBundleInfo().getSymbolicName() + ".source"), "Missing source for bundle " + bundle.getBundleInfo().getSymbolicName()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}

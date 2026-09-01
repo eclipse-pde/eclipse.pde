@@ -58,7 +58,7 @@ import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.ui.tests.runtime.TestUtils;
 import org.eclipse.pde.ui.tests.util.ProjectUtils.CoreConsumer;
-import org.junit.rules.TestRule;
+import org.junit.jupiter.api.extension.Extension;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkUtil;
@@ -66,7 +66,7 @@ import org.osgi.framework.FrameworkUtil;
 public class TargetPlatformUtil {
 
 	public static final ITargetPlatformService TPS = PDECore.getDefault().acquireService(ITargetPlatformService.class);
-	public static final TestRule RESTORE_CURRENT_TARGET_DEFINITION_AFTER = TestUtils.getThrowingTestRule(
+	public static final Extension RESTORE_CURRENT_TARGET_DEFINITION_AFTER = TestUtils.getThrowingClassExtension(
 			TPS::getWorkspaceTargetDefinition, //
 			beforeTarget -> {
 				if (beforeTarget != TPS.getWorkspaceTargetDefinition()) {

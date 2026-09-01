@@ -14,8 +14,10 @@
  *******************************************************************************/
 package org.eclipse.pde.core.tests.internal.classpath;
 
+import org.junit.jupiter.api.extension.Extension;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Arrays;
 import java.util.List;
@@ -44,11 +46,8 @@ import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.ui.tests.runtime.TestUtils;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
 import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestRule;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
@@ -56,17 +55,17 @@ import org.osgi.framework.FrameworkUtil;
 
 public class ClasspathResolutionTest {
 
-	@ClassRule
-	public static final TestRule RESTORE_TARGET_DEFINITION = TargetPlatformUtil.RESTORE_CURRENT_TARGET_DEFINITION_AFTER;
+	@RegisterExtension
+	public static final Extension RESTORE_TARGET_DEFINITION = TargetPlatformUtil.RESTORE_CURRENT_TARGET_DEFINITION_AFTER;
 
-	@ClassRule
-	public static final TestRule CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
-	@Rule
-	public final TestRule deleteCreatedTestProjectsAfter = ProjectUtils.DELETE_CREATED_WORKSPACE_PROJECTS_AFTER;
+	@RegisterExtension
+	public static final Extension CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
+	@RegisterExtension
+	public final Extension deleteCreatedTestProjectsAfter = ProjectUtils.DELETE_CREATED_WORKSPACE_PROJECTS_AFTER;
 
 	private static String jakartaAnnotationProviderBSN;
 
-	@BeforeClass
+	@BeforeAll
 	public static void getJavaxAnnotationProviderBSN() {
 		Bundle bundle = FrameworkUtil.getBundle(jakarta.annotation.PostConstruct.class);
 		jakartaAnnotationProviderBSN = bundle.getSymbolicName();
@@ -82,12 +81,12 @@ public class ClasspathResolutionTest {
 				.computeClasspathEntries(PDECore.getDefault().getModelManager().findModel(project), project);
 		for (IClasspathEntry entry : classpathEntries) {
 			if (entry.getPath().lastSegment().contains("org.w3c.dom.events")) {
-				fail(entry.getPath() + " erronesously present in container");
+				fail(entry.getPath() + " erronesously present in container"); //$NON-NLS-1$
 			}
 		}
 		for (IClasspathEntry entry : javaProject.getResolvedClasspath(false)) {
 			if (entry.getPath().lastSegment().contains("org.w3c.dom.events")) {
-				fail(entry.getPath() + " erronesously present in classpath");
+				fail(entry.getPath() + " erronesously present in classpath"); //$NON-NLS-1$
 			}
 		}
 		for (IMarker marker : project.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE)) {

@@ -13,17 +13,18 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.junit.jupiter.api.TestInfo;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.target.ITargetDefinition;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * Tests for target definitions.  The tested targets will be backed by a workspace file.
@@ -36,26 +37,26 @@ public class WorkspaceTargetDefinitionTests extends LocalTargetDefinitionTests {
 	private static final String PROJECT_NAME = "WorkspaceTargetDefinitionTests";
 
 	@Override
-	@Before
-	public void setUp() throws Exception {
-		super.setUp();
+	@BeforeEach
+	public void setUp(TestInfo testInfo) throws Exception {
+		super.setUp(testInfo);
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME);
 		if (!project.exists()){
 			project.create(null);
 		}
-		assertTrue("Could not create test project",project.exists());
+		assertTrue(project.exists(), "Could not create test project"); //$NON-NLS-1$
 		project.open(null);
-		assertTrue("Could not open test project", project.isOpen());
+		assertTrue(project.isOpen(), "Could not open test project"); //$NON-NLS-1$
 	}
 
 	@Override
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME);
 		if (project.exists()){
 			project.delete(true, null);
 		}
-		assertFalse("Could not delete test project",project.exists());
+		assertFalse(project.exists(), "Could not delete test project"); //$NON-NLS-1$
 		super.tearDown();
 	}
 

@@ -13,11 +13,15 @@
  *******************************************************************************/
 package org.eclipse.pde.core.tests.internal.core.builders;
 
+import java.nio.file.Files;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.api.extension.Extension;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import static java.util.Map.entry;
 import static org.eclipse.pde.ui.tests.util.TargetPlatformUtil.bundle;
 import static org.eclipse.pde.ui.tests.util.TargetPlatformUtil.version;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.osgi.framework.Constants.EXPORT_PACKAGE;
 import static org.osgi.framework.Constants.IMPORT_PACKAGE;
 import static org.osgi.framework.Constants.REQUIRE_BUNDLE;
@@ -39,12 +43,8 @@ import org.eclipse.pde.internal.core.builders.DependencyLoopFinder;
 import org.eclipse.pde.ui.tests.launcher.AbstractLaunchTest;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
 import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.rules.TestRule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link DependencyLoopFinder}, the engine behind the MANIFEST.MF
@@ -57,19 +57,19 @@ import org.junit.rules.TestRule;
  */
 public class DependencyLoopFinderTest {
 
-	@ClassRule
-	public static final TestRule RESTORE_TARGET_DEFINITION = TargetPlatformUtil.RESTORE_CURRENT_TARGET_DEFINITION_AFTER;
-	@ClassRule
-	public static final TestRule CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
+	@RegisterExtension
+	public static final Extension RESTORE_TARGET_DEFINITION = TargetPlatformUtil.RESTORE_CURRENT_TARGET_DEFINITION_AFTER;
+	@RegisterExtension
+	public static final Extension CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
 
-	@Rule
-	public TemporaryFolder folder = new TemporaryFolder();
+	@TempDir
+	public Path folder;
 
 	private Path tpJarDirectory;
 
-	@Before
+	@BeforeEach
 	public void setupBefore() throws IOException {
-		tpJarDirectory = folder.newFolder("TPJarDirectory").toPath();
+		tpJarDirectory = Files.createDirectory(folder.resolve("TPJarDirectory"));
 		// ensure the PluginModelManager (and therefore PluginRegistry) is initialized
 		PluginModelManager.getInstance().getState();
 	}
@@ -82,8 +82,8 @@ public class DependencyLoopFinderTest {
 				bundle("loop.b", "1.0.0", entry(REQUIRE_BUNDLE, "loop.c")), //
 				bundle("loop.c", "1.0.0"));
 
-		assertEquals(List.of(), loopSignatures("loop.a"));
-		assertEquals(List.of(), loopSignatures("loop.c"));
+		assertEquals(List.of(), loopSignatures("loop.a")); //$NON-NLS-1$
+		assertEquals(List.of(), loopSignatures("loop.c")); //$NON-NLS-1$
 	}
 
 	@Test
@@ -93,7 +93,7 @@ public class DependencyLoopFinderTest {
 				bundle("loop.a", "1.0.0", entry(REQUIRE_BUNDLE, "loop.b")), //
 				bundle("loop.b", "1.0.0", entry(REQUIRE_BUNDLE, "loop.a")));
 
-		assertEquals(List.of("loop.a -> loop.b"), loopSignatures("loop.a"));
+		assertEquals(List.of("loop.a -> loop.b"), loopSignatures("loop.a")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Test
@@ -104,7 +104,7 @@ public class DependencyLoopFinderTest {
 				bundle("loop.b", "1.0.0", entry(REQUIRE_BUNDLE, "loop.c")), //
 				bundle("loop.c", "1.0.0", entry(REQUIRE_BUNDLE, "loop.a")));
 
-		assertEquals(List.of("loop.a -> loop.b -> loop.c"), loopSignatures("loop.a"));
+		assertEquals(List.of("loop.a -> loop.b -> loop.c"), loopSignatures("loop.a")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Test
@@ -115,7 +115,7 @@ public class DependencyLoopFinderTest {
 				bundle("loop.a", "1.0.0", entry(REQUIRE_BUNDLE, "loop.r")), //
 				bundle("loop.b", "1.0.0", entry(REQUIRE_BUNDLE, "loop.r")));
 
-		assertEquals(List.of("loop.r -> loop.a", "loop.r -> loop.b"), loopSignatures("loop.r"));
+		assertEquals(List.of("loop.r -> loop.a", "loop.r -> loop.b"), loopSignatures("loop.r")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	/**
@@ -133,7 +133,7 @@ public class DependencyLoopFinderTest {
 						entry(EXPORT_PACKAGE, "loop.b.pack"), //
 						entry(IMPORT_PACKAGE, "loop.a.pack")));
 
-		assertEquals(List.of("loop.a -> loop.b"), loopSignatures("loop.a"));
+		assertEquals(List.of("loop.a -> loop.b"), loopSignatures("loop.a")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -149,7 +149,7 @@ public class DependencyLoopFinderTest {
 						entry(EXPORT_PACKAGE, "loop.a.pack")), //
 				bundle("loop.b", "1.0.0", entry(IMPORT_PACKAGE, "loop.a.pack")));
 
-		assertEquals(List.of("loop.a -> loop.b"), loopSignatures("loop.a"));
+		assertEquals(List.of("loop.a -> loop.b"), loopSignatures("loop.a")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -167,7 +167,7 @@ public class DependencyLoopFinderTest {
 						entry(EXPORT_PACKAGE, "loop.shared.pack" + version("1.0.0")), //
 						entry(REQUIRE_BUNDLE, "loop.a")));
 
-		assertEquals(List.of(), loopSignatures("loop.a"));
+		assertEquals(List.of(), loopSignatures("loop.a")); //$NON-NLS-1$
 	}
 
 	/**
@@ -194,8 +194,8 @@ public class DependencyLoopFinderTest {
 				bundle("loop.b", "1.0.0", entry(REQUIRE_BUNDLE, "loop.a")), //
 				bundle("loop.d", "1.0.0", entry(REQUIRE_BUNDLE, "loop.b")));
 
-		assertEquals(List.of("loop.r -> loop.a", "loop.r -> loop.d -> loop.b -> loop.a"),
-				loopSignatures("loop.r"));
+		assertEquals(List.of("loop.r -> loop.a", "loop.r -> loop.d -> loop.b -> loop.a"), //$NON-NLS-1$ //$NON-NLS-2$
+				loopSignatures("loop.r")); //$NON-NLS-1$
 	}
 
 	/**
@@ -217,8 +217,8 @@ public class DependencyLoopFinderTest {
 				bundle("loop.b", "1.0.0", entry(REQUIRE_BUNDLE, "loop.a")), //
 				bundle("loop.d", "1.0.0", entry(REQUIRE_BUNDLE, "loop.b")));
 
-		assertEquals(List.of("loop.r -> loop.a", "loop.r -> loop.d -> loop.b -> loop.a"),
-				loopSignatures("loop.r"));
+		assertEquals(List.of("loop.r -> loop.a", "loop.r -> loop.d -> loop.b -> loop.a"), //$NON-NLS-1$ //$NON-NLS-2$
+				loopSignatures("loop.r")); //$NON-NLS-1$
 	}
 
 	/**
@@ -234,7 +234,7 @@ public class DependencyLoopFinderTest {
 				bundle("loop.b", "1.0.0", entry(REQUIRE_BUNDLE, "loop.c")), //
 				bundle("loop.c", "1.0.0", entry(REQUIRE_BUNDLE, "loop.b")));
 
-		assertEquals(List.of("loop.r -> loop.a"), loopSignatures("loop.r"));
+		assertEquals(List.of("loop.r -> loop.a"), loopSignatures("loop.r")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	// --- utility methods ---
@@ -261,7 +261,7 @@ public class DependencyLoopFinderTest {
 
 	private static IPlugin plugin(String id) {
 		IPluginModelBase model = AbstractLaunchTest.findTargetModel(id, "1.0.0");
-		assertNotNull("expected target model for " + id, model);
+		assertNotNull(model, "expected target model for " + id); //$NON-NLS-1$
 		return (IPlugin) model.getPluginBase();
 	}
 }

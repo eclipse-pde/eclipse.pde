@@ -28,12 +28,14 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.function.ThrowingConsumer;
 import org.junit.jupiter.api.function.ThrowingSupplier;
-import org.junit.rules.TestRule;
-import org.junit.runners.model.MultipleFailureException;
-import org.junit.runners.model.Statement;
+import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.Extension;
 
 /**
  * Utility methods for JUnit tests.
@@ -46,7 +48,7 @@ public class TestUtils {
 	 */
 	public static void cleanUp(String owner) {
 		// Ensure that the Thread.interrupted() flag didn't leak.
-		Assert.assertFalse("The main thread should not be interrupted at the end of a test", Thread.interrupted());
+		Assertions.assertFalse(Thread.interrupted(), "The main thread should not be interrupted at the end of a test"); //$NON-NLS-1$
 
 		// Wait for any outstanding jobs to finish. Protect against deadlock by
 		// terminating the wait after a timeout.
@@ -61,7 +63,7 @@ public class TestUtils {
 		}
 
 		// Ensure that the Thread.interrupted() flag didn't leak.
-		Assert.assertFalse("The main thread should not be interrupted at the end of a test", Thread.interrupted());
+		Assertions.assertFalse(Thread.interrupted(), "The main thread should not be interrupted at the end of a test"); //$NON-NLS-1$
 	}
 
 	/**
@@ -241,9 +243,8 @@ public class TestUtils {
 	}
 
 	/**
-	 * Returns a TestRule similar to {@link org.junit.rules.ExternalResource}
-	 * but allows throwing unchecked exception in its
-	 * {@link org.junit.rules.ExternalResource#after()} method. Furthermore
+	 * Returns a Jupiter extension similar to an external resource rule
+	 * but allows throwing exceptions in its after callback. Furthermore
 	 * {@code before} and {@code after} are expressed by the specified actions
 	 * that may throw exceptions and can share a state.
 	 *
@@ -252,30 +253,77 @@ public class TestUtils {
 	 * @param after
 	 *            the action performed after the evaluation (only called if the
 	 *            {@code before} action did not throw)
-	 * @return a rule performing the given before respectively after action
-	 *         before/after the evaluation of the base
+	 * @return an extension performing the given before and after actions
 	 * @param <S>
 	 *            the type of state shared between before and after action
 	 */
-	public static <S> TestRule getThrowingTestRule(ThrowingSupplier<S> before, ThrowingConsumer<S> after) {
-		return (base, description) -> new Statement() {
-			@Override
-			public void evaluate() throws Throwable {
-				S state = before.get();
-				List<Throwable> errors = new ArrayList<>();
-				try {
-					base.evaluate();
-				} catch (Throwable t) {
-					errors.add(t);
-				} finally {
-					try {
-						after.accept(state);
-					} catch (Throwable t) {
-						errors.add(t);
-					}
-				}
-				MultipleFailureException.assertEmpty(errors);
-			}
-		};
+	public static <S> Extension getThrowingClassExtension(ThrowingSupplier<S> before, ThrowingConsumer<S> after) {
+		return new ClassThrowingExtension<>(before, after);
+	}
+
+	public static <S> Extension getThrowingTestExtension(ThrowingSupplier<S> before, ThrowingConsumer<S> after) {
+		return new TestThrowingExtension<>(before, after);
+	}
+
+	private static final class ClassThrowingExtension<S> implements BeforeAllCallback, AfterAllCallback {
+		private final ThrowingSupplier<S> before;
+		private final ThrowingConsumer<S> after;
+		private S state;
+
+		private ClassThrowingExtension(ThrowingSupplier<S> before, ThrowingConsumer<S> after) {
+			this.before = before;
+			this.after = after;
+		}
+
+		@Override
+		public void beforeAll(org.junit.jupiter.api.extension.ExtensionContext context) throws Exception {
+			state = get(before);
+		}
+
+		@Override
+		public void afterAll(org.junit.jupiter.api.extension.ExtensionContext context) throws Exception {
+			accept(after, state);
+		}
+	}
+
+	private static final class TestThrowingExtension<S> implements BeforeEachCallback, AfterEachCallback {
+		private final ThrowingSupplier<S> before;
+		private final ThrowingConsumer<S> after;
+		private S state;
+
+		private TestThrowingExtension(ThrowingSupplier<S> before, ThrowingConsumer<S> after) {
+			this.before = before;
+			this.after = after;
+		}
+
+		@Override
+		public void beforeEach(org.junit.jupiter.api.extension.ExtensionContext context) throws Exception {
+			state = get(before);
+		}
+
+		@Override
+		public void afterEach(org.junit.jupiter.api.extension.ExtensionContext context) throws Exception {
+			accept(after, state);
+		}
+	}
+
+	private static <S> S get(ThrowingSupplier<S> supplier) throws Exception {
+		try {
+			return supplier.get();
+		} catch (Exception e) {
+			throw e;
+		} catch (Throwable e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private static <S> void accept(ThrowingConsumer<S> consumer, S state) throws Exception {
+		try {
+			consumer.accept(state);
+		} catch (Exception e) {
+			throw e;
+		} catch (Throwable e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

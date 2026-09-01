@@ -13,18 +13,18 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.bundle;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.core.text.bundle.BundleTextChangeListener;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public abstract class BundleModelTestCase {
 
@@ -37,7 +37,7 @@ public abstract class BundleModelTestCase {
 		fHeaderName = headerName;
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		fDocument = new Document();
 	}
@@ -51,14 +51,14 @@ public abstract class BundleModelTestCase {
 			fModel = new BundleModel(fDocument, false);
 			fModel.load();
 			if (!fModel.isLoaded() || !fModel.isValid()) {
-				fail("model cannot be loaded");
+				fail("model cannot be loaded"); //$NON-NLS-1$
 			}
 			if (addListener) {
 				fListener = new BundleTextChangeListener(fModel.getDocument());
 				fModel.addModelChangedListener(fListener);
 			}
 		} catch (CoreException e) {
-			fail("model cannot be loaded");
+			fail("model cannot be loaded"); //$NON-NLS-1$
 		}
 	}
 

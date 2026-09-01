@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.xml;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -47,8 +47,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ErrorEditorPart;
 import org.eclipse.ui.texteditor.spelling.SpellingAnnotation;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test cases for ensuring the source page in Manifest Editor for plug-in.xml
@@ -63,7 +63,7 @@ public class ManifestEditorSpellCheckTestCase extends XMLModelTestCase {
 	private static final String EDITOR_ID = "org.eclipse.pde.ui.manifestEditor";
 
 	@Override
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
@@ -142,7 +142,7 @@ public class ManifestEditorSpellCheckTestCase extends XMLModelTestCase {
 		if (fEditor instanceof ErrorEditorPart errorpart) {
 			IStatus error = errorpart.getError();
 			if (error == null) {
-				fail("failed to open editor");
+				fail("failed to open editor"); //$NON-NLS-1$
 			}
 			Throwable exception = error.getException();
 			if (exception != null) {

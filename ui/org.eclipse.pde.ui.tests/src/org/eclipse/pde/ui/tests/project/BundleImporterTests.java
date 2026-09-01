@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.project;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 
@@ -26,7 +26,7 @@ import org.eclipse.pde.internal.core.project.BundleProjectService;
 import org.eclipse.team.core.ScmUrlImportDescription;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.core.importing.provisional.IBundleImporter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for bundle importer extensions.
@@ -54,7 +54,7 @@ public class BundleImporterTests {
 		ScmUrlImportDescription[] descriptions = descMap.get(importer);
 		assertEquals(1, descriptions.length);
 		ScmUrlImportDescription description = descriptions[0];
-		assertTrue("Incorrect URL Length: " + description.getUrl(),description.getUrl().length() >= expectedURL.length());
+		assertTrue(description.getUrl().length() >= expectedURL.length(), "Incorrect URL Length: " + description.getUrl()); //$NON-NLS-1$
 		assertEquals(expectedURL,description.getUrl().substring(0,expectedURL.length()));
 		assertEquals(bundleId, description.getProject());
 		assertTrue(description.getProperty(BundleProjectService.PLUGIN) instanceof IPluginModelBase);
@@ -70,7 +70,7 @@ public class BundleImporterTests {
 		IBundleImporter[] importers = Team.getBundleImporters();
 		assertEquals(1, importers.length);
 		assertEquals(CVS_IMPORTER, importers[0].getId());
-		assertEquals("CVS Bundle Importer", importers[0].getName());
+		assertEquals(importers[0].getName(), "CVS Bundle Importer"); //$NON-NLS-1$
 	}
 
 }

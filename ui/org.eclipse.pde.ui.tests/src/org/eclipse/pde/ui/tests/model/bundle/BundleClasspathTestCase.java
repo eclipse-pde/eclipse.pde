@@ -13,12 +13,12 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.bundle;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.BundleClasspathHeader;
 import org.eclipse.text.edits.TextEdit;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.Constants;
 
 public class BundleClasspathTestCase extends MultiLineHeaderTestCase {
@@ -51,7 +51,7 @@ public class BundleClasspathTestCase extends MultiLineHeaderTestCase {
 
 		int pos = fDocument.getLineOffset(4);
 		int length = fDocument.getLineLength(4);
-		assertEquals(" com.example.xyz\n", fDocument.get(pos, length));
+		assertEquals(fDocument.get(pos, length), " com.example.xyz\n"); //$NON-NLS-1$
 	}
 
 	@Test
@@ -79,7 +79,7 @@ public class BundleClasspathTestCase extends MultiLineHeaderTestCase {
 
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineLength(3);
-		assertEquals(fHeaderName + ": com.example.xyz\n", fDocument.get(pos, length));
+		assertEquals(fHeaderName + ": com.example.xyz\n", fDocument.get(pos, length)); //$NON-NLS-1$
 	}
 
 	@Test

@@ -13,14 +13,14 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.bundle;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.BundleNameHeader;
 import org.eclipse.text.edits.TextEdit;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.Constants;
 
 public class BundleNameTestCase extends BundleModelTestCase {
@@ -42,7 +42,7 @@ public class BundleNameTestCase extends BundleModelTestCase {
 
 		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
 		assertNotNull(header);
-		assertEquals(((BundleNameHeader) header).getBundleName(), "Bundle Name");
+		assertEquals(((BundleNameHeader) header).getBundleName(), "Bundle Name"); //$NON-NLS-1$
 	}
 
 	@Test
@@ -68,7 +68,7 @@ public class BundleNameTestCase extends BundleModelTestCase {
 
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineLength(3);
-		assertEquals(fHeaderName + ": Bundle Name\n", fDocument.get(pos, length));
+		assertEquals(fHeaderName + ": Bundle Name\n", fDocument.get(pos, length)); //$NON-NLS-1$
 	}
 
 	@Test
@@ -96,6 +96,6 @@ public class BundleNameTestCase extends BundleModelTestCase {
 
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineLength(3);
-		assertEquals(fHeaderName + ": Bundle Name\n", fDocument.get(pos, length));
+		assertEquals(fHeaderName + ": Bundle Name\n", fDocument.get(pos, length)); //$NON-NLS-1$
 	}
 }

@@ -13,10 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.bundle;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public abstract class MultiLineHeaderTestCase extends BundleModelTestCase {
 

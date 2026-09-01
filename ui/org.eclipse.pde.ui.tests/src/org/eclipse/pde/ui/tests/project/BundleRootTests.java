@@ -13,10 +13,12 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.project;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInfo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -33,9 +35,7 @@ import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.core.project.PDEProject;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestName;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.Version;
 
 /**
@@ -44,8 +44,12 @@ import org.osgi.framework.Version;
  */
 public class BundleRootTests {
 
-	@Rule
-	public TestName testName = new TestName();
+	@BeforeEach
+	void setUp(TestInfo testInfo) {
+		testName = testInfo.getTestMethod().orElseThrow().getName();
+	}
+
+	private String testName;
 
 	protected IBundleProjectService getBundleProjectService() {
 		return PDECore.getDefault().acquireService(IBundleProjectService.class);
@@ -58,10 +62,10 @@ public class BundleRootTests {
 	 * @exception CoreException on failure
 	 */
 	protected IProject createProject() throws CoreException {
-		String name = testName.getMethodName().toLowerCase().substring(4);
+		String name = testName.toLowerCase().substring(4);
 		name = "test." + name;
 		IProject proj = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
-		assertFalse("Project should not exist", proj.exists());
+		assertFalse(proj.exists(), "Project should not exist"); //$NON-NLS-1$
 		proj.create(null);
 		proj.open(null);
 		return proj;
@@ -74,10 +78,10 @@ public class BundleRootTests {
 	 * @exception CoreException on failure
 	 */
 	protected IBundleProjectDescription newProject() throws CoreException {
-		String name = testName.getMethodName().toLowerCase().substring(4);
+		String name = testName.toLowerCase().substring(4);
 		name = "test." + name;
 		IProject proj = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
-		assertFalse("Project should not exist", proj.exists());
+		assertFalse(proj.exists(), "Project should not exist"); //$NON-NLS-1$
 		IBundleProjectDescription description = getBundleProjectService().getDescription(proj);
 		description.setSymbolicName(proj.getName());
 		return description;
@@ -89,17 +93,17 @@ public class BundleRootTests {
 	@Test
 	public void testSetGetLocation() throws CoreException {
 		IProject project = createProject();
-		assertEquals("Bundle root unspecified - should be project itself", project, PDEProject.getBundleRoot(project));
+		assertEquals(project, PDEProject.getBundleRoot(project), "Bundle root unspecified - should be project itself"); //$NON-NLS-1$
 		// set to something
 		IFolder folder = project.getFolder(IPath.fromOSString("bundle/root"));
 		PDEProject.setBundleRoot(project, folder);
-		assertEquals("Wrong bundle root", folder, PDEProject.getBundleRoot(project));
+		assertEquals(folder, PDEProject.getBundleRoot(project), "Wrong bundle root"); //$NON-NLS-1$
 		// set to null
 		PDEProject.setBundleRoot(project, null);
-		assertEquals("Bundle root unspecified - should be project itself", project, PDEProject.getBundleRoot(project));
+		assertEquals(project, PDEProject.getBundleRoot(project), "Bundle root unspecified - should be project itself"); //$NON-NLS-1$
 		// set to empty project itself
 		PDEProject.setBundleRoot(project, project);
-		assertEquals("Bundle root unspecified - should be project itself", project, PDEProject.getBundleRoot(project));
+		assertEquals(project, PDEProject.getBundleRoot(project), "Bundle root unspecified - should be project itself"); //$NON-NLS-1$
 	}
 
 	/**
@@ -111,16 +115,16 @@ public class BundleRootTests {
 		IProject project = createProject();
 		IBundleProjectService service = getBundleProjectService();
 		IBundleProjectDescription description = service.getDescription(project);
-		assertNull("Bundle root unspecified - should be project itself (null)", description.getBundleRoot());
+		assertNull(description.getBundleRoot(), "Bundle root unspecified - should be project itself (null)"); //$NON-NLS-1$
 		// set to something
 		IFolder folder = project.getFolder(IPath.fromOSString("bundle/root"));
 		service.setBundleRoot(project, folder.getProjectRelativePath());
 		description = service.getDescription(project);
-		assertEquals("Wrong bundle root", folder.getProjectRelativePath(), description.getBundleRoot());
+		assertEquals(folder.getProjectRelativePath(), description.getBundleRoot(), "Wrong bundle root"); //$NON-NLS-1$
 		// set to null
 		service.setBundleRoot(project, null);
 		description = service.getDescription(project);
-		assertNull("Bundle root unspecified - should be project itself (null)", description.getBundleRoot());
+		assertNull(description.getBundleRoot(), "Bundle root unspecified - should be project itself (null)"); //$NON-NLS-1$
 	}
 
 	/**
@@ -128,9 +132,9 @@ public class BundleRootTests {
 	 */
 	@Test
 	public void testGetOnNonExistantProject() {
-		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(testName.getMethodName());
-		assertFalse("Project should not exist", project.exists());
-		assertEquals("Root location should be project root", project, PDEProject.getBundleRoot(project));
+		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(testName);
+		assertFalse(project.exists(), "Project should not exist"); //$NON-NLS-1$
+		assertEquals(project, PDEProject.getBundleRoot(project), "Root location should be project root"); //$NON-NLS-1$
 	}
 
 	/**
@@ -151,7 +155,7 @@ public class BundleRootTests {
 
 		ProjectCreationTests.waitForBuild();
 		IPluginModelBase model = PluginRegistry.findModel(project);
-		assertEquals("Wrong install location", project.getFolder(root).getLocation(), IPath.fromOSString(model.getInstallLocation()));
+		assertEquals(project.getFolder(root).getLocation(), IPath.fromOSString(model.getInstallLocation()), "Wrong install location"); //$NON-NLS-1$
 	}
 
 	/**
@@ -173,35 +177,35 @@ public class BundleRootTests {
 
 		IBundleProjectDescription d2 = getBundleProjectService().getDescription(project);
 
-		assertEquals("Wrong bundle root", root, d2.getBundleRoot());
-		assertEquals("Should be no activator", "org.eclipse.foo.SomeActivator", d2.getActivator());
+		assertEquals(root, d2.getBundleRoot(), "Wrong bundle root"); //$NON-NLS-1$
+		assertEquals("org.eclipse.foo.SomeActivator", d2.getActivator(), "Should be no activator"); //$NON-NLS-1$ //$NON-NLS-2$
 		IPath[] binIncludes = d2.getBinIncludes();
-		assertNull("Wrong number of entries on bin.includes", binIncludes);
+		assertNull(binIncludes, "Wrong number of entries on bin.includes"); //$NON-NLS-1$
 		IBundleClasspathEntry[] classpath = d2.getBundleClasspath();
-		assertNotNull("Wrong Bundle-Classpath", classpath);
-		assertEquals("Wrong number of Bundle-Classpath entries", 1, classpath.length);
-		assertEquals("Wrong Bundle-Classpath entry", cp1, classpath[0]);
-		assertEquals("Wrong Bundle-Name", project.getName(), d2.getBundleName());
-		assertNull("Wrong Bundle-Vendor", d2.getBundleVendor());
-		assertEquals("Wrong version", "1.0.0.qualifier", d2.getBundleVersion().toString());
-		assertEquals("Wrong default output folder", IPath.fromOSString("bin"), d2.getDefaultOutputFolder());
-		assertNull("Wrong execution environments", d2.getExecutionEnvironments());
-		assertNull("Wrong host", d2.getHost());
-		assertEquals("Wrong localization", nls, d2.getLocalization());
-		assertNull("Wrong project location URI", d2.getLocationURI());
+		assertNotNull(classpath, "Wrong Bundle-Classpath"); //$NON-NLS-1$
+		assertEquals(1, classpath.length, "Wrong number of Bundle-Classpath entries"); //$NON-NLS-1$
+		assertEquals(cp1, classpath[0], "Wrong Bundle-Classpath entry"); //$NON-NLS-1$
+		assertEquals(project.getName(), d2.getBundleName(), "Wrong Bundle-Name"); //$NON-NLS-1$
+		assertNull(d2.getBundleVendor(), "Wrong Bundle-Vendor"); //$NON-NLS-1$
+		assertEquals("1.0.0.qualifier", d2.getBundleVersion().toString(), "Wrong version"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(IPath.fromOSString("bin"), d2.getDefaultOutputFolder(), "Wrong default output folder"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNull(d2.getExecutionEnvironments(), "Wrong execution environments"); //$NON-NLS-1$
+		assertNull(d2.getHost(), "Wrong host"); //$NON-NLS-1$
+		assertEquals(nls, d2.getLocalization(), "Wrong localization"); //$NON-NLS-1$
+		assertNull(d2.getLocationURI(), "Wrong project location URI"); //$NON-NLS-1$
 		String[] natureIds = d2.getNatureIds();
-		assertEquals("Wrong number of natures", 2, natureIds.length);
-		assertEquals("Wrong nature", PluginProject.NATURE, natureIds[0]);
-		assertEquals("Wrong nature", JavaCore.NATURE_ID, natureIds[1]);
-		assertNull("Wrong imports", d2.getPackageImports());
-		assertNull("Wrong exports", d2.getPackageExports());
-		assertEquals("Wrong project", project, d2.getProject());
-		assertNull("Wrong required bundles", d2.getRequiredBundles());
-		assertNull("Wrong target version", d2.getTargetVersion());
-		assertEquals("Wrong symbolic name", project.getName(), d2.getSymbolicName());
-		assertFalse("Wrong extension registry support", d2.isExtensionRegistry());
-		assertFalse("Wrong Equinox headers", d2.isEquinox());
-		assertFalse("Wrong singleton", d2.isSingleton());
+		assertEquals(2, natureIds.length, "Wrong number of natures"); //$NON-NLS-1$
+		assertEquals(PluginProject.NATURE, natureIds[0], "Wrong nature"); //$NON-NLS-1$
+		assertEquals(JavaCore.NATURE_ID, natureIds[1], "Wrong nature"); //$NON-NLS-1$
+		assertNull(d2.getPackageImports(), "Wrong imports"); //$NON-NLS-1$
+		assertNull(d2.getPackageExports(), "Wrong exports"); //$NON-NLS-1$
+		assertEquals(project, d2.getProject(), "Wrong project"); //$NON-NLS-1$
+		assertNull(d2.getRequiredBundles(), "Wrong required bundles"); //$NON-NLS-1$
+		assertNull(d2.getTargetVersion(), "Wrong target version"); //$NON-NLS-1$
+		assertEquals(project.getName(), d2.getSymbolicName(), "Wrong symbolic name"); //$NON-NLS-1$
+		assertFalse(d2.isExtensionRegistry(), "Wrong extension registry support"); //$NON-NLS-1$
+		assertFalse(d2.isEquinox(), "Wrong Equinox headers"); //$NON-NLS-1$
+		assertFalse(d2.isSingleton(), "Wrong singleton"); //$NON-NLS-1$
 	}
 
 	/**
@@ -239,34 +243,34 @@ public class BundleRootTests {
 		IPath nls = IPath.fromOSString("plugin.properties");
 		IBundleClasspathEntry cp1 = service.newBundleClasspathEntry(IPath.fromOSString("src"), IPath.fromOSString("bin"), IPath.fromOSString("the.jar"));
 
-		assertEquals("Wrong bundle root", root, d2.getBundleRoot());
-		assertEquals("Should be no activator", "org.eclipse.foo.SomeActivator", d2.getActivator());
+		assertEquals(root, d2.getBundleRoot(), "Wrong bundle root"); //$NON-NLS-1$
+		assertEquals("org.eclipse.foo.SomeActivator", d2.getActivator(), "Should be no activator"); //$NON-NLS-1$ //$NON-NLS-2$
 		IPath[] binIncludes = d2.getBinIncludes();
-		assertNull("Wrong number of entries on bin.includes", binIncludes);
+		assertNull(binIncludes, "Wrong number of entries on bin.includes"); //$NON-NLS-1$
 		IBundleClasspathEntry[] classpath = d2.getBundleClasspath();
-		assertNotNull("Wrong Bundle-Classpath", classpath);
-		assertEquals("Wrong number of Bundle-Classpath entries", 1, classpath.length);
-		assertEquals("Wrong Bundle-Classpath entry", cp1, classpath[0]);
-		assertEquals("Wrong Bundle-Name", project.getName(), d2.getBundleName());
-		assertEquals("Wrong Bundle-Vendor", "Some Vendor", d2.getBundleVendor());
-		assertEquals("Wrong version", "2.0.0", d2.getBundleVersion().toString());
-		assertEquals("Wrong default output folder", IPath.fromOSString("bin"), d2.getDefaultOutputFolder());
-		assertNull("Wrong execution environments", d2.getExecutionEnvironments());
-		assertNull("Wrong host", d2.getHost());
-		assertEquals("Wrong localization", nls, d2.getLocalization());
-		assertNull("Wrong project location URI", d2.getLocationURI());
+		assertNotNull(classpath, "Wrong Bundle-Classpath"); //$NON-NLS-1$
+		assertEquals(1, classpath.length, "Wrong number of Bundle-Classpath entries"); //$NON-NLS-1$
+		assertEquals(cp1, classpath[0], "Wrong Bundle-Classpath entry"); //$NON-NLS-1$
+		assertEquals(project.getName(), d2.getBundleName(), "Wrong Bundle-Name"); //$NON-NLS-1$
+		assertEquals("Some Vendor", d2.getBundleVendor(), "Wrong Bundle-Vendor"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("2.0.0", d2.getBundleVersion().toString(), "Wrong version"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(IPath.fromOSString("bin"), d2.getDefaultOutputFolder(), "Wrong default output folder"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNull(d2.getExecutionEnvironments(), "Wrong execution environments"); //$NON-NLS-1$
+		assertNull(d2.getHost(), "Wrong host"); //$NON-NLS-1$
+		assertEquals(nls, d2.getLocalization(), "Wrong localization"); //$NON-NLS-1$
+		assertNull(d2.getLocationURI(), "Wrong project location URI"); //$NON-NLS-1$
 		String[] natureIds = d2.getNatureIds();
-		assertEquals("Wrong number of natures", 2, natureIds.length);
-		assertEquals("Wrong nature", PluginProject.NATURE, natureIds[0]);
-		assertEquals("Wrong nature", JavaCore.NATURE_ID, natureIds[1]);
-		assertNull("Wrong imports", d2.getPackageImports());
-		assertNull("Wrong exports", d2.getPackageExports());
-		assertEquals("Wrong project", project, d2.getProject());
-		assertNull("Wrong required bundles", d2.getRequiredBundles());
-		assertNull("Wrong target version", d2.getTargetVersion());
-		assertEquals("Wrong symbolic name", project.getName(), d2.getSymbolicName());
-		assertFalse("Wrong extension registry support", d2.isExtensionRegistry());
-		assertFalse("Wrong Equinox headers", d2.isEquinox());
-		assertFalse("Wrong singleton", d2.isSingleton());
+		assertEquals(2, natureIds.length, "Wrong number of natures"); //$NON-NLS-1$
+		assertEquals(PluginProject.NATURE, natureIds[0], "Wrong nature"); //$NON-NLS-1$
+		assertEquals(JavaCore.NATURE_ID, natureIds[1], "Wrong nature"); //$NON-NLS-1$
+		assertNull(d2.getPackageImports(), "Wrong imports"); //$NON-NLS-1$
+		assertNull(d2.getPackageExports(), "Wrong exports"); //$NON-NLS-1$
+		assertEquals(project, d2.getProject(), "Wrong project"); //$NON-NLS-1$
+		assertNull(d2.getRequiredBundles(), "Wrong required bundles"); //$NON-NLS-1$
+		assertNull(d2.getTargetVersion(), "Wrong target version"); //$NON-NLS-1$
+		assertEquals(project.getName(), d2.getSymbolicName(), "Wrong symbolic name"); //$NON-NLS-1$
+		assertFalse(d2.isExtensionRegistry(), "Wrong extension registry support"); //$NON-NLS-1$
+		assertFalse(d2.isEquinox(), "Wrong Equinox headers"); //$NON-NLS-1$
+		assertFalse(d2.isSingleton(), "Wrong singleton"); //$NON-NLS-1$
 	}
 }

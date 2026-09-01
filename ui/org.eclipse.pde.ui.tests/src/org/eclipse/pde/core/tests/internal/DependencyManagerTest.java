@@ -15,6 +15,10 @@
  *******************************************************************************/
 package org.eclipse.pde.core.tests.internal;
 
+import java.nio.file.Files;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.api.extension.Extension;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import static java.util.Map.entry;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.eclipse.pde.internal.core.DependencyManager.findRequirementsClosure;
@@ -53,30 +57,26 @@ import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.ui.tests.launcher.AbstractLaunchTest;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
 import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.rules.TestRule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.Constants;
 
 public class DependencyManagerTest {
 
-	@ClassRule
-	public static final TestRule RESTORE_TARGET_DEFINITION = TargetPlatformUtil.RESTORE_CURRENT_TARGET_DEFINITION_AFTER;
-	@ClassRule
-	public static final TestRule CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
+	@RegisterExtension
+	public static final Extension RESTORE_TARGET_DEFINITION = TargetPlatformUtil.RESTORE_CURRENT_TARGET_DEFINITION_AFTER;
+	@RegisterExtension
+	public static final Extension CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
 
-	@Rule
-	public final TestRule deleteCreatedTestProjectsAfter = ProjectUtils.DELETE_CREATED_WORKSPACE_PROJECTS_AFTER;
-	@Rule
-	public TemporaryFolder folder = new TemporaryFolder();
+	@RegisterExtension
+	public final Extension deleteCreatedTestProjectsAfter = ProjectUtils.DELETE_CREATED_WORKSPACE_PROJECTS_AFTER;
+	@TempDir
+	public Path folder;
 	private Path tpJarDirectory;
 
-	@Before
+	@BeforeEach
 	public void setupBefore() throws IOException {
-		tpJarDirectory = folder.newFolder("TPJarDirectory").toPath();
+		tpJarDirectory = Files.createDirectory(folder.resolve("TPJarDirectory"));
 		// ensure PluginModelManager is initialized
 		PluginModelManager.getInstance().getState();
 	}

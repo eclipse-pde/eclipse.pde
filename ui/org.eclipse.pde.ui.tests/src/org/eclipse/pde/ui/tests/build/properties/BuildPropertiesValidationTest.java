@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.build.properties;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -27,7 +27,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
@@ -50,7 +50,7 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 				verifyBuildPropertiesMarkers(buildProperty, expectedValues, CompilerFlags.ERROR);
 				verifyQuickFixes(buildProperty, expectedValues);
 			} else {
-				fail("Could not build the project '" + project.getName() + "'");
+				fail("Could not build the project '" + project.getName() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}
@@ -68,7 +68,7 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 			verifyBuildPropertiesMarkers(buildProperty, expectedValues, CompilerFlags.WARNING);
 			verifyQuickFixes(buildProperty, expectedValues);
 		} else {
-			fail("Could not build the project '" + project.getName() + "'");
+			fail("Could not build the project '" + project.getName() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -85,7 +85,7 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 			verifyBuildPropertiesMarkers(buildProperty, expectedValues, CompilerFlags.ERROR);
 			verifyQuickFixes(buildProperty, expectedValues);
 		} else {
-			fail("Could not build the project '" + project.getName() + "'");
+			fail("Could not build the project '" + project.getName() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -100,7 +100,7 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 			verifyBuildPropertiesMarkers(buildProperty, expectedValues, CompilerFlags.ERROR);
 			verifyQuickFixes(buildProperty, expectedValues);
 		} else {
-			fail("Could not build the project '" + project.getName() + "'");
+			fail("Could not build the project '" + project.getName() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -116,7 +116,7 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 			verifyBuildPropertiesMarkers(buildProperty, expectedValues, CompilerFlags.ERROR);
 			verifyQuickFixes(buildProperty, expectedValues);
 		} else {
-			fail("Could not build the project '" + project.getName() + "'");
+			fail("Could not build the project '" + project.getName() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -132,7 +132,7 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 			verifyBuildPropertiesMarkers(buildProperty, expectedValues, CompilerFlags.ERROR);
 			verifyQuickFixes(buildProperty, expectedValues);
 		} else {
-			fail("Could not build the project '" + project.getName() + "'");
+			fail("Could not build the project '" + project.getName() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -148,7 +148,7 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 			verifyBuildPropertiesMarkers(buildProperty, expectedValues, CompilerFlags.ERROR);
 			verifyQuickFixes(buildProperty, expectedValues);
 		} else {
-			fail("Could not build the project '" + project.getName() + "'");
+			fail("Could not build the project '" + project.getName() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -157,7 +157,7 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 		IProject project = findProject("org.eclipse.pde.tests.build.properties.1");
 		setPreferences(project, CompilerFlags.ERROR);
 		if (!buildProject(project)) {
-			fail("Could not build the project '" + project.getName() + "'");
+			fail("Could not build the project '" + project.getName() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		IResource buildProperty = project.findMember("build.properties");
@@ -165,11 +165,11 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 		assertNotEquals(0, initialMarkers.length);
 
 		if (!buildProject(project)) {
-			fail("Could not build the project '" + project.getName() + "'");
+			fail("Could not build the project '" + project.getName() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		IMarker[] markersAfterBuild = buildProperty.findMarkers(PDEMarkerFactory.MARKER_ID, false, IResource.DEPTH_ZERO);
-		assertArrayEquals("validation should not have recreated unchanged markers", initialMarkers, markersAfterBuild);
+		assertArrayEquals(initialMarkers, markersAfterBuild, "validation should not have recreated unchanged markers"); //$NON-NLS-1$
 	}
 
 	private PropertyResourceBundle createResourceBundle(IResource buildProperty) throws IOException {

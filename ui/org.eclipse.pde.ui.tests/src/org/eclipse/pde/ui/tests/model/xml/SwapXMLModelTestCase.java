@@ -13,13 +13,13 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.xml;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginObject;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SwapXMLModelTestCase extends XMLModelTestCase {
 
@@ -102,8 +102,8 @@ public class SwapXMLModelTestCase extends XMLModelTestCase {
 		assertEquals(2, children.length);
 		assertTrue(children[0] instanceof IPluginElement);
 		assertTrue(children[1] instanceof IPluginElement);
-		assertEquals("a", ((IPluginElement) children[0]).getAttribute("id").getValue());
-		assertEquals("b", ((IPluginElement) children[1]).getAttribute("id").getValue());
+		assertEquals(((IPluginElement) children[0]).getAttribute("id").getValue(), "a"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(((IPluginElement) children[1]).getAttribute("id").getValue(), "b"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		extensions[0].swap(children[0], children[1]);
 
@@ -118,7 +118,7 @@ public class SwapXMLModelTestCase extends XMLModelTestCase {
 		assertEquals(2, children.length);
 		assertTrue(children[0] instanceof IPluginElement);
 		assertTrue(children[1] instanceof IPluginElement);
-		assertEquals("b", ((IPluginElement) children[0]).getAttribute("id").getValue());
-		assertEquals("a", ((IPluginElement) children[1]).getAttribute("id").getValue());
+		assertEquals(((IPluginElement) children[0]).getAttribute("id").getValue(), "b"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(((IPluginElement) children[1]).getAttribute("id").getValue(), "a"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

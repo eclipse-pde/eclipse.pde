@@ -69,7 +69,7 @@ import org.eclipse.pde.ui.templates.AbstractNewPluginTemplateWizard;
 import org.eclipse.pde.ui.templates.ITemplateSection;
 import org.eclipse.pde.ui.tests.project.ProjectCreationTests;
 import org.eclipse.pde.ui.tests.runtime.TestUtils;
-import org.junit.rules.TestRule;
+import org.junit.jupiter.api.extension.Extension;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkUtil;
@@ -314,7 +314,7 @@ public class ProjectUtils {
 	// --- workspace project deletion ---
 
 	/**
-	 * An (intended) {@link org.junit.ClassRule} that deletes all projects from
+	 * A class-level extension that deletes all projects from
 	 * the test-workspace before and after all tests are executed.
 	 * <p>
 	 * The intention is to ensure that the workspace is empty before the first
@@ -328,14 +328,14 @@ public class ProjectUtils {
 	 * other projects are virtual and can safely be deleted.
 	 * </p>
 	 */
-	public static final TestRule DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER = TestUtils.getThrowingTestRule( //
+	public static final Extension DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER = TestUtils.getThrowingClassExtension( //
 			() -> { // Clean-up garbage of other test-classes
 				deleteAllWorkspaceProjects();
 				return null;
 			}, o -> deleteAllWorkspaceProjects());
 
 	/**
-	 * An (intended) {@link org.junit.Rule} that deletes the projects from the
+	 * A test-level extension that deletes the projects from the
 	 * test-workspace , that where created during the test-case execution, after
 	 * each test-case.
 	 * <p>
@@ -350,7 +350,7 @@ public class ProjectUtils {
 	 * other projects are virtual and can safely be deleted.
 	 * </p>
 	 */
-	public static final TestRule DELETE_CREATED_WORKSPACE_PROJECTS_AFTER = TestUtils.getThrowingTestRule( //
+	public static final Extension DELETE_CREATED_WORKSPACE_PROJECTS_AFTER = TestUtils.getThrowingTestExtension( //
 			() -> Set.of(ResourcesPlugin.getWorkspace().getRoot().getProjects()), //
 			projectsBefore -> deleteWorkspaceProjects(projectsBefore));
 

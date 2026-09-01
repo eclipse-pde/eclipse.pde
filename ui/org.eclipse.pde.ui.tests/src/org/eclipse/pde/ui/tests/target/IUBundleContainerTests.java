@@ -13,11 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -61,7 +61,7 @@ import org.eclipse.pde.internal.core.target.TargetDefinition;
 import org.eclipse.pde.internal.core.target.TargetDefinitionPersistenceHelper;
 import org.eclipse.pde.internal.core.target.TargetPersistence38Helper;
 import org.eclipse.pde.internal.core.target.VirtualArtifactRepository;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.FrameworkUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -81,7 +81,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 */
 	protected IMetadataRepository getRepository(URI uri) throws Exception {
 		IMetadataRepositoryManager manager = P2TargetUtils.getRepoManager();
-		assertNotNull("Missing metadata repository manager", manager);
+		assertNotNull(manager, "Missing metadata repository manager"); //$NON-NLS-1$
 		IMetadataRepository repo = manager.loadRepository(uri, null);
 		return repo;
 	}
@@ -111,7 +111,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		if (units.length == 1) {
 			return units[0];
 		}
-		assertTrue("Did not find IU: " + id, false);
+		assertTrue(false, "Did not find IU: " + id); //$NON-NLS-1$
 		return null;
 	}
 
@@ -131,7 +131,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 			Set<String> names = collectAllSymbolicNames(infos);
 			assertEquals(expectedBundles.length, infos.size());
 			for (String expectedBundle : expectedBundles) {
-				assertTrue("Missing: " + expectedBundle, names.contains(expectedBundle));
+				assertTrue(names.contains(expectedBundle), "Missing: " + expectedBundle); //$NON-NLS-1$
 			}
 
 			// Now modify the target to have just a lower level root.  The extra higher level stuff should get removed.
@@ -141,13 +141,13 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 			names = collectAllSymbolicNames(infos);
 			assertEquals(expectedBundles2.length, infos.size());
 			for (String element : expectedBundles2) {
-				assertTrue("Missing: " + element, names.contains(element));
+				assertTrue(names.contains(element), "Missing: " + element); //$NON-NLS-1$
 			}
 
 			List<String> profiles = P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
 			assertEquals(1, profiles.size());
 			String id = profiles.get(0);
-			assertTrue("Unexpected profile GC'd", id.endsWith(target.getHandle().getMemento()));
+			assertTrue(id.endsWith(target.getHandle().getMemento()), "Unexpected profile GC'd"); //$NON-NLS-1$
 
 		} finally {
 			// Always clean any profiles, even if the test failed to prevent cascading failures
@@ -284,7 +284,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	public void testContentEqualNonNull() throws Exception {
 		IUBundleContainer c1 = createContainer(new String[]{"bundle.a1", "bundle.a2"});
 		IUBundleContainer c2 = createContainer(new String[]{"bundle.a1", "bundle.a2"});
-		assertTrue("Contents should be equivalent", c1.equals(c2));
+		assertTrue(c1.equals(c2), "Contents should be equivalent"); //$NON-NLS-1$
 	}
 
 	/**
@@ -294,7 +294,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	public void testContentNotEqualNonNull() throws Exception {
 		IUBundleContainer c1 = createContainer(new String[]{"bundle.a1", "bundle.a2"});
 		IUBundleContainer c2 = createContainer(new String[]{"bundle.b1", "bundle.b2"});
-		assertFalse("Contents should not be equivalent", c1.equals(c2));
+		assertFalse(c1.equals(c2), "Contents should not be equivalent"); //$NON-NLS-1$
 	}
 
 	/**
@@ -305,7 +305,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		ITargetPlatformService service = getTargetService();
 		IUBundleContainer c3 = (IUBundleContainer) service.newIULocation(new String[]{"bundle.a1", "bundle.a2"}, new String[]{"1.0.0", "1.0.0"}, null, 0);
 		IUBundleContainer c4 = (IUBundleContainer) service.newIULocation(new String[]{"bundle.a1", "bundle.a2"}, new String[]{"1.0.0", "1.0.0"}, null, 0);
-		assertTrue("Contents should be equivalent", c3.equals(c4));
+		assertTrue(c3.equals(c4), "Contents should be equivalent"); //$NON-NLS-1$
 	}
 
 	/**
@@ -316,7 +316,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		ITargetPlatformService service = getTargetService();
 		IUBundleContainer c3 = (IUBundleContainer) service.newIULocation(new String[]{"bundle.a1", "bundle.a2"}, new String[]{"1.0.0", "1.0.0"}, null, 1);
 		IUBundleContainer c4 = (IUBundleContainer) service.newIULocation(new String[]{"bundle.b1", "bundle.b2"}, new String[]{"1.0.0", "1.0.0"}, null, 0);
-		assertFalse("Contents should not be equivalent", c3.equals(c4));
+		assertFalse(c3.equals(c4), "Contents should not be equivalent"); //$NON-NLS-1$
 	}
 
 	/**
@@ -339,13 +339,13 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 			assertEquals(bundleIds.length, infos.size());
 
 			for (String bundleId : bundleIds) {
-				assertTrue("Missing: " + bundleId, names.contains(bundleId));
+				assertTrue(names.contains(bundleId), "Missing: " + bundleId); //$NON-NLS-1$
 			}
 			List<String> profiles = P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
 			if (bundleIds.length > 0) {
 				assertEquals(1, profiles.size());
 				String id = profiles.get(0);
-				assertTrue("Unexpected profile GC'd", id.endsWith(target.getHandle().getMemento()));
+				assertTrue(id.endsWith(target.getHandle().getMemento()), "Unexpected profile GC'd"); //$NON-NLS-1$
 			} else {
 				assertEquals(0, profiles.size());
 			}
@@ -372,7 +372,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		ITargetDefinition definitionB = getTargetService().newTarget();
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
 		TargetDefinitionPersistenceHelper.initFromXML(definitionB, inputStream);
-		assertTrue("Target content not equal",((TargetDefinition)target).isContentEqual(definitionB));
+		assertTrue(((TargetDefinition)target).isContentEqual(definitionB), "Target content not equal"); //$NON-NLS-1$
 
 		// resolve the restored target and ensure bundles are correct
 		List<BundleInfo> infos = getAllBundleInfos(definitionB);
@@ -380,12 +380,12 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		assertEquals(bundleIds.length, infos.size());
 
 		for (String bundleId : bundleIds) {
-			assertTrue("Missing: " + bundleId, names.contains(bundleId));
+			assertTrue(names.contains(bundleId), "Missing: " + bundleId); //$NON-NLS-1$
 		}
 		List<String> profiles = P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
 		assertEquals(1, profiles.size());
 		String id = profiles.get(0);
-		assertTrue("Unexpected profile GC'd", id.endsWith(definitionB.getHandle().getMemento()));
+		assertTrue(id.endsWith(definitionB.getHandle().getMemento()), "Unexpected profile GC'd"); //$NON-NLS-1$
 	}
 
 	/**
@@ -413,14 +413,14 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 
 			// ensure the external model manager only knows about bundles in target A
 			IPluginModelBase[] externalBundles = PDECore.getDefault().getModelManager().getExternalModelManager().getAllModels();
-			assertEquals("Wrong number of external bundles", 3, externalBundles.length);
+			assertEquals(3, externalBundles.length, "Wrong number of external bundles"); //$NON-NLS-1$
 			// expected bundles
 			Set<String> expected = new HashSet<>();
 			expected.add("bundle.a1");
 			expected.add("bundle.a2");
 			expected.add("bundle.a3");
 			for (IPluginModelBase externalBundle : externalBundles) {
-				assertTrue("Unexpected bundle in restored list: " + externalBundle.getInstallLocation(), expected.remove(externalBundle.getBundleDescription().getName()));
+				assertTrue(expected.remove(externalBundle.getBundleDescription().getName()), "Unexpected bundle in restored list: " + externalBundle.getInstallLocation()); //$NON-NLS-1$
 			}
 			assertTrue(expected.isEmpty());
 		} finally {
@@ -522,7 +522,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		assertEquals(bundleIds.length, infos.size());
 
 		for (String bundleId : bundleIds) {
-			assertTrue("Missing: " + bundleId, names.contains(bundleId));
+			assertTrue(names.contains(bundleId), "Missing: " + bundleId); //$NON-NLS-1$
 		}
 
 		getTargetService().deleteTarget(target.getHandle());
@@ -555,7 +555,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		assertEquals(bundleIds.length, infos.size());
 
 		for (String bundleId : bundleIds) {
-			assertTrue("Missing: " + bundleId, names.contains(bundleId));
+			assertTrue(names.contains(bundleId), "Missing: " + bundleId); //$NON-NLS-1$
 		}
 
 		getTargetService().deleteTarget(target.getHandle());
@@ -582,7 +582,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		assertEquals(bundleIds.length, infos.size());
 
 		for (String bundleId : bundleIds) {
-			assertTrue("Missing: " + bundleId, names.contains(bundleId));
+			assertTrue(names.contains(bundleId), "Missing: " + bundleId); //$NON-NLS-1$
 		}
 
 		infos = getBundleInfos(c2);
@@ -591,7 +591,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		assertEquals(bundleIds.length, infos.size());
 
 		for (String bundleId : bundleIds) {
-			assertTrue("Missing: " + bundleId, names.contains(bundleId));
+			assertTrue(names.contains(bundleId), "Missing: " + bundleId); //$NON-NLS-1$
 		}
 
 		List<String> profiles = P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
@@ -669,7 +669,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		String normalizedNew = resultXmlNew.replaceAll("\r?\n[ \t]*", "");
 
 		assertNotEquals(normalizedOld, normalizedNew);
-		assertEquals(normalizedOld, normalizedNew.replace("includeSource=\"false\"", "includeSource=\"true\""));
+		assertEquals(normalizedOld, normalizedNew.replace("includeSource=\"false\"", "includeSource=\"true\"")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Test
@@ -693,7 +693,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		IUBundleContainer location = (IUBundleContainer) getTargetService().newIULocation(unitIds, versions,
 				new URI[] { uri }, 0);
 		String xml = location.serialize();
-		assertFalse("No version declaration expected", xml.contains("version="));
+		assertFalse(xml.contains("version="), "No version declaration expected"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertIncludeMode(xml, "slicer");
 		deserializationTest(location);
 	}

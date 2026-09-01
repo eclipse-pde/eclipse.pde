@@ -16,6 +16,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.launcher;
 
+import java.nio.file.Files;
+import org.junit.jupiter.api.io.TempDir;
 import static java.util.Collections.emptySet;
 import static java.util.Map.entry;
 import static java.util.Map.ofEntries;
@@ -67,23 +69,21 @@ import org.eclipse.pde.ui.tests.util.ProjectUtils.CoreConsumer;
 import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
 import org.eclipse.platform.internal.LaunchUpdateIntroAction;
 import org.eclipse.ui.internal.ide.application.IDEApplication;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.osgi.annotation.bundle.Referenced;
 import org.osgi.framework.FrameworkUtil;
 
 @Referenced({ LaunchUpdateIntroAction.class, IDEApplication.class })
 public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 
-	@Rule
-	public TemporaryFolder folder = new TemporaryFolder();
+	@TempDir
+	public Path folder;
 	private Path tpJarDirectory;
 
-	@Before
+	@BeforeEach
 	public void setup() throws Exception {
-		tpJarDirectory = folder.newFolder("TPJarDirectory").toPath();
+		tpJarDirectory = Files.createDirectory(folder.resolve("TPJarDirectory"));
 	}
 
 	// --- tests ---

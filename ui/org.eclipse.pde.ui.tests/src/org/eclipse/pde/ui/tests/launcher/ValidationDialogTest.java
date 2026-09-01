@@ -14,7 +14,7 @@
 
 package org.eclipse.pde.ui.tests.launcher;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.pde.internal.ui.launcher.PluginStatusDialog;
@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.ui.PlatformUI;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ValidationDialogTest {
 	PluginStatusDialog dialog;

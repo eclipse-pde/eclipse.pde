@@ -14,12 +14,16 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.launcher.product;
 
+import java.nio.file.Files;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.api.extension.Extension;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import static java.util.Map.ofEntries;
 import static org.eclipse.pde.ui.tests.util.ProjectUtils.addIncludedFeature;
 import static org.eclipse.pde.ui.tests.util.ProjectUtils.addIncludedPlugin;
 import static org.eclipse.pde.ui.tests.util.TargetPlatformUtil.bundle;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
 import java.util.Collections;
@@ -40,27 +44,24 @@ import org.eclipse.pde.internal.ui.launcher.LaunchAction;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
 import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.rules.TestRule;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class ProductEditorLaunchingTest {
 
-	@ClassRule
-	public static final TestRule CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
-	@ClassRule
-	public static final TestRule RESTORE_TARGET_DEFINITION = TargetPlatformUtil.RESTORE_CURRENT_TARGET_DEFINITION_AFTER;
+	@RegisterExtension
+	public static final Extension CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
+	@RegisterExtension
+	public static final Extension RESTORE_TARGET_DEFINITION = TargetPlatformUtil.RESTORE_CURRENT_TARGET_DEFINITION_AFTER;
 
-	@ClassRule
-	public static TemporaryFolder folder = new TemporaryFolder();
+	@TempDir
+	public static Path folder;
 	private static Path tpBundlePool;
 	private static IProject project;
 
-	@BeforeClass
+	@BeforeAll
 	public static void setUpBeforeClass() throws Throwable {
-		tpBundlePool = folder.newFolder("TPJarDirectory").toPath();
+		tpBundlePool = Files.createDirectory(folder.resolve("TPJarDirectory"));
 		var targetPlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0"), //
 				bundle("plugin.b", "1.0.0"), //
@@ -168,16 +169,16 @@ public class ProductEditorLaunchingTest {
 		// A repeated value must be preserved. It was wrongly dropped when it
 		// matched a value contributed by an earlier user argument, turning
 		// "-target testarg -helper testarg" into "-target testarg -helper".
-		assertEquals("-target testarg expected", "testarg", argumentValue(arguments, "-target"));
-		assertEquals("-helper testarg expected", "testarg", argumentValue(arguments, "-helper"));
-		assertEquals("both repeated values must be kept", 2, Collections.frequency(arguments, "testarg"));
+		assertEquals("testarg", argumentValue(arguments, "-target"), "-target testarg expected"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		assertEquals("testarg", argumentValue(arguments, "-helper"), "-helper testarg expected"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		assertEquals(2, Collections.frequency(arguments, "testarg"), "both repeated values must be kept"); //$NON-NLS-1$ //$NON-NLS-2$
 		// A user argument already provided by the initial arguments is not duplicated.
-		assertEquals("-consoleLog must not be duplicated", 1, Collections.frequency(arguments, "-consoleLog"));
+		assertEquals(1, Collections.frequency(arguments, "-consoleLog"), "-consoleLog must not be duplicated"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private static String argumentValue(List<String> arguments, String flag) {
 		int index = arguments.indexOf(flag);
-		assertTrue(flag + " is missing", index >= 0 && index + 1 < arguments.size());
+		assertTrue(index >= 0 && index + 1 < arguments.size(), flag + " is missing"); //$NON-NLS-1$
 		return arguments.get(index + 1);
 	}
 
@@ -193,7 +194,7 @@ public class ProductEditorLaunchingTest {
 		ILaunchConfiguration config = new LaunchAction(product, file.getFullPath(), ILaunchManager.RUN_MODE)
 				.findLaunchConfiguration();
 
-		assertEquals(productId + ".product", config.getName());
+		assertEquals(productId + ".product", config.getName()); //$NON-NLS-1$
 		assertEquals(useFeatures, config.getAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, false));
 
 		assertAttributeSet(expectedFeatures, IPDELauncherConstants.SELECTED_FEATURES, config, ":");

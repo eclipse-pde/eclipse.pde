@@ -13,8 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assume.assumeTrue;
+import org.junit.jupiter.api.TestInfo;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -55,10 +56,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.progress.UIJob;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.TestName;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
@@ -69,21 +68,21 @@ import org.osgi.framework.FrameworkUtil;
 public abstract class PDETestCase {
 
 	private static boolean welcomeClosed;
-	@Rule
-	public TestName name = new TestName();
+	protected String testName;
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	public void setUp(TestInfo testInfo) throws Exception {
+		testName = testInfo.getTestMethod().orElseThrow().getName();
 		MessageDialog.AUTOMATED_MODE = true;
 		ErrorDialog.AUTOMATED_MODE = true;
 		FreezeMonitor.expectCompletionInAMinute();
-		ILog.get().log(Status.info("[" + name.getMethodName() + "] " + "setUp"));
+		ILog.get().log(Status.info("[" + testName + "] " + "setUp"));
 		assertWelcomeScreenClosed();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
-		ILog.get().log(Status.info("[" + name.getMethodName() + "] " + "tearDown"));
+		ILog.get().log(Status.info("[" + testName + "] " + "tearDown"));
 		// Close any editors we opened
 		IWorkbenchWindow[] workbenchPages = PlatformUI.getWorkbench().getWorkbenchWindows();
 		for (IWorkbenchWindow workbenchPage : workbenchPages) {
@@ -93,7 +92,7 @@ public abstract class PDETestCase {
 			}
 		}
 		TestUtils.processUIEvents();
-		TestUtils.cleanUp(name.getMethodName());
+		TestUtils.cleanUp(testName);
 		// Delete any projects that were created
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		IProject[] projects = workspaceRoot.getProjects();
@@ -112,7 +111,7 @@ public abstract class PDETestCase {
 				ILog.get().error(message, e);
 			}
 		}
-		TestUtils.waitForJobs(name.getMethodName(), 10, 10000);
+		TestUtils.waitForJobs(testName, 10, 10000);
 		FreezeMonitor.done();
 		if (error != null) {
 			throw error;
@@ -173,7 +172,7 @@ public abstract class PDETestCase {
 		try {
 			Path location = Path.of(Platform.getInstallLocation().getURL().toURI());
 			for (String directory : List.of("plugins", "features")) {
-				assumeTrue("Not running in a standalone Eclipse SDK", Files.isDirectory(location.resolve(directory)));
+				assumeTrue(Files.isDirectory(location.resolve(directory)), "Not running in a standalone Eclipse SDK");
 			}
 		} catch (URISyntaxException e) {
 			throw new IllegalStateException(e);
@@ -219,7 +218,7 @@ public abstract class PDETestCase {
 
 	public static Path doUnZip(Path targetDirectory, String archivePath) throws IOException {
 		URL zipURL = FrameworkUtil.getBundle(PDETestCase.class).getEntry(archivePath);
-		assertNotNull("Zip file not found at path " + archivePath, zipURL);
+		assertNotNull(zipURL, "Zip file not found at path " + archivePath); //$NON-NLS-1$
 		try (ZipInputStream zipStream = new ZipInputStream(zipURL.openStream())) {
 			for (ZipEntry entry = zipStream.getNextEntry(); entry != null; entry = zipStream.getNextEntry()) {
 				if (!entry.isDirectory()) {

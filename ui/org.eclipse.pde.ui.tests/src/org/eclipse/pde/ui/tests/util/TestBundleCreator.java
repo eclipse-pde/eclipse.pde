@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.util;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -65,7 +65,7 @@ public class TestBundleCreator {
 		for (int i = 1; i <= count; i++) {
 			String projectName = TEST_BUNDLE_NAME + Integer.toString(i);
 			IProject proj = ws.getRoot().getProject(projectName);
-			assertFalse("Project should not exist", proj.exists());
+			assertFalse(proj.exists(), "Project should not exist"); //$NON-NLS-1$
 			IBundleProjectDescription description = service.getDescription(proj);
 
 			description.setSymbolicName(projectName);

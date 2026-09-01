@@ -13,17 +13,16 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.performance;
 
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 import org.eclipse.pde.ui.tests.performance.parts.OpenManifestEditorPerfTest;
 import org.eclipse.pde.ui.tests.performance.parts.PDEModelManagerPerfTest;
 import org.eclipse.pde.ui.tests.performance.parts.SchemaLoaderPerfTest;
 import org.eclipse.pde.ui.tests.performance.parts.SchemaTraversePerfTest;
 import org.eclipse.pde.ui.tests.performance.parts.TargetPlatformPerfTest;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
 
-@RunWith(Suite.class)
-@SuiteClasses({
+@Suite
+@SelectClasses({
 	PDEModelManagerPerfTest.class, SchemaLoaderPerfTest.class, SchemaTraversePerfTest.class,
 	OpenManifestEditorPerfTest.class, TargetPlatformPerfTest.class
 })

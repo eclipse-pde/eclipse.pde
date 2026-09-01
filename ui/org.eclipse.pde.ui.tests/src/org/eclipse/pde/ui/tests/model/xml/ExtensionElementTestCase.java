@@ -13,13 +13,13 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.xml;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginObject;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ExtensionElementTestCase extends ExtensionTestCase {
 	@Test
@@ -322,9 +322,9 @@ public class ExtensionElementTestCase extends ExtensionTestCase {
 
 		extensions = fModel.getPluginBase().getExtensions();
 		assertEquals(extensions.length, 1);
-		assertEquals(extensions[0].getPoint(), "org.eclipse.pde.ui.samples");
+		assertEquals(extensions[0].getPoint(), "org.eclipse.pde.ui.samples"); //$NON-NLS-1$
 		assertEquals(extensions[0].getChildCount(), 1);
-		assertEquals(extensions[0].getChildren()[0].getName(), "sample");
+		assertEquals(extensions[0].getChildren()[0].getName(), "sample"); //$NON-NLS-1$
 	}
 
 	private void testAddExtensionElement(StringBuilder buffer, String newLine) throws Exception {
@@ -339,7 +339,7 @@ public class ExtensionElementTestCase extends ExtensionTestCase {
 
 		ext = reloadModel();
 		assertEquals(ext.getChildCount(), 2);
-		assertEquals(ext.getChildren()[0].getName(), "sample");
+		assertEquals(ext.getChildren()[0].getName(), "sample"); //$NON-NLS-1$
 	}
 
 	private void testAddNewMultipleExtensionElements(StringBuilder buffer, String newLine) throws Exception {
@@ -355,8 +355,8 @@ public class ExtensionElementTestCase extends ExtensionTestCase {
 
 		ext = reloadModel();
 		assertEquals(ext.getChildCount(), 2);
-		assertEquals(ext.getChildren()[0].getName(), "sample1");
-		assertEquals(ext.getChildren()[1].getName(), "sample2");
+		assertEquals(ext.getChildren()[0].getName(), "sample1"); //$NON-NLS-1$
+		assertEquals(ext.getChildren()[1].getName(), "sample2"); //$NON-NLS-1$
 	}
 
 	private void testAddMultipleExtensionElements(StringBuilder buffer, String newLine) throws Exception {
@@ -373,9 +373,9 @@ public class ExtensionElementTestCase extends ExtensionTestCase {
 
 		ext = reloadModel();
 		assertEquals(ext.getChildCount(), 3);
-		assertEquals(ext.getChildren()[0].getName(), "sample");
-		assertEquals(ext.getChildren()[1].getName(), "sample1");
-		assertEquals(ext.getChildren()[2].getName(), "sample2");
+		assertEquals(ext.getChildren()[0].getName(), "sample"); //$NON-NLS-1$
+		assertEquals(ext.getChildren()[1].getName(), "sample1"); //$NON-NLS-1$
+		assertEquals(ext.getChildren()[2].getName(), "sample2"); //$NON-NLS-1$
 	}
 
 	private void testRemoveExtensionElement(StringBuilder buffer, String newLine) throws Exception {
@@ -402,18 +402,18 @@ public class ExtensionElementTestCase extends ExtensionTestCase {
 		assertEquals(extensions.length, 1);
 		IPluginExtension ext = extensions[0];
 		assertEquals(ext.getChildCount(), 3);
-		assertEquals(ext.getPoint(), "org.eclipse.pde.ui.samples");
+		assertEquals(ext.getPoint(), "org.eclipse.pde.ui.samples"); //$NON-NLS-1$
 		IPluginObject[] children = ext.getChildren();
-		assertEquals(children[0].getName(), "sample");
-		assertEquals(children[1].getName(), "sample1");
-		assertEquals(children[2].getName(), "sample2");
+		assertEquals(children[0].getName(), "sample"); //$NON-NLS-1$
+		assertEquals(children[1].getName(), "sample1"); //$NON-NLS-1$
+		assertEquals(children[2].getName(), "sample2"); //$NON-NLS-1$
 
 		ext.remove(children[0]);
 		ext.remove(children[2]);
 
 		ext = reloadModel();
 		assertEquals(ext.getChildCount(), 1);
-		assertEquals(ext.getChildren()[0].getName(), "sample1");
+		assertEquals(ext.getChildren()[0].getName(), "sample1"); //$NON-NLS-1$
 	}
 
 	private IPluginElement createElement(String name, IPluginExtension parent) throws CoreException {

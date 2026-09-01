@@ -13,14 +13,14 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.bundle;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.BasePackageHeader;
 import org.eclipse.pde.internal.core.text.bundle.PackageObject;
 import org.eclipse.text.edits.TextEdit;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 
@@ -40,7 +40,7 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 
 		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
 		assertNotNull(header);
-		assertEquals(fHeaderName + ": com.example.abc\n", header.write());
+		assertEquals(fHeaderName + ": com.example.abc\n", header.write()); //$NON-NLS-1$
 
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
@@ -111,7 +111,7 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 
 		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
 		assertNotNull(header);
-		assertEquals(fHeaderName + ": com.example.abc\n", header.write());
+		assertEquals(fHeaderName + ": com.example.abc\n", header.write()); //$NON-NLS-1$
 
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
@@ -205,7 +205,7 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineLength(3);
-		assertEquals(fHeaderName + ": com.example.abc.refactoring\n", fDocument.get(pos, length));
+		assertEquals(fHeaderName + ": com.example.abc.refactoring\n", fDocument.get(pos, length)); //$NON-NLS-1$
 	}
 
 	@Test
@@ -224,7 +224,7 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 
 		PackageObject object = getPackage(header, "org.osgi.framework");
 		assertNotNull(object);
-		assertEquals("1.3.0", object.getVersion());
+		assertEquals(object.getVersion(), "1.3.0"); //$NON-NLS-1$
 	}
 
 	@Test
@@ -253,7 +253,7 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineLength(3);
-		assertEquals(fHeaderName + ": org.osgi.framework;version=\"1.3.0\"\n", fDocument.get(pos, length));
+		assertEquals(fHeaderName + ": org.osgi.framework;version=\"1.3.0\"\n", fDocument.get(pos, length)); //$NON-NLS-1$
 	}
 
 	@Test
@@ -282,7 +282,7 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineLength(3);
-		assertEquals(fHeaderName + ": org.osgi.framework\n", fDocument.get(pos, length));
+		assertEquals(fHeaderName + ": org.osgi.framework\n", fDocument.get(pos, length)); //$NON-NLS-1$
 	}
 
 	@Test

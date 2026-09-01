@@ -14,8 +14,10 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.classpathcontributor;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.extension.Extension;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,10 +35,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.ui.tests.classpathresolver.ClasspathResolverTest;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
 import org.eclipse.swt.widgets.Display;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestRule;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests {@link IClasspathContributor} API to add additional classpath
@@ -45,10 +44,10 @@ import org.junit.rules.TestRule;
  */
 public class ClasspathContributorTest {
 
-	@ClassRule
-	public static final TestRule CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
-	@Rule
-	public final TestRule deleteCreatedTestProjectsAfter = ProjectUtils.DELETE_CREATED_WORKSPACE_PROJECTS_AFTER;
+	@RegisterExtension
+	public static final Extension CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
+	@RegisterExtension
+	public final Extension deleteCreatedTestProjectsAfter = ProjectUtils.DELETE_CREATED_WORKSPACE_PROJECTS_AFTER;
 
 	@Test
 	public void testAdditionalClasspathEntries() throws Exception {
@@ -67,16 +66,15 @@ public class ClasspathContributorTest {
 				IJavaProject jProject = JavaCore.create(project);
 				IClasspathContainer container = JavaCore.getClasspathContainer(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH,
 						jProject);
-				assertNotNull("Could not find PDE classpath container", container);
+				assertNotNull(container, "Could not find PDE classpath container"); //$NON-NLS-1$
 				IClasspathEntry[] classpath = container.getClasspathEntries();
 				for (IClasspathEntry element : classpath) {
 					if (!isPdeDependency(element)) {
-						assertTrue("Unexpected classpath entry found: " + element, expected.remove(element));
+						assertTrue(expected.remove(element), "Unexpected classpath entry found: " + element); //$NON-NLS-1$
 					}
 				}
-				assertTrue("Expected classpath entry not found: "
-						+ expected.stream().map(String::valueOf).collect(Collectors.joining(System.lineSeparator())),
-						expected.isEmpty());
+				assertTrue(expected.isEmpty(), "Expected classpath entry not found: " //$NON-NLS-1$
+						+ expected.stream().map(String::valueOf).collect(Collectors.joining(System.lineSeparator())));
 				break;
 			} catch (AssertionError e) {
 				if (System.currentTimeMillis() > deadline) {

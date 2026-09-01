@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.xml;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.pde.core.plugin.IPluginExtension;
 
@@ -23,7 +23,7 @@ public class ExtensionTestCase extends XMLModelTestCase {
 		reload();
 		IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();
 		assertEquals(extensions.length, 1);
-		assertEquals(extensions[0].getPoint(), "org.eclipse.pde.ui.samples");
+		assertEquals(extensions[0].getPoint(), "org.eclipse.pde.ui.samples"); //$NON-NLS-1$
 		return extensions[0];
 	}
 }

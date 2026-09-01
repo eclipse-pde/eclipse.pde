@@ -13,15 +13,14 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.build.properties;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * @since 3.6
  */
-@RunWith(Suite.class)
-@SuiteClasses({ BuildPropertiesValidationTest.class })
+@Suite
+@SelectClasses({ BuildPropertiesValidationTest.class })
 public class AllValidatorTests {
 
 }

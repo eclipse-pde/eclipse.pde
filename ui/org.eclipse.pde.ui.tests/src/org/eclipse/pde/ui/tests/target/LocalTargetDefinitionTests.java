@@ -13,12 +13,12 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.net.URI;
@@ -51,7 +51,7 @@ import org.eclipse.pde.internal.launching.ILaunchingPreferenceConstants;
 import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
 import org.eclipse.pde.internal.launching.launcher.LaunchArgumentsHelper;
 import org.eclipse.pde.ui.tests.PDETestCase;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for target definitions. The tested targets will be created in the
@@ -99,16 +99,16 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		IPluginModelBase[] models = TargetPlatformHelper.getPDEState().getTargetModels();
 
 		// should be equivalent
-		assertEquals("Should have same number of bundles", uris.size(), models.length);
+		assertEquals(uris.size(), models.length, "Should have same number of bundles"); //$NON-NLS-1$
 		for (IPluginModelBase model : models) {
 			Path location = Path.of(model.getInstallLocation());
 			URI uri = location.toUri();
-			assertTrue("Missing plug-in " + location, uris.contains(uri));
+			assertTrue(uris.contains(uri), "Missing plug-in " + location); //$NON-NLS-1$
 			if (model.isFragmentModel()) {
-				assertTrue("Missing fragment", fragments.remove(uri));
+				assertTrue(fragments.remove(uri), "Missing fragment"); //$NON-NLS-1$
 			}
 		}
-		assertTrue("Different number of fragments", fragments.isEmpty());
+		assertTrue(fragments.isEmpty(), "Different number of fragments"); //$NON-NLS-1$
 	}
 
 	/**
@@ -141,12 +141,12 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		definition.setIncluded(restrictions);
 		List<BundleInfo> infos = getAllBundleInfos(definition);
 
-		assertEquals("Wrong number of bundles", 2, infos.size());
+		assertEquals(2, infos.size(), "Wrong number of bundles"); //$NON-NLS-1$
 		Set<String> set = collectAllSymbolicNames(infos);
 		for (NameVersionDescriptor info : restrictions) {
 			set.remove(info.getId());
 		}
-		assertEquals("Wrong bundles", 0, set.size());
+		assertEquals(0, set.size(), "Wrong bundles"); //$NON-NLS-1$
 	}
 
 	/**
@@ -165,9 +165,9 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 				.map(info -> info.getVersion()).findFirst().orElse(null);
 		String v2 = infos.stream().filter(info -> info.getSymbolicName().equals("org.eclipse.jdt.debug"))
 				.map(info -> info.getVersion()).findFirst().orElse(null);
-		assertNotNull("Missing bundle 'org.eclipse.jdt.launching'", v1);
+		assertNotNull(v1, "Missing bundle 'org.eclipse.jdt.launching'"); //$NON-NLS-1$
 		assertNotEquals(BundleInfo.EMPTY_VERSION, v1);
-		assertNotNull("Missing bundle 'org.eclipse.jdt.debug'", v2);
+		assertNotNull(v2, "Missing bundle 'org.eclipse.jdt.debug'"); //$NON-NLS-1$
 		assertNotEquals(BundleInfo.EMPTY_VERSION, v2);
 
 		NameVersionDescriptor[] restrictions = new NameVersionDescriptor[] {
@@ -176,7 +176,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		definition.setIncluded(restrictions);
 		infos = getAllBundleInfos(definition);
 
-		assertEquals("Wrong number of bundles", 2, infos.size());
+		assertEquals(2, infos.size(), "Wrong number of bundles"); //$NON-NLS-1$
 		for (BundleInfo info : infos) {
 			if (info.getSymbolicName().equals("org.eclipse.jdt.launching")) {
 				assertEquals(v1, info.getVersion());
@@ -204,11 +204,10 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		definition.resolve(null);
 		TargetBundle[] bundles = definition.getBundles();
 
-		assertEquals("Wrong number of bundles", 2, bundles.length);
+		assertEquals(2, bundles.length, "Wrong number of bundles"); //$NON-NLS-1$
 		for (TargetBundle rb : bundles) {
-			assertEquals("Should be a missing bundle version", TargetBundle.STATUS_VERSION_DOES_NOT_EXIST,
-					rb.getStatus().getCode());
-			assertEquals("Should be an error", IStatus.ERROR, rb.getStatus().getSeverity());
+			assertEquals(TargetBundle.STATUS_VERSION_DOES_NOT_EXIST, rb.getStatus().getCode(), "Should be a missing bundle version"); //$NON-NLS-1$
+			assertEquals(IStatus.ERROR, rb.getStatus().getSeverity(), "Should be an error"); //$NON-NLS-1$
 		}
 	}
 
@@ -301,15 +300,15 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			expected.add("org.eclipse.jdt.launching.macosx");
 		}
 
-		assertEquals("Wrong number of bundles in test JDT feature", expected.size(), bundles.length);
+		assertEquals(expected.size(), bundles.length, "Wrong number of bundles in test JDT feature"); //$NON-NLS-1$
 		for (TargetBundle bundle : bundles) {
 			expected.remove(bundle.getBundleInfo().getSymbolicName());
 		}
-		assertTrue("Wrong bundles in JDT feature. Missing: " + expected, expected.isEmpty());
+		assertTrue(expected.isEmpty(), "Wrong bundles in JDT feature. Missing: " + expected); //$NON-NLS-1$
 
 		// should be no source bundles
 		for (TargetBundle bundle : bundles) {
-			assertFalse("Should be no source bundles", bundle.isSourceBundle());
+			assertFalse(bundle.isSourceBundle(), "Should be no source bundles"); //$NON-NLS-1$
 		}
 	}
 
@@ -337,7 +336,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		expected.add("org.junit4");
 		expected.add("org.eclipse.jdt.launching.macosx");
 
-		assertEquals("Wrong number of bundles in JDT feature", expected.size(), bundles.length);
+		assertEquals(expected.size(), bundles.length, "Wrong number of bundles in JDT feature"); //$NON-NLS-1$
 		for (TargetBundle bundle : bundles) {
 			String symbolicName = bundle.getBundleInfo().getSymbolicName();
 			expected.remove(symbolicName);
@@ -345,19 +344,18 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 				// the bundle should be missing unless on Mac
 				IStatus status = bundle.getStatus();
 				if (Platform.getOS().equals(Platform.OS_MACOSX)) {
-					assertTrue("Mac bundle should be present", status.isOK());
+					assertTrue(status.isOK(), "Mac bundle should be present"); //$NON-NLS-1$
 				} else {
-					assertFalse("Mac bundle should be missing", status.isOK());
-					assertEquals("Mac bundle should be mssing", TargetBundle.STATUS_PLUGIN_DOES_NOT_EXIST,
-							status.getCode());
+					assertFalse(status.isOK(), "Mac bundle should be missing"); //$NON-NLS-1$
+					assertEquals(TargetBundle.STATUS_PLUGIN_DOES_NOT_EXIST, status.getCode(), "Mac bundle should be mssing"); //$NON-NLS-1$
 				}
 			}
 		}
-		assertTrue("Wrong bundles in JDT feature. Missing: " + expected, expected.isEmpty());
+		assertTrue(expected.isEmpty(), "Wrong bundles in JDT feature. Missing: " + expected); //$NON-NLS-1$
 
 		// should be no source bundles
 		for (TargetBundle bundle : bundles) {
-			assertFalse("Should be no source bundles", bundle.isSourceBundle());
+			assertFalse(bundle.isSourceBundle(), "Should be no source bundles"); //$NON-NLS-1$
 		}
 	}
 
@@ -379,12 +377,12 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		definition.setIncluded(restrictions);
 		List<BundleInfo> infos = getAllBundleInfos(definition);
 
-		assertEquals("Wrong number of bundles", 2, infos.size());
+		assertEquals(2, infos.size(), "Wrong number of bundles"); //$NON-NLS-1$
 		Set<String> set = collectAllSymbolicNames(infos);
 		for (NameVersionDescriptor info : restrictions) {
 			set.remove(info.getId());
 		}
-		assertEquals("Wrong bundles", 0, set.size());
+		assertEquals(0, set.size(), "Wrong bundles"); //$NON-NLS-1$
 	}
 
 	/**
@@ -412,16 +410,16 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			expected.add("org.eclipse.jdt.launching.macosx.source");
 		}
 
-		assertEquals("Wrong number of bundles", expected.size(), bundles.length);
+		assertEquals(expected.size(), bundles.length, "Wrong number of bundles"); //$NON-NLS-1$
 		for (TargetBundle bundle : bundles) {
 			if (bundle.getBundleInfo().getSymbolicName().equals("org.eclipse.jdt.doc.isv")) {
-				assertFalse("Should not be a source bundle", bundle.isSourceBundle());
+				assertFalse(bundle.isSourceBundle(), "Should not be a source bundle"); //$NON-NLS-1$
 			} else {
 				assertTrue(expected.remove(bundle.getBundleInfo().getSymbolicName()));
-				assertTrue("Should be a source bundle", bundle.isSourceBundle());
+				assertTrue(bundle.isSourceBundle(), "Should be a source bundle"); //$NON-NLS-1$
 			}
 		}
-		assertTrue("Wrong bundles in JDT feature", expected.isEmpty());
+		assertTrue(expected.isEmpty(), "Wrong bundles in JDT feature"); //$NON-NLS-1$
 	}
 
 	/**
@@ -456,12 +454,12 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			// current platform
 			IPluginModelBase[] models = TargetPlatformHelper.getPDEState().getTargetModels();
 
-			assertEquals("Wrong number of bundles in JDT feature", expected.size(), models.length);
+			assertEquals(expected.size(), models.length, "Wrong number of bundles in JDT feature"); //$NON-NLS-1$
 			for (IPluginModelBase model : models) {
 				expected.remove(model.getPluginBase().getId());
 				assertTrue(model.isEnabled());
 			}
-			assertTrue("Wrong bundles in target platform. Missing: " + expected, expected.isEmpty());
+			assertTrue(expected.isEmpty(), "Wrong bundles in target platform. Missing: " + expected); //$NON-NLS-1$
 		} finally {
 			resetTargetPlatform();
 		}
@@ -478,7 +476,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			// current platform
 			IPluginModelBase[] models = TargetPlatformHelper.getPDEState().getTargetModels();
 
-			assertEquals("Wrong number of bundles in empty target", 0, models.length);
+			assertEquals(0, models.length, "Wrong number of bundles in empty target"); //$NON-NLS-1$
 
 		} finally {
 			resetTargetPlatform();
@@ -493,7 +491,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		// test bundle containers for known arguments
 		ITargetLocation directoryContainer = getTargetService()
 				.newDirectoryLocation(TargetPlatform.getDefaultLocation() + "/plugins");
-		assertNull("Plugins directory containers should not have arguments", directoryContainer.getVMArguments());
+		assertNull(directoryContainer.getVMArguments(), "Plugins directory containers should not have arguments"); //$NON-NLS-1$
 	}
 
 	/**
@@ -504,8 +502,8 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		PDETestCase.assumeRunningInStandaloneEclipseSDK();
 		ITargetLocation installDirectory = getTargetService().newDirectoryLocation(TargetPlatform.getDefaultLocation());
 		String[] installArgs = installDirectory.getVMArguments();
-		assertNotNull("Install directory should have arguments", installArgs);
-		assertTrue("Install directory should have arguments", installArgs.length > 0);
+		assertNotNull(installArgs, "Install directory should have arguments"); //$NON-NLS-1$
+		assertTrue(installArgs.length > 0, "Install directory should have arguments"); //$NON-NLS-1$
 	}
 
 	/**
@@ -515,7 +513,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	public void testArgumentsFeatureContainer() throws Exception {
 		ITargetLocation featureContainer = getTargetService().newFeatureLocation(TargetPlatform.getDefaultLocation(),
 				"DOES NOT EXIST", "DOES NOT EXIST");
-		assertNull("Feature containers should not have arguments", featureContainer.getVMArguments());
+		assertNull(featureContainer.getVMArguments(), "Feature containers should not have arguments"); //$NON-NLS-1$
 	}
 
 	/**
@@ -527,8 +525,8 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		ITargetLocation profileContainer = getTargetService().newProfileLocation(TargetPlatform.getDefaultLocation(),
 				null);
 		String[] arguments = profileContainer.getVMArguments();
-		assertNotNull("Profile containers should have arguments", arguments);
-		assertTrue("Profile containers should have arguments", arguments.length > 0);
+		assertNotNull(arguments, "Profile containers should have arguments"); //$NON-NLS-1$
+		assertTrue(arguments.length > 0, "Profile containers should have arguments"); //$NON-NLS-1$
 	}
 
 	/**
@@ -556,10 +554,10 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 
 			// Check that new launch configs will be prepopulated from target
 			// along with the default preference values
-			assertEquals(vmArgs + " -Dorg.eclipse.swt.graphics.Resource.reportNonDisposed=true",
+			assertEquals(vmArgs + " -Dorg.eclipse.swt.graphics.Resource.reportNonDisposed=true", //$NON-NLS-1$
 					LaunchArgumentsHelper.getInitialVMArguments());
-			assertEquals("-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog "
-					.concat(programArgs), LaunchArgumentsHelper.getInitialProgramArguments());
+			assertEquals(LaunchArgumentsHelper.getInitialProgramArguments(), "-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog " //$NON-NLS-1$
+					.concat(programArgs));
 
 			// Check that new launch configs will be prepopulated from target
 			// along with ADD_SWT_NON_DISPOSAL_REPORTING == false
@@ -569,7 +567,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			// Check that new launch configs will be prepopulated from target
 			// along with ADD_SWT_NON_DISPOSAL_REPORTING == true
 			prefs.setValue(ILaunchingPreferenceConstants.ADD_SWT_NON_DISPOSAL_REPORTING, true);
-			assertEquals(vmArgs + " -Dorg.eclipse.swt.graphics.Resource.reportNonDisposed=true",
+			assertEquals(vmArgs + " -Dorg.eclipse.swt.graphics.Resource.reportNonDisposed=true", //$NON-NLS-1$
 					LaunchArgumentsHelper.getInitialVMArguments());
 
 			// Check that new launch configs will be prepopulated from target
@@ -674,9 +672,9 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			if (descriptions == null) {
 
 			} else {
-				assertEquals("Wrong number of enabled bundles", descriptions.length, enabled.size());
+				assertEquals(descriptions.length, enabled.size(), "Wrong number of enabled bundles"); //$NON-NLS-1$
 				for (NameVersionDescriptor description : descriptions) {
-					assertTrue("Missing bundle", enabled.contains(description));
+					assertTrue(enabled.contains(description), "Missing bundle"); //$NON-NLS-1$
 				}
 			}
 		} finally {

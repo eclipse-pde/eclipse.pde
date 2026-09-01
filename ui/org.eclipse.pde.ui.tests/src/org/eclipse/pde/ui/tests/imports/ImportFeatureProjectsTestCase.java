@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.imports;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -33,15 +33,15 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.wizards.imports.FeatureImportOperation;
 import org.eclipse.pde.internal.ui.wizards.imports.FeatureImportWizard.ReplaceQuery;
 import org.eclipse.pde.ui.tests.wizards.NewProjectTestCase;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 public class ImportFeatureProjectsTestCase extends NewProjectTestCase {
 
 	private String fProjectName;
 
 	@Override
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		fProjectName = null;
 		super.tearDown();
@@ -78,10 +78,10 @@ public class ImportFeatureProjectsTestCase extends NewProjectTestCase {
 		IFeatureModel[] imported = PDECore.getDefault().getFeatureModelManager().getWorkspaceModels();
 		for (IFeatureModel element : imported) {
 			lookingAtProject(element);
-			assertTrue("Verifying feature nature...", hasNature(FeatureProject.NATURE));
+			assertTrue(hasNature(FeatureProject.NATURE), "Verifying feature nature..."); //$NON-NLS-1$
 			IFeatureInstallHandler installHandler = element.getFeature().getInstallHandler();
 			boolean shouldHaveJavaNature = installHandler != null ? installHandler.getLibrary() != null : false;
-			assertEquals("Verifying java nature...", hasNature(JavaCore.NATURE_ID), shouldHaveJavaNature);
+			assertEquals(hasNature(JavaCore.NATURE_ID), shouldHaveJavaNature, "Verifying java nature..."); //$NON-NLS-1$
 		}
 	}
 
@@ -89,8 +89,8 @@ public class ImportFeatureProjectsTestCase extends NewProjectTestCase {
 		IFeatureModel[] imported = PDECore.getDefault().getFeatureModelManager().getWorkspaceModels();
 		for (IFeatureModel element : imported) {
 			lookingAtProject(element);
-			assertEquals("Verifing feature is binary...", isBinary, PDECore.BINARY_PROJECT_VALUE
-					.equals(getProject().getPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY)));
+			assertEquals(isBinary, PDECore.BINARY_PROJECT_VALUE
+					.equals(getProject().getPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY)), "Verifing feature is binary..."); //$NON-NLS-1$
 		}
 	}
 
@@ -144,9 +144,9 @@ public class ImportFeatureProjectsTestCase extends NewProjectTestCase {
 		if (imported.length != models.length) {
 			Set<String> expected = toFeatureIds(models);
 			Set<String> actual = toFeatureIds(imported);
-			assertEquals("Imported models differ from expected", expected.toString(), actual.toString());
+			assertEquals(expected.toString(), actual.toString(), "Imported models differ from expected"); //$NON-NLS-1$
 		}
-		assertEquals("Verifing number models imported...", models.length, imported.length);
+		assertEquals(models.length, imported.length, "Verifing number models imported..."); //$NON-NLS-1$
 	}
 
 	private static TreeSet<String> toFeatureIds(IFeatureModel[] models) {
@@ -166,12 +166,12 @@ public class ImportFeatureProjectsTestCase extends NewProjectTestCase {
 		verifyNatures();
 		verifyFeature(binary);
 		IFeatureModel[] imported = PDECore.getDefault().getFeatureModelManager().getWorkspaceModels();
-		assertTrue("Verifing number models imported...", imported.length == 1);
+		assertTrue(imported.length == 1, "Verifing number models imported..."); //$NON-NLS-1$
 		IFeaturePlugin[] plugins = model[0].getFeature().getPlugins();
 		if (plugins != null) {
 			IFeaturePlugin[] importedFeaturePlugins = getFeaturePluginsFrom(model[0].getFeature().getId(), imported);
-			assertNotNull("Verifying feature plugins exist...", importedFeaturePlugins);
-			assertEquals("Verifying total equal feature plugins...", plugins.length, importedFeaturePlugins.length);
+			assertNotNull(importedFeaturePlugins, "Verifying feature plugins exist..."); //$NON-NLS-1$
+			assertEquals(plugins.length, importedFeaturePlugins.length, "Verifying total equal feature plugins..."); //$NON-NLS-1$
 		}
 	}
 

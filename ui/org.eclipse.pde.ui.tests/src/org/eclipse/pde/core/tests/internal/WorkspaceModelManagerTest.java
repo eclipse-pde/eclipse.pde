@@ -13,12 +13,14 @@
  *******************************************************************************/
 package org.eclipse.pde.core.tests.internal;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.extension.Extension;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -44,11 +46,8 @@ import org.eclipse.pde.internal.core.WorkspacePluginModelManager;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.ui.tests.runtime.TestUtils;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
-import org.junit.After;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestRule;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.Constants;
 
 /**
@@ -57,15 +56,15 @@ import org.osgi.framework.Constants;
  * 'test'-implementation.
  */
 public class WorkspaceModelManagerTest {
-	@ClassRule
-	public static final TestRule CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
+	@RegisterExtension
+	public static final Extension CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
 
-	@Rule
-	public final TestRule deleteCreatedTestProjectsAfter = ProjectUtils.DELETE_CREATED_WORKSPACE_PROJECTS_AFTER;
+	@RegisterExtension
+	public final Extension deleteCreatedTestProjectsAfter = ProjectUtils.DELETE_CREATED_WORKSPACE_PROJECTS_AFTER;
 
 	private static final Set<WorkspaceModelManager<?>> openManagers = ConcurrentHashMap.newKeySet();
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		openManagers.forEach(WorkspaceModelManager::shutdown);
 	}
@@ -146,8 +145,8 @@ public class WorkspaceModelManagerTest {
 		IPluginModelBase model = getPluginModel(project, mm);
 		assertExistingModel("plugin.a", "1.0.0", model);
 		assertFalse(manifest(project).exists());
-		assertTrue(project.getFile("other/root/META-INF/MANIFEST.MF").exists());
-		assertEquals(project.getFile("other/root/META-INF/MANIFEST.MF"), model.getUnderlyingResource());
+		assertTrue(project.getFile("other/root/META-INF/MANIFEST.MF").exists()); //$NON-NLS-1$
+		assertEquals(project.getFile("other/root/META-INF/MANIFEST.MF"), model.getUnderlyingResource()); //$NON-NLS-1$
 	}
 
 	@Test
@@ -167,7 +166,7 @@ public class WorkspaceModelManagerTest {
 
 		IPluginModelBase model = getPluginModel(project, mm);
 		assertExistingModel("plugin.a", "2.0.0", model);
-		assertEquals(manifestIn(project, "otherRoot"), model.getUnderlyingResource());
+		assertEquals(manifestIn(project, "otherRoot"), model.getUnderlyingResource()); //$NON-NLS-1$
 	}
 
 	@Test
@@ -194,13 +193,13 @@ public class WorkspaceModelManagerTest {
 
 		IPluginModelBase model1 = getPluginModel(project, mm);
 		assertExistingModel("plugin.a", "2.0.0", model1);
-		assertEquals(manifestIn(project, "otherRoot"), model1.getUnderlyingResource());
+		assertEquals(manifestIn(project, "otherRoot"), model1.getUnderlyingResource()); //$NON-NLS-1$
 
 		setBundleRoot(project, "root2");
 
 		IPluginModelBase model2 = getPluginModel(project, mm);
 		assertExistingModel("plugin.a", "3.0.0", model2);
-		assertEquals(manifestIn(project, "root2"), model2.getUnderlyingResource());
+		assertEquals(manifestIn(project, "root2"), model2.getUnderlyingResource()); //$NON-NLS-1$
 
 		setBundleRoot(project, null);
 
@@ -223,7 +222,7 @@ public class WorkspaceModelManagerTest {
 
 		IPluginModelBase model = getPluginModel(project, mm);
 		assertExistingModel("plugin.a", "2.0.0", model);
-		assertEquals(manifestIn(project, "otherRoot"), model.getUnderlyingResource());
+		assertEquals(manifestIn(project, "otherRoot"), model.getUnderlyingResource()); //$NON-NLS-1$
 	}
 
 	@Test

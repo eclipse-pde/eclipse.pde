@@ -33,16 +33,16 @@ import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.Constants;
 
 public class BundleErrorReporterTest {
 
 	private IFile manifest;
 
-	@Before
+	@BeforeEach
 	public void setup() throws Exception {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(getClass().getName());
 		manifest = project.getFile("META-INF/MANIFEST.MF");
@@ -85,7 +85,7 @@ public class BundleErrorReporterTest {
 				.filter(m -> m.getAttribute(IMarker.SEVERITY, -1) == IMarker.SEVERITY_ERROR).toList();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		if (manifest.getProject().exists()) {
 			manifest.getProject().delete(true, null);

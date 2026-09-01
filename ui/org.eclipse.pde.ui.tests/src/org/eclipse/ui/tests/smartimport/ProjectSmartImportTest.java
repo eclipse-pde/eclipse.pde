@@ -13,8 +13,11 @@
  ******************************************************************************/
 package org.eclipse.ui.tests.smartimport;
 
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.api.io.TempDir;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,20 +38,10 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.ui.tests.PDETestCase;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
-import org.junit.After;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 
-@RunWith(Parameterized.class)
 public class ProjectSmartImportTest {
-
-	@Parameters(name = "{0}")
 	public static Object[][] projects() {
 		return new Object[][] { //
 			{ "JavaEclipseProject", List.of("org.eclipse.jdt.core.javanature") }, //
@@ -58,24 +51,19 @@ public class ProjectSmartImportTest {
 		};
 	}
 
-	@ClassRule
-	public static TemporaryFolder workingDirectory = new TemporaryFolder();
+	@TempDir
+	public static Path workingDirectory;
 
-	@Parameter(0)
-	public String projectName;
-	@Parameter(1)
-	public List<String> expectedNatures;
-
-	@BeforeClass
+@BeforeAll
 	public static void setupClass() throws Exception {
 		// Copy imported projects to temp-directory to not pollute this project
 		// and have it unzipped for I-build tests
-		PDETestCase.copyFromThisBundleInto("tests/smartImport", workingDirectory.getRoot().toPath());
+		PDETestCase.copyFromThisBundleInto("tests/smartImport", workingDirectory);
 		Files.writeString(getErrorLogFile(), ""); // empty error log
 		ProjectUtils.deleteAllWorkspaceProjects();
 	}
 
-	@After
+	@AfterEach
 	public void cleanup() throws IOException, CoreException {
 		Files.writeString(getErrorLogFile(), ""); // empty error log
 		ProjectUtils.deleteAllWorkspaceProjects();
@@ -85,9 +73,10 @@ public class ProjectSmartImportTest {
 		return Platform.getLogFileLocation().toFile().toPath();
 	}
 
-	@Test
-	public void testImport() throws CoreException, InterruptedException, IOException {
-		File projectPath = new File(workingDirectory.getRoot(), projectName);
+	@ParameterizedTest(name = "{0}")
+	@MethodSource("projects")
+	public void testImport(String projectName, List<String> expectedNatures) throws CoreException, InterruptedException, IOException {
+		File projectPath = workingDirectory.resolve(projectName).toFile();
 
 		var job = new org.eclipse.ui.internal.wizards.datatransfer.SmartImportJob(projectPath, null, true, false);
 		job.run(new NullProgressMonitor());
@@ -114,10 +103,8 @@ public class ProjectSmartImportTest {
 				return false;
 			}
 		}).toList();
-		assertTrue(
-				"There should be no errors in imported project: " + System.lineSeparator() + errorMarkers.stream()
-				.map(String::valueOf).collect(Collectors.joining(System.lineSeparator())),
-				errorMarkers.isEmpty());
+		assertTrue(errorMarkers.isEmpty(), "There should be no errors in imported project: " + System.lineSeparator() + errorMarkers.stream() //$NON-NLS-1$
+				.map(String::valueOf).collect(Collectors.joining(System.lineSeparator())));
 
 	}
 

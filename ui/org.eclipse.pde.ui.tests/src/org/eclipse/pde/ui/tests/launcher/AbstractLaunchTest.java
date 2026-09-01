@@ -16,9 +16,11 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.launcher;
 
+import org.junit.jupiter.api.extension.Extension;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import static java.util.Comparator.comparing;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -44,29 +46,26 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
 import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
 import org.eclipse.swt.widgets.Display;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.rules.TestRule;
+import org.junit.jupiter.api.BeforeAll;
 import org.osgi.framework.Version;
 
 public abstract class AbstractLaunchTest {
 
-	@ClassRule
-	public static final TestRule RESTORE_TARGET_DEFINITION = TargetPlatformUtil.RESTORE_CURRENT_TARGET_DEFINITION_AFTER;
-	@ClassRule
-	public static final TestRule CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
+	@RegisterExtension
+	public static final Extension RESTORE_TARGET_DEFINITION = TargetPlatformUtil.RESTORE_CURRENT_TARGET_DEFINITION_AFTER;
+	@RegisterExtension
+	public static final Extension CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
 
 	private static IProject launchConfigsProject;
 
-	@BeforeClass
+	@BeforeAll
 	public static void setupTargetPlatform() throws Exception {
 		TargetPlatformUtil.setRunningPlatformAsTarget();
 		launchConfigsProject = ProjectUtils.importTestProject("tests/launch");
 	}
 
-	@Rule
-	public final TestRule deleteCreatedTestProjectsAfter = ProjectUtils.DELETE_CREATED_WORKSPACE_PROJECTS_AFTER;
+	@RegisterExtension
+	public final Extension deleteCreatedTestProjectsAfter = ProjectUtils.DELETE_CREATED_WORKSPACE_PROJECTS_AFTER;
 
 	protected static ILaunchConfiguration getLaunchConfiguration(String name) {
 		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
@@ -87,9 +86,9 @@ public abstract class AbstractLaunchTest {
 		waitForJobsAndUI(10000);
 
 		ModelEntry entry = PluginRegistry.findEntry(id);
-		assertNotNull("entry '" + id + "' should be present in PluginRegistry", entry);
+		assertNotNull(entry, "entry '" + id + "' should be present in PluginRegistry"); //$NON-NLS-1$ //$NON-NLS-2$
 		IPluginModelBase[] models = modelsGetter.apply(entry);
-		assertTrue("entry '" + id + "' should have " + type + " models", models.length > 0);
+		assertTrue(models.length > 0, "entry '" + id + "' should have " + type + " models"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 		if (versionStr == null) {
 			return models[0];
@@ -150,7 +149,7 @@ public abstract class AbstractLaunchTest {
 
 	static void assertPluginMapsEquals(String message, Map<IPluginModelBase, String> expected,
 			Map<IPluginModelBase, String> actual) {
-		// Like Assert.assertEquals() but with more expressive and easier to
+		// Like Assertions.assertEquals() but with more expressive and easier to
 		// compare failure message
 		Assertions.assertThat(actual).withRepresentation(new StandardRepresentation() {
 			@Override

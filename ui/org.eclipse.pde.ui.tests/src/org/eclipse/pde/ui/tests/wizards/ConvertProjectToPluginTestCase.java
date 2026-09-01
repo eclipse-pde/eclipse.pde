@@ -14,10 +14,10 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.wizards;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -34,7 +34,7 @@ import org.eclipse.pde.internal.ui.wizards.tools.ConvertProjectToPluginOperation
 import org.eclipse.pde.ui.tests.PDETestCase;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test case to test the conversion of projects to plug-in projects
@@ -147,7 +147,7 @@ public class ConvertProjectToPluginTestCase extends PDETestCase {
 		try {
 			progressService.runInUI(progressService, convertOperation, null);
 		} catch (InvocationTargetException | InterruptedException e) {
-			fail("Plug-in project conversion failed...");
+			fail("Plug-in project conversion failed..."); //$NON-NLS-1$
 		}
 	}
 

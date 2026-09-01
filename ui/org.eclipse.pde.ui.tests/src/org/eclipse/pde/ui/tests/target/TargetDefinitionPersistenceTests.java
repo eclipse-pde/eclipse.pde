@@ -13,11 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -52,7 +52,7 @@ import org.eclipse.pde.internal.core.target.ProfileBundleContainer;
 import org.eclipse.pde.internal.core.target.TargetDefinition;
 import org.eclipse.pde.internal.core.target.TargetDefinitionPersistenceHelper;
 import org.eclipse.pde.ui.tests.PDETestCase;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.FrameworkUtil;
 
 /**
@@ -69,14 +69,14 @@ public class TargetDefinitionPersistenceTests {
 		ITargetPlatformService service = getTargetService();
 		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(IPath.fromOSString("does/not/exist"));
 		ITargetHandle handle = service.getTarget(file);
-		assertFalse("Target should not exist", handle.exists());
+		assertFalse(handle.exists(), "Target should not exist"); //$NON-NLS-1$
 		String memento = handle.getMemento();
-		assertNotNull("Missing memento", memento);
+		assertNotNull(memento, "Missing memento"); //$NON-NLS-1$
 		ITargetHandle handle2 = service.getTarget(memento);
-		assertEquals("Restore failed", handle, handle2);
+		assertEquals(handle, handle2, "Restore failed"); //$NON-NLS-1$
 		IFile file2 = ResourcesPlugin.getWorkspace().getRoot().getFile(IPath.fromOSString("does/not/exist/either"));
 		ITargetHandle handle3 = service.getTarget(file2);
-		assertFalse("Should be different targets", handle.equals(handle3));
+		assertFalse(handle.equals(handle3), "Should be different targets"); //$NON-NLS-1$
 	}
 
 	/** Tests restoration of a handle to target definition in local metadata. */
@@ -84,13 +84,13 @@ public class TargetDefinitionPersistenceTests {
 	public void testLocalTargetHandleMemento() throws CoreException {
 		ITargetPlatformService service = getTargetService();
 		ITargetHandle handle = service.newTarget().getHandle();
-		assertFalse("Target should not exist", handle.exists());
+		assertFalse(handle.exists(), "Target should not exist"); //$NON-NLS-1$
 		String memento = handle.getMemento();
-		assertNotNull("Missing memento", memento);
+		assertNotNull(memento, "Missing memento"); //$NON-NLS-1$
 		ITargetHandle handle2 = service.getTarget(memento);
-		assertEquals("Restore failed", handle, handle2);
+		assertEquals(handle, handle2, "Restore failed"); //$NON-NLS-1$
 		ITargetHandle handle3 = service.newTarget().getHandle();
-		assertFalse("Should be different targets", handle.equals(handle3));
+		assertFalse(handle.equals(handle3), "Should be different targets"); //$NON-NLS-1$
 	}
 
 	/** Tests restoration of a handle to target definition in external URI. */
@@ -105,11 +105,11 @@ public class TargetDefinitionPersistenceTests {
 		// IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new
 		// Path("does/not/exist"));
 		ITargetHandle handle = service.getTarget(uri);
-		assertFalse("Target should not exist", handle.exists());
+		assertFalse(handle.exists(), "Target should not exist"); //$NON-NLS-1$
 		String memento = handle.getMemento();
-		assertNotNull("Missing memento", memento);
+		assertNotNull(memento, "Missing memento"); //$NON-NLS-1$
 		ITargetHandle handle2 = service.getTarget(memento);
-		assertEquals("Restore failed", handle, handle2);
+		assertEquals(handle, handle2, "Restore failed"); //$NON-NLS-1$
 		// IFile file2 = ResourcesPlugin.getWorkspace().getRoot().getFile(new
 		// Path("does/not/exist/either"));
 		URI uri2 = null;
@@ -118,7 +118,7 @@ public class TargetDefinitionPersistenceTests {
 		} catch (URISyntaxException e) {
 		}
 		ITargetHandle handle3 = service.getTarget(uri2);
-		assertFalse("Should be different targets", handle.equals(handle3));
+		assertFalse(handle.equals(handle3), "Should be different targets"); //$NON-NLS-1$
 	}
 
 	/**
@@ -144,7 +144,7 @@ public class TargetDefinitionPersistenceTests {
 	public void testReadOldBasicTargetFile() throws Exception {
 		ITargetDefinition target = readOldTarget("basic");
 
-		assertEquals("Wrong name", "Basic", target.getName());
+		assertEquals("Basic", target.getName(), "Wrong name"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertNull(target.getArch());
 		assertNull(target.getOS());
 		assertNull(target.getNL());
@@ -155,10 +155,9 @@ public class TargetDefinitionPersistenceTests {
 		assertNull(target.getJREContainer());
 
 		ITargetLocation[] containers = target.getTargetLocations();
-		assertEquals("Wrong number of bundles", 1, containers.length);
-		assertTrue("Container should be a profile container", containers[0] instanceof ProfileBundleContainer);
-		assertEquals("Wrong home location", IPath.fromOSString(TargetPlatform.getDefaultLocation()),
-				IPath.fromOSString(getResolvedLocation(containers[0])));
+		assertEquals(1, containers.length, "Wrong number of bundles"); //$NON-NLS-1$
+		assertTrue(containers[0] instanceof ProfileBundleContainer, "Container should be a profile container"); //$NON-NLS-1$
+		assertEquals(IPath.fromOSString(TargetPlatform.getDefaultLocation()), IPath.fromOSString(getResolvedLocation(containers[0])), "Wrong home location"); //$NON-NLS-1$
 	}
 
 	/**
@@ -169,7 +168,7 @@ public class TargetDefinitionPersistenceTests {
 	public void testReadOldBasicDirectoryTargetFile() throws Exception {
 		ITargetDefinition target = readOldTarget("directory");
 
-		assertEquals("Wrong name", "Directory", target.getName());
+		assertEquals("Directory", target.getName(), "Wrong name"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertNull(target.getArch());
 		assertNull(target.getOS());
 		assertNull(target.getNL());
@@ -180,10 +179,9 @@ public class TargetDefinitionPersistenceTests {
 		assertNull(target.getJREContainer());
 
 		ITargetLocation[] containers = target.getTargetLocations();
-		assertEquals("Wrong number of bundles", 1, containers.length);
-		assertTrue("Container should be a directory container", containers[0] instanceof DirectoryBundleContainer);
-		assertEquals("Wrong home location", IPath.fromOSString(TargetPlatform.getDefaultLocation()).append("plugins"),
-				IPath.fromOSString(getResolvedLocation(containers[0])));
+		assertEquals(1, containers.length, "Wrong number of bundles"); //$NON-NLS-1$
+		assertTrue(containers[0] instanceof DirectoryBundleContainer, "Container should be a directory container"); //$NON-NLS-1$
+		assertEquals(IPath.fromOSString(TargetPlatform.getDefaultLocation()).append("plugins"), IPath.fromOSString(getResolvedLocation(containers[0])), "Wrong home location"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -194,33 +192,32 @@ public class TargetDefinitionPersistenceTests {
 	public void testReadOldSpecificTargetFile() throws Exception {
 		ITargetDefinition target = readOldTarget("specific");
 
-		assertEquals("Wrong name", "Specific Settings", target.getName());
-		assertEquals("x86", target.getArch());
-		assertEquals("linux", target.getOS());
-		assertEquals("en_US", target.getNL());
-		assertEquals("gtk", target.getWS());
-		assertEquals("pgm1 pgm2", target.getProgramArguments());
-		assertEquals("-Dfoo=\"bar\"", target.getVMArguments());
+		assertEquals("Specific Settings", target.getName(), "Wrong name"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(target.getArch(), "x86"); //$NON-NLS-1$
+		assertEquals(target.getOS(), "linux"); //$NON-NLS-1$
+		assertEquals(target.getNL(), "en_US"); //$NON-NLS-1$
+		assertEquals(target.getWS(), "gtk"); //$NON-NLS-1$
+		assertEquals(target.getProgramArguments(), "pgm1 pgm2"); //$NON-NLS-1$
+		assertEquals(target.getVMArguments(), "-Dfoo=\"bar\""); //$NON-NLS-1$
 		assertEquals(
 				JavaRuntime
-				.newJREContainerPath(JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("J2SE-1.4")),
+				.newJREContainerPath(JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("J2SE-1.4")), //$NON-NLS-1$
 				target.getJREContainer());
 
 		NameVersionDescriptor[] infos = target.getImplicitDependencies();
-		assertEquals("Wrong number of implicit dependencies", 2, infos.length);
+		assertEquals(2, infos.length, "Wrong number of implicit dependencies"); //$NON-NLS-1$
 		Set<String> set = new HashSet<>();
 		for (NameVersionDescriptor info : infos) {
 			set.add(info.getId());
 		}
-		assertTrue("Missing ", set.remove("org.eclipse.jdt.debug"));
-		assertTrue("Missing ", set.remove("org.eclipse.debug.core"));
+		assertTrue(set.remove("org.eclipse.jdt.debug"), "Missing "); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(set.remove("org.eclipse.debug.core"), "Missing "); //$NON-NLS-1$ //$NON-NLS-2$
 		assertTrue(set.isEmpty());
 
 		ITargetLocation[] containers = target.getTargetLocations();
-		assertEquals("Wrong number of bundles", 1, containers.length);
-		assertTrue("Container should be a directory container", containers[0] instanceof DirectoryBundleContainer);
-		assertEquals("Wrong home location", IPath.fromOSString(TargetPlatform.getDefaultLocation()).append("plugins"),
-				IPath.fromOSString(getResolvedLocation(containers[0])));
+		assertEquals(1, containers.length, "Wrong number of bundles"); //$NON-NLS-1$
+		assertTrue(containers[0] instanceof DirectoryBundleContainer, "Container should be a directory container"); //$NON-NLS-1$
+		assertEquals(IPath.fromOSString(TargetPlatform.getDefaultLocation()).append("plugins"), IPath.fromOSString(getResolvedLocation(containers[0])), "Wrong home location"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -231,7 +228,7 @@ public class TargetDefinitionPersistenceTests {
 	public void testReadOldAdditionLocationsTargetFile() throws Exception {
 		ITargetDefinition target = readOldTarget("additionalLocations");
 
-		assertEquals("Wrong name", "Additional Locations", target.getName());
+		assertEquals("Additional Locations", target.getName(), "Wrong name"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertNull(target.getArch());
 		assertNull(target.getOS());
 		assertNull(target.getNL());
@@ -242,22 +239,18 @@ public class TargetDefinitionPersistenceTests {
 		assertNull(target.getImplicitDependencies());
 
 		ITargetLocation[] containers = target.getTargetLocations();
-		assertEquals("Wrong number of bundles", 3, containers.length);
+		assertEquals(3, containers.length, "Wrong number of bundles"); //$NON-NLS-1$
 		assertTrue(containers[0] instanceof ProfileBundleContainer);
 		assertTrue(containers[1] instanceof DirectoryBundleContainer);
 		assertTrue(containers[2] instanceof DirectoryBundleContainer);
 
-		assertEquals("Wrong home location", IPath.fromOSString(TargetPlatform.getDefaultLocation()),
-				IPath.fromOSString(getResolvedLocation(containers[0])));
+		assertEquals(IPath.fromOSString(TargetPlatform.getDefaultLocation()), IPath.fromOSString(getResolvedLocation(containers[0])), "Wrong home location"); //$NON-NLS-1$
 
 		String string = VariablesPlugin.getDefault().getStringVariableManager()
 				.performStringSubstitution("${workspace_loc}");
-		assertEquals("Wrong 1st additional location", IPath.fromOSString(string).append("stuff"),
-				IPath.fromOSString(getResolvedLocation(containers[1])));
+		assertEquals(IPath.fromOSString(string).append("stuff"), IPath.fromOSString(getResolvedLocation(containers[1])), "Wrong 1st additional location"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		assertEquals("Wrong 2nd additional location",
-				IPath.fromOSString(TargetPlatform.getDefaultLocation()).append("dropins"),
-				IPath.fromOSString(getResolvedLocation(containers[2])));
+		assertEquals(IPath.fromOSString(TargetPlatform.getDefaultLocation()).append("dropins"), IPath.fromOSString(getResolvedLocation(containers[2])), "Wrong 2nd additional location"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -268,7 +261,7 @@ public class TargetDefinitionPersistenceTests {
 	public void testReadOldFeaturesTargetFile() throws Exception {
 		ITargetDefinition target = readOldTarget("featureLocations");
 
-		assertEquals("Wrong name", "Features", target.getName());
+		assertEquals("Features", target.getName(), "Wrong name"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertNull(target.getArch());
 		assertNull(target.getOS());
 		assertNull(target.getNL());
@@ -279,14 +272,12 @@ public class TargetDefinitionPersistenceTests {
 		assertNull(target.getImplicitDependencies());
 
 		ITargetLocation[] containers = target.getTargetLocations();
-		assertEquals("Wrong number of bundles", 2, containers.length);
+		assertEquals(2, containers.length, "Wrong number of bundles"); //$NON-NLS-1$
 		assertTrue(containers[0] instanceof FeatureBundleContainer);
 		assertTrue(containers[1] instanceof FeatureBundleContainer);
 
-		assertEquals("Wrong feature location", "org.eclipse.jdt",
-				((FeatureBundleContainer) containers[0]).getFeatureId());
-		assertEquals("Wrong feature location", "org.eclipse.platform",
-				((FeatureBundleContainer) containers[1]).getFeatureId());
+		assertEquals("org.eclipse.jdt", ((FeatureBundleContainer) containers[0]).getFeatureId(), "Wrong feature location"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("org.eclipse.platform", ((FeatureBundleContainer) containers[1]).getFeatureId(), "Wrong feature location"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -297,7 +288,7 @@ public class TargetDefinitionPersistenceTests {
 	public void testReadOldRestrictionsTargetFile() throws Exception {
 		ITargetDefinition target = readOldTarget("restrictions");
 
-		assertEquals("Wrong name", "Restrictions", target.getName());
+		assertEquals("Restrictions", target.getName(), "Wrong name"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertNull(target.getArch());
 		assertNull(target.getOS());
 		assertNull(target.getNL());
@@ -308,18 +299,14 @@ public class TargetDefinitionPersistenceTests {
 		assertNull(target.getImplicitDependencies());
 
 		ITargetLocation[] containers = target.getTargetLocations();
-		assertEquals("Wrong number of containers", 3, containers.length);
+		assertEquals(3, containers.length, "Wrong number of containers"); //$NON-NLS-1$
 		assertTrue(containers[0] instanceof ProfileBundleContainer);
 		assertTrue(containers[1] instanceof FeatureBundleContainer);
 		assertTrue(containers[2] instanceof DirectoryBundleContainer);
 
-		assertEquals("Wrong home location", IPath.fromOSString(TargetPlatform.getDefaultLocation()),
-				IPath.fromOSString(getResolvedLocation(containers[0])));
-		assertEquals("Wrong 1st additional location", "org.eclipse.jdt",
-				((FeatureBundleContainer) containers[1]).getFeatureId());
-		assertEquals("Wrong 2nd additional location",
-				IPath.fromOSString(TargetPlatform.getDefaultLocation()).append("dropins"),
-				IPath.fromOSString(getResolvedLocation(containers[2])));
+		assertEquals(IPath.fromOSString(TargetPlatform.getDefaultLocation()), IPath.fromOSString(getResolvedLocation(containers[0])), "Wrong home location"); //$NON-NLS-1$
+		assertEquals("org.eclipse.jdt", ((FeatureBundleContainer) containers[1]).getFeatureId(), "Wrong 1st additional location"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(IPath.fromOSString(TargetPlatform.getDefaultLocation()).append("dropins"), IPath.fromOSString(getResolvedLocation(containers[2])), "Wrong 2nd additional location"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		NameVersionDescriptor[] restrictions = new NameVersionDescriptor[] {
 				new NameVersionDescriptor("org.eclipse.debug.core", null),
@@ -330,9 +317,9 @@ public class TargetDefinitionPersistenceTests {
 
 		NameVersionDescriptor[] actual = target.getIncluded();
 		assertNotNull(actual);
-		assertEquals("Wrong number of restrictions", restrictions.length, actual.length);
+		assertEquals(restrictions.length, actual.length, "Wrong number of restrictions"); //$NON-NLS-1$
 		for (int j = 0; j < actual.length; j++) {
-			assertEquals("Wrong restriction", restrictions[j], actual[j]);
+			assertEquals(restrictions[j], actual[j], "Wrong restriction"); //$NON-NLS-1$
 		}
 	}
 
@@ -345,7 +332,7 @@ public class TargetDefinitionPersistenceTests {
 	public void testReadOldTargetFileWithUnknownTags() throws Exception {
 		ITargetDefinition target = readOldTarget("extratags");
 
-		assertEquals("Wrong name", "Restrictions", target.getName());
+		assertEquals("Restrictions", target.getName(), "Wrong name"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertNull(target.getArch());
 		assertNull(target.getOS());
 		assertNull(target.getNL());
@@ -356,18 +343,14 @@ public class TargetDefinitionPersistenceTests {
 		assertNull(target.getImplicitDependencies());
 
 		ITargetLocation[] containers = target.getTargetLocations();
-		assertEquals("Wrong number of bundles", 3, containers.length);
+		assertEquals(3, containers.length, "Wrong number of bundles"); //$NON-NLS-1$
 		assertTrue(containers[0] instanceof ProfileBundleContainer);
 		assertTrue(containers[1] instanceof FeatureBundleContainer);
 		assertTrue(containers[2] instanceof DirectoryBundleContainer);
 
-		assertEquals("Wrong home location", IPath.fromOSString(TargetPlatform.getDefaultLocation()),
-				IPath.fromOSString(getResolvedLocation(containers[0])));
-		assertEquals("Wrong 1st additional location", "org.eclipse.jdt",
-				((FeatureBundleContainer) containers[1]).getFeatureId());
-		assertEquals("Wrong 2nd additional location",
-				IPath.fromOSString(TargetPlatform.getDefaultLocation()).append("dropins"),
-				IPath.fromOSString(getResolvedLocation(containers[2])));
+		assertEquals(IPath.fromOSString(TargetPlatform.getDefaultLocation()), IPath.fromOSString(getResolvedLocation(containers[0])), "Wrong home location"); //$NON-NLS-1$
+		assertEquals("org.eclipse.jdt", ((FeatureBundleContainer) containers[1]).getFeatureId(), "Wrong 1st additional location"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(IPath.fromOSString(TargetPlatform.getDefaultLocation()).append("dropins"), IPath.fromOSString(getResolvedLocation(containers[2])), "Wrong 2nd additional location"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		NameVersionDescriptor[] restrictions = new NameVersionDescriptor[] {
 				new NameVersionDescriptor("org.eclipse.debug.core", null),
@@ -378,9 +361,9 @@ public class TargetDefinitionPersistenceTests {
 
 		NameVersionDescriptor[] actual = target.getIncluded();
 		assertNotNull(actual);
-		assertEquals("Wrong number of restrictions", restrictions.length, actual.length);
+		assertEquals(restrictions.length, actual.length, "Wrong number of restrictions"); //$NON-NLS-1$
 		for (int j = 0; j < actual.length; j++) {
-			assertEquals("Wrong restriction", restrictions[j], actual[j]);
+			assertEquals(restrictions[j], actual[j], "Wrong restriction"); //$NON-NLS-1$
 		}
 	}
 
@@ -392,7 +375,7 @@ public class TargetDefinitionPersistenceTests {
 	public void testReadOldOptionalTargetFile() throws Exception {
 		ITargetDefinition target = readOldTarget("optional");
 
-		assertEquals("Wrong name", "Optional", target.getName());
+		assertEquals("Optional", target.getName(), "Wrong name"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertNull(target.getArch());
 		assertNull(target.getOS());
 		assertNull(target.getNL());
@@ -403,13 +386,11 @@ public class TargetDefinitionPersistenceTests {
 		assertNull(target.getJREContainer());
 
 		ITargetLocation[] containers = target.getTargetLocations();
-		assertEquals("Wrong number of bundles", 2, containers.length);
-		assertTrue("Container should be a profile container", containers[0] instanceof ProfileBundleContainer);
-		assertTrue("Container should be a profile container", containers[1] instanceof FeatureBundleContainer);
-		assertEquals("Wrong home location", IPath.fromOSString(TargetPlatform.getDefaultLocation()),
-				IPath.fromOSString(getResolvedLocation(containers[0])));
-		assertEquals("Wrong feature location", "org.eclipse.jdt",
-				((FeatureBundleContainer) containers[1]).getFeatureId());
+		assertEquals(2, containers.length, "Wrong number of bundles"); //$NON-NLS-1$
+		assertTrue(containers[0] instanceof ProfileBundleContainer, "Container should be a profile container"); //$NON-NLS-1$
+		assertTrue(containers[1] instanceof FeatureBundleContainer, "Container should be a profile container"); //$NON-NLS-1$
+		assertEquals(IPath.fromOSString(TargetPlatform.getDefaultLocation()), IPath.fromOSString(getResolvedLocation(containers[0])), "Wrong home location"); //$NON-NLS-1$
+		assertEquals("org.eclipse.jdt", ((FeatureBundleContainer) containers[1]).getFeatureId(), "Wrong feature location"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		// Old optional settings are added to includes
 		NameVersionDescriptor[] included = new NameVersionDescriptor[] {
@@ -423,9 +404,9 @@ public class TargetDefinitionPersistenceTests {
 
 		NameVersionDescriptor[] actual = target.getIncluded();
 		assertNotNull(actual);
-		assertEquals("Wrong number of inclusions", included.length, actual.length);
+		assertEquals(included.length, actual.length, "Wrong number of inclusions"); //$NON-NLS-1$
 		for (int j = 0; j < actual.length; j++) {
-			assertEquals("Wrong restriction", included[j], actual[j]);
+			assertEquals(included[j], actual[j], "Wrong restriction"); //$NON-NLS-1$
 		}
 	}
 
@@ -440,14 +421,13 @@ public class TargetDefinitionPersistenceTests {
 		ITargetDefinition target = readOldTarget("emptycontent");
 
 		ITargetLocation[] containers = target.getTargetLocations();
-		assertEquals("Wrong number of bundles", 1, containers.length);
-		assertTrue("Container should be a directory container", containers[0] instanceof DirectoryBundleContainer);
-		assertEquals("Wrong home location", IPath.fromOSString(TargetPlatform.getDefaultLocation()).append("plugins"),
-				IPath.fromOSString(getResolvedLocation(containers[0])));
+		assertEquals(1, containers.length, "Wrong number of bundles"); //$NON-NLS-1$
+		assertTrue(containers[0] instanceof DirectoryBundleContainer, "Container should be a directory container"); //$NON-NLS-1$
+		assertEquals(IPath.fromOSString(TargetPlatform.getDefaultLocation()).append("plugins"), IPath.fromOSString(getResolvedLocation(containers[0])), "Wrong home location"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		target.resolve(null);
 
-		assertTrue("Should have resolved bundles", target.getBundles().length > 0);
+		assertTrue(target.getBundles().length > 0, "Should have resolved bundles"); //$NON-NLS-1$
 
 	}
 
@@ -525,9 +505,9 @@ public class TargetDefinitionPersistenceTests {
 			if (!project.exists()) {
 				project.create(null);
 			}
-			assertTrue("Could not create test project", project.exists());
+			assertTrue(project.exists(), "Could not create test project"); //$NON-NLS-1$
 			project.open(null);
-			assertTrue("Could not open test project", project.isOpen());
+			assertTrue(project.isOpen(), "Could not open test project"); //$NON-NLS-1$
 
 			IFile target = project.getFile(Long.toString(System.currentTimeMillis()) + "A.target");
 			ITargetDefinition definitionA = getTargetService().getTarget(target).getTargetDefinition();
@@ -540,7 +520,7 @@ public class TargetDefinitionPersistenceTests {
 			if (project.exists()) {
 				project.delete(true, null);
 			}
-			assertFalse("Could not delete test project", project.exists());
+			assertFalse(project.exists(), "Could not delete test project"); //$NON-NLS-1$
 		}
 	}
 
@@ -551,7 +531,7 @@ public class TargetDefinitionPersistenceTests {
 	 */
 	private ITargetPlatformService getTargetService() {
 		ITargetPlatformService service = AbstractTargetTest.getTargetService();
-		assertNotNull("Missing target platform service", service);
+		assertNotNull(service, "Missing target platform service"); //$NON-NLS-1$
 		return service;
 	}
 
@@ -585,7 +565,7 @@ public class TargetDefinitionPersistenceTests {
 		IPath path = IPath.fromOSString(TargetPlatform.getDefaultLocation());
 		path = path.append("features");
 		File dir = path.toFile();
-		assertTrue("Missing features directory", dir.exists() && !dir.isFile());
+		assertTrue(dir.exists() && !dir.isFile(), "Missing features directory"); //$NON-NLS-1$
 		String[] files = dir.list();
 		String location = null;
 		for (String file : files) {
@@ -594,7 +574,7 @@ public class TargetDefinitionPersistenceTests {
 				break;
 			}
 		}
-		assertNotNull("Missing JDT feature", location);
+		assertNotNull(location, "Missing JDT feature"); //$NON-NLS-1$
 		return IPath.fromOSString(location);
 	}
 
@@ -623,7 +603,7 @@ public class TargetDefinitionPersistenceTests {
 		IPath location = getJdtFeatureLocation();
 		String segment = location.lastSegment();
 		int index = segment.indexOf('_');
-		assertTrue("Missing version id", index > 0);
+		assertTrue(index > 0, "Missing version id"); //$NON-NLS-1$
 		String version = segment.substring(index + 1);
 		ITargetLocation featureContainer = getTargetService().newFeatureLocation("${eclipse_home}", "org.eclipse.jdt",
 				version);
@@ -648,7 +628,7 @@ public class TargetDefinitionPersistenceTests {
 	}
 
 	private void assertTargetDefinitionsEqual(ITargetDefinition targetA, ITargetDefinition targetB) {
-		assertTrue("Target content not equal", ((TargetDefinition) targetA).isContentEqual(targetB));
+		assertTrue(((TargetDefinition) targetA).isContentEqual(targetB), "Target content not equal"); //$NON-NLS-1$
 	}
 
 }

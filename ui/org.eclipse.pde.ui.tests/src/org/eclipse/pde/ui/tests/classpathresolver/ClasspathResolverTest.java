@@ -16,11 +16,14 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.classpathresolver;
 
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.api.extension.Extension;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import static org.eclipse.pde.ui.tests.launcher.AbstractLaunchTest.findTargetModel;
 import static org.eclipse.pde.ui.tests.launcher.AbstractLaunchTest.findWorkspaceModel;
 import static org.eclipse.pde.ui.tests.util.TargetPlatformUtil.bundle;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,14 +56,10 @@ import org.eclipse.pde.internal.launching.sourcelookup.PDESourceLookupDirector;
 import org.eclipse.pde.internal.launching.sourcelookup.PDESourceLookupQuery;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
 import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.rules.TestRule;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.Bundle;
 
 /**
@@ -69,10 +68,10 @@ import org.osgi.framework.Bundle;
  */
 public class ClasspathResolverTest {
 
-	@ClassRule
-	public static final TestRule CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
-	@ClassRule
-	public static final TestRule RESTORE_TARGET_DEFINITION = TargetPlatformUtil.RESTORE_CURRENT_TARGET_DEFINITION_AFTER;
+	@RegisterExtension
+	public static final Extension CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
+	@RegisterExtension
+	public static final Extension RESTORE_TARGET_DEFINITION = TargetPlatformUtil.RESTORE_CURRENT_TARGET_DEFINITION_AFTER;
 
 	private static IProject project;
 
@@ -82,7 +81,7 @@ public class ClasspathResolverTest {
 	public static final String bundleName = "classpathresolver";
 	private static final String HOST_BUNDLE_ID = "org.eclipse.pde.core";
 
-	@BeforeClass
+	@BeforeAll
 	public static void setUpBeforeClass() throws Exception {
 		project = ProjectUtils.importTestProject("tests/projects/" + bundleName);
 		// create workspace plug-ins with same id like a running-platform bundle
@@ -92,20 +91,20 @@ public class ClasspathResolverTest {
 				bundle(hostBundle.getSymbolicName(), hostBundle.getVersion().toString()));
 	}
 
-	@Rule
-	public TemporaryFolder tempFolder = new TemporaryFolder();
+	@TempDir
+	public Path tempFolder;
 
 	private Path mockedPlatformDevPropertiesFile;
 	private String originalPlatformDevPropertiesURL;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
-		mockedPlatformDevPropertiesFile = tempFolder.newFile("test-platform-dev.properties").toPath();
+		mockedPlatformDevPropertiesFile = Files.createFile(tempFolder.resolve("test-platform-dev.properties"));
 		String mockDevPropertiesURL = mockedPlatformDevPropertiesFile.toUri().toURL().toString();
 		originalPlatformDevPropertiesURL = setPlatformDevPropertiesURL(mockDevPropertiesURL);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws ReflectiveOperationException {
 		setPlatformDevPropertiesURL(originalPlatformDevPropertiesURL);
 	}
@@ -130,14 +129,14 @@ public class ClasspathResolverTest {
 	public void testGetDevProperties() throws Exception {
 		mockTPWithRunningPlatformAndBundles(); // running-platform only
 
-		File devProperties = tempFolder.newFile("dev.properties").getCanonicalFile();
+		File devProperties = Files.createFile(tempFolder.resolve("dev.properties")).toFile().getCanonicalFile();
 		Path devPropertiesFile = ClasspathHelper.getDevEntriesProperties(devProperties.getPath(), false);
 
 		Properties properties = loadProperties(devPropertiesFile);
 
 		String expectedDevCP = project.getFolder("cpe").getLocation().toPortableString();
 		assertEquals(expectedDevCP, properties.get(bundleName));
-		assertEquals(expectedDevCP, properties.get(bundleName + ";1.0.0.qualifier"));
+		assertEquals(expectedDevCP, properties.get(bundleName + ";1.0.0.qualifier")); //$NON-NLS-1$
 	}
 
 	/**
@@ -154,7 +153,7 @@ public class ClasspathResolverTest {
 
 		assertEquals(2, containers.size());
 		assertEquals(JavaCore.create(project), ((JavaProjectSourceContainer) containers.get(0)).getJavaProject());
-		assertEquals(project.getFolder("cpe").getLocation().toFile(),
+		assertEquals(project.getFolder("cpe").getLocation().toFile(), //$NON-NLS-1$
 				((DirectorySourceContainer) containers.get(1)).getDirectory());
 	}
 
@@ -169,9 +168,9 @@ public class ClasspathResolverTest {
 
 		Properties devProperties = createDevEntryProperties(List.of(wsModel));
 
-		assertEquals("true", devProperties.getProperty("@ignoredot@"));
-		assertEquals("bin", devProperties.getProperty(HOST_BUNDLE_ID));
-		assertEquals("bin", devProperties.getProperty(HOST_BUNDLE_ID + ";2.0.0"));
+		assertEquals(devProperties.getProperty("@ignoredot@"), "true"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(devProperties.getProperty(HOST_BUNDLE_ID), "bin"); //$NON-NLS-1$
+		assertEquals(devProperties.getProperty(HOST_BUNDLE_ID + ";2.0.0"), "bin"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertEquals(3, devProperties.size()); // assert no more entries
 	}
 
@@ -188,9 +187,9 @@ public class ClasspathResolverTest {
 
 		Properties devProperties = createDevEntryProperties(List.of(wsModel));
 
-		assertEquals("true", devProperties.getProperty("@ignoredot@"));
-		assertEquals("bin", devProperties.getProperty(HOST_BUNDLE_ID));
-		assertEquals("bin", devProperties.getProperty(HOST_BUNDLE_ID + ";" + hostBundleVersion));
+		assertEquals(devProperties.getProperty("@ignoredot@"), "true"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(devProperties.getProperty(HOST_BUNDLE_ID), "bin"); //$NON-NLS-1$
+		assertEquals(devProperties.getProperty(HOST_BUNDLE_ID + ";" + hostBundleVersion), "bin"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertEquals(3, devProperties.size()); // assert no more entries
 	}
 
@@ -206,9 +205,9 @@ public class ClasspathResolverTest {
 
 		Properties devProperties = createDevEntryProperties(List.of(hostModel));
 
-		assertEquals("true", devProperties.getProperty("@ignoredot@"));
-		assertEquals("devPath2", devProperties.getProperty(HOST_BUNDLE_ID));
-		assertEquals("devPath2", devProperties.getProperty(HOST_BUNDLE_ID + ";" + hostBundleVersion));
+		assertEquals(devProperties.getProperty("@ignoredot@"), "true"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(devProperties.getProperty(HOST_BUNDLE_ID), "devPath2"); //$NON-NLS-1$
+		assertEquals(devProperties.getProperty(HOST_BUNDLE_ID + ";" + hostBundleVersion), "devPath2"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertEquals(3, devProperties.size()); // assert no more entries
 	}
 
@@ -226,7 +225,7 @@ public class ClasspathResolverTest {
 
 		Properties devProperties = createDevEntryProperties(List.of(tpModel));
 
-		assertEquals("true", devProperties.getProperty("@ignoredot@"));
+		assertEquals(devProperties.getProperty("@ignoredot@"), "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertNull(devProperties.getProperty(HOST_BUNDLE_ID));
 		assertEquals(1, devProperties.size()); // assert no more entries
 	}
@@ -246,7 +245,7 @@ public class ClasspathResolverTest {
 
 		Properties devProperties = createDevEntryProperties(List.of(hostModel));
 
-		assertEquals("true", devProperties.getProperty("@ignoredot@"));
+		assertEquals(devProperties.getProperty("@ignoredot@"), "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertNull(devProperties.getProperty(HOST_BUNDLE_ID));
 		assertEquals(1, devProperties.size()); // assert no more entries
 	}
@@ -265,10 +264,10 @@ public class ClasspathResolverTest {
 
 		Properties devProperties = createDevEntryProperties(List.of(hostModel, wsModel));
 
-		assertEquals("true", devProperties.getProperty("@ignoredot@"));
-		assertEquals("bin", devProperties.getProperty(HOST_BUNDLE_ID)); // last
-		assertEquals("", devProperties.getProperty(HOST_BUNDLE_ID + ";1.0.0"));
-		assertEquals("bin", devProperties.getProperty(HOST_BUNDLE_ID + ";2.0.0"));
+		assertEquals(devProperties.getProperty("@ignoredot@"), "true"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(devProperties.getProperty(HOST_BUNDLE_ID), "bin"); // last //$NON-NLS-1$
+		assertEquals(devProperties.getProperty(HOST_BUNDLE_ID + ";1.0.0"), ""); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(devProperties.getProperty(HOST_BUNDLE_ID + ";2.0.0"), "bin"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertEquals(4, devProperties.size()); // assert no more entries
 	}
 
@@ -286,10 +285,10 @@ public class ClasspathResolverTest {
 
 		Properties devProperties = createDevEntryProperties(List.of(tpModel, hostModel));
 
-		assertEquals("true", devProperties.getProperty("@ignoredot@"));
-		assertEquals("devPath2", devProperties.getProperty(HOST_BUNDLE_ID)); // last
-		assertEquals("", devProperties.getProperty(HOST_BUNDLE_ID + ";1.0.0"));
-		assertEquals("devPath2", devProperties.getProperty(HOST_BUNDLE_ID + ";" + hostBundleVersion));
+		assertEquals(devProperties.getProperty("@ignoredot@"), "true"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(devProperties.getProperty(HOST_BUNDLE_ID), "devPath2"); // last //$NON-NLS-1$
+		assertEquals(devProperties.getProperty(HOST_BUNDLE_ID + ";1.0.0"), ""); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(devProperties.getProperty(HOST_BUNDLE_ID + ";" + hostBundleVersion), "devPath2"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertEquals(4, devProperties.size()); // assert no more entries
 	}
 
@@ -306,10 +305,10 @@ public class ClasspathResolverTest {
 
 		Properties devProperties = createDevEntryProperties(List.of(hostModel, wsModel));
 
-		assertEquals("true", devProperties.getProperty("@ignoredot@"));
-		assertEquals("bin", devProperties.getProperty(HOST_BUNDLE_ID)); // last
-		assertEquals("bin", devProperties.getProperty(HOST_BUNDLE_ID + ";2.0.0"));
-		assertEquals("devPath2", devProperties.getProperty(HOST_BUNDLE_ID + ";" + hostBundleVersion));
+		assertEquals(devProperties.getProperty("@ignoredot@"), "true"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(devProperties.getProperty(HOST_BUNDLE_ID), "bin"); // last //$NON-NLS-1$
+		assertEquals(devProperties.getProperty(HOST_BUNDLE_ID + ";2.0.0"), "bin"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(devProperties.getProperty(HOST_BUNDLE_ID + ";" + hostBundleVersion), "devPath2"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertEquals(4, devProperties.size()); // assert no more entries
 	}
 
@@ -328,12 +327,12 @@ public class ClasspathResolverTest {
 
 		Properties devProperties = createDevEntryProperties(List.of(hostModel, wsModel, tpModel));
 
-		assertEquals("true", devProperties.getProperty("@ignoredot@"));
+		assertEquals(devProperties.getProperty("@ignoredot@"), "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		// jar-bundle from tp should not be considered for non-version entry
-		assertEquals("bin", devProperties.getProperty(HOST_BUNDLE_ID));
-		assertEquals("", devProperties.getProperty(HOST_BUNDLE_ID + ";1.0.0"));
-		assertEquals("bin", devProperties.getProperty(HOST_BUNDLE_ID + ";2.0.0"));
-		assertEquals("devPath2", devProperties.getProperty(HOST_BUNDLE_ID + ";" + hostBundleVersion));
+		assertEquals(devProperties.getProperty(HOST_BUNDLE_ID), "bin"); //$NON-NLS-1$
+		assertEquals(devProperties.getProperty(HOST_BUNDLE_ID + ";1.0.0"), ""); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(devProperties.getProperty(HOST_BUNDLE_ID + ";2.0.0"), "bin"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(devProperties.getProperty(HOST_BUNDLE_ID + ";" + hostBundleVersion), "devPath2"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertEquals(5, devProperties.size()); // assert no more entries
 	}
 
@@ -385,21 +384,21 @@ public class ClasspathResolverTest {
 
 	@SafeVarargs
 	private void mockTPWithBundles(Entry<NameVersionDescriptor, Map<String, String>>... bundles) throws Exception {
-		Path jarsDirectory = tempFolder.newFolder("TPJarsDirectory").toPath();
+		Path jarsDirectory = Files.createDirectory(tempFolder.resolve("TPJarsDirectory"));
 		TargetPlatformUtil.setDummyBundlesAsTarget(Map.ofEntries(bundles), List.of(), jarsDirectory);
 	}
 
 	@SafeVarargs
 	private void mockTPWithRunningPlatformAndBundles(
 			Entry<NameVersionDescriptor, Map<String, String>>... additionalBundles) throws Exception {
-		Path jarsDirectory = tempFolder.newFolder("TPJarsDirectory").toPath();
+		Path jarsDirectory = Files.createDirectory(tempFolder.resolve("TPJarsDirectory"));
 		TargetPlatformUtil.setRunningPlatformWithDummyBundlesAsTarget(b -> b.getSymbolicName().equals(HOST_BUNDLE_ID),
 				Map.ofEntries(additionalBundles), Set.of(), jarsDirectory);
 	}
 
 	private Properties createDevEntryProperties(List<IPluginModelBase> launchedBundles)
 			throws IOException, CoreException {
-		File devPropertiesFile = tempFolder.newFile("dev.properties").getCanonicalFile();
+		File devPropertiesFile = Files.createFile(tempFolder.resolve("dev.properties")).toFile().getCanonicalFile();
 		Map<String, List<IPluginModelBase>> bundlesMap = Map.of(HOST_BUNDLE_ID, launchedBundles);
 		Path devProperties = ClasspathHelper.getDevEntriesProperties(devPropertiesFile.getPath(), bundlesMap);
 		return loadProperties(devProperties);

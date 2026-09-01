@@ -14,14 +14,14 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.views.log;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import org.eclipse.ui.internal.views.log.LogEntry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class LogEntryTest {
 	@Test
@@ -29,7 +29,7 @@ public class LogEntryTest {
 		LogEntry entry = new LogEntry();
 		entry.processEntry("!ENTRY org.eclipse.pde.ui 1 100 2009-01-03 11:15:30.123");
 
-		assertEquals("org.eclipse.pde.ui", entry.getPluginId());
+		assertEquals(entry.getPluginId(), "org.eclipse.pde.ui"); //$NON-NLS-1$
 		assertEquals(1, entry.getSeverity());
 		assertEquals(100, entry.getCode());
 
@@ -43,7 +43,7 @@ public class LogEntryTest {
 		LogEntry entry = new LogEntry();
 		entry.processEntry("!ENTRY org.eclipse.osgi 2009-01-07 11:15:30.123");
 
-		assertEquals("org.eclipse.osgi", entry.getPluginId());
+		assertEquals(entry.getPluginId(), "org.eclipse.osgi"); //$NON-NLS-1$
 		assertEquals(0, entry.getSeverity());
 		assertEquals(0, entry.getCode());
 
@@ -57,7 +57,7 @@ public class LogEntryTest {
 		LogEntry entry = new LogEntry();
 		int depth = entry.processSubEntry("!SUBENTRY 1 org.eclipse.osgi 1 101 2009-01-08 11:15:30.123");
 
-		assertEquals("org.eclipse.osgi", entry.getPluginId());
+		assertEquals(entry.getPluginId(), "org.eclipse.osgi"); //$NON-NLS-1$
 		assertEquals(1, entry.getSeverity());
 		assertEquals(101, entry.getCode());
 
@@ -73,7 +73,7 @@ public class LogEntryTest {
 		LogEntry entry = new LogEntry();
 		int depth = entry.processSubEntry("!SUBENTRY 1 org.eclipse.osgi 2009-01-01 11:15:30.123");
 
-		assertEquals("org.eclipse.osgi", entry.getPluginId());
+		assertEquals(entry.getPluginId(), "org.eclipse.osgi"); //$NON-NLS-1$
 		assertEquals(0, entry.getSeverity());
 		assertEquals(0, entry.getCode());
 
@@ -91,7 +91,7 @@ public class LogEntryTest {
 		try {
 			LogEntry entry = new LogEntry();
 			entry.processEntry("!ENTRY org.eclipse.core.contenttype 4 0");
-			fail("Should throw IllegalArgumentException for invalid entry");
+			fail("Should throw IllegalArgumentException for invalid entry"); //$NON-NLS-1$
 		} catch (IllegalArgumentException e) {
 			// good
 		}
@@ -99,7 +99,7 @@ public class LogEntryTest {
 		try {
 			LogEntry entry = new LogEntry();
 			entry.processEntry("!ENTRY org.eclipse.ui 4 0");
-			fail("Should throw IllegalArgumentException for invalid entry");
+			fail("Should throw IllegalArgumentException for invalid entry"); //$NON-NLS-1$
 		} catch (IllegalArgumentException e) {
 			// good
 		}
@@ -107,14 +107,14 @@ public class LogEntryTest {
 		try {
 			LogEntry entry = new LogEntry();
 			entry.processEntry("!ENTRY org.eclipse.ui 4 0");
-			fail("Should throw IllegalArgumentException for invalid entry");
+			fail("Should throw IllegalArgumentException for invalid entry"); //$NON-NLS-1$
 		} catch (IllegalArgumentException e) {
 			// good
 		}
 		try {
 			LogEntry entry = new LogEntry();
 			entry.processEntry("!SUBENTRY 1 Failed to read file 4 0 2024-01-11 13:20:30.288");
-			fail("Should throw IllegalArgumentException for invalid entry");
+			fail("Should throw IllegalArgumentException for invalid entry"); //$NON-NLS-1$
 		} catch (IllegalArgumentException e) {
 			// good
 		}

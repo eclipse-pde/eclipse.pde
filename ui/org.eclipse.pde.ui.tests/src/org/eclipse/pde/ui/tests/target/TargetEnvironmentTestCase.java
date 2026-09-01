@@ -13,8 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import org.junit.jupiter.api.extension.Extension;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Arrays;
 import java.util.Dictionary;
@@ -39,24 +41,22 @@ import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.ui.tests.runtime.TestUtils;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
 import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.TestRule;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.Constants;
 
 public class TargetEnvironmentTestCase {
 
 	private static final String JAVA_SE_1_7 = "JavaSE-1.7";
 
-	@ClassRule
-	public static final TestRule RESTORE_TARGET_DEFINITION = TargetPlatformUtil.RESTORE_CURRENT_TARGET_DEFINITION_AFTER;
-	@ClassRule
-	public static final TestRule CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
+	@RegisterExtension
+	public static final Extension RESTORE_TARGET_DEFINITION = TargetPlatformUtil.RESTORE_CURRENT_TARGET_DEFINITION_AFTER;
+	@RegisterExtension
+	public static final Extension CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
 
-	@BeforeClass
+	@BeforeAll
 	public static void setupTargetPlatform() throws Exception {
 		TargetPlatformUtil.setRunningPlatformAsTarget();
 	}
@@ -64,13 +64,13 @@ public class TargetEnvironmentTestCase {
 	private IExecutionEnvironment eeJava_1_7;
 	private IVMInstall eeJava_1_7DefaultVM;
 
-	@Before
+	@BeforeEach
 	public void saveJava1_7EEDefault() {
 		eeJava_1_7 = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(JAVA_SE_1_7);
 		eeJava_1_7DefaultVM = eeJava_1_7.getDefaultVM();
 	}
 
-	@After
+	@AfterEach
 	public void restoreJava1_7EEDefault() {
 		eeJava_1_7.setDefaultVM(eeJava_1_7DefaultVM);
 	}
@@ -104,31 +104,31 @@ public class TargetEnvironmentTestCase {
 	@Test
 	public void testDictionaryOS() {
 		Dictionary<String, String> dictionary = TargetPlatformHelper.getTargetEnvironment();
-		assertEquals(Platform.getOS(), dictionary.get("osgi.os"));
+		assertEquals(Platform.getOS(), dictionary.get("osgi.os")); //$NON-NLS-1$
 	}
 
 	@Test
 	public void testDictionaryWS() {
 		Dictionary<String, String> dictionary = TargetPlatformHelper.getTargetEnvironment();
-		assertEquals(Platform.getWS(), dictionary.get("osgi.ws"));
+		assertEquals(Platform.getWS(), dictionary.get("osgi.ws")); //$NON-NLS-1$
 	}
 
 	@Test
 	public void testDictionaryArch() {
 		Dictionary<String, String> dictionary = TargetPlatformHelper.getTargetEnvironment();
-		assertEquals(Platform.getOSArch(), dictionary.get("osgi.arch"));
+		assertEquals(Platform.getOSArch(), dictionary.get("osgi.arch")); //$NON-NLS-1$
 	}
 
 	@Test
 	public void testDictionaryNL() {
 		Dictionary<String, String> dictionary = TargetPlatformHelper.getTargetEnvironment();
-		assertEquals(Platform.getNL(), dictionary.get("osgi.nl"));
+		assertEquals(Platform.getNL(), dictionary.get("osgi.nl")); //$NON-NLS-1$
 	}
 
 	@Test
 	public void testResolveOptional() {
 		Dictionary<String, String> dictionary = TargetPlatformHelper.getTargetEnvironment();
-		assertEquals("true", dictionary.get("osgi.resolveOptional"));
+		assertEquals(dictionary.get("osgi.resolveOptional"), "true"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -155,13 +155,13 @@ public class TargetEnvironmentTestCase {
 									return packages.containsAll(profileSystemPackages);
 								});
 						if (!foundSystemPackage) {
-							fail("The system packages property for EE " + profile + " was not found in the state's propeties");
+							fail("The system packages property for EE " + profile + " was not found in the state's propeties"); //$NON-NLS-1$ //$NON-NLS-2$
 						}
 					}
 					String ee = getExecutionenvironment(profileProps);
 					if (ee != null) {
 						if (Stream.of(platformProps).map(pp -> getExecutionenvironment(pp)).noneMatch(ee::equals)) {
-							fail("The framework EE property for EE " + profile + " was not found in the state's propeties");
+							fail("The framework EE property for EE " + profile + " was not found in the state's propeties"); //$NON-NLS-1$ //$NON-NLS-2$
 						}
 					}
 				}
@@ -197,7 +197,7 @@ public class TargetEnvironmentTestCase {
 		});
 		project.build(IncrementalProjectBuilder.FULL_BUILD, null);
 		List<IMarker> errorsWithoutEEDefault = findErrorMarkers(project);
-		assertEquals(errorsWithoutEEDefault.toString(), 1, errorsWithoutEEDefault.size());
+		assertEquals(1, errorsWithoutEEDefault.size(), errorsWithoutEEDefault.toString());
 
 		eeJava_1_7.setDefaultVM(JavaRuntime.getDefaultVMInstall());
 

@@ -13,9 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.wizards;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.junit.jupiter.api.TestInfo;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -36,19 +37,17 @@ import org.eclipse.pde.internal.ui.wizards.site.NewSiteProjectCreationOperation;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestName;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class NewSiteProjectTestCase {
 	private static final String EXISTING_PROJECT_NAME = "ExistingSiteProject"; //$NON-NLS-1$
-	@Rule
-	public TestName name = new TestName();
-	@Before
-	public void setUp() throws Exception {
-		if ("testExistingSiteProject".equalsIgnoreCase(name.getMethodName())) { //$NON-NLS-1$
+	private String testName;
+	@BeforeEach
+	public void setUp(TestInfo testInfo) throws Exception {
+		testName = testInfo.getTestMethod().orElseThrow().getName();
+		if ("testExistingSiteProject".equalsIgnoreCase(testName)) { //$NON-NLS-1$
 			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(EXISTING_PROJECT_NAME);
 			project.create(new NullProgressMonitor());
 			project.open(new NullProgressMonitor());
@@ -67,7 +66,7 @@ public class NewSiteProjectTestCase {
 		}
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		IProject[] projects = workspaceRoot.getProjects();
@@ -87,19 +86,19 @@ public class NewSiteProjectTestCase {
 	}
 
 	private void ensureCreated(IProject project) {
-		assertTrue("Project not created.", project.exists()); //$NON-NLS-1$
-		assertTrue("Project not open.", project.isOpen()); //$NON-NLS-1$
+		assertTrue(project.exists(), "Project not created."); //$NON-NLS-1$
+		assertTrue(project.isOpen(), "Project not open."); //$NON-NLS-1$
 		try {
-			assertTrue("Site nature not added.", project.hasNature(SiteProject.NATURE));
+			assertTrue(project.hasNature(SiteProject.NATURE), "Site nature not added."); //$NON-NLS-1$
 		} catch (Exception e) {
 		}
-		assertTrue("site.xml not created.", project //$NON-NLS-1$
-				.exists(IPath.fromOSString("site.xml"))); //$NON-NLS-1$
+		assertTrue(project
+				.exists(IPath.fromOSString("site.xml")), "site.xml not created."); //$NON-NLS-1$ //$NON-NLS-2$
 		WorkspaceSiteModel model = new WorkspaceSiteModel(project.getFile(IPath.fromOSString("site.xml"))); //$NON-NLS-1$
 		model.load();
-		assertTrue("Model cannot be loaded.", model.isLoaded()); //$NON-NLS-1$
-		assertTrue("Model is not valid.", model.isValid()); //$NON-NLS-1$
-		assertFalse("ISite is null.", model.getSite() == null); //$NON-NLS-1$
+		assertTrue(model.isLoaded(), "Model cannot be loaded."); //$NON-NLS-1$
+		assertTrue(model.isValid(), "Model is not valid."); //$NON-NLS-1$
+		assertFalse(model.getSite() == null, "ISite is null."); //$NON-NLS-1$
 		model.dispose();
 	}
 
@@ -116,8 +115,8 @@ public class NewSiteProjectTestCase {
 		ensureCreated(project);
 		WorkspaceSiteModel model = new WorkspaceSiteModel(project.getFile(IPath.fromOSString("site.xml"))); //$NON-NLS-1$
 		model.load();
-		assertTrue("Existig site overwritten.", model.getSite() //$NON-NLS-1$
-				.getCategoryDefinitions().length > 0);
+		assertTrue(model.getSite()
+				.getCategoryDefinitions().length > 0, "Existig site overwritten."); //$NON-NLS-1$
 		model.dispose();
 
 	}
@@ -134,8 +133,8 @@ public class NewSiteProjectTestCase {
 			fail("testSiteProject: " + e); //$NON-NLS-1$
 		}
 		ensureCreated(project);
-		assertFalse("index.html should have not been generated.", project //$NON-NLS-1$
-				.exists(IPath.fromOSString("index.html"))); //$NON-NLS-1$
+		assertFalse(project
+				.exists(IPath.fromOSString("index.html")), "index.html should have not been generated."); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Test
@@ -150,13 +149,13 @@ public class NewSiteProjectTestCase {
 			fail("testSiteProjectWithWeb: " + e); //$NON-NLS-1$
 		}
 		ensureCreated(project);
-		assertTrue("index.html not generated.", project.exists(IPath.fromOSString( //$NON-NLS-1$
-				"index.html"))); //$NON-NLS-1$
+		assertTrue(project.exists(IPath.fromOSString(
+				"index.html")), "index.html not generated."); //$NON-NLS-1$ //$NON-NLS-2$
 		IFolder webFolder = project.getFolder(IPath.fromOSString("testWeb")); //$NON-NLS-1$
-		assertTrue("Web folder not generated.", webFolder.exists()); //$NON-NLS-1$
-		assertTrue("site.xsl not generated.", webFolder.exists(IPath.fromOSString( //$NON-NLS-1$
-				"site.xsl"))); //$NON-NLS-1$
-		assertTrue("site.css not generated.", webFolder.exists(IPath.fromOSString( //$NON-NLS-1$
-				"site.css"))); //$NON-NLS-1$
+		assertTrue(webFolder.exists(), "Web folder not generated."); //$NON-NLS-1$
+		assertTrue(webFolder.exists(IPath.fromOSString(
+				"site.xsl")), "site.xsl not generated."); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(webFolder.exists(IPath.fromOSString(
+				"site.css")), "site.css not generated."); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

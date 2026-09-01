@@ -13,13 +13,13 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.bundle;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.BundleVersionHeader;
 import org.eclipse.text.edits.TextEdit;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.Constants;
 
 public class BundleVersionTestCase extends BundleModelTestCase {
@@ -40,7 +40,7 @@ public class BundleVersionTestCase extends BundleModelTestCase {
 
 		IManifestHeader header = fModel.getBundle().getManifestHeader(Constants.BUNDLE_VERSION);
 		assertNotNull(header);
-		assertEquals("Bundle-Version: 3.2.0.1\n", header.write());
+		assertEquals(header.write(), "Bundle-Version: 3.2.0.1\n"); //$NON-NLS-1$
 
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
@@ -92,7 +92,7 @@ public class BundleVersionTestCase extends BundleModelTestCase {
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineLength(3) + fDocument.getLineLength(4);
 
-		assertEquals("Bundle-Version: 3.2.0\n", fDocument.get(pos, length));
+		assertEquals(fDocument.get(pos, length), "Bundle-Version: 3.2.0\n"); //$NON-NLS-1$
 	}
 
 }

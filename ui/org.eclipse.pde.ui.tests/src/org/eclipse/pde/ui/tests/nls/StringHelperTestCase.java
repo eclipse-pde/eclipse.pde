@@ -14,10 +14,10 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.nls;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.pde.internal.ui.nls.StringHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests StringHelper.java convenience methods
@@ -38,7 +38,7 @@ public class StringHelperTestCase {
 		// two lines
 		s1 = "abc" + newLine + "def";
 		s2 = StringHelper.preparePropertiesString(s1, newLine.toCharArray());
-		assertEquals("abc\\r\\n\\" + newLine + "def", s2);
+		assertEquals(s2, "abc\\r\\n\\" + newLine + "def"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Test
@@ -53,12 +53,12 @@ public class StringHelperTestCase {
 		// two lines, second line with spaces
 		s1 = "ab  c   " + newLine + "    ";
 		s2 = StringHelper.preparePropertiesString(s1, newLine.toCharArray());
-		assertEquals("ab  c   \\r\\n    ", s2);
+		assertEquals(s2, "ab  c   \\r\\n    "); //$NON-NLS-1$
 
 		// two lines, second line with leading spaces
 		s1 = "abc   " + newLine + "  d  ef";
 		s2 = StringHelper.preparePropertiesString(s1, newLine.toCharArray());
-		assertEquals("abc   \\r\\n  \\" + newLine + "d  ef", s2);
+		assertEquals(s2, "abc   \\r\\n  \\" + newLine + "d  ef"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	//	public void testSpecialChars() {
@@ -86,6 +86,6 @@ public class StringHelperTestCase {
 		// new line only
 		s1 = newLine;
 		s2 = StringHelper.preparePropertiesString(s1, newLine.toCharArray());
-		assertEquals("\\r\\n", s2);
+		assertEquals(s2, "\\r\\n"); //$NON-NLS-1$
 	}
 }

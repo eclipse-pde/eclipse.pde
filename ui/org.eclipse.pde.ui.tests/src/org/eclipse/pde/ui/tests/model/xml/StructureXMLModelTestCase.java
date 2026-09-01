@@ -13,14 +13,14 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.xml;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class StructureXMLModelTestCase extends XMLModelTestCase {
 

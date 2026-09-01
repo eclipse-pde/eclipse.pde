@@ -14,8 +14,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -168,23 +168,23 @@ public abstract class AbstractTargetTest extends PDETestCase {
 		try {
 			TargetPlatformUtil.loadAndSetTarget(target);
 		} catch (InterruptedException e) {
-			assertFalse("Target platform reset interrupted", true);
+			assertFalse(true, "Target platform reset interrupted"); //$NON-NLS-1$
 		}
-		TestUtils.waitForJobs(name.getMethodName(), 100, 30000);
+		TestUtils.waitForJobs(testName, 100, 30000);
 		Object firstDefinition = payload.getAndSet(null);
 
 		ITargetPlatformService service = getTargetService();
 		// this call will trigger more events if the target was null
 		ITargetDefinition definition = (target != null) ? target : service.getWorkspaceTargetDefinition();
-		TestUtils.waitForJobs(name.getMethodName(), 100, 30000);
+		TestUtils.waitForJobs(testName, 100, 30000);
 		eventBroker.unsubscribe(handler);
 		Object secondDefinition = payload.get();
 		ITargetHandle handle = (target != null) ? target.getHandle() : null;
-		assertEquals("Wrong target platform handle preference setting", handle, service.getWorkspaceTargetHandle());
+		assertEquals(handle, service.getWorkspaceTargetHandle(), "Wrong target platform handle preference setting"); //$NON-NLS-1$
 		if (target == null) {
-			assertEquals("Wrong workspaceTargetChanged event payload", definition, secondDefinition);
+			assertEquals(definition, secondDefinition, "Wrong workspaceTargetChanged event payload"); //$NON-NLS-1$
 		} else {
-			assertEquals("Wrong workspaceTargetChanged event payload", definition, firstDefinition);
+			assertEquals(definition, firstDefinition, "Wrong workspaceTargetChanged event payload"); //$NON-NLS-1$
 		}
 
 	}

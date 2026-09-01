@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.launcher;
 
+import org.junit.jupiter.api.io.TempDir;
 import static java.util.Map.entry;
 import static java.util.Map.ofEntries;
 import static org.eclipse.pde.ui.tests.launcher.FeatureBasedLaunchTest.concat;
@@ -21,7 +22,7 @@ import static org.eclipse.pde.ui.tests.util.TargetPlatformUtil.bundle;
 import static org.eclipse.pde.ui.tests.util.TargetPlatformUtil.resolution;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.osgi.framework.Constants.EXPORT_PACKAGE;
 import static org.osgi.framework.Constants.IMPORT_PACKAGE;
 import static org.osgi.framework.Constants.REQUIRE_BUNDLE;
@@ -66,21 +67,19 @@ import org.eclipse.pde.launching.EclipseApplicationLaunchConfiguration;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
 import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.Constants;
 
 public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
-	@Rule
-	public TemporaryFolder folder = new TemporaryFolder();
+	@TempDir
+	public Path folder;
 	private Path tpJarDirectory;
 
-	@Before
+	@BeforeEach
 	public void setupPluginProjects() throws Exception {
-		tpJarDirectory = folder.newFolder("TPJarDirectory").toPath();
+		tpJarDirectory = Files.createDirectory(folder.resolve("TPJarDirectory"));
 	}
 
 	// --- test cases for getMergedBundleMap() ----
@@ -1042,7 +1041,7 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 		IPluginModelBase plugin = workspaceBundle("plugin.a", "1.0.0").findModel();
 
 		String entry = BundleLauncherHelper.formatBundleEntry(plugin, null, null);
-		assertEquals("plugin.a", entry);
+		assertEquals(entry, "plugin.a"); //$NON-NLS-1$
 	}
 
 	@Test
@@ -1057,7 +1056,7 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 		IPluginModelBase plugin = workspaceBundle("plugin.a", "1.0.0").findModel();
 
 		String entry = BundleLauncherHelper.formatBundleEntry(plugin, null, null);
-		assertEquals("plugin.a*1.0.0", entry);
+		assertEquals(entry, "plugin.a*1.0.0"); //$NON-NLS-1$
 	}
 
 	@Test
@@ -1072,7 +1071,7 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 		IPluginModelBase plugin = targetBundle("plugin.a", "2.0.0").findModel();
 
 		String entry = BundleLauncherHelper.formatBundleEntry(plugin, null, null);
-		assertEquals("plugin.a", entry);
+		assertEquals(entry, "plugin.a"); //$NON-NLS-1$
 	}
 
 	@Test
@@ -1087,7 +1086,7 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 		IPluginModelBase plugin = targetBundle("plugin.a", "2.0.0").findModel();
 
 		String entry = BundleLauncherHelper.formatBundleEntry(plugin, null, null);
-		assertEquals("plugin.a*2.0.0", entry);
+		assertEquals(entry, "plugin.a*2.0.0"); //$NON-NLS-1$
 	}
 
 	@Test
@@ -1099,11 +1098,11 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 		IPluginModelBase plugin = workspaceBundle("plugin.a", "1.0.0").findModel();
 
-		assertEquals("plugin.a*1.0.0", BundleLauncherHelper.formatBundleEntry(plugin, null, null));
-		assertEquals("plugin.a*1.0.0", BundleLauncherHelper.formatBundleEntry(plugin, "", ""));
-		assertEquals("plugin.a*1.0.0@4:true", BundleLauncherHelper.formatBundleEntry(plugin, "4", "true"));
-		assertEquals("plugin.a*1.0.0@4:", BundleLauncherHelper.formatBundleEntry(plugin, "4", ""));
-		assertEquals("plugin.a*1.0.0@:false", BundleLauncherHelper.formatBundleEntry(plugin, null, "false"));
+		assertEquals(BundleLauncherHelper.formatBundleEntry(plugin, null, null), "plugin.a*1.0.0"); //$NON-NLS-1$
+		assertEquals(BundleLauncherHelper.formatBundleEntry(plugin, "", ""), "plugin.a*1.0.0"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		assertEquals(BundleLauncherHelper.formatBundleEntry(plugin, "4", "true"), "plugin.a*1.0.0@4:true"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		assertEquals(BundleLauncherHelper.formatBundleEntry(plugin, "4", ""), "plugin.a*1.0.0@4:"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		assertEquals(BundleLauncherHelper.formatBundleEntry(plugin, null, "false"), "plugin.a*1.0.0@:false"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	// --- test cases for identifying unresolved plug-ins (Remove Unresolved) ---

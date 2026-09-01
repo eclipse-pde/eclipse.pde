@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.Arrays;
@@ -22,8 +22,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.equinox.simpleconfigurator.manipulator.SimpleConfiguratorManipulator;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.internal.core.target.ProfileBundleContainer;
-import org.junit.Assume;
-import org.junit.Test;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Test;
 
 public class ProfileContainerTests extends AbstractTargetTest {
 
@@ -31,7 +31,7 @@ public class ProfileContainerTests extends AbstractTargetTest {
 	public void testBundleResolutionWithConfigIni() {
 		File bundlesInfo = new File(new ProfileBundleContainer("${eclipse.home}", null).getConfigurationLocation(),
 				SimpleConfiguratorManipulator.BUNDLES_INFO_PATH);
-		Assume.assumeFalse("Skip test when using regular p2 configurator", bundlesInfo.isFile());
+		Assumptions.assumeFalse(bundlesInfo.isFile(), "Skip test when using regular p2 configurator");
 		ITargetDefinition defaultDefinition = getTargetService().newDefaultTarget();
 		defaultDefinition.resolve(new NullProgressMonitor());
 		assertTrue(defaultDefinition.getBundles().length > 10);
@@ -46,8 +46,8 @@ public class ProfileContainerTests extends AbstractTargetTest {
 
 		Collection<File> parsedBundles = ProfileBundleContainer.parseBundlesFromConfigIni(configIni, new File("."));
 		assertEquals(Arrays.asList( //
-				absoluteFile("plugins/some.bundle"), //
-				absoluteFile("plugins/some.bundle_startlevel")), //
+				absoluteFile("plugins/some.bundle"), // //$NON-NLS-1$
+				absoluteFile("plugins/some.bundle_startlevel")), // //$NON-NLS-1$
 				parsedBundles);
 	}
 
@@ -60,9 +60,9 @@ public class ProfileContainerTests extends AbstractTargetTest {
 
 		Collection<File> parsedBundles = ProfileBundleContainer.parseBundlesFromConfigIni(configIni, new File("."));
 		assertEquals(Arrays.asList( //
-				new File("plugins/some.bundle"), //
-				new File("plugins/some.bundle_startlevel"), //
-				absoluteFile("absolute.bundle")), //
+				new File("plugins/some.bundle"), // //$NON-NLS-1$
+				new File("plugins/some.bundle_startlevel"), // //$NON-NLS-1$
+				absoluteFile("absolute.bundle")), // //$NON-NLS-1$
 				parsedBundles);
 	}
 
@@ -76,10 +76,10 @@ public class ProfileContainerTests extends AbstractTargetTest {
 
 		Collection<File> parsedBundles = ProfileBundleContainer.parseBundlesFromConfigIni(configIni, new File("/home"));
 		assertEquals(Arrays.asList( //
-				new File("/home/plugins/o.e.osgi.jar"), //
-				new File("/home/plugins/some.bundle"), //
-				new File("/home/plugins/some.bundle_startlevel"), //
-				absoluteFile("absolute.bundle")), //
+				new File("/home/plugins/o.e.osgi.jar"), // //$NON-NLS-1$
+				new File("/home/plugins/some.bundle"), // //$NON-NLS-1$
+				new File("/home/plugins/some.bundle_startlevel"), // //$NON-NLS-1$
+				absoluteFile("absolute.bundle")), // //$NON-NLS-1$
 				parsedBundles);
 	}
 
@@ -92,9 +92,9 @@ public class ProfileContainerTests extends AbstractTargetTest {
 
 		Collection<File> parsedBundles = ProfileBundleContainer.parseBundlesFromConfigIni(configIni, new File("/home"));
 		assertEquals(Arrays.asList( //
-				absoluteFile("plugins/o.e.osgi.jar"), //
-				absoluteFile("plugins/some.bundle"), //
-				absoluteFile("plugins/some.bundle_startlevel")), //
+				absoluteFile("plugins/o.e.osgi.jar"), // //$NON-NLS-1$
+				absoluteFile("plugins/some.bundle"), // //$NON-NLS-1$
+				absoluteFile("plugins/some.bundle_startlevel")), // //$NON-NLS-1$
 				parsedBundles);
 	}
 

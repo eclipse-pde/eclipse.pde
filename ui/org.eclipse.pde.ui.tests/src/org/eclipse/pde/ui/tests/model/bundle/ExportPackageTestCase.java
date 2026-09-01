@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.bundle;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
@@ -23,7 +23,7 @@ import org.eclipse.pde.internal.core.text.bundle.ExportPackageObject;
 import org.eclipse.pde.internal.core.text.bundle.PackageFriend;
 import org.eclipse.pde.internal.core.text.bundle.PackageObject;
 import org.eclipse.text.edits.TextEdit;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.Constants;
 
 public class ExportPackageTestCase extends PackageHeaderTestCase {
@@ -80,7 +80,7 @@ public class ExportPackageTestCase extends PackageHeaderTestCase {
 		assertTrue(object.isInternal());
 		PackageFriend[] friends = object.getFriends();
 		assertEquals(friends.length, 1);
-		assertTrue(friends[0].getName().equals("com.example.xyz"));
+		assertTrue(friends[0].getName().equals("com.example.xyz")); //$NON-NLS-1$
 	}
 
 	@Test
@@ -101,9 +101,9 @@ public class ExportPackageTestCase extends PackageHeaderTestCase {
 		assertTrue(object.isInternal());
 		PackageFriend[] friends = object.getFriends();
 		assertEquals(friends.length, 3);
-		assertTrue(friends[0].getName().equals("com.example.xxx"));
-		assertTrue(friends[1].getName().equals("com.example.yyy"));
-		assertTrue(friends[2].getName().equals("com.example.zzz"));
+		assertTrue(friends[0].getName().equals("com.example.xxx")); //$NON-NLS-1$
+		assertTrue(friends[1].getName().equals("com.example.yyy")); //$NON-NLS-1$
+		assertTrue(friends[2].getName().equals("com.example.zzz")); //$NON-NLS-1$
 	}
 
 	@Test
@@ -131,7 +131,7 @@ public class ExportPackageTestCase extends PackageHeaderTestCase {
 
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineLength(3);
-		assertEquals(fHeaderName + ": org.osgi.framework;x-internal:=true\n", fDocument.get(pos, length));
+		assertEquals(fHeaderName + ": org.osgi.framework;x-internal:=true\n", fDocument.get(pos, length)); //$NON-NLS-1$
 	}
 
 	@Test
@@ -158,7 +158,7 @@ public class ExportPackageTestCase extends PackageHeaderTestCase {
 
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineLength(3);
-		assertEquals(fHeaderName + ": org.osgi.framework;x-friends:=\"org.eclipse.pde.ui\"\n", fDocument.get(pos, length));
+		assertEquals(fHeaderName + ": org.osgi.framework;x-friends:=\"org.eclipse.pde.ui\"\n", fDocument.get(pos, length)); //$NON-NLS-1$
 	}
 
 	@Test
@@ -186,6 +186,6 @@ public class ExportPackageTestCase extends PackageHeaderTestCase {
 
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineLength(3);
-		assertEquals(fHeaderName + ": org.osgi.framework;x-friends:=\"org.eclipse.pde.core,org.eclipse.pde.ui\"\n", fDocument.get(pos, length));
+		assertEquals(fHeaderName + ": org.osgi.framework;x-friends:=\"org.eclipse.pde.core,org.eclipse.pde.ui\"\n", fDocument.get(pos, length)); //$NON-NLS-1$
 	}
 }

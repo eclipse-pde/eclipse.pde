@@ -13,8 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.core.tests.internal.classpath;
 
+import org.junit.jupiter.api.extension.Extension;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -36,11 +38,8 @@ import org.eclipse.pde.internal.core.ClasspathComputer;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.ui.tests.runtime.TestUtils;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestRule;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Comprehensive test for PDE's RequiredPluginsClasspathContainer validating
@@ -151,11 +150,11 @@ import org.junit.rules.TestRule;
  */
 public class ClasspathResolutionTest2 {
 
-	@ClassRule
-	public static final TestRule CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
+	@RegisterExtension
+	public static final Extension CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
 
-	@Rule
-	public final TestRule deleteCreatedTestProjectsAfter = ProjectUtils.DELETE_CREATED_WORKSPACE_PROJECTS_AFTER;
+	@RegisterExtension
+	public final Extension deleteCreatedTestProjectsAfter = ProjectUtils.DELETE_CREATED_WORKSPACE_PROJECTS_AFTER;
 
 	private static IProject projectA;
 	private static IProject projectAe;
@@ -189,7 +188,7 @@ public class ClasspathResolutionTest2 {
 
 	private static IClasspathEntry[] consumerClasspathEntries;
 
-	@BeforeClass
+	@BeforeAll
 	public static void setupBeforeClass() throws Exception {
 		// Import ALL projects at once — dependency and consumer bundles.
 		// The workspace builder knows the correct build order from project
@@ -228,11 +227,11 @@ public class ClasspathResolutionTest2 {
 		// Compute PDE classpath entries (only plugin dependencies, no
 		// JRE/source)
 		IPluginModelBase modelA = PDECore.getDefault().getModelManager().findModel(projectA);
-		assertNotNull("PDE model for project A must be available", modelA);
+		assertNotNull(modelA, "PDE model for project A must be available"); //$NON-NLS-1$
 		classpathEntriesA = ClasspathComputer.computeClasspathEntries(modelA, projectA);
 
 		IPluginModelBase modelAd = PDECore.getDefault().getModelManager().findModel(projectAd);
-		assertNotNull("PDE model for project Ad must be available", modelAd);
+		assertNotNull(modelAd, "PDE model for project Ad must be available"); //$NON-NLS-1$
 		classpathEntriesAd = ClasspathComputer.computeClasspathEntries(modelAd, projectAd);
 
 		IPluginModelBase consumerModel = PDECore.getDefault().getModelManager().findModel(projectConsumer);
@@ -339,7 +338,7 @@ public class ClasspathResolutionTest2 {
 	@Test
 	public void testAccessRulesForBundle_B() throws Exception {
 		IClasspathEntry entryB = findEntry("B");
-		assertNotNull("Bundle B must be on the classpath", entryB);
+		assertNotNull(entryB, "Bundle B must be on the classpath"); //$NON-NLS-1$
 
 		IAccessRule[] rules = entryB.getAccessRules();
 
@@ -378,7 +377,7 @@ public class ClasspathResolutionTest2 {
 	@Test
 	public void testAccessRulesForBundle_G() throws Exception {
 		IClasspathEntry entryG = findEntry("G");
-		assertNotNull("Bundle G must be on the classpath", entryG);
+		assertNotNull(entryG, "Bundle G must be on the classpath"); //$NON-NLS-1$
 
 		IAccessRule[] rules = entryG.getAccessRules();
 
@@ -423,7 +422,7 @@ public class ClasspathResolutionTest2 {
 	public void testTransitiveDependenciesHaveAllForbiddenAccessRules() throws Exception {
 		for (String bundleName : TRANSITIVE_FORBIDDEN_BUNDLES) {
 			IClasspathEntry entry = findEntry(bundleName);
-			assertNotNull("Transitive bundle " + bundleName + " must be on classpath", entry);
+			assertNotNull(entry, "Transitive bundle " + bundleName + " must be on classpath"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			IAccessRule[] rules = entry.getAccessRules();
 
@@ -629,7 +628,7 @@ public class ClasspathResolutionTest2 {
 	@Test
 	public void testDiscouragedAccessRulesForXInternal() throws Exception {
 		IClasspathEntry entryX = findEntryIn(classpathEntriesAd, "X");
-		assertNotNull("X must be on Ad's classpath " + "(directly imported via Import-Package)", entryX);
+		assertNotNull(entryX, "X must be on Ad's classpath " + "(directly imported via Import-Package)"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		IAccessRule[] rules = entryX.getAccessRules();
 		assertThat(rules).as("X entry must have 3 rules: " + "x/api/* K_ACCESSIBLE, x/internal/* K_DISCOURAGED, "

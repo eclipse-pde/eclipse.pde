@@ -14,13 +14,15 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.imports;
 
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.ParameterizedTest;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -48,19 +50,13 @@ import org.eclipse.pde.internal.core.natures.PluginProject;
 import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation;
 import org.eclipse.pde.ui.tests.PDETestCase;
 import org.eclipse.team.core.RepositoryProvider;
-import org.junit.Assume;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.Assumptions;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.Version;
 
-@RunWith(Parameterized.class)
 public class BaseImportTestCase extends PDETestCase {
 
-	@Parameters(name = "{0}")
+	private int importType;
 	public static Object[][] importTypes() {
 		return new Object[][] { //
 			{ "Import binary", PluginImportOperation.IMPORT_BINARY }, //
@@ -69,51 +65,60 @@ public class BaseImportTestCase extends PDETestCase {
 		};
 	}
 
-	@Parameter(0)
-	public String importTypeName;
-	@Parameter(1)
-	public int importType;
-
-	@Test
-	public void testImportJAR() throws Exception {
+@ParameterizedTest(name = "{0}")
+	@MethodSource("importTypes")
+	public void testImportJAR(String importTypeName, int importType) throws Exception {
+		this.importType = importType;
 		doSingleImport("org.eclipse.jsch.core", true);
 	}
 
-	@Test
-	public void testImportFlat() throws Exception {
+	@ParameterizedTest(name = "{0}")
+	@MethodSource("importTypes")
+	public void testImportFlat(String importTypeName, int importType) throws Exception {
+		this.importType = importType;
 		doSingleImport("org.eclipse.jdt.debug", true);
 	}
 
-	@Test
-	public void testImportNotJavaFlat() throws Exception {
+	@ParameterizedTest(name = "{0}")
+	@MethodSource("importTypes")
+	public void testImportNotJavaFlat(String importTypeName, int importType) throws Exception {
+		this.importType = importType;
 		doSingleImport("org.junit.source", false);
 	}
 
-	@Test
-	public void testImportNotJavaJARd() throws Exception {
+	@ParameterizedTest(name = "{0}")
+	@MethodSource("importTypes")
+	public void testImportNotJavaJARd(String importTypeName, int importType) throws Exception {
+		this.importType = importType;
 		doSingleImport("org.eclipse.jdt.doc.user", false);
 		doSingleImport("org.eclipse.pde.ui.source", false);
 	}
 
-	@Test
-	public void testImportAnt() throws Exception {
-		Assume.assumeFalse(importType == PluginImportOperation.IMPORT_WITH_SOURCE);
+	@ParameterizedTest(name = "{0}")
+	@MethodSource("importTypes")
+	public void testImportAnt(String importTypeName, int importType) throws Exception {
+		this.importType = importType;
+		Assumptions.assumeFalse(importType == PluginImportOperation.IMPORT_WITH_SOURCE);
 		// Note: Ant is exempt from importing as source
 		doSingleImport("org.apache.ant", true);
 	}
 
-	@Test
-	public void testImportJUnit4() throws Exception {
+	@ParameterizedTest(name = "{0}")
+	@MethodSource("importTypes")
+	public void testImportJUnit4(String importTypeName, int importType) throws Exception {
+		this.importType = importType;
 		doSingleImport("org.junit", 4, true);
 	}
 
-	@Test
-	public void testImportLinksMultiple() throws Exception {
+	@ParameterizedTest(name = "{0}")
+	@MethodSource("importTypes")
+	public void testImportLinksMultiple(String importTypeName, int importType) throws Exception {
+		this.importType = importType;
 		List<IPluginModelBase> modelsToImport = Stream
 				.of("org.eclipse.core.filebuffers", "org.eclipse.jdt.doc.user", "org.eclipse.pde.build").map(name -> {
 					IPluginModelBase model = PluginRegistry.findModel(name);
-					assertNotNull("No model found with name'" + name + "'", model);
-					assertNull("Workspace resource already exists for: " + name, model.getUnderlyingResource());
+					assertNotNull(model, "No model found with name'" + name + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+					assertNull(model.getUnderlyingResource(), "Workspace resource already exists for: " + name); //$NON-NLS-1$
 					return model;
 				}).toList();
 		runOperation(modelsToImport, importType);
@@ -124,7 +129,7 @@ public class BaseImportTestCase extends PDETestCase {
 
 	protected void doSingleImport(String bundleSymbolicName, boolean isJava) throws Exception {
 		IPluginModelBase modelToImport = PluginRegistry.findModel(bundleSymbolicName);
-		assertNotNull("No model found with name'" + name + "'", modelToImport);
+		assertNotNull(modelToImport, "No model found with name'" + bundleSymbolicName + "'"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertNull(modelToImport.getUnderlyingResource());
 		runOperation(List.of(modelToImport), importType);
 		verifyProject(modelToImport, isJava);
@@ -142,13 +147,12 @@ public class BaseImportTestCase extends PDETestCase {
 	protected void doSingleImport(String bundleSymbolicName, int majorVersion, boolean isJava) throws Exception {
 		ModelEntry entry = PluginRegistry.findEntry(bundleSymbolicName);
 		IPluginModelBase models[] = entry.getExternalModels();
-		assertTrue("No external models for with name '" + bundleSymbolicName + "'", models.length > 0);
+		assertTrue(models.length > 0, "No external models for with name '" + bundleSymbolicName + "'"); //$NON-NLS-1$ //$NON-NLS-2$
 		IPluginModelBase modelToImport = Arrays.stream(models)
 				.filter(m -> new Version(m.getPluginBase().getVersion()).getMajor() == majorVersion).findFirst()
 				.orElse(null);
 
-		assertNull("Model for " + bundleSymbolicName + " with major version " + majorVersion + " not be found",
-				modelToImport.getUnderlyingResource());
+		assertNull(modelToImport.getUnderlyingResource(), "Model for " + bundleSymbolicName + " with major version " + majorVersion + " not be found"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		runOperation(List.of(modelToImport), importType);
 		verifyProject(modelToImport, isJava);
 	}
@@ -160,13 +164,13 @@ public class BaseImportTestCase extends PDETestCase {
 		job.schedule();
 		job.join();
 		IStatus status = job.getResult();
-		assertTrue("Import Operation failed: " + status.toString(), status.isOK());
+		assertTrue(status.isOK(), "Import Operation failed: " + status.toString()); //$NON-NLS-1$
 	}
 
 	private void verifyProject(IPluginModelBase modelImported, boolean isJava) throws CoreException {
 		String id = modelImported.getPluginBase().getId();
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(id);
-		assertTrue("Project " + id + " does not exist", project.exists());
+		assertTrue(project.exists(), "Project " + id + " does not exist"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		// When self hosting the tests, import tests may fail if you have the
 		// imported project in the host
@@ -212,7 +216,7 @@ public class BaseImportTestCase extends PDETestCase {
 			if (entry.getEntryKind() == IClasspathEntry.CPE_LIBRARY
 					|| (entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER)
 					&& !entry.getPath().equals(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH)) {
-				assertNotNull("Missing source attachement for entry " + entry, root.getSourceAttachmentPath());
+				assertNotNull(root.getSourceAttachmentPath(), "Missing source attachement for entry " + entry); //$NON-NLS-1$
 			}
 		}
 	}

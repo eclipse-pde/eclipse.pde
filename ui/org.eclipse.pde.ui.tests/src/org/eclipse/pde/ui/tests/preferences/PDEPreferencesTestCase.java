@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.preferences;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
@@ -26,7 +26,7 @@ import org.eclipse.pde.internal.launching.ILaunchingPreferenceConstants;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 
 /**
@@ -56,17 +56,17 @@ public class PDEPreferencesTestCase {
 	@Test
 	public void testInstanceScopePDEPreferences(){
 		PDEPreferencesManager preferences = new PDEPreferencesManager(PLUGIN_ID);
-		assertEquals(preferences.getString("stringKey"), "stringValue");
-		assertEquals(preferences.getBoolean("booleanKey"), true);
-		assertEquals(preferences.getInt("intKey"), 0);
+		assertEquals(preferences.getString("stringKey"), "stringValue"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(preferences.getBoolean("booleanKey"), true); //$NON-NLS-1$
+		assertEquals(preferences.getInt("intKey"), 0); //$NON-NLS-1$
 	}
 
 	@Test
 	public void testDefaultPDEPreferences(){
 		PDEPreferencesManager preferences = new PDEPreferencesManager(PLUGIN_ID);
-		assertEquals(preferences.getDefaultString("stringKey"), "defaultValue");
-		assertEquals(preferences.getDefaultBoolean("booleanKey"), false);
-		assertEquals(preferences.getDefaultInt("intKey"), -1);
+		assertEquals(preferences.getDefaultString("stringKey"), "defaultValue"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(preferences.getDefaultBoolean("booleanKey"), false); //$NON-NLS-1$
+		assertEquals(preferences.getDefaultInt("intKey"), -1); //$NON-NLS-1$
 	}
 
 	@Test
@@ -77,7 +77,7 @@ public class PDEPreferencesTestCase {
 
 		IPreferenceChangeListener listener = event -> {
 			assertEquals(event.getKey(), key);
-			assertEquals(event.getNewValue(), "stringValue");
+			assertEquals(event.getNewValue(), "stringValue"); //$NON-NLS-1$
 		};
 		preferences.addPreferenceChangeListener(listener);
 		preferences.put(key, "stringValue");
@@ -99,8 +99,8 @@ public class PDEPreferencesTestCase {
 
 		IPreferenceChangeListener listener = event -> {
 			assertEquals(event.getKey(), key);
-			assertEquals(event.getOldValue(), "oldStringValue");
-			assertEquals(event.getNewValue(), "newStringValue");
+			assertEquals(event.getOldValue(), "oldStringValue"); //$NON-NLS-1$
+			assertEquals(event.getNewValue(), "newStringValue"); //$NON-NLS-1$
 		};
 		preferences.put(key, "newStringValue");
 		preferences.removePreferenceChangeListener(listener);

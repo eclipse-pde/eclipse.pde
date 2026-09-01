@@ -13,13 +13,13 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.bundle;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.FragmentHostHeader;
 import org.eclipse.text.edits.TextEdit;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.Constants;
 
 public class FragmentHostTestCase extends BundleModelTestCase {
@@ -40,7 +40,7 @@ public class FragmentHostTestCase extends BundleModelTestCase {
 
 		IManifestHeader header = fModel.getBundle().getManifestHeader(Constants.FRAGMENT_HOST);
 		assertNotNull(header);
-		assertEquals("Fragment-Host: org.eclipse.pde\n", header.write());
+		assertEquals(header.write(), "Fragment-Host: org.eclipse.pde\n"); //$NON-NLS-1$
 
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);

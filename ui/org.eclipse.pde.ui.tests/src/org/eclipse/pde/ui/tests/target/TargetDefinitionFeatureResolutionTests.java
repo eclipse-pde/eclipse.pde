@@ -13,11 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ import org.eclipse.pde.core.target.TargetFeature;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.ui.tests.PDETestCase;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests whether targets and bundle containers manage features correctly.
@@ -69,12 +69,11 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 
 		for (TargetFeature feature : features) {
 			String currentID = feature.getId();
-			assertTrue("Extra feature in result: " + currentID, expectedIDs.contains(currentID));
+			assertTrue(expectedIDs.contains(currentID), "Extra feature in result: " + currentID); //$NON-NLS-1$
 			expectedIDs.remove(currentID);
 		}
 
-		assertTrue("Not all expected features returned by the container: " + expectedIDs.toString(),
-				expectedIDs.isEmpty());
+		assertTrue(expectedIDs.isEmpty(), "Not all expected features returned by the container: " + expectedIDs.toString()); //$NON-NLS-1$
 	}
 
 	/**
@@ -101,12 +100,11 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 
 		for (TargetFeature feature : features) {
 			String currentID = feature.getId();
-			assertTrue("Extra feature in result: " + currentID, expectedIDs.contains(currentID));
+			assertTrue(expectedIDs.contains(currentID), "Extra feature in result: " + currentID); //$NON-NLS-1$
 			expectedIDs.remove(currentID);
 		}
 
-		assertTrue("Not all expected features returned by the container: " + expectedIDs.toString(),
-				expectedIDs.isEmpty());
+		assertTrue(expectedIDs.isEmpty(), "Not all expected features returned by the container: " + expectedIDs.toString()); //$NON-NLS-1$
 	}
 
 	@Test
@@ -149,18 +147,17 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 				// the bundle should be missing unless on Mac
 				IStatus status = bundle.getStatus();
 				if (Platform.getOS().equals(Platform.OS_MACOSX)) {
-					assertTrue("Mac bundle should be present", status.isOK());
+					assertTrue(status.isOK(), "Mac bundle should be present"); //$NON-NLS-1$
 				} else {
-					assertFalse("Mac bundle should be missing", status.isOK());
-					assertEquals("Mac bundle should be mssing", TargetBundle.STATUS_PLUGIN_DOES_NOT_EXIST,
-							status.getCode());
+					assertFalse(status.isOK(), "Mac bundle should be missing"); //$NON-NLS-1$
+					assertEquals(TargetBundle.STATUS_PLUGIN_DOES_NOT_EXIST, status.getCode(), "Mac bundle should be mssing"); //$NON-NLS-1$
 				}
 			}
 		}
 		for (String name : expected) {
 			System.err.println("Missing: " + name);
 		}
-		assertTrue("Wrong bundles in JDT feature", expected.isEmpty());
+		assertTrue(expected.isEmpty(), "Wrong bundles in JDT feature"); //$NON-NLS-1$
 
 	}
 
@@ -197,18 +194,17 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 				// the bundle should be missing unless on Mac
 				IStatus status = bundle.getStatus();
 				if (Platform.getOS().equals(Platform.OS_MACOSX)) {
-					assertTrue("Mac bundle should be present", status.isOK());
+					assertTrue(status.isOK(), "Mac bundle should be present"); //$NON-NLS-1$
 				} else {
-					assertFalse("Mac bundle should be missing", status.isOK());
-					assertEquals("Mac bundle should be missing", TargetBundle.STATUS_PLUGIN_DOES_NOT_EXIST,
-							status.getCode());
+					assertFalse(status.isOK(), "Mac bundle should be missing"); //$NON-NLS-1$
+					assertEquals(TargetBundle.STATUS_PLUGIN_DOES_NOT_EXIST, status.getCode(), "Mac bundle should be missing"); //$NON-NLS-1$
 				}
 			}
 		}
 		for (String name : expected) {
 			System.err.println("Missing: " + name);
 		}
-		assertTrue("Wrong bundles in JDT feature", expected.isEmpty());
+		assertTrue(expected.isEmpty(), "Wrong bundles in JDT feature"); //$NON-NLS-1$
 	}
 
 	@Test
@@ -245,18 +241,17 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 				// the bundle should be missing unless on Mac
 				IStatus status = bundle.getStatus();
 				if (Platform.getOS().equals(Platform.OS_MACOSX)) {
-					assertTrue("Mac bundle should be present", status.isOK());
+					assertTrue(status.isOK(), "Mac bundle should be present"); //$NON-NLS-1$
 				} else {
-					assertFalse("Mac bundle should be missing", status.isOK());
-					assertEquals("Mac bundle should be mssing", TargetBundle.STATUS_PLUGIN_DOES_NOT_EXIST,
-							status.getCode());
+					assertFalse(status.isOK(), "Mac bundle should be missing"); //$NON-NLS-1$
+					assertEquals(TargetBundle.STATUS_PLUGIN_DOES_NOT_EXIST, status.getCode(), "Mac bundle should be mssing"); //$NON-NLS-1$
 				}
 			}
 		}
 		for (String name : expected) {
 			System.err.println("Missing: " + name);
 		}
-		assertTrue("Wrong bundles in JDT feature", expected.isEmpty());
+		assertTrue(expected.isEmpty(), "Wrong bundles in JDT feature"); //$NON-NLS-1$
 	}
 
 	@Test
@@ -274,15 +269,15 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 		definition.setIncluded(allFeatures);
 		TargetBundle[] bundles = definition.getBundles();
 
-		assertNotNull("Target didn't resolve", bundles);
-		assertEquals("Wrong number of included bundles", 1, bundles.length);
+		assertNotNull(bundles, "Target didn't resolve"); //$NON-NLS-1$
+		assertEquals(1, bundles.length, "Wrong number of included bundles"); //$NON-NLS-1$
 
 		IStatus definitionStatus = definition.getStatus();
-		assertEquals("Wrong severity", IStatus.ERROR, definitionStatus.getSeverity());
+		assertEquals(IStatus.ERROR, definitionStatus.getSeverity(), "Wrong severity"); //$NON-NLS-1$
 
 		IStatus[] children = definitionStatus.getChildren();
-		assertEquals("Wrong number of statuses", 1, children.length);
-		assertEquals("Wrong severity", IStatus.ERROR, children[0].getSeverity());
+		assertEquals(1, children.length, "Wrong number of statuses"); //$NON-NLS-1$
+		assertEquals(IStatus.ERROR, children[0].getSeverity(), "Wrong severity"); //$NON-NLS-1$
 		assertEquals(TargetBundle.STATUS_FEATURE_DOES_NOT_EXIST, children[0].getCode());
 
 		// Check that removing the included bundles and resolving removes the
@@ -326,18 +321,17 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 				// the bundle should be missing unless on Mac
 				IStatus status = bundle.getStatus();
 				if (Platform.getOS().equals(Platform.OS_MACOSX)) {
-					assertTrue("Mac bundle should be present", status.isOK());
+					assertTrue(status.isOK(), "Mac bundle should be present"); //$NON-NLS-1$
 				} else {
-					assertFalse("Mac bundle should be missing", status.isOK());
-					assertEquals("Mac bundle should be mssing", TargetBundle.STATUS_PLUGIN_DOES_NOT_EXIST,
-							status.getCode());
+					assertFalse(status.isOK(), "Mac bundle should be missing"); //$NON-NLS-1$
+					assertEquals(TargetBundle.STATUS_PLUGIN_DOES_NOT_EXIST, status.getCode(), "Mac bundle should be mssing"); //$NON-NLS-1$
 				}
 			}
 		}
 		for (String name : expected) {
 			System.err.println("Missing: " + name);
 		}
-		assertTrue("Wrong bundles in JDT feature", expected.isEmpty());
+		assertTrue(expected.isEmpty(), "Wrong bundles in JDT feature"); //$NON-NLS-1$
 	}
 
 	@Test
@@ -357,15 +351,15 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 		definition.setIncluded(allFeatures);
 		TargetBundle[] bundles = definition.getBundles();
 
-		assertNotNull("Target didn't resolve", bundles);
-		assertEquals("Wrong number of included bundles", 1, bundles.length);
+		assertNotNull(bundles, "Target didn't resolve"); //$NON-NLS-1$
+		assertEquals(1, bundles.length, "Wrong number of included bundles"); //$NON-NLS-1$
 
 		IStatus definitionStatus = definition.getStatus();
-		assertEquals("Wrong severity", IStatus.ERROR, definitionStatus.getSeverity());
+		assertEquals(IStatus.ERROR, definitionStatus.getSeverity(), "Wrong severity"); //$NON-NLS-1$
 
 		IStatus[] children = definitionStatus.getChildren();
-		assertEquals("Wrong number of statuses", 1, children.length);
-		assertEquals("Wrong severity", IStatus.ERROR, children[0].getSeverity());
+		assertEquals(1, children.length, "Wrong number of statuses"); //$NON-NLS-1$
+		assertEquals(IStatus.ERROR, children[0].getSeverity(), "Wrong severity"); //$NON-NLS-1$
 		assertEquals(TargetBundle.STATUS_FEATURE_DOES_NOT_EXIST, children[0].getCode());
 
 		// Check that removing the included bundles and resolving removes the

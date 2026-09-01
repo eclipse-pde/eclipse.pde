@@ -13,8 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.core.tests.internal;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import org.junit.jupiter.api.extension.Extension;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.Collection;
 import java.util.Set;
@@ -32,23 +34,20 @@ import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.ui.views.features.model.WorkspaceProductModelManager;
 import org.eclipse.pde.internal.ui.wizards.product.BaseProductCreationOperation;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
-import org.junit.After;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestRule;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 public class WorkspaceProductModelManagerTest {
 
-	@ClassRule
-	public static final TestRule CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
+	@RegisterExtension
+	public static final Extension CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
 
-	@Rule
-	public final TestRule deleteCreatedTestProjectsAfter = ProjectUtils.DELETE_CREATED_WORKSPACE_PROJECTS_AFTER;
+	@RegisterExtension
+	public final Extension deleteCreatedTestProjectsAfter = ProjectUtils.DELETE_CREATED_WORKSPACE_PROJECTS_AFTER;
 
 	private static final Set<WorkspaceModelManager<?>> openManagers = ConcurrentHashMap.newKeySet();
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		openManagers.forEach(WorkspaceModelManager::shutdown);
 	}

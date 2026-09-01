@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.bundle;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -23,7 +23,7 @@ import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.RequiredExecutionEnvironmentHeader;
 import org.eclipse.pde.internal.core.util.ManifestUtils;
 import org.eclipse.text.edits.TextEdit;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.Constants;
 
 @SuppressWarnings("deprecation")
@@ -47,7 +47,7 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 
 		IManifestHeader header = fModel.getBundle().getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
 		assertNotNull(header);
-		assertEquals("Bundle-RequiredExecutionEnvironment: J2SE-1.4\n", header.write());
+		assertEquals(header.write(), "Bundle-RequiredExecutionEnvironment: J2SE-1.4\n"); //$NON-NLS-1$
 
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
@@ -100,10 +100,10 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineLength(3) + fDocument.getLineLength(4);
 
-		assertEquals("""
+		assertEquals(fDocument.get(pos, length), """
 				Bundle-RequiredExecutionEnvironment: J2SE-1.4,
 				 J2SE-1.5
-				""", fDocument.get(pos, length));
+				""");
 	}
 
 	@Test
@@ -129,12 +129,12 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineOffset(7) - fDocument.getLineOffset(3);
-		assertEquals("""
+		assertEquals(fDocument.get(pos, length), """
 				Bundle-RequiredExecutionEnvironment: CDC-1.1/Foundation-1.1,
 				 OSGi/Minimum-1.1,
 				 J2SE-1.4,
 				 J2SE-1.5
-				""", fDocument.get(pos, length));
+				""");
 	}
 
 	@Test
@@ -160,10 +160,10 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineOffset(5) - fDocument.getLineOffset(3);
-		assertEquals("""
+		assertEquals(fDocument.get(pos, length), """
 				Bundle-RequiredExecutionEnvironment: OSGi/Minimum-1.1,
 				 J2SE-1.4
-				""", fDocument.get(pos, length));
+				""");
 	}
 
 	@Test
@@ -190,7 +190,7 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineLength(3);
-		assertEquals("Bundle-RequiredExecutionEnvironment: OSGi/Minimum-1.1\n", fDocument.get(pos, length));
+		assertEquals(fDocument.get(pos, length), "Bundle-RequiredExecutionEnvironment: OSGi/Minimum-1.1\n"); //$NON-NLS-1$
 	}
 
 	@Test
@@ -216,11 +216,11 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineOffset(6) - fDocument.getLineOffset(3);
 
-		assertEquals("""
+		assertEquals(fDocument.get(pos, length), """
 				Bundle-RequiredExecutionEnvironment:\s
 				 OSGi/Minimum-1.1,
 				 J2SE-1.4
-				""", fDocument.get(pos, length));
+				""");
 	}
 
 	@Test
@@ -228,17 +228,17 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 		{
 			Set<String> ees = new HashSet<>();
 			ManifestUtils.parseRequiredEEsFromFilter("(&(osgi.ee=JavaSE)(version=1.8))", ees::add);
-			assertEquals(Set.of("JavaSE-1.8"), ees);
+			assertEquals(Set.of("JavaSE-1.8"), ees); //$NON-NLS-1$
 		}
 		{
 			Set<String> ees = new HashSet<>();
 			ManifestUtils.parseRequiredEEsFromFilter("(& ( version=17 ) ( osgi.ee=JavaSE ) )", ees::add);
-			assertEquals(Set.of("JavaSE-17"), ees);
+			assertEquals(Set.of("JavaSE-17"), ees); //$NON-NLS-1$
 		}
 		{
 			Set<String> ees = new HashSet<>();
 			ManifestUtils.parseRequiredEEsFromFilter("(&(osgi.ee=JavaSE)(version>=1.6)(version<=1.8))", ees::add);
-			assertEquals(Set.of("JavaSE-1.6", "JavaSE-1.7", "JavaSE-1.8"), ees);
+			assertEquals(Set.of("JavaSE-1.6", "JavaSE-1.7", "JavaSE-1.8"), ees); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		{
 			// Equivalent to
@@ -246,7 +246,7 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 			Set<String> ees = new HashSet<>();
 			ManifestUtils.parseRequiredEEsFromFilter(
 					"(| (&(version=17)(osgi.ee=JavaSE)) (&(osgi.ee=JavaSE)(version=21)) )", ees::add);
-			assertEquals(Set.of("JavaSE-17", "JavaSE-21"), ees);
+			assertEquals(Set.of("JavaSE-17", "JavaSE-21"), ees); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 

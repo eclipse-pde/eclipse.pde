@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.project;
 
+import org.junit.jupiter.api.extension.Extension;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -28,18 +30,15 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
-import org.junit.Assert;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestRule;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class DynamicPluginProjectReferencesTest {
 
-	@ClassRule
-	public static final TestRule CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
-	@Rule
-	public final TestRule deleteCreatedTestProjectsAfter = ProjectUtils.DELETE_CREATED_WORKSPACE_PROJECTS_AFTER;
+	@RegisterExtension
+	public static final Extension CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
+	@RegisterExtension
+	public final Extension deleteCreatedTestProjectsAfter = ProjectUtils.DELETE_CREATED_WORKSPACE_PROJECTS_AFTER;
 
 	@Test
 	public void testFragmentHost_required() throws Exception {
@@ -82,7 +81,7 @@ public class DynamicPluginProjectReferencesTest {
 			}
 		}
 
-		Assert.fail("references should include local osgi project: " + Arrays.toString(referencedBuildConfigs));
+		Assertions.fail("references should include local osgi project: " + Arrays.toString(referencedBuildConfigs)); //$NON-NLS-1$
 	}
 
 	@Test
@@ -107,7 +106,7 @@ public class DynamicPluginProjectReferencesTest {
 			}
 		}
 
-		Assert.fail("references should include local osgi project: " + Arrays.toString(referencedBuildConfigs));
+		Assertions.fail("references should include local osgi project: " + Arrays.toString(referencedBuildConfigs)); //$NON-NLS-1$
 	}
 
 	@Test

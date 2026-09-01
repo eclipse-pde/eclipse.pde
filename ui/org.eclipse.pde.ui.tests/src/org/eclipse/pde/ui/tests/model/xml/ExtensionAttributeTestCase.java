@@ -13,13 +13,13 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.xml;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginObject;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ExtensionAttributeTestCase extends ExtensionTestCase {
 	@Test
@@ -361,8 +361,8 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 		IPluginExtension ext = reloadModel();
 		assertEquals(ext.getChildCount(), 1);
 		elem = (IPluginElement) ext.getChildren()[0];
-		assertEquals(elem.getName(), "sample");
-		assertEquals(elem.getAttribute("id").getValue(), "org.eclipse.pde.sample1");
+		assertEquals(elem.getName(), "sample"); //$NON-NLS-1$
+		assertEquals(elem.getAttribute("id").getValue(), "org.eclipse.pde.sample1"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private void testAddExtensionAttribute(StringBuilder buffer, String newLine) throws Exception {
@@ -376,17 +376,17 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 
 		assertTrue(child instanceof IPluginElement);
 		IPluginElement elem = (IPluginElement) child;
-		assertEquals(elem.getAttribute("id").getValue(), "org.eclipse.pde.sample1");
+		assertEquals(elem.getAttribute("id").getValue(), "org.eclipse.pde.sample1"); //$NON-NLS-1$ //$NON-NLS-2$
 		elem.setAttribute("name", "pde sample");
 
 		IPluginExtension ext = reloadModel();
 
 		assertEquals(ext.getChildCount(), 1);
 		elem = (IPluginElement) ext.getChildren()[0];
-		assertEquals(elem.getName(), "sample");
+		assertEquals(elem.getName(), "sample"); //$NON-NLS-1$
 		assertEquals(elem.getAttributeCount(), 2);
-		assertEquals(elem.getAttribute("id").getValue(), "org.eclipse.pde.sample1");
-		assertEquals(elem.getAttribute("name").getValue(), "pde sample");
+		assertEquals(elem.getAttribute("id").getValue(), "org.eclipse.pde.sample1"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(elem.getAttribute("name").getValue(), "pde sample"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private void testAddNewMultipleExtensionAttributes(StringBuilder buffer, String newLine) throws Exception {
@@ -406,9 +406,9 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 
 		assertEquals(ext.getChildCount(), 1);
 		elem = (IPluginElement) ext.getChildren()[0];
-		assertEquals(elem.getName(), "sample");
-		assertEquals(elem.getAttribute("id").getValue(), "org.eclipse.pde.sample1");
-		assertEquals(elem.getAttribute("name").getValue(), "pde sample");
+		assertEquals(elem.getName(), "sample"); //$NON-NLS-1$
+		assertEquals(elem.getAttribute("id").getValue(), "org.eclipse.pde.sample1"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(elem.getAttribute("name").getValue(), "pde sample"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private void testRemoveExtensionAttribute(StringBuilder buffer, String newLine) throws Exception {
@@ -422,14 +422,14 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 
 		assertTrue(child instanceof IPluginElement);
 		IPluginElement elem = (IPluginElement) child;
-		assertEquals(elem.getAttribute("id").getValue(), "org.eclipse.pde.sample1");
+		assertEquals(elem.getAttribute("id").getValue(), "org.eclipse.pde.sample1"); //$NON-NLS-1$ //$NON-NLS-2$
 		elem.setAttribute("id", null);
 
 		IPluginExtension ext = reloadModel();
 
 		assertEquals(ext.getChildCount(), 1);
 		elem = (IPluginElement) ext.getChildren()[0];
-		assertEquals(elem.getName(), "sample");
+		assertEquals(elem.getName(), "sample"); //$NON-NLS-1$
 		assertEquals(elem.getAttributeCount(), 0);
 	}
 
@@ -446,7 +446,7 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 
 		assertTrue(child instanceof IPluginElement);
 		IPluginElement elem = (IPluginElement) child;
-		assertEquals(elem.getAttribute("id").getValue(), "org.eclipse.pde.sample1");
+		assertEquals(elem.getAttribute("id").getValue(), "org.eclipse.pde.sample1"); //$NON-NLS-1$ //$NON-NLS-2$
 		elem.setAttribute("id", null);
 		elem.setAttribute("perspectiveId", null);
 
@@ -454,9 +454,9 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 
 		assertEquals(ext.getChildCount(), 1);
 		elem = (IPluginElement) ext.getChildren()[0];
-		assertEquals(elem.getName(), "sample");
+		assertEquals(elem.getName(), "sample"); //$NON-NLS-1$
 		assertEquals(elem.getAttributeCount(), 1);
-		assertEquals(elem.getAttribute("name").getValue(), "pde sample");
+		assertEquals(elem.getAttribute("name").getValue(), "pde sample"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private void testChangeExtensionAttribute(StringBuilder buffer, String newLine) throws Exception {
@@ -469,17 +469,17 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 		IPluginObject child = extensions[0].getChildren()[0];
 		assertTrue(child instanceof IPluginElement);
 		IPluginElement elem = (IPluginElement) child;
-		assertEquals(elem.getAttribute("id").getValue(), "org.eclipse.pde.sample1");
+		assertEquals(elem.getAttribute("id").getValue(), "org.eclipse.pde.sample1"); //$NON-NLS-1$ //$NON-NLS-2$
 		elem.setAttribute("id", "org.eclipse.pde.sample2");
 
 		IPluginExtension ext = reloadModel();
 
 		assertEquals(ext.getChildCount(), 1);
 		elem = (IPluginElement) ext.getChildren()[0];
-		assertEquals(elem.getName(), "sample");
+		assertEquals(elem.getName(), "sample"); //$NON-NLS-1$
 		assertEquals(elem.getAttributeCount(), 3);
-		assertEquals(elem.getAttribute("id").getValue(), "org.eclipse.pde.sample2");
-		assertEquals(elem.getAttribute("name").getValue(), "pde sample");
-		assertEquals(elem.getAttribute("perspectiveId").getValue(), "org.eclipse.pde.ui.PDEPerspective");
+		assertEquals(elem.getAttribute("id").getValue(), "org.eclipse.pde.sample2"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(elem.getAttribute("name").getValue(), "pde sample"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(elem.getAttribute("perspectiveId").getValue(), "org.eclipse.pde.ui.PDEPerspective"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

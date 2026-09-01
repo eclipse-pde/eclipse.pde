@@ -13,12 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.imports;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
-@RunWith(Suite.class)
-@SuiteClasses({ //
+@Suite
+@SelectClasses({ //
 	BaseImportTestCase.class, //
 
 	// Temporarily disabled until git migration is complete and we have access to a

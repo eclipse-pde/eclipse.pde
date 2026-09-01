@@ -13,15 +13,15 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.bundle;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.RequireBundleHeader;
 import org.eclipse.pde.internal.core.text.bundle.RequireBundleObject;
 import org.eclipse.text.edits.TextEdit;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.Constants;
 
 public class RequireBundleTestCase extends MultiLineHeaderTestCase {
@@ -42,7 +42,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 
 		IManifestHeader header = fModel.getBundle().getManifestHeader(Constants.REQUIRE_BUNDLE);
 		assertNotNull(header);
-		assertEquals("Require-Bundle: com.example.abc\n", header.write());
+		assertEquals(header.write(), "Require-Bundle: com.example.abc\n"); //$NON-NLS-1$
 
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(1, ops.length);
@@ -181,7 +181,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineLength(3);
-		assertEquals("Require-Bundle: com.example.ui\n", fDocument.get(pos, length));
+		assertEquals(fDocument.get(pos, length), "Require-Bundle: com.example.ui\n"); //$NON-NLS-1$
 	}
 
 	@Test
@@ -217,10 +217,10 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 
 		RequireBundleObject bundle = getBundle((RequireBundleHeader) header, "org.eclipse.osgi");
 		assertNotNull(bundle);
-		assertEquals("[3.1.0,4.0.0)", bundle.getVersion());
+		assertEquals(bundle.getVersion(), "[3.1.0,4.0.0)"); //$NON-NLS-1$
 
 		bundle.setVersion("(1.9.9,3.0.9]");
-		assertEquals("(1.9.9,3.0.9]", bundle.getVersion());
+		assertEquals(bundle.getVersion(), "(1.9.9,3.0.9]"); //$NON-NLS-1$
 	}
 
 	@Test
@@ -238,7 +238,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 
 		RequireBundleObject bundle = getBundle((RequireBundleHeader) header, "org.eclipse.osgi");
 		assertNotNull(bundle);
-		assertEquals("3.2.0", bundle.getVersion());
+		assertEquals(bundle.getVersion(), "3.2.0"); //$NON-NLS-1$
 	}
 
 	@Test
@@ -266,7 +266,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineLength(3);
-		assertEquals("Require-Bundle: org.eclipse.osgi;resolution:=optional\n", fDocument.get(pos, length));
+		assertEquals(fDocument.get(pos, length), "Require-Bundle: org.eclipse.osgi;resolution:=optional\n"); //$NON-NLS-1$
 	}
 
 	@Test
@@ -294,7 +294,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineLength(3);
-		assertEquals("Require-Bundle: org.eclipse.osgi\n", fDocument.get(pos, length));
+		assertEquals(fDocument.get(pos, length), "Require-Bundle: org.eclipse.osgi\n"); //$NON-NLS-1$
 	}
 
 	@Test
@@ -322,7 +322,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineLength(3);
-		assertEquals("Require-Bundle: org.eclipse.osgi;bundle-version=\"3.2.0\"\n", fDocument.get(pos, length));
+		assertEquals(fDocument.get(pos, length), "Require-Bundle: org.eclipse.osgi;bundle-version=\"3.2.0\"\n"); //$NON-NLS-1$
 	}
 
 	@Test
@@ -350,7 +350,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineLength(3);
-		assertEquals("Require-Bundle: org.eclipse.osgi\n", fDocument.get(pos, length));
+		assertEquals(fDocument.get(pos, length), "Require-Bundle: org.eclipse.osgi\n"); //$NON-NLS-1$
 	}
 
 	@Test
@@ -481,7 +481,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineLength(3);
-		assertEquals("Require-Bundle: org.eclipse.osgi;visibility:=reexport\n", fDocument.get(pos, length));
+		assertEquals(fDocument.get(pos, length), "Require-Bundle: org.eclipse.osgi;visibility:=reexport\n"); //$NON-NLS-1$
 	}
 
 	@Test
@@ -509,7 +509,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineLength(3);
-		assertEquals("Require-Bundle: org.eclipse.osgi\n", fDocument.get(pos, length));
+		assertEquals(fDocument.get(pos, length), "Require-Bundle: org.eclipse.osgi\n"); //$NON-NLS-1$
 	}
 
 	private static RequireBundleObject getBundle(RequireBundleHeader header, String id) {

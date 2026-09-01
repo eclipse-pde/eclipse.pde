@@ -14,9 +14,9 @@
  **************************************************************************************/
 package org.eclipse.pde.ui.tests.launcher;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 
@@ -27,12 +27,12 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class LaunchConfigurationMigrationTest extends AbstractLaunchTest {
 
-	@BeforeClass
+	@BeforeAll
 	public static void setupPluginProjects() throws Exception {
 		ProjectUtils.createPluginProject("org.eclipse.pde.plugin1", "org.eclipse.pde.plugin1", "0.0.0");
 		ProjectUtils.createPluginProject("org.eclipse.pde.plugin2", "org.eclipse.pde.plugin2", "0.0.0");
@@ -49,11 +49,11 @@ public class LaunchConfigurationMigrationTest extends AbstractLaunchTest {
 		assertOldPropertiesRemoved(wc);
 
 		Map<IPluginModelBase, String> bundles = BundleLauncherHelper.getAllSelectedPluginBundles(wc);
-		assertEquals("default:true", bundles.get(findWorkspaceModel("org.eclipse.pde.plugin1", null)));
-		assertEquals("3:false", bundles.get(findWorkspaceModel("org.eclipse.pde.plugin2", null)));
+		assertEquals(bundles.get(findWorkspaceModel("org.eclipse.pde.plugin1", null)), "default:true"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(bundles.get(findWorkspaceModel("org.eclipse.pde.plugin2", null)), "3:false"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		assertEquals("default:true", bundles.get(findTargetModel("org.eclipse.core.runtime", null)));
-		assertEquals("2:false", bundles.get(findTargetModel("org.eclipse.ui", null)));
+		assertEquals(bundles.get(findTargetModel("org.eclipse.core.runtime", null)), "default:true"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(bundles.get(findTargetModel("org.eclipse.ui", null)), "2:false"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Test
@@ -67,10 +67,10 @@ public class LaunchConfigurationMigrationTest extends AbstractLaunchTest {
 		assertOldPropertiesRemoved(wc);
 
 		Map<IPluginModelBase, String> bundles = BundleLauncherHelper.getAllSelectedPluginBundles(wc);
-		assertEquals("default:default", bundles.get(findWorkspaceModel("org.eclipse.pde.plugin1", null)));
+		assertEquals(bundles.get(findWorkspaceModel("org.eclipse.pde.plugin1", null)), "default:default"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		assertEquals("default:true", bundles.get(findTargetModel("org.eclipse.core.runtime", null)));
-		assertEquals("2:false", bundles.get(findTargetModel("org.eclipse.ui", null)));
+		assertEquals(bundles.get(findTargetModel("org.eclipse.core.runtime", null)), "default:true"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(bundles.get(findTargetModel("org.eclipse.ui", null)), "2:false"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Test
@@ -84,25 +84,22 @@ public class LaunchConfigurationMigrationTest extends AbstractLaunchTest {
 		assertOldOsgiPropertiesRemoved(wc);
 
 		Map<IPluginModelBase, String> bundles = BundleLauncherHelper.getAllSelectedPluginBundles(wc);
-		assertEquals("default:true", bundles.get(findWorkspaceModel("org.eclipse.pde.plugin1", null)));
-		assertEquals("3:false", bundles.get(findWorkspaceModel("org.eclipse.pde.plugin2", null)));
+		assertEquals(bundles.get(findWorkspaceModel("org.eclipse.pde.plugin1", null)), "default:true"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(bundles.get(findWorkspaceModel("org.eclipse.pde.plugin2", null)), "3:false"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		assertEquals("default:true", bundles.get(findTargetModel("org.eclipse.core.runtime", null)));
-		assertEquals("2:false", bundles.get(findTargetModel("org.eclipse.ui", null)));
+		assertEquals(bundles.get(findTargetModel("org.eclipse.core.runtime", null)), "default:true"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(bundles.get(findTargetModel("org.eclipse.ui", null)), "2:false"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@SuppressWarnings("deprecation")
 	private void assertOldPropertiesRemoved(ILaunchConfigurationWorkingCopy wc) throws CoreException {
-		assertFalse("selected_workspace_plugins should not be present",
-				wc.hasAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS));
-		assertFalse("selected_target_plugins should not be present",
-				wc.hasAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS));
+		assertFalse(wc.hasAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS), "selected_workspace_plugins should not be present"); //$NON-NLS-1$
+		assertFalse(wc.hasAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS), "selected_target_plugins should not be present"); //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("deprecation")
 	private void assertOldOsgiPropertiesRemoved(ILaunchConfiguration wc) throws CoreException {
-		assertFalse("workspace_bundles should not be present",
-				wc.hasAttribute(IPDELauncherConstants.WORKSPACE_BUNDLES));
-		assertFalse("target_bundles should not be present", wc.hasAttribute(IPDELauncherConstants.TARGET_BUNDLES));
+		assertFalse(wc.hasAttribute(IPDELauncherConstants.WORKSPACE_BUNDLES), "workspace_bundles should not be present"); //$NON-NLS-1$
+		assertFalse(wc.hasAttribute(IPDELauncherConstants.TARGET_BUNDLES), "target_bundles should not be present"); //$NON-NLS-1$
 	}
 }

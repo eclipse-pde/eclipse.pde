@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.search.dependencies;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import org.junit.jupiter.api.extension.Extension;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -41,15 +43,13 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.search.dependencies.GatherUnusedDependenciesOperation;
 import org.eclipse.pde.ui.tests.runtime.TestUtils;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.TestRule;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.VersionRange;
 
 public class GatherUnusedDependenciesOperationTest {
 
-	@ClassRule
-	public static final TestRule CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
+	@RegisterExtension
+	public static final Extension CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
 
 	@Test
 	public void testDirectlyUsedDependencyReexportedByOtherDependencyIsNotFlaggedAsUnused() throws Exception {
@@ -81,9 +81,7 @@ public class GatherUnusedDependenciesOperationTest {
 
 		buildProjects();
 		List<String> unusedPlugins = gatherUnusedDependencies(projectB);
-		assertFalse(
-				"Direct, used dependency to bundle C must not be flagged as unused just because bundle A reexports it",
-				unusedPlugins.contains(bundleC));
+		assertFalse(unusedPlugins.contains(bundleC), "Direct, used dependency to bundle C must not be flagged as unused just because bundle A reexports it"); //$NON-NLS-1$
 	}
 
 	private static IProject createManifestOnlyPluginProject(String symbolicName) throws Exception {
@@ -174,7 +172,7 @@ public class GatherUnusedDependenciesOperationTest {
 	private static List<String> gatherUnusedDependencies(IProject project)
 			throws InvocationTargetException, InterruptedException {
 		IPluginModelBase model = PluginRegistry.findModel(project);
-		assertNotNull("Plug-in model for bundle " + project.getName() + " not found", model);
+		assertNotNull(model, "Plug-in model for bundle " + project.getName() + " not found"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		GatherUnusedDependenciesOperation operation = new GatherUnusedDependenciesOperation(model);
 		operation.run(new NullProgressMonitor());

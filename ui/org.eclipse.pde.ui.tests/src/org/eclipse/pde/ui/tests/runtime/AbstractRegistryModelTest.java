@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.runtime;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URISyntaxException;
 import java.util.EventListener;
@@ -32,9 +32,9 @@ import org.eclipse.pde.internal.runtime.registry.model.ModelChangeListener;
 import org.eclipse.pde.internal.runtime.registry.model.RegistryModel;
 import org.eclipse.pde.internal.runtime.registry.model.ServiceName;
 import org.eclipse.pde.internal.runtime.registry.model.ServiceRegistration;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
 import org.osgi.framework.FrameworkUtil;
@@ -114,7 +114,7 @@ public abstract class AbstractRegistryModelTest implements ModelChangeListener {
 		testExtPointBundle = Platform.getBundle(TEST_EXT_POINT_BUNDLE);
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		model = createModel();
 		model.connect(new NullProgressMonitor(), false);
@@ -123,7 +123,7 @@ public abstract class AbstractRegistryModelTest implements ModelChangeListener {
 		model.addModelChangeListener(this);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		model.removeModelChangeListener(this);
 		model.disconnect();

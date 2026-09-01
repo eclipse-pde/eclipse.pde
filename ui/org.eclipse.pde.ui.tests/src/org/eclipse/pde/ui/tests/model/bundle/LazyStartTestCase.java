@@ -13,16 +13,16 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.bundle;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.LazyStartHeader;
 import org.eclipse.text.edits.TextEdit;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class LazyStartTestCase extends BundleModelTestCase {
 
@@ -85,7 +85,7 @@ public class LazyStartTestCase extends BundleModelTestCase {
 
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineLength(3);
-		assertEquals(fHeaderName + ": plugin\n", fDocument.get(pos, length));
+		assertEquals(fHeaderName + ": plugin\n", fDocument.get(pos, length)); //$NON-NLS-1$
 	}
 
 	@Test
@@ -113,6 +113,6 @@ public class LazyStartTestCase extends BundleModelTestCase {
 
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineLength(3);
-		assertEquals(fHeaderName + ": true\n", fDocument.get(pos, length));
+		assertEquals(fHeaderName + ": true\n", fDocument.get(pos, length)); //$NON-NLS-1$
 	}
 }

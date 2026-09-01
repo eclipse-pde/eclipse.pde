@@ -13,12 +13,12 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests TargetPlatformHelper.java convenience methods
@@ -52,19 +52,19 @@ public class TargetPlatformHelperTests {
 
 		for (int i = 0; i < bundleStrings.length; i++) {
 			if (i <= 7){
-				assertEquals("Bundle path was not stripped properly", "org.eclipse.osgi" + i, TargetPlatformHelper.stripPathInformation(bundleStrings[i]));
+				assertEquals("org.eclipse.osgi" + i, TargetPlatformHelper.stripPathInformation(bundleStrings[i]), "Bundle path was not stripped properly"); //$NON-NLS-1$ //$NON-NLS-2$
 			} else if (i <= 11) {
-				assertEquals("Bundle path was not stripped properly", "org.eclipse.osgi" + i + "@1:start", TargetPlatformHelper.stripPathInformation(bundleStrings[i]));
+				assertEquals("org.eclipse.osgi" + i + "@1:start", TargetPlatformHelper.stripPathInformation(bundleStrings[i]), "Bundle path was not stripped properly"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			} else if (i <= 14) {
-				assertEquals("Bundle path was not stripped properly", "org.eclipse.osgi" + i, TargetPlatformHelper.stripPathInformation(bundleStrings[i]));
+				assertEquals("org.eclipse.osgi" + i, TargetPlatformHelper.stripPathInformation(bundleStrings[i]), "Bundle path was not stripped properly"); //$NON-NLS-1$ //$NON-NLS-2$
 			} else if (i == 15) {
-				assertEquals("Bundle path was not stripped properly", "org.eclipse.osgi" + i + "_13", TargetPlatformHelper.stripPathInformation(bundleStrings[i]));
+				assertEquals("org.eclipse.osgi" + i + "_13", TargetPlatformHelper.stripPathInformation(bundleStrings[i]), "Bundle path was not stripped properly"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			} else if (i == 16) {
-				assertEquals("Bundle path was not stripped properly", "org.eclipse.osgi" + i + ".nl_de", TargetPlatformHelper.stripPathInformation(bundleStrings[i]));
+				assertEquals("org.eclipse.osgi" + i + ".nl_de", TargetPlatformHelper.stripPathInformation(bundleStrings[i]), "Bundle path was not stripped properly"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			} else if (i == 17) {
-				assertEquals("Bundle path was not stripped properly", "org.eclipse.osgi" + i + ".ia64_32", TargetPlatformHelper.stripPathInformation(bundleStrings[i]));
+				assertEquals("org.eclipse.osgi" + i + ".ia64_32", TargetPlatformHelper.stripPathInformation(bundleStrings[i]), "Bundle path was not stripped properly"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			} else {
-				assertEquals("Bundle path was not stripped properly", "org.eclipse.osgi" + i + ".x86_64", TargetPlatformHelper.stripPathInformation(bundleStrings[i]));
+				assertEquals("org.eclipse.osgi" + i + ".x86_64", TargetPlatformHelper.stripPathInformation(bundleStrings[i]), "Bundle path was not stripped properly"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 		}
 

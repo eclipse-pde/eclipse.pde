@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.wizards;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -24,7 +24,7 @@ import org.eclipse.pde.ui.tests.PDETestCase;
 public abstract class NewProjectTestCase extends PDETestCase {
 
 	protected void verifyProjectExistence() {
-		assertTrue("Project does not exist", getProject().exists()); //$NON-NLS-1$
+		assertTrue(getProject().exists(), "Project does not exist"); //$NON-NLS-1$
 	}
 
 	protected IProject getProject() {

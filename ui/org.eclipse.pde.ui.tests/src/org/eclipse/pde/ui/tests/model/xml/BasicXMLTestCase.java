@@ -13,14 +13,14 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.xml;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.eclipse.pde.core.plugin.IExtensionsModelFactory;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class BasicXMLTestCase extends XMLModelTestCase {
 	@Test
@@ -32,9 +32,9 @@ public class BasicXMLTestCase extends XMLModelTestCase {
 
 		IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();
 		assertEquals(extensions.length, 1);
-		assertEquals(extensions[0].getPoint(), "org.eclipse.pde.ui.samples");
+		assertEquals(extensions[0].getPoint(), "org.eclipse.pde.ui.samples"); //$NON-NLS-1$
 		assertEquals(extensions[0].getChildCount(), 1);
-		assertEquals(extensions[0].getChildren()[0].getName(), "sample");
+		assertEquals(extensions[0].getChildren()[0].getName(), "sample"); //$NON-NLS-1$
 	}
 
 	@Test
@@ -63,9 +63,9 @@ public class BasicXMLTestCase extends XMLModelTestCase {
 
 		IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();
 		assertEquals(extensions.length, 1);
-		assertEquals(extensions[0].getPoint(), "org.eclipse.pde.ui.samples");
+		assertEquals(extensions[0].getPoint(), "org.eclipse.pde.ui.samples"); //$NON-NLS-1$
 		assertEquals(extensions[0].getChildCount(), 1);
-		assertEquals(extensions[0].getChildren()[0].getName(), "sample");
+		assertEquals(extensions[0].getChildren()[0].getName(), "sample"); //$NON-NLS-1$
 	}
 
 	@Test
@@ -88,9 +88,9 @@ public class BasicXMLTestCase extends XMLModelTestCase {
 
 		extensions = fModel.getPluginBase().getExtensions();
 		assertEquals(extensions.length, 1);
-		assertEquals(extensions[0].getPoint(), "org.eclipse.pde.ui.samples");
+		assertEquals(extensions[0].getPoint(), "org.eclipse.pde.ui.samples"); //$NON-NLS-1$
 		assertEquals(extensions[0].getChildCount(), 1);
-		assertEquals(extensions[0].getChildren()[0].getName(), "sample");
+		assertEquals(extensions[0].getChildren()[0].getName(), "sample"); //$NON-NLS-1$
 	}
 
 	@Test
@@ -141,9 +141,9 @@ public class BasicXMLTestCase extends XMLModelTestCase {
 
 		IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();
 		assertEquals(extensions.length, 1);
-		assertEquals(extensions[0].getPoint(), "org.eclipse.pde.ui.samples");
+		assertEquals(extensions[0].getPoint(), "org.eclipse.pde.ui.samples"); //$NON-NLS-1$
 		assertEquals(extensions[0].getChildCount(), 1);
-		assertEquals(extensions[0].getChildren()[0].getName(), "sample");
+		assertEquals(extensions[0].getChildren()[0].getName(), "sample"); //$NON-NLS-1$
 	}
 
 }

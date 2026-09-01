@@ -13,9 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.classpathupdater;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.extension.Extension;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -40,11 +42,9 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.wizards.tools.UpdateClasspathJob;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
-import org.junit.After;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.TestRule;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class ClasspathUpdaterTest {
 
@@ -54,13 +54,13 @@ public class ClasspathUpdaterTest {
 	private static IClasspathEntry[] originalClasspath;
 	private static String originalTestPluginPattern;
 	private static Boolean expectIsTest;
-	@ClassRule
-	public static final TestRule CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
+	@RegisterExtension
+	public static final Extension CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
 
-	@BeforeClass
+	@BeforeAll
 	public static void setUpBeforeClass() throws Exception {
 		project = ProjectUtils.importTestProject("tests/projects/classpathupdater");
-		assertTrue("Project was not created", project.exists());
+		assertTrue(project.exists(), "Project was not created"); //$NON-NLS-1$
 		jProject = JavaCore.create(project);
 		originalClasspath = jProject.getRawClasspath();
 		originalTestPluginPattern = PDECore.getDefault().getPreferencesManager()
@@ -68,12 +68,12 @@ public class ClasspathUpdaterTest {
 		expectIsTest = null;
 	}
 
-	@After
+	@AfterEach
 	public void restoreOriginalClasspath() throws Exception {
 		jProject.setRawClasspath(originalClasspath, null);
 	}
 
-	@After
+	@AfterEach
 	public void restoreOriginalTestPluginPattern() {
 		PDECore.getDefault().getPreferencesManager().setValue(ICoreConstants.TEST_PLUGIN_PATTERN,
 				originalTestPluginPattern);
@@ -182,17 +182,17 @@ public class ClasspathUpdaterTest {
 		Job job = UpdateClasspathJob.scheduleFor(List.of(model), false);
 		job.join();
 		IStatus result = job.getResult();
-		assertTrue("Update Classpath Job failed: " + result, result.isOK());
+		assertTrue(result.isOK(), "Update Classpath Job failed: " + result); //$NON-NLS-1$
 	}
 
 	private <T> void assertClasspathAttribute(String entryName, String attrName, T expectedValue,
 			Function<String, T> parser) throws JavaModelException {
 		IClasspathEntry entry = findClasspathEntry(entryName);
-		assertNotNull("Classpath entry for " + entryName + " is missing", entry);
+		assertNotNull(entry, "Classpath entry for " + entryName + " is missing"); //$NON-NLS-1$ //$NON-NLS-2$
 		String attrValue = findClasspathAttributeValue(entry, attrName);
 		T current = attrValue != null ? parser.apply(attrValue) : null; // null: attribute not set
-		assertEquals("Classpath entry for '" + entry.getPath().lastSegment() + "': attribute '" + attrName
-				+ "' is not '" + expectedValue + "'", expectedValue, current);
+		assertEquals(expectedValue, current, "Classpath entry for '" + entry.getPath().lastSegment() + "': attribute '" + attrName //$NON-NLS-1$ //$NON-NLS-2$
+				+ "' is not '" + expectedValue + "'"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private String findClasspathAttributeValue(IClasspathEntry entry, String name) {
@@ -204,7 +204,7 @@ public class ClasspathUpdaterTest {
 	private void assertClasspathProperty(String entryName, String expectedValue, Predicate<IClasspathEntry> checker)
 			throws JavaModelException {
 		IClasspathEntry entry = findClasspathEntry(entryName);
-		assertTrue("Classpath entry for '" + entryName + "' has not set '" + expectedValue + "'", checker.test(entry));
+		assertTrue(checker.test(entry), "Classpath entry for '" + entryName + "' has not set '" + expectedValue + "'"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	private void assertClasspathOrder(String... names) throws Exception {
@@ -215,7 +215,7 @@ public class ClasspathUpdaterTest {
 	private IClasspathEntry findClasspathEntry(String name) throws JavaModelException {
 		Optional<IClasspathEntry> entry = Arrays.stream(jProject.getRawClasspath())
 				.filter(e -> name.equals(e.getPath().lastSegment())).findFirst();
-		assertTrue("Classpath entry for " + name + " is missing", entry.isPresent());
+		assertTrue(entry.isPresent(), "Classpath entry for " + name + " is missing"); //$NON-NLS-1$ //$NON-NLS-2$
 		return entry.get();
 	}
 

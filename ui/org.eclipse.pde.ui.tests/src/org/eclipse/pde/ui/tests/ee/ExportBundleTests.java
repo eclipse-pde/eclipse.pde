@@ -13,10 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.ee;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.junit.jupiter.api.TestInfo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -38,16 +39,16 @@ import org.eclipse.pde.internal.core.exports.PluginExportOperation;
 import org.eclipse.pde.ui.tests.PDETestCase;
 import org.eclipse.pde.ui.tests.runtime.TestUtils;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests exporting bundles.
  */
 public class ExportBundleTests extends PDETestCase {
 
-	@BeforeClass
+	@BeforeAll
 	public static void requireStandaloneEclipseSDKEnvironment() {
 		PDETestCase.assumeRunningInStandaloneEclipseSDK();
 	}
@@ -55,9 +56,9 @@ public class ExportBundleTests extends PDETestCase {
 	private static final Path EXPORT_PATH = getThisBundlesStateLocation().resolve(".export");
 
 	@Override
-	@Before
-	public void setUp() throws Exception {
-		super.setUp();
+	@BeforeEach
+	public void setUp(TestInfo testInfo) throws Exception {
+		super.setUp(testInfo);
 		Path path = Files.createDirectories(EXPORT_PATH.toFile().toPath());
 		if (Files.exists(path)) {
 			Files.delete(path);
@@ -84,7 +85,7 @@ public class ExportBundleTests extends PDETestCase {
 	 */
 	protected void validateTargetLevel(String zipFileName, String zipEntryName, int major) {
 		IClassFileReader reader = ToolFactory.createDefaultClassFileReader(zipFileName, zipEntryName, IClassFileReader.ALL);
-		assertEquals("Wrong major version", major, reader.getMajorVersion());
+		assertEquals(major, reader.getMajorVersion(), "Wrong major version"); //$NON-NLS-1$
 	}
 
 	/**
@@ -96,7 +97,7 @@ public class ExportBundleTests extends PDETestCase {
 		try {
 			IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(EnvironmentAnalyzerDelegate.EE_NO_SOUND);
 			IJavaProject project = ProjectUtils.createPluginProject("no.sound.export", env);
-			assertTrue("Project was not created", project.exists());
+			assertTrue(project.exists(), "Project was not created"); //$NON-NLS-1$
 
 			final FeatureExportInfo info = new FeatureExportInfo();
 			info.toDirectory = true;
@@ -114,26 +115,26 @@ public class ExportBundleTests extends PDETestCase {
 			job.schedule();
 			job.join();
 			if (job.hasAntErrors()){
-				fail("Export job had ant errors");
+				fail("Export job had ant errors"); //$NON-NLS-1$
 			}
 			IStatus result = job.getResult();
-			assertTrue("Export job had errors", result.isOK());
+			assertTrue(result.isOK(), "Export job had errors"); //$NON-NLS-1$
 
 			TestUtils.processUIEvents(100);
-			TestUtils.waitForJobs(name.getMethodName(), 100, 10000);
+			TestUtils.waitForJobs(testName, 100, 10000);
 
 			// verify exported bundle exists
 			Path path = EXPORT_PATH.resolve("plugins/no.sound.export_1.0.0.jar");
 
 			// The jar file may not have been copied to the file system yet, see Bug 424597
 			if (!Files.exists(path)) {
-				TestUtils.waitForJobs(name.getMethodName(), 100, 30000);
+				TestUtils.waitForJobs(testName, 100, 30000);
 			}
 
-			assertTrue("Missing exported bundle", Files.exists(path));
+			assertTrue(Files.exists(path), "Missing exported bundle"); //$NON-NLS-1$
 			validateTargetLevel(path.toString(), "no/sound/export/Activator.class", ClassFileConstants.MAJOR_VERSION_1_8);
 		} finally {
-			TestUtils.waitForJobs(name.getMethodName(), 10, 5000);
+			TestUtils.waitForJobs(testName, 10, 5000);
 			deleteProject("no.sound.export");
 			delete(EXPORT_PATH.toFile());
 		}
@@ -148,7 +149,7 @@ public class ExportBundleTests extends PDETestCase {
 		try {
 			IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("JavaSE-1.8");
 			IJavaProject project = ProjectUtils.createPluginProject("j2se18.export", env);
-			assertTrue("Project was not created", project.exists());
+			assertTrue(project.exists(), "Project was not created"); //$NON-NLS-1$
 
 			final FeatureExportInfo info = new FeatureExportInfo();
 			info.toDirectory = true;
@@ -170,11 +171,11 @@ public class ExportBundleTests extends PDETestCase {
 			job.join();
 			long l4 = System.currentTimeMillis();
 			if (job.hasAntErrors()){
-				fail("Export job had ant errors");
+				fail("Export job had ant errors"); //$NON-NLS-1$
 			}
 			long l5 = System.currentTimeMillis();
 			IStatus result = job.getResult();
-			assertTrue("Export job had errors", result.isOK());
+			assertTrue(result.isOK(), "Export job had errors"); //$NON-NLS-1$
 			long l6 = System.currentTimeMillis();
 
 			// veriry exported bundle exists
@@ -182,13 +183,13 @@ public class ExportBundleTests extends PDETestCase {
 			long l7 = System.currentTimeMillis();
 
 			TestUtils.processUIEvents(100);
-			TestUtils.waitForJobs(name.getMethodName(), 100, 10000);
+			TestUtils.waitForJobs(testName, 100, 10000);
 
 			boolean didPathExistBeforeSleep = Files.exists(path);
 			/*		give a 30 second delay when the path doesn't exist
 					( JUST IN CASE - unlikely to work but worth trying)*/
 			if (!Files.exists(path)) {
-				TestUtils.waitForJobs(name.getMethodName(), 3000, 30000);
+				TestUtils.waitForJobs(testName, 3000, 30000);
 			}
 			boolean didPathExistAfterSleep = Files.exists(path);
 
@@ -231,10 +232,10 @@ public class ExportBundleTests extends PDETestCase {
 			}
 			System.out.println("================================\nEnd of BUG 424597");
 
-			assertTrue("Missing exported bundle", Files.exists(path));
+			assertTrue(Files.exists(path), "Missing exported bundle"); //$NON-NLS-1$
 			validateTargetLevel(path.toString(), "j2se18/export/Activator.class", ClassFileConstants.MAJOR_VERSION_1_8);
 		} finally {
-			TestUtils.waitForJobs(name.getMethodName(), 10, 5000);
+			TestUtils.waitForJobs(testName, 10, 5000);
 			deleteProject("j2se18.export");
 			delete(EXPORT_PATH.toFile());
 		}

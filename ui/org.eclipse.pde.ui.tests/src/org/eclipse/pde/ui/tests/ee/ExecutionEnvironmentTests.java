@@ -14,9 +14,9 @@
 package org.eclipse.pde.ui.tests.ee;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Hashtable;
 import java.util.List;
@@ -45,7 +45,7 @@ import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.ui.wizards.tools.UpdateClasspathJob;
 import org.eclipse.pde.ui.tests.PDETestCase;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests projects with a custom execution environment
@@ -85,7 +85,7 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 	 */
 	protected void validateOption(IJavaProject project, String optionName, String expectedValue) {
 		String option = project.getOption(optionName, true);
-		assertEquals("Wrong value for option " + optionName, expectedValue, option);
+		assertEquals(expectedValue, option, "Wrong value for option " + optionName); //$NON-NLS-1$
 	}
 
 	/**
@@ -97,12 +97,12 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 			if (entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
 				IPath path = entry.getPath();
 				if (JavaRuntime.JRE_CONTAINER.equals(path.segment(0))) {
-					assertEquals("Wrong system library class path container", conatinerPath, path);
+					assertEquals(conatinerPath, path, "Wrong system library class path container"); //$NON-NLS-1$
 					return;
 				}
 			}
 		}
-		assertFalse("JRE container not found", true);
+		assertFalse(true, "JRE container not found"); //$NON-NLS-1$
 	}
 
 	/**
@@ -115,7 +115,7 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 	 */
 	protected void validateTargetLevel(String classfile, int major) {
 		IClassFileReader reader = ToolFactory.createDefaultClassFileReader(classfile, IClassFileReader.ALL);
-		assertEquals("Wrong major version", major, reader.getMajorVersion());
+		assertEquals(major, reader.getMajorVersion(), "Wrong major version"); //$NON-NLS-1$
 	}
 
 	/**
@@ -133,7 +133,7 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 			IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager()
 					.getEnvironment(EnvironmentAnalyzerDelegate.EE_NO_SOUND);
 			IJavaProject project = ProjectUtils.createPluginProject("no.sound", env);
-			assertTrue("Project was not created", project.exists());
+			assertTrue(project.exists(), "Project was not created"); //$NON-NLS-1$
 
 			validateOption(project, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_8);
 			validateOption(project, JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
@@ -147,7 +147,7 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 			project.getProject().build(IncrementalProjectBuilder.FULL_BUILD, null);
 			waitForBuild();
 			IFile file = project.getProject().getFile("/bin/no/sound/Activator.class");
-			assertTrue("Activator class missing", file.exists());
+			assertTrue(file.exists(), "Activator class missing"); //$NON-NLS-1$
 			validateTargetLevel(file.getLocation().toOSString(), ClassFileConstants.MAJOR_VERSION_1_8);
 		} finally {
 			deleteProject("no.sound");
@@ -164,7 +164,7 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 		try {
 			IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("JavaSE-1.8");
 			IJavaProject project = ProjectUtils.createPluginProject("j2se18.plug", env);
-			assertTrue("Project was not created", project.exists());
+			assertTrue(project.exists(), "Project was not created"); //$NON-NLS-1$
 
 			validateOption(project, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_8);
 			validateOption(project, JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
@@ -177,7 +177,7 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 			project.getProject().build(IncrementalProjectBuilder.FULL_BUILD, null);
 			waitForBuild();
 			IFile file = project.getProject().getFile("/bin/j2se18/plug/Activator.class");
-			assertTrue("Activator class missing", file.exists());
+			assertTrue(file.exists(), "Activator class missing"); //$NON-NLS-1$
 			validateTargetLevel(file.getLocation().toOSString(), ClassFileConstants.MAJOR_VERSION_1_8);
 		} finally {
 			deleteProject("j2se18.plug");
@@ -193,7 +193,7 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 	public void testNoEnvironment() throws Exception {
 		try {
 			IJavaProject project = ProjectUtils.createPluginProject("no.env", (IExecutionEnvironment) null);
-			assertTrue("Project was not created", project.exists());
+			assertTrue(project.exists(), "Project was not created"); //$NON-NLS-1$
 
 			Hashtable<String, String> options = JavaCore.getOptions();
 			validateOption(project, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM,
@@ -223,7 +223,7 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 		try {
 			IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("JavaSE-1.8");
 			IJavaProject project = ProjectUtils.createPluginProject("j2se18.ignore", env);
-			assertTrue("Project was not created", project.exists());
+			assertTrue(project.exists(), "Project was not created"); //$NON-NLS-1$
 
 			validateOption(project, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_8);
 			validateOption(project, JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
@@ -266,7 +266,7 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 		try {
 			IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("JavaSE-1.8");
 			IJavaProject project = ProjectUtils.createPluginProject("j2se18.error", env);
-			assertTrue("Project was not created", project.exists());
+			assertTrue(project.exists(), "Project was not created"); //$NON-NLS-1$
 
 			validateOption(project, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_8);
 			validateOption(project, JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
