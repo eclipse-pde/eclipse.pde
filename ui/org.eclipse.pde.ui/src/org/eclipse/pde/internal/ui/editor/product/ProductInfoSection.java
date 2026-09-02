@@ -20,12 +20,14 @@ import static org.eclipse.pde.internal.core.iproduct.IProduct.ProductType.FEATUR
 import static org.eclipse.pde.internal.core.iproduct.IProduct.ProductType.MIXED;
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
+import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -121,17 +123,10 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 			}
 		}
 
-		public void handleExtensionDelta(IExtensionDelta[] deltas) {
-			for (IExtensionDelta delta : deltas) {
-				IExtension extension = delta.getExtension();
-				if (extension == null) {
-					return;
-				}
-				String id = extension.getUniqueIdentifier();
-				if (id == null) {
-					continue;
-				}
-				if (delta.getKind() == IExtensionDelta.ADDED) {
+		public void handleExtensionChanges(List<ExtensionChange> changes) {
+			for (ExtensionChange change : changes) {
+				String id = change.id();
+				if (change.added()) {
 					int index = computeIndex(id);
 					// index of -1 means id is already in combo
 					if (index >= 0) {
@@ -416,19 +411,47 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		return c instanceof Text;
 	}
 
+	public record ExtensionChange(String id, boolean added) {
+	}
+
 	@Override
 	public void registryChanged(IRegistryChangeEvent event) {
-		final IExtensionDelta[] applicationDeltas = event.getExtensionDeltas(IPDEBuildConstants.BUNDLE_CORE_RUNTIME,
-				"applications"); //$NON-NLS-1$
-		final IExtensionDelta[] productDeltas = event.getExtensionDeltas(IPDEBuildConstants.BUNDLE_CORE_RUNTIME,
-				"products"); //$NON-NLS-1$
-		if (applicationDeltas.length + productDeltas.length == 0) {
+		List<ExtensionChange> applicationChanges = toExtensionChanges(
+				event.getExtensionDeltas(IPDEBuildConstants.BUNDLE_CORE_RUNTIME, "applications")); //$NON-NLS-1$
+		List<ExtensionChange> productChanges = toExtensionChanges(
+				event.getExtensionDeltas(IPDEBuildConstants.BUNDLE_CORE_RUNTIME, "products")); //$NON-NLS-1$
+		if (applicationChanges.isEmpty() && productChanges.isEmpty()) {
 			return;
 		}
 		Display.getDefault().asyncExec(() -> {
-			fAppCombo.handleExtensionDelta(applicationDeltas);
-			fProductCombo.handleExtensionDelta(productDeltas);
+			fAppCombo.handleExtensionChanges(applicationChanges);
+			fProductCombo.handleExtensionChanges(productChanges);
 		});
+	}
+
+	/**
+	 * Must run inside the registry listener, removed extensions are invalid
+	 * once it returns.
+	 */
+	public static List<ExtensionChange> toExtensionChanges(IExtensionDelta[] deltas) {
+		List<ExtensionChange> changes = new ArrayList<>(deltas.length);
+		for (IExtensionDelta delta : deltas) {
+			IExtension extension = delta.getExtension();
+			if (extension == null) {
+				continue;
+			}
+			String id;
+			try {
+				id = extension.getUniqueIdentifier();
+			} catch (InvalidRegistryObjectException e) {
+				continue;
+			}
+			if (id == null) {
+				continue;
+			}
+			changes.add(new ExtensionChange(id, delta.getKind() == IExtensionDelta.ADDED));
+		}
+		return changes;
 	}
 
 	@Override
