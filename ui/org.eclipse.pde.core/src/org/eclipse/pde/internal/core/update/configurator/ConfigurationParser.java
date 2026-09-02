@@ -298,12 +298,9 @@ class ConfigurationParser extends DefaultHandler implements IConfigurationConsta
 		if (date == null || date.trim().length() == 0) {
 			config = new Configuration(); // constructed with current date
 		} else {
-			long time = 0;
 			try {
-				time = Long.parseLong(date);
-				config = new Configuration(new Date(time));
+				config = new Configuration(new Date(Long.parseLong(date)));
 			} catch (NumberFormatException e1) {
-				time = new Date().getTime();
 				Utils.log(NLS.bind(Messages.InstalledSiteParser_date, (new String[] { date })));
 				config = new Configuration(); // constructed with current date
 			}
