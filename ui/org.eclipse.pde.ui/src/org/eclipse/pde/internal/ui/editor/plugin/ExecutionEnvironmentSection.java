@@ -19,6 +19,7 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -348,12 +349,12 @@ public class ExecutionEnvironmentSection extends TableSection {
 	private IExecutionEnvironment[] getEnvironments() {
 		RequiredExecutionEnvironmentHeader header = getHeader();
 		IExecutionEnvironmentsManager eeManager = JavaRuntime.getExecutionEnvironmentsManager();
-		IExecutionEnvironment[] envs = eeManager.getExecutionEnvironments();
-		if (header == null) {
-			return envs;
+		Stream<IExecutionEnvironment> envs = VMUtil.getSupportedExecutionEnvironments().stream();
+		if (header != null) {
+			List<IExecutionEnvironment> ees = header.getElementNames().stream().map(eeManager::getEnvironment).toList();
+			envs = envs.filter(ee -> !ees.contains(ee));
 		}
-		List<IExecutionEnvironment> ees = header.getElementNames().stream().map(eeManager::getEnvironment).toList();
-		return Arrays.stream(envs).filter(ee -> !ees.contains(ee)).toArray(IExecutionEnvironment[]::new);
+		return envs.toArray(IExecutionEnvironment[]::new);
 	}
 
 	@Override

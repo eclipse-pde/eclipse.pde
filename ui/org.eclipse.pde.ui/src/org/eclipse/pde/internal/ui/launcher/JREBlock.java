@@ -18,6 +18,7 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -220,8 +221,7 @@ public class JREBlock {
 		if (jrePath == null) {
 			// Try to get a default EE based on default VM install first
 			IVMInstall install = JavaRuntime.getDefaultVMInstall();
-			IExecutionEnvironment[] systemEnvs = JavaRuntime.getExecutionEnvironmentsManager()
-					.getExecutionEnvironments();
+			List<IExecutionEnvironment> systemEnvs = VMUtil.getSupportedExecutionEnvironments();
 			for (IExecutionEnvironment iExecutionEnvironment : systemEnvs) {
 				if (iExecutionEnvironment.isStrictlyCompatible(install)) {
 					eeId = iExecutionEnvironment.getId();
@@ -368,16 +368,17 @@ public class JREBlock {
 	}
 
 	private void setEECombo() {
-		IExecutionEnvironment[] eeObjects = VMUtil.getExecutionEnvironments();
-		String[] ees = new String[eeObjects.length];
-		for (int i = 0; i < eeObjects.length; i++) {
+		List<IExecutionEnvironment> eeObjects = VMUtil.getSupportedExecutionEnvironments();
+		String[] ees = new String[eeObjects.size()];
+		for (int i = 0; i < ees.length; i++) {
+			IExecutionEnvironment eeObject = eeObjects.get(i);
 			String vm;
 			try {
-				vm = VMUtil.getVMInstallName(eeObjects[i]);
+				vm = VMUtil.getVMInstallName(eeObject);
 			} catch (CoreException e) {
 				vm = PDEUIMessages.BasicLauncherTab_unbound;
 			}
-			ees[i] = NLS.bind("{0} ({1})", new String[] {eeObjects[i].getId(), vm}); //$NON-NLS-1$
+			ees[i] = NLS.bind("{0} ({1})", new String[] {eeObject.getId(), vm}); //$NON-NLS-1$
 		}
 		fEeCombo.setItems(ees);
 	}

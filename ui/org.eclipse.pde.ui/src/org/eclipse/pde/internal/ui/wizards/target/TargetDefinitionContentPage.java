@@ -44,7 +44,6 @@ import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
-import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
@@ -510,9 +509,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	 */
 	protected void initializeJREValues() {
 		fExecEnvChoices = new TreeSet<>();
-		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
-		IExecutionEnvironment[] envs = manager.getExecutionEnvironments();
-		for (IExecutionEnvironment env : envs) {
+		for (IExecutionEnvironment env : VMUtil.getSupportedExecutionEnvironments()) {
 			fExecEnvChoices.add(env.getId());
 		}
 	}

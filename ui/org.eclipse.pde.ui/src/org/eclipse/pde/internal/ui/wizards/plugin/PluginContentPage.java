@@ -18,6 +18,7 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 import org.eclipse.core.runtime.IStatus;
@@ -150,7 +151,7 @@ public class PluginContentPage extends ContentPage {
 		fEEChoice.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		// Gather EEs
-		IExecutionEnvironment[] exeEnvs = VMUtil.getExecutionEnvironments();
+		List<IExecutionEnvironment> exeEnvs = VMUtil.getSupportedExecutionEnvironments();
 		ArrayList<String> availableEEs = new ArrayList<>();
 		availableEEs.add(NO_EXECUTION_ENVIRONMENT);
 		for (IExecutionEnvironment exeEnv : exeEnvs) {
