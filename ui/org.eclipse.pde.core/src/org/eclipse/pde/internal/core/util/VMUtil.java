@@ -16,9 +16,11 @@ package org.eclipse.pde.internal.core.util;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -78,6 +80,16 @@ public class VMUtil {
 		return manager.getExecutionEnvironments();
 	}
 
+	/**
+	 * {@return the execution environments one can still compile against.}
+	 */
+	public static List<IExecutionEnvironment> getSupportedExecutionEnvironments() {
+		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
+		Set<IExecutionEnvironment> supported = manager.getSupportedExecutionEnvironments();
+		return Arrays.stream(manager.getExecutionEnvironments())
+				.filter(ee -> supported.contains(ee) || isNewerThanSupportedByCompiler(ee)).toList();
+	}
+
 	public static IExecutionEnvironment getExecutionEnvironment(String id) {
 		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 		return manager.getEnvironment(id);
@@ -99,12 +111,29 @@ public class VMUtil {
 			.comparingDouble((String ee) -> JAVA_VERSION_OF_EE.getOrDefault(ee, 0.0))
 			.thenComparing(Comparator.naturalOrder());
 
+	private static final double LATEST_SUPPORTED_JAVA_VERSION = parseJavaVersion(
+			JavaCore.getAllJavaSourceVersionsSupportedByCompiler().last());
+
 	public static double getJavaTargetVersion(IExecutionEnvironment ee) {
 		Properties properties = ee.getProfileProperties();
 		Object target = properties != null //
 				? properties.get(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM)
 				: null;
-		return target instanceof String version ? Double.parseDouble(version) : 0.0;
+		return target instanceof String version ? parseJavaVersion(version) : 0.0;
+	}
+
+	private static boolean isNewerThanSupportedByCompiler(IExecutionEnvironment ee) {
+		Map<String, String> options = ee.getComplianceOptions();
+		String compliance = options != null ? options.get(JavaCore.COMPILER_COMPLIANCE) : null;
+		return compliance != null && parseJavaVersion(compliance) > LATEST_SUPPORTED_JAVA_VERSION;
+	}
+
+	private static double parseJavaVersion(String version) {
+		try {
+			return Double.parseDouble(version);
+		} catch (NumberFormatException e) {
+			return 0.0;
+		}
 	}
 
 }

@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -32,7 +33,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
-import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -51,6 +51,7 @@ import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.util.PDEJavaHelper;
+import org.eclipse.pde.internal.core.util.VMUtil;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
@@ -88,11 +89,8 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 
 	private static final String[] fExecEnvs;
 	static {
-		IExecutionEnvironment[] envs = JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments();
-		fExecEnvs = new String[envs.length];
-		for (int i = 0; i < envs.length; i++) {
-			fExecEnvs[i] = envs[i].getId();
-		}
+		List<IExecutionEnvironment> envs = VMUtil.getSupportedExecutionEnvironments();
+		fExecEnvs = envs.stream().map(IExecutionEnvironment::getId).toArray(String[]::new);
 		Arrays.sort(fExecEnvs, String::compareToIgnoreCase);
 	}
 

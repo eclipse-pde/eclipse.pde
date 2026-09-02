@@ -18,6 +18,7 @@ package org.eclipse.pde.internal.ui.wizards.tools;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -288,27 +289,28 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 			pluginBundle.setHeader(ICoreConstants.AUTOMATIC_MODULE_NAME,
 					NewProjectCreationOperation.determineAutomaticModuleNameFromBSN(pluginId));
 		}
-		IExecutionEnvironment[] exeEnvs = VMUtil.getExecutionEnvironments();
+		List<IExecutionEnvironment> exeEnvs = VMUtil.getSupportedExecutionEnvironments();
 		IExecutionEnvironment ee = null;
 		IVMInstall defaultVM = JavaRuntime.getDefaultVMInstall();
-		for (int i = 0; i < exeEnvs.length; i++) {
-			if (!(exeEnvs[i].getId().equals(NO_EXECUTION_ENVIRONMENT))) {
-				if (VMUtil.getExecutionEnvironment(exeEnvs[i].getId()).isStrictlyCompatible(defaultVM)) {
-					ee = exeEnvs[i];
+		for (IExecutionEnvironment exeEnv : exeEnvs) {
+			if (!(exeEnv.getId().equals(NO_EXECUTION_ENVIRONMENT))) {
+				if (VMUtil.getExecutionEnvironment(exeEnv.getId()).isStrictlyCompatible(defaultVM)) {
+					ee = exeEnv;
 					break;
 				}
 			}
 		}
 		if (ee == null) {
-			for (int i = exeEnvs.length - 1; i >= 0; i--) {
-				if (!(exeEnvs[i].getId().equals(NO_EXECUTION_ENVIRONMENT))) {
-					IVMInstall[] vm = VMUtil.getExecutionEnvironment(exeEnvs[i].getId()).getCompatibleVMs();
+			for (int i = exeEnvs.size() - 1; i >= 0; i--) {
+				IExecutionEnvironment exeEnv = exeEnvs.get(i);
+				if (!(exeEnv.getId().equals(NO_EXECUTION_ENVIRONMENT))) {
+					IVMInstall[] vm = VMUtil.getExecutionEnvironment(exeEnv.getId()).getCompatibleVMs();
 					if (vm == null || vm.length == 0) {
 						continue;
 					}
-					java.util.List<IVMInstall> vmList = Arrays.asList(vm);
+					List<IVMInstall> vmList = Arrays.asList(vm);
 					if (vmList.contains(defaultVM)) {
-						ee = exeEnvs[i];
+						ee = exeEnv;
 						break;
 					}
 				}

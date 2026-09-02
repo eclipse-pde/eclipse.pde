@@ -18,6 +18,7 @@ package org.eclipse.pde.internal.ui.wizards.plugin;
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 import java.util.TreeSet;
 
 import org.eclipse.core.runtime.IStatus;
@@ -199,7 +200,7 @@ public class FragmentContentPage extends ContentPage {
 		fEEChoice.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		// Gather EEs
-		IExecutionEnvironment[] exeEnvs = VMUtil.getExecutionEnvironments();
+		List<IExecutionEnvironment> exeEnvs = VMUtil.getSupportedExecutionEnvironments();
 		TreeSet<String> availableEEs = new TreeSet<>();
 		for (IExecutionEnvironment exeEnv : exeEnvs) {
 			availableEEs.add(exeEnv.getId());

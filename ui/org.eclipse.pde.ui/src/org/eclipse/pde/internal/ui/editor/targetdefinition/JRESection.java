@@ -20,7 +20,6 @@ import java.util.TreeSet;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
-import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.internal.core.util.VMUtil;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -165,9 +164,7 @@ public class JRESection extends SectionPart {
 	 */
 	protected void initializeValues() {
 		fExecEnvChoices = new TreeSet<>();
-		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
-		IExecutionEnvironment[] envs = manager.getExecutionEnvironments();
-		for (IExecutionEnvironment env : envs) {
+		for (IExecutionEnvironment env : VMUtil.getSupportedExecutionEnvironments()) {
 			fExecEnvChoices.add(env.getId());
 		}
 	}

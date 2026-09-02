@@ -130,7 +130,8 @@ public class JRESection extends PDESection {
 		fEEsCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fEEsCombo.setLabelProvider(new EELabelProvider());
 		fEEsCombo.setComparator(new ViewerComparator());
-		fEEsCombo.setItems(VMUtil.getExecutionEnvironments());
+		// An environment already set in the product is added back in refresh()
+		fEEsCombo.setItems(VMUtil.getSupportedExecutionEnvironments().toArray());
 		fEEsCombo.addItem("", 0); //$NON-NLS-1$
 		fEEsCombo.addSelectionChangedListener(event -> {
 			if (!fBlockChanges) {
