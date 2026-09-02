@@ -24,6 +24,7 @@ import org.eclipse.pde.ui.tests.build.properties.AllValidatorTests;
 import org.eclipse.pde.ui.tests.classpathcontributor.ClasspathContributorTest;
 import org.eclipse.pde.ui.tests.classpathresolver.ClasspathResolverTest;
 import org.eclipse.pde.ui.tests.classpathupdater.ClasspathUpdaterTest;
+import org.eclipse.pde.ui.tests.editor.ProductInfoSectionTest;
 import org.eclipse.pde.ui.tests.ee.ExportBundleTests;
 import org.eclipse.pde.ui.tests.imports.AllImportTests;
 import org.eclipse.pde.ui.tests.launcher.AllLauncherTests;
@@ -76,6 +77,7 @@ import org.junit.platform.suite.api.Suite;
 	ProjectSmartImportTest.class, //
 	GatherUnusedDependenciesOperationTest.class, //
 	PDELabelProviderTest.class, //
+	ProductInfoSectionTest.class, //
 })
 public class AllPDETests {
 
