@@ -24,6 +24,7 @@ public class CoreMessages extends NLS {
 	public static String ApiBaseline_4;
 	public static String ApiBaseline_5;
 	public static String ApiBaseline_6;
+	public static String ApiBaseline_7;
 	public static String FilterStore_0;
 	public static String JavadocTagManager_annotation_no_reference;
 	public static String JavadocTagManager_class_no_instantiate;

@@ -38,6 +38,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -357,13 +358,19 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		HashSet<String> ees = new HashSet<>();
 		for (IApiComponent apiComponent : components) {
 			BundleComponent component = (BundleComponent) apiComponent;
-			if (component.isSourceComponent()) {
-				continue;
+			try {
+				if (component.isSourceComponent()) {
+					continue;
+				}
+				BundleDescription description = component.getBundleDescription();
+				getState().addBundle(description);
+				addComponent(component);
+				ees.addAll(component.getExecutionEnvironments());
+			} catch (CoreException | RuntimeException e) {
+				// a single unusable component must not abort the whole baseline
+				ILog.of(ApiBaseline.class).warn(MessageFormat.format(CoreMessages.ApiBaseline_7,
+						component.getSymbolicName(), component.getLocation(), getName()), e);
 			}
-			BundleDescription description = component.getBundleDescription();
-			getState().addBundle(description);
-			addComponent(component);
-			ees.addAll(component.getExecutionEnvironments());
 		}
 		resolveSystemLibrary(ees);
 		getState().resolve();
