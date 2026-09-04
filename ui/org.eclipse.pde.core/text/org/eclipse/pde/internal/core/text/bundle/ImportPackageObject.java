@@ -14,14 +14,14 @@
 package org.eclipse.pde.internal.core.text.bundle;
 
 import java.io.PrintWriter;
-import java.util.Arrays;
 
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
+import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.internal.build.Utils;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PDEState;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.util.VersionUtil;
@@ -93,14 +93,32 @@ public class ImportPackageObject extends PackageObject {
 		}
 	}
 
+	/**
+	 * Returns whether a bundle in the target exports this package in the imported
+	 * version range.
+	 */
 	public boolean isResolved() {
-		PDEState pdeState = PDECore.getDefault().getModelManager().getState();
-		ExportPackageDescription[] exportedPackages = pdeState.getState().getExportedPackages();
-
+		State state = PDECore.getDefault().getModelManager().getState().getState();
 		VersionRange versionRange = Utils.parseVersionRange(getVersion());
-		return Arrays.stream(exportedPackages)
-				.filter(p -> p.getName().equals(getName()))
-				.anyMatch(p -> versionRange.includes(p.getVersion()));
+		// State.getExportedPackages() copies the exports of every bundle on each call
+		return isExportedBy(state.getResolvedBundles(), versionRange)
+				|| isExportedBy(state.getRemovalPending(), versionRange);
+	}
+
+	private boolean isExportedBy(BundleDescription[] bundles, VersionRange versionRange) {
+		String name = getName();
+		for (BundleDescription bundle : bundles) {
+			ExportPackageDescription[] exports = bundle.getSelectedExports();
+			if (exports == null) {
+				continue;
+			}
+			for (ExportPackageDescription export : exports) {
+				if (export.getName().equals(name) && versionRange.includes(export.getVersion())) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 }

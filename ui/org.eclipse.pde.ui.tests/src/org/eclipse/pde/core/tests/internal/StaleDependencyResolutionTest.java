@@ -167,7 +167,33 @@ public class StaleDependencyResolutionTest {
 				importedPackage.isResolved());
 	}
 
+	/**
+	 * The version range of the import decides the result, and an import without a
+	 * version attribute matches any exported version.
+	 */
+	@Test
+	public void testImportedPackageResolutionHonoursVersionRange() throws Exception {
+		setTargetPlatform(targetWithBundleA,
+				bundle("bundle.a", "1.0.0", entry(EXPORT_PACKAGE, "bundle.a.pack;version=\"1.2.0\"")));
+
+		assertTrue("an import without a version must match any exported version",
+				importedPackage("bundle.a.pack", null).isResolved());
+		assertTrue("1.2.0 must resolve against [1.0.0,2.0.0)",
+				importedPackage("bundle.a.pack", "[1.0.0,2.0.0)").isResolved());
+		assertFalse("1.2.0 must not resolve against [2.0.0,3.0.0)",
+				importedPackage("bundle.a.pack", "[2.0.0,3.0.0)").isResolved());
+		assertFalse("a package nobody exports must not resolve",
+				importedPackage("bundle.a.unexported", null).isResolved());
+	}
+
 	private static ImportPackageObject importedPackage(String packageName) throws CoreException {
+		return importedPackage(packageName, null);
+	}
+
+	private static ImportPackageObject importedPackage(String packageName, String versionRange)
+			throws CoreException {
+		String element = versionRange == null ? packageName
+				: packageName + ";version=\"" + versionRange + '"';
 		Document document = new Document();
 		document.set("""
 				Manifest-Version: 1.0
@@ -175,7 +201,7 @@ public class StaleDependencyResolutionTest {
 				Bundle-SymbolicName: bundle.importer
 				Bundle-Version: 1.0.0
 				Import-Package: %s
-				""".formatted(packageName));
+				""".formatted(element));
 		BundleModel model = new BundleModel(document, false);
 		model.load();
 		ImportPackageHeader header = (ImportPackageHeader) model.getBundle()
