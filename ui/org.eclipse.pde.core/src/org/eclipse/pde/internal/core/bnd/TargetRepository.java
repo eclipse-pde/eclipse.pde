@@ -160,6 +160,11 @@ public class TargetRepository extends BaseRepository implements RepositoryPlugin
 	}
 
 	@Override
+	public String getIcon() {
+		return "target_platform_state.svg"; //$NON-NLS-1$
+	}
+
+	@Override
 	public String getLocation() {
 		return "pde-target-state"; //$NON-NLS-1$
 	}
