@@ -34,6 +34,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.service.resolver.State;
+import org.eclipse.osgi.service.resolver.StateDelta;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPlugin;
@@ -45,6 +47,7 @@ import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.core.IFeatureModelDelta;
 import org.eclipse.pde.internal.core.IFeatureModelListener;
 import org.eclipse.pde.internal.core.IPluginModelListener;
+import org.eclipse.pde.internal.core.IStateDeltaListener;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelDelta;
 import org.eclipse.pde.internal.core.feature.FeatureImport;
@@ -79,7 +82,8 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-public class RequiresSection extends TableSection implements IPluginModelListener, IFeatureModelListener {
+public class RequiresSection extends TableSection
+		implements IPluginModelListener, IStateDeltaListener, IFeatureModelListener {
 
 	private static final int REMOVE = 2;
 	private static final int NEW_FEATURE = 1;
@@ -351,6 +355,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 			model.removeModelChangedListener(this);
 		}
 		PDECore.getDefault().getModelManager().removePluginModelListener(this);
+		PDECore.getDefault().getModelManager().removeStateDeltaListener(this);
 		PDECore.getDefault().getFeatureModelManager().removeFeatureModelListener(this);
 		super.dispose();
 	}
@@ -429,6 +434,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		}
 		model.addModelChangedListener(this);
 		PDECore.getDefault().getModelManager().addPluginModelListener(this);
+		PDECore.getDefault().getModelManager().addStateDeltaListener(this);
 		PDECore.getDefault().getFeatureModelManager().addFeatureModelListener(this);
 	}
 
@@ -466,6 +472,21 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 			ModelEntry[] removed = delta.getRemovedEntries();
 			ModelEntry[] changed = delta.getChangedEntries();
 			if (hasModels(added) || hasModels(removed) || hasModels(changed)) {
+				markStale();
+			}
+		});
+	}
+
+	@Override
+	public void stateResolved(StateDelta delta) {
+		// already covered by modelsChanged, which is fired for the same batch
+	}
+
+	@Override
+	public void stateChanged(State newState) {
+		// a target reload replaces the state without firing a PluginModelDelta
+		getSection().getDisplay().asyncExec(() -> {
+			if (!getSection().isDisposed()) {
 				markStale();
 			}
 		});
