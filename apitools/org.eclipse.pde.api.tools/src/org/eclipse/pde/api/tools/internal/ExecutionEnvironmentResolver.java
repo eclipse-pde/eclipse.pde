@@ -72,7 +72,6 @@ import org.osgi.framework.namespace.ExecutionEnvironmentNamespace;
  */
 public class ExecutionEnvironmentResolver {
 
-	private static final String JAVASE_PREFIX = "JavaSE-"; //$NON-NLS-1$
 	private static final String JAVASE_EE_NAME = "JavaSE"; //$NON-NLS-1$
 	private static final String BREE_SEPARATOR = ","; //$NON-NLS-1$
 	private static final String FILTER_DIRECTIVE = "filter"; //$NON-NLS-1$
@@ -152,20 +151,35 @@ public class ExecutionEnvironmentResolver {
 	 * Returns the JDT compliance string for a single BREE entry, or {@code null}.
 	 */
 	private static String fromSingleBree(String eename) {
-		if (eename.startsWith(JAVASE_PREFIX)) {
-			String version = eename.substring(JAVASE_PREFIX.length());
-			if (JavaCore.getAllJavaSourceVersionsSupportedByCompiler().contains(version)) {
+		// Java 8 compact profiles: only three variants exist, all require Java 1.8
+		if (JavaCore.getAllJavaSourceVersionsSupportedByCompiler().contains(JavaCore.VERSION_1_8)) {
+			if ("JavaSE/compact1-1.8".equals(eename) //$NON-NLS-1$
+					|| "JavaSE/compact2-1.8".equals(eename) //$NON-NLS-1$
+					|| "JavaSE/compact3-1.8".equals(eename)) { //$NON-NLS-1$
+				return JavaCore.VERSION_1_8;
+			}
+		}
+		int separator = eename.lastIndexOf('-');
+		if (separator > 0) {
+			String eeName = eename.substring(0, separator);
+			String version = eename.substring(separator + 1);
+			if (JAVASE_EE_NAME.equals(eeName)
+					&& JavaCore.getAllJavaSourceVersionsSupportedByCompiler().contains(version)) {
 				return version;
 			}
 		}
+		ApiPlugin.logErrorMessage("ExecutionEnvironmentResolver: unknown or unsupported execution environment '" //$NON-NLS-1$
+				+ eename);
 		return null;
 	}
 
 	/**
-	 * Returns the lowest supported compliance across all {@code osgi.ee=JavaSE}
+	 * Returns the highest supported compliance across all {@code osgi.ee=JavaSE}
 	 * capabilities in the {@code Require-Capability} header, or {@code null}.
-	 * Multiple {@code osgi.ee} entries are treated as alternatives (like BREE), so
-	 * the lowest matching version is returned.
+	 * Multiple {@code osgi.ee} entries are conjunctive (AND) requirements, so the
+	 * parser must understand the syntax of the highest required version. Within a
+	 * single filter expression (e.g. an OR filter) the lowest matching version is
+	 * used, since the filter itself defines what suffices for that entry.
 	 */
 	private static String fromRequireCapability(String requireCapability) {
 		try {
@@ -173,7 +187,7 @@ public class ExecutionEnvironmentResolver {
 			if (elements == null) {
 				return null;
 			}
-			String lowest = null;
+			String highest = null;
 			for (ManifestElement element : elements) {
 				if (!ExecutionEnvironmentNamespace.EXECUTION_ENVIRONMENT_NAMESPACE.equals(element.getValue())) {
 					continue;
@@ -186,11 +200,11 @@ public class ExecutionEnvironmentResolver {
 				if (version == null) {
 					continue;
 				}
-				if (lowest == null || JavaCore.compareJavaVersions(version, lowest) < 0) {
-					lowest = version;
+				if (highest == null || JavaCore.compareJavaVersions(version, highest) > 0) {
+					highest = version;
 				}
 			}
-			return lowest;
+			return highest;
 		} catch (BundleException e) {
 			ApiPlugin.log(e);
 		}
