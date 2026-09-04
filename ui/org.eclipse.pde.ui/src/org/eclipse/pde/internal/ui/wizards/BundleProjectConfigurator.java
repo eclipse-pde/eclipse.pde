@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2024 Red Hat Inc., and others
+ * Copyright (c) 2014, 2026 Red Hat Inc., and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,13 +14,18 @@
 package org.eclipse.pde.internal.ui.wizards;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.jar.Manifest;
 
 import org.eclipse.core.resources.IContainer;
@@ -136,15 +141,54 @@ public class BundleProjectConfigurator implements ProjectConfigurator {
 	private boolean hasOSGiManifest(IContainer container) {
 		IFile manifestResource = container.getFile(IPath.fromOSString(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR));
 		if (manifestResource.exists()) {
-			Manifest manifest = new Manifest();
 			try (InputStream stream = manifestResource.getContents()) {
-				manifest.read(stream);
-				return manifest.getMainAttributes().getValue(Constants.BUNDLE_SYMBOLICNAME) != null;
+				return hasSymbolicName(stream);
 			} catch (CoreException | IOException ex) {
 				PDEPlugin.log(ex);
 			}
 		}
 		return false;
+	}
+
+	private static boolean hasOSGiManifest(File directory) {
+		File manifestFile = new File(directory, ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
+		if (manifestFile.isFile()) {
+			try (InputStream stream = new FileInputStream(manifestFile)) {
+				return hasSymbolicName(stream);
+			} catch (IOException ex) {
+				PDEPlugin.log(ex);
+			}
+		}
+		return false;
+	}
+
+	private static boolean hasSymbolicName(InputStream manifestStream) throws IOException {
+		Manifest manifest = new Manifest(manifestStream);
+		return manifest.getMainAttributes().getValue(Constants.BUNDLE_SYMBOLICNAME) != null;
+	}
+
+	@Override
+	public void removeDirtyDirectories(Map<File, List<ProjectConfigurator>> proposals) {
+		removeProposalsNestedIn(proposals, BundleProjectConfigurator::hasOSGiManifest);
+	}
+
+	/**
+	 * Drops every proposal that lies strictly below a proposal the given
+	 * predicate accepts as a project. Smart Import treats bundles and features
+	 * as leaves: what sits below them is almost always a test fixture that
+	 * happens to carry a .project.
+	 */
+	static void removeProposalsNestedIn(Map<File, List<ProjectConfigurator>> proposals, Predicate<File> isProject) {
+		List<Path> roots = proposals.keySet().stream().filter(isProject).map(BundleProjectConfigurator::toPath)
+				.toList();
+		proposals.keySet().removeIf(directory -> {
+			Path path = toPath(directory);
+			return roots.stream().anyMatch(root -> !root.equals(path) && path.startsWith(root));
+		});
+	}
+
+	private static Path toPath(File directory) {
+		return directory.getAbsoluteFile().toPath().normalize();
 	}
 
 	@Override
