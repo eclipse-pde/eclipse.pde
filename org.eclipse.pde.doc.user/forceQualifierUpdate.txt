@@ -1,3 +1,4 @@
 Consider changes due to build with Java-25
 Enforce qualifier update
 https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/3939
+https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/4025
