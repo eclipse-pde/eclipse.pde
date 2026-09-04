@@ -55,9 +55,8 @@ import org.osgi.framework.Version;
 
 public class StateTree extends FilteredTree {
 
-	@SuppressWarnings("deprecation")
 	public StateTree(Composite parent) {
-		super(parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.SINGLE, new PatternFilter(), true);
+		super(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.SINGLE, new PatternFilter(), true, true);
 		TreeViewer fTreeViewer = getViewer();
 		fTreeViewer.setContentProvider(new StateContentProvider());
 		fTreeViewer.setLabelProvider(new StateLabelProvider());
@@ -250,7 +249,7 @@ public class StateTree extends FilteredTree {
 
 	protected void handleDoubleClick() {
 		IStructuredSelection selection = getViewer().getStructuredSelection();
-		if (selection.size() == 1) {
+		if (!selection.isEmpty()) {
 			BundleDescription desc = getBundleDescription();
 			if (desc != null) {
 				ManifestEditor.open(desc, false);
@@ -260,7 +259,7 @@ public class StateTree extends FilteredTree {
 
 	public BundleDescription getBundleDescription() {
 		IStructuredSelection selection = getViewer().getStructuredSelection();
-		if (selection.size() == 1) {
+		if (!selection.isEmpty()) {
 			Object obj = selection.getFirstElement();
 			if (obj instanceof BundleSpecification) {
 				obj = ((BundleSpecification) obj).getSupplier();
