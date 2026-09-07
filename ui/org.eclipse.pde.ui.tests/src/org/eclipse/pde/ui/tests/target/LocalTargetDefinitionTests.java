@@ -549,6 +549,11 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		definition.setVMArguments(vmArgs);
 		assertEquals(vmArgs, definition.getVMArguments());
 
+		// Added to new launch configs when the default JRE is Java 24+
+		String nativeAccess = LaunchArgumentsHelper.isNativeAccessArgumentRequired()
+				? " " + LaunchArgumentsHelper.ENABLE_NATIVE_ACCESS_VM_ARGUMENT
+				: "";
+
 		PDEPreferencesManager prefs = PDELaunchingPlugin.getDefault().getPreferenceManager();
 		try {
 			getTargetService().saveTargetDefinition(definition);
@@ -556,7 +561,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 
 			// Check that new launch configs will be prepopulated from target
 			// along with the default preference values
-			assertEquals(vmArgs + " -Dorg.eclipse.swt.graphics.Resource.reportNonDisposed=true",
+			assertEquals(vmArgs + " -Dorg.eclipse.swt.graphics.Resource.reportNonDisposed=true" + nativeAccess,
 					LaunchArgumentsHelper.getInitialVMArguments());
 			assertEquals("-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog "
 					.concat(programArgs), LaunchArgumentsHelper.getInitialProgramArguments());
@@ -564,12 +569,12 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			// Check that new launch configs will be prepopulated from target
 			// along with ADD_SWT_NON_DISPOSAL_REPORTING == false
 			prefs.setValue(ILaunchingPreferenceConstants.ADD_SWT_NON_DISPOSAL_REPORTING, false);
-			assertEquals(vmArgs, LaunchArgumentsHelper.getInitialVMArguments());
+			assertEquals(vmArgs + nativeAccess, LaunchArgumentsHelper.getInitialVMArguments());
 
 			// Check that new launch configs will be prepopulated from target
 			// along with ADD_SWT_NON_DISPOSAL_REPORTING == true
 			prefs.setValue(ILaunchingPreferenceConstants.ADD_SWT_NON_DISPOSAL_REPORTING, true);
-			assertEquals(vmArgs + " -Dorg.eclipse.swt.graphics.Resource.reportNonDisposed=true",
+			assertEquals(vmArgs + " -Dorg.eclipse.swt.graphics.Resource.reportNonDisposed=true" + nativeAccess,
 					LaunchArgumentsHelper.getInitialVMArguments());
 
 			// Check that new launch configs will be prepopulated from target
@@ -578,7 +583,14 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			prefs.setValue(ILaunchingPreferenceConstants.ADD_SWT_NON_DISPOSAL_REPORTING, true);
 			vmArgs = "-testVMArgument -Dorg.eclipse.swt.graphics.Resource.reportNonDisposed=false -testVMArgument2";
 			definition.setVMArguments(vmArgs);
-			assertEquals(vmArgs, LaunchArgumentsHelper.getInitialVMArguments());
+			assertEquals(vmArgs + nativeAccess, LaunchArgumentsHelper.getInitialVMArguments());
+
+			// Check that an --enable-native-access argument already set in the
+			// target platform is respected
+			vmArgs = "-testVMArgument --enable-native-access=org.example -testVMArgument2";
+			definition.setVMArguments(vmArgs);
+			assertEquals(vmArgs + " -Dorg.eclipse.swt.graphics.Resource.reportNonDisposed=true",
+					LaunchArgumentsHelper.getInitialVMArguments());
 		} finally {
 			prefs.setToDefault(ILaunchingPreferenceConstants.ADD_SWT_NON_DISPOSAL_REPORTING);
 			getTargetService().deleteTarget(definition.getHandle());
