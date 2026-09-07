@@ -43,6 +43,7 @@ import org.eclipse.jdt.launching.AbstractVMInstall;
 import org.eclipse.jdt.launching.ExecutionArguments;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.core.plugin.PluginRegistry;
@@ -59,6 +60,11 @@ import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.osgi.framework.Bundle;
 
 public class LaunchArgumentsHelper {
+
+	/**
+	 * VM argument that enables native access for all code on the class-path.
+	 */
+	public static final String ENABLE_NATIVE_ACCESS_VM_ARGUMENT = "--enable-native-access=ALL-UNNAMED"; //$NON-NLS-1$
 
 	/**
 	 * Returns the location that will be used as the workspace when launching or
@@ -171,7 +177,34 @@ public class LaunchArgumentsHelper {
 			}
 		}
 
+		if (isNativeAccessArgumentRequired() && result.indexOf("--enable-native-access") == -1) { //$NON-NLS-1$
+			if (result.length() > 0) {
+				result += " "; //$NON-NLS-1$
+			}
+			result += ENABLE_NATIVE_ACCESS_VM_ARGUMENT;
+		}
+
 		return result;
+	}
+
+	/**
+	 * Returns whether {@link #ENABLE_NATIVE_ACCESS_VM_ARGUMENT} should be part
+	 * of the initial VM arguments of a new launch configuration, which is the
+	 * case if the workspace default JRE is Java 24 or newer.
+	 * <p>
+	 * Starting with Java 24 (<a href="https://openjdk.org/jeps/472">JEP 472</a>)
+	 * the JVM prints warnings when code on the class-path uses JNI or the
+	 * Foreign Function &amp; Memory API without native access being enabled.
+	 * Every Eclipse application uses JNI (e.g. through SWT), so the warnings
+	 * would otherwise show up on each launch.
+	 * </p>
+	 */
+	public static boolean isNativeAccessArgumentRequired() {
+		if (JavaRuntime.getDefaultVMInstall() instanceof AbstractVMInstall install) {
+			String vmver = install.getJavaVersion();
+			return vmver != null && JavaCore.compareJavaVersions(vmver, JavaCore.VERSION_24) >= 0;
+		}
+		return false;
 	}
 
 	public static String getInitialProgramArguments() {
