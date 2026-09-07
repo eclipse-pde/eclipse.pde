@@ -36,12 +36,14 @@ public class Messages extends NLS {
 	public static String CssSpyPart_CSS_Properties_;
 	public static String CssSpyPart_CSS_Rules;
 	public static String CssSpyPart_CSS_Selector;
+	public static String CssSpyPart_Collapse_all;
 	public static String CssSpyPart_declared_in_CSS;
 	public static String CssSpyPart_declared_in_CSS_rules;
 	public static String CssSpyPart_DISPOSED;
 	public static String CssSpyPart_Error;
 	public static String CssSpyPart_Error_fetching_property;
 	public static String CssSpyPart_Escape_to_dismiss;
+	public static String CssSpyPart_Expand_all;
 	public static String CssSpyPart_Follow_UI_Selection;
 	public static String CssSpyPart_Generates_CSS_rule_block_for_the_selected_widget;
 	public static String CssSpyPart_Highlight_matching_widgets;
