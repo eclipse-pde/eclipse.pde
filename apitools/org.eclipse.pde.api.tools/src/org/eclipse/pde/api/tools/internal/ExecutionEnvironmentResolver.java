@@ -17,6 +17,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.internal.core.util.ManifestUtils;
@@ -52,10 +54,10 @@ import org.eclipse.pde.internal.core.util.ManifestUtils;
  * </ul>
  * <p>
  * All EE IDs from both headers are collected and mapped to JavaCore version
- * strings via {@link ManifestUtils#eeIdToJavaVersion(String)}. The
- * <em>highest</em> version is returned: since every listed EE must be satisfied
- * (conjunctive requirements), the parser must understand the syntax of the
- * most-recent required version.
+ * strings via {@link ManifestUtils#javaVersionOfExecutionEnvironment(String)}.
+ * The <em>highest</em> version is returned: since every listed EE must be
+ * satisfied (conjunctive requirements), the parser must understand the syntax
+ * of the most-recent required version.
  * </p>
  *
  * <h2>Unsupported / unknown versions</h2>
@@ -79,34 +81,34 @@ public class ExecutionEnvironmentResolver {
 	 */
 	public static String resolveCompliance(Map<String, String> manifestMap) {
 		if (manifestMap == null) {
-			ApiPlugin.logErrorMessage("ExecutionEnvironmentResolver: manifestMap is null, falling back to compliance " //$NON-NLS-1$
-					+ getFallbackJavaVersion());
-			return getFallbackJavaVersion();
+			return useLatestSupportedVersion("ExecutionEnvironmentResolver: manifestMap is null"); //$NON-NLS-1$
 		}
-
 		try {
-			Optional<String> highest = ManifestUtils.getRequiredExecutionEnvironments(manifestMap) // extract ee ids to
-																									// stream
-					.map(ManifestUtils::eeIdToJavaVersion) // ee to java version string
-					.filter(Objects::nonNull) // remove nulls (unknown ee ids)
-					.filter(v -> JavaCore.getAllJavaSourceVersionsSupportedByCompiler().contains(v)) // remove
-																										// unsupported
-																										// versions
-					.max(JavaCore::compareJavaVersions); // choose the highest version
-			if (highest.isPresent()) {
-				return highest.get();
+			Optional<String> highestEE = ManifestUtils.getRequiredExecutionEnvironments(manifestMap)
+					.map(ManifestUtils::javaVersionOfExecutionEnvironment).filter(Objects::nonNull)
+					.filter(JavaCore::isJavaSourceVersionSupportedByCompiler)
+					// select the highest version
+					.max(JavaCore::compareJavaVersions);
+			// Limit to minimally supported Java version
+			highestEE = highestEE.map(v -> JavaCore.compareJavaVersions(v, MINIMALLY_SUPPORTED_JAVA_VERSION) < 0
+					? MINIMALLY_SUPPORTED_JAVA_VERSION
+					: v);
+			if (highestEE.isPresent()) {
+				return highestEE.get();
 			}
 		} catch (IllegalArgumentException e) {
 			ApiPlugin.log(e);
 		}
-
-		ApiPlugin.logErrorMessage(
-				"ExecutionEnvironmentResolver: unknown or unsupported execution environment in manifest, falling back to compliance " //$NON-NLS-1$
-						+ getFallbackJavaVersion());
-		return getFallbackJavaVersion();
+		return useLatestSupportedVersion(
+				"ExecutionEnvironmentResolver: unknown or unsupported execution environment in manifest"); //$NON-NLS-1$
 	}
 
-	private static String getFallbackJavaVersion() {
-		return JavaCore.latestSupportedJavaVersion();
+	private static final String MINIMALLY_SUPPORTED_JAVA_VERSION = JavaCore
+			.getAllJavaSourceVersionsSupportedByCompiler().first();
+	private static final String LATEST_SUPPORTED_JAVA_VERSION = JavaCore.latestSupportedJavaVersion();
+
+	private static String useLatestSupportedVersion(String msg) {
+		ILog.get().log(Status.warning(msg + ", falling back to Java " + LATEST_SUPPORTED_JAVA_VERSION)); //$NON-NLS-1$
+		return LATEST_SUPPORTED_JAVA_VERSION;
 	}
 }
