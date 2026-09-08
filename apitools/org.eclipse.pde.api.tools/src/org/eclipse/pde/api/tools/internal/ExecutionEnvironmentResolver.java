@@ -13,19 +13,13 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal;
 
-import java.util.Hashtable;
 import java.util.Map;
-import java.util.SortedSet;
+import java.util.Objects;
+import java.util.Optional;
 
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
-import org.osgi.framework.BundleException;
-import org.osgi.framework.Constants;
-import org.osgi.framework.Filter;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.namespace.ExecutionEnvironmentNamespace;
+import org.eclipse.pde.internal.core.util.ManifestUtils;
 
 /**
  * Resolves the Java compiler compliance level from a parsed bundle manifest
@@ -43,49 +37,38 @@ import org.osgi.framework.namespace.ExecutionEnvironmentNamespace;
  * incomplete {@code .api_description}.
  * </p>
  *
- * <h2>Header resolution order</h2>
+ * <h2>Header resolution</h2>
  * <p>
- * Two OSGi manifest headers are considered, in priority order:
+ * Two OSGi manifest headers are considered:
  * </p>
- * <ol>
+ * <ul>
  * <li><b>{@code Bundle-RequiredExecutionEnvironment} (BREE)</b> — the legacy
  * header, deprecated since OSGi 1.6. May list multiple comma-separated EE names
- * (e.g. {@code JavaSE-17, JavaSE-21}), in which case the lowest supported
- * version is used so that the source is parsed with the minimum required
- * compliance.</li>
+ * (e.g. {@code JavaSE-17, JavaSE-21}).</li>
  * <li><b>{@code Require-Capability: osgi.ee}</b> — the modern OSGi replacement
  * for BREE. The EE is expressed as an LDAP filter on the {@code osgi.ee}
- * namespace. Multiple {@code osgi.ee} entries are treated as alternatives and
- * the lowest matching version is returned, consistent with the BREE behaviour.
- * Each filter is evaluated against all versions known to
- * {@link JavaCore#getAllJavaSourceVersionsSupportedByCompiler()} using
- * {@link FrameworkUtil#createFilter(String)}.</li>
- * </ol>
+ * namespace, delegated to
+ * {@link ManifestUtils#getRequiredExecutionEnvironments(Map)}.</li>
+ * </ul>
+ * <p>
+ * All EE IDs from both headers are collected and mapped to JavaCore version
+ * strings via {@link ManifestUtils#eeIdToJavaVersion(String)}. The
+ * <em>highest</em> version is returned: since every listed EE must be satisfied
+ * (conjunctive requirements), the parser must understand the syntax of the
+ * most-recent required version.
+ * </p>
  *
  * <h2>Unsupported / unknown versions</h2>
  * <p>
- * Java versions that are no longer supported by the JDT compiler ( supported
- * are those from
- * {@link JavaCore#getAllJavaSourceVersionsSupportedByCompiler()}) are ignored.
- * If no supported version can be determined
+ * Java versions that are no longer supported by the JDT compiler (supported are
+ * those from {@link JavaCore#getAllJavaSourceVersionsSupportedByCompiler()})
+ * are ignored. If no supported version can be determined
  * {@link JavaCore#latestSupportedJavaVersion()} is returned.
  */
 public class ExecutionEnvironmentResolver {
 
-	private static final String JAVASE_EE_NAME = "JavaSE"; //$NON-NLS-1$
-	private static final String BREE_SEPARATOR = ","; //$NON-NLS-1$
-	private static final String FILTER_DIRECTIVE = "filter"; //$NON-NLS-1$
-
 	private ExecutionEnvironmentResolver() {
 		// utility class
-	}
-
-	/**
-	 * Returns {@link JavaCore#latestSupportedJavaVersion()} as the fallback
-	 * compliance.
-	 */
-	private static String getFallbackJavaVersion() {
-		return JavaCore.latestSupportedJavaVersion();
 	}
 
 	/**
@@ -98,141 +81,32 @@ public class ExecutionEnvironmentResolver {
 		if (manifestMap == null) {
 			ApiPlugin.logErrorMessage("ExecutionEnvironmentResolver: manifestMap is null, falling back to compliance " //$NON-NLS-1$
 					+ getFallbackJavaVersion());
-
 			return getFallbackJavaVersion();
 		}
 
-		// 1. Legacy BREE header (may contain multiple comma-separated values)
-		@SuppressWarnings("deprecation")
-		String bree = manifestMap.get(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
-		if (bree != null) {
-			String result = fromBree(bree);
-			if (result != null) {
-				return result;
+		try {
+			Optional<String> highest = ManifestUtils.getRequiredExecutionEnvironments(manifestMap) // extract ee ids to
+																									// stream
+					.map(ManifestUtils::eeIdToJavaVersion) // ee to java version string
+					.filter(Objects::nonNull) // remove nulls (unknown ee ids)
+					.filter(v -> JavaCore.getAllJavaSourceVersionsSupportedByCompiler().contains(v)) // remove
+																										// unsupported
+																										// versions
+					.max(JavaCore::compareJavaVersions); // choose the highest version
+			if (highest.isPresent()) {
+				return highest.get();
 			}
-		}
-
-		// 2. Modern osgi.ee Require-Capability header
-		String requireCapability = manifestMap.get(Constants.REQUIRE_CAPABILITY);
-		if (requireCapability != null) {
-			String result = fromRequireCapability(requireCapability);
-			if (result != null) {
-				return result;
-			}
+		} catch (IllegalArgumentException e) {
+			ApiPlugin.log(e);
 		}
 
 		ApiPlugin.logErrorMessage(
 				"ExecutionEnvironmentResolver: unknown or unsupported execution environment in manifest, falling back to compliance " //$NON-NLS-1$
 						+ getFallbackJavaVersion());
-
 		return getFallbackJavaVersion();
 	}
 
-	/**
-	 * Returns the lowest supported compliance from a comma-separated BREE header,
-	 * or {@code null} if no supported {@code JavaSE-X} entry is found.
-	 */
-	private static String fromBree(String breeHeader) {
-		String[] entries = breeHeader.split(BREE_SEPARATOR);
-		String lowest = null;
-		for (String entry : entries) {
-			String result = fromSingleBree(entry.trim());
-			if (result == null) {
-				continue;
-			}
-			if (lowest == null || JavaCore.compareJavaVersions(result, lowest) < 0) {
-				lowest = result;
-			}
-		}
-		return lowest;
-	}
-
-	/**
-	 * Returns the JDT compliance string for a single BREE entry, or {@code null}.
-	 */
-	private static String fromSingleBree(String eename) {
-		// Java 8 compact profiles: only three variants exist, all require Java 1.8
-		if (JavaCore.getAllJavaSourceVersionsSupportedByCompiler().contains(JavaCore.VERSION_1_8)) {
-			if ("JavaSE/compact1-1.8".equals(eename) //$NON-NLS-1$
-					|| "JavaSE/compact2-1.8".equals(eename) //$NON-NLS-1$
-					|| "JavaSE/compact3-1.8".equals(eename)) { //$NON-NLS-1$
-				return JavaCore.VERSION_1_8;
-			}
-		}
-		int separator = eename.lastIndexOf('-');
-		if (separator > 0) {
-			String eeName = eename.substring(0, separator);
-			String version = eename.substring(separator + 1);
-			if (JAVASE_EE_NAME.equals(eeName)
-					&& JavaCore.getAllJavaSourceVersionsSupportedByCompiler().contains(version)) {
-				return version;
-			}
-		}
-		ApiPlugin.logErrorMessage("ExecutionEnvironmentResolver: unknown or unsupported execution environment '" //$NON-NLS-1$
-				+ eename);
-		return null;
-	}
-
-	/**
-	 * Returns the highest supported compliance across all {@code osgi.ee=JavaSE}
-	 * capabilities in the {@code Require-Capability} header, or {@code null}.
-	 * Multiple {@code osgi.ee} entries are conjunctive (AND) requirements, so the
-	 * parser must understand the syntax of the highest required version. Within a
-	 * single filter expression (e.g. an OR filter) the lowest matching version is
-	 * used, since the filter itself defines what suffices for that entry.
-	 */
-	private static String fromRequireCapability(String requireCapability) {
-		try {
-			ManifestElement[] elements = ManifestElement.parseHeader(Constants.REQUIRE_CAPABILITY, requireCapability);
-			if (elements == null) {
-				return null;
-			}
-			String highest = null;
-			for (ManifestElement element : elements) {
-				if (!ExecutionEnvironmentNamespace.EXECUTION_ENVIRONMENT_NAMESPACE.equals(element.getValue())) {
-					continue;
-				}
-				String filterString = element.getDirective(FILTER_DIRECTIVE);
-				if (filterString == null) {
-					continue;
-				}
-				String version = matchJavaSEVersion(filterString);
-				if (version == null) {
-					continue;
-				}
-				if (highest == null || JavaCore.compareJavaVersions(version, highest) > 0) {
-					highest = version;
-				}
-			}
-			return highest;
-		} catch (BundleException e) {
-			ApiPlugin.log(e);
-		}
-		return null;
-	}
-
-	/**
-	 * Evaluates the LDAP filter against a {@code {osgi.ee=JavaSE, version=X}}
-	 * dictionary for each supported version and returns the first match, or
-	 * {@code null}. Handles complex filters (e.g. OR, version ranges) correctly
-	 * without custom parsing. Returns {@code null} for malformed filters.
-	 */
-	private static String matchJavaSEVersion(String filterString) {
-		Filter filter;
-		try {
-			filter = FrameworkUtil.createFilter(filterString);
-		} catch (InvalidSyntaxException e) {
-			return null;
-		}
-		SortedSet<String> supportedVersions = JavaCore.getAllJavaSourceVersionsSupportedByCompiler();
-		for (String version : supportedVersions) {
-			Hashtable<String, String> dict = new Hashtable<>();
-			dict.put(ExecutionEnvironmentNamespace.EXECUTION_ENVIRONMENT_NAMESPACE, JAVASE_EE_NAME);
-			dict.put(ExecutionEnvironmentNamespace.CAPABILITY_VERSION_ATTRIBUTE, version);
-			if (filter.matches(dict)) {
-				return version;
-			}
-		}
-		return null;
+	private static String getFallbackJavaVersion() {
+		return JavaCore.latestSupportedJavaVersion();
 	}
 }
