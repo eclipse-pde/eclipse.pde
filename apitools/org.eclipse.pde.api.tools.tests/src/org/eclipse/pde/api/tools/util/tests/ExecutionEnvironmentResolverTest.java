@@ -22,6 +22,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,7 @@ import java.util.SortedSet;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.api.tools.internal.ExecutionEnvironmentResolver;
+import org.junit.Assume;
 import org.junit.Test;
 import org.osgi.framework.BundleException;
 
@@ -64,8 +66,9 @@ public class ExecutionEnvironmentResolverTest {
 	// --- BREE: all supported JavaSE-X versions ---
 
 	/**
-	 * For every version in {@link JavaCore#getAllJavaSourceVersionsSupportedByCompiler()}
-	 * a BREE of the form {@code JavaSE-X} must resolve to exactly that version.
+	 * For every version in
+	 * {@link JavaCore#getAllJavaSourceVersionsSupportedByCompiler()} a BREE of
+	 * the form {@code JavaSE-X} must resolve to exactly that version.
 	 */
 	@Test
 	public void testBreeSingleVersionAllSupportedVersions() {
@@ -81,8 +84,8 @@ public class ExecutionEnvironmentResolverTest {
 
 	/**
 	 * When BREE lists two supported versions, the higher one must be returned —
-	 * all listed EEs must be satisfied (conjunctive), so the parser must understand
-	 * the most-recent required syntax.
+	 * all listed EEs must be satisfied (conjunctive), so the parser must
+	 * understand the most-recent required syntax.
 	 */
 	@Test
 	public void testBreeMultipleVersionsReturnsHighest() {
@@ -107,13 +110,12 @@ public class ExecutionEnvironmentResolverTest {
 		if (supported.size() < 3) {
 			return;
 		}
-		String[] versions = supported.toArray(new String[0]);
-		String low = versions[0];
-		String mid = versions[versions.length / 2];
-		String high = versions[versions.length - 1];
+		List<String> versions = new ArrayList<>(supported);
+		String low = versions.getFirst();
+		String mid = versions.get(versions.size() / 2);
+		String high = versions.getLast();
 		// put them in non-ascending order to ensure the logic actually compares
-		Map<String, String> manifest = breeManifest(
-				"JavaSE-" + high + ", JavaSE-" + low + ", JavaSE-" + mid); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		Map<String, String> manifest = breeManifest("JavaSE-" + high + ", JavaSE-" + low + ", JavaSE-" + mid); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		String result = ExecutionEnvironmentResolver.resolveCompliance(manifest);
 		assertEquals("Should return highest of three BREE versions", high, result); //$NON-NLS-1$
 	}
@@ -175,8 +177,7 @@ public class ExecutionEnvironmentResolverTest {
 	public void testRequireCapabilityAllSupportedVersions() {
 		SortedSet<String> supported = JavaCore.getAllJavaSourceVersionsSupportedByCompiler();
 		for (String version : supported) {
-			Map<String, String> manifest = eeCapabilityManifest(
-					"(&(osgi.ee=JavaSE)(version=" + version + "))"); //$NON-NLS-1$ //$NON-NLS-2$
+			Map<String, String> manifest = eeCapabilityManifest("(&(osgi.ee=JavaSE)(version=" + version + "))"); //$NON-NLS-1$ //$NON-NLS-2$
 			String result = ExecutionEnvironmentResolver.resolveCompliance(manifest);
 			assertEquals("Require-Capability osgi.ee version=" + version + " should resolve to " + version, //$NON-NLS-1$ //$NON-NLS-2$
 					version, result);
@@ -191,7 +192,9 @@ public class ExecutionEnvironmentResolverTest {
 		assertEquals(JavaCore.latestSupportedJavaVersion(), result);
 	}
 
-	/** A filter that does not match any supported version falls back to latest. */
+	/**
+	 * A filter that does not match any supported version falls back to latest.
+	 */
 	@Test
 	public void testRequireCapabilityNoMatchFallsBackToLatest() {
 		Map<String, String> manifest = eeCapabilityManifest("(&(osgi.ee=JavaSE)(version=999))"); //$NON-NLS-1$
@@ -200,18 +203,20 @@ public class ExecutionEnvironmentResolverTest {
 	}
 
 	/**
-	 * Two separate osgi.ee entries (version=19 AND version=12) are conjunctive —
-	 * the highest version (19) must be returned so the parser understands both.
+	 * Two separate osgi.ee entries (version=19 AND version=12) are conjunctive
+	 * — the highest version (19) must be returned so the parser understands
+	 * both.
 	 */
 	@Test
 	public void testRequireCapabilityTwoEntriesReturnsHighestConjunctive() throws IOException, BundleException {
-		String manifestContent = "Manifest-Version: 1.0\n" //$NON-NLS-1$
-				+ "Bundle-ManifestVersion: 2\n" //$NON-NLS-1$
-				+ "Bundle-SymbolicName: test.bundle\n" //$NON-NLS-1$
-				+ "Bundle-Version: 1.0.0\n" //$NON-NLS-1$
-				+ "Require-Capability: osgi.ee;filter:=\"(&(osgi.ee=JavaSE)(version=19))\",\n" //$NON-NLS-1$
-				+ " osgi.ee;filter:=\"(&(osgi.ee=JavaSE)(version=12))\"\n"; //$NON-NLS-1$
-		Map<String, String> manifest = parseManifestString(manifestContent);
+		Map<String, String> manifest = parseManifestString("""
+				Manifest-Version: 1.0
+				Bundle-ManifestVersion: 2
+				Bundle-SymbolicName: test.bundle
+				Bundle-Version: 1.0.0
+				Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=19))",
+				 osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=12))"
+				"""); //$NON-NLS-1$
 		String result = ExecutionEnvironmentResolver.resolveCompliance(manifest);
 		assertEquals("Two separate osgi.ee entries (19 AND 12) should resolve to highest (19)", "19", result); //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -223,12 +228,14 @@ public class ExecutionEnvironmentResolverTest {
 	 */
 	@Test
 	public void testRequireCapabilitySingleOrFilterReturnsHighest() throws IOException, BundleException {
-		String manifestContent = "Manifest-Version: 1.0\n" //$NON-NLS-1$
-				+ "Bundle-ManifestVersion: 2\n" //$NON-NLS-1$
-				+ "Bundle-SymbolicName: test.bundle\n" //$NON-NLS-1$
-				+ "Bundle-Version: 1.0.0\n" //$NON-NLS-1$
-				+ "Require-Capability: osgi.ee;filter:=\"(| (&(osgi.ee=JavaSE)(version=1.8)) (&(osgi.ee=JavaSE)(version=11)) )\"\n"; //$NON-NLS-1$
-		Map<String, String> manifest = parseManifestString(manifestContent);
+		Map<String, String> manifest = parseManifestString(
+				"""
+						Manifest-Version: 1.0
+						Bundle-ManifestVersion: 2
+						Bundle-SymbolicName: test.bundle
+						Bundle-Version: 1.0.0
+						Require-Capability: osgi.ee;filter:="(| (&(osgi.ee=JavaSE)(version=1.8)) (&(osgi.ee=JavaSE)(version=11)) )"
+						"""); //$NON-NLS-1$
 		String result = ExecutionEnvironmentResolver.resolveCompliance(manifest);
 		SortedSet<String> supported = JavaCore.getAllJavaSourceVersionsSupportedByCompiler();
 		if (supported.contains("11")) { //$NON-NLS-1$
@@ -245,12 +252,13 @@ public class ExecutionEnvironmentResolverTest {
 	 */
 	@Test
 	public void testRequireCapabilityNoJavaVersionFallsBackToLatest() throws IOException, BundleException {
-		String manifestContent = "Manifest-Version: 1.0\n" //$NON-NLS-1$
-				+ "Bundle-ManifestVersion: 2\n" //$NON-NLS-1$
-				+ "Bundle-SymbolicName: test.bundle\n" //$NON-NLS-1$
-				+ "Bundle-Version: 1.0.0\n" //$NON-NLS-1$
-				+ "Require-Capability: osgi.ee;filter:=\"(&(osgi.ee=OSGi/Minimum)(version=1.2))\"\n"; //$NON-NLS-1$
-		Map<String, String> manifest = parseManifestString(manifestContent);
+		Map<String, String> manifest = parseManifestString("""
+				Manifest-Version: 1.0
+				Bundle-ManifestVersion: 2
+				Bundle-SymbolicName: test.bundle
+				Bundle-Version: 1.0.0
+				Require-Capability: osgi.ee;filter:="(&(osgi.ee=OSGi/Minimum)(version=1.2))"
+				"""); //$NON-NLS-1$
 		String result = ExecutionEnvironmentResolver.resolveCompliance(manifest);
 		assertEquals("No JavaSE version (OSGi/Minimum only) should fall back to latest", //$NON-NLS-1$
 				JavaCore.latestSupportedJavaVersion(), result);
@@ -262,13 +270,14 @@ public class ExecutionEnvironmentResolverTest {
 	 */
 	@Test
 	public void testRequireCapabilityMixedJavaAndNonJavaReturnsJavaVersion() throws IOException, BundleException {
-		String manifestContent = "Manifest-Version: 1.0\n" //$NON-NLS-1$
-				+ "Bundle-ManifestVersion: 2\n" //$NON-NLS-1$
-				+ "Bundle-SymbolicName: test.bundle\n" //$NON-NLS-1$
-				+ "Bundle-Version: 1.0.0\n" //$NON-NLS-1$
-				+ "Require-Capability: osgi.ee;filter:=\"(&(osgi.ee=JavaSE)(version=17))\",\n" //$NON-NLS-1$
-				+ " osgi.ee;filter:=\"(&(osgi.ee=OSGi/Minimum)(version=1.2))\"\n"; //$NON-NLS-1$
-		Map<String, String> manifest = parseManifestString(manifestContent);
+		Map<String, String> manifest = parseManifestString("""
+				Manifest-Version: 1.0
+				Bundle-ManifestVersion: 2
+				Bundle-SymbolicName: test.bundle
+				Bundle-Version: 1.0.0
+				Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=17))",
+				 osgi.ee;filter:="(&(osgi.ee=OSGi/Minimum)(version=1.2))"
+				"""); //$NON-NLS-1$
 		String result = ExecutionEnvironmentResolver.resolveCompliance(manifest);
 		assertEquals("JavaSE 17 AND OSGi/Minimum should resolve to 17", "17", result); //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -283,14 +292,9 @@ public class ExecutionEnvironmentResolverTest {
 	@Test
 	public void testBreeCompactProfilesResolveToJava18() {
 		SortedSet<String> supported = JavaCore.getAllJavaSourceVersionsSupportedByCompiler();
-		String expected = supported.contains(JavaCore.VERSION_1_8)
-				? JavaCore.VERSION_1_8
+		String expected = supported.contains(JavaCore.VERSION_1_8) ? JavaCore.VERSION_1_8
 				: JavaCore.latestSupportedJavaVersion();
-		for (String bree : new String[] {
-				"JavaSE/compact1-1.8", //$NON-NLS-1$
-				"JavaSE/compact2-1.8", //$NON-NLS-1$
-				"JavaSE/compact3-1.8" //$NON-NLS-1$
-		}) {
+		for (String bree : List.of("JavaSE/compact1-1.8", "JavaSE/compact2-1.8", "JavaSE/compact3-1.8")) { //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 			Map<String, String> manifest = breeManifest(bree);
 			String result = ExecutionEnvironmentResolver.resolveCompliance(manifest);
 			assertEquals("BREE " + bree + " should resolve to " + expected, expected, result); //$NON-NLS-1$ //$NON-NLS-2$
@@ -304,16 +308,14 @@ public class ExecutionEnvironmentResolverTest {
 	@Test
 	public void testBreeAndRequireCapabilityCombinedHighestWins() {
 		SortedSet<String> supported = JavaCore.getAllJavaSourceVersionsSupportedByCompiler();
-		if (supported.size() < 2) {
-			return;
-		}
-		String[] versions = supported.toArray(new String[0]);
-		String breeVersion = versions[0]; // lowest
-		String capVersion  = versions[versions.length - 1]; // highest
-		Map<String, String> manifest = new HashMap<>();
-		manifest.put("Bundle-RequiredExecutionEnvironment", "JavaSE-" + breeVersion); //$NON-NLS-1$ //$NON-NLS-2$
-		manifest.put("Require-Capability", //$NON-NLS-1$
-				"osgi.ee; filter:=\"(&(osgi.ee=JavaSE)(version=" + capVersion + "))\""); //$NON-NLS-1$ //$NON-NLS-2$
+		Assume.assumeFalse("Requires at least two supported java versions", supported.size() < 2); //$NON-NLS-1$
+
+		String breeVersion = supported.getFirst();
+		String capVersion = supported.getLast();
+		Map<String, String> manifest = Map.of( //
+				"Bundle-RequiredExecutionEnvironment", "JavaSE-" + breeVersion, //$NON-NLS-1$//$NON-NLS-2$
+				"Require-Capability", "osgi.ee; filter:=\"(&(osgi.ee=JavaSE)(version=" + capVersion + "))\"" //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+		);
 		String result = ExecutionEnvironmentResolver.resolveCompliance(manifest);
 		assertEquals("BREE and Require-Capability combined: highest version must win", capVersion, result); //$NON-NLS-1$
 	}
@@ -324,9 +326,7 @@ public class ExecutionEnvironmentResolverTest {
 	@Test
 	public void testResultIsAlwaysASupportedVersion() {
 		SortedSet<String> supported = JavaCore.getAllJavaSourceVersionsSupportedByCompiler();
-		List<Map<String, String>> manifests = List.of(
-				new HashMap<>(),
-				breeManifest("JavaSE-999"), //$NON-NLS-1$
+		List<Map<String, String>> manifests = List.of(Map.of(), breeManifest("JavaSE-999"), //$NON-NLS-1$
 				breeManifest("garbage"), //$NON-NLS-1$
 				eeCapabilityManifest("(&(osgi.ee=JavaSE)(version=999))") //$NON-NLS-1$
 		);
@@ -372,16 +372,18 @@ public class ExecutionEnvironmentResolverTest {
 
 	/**
 	 * Uses the {@code Require-Capability: osgi.ee} filter from the real
-	 * {@code bundle.b} test bundle, reduced to the minimum needed for this test.
+	 * {@code bundle.b} test bundle, reduced to the minimum needed for this
+	 * test.
 	 */
 	@Test
 	public void testRealManifestBundleBRequireCapabilityJava17() throws IOException, BundleException {
-		String manifestContent = "Manifest-Version: 1.0\n" //$NON-NLS-1$
-				+ "Bundle-ManifestVersion: 2\n" //$NON-NLS-1$
-				+ "Bundle-SymbolicName: bundle.b\n" //$NON-NLS-1$
-				+ "Bundle-Version: 1.0.0\n" //$NON-NLS-1$
-				+ "Require-Capability: osgi.ee;filter:=\"(&(osgi.ee=JavaSE)(version=17))\"\n"; //$NON-NLS-1$
-		Map<String, String> manifest = parseManifestString(manifestContent);
+		Map<String, String> manifest = parseManifestString("""
+				Manifest-Version: 1.0
+				Bundle-ManifestVersion: 2
+				Bundle-SymbolicName: bundle.b
+				Bundle-Version: 1.0.0
+				Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=17))"
+				"""); //$NON-NLS-1$
 		String result = ExecutionEnvironmentResolver.resolveCompliance(manifest);
 		assertEquals("bundle.b Require-Capability osgi.ee version=17 should resolve to 17", "17", result); //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -389,12 +391,14 @@ public class ExecutionEnvironmentResolverTest {
 	@Test
 	public void testRealManifestDemoJava8ComplexOrFilter() throws IOException, BundleException {
 		// minimal manifest — only the header relevant for EE resolution
-		String manifestContent = "Manifest-Version: 1.0\n" //$NON-NLS-1$
-				+ "Bundle-ManifestVersion: 2\n" //$NON-NLS-1$
-				+ "Bundle-SymbolicName: demoMissedSystemModulePackage\n" //$NON-NLS-1$
-				+ "Bundle-Version: 1.0.0\n" //$NON-NLS-1$
-				+ "Require-Capability: osgi.ee; filter:=\"(| (&(osgi.ee=JavaSE)(version=1.8)) (&(osgi.ee=JavaSE/compact1)(version=1.8)) )\"\n"; //$NON-NLS-1$
-		Map<String, String> manifest = parseManifestString(manifestContent);
+		Map<String, String> manifest = parseManifestString(
+				"""
+						Manifest-Version: 1.0
+						Bundle-ManifestVersion: 2
+						Bundle-SymbolicName: demoMissedSystemModulePackage
+						Bundle-Version: 1.0.0
+						Require-Capability: osgi.ee; filter:="(| (&(osgi.ee=JavaSE)(version=1.8)) (&(osgi.ee=JavaSE/compact1)(version=1.8)) )"
+						"""); //$NON-NLS-1$
 		String result = ExecutionEnvironmentResolver.resolveCompliance(manifest);
 		SortedSet<String> supported = JavaCore.getAllJavaSourceVersionsSupportedByCompiler();
 		if (supported.contains(JavaCore.VERSION_1_8)) {
@@ -418,14 +422,10 @@ public class ExecutionEnvironmentResolverTest {
 	}
 
 	private static Map<String, String> breeManifest(String breeValue) {
-		Map<String, String> map = new HashMap<>();
-		map.put("Bundle-RequiredExecutionEnvironment", breeValue); //$NON-NLS-1$
-		return map;
+		return Map.of("Bundle-RequiredExecutionEnvironment", breeValue); //$NON-NLS-1$
 	}
 
 	private static Map<String, String> eeCapabilityManifest(String filter) {
-		Map<String, String> map = new HashMap<>();
-		map.put("Require-Capability", "osgi.ee; filter:=\"" + filter + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		return map;
+		return Map.of("Require-Capability", "osgi.ee; filter:=\"" + filter + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 }

@@ -41,6 +41,10 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 		super(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
 	}
 
+	// TODO: Check what's duplicated and what is really necessary.
+	// Actually here we should only test the EEResolvers specific behaviour.
+	// Everything else should be tested in the existing case.
+
 	@Test
 	public void testAddExecutionEnvironmentHeader() throws Exception {
 		String text = """
@@ -75,7 +79,7 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 		RequiredExecutionEnvironmentHeader header = getRequiredExecutionEnvironmentHeader();
 		assertNotNull(header);
 
-		String env = header.getEnvironments().get(0);
+		String env = header.getEnvironments().getFirst();
 		header.removeExecutionEnvironment(env);
 
 		TextEdit[] ops = fListener.getTextOperations();
@@ -261,9 +265,7 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 	public void testGetRequiredExecutionEnvironments_breeOnly() {
 		Map<String, String> manifest = Map.of(
 				"Bundle-RequiredExecutionEnvironment", "JavaSE-17, JavaSE-21"); //$NON-NLS-1$ //$NON-NLS-2$
-		List<String> ees = ManifestUtils.getRequiredExecutionEnvironments(manifest)
-				.collect(Collectors.toList());
-		assertEquals(Set.of("JavaSE-17", "JavaSE-21"), new HashSet<>(ees)); //$NON-NLS-1$ //$NON-NLS-2$
+		assertRequiredEEs(manifest, "JavaSE-17", "JavaSE-21");
 	}
 
 	@Test
@@ -271,10 +273,9 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 		Map<String, String> manifest = Map.of(
 				"Require-Capability", //$NON-NLS-1$
 				"osgi.ee;filter:=\"(&(osgi.ee=JavaSE)(version=17))\""); //$NON-NLS-1$
-		List<String> ees = ManifestUtils.getRequiredExecutionEnvironments(manifest)
-				.collect(Collectors.toList());
-		assertEquals(List.of("JavaSE-17"), ees); //$NON-NLS-1$
+		assertRequiredEEs(manifest, "JavaSE-17");
 	}
+
 
 	@Test
 	public void testGetRequiredExecutionEnvironments_bothHeaders() {
@@ -282,16 +283,14 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 				"Bundle-RequiredExecutionEnvironment", "JavaSE-11", //$NON-NLS-1$ //$NON-NLS-2$
 				"Require-Capability", //$NON-NLS-1$
 				"osgi.ee;filter:=\"(&(osgi.ee=JavaSE)(version=17))\""); //$NON-NLS-1$
-		List<String> ees = ManifestUtils.getRequiredExecutionEnvironments(manifest)
-				.collect(Collectors.toList());
-		assertEquals(Set.of("JavaSE-11", "JavaSE-17"), new HashSet<>(ees)); //$NON-NLS-1$ //$NON-NLS-2$
+		assertRequiredEEs(manifest, "JavaSE-11", "JavaSE-17");
 	}
+
+
 
 	@Test
 	public void testGetRequiredExecutionEnvironments_emptyManifest() {
-		List<String> ees = ManifestUtils.getRequiredExecutionEnvironments(Map.of())
-				.collect(Collectors.toList());
-		assertEquals(List.of(), ees);
+		assertRequiredEEs(Map.of());
 	}
 
 	@Test
@@ -301,11 +300,10 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 		Map<String, String> manifest = Map.of(
 				"Require-Capability", //$NON-NLS-1$
 				"osgi.ee;filter:=\"(&(osgi.ee=OSGi/Minimum)(version=1.2))\""); //$NON-NLS-1$
-		List<String> ees = ManifestUtils.getRequiredExecutionEnvironments(manifest)
-				.collect(Collectors.toList());
+		List<String> ees = ManifestUtils.getRequiredExecutionEnvironments(manifest).toList();
 		assertFalse("OSGi/Minimum EE should be present in the stream", ees.isEmpty()); //$NON-NLS-1$
 		assertNull("eeIdToJavaVersion should return null for non-JavaSE EE", //$NON-NLS-1$
-				ManifestUtils.eeIdToJavaVersion(ees.get(0)));
+				ManifestUtils.javaVersionOfExecutionEnvironment(ees.getFirst()));
 	}
 
 	@Test
@@ -313,34 +311,36 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 		Map<String, String> manifest = Map.of(
 				"Require-Capability", //$NON-NLS-1$
 				"osgi.ee;filter:=\"(|(&(osgi.ee=JavaSE)(version=17))(&(osgi.ee=JavaSE)(version=21)))\""); //$NON-NLS-1$
-		Set<String> ees = ManifestUtils.getRequiredExecutionEnvironments(manifest)
-				.collect(Collectors.toSet());
-		assertEquals(Set.of("JavaSE-17", "JavaSE-21"), ees); //$NON-NLS-1$ //$NON-NLS-2$
+		assertRequiredEEs(manifest, "JavaSE-17", "JavaSE-21");
+	}
+
+	private void assertRequiredEEs(Map<String, String> manifest, String... expectedEEs) {
+		Set<String> actualEEs = ManifestUtils.getRequiredExecutionEnvironments(manifest).collect(Collectors.toSet());
+		assertEquals(Set.of(expectedEEs), actualEEs);
 	}
 
 	@Test
 	public void testEeIdToJavaVersion_standardVersions() {
-		assertEquals("17", ManifestUtils.eeIdToJavaVersion("JavaSE-17")); //$NON-NLS-1$ //$NON-NLS-2$
-		assertEquals("21", ManifestUtils.eeIdToJavaVersion("JavaSE-21")); //$NON-NLS-1$ //$NON-NLS-2$
-		assertEquals("1.8", ManifestUtils.eeIdToJavaVersion("JavaSE-1.8")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("17", ManifestUtils.javaVersionOfExecutionEnvironment("JavaSE-17")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("21", ManifestUtils.javaVersionOfExecutionEnvironment("JavaSE-21")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("1.8", ManifestUtils.javaVersionOfExecutionEnvironment("JavaSE-1.8")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Test
 	public void testEeIdToJavaVersion_compactProfiles() {
 		// compact profiles always map to "1.8" regardless of compiler support
-		assertEquals("1.8", ManifestUtils.eeIdToJavaVersion("JavaSE/compact1-1.8")); //$NON-NLS-1$ //$NON-NLS-2$
-		assertEquals("1.8", ManifestUtils.eeIdToJavaVersion("JavaSE/compact2-1.8")); //$NON-NLS-1$ //$NON-NLS-2$
-		assertEquals("1.8", ManifestUtils.eeIdToJavaVersion("JavaSE/compact3-1.8")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("1.8", ManifestUtils.javaVersionOfExecutionEnvironment("JavaSE/compact1-1.8")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("1.8", ManifestUtils.javaVersionOfExecutionEnvironment("JavaSE/compact2-1.8")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("1.8", ManifestUtils.javaVersionOfExecutionEnvironment("JavaSE/compact3-1.8")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Test
 	public void testEeIdToJavaVersion_unknownReturnsNull() {
-		assertNull(ManifestUtils.eeIdToJavaVersion("J2SE-1.4")); //$NON-NLS-1$  — J2SE prefix, not JavaSE
-		assertNull(ManifestUtils.eeIdToJavaVersion("garbage")); //$NON-NLS-1$
-		assertNull(ManifestUtils.eeIdToJavaVersion(null));
-		assertNull(ManifestUtils.eeIdToJavaVersion("")); //$NON-NLS-1$
-		assertNull(ManifestUtils.eeIdToJavaVersion("OSGi/Minimum-1.2")); //$NON-NLS-1$
-		assertNull(ManifestUtils.eeIdToJavaVersion("CDC-1.1/Foundation-1.1")); //$NON-NLS-1$
+		assertNull(ManifestUtils.javaVersionOfExecutionEnvironment("garbage")); //$NON-NLS-1$
+		assertNull(ManifestUtils.javaVersionOfExecutionEnvironment(null));
+		assertNull(ManifestUtils.javaVersionOfExecutionEnvironment("")); //$NON-NLS-1$
+		assertNull(ManifestUtils.javaVersionOfExecutionEnvironment("OSGi/Minimum-1.2")); //$NON-NLS-1$
+		assertNull(ManifestUtils.javaVersionOfExecutionEnvironment("CDC-1.1/Foundation-1.1")); //$NON-NLS-1$
 	}
 
 	@Test
@@ -348,16 +348,16 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 		SortedSet<String> supported = JavaCore.getAllJavaSourceVersionsSupportedByCompiler();
 		for (String version : supported) {
 			assertEquals("JavaSE-" + version + " should map to " + version, //$NON-NLS-1$ //$NON-NLS-2$
-					version, ManifestUtils.eeIdToJavaVersion("JavaSE-" + version)); //$NON-NLS-1$
+					version, ManifestUtils.javaVersionOfExecutionEnvironment("JavaSE-" + version)); //$NON-NLS-1$
 		}
 	}
 
 	@Test
 	public void testEeIdToJavaVersion_unsupportedVersionsStillReturnVersion() {
 		// eeIdToJavaVersion extracts the version string without checking compiler support
-		assertEquals("1.6", ManifestUtils.eeIdToJavaVersion("JavaSE-1.6")); //$NON-NLS-1$ //$NON-NLS-2$
-		assertEquals("1.7", ManifestUtils.eeIdToJavaVersion("JavaSE-1.7")); //$NON-NLS-1$ //$NON-NLS-2$
-		assertEquals("999", ManifestUtils.eeIdToJavaVersion("JavaSE-999")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("1.6", ManifestUtils.javaVersionOfExecutionEnvironment("JavaSE-1.6")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("1.7", ManifestUtils.javaVersionOfExecutionEnvironment("JavaSE-1.7")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("999", ManifestUtils.javaVersionOfExecutionEnvironment("JavaSE-999")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private RequiredExecutionEnvironmentHeader getRequiredExecutionEnvironmentHeader() {
