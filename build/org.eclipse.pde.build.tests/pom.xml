@@ -13,6 +13,10 @@
 	<version>1.4.1100-SNAPSHOT</version>
 	<packaging>eclipse-test-plugin</packaging>
 
+	<properties>
+		<maven.javadoc.skip>true</maven.javadoc.skip>
+	</properties>
+
 	<profiles>
 		<profile>
 			<!-- Only enable this for individual bundles builds as otherhwise the ibuild repository is not aviable and we might run into problems -->
