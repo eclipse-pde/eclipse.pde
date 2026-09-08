@@ -77,13 +77,15 @@ public class ExecutionEnvironmentResolverTest {
 		}
 	}
 
-	// --- BREE: multiple values → lowest wins ---
+	// --- BREE: multiple values → highest wins (conjunctive requirements) ---
 
 	/**
-	 * When BREE lists two supported versions, the lower one must be returned.
+	 * When BREE lists two supported versions, the higher one must be returned —
+	 * all listed EEs must be satisfied (conjunctive), so the parser must understand
+	 * the most-recent required syntax.
 	 */
 	@Test
-	public void testBreeMultipleVersionsReturnsLowest() {
+	public void testBreeMultipleVersionsReturnsHighest() {
 		SortedSet<String> supported = JavaCore.getAllJavaSourceVersionsSupportedByCompiler();
 		if (supported.size() < 2) {
 			return; // not enough versions to test
@@ -92,15 +94,15 @@ public class ExecutionEnvironmentResolverTest {
 		String highest = supported.last();
 		Map<String, String> manifest = breeManifest("JavaSE-" + highest + ", JavaSE-" + lowest); //$NON-NLS-1$ //$NON-NLS-2$
 		String result = ExecutionEnvironmentResolver.resolveCompliance(manifest);
-		assertEquals("Should return lowest of multiple BREE versions", lowest, result); //$NON-NLS-1$
+		assertEquals("Should return highest of multiple BREE versions", highest, result); //$NON-NLS-1$
 	}
 
 	/**
-	 * When BREE lists three supported versions in mixed order, the lowest must
+	 * When BREE lists three supported versions in mixed order, the highest must
 	 * be returned.
 	 */
 	@Test
-	public void testBreeThreeVersionsReturnsLowest() {
+	public void testBreeThreeVersionsReturnsHighest() {
 		SortedSet<String> supported = JavaCore.getAllJavaSourceVersionsSupportedByCompiler();
 		if (supported.size() < 3) {
 			return;
@@ -113,7 +115,7 @@ public class ExecutionEnvironmentResolverTest {
 		Map<String, String> manifest = breeManifest(
 				"JavaSE-" + high + ", JavaSE-" + low + ", JavaSE-" + mid); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		String result = ExecutionEnvironmentResolver.resolveCompliance(manifest);
-		assertEquals("Should return lowest of three BREE versions", low, result); //$NON-NLS-1$
+		assertEquals("Should return highest of three BREE versions", high, result); //$NON-NLS-1$
 	}
 
 	// --- BREE: unsupported / old versions ---
@@ -216,11 +218,11 @@ public class ExecutionEnvironmentResolverTest {
 
 	/**
 	 * Single OR filter within one osgi.ee entry (version=1.8 OR version=11).
-	 * Within one filter the lowest matching version is used — 1.8 satisfies the
-	 * OR filter first since versions are iterated in ascending order.
+	 * Both versions match the OR filter; the highest (11) is returned since all
+	 * matched EEs are conjunctive requirements.
 	 */
 	@Test
-	public void testRequireCapabilitySingleOrFilterReturnsLowest() throws IOException, BundleException {
+	public void testRequireCapabilitySingleOrFilterReturnsHighest() throws IOException, BundleException {
 		String manifestContent = "Manifest-Version: 1.0\n" //$NON-NLS-1$
 				+ "Bundle-ManifestVersion: 2\n" //$NON-NLS-1$
 				+ "Bundle-SymbolicName: test.bundle\n" //$NON-NLS-1$
@@ -229,10 +231,11 @@ public class ExecutionEnvironmentResolverTest {
 		Map<String, String> manifest = parseManifestString(manifestContent);
 		String result = ExecutionEnvironmentResolver.resolveCompliance(manifest);
 		SortedSet<String> supported = JavaCore.getAllJavaSourceVersionsSupportedByCompiler();
-		if (supported.contains(JavaCore.VERSION_1_8)) {
-			assertEquals("Single OR filter (1.8 OR 11) should resolve to lowest match (1.8)", JavaCore.VERSION_1_8, result); //$NON-NLS-1$
+		if (supported.contains("11")) { //$NON-NLS-1$
+			assertEquals("Single OR filter (1.8 OR 11): highest match (11) must be returned", "11", result); //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
-			assertEquals("1.8 unsupported, OR filter should resolve to next match (11)", "11", result); //$NON-NLS-1$ //$NON-NLS-2$
+			assertEquals("11 unsupported, OR filter should resolve to latest", //$NON-NLS-1$
+					JavaCore.latestSupportedJavaVersion(), result);
 		}
 	}
 
@@ -295,10 +298,11 @@ public class ExecutionEnvironmentResolverTest {
 	}
 
 	/**
-	 * When both BREE and {@code Require-Capability} are present, BREE must win.
+	 * When both BREE and {@code Require-Capability} are present, all EEs are
+	 * combined and the highest version wins (conjunctive requirements).
 	 */
 	@Test
-	public void testBreeHasPriorityOverRequireCapability() {
+	public void testBreeAndRequireCapabilityCombinedHighestWins() {
 		SortedSet<String> supported = JavaCore.getAllJavaSourceVersionsSupportedByCompiler();
 		if (supported.size() < 2) {
 			return;
@@ -311,7 +315,7 @@ public class ExecutionEnvironmentResolverTest {
 		manifest.put("Require-Capability", //$NON-NLS-1$
 				"osgi.ee; filter:=\"(&(osgi.ee=JavaSE)(version=" + capVersion + "))\""); //$NON-NLS-1$ //$NON-NLS-2$
 		String result = ExecutionEnvironmentResolver.resolveCompliance(manifest);
-		assertEquals("BREE should take priority over Require-Capability", breeVersion, result); //$NON-NLS-1$
+		assertEquals("BREE and Require-Capability combined: highest version must win", capVersion, result); //$NON-NLS-1$
 	}
 
 	// --- result is always a supported version ---
