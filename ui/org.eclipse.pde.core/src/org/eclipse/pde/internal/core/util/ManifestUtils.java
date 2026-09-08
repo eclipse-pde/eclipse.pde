@@ -22,12 +22,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
@@ -328,84 +330,56 @@ public class ManifestUtils {
 
 	/**
 	 * Returns the EE IDs required by the bundle described by the given manifest
-	 * map. Both the legacy {@code Bundle-RequiredExecutionEnvironment} header and
-	 * the modern {@code Require-Capability: osgi.ee} header are considered.
+	 * map. Both the legacy {@code Bundle-RequiredExecutionEnvironment} header
+	 * and {@code Require-Capability: osgi.ee} requirements are considered.
 	 *
-	 * @param manifestMap
-	 *            the parsed bundle manifest, must not be {@code null}
+	 * @param manifest
+	 *            the parsed bundle manifest as map, must not be {@code null}
 	 * @return a stream of EE IDs (e.g. {@code "JavaSE-17"})
+	 * @see Constants#BUNDLE_REQUIREDEXECUTIONENVIRONMENT
+	 * @see Constants#REQUIRE_CAPABILITY
 	 */
-	public static Stream<String> getRequiredExecutionEnvironments(Map<String, String> manifestMap) {
-		String bree = manifestMap.get(BREE);
-		Stream<String> fromBree = Stream.empty();
-		if (bree != null) {
-			try {
-				ManifestElement[] elements = ManifestElement
-						.parseHeader(BREE, bree);
-				if (elements != null) {
-					fromBree = Stream.of(elements).map(ManifestElement::getValue);
-				}
-			} catch (BundleException e) {
-				ILog.get().error("Failed to parse Bundle-RequiredExecutionEnvironment header", e); //$NON-NLS-1$
+	public static Stream<String> getRequiredExecutionEnvironments(Map<String, String> manifest) {
+		Stream<String> fromBree = parseHeader(manifest, BREE, (e, requiredEEs) -> requiredEEs.accept(e.getValue()));
+		Stream<String> fromRequirements = parseHeader(manifest, Constants.REQUIRE_CAPABILITY, (e, ees) -> {
+			if (EXECUTION_ENVIRONMENT_NAMESPACE.equals(e.getValue())) {
+				String filter = e.getDirective(Namespace.REQUIREMENT_FILTER_DIRECTIVE);
+				parseRequiredEEsFromFilter(filter, ees);
 			}
-		}
+		});
+		return Stream.concat(fromBree, fromRequirements);
+	}
 
-		String requireCapability = manifestMap.get(Constants.REQUIRE_CAPABILITY);
-		Stream<String> fromRequireCapability = Stream.empty();
-		if (requireCapability != null) {
-			try {
-				ManifestElement[] elements = ManifestElement.parseHeader(Constants.REQUIRE_CAPABILITY,
-						requireCapability);
-				if (elements != null) {
-					List<String> eeIds = new LinkedList<>();
-					for (ManifestElement element : elements) {
-						if (EXECUTION_ENVIRONMENT_NAMESPACE.equals(element.getValue())) {
-							String filter = element.getDirective(Namespace.REQUIREMENT_FILTER_DIRECTIVE);
-							parseRequiredEEsFromFilter(filter, eeIds::add);
-						}
-					}
-					fromRequireCapability = eeIds.stream();
-				}
-			} catch (BundleException e) {
-				ILog.get().error("Failed to parse Require-Capability header", e); //$NON-NLS-1$
+	private static Stream<String> parseHeader(Map<String, String> manifest, String header,
+			BiConsumer<ManifestElement, Consumer<String>> processor) {
+		try {
+			String value = manifest.get(header);
+			ManifestElement[] elements = ManifestElement.parseHeader(header, value);
+			if (elements != null) {
+				return Arrays.stream(elements).mapMulti(processor);
 			}
+		} catch (BundleException e) {
+			ILog.get().error("Failed to parse " + header + " header", e); //$NON-NLS-1$//$NON-NLS-2$
 		}
-
-		return Stream.concat(fromBree, fromRequireCapability);
+		return Stream.empty();
 	}
 
 	/**
 	 * Maps a single EE ID (e.g. {@code "JavaSE-17"}) to a JDT compiler
-	 * compliance string, or {@code null} if the version cannot be determined
-	 * from the EE ID.
-	 * <p>
-	 * Java 8 compact profiles ({@code JavaSE/compact1-1.8},
-	 * {@code JavaSE/compact2-1.8}, {@code JavaSE/compact3-1.8}) are mapped to
-	 * {@code "1.8"}. Non-JavaSE EE IDs (e.g. {@code OSGi/Minimum-1.2}) return
-	 * {@code null}. Whether the returned version is actually supported by the
-	 * JDT compiler is not checked here.
-	 * </p>
+	 * compliance version string, or {@code null} if the version cannot be
+	 * determined from the EE identifier.
 	 *
 	 * @param eeId
 	 *            the EE ID, may be {@code null}
 	 * @return a JDT compliance string (e.g. {@code "17"}), or {@code null}
 	 */
-	public static String eeIdToJavaVersion(String eeId) {
-		if (eeId == null) {
-			return null;
-		}
-		if ("JavaSE/compact1-1.8".equals(eeId) //$NON-NLS-1$
-				|| "JavaSE/compact2-1.8".equals(eeId) //$NON-NLS-1$
-				|| "JavaSE/compact3-1.8".equals(eeId)) { //$NON-NLS-1$
-			return JavaCore.VERSION_1_8;
-		}
-		int separator = eeId.lastIndexOf('-');
-		if (separator > 0) {
-			String eeName = eeId.substring(0, separator);
-			String version = eeId.substring(separator + 1);
-			if ("JavaSE".equals(eeName)) { //$NON-NLS-1$
-				return version;
-			}
+	public static String javaVersionOfExecutionEnvironment(String eeId) {
+		Map<String, String> properties = AVAILABLE_EE_ATTRIBUTES.get(eeId);
+		if (properties != null) {
+			return properties.get(CAPABILITY_VERSION_ATTRIBUTE);
+		} else if ("JavaSE-cldc1.1".equals(eeId)) { //$NON-NLS-1$
+			// Derived from the only JDT java version not mapped to an OSGi EE
+			return "1.1"; //$NON-NLS-1$
 		}
 		return null;
 	}
