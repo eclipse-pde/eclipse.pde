@@ -11,14 +11,32 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.pde.api.tools.internal.model;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.lang.classfile.Annotation;
+import java.lang.classfile.AnnotationValue;
+import java.lang.classfile.Attributes;
+import java.lang.classfile.ClassFile;
+import java.lang.classfile.ClassModel;
+import java.lang.classfile.CodeElement;
+import java.lang.classfile.CodeModel;
+import java.lang.classfile.FieldModel;
+import java.lang.classfile.MethodModel;
+import java.lang.classfile.attribute.InnerClassInfo;
+import java.lang.classfile.attribute.InnerClassesAttribute;
+import java.lang.classfile.constantpool.ClassEntry;
+import java.lang.classfile.constantpool.Utf8Entry;
+import java.lang.classfile.instruction.LineNumber;
+import java.lang.classfile.instruction.NewObjectInstruction;
+import java.lang.classfile.instruction.NewReferenceArrayInstruction;
+import java.lang.classfile.instruction.TypeCheckInstruction;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Status;
@@ -29,221 +47,30 @@ import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
-import org.eclipse.pde.api.tools.internal.util.Util;
-import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.FieldVisitor;
-import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.ClassNode;
+
 /**
- * Class adapter used to create an API type structure
+ * Builds an API type structure from a class file, using the
+ * {@code java.lang.classfile} API (JEP 484) instead of ASM.
+ *
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
-public class TypeStructureBuilder extends ClassVisitor {
-	ApiType fType;
-	IApiComponent fComponent;
-	IApiTypeRoot fFile;
+public class TypeStructureBuilder {
 
-	/**
-	 * Builds a type structure for a class file. Note that if an API component
-	 * is not specified, then some operations on the resulting {@link IApiType}
-	 * will not be available (navigating super types, member types, etc).
-	 *
-	 * @param cv class file visitor
-	 * @param component originating API component or <code>null</code> if
-	 *            unknown
-	 */
-	TypeStructureBuilder(ClassVisitor cv, IApiComponent component, IApiTypeRoot file) {
-		super(Util.LATEST_OPCODES_ASM, cv);
-		fComponent = component;
-		fFile = file;
+	private static final String POLYMORPHIC_SIGNATURE_ANNOTATION = "Ljava/lang/invoke/MethodHandle$PolymorphicSignature;"; //$NON-NLS-1$
+
+	private TypeStructureBuilder() {
+		// no instances
 	}
 
-	@Override
-	public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-		StringBuilder simpleSig = new StringBuilder();
-		simpleSig.append('L');
-		simpleSig.append(name);
-		simpleSig.append(';');
-		String enclosingName = null;
-		int index = name.lastIndexOf('$');
-		if (index > -1) {
-			enclosingName = name.substring(0, index).replace('/', '.');
-		}
-		int laccess = access;
-		// TODO: inner types should be have enclosing type as parent instead of
-		// component
-		if ((laccess & Opcodes.ACC_DEPRECATED) != 0) {
-			laccess &= ~Opcodes.ACC_DEPRECATED;
-			laccess |= Flags.AccDeprecated;
-		}
-		fType = new ApiType(fComponent, name.replace('/', '.'), simpleSig.toString(), signature, laccess, enclosingName, fFile);
-		if (superName != null) {
-			fType.setSuperclassName(superName.replace('/', '.'));
-		}
-		if (interfaces != null && interfaces.length > 0) {
-			String[] names = new String[interfaces.length];
-			for (int i = 0; i < names.length; i++) {
-				names[i] = interfaces[i].replace('/', '.');
-			}
-			fType.setSuperInterfaceNames(names);
-		}
-		super.visit(version, laccess, name, signature, superName, interfaces);
+	private static String internalToQualified(String internalName) {
+		return internalName.replace('/', '.');
 	}
 
-	@Override
-	public void visitInnerClass(String name, String outerName, String innerName, int access) {
-		super.visitInnerClass(name, outerName, innerName, access);
-		String currentName = name.replace('/', '.');
-		if (currentName.equals(fType.getName())) {
-			if (innerName == null) {
-				fType.setAnonymous();
-			} else if (outerName == null) {
-				fType.setLocal();
-				fType.setSimpleName(innerName);
-			}
+	private static int withDeprecatedFlag(int access, boolean deprecated) {
+		if (deprecated) {
+			return access | Flags.AccDeprecated;
 		}
-		if (outerName != null && innerName != null) {
-			// technically speaking innerName != null is not necessary, but this
-			// is a workaround for some
-			// bogus synthetic types created by another compiler
-			String currentOuterName = outerName.replace('/', '.');
-			if (currentOuterName.equals(fType.getName())) {
-				// this is a real type member defined in the descriptor (not
-				// just a reference to a type member)
-				fType.addMemberType(currentName);
-			} else if (currentName.equals(fType.getName())) {
-				fType.setModifiers(access);
-				fType.setSimpleName(innerName);
-				fType.setMemberType();
-			}
-		}
-	}
-
-	@Override
-	public void visitOuterClass(String owner, String name, String desc) {
-		fType.setEnclosingMethodInfo(name, desc);
-	}
-
-	@Override
-	public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
-		int laccess = access;
-		if ((access & Opcodes.ACC_DEPRECATED) != 0) {
-			laccess &= ~Opcodes.ACC_DEPRECATED;
-			laccess |= Flags.AccDeprecated;
-		}
-		fType.addField(name, desc, signature, laccess, value);
-		return null;
-	}
-
-	@Override
-	public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-		String[] names = null;
-		int laccess = access;
-		if ((laccess & Opcodes.ACC_DEPRECATED) != 0) {
-			laccess &= ~Opcodes.ACC_DEPRECATED;
-			laccess |= Flags.AccDeprecated;
-		}
-		if (exceptions != null && exceptions.length > 0) {
-			names = new String[exceptions.length];
-			for (int i = 0; i < names.length; i++) {
-				names[i] = exceptions[i].replace('/', '.');
-			}
-		}
-		final ApiMethod method = fType.addMethod(name, desc, signature, laccess, names);
-		return new MethodVisitor(Util.LATEST_OPCODES_ASM,
-				super.visitMethod(laccess, name, desc, signature, exceptions)) {
-			@Override
-			public AnnotationVisitor visitAnnotation(String sig, boolean visible) {
-				if (visible && "Ljava/lang/invoke/MethodHandle$PolymorphicSignature;".equals(sig)) { //$NON-NLS-1$
-					method.isPolymorphic();
-				}
-				return super.visitAnnotation(sig, visible);
-			}
-
-			@Override
-			public AnnotationVisitor visitAnnotationDefault() {
-				return new AnnotationDefaultVisitor(method);
-			}
-		};
-	}
-
-	private static IApiType logAndReturn(IApiTypeRoot file, Exception e) {
-		if (ApiPlugin.DEBUG_BUILDER) {
-			ApiPlugin.log(Status.error(NLS.bind(Messages.TypeStructureBuilder_badClassFileEncountered, file.getTypeName()), e));
-		}
-		return null;
-	}
-
-	/**
-	 * Visit the default value for an annotation
-	 */
-	static class AnnotationDefaultVisitor extends AnnotationVisitor {
-		ApiMethod method;
-		Object value;
-		StringBuilder buff = new StringBuilder();
-		boolean trace = false;
-		int traceCount = 0;
-
-		public AnnotationDefaultVisitor(ApiMethod method) {
-			super(Util.LATEST_OPCODES_ASM);
-			this.method = method;
-		}
-
-		@Override
-		public void visit(String name, Object value) {
-			if (trace) {
-				appendValue(value);
-				traceCount++;
-				return;
-			}
-			this.value = value;
-		}
-
-		@Override
-		public AnnotationVisitor visitAnnotation(String name, String desc) {
-			trace = true;
-			return this;
-		}
-
-		@Override
-		public void visitEnum(String name, String desc, String value) {
-			if (trace) {
-				appendValue(value);
-				traceCount++;
-				return;
-			}
-			this.value = value;
-		}
-
-		@Override
-		public AnnotationVisitor visitArray(String name) {
-			trace = true;
-			return this;
-		}
-
-		@Override
-		public void visitEnd() {
-			if (trace) {
-				this.value = buff.toString();
-				traceCount--;
-				trace = traceCount != 0;
-			} else {
-				method.setDefaultValue(this.value == null ? null : this.value.toString());
-			}
-		}
-
-		void appendValue(Object val) {
-			if (val != null) {
-				if (buff.length() < 1) {
-					buff.append(val.toString());
-				} else {
-					buff.append(',').append(val.toString());
-				}
-			}
-		}
+		return access;
 	}
 
 	/**
@@ -255,142 +82,266 @@ public class TypeStructureBuilder extends ClassVisitor {
 	 * @param file associated class file
 	 */
 	public static IApiType buildTypeStructure(byte[] bytes, IApiComponent component, IApiTypeRoot file) {
-		TypeStructureBuilder visitor = new TypeStructureBuilder(new ClassNode(), component, file);
+		ClassModel model;
 		try {
-			ClassReader classReader = new ClassReader(bytes);
-			classReader.accept(visitor, ClassReader.SKIP_CODE | ClassReader.SKIP_FRAMES);
-		} catch (ArrayIndexOutOfBoundsException e) {
-			logAndReturn(file, e);
-			return null;
+			model = ClassFile.of().parse(bytes);
 		} catch (IllegalArgumentException iae) {
-			// thrown from ASM 5.0 for bad bytecodes
+			// thrown for bad bytecodes
 			return logAndReturn(file, iae);
+		} catch (ArrayIndexOutOfBoundsException e) {
+			return logAndReturn(file, e);
 		}
-		return visitor.fType;
+
+		String name = model.thisClass().asInternalName();
+		String enclosingName = null;
+		int index = name.lastIndexOf('$');
+		if (index > -1) {
+			enclosingName = internalToQualified(name.substring(0, index));
+		}
+		// TODO: inner types should be have enclosing type as parent instead of
+		// component
+		int access = withDeprecatedFlag(model.flags().flagsMask(), model.findAttribute(Attributes.deprecated()).isPresent());
+
+		StringBuilder simpleSig = new StringBuilder();
+		simpleSig.append('L').append(name).append(';');
+
+		ApiType type = new ApiType(component, internalToQualified(name), simpleSig.toString(),
+				model.findAttribute(Attributes.signature()).map(sig -> sig.signature().stringValue()).orElse(null),
+				access, enclosingName, file);
+
+		model.superclass().ifPresent(superClass -> type.setSuperclassName(internalToQualified(superClass.asInternalName())));
+
+		List<ClassEntry> interfaces = model.interfaces();
+		if (!interfaces.isEmpty()) {
+			type.setSuperInterfaceNames(interfaces.stream().map(ClassEntry::asInternalName)
+					.map(TypeStructureBuilder::internalToQualified).toArray(String[]::new));
+		}
+
+		model.findAttribute(Attributes.innerClasses()).ifPresent(ica -> visitInnerClasses(type, ica));
+		model.findAttribute(Attributes.enclosingMethod()).ifPresent(ema -> type.setEnclosingMethodInfo(
+				ema.enclosingMethodName().map(Utf8Entry::stringValue).orElse(null),
+				ema.enclosingMethodType().map(Utf8Entry::stringValue).orElse(null)));
+
+		for (FieldModel field : model.fields()) {
+			visitField(type, field);
+		}
+		for (MethodModel method : model.methods()) {
+			visitMethod(type, method);
+		}
+
+		return type;
+	}
+
+	private static void visitInnerClasses(ApiType type, InnerClassesAttribute innerClasses) {
+		for (InnerClassInfo info : innerClasses.classes()) {
+			String currentName = internalToQualified(info.innerClass().asInternalName());
+			if (currentName.equals(type.getName())) {
+				if (info.innerName().isEmpty()) {
+					type.setAnonymous();
+				} else if (info.outerClass().isEmpty()) {
+					type.setLocal();
+					type.setSimpleName(info.innerName().get().stringValue());
+				}
+			}
+			if (info.outerClass().isPresent() && info.innerName().isPresent()) {
+				// technically speaking innerName != null is not necessary, but this
+				// is a workaround for some bogus synthetic types created by another
+				// compiler
+				String currentOuterName = internalToQualified(info.outerClass().get().asInternalName());
+				if (currentOuterName.equals(type.getName())) {
+					// this is a real type member defined in the descriptor (not
+					// just a reference to a type member)
+					type.addMemberType(currentName);
+				} else if (currentName.equals(type.getName())) {
+					type.setModifiers(info.flagsMask());
+					type.setSimpleName(info.innerName().get().stringValue());
+					type.setMemberType();
+				}
+			}
+		}
+	}
+
+	private static void visitField(ApiType type, FieldModel field) {
+		int access = withDeprecatedFlag(field.flags().flagsMask(), field.findAttribute(Attributes.deprecated()).isPresent());
+		String signature = field.findAttribute(Attributes.signature()).map(sig -> sig.signature().stringValue()).orElse(null);
+		Object value = field.findAttribute(Attributes.constantValue()).map(cv -> cv.constant().constantValue()).orElse(null);
+		type.addField(field.fieldName().stringValue(), field.fieldType().stringValue(), signature, access, value);
+	}
+
+	private static void visitMethod(ApiType type, MethodModel method) {
+		int access = withDeprecatedFlag(method.flags().flagsMask(), method.findAttribute(Attributes.deprecated()).isPresent());
+		String[] exceptionNames = null;
+		List<ClassEntry> exceptions = method.findAttribute(Attributes.exceptions()).map(ea -> ea.exceptions()).orElse(List.of());
+		if (!exceptions.isEmpty()) {
+			exceptionNames = exceptions.stream().map(ClassEntry::asInternalName).map(TypeStructureBuilder::internalToQualified)
+					.toArray(String[]::new);
+		}
+		String signature = method.findAttribute(Attributes.signature()).map(sig -> sig.signature().stringValue()).orElse(null);
+		ApiMethod apiMethod = type.addMethod(method.methodName().stringValue(), method.methodType().stringValue(), signature, access,
+				exceptionNames);
+
+		boolean polymorphic = method.findAttribute(Attributes.runtimeVisibleAnnotations())
+				.map(rva -> rva.annotations().stream().anyMatch(TypeStructureBuilder::isPolymorphicSignature)).orElse(false);
+		if (polymorphic) {
+			// note: kept identical to the original ASM based implementation, which
+			// also just calls this getter without using its result
+			apiMethod.isPolymorphic();
+		}
+
+		method.findAttribute(Attributes.annotationDefault())
+				.ifPresent(ada -> apiMethod.setDefaultValue(annotationValueToString(ada.defaultValue())));
+	}
+
+	private static boolean isPolymorphicSignature(Annotation annotation) {
+		return POLYMORPHIC_SIGNATURE_ANNOTATION.equals(annotation.className().stringValue());
+	}
+
+	/**
+	 * Converts an annotation default value into a textual representation,
+	 * mirroring the flattening behavior of the previous ASM based
+	 * {@code AnnotationDefaultVisitor}.
+	 */
+	private static String annotationValueToString(AnnotationValue value) {
+		return switch (value) {
+			case AnnotationValue.OfString v -> v.stringValue();
+			case AnnotationValue.OfInt v -> Integer.toString(v.intValue());
+			case AnnotationValue.OfLong v -> Long.toString(v.longValue());
+			case AnnotationValue.OfFloat v -> Float.toString(v.floatValue());
+			case AnnotationValue.OfDouble v -> Double.toString(v.doubleValue());
+			case AnnotationValue.OfBoolean v -> Boolean.toString(v.booleanValue());
+			case AnnotationValue.OfByte v -> Byte.toString(v.byteValue());
+			case AnnotationValue.OfShort v -> Short.toString(v.shortValue());
+			case AnnotationValue.OfChar v -> Character.toString(v.charValue());
+			case AnnotationValue.OfClass v -> v.className().stringValue();
+			case AnnotationValue.OfEnum v -> v.constantName().stringValue();
+			case AnnotationValue.OfAnnotation v -> v.annotation().elements().stream()
+					.map(e -> annotationValueToString(e.value())).collect(Collectors.joining(","));//$NON-NLS-1$
+			case AnnotationValue.OfArray v -> v.values().stream().map(TypeStructureBuilder::annotationValueToString)
+					.collect(Collectors.joining(","));//$NON-NLS-1$
+			default -> value.toString();
+		};
+	}
+
+	private static IApiType logAndReturn(IApiTypeRoot file, Exception e) {
+		if (ApiPlugin.DEBUG_BUILDER) {
+			ApiPlugin.log(Status.error(NLS.bind(Messages.TypeStructureBuilder_badClassFileEncountered, file.getTypeName()), e));
+		}
+		return null;
+	}
+
+	/**
+	 * Scans the type's class file to find the method that encloses an
+	 * anonymous/local type, and sets that information on the given type.
+	 */
+	public static void setEnclosingMethod(IApiType enclosingType, ApiType currentAnonymousLocalType) {
+		IApiTypeRoot typeRoot = enclosingType.getTypeRoot();
+		if (typeRoot instanceof AbstractApiTypeRoot abstractApiTypeRoot) {
+			String typeName = currentAnonymousLocalType.getName().replace('.', '/');
+			try {
+				ClassModel model = ClassFile.of().parse(abstractApiTypeRoot.getContents());
+				EnclosingMethodResult result = findEnclosingMethod(model, typeName);
+				if (result != null) {
+					currentAnonymousLocalType.setEnclosingMethodInfo(result.name(), result.signature());
+				}
+			} catch (ArrayIndexOutOfBoundsException | CoreException e) {
+				// bytes could not be retrieved for abstractApiTypeRoot
+				ApiPlugin.log(e);
+			}
+		}
+	}
+
+	private record EnclosingMethodResult(String name, String signature) {
+	}
+
+	/**
+	 * Scans all eligible (non-abstract, non-native) methods, in order, for a
+	 * reference to {@code typeName}, exactly as the previous ASM based
+	 * {@code EnclosingMethodSetter}/{@code TypeNameFinder} did.
+	 */
+	private static EnclosingMethodResult findEnclosingMethod(ClassModel model, String typeName) {
+		for (MethodModel method : model.methods()) {
+			String name = method.methodName().stringValue();
+			if ("<clinit>".equals(name)) { //$NON-NLS-1$
+				continue;
+			}
+			int access = method.flags().flagsMask();
+			if ((access & (ClassFile.ACC_ABSTRACT | ClassFile.ACC_NATIVE)) != 0) {
+				continue;
+			}
+			CodeModel code = method.code().orElse(null);
+			if (code == null) {
+				continue;
+			}
+			String signature = method.findAttribute(Attributes.signature()).map(sig -> sig.signature().stringValue())
+					.orElse(method.methodType().stringValue());
+
+			boolean isConstructor = "<init>".equals(name); //$NON-NLS-1$
+			TypeNameFinder finder = new TypeNameFinder(typeName, isConstructor);
+			for (CodeElement element : code) {
+				finder.accept(element);
+			}
+			if (finder.finish()) {
+				return new EnclosingMethodResult(name, signature);
+			}
+			// not found (or, for a constructor, the match fell outside the
+			// constructor's line number bounds): keep scanning the next method
+		}
+		return null;
+	}
+
+	/**
+	 * Scans a method body for a reference to a given type via a {@code new},
+	 * {@code anewarray}, {@code checkcast} or {@code instanceof} instruction.
+	 */
+	private static final class TypeNameFinder {
+		private final String typeName;
+		private final boolean constructor;
+		private boolean found;
+		private int lineNumberStart = -1;
+		private int currentLineNumber = -1;
+		private int matchingLineNumber = -1;
+
+		TypeNameFinder(String typeName, boolean constructor) {
+			this.typeName = typeName;
+			this.constructor = constructor;
+		}
+
+		void accept(CodeElement element) {
+			switch (element) {
+				case LineNumber ln -> {
+					if (currentLineNumber == -1) {
+						lineNumberStart = ln.line();
+					}
+					currentLineNumber = ln.line();
+				}
+				case NewObjectInstruction insn -> checkType(insn.className());
+				case NewReferenceArrayInstruction insn -> checkType(insn.componentType());
+				case TypeCheckInstruction insn -> checkType(insn.type());
+				default -> {
+					// not relevant for enclosing method detection
+				}
+			}
+		}
+
+		private void checkType(ClassEntry entry) {
+			if (!found && typeName.equals(entry.asInternalName())) {
+				matchingLineNumber = currentLineNumber;
+				found = true;
+			}
+		}
+
+		boolean finish() {
+			if (found && constructor && (matchingLineNumber < lineNumberStart || matchingLineNumber > currentLineNumber)) {
+				found = false;
+			}
+			return found;
+		}
 	}
 
 	/**
 	 * Builds a type structure with the given .class file bytes in the specified
 	 * API component.
 	 */
-	public static void setEnclosingMethod(IApiType enclosingType, ApiType currentAnonymousLocalType) {
-		IApiTypeRoot typeRoot = enclosingType.getTypeRoot();
-		if (typeRoot instanceof AbstractApiTypeRoot abstractApiTypeRoot) {
-			EnclosingMethodSetter visitor = new EnclosingMethodSetter(new ClassNode(), currentAnonymousLocalType.getName());
-			try {
-				ClassReader classReader = new ClassReader(abstractApiTypeRoot.getContents());
-				classReader.accept(visitor, ClassReader.SKIP_FRAMES);
-			} catch (ArrayIndexOutOfBoundsException | CoreException e) {
-				// bytes could not be retrieved for abstractApiTypeRoot
-				ApiPlugin.log(e);
-			}
-			if (visitor.found) {
-				currentAnonymousLocalType.setEnclosingMethodInfo(visitor.name, visitor.signature);
-			}
-		}
-	}
-
-	static class EnclosingMethodSetter extends ClassVisitor {
-		String name;
-		String signature;
-		boolean found = false;
-		String typeName;
-
-		public EnclosingMethodSetter(ClassVisitor cv, String typeName) {
-			super(Util.LATEST_OPCODES_ASM, cv);
-			this.typeName = typeName.replace('.', '/');
-		}
-
-		@Override
-		public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-			if ("<clinit>".equals(name)) { //$NON-NLS-1$
-				return null;
-			}
-			if (!this.found) {
-				if ((access & (Opcodes.ACC_ABSTRACT | Opcodes.ACC_NATIVE)) == 0) {
-					this.name = name;
-					this.signature = desc;
-					if (signature != null) {
-						this.signature = signature;
-					}
-					MethodVisitor mv;
-					if ("<init>".equals(name)) { //$NON-NLS-1$
-						mv = new TypeNameFinderInConstructor(cv.visitMethod(access, name, desc, signature, exceptions), this);
-					} else {
-						mv = new TypeNameFinder(cv.visitMethod(access, name, desc, signature, exceptions), this);
-					}
-					return mv;
-				}
-			}
-			return null;
-		}
-	}
-
-	static class TypeNameFinder extends MethodVisitor {
-		protected EnclosingMethodSetter setter;
-
-		public TypeNameFinder(MethodVisitor mv, EnclosingMethodSetter enclosingMethodSetter) {
-			super(Util.LATEST_OPCODES_ASM, mv);
-			this.setter = enclosingMethodSetter;
-		}
-
-		@Override
-		public void visitTypeInsn(int opcode, String type) {
-			if (setter.typeName.equals(type)) {
-				setter.found = true;
-			}
-		}
-	}
-
-	static class TypeNameFinderInConstructor extends TypeNameFinder {
-		int lineNumberStart;
-		int matchingLineNumber;
-		int currentLineNumber = -1;
-
-		public TypeNameFinderInConstructor(MethodVisitor mv, EnclosingMethodSetter enclosingMethodSetter) {
-			super(mv, enclosingMethodSetter);
-		}
-
-		@Override
-		public void visitFieldInsn(int opcode, String owner, String name, String desc) {
-			super.visitFieldInsn(opcode, owner, name, desc);
-		}
-
-		@Override
-		public void visitTypeInsn(int opcode, String type) {
-			if (!setter.found && setter.typeName.equals(type)) {
-				this.matchingLineNumber = this.currentLineNumber;
-				setter.found = true;
-			}
-		}
-
-		@Override
-		public void visitLineNumber(int line, Label start) {
-			if (this.currentLineNumber == -1) {
-				this.lineNumberStart = line;
-			}
-			this.currentLineNumber = line;
-		}
-
-		@Override
-		public void visitEnd() {
-			if (setter.found) {
-				// check that the line number is between the constructor bounds
-				if (this.matchingLineNumber < this.lineNumberStart || this.matchingLineNumber > this.currentLineNumber) {
-					setter.found = false;
-				}
-			}
-		}
-	}
-
-	@Override
-	public String toString() {
-		StringBuilder buffer = new StringBuilder();
-		buffer.append("Type structure builder for: ").append(fType.getName()); //$NON-NLS-1$
-		buffer.append("\nBacked by file: ").append(fFile.getName()); //$NON-NLS-1$
-		return buffer.toString();
-	}
-
 	public static IApiType buildStubTypeStructure(byte[] contents, IApiComponent apiComponent, ArchiveApiTypeRoot archiveApiTypeRoot) {
 		// decode the byte[]
 		ApiType type = null;
