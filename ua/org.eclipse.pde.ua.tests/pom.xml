@@ -22,7 +22,6 @@
   <packaging>eclipse-test-plugin</packaging>
 
   <properties>
-  	<maven.javadoc.skip>true</maven.javadoc.skip>
   	<testSuite>${project.artifactId}</testSuite>
   	<testClass>org.eclipse.pde.internal.ua.tests.AllUATests</testClass>
   </properties>
