@@ -22,7 +22,6 @@
   <packaging>eclipse-test-plugin</packaging>
 
   <properties>
-    <maven.javadoc.skip>true</maven.javadoc.skip>
     <defaultSigning-excludeInnerJars>true</defaultSigning-excludeInnerJars>
       <testSuite>${project.artifactId}</testSuite>
       <testClass>org.eclipse.pde.ui.tests.AllPDETests</testClass>

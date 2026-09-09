@@ -26,9 +26,6 @@
 	<artifactId>org.eclipse.pde.junit.runtime.tests</artifactId>
 	<version>3.8.400-SNAPSHOT</version>
 	<packaging>eclipse-test-plugin</packaging>
-	<properties>
-		<maven.javadoc.skip>true</maven.javadoc.skip>
-	</properties>
 	<build>
 		<plugins>
 			<plugin>
