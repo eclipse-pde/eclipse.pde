@@ -33,6 +33,7 @@ import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WordRule;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.editors.text.SyntaxThemeConstants;
 
 /**
  * Rule to match the attributes of a tag
@@ -46,7 +47,7 @@ public class TargetPlatformAttributeRule extends WordRule {
 			INCLUDE_DEPENDENCY_SCOPES, MISSING_MANIFEST };
 	private final IToken attributeToken = new Token(
 			new TextAttribute(PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry()
-					.get(IGETEColorConstants.P_ATTRIBUTE)));
+					.get(SyntaxThemeConstants.ATTRIBUTE_NAME_COLOR)));
 
 	public TargetPlatformAttributeRule() {
 		super(new AlphanumericDetector());
