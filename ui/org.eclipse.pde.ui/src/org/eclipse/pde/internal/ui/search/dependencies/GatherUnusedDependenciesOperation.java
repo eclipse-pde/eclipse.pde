@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2025 IBM Corporation and others.
+ *  Copyright (c) 2005, 2026 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -20,12 +20,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -83,16 +83,22 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 		if (!ClasspathUtilCore.hasBundleStructure(fModel)) {
 			return;
 		}
-		Set<String> computedPackages;
+		Set<String> computedPackages = new HashSet<>();
 		try (PdeProjectAnalyzer analyzer = new PdeProjectAnalyzer(fModel.getUnderlyingResource().getProject(), true)) {
 			analyzer.setImportPackage("*"); //$NON-NLS-1$
 			analyzer.calcManifest();
 			Packages imports = analyzer.getImports();
-			if (imports == null) {
-				computedPackages = Set.of();
-			} else {
-				computedPackages = imports.keySet().stream().map(PackageRef::getFQN).collect(Collectors.toSet());
+			if (imports != null) {
+				imports.keySet().stream().map(PackageRef::getFQN).forEach(computedPackages::add);
 			}
+			// A reference into a package that the project provides itself is
+			// invisible in the computed packages, because those are the packages
+			// referred to by the byte code reduced by the ones the project
+			// contains. Detecting such a reference would require analyzing the
+			// sources, so the packages that the project provides itself are
+			// treated as required: that retains dependencies which are in fact
+			// unused but never removes one that is needed.
+			analyzer.getContained().keySet().stream().map(PackageRef::getFQN).forEach(computedPackages::add);
 		} catch (InterruptedException e) {
 			throw e;
 		} catch (Exception e) {
