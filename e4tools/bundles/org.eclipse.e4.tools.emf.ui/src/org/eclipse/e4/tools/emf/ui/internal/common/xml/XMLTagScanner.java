@@ -20,11 +20,12 @@ import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WhitespaceRule;
+import org.eclipse.ui.editors.text.SyntaxThemeConstants;
 
 public class XMLTagScanner extends RuleBasedScanner {
 
 	public XMLTagScanner() {
-		IToken string = new Token(new TextAttribute(XMLColors.get(XMLColors.STRING)));
+		IToken string = new Token(new TextAttribute(XMLColors.get(SyntaxThemeConstants.STRING_COLOR)));
 
 		IRule[] rules = new IRule[3];
 
