@@ -37,6 +37,8 @@ import org.osgi.framework.wiring.BundleWiring;
  */
 public class RemotePluginTestRunner extends RemoteTestRunner {
 
+	private static final boolean DISABLE_FRAMEWORK_STATE_DUMP = Boolean.getBoolean("pde.testing.disable.framework.state.dump"); //$NON-NLS-1$
+
 	private static final String ORG_ECLIPSE_JDT_JUNIT5_RUNTIME = "org.eclipse.jdt.junit5.runtime"; //$NON-NLS-1$
 	private static final String ORG_ECLIPSE_JDT_JUNIT6_RUNTIME = "org.eclipse.jdt.junit6.runtime"; //$NON-NLS-1$
 	private static final VersionRange JUNIT5_VERSION_RANGE = new VersionRange("[1.0.0,6.0.0)"); //$NON-NLS-1$
@@ -92,7 +94,7 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 					failures++;
 				}
 			}
-			if (failures > 0) {
+			if (failures > 0 && !DISABLE_FRAMEWORK_STATE_DUMP) {
 				System.err.println();
 				System.err.println("Current Framework state is:"); //$NON-NLS-1$
 				for (Bundle bundle : bundles) {
