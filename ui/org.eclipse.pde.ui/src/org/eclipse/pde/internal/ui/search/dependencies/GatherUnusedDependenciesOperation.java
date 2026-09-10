@@ -20,12 +20,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -83,16 +83,14 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 		if (!ClasspathUtilCore.hasBundleStructure(fModel)) {
 			return;
 		}
-		Set<String> computedPackages;
+		Set<String> computedPackages = new HashSet<>();
 		try (PdeProjectAnalyzer analyzer = new PdeProjectAnalyzer(fModel.getUnderlyingResource().getProject(), true)) {
-			analyzer.setImportPackage("*"); //$NON-NLS-1$
-			analyzer.calcManifest();
-			Packages imports = analyzer.getImports();
-			if (imports == null) {
-				computedPackages = Set.of();
-			} else {
-				computedPackages = imports.keySet().stream().map(PackageRef::getFQN).collect(Collectors.toSet());
-			}
+			analyzer.analyze();
+			// Deliberately not the imports: bnd removes from those everything
+			// that a Require-Bundle entry already provides, which is exactly
+			// what is to be determined here.
+			Packages referred = analyzer.getReferred();
+			referred.keySet().stream().map(PackageRef::getFQN).forEach(computedPackages::add);
 		} catch (InterruptedException e) {
 			throw e;
 		} catch (Exception e) {
