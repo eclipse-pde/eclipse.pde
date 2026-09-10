@@ -330,14 +330,8 @@ public class ManifestUtils {
 
 	/**
 	 * Returns the EE IDs required by the bundle described by the given manifest
-	 * map. Both the legacy {@code Bundle-RequiredExecutionEnvironment} header
-	 * and {@code Require-Capability: osgi.ee} requirements are considered.
-	 *
-	 * @param manifest
-	 *            the parsed bundle manifest as map, must not be {@code null}
-	 * @return a stream of EE IDs (e.g. {@code "JavaSE-17"})
-	 * @see Constants#BUNDLE_REQUIREDEXECUTIONENVIRONMENT
-	 * @see Constants#REQUIRE_CAPABILITY
+	 * map, from both {@code Bundle-RequiredExecutionEnvironment} and
+	 * {@code Require-Capability: osgi.ee}.
 	 */
 	public static Stream<String> getRequiredExecutionEnvironments(Map<String, String> manifest) {
 		Stream<String> fromBree = parseHeader(manifest, BREE, (e, requiredEEs) -> requiredEEs.accept(e.getValue()));
@@ -365,13 +359,8 @@ public class ManifestUtils {
 	}
 
 	/**
-	 * Maps a single EE ID (e.g. {@code "JavaSE-17"}) to a JDT compiler
-	 * compliance version string, or {@code null} if the version cannot be
-	 * determined from the EE identifier.
-	 *
-	 * @param eeId
-	 *            the EE ID, may be {@code null}
-	 * @return a JDT compliance string (e.g. {@code "17"}), or {@code null}
+	 * Returns the JDT version string for a known EE ID (e.g. {@code "JavaSE-17"}
+	 * → {@code "17"}), or {@code null} if the EE is unknown or has no Java version.
 	 */
 	public static String javaVersionOfExecutionEnvironment(String eeId) {
 		Map<String, String> properties = AVAILABLE_EE_ATTRIBUTES.get(eeId);
