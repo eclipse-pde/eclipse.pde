@@ -42,6 +42,7 @@ import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WordRule;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.editors.text.SyntaxThemeConstants;
 
 /**
  * Word rule feeding the tags of a target definition to be highlighted
@@ -55,7 +56,7 @@ public class TargetPlatformTagRule extends WordRule {
 
 	private final IToken tagToken = new Token(
 			new TextAttribute(PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry()
-					.get(IGETEColorConstants.P_TAG)));
+					.get(SyntaxThemeConstants.TAG_COLOR)));
 
 	public TargetPlatformTagRule() {
 		super(new AlphanumericDetector());

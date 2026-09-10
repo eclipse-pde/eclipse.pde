@@ -18,11 +18,6 @@ import org.eclipse.ui.PlatformUI;
  */
 public class XMLColors {
 
-	public static final String TAG = "org.eclipse.e4.tools.emf.ui.color.tag"; //$NON-NLS-1$
-	public static final String STRING = "org.eclipse.e4.tools.emf.ui.color.string"; //$NON-NLS-1$
-	public static final String COMMENT = "org.eclipse.e4.tools.emf.ui.color.comment"; //$NON-NLS-1$
-	public static final String PROC_INSTR = "org.eclipse.e4.tools.emf.ui.color.procInstr"; //$NON-NLS-1$
-
 	private XMLColors() {
 	}
 

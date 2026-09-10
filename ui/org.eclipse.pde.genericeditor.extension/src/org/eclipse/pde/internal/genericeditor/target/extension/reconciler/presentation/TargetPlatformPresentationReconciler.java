@@ -37,6 +37,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.editors.text.SyntaxThemeConstants;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
 /**
@@ -96,11 +97,11 @@ public class TargetPlatformPresentationReconciler extends PresentationReconciler
 		ColorRegistry manager = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry();
 		IRule[] rules = new IRule[6];
 		rules[0] = new SingleLineRule("<?", "?>", //$NON-NLS-1$ //$NON-NLS-2$
-				new Token(new TextAttribute(manager.get(IGETEColorConstants.P_HEADER))));
+				new Token(new TextAttribute(manager.get(SyntaxThemeConstants.DIRECTIVE_COLOR))));
 		rules[1] = new SingleLineRule("\"", "\"", //$NON-NLS-1$ //$NON-NLS-2$
-				new Token(new TextAttribute(manager.get(IGETEColorConstants.P_QUOTE))));
+				new Token(new TextAttribute(manager.get(SyntaxThemeConstants.STRING_COLOR))));
 		rules[2] = new MultiLineRule("<!--", "-->", //$NON-NLS-1$ //$NON-NLS-2$
-				new Token(new TextAttribute(manager.get(IGETEColorConstants.P_COMMENT))));
+				new Token(new TextAttribute(manager.get(SyntaxThemeConstants.COMMENT_COLOR))));
 		rules[3] = new TargetPlatformTagRule();
 		rules[4] = new TargetPlatformAttributeRule();
 		rules[5] = new GeneralTagRule();
