@@ -26,6 +26,8 @@ public class PDECoreMessages extends NLS {
 
 	public static String BuildErrorReporter_cannotFindJar;
 
+	public static String BundleErrorReporter_MissingMandatoryDirective;
+
 	public static String BundleErrorReporter_ConflictingAutoModule;
 
 	public static String BundleErrorReporter_badFilter;
@@ -246,6 +248,10 @@ public class PDECoreMessages extends NLS {
 	public static String BundleValidationOperation_multiple_singletons;
 
 	public static String ManifestConsistencyChecker_buildPropertiesSubtask;
+
+	public static String AddMandatoryAttrResolution_label;
+
+	public static String AddMandatoryAttrResolution_description;
 
 	public static String BuildErrorReporter_missingEntry;
 	public static String BuildErrorReporter_missingFolder;
