@@ -39,6 +39,7 @@ import org.eclipse.pde.ui.tests.project.ProjectCreationTests;
 import org.eclipse.pde.ui.tests.runtime.AllPDERuntimeTests;
 import org.eclipse.pde.ui.tests.search.dependencies.GatherUnusedDependenciesOperationTest;
 import org.eclipse.pde.ui.tests.target.AllTargetTests;
+import org.eclipse.pde.ui.tests.util.BundleResourceLocatorTest;
 import org.eclipse.pde.ui.tests.util.PDELabelProviderTest;
 import org.eclipse.pde.ui.tests.views.log.AllLogViewTests;
 import org.eclipse.pde.ui.tests.wizards.AllNewProjectTests;
@@ -77,6 +78,7 @@ import org.junit.platform.suite.api.Suite;
 	ProjectSmartImportTest.class, //
 	GatherUnusedDependenciesOperationTest.class, //
 	PDELabelProviderTest.class, //
+	BundleResourceLocatorTest.class, //
 	ProductInfoSectionTest.class, //
 })
 public class AllPDETests {
