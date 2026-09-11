@@ -22,6 +22,7 @@ import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.ui.editors.text.SyntaxThemeConstants;
 
 public class XMLConfiguration extends SourceViewerConfiguration {
 	private XMLDoubleClickStrategy doubleClickStrategy;
@@ -55,7 +56,7 @@ public class XMLConfiguration extends SourceViewerConfiguration {
 	protected XMLTagScanner getXMLTagScanner() {
 		if (tagScanner == null) {
 			tagScanner = new XMLTagScanner();
-			tagScanner.setDefaultReturnToken(new Token(new TextAttribute(XMLColors.get(XMLColors.TAG))));
+			tagScanner.setDefaultReturnToken(new Token(new TextAttribute(XMLColors.get(SyntaxThemeConstants.TAG_COLOR))));
 		}
 		return tagScanner;
 	}
@@ -72,7 +73,7 @@ public class XMLConfiguration extends SourceViewerConfiguration {
 		reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
 		reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
 
-		NonRuleBasedDamagerRepairer ndr = new NonRuleBasedDamagerRepairer(new TextAttribute(XMLColors.get(XMLColors.COMMENT)));
+		NonRuleBasedDamagerRepairer ndr = new NonRuleBasedDamagerRepairer(new TextAttribute(XMLColors.get(SyntaxThemeConstants.COMMENT_COLOR)));
 		reconciler.setDamager(ndr, XMLPartitionScanner.XML_COMMENT);
 		reconciler.setRepairer(ndr, XMLPartitionScanner.XML_COMMENT);
 
