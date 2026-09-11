@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * Copyright (c) 2005, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -169,7 +169,7 @@ public class LaunchArgumentsHelper {
 		}
 
 		if (getAddSwtNonDisposalReportingPreference()) {
-			if (result.indexOf("-Dorg.eclipse.swt.graphics.Resource.reportNonDisposed") == -1) { //$NON-NLS-1$
+			if (!result.contains("-Dorg.eclipse.swt.graphics.Resource.reportNonDisposed")) { //$NON-NLS-1$
 				if (result.length() > 0) {
 					result += " "; //$NON-NLS-1$
 				}
@@ -177,7 +177,7 @@ public class LaunchArgumentsHelper {
 			}
 		}
 
-		if (isNativeAccessArgumentRequired() && result.indexOf("--enable-native-access") == -1) { //$NON-NLS-1$
+		if (isNativeAccessArgumentRequired() && !result.contains("--enable-native-access")) { //$NON-NLS-1$
 			if (result.length() > 0) {
 				result += " "; //$NON-NLS-1$
 			}
