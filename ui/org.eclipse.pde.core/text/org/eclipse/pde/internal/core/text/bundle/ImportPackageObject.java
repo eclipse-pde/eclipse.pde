@@ -17,11 +17,11 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
+import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.internal.build.Utils;
 import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PDEState;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.util.VersionUtil;
@@ -93,13 +93,14 @@ public class ImportPackageObject extends PackageObject {
 		}
 	}
 
+	/**
+	 * Returns whether a bundle in the target exports this package in the imported
+	 * version range.
+	 */
 	public boolean isResolved() {
-		PDEState pdeState = PDECore.getDefault().getModelManager().getState();
-		ExportPackageDescription[] exportedPackages = pdeState.getState().getExportedPackages();
-
+		State state = TargetPlatformHelper.getState();
 		VersionRange versionRange = Utils.parseVersionRange(getVersion());
-		return Arrays.stream(exportedPackages)
-				.filter(p -> p.getName().equals(getName()))
+		return Arrays.stream(state.getExportedPackages(getName()))
 				.anyMatch(p -> versionRange.includes(p.getVersion()));
 	}
 
