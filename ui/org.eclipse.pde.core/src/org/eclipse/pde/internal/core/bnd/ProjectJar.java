@@ -191,4 +191,8 @@ public class ProjectJar extends Jar {
 		}
 	}
 
+	public IFile getManifestFile() {
+		return manifestFile;
+	}
+
 }
