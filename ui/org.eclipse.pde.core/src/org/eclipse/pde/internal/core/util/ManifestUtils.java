@@ -22,12 +22,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
@@ -82,6 +84,9 @@ public class ManifestUtils {
 	public static final String MANIFEST_LIST_SEPARATOR = ",\n "; //$NON-NLS-1$
 	public static final String MANIFEST_LINE_SEPARATOR = "\n "; //$NON-NLS-1$
 	private static int MANIFEST_MAXLINE = 511;
+
+	@SuppressWarnings("deprecation")
+	private static final String BREE = Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT;
 
 	/**
 	 * Status code given to the returned core exception when a manifest file is found,
@@ -321,6 +326,51 @@ public class ManifestUtils {
 		return requirements.stream()
 				.map(requirement -> requirement.getDirectives().get(Namespace.REQUIREMENT_FILTER_DIRECTIVE))
 				.mapMulti(ManifestUtils::parseRequiredEEsFromFilter);
+	}
+
+	/**
+	 * Returns the EE IDs required by the bundle described by the given manifest
+	 * map, from both {@code Bundle-RequiredExecutionEnvironment} and
+	 * {@code Require-Capability: osgi.ee}.
+	 */
+	public static Stream<String> getRequiredExecutionEnvironments(Map<String, String> manifest) {
+		Stream<String> fromBree = parseHeader(manifest, BREE, (e, requiredEEs) -> requiredEEs.accept(e.getValue()));
+		Stream<String> fromRequirements = parseHeader(manifest, Constants.REQUIRE_CAPABILITY, (e, ees) -> {
+			if (EXECUTION_ENVIRONMENT_NAMESPACE.equals(e.getValue())) {
+				String filter = e.getDirective(Namespace.REQUIREMENT_FILTER_DIRECTIVE);
+				parseRequiredEEsFromFilter(filter, ees);
+			}
+		});
+		return Stream.concat(fromBree, fromRequirements);
+	}
+
+	private static Stream<String> parseHeader(Map<String, String> manifest, String header,
+			BiConsumer<ManifestElement, Consumer<String>> processor) {
+		try {
+			String value = manifest.get(header);
+			ManifestElement[] elements = ManifestElement.parseHeader(header, value);
+			if (elements != null) {
+				return Arrays.stream(elements).mapMulti(processor);
+			}
+		} catch (BundleException e) {
+			ILog.get().error("Failed to parse " + header + " header", e); //$NON-NLS-1$//$NON-NLS-2$
+		}
+		return Stream.empty();
+	}
+
+	/**
+	 * Returns the JDT version string for a known EE ID (e.g. {@code "JavaSE-17"}
+	 * → {@code "17"}), or {@code null} if the EE is unknown or has no Java version.
+	 */
+	public static String javaVersionOfExecutionEnvironment(String eeId) {
+		Map<String, String> properties = AVAILABLE_EE_ATTRIBUTES.get(eeId);
+		if (properties != null) {
+			return properties.get(CAPABILITY_VERSION_ATTRIBUTE);
+		} else if ("JavaSE-cldc1.1".equals(eeId)) { //$NON-NLS-1$
+			// Derived from the only JDT java version not mapped to an OSGi EE
+			return "1.1"; //$NON-NLS-1$
+		}
+		return null;
 	}
 
 	// provide fast-path for simple filters like: (&(osgi.ee=JavaSE)(version=17)

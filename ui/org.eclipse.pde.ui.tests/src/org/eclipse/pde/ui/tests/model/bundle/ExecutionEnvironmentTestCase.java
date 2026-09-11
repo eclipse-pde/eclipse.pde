@@ -14,11 +14,18 @@
 package org.eclipse.pde.ui.tests.model.bundle;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.stream.Collectors;
 
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.RequiredExecutionEnvironmentHeader;
 import org.eclipse.pde.internal.core.util.ManifestUtils;
@@ -33,6 +40,10 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 	public ExecutionEnvironmentTestCase() {
 		super(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
 	}
+
+	// TODO: Check what's duplicated and what is really necessary.
+	// Actually here we should only test the EEResolvers specific behaviour.
+	// Everything else should be tested in the existing case.
 
 	@Test
 	public void testAddExecutionEnvironmentHeader() throws Exception {
@@ -68,7 +79,7 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 		RequiredExecutionEnvironmentHeader header = getRequiredExecutionEnvironmentHeader();
 		assertNotNull(header);
 
-		String env = header.getEnvironments().get(0);
+		String env = header.getEnvironments().getFirst();
 		header.removeExecutionEnvironment(env);
 
 		TextEdit[] ops = fListener.getTextOperations();
@@ -248,6 +259,98 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 					"(| (&(version=17)(osgi.ee=JavaSE)) (&(osgi.ee=JavaSE)(version=21)) )", ees::add);
 			assertEquals(Set.of("JavaSE-17", "JavaSE-21"), ees);
 		}
+	}
+
+	@Test
+	public void testGetRequiredExecutionEnvironments_breeOnly() {
+		Map<String, String> manifest = Map.of(
+				"Bundle-RequiredExecutionEnvironment", "JavaSE-17, JavaSE-21"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertRequiredEEs(manifest, "JavaSE-17", "JavaSE-21");
+	}
+
+	@Test
+	public void testGetRequiredExecutionEnvironments_requireCapabilityOnly() {
+		Map<String, String> manifest = Map.of(
+				"Require-Capability", //$NON-NLS-1$
+				"osgi.ee;filter:=\"(&(osgi.ee=JavaSE)(version=17))\""); //$NON-NLS-1$
+		assertRequiredEEs(manifest, "JavaSE-17");
+	}
+
+	@Test
+	public void testGetRequiredExecutionEnvironments_bothHeaders() {
+		Map<String, String> manifest = Map.of(
+				"Bundle-RequiredExecutionEnvironment", "JavaSE-11", //$NON-NLS-1$ //$NON-NLS-2$
+				"Require-Capability", //$NON-NLS-1$
+				"osgi.ee;filter:=\"(&(osgi.ee=JavaSE)(version=17))\""); //$NON-NLS-1$
+		assertRequiredEEs(manifest, "JavaSE-11", "JavaSE-17");
+	}
+
+	@Test
+	public void testGetRequiredExecutionEnvironments_emptyManifest() {
+		assertRequiredEEs(Map.of());
+	}
+
+	@Test
+	public void testGetRequiredExecutionEnvironments_nonJavaSECapabilityIncluded() {
+		// getRequiredExecutionEnvironments returns all EE IDs, including non-JavaSE ones.
+		// javaVersionOfExecutionEnvironment maps OSGi/Minimum to a version too,
+		// but that version is not JavaSE-supported so ExecutionEnvironmentResolver filters it.
+		Map<String, String> manifest = Map.of(
+				"Require-Capability", //$NON-NLS-1$
+				"osgi.ee;filter:=\"(&(osgi.ee=OSGi/Minimum)(version=1.2))\""); //$NON-NLS-1$
+		List<String> ees = ManifestUtils.getRequiredExecutionEnvironments(manifest).toList();
+		assertFalse("OSGi/Minimum EE should be present in the stream", ees.isEmpty()); //$NON-NLS-1$
+		assertEquals("eeIdToJavaVersion should be 1.2 even for non-JavaSE EE", "1.2", //$NON-NLS-1$
+				ManifestUtils.javaVersionOfExecutionEnvironment(ees.getFirst()));
+	}
+
+	@Test
+	public void testGetRequiredExecutionEnvironments_orFilterYieldsBothEEs() {
+		Map<String, String> manifest = Map.of(
+				"Require-Capability", //$NON-NLS-1$
+				"osgi.ee;filter:=\"(|(&(osgi.ee=JavaSE)(version=17))(&(osgi.ee=JavaSE)(version=21)))\""); //$NON-NLS-1$
+		assertRequiredEEs(manifest, "JavaSE-17", "JavaSE-21");
+	}
+
+	private void assertRequiredEEs(Map<String, String> manifest, String... expectedEEs) {
+		Set<String> actualEEs = ManifestUtils.getRequiredExecutionEnvironments(manifest).collect(Collectors.toSet());
+		assertEquals(Set.of(expectedEEs), actualEEs);
+	}
+
+	@Test
+	public void testEeIdToJavaVersion_standardVersions() {
+		assertEquals("17", ManifestUtils.javaVersionOfExecutionEnvironment("JavaSE-17")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("21", ManifestUtils.javaVersionOfExecutionEnvironment("JavaSE-21")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("1.8", ManifestUtils.javaVersionOfExecutionEnvironment("JavaSE-1.8")); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	@Test
+	public void testEeIdToJavaVersion_unknownReturnsNull() {
+		assertNull(ManifestUtils.javaVersionOfExecutionEnvironment("garbage")); //$NON-NLS-1$
+		assertNull(ManifestUtils.javaVersionOfExecutionEnvironment(null));
+		assertNull(ManifestUtils.javaVersionOfExecutionEnvironment("")); //$NON-NLS-1$
+		assertEquals("1.2", ManifestUtils.javaVersionOfExecutionEnvironment("OSGi/Minimum-1.2")); //$NON-NLS-1$
+		assertEquals("1.1", ManifestUtils.javaVersionOfExecutionEnvironment("CDC-1.1/Foundation-1.1")); //$NON-NLS-1$
+
+	}
+
+	@Test
+	public void testEeIdToJavaVersion_allSupportedVersions() {
+		SortedSet<String> supported = JavaCore.getAllJavaSourceVersionsSupportedByCompiler();
+		for (String version : supported) {
+			assertEquals("JavaSE-" + version + " should map to " + version, //$NON-NLS-1$ //$NON-NLS-2$
+					version, ManifestUtils.javaVersionOfExecutionEnvironment("JavaSE-" + version)); //$NON-NLS-1$
+		}
+	}
+
+	@Test
+	public void testEeIdToJavaVersion_unsupportedVersionsStillReturnVersion() {
+		// eeIdToJavaVersion extracts the version string without checking
+		// compiler support
+
+		assertEquals("1.6", ManifestUtils.javaVersionOfExecutionEnvironment("JavaSE-1.6")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("1.7", ManifestUtils.javaVersionOfExecutionEnvironment("JavaSE-1.7")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNull(ManifestUtils.javaVersionOfExecutionEnvironment("JavaSE-99999")); //$NON-NLS-1$
 	}
 
 	private RequiredExecutionEnvironmentHeader getRequiredExecutionEnvironmentHeader() {
