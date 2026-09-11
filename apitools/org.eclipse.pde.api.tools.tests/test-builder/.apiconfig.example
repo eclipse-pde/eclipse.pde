@@ -1,0 +1,40 @@
+# Example .apiconfig file for Eclipse API Tools
+# This file configures how version increments are handled for OSGi bundles
+
+# Version Increment Rules
+# -----------------------
+# Format: <segment>.version.increment = <target_segment>+<amount>
+# Where:
+#   - segment: major, minor, or micro
+#   - target_segment: major, minor, or micro (which segment to actually increment)
+#   - amount: positive integer (how much to increment by)
+
+# Example: Eclipse Platform doesn't use major version increments
+# When a major change is detected, increment minor version instead
+major.version.increment = minor+1
+
+# Standard minor version increment
+minor.version.increment = minor+1
+
+# Micro version increments by 100 (common pattern for service releases)
+micro.version.increment = micro+100
+
+
+# Error Handling Mode
+# -------------------
+# Format: <segment>.version.error = error|warning|ignore|filter
+# Where:
+#   - error: Report as error (default)
+#   - warning: Report as warning
+#   - ignore: Don't report
+#   - filter: Automatically create an API filter with comment
+
+# Auto-generate filters for major version problems
+# (useful when you've decided your policy doesn't use major versions)
+major.version.error = filter
+
+# Report minor version issues as errors (default behavior)
+minor.version.error = error
+
+# Report micro version issues as warnings
+micro.version.error = warning
