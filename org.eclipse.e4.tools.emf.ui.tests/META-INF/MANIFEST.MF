@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: EMF UI Test-Fragment
+Bundle-SymbolicName: org.eclipse.e4.tools.emf.ui.tests
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Eclipse.org
+Fragment-Host: org.eclipse.e4.tools.emf.ui
+Automatic-Module-Name: org.eclipse.e4.tools.emf.ui.tests
+Bundle-RequiredExecutionEnvironment: JavaSE-21
+Import-Package: org.junit.jupiter.api;version="[5.14.3,6.0.0)"
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.ui.ide,
+ org.eclipse.e4.tools.emf.editor3x
