@@ -67,10 +67,23 @@ public final class GatherUnusedDependenciesTestUtils {
 	}
 
 	public static IProject createJavaPluginProject(String symbolicName) throws Exception {
+		return createJavaPluginProject(symbolicName, null, false);
+	}
+
+	public static IProject createJavaPluginProject(String symbolicName, String hostSymbolicName) throws Exception {
+		return createJavaPluginProject(symbolicName, hostSymbolicName, false);
+	}
+
+	public static IProject createJavaPluginProject(String symbolicName, String hostSymbolicName, boolean singleton)
+			throws Exception {
 		IBundleProjectService service = acquireBundleProjectService();
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(symbolicName);
 		IBundleProjectDescription description = service.getDescription(project);
 		description.setSymbolicName(symbolicName);
+		description.setSingleton(singleton);
+		if (hostSymbolicName != null) {
+			description.setHost(service.newHost(hostSymbolicName, (VersionRange) null));
+		}
 		description.setNatureIds(new String[] { IBundleProjectDescription.PLUGIN_NATURE, JavaCore.NATURE_ID });
 		IBundleClasspathEntry classpathEntry = service.newBundleClasspathEntry(IPath.fromOSString("src"), null,
 				IPath.fromOSString("."));
