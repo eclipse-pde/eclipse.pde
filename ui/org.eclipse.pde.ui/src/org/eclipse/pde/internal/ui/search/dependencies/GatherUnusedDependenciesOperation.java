@@ -106,6 +106,9 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 		} catch (Exception e) {
 			throw new InvocationTargetException(e);
 		}
+		// the byte code does not refer to the types that the extensions
+		// reference, so their packages have to be added to the computed ones
+		computedPackages.addAll(ExtensionPackageFinder.findPackagesInExtensions(fModel));
 		ImportPackageObject[] packages = null;
 		IBundle bundle = ((IBundlePluginModelBase) fModel).getBundleModel().getBundle();
 		IManifestHeader header = bundle.getManifestHeader(Constants.IMPORT_PACKAGE);

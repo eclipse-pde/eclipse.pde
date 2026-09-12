@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
@@ -67,10 +68,23 @@ public final class GatherUnusedDependenciesTestUtils {
 	}
 
 	public static IProject createJavaPluginProject(String symbolicName) throws Exception {
+		return createJavaPluginProject(symbolicName, null, false);
+	}
+
+	public static IProject createJavaPluginProject(String symbolicName, String hostSymbolicName) throws Exception {
+		return createJavaPluginProject(symbolicName, hostSymbolicName, false);
+	}
+
+	public static IProject createJavaPluginProject(String symbolicName, String hostSymbolicName, boolean singleton)
+			throws Exception {
 		IBundleProjectService service = acquireBundleProjectService();
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(symbolicName);
 		IBundleProjectDescription description = service.getDescription(project);
 		description.setSymbolicName(symbolicName);
+		description.setSingleton(singleton);
+		if (hostSymbolicName != null) {
+			description.setHost(service.newHost(hostSymbolicName, (VersionRange) null));
+		}
 		description.setNatureIds(new String[] { IBundleProjectDescription.PLUGIN_NATURE, JavaCore.NATURE_ID });
 		IBundleClasspathEntry classpathEntry = service.newBundleClasspathEntry(IPath.fromOSString("src"), null,
 				IPath.fromOSString("."));
@@ -141,6 +155,19 @@ public final class GatherUnusedDependenciesTestUtils {
 
 				%s""".formatted(packageName, body);
 		javaFile.create(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)), true, null);
+	}
+
+	public static void createFile(IProject project, IPath path, String content) throws CoreException {
+		IContainer container = project;
+		for (String segment : path.removeLastSegments(1).segments()) {
+			IFolder folder = container.getFolder(IPath.fromOSString(segment));
+			if (!folder.exists()) {
+				folder.create(true, true, null);
+			}
+			container = folder;
+		}
+		IFile file = container.getFile(IPath.fromOSString(path.lastSegment()));
+		file.create(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)), true, null);
 	}
 
 	private static IBundleProjectService acquireBundleProjectService() {
