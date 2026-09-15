@@ -31,6 +31,9 @@ import org.junit.Test;
 /** Tests for {@link ExecutionEnvironmentResolver}. */
 public class ExecutionEnvironmentResolverTest {
 
+	private static final String MINIMALLY_SUPPORTED_JAVA_VERSION = JavaCore
+			.getAllJavaSourceVersionsSupportedByCompiler().first();
+
 	@Test
 	public void testNullManifestReturnsLatestSupported() {
 		assertEquals(JavaCore.latestSupportedJavaVersion(), ExecutionEnvironmentResolver.resolveCompliance(null));
@@ -53,9 +56,10 @@ public class ExecutionEnvironmentResolverTest {
 
 	@Test
 	public void testUnsupportedBreeVersionFallsBackToLatest() {
+
 		for (String old : new String[] { "J2SE-1.4", "J2SE-1.5", "JavaSE-1.6", "JavaSE-1.7" }) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			assertEquals("Unsupported BREE " + old, //$NON-NLS-1$
-					JavaCore.latestSupportedJavaVersion(),
+					MINIMALLY_SUPPORTED_JAVA_VERSION,
 					ExecutionEnvironmentResolver.resolveCompliance(breeManifest(old)));
 		}
 	}

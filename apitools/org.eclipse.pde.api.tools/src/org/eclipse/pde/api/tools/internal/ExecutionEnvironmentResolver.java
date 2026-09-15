@@ -29,10 +29,18 @@ import org.eclipse.pde.internal.core.util.ManifestUtils;
  * {@code Require-Capability: osgi.ee} headers. Returns the highest version
  * among all stated EEs so the JDT parser can handle all required syntax.
  *
+ * If an ee version is no longer supported by the JDT compiler, the version is
+ * increased to the minimal supported version. For example, if the manifest
+ * states "JavaSE-1.6" and the JDT compiler only supports 1.8 and above, the
+ * returned version will be 1.8.
+ *
  * If there is no supported EE, the latest supported version is returned and a
  * warning is logged.
  */
 public class ExecutionEnvironmentResolver {
+
+	private static final String MINIMALLY_SUPPORTED_JAVA_VERSION = JavaCore
+			.getAllJavaSourceVersionsSupportedByCompiler().first();
 
 	private static final String LATEST_SUPPORTED_JAVA_VERSION = JavaCore.latestSupportedJavaVersion();
 
@@ -47,7 +55,7 @@ public class ExecutionEnvironmentResolver {
 		try {
 			Optional<String> highestEE = ManifestUtils.getRequiredExecutionEnvironments(manifestMap)
 					.map(ManifestUtils::javaVersionOfExecutionEnvironment).filter(Objects::nonNull)
-					.filter(JavaCore::isJavaSourceVersionSupportedByCompiler)
+					.map(ExecutionEnvironmentResolver::increaseToMinimumSupportedVersion)
 					.max(JavaCore::compareJavaVersions);
 			if (highestEE.isPresent()) {
 				return highestEE.get();
@@ -57,6 +65,12 @@ public class ExecutionEnvironmentResolver {
 		}
 		return useLatestSupportedVersion(
 				"ExecutionEnvironmentResolver: unknown or unsupported execution environment in manifest"); //$NON-NLS-1$
+	}
+
+	private static String increaseToMinimumSupportedVersion(String version) {
+		return JavaCore.compareJavaVersions(version, MINIMALLY_SUPPORTED_JAVA_VERSION) < 0
+				? MINIMALLY_SUPPORTED_JAVA_VERSION
+				: version;
 	}
 
 	private static String useLatestSupportedVersion(String msg) {
