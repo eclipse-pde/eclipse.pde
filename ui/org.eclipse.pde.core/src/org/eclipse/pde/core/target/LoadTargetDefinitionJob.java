@@ -29,7 +29,6 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.internal.core.EclipseHomeInitializer;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.core.target.Messages;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.pde.internal.core.target.TargetResolveSchedulingRule;
@@ -133,19 +132,9 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 			subMon.checkCanceled();
 			subMon.setWorkRemaining(20);
 
-			PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
-
-			((TargetPlatformService) TargetPlatformService.getDefault()).setWorkspaceTargetDefinition(fTarget, false); // Must be set before preference so listeners can react
-			String memento = fTarget.getHandle().getMemento();
-			if (fNone) {
-				memento = ICoreConstants.NO_TARGET;
-			}
-			// If the same target has been modified, clear the preference so listeners can react to the change
-			if (memento.equals(preferences.getString(ICoreConstants.WORKSPACE_TARGET_HANDLE))) {
-				preferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, ""); //$NON-NLS-1$
-			}
-			preferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, memento);
-
+			String memento = fNone ? ICoreConstants.NO_TARGET : fTarget.getHandle().getMemento();
+			((TargetPlatformService) TargetPlatformService.getDefault()).setWorkspaceTargetDefinition(fTarget, memento,
+					false);
 
 			loadJRE(subMon.split(3));
 
