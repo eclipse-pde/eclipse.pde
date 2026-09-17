@@ -19,7 +19,11 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
@@ -31,6 +35,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -376,6 +381,30 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 		getTablePart().setButtonEnabled(1, fInternalButton.getSelection() && isEditable());
 		fFriendViewer.setInput(object);
 		fBlockChanges = false;
+		getSection().setDescription(description(objects));
+	}
+
+	private String description(ExportPackageObject[] packages) {
+		List<String> names = names(packages);
+		switch (names.size()) {
+			case 0: {
+				return PDEUIMessages.ExportPackageVisibilitySection_default;
+			}
+			case 1: {
+				return NLS.bind(PDEUIMessages.ExportPackageVisibilitySection_one, names.get(0));
+			}
+			default:
+				return NLS.bind(PDEUIMessages.ExportPackageVisibilitySection_many,
+						names.stream().collect(Collectors.joining(", "))); //$NON-NLS-1$
+		}
+
+	}
+
+	private List<String> names(ExportPackageObject[] packages) {
+		if (packages == null) {
+			return Collections.emptyList();
+		}
+		return Arrays.stream(packages).filter(Objects::nonNull).map(ExportPackageObject::getName).toList();
 	}
 
 	private BundleInputContext getBundleContext() {
