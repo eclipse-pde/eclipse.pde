@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2017 Red Hat Inc., and others
+ * Copyright (c) 2014, 2026 Red Hat Inc., and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,8 @@
 package org.eclipse.pde.internal.ui.wizards;
 
 import java.io.File;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
@@ -62,6 +64,12 @@ public class FeatureProjectConfigurator implements ProjectConfigurator {
 	@Override
 	public Set<IFolder> getFoldersToIgnore(IProject project, IProgressMonitor monitor) {
 		return null;
+	}
+
+	@Override
+	public void removeDirtyDirectories(Map<File, List<ProjectConfigurator>> proposals) {
+		BundleProjectConfigurator.removeProposalsNestedIn(proposals,
+				directory -> new File(directory, ICoreConstants.FEATURE_FILENAME_DESCRIPTOR).isFile());
 	}
 
 	@Override
