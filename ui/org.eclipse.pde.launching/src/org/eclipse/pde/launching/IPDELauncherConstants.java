@@ -585,7 +585,7 @@ public interface IPDELauncherConstants {
 	 * the <code>-console</code> argument should be added when launching.
 	 * When set to <code>true</code>, the application will be started with
 	 * console support enabled.
-	 * 
+	 *
 	 * @since 3.14
 	 */
 	String ADD_CONSOLE = "add_console"; //$NON-NLS-1$
