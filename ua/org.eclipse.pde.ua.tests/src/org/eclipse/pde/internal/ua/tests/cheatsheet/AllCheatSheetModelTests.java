@@ -13,11 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ua.tests.cheatsheet;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({ SimpleCSIntroTestCase.class, SimpleCSItemTestCase.class, SimpleCSSubItemTestCase.class,
+@Suite
+@SelectClasses({ SimpleCSIntroTestCase.class, SimpleCSItemTestCase.class, SimpleCSSubItemTestCase.class,
 		SimpleCSItemAPITestCase.class, SimpleCSSubItemAPITestCase.class })
 public class AllCheatSheetModelTests {
 }
