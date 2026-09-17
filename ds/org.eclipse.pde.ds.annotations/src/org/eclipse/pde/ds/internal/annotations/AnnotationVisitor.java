@@ -239,7 +239,8 @@ public class AnnotationVisitor extends ASTVisitor {
 					|| (isAbstract = Modifier.isAbstract(type.getModifiers()))
 					|| (isNested = (!type.isPackageMemberTypeDeclaration() && !isNestedPublicStatic(type)))
 					|| (noDefaultConstructor = !(hasDefaultConstructor(type)
-							|| (hasInjectableConstructor = hasInjectableConstructor(type, problemReporter))))) {
+							|| (hasInjectableConstructor = hasInjectableConstructor(type,
+									DSAnnotationVersion.V1_4.isEqualOrHigherThan(specVersion)))))) {
 				// interfaces, abstract types, non-static/non-public nested types, or types with no default constructor cannot be components
 				if (!errorLevel.isIgnore()) {
 					if (isInterface) {
@@ -249,11 +250,18 @@ public class AnnotationVisitor extends ASTVisitor {
 					} else if (isNested) {
 						problemReporter.reportProblem(annotation, null, NLS.bind(Messages.AnnotationProcessor_invalidCompImplClass_notTopLevel, type.getName().getIdentifier()), type.getName().getIdentifier());
 					} else if (noDefaultConstructor) {
-						if (specVersion.isEqualOrHigherThan(DSAnnotationVersion.V1_4)) {
-							problemReporter.reportProblem(annotation, null,
-									NLS.bind(Messages.AnnotationProcessor_invalidCompImplClass_compatibleConstructor,
-											type.getName().getIdentifier()),
-									type.getName().getIdentifier());
+						if (DSAnnotationVersion.V1_4.isEqualOrHigherThan(specVersion)) {
+							if (hasInjectableConstructor(type, false)) {
+								problemReporter.reportProblem(annotation, null,
+										NLS.bind(Messages.AnnotationProcessor_invalidConstructorNotPublic,
+												type.getName().getIdentifier()),
+										type.getName().getIdentifier());
+							} else {
+								problemReporter.reportProblem(annotation, null,
+										NLS.bind(Messages.AnnotationProcessor_invalidCompImplClass_compatibleConstructor,
+												type.getName().getIdentifier()),
+										type.getName().getIdentifier());
+							}
 						} else {
 							if (hasInjectableConstructor) {
 								// TODO we should add an error marker that offers a quickfix to upgrade the spec
@@ -2214,15 +2222,18 @@ public class AnnotationVisitor extends ASTVisitor {
 	}
 
 	/**
-	 * An injectable constructor is one annotated with <code>@Activate</code>
-	 *
+	 * An injectable constructor is one annotated with <code>@Activate</code> This
+	 * also checks whether the constructor is public as only public constructors are
+	 * considered for constructor injection.
+	 * 
 	 * @param type
-	 * @param problemReporter2
+	 * @param requirePublic
 	 * @return
 	 */
-	private static boolean hasInjectableConstructor(TypeDeclaration type, ProblemReporter problemReporter) {
+	private static boolean hasInjectableConstructor(TypeDeclaration type, boolean requirePublic) {
 		for (MethodDeclaration method : type.getMethods()) {
 			if (method.isConstructor()
+					&& (!requirePublic || Modifier.isPublic(method.getModifiers()))
 					&& annotations(method.modifiers()).map(Annotation::resolveAnnotationBinding)
 							.anyMatch(AnnotationVisitor::isActivateAnnotation)) {
 				return true;
