@@ -47,6 +47,7 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 
 	private Button fRemoveUnresolved;
 	private Button fCalculateUses;
+	private Button fUpdateHeader;
 	private Button fAddMissing;
 	private Button fMarkInternal;
 	private Text fPackageFilter;
@@ -164,6 +165,13 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 		gd = new GridData();
 		gd.verticalIndent = 5;
 		fCalculateUses.setLayoutData(gd);
+
+		// issue-1816
+		fUpdateHeader = new Button(group, SWT.CHECK);
+		fUpdateHeader.setText(PDEUIMessages.OrganizeManifestsWizardPage_updateHeader);
+		gd = new GridData();
+		gd.verticalIndent = 5;
+		fUpdateHeader.setLayoutData(gd);
 	}
 
 	private void createRequireImportGroup(Composite container) {
@@ -241,6 +249,10 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 		fCalculateUses.setSelection(selection);
 		fProcessor.setCalculateUses(selection);
 
+		selection = settings.getBoolean(PROP_UPDATE_HEADER);
+		fUpdateHeader.setSelection(selection);
+		fProcessor.setUpdateHeader(selection);
+
 		selection = !settings.getBoolean(PROP_MODIFY_DEP);
 		fModifyDependencies.setSelection(selection);
 		fProcessor.setModifyDep(selection);
@@ -290,6 +302,7 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 		settings.put(PROP_INTERAL_PACKAGE_FILTER, fPackageFilter.getText());
 		settings.put(PROP_REMOVE_UNRESOLVED_EX, !fRemoveUnresolved.getSelection());
 		settings.put(PROP_CALCULATE_USES, fCalculateUses.getSelection());
+		settings.put(PROP_UPDATE_HEADER, fUpdateHeader.getSelection());
 
 		settings.put(PROP_MODIFY_DEP, !fModifyDependencies.getSelection());
 		settings.put(PROP_RESOLVE_IMP_MARK_OPT, fOptionalImport.getSelection());
@@ -318,7 +331,7 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 	private void setButtonArrays() {
 		fTopLevelButtons = new Button[] { fRemoveUnresolved, fAddMissing, fModifyDependencies, fMarkInternal,
 				fUnusedDependencies, fAdditonalDependencies, fComputeImportPackages, fFixIconNLSPaths,
-				fRemovedUnusedKeys, fRemoveLazy, fRemoveUselessFiles, fCalculateUses };
+				fRemovedUnusedKeys, fRemoveLazy, fRemoveUselessFiles, fCalculateUses, fUpdateHeader };
 	}
 
 	private void setPageComplete() {
@@ -360,6 +373,8 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 			fProcessor.setRemoveUnresolved(fRemoveUnresolved.getSelection());
 		} else if (fCalculateUses.equals(source)) {
 			fProcessor.setCalculateUses(fCalculateUses.getSelection());
+		} else if (fUpdateHeader.equals(source)) {
+			fProcessor.setUpdateHeader(fUpdateHeader.getSelection());
 		} else if (fModifyDependencies.equals(source)) {
 			fProcessor.setModifyDep(fModifyDependencies.getSelection());
 		} else if (fOptionalImport.equals(source)) {
