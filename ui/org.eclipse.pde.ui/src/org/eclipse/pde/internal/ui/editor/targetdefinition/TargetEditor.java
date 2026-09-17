@@ -46,7 +46,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.ControlContribution;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.text.DocumentEvent;
@@ -80,9 +79,7 @@ import org.eclipse.pde.internal.ui.shared.target.ITargetChangedListener;
 import org.eclipse.pde.internal.ui.shared.target.TargetContentsGroup;
 import org.eclipse.pde.internal.ui.shared.target.TargetLocationsGroup;
 import org.eclipse.pde.internal.ui.wizards.exports.TargetDefinitionExportWizard;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
@@ -97,14 +94,10 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.forms.AbstractFormPart;
-import org.eclipse.ui.forms.HyperlinkGroup;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
-import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.progress.UIJob;
@@ -133,7 +126,7 @@ public class TargetEditor extends FormEditor {
 	private TargetChangedListener fTargetChangedListener;
 	private boolean fDirty;
 
-	private ImageHyperlink fLoadHyperlink;
+	private Action fLoadTargetAction;
 
 	private final EventHandler fEventHandler = this::handleBrokerEvent;
 	private StatePage statePage;
@@ -370,69 +363,30 @@ public class TargetEditor extends FormEditor {
 	}
 
 	public void contributeToToolbar(final ScrolledForm form, String contextID) {
-		ControlContribution setAsTarget = new ControlContribution("Set") { //$NON-NLS-1$
-
+		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
+		String memento = null;
+		String tooltipText = PDEUIMessages.AbstractTargetPage_setTarget;
+		String mementoPref = preferences.getString(ICoreConstants.WORKSPACE_TARGET_HANDLE);
+		try {
+			memento = getTarget().getHandle().getMemento();
+		} catch (CoreException e) {
+		}
+		if (mementoPref != null && memento != null && memento.equals(mementoPref)) {
+			tooltipText = PDEUIMessages.AbstractTargetPage_reloadTarget;
+		}
+		fLoadTargetAction = new Action("loadTarget") { //$NON-NLS-1$
 			@Override
-			protected Control createControl(Composite parent) {
-				PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
-				String memento = null;
-				String hyperLinkText = PDEUIMessages.AbstractTargetPage_setTarget;
-				String mementoPref = preferences.getString(ICoreConstants.WORKSPACE_TARGET_HANDLE);
-				try {
-					memento = getTarget().getHandle().getMemento();
-				} catch (CoreException e) {
+			public void run() {
+				IEditorPart editorPart = TargetEditor.this;
+				IWorkbenchPage page = editorPart.getSite().getPage();
+				if (TargetEditor.this.isDirty()) {
+					page.saveEditor(editorPart, true);
 				}
-				if (mementoPref != null && memento != null) {
-					if (memento.equals(mementoPref)) {
-						hyperLinkText = PDEUIMessages.AbstractTargetPage_reloadTarget;
-					}
-				}
-				fLoadHyperlink = new ImageHyperlink(parent, SWT.NONE | SWT.NO_FOCUS);
-				fLoadHyperlink.setText(hyperLinkText);
-				fLoadHyperlink.setUnderlined(true);
-				fLoadHyperlink.setForeground(getToolkit().getHyperlinkGroup().getForeground());
-				fLoadHyperlink.addHyperlinkListener(new IHyperlinkListener() {
-					@Override
-					public void linkActivated(HyperlinkEvent e) {
-						IEditorPart editorPart = TargetEditor.this;
-						IWorkbenchPage page = editorPart.getSite().getPage();
-						if (TargetEditor.this.isDirty()) {
-							page.saveEditor(editorPart, true);
-						}
-						ITargetDefinition target = getTarget();
-						LoadTargetDefinitionJob.load(target);
-					}
-
-					@Override
-					public void linkEntered(HyperlinkEvent e) {
-						HyperlinkGroup hyperlinkGroup = getHyperlinkGroup();
-
-						if (hyperlinkGroup != null) {
-							fLoadHyperlink.setForeground(hyperlinkGroup.getActiveForeground());
-						}
-					}
-
-					@Override
-					public void linkExited(HyperlinkEvent e) {
-						HyperlinkGroup hyperlinkGroup = getHyperlinkGroup();
-
-						if (hyperlinkGroup != null) {
-							fLoadHyperlink.setForeground(hyperlinkGroup.getForeground());
-						}
-					}
-
-					private HyperlinkGroup getHyperlinkGroup() {
-						FormToolkit toolkit = getToolkit();
-						HyperlinkGroup hyperlinkGroup = null;
-						if (toolkit != null) {
-							hyperlinkGroup = toolkit.getHyperlinkGroup();
-						}
-						return hyperlinkGroup;
-					}
-				});
-				return fLoadHyperlink;
+				LoadTargetDefinitionJob.load(getTarget());
 			}
 		};
+		fLoadTargetAction.setImageDescriptor(PDEPluginImages.DESC_REFRESH);
+		fLoadTargetAction.setToolTipText(tooltipText);
 
 		final String helpContextID = contextID;
 		Action help = new Action("help") { //$NON-NLS-1$
@@ -466,7 +420,7 @@ public class TargetEditor extends FormEditor {
 		openTPPreference.setToolTipText(PDEUIMessages.AbstractTargetPage_openPreferences);
 		openTPPreference.setImageDescriptor(PDEPluginImages.DESC_SETTINGS_OBJ);
 
-		form.getToolBarManager().add(setAsTarget);
+		form.getToolBarManager().add(fLoadTargetAction);
 		form.getToolBarManager().add(export);
 		form.getToolBarManager().add(openTPPreference);
 		form.getToolBarManager().add(help);
@@ -757,9 +711,13 @@ public class TargetEditor extends FormEditor {
 		}
 	}
 
-	private void updateHyperlinkText(String s) {
-		if (fLoadHyperlink != null && !fLoadHyperlink.isDisposed()) {
-			fLoadHyperlink.setText(s);
+	private void updateLoadTargetAction(boolean isCurrent) {
+		if (fLoadTargetAction != null) {
+			fLoadTargetAction.setToolTipText(isCurrent ? PDEUIMessages.AbstractTargetPage_reloadTarget
+					: PDEUIMessages.AbstractTargetPage_setTarget);
+			fLoadTargetAction.setImageDescriptor(
+					isCurrent ? PDEPluginImages.DESC_REFRESH : PDEPluginImages.DESC_TARGET_DEFINITION);
+			fManagedFormPages.forEach(mf -> mf.getForm().getToolBarManager().update(true));
 		}
 		ITextViewer viewer = fTextualEditor.getAdapter(ITextViewer.class);
 		if (viewer instanceof ISourceViewerExtension5 extension5) {
@@ -784,9 +742,7 @@ public class TargetEditor extends FormEditor {
 		ITargetHandle changedHandle = workspaceTarget.getHandle();
 		try {
 			final boolean isCurrent = Objects.equals(editorHandle.getMemento(), changedHandle.getMemento());
-			final String label = isCurrent ? PDEUIMessages.AbstractTargetPage_reloadTarget
-					: PDEUIMessages.AbstractTargetPage_setTarget;
-			Display.getDefault().asyncExec(() -> updateHyperlinkText(label));
+			Display.getDefault().asyncExec(() -> updateLoadTargetAction(isCurrent));
 		} catch (CoreException e) {
 			PDECore.log(e.getStatus());
 		}
