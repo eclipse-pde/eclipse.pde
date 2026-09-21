@@ -17,9 +17,6 @@
 
 IEclipsePreferences#org-eclipse-pde-ui:org-eclipse-pde-ui {
 	preferences:
-		'editor.color.default=217,232,247'
-		'editor.color.externalized_string=140,210,20'
-		'editor.color.externalized_string_italic=true'
 		'editor.color.header_assignment=103,207,241'
 		'editor.color.header_assignment_bold=true'
 		'editor.color.header_attributes=140,210,20'
@@ -28,11 +25,9 @@ IEclipsePreferences#org-eclipse-pde-ui:org-eclipse-pde-ui {
 		'editor.color.header_osgi=38,139,210'
 		'editor.color.header_value=23,198,163'
 		'editor.color.header_value_italic=true'
-		'editor.color.instr=221,40,103'
-		'editor.color.instr_bold=true'
-		'editor.color.string=23,198,163'
-		'editor.color.string_italic=true'
-		'editor.color.tag=38,139,210'
-		'editor.color.tag_bold=true'
-		'editor.color.xml_comment=98,98,98'
+}
+
+IEclipsePreferences#org-eclipse-ui-workbench:org-eclipse-pde-ui {
+	preferences:
+		'org.eclipse.pde.ui.externalizedStringColor=140,210,20'
 }

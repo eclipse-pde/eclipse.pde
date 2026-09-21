@@ -1421,6 +1421,16 @@
             %fontDefinition.description.1
          </description>
        </fontDefinition>
+       <colorDefinition
+            categoryId="org.eclipse.editors.syntaxColors"
+            id="org.eclipse.pde.ui.externalizedStringColor"
+            isEditable="true"
+            label="%colorDefinition.externalizedString.label"
+            value="128,0,128">
+         <description>
+            %colorDefinition.externalizedString.description
+         </description>
+       </colorDefinition>
     </extension>
    <extension
           point="org.eclipse.ui.perspectiveExtensions">

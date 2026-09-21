@@ -49,12 +49,6 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 	}
 
 	public static void initializeDefaults(IPreferenceStore store) {
-		setDefault(store, P_DEFAULT, DEFAULT);
-		setDefault(store, P_PROC_INSTR, PROC_INSTR);
-		setDefault(store, P_STRING, STRING);
-		setDefault(store, P_EXTERNALIZED_STRING, EXTERNALIZED_STRING);
-		setDefault(store, P_TAG, TAG);
-		setDefault(store, P_XML_COMMENT, XML_COMMENT);
 		setDefault(store, P_HEADER_KEY, HEADER_KEY);
 		setDefault(store, P_HEADER_OSGI, HEADER_OSGI);
 		store.setDefault(P_HEADER_OSGI + IPDEColorConstants.P_BOLD_SUFFIX, true);
@@ -69,7 +63,6 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 			Display display = PlatformUI.getWorkbench().getDisplay();
 			Runnable runnable = () -> {
 				if (!display.isDisposed() && display.getHighContrast()) {
-					setDefault(store, P_DEFAULT, DEFAULT_HIGH_CONTRAST);
 					setDefault(store, P_HEADER_VALUE, HEADER_VALUE_HIGH_CONTRAST);
 					setDefault(store, P_HEADER_ATTRIBUTES, HEADER_ASSIGNMENT_HIGH_CONTRAST);
 				}
@@ -86,12 +79,6 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 
 	private void initialize() {
 		IPreferenceStore pstore = PDEPlugin.getDefault().getPreferenceStore();
-		putColor(pstore, P_DEFAULT);
-		putColor(pstore, P_PROC_INSTR);
-		putColor(pstore, P_STRING);
-		putColor(pstore, P_EXTERNALIZED_STRING);
-		putColor(pstore, P_TAG);
-		putColor(pstore, P_XML_COMMENT);
 		putColor(pstore, P_HEADER_KEY);
 		putColor(pstore, P_HEADER_OSGI);
 		putColor(pstore, P_HEADER_VALUE);

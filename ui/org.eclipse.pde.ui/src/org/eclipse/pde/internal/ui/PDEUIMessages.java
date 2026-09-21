@@ -1681,11 +1681,6 @@ public class PDEUIMessages extends NLS {
 	public static String BaseExtensionPointMainPage_schemaLocation_title;
 	public static String BaseExtensionPointMainPage_schemaLocation_desc;
 	public static String EditorPreferencePage_colorSettings;
-	public static String EditorPreferencePage_text;
-	public static String EditorPreferencePage_proc;
-	public static String EditorPreferencePage_string;
-	public static String EditorPreferencePage_tag;
-	public static String EditorPreferencePage_comment;
 	public static String PluginContentPage_yes;
 
 	//Search Page###############################
@@ -2755,7 +2750,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String SyntaxColorTab_preview;
 
-	public static String EditorPreferencePage_xml;
 
 	public static String EditorPreferencePage_manifest;
 
@@ -3360,7 +3354,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String XMLContentAssistProcessor_extPointName;
 
-	public static String XMLSyntaxColorTab_externalizedStrings;
 
 	public static String XMLContentAssistProcessor_schemaLocation;
 
