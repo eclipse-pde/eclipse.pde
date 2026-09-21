@@ -39,7 +39,6 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 
 public class EditorPreferencePage extends PreferencePage implements IWorkbenchPreferencePage, IPreferenceConstants {
 
-	private XMLSyntaxColorTab fXMLTab;
 	private ManifestSyntaxColorTab fManifestTab;
 	private final ColorManager fColorManager;
 
@@ -50,7 +49,6 @@ public class EditorPreferencePage extends PreferencePage implements IWorkbenchPr
 
 	@Override
 	public boolean performOk() {
-		fXMLTab.performOk();
 		fManifestTab.performOk();
 		PDEPlugin.getDefault().getPreferenceManager().savePluginPreferences();
 		return super.performOk();
@@ -58,14 +56,12 @@ public class EditorPreferencePage extends PreferencePage implements IWorkbenchPr
 
 	@Override
 	public void dispose() {
-		fXMLTab.dispose();
 		fManifestTab.dispose();
 		super.dispose();
 	}
 
 	@Override
 	protected void performDefaults() {
-		fXMLTab.performDefaults();
 		fManifestTab.performDefaults();
 		super.performDefaults();
 	}
@@ -101,20 +97,12 @@ public class EditorPreferencePage extends PreferencePage implements IWorkbenchPr
 		folder.setLayout(new TabFolderLayout());
 		folder.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		createXMLTab(folder);
 		createManifestTab(folder);
 
 		Dialog.applyDialogFont(getControl());
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.EDITOR_PREFERENCE_PAGE);
 
 		return parent;
-	}
-
-	private void createXMLTab(TabFolder folder) {
-		fXMLTab = new XMLSyntaxColorTab(fColorManager);
-		TabItem item = new TabItem(folder, SWT.NONE);
-		item.setText(PDEUIMessages.EditorPreferencePage_xml);
-		item.setControl(fXMLTab.createContents(folder));
 	}
 
 	private void createManifestTab(TabFolder folder) {
