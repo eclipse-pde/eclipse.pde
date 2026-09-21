@@ -311,7 +311,7 @@ public class ClassFileComparator {
 								IApiMethod meth = this.type2.getMethod(iMethod.getName(), iMethod.getSignature());
 								if (meth == null) {
 									// check in superclasses
-									List<IApiType> superclassList = getSuperclassList(this.type2);
+									List<IApiType> superclassList = getSuperclassList(this.type2, false, true);
 									if (superclassList != null) {
 										for (IApiType apiType : superclassList) {
 											meth = apiType.getMethod(iMethod.getName(),
@@ -425,7 +425,7 @@ public class ClassFileComparator {
 									IApiMethod meth = this.type2.getMethod(iMethod.getName(), iMethod.getSignature());
 									if (meth == null) {
 										// check in superclasses
-										List<IApiType> superclassList = getSuperclassList(this.type2);
+									List<IApiType> superclassList = getSuperclassList(this.type2, false, true);
 										if (superclassList != null) {
 											for (IApiType type : superclassList) {
 												meth = type.getMethod(iMethod.getName(), iMethod.getSignature());
@@ -1545,6 +1545,24 @@ public class ClassFileComparator {
 		}
 	}
 
+	private boolean isCompatibleMethodMovedUp(int access, int access2) {
+		if (Flags.isPublic(access) && !Flags.isPublic(access2)) {
+			return false;
+		}
+		if (Flags.isStatic(access) != Flags.isStatic(access2)) {
+			return false;
+		}
+		if (!Flags.isAbstract(access) && Flags.isAbstract(access2)
+				&& !RestrictionModifiers.isInstantiateRestriction(this.currentDescriptorRestrictions)) {
+			return false;
+		}
+		if (!Flags.isFinal(access) && Flags.isFinal(access2)
+				&& !RestrictionModifiers.isExtendRestriction(this.currentDescriptorRestrictions)) {
+			return false;
+		}
+		return true;
+	}
+
 	private void getDeltaForMethod(IApiMethod method) {
 		int access = method.getModifiers();
 		if (Flags.isSynthetic(access)) {
@@ -1594,7 +1612,7 @@ public class ClassFileComparator {
 						}
 					}
 				} else {
-					List<IApiType> superclassList = getSuperclassList(this.type2, true);
+					List<IApiType> superclassList = getSuperclassList(this.type2, true, true);
 					if (superclassList != null && isStatusOk()) {
 						loop: for (IApiType superTypeDescriptor : superclassList) {
 							IApiMethod method3 = superTypeDescriptor.getMethod(name, descriptor);
@@ -1602,7 +1620,8 @@ public class ClassFileComparator {
 								continue;
 							} else {
 								int access3 = method3.getModifiers();
-								if (Flags.isPublic(access3) || Flags.isProtected(access3)) {
+								if ((Flags.isPublic(access3) || Flags.isProtected(access3))
+										&& isCompatibleMethodMovedUp(access, access3)) {
 									// method has been move up in the hierarchy
 									// - report the delta and abort loop
 									// TODO need to make the distinction between

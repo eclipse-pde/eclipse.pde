@@ -23,4 +23,5 @@ Export-Package: a.annotations,
  a.methods.modifiers,
  a.methods.typeparameters,
  a.since,
- a.version
+ a.version,
+ a.superclass;version="1.0.0"
