@@ -3903,4 +3903,57 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
 
+	private void assertInternalSuperclassMethodPullUpIsBreaking(String testName) {
+		deployBundles(testName);
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after,
+				VisibilityModifiers.ALL_VISIBILITIES, null);
+		assertNotNull("No delta", delta); //$NON-NLS-1$
+		IDelta methodDelta = null;
+		for (IDelta child : collectLeaves(delta)) {
+			if ("api.B".equals(child.getTypeName()) //$NON-NLS-1$
+					&& (child.getFlags() == IDelta.METHOD || child.getFlags() == IDelta.METHOD_MOVED_UP)) {
+				methodDelta = child;
+				break;
+			}
+		}
+		assertNotNull("No method delta", methodDelta); //$NON-NLS-1$
+		assertEquals("Wrong kind", IDelta.REMOVED, methodDelta.getKind()); //$NON-NLS-1$
+		assertEquals("Wrong flag", IDelta.METHOD, methodDelta.getFlags()); //$NON-NLS-1$
+		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, methodDelta.getElementType()); //$NON-NLS-1$
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(methodDelta)); //$NON-NLS-1$
+	}
+
+	/**
+	 * A public method narrowed to protected in an internal superclass remains a
+	 * breaking removal from the public API.
+	 */
+	@Test
+	public void testInternalSuperclassProtectedMethodPullUp() {
+		assertInternalSuperclassMethodPullUpIsBreaking("test162"); //$NON-NLS-1$
+	}
+
+	/**
+	 * A public instance method replaced by a static method in an internal
+	 * superclass remains a breaking removal from the public API.
+	 */
+	@Test
+	public void testInternalSuperclassStaticMethodPullUp() {
+		assertInternalSuperclassMethodPullUpIsBreaking("test163"); //$NON-NLS-1$
+	}
+
+	/**
+	 * A public method that becomes final in an internal superclass retains the
+	 * existing non-final-to-final incompatibility.
+	 */
+	@Test
+	public void testInternalSuperclassFinalMethodPullUp() {
+		assertInternalSuperclassMethodPullUpIsBreaking("test164"); //$NON-NLS-1$
+	}
+
 }
