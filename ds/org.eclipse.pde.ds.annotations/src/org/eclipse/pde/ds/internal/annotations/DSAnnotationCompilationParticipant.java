@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2021 Ecliptical Software Inc. and others.
+ * Copyright (c) 2012, 2026 Ecliptical Software Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -64,6 +64,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.compiler.BuildContext;
+import org.eclipse.jdt.core.compiler.CharOperation;
 import org.eclipse.jdt.core.compiler.CompilationParticipant;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -91,6 +92,10 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 	private static final String AP_MANIFEST_KEY = "Bundle-ActivationPolicy"; //$NON-NLS-1$
 
 	static final String COMPONENT_ANNOTATION = "org.osgi.service.component.annotations.Component"; //$NON-NLS-1$
+
+	private static final char[] COMPONENT_SIMPLE_NAME = "Component".toCharArray(); //$NON-NLS-1$
+
+	private static final char[] UNICODE_ESCAPE = "\\u".toCharArray(); //$NON-NLS-1$
 
 	static final String ANNOTATIONS_PACKAGE = COMPONENT_ANNOTATION.substring(0, COMPONENT_ANNOTATION.lastIndexOf('.'));
 
@@ -641,7 +646,7 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 				continue;
 			}
 
-			if (canSkipFile(cu)) {
+			if (canSkipFile(file, cu)) {
 				markAsAbandoned(cu);
 				continue;
 			}
@@ -665,6 +670,28 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 		}
 	}
 
+	private boolean canSkipFile(BuildContext file, ICompilationUnit cu) {
+		if (file.hasAnnotations(COMPONENT_ANNOTATION)) {
+			return false;
+		}
+		// an unresolved @Component is only visible in the source text
+		if (!mayMentionComponent(file)) {
+			return true;
+		}
+		return canSkipFile(cu);
+	}
+
+	private static boolean mayMentionComponent(BuildContext file) {
+		char[] contents;
+		try {
+			contents = file.getContents();
+		} catch (RuntimeException e) {
+			return true;
+		}
+		return contents == null || CharOperation.indexOf(COMPONENT_SIMPLE_NAME, contents, true) >= 0
+				|| CharOperation.indexOf(UNICODE_ESCAPE, contents, true) >= 0;
+	}
+
 	public boolean canSkipFile(ICompilationUnit cu) {
 		IType primaryType = cu.findPrimaryType();
 		if (primaryType == null) {
@@ -680,12 +707,11 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 
 	private boolean containsComponent(IType type) throws JavaModelException {
 
-		IAnnotation annotationWithImport = type.getAnnotation("Component"); //$NON-NLS-1$
-		IAnnotation fullyQualifiedAnnotation = type.getAnnotation(COMPONENT_ANNOTATION);
-
-		boolean hasComponentAnnotation = annotationWithImport.exists() || fullyQualifiedAnnotation.exists();
-		if (hasComponentAnnotation) {
-			return true;
+		for (IAnnotation annotation : type.getAnnotations()) {
+			String name = annotation.getElementName();
+			if ("Component".equals(name) || COMPONENT_ANNOTATION.equals(name)) { //$NON-NLS-1$
+				return true;
+			}
 		}
 
 		for (IJavaElement child : type.getChildren()) {
