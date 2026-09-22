@@ -17,7 +17,7 @@ import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 
 @Suite
-@SelectClasses({ LocalModelTest.class })
+@SelectClasses({ LocalModelTest.class, E4TemplateCompletionTest.class })
 public class AllPDERuntimeTests {
 
 }
