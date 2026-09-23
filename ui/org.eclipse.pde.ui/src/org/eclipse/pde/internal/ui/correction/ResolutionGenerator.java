@@ -163,6 +163,9 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 		case PDEMarkerFactory.M_MISSINGVERSION_IMPORT_PACKAGE:
 			return new IMarkerResolution[] {
 					new VersionMatchImportPackageResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker) };
+		case PDEMarkerFactory.M_MISSING_MULTI_RELEASE_HEADER:
+			return new IMarkerResolution[] {
+					new AddMultiReleaseHeaderResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker) };
 		}
 		return NO_RESOLUTIONS;
 	}
