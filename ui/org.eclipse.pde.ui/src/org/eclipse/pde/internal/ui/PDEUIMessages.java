@@ -3367,6 +3367,9 @@ public class PDEUIMessages extends NLS {
 	public static String AddBundleManifestVersionResolution_description;
 	public static String AddBundleManifestVersionResolution_label;
 
+	public static String AddMultiReleaseHeaderResolution_description;
+	public static String AddMultiReleaseHeaderResolution_label;
+
 	public static String AddPdeClasspathContainerClasspathFixProposal_0;
 
 	public static String AddPdeClasspathContainerClasspathFixProposal_1;

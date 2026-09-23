@@ -82,6 +82,7 @@ public class PDEMarkerFactory {
 																	// problem
 	public static final int M_MISSINGVERSION_IMPORT_PACKAGE = 0x1035; // other
 																		// problem
+	public static final int M_MISSING_MULTI_RELEASE_HEADER = 0x1036; // fatal problem
 
 	// build properties fixes
 	public static final int B_APPEND_SLASH_FOLDER_ENTRY = 0x2001;

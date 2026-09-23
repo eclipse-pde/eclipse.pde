@@ -285,6 +285,12 @@ public interface ICoreConstants {
 	String ECLIPSE_SOURCE_REFERENCES = "Eclipse-SourceReferences"; //$NON-NLS-1$
 	String SERVICE_COMPONENT = "Service-Component"; //$NON-NLS-1$
 	String AUTOMATIC_MODULE_NAME = "Automatic-Module-Name"; //$NON-NLS-1$
+	/**
+	 * Header from the <a href="https://openjdk.org/jeps/238">Multi-Release JAR
+	 * spec</a> that must be set to <code>true</code> when the bundle is built
+	 * using release-specific source folders.
+	 */
+	String MULTI_RELEASE = "Multi-Release"; //$NON-NLS-1$
 	String ECLIPSE_EXPORT_EXTERNAL_ANNOTATIONS = "Eclipse-ExportExternalAnnotations"; //$NON-NLS-1$
 
 	// Equinox-specific system properties

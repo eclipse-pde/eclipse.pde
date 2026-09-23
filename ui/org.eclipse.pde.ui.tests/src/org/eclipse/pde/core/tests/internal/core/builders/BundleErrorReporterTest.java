@@ -15,6 +15,8 @@ package org.eclipse.pde.core.tests.internal.core.builders;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,13 +27,16 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
+import org.eclipse.pde.ui.tests.runtime.TestUtils;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -77,6 +82,50 @@ public class BundleErrorReporterTest {
 		PDEModelUtility.modifyModel(modification, null);
 
 		assertThat(findUnresolvedImportsMarkers()).isEmpty();
+	}
+
+	@Test
+	public void testErrorOnMissingMultiReleaseHeader() throws Exception {
+		IJavaProject javaProject = ProjectUtils.createPluginProject(manifest.getProject().getName(),
+				JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("JavaSE-17"));
+		IProject project = javaProject.getProject();
+		IFile manifest = project.getFile("META-INF/MANIFEST.MF");
+
+		// Add a release-specific source folder directly to the .classpath file
+		// (as Tycho/JDT expect it), bypassing IJavaProject#setRawClasspath's
+		// stricter multi-output-folder validation which does not apply here.
+		project.getFolder("src17").create(true, true, null);
+		IFile classpathFile = project.getFile(".classpath");
+		String content = new String(classpathFile.getContents().readAllBytes(), StandardCharsets.UTF_8);
+		content = content.replace("</classpath>", """
+					<classpathentry kind="src" output="bin17" path="src17">
+						<attributes>
+							<attribute name="release" value="17"/>
+						</attributes>
+					</classpathentry>
+				</classpath>""");
+		classpathFile.setContents(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)), true, true, null);
+		TestUtils.waitForJobs(getClass().getName(), 100, 10000);
+
+		assertThat(findMissingMultiReleaseHeaderMarkers(manifest)).hasSize(1);
+
+		PDEModelUtility.modifyModel(new ModelModification(manifest) {
+			@Override
+			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
+				IBundlePluginModelBase modelBase = (IBundlePluginModelBase) model;
+				IBundle bundle = modelBase.getBundleModel().getBundle();
+				bundle.setHeader(ICoreConstants.MULTI_RELEASE, "true");
+			}
+		}, null);
+
+		assertThat(findMissingMultiReleaseHeaderMarkers(manifest)).isEmpty();
+	}
+
+	private List<IMarker> findMissingMultiReleaseHeaderMarkers(IFile manifest) throws CoreException {
+		manifest.getProject().build(IncrementalProjectBuilder.FULL_BUILD, null);
+		return Arrays.stream(manifest.findMarkers(PDEMarkerFactory.MARKER_ID, false, 0))
+				.filter(m -> m.getAttribute(PDEMarkerFactory.PROBLEM_ID, -1) == PDEMarkerFactory.M_MISSING_MULTI_RELEASE_HEADER)
+				.toList();
 	}
 
 	private List<IMarker> findUnresolvedImportsMarkers() throws CoreException {

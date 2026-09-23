@@ -43,6 +43,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -124,6 +125,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		}
 		if (PluginProject.isJavaProject(fProject)) {
 			validateAutomaticModuleName();
+			validateMultiReleaseHeader();
 		}
 		if (!validateVersionOfRequireBundle()) {
 			return;
@@ -248,6 +250,31 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 						CompilerFlags.WARNING, PDEMarkerFactory.M_CONFLICTING_AUTOMATIC_MODULE, PDEMarkerFactory.CAT_OTHER);
 			}
 
+		}
+	}
+
+	private void validateMultiReleaseHeader() {
+		IJavaProject jp = JavaCore.create(fProject);
+		if (jp == null || !jp.exists()) {
+			return;
+		}
+		boolean hasReleaseSpecificSourceFolder;
+		try {
+			hasReleaseSpecificSourceFolder = Arrays.stream(jp.getRawClasspath())
+					.filter(entry -> entry.getEntryKind() == IClasspathEntry.CPE_SOURCE)
+					.flatMap(entry -> Arrays.stream(entry.getExtraAttributes()))
+					.anyMatch(attribute -> IClasspathAttribute.RELEASE.equals(attribute.getName()));
+		} catch (JavaModelException e) {
+			return;
+		}
+		if (!hasReleaseSpecificSourceFolder) {
+			return;
+		}
+		IHeader header = fHeaders.get(ICoreConstants.MULTI_RELEASE.toLowerCase());
+		if (header == null || !"true".equalsIgnoreCase(header.getValue())) { //$NON-NLS-1$
+			int line = header == null ? 1 : header.getLineNumber();
+			report(NLS.bind(PDECoreMessages.BundleErrorReporter_missingMultiReleaseHeader, ICoreConstants.MULTI_RELEASE),
+					line, CompilerFlags.ERROR, PDEMarkerFactory.M_MISSING_MULTI_RELEASE_HEADER, PDEMarkerFactory.CAT_FATAL);
 		}
 	}
 
