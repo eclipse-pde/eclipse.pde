@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
@@ -35,7 +36,7 @@ public class PDEBuilderHelper {
 		String[] unlisted = new String[cpes.length];
 		int index = 0;
 		for (IClasspathEntry entry : cpes) {
-			if (entry.getEntryKind() != IClasspathEntry.CPE_SOURCE || entry.isTest()) {
+			if (entry.getEntryKind() != IClasspathEntry.CPE_SOURCE || entry.isTest() || isReleaseSpecific(entry)) {
 				continue;
 			}
 			IPath path = entry.getPath();
@@ -59,6 +60,23 @@ public class PDEBuilderHelper {
 			}
 		}
 		return unlisted;
+	}
+
+	/**
+	 * Tycho automatically discovers additional source folders that are configured
+	 * for <a href="https://openjdk.org/jeps/238">Multi-Release</a> compilation
+	 * (i.e. carry the {@link IClasspathAttribute#RELEASE} classpath attribute) and
+	 * places their output into the matching {@code META-INF/versions/<release>}
+	 * folder. Such source folders therefore do not need to be (and should not be)
+	 * listed in build.properties.
+	 */
+	private static boolean isReleaseSpecific(IClasspathEntry entry) {
+		for (IClasspathAttribute attribute : entry.getExtraAttributes()) {
+			if (IClasspathAttribute.RELEASE.equals(attribute.getName())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public static ArrayList<String> getSourceEntries(IBuild build) {
