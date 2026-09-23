@@ -3903,6 +3903,39 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
 
+	/**
+	 * An abstract method in a non-API superclass does not implement a newly
+	 * inherited interface method.
+	 */
+	@Test
+	public void testInternalAbstractSuperclassDoesNotImplementNewInterfaceMethod() {
+		deployBundles("test165"); //$NON-NLS-1$
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after,
+				VisibilityModifiers.API, null);
+		assertNotNull("No delta", delta); //$NON-NLS-1$
+		IDelta expandedSuperinterfacesDelta = null;
+		for (IDelta child : collectLeaves(delta)) {
+			if ("api.B".equals(child.getTypeName()) //$NON-NLS-1$
+					&& (child.getFlags() == IDelta.EXPANDED_SUPERINTERFACES_SET
+							|| child.getFlags() == IDelta.EXPANDED_SUPERINTERFACES_SET_BREAKING)) {
+				expandedSuperinterfacesDelta = child;
+				break;
+			}
+		}
+		assertNotNull("No expanded superinterfaces delta", expandedSuperinterfacesDelta); //$NON-NLS-1$
+		assertEquals("Wrong kind", IDelta.ADDED, expandedSuperinterfacesDelta.getKind()); //$NON-NLS-1$
+		assertEquals("Wrong flag", //$NON-NLS-1$
+				IDelta.EXPANDED_SUPERINTERFACES_SET_BREAKING, expandedSuperinterfacesDelta.getFlags());
+		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, expandedSuperinterfacesDelta.getElementType()); //$NON-NLS-1$
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(expandedSuperinterfacesDelta)); //$NON-NLS-1$
+	}
+
 	private void assertInternalSuperclassMethodPullUpIsBreaking(String testName) {
 		deployBundles(testName);
 		IApiBaseline before = getBeforeState();

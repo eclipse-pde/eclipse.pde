@@ -322,12 +322,7 @@ public class ClassFileComparator {
 										}
 									}
 								}
-								if (meth == null) {
-									isBreakingChange = true;
-								}
-								if(meth !=null) {
-									isBreakingChange = Flags.isSynthetic(meth.getModifiers());
-								}
+								isBreakingChange = !isValidInterfaceMethodImplementation(meth);
 								if (isBreakingChange) {
 									this.addDelta(getElementType(this.type1), IDelta.ADDED,
 											IDelta.EXPANDED_SUPERINTERFACES_SET_BREAKING,
@@ -435,12 +430,7 @@ public class ClassFileComparator {
 											}
 										}
 									}
-									if (meth == null) {
-										isBreakingChange = true;
-									}
-									if(meth !=null) {
-										isBreakingChange = Flags.isSynthetic(meth.getModifiers());
-									}
+									isBreakingChange = !isValidInterfaceMethodImplementation(meth);
 									if (isBreakingChange) {
 										this.addDelta(getElementType(this.type1), IDelta.CHANGED,
 												IDelta.EXPANDED_SUPERINTERFACES_SET_BREAKING,
@@ -513,6 +503,15 @@ public class ClassFileComparator {
 				}
 			}
 		}
+	}
+
+	private boolean isValidInterfaceMethodImplementation(IApiMethod method) {
+		if (method == null) {
+			return false;
+		}
+		int modifiers = method.getModifiers();
+		return Flags.isPublic(modifiers) && !Flags.isStatic(modifiers) && !Flags.isAbstract(modifiers)
+				&& !Flags.isSynthetic(modifiers);
 	}
 
 	private String computeDiff(Set<IApiType> superinterfacesSet1, Set<IApiType> superinterfacesSet2, boolean expand) {
