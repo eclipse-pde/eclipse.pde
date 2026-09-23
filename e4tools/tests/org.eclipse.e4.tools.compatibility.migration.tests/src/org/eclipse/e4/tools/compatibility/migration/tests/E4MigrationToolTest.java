@@ -93,7 +93,7 @@ class E4MigrationToolTest {
 		MElementContainer<MPerspectiveStack> windowContainer = (MElementContainer<MPerspectiveStack>)mWindowElement;
 		assertEquals(3, windowContainer.getChildren().get(0).getChildren().size());
 		MPerspective resourceExportPerspective = windowContainer.getChildren().get(0).getChildren().get(0);
-		assertEquals("ResourceExport", resourceExportPerspective.getElementId());
+		assertEquals(resourceExportPerspective.getElementId(), "ResourceExport");
 
 	}
 
