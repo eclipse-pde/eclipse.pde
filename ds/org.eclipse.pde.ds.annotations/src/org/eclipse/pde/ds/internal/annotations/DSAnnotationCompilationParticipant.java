@@ -52,7 +52,6 @@ import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jdt.core.IAccessRule;
-import org.eclipse.jdt.core.IAnnotation;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -60,11 +59,9 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.compiler.BuildContext;
-import org.eclipse.jdt.core.compiler.CharOperation;
 import org.eclipse.jdt.core.compiler.CompilationParticipant;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -92,10 +89,6 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 	private static final String AP_MANIFEST_KEY = "Bundle-ActivationPolicy"; //$NON-NLS-1$
 
 	static final String COMPONENT_ANNOTATION = "org.osgi.service.component.annotations.Component"; //$NON-NLS-1$
-
-	private static final char[] COMPONENT_SIMPLE_NAME = "Component".toCharArray(); //$NON-NLS-1$
-
-	private static final char[] UNICODE_ESCAPE = "\\u".toCharArray(); //$NON-NLS-1$
 
 	static final String ANNOTATIONS_PACKAGE = COMPONENT_ANNOTATION.substring(0, COMPONENT_ANNOTATION.lastIndexOf('.'));
 
@@ -646,7 +639,7 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 				continue;
 			}
 
-			if (canSkipFile(file, cu)) {
+			if (!file.hasAnnotations(COMPONENT_ANNOTATION)) {
 				markAsAbandoned(cu);
 				continue;
 			}
@@ -668,59 +661,6 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 
 			processAnnotations(entry.getKey(), entry.getValue());
 		}
-	}
-
-	private boolean canSkipFile(BuildContext file, ICompilationUnit cu) {
-		if (file.hasAnnotations(COMPONENT_ANNOTATION)) {
-			return false;
-		}
-		// an unresolved @Component is only visible in the source text
-		if (!mayMentionComponent(file)) {
-			return true;
-		}
-		return canSkipFile(cu);
-	}
-
-	private static boolean mayMentionComponent(BuildContext file) {
-		char[] contents;
-		try {
-			contents = file.getContents();
-		} catch (RuntimeException e) {
-			return true;
-		}
-		return contents == null || CharOperation.indexOf(COMPONENT_SIMPLE_NAME, contents, true) >= 0
-				|| CharOperation.indexOf(UNICODE_ESCAPE, contents, true) >= 0;
-	}
-
-	public boolean canSkipFile(ICompilationUnit cu) {
-		IType primaryType = cu.findPrimaryType();
-		if (primaryType == null) {
-			return false;
-		}
-
-		try {
-			return !containsComponent(primaryType);
-		} catch (JavaModelException e) {
-			return false;
-		}
-	}
-
-	private boolean containsComponent(IType type) throws JavaModelException {
-
-		for (IAnnotation annotation : type.getAnnotations()) {
-			String name = annotation.getElementName();
-			if ("Component".equals(name) || COMPONENT_ANNOTATION.equals(name)) { //$NON-NLS-1$
-				return true;
-			}
-		}
-
-		for (IJavaElement child : type.getChildren()) {
-			if ((child instanceof IType) && containsComponent((IType) child)) {
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	public void markAsAbandoned(ICompilationUnit cu) {
