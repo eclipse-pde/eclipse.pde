@@ -96,7 +96,7 @@ public class BundleErrorReporterTest {
 		// stricter multi-output-folder validation which does not apply here.
 		project.getFolder("src17").create(true, true, null);
 		IFile classpathFile = project.getFile(".classpath");
-		String content = new String(classpathFile.getContents().readAllBytes(), StandardCharsets.UTF_8);
+		String content = classpathFile.readString();
 		content = content.replace("</classpath>", """
 					<classpathentry kind="src" output="bin17" path="src17">
 						<attributes>
