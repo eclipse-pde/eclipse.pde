@@ -29,11 +29,13 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.core.util.VMUtil;
 import org.eclipse.pde.internal.launching.PDEMessages;
 
@@ -211,6 +213,25 @@ public class VMHelper {
 			throw new CoreException(Status.error(PDEMessages.WorkbenchLauncherConfigurationDelegate_jrePathNotFound));
 		}
 		return launcher;
+	}
+
+	/**
+	 * Returns the major Java release (e.g. 17 for Java 17) of the given VM install, or
+	 * {@link ClasspathHelper#NO_RELEASE} if it can't be determined. Used to filter/order
+	 * Multi-Release compiled dev-classpath entries for the launched runtime.
+	 */
+	public static int getJavaRelease(IVMInstall vm) {
+		if (vm instanceof IVMInstall2 vm2) {
+			String javaVersion = vm2.getJavaVersion();
+			if (javaVersion != null) {
+				try {
+					return Integer.parseInt(javaVersion.split("\\.")[0]); //$NON-NLS-1$
+				} catch (NumberFormatException e) {
+					// fall through, release unknown
+				}
+			}
+		}
+		return ClasspathHelper.NO_RELEASE;
 	}
 
 	/**
