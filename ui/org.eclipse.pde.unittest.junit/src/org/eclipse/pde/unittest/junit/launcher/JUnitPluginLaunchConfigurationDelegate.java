@@ -85,6 +85,7 @@ import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.core.util.VMUtil;
 import org.eclipse.pde.internal.launching.IPDEConstants;
 import org.eclipse.pde.internal.launching.JUnitLaunchRequirements;
 import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
@@ -515,9 +516,11 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 
 		// Specify the output folder names
 		programArgs.add("-dev"); //$NON-NLS-1$
+		IVMInstall launcher = VMHelper.createLauncher(configuration, fModels.keySet());
+		int javaRelease = VMUtil.getJavaRelease(launcher);
 		programArgs.add(ClasspathHelper
 				.getDevEntriesProperties(getConfigurationDirectory(configuration).toString() + "/dev.properties", //$NON-NLS-1$
-						fAllBundles)
+						fAllBundles, javaRelease)
 				.toUri().toString());
 
 		// Create the .options file if tracing is turned on
@@ -556,7 +559,6 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 
 		programArgs.add("-testpluginname"); //$NON-NLS-1$
 		programArgs.add(getTestPluginId(configuration));
-		IVMInstall launcher = VMHelper.createLauncher(configuration, fModels.keySet());
 		boolean isModular = JavaRuntime.isModularJava(launcher);
 		if (isModular) {
 			VMHelper.addNewArgument(vmArguments, "--add-modules", "ALL-SYSTEM"); //$NON-NLS-1$//$NON-NLS-2$
