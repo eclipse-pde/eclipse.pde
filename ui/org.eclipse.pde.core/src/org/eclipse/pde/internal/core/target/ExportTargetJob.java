@@ -225,10 +225,10 @@ public class ExportTargetJob extends Job {
 
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 1);
 
-		if (destination.fetchInfo().exists()) {
+		if (destination.exists()) {
 			return Status.OK_STATUS;
 		}
-		if (source.fetchInfo().isDirectory()) {
+		if (source.isDirectory()) {
 			destination.mkdir(EFS.NONE, new NullProgressMonitor());
 		}
 		source.copy(destination, EFS.OVERWRITE, subMonitor.split(1));

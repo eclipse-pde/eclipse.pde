@@ -20,7 +20,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 
 import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -115,8 +115,8 @@ public class CreateFileChange extends ResourceChange {
 			return result;
 		}
 
-		IFileInfo jFile = EFS.getStore(location).fetchInfo();
-		if (jFile.exists()) {
+		IFileStore jFileStore = EFS.getStore(location);
+		if (jFileStore.exists()) {
 			result.addFatalError(NLS.bind(RefactoringMessages.CreateFileChange_2, file.getFullPath()));
 			return result;
 		}
