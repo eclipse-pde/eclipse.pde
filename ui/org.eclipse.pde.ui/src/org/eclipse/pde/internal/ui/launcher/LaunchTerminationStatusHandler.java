@@ -83,7 +83,7 @@ public class LaunchTerminationStatusHandler implements IStatusHandler {
 
 	private void openInEditor(File log) {
 		IFileStore fileStore = EFS.getLocalFileSystem().getStore(IPath.fromOSString(log.getAbsolutePath()));
-		if (!fileStore.fetchInfo().isDirectory() && fileStore.fetchInfo().exists()) {
+		if (!fileStore.isDirectory() && fileStore.exists()) {
 			IWorkbenchWindow ww = PDEPlugin.getActiveWorkbenchWindow();
 			IWorkbenchPage page = ww.getActivePage();
 			try {
