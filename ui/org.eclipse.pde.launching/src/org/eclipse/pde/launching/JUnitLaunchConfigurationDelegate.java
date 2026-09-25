@@ -265,7 +265,9 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		// Specify the output folder names
 		programArgs.add("-dev"); //$NON-NLS-1$
 
-		Properties devProperties = ClasspathHelper.getDevEntriesProperties(fAllBundles, true);
+		IVMInstall launcher = VMHelper.createLauncher(configuration, fModels.keySet());
+		int javaRelease = VMHelper.getJavaRelease(launcher);
+		Properties devProperties = ClasspathHelper.getDevEntriesProperties(fAllBundles, true, javaRelease);
 		if (javaProject != null) {
 			// source-folders of type "test" are omitted in the previous search so the need to be added here as they are part of the test but not part of the build.properties
 			Arrays.stream(javaProject.getRawClasspath())//
@@ -314,7 +316,6 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		programArgs.add("-testpluginname"); //$NON-NLS-1$
 		programArgs.add(testPlugin.getId());
 
-		IVMInstall launcher = VMHelper.createLauncher(configuration, fModels.keySet());
 		boolean isModular = JavaRuntime.isModularJava(launcher);
 		if (isModular) {
 			VMHelper.addNewArgument(vmArguments, "--add-modules", "ALL-SYSTEM"); //$NON-NLS-1$//$NON-NLS-2$

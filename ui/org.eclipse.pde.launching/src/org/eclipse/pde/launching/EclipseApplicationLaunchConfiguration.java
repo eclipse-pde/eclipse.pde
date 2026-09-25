@@ -35,6 +35,7 @@ import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.ClasspathHelper;
@@ -49,6 +50,7 @@ import org.eclipse.pde.internal.launching.launcher.LaunchConfigurationHelper;
 import org.eclipse.pde.internal.launching.launcher.LaunchPluginValidator;
 import org.eclipse.pde.internal.launching.launcher.LauncherUtils;
 import org.eclipse.pde.internal.launching.launcher.RequirementHelper;
+import org.eclipse.pde.internal.launching.launcher.VMHelper;
 
 /**
  * A launch delegate for launching Eclipse applications
@@ -129,7 +131,11 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 
 		// add the output folder names
 		programArgs.add("-dev"); //$NON-NLS-1$
-		programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", fAllBundles).toUri().toString()); //$NON-NLS-1$
+		IVMInstall vm = VMHelper.createLauncher(configuration, fModels.keySet());
+		int javaRelease = VMHelper.getJavaRelease(vm);
+		programArgs.add(ClasspathHelper
+				.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", fAllBundles, javaRelease) //$NON-NLS-1$
+				.toUri().toString());
 
 		String[] args = super.getProgramArguments(configuration);
 		Collections.addAll(programArgs, args);

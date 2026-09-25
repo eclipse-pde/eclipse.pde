@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.TargetPlatform;
@@ -47,6 +48,7 @@ import org.eclipse.pde.internal.launching.launcher.LaunchPluginValidator;
 import org.eclipse.pde.internal.launching.launcher.LaunchValidationOperation;
 import org.eclipse.pde.internal.launching.launcher.OSGiFrameworkManager;
 import org.eclipse.pde.internal.launching.launcher.RequirementHelper;
+import org.eclipse.pde.internal.launching.launcher.VMHelper;
 
 /**
  * A launch delegate for launching the Equinox framework
@@ -84,7 +86,11 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 		ArrayList<String> programArgs = new ArrayList<>();
 
 		programArgs.add("-dev"); //$NON-NLS-1$
-		programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", fAllBundles).toUri().toString()); //$NON-NLS-1$
+		IVMInstall vm = VMHelper.createLauncher(configuration, fModels.keySet());
+		int javaRelease = VMHelper.getJavaRelease(vm);
+		programArgs.add(ClasspathHelper
+				.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", fAllBundles, javaRelease) //$NON-NLS-1$
+				.toUri().toString());
 
 		saveConfigurationFile(configuration);
 		programArgs.add("-configuration"); //$NON-NLS-1$

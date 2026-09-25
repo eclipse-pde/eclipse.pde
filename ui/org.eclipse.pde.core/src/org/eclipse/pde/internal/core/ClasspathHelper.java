@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -45,6 +46,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -71,6 +73,18 @@ public class ClasspathHelper {
 	private static final String FRAGMENT_ANNOTATION = "@fragment@"; //$NON-NLS-1$
 	private static final String DEV_CLASSPATH_ENTRY_SEPARATOR = ","; //$NON-NLS-1$
 	private static final String DEV_CLASSPATH_VERSION_SEPARATOR = ";"; //$NON-NLS-1$
+	// Class-files compiled from a Multi-Release ('release' classpath attribute) source
+	// folder are written by JDT below this folder inside the (default) output folder,
+	// see org.eclipse.jdt.internal.core.builder.NameEnvironment.
+	private static final String RELEASE_OUTPUT_FOLDER = "META-INF/versions"; //$NON-NLS-1$
+
+	/**
+	 * Sentinel value indicating that the Java release of the launched runtime is
+	 * unknown/not applicable, in which case Multi-Release source folders are not
+	 * specially considered when computing dev-classpath entries (backward compatible
+	 * behavior).
+	 */
+	public static final int NO_RELEASE = -1;
 
 	public static Path getDevEntriesProperties(String fileName, boolean checkExcluded) throws CoreException {
 		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
@@ -84,7 +98,24 @@ public class ClasspathHelper {
 
 	public static Path getDevEntriesProperties(String fileName, Map<String, List<IPluginModelBase>> map)
 			throws CoreException {
-		Properties properties = getDevEntriesProperties(map, true);
+		return getDevEntriesProperties(fileName, map, NO_RELEASE);
+	}
+
+	/**
+	 * Like {@link #getDevEntriesProperties(String, Map)} but additionally takes the
+	 * major Java release of the runtime the bundles are launched with into account, so
+	 * that Multi-Release compiled workspace projects (source folders with the 'release'
+	 * classpath attribute) get their release-specific output folders added to the dev
+	 * classpath -- ordered from the highest applicable release to the lowest, followed
+	 * by the default output folder -- to emulate the class-loading behavior of a
+	 * packaged Multi-Release JAR for the "exploded" workspace project.
+	 *
+	 * @param javaRelease the major Java release of the launched runtime, or
+	 *            {@link #NO_RELEASE} if unknown
+	 */
+	public static Path getDevEntriesProperties(String fileName, Map<String, List<IPluginModelBase>> map,
+			int javaRelease) throws CoreException {
+		Properties properties = getDevEntriesProperties(map, true, javaRelease);
 		return writeDevEntries(fileName, properties);
 	}
 
@@ -104,6 +135,16 @@ public class ClasspathHelper {
 
 	public static Properties getDevEntriesProperties(Map<String, List<IPluginModelBase>> bundlesMap,
 			boolean checkExcluded) {
+		return getDevEntriesProperties(bundlesMap, checkExcluded, NO_RELEASE);
+	}
+
+	/**
+	 * Like {@link #getDevEntriesProperties(Map, boolean)} but additionally takes the
+	 * major Java release of the runtime the bundles are launched with into account, see
+	 * {@link #getDevEntriesProperties(String, Map, int)}.
+	 */
+	public static Properties getDevEntriesProperties(Map<String, List<IPluginModelBase>> bundlesMap,
+			boolean checkExcluded, int javaRelease) {
 
 		Set<IPluginModelBase> launchedPlugins = bundlesMap.values().stream().flatMap(Collection::stream)
 				.collect(Collectors.toCollection(LinkedHashSet::new));
@@ -115,7 +156,7 @@ public class ClasspathHelper {
 		for (List<IPluginModelBase> models : bundlesMap.values()) {
 			for (IPluginModelBase model : models) {
 				if (model.getUnderlyingResource() != null) {
-					String entry = formatEntry(getDevPaths(model, checkExcluded, launchedPlugins));
+					String entry = formatEntry(getDevPaths(model, checkExcluded, launchedPlugins, javaRelease));
 					if (!entry.isEmpty()) {
 						// overwrite entry, if plug-in from primary Eclipse is
 						// also imported into workspace of secondary eclipse
@@ -260,7 +301,8 @@ public class ClasspathHelper {
 		return paths;
 	}
 
-	private static Set<IPath> getDevPaths(IPluginModelBase model, boolean checkExcluded, Set<IPluginModelBase> plugins) {
+	private static Set<IPath> getDevPaths(IPluginModelBase model, boolean checkExcluded, Set<IPluginModelBase> plugins,
+			int javaRelease) {
 		IProject project = model.getUnderlyingResource().getProject();
 		if (PluginProject.isJavaProject(project)) {
 			try {
@@ -289,15 +331,107 @@ public class ClasspathHelper {
 							addPaths(paths, project, result);
 						}
 					}
-					return result;
+					return prependReleaseOutputs(project, checkExcluded, javaRelease, result);
 				}
 				// if no build.properties, add all output folders
 				classpathMap.values().forEach(l -> addPaths(l, project, result));
-				return result;
+				return prependReleaseOutputs(project, checkExcluded, javaRelease, result);
 			} catch (CoreException e) {
 			}
 		}
 		return Collections.emptySet();
+	}
+
+	// Prepends the output folders of Multi-Release ('release' classpath attribute)
+	// source folders that are applicable to the given Java release, ordered from the
+	// highest applicable release to the lowest, in front of the given (default) dev
+	// classpath entries. Equinox's dev-classpath entries are searched in the order they
+	// are listed and before the bundle's own default classpath, so this makes the
+	// class-loader look up release-specific classes first, just like it would when
+	// loading a packaged Multi-Release JAR.
+	private static Set<IPath> prependReleaseOutputs(IProject project, boolean checkExcluded, int javaRelease,
+			Set<IPath> result) throws JavaModelException {
+		if (javaRelease == NO_RELEASE) {
+			return result;
+		}
+		List<ReleaseOutput> releaseOutputs = getReleaseOutputs(project, checkExcluded);
+		if (releaseOutputs.isEmpty()) {
+			return result;
+		}
+		Set<IPath> merged = new LinkedHashSet<>();
+		for (ReleaseOutput releaseOutput : releaseOutputs) {
+			if (releaseOutput.release() > javaRelease) {
+				continue; // not applicable to the launched runtime
+			}
+			IPath resolved = resolvePath(project, releaseOutput.output());
+			if (resolved != null) {
+				merged.add(resolved);
+			}
+		}
+		merged.addAll(result);
+		return merged;
+	}
+
+	private record ReleaseOutput(int release, IPath output) {
+	}
+
+	// Collects the output folders JDT writes Multi-Release compiled class-files to,
+	// i.e. <output-of-the-release-specific-source-folder>/META-INF/versions/<release>,
+	// sorted from the highest to the lowest release.
+	private static List<ReleaseOutput> getReleaseOutputs(IProject project, boolean checkExcluded)
+			throws JavaModelException {
+		Set<IPath> excluded = getFoldersToExclude(project, checkExcluded);
+		IJavaProject jProject = JavaCore.create(project);
+		List<ReleaseOutput> result = new ArrayList<>();
+		for (IClasspathEntry entry : jProject.getRawClasspath()) {
+			if (entry.getEntryKind() != IClasspathEntry.CPE_SOURCE) {
+				continue;
+			}
+			int release = getReleaseAttribute(entry);
+			if (release == NO_RELEASE) {
+				continue;
+			}
+			IPath output = entry.getOutputLocation();
+			if (output == null) {
+				output = jProject.getOutputLocation();
+			}
+			output = output.append(RELEASE_OUTPUT_FOLDER).append(String.valueOf(release));
+			if (excluded.contains(output)) {
+				continue;
+			}
+			IResource file = project.findMember(output.removeFirstSegments(1));
+			if (file == null) {
+				continue; // not (yet) compiled
+			}
+			if (file.isLinked(IResource.CHECK_ANCESTORS)) {
+				IPath location = file.getLocation();
+				if (location == null) {
+					PDECore.log(Status.error(NLS.bind(PDECoreMessages.ClasspathHelper_BadFileLocation, file.getFullPath())));
+					continue;
+				}
+				output = location.makeAbsolute();
+			} else {
+				output = output.makeRelative();
+			}
+			result.add(new ReleaseOutput(release, output));
+		}
+		result.sort(Comparator.comparingInt(ReleaseOutput::release).reversed());
+		return result;
+	}
+
+	// Reads the 'release' classpath attribute (JDT's Multi-Release compilation support)
+	// of a source classpath entry, see org.eclipse.jdt.core.IClasspathAttribute.RELEASE.
+	private static int getReleaseAttribute(IClasspathEntry entry) {
+		for (IClasspathAttribute attribute : entry.getExtraAttributes()) {
+			if (IClasspathAttribute.RELEASE.equals(attribute.getName())) {
+				try {
+					return Integer.parseInt(attribute.getValue());
+				} catch (NumberFormatException e) {
+					// not release-specific
+				}
+			}
+		}
+		return NO_RELEASE;
 	}
 
 	private static void addPaths(List<IPath> paths, IProject project, Set<IPath> result) {
