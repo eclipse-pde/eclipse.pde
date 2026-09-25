@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Dictionary;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
@@ -44,9 +43,7 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.IVMInstallChangedListener;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.PropertyChangeEvent;
@@ -74,6 +71,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.internal.core.ClasspathComputer;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.core.util.VMUtil;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 
@@ -248,7 +246,6 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		return null;
 	}
 
-
 	/**
 	 * Initializes this baseline from the given properties.
 	 *
@@ -305,8 +302,6 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		addComponent(fSystemLibraryComponent);
 		fSystemLibraryComponentList.add(fSystemLibraryComponent);
 	}
-
-
 
 	/**
 	 * Clears the package -> components cache
@@ -378,7 +373,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		if (ApiPlugin.isRunningInFramework() && fAutoResolve) {
 			IStatus error = null;
 			IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
-			Map<IVMInstall, Set<String>> vmToEEs = new TreeMap<>(new VmVersionComparator());
+			Map<IVMInstall, Set<String>> vmToEEs = new TreeMap<>(VM_VERSION_COMPARATOR);
 			for (String ee : ees) {
 				IExecutionEnvironment environment = manager.getEnvironment(ee);
 				if (environment != null) {
@@ -433,66 +428,8 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	/**
 	 * Sorts highest VM version first
 	 */
-	static final class VmVersionComparator implements Comparator<IVMInstall> {
-
-		private static final String UNKNOWN_VERSION = "UNKNOWN"; //$NON-NLS-1$
-		private static final Integer UNKNOWN_VERSION_ORDINAL = Integer.valueOf(-1);
-		private static final Map<String, Integer> KNOWN_VERSIONS_MAP;
-		static {
-			List<String> allVersions = JavaCore.getAllVersions();
-			KNOWN_VERSIONS_MAP = new HashMap<>(allVersions.size() + 1);
-			for (int i = 0; i < allVersions.size(); i++) {
-				KNOWN_VERSIONS_MAP.put(allVersions.get(i), Integer.valueOf(i));
-			}
-			KNOWN_VERSIONS_MAP.put(UNKNOWN_VERSION, UNKNOWN_VERSION_ORDINAL);
-		}
-
-		@Override
-		public int compare(IVMInstall o1, IVMInstall o2) {
-			String vmVersion1 = getSimpleVmVersion(o1);
-			String vmVersion2 = getSimpleVmVersion(o2);
-			Integer ordinal1 = getVmOrdinal(vmVersion1);
-			Integer ordinal2 = getVmOrdinal(vmVersion2);
-			// reversed order, so highest version is sorted first
-			return ordinal2.compareTo(ordinal1);
-		}
-
-		@SuppressWarnings("nls")
-		private static String getSimpleVmVersion(IVMInstall vm) {
-			if (!(vm instanceof IVMInstall2 vm2)) {
-				return UNKNOWN_VERSION;
-			}
-			String javaVersion = vm2.getJavaVersion();
-			if (javaVersion == null) {
-				return UNKNOWN_VERSION;
-			}
-			javaVersion = javaVersion.strip();
-			if (javaVersion.length() > 2 && javaVersion.startsWith("1.")) {
-				// 1.8.0 -> 1.8
-				javaVersion = javaVersion.substring(0, 3);
-			} else {
-				int firstDot = javaVersion.indexOf(".");
-				if (firstDot > 0) {
-					// 21.0.1 -> 21
-					javaVersion = javaVersion.substring(0, firstDot);
-				}
-			}
-			return javaVersion;
-		}
-
-		private static Integer getVmOrdinal(String vmVersion) {
-			Integer value = KNOWN_VERSIONS_MAP.get(vmVersion);
-			if (value == null) {
-				try {
-					// assume it is > Java 21 and can be parsed as integer
-					return Integer.valueOf(vmVersion);
-				} catch (Exception e) {
-					return UNKNOWN_VERSION_ORDINAL;
-				}
-			}
-			return value;
-		}
-	}
+	private static final Comparator<IVMInstall> VM_VERSION_COMPARATOR = Comparator
+			.<IVMInstall>comparingInt(VMUtil::getJavaRelease).reversed();
 
 	/**
 	 * Returns true if the {@link IApiBaseline} has its information loaded
@@ -754,7 +691,6 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 			restored = true;
 		}
 	}
-
 
 	/**
 	 * Returns all errors in the state.
