@@ -54,6 +54,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.TracingOptionsManager;
+import org.eclipse.pde.internal.core.util.VMUtil;
 import org.eclipse.pde.internal.launching.ILaunchingPreferenceConstants;
 import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
 import org.eclipse.pde.launching.IPDELauncherConstants;
@@ -248,26 +249,17 @@ public class LaunchArgumentsHelper {
 			ModelEntry entry = PluginRegistry.findEntry("org.eclipse.jdt.debug"); //$NON-NLS-1$
 			if (entry != null) {
 				IVMInstall vmInstall = VMHelper.getVMInstall(config, plugins);
-				if (vmInstall instanceof AbstractVMInstall) {
-					String javaVersion = ((AbstractVMInstall) vmInstall).getJavaVersion();
-					String[] javaVersionSegments = javaVersion.split("\\."); //$NON-NLS-1$
-					if (javaVersionSegments.length >= 2) {
-						try {
-							if (Integer.parseInt(javaVersionSegments[0]) == 1 && Integer.parseInt(javaVersionSegments[1]) < 7) {
-								IPluginModelBase[] models = entry.getExternalModels();
-								for (IPluginModelBase model : models) {
-									File file = new File(model.getInstallLocation());
-									if (!file.isFile()) {
-										file = new File(file, "jdi.jar"); //$NON-NLS-1$
-									}
-									if (file.exists()) {
-										map.put(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH_PREPEND, new String[] {file.getAbsolutePath()});
-										break;
-									}
-								}
-							}
-						} catch (NumberFormatException e) {
-							// ignored
+				int javaRelease = VMUtil.getJavaRelease(vmInstall);
+				if (-1 < javaRelease && javaRelease < 7) {
+					IPluginModelBase[] models = entry.getExternalModels();
+					for (IPluginModelBase model : models) {
+						File file = new File(model.getInstallLocation());
+						if (!file.isFile()) {
+							file = new File(file, "jdi.jar"); //$NON-NLS-1$
+						}
+						if (file.exists()) {
+							map.put(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH_PREPEND, new String[] {file.getAbsolutePath()});
+							break;
 						}
 					}
 				}
