@@ -16,11 +16,14 @@ package org.eclipse.pde.core.tests.internal;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -39,6 +42,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.WorkspacePluginModelManager;
 import org.eclipse.pde.internal.core.project.PDEProject;
@@ -87,6 +91,41 @@ public class WorkspaceModelManagerTest {
 		TestWorkspaceModelManager mm = createWorkspaceModelManager(false);
 		IPluginModelBase model = getPluginModel(existingProject, mm);
 		assertExistingModel("plugin.a", "1.0.0", model);
+	}
+
+	@Test
+	public void testExtensionPoints_surviveManifestChange() throws Exception {
+		IProject project = createModelProject("plugin.with.extension.point", "1.0.0");
+		IFile pluginXml = project.getFile("plugin.xml");
+		byte[] pluginXmlContents = ("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+				+ "<?eclipse version=\"3.4\"?>\n"
+				+ "<plugin>\n"
+				+ "   <extension-point id=\"sample\" name=\"Sample\" schema=\"schema/sample.exsd\"/>\n"
+				+ "</plugin>\n").getBytes(StandardCharsets.UTF_8);
+		pluginXml.create(new ByteArrayInputStream(pluginXmlContents), true, null);
+		awaitJobs();
+
+		IPluginModelBase modelBefore = PluginRegistry.findModel(project);
+		assertNotNull(modelBefore);
+		long bundleIdBefore = modelBefore.getBundleDescription().getBundleId();
+		assertEquals(1, modelBefore.getPluginBase().getExtensionPoints().length);
+
+		IFile manifest = manifest(project);
+		try (var contents = manifest.getContents()) {
+			String updatedManifest = new String(contents.readAllBytes(), StandardCharsets.UTF_8)
+					.replace("Bundle-Version: 1.0.0", "Bundle-Version: 1.0.1");
+			assertTrue(updatedManifest.contains("Bundle-Version: 1.0.1"));
+			manifest.setContents(new ByteArrayInputStream(updatedManifest.getBytes(StandardCharsets.UTF_8)),
+					IResource.FORCE, null);
+		}
+		awaitJobs();
+
+		IPluginModelBase modelAfter = PluginRegistry.findModel(project);
+		assertNotNull(modelAfter);
+		long bundleIdAfter = modelAfter.getBundleDescription().getBundleId();
+		assertNotEquals("The manifest change must replace the bundle description", bundleIdBefore, bundleIdAfter);
+		assertEquals("Extension points should remain available after a manifest-only change", 1,
+				modelAfter.getPluginBase().getExtensionPoints().length);
 	}
 
 	@Test
