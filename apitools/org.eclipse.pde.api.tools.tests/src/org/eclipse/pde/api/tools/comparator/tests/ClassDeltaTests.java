@@ -30,6 +30,8 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.junit.Test;
@@ -3934,6 +3936,102 @@ public class ClassDeltaTests extends DeltaTestSetup {
 				IDelta.EXPANDED_SUPERINTERFACES_SET_BREAKING, expandedSuperinterfacesDelta.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, expandedSuperinterfacesDelta.getElementType()); //$NON-NLS-1$
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(expandedSuperinterfacesDelta)); //$NON-NLS-1$
+	}
+
+	/**
+	 * A compiler-generated bridge method implements the erased method of a newly
+	 * added generic interface.
+	 */
+	@Test
+	public void test166() throws Exception {
+		deployBundles("test166"); //$NON-NLS-1$
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		IApiTypeRoot classRoot = afterApiComponent.findTypeRoot("api.C"); //$NON-NLS-1$
+		assertNotNull("no class type root", classRoot); //$NON-NLS-1$
+		IApiType classType = classRoot.getStructure();
+		IApiMethod bridgeMethod = null;
+		for (IApiMethod method : classType.getMethods()) {
+			if ("resolve".equals(method.getName()) && "()Lapi/Base;".equals(method.getSignature())) { //$NON-NLS-1$ //$NON-NLS-2$
+				bridgeMethod = method;
+				break;
+			}
+		}
+		assertNotNull("no erased bridge method", bridgeMethod); //$NON-NLS-1$
+		int modifiers = bridgeMethod.getModifiers();
+		assertTrue("bridge is not public", Flags.isPublic(modifiers)); //$NON-NLS-1$
+		assertTrue("bridge is not synthetic", Flags.isSynthetic(modifiers)); //$NON-NLS-1$
+		assertEquals("Wrong bridge modifiers", 0x1041, modifiers); //$NON-NLS-1$
+
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after,
+				VisibilityModifiers.API, null);
+		assertNotNull("No delta", delta); //$NON-NLS-1$
+		IDelta expandedSuperinterfacesDelta = null;
+		expandedSuperinterfacesDelta = findExpandedSuperinterfacesDelta(delta, "api.C"); //$NON-NLS-1$
+		assertNotNull("No expanded superinterfaces delta", expandedSuperinterfacesDelta); //$NON-NLS-1$
+		assertEquals("Wrong flag", IDelta.EXPANDED_SUPERINTERFACES_SET, expandedSuperinterfacesDelta.getFlags()); //$NON-NLS-1$
+		assertEquals("Wrong kind", IDelta.CHANGED, expandedSuperinterfacesDelta.getKind()); //$NON-NLS-1$
+		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, expandedSuperinterfacesDelta.getElementType()); //$NON-NLS-1$
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(expandedSuperinterfacesDelta)); //$NON-NLS-1$
+	}
+
+	/**
+	 * Adding an interface does not create a new obligation when the same method
+	 * contract was already present through another interface.
+	 */
+	@Test
+	public void test167() throws Exception {
+		deployBundles("test167"); //$NON-NLS-1$
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		IApiType beforeClass = beforeApiComponent.findTypeRoot("api.C").getStructure(); //$NON-NLS-1$
+		IApiType afterClass = afterApiComponent.findTypeRoot("api.C").getStructure(); //$NON-NLS-1$
+		assertEquals("Wrong baseline interface set", "api.Existing", beforeClass.getSuperInterfaceNames()[0]); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("Wrong current interface set size", 2, afterClass.getSuperInterfaceNames().length); //$NON-NLS-1$
+		assertEquals("Wrong first current interface", "api.Existing", afterClass.getSuperInterfaceNames()[0]); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("Wrong second current interface", "api.Added", afterClass.getSuperInterfaceNames()[1]); //$NON-NLS-1$ //$NON-NLS-2$
+		IApiMethod existingMethod = beforeApiComponent.findTypeRoot("api.Existing").getStructure() //$NON-NLS-1$
+				.getMethod("isFrozen", "()Z"); //$NON-NLS-1$ //$NON-NLS-2$
+		IApiMethod addedMethod = afterApiComponent.findTypeRoot("api.Added").getStructure() //$NON-NLS-1$
+				.getMethod("isFrozen", "()Z"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNotNull("No existing interface method", existingMethod); //$NON-NLS-1$
+		assertNotNull("No added interface method", addedMethod); //$NON-NLS-1$
+		assertEquals("Different method contracts", existingMethod.getSignature(), addedMethod.getSignature()); //$NON-NLS-1$
+		assertEquals("Wrong required method signature", "()Z", addedMethod.getSignature()); //$NON-NLS-1$ //$NON-NLS-2$
+
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after,
+				VisibilityModifiers.API, null);
+		assertNotNull("No delta", delta); //$NON-NLS-1$
+		IDelta expandedSuperinterfacesDelta = null;
+		expandedSuperinterfacesDelta = findExpandedSuperinterfacesDelta(delta, "api.C"); //$NON-NLS-1$
+		assertNotNull("No expanded superinterfaces delta", expandedSuperinterfacesDelta); //$NON-NLS-1$
+		assertEquals("Wrong kind", IDelta.CHANGED, expandedSuperinterfacesDelta.getKind()); //$NON-NLS-1$
+		assertEquals("Wrong flag", IDelta.EXPANDED_SUPERINTERFACES_SET, expandedSuperinterfacesDelta.getFlags()); //$NON-NLS-1$
+		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, expandedSuperinterfacesDelta.getElementType()); //$NON-NLS-1$
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(expandedSuperinterfacesDelta)); //$NON-NLS-1$
+	}
+
+	private IDelta findExpandedSuperinterfacesDelta(IDelta delta, String typeName) {
+		if (typeName.equals(delta.getTypeName())
+				&& (delta.getFlags() == IDelta.EXPANDED_SUPERINTERFACES_SET
+						|| delta.getFlags() == IDelta.EXPANDED_SUPERINTERFACES_SET_BREAKING)) {
+			return delta;
+		}
+		for (IDelta child : delta.getChildren()) {
+			IDelta match = findExpandedSuperinterfacesDelta(child, typeName);
+			if (match != null) {
+				return match;
+			}
+		}
+		return null;
 	}
 
 	private void assertInternalSuperclassMethodPullUpIsBreaking(String testName) {
