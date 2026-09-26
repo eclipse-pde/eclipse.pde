@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.lsp4e.languageServer">
+      <server
+            class="org.eclipse.pde.ls.BNDLanguageServerClient"
+            id="org.eclipse.pde.ls.bnd"
+            label="BND Instructions">
+      </server>
+      <contentTypeMapping
+            contentType="org.eclipse.pde.bndInstructions"
+            id="org.eclipse.pde.ls.bnd">
+      </contentTypeMapping>
+   </extension>
+
+</plugin>
