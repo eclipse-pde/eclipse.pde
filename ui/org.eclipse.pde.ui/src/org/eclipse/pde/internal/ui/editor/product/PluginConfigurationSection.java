@@ -22,7 +22,6 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -45,6 +44,7 @@ import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.core.iproduct.IProductModelFactory;
 import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
+import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -69,13 +69,14 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 public class PluginConfigurationSection extends TableSection {
+	private static final String DEFAULT = "default"; //$NON-NLS-1$
 
 	private class LabelProvider extends PDELabelProvider {
 
 		@Override
 		public Image getColumnImage(Object obj, int index) {
-			if (index == 0) {
-				return super.getColumnImage(PluginRegistry.findModel(((IPluginConfiguration) obj).getId()), index);
+			if (index == 0 && obj instanceof IPluginConfiguration pluginConfig) {
+				return super.getColumnImage(PluginRegistry.findModel(pluginConfig.getId()), index);
 			}
 			return null;
 		}
@@ -87,7 +88,7 @@ public class PluginConfigurationSection extends TableSection {
 				case 0 -> configuration.getId();
 				case 1 -> {
 					int startLevel = configuration.getStartLevel();
-					yield startLevel == 0 ? "default" : Integer.toString(startLevel); //$NON-NLS-1$
+					yield startLevel == 0 ? DEFAULT : Integer.toString(startLevel);
 				}
 				case 2 -> Boolean.toString(configuration.isAutoStart());
 				default -> null;
@@ -111,32 +112,6 @@ public class PluginConfigurationSection extends TableSection {
 		labels[3] = PDEUIMessages.Product_PluginSection_removeAll;
 		return labels;
 	}
-
-	/*
-	 * A list of bundles that typically require auto-start and optionally
-	 * require a special startlevel. If the startlevel is zero then the
-	 * framework will use the default start level for the bundle. This list
-	 * loosely based on TargetPlatform.getBundleList and more specifically on
-	 * TargetPlatformHelper.getDefaultBundleList(). Both of these
-	 * implementations are problematic because they are out of date, and also
-	 * leave out commonly used bundles. This list attempts to describe a typical
-	 * set up on the assumption that an advanced user can further modify it. The
-	 * list is hard-coded rather than walking the plugin requirements of the
-	 * product and all required products. The reason for this is that there are
-	 * some bundles, such as org.eclipse.equinox.ds, that are typically needed
-	 * but users do not remember to add them, and they are not required by any
-	 * bundle. The idea of this list is to suggest these commonly used bundles
-	 * and start levels that clients typically do not remember. See
-	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=426529 We use the same
-	 * String format described in TargetPlatform so that in the future, we could
-	 * obtain this list from another source that uses the same format.
-	 */
-	private static final Map<String, Integer> RECOMMENDED_AUTOSTART_BUNDLES = Map.of( //
-			"org.apache.felix.scr", 2, //$NON-NLS-1$
-			"org.eclipse.core.runtime", 0, //$NON-NLS-1$
-			"org.eclipse.equinox.common", 2, //$NON-NLS-1$
-			"org.eclipse.equinox.event", 2, //$NON-NLS-1$
-			"org.eclipse.equinox.simpleconfigurator", 1); //$NON-NLS-1$
 
 	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
@@ -237,7 +212,7 @@ public class PluginConfigurationSection extends TableSection {
 				.map(IPluginModelBase::getPluginBase).map(IPluginBase::getId).collect(Collectors.toSet());
 		// Build a user-presentable description of the plugins and start levels.
 		StringBuilder bundlesList = new StringBuilder();
-		RECOMMENDED_AUTOSTART_BUNDLES.forEach((pluginID, autoStartLevel) -> {
+		BundleLauncherHelper.RECOMMENDED_AUTO_START_BUNDLE_LEVELS.forEach((pluginID, autoStartLevel) -> {
 			if (!configuredPluginIDs.contains(pluginID) && allPlugins.contains(pluginID)) {
 				bundlesList.append('\t');
 				bundlesList.append(pluginID);
@@ -247,7 +222,7 @@ public class PluginConfigurationSection extends TableSection {
 					bundlesList.append(' ');
 					bundlesList.append(autoStartLevel);
 				} else {
-					bundlesList.append(NLS.bind(PDEUIMessages.EquinoxPluginBlock_defaultLevelColumn, "Default")); //$NON-NLS-1$
+					bundlesList.append(NLS.bind(PDEUIMessages.EquinoxPluginBlock_defaultLevelColumn, DEFAULT));
 				}
 				bundlesList.append('\n');
 			}
@@ -261,7 +236,7 @@ public class PluginConfigurationSection extends TableSection {
 				IProductModelFactory factory = product.getModel().getFactory();
 				// Build the model objects for the plugins and add to the
 				// product model.
-				RECOMMENDED_AUTOSTART_BUNDLES.forEach((pluginID, autoStartLevel) -> {
+				BundleLauncherHelper.RECOMMENDED_AUTO_START_BUNDLE_LEVELS.forEach((pluginID, autoStartLevel) -> {
 					IPluginConfiguration configuration = factory.createPluginConfiguration();
 					configuration.setId(pluginID);
 					if (autoStartLevel > 0) {
@@ -352,12 +327,11 @@ public class PluginConfigurationSection extends TableSection {
 
 			spinner.setMinimum(0);
 			String level = item.getText(1);
-			int defaultLevel = level.length() == 0 || "default".equals(level) ? 0 : Integer.parseInt(level); //$NON-NLS-1$
+			int defaultLevel = BundleLauncherHelper.parseAutoStartLevel(level);
 			spinner.setSelection(defaultLevel);
 			spinner.addModifyListener(e -> {
 				int selection1 = spinner.getSelection();
-				item.setText(1, selection1 == 0 ? "default" //$NON-NLS-1$
-						: Integer.toString(selection1));
+				item.setText(1, BundleLauncherHelper.autoStartLevelToString(selection1));
 				ppc.setStartLevel(selection1);
 			});
 			fLevelColumnEditor.setEditor(spinner, item, 1);
