@@ -3055,6 +3055,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String TargetPlatformPreferencePage_LoadDefaultTarget;
 
+	public static String TargetPlatformPreferencePage_AutoReload;
+
+	public static String TargetPlatformPreferencePage_AutoReloadTooltip;
+
 	public static String TargetPlatformPreferencePage2_0;
 
 	public static String TargetPlatformPreferencePage2_1;
