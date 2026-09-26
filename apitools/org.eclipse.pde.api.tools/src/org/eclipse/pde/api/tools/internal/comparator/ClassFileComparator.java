@@ -418,7 +418,9 @@ public class ClassFileComparator {
 								if (defMethod == false) {
 									boolean isBreakingChange = false;
 									IApiMethod meth = this.type2.getMethod(iMethod.getName(), iMethod.getSignature());
-									if (meth == null) {
+									boolean methodAlreadyRequired = meth == null
+											&& isMethodRequiredByBaselineInterfaces(iMethod, superinterfacesSet1);
+									if (meth == null && !methodAlreadyRequired) {
 										// check in superclasses
 									List<IApiType> superclassList = getSuperclassList(this.type2, false, true);
 										if (superclassList != null) {
@@ -430,7 +432,8 @@ public class ClassFileComparator {
 											}
 										}
 									}
-									isBreakingChange = !isValidInterfaceMethodImplementation(meth);
+									isBreakingChange = !methodAlreadyRequired
+											&& !isValidInterfaceMethodImplementation(meth);
 									if (isBreakingChange) {
 										this.addDelta(getElementType(this.type1), IDelta.CHANGED,
 												IDelta.EXPANDED_SUPERINTERFACES_SET_BREAKING,
@@ -511,7 +514,19 @@ public class ClassFileComparator {
 		}
 		int modifiers = method.getModifiers();
 		return Flags.isPublic(modifiers) && !Flags.isStatic(modifiers) && !Flags.isAbstract(modifiers)
-				&& !Flags.isSynthetic(modifiers);
+				&& (!Flags.isSynthetic(modifiers) || Flags.isBridge(modifiers));
+	}
+
+	private boolean isMethodRequiredByBaselineInterfaces(IApiMethod method, Set<IApiType> baselineInterfaces) {
+		if (baselineInterfaces == null) {
+			return false;
+		}
+		for (IApiType baselineInterface : baselineInterfaces) {
+			if (baselineInterface.getMethod(method.getName(), method.getSignature()) != null) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private String computeDiff(Set<IApiType> superinterfacesSet1, Set<IApiType> superinterfacesSet2, boolean expand) {
