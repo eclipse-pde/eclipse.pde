@@ -61,6 +61,7 @@ import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.target.IUBundleContainer;
 import org.eclipse.pde.internal.core.target.TargetDefinition;
+import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.core.util.ManifestUtils;
 import org.eclipse.pde.internal.core.util.VersionUtil;
@@ -559,15 +560,9 @@ public class TargetPlatformHelper {
 			if (monitor != null && monitor.isCanceled()) {
 				return null;
 			}
-			PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
-			String memento = target.getHandle().getMemento();
-			if (memento != null && memento.equals(preferences.getString(ICoreConstants.WORKSPACE_TARGET_HANDLE))) {
-				// Same target has been re-resolved upon loading, clear the
-				// preference and update the target so listeners can react to
-				// the change - see TargetStatus
-				preferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, ""); //$NON-NLS-1$
-				preferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, memento);
-			}
+			// Same target may have been re-resolved upon loading, re-store the
+			// preference so listeners can react to the change - see TargetStatus
+			((TargetPlatformService) service).refreshWorkspaceTargetHandle(target);
 		}
 		return target;
 	}
