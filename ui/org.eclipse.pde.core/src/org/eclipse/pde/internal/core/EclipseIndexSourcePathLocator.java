@@ -24,24 +24,13 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.equinox.p2.metadata.IArtifactKey;
-import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.Version;
-import org.eclipse.equinox.p2.query.QueryUtil;
-import org.eclipse.equinox.p2.repository.artifact.IArtifactRepository;
-import org.eclipse.equinox.p2.repository.artifact.IArtifactRepositoryManager;
-import org.eclipse.equinox.p2.repository.artifact.IArtifactRequest;
-import org.eclipse.equinox.p2.repository.artifact.IFileArtifactRepository;
-import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
-import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
 import org.eclipse.pde.core.IPluginSourcePathLocator;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.internal.core.index.P2Index;
 import org.eclipse.pde.internal.core.index.P2Index.Repository;
 import org.eclipse.pde.internal.core.index.P2IndexImpl;
-import org.eclipse.pde.internal.core.target.P2TargetUtils;
 
 /**
  * A plugin source path locator that queries the "Eclipse Index"
@@ -59,7 +48,6 @@ import org.eclipse.pde.internal.core.target.P2TargetUtils;
 public class EclipseIndexSourcePathLocator implements IPluginSourcePathLocator {
 
 	private static final String CAPABILITY_NS_OSGI_BUNDLE = "osgi.bundle"; //$NON-NLS-1$
-	private static final String SOURCE_SUFFIX = ".source"; //$NON-NLS-1$
 
 	/**
 	 * Caches the outcome (potentially empty) of a lookup for a given plugin id
@@ -94,14 +82,14 @@ public class EclipseIndexSourcePathLocator implements IPluginSourcePathLocator {
 	}
 
 	private IPath findAndDownloadSource(String id, String hostVersion) {
-		String sourceId = id + SOURCE_SUFFIX;
-		String hostBase = baseVersion(hostVersion);
+		String sourceId = id + SourceBundleDownloader.SOURCE_SUFFIX;
+		String hostBase = SourceBundleDownloader.baseVersion(hostVersion);
 		Map<Repository, Set<Version>> capabilities = getIndex().lookupCapabilities(CAPABILITY_NS_OSGI_BUNDLE,
 				sourceId);
 		List<Candidate> candidates = new ArrayList<>();
 		for (Map.Entry<Repository, Set<Version>> entry : capabilities.entrySet()) {
 			for (Version v : entry.getValue()) {
-				if (v.isOSGiCompatible() && baseVersion(v.getOriginal()).equals(hostBase)) {
+				if (v.isOSGiCompatible() && SourceBundleDownloader.baseVersion(v.getOriginal()).equals(hostBase)) {
 					candidates.add(new Candidate(entry.getKey(), v));
 				}
 			}
@@ -120,51 +108,13 @@ public class EclipseIndexSourcePathLocator implements IPluginSourcePathLocator {
 	private IPath tryDownload(Candidate candidate, String sourceId) {
 		try {
 			URI location = new URI(candidate.repository.getLocation().toString());
-			IMetadataRepositoryManager metadataManager = P2TargetUtils.getRepoManager();
-			IMetadataRepository metadataRepository = metadataManager.loadRepository(location,
-					new NullProgressMonitor());
-			IInstallableUnit unit = metadataRepository
-					.query(QueryUtil.createIUQuery(sourceId, candidate.version), null).stream().findFirst()
-					.orElse(null);
-			if (unit == null) {
-				return null;
-			}
-			IArtifactKey artifactKey = unit.getArtifacts().stream().findFirst().orElse(null);
-			if (artifactKey == null) {
-				return null;
-			}
-			IFileArtifactRepository bundlePool = P2TargetUtils.getBundlePool();
-			File existing = bundlePool.getArtifactFile(artifactKey);
-			if (existing != null && existing.isFile()) {
-				return IPath.fromOSString(existing.getAbsolutePath());
-			}
-			IArtifactRepositoryManager artifactManager = P2TargetUtils.getArtifactRepositoryManager();
-			IArtifactRepository sourceRepository = artifactManager.loadRepository(location,
-					new NullProgressMonitor());
-			IArtifactRequest request = artifactManager.createMirrorRequest(artifactKey, bundlePool, null, null);
-			request.perform(sourceRepository, new NullProgressMonitor());
-			if (request.getResult() == null || !request.getResult().isOK()) {
-				return null;
-			}
-			File downloaded = bundlePool.getArtifactFile(artifactKey);
-			if (downloaded != null && downloaded.isFile()) {
-				return IPath.fromOSString(downloaded.getAbsolutePath());
-			}
+			return SourceBundleDownloader.tryDownload(location, sourceId, candidate.version);
 		} catch (Exception e) {
 			PDECore.log(Status.warning(
 					"Failed to download source bundle " + sourceId + " from " + candidate.repository.getLocation(), //$NON-NLS-1$ //$NON-NLS-2$
 					e));
 		}
 		return null;
-	}
-
-	/**
-	 * @return the {@code major.minor.micro} part of the given version string,
-	 *         ignoring the qualifier.
-	 */
-	private static String baseVersion(String version) {
-		org.osgi.framework.Version v = org.osgi.framework.Version.parseVersion(version);
-		return v.getMajor() + "." + v.getMinor() + "." + v.getMicro(); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private P2Index getIndex() {

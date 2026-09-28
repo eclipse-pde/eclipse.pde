@@ -80,5 +80,6 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		corePrefs.setDefault(ICoreConstants.UPDATE_CLASSPATH_IN_PARALLEL, true);
 		corePrefs.setDefault(ICoreConstants.TEST_PLUGIN_PATTERN, ICoreConstants.TEST_PLUGIN_PATTERN_DEFAULTVALUE);
 		corePrefs.setDefault(ICoreConstants.QUERY_ECLIPSE_INDEX_FOR_SOURCE_BUNDLES, false);
+		corePrefs.setDefault(ICoreConstants.QUERY_KNOWN_P2_REPOSITORIES_FOR_SOURCE_BUNDLES, false);
 	}
 }

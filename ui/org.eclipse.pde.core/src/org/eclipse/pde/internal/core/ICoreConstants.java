@@ -379,6 +379,14 @@ public interface ICoreConstants {
 	String QUERY_ECLIPSE_INDEX_FOR_SOURCE_BUNDLES = "Preferences.MainPage.queryEclipseIndexForSourceBundles";//$NON-NLS-1$
 
 	/**
+	 * Boolean preference whether the p2 repositories already known to the IDE
+	 * (e.g. added under Available Software Sites or resolved as part of a
+	 * target definition) should be queried to locate and download missing
+	 * source bundles into the target bundle pool.
+	 */
+	String QUERY_KNOWN_P2_REPOSITORIES_FOR_SOURCE_BUNDLES = "Preferences.MainPage.queryKnownP2RepositoriesForSourceBundles";//$NON-NLS-1$
+
+	/**
 	 * Explicit preference value for {@link #WORKSPACE_TARGET_HANDLE} when the user chooses no
 	 * target for the workspace (no external bundles).
 	 */
