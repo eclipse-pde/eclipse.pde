@@ -36,10 +36,12 @@ public class TargetDefinitionCodeMiningProvider extends AbstractCodeMiningProvid
 		return CompletableFuture.supplyAsync(() -> {
 			List<ICodeMining> minings = new ArrayList<>();
 			IDocument document = viewer.getDocument();
-			try {
-				fillCodeMinings(document, minings);
-			} catch (BadLocationException e) {
-				// Caught with empty mining
+			if (document != null) {
+				try {
+					fillCodeMinings(document, minings);
+				} catch (BadLocationException e) {
+					// Caught with empty mining
+				}
 			}
 			return minings;
 		});
