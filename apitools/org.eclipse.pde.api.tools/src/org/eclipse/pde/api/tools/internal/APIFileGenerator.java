@@ -248,6 +248,9 @@ public class APIFileGenerator {
 		if (allFiles != null && allFiles.length != 0) {
 			Map<String, String> options = JavaCore.getOptions();
 			options.put(JavaCore.COMPILER_COMPLIANCE, ExecutionEnvironmentResolver.resolveCompliance(manifestMap));
+			String compliance = ExecutionEnvironmentResolver.resolveCompliance(manifestMap);
+			options.put(JavaCore.COMPILER_COMPLIANCE, compliance);
+			options.put(JavaCore.COMPILER_SOURCE, compliance);
 			CompilationUnit unit = null;
 			for (int i = 0, max = allFiles.length; i < max; i++) {
 				unit = new CompilationUnit(allFiles[i].getAbsolutePath(), this.encoding);
