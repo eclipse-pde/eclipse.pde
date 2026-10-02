@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2022 Manumitting Technologies, Inc.
+ * Copyright (c) 2011, 2026 Manumitting Technologies, Inc.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,9 +14,21 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
+import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleSheetImpl;
+import org.eclipse.e4.ui.css.core.impl.parser.CssParseException;
+import org.eclipse.e4.ui.css.swt.helpers.EclipsePreferencesHelper;
 import org.eclipse.e4.ui.css.swt.internal.theme.ThemeEngine;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -116,32 +128,69 @@ public class CSSScratchPadPart {
 		long start = System.nanoTime();
 		exceptions.setText(""); //$NON-NLS-1$
 
-		StringBuilder sb = new StringBuilder();
-
 		// FIXME: expose these new protocols: resetCurrentTheme() and
 		// getCSSEngines()
 		((ThemeEngine) themeEngine).resetCurrentTheme();
 
-		int count = 0;
-		for (CSSEngine engine : ((ThemeEngine) themeEngine).getCSSEngines()) {
-			if (count++ > 0) {
-				sb.append("\n\n"); //$NON-NLS-1$
-			}
-			sb.append(MessageFormat.format(Messages.CSSScratchPadPart_Engine, engine.getClass().getSimpleName()));
-
-			try {
+		CSSStyleSheetImpl styleSheet = null;
+		int changedPreferences = 0;
+		try {
+			for (CSSEngine engine : ((ThemeEngine) themeEngine).getCSSEngines()) {
 				// Appended last, so the scratch sheet wins cascade ties.
-				engine.parseStyleSheet(new StringReader(cssText.getText()));
+				styleSheet = engine.parseStyleSheet(new StringReader(cssText.getText()));
 				engine.reapply();
+				changedPreferences += applyToPreferences(engine);
+			}
+		} catch (IOException | RuntimeException e) {
+			exceptions.setText(MessageFormat.format(Messages.CSSScratchPadPart_Error, e.getLocalizedMessage()));
+			return;
+		}
 
-				long nanoDiff = System.nanoTime() - start;
-				sb.append(MessageFormat.format("\n{0}", MessageFormat.format(Messages.CSSScratchPadPart_Time_ms, nanoDiff / 1000000))); //$NON-NLS-1$
-			} catch (IOException | RuntimeException e) {
-				// e4's parser throws an unchecked CssParseException whose message already carries line and column.
-				sb.append(MessageFormat.format("\n{0}", MessageFormat.format(Messages.CSSScratchPadPart_Error, e.getLocalizedMessage()))); //$NON-NLS-1$
+		long millis = (System.nanoTime() - start) / 1_000_000;
+		int ruleCount = styleSheet == null ? 0 : styleSheet.getRules().size();
+		StringBuilder sb = new StringBuilder(
+				MessageFormat.format(Messages.CSSScratchPadPart_Summary, ruleCount, changedPreferences, millis));
+		if (styleSheet != null) {
+			// The parser drops malformed rules and keeps going, so they never reach the catch above
+			for (CssParseException problem : styleSheet.getProblems()) {
+				sb.append('\n').append(MessageFormat.format(Messages.CSSScratchPadPart_Skipped, problem.getMessage()));
 			}
 		}
 		exceptions.setText(sb.toString());
+	}
+
+	// Same nodes the workbench styles on a theme change
+	private static int applyToPreferences(CSSEngine engine) {
+		int changed = 0;
+		for (String bundleId : getThemeRelatedBundleIds()) {
+			IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(bundleId);
+			Map<String, String> before = new HashMap<>();
+			// CSS only overwrites values it did not write before unless the theme changed
+			for (String name : EclipsePreferencesHelper.getOverriddenPropertyNames(preferences)) {
+				before.put(name, preferences.get(name, null));
+				preferences.remove(name);
+			}
+			engine.applyStyles(preferences, false);
+			Set<String> names = new HashSet<>(before.keySet());
+			names.addAll(EclipsePreferencesHelper.getOverriddenPropertyNames(preferences));
+			for (String name : names) {
+				if (!Objects.equals(before.get(name), preferences.get(name, null))) {
+					changed++;
+				}
+			}
+		}
+		return changed;
+	}
+
+	private static Set<String> getThemeRelatedBundleIds() {
+		Set<String> bundleIds = new TreeSet<>();
+		for (String extensionPoint : new String[] { "org.eclipse.e4.ui.css.swt.theme", "org.eclipse.ui.themes" }) { //$NON-NLS-1$ //$NON-NLS-2$
+			for (IConfigurationElement element : Platform.getExtensionRegistry()
+					.getConfigurationElementsFor(extensionPoint)) {
+				bundleIds.add(element.getNamespaceIdentifier());
+			}
+		}
+		return bundleIds;
 	}
 
 }
