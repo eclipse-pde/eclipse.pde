@@ -16,14 +16,9 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.e4.core.services.translation.TranslationService;
 import org.eclipse.e4.tools.services.impl.ResourceBundleHelper;
 import org.eclipse.e4.tools.services.impl.ResourceBundleTranslationProvider;
 import org.osgi.framework.Constants;
-
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
 
 public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationProvider {
 
@@ -80,26 +75,14 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 		}
 	}
 
-	// TODO remove once we break e4 tools
-	// compatibility with Luna
-	@Inject
-	void setLocale(@Named(TranslationService.LOCALE) String locale, @Optional Boolean performUpdate) {
+	void setLocale(String locale, boolean performUpdate) {
 		try {
 			this.locale = locale == null ? Locale.getDefault() : ResourceBundleHelper.toLocale(locale);
 		} catch (final Exception e) {
 			this.locale = Locale.getDefault();
 		}
 
-		if (performUpdate == null || performUpdate) {
-			updateResourceBundle();
-		}
-	}
-
-	@Inject
-	void setLocale(@Named(TranslationService.LOCALE) Locale locale, @Optional Boolean performUpdate) {
-		this.locale = locale == null ? Locale.getDefault() : locale;
-
-		if (performUpdate == null || performUpdate) {
+		if (performUpdate) {
 			updateResourceBundle();
 		}
 	}
