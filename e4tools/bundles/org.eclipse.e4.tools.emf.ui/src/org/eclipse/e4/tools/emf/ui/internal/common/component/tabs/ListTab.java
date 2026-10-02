@@ -24,7 +24,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -116,7 +115,6 @@ public class ListTab implements IViewEObjects {
 
 	static final String ELIPSIS = "..."; //$NON-NLS-1$
 
-	ConcurrentHashMap<String, List<EObject>> mapId_Object = new ConcurrentHashMap<>();
 
 	@Inject
 	private IEclipseContext context;
@@ -280,12 +278,6 @@ public class ListTab implements IViewEObjects {
 							}
 						}
 						tvResults.getTable().setColumnOrder(order);
-
-						//					if ("Item".equals(colName)) { //$NON-NLS-1$
-						// col = colItem;
-						//					} else if ("Item".equals(colName)) { //$NON-NLS-1$
-						// col = colItem;
-						// }
 
 						final String sWidth = xpath.evaluate("width/text()", ele); //$NON-NLS-1$
 						try {
@@ -878,14 +870,10 @@ public class ListTab implements IViewEObjects {
 		filterByItemName = name;
 		filterByAttrName = null;
 		filterByAttrEmptyOption = null;
-		mapId_Object.clear();
 		final ArrayList<EObject> filtered = new ArrayList<>();
 		for (final EObject object : getAllEObjects()) {
 			if (object.eClass().getName().equals(filterByItemName)) {
 				filtered.add(object);
-				// filter.setText(Messages.ListTab_7 +
-				// attFilter);
-
 			}
 
 			final ViewerFilter viewerFilter = new ViewerFilter() {
@@ -906,7 +894,6 @@ public class ListTab implements IViewEObjects {
 		filterByAttrName = name;
 		filterByAttrEmptyOption = emptyOption;
 		filterByItemName = null;
-		mapId_Object.clear();
 		final ArrayList<EObject> filtered = new ArrayList<>();
 		for (final EObject object : getAllEObjects()) {
 			if (EmfUtil.getAttribute(object, filterByAttrName) != null) {

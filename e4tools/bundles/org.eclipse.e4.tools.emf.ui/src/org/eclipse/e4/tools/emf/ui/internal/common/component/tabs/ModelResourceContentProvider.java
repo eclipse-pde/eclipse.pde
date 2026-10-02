@@ -28,47 +28,6 @@ public class ModelResourceContentProvider implements IStructuredContentProvider 
 
 	private Object[] items = new Object[0];
 
-	public ModelResourceContentProvider() {
-		// adapter = new EContentAdapter() {
-		// @Override
-		// public void notifyChanged(Notification notification) {
-		// switch (notification.getEventType()) {
-		// case Notification.REMOVING_ADAPTER:
-		// return;
-		// }
-		//
-		// if (viewer != null && viewer.getControl().isDisposed() == false) {
-		// viewer.refresh();
-		// }
-		// super.notifyChanged(notification);
-		//
-		// // boolean optimize = false;
-		// // switch (notification.getEventType()) {
-		// //
-		// // case Notification.SET:
-		// // // optimized to only update row if SET and not elementId
-		// // // if the id is modified, we need to reindex our id map
-		// // // (by forcing input)
-		//				//						if (notification.getFeature() != EmfUtil.getAttribute((EObject) notification.getFeature(), "elementId")) { //$NON-NLS-1$
-		// // if (viewer instanceof TableViewer) {
-		// // optimize = true;
-		// // }
-		// // }
-		// // break;
-		// // default:
-		// // break;
-		// // }
-		// // if (optimize) {
-		// // EClass eClass = (EClass) ((EAttribute)
-		// // notification.getFeature()).eContainer();
-		// // ((TableViewer) viewer).update(eClass, null);
-		// // } else {
-		// // viewer.setInput(viewer.getInput());
-		// // }
-		// }
-		// };
-	}
-
 	@Override
 	public Object[] getElements(Object object) {
 		return items;
@@ -78,10 +37,6 @@ public class ModelResourceContentProvider implements IStructuredContentProvider 
 	public void inputChanged(final Viewer viewer, Object oldInput, Object newInput) {
 		ArrayList<EObject> list = new ArrayList<>();
 		IModelResource modelProvider = (IModelResource) newInput;
-		if (newInput != oldInput && newInput != null) {
-			// ((EObject)
-			// modelProvider.getRoot().get(0)).eAdapters().add(adapter);
-		}
 		if (newInput != null) {
 			TreeIterator<Object> itTree = EcoreUtil.getAllContents(modelProvider.getRoot());
 			while (itTree.hasNext()) {

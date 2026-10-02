@@ -14,7 +14,7 @@ package org.eclipse.e4.tools.emf.ui.tests;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.eclipse.e4.tools.emf.ui.internal.StringMatcher;
+import org.eclipse.core.text.StringMatcher;
 import org.junit.jupiter.api.Test;
 
 /**

@@ -15,16 +15,15 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
-import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.text.StringMatcher;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.Util.InternalClass;
 import org.eclipse.e4.tools.emf.ui.common.Util.InternalFeature;
 import org.eclipse.e4.tools.emf.ui.common.Util.InternalPackage;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
-import org.eclipse.e4.tools.emf.ui.internal.StringMatcher;
 import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
 import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
 import org.eclipse.e4.ui.model.internal.ModelUtils;
@@ -369,28 +368,6 @@ public class FeatureSelectionDialog extends SaveDialogBoundsSettingsDialog {
 			return true;
 		}
 
-		protected boolean wordMatches(String text) {
-			if (text == null) {
-				return false;
-			}
-
-			// If the whole text matches we are all set
-			if (match(text)) {
-				return true;
-			}
-
-			// Otherwise check if any of the words of the text matches
-			final String[] words = getWords(text);
-			for (int i = 0; i < words.length; i++) {
-				final String word = words[i];
-				if (match(word)) {
-					return true;
-				}
-			}
-
-			return false;
-		}
-
 		/**
 		 * Answers whether the given String matches the pattern.
 		 *
@@ -421,42 +398,6 @@ public class FeatureSelectionDialog extends SaveDialogBoundsSettingsDialog {
 				}
 				matcher = new StringMatcher(pattern, true, false);
 			}
-		}
-
-		/**
-		 * Take the given filter text and break it down into words using a
-		 * BreakIterator.
-		 *
-		 * @return an array of words
-		 */
-		private String[] getWords(String text) {
-			final List<String> words = new ArrayList<>();
-			// Break the text up into words, separating based on whitespace and
-			// common punctuation.
-			// Previously used String.split(..., "\\W"), where "\W" is a regular
-			// expression (see the Javadoc for class Pattern).
-			// Need to avoid both String.split and regular expressions, in order
-			// to
-			// compile against JCL Foundation (bug 80053).
-			// Also need to do this in an NL-sensitive way. The use of
-			// BreakIterator
-			// was suggested in bug 90579.
-			final BreakIterator iter = BreakIterator.getWordInstance();
-			iter.setText(text);
-			int i = iter.first();
-			while (i != java.text.BreakIterator.DONE && i < text.length()) {
-				int j = iter.following(i);
-				if (j == java.text.BreakIterator.DONE) {
-					j = text.length();
-				}
-				// match the word
-				if (Character.isLetterOrDigit(text.charAt(i))) {
-					final String word = text.substring(i, j);
-					words.add(word);
-				}
-				i = j;
-			}
-			return words.toArray(new String[words.size()]);
 		}
 	}
 }

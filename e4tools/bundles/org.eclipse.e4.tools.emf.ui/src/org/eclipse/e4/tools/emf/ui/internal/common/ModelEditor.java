@@ -1347,7 +1347,7 @@ public class ModelEditor implements IGotoObject {
 	 * @return the {@link AbstractComponentEditor} found (never null).
 	 */
 	public AbstractComponentEditor<?> getEditor(EClass eClass) {
-		AbstractComponentEditor<?> editor = getEditor(eClass.getInstanceClassName(), false);
+		AbstractComponentEditor<?> editor = getEditor(eClass.getInstanceClassName());
 
 		if (editor == null) {
 			// May be can try to use the ancestor editor if not found or the default editor
@@ -1371,20 +1371,11 @@ public class ModelEditor implements IGotoObject {
 
 	}
 
-	public AbstractComponentEditor<?> getEditor(String key) {
-		return getEditor(key, true);
-	}
-
 	/**
-	 * get editor from a string key.
-	 *
-	 * @param key                 : the editor string key
-	 * @param createDefaultIfNull if true, returns the default editor if no editor
-	 *                            found
-	 * @return the {@link AbstractComponentEditor} if exists. Never null if
-	 *         createDefaultIfNull is true
+	 * Returns the editor registered for the key, or <code>null</code> if there is
+	 * none.
 	 */
-	private AbstractComponentEditor<?> getEditor(String key, boolean createDefaultIfNull) {
+	public AbstractComponentEditor<?> getEditor(String key) {
 		AbstractComponentEditor<?> editor = editors.get(key);
 
 		if (editor == null) {

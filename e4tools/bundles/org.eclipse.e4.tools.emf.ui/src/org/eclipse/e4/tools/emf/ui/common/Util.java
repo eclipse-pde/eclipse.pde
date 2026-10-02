@@ -166,32 +166,6 @@ public class Util {
 	}
 
 	public static boolean moveElementByIndex(EditingDomain editingDomain, MUIElement element, boolean liveModel,
-			int index, EStructuralFeature feature) {
-		if (liveModel) {
-			final EObject container = ((EObject) element).eContainer();
-			@SuppressWarnings("unchecked")
-			final List<Object> l = (List<Object>) container.eGet(feature);
-			l.remove(element);
-
-			if (index >= 0) {
-				l.add(index, element);
-			} else {
-				l.add(element);
-			}
-
-			return true;
-		}
-		final EObject container = ((EObject) element).eContainer();
-		final Command cmd = MoveCommand.create(editingDomain, container, feature, element, index);
-
-		if (cmd.canExecute()) {
-			editingDomain.getCommandStack().execute(cmd);
-			return true;
-		}
-		return false;
-	}
-
-	public static boolean moveElementByIndex(EditingDomain editingDomain, MUIElement element, boolean liveModel,
 			int index) {
 		if (liveModel) {
 			final MElementContainer<MUIElement> container = element.getParent();

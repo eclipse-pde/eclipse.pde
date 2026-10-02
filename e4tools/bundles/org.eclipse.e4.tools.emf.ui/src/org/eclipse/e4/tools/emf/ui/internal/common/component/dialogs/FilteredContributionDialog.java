@@ -52,7 +52,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.TitleAre
 import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.TargetPlatformClassContributionCollector;
 import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.TargetPlatformContributionCollector;
 import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.TargetPlatformIconContributionCollector;
-import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs.NonReferencedResourceDialog;
+import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs.NonReferencedActionPage;
 import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs.NonReferencedResourceWizard;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -943,7 +943,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 					if (file instanceof final ContributionDataFile cdFile) {
 						final String className = cdFile.getContributionData().className;
 						if (className != null) {
-							final String pakage = NonReferencedResourceDialog.getPackageFromClassName(className);
+							final String pakage = NonReferencedActionPage.getPackageFromClassName(className);
 							final ImportPackageHeader iph = (ImportPackageHeader) model.getBundle().getManifestHeader(
 									"Import-Package"); //$NON-NLS-1$
 							if (iph != null) {
