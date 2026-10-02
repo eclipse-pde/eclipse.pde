@@ -14,10 +14,10 @@ public class Messages extends NLS {
 
 	public static String CSSScratchPadPart_Apply;
 	public static String CSSScratchPadPart_Close;
-	public static String CSSScratchPadPart_Engine;
 	public static String CSSScratchPadPart_Error;
 	public static String CSSScratchPadPart_No_theme_engine_available;
-	public static String CSSScratchPadPart_Time_ms;
+	public static String CSSScratchPadPart_Skipped;
+	public static String CSSScratchPadPart_Summary;
 	public static String CssSpyPart_actual_values;
 	public static String CssSpyPart_All_shells;
 	public static String CssSpyPart_Bounds;
