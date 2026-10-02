@@ -29,7 +29,6 @@ import org.eclipse.e4.tools.emf.ui.internal.common.EClassLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.tools.emf.ui.internal.imp.ModelImportWizard;
 import org.eclipse.e4.tools.emf.ui.internal.imp.RegistryUtil;
-import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -179,11 +178,6 @@ public class VControlsEditor extends AbstractComponentEditor<MElementContainer<M
 			protected void addPressed() {
 				final EClass eClass = (EClass) getSelection().getFirstElement();
 				handleAddChild(eClass);
-			}
-
-			@Override
-			protected List<?> getContainerChildren(Object container) {
-				return ((MApplication) container).getChildren();
 			}
 		};
 		pickList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));

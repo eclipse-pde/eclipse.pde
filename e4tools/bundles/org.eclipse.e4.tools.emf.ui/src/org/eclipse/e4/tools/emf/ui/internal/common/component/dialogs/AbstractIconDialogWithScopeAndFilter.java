@@ -371,7 +371,7 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 			try {
 				for (final IProject project : projects) {
 					// Only search bundles unless requested
-					if (includeNonBundles == false && filter.project.getFile("/META-INF/MANIFEST.MF").exists() == false) { //$NON-NLS-1$
+					if (includeNonBundles == false && project.getFile("/META-INF/MANIFEST.MF").exists() == false) { //$NON-NLS-1$
 						continue;
 					}
 					project.accept(resource -> {
