@@ -24,6 +24,7 @@ import java.util.jar.Manifest;
 import java.util.zip.ZipFile;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -383,7 +384,7 @@ public class NonReferencedActionPage extends WizardPage {
 			// file).getContributionData().className + ".class";
 			IPath newPath = IPath.fromOSString(path);
 			if (newPath.isEmpty() == false) {
-				NonReferencedResourceDialog.createFolder(project.getFolder(newPath));
+				createFolder(project.getFolder(newPath));
 			}
 			if (className != null) {
 				newPath.append(className + ".class"); //$NON-NLS-1$
@@ -443,7 +444,15 @@ public class NonReferencedActionPage extends WizardPage {
 		}
 	}
 
-	// @Refactor
+	private static void createFolder(IFolder folder) throws CoreException {
+		if (!folder.exists()) {
+			if (folder.getParent() instanceof IFolder parent) {
+				createFolder(parent);
+			}
+			folder.create(true, true, null);
+		}
+	}
+
 	static public String getPackageFromClassName(String className) {
 		final int index = className.lastIndexOf('.');
 		if (index >= 0) {

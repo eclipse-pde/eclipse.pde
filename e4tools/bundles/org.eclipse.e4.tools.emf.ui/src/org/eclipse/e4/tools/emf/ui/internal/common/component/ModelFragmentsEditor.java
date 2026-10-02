@@ -38,9 +38,7 @@ import org.eclipse.e4.ui.model.fragment.MModelFragments;
 import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -209,22 +207,6 @@ public class ModelFragmentsEditor extends AbstractComponentEditor<MModelFragment
 		}
 
 		viewer.setInput(E4Properties.imports().observeDetail(getMaster()));
-	}
-
-	public void addClasses(EPackage ePackage, List<FeatureClass> list) {
-		for (final EClassifier c : ePackage.getEClassifiers()) {
-			if (c instanceof final EClass eclass) {
-				if (eclass != ApplicationPackageImpl.Literals.APPLICATION && !eclass.isAbstract()
-						&& !eclass.isInterface()
-						&& eclass.getEAllSuperTypes().contains(ApplicationPackageImpl.Literals.APPLICATION_ELEMENT)) {
-					list.add(new FeatureClass(eclass.getName(), eclass));
-				}
-			}
-		}
-
-		for (final EPackage eSubPackage : ePackage.getESubpackages()) {
-			addClasses(eSubPackage, list);
-		}
 	}
 
 	@Override

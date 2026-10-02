@@ -14,7 +14,6 @@
 package org.eclipse.e4.tools.emf.editor3x;
 
 import org.eclipse.e4.tools.compat.parts.DIEditorPart;
-import org.eclipse.e4.tools.emf.ui.common.IModelResource.ModelListener;
 import org.eclipse.e4.tools.emf.ui.internal.wbm.ApplicationModelEditor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchCommandConstants;
@@ -25,19 +24,6 @@ public class E4WorkbenchModelEditor extends
 	DIEditorPart<ApplicationModelEditor> {
 	private UndoAction undoAction;
 	private RedoAction redoAction;
-
-	private final ModelListener listener = new ModelListener() {
-
-		@Override
-		public void dirtyChanged() {
-			firePropertyChange(PROP_DIRTY);
-		}
-
-		@Override
-		public void commandStackChanged() {
-
-		}
-	};
 
 	public E4WorkbenchModelEditor() {
 		super(ApplicationModelEditor.class, COPY | CUT | PASTE);
@@ -72,10 +58,6 @@ public class E4WorkbenchModelEditor extends
 
 		if (redoAction != null) {
 			redoAction.dispose();
-		}
-
-		if (listener != null && getComponent() != null && getComponent().getModelProvider() != null) {
-			getComponent().getModelProvider().removeModelListener(listener);
 		}
 
 		super.dispose();
