@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.search.dependencies;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -22,12 +24,15 @@ import java.util.stream.Stream;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jdt.core.IJavaModelMarker;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -41,6 +46,8 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.search.dependencies.GatherUnusedDependenciesOperation;
 import org.eclipse.pde.ui.tests.runtime.TestUtils;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
+import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
@@ -49,7 +56,17 @@ import org.osgi.framework.VersionRange;
 public class GatherUnusedDependenciesOperationTest {
 
 	@ClassRule
+	public static final TestRule RESTORE_TARGET_DEFINITION = TargetPlatformUtil.RESTORE_CURRENT_TARGET_DEFINITION_AFTER;
+	@ClassRule
 	public static final TestRule CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
+
+	@BeforeClass
+	public static void setUpTargetPlatform() throws Exception {
+		// The tests require bundles of the target platform to be present, so
+		// that they must not depend on whatever target definition another test
+		// class happens to have left behind.
+		TargetPlatformUtil.setRunningPlatformAsTarget();
+	}
 
 	@Test
 	public void testDirectlyUsedDependencyReexportedByOtherDependencyIsNotFlaggedAsUnused() throws Exception {
@@ -84,6 +101,57 @@ public class GatherUnusedDependenciesOperationTest {
 		assertFalse(
 				"Direct, used dependency to bundle C must not be flagged as unused just because bundle A reexports it",
 				unusedPlugins.contains(bundleC));
+	}
+
+	@Test
+	public void testTargetBundleDependencyUsedOnlyInByteCodeIsNotFlaggedAsUnused() throws Exception {
+		// Dependencies to bundles of the target platform are resolvable as jars
+		// during the analysis, unlike those to bundles of the workspace, so that
+		// they are subject to manifest calculation rules that do not apply here.
+		// The referred type IEclipseContext of org.eclipse.e4.core.contexts is
+		// only used as the return type of a method of another bundle, so that
+		// the reference is present in the byte code but in no source file.
+		String contextsBundle = "org.eclipse.e4.core.contexts";
+		String bundle = "targetplatform.bundle";
+		IProject project = createJavaPluginProject(bundle);
+		addRequiredBundle(project, "org.eclipse.e4.ui.model.workbench");
+		addRequiredBundle(project, "org.eclipse.e4.ui.workbench");
+		addRequiredBundle(project, contextsBundle);
+		createJavaSource(project, bundle, "UsesContext", """
+				import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+				import org.eclipse.e4.ui.workbench.modeling.EModelService;
+
+				public class UsesContext {
+					public EModelService getModelService(MPart part) {
+						return part.getContext().get(EModelService.class);
+					}
+				}
+				""");
+
+		buildProjects();
+		List<String> unusedPlugins = gatherUnusedDependencies(project);
+		assertFalse("Dependency to target platform bundle " + contextsBundle + " must not be flagged as unused "
+				+ "although its type is only referred to by the byte code", unusedPlugins.contains(contextsBundle));
+	}
+
+	@Test
+	public void testUnusedTargetBundleDependencyIsFlaggedAsUnused() throws Exception {
+		// Counterpart to the used dependency to a target platform bundle: not
+		// being able to tell the packages of such a bundle apart from those of
+		// the other dependencies must not make every one of them appear as used
+		String contextsBundle = "org.eclipse.e4.core.contexts";
+		String bundle = "targetplatform.bundle.unused";
+		IProject project = createJavaPluginProject(bundle);
+		addRequiredBundle(project, contextsBundle);
+		createJavaSource(project, bundle, "UsesNothing", """
+				public class UsesNothing {
+				}
+				""");
+
+		buildProjects();
+		List<String> unusedPlugins = gatherUnusedDependencies(project);
+		assertTrue("Unused dependency to target platform bundle " + contextsBundle + " must be flagged as unused",
+				unusedPlugins.contains(contextsBundle));
 	}
 
 	private static IProject createManifestOnlyPluginProject(String symbolicName) throws Exception {
@@ -168,7 +236,28 @@ public class GatherUnusedDependenciesOperationTest {
 
 	private static void buildProjects() throws CoreException {
 		ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
-		TestUtils.waitForJobs(GatherUnusedDependenciesOperationTest.class.getName(), 100, 10000);
+		boolean timedOut = TestUtils.waitForJobs(GatherUnusedDependenciesOperationTest.class.getName(), 100, 10000);
+		assertFalse("Timed out waiting for the build to finish", timedOut);
+		assertProjectsCompiledWithoutErrors();
+	}
+
+	/**
+	 * The analysis derives the used dependencies from the byte code, so a
+	 * project whose sources did not compile has no dependency that appears to
+	 * be used. Without this check, every test that expects a dependency to be
+	 * reported as unused would also pass if nothing had been analyzed at all,
+	 * and a test that expects the opposite would fail with a message about the
+	 * analysis instead of about the missing byte code.
+	 */
+	private static void assertProjectsCompiledWithoutErrors() throws CoreException {
+		for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
+			IMarker[] markers = project.findMarkers(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER, true,
+					IResource.DEPTH_INFINITE);
+			List<String> errors = Arrays.stream(markers)
+					.filter(marker -> marker.getAttribute(IMarker.SEVERITY, -1) == IMarker.SEVERITY_ERROR)
+					.map(marker -> marker.getAttribute(IMarker.MESSAGE, "")).toList();
+			assertEquals("Project " + project.getName() + " must compile without errors", List.of(), errors);
+		}
 	}
 
 	private static List<String> gatherUnusedDependencies(IProject project)
