@@ -237,7 +237,6 @@ public class ControlFactory {
 						if (key.getText().trim().length() > 0) {
 							final BasicEMap.Entry<String, String> entry = (org.eclipse.emf.common.util.BasicEMap.Entry<String, String>) ApplicationFactoryImpl.eINSTANCE
 									.createStringToStringMap();
-							entry.setHash(key.hashCode());
 							entry.setKey(key.getText());
 							entry.setValue(value.getText().trim().length() > 0 ? value.getText() : null);
 							final Command cmd = AddCommand.create(editor.getEditingDomain(), editor.getMaster()

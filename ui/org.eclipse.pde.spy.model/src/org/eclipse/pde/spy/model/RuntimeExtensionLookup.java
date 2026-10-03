@@ -5,7 +5,6 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.e4.tools.emf.ui.common.IExtensionLookup;
 
-@SuppressWarnings("restriction")
 public class RuntimeExtensionLookup implements IExtensionLookup {
 
 	@Override

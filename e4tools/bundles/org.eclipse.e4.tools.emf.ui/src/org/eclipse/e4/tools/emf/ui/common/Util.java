@@ -278,7 +278,7 @@ public class Util {
 				if (el.getName().equals("product")) { //$NON-NLS-1$
 					boolean xmiPropertyPresent = false;
 					for (final IConfigurationElement prop : el.getChildren("property")) { //$NON-NLS-1$
-						if (prop.getAttribute("name").equals("applicationXMI")) { //$NON-NLS-1$//$NON-NLS-2$
+						if ("applicationXMI".equals(prop.getAttribute("name"))) { //$NON-NLS-1$//$NON-NLS-2$
 							final String v = prop.getAttribute("value"); //$NON-NLS-1$
 							setUpResourceSet(modelResourceSet, root, v);
 							xmiPropertyPresent = true;

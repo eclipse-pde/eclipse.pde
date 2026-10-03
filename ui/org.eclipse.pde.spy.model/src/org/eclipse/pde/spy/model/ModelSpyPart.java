@@ -22,7 +22,6 @@ import org.eclipse.e4.ui.model.application.MApplication;
 
 import jakarta.inject.Inject;
 
-@SuppressWarnings("restriction")
 public class ModelSpyPart {
 
 	private final ApplicationModelEditor instance;

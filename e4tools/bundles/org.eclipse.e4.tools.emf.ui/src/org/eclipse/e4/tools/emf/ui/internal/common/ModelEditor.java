@@ -43,6 +43,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
@@ -200,6 +201,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider;
 import org.eclipse.jface.databinding.viewers.TreeStructureAdvisor;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -1445,7 +1447,10 @@ public class ModelEditor implements IGotoObject {
 		try {
 			setSaving(true);
 			if (modelProvider.isSaveable()) {
-				modelProvider.save();
+				final IStatus status = modelProvider.save();
+				if (!status.isOK()) {
+					ErrorDialog.openError(viewer.getControl().getShell(), null, null, status);
+				}
 			}
 		} finally {
 			setSaving(false);
@@ -1607,7 +1612,7 @@ public class ModelEditor implements IGotoObject {
 						pastedObject = el;
 						cc.append(cmd);
 					}
-					return;
+					continue;
 				}
 
 				final Command cmd = AddCommand.create(getModelProvider().getEditingDomain(), container, feature,
@@ -1863,7 +1868,7 @@ public class ModelEditor implements IGotoObject {
 				if (feature == FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS && parent != null) {
 					final MApplicationElement el = (MApplicationElement) EcoreUtil.create(((EObject) data).eClass());
 					el.setElementId(((MApplicationElement) data).getElementId());
-					final Command cmd = createRemoveAddCommand(data, feature, parent, CommandParameter.NO_INDEX);
+					final Command cmd = AddCommand.create(domain, parent, feature, el);
 					if (cmd.canExecute()) {
 						domain.getCommandStack().execute(cmd);
 					}
