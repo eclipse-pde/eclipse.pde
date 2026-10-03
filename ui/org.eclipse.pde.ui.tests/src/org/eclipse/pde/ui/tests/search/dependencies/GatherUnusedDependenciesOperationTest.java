@@ -10,41 +10,23 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.search.dependencies;
 
+import static org.eclipse.pde.ui.tests.search.dependencies.GatherUnusedDependenciesTestUtils.addExportedPackage;
+import static org.eclipse.pde.ui.tests.search.dependencies.GatherUnusedDependenciesTestUtils.addReexportedBundle;
+import static org.eclipse.pde.ui.tests.search.dependencies.GatherUnusedDependenciesTestUtils.addRequiredBundle;
+import static org.eclipse.pde.ui.tests.search.dependencies.GatherUnusedDependenciesTestUtils.buildProjects;
+import static org.eclipse.pde.ui.tests.search.dependencies.GatherUnusedDependenciesTestUtils.createJavaPluginProject;
+import static org.eclipse.pde.ui.tests.search.dependencies.GatherUnusedDependenciesTestUtils.createJavaSource;
+import static org.eclipse.pde.ui.tests.search.dependencies.GatherUnusedDependenciesTestUtils.createManifestOnlyPluginProject;
+import static org.eclipse.pde.ui.tests.search.dependencies.GatherUnusedDependenciesTestUtils.gatherUnusedDependencies;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 
-import java.io.ByteArrayInputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.pde.core.plugin.IPluginImport;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.core.project.IBundleClasspathEntry;
-import org.eclipse.pde.core.project.IBundleProjectDescription;
-import org.eclipse.pde.core.project.IBundleProjectService;
-import org.eclipse.pde.core.project.IPackageExportDescription;
-import org.eclipse.pde.core.project.IRequiredBundleDescription;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.ui.search.dependencies.GatherUnusedDependenciesOperation;
-import org.eclipse.pde.ui.tests.runtime.TestUtils;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
-import org.osgi.framework.VersionRange;
 
 public class GatherUnusedDependenciesOperationTest {
 
@@ -84,103 +66,6 @@ public class GatherUnusedDependenciesOperationTest {
 		assertFalse(
 				"Direct, used dependency to bundle C must not be flagged as unused just because bundle A reexports it",
 				unusedPlugins.contains(bundleC));
-	}
-
-	private static IProject createManifestOnlyPluginProject(String symbolicName) throws Exception {
-		IBundleProjectService service = acquireBundleProjectService();
-		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(symbolicName);
-		IBundleProjectDescription description = service.getDescription(project);
-		description.setSymbolicName(symbolicName);
-		description.setNatureIds(new String[] { IBundleProjectDescription.PLUGIN_NATURE });
-		description.apply(null);
-		return project;
-	}
-
-	private static IProject createJavaPluginProject(String symbolicName) throws Exception {
-		IBundleProjectService service = acquireBundleProjectService();
-		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(symbolicName);
-		IBundleProjectDescription description = service.getDescription(project);
-		description.setSymbolicName(symbolicName);
-		description.setNatureIds(new String[] { IBundleProjectDescription.PLUGIN_NATURE, JavaCore.NATURE_ID });
-		IBundleClasspathEntry classpathEntry = service.newBundleClasspathEntry(IPath.fromOSString("src"), null,
-				IPath.fromOSString("."));
-		description.setBundleClasspath(new IBundleClasspathEntry[] { classpathEntry });
-		description.apply(null);
-		return project;
-	}
-
-	private static void addExportedPackage(IProject project, String packageName) throws Exception {
-		IBundleProjectService service = acquireBundleProjectService();
-		IBundleProjectDescription description = service.getDescription(project);
-		IPackageExportDescription[] presentExports = description.getPackageExports();
-		IPackageExportDescription addedExport = service.newPackageExport(packageName, null, true, List.of());
-		description.setPackageExports(Stream
-				.concat(presentExports != null ? Arrays.stream(presentExports) : Stream.empty(), Stream.of(addedExport))
-				.toArray(IPackageExportDescription[]::new));
-		description.apply(null);
-	}
-
-	private static void addRequiredBundle(IProject project, String symbolicName) throws CoreException {
-		addRequiredBundle(project, symbolicName, false);
-	}
-
-	private static void addReexportedBundle(IProject project, String symbolicName) throws CoreException {
-		addRequiredBundle(project, symbolicName, true);
-	}
-
-	private static void addRequiredBundle(IProject project, String symbolicName, boolean reexported)
-			throws CoreException {
-		IBundleProjectService service = acquireBundleProjectService();
-		IBundleProjectDescription description = service.getDescription(project);
-		IRequiredBundleDescription[] presentBundles = description.getRequiredBundles();
-		IRequiredBundleDescription addedBundle = service.newRequiredBundle(symbolicName, (VersionRange) null, false,
-				reexported);
-		description.setRequiredBundles(Stream
-				.concat(presentBundles != null ? Arrays.stream(presentBundles) : Stream.empty(), Stream.of(addedBundle))
-				.toArray(IRequiredBundleDescription[]::new));
-		description.apply(null);
-	}
-
-	private static void createJavaSource(IProject project, String packageName, String typeName, String body)
-			throws CoreException {
-		IPath packagePath = IPath.fromOSString("src").append(packageName.replace('.', '/'));
-		IFolder packageFolder = project.getFolder(packagePath);
-		if (!packageFolder.exists()) {
-			IFolder parent = project.getFolder(IPath.fromOSString("src"));
-			for (String segment : packageName.split("\\.")) {
-				parent = parent.getFolder(segment);
-				if (!parent.exists()) {
-					parent.create(true, true, null);
-				}
-			}
-		}
-		IFile javaFile = packageFolder.getFile(typeName + ".java");
-		String content = """
-				package %s;
-
-				%s""".formatted(packageName, body);
-		javaFile.create(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)), true, null);
-	}
-
-	private static IBundleProjectService acquireBundleProjectService() {
-		return PDECore.getDefault().acquireService(IBundleProjectService.class);
-	}
-
-	private static void buildProjects() throws CoreException {
-		ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
-		TestUtils.waitForJobs(GatherUnusedDependenciesOperationTest.class.getName(), 100, 10000);
-	}
-
-	private static List<String> gatherUnusedDependencies(IProject project)
-			throws InvocationTargetException, InterruptedException {
-		IPluginModelBase model = PluginRegistry.findModel(project);
-		assertNotNull("Plug-in model for bundle " + project.getName() + " not found", model);
-
-		GatherUnusedDependenciesOperation operation = new GatherUnusedDependenciesOperation(model);
-		operation.run(new NullProgressMonitor());
-
-		return operation.getList().stream().filter(IPluginImport.class::isInstance).map(IPluginImport.class::cast)
-				.map(IPluginImport::getId).toList();
 	}
 
 }
