@@ -117,3 +117,20 @@ Then add the packaging plug-in to the build:
     </plugins>
 </build>
 ```
+
+## Locating Source Bundles for the Target Platform
+
+Independent of the mechanisms above (which are about generating/importing source references for building/checking out a project),
+PDE also needs to locate the source bundle matching a binary bundle of the target platform, for example to attach source to the Java classpath.
+
+This is handled by the **org.eclipse.pde.core.dynamicSource** extension point.
+Each contributor provides an implementation of **org.eclipse.pde.core.IPluginSourcePathLocator** together with a **complexity** hint (`low`, `medium` or `high`) that tells PDE how expensive it is to run the locator; cheap (e.g. purely local file system based) locators are tried first.
+
+PDE ships with a few locators out of the box:
+
+* **EclipsePluginSourcePathLocator** - looks for a co-located source bundle in the same directory (e.g. in a bundle pool).
+* **LocalMavenPluginSourcePathLocator** - looks for a local Maven `-sources.jar` next to the binary jar.
+* **EclipseIndexSourcePathLocator** - if none of the above found anything and the user opted in to the *Query the Eclipse Index for missing source bundles* preference (**Preferences > Plug-in Development**), this locator queries the [Eclipse Index](https://download.eclipse.org/oomph/index/) (the same index used by the Oomph Setup installer) for a p2 repository that provides a matching source bundle.
+  If one is found, it is downloaded into the target bundle pool so that subsequent lookups can resolve it locally.
+  This locator requires network access and is therefore disabled by default.
+
