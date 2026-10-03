@@ -439,4 +439,12 @@
                  type="Repository">
            </targetLocation>
         </extension>
+        <extension
+              point="org.eclipse.jdt.core.compilationParticipant">
+           <compilationParticipant
+                 class="org.eclipse.pde.internal.core.builders.PDECompilationParticipant"
+                 id="org.eclipse.pde.core.compilationParticipant"
+                 modifiesEnvironment="false">
+           </compilationParticipant>
+        </extension>
 </plugin>
