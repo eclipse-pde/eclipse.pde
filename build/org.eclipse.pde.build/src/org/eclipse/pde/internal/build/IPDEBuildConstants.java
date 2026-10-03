@@ -136,13 +136,15 @@ public interface IPDEBuildConstants {
 	public final static String PDE_SOURCE_REF = "${PDE_SOURCE_REF}"; //$NON-NLS-1$
 
 	//Some Bundle IDs we care about
-	public final static String BUNDLE_OSGI = "org.eclipse.osgi"; //$NON-NLS-1$
+	public static final String BUNDLE_OSGI = "org.eclipse.osgi"; //$NON-NLS-1$
 	public static final String BUNDLE_EQUINOX_LAUNCHER = Constants.BUNDLE_EQUINOX_LAUNCHER;
 	public static final String BUNDLE_EQUINOX_COMMON = "org.eclipse.equinox.common"; //$NON-NLS-1$
+	public static final String BUNDLE_EQUINOX_EVENT = "org.eclipse.equinox.event"; //$NON-NLS-1$
 	public static final String BUNDLE_CORE_RUNTIME = "org.eclipse.core.runtime"; //$NON-NLS-1$
 	public static final String BUNDLE_SIMPLE_CONFIGURATOR = "org.eclipse.equinox.simpleconfigurator"; //$NON-NLS-1$
 	public static final String BUNDLE_DS = "org.eclipse.equinox.ds"; //$NON-NLS-1$
 	public static final String BUNDLE_FELIX_SCR = "org.apache.felix.scr"; //$NON-NLS-1$
+	public static final String BUNDLE_ARIES_SPIFLY = "org.apache.aries.spifly.dynamic.bundle"; //$NON-NLS-1$
 	public static final String FEATURE_PLATFORM_LAUNCHERS = "org.eclipse.platform.launchers"; //$NON-NLS-1$
 	public static final String FEATURE_EQUINOX_EXECUTABLE = "org.eclipse.equinox.executable"; //$NON-NLS-1$
 
