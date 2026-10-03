@@ -24,7 +24,6 @@ public class Messages extends NLS {
 	public static String FindIconDialog_searchByFilename;
 	public static String IconDialog_bundle;
 	public static String IconDialog_find;
-	public static String IconDialog_folder;
 	public static String IconDialog_icon;
 	public static String IconDialog_selectIcon;
 	public static String IconDialog_selectIcon_MESSAGE;
@@ -35,7 +34,6 @@ public class Messages extends NLS {
 	public static String NonReferencedActionPage_NonreferencedResourceAction;
 	public static String NonReferencedResourceDialog__ast_notInABundle_ast;
 	public static String NonReferencedResourceDialog_2;
-	public static String NonReferencedResourceDialog_Action;
 	public static String NonReferencedResourceDialog_ast_notInABundle_ast;
 	public static String NonReferencedResourceDialog_bundle;
 	public static String NonReferencedResourceDialog_class;
@@ -49,10 +47,7 @@ public class Messages extends NLS {
 	public static String NonReferencedResourceDialog_package;
 	public static String NonReferencedResourceDialog_requireBundle;
 	public static String NonReferencedResourceDialog_resource;
-	public static String NonReferencedResourceDialog_resourceNotReferenced;
-	public static String NonReferencedResourceDialog_resourceReferenceWarning;
 	public static String NonReferencedResourceDialog_selectProjectToReceiveCopy;
-	public static String NonReferencedResourceDialog_selectTheFolderResourceCopy;
 	public static String NonReferencedResourceDialog_url;
 	public static String NonReferencedResourceDialog_useAnyway;
 	public static String PickProjectFolderPage_SelectProjectFolder;
@@ -61,7 +56,6 @@ public class Messages extends NLS {
 	public static String ProjectFolderPickerDialog_6;
 	public static String ProjectFolderPickerDialog_sourceResourceDirectory;
 	public static String ProjectFolderPickerDialog_sourceResourceName;
-	public static String ProjectFolderPickerDialog_useSourceDirectory;
 	public static String ReferencedProjectPickerDialog_selectReferencedProject;
 	public static String TargetPlatformClassContributionCollector_classes;
 	public static String TargetPlatformContributionCollector_BuildTargetPlatformIndex;

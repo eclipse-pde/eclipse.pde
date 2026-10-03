@@ -14,24 +14,32 @@
 
 package org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs;
 
+import java.io.InputStream;
+import java.net.URL;
+import java.util.ArrayList;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceProxyVisitor;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.BundleImageCache;
 import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages;
-import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs.ProjectFolderPickerDialog.ProjectContentProvider;
-import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs.ProjectFolderPickerDialog.ProjectLabelProvider;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 
 /**
@@ -137,5 +145,105 @@ public class PickProjectFolderPage extends WizardPage {
 		context.set("folderToCopyTo", value); //$NON-NLS-1$
 		context.set("folderToCopyTo.obj", selected); //$NON-NLS-1$
 		setPageComplete(selected != null);
+	}
+
+	static class ProjectContentProvider implements ITreeContentProvider {
+
+		private IProject project;
+
+		public ProjectContentProvider() {
+		}
+
+		@Override
+		public void dispose() {
+		}
+
+		@Override
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			this.project = (IProject) newInput;
+		}
+
+		@Override
+		public Object[] getElements(Object inputElement) {
+			return new Object[] { project.getName() };
+		}
+
+		@Override
+		public Object[] getChildren(final Object parentElement) {
+			if (parentElement instanceof String) {
+				return getChildren(project);
+			}
+			final IResource resource = (IResource) parentElement;
+			final ArrayList<Object> list = new ArrayList<>();
+			IResourceProxyVisitor visitor = proxy -> {
+				if (proxy.getType() == IResource.FOLDER && proxy.requestResource().getParent() == resource) {
+					if (proxy.requestResource().equals(resource) == false) {
+						list.add(proxy.requestResource());
+					}
+				}
+				return true;
+			};
+			try {
+				resource.accept(visitor, IResource.DEPTH_ONE);
+			} catch (CoreException e) {
+				e.printStackTrace();
+			}
+			return list.toArray(new Object[0]);
+		}
+
+		@Override
+		public Object getParent(Object element) {
+			IResource resource = (IResource) element;
+			return resource.getParent();
+		}
+
+		Boolean found = false;
+
+		@Override
+		public boolean hasChildren(Object element) {
+			if (element instanceof String) {
+				return true;
+			}
+			final IResource resource = (IResource) element;
+			try {
+				found = false;
+				resource.accept(proxy -> {
+					if (proxy.getType() == IResource.FOLDER && proxy.requestResource().equals(resource) == false) {
+						found = true;
+						return false;
+					}
+					return true;
+				}, IResource.DEPTH_ONE);
+			} catch (CoreException e) {
+				e.printStackTrace();
+			}
+			return found;
+		}
+	}
+
+	static class ProjectLabelProvider extends ColumnLabelProvider {
+		@Override
+		public String getText(Object element) {
+			if (element instanceof String) {
+				return element.toString();
+			}
+			IResource resource = (IResource) element;
+			return resource.getName();
+		}
+
+		@Override
+		public Image getImage(Object element) {
+			try {
+				if (element instanceof String) {
+					return new Image(Display.getDefault(), new URL(Messages.ProjectFolderPickerDialog_0).openStream());
+				}
+				try (InputStream is = new URL("platform:/plugin/org.eclipse.ui.ide/icons/full/obj16/folder.png") //$NON-NLS-1$
+						.openStream()) {
+					return new Image(Display.getDefault(), is);
+				}
+			} catch (Exception e) {
+				return super.getImage(element);
+			}
+		}
 	}
 }

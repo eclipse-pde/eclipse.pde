@@ -24,7 +24,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -116,7 +115,6 @@ public class ListTab implements IViewEObjects {
 
 	static final String ELIPSIS = "..."; //$NON-NLS-1$
 
-	ConcurrentHashMap<String, List<EObject>> mapId_Object = new ConcurrentHashMap<>();
 
 	@Inject
 	private IEclipseContext context;
@@ -180,7 +178,7 @@ public class ListTab implements IViewEObjects {
 			final Document doc = DocUtil.createDocument("list-tab"); //$NON-NLS-1$
 			final Element cols = DocUtil.createChild(doc.getDocumentElement(), "columns"); //$NON-NLS-1$
 
-			final ArrayList<TableColumn> allCols = TableViewerUtil.getColumnsInDisplayOrder(tvResults);
+			final List<TableColumn> allCols = TableViewerUtil.getColumnsInDisplayOrder(tvResults);
 			for (final TableColumn col : allCols) {
 				String id;
 				if (requiredColumns.containsValue(col)) {
@@ -269,23 +267,7 @@ public class ListTab implements IViewEObjects {
 							col = addColumn(colName).getTableViewerColumn().getColumn();
 						}
 
-						// move it to the end of the list.
-						final int currentIndex = TableViewerUtil.getVisibleColumnIndex(tvResults, col);
-						final int[] order = tvResults.getTable().getColumnOrder();
-						for (int idx = 0; idx < order.length; idx++) {
-							if (order[idx] > currentIndex) {
-								order[idx]--;
-							} else if (order[idx] == currentIndex) {
-								order[idx] = order.length - 1;
-							}
-						}
-						tvResults.getTable().setColumnOrder(order);
-
-						//					if ("Item".equals(colName)) { //$NON-NLS-1$
-						// col = colItem;
-						//					} else if ("Item".equals(colName)) { //$NON-NLS-1$
-						// col = colItem;
-						// }
+						TableViewerUtil.moveColumnToEnd(tvResults, col);
 
 						final String sWidth = xpath.evaluate("width/text()", ele); //$NON-NLS-1$
 						try {
@@ -469,7 +451,7 @@ public class ListTab implements IViewEObjects {
 					filterByAttrName = null;
 					tvResults.setFilters();
 					filterByItem.setText(Messages.ListTab_filterByItem + ELIPSIS);
-					filterByAttribute.setText(Messages.ListTab_markAttribute + ELIPSIS);
+					filterByAttribute.setText(Messages.ListTab_filterByAttribute + ELIPSIS);
 				}
 			});
 		}
@@ -604,15 +586,8 @@ public class ListTab implements IViewEObjects {
 				final Table table = (Table) event.widget;
 				final int clientWidth = table.getClientArea().width;
 				final GC gc = event.gc;
-				// Color oldForeground = gc.getForeground();
-				// Color oldBackground = gc.getBackground();
-
-				// gc.setBackground(item.getDisplay().getSystemColor(SWT.COLOR_YELLOW));
-				gc.setForeground(item.getDisplay().getSystemColor(SWT.COLOR_RED));
+				gc.setBackground(item.getDisplay().getSystemColor(SWT.COLOR_RED));
 				gc.fillRectangle(0, event.y, clientWidth, event.height);
-
-				// gc.setForeground(oldForeground);
-				// gc.setBackground(oldBackground);
 				event.detail &= ~SWT.SELECTED;
 			}
 		});
@@ -823,13 +798,7 @@ public class ListTab implements IViewEObjects {
 			if (e1Type == ATT_TYPE.BOOLEAN || e2Type == ATT_TYPE.BOOLEAN) {
 				final Boolean b1 = (Boolean) EmfUtil.getAttributeValue((EObject) e1, attName);
 				final Boolean b2 = (Boolean) EmfUtil.getAttributeValue((EObject) e2, attName);
-				if (b1 == null && b2 != null) {
-					return -2;
-				} else if (b2 == null && b1 != null) {
-					return 2;
-				} else {
-					return b1.compareTo(b2);
-				}
+				return E.compareTo(b1, b2);
 			}
 			return super.compare(viewer, e1, e2);
 		}
@@ -878,14 +847,10 @@ public class ListTab implements IViewEObjects {
 		filterByItemName = name;
 		filterByAttrName = null;
 		filterByAttrEmptyOption = null;
-		mapId_Object.clear();
 		final ArrayList<EObject> filtered = new ArrayList<>();
 		for (final EObject object : getAllEObjects()) {
 			if (object.eClass().getName().equals(filterByItemName)) {
 				filtered.add(object);
-				// filter.setText(Messages.ListTab_7 +
-				// attFilter);
-
 			}
 
 			final ViewerFilter viewerFilter = new ViewerFilter() {
@@ -906,7 +871,6 @@ public class ListTab implements IViewEObjects {
 		filterByAttrName = name;
 		filterByAttrEmptyOption = emptyOption;
 		filterByItemName = null;
-		mapId_Object.clear();
 		final ArrayList<EObject> filtered = new ArrayList<>();
 		for (final EObject object : getAllEObjects()) {
 			if (EmfUtil.getAttribute(object, filterByAttrName) != null) {

@@ -166,32 +166,6 @@ public class Util {
 	}
 
 	public static boolean moveElementByIndex(EditingDomain editingDomain, MUIElement element, boolean liveModel,
-			int index, EStructuralFeature feature) {
-		if (liveModel) {
-			final EObject container = ((EObject) element).eContainer();
-			@SuppressWarnings("unchecked")
-			final List<Object> l = (List<Object>) container.eGet(feature);
-			l.remove(element);
-
-			if (index >= 0) {
-				l.add(index, element);
-			} else {
-				l.add(element);
-			}
-
-			return true;
-		}
-		final EObject container = ((EObject) element).eContainer();
-		final Command cmd = MoveCommand.create(editingDomain, container, feature, element, index);
-
-		if (cmd.canExecute()) {
-			editingDomain.getCommandStack().execute(cmd);
-			return true;
-		}
-		return false;
-	}
-
-	public static boolean moveElementByIndex(EditingDomain editingDomain, MUIElement element, boolean liveModel,
 			int index) {
 		if (liveModel) {
 			final MElementContainer<MUIElement> container = element.getParent();
@@ -278,7 +252,7 @@ public class Util {
 				if (el.getName().equals("product")) { //$NON-NLS-1$
 					boolean xmiPropertyPresent = false;
 					for (final IConfigurationElement prop : el.getChildren("property")) { //$NON-NLS-1$
-						if (prop.getAttribute("name").equals("applicationXMI")) { //$NON-NLS-1$//$NON-NLS-2$
+						if ("applicationXMI".equals(prop.getAttribute("name"))) { //$NON-NLS-1$//$NON-NLS-2$
 							final String v = prop.getAttribute("value"); //$NON-NLS-1$
 							setUpResourceSet(modelResourceSet, root, v);
 							xmiPropertyPresent = true;

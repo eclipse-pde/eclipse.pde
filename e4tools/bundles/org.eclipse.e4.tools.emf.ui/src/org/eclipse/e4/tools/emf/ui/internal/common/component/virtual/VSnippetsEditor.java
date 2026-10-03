@@ -16,7 +16,6 @@ import org.eclipse.e4.tools.emf.ui.internal.common.AbstractPickList.PickListFeat
 import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
 import org.eclipse.e4.tools.emf.ui.internal.common.EClassLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
-import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MSnippetContainer;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
@@ -155,7 +154,7 @@ public class VSnippetsEditor extends AbstractComponentEditor<MSnippetContainer> 
 
 	@Override
 	public String getLabel(Object element) {
-		return Messages.VWindowControlEditor_TreeLabel;
+		return Messages.VSnippetsEditor_Snippets;
 	}
 
 	@Override
@@ -165,7 +164,7 @@ public class VSnippetsEditor extends AbstractComponentEditor<MSnippetContainer> 
 
 	@Override
 	public String getDescription(Object element) {
-		return Messages.VWindowControlEditor_TreeLabelDescription;
+		return Messages.VSnippetsEditor_Snippets;
 	}
 
 	@Override
@@ -201,7 +200,7 @@ public class VSnippetsEditor extends AbstractComponentEditor<MSnippetContainer> 
 
 			@Override
 			protected List<?> getContainerChildren(Object container) {
-				return ((MApplication) container).getSnippets();
+				return ((MSnippetContainer) container).getSnippets();
 			}
 		};
 		pickList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));

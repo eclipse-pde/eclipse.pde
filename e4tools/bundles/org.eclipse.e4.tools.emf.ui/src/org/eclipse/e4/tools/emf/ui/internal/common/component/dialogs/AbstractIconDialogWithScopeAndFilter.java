@@ -30,13 +30,13 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.text.StringMatcher;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.ContributionData;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.Filter;
 import org.eclipse.e4.tools.emf.ui.common.ResourceSearchScope;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
-import org.eclipse.e4.tools.emf.ui.internal.StringMatcher;
 import org.eclipse.e4.tools.emf.ui.internal.common.ClassContributionCollector;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.E;
 import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.TargetPlatformIconContributionCollector;
@@ -371,7 +371,7 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 			try {
 				for (final IProject project : projects) {
 					// Only search bundles unless requested
-					if (includeNonBundles == false && filter.project.getFile("/META-INF/MANIFEST.MF").exists() == false) { //$NON-NLS-1$
+					if (includeNonBundles == false && project.getFile("/META-INF/MANIFEST.MF").exists() == false) { //$NON-NLS-1$
 						continue;
 					}
 					project.accept(resource -> {
