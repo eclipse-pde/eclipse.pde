@@ -335,6 +335,54 @@ public class TargetPlatformService implements ITargetPlatformService {
 		}
 	}
 
+	/**
+	 * Sets the workspace target and stores its handle memento under the lock that
+	 * guards {@link #getWorkspaceTargetDefinition()}, so that method never observes
+	 * a target and a memento that disagree.
+	 *
+	 * @return <code>true</code> if a different target was replaced
+	 */
+	public boolean setWorkspaceTargetDefinition(ITargetDefinition target, String memento, boolean asyncEvents) {
+		ITargetDefinition oldTarget;
+		synchronized (this) {
+			// Must be set before the preference so listeners can react
+			oldTarget = fWorkspaceTarget.getAndSet(target);
+			storeWorkspaceTargetHandle(memento);
+		}
+		boolean changed = !Objects.equals(oldTarget, target);
+		if (changed) {
+			notifyEvent(TargetEvents.TOPIC_WORKSPACE_TARGET_CHANGED, target, asyncEvents);
+		}
+		return changed;
+	}
+
+	/**
+	 * Re-stores the memento of the given target if it is the active one, so that
+	 * preference listeners react to it being re-resolved. Leaves the stored target
+	 * alone and fires no target-changed event.
+	 *
+	 * @return <code>true</code> if the memento was re-stored
+	 */
+	public synchronized boolean refreshWorkspaceTargetHandle(ITargetDefinition target) throws CoreException {
+		String memento = target.getHandle().getMemento();
+		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
+		if (memento == null || !memento.equals(preferences.getString(ICoreConstants.WORKSPACE_TARGET_HANDLE))) {
+			return false;
+		}
+		storeWorkspaceTargetHandle(memento);
+		return true;
+	}
+
+	private void storeWorkspaceTargetHandle(String memento) {
+		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
+		// Clear first so that listeners still see a change when the same target was
+		// modified or re-resolved - see TargetStatus
+		if (memento.equals(preferences.getString(ICoreConstants.WORKSPACE_TARGET_HANDLE))) {
+			preferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, ""); //$NON-NLS-1$
+		}
+		preferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, memento);
+	}
+
 	public static void scheduleEvent(String topic, Object data) {
 		notifyEvent(topic, data, true);
 	}
