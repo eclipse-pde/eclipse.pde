@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.pde.spy.css;
 
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,6 +51,7 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.layout.TreeColumnLayout;
 import org.eclipse.jface.notifications.NotificationPopup;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewerEditor;
@@ -104,6 +106,8 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.Widget;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.css.CSSStyleDeclaration;
@@ -508,11 +512,24 @@ public class CssSpyPart {
 		outer.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Composite top = new Composite(outer, SWT.NONE);
-		GridLayoutFactory.swtDefaults().numColumns(3).applyTo(top);
+		GridLayoutFactory.swtDefaults().numColumns(4).applyTo(top);
 		cssSearchBox = new Text(top, SWT.SEARCH | SWT.ICON_SEARCH | SWT.ICON_CANCEL);
 		cssSearchBox.setMessage(Messages.CssSpyPart_CSS_Selector);
 		cssSearchBox.setToolTipText(Messages.CssSpyPart_Highlight_matching_widgets);
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(cssSearchBox);
+
+		ToolBar treeToolbar = new ToolBar(top, SWT.FLAT);
+		ToolItem expandAll = new ToolItem(treeToolbar, SWT.PUSH);
+		ToolItem collapseAll = new ToolItem(treeToolbar, SWT.PUSH);
+		Bundle bundle = FrameworkUtil.getBundle(getClass());
+		URL expandUrl = bundle.getEntry("/icons/expandall.svg");
+		URL collapseUrl = bundle.getEntry("/icons/collapseall.svg");
+		expandAll.setImage(ImageDescriptor.createFromURL(expandUrl).createImage());
+		collapseAll.setImage(ImageDescriptor.createFromURL(collapseUrl).createImage());
+		expandAll.setToolTipText(Messages.CssSpyPart_Expand_all);
+		expandAll.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> widgetTreeViewer.expandAll()));
+		collapseAll.setToolTipText(Messages.CssSpyPart_Collapse_all);
+		collapseAll.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> widgetTreeViewer.collapseAll()));
 
 		followSelection = new Button(top, SWT.CHECK);
 		followSelection.setSelection(true);
@@ -997,8 +1014,9 @@ public class CssSpyPart {
 		}
 		subMonitor.split(5);
 		for (int i = 0; i < children.getLength(); i++) {
-			processCSSSearch(subMonitor.split(5), matcher,
-					(CSSStylableElement) children.item(i), results);
+			if (children.item(i) instanceof CSSStylableElement child) {
+				processCSSSearch(subMonitor.split(5), matcher, child, results);
+			}
 		}
 	}
 
