@@ -31,6 +31,8 @@
 
 <p><strong>Move</strong> allows you to move a target definition stored in the Eclipse preferences to the workspace.  The <a href="../target_shared/move_target_wizard.htm">Move Target Wizard</a> will have you choose a location in your workspace and a file name ending in &quot;.target&quot;.  The new location will be displayed in grey beside the target name and will be applied when <strong>OK</strong> or <strong>Apply</strong> is pressed.</p>
 
+<p><strong>Reload the active target definition automatically when its file changes</strong> makes PDE reload the active target platform whenever its <code>.target</code> file is saved in the workspace or changed on disk, for example by a Git operation.  A change made while the IDE was closed is detected on the next startup.  The option is off by default because every reload resolves the target, which can take a while for large targets.</p>
+
 <p><img src="../../images/preferences/target_locations_group.png" alt="Target Locations Group"></p>
 
 <p>At the bottom of the page there is a <em>Locations</em> group.  This table will display information about the currently selected target definition.  It provides a quick way to see the contents of a target.</p>
