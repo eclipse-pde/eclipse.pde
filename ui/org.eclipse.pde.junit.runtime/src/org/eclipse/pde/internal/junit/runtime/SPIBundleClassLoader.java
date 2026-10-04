@@ -14,6 +14,8 @@
 package org.eclipse.pde.internal.junit.runtime;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,11 +27,12 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.URIUtil;
 import org.osgi.framework.Bundle;
 
 /**
- * The classloader wraps the OSGi provided one but gives access for the JUnit
- * runer to any SPI declared services.
+ * The class loader wraps the OSGi provided one but gives access for the JUnit
+ * runner to any SPI declared services.
  */
 public class SPIBundleClassLoader extends ClassLoader {
 
@@ -113,10 +116,22 @@ public class SPIBundleClassLoader extends ClassLoader {
 		for (Bundle bundle : bundles) {
 			Enumeration<URL> resources = bundle.getResources(name);
 			while (resources != null && resources.hasMoreElements()) {
-				result.add(FileLocator.resolve(resources.nextElement()));
+				// FileLocator.resolve() does not encode blanks, so the URL may not be a valid URI
+				result.add(toEncodedURL(FileLocator.resolve(resources.nextElement())));
 			}
 		}
 		return Collections.enumeration(result);
+	}
+
+	private static URL toEncodedURL(URL url) {
+		if (!"file".equals(url.getProtocol())) { //$NON-NLS-1$
+			return url;
+		}
+		try {
+			return URIUtil.toURI(url).toURL();
+		} catch (URISyntaxException | MalformedURLException e) {
+			return url;
+		}
 	}
 
 	@Override
