@@ -29,7 +29,6 @@ import org.eclipse.swt.widgets.Shell;
 
 import jakarta.inject.Named;
 
-@SuppressWarnings("restriction")
 public class OpenLiveDialogHandler {
 	private Shell shell;
 
