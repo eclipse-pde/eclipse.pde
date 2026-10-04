@@ -27,7 +27,6 @@ import org.eclipse.e4.tools.emf.ui.internal.common.AbstractPickList.PickListFeat
 import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
 import org.eclipse.e4.tools.emf.ui.internal.common.EClassLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
-import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
@@ -122,7 +121,7 @@ public abstract class VWindowEditor<M> extends AbstractComponentEditor<M> {
 
 			@Override
 			protected List<?> getContainerChildren(Object container) {
-				return ((MApplication) container).getChildren();
+				return (List<?>) ((EObject) container).eGet(targetFeature);
 			}
 		};
 		pickList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
