@@ -25,6 +25,9 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.ui.forms.FormColors;
 
 /**
  * A table viewer column for editing an EMF EAttribute If the object does not
@@ -104,9 +107,19 @@ public class EAttributeTableViewerColumn {
 		final EObject eObject = (EObject) element;
 		final EAttribute eAtt = EmfUtil.getAttribute(eObject, attName);
 		if (eAtt == null) {
-			return tvResults.getTable().getDisplay().getSystemColor(SWT.COLOR_GRAY);
+			final Table table = tvResults.getTable();
+			return tint(table, table.getForeground().getRGB(), 10);
 		}
 		return null;
+	}
+
+	/**
+	 * Returns the table background mixed with the given color by the given percentage, so it stays
+	 * readable in light and dark themes.
+	 */
+	static Color tint(Table table, RGB rgb, int percent) {
+		final RGB mixed = FormColors.blend(rgb, table.getBackground().getRGB(), percent);
+		return new Color(mixed);
 	}
 
 	public void dispose() {
