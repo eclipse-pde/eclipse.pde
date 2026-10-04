@@ -24,7 +24,6 @@ public class Messages extends NLS {
 	public static String FindIconDialog_searchByFilename;
 	public static String IconDialog_bundle;
 	public static String IconDialog_find;
-	public static String IconDialog_folder;
 	public static String IconDialog_icon;
 	public static String IconDialog_selectIcon;
 	public static String IconDialog_selectIcon_MESSAGE;

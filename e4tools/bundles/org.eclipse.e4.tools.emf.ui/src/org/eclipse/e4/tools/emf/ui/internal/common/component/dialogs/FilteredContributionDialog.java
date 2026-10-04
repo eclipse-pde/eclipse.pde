@@ -726,7 +726,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 		if (dlg.open() == Window.OK) {
 			final ArrayList<String> result = new ArrayList<>();
 			result.add(dlg.getFirstSelection());
-			setFilterBundles(result);
+			setFilterPackages(result);
 			refreshSearch();
 		}
 		updateUiState();
@@ -788,7 +788,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 		if (dlg.open() == Window.OK) {
 			final ArrayList<String> result = new ArrayList<>();
 			result.add(dlg.getFirstSelection());
-			setFilterBundles(result);
+			setFilterLocations(result);
 			refreshSearch();
 		}
 		updateUiState();

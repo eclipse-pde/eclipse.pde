@@ -509,6 +509,7 @@ public class StringModelFragment extends AbstractComponentEditor<MStringModelFra
 			context.dispose();
 			context = null;
 		}
+		super.dispose();
 	}
 
 	/**

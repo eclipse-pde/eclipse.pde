@@ -265,6 +265,7 @@ public class RegistryUtil {
 			part.setElementId(element.getAttribute(ID));
 			part.setLabel(element.getAttribute(NAME));
 			part.setIconURI(getIconURI(element, ICON));
+			part.setContributionURI(getContributionURI(element, CLASS));
 
 			final MToolBar toolBar = MMenuFactory.INSTANCE.createToolBar();
 			toolBar.setElementId(part.getElementId());
@@ -397,16 +398,17 @@ public class RegistryUtil {
 		} else if (applicationElement == MPerspective.class) {
 			return new RegistryStruct(EMPTY_STRING, "org.eclipse.ui.perspectives", "perspective", NAME); //$NON-NLS-1$ //$NON-NLS-2$
 		} else if (applicationElement == MPart.class) {
+			if (HINT_EDITOR.equals(hint)) {
+				return new RegistryStruct(EMPTY_STRING, "org.eclipse.ui.editors", EDITOR, NAME); //$NON-NLS-1$
+			}
 			return new RegistryStruct(EMPTY_STRING, "org.eclipse.ui.views", "view", NAME); //$NON-NLS-1$ //$NON-NLS-2$
 		} else if (applicationElement == MHandler.class) {
 			return new RegistryStruct(EMPTY_STRING, "org.eclipse.ui.handlers", "handler", COMMAND_ID); //$NON-NLS-1$ //$NON-NLS-2$
 		} else if (applicationElement == MPartDescriptor.class) {
-			if (hint == HINT_EDITOR)
-			{
+			if (HINT_EDITOR.equals(hint)) {
 				return new RegistryStruct(EMPTY_STRING, "org.eclipse.ui.editors", EDITOR, NAME); //$NON-NLS-1$
 			}
-			if (hint == HINT_VIEW || hint == HINT_COMPAT_VIEW)
-			{
+			if (HINT_VIEW.equals(hint) || HINT_COMPAT_VIEW.equals(hint)) {
 				return new RegistryStruct(EMPTY_STRING, "org.eclipse.ui.views", "view", NAME); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}

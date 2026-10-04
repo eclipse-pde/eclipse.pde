@@ -174,8 +174,8 @@ public class IconDialog extends Dialog implements UriDialog {
 				public void widgetSelected(SelectionEvent e) {
 					IEclipseContext childCtx = context.createChild();
 					childCtx.set(Bundle.class, FrameworkUtil.getBundle(FindContributionDialog.class));
-					childCtx.set(Messages.IconDialog_bundle, getBundle());
-					childCtx.set(Messages.IconDialog_folder, getPath());
+					childCtx.set("bundle", getBundle()); //$NON-NLS-1$
+					childCtx.set("folder", getPath()); //$NON-NLS-1$
 					AbstractIconDialogWithHardcodedScope dlg = new AbstractIconDialogWithHardcodedScope(getParentShell(), childCtx) {
 
 						@Override
