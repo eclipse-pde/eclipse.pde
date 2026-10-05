@@ -371,9 +371,7 @@ public class CssSpyPart {
 		if (decl != null) {
 			sb.append(MessageFormat.format("\n\n{0}\n", Messages.CssSpyPart_CSS_Properties_)); //$NON-NLS-1$
 			try {
-				if (decl != null) {
-					sb.append(decl.getCssText());
-				}
+				sb.append(decl.getCssText());
 			} catch (Exception e) {
 				sb.append(e);
 			}
@@ -995,7 +993,7 @@ public class CssSpyPart {
 				subMonitor.split(2);
 				processCSSSearch(subMonitor.split(8), matcher, element, results);
 			} catch (Exception e) {
-				System.out.println(e.toString());
+				System.err.println(e.toString());
 			}
 		}
 		monitor.done();

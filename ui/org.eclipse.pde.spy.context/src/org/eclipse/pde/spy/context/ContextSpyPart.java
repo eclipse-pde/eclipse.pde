@@ -215,6 +215,7 @@ public class ContextSpyPart {
 
 	@PreDestroy
 	public void dispose() {
+		imgReg.dispose();
 	}
 
 	@Focus
