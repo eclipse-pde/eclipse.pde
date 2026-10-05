@@ -95,10 +95,9 @@ public class ContextDataPart {
 		TreeViewerColumn valueCol = new TreeViewerColumn(contextDataViewer, SWT.NONE);
 		valueCol.getColumn().setWidth(600);
 		valueCol.getColumn().setText(Messages.ContextDataPart_3);
-		ContextDataProvider valueLabelProvider = ContextInjectionFactory.make(ContextDataProvider.class, ctx);
 		valueCol.setLabelProvider(dataProvider);
 		valueCol.getColumn().addSelectionListener(
-				getHeaderSelectionAdapter(contextDataViewer, valueCol.getColumn(), 1, valueLabelProvider));
+				getHeaderSelectionAdapter(contextDataViewer, valueCol.getColumn(), 1, dataProvider));
 
 		// Open all the tree
 		contextDataViewer.expandAll();
