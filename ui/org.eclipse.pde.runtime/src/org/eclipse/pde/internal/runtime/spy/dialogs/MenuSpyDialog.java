@@ -73,7 +73,6 @@ public class MenuSpyDialog extends PopupDialog {
 
 	@Override
 	protected Control createContents(Composite parent) {
-		getShell().setBackground(getShell().getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
 		initializeBounds();
 		return createDialogArea(parent);
 	}
@@ -105,6 +104,8 @@ public class MenuSpyDialog extends PopupDialog {
 		ActiveMenuSection section = new ActiveMenuSection();
 		section.build(form, toolkit, event);
 
+		// reapply the theme over the colors the toolkit set
+		getShell().reskin(SWT.ALL);
 		parent.pack();
 		return composite;
 	}
