@@ -92,7 +92,10 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 	@Override
 	public void dispose() {
 		selectedContext = null;
-		imgReg = null;
+		if (imgReg != null) {
+			imgReg.dispose();
+			imgReg = null;
+		}
 	}
 
 	@Override
