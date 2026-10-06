@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.xml;
 
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.ui.PlatformUI;
 
 /**
- * The syntax colours of the XMI tab, taken from the active workbench theme.
+ * The syntax colours of the XMI tab, taken from the JFace color registry, which
+ * the workbench keeps in sync with the active theme.
  */
 public class XMLColors {
 
@@ -22,6 +23,6 @@ public class XMLColors {
 	}
 
 	public static Color get(String colorId) {
-		return PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry().get(colorId);
+		return JFaceResources.getColorRegistry().get(colorId);
 	}
 }
