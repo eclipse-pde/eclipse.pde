@@ -318,6 +318,8 @@ public class ModelEditor implements IGotoObject {
 	/** An imageRegistry for dynamic component images (see bug #403583) */
 	private final ImageRegistry componentImages = new ImageRegistry();
 
+	private ProjectOSGiTranslationProvider translationProvider;
+
 	@Inject
 	ESelectionService selectionService;
 
@@ -406,7 +408,7 @@ public class ModelEditor implements IGotoObject {
 			if (object != null) {
 				localeString = object.toString();
 			}
-			final ProjectOSGiTranslationProvider translationProvider = new ProjectOSGiTranslationProvider(project,
+			translationProvider = new ProjectOSGiTranslationProvider(project,
 					localeString) {
 				@Override
 				protected void updateResourceBundle() {
@@ -1484,6 +1486,11 @@ public class ModelEditor implements IGotoObject {
 		if (xmiTab != null) {
 			ContextInjectionFactory.uninject(xmiTab, xmiTab.getContext());
 		}
+
+		if (translationProvider != null) {
+			translationProvider.dispose();
+		}
+		componentImages.dispose();
 	}
 
 	public IModelResource getModelProvider() {
