@@ -13,6 +13,7 @@ import java.util.ResourceBundle.Control;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
@@ -39,6 +40,16 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 	 */
 	private Locale locale;
 
+	private final IResourceChangeListener resourceListener = event -> {
+		if (event.getType() == IResourceChangeEvent.POST_CHANGE) {
+			try {
+				event.getDelta().accept(this::visit);
+			} catch (final CoreException e) {
+				e.printStackTrace();
+			}
+		}
+	};
+
 	/**
 	 * @param project
 	 *            The {@link IProject} this translation provider should be
@@ -55,16 +66,7 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 		super(null);
 
 		this.project = project;
-		this.project.getWorkspace().addResourceChangeListener(event -> {
-			if (event.getType() == IResourceChangeEvent.POST_CHANGE) {
-				try {
-					event.getDelta().accept(ProjectOSGiTranslationProvider.this::visit);
-				} catch (final CoreException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		});
+		this.project.getWorkspace().addResourceChangeListener(resourceListener);
 		setLocale(locale, false);
 
 		final IFile f = this.project.getFile(MANIFEST_DEFAULT_PATH);
@@ -73,6 +75,13 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 		} else {
 			basename = Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME;
 		}
+	}
+
+	/**
+	 * Stops tracking changes to the project's manifest and properties files.
+	 */
+	public void dispose() {
+		project.getWorkspace().removeResourceChangeListener(resourceListener);
 	}
 
 	void setLocale(String locale, boolean performUpdate) {
