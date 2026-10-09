@@ -23,6 +23,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.Map;
+import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -71,6 +72,16 @@ public class ContributionDataFile implements IFile {
 
 	public ContributionData getContributionData() {
 		return data;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return obj instanceof ContributionDataFile other && Objects.equals(data, other.data);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(data);
 	}
 
 	@Override

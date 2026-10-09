@@ -21,11 +21,14 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.AbstractIco
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.AbstractIconDialogWithScopeAndFilter;
 import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.LocalResourceManager;
+import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -82,6 +85,7 @@ public class IconDialog extends Dialog implements UriDialog {
 
 		ToolBar toolBar = new ToolBar(composite, SWT.NO_FOCUS);
 		toolBar.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
+		ResourceManager resources = new LocalResourceManager(JFaceResources.getResources(), toolBar);
 
 		{
 			Label lbl = new Label(composite, SWT.NONE);
@@ -204,7 +208,7 @@ public class IconDialog extends Dialog implements UriDialog {
 		// btnFind.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false,
 		// false, 2, 1));
 		btnFind.setText(Messages.IconDialog_find + "..."); //$NON-NLS-1$
-		btnFind.setImage(new Image(getShell().getDisplay(), getClass().getResourceAsStream("/icons/full/obj16/find.png"))); //$NON-NLS-1$
+		btnFind.setImage(resources.create(ImageDescriptor.createFromFile(IconDialog.class, "/icons/full/obj16/find.png"))); //$NON-NLS-1$
 		btnFind.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -222,7 +226,8 @@ public class IconDialog extends Dialog implements UriDialog {
 		// btnRemove.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER,
 		// false, false, 2, 1));
 		btnRemove.setText("Remove"); //$NON-NLS-1$
-		btnRemove.setImage(new Image(getShell().getDisplay(), getClass().getResourceAsStream("/icons/full/obj16/remove_filter.png"))); //$NON-NLS-1$
+		btnRemove.setImage(
+				resources.create(ImageDescriptor.createFromFile(IconDialog.class, "/icons/full/obj16/remove_filter.png"))); //$NON-NLS-1$
 		btnRemove.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {

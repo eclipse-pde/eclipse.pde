@@ -14,8 +14,7 @@
 
 package org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs;
 
-import java.io.InputStream;
-import java.net.URL;
+import java.net.URI;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IProject;
@@ -27,6 +26,9 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.BundleImageCache;
 import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.Messages;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.LocalResourceManager;
+import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -39,7 +41,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 
 /**
@@ -222,6 +223,8 @@ public class PickProjectFolderPage extends WizardPage {
 	}
 
 	static class ProjectLabelProvider extends ColumnLabelProvider {
+		private final ResourceManager resources = new LocalResourceManager(JFaceResources.getResources());
+
 		@Override
 		public String getText(Object element) {
 			if (element instanceof String) {
@@ -233,17 +236,15 @@ public class PickProjectFolderPage extends WizardPage {
 
 		@Override
 		public Image getImage(Object element) {
-			try {
-				if (element instanceof String) {
-					return new Image(Display.getDefault(), new URL(Messages.ProjectFolderPickerDialog_0).openStream());
-				}
-				try (InputStream is = new URL("platform:/plugin/org.eclipse.ui.ide/icons/full/obj16/folder.png") //$NON-NLS-1$
-						.openStream()) {
-					return new Image(Display.getDefault(), is);
-				}
-			} catch (Exception e) {
-				return super.getImage(element);
-			}
+			String uri = element instanceof String ? Messages.ProjectFolderPickerDialog_0
+					: "platform:/plugin/org.eclipse.ui.ide/icons/full/obj16/folder.png"; //$NON-NLS-1$
+			return resources.create(ImageDescriptor.createFromURI(URI.create(uri)));
+		}
+
+		@Override
+		public void dispose() {
+			resources.dispose();
+			super.dispose();
 		}
 	}
 }
