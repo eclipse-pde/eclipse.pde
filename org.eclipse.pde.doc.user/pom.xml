@@ -229,6 +229,15 @@
                   <resources>          
                     <resource>
                       <directory>${project.build.directory}/reports/apidocs</directory>
+                      <!-- javadoc keeps its invocation files when Maven logs at debug level -->
+                      <excludes>
+                        <exclude>argfile</exclude>
+                        <exclude>options</exclude>
+                        <exclude>packages</exclude>
+                        <exclude>files</exclude>
+                        <exclude>javadoc.sh</exclude>
+                        <exclude>javadoc.bat</exclude>
+                      </excludes>
                     </resource>
                   </resources>
                 </configuration>
