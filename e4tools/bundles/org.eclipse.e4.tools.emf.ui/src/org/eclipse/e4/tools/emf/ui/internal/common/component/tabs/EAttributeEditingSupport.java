@@ -37,6 +37,8 @@ class EAttributeEditingSupport extends EditingSupport {
 	private final TableViewer tableViewer;
 	private boolean wasNull;
 	private final IEclipseContext context;
+	private CellEditor checkboxEditor;
+	private CellEditor textEditor;
 
 	static public enum ATT_TYPE {
 		STRING, BOOLEAN, INTEGER, NOT_AN_ATTRIBUTE, OTHER;
@@ -51,21 +53,31 @@ class EAttributeEditingSupport extends EditingSupport {
 
 	@Override
 	protected CellEditor getCellEditor(Object element) {
+		// reuse the editors, JFace does not dispose the ones returned here
 		switch (getAttributeType(element, attName)) {
 		case BOOLEAN:
-			return new CheckboxCellEditor(tableViewer.getTable(), SWT.CHECK);
+			if (checkboxEditor == null) {
+				checkboxEditor = new CheckboxCellEditor(tableViewer.getTable(), SWT.CHECK);
+			}
+			return checkboxEditor;
 		case STRING:
 		case INTEGER:
 		default:
-			if ("contributionURI".equals(attName)) { //$NON-NLS-1$
-				return new ContributionUriCellEditor(tableViewer.getTable(), SWT.NONE, context,
-					UriDialogType.BUNDLECLASS);
+			if (textEditor == null) {
+				textEditor = createTextEditor();
 			}
-			if ("iconURI".equals(attName)) { //$NON-NLS-1$
-				return new ContributionUriCellEditor(tableViewer.getTable(), SWT.NONE, context, UriDialogType.ICON);
-			}
-			return new TextCellEditor(tableViewer.getTable(), SWT.NONE);
+			return textEditor;
 		}
+	}
+
+	private CellEditor createTextEditor() {
+		if ("contributionURI".equals(attName)) { //$NON-NLS-1$
+			return new ContributionUriCellEditor(tableViewer.getTable(), SWT.NONE, context, UriDialogType.BUNDLECLASS);
+		}
+		if ("iconURI".equals(attName)) { //$NON-NLS-1$
+			return new ContributionUriCellEditor(tableViewer.getTable(), SWT.NONE, context, UriDialogType.ICON);
+		}
+		return new TextCellEditor(tableViewer.getTable(), SWT.NONE);
 	}
 
 	static public ATT_TYPE getAttributeType(Object element, String attName) {
