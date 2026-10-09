@@ -195,9 +195,13 @@ public class Util {
 	 * The set of resources containing model element. Updated when one changes
 	 * in the workspace
 	 */
-	private static ResourceSet modelResourceSet;
+	private static volatile ResourceSet modelResourceSet;
 
-	// The lis
+	private static final Object modelResourceLock = new Object();
+
+	/** Incremented on every invalidation so a build that raced with one is not cached. */
+	private static int modelResourceGeneration;
+
 	private static boolean e4ModelResourceListenerRegistered = false;
 
 	/**
@@ -209,14 +213,20 @@ public class Util {
 	public static ResourceSet getModelElementResources() {
 
 		// Return previous computed result while workspace did not change...
-		if (modelResourceSet != null) {
-			return modelResourceSet;
+		ResourceSet cached = modelResourceSet;
+		if (cached != null) {
+			return cached;
 		}
 
 		registerE4XmiListener(); // Done only once.
 
-		modelResourceSet = new ResourceSetImpl();
-		final org.eclipse.pde.internal.core.PDEExtensionRegistry reg = new org.eclipse.pde.internal.core.PDEExtensionRegistry();
+		final int generation;
+		synchronized (modelResourceLock) {
+			generation = modelResourceGeneration;
+		}
+		final ResourceSet resourceSet = new ResourceSetImpl();
+		final org.eclipse.pde.internal.core.PDEExtensionRegistry reg = org.eclipse.pde.internal.core.PDECore.getDefault()
+				.getExtensionsRegistry();
 		IExtension[] extensions = reg.findExtensions("org.eclipse.e4.workbench.model", true); //$NON-NLS-1$
 		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 
@@ -236,7 +246,7 @@ public class Util {
 					}
 					// System.err.println(uri);
 					try {
-						modelResourceSet.getResource(uri, true);
+						resourceSet.getResource(uri, true);
 					} catch (final Exception e) {
 						e.printStackTrace();
 						// System.err.println("=============> Failing");
@@ -254,26 +264,31 @@ public class Util {
 					for (final IConfigurationElement prop : el.getChildren("property")) { //$NON-NLS-1$
 						if ("applicationXMI".equals(prop.getAttribute("name"))) { //$NON-NLS-1$//$NON-NLS-2$
 							final String v = prop.getAttribute("value"); //$NON-NLS-1$
-							setUpResourceSet(modelResourceSet, root, v);
+							setUpResourceSet(resourceSet, root, v);
 							xmiPropertyPresent = true;
 							break;
 						}
 					}
 					if (!xmiPropertyPresent) {
-						setUpResourceSet(modelResourceSet, root,
+						setUpResourceSet(resourceSet, root,
 								ext.getNamespaceIdentifier() + "/" + APP_E4XMI_DEFAULT); //$NON-NLS-1$
 						break;
 					}
 				}
 			}
 		}
-		return modelResourceSet;
+		synchronized (modelResourceLock) {
+			if (modelResourceGeneration == generation) {
+				modelResourceSet = resourceSet;
+			}
+		}
+		return resourceSet;
 	}
 
 	/**
 	 * A listener to reset the cache of e4Xmi resource for the index research
 	 */
-	private static void registerE4XmiListener() {
+	private static synchronized void registerE4XmiListener() {
 		// Register once on the workspace.
 		// the listener could be optimized to remember of changed resource since
 		// the last call to getModelElementResources...
@@ -282,24 +297,20 @@ public class Util {
 				@Override
 				public void resourceChanged(IResourceChangeEvent event) {
 					IResourceDelta delta = event.getDelta();
-					// Nothing to do if resource set not yet used or no resource change recorded!
-					if (modelResourceSet == null || delta == null) {
+					// Also invalidate while the set is null, a build may be running
+					if (delta == null) {
 						return;
 					}
 					checkDeltaContainsE4xmi(delta);
 				}
 
 				private void checkDeltaContainsE4xmi(IResourceDelta delta) {
-					if (modelResourceSet == null) {
-						return;
-					}
-
 					for (IResourceDelta rd : delta.getAffectedChildren()) {
 						IResource r = rd.getResource();
 						if (r instanceof IFile)
 						{
 							if ("e4xmi".equals(r.getFileExtension())) { //$NON-NLS-1$
-								modelResourceSet = null;
+								invalidateModelElementResources();
 								break;
 							}
 						} else {
@@ -313,6 +324,13 @@ public class Util {
 		}
 	}
 
+
+	private static void invalidateModelElementResources() {
+		synchronized (modelResourceLock) {
+			modelResourceGeneration++;
+			modelResourceSet = null;
+		}
+	}
 
 	private static void setUpResourceSet(ResourceSet resourceSet, IWorkspaceRoot root, String v) {
 		final String[] s = v.split("/"); //$NON-NLS-1$

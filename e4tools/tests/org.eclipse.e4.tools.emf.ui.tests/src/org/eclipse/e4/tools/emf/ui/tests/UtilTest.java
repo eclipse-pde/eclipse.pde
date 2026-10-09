@@ -13,13 +13,16 @@ package org.eclipse.e4.tools.emf.ui.tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.e4.tools.emf.ui.common.IEditorFeature.FeatureClass;
@@ -38,6 +41,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.domain.EditingDomain;
@@ -128,6 +132,29 @@ public class UtilTest {
 		assertEquals("demo.part.2", Util.getDefaultElementId(resource, part(null), project)); //$NON-NLS-1$
 		assertEquals("demo.partstack.0", //$NON-NLS-1$
 				Util.getDefaultElementId(resource, MBasicFactory.INSTANCE.createPartStack(), project));
+	}
+
+	@Test
+	public void testModelElementResourcesInvalidatedByE4xmiChange() throws Exception {
+		final ResourceSet first = Util.getModelElementResources();
+		assertSame(first, Util.getModelElementResources());
+
+		final IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject("UtilTestE4xmi"); //$NON-NLS-1$
+		if (project.exists()) {
+			project.delete(true, null);
+		}
+		project.create(null);
+		try {
+			project.open(null);
+			final IFile file = project.getFile("fragment.e4xmi"); //$NON-NLS-1$
+			file.create(new ByteArrayInputStream(new byte[0]), true, null);
+
+			final ResourceSet second = Util.getModelElementResources();
+			assertNotSame(first, second);
+			assertSame(second, Util.getModelElementResources());
+		} finally {
+			project.delete(true, null);
+		}
 	}
 
 	@Test

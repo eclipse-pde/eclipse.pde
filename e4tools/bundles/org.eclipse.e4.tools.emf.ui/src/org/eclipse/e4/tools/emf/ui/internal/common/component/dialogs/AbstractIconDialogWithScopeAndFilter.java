@@ -22,14 +22,15 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ICoreRunnable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.text.StringMatcher;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.ContributionData;
@@ -235,25 +236,19 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 
 	private IconMatchCallback callback;
 	private String returnValue;
-	private SearchThread task;
+	private Job searchJob;
 
 	@Override
 	protected boolean doSearch() {
-
-		// if (getSearchScopes().contains(SearchScope.TARGET_PLATFORM) ||
-		// getSearchScopes().contains(SearchScope.WORKSPACE)) {
 		if (getSearchScopes().contains(ResourceSearchScope.TARGET_PLATFORM)) {
 			return false;
 		}
-		final Timer timer = new Timer(true);
-
 		if (callback != null) {
 			callback.cancel = true;
 		}
-		if (task != null) {
-			task.cancel();
+		if (searchJob != null) {
+			searchJob.cancel();
 		}
-		task = null;
 
 		clearImages();
 
@@ -266,9 +261,10 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 		filter.setLocations(getFilterLocations());
 		filter.setPackages(getFilterPackages());
 		filter.setIncludeNonBundles(includeNonBundles);
-		task = new SearchThread(callback, filter);
-		timer.schedule(task, 500);
-		// }
+		searchJob = Job.create(Messages.FilteredContributionDialog_ContributionSearch,
+				new IconSearch(callback, filter));
+		searchJob.setSystem(true);
+		searchJob.schedule(500);
 		return true;
 	}
 
@@ -277,6 +273,17 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 			img.dispose();
 		}
 		icons.clear();
+	}
+
+	@Override
+	public boolean close() {
+		if (callback != null) {
+			callback.cancel = true;
+		}
+		if (searchJob != null) {
+			searchJob.cancel();
+		}
+		return super.close();
 	}
 
 	@Override
@@ -320,7 +327,7 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 		}
 	}
 
-	private static class SearchThread extends TimerTask {
+	private static class IconSearch implements ICoreRunnable {
 		private final IconMatchCallback callback;
 		private final StringMatcher matcherGif;
 		private final StringMatcher matcherJpg;
@@ -331,7 +338,7 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 		private boolean includeNonBundles;
 
 
-		public SearchThread(IconMatchCallback callback, Filter filter) {
+		public IconSearch(IconMatchCallback callback, Filter filter) {
 			matcherGif = new StringMatcher("*" + filter.namePattern + "*.gif", true, false); //$NON-NLS-1$//$NON-NLS-2$
 			matcherJpg = new StringMatcher("*" + filter.namePattern + "*.jpg", true, false); //$NON-NLS-1$//$NON-NLS-2$
 			matcherPng = new StringMatcher("*" + filter.namePattern + "*.png", true, false); //$NON-NLS-1$//$NON-NLS-2$
@@ -342,7 +349,7 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 		}
 
 		@Override
-		public void run() {
+		public void run(IProgressMonitor monitor) {
 			List<IProject> projects;
 			if (filter.getSearchScope().contains(ResourceSearchScope.TARGET_PLATFORM)) {
 				// never should be here because it is cached and not run as
