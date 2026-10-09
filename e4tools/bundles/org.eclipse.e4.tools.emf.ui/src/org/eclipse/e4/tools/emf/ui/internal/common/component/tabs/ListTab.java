@@ -53,6 +53,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.EmptyFil
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.TitleAreaFilterDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.TitleAreaFilterDialogWithEmptyOptions;
 import org.eclipse.e4.tools.emf.ui.internal.common.xml.EMFDocumentResourceMediator;
+import org.eclipse.e4.tools.emf.ui.internal.handlers.AbstractHandler;
 import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.emf.common.command.Command;
@@ -165,10 +166,21 @@ public class ListTab implements IViewEObjects {
 
 	@PreDestroy
 	public void preDestroy() {
-		// race condition issue with observables (exception is not thrown when
-		// break points are set)
-		tvResults.setContentProvider(ArrayContentProvider.getInstance());
+		final IEclipseContext appContext = app.getContext();
+		if (appContext.getLocal(AbstractHandler.VIEWER_KEY) == this) {
+			appContext.remove(AbstractHandler.VIEWER_KEY);
+		}
+		if (!tvResults.getControl().isDisposed()) {
+			// race condition issue with observables (exception is not thrown when
+			// break points are set)
+			tvResults.setContentProvider(ArrayContentProvider.getInstance());
+		}
 		context.get(EMFDocumentResourceMediator.class).getDocument().removeDocumentListener(documentListener);
+		if (!tabItem.isDisposed()) {
+			// a CTabItem does not dispose its control
+			tabItem.getControl().dispose();
+			tabItem.dispose();
+		}
 	}
 
 	// save custom column and filter settings
@@ -332,7 +344,6 @@ public class ListTab implements IViewEObjects {
 	@PostConstruct
 	public void postConstruct(final CTabFolder tabFolder) {
 		imageCache = new BundleImageCache(context.get(Display.class), getClass().getClassLoader());
-		tabFolder.addDisposeListener(e -> imageCache.dispose());
 		try {
 			imgMarkedItem = imageCache.create(Plugin.ID, "/icons/full/obj16/mark_occurrences.png"); //$NON-NLS-1$
 		} catch (final Exception e2) {
@@ -357,6 +368,7 @@ public class ListTab implements IViewEObjects {
 		final Composite composite = new Composite(tabFolder, SWT.NONE);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		composite.setLayout(new GridLayout(2, false));
+		composite.addDisposeListener(e -> imageCache.dispose());
 		tabItem.setControl(composite);
 		tabItem.setText(Messages.ListTab_0);
 
@@ -562,8 +574,6 @@ public class ListTab implements IViewEObjects {
 				return super.getText(eObject.eClass().getName());
 			}
 		});
-
-		app.getContext().set("org.eclipse.e4.tools.active-object-viewer", this); //$NON-NLS-1$
 
 		final EAttributeTableViewerColumn colId = new EAttributeTableViewerColumn(tvResults,
 				Messages.ListTab_elementId, "elementId", context); //$NON-NLS-1$

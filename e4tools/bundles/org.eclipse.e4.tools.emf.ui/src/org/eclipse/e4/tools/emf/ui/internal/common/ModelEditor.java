@@ -1256,9 +1256,10 @@ public class ModelEditor implements IGotoObject {
 		}
 		if (show == false) {
 			if (listTab != null) {
-				// remove the tab from the folder
-				listTab.getTabItem().dispose();
-				ContextInjectionFactory.uninject(listTab, listTab.getContext());
+				// uninject runs ListTab's @PreDestroy, which removes the tab from the folder
+				final IEclipseContext listContext = listTab.getContext();
+				ContextInjectionFactory.uninject(listTab, listContext);
+				listContext.dispose();
 				listTab = null;
 			}
 		} else {
@@ -2069,10 +2070,10 @@ public class ModelEditor implements IGotoObject {
 
 				viewer.reveal(object);
 				viewer.setSelection(new StructuredSelection(object));
-				editorTabFolder.setSelection(getTabIndex(tabItemTree));
+				showTab(tabItemTree);
 				break;
 			case TAB_XMI:
-				editorTabFolder.setSelection(getTabIndex(tabItemXmi));
+				showTab(tabItemXmi);
 				// model was not updating in XMI document (selection listener
 				// was not firing from programmatic setSelection()
 				emfDocumentProvider.updateFromEMF();
@@ -2085,7 +2086,7 @@ public class ModelEditor implements IGotoObject {
 				break;
 			case TAB_LIST:
 				if (tabItemList != null && listTab != null) {
-					editorTabFolder.setSelection(getTabIndex(tabItemList));
+					showTab(tabItemList);
 					listTab.getViewer().setSelection(new StructuredSelection(object), true);
 				}
 				break;
@@ -2093,6 +2094,12 @@ public class ModelEditor implements IGotoObject {
 				break;
 			}
 		}
+	}
+
+	private void showTab(CTabItem item) {
+		editorTabFolder.setSelection(item);
+		// a programmatic selection does not notify the tab folder's selection listener
+		app.getContext().set(key, listTab != null && item == listTab.getTabItem() ? listTab : null);
 	}
 
 	// This will ensure the provider has created the tree node (so we can reveal
