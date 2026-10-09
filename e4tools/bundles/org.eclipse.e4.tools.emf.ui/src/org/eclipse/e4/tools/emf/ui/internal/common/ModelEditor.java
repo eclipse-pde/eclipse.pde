@@ -1695,7 +1695,6 @@ public class ModelEditor implements IGotoObject {
 
 			// Manage multiple cut objects (bug #532070)
 			Collection<EObject> objectsToCut = new ArrayList<>();
-			final Clipboard clip = new Clipboard(viewer.getControl().getDisplay());
 			for (Object o : ((IStructuredSelection) viewer.getSelection()).toList()) {
 				if (o instanceof EObject) {
 					objectsToCut.add((EObject) o);
@@ -1724,11 +1723,11 @@ public class ModelEditor implements IGotoObject {
 
 			if (cmd.canExecute()) {
 				// Now can set the clipboard...
+				final Clipboard clip = new Clipboard(viewer.getControl().getDisplay());
 				clip.setContents(new Object[] { objectsToCut }, new Transfer[] { MemoryTransfer.getInstance() });
+				clip.dispose();
 				getModelProvider().getEditingDomain().getCommandStack().execute(cmd);
 			}
-
-			clip.dispose();
 		}
 	}
 
