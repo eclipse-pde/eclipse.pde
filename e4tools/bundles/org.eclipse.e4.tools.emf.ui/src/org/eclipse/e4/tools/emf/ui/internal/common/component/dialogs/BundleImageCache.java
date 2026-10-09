@@ -42,7 +42,7 @@ public class BundleImageCache {
 	private final Display display;
 	private final ClassLoader classloader;
 	private final ArrayList<Image> images;
-	private static Image imgPlaceholder;
+	private Image imgPlaceholder;
 	private final IEclipseContext context;
 
 	public BundleImageCache(Display display, ClassLoader classloader) {
@@ -95,8 +95,7 @@ public class BundleImageCache {
 		if (imgPlaceholder == null) {
 			try (InputStream resourceStream = classloader
 					.getResourceAsStream("/icons/full/obj16/missing_image_placeholder.png")) { //$NON-NLS-1$
-				imgPlaceholder = new Image(Display.getDefault(),
-						resourceStream);
+				imgPlaceholder = new Image(display, resourceStream);
 			} catch (IOException ex) {
 				throw new RuntimeException(ex);
 			}
