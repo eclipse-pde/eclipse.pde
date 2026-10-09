@@ -421,6 +421,7 @@ public class StringModelFragment extends AbstractComponentEditor<MStringModelFra
 			};
 
 			pickList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
+			pickList.getList().setInput(E4Properties.elements().observeDetail(getMaster()));
 
 			pickList.setLabelProvider(new LabelProvider() {
 				@Override
@@ -525,10 +526,6 @@ public class StringModelFragment extends AbstractComponentEditor<MStringModelFra
 		if (list.size() > 0) {
 			pickList.setSelection(new StructuredSelection(list.get(0)));
 		}
-
-		// pickList.getList().refresh();
-
-		pickList.getList().setInput(E4Properties.elements().observeDetail(getMaster()));
 
 		// Update the possible actions
 		actions.clear();
