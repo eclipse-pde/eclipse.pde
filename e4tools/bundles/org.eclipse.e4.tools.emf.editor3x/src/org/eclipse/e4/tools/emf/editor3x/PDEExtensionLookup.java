@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.e4.tools.emf.ui.common.IExtensionLookup;
-import org.eclipse.pde.internal.core.PDEExtensionRegistry;
+import org.eclipse.pde.internal.core.PDECore;
 
 @SuppressWarnings("restriction")
 public class PDEExtensionLookup implements IExtensionLookup {
@@ -28,8 +28,7 @@ public class PDEExtensionLookup implements IExtensionLookup {
 			final IExtensionRegistry registry = RegistryFactory.getRegistry();
 			return registry.getExtensionPoint(extensionPointId).getExtensions();
 		}
-		final PDEExtensionRegistry reg = new PDEExtensionRegistry();
-		return reg.findExtensions(extensionPointId, true);
+		return PDECore.getDefault().getExtensionsRegistry().findExtensions(extensionPointId, true);
 	}
 
 }
