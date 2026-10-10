@@ -1534,23 +1534,17 @@ public class ModelEditor implements IGotoObject {
 
 			EStructuralFeature feature = null;
 			EObject container = null;
+			int index = CommandParameter.NO_INDEX;
 			if (parent instanceof VirtualEntry) {
 				final VirtualEntry<EObject, ?> v = (VirtualEntry<EObject, ?>) parent;
 				feature = ((IEMFProperty) v.getProperty()).getStructuralFeature();
 				container = v.getOriginalParent();
-			} else if (parent instanceof EObject) {
-				container = (EObject) parent;
-				if (container instanceof MElementContainer<?>) {
-					feature = UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN;
-				} else {
-					feature = determineTargetFeature(probe, container);
-					if (feature == null && container.eClass().equals(probe.eClass())
-							&& container.eContainer() != null) {
-						// it seems the user has still the original selection active,
-						// try to find the target feature using the container's container
-						container = container.eContainer();
-						feature = determineTargetFeature(probe, container);
-					}
+			} else if (parent instanceof EObject selected) {
+				final PasteTarget target = PasteTarget.find(selected, probe);
+				if (target != null) {
+					container = target.container();
+					feature = target.feature();
+					index = target.index();
 				}
 			}
 
@@ -1584,7 +1578,7 @@ public class ModelEditor implements IGotoObject {
 			CompoundCommand cc = new CompoundCommand();
 			Object pastedObject = null; // The single pasted object if single paste (for undo/redo message)
 			for (EObject eObject : toCopy) {
-				if (!isValidTarget(parent, eObject, false)) {
+				if (!PasteTarget.accepts(container, feature, eObject)) {
 					// the object to paste does not fit into the target feature
 					continue;
 				}
@@ -1607,10 +1601,13 @@ public class ModelEditor implements IGotoObject {
 				}
 
 				final Command cmd = AddCommand.create(getModelProvider().getEditingDomain(), container, feature,
-						eObject);
+						eObject, index);
 				pastedObject = eObject;
 				if (cmd.canExecute()) {
 					cc.append(cmd);
+					if (index != CommandParameter.NO_INDEX) {
+						index++;
+					}
 					if (isLiveModel()) {
 						if (container instanceof MElementContainer<?> && probe instanceof MUIElement) {
 							// the last selection wins
@@ -1628,16 +1625,6 @@ public class ModelEditor implements IGotoObject {
 
 				getModelProvider().getEditingDomain().getCommandStack().execute(cc);
 			}
-		}
-
-		private EStructuralFeature determineTargetFeature(EObject probe, EObject container) {
-			final EClass eClass = container.eClass();
-			for (final EStructuralFeature f : eClass.getEAllReferences()) {
-				if (ModelUtils.getTypeArgument(eClass, f.getEGenericType()).isInstance(probe)) {
-					return f;
-				}
-			}
-			return null;
 		}
 
 		@Override
