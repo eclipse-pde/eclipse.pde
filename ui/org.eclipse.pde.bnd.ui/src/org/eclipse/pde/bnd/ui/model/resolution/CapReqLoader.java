@@ -12,23 +12,17 @@
  *     Neil Bartlett <njbartlett@gmail.com> - initial API and implementation
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
 *******************************************************************************/
-package org.eclipse.pde.bnd.ui.tasks;
+package org.eclipse.pde.bnd.ui.model.resolution;
 
 import java.io.Closeable;
-import java.util.List;
-import java.util.Map;
 
-import org.eclipse.pde.bnd.ui.model.resolution.RequirementWrapper;
-import org.osgi.resource.Capability;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 public interface CapReqLoader extends Closeable {
 
 	String getShortLabel();
 
 	String getLongLabel();
-
-	Map<String, List<Capability>> loadCapabilities() throws Exception;
-
-	Map<String, List<RequirementWrapper>> loadRequirements() throws Exception;
+	CapReq loadCapReq(IProgressMonitor monitor) throws Exception;
 
 }
