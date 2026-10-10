@@ -56,6 +56,7 @@ public class E4ToolItemMenu {
 		handlerService = this.context.get(EHandlerService.class);
 
 		menu = new Menu(parent.getShell(), SWT.POP_UP);
+		toolItem.addDisposeListener(e -> menu.dispose());
 
 		toolItem.addSelectionListener(new SelectionAdapter() {
 			@Override
