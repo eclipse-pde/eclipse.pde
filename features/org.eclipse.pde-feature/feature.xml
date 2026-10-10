@@ -110,4 +110,11 @@
          id="org.eclipse.pde.bnd.ui"
          version="0.0.0"/>
 
+   <plugin
+         id="org.eclipse.pde.ls"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>
