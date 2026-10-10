@@ -135,7 +135,7 @@ public class E4TemplateCompletionProposalComputer extends AbstractTemplateComple
 	private boolean fIsE4OnClasspath;
 
 	public E4TemplateCompletionProposalComputer() {
-		final ContextTypeRegistry templateContextRegistry = JavaPlugin.getDefault().getTemplateContextRegistry();
+		final ContextTypeRegistry templateContextRegistry = JavaPlugin.getDefault().getTemplateContextRegistryCore();
 		fE4TemplateEngine = createTemplateEngine(templateContextRegistry, E4ContextType.ID_ALL);
 		fE4MembersTemplateEngine = createTemplateEngine(templateContextRegistry, E4ContextType.ID_MEMBERS);
 		fE4StatementsTemplateEngine = createTemplateEngine(templateContextRegistry, E4ContextType.ID_STATEMENTS);
