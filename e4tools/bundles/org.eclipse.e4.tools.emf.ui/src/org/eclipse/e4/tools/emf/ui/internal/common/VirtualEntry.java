@@ -52,6 +52,7 @@ public class VirtualEntry<P, E> {
 		};
 
 		origList.addListChangeListener(listener);
+		list.addDisposeListener(event -> origList.dispose());
 	}
 
 	public IListProperty<? super P, E> getProperty() {

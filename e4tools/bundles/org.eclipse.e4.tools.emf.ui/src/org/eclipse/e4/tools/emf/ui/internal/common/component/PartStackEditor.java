@@ -183,7 +183,6 @@ public class PartStackEditor extends AbstractComponentEditor<MPartStack> {
 				composite.requestLayout();
 			}
 		}
-		viewer.setInput(E4Properties.<MStackElement>children().observeDetail(getMaster()));
 		getMaster().setValue((MPartStack) object);
 		return composite;
 	}
