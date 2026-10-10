@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.ui.launcher;
 
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
+import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
 import org.eclipse.pde.internal.ui.shared.CachedCheckboxTreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyListener;
@@ -104,10 +105,9 @@ class StartLevelEditingSupport extends EditingSupport {
 
 		@Override
 		protected void doSetValue(Object value) {
-			if (value == null || "default".equals(value)) { //$NON-NLS-1$
-				fSpinner.setSelection(0);
-			} else {
-				fSpinner.setSelection(Integer.parseInt((String) value));
+			if (value instanceof String stringValue) {
+				int level = BundleLauncherHelper.parseAutoStartLevel(stringValue);
+				fSpinner.setSelection(level);
 			}
 		}
 
