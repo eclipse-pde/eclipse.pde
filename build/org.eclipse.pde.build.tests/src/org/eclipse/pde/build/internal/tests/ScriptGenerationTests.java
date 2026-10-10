@@ -13,12 +13,13 @@
 
 package org.eclipse.pde.build.internal.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -72,8 +73,8 @@ import org.eclipse.pde.internal.build.site.BuildTimeFeature;
 import org.eclipse.pde.internal.build.site.BuildTimeFeatureFactory;
 import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
 import org.eclipse.pde.internal.build.site.QualifierReplacer;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.Version;
 import org.osgi.framework.VersionRange;
 
@@ -121,9 +122,9 @@ public class ScriptGenerationTests extends PDETestCase {
 		generator.generate();
 
 		HashMap<Config, String> map = generator.getArchivesFormat();
-		assertEquals(map.size(), 1);
+		assertEquals(1, map.size());
 		Config config = map.keySet().iterator().next();
-		assertEquals(map.get(config), "antZip");
+		assertEquals("antZip", map.get(config)); //$NON-NLS-1$
 
 		clearStatics();
 
@@ -136,9 +137,9 @@ public class ScriptGenerationTests extends PDETestCase {
 		generator.generate();
 
 		map = generator.getArchivesFormat();
-		assertEquals(map.size(), 1);
+		assertEquals(1, map.size());
 		config = map.keySet().iterator().next();
-		assertEquals(map.get(config), "folder");
+		assertEquals("folder", map.get(config)); //$NON-NLS-1$
 	}
 
 	// Test script generation for bundles using Bundle-RequiredExecutionEnvironment
@@ -187,7 +188,7 @@ public class ScriptGenerationTests extends PDETestCase {
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=379182.
 	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void testBug183924() throws Exception {
 		IFolder buildFolder = newTest("183924");
 		IFolder configFolder = Utils.createFolder(buildFolder, "configuration/org.eclipse.update");
@@ -225,12 +226,12 @@ public class ScriptGenerationTests extends PDETestCase {
 			generateScripts(buildFolder, properties);
 			assertTrue(false);
 		} catch (Exception e) {
-			assertTrue(e.getMessage().endsWith("Unable to find element: org.eclipse.core.resources."));
+			assertTrue(e.getMessage().endsWith("Unable to find element: org.eclipse.core.resources.")); //$NON-NLS-1$
 		}
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testBug221855() throws Exception {
 		IFolder buildFolder = newTest("221855");
 		IFolder tempFolder = Utils.createFolder(buildFolder, "temp");
@@ -238,7 +239,7 @@ public class ScriptGenerationTests extends PDETestCase {
 
 		String configLocation = Platform.getConfigurationLocation().getURL().getFile();
 		if (!new File(configLocation, "org.eclipse.equinox.simpleconfigurator/bundles.info").exists()) {
-			fail("bundles.info not Found.");
+			fail("bundles.info not Found."); //$NON-NLS-1$
 		}
 
 		File testBundle = null;
@@ -263,7 +264,7 @@ public class ScriptGenerationTests extends PDETestCase {
 			properties.put("filterP2Base", "true");
 			try {
 				generateScripts(buildFolder, properties);
-				fail("Script generation was expected to fail.");
+				fail("Script generation was expected to fail."); //$NON-NLS-1$
 			} catch (Exception e) {
 				IFile log = buildFolder.getFile("log.log");
 				assertLogContainsLine(log, "Unable to find element: org.eclipse.pde.build.test.221855.");
@@ -294,10 +295,10 @@ public class ScriptGenerationTests extends PDETestCase {
 		BuildTimeFeature model = factory.parseBuildFeature(feature.getLocation().toPath());
 
 		FeatureEntry[] included = model.getIncludedFeatureReferences();
-		assertEquals(included.length, 3);
-		assertEquals(included[0].getId(), "foo");
-		assertEquals(included[1].getId(), "bar");
-		assertEquals(included[2].getId(), "disco");
+		assertEquals(3, included.length);
+		assertEquals("foo", included[0].getId()); //$NON-NLS-1$
+		assertEquals("bar", included[1].getId()); //$NON-NLS-1$
+		assertEquals("disco", included[2].getId()); //$NON-NLS-1$
 	}
 
 	@Test
@@ -367,7 +368,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertNotNull(dot);
 		Object child = AntUtils.getFirstChildByName(dot, "path");
 		assertNotNull(child);
-		assertTrue(child instanceof Path);
+		assertInstanceOf(Path.class, child);
 		String path = child.toString();
 
 		// Assert classpath has correct contents
@@ -395,7 +396,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertNotNull(dot);
 		Object child = AntUtils.getFirstChildByName(dot, "path");
 		assertNotNull(child);
-		assertTrue(child instanceof Path);
+		assertInstanceOf(Path.class, child);
 		String path = child.toString();
 
 		// Assert classpath has the swt fragment
@@ -448,9 +449,9 @@ public class ScriptGenerationTests extends PDETestCase {
 		Project antProject = assertValidAntScript(buildScript);
 		Target dot = antProject.getTargets().get("@dot");
 		Object child = AntUtils.getFirstChildByName(dot, "path");
-		assertTrue(child instanceof Path);
+		assertInstanceOf(Path.class, child);
 		String path = child.toString();
-		assertEquals(-1, path.indexOf("org.eclipse.core.runtime.compatibility.registry"));
+		assertEquals(-1, path.indexOf("org.eclipse.core.runtime.compatibility.registry")); //$NON-NLS-1$
 	}
 
 	@Test
@@ -489,12 +490,12 @@ public class ScriptGenerationTests extends PDETestCase {
 		BuildTimeFeatureFactory factory = new BuildTimeFeatureFactory();
 		BuildTimeFeature feature = factory.parseBuildFeature(featureXML.getLocation().toPath());
 		FeatureEntry[] pluginEntryModels = feature.getPluginEntries();
-		assertEquals(pluginEntryModels[0].getId(), "foo");
-		assertEquals(pluginEntryModels[0].getVersion(), "1.0.0.vA");
-		assertEquals(pluginEntryModels[1].getId(), "bar");
-		assertEquals(pluginEntryModels[1].getVersion(), "1.0.0.id_v");
-		assertEquals(pluginEntryModels[2].getId(), "foo.version");
-		assertEquals(pluginEntryModels[2].getVersion(), "2.1.2");
+		assertEquals("foo", pluginEntryModels[0].getId()); //$NON-NLS-1$
+		assertEquals("1.0.0.vA", pluginEntryModels[0].getVersion()); //$NON-NLS-1$
+		assertEquals("bar", pluginEntryModels[1].getId()); //$NON-NLS-1$
+		assertEquals("1.0.0.id_v", pluginEntryModels[1].getVersion()); //$NON-NLS-1$
+		assertEquals("foo.version", pluginEntryModels[2].getId()); //$NON-NLS-1$
+		assertEquals("2.1.2", pluginEntryModels[2].getVersion()); //$NON-NLS-1$
 	}
 
 	@Test
@@ -708,44 +709,44 @@ public class ScriptGenerationTests extends PDETestCase {
 		VersionRange range = org.eclipse.pde.internal.build.Utils.createVersionRange("1.0.0");
 		assertEquals(VersionRange.LEFT_CLOSED, range.getLeftType());
 		assertEquals(VersionRange.RIGHT_CLOSED, range.getRightType());
-		assertEquals(range.getLeft(), new Version("1.0.0"));
-		assertEquals(range.getRight(), new Version("1.0.0"));
+		assertEquals(new Version("1.0.0"), range.getLeft()); //$NON-NLS-1$
+		assertEquals(new Version("1.0.0"), range.getRight()); //$NON-NLS-1$
 
 		range = org.eclipse.pde.internal.build.Utils.createVersionRange("1.0.0.qualifier");
 		assertEquals(VersionRange.LEFT_CLOSED, range.getLeftType());
 		assertEquals(VersionRange.RIGHT_OPEN, range.getRightType());
-		assertEquals(range.getLeft(), new Version("1.0.0"));
-		assertEquals(range.getRight(), new Version("1.0.1"));
+		assertEquals(new Version("1.0.0"), range.getLeft()); //$NON-NLS-1$
+		assertEquals(new Version("1.0.1"), range.getRight()); //$NON-NLS-1$
 
 		range = org.eclipse.pde.internal.build.Utils.createVersionRange("1.0.0.zqualifier");
 		assertEquals(VersionRange.LEFT_CLOSED, range.getLeftType());
 		assertEquals(VersionRange.RIGHT_OPEN, range.getRightType());
-		assertEquals(range.getLeft(), new Version("1.0.0.z"));
-		assertEquals(range.getRight(), new Version("1.0.1"));
+		assertEquals(new Version("1.0.0.z"), range.getLeft()); //$NON-NLS-1$
+		assertEquals(new Version("1.0.1"), range.getRight()); //$NON-NLS-1$
 
 		range = org.eclipse.pde.internal.build.Utils.createVersionRange("1.0.0.abcqualifier");
 		assertEquals(VersionRange.LEFT_CLOSED, range.getLeftType());
 		assertEquals(VersionRange.RIGHT_OPEN, range.getRightType());
-		assertEquals(range.getLeft(), new Version("1.0.0.abc"));
-		assertEquals(range.getRight(), new Version("1.0.0.abd"));
+		assertEquals(new Version("1.0.0.abc"), range.getLeft()); //$NON-NLS-1$
+		assertEquals(new Version("1.0.0.abd"), range.getRight()); //$NON-NLS-1$
 
 		range = org.eclipse.pde.internal.build.Utils.createVersionRange("1.0.0.abzqualifier");
 		assertEquals(VersionRange.LEFT_CLOSED, range.getLeftType());
 		assertEquals(VersionRange.RIGHT_OPEN, range.getRightType());
-		assertEquals(range.getLeft(), new Version("1.0.0.abz"));
-		assertEquals(range.getRight(), new Version("1.0.0.ac"));
+		assertEquals(new Version("1.0.0.abz"), range.getLeft()); //$NON-NLS-1$
+		assertEquals(new Version("1.0.0.ac"), range.getRight()); //$NON-NLS-1$
 
 		range = org.eclipse.pde.internal.build.Utils.createVersionRange("1.0.0.abzzqualifier");
 		assertEquals(VersionRange.LEFT_CLOSED, range.getLeftType());
 		assertEquals(VersionRange.RIGHT_OPEN, range.getRightType());
-		assertEquals(range.getLeft(), new Version("1.0.0.abzz"));
-		assertEquals(range.getRight(), new Version("1.0.0.ac"));
+		assertEquals(new Version("1.0.0.abzz"), range.getLeft()); //$NON-NLS-1$
+		assertEquals(new Version("1.0.0.ac"), range.getRight()); //$NON-NLS-1$
 
 		range = org.eclipse.pde.internal.build.Utils.createVersionRange("1.0.0.abzz_qualifier");
 		assertEquals(VersionRange.LEFT_CLOSED, range.getLeftType());
 		assertEquals(VersionRange.RIGHT_OPEN, range.getRightType());
-		assertEquals(range.getLeft(), new Version("1.0.0.abzz_"));
-		assertEquals(range.getRight(), new Version("1.0.0.abzza"));
+		assertEquals(new Version("1.0.0.abzz_"), range.getLeft()); //$NON-NLS-1$
+		assertEquals(new Version("1.0.0.abzza"), range.getRight()); //$NON-NLS-1$
 
 	}
 
@@ -882,10 +883,10 @@ public class ScriptGenerationTests extends PDETestCase {
 		String dir0 = (String) tasks[0].getRuntimeConfigurableWrapper().getAttributeMap().get("dir");
 		String dir1 = (String) tasks[1].getRuntimeConfigurableWrapper().getAttributeMap().get("dir");
 		if (dir0.equals("plugins/B")) {
-			assertEquals("plugins/A", dir1);
+			assertEquals("plugins/A", dir1); //$NON-NLS-1$
 		} else {
-			assertEquals("plugins/A", dir0);
-			assertEquals("plugins/B", dir1);
+			assertEquals("plugins/A", dir0); //$NON-NLS-1$
+			assertEquals("plugins/B", dir1); //$NON-NLS-1$
 		}
 
 		tasks = AntUtils.getParallelTasks((Parallel) children[1]);
@@ -893,19 +894,19 @@ public class ScriptGenerationTests extends PDETestCase {
 		dir0 = (String) tasks[0].getRuntimeConfigurableWrapper().getAttributeMap().get("dir");
 		dir1 = (String) tasks[1].getRuntimeConfigurableWrapper().getAttributeMap().get("dir");
 		if (dir0.equals("plugins/C")) {
-			assertEquals("plugins/D", dir1);
+			assertEquals("plugins/D", dir1); //$NON-NLS-1$
 		} else {
-			assertEquals("plugins/D", dir0);
-			assertEquals("plugins/C", dir1);
+			assertEquals("plugins/D", dir0); //$NON-NLS-1$
+			assertEquals("plugins/C", dir1); //$NON-NLS-1$
 		}
 
 		tasks = AntUtils.getParallelTasks((Parallel) children[2]);
 		assertEquals(1, tasks.length);
-		assertEquals("plugins/E", tasks[0].getRuntimeConfigurableWrapper().getAttributeMap().get("dir"));
+		assertEquals("plugins/E", tasks[0].getRuntimeConfigurableWrapper().getAttributeMap().get("dir")); //$NON-NLS-1$ //$NON-NLS-2$
 
 		tasks = AntUtils.getParallelTasks((Parallel) children[3]);
 		assertEquals(1, tasks.length);
-		assertEquals("plugins/F", tasks[0].getRuntimeConfigurableWrapper().getAttributeMap().get("dir"));
+		assertEquals("plugins/F", tasks[0].getRuntimeConfigurableWrapper().getAttributeMap().get("dir")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public static class TestQualifierDirector extends BuildDirector {
@@ -1062,9 +1063,9 @@ public class ScriptGenerationTests extends PDETestCase {
 		buildProperties.put("CDC-1.1/Foundation-1.1", "somejar.jar");
 		try {
 			generateScripts(buildFolder, buildProperties);
-			fail("Script generation expected to fail.");
+			fail("Script generation expected to fail."); //$NON-NLS-1$
 		} catch (Exception e) {
-			assertTrue(e.getMessage().indexOf("Unable to find element: a") > -1);
+			assertTrue(e.getMessage().indexOf("Unable to find element: a") > -1); //$NON-NLS-1$
 		}
 
 		// 3: add a bundle exporting xml.sax, expect success
@@ -1263,7 +1264,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertResourceFile(bundle, "bundle_1.0.0.jar");
 		try (JarFile jar = new JarFile(bundle.getFile("bundle_1.0.0.jar").getLocation().toFile());) {
 			Manifest manifest = jar.getManifest();
-			assertEquals(manifest.getMainAttributes().getValue("Bundle-SymbolicName"), "bundle");
+			assertEquals("bundle", manifest.getMainAttributes().getValue("Bundle-SymbolicName")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -1414,10 +1415,11 @@ public class ScriptGenerationTests extends PDETestCase {
 		properties.put("baseLocation", buildFolder.getLocation().toOSString());
 		try {
 			generateScripts(buildFolder, properties);
-			fail("We expected an exception");
+			fail("We expected an exception"); //$NON-NLS-1$
 		} catch (Exception e) {
-			assertEquals(e.getMessage(),
-					"Malformed URL exception: org.eclipse.pde.build.test.279583/build.properties: platform:/plugins/foo/k.jar.");
+			assertEquals(
+					"Malformed URL exception: org.eclipse.pde.build.test.279583/build.properties: platform:/plugins/foo/k.jar.", //$NON-NLS-1$
+					e.getMessage());
 		}
 	}
 
@@ -1660,7 +1662,7 @@ public class ScriptGenerationTests extends PDETestCase {
 			failedMessage = e.getMessage();
 		}
 		assertTrue(failedMessage != null
-				&& failedMessage.indexOf("Another singleton version selected: a_3.4.2.v_833") > -1);
+				&& failedMessage.indexOf("Another singleton version selected: a_3.4.2.v_833") > -1); //$NON-NLS-1$
 	}
 
 	@Test
@@ -1799,18 +1801,18 @@ public class ScriptGenerationTests extends PDETestCase {
 				"META-INF/MANIFEST.MF");
 		try (InputStream contents = new StringInputStream(manifestFile)) {
 			Manifest m = new Manifest(contents);
-			assertEquals(m.getMainAttributes().getValue(IPDEBuildConstants.ECLIPSE_SOURCE_REF), a_source);
+			assertEquals(a_source, m.getMainAttributes().getValue(IPDEBuildConstants.ECLIPSE_SOURCE_REF));
 		}
 		manifestFile = readEntryFromZip(buildFolder.getFile("tmp/eclipse/plugins/B_1.0.0.jar"), "META-INF/MANIFEST.MF");
 		try (InputStream contents = new StringInputStream(manifestFile)) {
 			Manifest m = new Manifest(contents);
-			assertEquals(m.getMainAttributes().getValue(IPDEBuildConstants.ECLIPSE_SOURCE_REF),
-					"B's source,foo.bar;type:=\"mine\"");
+			assertEquals("B's source,foo.bar;type:=\"mine\"", //$NON-NLS-1$
+					m.getMainAttributes().getValue(IPDEBuildConstants.ECLIPSE_SOURCE_REF));
 		}
 		manifestFile = readEntryFromZip(buildFolder.getFile("tmp/eclipse/plugins/C_1.0.0.jar"), "META-INF/MANIFEST.MF");
 		try (InputStream contents = new StringInputStream(manifestFile)) {
 			Manifest m = new Manifest(contents);
-			assertEquals(m.getMainAttributes().getValue(IPDEBuildConstants.ECLIPSE_SOURCE_REF), "foo.bar;type:=mine");
+			assertEquals("foo.bar;type:=mine", m.getMainAttributes().getValue(IPDEBuildConstants.ECLIPSE_SOURCE_REF)); //$NON-NLS-1$
 		}
 	}
 
@@ -1839,7 +1841,7 @@ public class ScriptGenerationTests extends PDETestCase {
 			failedMessage = e.getMessage();
 		}
 		assertTrue(failedMessage != null && failedMessage
-				.indexOf("Unsatisfied native code filter: lib.so; selection-filter=\"(osgi.os=foobar)\"") > -1);
+				.indexOf("Unsatisfied native code filter: lib.so; selection-filter=\"(osgi.os=foobar)\"") > -1); //$NON-NLS-1$
 
 		properties = new Properties();
 		properties.put("buildDirectory", buildFolder.getLocation().toOSString());
@@ -1873,12 +1875,12 @@ public class ScriptGenerationTests extends PDETestCase {
 			newVersions.put("foo,1.0.0", "one");
 			newVersions.put("foo,2.0.0.R1_", "r1");
 
-			assertEquals("1.0.0.one",
-					QualifierReplacer.replaceQualifierInVersion("1.0.0.qualifier", "foo", null, newVersions));
-			assertEquals("2.0.0.wildcard",
-					QualifierReplacer.replaceQualifierInVersion("2.0.0.qualifier", "foo", null, newVersions));
-			assertEquals("2.0.0.R1_r1",
-					QualifierReplacer.replaceQualifierInVersion("2.0.0.R1_qualifier", "foo", null, newVersions));
+			assertEquals("1.0.0.one", //$NON-NLS-1$
+					QualifierReplacer.replaceQualifierInVersion("1.0.0.qualifier", "foo", null, newVersions)); //$NON-NLS-1$ //$NON-NLS-2$
+			assertEquals("2.0.0.wildcard", //$NON-NLS-1$
+					QualifierReplacer.replaceQualifierInVersion("2.0.0.qualifier", "foo", null, newVersions)); //$NON-NLS-1$ //$NON-NLS-2$
+			assertEquals("2.0.0.R1_r1", //$NON-NLS-1$
+					QualifierReplacer.replaceQualifierInVersion("2.0.0.R1_qualifier", "foo", null, newVersions)); //$NON-NLS-1$ //$NON-NLS-2$
 		} finally {
 			generator.setImmutableAntProperties(null);
 		}
@@ -1913,34 +1915,34 @@ public class ScriptGenerationTests extends PDETestCase {
 		Enumeration<RuntimeConfigurable> rc = copyChild.getRuntimeConfigurableWrapper().getChildren().nextElement()
 				.getChildren();
 		RuntimeConfigurable configurable = rc.nextElement();
-		assertEquals(configurable.getElementTag(), "exclude");
-		assertEquals(configurable.getAttributeMap().get("name"), "**/*.java");
-		assertEquals(rc.nextElement().getAttributeMap().get("name"), "**/*.aj");
-		assertEquals(rc.nextElement().getAttributeMap().get("name"), "**/*.groovy");
-		assertEquals(rc.nextElement().getAttributeMap().get("name"), "**/package.htm*");
-		assertFalse("Should have only found 4 filter elements", rc.hasMoreElements());
+		assertEquals("exclude", configurable.getElementTag()); //$NON-NLS-1$
+		assertEquals("**/*.java", configurable.getAttributeMap().get("name")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("**/*.aj", rc.nextElement().getAttributeMap().get("name")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("**/*.groovy", rc.nextElement().getAttributeMap().get("name")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("**/package.htm*", rc.nextElement().getAttributeMap().get("name")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertFalse(rc.hasMoreElements(), "Should have only found 4 filter elements"); //$NON-NLS-1$
 
 		// check the includes directive for copying source files
 		Target copySource = antProject.getTargets().get("copy.src.zip");
 		copyChild = (Copy) AntUtils.getFirstChildByName(copySource, "copy");
 		rc = copyChild.getRuntimeConfigurableWrapper().getChildren().nextElement().getChildren();
 		configurable = rc.nextElement();
-		assertEquals(configurable.getElementTag(), "include");
-		assertEquals(configurable.getAttributeMap().get("name"), "**/*.java");
-		assertEquals(rc.nextElement().getAttributeMap().get("name"), "**/*.aj");
-		assertEquals(rc.nextElement().getAttributeMap().get("name"), "**/*.groovy");
-		assertFalse("Should have only found 3 filter elements", rc.hasMoreElements());
+		assertEquals("include", configurable.getElementTag()); //$NON-NLS-1$
+		assertEquals("**/*.java", configurable.getAttributeMap().get("name")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("**/*.aj", rc.nextElement().getAttributeMap().get("name")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("**/*.groovy", rc.nextElement().getAttributeMap().get("name")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertFalse(rc.hasMoreElements(), "Should have only found 3 filter elements"); //$NON-NLS-1$
 
 		// check the includes directive for zipping source files
 		Target zipSource = antProject.getTargets().get("zip.src.zip");
 		Zip zipChild = (Zip) AntUtils.getFirstChildByName(zipSource, "zip");
 		rc = zipChild.getRuntimeConfigurableWrapper().getChildren().nextElement().getChildren();
 		configurable = rc.nextElement();
-		assertEquals(configurable.getElementTag(), "include");
-		assertEquals(configurable.getAttributeMap().get("name"), "**/*.java");
-		assertEquals(rc.nextElement().getAttributeMap().get("name"), "**/*.aj");
-		assertEquals(rc.nextElement().getAttributeMap().get("name"), "**/*.groovy");
-		assertFalse("Should have only found 3 filter elements", rc.hasMoreElements());
+		assertEquals("include", configurable.getElementTag()); //$NON-NLS-1$
+		assertEquals("**/*.java", configurable.getAttributeMap().get("name")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("**/*.aj", rc.nextElement().getAttributeMap().get("name")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("**/*.groovy", rc.nextElement().getAttributeMap().get("name")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertFalse(rc.hasMoreElements(), "Should have only found 3 filter elements"); //$NON-NLS-1$
 	}
 
 	// Tests sourceFileExtensions attribute in build.properties
@@ -1970,23 +1972,23 @@ public class ScriptGenerationTests extends PDETestCase {
 		Copy copyChild = (Copy) AntUtils.getFirstChildByName(dot, "copy");
 		Enumeration<RuntimeConfigurable> rc = copyChild.getRuntimeConfigurableWrapper().getChildren().nextElement()
 				.getChildren();
-		assertEquals(rc.nextElement().getAttributeMap().get("name"), "**/*.java");
-		assertEquals(rc.nextElement().getAttributeMap().get("name"), "**/package.htm*");
-		assertFalse("Should have only found 2 filter elements", rc.hasMoreElements());
+		assertEquals("**/*.java", rc.nextElement().getAttributeMap().get("name")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("**/package.htm*", rc.nextElement().getAttributeMap().get("name")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertFalse(rc.hasMoreElements(), "Should have only found 2 filter elements"); //$NON-NLS-1$
 
 		// check the includes directive for copying source files
 		Target copySource = antProject.getTargets().get("copy.src.zip");
 		copyChild = (Copy) AntUtils.getFirstChildByName(copySource, "copy");
 		rc = copyChild.getRuntimeConfigurableWrapper().getChildren().nextElement().getChildren();
-		assertEquals(rc.nextElement().getAttributeMap().get("name"), "**/*.java");
-		assertFalse("Should have only found 1 filter elements", rc.hasMoreElements());
+		assertEquals("**/*.java", rc.nextElement().getAttributeMap().get("name")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertFalse(rc.hasMoreElements(), "Should have only found 1 filter elements"); //$NON-NLS-1$
 
 		// check the includes directive for zipping source files
 		Target zipSource = antProject.getTargets().get("zip.src.zip");
 		Zip zipChild = (Zip) AntUtils.getFirstChildByName(zipSource, "zip");
 		rc = zipChild.getRuntimeConfigurableWrapper().getChildren().nextElement().getChildren();
-		assertEquals(rc.nextElement().getAttributeMap().get("name"), "**/*.java");
-		assertFalse("Should have only found 1 filter elements", rc.hasMoreElements());
+		assertEquals("**/*.java", rc.nextElement().getAttributeMap().get("name")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertFalse(rc.hasMoreElements(), "Should have only found 1 filter elements"); //$NON-NLS-1$
 	}
 
 	// Tests compilerAdapter attribute in build.properties
@@ -2012,7 +2014,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		Target dot = antProject.getTargets().get("@dot");
 		Javac javac = (Javac) AntUtils.getFirstChildByName(dot, "javac");
 		Object compiler = javac.getRuntimeConfigurableWrapper().getAttributeMap().get("compiler");
-		assertEquals("Incorrect compiler adapter", "org.foo.someCompilerAdapter", compiler);
+		assertEquals("org.foo.someCompilerAdapter", compiler, "Incorrect compiler adapter"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	// Tests compilerAdapter.useLog attribute in build.properties
@@ -2050,7 +2052,7 @@ public class ScriptGenerationTests extends PDETestCase {
 				}
 			}
 		}
-		fail("Should have found compiler log entry:\n-log '${build.result.folder}/@dot${logExtension}'");
+		fail("Should have found compiler log entry:\n-log '${build.result.folder}/@dot${logExtension}'"); //$NON-NLS-1$
 	}
 
 	// Tests compilerAdapter.useLog attribute in build.properties
@@ -2089,7 +2091,7 @@ public class ScriptGenerationTests extends PDETestCase {
 				}
 			}
 		}
-		fail("Should have found compiler log entry:\n-log '${build.result.folder}/@dot${logExtension}'");
+		fail("Should have found compiler log entry:\n-log '${build.result.folder}/@dot${logExtension}'"); //$NON-NLS-1$
 	}
 
 	// Tests compilerAdapter.useLog attribute in build.properties
@@ -2124,7 +2126,7 @@ public class ScriptGenerationTests extends PDETestCase {
 				if (rc.getAttributeMap().containsKey("line")
 						&& "-log '${build.result.folder}/@dot${logExtension}'".equals(rc.getAttributeMap().get("line"))
 						&& "org.foo.someCompilerAdapter".equals(rc.getAttributeMap().get("compiler"))) {
-					fail("Should not have found compiler log entry:\n-log '${build.result.folder}/@dot${logExtension}'");
+					fail("Should not have found compiler log entry:\n-log '${build.result.folder}/@dot${logExtension}'"); //$NON-NLS-1$
 				}
 			}
 		}
@@ -2166,7 +2168,7 @@ public class ScriptGenerationTests extends PDETestCase {
 				}
 			}
 		}
-		fail("Should have found compiler log entry:\n@${basedir}/javaCompiler...args");
+		fail("Should have found compiler log entry:\n@${basedir}/javaCompiler...args"); //$NON-NLS-1$
 	}
 
 	// Tests compilerAdapter.useArgFile attribute in build.properties
@@ -2206,7 +2208,7 @@ public class ScriptGenerationTests extends PDETestCase {
 				}
 			}
 		}
-		fail("Should have found compiler log entry:\n@${basedir}/javaCompiler...args");
+		fail("Should have found compiler log entry:\n@${basedir}/javaCompiler...args"); //$NON-NLS-1$
 	}
 
 	// Tests compilerAdapter.useArgFile attribute in build.properties
@@ -2242,7 +2244,7 @@ public class ScriptGenerationTests extends PDETestCase {
 				if (rc.getAttributeMap().containsKey("value")
 						&& "@${basedir}/javaCompiler...args".equals(rc.getAttributeMap().get("value"))
 						&& "org.foo.someCompilerAdapter".equals(rc.getAttributeMap().get("compiler"))) {
-					fail("Should not have found compiler log entry:\n@${basedir}/javaCompiler...args");
+					fail("Should not have found compiler log entry:\n@${basedir}/javaCompiler...args"); //$NON-NLS-1$
 				}
 			}
 		}
@@ -2281,7 +2283,7 @@ public class ScriptGenerationTests extends PDETestCase {
 				}
 			}
 		}
-		fail("Should have found compiler log entry:\n-foo -bar baz");
+		fail("Should have found compiler log entry:\n-foo -bar baz"); //$NON-NLS-1$
 	}
 
 	// Tests compilerArgs attribute in build.properties
@@ -2318,7 +2320,7 @@ public class ScriptGenerationTests extends PDETestCase {
 				}
 			}
 		}
-		fail("Should have found compiler log entry:\n-foo -bar baz");
+		fail("Should have found compiler log entry:\n-foo -bar baz"); //$NON-NLS-1$
 	}
 
 	@Test
