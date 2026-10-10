@@ -84,8 +84,10 @@ public class JUnitExecutionTest {
 		return new Object[][] {
 				{ "JUnit6", getJProject("verification.tests.junit6") },
 				{ "JUnit6 Fragment", getJProject("verification.tests.junit6.fragment") },
+				{ "JUnit6 in path with space", getJProject("verification.tests.junit6.space") },
 				{ "JUnit5", getJProject("verification.tests.junit5") },
 				{ "JUnit5 Fragment", getJProject("verification.tests.junit5.fragment") },
+				{ "JUnit5 in path with space", getJProject("verification.tests.junit5.space") },
 				{ "JUnit4", getJProject("verification.tests.junit4") },
 				{ "JUnit4 Fragment", getJProject("verification.tests.junit4.fragment") },
 				{ "JUnit4 (JUnitPlatform)", getJProject("verification.tests.junit4.platform") },
