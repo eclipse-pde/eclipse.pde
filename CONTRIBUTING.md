@@ -17,6 +17,10 @@ more.
 
 * https://projects.eclipse.org/projects/eclipse.pde/developer
 
+PDE Usage Scenarios (testing builds)
+
+* https://eclipse.dev/pde/pde-ui/scenarios/PDEScenarios3_0.html
+
 The project maintains the following source code repositories
 
 * https://github.com/eclipse-pde/eclipse.pde/
