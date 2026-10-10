@@ -814,7 +814,7 @@ public class ListTab implements IViewEObjects {
 		public Color getBackground(Object element) {
 			Color ret;
 			if (isHighlighted(element)) {
-				return ret = tvResults.getTable().getDisplay().getSystemColor(SWT.COLOR_YELLOW);
+				return ret = highlightColor();
 			}
 			ret = super.getBackground(element);
 			return ret;
@@ -826,7 +826,7 @@ public class ListTab implements IViewEObjects {
 		public Color getBackground(Object element) {
 			Color ret;
 			if (isHighlighted(element)) {
-				ret = tvResults.getTable().getDisplay().getSystemColor(SWT.COLOR_YELLOW);
+				ret = highlightColor();
 			} else {
 				ret = super.getBackground(element);
 			}
@@ -837,6 +837,11 @@ public class ListTab implements IViewEObjects {
 	@Override
 	public EditingDomain getEditingDomain() {
 		return modelResource.getEditingDomain();
+	}
+
+	private Color highlightColor() {
+		final Table table = tvResults.getTable();
+		return EAttributeTableViewerColumn.tint(table, table.getDisplay().getSystemColor(SWT.COLOR_YELLOW).getRGB(), 35);
 	}
 
 	public boolean isHighlighted(Object element) {
