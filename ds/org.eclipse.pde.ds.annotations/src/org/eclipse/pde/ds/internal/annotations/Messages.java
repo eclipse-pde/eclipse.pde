@@ -69,6 +69,8 @@ public class Messages extends NLS {
 
 	public static String AnnotationProcessor_invalidConstructorArgument;
 
+	public static String AnnotationProcessor_invalidConstructorNotPublic;
+
 	public static String AnnotationProcessor_invalidComponentProperty_nameRequired;
 
 	public static String AnnotationProcessor_invalidComponentProperty_valueRequired;
