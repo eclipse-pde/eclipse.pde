@@ -48,6 +48,8 @@ import org.eclipse.pde.internal.core.text.bundle.ImportPackageObject;
 import org.eclipse.pde.internal.ui.search.dependencies.GatherUnusedDependenciesOperation;
 import org.eclipse.pde.ui.tests.runtime.TestUtils;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
+import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -57,11 +59,21 @@ import org.osgi.framework.VersionRange;
 public class GatherUnusedDependenciesOperationTest {
 
 	@ClassRule
+	public static final TestRule RESTORE_TARGET_DEFINITION = TargetPlatformUtil.RESTORE_CURRENT_TARGET_DEFINITION_AFTER;
+	@ClassRule
 	public static final TestRule CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
 
 	/** Keeps the projects of one test case from interfering with the others. */
 	@Rule
 	public final TestRule clearCreatedProjects = ProjectUtils.DELETE_CREATED_WORKSPACE_PROJECTS_AFTER;
+
+	@BeforeClass
+	public static void setUpTargetPlatform() throws Exception {
+		// Some tests require bundles of the target platform to be present, so
+		// that they must not depend on whatever target definition another test
+		// class happens to have left behind.
+		TargetPlatformUtil.setRunningPlatformAsTarget();
+	}
 
 	@Test
 	public void testDirectlyUsedDependencyReexportedByOtherDependencyIsNotFlaggedAsUnused() throws Exception {
@@ -96,6 +108,57 @@ public class GatherUnusedDependenciesOperationTest {
 		assertFalse(
 				"Direct, used dependency to bundle C must not be flagged as unused just because bundle A reexports it",
 				unusedPlugins.contains(bundleC));
+	}
+
+	@Test
+	public void testTargetBundleDependencyUsedOnlyInByteCodeIsNotFlaggedAsUnused() throws Exception {
+		// Dependencies to bundles of the target platform are resolvable as jars
+		// during the analysis, unlike those to bundles of the workspace, so that
+		// they are subject to manifest calculation rules that do not apply here.
+		// The referred type IEclipseContext of org.eclipse.e4.core.contexts is
+		// only used as the return type of a method of another bundle, so that
+		// the reference is present in the byte code but in no source file.
+		String contextsBundle = "org.eclipse.e4.core.contexts";
+		String bundle = "targetplatform.bundle";
+		IProject project = createJavaPluginProject(bundle);
+		addRequiredBundle(project, "org.eclipse.e4.ui.model.workbench");
+		addRequiredBundle(project, "org.eclipse.e4.ui.workbench");
+		addRequiredBundle(project, contextsBundle);
+		createJavaSource(project, bundle, "UsesContext", """
+				import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+				import org.eclipse.e4.ui.workbench.modeling.EModelService;
+
+				public class UsesContext {
+					public EModelService getModelService(MPart part) {
+						return part.getContext().get(EModelService.class);
+					}
+				}
+				""");
+
+		buildProjects();
+		List<String> unusedPlugins = gatherUnusedDependencies(project);
+		assertFalse("Dependency to target platform bundle " + contextsBundle + " must not be flagged as unused "
+				+ "although its type is only referred to by the byte code", unusedPlugins.contains(contextsBundle));
+	}
+
+	@Test
+	public void testUnusedTargetBundleDependencyIsFlaggedAsUnused() throws Exception {
+		// Counterpart to the used dependency to a target platform bundle: not
+		// being able to tell the packages of such a bundle apart from those of
+		// the other dependencies must not make every one of them appear as used
+		String contextsBundle = "org.eclipse.e4.core.contexts";
+		String bundle = "targetplatform.bundle.unused";
+		IProject project = createJavaPluginProject(bundle);
+		addRequiredBundle(project, contextsBundle);
+		createJavaSource(project, bundle, "UsesNothing", """
+				public class UsesNothing {
+				}
+				""");
+
+		buildProjects();
+		List<String> unusedPlugins = gatherUnusedDependencies(project);
+		assertTrue("Unused dependency to target platform bundle " + contextsBundle + " must be flagged as unused",
+				unusedPlugins.contains(contextsBundle));
 	}
 
 	@Test
@@ -545,7 +608,8 @@ public class GatherUnusedDependenciesOperationTest {
 		// against a stale classpath and fail to compile
 		TestUtils.waitForJobs(GatherUnusedDependenciesOperationTest.class.getName(), 100, 10000);
 		ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
-		TestUtils.waitForJobs(GatherUnusedDependenciesOperationTest.class.getName(), 100, 10000);
+		boolean timedOut = TestUtils.waitForJobs(GatherUnusedDependenciesOperationTest.class.getName(), 100, 10000);
+		assertFalse("Timed out waiting for the build to finish", timedOut);
 		// the analysis is based on the compiled classes, so a test that does not
 		// compile would not test what it is supposed to test
 		IMarker[] markers = ResourcesPlugin.getWorkspace().getRoot()

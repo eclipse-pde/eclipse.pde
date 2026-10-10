@@ -85,12 +85,12 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 		}
 		Set<String> computedPackages = new HashSet<>();
 		try (PdeProjectAnalyzer analyzer = new PdeProjectAnalyzer(fModel.getUnderlyingResource().getProject(), true)) {
-			analyzer.setImportPackage("*"); //$NON-NLS-1$
-			analyzer.calcManifest();
-			Packages imports = analyzer.getImports();
-			if (imports != null) {
-				imports.keySet().stream().map(PackageRef::getFQN).forEach(computedPackages::add);
-			}
+			analyzer.analyze();
+			// Deliberately not the imports: bnd removes from those everything
+			// that a Require-Bundle entry already provides, which is exactly
+			// what is to be determined here.
+			Packages referred = analyzer.getReferred();
+			referred.keySet().stream().map(PackageRef::getFQN).forEach(computedPackages::add);
 			// A reference into a package that the project provides itself is
 			// invisible in the computed packages, because those are the packages
 			// referred to by the byte code reduced by the ones the project
