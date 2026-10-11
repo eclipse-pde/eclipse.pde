@@ -33,7 +33,6 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.common.command.Command;
-import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -55,7 +54,6 @@ import jakarta.inject.Inject;
 
 public class VMenuEditor<M> extends AbstractComponentEditor<M> {
 	private Composite composite;
-	private EMFDataBindingContext context;
 	private StructuredViewer viewer;
 	private final List<Action> actions = new ArrayList<>();
 	private final EStructuralFeature feature;
@@ -69,7 +67,7 @@ public class VMenuEditor<M> extends AbstractComponentEditor<M> {
 		MENU, POPUP_MENU, VIEW_MENU
 	}
 
-	protected VMenuEditor(EStructuralFeature feature) {
+	public VMenuEditor(EStructuralFeature feature) {
 		super();
 		this.feature = feature;
 	}
@@ -114,30 +112,29 @@ public class VMenuEditor<M> extends AbstractComponentEditor<M> {
 	@Override
 	public Composite doGetEditor(Composite parent, Object object) {
 		if (composite == null) {
-			context = new EMFDataBindingContext();
-			composite = createForm(parent, context, getMaster());
+			composite = createForm(parent, getMaster());
 		}
 		@SuppressWarnings("unchecked")
-		final VirtualEntry<M, ?> o = (VirtualEntry<M, ?>) object;
+		VirtualEntry<M, ?> o = (VirtualEntry<M, ?>) object;
 		viewer.setInput(o.getList());
 		getMaster().setValue(o.getOriginalParent());
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue<M> master) {
-		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
+	private Composite createForm(Composite parent, WritableValue<M> master) {
+		CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
-		final CTabItem item = new CTabItem(folder, SWT.NONE);
+		CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabDefault);
 
 		parent = createScrollableContainer(folder);
 		item.setControl(parent.getParent());
 
-		final AbstractPickList pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_GROUP),
+		AbstractPickList pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_GROUP),
 				this, feature) {
 			@Override
 			protected void addPressed() {
-				final Types t = (Types) getSelection().getFirstElement();
+				Types t = (Types) getSelection().getFirstElement();
 				if (t == Types.MENU) {
 					handleAdd(MenuPackageImpl.Literals.MENU);
 				} else if (t == Types.POPUP_MENU) {
@@ -187,10 +184,10 @@ public class VMenuEditor<M> extends AbstractComponentEditor<M> {
 	}
 
 	protected void handleAdd(EClass eClass) {
-		final EObject handler = EcoreUtil.create(eClass);
+		EObject handler = EcoreUtil.create(eClass);
 		setElementId(handler);
 
-		final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), feature, handler);
+		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), feature, handler);
 
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);
@@ -199,11 +196,11 @@ public class VMenuEditor<M> extends AbstractComponentEditor<M> {
 	}
 
 	protected void handleAddViewMenu() {
-		final MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
+		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
 		menu.getTags().add(VIEW_MENU_TAG);
 		setElementId(menu);
 
-		final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), feature, menu);
+		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), feature, menu);
 
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);
@@ -213,7 +210,7 @@ public class VMenuEditor<M> extends AbstractComponentEditor<M> {
 
 	@Override
 	public List<Action> getActions(Object element) {
-		final ArrayList<Action> l = new ArrayList<>(super.getActions(element));
+		ArrayList<Action> l = new ArrayList<>(super.getActions(element));
 		l.addAll(actions);
 		return l;
 	}
