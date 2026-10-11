@@ -32,7 +32,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.AbstractPickList.PickListFeat
 import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.CommandCategorySelectionDialog;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.CommandIconDialogEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ElementIconDialog;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MCommandParameter;
 import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
@@ -227,9 +227,11 @@ public class CommandEditor extends AbstractComponentEditor<MCommand> {
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					final CommandIconDialogEditor dialog = new CommandIconDialogEditor(b.getShell(), eclipseContext,
-							project,
-							getEditingDomain(), getMaster().getValue(), Messages);
+					final ElementIconDialog dialog = new ElementIconDialog(b.getShell(), eclipseContext,
+							getEditingDomain(), getMaster().getValue(),
+							CommandsPackageImpl.Literals.COMMAND__COMMAND_ICON_URI, Messages,
+							Messages.CommandIconDialogEditor_ShellTitle, Messages.CommandIconDialogEditor_DialogTitle,
+							Messages.CommandIconDialogEditor_DialogMessage);
 					dialog.open();
 				}
 			});

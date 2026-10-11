@@ -16,12 +16,8 @@
 
 package org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -48,6 +44,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.e4.tools.emf.ui.common.BundleSymbolicName;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.ContributionData;
 import org.eclipse.e4.tools.emf.ui.common.IModelElementProvider;
@@ -472,33 +469,8 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 		}
 	}
 
-	// @Refactor
 	static public String getBundle(File file) {
-		if (file.isDirectory() == false) {
-			return null;
-		}
-
-		final File f = new File(file, "META-INF/MANIFEST.MF"); //$NON-NLS-1$
-
-		if (f.exists() && f.isFile()) {
-			try (final InputStream s = new FileInputStream(f);
-					BufferedReader r = new BufferedReader(new InputStreamReader(s))) {
-				String line;
-				while ((line = r.readLine()) != null) {
-					if (line.startsWith("Bundle-SymbolicName:")) { //$NON-NLS-1$
-						final int start = line.indexOf(':');
-						int end = line.indexOf(';');
-						if (end == -1) {
-							end = line.length();
-						}
-						return line.substring(start + 1, end).trim();
-					}
-				}
-			} catch (final IOException e) {
-				e.printStackTrace();
-			}
-		}
-		return null;
+		return BundleSymbolicName.of(file);
 	}
 
 	protected void visit(IProgressMonitor monitor, String bundleName, String installLocation, File file) {

@@ -20,14 +20,12 @@ public class Messages extends NLS {
 	public static String FindContributionDialog_findPackage;
 	public static String FindContributionDialog_inBundle;
 	public static String FindContributionDialog_inPackage;
+	public static String FindIconDialog_filteringByBundle;
 	public static String FindIconDialog_findIcon;
 	public static String FindIconDialog_searchByFilename;
 	public static String IconDialog_bundle;
 	public static String IconDialog_find;
 	public static String IconDialog_icon;
-	public static String IconDialog_selectIcon;
-	public static String IconDialog_selectIcon_MESSAGE;
-	public static String IconDialog_selectIcon_TITLE;
 	public static String IconDialog_uri;
 	public static String IconDialog_uriEditor;
 	public static String NonReferencedActionPage_Action;

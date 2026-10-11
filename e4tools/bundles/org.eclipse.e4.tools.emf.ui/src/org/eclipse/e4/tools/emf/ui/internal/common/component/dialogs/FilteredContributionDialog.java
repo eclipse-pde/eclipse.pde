@@ -16,18 +16,15 @@
 
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
@@ -39,6 +36,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.tools.emf.ui.common.BundleSymbolicName;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.ContributionData;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.ContributionResultHandler;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.Filter;
@@ -49,9 +47,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.ClassContributionCollector;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.AbstractIconDialogWithScopeAndFilter.Entry;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.E;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.TitleAreaFilterDialog;
-import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.TargetPlatformClassContributionCollector;
 import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.TargetPlatformContributionCollector;
-import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.TargetPlatformIconContributionCollector;
 import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs.NonReferencedActionPage;
 import org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs.NonReferencedResourceWizard;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
@@ -59,10 +55,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StyledCellLabelProvider;
-import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.internal.core.project.PDEProject;
@@ -72,8 +65,6 @@ import org.eclipse.pde.internal.core.text.bundle.ImportPackageObject;
 import org.eclipse.pde.internal.core.text.bundle.RequireBundleHeader;
 import org.eclipse.pde.internal.core.text.bundle.RequireBundleObject;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -210,9 +201,16 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 	@Override
 	public boolean close() {
 		stopSearchThread(true);
-		getPreferences().put(PREF_SEARCHSCOPE, searchScope.toString());
-		getPreferences().put(PREF_SEARCHSCOPES, searchScopes.toString());
+		if (isScopePersisted()) {
+			getPreferences().put(PREF_SEARCHSCOPE, searchScope.toString());
+			getPreferences().put(PREF_SEARCHSCOPES, searchScopes.toString());
+		}
 		return super.close();
+	}
+
+	/** Whether the chosen search scope is remembered for the next dialog. */
+	protected boolean isScopePersisted() {
+		return true;
 	}
 
 	@Override
@@ -328,27 +326,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 
 		collector = getCollector();
 
-		textBox.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == SWT.ARROW_DOWN) {
-					if (viewer.getTable().getItemCount() > 0) {
-						viewer.getTable().setFocus();
-						viewer.getTable().select(0);
-					}
-				}
-			}
-		});
-
-		viewer.getTable().addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				super.keyPressed(e);
-				if (e.keyCode == SWT.ARROW_UP && viewer.getTable().getSelectionIndex() == 0) {
-					textBox.setFocus();
-				}
-			}
-		});
+		TableKeyNavigation.installOnText(textBox, () -> viewer.getTable());
 
 		textBox.addModifyListener(e -> {
 			stopSearchThread(true);
@@ -657,58 +635,48 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 	}
 
 	protected void showBundleFilter() {
-		final Collection<String> bundleIds;
-		// TODO make HasBundles an interface so we are not tied to
-		// implementation
-		if (getCollector() instanceof TargetPlatformClassContributionCollector) {
-			bundleIds = TargetPlatformClassContributionCollector.getInstance().getBundleIds();
-		} else if (getCollector() instanceof TargetPlatformIconContributionCollector) {
-			bundleIds = TargetPlatformIconContributionCollector.getInstance().getBundleIds();
-		} else {
-			return;
-		}
-
-		final ArrayList<String> sorted = new ArrayList<>(bundleIds);
-		sorted.sort(null);
-
-		final TitleAreaFilterDialog dlg = new TitleAreaFilterDialog(getShell(), new ColumnLabelProvider()) {
-			@Override
-			protected Control createContents(Composite parent) {
-				final Control ret = super.createContents(parent);
-				getViewer().setInput(sorted);
-				setMessage(Messages.FilteredContributionDialog_SelectTheBundle);
-				setTitle(Messages.FilteredContributionDialog_BundleFilter);
-				getShell().setText(Messages.FilteredContributionDialog_BundleFilter);
-				try {
-					setTitleImage(imageCache.create("/icons/full/wizban/plugin_wiz.gif")); //$NON-NLS-1$
-				} catch (final Exception e) {
-					e.printStackTrace();
-				}
-				return ret;
-			}
-		};
-		if (dlg.open() == Window.OK) {
-			final ArrayList<String> result = new ArrayList<>();
-			result.add(dlg.getFirstSelection());
-			setFilterBundles(result);
-			refreshSearch();
-		}
-		updateUiState();
+		showFilter(TargetPlatformContributionCollector::getBundleIds,
+				Messages.FilteredContributionDialog_SelectTheBundle, Messages.FilteredContributionDialog_BundleFilter,
+				"/icons/full/wizban/plugin_wiz.gif", this::setFilterBundles); //$NON-NLS-1$
 	}
 
 	protected void showPackageFilter() {
-		final Collection<String> packages;
-		// TODO make HasPackages an interface so we are not tied to
-		// implementation
-		if (getCollector() instanceof TargetPlatformClassContributionCollector) {
-			packages = TargetPlatformClassContributionCollector.getInstance().getPackages();
-		} else if (getCollector() instanceof TargetPlatformIconContributionCollector) {
-			packages = TargetPlatformIconContributionCollector.getInstance().getPackages();
-		} else {
+		showFilter(TargetPlatformContributionCollector::getPackages,
+				Messages.FilteredContributionDialog_SelectThePackage,
+				Messages.FilteredContributionDialog_PackageFilter, "/icons/full/wizban/package_wiz.png", //$NON-NLS-1$
+				this::setFilterPackages);
+	}
+
+	protected void showLocationFilter() {
+		showFilter(FilteredContributionDialog::getParentLocations,
+				Messages.FilteredContributionDialog_SelectTheLocation,
+				Messages.FilteredContributionDialog_LocationFilter, "/icons/full/wizban/location_wiz.png", //$NON-NLS-1$
+				this::setFilterLocations);
+	}
+
+	private static Collection<String> getParentLocations(TargetPlatformContributionCollector tpCollector) {
+		final HashSet<String> parentLocations = new HashSet<>();
+		for (String location : tpCollector.getLocations()) {
+			if (location.endsWith(".jar")) { //$NON-NLS-1$
+				final int index = location.lastIndexOf(File.separator);
+				if (index >= 0) {
+					location = location.substring(0, index);
+					parentLocations.add(location);
+				}
+			} else {
+				parentLocations.add(location);
+			}
+		}
+		return parentLocations;
+	}
+
+	private void showFilter(Function<TargetPlatformContributionCollector, Collection<String>> valueProvider,
+			String message, String title, String titleImagePath, Consumer<List<String>> filterSetter) {
+		if (!(getCollector() instanceof final TargetPlatformContributionCollector tpCollector)) {
 			return;
 		}
 
-		final ArrayList<String> sorted = new ArrayList<>(packages);
+		final ArrayList<String> sorted = new ArrayList<>(valueProvider.apply(tpCollector));
 		sorted.sort(null);
 
 		final TitleAreaFilterDialog dlg = new TitleAreaFilterDialog(getShell(), new ColumnLabelProvider()) {
@@ -716,17 +684,17 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 			protected Control createContents(Composite parent) {
 				final Control ret = super.createContents(parent);
 				getViewer().setInput(sorted);
-				setMessage(Messages.FilteredContributionDialog_SelectThePackage);
-				setTitle(Messages.FilteredContributionDialog_PackageFilter);
-				getShell().setText(Messages.FilteredContributionDialog_PackageFilter);
-				setTitleImage(imageCache.create("/icons/full/wizban/package_wiz.png")); //$NON-NLS-1$
+				setMessage(message);
+				setTitle(title);
+				getShell().setText(title);
+				setTitleImage(imageCache.create(titleImagePath));
 				return ret;
 			}
 		};
 		if (dlg.open() == Window.OK) {
 			final ArrayList<String> result = new ArrayList<>();
 			result.add(dlg.getFirstSelection());
-			setFilterPackages(result);
+			filterSetter.accept(result);
 			refreshSearch();
 		}
 		updateUiState();
@@ -744,56 +712,6 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 		this.collector = collector;
 	}
 
-	protected void showLocationFilter() {
-		final Collection<String> locations;
-		// TODO make HasLocations an interface so we are not tied to
-		// implementation
-		if (getCollector() instanceof TargetPlatformClassContributionCollector) {
-			locations = TargetPlatformClassContributionCollector.getInstance().getLocations();
-		} else if (getCollector() instanceof TargetPlatformIconContributionCollector) {
-			locations = TargetPlatformIconContributionCollector.getInstance().getLocations();
-		} else {
-			return;
-		}
-
-		// add all parent paths
-		final HashSet<String> parentLocations = new HashSet<>();
-		for (String location : locations) {
-			if (location.endsWith(".jar")) { //$NON-NLS-1$
-				final int index = location.lastIndexOf(File.separator);
-				if (index >= 0) {
-					location = location.substring(0, index);
-					parentLocations.add(location);
-				}
-			} else {
-				parentLocations.add(location);
-			}
-		}
-
-		final ArrayList<String> sorted = new ArrayList<>(parentLocations);
-		sorted.sort(null);
-
-		final TitleAreaFilterDialog dlg = new TitleAreaFilterDialog(getShell(), new ColumnLabelProvider()) {
-			@Override
-			protected Control createContents(Composite parent) {
-				final Control ret = super.createContents(parent);
-				getViewer().setInput(sorted);
-				setMessage(Messages.FilteredContributionDialog_SelectTheLocation);
-				setTitle(Messages.FilteredContributionDialog_LocationFilter);
-				getShell().setText(Messages.FilteredContributionDialog_LocationFilter);
-				setTitleImage(imageCache.create("/icons/full/wizban/location_wiz.png")); //$NON-NLS-1$
-				return ret;
-			}
-		};
-		if (dlg.open() == Window.OK) {
-			final ArrayList<String> result = new ArrayList<>();
-			result.add(dlg.getFirstSelection());
-			setFilterLocations(result);
-			refreshSearch();
-		}
-		updateUiState();
-	}
-
 	protected void rebuildViewer() {
 
 		viewerList = new WritableList<>();
@@ -807,43 +725,9 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 		final GridData gd = new GridData(GridData.FILL_BOTH);
 		viewer.getControl().setLayoutData(gd);
 		viewer.setContentProvider(new ObservableListContentProvider<>());
-		viewer.setLabelProvider(new StyledCellLabelProvider() {
-			@Override
-			public void update(ViewerCell cell) {
-				ContributionData data;
-				if (cell.getElement() instanceof ContributionData) {
-					data = (ContributionData) cell.getElement();
-				} else if (cell.getElement() instanceof ContributionDataFile) {
-					data = ((ContributionDataFile) cell.getElement()).getContributionData();
-				} else {
-					return;
-				}
-
-				final StyledString styledString = new StyledString();
-				if (data.className != null) {
-					styledString.append(data.className, null);
-				}
-
-				if (data.bundleName != null) {
-					styledString.append(" - " + data.bundleName, StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
-				} else if (data.installLocation != null) {
-					styledString.append(" - " + data.installLocation, StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
-				}
-
-				if (data.sourceType != null) {
-					styledString.append(" - ", StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
-					styledString.append(data.sourceType + "", StyledString.COUNTER_STYLER); //$NON-NLS-1$
-				}
-
-				if (data.iconPath == null) {
-					cell.setImage(contributionTypeImage);
-				}
-
-				cell.setText(styledString.getString());
-				cell.setStyleRanges(styledString.getStyleRanges());
-			}
-		});
+		viewer.setLabelProvider(new ContributionDataLabelProvider(contributionTypeImage));
 		viewer.addDoubleClickListener(event -> okPressed());
+		TableKeyNavigation.installOnTable(viewer.getTable(), textBox);
 
 		viewer.setInput(viewerList);
 
@@ -922,7 +806,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 
 		// Reference by current project
 		final IProject currentProject = context.get(IProject.class);
-		if (currentProject != null && !getBundle(currentProject).equals(bundle)) {
+		if (currentProject != null && !bundle.equals(getBundle(currentProject))) {
 			boolean found = false;
 			// search the current project's manifest for require-bundle
 			try {
@@ -991,6 +875,10 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 		return searchScopes;
 	}
 
+	protected void setSearchScopes(EnumSet<ResourceSearchScope> searchScopes) {
+		this.searchScopes = searchScopes;
+	}
+
 	public void stopSearchThread(boolean bJoin) {
 		if (currentSearchThread != null) {
 			currentResultHandler.cancled = true;
@@ -1028,28 +916,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 	}
 
 	static String getBundle(IProject project) {
-		final IFile f = PDEProject.getManifest(project);
-		if (f != null && f.exists()) {
-			try (final InputStream s = f.getContents();
-					BufferedReader r = new BufferedReader(new InputStreamReader(s));) {
-				String line;
-				while ((line = r.readLine()) != null) {
-					if (line.startsWith("Bundle-SymbolicName:")) { //$NON-NLS-1$
-						final int start = line.indexOf(':');
-						int end = line.indexOf(';');
-						if (end == -1) {
-							end = line.length();
-						}
-						return line.substring(start + 1, end).trim();
-					}
-				}
-			} catch (final CoreException e) {
-				e.printStackTrace();
-			} catch (final IOException e) {
-				e.printStackTrace();
-			}
-		}
-		return null;
+		return BundleSymbolicName.of(project);
 	}
 
 	/**
@@ -1058,27 +925,6 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 	 * @return the id of the bundle if existing
 	 */
 	public static String getBundle(String rootDirectory) {
-		final File f = new File(new File(rootDirectory), "/META-INF/MANIFEST.MF"); //$NON-NLS-1$
-
-		if (f.exists()) {
-			try (final InputStream s = new FileInputStream(f);
-					BufferedReader r = new BufferedReader(new InputStreamReader(s))) {
-
-				String line;
-				while ((line = r.readLine()) != null) {
-					if (line.startsWith("Bundle-SymbolicName:")) { //$NON-NLS-1$
-						final int start = line.indexOf(':');
-						int end = line.indexOf(';');
-						if (end == -1) {
-							end = line.length();
-						}
-						return line.substring(start + 1, end).trim();
-					}
-				}
-			} catch (final IOException e) {
-				e.printStackTrace();
-			}
-		}
-		return null;
+		return BundleSymbolicName.of(new File(rootDirectory));
 	}
 }

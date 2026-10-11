@@ -14,15 +14,10 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.editor3x;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.e4.tools.emf.ui.common.BundleSymbolicName;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider;
 import org.eclipse.e4.tools.emf.ui.common.ResourceSearchScope;
 import org.eclipse.jdt.core.IJavaProject;
@@ -123,33 +118,9 @@ public class PDEClassContributionProvider implements IClassContributionProvider 
 				final IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
 
 				if (resource != null) {
-					final IProject project = resource.getProject();
-					final IFile f = project.getFile("/META-INF/MANIFEST.MF"); //$NON-NLS-1$
-
-					if (f != null && f.exists()) {
-						try (BufferedReader r = new BufferedReader(new InputStreamReader(f.getContents()))) {
-							String line;
-							while ((line = r.readLine()) != null) {
-								if (line.startsWith("Bundle-SymbolicName:")) { //$NON-NLS-1$
-									final int start = line.indexOf(':');
-									int end = line.indexOf(';');
-									if (end == -1) {
-										end = line.length();
-									}
-									final ContributionData data = new ContributionData(line.substring(start + 1, end)
-											.trim(), content, "Java", null); //$NON-NLS-1$
-									handler.result(data);
-									break;
-								}
-							}
-
-						} catch (final CoreException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (final IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+					final String bundleName = BundleSymbolicName.of(resource.getProject());
+					if (bundleName != null) {
+						handler.result(new ContributionData(bundleName, content, "Java", null)); //$NON-NLS-1$
 					}
 				}
 
