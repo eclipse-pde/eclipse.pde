@@ -30,9 +30,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.fragment.MModelFragments;
 import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
-import org.eclipse.e4.ui.model.fragment.impl.ModelFragmentsImpl;
 import org.eclipse.emf.common.command.Command;
-import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -52,7 +50,6 @@ import jakarta.inject.Inject;
 
 public class VModelImportsEditor extends AbstractComponentEditor<MModelFragments> {
 	private Composite composite;
-	private EMFDataBindingContext context;
 
 	@Inject
 	IEclipseContext eclipseContext;
@@ -81,40 +78,39 @@ public class VModelImportsEditor extends AbstractComponentEditor<MModelFragments
 	@Override
 	public Composite doGetEditor(Composite parent, Object object) {
 		if (composite == null) {
-			context = new EMFDataBindingContext();
-			composite = createForm(parent, context, getMaster());
+			composite = createForm(parent, getMaster());
 		}
 		@SuppressWarnings("unchecked")
-		final VirtualEntry<MModelFragments, ?> o = (VirtualEntry<MModelFragments, ?>) object;
+		VirtualEntry<MModelFragments, ?> o = (VirtualEntry<MModelFragments, ?>) object;
 		viewer.setInput(o.getList());
 		getMaster().setValue(o.getOriginalParent());
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, EMFDataBindingContext context,
+	private Composite createForm(Composite parent,
 			WritableValue<MModelFragments> master) {
-		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
+		CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 		composite = folder;
 
-		final CTabItem item = new CTabItem(folder, SWT.NONE);
+		CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabDefault);
 
 		parent = createScrollableContainer(folder);
 		item.setControl(parent.getParent());
 
-		final E4PickList pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_GROUP), this,
+		E4PickList pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_GROUP), this,
 				FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS) {
 			@Override
 			protected void addPressed() {
 
-				final Object firstElement = getSelection().getFirstElement();
+				Object firstElement = getSelection().getFirstElement();
 
 				if (firstElement != null) {
-					final FeatureClass featureClass = (FeatureClass) firstElement;
-					final EClass eClass = featureClass.eClass;
-					final EObject eObject = EcoreUtil.create(eClass);
+					FeatureClass featureClass = (FeatureClass) firstElement;
+					EClass eClass = featureClass.eClass;
+					EObject eObject = EcoreUtil.create(eClass);
 
-					final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS, eObject);
+					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS, eObject);
 
 					if (cmd.canExecute()) {
 						getEditingDomain().getCommandStack().execute(cmd);
@@ -125,7 +121,7 @@ public class VModelImportsEditor extends AbstractComponentEditor<MModelFragments
 
 			@Override
 			protected List<?> getContainerChildren(Object master) {
-				return ((ModelFragmentsImpl) master).getImports();
+				return ((MModelFragments) master).getImports();
 			}
 		};
 		viewer = pickList.getList();
@@ -135,7 +131,7 @@ public class VModelImportsEditor extends AbstractComponentEditor<MModelFragments
 		pickList.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element) {
-				final FeatureClass eclass = (FeatureClass) element;
+				FeatureClass eclass = (FeatureClass) element;
 				return eclass.label;
 			}
 		});
@@ -143,13 +139,13 @@ public class VModelImportsEditor extends AbstractComponentEditor<MModelFragments
 		pickList.setComparator(new ViewerComparator() {
 			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
-				final FeatureClass eClass1 = (FeatureClass) e1;
-				final FeatureClass eClass2 = (FeatureClass) e2;
+				FeatureClass eClass1 = (FeatureClass) e1;
+				FeatureClass eClass2 = (FeatureClass) e2;
 				return eClass1.label.compareTo(eClass2.label);
 			}
 		});
 
-		final List<FeatureClass> list = new ArrayList<>();
+		List<FeatureClass> list = new ArrayList<>();
 		Util.addClasses(ApplicationPackageImpl.eINSTANCE, list);
 		list.addAll(getEditor().getFeatureClasses(FragmentPackageImpl.Literals.MODEL_FRAGMENT, FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS));
 

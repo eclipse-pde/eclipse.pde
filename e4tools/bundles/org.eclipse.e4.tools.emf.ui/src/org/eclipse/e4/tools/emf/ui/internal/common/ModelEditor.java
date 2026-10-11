@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import org.eclipse.core.databinding.ObservablesManager;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -116,33 +117,10 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.EmfUtil;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.IGotoObject;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.ListTab;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.XmiTab;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VApplicationAddons;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VApplicationCategoriesEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VApplicationWindowEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VBindingTableEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VCommandEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VControlsEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VHandlerEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VItemParametersEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VMenuContributionsEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VModelFragmentsEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VMenuEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VModelImportsEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VPartDescriptor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VPartDescriptorMenuEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VPartDescriptorTrimEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VPartMenuEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VPartTrimEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VPerspectiveControlEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VPerspectiveTrimEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VPerspectiveWindowsEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VRootBindingContexts;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VSnippetsEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VToolBarContributionsEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VTrimContributionsEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowControlEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowSharedElementsEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowTrimEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowWindowsEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VirtualListEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VirtualListSpecs;
 import org.eclipse.e4.tools.emf.ui.internal.common.properties.ExportIdsHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.properties.ExternalizeStringHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.properties.ProjectOSGiTranslationProvider;
@@ -159,6 +137,7 @@ import org.eclipse.e4.ui.dialogs.filteredtree.PatternFilter;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
+import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MContext;
@@ -305,6 +284,12 @@ public class ModelEditor implements IGotoObject {
 	 * AbstractComponentEditor. This map is filled on init by registerEditor
 	 */
 	private final Map<String, Class<? extends AbstractComponentEditor<?>>> editorsClasses = new HashMap<>();
+
+	/**
+	 * A map with key = virtual key, value creates an AbstractComponentEditor that
+	 * is injected on first use. This map is filled on init by registerEditor
+	 */
+	private final Map<String, Supplier<? extends AbstractComponentEditor<?>>> editorSuppliers = new HashMap<>();
 
 	private final Map<Class<?>, List<AbstractElementEditorContribution>> tabContributions = new HashMap<>();
 	private final List<FeaturePath> labelFeaturePaths = new ArrayList<>();
@@ -1103,34 +1088,35 @@ public class ModelEditor implements IGotoObject {
 	}
 
 	private void registerVirtualEditors() {
-		registerEditor(VIRTUAL_PART_MENU, VPartMenuEditor.class);
-		registerEditor(VIRTUAL_PART_TRIMS, VPartTrimEditor.class);
-		registerEditor(VIRTUAL_HANDLER, VHandlerEditor.class);
-		registerEditor(VIRTUAL_CONTROLS, VControlsEditor.class);
-		registerEditor(VIRTUAL_BINDING_TABLE, VBindingTableEditor.class);
-		registerEditor(VIRTUAL_COMMAND, VCommandEditor.class);
-		registerEditor(VIRTUAL_APPLICATION_WINDOWS, VApplicationWindowEditor.class);
-		registerEditor(VIRTUAL_WINDOW_WINDOWS, VWindowWindowsEditor.class);
-		registerEditor(VIRTUAL_PERSPECTIVE_WINDOWS, VPerspectiveWindowsEditor.class);
-		registerEditor(VIRTUAL_WINDOW_CONTROLS, VWindowControlEditor.class);
-		registerEditor(VIRTUAL_WINDOW_SNIPPETS, VSnippetsEditor.class);
-		registerEditor(VIRTUAL_PART_DESCRIPTORS, VPartDescriptor.class);
-		registerEditor(VIRTUAL_PARTDESCRIPTOR_MENU, VPartDescriptorMenuEditor.class);
-		registerEditor(VIRTUAL_PARTDESCRIPTOR_TRIMS, VPartDescriptorTrimEditor.class);
-		registerEditor(VIRTUAL_TRIMMED_WINDOW_TRIMS, VWindowTrimEditor.class);
-		registerEditor(VIRTUAL_ADDONS, VApplicationAddons.class);
-		registerEditor(VIRTUAL_MENU_CONTRIBUTIONS, VMenuContributionsEditor.class);
-		registerEditor(VIRTUAL_TOOLBAR_CONTRIBUTIONS, VToolBarContributionsEditor.class);
-		registerEditor(VIRTUAL_TRIM_CONTRIBUTIONS, VTrimContributionsEditor.class);
-		registerEditor(VIRTUAL_WINDOW_SHARED_ELEMENTS, VWindowSharedElementsEditor.class);
-		registerEditor(VIRTUAL_MODEL_FRAGEMENTS, VModelFragmentsEditor.class);
+		registerEditor(VIRTUAL_PART_MENU, () -> new VMenuEditor<MPart>(BasicPackageImpl.Literals.PART__MENUS));
+		registerEditor(VIRTUAL_PARTDESCRIPTOR_MENU, () -> new VMenuEditor<MPartDescriptor>(
+				org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.Literals.PART_DESCRIPTOR__MENUS));
 		registerEditor(VIRTUAL_MODEL_IMPORTS, VModelImportsEditor.class);
-		registerEditor(VIRTUAL_CATEGORIES, VApplicationCategoriesEditor.class);
-		registerEditor(VIRTUAL_PARAMETERS, VItemParametersEditor.class);
-		registerEditor(VIRTUAL_ROOT_CONTEXTS, VRootBindingContexts.class);
-		registerEditor(VIRTUAL_PERSPECTIVE_CONTROLS, VPerspectiveControlEditor.class);
-		registerEditor(VIRTUAL_PERSPECTIVE_TRIMS, VPerspectiveTrimEditor.class);
-		registerEditor(VIRTUAL_SNIPPETS, VSnippetsEditor.class);
+		registerList(VIRTUAL_PART_TRIMS, VirtualListSpecs.PART_TRIMS);
+		registerList(VIRTUAL_PARTDESCRIPTOR_TRIMS, VirtualListSpecs.PART_DESCRIPTOR_TRIMS);
+		registerList(VIRTUAL_PERSPECTIVE_TRIMS, VirtualListSpecs.PERSPECTIVE_TRIMS);
+		registerList(VIRTUAL_TRIMMED_WINDOW_TRIMS, VirtualListSpecs.WINDOW_TRIMS);
+		registerList(VIRTUAL_HANDLER, VirtualListSpecs.HANDLERS);
+		registerList(VIRTUAL_CONTROLS, VirtualListSpecs.CONTROLS);
+		registerList(VIRTUAL_BINDING_TABLE, VirtualListSpecs.BINDING_TABLES);
+		registerList(VIRTUAL_COMMAND, VirtualListSpecs.COMMANDS);
+		registerList(VIRTUAL_APPLICATION_WINDOWS, VirtualListSpecs.APPLICATION_WINDOWS);
+		registerList(VIRTUAL_WINDOW_WINDOWS, VirtualListSpecs.WINDOW_WINDOWS);
+		registerList(VIRTUAL_PERSPECTIVE_WINDOWS, VirtualListSpecs.PERSPECTIVE_WINDOWS);
+		registerList(VIRTUAL_WINDOW_CONTROLS, VirtualListSpecs.WINDOW_CONTROLS);
+		registerList(VIRTUAL_WINDOW_SNIPPETS, VirtualListSpecs.SNIPPETS);
+		registerList(VIRTUAL_PART_DESCRIPTORS, VirtualListSpecs.PART_DESCRIPTORS);
+		registerList(VIRTUAL_ADDONS, VirtualListSpecs.ADDONS);
+		registerList(VIRTUAL_MENU_CONTRIBUTIONS, VirtualListSpecs.MENU_CONTRIBUTIONS);
+		registerList(VIRTUAL_TOOLBAR_CONTRIBUTIONS, VirtualListSpecs.TOOLBAR_CONTRIBUTIONS);
+		registerList(VIRTUAL_TRIM_CONTRIBUTIONS, VirtualListSpecs.TRIM_CONTRIBUTIONS);
+		registerList(VIRTUAL_WINDOW_SHARED_ELEMENTS, VirtualListSpecs.SHARED_ELEMENTS);
+		registerList(VIRTUAL_MODEL_FRAGEMENTS, VirtualListSpecs.MODEL_FRAGMENTS);
+		registerList(VIRTUAL_CATEGORIES, VirtualListSpecs.CATEGORIES);
+		registerList(VIRTUAL_PARAMETERS, VirtualListSpecs.PARAMETERS);
+		registerList(VIRTUAL_ROOT_CONTEXTS, VirtualListSpecs.ROOT_CONTEXTS);
+		registerList(VIRTUAL_PERSPECTIVE_CONTROLS, VirtualListSpecs.PERSPECTIVE_CONTROLS);
+		registerList(VIRTUAL_SNIPPETS, VirtualListSpecs.SNIPPETS);
 	}
 
 	public void setSelection(Object element) {
@@ -1336,6 +1322,18 @@ public class ModelEditor implements IGotoObject {
 	}
 
 	/**
+	 * Register a supplier of an editor for a given key. The supplied instance is
+	 * injected with the editor context.
+	 */
+	private void registerEditor(String key, Supplier<? extends AbstractComponentEditor<?>> supplier) {
+		editorSuppliers.put(key, supplier);
+	}
+
+	private void registerList(String key, VirtualListEditor.Spec spec) {
+		registerEditor(key, () -> new VirtualListEditor(spec));
+	}
+
+	/**
 	 * Register directly a created editor for a given key
 	 */
 	private void registerEditor(String key, AbstractComponentEditor<?> editor) {
@@ -1386,8 +1384,14 @@ public class ModelEditor implements IGotoObject {
 			// Editor not yet created in the map... must create instance using registered
 			// class
 			Class<? extends AbstractComponentEditor<?>> cz = editorsClasses.get(key);
+			Supplier<? extends AbstractComponentEditor<?>> supplier = editorSuppliers.get(key);
 			if (cz != null) {
 				editor = ContextInjectionFactory.make(cz, context);
+			} else if (supplier != null) {
+				editor = supplier.get();
+				ContextInjectionFactory.inject(editor, context);
+			}
+			if (editor != null) {
 				editors.put(key, editor);
 
 				// Then manage the feature maps...
