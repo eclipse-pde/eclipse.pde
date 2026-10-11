@@ -27,7 +27,7 @@ import org.eclipse.e4.tools.emf.ui.internal.E4Properties;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.PartIconDialogEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ElementIconDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.objectdata.ObjectViewer;
 import org.eclipse.e4.tools.emf.ui.internal.common.uistructure.UIViewer;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
@@ -177,8 +177,10 @@ public abstract class AbstractPartEditor<M extends MPart> extends AbstractCompon
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					final PartIconDialogEditor dialog = new PartIconDialogEditor(b.getShell(), eclipseContext, project,
-							getEditingDomain(), getMaster().getValue(), Messages);
+					final ElementIconDialog dialog = new ElementIconDialog(b.getShell(), eclipseContext,
+							getEditingDomain(), getMaster().getValue(), Messages,
+							Messages.PartIconDialogEditor_ShellTitle, Messages.PartIconDialogEditor_DialogTitle,
+							Messages.PartIconDialogEditor_DialogMessage);
 					dialog.open();
 				}
 			});

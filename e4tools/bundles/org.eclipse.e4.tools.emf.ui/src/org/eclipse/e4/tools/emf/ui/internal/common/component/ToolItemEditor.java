@@ -34,7 +34,7 @@ import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.E4Properties;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ToolItemIconDialogEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ElementIconDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.uistructure.UIViewer;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
@@ -239,8 +239,10 @@ public abstract class ToolItemEditor<M extends MToolItem> extends AbstractCompon
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					final ToolItemIconDialogEditor dialog = new ToolItemIconDialogEditor(b.getShell(), eclipseContext,
-							project, getEditingDomain(), getMaster().getValue(), Messages);
+					final ElementIconDialog dialog = new ElementIconDialog(b.getShell(), eclipseContext,
+							getEditingDomain(), getMaster().getValue(), Messages,
+							Messages.ToolItemIconDialogEditor_ShellTitle, Messages.ToolItemIconDialogEditor_DialogTitle,
+							Messages.ToolItemIconDialogEditor_DialogMessage);
 					dialog.open();
 				}
 			});

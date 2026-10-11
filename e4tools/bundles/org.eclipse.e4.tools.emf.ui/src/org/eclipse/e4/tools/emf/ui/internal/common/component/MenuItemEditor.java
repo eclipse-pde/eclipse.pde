@@ -33,7 +33,7 @@ import org.eclipse.e4.tools.emf.ui.internal.E4Properties;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.MenuItemIconDialogEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ElementIconDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.uistructure.UIViewer;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -235,8 +235,10 @@ public abstract class MenuItemEditor<M extends MMenuItem> extends AbstractCompon
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					final MenuItemIconDialogEditor dialog = new MenuItemIconDialogEditor(b.getShell(), eclipseContext,
-							project, getEditingDomain(), getMaster().getValue(), Messages);
+					final ElementIconDialog dialog = new ElementIconDialog(b.getShell(), eclipseContext,
+							getEditingDomain(), getMaster().getValue(), Messages,
+							Messages.MenuItemIconDialogEditor_ShellTitle, Messages.MenuItemIconDialogEditor_DialogTitle,
+							Messages.MenuItemIconDialogEditor_DialogMessage);
 					dialog.open();
 				}
 			});

@@ -15,7 +15,10 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs;
 
-import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
@@ -26,6 +29,8 @@ import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.Contributio
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.Filter;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.ClassContributionCollector;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ContributionDataLabelProvider;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.TableKeyNavigation;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.E;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -37,8 +42,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Image;
@@ -133,6 +136,7 @@ public class FindContributionDialog extends TitleAreaDialog {
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		viewer.getControl().setLayoutData(gd);
 		viewer.setContentProvider(new ObservableListContentProvider<>());
+		final ContributionDataLabelProvider classLabelProvider = new ContributionDataLabelProvider(javaClassImage);
 		viewer.setLabelProvider(new StyledCellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
@@ -141,14 +145,7 @@ public class FindContributionDialog extends TitleAreaDialog {
 				if ("show-bundles".equals(mode)) { //$NON-NLS-1$
 					styledString.append(data.bundleName, StyledString.DECORATIONS_STYLER);
 				} else if ("show-packages".equals(mode)) { //$NON-NLS-1$
-					int dot = data.className.lastIndexOf("."); //$NON-NLS-1$
-					String packageName;
-					if (dot >= 0) {
-						packageName = data.className.substring(0, dot);
-					} else {
-						packageName = ""; //$NON-NLS-1$
-					}
-					styledString.append(packageName, StyledString.DECORATIONS_STYLER);
+					styledString.append(packageOf(data.className), StyledString.DECORATIONS_STYLER);
 				} else if ("show-icons".equals(mode)) { //$NON-NLS-1$
 					styledString.append(data.iconPath, null);
 
@@ -165,20 +162,8 @@ public class FindContributionDialog extends TitleAreaDialog {
 						cell.setImage(javaClassImage);
 					}
 				} else {
-					styledString.append(data.className, null);
-
-					if (data.bundleName != null) {
-						styledString.append(" - " + data.bundleName, StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
-					}
-
-					if (data.sourceType != null) {
-						styledString.append(" - ", StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
-						styledString.append(data.sourceType + "", StyledString.COUNTER_STYLER); //$NON-NLS-1$
-					}
-
-					if (data.iconPath == null) {
-						cell.setImage(javaClassImage);
-					}
+					classLabelProvider.update(cell);
+					return;
 				}
 
 				cell.setText(styledString.getString());
@@ -191,6 +176,8 @@ public class FindContributionDialog extends TitleAreaDialog {
 		viewer.setInput(list);
 
 		final ClassContributionCollector collector = getCollector();
+		TableKeyNavigation.installOnText(t, () -> viewer.getTable());
+		TableKeyNavigation.installOnTable(viewer.getTable(), t);
 
 		t.addModifyListener(new ModifyListener() {
 			private ContributionResultHandlerImpl currentResultHandler;
@@ -204,26 +191,6 @@ public class FindContributionDialog extends TitleAreaDialog {
 				currentResultHandler = new ContributionResultHandlerImpl(list);
 				Filter filter = new Filter(project, t.getText());
 				collector.findContributions(filter, currentResultHandler);
-				t.addKeyListener(new KeyAdapter() {
-					@Override
-					public void keyPressed(KeyEvent e) {
-						if (e.keyCode == SWT.ARROW_DOWN) {
-							if (viewer.getTable().getItemCount() > 0) {
-								viewer.getTable().setFocus();
-								viewer.getTable().select(0);
-							}
-						}
-					}
-				});
-				viewer.getTable().addKeyListener(new KeyAdapter() {
-					@Override
-					public void keyPressed(KeyEvent e) {
-						super.keyPressed(e);
-						if ((e.keyCode == SWT.ARROW_UP) && (viewer.getTable().getSelectionIndex() == 0)) {
-							t.setFocus();
-						}
-					}
-				});
 			}
 		});
 
@@ -232,49 +199,15 @@ public class FindContributionDialog extends TitleAreaDialog {
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				ContributionData cd = (ContributionData) element;
 				if ("show-bundles".equals(mode)) { //$NON-NLS-1$
-					boolean found = false;
-					for (Iterator<?> it = list.iterator(); it.hasNext();) {
-						ContributionData cd2 = (ContributionData) it.next();
-						if (cd2.bundleName == null || cd2.bundleName.equals(cd.bundleName)) {
-							if (found == false) {
-								found = true;
-							} else {
-								return false;
-							}
-						}
-					}
-					return true;
+					return isFirstWithKey(list, cd, data -> data.bundleName, data -> true);
 				} else if ("show-packages".equals(mode)) { //$NON-NLS-1$
 					if (bundleFilter != null && bundleFilter.isEmpty() == false) {
 						if (!bundleFilter.equals(cd.bundleName)) {
 							return false;
 						}
 					}
-					String packageName;
-					int last = cd.className.lastIndexOf("."); //$NON-NLS-1$
-					if (last >= 0) {
-						packageName = cd.className.substring(0, last);
-					} else {
-						packageName = ""; //$NON-NLS-1$
-					}
-					boolean found = false;
-					for (Iterator<?> it = list.iterator(); it.hasNext();) {
-						boolean matches = false;
-						ContributionData cd2 = (ContributionData) it.next();
-						if (packageName.isEmpty() && cd2.className.contains(".") == false) { //$NON-NLS-1$
-							matches = true;
-						} else if (cd2.className.startsWith(packageName + ".")) { //$NON-NLS-1$
-							matches = true;
-						}
-						if (matches) {
-							if (found == false) {
-								found = true;
-							} else {
-								return false;
-							}
-						}
-					}
-					return true;
+					return isFirstWithKey(list, cd, data -> packageOf(data.className),
+							data -> E.isEmpty(bundleFilter) || bundleFilter.equals(data.bundleName));
 				} else if ("show-icons".equals(mode)) { //$NON-NLS-1$
 					if (cd.iconPath == null) {
 						return false;
@@ -357,6 +290,24 @@ public class FindContributionDialog extends TitleAreaDialog {
 		} else {
 			super.cancelPressed();
 		}
+	}
+
+	/** Returns the package of a fully qualified class name, empty for the default package. */
+	public static String packageOf(String className) {
+		final int dot = className.lastIndexOf('.');
+		return dot >= 0 ? className.substring(0, dot) : ""; //$NON-NLS-1$
+	}
+
+	/** Returns true if no earlier candidate in the list has the same key, so each key is shown once. */
+	public static boolean isFirstWithKey(List<ContributionData> list, ContributionData data,
+			Function<ContributionData, String> key, Predicate<ContributionData> candidate) {
+		final String wanted = key.apply(data);
+		for (ContributionData other : list) {
+			if (candidate.test(other) && Objects.equals(key.apply(other), wanted)) {
+				return other == data;
+			}
+		}
+		return true;
 	}
 
 	private ClassContributionCollector getCollector() {

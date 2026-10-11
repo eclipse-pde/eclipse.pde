@@ -32,7 +32,7 @@ import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.PerspectiveIconDialogEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ElementIconDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.uistructure.UIViewer;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
@@ -237,8 +237,10 @@ public class PerspectiveEditor extends AbstractComponentEditor<MPerspective> {
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					final PerspectiveIconDialogEditor dialog = new PerspectiveIconDialogEditor(b.getShell(),
-							eclipseContext, project, getEditingDomain(), getMaster().getValue(), Messages);
+					final ElementIconDialog dialog = new ElementIconDialog(b.getShell(), eclipseContext,
+							getEditingDomain(), getMaster().getValue(), Messages,
+							Messages.PerspectiveIconDialogEditor_ShellTitle, Messages.PerspectiveIconDialogEditor_DialogTitle,
+							Messages.PerspectiveIconDialogEditor_DialogMessage);
 					dialog.open();
 				}
 			});
