@@ -223,14 +223,11 @@ public abstract class AbstractComponentEditor<M> {
 		// may be image not yet created
 		if (result == null) {
 			result = getComponentImages().get(key);
-			// If no image found, ask the resource pool to create it...
+			// The pool shares its images with other editors, so the registry must not own them
 			if (result == null && !key.startsWith("platform:")) { //$NON-NLS-1$
 				try {
 					result = createImage(key);
 				} catch (final Exception e) {
-				}
-				if (result != null) {
-					getComponentImages().put(key, result);
 				}
 			}
 
