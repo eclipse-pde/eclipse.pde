@@ -205,6 +205,7 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.events.KeyAdapter;
@@ -215,6 +216,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.TreeAdapter;
 import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -1866,21 +1868,22 @@ public class ModelEditor implements IGotoObject {
 
 				if (feature != null && parent != null && parent.eGet(feature) instanceof List<?>) {
 					final List<Object> list = (List<Object>) parent.eGet(feature);
-					int index = list.indexOf(getCurrentTarget());
+					final int current = list.indexOf(data);
+					int index = DropPosition.index(list.indexOf(getCurrentTarget()),
+							getCurrentLocation() == LOCATION_AFTER, current);
 
 					if (index >= list.size()) {
 						index = CommandParameter.NO_INDEX;
 					}
 
-					if (parent == ((EObject) data).eContainer()) {
-						if (parent instanceof MElementContainer<?> && data instanceof MUIElement) {
-							Util.moveElementByIndex(domain, (MUIElement) data, isLiveModel(), index);
-						} else {
-							final Command cmd = MoveCommand.create(domain, parent, feature, data, index);
-							if (cmd.canExecute()) {
-								domain.getCommandStack().execute(cmd);
-								return true;
-							}
+					if (current >= 0) {
+						if (feature == UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN && data instanceof MUIElement) {
+							return Util.moveElementByIndex(domain, (MUIElement) data, isLiveModel(), index);
+						}
+						final Command cmd = MoveCommand.create(domain, parent, feature, data, index);
+						if (cmd.canExecute()) {
+							domain.getCommandStack().execute(cmd);
+							return true;
 						}
 					} else {
 						// Moving between different sources is always a copy
@@ -1939,6 +1942,24 @@ public class ModelEditor implements IGotoObject {
 			compoundCommand.setLabel(messages.ModelEditor_Move + " " + getObjectNameForCommand(data)); //$NON-NLS-1$
 			return compoundCommand;
 
+		}
+
+		@Override
+		protected int determineLocation(DropTargetEvent event) {
+			if (!(event.item instanceof TreeItem item)) {
+				return LOCATION_NONE;
+			}
+			final Object dragged = getSelectedObject();
+			final TreeItem parentItem = item.getParentItem();
+			// a virtual folder row is not an element of its parent's list, so it cannot be a sibling
+			if (parentItem == null || item.getData() instanceof VirtualEntry
+					|| !isValidTarget(parentItem.getData(), dragged, true)) {
+				return LOCATION_ON;
+			}
+			final Rectangle bounds = item.getBounds();
+			final int offset = getViewer().getControl().toControl(event.x, event.y).y - bounds.y;
+			return DropPosition.location(offset, bounds.height, isValidTarget(item.getData(), dragged, false),
+					item.getExpanded() && item.getItemCount() > 0);
 		}
 
 		@Override
