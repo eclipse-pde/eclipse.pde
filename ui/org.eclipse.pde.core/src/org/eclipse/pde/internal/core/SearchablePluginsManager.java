@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -74,6 +75,8 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 	private static final String PROXY_FILE_NAME = ".searchable"; //$NON-NLS-1$
 	public static final String PROXY_PROJECT_NAME = "External Plug-in Libraries"; //$NON-NLS-1$
 	private static final String KEY = "searchablePlugins"; //$NON-NLS-1$
+	private static final String DOT_ZIP = ".zip"; //$NON-NLS-1$
+	private static final String DOT_JAR = ".jar"; //$NON-NLS-1$
 
 	private final Listener fElementListener;
 	private Set<String> fPluginIdSet;
@@ -217,7 +220,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 	@Override
 	public Object createAdapterChild(FileAdapter parent, File file) {
 		if (!file.isDirectory()) {
-			if (file.isFile()) {
+			if (file.isFile() && isZipJarFile(file.getName())) {
 				IPackageFragmentRoot root = findPackageFragmentRoot(IPath.fromOSString(file.getAbsolutePath()));
 				if (root != null) {
 					return root;
@@ -225,6 +228,11 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 			}
 		}
 		return new FileAdapter(parent, file, this);
+	}
+
+	private static boolean isZipJarFile(String fileName) {
+		String normalizedFileName = fileName.toLowerCase(Locale.ENGLISH);
+		return normalizedFileName.endsWith(DOT_ZIP) || normalizedFileName.endsWith(DOT_JAR);
 	}
 
 	private IPackageFragmentRoot findPackageFragmentRoot(IPath jarPath) {
