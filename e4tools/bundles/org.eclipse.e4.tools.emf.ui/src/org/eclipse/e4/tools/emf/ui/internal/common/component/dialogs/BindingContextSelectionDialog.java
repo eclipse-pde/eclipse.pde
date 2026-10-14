@@ -26,6 +26,10 @@ import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.LocalResourceManager;
+import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -68,10 +72,9 @@ public class BindingContextSelectionDialog extends SaveDialogBoundsSettingsDialo
 		setTitle(Messages.BindingContextSelectionDialog_Title);
 		setMessage(Messages.BindingContextSelectionDialog_Message);
 
-		final Image titleImage = new Image(composite.getDisplay(), getClass().getClassLoader().getResourceAsStream(
-				"/icons/full/wizban/newexp_wiz.png")); //$NON-NLS-1$
-		setTitleImage(titleImage);
-		getShell().addDisposeListener(e -> titleImage.dispose());
+		final ResourceManager resources = new LocalResourceManager(JFaceResources.getResources(), getShell());
+		setTitleImage(resources.create(
+				ImageDescriptor.createFromFile(BindingContextSelectionDialog.class, "/icons/full/wizban/newexp_wiz.png"))); //$NON-NLS-1$
 
 		final Composite container = new Composite(composite, SWT.NONE);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
