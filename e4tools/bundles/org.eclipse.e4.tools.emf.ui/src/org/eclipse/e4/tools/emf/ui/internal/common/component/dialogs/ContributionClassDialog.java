@@ -52,7 +52,7 @@ public class ContributionClassDialog extends FilteredContributionDialog {
 
 	@Override
 	protected Image getTitleImage() {
-		return new Image(getShell().getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/full/wizban/newclass_wiz.png")); //$NON-NLS-1$
+		return imageCache.create("/icons/full/wizban/newclass_wiz.png"); //$NON-NLS-1$
 	}
 
 	@Override
