@@ -25,6 +25,10 @@ import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.LocalResourceManager;
+import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
@@ -35,7 +39,6 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -67,10 +70,9 @@ public class FindImportElementDialog extends SaveDialogBoundsSettingsDialog {
 	protected Control createDialogArea(Composite parent) {
 		final Composite comp = (Composite) super.createDialogArea(parent);
 
-		final Image titleImage = new Image(parent.getDisplay(), getClass().getClassLoader().getResourceAsStream(
-				"/icons/full/wizban/import_wiz.png")); //$NON-NLS-1$
-		setTitleImage(titleImage);
-		getShell().addDisposeListener(e -> titleImage.dispose());
+		final ResourceManager resources = new LocalResourceManager(JFaceResources.getResources(), getShell());
+		setTitleImage(resources.create(
+				ImageDescriptor.createFromFile(FindImportElementDialog.class, "/icons/full/wizban/import_wiz.png"))); //$NON-NLS-1$
 
 		getShell().setText(Messages.FindImportElementDialog_ShellTitle);
 		setTitle(Messages.FindImportElementDialog_Title);

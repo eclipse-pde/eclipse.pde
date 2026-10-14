@@ -67,7 +67,6 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -217,14 +216,8 @@ public abstract class AbstractNewClassPage extends WizardPage {
 
 	@Override
 	public void createControl(Composite parent) {
-		final Image img = new Image(parent.getDisplay(), getClass().getClassLoader().getResourceAsStream(
-				"/icons/full/wizban/newclass_wiz.png")); //$NON-NLS-1$
-		setImageDescriptor(ImageDescriptor.createFromImage(img));
-
-		parent.addDisposeListener(e -> {
-			img.dispose();
-			setImageDescriptor(null);
-		});
+		setImageDescriptor(
+				ImageDescriptor.createFromFile(AbstractNewClassPage.class, "/icons/full/wizban/newclass_wiz.png")); //$NON-NLS-1$
 
 		parent = new Composite(parent, SWT.NULL);
 		parent.setLayoutData(new GridData(GridData.FILL_BOTH));
