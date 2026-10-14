@@ -292,9 +292,6 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 			if (contributionTypeImage.isDisposed() == false) {
 				contributionTypeImage.dispose();
 			}
-			if (getTitleImageLabel().getImage() != null && getTitleImage().isDisposed() == false) {
-				getTitleImageLabel().getImage().dispose();
-			}
 		});
 
 		getShell().setText(getShellTitle());
