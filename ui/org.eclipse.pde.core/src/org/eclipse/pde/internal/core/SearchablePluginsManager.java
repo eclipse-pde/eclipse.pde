@@ -220,7 +220,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 	@Override
 	public Object createAdapterChild(FileAdapter parent, File file) {
 		if (!file.isDirectory()) {
-			if (file.isFile() && isZipJarFile(file.getName())) {
+			if (isZipJarFile(file.getName()) && file.isFile()) {
 				IPackageFragmentRoot root = findPackageFragmentRoot(IPath.fromOSString(file.getAbsolutePath()));
 				if (root != null) {
 					return root;
