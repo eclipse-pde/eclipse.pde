@@ -91,30 +91,11 @@ public class WorkspaceDeltaProcessor implements IElementChangedListener, IResour
 									System.out.println("--> processing CHILDREN delta of project: [" + proj.getElementName() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 								}
 								processJavaElementDeltas(delta.getAffectedChildren(), proj);
-							} else if ((flags & IJavaElementDelta.F_CONTENT) != 0) {
-								if (proj != null) {
-									if (ApiPlugin.DEBUG_WORKSPACE_DELTA_PROCESSOR) {
-										System.out.println("--> processing child CONTENT of project: [" + proj.getElementName() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-									}
-									IResourceDelta[] resourcedeltas = delta.getResourceDeltas();
-									if (resourcedeltas != null) {
-										IResourceDelta rdelta = null;
-										for (IResourceDelta resourcedelta : resourcedeltas) {
-											rdelta = resourcedelta.findMember(IPath.fromOSString(Util.MANIFEST_NAME));
-											if (rdelta != null && rdelta.getKind() == IResourceDelta.CHANGED && (rdelta.getFlags() & IResourceDelta.CONTENT) > 0) {
-												if (ApiPlugin.DEBUG_WORKSPACE_DELTA_PROCESSOR) {
-													System.out.println("--> processing manifest delta"); //$NON-NLS-1$
-												}
-												bmanager.disposeWorkspaceBaseline();
-												break;
-											}
-										}
-									}
-								} else {
-									if (ApiPlugin.DEBUG_WORKSPACE_DELTA_PROCESSOR) {
-										System.out.println("--> ignoring child CONTENT project context is null"); //$NON-NLS-1$
-									}
+								if ((flags & IJavaElementDelta.F_CONTENT) != 0) {
+									processProjectContentDelta(proj, delta);
 								}
+							} else if ((flags & IJavaElementDelta.F_CONTENT) != 0) {
+								processProjectContentDelta(proj, delta);
 							}
 							break;
 						}
@@ -211,6 +192,25 @@ public class WorkspaceDeltaProcessor implements IElementChangedListener, IResour
 				}
 				default:
 					break;
+			}
+		}
+	}
+
+	private void processProjectContentDelta(IJavaProject project, IJavaElementDelta delta) {
+		if (ApiPlugin.DEBUG_WORKSPACE_DELTA_PROCESSOR) {
+			System.out.println("--> processing child CONTENT of project: [" + project.getElementName() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		IResourceDelta[] resourceDeltas = delta.getResourceDeltas();
+		if (resourceDeltas != null) {
+			for (IResourceDelta resourceDelta : resourceDeltas) {
+				IResourceDelta manifestDelta = resourceDelta.findMember(IPath.fromOSString(Util.MANIFEST_NAME));
+				if (manifestDelta != null && manifestDelta.getKind() == IResourceDelta.CHANGED && (manifestDelta.getFlags() & IResourceDelta.CONTENT) > 0) {
+					if (ApiPlugin.DEBUG_WORKSPACE_DELTA_PROCESSOR) {
+						System.out.println("--> processing manifest delta"); //$NON-NLS-1$
+					}
+					bmanager.disposeWorkspaceBaseline();
+					break;
+				}
 			}
 		}
 	}
