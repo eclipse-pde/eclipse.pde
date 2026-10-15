@@ -43,6 +43,7 @@ import org.eclipse.pde.ui.tests.target.AllTargetTests;
 import org.eclipse.pde.ui.tests.util.PDELabelProviderTest;
 import org.eclipse.pde.ui.tests.views.log.AllLogViewTests;
 import org.eclipse.pde.ui.tests.wizards.AllNewProjectTests;
+import org.eclipse.ui.tests.smartimport.NestedProjectSmartImportTest;
 import org.eclipse.ui.tests.smartimport.ProjectSmartImportTest;
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
@@ -77,6 +78,7 @@ import org.junit.platform.suite.api.Suite;
 	BundleErrorReporterTest.class, //
 	AllPDECoreTests.class, //
 	ProjectSmartImportTest.class, //
+	NestedProjectSmartImportTest.class, //
 	GatherUnusedDependenciesOperationTest.class, //
 	PDELabelProviderTest.class, //
 	ProductInfoSectionTest.class, //
