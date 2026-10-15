@@ -335,6 +335,63 @@ public class TargetPlatformService implements ITargetPlatformService {
 		}
 	}
 
+	/**
+	 * Makes the given target the workspace target and stores the given memento
+	 * as {@link ICoreConstants#WORKSPACE_TARGET_HANDLE} in one atomic step.
+	 * <p>
+	 * {@link #getWorkspaceTargetDefinition()} discards the stored target if its
+	 * handle does not match the preference, so both must never be observed in
+	 * an inconsistent state. Otherwise a concurrent caller replaces the new
+	 * target by the one the preference still points to or, if that one is not
+	 * persisted, even by a new default target.
+	 * </p>
+	 *
+	 * @param target
+	 *            the new workspace target definition
+	 * @param memento
+	 *            the memento to store as workspace target handle
+	 */
+	public void setWorkspaceTargetDefinition(ITargetDefinition target, String memento) {
+		ITargetDefinition oldTarget;
+		synchronized (this) {
+			oldTarget = fWorkspaceTarget.getAndSet(target);
+			setWorkspaceTargetHandle(memento);
+		}
+		if (!Objects.equals(oldTarget, target)) {
+			notifyEvent(TargetEvents.TOPIC_WORKSPACE_TARGET_CHANGED, target, false);
+		}
+	}
+
+	/**
+	 * Re-stores the {@link ICoreConstants#WORKSPACE_TARGET_HANDLE} so that
+	 * preference listeners react to a change of the given target, provided it
+	 * still is the current workspace target.
+	 *
+	 * @param target
+	 *            the workspace target definition that has changed
+	 * @throws CoreException
+	 *             if the memento of the target's handle cannot be computed
+	 */
+	public synchronized void touchWorkspaceTargetHandle(ITargetDefinition target) throws CoreException {
+		String memento = target.getHandle().getMemento();
+		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
+		if (fWorkspaceTarget.get() == target
+				&& memento.equals(preferences.getString(ICoreConstants.WORKSPACE_TARGET_HANDLE))) {
+			setWorkspaceTargetHandle(memento);
+		}
+	}
+
+	/** Has to be called synchronized on this service. */
+	private void setWorkspaceTargetHandle(String memento) {
+		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
+		// If the same target has been modified, clear the preference so
+		// listeners can react to the change
+		if (memento.equals(preferences.getString(ICoreConstants.WORKSPACE_TARGET_HANDLE))) {
+			preferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, ""); //$NON-NLS-1$
+		}
+		preferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, memento);
+	}
+
 	public static void scheduleEvent(String topic, Object data) {
 		notifyEvent(topic, data, true);
 	}
