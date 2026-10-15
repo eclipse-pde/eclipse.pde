@@ -365,8 +365,10 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 		fFeatureRebuilder = new FeatureRebuilder();
 		fFeatureRebuilder.start();
 
-		fTargetPlatformService = context.registerService(ITargetPlatformService.class,
-				TargetPlatformService.getDefault(), new Hashtable<>());
+		TargetPlatformService targetPlatformService = (TargetPlatformService) TargetPlatformService.getDefault();
+		fTargetPlatformService = context.registerService(ITargetPlatformService.class, targetPlatformService,
+				new Hashtable<>());
+		targetPlatformService.start();
 		fBundleProjectService = context.registerService(IBundleProjectService.class, BundleProjectService.getDefault(),
 				new Hashtable<>());
 
@@ -447,6 +449,7 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 		PluginModelManager.shutdownInstance();
 
 		if (fTargetPlatformService != null) {
+			((TargetPlatformService) TargetPlatformService.getDefault()).stop();
 			fTargetPlatformService.unregister();
 			fTargetPlatformService = null;
 		}
