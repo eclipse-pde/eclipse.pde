@@ -252,16 +252,6 @@
        gradientUnits="userSpaceOnUse"
        id="linearGradient4207"
        xlink:href="#linearGradient7254-6-4-9-2-0-7-7-9" />
-    <filter
-       id="filter4405"
-       x="-0.23111123"
-       width="1.4622225"
-       y="-0.23111079"
-       height="1.4622216">
-      <feGaussianBlur
-         stdDeviation="0.45000043"
-         id="feGaussianBlur4407" />
-    </filter>
     <mask
        maskUnits="userSpaceOnUse"
        id="mask4542">
@@ -443,7 +433,7 @@
       <g
          transform="translate(-15,4.0000004)"
          id="g4140-9-0"
-         style="display:inline;fill:#ffffff;filter:url(#filter4405);stroke:#ffffff;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none">
+         style="display:inline;fill:#ffffff;stroke:#ffffff;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none">
         <rect
            style="color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:2;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;stroke-miterlimit:4;stroke-dasharray:none"
            id="rect7244-4-4-0-2-1-6-5-1-6-1"

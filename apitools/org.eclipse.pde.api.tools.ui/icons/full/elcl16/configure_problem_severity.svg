@@ -109,17 +109,6 @@
         </g>
       </g>
     </mask>
-    <filter
-       color-interpolation-filters="sRGB"
-       id="filter25166"
-       x="-0.3241778"
-       width="1.6760303"
-       y="-0.36202789"
-       height="1.7240558">
-      <feGaussianBlur
-         stdDeviation="1.0667455"
-         id="feGaussianBlur25168" />
-    </filter>
   </defs>
   <metadata
      id="metadata3161">
@@ -190,7 +179,7 @@
       <g
          transform="matrix(0.8261236,0,0,0.8261236,-0.70848,186.15135)"
          id="layer1-4-9"
-         style="fill:#ffffff;stroke:#ffffff;stroke-width:2.42094517;stroke-miterlimit:4;stroke-dasharray:none;display:inline;filter:url(#filter25166)">
+         style="fill:#ffffff;stroke:#ffffff;stroke-width:2.42094517;stroke-miterlimit:4;stroke-dasharray:none;display:inline">
         <g
            style="fill:#ffffff;stroke:#ffffff;stroke-width:2.00652146;stroke-miterlimit:4;stroke-dasharray:none"
            id="g17594-4"

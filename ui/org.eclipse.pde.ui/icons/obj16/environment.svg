@@ -99,17 +99,6 @@
        r="1318.78"
        gradientTransform="matrix(-1.4307844,-0.80728921,0.57053019,-1.1092966,-4927.184,-2123.5377)"
        gradientUnits="userSpaceOnUse" />
-    <filter
-       style="color-interpolation-filters:sRGB"
-       id="filter4531"
-       x="-0.26463708"
-       width="1.5292742"
-       y="-0.085970481"
-       height="1.171941">
-      <feGaussianBlur
-         stdDeviation="70.771383"
-         id="feGaussianBlur4533" />
-    </filter>
     <linearGradient
        xlink:href="#linearGradient4361"
        id="linearGradient4368"
@@ -191,7 +180,7 @@
            transform="matrix(0.00124788,-0.00124544,0.00124788,0.00124544,22.099311,1051.3941)"
            style="display:inline">
           <path
-             style="fill:#2f522a;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:325.48294067px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#filter4531);opacity:0.658"
+             style="fill:#2f522a;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:325.48294067px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;opacity:0.658"
              d="m -2462.6051,-1029.6298 c -20.3625,20.3625 -92.2489,722.25517 -102.5497,854.49264 -10.3007,132.237481 -168.3199,503.64594 -137.9154,615.50089 30.4046,111.85493 111.5365,355.88763 136.94,381.29111 25.4035,25.4035 50.7174,142.3491 -0.1195,122.05619 -50.8367,-20.29298 -132.1678,-60.8987 -152.4905,-81.22147 -20.3228,-20.32271 -45.6965,-76.24026 -45.6965,-76.24026 l -126.8979,-249.07364 -81.2613,-111.80518 -116.8063,-167.71277 c 0,0 -30.305,-213.568429 -4.8517,-239.021673 25.4532,-25.453245 122.2751,-223.889077 122.2751,-223.889077 l 15.3616,-106.81407 -20.0939,-254.26376 -55.8578,-86.40173 c 0,0 219.0075,-330.78277 259.6829,-320.65123 40.6754,10.13158 310.2809,-56.24597 310.2809,-56.24597 z"
              id="path4381" />
           <g

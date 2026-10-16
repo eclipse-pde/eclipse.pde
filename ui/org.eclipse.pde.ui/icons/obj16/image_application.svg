@@ -117,28 +117,6 @@
          d="m 1.495586,1036.8977 12.004414,0 0,10.0292 -12.004414,0 z"
          style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0;display:inline" />
     </mask>
-    <filter
-       color-interpolation-filters="sRGB"
-       id="filter18648"
-       x="-0.33945793"
-       width="1.6789159"
-       y="-0.3408724"
-       height="1.6817448">
-      <feGaussianBlur
-         stdDeviation="0.9983657"
-         id="feGaussianBlur18650" />
-    </filter>
-    <filter
-       color-interpolation-filters="sRGB"
-       id="filter3809"
-       x="-0.021501703"
-       y="-0.02715518"
-       width="1.0430034"
-       height="1.0543104">
-      <feGaussianBlur
-         stdDeviation="1.7520611"
-         id="feGaussianBlur3811" />
-    </filter>
     <linearGradient
        gradientTransform="matrix(0.08320777,0,0,0.08320777,-25.132681,985.34583)"
        xlink:href="#linearGradient3820"
@@ -526,12 +504,12 @@
        id="g18686"
        mask="url(#mask18689)">
       <path
-         style="opacity:0.5;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;display:inline;filter:url(#filter18648)"
+         style="opacity:0.5;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;display:inline"
          d="m 5.495586,1040.8977 10.004414,0 0,9.9629 -10.004414,0 z"
          id="rect3997-9-2-7" />
     </g>
     <rect
-       style="opacity:0.5;fill:#000000;fill-opacity:0.73936169;stroke:none;display:inline;filter:url(#filter3809)"
+       style="opacity:0.5;fill:#000000;fill-opacity:0.73936169;stroke:none;display:inline"
        id="rect2996-1"
        width="195.56343"
        height="154.84879"
