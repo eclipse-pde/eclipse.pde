@@ -1400,10 +1400,10 @@ public class AnnotationVisitor extends ASTVisitor {
 						return string.getLiteralValue();
 					} else if (arrayExpression instanceof TypeLiteral type) {
 						return type.getType().resolveBinding().getQualifiedName();
-					} else if (expression instanceof QualifiedName name) {
+					} else if (arrayExpression instanceof QualifiedName name) {
 						return String.valueOf(name.resolveConstantExpressionValue());
 					}
-					return expression.toString();
+					return arrayExpression.toString();
 				}).collect(Collectors.joining(TextUtil.getDefaultLineDelimiter()));
 				if (expressions.size() == 1) {
 					property.setPropertyValue(body);
