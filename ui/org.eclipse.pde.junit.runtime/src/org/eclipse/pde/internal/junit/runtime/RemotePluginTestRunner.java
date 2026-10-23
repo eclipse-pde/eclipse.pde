@@ -165,20 +165,24 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 
 	private static List<Bundle> findTestEngineBundles(VersionRange versionRange) {
 		BundleContext bundleContext = FrameworkUtil.getBundle(RemotePluginTestRunner.class).getBundleContext();
-		return Arrays.stream(bundleContext.getBundles()).filter(RemotePluginTestRunner::providesTestEngine) //
-				.filter(b -> versionRange.includes(b.getVersion())) //
+		return Arrays.stream(bundleContext.getBundles()).filter(bundle -> providesTestEngine(bundle, versionRange)) //
 				.collect(Collectors.toCollection(ArrayList::new));
 	}
 
 	/**
-	 * Checks whether the bundle provides test engines.
+	 * Checks whether the bundle provides test engines compatible with the given version range.
 	 */
-	private static boolean providesTestEngine(Bundle bundle) {
+	private static boolean providesTestEngine(Bundle bundle, VersionRange versionRange) {
 		try {
 			BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
 			String testEngineClass = "org.junit.platform.engine.TestEngine"; //$NON-NLS-1$
 			Collection<String> engineProviders = bundleWiring.listResources("META-INF/services", testEngineClass, BundleWiring.LISTRESOURCES_LOCAL); //$NON-NLS-1$
-			return !engineProviders.isEmpty();
+			if (engineProviders.isEmpty()) {
+				return false;
+			}
+			Class<?> clazz = bundleWiring.getClassLoader().loadClass(testEngineClass);
+			Bundle testEngineInterfaceBundle = FrameworkUtil.getBundle(clazz);
+			return versionRange.includes(testEngineInterfaceBundle.getVersion());
 		} catch (Exception e) {
 			// skip this bundle
 		}
