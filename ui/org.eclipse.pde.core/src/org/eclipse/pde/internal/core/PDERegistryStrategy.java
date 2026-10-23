@@ -77,31 +77,17 @@ public class PDERegistryStrategy extends RegistryStrategy {
 			// can ignore removed models since the ModelEntries is empty
 			ModelEntry[] entries = delta.getChangedEntries();
 			for (int i = 0; i < entries.length; i++) {
-				// If we have workspace models, we need to make sure they are registered before external models so when we search for extension points,
-				// we find the workspace version
-				IPluginModelBase[] workspaceModels = entries[i].getWorkspaceModels();
-				if (workspaceModels.length > 0) {
-					removeModels(entries[i].getExternalModels(), !entries[i].hasWorkspaceModels());
-					removeModels(workspaceModels, true);
-					addBundles(fRegistry, entries[i].getWorkspaceModels());
-				}
-				// make sure the external models are registered at all times
-				addBundles(fRegistry, entries[i].getExternalModels());
+				// Rebuild the registry state for this symbolic name. Register workspace models before external models so searches find the workspace version.
+				ModelEntry entry = entries[i];
+				removeContributors(fRegistry, entry.getId());
+				addBundles(fRegistry, entry.getWorkspaceModels());
+				addBundles(fRegistry, entry.getExternalModels());
 			}
 			entries = delta.getAddedEntries();
 			ModelEntry[] removedEntries = delta.getRemovedEntries();
-			if (removedEntries.length == entries.length && fRegistry instanceof IDynamicExtensionRegistry) {
+			if (removedEntries.length == entries.length) {
 				for (ModelEntry entry : removedEntries) {
-					if (entry.getId() != null) {
-						IDynamicExtensionRegistry registry = (IDynamicExtensionRegistry) fRegistry;
-						IContributor[] contributors = registry.getAllContributors();
-						for (IContributor contributor : contributors) {
-							if (entry.getId().equals(contributor.getName())) {
-								registry.removeContributor(contributor, fKey);
-								break;
-							}
-						}
-					}
+					removeContributors(fRegistry, entry.getId());
 				}
 			}
 			for (ModelEntry entry : entries) {
@@ -246,6 +232,18 @@ public class PDERegistryStrategy extends RegistryStrategy {
 			IContributor contributor = createContributor(base);
 			if (contributor != null && ((IDynamicExtensionRegistry) registry).hasContributor(contributor)) {
 				((IDynamicExtensionRegistry) registry).removeContributor(createContributor(base), fKey);
+			}
+		}
+	}
+
+	private void removeContributors(IExtensionRegistry registry, String contributorName) {
+		if (contributorName == null || !(registry instanceof IDynamicExtensionRegistry dynamicRegistry)) {
+			return;
+		}
+
+		for (IContributor contributor : dynamicRegistry.getAllContributors()) {
+			if (contributorName.equals(contributor.getName())) {
+				dynamicRegistry.removeContributor(contributor, fKey);
 			}
 		}
 	}
