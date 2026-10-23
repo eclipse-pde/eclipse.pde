@@ -103,7 +103,7 @@ public class LaunchingPreferencePage extends PreferencePage implements IWorkbenc
 			fJunitAutoIncludeRequirementsButton = SWTFactory.createCheckButton(options,
 					PDEUIMessages.AdvancedLauncherTab_autoIncludeRequirements_plugins, null, true, 1);
 			fJunitIncludeOptionalButton = SWTFactory.createCheckButton(options,
-					PDEUIMessages.AdvancedLauncherTab_includeOptional_plugins, null, true, 1);
+					PDEUIMessages.AdvancedLauncherTab_includeOptional_plugins, null, false, 1);
 			fJunitAddWorkspaceButton = SWTFactory.createCheckButton(options,
 					PDEUIMessages.AdvancedLauncherTab_addNew_plugins, null, false, 1);
 			fJunitAutoValidate = SWTFactory.createCheckButton(options,
