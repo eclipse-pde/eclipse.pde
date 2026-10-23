@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2022 IBM Corporation and others.
+ * Copyright (c) 2007, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -66,6 +66,7 @@ import org.eclipse.pde.internal.build.BundleHelper;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.DependencyManager;
 import org.eclipse.pde.internal.core.FeatureModelManager;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
@@ -352,10 +353,20 @@ public class BundleLauncherHelper {
 	private static final Predicate<IPluginModelBase> ENABLED_VALID_PLUGIN_FILTER = p -> p.getBundleDescription() != null && p.isEnabled();
 	private static final Function<IPluginModelBase, String> GET_PLUGIN_VERSION = m -> m.getPluginBase().getVersion();
 	private static final Comparator<IPluginModelBase> COMPARE_PLUGIN_RESOLVED = comparing(p -> p.getBundleDescription().isResolved());
+	private static final BiPredicate<IPluginModelBase, Version> EXACT_PLUGIN_VERSION = (e, v) -> Version.parseVersion(GET_PLUGIN_VERSION.apply(e)).equals(v);
 
 	private static IPluginModelBase getIncludedPlugin(String id, String version, String pluginLocation) {
 		List<List<IPluginModelBase>> plugins = getPlugins(id, pluginLocation);
-		return getIncluded(plugins, ENABLED_VALID_PLUGIN_FILTER, GET_PLUGIN_VERSION, COMPARE_PLUGIN_RESOLVED, version);
+		return getIncluded(plugins, ENABLED_VALID_PLUGIN_FILTER, GET_PLUGIN_VERSION, getIncludedPluginComparator(version), version);
+	}
+
+	private static Comparator<IPluginModelBase> getIncludedPluginComparator(String versionString) {
+		if (ICoreConstants.DEFAULT_VERSION.equals(versionString)) {
+			return COMPARE_PLUGIN_RESOLVED;
+		}
+		Version version = Version.parseVersion(versionString);
+		return Comparator.<IPluginModelBase, Boolean> comparing(e -> EXACT_PLUGIN_VERSION.test(e, version)) // false < true
+				.thenComparing(COMPARE_PLUGIN_RESOLVED);
 	}
 
 	private static IPluginModelBase getRequiredPlugin(String id, String version, int versionMatchRule, String pluginLocation) {
