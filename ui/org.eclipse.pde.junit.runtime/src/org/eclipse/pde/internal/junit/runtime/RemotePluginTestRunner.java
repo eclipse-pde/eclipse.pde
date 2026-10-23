@@ -41,6 +41,7 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 
 	private static final String ORG_ECLIPSE_JDT_JUNIT5_RUNTIME = "org.eclipse.jdt.junit5.runtime"; //$NON-NLS-1$
 	private static final String ORG_ECLIPSE_JDT_JUNIT6_RUNTIME = "org.eclipse.jdt.junit6.runtime"; //$NON-NLS-1$
+	private static final String ORG_JUNIT_PLATFORM_ENGINE_TEST_ENGINE = "org.junit.platform.engine.TestEngine"; //$NON-NLS-1$
 	private static final VersionRange JUNIT5_VERSION_RANGE = new VersionRange("[1.0.0,6.0.0)"); //$NON-NLS-1$
 	private static final VersionRange JUNIT6_VERSION_RANGE = new VersionRange("[6.0.0,7.0.0)"); //$NON-NLS-1$
 	private String fTestPluginName;
@@ -166,7 +167,7 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 	private static List<Bundle> findTestEngineBundles(VersionRange versionRange) {
 		BundleContext bundleContext = FrameworkUtil.getBundle(RemotePluginTestRunner.class).getBundleContext();
 		return Arrays.stream(bundleContext.getBundles()).filter(RemotePluginTestRunner::providesTestEngine) //
-				.filter(b -> versionRange.includes(b.getVersion())) //
+				.filter(bundle -> isMatchingImplementation(bundle, versionRange)) //
 				.collect(Collectors.toCollection(ArrayList::new));
 	}
 
@@ -176,13 +177,27 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 	private static boolean providesTestEngine(Bundle bundle) {
 		try {
 			BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
-			String testEngineClass = "org.junit.platform.engine.TestEngine"; //$NON-NLS-1$
-			Collection<String> engineProviders = bundleWiring.listResources("META-INF/services", testEngineClass, BundleWiring.LISTRESOURCES_LOCAL); //$NON-NLS-1$
+			Collection<String> engineProviders = bundleWiring.listResources("META-INF/services", ORG_JUNIT_PLATFORM_ENGINE_TEST_ENGINE, BundleWiring.LISTRESOURCES_LOCAL); //$NON-NLS-1$
 			return !engineProviders.isEmpty();
 		} catch (Exception e) {
 			// skip this bundle
 		}
 		return false;
+	}
+
+	/**
+	 * Checks whether a bundle providing test engines matches the given version range.
+	 * This is needed to differentiate between bundles providing JUnit 5 and/or JUnit 6 test engine implementations.
+	 */
+	private static boolean isMatchingImplementation(Bundle bundle, VersionRange versionRange) {
+		try {
+			BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
+			Class<?> clazz = bundleWiring.getClassLoader().loadClass(ORG_JUNIT_PLATFORM_ENGINE_TEST_ENGINE);
+			Bundle testEngineInterfaceBundle = FrameworkUtil.getBundle(clazz);
+			return versionRange.includes(testEngineInterfaceBundle.getVersion());
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	/**
