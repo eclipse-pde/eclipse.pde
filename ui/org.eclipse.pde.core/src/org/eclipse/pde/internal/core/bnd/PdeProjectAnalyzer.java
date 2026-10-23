@@ -46,6 +46,12 @@ public class PdeProjectAnalyzer extends Analyzer {
 
 	public PdeProjectAnalyzer(IProject project, boolean includeTest, Collection<String> copyHeader) throws Exception {
 		super(includeTest ? new PdeTestProjectJar(project) : new PdeProjectJar(project));
+		// The Analyzer constructor copies all headers of the manifest of the jar.
+		// This would let bnd take the current Require-Bundle, Import-Package, ...
+		// into account and e.g. not report packages already provided by a required
+		// bundle as imports, but the manifest is to be computed from scratch. Only
+		// the explicitly requested headers are copied below.
+		getProperties().clear();
 		set(NOEXTRAHEADERS, "true"); //$NON-NLS-1$
 		if (PluginProject.isJavaProject(project)) {
 			IJavaProject javaProject = JavaCore.create(project);
