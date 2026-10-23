@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 
 public class BundleImageCacheTest {
 
+	private static final String EXISTING = "/icons/full/obj16/class_obj.png"; //$NON-NLS-1$
 	private static final String MISSING = "/icons/does_not_exist.png"; //$NON-NLS-1$
 
 	private static BundleImageCache newCache() {
@@ -44,6 +45,22 @@ public class BundleImageCacheTest {
 		} finally {
 			cache1.dispose();
 			cache2.dispose();
+		}
+	}
+
+	@Test
+	public void testCreateLoadsExistingImage() {
+		final BundleImageCache cache = newCache();
+		try {
+			final Image image = cache.create(EXISTING);
+			assertNotSame(cache.create(MISSING), image);
+			assertFalse(image.isDisposed());
+
+			cache.dispose();
+
+			assertTrue(image.isDisposed());
+		} finally {
+			cache.dispose();
 		}
 	}
 
