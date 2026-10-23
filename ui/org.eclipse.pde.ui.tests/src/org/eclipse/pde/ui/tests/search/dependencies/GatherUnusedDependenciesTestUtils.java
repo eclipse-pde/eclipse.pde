@@ -11,6 +11,7 @@
 package org.eclipse.pde.ui.tests.search.dependencies;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.ByteArrayInputStream;
@@ -153,7 +154,8 @@ public final class GatherUnusedDependenciesTestUtils {
 		// against a stale classpath and fail to compile
 		TestUtils.waitForJobs(GatherUnusedDependenciesTestUtils.class.getName(), 100, 10000);
 		ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
-		TestUtils.waitForJobs(GatherUnusedDependenciesTestUtils.class.getName(), 100, 10000);
+		boolean timedOut = TestUtils.waitForJobs(GatherUnusedDependenciesTestUtils.class.getName(), 100, 10000);
+		assertFalse("Timed out waiting for the build to finish", timedOut);
 		// the analysis is based on the compiled classes, so a test that does not
 		// compile would not test what it is supposed to test
 		IMarker[] markers = ResourcesPlugin.getWorkspace().getRoot()
