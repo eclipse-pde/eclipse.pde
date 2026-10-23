@@ -27,6 +27,8 @@ import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
+import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -35,11 +37,129 @@ import org.junit.rules.TestRule;
 public class GatherUnusedDependenciesOperationTest {
 
 	@ClassRule
+	public static final TestRule RESTORE_TARGET_DEFINITION = TargetPlatformUtil.RESTORE_CURRENT_TARGET_DEFINITION_AFTER;
+	@ClassRule
 	public static final TestRule CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
 
 	/** Keeps the projects of one test case from interfering with the others. */
 	@Rule
 	public final TestRule clearCreatedProjects = ProjectUtils.DELETE_CREATED_WORKSPACE_PROJECTS_AFTER;
+
+	@BeforeClass
+	public static void setUpTargetPlatform() throws Exception {
+		// Tests refer to bundles of the running platform, so do not rely on the
+		// target definition another test class left behind.
+		TargetPlatformUtil.setRunningPlatformAsTarget();
+	}
+
+	/**
+	 * A dependency that only provides a type indirectly used as the return type
+	 * of a chained call, here IEclipseContext returned by MPart.getContext(),
+	 * must not be flagged as unused. The type is never named in the source, so
+	 * the search for source references cannot find it and the operation relies
+	 * on the analysis of the byte code.
+	 */
+	@Test
+	public void testDependencyUsedViaReturnTypeOfChainedCallIsNotFlaggedAsUnused() throws Exception {
+		String contextsBundle = "org.eclipse.e4.core.contexts";
+		String bundle = "chained.call.bundle";
+		IProject project = createJavaPluginProject(bundle);
+		addRequiredBundle(project, "org.eclipse.e4.ui.model.workbench");
+		addRequiredBundle(project, "org.eclipse.e4.ui.workbench");
+		addRequiredBundle(project, contextsBundle);
+		createJavaSource(project, bundle, "UsesContext", """
+				import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+				import org.eclipse.e4.ui.workbench.modeling.EModelService;
+
+				public class UsesContext {
+					public EModelService getModelService(MPart part) {
+						return part.getContext().get(EModelService.class);
+					}
+				}
+				""");
+
+		buildProjects();
+		List<String> unusedPlugins = gatherUnusedDependencies(project);
+		assertFalse("Dependency to " + contextsBundle + " must not be flagged as unused "
+				+ "although its type is only used as return type of a chained call", unusedPlugins.contains(contextsBundle));
+	}
+
+	/**
+	 * Same as
+	 * {@link #testDependencyUsedViaReturnTypeOfChainedCallIsNotFlaggedAsUnused()}
+	 * with the types provided by bundles created in the test: the type of A is
+	 * only used as the return type of B.getA() in the chained call.
+	 */
+	@Test
+	public void testDependencyUsedViaReturnTypeOfChainedCallInTestBundlesIsNotFlaggedAsUnused() throws Exception {
+		// Bundle A: provides the type that is used without ever being named
+		String bundleA = "indirect.bundle.a";
+		String packageA = bundleA + ".pkg";
+		IProject projectA = createJavaPluginProject(bundleA);
+		addExportedPackage(projectA, packageA);
+		createJavaSource(projectA, packageA, "A", """
+				public class A {
+					public void use() {
+					}
+				}
+				""");
+
+		// Bundle B: returns the type of A from a method
+		String bundleB = "indirect.bundle.b";
+		String packageB = bundleB + ".pkg";
+		IProject projectB = createJavaPluginProject(bundleB);
+		addExportedPackage(projectB, packageB);
+		addRequiredBundle(projectB, bundleA);
+		createJavaSource(projectB, packageB, "B", """
+				public class B {
+					public %s.A getA() {
+						return null;
+					}
+				}
+				""".formatted(packageA));
+
+		// Bundle C: requires both and calls a method on the returned type
+		String bundleC = "indirect.bundle.c";
+		IProject projectC = createJavaPluginProject(bundleC);
+		addRequiredBundle(projectC, bundleA);
+		addRequiredBundle(projectC, bundleB);
+		createJavaSource(projectC, bundleC, "UsesA", """
+				import %s.B;
+
+				public class UsesA {
+					public void use(B b) {
+						b.getA().use();
+					}
+				}
+				""".formatted(packageB));
+
+		buildProjects();
+		List<String> unusedPlugins = gatherUnusedDependencies(projectC);
+		assertFalse("Dependency to " + bundleA + " must not be flagged as unused "
+				+ "although its type is only used as return type of a chained call", unusedPlugins.contains(bundleA));
+	}
+
+	/**
+	 * A dependency whose packages are not referenced at all must be reported as
+	 * unused. Without this counterpart, the tests above would also pass if
+	 * every dependency were retained.
+	 */
+	@Test
+	public void testUnreferencedDependencyIsFlaggedAsUnused() throws Exception {
+		String contextsBundle = "org.eclipse.e4.core.contexts";
+		String bundle = "unreferenced.bundle";
+		IProject project = createJavaPluginProject(bundle);
+		addRequiredBundle(project, contextsBundle);
+		createJavaSource(project, bundle, "UsesNothing", """
+				public class UsesNothing {
+				}
+				""");
+
+		buildProjects();
+		List<String> unusedPlugins = gatherUnusedDependencies(project);
+		assertTrue("Unreferenced dependency to " + contextsBundle + " must be flagged as unused",
+				unusedPlugins.contains(contextsBundle));
+	}
 
 	@Test
 	public void testDirectlyUsedDependencyReexportedByOtherDependencyIsNotFlaggedAsUnused() throws Exception {
