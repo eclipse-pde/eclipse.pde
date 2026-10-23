@@ -13,20 +13,12 @@ t SPDX-License-Identifier: EPL-2.0
 
 package org.eclipse.pde.build.tests;
 
-import static org.junit.Assume.assumeTrue;
-
 import org.eclipse.pde.build.internal.tests.p2.P2Tests;
 import org.eclipse.pde.build.internal.tests.p2.PublishingTests;
-import org.junit.BeforeClass;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({ P2Tests.class, PublishingTests.class })
+@Suite
+@SelectClasses({ P2Tests.class, PublishingTests.class })
 public class P2TestSuite {
-
-	@BeforeClass
-	public static void setUp() {
-		assumeTrue(Boolean.valueOf(System.getProperty("pde.build.includeP2", "true")).booleanValue());
-	}
 }
