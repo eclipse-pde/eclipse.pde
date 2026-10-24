@@ -423,6 +423,11 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			if (data.doEnableAPITooling()) {
 				addApiAnalysisNature();
 			}
+
+			// enable Declarative Services processing if requested
+			if (data.doEnableDSProcessing()) {
+				setDSProcessingPreference(project);
+			}
 		}
 		if (isAutomaticMetadata()) {
 			subMonitor.subTask(PDEUIMessages.NewProjectCreationOperation_manifestFile);
@@ -732,6 +737,22 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			project.setDescription(description, new NullProgressMonitor());
 		} catch (CoreException ce) {
 			//ignore
+		}
+	}
+
+	/**
+	 * Enable Declarative Services processing for the project
+	 *
+	 * @param project the project to enable DS processing for
+	 */
+	private void setDSProcessingPreference(IProject project) {
+		IScopeContext context = new ProjectScope(project);
+		IEclipsePreferences node = context.getNode("org.eclipse.pde.ds.annotations"); //$NON-NLS-1$
+		node.putBoolean("enabled", true); //$NON-NLS-1$
+		try {
+			node.flush();
+		} catch (BackingStoreException e) {
+			PDEPlugin.log(e);
 		}
 	}
 
