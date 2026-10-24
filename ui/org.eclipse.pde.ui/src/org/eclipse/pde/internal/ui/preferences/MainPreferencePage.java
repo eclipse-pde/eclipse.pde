@@ -83,6 +83,7 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 	private Button fDisableAPIAnalysisBuilder;
 	private Button fRunAPIAnalysisBuilderAsJob;
 	private Button fUpdateClasspathInParallel;
+	private Button fQueryEclipseIndexForSourceBundles;
 	private Text fTestPluginPatternText;
 
 
@@ -217,6 +218,14 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		WidgetFactory.button(SWT.PUSH).text(PDEUIMessages.MainPreferencePage_BundlePoolPrefsCleanBtn)
 				.layoutData(GridDataFactory.swtDefaults().align(SWT.FILL, SWT.BEGINNING).create()).create(bundlePoolGp)
 				.addSelectionListener(SelectionListener.widgetSelectedAdapter(this::handleClean));
+
+		fQueryEclipseIndexForSourceBundles = SWTFactory.createCheckButton(bundlePoolGp,
+				PDEUIMessages.MainPreferencePage_QueryEclipseIndexForSourceBundles, null,
+				PDECore.getDefault().getPreferencesManager()
+						.getBoolean(ICoreConstants.QUERY_ECLIPSE_INDEX_FOR_SOURCE_BUNDLES),
+				2);
+		fQueryEclipseIndexForSourceBundles
+				.setToolTipText(PDEUIMessages.MainPreferencePage_QueryEclipseIndexForSourceBundlesTooltip);
 
 		return composite;
 	}
@@ -353,6 +362,12 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 			PDEPreferencesManager prefs = PDECore.getDefault().getPreferencesManager();
 			prefs.setValue(ICoreConstants.UPDATE_CLASSPATH_IN_PARALLEL, updateClasspathInParallel);
 		}
+		boolean queryEclipseIndexForSourceBundles = fQueryEclipseIndexForSourceBundles.getSelection();
+		if (PDECore.getDefault().getPreferencesManager()
+				.getBoolean(ICoreConstants.QUERY_ECLIPSE_INDEX_FOR_SOURCE_BUNDLES) != queryEclipseIndexForSourceBundles) {
+			PDEPreferencesManager prefs = PDECore.getDefault().getPreferencesManager();
+			prefs.setValue(ICoreConstants.QUERY_ECLIPSE_INDEX_FOR_SOURCE_BUNDLES, queryEclipseIndexForSourceBundles);
+		}
 		PDECore.getDefault().getPreferencesManager().savePluginPreferences();
 		PDEPlugin.getDefault().getPreferenceManager().savePluginPreferences();
 		return super.performOk();
@@ -381,6 +396,8 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 				PDECore.getDefault().getPreferencesManager().getDefaultBoolean(ICoreConstants.RUN_API_ANALYSIS_AS_JOB));
 		fUpdateClasspathInParallel.setSelection(PDECore.getDefault().getPreferencesManager()
 				.getDefaultBoolean(ICoreConstants.UPDATE_CLASSPATH_IN_PARALLEL));
+		fQueryEclipseIndexForSourceBundles.setSelection(PDECore.getDefault().getPreferencesManager()
+				.getDefaultBoolean(ICoreConstants.QUERY_ECLIPSE_INDEX_FOR_SOURCE_BUNDLES));
 		fDisableAPIAnalysisBuilder
 				.setSelection(store.getDefaultBoolean(IPreferenceConstants.DISABLE_API_ANALYSIS_BUILDER));
 		fTestPluginPatternText.setText(store.getDefaultString(IPreferenceConstants.TEST_PLUGIN_PATTERN));
