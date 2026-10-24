@@ -15,6 +15,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.build;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -38,12 +41,18 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.core.plugin.IFragmentModel;
+import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
+import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.core.natures.PluginProject;
+import org.eclipse.pde.internal.launching.ILaunchingPreferenceConstants;
+import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
@@ -155,7 +164,10 @@ public class BuildClasspathSection extends TableSection {
 	}
 
 	public BuildClasspathSection(PDEFormPage page, Composite parent) {
-		super(page, parent, Section.DESCRIPTION | ExpandableComposite.TWISTIE, new String[] {PDEUIMessages.BuildEditor_ClasspathSection_add, PDEUIMessages.BuildEditor_ClasspathSection_remove, null, null});
+		super(page, parent, Section.DESCRIPTION | ExpandableComposite.TWISTIE,
+				new String[] { PDEUIMessages.BuildEditor_ClasspathSection_add,
+						PDEUIMessages.BuildEditor_ClasspathSection_add_bundle,
+						PDEUIMessages.BuildEditor_ClasspathSection_remove, null });
 		getSection().setText(PDEUIMessages.BuildEditor_ClasspathSection_title);
 		getSection().setDescription(PDEUIMessages.BuildEditor_ClasspathSection_desc);
 		initialize();
@@ -184,6 +196,7 @@ public class BuildClasspathSection extends TableSection {
 
 		EditableTablePart tablePart = getTablePart();
 		tablePart.setEditable(true);
+
 		fTableViewer = tablePart.getTableViewer();
 
 		fTableViewer.setContentProvider(new TableContentProvider());
@@ -208,6 +221,18 @@ public class BuildClasspathSection extends TableSection {
 			@Override
 			public void run() {
 				handleNew();
+			}
+		};
+		action.setEnabled(fEnabled);
+		manager.add(action);
+
+		manager.add(new Separator());
+
+		// add new bundle action
+		action = new Action(PDEUIMessages.BuildEditor_ClasspathSection_add_bundle) {
+			@Override
+			public void run() {
+				handleNewBundle();
 			}
 		};
 		action.setEnabled(fEnabled);
@@ -247,14 +272,15 @@ public class BuildClasspathSection extends TableSection {
 	public void enableSection(boolean enable) {
 		fEnabled = enable;
 		EditableTablePart tablePart = getTablePart();
-		tablePart.setButtonEnabled(1, enable && !fTableViewer.getStructuredSelection().isEmpty());
+		tablePart.setButtonEnabled(2, enable && !fTableViewer.getStructuredSelection().isEmpty());
+		tablePart.setButtonEnabled(1, enable);
 		tablePart.setButtonEnabled(0, enable);
 	}
 
 	@Override
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
-		getTablePart().setButtonEnabled(1, selection != null && !selection.isEmpty() && fEnabled);
+		getTablePart().setButtonEnabled(2, selection != null && !selection.isEmpty() && fEnabled);
 	}
 
 	private void handleDelete() {
@@ -354,11 +380,63 @@ public class BuildClasspathSection extends TableSection {
 		return null;
 	}
 
+	private void handleNewBundle() {
+		PluginSelectionDialog dialog = new PluginSelectionDialog(PDEPlugin.getActiveWorkbenchShell(),
+				getAvailablePlugins(), true);
+		dialog.create();
+		if (dialog.open() == Window.OK) {
+			IBuildModel model = getBuildModel();
+			IBuild build = model.getBuild();
+			IBuildEntry entry = build.getEntry(IBuildPropertiesConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
+			try {
+				if (entry == null) {
+
+					entry = model.getFactory().createEntry(IBuildPropertiesConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
+					build.add(entry);
+				}
+				Object[] models = dialog.getResult();
+				for (Object m : models) {
+					IPluginModel pmodel = (IPluginModel) m;
+					String tokenName = "platform:/plugin/" + pmodel.getPlugin().getId() + "/"; // 7 //$NON-NLS-1$ //$NON-NLS-2$
+					entry.addToken(tokenName);
+				}
+				markDirty();
+				PDEPreferencesManager store = PDELaunchingPlugin.getDefault().getPreferenceManager();
+				store.setDefault(ILaunchingPreferenceConstants.PROP_AUTO_MANAGE, true);
+			} catch (CoreException e) {
+				PDEPlugin.logException(e);
+			}
+		}
+	}
+
+	private IPluginModelBase[] getAvailablePlugins() {
+		IPluginModelBase[] plugins = PluginRegistry.getActiveModels(false);
+		HashSet<String> currentPlugins = new HashSet<>();
+		IProject currentProj = getPage().getPDEEditor().getCommonProject();
+		IPluginModelBase model = PluginRegistry.findModel(currentProj);
+		if (model != null) {
+			currentPlugins.add(model.getPluginBase().getId());
+			if (model.isFragmentModel()) {
+				currentPlugins.add(((IFragmentModel) model).getFragment().getPluginId());
+			}
+		}
+
+		ArrayList<IPluginModelBase> result = new ArrayList<>();
+		for (int i = 0; i < plugins.length; i++) {
+			if (!currentPlugins.contains(plugins[i].getPluginBase().getId())) {
+				result.add(plugins[i]);
+			}
+		}
+		return result.toArray(new IPluginModelBase[result.size()]);
+	}
+
+
 	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
 			case 0 -> handleNew();
-			case 1 -> handleDelete();
+			case 1 -> handleNewBundle();
+			case 2 -> handleDelete();
 		}
 	}
 
