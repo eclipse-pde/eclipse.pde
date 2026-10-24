@@ -1,21 +1,19 @@
 package org.eclipse.pde.ds.internal.annotations.tests;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.jar.Manifest;
 
 import org.eclipse.core.resources.ICommand;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.ds.internal.annotations.DSAnnotationCompilationParticipant;
-import org.eclipse.pde.internal.core.ibundle.IBundleModel;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("restriction")
@@ -45,11 +43,14 @@ public class ManagedProjectTest extends CompilationParticipantTest {
 
 	@Test
 	public void manifestHeaderServiceComponentAdded() throws Exception {
-		IPluginModelBase pluginModel = PluginRegistry.findModel(testProject);
-		assertThat(pluginModel).isInstanceOf(IBundlePluginModelBase.class);
-		IBundleModel bundleModel = ((IBundlePluginModelBase) pluginModel).getBundleModel();
-		assertNotNull(bundleModel, "Missing bundle manifest!");
-		String serviceComponentHeader = bundleModel.getBundle().getHeader("Service-Component");
+		IFile manifestFile = testProject.getFile("META-INF/MANIFEST.MF");
+		manifestFile.refreshLocal(IResource.DEPTH_ZERO, null);
+		assertTrue(manifestFile.exists(), "Missing MANIFEST.MF!");
+		String serviceComponentHeader;
+		try (InputStream is = manifestFile.getContents(true)) {
+			Manifest manifest = new Manifest(is);
+			serviceComponentHeader = manifest.getMainAttributes().getValue("Service-Component");
+		}
 		assertNotNull(serviceComponentHeader, "Missing Service-Component header!");
 		String[] entries = serviceComponentHeader.split("\\s*,\\s*");
 		List<String> entryList = Arrays.asList(entries);
