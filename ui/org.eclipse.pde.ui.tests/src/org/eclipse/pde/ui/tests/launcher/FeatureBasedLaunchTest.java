@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2019, 2022 Julian Honnen and others.
+ *  Copyright (c) 2019, 2026 Julian Honnen and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -820,6 +820,32 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 
 			assertGetMergedBundleMap("pluginResolution workspace no match", lc, Set.of());
 		}
+	}
+
+	@Test
+	public void testGetMergedBundleMap_requiredPluginWithSpecificVersion3() throws Throwable {
+		var targetBundles = ofEntries( //
+				bundle("plugin.a", "1.0.0", entry(IMPORT_PACKAGE, "test;version=\"1.0.0\""),
+						entry(EXPORT_PACKAGE, "test;version=\"1.0.0\"")), //
+				bundle("plugin.a", "2.0.0", entry(IMPORT_PACKAGE, "test;version=\"2.0.0\""),
+						entry(EXPORT_PACKAGE, "test;version=\"2.0.0\"")), //
+				bundle("plugin.b", "1.0.0", entry(IMPORT_PACKAGE, "test;version=\"[1.0.0,2.0.0)\"")), //
+				bundle("plugin.b", "2.0.0", entry(IMPORT_PACKAGE, "test;version=\"[2.0.0,3.0.0)\"")));
+
+		var targetFeatures = List.of( //
+				targetFeature("feature.a", "1.0.0", f -> {
+					addIncludedPlugin(f, "plugin.a", "1.0.0");
+					addIncludedPlugin(f, "plugin.b", "1.0.0");
+				}));
+
+		setTargetPlatform(targetBundles, targetFeatures);
+
+		ILaunchConfigurationWorkingCopy lc = createFeatureLaunchConfig();
+		lc.setAttribute(IPDELauncherConstants.FEATURE_DEFAULT_LOCATION, IPDELauncherConstants.LOCATION_WORKSPACE);
+		lc.setAttribute(IPDELauncherConstants.SELECTED_FEATURES, Set.of("feature.a:default"));
+
+		assertGetMergedBundleMap("featureResolution workspace", lc,
+				Set.of(targetBundle("plugin.a", "1.0.0"), targetBundle("plugin.b", "1.0.0")));
 	}
 
 	// --- required/imported feature dependencies ---
