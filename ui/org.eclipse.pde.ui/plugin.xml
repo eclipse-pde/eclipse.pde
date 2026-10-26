@@ -273,6 +273,30 @@
          point="org.eclipse.ui.exportWizards">
       <wizard
             category="org.eclipse.pde.ui.PluginDevelopment"
+            class="org.eclipse.pde.internal.ui.wizards.exports.BundleExportWizard"
+            icon="$nl$/icons/etool16/exp_deployplug.svg"
+            id="org.eclipse.pde.ui.bundleExportWizard"
+            name="%BundleExportWizard.label">
+         <description>
+            %BundleExportWizard.description
+         </description>
+         <selection
+               name="plugin.xml"
+               class="org.eclipse.core.resources.IFile">
+         </selection>
+         <selection
+               name="fragment.xml"
+               class="org.eclipse.core.resources.IFile">
+         </selection>
+         <selection
+               class="org.eclipse.core.resources.IProject">
+         </selection>
+         <keywordReference
+               id="org.eclipse.pde.ui.pde">
+         </keywordReference>
+      </wizard>
+      <wizard
+            category="org.eclipse.pde.ui.PluginDevelopment"
             class="org.eclipse.pde.internal.ui.wizards.exports.PluginExportWizard"
             icon="$nl$/icons/etool16/exp_deployplug.svg"
             id="org.eclipse.pde.ui.pluginExportWizard"
