@@ -58,7 +58,7 @@ import org.w3c.dom.Document;
 
 public abstract class AntGeneratingExportWizard extends BaseExportWizard {
 
-	protected BaseExportWizardPage fPage;
+	protected AntExportWizardPage fPage;
 
 	@Override
 	public void addPages() {
@@ -66,7 +66,7 @@ public abstract class AntGeneratingExportWizard extends BaseExportWizard {
 		addPage(fPage);
 	}
 
-	protected abstract BaseExportWizardPage createPage1();
+	protected abstract AntExportWizardPage createPage1();
 
 	@Override
 	protected boolean performPreliminaryChecks() {

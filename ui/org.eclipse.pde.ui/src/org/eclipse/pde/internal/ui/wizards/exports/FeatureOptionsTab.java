@@ -48,7 +48,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.FilteredResourcesSelectionDialog;
 
-public class FeatureOptionsTab extends ExportOptionsTab {
+public class FeatureOptionsTab extends AntExportOptionsTab {
 
 	private static final String S_MULTI_PLATFORM = "multiplatform"; //$NON-NLS-1$
 	private static final String S_EXPORT_METADATA = "p2metadata"; //$NON-NLS-1$
@@ -150,6 +150,7 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 			fMultiPlatform.setText(PDEUIMessages.ExportWizard_multi_platform);
 		}
 
+		super.addAdditionalOptions(comp);
 	}
 
 	@Override
