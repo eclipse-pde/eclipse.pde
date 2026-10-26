@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.PlatformUI;
 
-public class FeatureExportWizardPage extends BaseExportWizardPage {
+public class FeatureExportWizardPage extends AntExportWizardPage {
 
 	private JNLPTab fJNLPTab;
 
@@ -82,11 +82,8 @@ public class FeatureExportWizardPage extends BaseExportWizardPage {
 	}
 
 	@Override
-	protected void createOptionsTab(TabFolder folder) {
-		fOptionsTab = new FeatureOptionsTab(this);
-		TabItem item = new TabItem(folder, SWT.NONE);
-		item.setControl(fOptionsTab.createControl(folder));
-		item.setText(PDEUIMessages.ExportWizard_options);
+	protected ExportOptionsTab createExportOptionsTab() {
+		return new FeatureOptionsTab(this);
 	}
 
 	private void createJNLPTab(TabFolder folder) {
