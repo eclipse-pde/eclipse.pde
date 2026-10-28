@@ -16,12 +16,10 @@ package org.eclipse.pde.internal.ui.wizards.exports;
 
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.pde.internal.build.site.QualifierReplacer;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -31,13 +29,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 
-public class ExportOptionsTab extends AbstractExportTab {
+public abstract class ExportOptionsTab extends AbstractExportTab {
 
 	protected static final String S_JAR_FORMAT = "exportUpdate"; //$NON-NLS-1$
 	private static final String S_EXPORT_SOURCE = "exportSource"; //$NON-NLS-1$
 	private static final String S_EXPORT_SOURCE_FORMAT = "exportSourceFormat"; //$NON-NLS-1$
-	private static final String S_SAVE_AS_ANT = "saveAsAnt"; //$NON-NLS-1$
-	private static final String S_ANT_FILENAME = "antFileName"; //$NON-NLS-1$
 	private static final String S_QUALIFIER = "qualifier"; //$NON-NLS-1$
 	private static final String S_QUALIFIER_NAME = "qualifierName"; //$NON-NLS-1$
 	private static final String S_ALLOW_BINARY_CYCLES = "allowBinaryCycles"; //$NON-NLS-1$
@@ -46,9 +42,6 @@ public class ExportOptionsTab extends AbstractExportTab {
 	private Button fIncludeSourceButton;
 	private Combo fIncludeSourceCombo;
 	protected Button fJarButton;
-	private Button fSaveAsAntButton;
-	private Combo fAntCombo;
-	private Button fBrowseAnt;
 	private Button fQualifierButton;
 	private Text fQualifierText;
 	private Button fAllowBinaryCycles;
@@ -68,7 +61,6 @@ public class ExportOptionsTab extends AbstractExportTab {
 		addJAROption(container);
 		addAdditionalOptions(container);
 		addQualifierOption(container);
-		addAntSection(container);
 		addAllowBinaryCyclesSection(container);
 		addUseWorkspaceCompiledClassesSection(container);
 
@@ -112,32 +104,12 @@ public class ExportOptionsTab extends AbstractExportTab {
 	}
 
 	/**
-	 * Provides an opportunity for subclasses to add additional options
-	 * to the composite.
+	 * Provides an opportunity for subclasses to add additional options to the
+	 * composite. Subclasses also override {@link #initialize(IDialogSettings)},
+	 * {@link #saveSettings(IDialogSettings)}, {@link #hookListeners()} and
+	 * {@link #validate()} for these options.
 	 */
 	protected void addAdditionalOptions(Composite comp) {
-	}
-
-	protected void addAntSection(Composite container) {
-		Composite comp = new Composite(container, SWT.NONE);
-		GridLayout layout = new GridLayout(3, false);
-		layout.marginHeight = layout.marginWidth = 0;
-		comp.setLayout(layout);
-		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		fSaveAsAntButton = new Button(comp, SWT.CHECK);
-		fSaveAsAntButton.setText(PDEUIMessages.ExportWizard_antCheck);
-		GridData gd = new GridData();
-		gd.horizontalSpan = 1;
-		fSaveAsAntButton.setLayoutData(gd);
-
-		fAntCombo = new Combo(comp, SWT.NONE);
-		fAntCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		fBrowseAnt = new Button(comp, SWT.PUSH);
-		fBrowseAnt.setText(PDEUIMessages.ExportWizard_browse);
-		fBrowseAnt.setLayoutData(new GridData());
-		SWTUtil.setButtonDimensionHint(fBrowseAnt);
 	}
 
 	protected void addQualifierOption(Composite container) {
@@ -163,10 +135,6 @@ public class ExportOptionsTab extends AbstractExportTab {
 		fIncludeSourceCombo.setText(sourceComboValue);
 		fIncludeSourceCombo.setEnabled(fIncludeSourceButton.getSelection());
 		fJarButton.setSelection(getInitialJarButtonSelection(settings));
-		fSaveAsAntButton.setSelection(settings.getBoolean(S_SAVE_AS_ANT));
-		initializeCombo(settings, S_ANT_FILENAME, fAntCombo);
-		fAntCombo.setEnabled(fSaveAsAntButton.getSelection());
-		fBrowseAnt.setEnabled(fSaveAsAntButton.getSelection());
 		fQualifierButton.setSelection(settings.getBoolean(S_QUALIFIER));
 		fQualifierText.setText(getInitialQualifierText(settings));
 		fQualifierText.setEnabled(fQualifierButton.getSelection());
@@ -180,12 +148,10 @@ public class ExportOptionsTab extends AbstractExportTab {
 		settings.put(S_JAR_FORMAT, fJarButton.getSelection());
 		settings.put(S_EXPORT_SOURCE, fIncludeSourceButton.getSelection());
 		settings.put(S_EXPORT_SOURCE_FORMAT, fIncludeSourceCombo.getItem(fIncludeSourceCombo.getSelectionIndex()));
-		settings.put(S_SAVE_AS_ANT, fSaveAsAntButton.getSelection());
 		settings.put(S_QUALIFIER, fQualifierButton.getSelection());
 		settings.put(S_QUALIFIER_NAME, fQualifierText.getText());
 		settings.put(S_ALLOW_BINARY_CYCLES, fAllowBinaryCycles.getSelection());
 		settings.put(S_USE_WORKSPACE_COMPILED_CLASSES, fUseWSCompiledClasses.getSelection());
-		saveCombo(settings, S_ANT_FILENAME, fAntCombo);
 	}
 
 	private String getInitialQualifierText(IDialogSettings settings) {
@@ -215,17 +181,6 @@ public class ExportOptionsTab extends AbstractExportTab {
 		fIncludeSourceButton.addSelectionListener(widgetSelectedAdapter(e -> fIncludeSourceCombo.setEnabled(fIncludeSourceButton.getSelection())));
 
 		fJarButton.addSelectionListener(widgetSelectedAdapter(e -> ((BaseExportWizardPage) fPage).adjustAdvancedTabsVisibility()));
-		fSaveAsAntButton.addSelectionListener(widgetSelectedAdapter(e -> {
-			fAntCombo.setEnabled(fSaveAsAntButton.getSelection());
-			fBrowseAnt.setEnabled(fSaveAsAntButton.getSelection());
-			fPage.pageChanged();
-		}));
-
-		fBrowseAnt.addSelectionListener(widgetSelectedAdapter(e -> chooseFile(fAntCombo, new String[] { "*.xml" }))); //$NON-NLS-1$
-
-		fAntCombo.addSelectionListener(widgetSelectedAdapter(e -> fPage.pageChanged()));
-
-		fAntCombo.addModifyListener(e -> fPage.pageChanged());
 		fQualifierButton.addSelectionListener(widgetSelectedAdapter(e -> {
 			fQualifierText.setEnabled(fQualifierButton.getSelection());
 			fPage.pageChanged();
@@ -233,17 +188,6 @@ public class ExportOptionsTab extends AbstractExportTab {
 	}
 
 	protected String validate() {
-		if (fSaveAsAntButton.getSelection() && fAntCombo.getText().trim().length() == 0) {
-			return PDEUIMessages.ExportWizard_status_noantfile;
-		}
-		return null;
-	}
-
-	protected String validateAntCombo() {
-		String path = IPath.fromOSString(fAntCombo.getText()).lastSegment();
-		if ("build.xml".equals(path)) { //$NON-NLS-1$
-			return PDEUIMessages.ExportOptionsTab_antReservedMessage;
-		}
 		return null;
 	}
 
@@ -265,14 +209,6 @@ public class ExportOptionsTab extends AbstractExportTab {
 
 	protected boolean useJARFormat() {
 		return fJarButton.getSelection();
-	}
-
-	protected boolean doGenerateAntFile() {
-		return fSaveAsAntButton.getSelection();
-	}
-
-	protected String getAntBuildFileName() {
-		return fSaveAsAntButton.getSelection() ? fAntCombo.getText() : null;
 	}
 
 	protected String getQualifier() {

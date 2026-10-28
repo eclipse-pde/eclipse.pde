@@ -23,7 +23,6 @@ import java.util.Set;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -140,11 +139,16 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 	}
 
 	protected void createOptionsTab(TabFolder folder) {
-		fOptionsTab = new ExportOptionsTab(this);
+		fOptionsTab = createExportOptionsTab();
 		TabItem item = new TabItem(folder, SWT.NONE);
 		item.setControl(fOptionsTab.createControl(folder));
 		item.setText(PDEUIMessages.ExportWizard_options);
 	}
+
+	/**
+	 * Creates the flavour of the options tab used by this page.
+	 */
+	protected abstract ExportOptionsTab createExportOptionsTab();
 
 	protected void createJARSigningTab(TabFolder folder) {
 		fJARSiginingTab = new JARSigningTab(this);
@@ -269,20 +273,20 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 		if (getMessage() != null) {
 			setMessage(null);
 		}
-		if (fOptionsTab != null) {
-			String path = fOptionsTab.getAntBuildFileName();
-			String warningMessage = null;
-			if (path != null && path.length() > 0 && "build.xml".equals(IPath.fromOSString(path).lastSegment())) { //$NON-NLS-1$
-				warningMessage = PDEUIMessages.ExportOptionsTab_antReservedMessage;
-			}
-			setMessage(warningMessage, IMessageProvider.WARNING);
-		}
+		setMessage(getWarningMessage(), IMessageProvider.WARNING);
 		String error = fExportPart.getSelectionCount() > 0 ? null : PDEUIMessages.ExportWizard_status_noselection;
 		if (error == null) {
 			error = validateTabs();
 		}
 		setErrorMessage(error);
 		setPageComplete(error == null);
+	}
+
+	/**
+	 * @return a warning to show on the page or <code>null</code>
+	 */
+	protected String getWarningMessage() {
+		return null;
 	}
 
 	protected String validateTabs() {
@@ -347,14 +351,6 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 
 	protected boolean useWorkspaceCompiledClasses() {
 		return fOptionsTab.useWorkspaceCompiledClasses();
-	}
-
-	protected boolean doGenerateAntFile() {
-		return fOptionsTab.doGenerateAntFile();
-	}
-
-	protected String getAntBuildFileName() {
-		return fOptionsTab.getAntBuildFileName();
 	}
 
 	protected String getQualifier() {

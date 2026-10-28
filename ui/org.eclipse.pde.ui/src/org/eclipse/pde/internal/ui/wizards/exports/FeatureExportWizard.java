@@ -60,7 +60,7 @@ public class FeatureExportWizard extends AntGeneratingExportWizard {
 	}
 
 	@Override
-	protected BaseExportWizardPage createPage1() {
+	protected AntExportWizardPage createPage1() {
 		return new FeatureExportWizardPage(getSelection());
 	}
 
