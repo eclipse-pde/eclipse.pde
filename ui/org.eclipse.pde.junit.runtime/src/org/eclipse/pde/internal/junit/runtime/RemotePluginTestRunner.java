@@ -17,12 +17,11 @@ package org.eclipse.pde.internal.junit.runtime;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.internal.junit.runner.RemoteTestRunner;
@@ -39,9 +38,17 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 
 	private static final boolean DISABLE_FRAMEWORK_STATE_DUMP = Boolean.getBoolean("pde.testing.disable.framework.state.dump"); //$NON-NLS-1$
 
+	private static final String[] LOADABLE_JUNIT_SERVICES = new String[] { //
+			"org.junit.platform.engine.TestEngine", //$NON-NLS-1$
+			"org.junit.platform.launcher.LauncherDiscoveryListener", //$NON-NLS-1$
+			"org.junit.platform.launcher.LauncherInterceptor", //$NON-NLS-1$
+			"org.junit.platform.launcher.LauncherSessionListener", //$NON-NLS-1$
+			"org.junit.platform.launcher.PostDiscoveryFilter", //$NON-NLS-1$
+			"org.junit.platform.launcher.TestExecutionListener" //$NON-NLS-1$
+	};
+
 	private static final String ORG_ECLIPSE_JDT_JUNIT5_RUNTIME = "org.eclipse.jdt.junit5.runtime"; //$NON-NLS-1$
 	private static final String ORG_ECLIPSE_JDT_JUNIT6_RUNTIME = "org.eclipse.jdt.junit6.runtime"; //$NON-NLS-1$
-	private static final String ORG_JUNIT_PLATFORM_ENGINE_TEST_ENGINE = "org.junit.platform.engine.TestEngine"; //$NON-NLS-1$
 	private static final VersionRange JUNIT5_VERSION_RANGE = new VersionRange("[1.0.0,6.0.0)"); //$NON-NLS-1$
 	private static final VersionRange JUNIT6_VERSION_RANGE = new VersionRange("[6.0.0,7.0.0)"); //$NON-NLS-1$
 	private String fTestPluginName;
@@ -150,51 +157,63 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 		return Integer.toString(state);
 	}
 
-	private static ClassLoader createJUnitJupiterPluginClassLoader(String testPluginName, String junitRuntimeBundle, VersionRange versionRange, int junitVersion) {
+	private static ClassLoader createJUnitJupiterPluginClassLoader(String testPluginName, String junitRuntimeBundleName, VersionRange versionRange, int junitVersion) {
 		Bundle testBundle = Platform.getBundle(testPluginName);
 		if (testBundle == null) {
 			throw new IllegalArgumentException("Bundle \"" + testPluginName + "\" not found. Possible causes include missing dependencies, too restrictive version ranges, mixed JUnit versions, or a non-matching required execution environment."); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		Bundle junit5RuntimeBundle = Platform.getBundle(junitRuntimeBundle);
-		List<Bundle> platformEngineBundles = findTestEngineBundles(versionRange);
-		platformEngineBundles.add(testBundle);
-		if (junit5RuntimeBundle != null) {
-			platformEngineBundles.add(junit5RuntimeBundle);
+		Bundle junitRuntimeBundle = Platform.getBundle(junitRuntimeBundleName);
+		List<Bundle> bundles = findBundlesWithLoadableJUnitServices(versionRange);
+		bundles.add(testBundle);
+		if (junitRuntimeBundle != null) {
+			bundles.add(junitRuntimeBundle);
 		}
-		return new SPIBundleClassLoader(platformEngineBundles, junitVersion);
+		return new SPIBundleClassLoader(bundles, junitVersion);
 	}
 
-	private static List<Bundle> findTestEngineBundles(VersionRange versionRange) {
+	private static List<Bundle> findBundlesWithLoadableJUnitServices(VersionRange versionRange) {
+		List<Bundle> bundles = new ArrayList<>();
 		BundleContext bundleContext = FrameworkUtil.getBundle(RemotePluginTestRunner.class).getBundleContext();
-		return Arrays.stream(bundleContext.getBundles()).filter(RemotePluginTestRunner::providesTestEngine) //
-				.filter(bundle -> isMatchingImplementation(bundle, versionRange)) //
-				.collect(Collectors.toCollection(ArrayList::new));
-	}
-
-	/**
-	 * Checks whether the bundle provides test engines.
-	 */
-	private static boolean providesTestEngine(Bundle bundle) {
-		try {
-			BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
-			Collection<String> engineProviders = bundleWiring.listResources("META-INF/services", ORG_JUNIT_PLATFORM_ENGINE_TEST_ENGINE, BundleWiring.LISTRESOURCES_LOCAL); //$NON-NLS-1$
-			return !engineProviders.isEmpty();
-		} catch (Exception e) {
-			// skip this bundle
+		for (Bundle bundle : bundleContext.getBundles()) {
+			for (String foundService : getProvidedJUnitServices(bundle)) {
+				if (isMatchingImplementation(bundle, versionRange, foundService)) {
+					bundles.add(bundle);
+					break;
+				}
+			}
 		}
-		return false;
+		return bundles;
 	}
 
 	/**
-	 * Checks whether a bundle providing test engines matches the given version range.
-	 * This is needed to differentiate between bundles providing JUnit 5 and/or JUnit 6 test engine implementations.
+	 * Lists all JUnit 5/6 services provided by the given bundle.
 	 */
-	private static boolean isMatchingImplementation(Bundle bundle, VersionRange versionRange) {
+	private static Collection<String> getProvidedJUnitServices(Bundle bundle) {
 		try {
 			BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
-			Class<?> clazz = bundleWiring.getClassLoader().loadClass(ORG_JUNIT_PLATFORM_ENGINE_TEST_ENGINE);
-			Bundle testEngineInterfaceBundle = FrameworkUtil.getBundle(clazz);
-			return versionRange.includes(testEngineInterfaceBundle.getVersion());
+			Collection<String> foundServices = new ArrayList<>();
+			for (String service : LOADABLE_JUNIT_SERVICES) {
+				Collection<String> resources = bundleWiring.listResources("META-INF/services", service, BundleWiring.LISTRESOURCES_LOCAL); //$NON-NLS-1$
+				if (!resources.isEmpty()) {
+					foundServices.add(service);
+				}
+			}
+			return foundServices;
+		} catch (Exception e) {
+			return Collections.emptyList();
+		}
+	}
+
+	/**
+	 * Checks whether a bundle providing a service implementation matches the given version range.
+	 * This is needed to differentiate between bundles providing JUnit 5 and/or JUnit 6 services.
+	 */
+	private static boolean isMatchingImplementation(Bundle bundle, VersionRange versionRange, String serviceName) {
+		try {
+			BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
+			Class<?> clazz = bundleWiring.getClassLoader().loadClass(serviceName);
+			Bundle serviceInterfaceBundle = FrameworkUtil.getBundle(clazz);
+			return versionRange.includes(serviceInterfaceBundle.getVersion());
 		} catch (Exception e) {
 			return false;
 		}
@@ -234,7 +253,7 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 			// during initialization - see bug 520811
 			ClassLoader currentTCCL = Thread.currentThread().getContextClassLoader();
 			try {
-				Thread.currentThread().setContextClassLoader(new SPIBundleClassLoader(findTestEngineBundles(versionRange), junitVersion));
+				Thread.currentThread().setContextClassLoader(new SPIBundleClassLoader(findBundlesWithLoadableJUnitServices(versionRange), junitVersion));
 				defaultInit(args);
 			} finally {
 				Thread.currentThread().setContextClassLoader(currentTCCL);
