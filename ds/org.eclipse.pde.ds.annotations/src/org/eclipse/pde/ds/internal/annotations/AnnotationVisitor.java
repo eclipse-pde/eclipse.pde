@@ -254,9 +254,12 @@ public class AnnotationVisitor extends ASTVisitor {
 						if (DSAnnotationVersion.V1_4.isEqualOrHigherThan(specVersion)) {
 							Annotation activateAnnotation = getNonPublicInjectableConstructor(type);
 							if (activateAnnotation != null) {
-								problemReporter.reportProblem(activateAnnotation, null,
+								DSAnnotationProblem problem = problemReporter.reportProblem(activateAnnotation, null, -1, false, errorLevel,
 										NLS.bind(Messages.AnnotationProcessor_invalidConstructorNotPublic, typeName),
 										typeName);
+								if (problem != null) {
+									problem.setKind(DSAnnotationProblem.CONSTRUCTOR_NOT_PUBLIC);
+								}
 							} else {
 								problemReporter.reportProblem(annotation, null,
 										NLS.bind(Messages.AnnotationProcessor_invalidCompImplClass_compatibleConstructor,
