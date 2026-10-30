@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2017 IBM Corporation and others.
+ *  Copyright (c) 2003, 2026 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -31,6 +31,7 @@ public class XMLDefaultHandler extends DefaultHandler {
 
 	private org.w3c.dom.Document fDocument;
 	private Element fRootElement;
+	private StringBuilder fText;
 
 	protected Stack<Element> fElementStack = new Stack<>();
 	protected boolean fAbbreviated;
@@ -47,6 +48,7 @@ public class XMLDefaultHandler extends DefaultHandler {
 		if (!isPrepared()) {
 			return;
 		}
+		appendText();
 		Element element = fDocument.createElement(qName);
 		for (int i = 0; i < attributes.getLength(); i++) {
 			element.setAttribute(attributes.getQName(i), attributes.getValue(i));
@@ -63,6 +65,7 @@ public class XMLDefaultHandler extends DefaultHandler {
 	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		if (isPrepared() && !fElementStack.isEmpty()) {
+			appendText();
 			fElementStack.pop();
 		}
 	}
@@ -83,6 +86,7 @@ public class XMLDefaultHandler extends DefaultHandler {
 	@Override
 	public void endDocument() throws SAXException {
 		if (isPrepared()) {
+			appendText();
 			fDocument.appendChild(fRootElement);
 		}
 	}
@@ -96,19 +100,28 @@ public class XMLDefaultHandler extends DefaultHandler {
 
 	@Override
 	public void characters(char[] characters, int start, int length) throws SAXException {
-		if (fAbbreviated || !isPrepared()) {
+		if (fAbbreviated || !isPrepared() || length == 0) {
 			return;
 		}
-		StringBuilder buff = new StringBuilder();
-		for (int i = 0; i < length; i++) {
-			buff.append(characters[start + i]);
+		if (fText == null) {
+			fText = new StringBuilder(length);
 		}
-		Text text = fDocument.createTextNode(buff.toString());
+		// SAX can split one text node across many callbacks. Collect its content
+		// before creating the node to avoid repeatedly concatenating it in normalize().
+		fText.append(characters, start, length);
+	}
+
+	private void appendText() {
+		if (fText == null || fText.length() == 0) {
+			return;
+		}
+		Text text = fDocument.createTextNode(fText.toString());
 		if (fRootElement == null) {
 			fDocument.appendChild(text);
 		} else {
 			fElementStack.peek().appendChild(text);
 		}
+		fText.setLength(0);
 	}
 
 	public Node getDocumentElement() {
