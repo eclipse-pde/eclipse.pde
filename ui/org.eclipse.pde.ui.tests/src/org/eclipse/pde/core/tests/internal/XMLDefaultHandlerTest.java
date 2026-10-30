@@ -114,7 +114,6 @@ public class XMLDefaultHandlerTest {
 		assertEquals(1, root.getChildNodes().getLength());
 	}
 
-	@SuppressWarnings("restriction")
 	private static Document parse(String xml, boolean abbreviated) throws Exception {
 		XMLDefaultHandler handler = new XMLDefaultHandler(abbreviated);
 		XmlProcessorFactory.createSAXParserWithErrorOnDOCTYPE().parse(new InputSource(new StringReader(xml)), handler);
