@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Junit6 Serviceloader Test Case Bundle
+Bundle-SymbolicName: serviceloader.tests.junit6
+Bundle-Version: 1.0.0.qualifier
+Require-Bundle: junit-jupiter-api;bundle-version="[6.0.0,7.0.0)"
+Automatic-Module-Name: serviceloader.tests.junit6
+Bundle-RequiredExecutionEnvironment: JavaSE-25

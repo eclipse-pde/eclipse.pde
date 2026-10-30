@@ -51,6 +51,7 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.junit.JUnitCore;
 import org.eclipse.jdt.junit.TestRunListener;
 import org.eclipse.jdt.junit.model.ITestRunSession;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.pde.internal.launching.IPDEConstants;
 import org.eclipse.pde.internal.launching.launcher.LaunchListener;
 import org.eclipse.pde.launching.IPDELauncherConstants;
@@ -73,6 +74,10 @@ class TestExecutionUtil {
 	}
 
 	public static ITestRunSession runTest(IJavaElement element) throws CoreException {
+		return runTest(element, new String[0]);
+	}
+
+	public static ITestRunSession runTest(IJavaElement element, String... additionalVmArgs) throws CoreException {
 		IProject project = element.getResource().getProject();
 		project.build(IncrementalProjectBuilder.FULL_BUILD, null);
 		List<IMarker> errorMarkers = Arrays.stream(project.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE)) //
@@ -84,6 +89,7 @@ class TestExecutionUtil {
 		ILaunchConfigurationWorkingCopy launchConfiguration = launchShortcut.createLaunchConfiguration(element);
 		launchConfiguration.setAttribute(IPDELauncherConstants.APPLICATION, IPDEConstants.CORE_TEST_APPLICATION);
 		setupDirectories(launchConfiguration, element);
+		addVmArgs(launchConfiguration, additionalVmArgs);
 
 		BlockingQueue<ITestRunSession> testResult = new LinkedBlockingDeque<>();
 		TestRunListener testRunListener = new TestRunListener() {
@@ -117,6 +123,18 @@ class TestExecutionUtil {
 		launchConfiguration.setAttribute(IPDELauncherConstants.CONFIG_LOCATION,
 				testLocation.append("configuration").toOSString());
 		launchConfiguration.setAttribute(IPDELauncherConstants.CONFIG_USE_DEFAULT_AREA, false);
+	}
+
+	private static void addVmArgs(ILaunchConfigurationWorkingCopy launchConfiguration, String... vmArgs)
+			throws CoreException {
+		if (vmArgs.length == 0) {
+			return;
+		}
+		String existingVmArgs = launchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS,
+				"");
+		String joinedVmArgs = String.join(" ", vmArgs);
+		launchConfiguration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS,
+				existingVmArgs.isBlank() ? joinedVmArgs : existingVmArgs + " " + joinedVmArgs);
 	}
 
 	private static void launchAndWaitForTermination(ILaunchConfiguration launchConfiguration) throws CoreException {
