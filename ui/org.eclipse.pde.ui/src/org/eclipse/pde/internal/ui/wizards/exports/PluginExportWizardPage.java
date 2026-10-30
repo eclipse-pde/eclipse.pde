@@ -34,7 +34,7 @@ import org.eclipse.pde.internal.ui.util.PersistablePluginObject;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.PlatformUI;
 
-public class PluginExportWizardPage extends BaseExportWizardPage {
+public class PluginExportWizardPage extends AntExportWizardPage {
 
 	public PluginExportWizardPage(IStructuredSelection selection) {
 		super(selection, "pluginExport", //$NON-NLS-1$
