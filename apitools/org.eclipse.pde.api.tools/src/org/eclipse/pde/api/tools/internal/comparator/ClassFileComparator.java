@@ -355,11 +355,11 @@ public class ClassFileComparator {
 								if (method3 == null) {
 									String key = this.type1.getName();
 									boolean isDefaultMethod = false;
-									if (this.type2.getMethod(method.getName(), method.getSignature()) != null) {
-										isDefaultMethod = this.type2.getMethod(method.getName(), method.getSignature()).isDefaultMethod();
-										if(isDefaultMethod) {
-											key = getKeyForMethod(this.type2.getMethod(method.getName(), method.getSignature()), this.type2);
-										}
+									IApiMethod implementation = findInheritedDefaultMethod(this.type2, method.getName(),
+											method.getSignature(), new HashSet<>());
+									isDefaultMethod = implementation != null;
+									if (isDefaultMethod) {
+										key = getKeyForMethod(implementation, this.type2);
 									}
 									if (!isDefaultMethod && isSuperInterfaceWithMethodDeltaAdded == false) {
 										this.addDelta(getElementType(this.type1), IDelta.ADDED, IDelta.SUPER_INTERFACE_WITH_METHODS, this.currentDescriptorRestrictions, this.initialDescriptorRestrictions, this.type1.getModifiers(), this.type2.getModifiers(), this.type1, key, new String[] {
@@ -485,11 +485,11 @@ public class ClassFileComparator {
 									if (!found) {
 										String key = this.type1.getName();
 										boolean isDefaultMethod = false;
-										if(this.type2.getMethod(method.getName(), method.getSignature())!=null) {
-											isDefaultMethod = this.type2.getMethod(method.getName(), method.getSignature()).isDefaultMethod();
-											if (isDefaultMethod) {
-												key = getKeyForMethod(this.type2.getMethod(method.getName(), method.getSignature()), this.type2);
-											}
+										IApiMethod implementation = findInheritedDefaultMethod(this.type2, method.getName(),
+												method.getSignature(), new HashSet<>());
+										isDefaultMethod = implementation != null;
+										if (isDefaultMethod) {
+											key = getKeyForMethod(implementation, this.type2);
 										}
 										this.addDelta(getElementType(this.type1), IDelta.ADDED, isDefaultMethod ? IDelta.SUPER_INTERFACE_DEFAULT_METHOD : IDelta.SUPER_INTERFACE_WITH_METHODS, this.currentDescriptorRestrictions, this.initialDescriptorRestrictions, this.type1.getModifiers(), this.type2.getModifiers(), this.type1, key, new String[] {
 												Util.getDescriptorName(type1),
@@ -506,6 +506,91 @@ public class ClassFileComparator {
 				}
 			}
 		}
+	}
+
+	private IApiMethod findInheritedDefaultMethod(IApiType type, String name, String signature, Set<String> visited) {
+		List<IApiMethod> declarations = new ArrayList<>();
+		collectMethodDeclarations(type, name, signature, visited, declarations);
+		List<IApiMethod> maximallySpecificDeclarations = new ArrayList<>();
+		for (IApiMethod declaration : declarations) {
+			IApiType declaringType = getEnclosingType(declaration);
+			if (declaringType == null) {
+				continue;
+			}
+			boolean overridden = false;
+			for (IApiMethod otherDeclaration : declarations) {
+				if (declaration == otherDeclaration) {
+					continue;
+				}
+				IApiType otherDeclaringType = getEnclosingType(otherDeclaration);
+				if (otherDeclaringType != null && !declaringType.getName().equals(otherDeclaringType.getName())
+						&& isSubInterface(otherDeclaringType, declaringType, new HashSet<>())) {
+					overridden = true;
+					break;
+				}
+			}
+			if (!overridden) {
+				maximallySpecificDeclarations.add(declaration);
+			}
+		}
+		return maximallySpecificDeclarations.size() == 1 && maximallySpecificDeclarations.get(0).isDefaultMethod()
+				? maximallySpecificDeclarations.get(0)
+				: null;
+	}
+
+	private void collectMethodDeclarations(IApiType type, String name, String signature, Set<String> visited,
+			List<IApiMethod> declarations) {
+		if (type == null || !visited.add(type.getName())) {
+			return;
+		}
+		for (IApiMethod method : type.getMethods()) {
+			if (name.equals(method.getName()) && signature.equals(method.getSignature())) {
+				for (IApiMethod declaration : declarations) {
+					IApiType declaringType = getEnclosingType(declaration);
+					if (declaringType != null && declaringType.getName().equals(type.getName())) {
+						return;
+					}
+				}
+				declarations.add(method);
+				return;
+			}
+		}
+		try {
+			for (IApiType superInterface : type.getSuperInterfaces()) {
+				collectMethodDeclarations(superInterface, name, signature, new HashSet<>(visited), declarations);
+			}
+		} catch (CoreException e) {
+			ApiPlugin.log(e);
+			reportStatus(e);
+		}
+	}
+
+	private IApiType getEnclosingType(IApiMethod method) {
+		try {
+			return method.getEnclosingType();
+		} catch (CoreException e) {
+			ApiPlugin.log(e);
+			reportStatus(e);
+			return null;
+		}
+	}
+
+	private boolean isSubInterface(IApiType type, IApiType possibleSuperInterface, Set<String> visited) {
+		if (type == null || !visited.add(type.getName())) {
+			return false;
+		}
+		try {
+			for (IApiType superInterface : type.getSuperInterfaces()) {
+				if (superInterface.getName().equals(possibleSuperInterface.getName())
+						|| isSubInterface(superInterface, possibleSuperInterface, visited)) {
+					return true;
+				}
+			}
+		} catch (CoreException e) {
+			ApiPlugin.log(e);
+			reportStatus(e);
+		}
+		return false;
 	}
 
 	private boolean isValidInterfaceMethodImplementation(IApiMethod method) {
