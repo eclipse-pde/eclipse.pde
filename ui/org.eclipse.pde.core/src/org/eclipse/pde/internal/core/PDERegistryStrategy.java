@@ -242,7 +242,9 @@ public class PDERegistryStrategy extends RegistryStrategy {
 		}
 
 		for (IContributor contributor : dynamicRegistry.getAllContributors()) {
-			if (contributorName.equals(contributor.getName())) {
+			String actualName = contributor instanceof RegistryContributor registryContributor
+					? registryContributor.getActualName() : contributor.getName();
+			if (contributorName.equals(actualName)) {
 				dynamicRegistry.removeContributor(contributor, fKey);
 			}
 		}
