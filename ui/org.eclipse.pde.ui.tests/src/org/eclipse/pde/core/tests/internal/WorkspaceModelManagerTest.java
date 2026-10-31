@@ -15,8 +15,8 @@ package org.eclipse.pde.core.tests.internal;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -95,7 +95,11 @@ public class WorkspaceModelManagerTest {
 
 	@Test
 	public void testExtensionPoints_surviveManifestChange() throws Exception {
-		IProject project = createModelProject("plugin.with.extension.point", "1.0.0");
+		IProject project = ProjectUtils.createPluginProject("plugin.with.extension.point",
+				"plugin.with.extension.point", "1.0.0", (description, service) -> description.setSingleton(true));
+		project.build(IncrementalProjectBuilder.FULL_BUILD, null);
+		awaitJobs();
+
 		IFile pluginXml = project.getFile("plugin.xml");
 		byte[] pluginXmlContents = ("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 				+ "<?eclipse version=\"3.4\"?>\n"
