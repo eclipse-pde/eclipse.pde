@@ -906,6 +906,53 @@ public class InterfaceDeltaTests extends DeltaTestSetup {
 	}
 
 	/**
+	 * A default method inherited through an intermediate interface satisfies a
+	 * newly added super-interface method.
+	 */
+	@Test
+	public void test45() {
+		deployBundles("test45"); //$NON-NLS-1$
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after,
+				VisibilityModifiers.ALL_VISIBILITIES, null);
+		assertNotNull("No delta", delta); //$NON-NLS-1$
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 10, allLeavesDeltas.length); //$NON-NLS-1$
+		boolean foundInheritedDefault = false;
+		boolean foundAbstractRedeclaration = false;
+		int defaultMethodDeltas = 0;
+		int abstractMethodDeltas = 0;
+		int expandedSuperInterfaceDeltas = 0;
+		StringBuilder deltaSummary = new StringBuilder();
+		for (IDelta child : allLeavesDeltas) {
+			deltaSummary.append(child.getKind()).append(':').append(child.getFlags()).append(':')
+					.append(child.getKey()).append(' ');
+			if (child.getKind() == IDelta.ADDED && child.getFlags() == IDelta.SUPER_INTERFACE_DEFAULT_METHOD) {
+				foundInheritedDefault = true;
+				defaultMethodDeltas++;
+			}
+			if (child.getKind() == IDelta.ADDED && child.getFlags() == IDelta.SUPER_INTERFACE_WITH_METHODS) {
+				foundAbstractRedeclaration = true;
+				abstractMethodDeltas++;
+			}
+			if (child.getFlags() == IDelta.EXPANDED_SUPERINTERFACES_SET) {
+				expandedSuperInterfaceDeltas++;
+				assertTrue("Changed superinterfaces set not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+			}
+		}
+		assertTrue("Inherited default method was not recognized: " + deltaSummary, foundInheritedDefault); //$NON-NLS-1$
+		assertTrue("Abstract redeclaration was incorrectly treated as implemented", foundAbstractRedeclaration); //$NON-NLS-1$
+		assertEquals("Wrong number of inherited default method deltas", 3, defaultMethodDeltas); //$NON-NLS-1$
+		assertEquals("Wrong number of abstract redeclaration deltas", 1, abstractMethodDeltas); //$NON-NLS-1$
+		assertEquals("Wrong number of expanded superinterface deltas", 5, expandedSuperInterfaceDeltas); //$NON-NLS-1$
+	}
+
+	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=244984
 	 */
 	@Test
