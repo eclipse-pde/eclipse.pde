@@ -17,6 +17,12 @@ import org.eclipse.jdt.core.compiler.CategorizedProblem;
 
 public class DSAnnotationProblem extends CategorizedProblem {
 
+	public static final String ATTRIBUTE_TYPE = "org.eclipse.pde.ds.annotations.problemKind"; //$NON-NLS-1$
+
+	public static final String CONSTRUCTOR_NOT_PUBLIC = "constructorNotPublic"; //$NON-NLS-1$
+
+	private String kind;
+	
 	private final boolean error;
 
 	private final String message;
@@ -60,6 +66,28 @@ public class DSAnnotationProblem extends CategorizedProblem {
 	@Override
 	public String getMarkerType() {
 		return "org.eclipse.pde.ds.annotations.problem"; //$NON-NLS-1$
+	}
+
+	public void setKind(String kind) {
+		this.kind = kind;
+	}
+
+	@Override
+	public String[] getExtraMarkerAttributeNames() {
+		if (kind == null) {
+			return super.getExtraMarkerAttributeNames();
+		}
+
+		return new String[] { ATTRIBUTE_TYPE };
+	}
+
+	@Override
+	public Object[] getExtraMarkerAttributeValues() {
+		if (kind == null) {
+			return super.getExtraMarkerAttributeValues();
+		}
+
+		return new Object[] { kind };
 	}
 
 	@Override
