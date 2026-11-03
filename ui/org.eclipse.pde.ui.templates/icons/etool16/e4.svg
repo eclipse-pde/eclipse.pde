@@ -17,10 +17,10 @@
        id="linearGradient2"><stop
          id="stop1"
          offset="0"
-         style="stop-color:#4476aa;stop-opacity:1;" /><stop
+         style="stop-color:#4476aa;stop-opacity:1" /><stop
          id="stop2"
          offset="1"
-         style="stop-color:#5a9ccc;stop-opacity:1;" /></linearGradient><linearGradient
+         style="stop-color:#5a9ccc;stop-opacity:1" /></linearGradient><linearGradient
        xlink:href="#linearGradient4157"
        id="linearGradient4163"
        x1="1.0037121"
@@ -30,10 +30,10 @@
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(1.2586471,0,0,0.95055328,-1.3457395,48.514119)" /><linearGradient
        id="linearGradient4157"><stop
-         style="stop-color:#58b6e8;stop-opacity:1;"
+         style="stop-color:#58b6e8;stop-opacity:1"
          offset="0"
          id="stop4159" /><stop
-         style="stop-color:#58b6e8;stop-opacity:0;"
+         style="stop-color:#58b6e8;stop-opacity:0"
          offset="1"
          id="stop4161" /></linearGradient><linearGradient
        xlink:href="#linearGradient4082-3"

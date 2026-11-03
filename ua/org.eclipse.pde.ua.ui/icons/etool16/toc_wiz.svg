@@ -64,7 +64,7 @@
     <linearGradient
        id="linearGradient4193">
       <stop
-         style="stop-color:#958e6c;stop-opacity:1;"
+         style="stop-color:#958e6c;stop-opacity:1"
          offset="0"
          id="stop4195" />
       <stop
@@ -86,11 +86,11 @@
       <stop
          id="stop5070-8-0-4-9"
          offset="0"
-         style="stop-color:#ffffff;stop-opacity:1;" />
+         style="stop-color:#ffffff;stop-opacity:1" />
       <stop
          id="stop5072-3-6-1-7"
          offset="1"
-         style="stop-color:#ffffff;stop-opacity:0;" />
+         style="stop-color:#ffffff;stop-opacity:0" />
     </linearGradient>
     <linearGradient
        gradientTransform="translate(-15.015625,10.2734)"
@@ -168,7 +168,7 @@
     <linearGradient
        id="linearGradient4528-9-5-7-9-7-3">
       <stop
-         style="stop-color:#e0c576;stop-opacity:1;"
+         style="stop-color:#e0c576;stop-opacity:1"
          offset="0"
          id="stop4530-0-5-0-5-8-4" />
       <stop
@@ -241,7 +241,7 @@
         </g>
       </g>
       <g
-         style="font-style:normal;font-weight:normal;font-size:13.58917427px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;display:inline;fill:#ffffff;fill-opacity:1;stroke:none"
+         style="display:inline;fill:#ffffff;fill-opacity:1;stroke:none"
          id="g6432"
          transform="translate(29.16431,-10.354548)">
         <path

@@ -40,7 +40,7 @@
        id="linearGradient4902"><stop
          id="stop4904-7"
          offset="0"
-         style="stop-color:#c7b571;stop-opacity:1;" /><stop
+         style="stop-color:#c7b571;stop-opacity:1" /><stop
          id="stop4906"
          offset="1"
          style="stop-color:#9a9a8f;stop-opacity:1" /></linearGradient><linearGradient
@@ -68,7 +68,7 @@
        x2="62.220116"
        y2="1025.2668" /><linearGradient
        id="linearGradient4258"><stop
-         style="stop-color:#f4ae5f;stop-opacity:1;"
+         style="stop-color:#f4ae5f;stop-opacity:1"
          offset="0"
          id="stop4260" /><stop
          id="stop4266"

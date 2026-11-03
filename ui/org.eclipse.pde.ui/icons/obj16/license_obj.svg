@@ -48,11 +48,11 @@
     <linearGradient
        id="linearGradient4810">
       <stop
-         style="stop-color:#886b2d;stop-opacity:1;"
+         style="stop-color:#886b2d;stop-opacity:1"
          offset="0"
          id="stop4812" />
       <stop
-         style="stop-color:#bc9617;stop-opacity:1;"
+         style="stop-color:#bc9617;stop-opacity:1"
          offset="1"
          id="stop4814" />
     </linearGradient>
@@ -74,7 +74,7 @@
          offset="0"
          id="stop4996-5" />
       <stop
-         style="stop-color:#ffffff;stop-opacity:0;"
+         style="stop-color:#ffffff;stop-opacity:0"
          offset="1"
          id="stop4998-5" />
     </linearGradient>
@@ -253,7 +253,7 @@
          style="display:inline">
         <g
            id="text4892"
-           style="font-style:normal;font-weight:normal;font-size:13.07725716px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+           style="fill:#000000;fill-opacity:1;stroke:none"
            transform="matrix(0.84319949,0,0,0.94014067,2.8814302,113.47581)">
           <g
              id="g9242-2"

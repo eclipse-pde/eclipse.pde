@@ -50,7 +50,7 @@
     <linearGradient
        id="linearGradient5428">
       <stop
-         style="stop-color:#f0a53b;stop-opacity:1;"
+         style="stop-color:#f0a53b;stop-opacity:1"
          offset="0"
          id="stop5430" />
       <stop
@@ -88,7 +88,7 @@
     <linearGradient
        id="linearGradient5351">
       <stop
-         style="stop-color:#e4a239;stop-opacity:1;"
+         style="stop-color:#e4a239;stop-opacity:1"
          offset="0"
          id="stop5353" />
       <stop
@@ -258,7 +258,7 @@
           <path
              id="path5028"
              d="m 29.526238,1042.1318 c -0.440696,0.012 -0.86969,0.051 -1.279613,0.12 l 0,2.8791 c 0.409923,-0.068 0.838917,-0.1076 1.279613,-0.1199 z"
-             style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#496da1;fill-opacity:1;stroke:none;stroke-width:1.06988704;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans" />
+             style="color:#000000;fill:#496da1;fill-opacity:1;stroke:none;stroke-width:1.06988704;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
           <path
              id="rect4221-7-1"
              d="m 29.645582,1053.51 c -1.546954,0 -3.096933,0.3554 -3.778039,1.0365 l 0,0.5683 c 1.362214,1.3622 6.178977,1.3438 7.522644,0 l 0,-0.5683 c -0.671834,-0.6719 -2.197651,-1.0342 -3.744605,-1.0365 z"

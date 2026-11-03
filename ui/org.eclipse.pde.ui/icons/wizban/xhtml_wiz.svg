@@ -69,7 +69,7 @@
        id="linearGradient4902"><stop
          id="stop4904"
          offset="0"
-         style="stop-color:#c7b571;stop-opacity:1;" /><stop
+         style="stop-color:#c7b571;stop-opacity:1" /><stop
          id="stop4906"
          offset="1"
          style="stop-color:#9a9a8f;stop-opacity:1" /></linearGradient><linearGradient
@@ -81,7 +81,7 @@
          offset="1"
          id="stop6415" /></linearGradient><linearGradient
        id="linearGradient4258"><stop
-         style="stop-color:#f4ae5f;stop-opacity:1;"
+         style="stop-color:#f4ae5f;stop-opacity:1"
          offset="0"
          id="stop4260" /><stop
          id="stop4266"
@@ -155,10 +155,10 @@
        fy="395.31625"
        r="232.85715" /><linearGradient
        id="linearGradient8349"><stop
-         style="stop-color:#ffffff;stop-opacity:1;"
+         style="stop-color:#ffffff;stop-opacity:1"
          offset="0"
          id="stop8351" /><stop
-         style="stop-color:#ffffff;stop-opacity:0;"
+         style="stop-color:#ffffff;stop-opacity:0"
          offset="1"
          id="stop8353" /></linearGradient><linearGradient
        xlink:href="#linearGradient4994"

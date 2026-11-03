@@ -81,7 +81,7 @@
       <stop
          id="stop5248"
          offset="0.30296871"
-         style="stop-color:#f3da70;stop-opacity:1;" />
+         style="stop-color:#f3da70;stop-opacity:1" />
       <stop
          id="stop5246"
          offset="0.72222227"
@@ -107,7 +107,7 @@
       <stop
          id="stop4201"
          offset="0"
-         style="stop-color:#765d54;stop-opacity:1;" />
+         style="stop-color:#765d54;stop-opacity:1" />
       <stop
          style="stop-color:#c5b7ae;stop-opacity:1"
          offset="0.49346113"
@@ -228,7 +228,7 @@
       <stop
          id="stop4952-1"
          offset="0"
-         style="stop-color:#6a5148;stop-opacity:1;" />
+         style="stop-color:#6a5148;stop-opacity:1" />
       <stop
          id="stop4954-6"
          offset="1"
@@ -278,7 +278,7 @@
        transform="matrix(1.1726491,0,0.08958045,0.36603268,-112.93917,660.83554)"
        id="rect10961-8-3-6-1"
        d="m 47.000294,1007.3622 -12.319149,16.9335 -12.416197,17.0669 16.933329,0 17.066666,0 12.416197,-17.0669 0.09676,-0.133 12.2221,-16.8001 -17.066666,0 -16.933329,0 z"
-       style="font-style:normal;font-weight:normal;font-size:13.58917427px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;display:inline;fill:url(#linearGradient4462);fill-opacity:1;stroke:none;stroke-width:1.99999988;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter4606)" />
+       style="display:inline;fill:url(#linearGradient4462);fill-opacity:1;stroke:none;stroke-width:1.99999988;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter4606)" />
     <g
        transform="translate(-4,-3.0000016)"
        id="g4451"
