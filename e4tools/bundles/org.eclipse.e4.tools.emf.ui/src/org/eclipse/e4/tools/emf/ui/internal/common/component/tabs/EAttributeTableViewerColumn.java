@@ -27,7 +27,6 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.ui.forms.FormColors;
 
 /**
  * A table viewer column for editing an EMF EAttribute If the object does not
@@ -118,8 +117,7 @@ public class EAttributeTableViewerColumn {
 	 * readable in light and dark themes.
 	 */
 	static Color tint(Table table, RGB rgb, int percent) {
-		final RGB mixed = FormColors.blend(rgb, table.getBackground().getRGB(), percent);
-		return new Color(mixed);
+		return new Color(table.getBackground().getRGB().blend(rgb, percent / 100.0));
 	}
 
 	public void dispose() {
