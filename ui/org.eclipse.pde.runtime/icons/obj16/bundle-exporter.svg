@@ -255,18 +255,18 @@
        id="g13862">
       <g
          transform="matrix(3.5838051,0,0,3.5838051,511.44753,-3423.3167)"
-         style="font-style:normal;font-weight:normal;font-size:13.58917427px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;display:inline;fill:#ffffff;fill-opacity:1;stroke:none"
+         style="display:inline;fill:#ffffff;fill-opacity:1;stroke:none"
          id="layer1-9">
         <g
            id="g11260-4-2"
            transform="matrix(0.27903303,0,0,0.27903303,-109.29986,933.62804)"
            style="display:inline">
           <path
-             style="font-style:normal;font-weight:normal;font-size:13.58917427px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;display:inline;fill:url(#radialGradient10503-5);fill-opacity:1;stroke:none;stroke-width:3.58380508;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+             style="display:inline;fill:url(#radialGradient10503-5);fill-opacity:1;stroke:none;stroke-width:3.58380508;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
              d="m 375.04584,467.87065 12.70006,-4.27794 5.26516,-13.68728 -17.96522,0 z"
              id="rect10961-9-0-4-7" />
           <path
-             style="font-style:normal;font-weight:normal;font-size:13.58917427px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;display:inline;fill:url(#radialGradient10503-3-2);fill-opacity:1;stroke:none;stroke-width:3.58380508;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+             style="display:inline;fill:url(#radialGradient10503-3-2);fill-opacity:1;stroke:none;stroke-width:3.58380508;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
              d="m 374.583,467.87065 -12.70006,-4.27794 -5.26516,-13.68728 17.96522,0 z"
              id="rect10961-9-0-4-6-0" />
           <path
@@ -274,7 +274,7 @@
              d="m 375.04584,431.97098 12.70006,4.27794 5.26516,13.68728 -17.96522,0 z"
              id="rect10961-9-0-4" />
           <path
-             style="font-style:normal;font-weight:normal;font-size:13.58917427px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;display:inline;fill:url(#radialGradient10503-3);fill-opacity:1;stroke:none;stroke-width:3.58380508;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+             style="display:inline;fill:url(#radialGradient10503-3);fill-opacity:1;stroke:none;stroke-width:3.58380508;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
              d="m 374.583,431.97098 -12.70006,4.27794 -5.26516,13.68728 17.96522,0 z"
              id="rect10961-9-0-4-6" />
           <path
@@ -284,7 +284,7 @@
           <path
              id="path11108-6-7-5-6"
              d="m 398.16325,449.78978 -46.58947,0"
-             style="font-style:normal;font-weight:normal;font-size:13.58917427px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;display:inline;fill:#915323;fill-opacity:1;stroke:url(#linearGradient10544);stroke-width:3.58380508;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+             style="display:inline;fill:#915323;fill-opacity:1;stroke:url(#linearGradient10544);stroke-width:3.58380508;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
           <ellipse
              style="opacity:1;fill:none;fill-opacity:1;stroke:#ad755d;stroke-width:3.58380508;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
              id="path4196"

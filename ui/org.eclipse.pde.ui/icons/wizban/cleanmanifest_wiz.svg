@@ -85,7 +85,7 @@
        id="linearGradient4902"><stop
          id="stop4904"
          offset="0"
-         style="stop-color:#c7b571;stop-opacity:1;" /><stop
+         style="stop-color:#c7b571;stop-opacity:1" /><stop
          id="stop4906"
          offset="1"
          style="stop-color:#9a9a8f;stop-opacity:1" /></linearGradient><linearGradient
@@ -113,7 +113,7 @@
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(1.7498306,0,0,1.8651544,-65.901292,-906.74278)" /><linearGradient
        id="linearGradient4258"><stop
-         style="stop-color:#f4ae5f;stop-opacity:1;"
+         style="stop-color:#f4ae5f;stop-opacity:1"
          offset="0"
          id="stop4260" /><stop
          id="stop4266"

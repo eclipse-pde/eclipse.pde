@@ -63,7 +63,7 @@
       <stop
          id="stop4996-1"
          offset="0"
-         style="stop-color:#f9fafc;stop-opacity:1;" />
+         style="stop-color:#f9fafc;stop-opacity:1" />
       <stop
          id="stop4998-89"
          offset="1"
@@ -112,7 +112,7 @@
     <linearGradient
        id="linearGradient4877-6">
       <stop
-         style="stop-color:#91a5c7;stop-opacity:1;"
+         style="stop-color:#91a5c7;stop-opacity:1"
          offset="0"
          id="stop4879-1" />
       <stop
@@ -134,7 +134,7 @@
       <stop
          id="stop4863-1"
          offset="0"
-         style="stop-color:#91a5c7;stop-opacity:1;" />
+         style="stop-color:#91a5c7;stop-opacity:1" />
       <stop
          id="stop4865-52"
          offset="1"
@@ -183,20 +183,20 @@
          transform="matrix(-1,0,0,1,16.12959,8.0140628)">
         <g
            id="text6430"
-           style="font-size:13.58917427px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
+           style="fill:#ffffff;fill-opacity:1;stroke:none"
            transform="scale(-1,1)" />
         <g
            id="g6438"
-           style="font-size:13.58917427px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;display:inline;font-family:Sans"
+           style="fill:#ffffff;fill-opacity:1;stroke:none;display:inline"
            transform="scale(-1,1)">
           <g
-             style="font-size:13.58917427px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#236298;fill-opacity:1;stroke:#236298;stroke-width:0.24860173;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline;font-family:Sans"
+             style="fill:#236298;fill-opacity:1;stroke:#236298;stroke-width:0.24860173;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
              id="layer1-9"
              transform="matrix(1.2778996,0,0.03747938,1.2778996,-58.56426,-297.79529)">
             <g
                transform="translate(20,0)"
                id="text3909-7-7-1"
-               style="font-size:11.05178356px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#236298;fill-opacity:1;stroke:#236298;stroke-width:0.24860173;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline;font-family:AustralianFlyingCorpsStencil">
+               style="fill:#236298;fill-opacity:1;stroke:#236298;stroke-width:0.24860173;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline">
               <g
                  transform="matrix(0.84893168,0,-0.02489823,0.84893168,-258.1493,627.19515)"
                  style="display:inline"
@@ -233,26 +233,26 @@
                   <path
                      id="path4114"
                      d="m 11.652973,1046.0814 -0.85549,0.7332 c 0,0 -0.08148,0.8148 -0.08148,1.1407 0,0.3259 0.366638,1.0999 0.366638,1.0999 l 0.488851,0.4481 c 0,0 0.69254,-0.082 0.651802,-0.2444 -0.04073,-0.163 0.285163,-1.1814 0.285163,-1.1814 0,0 0.08148,-0.774 -0.04073,-1.0184 -0.122212,-0.2445 -0.366638,-0.6926 -0.366638,-0.6926 z"
-                     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.05178356px;line-height:125%;font-family:AustralianFlyingCorpsStencil;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#ffffff;fill-opacity:1;stroke:none" />
+                     style="display:inline;fill:#ffffff;fill-opacity:1;stroke:none" />
                   <path
                      id="path4114-5"
                      d="m 5.2571682,1046.0814 -0.85549,0.7332 c 0,0 -0.08148,0.8148 -0.08148,1.1407 0,0.3259 0.366638,1.0999 0.366638,1.0999 l 0.488851,0.4481 c 0,0 0.69254,-0.082 0.651802,-0.2444 -0.04073,-0.163 0.285163,-1.1814 0.285163,-1.1814 0,0 0.08148,-0.774 -0.04073,-1.0184 -0.122212,-0.2445 -0.366638,-0.6926 -0.366638,-0.6926 z"
-                     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.05178356px;line-height:125%;font-family:AustralianFlyingCorpsStencil;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#ffffff;fill-opacity:1;stroke:none" />
+                     style="display:inline;fill:#ffffff;fill-opacity:1;stroke:none" />
                   <g
                      transform="matrix(0.90281981,0,0,1.083123,0.02571408,32.415855)"
-                     style="font-style:normal;font-weight:normal;font-size:5.12397814px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#17325d;fill-opacity:1;stroke:none"
+                     style="fill:#17325d;fill-opacity:1;stroke:none"
                      id="text4130">
                     <path
                        d="m 6.4096109,937.52961 q 0,-0.70054 -0.132603,-0.98577 -0.130101,-0.28772 -0.4403418,-0.28772 -0.3102409,0 -0.4428438,0.28772 -0.132603,0.28523 -0.132603,0.98577 0,0.70805 0.132603,0.99827 0.1326029,0.29023 0.4428438,0.29023 0.3077389,0 0.4403418,-0.29023 0.132603,-0.29022 0.132603,-0.99827 z m 0.9632478,0.007 q 0,0.92823 -0.4003108,1.43362 -0.4003107,0.50289 -1.1358818,0.50289 -0.7380731,0 -1.1383838,-0.50289 -0.4003108,-0.50539 -0.4003108,-1.43362 0,-0.93072 0.4003108,-1.43361 0.4003107,-0.50539 1.1383838,-0.50539 0.7355711,0 1.1358818,0.50539 0.4003108,0.50289 0.4003108,1.43361 z"
-                       style="font-weight:bold;fill:#17325d;fill-opacity:1"
+                       style="fill:#17325d;fill-opacity:1"
                        id="path4180" />
                     <path
                        d="m 8.2160134,938.73555 0.8506604,0 0,-2.41438 -0.8731779,0.18014 0,-0.65551 0.868174,-0.18014 0.915711,0 0,3.06989 0.8506601,0 0,0.66551 -2.6120276,0 0,-0.66551 z"
-                       style="font-weight:bold;fill:#17325d;fill-opacity:1"
+                       style="fill:#17325d;fill-opacity:1"
                        id="path4182" />
                     <path
                        d="m 13.535143,937.52961 q 0,-0.70054 -0.132603,-0.98577 -0.130101,-0.28772 -0.440342,-0.28772 -0.310241,0 -0.442844,0.28772 -0.132603,0.28523 -0.132603,0.98577 0,0.70805 0.132603,0.99827 0.132603,0.29023 0.442844,0.29023 0.307739,0 0.440342,-0.29023 0.132603,-0.29022 0.132603,-0.99827 z m 0.963248,0.007 q 0,0.92823 -0.400311,1.43362 -0.400311,0.50289 -1.135882,0.50289 -0.738073,0 -1.138384,-0.50289 -0.40031,-0.50539 -0.40031,-1.43362 0,-0.93072 0.40031,-1.43361 0.400311,-0.50539 1.138384,-0.50539 0.735571,0 1.135882,0.50539 0.400311,0.50289 0.400311,1.43361 z"
-                       style="font-weight:bold;fill:#17325d;fill-opacity:1"
+                       style="fill:#17325d;fill-opacity:1"
                        id="path4184" />
                   </g>
                 </g>

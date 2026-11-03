@@ -17,7 +17,7 @@
     <linearGradient
        id="linearGradient3776">
       <stop
-         style="stop-color:#fdf2d0;stop-opacity:1;"
+         style="stop-color:#fdf2d0;stop-opacity:1"
          offset="0"
          id="stop3778" />
       <stop
@@ -55,7 +55,7 @@
        d="m 3.4905782,1039.3602 0,5.5312 3.03125,0 0,-3.0312 2.9999998,0 0,3.0312 2.999997,0 0,-5.5312 -0.476562,-0.4688 -4.039061,0 -4.0390621,0 z"
        id="path3796" />
     <path
-       style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#3f3f9f;fill-opacity:1;stroke:none;display:inline;font-family:Gautami;-inkscape-font-specification:Gautami"
+       style="fill:#3f3f9f;fill-opacity:1;stroke:none;display:inline"
        d="m 13.191018,1046.3935 -1.1875,1.1875 0.53125,0.5625 0.5625,-0.5625 0,3.7786 0.875,0 0,-4.9661 z"
        id="text4105-1" />
     <rect

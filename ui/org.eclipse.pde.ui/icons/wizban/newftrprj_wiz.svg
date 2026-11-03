@@ -71,7 +71,7 @@
          id="stop4896"
          offset="0"
          style="stop-color:#000000;stop-opacity:1" /><stop
-         style="stop-color:#f3da70;stop-opacity:1;"
+         style="stop-color:#f3da70;stop-opacity:1"
          offset="0.30296871"
          id="stop5248" /><stop
          style="stop-color:#f5e499;stop-opacity:1"
@@ -104,7 +104,7 @@
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(1.4358198,0,0,1.270043,-10.240326,977.40079)" /><linearGradient
        id="linearGradient4199"><stop
-         style="stop-color:#765d54;stop-opacity:1;"
+         style="stop-color:#765d54;stop-opacity:1"
          offset="0"
          id="stop4201" /><stop
          id="stop4207"
@@ -143,7 +143,7 @@
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(0.99999865,0,0,1.0179002,537.84569,1112.6509)" /><linearGradient
        id="linearGradient4950"><stop
-         style="stop-color:#6a5148;stop-opacity:1;"
+         style="stop-color:#6a5148;stop-opacity:1"
          offset="0"
          id="stop4952" /><stop
          style="stop-color:#978379;stop-opacity:1"
@@ -203,7 +203,7 @@
        id="linearGradient8777"><stop
          id="stop8773"
          offset="0"
-         style="stop-color:#fbeaab;stop-opacity:1;" /><stop
+         style="stop-color:#fbeaab;stop-opacity:1" /><stop
          id="stop8775"
          offset="1"
          style="stop-color:#deb241;stop-opacity:1" /></linearGradient><linearGradient
@@ -385,7 +385,7 @@
      id="layer1"
      style="display:inline"
      transform="translate(0,-986.3622)"><path
-       style="font-style:normal;font-weight:normal;font-size:13.5892px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;display:inline;fill:url(#linearGradient4462);fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter4606)"
+       style="display:inline;fill:url(#linearGradient4462);fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter4606)"
        d="m 47.000294,1007.3622 -12.319149,16.9335 -12.416197,17.0669 h 16.933329 17.066666 l 12.416197,-17.0669 0.09676,-0.133 L 81,1007.3626 H 63.933334 47.000005 Z"
        id="rect10961-8-3-6-1"
        transform="matrix(1.1726475,0,0.08958032,0.36603268,-114.6799,661.22486)" /><path
@@ -453,10 +453,10 @@
            style="fill:#737986;fill-opacity:1;stroke:#595e68;stroke-width:0.300756;stroke-opacity:1"
            id="g13408-8" /></g><g
          transform="matrix(3.3253216,0,0,3.3245835,101.14484,-3404.0931)"
-         style="font-style:normal;font-weight:normal;font-size:13.5892px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none"
+         style="fill:#ffffff;fill-opacity:1;stroke:none"
          id="text6430-2" /><g
          id="text3782-3"
-         style="font-style:normal;font-weight:normal;font-size:15.5694px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none"
+         style="fill:#ffffff;fill-opacity:1;stroke:none"
          transform="matrix(3.1391206,0,0,3.5217855,101.14484,-3404.0931)" /><g
          transform="matrix(0,-0.14879357,0.14879357,0,54.505884,115.39357)"
          style="display:inline"

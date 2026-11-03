@@ -30,7 +30,7 @@
       <stop
          id="stop3969"
          offset="0"
-         style="stop-color:#c48a4e;stop-opacity:1;" />
+         style="stop-color:#c48a4e;stop-opacity:1" />
       <stop
          id="stop3971"
          offset="1"
@@ -121,7 +121,7 @@
          offset="0"
          id="stop5150" />
       <stop
-         style="stop-color:#e6f9cc;stop-opacity:1;"
+         style="stop-color:#e6f9cc;stop-opacity:1"
          offset="1"
          id="stop5152" />
     </linearGradient>

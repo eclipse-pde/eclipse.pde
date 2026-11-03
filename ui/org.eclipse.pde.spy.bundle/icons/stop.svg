@@ -17,13 +17,13 @@
     <linearGradient
        id="linearGradient4729">
       <stop
-         style="stop-color:#ffffff;stop-opacity:1;"
+         style="stop-color:#ffffff;stop-opacity:1"
          offset="0"
          id="stop4731" />
       <stop
          id="stop4737"
          offset="0.5"
-         style="stop-color:#ffffff;stop-opacity:0.49579832;" />
+         style="stop-color:#ffffff;stop-opacity:0.49579832" />
       <stop
          style="stop-color:#ffffff;stop-opacity:1"
          offset="1"
@@ -32,11 +32,11 @@
     <linearGradient
        id="linearGradient6642">
       <stop
-         style="stop-color:#e83038;stop-opacity:1;"
+         style="stop-color:#e83038;stop-opacity:1"
          offset="0"
          id="stop6644" />
       <stop
-         style="stop-color:#af131a;stop-opacity:1;"
+         style="stop-color:#af131a;stop-opacity:1"
          offset="1"
          id="stop6646" />
     </linearGradient>
@@ -93,7 +93,7 @@
          style="fill:#737986;fill-opacity:1;stroke:#595e68;stroke-opacity:1" />
     </g>
     <rect
-       style="color:#000000;font-style:normal;font-weight:normal;font-size:13.58917427px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;display:inline;overflow:visible;visibility:visible;fill:url(#linearGradient6648);fill-opacity:1;fill-rule:nonzero;stroke:#a81d24;stroke-width:0.99999994;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker:none;enable-background:accumulate"
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:url(#linearGradient6648);fill-opacity:1;fill-rule:nonzero;stroke:#a81d24;stroke-width:0.99999994;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker:none;enable-background:accumulate"
        id="rect6562"
        width="10"
        height="10.044527"
@@ -102,7 +102,7 @@
        rx="1.1490484"
        ry="1.1490484" />
     <rect
-       style="color:#000000;font-style:normal;font-weight:normal;font-size:13.58917427px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;display:inline;overflow:visible;visibility:visible;fill:none;stroke:url(#linearGradient4735);stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.69158876;marker:none;enable-background:accumulate"
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:none;stroke:url(#linearGradient4735);stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.69158876;marker:none;enable-background:accumulate"
        id="rect6562-9"
        width="8.0380869"
        height="8.0000172"

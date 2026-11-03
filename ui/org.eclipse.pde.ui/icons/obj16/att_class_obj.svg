@@ -35,7 +35,7 @@
       <stop
          id="stop10802-1-5-3-0-4-8-4-2-9-2-3"
          offset="1"
-         style="stop-color:#91c168;stop-opacity:1;" />
+         style="stop-color:#91c168;stop-opacity:1" />
     </linearGradient>
   </defs>
   <metadata
@@ -78,11 +78,11 @@
                id="g6124-3">
               <g
                  transform="scale(-1,1)"
-                 style="font-style:normal;font-weight:normal;font-size:13.58917427px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none"
+                 style="fill:#ffffff;fill-opacity:1;stroke:none"
                  id="text6430" />
               <g
                  transform="scale(-1,1)"
-                 style="font-style:normal;font-weight:normal;font-size:13.58917427px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;display:inline;fill:#ffffff;fill-opacity:1;stroke:none"
+                 style="display:inline;fill:#ffffff;fill-opacity:1;stroke:none"
                  id="g6438">
                 <circle
                    style="display:inline;fill:url(#linearGradient3929-5-7);fill-opacity:1;stroke:#14733c;stroke-width:1.75405586;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
@@ -93,30 +93,30 @@
                    r="8.9586821" />
                 <g
                    transform="scale(0.94400511,1.0593163)"
-                   style="font-size:15.56941891px;font-family:Sans;fill:#ffffff"
+                   style="fill:#ffffff"
                    id="text3782" />
               </g>
             </g>
             <path
                d="m 9.9582435,1043.873 c -0.068736,-0.4207 -0.2258257,-0.7375 -0.4712765,-0.9505 -0.2405524,-0.2129 -0.5547364,-0.3192 -0.9425527,-0.3192 -0.5154625,0 -0.927829,0.185 -1.2371006,0.5551 -0.3043689,0.3648 -0.4565517,0.6031 -0.4565489,1.4648 -2.8e-6,0.958 0.1546346,1.3845 0.4639127,1.7799 0.3141807,0.3954 0.7339108,0.593 1.2591915,0.593 0.3927255,0 0.7142731,-0.114 0.9646439,-0.3422 0.2503599,-0.2332 0.4270885,-0.6309 0.5301861,-1.1937 l 2.032379,-0.017 c -0.211101,0.9629 -0.616102,2.0653 -1.215009,2.557 -0.598921,0.4917 -1.401562,0.7374 -2.407928,0.7374 -1.1438303,0 -2.0569271,-0.3724 -2.7392935,-1.1176 -0.6774613,-0.7449 -1.0161905,-1.5264 -1.0161905,-2.8443 0,-1.333 0.3411837,-1.9946 1.0235539,-2.7344 0.6823664,-0.7452 1.6052818,-1.1177 2.7687486,-1.1177 0.9523657,0 1.7083715,0.2129 2.2680175,0.6387 0.564543,0.4205 1.032045,1.4081 1.277509,2.2745 z"
-               style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:15.56941891px;line-height:125%;font-family:Arial;letter-spacing:0px;word-spacing:0px;display:inline;fill:#ffffff;fill-opacity:1;stroke:none"
+               style="display:inline;fill:#ffffff;fill-opacity:1;stroke:none"
                id="path3817" />
           </g>
         </g>
         <g
            transform="matrix(0.99875325,0,0,1.1286622,-0.97054126,-82.724784)"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.9916935px;line-height:125%;font-family:Serif;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#387838;fill-opacity:1;stroke:#266923;stroke-width:0.27821511;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           style="fill:#387838;fill-opacity:1;stroke:#266923;stroke-width:0.27821511;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            id="g4159">
           <circle
              r="4.4886336"
              cy="1044.7421"
              cx="20.544279"
-             style="font-style:normal;font-weight:normal;font-size:13.58917427px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;display:inline;fill:#ffffff;fill-opacity:1;stroke:#266923;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+             style="display:inline;fill:#ffffff;fill-opacity:1;stroke:#266923;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
              id="path10796-2-6-2"
              transform="matrix(1.0012483,0,0,0.88600469,0.97175283,73.294583)" />
           <path
              d="m 24.43155,1046.9864 a 4.4886336,4.4886336 0 0 1 -1.642954,1.6429"
-             style="font-style:normal;font-weight:normal;font-size:13.58917427px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;display:inline;fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+             style="display:inline;fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
              id="path10796-2-6-2-2"
              transform="matrix(1.0012483,0,0,0.88600469,0.97175283,73.294583)" />
           <path

@@ -71,7 +71,7 @@
        id="linearGradient4960"><stop
          id="stop4962"
          offset="0"
-         style="stop-color:#fdfcfa;stop-opacity:1;" /><stop
+         style="stop-color:#fdfcfa;stop-opacity:1" /><stop
          style="stop-color:#ffffff;stop-opacity:0.251"
          offset="0.74923491"
          id="stop4964" /><stop
@@ -89,7 +89,7 @@
        id="linearGradient4968"><stop
          id="stop4970"
          offset="0"
-         style="stop-color:#7792b2;stop-opacity:1;" /><stop
+         style="stop-color:#7792b2;stop-opacity:1" /><stop
          style="stop-color:#a1b3cb;stop-opacity:1"
          offset="0.15948199"
          id="stop4972" /><stop
@@ -111,7 +111,7 @@
        x2="31.931776"
        y2="1038.8719" /><linearGradient
        id="linearGradient4817"><stop
-         style="stop-color:#fefdef;stop-opacity:1;"
+         style="stop-color:#fefdef;stop-opacity:1"
          offset="0"
          id="stop4819" /><stop
          id="stop5177"
@@ -278,7 +278,7 @@
        id="linearGradient8777"><stop
          id="stop8773"
          offset="0"
-         style="stop-color:#fbeaab;stop-opacity:1;" /><stop
+         style="stop-color:#fbeaab;stop-opacity:1" /><stop
          id="stop8775"
          offset="1"
          style="stop-color:#deb241;stop-opacity:1" /></linearGradient><linearGradient

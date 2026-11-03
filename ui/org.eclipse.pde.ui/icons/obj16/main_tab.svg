@@ -17,7 +17,7 @@
     <linearGradient
        id="linearGradient4927">
       <stop
-         style="stop-color:#e8f8f8;stop-opacity:1;"
+         style="stop-color:#e8f8f8;stop-opacity:1"
          offset="0"
          id="stop4931" />
       <stop
@@ -30,7 +30,7 @@
       <stop
          id="stop4943"
          offset="0"
-         style="stop-color:#a8b8d0;stop-opacity:1;" />
+         style="stop-color:#a8b8d0;stop-opacity:1" />
       <stop
          id="stop4946"
          offset="1"
@@ -41,7 +41,7 @@
       <stop
          id="stop4936"
          offset="0"
-         style="stop-color:#a8b8d0;stop-opacity:1;" />
+         style="stop-color:#a8b8d0;stop-opacity:1" />
       <stop
          id="stop4938"
          offset="1"
@@ -50,7 +50,7 @@
     <linearGradient
        id="linearGradient4917">
       <stop
-         style="stop-color:#a8b8d0;stop-opacity:1;"
+         style="stop-color:#a8b8d0;stop-opacity:1"
          offset="0"
          id="stop4919" />
       <stop
@@ -72,7 +72,7 @@
     <linearGradient
        id="linearGradient5063">
       <stop
-         style="stop-color:#4f9cd2;stop-opacity:1;"
+         style="stop-color:#4f9cd2;stop-opacity:1"
          offset="0"
          id="stop5065" />
       <stop
@@ -105,7 +105,7 @@
     <linearGradient
        id="linearGradient4925">
       <stop
-         style="stop-color:#285088;stop-opacity:1;"
+         style="stop-color:#285088;stop-opacity:1"
          offset="0"
          id="stop4927" />
       <stop
@@ -144,7 +144,7 @@
       <stop
          id="stop4998-5-0"
          offset="1"
-         style="stop-color:#ffffff;stop-opacity:0;" />
+         style="stop-color:#ffffff;stop-opacity:0" />
     </linearGradient>
     <linearGradient
        id="linearGradient4910-4-4">
@@ -177,7 +177,7 @@
       <stop
          id="stop4998-5-0-8"
          offset="1"
-         style="stop-color:#ffffff;stop-opacity:0;" />
+         style="stop-color:#ffffff;stop-opacity:0" />
     </linearGradient>
     <linearGradient
        id="linearGradient4916-4">
@@ -356,15 +356,15 @@
       <path
          id="rect3997-9-1-1-5"
          d="m 16,1039.8911 -15,-0.052 0,0.5248 15,0 z"
-         style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:url(#linearGradient4177);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans" />
+         style="color:#000000;fill:url(#linearGradient4177);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
       <path
          id="rect3997-9-1"
          d="m 1,1040.3638 0,12 15,0 0,-12 z m 1,1 13,0 0,10 -13,0 z"
-         style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:url(#linearGradient4179);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans" />
+         style="color:#000000;fill:url(#linearGradient4179);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
       <path
          id="rect3997-9-1-1"
          d="m 2,1040.3638 13,0 0,11 -12.96875,0 z"
-         style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:url(#linearGradient4181);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans" />
+         style="color:#000000;fill:url(#linearGradient4181);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
       <path
          id="rect4853-82-7"
          d="m 4,1042.3638 0,9 -2,0 0,-11 z"
@@ -396,7 +396,7 @@
       <path
          id="rect3997-9-1-1-5-6"
          d="m 12,1039.8911 -11,-0.052 0,0.5248 11,0 z"
-         style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:url(#linearGradient4201);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans" />
+         style="color:#000000;fill:url(#linearGradient4201);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
       <rect
          y="1042.3622"
          x="4"

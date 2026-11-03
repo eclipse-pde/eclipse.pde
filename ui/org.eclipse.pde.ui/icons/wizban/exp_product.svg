@@ -20,14 +20,14 @@
          style="stop-color:#c5c6c6;stop-opacity:1" /><stop
          id="stop5908"
          offset="1"
-         style="stop-color:#000000;stop-opacity:0;" /></linearGradient><linearGradient
+         style="stop-color:#000000;stop-opacity:0" /></linearGradient><linearGradient
        id="linearGradient5898"><stop
          id="stop5900"
          offset="0"
          style="stop-color:#c0c1c1;stop-opacity:1" /><stop
          id="stop5902"
          offset="1"
-         style="stop-color:#000000;stop-opacity:0;" /></linearGradient><linearGradient
+         style="stop-color:#000000;stop-opacity:0" /></linearGradient><linearGradient
        id="linearGradient4581"><stop
          style="stop-color:#dddddd;stop-opacity:1"
          offset="0"
@@ -39,7 +39,7 @@
          style="stop-color:#a1adb2;stop-opacity:1"
          offset="0"
          id="stop4543" /><stop
-         style="stop-color:#000000;stop-opacity:0;"
+         style="stop-color:#000000;stop-opacity:0"
          offset="1"
          id="stop4545" /></linearGradient><linearGradient
        id="linearGradient4461"><stop

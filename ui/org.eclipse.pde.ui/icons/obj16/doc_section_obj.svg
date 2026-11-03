@@ -74,7 +74,7 @@
       <stop
          id="stop4996-1"
          offset="0"
-         style="stop-color:#f9fafc;stop-opacity:1;" />
+         style="stop-color:#f9fafc;stop-opacity:1" />
       <stop
          id="stop4998-89"
          offset="1"
@@ -123,7 +123,7 @@
     <linearGradient
        id="linearGradient4877-6">
       <stop
-         style="stop-color:#91a5c7;stop-opacity:1;"
+         style="stop-color:#91a5c7;stop-opacity:1"
          offset="0"
          id="stop4879-1" />
       <stop
@@ -237,20 +237,20 @@
          transform="matrix(-1,0,0,1,16.12959,8.0140628)">
         <g
            id="text6430"
-           style="font-size:13.58917427px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
+           style="fill:#ffffff;fill-opacity:1;stroke:none"
            transform="scale(-1,1)" />
         <g
            id="g6438"
-           style="font-size:13.58917427px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;display:inline;font-family:Sans"
+           style="fill:#ffffff;fill-opacity:1;stroke:none;display:inline"
            transform="scale(-1,1)">
           <g
-             style="font-size:13.58917427px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#236298;fill-opacity:1;stroke:#236298;stroke-width:0.24860173;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline;font-family:Sans"
+             style="fill:#236298;fill-opacity:1;stroke:#236298;stroke-width:0.24860173;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
              id="layer1-9"
              transform="matrix(1.2778996,0,0.03747938,1.2778996,-58.56426,-297.79529)">
             <g
                transform="translate(20,0)"
                id="text3909-7-7-1"
-               style="font-size:11.05178356px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#236298;fill-opacity:1;stroke:#236298;stroke-width:0.24860173;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline;font-family:AustralianFlyingCorpsStencil;">
+               style="fill:#236298;fill-opacity:1;stroke:#236298;stroke-width:0.24860173;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline">
               <g
                  transform="matrix(0.84893168,0,-0.02489823,0.84893168,-258.1493,627.19515)"
                  style="display:inline"
@@ -276,49 +276,49 @@
                     <path
                        id="rect4001-3-0"
                        d="m -4.9631536,1035.2067 c 0,0 8.5285363,-0.9593 10.8748056,0 1.4364002,0.5873 0.614002,3.9804 0.614002,3.9804 l -0.5625,-0.04 -10.9263073,0 z"
-                       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.05178356px;line-height:125%;font-family:AustralianFlyingCorpsStencil;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:url(#linearGradient4101-4);fill-opacity:1;stroke:none;stroke-width:0.24860173;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+                       style="display:inline;fill:url(#linearGradient4101-4);fill-opacity:1;stroke:none;stroke-width:0.24860173;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
                     <path
                        id="rect4001-31"
                        d="m -4.9631536,1035.2067 11.8877497,0 c 0.012962,4.687 0.00731,-0.7023 0.00731,3.9847 l -11.8950573,0 z"
-                       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.05178356px;line-height:125%;font-family:AustralianFlyingCorpsStencil;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:none;fill-opacity:1;stroke:url(#linearGradient4908-2-3);stroke-width:1.08484948;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+                       style="display:inline;fill:none;fill-opacity:1;stroke:url(#linearGradient4908-2-3);stroke-width:1.08484948;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
                   </g>
                   <rect
-                     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.05178356px;line-height:125%;font-family:AustralianFlyingCorpsStencil;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:url(#linearGradient4867-7-1);fill-opacity:1;stroke:none;stroke-width:0.24860173;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+                     style="display:inline;fill:url(#linearGradient4867-7-1);fill-opacity:1;stroke:none;stroke-width:0.24860173;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
                      id="rect4001-1-2"
                      width="4.5632777"
                      height="0.92891824"
                      x="-10.106611"
                      y="1052.3378" />
                   <rect
-                     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.05178356px;line-height:125%;font-family:AustralianFlyingCorpsStencil;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:url(#linearGradient4867-7-1-3);fill-opacity:1;stroke:none;stroke-width:0.24860173;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+                     style="display:inline;fill:url(#linearGradient4867-7-1-3);fill-opacity:1;stroke:none;stroke-width:0.24860173;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
                      id="rect4001-1-2-4"
                      width="0.95799965"
                      height="0.92891824"
                      x="-11.971158"
                      y="1052.3378" />
                   <rect
-                     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.05178356px;line-height:125%;font-family:AustralianFlyingCorpsStencil;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:url(#linearGradient4867-7-1-6);fill-opacity:1;stroke:none;stroke-width:0.24860173;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+                     style="display:inline;fill:url(#linearGradient4867-7-1-6);fill-opacity:1;stroke:none;stroke-width:0.24860173;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
                      id="rect4001-1-2-6"
                      width="1.8267229"
                      height="0.92891824"
                      x="-10.106612"
                      y="1048.6113" />
                   <rect
-                     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.05178356px;line-height:125%;font-family:AustralianFlyingCorpsStencil;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:url(#linearGradient4867-7-1-3-2);fill-opacity:1;stroke:none;stroke-width:0.24860173;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+                     style="display:inline;fill:url(#linearGradient4867-7-1-3-2);fill-opacity:1;stroke:none;stroke-width:0.24860173;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
                      id="rect4001-1-2-4-3"
                      width="0.95799965"
                      height="0.92891824"
                      x="-11.971158"
                      y="1048.6113" />
                   <rect
-                     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.05178356px;line-height:125%;font-family:AustralianFlyingCorpsStencil;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:url(#linearGradient4867-7-1-2);fill-opacity:1;stroke:none;stroke-width:0.24860173;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+                     style="display:inline;fill:url(#linearGradient4867-7-1-2);fill-opacity:1;stroke:none;stroke-width:0.24860173;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
                      id="rect4001-1-2-1"
                      width="4.5632777"
                      height="0.92891824"
                      x="-10.106612"
                      y="1056.0143" />
                   <rect
-                     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.05178356px;line-height:125%;font-family:AustralianFlyingCorpsStencil;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:url(#linearGradient4867-7-1-3-3);fill-opacity:1;stroke:none;stroke-width:0.24860173;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+                     style="display:inline;fill:url(#linearGradient4867-7-1-3-3);fill-opacity:1;stroke:none;stroke-width:0.24860173;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
                      id="rect4001-1-2-4-1"
                      width="0.95799965"
                      height="0.92891824"
