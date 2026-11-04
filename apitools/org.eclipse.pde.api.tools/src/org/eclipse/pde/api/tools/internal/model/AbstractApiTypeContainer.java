@@ -224,7 +224,7 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 			try {
 				close();
 			} catch (CoreException e) {
-				// TODO log error
+				ApiPlugin.log("Failed to close API type containers for " + getName(), e); //$NON-NLS-1$
 			}
 			fApiTypeContainers.clear();
 		} else {
