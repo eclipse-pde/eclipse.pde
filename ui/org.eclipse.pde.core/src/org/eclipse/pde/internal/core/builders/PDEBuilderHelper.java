@@ -16,11 +16,14 @@ package org.eclipse.pde.internal.core.builders;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.pde.core.build.IBuild;
@@ -91,6 +94,17 @@ public class PDEBuilderHelper {
 			}
 		}
 		return sourceEntryKeys;
+	}
+
+	/**
+	 * Returns the rule for a PDE builder running on the given project: that project
+	 * and all PDE projects. The project may lack a PDE nature, and an empty rule is
+	 * rejected inside the workspace root rule that builds usually run under.
+	 */
+	public static ISchedulingRule getBuilderRule(IProject project) {
+		Stream<IProject> pdeProjects = Arrays.stream(project.getWorkspace().getRoot().getProjects())
+				.filter(PDEBuilderHelper::isPDEProject);
+		return new MultiRule(Stream.concat(Stream.of(project), pdeProjects).distinct().toArray(ISchedulingRule[]::new));
 	}
 
 	public static boolean isPDEProject(IProject project) {
