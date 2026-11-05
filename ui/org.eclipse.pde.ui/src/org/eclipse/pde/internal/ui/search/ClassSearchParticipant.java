@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -36,11 +36,8 @@ import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.core.plugin.IPluginParent;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
@@ -50,12 +47,10 @@ import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchema;
-import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
-import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.schema.ExtensionInspector;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IEditingModel;
-import org.eclipse.pde.internal.core.text.plugin.PluginElementNode;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.ModelModification;
@@ -162,45 +157,15 @@ public class ClassSearchParticipant implements IQueryParticipant {
 					for (IPluginExtension extension : extensions) {
 						ISchema schema = registry.getSchema(extension.getPoint());
 						if (schema != null && !monitor.isCanceled()) {
-							inspectExtension(schema, extension, file);
+							new ExtensionInspector(schema).findAttributes(extension, IMetaAttribute.JAVA)
+									.filter(IDocumentAttributeNode.class::isInstance)
+									.forEach(attribute -> checkMatch(attribute, file));
 						}
 					}
 				}
 			}
 		};
 		PDEModelUtility.modifyModel(mod, monitor);
-	}
-
-	private void inspectExtension(ISchema schema, IPluginParent parent, IFile file) {
-		IPluginObject[] children = parent.getChildren();
-
-		if (parent instanceof PluginElementNode node && parent.getParent() instanceof PluginElementNode) {
-			// check if this node corresponds to a Java type attribute which
-			// would have been defined has an element
-			PluginElementNode parentNode = (PluginElementNode) parent.getParent();
-			ISchemaElement schemaElement = schema.findElement(parentNode.getName());
-			if (schemaElement != null) {
-				ISchemaAttribute attInfo = schemaElement.getAttribute(node.getName());
-				if (attInfo != null && attInfo.getKind() == IMetaAttribute.JAVA) {
-					checkMatch(node.getAttribute("class"), file); //$NON-NLS-1$
-				}
-			}
-		}
-
-		for (IPluginObject childObject : children) {
-			IPluginElement child = (IPluginElement) childObject;
-			ISchemaElement schemaElement = schema.findElement(child.getName());
-			if (schemaElement != null) {
-				IPluginAttribute[] attributes = child.getAttributes();
-				for (IPluginAttribute attr : attributes) {
-					ISchemaAttribute attInfo = schemaElement.getAttribute(attr.getName());
-					if (attInfo != null && attInfo.getKind() == IMetaAttribute.JAVA && attr instanceof IDocumentAttributeNode) {
-						checkMatch(attr, file);
-					}
-				}
-			}
-			inspectExtension(schema, child, file);
-		}
 	}
 
 	private void checkMatch(IPluginAttribute attr, IFile file) {

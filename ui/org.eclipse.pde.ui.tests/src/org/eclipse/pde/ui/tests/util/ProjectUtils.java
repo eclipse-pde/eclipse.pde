@@ -14,8 +14,10 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -28,7 +30,9 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
@@ -309,6 +313,24 @@ public class ProjectUtils {
 		setup.accept(description, bundleProjectService);
 		description.apply(null);
 		return project;
+	}
+
+	/**
+	 * Creates a file with the given content at the given project-relative path,
+	 * creating missing parent folders.
+	 */
+	public static IFile createFile(IProject project, IPath path, String content) throws CoreException {
+		IContainer container = project;
+		for (String segment : path.removeLastSegments(1).segments()) {
+			IFolder folder = container.getFolder(IPath.fromOSString(segment));
+			if (!folder.exists()) {
+				folder.create(true, true, null);
+			}
+			container = folder;
+		}
+		IFile file = container.getFile(IPath.fromOSString(path.lastSegment()));
+		file.create(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)), true, null);
+		return file;
 	}
 
 	// --- workspace project deletion ---

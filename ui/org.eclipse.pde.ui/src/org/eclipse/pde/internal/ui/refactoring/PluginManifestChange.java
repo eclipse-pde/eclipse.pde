@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.refactoring;
+
+import java.util.Objects;
+import java.util.stream.Stream;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
@@ -30,17 +33,12 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.TextChange;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
-import org.eclipse.pde.core.plugin.IPluginAttribute;
-import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.core.plugin.IPluginParent;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchema;
-import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
-import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.schema.ExtensionInspector;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.plugin.FragmentModel;
@@ -92,7 +90,7 @@ public class PluginManifestChange {
 					for (IPluginExtension extension : extensions) {
 						ISchema schema = registry.getSchema(extension.getPoint());
 						if (schema != null) {
-							addExtensionAttributeEdit(schema, extension, multiEdit, affectedElements[i], newNames[i]);
+							addExtensionAttributeEdit(new ExtensionInspector(schema), extension, multiEdit, affectedElements[i], newNames[i]);
 						}
 					}
 				}
@@ -122,34 +120,20 @@ public class PluginManifestChange {
 		}
 	}
 
-	private static void addExtensionAttributeEdit(ISchema schema, IPluginParent parent, MultiTextEdit multi, Object element, String newName) {
-		IPluginObject[] children = parent.getChildren();
-		for (IPluginObject childObject : children) {
-			IPluginElement child = (IPluginElement) childObject;
-			ISchemaElement schemaElement = schema.findElement(child.getName());
-			if (schemaElement != null) {
-				IPluginAttribute[] attributes = child.getAttributes();
-				for (IPluginAttribute attr : attributes) {
-					ISchemaAttribute attInfo = schemaElement.getAttribute(attr.getName());
-					if (attInfo != null) {
-						if (element instanceof IJavaElement && attInfo.getKind() == IMetaAttribute.JAVA) {
-							IDocumentAttributeNode docAttr = (IDocumentAttributeNode) attr;
-							TextEdit edit = createTextEdit(docAttr, (IJavaElement) element, newName);
-							if (edit != null) {
-								multi.addChild(edit);
-							}
-						} else if (element instanceof IResource && attInfo.getKind() == IMetaAttribute.RESOURCE) {
-							IDocumentAttributeNode docAttr = (IDocumentAttributeNode) attr;
-							TextEdit edit = createTextEdit(docAttr, (IResource) element, newName);
-							if (edit != null) {
-								multi.addChild(edit);
-							}
-						}
-					}
-				}
-			}
-			addExtensionAttributeEdit(schema, child, multi, element, newName);
+	private static void addExtensionAttributeEdit(ExtensionInspector inspector, IPluginExtension extension, MultiTextEdit multi, Object element, String newName) {
+		if (element instanceof IJavaElement javaElement) {
+			findDocumentAttributes(inspector, extension, IMetaAttribute.JAVA)
+					.map(attr -> createTextEdit(attr, javaElement, newName)).filter(Objects::nonNull)
+					.forEach(multi::addChild);
+		} else if (element instanceof IResource resource) {
+			findDocumentAttributes(inspector, extension, IMetaAttribute.RESOURCE)
+					.map(attr -> createTextEdit(attr, resource, newName)).filter(Objects::nonNull)
+					.forEach(multi::addChild);
 		}
+	}
+
+	private static Stream<IDocumentAttributeNode> findDocumentAttributes(ExtensionInspector inspector, IPluginExtension extension, int kind) {
+		return inspector.findAttributes(extension, kind).map(IDocumentAttributeNode.class::cast);
 	}
 
 	private static TextEdit createTextEdit(IDocumentAttributeNode attr, IJavaElement element, String newName) {
