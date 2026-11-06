@@ -753,6 +753,7 @@ public abstract class AbstractPluginBlock {
 	protected void setText(IPluginModelBase model, String value) {
 		Widget widget = fPluginTreeViewer.testFindItem(model);
 		if (widget instanceof TreeItem item) {
+			// TODO: unify this?!
 			int index = value == null ? -1 : value.indexOf(':');
 			String levelValue = index == -1 ? "" : value.substring(0, index); //$NON-NLS-1$
 			String autoValue = null;
@@ -761,7 +762,7 @@ public abstract class AbstractPluginBlock {
 			if (model.isFragmentModel()) {
 				autoValue = "false"; //$NON-NLS-1$
 				item.setText(2, autoValue);
-				// FIXME is this the right place for this logic?
+				// FIXME is this the right place for this logic? Fix this
 			} else if (IPDEBuildConstants.BUNDLE_CORE_RUNTIME.equals(modelName) || IPDEBuildConstants.BUNDLE_DS.equals(modelName)) {
 				autoValue = "true"; //$NON-NLS-1$
 				item.setText(2, autoValue);
