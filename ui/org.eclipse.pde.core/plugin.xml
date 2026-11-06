@@ -430,6 +430,9 @@
           <locator
                 class="org.eclipse.pde.internal.core.LocalMavenPluginSourcePathLocator"
                 complexity="low"/>
+          <locator
+                class="org.eclipse.pde.internal.core.EclipseIndexSourcePathLocator"
+                complexity="high"/>
     </extension>
         <extension
               point="org.eclipse.pde.core.targetLocations">
