@@ -311,7 +311,7 @@ public class ClassFileComparator {
 								IApiMethod meth = this.type2.getMethod(iMethod.getName(), iMethod.getSignature());
 								if (meth == null) {
 									// check in superclasses
-									List<IApiType> superclassList = getSuperclassList(this.type2);
+									List<IApiType> superclassList = getSuperclassList(this.type2, false, true);
 									if (superclassList != null) {
 										for (IApiType apiType : superclassList) {
 											meth = apiType.getMethod(iMethod.getName(),
@@ -322,12 +322,7 @@ public class ClassFileComparator {
 										}
 									}
 								}
-								if (meth == null) {
-									isBreakingChange = true;
-								}
-								if(meth !=null) {
-									isBreakingChange = Flags.isSynthetic(meth.getModifiers());
-								}
+								isBreakingChange = !isValidInterfaceMethodImplementation(meth);
 								if (isBreakingChange) {
 									this.addDelta(getElementType(this.type1), IDelta.ADDED,
 											IDelta.EXPANDED_SUPERINTERFACES_SET_BREAKING,
@@ -360,11 +355,11 @@ public class ClassFileComparator {
 								if (method3 == null) {
 									String key = this.type1.getName();
 									boolean isDefaultMethod = false;
-									if (this.type2.getMethod(method.getName(), method.getSignature()) != null) {
-										isDefaultMethod = this.type2.getMethod(method.getName(), method.getSignature()).isDefaultMethod();
-										if(isDefaultMethod) {
-											key = getKeyForMethod(this.type2.getMethod(method.getName(), method.getSignature()), this.type2);
-										}
+									IApiMethod implementation = findInheritedDefaultMethod(this.type2, method.getName(),
+											method.getSignature(), new HashSet<>());
+									isDefaultMethod = implementation != null;
+									if (isDefaultMethod) {
+										key = getKeyForMethod(implementation, this.type2);
 									}
 									if (!isDefaultMethod && isSuperInterfaceWithMethodDeltaAdded == false) {
 										this.addDelta(getElementType(this.type1), IDelta.ADDED, IDelta.SUPER_INTERFACE_WITH_METHODS, this.currentDescriptorRestrictions, this.initialDescriptorRestrictions, this.type1.getModifiers(), this.type2.getModifiers(), this.type1, key, new String[] {
@@ -423,9 +418,11 @@ public class ClassFileComparator {
 								if (defMethod == false) {
 									boolean isBreakingChange = false;
 									IApiMethod meth = this.type2.getMethod(iMethod.getName(), iMethod.getSignature());
-									if (meth == null) {
+									boolean methodAlreadyRequired = meth == null
+											&& isMethodRequiredByBaselineInterfaces(iMethod, superinterfacesSet1);
+									if (meth == null && !methodAlreadyRequired) {
 										// check in superclasses
-										List<IApiType> superclassList = getSuperclassList(this.type2);
+									List<IApiType> superclassList = getSuperclassList(this.type2, false, true);
 										if (superclassList != null) {
 											for (IApiType type : superclassList) {
 												meth = type.getMethod(iMethod.getName(), iMethod.getSignature());
@@ -435,12 +432,8 @@ public class ClassFileComparator {
 											}
 										}
 									}
-									if (meth == null) {
-										isBreakingChange = true;
-									}
-									if(meth !=null) {
-										isBreakingChange = Flags.isSynthetic(meth.getModifiers());
-									}
+									isBreakingChange = !methodAlreadyRequired
+											&& !isValidInterfaceMethodImplementation(meth);
 									if (isBreakingChange) {
 										this.addDelta(getElementType(this.type1), IDelta.CHANGED,
 												IDelta.EXPANDED_SUPERINTERFACES_SET_BREAKING,
@@ -492,11 +485,11 @@ public class ClassFileComparator {
 									if (!found) {
 										String key = this.type1.getName();
 										boolean isDefaultMethod = false;
-										if(this.type2.getMethod(method.getName(), method.getSignature())!=null) {
-											isDefaultMethod = this.type2.getMethod(method.getName(), method.getSignature()).isDefaultMethod();
-											if (isDefaultMethod) {
-												key = getKeyForMethod(this.type2.getMethod(method.getName(), method.getSignature()), this.type2);
-											}
+										IApiMethod implementation = findInheritedDefaultMethod(this.type2, method.getName(),
+												method.getSignature(), new HashSet<>());
+										isDefaultMethod = implementation != null;
+										if (isDefaultMethod) {
+											key = getKeyForMethod(implementation, this.type2);
 										}
 										this.addDelta(getElementType(this.type1), IDelta.ADDED, isDefaultMethod ? IDelta.SUPER_INTERFACE_DEFAULT_METHOD : IDelta.SUPER_INTERFACE_WITH_METHODS, this.currentDescriptorRestrictions, this.initialDescriptorRestrictions, this.type1.getModifiers(), this.type2.getModifiers(), this.type1, key, new String[] {
 												Util.getDescriptorName(type1),
@@ -513,6 +506,112 @@ public class ClassFileComparator {
 				}
 			}
 		}
+	}
+
+	private IApiMethod findInheritedDefaultMethod(IApiType type, String name, String signature, Set<String> visited) {
+		List<IApiMethod> declarations = new ArrayList<>();
+		collectMethodDeclarations(type, name, signature, visited, declarations);
+		List<IApiMethod> maximallySpecificDeclarations = new ArrayList<>();
+		for (IApiMethod declaration : declarations) {
+			IApiType declaringType = getEnclosingType(declaration);
+			if (declaringType == null) {
+				continue;
+			}
+			boolean overridden = false;
+			for (IApiMethod otherDeclaration : declarations) {
+				if (declaration == otherDeclaration) {
+					continue;
+				}
+				IApiType otherDeclaringType = getEnclosingType(otherDeclaration);
+				if (otherDeclaringType != null && !declaringType.getName().equals(otherDeclaringType.getName())
+						&& isSubInterface(otherDeclaringType, declaringType, new HashSet<>())) {
+					overridden = true;
+					break;
+				}
+			}
+			if (!overridden) {
+				maximallySpecificDeclarations.add(declaration);
+			}
+		}
+		return maximallySpecificDeclarations.size() == 1 && maximallySpecificDeclarations.get(0).isDefaultMethod()
+				? maximallySpecificDeclarations.get(0)
+				: null;
+	}
+
+	private void collectMethodDeclarations(IApiType type, String name, String signature, Set<String> visited,
+			List<IApiMethod> declarations) {
+		if (type == null || !visited.add(type.getName())) {
+			return;
+		}
+		for (IApiMethod method : type.getMethods()) {
+			if (name.equals(method.getName()) && signature.equals(method.getSignature())) {
+				for (IApiMethod declaration : declarations) {
+					IApiType declaringType = getEnclosingType(declaration);
+					if (declaringType != null && declaringType.getName().equals(type.getName())) {
+						return;
+					}
+				}
+				declarations.add(method);
+				return;
+			}
+		}
+		try {
+			for (IApiType superInterface : type.getSuperInterfaces()) {
+				collectMethodDeclarations(superInterface, name, signature, new HashSet<>(visited), declarations);
+			}
+		} catch (CoreException e) {
+			ApiPlugin.log(e);
+			reportStatus(e);
+		}
+	}
+
+	private IApiType getEnclosingType(IApiMethod method) {
+		try {
+			return method.getEnclosingType();
+		} catch (CoreException e) {
+			ApiPlugin.log(e);
+			reportStatus(e);
+			return null;
+		}
+	}
+
+	private boolean isSubInterface(IApiType type, IApiType possibleSuperInterface, Set<String> visited) {
+		if (type == null || !visited.add(type.getName())) {
+			return false;
+		}
+		try {
+			for (IApiType superInterface : type.getSuperInterfaces()) {
+				if (superInterface.getName().equals(possibleSuperInterface.getName())
+						|| isSubInterface(superInterface, possibleSuperInterface, visited)) {
+					return true;
+				}
+			}
+		} catch (CoreException e) {
+			ApiPlugin.log(e);
+			reportStatus(e);
+		}
+		return false;
+	}
+
+	private boolean isValidInterfaceMethodImplementation(IApiMethod method) {
+		if (method == null) {
+			return false;
+		}
+		int modifiers = method.getModifiers();
+		return Flags.isPublic(modifiers) && !Flags.isStatic(modifiers) && !Flags.isAbstract(modifiers)
+				&& (!Flags.isSynthetic(modifiers) || Flags.isBridge(modifiers));
+	}
+
+	private boolean isMethodRequiredByBaselineInterfaces(IApiMethod method, Set<IApiType> baselineInterfaces) {
+		if (baselineInterfaces == null) {
+			return false;
+		}
+		for (IApiType baselineInterface : baselineInterfaces) {
+			if (baselineInterface.getMethod(method.getName(), method.getSignature()) != null) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private String computeDiff(Set<IApiType> superinterfacesSet1, Set<IApiType> superinterfacesSet2, boolean expand) {
@@ -1545,6 +1644,24 @@ public class ClassFileComparator {
 		}
 	}
 
+	private boolean isCompatibleMethodMovedUp(int access, int access2) {
+		if (Flags.isPublic(access) && !Flags.isPublic(access2)) {
+			return false;
+		}
+		if (Flags.isStatic(access) != Flags.isStatic(access2)) {
+			return false;
+		}
+		if (!Flags.isAbstract(access) && Flags.isAbstract(access2)
+				&& !RestrictionModifiers.isInstantiateRestriction(this.currentDescriptorRestrictions)) {
+			return false;
+		}
+		if (!Flags.isFinal(access) && Flags.isFinal(access2)
+				&& !RestrictionModifiers.isExtendRestriction(this.currentDescriptorRestrictions)) {
+			return false;
+		}
+		return true;
+	}
+
 	private void getDeltaForMethod(IApiMethod method) {
 		int access = method.getModifiers();
 		if (Flags.isSynthetic(access)) {
@@ -1594,7 +1711,7 @@ public class ClassFileComparator {
 						}
 					}
 				} else {
-					List<IApiType> superclassList = getSuperclassList(this.type2, true);
+					List<IApiType> superclassList = getSuperclassList(this.type2, true, true);
 					if (superclassList != null && isStatusOk()) {
 						loop: for (IApiType superTypeDescriptor : superclassList) {
 							IApiMethod method3 = superTypeDescriptor.getMethod(name, descriptor);
@@ -1602,7 +1719,8 @@ public class ClassFileComparator {
 								continue;
 							} else {
 								int access3 = method3.getModifiers();
-								if (Flags.isPublic(access3) || Flags.isProtected(access3)) {
+								if ((Flags.isPublic(access3) || Flags.isProtected(access3))
+										&& isCompatibleMethodMovedUp(access, access3)) {
 									// method has been move up in the hierarchy
 									// - report the delta and abort loop
 									// TODO need to make the distinction between
