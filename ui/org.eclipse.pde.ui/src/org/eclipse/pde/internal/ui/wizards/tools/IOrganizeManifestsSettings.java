@@ -15,6 +15,8 @@ package org.eclipse.pde.internal.ui.wizards.tools;
 
 public interface IOrganizeManifestsSettings {
 
+	public static final String PROP_ADD_MISSING_VERSIONS = "OrganizeManifests.ExportedPackages.addMissingVersions"; //$NON-NLS-1$
+	public static final String PROP_MISSING_VERSION_OPTIONS = "OrganizeManifests.ExportedPackages.missingVersionOptions"; //$NON-NLS-1$
 	public static final String PROP_ADD_MISSING = "OrganizeManifests.ExportedPackages.addMissing"; //$NON-NLS-1$
 	public static final String PROP_MARK_INTERNAL = "OrganizeManifests.ExportedPackages.makeInternal"; //$NON-NLS-1$
 	public static final String PROP_INTERAL_PACKAGE_FILTER = "OrganizeManifests.ExportedPackages.packageFilter"; //$NON-NLS-1$
