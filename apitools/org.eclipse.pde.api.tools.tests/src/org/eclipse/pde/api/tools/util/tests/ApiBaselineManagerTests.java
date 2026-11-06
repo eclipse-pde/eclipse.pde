@@ -16,9 +16,13 @@ package org.eclipse.pde.api.tools.util.tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Iterator;
 import java.util.List;
 
@@ -27,13 +31,19 @@ import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jdt.core.ElementChangedEvent;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IElementChangedListener;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaElementDelta;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -71,11 +81,15 @@ import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.api.tools.tests.AbstractApiTest;
 import org.eclipse.pde.api.tools.tests.util.FileUtils;
 import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.project.IBundleClasspathEntry;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.pde.core.project.IBundleProjectService;
+import org.eclipse.pde.internal.core.PluginModelDelta;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
+import org.osgi.framework.Version;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -391,6 +405,111 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 		assertNotNull("the workspace baseline must not be null", baseline); //$NON-NLS-1$
 		IApiComponent component = baseline.getApiComponent(TESTING_PLUGIN_PROJECT_NAME);
 		assertNotNull("the test project api component must exist in the workspace baseline", component); //$NON-NLS-1$
+	}
+
+	/**
+	 * Tests whether an external manifest replacement updates the cached workspace
+	 * baseline when the live PDE model changes its bundle version.
+	 */
+	@Test
+	public void testWorkspaceBaselineAfterExternalManifestReplacement() throws Exception {
+		IJavaProject project = getTestingProject();
+		IFile manifest = project.getProject().getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
+		IFile source = project.getProject().getFile("src/a/b/c/ExternalReplacement.java"); //$NON-NLS-1$
+		String originalContents = Files.readString(manifest.getLocation().toFile().toPath(), StandardCharsets.UTF_8);
+		IApiBaseline cachedBaseline = getWorkspaceBaseline();
+		IPluginModelBase originalModel = PluginRegistry.findModel(project.getProject());
+		String symbolicName = originalModel.getBundleDescription().getSymbolicName();
+		Version originalVersion = originalModel.getBundleDescription().getVersion();
+		Version replacementVersion = new Version(originalVersion.getMajor(), originalVersion.getMinor(), originalVersion.getMicro() + 1);
+		IApiComponent originalComponent = cachedBaseline.getApiComponent(symbolicName, originalVersion);
+		assertNotNull("the cached workspace baseline must contain the original component", originalComponent); //$NON-NLS-1$
+
+		String replacementContents = originalContents.replace("Bundle-Version: " + originalVersion, "Bundle-Version: " + replacementVersion); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNotEquals("the manifest must contain the original bundle version", originalContents, replacementContents); //$NON-NLS-1$
+		String sourceContents = "package a.b.c; public class ExternalReplacement {}"; //$NON-NLS-1$
+		PluginModelEventWaiter waiter = new PluginModelEventWaiter(PluginModelDelta.CHANGED);
+		IJavaElementDelta[] projectDelta = new IJavaElementDelta[1];
+		IElementChangedListener deltaListener = event -> projectDelta[0] = findProjectDelta(event.getDelta(), project);
+		JavaCore.addElementChangedListener(deltaListener, ElementChangedEvent.POST_CHANGE);
+		try {
+			Files.writeString(manifest.getLocation().toFile().toPath(), replacementContents, StandardCharsets.UTF_8);
+			Files.writeString(source.getLocation().toFile().toPath(), sourceContents, StandardCharsets.UTF_8);
+			project.getProject().refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+			assertNotNull("PDE must report the changed live plug-in model", waiter.waitForEvent()); //$NON-NLS-1$
+			assertNotNull("the Java model must report the project replacement delta", projectDelta[0]); //$NON-NLS-1$
+			assertTrue("the replacement delta must contain Java child changes", //$NON-NLS-1$
+					(projectDelta[0].getFlags() & IJavaElementDelta.F_CHILDREN) != 0);
+			assertTrue("the replacement delta must also report project content", //$NON-NLS-1$
+					(projectDelta[0].getFlags() & IJavaElementDelta.F_CONTENT) != 0);
+			IPluginModelBase replacementModel = PluginRegistry.findModel(project.getProject());
+			assertEquals("the live PDE model must have the replacement version", replacementVersion, //$NON-NLS-1$
+					replacementModel.getBundleDescription().getVersion());
+
+			Job.getJobManager().join(ApiBaselineManager.class, null);
+			IApiBaseline updatedBaseline = getWorkspaceBaseline();
+			assertNotSame("the stale workspace baseline must not be reused after the bulk replacement", //$NON-NLS-1$
+					cachedBaseline, updatedBaseline);
+			assertNull("the updated baseline must no longer contain only the old version", //$NON-NLS-1$
+					updatedBaseline.getApiComponent(symbolicName, originalVersion));
+
+			// ApiAnalysisBuilder.buildAll() resolves this exact current-version component.
+			assertNotNull("the builder's current-version component lookup must succeed", //$NON-NLS-1$
+					updatedBaseline.getApiComponent(symbolicName, replacementVersion));
+		} finally {
+			JavaCore.removeElementChangedListener(deltaListener);
+			Files.writeString(manifest.getLocation().toFile().toPath(), originalContents, StandardCharsets.UTF_8);
+			Files.deleteIfExists(source.getLocation().toFile().toPath());
+			project.getProject().refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+			waitForAutoBuild();
+		}
+	}
+
+	private IJavaElementDelta findProjectDelta(IJavaElementDelta delta, IJavaProject project) {
+		if (delta.getElement().equals(project)) {
+			return delta;
+		}
+
+		for (IJavaElementDelta child : delta.getAffectedChildren()) {
+			IJavaElementDelta found = findProjectDelta(child, project);
+			if (found != null) {
+				return found;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Tests that changing only the manifest through the workspace resource API
+	 * invalidates the cached workspace baseline.
+	 */
+	@Test
+	public void testWorkspaceBaselineAfterWorkspaceManifestChange() throws Exception {
+		IJavaProject project = getTestingProject();
+		IFile manifest = project.getProject().getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
+		String originalContents = Files.readString(manifest.getLocation().toFile().toPath(), StandardCharsets.UTF_8);
+		IApiBaseline cachedBaseline = getWorkspaceBaseline();
+		IPluginModelBase originalModel = PluginRegistry.findModel(project.getProject());
+		Version originalVersion = originalModel.getBundleDescription().getVersion();
+		Version replacementVersion = new Version(originalVersion.getMajor(), originalVersion.getMinor(), originalVersion.getMicro() + 1);
+		String replacementContents = originalContents.replace("Bundle-Version: " + originalVersion, "Bundle-Version: " + replacementVersion); //$NON-NLS-1$ //$NON-NLS-2$
+		PluginModelEventWaiter waiter = new PluginModelEventWaiter(PluginModelDelta.CHANGED);
+		try {
+			manifest.setContents(new ByteArrayInputStream(replacementContents.getBytes(StandardCharsets.UTF_8)),
+					IResource.FORCE, new NullProgressMonitor());
+			assertNotNull("PDE must report the changed live plug-in model", waiter.waitForEvent()); //$NON-NLS-1$
+			Job.getJobManager().join(ApiBaselineManager.class, null);
+			IApiBaseline updatedBaseline = getWorkspaceBaseline();
+			assertNotSame("a workspace manifest edit must invalidate the cached workspace baseline", //$NON-NLS-1$
+					cachedBaseline, updatedBaseline);
+			assertNotNull("the updated baseline must contain the replacement version", //$NON-NLS-1$
+					updatedBaseline.getApiComponent(originalModel.getBundleDescription().getSymbolicName(), replacementVersion));
+		} finally {
+			manifest.setContents(new ByteArrayInputStream(originalContents.getBytes(StandardCharsets.UTF_8)),
+					IResource.FORCE, new NullProgressMonitor());
+			waitForAutoBuild();
+		}
 	}
 
 	/**
