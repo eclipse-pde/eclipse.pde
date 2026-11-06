@@ -50,9 +50,9 @@ public class ProblemReporter {
 		reportProblem(annotation, member, valueIndex, false, errorLevel, message, args);
 	}
 
-	public void reportProblem(Annotation annotation, String member, int valueIndex, boolean fullPair, ValidationErrorLevel errorLevel, String message, String... args) {
+	public DSAnnotationProblem reportProblem(Annotation annotation, String member, int valueIndex, boolean fullPair, ValidationErrorLevel errorLevel, String message, String... args) {
 		if (errorLevel.isIgnore()) {
-			return;
+			return null;
 		}
 
 		ASTNode element = annotation;
@@ -86,6 +86,9 @@ public class ProblemReporter {
 			problem.setSourceStart(start);
 			problem.setSourceEnd(start + length - 1);
 			problems.add(problem);
+			return problem;
 		}
+
+		return null;
 	}
 }
