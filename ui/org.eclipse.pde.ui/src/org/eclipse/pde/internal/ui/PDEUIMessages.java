@@ -572,6 +572,14 @@ public class PDEUIMessages extends NLS {
 
 	public static String MainPreferencePage_BundlePoolPrefsGroup;
 
+	public static String MainPreferencePage_QueryEclipseIndexForSourceBundles;
+
+	public static String MainPreferencePage_QueryEclipseIndexForSourceBundlesTooltip;
+
+	public static String MainPreferencePage_QueryKnownP2RepositoriesForSourceBundles;
+
+	public static String MainPreferencePage_QueryKnownP2RepositoriesForSourceBundlesTooltip;
+
 	public static String MainPreferencePage_junitWorkspace_asContainer;
 
 	public static String MainPreferencePage_junitWorkspace_asLocation;
