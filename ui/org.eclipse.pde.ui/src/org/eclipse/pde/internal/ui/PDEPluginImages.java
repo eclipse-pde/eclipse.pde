@@ -252,6 +252,8 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_CLEAR = create(PATH_LCL, "clear.svg"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_FILTER = create(PATH_LCL, "filter_ps.svg"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_FILTER_RELATED = create(PATH_LCL, "filter_related.svg"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_RELOAD_TARGET = create(PATH_LCL, "reload_target.svg"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_ACTIVATE_TARGET = create(PATH_LCL, "activate_target.svg"); //$NON-NLS-1$
 
 	public static final ImageDescriptor DESC_RUN_EXC = create(PATH_OBJ, "run_exc.svg"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_DEBUG_EXC = create(PATH_OBJ, "debug_exc.svg"); //$NON-NLS-1$
