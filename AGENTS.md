@@ -9,31 +9,32 @@ Guidance for AI agents building, testing and changing this repository (Tycho/Mav
 * Always pass `-Dtycho.baseline.replace=none` when you want to see your own changes (see "Baseline replacement").
 * Tests run in the `verify` phase (`eclipse-test-plugin`), `mvn test` runs nothing.
 * Redirect Maven output to a file and grep it; a run prints many `Resolving MavenDependencyRoots` lines.
-* Add `-am` when the tests must see your changes in other bundles of this repository (see "Building a single module"); check the `Reactor Summary` at the end of the log (`grep -n -A15 "Reactor Summary" /tmp/build.log`).
-* If your change has no effect: check `mvn -v`, that `replaced with the baseline` does not occur in the log, that changed bundle and tested module are in the reactor, and that a `Tests run:` line for your class exists.
+* Modules not in the reactor come from the I-build repository, not from your working tree (see "Building a single module").
+* If your change has no effect: check `mvn -v`, that `replaced with the baseline` does not occur in the log, that changed bundle and tested module are in the reactor (`grep -n -A15 "Reactor Summary" <log>`), and that a `Tests run:` line for your class exists.
 
 ## Quick start (commands)
 
 ```sh
-export JAVA_HOME=<path to a JDK 25>      # CI uses 25; check the "Java version" line of `mvn -v`
+export JAVA_HOME=<path to a JDK 25>      # check the "Java version" line of `mvn -v`
+LOG=$(mktemp)
 # Build one bundle (pomless bundles are selected by path or by artifactId):
 mvn -B -pl ui/org.eclipse.pde.core package -DskipTests -Dtycho.baseline.replace=none
 # Run one test class (needs a display; tests run in `verify`):
 GDK_BACKEND=x11 xvfb-run -a mvn -B -pl ui/org.eclipse.pde.ui.tests -am verify \
     -Dtest=DependencyLoopFinderTest -Dsurefire.failIfNoSpecifiedTests=false \
-    -Dtycho.baseline.replace=none > /tmp/build.log 2>&1
-grep -n "Tests run:\|BUILD\|ERROR" /tmp/build.log | tail -30
-grep -c "replaced with the baseline" /tmp/build.log    # must be 0
+    -Dtycho.baseline.replace=none > $LOG 2>&1
+grep -n "Tests run:\|BUILD\|ERROR" $LOG | tail -30
+grep -c "replaced with the baseline" $LOG    # must be 0
 ```
 
 ## Java version
 
-* The build and the forked test runtime require JDK 25 (the I-build bundles require `osgi.ee` `JavaSE` 25); Maven uses `JAVA_HOME` (when set) rather than the `java` on the `PATH`, so check `mvn -v`.
-* With an older JDK Maven fails early (`UnsupportedClassVersionError` for Tycho classes) or UI tests fail with `Could not find the default application "org.eclipse.ui.ide.workbench" in the test runtime`; the real reason is then in `<test bundle>/target/work/data/.metadata/.log` (`Unresolved requirement: ... osgi.ee ... version=25`).
+* The build and the forked test runtime require JDK 25; Maven uses `JAVA_HOME` (when set) rather than the `java` on the `PATH`, so check `mvn -v`.
+* With an older JDK Maven fails early (`UnsupportedClassVersionError` for Tycho classes) or UI tests fail with exit code 200 and `Could not find the default application "org.eclipse.ui.ide.workbench"`; the real reason (e.g. `Unresolved requirement: ... osgi.ee ... version=25`) is in `<test bundle>/target/work/data/.metadata/.log`.
 
 ## `.mvn` configuration (picked up automatically from the repo root)
 
-* `.mvn/extensions.xml`: loads the Tycho build extension (`tycho-build` 5.0.4). Tycho makes the bundles "pomless": there are no per-bundle `pom.xml` files for most bundles, `META-INF/MANIFEST.MF` and `build.properties` are the source of truth.
+* `.mvn/extensions.xml`: loads the Tycho build extension. Tycho makes the bundles "pomless": there are no per-bundle `pom.xml` files for most bundles, `META-INF/MANIFEST.MF` and `build.properties` are the source of truth.
 * `.mvn/maven.config`:
   * `-Pbuild-individual-bundles` resolves dependencies that are not in the reactor from the Eclipse I-build p2 repository and adds the `repository` module.
   * `-Dtycho.localArtifacts=ignore` makes Tycho ignore artifacts of this repository in `~/.m2`. `mvn install` of module A does not make a later `mvn -pl B` see A; both must be in the same reactor invocation.
@@ -41,9 +42,9 @@ grep -c "replaced with the baseline" /tmp/build.log    # must be 0
 
 ## Building a single module (outside the aggregator)
 
-* The root `pom.xml` has `<relativePath>../eclipse-platform-parent</relativePath>`, which does not exist in a standalone checkout; Maven then takes the parent from `~/.m2` or `repo.eclipse.org` (the first build needs network access).
+* The root `pom.xml` has `<relativePath>../eclipse-platform-parent</relativePath>`, which does not exist in a standalone checkout. This is not an error: the parent is resolved from `~/.m2` or `repo.eclipse.org`, and other dependencies via `-Pbuild-individual-bundles`.
 * Select modules by path (`-pl ui/org.eclipse.pde.core`) or artifactId (`-pl :org.eclipse.pde.core`); several can be combined (`-pl :org.eclipse.pde.core,:org.eclipse.pde.ui.tests`).
-* Without `-am`, modules not in `-pl` come from the I-build repository as binaries, not from your working tree.
+* Without `-am`, modules not in `-pl` come from the I-build repository as binaries.
   Changed `ui/org.eclipse.pde.core` and want `org.eclipse.pde.ui.tests` to use it? Build both with `-pl` or use `-am`.
 * With `-am` and `-Dtest=X`, add `-Dsurefire.failIfNoSpecifiedTests=false`, otherwise upstream modules without a matching test fail the build.
 
@@ -51,22 +52,15 @@ grep -c "replaced with the baseline" /tmp/build.log    # must be 0
 
 Symptom: build is green, but your change is not in the jar, so tests and features do not see it.
 
-The parent POM configures `tycho-p2-plugin` with `baselineRepositories` (the I-build repository). In the `package` phase Tycho looks up every bundle by id and version there. If the same `major.minor.micro` exists, the freshly built jar (and `-sources` jar) is silently overwritten by the baseline jar. Verified: for `org.eclipse.pde.core` 3.21.500 the rebuilt jar did not contain the new classes `P2IndexImpl*`.
+The parent POM configures `tycho-p2-plugin` with `baselineRepositories` (the I-build repository). In the `package` phase Tycho looks up every bundle by id and version there. If the same `major.minor.micro` exists, the freshly built jar (and `-sources` jar) is silently overwritten by the baseline jar.
 
-Log output (INFO level, no failure):
-
-```
-[INFO] MavenProject: org.eclipse.pde:org.eclipse.pde.core:3.21.500-SNAPSHOT @ ...
-    The main artifact has been replaced with the baseline version.
-    The following attached artifacts have been replaced with the baseline version: [sources]
-```
-
-Diagnose: `grep -n "replaced with the baseline\|No baseline version" /tmp/build.log`.
+Log output (INFO level, no failure) contains `The main artifact has been replaced with the baseline version.`
+Diagnose: `grep -n "replaced with the baseline\|No baseline version" <log>`.
 
 Fix, pick one:
 
 1. Local work: `-Dtycho.baseline.replace=none` (log has no "replaced" line, jar contains the new classes).
-2. Bump the `Bundle-Version` in `META-INF/MANIFEST.MF` (3.21.500 -> 3.21.600): the log says `No baseline version org.eclipse.pde:org.eclipse.pde.core:eclipse-plugin:3.21.600-SNAPSHOT` and keeps your build.
+2. Bump the `Bundle-Version` in `META-INF/MANIFEST.MF` (e.g. 3.21.500 -> 3.21.600): the log then says `No baseline version ...` and keeps your build.
    Only do this if the bump is a legitimate part of the change (see "API and versions"), never just to run a test.
 
 Does NOT work: `-Dtycho.baseline=disable` (the parent POM hard-codes `<baselineMode>warnCommon</baselineMode>`, which wins over the CLI property), `mvn clean`, `-U` or wiping `~/.m2` (it is not a stale cache).
@@ -76,25 +70,23 @@ Never commit `-Dtycho.baseline.replace=none` into a POM or `.mvn` file; CI relie
 
 * Test bundles are `eclipse-test-plugin`s (e.g. `ui/org.eclipse.pde.ui.tests`, `ui/org.eclipse.pde.junit.runtime.tests`, `build/org.eclipse.pde.build.tests`); they need `verify`.
 * Single class: `-Dtest=<SimpleClassName>`; the default is the bundle's suite (`AllPDETests` for `org.eclipse.pde.ui.tests`), which is very slow, avoid it unless asked.
-* Success proof is the log line `Tests run: 10, Failures: 0, Errors: 0, Skipped: 0` for your class (`DependencyLoopFinderTest`: 10 tests). Reports are in `<bundle>/target/surefire-reports`, the Eclipse log of the test runtime in `<bundle>/target/work/data/.metadata/.log`.
-* The runtime exit code 200 (`Could not find the default application ...`) means the test runtime did not resolve; read the `.metadata/.log`, it contains the unresolved requirement.
-* Network-related tests can fail without internet; judge by whether the failure relates to your change.
+* Success proof is a `Tests run: N, Failures: 0, Errors: 0, Skipped: 0` log line for your class. Reports are in `<bundle>/target/surefire-reports`, the Eclipse log of the test runtime in `<bundle>/target/work/data/.metadata/.log`.
 
 ## Project structure
 
 * `apitools/` API tooling bundles; `ds/` Declarative Services tooling; `ua/` user assistance; `e4tools/` Eclipse 4 tools.
 * `ui/` main PDE bundles: `org.eclipse.pde.core`, `org.eclipse.pde.ui`, launching, junit runtime, spies, bnd integration, tests (`*.tests`).
-* `build/` PDE Build, legacy; only IDE export bugs are fixed there, use Tycho for new build setups.
+* `build/` PDE Build, legacy; use Tycho for new build setups.
 * `features/` features; `org.eclipse.pde.doc.user/` user documentation; `repository/` p2 repository (`category.xml`), part of the reactor via `-Pbuild-individual-bundles`.
 * Bundle layout: `META-INF/MANIFEST.MF`, `build.properties`, `plugin.xml`, `src/`, `.settings/`; usually no `pom.xml` (pomless). Test bundles may have a `pom.xml` with `testClass`/`testSuite` properties.
 
 ## API and versions
 
-* PDE uses API tools (`-Papi-check`, see `docs/API_Tools.md`). Do not break public API (packages not `x-internal`/`internal`); new API needs `@since` with the next bundle version; missing `@since` is an error. Prefer changes in `internal` packages.
+* PDE uses API tools (enable with `-Papi-check`, see `docs/API_Tools.md`). Do not break public API (packages not `x-internal`/`internal`); new API needs `@since` with the next bundle version; missing `@since` is an error. Prefer changes in `internal` packages.
 * API Javadoc tags: `@noimplement`, `@noextend`, `@noreference`, `@noinstantiate`, `@nooverride`, `@category`.
 * Bundle versions follow OSGi semantic versioning: major = breaking, minor = API addition, micro = compatible fix.
-  Version bumps for a release stream are done by the "Eclipse PDE Bot" (`Version bump(s) for 4.42 stream`); do not bump drive-by, except when API changes require it (the `check-versions` PR check reports missing bumps).
-* Dependency version ranges: inclusive lower bound, exclusive upper bound at the next major, e.g. `[1.2.3,2.0.0)`. PDE's own manifest editor and dialogs should help users produce such ranges.
+  Version bumps for a release stream are done by the "Eclipse PDE Bot" (`Version bump(s) for <release> stream`); do not bump drive-by, except when API changes require it (the `check-versions` PR check reports missing bumps).
+* Dependency version ranges: inclusive lower bound, exclusive upper bound at the next major, e.g. `[1.2.3,2.0.0)`.
 
 ## Code and commit style
 
