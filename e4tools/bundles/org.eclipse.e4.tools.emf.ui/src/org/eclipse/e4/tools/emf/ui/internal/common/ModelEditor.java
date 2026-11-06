@@ -1065,7 +1065,7 @@ public class ModelEditor implements IGotoObject {
 			}
 		});
 
-		final int ops = DND.DROP_MOVE;
+		final int ops = DND.DROP_MOVE | DND.DROP_COPY;
 		viewer.addDragSupport(ops, new Transfer[] { MemoryTransfer.getInstance() }, new DragListener(viewer));
 		viewer.addDropSupport(ops, new Transfer[] { MemoryTransfer.getInstance() },
 				new DropListener(viewer, modelProvider.getEditingDomain()));
@@ -1790,6 +1790,7 @@ public class ModelEditor implements IGotoObject {
 
 		@SuppressWarnings("unchecked")
 		public boolean performSingleDrop(Object data) {
+			final boolean copy = getCurrentOperation() == DND.DROP_COPY;
 			if (getCurrentLocation() == LOCATION_ON) {
 				EStructuralFeature feature = null;
 				EObject parent = null;
@@ -1817,6 +1818,7 @@ public class ModelEditor implements IGotoObject {
 				}
 
 				if (feature != null && parent != null) {
+					data = DropPosition.element((EObject) data, parent, feature, copy);
 					final Command cmd = createRemoveAddCommand(data, feature, parent, CommandParameter.NO_INDEX);
 					if (cmd.canExecute()) {
 						domain.getCommandStack().execute(cmd);
@@ -1856,18 +1858,9 @@ public class ModelEditor implements IGotoObject {
 					}
 				}
 
-				if (feature == FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS && parent != null) {
-					final MApplicationElement el = (MApplicationElement) EcoreUtil.create(((EObject) data).eClass());
-					el.setElementId(((MApplicationElement) data).getElementId());
-					final Command cmd = AddCommand.create(domain, parent, feature, el);
-					if (cmd.canExecute()) {
-						domain.getCommandStack().execute(cmd);
-					}
-					return true;
-				}
-
 				if (feature != null && parent != null && parent.eGet(feature) instanceof List<?>) {
 					final List<Object> list = (List<Object>) parent.eGet(feature);
+					data = DropPosition.element((EObject) data, parent, feature, copy);
 					final int current = list.indexOf(data);
 					int index = DropPosition.index(list.indexOf(getCurrentTarget()),
 							getCurrentLocation() == LOCATION_AFTER, current);
@@ -1886,11 +1879,6 @@ public class ModelEditor implements IGotoObject {
 							return true;
 						}
 					} else {
-						// Moving between different sources is always a copy
-						if (parent.eResource() != ((EObject) data).eResource()) {
-							data = EcoreUtil.copy((EObject) data);
-						}
-
 						final Command cmd = createRemoveAddCommand(data, feature, parent, index);
 						if (cmd.canExecute()) {
 							domain.getCommandStack().execute(cmd);
