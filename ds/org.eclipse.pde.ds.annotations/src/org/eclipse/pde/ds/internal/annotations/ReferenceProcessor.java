@@ -574,6 +574,16 @@ public class ReferenceProcessor {
 
 		String service = serviceType == null ? null : serviceType.getBinaryName();
 
+		// Logger/FormatterLogger field injection which is a shorthand feature available
+		// only in DS ≥ 1.4.
+		// implicit: @Reference Logger log where no service is declared specifically.
+		// explicit: @Reference(service=LoggerFactory.class) where service is
+		// LoggerFactory.
+		if (serviceType != null && (serviceProperty == null ? isLoggerInjectionFieldType(fieldType)
+				: isLoggerServiceAssignment(fieldType, serviceType))) {
+			requiredVersion = DSAnnotationVersion.V1_4.max(requiredVersion);
+		}
+
 		String fieldCollectionType = DSAnnotationVersion.V1_4.isEqualOrHigherThan(specVersion)
 				? getCollectionType(params)
 				: null;
@@ -1235,17 +1245,39 @@ public class ReferenceProcessor {
 			// thats easy...
 			return true;
 		}
-		if (DSAnnotationVersion.V1_4.isEqualOrHigherThan(specVersion)) {
-			String serviceErasuer = serviceType.getErasure().getBinaryName();
-			if ("org.osgi.service.log.LoggerFactory".equals(serviceErasuer)) {
-				String fieldErasure = targetType.getErasure().getBinaryName();
-				if ("org.osgi.service.log.Logger".equals(fieldErasure)
-						|| "org.osgi.service.log.FormatterLogger".equals(fieldErasure)) {
-					// valid per specification...
-					return true;
-				}
-			}
+		if (DSAnnotationVersion.V1_4.isEqualOrHigherThan(specVersion)
+				&& isLoggerServiceAssignment(targetType, serviceType)) {
+			// LoggerFactory can be used as the service type for Logger and FormatterLogger
+			// references starting with DS 1.4.
+			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Returns true if {@code serviceType} is LoggerFactory and {@code targetType}
+	 * is either Logger or FormatterLogger. This identifies the field types used for
+	 * explicit logger injection, such as
+	 * {@code @Reference(service=LoggerFactory.class)Logger log}.
+	 */
+	private static boolean isLoggerServiceAssignment(ITypeBinding targetType, ITypeBinding serviceType) {
+		String serviceErasure = serviceType.getErasure().getBinaryName();
+		if ("org.osgi.service.log.LoggerFactory".equals(serviceErasure)) { //$NON-NLS-1$
+			String targetErasure = targetType.getErasure().getBinaryName();
+			return "org.osgi.service.log.Logger".equals(targetErasure) //$NON-NLS-1$
+					|| "org.osgi.service.log.FormatterLogger".equals(targetErasure); //$NON-NLS-1$
+		}
+		return false;
+	}
+
+	/**
+	 * Returns true if {@code fieldType} is either Logger or FormatterLogger. This
+	 * identifies the field types used for implicit logger injection, such as
+	 * {@code @Reference Logger log}.
+	 */
+	private static boolean isLoggerInjectionFieldType(ITypeBinding fieldType) {
+		String erasure = fieldType.getErasure().getBinaryName();
+		return "org.osgi.service.log.Logger".equals(erasure) //$NON-NLS-1$
+				|| "org.osgi.service.log.FormatterLogger".equals(erasure); //$NON-NLS-1$
 	}
 }
