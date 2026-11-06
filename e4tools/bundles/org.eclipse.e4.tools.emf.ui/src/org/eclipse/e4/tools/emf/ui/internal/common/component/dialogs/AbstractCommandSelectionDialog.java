@@ -14,8 +14,6 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +28,10 @@ import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.LocalResourceManager;
+import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -73,14 +75,9 @@ public abstract class AbstractCommandSelectionDialog extends SaveDialogBoundsSet
 		setTitle(getDialogTitle());
 		setMessage(getDialogMessage());
 
-		try (InputStream resourceStream = getClass().getClassLoader()
-				.getResourceAsStream("/icons/full/wizban/newexp_wiz.png")) { //$NON-NLS-1$
-			final Image titleImage = new Image(composite.getDisplay(), resourceStream);
-			setTitleImage(titleImage);
-			getShell().addDisposeListener(e -> titleImage.dispose());
-		} catch (IOException ex) {
-			throw new RuntimeException(ex);
-		}
+		final ResourceManager resources = new LocalResourceManager(JFaceResources.getResources(), getShell());
+		setTitleImage(resources.create(
+				ImageDescriptor.createFromFile(AbstractCommandSelectionDialog.class, "/icons/full/wizban/newexp_wiz.png"))); //$NON-NLS-1$
 
 		final Composite container = new Composite(composite, SWT.NONE);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));

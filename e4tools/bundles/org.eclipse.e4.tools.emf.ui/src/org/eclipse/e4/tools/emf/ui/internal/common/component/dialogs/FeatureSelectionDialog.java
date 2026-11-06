@@ -34,6 +34,10 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.LocalResourceManager;
+import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -82,23 +86,15 @@ public class FeatureSelectionDialog extends SaveDialogBoundsSettingsDialog {
 
 		final Composite composite = (Composite) super.createDialogArea(parent);
 
-		final Image packageImage = new Image(getShell().getDisplay(), getClass().getClassLoader().getResourceAsStream(
-				"/icons/full/obj16/EPackage.gif")); //$NON-NLS-1$
-		final Image classImage = new Image(getShell().getDisplay(), getClass().getClassLoader().getResourceAsStream(
-				"/icons/full/obj16/class_obj.png")); //$NON-NLS-1$
-		final Image featureImage = new Image(getShell().getDisplay(), getClass().getClassLoader().getResourceAsStream(
-				"/icons/full/obj16/field_public_obj.gif")); //$NON-NLS-1$
-		final Image newTitleImage = new Image(getShell().getDisplay(), getClass().getClassLoader().getResourceAsStream(
-				"/icons/full/wizban/fieldrefact_wiz.png")); //$NON-NLS-1$
-
-		setTitleImage(newTitleImage);
-
-		composite.addDisposeListener(e -> {
-			packageImage.dispose();
-			classImage.dispose();
-			featureImage.dispose();
-			newTitleImage.dispose();
-		});
+		final ResourceManager resources = new LocalResourceManager(JFaceResources.getResources(), composite);
+		final Image packageImage = resources
+				.create(ImageDescriptor.createFromFile(FeatureSelectionDialog.class, "/icons/full/obj16/EPackage.gif")); //$NON-NLS-1$
+		final Image classImage = resources
+				.create(ImageDescriptor.createFromFile(FeatureSelectionDialog.class, "/icons/full/obj16/class_obj.png")); //$NON-NLS-1$
+		final Image featureImage = resources.create(
+				ImageDescriptor.createFromFile(FeatureSelectionDialog.class, "/icons/full/obj16/field_public_obj.gif")); //$NON-NLS-1$
+		setTitleImage(resources.create(
+				ImageDescriptor.createFromFile(FeatureSelectionDialog.class, "/icons/full/wizban/fieldrefact_wiz.png"))); //$NON-NLS-1$
 
 		final Composite container = new Composite(composite, SWT.NONE);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));

@@ -40,6 +40,10 @@ import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.fieldassist.AutoCompleteField;
 import org.eclipse.jface.fieldassist.ComboContentAdapter;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.LocalResourceManager;
+import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -58,7 +62,6 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -115,10 +118,9 @@ public class FindParentReferenceElementDialog extends SaveDialogBoundsSettingsDi
 	protected Control createDialogArea(Composite parent) {
 		final Composite comp = (Composite) super.createDialogArea(parent);
 
-		final Image titleImage = new Image(parent.getDisplay(),
-				getClass().getClassLoader().getResourceAsStream("/icons/full/wizban/import_wiz.png")); //$NON-NLS-1$
-		setTitleImage(titleImage);
-		getShell().addDisposeListener(e -> titleImage.dispose());
+		final ResourceManager resources = new LocalResourceManager(JFaceResources.getResources(), getShell());
+		setTitleImage(resources.create(
+				ImageDescriptor.createFromFile(FindParentReferenceElementDialog.class, "/icons/full/wizban/import_wiz.png"))); //$NON-NLS-1$
 
 		getShell().setText(Messages.FindParentReferenceElementDialog_ShellTitle);
 		setTitle(Messages.FindParentReferenceElementDialog_Title);
@@ -171,9 +173,8 @@ public class FindParentReferenceElementDialog extends SaveDialogBoundsSettingsDi
 		new AutoCompleteField(combo, textContentAdapter, values);
 
 		Label help = new Label(parentForCombo, SWT.NONE);
-		final Image helpImage = new Image(parent.getDisplay(),
-				getClass().getClassLoader().getResourceAsStream("/icons/full/obj16/missing_image_placeholder.png")); //$NON-NLS-1$
-		help.setImage(helpImage);
+		help.setImage(resources.create(ImageDescriptor.createFromFile(FindParentReferenceElementDialog.class,
+				"/icons/full/obj16/missing_image_placeholder.png"))); //$NON-NLS-1$
 		help.setToolTipText(Messages.FindParentReferenceElementDialog_HelpTooltip);
 
 		l = new Label(container, SWT.NONE);

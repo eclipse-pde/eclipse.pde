@@ -34,6 +34,10 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.TableKeyNav
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.E;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.LocalResourceManager;
+import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
@@ -72,7 +76,6 @@ public class FindContributionDialog extends TitleAreaDialog {
 	private final String bundleFilter;
 	private final Bundle bundle;
 	private final String mode;
-	private Image titleImage;
 	private String platformUri;
 
 	public FindContributionDialog(IEclipseContext context) {
@@ -97,6 +100,7 @@ public class FindContributionDialog extends TitleAreaDialog {
 		// TODO param
 		getShell().setText(Messages.ContributionClassDialog_ShellTitle);
 
+		final ResourceManager resources = new LocalResourceManager(JFaceResources.getResources(), getShell());
 		if ("show-bundles".equals(mode)) { //$NON-NLS-1$
 			// TODO create icon
 		} else if ("show-packages".equals(mode)) { //$NON-NLS-1$
@@ -104,18 +108,12 @@ public class FindContributionDialog extends TitleAreaDialog {
 		} else if ("show-icons".equals(mode)) { //$NON-NLS-1$
 			// TODO create icon
 		} else {
-			titleImage = new Image(comp.getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/full/wizban/newclass_wiz.png")); //$NON-NLS-1$
-			setTitleImage(titleImage);
+			setTitleImage(resources.create(
+					ImageDescriptor.createFromFile(FindContributionDialog.class, "/icons/full/wizban/newclass_wiz.png"))); //$NON-NLS-1$
 		}
 
-		getShell().addDisposeListener(e -> {
-			javaClassImage.dispose();
-			if (titleImage != null) {
-				titleImage.dispose();
-			}
-		});
-
-		javaClassImage = new Image(getShell().getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/full/obj16/class_obj.png")); //$NON-NLS-1$
+		javaClassImage = resources
+				.create(ImageDescriptor.createFromFile(FindContributionDialog.class, "/icons/full/obj16/class_obj.png")); //$NON-NLS-1$
 
 		Composite container = new Composite(comp, SWT.NONE);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));

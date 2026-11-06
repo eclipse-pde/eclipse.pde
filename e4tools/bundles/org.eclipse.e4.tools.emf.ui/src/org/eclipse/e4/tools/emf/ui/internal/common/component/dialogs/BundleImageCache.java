@@ -13,14 +13,14 @@
  *******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.services.IResourcePool;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
@@ -64,7 +64,7 @@ public class BundleImageCache {
 	public Image create(String path) {
 		Image img;
 		try {
-			img = new Image(display, classloader.getResourceAsStream(path));
+			img = createImage(classloader.getResource(path));
 			images.add(img);
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -93,14 +93,19 @@ public class BundleImageCache {
 
 	protected Image getPlaceholder() {
 		if (imgPlaceholder == null) {
-			try (InputStream resourceStream = classloader
-					.getResourceAsStream("/icons/full/obj16/missing_image_placeholder.png")) { //$NON-NLS-1$
-				imgPlaceholder = new Image(display, resourceStream);
-			} catch (IOException ex) {
-				throw new RuntimeException(ex);
-			}
+			imgPlaceholder = ImageDescriptor
+					.createFromURL(classloader.getResource("/icons/full/obj16/missing_image_placeholder.png")) //$NON-NLS-1$
+					.createImage(display);
 		}
 		return imgPlaceholder;
+	}
+
+	private Image createImage(URL url) {
+		final Image img = url == null ? null : ImageDescriptor.createFromURL(url).createImage(false, display);
+		if (img == null) {
+			throw new IllegalArgumentException("Image not found: " + url); //$NON-NLS-1$
+		}
+		return img;
 	}
 
 	public void dispose() {
@@ -123,7 +128,7 @@ public class BundleImageCache {
 		}
 		Image img;
 		try {
-			img = new Image(display, new URL("platform:/plugin/" + bundleId + path).openStream()); //$NON-NLS-1$
+			img = createImage(URI.create("platform:/plugin/" + bundleId + path).toURL()); //$NON-NLS-1$
 			images.add(img);
 		} catch (final Exception e) {
 			e.printStackTrace();
