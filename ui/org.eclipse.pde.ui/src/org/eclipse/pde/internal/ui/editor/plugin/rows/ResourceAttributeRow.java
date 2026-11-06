@@ -25,7 +25,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
@@ -33,14 +32,11 @@ import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.IContextPart;
+import org.eclipse.pde.internal.ui.util.BundleResourceLocator;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IPageLayout;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.part.ISetSelectionTarget;
 
 public class ResourceAttributeRow extends ButtonAttributeRow {
 	public ResourceAttributeRow(IContextPart part, ISchemaAttribute att) {
@@ -54,69 +50,17 @@ public class ResourceAttributeRow extends ButtonAttributeRow {
 
 	@Override
 	protected void openReference() {
-		IResource file = getFile();
-		boolean successful = false;
-		if (file instanceof IFile) {
-			successful = openFile((IFile) file);
-		} else if (file instanceof IContainer) {
-			successful = openContainer((IContainer) file);
-		}
-		if (!successful) {
+		if (!BundleResourceLocator.open(getProject(), text.getText())) {
 			Display.getCurrent().beep();
 		}
 	}
 
-	private boolean openFile(IFile file) {
-		if (file != null && file.exists()) {
-			try {
-				IDE.openEditor(PDEPlugin.getActivePage(), file, true);
-			} catch (PartInitException e) {
-				PDEPlugin.logException(e);
-				return false;
-			}
-			return true;
-		}
-		file = getNLFile();
-		if (file != null && file.exists()) {
-			try {
-				IDE.openEditor(PDEPlugin.getActivePage(), file, true);
-			} catch (PartInitException e) {
-				PDEPlugin.logException(e);
-				return false;
-			}
-			return true;
-		}
-		return false;
-	}
-
-	private boolean openContainer(IContainer container) {
-		if (container != null && container.exists()) {
-			try {
-				ISetSelectionTarget part = (ISetSelectionTarget)PDEPlugin.getActivePage().showView(IPageLayout.ID_PROJECT_EXPLORER);
-				part.selectReveal(new StructuredSelection(container));
-			} catch (PartInitException e) {
-				return false;
-			}
-		}
-		return true;
-	}
-
+	/**
+	 * Returns the workspace resource the current value points at, which the browse
+	 * dialog uses as its initial selection.
+	 */
 	private IResource getFile() {
-		String value = text.getText();
-		if (value.length() == 0) {
-			return null;
-		}
-		IPath path = getProject().getFullPath().append(value);
-		return getProject().getWorkspace().getRoot().findMember(path);
-	}
-
-	private IFile getNLFile() {
-		String value = text.getText();
-		if (value.length() <= 5 || !value.startsWith("$nl$/")) { //$NON-NLS-1$
-			return null;
-		}
-		IPath path = getProject().getFullPath().append(value.substring(5));
-		return getProject().getWorkspace().getRoot().getFile(path);
+		return BundleResourceLocator.findWorkspaceResource(getProject(), text.getText());
 	}
 
 	@Override
