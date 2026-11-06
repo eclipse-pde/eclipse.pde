@@ -35,10 +35,8 @@ grep -c "replaced with the baseline" /tmp/build.log    # must be 0
 
 * `.mvn/extensions.xml`: loads the Tycho build extension (`tycho-build` 5.0.4). Tycho makes the bundles "pomless": there are no per-bundle `pom.xml` files for most bundles, `META-INF/MANIFEST.MF` and `build.properties` are the source of truth.
 * `.mvn/maven.config`:
-  * `-Pbuild-individual-bundles` resolves dependencies that are not in the reactor from the Eclipse I-build p2 repository (`https://download.eclipse.org/eclipse/updates/4.42-I-builds`) and adds the `repository` module.
-  * `-DtrimStackTrace=false` keeps full stack traces in surefire reports.
+  * `-Pbuild-individual-bundles` resolves dependencies that are not in the reactor from the Eclipse I-build p2 repository and adds the `repository` module.
   * `-Dtycho.localArtifacts=ignore` makes Tycho ignore artifacts of this repository in `~/.m2`. `mvn install` of module A does not make a later `mvn -pl B` see A; both must be in the same reactor invocation.
-* There is no `.mvn/jvm.config`.
 * Do not edit these files to work around a problem, pass `-D`/`-P` options on the command line.
 
 ## Building a single module (outside the aggregator)
@@ -47,9 +45,7 @@ grep -c "replaced with the baseline" /tmp/build.log    # must be 0
 * Select modules by path (`-pl ui/org.eclipse.pde.core`) or artifactId (`-pl :org.eclipse.pde.core`); several can be combined (`-pl :org.eclipse.pde.core,:org.eclipse.pde.ui.tests`).
 * Without `-am`, modules not in `-pl` come from the I-build repository as binaries, not from your working tree.
   Changed `ui/org.eclipse.pde.core` and want `org.eclipse.pde.ui.tests` to use it? Build both with `-pl` or use `-am`.
-* `-pl <test bundle> -am` builds ~10 upstream bundles for `org.eclipse.pde.ui.tests` (roughly twice as slow).
-* With `-am` and `-Dtest=X`, upstream modules without a matching test fail, so add `-Dsurefire.failIfNoSpecifiedTests=false`.
-* Whole-repo `mvn clean verify` is what CI runs and is much slower.
+* With `-am` and `-Dtest=X`, add `-Dsurefire.failIfNoSpecifiedTests=false`, otherwise upstream modules without a matching test fail the build.
 
 ## Baseline replacement (the main trap)
 
@@ -80,7 +76,6 @@ Never commit `-Dtycho.baseline.replace=none` into a POM or `.mvn` file; CI relie
 
 * Test bundles are `eclipse-test-plugin`s (e.g. `ui/org.eclipse.pde.ui.tests`, `ui/org.eclipse.pde.junit.runtime.tests`, `build/org.eclipse.pde.build.tests`); they need `verify`.
 * Single class: `-Dtest=<SimpleClassName>`; the default is the bundle's suite (`AllPDETests` for `org.eclipse.pde.ui.tests`), which is very slow, avoid it unless asked.
-* The commands in this file are for Linux. UI tests need a display. CI uses `xvnc`; locally use `GDK_BACKEND=x11 xvfb-run -a mvn ...` or a real `DISPLAY`.
 * Success proof is the log line `Tests run: 10, Failures: 0, Errors: 0, Skipped: 0` for your class (`DependencyLoopFinderTest`: 10 tests). Reports are in `<bundle>/target/surefire-reports`, the Eclipse log of the test runtime in `<bundle>/target/work/data/.metadata/.log`.
 * The runtime exit code 200 (`Could not find the default application ...`) means the test runtime did not resolve; read the `.metadata/.log`, it contains the unresolved requirement.
 * Network-related tests can fail without internet; judge by whether the failure relates to your change.
@@ -91,16 +86,7 @@ Never commit `-Dtycho.baseline.replace=none` into a POM or `.mvn` file; CI relie
 * `ui/` main PDE bundles: `org.eclipse.pde.core`, `org.eclipse.pde.ui`, launching, junit runtime, spies, bnd integration, tests (`*.tests`).
 * `build/` PDE Build, legacy; only IDE export bugs are fixed there, use Tycho for new build setups.
 * `features/` features; `org.eclipse.pde.doc.user/` user documentation; `repository/` p2 repository (`category.xml`), part of the reactor via `-Pbuild-individual-bundles`.
-* `docs/` API tools, FAQ, user guide; `releng/` Oomph setup (IDE setup: `https://raw.githubusercontent.com/eclipse-pde/eclipse.pde/master/releng/org.eclipse.pde.setup/PDEConfiguration.setup`).
 * Bundle layout: `META-INF/MANIFEST.MF`, `build.properties`, `plugin.xml`, `src/`, `.settings/`; usually no `pom.xml` (pomless). Test bundles may have a `pom.xml` with `testClass`/`testSuite` properties.
-
-## CI
-
-* `.github/workflows/ci.yml`: license check (dash) and the shared aggregator workflow with `clean verify -Ptck`.
-* `.github/workflows/pr-checks.yml`: freeze period, no merge commits, version increments (bot "Eclipse PDE Bot").
-* `Jenkinsfile`: JDK 25 under `xvnc`, runs `mvn clean verify` with `-Pbree-libs -Papi-check -Pjavadoc -Ptck`; 60 minute limit.
-  New compiler warnings (`**/target/compilelogs/*.xml`), API issues (`**/target/apianalysis/*.xml`), Javadoc errors or Maven console issues make the build unstable.
-* Further workflows are in `.github/workflows/`.
 
 ## API and versions
 
@@ -115,8 +101,6 @@ Never commit `-Dtycho.baseline.replace=none` into a POM or `.mvn` file; CI relie
 Follow the surrounding code first; keep every change small and focused on the task.
 
 * **Commits** (prevailing style in the history, not enforced):
-  * Do not commit on your own initiative. Finish the task and suggest a commit message to the user.
-  * If asked to commit, show the message first unless told to go ahead.
   * Subject: imperative, at most ~72 characters, no trailing period, no prefixes (e.g. `Remove invisible text from SVG icon`, `Fix resolution of constants in lists for component property types`).
   * Body: always for non-trivial changes; explain *why* (problem, motivation, effect), not what the diff does; wrap at ~72 characters.
   * Reference issues as `Fixes https://github.com/eclipse-pde/eclipse.pde/issues/<n>` (or `Relates to ...`/`See ...`). Issues of other projects use their full URL.
@@ -136,9 +120,9 @@ Follow the surrounding code first; keep every change small and focused on the ta
 This project follows the [Eclipse Foundation Generative AI usage guidelines](https://www.eclipse.org/projects/handbook/#genai).
 The human committer stays responsible for everything that is contributed; make that easy for them:
 
-* **Transparency:** disclose AI involvement with the `Assisted-by:` commit trailer (format above).
+* **Transparency:** disclose AI involvement with the `Assisted-by:` commit trailer (see "Code and commit style").
   For new files that are largely or entirely AI-generated, ask the user whether the handbook's header with the "AI Disclosure" note (`SPDX-License-Identifier: EPL-2.0 and CC0-1.0`) should be used; the copyright holder is the responsible human, never invent a name.
 * **Verification:** the output must be reviewable and verified. Run the relevant tests, do not claim success without evidence, and point out what you did not verify.
 * **IP cleanliness:** do not copy code from other projects or from memory of other sources; write it yourself or stop and ask. Do not add third-party dependencies, bundled libraries or binaries without the user's explicit agreement, they require IP due diligence.
 * **Confidentiality:** do not put secrets, credentials, personal data or other confidential content into code, commits, logs or issues.
-* **No autonomous publishing:** do not push, open or merge pull requests, or write to issue trackers on your own; a human reviews and submits.
+* **Review before publishing:** pushing, opening pull requests or commenting on issues is fine, but only after the human has explicitly confirmed that they reviewed the result and that these guidelines were followed. If nobody is available to confirm (autonomous run), keep the work local and report what is ready.
