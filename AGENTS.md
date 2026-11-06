@@ -1,141 +1,123 @@
-# Eclipse PDE - AI Coding Agent Instructions
+# Eclipse PDE - Agent Instructions
 
-## Repository Overview
+Guidance for AI agents building, testing and changing this repository (Tycho/Maven based).
 
-**Eclipse PDE** provides Eclipse tooling for developing OSGi bundles and RCP applications. ~150MB, 384 bundles, 8 modules.
+## Rules
 
-**Stack:** Maven 3.3.1+ with Tycho 4.0.13, Java 17+ (CI: JDK 21), OSGi/Eclipse RCP, Tycho Surefire tests.
+* Always use Maven (`mvn`), online, with `package` or `verify`. Never `compile` only, never `-o`, no hand-rolled `javac`.
+* Maven and the forked test runtime must run on JDK 25 (see "Java version").
+* Always pass `-Dtycho.baseline.replace=none` when you want to see your own changes (see "Baseline replacement").
+* Tests run in the `verify` phase (`eclipse-test-plugin`), `mvn test` runs nothing.
+* Redirect Maven output to a file and grep it; a run prints many `Resolving MavenDependencyRoots` lines.
+* Modules not in the reactor come from the I-build repository, not from your working tree (see "Building a single module").
+* If your change has no effect: check `mvn -v`, that `replaced with the baseline` does not occur in the log, that changed bundle and tested module are in the reactor (`grep -n -A15 "Reactor Summary" <log>`), and that a `Tests run:` line for your class exists.
 
-**Critical:** Requires `eclipse-platform-parent` POM from Eclipse Platform aggregator. Standalone `mvn clean verify` will fail with parent resolution errors - this is expected.
+## Quick start (commands)
 
-## Build & Test
-
-**Prerequisites:** Maven 3.3.1+, JDK 17+ (CI: JDK 21), display server for UI tests (xvnc/Xvfb)
-
-**CI Build (from Jenkinsfile):**
-```bash
-mvn clean verify -Dmaven.repo.local=$WORKSPACE/.m2/repository \
-    --fail-at-end --batch-mode --no-transfer-progress \
-    -Pbree-libs -Papi-check -Pjavadoc -Ptck \
-    -Dmaven.test.failure.ignore=true \
-    -Dcompare-version-with-baselines.skip=false
+```sh
+export JAVA_HOME=<path to a JDK 25>      # check the "Java version" line of `mvn -v`
+LOG=$(mktemp)
+# Build one bundle (pomless bundles are selected by path or by artifactId):
+mvn -B -pl ui/org.eclipse.pde.core package -DskipTests -Dtycho.baseline.replace=none
+# Run one test class (needs a display; tests run in `verify`):
+GDK_BACKEND=x11 xvfb-run -a mvn -B -pl ui/org.eclipse.pde.ui.tests -am verify \
+    -Dtest=DependencyLoopFinderTest -Dsurefire.failIfNoSpecifiedTests=false \
+    -Dtycho.baseline.replace=none > $LOG 2>&1
+grep -n "Tests run:\|BUILD\|ERROR" $LOG | tail -30
+grep -c "replaced with the baseline" $LOG    # must be 0
 ```
 
-**Profiles:** `-Pbree-libs` (BREE check), `-Papi-check` (API baseline), `-Pjavadoc` (docs), `-Ptck` (TCK tests)
+## Java version
 
-**Maven Config (`.mvn/`):** Tycho 4.0.13 extension, `-Pbuild-individual-bundles`, `-DtrimStackTrace=false`
+* The build and the forked test runtime require JDK 25; Maven uses `JAVA_HOME` (when set) rather than the `java` on the `PATH`, so check `mvn -v`.
+* With an older JDK Maven fails early (`UnsupportedClassVersionError` for Tycho classes) or UI tests fail with exit code 200 and `Could not find the default application "org.eclipse.ui.ide.workbench"`; the real reason (e.g. `Unresolved requirement: ... osgi.ee ... version=25`) is in `<test bundle>/target/work/data/.metadata/.log`.
 
-### Running Specific Tests Locally
+## `.mvn` configuration (picked up automatically from the repo root)
 
-Always use `mvn verify` (NOT `mvn test`): Tycho binds tests to the `integration-test` phase, so `mvn test` runs nothing.
+* `.mvn/extensions.xml`: loads the Tycho build extension. Tycho makes the bundles "pomless": there are no per-bundle `pom.xml` files for most bundles, `META-INF/MANIFEST.MF` and `build.properties` are the source of truth.
+* `.mvn/maven.config`:
+  * `-Pbuild-individual-bundles` resolves dependencies that are not in the reactor from the Eclipse I-build p2 repository and adds the `repository` module.
+  * `-Dtycho.localArtifacts=ignore` makes Tycho ignore artifacts of this repository in `~/.m2`. `mvn install` of module A does not make a later `mvn -pl B` see A; both must be in the same reactor invocation.
+* Do not edit these files to work around a problem, pass `-D`/`-P` options on the command line.
 
-**One test bundle** via `-pl` (artifact selector):
-```bash
-mvn verify -pl :org.eclipse.pde.ui.tests -Pbuild-individual-bundles
-```
+## Building a single module (outside the aggregator)
 
-**A single test class** via `-Dtest=<ClassName>`, which overrides the bundle's default suite (e.g. `AllPDETests`):
-```bash
-mvn verify -pl :org.eclipse.pde.ui.tests -Pbuild-individual-bundles -Dtest=DependencyLoopFinderTest
-```
+* The root `pom.xml` has `<relativePath>../eclipse-platform-parent</relativePath>`, which does not exist in a standalone checkout. This is not an error: the parent is resolved from `~/.m2` or `repo.eclipse.org`, and other dependencies via `-Pbuild-individual-bundles`.
+* Select modules by path (`-pl ui/org.eclipse.pde.core`) or artifactId (`-pl :org.eclipse.pde.core`); several can be combined (`-pl :org.eclipse.pde.core,:org.eclipse.pde.ui.tests`).
+* Without `-am`, modules not in `-pl` come from the I-build repository as binaries.
+  Changed `ui/org.eclipse.pde.core` and want `org.eclipse.pde.ui.tests` to use it? Build both with `-pl` or use `-am`.
+* Features are modules too: tests that use a feature (e.g. via a test product) need that feature in the reactor (`-pl` / `-am`) to see your changes, and a changed bundle in a feature may require the feature to be built as well.
+  This is rare and hard to reason about; when in doubt run a full build (slower, but its log is more telling than speculating why a change has no effect).
+* With `-am` and `-Dtest=X`, add `-Dsurefire.failIfNoSpecifiedTests=false`, otherwise upstream modules without a matching test fail the build.
 
-**Changed production code too?** Build the source bundle alongside its test bundle:
-```bash
-mvn verify -pl :org.eclipse.pde.core,:org.eclipse.pde.ui.tests -Pbuild-individual-bundles
-```
+## Baseline replacement (the main trap)
 
-**Headless (Wayland-safe):** pin the GTK backend to X11 so the UI test harness renders on Xvfb instead of the real compositor:
-```bash
-GDK_BACKEND=x11 xvfb-run -a mvn verify -pl :org.eclipse.pde.ui.tests -Pbuild-individual-bundles -Dtest=DependencyLoopFinderTest
-```
+Symptom: build is green, but your change is not in the jar, so tests and features do not see it.
 
-The first run downloads the target platform from p2, so it needs network access; running offline (`-o`) only works once those artifacts are cached.
+The parent POM configures `tycho-p2-plugin` with `baselineRepositories` (the I-build repository). In the `package` phase Tycho looks up every bundle by id and version there. If the same `major.minor.micro` exists, the freshly built jar (and `-sources` jar) is silently overwritten by the baseline jar.
 
-**Tests:** ~1,045 test files. Results: `**/target/surefire-reports/*.xml`. UI tests need display server.
+Log output (INFO level, no failure) contains `The main artifact has been replaced with the baseline version.`
+Diagnose: `grep -n "replaced with the baseline\|No baseline version" <log>`.
 
-**Artifacts:** `repository/target/repository/` (P2 site), `**/target/compilelogs/` (compile), `**/target/apianalysis/*.xml` (API)
+Fix, pick one:
 
-**Timeout:** CI build limit is 60 minutes.
+1. Local work: `-Dtycho.baseline.replace=none` (log has no "replaced" line, jar contains the new classes).
+2. Bump the version of the bundle (or feature) when the change actually needs one (see "API and versions"): the log then says `No baseline version ...` and keeps your build.
+   Never bump just to run a test.
 
-## Project Structure
+Does NOT work: `-Dtycho.baseline=disable` (the parent POM hard-codes `<baselineMode>warnCommon</baselineMode>`, which wins over the CLI property), `mvn clean`, `-U` or wiping `~/.m2` (it is not a stale cache).
+Never commit `-Dtycho.baseline.replace=none` into a POM or `.mvn` file; CI relies on the baseline.
 
-**8 Top-Level Modules (pom.xml):**
-- `apitools/` - API analysis, baseline checking (4 bundles including tests)
-- `ui/` - Main PDE UI (26 bundles: core, editors, launching, tests, spy tools)
-- `build/` - PDE Build (legacy, maintenance mode - use Tycho instead)
-- `ds/` - Declarative Services tooling
-- `e4tools/` - Eclipse 4 tools
-- `ua/` - User Assistance
-- `features/` - 6 feature definitions
-- `org.eclipse.pde.doc.user/` - Documentation
-- `repository/` - P2 repository (not in default build)
+## Running tests
 
-**Root Files:** `pom.xml` (parent: eclipse-platform-parent:4.38.0-SNAPSHOT), `Jenkinsfile`, `.mvn/` config, `prepareNextDevCycle.sh`
+* Test bundles are `eclipse-test-plugin`s (e.g. `ui/org.eclipse.pde.ui.tests`, `ui/org.eclipse.pde.junit.runtime.tests`, `build/org.eclipse.pde.build.tests`); they need `verify`.
+* Single class: `-Dtest=<SimpleClassName>`; the default is the bundle's suite (`AllPDETests` for `org.eclipse.pde.ui.tests`), which is very slow, avoid it unless asked.
+* Success proof is a `Tests run: N, Failures: 0, Errors: 0, Skipped: 0` log line for your class. Reports are in `<bundle>/target/surefire-reports`, the Eclipse log of the test runtime in `<bundle>/target/work/data/.metadata/.log`.
 
-**Bundle Structure:** `META-INF/MANIFEST.MF`, `build.properties`, `plugin.xml`, `src/`, `.project`, `pom.xml`
+## Project structure
 
-## CI/CD & Quality Gates
+* `apitools/` API tooling bundles; `ds/` Declarative Services tooling; `ua/` user assistance; `e4tools/` Eclipse 4 tools.
+* `ui/` main PDE bundles: `org.eclipse.pde.core`, `org.eclipse.pde.ui`, launching, junit runtime, spies, bnd integration, tests (`*.tests`).
+* `build/` PDE Build, legacy; use Tycho for new build setups.
+* `features/` features; `org.eclipse.pde.doc.user/` user documentation; `repository/` p2 repository (`category.xml`), part of the reactor via `-Pbuild-individual-bundles`.
+* Bundle layout: `META-INF/MANIFEST.MF`, `build.properties`, `plugin.xml`, `src/`, `.settings/`; usually no `pom.xml` (pomless). Test bundles may have a `pom.xml` with `testClass`/`testSuite` properties.
 
-**GitHub Workflows (.github/workflows/):**
-- `ci.yml` - Main build (triggers: push/PR to master): license check + `mvn clean verify -Ptck`
-- `pr-checks.yml` - PR validations: freeze period, no merge commits, version increments (bot: "Eclipse PDE Bot")
-- `unit-tests.yml` - Publishes test results
-- `version-increments.yml` - Publishes version check results
-- `checkDependencies.yml` - Daily dependency range validation
-- `codeql.yml`, `htmlvalidator.yml`, `licensecheck.yml`, `doCleanCode.yml` - Additional checks
+## API and versions
 
-**Quality Gates (Jenkinsfile):** Compiler warnings (`**/target/compilelogs/*.xml`), API issues (`**/target/apianalysis/*.xml`), Maven console, Javadoc errors. Threshold: 1 NEW issue → unstable.
+* PDE uses API tools (enable with `-Papi-check`, see `docs/API_Tools.md`). Do not break public API (packages not `x-internal`/`internal`); new API needs `@since` with the next bundle version; missing `@since` is an error. Prefer changes in `internal` packages.
+* API Javadoc tags: `@noimplement`, `@noextend`, `@noreference`, `@noinstantiate`, `@nooverride`, `@category`.
+* Bundle versions follow OSGi semantic versioning: major = breaking, minor = API addition, micro = compatible fix.
+  Do not bump unnecessarily: the "Eclipse PDE Bot" applies the usual increments for a release stream and the `check-versions` PR check reports missing ones; bump yourself only when the change requires it (e.g. API changes).
+  Features and products that reference a changed bundle or feature may need a bump as well; the PR check reports those too.
+* Dependency version ranges: inclusive lower bound, exclusive upper bound at the next major, e.g. `[1.2.3,2.0.0)`.
 
-**Pre-commit Validation:** Run `mvn clean verify -Ptck`, check version increments, review `**/target/compilelogs/` and `**/target/apianalysis/`
+## Code and commit style
 
-## Common Issues & Solutions
+Follow the surrounding code first; keep every change small and focused on the task.
 
-**Parent POM not found:** Expected - requires eclipse-platform-parent from Eclipse Platform aggregator.
+* **Commits** (prevailing style in the history, not enforced):
+  * Subject: imperative, at most ~72 characters, no trailing period, no prefixes (e.g. `Remove invisible text from SVG icon`, `Fix resolution of constants in lists for component property types`).
+  * Body: always for non-trivial changes; explain *why* (problem, motivation, effect), not what the diff does; wrap at ~72 characters.
+  * Reference issues as `Fixes https://github.com/eclipse-pde/eclipse.pde/issues/<n>` (or `Relates to ...`/`See ...`). Issues of other projects use their full URL.
+  * One logical change per commit, no unrelated formatting.
+  * AI disclosure: end with `Assisted-by: <Provider> <Model> (<Version>)`, e.g. `Assisted-by: GitHub Copilot (Claude Sonnet 5.5)`; the history uses this trailer. Add `Co-authored-by:` only when the user or your tooling requires it.
+  * Contributions of non-committers need `Signed-off-by` and a signed ECA (see `CONTRIBUTING.md`).
+* **Java:** tabs for indentation, keep the existing EPL-2.0 license header with `SPDX-License-Identifier: EPL-2.0` and update the copyright year of files you change. Formatting and save actions are in each bundle's `.settings/`; do not reformat untouched code.
+* **Types:** use public or package-private top-level types instead of inner classes/interfaces/records where practical (maintainer preference).
+* **Javadoc and comments:** short; say what is non-obvious (units, null handling, threading), comment *why* not *what*. No commented-out code.
+* **Tests:** add or adjust a focused test for behaviour changes in the matching `*.tests` bundle, preferably in an existing class. The history shows an ongoing migration to JUnit Jupiter (e.g. `org.eclipse.pde.build.tests`); for new tests follow the framework of the neighbouring tests.
+  Do not weaken or delete tests to get a green build.
+* **Markdown:** start each sentence on a new line; format tables with aligned columns.
+* **Hygiene:** `bin/`, `.polyglot.*` and `target/` directories up to three levels deep are git-ignored (`.gitignore` deliberately does not ignore all `target` folders); check `git status` before finishing and do not commit logs or stray files.
 
-**API baseline violations:** Update bundle version per Eclipse API rules. See `docs/API_Tools.md`.
+## Generative AI (Eclipse Foundation guidelines)
 
-**Test failures (headless):** Use `xvfb-run mvn clean verify` or set DISPLAY.
+This project follows the [Eclipse Foundation Generative AI usage guidelines](https://www.eclipse.org/projects/handbook/#genai).
+The human committer stays responsible for everything that is contributed; make that easy for them:
 
-**Build timeout >60 min:** Review added tests/code for performance impact.
-
-## API Tools & Versioning
-
-**API Baseline:** Verifies binary compatibility. Critical for CI.
-
-**Javadoc Tags:** `@noimplement`, `@noextend`, `@noreference`, `@noinstantiate`, `@nooverride`, `@category`
-
-**Version Rules:** Service (compatible fixes), Minor (API additions), Major (breaking changes). Missing `@since` = error.
-
-**Docs:** `docs/API_Tools.md` for comprehensive API Tools documentation.
-
-## OSGi Semantic Versioning
-
-**PDE follows OSGi semantic versioning principles** (https://docs.osgi.org/whitepaper/semantic-versioning/):
-
-**Version Format:** `major.minor.micro.qualifier`
-- **Major:** Breaking changes (incompatible API changes)
-- **Minor:** Backward-compatible API additions
-- **Micro:** Backward-compatible bug fixes
-- **Qualifier:** Build metadata (e.g., timestamps, commit hashes)
-
-**Version Ranges for Dependencies:**
-- Use version ranges to specify compatible dependency versions
-- **Inclusive lower bound:** `[1.2.3,2.0.0)` includes 1.2.3
-- **Exclusive upper bound:** `[1.2.3,2.0.0)` excludes 2.0.0
-- **Best practice:** Lower bound inclusive, upper bound at next major (exclusive)
-  - Example: For version `1.2.3`, use `[1.2.3,2.0.0)` to accept any 1.x version
-  - Example: For version `2.5.0`, use `[2.5.0,3.0.0)` to accept any 2.x version
-
-**Why exclude next major?** Major version changes indicate breaking changes, so dependencies should not automatically upgrade across major versions.
-
-**PDE Support:** PDE manifest editor and dialogs should help users create proper version ranges following these principles when adding or updating bundle/package dependencies.
-
-## Key Notes
-
-**Tycho:** Eclipse-specific Maven extension managing OSGi dependencies, P2 repos, Eclipse metadata (MANIFEST.MF, plugin.xml, feature.xml).
-
-**PDE Build (`build/`):** Maintenance mode. Use Tycho for new projects. Only IDE export bugs fixed.
-
-**Development:** Use Oomph for IDE setup: `https://raw.githubusercontent.com/eclipse-pde/eclipse.pde/master/releng/org.eclipse.pde.setup/PDEConfiguration.setup`
-
-**Trust These Instructions:** Only search if incomplete, encountering undocumented errors, or instructions appear outdated. Consult: `Jenkinsfile` (CI config), `README.md`, `docs/` (API Tools, FAQ, User Guide), `.github/workflows/` (pipelines).
+* **Transparency:** disclose AI involvement with the `Assisted-by:` commit trailer (see "Code and commit style").
+  For new files that are largely or entirely AI-generated, ask the user whether the handbook's header with the "AI Disclosure" note (`SPDX-License-Identifier: EPL-2.0 and CC0-1.0`) should be used; the copyright holder is the responsible human, never invent a name.
+* **Verification:** the output must be reviewable and verified. Run the relevant tests, do not claim success without evidence, and point out what you did not verify.
+* **IP cleanliness:** do not copy code from other projects or from memory of other sources; write it yourself or stop and ask. Do not add third-party dependencies, bundled libraries or binaries without the user's explicit agreement, they require IP due diligence.
+* **Confidentiality:** do not put secrets, credentials, personal data or other confidential content into code, commits, logs or issues.
+* **Review before publishing:** pushing, opening pull requests or commenting on issues is fine, but only after the human has explicitly confirmed that they reviewed the result and that these guidelines were followed. If nobody is available to confirm (autonomous run), keep the work local and report what is ready.
