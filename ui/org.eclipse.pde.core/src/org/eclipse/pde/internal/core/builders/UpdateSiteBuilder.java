@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
-import java.util.Arrays;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
@@ -27,7 +26,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.natures.SiteProject;
@@ -108,7 +106,6 @@ public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 
 	@Override
 	public ISchedulingRule getRule(int kind, Map<String, String> args) {
-		return new MultiRule(Arrays.stream(getProject().getWorkspace().getRoot().getProjects())
-				.filter(PDEBuilderHelper::isPDEProject).toArray(ISchedulingRule[]::new));
+		return PDEBuilderHelper.getBuilderRule(getProject());
 	}
 }

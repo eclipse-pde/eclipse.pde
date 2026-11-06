@@ -18,7 +18,6 @@ package org.eclipse.pde.internal.core.builders;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +35,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
@@ -499,7 +497,6 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 
 	@Override
 	public ISchedulingRule getRule(int kind, Map<String, String> args) {
-		return new MultiRule(Arrays.stream(getProject().getWorkspace().getRoot().getProjects())
-				.filter(PDEBuilderHelper::isPDEProject).toArray(ISchedulingRule[]::new));
+		return PDEBuilderHelper.getBuilderRule(getProject());
 	}
 }
