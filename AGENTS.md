@@ -46,6 +46,8 @@ grep -c "replaced with the baseline" $LOG    # must be 0
 * Select modules by path (`-pl ui/org.eclipse.pde.core`) or artifactId (`-pl :org.eclipse.pde.core`); several can be combined (`-pl :org.eclipse.pde.core,:org.eclipse.pde.ui.tests`).
 * Without `-am`, modules not in `-pl` come from the I-build repository as binaries.
   Changed `ui/org.eclipse.pde.core` and want `org.eclipse.pde.ui.tests` to use it? Build both with `-pl` or use `-am`.
+* Features are modules too: tests that use a feature (e.g. via a test product) need that feature in the reactor (`-pl` / `-am`) to see your changes, and a changed bundle in a feature may require the feature to be built as well.
+  This is rare and hard to reason about; when in doubt run a full build (slower, but its log is more telling than speculating why a change has no effect).
 * With `-am` and `-Dtest=X`, add `-Dsurefire.failIfNoSpecifiedTests=false`, otherwise upstream modules without a matching test fail the build.
 
 ## Baseline replacement (the main trap)
@@ -60,8 +62,8 @@ Diagnose: `grep -n "replaced with the baseline\|No baseline version" <log>`.
 Fix, pick one:
 
 1. Local work: `-Dtycho.baseline.replace=none` (log has no "replaced" line, jar contains the new classes).
-2. Bump the `Bundle-Version` in `META-INF/MANIFEST.MF` (e.g. 3.21.500 -> 3.21.600): the log then says `No baseline version ...` and keeps your build.
-   Only do this if the bump is a legitimate part of the change (see "API and versions"), never just to run a test.
+2. Bump the version of the bundle (or feature) when the change actually needs one (see "API and versions"): the log then says `No baseline version ...` and keeps your build.
+   Never bump just to run a test.
 
 Does NOT work: `-Dtycho.baseline=disable` (the parent POM hard-codes `<baselineMode>warnCommon</baselineMode>`, which wins over the CLI property), `mvn clean`, `-U` or wiping `~/.m2` (it is not a stale cache).
 Never commit `-Dtycho.baseline.replace=none` into a POM or `.mvn` file; CI relies on the baseline.
@@ -85,7 +87,8 @@ Never commit `-Dtycho.baseline.replace=none` into a POM or `.mvn` file; CI relie
 * PDE uses API tools (enable with `-Papi-check`, see `docs/API_Tools.md`). Do not break public API (packages not `x-internal`/`internal`); new API needs `@since` with the next bundle version; missing `@since` is an error. Prefer changes in `internal` packages.
 * API Javadoc tags: `@noimplement`, `@noextend`, `@noreference`, `@noinstantiate`, `@nooverride`, `@category`.
 * Bundle versions follow OSGi semantic versioning: major = breaking, minor = API addition, micro = compatible fix.
-  Version bumps for a release stream are done by the "Eclipse PDE Bot" (`Version bump(s) for <release> stream`); do not bump drive-by, except when API changes require it (the `check-versions` PR check reports missing bumps).
+  Do not bump unnecessarily: the "Eclipse PDE Bot" applies the usual increments for a release stream and the `check-versions` PR check reports missing ones; bump yourself only when the change requires it (e.g. API changes).
+  Features and products that reference a changed bundle or feature may need a bump as well; the PR check reports those too.
 * Dependency version ranges: inclusive lower bound, exclusive upper bound at the next major, e.g. `[1.2.3,2.0.0)`.
 
 ## Code and commit style
