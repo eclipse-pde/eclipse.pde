@@ -170,9 +170,25 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 		setMessage(message);
 	}
 
+	/** Like Display.asyncExec, but skipped once the dialog is closed. */
+	private void asyncExec(Runnable runnable) {
+		final Shell shell = getShell();
+		if (shell == null || shell.isDisposed()) {
+			return;
+		}
+		shell.getDisplay().asyncExec(() -> {
+			if (!shell.isDisposed()) {
+				runnable.run();
+			}
+		});
+	}
+
+	/** Collects results from the search job and adds them to the viewer in batches. */
 	private class ContributionResultHandlerImpl implements ContributionResultHandler {
-		private boolean cancled = false;
+		private volatile boolean cancelled;
 		private final IObservableList<ContributionData> list;
+		private final List<ContributionData> pending = new ArrayList<>();
+		private boolean flushScheduled;
 
 		public ContributionResultHandlerImpl(IObservableList<ContributionData> list) {
 			this.list = list;
@@ -180,27 +196,46 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 
 		@Override
 		public void result(final ContributionData data) {
-			if (!cancled) {
-				getShell().getDisplay().syncExec(() -> list.add(data));
+			if (cancelled) {
+				return;
+			}
+			synchronized (pending) {
+				pending.add(data);
+				if (flushScheduled) {
+					return;
+				}
+				flushScheduled = true;
+			}
+			asyncExec(this::flush);
+		}
+
+		private void flush() {
+			final List<ContributionData> batch;
+			synchronized (pending) {
+				batch = new ArrayList<>(pending);
+				pending.clear();
+				flushScheduled = false;
+			}
+			if (!cancelled) {
+				list.addAll(batch);
 			}
 		}
 
 		@Override
 		public void moreResults(final int hint, final Filter filter) {
-			if (!cancled) {
-				getShell().getDisplay().syncExec(() -> {
-					final FilteredContributionDialog dlg = (FilteredContributionDialog) filter.userData;
-					dlg.hint = hint;
-					dlg.maxResults = filter.maxResults;
-					dlg.updateStatusMessage();
-				});
-			}
+			asyncExec(() -> {
+				if (!cancelled) {
+					FilteredContributionDialog.this.hint = hint;
+					maxResults = filter.maxResults;
+					updateStatusMessage();
+				}
+			});
 		}
 	}
 
 	@Override
 	public boolean close() {
-		stopSearchThread(true);
+		stopSearchThread();
 		if (isScopePersisted()) {
 			getPreferences().put(PREF_SEARCHSCOPE, searchScope.toString());
 			getPreferences().put(PREF_SEARCHSCOPES, searchScopes.toString());
@@ -326,7 +361,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 		TableKeyNavigation.installOnText(textBox, () -> viewer.getTable());
 
 		textBox.addModifyListener(e -> {
-			stopSearchThread(true);
+			stopSearchThread();
 			setMessage(""); //$NON-NLS-1$
 
 			viewerList.clear();
@@ -336,63 +371,40 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 			searching = true;
 			updateStatusMessage();
 
+			final Filter filter = new Filter(context.get(IProject.class), textBox.getText());
+			filter.maxResults = MAX_RESULTS;
+			filter.userData = FilteredContributionDialog.this;
+			filter.setBundles(filterBundles);
+			filter.setPackages(filterPackages);
+			filter.setLocations(filterLocations);
+			filter.setSearchScope(searchScopes);
+			filter.setIncludeNonBundles(includeNonBundles);
+			filter.setProviderStatusCallback(status -> {
+				providerStatus = status;
+				asyncExec(() -> {
+					updateStatusMessage();
+					if (status == ProviderStatus.READY) {
+						refreshSearch();
+					}
+				});
+			});
+			final ContributionResultHandlerImpl resultHandler = new ContributionResultHandlerImpl(viewerList);
+			currentResultHandler = resultHandler;
 			currentSearchThread = new Job(Messages.FilteredContributionDialog_ContributionSearch) {
-
-				Filter filter;
 
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					monitor.beginTask(Messages.FilteredContributionDialog_ContributionSearch, IProgressMonitor.UNKNOWN);
-					currentResultHandler = new ContributionResultHandlerImpl(viewerList);
-					getShell().getDisplay().syncExec(() -> {
-						if (searchScopes.contains(ResourceSearchScope.PROJECT)) {
-							filter = new Filter(context.get(IProject.class), textBox.getText());
-						} else {
-							// filter = new Filter(null,
-							// textBox.getText());
-							filter = new Filter(context.get(IProject.class), textBox.getText());
-						}
-					});
-					filter.maxResults = MAX_RESULTS;
-					filter.userData = FilteredContributionDialog.this;
-					filter.setBundles(filterBundles);
-					filter.setPackages(filterPackages);
-					filter.setLocations(filterLocations);
-					filter.setSearchScope(searchScopes);
-					filter.setIncludeNonBundles(includeNonBundles);
 					filter.setProgressMonitor(monitor);
-					filter.setProviderStatusCallback(status -> {
-						providerStatus = status;
-						try {
-							getShell().getDisplay().syncExec(() -> {
-								updateStatusMessage();
-								switch (status) {
-								case READY:
-									// This will deadlock if
-									// currentSearchThread is not
-									// null
-									currentSearchThread = null;
-									if (currentResultHandler != null) {
-										currentResultHandler.cancled = true;
-									}
-									refreshSearch();
-									break;
-								case CANCELLED:
-								case INITIALIZING:
-									break;
-								}
-							});
-						} catch (final Exception e2) {
-							// Dialog may have been closed while
-							// provider was still indexing
+					collector.findContributions(filter, resultHandler);
+					monitor.done();
+					asyncExec(() -> {
+						if (currentSearchThread == this) {
+							currentSearchThread = null;
+							searching = false;
+							updateStatusMessage();
 						}
 					});
-					collector.findContributions(filter, currentResultHandler);
-
-					monitor.done();
-					searching = false;
-					currentSearchThread = null;
-					getShell().getDisplay().syncExec(() -> updateStatusMessage());
 					return Status.OK_STATUS;
 				}
 
@@ -876,22 +888,16 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 		this.searchScopes = searchScopes;
 	}
 
-	public void stopSearchThread(boolean bJoin) {
+	/** Cancels the running search without joining it, since the job reports to the UI thread. */
+	public void stopSearchThread() {
+		if (currentResultHandler != null) {
+			currentResultHandler.cancelled = true;
+			currentResultHandler = null;
+		}
 		if (currentSearchThread != null) {
-			currentResultHandler.cancled = true;
 			currentSearchThread.cancel();
-			if (bJoin) {
-				try {
-					if (currentSearchThread != null) {
-						currentSearchThread.join();
-					}
-				} catch (final InterruptedException e) {
-				} finally {
-					currentSearchThread = null;
-				}
-			} else {
-				currentSearchThread = null;
-			}
+			currentSearchThread = null;
+			searching = false;
 		}
 	}
 
