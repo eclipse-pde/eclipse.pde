@@ -30,8 +30,6 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchema;
-import org.eclipse.pde.internal.core.plugin.ExternalFragmentModel;
-import org.eclipse.pde.internal.core.plugin.ExternalPluginModel;
 import org.eclipse.pde.internal.core.plugin.ExternalPluginModelBase;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.schema.ExtensionInspector;
@@ -79,13 +77,11 @@ public final class ExtensionPackageFinder {
 		if (!file.exists()) {
 			return null;
 		}
-		ExternalPluginModelBase extensionsModel = isFragment ? new ExternalFragmentModel() : new ExternalPluginModel();
 		IPath location = project.getLocation();
-		if (location != null) {
-			extensionsModel.setInstallLocation(location.toOSString());
-		}
+		String installLocation = location != null ? location.toOSString() : null;
+		ExternalPluginModelBase extensionsModel;
 		try (InputStream stream = new BufferedInputStream(file.getContents(true))) {
-			extensionsModel.load(stream, false);
+			extensionsModel = ExternalPluginModelBase.load(stream, isFragment, installLocation);
 		} catch (CoreException | IOException e) {
 			// otherwise dependencies needed by extensions are silently reported as unused
 			PDEPlugin.logException(e);

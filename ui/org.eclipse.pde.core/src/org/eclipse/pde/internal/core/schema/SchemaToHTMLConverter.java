@@ -43,8 +43,6 @@ import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.XMLDefaultHandler;
 import org.eclipse.pde.internal.core.builders.SchemaTransformer;
 import org.eclipse.pde.internal.core.ischema.ISchemaInclude;
-import org.eclipse.pde.internal.core.plugin.ExternalFragmentModel;
-import org.eclipse.pde.internal.core.plugin.ExternalPluginModel;
 import org.eclipse.pde.internal.core.plugin.ExternalPluginModelBase;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
@@ -163,23 +161,12 @@ public class SchemaToHTMLConverter {
 	protected IPluginModelBase readManifestFile(String manifest) throws IOException, CoreException {
 		File file = IPath.fromOSString(manifest).isAbsolute() ? new File(manifest) : new File(baseDir, manifest);
 		try (InputStream stream = new BufferedInputStream(new FileInputStream(file))) {
-			ExternalPluginModelBase model = null;
-			switch (file.getName().toLowerCase(Locale.ENGLISH)) {
-			case ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR:
-				model = new ExternalFragmentModel();
-				break;
-			case ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR:
-				model = new ExternalPluginModel();
-				break;
-			default:
-				stream.close();
-				throw new IOException(NLS.bind(PDECoreMessages.Builders_Convert_illegalValue, "manifest")); //$NON-NLS-1$
-			}
-			String parentPath = file.getParentFile().getAbsolutePath();
-			model.setInstallLocation(parentPath);
-			model.load(stream, false);
-			stream.close();
-			return model;
+			boolean fragment = switch (file.getName().toLowerCase(Locale.ENGLISH)) {
+			case ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR -> true;
+			case ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR -> false;
+			default -> throw new IOException(NLS.bind(PDECoreMessages.Builders_Convert_illegalValue, "manifest")); //$NON-NLS-1$
+			};
+			return ExternalPluginModelBase.load(stream, fragment, file.getParentFile().getAbsolutePath());
 		}
 	}
 
