@@ -15,12 +15,14 @@ package org.eclipse.pde.internal.core.plugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.build.IBuildModel;
@@ -39,6 +41,29 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 
 	public ExternalPluginModelBase() {
 		super();
+	}
+
+	/**
+	 * Creates a fragment or plugin model at the given install location and
+	 * loads it from the given plugin.xml/fragment.xml content.
+	 *
+	 * @param stream
+	 *            the content of the plugin.xml/fragment.xml, not closed by
+	 *            this method
+	 * @param fragment
+	 *            whether to create a fragment model instead of a plugin model
+	 * @param installLocation
+	 *            the install location of the model, may be <code>null</code>
+	 * @return the loaded model
+	 * @throws CoreException
+	 *             if loading the model fails
+	 */
+	public static ExternalPluginModelBase load(InputStream stream, boolean fragment, String installLocation)
+			throws CoreException {
+		ExternalPluginModelBase model = fragment ? new ExternalFragmentModel() : new ExternalPluginModel();
+		model.setInstallLocation(installLocation);
+		model.load(stream, false);
+		return model;
 	}
 
 	@Override

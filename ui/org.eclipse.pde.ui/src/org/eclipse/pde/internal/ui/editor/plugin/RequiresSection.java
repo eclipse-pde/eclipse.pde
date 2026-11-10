@@ -59,7 +59,7 @@ import org.eclipse.pde.internal.core.PluginModelDelta;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.bundle.BundlePluginModelBase;
 import org.eclipse.pde.internal.core.plugin.AbstractPluginModelBase;
-import org.eclipse.pde.internal.core.plugin.ExternalPluginModel;
+import org.eclipse.pde.internal.core.plugin.ExternalPluginModelBase;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.core.plugin.PluginBase;
 import org.eclipse.pde.internal.core.text.plugin.PluginBaseNode;
@@ -529,21 +529,16 @@ public class RequiresSection extends TableSection
 
 	private void addSystemBundle(java.util.List<IPluginModelBase> list) {
 		try {
-			ExternalPluginModel model = new ExternalPluginModel();
-
 			// Need Install Location to load model.  Giving it org.eclipse.osgi's install location
 			IPluginModelBase osgi = PluginRegistry.findModel("system.bundle"); //$NON-NLS-1$
 			if (osgi == null) {
 				return;
 			}
-			model.setInstallLocation(osgi.getInstallLocation());
 
 			// Load model from a String representing the contents of an equivalent plugin.xml file
 			String pluginInfo = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><plugin id=\"system.bundle\" name=\"System Bundle\"></plugin>"; //$NON-NLS-1$
 			InputStream is = new BufferedInputStream(new ByteArrayInputStream(pluginInfo.getBytes()));
-			model.load(is, false);
-
-			list.add(model);
+			list.add(ExternalPluginModelBase.load(is, false, osgi.getInstallLocation()));
 
 		} catch (CoreException e) {
 		}
