@@ -35,6 +35,11 @@ public interface IPluginImport extends IPluginObject, IPluginReference {
 	String P_OPTIONAL = "optional"; //$NON-NLS-1$
 
 	/**
+	 * @since 3.21
+	 */
+	String P_FILTER = "filter"; //$NON-NLS-1$
+
+	/**
 	 * Tests whether the imported plug-in is reexported for
 	 * plug-ins that will use this plug-in.
 	 *
@@ -69,5 +74,26 @@ public interface IPluginImport extends IPluginObject, IPluginReference {
 	 * @throws CoreException if the model is not editable
 	 */
 	void setOptional(boolean value) throws CoreException;
+
+	/**
+	 * Sets the filter string applied to this import when resolving the required
+	 * plug-in.
+	 *
+	 * @param filter
+	 *            the filter string to associate with this import, or
+	 *            {@code null} to clear it
+	 * @throws CoreException
+	 *             if the model is not editable
+	 * @since 3.21
+	 */
+	void setFilter(String filter) throws CoreException;
+
+	/**
+	 * Returns the filter string for this plugin reference.
+	 *
+	 * @return the filter string, or null if not set
+	 * @since 3.21
+	 */
+	String getFilter();
 
 }
