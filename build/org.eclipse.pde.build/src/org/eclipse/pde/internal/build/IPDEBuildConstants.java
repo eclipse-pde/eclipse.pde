@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build;
 
+import java.util.Map;
+
 import org.eclipse.pde.internal.publishing.Constants;
 
 /**
@@ -136,15 +138,41 @@ public interface IPDEBuildConstants {
 	public final static String PDE_SOURCE_REF = "${PDE_SOURCE_REF}"; //$NON-NLS-1$
 
 	//Some Bundle IDs we care about
-	public final static String BUNDLE_OSGI = "org.eclipse.osgi"; //$NON-NLS-1$
+	public static final String BUNDLE_OSGI = "org.eclipse.osgi"; //$NON-NLS-1$
 	public static final String BUNDLE_EQUINOX_LAUNCHER = Constants.BUNDLE_EQUINOX_LAUNCHER;
 	public static final String BUNDLE_EQUINOX_COMMON = "org.eclipse.equinox.common"; //$NON-NLS-1$
+	public static final String BUNDLE_EQUINOX_EVENT = "org.eclipse.equinox.event"; //$NON-NLS-1$
 	public static final String BUNDLE_CORE_RUNTIME = "org.eclipse.core.runtime"; //$NON-NLS-1$
 	public static final String BUNDLE_SIMPLE_CONFIGURATOR = "org.eclipse.equinox.simpleconfigurator"; //$NON-NLS-1$
 	public static final String BUNDLE_DS = "org.eclipse.equinox.ds"; //$NON-NLS-1$
 	public static final String BUNDLE_FELIX_SCR = "org.apache.felix.scr"; //$NON-NLS-1$
 	public static final String FEATURE_PLATFORM_LAUNCHERS = "org.eclipse.platform.launchers"; //$NON-NLS-1$
 	public static final String FEATURE_EQUINOX_EXECUTABLE = "org.eclipse.equinox.executable"; //$NON-NLS-1$
+
+	/*
+	 * A list of bundles that typically require auto-start and optionally
+	 * require a special startlevel. If the startlevel is zero then the
+	 * framework will use the default start level for the bundle. This list
+	 * loosely based on TargetPlatformHelper.getDefaultBundleList(). Both of these
+	 * implementations are problematic because they are out of date, and also
+	 * leave out commonly used bundles. This list attempts to describe a typical
+	 * set up on the assumption that an advanced user can further modify it. The
+	 * list is hard-coded rather than walking the plugin requirements of the
+	 * product and all required products. The reason for this is that there are
+	 * some bundles, such as org.eclipse.equinox.ds, that are typically needed
+	 * but users do not remember to add them, and they are not required by any
+	 * bundle. The idea of this list is to suggest these commonly used bundles
+	 * and start levels that clients typically do not remember. See
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=426529
+	 */
+	public static final Map<String, Integer> RECOMMENDED_AUTO_START_BUNDLE_LEVELS = Map.of( //
+			IPDEBuildConstants.BUNDLE_DS, 1, // TODO: Obsolete
+			IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR, 1, //
+			IPDEBuildConstants.BUNDLE_EQUINOX_COMMON, 2, //
+			IPDEBuildConstants.BUNDLE_EQUINOX_EVENT, 2, //
+			IPDEBuildConstants.BUNDLE_OSGI, -1, // TODO: Shouldn't be necessary?
+			IPDEBuildConstants.BUNDLE_CORE_RUNTIME, 0, // zero means default
+			IPDEBuildConstants.BUNDLE_FELIX_SCR, 2); //
 
 	// fetch task extension point
 	public final static String EXT_FETCH_TASK_FACTORIES = "org.eclipse.pde.build.fetchFactories"; //$NON-NLS-1$
