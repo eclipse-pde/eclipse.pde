@@ -63,7 +63,6 @@
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 					<artifactId>tycho-eclipse-plugin</artifactId>
-					<version>${tycho.version}</version>
 					<executions>
 						<execution>
 							<id>generate-xmls</id>
@@ -119,9 +118,7 @@
 								<goal>verify</goal>
 							</goals>
 							<configuration>
-								<bundles>
-									org.osgi.test.cases.component.annotations
-								</bundles>
+								<bundles>org.osgi.test.cases.component.annotations</bundles>
 								<trace>false</trace>
 								<testerTrace>false</testerTrace>
 								<printBundles>true</printBundles>
@@ -138,11 +135,21 @@
 		</plugins>
 	</build>
 
+	<repositories>
+		<repository>
+			<id>maven-central-snapshots</id>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<url>https://central.sonatype.com/repository/maven-snapshots</url>
+		</repository>
+	</repositories>
+
 	<dependencies>
 		<dependency>
-			<groupId>org.osgi</groupId>
+			<groupId>org.osgi.tck</groupId>
 			<artifactId>org.osgi.test.cases.component.annotations</artifactId>
-			<version>8.1.0</version>
+			<version>1.5.2-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 
