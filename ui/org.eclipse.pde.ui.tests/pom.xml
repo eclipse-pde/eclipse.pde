@@ -57,6 +57,12 @@
                                 <id>org.eclipse.pde</id>
                                 <versionRange>0.0.0</versionRange>
                             </requirement>
+                            <requirement>
+                                <!-- PDE imports this feature; make its reactor build order explicit. -->
+                                <type>eclipse-feature</type>
+                                <id>org.eclipse.jdt</id>
+                                <versionRange>0.0.0</versionRange>
+                            </requirement>
                         </extraRequirements>
                     </dependency-resolution>
                 </configuration>
