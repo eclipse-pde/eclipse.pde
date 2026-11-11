@@ -15,11 +15,14 @@
 package org.eclipse.pde.ui.templates.tests;
 
 import static java.util.stream.Collectors.toSet;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
@@ -57,18 +60,12 @@ import org.eclipse.pde.ui.IPluginContentWizard;
 import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
-import org.junit.Assert;
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.AfterParam;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
 public class TestPDETemplates {
 
 	private static class NewProjectCreationOperationExtension extends NewProjectCreationOperation {
@@ -84,36 +81,36 @@ public class TestPDETemplates {
 		}
 	}
 
-	@BeforeClass
+	@BeforeAll
 	public static void setTargetPlatform() throws CoreException, InterruptedException {
 		TargetPlatformUtil.setRunningPlatformAsTarget();
 	}
 
-	@Parameter
-	public static WizardElement template;
+	private WizardElement template;
 
-	@Parameters(name = "{index}: {0}")
 	public static Collection<WizardElement> allTemplateWizards() {
 		return Arrays.stream(new NewPluginProjectWizard().getAvailableCodegenWizards().getChildren()) //
 				.filter(WizardElement.class::isInstance).map(WizardElement.class::cast) //
 				.collect(Collectors.toList());
 	}
 
-	private static IProject project;
+	private static final List<IProject> createdProjects = new ArrayList<>();
 
-	@Before
-	public void createProject() throws Exception {
+	private IProject project;
+
+	private void createProject(WizardElement template) throws Exception {
 		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().closeAllEditors(false);
 		String id = TestPDETemplates.class.getSimpleName() + '_' + template.getID();
 		project = ResourcesPlugin.getWorkspace().getRoot().getProject(id);
 		if (!project.exists()) {
 			project.create(new NullProgressMonitor());
 			project.open(new NullProgressMonitor());
+			createdProjects.add(project);
 			createProjectWithTemplate();
 		}
 	}
 
-	private static void createProjectWithTemplate()
+	private void createProjectWithTemplate()
 			throws CoreException, InvocationTargetException, InterruptedException {
 		PluginFieldData data = new PluginFieldData();
 		data.setId(project.getName());
@@ -160,8 +157,11 @@ public class TestPDETemplates {
 		op.execute(new NullProgressMonitor());
 	}
 
-	@Test
-	public void configureProjectAndCheckMarkers() throws CoreException {
+	@ParameterizedTest(name = "{0}")
+	@MethodSource("allTemplateWizards")
+	public void configureProjectAndCheckMarkers(WizardElement template) throws Exception {
+		this.template = template;
+		createProject(template);
 		project.build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
 		long deadline = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(60);
 		Display current = Display.getCurrent();
@@ -208,15 +208,17 @@ public class TestPDETemplates {
 			markers = new IMarker[0];
 		}
 
-		assertEquals("Template '" + template.getLabel() + "' generates errors: "
-				+ Arrays.stream(markers).map(String::valueOf).collect(Collectors.joining(System.lineSeparator())), 0,
-				markers.length);
+		assertEquals(0, markers.length, "Template '" + template.getLabel() + "' generates errors: "
+				+ Arrays.stream(markers).map(String::valueOf).collect(Collectors.joining(System.lineSeparator())));
 	}
 
-	@Test
-	public void validateProduct() throws CoreException {
+	@ParameterizedTest(name = "{0}")
+	@MethodSource("allTemplateWizards")
+	public void validateProduct(WizardElement template) throws Exception {
+		this.template = template;
+		createProject(template);
 		IResource productFile = project.findMember(project.getName() + ".product");
-		Assume.assumeNotNull(productFile);
+		Assumptions.assumeTrue(productFile != null);
 
 		WorkspaceProductModel model = new WorkspaceProductModel((IFile) productFile, false);
 		model.load();
@@ -232,13 +234,16 @@ public class TestPDETemplates {
 					.flatMap(Arrays::stream) //
 					.map(Object::toString) //
 					.collect(toSet());
-			Assert.fail("Generated product fails validation: \n" + errors);
+			fail("Generated product fails validation: \n" + errors);
 		}
 	}
 
-	@AfterParam
-	public static void deleteProject() throws CoreException {
+	@AfterAll
+	public static void deleteProjects() throws CoreException {
 		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().closeAllEditors(false);
-		project.delete(true, new NullProgressMonitor());
+		for (IProject createdProject : createdProjects) {
+			createdProject.delete(true, new NullProgressMonitor());
+		}
+		createdProjects.clear();
 	}
 }
