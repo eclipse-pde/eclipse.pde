@@ -51,8 +51,10 @@ public class DSComponent extends DSObject implements IDSComponent {
 	public DSComponent(DSModel model) {
 		super(model, ELEMENT_COMPONENT);
 		setAttributeName(IDSConstants.ELEMENT_COMPONENT);
-		setNamespace(IDSConstants.NAMESPACE); // hard code namespace to be 1.1
-		setNamespacePrefix("scr"); //$NON-NLS-1$
+		// Use super calls to set namespace defaults without firing property
+		// change events that would incorrectly mark the model as dirty
+		super.setNamespace(IDSConstants.NAMESPACE);
+		super.setNamespacePrefix("scr"); //$NON-NLS-1$
 		setInTheModel(true);
 	}
 
