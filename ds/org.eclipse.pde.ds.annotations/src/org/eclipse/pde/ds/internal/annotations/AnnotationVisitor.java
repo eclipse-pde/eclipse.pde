@@ -1321,7 +1321,7 @@ public class AnnotationVisitor extends ASTVisitor {
 			if (activateConstructor != null) {
 				requiredVersion = DSAnnotationVersion.V1_4.max(requiredVersion);
 			}
-			// TODO using logger component also requires 1.4!
+			// Logger/FormatterLogger field injection also requires 1.4 which is handled in ReferenceProcessor.processReference()
 		}
 
 		String xmlns = requiredVersion.getNamespace();
