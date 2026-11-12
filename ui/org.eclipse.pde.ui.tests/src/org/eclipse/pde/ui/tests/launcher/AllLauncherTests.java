@@ -23,6 +23,7 @@ import org.junit.platform.suite.api.Suite;
 	PluginBasedLaunchTest.class, //
 	LaunchConfigurationHelperTestCase.class, //
 	LaunchConfigurationMigrationTest.class, //
+	NativeAccessArgumentTest.class, //
 	ProductEditorLaunchingTest.class, //
 	ValidationDialogTest.class, //
 })

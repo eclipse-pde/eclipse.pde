@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -39,10 +40,10 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.launching.AbstractVMInstall;
 import org.eclipse.jdt.launching.ExecutionArguments;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ModelEntry;
@@ -201,11 +202,30 @@ public class LaunchArgumentsHelper {
 	 * </p>
 	 */
 	public static boolean isNativeAccessArgumentRequired() {
-		if (JavaRuntime.getDefaultVMInstall() instanceof AbstractVMInstall install) {
+		return isNativeAccessArgumentRequired(JavaRuntime.getDefaultVMInstall());
+	}
+
+	/**
+	 * Returns whether the given JRE is Java 24 or newer and therefore warns
+	 * about native access that is not enabled.
+	 */
+	public static boolean isNativeAccessArgumentRequired(IVMInstall vmInstall) {
+		if (vmInstall instanceof IVMInstall2 install) {
 			String vmver = install.getJavaVersion();
 			return vmver != null && JavaCore.compareJavaVersions(vmver, JavaCore.VERSION_24) >= 0;
 		}
 		return false;
+	}
+
+	/**
+	 * Adds {@link #ENABLE_NATIVE_ACCESS_VM_ARGUMENT} for a launch on the given
+	 * JRE, unless the arguments already configure native access.
+	 */
+	public static void addNativeAccessArgument(List<String> vmArguments, IVMInstall vmInstall) {
+		if (isNativeAccessArgumentRequired(vmInstall) && vmArguments.stream().noneMatch(
+				a -> a.startsWith("--enable-native-access") || a.startsWith("--illegal-native-access"))) { //$NON-NLS-1$ //$NON-NLS-2$
+			vmArguments.add(ENABLE_NATIVE_ACCESS_VM_ARGUMENT);
+		}
 	}
 
 	public static String getInitialProgramArguments() {

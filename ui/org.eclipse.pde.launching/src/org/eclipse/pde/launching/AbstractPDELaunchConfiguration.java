@@ -192,6 +192,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 		if (!isModular) {
 			arguments.remove("--add-modules=ALL-SYSTEM"); //$NON-NLS-1$
 		}
+		LaunchArgumentsHelper.addNativeAccessArgument(arguments, vmInstall);
 		return arguments.toArray(String[]::new);
 	}
 
