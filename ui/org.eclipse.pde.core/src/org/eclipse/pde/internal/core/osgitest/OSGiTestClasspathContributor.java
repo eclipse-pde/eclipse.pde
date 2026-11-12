@@ -21,8 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -48,6 +46,7 @@ import org.eclipse.osgi.service.resolver.StateDelta;
 import org.eclipse.pde.core.IClasspathContributor;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.BundleClasspathEntryCache;
 import org.eclipse.pde.internal.core.ClasspathContainerState;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.ICoreConstants;
@@ -90,7 +89,7 @@ public class OSGiTestClasspathContributor
 	private static final JunitBundles NO_JUNIT = new JunitBundles("No JUnit", //$NON-NLS-1$
 			() -> Stream.empty());
 
-	private final ConcurrentMap<String, Collection<IClasspathEntry>> entryMap = new ConcurrentHashMap<>();
+	private final BundleClasspathEntryCache entryCache = new BundleClasspathEntryCache();
 	private final Map<IProject, JunitProjectBundles> projectBundlesMap = new WeakHashMap<>();
 
 	@Activate
@@ -126,8 +125,7 @@ public class OSGiTestClasspathContributor
 		if (projectModel == null) {
 			return List.of();
 		}
-		return getJunitBundles(projectModel.getUnderlyingResource()).bundles()
-				.map(bundleId -> entryMap.computeIfAbsent(bundleId,
+		return getJunitBundles(projectModel.getUnderlyingResource()).bundles().map(bundleId -> entryCache.get(bundleId,
 				id -> ClasspathUtilCore
 						.classpathEntriesForBundle(id, true, new IClasspathAttribute[] { TEST_ATTRIBUTE }).toList()))
 				.flatMap(Collection::stream)
@@ -158,7 +156,7 @@ public class OSGiTestClasspathContributor
 		} else {
 			// just refresh the items in the map if they have any changes...
 			for (BundleDelta bundleDelta : delta.getChanges(CHANGE_FLAGS, false)) {
-				entryMap.remove(bundleDelta.getBundle().getSymbolicName());
+				entryCache.invalidate(bundleDelta.getBundle().getSymbolicName());
 			}
 		}
 
@@ -167,7 +165,7 @@ public class OSGiTestClasspathContributor
 	@Override
 	public void stateChanged(State newState) {
 		// we need to refresh everything
-		entryMap.clear();
+		entryCache.invalidateAll();
 	}
 
 	private static final class JunitBundles {

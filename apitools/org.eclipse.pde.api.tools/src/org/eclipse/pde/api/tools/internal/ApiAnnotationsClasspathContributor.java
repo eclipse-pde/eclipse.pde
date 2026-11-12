@@ -16,8 +16,6 @@ package org.eclipse.pde.api.tools.internal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -31,6 +29,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.core.IClasspathContributor;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.BundleClasspathEntryCache;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.IStateDeltaListener;
 import org.eclipse.pde.internal.core.PDECore;
@@ -46,14 +45,14 @@ public class ApiAnnotationsClasspathContributor implements IClasspathContributor
 
 	private static final Collection<String> API_TOOLS_ANNOTATIONS = List.of("org.eclipse.pde.api.tools.annotations"); //$NON-NLS-1$
 
-	private final ConcurrentMap<String, Collection<IClasspathEntry>> entryMap = new ConcurrentHashMap<>();
+	private final BundleClasspathEntryCache entryCache = new BundleClasspathEntryCache();
 
 	@Override
 	public List<IClasspathEntry> getInitialEntries(BundleDescription project) {
 		IPluginModelBase projectModel = PluginRegistry.findModel((Resource) project);
 		if (hasApiNature(projectModel)) {
 			return annotations()
-					.map(bundleId -> entryMap.computeIfAbsent(bundleId,
+					.map(bundleId -> entryCache.get(bundleId,
 							id -> ClasspathUtilCore.classpathEntriesForBundle(id).toList()))
 					.flatMap(Collection::stream)
 					.filter(Predicate.not(entry -> ClasspathUtilCore.isEntryForModel(entry, projectModel))).toList();
@@ -104,7 +103,7 @@ public class ApiAnnotationsClasspathContributor implements IClasspathContributor
 		} else {
 			// just refresh the items in the map if they have any changes...
 			for (BundleDelta bundleDelta : delta.getChanges(CHANGE_FLAGS, false)) {
-				entryMap.remove(bundleDelta.getBundle().getSymbolicName());
+				entryCache.invalidate(bundleDelta.getBundle().getSymbolicName());
 			}
 		}
 
@@ -113,7 +112,7 @@ public class ApiAnnotationsClasspathContributor implements IClasspathContributor
 	@Override
 	public void stateChanged(State newState) {
 		// we need to refresh everything
-		entryMap.clear();
+		entryCache.invalidateAll();
 	}
 
 
