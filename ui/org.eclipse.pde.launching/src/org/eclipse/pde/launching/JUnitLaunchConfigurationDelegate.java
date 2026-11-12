@@ -321,6 +321,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		if (isModular) {
 			VMHelper.addNewArgument(vmArguments, "--add-modules", "ALL-SYSTEM"); //$NON-NLS-1$//$NON-NLS-2$
 		}
+		LaunchArgumentsHelper.addNativeAccessArgument(vmArguments, launcher);
 		//  if element is a test class annotated with @RunWith(JUnitPlatform.class, we add this in program arguments
 		@SuppressWarnings("restriction")
 		String attrRunWithJunitPlatformAnnotation = org.eclipse.jdt.internal.junit.launcher.JUnitLaunchConfigurationConstants.ATTR_RUN_WITH_JUNIT_PLATFORM_ANNOTATION;
