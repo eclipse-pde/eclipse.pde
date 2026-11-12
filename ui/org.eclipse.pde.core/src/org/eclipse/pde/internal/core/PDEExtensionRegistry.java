@@ -285,16 +285,25 @@ public class PDEExtensionRegistry {
 
 	// Methods to add/remove listeners
 
+	// The registry may not exist yet or may have been discarded by a target
+	// reload. A registry created later attaches all registered listeners.
+
 	public void addListener(IRegistryChangeListener listener) {
-		fRegistry.addRegistryChangeListener(listener);
 		if (!fListeners.contains(listener)) {
 			fListeners.add(listener);
+		}
+		IExtensionRegistry registry = fRegistry;
+		if (registry != null) {
+			registry.addRegistryChangeListener(listener);
 		}
 	}
 
 	public void removeListener(IRegistryChangeListener listener) {
-		fRegistry.removeRegistryChangeListener(listener);
 		fListeners.remove(listener);
+		IExtensionRegistry registry = fRegistry;
+		if (registry != null) {
+			registry.removeRegistryChangeListener(listener);
+		}
 	}
 
 }
