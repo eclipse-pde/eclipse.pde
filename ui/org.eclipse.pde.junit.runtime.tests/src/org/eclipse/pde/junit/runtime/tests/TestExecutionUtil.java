@@ -72,7 +72,15 @@ class TestExecutionUtil {
 		} while (wasInterrupted);
 	}
 
+	public static interface LaunchConfigurationWorkingCopyModifierCallback{
+		void modify(ILaunchConfigurationWorkingCopy workingCopy) throws CoreException;
+	}
+	
 	public static ITestRunSession runTest(IJavaElement element) throws CoreException {
+		return runTest(element, null);
+	}
+	
+	public static ITestRunSession runTest(IJavaElement element, LaunchConfigurationWorkingCopyModifierCallback callback) throws CoreException {
 		IProject project = element.getResource().getProject();
 		project.build(IncrementalProjectBuilder.FULL_BUILD, null);
 		List<IMarker> errorMarkers = Arrays.stream(project.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE)) //
@@ -84,6 +92,9 @@ class TestExecutionUtil {
 		ILaunchConfigurationWorkingCopy launchConfiguration = launchShortcut.createLaunchConfiguration(element);
 		launchConfiguration.setAttribute(IPDELauncherConstants.APPLICATION, IPDEConstants.CORE_TEST_APPLICATION);
 		setupDirectories(launchConfiguration, element);
+		if (callback != null) {
+			callback.modify(launchConfiguration);
+		}
 
 		BlockingQueue<ITestRunSession> testResult = new LinkedBlockingDeque<>();
 		TestRunListener testRunListener = new TestRunListener() {
