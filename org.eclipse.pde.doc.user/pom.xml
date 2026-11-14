@@ -73,10 +73,10 @@
             <configuration>
                 <ignoredPatterns combine.children="append">
                     <!-- Uninteresting Javadoc changes  -->
-                    <pattern>reference/api/*.css</pattern>
                     <pattern>reference/api/*.js</pattern>
                     <pattern>reference/api/legal/**/*</pattern>
-                    <pattern>reference/api/script-dir/**/*</pattern>
+                    <pattern>reference/api/resource-files/**/*</pattern>
+                    <pattern>reference/api/script-files/**/*</pattern>
                 </ignoredPatterns>
             </configuration>
           </plugin>
