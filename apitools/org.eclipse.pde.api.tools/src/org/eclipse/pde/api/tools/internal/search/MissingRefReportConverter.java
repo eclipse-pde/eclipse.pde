@@ -202,7 +202,6 @@ public class MissingRefReportConverter extends UseReportConverter {
 	private String xmlLocation = null;
 	private String htmlLocation = null;
 	private File reportsRoot = null;
-	private final File htmlIndex = null;
 	Report currentreport = null;
 
 	static final Comparator<Object> missingcompare = (o1, o2) -> {
@@ -507,11 +506,6 @@ public class MissingRefReportConverter extends UseReportConverter {
 
 	@Override
 	public File getReportIndex() {
-		// TODO remove if
-		if (htmlIndex == null) {
-			return new File(htmlLocation);
-		} else {
-			return htmlIndex;
-		}
+		return new File(htmlLocation);
 	}
 }
