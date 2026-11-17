@@ -49,8 +49,8 @@ public class SkippedComponent implements IApiElement {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof SkippedComponent) {
-			return this.componentid.equals(((SkippedComponent) obj).componentid);
+		if (obj instanceof SkippedComponent component) {
+			return this.componentid.equals(component.componentid);
 		}
 		return false;
 	}

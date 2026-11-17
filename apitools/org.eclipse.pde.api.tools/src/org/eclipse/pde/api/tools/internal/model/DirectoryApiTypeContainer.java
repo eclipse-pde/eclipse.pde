@@ -69,8 +69,8 @@ public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeCon
 
 		@Override
 		public boolean equals(Object obj) {
-			if (obj instanceof LocalApiTypeRoot) {
-				return ((LocalApiTypeRoot) obj).getName().equals(this.getName());
+			if (obj instanceof LocalApiTypeRoot type) {
+				return type.getName().equals(this.getName());
 			}
 			return false;
 		}

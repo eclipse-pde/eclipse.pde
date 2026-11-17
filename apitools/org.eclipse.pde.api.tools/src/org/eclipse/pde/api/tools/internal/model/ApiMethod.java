@@ -70,8 +70,8 @@ public class ApiMethod extends ApiMember implements IApiMethod {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof IApiMethod) {
-			return super.equals(obj) && ((IApiMethod) obj).getSignature().equals(getSignature());
+		if (obj instanceof IApiMethod element) {
+			return super.equals(obj) && element.getSignature().equals(getSignature());
 		}
 		return false;
 	}

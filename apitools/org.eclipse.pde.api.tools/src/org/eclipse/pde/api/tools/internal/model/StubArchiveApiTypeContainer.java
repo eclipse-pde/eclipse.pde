@@ -261,8 +261,8 @@ public class StubArchiveApiTypeContainer extends ApiElement implements IApiTypeC
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof StubArchiveApiTypeContainer) {
-			return this.fLocation.equals(((StubArchiveApiTypeContainer) obj).fLocation);
+		if (obj instanceof StubArchiveApiTypeContainer type) {
+			return this.fLocation.equals(type.fLocation);
 		}
 		return false;
 	}

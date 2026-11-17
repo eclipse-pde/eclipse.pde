@@ -132,11 +132,11 @@ public class ApiJavadocTag implements IApiJavadocTag {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof IApiJavadocTag) {
-			return ((IApiJavadocTag) obj).getTagName().equals(getTagName());
+		if (obj instanceof IApiJavadocTag tag) {
+			return tag.getTagName().equals(getTagName());
 		}
-		if (obj instanceof String) {
-			return ((String) obj).equals(getTagName());
+		if (obj instanceof String name) {
+			return name.equals(getTagName());
 		}
 		return false;
 	}

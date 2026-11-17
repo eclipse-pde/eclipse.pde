@@ -54,8 +54,8 @@ public class ApiAccess implements IApiAccess {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof IApiAccess) {
-			return this.access == ((IApiAccess) obj).getAccessLevel();
+		if (obj instanceof IApiAccess element) {
+			return this.access == element.getAccessLevel();
 		}
 		return false;
 	}
