@@ -95,6 +95,19 @@ public class ControlValidationUtility {
 		return true;
 	}
 
+	public static boolean validateFilterField(String value, IValidatorMessageHandler validator) {
+		// Check to see if the platform filter syntax is valid
+		try {
+			PDECore.getDefault().getBundleContext().createFilter(value);
+		} catch (InvalidSyntaxException ise) {
+			validator.addMessage(PDEUIMessages.ControlValidationUtility_errorMsgFeatureFilterInvalidSyntax,
+					IMessageProvider.ERROR);
+			return false;
+		}
+
+		return true;
+	}
+
 	public static boolean validateActivatorField(String value, IValidatorMessageHandler validator, IProject project) {
 
 		// Check the compiler flag and translate it into a message type
