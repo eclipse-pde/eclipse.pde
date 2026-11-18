@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="deltatest">
+<plugin id="deltatest" />
+<package name="p">
+	<type name="Added" extend="false"/>
+	<type name="Base" extend="false"/>
+	<type name="Middle" extend="false"/>
+	<type name="Child" extend="false"/>
+	<type name="AbstractMiddle" extend="false"/>
+	<type name="AbstractChild" extend="false"/>
+</package>
+</component>

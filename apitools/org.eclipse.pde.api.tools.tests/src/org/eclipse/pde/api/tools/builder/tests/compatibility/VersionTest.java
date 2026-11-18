@@ -16,6 +16,7 @@ package org.eclipse.pde.api.tools.builder.tests.compatibility;
 import java.util.jar.JarFile;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -27,6 +28,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescri
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.util.Util;
+import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
 import junit.framework.Test;
 
@@ -42,6 +44,8 @@ public class VersionTest extends CompatibilityTest {
 	 */
 	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = IPath.fromOSString("bundle.a/src/a/version"); //$NON-NLS-1$
 	protected static IPath WORKSPACE_CLASSES_PACKAGE_INTERNAL = IPath.fromOSString("bundle.a/src/a/version/internal"); //$NON-NLS-1$
+	protected static IPath WORKSPACE_INTERNAL_SUPERCLASS_PACKAGE = IPath.fromOSString("bundle.a/src/a/superclass"); //$NON-NLS-1$
+	protected static IPath WORKSPACE_INTERNAL_SUPERCLASS_PACKAGE_INTERNAL = IPath.fromOSString("bundle.a/src/a/superclass/internal"); //$NON-NLS-1$
 
 	protected static IPath MANIFEST_PATH = IPath.fromOSString("bundle.a").append(JarFile.MANIFEST_NAME); //$NON-NLS-1$
 
@@ -128,6 +132,47 @@ public class VersionTest extends CompatibilityTest {
 
 	public void testBreakApiF() throws Exception {
 		xBreakApi(false);
+	}
+
+	/**
+	 * Tests version markers for an internal superclass that introduces a public
+	 * superinterface while retaining a compatible implementation.
+	 */
+	private void xInternalSuperclassBreak(boolean incremental) throws Exception {
+		int[] ids = new int[] {
+				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_VERSION, IElementDescriptor.RESOURCE, IApiProblem.MINOR_VERSION_CHANGE_PACKAGE, IApiProblem.NO_FLAGS),
+				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_VERSION, IElementDescriptor.RESOURCE, IApiProblem.MINOR_VERSION_CHANGE, IApiProblem.NO_FLAGS) };
+		setExpectedProblemIds(ids);
+		String[][] args = new String[2][];
+		args[0] = new String[] { "a.superclass", "1.1.0", "1.0.0" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		args[1] = new String[] { "1.0.0", "1.0.0" }; //$NON-NLS-1$ //$NON-NLS-2$
+		setExpectedMessageArgs(args);
+
+		IPath bPath = WORKSPACE_INTERNAL_SUPERCLASS_PACKAGE.append("B.java"); //$NON-NLS-1$
+		updateWorkspaceFile(bPath, getUpdateFilePath(bPath.lastSegment()));
+		createWorkspaceFile(WORKSPACE_INTERNAL_SUPERCLASS_PACKAGE.append("J.java"), getUpdateFilePath("J.java")); //$NON-NLS-1$ //$NON-NLS-2$
+		IPath internalX = WORKSPACE_INTERNAL_SUPERCLASS_PACKAGE_INTERNAL.append("X.java"); //$NON-NLS-1$
+		IFolder internalFolder = getEnv().getWorkspace().getRoot().getFolder(WORKSPACE_INTERNAL_SUPERCLASS_PACKAGE_INTERNAL);
+		if (!internalFolder.exists()) {
+			internalFolder.create(true, true, null);
+		}
+		createWorkspaceFile(internalX, TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append(getTestSourcePath()).append("internal").append("X.java")); //$NON-NLS-1$ //$NON-NLS-2$
+
+		if (incremental) {
+			incrementalBuild();
+		} else {
+			fullBuild();
+		}
+		ApiProblem[] problems = getEnv().getProblemsFor(MANIFEST_PATH, null);
+		assertProblems(problems);
+	}
+
+	public void testInternalSuperclassBreakI() throws Exception {
+		xInternalSuperclassBreak(true);
+	}
+
+	public void testInternalSuperclassBreakF() throws Exception {
+		xInternalSuperclassBreak(false);
 	}
 
 	/**
