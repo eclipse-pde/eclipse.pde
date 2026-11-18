@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,7 +16,6 @@ package org.eclipse.pde.internal.core;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.ListIterator;
 
 import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IExtension;
@@ -42,10 +41,16 @@ public class PDEExtensionRegistry {
 
 	private final Object fMasterKey = new Object();
 	private final Object fUserKey = new Object();
-	private IExtensionRegistry fRegistry = null;
+	private volatile IExtensionRegistry fRegistry = null;
 	private PDERegistryStrategy fStrategy = null;
 
 	private IPluginModelBase[] fModels = null;
+	/**
+	 * Incremented on every target reload, so that a registry is never created
+	 * from models collected before that reload. Only modified while holding
+	 * this object's monitor.
+	 */
+	private volatile int fTargetGeneration = 0;
 	private final ArrayList<IRegistryChangeListener> fListeners = new ArrayList<>();
 
 	private static final String EXTENSION_DIR = ".extensions"; //$NON-NLS-1$
@@ -85,33 +90,69 @@ public class PDEExtensionRegistry {
 
 	public void stop() {
 		if (fRegistry != null) {
+			// the cache written on stop has to carry the timestamp of the current
+			// models, not of those the registry was created from
+			fStrategy.setModels(getModels());
 			fRegistry.stop(fMasterKey);
 		}
 		dispose();
 	}
 
-	protected synchronized IExtensionRegistry getRegistry() {
-		if (fRegistry == null) {
-			fRegistry = createRegistry();
-			for (ListIterator<IRegistryChangeListener> li = fListeners.listIterator(); li.hasNext();) {
-				fRegistry.addRegistryChangeListener(li.next());
+	protected IExtensionRegistry getRegistry() {
+		while (true) {
+			IExtensionRegistry registry = fRegistry;
+			if (registry != null) {
+				return registry;
 			}
+			int generation = fTargetGeneration;
+			// Collect the models before taking this object's monitor: collecting
+			// them takes the lock of the PluginModelManager, whose model change
+			// listeners ask for this registry while holding that lock. The
+			// strategy, which the registry calls while holding the monitor, gets
+			// these models handed over instead of reading them itself.
+			IPluginModelBase[] models = getModels();
+			synchronized (this) {
+				if (fRegistry == null && generation == fTargetGeneration) {
+					fRegistry = createRegistry(models);
+				}
+				if (fRegistry != null) {
+					return fRegistry;
+				}
+			}
+			// the target was reloaded while the models were collected, so they
+			// may be outdated
 		}
-		return fRegistry;
 	}
 
-	private IExtensionRegistry createRegistry() {
-		return RegistryFactory.createRegistry(fStrategy, fMasterKey, fUserKey);
+	/** Has to be called while holding this object's monitor **/
+	private IExtensionRegistry createRegistry(IPluginModelBase[] models) {
+		fStrategy.setModels(models);
+		IExtensionRegistry registry = RegistryFactory.createRegistry(fStrategy, fMasterKey, fUserKey);
+		for (IRegistryChangeListener listener : fListeners) {
+			registry.addRegistryChangeListener(listener);
+		}
+		return registry;
 	}
 
-	public void targetReloaded() {
+	/**
+	 * Discards the registry, which is created again from the reloaded target's
+	 * models on next access.
+	 */
+	public synchronized void targetReloaded() {
 		// stop old registry (which will write contents to FS) and delete the cache it creates
 		// might see if we can dispose of a registry without writing to file system.  NOTE: Don't call stop() because we want to still reuse fStrategy
+		// The cache is deleted right below, so stopping the registry computes its
+		// timestamp from the models the registry was created from instead of
+		// reading the current ones while holding this object's monitor (see
+		// getRegistry()).
 		if (fRegistry != null) {
 			fRegistry.stop(fMasterKey);
 		}
 		CoreUtility.deleteContent(new File(PDECore.getDefault().getStateLocation().toFile(), EXTENSION_DIR));
 		fRegistry = null;
+		fTargetGeneration++;
+		// release the models of the previous target
+		fStrategy.setModels(new IPluginModelBase[0]);
 	}
 
 	// dispose of registry without writing contents.

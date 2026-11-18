@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -48,6 +48,15 @@ public class PDERegistryStrategy extends RegistryStrategy {
 	private ModelListener fModelListener = null;
 	private ExtensionListener fExtensionListener = null;
 	private PDEExtensionRegistry fPDERegistry = null;
+	/**
+	 * The models the registry is built from and computes the timestamp of its
+	 * cache from, handed over by the {@link PDEExtensionRegistry}. The registry
+	 * calls this strategy while holding the monitor of the PDEExtensionRegistry,
+	 * so the strategy must never read the models from the
+	 * {@link PluginModelManager} itself: model change listeners hold its lock
+	 * while asking for the registry.
+	 */
+	private volatile IPluginModelBase[] fModels = new IPluginModelBase[0];
 
 	class RegistryListener {
 		IExtensionRegistry fRegistry;
@@ -192,8 +201,16 @@ public class PDERegistryStrategy extends RegistryStrategy {
 		return xmlTracker.getService();
 	}
 
+	/**
+	 * Sets the models to build the registry from and to compute the timestamp
+	 * of its cache from.
+	 */
+	void setModels(IPluginModelBase[] models) {
+		fModels = models;
+	}
+
 	private void processBundles(IExtensionRegistry registry) {
-		addBundles(registry, fPDERegistry.getModels());
+		addBundles(registry, fModels);
 	}
 
 	private void addBundles(IExtensionRegistry registry, IPluginModelBase[] bases) {
@@ -325,7 +342,7 @@ public class PDERegistryStrategy extends RegistryStrategy {
 	// Same timestamp calculations as PDEState.computeTimestamp(URL[] urls, long timestamp)
 	@Override
 	public long getContributionsTimestamp() {
-		IPluginModelBase[] bases = fPDERegistry.getModels();
+		IPluginModelBase[] bases = fModels;
 		long timeStamp = 0;
 		for (IPluginModelBase base : bases) {
 			String loc = base.getInstallLocation();
