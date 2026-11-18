@@ -13,7 +13,7 @@
  *     Sean Bright <sean@malleable.com> - ongoing enhancements
  *     BJ Hargrave <bj@hargrave.dev> - ongoing enhancements
 *******************************************************************************/
-package org.eclipse.pde.bnd.ui.tasks;
+package org.eclipse.pde.bnd.ui.model.resolution;
 
 import java.io.File;
 import java.io.IOException;
