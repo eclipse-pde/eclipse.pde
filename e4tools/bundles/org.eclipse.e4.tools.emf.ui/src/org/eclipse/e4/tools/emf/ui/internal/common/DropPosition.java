@@ -11,11 +11,19 @@
 
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
+import java.util.List;
+
+import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
 
 /**
  * Where a drag and drop in the model editor tree goes: the drop zone under the
- * pointer and the list index that zone stands for.
+ * pointer, the list index that zone stands for and the element that lands there.
  */
 public final class DropPosition {
 
@@ -59,5 +67,29 @@ public final class DropPosition {
 		}
 		final int index = after ? target + 1 : target;
 		return current >= 0 && current < index ? index - 1 : index;
+	}
+
+	/**
+	 * Returns the element to add to {@code feature} of {@code parent} when
+	 * {@code dragged} is dropped there: an element id placeholder for the imports
+	 * of a fragment, a copy for an element of another model (such as one dragged
+	 * from a second editor) without references into that model, a copy if
+	 * {@code copy} is set, otherwise {@code dragged} itself, which is then moved.
+	 */
+	public static EObject element(EObject dragged, EObject parent, EStructuralFeature feature, boolean copy) {
+		if (feature == FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS
+				&& !((List<?>) parent.eGet(feature)).contains(dragged)
+				&& dragged instanceof MApplicationElement source) {
+			final MApplicationElement placeholder = (MApplicationElement) EcoreUtil.create(dragged.eClass());
+			placeholder.setElementId(source.getElementId());
+			return (EObject) placeholder;
+		}
+		if (EcoreUtil.getRootContainer(dragged) != EcoreUtil.getRootContainer(parent)) {
+			final Copier copier = new Copier(true, false);
+			final EObject result = copier.copy(dragged);
+			copier.copyReferences();
+			return result;
+		}
+		return copy ? EcoreUtil.copy(dragged) : dragged;
 	}
 }
