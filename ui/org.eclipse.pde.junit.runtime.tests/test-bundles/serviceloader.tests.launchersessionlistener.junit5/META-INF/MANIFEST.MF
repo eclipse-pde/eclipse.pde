@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Junit5 Serviceloader LauncherSessionListener Bundle
+Bundle-SymbolicName: serviceloader.tests.launchersessionlistener.junit5
+Bundle-Version: 1.0.0.qualifier
+Require-Bundle: junit-platform-engine;bundle-version="[1.0.0,6.0.0)",
+ junit-platform-launcher;bundle-version="[1.0.0,6.0.0)"
+Automatic-Module-Name: serviceloader.tests.launchersessionlistener.junit5
+Bundle-RequiredExecutionEnvironment: JavaSE-25
