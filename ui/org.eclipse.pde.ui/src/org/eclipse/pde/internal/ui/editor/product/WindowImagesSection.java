@@ -173,6 +173,7 @@ public class WindowImagesSection extends PDESection {
 		FileExtensionsFilter filter = new FileExtensionsFilter();
 		filter.addFileExtension("gif"); //$NON-NLS-1$
 		filter.addFileExtension("png"); //$NON-NLS-1$
+		filter.addFileExtension("svg"); //$NON-NLS-1$
 		dialog.addFilter(filter);
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
 
