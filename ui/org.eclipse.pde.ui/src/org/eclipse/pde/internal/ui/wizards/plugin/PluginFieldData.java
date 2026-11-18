@@ -26,6 +26,7 @@ public class PluginFieldData extends AbstractFieldData implements IPluginFieldDa
 	private boolean fDoGenerateActivator = false;
 	private boolean fRCPAppPlugin = false;
 	private boolean fSetupAPITooling = false;
+	private boolean fEnableDSProcessing = false;
 	private boolean fE4Plugin = false;
 	private final ArrayList<ITemplateSection> templates = new ArrayList<>();
 
@@ -87,6 +88,24 @@ public class PluginFieldData extends AbstractFieldData implements IPluginFieldDa
 	 */
 	public void setEnableAPITooling(boolean enable) {
 		fSetupAPITooling = enable;
+	}
+
+	/**
+	 * @return whether Declarative Services processing should be enabled in the
+	 *         plugin when created
+	 */
+	public boolean doEnableDSProcessing() {
+		return fEnableDSProcessing;
+	}
+
+	/**
+	 * Set whether Declarative Services processing should be enabled in the plugin
+	 * when created
+	 *
+	 * @param enable whether to enable DS processing
+	 */
+	public void setEnableDSProcessing(boolean enable) {
+		fEnableDSProcessing = enable;
 	}
 
 	public boolean isE4Plugin() {
