@@ -195,6 +195,10 @@
             class="org.eclipse.pde.ds.internal.annotations.BuildPathMarkerResolutionGenerator"
             markerType="org.eclipse.pde.ds.annotations.buildpath_problem">
       </markerResolutionGenerator>
+      <markerResolutionGenerator
+            class="org.eclipse.pde.ds.internal.annotations.DSAnnotationMarkerResolutionGenerator"
+            markerType="org.eclipse.pde.ds.annotations.problem">
+      </markerResolutionGenerator>
    </extension>
 
 </plugin>
