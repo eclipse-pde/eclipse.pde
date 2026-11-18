@@ -30,6 +30,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.CoreException;
@@ -205,18 +206,6 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		return true;
 	}
 
-	private BundleInfo[] getDefaultStartInfo() {
-		//TODO merge this with config.ini generation
-		//for now just set p2.inf values, implying refactored runtime and simpleconfigurator
-		BundleInfo[] defaults = new BundleInfo[6];
-		defaults[0] = new BundleInfo(BUNDLE_SIMPLE_CONFIGURATOR, null, null, 1, true);
-		defaults[1] = new BundleInfo(BUNDLE_EQUINOX_COMMON, null, null, 2, true);
-		defaults[2] = new BundleInfo(BUNDLE_OSGI, null, null, -1, true);
-		defaults[3] = new BundleInfo(BUNDLE_CORE_RUNTIME, null, null, 4, true);
-		defaults[4] = new BundleInfo(BUNDLE_DS, null, null, 2, true);
-		return defaults;
-	}
-
 	private void generateP2InfCUs(StringBuffer buffer, int startIndex, boolean cus, boolean launchers) {
 		int index = startIndex;
 
@@ -231,17 +220,19 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		}
 
 		if (cus) {
-			BundleInfo[] infos = getDefaultStartInfo();
-			for (int i = 0; i < infos.length && infos[i] != null; i++) {
-				BundleDescription bundle = assembly.getPlugin(infos[i].getSymbolicName(), infos[i].getVersion());
+			for (Entry<String, Integer> entry : IPDEBuildConstants.RECOMMENDED_AUTO_START_BUNDLE_LEVELS.entrySet()) {
+				String symbolicName = entry.getKey();
+				int startLevel = entry.getValue();
+				startLevel = startLevel == 0 ? BundleInfo.NO_LEVEL : startLevel;
+				BundleDescription bundle = assembly.getPlugin(symbolicName, BundleInfo.EMPTY_VERSION);
 				if (bundle == null) {
-					continue;
+					return;
 				}
 
 				String[] instructions = new String[4];
 				instructions[P2InfUtils.INSTRUCTION_INSTALL] = INSTALL_INSTRUCTION;
 				instructions[P2InfUtils.INSTRUCTION_UNINSTALL] = UNINSTALL_INSTRUCTION;
-				instructions[P2InfUtils.INSTRUCTION_CONFIGURE] = "setStartLevel(startLevel:" + infos[i].getStartLevel() + ");markStarted(started:" + Boolean.toString(infos[i].isMarkedAsStarted()) + ");"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				instructions[P2InfUtils.INSTRUCTION_CONFIGURE] = "setStartLevel(startLevel:" + startLevel + ");markStarted(started:" + true + ");"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				instructions[P2InfUtils.INSTRUCTION_UNCONFIGURE] = "setStartLevel(startLevel:-1);markStarted(started:false);"; //$NON-NLS-1$
 
 				if (!GENERIC_VERSION_NUMBER.equals(productVersionString)) {
@@ -249,7 +240,6 @@ public class ProductGenerator extends AbstractScriptGenerator {
 				} else {
 					P2InfUtils.printBundleCU(buffer, index++, bundle.getSymbolicName(), bundle.getVersion(), bundle.getPlatformFilter(), instructions);
 				}
-
 			}
 		}
 
@@ -465,19 +455,13 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		} else {
 			if ((style & CONFIG_STYLE_REFACTORED) > 0) {
 				//start levels for eclipse 3.2
-				//org.eclipse.equinox.common@2:start,
-				buffer.append(BUNDLE_EQUINOX_COMMON);
-				buffer.append(START_LEVEL_2);
-				buffer.append(',');
-				if ((style & CONFIG_INCLUDES_DS) > 0) {
-					//org.eclipse.equinox.ds@1:start
-					buffer.append(BUNDLE_DS);
-					buffer.append(START_LEVEL_2);
-					buffer.append(',');
-				}
-				//org.eclipse.core.runtime
-				buffer.append(BUNDLE_CORE_RUNTIME);
-				buffer.append(START);
+				IPDEBuildConstants.RECOMMENDED_AUTO_START_BUNDLE_LEVELS.forEach((bundleName, startLevel) -> {
+					if (startLevel > -1 && assembly.getPlugin(bundleName, null) != null) {
+						buffer.append(bundleName);
+						buffer.append(startLevel == 0 ? START : "@" + startLevel + ":start"); //$NON-NLS-1$ //$NON-NLS-2$
+						buffer.append(',');
+					}
+				});
 			} else {
 				//start level for 3.1 and 3.0
 				buffer.append(BUNDLE_CORE_RUNTIME);
@@ -527,16 +511,9 @@ public class ProductGenerator extends AbstractScriptGenerator {
 					}
 				} else {
 					buffer.append(bundle.getSymbolicName());
-					if (BUNDLE_EQUINOX_COMMON.equals(id)) {
-						buffer.append(START_LEVEL_2);
-					} else if (BUNDLE_DS.equals(id)) {
-						buffer.append(START_LEVEL_2);
-					} else if (BUNDLE_CORE_RUNTIME.equals(id)) {
-						if ((style & CONFIG_STYLE_REFACTORED) > 0) {
-							buffer.append(START);
-						} else {
-							buffer.append(START_LEVEL_2);
-						}
+					Integer startLevel = IPDEBuildConstants.RECOMMENDED_AUTO_START_BUNDLE_LEVELS.get(id);
+					if (startLevel != null) {
+						buffer.append(startLevel == 0 ? START : ("@" + startLevel + ":start")); //$NON-NLS-1$//$NON-NLS-2$
 					}
 				}
 			}

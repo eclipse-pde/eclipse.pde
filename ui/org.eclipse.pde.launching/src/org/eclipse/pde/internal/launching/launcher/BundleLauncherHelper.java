@@ -633,20 +633,21 @@ public class BundleLauncherHelper {
 		addBundleToMap(map, bundle, DEFAULT_START_LEVELS);
 	}
 
-	private static final Map<String, String> AUTO_STARTED_BUNDLE_LEVELS = Map.ofEntries( //
-			Map.entry(IPDEBuildConstants.BUNDLE_DS, "1"), //$NON-NLS-1$
-			Map.entry(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR, "1"), //$NON-NLS-1$
-			Map.entry(IPDEBuildConstants.BUNDLE_EQUINOX_COMMON, "2"), //$NON-NLS-1$
-			Map.entry(IPDEBuildConstants.BUNDLE_OSGI, "1"), //$NON-NLS-1$
-			Map.entry(IPDEBuildConstants.BUNDLE_CORE_RUNTIME, DEFAULT), //
-			Map.entry(IPDEBuildConstants.BUNDLE_FELIX_SCR, "1")); //$NON-NLS-1$
-
 	public static String resolveSystemRunLevelText(BundleDescription description) {
-		return AUTO_STARTED_BUNDLE_LEVELS.get(description.getSymbolicName());
+		Integer startLevel = IPDEBuildConstants.RECOMMENDED_AUTO_START_BUNDLE_LEVELS.get(description.getSymbolicName());
+		return startLevel != null ? autoStartLevelToString(startLevel) : null;
 	}
 
 	public static String resolveSystemAutoText(BundleDescription description) {
-		return AUTO_STARTED_BUNDLE_LEVELS.containsKey(description.getSymbolicName()) ? "true" : null; //$NON-NLS-1$
+		return IPDEBuildConstants.RECOMMENDED_AUTO_START_BUNDLE_LEVELS.containsKey(description.getSymbolicName()) ? "true" : null; //$NON-NLS-1$
+	}
+
+	public static int parseAutoStartLevel(String startLevel) {
+		return startLevel == null || startLevel.isBlank() || startLevel.equals(DEFAULT) ? 0 : Integer.parseInt(startLevel);
+	}
+
+	public static String autoStartLevelToString(int startLevel) {
+		return startLevel == 0 ? DEFAULT : Integer.toString(startLevel);
 	}
 
 	public static String formatBundleEntry(IPluginModelBase model, String startLevel, String autoStart) {
