@@ -56,6 +56,11 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 												// export-package
 	protected boolean fCalculateUses = false; // calculate the 'uses' directive
 												// for exported packages
+
+	protected boolean fUpdateHeader = false; // automatically adds missing
+												// required
+												// capabilities
+
 	protected boolean fModifyDep = true; // modify import-package /
 											// require-bundle
 	protected boolean fRemoveDependencies = true; // if true: remove, else mark
@@ -210,6 +215,14 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 			}
 		}
 
+		if (fUpdateHeader) {
+			subMonitor.subTask(NLS.bind(PDEUIMessages.OrganizeManifestsOperation_updateHeader, projectName));
+			if (!subMonitor.isCanceled()) {
+				UpdateHeaderFromAnnotationsOperation.updateHeadersFromAnnotations(fCurrentProject, currentBundle);
+				subMonitor.worked(3);
+			}
+		}
+
 		if (fAddDependencies) {
 			subMonitor.subTask(NLS.bind(PDEUIMessages.OrganizeManifestsOperation_additionalDeps, projectName));
 			if (!subMonitor.isCanceled()) {
@@ -314,6 +327,10 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 
 	public void setCalculateUses(boolean calculateUses) {
 		fCalculateUses = calculateUses;
+	}
+
+	public void setUpdateHeader(boolean updateHeader) {
+		fUpdateHeader = updateHeader;
 	}
 
 	public void setModifyDep(boolean modifyDep) {
