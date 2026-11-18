@@ -3163,6 +3163,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String PreferencesSection_title;
 	public static String PreferencesSection_description;
+	public static String PreferencesSection_file;
+	public static String PreferencesSection_fileTitle;
+	public static String PreferencesSection_fileMessage;
+	public static String PreferencesSection_browse;
 	public static String PreferencesSection_errorNoDefiningPlugin;
 	public static String PreferencesSection_errorNoDefiningPluginTitle;
 	public static String PreferencesSection_errorReading;

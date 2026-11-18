@@ -21,8 +21,10 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.equinox.bidi.StructuredTextTypeHandlerFactory;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.util.BidiUtils;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.util.NLS;
@@ -43,9 +45,13 @@ import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.parts.FormEntry;
+import org.eclipse.pde.internal.ui.util.FileExtensionsFilter;
+import org.eclipse.pde.internal.ui.util.FileValidator;
 import org.eclipse.pde.internal.ui.wizards.ResizableWizardDialog;
 import org.eclipse.pde.internal.ui.wizards.tools.ConvertPreferencesWizard;
 import org.eclipse.swt.dnd.Clipboard;
@@ -53,12 +59,16 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public class PreferencesSection extends PDESection {
 	private static final String PREFS_CUSTOMIZATION_FILE = "plugin_customization.ini"; //$NON-NLS-1$
@@ -67,6 +77,7 @@ public class PreferencesSection extends PDESection {
 	public static final String ELEMENT_PRODUCT = "product"; //$NON-NLS-1$
 
 	FormText configText;
+	private FormEntry fFileEntry;
 
 	public PreferencesSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION);
@@ -85,6 +96,30 @@ public class PreferencesSection extends PDESection {
 		Composite client = toolkit.createComposite(section);
 		client.setLayout(FormLayoutFactory.createSectionClientTableWrapLayout(false, 1));
 		client.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+
+		Composite child = toolkit.createComposite(client);
+		child.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 3));
+		child.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+
+		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
+		fFileEntry = new FormEntry(child, toolkit, PDEUIMessages.PreferencesSection_file,
+				PDEUIMessages.PreferencesSection_browse, false);
+		BidiUtils.applyBidiProcessing(fFileEntry.getText(), StructuredTextTypeHandlerFactory.FILE);
+		fFileEntry.setEditable(isEditable());
+		fFileEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+			@Override
+			public void textValueChanged(FormEntry entry) {
+				String value = entry.getValue().trim();
+				getPreferencesInfo().setPreferenceCustomizationPath(value.isEmpty() ? null : value);
+				configText.setText(getWizardConfigText(), true, true);
+				getSection().getParent().layout();
+			}
+
+			@Override
+			public void browseButtonSelected(FormEntry entry) {
+				handleBrowse();
+			}
+		});
 
 		configText = toolkit.createFormText(client, true);
 		String config = getWizardConfigText();
@@ -239,9 +274,46 @@ public class PreferencesSection extends PDESection {
 			info.setPreferenceCustomizationPath(wizard.getPluginCustomizationFilePath());
 			info.setSourceFilePath(wizard.getPreferencesFilePath());
 			info.setOverwrite(Boolean.toString(wizard.getOverwrite()));
+			fFileEntry.setValue(info.getPreferenceCustomizationPath(), true);
 			configText.setText(getWizardConfigText(), true, true);
 			getSection().getParent().layout();
 		}
+	}
+
+	private void handleBrowse() {
+		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getSection().getShell(),
+				new WorkbenchLabelProvider(), new WorkbenchContentProvider());
+		dialog.setValidator(new FileValidator());
+		dialog.setAllowMultiple(false);
+		dialog.setTitle(PDEUIMessages.PreferencesSection_fileTitle);
+		dialog.setMessage(PDEUIMessages.PreferencesSection_fileMessage);
+		FileExtensionsFilter filter = new FileExtensionsFilter();
+		filter.addFileExtension("ini"); //$NON-NLS-1$
+		dialog.addFilter(filter);
+		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
+		if (dialog.open() == Window.OK) {
+			IFile file = (IFile) dialog.getFirstResult();
+			fFileEntry.setValue(file.getFullPath().toString());
+		}
+	}
+
+	@Override
+	public void refresh() {
+		fFileEntry.setValue(getPreferencesInfo().getPreferenceCustomizationPath(), true);
+		configText.setText(getWizardConfigText(), true, true);
+		super.refresh();
+	}
+
+	@Override
+	public void commit(boolean onSave) {
+		fFileEntry.commit();
+		super.commit(onSave);
+	}
+
+	@Override
+	public void cancelEdit() {
+		fFileEntry.cancelEdit();
+		super.cancelEdit();
 	}
 
 	private boolean getOverwrite() {
