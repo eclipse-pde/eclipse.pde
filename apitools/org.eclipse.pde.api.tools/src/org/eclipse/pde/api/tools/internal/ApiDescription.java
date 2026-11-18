@@ -113,8 +113,8 @@ public class ApiDescription implements IApiDescription {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (obj instanceof ManifestNode) {
-				return ((ManifestNode) obj).element.equals(element);
+			if (obj instanceof ManifestNode node) {
+				return node.element.equals(element);
 			}
 			return false;
 		}

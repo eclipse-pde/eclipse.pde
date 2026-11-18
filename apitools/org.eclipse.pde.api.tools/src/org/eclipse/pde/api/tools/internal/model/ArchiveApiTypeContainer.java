@@ -250,8 +250,8 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof ArchiveApiTypeContainer) {
-			return this.fLocation.equals(((ArchiveApiTypeContainer) obj).fLocation);
+		if (obj instanceof ArchiveApiTypeContainer type) {
+			return this.fLocation.equals(type.fLocation);
 		}
 		return false;
 	}
