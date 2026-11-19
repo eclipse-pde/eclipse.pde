@@ -42,6 +42,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		prefs.putInt(CompilerFlags.P_SERVICE_COMP_WITHOUT_LAZY_ACT, CompilerFlags.WARNING);
 		prefs.putInt(CompilerFlags.P_NO_AUTOMATIC_MODULE, CompilerFlags.WARNING);
 		prefs.putInt(CompilerFlags.P_EXEC_ENV_TOO_LOW, CompilerFlags.WARNING);
+		// default severity of all p2.inf problems, switch to ERROR to make them errors
+		prefs.putInt(CompilerFlags.P_P2INF, CompilerFlags.WARNING);
 
 		prefs.putInt(CompilerFlags.P_BUILD, CompilerFlags.WARNING);
 		prefs.putInt(CompilerFlags.P_BUILD_MISSING_OUTPUT, CompilerFlags.IGNORE);

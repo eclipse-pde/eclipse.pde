@@ -49,6 +49,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	private static final int EXTENSIONS = 0x2;
 	private static final int BUILD = 0x4;
 	private static final int STRUCTURE = 0x8;
+	private static final int P2INF = 0x10;
 	static final IPath SETTINGS_PATH = IPath.fromOSString(".settings"); //$NON-NLS-1$
 
 	private static IProject[] EMPTY_LIST = new IProject[0];
@@ -163,6 +164,17 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 						if (PDECore.DEBUG_VALIDATION) {
 							StringBuilder sb = new StringBuilder();
 							sb.append("Needs to rebuild project ["); //$NON-NLS-1$
+							sb.append(getProject().getName());
+							sb.append("]: "); //$NON-NLS-1$
+							sb.append(delta.getResource().getProjectRelativePath().toString());
+							sb.append(" - changed"); //$NON-NLS-1$
+							PDECore.TRACE.trace(PDECore.KEY_DEBUG_VALIDATION, sb.toString());
+						}
+					} else if (file.equals(PDEProject.getBundleP2Inf(project))) {
+						type |= P2INF;
+						if (PDECore.DEBUG_VALIDATION) {
+							StringBuilder sb = new StringBuilder();
+							sb.append("Needs to rebuild p2.inf in project ["); //$NON-NLS-1$
 							sb.append(getProject().getName());
 							sb.append("]: "); //$NON-NLS-1$
 							sb.append(delta.getResource().getProjectRelativePath().toString());
@@ -298,6 +310,10 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		if ((type & BUILD) != 0) {
 			validateBuildProperties(subMonitor.split(1));
 		}
+		// STRUCTURE is set for full builds and when files are added or removed
+		if ((type & (P2INF | STRUCTURE)) != 0) {
+			validateP2Inf(subMonitor.split(1));
+		}
 	}
 
 	private int getWorkAmount(int type) {
@@ -306,6 +322,9 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			++work;
 		}
 		if ((type & BUILD) != 0) {
+			++work;
+		}
+		if ((type & (P2INF | STRUCTURE)) != 0) {
 			++work;
 		}
 		return work;
@@ -388,6 +407,18 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			monitor.subTask(PDECoreMessages.ManifestConsistencyChecker_buildPropertiesSubtask);
 			BuildErrorReporter ber = new BuildErrorReporter(file);
 			ber.validateContent(monitor);
+		}
+	}
+
+	private void validateP2Inf(IProgressMonitor monitor) {
+		if (monitor.isCanceled()) {
+			return;
+		}
+		IFile file = PDEProject.getBundleP2Inf(getProject());
+		if (file.exists()) {
+			monitor.subTask(PDECoreMessages.ManifestConsistencyChecker_p2InfSubtask);
+			P2InfErrorReporter reporter = new P2InfErrorReporter(file);
+			reporter.validateContent(monitor);
 		}
 	}
 
@@ -480,6 +511,8 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		cleanProblems(PDEProject.getFragmentXml(getProject()), IResource.DEPTH_ZERO);
 		// clean build properties
 		cleanProblems(PDEProject.getBuildProperties(getProject()), IResource.DEPTH_ZERO);
+		// clean p2.inf
+		cleanProblems(PDEProject.getBundleP2Inf(getProject()), IResource.DEPTH_ZERO);
 		localmonitor.split(1);
 	}
 
