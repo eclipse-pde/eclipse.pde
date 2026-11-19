@@ -2984,6 +2984,7 @@ public class PDEUIMessages extends NLS {
 	public static String ProductExportWizardPage_exportOptionsGroup;
 
 	public static String CompilersConfigurationTab_buildPropertiesErrors;
+	public static String CompilersConfigurationTab_p2InfErrors;
 
 	public static String PluginsView_description;
 

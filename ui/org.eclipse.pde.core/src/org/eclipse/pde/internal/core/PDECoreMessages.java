@@ -247,6 +247,11 @@ public class PDECoreMessages extends NLS {
 	public static String BundleValidationOperation_multiple_singletons;
 
 	public static String ManifestConsistencyChecker_buildPropertiesSubtask;
+	public static String ManifestConsistencyChecker_p2InfSubtask;
+
+	public static String P2InfErrorReporter_unknownKey;
+	public static String P2InfErrorReporter_unknownKeySuggestion;
+	public static String P2InfErrorReporter_missingIndex;
 
 	public static String BuildErrorReporter_missingEntry;
 	public static String BuildErrorReporter_missingFolder;
