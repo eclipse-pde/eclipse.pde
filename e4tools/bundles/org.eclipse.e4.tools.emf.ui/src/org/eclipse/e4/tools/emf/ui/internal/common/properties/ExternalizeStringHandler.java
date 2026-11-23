@@ -20,6 +20,7 @@ import org.eclipse.e4.core.services.nls.Translation;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
+import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl;
@@ -51,8 +52,8 @@ import jakarta.inject.Named;
 public class ExternalizeStringHandler {
 
 	@Execute
-	public void execute(@Named(IServiceConstants.ACTIVE_SHELL) Shell shell, @Translation Messages messages, IModelResource resource, IResourcePool pool, IProject project) {
-		TitleAreaDialog dialog = new ExtractionDialog(shell, messages, resource, resource.getRoot(), pool, project);
+	public void execute(@Named(IServiceConstants.ACTIVE_SHELL) Shell shell, @Translation Messages messages, IModelResource resource, IResourcePool pool, IProject project, ModelEditor editor) {
+		TitleAreaDialog dialog = new ExtractionDialog(shell, messages, resource, resource.getRoot(), pool, project, editor);
 		dialog.open();
 	}
 
@@ -63,10 +64,12 @@ public class ExternalizeStringHandler {
 		private final IProject project;
 		private CheckboxTableViewer viewer;
 		private final IModelResource resource;
+		private final ModelEditor editor;
 
 		public ExtractionDialog(Shell parentShell, Messages messages, IModelResource resource,
-				IObservableList<? extends EObject> list, IResourcePool pool, IProject project) {
+				IObservableList<? extends EObject> list, IResourcePool pool, IProject project, ModelEditor editor) {
 			super(parentShell);
+			this.editor = editor;
 			this.messages = messages;
 			this.list = list;
 			this.pool = pool;
@@ -108,8 +111,7 @@ public class ExternalizeStringHandler {
 					@Override
 					public String getText(Object element) {
 						Entry e = (Entry) element;
-						// FIXME We need the label provider
-						return e.object.eClass().getName();
+						return editor.getEditor(e.object.eClass()).getLabel(e.object);
 					}
 				});
 			}
