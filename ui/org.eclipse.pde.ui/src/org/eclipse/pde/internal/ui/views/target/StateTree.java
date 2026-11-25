@@ -49,6 +49,7 @@ import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.osgi.framework.Version;
@@ -256,6 +257,11 @@ public class StateTree extends FilteredTree {
 				ManifestEditor.open(desc, false);
 			}
 		}
+	}
+
+	@Override
+	protected Text doCreateFilterText(Composite parent) {
+		return new Text(parent, SWT.SINGLE | SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH | SWT.ICON_CANCEL);
 	}
 
 	public BundleDescription getBundleDescription() {

@@ -13,10 +13,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 
@@ -63,5 +65,11 @@ public class RegistryFilteredTree extends FilteredTree {
 
 		// update view title on viewer's toolbar update
 		browser.updateTitle();
+	}
+
+	@Override
+	protected Text doCreateFilterText(Composite parent) {
+		Text text = new Text(parent, SWT.SINGLE | SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH | SWT.ICON_CANCEL);
+		return text;
 	}
 }

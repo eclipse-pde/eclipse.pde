@@ -113,12 +113,12 @@ public class FilteredCheckboxTree extends FilteredTree {
 	protected Text doCreateFilterText(Composite parent) {
 		// Overridden so the text gets create using the toolkit if we have one
 		Text parentText = super.doCreateFilterText(parent);
+		int style = parentText.getStyle() | SWT.SEARCH | SWT.ICON_SEARCH | SWT.ICON_CANCEL;
+		parentText.dispose();
 		if (fToolkit != null) {
-			int style = parentText.getStyle();
-			parentText.dispose();
 			return fToolkit.createText(parent, null, style);
 		}
-		return parentText;
+		return new Text(parent, style);
 	}
 
 	public CachedCheckboxTreeViewer getCheckboxTreeViewer() {

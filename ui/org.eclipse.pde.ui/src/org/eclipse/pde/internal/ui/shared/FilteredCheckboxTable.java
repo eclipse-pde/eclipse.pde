@@ -126,12 +126,12 @@ public class FilteredCheckboxTable extends FilteredTable {
 	protected Text doCreateFilterText(Composite parent) {
 		// Overridden so the text gets create using the toolkit if we have one
 		Text parentText = super.doCreateFilterText(parent);
+		int style = parentText.getStyle() | SWT.SEARCH | SWT.ICON_SEARCH | SWT.ICON_CANCEL;
+		parentText.dispose();
 		if (toolkit != null) {
-			int style = parentText.getStyle();
-			parentText.dispose();
 			return toolkit.createText(parent, null, style);
 		}
-		return parentText;
+		return new Text(parent, style);
 	}
 
 	@Override
