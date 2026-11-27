@@ -39,7 +39,9 @@ import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -231,7 +233,7 @@ import jakarta.annotation.PreDestroy;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
-public class ModelEditor implements IGotoObject {
+public class ModelEditor implements IGotoObject, IAdaptable {
 	private static final String ORG_ECLIPSE_E4_TOOLS_MODELEDITOR_FILTEREDTREE_ENABLED_XMITAB_DISABLED = "org.eclipse.e4.tools.modeleditor.filteredtree.enabled.xmitab.disabled";//$NON-NLS-1$
 
 	public static final String CSS_CLASS_KEY = "org.eclipse.e4.ui.css.CssClassName"; //$NON-NLS-1$
@@ -297,6 +299,8 @@ public class ModelEditor implements IGotoObject {
 	private final List<FeaturePath> labelFeaturePaths = new ArrayList<>();
 	private final List<IEditorFeature> editorFeatures = new ArrayList<>();
 	private final List<IContributionClassCreator> contributionCreator = new ArrayList<>();
+
+	private final List<Runnable> tabChangedListeners = new ArrayList<>();
 
 	private TreeViewer viewer;
 	private final IModelResource modelProvider;
@@ -479,6 +483,7 @@ public class ModelEditor implements IGotoObject {
 					gotoEObject(TAB_FORM, null);
 					app.getContext().set(key, null);
 				}
+				fireTabChangedEvent();
 			}
 		});
 
@@ -1498,6 +1503,7 @@ public class ModelEditor implements IGotoObject {
 			translationProvider.dispose();
 		}
 		componentImages.dispose();
+		tabChangedListeners.clear();
 	}
 
 	public IModelResource getModelProvider() {
@@ -2118,6 +2124,21 @@ public class ModelEditor implements IGotoObject {
 		editorTabFolder.setSelection(item);
 		// a programmatic selection does not notify the tab folder's selection listener
 		app.getContext().set(key, listTab != null && item == listTab.getTabItem() ? listTab : null);
+		fireTabChangedEvent();
+	}
+
+	public void addTabChangedListener(Runnable listener) {
+		tabChangedListeners.add(listener);
+	}
+
+	public void removeTabChangedListener(Runnable listener) {
+		tabChangedListeners.remove(listener);
+	}
+
+	private void fireTabChangedEvent() {
+		for (Runnable listener : tabChangedListeners) {
+			listener.run();
+		}
 	}
 
 	// This will ensure the provider has created the tree node (so we can reveal
@@ -2158,6 +2179,16 @@ public class ModelEditor implements IGotoObject {
 			viewer.refresh(true);
 		}
 
+	}
+
+	@Override
+	public <T> T getAdapter(Class<T> adapter) {
+		if (editorTabFolder != null && !editorTabFolder.isDisposed() //
+				&& tabItemXmi != null && !tabItemXmi.isDisposed() //
+				&& editorTabFolder.getSelectionIndex() == getTabIndex(tabItemXmi)) {
+			return Adapters.adapt(xmiTab, adapter);
+		}
+		return null;
 	}
 
 }

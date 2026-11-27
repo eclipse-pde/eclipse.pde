@@ -16,6 +16,7 @@
 package org.eclipse.e4.tools.emf.ui.internal.common.component.tabs;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -35,7 +36,9 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
+import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.rules.FastPartitioner;
@@ -44,20 +47,18 @@ import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.VerticalRuler;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 
-public class XmiTab extends Composite {
+public class XmiTab extends Composite implements IAdaptable {
 
 	private static final String ORG_ECLIPSE_E4_TOOLS_MODELEDITOR_FILTEREDTREE_ENABLED_XMITAB_DISABLED = "org.eclipse.e4.tools.modeleditor.filteredtree.enabled.xmitab.disabled";//$NON-NLS-1$
 	private static final int VERTICAL_RULER_WIDTH = 20;
@@ -79,8 +80,6 @@ public class XmiTab extends Composite {
 	@Translation
 	protected Messages Messages;
 
-	private Text text;
-	protected int offsetStart;
 	private SourceViewer sourceViewer;
 
 	@Inject
@@ -91,20 +90,6 @@ public class XmiTab extends Composite {
 
 	@PostConstruct
 	protected void postConstruct() {
-		text = new Text(this, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
-		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		text.setMessage(Messages.XmiTab_TypeTextToSearch);
-		text.addKeyListener(KeyListener.keyPressedAdapter(e -> {
-			if (e.keyCode != SWT.CR) {
-				offsetStart = 0;
-			} else { // search next occurrence
-				offsetStart = searchAndHighlight(text.getText(), offsetStart);
-			}
-		}));
-		text.addModifyListener(e -> {
-			offsetStart = searchAndHighlight(text.getText(), offsetStart);
-		});
-
 		final AnnotationModel model = new AnnotationModel();
 		final VerticalRuler verticalRuler = new VerticalRuler(VERTICAL_RULER_WIDTH, new AnnotationAccess(resourcePool));
 		final int styles = SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION;
@@ -172,30 +157,6 @@ public class XmiTab extends Composite {
 		return new Color(PreferenceConverter.getColor(store, key));
 	}
 
-	/**
-	 *
-	 * @return The endOFfset, or -1 if not found
-	 */
-	protected int searchAndHighlight(String text, int startOffset) {
-		try {
-			// select the entire start tag
-			IRegion region;
-			region = emfDocumentProvider.findText(text, startOffset);
-			if (region == null && startOffset > 0) {
-				region = emfDocumentProvider.findText(text, 0);
-			}
-			if (region != null) {
-				sourceViewer.setSelection(new TextSelection(region.getOffset(), region.getLength()), true);
-				return region.getOffset() + region.getLength();
-			}
-			sourceViewer.setSelection(new TextSelection(0, 0), true);
-			return -1;
-		} catch (final Exception e) {
-			e.printStackTrace();
-			return -1;
-		}
-	}
-
 	public IEclipseContext getContext() {
 		return context;
 	}
@@ -211,31 +172,26 @@ public class XmiTab extends Composite {
 	}
 
 	public void paste() {
-		if (isFilterTextFocused()) {
-			text.paste();
-		} else {
-			sourceViewer.getTextWidget().paste();
-		}
+		sourceViewer.getTextWidget().paste();
 	}
 
 	public void copy() {
-		if (isFilterTextFocused()) {
-			text.copy();
-		} else {
-			sourceViewer.getTextWidget().copy();
-		}
+		sourceViewer.getTextWidget().copy();
 	}
 
 	public void cut() {
-		if (isFilterTextFocused()) {
-			text.cut();
-		} else {
-			sourceViewer.getTextWidget().cut();
-		}
+		sourceViewer.getTextWidget().cut();
 	}
 
-	private boolean isFilterTextFocused() {
-		return text.isFocusControl();
+	@Override
+	public <T> T getAdapter(Class<T> adapter) {
+		if (adapter == ITextViewer.class) {
+			return adapter.cast(sourceViewer);
+		}
+		if (adapter == IFindReplaceTarget.class && sourceViewer != null) {
+			return adapter.cast(sourceViewer.getFindReplaceTarget());
+		}
+		return null;
 	}
 
 }

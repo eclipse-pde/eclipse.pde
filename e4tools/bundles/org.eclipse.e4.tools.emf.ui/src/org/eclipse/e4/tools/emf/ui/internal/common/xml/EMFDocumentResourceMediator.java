@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.E;
 import org.eclipse.e4.ui.internal.workbench.E4XMIResource;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
@@ -120,26 +119,6 @@ public class EMFDocumentResourceMediator {
 			// TODO This will not work if the element has '<' or '>' in an
 			// attribute value
 			region = find.find(0, "<.*?" + xmiId + ".*?>", true, true, false, true); //$NON-NLS-1$ //$NON-NLS-2$
-			return region;
-		} catch (final BadLocationException e) {
-			return null;
-		}
-	}
-
-	/**
-	 *
-	 * @return The region for the start of the text, or null if not found or the
-	 *         text is empty.
-	 */
-	public IRegion findText(String text, int startOffset) {
-		if (E.isEmpty(text)) {
-			return null;
-		}
-
-		final FindReplaceDocumentAdapter find = new FindReplaceDocumentAdapter(document);
-		IRegion region;
-		try {
-			region = find.find(startOffset, text, true, true, false, false);
 			return region;
 		} catch (final BadLocationException e) {
 			return null;
