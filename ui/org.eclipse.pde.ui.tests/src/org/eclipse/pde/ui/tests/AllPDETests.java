@@ -30,6 +30,7 @@ import org.eclipse.pde.ui.tests.ee.ExportBundleTests;
 import org.eclipse.pde.ui.tests.imports.AllImportTests;
 import org.eclipse.pde.ui.tests.launcher.AllLauncherTests;
 import org.eclipse.pde.ui.tests.model.bundle.AllBundleModelTests;
+import org.eclipse.pde.ui.tests.model.plugin.ExternalPluginModelBaseTest;
 import org.eclipse.pde.ui.tests.model.schema.ExtensionInspectorTest;
 import org.eclipse.pde.ui.tests.model.xml.AllXMLModelTests;
 import org.eclipse.pde.ui.tests.nls.AllNLSTests;
@@ -82,6 +83,7 @@ import org.junit.platform.suite.api.Suite;
 	ProjectSmartImportTest.class, //
 	GatherUnusedDependenciesOperationTest.class, //
 	ExtensionInspectorTest.class, //
+	ExternalPluginModelBaseTest.class, //
 	PluginManifestChangeTest.class, //
 	GatherUnusedDependenciesOperationExtensionsTest.class, //
 	PDELabelProviderTest.class, //

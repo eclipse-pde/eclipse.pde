@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
-import org.eclipse.pde.internal.core.plugin.ExternalPluginModel;
+import org.eclipse.pde.internal.core.plugin.ExternalPluginModelBase;
 import org.eclipse.pde.internal.core.schema.ExtensionInspector;
 import org.eclipse.pde.internal.core.schema.Schema;
 import org.junit.Test;
@@ -141,8 +141,8 @@ public class ExtensionInspectorTest {
 				   </extension>
 				</plugin>
 				""".formatted(content.strip());
-		ExternalPluginModel model = new ExternalPluginModel();
-		model.load(new ByteArrayInputStream(pluginXml.getBytes(StandardCharsets.UTF_8)), false);
+		ExternalPluginModelBase model = ExternalPluginModelBase
+				.createAndLoad(new ByteArrayInputStream(pluginXml.getBytes(StandardCharsets.UTF_8)), false, null);
 		return model.getPluginBase().getExtensions()[0];
 	}
 
